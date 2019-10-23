@@ -2,179 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96512E187C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 13:06:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A97EE1956
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Oct 2019 13:50:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404630AbfJWLGB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Oct 2019 07:06:01 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:17770 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390566AbfJWLGB (ORCPT
+        id S2391132AbfJWLuG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Oct 2019 07:50:06 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46748 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733180AbfJWLuG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Oct 2019 07:06:01 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9NB4hQu130863
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2019 07:06:00 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2vtnnyr1pa-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2019 07:06:00 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
-        Wed, 23 Oct 2019 12:05:57 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 23 Oct 2019 12:05:55 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9NB5sex54263842
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Oct 2019 11:05:54 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 51DB24C052;
-        Wed, 23 Oct 2019 11:05:54 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D04AE4C044;
-        Wed, 23 Oct 2019 11:05:51 +0000 (GMT)
-Received: from [9.199.158.207] (unknown [9.199.158.207])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 23 Oct 2019 11:05:51 +0000 (GMT)
-Subject: Re: [PATCH RESEND 1/1] vfs: Really check for inode ptr in lookup_fast
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        wugyuan@cn.ibm.com, jlayton@kernel.org, hsiangkao@aol.com,
-        Jan Kara <jack@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <20190927044243.18856-1-riteshh@linux.ibm.com>
- <20191015040730.6A84742047@d06av24.portsmouth.uk.ibm.com>
- <20191022133855.B1B4752050@d06av21.portsmouth.uk.ibm.com>
- <20191022143736.GX26530@ZenIV.linux.org.uk>
- <20191022201131.GZ26530@ZenIV.linux.org.uk>
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Date:   Wed, 23 Oct 2019 16:35:50 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Wed, 23 Oct 2019 07:50:06 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n15so10950157wrw.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2019 04:50:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=FNXOHOHAscJYBJaLyIPFHrZ5VNTRi8Fq3c4G/x3Je7s=;
+        b=NfVTmM1iIDbXkr+6wsKUWEtJ0F9gy6AV8aeojpCDdxqIss+u3Xo6kE5Q65+OvJjcEm
+         WhwkgZPlSJpnoZoApFMjdjZzM1YCQ5n3gX4WdT0jYybE26uTesdrJp9PFn7oJyC0FQBm
+         Qaeywtiwqxchcd2pHFFmqGlW0ziMbrr233T2tgFxHNWndT8XARxQ5yVirmWZ7rcUEK3T
+         WYzFFDg7NFzFSuJUSeUYpZlUjwCALcTStmb/J9U8HNjENPjpGWaF2HrmJK+Cb7hIkapW
+         QVvr5LP0jrqgYLA0HlKGqM3vPrpDvviVG7gtQILxx3MgvmGnPrQ48EUeg9znaRW1doOT
+         CPfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=FNXOHOHAscJYBJaLyIPFHrZ5VNTRi8Fq3c4G/x3Je7s=;
+        b=DGDjw5UdgUvlUq/5yan1yT+DOaFU5WEK2zSKi0E3hhLsKWOk1YMP/tC+q57bV1unHS
+         +ztf6YYYlOMEuMO402zuOvt/WeAT8vrdtLaiY5JoDUy5LqX3dwenLsvgCVWRO9E99FYq
+         fDBDu6DPHsMbj+y3Y5lHGSGOh7WX646HyJ2DO9/3wN4sQ5KHoRKGiHfnr3uCh91XhFFI
+         VaY6ZrhfCPEM5QswFn3F62qzhyfijVSHm4pd2KCUBXglnRNaXMs5vN/SbXR8k7ikbQIJ
+         WlgK5mcRumjrcyA7kupX/MnZSbrtnnOa/wExlusGzIlulaFEnqBeLQl0Lx7BQOIvNeCL
+         AEkA==
+X-Gm-Message-State: APjAAAUj4wFE1nQfcVkf94/gjq8hDIiH+kSZiqj6PwiSZfaHa888REdI
+        X8i++v6nDlBNdj52ccr1Hwo=
+X-Google-Smtp-Source: APXvYqzzZDG8CZ6rYNw1+/x3n+klmzIClsgACMfc3KyLpNHdJ7k07vJ3N/QanIyQAXXkyCZ5ENuMWA==
+X-Received: by 2002:a5d:49cf:: with SMTP id t15mr7958665wrs.63.1571831403749;
+        Wed, 23 Oct 2019 04:50:03 -0700 (PDT)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id y13sm32084177wrg.8.2019.10.23.04.50.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 23 Oct 2019 04:50:02 -0700 (PDT)
+Date:   Wed, 23 Oct 2019 13:50:01 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Chris Murphy <lists@colorremedies.com>
+Cc:     Richard Weinberger <richard.weinberger@gmail.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: Re: Is rename(2) atomic on FAT?
+Message-ID: <20191023115001.vp4woh56k33b6hiq@pali>
+References: <CAJCQCtQ38W2r7Cuu5ieKRQizeKF0tf--3Z8yOJeeR+ZZ4S6CVQ@mail.gmail.com>
+ <CAFLxGvxdPQdzBz1rc3ZC+q1gLNCs9sbn8FOS6G-E1XxXeybyog@mail.gmail.com>
+ <20191022105413.pj6i3ydetnfgnkzh@pali>
+ <CAJCQCtToPc5sZTzdxjoF305VBzuzAQ6K=RTpDtG6UjgbWp5E8g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20191022201131.GZ26530@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19102311-4275-0000-0000-00000376149D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19102311-4276-0000-0000-000038893B65
-Message-Id: <20191023110551.D04AE4C044@d06av22.portsmouth.uk.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-23_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=771 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1910230112
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJCQCtToPc5sZTzdxjoF305VBzuzAQ6K=RTpDtG6UjgbWp5E8g@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi!
 
-
-On 10/23/19 1:41 AM, Al Viro wrote:
-> On Tue, Oct 22, 2019 at 03:37:36PM +0100, Al Viro wrote:
->> On Tue, Oct 22, 2019 at 07:08:54PM +0530, Ritesh Harjani wrote:
->>> I think we have still not taken this patch. Al?
-
->> or, for that matter, any callers of filename_lookup() assuming that the
->> lack of ENOENT means that the last call of walk_component() (from lookup_last())
->> has not failed with the same ENOENT and thus the result has been observed
->> positive.
->> You've picked the easiest one to hit, but on e.g. KVM setups you can have the
->> host thread representing the CPU where __d_set_inode_and_type() runs get
->> preempted (by the host kernel), leaving others with much wider window.
-
-I had thought so about the other call sites, but as you said
-maybe this was the easiest one to hit.
-Then, I kind of followed your suggested fix in below link to fix at 
-least this current crash.
-https://patchwork.kernel.org/patch/10909881/
-
->>
->> Sure, we can do that to all callers of d_is_negative/d_is_positive, but...
->> the same goes for any places that assumes that d_is_dir() implies that
->> the sucker is positive, etc.
->>
->> What we have guaranteed is
->> 	* ->d_lock serializes ->d_flags/->d_inode changes
->> 	* ->d_seq is bumped before/after such changes
->> 	* positive dentry never changes ->d_inode as long as you hold
->> a reference (negative dentry *can* become positive right under you)
->>
->> So there are 3 classes of valid users: those holding ->d_lock, those
->> sampling and rechecking ->d_seq and those relying upon having observed
->> the sucker they've pinned to be positive.
-
-:) Thanks for simplifying like this. Agreed.
-
-
-
->>
->> What you've been hitting is "we have it pinned, ->d_flags says it's
->> positive but we still observe the value of ->d_inode from before the
->> store to ->d_flags that has made it look positive".
+On Wednesday 23 October 2019 02:10:50 Chris Murphy wrote:
+> a. write bootloader file to a temp location
+> b. fsync
+> c. mv temp final
+> d. fsync
 > 
-> Actually, your patch opens another problem there.  Suppose you make
-> it d_really_is_positive() and hit the same race sans reordering.
-> Dentry is found by __d_lookup() and is negative.  Right after we
-> return from __d_lookup() another thread makes it positive (a symlink)
-> - ->d_inode is set, d_really_is_positive() becomes true.  OK, on we
-> go, pick the inode and move on.  Right?  ->d_flags is still not set
-> by the thread that made it positive.  We return from lookup_fast()
-> and call step_into().  And get to
->          if (likely(!d_is_symlink(path->dentry)) ||
-> Which checks ->d_flags and sees the value from before the sucker
-> became positive.  IOW, d_is_symlink() is false here.  If that
-> was the last path component and we'd been told to follow links,
-> we will end up with positive dentry of a symlink coming out of
-> pathname resolution.
-> 
+> if the crash happens anywhere from before a. to just after c. the old
+> configuration file is still present and old kernel+initramfs are used.
+> No problem. If the crash happens well after c. probably the new one is
+> in place, for sure after d. it's in place, and the new kernel+
+> initramfs are used.
 
-hmm. yes, looks like it, based on your above explanation.
-So even though this could avoid crash, but still we may end up with
-a bogus entry with current patch.
+I do not think that kernel guarantee for any filesystem that rename
+operation would be atomic on underlying disk storage.
 
+But somebody else should confirm it.
 
-
-> Similar fun happens if you have mkdir racing with lookup - ENOENT
-> is what should've happened if lookup comes first, success - if
-> mkdir does.  This way we can hit ENOTDIR, due to false negative
-> from d_can_lookup().
-> 
-> IOW, d_really_is_negative() in lookup_fast() will paper over
-> one of oopsen, but it
-> 	* won't cover similar oopsen on other codepaths and
-> 	* will lead to bogus behaviour.
-> 
-> I'm not sure that blanket conversion of d_is_... to smp_load_acquire()
-> is the right solution; it might very well be that we need to do that
-> only on a small subset of call sites, lookup_fast() being one of
-> those.  But we do want at least to be certain that something we'd
-> got from lookup_fast() in non-RCU mode already has ->d_flags visible.
-
-We may also need similar guarantees with __d_clear_type_and_inode().
-
-So do you think we should make use of ->d_seq for verifying this?
-I see both __d_set_inode_and_type & __d_clear_type_and_inode() called
-under ->d_seq_begin/->d_seq_end.
-
-Then maybe we should use ->d_seq checking at those call sites.
-We cannot unconditionally use ->d_seq checking in __d_entry_type(),
-since we sometimes call this function inside ->d_seq_begin
-(like in lookup_fast).
-
+So if kernel crashes in the middle of c or between c and d you need to
+repair filesystem externally prior trying to boot from such disk.
 
 > 
-> I'm going through the callers right now, will post a followup once
-> the things get cleaner...
+> > But looking at vfat source code (file namei_vfat.c), both rename and
+> > lookup operation are locked by mutex, so during rename operation there
+> > should not be access to read directory and therefore race condition
+> > should not be there (which would cause reading inconsistent directory
+> > during rename operation).
+> >
+> > If you want atomic rename of two files independently of filesystem, you
+> > can use RENAME_EXCHANGE flag. It exchanges that two specified files
+> > atomically, so there would not be that race condition like in rename()
+> > that in some period of time both "foo" and "bar" would point to same
+> > inode.
 > 
-Thanks for looking into this.
+> I'm not sure how to test the following: write kernel and initramfs to
+> final locations. And bootloader configuration is written to a temp
+> path. Then at the decision moment, rename it so that it goes from temp
+> path to final path doing at most 1 sector change. 1 512 byte sector
+> is a reasonable number to assume can be completely atomic for a
+> system. I have no idea if FAT can do such a 'mv' event with only one
+> sector change
 
+Theoretically it could be possible to implement it for FAT (with more
+restrictions), but I doubt that general purpose implementation of any
+filesystem in kernel can do such thing. So no practically.
+
+> >
+> >
+> > But... if you are asking for consistency and atomicity at filesystem
+> > level (e.g. you turn off disk / power supply during rename operation)
+> > then this is not atomic and probably it cannot be implemented. When FAT
+> > filesystem is mounted (either by Windows or Linux kernel) it is marked
+> > by "dirty" flag and later when doing unmount, "dirty" flag is cleared.
+> 
+> Right. And at least on UEFI and arm boards, it's not the linux kernel
+> that needs to read it right after a crash. It's the firmware's FAT
+> driver. I have no idea how they react to the dirty flag.
+
+Those bootloader firmwares which just load & run bootloader practically
+do not write anything to that FAT filesystem. In most cases their
+implementation of FAT is read-only and very stupid. I doubt that there
+is check for dirty flag.
+
+I saw lot of commercial devices of different kind which can read & write
+(backup) data to (FAT) SD card. And lot of time they were not able to
+read FAT filesystem formatted by other tool, only by their (or by
+in-device FAT formatted).
+
+So such firmwares can be full of bugs and it really is not a good idea
+to try booting bootloader from inconsistent FAT filesystem.
+
+> Most distros
+> set /etc/fstab FS_PASSNO to 2, maybe it should be a 1, but in any case
+> if we boot something far enough along to get to user space fsck, the
+> dirty flag is cleaned up.
+
+fs_passno set to 2 should be fine. You need to set it to 1 only for root
+device, on which is running linux system. All other disks which are not
+needed for running linux system can have fs_passno set to 2.
+
+> > This is there to ensure that operations like rename were finished and
+> > were not stopped/killed in between. So future when you read from FAT
+> > filesystem you would know if it is in consistent state or not.
+> 
+> GRUB has an option to blindly overwrite the 1024 byte contents of
+> grubenv (no file system modification), that's pretty close to atomic.
+> Most devices have physical sector bigger than 512 bytes. This write is
+> done in the pre-boot environment for saving state like boot counts.
+
+This depends on grub's FAT implementation. As said I would be very
+careful about such "atomic" writes. There are also some caches, include
+hardware on-disk, etc...
+
+> And add to the mix that I guess some UEFI firmware allow writing to
+> FAT in the pre-boot environment?
+
+Yes, UEFI API allows you to write to disk devices. And UEFI fileystem
+implementation can also supports writing to FAT fs.
+
+> I don't know if that's universally true. How do firmware handle a dirty bit being set?
+
+Bad implementation would ignore it. This is something which you should
+expect.
+
+> It's bad if the
+> firmware writes to such a file system anyway. But also bad if it can't
+> save state, now it's not possible to save boot attempts for fallback
+> purposes.
+
+The best is to always have fragile filesystem in consistent state. And
+if it goes broken, repair it on external system prior trying to write to
+it by some untrusted/broken/bad filesystem driver. This would prevent
+data damage.
+
+-- 
+Pali Rohár
+pali.rohar@gmail.com
