@@ -2,80 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E19A5E2818
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 04:24:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F598E282F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 04:31:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408217AbfJXCYG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Oct 2019 22:24:06 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43270 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406400AbfJXCYG (ORCPT
+        id S2437081AbfJXCbU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Oct 2019 22:31:20 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:42412 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437073AbfJXCbT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Oct 2019 22:24:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jqaSnMivMbTcu9ltBfVGub27KNjYSIvA9j9EeZ25Gtg=; b=HbQ4E4NyaoU4b4xncTnHvaoM7
-        dD9y4Rv90jjsduTfR5TIPaHkB1q1bvoTtoI+JOhZX2sRvtxUlf6wo/r+yhOU2mcIpfG6YAbBRIgsw
-        4SxXGr42k+1CZV0K8jNKrOEuOH4gfoSKrhXB+uQSTZwCOoON9nY8483Mj0w98gsJl9neXq2S/Xqpf
-        2tg8f5H65x/ExvuTcZmniU+dD6t6rtUoH6W/PyXFt854zeDeei8tP3PHjQrkiW6AJORaSusgwHosq
-        a2mPgpjRABGj5PriHE3PonP73iPD1cssVaSZZEIOJ4nAYd5T2cIDRuYJyx3FY80qNFnqw61Mr5ETl
-        jZnmC9/OQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iNSnG-0004h2-AQ; Thu, 24 Oct 2019 02:24:06 +0000
-Date:   Wed, 23 Oct 2019 19:24:06 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Michal Suchanek <msuchanek@suse.de>
-Cc:     linux-scsi@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Jens Axboe <axboe@kernel.dk>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Wed, 23 Oct 2019 22:31:19 -0400
+Received: by mail-ed1-f65.google.com with SMTP id s20so11353567edq.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2019 19:31:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=plexistor-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=gnpimtDmP0lqthi2a9dQUIzsbuDYbXbk8lwy1rA6ZU4=;
+        b=rWfKpJmH4ifuIAc04embim+n/JBDGLFT0Hj+ihXkCmiMhnOlUJ7dovXsW/rUmYCG6F
+         NxvohT6iNXBI6t174vtu7YcDkT26RFlgZNkwGZix5mNkPhEVfaQJud2KWOstCgH42cLL
+         C6TMjBSQEmYIn9WfT37PSeJ/iFVaR6bQjE0zyQcvJKF2mvrqFmnCmfG0685/oCLWd2D/
+         kj3C67iakdIgJwUCaU7RXbrXgjL50UBwhAsUqAr4lASSx5NA4IH+9zeFS8WnF3708s4S
+         VD43nmX5iXHmxRFB4FSaXMMTYJZZ+KuoOiJB3j+OaIRifCMquB5u1LE663zK8s24CJAE
+         4+WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gnpimtDmP0lqthi2a9dQUIzsbuDYbXbk8lwy1rA6ZU4=;
+        b=LToDoE7RCzylTzTtyGBif1ymGHuN41uX02Jut7pa3r4JkHeMbuhnSexbMxEIHD7FcZ
+         T9RsSwSP+ZRhjarAaCgyjHFvP2GCb3ThqkPDrL868NwQuTDINniE8fPw9zMhJZqM1PML
+         f8UApOvua84CXGzA2/mAZCTgNxMmuDGMcYnQcjHqfOYB3239ZYd7kQBQ9oUR1AZn+3bZ
+         tvSzv6wEQhjgGg0IR6BKY85DIk208wNoh+5XgJSeXvdBGj8JiznUQHn89ozHRNiM2jqy
+         Bm/RMNl/yViWsHYDMD6UDvYvqoHmaNeqmXTpfEkXOf6b0GrjsFc/deXjnLVMVrj1vULX
+         NsSA==
+X-Gm-Message-State: APjAAAVWfsuuaCaLuzytUlhMbBaEV7VihMK380ZnxmXjnPggSnsBYeVJ
+        /wbACNmpqogeUGcO5QDAbg6+bC9Fg+I=
+X-Google-Smtp-Source: APXvYqy84bemiVw55n7fco+FbX1+KuwznFlI0XsqhDfwNJccDH40WXATcHh+QUP1GE+pY3XO2S2c9A==
+X-Received: by 2002:a17:906:780e:: with SMTP id u14mr26591750ejm.97.1571884275784;
+        Wed, 23 Oct 2019 19:31:15 -0700 (PDT)
+Received: from [10.68.217.182] ([217.70.210.43])
+        by smtp.googlemail.com with ESMTPSA id x23sm430555eda.83.2019.10.23.19.31.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Oct 2019 19:31:15 -0700 (PDT)
+Subject: Re: [PATCH 0/5] Enable per-file/directory DAX operations
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     ira.weiny@intel.com, linux-kernel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Eric Biggers <ebiggers@google.com>,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Tejun Heo <tj@kernel.org>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 8/8] scsi: sr: wait for the medium to become ready
-Message-ID: <20191024022406.GD11485@infradead.org>
-References: <cover.1571834862.git.msuchanek@suse.de>
- <94dc98dc67b1d183d04c338c7978efa0556db6ac.1571834862.git.msuchanek@suse.de>
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20191020155935.12297-1-ira.weiny@intel.com>
+ <b7849297-e4a4-aaec-9a64-2b481663588b@plexistor.com>
+ <b883142c-ecfe-3c5b-bcd9-ebe4ff28d852@plexistor.com>
+ <20191023221332.GE2044@dread.disaster.area>
+From:   Boaz Harrosh <boaz@plexistor.com>
+Message-ID: <efffc9e7-8948-a117-dc7f-e394e50606ab@plexistor.com>
+Date:   Thu, 24 Oct 2019 05:31:13 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <94dc98dc67b1d183d04c338c7978efa0556db6ac.1571834862.git.msuchanek@suse.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20191023221332.GE2044@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 02:52:47PM +0200, Michal Suchanek wrote:
-> +static int sr_block_open_finish(struct block_device *bdev, fmode_t mode,
-> +				int ret)
-> +{
-> +	struct scsi_cd *cd = scsi_cd(bdev->bd_disk);
-> +
-> +	/* wait for drive to get ready */
-> +	if ((ret == -ENOMEDIUM) && !(mode & FMODE_NDELAY)) {
-> +		struct scsi_device *sdev = cd->device;
-> +		/*
-> +		 * Cannot use sr_block_ioctl because it locks sr_mutex blocking
-> +		 * out any processes trying to access the drive
-> +		 */
-> +		scsi_autopm_get_device(sdev);
-> +		cdrom_ioctl(&cd->cdi, bdev, mode, CDROM_AUTOCLOSE, 0);
-> +		ret = __sr_block_open(bdev, mode);
-> +		scsi_autopm_put_device(sdev);
+On 24/10/2019 01:13, Dave Chinner wrote:
+> On Wed, Oct 23, 2019 at 04:09:50PM +0300, Boaz Harrosh wrote:
+>> On 22/10/2019 14:21, Boaz Harrosh wrote:
+>>> On 20/10/2019 18:59, ira.weiny@intel.com wrote:
+>> Please explain the use case behind your model?
+> 
+> No application changes needed to control whether they use DAX or
+> not. It allows the admin to control the application behaviour
+> completely, so they can turn off DAX if necessary. Applications are
+> unaware of constraints that may prevent DAX from being used, and so
+> admins need a mechanism to prevent DAX aware application from
+> actually using DAX if the capability is present.
+> 
+> e.g. given how slow some PMEM devices are when it comes to writing
+> data, especially under extremely high concurrency, DAX is not
+> necessarily a performance win for every application. Admins need a
+> guaranteed method of turning off DAX in these situations - apps may
+> not provide such a knob, or even be aware of a thing called DAX...
+> 
 
-Ioctls should never be used from kernel space.  We have a few leftovers,
-but we need to get rid of that and not add more.
+Thank you Dave for explaining. Forgive my slowness. I now understand
+your intention.
+
+But if so please address my first concern. That in the submitted implementation
+you must set the flag-bit after the create of the file but before the write.
+So exactly the above slow writes must always be DAX if I ever want the file
+to be DAX accessed in the future.
+
+In fact I do not see how you do this without changing the application because
+most applications create thier own files, so you do not have a chance to set
+the DAX-flag before the write happens. So the only effective fixture is the
+inheritance from the parent directory.
+But then again how do you separate from the slow writes that we would like
+none-DAX to the DAX reads that are fast and save so much resources and latency.
+
+What if, say in XFS when setting the DAX-bit we take all the three write-locks
+same as a truncate. Then we check that there are no active page-cache mappings
+ie. a single opener. Then allow to set the bit. Else return EBUISY. (file is in use)
+
+> e.g. the data set being accessed by the application is mapped and
+> modified by RDMA applications, so those files must not be accessed
+> using DAX by any application because DAX+RDMA are currently
+> incompatible. Hence you can have RDMA on pmem devices co-exist
+> within the same filesystem as other applications using DAX to access
+> the pmem...
+> 
+
+I actually like the lastest patchset that takes a lease on the file.
+But yes an outside admin tool to set different needs.
+
+> Cheers,
+> Dave.
+> 
+
+Yes, thanks
+Boaz
