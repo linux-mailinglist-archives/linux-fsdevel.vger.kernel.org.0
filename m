@@ -2,98 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03495E3E93
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 23:57:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E252E3EAA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 23:57:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729805AbfJXV5K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Oct 2019 17:57:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57150 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729763AbfJXV5J (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Oct 2019 17:57:09 -0400
-Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93FF421D71;
-        Thu, 24 Oct 2019 21:57:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571954228;
-        bh=Iflj5s90gCCWa+Mfxg9ykmv/6MqmPaOcygtr7/UlNBA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oB1L+riMoL5N7sC4SZNAem0Wu0oZ0ChBwrvhO/JgjhncHZvOmASCxFqtgWo8fGRux
-         iay4z5tusW3UjYF9XXR2K/PR6sW/mqz5f58HnhVQvcc2Lzm13cIQmwsXq6YrDOyX2t
-         yxDS8oybc72F9Yt5eb8ST+azvTaHkk4M/wbn3BfA=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-fscrypt@vger.kernel.org
-Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, Satya Tangirala <satyat@google.com>,
-        Paul Crowley <paulcrowley@google.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH v2 3/3] f2fs: add support for IV_INO_LBLK_64 encryption policies
-Date:   Thu, 24 Oct 2019 14:54:38 -0700
-Message-Id: <20191024215438.138489-4-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.24.0.rc0.303.g954a862665-goog
-In-Reply-To: <20191024215438.138489-1-ebiggers@kernel.org>
-References: <20191024215438.138489-1-ebiggers@kernel.org>
+        id S1729861AbfJXV5y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Oct 2019 17:57:54 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:50320 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729763AbfJXV5y (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 24 Oct 2019 17:57:54 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 11so6301wmk.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2019 14:57:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Q80crq6dcFo4FVg0RAcx8WwRU/EPfdre/VW0eFU98dM=;
+        b=SNQgcTwGxX/niXS62JOK1k3Q0f07ugHX0l7GDKYMASpoTay+9Fnqc2VuQHPgUXJhoq
+         m2HtX/VjY7TeUeeXU5coPwRTv4F9+l8+iOml1j1YW7gbb8EB2rxxSCnEnzCR9YdSfd7S
+         Cf6m40JpATPgct/oz7oi/7uaLyMVHx70B4xRrUS+MK7GA88WHkdLaS/bsNvlHiLFtMTG
+         sAMSaWHYDyk2h+GfAgZO20tQGyM4x43Be2/HlLksPctvCuQDhaFCDYEMGpUGPygcxcr9
+         IRLCkAcIkc523BN6N+VfWu2x9nu2Ixe0Mp2S4UWoNI3cQKkd1//lLA6n7yFNayIf96Ii
+         wCiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Q80crq6dcFo4FVg0RAcx8WwRU/EPfdre/VW0eFU98dM=;
+        b=JRVHZ03ff8HETggpbKXI+65o4rwdtiMrt9M7Ua00QPGichE0E9TqaIge3J77d5uX4J
+         S/DJVMXw3Rx5FUjFkSgRoqI575f1kEsWu5zlDV1dH0o5fiqZmrNhgupOIMGeco1C43Zo
+         Qq89NWM9VIG8ZQatU86KGvw4UJrhgx5T34oXeXH/bua9AtU5iqjA7jQFsGs/Wx6AeMKD
+         loIbjFhKbVLDX/Tw2i6JccKoNmha1YYrE88TyCAdZsYnYn3Y94lFOyxZEjnpNVd70jmq
+         ZG48wwCdpJG8/Jt0efAlUvE85MVzBvd6yB81WkNzjJO9JrR6tBqcL+FPnIbhYSL6U2F0
+         svog==
+X-Gm-Message-State: APjAAAUdL54UT8h6iaf8Z/FjY5IoBPkyOaycBh21mydPgKB0JjJYyuLR
+        0m9MkKHADACvIcJHaVvUYCM=
+X-Google-Smtp-Source: APXvYqzWmMSL7QY+El/Xp8RRPZ9BzN3YoL1FNb5TdwzerErOYQJWkOQVAZpv7a8pzoSJ1fiv7ZcXUg==
+X-Received: by 2002:a1c:c28a:: with SMTP id s132mr419991wmf.162.1571954271925;
+        Thu, 24 Oct 2019 14:57:51 -0700 (PDT)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id u1sm44907wmc.38.2019.10.24.14.57.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 24 Oct 2019 14:57:50 -0700 (PDT)
+Date:   Thu, 24 Oct 2019 23:57:40 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Chris Murphy <lists@colorremedies.com>
+Cc:     Richard Weinberger <richard.weinberger@gmail.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: Re: Is rename(2) atomic on FAT?
+Message-ID: <20191024215740.dtcudmehqvywfnks@pali>
+References: <CAFLxGvxdPQdzBz1rc3ZC+q1gLNCs9sbn8FOS6G-E1XxXeybyog@mail.gmail.com>
+ <20191022105413.pj6i3ydetnfgnkzh@pali>
+ <CAJCQCtToPc5sZTzdxjoF305VBzuzAQ6K=RTpDtG6UjgbWp5E8g@mail.gmail.com>
+ <20191023115001.vp4woh56k33b6hiq@pali>
+ <CAJCQCtTZRoDKWj2j6S+_iWJzA+rejZx41zwM=VKgG90fyZhX6w@mail.gmail.com>
+ <20191023171611.qfcwfce2roe3k3qw@pali>
+ <CAFLxGvxCVNy0yj8SQmtOyk5xcmYag1rxe3v7GtbEj8fF1iPp5g@mail.gmail.com>
+ <CAJCQCtTEN50uNmuSz9jW5Kk51TLmB2jfbNGxceNqnjBVvMD9ZA@mail.gmail.com>
+ <CAFLxGvwDraUwZOeWyGfVAOh+MxHgOF--hMu6P4J=P6KRspGsAA@mail.gmail.com>
+ <CAJCQCtQhCRPG-UV+pcraCLXM5cVW887uX1UoymQ8=3Mk56w1Ag@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="55hcgvpxz234sddp"
+Content-Disposition: inline
+In-Reply-To: <CAJCQCtQhCRPG-UV+pcraCLXM5cVW887uX1UoymQ8=3Mk56w1Ag@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
 
-f2fs inode numbers are stable across filesystem resizing, and f2fs inode
-and file logical block numbers are always 32-bit.  So f2fs can always
-support IV_INO_LBLK_64 encryption policies.  Wire up the needed
-fscrypt_operations to declare support.
+--55hcgvpxz234sddp
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/f2fs/super.c | 26 ++++++++++++++++++++------
- 1 file changed, 20 insertions(+), 6 deletions(-)
+On Thursday 24 October 2019 23:46:43 Chris Murphy wrote:
+> So that leads me to, what about FAT? i.e. how does this get solved on FAT?
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 1443cee158633..851ac95229263 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2308,13 +2308,27 @@ static bool f2fs_dummy_context(struct inode *inode)
- 	return DUMMY_ENCRYPTION_ENABLED(F2FS_I_SB(inode));
- }
- 
-+static bool f2fs_has_stable_inodes(struct super_block *sb)
-+{
-+	return true;
-+}
-+
-+static void f2fs_get_ino_and_lblk_bits(struct super_block *sb,
-+				       int *ino_bits_ret, int *lblk_bits_ret)
-+{
-+	*ino_bits_ret = 8 * sizeof(nid_t);
-+	*lblk_bits_ret = 8 * sizeof(block_t);
-+}
-+
- static const struct fscrypt_operations f2fs_cryptops = {
--	.key_prefix	= "f2fs:",
--	.get_context	= f2fs_get_context,
--	.set_context	= f2fs_set_context,
--	.dummy_context	= f2fs_dummy_context,
--	.empty_dir	= f2fs_empty_dir,
--	.max_namelen	= F2FS_NAME_LEN,
-+	.key_prefix		= "f2fs:",
-+	.get_context		= f2fs_get_context,
-+	.set_context		= f2fs_set_context,
-+	.dummy_context		= f2fs_dummy_context,
-+	.empty_dir		= f2fs_empty_dir,
-+	.max_namelen		= F2FS_NAME_LEN,
-+	.has_stable_inodes	= f2fs_has_stable_inodes,
-+	.get_ino_and_lblk_bits	= f2fs_get_ino_and_lblk_bits,
- };
- #endif
- 
--- 
-2.24.0.rc0.303.g954a862665-goog
+Hi Chris! I think that for FAT in most cases it used ostrich algorithm.
+Probability that kernel crashes in the middle of operation which is
+updating kernel image on boot partition is very low.
 
+I'm Looking at grub's fat source code and there is no handling of dirty
+bit... http://git.savannah.gnu.org/cgit/grub.git/tree/grub-core/fs/fat.c
+It just expects that whole FAT fs is in consistent state.
+
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
+
+--55hcgvpxz234sddp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXbIeUgAKCRCL8Mk9A+RD
+UijiAKCp+9iYE4Hx4s+CaIzz/w33uoEdsQCeJb0T1aaocsYz2MPxbp8iqRwHUL0=
+=uU9w
+-----END PGP SIGNATURE-----
+
+--55hcgvpxz234sddp--
