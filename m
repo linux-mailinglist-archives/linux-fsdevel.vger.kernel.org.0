@@ -2,73 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0196AE2C50
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 10:37:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B279E2C80
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 10:50:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728889AbfJXIhS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Oct 2019 04:37:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41676 "EHLO mx1.suse.de"
+        id S2438370AbfJXIuS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Oct 2019 04:50:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51128 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728514AbfJXIhS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Oct 2019 04:37:18 -0400
+        id S1729514AbfJXIuS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 24 Oct 2019 04:50:18 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 83576B36C;
-        Thu, 24 Oct 2019 08:37:16 +0000 (UTC)
-Date:   Thu, 24 Oct 2019 10:37:15 +0200
-From:   Petr Vorel <pvorel@suse.cz>
-To:     Jan Kara <jack@suse.cz>, "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Yong Sun <yosun@suse.com>
-Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Cyril Hrubis <chrubis@suse.cz>
-Subject: Re: "New" ext4 features tests in LTP
-Message-ID: <20191024083713.GB13520@dell5510>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20191023155846.GA28604@dell5510>
- <20191023225824.GB7630@mit.edu>
- <20191024074619.GI31271@quack2.suse.cz>
+        by mx1.suse.de (Postfix) with ESMTP id E726EB087;
+        Thu, 24 Oct 2019 08:50:15 +0000 (UTC)
+Date:   Thu, 24 Oct 2019 10:50:14 +0200
+From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-scsi@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Tejun Heo <tj@kernel.org>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 2/8] cdrom: factor out common open_for_* code
+Message-ID: <20191024085014.GF938@kitsune.suse.cz>
+References: <cover.1571834862.git.msuchanek@suse.de>
+ <da032629db4a770a5f98ff400b91b44873cbdf46.1571834862.git.msuchanek@suse.de>
+ <20191024021958.GA11485@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191024074619.GI31271@quack2.suse.cz>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20191024021958.GA11485@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Ted, Jan,
+On Wed, Oct 23, 2019 at 07:19:58PM -0700, Christoph Hellwig wrote:
+> >  static
+> > -int open_for_data(struct cdrom_device_info *cdi)
+> > +int open_for_common(struct cdrom_device_info *cdi, tracktype *tracks)
+> 
+> Please fix the coding style.  static never should be on a line of its
+> own..
 
-> Yeah, I believe this may be useful to implement in fstests in some fs
-> agnostic way.
-Thank you both for reviewing LTP tests.
+That's fine.
 
-> > > ext4-nsec-timestamps [6]
-> > > --------------------
-> > > Directory containing the shell script which is used to test nanosec timestamps
-> > > of ext4.
+> 
+> >  			} else {
+> >  				cd_dbg(CD_OPEN, "bummer. this drive can't close the tray.\n");
+> > -				ret=-ENOMEDIUM;
+> > -				goto clean_up_and_return;
+> > +				return -ENOMEDIUM;
+> 
+> Can you revert the polarity of the if opening the block before and
+> return early for the -ENOMEDIUM case to save on leven of indentation?
 
-> > This basically tests that the file system supports nanosecond
-> > timestamps, with a 0.3% false positive failure rate.   Again, why?
+Then I will get complaints I do unrelated changes and it's hard to
+review. The code gets removed later anyway.
 
-> > > ext4-subdir-limit [9]
-> > > -----------------
-> > > Directory containing the shell script which is used to test subdirectory limit
-> > > of ext4. According to the kernel documentation, we create more than 32000
-> > > subdirectorys on the ext4 filesystem.
+Thanks
 
-> > This is a valid test, although it's not what I would call a "high
-> > value" test.  (As in, it's testing maybe a total of four simple lines
-> > of code that are highly unlikely to fail.)
-
-> These two may be IMHO worth carrying over to fstests in some form. The other
-> tests seem either already present in various fstests configs we run or
-> pointless as Ted wrote.
-As Sero already volunteered to contribute them to fstests (thanks Sero!),
-I'll send a patch to delete them from LTP.
-
-> 								Honza
-
-Kind regards,
-Petr
+Michal
