@@ -2,306 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D42A0E3908
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 18:57:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D91FE3A63
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 19:52:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410012AbfJXQ5r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Oct 2019 12:57:47 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:31632 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2410009AbfJXQ5q (ORCPT
+        id S2394061AbfJXRvz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Oct 2019 13:51:55 -0400
+Received: from mail-pl1-f173.google.com ([209.85.214.173]:34046 "EHLO
+        mail-pl1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392609AbfJXRvy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Oct 2019 12:57:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571936265;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=NYl4FrLbBWaBG1625TSNrJR25CyJ2Un0Gw1Isq0q23I=;
-        b=hpbu6utcg3EbBFzZbS/dRnVGuV40kL4RX7b7lNhVvS3o+ouXRb0WoWrD5XC/n7Cnn1n/Ph
-        Q3PDdXpbuEejwMaxWhtvA4lhyC8KlTwwgNhiotYo8UoMx6I4ltR7gbqb2TPZMn96N9pOw8
-        r6gnAoGQvyyzBg05lk1PlcewOXOtkZk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-377-1QOKCWTXMqehQKb2ajkHSg-1; Thu, 24 Oct 2019 12:57:38 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 14C19801E66;
-        Thu, 24 Oct 2019 16:57:36 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2966B5888;
-        Thu, 24 Oct 2019 16:57:33 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
-References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
-To:     torvalds@linux-foundation.org
-Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 11/10] pipe: Add fsync() support [ver #2]
-MIME-Version: 1.0
-Content-ID: <30392.1571936252.1@warthog.procyon.org.uk>
-Date:   Thu, 24 Oct 2019 17:57:32 +0100
-Message-ID: <30394.1571936252@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: 1QOKCWTXMqehQKb2ajkHSg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+        Thu, 24 Oct 2019 13:51:54 -0400
+Received: by mail-pl1-f173.google.com with SMTP id k7so12238694pll.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2019 10:51:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=tF/2SELAonCjUta1zWhD10pXJwE2qHwIT91x2FMVMcU=;
+        b=ItcTVGWcgUBL7MH8dVFfdUkhXO0Z0i5PPWM/g8sKszgo8cLrwFQNCQ3A4dnQsb2TE1
+         LUOdjP21CWEkS247RR26lBtQyX1H18zZRj/ImqY0cYa7GkMxGB3Ant1YrT6e6dZ33W2V
+         88YByfanT0NuQLkjmn7eIX+8E521sNaBCBhz96gORCFhs0DDDdVQDzLASxSoYc5Qk5Jg
+         Un6MjocSvGg9L8ILwpIHVmaBdeZpVfSA/46ukWobRZ9OjHLnwA5b2C9FLKXhwir/Fn3m
+         OY5TaaxCypa9cJeip8fSeYtKgX7UZAy0EL0MQCs+73WNolOjA1aEZHcSYiPB8Vrv3VuH
+         EbCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=tF/2SELAonCjUta1zWhD10pXJwE2qHwIT91x2FMVMcU=;
+        b=iYDuVqY6kF8bqu0ncxBllyPlQu9ueAM13SHA8llOKjND02+BUvOivD0dnplOHaPWs6
+         sD0DB76OjaCqOgcGz/ehT/C4qxfL+LE16yJDLwkky42Vbr+djNS1i/oNK6wULB0kQqFZ
+         wj0bKD3cRaX6wIq3ci20sJGyUR0VUps+feRA0f2zGAoW8LOVeblSaAbRcaYYgV3XXOHH
+         vJQ4OCeufPnhJldsFzxhYtXEuS1LXHwQvnZXK9hkjXMOQahTfzKnBETS0KNeCnepAmvt
+         gbRPGq0n8OK8D3J7ec8f+5Yb/K9QZHFkvgeugZEbgKHHJrgB0lxWhjaBBtUEsQfvPhad
+         H6Tw==
+X-Gm-Message-State: APjAAAX9+souaeQEa07bi6Wvn6EyQh8bis8rLYTgjqDYftrPdTF3Qc+T
+        wrtMHL1A4gHvDzoNi0i5xKyVFw==
+X-Google-Smtp-Source: APXvYqxEeiS8Do8r+HAuQAZh96z/nEPdQmOdhWd+IVg9M6wNaQvIpVjKYpFMoL00QXvKV1g32bqB7Q==
+X-Received: by 2002:a17:902:8606:: with SMTP id f6mr851241plo.226.1571939514002;
+        Thu, 24 Oct 2019 10:51:54 -0700 (PDT)
+Received: from cabot.adilger.ext (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
+        by smtp.gmail.com with ESMTPSA id z7sm10546493pfr.165.2019.10.24.10.51.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Oct 2019 10:51:52 -0700 (PDT)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <2794A217-0A93-44C1-B0A2-A67504A711F0@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_6B12323D-80C7-4522-AF86-AF0E0F6C2E2D";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: File system for scratch space (in HPC cluster)
+Date:   Thu, 24 Oct 2019 11:51:51 -0600
+In-Reply-To: <e143071a-b1dc-56a4-a82e-865bae4c60c1@molgen.mpg.de>
+Cc:     Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Donald Buczek <buczek@molgen.mpg.de>
+To:     Paul Menzel <pmenzel@molgen.mpg.de>
+References: <e143071a-b1dc-56a4-a82e-865bae4c60c1@molgen.mpg.de>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-pipe: Add fsync() support
 
-The keyrings testsuite needs the ability to wait for all the outstanding
-notifications in the queue to have been processed so that it can then go
-through them to find out whether the notifications it expected have been
-emitted.
+--Apple-Mail=_6B12323D-80C7-4522-AF86-AF0E0F6C2E2D
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
-Implement fsync() support for pipes to provide this.  The tailmost buffer
-at the point of calling is marked and fsync adds itself to the list of
-waiters, noting the tail position to be waited for and marking the buffer
-as no longer mergeable.  Then when the buffer is consumed, if the flag is
-set, any matching waiters are woken up.
+On Oct 24, 2019, at 4:43 AM, Paul Menzel <pmenzel@molgen.mpg.de> wrote:
+>=20
+> Dear Linux folks,
+>=20
+>=20
+> In our cluster, we offer scratch space for temporary files. As
+> these files are temporary, we do not need any safety
+> requirements =E2=80=93 especially not those when the system crashes or
+> shuts down. So no `sync` is for example needed.
+>=20
+> Are there file systems catering to this need? I couldn=E2=80=99t find
+> any? Maybe I missed some options for existing file systems.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
- fs/fuse/dev.c             |    1=20
- fs/pipe.c                 |   61 +++++++++++++++++++++++++++++++++++++++++=
-+++++
- fs/splice.c               |    3 ++
- include/linux/pipe_fs_i.h |   22 ++++++++++++++++
- lib/iov_iter.c            |    2 -
- 5 files changed, 88 insertions(+), 1 deletion(-)
+How big do you need the scratch filesystem to be?  Is it local
+to the node or does it need to be shared between nodes?  If it
+needs to be large and shared between nodes then Lustre is typically
+used for this.  If it is local and relatively small you could
+consider using tmpfs backed by swab on an NVMe flash device
+(M.2 or U.2, Optane if you can afford it) inside the node.
+
+That way you get RAM-like performance for many files, with a
+larger capacity than RAM when needed (tmpfs can use swap).
+
+You might consider to mount a new tmpfs filesystem per job (no
+formatting is needed for tmpfs), and then unmount it when the job
+is done, so that the old files are automatically cleaned up.
+
+Cheers, Andreas
 
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 5ef57a322cb8..9617a35579cb 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1983,6 +1983,7 @@ static ssize_t fuse_dev_splice_write(struct pipe_inod=
-e_info *pipe,
- =09=09if (rem >=3D ibuf->len) {
- =09=09=09*obuf =3D *ibuf;
- =09=09=09ibuf->ops =3D NULL;
-+=09=09=09pipe_wake_fsync(pipe, ibuf, tail);
- =09=09=09tail++;
- =09=09=09pipe_commit_read(pipe, tail);
- =09=09} else {
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 6a982a88f658..8e5fd7314be1 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -30,6 +30,12 @@
-=20
- #include "internal.h"
-=20
-+struct pipe_fsync {
-+=09struct list_head=09link;=09=09/* Link in pipe->fsync */
-+=09struct completion=09done;
-+=09unsigned int=09=09tail;=09=09/* The buffer being waited for */
-+};
-+
- /*
-  * The max size that a non-root user is allowed to grow the pipe. Can
-  * be set by root in /proc/sys/fs/pipe-max-size
-@@ -269,6 +275,58 @@ static bool pipe_buf_can_merge(struct pipe_buffer *buf=
-)
- =09return buf->ops =3D=3D &anon_pipe_buf_ops;
- }
-=20
-+/*
-+ * Wait for all the data currently in the pipe to be consumed.
-+ */
-+static int pipe_fsync(struct file *file, loff_t a, loff_t b, int datasync)
-+{
-+=09struct pipe_inode_info *pipe =3D file->private_data;
-+=09struct pipe_buffer *buf;
-+=09struct pipe_fsync fsync;
-+=09unsigned int head, tail, mask;
-+
-+=09pipe_lock(pipe);
-+
-+=09head =3D pipe->head;
-+=09tail =3D pipe->tail;
-+=09mask =3D pipe->ring_size - 1;
-+
-+=09if (pipe_empty(head, tail)) {
-+=09=09pipe_unlock(pipe);
-+=09=09return 0;
-+=09}
-+
-+=09init_completion(&fsync.done);
-+=09fsync.tail =3D tail;
-+=09buf =3D &pipe->bufs[tail & mask];
-+=09buf->flags |=3D PIPE_BUF_FLAG_FSYNC;
-+=09pipe_buf_mark_unmergeable(buf);
-+=09list_add_tail(&fsync.link, &pipe->fsync);
-+=09pipe_unlock(pipe);
-+
-+=09if (wait_for_completion_interruptible(&fsync.done) < 0) {
-+=09=09pipe_lock(pipe);
-+=09=09list_del(&fsync.link);
-+=09=09pipe_unlock(pipe);
-+=09=09return -EINTR;
-+=09}
-+
-+=09return 0;
-+}
-+
-+void __pipe_wake_fsync(struct pipe_inode_info *pipe, unsigned int tail)
-+{
-+=09struct pipe_fsync *fsync, *p;
-+
-+=09list_for_each_entry_safe(fsync, p, &pipe->fsync, link) {
-+=09=09if (fsync->tail =3D=3D tail) {
-+=09=09=09list_del_init(&fsync->link);
-+=09=09=09complete(&fsync->done);
-+=09=09}
-+=09}
-+}
-+EXPORT_SYMBOL(__pipe_wake_fsync);
-+
- static ssize_t
- pipe_read(struct kiocb *iocb, struct iov_iter *to)
- {
-@@ -325,6 +383,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- =09=09=09if (!buf->len) {
- =09=09=09=09pipe_buf_release(pipe, buf);
- =09=09=09=09spin_lock_irq(&pipe->wait.lock);
-+=09=09=09=09pipe_wake_fsync(pipe, buf, tail);
- =09=09=09=09tail++;
- =09=09=09=09pipe_commit_read(pipe, tail);
- =09=09=09=09do_wakeup =3D 1;
-@@ -717,6 +776,7 @@ struct pipe_inode_info *alloc_pipe_info(void)
- =09=09pipe->ring_size =3D pipe_bufs;
- =09=09pipe->user =3D user;
- =09=09mutex_init(&pipe->mutex);
-+=09=09INIT_LIST_HEAD(&pipe->fsync);
- =09=09return pipe;
- =09}
-=20
-@@ -1060,6 +1120,7 @@ const struct file_operations pipefifo_fops =3D {
- =09.llseek=09=09=3D no_llseek,
- =09.read_iter=09=3D pipe_read,
- =09.write_iter=09=3D pipe_write,
-+=09.fsync=09=09=3D pipe_fsync,
- =09.poll=09=09=3D pipe_poll,
- =09.unlocked_ioctl=09=3D pipe_ioctl,
- =09.release=09=3D pipe_release,
-diff --git a/fs/splice.c b/fs/splice.c
-index 3f72bc31b6ec..e106367e1be6 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -523,6 +523,7 @@ static int splice_from_pipe_feed(struct pipe_inode_info=
- *pipe, struct splice_des
-=20
- =09=09if (!buf->len) {
- =09=09=09pipe_buf_release(pipe, buf);
-+=09=09=09pipe_wake_fsync(pipe, buf, tail);
- =09=09=09tail++;
- =09=09=09pipe_commit_read(pipe, tail);
- =09=09=09if (pipe->files)
-@@ -771,6 +772,7 @@ iter_file_splice_write(struct pipe_inode_info *pipe, st=
-ruct file *out,
- =09=09=09=09ret -=3D buf->len;
- =09=09=09=09buf->len =3D 0;
- =09=09=09=09pipe_buf_release(pipe, buf);
-+=09=09=09=09pipe_wake_fsync(pipe, buf, tail);
- =09=09=09=09tail++;
- =09=09=09=09pipe_commit_read(pipe, tail);
- =09=09=09=09if (pipe->files)
-@@ -1613,6 +1615,7 @@ static int splice_pipe_to_pipe(struct pipe_inode_info=
- *ipipe,
- =09=09=09 */
- =09=09=09*obuf =3D *ibuf;
- =09=09=09ibuf->ops =3D NULL;
-+=09=09=09pipe_wake_fsync(ipipe, ibuf, i_tail);
- =09=09=09i_tail++;
- =09=09=09pipe_commit_read(ipipe, i_tail);
- =09=09=09input_wakeup =3D true;
-diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-index 90055ff16550..1a3027089558 100644
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -8,6 +8,7 @@
- #define PIPE_BUF_FLAG_ATOMIC=090x02=09/* was atomically mapped */
- #define PIPE_BUF_FLAG_GIFT=090x04=09/* page is a gift */
- #define PIPE_BUF_FLAG_PACKET=090x08=09/* read() as a packet */
-+#define PIPE_BUF_FLAG_FSYNC=090x10=09/* fsync() is waiting for this buffer=
- to die */
-=20
- /**
-  *=09struct pipe_buffer - a linux kernel pipe buffer
-@@ -43,6 +44,7 @@ struct pipe_buffer {
-  *=09@w_counter: writer counter
-  *=09@fasync_readers: reader side fasync
-  *=09@fasync_writers: writer side fasync
-+ *=09@fsync: Waiting fsyncs
-  *=09@bufs: the circular array of pipe buffers
-  *=09@user: the user who created this pipe
-  **/
-@@ -62,6 +64,7 @@ struct pipe_inode_info {
- =09struct page *tmp_page;
- =09struct fasync_struct *fasync_readers;
- =09struct fasync_struct *fasync_writers;
-+=09struct list_head fsync;
- =09struct pipe_buffer *bufs;
- =09struct user_struct *user;
- };
-@@ -268,6 +271,25 @@ extern const struct pipe_buf_operations nosteal_pipe_b=
-uf_ops;
- long pipe_fcntl(struct file *, unsigned int, unsigned long arg);
- struct pipe_inode_info *get_pipe_info(struct file *file);
-=20
-+void __pipe_wake_fsync(struct pipe_inode_info *pipe, unsigned int tail);
-+
-+/**
-+ * pipe_wake_fsync - Wake up anyone waiting with fsync for this point
-+ * @pipe: The pipe that owns the buffer
-+ * @buf: The pipe buffer in question
-+ * @tail: The index in the ring of the buffer
-+ *
-+ * Check to see if anyone is waiting for the pipe ring to clear up to and
-+ * including this buffer, and, if they are, wake them up.
-+ */
-+static inline void pipe_wake_fsync(struct pipe_inode_info *pipe,
-+=09=09=09=09   struct pipe_buffer *buf,
-+=09=09=09=09   unsigned int tail)
-+{
-+=09if (unlikely(buf->flags & PIPE_BUF_FLAG_FSYNC))
-+=09=09__pipe_wake_fsync(pipe, tail);
-+}
-+
- int create_pipe_files(struct file **, int);
- unsigned int round_pipe_size(unsigned long size);
-=20
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index e22f4e283f6d..38d52524cd21 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -404,7 +404,7 @@ static size_t copy_page_to_iter_pipe(struct page *page,=
- size_t offset, size_t by
- =09buf->offset =3D offset;
- =09buf->len =3D bytes;
-=20
--=09pipe_commit_read(pipe, i_head);
-+=09pipe_commit_write(pipe, i_head);
- =09i->iov_offset =3D offset + bytes;
- =09i->head =3D i_head;
- out:
 
+
+
+
+--Apple-Mail=_6B12323D-80C7-4522-AF86-AF0E0F6C2E2D
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl2x5LcACgkQcqXauRfM
+H+AO/BAAhhassljSPZNXP7jy6M2GM78gdwO+QEkZxI8+iC2Qh8ObAQt26DhtP7QA
+A0RimYBaT4yeKy5Fg5n+WVVgpUzos1s9Jb9hHSQyb49RIgSnDppfojTcfXrr5xeL
+yVzFqXsvAxDiDF15jTYyq9k8FG0BUuUgmV0BmtXUsCoRd+dQQqMW2r8QPxfKvKrI
+ue588jhz+inlYVzQM3V5GZdV+h/Dk+ztqYsCp6f/OIRuQ41gxs3+XmZm9+Vj/yaO
+3X9uOVM9uLqe8H31DDGdiRI0InDc08AlXYOhu2N9ioJrk54LYFSX4Tfo/Z1hvuPC
+CmrakEBt1y4NRiB9vOUJBhBbxx8jGXf+uqy5RYIkWuwxF5r/jeqUDl7rAR65I5MX
+SWz8AS37fubkc712L7JZoFQn/CN0U/1xoWTGH/8J5D9QeoeFl2TvK/ArLae6pC2u
+2CsmpIhVcHeSAawb4wLFYa/u6S/APiyqMY1towyWfLpDZO0ohMT5IjNE7YwIugP5
+IrtNUJEAMri58Anvrceaf8Fy2ZHeuQLRJ8uSSbkccEkSMGq6GIRXS3JkkbUJ6lsO
+9bwsJRiBmKT1yu5x1iemJlu3zJ9P0z1J+J8XMmc5mISkw1ZmR5sUY+LB3O/2zfa6
+9XVbxMVcqXAbOiTr3J/jycaBHFUtRjx9sAYeajJEoEp83osYyf4=
+=LytI
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_6B12323D-80C7-4522-AF86-AF0E0F6C2E2D--
