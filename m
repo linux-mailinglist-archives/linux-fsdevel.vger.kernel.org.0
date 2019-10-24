@@ -2,68 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15506E27B3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 03:28:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F06C0E27C1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 03:33:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390265AbfJXB2C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Oct 2019 21:28:02 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54750 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726925AbfJXB2C (ORCPT
+        id S2392652AbfJXBd2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Oct 2019 21:33:28 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:38179 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392621AbfJXBd1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Oct 2019 21:28:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=oOJSv5AEO1P0oZySMka50rrSmMrrts/dJHKNuIUqNOo=; b=p0Wf+fyQKYQ+zmCljn+rA0DQl
-        8YlfbIoi3u8Tc3vTG6MHb2BO+ialHTOQFunLNZ9gMdwbAMwG6gy6Q/TvM2k3NUvJF7ABzsT3zRfBt
-        xcExWeK/TDjIQNu4gvsin8QqUt8gEEGaHXq4Q4dOWbGbrUCSqdKuotJTFmSOWmujaR0ZWYoUppVRK
-        hBWeP5HCQRP3zpYSAYFf5HwokDoRdTCXs+lu3HbOGuM9WsaX16oG9zU9j9COwUyeEWDwEkDYjrymV
-        kV4QiUrHqqJ4wSjVB3uX/suXqft0eZckiYWyJKyJOya03V/uoD6KUPpcN52hKGhI5zR5uMVawR9G+
-        D9uTgaupA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iNRux-00005c-2V; Thu, 24 Oct 2019 01:27:59 +0000
-Date:   Wed, 23 Oct 2019 18:27:59 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, Satya Tangirala <satyat@google.com>,
-        Paul Crowley <paulcrowley@google.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 1/3] fscrypt: add support for inline-encryption-optimized
- policies
-Message-ID: <20191024012759.GA32358@infradead.org>
-References: <20191021230355.23136-1-ebiggers@kernel.org>
- <20191021230355.23136-2-ebiggers@kernel.org>
- <20191022052712.GA2083@dread.disaster.area>
- <20191022060004.GA333751@sol.localdomain>
- <20191022133001.GA23268@mit.edu>
- <20191023092718.GA23274@infradead.org>
- <20191023125701.GA2460@mit.edu>
+        Wed, 23 Oct 2019 21:33:27 -0400
+Received: by mail-pf1-f193.google.com with SMTP id c13so2831724pfp.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Oct 2019 18:33:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uzW923PDOaFWZLYNBS+ZAT/dQUlLsBw1xA3tQqC14LE=;
+        b=MePawSy7G7ab3fyxYb19SAhjqaFXuVviUvLejjX4rvP8CqBwpHokO1ZzZyHhrghHfA
+         BjyykblEJYWgdbrpSHkT4o3/Sr0ngCaHT4CnhgI4jmCBPlZj4RH7giHxF9isEekzG5/R
+         Oa75DnFrTuQzrsK/iAFHxL4TnW0RX0fdRmcdVODwproybPRkPEyZv53womwfwEw2GiyN
+         WHzB7vmE5oyrO1l4Z1CO7m7o1IwvW+fEIFf9rFJ51HgJqBAT/+Uev1fGSwmnL6CcUXy2
+         U4Ef78lcQSppkUTAG9Eb9ExLetpOsvQaKVs1YcNAnslXvqGGuEfBvwo+b/TKJ4D/P4tS
+         /uWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uzW923PDOaFWZLYNBS+ZAT/dQUlLsBw1xA3tQqC14LE=;
+        b=OkqIo7eAGZjQuOMr+9BNYXjcPTv+eGDOZIXQ8LftN8qiHTD2D5hRqJYxGLLdIfgXO2
+         lBkjjQtmhnYh4AFyLI7cpEkxmr9PrUz3OXdOrV2cWDu1aXZRCxLVv6/q4Y7N+B6vadV5
+         GJ0QgllHhjfHo1njCYrGlOWEmb8lqqZHUGmVKZHVIStJc+dLVZyw9oP22cfGmHxpHRoH
+         BmITYtBePlynUsSKHHYyKqKdSDx4onAHX6etvskGBZuF6MJ87XxUMJZ84rkfQQ5YGRUq
+         JEmYLIvk0lapk8TyvYhgM7oJ02ATFlz5m2C8nrxIBZzH13CsxqQq+SnbS0XBTeyVyqNv
+         0H+Q==
+X-Gm-Message-State: APjAAAXckH3l1rUqM3XFMk1YTC9qhbjeUbNW/9pFcAfZWWWY5suRzVT7
+        TLYkbd9aDgk6AZUKoBXI+Q43ghg1JWAo/lqFVjOErQ==
+X-Google-Smtp-Source: APXvYqwkXuRs73dz9Oxxu6xMfhgj/rivfh87OSdGtX/ZgPAej8TyXZ3fhlT9KrUm5FbuVLWT6c1TjEcugwWSEOGFDcg=
+X-Received: by 2002:a63:3044:: with SMTP id w65mr13157060pgw.384.1571880806585;
+ Wed, 23 Oct 2019 18:33:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191023125701.GA2460@mit.edu>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <1570546546-549-1-git-send-email-alan.maguire@oracle.com>
+ <1570546546-549-2-git-send-email-alan.maguire@oracle.com> <20191008213535.GB186342@google.com>
+ <alpine.LRH.2.20.1910091726010.2517@dhcp-10-175-191-127.vpn.oracle.com>
+ <CAFd5g46_6McK06XSrX=EZ9AaYYitQzd2CTvPMX+rPymisDq5uQ@mail.gmail.com>
+ <alpine.LRH.2.20.1910111105350.21459@dhcp-10-175-191-48.vpn.oracle.com>
+ <20191016230116.GA82401@google.com> <alpine.LRH.2.20.1910171930410.21739@dhcp-10-175-161-223.vpn.oracle.com>
+ <20191018122142.GC11244@42.do-not-panic.com>
+In-Reply-To: <20191018122142.GC11244@42.do-not-panic.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Wed, 23 Oct 2019 18:33:15 -0700
+Message-ID: <CAFd5g44FJa0P622cjPw_SGtp45ArHq6rVq=1o10b0RsS35_9YQ@mail.gmail.com>
+Subject: Re: [PATCH v2 linux-kselftest-test 1/3] kunit: allow kunit tests to
+ be loaded as a module
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Alan Maguire <alan.maguire@oracle.com>,
+        Matthias Maennich <maennich@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        catalin.marinas@arm.com, joe.lawrence@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, schowdary@nvidia.com,
+        urezki@gmail.com, andriy.shevchenko@linux.intel.com,
+        changbin.du@intel.com,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Knut Omang <knut.omang@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> If and when the vaporware shows up in real hardware, and assuming that
-> fscrypt is useful for this hardware, we can name it
-> "super_duper_fancy_inline_crypto".  :-)
+On Fri, Oct 18, 2019 at 5:21 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
+>
+> On Thu, Oct 17, 2019 at 07:32:18PM +0100, Alan Maguire wrote:
+> > kunit needs a non-exported global kernel symbol
+> > (sysctl_hung_task_timeout_secs).
+>
+> Sounds like a perfect use case for the new symbol namespaces [0]. We
+> wouldn't want random drivers importing this namespace, but for kunit it
+> would seem reasonable.
+>
+> [0] https://lwn.net/Articles/798254/
 
-I think you are entirely missing the point.  The point is that naming
-the option someting related to inline encryption is fundamentally
-wrong.  It is related to a limitation of existing inline crypto
-engines, not related to the fudamental model.  And all the other
-rambling below don't matter either.
+Sounds good to me.
