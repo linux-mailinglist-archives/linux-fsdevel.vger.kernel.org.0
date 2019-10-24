@@ -2,106 +2,220 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E252E3EAA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 23:57:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC1FFE3EC9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2019 00:08:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729861AbfJXV5y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Oct 2019 17:57:54 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50320 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729763AbfJXV5y (ORCPT
+        id S1730164AbfJXWIh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Oct 2019 18:08:37 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:53108 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726516AbfJXWIg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Oct 2019 17:57:54 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 11so6301wmk.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2019 14:57:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Q80crq6dcFo4FVg0RAcx8WwRU/EPfdre/VW0eFU98dM=;
-        b=SNQgcTwGxX/niXS62JOK1k3Q0f07ugHX0l7GDKYMASpoTay+9Fnqc2VuQHPgUXJhoq
-         m2HtX/VjY7TeUeeXU5coPwRTv4F9+l8+iOml1j1YW7gbb8EB2rxxSCnEnzCR9YdSfd7S
-         Cf6m40JpATPgct/oz7oi/7uaLyMVHx70B4xRrUS+MK7GA88WHkdLaS/bsNvlHiLFtMTG
-         sAMSaWHYDyk2h+GfAgZO20tQGyM4x43Be2/HlLksPctvCuQDhaFCDYEMGpUGPygcxcr9
-         IRLCkAcIkc523BN6N+VfWu2x9nu2Ixe0Mp2S4UWoNI3cQKkd1//lLA6n7yFNayIf96Ii
-         wCiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Q80crq6dcFo4FVg0RAcx8WwRU/EPfdre/VW0eFU98dM=;
-        b=JRVHZ03ff8HETggpbKXI+65o4rwdtiMrt9M7Ua00QPGichE0E9TqaIge3J77d5uX4J
-         S/DJVMXw3Rx5FUjFkSgRoqI575f1kEsWu5zlDV1dH0o5fiqZmrNhgupOIMGeco1C43Zo
-         Qq89NWM9VIG8ZQatU86KGvw4UJrhgx5T34oXeXH/bua9AtU5iqjA7jQFsGs/Wx6AeMKD
-         loIbjFhKbVLDX/Tw2i6JccKoNmha1YYrE88TyCAdZsYnYn3Y94lFOyxZEjnpNVd70jmq
-         ZG48wwCdpJG8/Jt0efAlUvE85MVzBvd6yB81WkNzjJO9JrR6tBqcL+FPnIbhYSL6U2F0
-         svog==
-X-Gm-Message-State: APjAAAUdL54UT8h6iaf8Z/FjY5IoBPkyOaycBh21mydPgKB0JjJYyuLR
-        0m9MkKHADACvIcJHaVvUYCM=
-X-Google-Smtp-Source: APXvYqzWmMSL7QY+El/Xp8RRPZ9BzN3YoL1FNb5TdwzerErOYQJWkOQVAZpv7a8pzoSJ1fiv7ZcXUg==
-X-Received: by 2002:a1c:c28a:: with SMTP id s132mr419991wmf.162.1571954271925;
-        Thu, 24 Oct 2019 14:57:51 -0700 (PDT)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id u1sm44907wmc.38.2019.10.24.14.57.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Oct 2019 14:57:50 -0700 (PDT)
-Date:   Thu, 24 Oct 2019 23:57:40 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Chris Murphy <lists@colorremedies.com>
-Cc:     Richard Weinberger <richard.weinberger@gmail.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Subject: Re: Is rename(2) atomic on FAT?
-Message-ID: <20191024215740.dtcudmehqvywfnks@pali>
-References: <CAFLxGvxdPQdzBz1rc3ZC+q1gLNCs9sbn8FOS6G-E1XxXeybyog@mail.gmail.com>
- <20191022105413.pj6i3ydetnfgnkzh@pali>
- <CAJCQCtToPc5sZTzdxjoF305VBzuzAQ6K=RTpDtG6UjgbWp5E8g@mail.gmail.com>
- <20191023115001.vp4woh56k33b6hiq@pali>
- <CAJCQCtTZRoDKWj2j6S+_iWJzA+rejZx41zwM=VKgG90fyZhX6w@mail.gmail.com>
- <20191023171611.qfcwfce2roe3k3qw@pali>
- <CAFLxGvxCVNy0yj8SQmtOyk5xcmYag1rxe3v7GtbEj8fF1iPp5g@mail.gmail.com>
- <CAJCQCtTEN50uNmuSz9jW5Kk51TLmB2jfbNGxceNqnjBVvMD9ZA@mail.gmail.com>
- <CAFLxGvwDraUwZOeWyGfVAOh+MxHgOF--hMu6P4J=P6KRspGsAA@mail.gmail.com>
- <CAJCQCtQhCRPG-UV+pcraCLXM5cVW887uX1UoymQ8=3Mk56w1Ag@mail.gmail.com>
+        Thu, 24 Oct 2019 18:08:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571954914;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Lt0ui2Zn4GJJ+6SRnh8DuJwgMxQuUYdZDUgODW613/I=;
+        b=i4/eZsbE/vfeHfFYKCo1h+GHNubriU8sVsnP4VaWHjTcr3xO9QGsa57V5hsfFQjZrbnofB
+        I+CiLR76JHXYmvPQSuYIUYNZder8PD+gH/Z26p26V2UMBzfFvP/ca2/QDHY+p6LwvFeGb4
+        jwo187NyNTjb8k8B/ChOCSXUFGRtjqo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-163-Zc6GJbPyNASsY8gcpckuSQ-1; Thu, 24 Oct 2019 18:08:31 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 48AFF47B;
+        Thu, 24 Oct 2019 22:08:29 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-19.phx2.redhat.com [10.3.112.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 961B05C1B5;
+        Thu, 24 Oct 2019 22:08:17 +0000 (UTC)
+Date:   Thu, 24 Oct 2019 18:08:14 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
+        mpatel@redhat.com
+Subject: Re: [PATCH ghak90 V7 14/21] audit: contid check descendancy and
+ nesting
+Message-ID: <20191024220814.pid5ql6kvyr4ianb@madcap2.tricolour.ca>
+References: <cover.1568834524.git.rgb@redhat.com>
+ <16abf1b2aafeb5f1b8dae20b9a4836e54f959ca5.1568834524.git.rgb@redhat.com>
+ <CAHC9VhSRmn46DcazH4Q35vOSxVoEu8PsX79aurkHkFymRoMwag@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="55hcgvpxz234sddp"
+In-Reply-To: <CAHC9VhSRmn46DcazH4Q35vOSxVoEu8PsX79aurkHkFymRoMwag@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-MC-Unique: Zc6GJbPyNASsY8gcpckuSQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
-In-Reply-To: <CAJCQCtQhCRPG-UV+pcraCLXM5cVW887uX1UoymQ8=3Mk56w1Ag@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 2019-10-10 20:40, Paul Moore wrote:
+> On Wed, Sep 18, 2019 at 9:26 PM Richard Guy Briggs <rgb@redhat.com> wrote=
+:
+> > ?fixup! audit: convert to contid list to check for orch/engine ownershi=
+p
+>=20
+> ?
+>=20
+> > Require the target task to be a descendant of the container
+> > orchestrator/engine.
+> >
+> > You would only change the audit container ID from one set or inherited
+> > value to another if you were nesting containers.
+> >
+> > If changing the contid, the container orchestrator/engine must be a
+> > descendant and not same orchestrator as the one that set it so it is no=
+t
+> > possible to change the contid of another orchestrator's container.
+>=20
+> Did you mean to say that the container orchestrator must be an
+> ancestor of the target, and the same orchestrator as the one that set
+> the target process' audit container ID?
 
---55hcgvpxz234sddp
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Not quite, the first half yes, but the second half: if it was already
+set by that orchestrator, it can't be set again.  If it is a different
+orchestrator that is a descendant of the orchestrator that set it, then
+allow the action.
 
-On Thursday 24 October 2019 23:46:43 Chris Murphy wrote:
-> So that leads me to, what about FAT? i.e. how does this get solved on FAT?
+> Or maybe I'm missing something about what you are trying to do?
 
-Hi Chris! I think that for FAT in most cases it used ostrich algorithm.
-Probability that kernel crashes in the middle of operation which is
-updating kernel image on boot partition is very low.
+Does that help clarify it?
 
-I'm Looking at grub's fat source code and there is no handling of dirty
-bit... http://git.savannah.gnu.org/cgit/grub.git/tree/grub-core/fs/fat.c
-It just expects that whole FAT fs is in consistent state.
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > ---
+> >  kernel/audit.c | 70 ++++++++++++++++++++++++++++++++++++++++++++++++++=
++-------
+> >  1 file changed, 62 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/kernel/audit.c b/kernel/audit.c
+> > index 9ce7a1ec7a92..69fe1e9af7cb 100644
+> > --- a/kernel/audit.c
+> > +++ b/kernel/audit.c
+> > @@ -2560,6 +2560,39 @@ static struct task_struct *audit_cont_owner(stru=
+ct task_struct *tsk)
+> >  }
+> >
+> >  /*
+> > + * task_is_descendant - walk up a process family tree looking for a ma=
+tch
+> > + * @parent: the process to compare against while walking up from child
+> > + * @child: the process to start from while looking upwards for parent
+> > + *
+> > + * Returns 1 if child is a descendant of parent, 0 if not.
+> > + */
+> > +static int task_is_descendant(struct task_struct *parent,
+> > +                             struct task_struct *child)
+> > +{
+> > +       int rc =3D 0;
+> > +       struct task_struct *walker =3D child;
+> > +
+> > +       if (!parent || !child)
+> > +               return 0;
+> > +
+> > +       rcu_read_lock();
+> > +       if (!thread_group_leader(parent))
+> > +               parent =3D rcu_dereference(parent->group_leader);
+> > +       while (walker->pid > 0) {
+> > +               if (!thread_group_leader(walker))
+> > +                       walker =3D rcu_dereference(walker->group_leader=
+);
+> > +               if (walker =3D=3D parent) {
+> > +                       rc =3D 1;
+> > +                       break;
+> > +               }
+> > +               walker =3D rcu_dereference(walker->real_parent);
+> > +       }
+> > +       rcu_read_unlock();
+> > +
+> > +       return rc;
+> > +}
+> > +
+> > +/*
+> >   * audit_set_contid - set current task's audit contid
+> >   * @task: target task
+> >   * @contid: contid value
+> > @@ -2587,22 +2620,43 @@ int audit_set_contid(struct task_struct *task, =
+u64 contid)
+> >         oldcontid =3D audit_get_contid(task);
+> >         read_lock(&tasklist_lock);
+> >         /* Don't allow the contid to be unset */
+> > -       if (!audit_contid_valid(contid))
+> > +       if (!audit_contid_valid(contid)) {
+> >                 rc =3D -EINVAL;
+> > +               goto unlock;
+> > +       }
+> >         /* Don't allow the contid to be set to the same value again */
+> > -       else if (contid =3D=3D oldcontid) {
+> > +       if (contid =3D=3D oldcontid) {
+> >                 rc =3D -EADDRINUSE;
+> > +               goto unlock;
+> > +       }
+> >         /* if we don't have caps, reject */
+> > -       else if (!capable(CAP_AUDIT_CONTROL))
+> > +       if (!capable(CAP_AUDIT_CONTROL)) {
+> >                 rc =3D -EPERM;
+> > -       /* if task has children or is not single-threaded, deny */
+> > -       else if (!list_empty(&task->children))
+> > +               goto unlock;
+> > +       }
+> > +       /* if task has children, deny */
+> > +       if (!list_empty(&task->children)) {
+> >                 rc =3D -EBUSY;
+> > -       else if (!(thread_group_leader(task) && thread_group_empty(task=
+)))
+> > +               goto unlock;
+> > +       }
+> > +       /* if task is not single-threaded, deny */
+> > +       if (!(thread_group_leader(task) && thread_group_empty(task))) {
+> >                 rc =3D -EALREADY;
+> > -       /* if contid is already set, deny */
+> > -       else if (audit_contid_set(task))
+> > +               goto unlock;
+> > +       }
+> > +       /* if task is not descendant, block */
+> > +       if (task =3D=3D current) {
+> > +               rc =3D -EBADSLT;
+> > +               goto unlock;
+> > +       }
+> > +       if (!task_is_descendant(current, task)) {
+> > +               rc =3D -EXDEV;
+> > +               goto unlock;
+> > +       }
+> > +       /* only allow contid setting again if nesting */
+> > +       if (audit_contid_set(task) && current =3D=3D audit_cont_owner(t=
+ask))
+> >                 rc =3D -ECHILD;
+> > +unlock:
+> >         read_unlock(&tasklist_lock);
+> >         if (!rc) {
+> >                 struct audit_cont *oldcont =3D audit_cont(task);
+>=20
+> --
+> paul moore
+> www.paul-moore.com
 
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
+- RGB
 
---55hcgvpxz234sddp
-Content-Type: application/pgp-signature; name="signature.asc"
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXbIeUgAKCRCL8Mk9A+RD
-UijiAKCp+9iYE4Hx4s+CaIzz/w33uoEdsQCeJb0T1aaocsYz2MPxbp8iqRwHUL0=
-=uU9w
------END PGP SIGNATURE-----
-
---55hcgvpxz234sddp--
