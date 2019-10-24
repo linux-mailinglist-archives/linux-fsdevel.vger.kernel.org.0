@@ -2,83 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19FC4E2ABA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 09:04:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4EB8E2AC2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 09:06:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437868AbfJXHEh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Oct 2019 03:04:37 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60208 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727635AbfJXHEh (ORCPT
+        id S2392436AbfJXHGl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Oct 2019 03:06:41 -0400
+Received: from mout-p-102.mailbox.org ([80.241.56.152]:11256 "EHLO
+        mout-p-102.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727635AbfJXHGl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Oct 2019 03:04:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=UuKLDbpQvbMotGXcc+uLQ0Vocvzd2LHIJ9vtxHOU5vU=; b=i6E3AhTxU7PiiGoZzHX1bpT6K
-        7IRuf91wXcARc4dhTksYxqxPdfUSlbB4q7yGugACfQTvkbN8suN7Yd9H8ZiWfzixEAaJEUoGg497V
-        8lWSw8TWXat6lhpSQCxuXB0JIQp15oSX7lw7dgZ6tsSiYPOWh+odehSxcdiZJEy7yrEN1UoQISKC+
-        KihqDHF2wWd5cKKq/bFaRJ4aOtR9PXq7IR4CzsUOxkrN9XW5Z5UkWpZkzqAoSh6m6C8RzC/j/5MRy
-        CLVwiG+QvZ8C4mNC7/+ocWKE0wCHvQZXxoKj2reDkv5OQNW6+OzL+JyxSmVy2pIlCdVqbRt89NrZ1
-        P+5IiNmTw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iNXAf-0004zo-44; Thu, 24 Oct 2019 07:04:33 +0000
-Date:   Thu, 24 Oct 2019 00:04:33 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Satya Tangirala <satyat@google.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
-        Paul Crowley <paulcrowley@google.com>
-Subject: Re: [PATCH 1/3] fscrypt: add support for inline-encryption-optimized
- policies
-Message-ID: <20191024070433.GB16652@infradead.org>
-References: <20191021230355.23136-1-ebiggers@kernel.org>
- <20191021230355.23136-2-ebiggers@kernel.org>
- <20191022052712.GA2083@dread.disaster.area>
- <20191022060004.GA333751@sol.localdomain>
- <20191022133001.GA23268@mit.edu>
- <20191023092718.GA23274@infradead.org>
- <20191023125701.GA2460@mit.edu>
- <20191024012759.GA32358@infradead.org>
- <20191024024459.GA743@sol.localdomain>
+        Thu, 24 Oct 2019 03:06:41 -0400
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 46zJFS55d2zKmhs;
+        Thu, 24 Oct 2019 09:06:36 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
+        with ESMTP id DAIjq9oYK49d; Thu, 24 Oct 2019 09:06:30 +0200 (CEST)
+Date:   Thu, 24 Oct 2019 18:06:04 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Aleksa Sarai <asarai@suse.de>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-ia64@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v14 2/6] namei: LOOKUP_IN_ROOT: chroot-like path
+ resolution
+Message-ID: <20191024070604.howuh6x6qrzd5jsm@yavin.dot.cyphar.com>
+References: <20191010054140.8483-1-cyphar@cyphar.com>
+ <20191010054140.8483-3-cyphar@cyphar.com>
+ <CAHk-=wh8L50f31vW8BwRUXhLiq3eoCQ3tg8ER4Yp2dzuU1w5rQ@mail.gmail.com>
+ <20191012040815.gnc43cfmo5mnv67u@yavin.dot.cyphar.com>
+ <20191012041541.milbmfbjpj5bcl5a@yavin.dot.cyphar.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="i56sxfhksaspu3tw"
 Content-Disposition: inline
-In-Reply-To: <20191024024459.GA743@sol.localdomain>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20191012041541.milbmfbjpj5bcl5a@yavin.dot.cyphar.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 07:44:59PM -0700, Eric Biggers wrote:
-> Would you be happy with something that more directly describes the change the
-> flag makes
 
-Yes.
+--i56sxfhksaspu3tw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> , like FSCRYPT_POLICY_FLAG_CONTENTS_IV_INO_LBLK_64?  I.e., the IVs for
-> contents encryption are 64-bit and contain the inode and logical block numbers.
-> 
-> Actually, we could use the same key derivation and IV generation for directories
-> and symlinks too, which would result in just FSCRYPT_POLICY_FLAG_IV_INO_LBLK_64.
-> (lblk is 0 when encrypting a filename.)
+On 2019-10-12, Aleksa Sarai <cyphar@cyphar.com> wrote:
+> On 2019-10-12, Aleksa Sarai <cyphar@cyphar.com> wrote:
+> > On 2019-10-10, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> > > On Wed, Oct 9, 2019 at 10:42 PM Aleksa Sarai <cyphar@cyphar.com> wrot=
+e:
+> > > >
+> > > > --- a/fs/namei.c
+> > > > +++ b/fs/namei.c
+> > > > @@ -2277,6 +2277,11 @@ static const char *path_init(struct nameidat=
+a *nd, unsigned flags)
+> > > >
+> > > >         nd->m_seq =3D read_seqbegin(&mount_lock);
+> > > >
+> > > > +       /* LOOKUP_IN_ROOT treats absolute paths as being relative-t=
+o-dirfd. */
+> > > > +       if (flags & LOOKUP_IN_ROOT)
+> > > > +               while (*s =3D=3D '/')
+> > > > +                       s++;
+> > > > +
+> > > >         /* Figure out the starting path and root (if needed). */
+> > > >         if (*s =3D=3D '/') {
+> > > >                 error =3D nd_jump_root(nd);
+> > >=20
+> > > Hmm. Wouldn't this make more sense all inside the if (*s =3D- '/') te=
+st?
+> > > That way if would be where we check for "should we start at the root",
+> > > which seems to make more sense conceptually.
+> >=20
+> > I don't really agree (though I do think that both options are pretty
+> > ugly). Doing it before the block makes it clear that absolute paths are
+> > just treated relative-to-dirfd -- doing it inside the block makes it
+> > look more like "/" is a special-case for nd_jump_root(). And while that
+>=20
+> Sorry, I meant "special-case for LOOKUP_IN_ROOT".
+>=20
+> > is somewhat true, this is just a side-effect of making the code more
+> > clean -- my earlier versions reworked the dirfd handling to always grab
+> > nd->root first if LOOKUP_IS_SCOPED. I switched to this method based on
+> > Al's review.
+> >=20
+> > In fairness, I do agree that the lonely while loop looks ugly.
+>=20
+> And with the old way I did it (where we grabbed nd->root first) the
+> semantics were slightly more clear -- stripping leading "/"s doesn't
+> really look as "clearly obvious" as grabbing nd->root beforehand and
+> treating "/"s normally. But the code was also needlessly more complex.
+>=20
+> > > That test for '/' currently has a "} else if (..)", but that's
+> > > pointless since it ends with a "return" anyway. So the "else" logic is
+> > > just noise.
+> >=20
+> > This depends on the fact that LOOKUP_BENEATH always triggers -EXDEV for
+> > nd_jump_root() -- if we ever add another "scoped lookup" flag then the
+> > logic will have to be further reworked.
+> >=20
+> > (It should be noted that the new version doesn't always end with a
+> > "return", but you could change it to act that way given the above
+> > assumption.)
+> >=20
+> > > And if you get rid of the unnecessary else, moving the LOOKUP_IN_ROOT
+> > > inside the if-statement works fine.
+> > >=20
+> > > So this could be something like
+> > >=20
+> > >     --- a/fs/namei.c
+> > >     +++ b/fs/namei.c
+> > >     @@ -2194,11 +2196,19 @@ static const char *path_init(struct
+> > > nameidata *nd, unsigned flags)
+> > >=20
+> > >         nd->m_seq =3D read_seqbegin(&mount_lock);
+> > >         if (*s =3D=3D '/') {
+> > >     -           set_root(nd);
+> > >     -           if (likely(!nd_jump_root(nd)))
+> > >     -                   return s;
+> > >     -           return ERR_PTR(-ECHILD);
+> > >     -   } else if (nd->dfd =3D=3D AT_FDCWD) {
+> > >     +           /* LOOKUP_IN_ROOT treats absolute paths as being
+> > > relative-to-dirfd. */
+> > >     +           if (!(flags & LOOKUP_IN_ROOT)) {
+> > >     +                   set_root(nd);
+> > >     +                   if (likely(!nd_jump_root(nd)))
+> > >     +                           return s;
+> > >     +                   return ERR_PTR(-ECHILD);
+> > >     +           }
+> > >     +
+> > >     +           /* Skip initial '/' for LOOKUP_IN_ROOT */
+> > >     +           do { s++; } while (*s =3D=3D '/');
+> > >     +   }
+> > >     +
+> > >     +   if (nd->dfd =3D=3D AT_FDCWD) {
+> > >                 if (flags & LOOKUP_RCU) {
+> > >                         struct fs_struct *fs =3D current->fs;
+> > >                         unsigned seq;
+> > >=20
+> > > instead. The patch ends up slightly bigger (due to the re-indentation)
+> > > but now it handles all the "start at root" in the same place. Doesn't
+> > > that make sense?
+> >=20
+> > It is correct (though I'd need to clean it up a bit to handle
+> > nd_jump_root() correctly), and if you really would like me to change it
+> > I will -- but I just don't agree that it's cleaner.
 
-I think not making it crazy verbose is a helpful, but at the same time
-it should be somewhat descriptive.
+Linus, did you still want me to make your proposed change?
 
-> Although, in general it would be nice to name the settings in ways that are
-> easier for people not intimately familiar with the crypto to understand...
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
-For the andoid case the actual users won't ever really see it, and if
-you set up the thing yourself it probably helps a lot to try to
-understand what your are doing.
+--i56sxfhksaspu3tw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXbFNWQAKCRCdlLljIbnQ
+Ert5AP0aC5CrGCVvHOpelKBjUDOS5duq76VaVyiiUWcy3eeeFwD/aQEQPqkGREqr
+5Lo0df+nvE9H+89b7vJGbcaEZNxkTQc=
+=rtfF
+-----END PGP SIGNATURE-----
+
+--i56sxfhksaspu3tw--
