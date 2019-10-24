@@ -2,94 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DFBAE361B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 17:01:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D86DE3709
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 17:53:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502969AbfJXPBL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Oct 2019 11:01:11 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:32785 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502933AbfJXPBK (ORCPT
+        id S2409780AbfJXPxs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Oct 2019 11:53:48 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:54006 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2409777AbfJXPxs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Oct 2019 11:01:10 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 6so2198417wmf.0;
-        Thu, 24 Oct 2019 08:01:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9OIRMBAMD/IGNv6LdXwINxw42BZ8L0+aAzrRbp7Nb0M=;
-        b=UoVP/lMjO0q8d6tSI+3LsoD8CBnAJKfLt1vflnsZg9pKFQ2eZP7gLYZ0TidaP1se+K
-         ImsXu2+3HTONlVnw+CjIETwWA1CHriCAPO3tJnlSAwQyf0YDY5NVOzvySJe4WVJGj0Ex
-         8gQNGpiyN67S77owCm0Nsm7pw5a7v3jW/H0JJM5vHystoNhf1oWYGQkTDSSfNkIFxrR9
-         7DNEy0tmPaD65x7UGA7EfwlQxY5aedul3xqRU1BGuT+tqgFszH56jSFeOske7cmiB+z3
-         oBWjulsnB06Zny3vXiwyZSEgkETuGB5V2KVzbWL+uYdYLAYWmpI2a7SZf1S281v90v96
-         Ytpg==
+        Thu, 24 Oct 2019 11:53:48 -0400
+Received: from mr3.cc.vt.edu (mr3.cc.ipv6.vt.edu [IPv6:2607:b400:92:8500:0:7f:b804:6b0a])
+        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x9OFrlCF026245
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2019 11:53:47 -0400
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+        by mr3.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x9OFrfIi002516
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2019 11:53:47 -0400
+Received: by mail-qt1-f198.google.com with SMTP id j18so17903870qtp.23
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2019 08:53:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9OIRMBAMD/IGNv6LdXwINxw42BZ8L0+aAzrRbp7Nb0M=;
-        b=ofRFE6FMiAhhbNCtI+lUs/e68VCBi/Lbt0g7cP62osO6M91kLJHLYbDyfVMQ8RTzuS
-         +OMI+BeJiwvMjNjV703KlRqmLVnyKS6d8Fuue0ynqPlf0OKMuJkTXAnUj7JeGD7l46/m
-         suGcB3qg+VQQ5FXATd6dL2VuqZUvf1JuqwscMR7xF/9PBI0LJEbgOrV4eCtGIV2wgKzm
-         caY1Z0CIn7mlE8/gQA8ipGDNtgYEPs+ZfnACQFxyOpkptO5ndC4KbzP3Yx3TldCAoVFh
-         ZXkRY+fJ1YMB5UHTugSGLCZy9V2vL4HxdGIZRoybnqNuBwHnPR2VlNzf2jm6HVsAlYdS
-         nZ6A==
-X-Gm-Message-State: APjAAAUUv1/5el+IHALjIDBj4GMZu5Mu9t7HMD9uAEQdynD5lZxA4n7S
-        ZcwVEfCh4UymU3VLoVpYggw=
-X-Google-Smtp-Source: APXvYqw1zRG4DrgTfQvcuF6g42B7nb/pJgiuLBfEHO25QU3txybg2ydt3lrhCnQsyP1SSS0KPCiLzQ==
-X-Received: by 2002:a05:600c:2107:: with SMTP id u7mr5545214wml.86.1571929268442;
-        Thu, 24 Oct 2019 08:01:08 -0700 (PDT)
-Received: from [10.68.217.182] ([217.70.210.43])
-        by smtp.gmail.com with ESMTPSA id l18sm35809016wrn.48.2019.10.24.08.01.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2019 08:01:07 -0700 (PDT)
-Subject: Re: File system for scratch space (in HPC cluster)
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Paul Menzel <pmenzel@molgen.mpg.de>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Donald Buczek <buczek@molgen.mpg.de>
-References: <e143071a-b1dc-56a4-a82e-865bae4c60c1@molgen.mpg.de>
- <20191024145504.GD1124@mit.edu>
-From:   Boaz Harrosh <openosd@gmail.com>
-Message-ID: <70755c40-b800-8ba0-a0df-4206f6b8c8d4@gmail.com>
-Date:   Thu, 24 Oct 2019 18:01:05 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=Xhl3yPOVTS2L2RYtPzBM49DHpAh9fTsOmofvxnsaE1A=;
+        b=LHD1CtD5L5bPUZVf1l6xtk4W1ktyJ9+EP7r/2V+SlqWhWC+Tk8g0FZ8ZIycZezPNkq
+         iAYQxegjIcZ4rC2rH+T0SjDXkqOLXjg+9rIv/4PyA1l96QfoaW+1T1JtZc1LrRIthxc+
+         HfUzABTSDNeiFygE8PmozMhIaEvuuW4bJbab9Bsm4L5YrBsYK8sEm3cNpFdck9fSeoKv
+         o94DdZc5nr0Zd8vxNEFU0/PT2w7kf95FzPunH8qXFyhE6zwwvkYxIMI0NE33rqRKWElf
+         O3TbqyHgTTeHBBP2/9KYkvCwdP6knjrneJXQmTFl+FUB98NicRRRtR0Ok+EcOYYxLoRS
+         Xd/w==
+X-Gm-Message-State: APjAAAXzStvQ8KJOMXVhDBNLGZ26YB0GvVdx7smYz3xGBL5XjKoDCE8H
+        TBgRCHsNgfYeeVf3302AJUNekNb93i6qHShHL08KDXeKTvX/2dV6FmLcbnQyC2tDsCQHXW4p73Y
+        o77mh2nbQxKLG0PXO4tgBayptKe6F8H/rfET7
+X-Received: by 2002:a37:2d45:: with SMTP id t66mr14451075qkh.259.1571932421736;
+        Thu, 24 Oct 2019 08:53:41 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxUv24uQguHXg4C03DgpvZQ5tzq4FGlK1SUvQChOMriwm2Q3/z3HIw7lT52ZNonLIB5QOV5vg==
+X-Received: by 2002:a37:2d45:: with SMTP id t66mr14451045qkh.259.1571932421394;
+        Thu, 24 Oct 2019 08:53:41 -0700 (PDT)
+Received: from turing-police.lan ([2601:5c0:c001:c9e1::359])
+        by smtp.gmail.com with ESMTPSA id x133sm12693274qka.44.2019.10.24.08.53.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2019 08:53:40 -0700 (PDT)
+From:   Valdis Kletnieks <valdis.kletnieks@vt.edu>
+X-Google-Original-From: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Valdis Kletnieks <Valdis.Kletnieks@vt.edu>,
+        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 00/15] staging: exfat: Clean up return codes
+Date:   Thu, 24 Oct 2019 11:53:11 -0400
+Message-Id: <20191024155327.1095907-1-Valdis.Kletnieks@vt.edu>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <20191024145504.GD1124@mit.edu>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 24/10/2019 17:55, Theodore Y. Ts'o wrote:
-> On Thu, Oct 24, 2019 at 12:43:40PM +0200, Paul Menzel wrote:
->>
->> In our cluster, we offer scratch space for temporary files. As
->> these files are temporary, we do not need any safety
->> requirements – especially not those when the system crashes or
->> shuts down. So no `sync` is for example needed.
->>
->> Are there file systems catering to this need? I couldn’t find
->> any? Maybe I missed some options for existing file systems.
-> 
-> You could use ext4 in nojournal mode.  If you want to make sure that
-> fsync() doesn't force a cache flush, you can mount with the nobarrier
-> mount option.
-> 
+The code had its own non-standard FFS_FOO return codes. Go through
+and convert them all the kernel standard -EFOO codes.
 
-And open the file with O_TMPFILE|O_EXCL so there is no metadata as well.
+Valdis Kletnieks (15):
+  staging: exfat: Clean up return codes - FFS_FULL
+  staging: exfat: Clean up return codes - FFS_NOTFOUND
+  staging: exfat: Clean up return codes - FFS_DIRBUSY
+  staging: exfat: Clean up return codes - FFS_PERMISSIONERR
+  staging: exfat: Clean up return codes - FFS_NAMETOOLONG
+  staging: exfat: Clean up return codes - FFS_FILEEXIST
+  staging: exfat: Clean up return codes - FFS_INVALIDPATH
+  staging: exfat: Clean up return code - FFS_MEMORYERR
+  staging: exfat: Clean up return codes - FFS_FORMATERR
+  staging: exfat: Clean up return codes - FFS_MEDIAERR
+  staging: exfat: Clean up return codes - FFS_EOF
+  staging: exfat: Clean up return codes - FFS_INVALIDFID
+  staging: exfat: Clean up return codes - FFS_ERROR
+  staging: exfat: Clean up return codes - remove unused codes
+  staging: exfat: Clean up return codes - FFS_SUCCESS
 
-I think xfs for O_TMPFILE|O_EXCL does not do any fsync, but I'm
-not sure
+ drivers/staging/exfat/exfat.h        |  24 +--
+ drivers/staging/exfat/exfat_blkdev.c |  18 +-
+ drivers/staging/exfat/exfat_cache.c  |   4 +-
+ drivers/staging/exfat/exfat_core.c   | 202 ++++++++++----------
+ drivers/staging/exfat/exfat_super.c  | 269 ++++++++++++++-------------
+ 5 files changed, 249 insertions(+), 268 deletions(-)
 
-> 					- Ted
-> 
+-- 
+2.23.0
 
