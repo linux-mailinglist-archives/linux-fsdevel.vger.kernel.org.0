@@ -2,209 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F4EFE404D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2019 01:15:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB302E405B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2019 01:29:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728492AbfJXXPy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Oct 2019 19:15:54 -0400
-Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:56356 "EHLO
-        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726395AbfJXXPy (ORCPT
+        id S1732008AbfJXX3K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Oct 2019 19:29:10 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:33079 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731101AbfJXX3K (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Oct 2019 19:15:54 -0400
+        Thu, 24 Oct 2019 19:29:10 -0400
+Received: by mail-ed1-f65.google.com with SMTP id c4so391587edl.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2019 16:29:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1571958953; x=1603494953;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yzypQ7FgiUXDAdU9c5k8PPyJ8/uARgK8nT+dj8pvnQ8=;
-  b=KcWizcLuAsXWTyDo8Efqi2E8yZ45mAY71I6j3FEQbkNumlTi0I1ZQLq1
-   VRkD3MWBfEjL6/642yw/u+YVMoXpVMpM9vR2245M/5qHNMsyA4Q+n9fdF
-   t8z1StPcAM7p908Qfc/5qDcfp7OBuDn03o9FA73Ktwunp0wia+D44nR/L
-   0=;
-IronPort-SDR: f/gQn3iYjvI2pqDCQHW9RIEMPhK0eou0OXYAaRBjoa3ptqvcVsgtgkIKVHYPEOcmMCxFzhc3k5
- QJnjmJ92vAdA==
-X-IronPort-AV: E=Sophos;i="5.68,226,1569283200"; 
-   d="scan'208";a="412386"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1d-f273de60.us-east-1.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP; 24 Oct 2019 23:15:51 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1d-f273de60.us-east-1.amazon.com (Postfix) with ESMTPS id A230CA2B9E;
-        Thu, 24 Oct 2019 23:15:49 +0000 (UTC)
-Received: from EX13D12UEA004.ant.amazon.com (10.43.61.62) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 24 Oct 2019 23:15:48 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (10.43.61.82) by
- EX13D12UEA004.ant.amazon.com (10.43.61.62) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 24 Oct 2019 23:15:48 +0000
-Received: from dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com
- (172.23.141.97) by mail-relay.amazon.com (10.43.61.243) with Microsoft SMTP
- Server id 15.0.1367.3 via Frontend Transport; Thu, 24 Oct 2019 23:15:48 +0000
-Received: by dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com (Postfix, from userid 6262777)
-        id 140A2C450C; Thu, 24 Oct 2019 23:15:48 +0000 (UTC)
-Date:   Thu, 24 Oct 2019 23:15:48 +0000
-From:   Frank van der Linden <fllinden@amazon.com>
-To:     Chuck Lever <chucklever@gmail.com>
-CC:     Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC PATCH 00/35] user xattr support (RFC8276)
-Message-ID: <20191024231547.GA16466@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
-References: <cover.1568309119.git.fllinden@amazon.com>
- <9CAEB69A-A92C-47D8-9871-BA6EA83E1881@gmail.com>
+        d=plexistor-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=imd8LYeUoBm8DTeA8qPBj6oTMtTRlNJlWrB8UNsRURg=;
+        b=fq94FQCVljJL8n1QnCTPl/iL6H5w3bnf/+l73zNSFs6OakFnAWfM/UwnbraJrYTHkU
+         RQJxiVE6Pg1pfH3tAT2Ec+5vYbBGRvUfyMvoNi/mVJKbXl7dfS6Y+SPfbGz6XPTzfl+f
+         HIvKAuJaS0SEbGEg2Pd+yy8ModIRF7utPp6COh9wiLgA6uP/xMfcf4vh7SZ5Nki0Jg5j
+         ZPJiJKF7easac64tVp6DJrdgf6iAfGXoOYXUJEqwWtWbXTU3ZA0JqTTTNefzB4PTQkCh
+         Dinc4V36iNos5fK3zMAAqGXi2E+yX/ukF13w5iCb5GbleOn3I/vQddbJaieLDpV5EXwr
+         lxkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=imd8LYeUoBm8DTeA8qPBj6oTMtTRlNJlWrB8UNsRURg=;
+        b=SXZIXYISkrHBOsWirAODqluIc2EYb9HHzkBPDchQUB6l0ayH0VJrjoOFpVOmjjlOU0
+         EIQCICSAvD/7cZ/jBZjCXwAdORfzFTAhqgRDnSeI/vw/eSMtz4oFgy1jKjJs4of708UL
+         MFlgXxshOX5kiMlcmj+oD0BXercSQwL9CvgVs4+wVeHw0K09Haz832gXoy1D0mfXWhj7
+         gZMO2I1UyyAm2OJRB8oBXjZ1iDAxcOEFIXY3TtbCYOPHj7KgNO1BYwF/49QmZyUbcKpF
+         LuxqWrwTL8dzxQ43kngvLNlURafelRb+Zx6iAgyUpkesbJimnqptkWiApdsFiT7tsKPg
+         36/w==
+X-Gm-Message-State: APjAAAWAr8UkwOHD4KBZDSlKD4DxaQ127aLWkukl8C/BuZnhkhBIlg0U
+        1wscRsXL1NgfOjSKA6W9/NyUy01B0l0=
+X-Google-Smtp-Source: APXvYqw3KtG7+DSk8VtpXuw54AjSUY96h6dk6WFFfObVLeErXJlPS27jxyXyV6GZmNS8RM7R6Qen9g==
+X-Received: by 2002:a50:da0f:: with SMTP id z15mr769859edj.137.1571959747939;
+        Thu, 24 Oct 2019 16:29:07 -0700 (PDT)
+Received: from [10.68.217.182] ([217.70.210.43])
+        by smtp.googlemail.com with ESMTPSA id oq18sm1653ejb.22.2019.10.24.16.29.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2019 16:29:07 -0700 (PDT)
+Subject: Re: [PATCH 0/5] Enable per-file/directory DAX operations
+To:     Dave Chinner <david@fromorbit.com>,
+        Boaz Harrosh <boaz@plexistor.com>
+Cc:     ira.weiny@intel.com, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20191020155935.12297-1-ira.weiny@intel.com>
+ <b7849297-e4a4-aaec-9a64-2b481663588b@plexistor.com>
+ <b883142c-ecfe-3c5b-bcd9-ebe4ff28d852@plexistor.com>
+ <20191023221332.GE2044@dread.disaster.area>
+ <efffc9e7-8948-a117-dc7f-e394e50606ab@plexistor.com>
+ <20191024073446.GA4614@dread.disaster.area>
+ <fb4f8be7-bca6-733a-7f16-ced6557f7108@plexistor.com>
+ <20191024213508.GB4614@dread.disaster.area>
+From:   Boaz Harrosh <boaz@plexistor.com>
+Message-ID: <ab101f90-6ec1-7527-1859-5f6309640cfa@plexistor.com>
+Date:   Fri, 25 Oct 2019 02:29:04 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <9CAEB69A-A92C-47D8-9871-BA6EA83E1881@gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20191024213508.GB4614@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Chuck,
-
-Thanks for your comments.
-
-On Thu, Oct 24, 2019 at 04:16:33PM -0400, Chuck Lever wrote:
-> - IMO you can post future updates just to linux-nfs. Note that the
-> kernel NFS client and server are maintained separately, so when it
-> comes time to submit final patches, you will send the client work
-> to Trond and Anna, and the server work to Bruce (and maybe me).
-
-Sure, I'll do that.
-
+On 25/10/2019 00:35, Dave Chinner wrote:
+> On Thu, Oct 24, 2019 at 05:05:45PM +0300, Boaz Harrosh wrote:
+<>
+>> Yes I said that as well.
 > 
-> - We like patches that are as small as possible but no smaller.
-> Some of these might be too small. For example, you don't need to add
-> the XDR encoders, decoders, and reply size macros in separate patches.
+> You said "it must be set between creation and first write",
+> stating the requirement for an on-disk flag to work.
 
-True, I might have gone overboard there :-) If you can send further
-suggestions offline, that'd be great!
+Sorry for not being clear. Its not new, I do not explain myself
+very well.
 
-> - Please run scripts/checkpatch.pl on each patch before you post
-> again. This will help identify coding convention issues that should
-> be addressed before merge. sparse is also a good idea too.
-> clang-format is also nice but is entirely optional.
+The above quote is if you set/clear the flag directly.
 
-No problem. I think there shouldn't be many issues, but I'm sure
-I mixed up some of the coding styles I've had to adhere to over
-the decades..
-
+> I'm describing how that requirement is actually implemented. i.e. what
+> you are stating is something we actually implemented years ago...
 > 
-> - I was not able to get 34/35 to apply. The series might be missing
-> a patch that adds nfsd_getxattr and friends.
 
-Hm, odd. I'll check on that - I might have messed up there.
+What you are talking about is when the flag is inherited from parent.
+And I did mention that option as well.
 
+[Which is my concern because my main point is that I want creation+write
+ to be none-DAX. Then after writer is done. Switch to DAX-on so READs can
+ be fast and not take any memory.
+ And you talked about another case when I start DAX-on and then for
+ say, use for RDMA turn it off later.
+]
+
+This flag is Unique because current RFC has an i_size == 0 check
+that other flags do not have
+
+>>> I also seem
+>>> to recall that there was a need to take some vm level lock to really
+>>> prevent page fault races, and that we can't safely take that in a
+>>> safe combination with all the filesystem locks we need.
+>>>
+>>
+>> We do not really care with page fault races in the Kernel as long
 > 
-> - Do you have man page updates for the new mount and export options?
-
-I don't, but I can easily write them. They go in nfs-utils, right?
-
-> - I'm not clear why new CONFIG options are necessary. These days we
-> try to avoid adding new CONFIG options if possible. I can't think of
-> a reason someone would need to compile user xattr support out if
-> NFSv4.2 is enabled.
+> Oh yes we do. A write fault is a 2-part operation - a read fault to
+> populate the pte and mapping, then a write fault (->page_mkwrite) to 
+> do all the filesystem work needed to dirty the page and pte.
 > 
-> - Can you explain why an NFS server administrator might want to
-> disable user xattr support on a share?
-
-I think both of these are cases of being careful. E.g. don't enable
-something by default and allow it to be disabled at runtime in
-case something goes terribly wrong.
-
-I didn't have any other reasons, really. I'm happy do to away with
-the CONFIG options if that's the consensus, as well as the
-nouser_xattr export option.
-
-> - Probably you are correct that the design choices you made regarding
-> multi-message LISTXATTR are the best that can be done. Hopefully that
-> is not a frequent operation, but for something like "tar" it might be.
-> Do you have any feeling for how to assess performance?
-
-So far, my performance testing has been based on synthetic workloads,
-which I'm also using to test some boundary conditions. E.g. create
-as many xattrs as the Linux limit allows, list them all, now do
-this for many files, etc. I'll definitely add testing with code
-that uses xattrs. tar is on the list, but I'm happy to test anything
-that exercises the code.
-
-I don't think a multi-message LISTXATTR will happen a lot in practice,
-if at all.
-
+> The read fault sets up the state for the write fault, and if we
+> change the aops between these two operations, then the
+> ->page_mkwrite implementation goes kaboom.
 > 
-> - Regarding client caching... the RFC is notably vague about what
-> is needed there. You might be able to get away with no caching, just
-> as a start. Do you (and others) think that this series would be
-> acceptable and mergeable without any client caching support?
-
-The performance is, obviously, not great without client side caching.
-But then again, that's on my synthetic workloads. In cases like GNU
-tar, it won't matter a whole lot because of the way that code is
-structured.
-
-I would prefer to have client side caching enabled from the start.
-I have an implementation that works, but, like I mentioned, I
-have some misgivings about it. But I should just include it when
-I re-post - I might simply be worrying too much.
-
+> This isn't a theoretical problem - this is exactly the race
+> condition that lead us to disabling the flag in the first place.
+> There is no serialisation between the read and write parts of the
+> page fault iand the filesystem changing the DAX flag and ops vector,
+> and so fixing this problem requires hold yet more locks in the
+> filesystem path to completely lock out page fault processing on the
+> inode's mapping.
 > 
-> - Do you have access to an RDMA-capable platform? RPC/RDMA needs to
-> be able to predict how large each reply will be, in order to reserve
-> appropriate memory resources to land the whole RPC reply on the client.
-> I'm wondering if you've found any particular areas where that might be
-> a challenge.
 
-Hm. I might be able to set something up. If not, I'd be relying
-on someone you might know to test it for me :-)
+Again sorry that I do not explain very good.
 
-I am not too familiar with the RDMA RPC code. From what I posted, is 
-there any specific part of how the RPC layer is used that would
-be of concern with RDMA?
+Already on the read fault we populate the xarray,
+My point was that if I want to set the DAX mode I must enforce that
+there are no other parallel users on my inode. The check that the
+xarray is empty is my convoluted way to check that there are no other
+users except me. If xarray is not empty I bail out with EBUISY
 
-I don't do anything other parts of the code don't do. The only special
-case is using on-demand page allocation on receive, which the ACL code
-also does (XDRBUF_SPARSE_PAGES - used for LISTXATTR and GETXATTR).
+I agree this is stupid.
 
+Which is the same stupid as i_size==0 check. Both have the same
+intention, to make sure that nothing is going on in parallel to
+me.
+
+>> as I protect the xarray access and these are protected well if we
+>> take truncate locking. But we have a bigger problem that you pointed
+>> out with the change of the operations vector pointer.
+>>
+>> I was thinking about this last night. One way to do this is with
+>> file-exclusive-lock. Correct me if I'm wrong:
+>> file-exclusive-readwrite-lock means any other openers will fail and
+>> if there are openers already the lock will fail. Which is what we want
+>> no?
 > 
+> The filesystem ioctls and page faults have no visibility of file
+> locks.  They don't know and can't find out in a sane manner that an
+> inode has a single -user- reference.
 > 
-> Testing:
+
+This is not true. The FS has full control. It is not too hard a work
+to take a file-excl-lock from within the IOCTL implementation. then
+unlock. that is option 1. Option 2 of the App taking the lock then
+for the check we might need a new export from the lock-subsystem.
+
+> And it introduces a new problem for any application using the
+> fssetxattr() ioctl - accidentally not setting the S_DAX flag to be
+> unmodified will now fail, and that means such a change breaks
+> existing applications. Sure, you can say they are "buggy
+> applications", but the fact is this user API change breaks them.
 > 
-> - Does fstests already have user xattr functional tests? If not, how
-> do you envision testing this new code?
 
-https://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git/ has some xattr
-tests. I've, so far, been using my own set of tests that I'm happy
-to contribute to any testsuite.
+I am not sure I completely understood. let me try ...
 
+The app wants to set some foo flag. It can set the ignore mask to all
+1(s) except the flag it wants to set/clear.
+And/or get_current_flags(); modify foo_flag; set_flags().
+
+Off course in both the ignore case or when the DAX bit does not change
+we do not go on a locking rampage.
+
+So I'm not sure I see the problem
+
+> Hence I don't think we can change the user API for setting/clearing
+> this flag like this.
 > 
-> - How should we test the logic that deals with delegation recall?
 
-I believe pyNFS has some logic do test this. What I have been doing
-is manual testing, either using 2 clients, or, simpler, setting
-xattrs on a file on the server itself, and verifying that client
-delegations were recalled.
+Yes we must not modify behavior of Apps that are modifing other flags.
 
+> Cheers,
+> Dave.
 > 
-> - Do you have plans to submit patches to pyNFS?
 
-It wasn't in my plans, but I certainly could. One issue I've noticed,
-with pyNFS and some other tests, is that they go no further than 4.1.
-They'll need some more work to do 4.2 - although that shouldn't be
-a lot of work, as most (or was it all?) features in 4.2 are optional.
+Perhaps we always go by the directory. And then do an mv dir_DAX/foo dir_NODAX/foo
+to have an effective change. In hard links the first one at iget time before populating
+the inode cache takes affect. (And never change the flag on the fly)
+(Just brain storming here)
 
-I've not had much time to work on this in the past few weeks, but
-next week is looking much better. Here's my plan:
+Or perhaps another API?
 
-* address any issues flagged by checkpatch
-* merge some patches, with your input
-* clean up my nfs-ganesha patches and test some more against that
-* test against Rick's FreeBSD prototype
-* repost the series, split in to client and server
-
-In general, what do people do with code changes that affect both
-client and server (e.g. generic defines)?
-
-Thanks,
-
-- Frank
+Thanks Dave
+Boaz
