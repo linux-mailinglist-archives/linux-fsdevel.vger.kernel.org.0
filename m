@@ -2,99 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 017EAE2E67
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 12:11:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C1ECE2F18
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 12:32:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405188AbfJXKLR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Oct 2019 06:11:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56916 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390611AbfJXKLQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Oct 2019 06:11:16 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 89A03B68C;
-        Thu, 24 Oct 2019 10:11:14 +0000 (UTC)
-Date:   Thu, 24 Oct 2019 12:11:12 +0200
-From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
-To:     Hannes Reinecke <hare@suse.de>
-Cc:     linux-scsi@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Jens Axboe <axboe@kernel.dk>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Eric Biggers <ebiggers@google.com>,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Tejun Heo <tj@kernel.org>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 7/8] scsi: sr: workaround VMware ESXi cdrom emulation
- bug
-Message-ID: <20191024101112.GK938@kitsune.suse.cz>
-References: <cover.1571834862.git.msuchanek@suse.de>
- <abf81ec4f8b6139fffc609df519856ff8dc01d0d.1571834862.git.msuchanek@suse.de>
- <08f1e291-0196-2402-1947-c0cdaaf534da@suse.de>
- <20191023162313.GE938@kitsune.suse.cz>
- <2bc50e71-6129-a482-00bd-0425b486ce07@suse.de>
- <20191024085631.GJ938@kitsune.suse.cz>
- <15c972ea-5b3a-487f-7be5-a62d780896da@suse.de>
+        id S2438846AbfJXKcd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Oct 2019 06:32:33 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:22944 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2438843AbfJXKcd (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 24 Oct 2019 06:32:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1571913152;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=LIKdOL11Ozx/PWJsb0Bia7eThEnrLMvgCNlbfPe+qhE=;
+        b=KIlXMDOMxKPSSAvg9kGz3sda5MqOHLHENWTns7LnTsjwebdSxKGRoLNaWyjz+ZKiMlapdy
+        ET9+jUDhssh/nyvu2t8dZ9AX9r28x9DJtvhtLC88fsX92D8kRAtL4Ma0bqqj+CP2BNn08a
+        Sr3vaii5XfMX/UDj3tx4+drhz/ejacI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-52-kf6BhbzrPzCAs2tEP3KZ1A-1; Thu, 24 Oct 2019 06:32:29 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C9DA8107AD33;
+        Thu, 24 Oct 2019 10:32:26 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 14CB41001B30;
+        Thu, 24 Oct 2019 10:32:23 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
+References: <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk> <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
+To:     torvalds@linux-foundation.org
+Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring, not cursor and length [ver #2]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <15c972ea-5b3a-487f-7be5-a62d780896da@suse.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-ID: <13193.1571913143.1@warthog.procyon.org.uk>
+Date:   Thu, 24 Oct 2019 11:32:23 +0100
+Message-ID: <13194.1571913143@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-MC-Unique: kf6BhbzrPzCAs2tEP3KZ1A-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 11:41:38AM +0200, Hannes Reinecke wrote:
-> On 10/24/19 10:56 AM, Michal Suchánek wrote:
-> > On Thu, Oct 24, 2019 at 07:46:57AM +0200, Hannes Reinecke wrote:
-> >> On 10/23/19 6:23 PM, Michal Suchánek wrote:
-> >>> On Wed, Oct 23, 2019 at 04:13:15PM +0200, Hannes Reinecke wrote:
-> [ .. ]>>>> This looks something which should be handled via a blacklist
-> flag, not
-> >>>> some inline hack which everyone forgets about it...
-> >>>
-> >>> AFAIK we used to have a blacklist but don't have anymore. So either it
-> >>> has to be resurrected for this one flag or an inline hack should be good
-> >>> enough.
-> >>>
-> >> But we do have one for generic scsi; cf drivers/scsi/scsi_devinfo.c.
-> >> And this pretty much falls into the category of SCSI quirks, so I'd
-> >> prefer have it hooked into that.
-> > 
-> > But generic scsi does not know about cdrom trays, does it?
-> > 
-> No, just about 'flags'. What you _do_ with those flags is up to you.
-> Or, rather, the driver.
-> Just define a 'tray detection broken' flag, and evaluate it in sr.c.
-> 
-> Where is the problem with that?
+I've pushed to git a new version that fixes an incomplete conversion in
+pipe_zero(), ports the powerpc virtio_console driver and fixes a comment in
+splice.
 
-And how do you set the flag?
+David
 
-The blacklist lists exact manufacturer and model while this rule only
-depends on model because manufacturer is bogus. Also the blacklist
-itself is deprecated:
-
-/*
- * scsi_static_device_list: deprecated list of devices that require
- * settings that differ from the default, includes black-listed (broken)
- * devices. The entries here are added to the tail of scsi_dev_info_list
- * via scsi_dev_info_list_init.
- *
- * Do not add to this list, use the command line or proc interface to add
- * to the scsi_dev_info_list. This table will eventually go away.
- */
-
-Thanks
-
-Michal
