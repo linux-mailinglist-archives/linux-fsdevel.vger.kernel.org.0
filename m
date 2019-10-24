@@ -2,220 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC1FFE3EC9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2019 00:08:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 421DCE3EE0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2019 00:16:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730164AbfJXWIh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Oct 2019 18:08:37 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:53108 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726516AbfJXWIg (ORCPT
+        id S1730353AbfJXWQV convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Oct 2019 18:16:21 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:38566 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730134AbfJXWQV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Oct 2019 18:08:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571954914;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Lt0ui2Zn4GJJ+6SRnh8DuJwgMxQuUYdZDUgODW613/I=;
-        b=i4/eZsbE/vfeHfFYKCo1h+GHNubriU8sVsnP4VaWHjTcr3xO9QGsa57V5hsfFQjZrbnofB
-        I+CiLR76JHXYmvPQSuYIUYNZder8PD+gH/Z26p26V2UMBzfFvP/ca2/QDHY+p6LwvFeGb4
-        jwo187NyNTjb8k8B/ChOCSXUFGRtjqo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-163-Zc6GJbPyNASsY8gcpckuSQ-1; Thu, 24 Oct 2019 18:08:31 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 48AFF47B;
-        Thu, 24 Oct 2019 22:08:29 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-19.phx2.redhat.com [10.3.112.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 961B05C1B5;
-        Thu, 24 Oct 2019 22:08:17 +0000 (UTC)
-Date:   Thu, 24 Oct 2019 18:08:14 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
-        mpatel@redhat.com
-Subject: Re: [PATCH ghak90 V7 14/21] audit: contid check descendancy and
- nesting
-Message-ID: <20191024220814.pid5ql6kvyr4ianb@madcap2.tricolour.ca>
-References: <cover.1568834524.git.rgb@redhat.com>
- <16abf1b2aafeb5f1b8dae20b9a4836e54f959ca5.1568834524.git.rgb@redhat.com>
- <CAHC9VhSRmn46DcazH4Q35vOSxVoEu8PsX79aurkHkFymRoMwag@mail.gmail.com>
+        Thu, 24 Oct 2019 18:16:21 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 27361609D2DE;
+        Fri, 25 Oct 2019 00:16:18 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id luVOrCdfBLvm; Fri, 25 Oct 2019 00:16:17 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id A2689609D2E3;
+        Fri, 25 Oct 2019 00:16:17 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id viiE1HXyCX6l; Fri, 25 Oct 2019 00:16:17 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 827E2609D2DE;
+        Fri, 25 Oct 2019 00:16:17 +0200 (CEST)
+Date:   Fri, 25 Oct 2019 00:16:17 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     Chris Murphy <lists@colorremedies.com>
+Cc:     Pali =?utf-8?Q?Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Message-ID: <854944926.38488.1571955377425.JavaMail.zimbra@nod.at>
+In-Reply-To: <CAJCQCtQhCRPG-UV+pcraCLXM5cVW887uX1UoymQ8=3Mk56w1Ag@mail.gmail.com>
+References: <CAJCQCtQ38W2r7Cuu5ieKRQizeKF0tf--3Z8yOJeeR+ZZ4S6CVQ@mail.gmail.com> <20191023115001.vp4woh56k33b6hiq@pali> <CAJCQCtTZRoDKWj2j6S+_iWJzA+rejZx41zwM=VKgG90fyZhX6w@mail.gmail.com> <20191023171611.qfcwfce2roe3k3qw@pali> <CAFLxGvxCVNy0yj8SQmtOyk5xcmYag1rxe3v7GtbEj8fF1iPp5g@mail.gmail.com> <CAJCQCtTEN50uNmuSz9jW5Kk51TLmB2jfbNGxceNqnjBVvMD9ZA@mail.gmail.com> <CAFLxGvwDraUwZOeWyGfVAOh+MxHgOF--hMu6P4J=P6KRspGsAA@mail.gmail.com> <CAJCQCtQhCRPG-UV+pcraCLXM5cVW887uX1UoymQ8=3Mk56w1Ag@mail.gmail.com>
+Subject: Re: Is rename(2) atomic on FAT?
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhSRmn46DcazH4Q35vOSxVoEu8PsX79aurkHkFymRoMwag@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-MC-Unique: Zc6GJbPyNASsY8gcpckuSQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [195.201.40.130]
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF60 (Linux)/8.8.12_GA_3809)
+Thread-Topic: Is rename(2) atomic on FAT?
+Thread-Index: NrDWwQUMFxD9semczhk+jcZ70iTM0Q==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019-10-10 20:40, Paul Moore wrote:
-> On Wed, Sep 18, 2019 at 9:26 PM Richard Guy Briggs <rgb@redhat.com> wrote=
-:
-> > ?fixup! audit: convert to contid list to check for orch/engine ownershi=
-p
->=20
-> ?
->=20
-> > Require the target task to be a descendant of the container
-> > orchestrator/engine.
-> >
-> > You would only change the audit container ID from one set or inherited
-> > value to another if you were nesting containers.
-> >
-> > If changing the contid, the container orchestrator/engine must be a
-> > descendant and not same orchestrator as the one that set it so it is no=
-t
-> > possible to change the contid of another orchestrator's container.
->=20
-> Did you mean to say that the container orchestrator must be an
-> ancestor of the target, and the same orchestrator as the one that set
-> the target process' audit container ID?
+----- Ursprüngliche Mail -----
+> Von: "Chris Murphy" <lists@colorremedies.com>
+> An: "Richard Weinberger" <richard.weinberger@gmail.com>
+> CC: "Chris Murphy" <lists@colorremedies.com>, "Pali Rohár" <pali.rohar@gmail.com>, "linux-fsdevel"
+> <linux-fsdevel@vger.kernel.org>
+> Gesendet: Donnerstag, 24. Oktober 2019 23:46:43
+> Betreff: Re: Is rename(2) atomic on FAT?
 
-Not quite, the first half yes, but the second half: if it was already
-set by that orchestrator, it can't be set again.  If it is a different
-orchestrator that is a descendant of the orchestrator that set it, then
-allow the action.
+> On Thu, Oct 24, 2019 at 12:22 AM Richard Weinberger
+> <richard.weinberger@gmail.com> wrote:
+>>
+>> On Wed, Oct 23, 2019 at 11:56 PM Chris Murphy <lists@colorremedies.com> wrote:
+>> > Any atomicity that depends on journal commits cannot be considered to
+>> > have atomicity in a boot context, because bootloaders don't do journal
+>> > replay. It's completely ignored.
+>>
+>> It depends on the bootloader. If you care about atomicity you need to handle
+>> the journal.
+>> There are also filesystems which *require* the journal to be handled.
+>> In that case you can still replay to memory.
+> 
+> I'm vaguely curious about examples of bootloaders that do journal
+> replay, only because I can't think of any that apply. Certainly none
+> that do replay on either ext4 or XFS. I've got some stale brain cells
+> telling me there was at one time JBD code in GRUB for, I think ext3
+> journal replay (?) and all of that got ripped out a very long time
+> ago. Maybe even before GRUB 2.
 
-> Or maybe I'm missing something about what you are trying to do?
+U-boot, for example. Of course it does not so for any filesystem, but where
+it is needed and makes sense.
 
-Does that help clarify it?
+Another approach is using Linux as bootloader and kexec another kernel.
+That way you can have a full filesystem implementation and bring the filesystem
+in a consistent state before reading from it.
+ 
+> 
+>> And yes, filesystem implementations in many bootloaders are in beyond
+>> shameful state.
+> 
+> Right. And while that's polite language, in their defence its just not
+> their area of expertise. I tend to think that bootloader support is a
+> burden primarily on file system folks. If you want this use case
+> supported, then do the work. Ideally the upstreams would pair
+> interested parties from each discipline to make this happen. But
+> anyway, as I've heard it described by file system folks, it may not be
+> practical to support it, in which case for the atomic update use case,
+> the modern journaled file systems are just flat out disqualified.
+> 
+> Which again leads me to FAT. We must have a solution that works there,
+> even if it's some odd duck like thing, where the FAT ESP is
+> essentially a static configuration, not changing, that points to some
+> other block device (a different partition and different file system)
+> that has the desired behavioral charactersistics.
+> 
+>> > If a journal is present, is it appropriate to consider it a separate
+>> > and optional part of the file system?
+>>
+>> No. This is filesystem specific.
+> 
+> I understand it's optional for ext3/4 insofar as it can optionally be
+> disabled, where on XFS it's compulsory. But mere presence of a journal
+> doesn't mean replay is required, there's a file system specific flag
+> that indicates replay is needed for the file system to be valid/cought
+> up to date. To what degree a file system indicating journal replace is
+> required, but can't be replayed, is still a valid file system isn't
+> answered by file system metadata. The assumption is, replay must
+> happen when indicated. So if a bootloader flat out can't do that, it
+> essentially means the combination of GRUB2, das uboot,
+> syslinux/extlinux and ext3/4 or XFS, is *proscribed* if the use case
+> requires atomic kernel updates. Given the current state of affairs.
+> 
+> So that leads me to, what about FAT? i.e. how does this get solved on
+> FAT? And does that help us solve it on journaled file systems? If not,
+> can it also be generic enough to solve it here? I'm actually not
+> convinced it can be solved in journaled file systems at all, unless
+> the bootloader can do journal replay, but I'm not a file system expert
+> :P
 
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  kernel/audit.c | 70 ++++++++++++++++++++++++++++++++++++++++++++++++++=
-+-------
-> >  1 file changed, 62 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/kernel/audit.c b/kernel/audit.c
-> > index 9ce7a1ec7a92..69fe1e9af7cb 100644
-> > --- a/kernel/audit.c
-> > +++ b/kernel/audit.c
-> > @@ -2560,6 +2560,39 @@ static struct task_struct *audit_cont_owner(stru=
-ct task_struct *tsk)
-> >  }
-> >
-> >  /*
-> > + * task_is_descendant - walk up a process family tree looking for a ma=
-tch
-> > + * @parent: the process to compare against while walking up from child
-> > + * @child: the process to start from while looking upwards for parent
-> > + *
-> > + * Returns 1 if child is a descendant of parent, 0 if not.
-> > + */
-> > +static int task_is_descendant(struct task_struct *parent,
-> > +                             struct task_struct *child)
-> > +{
-> > +       int rc =3D 0;
-> > +       struct task_struct *walker =3D child;
-> > +
-> > +       if (!parent || !child)
-> > +               return 0;
-> > +
-> > +       rcu_read_lock();
-> > +       if (!thread_group_leader(parent))
-> > +               parent =3D rcu_dereference(parent->group_leader);
-> > +       while (walker->pid > 0) {
-> > +               if (!thread_group_leader(walker))
-> > +                       walker =3D rcu_dereference(walker->group_leader=
-);
-> > +               if (walker =3D=3D parent) {
-> > +                       rc =3D 1;
-> > +                       break;
-> > +               }
-> > +               walker =3D rcu_dereference(walker->real_parent);
-> > +       }
-> > +       rcu_read_unlock();
-> > +
-> > +       return rc;
-> > +}
-> > +
-> > +/*
-> >   * audit_set_contid - set current task's audit contid
-> >   * @task: target task
-> >   * @contid: contid value
-> > @@ -2587,22 +2620,43 @@ int audit_set_contid(struct task_struct *task, =
-u64 contid)
-> >         oldcontid =3D audit_get_contid(task);
-> >         read_lock(&tasklist_lock);
-> >         /* Don't allow the contid to be unset */
-> > -       if (!audit_contid_valid(contid))
-> > +       if (!audit_contid_valid(contid)) {
-> >                 rc =3D -EINVAL;
-> > +               goto unlock;
-> > +       }
-> >         /* Don't allow the contid to be set to the same value again */
-> > -       else if (contid =3D=3D oldcontid) {
-> > +       if (contid =3D=3D oldcontid) {
-> >                 rc =3D -EADDRINUSE;
-> > +               goto unlock;
-> > +       }
-> >         /* if we don't have caps, reject */
-> > -       else if (!capable(CAP_AUDIT_CONTROL))
-> > +       if (!capable(CAP_AUDIT_CONTROL)) {
-> >                 rc =3D -EPERM;
-> > -       /* if task has children or is not single-threaded, deny */
-> > -       else if (!list_empty(&task->children))
-> > +               goto unlock;
-> > +       }
-> > +       /* if task has children, deny */
-> > +       if (!list_empty(&task->children)) {
-> >                 rc =3D -EBUSY;
-> > -       else if (!(thread_group_leader(task) && thread_group_empty(task=
-)))
-> > +               goto unlock;
-> > +       }
-> > +       /* if task is not single-threaded, deny */
-> > +       if (!(thread_group_leader(task) && thread_group_empty(task))) {
-> >                 rc =3D -EALREADY;
-> > -       /* if contid is already set, deny */
-> > -       else if (audit_contid_set(task))
-> > +               goto unlock;
-> > +       }
-> > +       /* if task is not descendant, block */
-> > +       if (task =3D=3D current) {
-> > +               rc =3D -EBADSLT;
-> > +               goto unlock;
-> > +       }
-> > +       if (!task_is_descendant(current, task)) {
-> > +               rc =3D -EXDEV;
-> > +               goto unlock;
-> > +       }
-> > +       /* only allow contid setting again if nesting */
-> > +       if (audit_contid_set(task) && current =3D=3D audit_cont_owner(t=
-ask))
-> >                 rc =3D -ECHILD;
-> > +unlock:
-> >         read_unlock(&tasklist_lock);
-> >         if (!rc) {
-> >                 struct audit_cont *oldcont =3D audit_cont(task);
->=20
-> --
-> paul moore
-> www.paul-moore.com
+Like I mentioned above, use Linux as bootloader.
+Have a minimal Linux kernel which can do kexec and the journaling filesystem
+of your choice.
 
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
-
+Thanks,
+//richard
