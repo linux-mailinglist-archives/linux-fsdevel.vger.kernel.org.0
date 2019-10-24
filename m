@@ -2,93 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9167BE2E0A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 12:01:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 017EAE2E67
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 12:11:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393150AbfJXKB2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Oct 2019 06:01:28 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41912 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393147AbfJXKB2 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Oct 2019 06:01:28 -0400
-Received: by mail-pg1-f194.google.com with SMTP id l3so473661pgr.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2019 03:01:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
-        b=cQ5pwQmSUxnNgH2cdt2U2st1j9SrsT7HVB9uVUFx9eP9hfo2tmuySiDsLHQq2ZuDdx
-         tj0UsZVG/xZWq8V9usF9cPfuzSNSwuZjFq5vqzJ2S5xRzW7jhhjVmPvY89hZ4IM/j1eo
-         O/GRU7q1MYV+aIyZaX8kCt8KxolvZoKvvfoV2zshTEwLBBMtnDpfP/9YWlgMbDEn7DiT
-         FPPyw0nsQPGyIarhwnZnQe7slEhdYfekakN+CUQ0FGfAXOegpMV6ZoKJffuUXiU6RHS9
-         hY8H7ieR0Ijiq4Q7hz8BG4CisMOC+3pAJsE4kCI2H+w2RKoc6C932yNK3Yqj4PN0aLUB
-         WlKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
-        b=lraI+C87kg6+XmCU+wgiff9sxvD1PTnDU2QL0x390rMlld4Z+QBtVv7Ui9TlYMOjh4
-         DEBsnP6nkiG40vx3+UdRs7PjhDaNH5V4+vyzbx+JbnttijQFzdO8Qn0Hek4d8Z6acx0E
-         6YX6pHi0wA8G6e5RvNAltU6MWRosXJ1cgYipEML060NvrJ2vpLEnYNVWzC7OnSE6cDUT
-         WRlXdjL2ks7Qadz7d3+7B5yi6rXiFsyKEPshb1OfVsHgqneDhus/3uPNNBHdbYe745Yl
-         hz9FOtB4NorRKbrpkS/sWCROpjXkbURgtiBdUy9odkxRTa1E8/D9wd+INmNdhfaVty03
-         DIFA==
-X-Gm-Message-State: APjAAAXX8Yo0UZoZKBQLT4BrT7fKyeBqsJNQSn+L6LOdhDvjO4iykRgn
-        REwfGPds9sfhJ5R13XUdGY9v5YRnDEDTrIhg97I=
-X-Google-Smtp-Source: APXvYqy0Gs91xgnQXmqsHUn+vwDgoqwJ5G6HfJhtRw3BuISJUWZw+8thMQ4moOPfvy4szZCYmCFMSF1R4mxYy+NBGAA=
-X-Received: by 2002:a17:90a:c38b:: with SMTP id h11mr5752918pjt.112.1571911287837;
- Thu, 24 Oct 2019 03:01:27 -0700 (PDT)
+        id S2405188AbfJXKLR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Oct 2019 06:11:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56916 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390611AbfJXKLQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 24 Oct 2019 06:11:16 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 89A03B68C;
+        Thu, 24 Oct 2019 10:11:14 +0000 (UTC)
+Date:   Thu, 24 Oct 2019 12:11:12 +0200
+From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+To:     Hannes Reinecke <hare@suse.de>
+Cc:     linux-scsi@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Tejun Heo <tj@kernel.org>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 7/8] scsi: sr: workaround VMware ESXi cdrom emulation
+ bug
+Message-ID: <20191024101112.GK938@kitsune.suse.cz>
+References: <cover.1571834862.git.msuchanek@suse.de>
+ <abf81ec4f8b6139fffc609df519856ff8dc01d0d.1571834862.git.msuchanek@suse.de>
+ <08f1e291-0196-2402-1947-c0cdaaf534da@suse.de>
+ <20191023162313.GE938@kitsune.suse.cz>
+ <2bc50e71-6129-a482-00bd-0425b486ce07@suse.de>
+ <20191024085631.GJ938@kitsune.suse.cz>
+ <15c972ea-5b3a-487f-7be5-a62d780896da@suse.de>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:30ec:0:0:0:0 with HTTP; Thu, 24 Oct 2019 03:01:27
- -0700 (PDT)
-Reply-To: eddywilliam0002@gmail.com
-From:   eddy william <missdonnahistory@gmail.com>
-Date:   Thu, 24 Oct 2019 12:01:27 +0200
-Message-ID: <CACROPfGsRCpXdpvR=GUR0kU0xZ9STopTWJma-qwswAbecAaSqQ@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <15c972ea-5b3a-487f-7be5-a62d780896da@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hallo
+On Thu, Oct 24, 2019 at 11:41:38AM +0200, Hannes Reinecke wrote:
+> On 10/24/19 10:56 AM, Michal Suchánek wrote:
+> > On Thu, Oct 24, 2019 at 07:46:57AM +0200, Hannes Reinecke wrote:
+> >> On 10/23/19 6:23 PM, Michal Suchánek wrote:
+> >>> On Wed, Oct 23, 2019 at 04:13:15PM +0200, Hannes Reinecke wrote:
+> [ .. ]>>>> This looks something which should be handled via a blacklist
+> flag, not
+> >>>> some inline hack which everyone forgets about it...
+> >>>
+> >>> AFAIK we used to have a blacklist but don't have anymore. So either it
+> >>> has to be resurrected for this one flag or an inline hack should be good
+> >>> enough.
+> >>>
+> >> But we do have one for generic scsi; cf drivers/scsi/scsi_devinfo.c.
+> >> And this pretty much falls into the category of SCSI quirks, so I'd
+> >> prefer have it hooked into that.
+> > 
+> > But generic scsi does not know about cdrom trays, does it?
+> > 
+> No, just about 'flags'. What you _do_ with those flags is up to you.
+> Or, rather, the driver.
+> Just define a 'tray detection broken' flag, and evaluate it in sr.c.
+> 
+> Where is the problem with that?
 
-Mein Name ist Eddy William. Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
-Ihnen anbieten
-die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
-($8,5 Millionen US-Dollar)
-Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
+And how do you set the flag?
 
-Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
-bei einem Autounfall ums Leben gekommen ist
-und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
-nd 50%
-sein f=C3=BCr dich.
-Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
-Informationen: eddywilliam0002gmail.com
+The blacklist lists exact manufacturer and model while this rule only
+depends on model because manufacturer is bogus. Also the blacklist
+itself is deprecated:
 
-Vielen Dank im Voraus,
-Mr. Eddy William,
+/*
+ * scsi_static_device_list: deprecated list of devices that require
+ * settings that differ from the default, includes black-listed (broken)
+ * devices. The entries here are added to the tail of scsi_dev_info_list
+ * via scsi_dev_info_list_init.
+ *
+ * Do not add to this list, use the command line or proc interface to add
+ * to the scsi_dev_info_list. This table will eventually go away.
+ */
 
+Thanks
 
-
-Hello
-
-My name is Eddy William I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($8.5 Million)
-dollars my client left in the bank before his death.
-
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-Please contact my private email here for more details:eddywilliam0002gmail.=
-com
-
-Many thanks in advance,
-Mr.Eddy William,
+Michal
