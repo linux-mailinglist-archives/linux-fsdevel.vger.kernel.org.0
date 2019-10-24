@@ -2,129 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B494E3E7C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 23:47:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65003E3E92
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 23:57:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729735AbfJXVrH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Oct 2019 17:47:07 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37700 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729730AbfJXVrG (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Oct 2019 17:47:06 -0400
-Received: by mail-wm1-f65.google.com with SMTP id q130so3843152wme.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2019 14:47:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=colorremedies-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lG3WdyNLCcfTNzO352JfUKqOKVeMeSmYj5nsZjZkwpc=;
-        b=khr+06rrcJqynyZYpC/d1ohf3JHyIrUkbhSr8T7ldCZQxaJzodnmw9cPczz+z6h+KN
-         V09iZLOpUhQBzPf6tUaAygxzN6Y6PVbAXybdeIWJROCfrbvEKFYnGrOIsxb2aOPxhvBK
-         7VVhB6s1P+fSXGwm2PaDLZSvFSmyNJ+sMVxBDzmegMznef1i95ijx+uYAIOhpWcwXsg5
-         Tf7Ro5mIac/jfysKAgQ88XichMVWzPetvTHZOSJ0XYhYA9AosTEf0g1RGwHy+XavjyUK
-         IU0gxwRfd2fX2tnDhflauZj/MW4PZbdLl9v19kXGvJ0K762KUhHKrMmI7Uc19AsqnQWO
-         VsNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lG3WdyNLCcfTNzO352JfUKqOKVeMeSmYj5nsZjZkwpc=;
-        b=deG+jAgKmoojYxMN57s27HNsbtiqxxrXsgaPIp5JBMaQv9cSbJT8tlPMJ9OT0VaipK
-         aKTiYj8jwkgL+hL3SyObJsxsAlbto9VFcaarBHAfHPDPYcve6W/G0/hksqXcR2dTTh8/
-         yLIeYxFaie1mPQTDnskKnMz/lPQhtoOafdpkA4q/jX9dErGbxB6OVVtkUVSXf4yKaQ0A
-         fEWzGsrqgA0ZXn2PKKP2e3U3jd9OlVTFrntzWnUshyL/t+dMRBb2q97b34Qifke6hXI7
-         T2JYNhgmiPMjaWDsPwON62WiocX+GaOj66f3E7uMuOn6ZKoE5VgjiOsA5NUhGFjJSYjQ
-         DXBA==
-X-Gm-Message-State: APjAAAV8Bitx0cjQnqJdxW3B0zdEguPh61vaLacWC6yV5tn1sgvjT05U
-        HrwuPiCMziMConQrFR62dWXxe+nMQ2Gu0hXFIvk5mA==
-X-Google-Smtp-Source: APXvYqzkE+sU1EkGJQK4JdUKGlJonXlWfXDzIipQi5qiYj9e9sZgCx6220s7Nojpr2W74pIDqxbQYZY1lv+r0Czbin4=
-X-Received: by 2002:a05:600c:2383:: with SMTP id m3mr399796wma.176.1571953623534;
- Thu, 24 Oct 2019 14:47:03 -0700 (PDT)
+        id S1729773AbfJXV5J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Oct 2019 17:57:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57122 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726279AbfJXV5J (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 24 Oct 2019 17:57:09 -0400
+Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4995620578;
+        Thu, 24 Oct 2019 21:57:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571954227;
+        bh=HDbyy92ncxjP1dI6FxrpY5/nE4vCNb78sIDmKUaw/oA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=tYsduxACwWAZcKMN50EsIXij5SWgunEH/IZT5C2so19z1/o5XTkDSDkgsUcfYdjGT
+         cYMAHDf8Q8CG1ftEildMrnVdoOBdnctFicyjkPr72LbPTbeOJgZh0wEtry6JZY/j+I
+         kCMv9S3xpWh1jvarxrgWjGDKupV8ex7ClSaq4Hg0=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fscrypt@vger.kernel.org
+Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, Satya Tangirala <satyat@google.com>,
+        Paul Crowley <paulcrowley@google.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH v2 0/3] fscrypt: support for IV_INO_LBLK_64 policies
+Date:   Thu, 24 Oct 2019 14:54:35 -0700
+Message-Id: <20191024215438.138489-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.24.0.rc0.303.g954a862665-goog
 MIME-Version: 1.0
-References: <CAJCQCtQ38W2r7Cuu5ieKRQizeKF0tf--3Z8yOJeeR+ZZ4S6CVQ@mail.gmail.com>
- <CAFLxGvxdPQdzBz1rc3ZC+q1gLNCs9sbn8FOS6G-E1XxXeybyog@mail.gmail.com>
- <20191022105413.pj6i3ydetnfgnkzh@pali> <CAJCQCtToPc5sZTzdxjoF305VBzuzAQ6K=RTpDtG6UjgbWp5E8g@mail.gmail.com>
- <20191023115001.vp4woh56k33b6hiq@pali> <CAJCQCtTZRoDKWj2j6S+_iWJzA+rejZx41zwM=VKgG90fyZhX6w@mail.gmail.com>
- <20191023171611.qfcwfce2roe3k3qw@pali> <CAFLxGvxCVNy0yj8SQmtOyk5xcmYag1rxe3v7GtbEj8fF1iPp5g@mail.gmail.com>
- <CAJCQCtTEN50uNmuSz9jW5Kk51TLmB2jfbNGxceNqnjBVvMD9ZA@mail.gmail.com> <CAFLxGvwDraUwZOeWyGfVAOh+MxHgOF--hMu6P4J=P6KRspGsAA@mail.gmail.com>
-In-Reply-To: <CAFLxGvwDraUwZOeWyGfVAOh+MxHgOF--hMu6P4J=P6KRspGsAA@mail.gmail.com>
-From:   Chris Murphy <lists@colorremedies.com>
-Date:   Thu, 24 Oct 2019 23:46:43 +0200
-Message-ID: <CAJCQCtQhCRPG-UV+pcraCLXM5cVW887uX1UoymQ8=3Mk56w1Ag@mail.gmail.com>
-Subject: Re: Is rename(2) atomic on FAT?
-To:     Richard Weinberger <richard.weinberger@gmail.com>
-Cc:     Chris Murphy <lists@colorremedies.com>,
-        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 12:22 AM Richard Weinberger
-<richard.weinberger@gmail.com> wrote:
->
-> On Wed, Oct 23, 2019 at 11:56 PM Chris Murphy <lists@colorremedies.com> wrote:
-> > Any atomicity that depends on journal commits cannot be considered to
-> > have atomicity in a boot context, because bootloaders don't do journal
-> > replay. It's completely ignored.
->
-> It depends on the bootloader. If you care about atomicity you need to handle
-> the journal.
-> There are also filesystems which *require* the journal to be handled.
-> In that case you can still replay to memory.
+Hello,
 
-I'm vaguely curious about examples of bootloaders that do journal
-replay, only because I can't think of any that apply. Certainly none
-that do replay on either ext4 or XFS. I've got some stale brain cells
-telling me there was at one time JBD code in GRUB for, I think ext3
-journal replay (?) and all of that got ripped out a very long time
-ago. Maybe even before GRUB 2.
+In preparation for adding inline encryption support to fscrypt, this
+patchset adds a new fscrypt policy flag which modifies the encryption to
+be optimized for inline encryption hardware compliant with the UFS v2.1
+standard or the upcoming version of the eMMC standard.
 
+This means using per-mode keys instead of per-file keys, and in
+compensation including the inode number in the IVs.  For ext4, this
+precludes filesystem shrinking, so I've also added a compat feature
+which will prevent the filesystem from being shrunk.
 
-> And yes, filesystem implementations in many bootloaders are in beyond
-> shameful state.
+I've separated this from the full "Inline Encryption Support" patchset
+(https://lkml.kernel.org/linux-fsdevel/20190821075714.65140-1-satyat@google.com/)
+to avoid conflating an implementation (inline encryption) with a new
+on-disk format (IV_INO_LBLK_64).  This patchset purely adds support for
+IV_INO_LBLK_64 policies to fscrypt, but implements them using the
+existing filesystem layer crypto.
 
-Right. And while that's polite language, in their defence its just not
-their area of expertise. I tend to think that bootloader support is a
-burden primarily on file system folks. If you want this use case
-supported, then do the work. Ideally the upstreams would pair
-interested parties from each discipline to make this happen. But
-anyway, as I've heard it described by file system folks, it may not be
-practical to support it, in which case for the atomic update use case,
-the modern journaled file systems are just flat out disqualified.
+We're planning to make the *implementation* (filesystem layer or inline
+crypto) be controlled by a mount option '-o inlinecrypt'.
 
-Which again leads me to FAT. We must have a solution that works there,
-even if it's some odd duck like thing, where the FAT ESP is
-essentially a static configuration, not changing, that points to some
-other block device (a different partition and different file system)
-that has the desired behavioral charactersistics.
+This patchset applies to fscrypt.git#master and can also be retrieved from
+https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=inline-crypt-optimized-v2
 
-> > If a journal is present, is it appropriate to consider it a separate
-> > and optional part of the file system?
->
-> No. This is filesystem specific.
+I've written a ciphertext verification test for this new type of policy:
+https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/xfstests-dev.git/log/?h=inline-encryption
 
-I understand it's optional for ext3/4 insofar as it can optionally be
-disabled, where on XFS it's compulsory. But mere presence of a journal
-doesn't mean replay is required, there's a file system specific flag
-that indicates replay is needed for the file system to be valid/cought
-up to date. To what degree a file system indicating journal replace is
-required, but can't be replayed, is still a valid file system isn't
-answered by file system metadata. The assumption is, replay must
-happen when indicated. So if a bootloader flat out can't do that, it
-essentially means the combination of GRUB2, das uboot,
-syslinux/extlinux and ext3/4 or XFS, is *proscribed* if the use case
-requires atomic kernel updates. Given the current state of affairs.
+Work-in-progress patches for the inline encryption implementation of
+both IV_INO_LBLK_64 and regular policies can be found at
+https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=inline-encryption-wip
 
-So that leads me to, what about FAT? i.e. how does this get solved on
-FAT? And does that help us solve it on journaled file systems? If not,
-can it also be generic enough to solve it here? I'm actually not
-convinced it can be solved in journaled file systems at all, unless
-the bootloader can do journal replay, but I'm not a file system expert
-:P
+Changes v1 => v2:
+
+- Rename the flag from INLINE_CRYPT_OPTIMIZED to IV_INO_LBLK_64.
+
+- Use the same key derivation and IV generation scheme for filenames
+  encryption too.
+
+- Improve the documentation and commit messages.
+
+Eric Biggers (3):
+  fscrypt: add support for IV_INO_LBLK_64 policies
+  ext4: add support for IV_INO_LBLK_64 encryption policies
+  f2fs: add support for IV_INO_LBLK_64 encryption policies
+
+ Documentation/filesystems/fscrypt.rst | 63 +++++++++++++++++----------
+ fs/crypto/crypto.c                    | 10 ++++-
+ fs/crypto/fscrypt_private.h           | 16 +++++--
+ fs/crypto/keyring.c                   |  6 ++-
+ fs/crypto/keysetup.c                  | 45 ++++++++++++++-----
+ fs/crypto/policy.c                    | 41 ++++++++++++++++-
+ fs/ext4/ext4.h                        |  2 +
+ fs/ext4/super.c                       | 14 ++++++
+ fs/f2fs/super.c                       | 26 ++++++++---
+ include/linux/fscrypt.h               |  3 ++
+ include/uapi/linux/fscrypt.h          |  3 +-
+ 11 files changed, 182 insertions(+), 47 deletions(-)
 
 -- 
-Chris Murphy
+2.24.0.rc0.303.g954a862665-goog
+
