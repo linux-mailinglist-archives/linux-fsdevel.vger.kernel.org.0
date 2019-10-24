@@ -2,116 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 558F2E2B37
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 09:35:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5DBDE2B51
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Oct 2019 09:46:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408615AbfJXHe5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Oct 2019 03:34:57 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:42322 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727635AbfJXHe4 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Oct 2019 03:34:56 -0400
-Received: from dread.disaster.area (pa49-181-161-154.pa.nsw.optusnet.com.au [49.181.161.154])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 7528843E54F;
-        Thu, 24 Oct 2019 18:34:48 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iNXdu-0001Nj-RS; Thu, 24 Oct 2019 18:34:46 +1100
-Date:   Thu, 24 Oct 2019 18:34:46 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Boaz Harrosh <boaz@plexistor.com>
-Cc:     ira.weiny@intel.com, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/5] Enable per-file/directory DAX operations
-Message-ID: <20191024073446.GA4614@dread.disaster.area>
-References: <20191020155935.12297-1-ira.weiny@intel.com>
- <b7849297-e4a4-aaec-9a64-2b481663588b@plexistor.com>
- <b883142c-ecfe-3c5b-bcd9-ebe4ff28d852@plexistor.com>
- <20191023221332.GE2044@dread.disaster.area>
- <efffc9e7-8948-a117-dc7f-e394e50606ab@plexistor.com>
+        id S2407111AbfJXHqZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Oct 2019 03:46:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35658 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2404822AbfJXHqZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 24 Oct 2019 03:46:25 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 456BEAC22;
+        Thu, 24 Oct 2019 07:46:23 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 0CF971E4A99; Thu, 24 Oct 2019 09:46:19 +0200 (CEST)
+Date:   Thu, 24 Oct 2019 09:46:19 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     Petr Vorel <pvorel@suse.cz>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Cyril Hrubis <chrubis@suse.cz>,
+        Yong Sun <yosun@suse.com>
+Subject: Re: "New" ext4 features tests in LTP
+Message-ID: <20191024074619.GI31271@quack2.suse.cz>
+References: <20191023155846.GA28604@dell5510>
+ <20191023225824.GB7630@mit.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <efffc9e7-8948-a117-dc7f-e394e50606ab@plexistor.com>
+In-Reply-To: <20191023225824.GB7630@mit.edu>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=G6BsK5s5 c=1 sm=1 tr=0
-        a=l3vQdJ1SkhDHY1nke8Lmag==:117 a=l3vQdJ1SkhDHY1nke8Lmag==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
-        a=QyXUC8HyAAAA:8 a=7-415B0cAAAA:8 a=Tfe4Wh1HrYWVbsmHChwA:9
-        a=eAQsJKfVFY_lWVYV:21 a=XZNTOILeClruhaqN:21 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 05:31:13AM +0300, Boaz Harrosh wrote:
-> On 24/10/2019 01:13, Dave Chinner wrote:
-> > On Wed, Oct 23, 2019 at 04:09:50PM +0300, Boaz Harrosh wrote:
-> >> On 22/10/2019 14:21, Boaz Harrosh wrote:
-> >>> On 20/10/2019 18:59, ira.weiny@intel.com wrote:
-> >> Please explain the use case behind your model?
-> > 
-> > No application changes needed to control whether they use DAX or
-> > not. It allows the admin to control the application behaviour
-> > completely, so they can turn off DAX if necessary. Applications are
-> > unaware of constraints that may prevent DAX from being used, and so
-> > admins need a mechanism to prevent DAX aware application from
-> > actually using DAX if the capability is present.
-> > 
-> > e.g. given how slow some PMEM devices are when it comes to writing
-> > data, especially under extremely high concurrency, DAX is not
-> > necessarily a performance win for every application. Admins need a
-> > guaranteed method of turning off DAX in these situations - apps may
-> > not provide such a knob, or even be aware of a thing called DAX...
-> > 
+On Wed 23-10-19 18:58:24, Theodore Y. Ts'o wrote:
+> On Wed, Oct 23, 2019 at 05:58:46PM +0200, Petr Vorel wrote:
+> > ext4-inode-version [4]
+> > ------------------
+> > Directory containing the shell script which is used to test inode version field
+> > on disk of ext4.
 > 
-> Thank you Dave for explaining. Forgive my slowness. I now understand
-> your intention.
+> This is basically testing whether or not i_version gets incremented
+> after various file system operations.  There's some checks about
+> whether i_version is 32 bit or 64 bit based on the inode size, which
+> seems a bit pointless, and also checking whether the file system can
+> be mounted as ext3, which is even more pointless.
 > 
-> But if so please address my first concern. That in the submitted implementation
-> you must set the flag-bit after the create of the file but before the write.
-> So exactly the above slow writes must always be DAX if I ever want the file
-> to be DAX accessed in the future.
+> The i_version increment check can be done in a much more general (file
+> systme independant) way by using the FS_IOC_GETVERSION ioctl (there is
+> also an FS_IOC_SETVERSION).  
 
-The on disk DAX flag is inherited from the parent directory at
-create time. Hence an admin only need to set it on the data
-directory of the application when first configuring it, and
-everything the app creates will be configured for DAX access
-automatically.
+Yeah, I believe this may be useful to implement in fstests in some fs
+agnostic way.
 
-Or, alternatively, mkfs sets the flag on the root dir so that
-everything in the filesystem uses DAX by default (through
-inheritance) unless the admin turns off the flag on a directory
-before it starts to be used or on a set of files after they have
-been created (because DAX causes problems)...
+> > ext4-nsec-timestamps [6]
+> > --------------------
+> > Directory containing the shell script which is used to test nanosec timestamps
+> > of ext4.
+> 
+> This basically tests that the file system supports nanosecond
+> timestamps, with a 0.3% false positive failure rate.   Again, why?
+> 
+> > ext4-subdir-limit [9]
+> > -----------------
+> > Directory containing the shell script which is used to test subdirectory limit
+> > of ext4. According to the kernel documentation, we create more than 32000
+> > subdirectorys on the ext4 filesystem.
+> 
+> This is a valid test, although it's not what I would call a "high
+> value" test.  (As in, it's testing maybe a total of four simple lines
+> of code that are highly unlikely to fail.)
 
-So, yeah, there's another problem with the basic assertion that we
-only need to allow the on disk flag to be changed on zero length
-files: we actually want to be able to -clear- the DAX flag when the
-file has data attached to it, not just when it is an empty file...
-
-> What if, say in XFS when setting the DAX-bit we take all the three write-locks
-> same as a truncate. Then we check that there are no active page-cache mappings
-> ie. a single opener. Then allow to set the bit. Else return EBUISY. (file is in use)
-
-DAX doesn't have page cache mappings, so anything that relies on
-checking page cache state isn't going to work reliably. I also seem
-to recall that there was a need to take some vm level lock to really
-prevent page fault races, and that we can't safely take that in a
-safe combination with all the filesystem locks we need.
-
-Cheers,
-
-Dave.
+These two may be IMHO worth carrying over to fstests in some form. The other
+tests seem either already present in various fstests configs we run or
+pointless as Ted wrote.
+	
+								Honza
 -- 
-Dave Chinner
-david@fromorbit.com
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
