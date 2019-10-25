@@ -2,25 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14F95E40A3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2019 02:36:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A946EE40E3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2019 03:15:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387475AbfJYAgL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Oct 2019 20:36:11 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:59287 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729728AbfJYAgK (ORCPT
+        id S2388546AbfJYBPt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Oct 2019 21:15:49 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40815 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388531AbfJYBPt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Oct 2019 20:36:10 -0400
-Received: from dread.disaster.area (pa49-181-161-154.pa.nsw.optusnet.com.au [49.181.161.154])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id E39F73634F1;
-        Fri, 25 Oct 2019 11:36:04 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iNnaF-0007Qb-GX; Fri, 25 Oct 2019 11:36:03 +1100
-Date:   Fri, 25 Oct 2019 11:36:03 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Boaz Harrosh <boaz@plexistor.com>
+        Thu, 24 Oct 2019 21:15:49 -0400
+Received: by mail-ed1-f67.google.com with SMTP id p59so499632edp.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Oct 2019 18:15:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=plexistor-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=H1GaUvponGzx8dfabBhKW2OqVVQdC3N0IbNOHN+GfyA=;
+        b=F7CvUN1nPbeQ3ofUpTfw3ik8aSK5aNiLPnsPsnj56b2FzDgopyq8dS+4OdywSY3cRK
+         Eb7pBK79RZCAqa7dMaDNiALdZ1Q3F4Qp1fNImEMnjWIyz47c4BHaKK+WCMwcPVNBfHiN
+         xknjfj8h/cTsqLjN1CpurQu9NYku85BMGiwf+6d9S5cE50PlssibV/Qo7E4k6g+D1o7G
+         BXtMdHwxSZDmgNJWJzqGOPCg0ZODwFjbIvuczE7ACnosAFZZhRB0n7cefeG6+aipnjAf
+         ijbC86raCT7G6EcIKb+iSX/posRmH1Oq7/anIPBl3mwLVo+v+cMt72aXJqlVakb/ePHY
+         pyYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=H1GaUvponGzx8dfabBhKW2OqVVQdC3N0IbNOHN+GfyA=;
+        b=rGkGU0DMr2/Bl0tSxNUlqXru9V5QNM6hz87A5gWa95axYwSez7gbz2t4CvX+6QbVL+
+         1B80tQsWpuZZ7mXp/7e1rIzbZcpl1Q1HsDQGMSXMwuDPuVrm0FOLMNQ6/uAgA6Azy9rg
+         fulNKzGgmBOgtx4E3LCsQ2b4YlgYyskLVKinWvDH844u30LYkt2c4CLu0dDvq3pbSWkd
+         hlPlSoNzr+QCfVod1C3F+CfBxFYkFvA1cTU9ut1fTdgMzqloeS1F2vAERLIdvJcbI+wO
+         /J361QTicol5CI5QH6adehnwpsYioOYO4VYZRQbbagHod3EZPqXtEKJwt+wtrNvAJaSB
+         0cvw==
+X-Gm-Message-State: APjAAAXJua2YfThj0Y4aPfSG++qmyYzWpRmWDYB6QeVQNDNKvexazKLE
+        0AF7qWMiXO92urUXZoUl1AZxZzWax58=
+X-Google-Smtp-Source: APXvYqz6czjRAMv/BeSl0ugHesI8gzA5oRUMvzQQRtKwlS9OjlmuA9FEFIHOOZH28oxILnBJQbs9HQ==
+X-Received: by 2002:a50:cbc2:: with SMTP id l2mr1201839edi.304.1571966147286;
+        Thu, 24 Oct 2019 18:15:47 -0700 (PDT)
+Received: from [10.68.217.182] ([217.70.210.43])
+        by smtp.googlemail.com with ESMTPSA id gj14sm1695ejb.62.2019.10.24.18.15.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2019 18:15:46 -0700 (PDT)
+Subject: Re: [PATCH 0/5] Enable per-file/directory DAX operations
+To:     Dave Chinner <david@fromorbit.com>,
+        Boaz Harrosh <boaz@plexistor.com>
 Cc:     ira.weiny@intel.com, linux-kernel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
@@ -29,8 +57,6 @@ Cc:     ira.weiny@intel.com, linux-kernel@vger.kernel.org,
         "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/5] Enable per-file/directory DAX operations
-Message-ID: <20191025003603.GE4614@dread.disaster.area>
 References: <20191020155935.12297-1-ira.weiny@intel.com>
  <b7849297-e4a4-aaec-9a64-2b481663588b@plexistor.com>
  <b883142c-ecfe-3c5b-bcd9-ebe4ff28d852@plexistor.com>
@@ -40,87 +66,74 @@ References: <20191020155935.12297-1-ira.weiny@intel.com>
  <fb4f8be7-bca6-733a-7f16-ced6557f7108@plexistor.com>
  <20191024213508.GB4614@dread.disaster.area>
  <ab101f90-6ec1-7527-1859-5f6309640cfa@plexistor.com>
+ <20191025003603.GE4614@dread.disaster.area>
+From:   Boaz Harrosh <boaz@plexistor.com>
+Message-ID: <9ffbc2a5-c85b-3633-1ad5-a9a3fe33cd2e@plexistor.com>
+Date:   Fri, 25 Oct 2019 04:15:44 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ab101f90-6ec1-7527-1859-5f6309640cfa@plexistor.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
-        a=l3vQdJ1SkhDHY1nke8Lmag==:117 a=l3vQdJ1SkhDHY1nke8Lmag==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
-        a=7-415B0cAAAA:8 a=wNVn5hzRuzmDeAh33toA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20191025003603.GE4614@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 25, 2019 at 02:29:04AM +0300, Boaz Harrosh wrote:
-> On 25/10/2019 00:35, Dave Chinner wrote:
-> > On Thu, Oct 24, 2019 at 05:05:45PM +0300, Boaz Harrosh wrote:
-> > This isn't a theoretical problem - this is exactly the race
-> > condition that lead us to disabling the flag in the first place.
-> > There is no serialisation between the read and write parts of the
-> > page fault iand the filesystem changing the DAX flag and ops vector,
-> > and so fixing this problem requires hold yet more locks in the
-> > filesystem path to completely lock out page fault processing on the
-> > inode's mapping.
-> > 
+On 25/10/2019 03:36, Dave Chinner wrote:
+> On Fri, Oct 25, 2019 at 02:29:04AM +0300, Boaz Harrosh wrote:
+<>
+
+>> Perhaps we always go by the directory. And then do an mv dir_DAX/foo dir_NODAX/foo
 > 
-> Again sorry that I do not explain very good.
+> The inode is instatiated before the rename is run, so it's set up
+> with it's old dir config, not the new one. So this ends up with the
+> same problem of haivng to change the S_DAX flag and aops vector
+> dynamically on rename. Same problem, not a solution.
 > 
-> Already on the read fault we populate the xarray,
 
-On a write fault we can have an empty xarray slot so the write fault
-needs to both populate the xarray slot (read fault) and process the
-write fault.
+Yes Admin needs a inode-drop_caches after the mv if she/he wants an effective
+change.
 
-> My point was that if I want to set the DAX mode I must enforce that
-> there are no other parallel users on my inode. The check that the
-> xarray is empty is my convoluted way to check that there are no other
-> users except me. If xarray is not empty I bail out with EBUISY
+>> to have an effective change. In hard links the first one at iget time before populating
+>> the inode cache takes affect.
+> 
+> If something like a find or backup program brings the inode into
+> cache, the app may not even get the behaviour it wants, and it can't
+> change it until the inode is evicted from cache, which may be never.
 
-Checking the xarray being empty is racy. The moment you drop the
-mapping lock, the page fault can populate a slot in the mapping that
-you just checked was empty. And then you swap the aops between the
-population and the ->page-mkwrite() call in the page fault
-that is running, and things go boom.
+inode-drop-caches. (echo 2 > /proc/sys/vm/drop_caches)
 
-Unless there's something new in the page fault path that nobody has
-noticed in the past couple of years, this TOCTOU race hasn't been
-solved....
+> Nobody wants implicit/random/uncontrollable/unchangeable behaviour
+> like this.
+> 
 
-> Perhaps we always go by the directory. And then do an mv dir_DAX/foo dir_NODAX/foo
+You mean in the case of hard links between different mode directories?
+I agree it is not so good. I do not like it too.
 
-The inode is instatiated before the rename is run, so it's set up
-with it's old dir config, not the new one. So this ends up with the
-same problem of haivng to change the S_DAX flag and aops vector
-dynamically on rename. Same problem, not a solution.
+<>
+> We went over all this ground when we disabled the flag in the first
+> place. We disabled the flag because we couldn't come up with a sane
+> way to flip the ops vector short of tracking the number of aops
+> calls in progress at any given time. i.e. reference counting the
+> aops structure, but that's hard to do with a const ops structure,
+> and so it got disabled rather than allowing users to crash
+> kernels....
+> 
 
-> to have an effective change. In hard links the first one at iget time before populating
-> the inode cache takes affect.
+Do you mean dropping this patchset all together? I missed that.
 
-If something like a find or backup program brings the inode into
-cache, the app may not even get the behaviour it wants, and it can't
-change it until the inode is evicted from cache, which may be never.
-Nobody wants implicit/random/uncontrollable/unchangeable behaviour
-like this.
+Current patchset with the i_size == 0 thing is really bad I think.
+Its the same has dropping the direct change all together and only
+supporting inheritance from parent.
+[Which again for me is really not interesting]
 
-> (And never change the flag on the fly)
-> (Just brain storming here)
+> Cheers,
+> -Dave.
 
-We went over all this ground when we disabled the flag in the first
-place. We disabled the flag because we couldn't come up with a sane
-way to flip the ops vector short of tracking the number of aops
-calls in progress at any given time. i.e. reference counting the
-aops structure, but that's hard to do with a const ops structure,
-and so it got disabled rather than allowing users to crash
-kernels....
+Lets sleep on it. Please remind me if xfs supports clone + DAX
 
-Cheers,
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks Dave
+Boaz
