@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BED7E4196
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2019 04:36:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34670E4198
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2019 04:36:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390178AbfJYCga (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Oct 2019 22:36:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41344 "EHLO
+        id S2390194AbfJYCge (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Oct 2019 22:36:34 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41354 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728416AbfJYCga (ORCPT
+        with ESMTP id S1728416AbfJYCge (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Oct 2019 22:36:30 -0400
+        Thu, 24 Oct 2019 22:36:34 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:To:From:Sender:
         Reply-To:Cc:Content-Type:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=3kikTJ9SvjuYwD0CKdDNcEF71ucz9PsOK2rZyOULu/U=; b=km0f3+4tfwOBlKYVbYV5Cr800
-        wt98OkAP6v/qxYrRuD6Xp5T/UMM5E+8HSgMKP+/eJXYDwGIC+vmeMF0bra7nY7tyregLmyILIpMZP
-        mWkbI3/mBMivcfd6fZazljY83JzVQps46XxNdQyj5nxvDz2D2LJX0nrZgY1SNN5ArcAURVN7AZJdg
-        Ceh0ItY7z8+teqBOQWeooxSlmyBEToLGkwJF1CDKvgWItzGXcayYrwJPOUH4x4tJejviShyhvl5IU
-        Jlgxyl627+V6Oa19n27WeGHRoZAgCPxrJgnf6xKVpU0gaD0GhiKIgtV4V8j1ZWgwHKA8Sq8+ngAWX
-        LSmCfQq1Q==;
+         bh=LNcjTYweWLROtw0+6qrNHyWm/b7rJm5aqhasGw1fHRo=; b=ltU+LTDxyHZPF5Jxfikl7ZqUf
+        qt4kuz8YHvTATIsdetvN3qTKKizR/L/tm/EMXIT9TsOkhzVpEwLlC14qPt+ZmL7LLrtLySLe9eLn6
+        08jWeRDuJSNQsQ946gxkQP277ssOSt9Axv3XUEvUz8KXlYn3bdmrrkcqglYI5bNgwAf1nQZRX4S+4
+        jZpqWfwOG2AgFn/0kB5akizHJXo9PNkjmyZwYOecOkZJjYJcR9rd/h5IN5OKUgK3e9rql8bpmVDCn
+        0snLY98YepM7EZnimKmZJU0eaHCXMODtIYMYTC4ZrHngYPLBAjjOGB88rc7bVk9B8VwkGsS7hDtue
+        BuP0xwz6A==;
 Received: from p91006-ipngnfx01marunouchi.tokyo.ocn.ne.jp ([153.156.43.6] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iNpSn-0003em-6G; Fri, 25 Oct 2019 02:36:30 +0000
+        id 1iNpSr-0003ey-4I; Fri, 25 Oct 2019 02:36:33 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 3/4] xfs: disable xfs_ioc_space for always COW inodes
-Date:   Fri, 25 Oct 2019 11:36:08 +0900
-Message-Id: <20191025023609.22295-4-hch@lst.de>
+Subject: [PATCH 4/4] xfs: consolidate preallocation in xfs_file_fallocate
+Date:   Fri, 25 Oct 2019 11:36:09 +0900
+Message-Id: <20191025023609.22295-5-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191025023609.22295-1-hch@lst.de>
 References: <20191025023609.22295-1-hch@lst.de>
@@ -43,37 +43,136 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If we always have to write out of place preallocating blocks is
-pointless.  We already check for this in the normal falloc path, but
-the check was missig in the legacy ALLOCSP path.
+Remove xfs_zero_file_space and reorganize xfs_file_fallocate so that a
+single call to xfs_alloc_file_space covers all modes that preallocate
+blocks.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/xfs/xfs_ioctl.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/xfs/xfs_bmap_util.c | 37 -------------------------------------
+ fs/xfs/xfs_bmap_util.h |  2 --
+ fs/xfs/xfs_file.c      | 32 ++++++++++++++++++++++++--------
+ 3 files changed, 24 insertions(+), 47 deletions(-)
 
-diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-index 3fe1543f9f02..552034325991 100644
---- a/fs/xfs/xfs_ioctl.c
-+++ b/fs/xfs/xfs_ioctl.c
-@@ -33,6 +33,7 @@
- #include "xfs_sb.h"
- #include "xfs_ag.h"
- #include "xfs_health.h"
-+#include "xfs_reflink.h"
+diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
+index 9b0572a7b03a..11658da40640 100644
+--- a/fs/xfs/xfs_bmap_util.c
++++ b/fs/xfs/xfs_bmap_util.c
+@@ -1133,43 +1133,6 @@ xfs_free_file_space(
+ 	return error;
+ }
  
- #include <linux/mount.h>
- #include <linux/namei.h>
-@@ -606,6 +607,9 @@ xfs_ioc_space(
- 	if (!S_ISREG(inode->i_mode))
- 		return -EINVAL;
+-/*
+- * Preallocate and zero a range of a file. This mechanism has the allocation
+- * semantics of fallocate and in addition converts data in the range to zeroes.
+- */
+-int
+-xfs_zero_file_space(
+-	struct xfs_inode	*ip,
+-	xfs_off_t		offset,
+-	xfs_off_t		len)
+-{
+-	struct xfs_mount	*mp = ip->i_mount;
+-	uint			blksize;
+-	int			error;
+-
+-	trace_xfs_zero_file_space(ip);
+-
+-	blksize = 1 << mp->m_sb.sb_blocklog;
+-
+-	/*
+-	 * Punch a hole and prealloc the range. We use hole punch rather than
+-	 * unwritten extent conversion for two reasons:
+-	 *
+-	 * 1.) Hole punch handles partial block zeroing for us.
+-	 *
+-	 * 2.) If prealloc returns ENOSPC, the file range is still zero-valued
+-	 * by virtue of the hole punch.
+-	 */
+-	error = xfs_free_file_space(ip, offset, len);
+-	if (error || xfs_is_always_cow_inode(ip))
+-		return error;
+-
+-	return xfs_alloc_file_space(ip, round_down(offset, blksize),
+-				     round_up(offset + len, blksize) -
+-				     round_down(offset, blksize),
+-				     XFS_BMAPI_PREALLOC);
+-}
+-
+ static int
+ xfs_prepare_shift(
+ 	struct xfs_inode	*ip,
+diff --git a/fs/xfs/xfs_bmap_util.h b/fs/xfs/xfs_bmap_util.h
+index 7a78229cf1a7..3e0fa0d363d1 100644
+--- a/fs/xfs/xfs_bmap_util.h
++++ b/fs/xfs/xfs_bmap_util.h
+@@ -59,8 +59,6 @@ int	xfs_alloc_file_space(struct xfs_inode *ip, xfs_off_t offset,
+ 			     xfs_off_t len, int alloc_type);
+ int	xfs_free_file_space(struct xfs_inode *ip, xfs_off_t offset,
+ 			    xfs_off_t len);
+-int	xfs_zero_file_space(struct xfs_inode *ip, xfs_off_t offset,
+-			    xfs_off_t len);
+ int	xfs_collapse_file_space(struct xfs_inode *, xfs_off_t offset,
+ 				xfs_off_t len);
+ int	xfs_insert_file_space(struct xfs_inode *, xfs_off_t offset,
+diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+index 156238d5af19..525b29b99116 100644
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -880,16 +880,30 @@ xfs_file_fallocate(
+ 		}
  
-+	if (xfs_is_always_cow_inode(ip))
-+		return -EOPNOTSUPP;
+ 		if (mode & FALLOC_FL_ZERO_RANGE) {
+-			error = xfs_zero_file_space(ip, offset, len);
++			/*
++			 * Punch a hole and prealloc the range.  We use a hole
++			 * punch rather than unwritten extent conversion for two
++			 * reasons:
++			 *
++			 *   1.) Hole punch handles partial block zeroing for us.
++			 *   2.) If prealloc returns ENOSPC, the file range is
++			 *       still zero-valued by virtue of the hole punch.
++			 */
++			unsigned int blksize = i_blocksize(inode);
 +
- 	if (filp->f_flags & O_DSYNC)
- 		flags |= XFS_PREALLOC_SYNC;
- 	if (filp->f_mode & FMODE_NOCMTIME)
++			trace_xfs_zero_file_space(ip);
++
++			error = xfs_free_file_space(ip, offset, len);
++			if (error)
++				goto out_unlock;
++
++			len = round_up(offset + len, blksize) -
++			      round_down(offset, blksize);
++			offset = round_down(offset, blksize);
+ 		} else if (mode & FALLOC_FL_UNSHARE_RANGE) {
+ 			error = xfs_reflink_unshare(ip, offset, len);
+ 			if (error)
+ 				goto out_unlock;
+-
+-			if (!xfs_is_always_cow_inode(ip)) {
+-				error = xfs_alloc_file_space(ip, offset, len,
+-						XFS_BMAPI_PREALLOC);
+-			}
+ 		} else {
+ 			/*
+ 			 * If always_cow mode we can't use preallocations and
+@@ -899,12 +913,14 @@ xfs_file_fallocate(
+ 				error = -EOPNOTSUPP;
+ 				goto out_unlock;
+ 			}
++		}
+ 
++		if (!xfs_is_always_cow_inode(ip)) {
+ 			error = xfs_alloc_file_space(ip, offset, len,
+ 						     XFS_BMAPI_PREALLOC);
++			if (error)
++				goto out_unlock;
+ 		}
+-		if (error)
+-			goto out_unlock;
+ 	}
+ 
+ 	if (file->f_flags & O_DSYNC)
 -- 
 2.20.1
 
