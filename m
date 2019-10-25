@@ -2,177 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34670E4198
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2019 04:36:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB52DE419C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2019 04:38:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390194AbfJYCge (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Oct 2019 22:36:34 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41354 "EHLO
+        id S2390242AbfJYCic (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Oct 2019 22:38:32 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41386 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728416AbfJYCge (ORCPT
+        with ESMTP id S1728416AbfJYCib (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Oct 2019 22:36:34 -0400
+        Thu, 24 Oct 2019 22:38:31 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:To:From:Sender:
-        Reply-To:Cc:Content-Type:Content-ID:Content-Description:Resent-Date:
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=LNcjTYweWLROtw0+6qrNHyWm/b7rJm5aqhasGw1fHRo=; b=ltU+LTDxyHZPF5Jxfikl7ZqUf
-        qt4kuz8YHvTATIsdetvN3qTKKizR/L/tm/EMXIT9TsOkhzVpEwLlC14qPt+ZmL7LLrtLySLe9eLn6
-        08jWeRDuJSNQsQ946gxkQP277ssOSt9Axv3XUEvUz8KXlYn3bdmrrkcqglYI5bNgwAf1nQZRX4S+4
-        jZpqWfwOG2AgFn/0kB5akizHJXo9PNkjmyZwYOecOkZJjYJcR9rd/h5IN5OKUgK3e9rql8bpmVDCn
-        0snLY98YepM7EZnimKmZJU0eaHCXMODtIYMYTC4ZrHngYPLBAjjOGB88rc7bVk9B8VwkGsS7hDtue
-        BuP0xwz6A==;
-Received: from p91006-ipngnfx01marunouchi.tokyo.ocn.ne.jp ([153.156.43.6] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iNpSr-0003ey-4I; Fri, 25 Oct 2019 02:36:33 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 4/4] xfs: consolidate preallocation in xfs_file_fallocate
-Date:   Fri, 25 Oct 2019 11:36:09 +0900
-Message-Id: <20191025023609.22295-5-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191025023609.22295-1-hch@lst.de>
-References: <20191025023609.22295-1-hch@lst.de>
+         bh=og4UwUe+IdpNdozHFTSH6d+IuI1h2CCsMk4c1RoYWD0=; b=hGKpSTAfckdqYjvK9u9zIy2nf
+        6fFP+pD1oOAcPxZOa5hynTKk8ls+wO6dg/j82Xfi1hWoX69w/lNvfidaF0u5V/t7DLRO7pclcUkSb
+        yBn1VwK/BWfRVmaQxEJxqYBu2jUWYnUc1izydmJZy0/VGUWeMRt/Qo/S5gcARgDqmNCXNrh7npuKm
+        +/lkQkVZe3hUrg/cACPHYD3QAGoSEbiTz/cJ8ZGmJPYnVxqkr9T1uWkgJq32yFtvhCDdyUgU6DtTO
+        h0zzfoN5mY2AUBxa+JcVsZlNwAuatQlhFiKXJ0Kniflwr0ZqTkV8yRrm6D8ZJtT8cc2/Qzi6JRy2E
+        6U24WjTog==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iNpUk-0003mZ-Kj; Fri, 25 Oct 2019 02:38:30 +0000
+Date:   Thu, 24 Oct 2019 19:38:30 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Michal Suchanek <msuchanek@suse.de>,
+        linux-scsi@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Tejun Heo <tj@kernel.org>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 2/8] cdrom: factor out common open_for_* code
+Message-ID: <20191025023830.GA14108@infradead.org>
+References: <cover.1571834862.git.msuchanek@suse.de>
+ <da032629db4a770a5f98ff400b91b44873cbdf46.1571834862.git.msuchanek@suse.de>
+ <20191024021958.GA11485@infradead.org>
+ <20191024132314.GG2963@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191024132314.GG2963@bombadil.infradead.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Remove xfs_zero_file_space and reorganize xfs_file_fallocate so that a
-single call to xfs_alloc_file_space covers all modes that preallocate
-blocks.
+On Thu, Oct 24, 2019 at 06:23:14AM -0700, Matthew Wilcox wrote:
+> On Wed, Oct 23, 2019 at 07:19:58PM -0700, Christoph Hellwig wrote:
+> > >  static
+> > > -int open_for_data(struct cdrom_device_info *cdi)
+> > > +int open_for_common(struct cdrom_device_info *cdi, tracktype *tracks)
+> > 
+> > Please fix the coding style.  static never should be on a line of its
+> > own..
+> 
+> It's OK to have the static on a line by itself; it's having 'static int'
+> on a line by itself that Linus gets unhappy about because he can't use
+> grep to see the return type.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/xfs/xfs_bmap_util.c | 37 -------------------------------------
- fs/xfs/xfs_bmap_util.h |  2 --
- fs/xfs/xfs_file.c      | 32 ++++++++++++++++++++++++--------
- 3 files changed, 24 insertions(+), 47 deletions(-)
-
-diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
-index 9b0572a7b03a..11658da40640 100644
---- a/fs/xfs/xfs_bmap_util.c
-+++ b/fs/xfs/xfs_bmap_util.c
-@@ -1133,43 +1133,6 @@ xfs_free_file_space(
- 	return error;
- }
- 
--/*
-- * Preallocate and zero a range of a file. This mechanism has the allocation
-- * semantics of fallocate and in addition converts data in the range to zeroes.
-- */
--int
--xfs_zero_file_space(
--	struct xfs_inode	*ip,
--	xfs_off_t		offset,
--	xfs_off_t		len)
--{
--	struct xfs_mount	*mp = ip->i_mount;
--	uint			blksize;
--	int			error;
--
--	trace_xfs_zero_file_space(ip);
--
--	blksize = 1 << mp->m_sb.sb_blocklog;
--
--	/*
--	 * Punch a hole and prealloc the range. We use hole punch rather than
--	 * unwritten extent conversion for two reasons:
--	 *
--	 * 1.) Hole punch handles partial block zeroing for us.
--	 *
--	 * 2.) If prealloc returns ENOSPC, the file range is still zero-valued
--	 * by virtue of the hole punch.
--	 */
--	error = xfs_free_file_space(ip, offset, len);
--	if (error || xfs_is_always_cow_inode(ip))
--		return error;
--
--	return xfs_alloc_file_space(ip, round_down(offset, blksize),
--				     round_up(offset + len, blksize) -
--				     round_down(offset, blksize),
--				     XFS_BMAPI_PREALLOC);
--}
--
- static int
- xfs_prepare_shift(
- 	struct xfs_inode	*ip,
-diff --git a/fs/xfs/xfs_bmap_util.h b/fs/xfs/xfs_bmap_util.h
-index 7a78229cf1a7..3e0fa0d363d1 100644
---- a/fs/xfs/xfs_bmap_util.h
-+++ b/fs/xfs/xfs_bmap_util.h
-@@ -59,8 +59,6 @@ int	xfs_alloc_file_space(struct xfs_inode *ip, xfs_off_t offset,
- 			     xfs_off_t len, int alloc_type);
- int	xfs_free_file_space(struct xfs_inode *ip, xfs_off_t offset,
- 			    xfs_off_t len);
--int	xfs_zero_file_space(struct xfs_inode *ip, xfs_off_t offset,
--			    xfs_off_t len);
- int	xfs_collapse_file_space(struct xfs_inode *, xfs_off_t offset,
- 				xfs_off_t len);
- int	xfs_insert_file_space(struct xfs_inode *, xfs_off_t offset,
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 156238d5af19..525b29b99116 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -880,16 +880,30 @@ xfs_file_fallocate(
- 		}
- 
- 		if (mode & FALLOC_FL_ZERO_RANGE) {
--			error = xfs_zero_file_space(ip, offset, len);
-+			/*
-+			 * Punch a hole and prealloc the range.  We use a hole
-+			 * punch rather than unwritten extent conversion for two
-+			 * reasons:
-+			 *
-+			 *   1.) Hole punch handles partial block zeroing for us.
-+			 *   2.) If prealloc returns ENOSPC, the file range is
-+			 *       still zero-valued by virtue of the hole punch.
-+			 */
-+			unsigned int blksize = i_blocksize(inode);
-+
-+			trace_xfs_zero_file_space(ip);
-+
-+			error = xfs_free_file_space(ip, offset, len);
-+			if (error)
-+				goto out_unlock;
-+
-+			len = round_up(offset + len, blksize) -
-+			      round_down(offset, blksize);
-+			offset = round_down(offset, blksize);
- 		} else if (mode & FALLOC_FL_UNSHARE_RANGE) {
- 			error = xfs_reflink_unshare(ip, offset, len);
- 			if (error)
- 				goto out_unlock;
--
--			if (!xfs_is_always_cow_inode(ip)) {
--				error = xfs_alloc_file_space(ip, offset, len,
--						XFS_BMAPI_PREALLOC);
--			}
- 		} else {
- 			/*
- 			 * If always_cow mode we can't use preallocations and
-@@ -899,12 +913,14 @@ xfs_file_fallocate(
- 				error = -EOPNOTSUPP;
- 				goto out_unlock;
- 			}
-+		}
- 
-+		if (!xfs_is_always_cow_inode(ip)) {
- 			error = xfs_alloc_file_space(ip, offset, len,
- 						     XFS_BMAPI_PREALLOC);
-+			if (error)
-+				goto out_unlock;
- 		}
--		if (error)
--			goto out_unlock;
- 	}
- 
- 	if (file->f_flags & O_DSYNC)
--- 
-2.20.1
-
+Sorry, but independent of any preference just looking at the codebases
+proves you wrong.  All on one line is the most common style, but not
+by much, followed by static + type.  Just static is just in a few crazy
