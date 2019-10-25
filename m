@@ -2,19 +2,19 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 815D0E49D5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2019 13:22:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27A04E49D2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2019 13:22:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410199AbfJYLVx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S2410210AbfJYLVx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Fri, 25 Oct 2019 07:21:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56844 "EHLO mx1.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:56864 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731463AbfJYLVx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S1726352AbfJYLVx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 25 Oct 2019 07:21:53 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 24313B278;
-        Fri, 25 Oct 2019 11:21:50 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 02277B286;
+        Fri, 25 Oct 2019 11:21:51 +0000 (UTC)
 From:   Michal Suchanek <msuchanek@suse.de>
 To:     linux-scsi@vger.kernel.org
 Cc:     Michal Suchanek <msuchanek@suse.de>,
@@ -35,9 +35,9 @@ Cc:     Michal Suchanek <msuchanek@suse.de>,
         Bart Van Assche <bvanassche@acm.org>,
         Tejun Heo <tj@kernel.org>, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 2/7] cdrom: factor out common open_for_* code
-Date:   Fri, 25 Oct 2019 13:21:39 +0200
-Message-Id: <6904165cd79a488c557aff19ac1fd9598503386f.1572002144.git.msuchanek@suse.de>
+Subject: [PATCH v3 3/7] cdrom: wait for the tray to close
+Date:   Fri, 25 Oct 2019 13:21:40 +0200
+Message-Id: <08202208cb9876d2d96454e6fdd89b022a0be978.1572002144.git.msuchanek@suse.de>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <cover.1572002144.git.msuchanek@suse.de>
 References: <cover.1572002144.git.msuchanek@suse.de>
@@ -48,176 +48,77 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The open_for_audio and open_for_data copies are bitrotten in different
-ways already and will need to update the autoclose logic in both.
+The scsi command to close the tray only starts the motor and does not
+wait for the tray to close. Wait until the state chages from TRAY_OPEN
+so users do not race with the tray closing.
+
+This looks like inifinte wait but unless the drive is broken it either
+closes the tray shortly or reports an error when it detects the tray is
+blocked. At worst the wait can be interrupted by the user.
+
+Also wait for the drive to become ready once the tray closes.
 
 Signed-off-by: Michal Suchanek <msuchanek@suse.de>
 ---
-v2: do not add unrelated whitespace changes
-v3: fix declaration style
+v2:
+ - check drive_status exists before using it
+ - rename tray_close -> cdrom_tray_close
+ - also wait for drive to become ready after tray closes
+ - do not wait in cdrom_ioctl_closetray
 ---
- drivers/cdrom/cdrom.c | 96 +++++++++++++++----------------------------
- 1 file changed, 33 insertions(+), 63 deletions(-)
+ drivers/cdrom/cdrom.c | 25 ++++++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
-index 2ad6b73482fe..87db82489bf8 100644
+index 87db82489bf8..27f4fce22781 100644
 --- a/drivers/cdrom/cdrom.c
 +++ b/drivers/cdrom/cdrom.c
-@@ -1045,13 +1045,12 @@ static void cdrom_count_tracks(struct cdrom_device_info *cdi, tracktype *tracks)
+@@ -1045,6 +1045,18 @@ static void cdrom_count_tracks(struct cdrom_device_info *cdi, tracktype *tracks)
  	       tracks->cdi, tracks->xa);
  }
  
--static
--int open_for_data(struct cdrom_device_info *cdi)
-+static int open_for_common(struct cdrom_device_info *cdi, tracktype *tracks)
++static int cdrom_tray_close(struct cdrom_device_info *cdi)
++{
++	int ret;
++
++	ret = cdi->ops->tray_move(cdi, 0);
++	if (ret || !cdi->ops->drive_status)
++		return ret;
++
++	return poll_event_interruptible(CDS_TRAY_OPEN !=
++			cdi->ops->drive_status(cdi, CDSL_CURRENT), 500);
++}
++
+ static int open_for_common(struct cdrom_device_info *cdi, tracktype *tracks)
  {
  	int ret;
- 	const struct cdrom_device_ops *cdo = cdi->ops;
--	tracktype tracks;
--	cd_dbg(CD_OPEN, "entering open_for_data\n");
-+
-+	cd_dbg(CD_OPEN, "entering open_for_common\n");
- 	/* Check if the driver can report drive status.  If it can, we
- 	   can do clever things.  If it can't, well, we at least tried! */
- 	if (cdo->drive_status != NULL) {
-@@ -1071,37 +1070,44 @@ int open_for_data(struct cdrom_device_info *cdi)
- 					couldn't close the tray.  We only care 
- 					that there is no disc in the drive, 
- 					since that is the _REAL_ problem here.*/
--					ret=-ENOMEDIUM;
--					goto clean_up_and_return;
-+					return -ENOMEDIUM;
- 				}
- 			} else {
- 				cd_dbg(CD_OPEN, "bummer. this drive can't close the tray.\n");
--				ret=-ENOMEDIUM;
--				goto clean_up_and_return;
-+				return -ENOMEDIUM;
- 			}
- 			/* Ok, the door should be closed now.. Check again */
- 			ret = cdo->drive_status(cdi, CDSL_CURRENT);
- 			if ((ret == CDS_NO_DISC) || (ret==CDS_TRAY_OPEN)) {
- 				cd_dbg(CD_OPEN, "bummer. the tray is still not closed.\n");
- 				cd_dbg(CD_OPEN, "tray might not contain a medium\n");
--				ret=-ENOMEDIUM;
--				goto clean_up_and_return;
-+				return -ENOMEDIUM;
+@@ -1062,7 +1074,9 @@ static int open_for_common(struct cdrom_device_info *cdi, tracktype *tracks)
+ 			if (CDROM_CAN(CDC_CLOSE_TRAY) &&
+ 			    cdi->options & CDO_AUTO_CLOSE) {
+ 				cd_dbg(CD_OPEN, "trying to close the tray\n");
+-				ret=cdo->tray_move(cdi,0);
++				ret = cdrom_tray_close(cdi);
++				if (ret == -ERESTARTSYS)
++					return ret;
+ 				if (ret) {
+ 					cd_dbg(CD_OPEN, "bummer. tried to close the tray but failed.\n");
+ 					/* Ignore the error from the low
+@@ -1085,6 +1099,15 @@ static int open_for_common(struct cdrom_device_info *cdi, tracktype *tracks)
  			}
  			cd_dbg(CD_OPEN, "the tray is now closed\n");
  		}
--		/* the door should be closed now, check for the disc */
--		ret = cdo->drive_status(cdi, CDSL_CURRENT);
--		if (ret!=CDS_DISC_OK) {
--			ret = -ENOMEDIUM;
--			goto clean_up_and_return;
--		}
-+		if (ret != CDS_DISC_OK)
-+			return -ENOMEDIUM;
++		/* the door should be closed now, check for the disc */
++		if (ret == CDS_DRIVE_NOT_READY) {
++			int poll_res = poll_event_interruptible(
++				CDS_DRIVE_NOT_READY !=
++				(ret = cdo->drive_status(cdi, CDSL_CURRENT)),
++				500);
++			if (poll_res == -ERESTARTSYS)
++				return poll_res;
++		}
+ 		if (ret != CDS_DISC_OK)
+ 			return -ENOMEDIUM;
  	}
--	cdrom_count_tracks(cdi, &tracks);
--	if (tracks.error == CDS_NO_DISC) {
-+	cdrom_count_tracks(cdi, tracks);
-+	if (tracks->error == CDS_NO_DISC) {
- 		cd_dbg(CD_OPEN, "bummer. no disc.\n");
--		ret=-ENOMEDIUM;
--		goto clean_up_and_return;
-+		return -ENOMEDIUM;
- 	}
-+
-+	return 0;
-+}
-+
-+static int open_for_data(struct cdrom_device_info *cdi)
-+{
-+	int ret;
-+	const struct cdrom_device_ops *cdo = cdi->ops;
-+	tracktype tracks;
-+
-+	cd_dbg(CD_OPEN, "entering open_for_data\n");
-+	ret = open_for_common(cdi, &tracks);
-+	if (ret)
-+		goto clean_up_and_return;
-+
- 	/* CD-Players which don't use O_NONBLOCK, workman
- 	 * for example, need bit CDO_CHECK_TYPE cleared! */
- 	if (tracks.data==0) {
-@@ -1208,53 +1214,17 @@ int cdrom_open(struct cdrom_device_info *cdi, struct block_device *bdev,
- /* This code is similar to that in open_for_data. The routine is called
-    whenever an audio play operation is requested.
- */
--static int check_for_audio_disc(struct cdrom_device_info *cdi,
--				const struct cdrom_device_ops *cdo)
-+static int check_for_audio_disc(struct cdrom_device_info *cdi)
- {
-         int ret;
- 	tracktype tracks;
- 	cd_dbg(CD_OPEN, "entering check_for_audio_disc\n");
- 	if (!(cdi->options & CDO_CHECK_TYPE))
- 		return 0;
--	if (cdo->drive_status != NULL) {
--		ret = cdo->drive_status(cdi, CDSL_CURRENT);
--		cd_dbg(CD_OPEN, "drive_status=%d\n", ret);
--		if (ret == CDS_TRAY_OPEN) {
--			cd_dbg(CD_OPEN, "the tray is open...\n");
--			/* can/may i close it? */
--			if (CDROM_CAN(CDC_CLOSE_TRAY) &&
--			    cdi->options & CDO_AUTO_CLOSE) {
--				cd_dbg(CD_OPEN, "trying to close the tray\n");
--				ret=cdo->tray_move(cdi,0);
--				if (ret) {
--					cd_dbg(CD_OPEN, "bummer. tried to close tray but failed.\n");
--					/* Ignore the error from the low
--					level driver.  We don't care why it
--					couldn't close the tray.  We only care 
--					that there is no disc in the drive, 
--					since that is the _REAL_ problem here.*/
--					return -ENOMEDIUM;
--				}
--			} else {
--				cd_dbg(CD_OPEN, "bummer. this driver can't close the tray.\n");
--				return -ENOMEDIUM;
--			}
--			/* Ok, the door should be closed now.. Check again */
--			ret = cdo->drive_status(cdi, CDSL_CURRENT);
--			if ((ret == CDS_NO_DISC) || (ret==CDS_TRAY_OPEN)) {
--				cd_dbg(CD_OPEN, "bummer. the tray is still not closed.\n");
--				return -ENOMEDIUM;
--			}	
--			if (ret!=CDS_DISC_OK) {
--				cd_dbg(CD_OPEN, "bummer. disc isn't ready.\n");
--				return -EIO;
--			}	
--			cd_dbg(CD_OPEN, "the tray is now closed\n");
--		}	
--	}
--	cdrom_count_tracks(cdi, &tracks);
--	if (tracks.error) 
--		return(tracks.error);
-+
-+	ret = open_for_common(cdi, &tracks);
-+	if (ret)
-+		return ret;
- 
- 	if (tracks.audio==0)
- 		return -EMEDIUMTYPE;
-@@ -2725,7 +2695,7 @@ static int cdrom_ioctl_play_trkind(struct cdrom_device_info *cdi,
- 	if (copy_from_user(&ti, argp, sizeof(ti)))
- 		return -EFAULT;
- 
--	ret = check_for_audio_disc(cdi, cdi->ops);
-+	ret = check_for_audio_disc(cdi);
- 	if (ret)
- 		return ret;
- 	return cdi->ops->audio_ioctl(cdi, CDROMPLAYTRKIND, &ti);
-@@ -2773,7 +2743,7 @@ static int cdrom_ioctl_audioctl(struct cdrom_device_info *cdi,
- 
- 	if (!CDROM_CAN(CDC_PLAY_AUDIO))
- 		return -ENOSYS;
--	ret = check_for_audio_disc(cdi, cdi->ops);
-+	ret = check_for_audio_disc(cdi);
- 	if (ret)
- 		return ret;
- 	return cdi->ops->audio_ioctl(cdi, cmd, NULL);
 -- 
 2.23.0
 
