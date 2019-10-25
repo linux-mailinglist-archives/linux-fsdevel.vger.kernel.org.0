@@ -2,110 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EAB4E4C35
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2019 15:30:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7AFEE4C8E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2019 15:43:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504715AbfJYNau (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Oct 2019 09:30:50 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58178 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2504702AbfJYNau (ORCPT
+        id S2440409AbfJYNnb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Oct 2019 09:43:31 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:56345 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbfJYNna (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Oct 2019 09:30:50 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9PDUd8b089869
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2019 09:30:49 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2vv0aekfrp-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2019 09:30:46 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <chandan@linux.ibm.com>;
-        Fri, 25 Oct 2019 14:28:34 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 25 Oct 2019 14:28:31 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9PDSUR749152076
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 25 Oct 2019 13:28:30 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 75C05AE057;
-        Fri, 25 Oct 2019 13:28:30 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 53399AE045;
-        Fri, 25 Oct 2019 13:28:29 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.102.19.25])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 25 Oct 2019 13:28:29 +0000 (GMT)
-From:   Chandan Rajendra <chandan@linux.ibm.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-ext4@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] ext4: support encryption with blocksize != PAGE_SIZE
-Date:   Fri, 25 Oct 2019 19:00:29 +0530
-Organization: IBM
-In-Reply-To: <20191023033312.361355-1-ebiggers@kernel.org>
-References: <20191023033312.361355-1-ebiggers@kernel.org>
+        Fri, 25 Oct 2019 09:43:30 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1iNzsH-00072g-Pn; Fri, 25 Oct 2019 07:43:29 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1iNzsG-0006vL-SW; Fri, 25 Oct 2019 07:43:29 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191025112917.22518-1-mszeredi@redhat.com>
+Date:   Fri, 25 Oct 2019 08:42:24 -0500
+In-Reply-To: <20191025112917.22518-1-mszeredi@redhat.com> (Miklos Szeredi's
+        message of "Fri, 25 Oct 2019 13:29:12 +0200")
+Message-ID: <87r231rlfj.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-TM-AS-GCONF: 00
-x-cbid: 19102513-0028-0000-0000-000003AF7A56
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19102513-0029-0000-0000-00002471B0B4
-Message-Id: <17874972.D0pmjP8EC8@localhost.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-25_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1910250127
+Content-Type: text/plain
+X-XM-SPF: eid=1iNzsG-0006vL-SW;;;mid=<87r231rlfj.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19PFgdLj+d0f0xnbf++PpDtbqlJ7o3tTO0=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa05.xmission.com
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMNoVowels autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4944]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Miklos Szeredi <mszeredi@redhat.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 365 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 3.8 (1.0%), b_tie_ro: 2.5 (0.7%), parse: 1.31
+        (0.4%), extract_message_metadata: 4.8 (1.3%), get_uri_detail_list:
+        1.73 (0.5%), tests_pri_-1000: 6 (1.5%), tests_pri_-950: 1.88 (0.5%),
+        tests_pri_-900: 1.48 (0.4%), tests_pri_-90: 24 (6.5%), check_bayes: 22
+        (6.0%), b_tokenize: 8 (2.3%), b_tok_get_all: 6 (1.6%), b_comp_prob:
+        2.5 (0.7%), b_tok_touch_all: 2.7 (0.7%), b_finish: 0.75 (0.2%),
+        tests_pri_0: 300 (82.3%), check_dkim_signature: 0.62 (0.2%),
+        check_dkim_adsp: 2.4 (0.7%), poll_dns_idle: 0.52 (0.1%), tests_pri_10:
+        2.5 (0.7%), tests_pri_500: 8 (2.1%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [RFC PATCH 0/5] allow unprivileged overlay mounts
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wednesday, October 23, 2019 9:03 AM Eric Biggers wrote: 
-> Hello,
-> 
-> This patchset makes ext4 support encryption on filesystems where the
-> filesystem block size is not equal to PAGE_SIZE.  This allows e.g.
-> PowerPC systems to use ext4 encryption.
-> 
-> Most of the work for this was already done in prior kernel releases; now
-> the only part missing is decryption support in block_read_full_page().
-> Chandan Rajendra has proposed a patchset "Consolidate FS read I/O
-> callbacks code" [1] to address this and do various other things like
-> make ext4 use mpage_readpages() again, and make ext4 and f2fs share more
-> code.  But it doesn't seem to be going anywhere.
-> 
-> Therefore, I propose we simply add decryption support to
-> block_read_full_page() for now.  This is a fairly small change, and it
-> gets ext4 encryption with subpage-sized blocks working.
-> 
-> Note: to keep things simple I'm just allocating the work object from the
-> bi_end_io function with GFP_ATOMIC.  But if people think it's necessary,
-> it could be changed to use preallocation like the page-based read path.
-> 
-> Tested with 'gce-xfstests -c ext4/encrypt_1k -g auto', using the new
-> "encrypt_1k" config I created.  All tests pass except for those that
-> already fail or are excluded with the encrypt or 1k configs, and 2 tests
-> that try to create 1023-byte symlinks which fails since encrypted
-> symlinks are limited to blocksize-3 bytes.  Also ran the dedicated
-> encryption tests using 'kvm-xfstests -c ext4/1k -g encrypt'; all pass,
-> including the on-disk ciphertext verification tests.
+Miklos Szeredi <mszeredi@redhat.com> writes:
 
-I have tested this patchset on ppc64le with both 4k and 64k block size. There
-were no regressions. Hence,
+> Hi Eric,
+>
+> Can you please have a look at this patchset?
+>
+> The most interesting one is the last oneliner adding FS_USERNS_MOUNT;
+> whether I'm correct in stating that this isn't going to introduce any
+> holes, or not...
 
-Tested-by: Chandan Rajendra <chandan@linux.ibm.com>
+I will take some time and dig through this.
 
--- 
-chandan
+From a robustness standpoint I worry about the stackable filesystem
+side.  As that is uniquely an attack vector with overlayfs.
+
+There is definitely demand for this.
 
 
+> Thanks,
+> Miklos
+>
+> ---
+> Miklos Szeredi (5):
+>   ovl: document permission model
+>   ovl: ignore failure to copy up unknown xattrs
+>   vfs: allow unprivileged whiteout creation
+>   ovl: user xattr
+>   ovl: unprivieged mounts
+>
+>  Documentation/filesystems/overlayfs.txt | 44 +++++++++++++
+>  fs/char_dev.c                           |  3 +
+>  fs/namei.c                              | 17 ++---
+>  fs/overlayfs/copy_up.c                  | 34 +++++++---
+>  fs/overlayfs/dir.c                      |  2 +-
+>  fs/overlayfs/export.c                   |  2 +-
+>  fs/overlayfs/inode.c                    | 39 ++++++------
+>  fs/overlayfs/namei.c                    | 56 +++++++++--------
+>  fs/overlayfs/overlayfs.h                | 81 +++++++++++++++---------
+>  fs/overlayfs/ovl_entry.h                |  1 +
+>  fs/overlayfs/readdir.c                  |  5 +-
+>  fs/overlayfs/super.c                    | 53 +++++++++++-----
+>  fs/overlayfs/util.c                     | 82 +++++++++++++++++++++----
+>  include/linux/device_cgroup.h           |  3 +
+>  14 files changed, 298 insertions(+), 124 deletions(-)
 
+Eric
