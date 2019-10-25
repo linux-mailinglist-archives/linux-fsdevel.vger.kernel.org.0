@@ -2,130 +2,191 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D7CBE550D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2019 22:21:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96998E556A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2019 22:49:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbfJYUVj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Oct 2019 16:21:39 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:41683 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727522AbfJYUVi (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Oct 2019 16:21:38 -0400
-Received: by mail-io1-f67.google.com with SMTP id r144so3830114iod.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2019 13:21:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Dc4k+UabI6V6/G33XeJs4WPRz9SFvXw6O8X8BNO/mAM=;
-        b=CdRXolyPRltkKpwl7x2YxfqiOpAnZ+u7DtSVzeqIsnHElmLPdttG7EcG/wlrHpCujV
-         s4BtY9l/WSSL8MTQS67S8JiXKyy4rBENARGlWyyc8IEwhPTNlI8QsYg3VLoxmjaQvKCc
-         PeKjGHX5acSgNqfmd302Me581aFiY7gVuLElqz//7vxi+RXeZDqTW2gDETrnjUEXxdu4
-         bF/VWrD6DnMHigtC0mmme4dWzg5cce9LdaUzGwLSFRYvugM3lm8+ql2GYmkduvje3k42
-         s9ctj14iB8H+y+y+AQZYLgwY/LRFa1o+I6tVnkncIr8GYgz85LHkJnB2R6npxgETWYEZ
-         ZiJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Dc4k+UabI6V6/G33XeJs4WPRz9SFvXw6O8X8BNO/mAM=;
-        b=fHN6XR9yUSkK4FAbyDyj1jrhtt2T5aOIFEJnvlCF+XzRd/ZhWUwdBWYxYtdKjDG68U
-         oVp5GxGvejRQv3jpLGfIBQRuk5bsccVM+J/PpzpP87aHh0uvFqLXrAdrFAuqnL7FuxnG
-         balucUNJxNd0czHUCDkg8nlj7/n94c1I2xaLwtZYdt3dNC1qJWOxZDIYGQ+rGJY5gE7h
-         knFPt/V1MncBQ/VVZqbUpA4S2SpRsaWZwBLql/wTMr/A1dGaETjMMqWkx/VJE6KzglY2
-         hFhPoBAN7hzkYR2azf8WdGA4nNoIN2+q5cFqxbrMbpJBACQYGYAu0REotIcYzHhGqokP
-         Bk5Q==
-X-Gm-Message-State: APjAAAUOJCyzdoPiP9C+FkOZ+mv3L8df1d0l320bOv8SqCh5NmbGv/38
-        d0FYlz1HiagjFfWQGn4zljnnvzXVQR66GQ==
-X-Google-Smtp-Source: APXvYqzYQEt9eGDLQO+yrcS97tWMQknVwlPPwhhqDw9EwJO5uwRH8+rKZdCSuf/bhSYRvTkLLoPEhg==
-X-Received: by 2002:a02:1006:: with SMTP id 6mr5549470jay.140.1572034896612;
-        Fri, 25 Oct 2019 13:21:36 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id d197sm345135iog.15.2019.10.25.13.21.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Oct 2019 13:21:35 -0700 (PDT)
-Subject: Re: [PATCH v3 0/3] Fix typo in RWH_WRITE_LIFE_NOT_SET constant name
-To:     Song Liu <liu.song.a23@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     Eugene Syromiatnikov <esyr@redhat.com>,
-        open list <linux-kernel@vger.kernel.org>,
+        id S1726594AbfJYUt1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Oct 2019 16:49:27 -0400
+Received: from mga11.intel.com ([192.55.52.93]:23023 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725874AbfJYUt1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 25 Oct 2019 16:49:27 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2019 13:49:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,229,1569308400"; 
+   d="scan'208";a="210441346"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga001.fm.intel.com with ESMTP; 25 Oct 2019 13:49:26 -0700
+Date:   Fri, 25 Oct 2019 13:49:26 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Boaz Harrosh <boaz@plexistor.com>, linux-kernel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-raid <linux-raid@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
-References: <cover.1568994791.git.esyr@redhat.com>
- <CAPhsuW5CvJNRP5OO_M6XVd9q0x-CH9eADWR5oqdJP20eFScCFw@mail.gmail.com>
- <87d4b42f-7aa2-5372-27e4-a28e4c724f37@kernel.dk>
- <CAPhsuW68rK3zGF3A8HnwArh7bs+-AAvZBtVkt4gcxPnFCGxwAQ@mail.gmail.com>
- <CAPhsuW6ZSbKLYPpUk3DT+HxTfcuOVPG64rQ057aoLGgrGSeGHA@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <87964005-1790-007b-4117-3b6abbb67f36@kernel.dk>
-Date:   Fri, 25 Oct 2019 14:21:34 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/5] Enable per-file/directory DAX operations
+Message-ID: <20191025204926.GA26184@iweiny-DESK2.sc.intel.com>
+References: <20191020155935.12297-1-ira.weiny@intel.com>
+ <b7849297-e4a4-aaec-9a64-2b481663588b@plexistor.com>
+ <b883142c-ecfe-3c5b-bcd9-ebe4ff28d852@plexistor.com>
+ <20191023221332.GE2044@dread.disaster.area>
+ <efffc9e7-8948-a117-dc7f-e394e50606ab@plexistor.com>
+ <20191024073446.GA4614@dread.disaster.area>
+ <fb4f8be7-bca6-733a-7f16-ced6557f7108@plexistor.com>
+ <20191024213508.GB4614@dread.disaster.area>
+ <ab101f90-6ec1-7527-1859-5f6309640cfa@plexistor.com>
+ <20191025003603.GE4614@dread.disaster.area>
 MIME-Version: 1.0
-In-Reply-To: <CAPhsuW6ZSbKLYPpUk3DT+HxTfcuOVPG64rQ057aoLGgrGSeGHA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191025003603.GE4614@dread.disaster.area>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/16/19 11:00 AM, Song Liu wrote:
-> Hi Jeff and J. Bruce,
+On Fri, Oct 25, 2019 at 11:36:03AM +1100, Dave Chinner wrote:
+> On Fri, Oct 25, 2019 at 02:29:04AM +0300, Boaz Harrosh wrote:
+> > On 25/10/2019 00:35, Dave Chinner wrote:
 > 
-> On Wed, Oct 2, 2019 at 9:55 AM Song Liu <liu.song.a23@gmail.com> wrote:
->>
->> On Tue, Oct 1, 2019 at 5:55 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>
->>> On 10/1/19 5:12 PM, Song Liu wrote:
->>>> On Fri, Sep 20, 2019 at 8:58 AM Eugene Syromiatnikov <esyr@redhat.com> wrote:
->>>>>
->>>>> Hello.
->>>>>
->>>>> This is a small fix of a typo (or, more specifically, some remnant of
->>>>> the old patch version spelling) in RWH_WRITE_LIFE_NOT_SET constant,
->>>>> which is named as RWF_WRITE_LIFE_NOT_SET currently.  Since the name
->>>>> with "H" is used in man page and everywhere else, it's probably worth
->>>>> to make the name used in the fcntl.h UAPI header in line with it.
->>>>> The two follow-up patches update usage sites of this constant in kernel
->>>>> to use the new spelling.
->>>>>
->>>>> The old name is retained as it is part of UAPI now.
->>>>>
->>>>> Changes since v2[1]:
->>>>>    * Updated RWF_WRITE_LIFE_NOT_SET constant usage
->>>>>      in drivers/md/raid5-ppl.c:ppl_init_log().
->>>>>
->>>>> Changes since v1[2]:
->>>>>    * Changed format of the commit ID in the commit message of the first patch.
->>>>>    * Removed bogus Signed-off-by that snuck into the resend of the series.
->>>>
->>>> Applied to md-next.
->>>
->>> I think the core fs change should core in through a core tree, then
->>> the md bits can go in at will after that.
-> 
-> As Jens suggested, we should route core fs patches through core tree. Could
-> you please apply these patches? Since the change is small, probably you can
-> also apply md patches?
-> 
-> Thanks,
-> Song
-> 
-> PS: for the series:
-> 
-> Acked-by: Song Liu <songliubraving@fb.com>
+> If something like a find or backup program brings the inode into
+> cache, the app may not even get the behaviour it wants, and it can't
+> change it until the inode is evicted from cache, which may be never.
 
-I applied 1/3 to the for-5.5/block core branch.
+Why would this be never?
 
+> Nobody wants implicit/random/uncontrollable/unchangeable behaviour
+> like this.
+
+I'm thinking this could work with a bit of effort on the users part.  While the
+behavior does have a bit of uncertainty, I feel like there has to be a way to
+get the inode to drop from the cache when a final iput() happens on the inode.
+
+Admin programs should not leave files open forever, without the users knowing
+about it.  So I don't understand why the inode could not be evicted from the
+cache if the FS knew that this change had been made and the inode needs to be
+"re-loaded".  See below...
+
+> 
+> > (And never change the flag on the fly)
+> > (Just brain storming here)
+> 
+> We went over all this ground when we disabled the flag in the first
+> place. We disabled the flag because we couldn't come up with a sane
+> way to flip the ops vector short of tracking the number of aops
+> calls in progress at any given time. i.e. reference counting the
+> aops structure, but that's hard to do with a const ops structure,
+> and so it got disabled rather than allowing users to crash
+> kernels....
+
+Agreed.  We can't change the a_ops without some guarantee that no one is using
+the file.  Which means we need all fds to close and a final iput().  I thought
+that would mean an eviction of the inode and a subsequent reload.
+
+Yesterday I coded up the following (applies on top of this series) but I can't
+seem to get it to work because I believe xfs is keeping a reference on the
+inode.  What am I missing?  I think if I could get xfs to recognize that the
+inode needs to be cleared from it's cache this would work, with some caveats.
+
+Currently this works if I remount the fs or if I use <procfs>/drop_caches like
+Boaz mentioned.
+
+Isn't there a way to get xfs to do that on it's own?
+
+Ira
+
+
+From 7762afd95a3e21a782dffd2fd8e13ae4a23b5e4a Mon Sep 17 00:00:00 2001
+From: Ira Weiny <ira.weiny@intel.com>
+Date: Fri, 25 Oct 2019 13:32:07 -0700
+Subject: [PATCH] squash: Allow phys change on any length file
+
+delay the changing of the effective bit to when the inode is re-read
+into the cache.
+
+Currently a work in Progress because xfs seems to cache the inodes as
+well and I'm not sure how to get xfs to release it's reference.
+---
+ fs/xfs/xfs_ioctl.c | 18 +++++++-----------
+ include/linux/fs.h |  5 ++++-
+ 2 files changed, 11 insertions(+), 12 deletions(-)
+
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index 89cf47ef273e..4d730d5781d9 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -1233,10 +1233,13 @@ xfs_diflags_to_linux(
+ 		inode->i_flags |= S_NOATIME;
+ 	else
+ 		inode->i_flags &= ~S_NOATIME;
+-	if (xflags & FS_XFLAG_DAX)
+-		inode->i_flags |= S_DAX;
+-	else
+-		inode->i_flags &= ~S_DAX;
++	/* NOTE: we do not allow the physical DAX flag to immediately change
++	 * the effective IS_DAX() flag tell the VFS layer to remove the inode
++	 * from the cache on the final iput() to force recreation on the next
++	 * 'fresh' open */
++	if (((xflags & FS_XFLAG_DAX) && !IS_DAX(inode)) ||
++	    (!(xflags & FS_XFLAG_DAX) && IS_DAX(inode)))
++		inode->i_flags |= S_REVALIDATE;
+ }
+ 
+ static int
+@@ -1320,13 +1323,6 @@ xfs_ioctl_setattr_dax_invalidate(
+ 	/* lock, flush and invalidate mapping in preparation for flag change */
+ 	xfs_ilock(ip, XFS_MMAPLOCK_EXCL | XFS_IOLOCK_EXCL);
+ 
+-	/* File size must be zero to avoid races with asynchronous page
+-	 * faults */
+-	if (i_size_read(inode) > 0) {
+-		error = -EINVAL;
+-		goto out_unlock;
+-	}
+-
+ 	error = filemap_write_and_wait(inode->i_mapping);
+ 	if (error)
+ 		goto out_unlock;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 0b4d8fc79e0f..4e9b7bf53c86 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1998,6 +1998,7 @@ struct super_operations {
+ #define S_ENCRYPTED	16384	/* Encrypted file (using fs/crypto/) */
+ #define S_CASEFOLD	32768	/* Casefolded file */
+ #define S_VERITY	65536	/* Verity file (using fs/verity/) */
++#define S_REVALIDATE	131072	/* Drop inode from cache on final put */
+ 
+ /*
+  * Note that nosuid etc flags are inode-specific: setting some file-system
+@@ -2040,6 +2041,7 @@ static inline bool sb_rdonly(const struct super_block *sb) { return sb->s_flags
+ #define IS_ENCRYPTED(inode)	((inode)->i_flags & S_ENCRYPTED)
+ #define IS_CASEFOLDED(inode)	((inode)->i_flags & S_CASEFOLD)
+ #define IS_VERITY(inode)	((inode)->i_flags & S_VERITY)
++#define IS_REVALIDATE(inode)	((inode)->i_flags & S_REVALIDATE)
+ 
+ #define IS_WHITEOUT(inode)	(S_ISCHR(inode->i_mode) && \
+ 				 (inode)->i_rdev == WHITEOUT_DEV)
+@@ -3027,7 +3029,8 @@ extern int inode_needs_sync(struct inode *inode);
+ extern int generic_delete_inode(struct inode *inode);
+ static inline int generic_drop_inode(struct inode *inode)
+ {
+-	return !inode->i_nlink || inode_unhashed(inode);
++	return !inode->i_nlink || inode_unhashed(inode) ||
++		IS_REVALIDATE(inode);
+ }
+ 
+ extern struct inode *ilookup5_nowait(struct super_block *sb,
 -- 
-Jens Axboe
+2.20.1
+
 
