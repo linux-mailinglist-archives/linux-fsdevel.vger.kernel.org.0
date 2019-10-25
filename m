@@ -2,468 +2,277 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFF8AE558C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2019 23:00:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10EF0E56F0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Oct 2019 01:10:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726060AbfJYVA3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Oct 2019 17:00:29 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:54084 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725963AbfJYVA3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Oct 2019 17:00:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572037227;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ESaDI9Sbn2pcUwKJdT+wbkZ3h6KhdJHUdxJfF5QHTAo=;
-        b=g+upZYpn66I3We9LIK4BDhANRPtL/2lTINvCH0n74yU/OEwoKWGWtkWOB0k9T9HAXT4THO
-        GGY7/JbyJSK6s4sKP1QXf1Ht+tA5ZTOfgZ1/ME9cwSkC32h6TM5lEkb1xVqMqE2PcRLMPA
-        i1A++vG4REjmrBrmZC79ddZxrlJuX/4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-182-3Q3B_5DtPmCgXjhJV5FcFw-1; Fri, 25 Oct 2019 17:00:23 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 902D3107AD3D;
-        Fri, 25 Oct 2019 21:00:19 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-19.phx2.redhat.com [10.3.112.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 031DF194B9;
-        Fri, 25 Oct 2019 21:00:07 +0000 (UTC)
-Date:   Fri, 25 Oct 2019 17:00:04 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
-        mpatel@redhat.com
-Subject: Re: [PATCH ghak90 V7 04/21] audit: convert to contid list to check
- for orch/engine ownership
-Message-ID: <20191025210004.jzkenjg6jrka22ak@madcap2.tricolour.ca>
-References: <cover.1568834524.git.rgb@redhat.com>
- <6fb4e270bfafef3d0477a06b0365fdcc5a5305b5.1568834524.git.rgb@redhat.com>
- <CAHC9VhS2111YTQ_rbHKe6+n9coPNbcTJqf5wnBx9LYHSf69THA@mail.gmail.com>
+        id S1726063AbfJYXKL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Oct 2019 19:10:11 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:37790 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725847AbfJYXKL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 25 Oct 2019 19:10:11 -0400
+Received: from s0106ac1f6bb1ecac.cg.shawcable.net ([70.73.163.230] helo=[192.168.11.155])
+        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1iO8iV-0001Q4-U7; Fri, 25 Oct 2019 17:10:01 -0600
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Stephen Bates <sbates@raithlin.com>
+References: <20191009192530.13079-1-logang@deltatee.com>
+ <20191009192530.13079-6-logang@deltatee.com> <20191010123406.GC28921@lst.de>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <247eca47-c3bc-6452-fb19-f7aa27b05a60@deltatee.com>
+Date:   Fri, 25 Oct 2019 17:09:56 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhS2111YTQ_rbHKe6+n9coPNbcTJqf5wnBx9LYHSf69THA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: 3Q3B_5DtPmCgXjhJV5FcFw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+In-Reply-To: <20191010123406.GC28921@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 70.73.163.230
+X-SA-Exim-Rcpt-To: sbates@raithlin.com, maxg@mellanox.com, Chaitanya.Kulkarni@wdc.com, axboe@fb.com, kbusch@kernel.org, sagi@grimberg.me, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, hch@lst.de
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
+Subject: Re: [PATCH v9 05/12]
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019-10-10 20:38, Paul Moore wrote:
-> On Wed, Sep 18, 2019 at 9:24 PM Richard Guy Briggs <rgb@redhat.com> wrote=
-:
-> > Store the audit container identifier in a refcounted kernel object that
-> > is added to the master list of audit container identifiers.  This will
-> > allow multiple container orchestrators/engines to work on the same
-> > machine without danger of inadvertantly re-using an existing identifier=
-.
-> > It will also allow an orchestrator to inject a process into an existing
-> > container by checking if the original container owner is the one
-> > injecting the task.  A hash table list is used to optimize searches.
-> >
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  include/linux/audit.h | 26 ++++++++++++++--
-> >  kernel/audit.c        | 86 +++++++++++++++++++++++++++++++++++++++++++=
-+++++---
-> >  kernel/audit.h        |  8 +++++
-> >  3 files changed, 112 insertions(+), 8 deletions(-)
->=20
-> One general comment before we go off into the weeds on this ... I can
-> understand why you wanted to keep this patch separate from the earlier
-> patches, but as we get closer to having mergeable code this should get
-> folded into the previous patches.  For example, there shouldn't be a
-> change in audit_task_info where you change the contid field from a u64
-> to struct pointer, it should be a struct pointer from the start.
+Hey,
 
-I should have marked this patchset as RFC even though it was v7 due to a
-lot of new ideas/code that was added with uncertainties needing comment
-and direction.
+Ok, I've got much of the work in progress: anything I haven't mentioned
+below I should be able to get done for the next version of the patchset.
 
-> It's also disappointing that idr appears to only be for 32-bit ID
-> values, if we had a 64-bit idr I think we could simplify this greatly.
+However, I have some remaining comments on the following feedback:
 
-Perhaps.  I do still see value in letting the orchestrator choose the
-value.
+On 2019-10-10 6:34 a.m., Christoph Hellwig wrote:
+>> +	/* don't support host memory buffer */
+>> +	id->hmpre = 0;
+>> +	id->hmmin = 0;
+> 
+> What about CMB/PMR?
 
-> > diff --git a/include/linux/audit.h b/include/linux/audit.h
-> > index f2e3b81f2942..e317807cdd3e 100644
-> > --- a/include/linux/audit.h
-> > +++ b/include/linux/audit.h
-> > @@ -95,10 +95,18 @@ struct audit_ntp_data {
-> >  struct audit_ntp_data {};
-> >  #endif
-> >
-> > +struct audit_cont {
-> > +       struct list_head        list;
-> > +       u64                     id;
-> > +       struct task_struct      *owner;
-> > +       refcount_t              refcount;
-> > +       struct rcu_head         rcu;
-> > +};
->=20
-> It seems as though in most of the code you are using "contid", any
-> reason why didn't stick with that naming scheme here, e.g. "struct
-> audit_contid"?
+The CMB and PMR are not specified in the identify structure. They are
+specified in PCI registers so there's no need to override anything here.
+I don't think it makes any sense to try to pass these through fabrics.
 
-I was using contid to refer to the value itself and cont to refer to the
-refcounted object.  I find cont a bit too terse, so I'm still thinking
-of changing it.  Perhaps contobj?
+>> +	/*
+>> +	 * When passsthru controller is setup using nvme-loop transport it will
+>> +	 * export the passthru ctrl subsysnqn (PCIe NVMe ctrl) and will fail in
+>> +	 * the nvme/host/core.c in the nvme_init_subsystem()->nvme_active_ctrl()
+>> +	 * code path with duplicate ctr subsynqn. In order to prevent that we
+>> +	 * mask the passthru-ctrl subsysnqn with the target ctrl subsysnqn.
+>> +	 */
+>> +	memcpy(id->subnqn, ctrl->subsysnqn, sizeof(id->subnqn));
+> 
+> I don't think this is a good idea.  It will break multipathing when you
+> export two ports of the original controller.  The whole idea of
+> overwriting ctrlid and subsysnqn will also lead to huge problems with
+> persistent reservations.  I think we need to pass through the subnqn
+> and cntlid unmodified.
 
-> >  struct audit_task_info {
-> >         kuid_t                  loginuid;
-> >         unsigned int            sessionid;
-> > -       u64                     contid;
-> > +       struct audit_cont       *cont;
->=20
-> Same, why not stick with "contid"?
+I think trying to clone the cntlid will cause bigger problems with
+multipath... I'll inflict some ascii art on you to try and explain.
 
-^^^
+The fabrics code creates a new controller for every connection, so if
+they all had the cntlid of the passed through controller then we'd have
+to restrict each passed through controller to only have a single
+connection which means we can't have multi-path over the fabrics side
+because we'd end up with something like this:
 
-> >  #ifdef CONFIG_AUDITSYSCALL
-> >         struct audit_context    *ctx;
-> >  #endif
-> > @@ -203,11 +211,15 @@ static inline unsigned int audit_get_sessionid(st=
-ruct task_struct *tsk)
-> >
-> >  static inline u64 audit_get_contid(struct task_struct *tsk)
-> >  {
-> > -       if (!tsk->audit)
-> > +       if (!tsk->audit || !tsk->audit->cont)
-> >                 return AUDIT_CID_UNSET;
-> > -       return tsk->audit->contid;
-> > +       return tsk->audit->cont->id;
-> >  }
->=20
-> Assuming for a moment that we implement an audit_contid_get() (see
-> Neil's comment as well as mine below), we probably need to name this
-> something different so we don't all lose our minds when we read this
-> code.  On the plus side we can probably preface it with an underscore
-> since it is a static, in which case _audit_contid_get() might be okay,
-> but I'm open to suggestions.
+ +-----------------+      +-----------------+      +----------------+
+ |Host A Subsys A  |      |Target Subsys A  |      |Host B Subsys A |
+ | +--------------+|      |        +------+ | tcp  |        +------+|
+ | | PCI Device   ||  -------------+ Ctrl +-----------------+ Ctrl ||
+ | |      +------+||  |   |        |   0  | |      |        |   0  ||
+ | |      | Ctrl +----+   |        +------+ |      |        +------+|
+ | |      |   0  |||  |   |        +------+ | rdma |        +------+|
+ | |      +------+||  +------------+ Ctrl +-----------------+ Ctrl ||
+ | |      +------+||  |   |        |   0  | |      |        |   0  ||
+ | |      | Ctrl |||  |   |        +------+ |      |        +------+|
+ | |      |   1  |||  |   |        +------+ | loop |                |
+ | |      +------+||  +------------+ Ctrl +----+   |                |
+ | +--------------+|      |        |   0  | |  |   |                |
+ |                 |      |        +------+ |  |   |                |
+ |                 |      +-----------------+  |   +----------------+
+ |                 |                           |
+ |     ----------------------------------------+
+ |    |            |
+ |    |   +------+ |
+ |    +---+ Ctrl | |
+ |        |   0  | |
+ |        +------+ |
+ +-----------------+
 
-I'm fine with the "_" prefix, can you point to precedent or convention?
+Multipath doesn't work on Host B because all the controllers have the
+same cntlid and it doesn't work on Host A for the loop back interface
+because the cntlid conflicts with the cntlid of the original device. If
+we allow the target to assign cntlid's from the IDA, per usual, I think
+we have a much better situation:
 
-> > +extern struct audit_cont *audit_cont(struct task_struct *tsk);
-> > +
-> > +extern void audit_cont_put(struct audit_cont *cont);
->=20
-> More of the "contid" vs "cont".
++-----------------+      +-----------------+      +----------------+
+ |Host A Subsys A  |      |Target Subsys A  |      |Host B Subsys A |
+ | +--------------+|      |        +------+ | tcp  |        +------+|
+ | | PCI Device   ||  -------------+ Ctrl +-----------------+ Ctrl ||
+ | |      +------+||  |   |        |   0  | |      |        |   0  ||
+ | |      | Ctrl +----+   |        +------+ |      |        +------+|
+ | |      |   0  |||  |   |        +------+ | rdma |        +------+|
+ | |      +------+||  +------------+ Ctrl +-----------------+ Ctrl ||
+ | |      +------+||  |   |        |   1  | |      |        |   1  ||
+ | |      | Ctrl |||  |   |        +------+ |      |        +------+|
+ | |      |   1  |||  |   |        +------+ | loop |                |
+ | |      +------+||  +------------+ Ctrl +----+   |                |
+ | +--------------+|      |        |   2  | |  |   |                |
+ |                 |      |        +------+ |  |   |                |
+ |                 |      +-----------------+  |   +----------------+
+ |                 |                           |
+ |     ----------------------------------------+
+ |    |            |
+ |    |   +------+ |
+ |    +---+ Ctrl | |
+ |        |   2  | |
+ |        +------+ |
+ +-----------------+
 
-^^^
+Now multipath works for host B and will work with the loopback to Host
+A, but *only* if the target assigns it a cntlid that doesn't conflict
+with one that was in the original device (which is actually quite common
+in the simple case of one device and one target). To deal with this
+situation I contend it's better to replace the subsysnqn:
 
-> >  extern u32 audit_enabled;
-> >
-> >  extern int audit_signal_info(int sig, struct task_struct *t);
-> > @@ -277,6 +289,14 @@ static inline u64 audit_get_contid(struct task_str=
-uct *tsk)
-> >         return AUDIT_CID_UNSET;
-> >  }
-> >
-> > +static inline struct audit_cont *audit_cont(struct task_struct *tsk)
-> > +{
-> > +       return NULL;
-> > +}
-> > +
-> > +static inline void audit_cont_put(struct audit_cont *cont)
-> > +{ }
-> > +
-> >  #define audit_enabled AUDIT_OFF
-> >
-> >  static inline int audit_signal_info(int sig, struct task_struct *t)
-> > diff --git a/kernel/audit.c b/kernel/audit.c
-> > index a36ea57cbb61..ea0899130cc1 100644
-> > --- a/kernel/audit.c
-> > +++ b/kernel/audit.c
-> > @@ -137,6 +137,8 @@ struct audit_net {
-> >
-> >  /* Hash for inode-based rules */
-> >  struct list_head audit_inode_hash[AUDIT_INODE_BUCKETS];
-> > +/* Hash for contid-based rules */
-> > +struct list_head audit_contid_hash[AUDIT_CONTID_BUCKETS];
-> >
-> >  static struct kmem_cache *audit_buffer_cache;
-> >
-> > @@ -204,6 +206,8 @@ struct audit_reply {
-> >
-> >  static struct kmem_cache *audit_task_cache;
-> >
-> > +static DEFINE_SPINLOCK(audit_contid_list_lock);
->=20
-> Since it looks like this protectects audit_contid_hash, I think it
-> would be better to move it up underneath audit_contid_hash.
+ +-----------------+      +-----------------+      +----------------+
+ |Host A Subsys A  |      |Target Subsys B  |      | Host B Subsys B|
+ | +--------------+|      |        +------+ | tcp  |        +------+|
+ | | PCI Device   ||  -------------+ Ctrl +-----------------+ Ctrl ||
+ | |      +------+||  |   |        |   2  | |      |        |   2  ||
+ | |      | Ctrl +----+   |        +------+ |      |        +------+|
+ | |      |   0  |||  |   |        +------+ | rdma |        +------+|
+ | |      +------+||  +------------+ Ctrl +-----------------+ Ctrl ||
+ | |      +------+||  |   |        |   1  | |      |        |   1  ||
+ | |      | Ctrl |||  |   |        +------+ |      |        +------+|
+ | |      |   1  |||  |   |        +------+ | loop |                |
+ | |      +------+||  +------------- Ctrl +----+   |                |
+ | +--------------+|      |        |   0  | |  |   |                |
+ +-----------------+      |        +------+ |  |   |                |
+ +-----------------+      +-----------------+  |   +----------------+
+ |Host A Subsys B  |                           |
+ |     ----------------------------------------+
+ |    |            |
 
-Agreed.
+ |    |   +------+ |
 
-> >  void __init audit_task_init(void)
-> >  {
-> >         audit_task_cache =3D kmem_cache_create("audit_task",
-> > @@ -231,7 +235,9 @@ int audit_alloc(struct task_struct *tsk)
-> >         }
-> >         info->loginuid =3D audit_get_loginuid(current);
-> >         info->sessionid =3D audit_get_sessionid(current);
-> > -       info->contid =3D audit_get_contid(current);
-> > +       info->cont =3D audit_cont(current);
-> > +       if (info->cont)
-> > +               refcount_inc(&info->cont->refcount);
->=20
-> See the other comments about a "get" function, but I think we need a
-> RCU read lock around the above, no?
+ |    +---+ Ctrl | |
 
-The rcu read lock is to protect the list rather than the cont object
-itself, the latter of which is protected by its refcount.
+ |        |   0  | |
 
-> >         tsk->audit =3D info;
-> >
-> >         ret =3D audit_alloc_syscall(tsk);
-> > @@ -246,7 +252,7 @@ int audit_alloc(struct task_struct *tsk)
-> >  struct audit_task_info init_struct_audit =3D {
-> >         .loginuid =3D INVALID_UID,
-> >         .sessionid =3D AUDIT_SID_UNSET,
-> > -       .contid =3D AUDIT_CID_UNSET,
-> > +       .cont =3D NULL,
->=20
-> More "cont" vs "contid".
+ |        +------+ |
 
-^^^
+ +-----------------+
 
-> >  #ifdef CONFIG_AUDITSYSCALL
-> >         .ctx =3D NULL,
-> >  #endif
-> > @@ -266,6 +272,9 @@ void audit_free(struct task_struct *tsk)
-> >         /* Freeing the audit_task_info struct must be performed after
-> >          * audit_log_exit() due to need for loginuid and sessionid.
-> >          */
-> > +       spin_lock(&audit_contid_list_lock);
-> > +       audit_cont_put(tsk->audit->cont);
-> > +       spin_unlock(&audit_contid_list_lock);
->=20
-> Perhaps this will make sense as I get further into the patchset, but
-> why not move the spin lock operations into audit_[cont/contid]_put()?
+This way loopback is always guaranteed to work, and multipath over
+fabrics will still work as well because they are never exposed to the
+original subsysnqn. Using a loopback device is really only useful for
+testing so I don't think using it as a path in a multipath setup will
+ever make any sense and thus we don't lose anything valuable by not
+having the same subsysnqn for the looped back host.
 
-audit_cont_put() is recursive in patch 18/21, which would have been
-evident if 18/21 was squashed into this one as you pointed out there...
+The first problem with this is if someone wants to passthru two ports
+of a multiport PCI device. If the cntlids and the subsysnqns were copied
+we could theoretically do something like this:
 
-> >         info =3D tsk->audit;
-> >         tsk->audit =3D NULL;
-> >         kmem_cache_free(audit_task_cache, info);
-> > @@ -1657,6 +1666,9 @@ static int __init audit_init(void)
-> >         for (i =3D 0; i < AUDIT_INODE_BUCKETS; i++)
-> >                 INIT_LIST_HEAD(&audit_inode_hash[i]);
-> >
-> > +       for (i =3D 0; i < AUDIT_CONTID_BUCKETS; i++)
-> > +               INIT_LIST_HEAD(&audit_contid_hash[i]);
-> > +
-> >         mutex_init(&audit_cmd_mutex.lock);
-> >         audit_cmd_mutex.owner =3D NULL;
-> >
-> > @@ -2356,6 +2368,32 @@ int audit_signal_info(int sig, struct task_struc=
-t *t)
-> >         return audit_signal_info_syscall(t);
-> >  }
-> >
-> > +struct audit_cont *audit_cont(struct task_struct *tsk)
-> > +{
-> > +       if (!tsk->audit || !tsk->audit->cont)
-> > +               return NULL;
-> > +       return tsk->audit->cont;
-> > +}
-> > +
-> > +/* audit_contid_list_lock must be held by caller */
-> > +void audit_cont_put(struct audit_cont *cont)
-> > +{
-> > +       if (!cont)
-> > +               return;
-> > +       if (refcount_dec_and_test(&cont->refcount)) {
-> > +               put_task_struct(cont->owner);
-> > +               list_del_rcu(&cont->list);
-> > +               kfree_rcu(cont, rcu);
-> > +       }
-> > +}
->=20
-> I tend to agree with Neil's previous comment; if we've got a
-> audit_[cont/contid]_put(), why not an audit_[cont/contid]_get()?
+ +-----------------+     +-----------------+       +-----------------+
+ |Host A Subsys A  |     |Target Subsys A  |       |Host B Subsys A  |
+ | +--------------+|     |        +------+ |       |        +------+ |
+ | | PCI Device   ||  ------------+ Ctrl +------------------+ Ctrl | |
+ | |      +------+||  |  |        |   0  | |       |        |   0  | |
+ | |      | Ctrl +----+  |        +------+ |       |        +------+ |
+ | |      |   0  |||     +-----------------+       |        +------+ |
+ | |      +------+||     +-----------------+    ------------+ Ctrl | |
+ | |      +------+||     | Target Subsys A |    |  |        |   1  | |
+ | |      | Ctrl +----+  |        +------+ |    |  |        +------+ |
+ | |      |   1  |||  |  |        | Ctrl | |    |  |                 |
+ | |      +------+||  -----------+|   1  +------+  +-----------------+
+ | +--------------+|     |        +------+ |
+ +-----------------+     +-----------------+
 
-^^^
+But this is awkward because we now have two subsystems that will require
+different nqns in configfs but will expose the same nqn as the original
+device in the identify command. If we try to make it less awkward by
+allowing a target subsystem to point to multiple ctrls (of the same
+subsystem) then we end up having to deal with a bunch of multipath
+complexity like implementing multipath for admin commands, etc. Not to
+mention the current passthru code is pretty much bypassing all the core
+multipath code so this would all have to be reworked significantly.
 
-> > +static struct task_struct *audit_cont_owner(struct task_struct *tsk)
-> > +{
-> > +       if (tsk->audit && tsk->audit->cont)
-> > +               return tsk->audit->cont->owner;
-> > +       return NULL;
-> > +}
->=20
-> I'm not sure if this is possible (I haven't make my way through the
-> entire patchset) and the function above isn't used in this patch (why
-> is it here?), but it seems like it would be safer to convert this into
-> an audit_contid_isowner() function that simply returns 1/0 depending
-> on if the passed task_struct is the owner or not of a passed audit
-> container ID value?
+I would argue that if someone wants to create a target for a multi-port
+PCI device and have multipath through both ports, then they should use
+the regular block device target and not a passthru target -- then it
+will all work using the existing multipath support in the core.
 
-Agreed since it is only ever compared with current.  It can be moved to
-14/21.
+The second problem with substituting cntlids is that some admin commands
+like the namespace attach command, take the cntlid as an input, so we'd
+have to translate those some how if we want to pass them through. I
+think this should be possible, however, I don't have any hardware that
+implements this so it would be hard for me to test any solution for this
+problem. So, for now, we've chosen just to reject such admin commands.
 
-> >  /*
-> >   * audit_set_contid - set current task's audit contid
-> >   * @task: target task
-> > @@ -2382,9 +2420,12 @@ int audit_set_contid(struct task_struct *task, u=
-64 contid)
-> >         }
-> >         oldcontid =3D audit_get_contid(task);
-> >         read_lock(&tasklist_lock);
-> > -       /* Don't allow the audit containerid to be unset */
-> > +       /* Don't allow the contid to be unset */
-> >         if (!audit_contid_valid(contid))
-> >                 rc =3D -EINVAL;
-> > +       /* Don't allow the contid to be set to the same value again */
-> > +       else if (contid =3D=3D oldcontid) {
-> > +               rc =3D -EADDRINUSE;
-> >         /* if we don't have caps, reject */
-> >         else if (!capable(CAP_AUDIT_CONTROL))
-> >                 rc =3D -EPERM;
->=20
-> RCU read lock?  It's a bit dicey since I believe the tasklist_lock is
-> going to provide us the safety we need, but if we are going to claim
-> that the audit container ID list is protected by RCU we should
-> probably use it.
+>> +	/* Support multipath connections with fabrics */
+>> +	id->cmic |= 1 << 1;
+> 
+> I don't think we can just overwrite this, we need to use the original
+> controllers values.
 
-Yes, perhaps, but to protect the task read, not the list, until it is
-accessed.  Getting the contid value or cont pointer via the task does
-not involve the list.  The cont pointer is protected by its refcount.
+If we don't overwrite this, then none of the multi-path over fabric
+scenarios, from above (that we do want to support) will work with any
+device that doesn't advertise this bit. As long as we set the bit, then
+multipath over the fabrics connection will work just fine.
+>> +	/* 4. By default, blacklist all admin commands */
+>> +	default:
+>> +
+>> +		status = NVME_SC_INVALID_OPCODE | NVME_SC_DNR;
+>> +		req->execute = NULL;
+>> +		break;
+>> +	}
+> 
+> That seems odd.  There is plenty of other useful admin commands.
+> 
+> Yes, we need to ignore the PCIe specific ones:
+> 
+>  - Create I/O Completion Queue
+>  - Create I/O Submission Queue
+>  - Delete I/O Completion Queue
+>  - Delete I/O Submission Queue
+>  - Doorbell Buffer Configuration
+>  - Virtualization Management
+> 
+> but all others seem perfectly valid to pass through.
 
-> > @@ -2397,8 +2438,43 @@ int audit_set_contid(struct task_struct *task, u=
-64 contid)
-> >         else if (audit_contid_set(task))
-> >                 rc =3D -ECHILD;
-> >         read_unlock(&tasklist_lock);
-> > -       if (!rc)
-> > -               task->audit->contid =3D contid;
-> > +       if (!rc) {
-> > +               struct audit_cont *oldcont =3D audit_cont(task);
->=20
-> Previously we held the tasklist_lock to protect the audit container ID
-> associated with the struct, should we still be holding it here?
+This was based on Sagi's feedback[1]. He contends that the format NVM
+command is not safe in an environment where there might be multiple
+hosts. For similar reasons, firmware commands and others might be
+dangerous too. We also have to ignore NS attach commands for reasons
+outlined above. So it certainly seems like there's more admin commands
+than not that we need to at least be careful of. Starting with a black
+list then adding the commands that are interesting to pass through (and
+that we can properly reason won't break things) seems like a prudent
+approach. For our use cases, we largely only care about identify
+commands and vendor specific commands.
 
-We held the tasklist_lock to protect access to the target task's
-child/parent/thread relationships.
+Logan
 
-> Regardless, I worry that the lock dependencies between the
-> tasklist_lock and the audit_contid_list_lock are going to be tricky.
-> It might be nice to document the relationship in a comment up near
-> where you declare audit_contid_list_lock.
 
-I don't think there should be a conflict between the two.
-
-The contid_list_lock doesn't care if the cont object is associated to a
-particular task.
-
-> > +               struct audit_cont *cont =3D NULL;
-> > +               struct audit_cont *newcont =3D NULL;
-> > +               int h =3D audit_hash_contid(contid);
-> > +
-> > +               spin_lock(&audit_contid_list_lock);
-> > +               list_for_each_entry_rcu(cont, &audit_contid_hash[h], li=
-st)
-> > +                       if (cont->id =3D=3D contid) {
-> > +                               /* task injection to existing container=
- */
-> > +                               if (current =3D=3D cont->owner) {
->=20
-> I understand the desire to limit a given audit container ID to the
-> orchestrator that created it, but are we certain that we can track
-> audit container ID "ownership" via a single instance of a task_struct?
-
-Are you suggesting that a task_struct representing a task may be
-replaced for a specific task?  I don't believe that will ever happen.
-
->  What happens when the orchestrator stops/restarts/crashes?  Do we
-> even care?
-
-Reap all of its containers?
-
-> > +                                       refcount_inc(&cont->refcount);
-> > +                                       newcont =3D cont;
->=20
-> We can bail out of the loop here, yes?
-
-Yes, that would be a performance improvement, but not functional bug,
-thanks.  :-)
-
-> > +                               } else {
-> > +                                       rc =3D -ENOTUNIQ;
-> > +                                       goto conterror;
-> > +                               }
-> > +                       }
-> > +               if (!newcont) {
-> > +                       newcont =3D kmalloc(sizeof(struct audit_cont), =
-GFP_ATOMIC);
-> > +                       if (newcont) {
-> > +                               INIT_LIST_HEAD(&newcont->list);
-> > +                               newcont->id =3D contid;
-> > +                               get_task_struct(current);
-> > +                               newcont->owner =3D current;
-> > +                               refcount_set(&newcont->refcount, 1);
-> > +                               list_add_rcu(&newcont->list, &audit_con=
-tid_hash[h]);
-> > +                       } else {
-> > +                               rc =3D -ENOMEM;
-> > +                               goto conterror;
-> > +                       }
-> > +               }
-> > +               task->audit->cont =3D newcont;
-> > +               audit_cont_put(oldcont);
-> > +conterror:
-> > +               spin_unlock(&audit_contid_list_lock);
-> > +       }
-> >         task_unlock(task);
-> >
-> >         if (!audit_enabled)
-> > diff --git a/kernel/audit.h b/kernel/audit.h
-> > index 16bd03b88e0d..e4a31aa92dfe 100644
-> > --- a/kernel/audit.h
-> > +++ b/kernel/audit.h
-> > @@ -211,6 +211,14 @@ static inline int audit_hash_ino(u32 ino)
-> >         return (ino & (AUDIT_INODE_BUCKETS-1));
-> >  }
-> >
-> > +#define AUDIT_CONTID_BUCKETS   32
-> > +extern struct list_head audit_contid_hash[AUDIT_CONTID_BUCKETS];
-> > +
-> > +static inline int audit_hash_contid(u64 contid)
-> > +{
-> > +       return (contid & (AUDIT_CONTID_BUCKETS-1));
-> > +}
-> > +
-> >  /* Indicates that audit should log the full pathname. */
-> >  #define AUDIT_NAME_FULL -1
-> >
->=20
-> --
-> paul moore
-> www.paul-moore.com
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
-
+[1]
+https://lore.kernel.org/linux-block/e4430207-7def-8776-0289-0d58689dc0cd@grimberg.me/
