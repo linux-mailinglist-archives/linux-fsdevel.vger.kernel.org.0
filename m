@@ -2,119 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7AFEE4C8E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2019 15:43:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B271BE4CA8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Oct 2019 15:50:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440409AbfJYNnb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Oct 2019 09:43:31 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:56345 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726453AbfJYNna (ORCPT
+        id S2504934AbfJYNur (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Oct 2019 09:50:47 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:44036 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2502198AbfJYNur (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Oct 2019 09:43:30 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1iNzsH-00072g-Pn; Fri, 25 Oct 2019 07:43:29 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1iNzsG-0006vL-SW; Fri, 25 Oct 2019 07:43:29 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20191025112917.22518-1-mszeredi@redhat.com>
-Date:   Fri, 25 Oct 2019 08:42:24 -0500
-In-Reply-To: <20191025112917.22518-1-mszeredi@redhat.com> (Miklos Szeredi's
-        message of "Fri, 25 Oct 2019 13:29:12 +0200")
-Message-ID: <87r231rlfj.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Fri, 25 Oct 2019 09:50:47 -0400
+Received: by mail-io1-f66.google.com with SMTP id w12so2448343iol.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Oct 2019 06:50:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=pHXHkRZYMYriBwnGx1XM0y5ekEDpj7Yqy5vMy8KNTfI=;
+        b=0cQoRyAcYNQaeNht9WUlKmJ4thYDBCv0oGZ90WqeIlTJc/i2dvhTHtH9lLGX+i9xMJ
+         JNUEzJItBVmQ/pue/RpcicBZXfmgvVyCD8ta53VyAsFNMWZnIX5Hq2d5dhnxFf0DinkA
+         b61XpECUWEWOztP77nH4HlIkiQTTuLjYxQ3AxvK5A/3VSPv5faRfmsint3I440JUecgz
+         VzrV+RQbGZTBDQzjq9/g6PGatAMbhG+fOWV26uaBrDiAtHwbI3WV+jzo0ZoFkL9zjS/h
+         4qlhySnaCAJkPLVAjF8sVbNc3Voxzx9dYl5rXOho+EJRi6a8Mxx2LDtpFri1YyapPvdm
+         slBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=pHXHkRZYMYriBwnGx1XM0y5ekEDpj7Yqy5vMy8KNTfI=;
+        b=mYgjB+g2LzkGKWzY8Sgn4ToMmqih16BVkiCN+EUPK8bqA5UmdUuYB/WSKGyrbxVAfn
+         MQYovaRwMFWFgefkyZCh1Ty6HNfEhzY6uw0WFvjoVHDcOU6HdXqxi9j7cXNGu4NVgEL0
+         5A1zmf/RL36xua9HT2S/mxeAsPQaE7Q5K64NYr50oUcOxqB6Op2tnf9rwaSpsJK7Kxg0
+         0+clZ4SK2xbFMPH5kOIsz7vvuSWPMDjTWZvq2MAWUjM5vOULAGsnxgUJFJMDwlj2GW1i
+         gDPCkDaYCxAegNehVn6VjR6SpPGRebVfVbuqu7cHwyMOou1bdD5vgYP9XNG+5quhZpcN
+         wtbw==
+X-Gm-Message-State: APjAAAV1zyCZPkTeCQSEr6stCrOXEBiOisTqmRftviYtrBTYi47m+Isp
+        nmHEcRIM2UfVXI3OkWcEo3TCXQ==
+X-Google-Smtp-Source: APXvYqxsot+KuzrRp/bZ42yX1xRSsmzeoxhjDbcJwWvURaSHFnyWN/tmsc5x4vnk1y4l48NbZvEEzw==
+X-Received: by 2002:a5e:d607:: with SMTP id w7mr3921189iom.237.1572011444742;
+        Fri, 25 Oct 2019 06:50:44 -0700 (PDT)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id l21sm266655iok.87.2019.10.25.06.50.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Oct 2019 06:50:43 -0700 (PDT)
+Subject: Re: KASAN: null-ptr-deref Write in io_wq_cancel_all
+To:     Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+d958a65633ea70280b23@syzkaller.appspotmail.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+References: <000000000000fbbe1e0595bac322@google.com>
+ <CACT4Y+Y946C-kyiBSZtyKY7PU4qxrysOfukd42--pXdyTRyjbw@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <0e1b3410-95b0-f9d9-6838-486eae0bf5d7@kernel.dk>
+Date:   Fri, 25 Oct 2019 07:50:42 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1iNzsG-0006vL-SW;;;mid=<87r231rlfj.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19PFgdLj+d0f0xnbf++PpDtbqlJ7o3tTO0=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa05.xmission.com
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMNoVowels autolearn=disabled
-        version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4944]
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Miklos Szeredi <mszeredi@redhat.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 365 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 3.8 (1.0%), b_tie_ro: 2.5 (0.7%), parse: 1.31
-        (0.4%), extract_message_metadata: 4.8 (1.3%), get_uri_detail_list:
-        1.73 (0.5%), tests_pri_-1000: 6 (1.5%), tests_pri_-950: 1.88 (0.5%),
-        tests_pri_-900: 1.48 (0.4%), tests_pri_-90: 24 (6.5%), check_bayes: 22
-        (6.0%), b_tokenize: 8 (2.3%), b_tok_get_all: 6 (1.6%), b_comp_prob:
-        2.5 (0.7%), b_tok_touch_all: 2.7 (0.7%), b_finish: 0.75 (0.2%),
-        tests_pri_0: 300 (82.3%), check_dkim_signature: 0.62 (0.2%),
-        check_dkim_adsp: 2.4 (0.7%), poll_dns_idle: 0.52 (0.1%), tests_pri_10:
-        2.5 (0.7%), tests_pri_500: 8 (2.1%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [RFC PATCH 0/5] allow unprivileged overlay mounts
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+In-Reply-To: <CACT4Y+Y946C-kyiBSZtyKY7PU4qxrysOfukd42--pXdyTRyjbw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Miklos Szeredi <mszeredi@redhat.com> writes:
+On 10/25/19 5:58 AM, Dmitry Vyukov wrote:
+> On Fri, Oct 25, 2019 at 1:51 PM syzbot
+> <syzbot+d958a65633ea70280b23@syzkaller.appspotmail.com> wrote:
+>>
+>> Hello,
+>>
+>> syzbot found the following crash on:
+>>
+>> HEAD commit:    139c2d13 Add linux-next specific files for 20191025
+>> git tree:       linux-next
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=17ab5a70e00000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=28fd7a693df38d29
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=d958a65633ea70280b23
+>> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+>>
+>> Unfortunately, I don't have any reproducer for this crash yet.
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+d958a65633ea70280b23@syzkaller.appspotmail.com
+> 
+> +Jens
 
-> Hi Eric,
->
-> Can you please have a look at this patchset?
->
-> The most interesting one is the last oneliner adding FS_USERNS_MOUNT;
-> whether I'm correct in stating that this isn't going to introduce any
-> holes, or not...
+Let me know if/when you have a reproducer for this one. I initially thought
+this was a basic NULL pointer check, but it doesn't look like it. I wonder
+if the thread handling the request got a signal, and since it had the
+task file_table with the io_uring fd attached, it's triggering an exit.
 
-I will take some time and dig through this.
+I'll poke at it, but don't immediately see the issue.
 
-From a robustness standpoint I worry about the stackable filesystem
-side.  As that is uniquely an attack vector with overlayfs.
+-- 
+Jens Axboe
 
-There is definitely demand for this.
-
-
-> Thanks,
-> Miklos
->
-> ---
-> Miklos Szeredi (5):
->   ovl: document permission model
->   ovl: ignore failure to copy up unknown xattrs
->   vfs: allow unprivileged whiteout creation
->   ovl: user xattr
->   ovl: unprivieged mounts
->
->  Documentation/filesystems/overlayfs.txt | 44 +++++++++++++
->  fs/char_dev.c                           |  3 +
->  fs/namei.c                              | 17 ++---
->  fs/overlayfs/copy_up.c                  | 34 +++++++---
->  fs/overlayfs/dir.c                      |  2 +-
->  fs/overlayfs/export.c                   |  2 +-
->  fs/overlayfs/inode.c                    | 39 ++++++------
->  fs/overlayfs/namei.c                    | 56 +++++++++--------
->  fs/overlayfs/overlayfs.h                | 81 +++++++++++++++---------
->  fs/overlayfs/ovl_entry.h                |  1 +
->  fs/overlayfs/readdir.c                  |  5 +-
->  fs/overlayfs/super.c                    | 53 +++++++++++-----
->  fs/overlayfs/util.c                     | 82 +++++++++++++++++++++----
->  include/linux/device_cgroup.h           |  3 +
->  14 files changed, 298 insertions(+), 124 deletions(-)
-
-Eric
