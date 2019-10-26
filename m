@@ -2,79 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D96BE5FAB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Oct 2019 22:56:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAFC9E6034
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Oct 2019 03:04:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbfJZU4M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 26 Oct 2019 16:56:12 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:42451 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726409AbfJZU4M (ORCPT
+        id S1726636AbfJ0CEw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 26 Oct 2019 22:04:52 -0400
+Received: from smg.telkomsa.net ([105.187.200.242]:44758 "EHLO
+        smg.telkomsa.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726525AbfJ0CEw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 26 Oct 2019 16:56:12 -0400
-Received: from dread.disaster.area (pa49-181-161-154.pa.nsw.optusnet.com.au [49.181.161.154])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 4FA223A0606;
-        Sun, 27 Oct 2019 07:56:10 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iOT6X-00068M-N6; Sun, 27 Oct 2019 07:56:09 +1100
-Date:   Sun, 27 Oct 2019 07:56:09 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/4] fs: add generic UNRESVSP and ZERO_RANGE ioctl
- handlers
-Message-ID: <20191026205609.GJ4614@dread.disaster.area>
-References: <20191025023609.22295-1-hch@lst.de>
- <20191025023609.22295-3-hch@lst.de>
- <20191025054452.GF913374@magnolia>
- <20191025095005.GA9613@lst.de>
+        Sat, 26 Oct 2019 22:04:52 -0400
+X-Greylist: delayed 328 seconds by postgrey-1.27 at vger.kernel.org; Sat, 26 Oct 2019 22:04:49 EDT
+X-AuditID: 69bbcaf5-201ff70000000a9e-d4-5db4f9ec670e
+Received: from sargas.telkomsa.net (sargas.telkomsa.net [196.25.211.69])
+        by smg.telkomsa.net (Telkom Internet Messaging Gateway) with SMTP id 58.D8.02718.CE9F4BD5; Sun, 27 Oct 2019 03:59:18 +0200 (CAT)
+Received: from mail8.telkomsa.net (unknown [192.168.16.221])
+        by sargas.telkomsa.net (Postfix) with ESMTP id 3E9B22A0CE7;
+        Sun, 27 Oct 2019 01:33:49 +0200 (SAST)
+Date:   Sun, 27 Oct 2019 01:33:49 +0200 (SAST)
+From:   "Mrs. Ja-ANN (UNIDPF SECRETARIAT) " <online553303@telkomsa.net>
+Reply-To: Office_IDPFDC11118Secretariat@usa.com
+To:     idpfoffice@mail2usa.com
+Message-ID: <465003346.47112718.1572132829121.JavaMail.root@telkomsa.net>
+In-Reply-To: <143999948.46849349.1572099017705.JavaMail.root@telkomsa.net>
+Subject: Re: YOUR PROJECT SUBSIDY NOTICE REF-:|
+ WBDS/UNIDPF/709/SGT43658/2019
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191025095005.GA9613@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
-        a=l3vQdJ1SkhDHY1nke8Lmag==:117 a=l3vQdJ1SkhDHY1nke8Lmag==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
-        a=7-415B0cAAAA:8 a=b_qk7ts0-XUPVcVpBZMA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.146.44.54]
+X-Mailer: Zimbra 7.2.4_GA_2903 (ZimbraWebClient - FF3.0 (Win)/7.2.4_GA_2900)
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SWUwTURT1dYYyNIwOA8KlEpcxEaOCgBprYtQfFNCIaFwj6igjbSwFO3Wp
+        H0oUMPDhUjEIChLBrS6F0giJ4lKISl2BJi4oi4iIuACVQt1wpg3Kz8l575x773vnPQKjbVI5
+        odLoOK2GVTNSGV4b3Bgd5nRZEiM6n9GKxrKnUkV+0Rup4lZ1Ha64Xxy4CI9xmMfH9JpiV0g2
+        yOYncWrVbk47c8EWmbL6eR+W9kK295KlxjsdDRE5yIcAajZkXWjBcpCMoKlHCOzOdNyzKEHQ
+        ln1ZKrpwagZUvM30ErmUiobW5nL3Pk3NhEMV2RKRB1Dj4OTRG24PScVCSe0bJHIfKg76j/30
+        Frk/FQ+Gx2bc4/GDuvz3bo5RofCrqAHz8AlQ+eUM5jndRHCV9CIPXwaZr1vQMTSmYER5wYjy
+        ghHlxQgzIobXp3A8zyazOm4Pqw+LmBO+TaML13HqHakpPBuu4XRmJISqumnrr0IduUorogjE
+        +JL6Lksi7cXuFuqtKJiQMGPJwQxha/TW1CS9kuWVm7W71BxvRUBgTAA5/aE5kSaTWP0+Tps6
+        LI0jcCaIzPoiSJR4gB0cl8Zph9UQgmCAVAoPSftpuWRu73aVWvdflhA+YnNfoflU0UPyaWwK
+        r0r26Da0luiqLTqHEX1ubDeWCuj4KOJvNz7oFvFgj4gvvlWfx2hck6rh5EFk/6DQjhLbKXdp
+        /k0c/lqf0G0kJOBP5ok2X+Hn/RsaVSoo1BMpZF/dD9YLGV5gvtzgA632OzKwvjtBgr2jkIbP
+        Tb9pcLXcCASDyREE1qr7IfDnlCsEzv44PAUuDbQLUD4wBRqaqsLgz/ecKHDU1C+Eb+lfF4G9
+        vTkaTPmuaPiZa18MrYbcGDCdvRkDpx/ZYyHj4pU4GOxzxkGjcWgZlA7Y4sHxZGgllBo7VkHb
+        lWtr4POP12s+CbFJhNjG4BVibDr2/w3k6Qg/4698e9q0MV4SHDn2SP71pITJTS2jarzL2253
+        lXQXLtTJN8krs+Zd7ZPXzbrzcvFW5+TVBuYeZ18S+PVAU3PCh57wk/HSeYb641OPzrp30Xzw
+        cParjABVwE7GUjnJNtFvXURmnqVzadnyGXse9xR15ilCe88XmrpHHakPXV/2vmDuXQbnlWzk
+        NEzLs38BziKVQN0DAAA=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 25, 2019 at 11:50:05AM +0200, Christoph Hellwig wrote:
-> On Thu, Oct 24, 2019 at 10:44:52PM -0700, Darrick J. Wong wrote:
-> > >  	case XFS_IOC_FREESP:
-> > > -	case XFS_IOC_UNRESVSP:
-> > >  	case XFS_IOC_ALLOCSP64:
-> > > -	case XFS_IOC_FREESP64:
-> > > -	case XFS_IOC_UNRESVSP64:
-> > > -	case XFS_IOC_ZERO_RANGE: {
-> > > +	case XFS_IOC_FREESP64: {
-> > 
-> > Ok, so this hoists everything to the vfs except for ALLOCSP and FREESP,
-> > which seems to be ... "set new size; allocate between old and new EOF if
-> > appropriate"?
-> > 
-> > I'm asking because I was never really clear on what those things are
-> > supposed to do. :)
-> 
-> Yes. ALLOCSP/FREESP have so weird semantics that we never added the
-> equivalent functionality to fallocate.
+ 
+Sir/Madam,
+Attn:| The Manager / Director, CEO
+Your Subsidy Ref:| WBDS/UNIDPF/709/SGT43658/2019
 
-We should plan to deprecate and remove ALLOCSP/FREESP - they just
-aren't useful APIs anymore, and nobody has used them in preference
-to the RESVSP/UNRESVSP ioctls since they were introduced in ~1998
-with unwritten extents. We probably should have deprecated then 10
-years ago....
+REF STATUS:| HEREWITH, THROUGH YOUR NAMES AND/OR UNDER YOUR COMPANY'S DATA-PROFILE IN YOUR COUNTRY;
+OUR DEPARTMENT HAS REGISTERED YOUR COMPANY'S DETAILS FOR YOU TO RECEIVE THE AMOUNT OF US$2,750,000.00 MILLION
+FROM THE (UNIDPF) INDUSTRIAL DEVELOPMENT PROJECT SUBSIDY. THIS IS A SPONSORED PROGRAM FROM THE WORLD BANK IN
+YOUR COUNTRY AND AROUND TO WORLD, FOR SMALL BUSINESSES AND INFRASTRUCTURES DEVELOPMENT PROJECT FINANCE 
+IN YOUR COUNTRY AS APPROVED, BETWEEN 2015 - 2030. ENCLOSED IS YOUR (((US$2,750,000.00 MILLION COMPANY'S 
+SUBSIDY ALLOCATION VOUCHER))) FROM OUR DEPARTMENT HERE IN NEW YORK, U.S.A.
+Kindly Re-confirm Your Detail Particulars As Follows:-
+* YOUR NAMES IN FULL:-
+* HOME TEL & MOBILE PHONE:-
+* FULL RESIDENTIAL ADDRESS:- (WITH SUBURB, CITY or STATE AND COUNTRY)
 
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+THANKS IN ANTICIPATION OF YOUR MOST CORDIALLY REPLY
+THROUGH OUR BELOW OFFICE EMAIL.
+/
+--------------------------------------------------
+MRS. JAYNE-ANN HALTIWANGER | {CFO} CHIEF FINANCIAL OFFICE
+ROOM DC1-1118 | EMAIL: Office_UNIDPFSecretariat@mail2Usa.com
+ Tell 001(0212)963 7904 | EMAIL: Jayne-ann.idpfDC1-1118Secretariat@usa.com
+UNIDPF NEW YORK OFFICE l NO. 1 UNITED NATIONAL PLAZA, NY 10017, U.S.A
+*** This PDF File Attachment Is Free From Virus & Not Harmful ***
