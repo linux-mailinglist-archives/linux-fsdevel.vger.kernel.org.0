@@ -2,73 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 643FCE63AE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Oct 2019 16:22:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BF5DE63CC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Oct 2019 16:42:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbfJ0PWa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 27 Oct 2019 11:22:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43966 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726682AbfJ0PWa (ORCPT
+        id S1727558AbfJ0Plz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 27 Oct 2019 11:41:55 -0400
+Received: from mout-p-201.mailbox.org ([80.241.56.171]:27440 "EHLO
+        mout-p-201.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727056AbfJ0Plz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 27 Oct 2019 11:22:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ABDhaHUlk58M0GS8x0OMrJzxXgr2v5RmyRmLK7Waq+g=; b=dUZFeTqfxrYApphqMY5veHBsj
-        A+RBT+sV9JAtjLVJ+WGOvwNXNw/oX5Nmdvk/AvVWpQtUikMzhdcFtLs1khOn6BULZkyos9EyCedJ5
-        hnt6JriZauG8vb9KgHx/w5MlX/0VsPY2qith2hEChaeTwdY1U4gqTqvfXNegsgqDSyxL508wE6OTp
-        rSaIg8nxkLmtsXAZhqw2s7U224aDC3inBSdoJfjj10LxclpiVy3dsmRybQQ2cjBiPNh9YfQem1O52
-        i64kZVSne/xbFmaWrYMJPXP1/NB8tION2wFu8JyUehQlS7P6++7uDvnUPpIJ80aCkyA7RRWHTg8rb
-        VpLLc/GSg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iOkN5-0005Zc-Hn; Sun, 27 Oct 2019 15:22:23 +0000
-Date:   Sun, 27 Oct 2019 08:22:23 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     torvalds@linux-foundation.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sun, 27 Oct 2019 11:41:55 -0400
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 471MXZ3cz5zQl8s;
+        Sun, 27 Oct 2019 16:41:50 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
+        with ESMTP id HKUBceS7i6hF; Sun, 27 Oct 2019 16:41:40 +0100 (CET)
+Date:   Mon, 28 Oct 2019 02:41:15 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 11/10] pipe: Add fsync() support [ver #2]
-Message-ID: <20191027152223.GA21194@infradead.org>
-References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
- <30394.1571936252@warthog.procyon.org.uk>
+        Aleksa Sarai <asarai@suse.de>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-ia64@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH RESEND v14 2/6] namei: LOOKUP_IN_ROOT: chroot-like path
+ resolution
+Message-ID: <20191027154115.ex55njkysey4m6pu@yavin.dot.cyphar.com>
+References: <20191026185700.10708-1-cyphar@cyphar.com>
+ <20191026185700.10708-3-cyphar@cyphar.com>
+ <CAHk-=wjPPWvm5_eR4uaHJaU1isTUk-4iXQV3Z2Px9A+w6j2nHg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="x254sstnuxqz6cbi"
 Content-Disposition: inline
-In-Reply-To: <30394.1571936252@warthog.procyon.org.uk>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAHk-=wjPPWvm5_eR4uaHJaU1isTUk-4iXQV3Z2Px9A+w6j2nHg@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 05:57:32PM +0100, David Howells wrote:
-> pipe: Add fsync() support
-> 
-> The keyrings testsuite needs the ability to wait for all the outstanding
-> notifications in the queue to have been processed so that it can then go
-> through them to find out whether the notifications it expected have been
-> emitted.
-> 
-> Implement fsync() support for pipes to provide this.  The tailmost buffer
-> at the point of calling is marked and fsync adds itself to the list of
-> waiters, noting the tail position to be waited for and marking the buffer
-> as no longer mergeable.  Then when the buffer is consumed, if the flag is
-> set, any matching waiters are woken up.
 
-I am _really_ worried about overloading fsync for this behavior.  fsync
-hasn't done anything for 50 years, and suddenly adding any action
-is not helpful.  If you can't use FIONREAD please add a new ioctls
-instead, and document it properly.
+--x254sstnuxqz6cbi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On 2019-10-27, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> On Sat, Oct 26, 2019 at 2:58 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
+> >
+> > +       /* LOOKUP_IN_ROOT treats absolute paths as being relative-to-di=
+rfd. */
+> > +       if (flags & LOOKUP_IN_ROOT)
+> > +               while (*s =3D=3D '/')
+> > +                       s++;
+> > +
+> >         /* Figure out the starting path and root (if needed). */
+> >         if (*s =3D=3D '/') {
+> >                 error =3D nd_jump_root(nd);
+>=20
+> So I'm still hung up on this.
+>=20
+> I guess I can't help it, but I look at the above, and it makes me go
+> "whoever wrote those tests wasn't thinking".
+>=20
+> It just annoys me how it tests for '/' completely unnecessarily.
+>=20
+> If LOOKUP_IN_ROOT is true, we know the subsequent test for '/' is not
+> going to match, because we just removed it. So I look at that code and
+> go "that code is doing stupid things".
+
+Okay, fair enough.
+
+> That's why I suggested moving the LOOKUP_IN_ROOT check inside the '/' tes=
+t.
+>=20
+> Alternatively, just make the logic be
+>=20
+>         if (flags & LOOKUP_IN_ROOT) {
+>                .. remove '/'s ...
+>         } else if (*s =3D=3D '/') {
+>                 .. handl;e root ..
+>=20
+> and remove the next "else" clause
+
+I've gone with the latter since I think it reads better.
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--x254sstnuxqz6cbi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXbW6lwAKCRCdlLljIbnQ
+EoPNAP0TH7raCw5NCLFnqJEAJ2bl+pDz8oGtxQKGtoXC7HohOQEAqFv71cuFJjle
+mvHPyKwhvNv8coIv55o8qUxny+XxIAg=
+=0iVb
+-----END PGP SIGNATURE-----
+
+--x254sstnuxqz6cbi--
