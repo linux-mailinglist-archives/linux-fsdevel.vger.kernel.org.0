@@ -2,122 +2,211 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B248E7A34
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Oct 2019 21:36:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D08A3E7AA6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Oct 2019 22:00:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387620AbfJ1Ugy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Oct 2019 16:36:54 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33070 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726816AbfJ1Ugy (ORCPT
+        id S2388670AbfJ1VAP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Oct 2019 17:00:15 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36971 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730030AbfJ1VAP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Oct 2019 16:36:54 -0400
-Received: by mail-pf1-f195.google.com with SMTP id c184so7731488pfb.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Oct 2019 13:36:49 -0700 (PDT)
+        Mon, 28 Oct 2019 17:00:15 -0400
+Received: by mail-pl1-f195.google.com with SMTP id p13so6298480pll.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Oct 2019 14:00:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=e6PsAZcqr3oYV/o2k3hxPPelLIbfYqfer30lzZ2BFcY=;
-        b=f3VmmWddgpdgU1E2UCNM6eeKOTtiJc5S/WhchNMLI5+X2wZnW9VV7dIuMrLtVqgbCp
-         3BgMn1u5QY7aawnMiX4U2V3+csgO1ddnLgMGs45jvCPBhTUYdLws5/INzy0HXDlnfXzs
-         cCecLkqEbQog15uiini90A1DiwZwB6YEsntBIWrvC8Z+JOxiDDMI4s/xaZwf2/VRisSP
-         g1XL9Cs7hrDb9GXQtGrAHu5wTlTR8H7Uby5nTi4fWqesFvXbqLywvWw8fh4Kd9XteNgB
-         rbVEl0TKeDnR3C69L9uYHObsb29GV6b2XZgyHuIaYInOIEAFh7Yd5Z9uHavd4omQm3nZ
-         aIHA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=P/TNBkzS9c/yuaoKTyq62ByC/G1jJQ84tbNvzb7SgP4=;
+        b=o0C9HsFtBU9Sra7x6IaGLFH7PguNxhPeWMy7ynv9qa03nFGgs3b/LqSleDwmrFa7hV
+         HIpIl3ADXvcn4z/BekGETXFni2nBKstLman9EpDxXkk/x/PQ7fD5ZYSRriRgARzPcng5
+         cAQASlDGW/NyW9Ys9CeBjqFTY/FDG6qDALiUmt2PvyDSvVFkCxVrpx14R+M9p+Bo7O5O
+         4drW68U7DNRMUwdRVG+2EMbuu2DP5GhNnhPzMZXhyIPDaUrTSgEYX/0gMGUqpgIxjq/S
+         Yf1WyoN4mnZMtAeR4hftKH7MSME6xXhzVvIWdCrToeqTYuc0g1Xd568hzngj7UmhwBXI
+         sNaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=e6PsAZcqr3oYV/o2k3hxPPelLIbfYqfer30lzZ2BFcY=;
-        b=aFiEvyhg65JlJEKb1Wf1oXKviVAOnn5MiC8ujMu11zc5lwX8bQibbWBMRUzIngs+fo
-         JWtatFyV4O+MO+5mxqXd2IH1hItYd32hKAN6PhM24w5wGp1sEZETyvskJgTF+evJfQBi
-         sJ1ux9jlCRef1D5PlysA8xi0JwU4q+dWA3yjL+bBNb6h5e9n2Mwk1hl6xXPQ92QrLIdo
-         0lg4QlNO2KhVVhgARNeZnb86CqH8aSN/oUPl0sTfPqPbaOwe3sQat6zzAXz2jcKq1nbv
-         iR7cDsxhjFt8T36wYBgIFFpk3IFLTalLvynIxq/r2ZIAz6VhTTFX5pCuu5B9KGyJB8RO
-         U8hQ==
-X-Gm-Message-State: APjAAAWqJkJxwft4J027wkEh8ZFgWYb83S4MMqLv3R2rFWTzRt1ECUwK
-        iFgO6daT/BRrzdrwPe1oT0iC
-X-Google-Smtp-Source: APXvYqy9yZPBfvOSWcmpa0LDyHMOrbfsD6MZFeQ64kJK2fev3biiGJx2YcU9F+nJP8Q8l8tAG03+ow==
-X-Received: by 2002:a62:7c91:: with SMTP id x139mr13910960pfc.119.1572295008612;
-        Mon, 28 Oct 2019 13:36:48 -0700 (PDT)
-Received: from bobrowski ([110.232.114.101])
-        by smtp.gmail.com with ESMTPSA id c14sm12887423pfm.179.2019.10.28.13.36.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2019 13:36:47 -0700 (PDT)
-Date:   Tue, 29 Oct 2019 07:36:41 +1100
-From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     tytso@mit.edu, jack@suse.cz, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        hch@infradead.org, david@fromorbit.com
-Subject: Re: [PATCH v6 04/11] ext4: move set iomap routines into a separate
- helper ext4_set_iomap()
-Message-ID: <20191028203641.GA25021@bobrowski>
-References: <cover.1572255424.git.mbobrowski@mbobrowski.org>
- <36c0b0028215ed0a39697512054f3fa4799b0701.1572255425.git.mbobrowski@mbobrowski.org>
- <20191028170348.GA15203@magnolia>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=P/TNBkzS9c/yuaoKTyq62ByC/G1jJQ84tbNvzb7SgP4=;
+        b=UgplFX5KJtH6Lpp4ckflsMHJRHMMb+K1DN75twJk+2P8L+966La4+zBdL+4uxk6BJy
+         BrJDeVJF0L8IIYo4XFOJLHrCssrQH5wecV8S9QWTuTgIklqQcC0I4frrcm2CR3FNe6u9
+         NAtXT0Y7SX/tpfPY2STaaMFbvEp81I6HjR1AzLMCX3YlUOOwrvxdlXLPXrLMIwG/4gva
+         KNaHxminqzs8UnSYvTAaaTSOKVYCfUs2Wz1Wu1kgke2il/6KEghF0E8sQ25w6rOuuR29
+         8P+2OPuTFQ5dtYI/KnIdkOS4z1jLNg1Y7nlgcOk/PFNz4xjrR8NAbT6fwPj/RxRj9lCS
+         BLBA==
+X-Gm-Message-State: APjAAAXBm1YLvB8ZxdnYDAhUucOifnU0loZSm021zvx3hb7hLtS/sij3
+        DAY5JbkCVPnssPM/ABLJEn3SXg==
+X-Google-Smtp-Source: APXvYqx+2ejtwliH32Lrsh/HKKbawYZkx6gTkSPqk4stHnkUm7zC43dfFaIO4KnDQRSPXO/qOp1v1A==
+X-Received: by 2002:a17:902:b20b:: with SMTP id t11mr52091plr.89.1572296413030;
+        Mon, 28 Oct 2019 14:00:13 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.79])
+        by smtp.gmail.com with ESMTPSA id a8sm10678707pfc.20.2019.10.28.14.00.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 28 Oct 2019 14:00:12 -0700 (PDT)
+Subject: Re: INFO: task hung in io_wq_destroy
+To:     syzbot <syzbot+0f1cc17f85154f400465@syzkaller.appspotmail.com>,
+        andriy.shevchenko@linux.intel.com, davem@davemloft.net,
+        f.fainelli@gmail.com, gregkh@linuxfoundation.org,
+        idosch@mellanox.com, kimbrownkd@gmail.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, petrm@mellanox.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        viro@zeniv.linux.org.uk, wanghai26@huawei.com,
+        yuehaibing@huawei.com
+References: <000000000000f86a4f0595fdb152@google.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <f1a79e81-b41f-ba48-9bf3-aeae708f73ba@kernel.dk>
+Date:   Mon, 28 Oct 2019 15:00:08 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191028170348.GA15203@magnolia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <000000000000f86a4f0595fdb152@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 10:03:48AM -0700, Darrick J. Wong wrote:
-> On Mon, Oct 28, 2019 at 09:51:31PM +1100, Matthew Bobrowski wrote:
-> > +static void ext4_set_iomap(struct inode *inode, struct iomap *iomap,
-> > +			   struct ext4_map_blocks *map, loff_t offset,
-> > +			   loff_t length)
-> > +{
-> > +	u8 blkbits = inode->i_blkbits;
-> > +
-> > +	/*
-> > +	 * Writes that span EOF might trigger an I/O size update on completion,
-> > +	 * so consider them to be dirty for the purpose of O_DSYNC, even if
-> > +	 * there is no other metadata changes being made or are pending.
-> > +	 */
-> > +	iomap->flags = 0;
-> > +	if (ext4_inode_datasync_dirty(inode) ||
-> > +	    offset + length > i_size_read(inode))
-> > +		iomap->flags |= IOMAP_F_DIRTY;
-> > +
-> > +	if (map->m_flags & EXT4_MAP_NEW)
-> > +		iomap->flags |= IOMAP_F_NEW;
-> > +
-> > +	iomap->bdev = inode->i_sb->s_bdev;
-> > +	iomap->dax_dev = EXT4_SB(inode->i_sb)->s_daxdev;
-> > +	iomap->offset = (u64) map->m_lblk << blkbits;
-> > +	iomap->length = (u64) map->m_len << blkbits;
-> > +
-> > +	if (map->m_flags & (EXT4_MAP_MAPPED | EXT4_MAP_UNWRITTEN)) {
+On 10/28/19 1:42 PM, syzbot wrote:
+> Hello,
 > 
-> /me wonders if this would be easier to follow if it was less indenty:
+> syzbot found the following crash on:
 > 
-> /*
->  * <giant comment from below>
->  */
-> if (m_flags & EXT4_MAP_UNWRITTEN) {
-> 	iomap->type = IOMAP_UNWRITTEN;
-> 	iomap->addr = ...
-> } else if (m_flags & EXT4_MAP_MAPPED) {
-> 	iomap->type = IOAMP_MAPPED;
-> 	iomap->addr = ...
-> } else {
-> 	iomap->type = IOMAP_HOLE;
-> 	iomap->addr = IOMAP_NULL_ADDR;
-> }
+> HEAD commit:    139c2d13 Add linux-next specific files for 20191025
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=137a3e97600000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=28fd7a693df38d29
+> dashboard link: https://syzkaller.appspot.com/bug?extid=0f1cc17f85154f400465
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15415bdf600000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=101fa6e4e00000
 > 
-> Rather than double-checking m_flags?
+> The bug was bisected to:
+> 
+> commit 3f982fff29b4ad339b36e9cf43422d1039f9917a
+> Author: Jens Axboe <axboe@kernel.dk>
+> Date:   Thu Oct 24 17:35:03 2019 +0000
+> 
+>       Merge branch 'for-5.5/drivers' into for-next
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17f7e44ce00000
+> final crash:    https://syzkaller.appspot.com/x/report.txt?x=140fe44ce00000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=100fe44ce00000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+0f1cc17f85154f400465@syzkaller.appspotmail.com
+> Fixes: 3f982fff29b4 ("Merge branch 'for-5.5/drivers' into for-next")
+> 
+> INFO: task syz-executor696:18072 blocked for more than 143 seconds.
+>         Not tainted 5.4.0-rc4-next-20191025 #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> syz-executor696 D28160 18072   9609 0x00004004
+> Call Trace:
+>    context_switch kernel/sched/core.c:3385 [inline]
+>    __schedule+0x94a/0x1e70 kernel/sched/core.c:4070
+>    schedule+0xdc/0x2b0 kernel/sched/core.c:4144
+>    schedule_timeout+0x717/0xc50 kernel/time/timer.c:1871
+>    do_wait_for_common kernel/sched/completion.c:83 [inline]
+>    __wait_for_common kernel/sched/completion.c:104 [inline]
+>    wait_for_common kernel/sched/completion.c:115 [inline]
+>    wait_for_completion+0x29c/0x440 kernel/sched/completion.c:136
+>    io_wq_destroy+0x247/0x470 fs/io-wq.c:784
+>    io_finish_async+0x102/0x180 fs/io_uring.c:2890
+>    io_ring_ctx_free fs/io_uring.c:3615 [inline]
+>    io_ring_ctx_wait_and_kill+0x249/0x710 fs/io_uring.c:3683
+>    io_uring_release+0x42/0x50 fs/io_uring.c:3691
+>    __fput+0x2ff/0x890 fs/file_table.c:280
+>    ____fput+0x16/0x20 fs/file_table.c:313
+>    task_work_run+0x145/0x1c0 kernel/task_work.c:113
+>    tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+>    exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:163
+>    prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
+>    syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
+>    do_syscall_64+0x65f/0x760 arch/x86/entry/common.c:300
+>    entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x4019d0
+> Code: 01 f0 ff ff 0f 83 20 0c 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f
+> 44 00 00 83 3d fd 2c 2d 00 00 75 14 b8 03 00 00 00 0f 05 <48> 3d 01 f0 ff
+> ff 0f 83 f4 0b 00 00 c3 48 83 ec 08 e8 5a 01 00 00
+> RSP: 002b:00007ffdcb9bf4b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
+> RAX: 0000000000000000 RBX: 0000000000000004 RCX: 00000000004019d0
+> RDX: 0000000000401970 RSI: 0000000020000080 RDI: 0000000000000003
+> RBP: 0000000000000000 R08: 0000000000000004 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000670
+> R13: 0000000000402ae0 R14: 0000000000000000 R15: 0000000000000000
+> 
+> Showing all locks held in the system:
+> 1 lock held by khungtaskd/1078:
+>    #0: ffffffff88faba80 (rcu_read_lock){....}, at:
+> debug_show_all_locks+0x5f/0x279 kernel/locking/lockdep.c:5336
+> 1 lock held by rsyslogd/9148:
+>    #0: ffff888099aa8660 (&f->f_pos_lock){+.+.}, at: __fdget_pos+0xee/0x110
+> fs/file.c:801
+> 2 locks held by getty/9238:
+>    #0: ffff88809a77f090 (&tty->ldisc_sem){++++}, at:
+> ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
+>    #1: ffffc90005f472e0 (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x220/0x1bf0 drivers/tty/n_tty.c:2156
+> 2 locks held by getty/9239:
+>    #0: ffff8880a7bc7090 (&tty->ldisc_sem){++++}, at:
+> ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
+>    #1: ffffc90005f4f2e0 (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x220/0x1bf0 drivers/tty/n_tty.c:2156
+> 2 locks held by getty/9240:
+>    #0: ffff8880a83e7090 (&tty->ldisc_sem){++++}, at:
+> ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
+>    #1: ffffc90005f3d2e0 (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x220/0x1bf0 drivers/tty/n_tty.c:2156
+> 2 locks held by getty/9241:
+>    #0: ffff88808e706090 (&tty->ldisc_sem){++++}, at:
+> ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
+>    #1: ffffc90005f292e0 (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x220/0x1bf0 drivers/tty/n_tty.c:2156
+> 2 locks held by getty/9242:
+>    #0: ffff8880a7b75090 (&tty->ldisc_sem){++++}, at:
+> ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
+>    #1: ffffc90005f312e0 (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x220/0x1bf0 drivers/tty/n_tty.c:2156
+> 2 locks held by getty/9243:
+>    #0: ffff8880a130f090 (&tty->ldisc_sem){++++}, at:
+> ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
+>    #1: ffffc90005f532e0 (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x220/0x1bf0 drivers/tty/n_tty.c:2156
+> 2 locks held by getty/9244:
+>    #0: ffff88809b09e090 (&tty->ldisc_sem){++++}, at:
+> ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
+>    #1: ffffc90005f212e0 (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x220/0x1bf0 drivers/tty/n_tty.c:2156
+> 
+> =============================================
+> 
+> NMI backtrace for cpu 0
+> CPU: 0 PID: 1078 Comm: khungtaskd Not tainted 5.4.0-rc4-next-20191025 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>    __dump_stack lib/dump_stack.c:77 [inline]
+>    dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+>    nmi_cpu_backtrace.cold+0x70/0xb2 lib/nmi_backtrace.c:101
+>    nmi_trigger_cpumask_backtrace+0x23b/0x28b lib/nmi_backtrace.c:62
+>    arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+>    trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
+>    check_hung_uninterruptible_tasks kernel/hung_task.c:269 [inline]
+>    watchdog+0xc8f/0x1350 kernel/hung_task.c:353
+>    kthread+0x361/0x430 kernel/kthread.c:255
+>    ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+> Sending NMI from CPU 0 to CPUs 1:
+> NMI backtrace for cpu 1 skipped: idling at native_safe_halt+0xe/0x10
+> arch/x86/include/asm/irqflags.h:60
 
-Yeah, you're right. The extra checks and levels of indentation aren't really
-necessary and can be simplified further, as you've suggested above.
+This is fixed in my for-next branch for a few days at least, unfortunately
+linux-next is still on the old one. Next version should be better.
 
-Thanks for looking over this for me.
+-- 
+Jens Axboe
 
-/me adds this to the TODO for v7.
-
---<M>--
