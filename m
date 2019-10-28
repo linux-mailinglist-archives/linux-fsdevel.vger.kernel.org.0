@@ -2,73 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7546AE703E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Oct 2019 12:21:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C05CE7093
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Oct 2019 12:39:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727711AbfJ1LUz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Oct 2019 07:20:55 -0400
-Received: from forwardcorp1j.mail.yandex.net ([5.45.199.163]:41610 "EHLO
-        forwardcorp1j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727163AbfJ1LUz (ORCPT
+        id S2388546AbfJ1Lj5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Oct 2019 07:39:57 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56788 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729074AbfJ1Lj5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Oct 2019 07:20:55 -0400
-Received: from mxbackcorp1j.mail.yandex.net (mxbackcorp1j.mail.yandex.net [IPv6:2a02:6b8:0:1619::162])
-        by forwardcorp1j.mail.yandex.net (Yandex) with ESMTP id 3ED9B2E14E7;
-        Mon, 28 Oct 2019 14:20:52 +0300 (MSK)
-Received: from myt4-4db2488e778a.qloud-c.yandex.net (myt4-4db2488e778a.qloud-c.yandex.net [2a02:6b8:c00:884:0:640:4db2:488e])
-        by mxbackcorp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id JysqeZpZ3P-Kp9ud7sV;
-        Mon, 28 Oct 2019 14:20:52 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1572261652; bh=8XwSiEkPC9qn9resugp5JbDrv4IyCtiDq/CQDPF6oiY=;
-        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
-        b=aOTb4mCQwAKdSGLq1PQZE9I3SRWh+HZt0QF2TTF7e2a6SV9hJ3A7PG89Jvw3hRubY
-         R5QiEkOs+cvQ3gUnXVOkPCgOBUEVuXnf6Y5l7B54F+tiZezohUk7rtBug8VpmKj2xU
-         oHG4G0QDMPHmsDBnO0SrSQtH+cD382KMs8OyukVo=
-Authentication-Results: mxbackcorp1j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:148a:8f3:5b61:9f4])
-        by myt4-4db2488e778a.qloud-c.yandex.net (nwsmtp/Yandex) with ESMTPSA id o1Ru44CYmh-KpVKoKKg;
-        Mon, 28 Oct 2019 14:20:51 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: Re: [PATCH RFC] fs/fcntl: add fcntl F_GET_RSS
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Michal Hocko <mhocko@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
+        Mon, 28 Oct 2019 07:39:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=qlaRIlg2IzHlknjdR50kOOzdtwiROoikVmFM60sEtfY=; b=O+rif9bOXr8XIG1Mu1oBzvBg7
+        ONF2DJt8igNpozuZHO6SFOXM7asLVC9s/240RyJ+AvKpGGX+QdsHBVcb/+AViPZyY3Bztw+D+vXOJ
+        nn6abYBCb5dcDVlij63Qm1aMwITCecRR4Xwsw4LtpVGGQHZEPOtMlhNKoRczSK68vFTpnZn5YEFe8
+        zZkbewymgdxB8y00NXwGSZdaarHT4T8z7N+MaLES3IxVnVEQOv8GyoqBO1IRtXyGQn0KFrWQ/uKkp
+        RQC03L0x644OIvhavb/LbF03rOzd6KoDi6cLxRe1nxrPapZG4fdf04srHXqNicbbnuKh9cWd/I0eA
+        44QcBmt0g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iP3NG-0000mT-27; Mon, 28 Oct 2019 11:39:50 +0000
+Date:   Mon, 28 Oct 2019 04:39:50 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>
-References: <157225848971.557.16257813537984792761.stgit@buzz>
- <20191028111034.GS2963@bombadil.infradead.org>
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Message-ID: <33978ec2-ac27-1b8b-ba33-3bd2c66aa016@yandex-team.ru>
-Date:   Mon, 28 Oct 2019 14:20:51 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v17 0/1] staging: Add VirtualBox guest shared folder
+ (vboxsf) support
+Message-ID: <20191028113950.GA2406@infradead.org>
+References: <20191028111744.143863-1-hdegoede@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20191028111034.GS2963@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191028111744.143863-1-hdegoede@redhat.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 28/10/2019 14.10, Matthew Wilcox wrote:
-> On Mon, Oct 28, 2019 at 01:28:09PM +0300, Konstantin Khlebnikov wrote:
->> +	if (dax_mapping(mapping))
->> +		pages = READ_ONCE(mapping->nrexceptional);
->> +	else
->> +		pages = READ_ONCE(mapping->nrpages);
+On Mon, Oct 28, 2019 at 12:17:43PM +0100, Hans de Goede wrote:
+> Hi Greg,
 > 
-> I'm not sure this is the right calculation for DAX files.  We haven't
-> allocated any memory for DAX; we're just accessing storage directly.
-> The entries in the page caache are just translation from file offset to
-> physical address.
+> As discussed previously can you please take vboxsf upstream through
+> drivers/staging?
 > 
+> It has seen many revisions on the fsdevel list, but it seems that the
+> fsdevel people are to busy to pick it up.
+> 
+> Previous versions of this patch have been reviewed by Al Viro, David Howells
+> and Christoph Hellwig (all in the Cc) and I believe that the current
+> version addresses all their review remarks.
 
-Yep, makes sense. If RSS declared as memory usage then this chunk must do
-pages = READ_ONCE(mapping->nrpages) unconditionally and report 0 for DAX.
+Please just send it to Linus directly.  This is the equivalent of
+consumer hardware enablement and it is in a state as clean as it gets
+for the rather messed up protocol.
