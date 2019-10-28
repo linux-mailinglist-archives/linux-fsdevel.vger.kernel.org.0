@@ -2,62 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B4E8E7025
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Oct 2019 12:10:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DA9DE7039
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Oct 2019 12:17:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726124AbfJ1LKj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Oct 2019 07:10:39 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47362 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbfJ1LKi (ORCPT
+        id S1727061AbfJ1LRx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Oct 2019 07:17:53 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:29119 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725776AbfJ1LRx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Oct 2019 07:10:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=QYRGqons38NtMgtcv+gzyzZCBRvkASR8tK2x6q26fog=; b=C2Fk946fmaN4QY8nAYZ1vMm2I
-        w0+gKnBQrGuUVKOFpgp4SK2A5VKbLkM3ClkVdoLUznnQA0dzuDaj9icom7IfIUBW5ujgQZT8xqSLo
-        vTiFTK5CZQgI9b6lcrtDBgnJCyRuF1avCfiAf7IMcXr6Nij4E/32a21gqi2o+SxkN5tyrkKCSvtDI
-        4/yE9UG0hGsfX10WoOekfQ8N51JSZQCd3jSPmalVxKYLP/pDxAF2nXeyYsym4IWAFw5xLjDFku72w
-        JXA17Jerqj3nWG+uUa94+7F4+cjrT8ekYPyfJuvu5lyg64HUkwPTXK3VjPlqgcZ5C3Ned657hv4il
-        uw7PAqTww==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iP2uw-0007FD-Nb; Mon, 28 Oct 2019 11:10:34 +0000
-Date:   Mon, 28 Oct 2019 04:10:34 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Michal Hocko <mhocko@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
+        Mon, 28 Oct 2019 07:17:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572261472;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=xvGy8lfSyzYT4HF73ZOXkZjMD3C1Ua03UylbZbwvVfY=;
+        b=FXsiZmCZWK3WBNnWPL1qY+zVJTT6D5HZRgKqXxX33/3Makkfqth0a3nzxgNltZ+DETG9VW
+        FWD40ZlhPVA/MBZME/Nqq+KcAc7KHjsIiYsRijgGH9uUMhuh+MB7xlRYdI8aWKcODynbXU
+        EWiNGrCYN9TuWD+Z8QGBdlHdYz85Es4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-360-WNphYuquOhybpm7TOvjMvg-1; Mon, 28 Oct 2019 07:17:49 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BF407476;
+        Mon, 28 Oct 2019 11:17:47 +0000 (UTC)
+Received: from shalem.localdomain.com (ovpn-116-64.ams2.redhat.com [10.36.116.64])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B4844194B2;
+        Mon, 28 Oct 2019 11:17:45 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>
-Subject: Re: [PATCH RFC] fs/fcntl: add fcntl F_GET_RSS
-Message-ID: <20191028111034.GS2963@bombadil.infradead.org>
-References: <157225848971.557.16257813537984792761.stgit@buzz>
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v17 0/1] staging: Add VirtualBox guest shared folder (vboxsf) support
+Date:   Mon, 28 Oct 2019 12:17:43 +0100
+Message-Id: <20191028111744.143863-1-hdegoede@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <157225848971.557.16257813537984792761.stgit@buzz>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: WNphYuquOhybpm7TOvjMvg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 01:28:09PM +0300, Konstantin Khlebnikov wrote:
-> +	if (dax_mapping(mapping))
-> +		pages = READ_ONCE(mapping->nrexceptional);
-> +	else
-> +		pages = READ_ONCE(mapping->nrpages);
+Hi Greg,
 
-I'm not sure this is the right calculation for DAX files.  We haven't
-allocated any memory for DAX; we're just accessing storage directly.
-The entries in the page caache are just translation from file offset to
-physical address.
+As discussed previously can you please take vboxsf upstream through
+drivers/staging?
+
+It has seen many revisions on the fsdevel list, but it seems that the
+fsdevel people are to busy to pick it up.
+
+Previous versions of this patch have been reviewed by Al Viro, David Howell=
+s
+and Christoph Hellwig (all in the Cc) and I believe that the current
+version addresses all their review remarks.
+
+Regards,
+
+Hans
 
