@@ -2,165 +2,223 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD038E69E0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Oct 2019 23:10:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE5CEE6A5B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Oct 2019 01:58:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728024AbfJ0WKr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 27 Oct 2019 18:10:47 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:57349 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726931AbfJ0WKr (ORCPT
+        id S1728833AbfJ1A65 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 27 Oct 2019 20:58:57 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:39175 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728205AbfJ1A65 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 27 Oct 2019 18:10:47 -0400
-Received: from dread.disaster.area (pa49-181-161-154.pa.nsw.optusnet.com.au [49.181.161.154])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 0A0EF3A0432;
-        Mon, 28 Oct 2019 09:10:40 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iOqkB-0006QW-Bo; Mon, 28 Oct 2019 09:10:39 +1100
-Date:   Mon, 28 Oct 2019 09:10:39 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     Boaz Harrosh <boaz@plexistor.com>, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/5] Enable per-file/directory DAX operations
-Message-ID: <20191027221039.GL4614@dread.disaster.area>
-References: <b7849297-e4a4-aaec-9a64-2b481663588b@plexistor.com>
- <b883142c-ecfe-3c5b-bcd9-ebe4ff28d852@plexistor.com>
- <20191023221332.GE2044@dread.disaster.area>
- <efffc9e7-8948-a117-dc7f-e394e50606ab@plexistor.com>
- <20191024073446.GA4614@dread.disaster.area>
- <fb4f8be7-bca6-733a-7f16-ced6557f7108@plexistor.com>
- <20191024213508.GB4614@dread.disaster.area>
- <ab101f90-6ec1-7527-1859-5f6309640cfa@plexistor.com>
- <20191025003603.GE4614@dread.disaster.area>
- <20191025204926.GA26184@iweiny-DESK2.sc.intel.com>
+        Sun, 27 Oct 2019 20:58:57 -0400
+Received: by mail-lf1-f68.google.com with SMTP id 195so6473589lfj.6
+        for <linux-fsdevel@vger.kernel.org>; Sun, 27 Oct 2019 17:58:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=hev-cc.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1aMsAP2PxExyB/E1NoTV0dqnnfdxMUwdxPX5EmrFyzA=;
+        b=O77cxxp0TiDbHCipSNxBDPQs6T3YuiXf2d6J838uRz/Yz+afk4zkR4cPIm4g3CsmLU
+         +BQIeATLcLKQ3CnG6y/WT1V6Wder0rgPEQQOcvJLBXyqGsXF44D7R/iyUcHJZdJUnlQ5
+         +FKKNxPCswaqseS4VUyoitrkxGU/Xg/Mg6Nu6OYsvG4oOjj7V/sH3Aa+VajjKaSI5flC
+         5RfLygrqux7RvLJcNKY0PfyXkS0784Dgxwvw6BQAJQJgqUJGj4NUukHElgcB73eiWejp
+         Ch8wzrgFhJkDlErFtU7bxaYsLF/DhvBa20f/1dphxEnP9jFGkBzHzVzXqvtA+jPR4iLu
+         jC3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1aMsAP2PxExyB/E1NoTV0dqnnfdxMUwdxPX5EmrFyzA=;
+        b=JOeds0mGVYgjwOpnn2SOzcRkUxAUmp2ffNa1wAaKeLIsAqihWqsKkeJr2rCoan6lu9
+         knXlP61LxAjm+21lrUaKuj7nQznN1D+J3sjsEpshkOS5mgWFeRmG22xkLka80ej4g8uH
+         aJuhA13ejA0rI70UkORXbWHRpOKiv+4EXVYck3r3F0Wot6rTndZPUtGz02RheeRszJ+R
+         dnOU58e5vhKHV3Prg9xTTbYo3cKCATuI5Id803a1bF6w9KG+96Y2gJURWW06SjsyA2NT
+         PB1xHfhHc9/mBQpqL+TsNlAOcKSWve9k5TAivsrFBdBUV2uM3E7fW5Jv4BcK1AGg/yZq
+         hXLg==
+X-Gm-Message-State: APjAAAUj6ZSO7vMXcFGkehV99rsr4PNI/pzJlwEkpvrPV0cfakzqhDGX
+        YS3NqVAc+fyaXwKujZ+ZgWnnVOvWxLoa/RBasUV33Q==
+X-Google-Smtp-Source: APXvYqxuFefFQRfxYLkJfVt6hHBd6Eyt1FmfLGZfeU+h+svNEOHgMHfQEyL/zqhvT47BmrFDaTpQdCnU0C81rSHyBto=
+X-Received: by 2002:a05:6512:146:: with SMTP id m6mr47893lfo.98.1572224332997;
+ Sun, 27 Oct 2019 17:58:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191025204926.GA26184@iweiny-DESK2.sc.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=G6BsK5s5 c=1 sm=1 tr=0
-        a=l3vQdJ1SkhDHY1nke8Lmag==:117 a=l3vQdJ1SkhDHY1nke8Lmag==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
-        a=7-415B0cAAAA:8 a=7H7ooxU6e5Yfb1tYggsA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+References: <20191009060516.3577-1-r@hev.cc> <0911c1130bb79fd8c8e266bc7701b251@suse.de>
+In-Reply-To: <0911c1130bb79fd8c8e266bc7701b251@suse.de>
+From:   Heiher <r@hev.cc>
+Date:   Mon, 28 Oct 2019 08:58:35 +0800
+Message-ID: <CAHirt9iJhPA2BbHYFU81M3bcCwd9uk8T_Cvx9_3MRauwz-2+hg@mail.gmail.com>
+Subject: Re: [PATCH RESEND v5] fs/epoll: Remove unnecessary wakeups of nested epoll
+To:     stable@vger.kernel.org
+Cc:     Roman Penyaev <rpenyaev@suse.de>, linux-fsdevel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Davide Libenzi <davidel@xmailserver.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Eric Wong <e@80x24.org>, Jason Baron <jbaron@akamai.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sridhar Samudrala <sridhar.samudrala@intel.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 25, 2019 at 01:49:26PM -0700, Ira Weiny wrote:
-> On Fri, Oct 25, 2019 at 11:36:03AM +1100, Dave Chinner wrote:
-> > On Fri, Oct 25, 2019 at 02:29:04AM +0300, Boaz Harrosh wrote:
-> > > On 25/10/2019 00:35, Dave Chinner wrote:
-> > 
-> > If something like a find or backup program brings the inode into
-> > cache, the app may not even get the behaviour it wants, and it can't
-> > change it until the inode is evicted from cache, which may be never.
-> 
-> Why would this be never?
+Hi,
 
-Because only unreferenced inodes can be removed from cache. As long
-as something holds a reference or repeatedly accesses the inode such
-that reclaim always skips it because it is referenced, it will never
-get evicted from the cache.
+On Wed, Oct 9, 2019 at 5:21 PM Roman Penyaev <rpenyaev@suse.de> wrote:
+>
+> On 2019-10-09 08:05, hev wrote:
+> > From: Heiher <r@hev.cc>
+> >
+> > Take the case where we have:
+> >
+> >         t0
+> >          | (ew)
+> >         e0
+> >          | (et)
+> >         e1
+> >          | (lt)
+> >         s0
+> >
+> > t0: thread 0
+> > e0: epoll fd 0
+> > e1: epoll fd 1
+> > s0: socket fd 0
+> > ew: epoll_wait
+> > et: edge-trigger
+> > lt: level-trigger
+> >
+> > We remove unnecessary wakeups to prevent the nested epoll that working
+> > in edge-
+> > triggered mode to waking up continuously.
+> >
+> > Test code:
+> >  #include <unistd.h>
+> >  #include <sys/epoll.h>
+> >  #include <sys/socket.h>
+> >
+> >  int main(int argc, char *argv[])
+> >  {
+> >       int sfd[2];
+> >       int efd[2];
+> >       struct epoll_event e;
+> >
+> >       if (socketpair(AF_UNIX, SOCK_STREAM, 0, sfd) < 0)
+> >               goto out;
+> >
+> >       efd[0] = epoll_create(1);
+> >       if (efd[0] < 0)
+> >               goto out;
+> >
+> >       efd[1] = epoll_create(1);
+> >       if (efd[1] < 0)
+> >               goto out;
+> >
+> >       e.events = EPOLLIN;
+> >       if (epoll_ctl(efd[1], EPOLL_CTL_ADD, sfd[0], &e) < 0)
+> >               goto out;
+> >
+> >       e.events = EPOLLIN | EPOLLET;
+> >       if (epoll_ctl(efd[0], EPOLL_CTL_ADD, efd[1], &e) < 0)
+> >               goto out;
+> >
+> >       if (write(sfd[1], "w", 1) != 1)
+> >               goto out;
+> >
+> >       if (epoll_wait(efd[0], &e, 1, 0) != 1)
+> >               goto out;
+> >
+> >       if (epoll_wait(efd[0], &e, 1, 0) != 0)
+> >               goto out;
+> >
+> >       close(efd[0]);
+> >       close(efd[1]);
+> >       close(sfd[0]);
+> >       close(sfd[1]);
+> >
+> >       return 0;
+> >
+> >  out:
+> >       return -1;
+> >  }
+> >
+> > More tests:
+> >  https://github.com/heiher/epoll-wakeup
+> >
+> > Cc: Al Viro <viro@ZenIV.linux.org.uk>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Davide Libenzi <davidel@xmailserver.org>
+> > Cc: Davidlohr Bueso <dave@stgolabs.net>
+> > Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+> > Cc: Eric Wong <e@80x24.org>
+> > Cc: Jason Baron <jbaron@akamai.com>
+> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> > Cc: Roman Penyaev <rpenyaev@suse.de>
+> > Cc: Sridhar Samudrala <sridhar.samudrala@intel.com>
+> > Cc: linux-kernel@vger.kernel.org
+> > Cc: linux-fsdevel@vger.kernel.org
+> > Signed-off-by: hev <r@hev.cc>
+> > ---
+> >  fs/eventpoll.c | 16 ----------------
+> >  1 file changed, 16 deletions(-)
+> >
+> > diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> > index c4159bcc05d9..75fccae100b5 100644
+> > --- a/fs/eventpoll.c
+> > +++ b/fs/eventpoll.c
+> > @@ -671,7 +671,6 @@ static __poll_t ep_scan_ready_list(struct eventpoll
+> > *ep,
+> >                             void *priv, int depth, bool ep_locked)
+> >  {
+> >       __poll_t res;
+> > -     int pwake = 0;
+> >       struct epitem *epi, *nepi;
+> >       LIST_HEAD(txlist);
+> >
+> > @@ -738,26 +737,11 @@ static __poll_t ep_scan_ready_list(struct
+> > eventpoll *ep,
+> >        */
+> >       list_splice(&txlist, &ep->rdllist);
+> >       __pm_relax(ep->ws);
+> > -
+> > -     if (!list_empty(&ep->rdllist)) {
+> > -             /*
+> > -              * Wake up (if active) both the eventpoll wait list and
+> > -              * the ->poll() wait list (delayed after we release the lock).
+> > -              */
+> > -             if (waitqueue_active(&ep->wq))
+> > -                     wake_up(&ep->wq);
+> > -             if (waitqueue_active(&ep->poll_wait))
+> > -                     pwake++;
+> > -     }
+> >       write_unlock_irq(&ep->lock);
+> >
+> >       if (!ep_locked)
+> >               mutex_unlock(&ep->mtx);
+> >
+> > -     /* We have to call this outside the lock */
+> > -     if (pwake)
+> > -             ep_poll_safewake(&ep->poll_wait);
+> > -
+> >       return res;
+> >  }
+>
+> This looks good to me.  Heiher, mind to make kselftest out of your test
+> suite?
+>
+> Reviewed-by: Roman Penyaev <rpenyaev@suse.de>
+>
+> --
+> Roman
+>
+>
+>
 
-IOWs, "never" in the practical sense, not "never" in the theoretical
-sense.
+Need to back port this patch to stable branches?
 
-> > Nobody wants implicit/random/uncontrollable/unchangeable behaviour
-> > like this.
-> 
-> I'm thinking this could work with a bit of effort on the users part.  While the
-> behavior does have a bit of uncertainty, I feel like there has to be a way to
-> get the inode to drop from the cache when a final iput() happens on the inode.
-
-Keep in mind that the final iput()->evict() process doesn't mean the
-inode is going to get removed from all filesystem inode caches, just
-the VFS level cache. The filesystem can still have internal
-references to the inode, and still be doing work on the inode that
-the VFS knows nothing about. XFS definitely fits into this category.
-
-XFS will, however, re-initialise the inode aops structure if the VFS
-then does another lookup on the inode while it is in this
-"reclaimed" state, so from the VFS perspective it looks like a
-newly instantiated inodes on the next lookup. We don't actually need
-to do this for large parts of the inode as it is already still in
-the valid state from the evict() call. It's an implementation
-simplification that means we always re-init the ops vectors attached
-to the inode rather than just the fields that need to be
-re-initialised.
-
-IOWs, evict/reinit changing the aops vector because the on disk dax
-flag changed on XFS works by luck right now, not intent....
-
-> Admin programs should not leave files open forever, without the users knowing
-> about it.  So I don't understand why the inode could not be evicted from the
-> cache if the FS knew that this change had been made and the inode needs to be
-> "re-loaded".  See below...
-
-Doesn't need to be an open file - inodes are pinned in memory by the
-reference the dentry holds on it. Hence as long as there are
-actively referenced dentries that point at the inode, the inode
-cannot be reclaimed. Hard links mean multiple dentries could pin the
-inode, too.
-
-> > > (And never change the flag on the fly)
-> > > (Just brain storming here)
-> > 
-> > We went over all this ground when we disabled the flag in the first
-> > place. We disabled the flag because we couldn't come up with a sane
-> > way to flip the ops vector short of tracking the number of aops
-> > calls in progress at any given time. i.e. reference counting the
-> > aops structure, but that's hard to do with a const ops structure,
-> > and so it got disabled rather than allowing users to crash
-> > kernels....
-> 
-> Agreed.  We can't change the a_ops without some guarantee that no one is using
-> the file.  Which means we need all fds to close and a final iput().  I thought
-> that would mean an eviction of the inode and a subsequent reload.
-> 
-> Yesterday I coded up the following (applies on top of this series) but I can't
-> seem to get it to work because I believe xfs is keeping a reference on the
-> inode.  What am I missing?  I think if I could get xfs to recognize that the
-> inode needs to be cleared from it's cache this would work, with some caveats.
-
-You are missing the fact that dentries hold an active reference to
-inodes. So a path lookup (access(), stat(), etc) will pin the inode
-just as effectively as holding an open file because they instantiate
-a dentry that holds a reference to the inode....
-
-> Currently this works if I remount the fs or if I use <procfs>/drop_caches like
-> Boaz mentioned.
-
-drop_caches frees all the dentries that don't have an active
-references before it iterates over inodes, thereby dropping the
-cached reference(s) to the inode that pins it in memory before it
-iterates the inode LRU.
-
-> Isn't there a way to get xfs to do that on it's own?
-
-Not reliably. Killing all the dentries doesn't guarantee the inode
-will be reclaimed immediately. The ioctl() itself requires an open
-file reference to the inode, and there's no telling how many other
-references there are to the inode that the filesystem a) can't find,
-and b) even if it can find them, it is illegal to release them.
-
-IOWs, if you are relying on being able to force eviction of inode
-from the cache for correct operation of a user controlled flag, then
-it's just not going to work.
-
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Best regards!
+Hev
+https://hev.cc
