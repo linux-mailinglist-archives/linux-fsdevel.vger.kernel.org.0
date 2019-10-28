@@ -2,71 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C931EE7228
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Oct 2019 13:55:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6855E722C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Oct 2019 13:57:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728956AbfJ1MzZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Oct 2019 08:55:25 -0400
-Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:44650 "EHLO
-        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728269AbfJ1MzZ (ORCPT
+        id S1729123AbfJ1M5D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Oct 2019 08:57:03 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42629 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729096AbfJ1M5D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Oct 2019 08:55:25 -0400
-Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
-        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id 71BB12E09CF;
-        Mon, 28 Oct 2019 15:55:21 +0300 (MSK)
-Received: from iva4-c987840161f8.qloud-c.yandex.net (iva4-c987840161f8.qloud-c.yandex.net [2a02:6b8:c0c:3da5:0:640:c987:8401])
-        by mxbackcorp1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 6aykFKr5ke-tJBSrcoG;
-        Mon, 28 Oct 2019 15:55:21 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1572267321; bh=8ZYFRTzWqu504O6KQ7FUcpox3cZWhyoBz5ojDPWSmYE=;
-        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
-        b=vBo73IPUe3lrjMad2DFnaYStzbQtHX6+YDN8Zspbs17A3PUhAE2CpNckQRNrj+NQH
-         Fc/ykjTuHoaEP25SzA0GilwBqxkYuDk/Vog1pEEZ+1V9GKWmEN/wj1TMj63mquBT+n
-         9bq3FElt7uiVv3dj0zaldvpCQ2e4tNqLPw32lFcQ=
-Authentication-Results: mxbackcorp1g.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:148a:8f3:5b61:9f4])
-        by iva4-c987840161f8.qloud-c.yandex.net (nwsmtp/Yandex) with ESMTPSA id HgRUn4uEtY-tJWiB8BI;
-        Mon, 28 Oct 2019 15:55:19 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: Re: [PATCH RFC] fs/fcntl: add fcntl F_GET_RSS
-To:     Florian Weimer <fw@deneb.enyo.de>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Michal Hocko <mhocko@suse.com>,
+        Mon, 28 Oct 2019 08:57:03 -0400
+Received: by mail-lj1-f195.google.com with SMTP id a21so11207351ljh.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Oct 2019 05:57:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0z8rcnJQ2Ztw3XS+4jmpXqQHR2gbd+xnEDMVQdJ2PKg=;
+        b=srML+4c4W5XX21msxWpc4UTlLGRvocfhX+m8lvWZmTqWJ5JCiI2mfWZTnHxVqaYfjb
+         RZj0UT8eW/naYqmghTosmknDZj7Xpio4LxUzGrGSO3//giGKDQmYVrnZ/paCFuFAQcsB
+         V7znTFFwZzkN0gTbaEAl9TrDNfH1cG7W0wF73Ynd7rAmULk2w/g74sEdzHqe4AhDJ+3H
+         vPLMBrEepytPqjx0ZwiWK8rMJ4d7YqC1t7Ci1xJs9k1l4TphNVHkdFQ5/Xx3FdjDjY1D
+         qJp1PdMkWXv1nkI0LJwRV0l4SfjCylX+qDHekhf7ufySNb4+QR/AwOoYHWdrxpSqs3Sq
+         uUiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0z8rcnJQ2Ztw3XS+4jmpXqQHR2gbd+xnEDMVQdJ2PKg=;
+        b=Xi+AVdMwg6VHS4viZHz6C9knWy/BmG3oYmjBiR9fIp8r/++C8fbviO9njVFAIWkdPP
+         +n7LXzx8m9Ih99ElV6squIaw5fcwzDYd+XYnWXBwBK9GfeCrc78qOW09L9mr7DqS2s3J
+         azbHFvGJkCQK8CepDNSV40/IwOosD2SWXr2AP3oNwCEbJPtZDCBav7xYJVDEMe+MJa03
+         8N13GmvIHuTIsYgIZhpjHvyvZFHOrjQrid98UUVlSegImdpf405bzF3imfhpZuyk11o0
+         b9GRe8rBRNWpW1jKEcIKf19aKuoR9awRm9Pi0fK7GtRzpiIGD9DbkSroUxAxctNoayN/
+         jULQ==
+X-Gm-Message-State: APjAAAXeqsS4hUR2aRxvlG0D4PPNhomMpeEisSzGmtlY0+dlS0Pvk4E3
+        YoPsZFcP4ghENz9AyY5H56eijA==
+X-Google-Smtp-Source: APXvYqxnZmY+iQCpMLmbeFZh5dem+tdNcGHC4iY1KE4BMNoGuCBgfBV/T08SYVaI0ko2KXi+altLhA==
+X-Received: by 2002:a2e:9759:: with SMTP id f25mr175210ljj.173.1572267421409;
+        Mon, 28 Oct 2019 05:57:01 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id a11sm5241245ljp.97.2019.10.28.05.57.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2019 05:57:00 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id C0662100242; Mon, 28 Oct 2019 15:57:02 +0300 (+03)
+Date:   Mon, 28 Oct 2019 15:57:02 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>
-References: <157225848971.557.16257813537984792761.stgit@buzz>
- <87k18p6qjk.fsf@mid.deneb.enyo.de>
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Message-ID: <d7e76bee-80c3-d787-b854-91e631ab29cd@yandex-team.ru>
-Date:   Mon, 28 Oct 2019 15:55:19 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Steven Whitehouse <swhiteho@redhat.com>
+Subject: Re: [PATCH] mm/filemap: do not allocate cache pages beyond end of
+ file at read
+Message-ID: <20191028125702.xdfbs7rqhm3wer5t@box>
+References: <157225677483.3442.4227193290486305330.stgit@buzz>
+ <20191028124222.ld6u3dhhujfqcn7w@box>
+ <CAHk-=wgQ-Dcs2keNJPovTb4gG33M81yANH6KZM9d5NLUb-cJ1g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <87k18p6qjk.fsf@mid.deneb.enyo.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgQ-Dcs2keNJPovTb4gG33M81yANH6KZM9d5NLUb-cJ1g@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 28/10/2019 14.46, Florian Weimer wrote:
-> * Konstantin Khlebnikov:
+On Mon, Oct 28, 2019 at 01:47:16PM +0100, Linus Torvalds wrote:
+> On Mon, Oct 28, 2019 at 1:42 PM Kirill A. Shutemov <kirill@shutemov.name> wrote:
+> >
+> > I've tried something of this sort back in 2013:
+> >
+> > http://lore.kernel.org/r/1377099441-2224-1-git-send-email-kirill.shutemov@linux.intel.com
+> >
+> > and I've got push back.
+> >
+> > Apparently, some filesystems may not have valid i_size before >readpage().
+> > Not sure if it's still the case...
 > 
->> This implements fcntl() for getting amount of resident memory in cache.
->> Kernel already maintains counter for each inode, this patch just exposes
->> it into userspace. Returned size is in kilobytes like values in procfs.
+> Well, I agree that there might be some network filesystem that might
+> have inode sizes that are stale, but if that's the case then I don't
+> think your previous patch works either.
 > 
-> I think this needs a 32-bit compat implementation which clamps the
-> returned value to INT_MAX.
+> It too will avoid the readpage() if the read position is beyond i_size.
 > 
+> No?
 
-32-bit machine couldn't hold more than 2TB cache in one file.
-Even radix tree wouldn't fit into low memory area.
+Yes. That's the reason the patch was rejected back then.
+
+My point is that we need to make sure that this patch not break anything.
+
+-- 
+ Kirill A. Shutemov
