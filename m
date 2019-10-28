@@ -2,114 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6148CE719B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Oct 2019 13:40:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E19AEE71A9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Oct 2019 13:42:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389146AbfJ1MkH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Oct 2019 08:40:07 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:44359 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727024AbfJ1MkH (ORCPT
+        id S2389188AbfJ1MmZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Oct 2019 08:42:25 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34114 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389163AbfJ1MmX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Oct 2019 08:40:07 -0400
-Received: by mail-lj1-f194.google.com with SMTP id c4so11132325lja.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Oct 2019 05:40:06 -0700 (PDT)
+        Mon, 28 Oct 2019 08:42:23 -0400
+Received: by mail-lj1-f196.google.com with SMTP id 139so10992854ljf.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Oct 2019 05:42:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ATDKJMcIxCSwydf+1lUKxJ7Ftg71NmlGmbozwsqMkmc=;
-        b=QlzDd1Bh3krOIKFjcDBdZoayUKXaWxUvGFEq2duRqI6syPWfllKIuNiRiwFp3Rsvlm
-         nxqwqgYi8hs/NEk8mASxHt8carAtxDUSL6DW6fwUayesh7ZvlNihXqYJHT/hp5a3B/c/
-         sAj/eEL2RfuIZGHXujz05q+R3v1iYQI3WZw6c=
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YXz21DLbYChNtLC16qKg/F5siZzPuHpmcF6L0vjR70Q=;
+        b=UDy5cy9jp7qw9ea3NmGoBYL5rkK3rD7lP+Y1vSO/MvqCsnHZxGiFpUyWebGJzCFW9E
+         O4EN/t7pstqQFEkuseKzS6HdAafHy69l0s5ygYkRkW8TfdZhrlCNwaXt87RY98wEt4RP
+         Is7yuQa+XX5HsO0mbecgrOsACK82b0mMHfbbMNG+RwruNptd7tjW6NPWahNTvZ/ZFKST
+         2P+zFWeOa9FKappwZ+pztKsRRDT1l00rkjKdMCAIe4JbmppMd9zzBec12Pq0lMHa2GJ7
+         Nl6Qdmal2rG3oTZIll/X/BRfpYMawwGMn5q0oMGKiT8/fQssH8XyiL1bv1kzEd1UPD1C
+         iwTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ATDKJMcIxCSwydf+1lUKxJ7Ftg71NmlGmbozwsqMkmc=;
-        b=AT5ULvgEKHc0svY0S5YmW7LDFgBk4MLoM3NSxPZ3TZPmG2/b8MOAtDBhullOuvn4Kg
-         x6ZvNmO2w9mO8K1lAiMv4tCpfwD7UZiJ8GAsVahJYqMqykG18PYIGwmBchNz5467tfvu
-         SVUDIciFSZ4LgFS0nF8MoBoKOk99BA++7gI69x+5f/9D3v0TXApG4gDu2lyrxiRTs1yo
-         CSUfW40eFZwfr7Aa9sFpDeDcZKnl6MGkAOOAiSCyGdeA+ABDldQ7Q70F558HTRcKLpK6
-         uipQNx1J6c5ccXCtfzeG/hs/cBUj1O9eAzQTNUZujv1srwWRqAgBFCEZuMB7hwgcUqA1
-         LTJA==
-X-Gm-Message-State: APjAAAVhunLL0WKqpirl5qXUJSjErdnX8TDBzKHS66/Q4tS2LfV5MN7R
-        qJCDl8PIj9FzOr5NlxU3OziSO/Zlo8YCtg==
-X-Google-Smtp-Source: APXvYqw1sKZoVzuE5SHYbP6k9XUGU7CpYI6m16R6vj7Q5evWDJMjaFeVySYzKYO9xJ5TFRZ8akqoSQ==
-X-Received: by 2002:a2e:5c09:: with SMTP id q9mr3314850ljb.22.1572266404750;
-        Mon, 28 Oct 2019 05:40:04 -0700 (PDT)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id 141sm5224977ljj.37.2019.10.28.05.40.02
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2019 05:40:02 -0700 (PDT)
-Received: by mail-lj1-f174.google.com with SMTP id a21so11145590ljh.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Oct 2019 05:40:02 -0700 (PDT)
-X-Received: by 2002:a2e:3e18:: with SMTP id l24mr8529100lja.48.1572266402291;
- Mon, 28 Oct 2019 05:40:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <157225677483.3442.4227193290486305330.stgit@buzz>
-In-Reply-To: <157225677483.3442.4227193290486305330.stgit@buzz>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 28 Oct 2019 13:39:46 +0100
-X-Gmail-Original-Message-ID: <CAHk-=wjmLgo7DQT7Cy5rAGd=+2OK5Lqa8BN9qJFW1NPRoDfx5A@mail.gmail.com>
-Message-ID: <CAHk-=wjmLgo7DQT7Cy5rAGd=+2OK5Lqa8BN9qJFW1NPRoDfx5A@mail.gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YXz21DLbYChNtLC16qKg/F5siZzPuHpmcF6L0vjR70Q=;
+        b=NOfTfjPRGFG0CTcd/Es8q5xibSbTfqD8JaEodjCJz96XowZi3KRDom/2bILDaA0aCZ
+         gOCm28BPgHaZA+4oXBQqsP1Lf38sM4OFXbN0N5ybHHTtoMCZMsTRnhKB+YpG30fjaA4+
+         tw6BsSjq1WupvkGFkZqOOuVV4GnrdUItaZUCfHKt5P/C3IGV9iaQXESVvk0h+KErAVIz
+         gOubgIVUIQ3XnZpkr2vvr3c9UgBOQZ7dDJ8Dl4WgHSi03LUoB5fsLhr7MElfdzhJXaPe
+         Is/TP828lFX0g0TpDMe0X5764nyvmRBYVbMy1fn+z7o1kxPTiRALFlcrbgn30xxKh7pm
+         5M/A==
+X-Gm-Message-State: APjAAAUAloqrb94xTJfk/P3o0EzitpfZjfFiQYN9qFVnV9AcdiNNEIcy
+        f4mWE2ZOhCZXpwUyCXxNMO8R7Q==
+X-Google-Smtp-Source: APXvYqzeBill5sGQdQXwwRpWKiSVdlLvWFYx2xLqvPT8yXAFAWaeU7gv4dx3rhmelIIJkIMHn+8r0A==
+X-Received: by 2002:a2e:547:: with SMTP id 68mr11779036ljf.150.1572266541309;
+        Mon, 28 Oct 2019 05:42:21 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id 4sm6328938lfa.95.2019.10.28.05.42.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2019 05:42:20 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 86B96100242; Mon, 28 Oct 2019 15:42:22 +0300 (+03)
+Date:   Mon, 28 Oct 2019 15:42:22 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Steven Whitehouse <swhiteho@redhat.com>
 Subject: Re: [PATCH] mm/filemap: do not allocate cache pages beyond end of
  file at read
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <20191028124222.ld6u3dhhujfqcn7w@box>
+References: <157225677483.3442.4227193290486305330.stgit@buzz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <157225677483.3442.4227193290486305330.stgit@buzz>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 10:59 AM Konstantin Khlebnikov
-<khlebnikov@yandex-team.ru> wrote:
->
+On Mon, Oct 28, 2019 at 12:59:34PM +0300, Konstantin Khlebnikov wrote:
 > Page cache could contain pages beyond end of file during write or
 > if read races with truncate. But generic_file_buffered_read() always
 > allocates unneeded pages beyond eof if somebody reads here and one
 > extra page at the end if file size is page-aligned.
+> 
+> Function generic_file_buffered_read() calls page_cache_sync_readahead()
+> if page not found in cache and then do another lookup. Readahead checks
+> file size in __do_page_cache_readahead() before allocating pages.
+> After that generic_file_buffered_read() falls back to slow path and
+> allocates page for ->readpage() without checking file size.
+> 
+> This patch checks file size before allocating page for ->readpage().
+> 
+> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> ---
+>  mm/filemap.c |    4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 85b7d087eb45..92abf5f348a9 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -2225,6 +2225,10 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
+>  		goto out;
+>  
+>  no_cached_page:
+> +		/* Do not allocate cache pages beyond end of file. */
+> +		if (((loff_t)index << PAGE_SHIFT) >= i_size_read(inode))
+> +			goto out;
+> +
+>  		/*
+>  		 * Ok, it wasn't cached, so we need to create a new
+>  		 * page..
+> 
+> 
 
-I wonder if we could just do something like this instead:
+CC Steven.
 
-  diff --git a/mm/filemap.c b/mm/filemap.c
-  index 85b7d087eb45..80b08433c93a 100644
-  --- a/mm/filemap.c
-  +++ b/mm/filemap.c
-  @@ -2013,7 +2013,7 @@ static ssize_t generic_file_buffered_read(
-        struct address_space *mapping = filp->f_mapping;
-        struct inode *inode = mapping->host;
-        struct file_ra_state *ra = &filp->f_ra;
-  -     loff_t *ppos = &iocb->ki_pos;
-  +     loff_t *ppos = &iocb->ki_pos, size;
-        pgoff_t index;
-        pgoff_t last_index;
-        pgoff_t prev_index;
-  @@ -2021,9 +2021,10 @@ static ssize_t generic_file_buffered_read(
-        unsigned int prev_offset;
-        int error = 0;
+I've tried something of this sort back in 2013:
 
-  -     if (unlikely(*ppos >= inode->i_sb->s_maxbytes))
-  +     size = i_size_read(inode);
-  +     if (unlikely(*ppos >= size))
-                return 0;
-  -     iov_iter_truncate(iter, inode->i_sb->s_maxbytes);
-  +     iov_iter_truncate(iter, size);
+http://lore.kernel.org/r/1377099441-2224-1-git-send-email-kirill.shutemov@linux.intel.com
 
-        index = *ppos >> PAGE_SHIFT;
-        prev_index = ra->prev_pos >> PAGE_SHIFT;
+and I've got push back.
 
-and yes, we still need to re-check the inode size after we've read the
-page cache page (since it might have changed during the IO), but the
-above seems fairly benign and simple.
+Apparently, some filesystems may not have valid i_size before >readpage().
+Not sure if it's still the case...
 
-Hmm?
+Anyway I don't think it's valid reason for this inefficiency. These
+filesystems have to have own implementation of >read_iter() to deal with
+this.
 
-              Linus
+-- 
+ Kirill A. Shutemov
