@@ -2,298 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F72FE6D0E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Oct 2019 08:21:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0690EE6D24
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Oct 2019 08:22:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732836AbfJ1HVE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Oct 2019 03:21:04 -0400
-Received: from mail-pf1-f201.google.com ([209.85.210.201]:51689 "EHLO
-        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732811AbfJ1HVC (ORCPT
+        id S1732957AbfJ1HWJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Oct 2019 03:22:09 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:45698 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729984AbfJ1HWJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Oct 2019 03:21:02 -0400
-Received: by mail-pf1-f201.google.com with SMTP id s137so7878413pfs.18
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Oct 2019 00:21:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=YaUYxJIU8QNjs4DnqY9qxnn9mg2HqCmU7dCcxj1yfsw=;
-        b=aZpymRW91e2sm8Ex06DslpYKHKd+KQ6IO7BqB6qcudx1iMtuxWF4vHlLHvUbnln/Gf
-         UOrMbTCDEL04H/p1n7Rh1mIzWJ48GJErFdUzemJlLarsRMGOmdw27/TJ3C83uCcKeGfg
-         WHL1c4xZVsn/RU5JncLHCTWHF+IRP77RCU/y6sqPuvZiP+FOWRho7/0uzKFkV2E5i/Ps
-         ZsphWxzFIFhiZFAPDX+IwTaIfpdR3v5MGyZ9+umV0S3ddi7fc/NPgDvSYmbeO8GboJil
-         /XlRHZYPB1i6cwKa2uTUAJCrfbGmQPY+DVGK1SiUYWUx7GIW4K3kahcw59J4ru4BK+rs
-         4wjg==
+        Mon, 28 Oct 2019 03:22:09 -0400
+Received: by mail-io1-f69.google.com with SMTP id q6so7456391ios.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Oct 2019 00:22:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=YaUYxJIU8QNjs4DnqY9qxnn9mg2HqCmU7dCcxj1yfsw=;
-        b=FL2keyOBxXxtXKUykGjBWB0ZHCs8xV7nkqjMJclk/nTY2N8Xrn3SWBYl41e31jI2An
-         9fxyUmL4gWnM34Vb7ZWBB5lpCEtrMoSIRRPO1erJVTqgUqLYpNbq3TsJeea6NM+eHZfP
-         Qqoa2Hh3sqcPbgE8g68PUl/47QqswjYHIk38NWuGdBla5FPRFyoA6wf27skuJGQ1nXPJ
-         F5bqYo8rWB4yNqDLIgf/11DxkEIOEwHQQ9c26UEXX6QCKFW/OU1GU8UkG8Llgop+Z4cZ
-         DJBTpNcqx2D2o+UY9TU3EWsxqijrvOCHWC1n/dznDfdEMvusqLamM7tkwLYlU+9jqHTI
-         n6xg==
-X-Gm-Message-State: APjAAAWgRj/fsANHDwxfgvrU7Q3IoI8MOVuyw2GXNC7K0aV8Z35txks0
-        VyqmiZr0M8JG8Z142GqIRc5xWJm+0Ww=
-X-Google-Smtp-Source: APXvYqy3c/B/X4NYWwSXvNvZ0ZB6ZtWW4GfuuPKJh6nOOCXn8f0RoTWdJF68RmsTmVSY/kkgxvO1m7zp4mI=
-X-Received: by 2002:a63:3104:: with SMTP id x4mr18785655pgx.135.1572247261348;
- Mon, 28 Oct 2019 00:21:01 -0700 (PDT)
-Date:   Mon, 28 Oct 2019 00:20:32 -0700
-In-Reply-To: <20191028072032.6911-1-satyat@google.com>
-Message-Id: <20191028072032.6911-10-satyat@google.com>
-Mime-Version: 1.0
-References: <20191028072032.6911-1-satyat@google.com>
-X-Mailer: git-send-email 2.24.0.rc0.303.g954a862665-goog
-Subject: [PATCH v5 9/9] ext4: add inline encryption support
-From:   Satya Tangirala <satyat@google.com>
-To:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Kim Boojin <boojin.kim@samsung.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Satya Tangirala <satyat@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=UTMie8PkzK5wS7wiHXSMYFWr16Um/IYsiISWD8xfTF8=;
+        b=ht8ve5z71O4ArqAGTM+NeW+7PN7YXp73CLElD0yI2OSTwutwUVVsBTg1hK07eUUS0o
+         OnHVBAKAFtghTLbLKOED61GNLPQHGw9ohXsSAYKfK2ulGPkHW9rlKUFEaGGzlewZ38LT
+         5AWYlUGkjLClCRthkwaVQg6YMtvNXHLsizvZTK00ZKLYiTtkRmvg+4aziES1mx1TaPkC
+         BUkvlSliMnFIV/sbPMzvHzhfBwT6pJrYKYQfC7Nhro8nu6aBC95rP39+8xbYTYZ3wFb5
+         o9JrcHnbAjEDr70Z3w/fiwfBO0LwZ4PyND1MZ4H0at/j8qOqXo26GZXZBim51/OGjRIl
+         ezzw==
+X-Gm-Message-State: APjAAAWMdNuZK1/NXwdVqnZtJoHkYjccsLkHMs9LBcNCc6j+yngoCMg8
+        zigDNsNmqPXv/58mCbuAGEeU0yHe5e/rYixLka3IXyOo9ioS
+X-Google-Smtp-Source: APXvYqyjnPdfn3CdjHyInJVCwZZ8j26hi12GlxQnoYj74BdqdbCdpi7IjZ0jDDmXtV+Sf0ZDU8zXLudLzwnJ4P1QPrQ9A1VWDGeF
+MIME-Version: 1.0
+X-Received: by 2002:a5d:8d8f:: with SMTP id b15mr16379107ioj.296.1572247328016;
+ Mon, 28 Oct 2019 00:22:08 -0700 (PDT)
+Date:   Mon, 28 Oct 2019 00:22:08 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007c4f500595f35bf4@google.com>
+Subject: KASAN: use-after-free Read in io_uring_setup
+From:   syzbot <syzbot+6f03d895a6cd0d06187f@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+Hello,
 
-Wire up ext4 to support inline encryption via the helper functions which
-fs/crypto/ now provides.  This includes:
+syzbot found the following crash on:
 
-- Adding a mount option 'inlinecrypt' which enables inline encryption
-  on encrypted files where it can be used.
+HEAD commit:    5a1e843c Merge tag 'mips_fixes_5.4_3' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10e2001f600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=420126a10fdda0f1
+dashboard link: https://syzkaller.appspot.com/bug?extid=6f03d895a6cd0d06187f
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d4fa97600000
 
-- Setting the bio_crypt_ctx on bios that will be submitted to an
-  inline-encrypted file.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+6f03d895a6cd0d06187f@syzkaller.appspotmail.com
 
-  Note: submit_bh_wbc() in fs/buffer.c also needed to be patched for
-  this part, since ext4 sometimes uses ll_rw_block() on file data.
+==================================================================
+BUG: KASAN: use-after-free in io_uring_create fs/io_uring.c:3842 [inline]
+BUG: KASAN: use-after-free in io_uring_setup+0x1877/0x18c0  
+fs/io_uring.c:3881
+Read of size 8 at addr ffff888082284048 by task syz-executor.5/11342
 
-- Not adding logically discontiguous data to bios that will be submitted
-  to an inline-encrypted file.
+CPU: 1 PID: 11342 Comm: syz-executor.5 Not tainted 5.4.0-rc4+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
+  __kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
+  kasan_report+0x12/0x20 mm/kasan/common.c:634
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:132
+  io_uring_create fs/io_uring.c:3842 [inline]
+  io_uring_setup+0x1877/0x18c0 fs/io_uring.c:3881
+  __do_sys_io_uring_setup fs/io_uring.c:3894 [inline]
+  __se_sys_io_uring_setup fs/io_uring.c:3891 [inline]
+  __x64_sys_io_uring_setup+0x54/0x80 fs/io_uring.c:3891
+  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x459f39
+Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f313e126c78 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
+RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 0000000000459f39
+RDX: 0000000000000000 RSI: 00000000200005c0 RDI: 000000040000000e
+RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f313e1276d4
+R13: 00000000004c1512 R14: 00000000004d4da8 R15: 00000000ffffffff
 
-- Not doing filesystem-layer crypto on inline-encrypted files.
+Allocated by task 11342:
+  save_stack+0x23/0x90 mm/kasan/common.c:69
+  set_track mm/kasan/common.c:77 [inline]
+  __kasan_kmalloc mm/kasan/common.c:510 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:483
+  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:524
+  kmem_cache_alloc_trace+0x158/0x790 mm/slab.c:3550
+  kmalloc include/linux/slab.h:556 [inline]
+  kzalloc include/linux/slab.h:690 [inline]
+  io_ring_ctx_alloc fs/io_uring.c:393 [inline]
+  io_uring_create fs/io_uring.c:3811 [inline]
+  io_uring_setup+0xec6/0x18c0 fs/io_uring.c:3881
+  __do_sys_io_uring_setup fs/io_uring.c:3894 [inline]
+  __se_sys_io_uring_setup fs/io_uring.c:3891 [inline]
+  __x64_sys_io_uring_setup+0x54/0x80 fs/io_uring.c:3891
+  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Satya Tangirala <satyat@google.com>
+Freed by task 11335:
+  save_stack+0x23/0x90 mm/kasan/common.c:69
+  set_track mm/kasan/common.c:77 [inline]
+  kasan_set_free_info mm/kasan/common.c:332 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:471
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:480
+  __cache_free mm/slab.c:3425 [inline]
+  kfree+0x10a/0x2c0 mm/slab.c:3756
+  io_ring_ctx_free fs/io_uring.c:3552 [inline]
+  io_ring_ctx_wait_and_kill+0x4d7/0x6c0 fs/io_uring.c:3592
+  io_uring_release+0x42/0x50 fs/io_uring.c:3600
+  __fput+0x2ff/0x890 fs/file_table.c:280
+  ____fput+0x16/0x20 fs/file_table.c:313
+  task_work_run+0x145/0x1c0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+  exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:163
+  prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
+  do_syscall_64+0x65f/0x760 arch/x86/entry/common.c:300
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff888082284000
+  which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 72 bytes inside of
+  2048-byte region [ffff888082284000, ffff888082284800)
+The buggy address belongs to the page:
+page:ffffea000208a100 refcount:1 mapcount:0 mapping:ffff8880aa400e00  
+index:0x0
+flags: 0x1fffc0000000200(slab)
+raw: 01fffc0000000200 ffffea0002a1bc88 ffffea00023fa248 ffff8880aa400e00
+raw: 0000000000000000 ffff888082284000 0000000100000001 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff888082283f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff888082283f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff888082284000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                               ^
+  ffff888082284080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff888082284100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
 ---
- fs/buffer.c        |  3 +++
- fs/ext4/ext4.h     |  1 +
- fs/ext4/inode.c    |  4 ++--
- fs/ext4/page-io.c  | 11 +++++++++--
- fs/ext4/readpage.c | 15 ++++++++++++---
- fs/ext4/super.c    | 13 +++++++++++++
- 6 files changed, 40 insertions(+), 7 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 86a38b979323..5d1f420de95b 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -47,6 +47,7 @@
- #include <linux/pagevec.h>
- #include <linux/sched/mm.h>
- #include <trace/events/block.h>
-+#include <linux/fscrypt.h>
- 
- static int fsync_buffers_list(spinlock_t *lock, struct list_head *list);
- static int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
-@@ -3068,6 +3069,8 @@ static int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
- 	 */
- 	bio = bio_alloc(GFP_NOIO, 1);
- 
-+	fscrypt_set_bio_crypt_ctx_bh(bio, bh, GFP_NOIO | __GFP_NOFAIL);
-+
- 	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
- 	bio_set_dev(bio, bh->b_bdev);
- 	bio->bi_write_hint = write_hint;
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index b3a2cc7c0252..ce493e360814 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -1148,6 +1148,7 @@ struct ext4_inode_info {
- #define EXT4_MOUNT_JOURNAL_CHECKSUM	0x800000 /* Journal checksums */
- #define EXT4_MOUNT_JOURNAL_ASYNC_COMMIT	0x1000000 /* Journal Async Commit */
- #define EXT4_MOUNT_WARN_ON_ERROR	0x2000000 /* Trigger WARN_ON on error */
-+#define EXT4_MOUNT_INLINECRYPT		0x4000000 /* Inline encryption support */
- #define EXT4_MOUNT_DELALLOC		0x8000000 /* Delalloc support */
- #define EXT4_MOUNT_DATA_ERR_ABORT	0x10000000 /* Abort on file data write */
- #define EXT4_MOUNT_BLOCK_VALIDITY	0x20000000 /* Block validity checking */
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 516faa280ced..43a844affc57 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -1237,7 +1237,7 @@ static int ext4_block_write_begin(struct page *page, loff_t pos, unsigned len,
- 	}
- 	if (unlikely(err)) {
- 		page_zero_new_buffers(page, from, to);
--	} else if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode)) {
-+	} else if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
- 		for (i = 0; i < nr_wait; i++) {
- 			int err2;
- 
-@@ -4034,7 +4034,7 @@ static int __ext4_block_zero_page_range(handle_t *handle,
- 		/* Uhhuh. Read error. Complain and punt. */
- 		if (!buffer_uptodate(bh))
- 			goto unlock;
--		if (S_ISREG(inode->i_mode) && IS_ENCRYPTED(inode)) {
-+		if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
- 			/* We expect the key to be set. */
- 			BUG_ON(!fscrypt_has_encryption_key(inode));
- 			WARN_ON_ONCE(fscrypt_decrypt_pagecache_blocks(
-diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-index 12ceadef32c5..46a4aeef8275 100644
---- a/fs/ext4/page-io.c
-+++ b/fs/ext4/page-io.c
-@@ -362,10 +362,16 @@ static int io_submit_init_bio(struct ext4_io_submit *io,
- 			      struct buffer_head *bh)
- {
- 	struct bio *bio;
-+	int err;
- 
- 	bio = bio_alloc(GFP_NOIO, BIO_MAX_PAGES);
- 	if (!bio)
- 		return -ENOMEM;
-+	err = fscrypt_set_bio_crypt_ctx_bh(bio, bh, GFP_NOIO);
-+	if (err) {
-+		bio_put(bio);
-+		return err;
-+	}
- 	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
- 	bio_set_dev(bio, bh->b_bdev);
- 	bio->bi_end_io = ext4_end_bio;
-@@ -383,7 +389,8 @@ static int io_submit_add_bh(struct ext4_io_submit *io,
- {
- 	int ret;
- 
--	if (io->io_bio && bh->b_blocknr != io->io_next_block) {
-+	if (io->io_bio && (bh->b_blocknr != io->io_next_block ||
-+			   !fscrypt_mergeable_bio_bh(io->io_bio, bh))) {
- submit_and_retry:
- 		ext4_io_submit(io);
- 	}
-@@ -474,7 +481,7 @@ int ext4_bio_write_page(struct ext4_io_submit *io,
- 	 * (e.g. holes) to be unnecessarily encrypted, but this is rare and
- 	 * can't happen in the common case of blocksize == PAGE_SIZE.
- 	 */
--	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode) && nr_to_submit) {
-+	if (fscrypt_inode_uses_fs_layer_crypto(inode) && nr_to_submit) {
- 		gfp_t gfp_flags = GFP_NOFS;
- 		unsigned int enc_bytes = round_up(len, i_blocksize(inode));
- 
-diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-index a30b203fa461..643f271b0b8e 100644
---- a/fs/ext4/readpage.c
-+++ b/fs/ext4/readpage.c
-@@ -183,7 +183,7 @@ static struct bio_post_read_ctx *get_bio_post_read_ctx(struct inode *inode,
- 	unsigned int post_read_steps = 0;
- 	struct bio_post_read_ctx *ctx = NULL;
- 
--	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode))
-+	if (fscrypt_inode_uses_fs_layer_crypto(inode))
- 		post_read_steps |= 1 << STEP_DECRYPT;
- 
- 	if (ext4_need_verity(inode, first_idx))
-@@ -220,6 +220,7 @@ int ext4_mpage_readpages(struct address_space *mapping,
- 	const unsigned blkbits = inode->i_blkbits;
- 	const unsigned blocks_per_page = PAGE_SIZE >> blkbits;
- 	const unsigned blocksize = 1 << blkbits;
-+	sector_t next_block;
- 	sector_t block_in_file;
- 	sector_t last_block;
- 	sector_t last_block_in_file;
-@@ -252,7 +253,8 @@ int ext4_mpage_readpages(struct address_space *mapping,
- 		if (page_has_buffers(page))
- 			goto confused;
- 
--		block_in_file = (sector_t)page->index << (PAGE_SHIFT - blkbits);
-+		block_in_file = next_block =
-+			(sector_t)page->index << (PAGE_SHIFT - blkbits);
- 		last_block = block_in_file + nr_pages * blocks_per_page;
- 		last_block_in_file = (ext4_readpage_limit(inode) +
- 				      blocksize - 1) >> blkbits;
-@@ -352,7 +354,8 @@ int ext4_mpage_readpages(struct address_space *mapping,
- 		 * This page will go to BIO.  Do we need to send this
- 		 * BIO off first?
- 		 */
--		if (bio && (last_block_in_bio != blocks[0] - 1)) {
-+		if (bio && (last_block_in_bio != blocks[0] - 1 ||
-+			    !fscrypt_mergeable_bio(bio, inode, next_block))) {
- 		submit_and_realloc:
- 			submit_bio(bio);
- 			bio = NULL;
-@@ -364,6 +367,12 @@ int ext4_mpage_readpages(struct address_space *mapping,
- 				min_t(int, nr_pages, BIO_MAX_PAGES));
- 			if (!bio)
- 				goto set_error_page;
-+			if (fscrypt_set_bio_crypt_ctx(bio, inode, next_block,
-+						      GFP_KERNEL) != 0) {
-+				bio_put(bio);
-+				bio = NULL;
-+				goto set_error_page;
-+			}
- 			ctx = get_bio_post_read_ctx(inode, bio, page->index);
- 			if (IS_ERR(ctx)) {
- 				bio_put(bio);
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index b3cbf8622eab..3415bce51a36 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1357,6 +1357,11 @@ static void ext4_get_ino_and_lblk_bits(struct super_block *sb,
- 	*lblk_bits_ret = 8 * sizeof(ext4_lblk_t);
- }
- 
-+static bool ext4_inline_crypt_enabled(struct super_block *sb)
-+{
-+	return test_opt(sb, INLINECRYPT);
-+}
-+
- static const struct fscrypt_operations ext4_cryptops = {
- 	.key_prefix		= "ext4:",
- 	.get_context		= ext4_get_context,
-@@ -1366,6 +1371,7 @@ static const struct fscrypt_operations ext4_cryptops = {
- 	.max_namelen		= EXT4_NAME_LEN,
- 	.has_stable_inodes	= ext4_has_stable_inodes,
- 	.get_ino_and_lblk_bits	= ext4_get_ino_and_lblk_bits,
-+	.inline_crypt_enabled	= ext4_inline_crypt_enabled,
- };
- #endif
- 
-@@ -1461,6 +1467,7 @@ enum {
- 	Opt_journal_path, Opt_journal_checksum, Opt_journal_async_commit,
- 	Opt_abort, Opt_data_journal, Opt_data_ordered, Opt_data_writeback,
- 	Opt_data_err_abort, Opt_data_err_ignore, Opt_test_dummy_encryption,
-+	Opt_inlinecrypt,
- 	Opt_usrjquota, Opt_grpjquota, Opt_offusrjquota, Opt_offgrpjquota,
- 	Opt_jqfmt_vfsold, Opt_jqfmt_vfsv0, Opt_jqfmt_vfsv1, Opt_quota,
- 	Opt_noquota, Opt_barrier, Opt_nobarrier, Opt_err,
-@@ -1557,6 +1564,7 @@ static const match_table_t tokens = {
- 	{Opt_noinit_itable, "noinit_itable"},
- 	{Opt_max_dir_size_kb, "max_dir_size_kb=%u"},
- 	{Opt_test_dummy_encryption, "test_dummy_encryption"},
-+	{Opt_inlinecrypt, "inlinecrypt"},
- 	{Opt_nombcache, "nombcache"},
- 	{Opt_nombcache, "no_mbcache"},	/* for backward compatibility */
- 	{Opt_removed, "check=none"},	/* mount option from ext2/3 */
-@@ -1768,6 +1776,11 @@ static const struct mount_opts {
- 	{Opt_jqfmt_vfsv1, QFMT_VFS_V1, MOPT_QFMT},
- 	{Opt_max_dir_size_kb, 0, MOPT_GTE0},
- 	{Opt_test_dummy_encryption, 0, MOPT_GTE0},
-+#ifdef CONFIG_FS_ENCRYPTION_INLINE_CRYPT
-+	{Opt_inlinecrypt, EXT4_MOUNT_INLINECRYPT, MOPT_SET},
-+#else
-+	{Opt_inlinecrypt, EXT4_MOUNT_INLINECRYPT, MOPT_NOSUPPORT},
-+#endif
- 	{Opt_nombcache, EXT4_MOUNT_NO_MBCACHE, MOPT_SET},
- 	{Opt_err, 0, 0}
- };
--- 
-2.24.0.rc0.303.g954a862665-goog
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
