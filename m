@@ -2,54 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A760E7217
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Oct 2019 13:49:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C931EE7228
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Oct 2019 13:55:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728559AbfJ1Mtw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Oct 2019 08:49:52 -0400
-Received: from forwardcorp1j.mail.yandex.net ([5.45.199.163]:59760 "EHLO
-        forwardcorp1j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726940AbfJ1Mtw (ORCPT
+        id S1728956AbfJ1MzZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Oct 2019 08:55:25 -0400
+Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:44650 "EHLO
+        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728269AbfJ1MzZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Oct 2019 08:49:52 -0400
-Received: from mxbackcorp2j.mail.yandex.net (mxbackcorp2j.mail.yandex.net [IPv6:2a02:6b8:0:1619::119])
-        by forwardcorp1j.mail.yandex.net (Yandex) with ESMTP id 399322E133F;
-        Mon, 28 Oct 2019 15:49:49 +0300 (MSK)
-Received: from iva8-b53eb3f76dc7.qloud-c.yandex.net (iva8-b53eb3f76dc7.qloud-c.yandex.net [2a02:6b8:c0c:2ca1:0:640:b53e:b3f7])
-        by mxbackcorp2j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id g0lC5DUKiH-nleeAlQ6;
-        Mon, 28 Oct 2019 15:49:49 +0300
+        Mon, 28 Oct 2019 08:55:25 -0400
+Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
+        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id 71BB12E09CF;
+        Mon, 28 Oct 2019 15:55:21 +0300 (MSK)
+Received: from iva4-c987840161f8.qloud-c.yandex.net (iva4-c987840161f8.qloud-c.yandex.net [2a02:6b8:c0c:3da5:0:640:c987:8401])
+        by mxbackcorp1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 6aykFKr5ke-tJBSrcoG;
+        Mon, 28 Oct 2019 15:55:21 +0300
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1572266989; bh=nbn/F7ubzB3gfFhaClCiJKA9kSdMFcCRJXW6XjKJ3bE=;
+        t=1572267321; bh=8ZYFRTzWqu504O6KQ7FUcpox3cZWhyoBz5ojDPWSmYE=;
         h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
-        b=AgS1a0L35oEfSF2W145KMr2NS22+HqFpzkEHWNHtZBmZ6+a8TjL5D5FmYVaSNn3zL
-         1z9J1W+bXi5/CtTNqSjpRts69KOOvvYXb6exfk+qeZjU/fHEakbwRa+x2uo8bNu24E
-         +x8kyu4atWJrzHHUh40lt8QKWc9TssRTROgEDKiM=
-Authentication-Results: mxbackcorp2j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+        b=vBo73IPUe3lrjMad2DFnaYStzbQtHX6+YDN8Zspbs17A3PUhAE2CpNckQRNrj+NQH
+         Fc/ykjTuHoaEP25SzA0GilwBqxkYuDk/Vog1pEEZ+1V9GKWmEN/wj1TMj63mquBT+n
+         9bq3FElt7uiVv3dj0zaldvpCQ2e4tNqLPw32lFcQ=
+Authentication-Results: mxbackcorp1g.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
 Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:148a:8f3:5b61:9f4])
-        by iva8-b53eb3f76dc7.qloud-c.yandex.net (nwsmtp/Yandex) with ESMTPSA id qg1g0pXFHn-nkWmd21h;
-        Mon, 28 Oct 2019 15:49:47 +0300
+        by iva4-c987840161f8.qloud-c.yandex.net (nwsmtp/Yandex) with ESMTPSA id HgRUn4uEtY-tJWiB8BI;
+        Mon, 28 Oct 2019 15:55:19 +0300
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (Client certificate not present)
 Subject: Re: [PATCH RFC] fs/fcntl: add fcntl F_GET_RSS
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
+To:     Florian Weimer <fw@deneb.enyo.de>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Michal Hocko <mhocko@suse.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Johannes Weiner <hannes@cmpxchg.org>,
         Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Roman Gushchin <guro@fb.com>
 References: <157225848971.557.16257813537984792761.stgit@buzz>
- <CAHk-=wiCDPd1ivoU5BJBMSt5cmKnX0XFWiinfegyknfoipif0g@mail.gmail.com>
+ <87k18p6qjk.fsf@mid.deneb.enyo.de>
 From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Message-ID: <03f36def-746e-063b-7c42-91244eec87bd@yandex-team.ru>
-Date:   Mon, 28 Oct 2019 15:49:44 +0300
+Message-ID: <d7e76bee-80c3-d787-b854-91e631ab29cd@yandex-team.ru>
+Date:   Mon, 28 Oct 2019 15:55:19 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wiCDPd1ivoU5BJBMSt5cmKnX0XFWiinfegyknfoipif0g@mail.gmail.com>
+In-Reply-To: <87k18p6qjk.fsf@mid.deneb.enyo.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-CA
 Content-Transfer-Encoding: 7bit
@@ -58,30 +57,16 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 28/10/2019 15.27, Linus Torvalds wrote:
-> On Mon, Oct 28, 2019 at 11:28 AM Konstantin Khlebnikov
-> <khlebnikov@yandex-team.ru> wrote:
->>
+On 28/10/2019 14.46, Florian Weimer wrote:
+> * Konstantin Khlebnikov:
+> 
 >> This implements fcntl() for getting amount of resident memory in cache.
 >> Kernel already maintains counter for each inode, this patch just exposes
 >> it into userspace. Returned size is in kilobytes like values in procfs.
 > 
-> This doesn't actually explain why anybody would want it, and what the
-> usage scenario is.
+> I think this needs a 32-bit compat implementation which clamps the
+> returned value to INT_MAX.
 > 
 
-This really helps to plot memory usage distribution. Right now file cache
-have only total counters. Collecting statistics via mincore as implemented
-in page-types tool isn't efficient and very racy.
-
-Usage scenario is the same as finding top memory usage among processes.
-But among files which are not always mapped anywhere.
-
-For example if somebody writes\reads logs too intensive this file cache
-could bloat and push more important data out out memory.
-
-Also little bit of introspection wouldn't hurt.
-Using this I've found unneeded pages beyond i_size.
-
->               Linus
-> 
+32-bit machine couldn't hold more than 2TB cache in one file.
+Even radix tree wouldn't fit into low memory area.
