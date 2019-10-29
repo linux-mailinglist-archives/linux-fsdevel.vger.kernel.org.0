@@ -2,107 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C19CAE84A7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2019 10:45:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2290E88A4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2019 13:47:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728432AbfJ2JpI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Oct 2019 05:45:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50948 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727504AbfJ2JpH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Oct 2019 05:45:07 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 92EEBB129;
-        Tue, 29 Oct 2019 09:45:04 +0000 (UTC)
-Subject: Re: [PATCH] fs/iomap: remove redundant check in iomap_dio_rw()
-To:     Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-block@vger.kernel.org
-References: <1572342047-99933-1-git-send-email-joseph.qi@linux.alibaba.com>
-From:   Johannes Thumshirn <jthumshirn@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <a93a1956-e3b0-ec6d-7abd-74612a50348a@suse.de>
-Date:   Tue, 29 Oct 2019 10:45:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2387979AbfJ2Mr2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Oct 2019 08:47:28 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38004 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387960AbfJ2Mr1 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 29 Oct 2019 08:47:27 -0400
+Received: by mail-wr1-f65.google.com with SMTP id v9so13500384wrq.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Oct 2019 05:47:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=6VqIj3BTfFgV4L15YGzzwv6yyFmVnbm7JQmLRtMKsic=;
+        b=CfxPPaDekZp7Q3u2GYPK2Du+jE1BNYcTQSKcDF5cLZnsRZZwbwlKGn0v6Lag4uMheH
+         pr6at2+zXWlfkIVglgv3gVRED3ewZjIBNRcJdFSK/UMybQo2xr7hrahVXBrn3ff9P6wZ
+         bFNSTFOjxn/qUDPxzBiLa0a/JuFbX9XODa7q0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=6VqIj3BTfFgV4L15YGzzwv6yyFmVnbm7JQmLRtMKsic=;
+        b=ID6POelMhp4uP6yvjVhzyiMhlEAaVUNt8oIHAwj3g85Gnw9QlmVPumUzyOa9QRWW+S
+         NIWNPG43/DrOG4yAB245Kw1axznes7gCCw9N+9ax2yyZvkqGQ6ocBySAwE0pEYPjtptm
+         TJ1jc2ucHt40KbWK5P5CHQzvIOs+sombb1yuwbVdLZCeIGc6KKvcFjMynMMm/i0iDpj0
+         k2QUEr7L2LC1goyq/Nnel4HC8xMiI2SfaIdkAg9BnxK4w1eaKPQ0LwfRmaFVYgqCSPOt
+         NJOH0iZFN2QFTM/CEkQgWcVAtuKIIa+SSLk/uuwpAVSGBb6ZpMMIaueiXrHDXdgp2nnP
+         65Gw==
+X-Gm-Message-State: APjAAAUZS8jFTbLYcqgZt4uM7ygKjiXfoLpmUJwu7NMurn6BMNmxSf4+
+        2B/OsG48C2nbc/vVMTyfufuw1w==
+X-Google-Smtp-Source: APXvYqxP32WsuIeX0uHdKVMlzu2T3N+gMRJC+9wtmoLuOudI6BOZebwGZYeFObYe4CxYzxOkt41AhA==
+X-Received: by 2002:a5d:4142:: with SMTP id c2mr18809312wrq.208.1572353244608;
+        Tue, 29 Oct 2019 05:47:24 -0700 (PDT)
+Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
+        by smtp.gmail.com with ESMTPSA id l4sm1953002wml.33.2019.10.29.05.47.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2019 05:47:23 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 13:47:17 +0100
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] fuse fixes for 5.4-rc6
+Message-ID: <20191029124717.GA7805@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <1572342047-99933-1-git-send-email-joseph.qi@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Looks good,
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
--- 
-Johannes Thumshirn                            SUSE Labs Filesystems
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5
-90409 Nürnberg
-Germany
-(HRB 36809, AG Nürnberg)
-Geschäftsführer: Felix Imendörffer
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+Hi Linus,
+
+Please pull from:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-fixes-5.4-rc6
+
+Mostly virtiofs fixes, but also fixes a regression and couple of
+longstanding data/metadata writeback ordering issues.
+
+Thanks,
+Miklos
+
+----------------------------------------------------------------
+Alan Somers (1):
+      fuse: Add changelog entries for protocols 7.1 - 7.8
+
+Miklos Szeredi (5):
+      virtio-fs: don't show mount options
+      fuse: don't dereference req->args on finished request
+      fuse: don't advise readdirplus for negative lookup
+      fuse: flush dirty data/metadata before non-truncate setattr
+      fuse: truncate pending writes on O_TRUNC
+
+Vasily Averin (1):
+      fuse: redundant get_fuse_inode() calls in fuse_writepages_fill()
+
+Vivek Goyal (6):
+      virtio-fs: Change module name to virtiofs.ko
+      virtiofs: Do not end request in submission context
+      virtiofs: No need to check fpq->connected state
+      virtiofs: Set FR_SENT flag only after request has been sent
+      virtiofs: Count pending forgets as in_flight forgets
+      virtiofs: Retry request submission from worker context
+
+zhengbin (1):
+      virtiofs: Remove set but not used variable 'fc'
+
+---
+ fs/fuse/Makefile          |   3 +-
+ fs/fuse/dev.c             |   4 +-
+ fs/fuse/dir.c             |  16 ++++-
+ fs/fuse/file.c            |  14 ++--
+ fs/fuse/fuse_i.h          |   4 ++
+ fs/fuse/inode.c           |   4 ++
+ fs/fuse/virtio_fs.c       | 169 +++++++++++++++++++++++++++++++---------------
+ include/uapi/linux/fuse.h |  37 ++++++++++
+ 8 files changed, 186 insertions(+), 65 deletions(-)
