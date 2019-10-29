@@ -2,103 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36D8FE8C84
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2019 17:15:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1E0AE8D50
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2019 17:52:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390129AbfJ2QPS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Oct 2019 12:15:18 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:56298 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389902AbfJ2QPR (ORCPT
+        id S1728686AbfJ2Qw1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Oct 2019 12:52:27 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41599 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727279AbfJ2Qw0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Oct 2019 12:15:17 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9TFxJ5U033344;
-        Tue, 29 Oct 2019 16:15:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=A1kYMmkaG5FKs/QVIwTtK+7+pOSUYwVnoIw867e/re8=;
- b=apxkMzZocVJycoJd7xxDLAGwLZw+ta+Wpupyn3WkaRjN4vPMVB6rucRJdgubvrCtJNdY
- +sui1tn/SLpc8pHESfo/VRgM26ydbuY8dpGmbRvjYp8yWOPMqUgRtU+BbDiAaQvF9gKm
- WtFgVZ/YWSdiUmRR4mlRNn3bc8MBn8BibcFQmkFKEwxdVAbdVFek104Ks3jqHlku8DXz
- eGDt9ohQ5S5FAH6mh/fprjAmcparxUmGxzDHkNccIjIhU2HiiRJd3khUyMfVcmmhaHAl
- 2ylyXlyitLvZtluyn5GniOhuiUZBNj1TFCzFeprj8vk+4v7JLZjrsWjpxoi+pzAtWDrb Mw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2vvumff787-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Oct 2019 16:15:00 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9TG351i064792;
-        Tue, 29 Oct 2019 16:14:59 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2vxpgf7qc4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Oct 2019 16:14:59 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9TGEriI001291;
-        Tue, 29 Oct 2019 16:14:53 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 29 Oct 2019 09:14:53 -0700
-Date:   Tue, 29 Oct 2019 09:14:52 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH] fs/iomap: remove redundant check in iomap_dio_rw()
-Message-ID: <20191029161452.GC15222@magnolia>
-References: <1572342047-99933-1-git-send-email-joseph.qi@linux.alibaba.com>
+        Tue, 29 Oct 2019 12:52:26 -0400
+Received: by mail-lj1-f196.google.com with SMTP id m9so6385235ljh.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Oct 2019 09:52:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JCP0gTNW0nrKOjfGXUDHkeT9LXYh8gTwBFSl8WQWe9E=;
+        b=PCQcPN9krk/MLfnozI5e+YmrRxCY8nQ2YUphNRQ+Q7PWvraCFUevYyKeC3hb6cSU+E
+         ptoftGM6aIVugo0NJ5Sj7+8ikD83EWAw+XBoNW6982A8TmkIVBVLCjVZXretXxGE0hIE
+         uxSzFEmOYqjXztMzAKG2M3avS6nE/p3Mb230Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JCP0gTNW0nrKOjfGXUDHkeT9LXYh8gTwBFSl8WQWe9E=;
+        b=J277m49cFwovqiejFyqSlcGDdtE6p4tiemVniZRuhyWxSWAAr9FGB+iQFntWC9wRdZ
+         62G81/0iY3kU15+b1j2tEDkPilUeOT/fWOI/2OcabvojqBRZUgtETO4rt5KgsUBO/Cze
+         0y92dKjWjoryGn6AjTFCZJFirZYyoxZeGzybnmIzaeMWktZBxQVC3L43iFMMcmFDQv9v
+         jFaHcnalFpXAsX/ZbQeYl9ShXwAbiY9JUz4+uJZDP4yBxlt7gPWiceMn2PAAjQbsZRw/
+         1tKAooabH46NuAML8JWS63rajvqIHlueoAnhP0+CnCCkuQe+4qk0L9fmksMqYhamfCo/
+         VFLw==
+X-Gm-Message-State: APjAAAVUHc7vNwi2ptIVVPdyUcUkuvKZlanvwswJeaQ9K7b59WDGm6s8
+        WYs1iG1+P/rQla0ZNL2MoEAc7OxfEADvxg==
+X-Google-Smtp-Source: APXvYqzN9nFbbdVISSQz74kq0DmK1FDtMdtEuswBevN8fZR+vqC+c1LyxDAqQIpBtihKXYc4ojnVuA==
+X-Received: by 2002:a2e:9942:: with SMTP id r2mr3448881ljj.168.1572367943055;
+        Tue, 29 Oct 2019 09:52:23 -0700 (PDT)
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
+        by smtp.gmail.com with ESMTPSA id r19sm769343lfi.13.2019.10.29.09.52.21
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2019 09:52:22 -0700 (PDT)
+Received: by mail-lf1-f51.google.com with SMTP id q28so11074503lfa.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Oct 2019 09:52:21 -0700 (PDT)
+X-Received: by 2002:a19:820e:: with SMTP id e14mr3088342lfd.29.1572367941598;
+ Tue, 29 Oct 2019 09:52:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1572342047-99933-1-git-send-email-joseph.qi@linux.alibaba.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9424 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910290145
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9424 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910290145
+References: <157225677483.3442.4227193290486305330.stgit@buzz>
+ <20191028124222.ld6u3dhhujfqcn7w@box> <CAHk-=wgQ-Dcs2keNJPovTb4gG33M81yANH6KZM9d5NLUb-cJ1g@mail.gmail.com>
+ <20191028125702.xdfbs7rqhm3wer5t@box> <ac83fee6-9bcd-8c66-3596-2c0fbe6bcf96@yandex-team.ru>
+In-Reply-To: <ac83fee6-9bcd-8c66-3596-2c0fbe6bcf96@yandex-team.ru>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 29 Oct 2019 17:52:05 +0100
+X-Gmail-Original-Message-ID: <CAHk-=who0HS=NT8U7vFDT7er_CD7+ZreRJMxjYrRXs5G6dbpyw@mail.gmail.com>
+Message-ID: <CAHk-=who0HS=NT8U7vFDT7er_CD7+ZreRJMxjYrRXs5G6dbpyw@mail.gmail.com>
+Subject: Re: [PATCH] mm/filemap: do not allocate cache pages beyond end of
+ file at read
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Steven Whitehouse <swhiteho@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 29, 2019 at 05:40:47PM +0800, Joseph Qi wrote:
-> We've already check if it is READ iov_iter, no need check again.
-> 
-> Signed-off-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+On Tue, Oct 29, 2019 at 3:25 PM Konstantin Khlebnikov
+<khlebnikov@yandex-team.ru> wrote:
+>
+> I think all network filesystems which synchronize metadata lazily should be
+> marked. For example as "SB_VOLATILE". And vfs could handle them specially.
 
-Applied to the iomap tree, thanks.
+No need. The VFS layer doesn't call generic_file_buffered_read()
+directly anyway. It's just a helper function for filesystems to use if
+they want to.
 
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+They could (and should) make sure the inode size is sufficiently
+up-to-date before calling it. And if they want something more
+synchronous, they can do it themselves.
 
---D
+But NFS, for example, has open/close consistency, so the metadata
+revalidation is at open() time, not at read time.
 
-> ---
->  fs/iomap/direct-io.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 1fc28c2..9712648 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -430,7 +430,7 @@ static void iomap_dio_bio_end_io(struct bio *bio)
->  		if (pos >= dio->i_size)
->  			goto out_free_dio;
->  
-> -		if (iter_is_iovec(iter) && iov_iter_rw(iter) == READ)
-> +		if (iter_is_iovec(iter))
->  			dio->flags |= IOMAP_DIO_DIRTY;
->  	} else {
->  		flags |= IOMAP_WRITE;
-> -- 
-> 1.8.3.1
-> 
+               Linus
