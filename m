@@ -2,77 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D7A4E90F9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2019 21:43:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A24BDE930B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2019 23:32:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728227AbfJ2Un5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Oct 2019 16:43:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34752 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728156AbfJ2Un5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Oct 2019 16:43:57 -0400
-Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F32721835;
-        Tue, 29 Oct 2019 20:43:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572381836;
-        bh=p5iqeRBG0wAn8vG31RO8K0J2sdKd+zlwDuiiVCe/arU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fqLabC+4M1549VLoHu+fT+YMZrTGGCI6h26q23IVXUV+l623EaOFPGHWTbPJw6rZQ
-         z6+Hb6lOhwnAuiq9iVMCCKczLZk3npUaZaH86ZnpoxrQvfeVOOuYLC9FnrJvJznCMQ
-         fH9S1BHEqrrcJqKGPANaSpjGiCl63Sl7zkWvb3wE=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-fscrypt@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-api@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Victor Hsieh <victorhsieh@google.com>
-Subject: [PATCH 4/4] docs: fs-verity: mention statx() support
-Date:   Tue, 29 Oct 2019 13:41:41 -0700
-Message-Id: <20191029204141.145309-5-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.24.0.rc1.363.gb1bccd3e3d-goog
-In-Reply-To: <20191029204141.145309-1-ebiggers@kernel.org>
-References: <20191029204141.145309-1-ebiggers@kernel.org>
+        id S1726679AbfJ2WaV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Oct 2019 18:30:21 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37323 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726563AbfJ2WaV (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 29 Oct 2019 18:30:21 -0400
+Received: by mail-pg1-f194.google.com with SMTP id p1so85317pgi.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Oct 2019 15:30:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=4huLalvhOWDbWG3Nf3mcBjBlVwTLOfhCdDsGci1DaaA=;
+        b=UmqeY8jODMF8xNAX6XfvouYj3ruqZPeOZMuGUYcnGVc2Zo8C1qdiery8eoeD+bx3be
+         KxS1D4ohHw3rAhK5FB9iwxKm1DkoU1G6+fLpZgbktTY3DKw1VMQQhAYKQe/XNxzPrIcF
+         R0bI6QaUKVTR5VBxiy/9Q66uba4qjHu+FDyic=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=4huLalvhOWDbWG3Nf3mcBjBlVwTLOfhCdDsGci1DaaA=;
+        b=NctD61TExeeIcuKdUdrsMXTBsf4mP4zLWkbU+MlFFXIIo25VMu3UwJhLgiBBQzm3h/
+         /LZgXNjfsGgtUvPaZxeqU+0nNROia1WXqj7L/TEuxArXrxBDOIr9rrhRxkwvjfKyjVjG
+         Y29TbMDce8vPW7U1vk+iK5i7whUhotD0lp8BeEyV/hZnkhYzdaBv5is4NzhTAMmIevvi
+         eNxVQkeo/Qb8dr4A/guiCEFcS5HmEPT13CWv5RCRniBmtP8ubpNt+gCU8AbB3LQa3WxA
+         OoRaDBxhOT3VOe70SOlpTu0FYMH8jR1zsfXONIbMULkGJuGZyjMQPwdHhMl6SjF5VWIP
+         /w0w==
+X-Gm-Message-State: APjAAAVkutJvdzPGgJo6CZxBwzPHXNWeSiGJ/3jyhUKR+ybPCurgTYgx
+        VLYkuYJ2GyNUFLQyp99+K7Nmzg==
+X-Google-Smtp-Source: APXvYqyDGaeuMVJibuQEGGPk4C3IMj3UK901bqnfRpViSdOK3zl/eMdR/sOGUpiYAYGCLxL3rafotg==
+X-Received: by 2002:a63:1904:: with SMTP id z4mr30463579pgl.413.1572388220234;
+        Tue, 29 Oct 2019 15:30:20 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id c21sm136005pfo.51.2019.10.29.15.30.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2019 15:30:19 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 15:30:18 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        netdev@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] treewide: Use sizeof_member() macro
+Message-ID: <201910291527.ED0E642@keescook>
+References: <20191010232345.26594-1-keescook@chromium.org>
+ <20191010232345.26594-4-keescook@chromium.org>
+ <2231d5f0a82f880e6706e2d0f070328a029c9b21.camel@perches.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2231d5f0a82f880e6706e2d0f070328a029c9b21.camel@perches.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On Thu, Oct 10, 2019 at 04:50:27PM -0700, Joe Perches wrote:
+> On Thu, 2019-10-10 at 16:23 -0700, Kees Cook wrote:
+> > From: Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>
+> > 
+> > Replace all the occurrences of FIELD_SIZEOF() and sizeof_field() with
+> > sizeof_member() except at places where these are defined. Later patches
+> > will remove the unused definitions.
+> > 
+> > This patch is generated using following script:
+> > 
+> > EXCLUDE_FILES="include/linux/stddef.h|include/linux/kernel.h"
+> > 
+> > git grep -l -e "\bFIELD_SIZEOF\b" -e "\bsizeof_field\b" | while read file;
+> > do
+> > 
+> > 	if [[ "$file" =~ $EXCLUDE_FILES ]]; then
+> > 		continue
+> > 	fi
+> > 	sed -i  -e 's/\bFIELD_SIZEOF\b/sizeof_member/g' \
+> > 		-e 's/\bsizeof_field\b/sizeof_member/g' \
+> > 		$file;
+> > done
+> 
+> While the sed works, a cocci script would perhaps
+> be better as multi line argument realignment would
+> also occur.
+> 
+> $ cat sizeof_member.cocci
+> @@
+> @@
+> 
+> -	FIELD_SIZEOF
+> +	sizeof_member
+> 
+> @@
+> @@
+> 
+> -	sizeof_field
+> +	sizeof_member
+> $
+> 
+> For instance, this sed produces:
+> 
+> diff --git a/crypto/adiantum.c b/crypto/adiantum.c
+> @@ -435,10 +435,10 @@ static int adiantum_init_tfm(struct crypto_skcipher *tfm)
+>  
+>  	BUILD_BUG_ON(offsetofend(struct adiantum_request_ctx, u) !=
+>  		     sizeof(struct adiantum_request_ctx));
+> -	subreq_size = max(FIELD_SIZEOF(struct adiantum_request_ctx,
+> +	subreq_size = max(sizeof_member(struct adiantum_request_ctx,
+>  				       u.hash_desc) +
+>  			  crypto_shash_descsize(hash),
+> -			  FIELD_SIZEOF(struct adiantum_request_ctx,
+> +			  sizeof_member(struct adiantum_request_ctx,
+>  				       u.streamcipher_req) +
+>  			  crypto_skcipher_reqsize(streamcipher));
+>  
+> 
+> where the cocci script produces:
+> 
+> --- crypto/adiantum.c
+> +++ /tmp/cocci-output-22881-d8186c-adiantum.c
+> @@ -435,11 +435,11 @@ static int adiantum_init_tfm(struct cryp
+>  
+>  	BUILD_BUG_ON(offsetofend(struct adiantum_request_ctx, u) !=
+>  		     sizeof(struct adiantum_request_ctx));
+> -	subreq_size = max(FIELD_SIZEOF(struct adiantum_request_ctx,
+> -				       u.hash_desc) +
+> +	subreq_size = max(sizeof_member(struct adiantum_request_ctx,
+> +					u.hash_desc) +
+>  			  crypto_shash_descsize(hash),
+> -			  FIELD_SIZEOF(struct adiantum_request_ctx,
+> -				       u.streamcipher_req) +
+> +			  sizeof_member(struct adiantum_request_ctx,
+> +					u.streamcipher_req) +
+>  			  crypto_skcipher_reqsize(streamcipher));
+>  
+>  	crypto_skcipher_set_reqsize(tfm,
 
-Document that the statx() system call can now be used to check whether a
-file is a verity file.
+I played with this a bit, and it seems Coccinelle can get this very very
+wrong:
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- Documentation/filesystems/fsverity.rst | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/Documentation/filesystems/fsverity.rst b/Documentation/filesystems/fsverity.rst
-index 42a0b6dd9e0b68..3355377a24398d 100644
---- a/Documentation/filesystems/fsverity.rst
-+++ b/Documentation/filesystems/fsverity.rst
-@@ -226,6 +226,14 @@ To do so, check for FS_VERITY_FL (0x00100000) in the returned flags.
- The verity flag is not settable via FS_IOC_SETFLAGS.  You must use
- FS_IOC_ENABLE_VERITY instead, since parameters must be provided.
+diff -u -p a/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c b/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
+@@ -87,13 +87,13 @@ static const struct rhashtable_params rh
+ 	 * value is not constant during the lifetime
+ 	 * of the key object.
+ 	 */
+-	.key_len = FIELD_SIZEOF(struct mlx5_fpga_ipsec_sa_ctx, hw_sa) -
+-		   FIELD_SIZEOF(struct mlx5_ifc_fpga_ipsec_sa_v1, cmd),
++	.key_len = sizeof_member(struct mlx5_fpga_ipsec_sa_ctx, hw_sa) -
++	sizeof_member(struct mlx5_ifc_fpga_ipsec_sa_v1, cmd),
+ 	.key_offset = offsetof(struct mlx5_fpga_ipsec_sa_ctx, hw_sa) +
+-		      FIELD_SIZEOF(struct mlx5_ifc_fpga_ipsec_sa_v1, cmd),
+-	.head_offset = offsetof(struct mlx5_fpga_ipsec_sa_ctx, hash),
+-	.automatic_shrinking = true,
+-	.min_size = 1,
++		      sizeof_member(struct mlx5_ifc_fpga_ipsec_sa_v1, cmd),
++		      .head_offset = offsetof(struct mlx5_fpga_ipsec_sa_ctx, hash),
++		      .automatic_shrinking = true,
++		      .min_size = 1,
+ };
  
-+statx
-+-----
-+
-+Since Linux v5.5, the statx() system call sets STATX_ATTR_VERITY if
-+the file has fs-verity enabled.  This can perform better than
-+FS_IOC_GETFLAGS and FS_IOC_MEASURE_VERITY because it doesn't require
-+opening the file, and opening verity files can be expensive.
-+
- Accessing verity files
- ======================
- 
+ struct mlx5_fpga_ipsec {
+
+
+So, since the sed is faster and causes fewer problems, I'll keep it
+as-is.
+
 -- 
-2.24.0.rc1.363.gb1bccd3e3d-goog
-
+Kees Cook
