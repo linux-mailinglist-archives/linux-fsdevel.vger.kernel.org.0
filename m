@@ -2,105 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2290E88A4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2019 13:47:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00D8FE89B4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2019 14:39:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387979AbfJ2Mr2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Oct 2019 08:47:28 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38004 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387960AbfJ2Mr1 (ORCPT
+        id S2388578AbfJ2NjX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Oct 2019 09:39:23 -0400
+Received: from mail.loongson.cn ([114.242.206.163]:43645 "EHLO
+        mail.loongson.cn" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388274AbfJ2NjX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Oct 2019 08:47:27 -0400
-Received: by mail-wr1-f65.google.com with SMTP id v9so13500384wrq.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Oct 2019 05:47:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=6VqIj3BTfFgV4L15YGzzwv6yyFmVnbm7JQmLRtMKsic=;
-        b=CfxPPaDekZp7Q3u2GYPK2Du+jE1BNYcTQSKcDF5cLZnsRZZwbwlKGn0v6Lag4uMheH
-         pr6at2+zXWlfkIVglgv3gVRED3ewZjIBNRcJdFSK/UMybQo2xr7hrahVXBrn3ff9P6wZ
-         bFNSTFOjxn/qUDPxzBiLa0a/JuFbX9XODa7q0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=6VqIj3BTfFgV4L15YGzzwv6yyFmVnbm7JQmLRtMKsic=;
-        b=ID6POelMhp4uP6yvjVhzyiMhlEAaVUNt8oIHAwj3g85Gnw9QlmVPumUzyOa9QRWW+S
-         NIWNPG43/DrOG4yAB245Kw1axznes7gCCw9N+9ax2yyZvkqGQ6ocBySAwE0pEYPjtptm
-         TJ1jc2ucHt40KbWK5P5CHQzvIOs+sombb1yuwbVdLZCeIGc6KKvcFjMynMMm/i0iDpj0
-         k2QUEr7L2LC1goyq/Nnel4HC8xMiI2SfaIdkAg9BnxK4w1eaKPQ0LwfRmaFVYgqCSPOt
-         NJOH0iZFN2QFTM/CEkQgWcVAtuKIIa+SSLk/uuwpAVSGBb6ZpMMIaueiXrHDXdgp2nnP
-         65Gw==
-X-Gm-Message-State: APjAAAUZS8jFTbLYcqgZt4uM7ygKjiXfoLpmUJwu7NMurn6BMNmxSf4+
-        2B/OsG48C2nbc/vVMTyfufuw1w==
-X-Google-Smtp-Source: APXvYqxP32WsuIeX0uHdKVMlzu2T3N+gMRJC+9wtmoLuOudI6BOZebwGZYeFObYe4CxYzxOkt41AhA==
-X-Received: by 2002:a5d:4142:: with SMTP id c2mr18809312wrq.208.1572353244608;
-        Tue, 29 Oct 2019 05:47:24 -0700 (PDT)
-Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id l4sm1953002wml.33.2019.10.29.05.47.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2019 05:47:23 -0700 (PDT)
-Date:   Tue, 29 Oct 2019 13:47:17 +0100
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] fuse fixes for 5.4-rc6
-Message-ID: <20191029124717.GA7805@miu.piliscsaba.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        Tue, 29 Oct 2019 09:39:23 -0400
+Received: from linux.loongson.cn (unknown [10.20.41.27])
+        by mail (Coremail) with SMTP id QMiowPDxz1wIQbhd0YEZAA--.70S2;
+        Tue, 29 Oct 2019 21:39:20 +0800 (CST)
+From:   Tiezhu Yang <yangtiezhu@loongson.cn>
+To:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] fsnotify: Use NULL instead of 0 for pointer
+Date:   Tue, 29 Oct 2019 21:39:02 +0800
+Message-Id: <1572356342-24776-1-git-send-email-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.1.0
+X-CM-TRANSID: QMiowPDxz1wIQbhd0YEZAA--.70S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7JFWfKF17Jr47XFWfKFW5Awb_yoWftFbE9r
+        1qva1kWryrursYyr43CrWYyF97ur1kGr18CFsFqr1jka15trZxJFyvvrZ3Zw48uFWYkw4r
+        K3sFk347KF1akjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbakYjsxI4VWDJwAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I
+        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0
+        cI8IcVCY1x0267AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4
+        A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+        w4CE5I8CrVC2j2WlYx0EF7xvrVAajcxG14v26r1j6r4UMcIj6xIIjxv20xvE14v26r1Y6r
+        17McIj6I8E87Iv67AKxVWxJVW8Jr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAK
+        I48JM4x0Y48IcxkI7VAKI48G6xCjnVAKz4kxMxAIw28IcxkI7VAKI48JMxC20s026xCaFV
+        Cjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
+        x4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
+        1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Wr1j
+        6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8Jb
+        IYCTnIWIevJa73UjIFyTuYvjxU4KsjUUUUU
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+Fix the following sparse warning:
 
-Please pull from:
+fs/notify/fdinfo.c:53:87: warning: Using plain integer as NULL pointer
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-fixes-5.4-rc6
-
-Mostly virtiofs fixes, but also fixes a regression and couple of
-longstanding data/metadata writeback ordering issues.
-
-Thanks,
-Miklos
-
-----------------------------------------------------------------
-Alan Somers (1):
-      fuse: Add changelog entries for protocols 7.1 - 7.8
-
-Miklos Szeredi (5):
-      virtio-fs: don't show mount options
-      fuse: don't dereference req->args on finished request
-      fuse: don't advise readdirplus for negative lookup
-      fuse: flush dirty data/metadata before non-truncate setattr
-      fuse: truncate pending writes on O_TRUNC
-
-Vasily Averin (1):
-      fuse: redundant get_fuse_inode() calls in fuse_writepages_fill()
-
-Vivek Goyal (6):
-      virtio-fs: Change module name to virtiofs.ko
-      virtiofs: Do not end request in submission context
-      virtiofs: No need to check fpq->connected state
-      virtiofs: Set FR_SENT flag only after request has been sent
-      virtiofs: Count pending forgets as in_flight forgets
-      virtiofs: Retry request submission from worker context
-
-zhengbin (1):
-      virtiofs: Remove set but not used variable 'fc'
-
+Fixes: be77196b809c ("fs, notify: add procfs fdinfo helper")
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
 ---
- fs/fuse/Makefile          |   3 +-
- fs/fuse/dev.c             |   4 +-
- fs/fuse/dir.c             |  16 ++++-
- fs/fuse/file.c            |  14 ++--
- fs/fuse/fuse_i.h          |   4 ++
- fs/fuse/inode.c           |   4 ++
- fs/fuse/virtio_fs.c       | 169 +++++++++++++++++++++++++++++++---------------
- include/uapi/linux/fuse.h |  37 ++++++++++
- 8 files changed, 186 insertions(+), 65 deletions(-)
+ fs/notify/fdinfo.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
+index 1e2bfd2..cd2846e 100644
+--- a/fs/notify/fdinfo.c
++++ b/fs/notify/fdinfo.c
+@@ -50,7 +50,8 @@ static void show_mark_fhandle(struct seq_file *m, struct inode *inode)
+ 	f.handle.handle_bytes = sizeof(f.pad);
+ 	size = f.handle.handle_bytes >> 2;
+ 
+-	ret = exportfs_encode_inode_fh(inode, (struct fid *)f.handle.f_handle, &size, 0);
++	ret = exportfs_encode_inode_fh(inode, (struct fid *)f.handle.f_handle,
++				       &size, NULL);
+ 	if ((ret == FILEID_INVALID) || (ret < 0)) {
+ 		WARN_ONCE(1, "Can't encode file handler for inotify: %d\n", ret);
+ 		return;
+-- 
+2.1.0
+
+
