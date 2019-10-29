@@ -2,53 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9ABDE8D9A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2019 18:05:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3796AE8DFB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2019 18:22:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390762AbfJ2RFD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Oct 2019 13:05:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44580 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390580AbfJ2RFD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Oct 2019 13:05:03 -0400
-Subject: Re: [GIT PULL] fuse fixes for 5.4-rc6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572368702;
-        bh=Ox7HKx5NzeW3uA2zahha7SNPObb44UmyPOAGV4rMffU=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=jdeVoQZfW50rwBBv/Skc8bS2og1o1HgNNSVdXbbC2ZnNKRQfv9aZ4jTiJZVgtA2bC
-         +WMo+aSn7TRsJ5Q4RBSD/7nKRFvNurodZd9tnXTf+p7VM5idHy7MVF+PwiBDaen/YB
-         MJtsapCmJzGFJewUKs2sJCkeoFcTQTOuD39L85O4=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20191029124717.GA7805@miu.piliscsaba.redhat.com>
-References: <20191029124717.GA7805@miu.piliscsaba.redhat.com>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20191029124717.GA7805@miu.piliscsaba.redhat.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
- tags/fuse-fixes-5.4-rc6
-X-PR-Tracked-Commit-Id: 091d1a7267726ba162b12ce9332d76cdae602789
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 23fdb198ae81f47a574296dab5167c5e136a02ba
-Message-Id: <157236870243.18301.6340281762330254385.pr-tracker-bot@kernel.org>
-Date:   Tue, 29 Oct 2019 17:05:02 +0000
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+        id S2390795AbfJ2RWP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Oct 2019 13:22:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35714 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727763AbfJ2RWP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 29 Oct 2019 13:22:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E7A61B1D3;
+        Tue, 29 Oct 2019 17:22:13 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id A8884DA734; Tue, 29 Oct 2019 18:22:21 +0100 (CET)
+Date:   Tue, 29 Oct 2019 18:22:20 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     viro@ZenIV.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        kernel-team@fb.com, jack@suse.cz, linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH] fs: use READ_ONCE/WRITE_ONCE with the i_size helpers
+Message-ID: <20191029172220.GY3001@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Josef Bacik <josef@toxicpanda.com>,
+        viro@ZenIV.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        kernel-team@fb.com, jack@suse.cz, linux-btrfs@vger.kernel.org
+References: <20191011202050.8656-1-josef@toxicpanda.com>
+ <20191024120843.4n2eh47okn4c635f@MacBook-Pro-91.local>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191024120843.4n2eh47okn4c635f@MacBook-Pro-91.local>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Tue, 29 Oct 2019 13:47:17 +0100:
+On Thu, Oct 24, 2019 at 08:08:44AM -0400, Josef Bacik wrote:
+> Al,
+> 
+> Will you pick this up, or do you want me to send it along?  Thanks,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-fixes-5.4-rc6
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/23fdb198ae81f47a574296dab5167c5e136a02ba
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+So is this patch on the way to 5.4-rc or shall we apply the
+btrfs-specific fix? Thanks.
