@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53F7FE90F6
+	by mail.lfdr.de (Postfix) with ESMTP id 3D80EE90F5
 	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2019 21:43:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728181AbfJ2Un5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1728202AbfJ2Un5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Tue, 29 Oct 2019 16:43:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34740 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:34752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726636AbfJ2Un4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S1725840AbfJ2Un4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 29 Oct 2019 16:43:56 -0400
 Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown [104.132.1.77])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27ABC21721;
+        by mail.kernel.org (Postfix) with ESMTPSA id 928D521479;
         Tue, 29 Oct 2019 20:43:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1572381835;
-        bh=bA1Nt9TWZvija+pWQm/jvZD5pLPHccs35Yz1RfF2GZA=;
+        bh=6uKinpfPcLRaz3evDg6XWZp9GRM69VU/7RKl098ZYrc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rd7PXg6zwRW6AzBcDukG70kVXPnDFY/Yp1M1Yi465IxdRteBn/mWEGk2RcSAX0bx9
-         zel1es+30DpGpOmI1ko07QXwQLI0WJLYWrVJ486au+twTpg7V/PgIwyKBDURx3jDP4
-         2oMAidPnxs9Tw9ec8wOtrlajmDWE6C9PK+eKYyUs=
+        b=F1vqZRv2eFon0GtBrubS3F8e3n4v3lX+Jc7jDQg+EZxKCGfEixUVBHBkysbExqltN
+         roBhndZO2TwSgAGdgGQDvkeehTBKaAmzZ3De6S2jApC8pcFCkEdmVptT1PczW0qk0K
+         jbi9gPsqlqJrizoOxtRc9vp5wHXzAHRlP9oxJ79A=
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-fscrypt@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
@@ -31,9 +31,9 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         Theodore Ts'o <tytso@mit.edu>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
         Victor Hsieh <victorhsieh@google.com>
-Subject: [PATCH 1/4] statx: define STATX_ATTR_VERITY
-Date:   Tue, 29 Oct 2019 13:41:38 -0700
-Message-Id: <20191029204141.145309-2-ebiggers@kernel.org>
+Subject: [PATCH 2/4] ext4: support STATX_ATTR_VERITY
+Date:   Tue, 29 Oct 2019 13:41:39 -0700
+Message-Id: <20191029204141.145309-3-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.24.0.rc1.363.gb1bccd3e3d-goog
 In-Reply-To: <20191029204141.145309-1-ebiggers@kernel.org>
 References: <20191029204141.145309-1-ebiggers@kernel.org>
@@ -46,52 +46,35 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-Add a statx attribute bit STATX_ATTR_VERITY which will be set if the
-file has fs-verity enabled.  This is the statx() equivalent of
-FS_VERITY_FL which is returned by FS_IOC_GETFLAGS.
-
-This is useful because it allows applications to check whether a file is
-a verity file without opening it.  Opening a verity file can be
-expensive because the fsverity_info is set up on open, which involves
-parsing metadata and optionally verifying a cryptographic signature.
-
-This is analogous to how various other bits are exposed through both
-FS_IOC_GETFLAGS and statx(), e.g. the encrypt bit.
+Set the STATX_ATTR_VERITY bit when the statx() system call is used on a
+verity file on ext4.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- include/linux/stat.h      | 3 ++-
- include/uapi/linux/stat.h | 2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ fs/ext4/inode.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/stat.h b/include/linux/stat.h
-index 765573dc17d659..528c4baad09146 100644
---- a/include/linux/stat.h
-+++ b/include/linux/stat.h
-@@ -33,7 +33,8 @@ struct kstat {
- 	 STATX_ATTR_IMMUTABLE |				\
- 	 STATX_ATTR_APPEND |				\
- 	 STATX_ATTR_NODUMP |				\
--	 STATX_ATTR_ENCRYPTED				\
-+	 STATX_ATTR_ENCRYPTED |				\
-+	 STATX_ATTR_VERITY				\
- 	 )/* Attrs corresponding to FS_*_FL flags */
- 	u64		ino;
- 	dev_t		dev;
-diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
-index 7b35e98d3c58b1..ad80a5c885d598 100644
---- a/include/uapi/linux/stat.h
-+++ b/include/uapi/linux/stat.h
-@@ -167,8 +167,8 @@ struct statx {
- #define STATX_ATTR_APPEND		0x00000020 /* [I] File is append-only */
- #define STATX_ATTR_NODUMP		0x00000040 /* [I] File is not to be dumped */
- #define STATX_ATTR_ENCRYPTED		0x00000800 /* [I] File requires key to decrypt in fs */
--
- #define STATX_ATTR_AUTOMOUNT		0x00001000 /* Dir: Automount trigger */
-+#define STATX_ATTR_VERITY		0x00100000 /* [I] Verity protected file */
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 516faa280ceda8..a7ca6517798008 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -5717,12 +5717,15 @@ int ext4_getattr(const struct path *path, struct kstat *stat,
+ 		stat->attributes |= STATX_ATTR_IMMUTABLE;
+ 	if (flags & EXT4_NODUMP_FL)
+ 		stat->attributes |= STATX_ATTR_NODUMP;
++	if (flags & EXT4_VERITY_FL)
++		stat->attributes |= STATX_ATTR_VERITY;
  
+ 	stat->attributes_mask |= (STATX_ATTR_APPEND |
+ 				  STATX_ATTR_COMPRESSED |
+ 				  STATX_ATTR_ENCRYPTED |
+ 				  STATX_ATTR_IMMUTABLE |
+-				  STATX_ATTR_NODUMP);
++				  STATX_ATTR_NODUMP |
++				  STATX_ATTR_VERITY);
  
- #endif /* _UAPI_LINUX_STAT_H */
+ 	generic_fillattr(inode, stat);
+ 	return 0;
 -- 
 2.24.0.rc1.363.gb1bccd3e3d-goog
 
