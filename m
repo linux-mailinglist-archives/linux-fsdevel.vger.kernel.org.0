@@ -2,82 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F083CE8E8A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2019 18:48:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 790D2E90A2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2019 21:15:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbfJ2RsF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Oct 2019 13:48:05 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45350 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726566AbfJ2RsE (ORCPT
+        id S1726273AbfJ2UPX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Oct 2019 16:15:23 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56642 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725840AbfJ2UPX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Oct 2019 13:48:04 -0400
-Received: by mail-lj1-f195.google.com with SMTP id q64so16208011ljb.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Oct 2019 10:48:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=R35NzCe37FoRr+JmWaRxXNrs+ANr5l1yDPp+eQUm8vU=;
-        b=cIKrfG2BcBsU9hYXIpQdSwopgElTE4RautsHm9ZOuGHXTi69dKNkh17wSQH/L4zosA
-         DI1JpADSu0a3R25/VXr5Iz0OjSuf3z6tAsWgiVO+H5ZF/9VP2xOxAKxjdhdoLpjleNL1
-         GGQBMKSg8yP8LIjunquGxXVF8tAxYNJNCdEfsXnbnr55B8bLQDyruSeqzDYclYPGSbAm
-         HJjhrG4J94CdXOlytO9LgDMPwdYA+nprQ2rf2m4rCZfPfrNaJYmSZ90g3N59yzI3oBGl
-         vPR4bxKynazkligieSoyOTOws2e6shukr1fmmOZGMEygc+XcvpYmK61rppkwFwgRbTjB
-         zPIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=R35NzCe37FoRr+JmWaRxXNrs+ANr5l1yDPp+eQUm8vU=;
-        b=TBTu5bNaAy+BIttDP4EbAwDBTSQB6nmux+p3goVzKf2SS8+E5tcRI4ic0nkk/2ODjI
-         oaIiZx3IfsW4DmIQHGOK1ICGOe5my+orzlqT4nf5hOFoi0SmuBeztToPSSF95+srIhGn
-         amJ5lGN5CCq7e/iafR+r8L9JkqVAufB9lKAXPE0z9RTMIMtFXj1P/cEoO4PfGX3FBle/
-         fmg1KsYX1AKjmfizRojaWZFUdGxBYBv2RPE5SIOhUG+qCPrfEPFP1VH6C+1PLJcsjtD1
-         /3+m/fVf8TC5XtuZ+rDgHlhahRnXkVESEzudCVlxA2+ccxvUynNm9Taw3fPIJ+1MjxqY
-         sAxA==
-X-Gm-Message-State: APjAAAXSRsIPF1CSQ55FQkSCj8EdIIpNb5SQQWXSaeSa/wIgpKS9afBh
-        57198Lgz2Jt89PdsMfFlPSmyXGvV+iEghQeYnxSVeQ==
-X-Google-Smtp-Source: APXvYqwNTLBO6ek7haLq57qS7qFh4V78zjcOU4/j+rzIkHP000hEzkPtfT9hnV441B6ZiktsLU57y15HuzMTPyrd4yw=
-X-Received: by 2002:a2e:96c9:: with SMTP id d9mr3387439ljj.247.1572371282017;
- Tue, 29 Oct 2019 10:48:02 -0700 (PDT)
+        Tue, 29 Oct 2019 16:15:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LzVdL0wHnm5sm88oPlshU6HxnHkQI6xUUaMFyCCHz6w=; b=S/ChoJyNsr+FqVRPy4QQVpV4T
+        bXF701TlM7rUvdvHvnqFCpvuoC+ZovETwZaBjB0uRLaTbraAOdKDuvsT3ObAE8642xb0iy6cFFl0O
+        0/5Y2sfvbW7Qd3gOInOIwOBErFrm9Id+U8Cxj10dsgtGyHx3hnrv/Sb1jQAxIz4SWyWIj7DK6pka7
+        /DkusRyXN/MSdgQ4u/pXWLZKskmUmx6EB5QM8FsOwKRTuVYJLoErDDGfPI6PFMzBKBHiZoFRUaFwX
+        1PRsqK+xuKdm4C298KOmlWbKDy96wMWKY40Fh/Hv7XK7T+WvnhIYVdfx/lfcEvwvnPAU59prGAP7N
+        +N83CyUmw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iPXth-0007MY-Ed; Tue, 29 Oct 2019 20:15:21 +0000
+Date:   Tue, 29 Oct 2019 13:15:21 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Schumaker, Anna" <Anna.Schumaker@netapp.com>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "mbenjami@redhat.com" <mbenjami@redhat.com>,
+        "boaz@plexistor.com" <boaz@plexistor.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "mszeredi@redhat.com" <mszeredi@redhat.com>,
+        "amir73il@gmail.com" <amir73il@gmail.com>,
+        "Manole, Sagi" <Sagi.Manole@netapp.com>
+Subject: Re: [PATCH 11/16] zuf: Write/Read implementation
+Message-ID: <20191029201521.GC17669@bombadil.infradead.org>
+References: <20190926020725.19601-1-boazh@netapp.com>
+ <20190926020725.19601-12-boazh@netapp.com>
+ <db90d73233484d251755c5a0cb7ee570b3fc9d19.camel@netapp.com>
 MIME-Version: 1.0
-References: <20191024215438.138489-1-ebiggers@kernel.org> <20191024215438.138489-2-ebiggers@kernel.org>
-In-Reply-To: <20191024215438.138489-2-ebiggers@kernel.org>
-From:   Paul Crowley <paulcrowley@google.com>
-Date:   Tue, 29 Oct 2019 10:47:50 -0700
-Message-ID: <CA+_SqcCefZRWL2xHRwFABupXyBdq9=jgBK_9gy-_4o-yFXG+Tg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] fscrypt: add support for IV_INO_LBLK_64 policies
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, Satya Tangirala <satyat@google.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <db90d73233484d251755c5a0cb7ee570b3fc9d19.camel@netapp.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 24 Oct 2019 at 14:57, Eric Biggers <ebiggers@kernel.org> wrote:
-> From: Eric Biggers <ebiggers@google.com>
->
-> Co-developed-by: Satya Tangirala <satyat@google.com>
-> Signed-off-by: Satya Tangirala <satyat@google.com>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->  Documentation/filesystems/fscrypt.rst | 63 +++++++++++++++++----------
->  fs/crypto/crypto.c                    | 10 ++++-
->  fs/crypto/fscrypt_private.h           | 16 +++++--
->  fs/crypto/keyring.c                   |  6 ++-
->  fs/crypto/keysetup.c                  | 45 ++++++++++++++-----
->  fs/crypto/policy.c                    | 41 ++++++++++++++++-
->  include/linux/fscrypt.h               |  3 ++
->  include/uapi/linux/fscrypt.h          |  3 +-
->  8 files changed, 146 insertions(+), 41 deletions(-)
+On Tue, Oct 29, 2019 at 08:08:16PM +0000, Schumaker, Anna wrote:
+> > +       return size ?: ret;
+> 
+> It looks like you're returning "ret" if the ternary evaluates to false, but it's not clear to
+> me what is returned if it evaluates to true. It's possible it's okay, but I just don't know
+> enough about how ternaries work in this case.
 
-I don't understand all of this, but the crypto-relevant part looks good to me.
+It's an unloved, unwnted GNU extension.  See
+https://gcc.gnu.org/onlinedocs/gcc/Conditionals.html
 
-Reviewed-By: Paul Crowley <paulcrowley@google.com>
+It's really no better than writing:
+
+	return size ? size : ret;
+
+or even better:
+
+	if (size)
+		return size;
+	return ret;
