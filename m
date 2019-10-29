@@ -2,89 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86F1CE7EF6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2019 05:05:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C134E7F6E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Oct 2019 06:07:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726116AbfJ2EFh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Oct 2019 00:05:37 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37291 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725830AbfJ2EFh (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Oct 2019 00:05:37 -0400
-Received: by mail-pf1-f196.google.com with SMTP id u9so3821204pfn.4;
-        Mon, 28 Oct 2019 21:05:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=6kfMSy0YgXJLyBlk1+ds2GJPOLdmrFH2Txe8Vx2BEAo=;
-        b=qMcnvSdtU0oU4QbZESXTMDIDXuhTMtdCoSPB57JMG8PEt6fskTqfW3V9WDHRC9h2Xo
-         rMVOMLKx2elTTyiFOtFxlX/QTnbr7lAxkGOBG5I84zs62pturUoRi/kaYGtdUXEwcj+7
-         Dkh6qXE2Bm9E6Fwao9zdZV8CZn9nI3YK9BADEeHYj/gttkyxvIpJ0iQ2/hpqQX4zac5X
-         iHFOe7A4liELhYdVype5HpQ3nXZudc+rgUkr9kHqT32rtYEWMCnt8wbEaYc6xC0fjRLT
-         WYjXaos6ptmwTIg2NYbLRVankZHB1dZaRUH63trWBpyAibRnZv5CEQEx9zbGDvFg9LsG
-         VniQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=6kfMSy0YgXJLyBlk1+ds2GJPOLdmrFH2Txe8Vx2BEAo=;
-        b=anQlJR7dC+wWrxX9RZNqfqxvEUalqs6KtXfSAta8ctFzt00U0nIidq+bB99KtVT8Me
-         eDsBEpok8+nrUfmp3Qg42Q6uKJF/dVXu+7jkuA6aNqucxIaK9tVyXS/DYgdvvJKRggcU
-         SeWnohl7Y4oeu2me8uHoSeNQ8htrUYTGciF+b/f8kf/hWwcY6W/MYsvbXTMyPtpRaKoB
-         5afA+nEDet2dtTa+WkYDO7pCU/AmeRMEQM1g86LpV1ZgUxyl2QZGF7umvKado/lN2HW/
-         J1Zuyi49Opw5XwAn/qf5fkdoCISSGkRmLhGm4KcifIPZIi/v0xIYFsHrzmRY6FkJlDmt
-         /lyw==
-X-Gm-Message-State: APjAAAWZM2MAnLcjWYUYyOODiE6vGniPzzcnTDPFXyJN6FE3zlBQbsbq
-        +9zAboR5qfTmhNQAe+8ergKRJQ3IQ1Q=
-X-Google-Smtp-Source: APXvYqxsjIyyj4Ra1iYRvCc5o+ssppErTK1FGHOLkdks6DLomEu0wqnIqE1NHZl7JVzVhCvp+kgCXA==
-X-Received: by 2002:a63:c40e:: with SMTP id h14mr24406732pgd.254.1572321936001;
-        Mon, 28 Oct 2019 21:05:36 -0700 (PDT)
-Received: from saurav ([27.62.167.137])
-        by smtp.gmail.com with ESMTPSA id s18sm6102396pfc.120.2019.10.28.21.05.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2019 21:05:35 -0700 (PDT)
-Date:   Tue, 29 Oct 2019 09:35:29 +0530
-From:   Saurav Girepunje <saurav.girepunje@gmail.com>
-To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        id S1731622AbfJ2FHj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Oct 2019 01:07:39 -0400
+Received: from ozlabs.org ([203.11.71.1]:50809 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731547AbfJ2FHi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 29 Oct 2019 01:07:38 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 472KMp2YvRz9sPV;
+        Tue, 29 Oct 2019 16:07:34 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1572325656;
+        bh=cjVSQ2LeMyLilTOrYL1B1Dp8AyZuyPWwP4ayARVor8M=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=NrkxL5DNaqn/fFPvdXlvKguLF+D5zjiI7p+g88YE9sqP78SRoWgA614JHSEjxujlo
+         mulVx26SU8rT0Ox7178eD1fsvm+WbIGLwRskp7evaKug6mtD8q0kGWkG0t7K+1NjHZ
+         Bs52PB1LHiyc9xMFgNaEfIcWRRwgStyKEQJLKehGWDr1gXUHoDsQx0J6dzW7BTLCij
+         qWBx+M5Zl292rAn3U/v5cNXMda03Q7d0ZxCmEOjbE84dp3soqBIoEd1VOadyJbGqh6
+         xUVELfHbZuA2Sgip3SFAWOVbmemTP80AsGLaGnekmHu+6KUp8FergJBQbFHWRhkOwH
+         k9gaf91CUoH8Q==
+Date:   Tue, 29 Oct 2019 16:07:33 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Boaz Harrosh <boaz@plexistor.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-kernel@vger.kernel.org
-Cc:     saurav.girepunje@hotmail.com
-Subject: [PATCH] fs: buffer.c: Fix use true/false for bool type
-Message-ID: <20191029040529.GA7625@saurav>
+Subject: Re: Please add the zuf tree to linux-next
+Message-ID: <20191029160733.298c6539@canb.auug.org.au>
+In-Reply-To: <20191024023606.GA1884@infradead.org>
+References: <1b192a85-e1da-0925-ef26-178b93d0aa45@plexistor.com>
+        <20191024023606.GA1884@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; boundary="Sig_/DNRAmrpHoq6Pd+umJSouVY0";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use true/false for bool return type of has_bh_in_lru().
+--Sig_/DNRAmrpHoq6Pd+umJSouVY0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Saurav Girepunje <saurav.girepunje@gmail.com>
----
- fs/buffer.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi Christoph,
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 86a38b979323..66a9fe8310c7 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -1385,10 +1385,10 @@ static bool has_bh_in_lru(int cpu, void *dummy)
- 	
- 	for (i = 0; i < BH_LRU_SIZE; i++) {
- 		if (b->bhs[i])
--			return 1;
-+			return true;
- 	}
- 
--	return 0;
-+	return false;
- }
- 
- void invalidate_bh_lrus(void)
--- 
-2.20.1
+On Wed, 23 Oct 2019 19:36:06 -0700 Christoph Hellwig <hch@infradead.org> wr=
+ote:
+>
+> On Thu, Oct 24, 2019 at 03:34:29AM +0300, Boaz Harrosh wrote:
+> > Hello Stephen
+> >=20
+> > Please add the zuf tree below to the linux-next tree.
+> > 	[https://github.com/NetApp/zufs-zuf zuf] =20
+>=20
+> I don't remember us coming to the conclusion that this actually is
+> useful doesn't just badly duplicate the fuse functionality.
 
+So is that a hard Nak on inclusion in linux-next at this time?
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/DNRAmrpHoq6Pd+umJSouVY0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl23yRUACgkQAVBC80lX
+0GwIiAgAoL3ldh/i+LtJQynaMn2qgEcke4R5IfGsrq08bxO9xczz48rlUAwwGY3i
+Xre4GQ/G4jZSiNcHHXnBtgA9habyNVb4yqmhJnQav/x6m+wQmE3lxlp6FaIWV4TJ
+eOWY3XUiNyYGPQVzVgpNvor8oIz1vTYodw2NbpoakoTYnbdz5S3mwMWAbLK/i8V5
+MZ12qTE8QrMxAGqPWZeEXW7tpPMvNvyJh3wqWF8dNETWQ9SSfMfeVA/Kc162eGYT
+t++EuUdmMcLXpjhUDjeoN0cW+Equ3E5JZ+jNbBQ/UIBBAYj7gDdns/jRSrXp++54
+RtlRL2TApKLbNKRisNddCuCOO+bF+w==
+=Jukb
+-----END PGP SIGNATURE-----
+
+--Sig_/DNRAmrpHoq6Pd+umJSouVY0--
