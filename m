@@ -2,102 +2,293 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3411BE9BDE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 13:53:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCFE2E9BE5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 13:57:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726255AbfJ3MxW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Oct 2019 08:53:22 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:38833 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726209AbfJ3MxW (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Oct 2019 08:53:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572440001;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=xEm7If272zgBUaaTDZ9GOaX/N26+KNfnDd8n2XNZSWk=;
-        b=AVoO5gi07lcd075v8skXgQkAbtQnsyrhY8C8HdXOsgsdl3tKzm7tlCw9iBv+Z4v/qZf84/
-        YbDpiLu27LMQw4/2L6Xy6B1T7+nHBS+N82RIK3OOxmF5VRlL97rwqtlCnyMHTTV7fGvhn5
-        UOdM4Z3MQsYYxjA0ix+Zf2oytxGrfiU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-154-wY2Aes37MRCfG9JiAEpIgg-1; Wed, 30 Oct 2019 08:53:19 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 708AB1800D55;
-        Wed, 30 Oct 2019 12:53:18 +0000 (UTC)
-Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E669119486;
-        Wed, 30 Oct 2019 12:53:17 +0000 (UTC)
-Date:   Wed, 30 Oct 2019 08:53:16 -0400
-From:   Brian Foster <bfoster@redhat.com>
-To:     Pingfan Liu <kernelfans@gmail.com>
-Cc:     linux-xfs@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] xfs/log: protect xc_cil in xlog_cil_push()
-Message-ID: <20191030125316.GC46856@bfoster>
-References: <1572416980-25274-1-git-send-email-kernelfans@gmail.com>
+        id S1726171AbfJ3M5H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Oct 2019 08:57:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55568 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726097AbfJ3M5H (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 30 Oct 2019 08:57:07 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9A676B49A;
+        Wed, 30 Oct 2019 12:57:03 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 265741E485C; Wed, 30 Oct 2019 13:57:03 +0100 (CET)
+Date:   Wed, 30 Oct 2019 13:57:03 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     =?utf-8?B?0JTQvNC40YLRgNC40Lkg0JzQvtC90LDRhdC+0LI=?= 
+        <dmtrmonakhov@yandex-team.ru>
+Cc:     Jan Kara <jack@suse.cz>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jan Kara <jack@suse.com>, Li Xi <lixi@ddn.com>
+Subject: Re: [PATCH] fs/ext4: get project quota from inode for mangling
+ statfs results
+Message-ID: <20191030125703.GM28525@quack2.suse.cz>
+References: <157225912326.3929.8539227851002947260.stgit@buzz>
+ <20191030105953.GC28525@quack2.suse.cz>
+ <2625831572437163@vla1-6bb9290e4d68.qloud-c.yandex.net>
 MIME-Version: 1.0
-In-Reply-To: <1572416980-25274-1-git-send-email-kernelfans@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: wY2Aes37MRCfG9JiAEpIgg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2625831572437163@vla1-6bb9290e4d68.qloud-c.yandex.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 02:29:40PM +0800, Pingfan Liu wrote:
-> xlog_cil_push() is the reader and writer of xc_cil, and should be protect=
-ed
-> against xlog_cil_insert_items().
->=20
-> Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
-> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-> To: linux-xfs@vger.kernel.org
-> Cc: linux-fsdevel@vger.kernel.org
-> ---
->  fs/xfs/xfs_log_cil.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/fs/xfs/xfs_log_cil.c b/fs/xfs/xfs_log_cil.c
-> index ef652abd..004af09 100644
-> --- a/fs/xfs/xfs_log_cil.c
-> +++ b/fs/xfs/xfs_log_cil.c
-> @@ -723,6 +723,7 @@ xlog_cil_push(
->  =09 */
->  =09lv =3D NULL;
->  =09num_iovecs =3D 0;
-> +=09spin_lock(&cil->xc_cil_lock);
->  =09while (!list_empty(&cil->xc_cil)) {
->  =09=09struct xfs_log_item=09*item;
-> =20
-> @@ -737,6 +738,7 @@ xlog_cil_push(
->  =09=09item->li_lv =3D NULL;
->  =09=09num_iovecs +=3D lv->lv_niovecs;
->  =09}
-> +=09spin_unlock(&cil->xc_cil_lock);
+On Wed 30-10-19 15:06:13, Дмитрий Монахов wrote:
+>  
+>  
+> 30.10.2019, 13:59, "Jan Kara" <jack@suse.cz>:
+> 
+> 
+>     On Mon 28-10-19 13:38:43, Konstantin Khlebnikov wrote:
+> 
+>          Right now ext4_statfs_project() does quota lookup by id every time.
+>          This is costly operation, especially if there is no inode who hold
+>          reference to this quota and dqget() reads it from disk each time.
+> 
+>          Function ext4_statfs_project() could be moved into generic quota code,
+>          it is required for every filesystem which uses generic project quota.
+> 
+>          Reported-by: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+>          Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+>          ---
+>           fs/ext4/super.c | 25 ++++++++++++++++---------
+>           1 file changed, 16 insertions(+), 9 deletions(-)
+> 
+>          diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+>          index dd654e53ba3d..f841c66aa499 100644
+>          --- a/fs/ext4/super.c
+>          +++ b/fs/ext4/super.c
+>          @@ -5532,18 +5532,23 @@ static int ext4_remount(struct super_block
+>         *sb, int *flags, char *data)
+>           }
+> 
+>           #ifdef CONFIG_QUOTA
+>          -static int ext4_statfs_project(struct super_block *sb,
+>          - kprojid_t projid, struct kstatfs *buf)
+>          +static int ext4_statfs_project(struct inode *inode, struct kstatfs
+>         *buf)
+>           {
+>          - struct kqid qid;
+>          + struct super_block *sb = inode->i_sb;
+>                   struct dquot *dquot;
+>                   u64 limit;
+>                   u64 curblock;
+>          + int err;
+>          +
+>          + err = dquot_initialize(inode);
+> 
+> 
+>     Hum, I'm kind of puzzled here: Your patch seems to be concerned with
+>     performance but how is this any faster than what we do now?
+>     dquot_initialize() will look up three dquots instead of one in the current
+>     code? Oh, I guess you are concerned about *repeated* calls to statfs() and
+>     thus repeated lookups of dquot structure? And this patch effectively caches
+>     looked up dquots in the inode?
+> 
+>     That starts to make some sense but still, even if dquot isn't cached in any
+>     inode, we still hold on to it (it's in the free_list) until shrinker evicts
+>     it. So lookup of such dquot should be just a hash table lookup which should
+>     be very fast. Then there's the cost of dquot_acquire() / dquot_release()
+>     that get always called on first / last get of a dquot. So are you concerned
+>     about that cost? Or do you really see IO happening to fetch quota structure
+>     on each statfs call again and again?
+> 
+> Hi,
+> No IO, only useless synchronization on journal
+> Repeaded statfs result in dquot_acquire()/ dquot_release() which result in two
+> ext4_journal_starts
+> perf record -e 'ext4:*' -e 'jbd2:*'  stat -f  volume
+> perf script
+>            stat 520596 [002] 589927.123955:                      
+> ext4:ext4_journal_start: dev 252,2 blocks, 73 rsv_blocks, 0 caller
+> ext4_acquire_dquot
+>             stat 520596 [002] 589927.123958:                      
+>  jbd2:jbd2_handle_start: dev 252,2 tid 187859 type 6 line_no 5550
+> requested_blocks 73
+>             stat 520596 [002] 589927.123959:                      
+>  jbd2:jbd2_handle_stats: dev 252,2 tid 187859 type 6 line_no 5550 interval 0
+> sync 0 requested_blocks 73 dirtied_blocks 0
+>             stat 520596 [002] 589927.123960:                      
+> ext4:ext4_journal_start: dev 252,2 blocks, 9 rsv_blocks, 0 caller
+> ext4_release_dquot
+>             stat 520596 [002] 589927.123961:                      
+>  jbd2:jbd2_handle_start: dev 252,2 tid 187859 type 6 line_no 5566
+> requested_blocks 9
+>             stat 520596 [002] 589927.123962:                      
+>  jbd2:jbd2_handle_stats: dev 252,2 tid 187859 type 6 line_no 5566 interval 0
+> sync 0 requested_blocks 9 dirtied_blocks 0
+> On host under io load this will be blocked on __jbd2_log_wait_for_space() which
+> is no what people expects from statfs()
 
-The majority of this function executes under exclusive ->xc_ctx_lock.
-xlog_cil_insert_items() runs with the ->xc_ctx_lock taken in read mode.
-The ->xc_cil_lock spinlock is used in the latter case to protect the
-list under concurrent transaction commits.
+OK, makes sense.
 
-Brian
+>     The only situation where I could seethat happening is when the quota
+>     structure would be actually completely
+>     empty (i.e., not originally present in the quota file). But then this
+>     cannot be a case when there's actually an inode belonging to this
+>     project...
+> 
+>     So I'm really curious about the details of what you are seeing as the
+>     changelog / patch doesn't quite make sense to me yet.
+> 
+>  
+> This indeed happens if project quota goes out of sync, which is quite simple
+> for non journaled  quota case.
+> And this provoke huge IO penalty on each statfs
 
-> =20
->  =09/*
->  =09 * initialise the new context and attach it to the CIL. Then attach
-> --=20
-> 2.7.5
->=20
+Yes, but then I wonder how it can happen that project quota is out of sync
+because ext4 does not support non-journalled project quotas (project quotas
+must be stored in hidden system inodes). So it is a fs bug if project quota
+goes out of sync.
 
+Anyway, case 1 you mentioned above still makes sense so please just update
+the changelog explaining more details about the problem and why your
+patch helps that. Thanks!
+
+								Honza
+
+>  
+> $perf record -e 'ext4:*' -e 'jbd2:*'  stat -f  volume-with-staled-quota
+> $perf script
+>             stat 528212 [002] 591269.007915:                      
+> ext4:ext4_journal_start: dev 252,2 blocks, 73 rsv_blocks, 0 caller
+> ext4_acquire_dquot
+>             stat 528212 [002] 591269.007919:                      
+>  jbd2:jbd2_handle_start: dev 252,2 tid 188107 type 6 line_no 5550
+> requested_blocks 73
+>             stat 528212 [002] 591269.007922:            
+>  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 0
+>             stat 528212 [002] 591269.007923:              
+> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [0/1) 190361090 W
+>             stat 528212 [002] 591269.007926:            
+>  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 3
+>             stat 528212 [002] 591269.007926:              
+> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [3/1) 188785674 W
+>             stat 528212 [002] 591269.007928:            
+>  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 3
+>             stat 528212 [002] 591269.007928:              
+> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [3/1) 188785674 W
+>             stat 528212 [002] 591269.007929:            
+>  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 3
+>             stat 528212 [002] 591269.007930:              
+> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [3/1) 188785674 W
+>             stat 528212 [002] 591269.007931:            
+>  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 1
+>             stat 528212 [002] 591269.007931:              
+> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [1/1) 138484739 W
+>             stat 528212 [002] 591269.007933:            
+>  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 1
+>             stat 528212 [002] 591269.007933:              
+> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [1/1) 138484739 W
+>             stat 528212 [002] 591269.007936:            
+>  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 3
+>             stat 528212 [002] 591269.007936:              
+> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [3/1) 188785674 W
+>             stat 528212 [002] 591269.007938:            
+>  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 1
+>             stat 528212 [002] 591269.007938:              
+> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [1/1) 138484739 W
+>             stat 528212 [002] 591269.007940:                      
+>  jbd2:jbd2_handle_stats: dev 252,2 tid 188107 type 6 line_no 5550 interval 0
+> sync 0 requested_blocks 73 dirtied_blocks 2
+>             stat 528212 [002] 591269.007941:                      
+> ext4:ext4_journal_start: dev 252,2 blocks, 9 rsv_blocks, 0 caller
+> ext4_release_dquot
+>             stat 528212 [002] 591269.007941:                      
+>  jbd2:jbd2_handle_start: dev 252,2 tid 188107 type 6 line_no 5566
+> requested_blocks 9
+>             stat 528212 [002] 591269.007942:            
+>  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 0
+>             stat 528212 [002] 591269.007943:              
+> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [0/1) 190361090 W
+>             stat 528212 [002] 591269.007944:            
+>  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 3
+>             stat 528212 [002] 591269.007944:              
+> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [3/1) 188785674 W
+>             stat 528212 [002] 591269.007945:            
+>  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 3
+>             stat 528212 [002] 591269.007954:              
+> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [3/1) 188785674 W
+>             stat 528212 [002] 591269.007954:            
+>  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 3
+>             stat 528212 [002] 591269.007955:              
+> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [3/1) 188785674 W
+>             stat 528212 [002] 591269.007956:            
+>  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 1
+>             stat 528212 [002] 591269.007956:              
+> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [1/1) 138484739 W
+>             stat 528212 [002] 591269.007957:            
+>  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 1
+>             stat 528212 [002] 591269.007957:              
+> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [1/1) 138484739 W
+>             stat 528212 [002] 591269.007958:            
+>  ext4:ext4_es_lookup_extent_enter: dev 252,2 ino 13 lblk 3
+>             stat 528212 [002] 591269.007958:              
+> ext4:ext4_es_lookup_extent_exit: dev 252,2 ino 13 found 1 [3/1) 188785674 W
+>             stat 528212 [002] 591269.007959:                      
+>  jbd2:jbd2_handle_stats: dev 252,2 tid 188107 type 6 line_no 5566 interval 0
+> sync 0 requested_blocks 9 dirtied_blocks 0
+> 
+> 
+> 
+>      
+> 
+>          + if (err)
+>          + return err;
+>          +
+>          + spin_lock(&inode->i_lock);
+>          + dquot = ext4_get_dquots(inode)[PRJQUOTA];
+>          + if (!dquot)
+>          + goto out_unlock;
+> 
+>          - qid = make_kqid_projid(projid);
+>          - dquot = dqget(sb, qid);
+>          - if (IS_ERR(dquot))
+>          - return PTR_ERR(dquot);
+>                   spin_lock(&dquot->dq_dqb_lock);
+> 
+>                   limit = (dquot->dq_dqb.dqb_bsoftlimit ?
+>          @@ -5569,7 +5574,9 @@ static int ext4_statfs_project(struct
+>         super_block *sb,
+>                   }
+> 
+>                   spin_unlock(&dquot->dq_dqb_lock);
+>          - dqput(dquot);
+>          +out_unlock:
+>          + spin_unlock(&inode->i_lock);
+>          +
+>                   return 0;
+>           }
+>           #endif
+>          @@ -5609,7 +5616,7 @@ static int ext4_statfs(struct dentry *dentry,
+>         struct kstatfs *buf)
+>           #ifdef CONFIG_QUOTA
+>                   if (ext4_test_inode_flag(dentry->d_inode,
+>         EXT4_INODE_PROJINHERIT) &&
+>                       sb_has_quota_limits_enabled(sb, PRJQUOTA))
+>          - ext4_statfs_project(sb, EXT4_I(dentry->d_inode)->i_projid, buf);
+>          + ext4_statfs_project(dentry->d_inode, buf);
+>           #endif
+>                   return 0;
+>           }
+>          
+> 
+>     --
+>     Jan Kara <jack@suse.com>
+>     SUSE Labs, CR
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
