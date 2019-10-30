@@ -2,106 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3506EA4CA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 21:33:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86492EA4DB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 21:35:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726749AbfJ3UdH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Oct 2019 16:33:07 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37452 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726683AbfJ3UdH (ORCPT
+        id S1726875AbfJ3UfO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Oct 2019 16:35:14 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43917 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726780AbfJ3UfO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Oct 2019 16:33:07 -0400
-Received: by mail-lj1-f196.google.com with SMTP id v2so4176147lji.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2019 13:33:06 -0700 (PDT)
+        Wed, 30 Oct 2019 16:35:14 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n1so3818577wra.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2019 13:35:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PZw4hUcpDDeEECYWt5oKzqEsWCt5if9tCmjtkMvGZZc=;
-        b=kVXUCm5X6CCOwy3PrkvG8ynq72GLC65upZkmDyjLUB02BH0FDQdUbgOtudVOF7kWIU
-         /yYbkuNCFW9ggROV0FS4Q5s91jSFfgDgeUErkMGCEN1ZwREfMy1NCtZTH2euSXS+bXAI
-         +0Pxezte5/LmQNgNAvq/jBGkxT9+cx+7WYa0ZTyeDmyNP47fS+iCQoIgRM9dcOmAoOfB
-         ow38H55a7FOBuTU984DCypUFmnLIxSjK1Uda+b4SYvQqXY5oRtoC2hMOz+Hbrce3JWLS
-         3tXmml2BE/xG70rKxHcQQodoA1dieVC//O/kr9sd8uyOrOR+hPJs9AB9O7oTR39zsD8t
-         GH4A==
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=GKB6Sx/IUizZ9IZiRwVYRZ7sZESLZmd5Upv0GbKgvpI=;
+        b=h6STLAlgZAIHahRpiOqt75+7YPhEervlfOHpzdNopczUpjoi/cznwsqOZegaIuJ4TM
+         zdwrYQypkfpFaKGT8vusv604I2nbF1GOJZlwrB9ZKBgTEBjDOpLU6TSZRH/roP8sxwT+
+         LZ6HXtPlhEH+GSsavlv45TTL5baI9xO8kN71I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PZw4hUcpDDeEECYWt5oKzqEsWCt5if9tCmjtkMvGZZc=;
-        b=LAraEdPYWHzIHI1vAehSfK4HNnUBnfT7k/YmaTeTmzpjWu+Ne7WRZ32RvmcrPWf8+C
-         RkQ44oWaMh4WPPexomKBd/yuyKuZtAZUo7Me3VledLbMIw2b+O++CjNxz4F9WO0RKCs6
-         SD6lp4WBRDex2w5lvj6SdVgy/Bsf2OXZUMmh2v6AP1CD8ivjNO74qRXPKnaIjNoASQpk
-         qaWzcgs+d0qotDnQy/Q8AtaoZ7Hg2dDJYqNroKW4/eFmaLo4P7oFBcM6ixXgp5K4/wnz
-         kazLrQjL9ufstMhqy+Bxp2Gi1vlPsc9+qJLFAxgPwDS8ZaJVdhvN77YSClUcObfbWdHc
-         2o5A==
-X-Gm-Message-State: APjAAAX17FRkUcT+trjTECvo60Khn0CkDHyjDi7VgsKVFIPTKrVkxl4z
-        3ZVoiwroOurncCyci7Jbpfn7Mbi92tPjsZeMn6kf
-X-Google-Smtp-Source: APXvYqyiyj85p5hWvRdH63/Hex6oBbr4Qp3fVRiaxpwF74z1TwPKum1fWCiiIky+FvzFDsHURjcemP+RjH0Szm1Yw/g=
-X-Received: by 2002:a2e:8987:: with SMTP id c7mr1107993lji.225.1572467585472;
- Wed, 30 Oct 2019 13:33:05 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GKB6Sx/IUizZ9IZiRwVYRZ7sZESLZmd5Upv0GbKgvpI=;
+        b=bcS+LqpG/ZbZMCzKBJne/l/xhxxI4r3JFIqppcOXSMT3BAFMfSgmRknSS70oWoqxJj
+         fUDGqTiCvdZeEndXLsk6y2ExgvIu9G1vUDYkGxhhvl5Zv4gl7IZnBsHu1jz2OTvuCo05
+         QxXGBGA6GfdX337qPTE6X8B7wHWjX7V+akI7wS21uQvecFfcF6cWxFjmjz7aJlQOv6J/
+         e1YfjnL0itouKw8FsQDAUkUzc3oT+LlO2GohPUIuNqJ5hCyiYWX1F8VAV6UKs3bwOzjL
+         PvBKMu/hdsDb+z+fnbsaOUw3UblSKQALeXU8IQkbb5bHhlvZRqje8fE/09kBebmh8dhK
+         Vs9Q==
+X-Gm-Message-State: APjAAAWW7dhVma9T8Bx7fg48KY3P0WEvSJih3FkXvP/fTgBbUyVgA5ic
+        FyhA368ZbrrD5cUBs8MTAYy+bvE8i82jW5FbNgI=
+X-Google-Smtp-Source: APXvYqwZ8L7WBUXKpllPra1iDKCIj9jTGodgQKb31qnM478jp8ypjhyOfCzrMdjpE9K/VYB36AzGxg==
+X-Received: by 2002:adf:d18b:: with SMTP id v11mr1782349wrc.308.1572467711910;
+        Wed, 30 Oct 2019 13:35:11 -0700 (PDT)
+Received: from [192.168.1.149] (ip-5-186-115-54.cgn.fibianet.dk. [5.186.115.54])
+        by smtp.gmail.com with ESMTPSA id a7sm1633681wrr.89.2019.10.30.13.35.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Oct 2019 13:35:10 -0700 (PDT)
+Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring,
+ not cursor and length [ver #2]
+To:     Ilya Dryomov <idryomov@gmail.com>,
+        David Howells <dhowells@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-api@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
+ <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
+ <CAOi1vP97DMX8zweOLfBDOFstrjC78=6RgxK3PPj_mehCOSeoaw@mail.gmail.com>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <4892d186-8eb0-a282-e7e6-e79958431a54@rasmusvillemoes.dk>
+Date:   Wed, 30 Oct 2019 21:35:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <cover.1568834524.git.rgb@redhat.com> <16abf1b2aafeb5f1b8dae20b9a4836e54f959ca5.1568834524.git.rgb@redhat.com>
- <CAHC9VhSRmn46DcazH4Q35vOSxVoEu8PsX79aurkHkFymRoMwag@mail.gmail.com> <20191024220814.pid5ql6kvyr4ianb@madcap2.tricolour.ca>
-In-Reply-To: <20191024220814.pid5ql6kvyr4ianb@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 30 Oct 2019 16:32:54 -0400
-Message-ID: <CAHC9VhTEpVLgKk1FpFqaXH-B1jUvfRyaGffHwFrHbi3MjbRrUA@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V7 14/21] audit: contid check descendancy and nesting
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
-        mpatel@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAOi1vP97DMX8zweOLfBDOFstrjC78=6RgxK3PPj_mehCOSeoaw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 6:08 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2019-10-10 20:40, Paul Moore wrote:
-> > On Wed, Sep 18, 2019 at 9:26 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > ?fixup! audit: convert to contid list to check for orch/engine ownership
-> >
-> > ?
-> >
-> > > Require the target task to be a descendant of the container
-> > > orchestrator/engine.
-> > >
-> > > You would only change the audit container ID from one set or inherited
-> > > value to another if you were nesting containers.
-> > >
-> > > If changing the contid, the container orchestrator/engine must be a
-> > > descendant and not same orchestrator as the one that set it so it is not
-> > > possible to change the contid of another orchestrator's container.
-> >
-> > Did you mean to say that the container orchestrator must be an
-> > ancestor of the target, and the same orchestrator as the one that set
-> > the target process' audit container ID?
->
-> Not quite, the first half yes, but the second half: if it was already
-> set by that orchestrator, it can't be set again.  If it is a different
-> orchestrator that is a descendant of the orchestrator that set it, then
-> allow the action.
->
-> > Or maybe I'm missing something about what you are trying to do?
->
-> Does that help clarify it?
+On 30/10/2019 17.19, Ilya Dryomov wrote:
+> On Thu, Oct 24, 2019 at 11:49 AM David Howells <dhowells@redhat.com> wrote:
+>>  /*
+>> - * We use a start+len construction, which provides full use of the
+>> - * allocated memory.
+>> - * -- Florian Coosmann (FGC)
+>> - *
+>> + * We use head and tail indices that aren't masked off, except at the point of
+>> + * dereference, but rather they're allowed to wrap naturally.  This means there
+>> + * isn't a dead spot in the buffer, provided the ring size < INT_MAX.
+>> + * -- David Howells 2019-09-23.
+> 
+> Hi David,
+> 
+> Is "ring size < INT_MAX" constraint correct?
 
-I think so, it's pretty much as you stated originally: "Require the
-target task to be a descendant of the container orchestrator/engine".
-It's possible I misread something in the patch, or got lost in all the
-?fixup! patching.  I'll take a closer look at the next revision of the
-patchset to make sure the code makes sense to me, but the logic seems
-reasonable.
+No. As long as one always uses a[idx % size] to access the array, the
+only requirement is that size is representable in an unsigned int. Then
+because one also wants to do the % using simple bitmasking, that further
+restricts one to sizes that are a power of 2, so the end result is that
+the max size is 2^31 (aka INT_MAX+1).
 
--- 
-paul moore
-www.paul-moore.com
+> I've never had to implement this free running indices scheme, but
+> the way I've always visualized it is that the top bit of the index is
+> used as a lap (as in a race) indicator, leaving 31 bits to work with
+> (in case of unsigned ints).  Should that be
+> 
+>   ring size <= 2^31
+> 
+> or more precisely
+> 
+>   ring size is a power of two <= 2^31
+
+Exactly. But it's kind of moot since the ring size would never be
+allowed to grow anywhere near that.
+
+Rasmus
