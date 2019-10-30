@@ -2,86 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8504CE9E4D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 16:05:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE8DAE9E5D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 16:07:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbfJ3PEw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Oct 2019 11:04:52 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:51128 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726175AbfJ3PEv (ORCPT
+        id S1726804AbfJ3PHw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Oct 2019 11:07:52 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:49923 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726967AbfJ3PHv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:04:51 -0400
-Received: from callcc.thunk.org (guestnat-104-133-0-98.corp.google.com [104.133.0.98] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x9UF4bG3006443
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 30 Oct 2019 11:04:38 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 7BF1F420456; Wed, 30 Oct 2019 11:04:37 -0400 (EDT)
-Date:   Wed, 30 Oct 2019 11:04:37 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     Gao Xiang <gaoxiang25@huawei.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] ext4: bio_alloc never fails
-Message-ID: <20191030150437.GB16197@mit.edu>
-References: <20191030042618.124220-1-gaoxiang25@huawei.com>
- <20191030101311.2175EA4055@d06av23.portsmouth.uk.ibm.com>
+        Wed, 30 Oct 2019 11:07:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572448071;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=tAmJCcma8tMfaZZhSnuziMQ0xZCDAhkTYFHnjIDKQN0=;
+        b=CtZ2gFwjP7G3Ba8p80wYPBHXtcjZn0CqlAJLrFDpHnKwj8b+PXZse7iH5zOE8zs9wMNOVd
+        0swU7Kx/KYYNDSaTh9WTUwhWtHQy85VP15w9uO6J75WN0WjV9XA5lLwekWZfejN6slYfXa
+        tdzcaPoYUxZi4iK/dJ4VioLjvZN+Ik4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-262-j29PkrUkOkOLNNsz2ewIgg-1; Wed, 30 Oct 2019 11:07:46 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 100C11005500;
+        Wed, 30 Oct 2019 15:07:45 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5B260600C6;
+        Wed, 30 Oct 2019 15:07:39 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id D41862237B5; Wed, 30 Oct 2019 11:07:38 -0400 (EDT)
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtio-fs@redhat.com
+Cc:     virtualization@lists.linux-foundation.org, vgoyal@redhat.com,
+        miklos@szeredi.hu, stefanha@redhat.com, dgilbert@redhat.com
+Subject: [PATCH 0/3] virtiofs: Small Cleanups for 5.5
+Date:   Wed, 30 Oct 2019 11:07:16 -0400
+Message-Id: <20191030150719.29048-1-vgoyal@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191030101311.2175EA4055@d06av23.portsmouth.uk.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-MC-Unique: j29PkrUkOkOLNNsz2ewIgg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 03:43:10PM +0530, Ritesh Harjani wrote:
-> 
-> 
-> On 10/30/19 9:56 AM, Gao Xiang wrote:
-> > Similar to [1] [2], it seems a trivial cleanup since
-> > bio_alloc can handle memory allocation as mentioned in
-> > fs/direct-io.c (also see fs/block_dev.c, fs/buffer.c, ..)
-> > 
-> 
-> AFAIU, the reason is that, bio_alloc with __GFP_DIRECT_RECLAIM
-> flags guarantees bio allocation under some given restrictions,
-> as stated in fs/direct-io.c
-> So here it is ok to not check for NULL value from bio_alloc.
-> 
-> I think we can update above info too in your commit msg.
+Hi Miklos,
 
-Please also add a short comment in the code itself, so it's clear why
-it's OK to skip the error check, and reference the comments for
-bio_alloc_bioset().  This is the fairly subtle bit which makes this
-change not obvious:
+Here are few small cleanups for virtiofs for 5.5. I had received some
+comments from Michael Tsirkin on original virtiofs patches and these
+cleanups are result of these comments.
 
- *   When @bs is not NULL, if %__GFP_DIRECT_RECLAIM is set then bio_alloc will
- *   always be able to allocate a bio. This is due to the mempool guarantees.
- *   To make this work, callers must never allocate more than 1 bio at a time
- *   from this pool. Callers that need to allocate more than 1 bio must always
- *   submit the previously allocated bio for IO before attempting to allocate
- *   a new one. Failure to do so can cause deadlocks under memory pressure.
- *
- *   Note that when running under generic_make_request() (i.e. any block
- *   driver), bios are not submitted until after you return - see the code in
- *   generic_make_request() that converts recursion into iteration, to prevent
- *   stack overflows.
- *
- *   This would normally mean allocating multiple bios under
- *   generic_make_request() would be susceptible to deadlocks, but we have
- *   deadlock avoidance code that resubmits any blocked bios from a rescuer
- *   thread.
+Thanks
+Vivek
 
-Otherwise, someone else may not understand why it's safe to not check
-the error return then submit cleanup patch to add the error checking
-back.  :-)
+Vivek Goyal (3):
+  virtiofs: Use a common function to send forget
+  virtiofs: Do not send forget request "struct list_head" element
+  virtiofs: Use completions while waiting for queue to be drained
 
-					- Ted
-					
+ fs/fuse/virtio_fs.c | 204 ++++++++++++++++++++++----------------------
+ 1 file changed, 103 insertions(+), 101 deletions(-)
+
+--=20
+2.20.1
+
