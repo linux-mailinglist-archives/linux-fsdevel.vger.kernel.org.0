@@ -2,173 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6343EA76A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 23:58:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED3EEEA780
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 00:05:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbfJ3W57 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Oct 2019 18:57:59 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43376 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727481AbfJ3W56 (ORCPT
+        id S1727337AbfJ3XF2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Oct 2019 19:05:28 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:17582 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727064AbfJ3XF2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Oct 2019 18:57:58 -0400
-Received: by mail-pf1-f194.google.com with SMTP id 3so2725407pfb.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2019 15:57:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3iJAKkJJ1zNiD5ToRiLk2GGyD+vwUWvFX41wfSXW2yw=;
-        b=ytxpiWCfVHhuSE+xqCog0m0AXL1B3dPaRKTHacZP0zCOFyRrV4xmdjq2BQx9srz8Bs
-         4QZyYC8CNosHZeq6DTYLx8IM++IKHFZCohMBnD6ACBFxjTe5/+XQGSK11ZRXbZLfejl+
-         sToMO8utduT0t/NE595UePSQv6XVp2T4jPt1ynKayWeNW6cWdqZRtpJ+mw50d0JqFd5H
-         RNQ7Sy58RwIypOIeeGjKs+cujcujmqVRCISK6/T/kzGBHK2bIa5rrt2GZ9zSSo19NKWv
-         MPmytOfjfpn6nZHj6wW0WVdmhNJrbqNL6ZO+z8Hf/iUS40M9Bmnw8RYmw3sqPloL5ziZ
-         cOVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3iJAKkJJ1zNiD5ToRiLk2GGyD+vwUWvFX41wfSXW2yw=;
-        b=Y/uyAncTNuPfLRsHS8i8+4lvTglQ8DqOYDr2fAUjksIMJRUlWNQJmHn8IoAwRHOXL2
-         14JwgY379AfttYBs2TLMgNTl0niEdB9R6hHUuzB448IqREKN9ApVgkDzC2koBWJv2MS+
-         ik09YZ/fsprTi/psrg2A4hL1PNmaHefZ6YuqtHZYh4g2lLyQ/U55yWfjb6m/FJty9nQJ
-         B2eMwuCmocw8eivtzXN+vszwZOHaFK6QrU9HZgPQ89vQgg2nxSlAGpY1tGTiYGY9bdwV
-         PpZU/LCGaNUw+hTxXtwD1XypdiKnCEJPilscXtHonq6oBRsWy7HxwdsXRhO3nT51wwzQ
-         9AQA==
-X-Gm-Message-State: APjAAAVFhVzL5e1iQ+R8/bTUTGOy/96cQnAa+n9PCUcvnUHdguFWyMNm
-        0wyClhpe//vgyNSw2XE7dZUeeQ==
-X-Google-Smtp-Source: APXvYqwZZqIt951olpu/vwyMMFVU8OrDnaxNtFnNRsSf/YzjHqEUVH1Tg/7QCRt8LkYspXmLhvBYVA==
-X-Received: by 2002:a63:ce50:: with SMTP id r16mr2097944pgi.253.1572476275923;
-        Wed, 30 Oct 2019 15:57:55 -0700 (PDT)
-Received: from vader ([2620:10d:c090:180::3912])
-        by smtp.gmail.com with ESMTPSA id j186sm15676pfg.161.2019.10.30.15.57.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2019 15:57:55 -0700 (PDT)
-Date:   Wed, 30 Oct 2019 15:57:54 -0700
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Btrfs <linux-btrfs@vger.kernel.org>,
+        Wed, 30 Oct 2019 19:05:28 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dba17390001>; Wed, 30 Oct 2019 16:05:29 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 30 Oct 2019 16:05:23 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 30 Oct 2019 16:05:23 -0700
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 30 Oct
+ 2019 23:05:22 +0000
+Subject: Re: [PATCH 14/19] vfio, mm: pin_longterm_pages (FOLL_PIN) and
+ put_user_page() conversion
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
         Dave Chinner <david@fromorbit.com>,
-        Jann Horn <jannh@google.com>,
-        Linux API <linux-api@vger.kernel.org>, kernel-team@fb.com,
-        Theodore Tso <tytso@mit.edu>
-Subject: Re: [PATCH man-pages] Document encoded I/O
-Message-ID: <20191030225754.GH326591@vader>
-References: <cover.1571164762.git.osandov@fb.com>
- <c7e8f93596fee7bb818dc0edf29f484036be1abb.1571164851.git.osandov@fb.com>
- <CAOQ4uxh_pZSiMmD=46Mc3o0GE+svXuoC155P_9FGJXdsE4cweg@mail.gmail.com>
- <20191021185356.GB81648@vader>
- <CAOQ4uxgm6MWwCDO5stUwOKKSq7Ot4-Sc96F1Evc6ra5qBE+-wA@mail.gmail.com>
- <20191023044430.alow65tnodgnu5um@yavin.dot.cyphar.com>
- <CAOQ4uxjyNZhyU9yEYkuMnD0o=sU1vJMOYJAzjV7FDjG45gaevg@mail.gmail.com>
- <20191023121203.pozm2xzrbxmcqpbr@yavin.dot.cyphar.com>
- <20191030224606.GF326591@vader>
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20191030224930.3990755-1-jhubbard@nvidia.com>
+ <20191030224930.3990755-15-jhubbard@nvidia.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <cfa579f0-999c-9712-494a-9d519bbc4314@nvidia.com>
+Date:   Wed, 30 Oct 2019 16:05:22 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191030224606.GF326591@vader>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191030224930.3990755-15-jhubbard@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1572476729; bh=53l+EYxovXaJJmkDDYPwp5PBwN0eKGoaifL7qKM0Mds=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=md/zgeBc2zml8TuAaTKRK2oyv1Btng0H6ozq8zn2sRJiXmTfxKbYsvkGcjK6gQS+q
+         3nPYnJq+1Eps5VG6ooIJSjGzkjOCMYIGUlSFcOJoUyjFNZ1H0vd+dWvWBSOqDkH5Uc
+         dvFo63nthImmg9iCDmU6xj0EE8b8pgUM6g95EetFKN1/r0QnPl5BygVRpoyVLlCyiH
+         iCMwhme/pZSwh1q5oOeHae8CYEOAkIwb1y6ebulV3/7WSgE5bb3SmwuYCg/xWfmbmX
+         iPDY0K1xyswztlMvQmBw8+uJFpl2scC5scONZ/nlQeN+ZcWegNbDORlz6y4lLuTxuj
+         WJ+vmX9yZfaww==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 03:46:06PM -0700, Omar Sandoval wrote:
-> On Wed, Oct 23, 2019 at 11:12:03PM +1100, Aleksa Sarai wrote:
-> > On 2019-10-23, Amir Goldstein <amir73il@gmail.com> wrote:
-> > > > >
-> > > > > No, I see why you choose to add the flag to open(2).
-> > > > > I have no objection.
-> > > > >
-> > > > > I once had a crazy thought how to add new open flags
-> > > > > in a non racy manner without adding a new syscall,
-> > > > > but as you wrote, this is not relevant for O_ALLOW_ENCODED.
-> > > > >
-> > > > > Something like:
-> > > > >
-> > > > > /*
-> > > > >  * Old kernels silently ignore unsupported open flags.
-> > > > >  * New kernels that gets __O_CHECK_NEWFLAGS do
-> > > > >  * the proper checking for unsupported flags AND set the
-> > > > >  * flag __O_HAVE_NEWFLAGS.
-> > > > >  */
-> > > > > #define O_FLAG1 __O_CHECK_NEWFLAGS|__O_FLAG1
-> > > > > #define O_HAVE_FLAG1 __O_HAVE_NEWFLAGS|__O_FLAG1
-> > > > >
-> > > > > fd = open(path, O_FLAG1);
-> > > > > if (fd < 0)
-> > > > >     return -errno;
-> > > > > flags = fcntl(fd, F_GETFL, 0);
-> > > > > if (flags < 0)
-> > > > >     return flags;
-> > > > > if ((flags & O_HAVE_FLAG1) != O_HAVE_FLAG1) {
-> > > > >     close(fd);
-> > > > >     return -EINVAL;
-> > > > > }
-> > > >
-> > > > You don't need to add __O_HAVE_NEWFLAGS to do this -- this already works
-> > > > today for userspace to check whether a flag works properly
-> > > > (specifically, __O_FLAG1 will only be set if __O_FLAG1 is supported --
-> > > > otherwise it gets cleared during build_open_flags).
-> > > 
-> > > That's a behavior of quite recent kernels since
-> > > 629e014bb834 fs: completely ignore unknown open flags
-> > > and maybe some stable kernels. Real old kernels don't have that luxury.
-> > 
-> > Ah okay -- so the key feature is that __O_CHECK_NEWFLAGS gets
-> > transformed into __O_HAVE_NEWFLAGS (making it so that both the older and
-> > current behaviours are detected). Apologies, I missed that on my first
-> > read-through.
-> > 
-> > While it is a little bit ugly, it probably wouldn't be a bad idea to
-> > have something like that.
-> > 
-> > > > The problem with adding new flags is that an *old* program running on a
-> > > > *new* kernel could pass a garbage flag (__O_CHECK_NEWFLAGS for instance)
-> > > > that causes an error only on the new kernel.
-> > > 
-> > > That's a theoretic problem. Same as O_PATH|O_TMPFILE.
-> > > Show me a real life program that passes garbage files to open.
-> > 
-> > Has "that's a theoretical problem" helped when we faced this issue in
-> > the past? I don't disagree that this is mostly theoretical, but I have a
-> > feeling that this is an argument that won't hold water.
-> > 
-> > As for an example of semi-garbage flag passing -- systemd passes
-> > O_PATH|O_NOCTTY in several places. Yes, they're known flags (so not
-> > entirely applicable to this discussion) but it's also not a meaningful
-> > combination of flags and yet is permitted.
-> > 
-> > > > The only real solution to this (and several other problems) is
-> > > > openat2().
-> > > 
-> > > No argue about that. Come on, let's get it merged ;-)
-> > 
-> > Believe me, I'm trying. ;)
-> > 
-> > > > As for O_ALLOW_ENCODED -- the current semantics (-EPERM if it
-> > > > is set without CAP_SYS_ADMIN) *will* cause backwards compatibility
-> > > > issues for programs that have garbage flags set...
-> > > >
-> > > 
-> > > Again, that's theoretical. In practice, O_ALLOW_ENCODED can work with
-> > > open()/openat(). In fact, even if O_ALLOW_ENCODED gets merged after
-> > > openat2(), I don't think it should be forbidden by open()/openat(),
-> > > right? Do in that sense, O_ALLOW_ENCODED does not depend on openat2().
-> > 
-> > If it's a valid open() flag it'll also be a valid openat2(2) flag. The
-> > only question is whether the garbage-flag problem justifies making it a
-> > no-op for open(2).
-> 
-> Consider O_NOATIME: a (non-root) program passing this flag for files it
-> didn't own would have been broken by kernel v2.6.8. Or, more recently, a
-> program accidentally setting O_TMPFILE would suddenly get drastically
-> different behavior on v3.11. These two flags technically broke backwards
-> compatibility. I don't think it's worth the trouble to treat
-> O_ALLOW_ENCODED any differently for open().
+On 10/30/19 3:49 PM, John Hubbard wrote:
+> This also fixes one or two likely bugs.
 
-Ah, I missed that O_TMPFILE is careful to fail on old kernels. My point
-still stands about O_NOATIME, though :)
+Well, actually just one...
+
+> 
+> 1. Change vfio from get_user_pages(FOLL_LONGTERM), to
+> pin_longterm_pages(), which sets both FOLL_LONGTERM and FOLL_PIN.
+> 
+> Note that this is a change in behavior, because the
+> get_user_pages_remote() call was not setting FOLL_LONGTERM, but the
+> new pin_user_pages_remote() call that replaces it, *is* setting
+> FOLL_LONGTERM. It is important to set FOLL_LONGTERM, because the
+> DMA case requires it. Please see the FOLL_PIN documentation in
+> include/linux/mm.h, and Documentation/pin_user_pages.rst for details.
+
+Correction: the above comment is stale and wrong. I wrote it before 
+getting further into the details, and the patch doesn't do this. 
+
+Instead, it keeps exactly the old behavior: pin_longterm_pages_remote()
+is careful to avoid setting FOLL_LONGTERM. Instead of setting that flag,
+it drops in a "TODO" comment nearby. :)
+
+I'll update the commit description in the next version of the series.
+
+
+thanks,
+
+John Hubbard
+NVIDIA
+
+> 
+> 2. Because all FOLL_PIN-acquired pages must be released via
+> put_user_page(), also convert the put_page() call over to
+> put_user_pages().
+> 
+> Note that this effectively changes the code's behavior in
+> vfio_iommu_type1.c: put_pfn(): it now ultimately calls
+> set_page_dirty_lock(), instead of set_page_dirty(). This is
+> probably more accurate.
+> 
+> As Christoph Hellwig put it, "set_page_dirty() is only safe if we are
+> dealing with a file backed page where we have reference on the inode it
+> hangs off." [1]
+> 
+> [1] https://lore.kernel.org/r/20190723153640.GB720@lst.de
+> 
+> Cc: Alex Williamson <alex.williamson@redhat.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+>  drivers/vfio/vfio_iommu_type1.c | 15 +++++++--------
+>  1 file changed, 7 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+> index d864277ea16f..795e13f3ef08 100644
+> --- a/drivers/vfio/vfio_iommu_type1.c
+> +++ b/drivers/vfio/vfio_iommu_type1.c
+> @@ -327,9 +327,8 @@ static int put_pfn(unsigned long pfn, int prot)
+>  {
+>  	if (!is_invalid_reserved_pfn(pfn)) {
+>  		struct page *page = pfn_to_page(pfn);
+> -		if (prot & IOMMU_WRITE)
+> -			SetPageDirty(page);
+> -		put_page(page);
+> +
+> +		put_user_pages_dirty_lock(&page, 1, prot & IOMMU_WRITE);
+>  		return 1;
+>  	}
+>  	return 0;
+> @@ -349,11 +348,11 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
+>  
+>  	down_read(&mm->mmap_sem);
+>  	if (mm == current->mm) {
+> -		ret = get_user_pages(vaddr, 1, flags | FOLL_LONGTERM, page,
+> -				     vmas);
+> +		ret = pin_longterm_pages(vaddr, 1, flags, page, vmas);
+>  	} else {
+> -		ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags, page,
+> -					    vmas, NULL);
+> +		ret = pin_longterm_pages_remote(NULL, mm, vaddr, 1,
+> +						flags, page, vmas,
+> +						NULL);
+>  		/*
+>  		 * The lifetime of a vaddr_get_pfn() page pin is
+>  		 * userspace-controlled. In the fs-dax case this could
+> @@ -363,7 +362,7 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
+>  		 */
+>  		if (ret > 0 && vma_is_fsdax(vmas[0])) {
+>  			ret = -EOPNOTSUPP;
+> -			put_page(page[0]);
+> +			put_user_page(page[0]);
+>  		}
+>  	}
+>  	up_read(&mm->mmap_sem);
+> 
