@@ -2,97 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFA3CE9A6D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 11:55:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13AC4E9A91
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 12:00:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726804AbfJ3Ky5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Oct 2019 06:54:57 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:39371 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726566AbfJ3Ky5 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Oct 2019 06:54:57 -0400
-Received: by mail-lj1-f195.google.com with SMTP id y3so2126301ljj.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2019 03:54:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qtCKRSOH2wHBPxYWft32/SnJnhtK6FCm3n3b1weS2iw=;
-        b=BAJsYTc/WnEx9YqK3Q0ZjZ4NLIwdz+jXTH4YfRpJ9sI9RvhB5+3oEy4JGzzu9ikMmj
-         JBFxfCmjslc2gcgXJ8TUmf3+BQRpjtIMcUHEHm10Dbx9leMzPLpvUiu9ddeV3+iQwLbO
-         aVM+FYR1044gIW56sLGDszs2pmd8cDBgBBeXM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qtCKRSOH2wHBPxYWft32/SnJnhtK6FCm3n3b1weS2iw=;
-        b=sVbBCF3q9LMa0w0/+KiOjIUGUS0EqsXLu37+AMFhrGqbocTNGuDr9IGeYSbRT09HD9
-         s0uemNQIZ696J4wr20sIkgOdJRVThjesySYQWmN1DQbIQnC+ouSzFu1a2wr6kmhS5L6h
-         yRvtVWrUtKsGE5wEUky7lfTRt2Rt5WSlbjueraos8FYKSPqc3tq/tKMTJ0HA2IVV51Fe
-         72yMKhmJ0XCuBT53zLQGFiGsvRNlFm3bT92yXmakTBmMOtxofloEgcBVIrX2fdVun4wx
-         jVmtFCFw2XCE6JTYaaW4MrIuuGV8XOWWzieLUsW3USmcu6Hv9iQexjM0ZENgnwsEOi77
-         hIEg==
-X-Gm-Message-State: APjAAAWYDZLNkVe/rXcZADGbKViXKOtka5mdHUarew/IiLXKhP6SqUOa
-        xOOb3wHfxX4jQbZPAyXgwQK5EwfekhDnCA==
-X-Google-Smtp-Source: APXvYqzlrxz6OvI5qiirGT+9aeCbYm9ozkft74/bIBWGSMinG+aDx6N17cJLhwck1sZpQq/XLlG/fQ==
-X-Received: by 2002:a2e:b5d4:: with SMTP id g20mr2343697ljn.140.1572432893395;
-        Wed, 30 Oct 2019 03:54:53 -0700 (PDT)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id g25sm923539ljk.36.2019.10.30.03.54.52
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Oct 2019 03:54:52 -0700 (PDT)
-Received: by mail-lf1-f44.google.com with SMTP id f5so1197546lfp.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2019 03:54:52 -0700 (PDT)
-X-Received: by 2002:a19:6f0e:: with SMTP id k14mr5783119lfc.79.1572432891872;
- Wed, 30 Oct 2019 03:54:51 -0700 (PDT)
+        id S1726262AbfJ3K74 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Oct 2019 06:59:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38820 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726096AbfJ3K74 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 30 Oct 2019 06:59:56 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B1740B188;
+        Wed, 30 Oct 2019 10:59:53 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 157DC1E485C; Wed, 30 Oct 2019 11:59:53 +0100 (CET)
+Date:   Wed, 30 Oct 2019 11:59:53 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.com>, Li Xi <lixi@ddn.com>,
+        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+Subject: Re: [PATCH] fs/ext4: get project quota from inode for mangling
+ statfs results
+Message-ID: <20191030105953.GC28525@quack2.suse.cz>
+References: <157225912326.3929.8539227851002947260.stgit@buzz>
 MIME-Version: 1.0
-References: <157225677483.3442.4227193290486305330.stgit@buzz>
- <20191028124222.ld6u3dhhujfqcn7w@box> <CAHk-=wgQ-Dcs2keNJPovTb4gG33M81yANH6KZM9d5NLUb-cJ1g@mail.gmail.com>
- <20191028125702.xdfbs7rqhm3wer5t@box> <ac83fee6-9bcd-8c66-3596-2c0fbe6bcf96@yandex-team.ru>
- <CAHk-=who0HS=NT8U7vFDT7er_CD7+ZreRJMxjYrRXs5G6dbpyw@mail.gmail.com> <f0140b13-cca2-af9e-eb4b-82eda134eb8f@redhat.com>
-In-Reply-To: <f0140b13-cca2-af9e-eb4b-82eda134eb8f@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 30 Oct 2019 11:54:35 +0100
-X-Gmail-Original-Message-ID: <CAHk-=wh4SKRxKQf5LawRMSijtjRVQevaFioBK+tOZAVPt7ek0Q@mail.gmail.com>
-Message-ID: <CAHk-=wh4SKRxKQf5LawRMSijtjRVQevaFioBK+tOZAVPt7ek0Q@mail.gmail.com>
-Subject: Re: [PATCH] mm/filemap: do not allocate cache pages beyond end of
- file at read
-To:     Steven Whitehouse <swhiteho@redhat.com>
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "cluster-devel@redhat.com" <cluster-devel@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <157225912326.3929.8539227851002947260.stgit@buzz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 11:35 AM Steven Whitehouse <swhiteho@redhat.com> wrote:
->
-> NFS may be ok here, but it will break GFS2. There may be others too...
-> OCFS2 is likely one. Not sure about CIFS either. Does it really matter
-> that we might occasionally allocate a page and then free it again?
+On Mon 28-10-19 13:38:43, Konstantin Khlebnikov wrote:
+> Right now ext4_statfs_project() does quota lookup by id every time.
+> This is costly operation, especially if there is no inode who hold
+> reference to this quota and dqget() reads it from disk each time.
+> 
+> Function ext4_statfs_project() could be moved into generic quota code,
+> it is required for every filesystem which uses generic project quota.
+> 
+> Reported-by: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> ---
+>  fs/ext4/super.c |   25 ++++++++++++++++---------
+>  1 file changed, 16 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index dd654e53ba3d..f841c66aa499 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -5532,18 +5532,23 @@ static int ext4_remount(struct super_block *sb, int *flags, char *data)
+>  }
+>  
+>  #ifdef CONFIG_QUOTA
+> -static int ext4_statfs_project(struct super_block *sb,
+> -			       kprojid_t projid, struct kstatfs *buf)
+> +static int ext4_statfs_project(struct inode *inode, struct kstatfs *buf)
+>  {
+> -	struct kqid qid;
+> +	struct super_block *sb = inode->i_sb;
+>  	struct dquot *dquot;
+>  	u64 limit;
+>  	u64 curblock;
+> +	int err;
+> +
+> +	err = dquot_initialize(inode);
 
-Why are gfs2 and cifs doing things wrong?
+Hum, I'm kind of puzzled here: Your patch seems to be concerned with
+performance but how is this any faster than what we do now?
+dquot_initialize() will look up three dquots instead of one in the current
+code? Oh, I guess you are concerned about *repeated* calls to statfs() and
+thus repeated lookups of dquot structure? And this patch effectively caches
+looked up dquots in the inode?
 
-"readpage()" is not for synchrionizing metadata. Never has been. You
-shouldn't treat it that way, and you shouldn't then make excuses for
-filesystems that treat it that way.
+That starts to make some sense but still, even if dquot isn't cached in any
+inode, we still hold on to it (it's in the free_list) until shrinker evicts
+it. So lookup of such dquot should be just a hash table lookup which should
+be very fast. Then there's the cost of dquot_acquire() / dquot_release()
+that get always called on first / last get of a dquot. So are you concerned
+about that cost? Or do you really see IO happening to fetch quota structure
+on each statfs call again and again? The only situation where I could see
+that happening is when the quota structure would be actually completely
+empty (i.e., not originally present in the quota file). But then this
+cannot be a case when there's actually an inode belonging to this
+project...
 
-Look at mmap, for example. It will do the SIGBUS handling before
-calling readpage(). Same goes for the copyfile code. A filesystem that
-thinks "I will update size at readpage" is already fundamentally
-buggy.
+So I'm really curious about the details of what you are seeing as the
+changelog / patch doesn't quite make sense to me yet.
 
-We do _recheck_ the inode size under the page lock, but that's to
-handle the races with truncate etc.
+								Honza
 
-            Linus
+
+> +	if (err)
+> +		return err;
+> +
+> +	spin_lock(&inode->i_lock);
+> +	dquot = ext4_get_dquots(inode)[PRJQUOTA];
+> +	if (!dquot)
+> +		goto out_unlock;
+>  
+> -	qid = make_kqid_projid(projid);
+> -	dquot = dqget(sb, qid);
+> -	if (IS_ERR(dquot))
+> -		return PTR_ERR(dquot);
+>  	spin_lock(&dquot->dq_dqb_lock);
+>  
+>  	limit = (dquot->dq_dqb.dqb_bsoftlimit ?
+> @@ -5569,7 +5574,9 @@ static int ext4_statfs_project(struct super_block *sb,
+>  	}
+>  
+>  	spin_unlock(&dquot->dq_dqb_lock);
+> -	dqput(dquot);
+> +out_unlock:
+> +	spin_unlock(&inode->i_lock);
+> +
+>  	return 0;
+>  }
+>  #endif
+> @@ -5609,7 +5616,7 @@ static int ext4_statfs(struct dentry *dentry, struct kstatfs *buf)
+>  #ifdef CONFIG_QUOTA
+>  	if (ext4_test_inode_flag(dentry->d_inode, EXT4_INODE_PROJINHERIT) &&
+>  	    sb_has_quota_limits_enabled(sb, PRJQUOTA))
+> -		ext4_statfs_project(sb, EXT4_I(dentry->d_inode)->i_projid, buf);
+> +		ext4_statfs_project(dentry->d_inode, buf);
+>  #endif
+>  	return 0;
+>  }
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
