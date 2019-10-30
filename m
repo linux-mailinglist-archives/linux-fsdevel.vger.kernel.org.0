@@ -2,114 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86492EA4DB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 21:35:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70D99EA5A5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 22:43:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbfJ3UfO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Oct 2019 16:35:14 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43917 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726780AbfJ3UfO (ORCPT
+        id S1727186AbfJ3Vnm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Oct 2019 17:43:42 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:43060 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726171AbfJ3Vnl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Oct 2019 16:35:14 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n1so3818577wra.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2019 13:35:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=GKB6Sx/IUizZ9IZiRwVYRZ7sZESLZmd5Upv0GbKgvpI=;
-        b=h6STLAlgZAIHahRpiOqt75+7YPhEervlfOHpzdNopczUpjoi/cznwsqOZegaIuJ4TM
-         zdwrYQypkfpFaKGT8vusv604I2nbF1GOJZlwrB9ZKBgTEBjDOpLU6TSZRH/roP8sxwT+
-         LZ6HXtPlhEH+GSsavlv45TTL5baI9xO8kN71I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=GKB6Sx/IUizZ9IZiRwVYRZ7sZESLZmd5Upv0GbKgvpI=;
-        b=bcS+LqpG/ZbZMCzKBJne/l/xhxxI4r3JFIqppcOXSMT3BAFMfSgmRknSS70oWoqxJj
-         fUDGqTiCvdZeEndXLsk6y2ExgvIu9G1vUDYkGxhhvl5Zv4gl7IZnBsHu1jz2OTvuCo05
-         QxXGBGA6GfdX337qPTE6X8B7wHWjX7V+akI7wS21uQvecFfcF6cWxFjmjz7aJlQOv6J/
-         e1YfjnL0itouKw8FsQDAUkUzc3oT+LlO2GohPUIuNqJ5hCyiYWX1F8VAV6UKs3bwOzjL
-         PvBKMu/hdsDb+z+fnbsaOUw3UblSKQALeXU8IQkbb5bHhlvZRqje8fE/09kBebmh8dhK
-         Vs9Q==
-X-Gm-Message-State: APjAAAWW7dhVma9T8Bx7fg48KY3P0WEvSJih3FkXvP/fTgBbUyVgA5ic
-        FyhA368ZbrrD5cUBs8MTAYy+bvE8i82jW5FbNgI=
-X-Google-Smtp-Source: APXvYqwZ8L7WBUXKpllPra1iDKCIj9jTGodgQKb31qnM478jp8ypjhyOfCzrMdjpE9K/VYB36AzGxg==
-X-Received: by 2002:adf:d18b:: with SMTP id v11mr1782349wrc.308.1572467711910;
-        Wed, 30 Oct 2019 13:35:11 -0700 (PDT)
-Received: from [192.168.1.149] (ip-5-186-115-54.cgn.fibianet.dk. [5.186.115.54])
-        by smtp.gmail.com with ESMTPSA id a7sm1633681wrr.89.2019.10.30.13.35.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Oct 2019 13:35:10 -0700 (PDT)
-Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring,
- not cursor and length [ver #2]
-To:     Ilya Dryomov <idryomov@gmail.com>,
-        David Howells <dhowells@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-api@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
- <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
- <CAOi1vP97DMX8zweOLfBDOFstrjC78=6RgxK3PPj_mehCOSeoaw@mail.gmail.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <4892d186-8eb0-a282-e7e6-e79958431a54@rasmusvillemoes.dk>
-Date:   Wed, 30 Oct 2019 21:35:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Wed, 30 Oct 2019 17:43:41 -0400
+Received: from dread.disaster.area (pa49-180-67-183.pa.nsw.optusnet.com.au [49.180.67.183])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id C48267E9BCE;
+        Thu, 31 Oct 2019 08:43:37 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1iPvkd-0006QK-OU; Thu, 31 Oct 2019 08:43:35 +1100
+Date:   Thu, 31 Oct 2019 08:43:35 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 04/26] xfs: Improve metadata buffer reclaim accountability
+Message-ID: <20191030214335.GQ4614@dread.disaster.area>
+References: <20191009032124.10541-1-david@fromorbit.com>
+ <20191009032124.10541-5-david@fromorbit.com>
+ <20191030172517.GO15222@magnolia>
 MIME-Version: 1.0
-In-Reply-To: <CAOi1vP97DMX8zweOLfBDOFstrjC78=6RgxK3PPj_mehCOSeoaw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191030172517.GO15222@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
+        a=3wLbm4YUAFX2xaPZIabsgw==:117 a=3wLbm4YUAFX2xaPZIabsgw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
+        a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=D5QIZhWRPjQ8d_Cs2q0A:9
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 30/10/2019 17.19, Ilya Dryomov wrote:
-> On Thu, Oct 24, 2019 at 11:49 AM David Howells <dhowells@redhat.com> wrote:
->>  /*
->> - * We use a start+len construction, which provides full use of the
->> - * allocated memory.
->> - * -- Florian Coosmann (FGC)
->> - *
->> + * We use head and tail indices that aren't masked off, except at the point of
->> + * dereference, but rather they're allowed to wrap naturally.  This means there
->> + * isn't a dead spot in the buffer, provided the ring size < INT_MAX.
->> + * -- David Howells 2019-09-23.
+On Wed, Oct 30, 2019 at 10:25:17AM -0700, Darrick J. Wong wrote:
+> On Wed, Oct 09, 2019 at 02:21:02PM +1100, Dave Chinner wrote:
+> > From: Dave Chinner <dchinner@redhat.com>
+> > 
+> > The buffer cache shrinker frees more than just the xfs_buf slab
+> > objects - it also frees the pages attached to the buffers. Make sure
+> > the memory reclaim code accounts for this memory being freed
+> > correctly, similar to how the inode shrinker accounts for pages
+> > freed from the page cache due to mapping invalidation.
+> > 
+> > We also need to make sure that the mm subsystem knows these are
+> > reclaimable objects. We provide the memory reclaim subsystem with a
+> > a shrinker to reclaim xfs_bufs, so we should really mark the slab
+> > that way.
+> > 
+> > We also have a lot of xfs_bufs in a busy system, spread them around
+> > like we do inodes.
+> > 
+> > Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> > ---
+> >  fs/xfs/xfs_buf.c | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+> > index e484f6bead53..45b470f55ad7 100644
+> > --- a/fs/xfs/xfs_buf.c
+> > +++ b/fs/xfs/xfs_buf.c
+> > @@ -324,6 +324,9 @@ xfs_buf_free(
+> >  
+> >  			__free_page(page);
+> >  		}
+> > +		if (current->reclaim_state)
+> > +			current->reclaim_state->reclaimed_slab +=
+> > +							bp->b_page_count;
 > 
-> Hi David,
+> Hmm, ok, I see how ZONE_RECLAIM and reclaimed_slab fit together.
 > 
-> Is "ring size < INT_MAX" constraint correct?
+> >  	} else if (bp->b_flags & _XBF_KMEM)
+> >  		kmem_free(bp->b_addr);
+> >  	_xfs_buf_free_pages(bp);
+> > @@ -2064,7 +2067,8 @@ int __init
+> >  xfs_buf_init(void)
+> >  {
+> >  	xfs_buf_zone = kmem_zone_init_flags(sizeof(xfs_buf_t), "xfs_buf",
+> > -						KM_ZONE_HWALIGN, NULL);
+> > +			KM_ZONE_HWALIGN | KM_ZONE_SPREAD | KM_ZONE_RECLAIM,
+> 
+> I guess I'm fine with ZONE_SPREAD too, insofar as it only seems to apply
+> to a particular "use another node" memory policy when slab is in use.
+> Was that your intent?
 
-No. As long as one always uses a[idx % size] to access the array, the
-only requirement is that size is representable in an unsigned int. Then
-because one also wants to do the % using simple bitmasking, that further
-restricts one to sizes that are a power of 2, so the end result is that
-the max size is 2^31 (aka INT_MAX+1).
+It's more documentation than anything - that we shouldn't be piling
+these structures all on to one node because that can have severe
+issues with NUMA memory reclaim algorithms. i.e. the xfs-buf
+shrinker sets SHRINKER_NUMA_AWARE, so memory pressure on a single
+node can reclaim all the xfs-bufs on that node without touching any
+other node.
 
-> I've never had to implement this free running indices scheme, but
-> the way I've always visualized it is that the top bit of the index is
-> used as a lap (as in a race) indicator, leaving 31 bits to work with
-> (in case of unsigned ints).  Should that be
-> 
->   ring size <= 2^31
-> 
-> or more precisely
-> 
->   ring size is a power of two <= 2^31
+That means, for example, if we instantiate all the AG header buffers
+on a single node (e.g. like we do at mount time) then memory
+pressure on that one node will generate IO stalls across the entire
+filesystem as other nodes doing work have to repopulate the buffer
+cache for any allocation for freeing of space/inodes..
 
-Exactly. But it's kind of moot since the ring size would never be
-allowed to grow anywhere near that.
+IOWs, for large NUMA systems using cpusets this cache should be
+spread around all of memory, especially as it has NUMA aware
+reclaim. For everyone else, it's just documentation that improper
+cgroup or NUMA memory policy could cause you all sorts of problems
+with this cache.
 
-Rasmus
+It's worth noting that SLAB_MEM_SPREAD is used almost exclusively in
+filesystems for inode caches largely because, at the time (~2006),
+the only reclaimable cache that could grow to any size large enough
+to cause problems was the inode cache. It's been cargo-culted ever
+since, whether it is needed or not (e.g. ceph).
+
+In the case of the xfs_bufs, I've been running workloads recently
+that cache several million xfs_bufs and only a handful of inodes
+rather than the other way around. If we spread inodes because
+caching millions on a single node can cause problems on large NUMA
+machines, then we also need to spread xfs_bufs...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
