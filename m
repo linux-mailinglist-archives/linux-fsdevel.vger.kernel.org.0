@@ -2,151 +2,272 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCD9EE9616
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 06:32:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67323E9633
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 07:01:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726407AbfJ3FcJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Oct 2019 01:32:09 -0400
-Received: from mail-il1-f197.google.com ([209.85.166.197]:56197 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726177AbfJ3FcJ (ORCPT
+        id S1726262AbfJ3GBa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Oct 2019 02:01:30 -0400
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:32809 "EHLO
+        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726108AbfJ3GB3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Oct 2019 01:32:09 -0400
-Received: by mail-il1-f197.google.com with SMTP id n81so1065230ili.22
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Oct 2019 22:32:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=mbTIn03M48tLQ3Ae3NFBVUq/hfQBC8WrnQ5NE/Xg208=;
-        b=U2dzJBrM0u8u9Ad4cNMB5OfgH0VvmXcye/I+OQz+YQViHijh4RucxudMuBwchAg/R6
-         W3SgdGjUpjdNgAs0Nh1tmt4nQVUO2qhNyEh04KPKl+fymJIXdxpI75Ndha+WAId/KeLb
-         DB6KLH4AIC3gXTmFwH7DPEjbKdCKJGfQ1E+3cshXDsRVUMxCbOtAgSXtWd2e8i9vKVB8
-         9HXd5xNTxu7uQeiWw0W9l28fh3aJTjo6gyJhZjK6+QDGlHTzdUG7v86vSHTdXPVZzKS6
-         WlhA++IaS04NFW/v7/LIFS+IKC00ExEQR5gxvEj/PeEEXx5LowXDFbH7kaSPgxa0byfz
-         6VlQ==
-X-Gm-Message-State: APjAAAXg2+conVNyGSZ0LnW7lmsNmkveufrg5Y+rYbr51sT5EyRtrkaw
-        WU049hIH6rFohdE7Fqdxr0nBhlEfW9NGBBy2OEZAksABE0+1
-X-Google-Smtp-Source: APXvYqx18oKmF/BSsIkvWFJj4i4V9vr7G/Bknv+KRm5J3e6SMSZP3B8etPPoqOn8D0S7nfK4MHVieihGsTrQatA/SpcuGAK22Cnk
+        Wed, 30 Oct 2019 02:01:29 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.west.internal (Postfix) with ESMTP id 20EC341E;
+        Wed, 30 Oct 2019 02:01:28 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Wed, 30 Oct 2019 02:01:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm1; bh=
+        XH/nVnr9lSCeZWxQ8dVKtrszqi0pNbokP25FE9wcqd8=; b=XW0IbPW8n9XYZr39
+        D2UJBhvkFeeMYcCsw+zUKvi2l8YJfmLWSEzVa9hlUEAQi6hyQBwW1GVyx3QnNWC6
+        LOKmv0fJRCa4QJjnBhKd8myzPHk009hkolh7+6B0f6rr8ybQr6gm7iMcNJ7pVx4X
+        8qfCOGEmPZhnMOg3jm06339hVE7Fk2Eyt/C0BXSsIrDwciPgNDSk0L5E9Uoj+GK5
+        o4JIJf2BsfjU1YzQl50TfY+qvdOdJjav//hHdh06MTqfrPZaJJVAXM9wQqOQE+pW
+        yJEKsPxFvKoqn7Z3F+ARYKuGaxQfCMGVHKpXxzvYCZrNwBboqnBGYzzdoCi+upMY
+        /5L99g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=XH/nVnr9lSCeZWxQ8dVKtrszqi0pNbokP25FE9wcq
+        d8=; b=amhEoLLJ8Vp+dk0o525Sb3SDT82DrovuHh2xQc/9w44SaD7NOMiqKI9sO
+        0huiNamSHJgnSP7MaE+hIl7ZXX83OUNAo7jqG2HQ2z/x2b1zgHIOLrwLWfxkKKan
+        65TfE97ExqsA47g1O2sDFJ+CrSlX8Lv7UcgTQeKlIq4gHiQENn7A2IlOWMXZv/vU
+        Cz9mSF7c2c7Z9LOX15XzRNVWkALnEKlcspwUURIUvQ6k2I32WmHNNWM/XRWaPBcg
+        1PRicjLK6CNvYfu7OThSXG0caTV7O8hNAnbN8NTjbAGoH/di9mW6a2I4DyiaXsHb
+        aum93PyJ9/w/rh1FxUNQToQF6oY2w==
+X-ME-Sender: <xms:Nye5Xb3oj-REBoiECgSz0tgE-UuN-6OUmaKXxL2XaW6phHSgBW4OUg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedruddtvddgledvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucfkphepuddukedrvddtke
+    drudekjedrfedvnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgr
+    fidrnhgvthenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:Nye5XRDoLgrGy9VFcFtuGsFNCtVvp7p6HNrQJWDNuYVIsaiEMME3oA>
+    <xmx:Nye5XSXa99StyOfz_Ts_npN1qkUhB2CbdigX4_d-9t0wNEgdOQdjYQ>
+    <xmx:Nye5XfUoFM33Xhjm1CoKMwxRAXFOnHWBQIKyx8hde3Axy0ymolyKSQ>
+    <xmx:Nye5XTyQ9E_ZGXSUr13rsz8TuJPSCofGWEieQFJbUNMto4WGx24lEQ>
+Received: from mickey.themaw.net (unknown [118.208.187.32])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 14FB4306005C;
+        Wed, 30 Oct 2019 02:01:24 -0400 (EDT)
+Message-ID: <a7e2d30f30f435216e9533d79928e6cf2e953256.camel@themaw.net>
+Subject: Re: [RFC] Don't propagate automount
+From:   Ian Kent <raven@themaw.net>
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc:     viro@zeniv.linux.org.uk, autofs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Date:   Wed, 30 Oct 2019 14:01:21 +0800
+In-Reply-To: <20191029160017.33chq3w2alyzscfa@fiona>
+References: <d163042ab8fffd975a6d460488f1539c5f619eaa.camel@themaw.net>
+         <7f31f0c2bf214334a8f7e855044c88a50e006f05.camel@themaw.net>
+         <b2443a28939d6fe79ec9aa9d983f516c8269448a.camel@themaw.net>
+         <20190927161643.ehahioerrlgehhud@fiona>
+         <f0849206eff7179c825061f4b96d56c106c4eb66.camel@themaw.net>
+         <20191001190916.fxko7vjcjsgzy6a2@fiona>
+         <5117fb99760cc52ca24b103b70e197f6a619bee0.camel@themaw.net>
+         <20191028162835.dtyjwwv57xqxrpap@fiona>
+         <2dcbe8a95153e43cb179733f03de7da80fbbc6b2.camel@themaw.net>
+         <8ca2feb2622165818f27c15564ca78529f31007e.camel@themaw.net>
+         <20191029160017.33chq3w2alyzscfa@fiona>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-X-Received: by 2002:a92:9c94:: with SMTP id x20mr29794180ill.149.1572413528010;
- Tue, 29 Oct 2019 22:32:08 -0700 (PDT)
-Date:   Tue, 29 Oct 2019 22:32:08 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c6fb2a05961a0dd8@google.com>
-Subject: BUG: unable to handle kernel paging request in io_wq_cancel_all
-From:   syzbot <syzbot+221cc24572a2fed23b6b@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Tue, 2019-10-29 at 11:00 -0500, Goldwyn Rodrigues wrote:
+> On 14:39 29/10, Ian Kent wrote:
+> > On Tue, 2019-10-29 at 07:57 +0800, Ian Kent wrote:
+> > > On Mon, 2019-10-28 at 11:28 -0500, Goldwyn Rodrigues wrote:
+> > > > Hi Ian,
+> > > > 
+> > > > On 10:14 02/10, Ian Kent wrote:
+> > > > > On Tue, 2019-10-01 at 14:09 -0500, Goldwyn Rodrigues wrote:
+> > > > <snip>
+> > > > 
+> > > > > Anyway, it does sound like it's worth putting time into
+> > > > > your suggestion of a kernel change.
+> > > > > 
+> > > > > Unfortunately I think it's going to take a while to work
+> > > > > out what's actually going on with the propagation and I'm
+> > > > > in the middle of some other pressing work right now.
+> > > > 
+> > > > Have you have made any progress on this issue?
+> > > 
+> > > Sorry I haven't.
+> > > I still want to try and understand what's going on there.
+> > > 
+> > > > As I mentioned, I am fine with a userspace solution of
+> > > > defaulting
+> > > > to slave mounts all of the time instead of this kernel patch.
+> > > 
+> > > Oh, I thought you weren't keen on that recommendation.
+> > > 
+> > > That shouldn't take long to do so I should be able to get that
+> > > done
+> > > and post a patch pretty soon.
+> > > 
+> > > I'll get back to looking at the mount propagation code when I get
+> > > a
+> > > chance. Unfortunately I haven't been very successful when making
+> > > changes to that area of code in the past ...
+> > 
+> > After working on this patch I'm even more inclined to let the
+> > kernel
+> > do it's propagation thing and set the autofs mounts, either
+> > silently
+> > by default or explicitly by map entry option.
+> > 
+> > Because it's the propagation setting of the parent mount that
+> > controls
+> > the propagation of its children there shouldn't be any chance of a
+> > race so this should be reliable.
+> > 
+> > Anyway, here is a patch, compile tested only, and without the
+> > changelog
+> > hunk I normally add to save you possible conflicts. But unless
+> > there
+> > are any problems found this is what I will eventually commit to the
+> > repo.
+> > 
+> > If there are any changes your not aware of I'll let you know.
+> > 
+> > Clearly this depends on the other two related patches for this
+> > issue.
+> 
+> This works good for us. Thanks.
+> However, I have some review comments for the patch.
+> 
+> > --
+> > 
+> > autofs-5.1.6 - make bind mounts propagation slave by default
+> > 
+> > From: Ian Kent <raven@themaw.net>
+> > 
+> > Make setting mount propagation on bind mounts mandatory with a
+> > default
+> > of propagation slave.
+> > 
+> > When using multi-mounts that have bind mounts the bind mount will
+> > have
+> > the same properties as its parent which is commonly propagation
+> > shared.
+> > And if the mount target is also propagation shared this can lead to
+> > a
+> > deadlock when attempting to access the offset mounts. When this
+> > happens
+> > an unwanted offset mount is propagated back to the target file
+> > system
+> > resulting in a deadlock since the automount target is itself an
+> > (unwanted) automount trigger.
+> > 
+> > This problem has been present much longer than I originally
+> > thought,
+> > perhaps since mount propagation was introduced into the kernel, so
+> > explicitly setting bind mount propagation is the sensible thing to
+> > do.
+> > 
+> > Signed-off-by: Ian Kent <raven@themaw.net>
+> > ---
+> >  include/automount.h  |    9 +++++----
+> >  lib/master_parse.y   |   11 ++++++++---
+> >  lib/master_tok.l     |    1 +
+> >  man/auto.master.5.in |   19 ++++++++++---------
+> >  modules/mount_bind.c |   40 ++++++++++++++++++++++--------------
+> > ----
+> >  5 files changed, 46 insertions(+), 34 deletions(-)
+> > 
+> > diff --git a/include/automount.h b/include/automount.h
+> > index 4fd0ba96..fe9c7fee 100644
+> > --- a/include/automount.h
+> > +++ b/include/automount.h
+> > @@ -551,14 +551,15 @@ struct kernel_mod_version {
+> >  #define MOUNT_FLAG_AMD_CACHE_ALL	0x0080
+> >  
+> >  /* Set mount propagation for bind mounts */
+> > -#define MOUNT_FLAG_SLAVE		0x0100
+> > -#define MOUNT_FLAG_PRIVATE		0x0200
+> > +#define MOUNT_FLAG_SHARED		0x0100
+> > +#define MOUNT_FLAG_SLAVE		0x0200
+> > +#define MOUNT_FLAG_PRIVATE		0x0400
+> >  
+> >  /* Use strict expire semantics if requested and kernel supports it
+> > */
+> > -#define MOUNT_FLAG_STRICTEXPIRE		0x0400
+> > +#define MOUNT_FLAG_STRICTEXPIRE		0x0800
+> >  
+> >  /* Indicator for applications to ignore the mount entry */
+> > -#define MOUNT_FLAG_IGNORE		0x0800
+> > +#define MOUNT_FLAG_IGNORE		0x1000
+> >  
+> >  struct autofs_point {
+> >  	pthread_t thid;
+> > diff --git a/lib/master_parse.y b/lib/master_parse.y
+> > index f817f739..e9589a5a 100644
+> > --- a/lib/master_parse.y
+> > +++ b/lib/master_parse.y
+> > @@ -59,6 +59,7 @@ static long timeout;
+> >  static long negative_timeout;
+> >  static unsigned symlnk;
+> >  static unsigned strictexpire;
+> > +static unsigned shared;
+> >  static unsigned slave;
+> >  static unsigned private;
+> >  static unsigned nobind;
+> > @@ -106,7 +107,7 @@ static int master_fprintf(FILE *, char *, ...);
+> >  %token MAP
+> >  %token OPT_TIMEOUT OPT_NTIMEOUT OPT_NOBIND OPT_NOGHOST OPT_GHOST
+> > OPT_VERBOSE
+> >  %token OPT_DEBUG OPT_RANDOM OPT_USE_WEIGHT OPT_SYMLINK OPT_MODE
+> > -%token OPT_STRICTEXPIRE OPT_SLAVE OPT_PRIVATE
+> > +%token OPT_STRICTEXPIRE OPT_SHARED OPT_SLAVE OPT_PRIVATE
+> >  %token COLON COMMA NL DDASH
+> >  %type <strtype> map
+> >  %type <strtype> options
+> > @@ -208,6 +209,7 @@ line:
+> >  	| PATH OPT_TIMEOUT { master_notify($1); YYABORT; }
+> >  	| PATH OPT_SYMLINK { master_notify($1); YYABORT; }
+> >  	| PATH OPT_STRICTEXPIRE { master_notify($1); YYABORT; }
+> > +	| PATH OPT_SHARED { master_notify($1); YYABORT; }
+> >  	| PATH OPT_SLAVE { master_notify($1); YYABORT; }
+> >  	| PATH OPT_PRIVATE { master_notify($1); YYABORT; }
+> >  	| PATH OPT_NOBIND { master_notify($1); YYABORT; }
+> > @@ -622,6 +624,7 @@ daemon_option: OPT_TIMEOUT NUMBER { timeout =
+> > $2; }
+> >  	| OPT_NTIMEOUT NUMBER { negative_timeout = $2; }
+> >  	| OPT_SYMLINK	{ symlnk = 1; }
+> >  	| OPT_STRICTEXPIRE { strictexpire = 1; }
+> > +	| OPT_SHARED	{ shared = 1; }
+> >  	| OPT_SLAVE	{ slave = 1; }
+> >  	| OPT_PRIVATE	{ private = 1; }
+> >  	| OPT_NOBIND	{ nobind = 1; }
+> > @@ -907,8 +910,10 @@ int master_parse_entry(const char *buffer,
+> > unsigned int default_timeout, unsigne
+> >  		entry->ap->flags |= MOUNT_FLAG_SYMLINK;
+> >  	if (strictexpire)
+> >  		entry->ap->flags |= MOUNT_FLAG_STRICTEXPIRE;
+> > -	if (slave)
+> > -		entry->ap->flags |= MOUNT_FLAG_SLAVE;
+> > +	/* Default is propagation slave */
+> > +	entry->ap->flags |= MOUNT_FLAG_SLAVE;
+> > +	if (shared)
+> > +		entry->ap->flags |= MOUNT_FLAG_SHARED;
+> >  	if (private)
+> >  		entry->ap->flags |= MOUNT_FLAG_PRIVATE;
+> 
+> If the user mention shared or private flag, you will end up
+> enabling both MOUNT_FLAG_SLAVE and MOUNT_FLAG_SHARED.
+> It would be better to put it in a if..else if..else sequence.
+> These are options are mutually exclusive.
 
-syzbot found the following crash on:
+Thanks for noticing this obvious blunder.
+I'll fix that up and send an update.
 
-HEAD commit:    c57cf383 Add linux-next specific files for 20191029
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=161e9e04e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cb86688f30db053d
-dashboard link: https://syzkaller.appspot.com/bug?extid=221cc24572a2fed23b6b
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=168671d4e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140f4898e00000
+Ian
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+221cc24572a2fed23b6b@syzkaller.appspotmail.com
-
-BUG: unable to handle page fault for address: fffffc0000000000
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 0 P4D 0
-Oops: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 8856 Comm: syz-executor355 Not tainted 5.4.0-rc5-next-20191029  
-#0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:bytes_is_nonzero mm/kasan/generic.c:92 [inline]
-RIP: 0010:memory_is_nonzero mm/kasan/generic.c:109 [inline]
-RIP: 0010:memory_is_poisoned_n mm/kasan/generic.c:135 [inline]
-RIP: 0010:memory_is_poisoned mm/kasan/generic.c:166 [inline]
-RIP: 0010:check_memory_region_inline mm/kasan/generic.c:182 [inline]
-RIP: 0010:check_memory_region+0x123/0x1a0 mm/kasan/generic.c:192
-Code: 49 89 d9 49 29 c1 e9 68 ff ff ff 5b b8 01 00 00 00 41 5c 41 5d 5d c3  
-4d 85 c9 74 ef 4d 01 e1 eb 09 48 83 c0 01 4c 39 c8 74 e1 <80> 38 00 74 f2  
-eb 8c 4d 39 c2 74 4d e8 8c e4 ff ff 31 c0 5b 41 5c
-RSP: 0018:ffff888090717b30 EFLAGS: 00010216
-RAX: fffffc0000000000 RBX: dffffc0000000001 RCX: ffffffff81d256a8
-RDX: 0000000000000001 RSI: 0000000000000008 RDI: fffffffffffffffc
-RBP: ffff888090717b48 R08: 1fffffffffffffff R09: dffffc0000000001
-R10: dffffc0000000000 R11: 0000000000000003 R12: fffffbffffffffff
-R13: ffff8880a0f685c0 R14: ffff8880a4146458 R15: 0000000000000000
-FS:  0000000001f6c880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: fffffc0000000000 CR3: 00000000a0083000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  __kasan_check_write+0x14/0x20 mm/kasan/common.c:98
-  set_bit include/asm-generic/bitops-instrumented.h:28 [inline]
-  io_wq_cancel_all+0x28/0x2a0 fs/io-wq.c:617
-  io_uring_flush+0x35a/0x4e0 fs/io_uring.c:3936
-  filp_close+0xbd/0x170 fs/open.c:1174
-  close_files fs/file.c:388 [inline]
-  put_files_struct fs/file.c:416 [inline]
-  put_files_struct+0x1d7/0x2f0 fs/file.c:413
-  exit_files+0x83/0xb0 fs/file.c:445
-  do_exit+0x8d2/0x2e60 kernel/exit.c:812
-  do_group_exit+0x135/0x360 kernel/exit.c:921
-  __do_sys_exit_group kernel/exit.c:932 [inline]
-  __se_sys_exit_group kernel/exit.c:930 [inline]
-  __x64_sys_exit_group+0x44/0x50 kernel/exit.c:930
-  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440018
-Code: 00 00 be 3c 00 00 00 eb 19 66 0f 1f 84 00 00 00 00 00 48 89 d7 89 f0  
-0f 05 48 3d 00 f0 ff ff 77 21 f4 48 89 d7 44 89 c0 0f 05 <48> 3d 00 f0 ff  
-ff 76 e0 f7 d8 64 41 89 01 eb d8 0f 1f 84 00 00 00
-RSP: 002b:00007ffc5afbadb8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000440018
-RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
-RBP: 00000000004bfcf0 R08: 00000000000000e7 R09: ffffffffffffffd0
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00000000006d2180 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
-CR2: fffffc0000000000
----[ end trace 3dc71453331dd723 ]---
-RIP: 0010:bytes_is_nonzero mm/kasan/generic.c:92 [inline]
-RIP: 0010:memory_is_nonzero mm/kasan/generic.c:109 [inline]
-RIP: 0010:memory_is_poisoned_n mm/kasan/generic.c:135 [inline]
-RIP: 0010:memory_is_poisoned mm/kasan/generic.c:166 [inline]
-RIP: 0010:check_memory_region_inline mm/kasan/generic.c:182 [inline]
-RIP: 0010:check_memory_region+0x123/0x1a0 mm/kasan/generic.c:192
-Code: 49 89 d9 49 29 c1 e9 68 ff ff ff 5b b8 01 00 00 00 41 5c 41 5d 5d c3  
-4d 85 c9 74 ef 4d 01 e1 eb 09 48 83 c0 01 4c 39 c8 74 e1 <80> 38 00 74 f2  
-eb 8c 4d 39 c2 74 4d e8 8c e4 ff ff 31 c0 5b 41 5c
-RSP: 0018:ffff888090717b30 EFLAGS: 00010216
-RAX: fffffc0000000000 RBX: dffffc0000000001 RCX: ffffffff81d256a8
-RDX: 0000000000000001 RSI: 0000000000000008 RDI: fffffffffffffffc
-RBP: ffff888090717b48 R08: 1fffffffffffffff R09: dffffc0000000001
-R10: dffffc0000000000 R11: 0000000000000003 R12: fffffbffffffffff
-R13: ffff8880a0f685c0 R14: ffff8880a4146458 R15: 0000000000000000
-FS:  0000000001f6c880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: fffffc0000000000 CR3: 00000000a0083000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
