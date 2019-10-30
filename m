@@ -2,133 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70D99EA5A5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 22:43:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D156EA5EE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 23:04:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727186AbfJ3Vnm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Oct 2019 17:43:42 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:43060 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726171AbfJ3Vnl (ORCPT
+        id S1727327AbfJ3WEI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Oct 2019 18:04:08 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:32495 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726711AbfJ3WEH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Oct 2019 17:43:41 -0400
-Received: from dread.disaster.area (pa49-180-67-183.pa.nsw.optusnet.com.au [49.180.67.183])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id C48267E9BCE;
-        Thu, 31 Oct 2019 08:43:37 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iPvkd-0006QK-OU; Thu, 31 Oct 2019 08:43:35 +1100
-Date:   Thu, 31 Oct 2019 08:43:35 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 04/26] xfs: Improve metadata buffer reclaim accountability
-Message-ID: <20191030214335.GQ4614@dread.disaster.area>
-References: <20191009032124.10541-1-david@fromorbit.com>
- <20191009032124.10541-5-david@fromorbit.com>
- <20191030172517.GO15222@magnolia>
+        Wed, 30 Oct 2019 18:04:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572473046;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IZ23M/gMQsnd17K54zQYAc0WcgVlZvNdQOyTSj0SueE=;
+        b=SNiDRvpl36/lQi73+cAgETh20xX6XJ8JlG/3IVGCqrl8Ctcz2XBUVDEQj39h1Wbflukt5X
+        Pv3ox8iWU0WNh1uJWti/11oTwSC48wz3MB5MeRgVJ+agP+/VrxQVkJE6VWMDI0nbg7ob2K
+        UKek+mNzBVZK5nF1ZBNBIUeDrxRpXf0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-346-YodGD9WtO8qS3uIWWEjLYA-1; Wed, 30 Oct 2019 18:04:03 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 31D371005502;
+        Wed, 30 Oct 2019 22:04:00 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-19.phx2.redhat.com [10.3.112.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4FBB15C548;
+        Wed, 30 Oct 2019 22:03:22 +0000 (UTC)
+Date:   Wed, 30 Oct 2019 18:03:20 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
+        mpatel@redhat.com
+Subject: Re: [PATCH ghak90 V7 20/21] audit: add capcontid to set contid
+ outside init_user_ns
+Message-ID: <20191030220320.tnwkaj5gbzchcn7j@madcap2.tricolour.ca>
+References: <cover.1568834524.git.rgb@redhat.com>
+ <214163d11a75126f610bcedfad67a4d89575dc77.1568834525.git.rgb@redhat.com>
+ <20191019013904.uevmrzbmztsbhpnh@madcap2.tricolour.ca>
+ <CAHC9VhRPygA=LsHLUqv+K=ouAiPFJ6fb2_As=OT-_zB7kGc_aQ@mail.gmail.com>
+ <20191021213824.6zti5ndxu7sqs772@madcap2.tricolour.ca>
+ <CAHC9VhRdNXsY4neJpSoNyJoAVEoiEc2oW5kSscF99tjmoQAxFA@mail.gmail.com>
+ <20191021235734.mgcjotdqoe73e4ha@madcap2.tricolour.ca>
+ <CAHC9VhSiwnY-+2awxvGeO4a0NgfVkOPd8fzzBVujp=HtjskTuQ@mail.gmail.com>
+ <20191024210010.owwgc3bqbvtdsqws@madcap2.tricolour.ca>
+ <CAHC9VhRDoX9du4XbCnBtBzsNPMGOsb-TKM1CC+sCL7HP=FuTRQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAHC9VhRDoX9du4XbCnBtBzsNPMGOsb-TKM1CC+sCL7HP=FuTRQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-MC-Unique: YodGD9WtO8qS3uIWWEjLYA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
-In-Reply-To: <20191030172517.GO15222@magnolia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
-        a=3wLbm4YUAFX2xaPZIabsgw==:117 a=3wLbm4YUAFX2xaPZIabsgw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
-        a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=D5QIZhWRPjQ8d_Cs2q0A:9
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 10:25:17AM -0700, Darrick J. Wong wrote:
-> On Wed, Oct 09, 2019 at 02:21:02PM +1100, Dave Chinner wrote:
-> > From: Dave Chinner <dchinner@redhat.com>
-> > 
-> > The buffer cache shrinker frees more than just the xfs_buf slab
-> > objects - it also frees the pages attached to the buffers. Make sure
-> > the memory reclaim code accounts for this memory being freed
-> > correctly, similar to how the inode shrinker accounts for pages
-> > freed from the page cache due to mapping invalidation.
-> > 
-> > We also need to make sure that the mm subsystem knows these are
-> > reclaimable objects. We provide the memory reclaim subsystem with a
-> > a shrinker to reclaim xfs_bufs, so we should really mark the slab
-> > that way.
-> > 
-> > We also have a lot of xfs_bufs in a busy system, spread them around
-> > like we do inodes.
-> > 
-> > Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> > ---
-> >  fs/xfs/xfs_buf.c | 6 +++++-
-> >  1 file changed, 5 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-> > index e484f6bead53..45b470f55ad7 100644
-> > --- a/fs/xfs/xfs_buf.c
-> > +++ b/fs/xfs/xfs_buf.c
-> > @@ -324,6 +324,9 @@ xfs_buf_free(
-> >  
-> >  			__free_page(page);
-> >  		}
-> > +		if (current->reclaim_state)
-> > +			current->reclaim_state->reclaimed_slab +=
-> > +							bp->b_page_count;
-> 
-> Hmm, ok, I see how ZONE_RECLAIM and reclaimed_slab fit together.
-> 
-> >  	} else if (bp->b_flags & _XBF_KMEM)
-> >  		kmem_free(bp->b_addr);
-> >  	_xfs_buf_free_pages(bp);
-> > @@ -2064,7 +2067,8 @@ int __init
-> >  xfs_buf_init(void)
-> >  {
-> >  	xfs_buf_zone = kmem_zone_init_flags(sizeof(xfs_buf_t), "xfs_buf",
-> > -						KM_ZONE_HWALIGN, NULL);
-> > +			KM_ZONE_HWALIGN | KM_ZONE_SPREAD | KM_ZONE_RECLAIM,
-> 
-> I guess I'm fine with ZONE_SPREAD too, insofar as it only seems to apply
-> to a particular "use another node" memory policy when slab is in use.
-> Was that your intent?
+On 2019-10-30 16:27, Paul Moore wrote:
+> On Thu, Oct 24, 2019 at 5:00 PM Richard Guy Briggs <rgb@redhat.com> wrote=
+:
+> > Here's the note I had from that meeting:
+> >
+> > - Eric raised the issue that using /proc is likely to get more and more
+> >   hoary due to mount namespaces and suggested that we use a netlink
+> > audit message (or a new syscall) to set the audit container identifier
+> > and since the loginuid is a similar type of operation, that it should b=
+e
+> > migrated over to a similar mechanism to get it away from /proc.  Get
+> > could be done with a netlink audit message that triggers an audit log
+> > message to deliver the information.  I'm reluctant to further pollute
+> > the syscall space if we can find another method.  The netlink audit
+> > message makes sense since any audit-enabled service is likely to alread=
+y
+> > have an audit socket open.
+>=20
+> Thanks for the background info on the off-list meeting.  I would
+> encourage you to have discussions like this on-list in the future; if
+> that isn't possible, hosting a public call would okay-ish, but a
+> distant second.
 
-It's more documentation than anything - that we shouldn't be piling
-these structures all on to one node because that can have severe
-issues with NUMA memory reclaim algorithms. i.e. the xfs-buf
-shrinker sets SHRINKER_NUMA_AWARE, so memory pressure on a single
-node can reclaim all the xfs-bufs on that node without touching any
-other node.
+I'm still trying to get Eric's attention to get him to weigh in here and
+provide a more eloquent representation of his ideas and concerns.  Some
+of it was related to CRIU(sp?) issues which we've already of which we've
+already seen similar concerns in namespace identifiers including the
+device identity to qualify it.
 
-That means, for example, if we instantiate all the AG header buffers
-on a single node (e.g. like we do at mount time) then memory
-pressure on that one node will generate IO stalls across the entire
-filesystem as other nodes doing work have to repopulate the buffer
-cache for any allocation for freeing of space/inodes..
+> At this point in time I'm not overly concerned about /proc completely
+> going away in namespaces/containers that are full featured enough to
+> host a container orchestrator.  If/when reliance on procfs becomes an
+> issue, we can look at alternate APIs, but given the importance of
+> /proc to userspace (including to audit) I suspect we are going to see
+> it persist for some time.  I would prefer to see you to drop the audit
+> container ID netlink API portions of this patchset and focus on the
+> procfs API.
 
-IOWs, for large NUMA systems using cpusets this cache should be
-spread around all of memory, especially as it has NUMA aware
-reclaim. For everyone else, it's just documentation that improper
-cgroup or NUMA memory policy could cause you all sorts of problems
-with this cache.
+I've already refactored the code to put the netlink bits at the end as
+completely optional pieces for completeness so they won't get in the way
+of the real substance of this patchset.  The nesting depth and total
+number of containers checks have also been punted to the end of the
+patchset to get them out of the way of discussion.
 
-It's worth noting that SLAB_MEM_SPREAD is used almost exclusively in
-filesystems for inode caches largely because, at the time (~2006),
-the only reclaimable cache that could grow to any size large enough
-to cause problems was the inode cache. It's been cargo-culted ever
-since, whether it is needed or not (e.g. ceph).
+> Also, for the record, removing the audit loginuid from procfs is not
+> something to take lightly, if at all; like it or not, it's part of the
+> kernel API.
 
-In the case of the xfs_bufs, I've been running workloads recently
-that cache several million xfs_bufs and only a handful of inodes
-rather than the other way around. If we spread inodes because
-caching millions on a single node can cause problems on large NUMA
-machines, then we also need to spread xfs_bufs...
+Oh, I'm quite aware of how important this change is and it was discussed
+with Steve Grubb who saw the concern and value of considering such a
+disruptive change.  Removing proc support for auid/ses would be a
+long-term deprecation if accepted.
 
-Cheers,
+Really, I should have labelled the v7 patchset as RFC since there were
+so many new and disruptive ideas presented in it.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> paul moore
+> www.paul-moore.com
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
+
