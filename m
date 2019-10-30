@@ -2,359 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68E34EA43C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 20:29:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72C2CEA4B5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 21:27:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbfJ3T3A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Oct 2019 15:29:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54396 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726206AbfJ3T3A (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Oct 2019 15:29:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 68AC4B6FF;
-        Wed, 30 Oct 2019 19:28:56 +0000 (UTC)
-Date:   Wed, 30 Oct 2019 14:28:53 -0500
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     Ian Kent <raven@themaw.net>
-Cc:     viro@zeniv.linux.org.uk, autofs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC] Don't propagate automount
-Message-ID: <20191030192853.pwbmk4dkzbtc6lsr@fiona>
-References: <b2443a28939d6fe79ec9aa9d983f516c8269448a.camel@themaw.net>
- <20190927161643.ehahioerrlgehhud@fiona>
- <f0849206eff7179c825061f4b96d56c106c4eb66.camel@themaw.net>
- <20191001190916.fxko7vjcjsgzy6a2@fiona>
- <5117fb99760cc52ca24b103b70e197f6a619bee0.camel@themaw.net>
- <20191028162835.dtyjwwv57xqxrpap@fiona>
- <2dcbe8a95153e43cb179733f03de7da80fbbc6b2.camel@themaw.net>
- <8ca2feb2622165818f27c15564ca78529f31007e.camel@themaw.net>
- <20191029160017.33chq3w2alyzscfa@fiona>
- <4a477088af70c1897918af6ff2712d643ed2273b.camel@themaw.net>
+        id S1726824AbfJ3U1t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Oct 2019 16:27:49 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33933 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726825AbfJ3U1t (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 30 Oct 2019 16:27:49 -0400
+Received: by mail-lj1-f194.google.com with SMTP id 139so4184326ljf.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2019 13:27:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ThGwTwTp4bZorwdaVrJo5UrBBQpibM4/aFgMPeqwm5E=;
+        b=Gm26HZjBU2uuF0YwNHad3PnEOS9hPuQTAg5xL7kLdu1O0WluIGq1cH3+PRhpQA13vV
+         DzJcMXPCM9W8+4OJdqpUeo+8QRGh5ku4KjkX3UXlZwiY0DplbVDpIeYteu6gUojdVbs5
+         mUtDG6M08OxHZHB8ByhYFJU5gRby7guMdJOT5/rDe1UgpD+wozzw+ldkHqw2hOGWgSgX
+         z2TG+GeNvNZTeklnHV4TABaWX73PY1s8dd/WdZEldbqY0CI8zPzqKKtvWrYIMtCXgbL9
+         9QaZ/ySBZRyXq/rzWIbzVIdEiwfPLCVIKoMAl2zXvtZapKIHcEUdOj3jmaGDvAyziTnw
+         jT2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ThGwTwTp4bZorwdaVrJo5UrBBQpibM4/aFgMPeqwm5E=;
+        b=BOjiY71Ls+iSuXoqRPCy1Pmcs0wpN+sD/2GIi6yTqYgVZziETVZcJC9VPnejb7JrW5
+         9/HC71Go6XUGV75hTcTTCT4N2+O0U2l88UUqrmDrOct2JqWAg63NI2y0kqb0JbOfNlui
+         k7Th82YNsQuxz9InIwIcxmD+mx1gCkNlCJVDfTiTBfrfDnMdfOSxTZ64AD+apsgCAGZE
+         /pk7f7GTqz+sPraF5i2DOLR+CYIITNiezTdvBqITV63o7L54BdHRTh7WHvxSLbku+MED
+         T+O/3QMdFYs8pRg3tD5CDM5kq686qC6kRZLW1Pw9z5aG9myuabu0/txHfDVJL4eguyFB
+         l+WQ==
+X-Gm-Message-State: APjAAAUH39gjw12+R9bheve8uBuCo+VKONStkH3ezT8IyXdFhENB57Ec
+        dDX6K3a2WHtjfza3cPd4mTy+EIp2E3v1PmlhvUOK
+X-Google-Smtp-Source: APXvYqwNJV+fESPPSy88I8V9SQJjpifZuNL/1FipNLKwD0hUFyI8ehvSjLCN+oZyru7R02+LN8E0BXtmTH/ZA5bgmuo=
+X-Received: by 2002:a2e:58d:: with SMTP id 135mr1059911ljf.57.1572467266987;
+ Wed, 30 Oct 2019 13:27:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4a477088af70c1897918af6ff2712d643ed2273b.camel@themaw.net>
-User-Agent: NeoMutt/20180716
+References: <cover.1568834524.git.rgb@redhat.com> <214163d11a75126f610bcedfad67a4d89575dc77.1568834525.git.rgb@redhat.com>
+ <20191019013904.uevmrzbmztsbhpnh@madcap2.tricolour.ca> <CAHC9VhRPygA=LsHLUqv+K=ouAiPFJ6fb2_As=OT-_zB7kGc_aQ@mail.gmail.com>
+ <20191021213824.6zti5ndxu7sqs772@madcap2.tricolour.ca> <CAHC9VhRdNXsY4neJpSoNyJoAVEoiEc2oW5kSscF99tjmoQAxFA@mail.gmail.com>
+ <20191021235734.mgcjotdqoe73e4ha@madcap2.tricolour.ca> <CAHC9VhSiwnY-+2awxvGeO4a0NgfVkOPd8fzzBVujp=HtjskTuQ@mail.gmail.com>
+ <20191024210010.owwgc3bqbvtdsqws@madcap2.tricolour.ca>
+In-Reply-To: <20191024210010.owwgc3bqbvtdsqws@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 30 Oct 2019 16:27:35 -0400
+Message-ID: <CAHC9VhRDoX9du4XbCnBtBzsNPMGOsb-TKM1CC+sCL7HP=FuTRQ@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V7 20/21] audit: add capcontid to set contid
+ outside init_user_ns
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
+        mpatel@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 20:05 30/10, Ian Kent wrote:
-> On Tue, 2019-10-29 at 11:00 -0500, Goldwyn Rodrigues wrote:
-> > On 14:39 29/10, Ian Kent wrote:
-> > > On Tue, 2019-10-29 at 07:57 +0800, Ian Kent wrote:
-> > > > On Mon, 2019-10-28 at 11:28 -0500, Goldwyn Rodrigues wrote:
-> > > > > Hi Ian,
-> > > > > 
-> > > > > On 10:14 02/10, Ian Kent wrote:
-> > > > > > On Tue, 2019-10-01 at 14:09 -0500, Goldwyn Rodrigues wrote:
-> > > > > <snip>
-> > > > > 
-> > > > > > Anyway, it does sound like it's worth putting time into
-> > > > > > your suggestion of a kernel change.
-> > > > > > 
-> > > > > > Unfortunately I think it's going to take a while to work
-> > > > > > out what's actually going on with the propagation and I'm
-> > > > > > in the middle of some other pressing work right now.
-> > > > > 
-> > > > > Have you have made any progress on this issue?
-> > > > 
-> > > > Sorry I haven't.
-> > > > I still want to try and understand what's going on there.
-> > > > 
-> > > > > As I mentioned, I am fine with a userspace solution of
-> > > > > defaulting
-> > > > > to slave mounts all of the time instead of this kernel patch.
-> > > > 
-> > > > Oh, I thought you weren't keen on that recommendation.
-> > > > 
-> > > > That shouldn't take long to do so I should be able to get that
-> > > > done
-> > > > and post a patch pretty soon.
-> > > > 
-> > > > I'll get back to looking at the mount propagation code when I get
-> > > > a
-> > > > chance. Unfortunately I haven't been very successful when making
-> > > > changes to that area of code in the past ...
-> > > 
-> > > After working on this patch I'm even more inclined to let the
-> > > kernel
-> > > do it's propagation thing and set the autofs mounts, either
-> > > silently
-> > > by default or explicitly by map entry option.
-> > > 
-> > > Because it's the propagation setting of the parent mount that
-> > > controls
-> > > the propagation of its children there shouldn't be any chance of a
-> > > race so this should be reliable.
-> > > 
-> > > Anyway, here is a patch, compile tested only, and without the
-> > > changelog
-> > > hunk I normally add to save you possible conflicts. But unless
-> > > there
-> > > are any problems found this is what I will eventually commit to the
-> > > repo.
-> > > 
-> > > If there are any changes your not aware of I'll let you know.
-> > > 
-> > > Clearly this depends on the other two related patches for this
-> > > issue.
-> > 
-> > This works good for us. Thanks.
-> > However, I have some review comments for the patch.
-> 
-> I think this one should do the trick.
-> 
-> autofs-5.1.6 - make bind mounts propagation slave by default
-> 
-> From: Ian Kent <raven@themaw.net>
-> 
-> Make setting mount propagation on bind mounts mandatory with a default
-> of propagation slave.
-> 
-> When using multi-mounts that have bind mounts the bind mount will have
-> the same properties as its parent which is commonly propagation shared.
-> And if the mount target is also propagation shared this can lead to a
-> deadlock when attempting to access the offset mounts. When this happens
-> an unwanted offset mount is propagated back to the target file system
-> resulting in a deadlock since the automount target is itself an
-> (unwanted) automount trigger.
-> 
-> This problem has been present much longer than I originally thought,
-> perhaps since mount propagation was introduced into the kernel, so
-> explicitly setting bind mount propagation is the sensible thing to do.
-> 
-> Signed-off-by: Ian Kent <raven@themaw.net>
+On Thu, Oct 24, 2019 at 5:00 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> Here's the note I had from that meeting:
+>
+> - Eric raised the issue that using /proc is likely to get more and more
+>   hoary due to mount namespaces and suggested that we use a netlink
+> audit message (or a new syscall) to set the audit container identifier
+> and since the loginuid is a similar type of operation, that it should be
+> migrated over to a similar mechanism to get it away from /proc.  Get
+> could be done with a netlink audit message that triggers an audit log
+> message to deliver the information.  I'm reluctant to further pollute
+> the syscall space if we can find another method.  The netlink audit
+> message makes sense since any audit-enabled service is likely to already
+> have an audit socket open.
 
-Tested and works as expected.
-Reviewed-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+Thanks for the background info on the off-list meeting.  I would
+encourage you to have discussions like this on-list in the future; if
+that isn't possible, hosting a public call would okay-ish, but a
+distant second.
+
+At this point in time I'm not overly concerned about /proc completely
+going away in namespaces/containers that are full featured enough to
+host a container orchestrator.  If/when reliance on procfs becomes an
+issue, we can look at alternate APIs, but given the importance of
+/proc to userspace (including to audit) I suspect we are going to see
+it persist for some time.  I would prefer to see you to drop the audit
+container ID netlink API portions of this patchset and focus on the
+procfs API.
+
+Also, for the record, removing the audit loginuid from procfs is not
+something to take lightly, if at all; like it or not, it's part of the
+kernel API.
 
 -- 
-Goldwyn
-
-> ---
->  include/automount.h  |    9 +++++----
->  lib/master_parse.y   |   24 +++++++++++++-----------
->  lib/master_tok.l     |    1 +
->  man/auto.master.5.in |   19 ++++++++++---------
->  modules/mount_bind.c |   40 ++++++++++++++++++++++------------------
->  5 files changed, 51 insertions(+), 42 deletions(-)
-> 
-> diff --git a/include/automount.h b/include/automount.h
-> index 4fd0ba96..fe9c7fee 100644
-> --- a/include/automount.h
-> +++ b/include/automount.h
-> @@ -551,14 +551,15 @@ struct kernel_mod_version {
->  #define MOUNT_FLAG_AMD_CACHE_ALL	0x0080
->  
->  /* Set mount propagation for bind mounts */
-> -#define MOUNT_FLAG_SLAVE		0x0100
-> -#define MOUNT_FLAG_PRIVATE		0x0200
-> +#define MOUNT_FLAG_SHARED		0x0100
-> +#define MOUNT_FLAG_SLAVE		0x0200
-> +#define MOUNT_FLAG_PRIVATE		0x0400
->  
->  /* Use strict expire semantics if requested and kernel supports it */
-> -#define MOUNT_FLAG_STRICTEXPIRE		0x0400
-> +#define MOUNT_FLAG_STRICTEXPIRE		0x0800
->  
->  /* Indicator for applications to ignore the mount entry */
-> -#define MOUNT_FLAG_IGNORE		0x0800
-> +#define MOUNT_FLAG_IGNORE		0x1000
->  
->  struct autofs_point {
->  	pthread_t thid;
-> diff --git a/lib/master_parse.y b/lib/master_parse.y
-> index f817f739..3f36b0aa 100644
-> --- a/lib/master_parse.y
-> +++ b/lib/master_parse.y
-> @@ -59,8 +59,6 @@ static long timeout;
->  static long negative_timeout;
->  static unsigned symlnk;
->  static unsigned strictexpire;
-> -static unsigned slave;
-> -static unsigned private;
->  static unsigned nobind;
->  static unsigned ghost;
->  extern unsigned global_selection_options;
-> @@ -72,6 +70,11 @@ static int tmp_argc;
->  static char **local_argv;
->  static int local_argc;
->  
-> +#define PROPAGATION_SHARED	MOUNT_FLAG_SHARED
-> +#define PROPAGATION_SLAVE	MOUNT_FLAG_SLAVE
-> +#define PROPAGATION_PRIVATE	MOUNT_FLAG_PRIVATE
-> +static unsigned int propagation;
-> +
->  static char errstr[MAX_ERR_LEN];
->  
->  static unsigned int verbose;
-> @@ -106,7 +109,7 @@ static int master_fprintf(FILE *, char *, ...);
->  %token MAP
->  %token OPT_TIMEOUT OPT_NTIMEOUT OPT_NOBIND OPT_NOGHOST OPT_GHOST OPT_VERBOSE
->  %token OPT_DEBUG OPT_RANDOM OPT_USE_WEIGHT OPT_SYMLINK OPT_MODE
-> -%token OPT_STRICTEXPIRE OPT_SLAVE OPT_PRIVATE
-> +%token OPT_STRICTEXPIRE OPT_SHARED OPT_SLAVE OPT_PRIVATE
->  %token COLON COMMA NL DDASH
->  %type <strtype> map
->  %type <strtype> options
-> @@ -208,6 +211,7 @@ line:
->  	| PATH OPT_TIMEOUT { master_notify($1); YYABORT; }
->  	| PATH OPT_SYMLINK { master_notify($1); YYABORT; }
->  	| PATH OPT_STRICTEXPIRE { master_notify($1); YYABORT; }
-> +	| PATH OPT_SHARED { master_notify($1); YYABORT; }
->  	| PATH OPT_SLAVE { master_notify($1); YYABORT; }
->  	| PATH OPT_PRIVATE { master_notify($1); YYABORT; }
->  	| PATH OPT_NOBIND { master_notify($1); YYABORT; }
-> @@ -622,8 +626,9 @@ daemon_option: OPT_TIMEOUT NUMBER { timeout = $2; }
->  	| OPT_NTIMEOUT NUMBER { negative_timeout = $2; }
->  	| OPT_SYMLINK	{ symlnk = 1; }
->  	| OPT_STRICTEXPIRE { strictexpire = 1; }
-> -	| OPT_SLAVE	{ slave = 1; }
-> -	| OPT_PRIVATE	{ private = 1; }
-> +	| OPT_SHARED	{ propagation = PROPAGATION_SHARED; }
-> +	| OPT_SLAVE	{ propagation = PROPAGATION_SLAVE; }
-> +	| OPT_PRIVATE	{ propagation = PROPAGATION_PRIVATE; }
->  	| OPT_NOBIND	{ nobind = 1; }
->  	| OPT_NOGHOST	{ ghost = 0; }
->  	| OPT_GHOST	{ ghost = 1; }
-> @@ -697,8 +702,7 @@ static void local_init_vars(void)
->  	negative_timeout = 0;
->  	symlnk = 0;
->  	strictexpire = 0;
-> -	slave = 0;
-> -	private = 0;
-> +	propagation = PROPAGATION_SLAVE;
->  	nobind = 0;
->  	ghost = defaults_get_browse_mode();
->  	random_selection = global_selection_options & MOUNT_FLAG_RANDOM_SELECT;
-> @@ -899,6 +903,8 @@ int master_parse_entry(const char *buffer, unsigned int default_timeout, unsigne
->  			return 0;
->  		}
->  	}
-> +	entry->ap->flags = propagation;
-> +
->  	if (random_selection)
->  		entry->ap->flags |= MOUNT_FLAG_RANDOM_SELECT;
->  	if (use_weight)
-> @@ -907,10 +913,6 @@ int master_parse_entry(const char *buffer, unsigned int default_timeout, unsigne
->  		entry->ap->flags |= MOUNT_FLAG_SYMLINK;
->  	if (strictexpire)
->  		entry->ap->flags |= MOUNT_FLAG_STRICTEXPIRE;
-> -	if (slave)
-> -		entry->ap->flags |= MOUNT_FLAG_SLAVE;
-> -	if (private)
-> -		entry->ap->flags |= MOUNT_FLAG_PRIVATE;
->  	if (negative_timeout)
->  		entry->ap->negative_timeout = negative_timeout;
->  	if (mode && mode < LONG_MAX)
-> diff --git a/lib/master_tok.l b/lib/master_tok.l
-> index 7486710b..87a6b958 100644
-> --- a/lib/master_tok.l
-> +++ b/lib/master_tok.l
-> @@ -389,6 +389,7 @@ MODE		(--mode{OPTWS}|--mode{OPTWS}={OPTWS})
->  	-?symlink		{ return(OPT_SYMLINK); }
->  	-?nobind		{ return(OPT_NOBIND); }
->  	-?nobrowse		{ return(OPT_NOGHOST); }
-> +	-?shared		{ return(OPT_SHARED); }
->  	-?slave			{ return(OPT_SLAVE); }
->  	-?private		{ return(OPT_PRIVATE); }
->  	-?strictexpire		{ return(OPT_STRICTEXPIRE); }
-> diff --git a/man/auto.master.5.in b/man/auto.master.5.in
-> index 6e510a59..2a0b672a 100644
-> --- a/man/auto.master.5.in
-> +++ b/man/auto.master.5.in
-> @@ -208,17 +208,18 @@ applications scanning the mount tree. Note that this doesn't completely
->  resolve the problem of expired automounts being immediately re-mounted
->  due to application accesses triggered by the expire itself.
->  .TP
-> -.I slave \fPor\fI private
-> +.I slave\fP, \fIprivate\fP or \fIshared\fP
->  This option allows mount propagation of bind mounts to be set to
-> -either \fIslave\fP or \fIprivate\fP. This option may be needed when using
-> -multi-mounts that have bind mounts that bind to a file system that is
-> -propagation shared. This is because the bind mount will have the same
-> -properties as its target which causes problems for offset mounts. When
-> -this happens an unwanted offset mount is propagated back to the target
-> -file system resulting in a deadlock when attempting to access the offset.
-> +\fIslave\fP, \fIprivate\fP or \fIshared\fP. This option defaults to
-> +\fIslave\fP if no option is given. When using multi-mounts that have
-> +bind mounts the bind mount will have the same properties as its parent
-> +which is commonly propagation \fIshared\fP. And if the mount target is
-> +also propagation \fIshared\fP this can lead to a deadlock when attempting
-> +to access the offset mounts. When this happens an unwanted offset mount
-> +is propagated back to the target file system resulting in a deadlock
-> +since the automount target is itself an (unwanted) automount trigger.
->  This option is an autofs pseudo mount option that can be used in the
-> -master map only. By default, bind mounts will inherit the mount propagation
-> -of the target file system.
-> +master map only.
->  .TP
->  .I "\-r, \-\-random-multimount-selection"
->  Enables the use of random selection when choosing a host from a
-> diff --git a/modules/mount_bind.c b/modules/mount_bind.c
-> index 9cba0d7a..5253501c 100644
-> --- a/modules/mount_bind.c
-> +++ b/modules/mount_bind.c
-> @@ -153,6 +153,7 @@ int mount_mount(struct autofs_point *ap, const char *root, const char *name, int
->  
->  	if (!symlnk && bind_works) {
->  		int status, existed = 1;
-> +		int flags;
->  
->  		debug(ap->logopt, MODPREFIX "calling mkdir_path %s", fullpath);
->  
-> @@ -190,24 +191,27 @@ int mount_mount(struct autofs_point *ap, const char *root, const char *name, int
->  			      what, fstype, fullpath);
->  		}
->  
-> -		if (ap->flags & (MOUNT_FLAG_SLAVE | MOUNT_FLAG_PRIVATE)) {
-> -			int flags = MS_SLAVE;
-> -
-> -			if (ap->flags & MOUNT_FLAG_PRIVATE)
-> -				flags = MS_PRIVATE;
-> -
-> -			/* The bind mount has succeeded but if the target
-> -			 * mount is propagation shared propagation of child
-> -			 * mounts (autofs offset mounts for example) back to
-> -			 * the target of the bind mount must be avoided or
-> -			 * autofs trigger mounts will deadlock.
-> -			 */
-> -			err = mount(NULL, fullpath, NULL, flags, NULL);
-> -			if (err) {
-> -				warn(ap->logopt,
-> -				     "failed to set propagation for %s",
-> -				     fullpath, root);
-> -			}
-> +		/* The bind mount has succeeded, now set the mount propagation.
-> +		 *
-> +		 * The default is propagation shared, change it if the master
-> +		 * map entry has a different option specified.
-> +		 */
-> +		flags = MS_SLAVE;
-> +		if (ap->flags & MOUNT_FLAG_PRIVATE)
-> +			flags = MS_PRIVATE;
-> +		else if (ap->flags & MOUNT_FLAG_SHARED)
-> +			flags = MS_SHARED;
-> +
-> +		/* Note: If the parent mount is propagation shared propagation
-> +		 *  of child mounts (autofs offset mounts for example) back to
-> +		 *  the target of the bind mount can happen in some cases and
-> +		 *  must be avoided or autofs trigger mounts will deadlock.
-> +		 */
-> +		err = mount(NULL, fullpath, NULL, flags, NULL);
-> +		if (err) {
-> +			warn(ap->logopt,
-> +			     "failed to set propagation for %s",
-> +			     fullpath, root);
->  		}
->  
->  		return 0;
-> 
-> 
-
--- 
-Goldwyn
+paul moore
+www.paul-moore.com
