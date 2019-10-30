@@ -2,90 +2,210 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60376E9917
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 10:21:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 871C3E99C3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 11:13:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726102AbfJ3JVT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Oct 2019 05:21:19 -0400
-Received: from relay.sw.ru ([185.231.240.75]:56870 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726028AbfJ3JVT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Oct 2019 05:21:19 -0400
-Received: from [172.16.24.163] (helo=snorch.sw.ru)
-        by relay.sw.ru with esmtp (Exim 4.92.2)
-        (envelope-from <ptikhomirov@virtuozzo.com>)
-        id 1iPkAG-0003hv-3T; Wed, 30 Oct 2019 12:21:16 +0300
-From:   Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-Subject: [PATCH] fs/ppoll: skip excess EINTR if we never sleep
-Date:   Wed, 30 Oct 2019 12:21:02 +0300
-Message-Id: <20191030092102.871-1-ptikhomirov@virtuozzo.com>
-X-Mailer: git-send-email 2.21.0
+        id S1726552AbfJ3KNW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Oct 2019 06:13:22 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:22610 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726096AbfJ3KNV (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 30 Oct 2019 06:13:21 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9UA9Lxo005370
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2019 06:13:20 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2vy6njm72v-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2019 06:13:19 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
+        Wed, 30 Oct 2019 10:13:17 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 30 Oct 2019 10:13:15 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9UADEog53411954
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Oct 2019 10:13:14 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 032ECA404D;
+        Wed, 30 Oct 2019 10:13:14 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2175EA4055;
+        Wed, 30 Oct 2019 10:13:11 +0000 (GMT)
+Received: from [9.199.158.87] (unknown [9.199.158.87])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 30 Oct 2019 10:13:10 +0000 (GMT)
+Subject: Re: [PATCH] ext4: bio_alloc never fails
+To:     Gao Xiang <gaoxiang25@huawei.com>, "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>
+Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20191030042618.124220-1-gaoxiang25@huawei.com>
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+Date:   Wed, 30 Oct 2019 15:43:10 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191030042618.124220-1-gaoxiang25@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19103010-0016-0000-0000-000002BF14B1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19103010-0017-0000-0000-000033207124
+Message-Id: <20191030101311.2175EA4055@d06av23.portsmouth.uk.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-30_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910300100
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If while calling sys_ppoll with zero timeout we had received a signal,
-we do return -EINTR.
 
-FMPOV the -EINTR should specify that we were interrupted by the signal,
-and not that we have a pending signal which does not interfere with us
-at all as we were planning to return anyway. We can just return 0 in
-these case.
 
-I understand that it is a rare situation that signal comes to us while
-in poll with zero timeout, but that reproduced somehow on VZ7 kernel on
-CRIU tests.
+On 10/30/19 9:56 AM, Gao Xiang wrote:
+> Similar to [1] [2], it seems a trivial cleanup since
+> bio_alloc can handle memory allocation as mentioned in
+> fs/direct-io.c (also see fs/block_dev.c, fs/buffer.c, ..)
+> 
 
-Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
----
- fs/select.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+AFAIU, the reason is that, bio_alloc with __GFP_DIRECT_RECLAIM
+flags guarantees bio allocation under some given restrictions,
+as stated in fs/direct-io.c
+So here it is ok to not check for NULL value from bio_alloc.
 
-diff --git a/fs/select.c b/fs/select.c
-index 53a0c149f528..54d523e3de7f 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -873,7 +873,7 @@ static int do_poll(struct poll_list *list, struct poll_wqueues *wait,
- {
- 	poll_table* pt = &wait->pt;
- 	ktime_t expire, *to = NULL;
--	int timed_out = 0, count = 0;
-+	int timed_out = 0, no_timeout = 0, count = 0;
- 	u64 slack = 0;
- 	__poll_t busy_flag = net_busy_loop_on() ? POLL_BUSY_LOOP : 0;
- 	unsigned long busy_start = 0;
-@@ -881,10 +881,10 @@ static int do_poll(struct poll_list *list, struct poll_wqueues *wait,
- 	/* Optimise the no-wait case */
- 	if (end_time && !end_time->tv_sec && !end_time->tv_nsec) {
- 		pt->_qproc = NULL;
--		timed_out = 1;
-+		no_timeout = 1;
- 	}
- 
--	if (end_time && !timed_out)
-+	if (end_time && !no_timeout)
- 		slack = select_estimate_accuracy(end_time);
- 
- 	for (;;) {
-@@ -921,10 +921,10 @@ static int do_poll(struct poll_list *list, struct poll_wqueues *wait,
- 		pt->_qproc = NULL;
- 		if (!count) {
- 			count = wait->error;
--			if (signal_pending(current))
-+			if (!no_timeout && signal_pending(current))
- 				count = -ERESTARTNOHAND;
- 		}
--		if (count || timed_out)
-+		if (count || timed_out || no_timeout)
- 			break;
- 
- 		/* only if found POLL_BUSY_LOOP sockets && not out of time */
--- 
-2.21.0
+I think we can update above info too in your commit msg.
+
+> [1] https://lore.kernel.org/r/20191030035518.65477-1-gaoxiang25@huawei.com
+> [2] https://lore.kernel.org/r/20190830162812.GA10694@infradead.org
+> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+> ---
+>   fs/ext4/page-io.c  | 11 +++--------
+>   fs/ext4/readpage.c |  2 --
+>   2 files changed, 3 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
+> index 12ceadef32c5..f1f7b6601780 100644
+> --- a/fs/ext4/page-io.c
+> +++ b/fs/ext4/page-io.c
+> @@ -358,14 +358,12 @@ void ext4_io_submit_init(struct ext4_io_submit *io,
+>   	io->io_end = NULL;
+>   }
+> 
+> -static int io_submit_init_bio(struct ext4_io_submit *io,
+> -			      struct buffer_head *bh)
+> +static void io_submit_init_bio(struct ext4_io_submit *io,
+> +			       struct buffer_head *bh)
+>   {
+>   	struct bio *bio;
+> 
+>   	bio = bio_alloc(GFP_NOIO, BIO_MAX_PAGES);
+> -	if (!bio)
+> -		return -ENOMEM;
+>   	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
+>   	bio_set_dev(bio, bh->b_bdev);
+>   	bio->bi_end_io = ext4_end_bio;
+> @@ -373,7 +371,6 @@ static int io_submit_init_bio(struct ext4_io_submit *io,
+>   	io->io_bio = bio;
+>   	io->io_next_block = bh->b_blocknr;
+>   	wbc_init_bio(io->io_wbc, bio);
+> -	return 0;
+>   }
+> 
+>   static int io_submit_add_bh(struct ext4_io_submit *io,
+> @@ -388,9 +385,7 @@ static int io_submit_add_bh(struct ext4_io_submit *io,
+>   		ext4_io_submit(io);
+>   	}
+>   	if (io->io_bio == NULL) {
+> -		ret = io_submit_init_bio(io, bh);
+> -		if (ret)
+> -			return ret;
+> +		io_submit_init_bio(io, bh);
+>   		io->io_bio->bi_write_hint = inode->i_write_hint;
+>   	}
+>   	ret = bio_add_page(io->io_bio, page, bh->b_size, bh_offset(bh));
+
+
+Also we can further simplify it like below. Please check.
+
+diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
+index f1f7b6601780..a3a2edeb3bbf 100644
+--- a/fs/ext4/page-io.c
++++ b/fs/ext4/page-io.c
+@@ -373,7 +373,7 @@ static void io_submit_init_bio(struct ext4_io_submit 
+*io,
+  	wbc_init_bio(io->io_wbc, bio);
+  }
+
+-static int io_submit_add_bh(struct ext4_io_submit *io,
++static void io_submit_add_bh(struct ext4_io_submit *io,
+  			    struct inode *inode,
+  			    struct page *page,
+  			    struct buffer_head *bh)
+@@ -393,7 +393,6 @@ static int io_submit_add_bh(struct ext4_io_submit *io,
+  		goto submit_and_retry;
+  	wbc_account_cgroup_owner(io->io_wbc, page, bh->b_size);
+  	io->io_next_block++;
+-	return 0;
+  }
+
+  int ext4_bio_write_page(struct ext4_io_submit *io,
+@@ -495,30 +494,23 @@ int ext4_bio_write_page(struct ext4_io_submit *io,
+  	do {
+  		if (!buffer_async_write(bh))
+  			continue;
+-		ret = io_submit_add_bh(io, inode, bounce_page ?: page, bh);
+-		if (ret) {
+-			/*
+-			 * We only get here on ENOMEM.  Not much else
+-			 * we can do but mark the page as dirty, and
+-			 * better luck next time.
+-			 */
+-			break;
+-		}
++		io_submit_add_bh(io, inode, bounce_page ?: page, bh);
+  		nr_submitted++;
+  		clear_buffer_dirty(bh);
+  	} while ((bh = bh->b_this_page) != head);
+
+-	/* Error stopped previous loop? Clean up buffers... */
+-	if (ret) {
+-	out:
+-		fscrypt_free_bounce_page(bounce_page);
+-		printk_ratelimited(KERN_ERR "%s: ret = %d\n", __func__, ret);
+-		redirty_page_for_writepage(wbc, page);
+-		do {
+-			clear_buffer_async_write(bh);
+-			bh = bh->b_this_page;
+-		} while (bh != head);
+-	}
++	goto unlock;
++
++out:
++	fscrypt_free_bounce_page(bounce_page);
++	printk_ratelimited(KERN_ERR "%s: ret = %d\n", __func__, ret);
++	redirty_page_for_writepage(wbc, page);
++	do {
++		clear_buffer_async_write(bh);
++		bh = bh->b_this_page;
++	} while (bh != head);
++
++unlock:
+  	unlock_page(page);
+  	/* Nothing submitted - we have to end page writeback */
+  	if (!nr_submitted)
+
+
+-ritesh
 
