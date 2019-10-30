@@ -2,92 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6C16E9664
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 07:30:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A58C7E96CD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 07:50:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbfJ3GaA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Oct 2019 02:30:00 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:40709 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726108AbfJ3GaA (ORCPT
+        id S1727400AbfJ3Gul (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Oct 2019 02:50:41 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:32928 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726108AbfJ3Gul (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Oct 2019 02:30:00 -0400
-Received: by mail-pl1-f193.google.com with SMTP id p5so506977plr.7;
-        Tue, 29 Oct 2019 23:30:00 -0700 (PDT)
+        Wed, 30 Oct 2019 02:50:41 -0400
+Received: by mail-lj1-f196.google.com with SMTP id t5so1383820ljk.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Oct 2019 23:50:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=QAFQpjJMQ1AiymCC034KBSTmnhi5/lZstN8G+BcUYtQ=;
-        b=L+7juWxsHSAdsqLcMZaIeS2fgz1xxYZDM6BmPqKWPQ7lCOP1azhyZMa35O/w3yx3qm
-         iv9x8SaVu/PjOJN2pLtuyqLR0S+N5OxGgJWAzQB/tcYjCMQJ60Nc0YmKyN+aDRhxq46U
-         /cDmrPBm0S9F6iqgkWJps5DoBTCEOUQjZirHK/7c4wg5df5wFvNGq7Jg3QXtuakVkZuX
-         Fh11AONhI5JPHfHXwjWsJCgQBd79ZXNhnTAuOfA/VzgRtoUeFlScdWNyxNZsvkKkRnM/
-         BsGu9HfGA7dX+N40HCLolVgT55w7eicybLsmogBO+vixLwlV0B+Lijq9/7gCUF05ZweJ
-         WsRA==
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=OG8TB5Z3OxSF2gHsUrhZBaXhf5Zgk82Z4whv67njgvw=;
+        b=iLvr36c6OKkhrzfRc9P24L3/yvyhg95cNQYYiDkqVk0XocMpM/RrtgKRStDaUTD3hy
+         t2Z0iDKBFn68feV/JPUoOeIYNM+dK/jviWrlQ3W7ulycbYjsHU+hCuO79lVCfrOfbTop
+         cLCG/NjL2OtAkcfDNYvkxpg6oKlzy09qag8StQ1AqeV0MbViYA6fvhdaco9LZU6ImE0Y
+         67+/dTZGp153XQPFxmdJtAEHsJXq+6OL+P18Khdb4abA1itzfm8Cj7nWJrF/TKDbmpY8
+         BTg7htB/XoXzxNe162ot9/hSu5WFDQkQbeF/B4vzWpL57AnMPUDdq8rbY4PXirZ9wer7
+         bKsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=QAFQpjJMQ1AiymCC034KBSTmnhi5/lZstN8G+BcUYtQ=;
-        b=h4DgCGLQslM2ifqdnwus3KU0m2NjEAMdgs3H+Lj3WXEydho8EvRFrWPbziaoifb7dF
-         +uhAFUETH3UmC3JDpm4c7opKTDhzfOoctvJGWRuLaOFO5OqL9uWsC+9+NP0G8MKXuW2G
-         JG056Z7p7F7ZVZT/QflB0Tyb50cyHK1246nbZyQX8ez8YsRc4EwfqkuZEylotvEwCReD
-         2lEysdX0ReGTqub0E5ypG7l089jffcOq/KklEE8JcaRsmM1SvLxe3TSoSoc3QcEdiG5S
-         CZQzcpNSYTGbJ89YDpnwL2KFehWPZLUDMzWyKsx2XleYW0uYgL2XAJEbuXPV6cQ7sxWw
-         zkAg==
-X-Gm-Message-State: APjAAAWkb/f4GbH7oRCXZy/T9Zp3qwv2reEaAoEsuaHe3m2qiy0V45Pv
-        pXbQKDoW5Nkh4FzIOWNHEB0QYjA=
-X-Google-Smtp-Source: APXvYqyPUPfaSQLnYzy58yyAYdB3/zVlw/XMUpI8CokLVQIdCCLWG/0xSnqna2ZYajrElqtinreShA==
-X-Received: by 2002:a17:902:6bca:: with SMTP id m10mr2753976plt.331.1572416999344;
-        Tue, 29 Oct 2019 23:29:59 -0700 (PDT)
-Received: from mylaptop.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id s12sm1542146pgf.36.2019.10.29.23.29.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Oct 2019 23:29:58 -0700 (PDT)
-From:   Pingfan Liu <kernelfans@gmail.com>
-To:     linux-xfs@vger.kernel.org
-Cc:     Pingfan Liu <kernelfans@gmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH] xfs/log: protect xc_cil in xlog_cil_push()
-Date:   Wed, 30 Oct 2019 14:29:40 +0800
-Message-Id: <1572416980-25274-1-git-send-email-kernelfans@gmail.com>
-X-Mailer: git-send-email 2.7.5
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OG8TB5Z3OxSF2gHsUrhZBaXhf5Zgk82Z4whv67njgvw=;
+        b=NZIGT/410l9iqKNMVcNs1THsQP9p8I4p85Du9MuCUYnvQF4d2fUP2VphSLJBJj/BQX
+         IdLnP2KQ7FjwE8dNNCRzxUkVrbr2mEc71Mk16SlN3bh2M3MMSqKut9f2elZeHzmeKQqh
+         6TetWQ7Ak6O32lcB4zOwfhenxNsfZYH+S208QSsbFFvcpIR5pvTaiPZ7BOg5l86gnUc2
+         SUWXg0Ke8IeJV97M3OwxFcG4GLHcHg3BigdE25xpMbnF423FEM53NuA3H55a0CTZXNFk
+         0NUd8JXx+QEvQDb8n5Hi2upcANdnVRLu3ygrb3Oe2NxI5l+tiAnenhPv3/Y0yq9+NCnF
+         xjoQ==
+X-Gm-Message-State: APjAAAU3RPyfGQgoLfPAjur5NkZIezTTLV0cAvuDfgqsGb2hRlMwzQKl
+        IsEFebZiYCX4OYrxXtrg6sWwYw==
+X-Google-Smtp-Source: APXvYqyogKk2T+hF/rDbEusxizB/QjtNb9b5jF9FBYmoPBYmHE2zvO/6BoiLQKZ0srYAn7ZqDqdzNA==
+X-Received: by 2002:a2e:151c:: with SMTP id s28mr5291987ljd.70.1572418239710;
+        Tue, 29 Oct 2019 23:50:39 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id n5sm640209ljh.54.2019.10.29.23.50.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2019 23:50:38 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id D87181003C9; Wed, 30 Oct 2019 09:50:37 +0300 (+03)
+Date:   Wed, 30 Oct 2019 09:50:37 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Steven Whitehouse <swhiteho@redhat.com>
+Subject: Re: [PATCH] mm/filemap: do not allocate cache pages beyond end of
+ file at read
+Message-ID: <20191030065037.o3q6usc5vo3woif6@box>
+References: <157225677483.3442.4227193290486305330.stgit@buzz>
+ <20191028124222.ld6u3dhhujfqcn7w@box>
+ <CAHk-=wgQ-Dcs2keNJPovTb4gG33M81yANH6KZM9d5NLUb-cJ1g@mail.gmail.com>
+ <20191028125702.xdfbs7rqhm3wer5t@box>
+ <ac83fee6-9bcd-8c66-3596-2c0fbe6bcf96@yandex-team.ru>
+ <CAHk-=who0HS=NT8U7vFDT7er_CD7+ZreRJMxjYrRXs5G6dbpyw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=who0HS=NT8U7vFDT7er_CD7+ZreRJMxjYrRXs5G6dbpyw@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-xlog_cil_push() is the reader and writer of xc_cil, and should be protected
-against xlog_cil_insert_items().
+On Tue, Oct 29, 2019 at 05:52:05PM +0100, Linus Torvalds wrote:
+> But NFS, for example, has open/close consistency, so the metadata
+> revalidation is at open() time, not at read time.
 
-Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-To: linux-xfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
----
- fs/xfs/xfs_log_cil.c | 2 ++
- 1 file changed, 2 insertions(+)
+I don't know much about filesystems, but can't size of file change after
+the open() under network filesystem? Revlidation on read looks like an
+requirement anyway, no?
 
-diff --git a/fs/xfs/xfs_log_cil.c b/fs/xfs/xfs_log_cil.c
-index ef652abd..004af09 100644
---- a/fs/xfs/xfs_log_cil.c
-+++ b/fs/xfs/xfs_log_cil.c
-@@ -723,6 +723,7 @@ xlog_cil_push(
- 	 */
- 	lv = NULL;
- 	num_iovecs = 0;
-+	spin_lock(&cil->xc_cil_lock);
- 	while (!list_empty(&cil->xc_cil)) {
- 		struct xfs_log_item	*item;
- 
-@@ -737,6 +738,7 @@ xlog_cil_push(
- 		item->li_lv = NULL;
- 		num_iovecs += lv->lv_niovecs;
- 	}
-+	spin_unlock(&cil->xc_cil_lock);
- 
- 	/*
- 	 * initialise the new context and attach it to the CIL. Then attach
 -- 
-2.7.5
-
+ Kirill A. Shutemov
