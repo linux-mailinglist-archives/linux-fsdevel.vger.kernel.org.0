@@ -2,182 +2,248 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED3EEEA780
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 00:05:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60F87EA78A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 00:11:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbfJ3XF2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Oct 2019 19:05:28 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:17582 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727064AbfJ3XF2 (ORCPT
+        id S1727463AbfJ3XLp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Oct 2019 19:11:45 -0400
+Received: from mout-p-201.mailbox.org ([80.241.56.171]:59846 "EHLO
+        mout-p-201.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726411AbfJ3XLo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Oct 2019 19:05:28 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dba17390001>; Wed, 30 Oct 2019 16:05:29 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 30 Oct 2019 16:05:23 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 30 Oct 2019 16:05:23 -0700
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 30 Oct
- 2019 23:05:22 +0000
-Subject: Re: [PATCH 14/19] vfio, mm: pin_longterm_pages (FOLL_PIN) and
- put_user_page() conversion
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
+        Wed, 30 Oct 2019 19:11:44 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 473PNG02vYzQlBY;
+        Thu, 31 Oct 2019 00:11:42 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
+        with ESMTP id qMXSaGYO4s9t; Thu, 31 Oct 2019 00:11:38 +0100 (CET)
+Date:   Thu, 31 Oct 2019 10:11:27 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Omar Sandoval <osandov@osandov.com>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
         Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20191030224930.3990755-1-jhubbard@nvidia.com>
- <20191030224930.3990755-15-jhubbard@nvidia.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <cfa579f0-999c-9712-494a-9d519bbc4314@nvidia.com>
-Date:   Wed, 30 Oct 2019 16:05:22 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Jann Horn <jannh@google.com>, linux-api@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [RFC PATCH v2 2/5] fs: add RWF_ENCODED for reading/writing
+ compressed data
+Message-ID: <20191030231127.z3c4jb7ocxfd774h@yavin.dot.cyphar.com>
+References: <cover.1571164762.git.osandov@fb.com>
+ <7f98cf5409cf2b583cd5b3451fc739fd3428873b.1571164762.git.osandov@fb.com>
+ <20191021182806.GA6706@magnolia>
+ <20191021183831.mbe4q2beqo76fqxm@yavin.dot.cyphar.com>
+ <20191021190010.GC6726@magnolia>
+ <20191022020215.csdwgi3ky27rfidf@yavin.dot.cyphar.com>
+ <20191030222601.GE326591@vader>
 MIME-Version: 1.0
-In-Reply-To: <20191030224930.3990755-15-jhubbard@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1572476729; bh=53l+EYxovXaJJmkDDYPwp5PBwN0eKGoaifL7qKM0Mds=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=md/zgeBc2zml8TuAaTKRK2oyv1Btng0H6ozq8zn2sRJiXmTfxKbYsvkGcjK6gQS+q
-         3nPYnJq+1Eps5VG6ooIJSjGzkjOCMYIGUlSFcOJoUyjFNZ1H0vd+dWvWBSOqDkH5Uc
-         dvFo63nthImmg9iCDmU6xj0EE8b8pgUM6g95EetFKN1/r0QnPl5BygVRpoyVLlCyiH
-         iCMwhme/pZSwh1q5oOeHae8CYEOAkIwb1y6ebulV3/7WSgE5bb3SmwuYCg/xWfmbmX
-         iPDY0K1xyswztlMvQmBw8+uJFpl2scC5scONZ/nlQeN+ZcWegNbDORlz6y4lLuTxuj
-         WJ+vmX9yZfaww==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="g5npfiseklp7ctvo"
+Content-Disposition: inline
+In-Reply-To: <20191030222601.GE326591@vader>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/30/19 3:49 PM, John Hubbard wrote:
-> This also fixes one or two likely bugs.
 
-Well, actually just one...
+--g5npfiseklp7ctvo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> 1. Change vfio from get_user_pages(FOLL_LONGTERM), to
-> pin_longterm_pages(), which sets both FOLL_LONGTERM and FOLL_PIN.
-> 
-> Note that this is a change in behavior, because the
-> get_user_pages_remote() call was not setting FOLL_LONGTERM, but the
-> new pin_user_pages_remote() call that replaces it, *is* setting
-> FOLL_LONGTERM. It is important to set FOLL_LONGTERM, because the
-> DMA case requires it. Please see the FOLL_PIN documentation in
-> include/linux/mm.h, and Documentation/pin_user_pages.rst for details.
+On 2019-10-30, Omar Sandoval <osandov@osandov.com> wrote:
+> On Tue, Oct 22, 2019 at 01:02:15PM +1100, Aleksa Sarai wrote:
+> > On 2019-10-21, Darrick J. Wong <darrick.wong@oracle.com> wrote:
+> > > On Tue, Oct 22, 2019 at 05:38:31AM +1100, Aleksa Sarai wrote:
+> > > > On 2019-10-21, Darrick J. Wong <darrick.wong@oracle.com> wrote:
+> > > > > On Tue, Oct 15, 2019 at 11:42:40AM -0700, Omar Sandoval wrote:
+> > > > > > From: Omar Sandoval <osandov@fb.com>
+> > > > > >=20
+> > > > > > Btrfs supports transparent compression: data written by the use=
+r can be
+> > > > > > compressed when written to disk and decompressed when read back.
+> > > > > > However, we'd like to add an interface to write pre-compressed =
+data
+> > > > > > directly to the filesystem, and the matching interface to read
+> > > > > > compressed data without decompressing it. This adds support for
+> > > > > > so-called "encoded I/O" via preadv2() and pwritev2().
+> > > > > >=20
+> > > > > > A new RWF_ENCODED flags indicates that a read or write is "enco=
+ded". If
+> > > > > > this flag is set, iov[0].iov_base points to a struct encoded_io=
+v which
+> > > > > > is used for metadata: namely, the compression algorithm, unenco=
+ded
+> > > > > > (i.e., decompressed) length, and what subrange of the unencoded=
+ data
+> > > > > > should be used (needed for truncated or hole-punched extents an=
+d when
+> > > > > > reading in the middle of an extent). For reads, the filesystem =
+returns
+> > > > > > this information; for writes, the caller provides it to the fil=
+esystem.
+> > > > > > iov[0].iov_len must be set to sizeof(struct encoded_iov), which=
+ can be
+> > > > > > used to extend the interface in the future. The remaining iovec=
+s contain
+> > > > > > the encoded extent.
+> > > > > >=20
+> > > > > > Filesystems must indicate that they support encoded writes by s=
+etting
+> > > > > > FMODE_ENCODED_IO in ->file_open().
+> > > > > >=20
+> > > > > > Signed-off-by: Omar Sandoval <osandov@fb.com>
+> > > > > > ---
+> > > > > >  include/linux/fs.h      | 14 +++++++
+> > > > > >  include/uapi/linux/fs.h | 26 ++++++++++++-
+> > > > > >  mm/filemap.c            | 82 +++++++++++++++++++++++++++++++++=
++-------
+> > > > > >  3 files changed, 108 insertions(+), 14 deletions(-)
+> > > > > >=20
+> > > > > > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > > > > > index e0d909d35763..54681f21e05e 100644
+> > > > > > --- a/include/linux/fs.h
+> > > > > > +++ b/include/linux/fs.h
+> > > > > > @@ -175,6 +175,9 @@ typedef int (dio_iodone_t)(struct kiocb *io=
+cb, loff_t offset,
+> > > > > >  /* File does not contribute to nr_files count */
+> > > > > >  #define FMODE_NOACCOUNT		((__force fmode_t)0x20000000)
+> > > > > > =20
+> > > > > > +/* File supports encoded IO */
+> > > > > > +#define FMODE_ENCODED_IO	((__force fmode_t)0x40000000)
+> > > > > > +
+> > > > > >  /*
+> > > > > >   * Flag for rw_copy_check_uvector and compat_rw_copy_check_uve=
+ctor
+> > > > > >   * that indicates that they should check the contents of the i=
+ovec are
+> > > > > > @@ -314,6 +317,7 @@ enum rw_hint {
+> > > > > >  #define IOCB_SYNC		(1 << 5)
+> > > > > >  #define IOCB_WRITE		(1 << 6)
+> > > > > >  #define IOCB_NOWAIT		(1 << 7)
+> > > > > > +#define IOCB_ENCODED		(1 << 8)
+> > > > > > =20
+> > > > > >  struct kiocb {
+> > > > > >  	struct file		*ki_filp;
+> > > > > > @@ -3088,6 +3092,11 @@ extern int sb_min_blocksize(struct super=
+_block *, int);
+> > > > > >  extern int generic_file_mmap(struct file *, struct vm_area_str=
+uct *);
+> > > > > >  extern int generic_file_readonly_mmap(struct file *, struct vm=
+_area_struct *);
+> > > > > >  extern ssize_t generic_write_checks(struct kiocb *, struct iov=
+_iter *);
+> > > > > > +struct encoded_iov;
+> > > > > > +extern int generic_encoded_write_checks(struct kiocb *, struct=
+ encoded_iov *);
+> > > > > > +extern ssize_t check_encoded_read(struct kiocb *, struct iov_i=
+ter *);
+> > > > > > +extern int import_encoded_write(struct kiocb *, struct encoded=
+_iov *,
+> > > > > > +				struct iov_iter *);
+> > > > > >  extern int generic_remap_checks(struct file *file_in, loff_t p=
+os_in,
+> > > > > >  				struct file *file_out, loff_t pos_out,
+> > > > > >  				loff_t *count, unsigned int remap_flags);
+> > > > > > @@ -3403,6 +3412,11 @@ static inline int kiocb_set_rw_flags(str=
+uct kiocb *ki, rwf_t flags)
+> > > > > >  			return -EOPNOTSUPP;
+> > > > > >  		ki->ki_flags |=3D IOCB_NOWAIT;
+> > > > > >  	}
+> > > > > > +	if (flags & RWF_ENCODED) {
+> > > > > > +		if (!(ki->ki_filp->f_mode & FMODE_ENCODED_IO))
+> > > > > > +			return -EOPNOTSUPP;
+> > > > > > +		ki->ki_flags |=3D IOCB_ENCODED;
+> > > > > > +	}
+> > > > > >  	if (flags & RWF_HIPRI)
+> > > > > >  		ki->ki_flags |=3D IOCB_HIPRI;
+> > > > > >  	if (flags & RWF_DSYNC)
+> > > > > > diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+> > > > > > index 379a612f8f1d..ed92a8a257cb 100644
+> > > > > > --- a/include/uapi/linux/fs.h
+> > > > > > +++ b/include/uapi/linux/fs.h
+> > > > > > @@ -284,6 +284,27 @@ struct fsxattr {
+> > > > > > =20
+> > > > > >  typedef int __bitwise __kernel_rwf_t;
+> > > > > > =20
+> > > > > > +enum {
+> > > > > > +	ENCODED_IOV_COMPRESSION_NONE,
+> > > > > > +	ENCODED_IOV_COMPRESSION_ZLIB,
+> > > > > > +	ENCODED_IOV_COMPRESSION_LZO,
+> > > > > > +	ENCODED_IOV_COMPRESSION_ZSTD,
+> > > > > > +	ENCODED_IOV_COMPRESSION_TYPES =3D ENCODED_IOV_COMPRESSION_ZST=
+D,
+> > > > > > +};
+> > > > > > +
+> > > > > > +enum {
+> > > > > > +	ENCODED_IOV_ENCRYPTION_NONE,
+> > > > > > +	ENCODED_IOV_ENCRYPTION_TYPES =3D ENCODED_IOV_ENCRYPTION_NONE,
+> > > > > > +};
+> > > > > > +
+> > > > > > +struct encoded_iov {
+> > > > > > +	__u64 len;
+> > > > > > +	__u64 unencoded_len;
+> > > > > > +	__u64 unencoded_offset;
+> > > > > > +	__u32 compression;
+> > > > > > +	__u32 encryption;
+> > > > >=20
+> > > > > Can we add some must-be-zero padding space at the end here for wh=
+omever
+> > > > > comes along next wanting to add more encoding info?
+> > > >=20
+> > > > I would suggest to copy the extension design of copy_struct_from_us=
+er().
+> > > > Adding must-be-zero padding is a less-ideal solution to the extensi=
+on
+> > > > problem than length-based extension.
+> > >=20
+> > > Come to think of it, you /do/ have to specify iov_len so... yeah, do
+> > > that instead; we can always extend the structure later.
+> >=20
+> > Just to clarify -- if we want to make the interface forward-compatible
+> > from the outset (programs built 4 years from now running on 5.5), we
+> > will need to implement this in the original merge. Otherwise userspace
+> > will need to handle backwards-compatibility themselves once new features
+> > are added.
+> >=20
+> > @Omar: If it'd make your life easier, I can send some draft patches
+> > 	   which port copy_struct_from_user() to iovec-land.
+>=20
+> You're right, I didn't think about the case of newer programs on older
+> kernels. I can do that for the next submission. RWF_ENCODED should
+> probably translate the E2BIG from copy_struct_from_user() to EINVAL,
+> though, to avoid ambiguity with the case that the buffer wasn't big
+> enough to return the encoded data.
 
-Correction: the above comment is stale and wrong. I wrote it before 
-getting further into the details, and the patch doesn't do this. 
+Yeah, that seems fair enough. I would've preferred to keep the error
+semantics the same everywhere, but adding additional ambiguity to such
+error cases isn't a good idea.
 
-Instead, it keeps exactly the old behavior: pin_longterm_pages_remote()
-is careful to avoid setting FOLL_LONGTERM. Instead of setting that flag,
-it drops in a "TODO" comment nearby. :)
+It's a bit of a shame we don't have more granular EINVALs to make it
+easier to figure out *why* you got an EINVAL (then we wouldn't have had
+to abuse E2BIG to indicate to userspace "you're using a new feature on
+an old kernel") -- but that's a more generic problem that probably won't
+be solved any time soon.
 
-I'll update the commit description in the next version of the series.
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
+--g5npfiseklp7ctvo
+Content-Type: application/pgp-signature; name="signature.asc"
 
-thanks,
+-----BEGIN PGP SIGNATURE-----
 
-John Hubbard
-NVIDIA
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXboYnAAKCRCdlLljIbnQ
+Er2sAQC2VN2o2Lz85TnRXvI+410gb7l6v49AP888CDb1aU7NIAEAnSuthq3EWWZG
+aePx57k+ODDR3R3+iOlq6CbxrmSaUwg=
+=R5ek
+-----END PGP SIGNATURE-----
 
-> 
-> 2. Because all FOLL_PIN-acquired pages must be released via
-> put_user_page(), also convert the put_page() call over to
-> put_user_pages().
-> 
-> Note that this effectively changes the code's behavior in
-> vfio_iommu_type1.c: put_pfn(): it now ultimately calls
-> set_page_dirty_lock(), instead of set_page_dirty(). This is
-> probably more accurate.
-> 
-> As Christoph Hellwig put it, "set_page_dirty() is only safe if we are
-> dealing with a file backed page where we have reference on the inode it
-> hangs off." [1]
-> 
-> [1] https://lore.kernel.org/r/20190723153640.GB720@lst.de
-> 
-> Cc: Alex Williamson <alex.williamson@redhat.com>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
->  drivers/vfio/vfio_iommu_type1.c | 15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-> index d864277ea16f..795e13f3ef08 100644
-> --- a/drivers/vfio/vfio_iommu_type1.c
-> +++ b/drivers/vfio/vfio_iommu_type1.c
-> @@ -327,9 +327,8 @@ static int put_pfn(unsigned long pfn, int prot)
->  {
->  	if (!is_invalid_reserved_pfn(pfn)) {
->  		struct page *page = pfn_to_page(pfn);
-> -		if (prot & IOMMU_WRITE)
-> -			SetPageDirty(page);
-> -		put_page(page);
-> +
-> +		put_user_pages_dirty_lock(&page, 1, prot & IOMMU_WRITE);
->  		return 1;
->  	}
->  	return 0;
-> @@ -349,11 +348,11 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
->  
->  	down_read(&mm->mmap_sem);
->  	if (mm == current->mm) {
-> -		ret = get_user_pages(vaddr, 1, flags | FOLL_LONGTERM, page,
-> -				     vmas);
-> +		ret = pin_longterm_pages(vaddr, 1, flags, page, vmas);
->  	} else {
-> -		ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags, page,
-> -					    vmas, NULL);
-> +		ret = pin_longterm_pages_remote(NULL, mm, vaddr, 1,
-> +						flags, page, vmas,
-> +						NULL);
->  		/*
->  		 * The lifetime of a vaddr_get_pfn() page pin is
->  		 * userspace-controlled. In the fs-dax case this could
-> @@ -363,7 +362,7 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
->  		 */
->  		if (ret > 0 && vma_is_fsdax(vmas[0])) {
->  			ret = -EOPNOTSUPP;
-> -			put_page(page[0]);
-> +			put_user_page(page[0]);
->  		}
->  	}
->  	up_read(&mm->mmap_sem);
-> 
+--g5npfiseklp7ctvo--
