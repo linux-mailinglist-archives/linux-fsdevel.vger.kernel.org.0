@@ -2,131 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E8A9EA286
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 18:27:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BEF6EA349
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 19:26:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727080AbfJ3R1Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Oct 2019 13:27:24 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:37298 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726488AbfJ3R1Y (ORCPT
+        id S1727356AbfJ3S0T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Oct 2019 14:26:19 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:35545 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727220AbfJ3S0S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Oct 2019 13:27:24 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9UHE4MC125500;
-        Wed, 30 Oct 2019 17:27:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=zNhDxwoRd8SAqkrYmsDk/cAryv8u0HvoW5BjK8ZzTv4=;
- b=FaVFKR5IJjPKXWa2UwV+7GOTCetOELbtsW3rVDwOsTbECZbMcDosRBd9Lh99vOHSSNrm
- 6JLiXOrLlyNaVBysmcnlMVgh6mAv68j2KHrb9NOanrYA5/nOiWXnTW9zaA1k8mjVLrPI
- JUr294lI1TgaEGWC1a91S2x8oz/wJ+1C4kpxWUCZb5L4kwb0yU47fBabckaiPmEP59M0
- AKvgoCvM2MzGp3HrVQ4tvb86Uo2iuefan8X8XoRPY8IeU6A6iHry3ugc23WA+ZZq2Nsx
- 53JcYAL28DskAoMokw+bj0NgH6F3t8rXx7hqS1cFxksB6DgHWqdGN3L8xbT2RjcXCDTz ZQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2vxwhfdv5a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 30 Oct 2019 17:27:20 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9UHE0E2093840;
-        Wed, 30 Oct 2019 17:25:19 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2vxwhwfu3q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 30 Oct 2019 17:25:19 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9UHPIqZ005569;
-        Wed, 30 Oct 2019 17:25:18 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 30 Oct 2019 10:25:18 -0700
-Date:   Wed, 30 Oct 2019 10:25:17 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 04/26] xfs: Improve metadata buffer reclaim accountability
-Message-ID: <20191030172517.GO15222@magnolia>
-References: <20191009032124.10541-1-david@fromorbit.com>
- <20191009032124.10541-5-david@fromorbit.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191009032124.10541-5-david@fromorbit.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9426 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910300152
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9426 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910300152
+        Wed, 30 Oct 2019 14:26:18 -0400
+Received: by mail-pl1-f195.google.com with SMTP id x6so1365358pln.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2019 11:26:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=Ley5zvOlqaz2Wb2k694thCubOF2e57hu9OBi77fDxEQ=;
+        b=j/Xlnnb4bRZ9+4KD1WhoNvk/kS85zjuQnr4LIEdZrDVgY/LEuUTrBSqNeX1ziYwI2I
+         DUo5r32HNy1rmo4RKYYx+NO2f3XC/ZJgPWC9K2zzGVDmtF/2HTrTxI1mBdHol0jfK0Ln
+         sQCSBb2dejgO92c5ovM+98RbD4p4CQUAkqGYmeroASqzXhVBDJb5BOuuIuTYNDu72AwL
+         vHCS1HOnobtqiIBZFDJB66iSwOslFuySvU9Q7Yeb4qLgmuldq2ov30mxnrzLX5PGHdZo
+         hbNdReob4s+22r/9tmGT95z41DoSYc4cU/86Ip12mpySxbKCTx3g+01nT4m3uBFdGyho
+         ou3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=Ley5zvOlqaz2Wb2k694thCubOF2e57hu9OBi77fDxEQ=;
+        b=syZ5NY5v63OnGpzQLQfWLQVjT27DzEa9HBC9wtWhSoncZId1Su/Ak4IYuvKrRkuWRO
+         AbjSG+Jm3raNQMWUWJF6mm6gumfcbuiQlHaGScJDzPxMmEAAolwNYMzkXh7qosGXrLG7
+         wCn++bSQyO2v4rQxt0DfUDAIHRA1MKymvAzuQAbX52zKMumou/ACz/cYGji629+FVthY
+         yY93T/frR2jVF2k6CqGpYbl+yYYX9KShU0QTNSSzECyd1TWRL9fpUTIZSrdH6ovMpv8W
+         1RyRUABHoG/aF4JRTxzKmbwFHgYaTh4yMJYqbkyOXJ1EiS9Hia/Tnn3eHXe1R60WTK3a
+         h2WQ==
+X-Gm-Message-State: APjAAAVG7jZlw4zvbHOAhfph12HRX8ux9Ri/Yz6bCx6iRzcuADbohTJX
+        iix+a9SYk/cb1zigubMkRjIjnQ==
+X-Google-Smtp-Source: APXvYqyev8sjZ1KZb/AgoF729qKcxrPe4HXmhqnJexPBMNfdbYQ15vLaVNRr2Bm6WAicApGTTJeWxQ==
+X-Received: by 2002:a17:902:aa41:: with SMTP id c1mr1439479plr.153.1572459977459;
+        Wed, 30 Oct 2019 11:26:17 -0700 (PDT)
+Received: from cabot-wlan.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
+        by smtp.gmail.com with ESMTPSA id 39sm4053067pjo.7.2019.10.30.11.26.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Oct 2019 11:26:16 -0700 (PDT)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <7C96E996-D52F-4901-9F64-B2C40A889829@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_540B1263-203B-43E9-BA92-ABF36413FD90";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH 1/4] statx: define STATX_ATTR_VERITY
+Date:   Wed, 30 Oct 2019 12:26:10 -0600
+In-Reply-To: <20191029204141.145309-2-ebiggers@kernel.org>
+Cc:     linux-fscrypt@vger.kernel.org,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net, linux-api@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+References: <20191029204141.145309-1-ebiggers@kernel.org>
+ <20191029204141.145309-2-ebiggers@kernel.org>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 09, 2019 at 02:21:02PM +1100, Dave Chinner wrote:
-> From: Dave Chinner <dchinner@redhat.com>
-> 
-> The buffer cache shrinker frees more than just the xfs_buf slab
-> objects - it also frees the pages attached to the buffers. Make sure
-> the memory reclaim code accounts for this memory being freed
-> correctly, similar to how the inode shrinker accounts for pages
-> freed from the page cache due to mapping invalidation.
-> 
-> We also need to make sure that the mm subsystem knows these are
-> reclaimable objects. We provide the memory reclaim subsystem with a
-> a shrinker to reclaim xfs_bufs, so we should really mark the slab
-> that way.
-> 
-> We also have a lot of xfs_bufs in a busy system, spread them around
-> like we do inodes.
-> 
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
+
+--Apple-Mail=_540B1263-203B-43E9-BA92-ABF36413FD90
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
+
+On Oct 29, 2019, at 2:41 PM, Eric Biggers <ebiggers@kernel.org> wrote:
+>=20
+> From: Eric Biggers <ebiggers@google.com>
+>=20
+> Add a statx attribute bit STATX_ATTR_VERITY which will be set if the
+> file has fs-verity enabled.  This is the statx() equivalent of
+> FS_VERITY_FL which is returned by FS_IOC_GETFLAGS.
+>=20
+> This is useful because it allows applications to check whether a file =
+is
+> a verity file without opening it.  Opening a verity file can be
+> expensive because the fsverity_info is set up on open, which involves
+> parsing metadata and optionally verifying a cryptographic signature.
+>=20
+> This is analogous to how various other bits are exposed through both
+> FS_IOC_GETFLAGS and statx(), e.g. the encrypt bit.
+>=20
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+
 > ---
->  fs/xfs/xfs_buf.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-> index e484f6bead53..45b470f55ad7 100644
-> --- a/fs/xfs/xfs_buf.c
-> +++ b/fs/xfs/xfs_buf.c
-> @@ -324,6 +324,9 @@ xfs_buf_free(
->  
->  			__free_page(page);
->  		}
-> +		if (current->reclaim_state)
-> +			current->reclaim_state->reclaimed_slab +=
-> +							bp->b_page_count;
+> include/linux/stat.h      | 3 ++-
+> include/uapi/linux/stat.h | 2 +-
+> 2 files changed, 3 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/include/linux/stat.h b/include/linux/stat.h
+> index 765573dc17d659..528c4baad09146 100644
+> --- a/include/linux/stat.h
+> +++ b/include/linux/stat.h
+> @@ -33,7 +33,8 @@ struct kstat {
+> 	 STATX_ATTR_IMMUTABLE |				\
+> 	 STATX_ATTR_APPEND |				\
+> 	 STATX_ATTR_NODUMP |				\
+> -	 STATX_ATTR_ENCRYPTED				\
+> +	 STATX_ATTR_ENCRYPTED |				\
+> +	 STATX_ATTR_VERITY				\
+> 	 )/* Attrs corresponding to FS_*_FL flags */
+> 	u64		ino;
+> 	dev_t		dev;
+> diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
+> index 7b35e98d3c58b1..ad80a5c885d598 100644
+> --- a/include/uapi/linux/stat.h
+> +++ b/include/uapi/linux/stat.h
+> @@ -167,8 +167,8 @@ struct statx {
+> #define STATX_ATTR_APPEND		0x00000020 /* [I] File is =
+append-only */
+> #define STATX_ATTR_NODUMP		0x00000040 /* [I] File is not to =
+be dumped */
+> #define STATX_ATTR_ENCRYPTED		0x00000800 /* [I] File requires =
+key to decrypt in fs */
+> -
+> #define STATX_ATTR_AUTOMOUNT		0x00001000 /* Dir: Automount =
+trigger */
+> +#define STATX_ATTR_VERITY		0x00100000 /* [I] Verity =
+protected file */
+>=20
+>=20
+> #endif /* _UAPI_LINUX_STAT_H */
+> --
+> 2.24.0.rc1.363.gb1bccd3e3d-goog
+>=20
 
-Hmm, ok, I see how ZONE_RECLAIM and reclaimed_slab fit together.
 
->  	} else if (bp->b_flags & _XBF_KMEM)
->  		kmem_free(bp->b_addr);
->  	_xfs_buf_free_pages(bp);
-> @@ -2064,7 +2067,8 @@ int __init
->  xfs_buf_init(void)
->  {
->  	xfs_buf_zone = kmem_zone_init_flags(sizeof(xfs_buf_t), "xfs_buf",
-> -						KM_ZONE_HWALIGN, NULL);
-> +			KM_ZONE_HWALIGN | KM_ZONE_SPREAD | KM_ZONE_RECLAIM,
+Cheers, Andreas
 
-I guess I'm fine with ZONE_SPREAD too, insofar as it only seems to apply
-to a particular "use another node" memory policy when slab is in use.
-Was that your intent?
 
---D
 
-> +			NULL);
->  	if (!xfs_buf_zone)
->  		goto out;
->  
-> -- 
-> 2.23.0.rc1
-> 
+
+
+
+--Apple-Mail=_540B1263-203B-43E9-BA92-ABF36413FD90
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl251cMACgkQcqXauRfM
+H+DZ+xAAhLyZsNstVnuqyPFkwbCFPUlVQ0TjfHLGBCf1GxKf+I8XJCgAQdG4VJeb
+H5U3+9NMn5JZP/e0hGGGCnZtE7LpLRkQ7ja4hRS3cDS1eieU5JL7j2DYhCvAplsr
++WieKbYKUXLPByc5+fRW+VIRUkNPLl03IflKpo+746OnT0KMu/NfpViWbiVyuFyd
+bRoKMEwAhyRCgAgYXHQ6Rjyl/rUAA7jnI1Coau5KB9u4NdKsDheF3l7FMiENEpKc
+Za3SXo6Cq7N7KDu9E2YwD6jGPZx7uD3b0tpVIkc8D2zYgxFwwzFZmmh0P8/3hVd2
+UJY8adBQ4RKGtbYfjtznKPRb9kiEWeevRCwEfwtU7W5LQ0jOi37WdfSlHeIVbvqQ
+FrhGKiV9jQYG4HHu42CB0mcacmOZb0xNRjivgSJQYvNCwK1VCwWn+ATLAuONN458
+9ScrS0DkbBYN1k+mcz9erwA+MjWUzR+5LHgwbZ/CUNP8rlwSLzlXGxKnD0xrUHUg
+i7ttSxL9LGodPt4r+pc32rCTfVFwvm6q0yS6a8WuB8uWGltW0/ofxkBHYsAwARZx
+LkZIi3v8PM5G4ZuStQB0otNLudLmJXIkfmRp7vVgr8iOUNzMTT2Y/Li9zW2n9xcR
+YnghFoyhVUvxNSwhudMMN1IL47pyaCEVB9aVppsYtbheS//T5/I=
+=tGAO
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_540B1263-203B-43E9-BA92-ABF36413FD90--
