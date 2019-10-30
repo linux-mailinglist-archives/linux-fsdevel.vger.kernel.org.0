@@ -2,255 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CD84EA19C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 17:19:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D01B5EA20C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 17:48:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727233AbfJ3QS6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Oct 2019 12:18:58 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:36028 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726261AbfJ3QS6 (ORCPT
+        id S1727041AbfJ3Qsp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Oct 2019 12:48:45 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:35940 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726626AbfJ3Qsp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Oct 2019 12:18:58 -0400
-Received: by mail-io1-f68.google.com with SMTP id d25so2415076ioc.3;
-        Wed, 30 Oct 2019 09:18:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dwt32/Gx5HdaQ+zftvvpNO21bwdYc3mUPo3g9Pdn1Uo=;
-        b=AD1FHJqU851yv7rL/plnmm+6KmBIGKww4UxUPkSMsgXTDId3k2SM2yRshjXjAlrhrr
-         HZuTXgKfoL094aAUGkBtMnxyWhhgSuvCF82AnNRacuBolHVZr3X6s104efH7hqkhAjN0
-         Or3qMTBE9vws5qn0qVhzZ1zCS/cqF/BkdQf5c7j6Y2qrScQQRYgL8n/296y5497FPdr5
-         dbFn3L1m/6wlZTsAq7FnW4qYQGiJiU5rb/+ukqUGzmFc9QYaUav+N29DMOb2SfwKSMdk
-         cP4GE5/1jLmtgwjn8z2pGKfPSHtkEtNvGDyJofGbIutP5whWMpiUh8xiWoWoMpvp+7Fu
-         cbiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dwt32/Gx5HdaQ+zftvvpNO21bwdYc3mUPo3g9Pdn1Uo=;
-        b=jQ40kOLH7ioHuXQjg+KH6QmNdMg3fy4CWVknoj3AjZ+Ic5cvoxMrRAEQWZa0+dxSlK
-         kwUx851kXa3BtQHGkliVmsedA6kIp1+QHdtEGWL4Qp4+2qdFBiK+FQUTVXD+nN0Wcmxl
-         t4eWW1Z5t/exMyw9haZn63I9sEgesy4nZmiETUx58M0EkIx96IroYr+sIMY4tbkgSXcj
-         4ljnPxILKlE1j4vm4Jtf00ILQxgGtTKVpOtLtwh9vSL46RD0nzrmqWvpFw779w3FJT8K
-         +1Qh8yCxZ4nk8uyvyAH/ZtbXz07uWsYKx8doeTnCFmyHCrHUwFA4nrXFnZcjNckuUtmH
-         gtMQ==
-X-Gm-Message-State: APjAAAWxGGCzvnT8G+Bm4/H4aGAfd2wZfhbLAbuXzr5g6iTZ6N9yeID8
-        7Nxux8tX8QayGaBAkGR6NS/msidYc/DzjUoIRZ8=
-X-Google-Smtp-Source: APXvYqwbLOk2n5iHzKzzMmIhlfveeNHABqIlYpf0W2f9qUNfENTAV2B8vvyfzmAbXa7kdRi12GGt7jV2GC+y6mfumoA=
-X-Received: by 2002:a5e:9741:: with SMTP id h1mr583194ioq.143.1572452336799;
- Wed, 30 Oct 2019 09:18:56 -0700 (PDT)
+        Wed, 30 Oct 2019 12:48:45 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9UGYgaa106916;
+        Wed, 30 Oct 2019 16:48:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=CEaVZyeZjKoMAljaxyja7VfInrqBUnmMzIB87sgjGL0=;
+ b=Pvqz/ea8C3BrsVWxcChE13ypqvb4TodEUreVrVhdkz9qce0zApaGmYKsyHLR+r6Hgujm
+ gAjOiyuwHw24Ns0D4IZX86g1TLoiwTyaFQPS7zTZnvG+nNyZipTMbMC2YD80GDSHqRpx
+ lZIyk9CDWiIQaZUYHaRaurhGQPmRWbE2xTZ1Tc1fU9kEVMhzMFDVm/N0DZxIF8zvXFV7
+ dFwF+nBR1PYzNGx2iTIWI/T1fT5JDN2+yh+efY1YD8mte5Rxi0Ik/dIaplS4NzNjOkG4
+ rPz06Zzovk5dgPAI94pP614Nx/dLg+TtYEkYIDBU48D3qj1pDeyTtxS/plaz2iw+m3y1 4Q== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2vxwhfnm2d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Oct 2019 16:48:28 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9UGXd0m166468;
+        Wed, 30 Oct 2019 16:48:28 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2vxwhwdt1h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Oct 2019 16:48:27 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9UGmRKC006190;
+        Wed, 30 Oct 2019 16:48:27 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 30 Oct 2019 09:48:26 -0700
+Date:   Wed, 30 Oct 2019 09:48:25 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Pingfan Liu <kernelfans@gmail.com>
+Cc:     linux-xfs@vger.kernel.org, Brian Foster <bfoster@redhat.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] xfs/log: protect the logging content under xc_ctx_lock
+Message-ID: <20191030164825.GJ15222@magnolia>
+References: <20191030133327.GA29340@mypc>
+ <1572442631-4472-1-git-send-email-kernelfans@gmail.com>
 MIME-Version: 1.0
-References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
- <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
-In-Reply-To: <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 30 Oct 2019 17:19:12 +0100
-Message-ID: <CAOi1vP97DMX8zweOLfBDOFstrjC78=6RgxK3PPj_mehCOSeoaw@mail.gmail.com>
-Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring,
- not cursor and length [ver #2]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-api@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1572442631-4472-1-git-send-email-kernelfans@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9426 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910300150
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9426 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910300150
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 11:49 AM David Howells <dhowells@redhat.com> wrote:
->
-> Convert pipes to use head and tail pointers for the buffer ring rather than
-> pointer and length as the latter requires two atomic ops to update (or a
-> combined op) whereas the former only requires one.
->
->  (1) The head pointer is the point at which production occurs and points to
->      the slot in which the next buffer will be placed.  This is equivalent
->      to pipe->curbuf + pipe->nrbufs.
->
->      The head pointer belongs to the write-side.
->
->  (2) The tail pointer is the point at which consumption occurs.  It points
->      to the next slot to be consumed.  This is equivalent to pipe->curbuf.
->
->      The tail pointer belongs to the read-side.
->
->  (3) head and tail are allowed to run to UINT_MAX and wrap naturally.  They
->      are only masked off when the array is being accessed, e.g.:
->
->         pipe->bufs[head & mask]
->
->      This means that it is not necessary to have a dead slot in the ring as
->      head == tail isn't ambiguous.
->
->  (4) The ring is empty if "head == tail".
->
->      A helper, pipe_empty(), is provided for this.
->
->  (5) The occupancy of the ring is "head - tail".
->
->      A helper, pipe_occupancy(), is provided for this.
->
->  (6) The number of free slots in the ring is "pipe->ring_size - occupancy".
->
->      A helper, pipe_space_for_user() is provided to indicate how many slots
->      userspace may use.
->
->  (7) The ring is full if "head - tail >= pipe->ring_size".
->
->      A helper, pipe_full(), is provided for this.
->
-> Signed-off-by: David Howells <dhowells@redhat.com>
+On Wed, Oct 30, 2019 at 09:37:11PM +0800, Pingfan Liu wrote:
+> xc_cil_lock is not enough to protect the integrity of a trans logging.
+> Taking the scenario:
+>   cpuA                                 cpuB                          cpuC
+> 
+>   xlog_cil_insert_format_items()
+> 
+>   spin_lock(&cil->xc_cil_lock)
+>   link transA's items to xc_cil,
+>      including item1
+>   spin_unlock(&cil->xc_cil_lock)
+>                                                                       xlog_cil_push() fetches transA's item under xc_cil_lock
+>                                        issue transB, modify item1
+>                                                                       xlog_write(), but now, item1 contains content from transB and we have a broken transA
+> 
+> Survive this race issue by putting under the protection of xc_ctx_lock.
+> Meanwhile the xc_cil_lock can be dropped as xc_ctx_lock does it against
+> xlog_cil_insert_items()
+
+How did you trigger this race?  Is there a test case to reproduce, or
+did you figure this out via code inspection?
+
+--D
+
+> 
+> Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+> Cc: Brian Foster <bfoster@redhat.com>
+> To: linux-xfs@vger.kernel.org
+> Cc: linux-fsdevel@vger.kernel.org
 > ---
->
->  fs/fuse/dev.c             |   31 +++--
->  fs/pipe.c                 |  169 ++++++++++++++++-------------
->  fs/splice.c               |  188 ++++++++++++++++++++------------
->  include/linux/pipe_fs_i.h |   86 ++++++++++++++-
->  include/linux/uio.h       |    4 -
->  lib/iov_iter.c            |  266 +++++++++++++++++++++++++--------------------
->  6 files changed, 464 insertions(+), 280 deletions(-)
->
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index dadd617d826c..1e4bc27573cc 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -703,7 +703,7 @@ static int fuse_copy_fill(struct fuse_copy_state *cs)
->                         cs->pipebufs++;
->                         cs->nr_segs--;
->                 } else {
-> -                       if (cs->nr_segs == cs->pipe->buffers)
-> +                       if (cs->nr_segs >= cs->pipe->ring_size)
->                                 return -EIO;
->
->                         page = alloc_page(GFP_HIGHUSER);
-> @@ -879,7 +879,7 @@ static int fuse_ref_page(struct fuse_copy_state *cs, struct page *page,
->         struct pipe_buffer *buf;
->         int err;
->
-> -       if (cs->nr_segs == cs->pipe->buffers)
-> +       if (cs->nr_segs >= cs->pipe->ring_size)
->                 return -EIO;
->
->         err = unlock_request(cs->req);
-> @@ -1341,7 +1341,7 @@ static ssize_t fuse_dev_splice_read(struct file *in, loff_t *ppos,
->         if (!fud)
->                 return -EPERM;
->
-> -       bufs = kvmalloc_array(pipe->buffers, sizeof(struct pipe_buffer),
-> +       bufs = kvmalloc_array(pipe->ring_size, sizeof(struct pipe_buffer),
->                               GFP_KERNEL);
->         if (!bufs)
->                 return -ENOMEM;
-> @@ -1353,7 +1353,7 @@ static ssize_t fuse_dev_splice_read(struct file *in, loff_t *ppos,
->         if (ret < 0)
->                 goto out;
->
-> -       if (pipe->nrbufs + cs.nr_segs > pipe->buffers) {
-> +       if (pipe_occupancy(pipe->head, pipe->tail) + cs.nr_segs > pipe->ring_size) {
->                 ret = -EIO;
->                 goto out;
->         }
-> @@ -1935,6 +1935,7 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
->                                      struct file *out, loff_t *ppos,
->                                      size_t len, unsigned int flags)
->  {
-> +       unsigned int head, tail, mask, count;
->         unsigned nbuf;
->         unsigned idx;
->         struct pipe_buffer *bufs;
-> @@ -1949,8 +1950,12 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
->
->         pipe_lock(pipe);
->
-> -       bufs = kvmalloc_array(pipe->nrbufs, sizeof(struct pipe_buffer),
-> -                             GFP_KERNEL);
-> +       head = pipe->head;
-> +       tail = pipe->tail;
-> +       mask = pipe->ring_size - 1;
-> +       count = head - tail;
+>  fs/xfs/xfs_log_cil.c | 35 +++++++++++++++++++----------------
+>  1 file changed, 19 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_log_cil.c b/fs/xfs/xfs_log_cil.c
+> index 004af09..f8df3b5 100644
+> --- a/fs/xfs/xfs_log_cil.c
+> +++ b/fs/xfs/xfs_log_cil.c
+> @@ -723,22 +723,6 @@ xlog_cil_push(
+>  	 */
+>  	lv = NULL;
+>  	num_iovecs = 0;
+> -	spin_lock(&cil->xc_cil_lock);
+> -	while (!list_empty(&cil->xc_cil)) {
+> -		struct xfs_log_item	*item;
+> -
+> -		item = list_first_entry(&cil->xc_cil,
+> -					struct xfs_log_item, li_cil);
+> -		list_del_init(&item->li_cil);
+> -		if (!ctx->lv_chain)
+> -			ctx->lv_chain = item->li_lv;
+> -		else
+> -			lv->lv_next = item->li_lv;
+> -		lv = item->li_lv;
+> -		item->li_lv = NULL;
+> -		num_iovecs += lv->lv_niovecs;
+> -	}
+> -	spin_unlock(&cil->xc_cil_lock);
+>  
+>  	/*
+>  	 * initialise the new context and attach it to the CIL. Then attach
+> @@ -783,6 +767,25 @@ xlog_cil_push(
+>  	up_write(&cil->xc_ctx_lock);
+>  
+>  	/*
+> +	 * cil->xc_cil_lock around this loop can be dropped, since xc_ctx_lock
+> +	 * protects us against xlog_cil_insert_items().
+> +	 */
+> +	while (!list_empty(&cil->xc_cil)) {
+> +		struct xfs_log_item	*item;
 > +
-> +       bufs = kvmalloc_array(count, sizeof(struct pipe_buffer), GFP_KERNEL);
->         if (!bufs) {
->                 pipe_unlock(pipe);
->                 return -ENOMEM;
-> @@ -1958,8 +1963,8 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
->
->         nbuf = 0;
->         rem = 0;
-> -       for (idx = 0; idx < pipe->nrbufs && rem < len; idx++)
-> -               rem += pipe->bufs[(pipe->curbuf + idx) & (pipe->buffers - 1)].len;
-> +       for (idx = tail; idx < head && rem < len; idx++)
-> +               rem += pipe->bufs[idx & mask].len;
->
->         ret = -EINVAL;
->         if (rem < len)
-> @@ -1970,16 +1975,16 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
->                 struct pipe_buffer *ibuf;
->                 struct pipe_buffer *obuf;
->
-> -               BUG_ON(nbuf >= pipe->buffers);
-> -               BUG_ON(!pipe->nrbufs);
-> -               ibuf = &pipe->bufs[pipe->curbuf];
-> +               BUG_ON(nbuf >= pipe->ring_size);
-> +               BUG_ON(tail == head);
-> +               ibuf = &pipe->bufs[tail & mask];
->                 obuf = &bufs[nbuf];
->
->                 if (rem >= ibuf->len) {
->                         *obuf = *ibuf;
->                         ibuf->ops = NULL;
-> -                       pipe->curbuf = (pipe->curbuf + 1) & (pipe->buffers - 1);
-> -                       pipe->nrbufs--;
-> +                       tail++;
-> +                       pipe_commit_read(pipe, tail);
->                 } else {
->                         if (!pipe_buf_get(pipe, ibuf))
->                                 goto out_free;
-> diff --git a/fs/pipe.c b/fs/pipe.c
-> index 8a2ab2f974bd..8a0806fe12d3 100644
-> --- a/fs/pipe.c
-> +++ b/fs/pipe.c
-> @@ -43,10 +43,11 @@ unsigned long pipe_user_pages_hard;
->  unsigned long pipe_user_pages_soft = PIPE_DEF_BUFFERS * INR_OPEN_CUR;
->
->  /*
-> - * We use a start+len construction, which provides full use of the
-> - * allocated memory.
-> - * -- Florian Coosmann (FGC)
-> - *
-> + * We use head and tail indices that aren't masked off, except at the point of
-> + * dereference, but rather they're allowed to wrap naturally.  This means there
-> + * isn't a dead spot in the buffer, provided the ring size < INT_MAX.
-> + * -- David Howells 2019-09-23.
-
-Hi David,
-
-Is "ring size < INT_MAX" constraint correct?
-
-I've never had to implement this free running indices scheme, but
-the way I've always visualized it is that the top bit of the index is
-used as a lap (as in a race) indicator, leaving 31 bits to work with
-(in case of unsigned ints).  Should that be
-
-  ring size <= 2^31
-
-or more precisely
-
-  ring size is a power of two <= 2^31
-
-or am I missing something?
-
-Thanks,
-
-                Ilya
+> +		item = list_first_entry(&cil->xc_cil,
+> +					struct xfs_log_item, li_cil);
+> +		list_del_init(&item->li_cil);
+> +		if (!ctx->lv_chain)
+> +			ctx->lv_chain = item->li_lv;
+> +		else
+> +			lv->lv_next = item->li_lv;
+> +		lv = item->li_lv;
+> +		item->li_lv = NULL;
+> +		num_iovecs += lv->lv_niovecs;
+> +	}
+> +
+> +	/*
+>  	 * Build a checkpoint transaction header and write it to the log to
+>  	 * begin the transaction. We need to account for the space used by the
+>  	 * transaction header here as it is not accounted for in xlog_write().
+> -- 
+> 2.7.5
+> 
