@@ -2,403 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B05A8EA6B6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 23:50:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 102B8EA764
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 23:55:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727873AbfJ3WuX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Oct 2019 18:50:23 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:10956 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727763AbfJ3WuA (ORCPT
+        id S1727560AbfJ3Wzo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Oct 2019 18:55:44 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40173 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727321AbfJ3Wzn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Oct 2019 18:50:00 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dba139c0000>; Wed, 30 Oct 2019 15:50:04 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 30 Oct 2019 15:49:58 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 30 Oct 2019 15:49:58 -0700
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 30 Oct
- 2019 22:49:57 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 30 Oct 2019 22:49:57 +0000
-Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5dba13930001>; Wed, 30 Oct 2019 15:49:57 -0700
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
+        Wed, 30 Oct 2019 18:55:43 -0400
+Received: by mail-pf1-f193.google.com with SMTP id r4so2726505pfl.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2019 15:55:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Q+EXrAwYPi1jmJDHL1saWh2OPPKGYxQ4xx1dAqXhHyk=;
+        b=dGmI5orNM/wjsPNBWdlL9JeLS4CdUoeb0iw4BSIgfI79AV0e+hbMOrCNuna06yN5C+
+         I8TAi6p83eL9NJw5KuRNR03Rc/Dy/3Wt3YAj38w8HqM1HLuFN81zrFXsBR7Top2YFJ2j
+         kzKL4CEnAOqjw4V4GDHleYtq43IA+m2REy5SuM+5rN8Wt39+PostlbSnZ3KOh9GxQIn2
+         Y3mlrJyV6sLc0u27AxIdROq3SBFZhCxha5m6eQoOBNUCIZ2jPpep4cUinlibOI0MRMms
+         y+Vs20fZWj0ngXLwWUmWfYiBPAcD02bjmvpuZxaH1ydcwaCZwPdSBt9/iR0YX0ZSO3Xu
+         LCcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Q+EXrAwYPi1jmJDHL1saWh2OPPKGYxQ4xx1dAqXhHyk=;
+        b=F+DwrFDBWep7aJcsQJTCVKfL6ZOcQ/d8f91OFcDES/jbgobQkN6qj2v/TWH+kX+t7H
+         DFpvBLnnzLo1+PB7vElATQw3LT7HtaUNOToqGVKSTjEKrqDsNIcRE/7g9m9eyYXlt35z
+         ZSwNBL8RUorUrKYhGzS/crdODiY86caT4sW7/vooD/+K38Pc0u1MB0Yh6TMjiZqAacrc
+         bnzHeVpO26m9kwytlAy6Ut9xN983eGQjYRwh2Hxn5vsYLmm1Gcr42B6Rch87IQfMJu6W
+         /jj9TB4B52iNyEcdAQ7QrWXOwIh4PhaZ0fAa/Gl8DABz/aRbul/gv0v4o00w2Slxk/4Q
+         BYNw==
+X-Gm-Message-State: APjAAAXvdklRBdRY4KwxzVPNNdShTz5MVq2d0lr7EuivrjbgzRvBvlLh
+        jCGCWsLjW8RzBBx1/igHwYUkMA==
+X-Google-Smtp-Source: APXvYqxmRK8Tbsn/pocESYP1hArr6clJQ86i82SJ4Cpipgz83jobHOXYs05aDY7bpL6rzfnUHam0LA==
+X-Received: by 2002:a17:90a:6d64:: with SMTP id z91mr2230443pjj.44.1572476141676;
+        Wed, 30 Oct 2019 15:55:41 -0700 (PDT)
+Received: from vader ([2620:10d:c090:180::3912])
+        by smtp.gmail.com with ESMTPSA id h9sm982100pfn.167.2019.10.30.15.55.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2019 15:55:41 -0700 (PDT)
+Date:   Wed, 30 Oct 2019 15:55:40 -0700
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
         Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 19/19] Documentation/vm: add pin_user_pages.rst
-Date:   Wed, 30 Oct 2019 15:49:30 -0700
-Message-ID: <20191030224930.3990755-20-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191030224930.3990755-1-jhubbard@nvidia.com>
-References: <20191030224930.3990755-1-jhubbard@nvidia.com>
+        Jann Horn <jannh@google.com>, linux-api@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [RFC PATCH v2 1/5] fs: add O_ENCODED open flag
+Message-ID: <20191030225540.GG326591@vader>
+References: <cover.1571164762.git.osandov@fb.com>
+ <c4d2e911b7b04df9aa8418c8b11bc4c194e3808c.1571164762.git.osandov@fb.com>
+ <20191019045057.2fcrzuwc27eg5naf@yavin.dot.cyphar.com>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1572475804; bh=yoaqiDn2Wzt6dGe1BeoJvdxEEws1E68S1Y9yB9OGMfU=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
-         Content-Transfer-Encoding:Content-Type;
-        b=Vl2WHa6moN80c7LJGMn7iu18Qr+/T3JkBI9wfKiTKbOL4/ZPR/aLLGMH30RuT55Qq
-         Q4bcaWyn43jChG3r5S5iL/0s/rdHfd1WT4xIwhJHHYEuIZM9HEyuRGV399H2ugyCfC
-         KH68iqap+bJDbHZy+J7cc63wAij9Or5EhcDV1zatA69hspEHrvpyOILDhgo+wxffjz
-         HrjRAT+eE5ftqn18EEbTrZ+bVeOqRqMaIkbseGWTN+nsjKNuLMROznKs686wPHjYKO
-         VsKdDU62rZPEdAtwmfBj/ZN5nHLjOS6jSiASRPIUssa1DfpWJx6BOFscfy9IXsaBXD
-         FhwSiOqM5FkUA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191019045057.2fcrzuwc27eg5naf@yavin.dot.cyphar.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Document the new pin_user_pages() and related calls
-and behavior.
+On Sat, Oct 19, 2019 at 03:50:57PM +1100, Aleksa Sarai wrote:
+> On 2019-10-15, Omar Sandoval <osandov@osandov.com> wrote:
+> > From: Omar Sandoval <osandov@fb.com>
+> > 
+> > The upcoming RWF_ENCODED operation introduces some security concerns:
+> > 
+> > 1. Compressed writes will pass arbitrary data to decompression
+> >    algorithms in the kernel.
+> > 2. Compressed reads can leak truncated/hole punched data.
+> > 
+> > Therefore, we need to require privilege for RWF_ENCODED. It's not
+> > possible to do the permissions checks at the time of the read or write
+> > because, e.g., io_uring submits IO from a worker thread. So, add an open
+> > flag which requires CAP_SYS_ADMIN. It can also be set and cleared with
+> > fcntl(). The flag is not cleared in any way on fork or exec; it should
+> > probably be used with O_CLOEXEC in most cases.
+> > 
+> > Note that the usual issue that unknown open flags are ignored doesn't
+> > really matter for O_ENCODED; if the kernel doesn't support O_ENCODED,
+> > then it doesn't support RWF_ENCODED, either.
+> > 
+> > Signed-off-by: Omar Sandoval <osandov@fb.com>
+> > ---
+> >  fs/fcntl.c                       | 10 ++++++++--
+> >  fs/namei.c                       |  4 ++++
+> >  include/linux/fcntl.h            |  2 +-
+> >  include/uapi/asm-generic/fcntl.h |  4 ++++
+> >  4 files changed, 17 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/fcntl.c b/fs/fcntl.c
+> > index 3d40771e8e7c..45ebc6df078e 100644
+> > --- a/fs/fcntl.c
+> > +++ b/fs/fcntl.c
+> > @@ -30,7 +30,8 @@
+> >  #include <asm/siginfo.h>
+> >  #include <linux/uaccess.h>
+> >  
+> > -#define SETFL_MASK (O_APPEND | O_NONBLOCK | O_NDELAY | O_DIRECT | O_NOATIME)
+> > +#define SETFL_MASK (O_APPEND | O_NONBLOCK | O_NDELAY | O_DIRECT | O_NOATIME | \
+> > +		    O_ENCODED)
+> >  
+> >  static int setfl(int fd, struct file * filp, unsigned long arg)
+> >  {
+> > @@ -49,6 +50,11 @@ static int setfl(int fd, struct file * filp, unsigned long arg)
+> >  		if (!inode_owner_or_capable(inode))
+> >  			return -EPERM;
+> >  
+> > +	/* O_ENCODED can only be set by superuser */
+> > +	if ((arg & O_ENCODED) && !(filp->f_flags & O_ENCODED) &&
+> > +	    !capable(CAP_SYS_ADMIN))
+> > +		return -EPERM;
+> 
+> I have a feeling the error should probably be an EACCES and not EPERM.
 
-Thanks to Jan Kara and Vlastimil Babka for explaining the 4 cases
-in this documentation. (I've reworded it and expanded on it slightly.)
+Shrug, I wanted to make this consistent with O_NOATIME, which uses
+EPERM. EACCES seems more appropriate for lacking permissions for a
+particular path rather than for an operation, but the lines are blurry.
 
-Cc: Jonathan Corbet <corbet@lwn.net>
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- Documentation/vm/index.rst          |   1 +
- Documentation/vm/pin_user_pages.rst | 213 ++++++++++++++++++++++++++++
- 2 files changed, 214 insertions(+)
- create mode 100644 Documentation/vm/pin_user_pages.rst
+> > +
+> >  	/* required for strict SunOS emulation */
+> >  	if (O_NONBLOCK != O_NDELAY)
+> >  	       if (arg & O_NDELAY)
+> > @@ -1031,7 +1037,7 @@ static int __init fcntl_init(void)
+> >  	 * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
+> >  	 * is defined as O_NONBLOCK on some platforms and not on others.
+> >  	 */
+> > -	BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
+> > +	BUILD_BUG_ON(22 - 1 /* for O_RDONLY being 0 */ !=
+> >  		HWEIGHT32(
+> >  			(VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
+> >  			__FMODE_EXEC | __FMODE_NONOTIFY));
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > index 671c3c1a3425..ae86b125888a 100644
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+> > @@ -2978,6 +2978,10 @@ static int may_open(const struct path *path, int acc_mode, int flag)
+> >  	if (flag & O_NOATIME && !inode_owner_or_capable(inode))
+> >  		return -EPERM;
+> >  
+> > +	/* O_ENCODED can only be set by superuser */
+> > +	if ((flag & O_ENCODED) && !capable(CAP_SYS_ADMIN))
+> > +		return -EPERM;
+> 
+> I would suggest that this check be put into build_open_flags() rather
+> than putting it this late in open(). Also, same nit about the error
+> return as above.
 
-diff --git a/Documentation/vm/index.rst b/Documentation/vm/index.rst
-index e8d943b21cf9..7194efa3554a 100644
---- a/Documentation/vm/index.rst
-+++ b/Documentation/vm/index.rst
-@@ -44,6 +44,7 @@ descriptions of data structures and algorithms.
-    page_migration
-    page_frags
-    page_owner
-+   pin_user_pages
-    remap_file_pages
-    slub
-    split_page_table_lock
-diff --git a/Documentation/vm/pin_user_pages.rst b/Documentation/vm/pin_use=
-r_pages.rst
-new file mode 100644
-index 000000000000..7110bca3f188
---- /dev/null
-+++ b/Documentation/vm/pin_user_pages.rst
-@@ -0,0 +1,213 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
-+pin_user_pages() and related calls
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
-+
-+.. contents:: :local:
-+
-+Overview
-+=3D=3D=3D=3D=3D=3D=3D=3D
-+
-+This document describes the following functions: ::
-+
-+ pin_user_pages
-+ pin_user_pages_fast
-+ pin_user_pages_remote
-+
-+ pin_longterm_pages
-+ pin_longterm_pages_fast
-+ pin_longterm_pages_remote
-+
-+Basic description of FOLL_PIN
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-+
-+A new flag for get_user_pages ("gup") has been added: FOLL_PIN. FOLL_PIN h=
-as
-+significant interactions and interdependencies with FOLL_LONGTERM, so both=
- are
-+covered here.
-+
-+Both FOLL_PIN and FOLL_LONGTERM are "internal" to gup, meaning that neithe=
-r
-+FOLL_PIN nor FOLL_LONGTERM should not appear at the gup call sites. This a=
-llows
-+the associated wrapper functions  (pin_user_pages and others) to set the c=
-orrect
-+combination of these flags, and to check for problems as well.
-+
-+FOLL_PIN and FOLL_GET are mutually exclusive for a given gup call. However=
-,
-+multiple threads and call sites are free to pin the same struct pages, via=
- both
-+FOLL_PIN and FOLL_GET. It's just the call site that needs to choose one or=
- the
-+other, not the struct page(s).
-+
-+The FOLL_PIN implementation is nearly the same as FOLL_GET, except that FO=
-LL_PIN
-+uses a different reference counting technique.
-+
-+FOLL_PIN is a prerequisite to FOLL_LONGTGERM. Another way of saying that i=
-s,
-+FOLL_LONGTERM is a specific case, more restrictive case of FOLL_PIN.
-+
-+Which flags are set by each wrapper
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+
-+Only FOLL_PIN and FOLL_LONGTERM are covered here. These flags are added to
-+whatever flags the caller provides::
-+
-+ Function                    gup flags (FOLL_PIN or FOLL_LONGTERM only)
-+ --------                    ------------------------------------------
-+ pin_user_pages              FOLL_PIN
-+ pin_user_pages_fast         FOLL_PIN
-+ pin_user_pages_remote       FOLL_PIN
-+
-+ pin_longterm_pages          FOLL_PIN | FOLL_LONGTERM
-+ pin_longterm_pages_fast     FOLL_PIN | FOLL_LONGTERM
-+ pin_longterm_pages_remote   FOLL_PIN | FOLL_LONGTERM
-+
-+Tracking dma-pinned pages
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-+
-+Some of the key design constraints, and solutions, for tracking dma-pinned
-+pages:
-+
-+* An actual reference count, per struct page, is required. This is because
-+  multiple processes may pin and unpin a page.
-+
-+* False positives (reporting that a page is dma-pinned, when in fact it is=
- not)
-+  are acceptable, but false negatives are not.
-+
-+* struct page may not be increased in size for this, and all fields are al=
-ready
-+  used.
-+
-+* Given the above, we can overload the page->_refcount field by using, sor=
-t of,
-+  the upper bits in that field for a dma-pinned count. "Sort of", means th=
-at,
-+  rather than dividing page->_refcount into bit fields, we simple add a me=
-dium-
-+  large value (GUP_PIN_COUNTING_BIAS, initially chosen to be 1024: 10 bits=
-) to
-+  page->_refcount. This provides fuzzy behavior: if a page has get_page() =
-called
-+  on it 1024 times, then it will appear to have a single dma-pinned count.
-+  And again, that's acceptable.
-+
-+This also leads to limitations: there are only 32-10=3D=3D22 bits availabl=
-e for a
-+counter that increments 10 bits at a time.
-+
-+TODO: for 1GB and larger huge pages, this is cutting it close. That's beca=
-use
-+when pin_user_pages() follows such pages, it increments the head page by "=
-1"
-+(where "1" used to mean "+1" for get_user_pages(), but now means "+1024" f=
-or
-+pin_user_pages()) for each tail page. So if you have a 1GB huge page:
-+
-+* There are 256K (18 bits) worth of 4 KB tail pages.
-+* There are 22 bits available to count up via GUP_PIN_COUNTING_BIAS (that =
-is,
-+  10 bits at a time)
-+* There are 22 - 18 =3D=3D 4 bits available to count. Except that there ar=
-en't,
-+  because you need to allow for a few normal get_page() calls on the head =
-page,
-+  as well. Fortunately, the approach of using addition, rather than "hard"
-+  bitfields, within page->_refcount, allows for sharing these bits gracefu=
-lly.
-+  But we're still looking at about 16 references.
-+
-+This, however, is a missing feature more than anything else, because it's =
-easily
-+solved by addressing an obvious inefficiency in the original get_user_page=
-s()
-+approach of retrieving pages: stop treating all the pages as if they were
-+PAGE_SIZE. Retrieve huge pages as huge pages. The callers need to be aware=
- of
-+this, so some work is required. Once that's in place, this limitation most=
-ly
-+disappears from view, because there will be ample refcounting range availa=
-ble.
-+
-+* Callers must specifically request "dma-pinned tracking of pages". In oth=
-er
-+  words, just calling get_user_pages() will not suffice; a new set of func=
-tions,
-+  pin_user_page() and related, must be used.
-+
-+FOLL_PIN, FOLL_GET, FOLL_LONGTERM: when to use which flags
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+
-+Thanks to Jan Kara, Vlastimil Babka and several other -mm people, for desc=
-ribing
-+these categories:
-+
-+CASE 1: Direct IO (DIO)
-+-----------------------
-+There are GUP references to pages that are serving
-+as DIO buffers. These buffers are needed for a relatively short time (so t=
-hey
-+are not "long term"). No special synchronization with page_mkclean() or
-+munmap() is provided. Therefore, flags to set at the call site are: ::
-+
-+    FOLL_PIN
-+
-+...but rather than setting FOLL_PIN directly, call sites should use one of
-+the pin_user_pages*() routines that set FOLL_PIN.
-+
-+CASE 2: RDMA
-+------------
-+There are GUP references to pages that are serving as DMA
-+buffers. These buffers are needed for a long time ("long term"). No specia=
-l
-+synchronization with page_mkclean() or munmap() is provided. Therefore, fl=
-ags
-+to set at the call site are: ::
-+
-+    FOLL_PIN | FOLL_LONGTERM
-+
-+TODO: There is also a special case when the pages are DAX pages: in additi=
-on to
-+the above flags, the caller needs something like a layout lease on the
-+associated file. This is yet to be implemented. When it is implemented, it=
-'s
-+expected that the lease will be a prerequisite to setting FOLL_LONGTERM.
-+
-+CASE 3: ODP
-+-----------
-+(Mellanox/Infiniband On Demand Paging: the hardware supports
-+replayable page faulting). There are GUP references to pages serving as DM=
-A
-+buffers. For ODP, MMU notifiers are used to synchronize with page_mkclean(=
-)
-+and munmap(). Therefore, normal GUP calls are sufficient, so neither flag
-+needs to be set.
-+
-+CASE 4: Pinning for struct page manipulation only
-+-------------------------------------------------
-+Here, normal GUP calls are sufficient, so neither flag needs to be set.
-+
-+page_dma_pinned(): the whole point of pinning
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+
-+The whole point of marking pages as "DMA-pinned" or "gup-pinned" is to be =
-able
-+to query, "is this page DMA-pinned?" That allows code such as page_mkclean=
-()
-+(and file system writeback code in general) to make informed decisions abo=
-ut
-+what to do when a page cannot be unmapped due to such pins.
-+
-+What to do in those cases is the subject of a years-long series of discuss=
-ions
-+and debates (see the References at the end of this document). It's a TODO =
-item
-+here: fill in the details once that's worked out. Meanwhile, it's safe to =
-say
-+that having this available: ::
-+
-+        static inline bool page_dma_pinned(struct page *page)
-+
-+...is a prerequisite to solving the long-running gup+DMA problem.
-+
-+Another way of thinking about FOLL_GET, FOLL_PIN, and FOLL_LONGTERM
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+
-+Another way of thinking about these flags is as a progression of restricti=
-ons:
-+FOLL_GET is for struct page manipulation, without affecting the data that =
-the
-+struct page refers to. FOLL_PIN is a *replacement* for FOLL_GET, and is fo=
-r
-+short term pins on pages whose data *will* get accessed. As such, FOLL_PIN=
- is
-+a "more severe" form of pinning. And finally, FOLL_LONGTERM is an even mor=
-e
-+restrictive case that has FOLL_PIN as a prerequisite: this is for pages th=
-at
-+will be pinned longterm, and whose data will be accessed.
-+
-+Unit testing
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+This file::
-+
-+ tools/testing/selftests/vm/gup_benchmark.c
-+
-+has the following new calls to exercise the new pin*() wrapper functions:
-+
-+* PIN_FAST_BENCHMARK (./gup_benchmark -a)
-+* PIN_LONGTERM_BENCHMARK (./gup_benchmark -a)
-+* PIN_BENCHMARK (./gup_benchmark -a)
-+
-+You can monitor how many total dma-pinned pages have been acquired and rel=
-eased
-+since the system was booted, via two new /proc/vmstat entries: ::
-+
-+    /proc/vmstat/nr_foll_pin_requested
-+    /proc/vmstat/nr_foll_pin_requested
-+
-+Those are both going to show zero, unless CONFIG_DEBUG_VM is set. This is
-+because there is a noticeable performance drop in put_user_page(), when th=
-ey
-+are activated.
-+
-+References
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+
-+* `Some slow progress on get_user_pages() (Apr 2, 2019) <https://lwn.net/A=
-rticles/784574/>`_
-+* `DMA and get_user_pages() (LPC: Dec 12, 2018) <https://lwn.net/Articles/=
-774411/>`_
-+* `The trouble with get_user_pages() (Apr 30, 2018) <https://lwn.net/Artic=
-les/753027/>`_
-+
-+John Hubbard, October, 2019
---=20
-2.23.0
+This is where we check permissions for O_NOATIME, shouldn't we keep all
+of those permission checks in the same place? build_open_flags() only
+checks for flag validity.
 
+> > +
+> >  	return 0;
+> >  }
+> >  
+> > diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
+> > index d019df946cb2..5fac02479639 100644
+> > --- a/include/linux/fcntl.h
+> > +++ b/include/linux/fcntl.h
+> > @@ -9,7 +9,7 @@
+> >  	(O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC | \
+> >  	 O_APPEND | O_NDELAY | O_NONBLOCK | O_NDELAY | __O_SYNC | O_DSYNC | \
+> >  	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
+> > -	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
+> > +	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | O_ENCODED)
+> >  
+> >  #ifndef force_o_largefile
+> >  #define force_o_largefile() (!IS_ENABLED(CONFIG_ARCH_32BIT_OFF_T))
+> > diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
+> > index 9dc0bf0c5a6e..8c5cbd5942e3 100644
+> > --- a/include/uapi/asm-generic/fcntl.h
+> > +++ b/include/uapi/asm-generic/fcntl.h
+> > @@ -97,6 +97,10 @@
+> >  #define O_NDELAY	O_NONBLOCK
+> >  #endif
+> >  
+> > +#ifndef O_ENCODED
+> > +#define O_ENCODED	040000000
+> > +#endif
+> 
+> You should also define this for all of the architectures which don't use
+> the generic O_* flag values. On alpha, O_PATH is equal to the value you
+> picked (just be careful on sparc -- 0x4000000 is the next free bit, but
+> it's used by FMODE_NONOTIFY.)
+
+Good catch, I'll fix that. Thanks!
