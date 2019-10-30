@@ -2,110 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FCA5E9A77
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 11:56:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFA3CE9A6D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Oct 2019 11:55:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbfJ3Kzz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Oct 2019 06:55:55 -0400
-Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:53919 "EHLO
-        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726184AbfJ3Kzz (ORCPT
+        id S1726804AbfJ3Ky5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Oct 2019 06:54:57 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39371 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726566AbfJ3Ky5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Oct 2019 06:55:55 -0400
-X-Greylist: delayed 354 seconds by postgrey-1.27 at vger.kernel.org; Wed, 30 Oct 2019 06:55:54 EDT
-Received: from ATCSQR.andestech.com (localhost [127.0.0.2] (may be forged))
-        by ATCSQR.andestech.com with ESMTP id x9UAWISe061204;
-        Wed, 30 Oct 2019 18:32:18 +0800 (GMT-8)
-        (envelope-from ruinland@andestech.com)
-Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
-        by ATCSQR.andestech.com with ESMTP id x9UAW5As061184;
-        Wed, 30 Oct 2019 18:32:05 +0800 (GMT-8)
-        (envelope-from ruinland@andestech.com)
-Received: from APC301.andestech.com (10.0.12.139) by ATCPCS16.andestech.com
- (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Wed, 30 Oct 2019
- 18:49:42 +0800
-From:   Ruinland Chuan-Tzu Tsai <ruinland@andestech.com>
-To:     <viro@zeniv.linux.org.uk>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <alankao@andestech.com>, <ruinland@andestech.com>
-Subject: [PATCH] elf: Relocate brk elsewhere for static-PIE ELFs.
-Date:   Wed, 30 Oct 2019 18:49:27 +0800
-Message-ID: <20191030104927.6681-1-ruinland@andestech.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 30 Oct 2019 06:54:57 -0400
+Received: by mail-lj1-f195.google.com with SMTP id y3so2126301ljj.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2019 03:54:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qtCKRSOH2wHBPxYWft32/SnJnhtK6FCm3n3b1weS2iw=;
+        b=BAJsYTc/WnEx9YqK3Q0ZjZ4NLIwdz+jXTH4YfRpJ9sI9RvhB5+3oEy4JGzzu9ikMmj
+         JBFxfCmjslc2gcgXJ8TUmf3+BQRpjtIMcUHEHm10Dbx9leMzPLpvUiu9ddeV3+iQwLbO
+         aVM+FYR1044gIW56sLGDszs2pmd8cDBgBBeXM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qtCKRSOH2wHBPxYWft32/SnJnhtK6FCm3n3b1weS2iw=;
+        b=sVbBCF3q9LMa0w0/+KiOjIUGUS0EqsXLu37+AMFhrGqbocTNGuDr9IGeYSbRT09HD9
+         s0uemNQIZ696J4wr20sIkgOdJRVThjesySYQWmN1DQbIQnC+ouSzFu1a2wr6kmhS5L6h
+         yRvtVWrUtKsGE5wEUky7lfTRt2Rt5WSlbjueraos8FYKSPqc3tq/tKMTJ0HA2IVV51Fe
+         72yMKhmJ0XCuBT53zLQGFiGsvRNlFm3bT92yXmakTBmMOtxofloEgcBVIrX2fdVun4wx
+         jVmtFCFw2XCE6JTYaaW4MrIuuGV8XOWWzieLUsW3USmcu6Hv9iQexjM0ZENgnwsEOi77
+         hIEg==
+X-Gm-Message-State: APjAAAWYDZLNkVe/rXcZADGbKViXKOtka5mdHUarew/IiLXKhP6SqUOa
+        xOOb3wHfxX4jQbZPAyXgwQK5EwfekhDnCA==
+X-Google-Smtp-Source: APXvYqzlrxz6OvI5qiirGT+9aeCbYm9ozkft74/bIBWGSMinG+aDx6N17cJLhwck1sZpQq/XLlG/fQ==
+X-Received: by 2002:a2e:b5d4:: with SMTP id g20mr2343697ljn.140.1572432893395;
+        Wed, 30 Oct 2019 03:54:53 -0700 (PDT)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
+        by smtp.gmail.com with ESMTPSA id g25sm923539ljk.36.2019.10.30.03.54.52
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2019 03:54:52 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id f5so1197546lfp.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2019 03:54:52 -0700 (PDT)
+X-Received: by 2002:a19:6f0e:: with SMTP id k14mr5783119lfc.79.1572432891872;
+ Wed, 30 Oct 2019 03:54:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.0.12.139]
-X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com x9UAW5As061184
+References: <157225677483.3442.4227193290486305330.stgit@buzz>
+ <20191028124222.ld6u3dhhujfqcn7w@box> <CAHk-=wgQ-Dcs2keNJPovTb4gG33M81yANH6KZM9d5NLUb-cJ1g@mail.gmail.com>
+ <20191028125702.xdfbs7rqhm3wer5t@box> <ac83fee6-9bcd-8c66-3596-2c0fbe6bcf96@yandex-team.ru>
+ <CAHk-=who0HS=NT8U7vFDT7er_CD7+ZreRJMxjYrRXs5G6dbpyw@mail.gmail.com> <f0140b13-cca2-af9e-eb4b-82eda134eb8f@redhat.com>
+In-Reply-To: <f0140b13-cca2-af9e-eb4b-82eda134eb8f@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 30 Oct 2019 11:54:35 +0100
+X-Gmail-Original-Message-ID: <CAHk-=wh4SKRxKQf5LawRMSijtjRVQevaFioBK+tOZAVPt7ek0Q@mail.gmail.com>
+Message-ID: <CAHk-=wh4SKRxKQf5LawRMSijtjRVQevaFioBK+tOZAVPt7ek0Q@mail.gmail.com>
+Subject: Re: [PATCH] mm/filemap: do not allocate cache pages beyond end of
+ file at read
+To:     Steven Whitehouse <swhiteho@redhat.com>
+Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "cluster-devel@redhat.com" <cluster-devel@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Previous commits (bbdc607, 7be3cb0) move brk to ELF_ET_DYN_BASE to
-mitigate collision between heap and stack during ASLR's randomization
-procedure. We found the collision to be not limited to heap and stack
-nor ASLR enablement.
+On Wed, Oct 30, 2019 at 11:35 AM Steven Whitehouse <swhiteho@redhat.com> wrote:
+>
+> NFS may be ok here, but it will break GFS2. There may be others too...
+> OCFS2 is likely one. Not sure about CIFS either. Does it really matter
+> that we might occasionally allocate a page and then free it again?
 
-During the mapping of static-PIE binaries (ET_DYN, no INTERP) e.g.
-glibc's ld.so, elf_map() is used with load_bias being zero, which
-makes get_unmapped_area() to return an arbitrary unamapped area.
+Why are gfs2 and cifs doing things wrong?
 
-After mapping the static-PIE binary, set_brk() is called to setup
-program break.
+"readpage()" is not for synchrionizing metadata. Never has been. You
+shouldn't treat it that way, and you shouldn't then make excuses for
+filesystems that treat it that way.
 
-Then, arch_setup_additional_pages() carries out its duty to initialize
-vDSO pages and get_unmapped_area() is invoked with addr being zero
-once again - - in some cases (*), this could make it land right next to
-the previously mapped static-PIE program and occupy the space for heap.
+Look at mmap, for example. It will do the SIGBUS handling before
+calling readpage(). Same goes for the copyfile code. A filesystem that
+thinks "I will update size at readpage" is already fundamentally
+buggy.
 
-If we want to avoid this issue, we need to relocate our heap somewhere
-else. Regarding the principle of reusing the code, we simply make
-brk's relocating happen no matter ASLR is enabled or not.
+We do _recheck_ the inode size under the page lock, but that's to
+handle the races with truncate etc.
 
-* This could be reproduced on qemu-system-riscv64 and I observed this
-  issue on my riscv32 platform as well.
-
-Signed-off-by: Ruinland Chuan-Tzu Tsai <ruinland@andestech.com>
----
- fs/binfmt_elf.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
-
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index d4e11b2e04f6..a49eb1ea2c6b 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -1133,18 +1133,19 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 	current->mm->end_data = end_data;
- 	current->mm->start_stack = bprm->p;
- 
--	if ((current->flags & PF_RANDOMIZE) && (randomize_va_space > 1)) {
--		/*
--		 * For architectures with ELF randomization, when executing
--		 * a loader directly (i.e. no interpreter listed in ELF
--		 * headers), move the brk area out of the mmap region
--		 * (since it grows up, and may collide early with the stack
--		 * growing down), and into the unused ELF_ET_DYN_BASE region.
--		 */
--		if (IS_ENABLED(CONFIG_ARCH_HAS_ELF_RANDOMIZE) && !interpreter)
--			current->mm->brk = current->mm->start_brk =
--				ELF_ET_DYN_BASE;
-+	/*
-+	 * While treating static-PIE, force brk to move to ELF_ET_DYN_BASE
-+	 * no matter ASLR is enabled or * not. vDSO may collide with
-+	 * heap since both of them call get_unmapped_area() which doesn't
-+	 * know about set_brk(), causing vDSO to overlap our heap.
-+	 */
- 
-+	if (loc->elf_ex.e_type == ET_DYN && !interpreter) {
-+		current->mm->brk = current->mm->start_brk =
-+			PAGE_ALIGN(ELF_ET_DYN_BASE);
-+	}
-+
-+	if ((current->flags & PF_RANDOMIZE) && (randomize_va_space > 1)) {
- 		current->mm->brk = current->mm->start_brk =
- 			arch_randomize_brk(current->mm);
- #ifdef compat_brk_randomized
--- 
-2.17.1
-
+            Linus
