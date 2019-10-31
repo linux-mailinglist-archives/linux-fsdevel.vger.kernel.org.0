@@ -2,96 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80039EADF1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 11:55:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7E76EAE46
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 12:04:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727419AbfJaKz5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Oct 2019 06:55:57 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:35394 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726864AbfJaKz5 (ORCPT
+        id S1727502AbfJaLED (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Oct 2019 07:04:03 -0400
+Received: from forwardcorp1p.mail.yandex.net ([77.88.29.217]:41840 "EHLO
+        forwardcorp1p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727073AbfJaLEC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Oct 2019 06:55:57 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9VAsNb4192100;
-        Thu, 31 Oct 2019 10:55:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
- bh=tm+ynhomfiVzszaGXuALO61BT3GqIPJ1petNTHqSuA4=;
- b=rNyrMxADWHmk/W0nX15kbwSzDYNeeFUpT7c0LDL4KRxvxXAKnWhBYVSkNaGWSYaOMD8A
- gWpq121IvjGexVQMbY3iYBnho72bcrbhR8bBXaR1fB6yLbwi57sh+FprEZyFLjvvyOSQ
- nmTEyRFX47RfI8krXyHu+T1XBIWYpUFvJQYG92XzGtqEyzfolVHk40XkO0CEfpEtR5RN
- WY9ZNE99zZRnkfUVT0Nx2OWmtqEeL/XcTU4BJoXkz3RZj/JSVSQAoEtmcWHe47vTWU+w
- lbA9u3uhzQbJGpYPBBK+qJrn8HjqTEEvXYtkdcK5Lqdml/YX6732lO1H3VUwbPxx+9nY HQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2vxwhftcag-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 31 Oct 2019 10:55:55 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9VAqlgh047316;
-        Thu, 31 Oct 2019 10:55:54 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2vyqpdvky1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 31 Oct 2019 10:55:54 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9VAtrJH014719;
-        Thu, 31 Oct 2019 10:55:53 GMT
-Received: from mwanda (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 31 Oct 2019 03:55:53 -0700
-Date:   Thu, 31 Oct 2019 13:55:47 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] io_uring: signedness bug in io_async_cancel()
-Message-ID: <20191031105547.GC26612@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9426 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910310111
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9426 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910310111
+        Thu, 31 Oct 2019 07:04:02 -0400
+Received: from mxbackcorp1j.mail.yandex.net (mxbackcorp1j.mail.yandex.net [IPv6:2a02:6b8:0:1619::162])
+        by forwardcorp1p.mail.yandex.net (Yandex) with ESMTP id 26A3F2E1486;
+        Thu, 31 Oct 2019 14:03:59 +0300 (MSK)
+Received: from sas2-62907d92d1d8.qloud-c.yandex.net (sas2-62907d92d1d8.qloud-c.yandex.net [2a02:6b8:c08:b895:0:640:6290:7d92])
+        by mxbackcorp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id GiObEs4vO4-3wiSUIiv;
+        Thu, 31 Oct 2019 14:03:59 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1572519839; bh=D+6O7iUMBkZ3sqVRjui7jk+wGVzrqyDNlvlVRTMTN3s=;
+        h=Message-Id:Date:Subject:To:From:Cc;
+        b=gMHioc8MePvpAfs8uJE0MK0GT5EOkh1wfN+OjtOidy08Pn3dmiPcu61v0RCim1Cnf
+         lMGUV79++VKVn/tH80J1xU4xqxhklACtfx0c7nMO872QXWhk+Gwwg4Cn+KR1LP+jBU
+         kj0IE0N6RotOC9FN99E4D8YWxwDPq7W5DodpNosY=
+Authentication-Results: mxbackcorp1j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from 95.108.174.193-red.dhcp.yndx.net (95.108.174.193-red.dhcp.yndx.net [95.108.174.193])
+        by sas2-62907d92d1d8.qloud-c.yandex.net (nwsmtp/Yandex) with ESMTPSA id q8PWovi3A9-3wV8jBkp;
+        Thu, 31 Oct 2019 14:03:58 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+From:   Dmitry Monakhov <dmonakhov@openvz.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jack@suse.cz, tytso@mit.edu, lixi@ddn.com,
+        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Subject: [PATCH] fs/ext4: get project quota from inode for mangling statfs results
+Date:   Thu, 31 Oct 2019 11:03:48 +0000
+Message-Id: <20191031110348.6991-1-dmonakhov@openvz.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The problem is that this enum is unsigned, and we do use "ret" for the
-enum values, but we also use it for negative error codes.  If it's not
-signed then it causes a problem in the error handling.
+From: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
 
-Fixes: 6ec62e598211 ("io_uring: support for generic async request cancel")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Right now ext4_statfs_project() does quota lookup by id every time.
+This is costly operation, especially if there is no inode who hold
+reference to this dquot. This means that each statfs performs useless
+ext4_acquire_dquot()/ext4_release_dquot() which serialized on __jbd2_log_wait_for_space()
+dqget()
+ ->ext4_acquire_dquot
+   -> ext4_journal_start
+      -> __jbd2_log_wait_for_space
+dqput()
+  -> ext4_release_dquot
+     ->ext4_journal_start
+       ->__jbd2_log_wait_for_space
+
+
+Function ext4_statfs_project() could be moved into generic quota code,
+it is required for every filesystem which uses generic project quota.
+
+Reported-by: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 ---
- fs/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ext4/super.c | 25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index c4cdfe16cba7..9dcbde233657 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2144,8 +2144,8 @@ static int io_async_cancel(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 			   struct io_kiocb **nxt)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
--	enum io_wq_cancel ret;
- 	void *sqe_addr;
-+	int ret;
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 2318e5f..4e8f97d68 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -5532,18 +5532,23 @@ static int ext4_remount(struct super_block *sb, int *flags, char *data)
+ }
  
- 	if (unlikely(ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
+ #ifdef CONFIG_QUOTA
+-static int ext4_statfs_project(struct super_block *sb,
+-			       kprojid_t projid, struct kstatfs *buf)
++static int ext4_statfs_project(struct inode *inode, struct kstatfs *buf)
+ {
+-	struct kqid qid;
++	struct super_block *sb = inode->i_sb;
+ 	struct dquot *dquot;
+ 	u64 limit;
+ 	u64 curblock;
++	int err;
++
++	err = dquot_initialize(inode);
++	if (err)
++		return err;
++
++	spin_lock(&inode->i_lock);
++	dquot = ext4_get_dquots(inode)[PRJQUOTA];
++	if (!dquot)
++		goto out_unlock;
+ 
+-	qid = make_kqid_projid(projid);
+-	dquot = dqget(sb, qid);
+-	if (IS_ERR(dquot))
+-		return PTR_ERR(dquot);
+ 	spin_lock(&dquot->dq_dqb_lock);
+ 
+ 	limit = (dquot->dq_dqb.dqb_bsoftlimit ?
+@@ -5569,7 +5574,9 @@ static int ext4_statfs_project(struct super_block *sb,
+ 	}
+ 
+ 	spin_unlock(&dquot->dq_dqb_lock);
+-	dqput(dquot);
++out_unlock:
++	spin_unlock(&inode->i_lock);
++
+ 	return 0;
+ }
+ #endif
+@@ -5609,7 +5616,7 @@ static int ext4_statfs(struct dentry *dentry, struct kstatfs *buf)
+ #ifdef CONFIG_QUOTA
+ 	if (ext4_test_inode_flag(dentry->d_inode, EXT4_INODE_PROJINHERIT) &&
+ 	    sb_has_quota_limits_enabled(sb, PRJQUOTA))
+-		ext4_statfs_project(sb, EXT4_I(dentry->d_inode)->i_projid, buf);
++		ext4_statfs_project(dentry->d_inode, buf);
+ #endif
+ 	return 0;
+ }
 -- 
-2.20.1
+2.7.4
 
