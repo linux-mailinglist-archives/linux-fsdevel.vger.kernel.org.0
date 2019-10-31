@@ -2,106 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E68BEB324
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 15:51:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84FEDEB341
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 15:58:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728199AbfJaOvU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Oct 2019 10:51:20 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:26223 "EHLO
+        id S1728071AbfJaO6D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Oct 2019 10:58:03 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:36804 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728152AbfJaOvT (ORCPT
+        by vger.kernel.org with ESMTP id S1727969AbfJaO6D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Oct 2019 10:51:19 -0400
+        Thu, 31 Oct 2019 10:58:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572533478;
+        s=mimecast20190719; t=1572533880;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=3K6sCYQs8K5ApEcQ+TEBEBei1xOeMj1fQR7m/w4Dyos=;
-        b=B25v9SZyX4U5a0z5MJs9apakt9rJXAJChTOMBkXUT+RtHVC1l4/Lr4nwU2ibghlc60leeE
-        3NdVXd93sRBBfrSqvy3s3ddTQQVleWVxzQ50cSwz5xZP8vmzayMJXBhNv7OVPcEX2R5COU
-        a4xJCRweDYWiy2CWsD0Yi9VMU2rZt9E=
+        bh=cjgEzJVzo2lJMUc77CuSCNztlH8vIEi00dABVngX7OE=;
+        b=e4fwxynfN873ScbRWNY4kSCMFyB4tGHkp5i+shBPRx4TjNbYt7BGodHzmrZap7CiT8PL/A
+        eGGl1Je386gfzMmRxfOeh2ZZCgd1C6RmobgC9pqGaLk2MM9zv5PhV8/Wr+gMynRCGSuFqw
+        tNDdOHs184es5DZfkOCAT7jPAd1h3mU=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-230-piStzJfuPfqkyHSzRDB-TQ-1; Thu, 31 Oct 2019 10:51:14 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+ us-mta-216-_BdLQb6yOlu3p54wnvo9Pg-1; Thu, 31 Oct 2019 10:57:56 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 13D9E1800D6B;
-        Thu, 31 Oct 2019 14:51:13 +0000 (UTC)
-Received: from x2.localnet (ovpn-117-13.phx2.redhat.com [10.3.117.13])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4B3E160878;
-        Thu, 31 Oct 2019 14:50:58 +0000 (UTC)
-From:   Steve Grubb <sgrubb@redhat.com>
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        omosnace@redhat.com, dhowells@redhat.com, simo@redhat.com,
-        Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
-        mpatel@redhat.com
-Subject: Re: [PATCH ghak90 V7 20/21] audit: add capcontid to set contid outside init_user_ns
-Date:   Thu, 31 Oct 2019 10:50:57 -0400
-Message-ID: <3677995.NTHC7m0fHc@x2>
-Organization: Red Hat
-In-Reply-To: <20191030220320.tnwkaj5gbzchcn7j@madcap2.tricolour.ca>
-References: <cover.1568834524.git.rgb@redhat.com> <CAHC9VhRDoX9du4XbCnBtBzsNPMGOsb-TKM1CC+sCL7HP=FuTRQ@mail.gmail.com> <20191030220320.tnwkaj5gbzchcn7j@madcap2.tricolour.ca>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 92BE11800D6B;
+        Thu, 31 Oct 2019 14:57:54 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E40665D6D6;
+        Thu, 31 Oct 2019 14:57:51 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wh7cf3ANq-G9MmwSQiUK2d-=083C0HV_8hTGe2Mb4X7JA@mail.gmail.com>
+References: <CAHk-=wh7cf3ANq-G9MmwSQiUK2d-=083C0HV_8hTGe2Mb4X7JA@mail.gmail.com> <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk> <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring, not cursor and length [ver #2]
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-MC-Unique: piStzJfuPfqkyHSzRDB-TQ-1
+Content-ID: <24074.1572533871.1@warthog.procyon.org.uk>
+Date:   Thu, 31 Oct 2019 14:57:51 +0000
+Message-ID: <24075.1572533871@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: _BdLQb6yOlu3p54wnvo9Pg-1
 X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 7Bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-TLDR;  I see a lot of benefit to switching away from procfs for setting auid & 
-sessionid.
+> It's shorter and more obvious to just write
+>=20
+>    pipe->head =3D head;
+>=20
+> than it is to write
+>=20
+>    pipe_commit_write(pipe, head);
 
-On Wednesday, October 30, 2019 6:03:20 PM EDT Richard Guy Briggs wrote:
-> > Also, for the record, removing the audit loginuid from procfs is not
-> > something to take lightly, if at all; like it or not, it's part of the
-> > kernel API.
+But easier to find the latter.  But whatever.
 
-It can also be used by tools to iterate processes related to one user or 
-session. I use this in my Intrusion Prevention System which will land in 
-audit user space at some point in the future.
-
-
-> Oh, I'm quite aware of how important this change is and it was discussed
-> with Steve Grubb who saw the concern and value of considering such a
-> disruptive change.
-
-Actually, I advocated for syscall. I think the gist of Eric's idea was that /
-proc is the intersection of many nasty problems. By relying on it, you can't 
-simplify the API to reduce the complexity. Almost no program actually needs 
-access to /proc. ps does. But almost everything else is happy without it. For 
-example, when you setup chroot jails, you may have to add /dev/random or /
-dev/null, but almost never /proc. What does force you to add /proc is any 
-entry point daemon like sshd because it needs to set the loginuid. If we 
-switch away from /proc, then sshd or crond will no longer /require/ procfs to 
-be available which again simplifies the system design.
-
-
-> Removing proc support for auid/ses would be a
-> long-term deprecation if accepted.
-
-It might need to just be turned into readonly for a while. But then again, 
-perhaps auid and session should be part of /proc/<pid>/status? Maybe this can 
-be done independently and ahead of the container work so there is a migration 
-path for things that read auid or session. TBH, maybe this should have been 
-done from the beginning.
-
--Steve
-
-
+David
 
