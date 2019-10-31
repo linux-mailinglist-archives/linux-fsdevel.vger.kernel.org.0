@@ -2,127 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C05CEAC74
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 10:16:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56284EADA7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 11:39:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbfJaJQu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Oct 2019 05:16:50 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43038 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726897AbfJaJQu (ORCPT
+        id S1727240AbfJaKj3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Oct 2019 06:39:29 -0400
+Received: from forwardcorp1j.mail.yandex.net ([5.45.199.163]:39044 "EHLO
+        forwardcorp1j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726867AbfJaKj3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Oct 2019 05:16:50 -0400
-Received: by mail-pf1-f195.google.com with SMTP id 3so3929284pfb.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Oct 2019 02:16:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Xg/b4iDjx3u9hVd0I5Hyu2JBDES8904lj46RjDSYPdg=;
-        b=qCQus62hLg0ZsnirnsDBZzhB/PcwAe9LuCthO3P3ciRwf0s+1rDIv/hXc9/5liU514
-         /XqMuoHh8hYgvIvgJQcjL0N1tfc2r/9PMPDkJpn/VennbK/ZeWp7fQIKhUjWDIjyQDLq
-         ckbbR7jChqtbXCB3x37HwSpPBYhgCu5l42djFH8v2+mkbal7KtsscLTtA9C5pAaUoHHy
-         sQ+SvoP6gkn2MOWgX/jqRlaZkyg2tmSBu3HZSO4DeNqAOHws9Hjqy851hd+2OxxtrC67
-         /hL9kMIFUc1+9cW2qMLmL/CHe+ZdJBRaU0JyWwUg3DisGCvSVJFqgbNBcuMaNXOI/fWK
-         U/ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Xg/b4iDjx3u9hVd0I5Hyu2JBDES8904lj46RjDSYPdg=;
-        b=ghoXsvl62gEYNgpUSwlVkFEa5IbI5Zz+QJKdaFMrp8xE88s/3ptsEUghNi88qROIOh
-         lkgHPKKRHW5fpSKYQ3uUoiw0mDw0w1DfgO6KA0BV5QT049TkGMZ8LDBKtRimzco2Asmz
-         0JmwOP64ufK0LPzbhkmvycmuZZhG7maTtUtxaW36Q6sM5GkuAm1jTDGpHzcNZQBVOHlr
-         vHX911zU2Y4wk1/LUN+StTt7I+7+KjvH1ut8FIy10ppwPj+Gwyi2CIRdWJcXTb9ZjAKz
-         gsGm9CU7LBmCel8paVC3UgtTfWJY79Zyt8EXCrPnSKNj/b89/QAnjc7Mu2WLYyrKD3Sz
-         gXow==
-X-Gm-Message-State: APjAAAVDIlAHErv6M5lMePsvZM4Iv75RhOiZAbLDc31QBn+YvazOmkkQ
-        np1NpOopSMBSkpRO6aK7OhKG
-X-Google-Smtp-Source: APXvYqz67EYIlIsW0+qxccoAVUkIZa1rJsSaJq0oMvbZbUnR+Sh0Vs+VbU61vCQkX9oqc2Qy5gEVVQ==
-X-Received: by 2002:a62:5258:: with SMTP id g85mr5035665pfb.180.1572513408845;
-        Thu, 31 Oct 2019 02:16:48 -0700 (PDT)
-Received: from bobrowski ([110.232.114.101])
-        by smtp.gmail.com with ESMTPSA id d9sm2121040pgc.80.2019.10.31.02.16.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2019 02:16:48 -0700 (PDT)
-Date:   Thu, 31 Oct 2019 20:16:41 +1100
-From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        hch@infradead.org, david@fromorbit.com, darrick.wong@oracle.com
-Subject: Re: [PATCH v6 00/11] ext4: port direct I/O to iomap infrastructure
-Message-ID: <20191031091639.GB28679@bobrowski>
-References: <cover.1572255424.git.mbobrowski@mbobrowski.org>
- <20191029233159.GA8537@mit.edu>
- <20191029233401.GB8537@mit.edu>
- <20191030020022.GA7392@bobrowski>
- <20191030112652.GF28525@quack2.suse.cz>
- <20191030113918.GG28525@quack2.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191030113918.GG28525@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 31 Oct 2019 06:39:29 -0400
+Received: from mxbackcorp1j.mail.yandex.net (mxbackcorp1j.mail.yandex.net [IPv6:2a02:6b8:0:1619::162])
+        by forwardcorp1j.mail.yandex.net (Yandex) with ESMTP id 767022E0DC6;
+        Thu, 31 Oct 2019 13:39:26 +0300 (MSK)
+Received: from sas2-62907d92d1d8.qloud-c.yandex.net (sas2-62907d92d1d8.qloud-c.yandex.net [2a02:6b8:c08:b895:0:640:6290:7d92])
+        by mxbackcorp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 55UrcCtsWr-dPiqKoIV;
+        Thu, 31 Oct 2019 13:39:26 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1572518366; bh=g3jMoOgCIV+oJdbBwMXSmMefvpQfsP/udePjE7IgkA0=;
+        h=Message-Id:Date:Subject:To:From:Cc;
+        b=kDteKn5X2Jv9cxfWOVFnCYgvL8M2nBvClu1WnYrbyCxh7exoJKQla+hEdUVbPGJ5M
+         b8rJ57LHsL4v18r0+kw7G2gWo4setPYN36f9YGWFrE5QyDQYXMg/gSUbihFLkVLtWx
+         FT4A9SZxBKBE0NaSQvbmi5C9WEgF0kYhuKsbIGjM=
+Authentication-Results: mxbackcorp1j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from 95.108.174.193-red.dhcp.yndx.net (95.108.174.193-red.dhcp.yndx.net [95.108.174.193])
+        by sas2-62907d92d1d8.qloud-c.yandex.net (nwsmtp/Yandex) with ESMTPSA id ab6iIZdbUM-dPVKTtPu;
+        Thu, 31 Oct 2019 13:39:25 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+From:   Dmitry Monakhov <dmonakhov@openvz.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-ext4@vger.kernel.org, jack@suse.cz,
+        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Subject: [PATCH 1/2] fs/quota: fix livelock in dquot_writeback_dquots
+Date:   Thu, 31 Oct 2019 10:39:19 +0000
+Message-Id: <20191031103920.3919-1-dmonakhov@openvz.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 12:39:18PM +0100, Jan Kara wrote:
-> On Wed 30-10-19 12:26:52, Jan Kara wrote:
-> > On Wed 30-10-19 13:00:24, Matthew Bobrowski wrote:
-> > > On Tue, Oct 29, 2019 at 07:34:01PM -0400, Theodore Y. Ts'o wrote:
-> > > > On Tue, Oct 29, 2019 at 07:31:59PM -0400, Theodore Y. Ts'o wrote:
-> > > > > Hi Matthew, it looks like there are a number of problems with this
-> > > > > patch series when using the ext3 backwards compatibility mode (e.g.,
-> > > > > no extents enabled).
-> > > > > 
-> > > > > So the following configurations are failing:
-> > > > > 
-> > > > > kvm-xfstests -c ext3   generic/091 generic/240 generic/263
-> > > 
-> > > This is one mode that I didn't get around to testing. Let me take a
-> > > look at the above and get back to you.
-> > 
-> > If I should guess, I'd start looking at what that -ENOTBLK fallback from
-> > direct IO ends up doing as we seem to be hitting that path...
-> 
-> Hum, actually no. This write from fsx output:
-> 
-> 24( 24 mod 256): WRITE    0x23000 thru 0x285ff  (0x5600 bytes)
-> 
-> should have allocated blocks to where the failed write was going (0x24000).
-> But still I'd expect some interaction between how buffered writes to holes
-> interact with following direct IO writes... One of the subtle differences
-> we have introduced with iomap conversion is that the old code in
-> __generic_file_write_iter() did fsync & invalidate written range after
-> buffered write fallback and we don't seem to do that now (probably should
-> be fixed regardless of relation to this bug).
+From: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
 
-After performing some debugging this afternoon, I quickly realised
-that the fix for this is rather trivial. Within the previous direct
-I/O implementation, we passed EXT4_GET_BLOCKS_CREATE to
-ext4_map_blocks() for any writes to inodes without extents. I seem to
-have missed that here and consequently block allocation for a write
-wasn't performing correctly in such cases.
+Write only quotas which are dirty at entry.
 
-Also, I agree, the fsync + page cache invalidation bits need to be
-implemented. I'm just thinking to branch out within
-ext4_buffered_write_iter() and implement those bits there i.e.
 
-	...
-	ret = generic_perform_write();
+XFSTEST: https://github.com/dmonakhov/xfstests/commit/b10ad23566a5bf75832a6f500e1236084083cddc
 
-	if (ret > 0 && iocb->ki_flags & IOCB_DIRECT) {
-	   	err = filemap_write_and_wait_range();
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Signed-off-by: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+---
+ fs/quota/dquot.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-		if (!err)
-			invalidate_mapping_pages();
-	...
-
-AFAICT, this would be the most appropriate place to put it? Or, did
-you have something else in mind?
-
---<M>--
+diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+index 26812a6..b492b9e 100644
+--- a/fs/quota/dquot.c
++++ b/fs/quota/dquot.c
+@@ -622,7 +622,7 @@ EXPORT_SYMBOL(dquot_scan_active);
+ /* Write all dquot structures to quota files */
+ int dquot_writeback_dquots(struct super_block *sb, int type)
+ {
+-	struct list_head *dirty;
++	struct list_head dirty;
+ 	struct dquot *dquot;
+ 	struct quota_info *dqopt = sb_dqopt(sb);
+ 	int cnt;
+@@ -636,9 +636,10 @@ int dquot_writeback_dquots(struct super_block *sb, int type)
+ 		if (!sb_has_quota_active(sb, cnt))
+ 			continue;
+ 		spin_lock(&dq_list_lock);
+-		dirty = &dqopt->info[cnt].dqi_dirty_list;
+-		while (!list_empty(dirty)) {
+-			dquot = list_first_entry(dirty, struct dquot,
++		/* Move list away to avoid livelock. */
++		list_replace_init(&dqopt->info[cnt].dqi_dirty_list, &dirty);
++		while (!list_empty(&dirty)) {
++			dquot = list_first_entry(&dirty, struct dquot,
+ 						 dq_dirty);
+ 
+ 			WARN_ON(!test_bit(DQ_ACTIVE_B, &dquot->dq_flags));
+-- 
+2.7.4
 
