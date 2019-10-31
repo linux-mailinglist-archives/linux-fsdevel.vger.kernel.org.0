@@ -2,85 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C03BFEB3C9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 16:21:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BBF5CEB45B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 16:57:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727779AbfJaPVb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Oct 2019 11:21:31 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:55931 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727721AbfJaPVb (ORCPT
+        id S1728510AbfJaP5j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Oct 2019 11:57:39 -0400
+Received: from mail-il1-f193.google.com ([209.85.166.193]:39213 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727593AbfJaP5j (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Oct 2019 11:21:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572535290;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=KB0w+J47Vm67r8tjhUMxa0RlzCeaXYS337IcG/e9RSQ=;
-        b=IGC9i1xWgEWL3wophjL5XzI1h0CDS9d7wQYuQJoWC1pPcMEfk60dPS8M3lfFB7u7Ezbjvl
-        Auo5Dd6q/nTq2jG/gD+APR7h4hOVM9+pTX2qU0vZrcsH5dpYVfOqB3WPXqWmzaBQUxZeI2
-        lHe/RRGZWf/xQ2rzLQ7K6CAyaVJr2uA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-397-MUMIyamRN_mM4zAREXjqFg-1; Thu, 31 Oct 2019 11:21:28 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 976B3107ACC0;
-        Thu, 31 Oct 2019 15:21:26 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9F00F60BEC;
-        Thu, 31 Oct 2019 15:21:23 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <fe167a90-1503-7ca2-4150-eeffd5cb1378@yandex-team.ru>
-References: <fe167a90-1503-7ca2-4150-eeffd5cb1378@yandex-team.ru> <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk> <157186189069.3995.10292601951655075484.stgit@warthog.procyon.org.uk>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Thu, 31 Oct 2019 11:57:39 -0400
+Received: by mail-il1-f193.google.com with SMTP id f201so181615ilh.6;
+        Thu, 31 Oct 2019 08:57:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5fMqgxCz9YeELky5sdMvqRGe8oe8TryFm0ddjx2jFJ8=;
+        b=r2LAcakqEaUTEWVB42o7netz4E9VSlpCiF1h3M4FyqmZMW8hARpE28IicCl+YOx7cK
+         wIYdFj49qzwuextspvTS4pX+SXfjLIQH5ePcrW24wrFI2FLPYPUJWlXcZK5vfQUYH0vM
+         LDVsW0NrfZXiJiuQa2lgvWH+vqp5PLuOBFuN8dfnoxXb2ChS8BlOoPnJ44oH3vCkeE9r
+         e7EaZZse7IDcGaylRdktf7O2XJMiLmms8LvvHOLxS4oGNFpEZb+kY2i5x5SAxqU2Otni
+         sHQPudwD1eG2lPICtrGXqx1E0CmeCqZbtDV3Yd397iWEVLyCsSkk9zsjZIBQpoEfEhlU
+         fUHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5fMqgxCz9YeELky5sdMvqRGe8oe8TryFm0ddjx2jFJ8=;
+        b=tYJhUQYiPRhWk8CfaGeWA3C5WNuKjTxAuxGp2qT3xpch3eF6+rCKblZviMmMWG1iBk
+         MuvxK3faCpJ+QfaXjW2FAXDz0gM8ueRVGujVMMsDwK8P0YlYKKfJM9gMWQSvbQo35JSn
+         iQh1u8a6juw9opcB5NN642tlHdM4NQpp21QkLETaDaSVIWIQgzTjabJI965EmV/D/v6H
+         CLHZEs5WFxB4VWd5LuysjnqTibuHL6NGLoxRgM8TQL4W1eAQlHjg4NsjQOfUG/GSnzJA
+         64PBJLCNUUWW/wJqprnV5m65hZtmb6f/EwzZPiR0rqHvEIHtSDyfSgJOjgzY+V75jWzJ
+         Vbwg==
+X-Gm-Message-State: APjAAAUpnn9DIRCzU8vhxC8K2Fk8DXI1JWSCdQ9TAPn8hxEm07AYse8d
+        nHy42b5LFHhwGJ7JNi+yMjRocNiCMQS6AVz6iHA=
+X-Google-Smtp-Source: APXvYqxDzIvxdrtfoc1J6pHr6V7TIkjAtYww+JMfs2+Z9EUun1ZsfTWDhGu6aMUtGhRbc9znef8AcsrZINaCIzSjCbQ=
+X-Received: by 2002:a92:b656:: with SMTP id s83mr6910636ili.282.1572537457279;
+ Thu, 31 Oct 2019 08:57:37 -0700 (PDT)
+MIME-Version: 1.0
+References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
+ <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
+ <CAOi1vP97DMX8zweOLfBDOFstrjC78=6RgxK3PPj_mehCOSeoaw@mail.gmail.com>
+ <4892d186-8eb0-a282-e7e6-e79958431a54@rasmusvillemoes.dk> <16620.1572534687@warthog.procyon.org.uk>
+In-Reply-To: <16620.1572534687@warthog.procyon.org.uk>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Thu, 31 Oct 2019 16:57:53 +0100
+Message-ID: <CAOi1vP9GAmy5NXJisrDssspoRcc+UHum+cyBsJTMNTjz_jieoQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring,
+ not cursor and length [ver #2]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
         nicolas.dichtel@6wind.com, raven@themaw.net,
         Christian Brauner <christian@brauner.io>,
         keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 07/10] pipe: Conditionalise wakeup in pipe_read() [ver #2]
-MIME-Version: 1.0
-Content-ID: <18021.1572535282.1@warthog.procyon.org.uk>
-Date:   Thu, 31 Oct 2019 15:21:22 +0000
-Message-ID: <18022.1572535282@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: MUMIyamRN_mM4zAREXjqFg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+        linux-block <linux-block@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-api@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Konstantin Khlebnikov <khlebnikov@yandex-team.ru> wrote:
+On Thu, Oct 31, 2019 at 4:11 PM David Howells <dhowells@redhat.com> wrote:
+>
+> How about:
+>
+>  * We use head and tail indices that aren't masked off, except at the
+>  * point of dereference, but rather they're allowed to wrap naturally.
+>  * This means there isn't a dead spot in the buffer, provided the ring
+>  * size is a power of two and <= 2^31.
 
-> > Only do a wakeup in pipe_read() if we made space in a completely full
-> > buffer.  The producer shouldn't be waiting on pipe->wait otherwise.
->=20
-> We could go further and wakeup writer only when at least half of buffer i=
-s
-> empty.  This gives better batching and reduces rate of context switches.
->=20
-> https://lore.kernel.org/lkml/157219118016.7078.16223055699799396042.stgit=
-@buzz/T/#u
+To me "provided" reads like this thing works without a dead spot or
+with a dead spot, depending on whether the condition is met.  I would
+say:
 
-Yeah, I saw that.  I suspect that where you put the slider may depend on th=
-e
-context.
+>  * This means there isn't a dead spot in the buffer, but the ring
+>  * size has to be a power of two and <= 2^31.
 
-David
+Thanks,
 
+                Ilya
