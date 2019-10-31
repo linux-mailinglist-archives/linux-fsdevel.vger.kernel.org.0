@@ -2,118 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6729CEB573
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 17:54:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CDB5EB59B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 17:59:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728672AbfJaQyV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Oct 2019 12:54:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35352 "EHLO mx1.suse.de"
+        id S1728794AbfJaQ7I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Oct 2019 12:59:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36280 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728627AbfJaQyV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Oct 2019 12:54:21 -0400
+        id S1728597AbfJaQ7I (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 31 Oct 2019 12:59:08 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DBD23AF6A;
-        Thu, 31 Oct 2019 16:54:18 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id A3B4AB355;
+        Thu, 31 Oct 2019 16:59:06 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id EFA7F1E482D; Thu, 31 Oct 2019 17:54:16 +0100 (CET)
-Date:   Thu, 31 Oct 2019 17:54:16 +0100
+        id CC7811E482D; Thu, 31 Oct 2019 17:59:05 +0100 (CET)
+Date:   Thu, 31 Oct 2019 17:59:05 +0100
 From:   Jan Kara <jack@suse.cz>
-To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Cc:     Jan Kara <jack@suse.cz>, "Theodore Y. Ts'o" <tytso@mit.edu>,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, hch@infradead.org,
-        david@fromorbit.com, darrick.wong@oracle.com
-Subject: Re: [PATCH v6 00/11] ext4: port direct I/O to iomap infrastructure
-Message-ID: <20191031165416.GD13321@quack2.suse.cz>
-References: <cover.1572255424.git.mbobrowski@mbobrowski.org>
- <20191029233159.GA8537@mit.edu>
- <20191029233401.GB8537@mit.edu>
- <20191030020022.GA7392@bobrowski>
- <20191030112652.GF28525@quack2.suse.cz>
- <20191030113918.GG28525@quack2.suse.cz>
- <20191031091639.GB28679@bobrowski>
+To:     Dmitry Monakhov <dmonakhov@openvz.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jack@suse.cz, tytso@mit.edu,
+        lixi@ddn.com, Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Subject: Re: [PATCH] fs/ext4: get project quota from inode for mangling
+ statfs results
+Message-ID: <20191031165905.GE13321@quack2.suse.cz>
+References: <20191031110348.6991-1-dmonakhov@openvz.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191031091639.GB28679@bobrowski>
+In-Reply-To: <20191031110348.6991-1-dmonakhov@openvz.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 31-10-19 20:16:41, Matthew Bobrowski wrote:
-> On Wed, Oct 30, 2019 at 12:39:18PM +0100, Jan Kara wrote:
-> > On Wed 30-10-19 12:26:52, Jan Kara wrote:
-> > > On Wed 30-10-19 13:00:24, Matthew Bobrowski wrote:
-> > > > On Tue, Oct 29, 2019 at 07:34:01PM -0400, Theodore Y. Ts'o wrote:
-> > > > > On Tue, Oct 29, 2019 at 07:31:59PM -0400, Theodore Y. Ts'o wrote:
-> > > > > > Hi Matthew, it looks like there are a number of problems with this
-> > > > > > patch series when using the ext3 backwards compatibility mode (e.g.,
-> > > > > > no extents enabled).
-> > > > > > 
-> > > > > > So the following configurations are failing:
-> > > > > > 
-> > > > > > kvm-xfstests -c ext3   generic/091 generic/240 generic/263
-> > > > 
-> > > > This is one mode that I didn't get around to testing. Let me take a
-> > > > look at the above and get back to you.
-> > > 
-> > > If I should guess, I'd start looking at what that -ENOTBLK fallback from
-> > > direct IO ends up doing as we seem to be hitting that path...
-> > 
-> > Hum, actually no. This write from fsx output:
-> > 
-> > 24( 24 mod 256): WRITE    0x23000 thru 0x285ff  (0x5600 bytes)
-> > 
-> > should have allocated blocks to where the failed write was going (0x24000).
-> > But still I'd expect some interaction between how buffered writes to holes
-> > interact with following direct IO writes... One of the subtle differences
-> > we have introduced with iomap conversion is that the old code in
-> > __generic_file_write_iter() did fsync & invalidate written range after
-> > buffered write fallback and we don't seem to do that now (probably should
-> > be fixed regardless of relation to this bug).
+On Thu 31-10-19 11:03:48, Dmitry Monakhov wrote:
+> From: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
 > 
-> After performing some debugging this afternoon, I quickly realised
-> that the fix for this is rather trivial. Within the previous direct
-> I/O implementation, we passed EXT4_GET_BLOCKS_CREATE to
-> ext4_map_blocks() for any writes to inodes without extents. I seem to
-> have missed that here and consequently block allocation for a write
-> wasn't performing correctly in such cases.
+> Right now ext4_statfs_project() does quota lookup by id every time.
+> This is costly operation, especially if there is no inode who hold
+> reference to this dquot. This means that each statfs performs useless
+> ext4_acquire_dquot()/ext4_release_dquot() which serialized on __jbd2_log_wait_for_space()
+> dqget()
+>  ->ext4_acquire_dquot
+>    -> ext4_journal_start
+>       -> __jbd2_log_wait_for_space
+> dqput()
+>   -> ext4_release_dquot
+>      ->ext4_journal_start
+>        ->__jbd2_log_wait_for_space
+> 
+> 
+> Function ext4_statfs_project() could be moved into generic quota code,
+> it is required for every filesystem which uses generic project quota.
+> 
+> Reported-by: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-No, this is not correct. For inodes without extents we used
-ext4_dio_get_block() and we pass DIO_SKIP_HOLES to __blockdev_direct_IO().
-Now DIO_SKIP_HOLES means that if starting block is within i_size, we pass
-'create == 0' to get_blocks() function and thus ext4_dio_get_block() uses
-'0' argument to ext4_map_blocks() similarly to what you do.
+Thanks! The patch looks good to me. You can add:
 
-And indeed for inodes without extents we must fallback to buffered IO for
-filling holes inside a file to avoid stale data exposure (racing DIO read
-could read block contents before data is written to it if we used
-EXT4_GET_BLOCKS_CREATE).
-
-> Also, I agree, the fsync + page cache invalidation bits need to be
-> implemented. I'm just thinking to branch out within
-> ext4_buffered_write_iter() and implement those bits there i.e.
-> 
-> 	...
-> 	ret = generic_perform_write();
-> 
-> 	if (ret > 0 && iocb->ki_flags & IOCB_DIRECT) {
-> 	   	err = filemap_write_and_wait_range();
-> 
-> 		if (!err)
-> 			invalidate_mapping_pages();
-> 	...
-> 
-> AFAICT, this would be the most appropriate place to put it? Or, did
-> you have something else in mind?
-
-Yes, either this, or maybe in ext4_dio_write_iter() after returning from
-ext4_buffered_write_iter() would be even more logical.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
+
+
+> ---
+>  fs/ext4/super.c | 25 ++++++++++++++++---------
+>  1 file changed, 16 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 2318e5f..4e8f97d68 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -5532,18 +5532,23 @@ static int ext4_remount(struct super_block *sb, int *flags, char *data)
+>  }
+>  
+>  #ifdef CONFIG_QUOTA
+> -static int ext4_statfs_project(struct super_block *sb,
+> -			       kprojid_t projid, struct kstatfs *buf)
+> +static int ext4_statfs_project(struct inode *inode, struct kstatfs *buf)
+>  {
+> -	struct kqid qid;
+> +	struct super_block *sb = inode->i_sb;
+>  	struct dquot *dquot;
+>  	u64 limit;
+>  	u64 curblock;
+> +	int err;
+> +
+> +	err = dquot_initialize(inode);
+> +	if (err)
+> +		return err;
+> +
+> +	spin_lock(&inode->i_lock);
+> +	dquot = ext4_get_dquots(inode)[PRJQUOTA];
+> +	if (!dquot)
+> +		goto out_unlock;
+>  
+> -	qid = make_kqid_projid(projid);
+> -	dquot = dqget(sb, qid);
+> -	if (IS_ERR(dquot))
+> -		return PTR_ERR(dquot);
+>  	spin_lock(&dquot->dq_dqb_lock);
+>  
+>  	limit = (dquot->dq_dqb.dqb_bsoftlimit ?
+> @@ -5569,7 +5574,9 @@ static int ext4_statfs_project(struct super_block *sb,
+>  	}
+>  
+>  	spin_unlock(&dquot->dq_dqb_lock);
+> -	dqput(dquot);
+> +out_unlock:
+> +	spin_unlock(&inode->i_lock);
+> +
+>  	return 0;
+>  }
+>  #endif
+> @@ -5609,7 +5616,7 @@ static int ext4_statfs(struct dentry *dentry, struct kstatfs *buf)
+>  #ifdef CONFIG_QUOTA
+>  	if (ext4_test_inode_flag(dentry->d_inode, EXT4_INODE_PROJINHERIT) &&
+>  	    sb_has_quota_limits_enabled(sb, PRJQUOTA))
+> -		ext4_statfs_project(sb, EXT4_I(dentry->d_inode)->i_projid, buf);
+> +		ext4_statfs_project(dentry->d_inode, buf);
+>  #endif
+>  	return 0;
+>  }
+> -- 
+> 2.7.4
+> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
