@@ -2,184 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F151FEB6C9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 19:18:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10EC5EB6D8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 19:23:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729266AbfJaSSt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Oct 2019 14:18:49 -0400
-Received: from mga02.intel.com ([134.134.136.20]:23109 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729027AbfJaSSs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Oct 2019 14:18:48 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2019 11:18:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,252,1569308400"; 
-   d="scan'208";a="375329849"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga005.jf.intel.com with ESMTP; 31 Oct 2019 11:18:45 -0700
-Date:   Thu, 31 Oct 2019 11:18:44 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH 01/19] mm/gup: pass flags arg to __gup_device_* functions
-Message-ID: <20191031181844.GB14771@iweiny-DESK2.sc.intel.com>
-References: <20191030224930.3990755-1-jhubbard@nvidia.com>
- <20191030224930.3990755-2-jhubbard@nvidia.com>
+        id S1729244AbfJaSXQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Oct 2019 14:23:16 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35608 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729149AbfJaSXP (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 31 Oct 2019 14:23:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bxpUhY/qtwNaeue6qcQlTx7BDSxYIRC42kFrjayFps0=; b=r4ujFx2c+gNY+WxneSRVK4m9w
+        H0qa02Od7ZaBJosxTMd2wNBMdyNOGkMAcwWD6iZGHkr82+AiJjxoYyyr8BU5ao1JrK3GUdgbOYO2G
+        7+UV3QhIfrG2GV0ezl3f2ItkPqnazxDdRNrT5lmS7aF51M1KkRx1MQSrez6mI+/8y48vtz6H5COMB
+        IeGuhUxt5oLlOReFvjh+GipT8sQfL3gZEJS2ewrhIAM7GLs+jgEOHebsY2Q5aqTWGK1skLgIElgOq
+        pClq7/xatxK8uqc6+copbj6jtcl7bk7qV12Qi1zBNQ7KjgIujYB9qwLKEvqvQCDgqlEtQu/yPd5wr
+        fUpF2Uh6g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iQF6I-0001rc-B6; Thu, 31 Oct 2019 18:23:14 +0000
+Date:   Thu, 31 Oct 2019 11:23:14 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Satya Tangirala <satyat@google.com>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Kim Boojin <boojin.kim@samsung.com>
+Subject: Re: [PATCH v5 5/9] scsi: ufs: UFS crypto API
+Message-ID: <20191031182314.GD23601@infradead.org>
+References: <20191028072032.6911-1-satyat@google.com>
+ <20191028072032.6911-6-satyat@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191030224930.3990755-2-jhubbard@nvidia.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20191028072032.6911-6-satyat@google.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 03:49:12PM -0700, John Hubbard wrote:
-> A subsequent patch requires access to gup flags, so
-> pass the flags argument through to the __gup_device_*
-> functions.
-> 
-> Also placate checkpatch.pl by shortening a nearby line.
-> 
+> +static size_t get_keysize_bytes(enum ufs_crypto_key_size size)
+> +{
+> +	switch (size) {
+> +	case UFS_CRYPTO_KEY_SIZE_128: return 16;
+> +	case UFS_CRYPTO_KEY_SIZE_192: return 24;
+> +	case UFS_CRYPTO_KEY_SIZE_256: return 32;
+> +	case UFS_CRYPTO_KEY_SIZE_512: return 64;
+> +	default: return 0;
+> +	}
+> +}
 
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+Please fix the indentation and move all the returns to their own
+lines.  There are various more spots that will need to be fixed
+like this as well later in the patch.
 
-> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
->  mm/gup.c | 28 ++++++++++++++++++----------
->  1 file changed, 18 insertions(+), 10 deletions(-)
-> 
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 8f236a335ae9..85caf76b3012 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -1890,7 +1890,8 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
->  
->  #if defined(CONFIG_ARCH_HAS_PTE_DEVMAP) && defined(CONFIG_TRANSPARENT_HUGEPAGE)
->  static int __gup_device_huge(unsigned long pfn, unsigned long addr,
-> -		unsigned long end, struct page **pages, int *nr)
-> +			     unsigned long end, unsigned int flags,
-> +			     struct page **pages, int *nr)
->  {
->  	int nr_start = *nr;
->  	struct dev_pagemap *pgmap = NULL;
-> @@ -1916,13 +1917,14 @@ static int __gup_device_huge(unsigned long pfn, unsigned long addr,
->  }
->  
->  static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
-> -		unsigned long end, struct page **pages, int *nr)
-> +				 unsigned long end, unsigned int flags,
-> +				 struct page **pages, int *nr)
->  {
->  	unsigned long fault_pfn;
->  	int nr_start = *nr;
->  
->  	fault_pfn = pmd_pfn(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
-> -	if (!__gup_device_huge(fault_pfn, addr, end, pages, nr))
-> +	if (!__gup_device_huge(fault_pfn, addr, end, flags, pages, nr))
->  		return 0;
->  
->  	if (unlikely(pmd_val(orig) != pmd_val(*pmdp))) {
-> @@ -1933,13 +1935,14 @@ static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
->  }
->  
->  static int __gup_device_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
-> -		unsigned long end, struct page **pages, int *nr)
-> +				 unsigned long end, unsigned int flags,
-> +				 struct page **pages, int *nr)
->  {
->  	unsigned long fault_pfn;
->  	int nr_start = *nr;
->  
->  	fault_pfn = pud_pfn(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
-> -	if (!__gup_device_huge(fault_pfn, addr, end, pages, nr))
-> +	if (!__gup_device_huge(fault_pfn, addr, end, flags, pages, nr))
->  		return 0;
->  
->  	if (unlikely(pud_val(orig) != pud_val(*pudp))) {
-> @@ -1950,14 +1953,16 @@ static int __gup_device_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
->  }
->  #else
->  static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
-> -		unsigned long end, struct page **pages, int *nr)
-> +				 unsigned long end, unsigned int flags,
-> +				 struct page **pages, int *nr)
->  {
->  	BUILD_BUG();
->  	return 0;
->  }
->  
->  static int __gup_device_huge_pud(pud_t pud, pud_t *pudp, unsigned long addr,
-> -		unsigned long end, struct page **pages, int *nr)
-> +				 unsigned long end, unsigned int flags,
-> +				 struct page **pages, int *nr)
->  {
->  	BUILD_BUG();
->  	return 0;
-> @@ -2062,7 +2067,8 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
->  	if (pmd_devmap(orig)) {
->  		if (unlikely(flags & FOLL_LONGTERM))
->  			return 0;
-> -		return __gup_device_huge_pmd(orig, pmdp, addr, end, pages, nr);
-> +		return __gup_device_huge_pmd(orig, pmdp, addr, end, flags,
-> +					     pages, nr);
->  	}
->  
->  	refs = 0;
-> @@ -2092,7 +2098,8 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
->  }
->  
->  static int gup_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
-> -		unsigned long end, unsigned int flags, struct page **pages, int *nr)
-> +			unsigned long end, unsigned int flags,
-> +			struct page **pages, int *nr)
->  {
->  	struct page *head, *page;
->  	int refs;
-> @@ -2103,7 +2110,8 @@ static int gup_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
->  	if (pud_devmap(orig)) {
->  		if (unlikely(flags & FOLL_LONGTERM))
->  			return 0;
-> -		return __gup_device_huge_pud(orig, pudp, addr, end, pages, nr);
-> +		return __gup_device_huge_pud(orig, pudp, addr, end, flags,
-> +					     pages, nr);
->  	}
->  
->  	refs = 0;
-> -- 
-> 2.23.0
-> 
+> +
+> +static int ufshcd_crypto_cap_find(void *hba_p,
+> +			   enum blk_crypto_mode_num crypto_mode,
+> +			   unsigned int data_unit_size)
+> +{
+> +	struct ufs_hba *hba = hba_p;
+
+Please properly type the first argument.
+
+> +	case UFS_CRYPTO_ALG_BITLOCKER_AES_CBC: // fallthrough
+
+Please don't use // comments.
+
+> +static void program_key(struct ufs_hba *hba,
+> +			const union ufs_crypto_cfg_entry *cfg,
+> +			int slot)
+
+The function name needs a ufshcd prefix.
+
+> +	wmb();
+> +	for (i = 0; i < 16; i++) {
+> +		ufshcd_writel(hba, le32_to_cpu(cfg->reg_val[i]),
+> +			      slot_offset + i * sizeof(cfg->reg_val[0]));
+> +		/* Spec says each dword in key must be written sequentially */
+> +		wmb();
+> +	}
+> +	/* Write dword 17 */
+> +	ufshcd_writel(hba, le32_to_cpu(cfg->reg_val[17]),
+> +		      slot_offset + 17 * sizeof(cfg->reg_val[0]));
+> +	/* Dword 16 must be written last */
+> +	wmb();
+> +	/* Write dword 16 */
+> +	ufshcd_writel(hba, le32_to_cpu(cfg->reg_val[16]),
+> +		      slot_offset + 16 * sizeof(cfg->reg_val[0]));
+> +	wmb();
+
+wmb() has no meaning for MMIO operations, something looks very fishy
+here.
+
+> +static int ufshcd_crypto_keyslot_program(void *hba_p, const u8 *key,
+> +					 enum blk_crypto_mode_num crypto_mode,
+> +					 unsigned int data_unit_size,
+> +					 unsigned int slot)
+> +{
+> +	struct ufs_hba *hba = hba_p;
+
+This is not a very type safe API.  I think the proper thing to do
+would be to allocte the struct keyslot_manager in the driver (ufshcd)
+as part of the containing structure (ufs_hba) and then just have
+a keyslot_manager_init that initializes the field.  Then pass the
+struct keyslot_manager to the methods, which can use container_of
+to get the containing structure.
+
+> +#define NUM_KEYSLOTS(hba) (hba->crypto_capabilities.config_count + 1)
+
+Please make this an inline function.
