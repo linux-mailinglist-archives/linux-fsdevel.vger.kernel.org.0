@@ -2,233 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB90DEB6B8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 19:16:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F151FEB6C9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 19:18:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729248AbfJaSQO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Oct 2019 14:16:14 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35388 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726602AbfJaSQO (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Oct 2019 14:16:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=17ny2tyYchuJcZntPepC2H7DRLPjDMpL4NN+oqkqSow=; b=EBzOdjKJXHWIkOTWFGwr92r+5
-        0oG5g6sFqfUFUORDYSobteMoX8yA7NquOFErl5Jbz48+hIfWxcIUd2t2rdIZi79XuvjBBJ5u0JR5Y
-        1F55Lv6918LQWZoZNR0zcsCTYbcDkUJVBfxYGHHyap6eigddijJxdEyEJvoQqxC+3jdOkv7IN+Tiz
-        /QJ+TO5k0wyIxrT7zBPR8NnxUbpBYPSLan8jovTam+iF8BawhDJe8Pil4dHgM7+JZL19l8rxuJCL0
-        gGiMvL4q+csvDWn1upZy/WdDiVB7gvPUgBphrTTpgS6GJigFEPhaoVk6oTAWNhk2EDUBX8lqdpV/u
-        Rdo2k2J2A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iQEzV-00005I-Jz; Thu, 31 Oct 2019 18:16:13 +0000
-Date:   Thu, 31 Oct 2019 11:16:13 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Satya Tangirala <satyat@google.com>
-Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Kim Boojin <boojin.kim@samsung.com>
-Subject: Re: [PATCH v5 2/9] block: Add encryption context to struct bio
-Message-ID: <20191031181613.GC23601@infradead.org>
-References: <20191028072032.6911-1-satyat@google.com>
- <20191028072032.6911-3-satyat@google.com>
+        id S1729266AbfJaSSt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Oct 2019 14:18:49 -0400
+Received: from mga02.intel.com ([134.134.136.20]:23109 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729027AbfJaSSs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 31 Oct 2019 14:18:48 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Oct 2019 11:18:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,252,1569308400"; 
+   d="scan'208";a="375329849"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga005.jf.intel.com with ESMTP; 31 Oct 2019 11:18:45 -0700
+Date:   Thu, 31 Oct 2019 11:18:44 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH 01/19] mm/gup: pass flags arg to __gup_device_* functions
+Message-ID: <20191031181844.GB14771@iweiny-DESK2.sc.intel.com>
+References: <20191030224930.3990755-1-jhubbard@nvidia.com>
+ <20191030224930.3990755-2-jhubbard@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191028072032.6911-3-satyat@google.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20191030224930.3990755-2-jhubbard@nvidia.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> +static int num_prealloc_crypt_ctxs = 128;
+On Wed, Oct 30, 2019 at 03:49:12PM -0700, John Hubbard wrote:
+> A subsequent patch requires access to gup flags, so
+> pass the flags argument through to the __gup_device_*
+> functions.
+> 
+> Also placate checkpatch.pl by shortening a nearby line.
+> 
 
-Where does that magic number come from?
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
 
-> +struct bio_crypt_ctx *bio_crypt_alloc_ctx(gfp_t gfp_mask)
-> +{
-> +	return mempool_alloc(bio_crypt_ctx_pool, gfp_mask);
-> +}
-> +EXPORT_SYMBOL(bio_crypt_alloc_ctx);
-
-This isn't used by an modular code.
-
-> +void bio_crypt_free_ctx(struct bio *bio)
-> +{
-> +	mempool_free(bio->bi_crypt_context, bio_crypt_ctx_pool);
-> +	bio->bi_crypt_context = NULL;
-> +}
-> +EXPORT_SYMBOL(bio_crypt_free_ctx);
-
-This one is called from modular code, but I think the usage in DM
-is bogus, as the caller of the function eventually does a bio_put,
-which ends up in bio_free and takes care of the freeing as well.
-
-> +bool bio_crypt_should_process(struct bio *bio, struct request_queue *q)
-> +{
-> +	if (!bio_has_crypt_ctx(bio))
-> +		return false;
-> +
-> +	WARN_ON(!bio_crypt_has_keyslot(bio));
-> +	return q->ksm == bio->bi_crypt_context->processing_ksm;
-> +}
-
-Passing a struct request here and also adding the ->bio != NULL check
-here would simplify the only caller in ufs a bit.
-
-> +/*
-> + * Checks that two bio crypt contexts are compatible - i.e. that
-> + * they are mergeable except for data_unit_num continuity.
-> + */
-> +bool bio_crypt_ctx_compatible(struct bio *b_1, struct bio *b_2)
-> +{
-> +	struct bio_crypt_ctx *bc1 = b_1->bi_crypt_context;
-> +	struct bio_crypt_ctx *bc2 = b_2->bi_crypt_context;
-> +
-> +	if (bio_has_crypt_ctx(b_1) != bio_has_crypt_ctx(b_2))
-> +		return false;
-> +
-> +	if (!bio_has_crypt_ctx(b_1))
-> +		return true;
-> +
-> +	return bc1->keyslot == bc2->keyslot &&
-> +	       bc1->data_unit_size_bits == bc2->data_unit_size_bits;
-> +}
-
-I think we'd normally call this bio_crypt_ctx_mergeable.
-
-> +	if (bio_crypt_clone(b, bio, gfp_mask) < 0) {
-> +		bio_put(b);
-> +		return NULL;
-> +	}
+> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+>  mm/gup.c | 28 ++++++++++++++++++----------
+>  1 file changed, 18 insertions(+), 10 deletions(-)
+> 
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 8f236a335ae9..85caf76b3012 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -1890,7 +1890,8 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
 >  
-> -		if (ret < 0) {
-> -			bio_put(b);
-> -			return NULL;
-> -		}
-> +	if (bio_integrity(bio) &&
-> +	    bio_integrity_clone(b, bio, gfp_mask) < 0) {
-> +		bio_put(b);
-> +		return NULL;
-
-Pleae use a goto to merge the common error handling path
-
-> +		if (!bio_crypt_ctx_back_mergeable(req->bio,
-> +						  blk_rq_sectors(req),
-> +						  next->bio)) {
-> +			return ELEVATOR_NO_MERGE;
-> +		}
-
-No neef for the braces.  And pretty weird alignment, normal Linux style
-would be:
-
-		if (!bio_crypt_ctx_back_mergeable(req->bio,
-				blk_rq_sectors(req), next->bio))
-			return ELEVATOR_NO_MERGE;
-
-> +		if (!bio_crypt_ctx_back_mergeable(rq->bio,
-> +						  blk_rq_sectors(rq), bio)) {
-> +			return ELEVATOR_NO_MERGE;
-> +		}
->  		return ELEVATOR_BACK_MERGE;
-> -	else if (blk_rq_pos(rq) - bio_sectors(bio) == bio->bi_iter.bi_sector)
-> +	} else if (blk_rq_pos(rq) - bio_sectors(bio) ==
-> +		   bio->bi_iter.bi_sector) {
-> +		if (!bio_crypt_ctx_back_mergeable(bio,
-> +						  bio_sectors(bio), rq->bio)) {
-> +			return ELEVATOR_NO_MERGE;
-> +		}
-
-Same for these two.
-
-> +++ b/block/bounce.c
-> @@ -267,14 +267,15 @@ static struct bio *bounce_clone_bio(struct bio *bio_src, gfp_t gfp_mask,
->  		break;
+>  #if defined(CONFIG_ARCH_HAS_PTE_DEVMAP) && defined(CONFIG_TRANSPARENT_HUGEPAGE)
+>  static int __gup_device_huge(unsigned long pfn, unsigned long addr,
+> -		unsigned long end, struct page **pages, int *nr)
+> +			     unsigned long end, unsigned int flags,
+> +			     struct page **pages, int *nr)
+>  {
+>  	int nr_start = *nr;
+>  	struct dev_pagemap *pgmap = NULL;
+> @@ -1916,13 +1917,14 @@ static int __gup_device_huge(unsigned long pfn, unsigned long addr,
+>  }
+>  
+>  static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
+> -		unsigned long end, struct page **pages, int *nr)
+> +				 unsigned long end, unsigned int flags,
+> +				 struct page **pages, int *nr)
+>  {
+>  	unsigned long fault_pfn;
+>  	int nr_start = *nr;
+>  
+>  	fault_pfn = pmd_pfn(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
+> -	if (!__gup_device_huge(fault_pfn, addr, end, pages, nr))
+> +	if (!__gup_device_huge(fault_pfn, addr, end, flags, pages, nr))
+>  		return 0;
+>  
+>  	if (unlikely(pmd_val(orig) != pmd_val(*pmdp))) {
+> @@ -1933,13 +1935,14 @@ static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
+>  }
+>  
+>  static int __gup_device_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
+> -		unsigned long end, struct page **pages, int *nr)
+> +				 unsigned long end, unsigned int flags,
+> +				 struct page **pages, int *nr)
+>  {
+>  	unsigned long fault_pfn;
+>  	int nr_start = *nr;
+>  
+>  	fault_pfn = pud_pfn(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
+> -	if (!__gup_device_huge(fault_pfn, addr, end, pages, nr))
+> +	if (!__gup_device_huge(fault_pfn, addr, end, flags, pages, nr))
+>  		return 0;
+>  
+>  	if (unlikely(pud_val(orig) != pud_val(*pudp))) {
+> @@ -1950,14 +1953,16 @@ static int __gup_device_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
+>  }
+>  #else
+>  static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
+> -		unsigned long end, struct page **pages, int *nr)
+> +				 unsigned long end, unsigned int flags,
+> +				 struct page **pages, int *nr)
+>  {
+>  	BUILD_BUG();
+>  	return 0;
+>  }
+>  
+>  static int __gup_device_huge_pud(pud_t pud, pud_t *pudp, unsigned long addr,
+> -		unsigned long end, struct page **pages, int *nr)
+> +				 unsigned long end, unsigned int flags,
+> +				 struct page **pages, int *nr)
+>  {
+>  	BUILD_BUG();
+>  	return 0;
+> @@ -2062,7 +2067,8 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
+>  	if (pmd_devmap(orig)) {
+>  		if (unlikely(flags & FOLL_LONGTERM))
+>  			return 0;
+> -		return __gup_device_huge_pmd(orig, pmdp, addr, end, pages, nr);
+> +		return __gup_device_huge_pmd(orig, pmdp, addr, end, flags,
+> +					     pages, nr);
 >  	}
 >  
-> -	if (bio_integrity(bio_src)) {
-> -		int ret;
-> +	if (bio_crypt_clone(bio, bio_src, gfp_mask) < 0) {
-> +		bio_put(bio);
-> +		return NULL;
-> +	}
+>  	refs = 0;
+> @@ -2092,7 +2098,8 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
+>  }
 >  
-> -		ret = bio_integrity_clone(bio, bio_src, gfp_mask);
-> -		if (ret < 0) {
-> -			bio_put(bio);
-> -			return NULL;
-> -		}
-> +	if (bio_integrity(bio_src) &&
-> +	    bio_integrity_clone(bio, bio_src, gfp_mask) < 0) {
-> +		bio_put(bio);
-> +		return NULL;
-
-Use a common error path with a goto, please.
-
-> +static inline int bio_crypt_set_ctx(struct bio *bio,
-> +				    const u8 *raw_key,
-> +				    enum blk_crypto_mode_num crypto_mode,
-> +				    u64 dun,
-> +				    unsigned int dun_bits,
-> +				    gfp_t gfp_mask)
-
-Pleae just open code this in the only caller.
-
-> +{
-> +	struct bio_crypt_ctx *crypt_ctx;
-> +
-> +	crypt_ctx = bio_crypt_alloc_ctx(gfp_mask);
-> +	if (!crypt_ctx)
-> +		return -ENOMEM;
-
-Also bio_crypt_alloc_ctx with a waiting mask will never return an
-error.  Changing this function and its call chain to void returns will
-clean up a lot of code in this series.
-
-> +static inline void bio_set_data_unit_num(struct bio *bio, u64 dun)
-> +{
-> +	bio->bi_crypt_context->data_unit_num = dun;
-> +}
-
-This function is never used and can be removed.
-
-> +static inline void bio_crypt_set_keyslot(struct bio *bio,
-> +					 unsigned int keyslot,
-> +					 struct keyslot_manager *ksm)
-> +{
-> +	bio->bi_crypt_context->keyslot = keyslot;
-> +	bio->bi_crypt_context->processing_ksm = ksm;
-> +}
-
-Just adding these two lines to the only caller will be a lot cleaner.
-
-> +static inline const u8 *bio_crypt_raw_key(struct bio *bio)
-> +{
-> +	return bio->bi_crypt_context->raw_key;
-> +}
-
-Can be inlined into the only caller.
-
-> +
-> +static inline enum blk_crypto_mode_num bio_crypto_mode(struct bio *bio)
-> +{
-> +	return bio->bi_crypt_context->crypto_mode;
-> +}
-
-Same here.
-
-> +static inline u64 bio_crypt_sw_data_unit_num(struct bio *bio)
-> +{
-> +	return bio->bi_crypt_context->sw_data_unit_num;
-> +}
-
-Same here.
+>  static int gup_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
+> -		unsigned long end, unsigned int flags, struct page **pages, int *nr)
+> +			unsigned long end, unsigned int flags,
+> +			struct page **pages, int *nr)
+>  {
+>  	struct page *head, *page;
+>  	int refs;
+> @@ -2103,7 +2110,8 @@ static int gup_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
+>  	if (pud_devmap(orig)) {
+>  		if (unlikely(flags & FOLL_LONGTERM))
+>  			return 0;
+> -		return __gup_device_huge_pud(orig, pudp, addr, end, pages, nr);
+> +		return __gup_device_huge_pud(orig, pudp, addr, end, flags,
+> +					     pages, nr);
+>  	}
+>  
+>  	refs = 0;
+> -- 
+> 2.23.0
+> 
