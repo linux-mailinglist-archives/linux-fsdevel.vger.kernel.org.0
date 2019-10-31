@@ -2,132 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46384EB4CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 17:38:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8E59EB4E5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 17:43:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728598AbfJaQiQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Oct 2019 12:38:16 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:50417 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727856AbfJaQiQ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Oct 2019 12:38:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572539894;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=mxgLr4gqIZKHqSVNNAtea7HdJZYdiBMzARcL7j6XY2g=;
-        b=CF2hlQA8etUWX3SO7hGGqhd6fyRHTFCj/P3PpJH7AcCa8ad7e3giVNi8Aq/TYokeRHzC/i
-        Q3SzGnV0D5cxgMbF5fw9T93fPMiWX+AG4kg3OU+rkeznI04dj96wzsdlQKJGGA5kDqDQwd
-        bkrjqLI8Ac50PdU/ArudXekH2hbChhs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-120-OBNcKO5IPbCsAav66unpNg-1; Thu, 31 Oct 2019 12:38:11 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D80461800D55;
-        Thu, 31 Oct 2019 16:38:08 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A573219C5B;
-        Thu, 31 Oct 2019 16:38:05 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <fe167a90-1503-7ca2-4150-eeffd5cb1378@yandex-team.ru>
-References: <fe167a90-1503-7ca2-4150-eeffd5cb1378@yandex-team.ru> <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk> <157186189069.3995.10292601951655075484.stgit@warthog.procyon.org.uk>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 07/10] pipe: Conditionalise wakeup in pipe_read() [ver #2]
+        id S1728660AbfJaQn0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Oct 2019 12:43:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59658 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728521AbfJaQn0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 31 Oct 2019 12:43:26 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 71E17B243;
+        Thu, 31 Oct 2019 16:43:23 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 5597C1E482D; Thu, 31 Oct 2019 17:43:22 +0100 (CET)
+Date:   Thu, 31 Oct 2019 17:43:22 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Jan Kara <jack@suse.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-fsdevel@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-arch@vger.kernel.org
+Subject: Re: [RFC] errno.h: Provide EFSCORRUPTED for everybody
+Message-ID: <20191031164322.GC13321@quack2.suse.cz>
+References: <20191031010736.113783-1-Valdis.Kletnieks@vt.edu>
 MIME-Version: 1.0
-Content-ID: <3164.1572539884.1@warthog.procyon.org.uk>
-Date:   Thu, 31 Oct 2019 16:38:04 +0000
-Message-ID: <3165.1572539884@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: OBNcKO5IPbCsAav66unpNg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191031010736.113783-1-Valdis.Kletnieks@vt.edu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Okay, attached is a change that might give you what you want.  I tried my
-pipe-bench program (see cover note) with perf.  The output of the program w=
-ith
-the patch applied was:
+On Wed 30-10-19 21:07:33, Valdis Kletnieks wrote:
+> Three questions: (a) ACK/NAK on this patch, (b) should it be all in one
+> patch, or one to add to errno.h and 6 patches for 6 filesystems?), and
+> (c) if one patch, who gets to shepherd it through?
+> 
+> 
+> There's currently 6 filesystems that have the same #define. Move it
+> into errno.h so it's defined in just one place.
+> 
+> Signed-off-by: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>
 
--       pipe                  305127298     36262221772       302185181    =
-     7887690
+Looks good to me. You can add:
 
-The output of perf with the patch applied:
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-        239,943.92 msec task-clock                #    1.997 CPUs utilized
-            17,728      context-switches          #   73.884 M/sec
-               124      cpu-migrations            #    0.517 M/sec
-             9,330      page-faults               #   38.884 M/sec
-   885,107,207,365      cycles                    # 3688822.793 GHz
- 1,386,873,499,490      instructions              #    1.57  insn per cycle
-   311,037,372,339      branches                  # 1296296921.931 M/sec
-        33,467,827      branch-misses             #    0.01% of all branche=
-s
+								Honza
 
-And without:
-
-        239,891.87 msec task-clock                #    1.997 CPUs utilized
-            22,187      context-switches          #   92.488 M/sec
-               133      cpu-migrations            #    0.554 M/sec
-             9,334      page-faults               #   38.909 M/sec
-   884,906,976,128      cycles                    # 3688787.725 GHz
- 1,391,986,932,265      instructions              #    1.57  insn per cycle
-   311,394,686,857      branches                  # 1298067400.849 M/sec
-        30,242,823      branch-misses             #    0.01% of all branche=
-s
-
-So it did make something like a 20% reduction in context switches.
-
-David
----
-diff --git a/fs/pipe.c b/fs/pipe.c
-index e3d5f7a39123..5167921edd73 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -276,7 +276,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- =09size_t total_len =3D iov_iter_count(to);
- =09struct file *filp =3D iocb->ki_filp;
- =09struct pipe_inode_info *pipe =3D filp->private_data;
--=09int do_wakeup;
-+=09int do_wakeup, wake;
- =09ssize_t ret;
-
- =09/* Null read succeeds. */
-@@ -329,11 +329,12 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- =09=09=09=09tail++;
- =09=09=09=09pipe->tail =3D tail;
- =09=09=09=09do_wakeup =3D 1;
--=09=09=09=09if (head - (tail - 1) =3D=3D pipe->max_usage)
-+=09=09=09=09wake =3D head - (tail - 1) =3D=3D pipe->max_usage / 2;
-+=09=09=09=09if (wake)
- =09=09=09=09=09wake_up_interruptible_sync_poll_locked(
- =09=09=09=09=09=09&pipe->wait, EPOLLOUT | EPOLLWRNORM);
- =09=09=09=09spin_unlock_irq(&pipe->wait.lock);
--=09=09=09=09if (head - (tail - 1) =3D=3D pipe->max_usage)
-+=09=09=09=09if (wake)
- =09=09=09=09=09kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
- =09=09=09}
- =09=09=09total_len -=3D chars;
-
+> ---
+>  drivers/staging/exfat/exfat.h    | 2 --
+>  fs/erofs/internal.h              | 2 --
+>  fs/ext4/ext4.h                   | 1 -
+>  fs/f2fs/f2fs.h                   | 1 -
+>  fs/xfs/xfs_linux.h               | 1 -
+>  include/linux/jbd2.h             | 1 -
+>  include/uapi/asm-generic/errno.h | 1 +
+>  7 files changed, 1 insertion(+), 8 deletions(-)
+> 
+> diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
+> index 84de1123e178..3cf7e54af0b7 100644
+> --- a/drivers/staging/exfat/exfat.h
+> +++ b/drivers/staging/exfat/exfat.h
+> @@ -30,8 +30,6 @@
+>  #undef DEBUG
+>  #endif
+>  
+> -#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
+> -
+>  #define DENTRY_SIZE		32	/* dir entry size */
+>  #define DENTRY_SIZE_BITS	5
+>  
+> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+> index 544a453f3076..3980026a8882 100644
+> --- a/fs/erofs/internal.h
+> +++ b/fs/erofs/internal.h
+> @@ -425,7 +425,5 @@ static inline int z_erofs_init_zip_subsystem(void) { return 0; }
+>  static inline void z_erofs_exit_zip_subsystem(void) {}
+>  #endif	/* !CONFIG_EROFS_FS_ZIP */
+>  
+> -#define EFSCORRUPTED    EUCLEAN         /* Filesystem is corrupted */
+> -
+>  #endif	/* __EROFS_INTERNAL_H */
+>  
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 03db3e71676c..a86c2585457d 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -3396,6 +3396,5 @@ static inline int ext4_buffer_uptodate(struct buffer_head *bh)
+>  #endif	/* __KERNEL__ */
+>  
+>  #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
+> -#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
+>  
+>  #endif	/* _EXT4_H */
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 4024790028aa..04ebe77569a3 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -3752,6 +3752,5 @@ static inline bool is_journalled_quota(struct f2fs_sb_info *sbi)
+>  }
+>  
+>  #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
+> -#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
+>  
+>  #endif /* _LINUX_F2FS_H */
+> diff --git a/fs/xfs/xfs_linux.h b/fs/xfs/xfs_linux.h
+> index ca15105681ca..3409d02a7d21 100644
+> --- a/fs/xfs/xfs_linux.h
+> +++ b/fs/xfs/xfs_linux.h
+> @@ -123,7 +123,6 @@ typedef __u32			xfs_nlink_t;
+>  
+>  #define ENOATTR		ENODATA		/* Attribute not found */
+>  #define EWRONGFS	EINVAL		/* Mount with wrong filesystem type */
+> -#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
+>  #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
+>  
+>  #define SYNCHRONIZE()	barrier()
+> diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
+> index 564793c24d12..1ecd3859d040 100644
+> --- a/include/linux/jbd2.h
+> +++ b/include/linux/jbd2.h
+> @@ -1657,6 +1657,5 @@ static inline tid_t  jbd2_get_latest_transaction(journal_t *journal)
+>  #endif	/* __KERNEL__ */
+>  
+>  #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
+> -#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
+>  
+>  #endif	/* _LINUX_JBD2_H */
+> diff --git a/include/uapi/asm-generic/errno.h b/include/uapi/asm-generic/errno.h
+> index cf9c51ac49f9..1d5ffdf54cb0 100644
+> --- a/include/uapi/asm-generic/errno.h
+> +++ b/include/uapi/asm-generic/errno.h
+> @@ -98,6 +98,7 @@
+>  #define	EINPROGRESS	115	/* Operation now in progress */
+>  #define	ESTALE		116	/* Stale file handle */
+>  #define	EUCLEAN		117	/* Structure needs cleaning */
+> +#define	EFSCORRUPTED	EUCLEAN
+>  #define	ENOTNAM		118	/* Not a XENIX named type file */
+>  #define	ENAVAIL		119	/* No XENIX semaphores available */
+>  #define	EISNAM		120	/* Is a named type file */
+> -- 
+> 2.24.0.rc1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
