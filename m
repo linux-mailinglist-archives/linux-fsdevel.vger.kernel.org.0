@@ -2,76 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2988EB89A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 21:51:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31530EB895
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 21:50:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729795AbfJaUvX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Oct 2019 16:51:23 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:36363 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727511AbfJaUvX (ORCPT
+        id S1727995AbfJaUu4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Oct 2019 16:50:56 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:34322 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727511AbfJaUu4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Oct 2019 16:51:23 -0400
-Received: from callcc.thunk.org (guestnat-104-133-0-98.corp.google.com [104.133.0.98] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x9VKojQo005383
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 31 Oct 2019 16:50:46 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 11FEB420456; Thu, 31 Oct 2019 16:50:45 -0400 (EDT)
-Date:   Thu, 31 Oct 2019 16:50:45 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Satya Tangirala <satyat@google.com>, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Kim Boojin <boojin.kim@samsung.com>
-Subject: Re: [PATCH v5 3/9] block: blk-crypto for Inline Encryption
-Message-ID: <20191031205045.GG16197@mit.edu>
-References: <20191028072032.6911-1-satyat@google.com>
- <20191028072032.6911-4-satyat@google.com>
- <20191031175713.GA23601@infradead.org>
+        Thu, 31 Oct 2019 16:50:56 -0400
+Received: from dread.disaster.area (pa49-180-67-183.pa.nsw.optusnet.com.au [49.180.67.183])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id EBB5A3A27CA;
+        Fri,  1 Nov 2019 07:50:51 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1iQHP7-00067n-Az; Fri, 01 Nov 2019 07:50:49 +1100
+Date:   Fri, 1 Nov 2019 07:50:49 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 04/26] xfs: Improve metadata buffer reclaim accountability
+Message-ID: <20191031205049.GS4614@dread.disaster.area>
+References: <20191009032124.10541-1-david@fromorbit.com>
+ <20191009032124.10541-5-david@fromorbit.com>
+ <20191030172517.GO15222@magnolia>
+ <20191030214335.GQ4614@dread.disaster.area>
+ <20191031030658.GW15222@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191031175713.GA23601@infradead.org>
+In-Reply-To: <20191031030658.GW15222@magnolia>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
+        a=3wLbm4YUAFX2xaPZIabsgw==:117 a=3wLbm4YUAFX2xaPZIabsgw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=MeAgGD-zjQ4A:10
+        a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=fPFIRJHpAtQw70PwBpUA:9
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 10:57:13AM -0700, Christoph Hellwig wrote:
-> On Mon, Oct 28, 2019 at 12:20:26AM -0700, Satya Tangirala wrote:
-> > We introduce blk-crypto, which manages programming keyslots for struct
-> > bios. With blk-crypto, filesystems only need to call bio_crypt_set_ctx with
-> > the encryption key, algorithm and data_unit_num; they don't have to worry
-> > about getting a keyslot for each encryption context, as blk-crypto handles
-> > that. Blk-crypto also makes it possible for layered devices like device
-> > mapper to make use of inline encryption hardware.
+On Wed, Oct 30, 2019 at 08:06:58PM -0700, Darrick J. Wong wrote:
+> On Thu, Oct 31, 2019 at 08:43:35AM +1100, Dave Chinner wrote:
+> > On Wed, Oct 30, 2019 at 10:25:17AM -0700, Darrick J. Wong wrote:
+> > > On Wed, Oct 09, 2019 at 02:21:02PM +1100, Dave Chinner wrote:
+> > > > From: Dave Chinner <dchinner@redhat.com>
+> > > > 
+> > > > The buffer cache shrinker frees more than just the xfs_buf slab
+> > > > objects - it also frees the pages attached to the buffers. Make sure
+> > > > the memory reclaim code accounts for this memory being freed
+> > > > correctly, similar to how the inode shrinker accounts for pages
+> > > > freed from the page cache due to mapping invalidation.
+> > > > 
+> > > > We also need to make sure that the mm subsystem knows these are
+> > > > reclaimable objects. We provide the memory reclaim subsystem with a
+> > > > a shrinker to reclaim xfs_bufs, so we should really mark the slab
+> > > > that way.
+> > > > 
+> > > > We also have a lot of xfs_bufs in a busy system, spread them around
+> > > > like we do inodes.
+> > > > 
+> > > > Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> > > > ---
+> > > >  fs/xfs/xfs_buf.c | 6 +++++-
+> > > >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+> > > > index e484f6bead53..45b470f55ad7 100644
+> > > > --- a/fs/xfs/xfs_buf.c
+> > > > +++ b/fs/xfs/xfs_buf.c
+> > > > @@ -324,6 +324,9 @@ xfs_buf_free(
+> > > >  
+> > > >  			__free_page(page);
+> > > >  		}
+> > > > +		if (current->reclaim_state)
+> > > > +			current->reclaim_state->reclaimed_slab +=
+> > > > +							bp->b_page_count;
+> > > 
+> > > Hmm, ok, I see how ZONE_RECLAIM and reclaimed_slab fit together.
+> > > 
+> > > >  	} else if (bp->b_flags & _XBF_KMEM)
+> > > >  		kmem_free(bp->b_addr);
+> > > >  	_xfs_buf_free_pages(bp);
+> > > > @@ -2064,7 +2067,8 @@ int __init
+> > > >  xfs_buf_init(void)
+> > > >  {
+> > > >  	xfs_buf_zone = kmem_zone_init_flags(sizeof(xfs_buf_t), "xfs_buf",
+> > > > -						KM_ZONE_HWALIGN, NULL);
+> > > > +			KM_ZONE_HWALIGN | KM_ZONE_SPREAD | KM_ZONE_RECLAIM,
+> > > 
+> > > I guess I'm fine with ZONE_SPREAD too, insofar as it only seems to apply
+> > > to a particular "use another node" memory policy when slab is in use.
+> > > Was that your intent?
 > > 
-> > Blk-crypto delegates crypto operations to inline encryption hardware when
-> > available, and also contains a software fallback to the kernel crypto API.
-> > For more details, refer to Documentation/block/inline-encryption.rst.
+> > It's more documentation than anything - that we shouldn't be piling
+> > these structures all on to one node because that can have severe
+> > issues with NUMA memory reclaim algorithms. i.e. the xfs-buf
+> > shrinker sets SHRINKER_NUMA_AWARE, so memory pressure on a single
+> > node can reclaim all the xfs-bufs on that node without touching any
+> > other node.
+> > 
+> > That means, for example, if we instantiate all the AG header buffers
+> > on a single node (e.g. like we do at mount time) then memory
+> > pressure on that one node will generate IO stalls across the entire
+> > filesystem as other nodes doing work have to repopulate the buffer
+> > cache for any allocation for freeing of space/inodes..
+> > 
+> > IOWs, for large NUMA systems using cpusets this cache should be
+> > spread around all of memory, especially as it has NUMA aware
+> > reclaim. For everyone else, it's just documentation that improper
+> > cgroup or NUMA memory policy could cause you all sorts of problems
+> > with this cache.
+> > 
+> > It's worth noting that SLAB_MEM_SPREAD is used almost exclusively in
+> > filesystems for inode caches largely because, at the time (~2006),
+> > the only reclaimable cache that could grow to any size large enough
+> > to cause problems was the inode cache. It's been cargo-culted ever
+> > since, whether it is needed or not (e.g. ceph).
+> > 
+> > In the case of the xfs_bufs, I've been running workloads recently
+> > that cache several million xfs_bufs and only a handful of inodes
+> > rather than the other way around. If we spread inodes because
+> > caching millions on a single node can cause problems on large NUMA
+> > machines, then we also need to spread xfs_bufs...
 > 
-> Can you explain why we need this software fallback that basically just
-> duplicates logic already in fscrypt?  As far as I can tell this fallback
-> logic actually is more code than the actual inline encryption, and nasty
-> code at that, e.g. the whole crypt_iter thing.
+> Hmm, could we capture this as a comment somewhere?
 
-One of the reasons I really want this is so I (as an upstream
-maintainer of ext4 and fscrypt) can test the new code paths using
-xfstests on GCE, without needing special pre-release hardware that has
-the ICE support.
+Sure, but where? We're planning on getting rid of the KM_ZONE flags
+in the near future, and most of this is specific to the impacts on
+XFS. I could put it in xfs-super.c above where we initialise all the
+slabs, I guess. Probably a separate patch, though....
 
-Yeah, I could probably get one of those dev boards internally at
-Google, but they're a pain in the tuckus to use, and I'd much rather
-be able to have my normal test infrastructure using gce-xfstests and
-kvm-xfstests be able to test inline-crypto.  So in terms of CI
-testing, having the blk-crypto is really going to be helpful.
+Cheers,
 
-						- Ted
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
