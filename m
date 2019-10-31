@@ -2,48 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D196EEB8DE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 22:22:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F40C6EB8E0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 22:22:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729909AbfJaVWH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Oct 2019 17:22:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55134 "EHLO
+        id S1729915AbfJaVWi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Oct 2019 17:22:38 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55154 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbfJaVWH (ORCPT
+        with ESMTP id S1726680AbfJaVWi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Oct 2019 17:22:07 -0400
+        Thu, 31 Oct 2019 17:22:38 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xJnS2gKgHjZwKIXoPBsFqoULOP0zn3va2TnZ/oOJ3gw=; b=Zu8aMJLWjIYFVQR1/YLr7B6fX
-        nz2eqJ4vQdXty7zLXyepGBMGFvcNRitsdlp9URLiH51b1V2AVOMRexVZAObnKb0VERCBSoP/yak/L
-        nhgNS+BRkms5Nd0D2kNFhquds/QSKki19XH/FnjdjolXimiMPpS0k95oMDNbKgCT1giYanPdMoQn4
-        im+KO1duNYuP4umtwyFOQISP8/EvZWW8q+UyLoys02aYC+hzv9CPhoFe+kRAJhUZTuFLKQDmMQoc1
-        9n0Evz5tGYfWURNL2whZUuScTx1e1ovBq/kOgKzl8ly38rIeawCD3/sMtcqNu13EEF4+YhsXZQz4w
-        3qV9r9R6Q==;
+         bh=Vp+FXiDesIme9wZKEonBbY9EF/rmcc94oNJSVeB9Mnc=; b=X2NyMyJFykqbqzPbcpTyDRKbd
+        BQ/j4YYDfZ+K17wIdlSnJWeMlmiwSCq9IMkXKUsUWN8Djbc19Zfhk+hIp7ZaVzlxBuLOGvbM7mtvD
+        tdEuc2FEBLmOuRWXJW6ZqH7y/c0RNVVyx1fdanwkc0bf32knjKWhBgJhMskumnn4+48nVaeGOTn5Z
+        Dz/c9saizy3IesFxr79it6vaiPCO38unEJK2Q48dPTaXVBxYTsN1JT29cogNarc3E4PHjH+0XHVS8
+        wWix7xAS4JPhoqwv52QEQeoJ7XXluWPUny9K66o/qzd3n+iMFMDrWD33Gb0XpdR2PIr58Dp8mqtSI
+        X2izGODzg==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iQHtN-0008MS-T6; Thu, 31 Oct 2019 21:22:05 +0000
-Date:   Thu, 31 Oct 2019 14:22:05 -0700
+        id 1iQHtq-0008OR-Uf; Thu, 31 Oct 2019 21:22:34 +0000
+Date:   Thu, 31 Oct 2019 14:22:34 -0700
 From:   Christoph Hellwig <hch@infradead.org>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 04/26] xfs: Improve metadata buffer reclaim accountability
-Message-ID: <20191031212205.GB6244@infradead.org>
-References: <20191009032124.10541-1-david@fromorbit.com>
- <20191009032124.10541-5-david@fromorbit.com>
- <20191030172517.GO15222@magnolia>
- <20191030214335.GQ4614@dread.disaster.area>
- <20191031030658.GW15222@magnolia>
- <20191031205049.GS4614@dread.disaster.area>
- <20191031210551.GK15221@magnolia>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Satya Tangirala <satyat@google.com>,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Kim Boojin <boojin.kim@samsung.com>
+Subject: Re: [PATCH v5 3/9] block: blk-crypto for Inline Encryption
+Message-ID: <20191031212234.GA32262@infradead.org>
+References: <20191028072032.6911-1-satyat@google.com>
+ <20191028072032.6911-4-satyat@google.com>
+ <20191031175713.GA23601@infradead.org>
+ <20191031205045.GG16197@mit.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191031210551.GK15221@magnolia>
+In-Reply-To: <20191031205045.GG16197@mit.edu>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -51,11 +54,19 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 02:05:51PM -0700, Darrick J. Wong wrote:
-> Sounds like a reasonable place (to me) to record the fact that we want
-> inodes and metadata buffers not to end up concentrating on a single node.
+On Thu, Oct 31, 2019 at 04:50:45PM -0400, Theodore Y. Ts'o wrote:
+> One of the reasons I really want this is so I (as an upstream
+> maintainer of ext4 and fscrypt) can test the new code paths using
+> xfstests on GCE, without needing special pre-release hardware that has
+> the ICE support.
 > 
-> At least until we start having NUMA systems with a separate "IO node" in
-> which to confine all the IO threads and whatnot <shudder>. :P
+> Yeah, I could probably get one of those dev boards internally at
+> Google, but they're a pain in the tuckus to use, and I'd much rather
+> be able to have my normal test infrastructure using gce-xfstests and
+> kvm-xfstests be able to test inline-crypto.  So in terms of CI
+> testing, having the blk-crypto is really going to be helpful.
 
-Wait until someone does a Linux port to the Cray T3E ;-)
+Implementing the support in qemu or a special device mapper mode
+seems like a much better idea for that use case over carrying the
+code in the block layer and severely bloating the per-I/O data
+structure.
