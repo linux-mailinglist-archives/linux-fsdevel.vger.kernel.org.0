@@ -2,79 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60A2DEB0A6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 13:57:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D572EB1DE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 15:00:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726506AbfJaM5K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Oct 2019 08:57:10 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:41789 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbfJaM5J (ORCPT
+        id S1727918AbfJaOAE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Oct 2019 10:00:04 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39980 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727903AbfJaOAD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Oct 2019 08:57:09 -0400
-Received: by mail-il1-f195.google.com with SMTP id z10so5274163ilo.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Oct 2019 05:57:09 -0700 (PDT)
+        Thu, 31 Oct 2019 10:00:03 -0400
+Received: by mail-lj1-f196.google.com with SMTP id q2so193665ljg.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Oct 2019 07:00:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HFMClpqTeJP46m822zm9nFLSwcrgj9uvV5/DrfBRnPs=;
-        b=iEFkJ7oBRKTnH86pHzYP8n/pBPhjBfJYlldEsYn/rIGVWHnhgpxN9Caj2RqNP+Q9+v
-         /SsATlGRTx/Px6pZJL43nAcCe89USwlXPU+5W45WA+Haw1O2APUVr1TBsFo1kfQThhnf
-         m0nVawNTVYWxCd4jjbc12V1Vya3LiftKcRzhUzZmxoE/8g1BCcrGF4ZhGsg4Oie75lw9
-         JZJal9dMagDpaZUgnKqUDvRkmYQQ0EgBIXmHD53leDI77do78FYlp5HAF5lGoqqcYmrC
-         FZxsLPufmfOMu0dkVYHP7TBqJCWqlouul9OvP4+rvYTz9u+JrMVpskCCa2OztwL6Hm99
-         FnZQ==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DuatfVoIRwFhp1fiwVqEQDhLv5NKcD5+eL4mURteBJw=;
+        b=T0WGQpXFDtrHJfxqFmxbHxIc4bAH6IQvZs0OTPR85eE1GuPEBycmk9QZ+dEad3gcBZ
+         111Tl8gHMDWobnSVm/oAzghXtZ67XKZeU7Iv1i1wit1eJeMjOr73oWKibGez8sYJXCg5
+         +cQOCUohhdbNghmuNdLDmn228db2gz+xBmkAIvJqZTSY4dHUXeEEkpIrb7ncIQmqboAt
+         Z/ov5p25AUY1THMKi1DviI/uX3DGy8zd/T97zX+udzdtsfjL4srz+5gXsM7b01LCQpzv
+         BX6g51anf+KwtwI58WA9i6Uh/aOtyToAeS5ZFqybf4ztcFcPzqIgUxpnTGSLbS4pEaEu
+         btAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HFMClpqTeJP46m822zm9nFLSwcrgj9uvV5/DrfBRnPs=;
-        b=U0PF06zcV3FweUFMzWdARppgkQB/pnyEGhlL82k10z51zZV1Ue5Cs0jfIjAajl2Ae7
-         QceP/vYX1FYwz81pItCLG9XpbW68czJBJ+2AvsrAufcYkIJkC/q+dM1qqZzlLSy83FLq
-         1sPcXzP8wWKnggDlzYq4b+cCw/d0ruokL9DT2WSlUUdiNB2BMsMeh8JhTN1DDjnszI9i
-         qd8kF/c9YDxLdY4Leq2p4Yh07oA/1LSXCJaVXjfEzJZs8CAmz1tHeMCWq5DoYxUl9xza
-         mjEQ/YXXRxUJ6HswZI8nUo6CjeevRsjigD8iyqPn1DX2uZ0bl3tuwX7xGEyl+Go6OwHD
-         Otew==
-X-Gm-Message-State: APjAAAUKql5suVTX4dbl2fDy2VtvXho6YescclrTJ4xEokIJRQ3Ns9yb
-        AWW0LedDQdPOYmXYZJc3gZpfUg==
-X-Google-Smtp-Source: APXvYqy6YWgbIHTOYJsUJwrnjXnKqoqGCOzyA33ICwDU+p8YPyAoCA9Am/KjbwjsFlBj73v8w/Qhkw==
-X-Received: by 2002:a92:8c1c:: with SMTP id o28mr5805925ild.34.1572526628820;
-        Thu, 31 Oct 2019 05:57:08 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id l64sm508754ilh.2.2019.10.31.05.57.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Oct 2019 05:57:07 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: signedness bug in io_async_cancel()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <20191031105547.GC26612@mwanda>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <a697c16b-92bb-52a3-e2e8-5f24d75f580d@kernel.dk>
-Date:   Thu, 31 Oct 2019 06:57:06 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DuatfVoIRwFhp1fiwVqEQDhLv5NKcD5+eL4mURteBJw=;
+        b=GlT/O+833H7htBlath36zVeA6U1vQSgKDO0w2vqOLRnXVswQ/LL8Xik4ngOcIiquIc
+         tvoOmjEIBDEhPDseum5AoBpIsuqqp68U3/tSCkoAwB4DuWgaQmN3lGEPzE87PlX483xy
+         nsYKtewUuY+BIXJ/6Zy48KkcSUXF/CZven8bMdwLIDtKh47MYo0gapdh2KZ/lFm7MNAm
+         D7Kuq5wh39lGFlXWsi5J1FfKWmMf/gE3zlT/oKaeCJgdgDj+M7SADCNW2Es6YPVuYJOI
+         zWgQYQz2V5ysuT3znnwAUGCciW9DrsK3D/LsXLGBAfAFlIX8PMrvEOp/wt4CoW8BsaLw
+         L5GQ==
+X-Gm-Message-State: APjAAAVJPo/sZw1L7dbXuUgQL37ovm+jbiM08FEIvL+UNNd8uKGqLc+S
+        EwxBzypWRBrAvnswkZQx5i51Ac4ZB/CXsvpjbt9v
+X-Google-Smtp-Source: APXvYqwq2wNVb076m3Quvyq9PXqhSEvG470R+68J3/Y3Ahcr5xKs7JewCzfRlqwmRAqfj89jdi6yOS5N64nrB3PIo6A=
+X-Received: by 2002:a05:651c:1056:: with SMTP id x22mr1097948ljm.225.1572530400425;
+ Thu, 31 Oct 2019 07:00:00 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191031105547.GC26612@mwanda>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <cover.1568834524.git.rgb@redhat.com> <214163d11a75126f610bcedfad67a4d89575dc77.1568834525.git.rgb@redhat.com>
+ <20191019013904.uevmrzbmztsbhpnh@madcap2.tricolour.ca> <CAHC9VhRPygA=LsHLUqv+K=ouAiPFJ6fb2_As=OT-_zB7kGc_aQ@mail.gmail.com>
+ <20191021213824.6zti5ndxu7sqs772@madcap2.tricolour.ca> <CAHC9VhRdNXsY4neJpSoNyJoAVEoiEc2oW5kSscF99tjmoQAxFA@mail.gmail.com>
+ <20191021235734.mgcjotdqoe73e4ha@madcap2.tricolour.ca> <CAHC9VhSiwnY-+2awxvGeO4a0NgfVkOPd8fzzBVujp=HtjskTuQ@mail.gmail.com>
+ <20191024210010.owwgc3bqbvtdsqws@madcap2.tricolour.ca> <CAHC9VhRDoX9du4XbCnBtBzsNPMGOsb-TKM1CC+sCL7HP=FuTRQ@mail.gmail.com>
+ <20191030220320.tnwkaj5gbzchcn7j@madcap2.tricolour.ca>
+In-Reply-To: <20191030220320.tnwkaj5gbzchcn7j@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 31 Oct 2019 09:59:48 -0400
+Message-ID: <CAHC9VhTKaBwFxEnY9vLRgtZ5ptQzF-WvwiAyVgtTNn6tt4bZqw@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V7 20/21] audit: add capcontid to set contid
+ outside init_user_ns
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
+        mpatel@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/31/19 4:55 AM, Dan Carpenter wrote:
-> The problem is that this enum is unsigned, and we do use "ret" for the
-> enum values, but we also use it for negative error codes.  If it's not
-> signed then it causes a problem in the error handling.
+On Wed, Oct 30, 2019 at 6:04 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2019-10-30 16:27, Paul Moore wrote:
+> > On Thu, Oct 24, 2019 at 5:00 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > Here's the note I had from that meeting:
+> > >
+> > > - Eric raised the issue that using /proc is likely to get more and more
+> > >   hoary due to mount namespaces and suggested that we use a netlink
+> > > audit message (or a new syscall) to set the audit container identifier
+> > > and since the loginuid is a similar type of operation, that it should be
+> > > migrated over to a similar mechanism to get it away from /proc.  Get
+> > > could be done with a netlink audit message that triggers an audit log
+> > > message to deliver the information.  I'm reluctant to further pollute
+> > > the syscall space if we can find another method.  The netlink audit
+> > > message makes sense since any audit-enabled service is likely to already
+> > > have an audit socket open.
+> >
+> > Thanks for the background info on the off-list meeting.  I would
+> > encourage you to have discussions like this on-list in the future; if
+> > that isn't possible, hosting a public call would okay-ish, but a
+> > distant second.
+>
+> I'm still trying to get Eric's attention to get him to weigh in here and
+> provide a more eloquent representation of his ideas and concerns.  Some
+> of it was related to CRIU(sp?) issues which we've already of which we've
+> already seen similar concerns in namespace identifiers including the
+> device identity to qualify it.
 
-I noticed this one the other day, merged in a fix for it then. Not
-an issue in the current tree, though linux-next may still have the
-older one.
+Okay, let's leave this open until we hear from Eric to see if he has
+any additional information, but it's going to need to be pretty
+compelling.
+
+> > At this point in time I'm not overly concerned about /proc completely
+> > going away in namespaces/containers that are full featured enough to
+> > host a container orchestrator.  If/when reliance on procfs becomes an
+> > issue, we can look at alternate APIs, but given the importance of
+> > /proc to userspace (including to audit) I suspect we are going to see
+> > it persist for some time.  I would prefer to see you to drop the audit
+> > container ID netlink API portions of this patchset and focus on the
+> > procfs API.
+>
+> I've already refactored the code to put the netlink bits at the end as
+> completely optional pieces for completeness so they won't get in the way
+> of the real substance of this patchset.  The nesting depth and total
+> number of containers checks have also been punted to the end of the
+> patchset to get them out of the way of discussion.
+
+That's fine, but if we do decide to drop the netlink API after hearing
+from Eric, please drop those from the patchset.  Keeping the patchset
+small and focused should be a goal, and including rejected/dead
+patches (even at the end) doesn't help move towards that goal.
+
+> > Also, for the record, removing the audit loginuid from procfs is not
+> > something to take lightly, if at all; like it or not, it's part of the
+> > kernel API.
+>
+> Oh, I'm quite aware of how important this change is and it was discussed
+> with Steve Grubb who saw the concern and value of considering such a
+> disruptive change.  Removing proc support for auid/ses would be a
+> long-term deprecation if accepted.
+
+As I mentioned, that comment was more "for the record" than you in
+particular; I know we've talked a lot over the years about kernel API
+stability and I'm confident you are aware of the pitfalls there. :)
 
 -- 
-Jens Axboe
-
+paul moore
+www.paul-moore.com
