@@ -2,105 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1346FEA97B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 04:17:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2FB3EA98B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 04:30:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbfJaDRJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Oct 2019 23:17:09 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:34674 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726414AbfJaDRJ (ORCPT
+        id S1726552AbfJaDaE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Oct 2019 23:30:04 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:49450 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726336AbfJaDaE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Oct 2019 23:17:09 -0400
-Received: from mr2.cc.vt.edu (mr2.cc.ipv6.vt.edu [IPv6:2607:b400:92:8400:0:90:e077:bf22])
-        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x9V3H7g9010075
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2019 23:17:07 -0400
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-        by mr2.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x9V3H28M028687
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2019 23:17:07 -0400
-Received: by mail-qt1-f199.google.com with SMTP id t16so4768337qtp.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Oct 2019 20:17:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-transfer-encoding:date:message-id;
-        bh=UjwFl/5kyrrhReHkQKPm1SCGM6jwLyZlLmQqSsl7mww=;
-        b=k24PLOC4a4M6bVH273rnkaEM2B+KhGhOMdQCVrvZhoyKmGZVa1NW3MAoVuQlBA+A1A
-         TYWmVO0Z/+FjMXCnhLL3DEkhqYu3qF96mRBS4lacss1yOYvW/084dqCqUuK3O9ihHALy
-         v+R/Aty0xyA/ZsgjzPbwV1EvRyCSjlGiKiiwTb1aSjJSobSTvn2p83ESsIBAlFor3peY
-         hdMcKIsl9QNTvA+nUAiMqVmYnHAEzwOGaGtZLpe4hDp/oiwabyM9G43LXae6KrTwFD7j
-         8vC4TtQOKzQZrxD/5x/LDhu072eCZeddYrFd42iPvWsWvSVm5DlCiPoaoU+/2NQe47IG
-         j91g==
-X-Gm-Message-State: APjAAAXzvoeMG/PzmzIePhbXZs4clfKVNxMhIcv+fmaYcE6A0ef49GRB
-        dSpOa+Y2Ke0Hk7ks2IfxvJlw2BExbFp5GRLx9DD+qG/9iqlaxpbqDzKn6e/Hr2keWgxS6nrf+eG
-        uspliksjnQWKZ0KUitO4daem8TYbdYi48KfDj
-X-Received: by 2002:a37:bf02:: with SMTP id p2mr3402568qkf.42.1572491822466;
-        Wed, 30 Oct 2019 20:17:02 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyBRYNvJgULHc6/HirPX/JJlwuT5MkpOcps7z7Wgn9SXa/v+KbkipNm/PXten1R1WQp8wUltQ==
-X-Received: by 2002:a37:bf02:: with SMTP id p2mr3402548qkf.42.1572491822161;
-        Wed, 30 Oct 2019 20:17:02 -0700 (PDT)
-Received: from turing-police ([2601:5c0:c001:c9e1::359])
-        by smtp.gmail.com with ESMTPSA id t132sm1220848qke.51.2019.10.30.20.16.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2019 20:17:00 -0700 (PDT)
-From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
-X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, linux-xfs@vger.kernel.org,
-        Jan Kara <jack@suse.com>, Arnd Bergmann <arnd@arndb.de>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-arch@vger.kernel.org
-Subject: Re: [RFC] errno.h: Provide EFSCORRUPTED for everybody
-In-Reply-To: <20191031030449.GV15222@magnolia>
-References: <20191031010736.113783-1-Valdis.Kletnieks@vt.edu>
- <20191031030449.GV15222@magnolia>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1572491818_4623P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 30 Oct 2019 23:16:59 -0400
-Message-ID: <120748.1572491819@turing-police>
+        Wed, 30 Oct 2019 23:30:04 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9V3TCaR024791;
+        Thu, 31 Oct 2019 03:29:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
+ bh=XDUxscILsJ13tPTDg3J62ds2i/L80cksUFSZ1N7K4OQ=;
+ b=MGKb6w0an2ZK4Jt9N4Zo6+jDTSUaP3qxwplSI55jx0Vs49EEqIAmJWu9JHJPqCoWNquf
+ jepFpe3XcpLjMZ0GoEyGOq3ZPB2DQjpkfYiaGBAfj0l9Fa9ESFf71gYOt7gI6BFudbjt
+ /42BV7CEJiT4HBD1QpM74/fiXbvmbmwFBhXbzlexHnHc43hqZ316n1Z2ZhadsN0UIGxZ
+ toV3elyEcegfSM2Q1eUZp55vuPCcQUVq3PGqKxF+uJ6GMeK9PdlmCnDRql3QU+SwKeed
+ 9rJ7n/X9tnPxetRUpl08UlS2lseoP+psXwfjbeump163UyZ1Pv1xF6ar+bhfytNVX8ig IA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2vxwhfr77n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 31 Oct 2019 03:29:50 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9V3Nr20125950;
+        Thu, 31 Oct 2019 03:29:50 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2vykw0h5km-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 31 Oct 2019 03:29:50 +0000
+Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9V3TnFu021188;
+        Thu, 31 Oct 2019 03:29:49 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 30 Oct 2019 20:29:49 -0700
+Date:   Wed, 30 Oct 2019 20:29:48 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>
+Cc:     linux-block@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>
+Subject: [PATCH v4] loop: fix no-unmap write-zeroes request behavior
+Message-ID: <20191031032948.GA15212@magnolia>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9426 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910310031
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9426 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910310032
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---==_Exmh_1572491818_4623P
-Content-Type: text/plain; charset=us-ascii
+From: Darrick J. Wong <darrick.wong@oracle.com>
 
-On Wed, 30 Oct 2019 20:04:49 -0700, "Darrick J. Wong" said:
+Currently, if the loop device receives a WRITE_ZEROES request, it asks
+the underlying filesystem to punch out the range.  This behavior is
+correct if unmapping is allowed.  However, a NOUNMAP request means that
+the caller doesn't want us to free the storage backing the range, so
+punching out the range is incorrect behavior.
 
-> I would add (d) can we do the same to EFSBADCRC, seeing as f2fs,
-> ext4, xfs, and jbd2 all define it the same way?
+To satisfy a NOUNMAP | WRITE_ZEROES request, loop should ask the
+underlying filesystem to FALLOC_FL_ZERO_RANGE, which is (according to
+the fallocate documentation) required to ensure that the entire range is
+backed by real storage, which suffices for our purposes.
 
-If this one flies, that's a good candidate for a second patch....
+Fixes: 19372e2769179dd ("loop: implement REQ_OP_WRITE_ZEROES")
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+---
+v4: add review tags
+v3: refactor into a single fallocate function
+v2: reorganize a little according to hch feedback
+---
+ drivers/block/loop.c |   26 ++++++++++++++++++--------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
 
---==_Exmh_1572491818_4623P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.9.0 11/07/2018
-
-iQIVAwUBXbpSKgdmEQWDXROgAQJYmA/+PTG0+FXdOKpnGaoDDFNKM1tIitWpnoi9
-02VrxRtAXg+D3lFix+ADGPwdAI9qKi2oMzxnOdTY81JCchjmp2rN4y1iABx5+Vy1
-8eS3gGF2xihheSUp/wLsq4tQx7mY4DkcWIRsuRSmj3PPEZotxvNMkLFox/+xHCSk
-RXdXLU/kO9LZjdFdlxQ26/X9pwhTn6USWRD73f5lVzQ49IChhB+Ww3UJj2RUm4vK
-hkzocyTyA+tGSKEqh3b508buuxiUjWjYFFr8KWUzkd5Of/zgoddbTGXG117ILwDO
-V+kQgt2ZAIESvyDXpBDnkPDclJPgv9aQgkAKdSb94BoMqiry75amO2JuxCNaZcnr
-usLK+H7vWv++FXsA7BPhPAM0xuQRBbWA0sByEcKuHZEP5Z3LKjzIG8UqcbzJsRh4
-ZbmqnW34sqYegs16RUj6Uv3CpRQmNwgit0m4lovTVfHTv+5ZK65e2O615RJajHpE
-KKmSLCZCbLPN9TSAGm+p3m0aIoDH4+b5rp6KQDjfXJR3I8o0um8cLA6ejWmzhdVc
-NMJSDVYw/px/5FU35XocFQERd9DCHYmTtNg2PhPffAKY2Og0YTzyxqxu2aT1ao5S
-xLKZ1MHhLpDGdYhkJDvDHZPypg5kjtJN47yNF7naKgY7Xnt9i4s++1xoSSUVsj1a
-8rFfLA7uEbY=
-=RvfI
------END PGP SIGNATURE-----
-
---==_Exmh_1572491818_4623P--
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index f6f77eaa7217..ef6e251857c8 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -417,18 +417,20 @@ static int lo_read_transfer(struct loop_device *lo, struct request *rq,
+ 	return ret;
+ }
+ 
+-static int lo_discard(struct loop_device *lo, struct request *rq, loff_t pos)
++static int lo_fallocate(struct loop_device *lo, struct request *rq, loff_t pos,
++			int mode)
+ {
+ 	/*
+-	 * We use punch hole to reclaim the free space used by the
+-	 * image a.k.a. discard. However we do not support discard if
+-	 * encryption is enabled, because it may give an attacker
+-	 * useful information.
++	 * We use fallocate to manipulate the space mappings used by the image
++	 * a.k.a. discard/zerorange. However we do not support this if
++	 * encryption is enabled, because it may give an attacker useful
++	 * information.
+ 	 */
+ 	struct file *file = lo->lo_backing_file;
+-	int mode = FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE;
+ 	int ret;
+ 
++	mode |= FALLOC_FL_KEEP_SIZE;
++
+ 	if ((!file->f_op->fallocate) || lo->lo_encrypt_key_size) {
+ 		ret = -EOPNOTSUPP;
+ 		goto out;
+@@ -596,9 +598,17 @@ static int do_req_filebacked(struct loop_device *lo, struct request *rq)
+ 	switch (req_op(rq)) {
+ 	case REQ_OP_FLUSH:
+ 		return lo_req_flush(lo, rq);
+-	case REQ_OP_DISCARD:
+ 	case REQ_OP_WRITE_ZEROES:
+-		return lo_discard(lo, rq, pos);
++		/*
++		 * If the caller doesn't want deallocation, call zeroout to
++		 * write zeroes the range.  Otherwise, punch them out.
++		 */
++		return lo_fallocate(lo, rq, pos,
++			(rq->cmd_flags & REQ_NOUNMAP) ?
++				FALLOC_FL_ZERO_RANGE :
++				FALLOC_FL_PUNCH_HOLE);
++	case REQ_OP_DISCARD:
++		return lo_fallocate(lo, rq, pos, FALLOC_FL_PUNCH_HOLE);
+ 	case REQ_OP_WRITE:
+ 		if (lo->transfer)
+ 			return lo_write_transfer(lo, rq, pos);
