@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F7A5EBAE6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2019 00:47:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8EFEEBB07
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2019 00:48:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729117AbfJaXrX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Oct 2019 19:47:23 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:56405 "EHLO
+        id S1729689AbfJaXsO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Oct 2019 19:48:14 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:55729 "EHLO
         mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728692AbfJaXqd (ORCPT
+        by vger.kernel.org with ESMTP id S1728398AbfJaXq3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Oct 2019 19:46:33 -0400
+        Thu, 31 Oct 2019 19:46:29 -0400
 Received: from dread.disaster.area (pa49-180-67-183.pa.nsw.optusnet.com.au [49.180.67.183])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id B8F183A28A0;
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 178993A288C;
         Fri,  1 Nov 2019 10:46:25 +1100 (AEDT)
 Received: from discord.disaster.area ([192.168.253.110])
         by dread.disaster.area with esmtp (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1iQK8x-0007CQ-Hd; Fri, 01 Nov 2019 10:46:19 +1100
+        id 1iQK8x-0007CS-Ie; Fri, 01 Nov 2019 10:46:19 +1100
 Received: from dave by discord.disaster.area with local (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1iQK8x-00041v-FL; Fri, 01 Nov 2019 10:46:19 +1100
+        id 1iQK8x-00041y-Gp; Fri, 01 Nov 2019 10:46:19 +1100
 From:   Dave Chinner <david@fromorbit.com>
 To:     linux-xfs@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 16/28] mm: kswapd backoff for shrinkers
-Date:   Fri,  1 Nov 2019 10:46:06 +1100
-Message-Id: <20191031234618.15403-17-david@fromorbit.com>
+Subject: [PATCH 17/28] xfs: synchronous AIL pushing
+Date:   Fri,  1 Nov 2019 10:46:07 +1100
+Message-Id: <20191031234618.15403-18-david@fromorbit.com>
 X-Mailer: git-send-email 2.24.0.rc0
 In-Reply-To: <20191031234618.15403-1-david@fromorbit.com>
 References: <20191031234618.15403-1-david@fromorbit.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
+X-Optus-CM-Analysis: v=2.2 cv=G6BsK5s5 c=1 sm=1 tr=0
         a=3wLbm4YUAFX2xaPZIabsgw==:117 a=3wLbm4YUAFX2xaPZIabsgw==:17
         a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=MeAgGD-zjQ4A:10 a=20KFwNOVAAAA:8
-        a=NNMOctoXzqbiiAOzY8AA:9
+        a=Yw-OB7zFZuFGJ-GQUAcA:9
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -46,77 +46,107 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Dave Chinner <dchinner@redhat.com>
 
-When kswapd reaches the end of the page LRU and starts hitting dirty
-pages, the logic in shrink_node() allows it to back off and wait for
-IO to complete, thereby preventing kswapd from scanning excessively
-and driving the system into swap thrashing and OOM conditions.
+Provide an interface to push the AIL to a target LSN and wait for
+the tail of the log to move past that LSN. This is used to wait for
+all items older than a specific LSN to either be cleaned (written
+back) or relogged to a higher LSN in the AIL. The primary use for
+this is to allow IO free inode reclaim throttling.
 
-When we have inode cache heavy workloads on XFS, we have exactly the
-same problem with reclaim inodes. The non-blocking kswapd reclaim
-will keep putting pressure onto the inode cache which is unable to
-make progress. When the system gets to the point where there is no
-pages in the LRU to free, there is no swap left and there are no
-clean inodes that can be freed, it will OOM. This has a specific
-signature in OOM:
+Factor the common AIL deletion code that does all the wakeups into a
+helper so we only have one copy of this somewhat tricky code to
+interface with all the wakeups necessary when the LSN of the log
+tail changes.
 
-[  110.841987] Mem-Info:
-[  110.842816] active_anon:241 inactive_anon:82 isolated_anon:1
-                active_file:168 inactive_file:143 isolated_file:0
-                unevictable:2621523 dirty:1 writeback:8 unstable:0
-                slab_reclaimable:564445 slab_unreclaimable:420046
-                mapped:1042 shmem:11 pagetables:6509 bounce:0
-                free:77626 free_pcp:2 free_cma:0
-
-In this case, we have about 500-600 pages left in teh LRUs, but we
-have ~565000 reclaimable slab pages still available for reclaim.
-Unfortunately, they are mostly dirty inodes, and so we really need
-to be able to throttle kswapd when shrinker progress is limited due
-to reaching the dirty end of the LRU...
-
-So, add a flag into the reclaim_state so if the shrinker decides it
-needs kswapd to back off and wait for a while (for whatever reason)
-it can do so.
+xfs_ail_push_sync() is temporary infrastructure to facilitate
+non-blocking, IO-less inode reclaim throttling that allows further
+structural changes to be made. Once those structural changes are
+made, the need for this function goes away and it is removed. In
+essence, it is only provided to ensure git bisects don't break while
+the changes to the reclaim algorithms are in progress.
 
 Signed-off-by: Dave Chinner <dchinner@redhat.com>
 ---
- include/linux/swap.h |  1 +
- mm/vmscan.c          | 10 +++++++++-
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ fs/xfs/xfs_trans_ail.c  | 32 ++++++++++++++++++++++++++++++++
+ fs/xfs/xfs_trans_priv.h |  2 ++
+ 2 files changed, 34 insertions(+)
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index da0913e14bb9..76fc28f0e483 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -133,6 +133,7 @@ struct reclaim_state {
- 	unsigned long	reclaimed_pages;	/* pages freed by shrinkers */
- 	unsigned long	scanned_objects;	/* quantity of work done */ 
- 	unsigned long	deferred_objects;	/* work that wasn't done */
-+	bool		need_backoff;		/* tell kswapd to slow down */
+diff --git a/fs/xfs/xfs_trans_ail.c b/fs/xfs/xfs_trans_ail.c
+index 685a21cd24c0..3e1d0e1439e2 100644
+--- a/fs/xfs/xfs_trans_ail.c
++++ b/fs/xfs/xfs_trans_ail.c
+@@ -662,6 +662,36 @@ xfs_ail_push_all(
+ 		xfs_ail_push(ailp, threshold_lsn);
+ }
+ 
++/*
++ * Push the AIL to a specific lsn and wait for it to complete.
++ */
++void
++xfs_ail_push_sync(
++	struct xfs_ail		*ailp,
++	xfs_lsn_t		threshold_lsn)
++{
++	struct xfs_log_item	*lip;
++	DEFINE_WAIT(wait);
++
++	spin_lock(&ailp->ail_lock);
++	while ((lip = xfs_ail_min(ailp)) != NULL) {
++		prepare_to_wait(&ailp->ail_push, &wait, TASK_UNINTERRUPTIBLE);
++		if (XFS_FORCED_SHUTDOWN(ailp->ail_mount) ||
++		    XFS_LSN_CMP(threshold_lsn, lip->li_lsn) < 0)
++			break;
++		if (XFS_LSN_CMP(threshold_lsn, ailp->ail_target) > 0)
++			ailp->ail_target = threshold_lsn;
++		wake_up_process(ailp->ail_task);
++		spin_unlock(&ailp->ail_lock);
++		schedule();
++		spin_lock(&ailp->ail_lock);
++	}
++	spin_unlock(&ailp->ail_lock);
++
++	finish_wait(&ailp->ail_push, &wait);
++}
++
++
+ /*
+  * Push out all items in the AIL immediately and wait until the AIL is empty.
+  */
+@@ -702,6 +732,7 @@ xfs_ail_update_finish(
+ 	if (!XFS_FORCED_SHUTDOWN(mp))
+ 		xlog_assign_tail_lsn_locked(mp);
+ 
++	wake_up_all(&ailp->ail_push);
+ 	if (list_empty(&ailp->ail_head))
+ 		wake_up_all(&ailp->ail_empty);
+ 	spin_unlock(&ailp->ail_lock);
+@@ -858,6 +889,7 @@ xfs_trans_ail_init(
+ 	spin_lock_init(&ailp->ail_lock);
+ 	INIT_LIST_HEAD(&ailp->ail_buf_list);
+ 	init_waitqueue_head(&ailp->ail_empty);
++	init_waitqueue_head(&ailp->ail_push);
+ 
+ 	ailp->ail_task = kthread_run(xfsaild, ailp, "xfsaild/%s",
+ 			ailp->ail_mount->m_fsname);
+diff --git a/fs/xfs/xfs_trans_priv.h b/fs/xfs/xfs_trans_priv.h
+index 35655eac01a6..1b6f4bbd47c0 100644
+--- a/fs/xfs/xfs_trans_priv.h
++++ b/fs/xfs/xfs_trans_priv.h
+@@ -61,6 +61,7 @@ struct xfs_ail {
+ 	int			ail_log_flush;
+ 	struct list_head	ail_buf_list;
+ 	wait_queue_head_t	ail_empty;
++	wait_queue_head_t	ail_push;
  };
  
  /*
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 13c11e10c9c5..0f7d35820057 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2949,8 +2949,16 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
- 			 * implies that pages are cycling through the LRU
- 			 * faster than they are written so also forcibly stall.
- 			 */
--			if (sc->nr.immediate)
-+			if (sc->nr.immediate) {
- 				congestion_wait(BLK_RW_ASYNC, HZ/10);
-+			} else if (reclaim_state && reclaim_state->need_backoff) {
-+				/*
-+				 * Ditto, but it's a slab cache that is cycling
-+				 * through the LRU faster than they are written
-+				 */
-+				congestion_wait(BLK_RW_ASYNC, HZ/10);
-+				reclaim_state->need_backoff = false;
-+			}
- 		}
+@@ -113,6 +114,7 @@ xfs_trans_ail_remove(
+ }
  
- 		/*
+ void			xfs_ail_push(struct xfs_ail *, xfs_lsn_t);
++void			xfs_ail_push_sync(struct xfs_ail *, xfs_lsn_t);
+ void			xfs_ail_push_all(struct xfs_ail *);
+ void			xfs_ail_push_all_sync(struct xfs_ail *);
+ struct xfs_log_item	*xfs_ail_min(struct xfs_ail  *ailp);
 -- 
 2.24.0.rc0
 
