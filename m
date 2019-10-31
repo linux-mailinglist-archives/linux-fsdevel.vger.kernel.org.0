@@ -2,128 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49373EADA9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 11:39:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80039EADF1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 11:55:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727260AbfJaKja (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Oct 2019 06:39:30 -0400
-Received: from forwardcorp1j.mail.yandex.net ([5.45.199.163]:39086 "EHLO
-        forwardcorp1j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726913AbfJaKja (ORCPT
+        id S1727419AbfJaKz5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Oct 2019 06:55:57 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:35394 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726864AbfJaKz5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Oct 2019 06:39:30 -0400
-Received: from mxbackcorp1o.mail.yandex.net (mxbackcorp1o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::301])
-        by forwardcorp1j.mail.yandex.net (Yandex) with ESMTP id 4313A2E0DD2;
-        Thu, 31 Oct 2019 13:39:27 +0300 (MSK)
-Received: from sas1-7fab0cd91cd2.qloud-c.yandex.net (sas1-7fab0cd91cd2.qloud-c.yandex.net [2a02:6b8:c14:3a93:0:640:7fab:cd9])
-        by mxbackcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 3cec8TshNm-dQei0e3i;
-        Thu, 31 Oct 2019 13:39:27 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1572518367; bh=L9UYXWAgwZMaVyLOOzOt+ACtOFd1s/GUXWoDpY54l7s=;
-        h=In-Reply-To:Message-Id:References:Date:Subject:To:From:Cc;
-        b=FxquD+5RhfjDSq5dXzcScL6eS8oKzAE+Mo/0o2dZ9OXaVEfQGdcX/1jB1JrGhq5hl
-         /+lBPkWy3ZflQRUXM7J2rdjsEu7Yk4yGSO1IdKv3t967ErW6zbP+CQwANLqHNWyOSN
-         bMUAqV7cFsqHLblJgGV+x/H3tdXwDp4OyduA4OEw=
-Authentication-Results: mxbackcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from 95.108.174.193-red.dhcp.yndx.net (95.108.174.193-red.dhcp.yndx.net [95.108.174.193])
-        by sas1-7fab0cd91cd2.qloud-c.yandex.net (nwsmtp/Yandex) with ESMTPSA id N03nYWr42k-dQWKoRGl;
-        Thu, 31 Oct 2019 13:39:26 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-From:   Dmitry Monakhov <dmonakhov@openvz.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-ext4@vger.kernel.org, jack@suse.cz,
-        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
-Subject: [PATCH 2/2] fs/quota: Check that quota is not dirty before release
-Date:   Thu, 31 Oct 2019 10:39:20 +0000
-Message-Id: <20191031103920.3919-2-dmonakhov@openvz.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20191031103920.3919-1-dmonakhov@openvz.org>
-References: <20191031103920.3919-1-dmonakhov@openvz.org>
+        Thu, 31 Oct 2019 06:55:57 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9VAsNb4192100;
+        Thu, 31 Oct 2019 10:55:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
+ bh=tm+ynhomfiVzszaGXuALO61BT3GqIPJ1petNTHqSuA4=;
+ b=rNyrMxADWHmk/W0nX15kbwSzDYNeeFUpT7c0LDL4KRxvxXAKnWhBYVSkNaGWSYaOMD8A
+ gWpq121IvjGexVQMbY3iYBnho72bcrbhR8bBXaR1fB6yLbwi57sh+FprEZyFLjvvyOSQ
+ nmTEyRFX47RfI8krXyHu+T1XBIWYpUFvJQYG92XzGtqEyzfolVHk40XkO0CEfpEtR5RN
+ WY9ZNE99zZRnkfUVT0Nx2OWmtqEeL/XcTU4BJoXkz3RZj/JSVSQAoEtmcWHe47vTWU+w
+ lbA9u3uhzQbJGpYPBBK+qJrn8HjqTEEvXYtkdcK5Lqdml/YX6732lO1H3VUwbPxx+9nY HQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2vxwhftcag-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 31 Oct 2019 10:55:55 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9VAqlgh047316;
+        Thu, 31 Oct 2019 10:55:54 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2vyqpdvky1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 31 Oct 2019 10:55:54 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9VAtrJH014719;
+        Thu, 31 Oct 2019 10:55:53 GMT
+Received: from mwanda (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 31 Oct 2019 03:55:53 -0700
+Date:   Thu, 31 Oct 2019 13:55:47 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] io_uring: signedness bug in io_async_cancel()
+Message-ID: <20191031105547.GC26612@mwanda>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9426 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910310111
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9426 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910310111
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+The problem is that this enum is unsigned, and we do use "ret" for the
+enum values, but we also use it for negative error codes.  If it's not
+signed then it causes a problem in the error handling.
 
-There is a race window where quota was redirted once we drop dq_list_lock inside dqput(),
-but before we grab dquot->dq_lock inside dquot_release()
-
-TASK1                                                       TASK2 (chowner)
-->dqput()
-  we_slept:
-    spin_lock(&dq_list_lock)
-    if (dquot_dirty(dquot)) {
-          spin_unlock(&dq_list_lock);
-          dquot->dq_sb->dq_op->write_dquot(dquot);
-          goto we_slept
-    if (test_bit(DQ_ACTIVE_B, &dquot->dq_flags)) {
-          spin_unlock(&dq_list_lock);
-          dquot->dq_sb->dq_op->release_dquot(dquot);
-                                                            dqget()
-							    mark_dquot_dirty()
-							    dqput()
-          goto we_slept;
-        }
-So dquot dirty quota will be released by TASK1, but on next we_sleept loop
-we detect this and call ->write_dquot() for it.
-XFSTEST: https://github.com/dmonakhov/xfstests/commit/440a80d4cbb39e9234df4d7240aee1d551c36107
-
-Signed-off-by: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+Fixes: 6ec62e598211 ("io_uring: support for generic async request cancel")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- fs/ocfs2/quota_global.c  |  2 +-
- fs/quota/dquot.c         |  2 +-
- include/linux/quotaops.h | 10 ++++++++++
- 3 files changed, 12 insertions(+), 2 deletions(-)
+ fs/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ocfs2/quota_global.c b/fs/ocfs2/quota_global.c
-index 7a92219..eda8348 100644
---- a/fs/ocfs2/quota_global.c
-+++ b/fs/ocfs2/quota_global.c
-@@ -728,7 +728,7 @@ static int ocfs2_release_dquot(struct dquot *dquot)
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index c4cdfe16cba7..9dcbde233657 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2144,8 +2144,8 @@ static int io_async_cancel(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 			   struct io_kiocb **nxt)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+-	enum io_wq_cancel ret;
+ 	void *sqe_addr;
++	int ret;
  
- 	mutex_lock(&dquot->dq_lock);
- 	/* Check whether we are not racing with some other dqget() */
--	if (atomic_read(&dquot->dq_count) > 1)
-+	if (dquot_is_busy(dquot))
- 		goto out;
- 	/* Running from downconvert thread? Postpone quota processing to wq */
- 	if (current == osb->dc_task) {
-diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index b492b9e..72d24a5 100644
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -497,7 +497,7 @@ int dquot_release(struct dquot *dquot)
- 
- 	mutex_lock(&dquot->dq_lock);
- 	/* Check whether we are not racing with some other dqget() */
--	if (atomic_read(&dquot->dq_count) > 1)
-+	if (dquot_is_busy(dquot))
- 		goto out_dqlock;
- 	if (dqopt->ops[dquot->dq_id.type]->release_dqblk) {
- 		ret = dqopt->ops[dquot->dq_id.type]->release_dqblk(dquot);
-diff --git a/include/linux/quotaops.h b/include/linux/quotaops.h
-index 185d948..91e0b76 100644
---- a/include/linux/quotaops.h
-+++ b/include/linux/quotaops.h
-@@ -54,6 +54,16 @@ static inline struct dquot *dqgrab(struct dquot *dquot)
- 	atomic_inc(&dquot->dq_count);
- 	return dquot;
- }
-+
-+static inline bool dquot_is_busy(struct dquot *dquot)
-+{
-+	if (test_bit(DQ_MOD_B, &dquot->dq_flags))
-+		return true;
-+	if (atomic_read(&dquot->dq_count) > 1)
-+		return true;
-+	return false;
-+}
-+
- void dqput(struct dquot *dquot);
- int dquot_scan_active(struct super_block *sb,
- 		      int (*fn)(struct dquot *dquot, unsigned long priv),
+ 	if (unlikely(ctx->flags & IORING_SETUP_IOPOLL))
+ 		return -EINVAL;
 -- 
-2.7.4
+2.20.1
 
