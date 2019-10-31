@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04091EBB03
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2019 00:48:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F088FEBB11
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2019 00:48:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728616AbfJaXq3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Oct 2019 19:46:29 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:40131 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728443AbfJaXq3 (ORCPT
+        id S1728519AbfJaXq2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Oct 2019 19:46:28 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:55491 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728307AbfJaXq1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Oct 2019 19:46:29 -0400
+        Thu, 31 Oct 2019 19:46:27 -0400
 Received: from dread.disaster.area (pa49-180-67-183.pa.nsw.optusnet.com.au [49.180.67.183])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 699FD7EA73F;
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 9459C3A23D0;
         Fri,  1 Nov 2019 10:46:20 +1100 (AEDT)
 Received: from discord.disaster.area ([192.168.253.110])
         by dread.disaster.area with esmtp (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1iQK8x-0007C6-6J; Fri, 01 Nov 2019 10:46:19 +1100
+        id 1iQK8x-0007C8-7k; Fri, 01 Nov 2019 10:46:19 +1100
 Received: from dave by discord.disaster.area with local (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1iQK8x-00041R-3r; Fri, 01 Nov 2019 10:46:19 +1100
+        id 1iQK8x-00041U-51; Fri, 01 Nov 2019 10:46:19 +1100
 From:   Dave Chinner <david@fromorbit.com>
 To:     linux-xfs@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 06/28] xfs: factor common AIL item deletion code
-Date:   Fri,  1 Nov 2019 10:45:56 +1100
-Message-Id: <20191031234618.15403-7-david@fromorbit.com>
+Subject: [PATCH 07/28] xfs: tail updates only need to occur when LSN changes
+Date:   Fri,  1 Nov 2019 10:45:57 +1100
+Message-Id: <20191031234618.15403-8-david@fromorbit.com>
 X-Mailer: git-send-email 2.24.0.rc0
 In-Reply-To: <20191031234618.15403-1-david@fromorbit.com>
 References: <20191031234618.15403-1-david@fromorbit.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=G6BsK5s5 c=1 sm=1 tr=0
+X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
         a=3wLbm4YUAFX2xaPZIabsgw==:117 a=3wLbm4YUAFX2xaPZIabsgw==:17
         a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=MeAgGD-zjQ4A:10 a=20KFwNOVAAAA:8
-        a=MYL0kNLdbJVOrCnBhk4A:9
+        a=W3SVq3cs_kfo-QxLsoMA:9
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -46,140 +46,214 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Dave Chinner <dchinner@redhat.com>
 
-Factor the common AIL deletion code that does all the wakeups into a
-helper so we only have one copy of this somewhat tricky code to
-interface with all the wakeups necessary when the LSN of the log
-tail changes.
+We currently wake anything waiting on the log tail to move whenever
+the log item at the tail of the log is removed. Historically this
+was fine behaviour because there were very few items at any given
+LSN. But with delayed logging, there may be thousands of items at
+any given LSN, and we can't move the tail until they are all gone.
+
+Hence if we are removing them in near tail-first order, we might be
+waking up processes waiting on the tail LSN to change (e.g. log
+space waiters) repeatedly without them being able to make progress.
+This also occurs with the new sync push waiters, and can result in
+thousands of spurious wakeups every second when under heavy direct
+reclaim pressure.
+
+To fix this, check that the tail LSN has actually changed on the
+AIL before triggering wakeups. This will reduce the number of
+spurious wakeups when doing bulk AIL removal and make this code much
+more efficient.
 
 Signed-off-by: Dave Chinner <dchinner@redhat.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Brian Foster <bfoster@redhat.com>
 ---
- fs/xfs/xfs_inode_item.c | 12 +----------
- fs/xfs/xfs_trans_ail.c  | 48 ++++++++++++++++++++++-------------------
- fs/xfs/xfs_trans_priv.h |  4 +++-
- 3 files changed, 30 insertions(+), 34 deletions(-)
+ fs/xfs/xfs_inode_item.c | 18 ++++++++++----
+ fs/xfs/xfs_trans_ail.c  | 52 ++++++++++++++++++++++++++++-------------
+ fs/xfs/xfs_trans_priv.h |  4 ++--
+ 3 files changed, 51 insertions(+), 23 deletions(-)
 
 diff --git a/fs/xfs/xfs_inode_item.c b/fs/xfs/xfs_inode_item.c
-index bb8f076805b9..ab12e526540a 100644
+index ab12e526540a..79ffe6dff115 100644
 --- a/fs/xfs/xfs_inode_item.c
 +++ b/fs/xfs/xfs_inode_item.c
-@@ -743,17 +743,7 @@ xfs_iflush_done(
+@@ -731,19 +731,27 @@ xfs_iflush_done(
+ 	 * holding the lock before removing the inode from the AIL.
+ 	 */
+ 	if (need_ail) {
+-		bool			mlip_changed = false;
++		xfs_lsn_t	tail_lsn = 0;
+ 
+ 		/* this is an opencoded batch version of xfs_trans_ail_delete */
+ 		spin_lock(&ailp->ail_lock);
+ 		list_for_each_entry(blip, &tmp, li_bio_list) {
+ 			if (INODE_ITEM(blip)->ili_logged &&
+-			    blip->li_lsn == INODE_ITEM(blip)->ili_flush_lsn)
+-				mlip_changed |= xfs_ail_delete_one(ailp, blip);
+-			else {
++			    blip->li_lsn == INODE_ITEM(blip)->ili_flush_lsn) {
++				/*
++				 * xfs_ail_update_finish() only cares about the
++				 * lsn of the first tail item removed, any
++				 * others will be at the same or higher lsn so
++				 * we just ignore them.
++				 */
++				xfs_lsn_t lsn = xfs_ail_delete_one(ailp, blip);
++				if (!tail_lsn && lsn)
++					tail_lsn = lsn;
++			} else {
  				xfs_clear_li_failed(blip);
  			}
  		}
--
--		if (mlip_changed) {
--			if (!XFS_FORCED_SHUTDOWN(ailp->ail_mount))
--				xlog_assign_tail_lsn_locked(ailp->ail_mount);
--			if (list_empty(&ailp->ail_head))
--				wake_up_all(&ailp->ail_empty);
--		}
--		spin_unlock(&ailp->ail_lock);
--
--		if (mlip_changed)
--			xfs_log_space_wake(ailp->ail_mount);
-+		xfs_ail_update_finish(ailp, mlip_changed);
+-		xfs_ail_update_finish(ailp, mlip_changed);
++		xfs_ail_update_finish(ailp, tail_lsn);
  	}
  
  	/*
 diff --git a/fs/xfs/xfs_trans_ail.c b/fs/xfs/xfs_trans_ail.c
-index 6ccfd75d3c24..656819523bbd 100644
+index 656819523bbd..685a21cd24c0 100644
 --- a/fs/xfs/xfs_trans_ail.c
 +++ b/fs/xfs/xfs_trans_ail.c
-@@ -678,6 +678,27 @@ xfs_ail_push_all_sync(
- 	finish_wait(&ailp->ail_empty, &wait);
- }
- 
-+void
-+xfs_ail_update_finish(
-+	struct xfs_ail		*ailp,
-+	bool			do_tail_update) __releases(ailp->ail_lock)
+@@ -108,17 +108,25 @@ xfs_ail_next(
+  * We need the AIL lock in order to get a coherent read of the lsn of the last
+  * item in the AIL.
+  */
++static xfs_lsn_t
++__xfs_ail_min_lsn(
++	struct xfs_ail		*ailp)
 +{
-+	struct xfs_mount	*mp = ailp->ail_mount;
++	struct xfs_log_item	*lip = xfs_ail_min(ailp);
 +
-+	if (!do_tail_update) {
-+		spin_unlock(&ailp->ail_lock);
-+		return;
-+	}
-+
-+	if (!XFS_FORCED_SHUTDOWN(mp))
-+		xlog_assign_tail_lsn_locked(mp);
-+
-+	if (list_empty(&ailp->ail_head))
-+		wake_up_all(&ailp->ail_empty);
-+	spin_unlock(&ailp->ail_lock);
-+	xfs_log_space_wake(mp);
++	if (lip)
++		return lip->li_lsn;
++	return 0;
 +}
 +
- /*
-  * xfs_trans_ail_update - bulk AIL insertion operation.
-  *
-@@ -737,15 +758,7 @@ xfs_trans_ail_update_bulk(
+ xfs_lsn_t
+ xfs_ail_min_lsn(
+ 	struct xfs_ail		*ailp)
+ {
+-	xfs_lsn_t		lsn = 0;
+-	struct xfs_log_item	*lip;
++	xfs_lsn_t		lsn;
+ 
+ 	spin_lock(&ailp->ail_lock);
+-	lip = xfs_ail_min(ailp);
+-	if (lip)
+-		lsn = lip->li_lsn;
++	lsn = __xfs_ail_min_lsn(ailp);
+ 	spin_unlock(&ailp->ail_lock);
+ 
+ 	return lsn;
+@@ -681,11 +689,12 @@ xfs_ail_push_all_sync(
+ void
+ xfs_ail_update_finish(
+ 	struct xfs_ail		*ailp,
+-	bool			do_tail_update) __releases(ailp->ail_lock)
++	xfs_lsn_t		old_lsn) __releases(ailp->ail_lock)
+ {
+ 	struct xfs_mount	*mp = ailp->ail_mount;
+ 
+-	if (!do_tail_update) {
++	/* if the tail lsn hasn't changed, don't do updates or wakeups. */
++	if (!old_lsn || old_lsn == __xfs_ail_min_lsn(ailp)) {
+ 		spin_unlock(&ailp->ail_lock);
+ 		return;
+ 	}
+@@ -730,7 +739,7 @@ xfs_trans_ail_update_bulk(
+ 	xfs_lsn_t		lsn) __releases(ailp->ail_lock)
+ {
+ 	struct xfs_log_item	*mlip;
+-	int			mlip_changed = 0;
++	xfs_lsn_t		tail_lsn = 0;
+ 	int			i;
+ 	LIST_HEAD(tmp);
+ 
+@@ -745,9 +754,10 @@ xfs_trans_ail_update_bulk(
+ 				continue;
+ 
+ 			trace_xfs_ail_move(lip, lip->li_lsn, lsn);
++			if (mlip == lip && !tail_lsn)
++				tail_lsn = lip->li_lsn;
++
+ 			xfs_ail_delete(ailp, lip);
+-			if (mlip == lip)
+-				mlip_changed = 1;
+ 		} else {
+ 			trace_xfs_ail_insert(lip, 0, lsn);
+ 		}
+@@ -758,15 +768,23 @@ xfs_trans_ail_update_bulk(
  	if (!list_empty(&tmp))
  		xfs_ail_splice(ailp, cur, &tmp, lsn);
  
--	if (mlip_changed) {
--		if (!XFS_FORCED_SHUTDOWN(ailp->ail_mount))
--			xlog_assign_tail_lsn_locked(ailp->ail_mount);
--		spin_unlock(&ailp->ail_lock);
--
--		xfs_log_space_wake(ailp->ail_mount);
--	} else {
--		spin_unlock(&ailp->ail_lock);
--	}
-+	xfs_ail_update_finish(ailp, mlip_changed);
+-	xfs_ail_update_finish(ailp, mlip_changed);
++	xfs_ail_update_finish(ailp, tail_lsn);
  }
  
- bool
-@@ -789,10 +802,10 @@ void
- xfs_trans_ail_delete(
+-bool
++/*
++ * Delete one log item from the AIL.
++ *
++ * If this item was at the tail of the AIL, return the LSN of the log item so
++ * that we can use it to check if the LSN of the tail of the log has moved
++ * when finishing up the AIL delete process in xfs_ail_update_finish().
++ */
++xfs_lsn_t
+ xfs_ail_delete_one(
  	struct xfs_ail		*ailp,
- 	struct xfs_log_item	*lip,
--	int			shutdown_type) __releases(ailp->ail_lock)
-+	int			shutdown_type)
+ 	struct xfs_log_item	*lip)
+ {
+ 	struct xfs_log_item	*mlip = xfs_ail_min(ailp);
++	xfs_lsn_t		lsn = lip->li_lsn;
+ 
+ 	trace_xfs_ail_delete(lip, mlip->li_lsn, lip->li_lsn);
+ 	xfs_ail_delete(ailp, lip);
+@@ -774,7 +792,9 @@ xfs_ail_delete_one(
+ 	clear_bit(XFS_LI_IN_AIL, &lip->li_flags);
+ 	lip->li_lsn = 0;
+ 
+-	return mlip == lip;
++	if (mlip == lip)
++		return lsn;
++	return 0;
+ }
+ 
+ /**
+@@ -805,7 +825,7 @@ xfs_trans_ail_delete(
+ 	int			shutdown_type)
  {
  	struct xfs_mount	*mp = ailp->ail_mount;
--	bool			mlip_changed;
-+	bool			need_update;
+-	bool			need_update;
++	xfs_lsn_t		tail_lsn;
  
  	if (!test_bit(XFS_LI_IN_AIL, &lip->li_flags)) {
  		spin_unlock(&ailp->ail_lock);
-@@ -805,17 +818,8 @@ xfs_trans_ail_delete(
+@@ -818,8 +838,8 @@ xfs_trans_ail_delete(
  		return;
  	}
  
--	mlip_changed = xfs_ail_delete_one(ailp, lip);
--	if (mlip_changed) {
--		if (!XFS_FORCED_SHUTDOWN(mp))
--			xlog_assign_tail_lsn_locked(mp);
--		if (list_empty(&ailp->ail_head))
--			wake_up_all(&ailp->ail_empty);
--	}
--
--	spin_unlock(&ailp->ail_lock);
--	if (mlip_changed)
--		xfs_log_space_wake(ailp->ail_mount);
-+	need_update = xfs_ail_delete_one(ailp, lip);
-+	xfs_ail_update_finish(ailp, need_update);
+-	need_update = xfs_ail_delete_one(ailp, lip);
+-	xfs_ail_update_finish(ailp, need_update);
++	tail_lsn = xfs_ail_delete_one(ailp, lip);
++	xfs_ail_update_finish(ailp, tail_lsn);
  }
  
  int
 diff --git a/fs/xfs/xfs_trans_priv.h b/fs/xfs/xfs_trans_priv.h
-index 2e073c1c4614..64ffa746730e 100644
+index 64ffa746730e..35655eac01a6 100644
 --- a/fs/xfs/xfs_trans_priv.h
 +++ b/fs/xfs/xfs_trans_priv.h
-@@ -92,8 +92,10 @@ xfs_trans_ail_update(
+@@ -91,8 +91,8 @@ xfs_trans_ail_update(
+ 	xfs_trans_ail_update_bulk(ailp, NULL, &lip, 1, lsn);
  }
  
- bool xfs_ail_delete_one(struct xfs_ail *ailp, struct xfs_log_item *lip);
-+void xfs_ail_update_finish(struct xfs_ail *ailp, bool do_tail_update)
-+			__releases(ailp->ail_lock);
+-bool xfs_ail_delete_one(struct xfs_ail *ailp, struct xfs_log_item *lip);
+-void xfs_ail_update_finish(struct xfs_ail *ailp, bool do_tail_update)
++xfs_lsn_t xfs_ail_delete_one(struct xfs_ail *ailp, struct xfs_log_item *lip);
++void xfs_ail_update_finish(struct xfs_ail *ailp, xfs_lsn_t old_lsn)
+ 			__releases(ailp->ail_lock);
  void xfs_trans_ail_delete(struct xfs_ail *ailp, struct xfs_log_item *lip,
--		int shutdown_type) __releases(ailp->ail_lock);
-+		int shutdown_type);
- 
- static inline void
- xfs_trans_ail_remove(
+ 		int shutdown_type);
 -- 
 2.24.0.rc0
 
