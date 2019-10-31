@@ -2,162 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83FEAEB493
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 17:22:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46384EB4CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 17:38:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728529AbfJaQWM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Oct 2019 12:22:12 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:32778 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726540AbfJaQWM (ORCPT
+        id S1728598AbfJaQiQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Oct 2019 12:38:16 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:50417 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727856AbfJaQiQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Oct 2019 12:22:12 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9VG8gcn077408;
-        Thu, 31 Oct 2019 16:21:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
- bh=jKnmogrjBI421cgKzUpswjdcCEV/ia2xm5HwuLv6enY=;
- b=TUBvFhuRX+zkHNuvieKI704i0GjUMruro171WzUcoW+nEJw/5h4DFLpY4wfrTHFlJDZ5
- PF/mtt0ePYY9w5D5biPKw5d9y3yJ9SGKSV9Z12xHOEuLt4u/wmu3M7QVIEUpvb0MBJ52
- cRArqv2+zXodb9bLlwDpdpn83OKeISvNTRP47cmoln2BmQAQHN0Un1/+EZK/opJ2IaPG
- BVQZX+BVjU3VDVSXsi9J6XbrkhTxtNOBvWMpGWxu5BDNJcjQYgkyh4yf1gZ4tExgH/Rl
- 0S6QZX8zDWRtx4bzU95UW66/aH1EO9H/dkOMlrD+/VsUPrSMHYF7Gvnp6516Ax5qdNSu 5Q== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2vxwhfmhbr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 31 Oct 2019 16:21:46 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9VG9i1K140201;
-        Thu, 31 Oct 2019 16:21:45 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 2vykw1mev6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 31 Oct 2019 16:21:45 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x9VGLbOd016467;
-        Thu, 31 Oct 2019 16:21:37 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 31 Oct 2019 09:21:37 -0700
-Date:   Thu, 31 Oct 2019 09:21:35 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Jan Kara <jack@suse.cz>, mbobrowski@mbobrowski.org,
-        riteshh@linux.ibm.com, linux-ext4 <linux-ext4@vger.kernel.org>
-Subject: [ANNOUNCE] xfs-linux: iomap-for-next updated to a90100421499
-Message-ID: <20191031162135.GB15212@magnolia>
+        Thu, 31 Oct 2019 12:38:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572539894;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=mxgLr4gqIZKHqSVNNAtea7HdJZYdiBMzARcL7j6XY2g=;
+        b=CF2hlQA8etUWX3SO7hGGqhd6fyRHTFCj/P3PpJH7AcCa8ad7e3giVNi8Aq/TYokeRHzC/i
+        Q3SzGnV0D5cxgMbF5fw9T93fPMiWX+AG4kg3OU+rkeznI04dj96wzsdlQKJGGA5kDqDQwd
+        bkrjqLI8Ac50PdU/ArudXekH2hbChhs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-120-OBNcKO5IPbCsAav66unpNg-1; Thu, 31 Oct 2019 12:38:11 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D80461800D55;
+        Thu, 31 Oct 2019 16:38:08 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A573219C5B;
+        Thu, 31 Oct 2019 16:38:05 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <fe167a90-1503-7ca2-4150-eeffd5cb1378@yandex-team.ru>
+References: <fe167a90-1503-7ca2-4150-eeffd5cb1378@yandex-team.ru> <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk> <157186189069.3995.10292601951655075484.stgit@warthog.procyon.org.uk>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 07/10] pipe: Conditionalise wakeup in pipe_read() [ver #2]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9427 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910310163
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9427 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910310163
+Content-ID: <3164.1572539884.1@warthog.procyon.org.uk>
+Date:   Thu, 31 Oct 2019 16:38:04 +0000
+Message-ID: <3165.1572539884@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: OBNcKO5IPbCsAav66unpNg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi folks,
+Okay, attached is a change that might give you what you want.  I tried my
+pipe-bench program (see cover note) with perf.  The output of the program w=
+ith
+the patch applied was:
 
-The iomap-for-next branch of the xfs-linux repository at:
+-       pipe                  305127298     36262221772       302185181    =
+     7887690
 
-	git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+The output of perf with the patch applied:
 
-has just been updated.
+        239,943.92 msec task-clock                #    1.997 CPUs utilized
+            17,728      context-switches          #   73.884 M/sec
+               124      cpu-migrations            #    0.517 M/sec
+             9,330      page-faults               #   38.884 M/sec
+   885,107,207,365      cycles                    # 3688822.793 GHz
+ 1,386,873,499,490      instructions              #    1.57  insn per cycle
+   311,037,372,339      branches                  # 1296296921.931 M/sec
+        33,467,827      branch-misses             #    0.01% of all branche=
+s
 
-Patches often get missed, so please check if your outstanding patches
-were in this update. If they have not been in this update, please
-resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
-the next update.  This is a minor cleanup of a duplicated check, so
-there's no need to rebase your development trees.
+And without:
 
-The new head of the iomap-for-next branch is commit:
+        239,891.87 msec task-clock                #    1.997 CPUs utilized
+            22,187      context-switches          #   92.488 M/sec
+               133      cpu-migrations            #    0.554 M/sec
+             9,334      page-faults               #   38.909 M/sec
+   884,906,976,128      cycles                    # 3688787.725 GHz
+ 1,391,986,932,265      instructions              #    1.57  insn per cycle
+   311,394,686,857      branches                  # 1298067400.849 M/sec
+        30,242,823      branch-misses             #    0.01% of all branche=
+s
 
-a90100421499 fs/iomap: remove redundant check in iomap_dio_rw()
+So it did make something like a 20% reduction in context switches.
 
-New Commits:
+David
+---
+diff --git a/fs/pipe.c b/fs/pipe.c
+index e3d5f7a39123..5167921edd73 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -276,7 +276,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+ =09size_t total_len =3D iov_iter_count(to);
+ =09struct file *filp =3D iocb->ki_filp;
+ =09struct pipe_inode_info *pipe =3D filp->private_data;
+-=09int do_wakeup;
++=09int do_wakeup, wake;
+ =09ssize_t ret;
 
-Christoph Hellwig (20):
-      [2492a606b3d2] xfs: initialize iomap->flags in xfs_bmbt_to_iomap
-      [05b30949f1aa] xfs: set IOMAP_F_NEW more carefully
-      [4e087a3b313c] xfs: use a struct iomap in xfs_writepage_ctx
-      [433dad94ec5d] xfs: refactor the ioend merging code
-      [5653017bc44e] xfs: turn io_append_trans into an io_private void pointer
-      [760fea8bfb7f] xfs: remove the fork fields in the writepage_ctx and ioend
-      [009d8d849d3f] iomap: zero newly allocated mapped blocks
-      [9e91c5728cab] iomap: lift common tracing code from xfs to iomap
-      [598ecfbaa742] iomap: lift the xfs writeback code to iomap
-      [3e19e6f3eeea] iomap: warn on inline maps in iomap_writepage_map
-      [ab08b01ec0a2] iomap: move struct iomap_page out of iomap.h
-      [b3d423ec898a] iomap: cleanup iomap_ioend_compare
-      [48d64cd18b33] iomap: pass a struct page to iomap_finish_page_writeback
-      [65a60e8687c1] iomap: better document the IOMAP_F_* flags
-      [c12d6fa88d09] iomap: remove the unused iomap argument to __iomap_write_end
-      [dcd6158d15c7] iomap: always use AOP_FLAG_NOFS in iomap_write_begin
-      [3590c4d8979b] iomap: ignore non-shared or non-data blocks in xfs_file_dirty
-      [d3b404396977] iomap: move the zeroing case out of iomap_read_page_sync
-      [32a38a499104] iomap: use write_begin to read pages to unshare
-      [eb81cf9d0e18] iomap: renumber IOMAP_HOLE to 0
+ =09/* Null read succeeds. */
+@@ -329,11 +329,12 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+ =09=09=09=09tail++;
+ =09=09=09=09pipe->tail =3D tail;
+ =09=09=09=09do_wakeup =3D 1;
+-=09=09=09=09if (head - (tail - 1) =3D=3D pipe->max_usage)
++=09=09=09=09wake =3D head - (tail - 1) =3D=3D pipe->max_usage / 2;
++=09=09=09=09if (wake)
+ =09=09=09=09=09wake_up_interruptible_sync_poll_locked(
+ =09=09=09=09=09=09&pipe->wait, EPOLLOUT | EPOLLWRNORM);
+ =09=09=09=09spin_unlock_irq(&pipe->wait.lock);
+-=09=09=09=09if (head - (tail - 1) =3D=3D pipe->max_usage)
++=09=09=09=09if (wake)
+ =09=09=09=09=09kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
+ =09=09=09}
+ =09=09=09total_len -=3D chars;
 
-Darrick J. Wong (1):
-      [9cd0ed63ca51] iomap: enhance writeback error message
-
-Dave Chinner (1):
-      [7684e2c4384d] iomap: iomap that extends beyond EOF should be marked dirty
-
-Goldwyn Rodrigues (1):
-      [c039b9979272] iomap: use a srcmap for a read-modify-write I/O
-
-Jan Kara (2):
-      [13ef954445df] iomap: Allow forcing of waiting for running DIO in iomap_dio_rw()
-      [906753befc4d] xfs: Use iomap_dio_rw to wait for unaligned direct IO
-
-Joseph Qi (1):
-      [a90100421499] fs/iomap: remove redundant check in iomap_dio_rw()
-
-
-Code Diffstat:
-
- fs/dax.c                 |  13 +-
- fs/ext2/inode.c          |   2 +-
- fs/ext4/inode.c          |   2 +-
- fs/gfs2/bmap.c           |   3 +-
- fs/gfs2/file.c           |   6 +-
- fs/iomap/Makefile        |  16 +-
- fs/iomap/apply.c         |  25 +-
- fs/iomap/buffered-io.c   | 749 ++++++++++++++++++++++++++++++++++++++++------
- fs/iomap/direct-io.c     |  11 +-
- fs/iomap/fiemap.c        |   4 +-
- fs/iomap/seek.c          |   4 +-
- fs/iomap/swapfile.c      |   3 +-
- fs/iomap/trace.c         |  12 +
- fs/iomap/trace.h         |  88 ++++++
- fs/xfs/libxfs/xfs_bmap.c |  14 +-
- fs/xfs/libxfs/xfs_bmap.h |   3 +-
- fs/xfs/xfs_aops.c        | 754 ++++++++---------------------------------------
- fs/xfs/xfs_aops.h        |  17 --
- fs/xfs/xfs_file.c        |  13 +-
- fs/xfs/xfs_iomap.c       |  51 +++-
- fs/xfs/xfs_iomap.h       |   2 +-
- fs/xfs/xfs_pnfs.c        |   2 +-
- fs/xfs/xfs_reflink.c     |   2 +-
- fs/xfs/xfs_super.c       |  11 +-
- fs/xfs/xfs_trace.h       |  65 ----
- include/linux/iomap.h    | 129 +++++---
- 26 files changed, 1086 insertions(+), 915 deletions(-)
- create mode 100644 fs/iomap/trace.c
- create mode 100644 fs/iomap/trace.h
