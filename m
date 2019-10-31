@@ -2,137 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B4F4EB697
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 19:04:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C680EB6A5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 19:11:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729146AbfJaSEk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Oct 2019 14:04:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55708 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726602AbfJaSEj (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Oct 2019 14:04:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=6HWF9R69q+bGarY+/HC5Lk584D+wVdNWtJtDctzB8q0=; b=TEtnKh13JEKKq4wRkVL86Y5w9
-        7iVHzu0iuZ8ezJjv4H2UHAd/n8maPHxbW9eNwbD3a+c8QX0cc802D/vBn56B4x+imP3oyyFtqjKVj
-        Ckrdpp7SVuZB2MLxrI/Z7q5xtnE3d4u11miv9lJWYYSzLivn0UwC9OJs8lp7paRuSjSFjrymTx0Ms
-        5CyATrnj8v+A7R2PZQc7NNbrt0xiC0nDud9k3oxZzdCYk/z7nfxj3h4qQrxgfYVg6WfFRW2fnAxQ2
-        aPJawWzu6LUD3GXu/R4R0U4WhklGsjzJhO84sNvZNHGFs03d2qkFtH8dsmv2I9szMN5q10ogDI/ZD
-        IZYtgPl0A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iQEoI-0002h1-Te; Thu, 31 Oct 2019 18:04:38 +0000
-Date:   Thu, 31 Oct 2019 11:04:38 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Satya Tangirala <satyat@google.com>
-Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Kim Boojin <boojin.kim@samsung.com>
-Subject: Re: [PATCH v5 1/9] block: Keyslot Manager for Inline Encryption
-Message-ID: <20191031180438.GB23601@infradead.org>
-References: <20191028072032.6911-1-satyat@google.com>
- <20191028072032.6911-2-satyat@google.com>
+        id S1729194AbfJaSLe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Oct 2019 14:11:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33062 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729127AbfJaSLd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 31 Oct 2019 14:11:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0E4D6B28C;
+        Thu, 31 Oct 2019 18:11:31 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id A2E791E482D; Thu, 31 Oct 2019 19:11:30 +0100 (CET)
+Date:   Thu, 31 Oct 2019 19:11:30 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Dmitry Monakhov <dmonakhov@openvz.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        jack@suse.cz, Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+Subject: Re: [PATCH 2/2] fs/quota: Check that quota is not dirty before
+ release
+Message-ID: <20191031181130.GH13321@quack2.suse.cz>
+References: <20191031103920.3919-1-dmonakhov@openvz.org>
+ <20191031103920.3919-2-dmonakhov@openvz.org>
+ <20191031180033.GF13321@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191028072032.6911-2-satyat@google.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20191031180033.GF13321@quack2.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 12:20:24AM -0700, Satya Tangirala wrote:
-> +/*
-> + * keyslot-manager.c
+On Thu 31-10-19 19:00:33, Jan Kara wrote:
+> On Thu 31-10-19 10:39:20, Dmitry Monakhov wrote:
+> > From: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+> > 
+> > There is a race window where quota was redirted once we drop dq_list_lock inside dqput(),
+> > but before we grab dquot->dq_lock inside dquot_release()
+> > 
+> > TASK1                                                       TASK2 (chowner)
+> > ->dqput()
+> >   we_slept:
+> >     spin_lock(&dq_list_lock)
+> >     if (dquot_dirty(dquot)) {
+> >           spin_unlock(&dq_list_lock);
+> >           dquot->dq_sb->dq_op->write_dquot(dquot);
+> >           goto we_slept
+> >     if (test_bit(DQ_ACTIVE_B, &dquot->dq_flags)) {
+> >           spin_unlock(&dq_list_lock);
+> >           dquot->dq_sb->dq_op->release_dquot(dquot);
+> >                                                             dqget()
+> > 							    mark_dquot_dirty()
+> > 							    dqput()
+> >           goto we_slept;
+> >         }
+> > So dquot dirty quota will be released by TASK1, but on next we_sleept loop
+> > we detect this and call ->write_dquot() for it.
+> > XFSTEST: https://github.com/dmonakhov/xfstests/commit/440a80d4cbb39e9234df4d7240aee1d551c36107
+> 
+> Yeah, good catch. Both patches look good to me. I've added them to my tree.
 
-Never mention the file name in top of the file comments, it is going
-to be out of data sooner than you'll get the series merged..
+And forgot to add: Thanks for both patches and also the regression tests! I
+really appreciate it!
 
-> +EXPORT_SYMBOL(keyslot_manager_create);
+								Honza
 
-please use EXPORT_SYMBOL_GPL like all new low-level block layer exports.
 
-> +EXPORT_SYMBOL(keyslot_manager_get_slot_for_key);
-
-This is only used in block/bio-crypt-ctx.c, no need for an export.
-
-> +void keyslot_manager_get_slot(struct keyslot_manager *ksm, unsigned int slot)
-> +{
-> +	if (WARN_ON(slot >= ksm->num_slots))
-> +		return;
-> +
-> +	WARN_ON(atomic_inc_return(&ksm->slots[slot].slot_refs) < 2);
-> +}
-> +EXPORT_SYMBOL(keyslot_manager_get_slot);
-
-Same here.
-
-> +EXPORT_SYMBOL(keyslot_manager_put_slot);
-
-And here.
-
-> +bool keyslot_manager_crypto_mode_supported(struct keyslot_manager *ksm,
-> +					   enum blk_crypto_mode_num crypto_mode,
-> +					   unsigned int data_unit_size)
-> +{
-> +	if (!ksm)
-> +		return false;
-> +	return ksm->ksm_ll_ops.crypto_mode_supported(ksm->ll_priv_data,
-> +						     crypto_mode,
-> +						     data_unit_size);
-> +}
-> +EXPORT_SYMBOL(keyslot_manager_crypto_mode_supported);
-
-And here as well.  In fact this one is so trivial that it is better
-open coded into the two callers.
-
-> +bool keyslot_manager_rq_crypto_mode_supported(struct request_queue *q,
-> +					enum blk_crypto_mode_num crypto_mode,
-> +					unsigned int data_unit_size)
-> +{
-> +	return keyslot_manager_crypto_mode_supported(q->ksm, crypto_mode,
-> +						     data_unit_size);
-> +}
-> +EXPORT_SYMBOL(keyslot_manager_rq_crypto_mode_supported);
-
-And this one is entirely unused.
-
-> +EXPORT_SYMBOL(keyslot_manager_evict_key);
-
-No used outside blk-crypto.c either.
-
-In fact given how small block/blk-crypto.c and block/keyslot-manager.c
-are, and given that all but two functions in the latter are only called
-from the former you should seriously consider merging the two files.
-
-> diff --git a/include/linux/bio.h b/include/linux/bio.h
-> index 3cdb84cdc488..d0cb7c350cdc 100644
-> --- a/include/linux/bio.h
-> +++ b/include/linux/bio.h
-> @@ -564,6 +564,11 @@ static inline void bvec_kunmap_irq(char *buffer, unsigned long *flags)
->  }
->  #endif
->  
-> +enum blk_crypto_mode_num {
-> +	BLK_ENCRYPTION_MODE_INVALID	= 0,
-> +	BLK_ENCRYPTION_MODE_AES_256_XTS	= 1,
-> +};
-
-This one moves to include/linux/bio-crypt-ctx.h later in the series,
-please introduce it in the right place from the start.  Also is there
-a need to explicitly assign code points here?
-
-> +extern struct keyslot_manager *keyslot_manager_create(unsigned int num_slots,
-> +				const struct keyslot_mgmt_ll_ops *ksm_ops,
-> +				void *ll_priv_data);
-
-There is no nee for externs on function declarations in headers.
+> > Signed-off-by: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+> > ---
+> >  fs/ocfs2/quota_global.c  |  2 +-
+> >  fs/quota/dquot.c         |  2 +-
+> >  include/linux/quotaops.h | 10 ++++++++++
+> >  3 files changed, 12 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/ocfs2/quota_global.c b/fs/ocfs2/quota_global.c
+> > index 7a92219..eda8348 100644
+> > --- a/fs/ocfs2/quota_global.c
+> > +++ b/fs/ocfs2/quota_global.c
+> > @@ -728,7 +728,7 @@ static int ocfs2_release_dquot(struct dquot *dquot)
+> >  
+> >  	mutex_lock(&dquot->dq_lock);
+> >  	/* Check whether we are not racing with some other dqget() */
+> > -	if (atomic_read(&dquot->dq_count) > 1)
+> > +	if (dquot_is_busy(dquot))
+> >  		goto out;
+> >  	/* Running from downconvert thread? Postpone quota processing to wq */
+> >  	if (current == osb->dc_task) {
+> > diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+> > index b492b9e..72d24a5 100644
+> > --- a/fs/quota/dquot.c
+> > +++ b/fs/quota/dquot.c
+> > @@ -497,7 +497,7 @@ int dquot_release(struct dquot *dquot)
+> >  
+> >  	mutex_lock(&dquot->dq_lock);
+> >  	/* Check whether we are not racing with some other dqget() */
+> > -	if (atomic_read(&dquot->dq_count) > 1)
+> > +	if (dquot_is_busy(dquot))
+> >  		goto out_dqlock;
+> >  	if (dqopt->ops[dquot->dq_id.type]->release_dqblk) {
+> >  		ret = dqopt->ops[dquot->dq_id.type]->release_dqblk(dquot);
+> > diff --git a/include/linux/quotaops.h b/include/linux/quotaops.h
+> > index 185d948..91e0b76 100644
+> > --- a/include/linux/quotaops.h
+> > +++ b/include/linux/quotaops.h
+> > @@ -54,6 +54,16 @@ static inline struct dquot *dqgrab(struct dquot *dquot)
+> >  	atomic_inc(&dquot->dq_count);
+> >  	return dquot;
+> >  }
+> > +
+> > +static inline bool dquot_is_busy(struct dquot *dquot)
+> > +{
+> > +	if (test_bit(DQ_MOD_B, &dquot->dq_flags))
+> > +		return true;
+> > +	if (atomic_read(&dquot->dq_count) > 1)
+> > +		return true;
+> > +	return false;
+> > +}
+> > +
+> >  void dqput(struct dquot *dquot);
+> >  int dquot_scan_active(struct super_block *sb,
+> >  		      int (*fn)(struct dquot *dquot, unsigned long priv),
+> > -- 
+> > 2.7.4
+> > 
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
