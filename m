@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC566EB3B8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 16:16:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C03BFEB3C9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 16:21:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728344AbfJaPQH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Oct 2019 11:16:07 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:54092 "EHLO
+        id S1727779AbfJaPVb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Oct 2019 11:21:31 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:55931 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726566AbfJaPQE (ORCPT
+        by vger.kernel.org with ESMTP id S1727721AbfJaPVb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Oct 2019 11:16:04 -0400
+        Thu, 31 Oct 2019 11:21:31 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572534963;
+        s=mimecast20190719; t=1572535290;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=zC2mY0mLUqkQzl10meI2dQTcqCAQks3OLoAJrTsT3pg=;
-        b=adzTcULULFJy8UcTe4yayYjVO6GidCQ7OQbxa57ibWr9JLlEP+ePDMRYzUW3mi3+VgISKy
-        /xFnGeLG/yFKZ5F9958e/V7wD7sZLOvjx+GP5o/Nsi824j+5D1eciBNAFRU32OAruv9vEr
-        0XeQU3e10feMJ4Vi8Y61HcBqAZGfR+o=
+        bh=KB0w+J47Vm67r8tjhUMxa0RlzCeaXYS337IcG/e9RSQ=;
+        b=IGC9i1xWgEWL3wophjL5XzI1h0CDS9d7wQYuQJoWC1pPcMEfk60dPS8M3lfFB7u7Ezbjvl
+        Auo5Dd6q/nTq2jG/gD+APR7h4hOVM9+pTX2qU0vZrcsH5dpYVfOqB3WPXqWmzaBQUxZeI2
+        lHe/RRGZWf/xQ2rzLQ7K6CAyaVJr2uA=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-253-FXImFqDnP-q7fXpZhf4T8w-1; Thu, 31 Oct 2019 11:16:00 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+ us-mta-397-MUMIyamRN_mM4zAREXjqFg-1; Thu, 31 Oct 2019 11:21:28 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E87491800D6B;
-        Thu, 31 Oct 2019 15:15:57 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 976B3107ACC0;
+        Thu, 31 Oct 2019 15:21:26 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AA8681001920;
-        Thu, 31 Oct 2019 15:15:54 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9F00F60BEC;
+        Thu, 31 Oct 2019 15:21:23 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
 From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <c6e044cc-5596-90b7-4418-6ad7009d6d79@yandex-team.ru>
-References: <c6e044cc-5596-90b7-4418-6ad7009d6d79@yandex-team.ru> <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk> <30394.1571936252@warthog.procyon.org.uk>
+In-Reply-To: <fe167a90-1503-7ca2-4150-eeffd5cb1378@yandex-team.ru>
+References: <fe167a90-1503-7ca2-4150-eeffd5cb1378@yandex-team.ru> <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk> <157186189069.3995.10292601951655075484.stgit@warthog.procyon.org.uk>
 To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
@@ -51,13 +51,13 @@ Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
         linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 11/10] pipe: Add fsync() support [ver #2]
+Subject: Re: [RFC PATCH 07/10] pipe: Conditionalise wakeup in pipe_read() [ver #2]
 MIME-Version: 1.0
-Content-ID: <17310.1572534953.1@warthog.procyon.org.uk>
-Date:   Thu, 31 Oct 2019 15:15:53 +0000
-Message-ID: <17311.1572534953@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: FXImFqDnP-q7fXpZhf4T8w-1
+Content-ID: <18021.1572535282.1@warthog.procyon.org.uk>
+Date:   Thu, 31 Oct 2019 15:21:22 +0000
+Message-ID: <18022.1572535282@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-MC-Unique: MUMIyamRN_mM4zAREXjqFg-1
 X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
@@ -68,14 +68,19 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Konstantin Khlebnikov <khlebnikov@yandex-team.ru> wrote:
 
-> Similar synchronization is required for reusing memory after vmsplice()?
-> I don't see other way how sender could safely change these pages.
+> > Only do a wakeup in pipe_read() if we made space in a completely full
+> > buffer.  The producer shouldn't be waiting on pipe->wait otherwise.
+>=20
+> We could go further and wakeup writer only when at least half of buffer i=
+s
+> empty.  This gives better batching and reduces rate of context switches.
+>=20
+> https://lore.kernel.org/lkml/157219118016.7078.16223055699799396042.stgit=
+@buzz/T/#u
 
-Sounds like a point - if you have multiple parallel contributors to the pip=
+Yeah, I saw that.  I suspect that where you put the slider may depend on th=
 e
-via vmsplice(), then FIONREAD is of no use.  To use use FIONREAD, you have =
-to
-let the pipe become empty before you can be sure.
+context.
 
 David
 
