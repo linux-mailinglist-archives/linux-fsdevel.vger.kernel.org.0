@@ -2,128 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AF33EB974
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 23:01:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC71EEB9AE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Oct 2019 23:25:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729269AbfJaWBO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Oct 2019 18:01:14 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:14553 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728345AbfJaWBN (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Oct 2019 18:01:13 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dbb59aa0000>; Thu, 31 Oct 2019 15:01:14 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 31 Oct 2019 15:01:08 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 31 Oct 2019 15:01:08 -0700
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 31 Oct
- 2019 22:01:07 +0000
-Subject: Re: [PATCH 02/19] mm/gup: factor out duplicate code from four
- routines
-To:     Ira Weiny <ira.weiny@intel.com>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
-References: <20191030224930.3990755-1-jhubbard@nvidia.com>
- <20191030224930.3990755-3-jhubbard@nvidia.com>
- <20191031183549.GC14771@iweiny-DESK2.sc.intel.com>
- <75b557f7-24b2-740c-2640-2f914d131600@nvidia.com>
- <20191031210954.GE14771@iweiny-DESK2.sc.intel.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <5cb84804-be12-82e8-11d8-7e593fd05619@nvidia.com>
-Date:   Thu, 31 Oct 2019 15:01:07 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2387456AbfJaWZH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Oct 2019 18:25:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51444 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387442AbfJaWZG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 31 Oct 2019 18:25:06 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E73562080F;
+        Thu, 31 Oct 2019 22:25:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572560705;
+        bh=ftYhWj4O4+ImXsZ36eQsPiXlqWILGWsZJF3VA/2bPe0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lxrpMWOZi/jca6U4O0ffuqvB0mi6Hjw9uCnz33WOlQcUfN2d++AGFEaDrQv6W8FkU
+         kKJpvd5fHygSqAPexEN/vOxQnp+sb1OHcalAvJOW2V+chhq+UrBufMHIOJkKNDCzuz
+         XpNn9I+zWcBk3MwpOZndqUfdhbhYyMt4lgDpWtys=
+Date:   Thu, 31 Oct 2019 15:25:03 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Satya Tangirala <satyat@google.com>, linux-scsi@vger.kernel.org,
+        Kim Boojin <boojin.kim@samsung.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-block@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v5 7/9] fscrypt: add inline encryption support
+Message-ID: <20191031222500.GB111219@gmail.com>
+Mail-Followup-To: Christoph Hellwig <hch@infradead.org>,
+        Satya Tangirala <satyat@google.com>, linux-scsi@vger.kernel.org,
+        Kim Boojin <boojin.kim@samsung.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20191028072032.6911-1-satyat@google.com>
+ <20191028072032.6911-8-satyat@google.com>
+ <20191031183217.GF23601@infradead.org>
+ <20191031202125.GA111219@gmail.com>
+ <20191031212103.GA6244@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20191031210954.GE14771@iweiny-DESK2.sc.intel.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1572559274; bh=St3Rf/REgq/1do28NhYtGJF/+ie61nX3HJRKUe+Kv+8=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=ikqeCXUqsTwoQB5CbB+62UgGOxuiKLZDrBsuVMEaD9IjjDxXb09OkVp8xOPRF5wct
-         ee5DhXFx3ncNZEuTcZeSOQivxIJokuWUNeY+2vtv3ZOkk1HWJjkj1h2EH0AXlwb+WX
-         k+12VWYeIpYnIAMc/9Jx/3qdPSGK+huRjsgTXXwezXTbb/FzDozYDlQdAsy+QX8f3z
-         guPaB2LcynNr/sr3xHEr7wV68E214NkgY5BRukBI2Kt+YqGU/HP5jxWqLsbWsS/eGt
-         xEDw4hf53LcGHOIM9YJEHjAqS/wG8o7OePI2ydIId+OliMRlMyINElUiwkTZonGlbb
-         If9KlbJQJnB+Q==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191031212103.GA6244@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/31/19 2:09 PM, Ira Weiny wrote:
-> On Thu, Oct 31, 2019 at 11:43:37AM -0700, John Hubbard wrote:
->> On 10/31/19 11:35 AM, Ira Weiny wrote:
->>> On Wed, Oct 30, 2019 at 03:49:13PM -0700, John Hubbard wrote:
->> ...
->>>> +
->>>> +static int __huge_pt_done(struct page *head, int nr_recorded_pages, int *nr)
->>>> +{
->>>> +	*nr += nr_recorded_pages;
->>>> +	SetPageReferenced(head);
->>>> +	return 1;
->>>
->>> When will this return anything but 1?
->>>
->>
->> Never, but it saves a line at all four call sites, by having it return like that.
->>
->> I could see how maybe people would prefer to just have it be a void function,
->> and return 1 directly at the call sites. Since this was a lower line count I
->> thought maybe it would be slightly better, but it's hard to say really.
+On Thu, Oct 31, 2019 at 02:21:03PM -0700, Christoph Hellwig wrote:
+> On Thu, Oct 31, 2019 at 01:21:26PM -0700, Eric Biggers wrote:
+> > > > +	/* The file must need contents encryption, not filenames encryption */
+> > > > +	if (!S_ISREG(inode->i_mode))
+> > > > +		return false;
+> > > 
+> > > But that isn't really what the check checks for..
+> > 
+> > This is how fscrypt has always worked.  The type of encryption to do is
+> > determined as follows:
+> > 
+> > S_ISREG() => contents encryption
+> > S_ISDIR() || S_ISLNK() => filenames encryption
+> > 
+> > See e.g. select_encryption_mode(), and similar checks elsewhere in
+> > fs/{crypto,ext4,f2fs}/.
+> > 
+> > Do you have a suggestion to make it clearer?
 > 
-> It is a NIT perhaps but I feel like the signature of a function should stand on
-> it's own.  What this does is mix the meaning of this function with those
-> calling it.  Which IMO is not good style.
+> Maybe have a fscrypt_content_encryption helper that currently
+> evaluates to S_ISREG(inode->i_mode) as that documents the intent?
+
+It's more important to clean up the IS_ENCRYPTED(inode) &&
+S_ISREG(inode->i_mode) checks that are duplicated in fs/{ext4,f2fs}/, so I've
+been thinking of adding a helper:
+
+static inline bool fscrypt_needs_contents_encryption(const struct inode *inode)
+{
+        return IS_ENABLED(CONFIG_FS_ENCRYPTION) && IS_ENCRYPTED(inode) &&
+               S_ISREG(inode->i_mode);
+}
+
+It could be used here too, though only S_ISREG() is actually needed here, so it
+wouldn't be as good of a fit.
+
+Anyway, this will need to be a separate cleanup.
+
 > 
-> We can see what others say.
+> > > > +	/* The filesystem must be mounted with -o inlinecrypt */
+> > > > +	if (!sb->s_cop->inline_crypt_enabled ||
+> > > > +	    !sb->s_cop->inline_crypt_enabled(sb))
+> > > > +		return false;
+> > > 
+> > > So please add a SB_* flag for that option instead of the weird
+> > > indirection.
+> > 
+> > IMO it's not really "weird" given that the point of the fscrypt_operations is to
+> > expose filesystem-specific stuff to fs/crypto/.  But yes, using one of the SB_*
+> > bits would make it simpler, so if people are fine with that we'll do that.
+> 
+> I think that is much simpler.  Additionally it could also replace the
+> need for the has_stable_inodes and get_ino_and_lblk_bits methods, which
+> are pretty weird.  Instead just document the requirements for the
+> SB_INLINE_CRYPT flag and handle the rest in the file system.  That is
+> for f2f always set it, and for ext4 set it based on s_inodes_count.
+> Which brings me to:
 > 
 
-Sure. I'll plan on changing it to a void return type, then, unless someone else
-pipes up.
+I don't think combining these things is a good idea because it would restrict
+the use of inline encryption to filesystems that allow IV_INO_LBLK_64 encryption
+policies, i.e. filesystems that have stable inode numbers, 32-bit inodes, and
+32-bit file logical block numbers.
 
+The on-disk format (i.e. the type of encryption policy chosen) and the
+implementation (inline or filesystem-layer crypto) are really two separate
+things.  This was one of the changes in v4 => v5 of this patchset; these two
+things used to be conflated but now they are separate.  Now you can use inline
+encryption with the existing fscrypt policies too.
 
-thanks,
+We could use two separate SB_* flags, like SB_INLINE_CRYPT and
+SB_IV_INO_LBLK_64_SUPPORT.  However, the ->has_stable_inodes() and
+->get_ino_and_lblk_bits() methods are nice because they separate the filesystem
+properties from the question of "is this encryption policy supported".
+Declaring the filesystem properties is easier to do because it doesn't require
+any fscrypt-specific knowledge.  Also, fs/crypto/ could use these properties in
+different ways in the future, e.g. if another IV generation scheme is added.
 
-John Hubbard
-NVIDIA
+> > > 
+> > > Btw, I'm not happy about the 8-byte IV assumptions everywhere here.
+> > > That really should be a parameter, not hardcoded.
+> > 
+> > To be clear, the 8-byte IV assumption doesn't really come from fs/crypto/, but
+> > rather in what the blk-crypto API provides.  If blk-crypto were to provide
+> > longer IV support, fs/crypto/ would pretty easily be able to make use of it.
+> 
+> That's what I meant - we hardcode the value in fscrypt.  Instead we need
+> to expose the size from blk-crypt and check for it.
+> 
+
+If we add variable-length IV support, I think it should be handled in the same
+way as crypto algorithms.  The current model is that the bio submitter doesn't
+need to check whether the crypto algorithm is supported by the device, because
+blk-crypto will fall back to the crypto API if needed.  Unsupported IV lengths
+could be handled in the same way.
+
+- Eric
