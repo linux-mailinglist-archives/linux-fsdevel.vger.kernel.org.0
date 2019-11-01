@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 187C8EC7ED
+	by mail.lfdr.de (Postfix) with ESMTP id E97F5EC7EF
 	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2019 18:36:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729893AbfKARfm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Nov 2019 13:35:42 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:30251 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729803AbfKARfl (ORCPT
+        id S1729966AbfKARfv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Nov 2019 13:35:51 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:60065 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729939AbfKARfv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Nov 2019 13:35:41 -0400
+        Fri, 1 Nov 2019 13:35:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572629741;
+        s=mimecast20190719; t=1572629750;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=N2gLZQTmOtfe94PwgELEjIRO8IuV3gWS7pjAAw1ld4Q=;
-        b=LWU3p0ikQbApW8GBZRyNBYPVF1420EKSoUdelk9Miu/iTy9ZYUbluIznJOFlfw/1ci/zIU
-        0ENhXrAnb8bacE/dvrEckrGiWvV+2bosOVF5lZAxgD1W6iIj4TCfbFZbFrJXDTOPRMmE4x
-        2tcEzX2ofjsMExD0jwAVvz43RrOg50c=
+        bh=Vi11bsC86DIjvR3JukBeRWivqFrcNqVuRmOTzZJ3x6E=;
+        b=ATN+ZACaQxhHrOMEJVgoBf/W41sr40yN4v97GH3Rg+f+WQpJQ3GBSyVpmV7SPsN2oGJUu1
+        rMQKwXsB2O5IZuD/AS71e84Pj5W4ULhJvHt0QRudHeJG55oDwnzAo9nU5LZs5MfnKE0YYY
+        V3/A2wvJnA3RpXYpr7yOyVXwgan8iGQ=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-31-c0mbb6TfPoiAsyuG_xveUQ-1; Fri, 01 Nov 2019 13:35:38 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+ us-mta-280-jObNGFxmMiqYnw6I3pTN-A-1; Fri, 01 Nov 2019 13:35:46 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3B4502EDC;
-        Fri,  1 Nov 2019 17:35:36 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 03A9A800D49;
+        Fri,  1 Nov 2019 17:35:45 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9C9B160C63;
-        Fri,  1 Nov 2019 17:35:33 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3C6B45D6B7;
+        Fri,  1 Nov 2019 17:35:42 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 10/11] pipe: Check for ring full inside of the spinlock
- in pipe_write() [ver #3]
+Subject: [RFC PATCH 11/11] pipe: Increase the writer-wakeup threshold to
+ reduce context-switch count [ver #3]
 From:   David Howells <dhowells@redhat.com>
 To:     torvalds@linux-foundation.org
 Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
@@ -50,14 +50,14 @@ Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 01 Nov 2019 17:35:32 +0000
-Message-ID: <157262973277.13142.11996381016183033698.stgit@warthog.procyon.org.uk>
+Date:   Fri, 01 Nov 2019 17:35:41 +0000
+Message-ID: <157262974145.13142.5910403713310791673.stgit@warthog.procyon.org.uk>
 In-Reply-To: <157262963995.13142.5568934007158044624.stgit@warthog.procyon.org.uk>
 References: <157262963995.13142.5568934007158044624.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: c0mbb6TfPoiAsyuG_xveUQ-1
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: jObNGFxmMiqYnw6I3pTN-A-1
 X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -66,33 +66,45 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Make pipe_write() check to see if the ring has become full between it
-taking the pipe mutex, checking the ring status and then taking the
-spinlock.
+Increase the threshold at which the reader sends a wake event to the
+writers in the queue such that the queue must be half empty before the wake
+is issued rather than the wake being issued when just a single slot
+available.
 
-This can happen if a notification is written into the pipe as that happens
-without the pipe mutex.
+This reduces the number of context switches in the tests significantly,
+without altering the amount of work achieved.  With my pipe-bench program,
+there's a 20% reduction versus an unpatched kernel.
 
+Suggested-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/pipe.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ fs/pipe.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/fs/pipe.c b/fs/pipe.c
-index d7b8d3f22987..aba2455caabe 100644
+index aba2455caabe..9cd5cbef9552 100644
 --- a/fs/pipe.c
 +++ b/fs/pipe.c
-@@ -463,6 +463,11 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- =09=09=09spin_lock_irq(&pipe->wait.lock);
+@@ -324,16 +324,18 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+ =09=09=09}
 =20
- =09=09=09head =3D pipe->head;
-+=09=09=09if (pipe_full(head, pipe->tail, max_usage)) {
-+=09=09=09=09spin_unlock_irq(&pipe->wait.lock);
-+=09=09=09=09continue;
-+=09=09=09}
-+
- =09=09=09pipe->head =3D head + 1;
-=20
- =09=09=09/* Always wake up, even if the copy fails. Otherwise
+ =09=09=09if (!buf->len) {
++=09=09=09=09bool wake;
+ =09=09=09=09pipe_buf_release(pipe, buf);
+ =09=09=09=09spin_lock_irq(&pipe->wait.lock);
+ =09=09=09=09tail++;
+ =09=09=09=09pipe->tail =3D tail;
+ =09=09=09=09do_wakeup =3D 1;
+-=09=09=09=09if (head - (tail - 1) =3D=3D pipe->max_usage)
++=09=09=09=09wake =3D head - (tail - 1) =3D=3D pipe->max_usage / 2;
++=09=09=09=09if (wake)
+ =09=09=09=09=09wake_up_interruptible_sync_poll_locked(
+ =09=09=09=09=09=09&pipe->wait, EPOLLOUT | EPOLLWRNORM);
+ =09=09=09=09spin_unlock_irq(&pipe->wait.lock);
+-=09=09=09=09if (head - (tail - 1) =3D=3D pipe->max_usage)
++=09=09=09=09if (wake)
+ =09=09=09=09=09kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
+ =09=09=09}
+ =09=09=09total_len -=3D chars;
 
