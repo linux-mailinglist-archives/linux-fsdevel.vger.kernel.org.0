@@ -2,106 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 043ADEC507
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2019 15:49:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFE9DEC51D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2019 15:53:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbfKAOto (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Nov 2019 10:49:44 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:43215 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727365AbfKAOto (ORCPT
+        id S1727751AbfKAOxe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Nov 2019 10:53:34 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:38618 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727559AbfKAOxd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Nov 2019 10:49:44 -0400
-Received: by mail-il1-f193.google.com with SMTP id j2so6766272ilc.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Nov 2019 07:49:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OvG/qWeSbh1TxLgtmArlVNDYsoALFmkQsSm7UaGBE/U=;
-        b=I8fTjuu/6Ne32KB3TzlkLHNc34FVVQHy/sTVoKvVYeIrGIs/zEWpPkdT4X2FTYZjfJ
-         UM4GFAou96icNjK1AVI5vEOtitRVjbXgZfqaanuntVF/vhTirkZT/9E+CWJUq7E2TQj0
-         StXEuMWcR5zlKYK8R7EGKhYIJ+Gb4ciY1IEMBuLWPRJg6NDyeWhuiAg3JUaKBbPDkQbL
-         sElozNdk4t7DFMJr/2GTc4DXhCqAVsopLQpS5jb3DWebvxakkqFHF/FpNq1kpaMflaeM
-         i/d5Nr3Kf7lOCXzSXk2CZXk0I+pfGJSDm0die6SS7xUqTydNbrFVI18tKwuFsQOAi/MB
-         kf9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OvG/qWeSbh1TxLgtmArlVNDYsoALFmkQsSm7UaGBE/U=;
-        b=Hhtx0wnzGDRQNYsOdnqyhCpDYq9JTUEMNm8xEkt4adof4CTN1PbJhh9FKAllWfNBYw
-         l7hMXDDvQ3FjPm+RuKHZyNSZ9OVukIEMdluEpj92gnYmH5EFj04f+fXYh++b7jXnWO3t
-         ZIB8lowZDxUuSNK99+IHXlgHy5VEKo9fwDh0APGTjY8QdEMPH4hkO64wMMhZgp6Xowad
-         52W2aRjd3TQh6uTGyS0HnlPDqyJDnXCEAm3YvvwNdjfW7yjlKBfZqNa+aQ2YNrDJYVMy
-         v6vNE+Z2Py5jDcmOFYhxxDo/JhZKeAWi/uawB7fCwqiu8/QgAyAtzyugWyeQkEnS8Hnp
-         J+Fw==
-X-Gm-Message-State: APjAAAW1+O7yEN6KeeqyJ+dnDgkvQLIMbNtJpg0NvaXM2m7XhV+OWREF
-        DnKmmjFGo0AETbs5b8DXnUEJJA==
-X-Google-Smtp-Source: APXvYqxr+bs1ScRWYKeCxmeXCSlj6Q4Lr6KXKYyS2zYjKblHkVBUMc7IPKJ+YzvkERiHaP9xr0/5Lg==
-X-Received: by 2002:a92:5d8f:: with SMTP id e15mr13331860ilg.173.1572619783709;
-        Fri, 01 Nov 2019 07:49:43 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id f73sm1107827ild.59.2019.11.01.07.49.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Nov 2019 07:49:42 -0700 (PDT)
-Subject: Re: [PATCH 10/19] fs/io_uring: set FOLL_PIN via pin_user_pages()
-To:     John Hubbard <jhubbard@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
-References: <20191030224930.3990755-1-jhubbard@nvidia.com>
- <20191030224930.3990755-11-jhubbard@nvidia.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <979ba2a3-ee04-fb12-204d-1b68c7b6e141@kernel.dk>
-Date:   Fri, 1 Nov 2019 08:49:39 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Fri, 1 Nov 2019 10:53:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572620012;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=4MrbBDQoC+y5mHa+x24tjKMzrIZqDb3nq3UowOz4YuY=;
+        b=f1rigfPGvTB/H5OhVEpDcYnjXRTVvHpmdODmqZmpitWDVFrlTfMmbN/5TjtGlIR6AjZ2hA
+        skc5QuBqRyut7uUj0laj1LxPrGsM7Se4L/dOcL7zroerH5slpEVz434+jA5/wyEKtF0HuY
+        ns0fYH9VIbeKtnAMX0lwLDUcByGLYF0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-343-hHyjRC-_MMioG67u4CEa_w-1; Fri, 01 Nov 2019 10:53:28 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9BED01800D67;
+        Fri,  1 Nov 2019 14:53:26 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6466F26DEA;
+        Fri,  1 Nov 2019 14:53:21 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAOi1vP9GAmy5NXJisrDssspoRcc+UHum+cyBsJTMNTjz_jieoQ@mail.gmail.com>
+References: <CAOi1vP9GAmy5NXJisrDssspoRcc+UHum+cyBsJTMNTjz_jieoQ@mail.gmail.com> <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk> <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk> <CAOi1vP97DMX8zweOLfBDOFstrjC78=6RgxK3PPj_mehCOSeoaw@mail.gmail.com> <4892d186-8eb0-a282-e7e6-e79958431a54@rasmusvillemoes.dk> <16620.1572534687@warthog.procyon.org.uk>
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-api@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring, not cursor and length [ver #2]
 MIME-Version: 1.0
-In-Reply-To: <20191030224930.3990755-11-jhubbard@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-ID: <23657.1572620001.1@warthog.procyon.org.uk>
+Date:   Fri, 01 Nov 2019 14:53:21 +0000
+Message-ID: <23658.1572620001@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: hHyjRC-_MMioG67u4CEa_w-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/30/19 4:49 PM, John Hubbard wrote:
-> Convert fs/io_uring to use the new pin_user_pages() call, which sets
-> FOLL_PIN. Setting FOLL_PIN is now required for code that requires
-> tracking of pinned pages, and therefore for any code that calls
-> put_user_page().
+Ilya Dryomov <idryomov@gmail.com> wrote:
 
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
+> >  * This means there isn't a dead spot in the buffer, but the ring
+> >  * size has to be a power of two and <=3D 2^31.
 
--- 
-Jens Axboe
+I'll go with that, thanks.
+
+David
 
