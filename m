@@ -2,92 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B487ECA5A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2019 22:40:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70721ECAB7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2019 23:05:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbfKAVko (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Nov 2019 17:40:44 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:43735 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725989AbfKAVko (ORCPT
+        id S1727029AbfKAWFh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Nov 2019 18:05:37 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:41144 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726230AbfKAWFh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Nov 2019 17:40:44 -0400
-Received: from dread.disaster.area (pa49-180-67-183.pa.nsw.optusnet.com.au [49.180.67.183])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id DBCB03A0834;
-        Sat,  2 Nov 2019 08:40:40 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iQeeu-0006bm-DO; Sat, 02 Nov 2019 08:40:40 +1100
-Date:   Sat, 2 Nov 2019 08:40:40 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/28] xfs: Throttle commits on delayed background CIL
- push
-Message-ID: <20191101214040.GX4614@dread.disaster.area>
-References: <20191031234618.15403-1-david@fromorbit.com>
- <20191031234618.15403-3-david@fromorbit.com>
- <20191101120426.GC59146@bfoster>
+        Fri, 1 Nov 2019 18:05:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572645935;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=E8+rrZXvUsqeBEaW/X2CqD+QnPOx373OWvmJOxsDZMI=;
+        b=CxRV7R5w1tFCKwkn2VITDPE7KNHlgmKWuJ+JSo/antl9wFd7qtfaTorApkuE4BvjGY04AK
+        1Au6fQEBqqkE12C6PbksYWE6cT9VYqxfbGjUJNy76jULFBjsRI6RY3qO5RtM6rz1b4YDDV
+        lQ7bf1rX3pPXUweE5tFk/E5c2/cjVcA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-395-UyQR-pJ3NNi_-Rohn9Habw-1; Fri, 01 Nov 2019 18:05:32 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2B3CA1005500;
+        Fri,  1 Nov 2019 22:05:30 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 220DF60878;
+        Fri,  1 Nov 2019 22:05:26 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wjqx4j2vqg-tAwthNP1gcAcj1x4B7sq6Npbi8QJTUMd-A@mail.gmail.com>
+References: <CAHk-=wjqx4j2vqg-tAwthNP1gcAcj1x4B7sq6Npbi8QJTUMd-A@mail.gmail.com> <157262963995.13142.5568934007158044624.stgit@warthog.procyon.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 00/11] pipe: Notification queue preparation [ver #3]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191101120426.GC59146@bfoster>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=G6BsK5s5 c=1 sm=1 tr=0
-        a=3wLbm4YUAFX2xaPZIabsgw==:117 a=3wLbm4YUAFX2xaPZIabsgw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=MeAgGD-zjQ4A:10
-        a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=0MiyBbjkrBVIBRQmzFcA:9
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-ID: <13963.1572645926.1@warthog.procyon.org.uk>
+Date:   Fri, 01 Nov 2019 22:05:26 +0000
+Message-ID: <13964.1572645926@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: UyQR-pJ3NNi_-Rohn9Habw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 01, 2019 at 08:04:26AM -0400, Brian Foster wrote:
-> On Fri, Nov 01, 2019 at 10:45:52AM +1100, Dave Chinner wrote:
-> > From: Dave Chinner <dchinner@redhat.com>
-> > 
-> > In certain situations the background CIL push can be indefinitely
-> > delayed. While we have workarounds from the obvious cases now, it
-> > doesn't solve the underlying issue. This issue is that there is no
-> > upper limit on the CIL where we will either force or wait for
-> > a background push to start, hence allowing the CIL to grow without
-> > bound until it consumes all log space.
-> > 
-> > To fix this, add a new wait queue to the CIL which allows background
-> > pushes to wait for the CIL context to be switched out. This happens
-> > when the push starts, so it will allow us to block incoming
-> > transaction commit completion until the push has started. This will
-> > only affect processes that are running modifications, and only when
-> > the CIL threshold has been significantly overrun.
-> > 
-> > This has no apparent impact on performance, and doesn't even trigger
-> > until over 45 million inodes had been created in a 16-way fsmark
-> > test on a 2GB log. That was limiting at 64MB of log space used, so
-> > the active CIL size is only about 3% of the total log in that case.
-> > The concurrent removal of those files did not trigger the background
-> > sleep at all.
-> > 
-> > Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> > Reviewed-by: Brian Foster <bfoster@redhat.com>
-> > ---
-> 
-> I don't recall posting an R-b tag for this one...
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Argh, sorry. I must have screwed up transcribing them from the
-mailing list.
+> Side note: we have a couple of cases where I don't think we should use
+> the "sync" version at all.
+>=20
+> Both pipe_read() and pipe_write() have that
+>=20
+>         if (do_wakeup) {
+>                 wake_up_interruptible_sync_poll(&pipe->wait, ...
+>=20
+> code at the end, outside the loop. But those two wake-ups aren't
+> actually synchronous.
 
-> That said, I think my only outstanding feedback (side discussion aside)
-> was the code factoring in xlog_cil_push_background().
+Changing those to non-sync:
 
-I'll go back and look at that, 'cause clearly I was looking at the
-wrong patch when I screwed up the rvb tag...
+BENCHMARK       BEST            TOTAL BYTES     AVG BYTES       STDDEV
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+pipe                  305816126     36255936983       302132808         888=
+0788
+splice                282402106     27102249370       225852078       21003=
+3443
+vmsplice              440022611     48896995196       407474959        5990=
+6438
 
-Cheers,
+Changing the others in pipe_read() and pipe_write() too:
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+pipe                  305609682     36285967942       302383066         741=
+5744
+splice                282475690     27891475073       232428958       20168=
+7522
+vmsplice              451458280     51949421503       432911845        3492=
+5242
+
+The cumulative patch is attached below.  I'm not sure how well this should
+make a difference with my benchmark programs since each thread can run on i=
+ts
+own CPU.
+
+David
+---
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 9cd5cbef9552..c5e3765465f0 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -332,7 +332,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+ =09=09=09=09do_wakeup =3D 1;
+ =09=09=09=09wake =3D head - (tail - 1) =3D=3D pipe->max_usage / 2;
+ =09=09=09=09if (wake)
+-=09=09=09=09=09wake_up_interruptible_sync_poll_locked(
++=09=09=09=09=09wake_up_locked_poll(
+ =09=09=09=09=09=09&pipe->wait, EPOLLOUT | EPOLLWRNORM);
+ =09=09=09=09spin_unlock_irq(&pipe->wait.lock);
+ =09=09=09=09if (wake)
+@@ -371,7 +371,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+=20
+ =09/* Signal writers asynchronously that there is more room. */
+ =09if (do_wakeup) {
+-=09=09wake_up_interruptible_sync_poll(&pipe->wait, EPOLLOUT | EPOLLWRNORM)=
+;
++=09=09wake_up_interruptible_poll(&pipe->wait, EPOLLOUT | EPOLLWRNORM);
+ =09=09kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
+ =09}
+ =09if (ret > 0)
+@@ -477,7 +477,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ =09=09=09 * syscall merging.
+ =09=09=09 * FIXME! Is this really true?
+ =09=09=09 */
+-=09=09=09wake_up_interruptible_sync_poll_locked(
++=09=09=09wake_up_locked_poll(
+ =09=09=09=09&pipe->wait, EPOLLIN | EPOLLRDNORM);
+=20
+ =09=09=09spin_unlock_irq(&pipe->wait.lock);
+@@ -531,7 +531,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ out:
+ =09__pipe_unlock(pipe);
+ =09if (do_wakeup) {
+-=09=09wake_up_interruptible_sync_poll(&pipe->wait, EPOLLIN | EPOLLRDNORM);
++=09=09wake_up_interruptible_poll(&pipe->wait, EPOLLIN | EPOLLRDNORM);
+ =09=09kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
+ =09}
+ =09if (ret > 0 && sb_start_write_trylock(file_inode(filp)->i_sb)) {
+
