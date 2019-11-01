@@ -2,147 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95539ECBA8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2019 23:47:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3175FECC07
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2019 00:46:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727926AbfKAWrZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Nov 2019 18:47:25 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:52248 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727751AbfKAWrZ (ORCPT
+        id S1726532AbfKAXq0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Nov 2019 19:46:26 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:40806 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbfKAXqZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Nov 2019 18:47:25 -0400
-Received: from dread.disaster.area (pa49-180-67-183.pa.nsw.optusnet.com.au [49.180.67.183])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 1A8E043E42B;
-        Sat,  2 Nov 2019 09:47:17 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iQfhL-00070m-Nv; Sat, 02 Nov 2019 09:47:15 +1100
-Date:   Sat, 2 Nov 2019 09:47:15 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     Boaz Harrosh <boaz@plexistor.com>, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/5] Enable per-file/directory DAX operations
-Message-ID: <20191101224715.GY4614@dread.disaster.area>
-References: <20191023221332.GE2044@dread.disaster.area>
- <efffc9e7-8948-a117-dc7f-e394e50606ab@plexistor.com>
- <20191024073446.GA4614@dread.disaster.area>
- <fb4f8be7-bca6-733a-7f16-ced6557f7108@plexistor.com>
- <20191024213508.GB4614@dread.disaster.area>
- <ab101f90-6ec1-7527-1859-5f6309640cfa@plexistor.com>
- <20191025003603.GE4614@dread.disaster.area>
- <20191025204926.GA26184@iweiny-DESK2.sc.intel.com>
- <20191027221039.GL4614@dread.disaster.area>
- <20191031161757.GA14771@iweiny-DESK2.sc.intel.com>
+        Fri, 1 Nov 2019 19:46:25 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iQgcY-0003GU-3x; Fri, 01 Nov 2019 23:46:22 +0000
+Date:   Fri, 1 Nov 2019 23:46:22 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        wugyuan@cn.ibm.com, jlayton@kernel.org, hsiangkao@aol.com,
+        Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH RESEND 1/1] vfs: Really check for inode ptr in lookup_fast
+Message-ID: <20191101234622.GM26530@ZenIV.linux.org.uk>
+References: <20190927044243.18856-1-riteshh@linux.ibm.com>
+ <20191015040730.6A84742047@d06av24.portsmouth.uk.ibm.com>
+ <20191022133855.B1B4752050@d06av21.portsmouth.uk.ibm.com>
+ <20191022143736.GX26530@ZenIV.linux.org.uk>
+ <20191022201131.GZ26530@ZenIV.linux.org.uk>
+ <20191023110551.D04AE4C044@d06av22.portsmouth.uk.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191031161757.GA14771@iweiny-DESK2.sc.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
-        a=3wLbm4YUAFX2xaPZIabsgw==:117 a=3wLbm4YUAFX2xaPZIabsgw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=MeAgGD-zjQ4A:10
-        a=7-415B0cAAAA:8 a=DDk79rDXCmxeI5gZc_4A:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20191023110551.D04AE4C044@d06av22.portsmouth.uk.ibm.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 09:17:58AM -0700, Ira Weiny wrote:
-> On Mon, Oct 28, 2019 at 09:10:39AM +1100, Dave Chinner wrote:
-> > On Fri, Oct 25, 2019 at 01:49:26PM -0700, Ira Weiny wrote:
+On Wed, Oct 23, 2019 at 04:35:50PM +0530, Ritesh Harjani wrote:
+
+> > > What we have guaranteed is
+> > > 	* ->d_lock serializes ->d_flags/->d_inode changes
+> > > 	* ->d_seq is bumped before/after such changes
+> > > 	* positive dentry never changes ->d_inode as long as you hold
+> > > a reference (negative dentry *can* become positive right under you)
+> > > 
+> > > So there are 3 classes of valid users: those holding ->d_lock, those
+> > > sampling and rechecking ->d_seq and those relying upon having observed
+> > > the sucker they've pinned to be positive.
 > 
-> [snip]
-> 
-> > 
-> > > Currently this works if I remount the fs or if I use <procfs>/drop_caches like
-> > > Boaz mentioned.
-> > 
-> > drop_caches frees all the dentries that don't have an active
-> > references before it iterates over inodes, thereby dropping the
-> > cached reference(s) to the inode that pins it in memory before it
-> > iterates the inode LRU.
-> > 
-> > > Isn't there a way to get xfs to do that on it's own?
-> > 
-> > Not reliably. Killing all the dentries doesn't guarantee the inode
-> > will be reclaimed immediately. The ioctl() itself requires an open
-> > file reference to the inode, and there's no telling how many other
-> > references there are to the inode that the filesystem a) can't find,
-> > and b) even if it can find them, it is illegal to release them.
-> > 
-> > IOWs, if you are relying on being able to force eviction of inode
-> > from the cache for correct operation of a user controlled flag, then
-> > it's just not going to work.
-> 
-> Agree, I see the difficulty of forcing the effective flag to change in this
-> path.  However, the only thing I am relying on is that the ioctl will change
-> the physical flag.
-> 
-> IOW I am proposing that the semantic be that changing the physical flag does
-> _not_ immediately change the effective flag.  With that clarified up front the
-> user can adjust accordingly.
+> :) Thanks for simplifying like this. Agreed.
 
-Which makes it useless from an admin perspective. i.e. to change the
-way the application uses DAX now, admins are going to have to end up
-rebooting the machine to guarantee that the kernel has picked up the
-change in the on-disk flag.
+FWIW, after fixing several ceph bugs, add to that the following:
+	* all places that turn a negative dentry into positive one are
+holding its parent exclusive or dentry has not been observable for
+anybody else.  It had been present in the parent's list of children
+(negative and unhashed) and it might have been present in in-lookup
+hashtable.  However, nobody is going to grab a reference to it from there
+without having grabbed ->d_lock on it and observed the state after
+it became positive. 
 
-> After thinking about this more I think there is a strong use case to be able to
-> change the physical flag on a non-zero length file.  That use case is to be
-> able to restore files from backups.
+Which means that holding a reference to dentry *and* holding its
+parent at least shared stabilizes both ->d_inode and type bits in
+->d_flags.  The situation with barriers is more subtle - *IF* we
+had sufficient barriers to have ->d_inode/type bits seen right
+after having gotten the reference, we are fine.  The only change
+possible after that point is negative->positive transition and
+that gets taken care of by barriers provided by ->i_rwsem.
 
-Why does that matter? Backup programs need to set the flag before
-the data is written into the destination file, just like they do
-with restoring other flags that influence data placement like the RT
-device bit and extent size hints...
+If we'd obtained that reference by d_lookup() or __d_lookup(),
+we are fine - ->d_lock gives a barrier.  The same goes for places
+that grab references during a tree traversal, provided that they
+hold ->d_lock around that (fs/autofs/expire.c stuff).  The same goes
+for having it found in inode's aliases list (->i_lock).
 
-Basically, all these issues you keep trying to work around go away
-if we can come up with a way of swapping the aops vector safely.
-That's the problem we need to solve, anything else results in
-largely unacceptible user visible admin warts.
+I really hope that the same applies to accesses to file_dentry(file);
+on anything except alpha that would be pretty much automatic and
+on alpha we get the things along the lines of
 
-> I propose the user has no direct control over this event and it is mainly used
-> to restore files from backups which is mainly an admin operation where a
-> remount is a reasonable thing to do.
+	f = fdt[n]
+	mb
+	d = f->f_path.dentry
+	i = d->d_inode
+	assert(i != NULL)
+vs.
+	see that d->d_inode is non-NULL
+	f->f_path.dentry = d
+	mb
+	fdt[n] = f
 
-As soon as users understand that they flag can be changed, they are
-going to want to do that and they are going to want it to work
-reliably.
+IOW, the barriers that make it safe to fetch the fields of struct file
+(rcu_dereference_raw() in __fcheck_files() vs. smp_store_release()
+in __fd_install() in the above) should *hopefully* take care of all
+stores visible by the time of do_dentry_open().  Sure, alpha cache
+coherency is insane, but AFAICS it's not _that_ insane.
 
-> Users direct control of the effective flag is through inheritance.  The user
-> needs to create the file in a DAX enable dir and they get effective operation
-> right away.
+Question to folks familiar with alpha memory model:
 
-Until they realise the application is slow or broken because it is
-using DAX, and they want to turn DAX off for that application. Then
-they have *no control*. You cannot have it both ways - being able to
-turn something on but not turn it off is not "effective operation"
-or user friendly.
+A = 0, B = NULL, C = NULL
+CPU1:
+	A = 1
 
-> If in the future we can determine a safe way to trigger the a_ops change we can
-> add that to the semantic as an alternative for users.
+CPU2:
+	r1 = A
+	if (r1) {
+		B = &A
+		mb
+		C = &B
+	}
 
-No, the flag does not get turned on until we've solved the problems
-that resulted in us turning it off. We've gone over this mutliple
-times, and nobody has solved the issues that need solving - everyone
-seems to just hack around the issues rather than solving it
-properly. If we thought taking some kind of shortcut full of
-compromises and gotchas was the right solution, we would have never
-turned the flag off in the first place.
+CPU3:
+	r2 = C;
+	mb
+	if (r2) {	// &B
+		r3 = *r2	// &A
+		r4 = *r3	// 1
+		assert(r4 == 1)
+	}
 
-Cheers,
+is the above safe on alpha?
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+[snip]
+
+> We may also need similar guarantees with __d_clear_type_and_inode().
+
+Not really - pinned dentry can't go negative.  In any case, with the
+audit I've done so far, I don't believe that blanket solutions like
+that are good idea - most of the places doing checks are safe as it is.
+The surface that needs to be taken care of is fairly small, actually;
+most of that is in fs/namei.c and fs/dcache.c.
