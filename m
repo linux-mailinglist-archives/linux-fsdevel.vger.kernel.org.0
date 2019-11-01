@@ -2,45 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F8F9ECA06
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2019 21:57:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 233B5ECA53
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2019 22:38:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727873AbfKAU5o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Nov 2019 16:57:44 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:35160 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726396AbfKAU5n (ORCPT
+        id S1726701AbfKAVig (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Nov 2019 17:38:36 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:33897 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725989AbfKAVig (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Nov 2019 16:57:43 -0400
-Received: by mail-oi1-f195.google.com with SMTP id n16so9325776oig.2;
-        Fri, 01 Nov 2019 13:57:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=B2Wo++qvCAWopO2MVN1SxMuOaw9O5ooxGYbXrtTGoLc=;
-        b=JnPKRmD8EH+YTuMKNidCmXHCX/xkxCn1I5n0S0B4DX7PNVRwaflaqlbaRoR3ijfKYy
-         buUgt6M5ddeaC6dTS2u+uBTqyp2BQ8o5sw56Zgrp8LRUgCmlgengvLZ7aHNN2BPgC3xf
-         n2hnXEcOkD7OoG1RxTgiLd/OsAO6tFtLyHFOuv+QbfPI61W37ATcc2PLDUe0tEYWs4l9
-         ZB8fmWRLSS3ZeAAjaLikBXOIATdnibwsKMtaMc9npj1IEkPya28MPDALPjcIXKvIevIP
-         8zF/pTKFCAxK+G5JpswJvCoWHo8KVccNusSQfrGFp9kW1Rua+Vs4iZObJq74YUKQBXEE
-         TdQg==
-X-Gm-Message-State: APjAAAXitYPQXSYdzk7bUFE86PsG8V12cHlWtzVZg6VmLLBFZNNt2UYl
-        g9sr2isaukLaVAAL6k2OpNDXGWMPmjI5F4gjpko=
-X-Google-Smtp-Source: APXvYqyMPGVgSghm8B6Z8BliWMbf63SJMtQqkLmxrpCWnOLjhSTH18y22Nnv6Mk4zTGM1EgQgPb5eF27WcBVRETo4XE=
-X-Received: by 2002:a05:6808:60a:: with SMTP id y10mr3730740oih.102.1572641862721;
- Fri, 01 Nov 2019 13:57:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191031010736.113783-1-Valdis.Kletnieks@vt.edu>
-In-Reply-To: <20191031010736.113783-1-Valdis.Kletnieks@vt.edu>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 1 Nov 2019 21:57:31 +0100
-Message-ID: <CAMuHMdXzyVBa4TZEc5eRaBzu50thgJ2TrHJLZqwhbQ=JASgWOA@mail.gmail.com>
-Subject: Re: [RFC] errno.h: Provide EFSCORRUPTED for everybody
-To:     Valdis Kletnieks <valdis.kletnieks@vt.edu>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Fri, 1 Nov 2019 17:38:36 -0400
+Received: from dread.disaster.area (pa49-180-67-183.pa.nsw.optusnet.com.au [49.180.67.183])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 239EF3A03EA;
+        Sat,  2 Nov 2019 08:38:26 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1iQech-0006ba-Hr; Sat, 02 Nov 2019 08:38:23 +1100
+Date:   Sat, 2 Nov 2019 08:38:23 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
+        Theodore Ts'o <tytso@mit.edu>,
         Andreas Dilger <adilger.kernel@dilger.ca>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
@@ -53,50 +37,81 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Ext4 Developers List <linux-ext4@vger.kernel.org>,
         linux-f2fs-devel@lists.sourceforge.net,
         Linux-Arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [RFC] errno.h: Provide EFSCORRUPTED for everybody
+Message-ID: <20191101213823.GW4614@dread.disaster.area>
+References: <20191031010736.113783-1-Valdis.Kletnieks@vt.edu>
+ <CAMuHMdXzyVBa4TZEc5eRaBzu50thgJ2TrHJLZqwhbQ=JASgWOA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXzyVBa4TZEc5eRaBzu50thgJ2TrHJLZqwhbQ=JASgWOA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
+        a=3wLbm4YUAFX2xaPZIabsgw==:117 a=3wLbm4YUAFX2xaPZIabsgw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=MeAgGD-zjQ4A:10
+        a=7-415B0cAAAA:8 a=aJW9rHtRmq1v9DlCOwQA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Valdis,
+On Fri, Nov 01, 2019 at 09:57:31PM +0100, Geert Uytterhoeven wrote:
+> Hi Valdis,
+> 
+> On Thu, Oct 31, 2019 at 2:11 AM Valdis Kletnieks
+> <valdis.kletnieks@vt.edu> wrote:
+> > Three questions: (a) ACK/NAK on this patch, (b) should it be all in one
+> > patch, or one to add to errno.h and 6 patches for 6 filesystems?), and
+> > (c) if one patch, who gets to shepherd it through?
+> >
+> > There's currently 6 filesystems that have the same #define. Move it
+> > into errno.h so it's defined in just one place.
+> >
+> > Signed-off-by: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>
+> 
+> Thanks for your patch!
+> 
+> > --- a/include/uapi/asm-generic/errno.h
+> > +++ b/include/uapi/asm-generic/errno.h
+> > @@ -98,6 +98,7 @@
+> >  #define        EINPROGRESS     115     /* Operation now in progress */
+> >  #define        ESTALE          116     /* Stale file handle */
+> >  #define        EUCLEAN         117     /* Structure needs cleaning */
+> > +#define        EFSCORRUPTED    EUCLEAN
+> 
+> I have two questions:
+> a) Why not use EUCLEAN everywhere instead?
+>     Having two different names for the same errno complicates grepping.
 
-On Thu, Oct 31, 2019 at 2:11 AM Valdis Kletnieks
-<valdis.kletnieks@vt.edu> wrote:
-> Three questions: (a) ACK/NAK on this patch, (b) should it be all in one
-> patch, or one to add to errno.h and 6 patches for 6 filesystems?), and
-> (c) if one patch, who gets to shepherd it through?
->
-> There's currently 6 filesystems that have the same #define. Move it
-> into errno.h so it's defined in just one place.
->
-> Signed-off-by: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>
+Because:
+	a) EUCLEAN is horrible for code documentation. EFSCORRUPTED
+	describes exactly the error being returned and/or checked for.
 
-Thanks for your patch!
+	b) we've used EFSCORRUPTED in XFS since 1993. i.e. it was an
+	official, published error value on Irix, and we've kept it
+	in the linux code for the past ~20 years because of a)
 
-> --- a/include/uapi/asm-generic/errno.h
-> +++ b/include/uapi/asm-generic/errno.h
-> @@ -98,6 +98,7 @@
->  #define        EINPROGRESS     115     /* Operation now in progress */
->  #define        ESTALE          116     /* Stale file handle */
->  #define        EUCLEAN         117     /* Structure needs cleaning */
-> +#define        EFSCORRUPTED    EUCLEAN
+	c) Userspace programs that include filesystem specific
+	headers have already been exposed to and use EFSCORRUPTED,
+	so we can't remove/change it without breaking userspace.
 
-I have two questions:
-a) Why not use EUCLEAN everywhere instead?
-    Having two different names for the same errno complicates grepping.
-b) Perhaps both errors should use different values? Do they have the
-   same semantics? I'm not a fs developer, so this is a bit fuzzy to me.
-   According to Documentation/, one seems to originate in mtd, the
-   other in xfs.
+	d) EUCLEAN has a convenient userspace string description
+	that is appropriate for filesystem corruption: "Structure
+	needs cleaning" is precisely what needs to happen. Repair of
+	the filesystem (i.e. recovery to a clean state) is what is
+	required to fix the error....
 
-Gr{oetje,eeting}s,
+> b) Perhaps both errors should use different values?
 
-                        Geert
+That horse bolted to userspace years ago - this is just formalising
+the practice that has spread across multiple linux filesystems from
+XFS over the past ~10 years..
 
+Cheers,
+
+Dave.
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Dave Chinner
+david@fromorbit.com
