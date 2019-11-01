@@ -2,71 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 746D1EBD5D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2019 06:48:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2742DEC05E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2019 10:15:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729911AbfKAFsO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Nov 2019 01:48:14 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:43489 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725280AbfKAFsO (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Nov 2019 01:48:14 -0400
-Received: by mail-yb1-f194.google.com with SMTP id t11so3462399ybk.10;
-        Thu, 31 Oct 2019 22:48:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4GcMXXZghEvnICSboqH8NfPPiAEyVsac7USbTrLyDio=;
-        b=WLbcXixH7Z9+igO7PmM+gxQaw5tWIGIRzSvRppuoDhR8SeFlk72xsi7J1pzAamHEy4
-         hB+0EKumfJ+bxABCK0lLzSG9RVlzHxWyftdPsEXQz11O5ZsgwpmrlIOlnuBCklPwTaam
-         M83+XILXUSmWPUuhVT+tQbn9Aigk77AIYw9C734WNrPJgQAqXdcJh4mdj9BXVwd1Cg3H
-         xiwZywaeFDdHeGLSimRaeJz4O/TE5Z7xyigI7TJJye4yep50UyGVQOkCFIG5sUNhVfUb
-         MMfd2IZnF+OsX0biWRzf0IUV0riT4sjyxhy1OIB5Y20Ctt6vQl3oyd473PuU6kCHe534
-         N32w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4GcMXXZghEvnICSboqH8NfPPiAEyVsac7USbTrLyDio=;
-        b=h4g5TFJA8DYeX/lDlD7Kf9xpi6ZXexXJACXyW2WMzft62eXbAJBrCY+KcM5QTZiwLX
-         zRrPvReg/ZJ8GRa+o8qoHqmC3VmO//SXLEhGSqQl+VT/GUBzRNnR9XjzI0Pm+UpjF2V1
-         POhBBZUKChZyhOdlE//yhwF9za8LE7C8TtdQjZqngvg5PIEs42qZJkAbuvp/Yc0cT9et
-         OFuXXNqac2q9wiEJfL/PsaHNdjo7WFvb9dhUeK928SOEcvE2caFu772A6SW+avsNdkUh
-         gH/mDtbqbzB3eE8RN/bmbC4L5rOwqvbiPbOzWVHQymF6SpHCSNtI/Tw9ZtwEE/pYwovs
-         4BbA==
-X-Gm-Message-State: APjAAAU80GPo2/0htLpOEFT+kL2fDBPfZFSp2vVvdpYdoazxOJJtVp/T
-        CsEnTEK1raBhbEzAQybKFWlmRKlIzxe+vHm3bC+MAOhFdQo=
-X-Google-Smtp-Source: APXvYqzjiPdBgUNgmf0fdO2mKtJRVEzJH+6FNzliKfqg+C5OAL7gFYfYYn9Q7JxIY5J71/DSa3UpPYiHTR4i1qm6rc8=
-X-Received: by 2002:a25:6ec5:: with SMTP id j188mr8092376ybc.207.1572587291819;
- Thu, 31 Oct 2019 22:48:11 -0700 (PDT)
+        id S1728242AbfKAJPh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Nov 2019 05:15:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60918 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728226AbfKAJPg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 1 Nov 2019 05:15:36 -0400
+Received: from localhost (unknown [84.241.195.165])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CAF252080F;
+        Fri,  1 Nov 2019 09:15:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572599736;
+        bh=dDSsvh/349/YsGRUcUEAZPUmQFj6QhYNPNtOxvWz+Ck=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OOIRsTldvF2msS/hgSTcDFUYANptm0qqIXeVbeTbUPtNSdIhUlB7eIsIp3bkw8InD
+         BIShOY6e8ugng2BPI3DjjsXm+1Ed2fYDOn9k80jb/bTtr1irA8uHATjMvnzcEz2j1N
+         AXKwmWS+oUxgcnwxjACqF+keaJHWI+sPPZmRI6xc=
+Date:   Fri, 1 Nov 2019 10:12:41 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>, devel@driverdev.osuosl.org,
+        David Howells <dhowells@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v17 0/1] staging: Add VirtualBox guest shared folder
+ (vboxsf) support
+Message-ID: <20191101091241.GA2734789@kroah.com>
+References: <20191028111744.143863-1-hdegoede@redhat.com>
+ <20191028113950.GA2406@infradead.org>
 MIME-Version: 1.0
-References: <1572521901-5070-1-git-send-email-yili@winhong.com> <20191031140600.GL26530@ZenIV.linux.org.uk>
-In-Reply-To: <20191031140600.GL26530@ZenIV.linux.org.uk>
-From:   =?UTF-8?B?5p2O5LmJ?= <yilikernel@gmail.com>
-Date:   Fri, 1 Nov 2019 13:48:06 +0800
-Message-ID: <CAJfdMYDQSKp4AeeBwy5R8qmmtdke693rwArzMf6ay5reemRmRg@mail.gmail.com>
-Subject: Re: [PATCH] seq_file: fix condition while loop
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Yi Li <yili@winhong.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191028113950.GA2406@infradead.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 10:06 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Thu, Oct 31, 2019 at 07:38:21PM +0800, Yi Li wrote:
-> > From: Yi Li <yilikernel@gmail.com>
-> >
-> > Use the break condition of loop body.
-> > PTR_ERR has some meanings when p is illegal,and return 0 when p is null.
-> > set the err = 0 on the next iteration if err > 0.
->
-> IDGI.  PTR_ERR() is not going to cause any kind of undefined behaviour for
-> any valid pointer and it's trivial to evaluate.  What's the point?
-This patch doesn't introduce any functional changes.
-Sorry for the noise..
+On Mon, Oct 28, 2019 at 04:39:50AM -0700, Christoph Hellwig wrote:
+> On Mon, Oct 28, 2019 at 12:17:43PM +0100, Hans de Goede wrote:
+> > Hi Greg,
+> > 
+> > As discussed previously can you please take vboxsf upstream through
+> > drivers/staging?
+> > 
+> > It has seen many revisions on the fsdevel list, but it seems that the
+> > fsdevel people are to busy to pick it up.
+> > 
+> > Previous versions of this patch have been reviewed by Al Viro, David Howells
+> > and Christoph Hellwig (all in the Cc) and I believe that the current
+> > version addresses all their review remarks.
+> 
+> Please just send it to Linus directly.  This is the equivalent of
+> consumer hardware enablement and it is in a state as clean as it gets
+> for the rather messed up protocol.
+
+Ok, I've merged this to my -linus staging tree and will push it to Linus
+in a few days, thanks.
+
+greg k-h
