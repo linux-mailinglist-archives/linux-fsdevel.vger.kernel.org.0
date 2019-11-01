@@ -2,122 +2,259 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1510EC697
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2019 17:22:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD645EC79E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2019 18:34:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbfKAQWZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Nov 2019 12:22:25 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42170 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726823AbfKAQWZ (ORCPT
+        id S1727209AbfKAReL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Nov 2019 13:34:11 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:40903 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729421AbfKAReK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Nov 2019 12:22:25 -0400
-Received: by mail-lf1-f68.google.com with SMTP id z12so7627967lfj.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Nov 2019 09:22:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=P52uQ/03xxtLBhBJNHvX72kCEGcrZADr6ibMXyDJZUc=;
-        b=jPDkkCiVQPhHdoqN3gETpPamjcSd0LaHORCRp24yq4o03d+MD9DpVGn/wq9II2U9Nk
-         F3ZajoXsjiQ+TdEtY2Bez94BYUoVZ2Ob7wuMmMcKvjVBc1yts+OjP0vbSJcZRGtg6omT
-         YCemZmox+cA9hxNDd/Y/Y8TMEssNiNI1lNDU1HfEkMYm7lrbQSIWBhRYL20eF3eXLaYB
-         WMTxbN36cLWM60qesLy3Tn/AQ2PcPx+t9f3gzhWCvtPyWd+tP6kcAsulQfN2GFd/Xtqt
-         WCCxWkMry213UO6vCKH9/7zUOLnXitsgv+cyTZe7wSQHdShLxWcJJIYMEpfpyafMdkns
-         iHGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P52uQ/03xxtLBhBJNHvX72kCEGcrZADr6ibMXyDJZUc=;
-        b=hFVGelKwUSoS60XHILInUG5zGa5xTNg6b5LZ9czXms0lsEFdYXTQwK7lzNeyBcmytS
-         FR6oIptrju1CgbrAVcdncDzaL1WexJg+/M7IkLcamN3uqXwMpnXUua1vf/uxIHq8kPS7
-         6krxbbrOLY6LVofTmbFSe4HaGHPZzLAiv7UFebkcXclo5ysgUb9ndN6EQsXaZaEIWD53
-         fVk3UhH0yG/CzEZiZv+TRtAW3BIzroXEAH72nBS/G8pjianmcFouCfhZifbBTX668MX9
-         e83MgEXbhbODbVljpx+maKAK6Q4oH9IRONN/tvin0cqZNqTUr0dsuQYPuJTfDhvPY8Ha
-         AJsg==
-X-Gm-Message-State: APjAAAUo5oWJOSDLEwwjeYtA99yLUO1VIdLYNnR4/2MXOJSwoLUyBuom
-        mAAKdsZP3ydGKe/Hj+hgy0XuxVxx9aus6ii9YmKi
-X-Google-Smtp-Source: APXvYqztnAP0ljp8NWIFMkniILElW3dB/q2AiVhtC69W6ZNYYpkmiK7cEliPHB6I2lTRJzaI5MaVEqHJZTKTjHz3SGs=
-X-Received: by 2002:ac2:5967:: with SMTP id h7mr7585007lfp.119.1572625342721;
- Fri, 01 Nov 2019 09:22:22 -0700 (PDT)
+        Fri, 1 Nov 2019 13:34:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572629649;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=BnSm/pyC1zFaEEQQT2Q7WTcKwm88OoHgQ5K89nMoPpE=;
+        b=GBwLsHOxsYs1U3x9vffWGhCz+x81LTe+BqZ7GCxdpzXr6YnG1cN9l0ZPMHHpu1QzkU2diC
+        zrR8laUf40+DYzYbMRn6tkp029QDv5oFAWKWLVSDnFbe0X3n7Dx3MEC8k4/U81tSy2FZjn
+        9ej/An7+kpuHgfj5dC95SbmkjTiMj+M=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-198-TbZ0HN8tPs2XGeG71slkgg-1; Fri, 01 Nov 2019 13:34:05 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BE672800EB4;
+        Fri,  1 Nov 2019 17:34:03 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-40.rdu2.redhat.com [10.10.121.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D8DC6600D1;
+        Fri,  1 Nov 2019 17:34:00 +0000 (UTC)
+Subject: [RFC PATCH 00/11] pipe: Notification queue preparation [ver #3]
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>, dhowells@redhat.com,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 01 Nov 2019 17:34:00 +0000
+Message-ID: <157262963995.13142.5568934007158044624.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-References: <cover.1568834524.git.rgb@redhat.com> <CAHC9VhRDoX9du4XbCnBtBzsNPMGOsb-TKM1CC+sCL7HP=FuTRQ@mail.gmail.com>
- <20191030220320.tnwkaj5gbzchcn7j@madcap2.tricolour.ca> <3677995.NTHC7m0fHc@x2>
- <20191101150927.c5sf3n5ezfg2eano@madcap2.tricolour.ca>
-In-Reply-To: <20191101150927.c5sf3n5ezfg2eano@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 1 Nov 2019 12:22:11 -0400
-Message-ID: <CAHC9VhT6ggLxSKV2hM6ZfNcifzJAi_fCSXpTGtyK0nthGk_sWQ@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V7 20/21] audit: add capcontid to set contid
- outside init_user_ns
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Steve Grubb <sgrubb@redhat.com>, nhorman@tuxdriver.com,
-        linux-api@vger.kernel.org, containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-MC-Unique: TbZ0HN8tPs2XGeG71slkgg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 1, 2019 at 11:10 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2019-10-31 10:50, Steve Grubb wrote:
-> > Hello,
-> >
-> > TLDR;  I see a lot of benefit to switching away from procfs for setting auid &
-> > sessionid.
-> >
-> > On Wednesday, October 30, 2019 6:03:20 PM EDT Richard Guy Briggs wrote:
-> > > > Also, for the record, removing the audit loginuid from procfs is not
-> > > > something to take lightly, if at all; like it or not, it's part of the
-> > > > kernel API.
-> >
-> > It can also be used by tools to iterate processes related to one user or
-> > session. I use this in my Intrusion Prevention System which will land in
-> > audit user space at some point in the future.
-> >
-> > > Oh, I'm quite aware of how important this change is and it was discussed
-> > > with Steve Grubb who saw the concern and value of considering such a
-> > > disruptive change.
-> >
-> > Actually, I advocated for syscall. I think the gist of Eric's idea was that /
-> > proc is the intersection of many nasty problems. By relying on it, you can't
-> > simplify the API to reduce the complexity. Almost no program actually needs
-> > access to /proc. ps does. But almost everything else is happy without it. For
-> > example, when you setup chroot jails, you may have to add /dev/random or /
-> > dev/null, but almost never /proc. What does force you to add /proc is any
-> > entry point daemon like sshd because it needs to set the loginuid. If we
-> > switch away from /proc, then sshd or crond will no longer /require/ procfs to
-> > be available which again simplifies the system design.
-> >
-> > > Removing proc support for auid/ses would be a
-> > > long-term deprecation if accepted.
-> >
-> > It might need to just be turned into readonly for a while. But then again,
-> > perhaps auid and session should be part of /proc/<pid>/status? Maybe this can
-> > be done independently and ahead of the container work so there is a migration
-> > path for things that read auid or session. TBH, maybe this should have been
-> > done from the beginning.
->
-> How about making loginuid/contid/capcontid writable only via netlink but
-> still provide the /proc interface for reading?  Deprecation of proc can
-> be left as a decision for later.  This way sshd/crond/getty don't need
-> /proc, but the info is still there for tools that want to read it.
 
-Just so there is no confusion for the next patchset: I think it would
-be a mistake to include any changes to loginuid in your next patchset,
-even as a "RFC" at the end.  Also, barring some shocking comments from
-Eric relating to the imminent death of /proc in containers, I think it
-would also be a mistake to include the netlink API.
+Here's a set of preparatory patches for building a general notification
+queue on top of pipes.  It makes a number of significant changes:
 
-Let's keep it small and focused :)
+ (1) It removes the nr_exclusive argument from __wake_up_sync_key() as this
+     is always 1.  This prepares for step 2.
 
--- 
-paul moore
-www.paul-moore.com
+ (2) Adds wake_up_interruptible_sync_poll_locked() so that poll can be
+     woken up from a function that's holding the poll waitqueue spinlock.
+
+ (3) Change the pipe buffer ring to be managed in terms of unbounded head
+     and tail indices rather than bounded index and length.  This means
+     that reading the pipe only needs to modify one index, not two.
+
+ (4) A selection of helper functions are provided to query the state of the
+     pipe buffer, plus a couple to apply updates to the pipe indices.
+
+ (5) The pipe ring is allowed to have kernel-reserved slots.  This allows
+     many notification messages to be spliced in by the kernel without
+     allowing userspace to pin too many pages if it writes to the same
+     pipe.
+
+ (6) Advance the head and tail indices inside the pipe waitqueue lock and
+     use step 2 to poke poll without having to take the lock twice.
+
+ (7) Rearrange pipe_write() to preallocate the buffer it is going to write
+     into and then drop the spinlock.  This allows kernel notifications to
+     then be added the ring whilst it is filling the buffer it allocated.
+     The read side is stalled because the pipe mutex is still held.
+
+ (8) Don't wake up readers on a pipe if there was already data in it when
+     we added more.
+
+ (9) Don't wake up writers on a pipe if the ring wasn't full before we
+     removed a buffer.
+
+The patches can be found here also:
+
+=09http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=
+=3Dnotifications-pipe-prep
+
+PATCHES=09BENCHMARK=09BEST=09=09TOTAL BYTES=09AVG BYTES=09STDDEV
+=3D=3D=3D=3D=3D=3D=3D=09=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=09=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=09=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=09=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=09=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+-=09pipe=09=09      307457969=09    36348556755=09      302904639=09       =
+10622403
+-=09splice=09=09      287117614=09    26933658717=09      224447155=09     =
+ 160777958
+-=09vmsplice=09      435180375=09    51302964090=09      427524700=09      =
+ 19083037
+
+rm-nrx=09pipe=09=09      311091179=09    37093181356=09      309109844=09  =
+      7221622
+rm-nrx=09splice=09=09      285628049=09    27916298942=09      232635824=09=
+      158296431
+rm-nrx=09vmsplice=09      417703153=09    47570362546=09      396419687=09 =
+      33960822
+
+wakesl=09pipe=09=09      310698731=09    36772541631=09      306437846=09  =
+      8249347
+wakesl=09splice=09=09      286193726=09    28600435451=09      238336962=09=
+      141169318
+wakesl=09vmsplice=09      436175803=09    50723895824=09      422699131=09 =
+      40724240
+
+ht=09pipe=09=09      305534565=09    36426079543=09      303550662=09      =
+  5673885
+ht=09splice=09=09      243632025=09    23319439010=09      194328658=09    =
+  150479853
+ht=09vmsplice=09      432825176=09    49101781001=09      409181508=09     =
+  44102509
+
+k-rsv=09pipe=09=09      308691523=09    36652267561=09      305435563=09   =
+    12972559
+k-rsv=09splice=09=09      244793528=09    23625172865=09      196876440=09 =
+     125319143
+k-rsv=09vmsplice=09      436119082=09    49460808579=09      412173404=09  =
+     55547525
+
+r-adv-t=09pipe=09=09      310094218=09    36860182219=09      307168185=09 =
+       8081101
+r-adv-t=09splice=09=09      285527382=09    27085052687=09      225708772=
+=09      206918887
+r-adv-t=09vmsplice=09      336885948=09    40128756927=09      334406307=09=
+        5895935
+
+r-cond=09pipe=09=09      308727804=09    36635828180=09      305298568=09  =
+      9976806
+r-cond=09splice=09=09      284467568=09    28445793054=09      237048275=09=
+      200284329
+r-cond=09vmsplice=09      449679489=09    51134833848=09      426123615=09 =
+      66790875
+
+w-preal=09pipe=09=09      307416578=09    36662086426=09      305517386=09 =
+       6216663
+w-preal=09splice=09=09      282655051=09    28455249109=09      237127075=
+=09      194154549
+w-preal=09vmsplice=09      437002601=09    47832160621=09      398601338=09=
+       96513019
+
+w-redun=09pipe=09=09      307279630=09    36329750422=09      302747920=09 =
+       8913567
+w-redun=09splice=09=09      284324488=09    27327152734=09      227726272=
+=09      219735663
+w-redun=09vmsplice=09      451141971=09    51485257719=09      429043814=09=
+       51388217
+
+w-ckful=09pipe=09=09      305055247=09    36374947350=09      303124561=09 =
+       5400728
+w-ckful=09splice=09=09      281575308=09    26841554544=09      223679621=
+=09      215942886
+w-ckful=09vmsplice=09      436653588=09    47564907110=09      396374225=09=
+       82255342
+
+The patches column indicates the point in the patchset at which the benchma=
+rks
+were taken:
+
+=090=09No patches
+=09rm-nrx=09"Remove the nr_exclusive argument from __wake_up_sync_key()"
+=09wakesl=09"Add wake_up_interruptible_sync_poll_locked()"
+=09ht=09"pipe: Use head and tail pointers for the ring, not cursor and leng=
+th"
+=09k-rsv=09"pipe: Allow pipes to have kernel-reserved slots"
+=09r-adv-t=09"pipe: Advance tail pointer inside of wait spinlock in pipe_re=
+ad()"
+=09r-cond=09"pipe: Conditionalise wakeup in pipe_read()"
+=09w-preal=09"pipe: Rearrange sequence in pipe_write() to preallocate slot"
+=09w-redun=09"pipe: Remove redundant wakeup from pipe_write()"
+=09w-ckful=09"pipe: Check for ring full inside of the spinlock in pipe_writ=
+e()"
+
+Changes:
+
+ ver #3:
+
+ (*) Get rid of pipe_commit_{read,write}.
+
+ (*) Port the virtio_console driver.
+
+ (*) Fix pipe_zero().
+
+ (*) Amend some comments.
+
+ (*) Added an additional patch that changes the threshold at which readers
+     wake writers for Konstantin Khlebnikov.
+
+ ver #2:
+
+ (*) Split the notification patches out into a separate branch.
+
+ (*) Removed the nr_exclusive parameter from __wake_up_sync_key().
+
+ (*) Renamed the locked wakeup function.
+
+ (*) Add helpers for empty, full, occupancy.
+
+ (*) Split the addition of ->max_usage out into its own patch.
+
+ (*) Fixed some bits pointed out by Rasmus Villemoes.
+
+ ver #1:
+
+ (*) Build on top of standard pipes instead of having a driver.
+
+David
+---
+David Howells (11):
+      pipe: Reduce #inclusion of pipe_fs_i.h
+      Remove the nr_exclusive argument from __wake_up_sync_key()
+      Add wake_up_interruptible_sync_poll_locked()
+      pipe: Use head and tail pointers for the ring, not cursor and length
+      pipe: Allow pipes to have kernel-reserved slots
+      pipe: Advance tail pointer inside of wait spinlock in pipe_read()
+      pipe: Conditionalise wakeup in pipe_read()
+      pipe: Rearrange sequence in pipe_write() to preallocate slot
+      pipe: Remove redundant wakeup from pipe_write()
+      pipe: Check for ring full inside of the spinlock in pipe_write()
+      pipe: Increase the writer-wakeup threshold to reduce context-switch c=
+ount
+
+
+ drivers/char/virtio_console.c |   16 +-
+ fs/exec.c                     |    1=20
+ fs/fuse/dev.c                 |   31 +++--
+ fs/ocfs2/aops.c               |    1=20
+ fs/pipe.c                     |  228 +++++++++++++++++++++--------------
+ fs/splice.c                   |  190 ++++++++++++++++++-----------
+ include/linux/pipe_fs_i.h     |   64 +++++++++-
+ include/linux/uio.h           |    4 -
+ include/linux/wait.h          |   11 +-
+ kernel/exit.c                 |    2=20
+ kernel/sched/wait.c           |   37 ++++--
+ lib/iov_iter.c                |  269 +++++++++++++++++++++++--------------=
+----
+ security/smack/smack_lsm.c    |    1=20
+ 13 files changed, 527 insertions(+), 328 deletions(-)
+
