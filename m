@@ -2,104 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A31E9EC832
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2019 19:02:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B560EC835
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2019 19:03:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbfKASCZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Nov 2019 14:02:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51506 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726229AbfKASCZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Nov 2019 14:02:25 -0400
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8948B2085B;
-        Fri,  1 Nov 2019 18:02:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572631343;
-        bh=+EVYdRQnzMSni7rbkWUkr/VyBRQqZzi7HYgJl2PSv7U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=H/js7aTdFNTtnWaMZwMd7OYbWGfMscIslU2oJfmvt7TBifOeGwuqtE2QElTyxYpr7
-         R4OLm2XIf0CaESSYuC8mO//4FbtGDyJ6M7c6oYdStKnDVn1r5SNLMT4lKj41qv8ydw
-         TWE5Xs721QeeFRJ6TErBluIl9FU8Ta+x9ZhSmrbk=
-Date:   Fri, 1 Nov 2019 11:02:21 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-fscrypt@vger.kernel.org
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Satya Tangirala <satyat@google.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-ext4@vger.kernel.org, Paul Crowley <paulcrowley@google.com>
-Subject: Re: [PATCH v2 0/3] fscrypt: support for IV_INO_LBLK_64 policies
-Message-ID: <20191101180220.GA86412@gmail.com>
-Mail-Followup-To: linux-fscrypt@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Satya Tangirala <satyat@google.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-ext4@vger.kernel.org, Paul Crowley <paulcrowley@google.com>
-References: <20191024215438.138489-1-ebiggers@kernel.org>
+        id S1727001AbfKASDX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Nov 2019 14:03:23 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:41539 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726229AbfKASDX (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 1 Nov 2019 14:03:23 -0400
+Received: by mail-qt1-f194.google.com with SMTP id o3so13990961qtj.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Nov 2019 11:03:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=k8D0kxdveIpuC6UigtyTU7urwvjnhy2BPAZbxffIYkA=;
+        b=f+FQf0a/ifANPLSwBV+ZkSgxM5Jp/onawYBupphq/LsTjIej2U+EoZiplzDJaj+w9f
+         f+HNklqSQZF2LnhTGh7KLY0AgjSJJzx2aI4Hn67VjCULaV+wlrwW2pf4YAr/1vY0DU+H
+         O69QaL/E2EfY4PDEOhF0PmKMeT/GqXZeYkLWyjeGmh84W4mLY39849znwYXB3Fd4ApvX
+         kV0JygyDXSgMrkVC+vPJcBomOufJZwPeHCOl80eSjh8PAx1zeAmiwhTd6SV2DOpohy6a
+         V1sA4A5q91zDXDOsrN+gypNTEucv0fgbKEUPi6AZLEvMGgH6SuL6ap6GoYm9uHPF2Tcv
+         ZSBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=k8D0kxdveIpuC6UigtyTU7urwvjnhy2BPAZbxffIYkA=;
+        b=qJjfqHIAXpV6xGfeZt2hZV3+nSQAXKN5ZbYzSIQLeF1BfyBRUJobelajVCoL+jdH3W
+         VI0k6xc0TmPW0ptoRrpaROCwLHys3tWQIR7pn47EsU6o85iEwKludvMeFMRunAmBdYJW
+         QK54iaL1f4/HbTRMFuyeGyTdawQbhTeeS0pyNH603HMVeaS/t1e5VOIH6AmHXEWrzMBW
+         pNGKmzBV5jN4H7ktNP7Q/YRGQ5i0O1yRIqiGC4CbWue+Mk+nJNEm9TIaJjRoAivMZQ6s
+         cPFdhXMwEJQcYVziRRGxjx/HmtcE7lsXVDNKGnr0sqideCNL6pGIZnpLaFGnWcfVBRD8
+         snpA==
+X-Gm-Message-State: APjAAAVTWyIMBI2wczEYoY9q6FD3wf5y2Vmx1aHE/UMEGthPEgNx2m/E
+        ts9k1iG8jZGqIhWtaZmUUZocgBto1AFrsYB+nmuW7Q==
+X-Google-Smtp-Source: APXvYqzRbyd6XaGiNNRA/t8TJsdO3rNYFVp/yOubJZnZL7YPB7EhMjaMtD1BiKpR716ZDhtNj0+0ij3ku29znK/XFIg=
+X-Received: by 2002:ac8:1103:: with SMTP id c3mr676808qtj.50.1572631402359;
+ Fri, 01 Nov 2019 11:03:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191024215438.138489-1-ebiggers@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <00000000000069801e05961be5fb@google.com> <0e2bc2bf-2a7a-73c5-03e2-9d08f89f0ffa@kernel.dk>
+ <CACT4Y+asiAtMVmA2QiNzTJC8OsX2NDXB7Dmj+v-Uy0tG5jpeFw@mail.gmail.com> <7fe298b7-4bc9-58e7-4173-63e3cbcbef25@kernel.dk>
+In-Reply-To: <7fe298b7-4bc9-58e7-4173-63e3cbcbef25@kernel.dk>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 1 Nov 2019 19:03:10 +0100
+Message-ID: <CACT4Y+au222UbfG_rbV+Zx6O75C1BHfCCw4R_Mp4ki4xw=_oDA@mail.gmail.com>
+Subject: Re: BUG: unable to handle kernel paging request in io_wq_cancel_all
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     syzbot <syzbot+221cc24572a2fed23b6b@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Howells <dhowells@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, mchehab+samsung@kernel.org,
+        Ingo Molnar <mingo@redhat.com>, patrick.bellasi@arm.com,
+        Richard Guy Briggs <rgb@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 02:54:35PM -0700, Eric Biggers wrote:
-> Hello,
-> 
-> In preparation for adding inline encryption support to fscrypt, this
-> patchset adds a new fscrypt policy flag which modifies the encryption to
-> be optimized for inline encryption hardware compliant with the UFS v2.1
-> standard or the upcoming version of the eMMC standard.
-> 
-> This means using per-mode keys instead of per-file keys, and in
-> compensation including the inode number in the IVs.  For ext4, this
-> precludes filesystem shrinking, so I've also added a compat feature
-> which will prevent the filesystem from being shrunk.
-> 
-> I've separated this from the full "Inline Encryption Support" patchset
-> (https://lkml.kernel.org/linux-fsdevel/20190821075714.65140-1-satyat@google.com/)
-> to avoid conflating an implementation (inline encryption) with a new
-> on-disk format (IV_INO_LBLK_64).  This patchset purely adds support for
-> IV_INO_LBLK_64 policies to fscrypt, but implements them using the
-> existing filesystem layer crypto.
-> 
-> We're planning to make the *implementation* (filesystem layer or inline
-> crypto) be controlled by a mount option '-o inlinecrypt'.
-> 
-> This patchset applies to fscrypt.git#master and can also be retrieved from
-> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=inline-crypt-optimized-v2
-> 
-> I've written a ciphertext verification test for this new type of policy:
-> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/xfstests-dev.git/log/?h=inline-encryption
-> 
-> Work-in-progress patches for the inline encryption implementation of
-> both IV_INO_LBLK_64 and regular policies can be found at
-> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=inline-encryption-wip
-> 
-> Changes v1 => v2:
-> 
-> - Rename the flag from INLINE_CRYPT_OPTIMIZED to IV_INO_LBLK_64.
-> 
-> - Use the same key derivation and IV generation scheme for filenames
->   encryption too.
-> 
-> - Improve the documentation and commit messages.
-> 
-> Eric Biggers (3):
->   fscrypt: add support for IV_INO_LBLK_64 policies
->   ext4: add support for IV_INO_LBLK_64 encryption policies
->   f2fs: add support for IV_INO_LBLK_64 encryption policies
-> 
+On Fri, Nov 1, 2019 at 6:56 PM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 11/1/19 11:50 AM, Dmitry Vyukov wrote:
+> > On Wed, Oct 30, 2019 at 3:41 PM Jens Axboe <axboe@kernel.dk> wrote:
+> >>
+> >> On 10/30/19 1:44 AM, syzbot wrote:
+> >>> syzbot has bisected this bug to:
+> >>>
+> >>> commit ef0524d3654628ead811f328af0a4a2953a8310f
+> >>> Author: Jens Axboe <axboe@kernel.dk>
+> >>> Date:   Thu Oct 24 13:25:42 2019 +0000
+> >>>
+> >>>        io_uring: replace workqueue usage with io-wq
+> >>>
+> >>> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16acf5d0e00000
+> >>> start commit:   c57cf383 Add linux-next specific files for 20191029
+> >>> git tree:       linux-next
+> >>> final crash:    https://syzkaller.appspot.com/x/report.txt?x=15acf5d0e00000
+> >>> console output: https://syzkaller.appspot.com/x/log.txt?x=11acf5d0e00000
+> >>> kernel config:  https://syzkaller.appspot.com/x/.config?x=cb86688f30db053d
+> >>> dashboard link: https://syzkaller.appspot.com/bug?extid=221cc24572a2fed23b6b
+> >>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=168671d4e00000
+> >>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140f4898e00000
+> >>>
+> >>> Reported-by: syzbot+221cc24572a2fed23b6b@syzkaller.appspotmail.com
+> >>> Fixes: ef0524d36546 ("io_uring: replace workqueue usage with io-wq")
+> >>
+> >> Good catch, it's a case of NULL vs ERR_PTR() confusion. I'll fold in
+> >> the below fix.
+> >
+> > Hi Jens,
+> >
+> > Please either add the syzbot tag to commit, or close manually with
+> > "#syz fix" (though requires waiting until the fixed commit is in
+> > linux-next).
+> > See https://goo.gl/tpsmEJ#rebuilt-treesamended-patches for details.
+> > Otherwise, the bug will be considered open and will waste time of
+> > humans looking at open bugs and prevent syzbot from reporting new bugs
+> > in io_uring.
+>
+> It's queued up since two days ago:
+>
+> http://git.kernel.dk/cgit/linux-block/commit/?h=for-5.5/io_uring&id=975c99a570967dd48e917dd7853867fee3febabd
+>
+> and should have the right attributions, so hopefully it'll catch up
+> eventually.
+>
+> --
+> Jens Axboe
+>
 
-Does anyone have any more comments on these patches?
-
-- Eric
+Cool! Thanks!
+I've seen "fold in" and historically lots of developers did not add
+the tag during amending, so wanted to double check.
