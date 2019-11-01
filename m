@@ -2,152 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D32E1EC591
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2019 16:21:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC200EC60F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Nov 2019 16:56:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728522AbfKAPVk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Nov 2019 11:21:40 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:43621 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727986AbfKAPVk (ORCPT
+        id S1729166AbfKAP4C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Nov 2019 11:56:02 -0400
+Received: from mail-il1-f195.google.com ([209.85.166.195]:40571 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729160AbfKAPzt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Nov 2019 11:21:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572621699;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=WDYGxxA/KgrYN0QEUL49MfltlmEWA16vt4MxjEs1+6E=;
-        b=ZvFQruI8L0LIc8Abg9nge7/YYc2CgXmrxcQ0E2Arp63U/CUqj+BsVzHQAr6GB4JTyCldVV
-        j4MKTv9MX0U/UDN0bU8JLz8ghEDVYN+Ur2jmwn+B/N3pHiKsNYeOESlaCrzAp+Tcfbv0ra
-        e8gHd21V2VgXboUFC5QAXvJTsP042Cw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-253-i5RvBvQWOlyITqFctoslYg-1; Fri, 01 Nov 2019 11:21:33 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E4EE31005500;
-        Fri,  1 Nov 2019 15:21:31 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-19.phx2.redhat.com [10.3.112.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 82BD619C58;
-        Fri,  1 Nov 2019 15:21:21 +0000 (UTC)
-Date:   Fri, 1 Nov 2019 11:21:18 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Steve Grubb <sgrubb@redhat.com>
-Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
-Subject: Re: [PATCH ghak90 V7 20/21] audit: add capcontid to set contid
- outside init_user_ns
-Message-ID: <20191101152118.mi2svoringtrdskv@madcap2.tricolour.ca>
-References: <cover.1568834524.git.rgb@redhat.com>
- <3677995.NTHC7m0fHc@x2>
- <20191101150927.c5sf3n5ezfg2eano@madcap2.tricolour.ca>
- <1592218.lpl3eoh2c6@x2>
+        Fri, 1 Nov 2019 11:55:49 -0400
+Received: by mail-il1-f195.google.com with SMTP id d83so9077874ilk.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Nov 2019 08:55:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=KqYLJklOErTzrVm5Bzbb6HQh9gI4PrbbORQE30GcC5Y=;
+        b=pUJIzGj/MPv1EKc2k3aNehKVojTiwbi36zg1sckIL11PdqXfau1yGsXj1t9CSJeyKL
+         3i/jp/TX/JDBG+iju9GRvxcye9SA9yiSTdccj7/EyUgYmTSSLRFNkcsvQASN37kQDgQc
+         jnResb6aJSg07Bq5suGRVdOqTkrlyY1YMgTmHgQc7tz+apzSU8zlfJ8cqPEt/z1Bd3OE
+         3WNB6qm/Pkg8xI5aHgZ1XzvGw6eZK1PwDo4winMpdBi8I/fqM1G/oYqHCv2wNxwHhj5m
+         N0Nph5NSOfE5c8csPVkAAUkUAiHHdFA9X2wHOboX58ouCDBOqdL9C38hXp5o3eU3+tNB
+         N8dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=KqYLJklOErTzrVm5Bzbb6HQh9gI4PrbbORQE30GcC5Y=;
+        b=QpRwS8ARsCWfg1IwTru/os/ADaf0o83vttutN0T/6fNbxGneQIKGjMJXl92r/5/HDc
+         qHBHM/mSOB+4VdIyGGo4RpvAd8sOqoM+glsVFGl1rVjSJzeEp4bSgyeX+qGEbFHF4RPu
+         79Z5nov7U+cG4AT8kI9r1cXJBeAY92R9f+73SApuPYp0o0YIYOkThgwk2/BNg5B+wSd0
+         k8UWv75F1L+gpGkDi+jTZmrMtS4M956KDygGwqbgmkflUegbbFTnLxIAjcSS7AlSLZf7
+         5an8SGXwNkbGWBwVSYiXTysJCSbuOhLEw+Jhw+NccngYW4OkwyYudu0D/5m+wmqRKZbE
+         xOKg==
+X-Gm-Message-State: APjAAAUiUoNZmqhrK4LrFWFUoyoEmypniaPMYietq5y996VtRkw1zHv/
+        F0FMqzQ3DD0z1cgVx1x78lml6mDbs8YtegPUJQ==
+X-Google-Smtp-Source: APXvYqwNtyKjT0pXbrd92BXP7Yur4/d12tLIQphfDkWOJF9bZR6SLYcfNyjCPNgVxkpA0mTQo/BiL8Zaftdd9XRgWqY=
+X-Received: by 2002:a92:1d8d:: with SMTP id g13mr8826976ile.35.1572623748630;
+ Fri, 01 Nov 2019 08:55:48 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1592218.lpl3eoh2c6@x2>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: i5RvBvQWOlyITqFctoslYg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Received: by 2002:a02:7749:0:0:0:0:0 with HTTP; Fri, 1 Nov 2019 08:55:48 -0700 (PDT)
+Reply-To: moneygram.1820@outlook.fr
+From:   "Mary Coster, I.M.F director-Benin" 
+        <info.zennitbankplcnigerian@gmail.com>
+Date:   Fri, 1 Nov 2019 16:55:48 +0100
+Message-ID: <CABHzvrmPdjgy_vBxQMfJ2YwGwj1RyCvQt1Oy5GJczarHTQb=pg@mail.gmail.com>
+Subject: Contact Money Gram international service-Benin to receive your
+ payment funds US$2.500,000 Million
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019-11-01 11:13, Steve Grubb wrote:
-> On Friday, November 1, 2019 11:09:27 AM EDT Richard Guy Briggs wrote:
-> > On 2019-10-31 10:50, Steve Grubb wrote:
-> > > Hello,
-> > >=20
-> > > TLDR;  I see a lot of benefit to switching away from procfs for setti=
-ng
-> > > auid & sessionid.
-> > >=20
-> > > On Wednesday, October 30, 2019 6:03:20 PM EDT Richard Guy Briggs wrot=
-e:
-> > > > > Also, for the record, removing the audit loginuid from procfs is =
-not
-> > > > > something to take lightly, if at all; like it or not, it's part o=
-f
-> > > > > the
-> > > > > kernel API.
-> > >=20
-> > > It can also be used by tools to iterate processes related to one user=
- or
-> > > session. I use this in my Intrusion Prevention System which will land=
- in
-> > > audit user space at some point in the future.
-> > >=20
-> > > > Oh, I'm quite aware of how important this change is and it was
-> > > > discussed
-> > > > with Steve Grubb who saw the concern and value of considering such =
-a
-> > > > disruptive change.
-> > >=20
-> > > Actually, I advocated for syscall. I think the gist of Eric's idea wa=
-s
-> > > that / proc is the intersection of many nasty problems. By relying on
-> > > it, you can't simplify the API to reduce the complexity. Almost no
-> > > program actually needs access to /proc. ps does. But almost everythin=
-g
-> > > else is happy without it. For example, when you setup chroot jails, y=
-ou
-> > > may have to add /dev/random or / dev/null, but almost never /proc. Wh=
-at
-> > > does force you to add /proc is any entry point daemon like sshd becau=
-se
-> > > it needs to set the loginuid. If we switch away from /proc, then sshd=
- or
-> > > crond will no longer /require/ procfs to be available which again
-> > > simplifies the system design.
-> > >=20
-> > > > Removing proc support for auid/ses would be a
-> > > > long-term deprecation if accepted.
-> > >=20
-> > > It might need to just be turned into readonly for a while. But then
-> > > again,
-> > > perhaps auid and session should be part of /proc/<pid>/status? Maybe =
-this
-> > > can be done independently and ahead of the container work so there is=
- a
-> > > migration path for things that read auid or session. TBH, maybe this
-> > > should have been done from the beginning.
-> >=20
-> > How about making loginuid/contid/capcontid writable only via netlink bu=
-t
-> > still provide the /proc interface for reading?  Deprecation of proc can
-> > be left as a decision for later.  This way sshd/crond/getty don't need
-> > /proc, but the info is still there for tools that want to read it.
->=20
-> This also sounds good to me. But I still think loginuid and audit session=
-id=20
-> should get written in /proc/<pid>/status so that all process information =
-is=20
-> consolidated in one place.
-
-I don't have a problem adding auid/sessionid to /proc/<pid>/status with
-other related information, but it is disruptive to deprecate the
-existing interface which could be a seperate step.
-
-> -Steve
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
-
+Attn Dear,Funds Beneficiary.
+Contact Money Gram international service-Benin to receive your payment
+funds US$2.500,000 Million approved this morning through the UN
+payment settlement organization.
+Contact Person, Mr. John Dave.
+Official Director.Money Gram-Benin
+Email: moneygram.1820@outlook.fr
+Telephone +229 62619517
+Once you get intouch with Mr. John Dave, Money Gram Director, send to
+him your address including your phone numbers. He will be sending the
+transfer to you  $5000.00 USD daily until you received your complete
+payment $2.5m from the office.
+Note,I have paid the whole service fees for you but only small money
+you been required to send to this office is $23.00 only via Money Gram
+transfer.
+God bless
+Mary Coster, I.M.F director-Benin
+m.coster@aol.com
