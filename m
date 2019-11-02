@@ -2,144 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24D32ED02E
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2019 19:08:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8097DED048
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2019 19:54:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726687AbfKBSIr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 2 Nov 2019 14:08:47 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:53744 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726523AbfKBSIr (ORCPT
+        id S1726634AbfKBSx5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 2 Nov 2019 14:53:57 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37558 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726396AbfKBSx5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 2 Nov 2019 14:08:47 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iQxpK-00056q-97; Sat, 02 Nov 2019 18:08:42 +0000
-Date:   Sat, 2 Nov 2019 18:08:42 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     Ritesh Harjani <riteshh@linux.ibm.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        wugyuan@cn.ibm.com, jlayton@kernel.org, hsiangkao@aol.com,
-        Jan Kara <jack@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH RESEND 1/1] vfs: Really check for inode ptr in lookup_fast
-Message-ID: <20191102180842.GN26530@ZenIV.linux.org.uk>
-References: <20190927044243.18856-1-riteshh@linux.ibm.com>
- <20191015040730.6A84742047@d06av24.portsmouth.uk.ibm.com>
- <20191022133855.B1B4752050@d06av21.portsmouth.uk.ibm.com>
- <20191022143736.GX26530@ZenIV.linux.org.uk>
- <20191022201131.GZ26530@ZenIV.linux.org.uk>
- <20191023110551.D04AE4C044@d06av22.portsmouth.uk.ibm.com>
- <20191101234622.GM26530@ZenIV.linux.org.uk>
- <20191102172229.GT20975@paulmck-ThinkPad-P72>
+        Sat, 2 Nov 2019 14:53:57 -0400
+Received: by mail-lf1-f68.google.com with SMTP id b20so9448272lfp.4
+        for <linux-fsdevel@vger.kernel.org>; Sat, 02 Nov 2019 11:53:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UFZsrTxHj8UNSOV0MW3iX+ZNPh241BxYI9RJCfbRj4I=;
+        b=fwWi36Cjm33TVpJsMKyyeNJuPa+EzO/w2jcz8N5ivZnB2LBgFElTwve7u7JUY1CQlk
+         LBP3NYhj8mwMGDKFLZC3aAKJjtxEeb837zFLkONBVlInZ3n9BYz2CiSK5BYhQEqMplN+
+         cxbruKuD+a9IFTjckV4CYWfQYTCffHao0G3wg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UFZsrTxHj8UNSOV0MW3iX+ZNPh241BxYI9RJCfbRj4I=;
+        b=D6nt6yaOh77X+3vwzz3dOjoafS3ovN2ngAt6k67i2zEFgZDC+YEfVX/Epc/xzf3rx8
+         y8Bda8trGTKEqnd8TMXrhzSSbGp0OYrIOKbls1CxHgISbdqas2em6AzfMIlZAZXV8rXW
+         cQFqo9uP2QAXbZwmiVIG3dILFZuVD3h78WM1CY7QMc0xFsXmAmujadzeCIhX5KS4Frp1
+         qyU8E5Xm4HSQPYJZCIQX342IPEbx5zmQH0v3ClQkzXPF7LFyDcQRxa7/hmsYP+yUsz31
+         ex+dxw9TyaPtnk4uFFmfJv4StTZgEIrScajtB4ZKqi+NB53WO5RwGsYJvDQ/6VffRMMn
+         MjNg==
+X-Gm-Message-State: APjAAAUZubsLPuSeu0jczhk0KGx6E4SNMsH7Adfzypf1z1MgCexoFnHA
+        9yFL5l3u+Uwt6f+lofD8m9dTZjjVejI=
+X-Google-Smtp-Source: APXvYqwOxVPDyvpgnjv/tPVPMNW+oeDk3nA+qcJK+w2ulh3zdrs4VHik79EiRWfl6l4BsKK5Nni4WQ==
+X-Received: by 2002:ac2:5295:: with SMTP id q21mr11207884lfm.93.1572720835070;
+        Sat, 02 Nov 2019 11:53:55 -0700 (PDT)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id w20sm4837943lff.46.2019.11.02.11.53.54
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 02 Nov 2019 11:53:54 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id y127so9448112lfc.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 02 Nov 2019 11:53:54 -0700 (PDT)
+X-Received: by 2002:ac2:4c86:: with SMTP id d6mr11465241lfl.106.1572720834124;
+ Sat, 02 Nov 2019 11:53:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191102172229.GT20975@paulmck-ThinkPad-P72>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
+ <30394.1571936252@warthog.procyon.org.uk> <c6e044cc-5596-90b7-4418-6ad7009d6d79@yandex-team.ru>
+ <17311.1572534953@warthog.procyon.org.uk>
+In-Reply-To: <17311.1572534953@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 2 Nov 2019 11:53:38 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg_X_7JSYT-a3qHrzvuWGMyffDWtQ4n7adBp_fe5w0BsA@mail.gmail.com>
+Message-ID: <CAHk-=wg_X_7JSYT-a3qHrzvuWGMyffDWtQ4n7adBp_fe5w0BsA@mail.gmail.com>
+Subject: Re: [RFC PATCH 11/10] pipe: Add fsync() support [ver #2]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 02, 2019 at 10:22:29AM -0700, Paul E. McKenney wrote:
-> Ignoring the possibility of the more exotic compiler optimizations, if
-> the first task's load into f sees the value stored by the second task,
-> then the pair of memory barriers guarantee that the first task's load
-> into d will see the second task's store.
+On Thu, Oct 31, 2019 at 8:16 AM David Howells <dhowells@redhat.com> wrote:
+>
+> Konstantin Khlebnikov <khlebnikov@yandex-team.ru> wrote:
+>
+> > Similar synchronization is required for reusing memory after vmsplice()?
+> > I don't see other way how sender could safely change these pages.
+>
+> Sounds like a point - if you have multiple parallel contributors to the pipe
+> via vmsplice(), then FIONREAD is of no use.  To use use FIONREAD, you have to
+> let the pipe become empty before you can be sure.
 
-The question was about the load into i being also safe.
+Well, the rules for vmsplice is simply to not change the source pages.
+It's zero-copy, after all.
 
-> In fact, you could instead say this in recent kernels:
-> 
-> 	f = READ_ONCE(fdt[n])  // provides dependency ordering via mb on Alpha
-> 	mb
+If you want to change the source pages, you need to just use write() instead.
 
-Er... that mb comes from expanded READ_ONCE(), actually - the call chain
-is
-	fdget_pos() -> __fdget_pos() -> __fdget() -> __fget_light() ->
-	__fcheck_files(), either directly or via
-			__fget() -> fcheck_files() -> __fcheck_files()
-	rcu_dereference_raw() -> READ_ONCE() -> smp_read_barrier_depends()
-which yields mb on alpha.
-						
-> 	d = f->f_path.dentry
-> 	i = d->d_inode  // But this is OK only if ->f_path.entry is
-> 			// constant throughout
+That said, even then the right model isn't fsync(). If you really want
+to have something like "notify me when this buffer has been used", it
+should be some kind of sequence count thing, not a "wait for empty".
 
-Yes, it is - once you hold a reference to a positive dentry, it can't
-be made negative by anybody else.  See d_delete() for details; basically,
-if you have refcount > 1, dentry will be unhashed, but not made negative.
+Which might be useful in theory, but would be something quite
+different (and honestly, I wouldn't expect it to find all that
+widespread use)
 
-> The result of the first task's load into i requires information outside
-> of the two code fragments.
-> 
-> Or am I missing your point?
-
-My point is that barriers sufficient to guarantee visibility of *f in
-the reader will also suffice to guarantee visibility of *f->f_path.dentry.
-
-On alpha it boils down to having load of d->d_inode when opening the
-file orders before the barrier prior to storing the reference to f
-in the descriptor table, so if it observes the store to d->d_inode done
-by the same CPU, that store is ordered before the barrier due to
-processor instruction order constraints and if it observes the store
-to d->d_inode done by some other CPU, that store is ordered before
-the load and before the barrier by transitivity.  So in either case
-that store is ordered before the store into descriptor table.
-IOW, the reader that has enough barriers to guarantee seing ->f_path.dentry
-will be guaranteed to see ->f_path.dentry->d_inode.
-
-And yes, we will need some barriers added near some positivity checks in
-pathname resolution - that's what has started the entire thread.  This
-part ("any place looking at file->f_path.dentry will have ->d_inode and
-mode bits of ->d_flags visible and stable") covers quite a few places
-that come up in the analysis...
-
-This morning catch, BTW:
-
-    audit_get_nd(): don't unlock parent too early
-    
-    if the child has been negative and just went positive
-    under us, we want coherent d_is_positive() and ->d_inode.
-    Don't unlock the parent until we'd done that work...
-    
-    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-
-diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
-index 1f31c2f1e6fc..4508d5e0cf69 100644
---- a/kernel/audit_watch.c
-+++ b/kernel/audit_watch.c
-@@ -351,12 +351,12 @@ static int audit_get_nd(struct audit_watch *watch, struct path *parent)
-        struct dentry *d = kern_path_locked(watch->path, parent);
-        if (IS_ERR(d))
-                return PTR_ERR(d);
--       inode_unlock(d_backing_inode(parent->dentry));
-        if (d_is_positive(d)) {
-                /* update watch filter fields */
-                watch->dev = d->d_sb->s_dev;
-                watch->ino = d_backing_inode(d)->i_ino;
-        }
-+       inode_unlock(d_backing_inode(parent->dentry));
-        dput(d);
-        return 0;
- }
-
-For other fun bits and pieces see ceph bugs caught this week and crap in
-dget_parent() (not posted yet).  The former had been ceph violating the
-"turning a previously observable dentry positive requires exclusive lock
-on parent" rule, the latter - genuine insufficient barriers in the fast
-path of dget_parent().
-
-It is converging to a reasonably small and understandable surface, actually,
-most of that being in core pathname resolution.  Two big piles of nightmares
-left to review - overlayfs and (somewhat surprisingly) setxattr call chains,
-the latter due to IMA/EVM/LSM insanity...
-
-There's also some secondary stuff dropping out of that (e.g. ceph seeding
-dcache on readdir and blindly unhashing dentries it sees stale instead of
-doing d_invalidate() as it ought to - leads to fun results if you had
-something mounted on a subdirectory that got removed/recreated on server),
-but that's a separate pile of joy - doesn't affect this analysis, so
-it'll have to be dealt with later.  It had been an interesting couple of
-weeks...
+             Linus
