@@ -2,40 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2E09ECFF2
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2019 18:24:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24D32ED02E
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2019 19:08:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbfKBRYt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 2 Nov 2019 13:24:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33664 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726523AbfKBRYt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 2 Nov 2019 13:24:49 -0400
-Received: from paulmck-ThinkPad-P72.home (unknown [65.158.186.218])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30223217D9;
-        Sat,  2 Nov 2019 17:24:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572715488;
-        bh=dFj8NAZBJwn8JB6ouldPBEYS8ERyP1np8D1tiIVWD3Q=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=yuTvp7WvRnzQ0qd5ylYyP6sw4h01DHOO4nwOU4fk0N1ttS6Jmy3gP7qgrsVSkrNno
-         Zs3BSxWyQKRxdl5BFMvOyk41dPLnX/QBcdNRc46YU+RNBx07OYXwkuzpgMUsDiwOgZ
-         iU5yoU7dWFZgeCqtHCpdM7XB7PZorpnclWT0Ujkw=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 0159A35204A2; Sat,  2 Nov 2019 10:24:47 -0700 (PDT)
-Date:   Sat, 2 Nov 2019 10:24:47 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        id S1726687AbfKBSIr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 2 Nov 2019 14:08:47 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:53744 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726523AbfKBSIr (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 2 Nov 2019 14:08:47 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iQxpK-00056q-97; Sat, 02 Nov 2019 18:08:42 +0000
+Date:   Sat, 2 Nov 2019 18:08:42 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     Ritesh Harjani <riteshh@linux.ibm.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         wugyuan@cn.ibm.com, jlayton@kernel.org, hsiangkao@aol.com,
         Jan Kara <jack@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ritesh Harjani <riteshh@linux.ibm.com>
+        Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: [PATCH RESEND 1/1] vfs: Really check for inode ptr in lookup_fast
-Message-ID: <20191102172447.GU20975@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
+Message-ID: <20191102180842.GN26530@ZenIV.linux.org.uk>
 References: <20190927044243.18856-1-riteshh@linux.ibm.com>
  <20191015040730.6A84742047@d06av24.portsmouth.uk.ibm.com>
  <20191022133855.B1B4752050@d06av21.portsmouth.uk.ibm.com>
@@ -43,99 +31,115 @@ References: <20190927044243.18856-1-riteshh@linux.ibm.com>
  <20191022201131.GZ26530@ZenIV.linux.org.uk>
  <20191023110551.D04AE4C044@d06av22.portsmouth.uk.ibm.com>
  <20191101234622.GM26530@ZenIV.linux.org.uk>
- <20191102061706.GA10268@ZenIV.linux.org.uk>
+ <20191102172229.GT20975@paulmck-ThinkPad-P72>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191102061706.GA10268@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191102172229.GT20975@paulmck-ThinkPad-P72>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 02, 2019 at 06:17:06AM +0000, Al Viro wrote:
-> On Fri, Nov 01, 2019 at 11:46:22PM +0000, Al Viro wrote:
-> > on anything except alpha that would be pretty much automatic and
-> > on alpha we get the things along the lines of
-> > 
-> > 	f = fdt[n]
-> > 	mb
-> > 	d = f->f_path.dentry
-> > 	i = d->d_inode
-> > 	assert(i != NULL)
-> > vs.
-> > 	see that d->d_inode is non-NULL
-> > 	f->f_path.dentry = d
-> > 	mb
-> > 	fdt[n] = f
-> > 
-> > IOW, the barriers that make it safe to fetch the fields of struct file
-> > (rcu_dereference_raw() in __fcheck_files() vs. smp_store_release()
-> > in __fd_install() in the above) should *hopefully* take care of all
-> > stores visible by the time of do_dentry_open().  Sure, alpha cache
-> > coherency is insane, but AFAICS it's not _that_ insane.
-> > 
-> > Question to folks familiar with alpha memory model:
-> > 
-> > A = 0, B = NULL, C = NULL
-> > CPU1:
-> > 	A = 1
-> > 
-> > CPU2:
-> > 	r1 = A
-> > 	if (r1) {
-> > 		B = &A
-> > 		mb
-> > 		C = &B
-> > 	}
-> > 
-> > CPU3:
-> > 	r2 = C;
-> > 	mb
-> > 	if (r2) {	// &B
-> > 		r3 = *r2	// &A
-> > 		r4 = *r3	// 1
-> > 		assert(r4 == 1)
-> > 	}
-> > 
-> > is the above safe on alpha?
+On Sat, Nov 02, 2019 at 10:22:29AM -0700, Paul E. McKenney wrote:
+> Ignoring the possibility of the more exotic compiler optimizations, if
+> the first task's load into f sees the value stored by the second task,
+> then the pair of memory barriers guarantee that the first task's load
+> into d will see the second task's store.
+
+The question was about the load into i being also safe.
+
+> In fact, you could instead say this in recent kernels:
 > 
-> Hmm...  After digging through alpha manuals, it should be -
+> 	f = READ_ONCE(fdt[n])  // provides dependency ordering via mb on Alpha
+> 	mb
+
+Er... that mb comes from expanded READ_ONCE(), actually - the call chain
+is
+	fdget_pos() -> __fdget_pos() -> __fdget() -> __fget_light() ->
+	__fcheck_files(), either directly or via
+			__fget() -> fcheck_files() -> __fcheck_files()
+	rcu_dereference_raw() -> READ_ONCE() -> smp_read_barrier_depends()
+which yields mb on alpha.
+						
+> 	d = f->f_path.dentry
+> 	i = d->d_inode  // But this is OK only if ->f_path.entry is
+> 			// constant throughout
+
+Yes, it is - once you hold a reference to a positive dentry, it can't
+be made negative by anybody else.  See d_delete() for details; basically,
+if you have refcount > 1, dentry will be unhashed, but not made negative.
+
+> The result of the first task's load into i requires information outside
+> of the two code fragments.
 > 
-> U1: W A, 1
-> 
-> V1: R A, 1
+> Or am I missing your point?
 
-Assuming a compare and branch here ...
+My point is that barriers sufficient to guarantee visibility of *f in
+the reader will also suffice to guarantee visibility of *f->f_path.dentry.
 
-> V2: W B, &A
-> V3: MB
-> V4: W C, &B
-> 
-> W1: R C, &B
-> W2: MB
+On alpha it boils down to having load of d->d_inode when opening the
+file orders before the barrier prior to storing the reference to f
+in the descriptor table, so if it observes the store to d->d_inode done
+by the same CPU, that store is ordered before the barrier due to
+processor instruction order constraints and if it observes the store
+to d->d_inode done by some other CPU, that store is ordered before
+the load and before the barrier by transitivity.  So in either case
+that store is ordered before the store into descriptor table.
+IOW, the reader that has enough barriers to guarantee seing ->f_path.dentry
+will be guaranteed to see ->f_path.dentry->d_inode.
 
-... and here ...
+And yes, we will need some barriers added near some positivity checks in
+pathname resolution - that's what has started the entire thread.  This
+part ("any place looking at file->f_path.dentry will have ->d_inode and
+mode bits of ->d_flags visible and stable") covers quite a few places
+that come up in the analysis...
 
-> W3: R B, &A
-> W4: R A, 0
-> 
-> is rejected since
-> 	U1 BEFORE V1 (storage and visibility)
-> 	V1 BEFORE V3 BEFORE V4 (processor issue order constraints)
-> 	V4 BEFORE W1 (storage and visibility)
-> 	W1 BEFORE W2 BEFORE W4 (processor issue order constraints)
-> and W4 BEFORE U1 (storage and visibility), which is impossible
-> due to BEFORE being acyclic and transitive.
-> 
-> I might very well be missing something, though...  Paul, could you
-> take a look and tell if the above makes sense?
+This morning catch, BTW:
 
-...  then yes, agreed.  Alpha does respect control dependencies to
-stores, and you supplied the required mb for the last task that has
-a control dependency only to loads.
+    audit_get_nd(): don't unlock parent too early
+    
+    if the child has been negative and just went positive
+    under us, we want coherent d_is_positive() and ->d_inode.
+    Don't unlock the parent until we'd done that work...
+    
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-I have to ask...  Are you seeing failures on Alpha?
+diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
+index 1f31c2f1e6fc..4508d5e0cf69 100644
+--- a/kernel/audit_watch.c
++++ b/kernel/audit_watch.c
+@@ -351,12 +351,12 @@ static int audit_get_nd(struct audit_watch *watch, struct path *parent)
+        struct dentry *d = kern_path_locked(watch->path, parent);
+        if (IS_ERR(d))
+                return PTR_ERR(d);
+-       inode_unlock(d_backing_inode(parent->dentry));
+        if (d_is_positive(d)) {
+                /* update watch filter fields */
+                watch->dev = d->d_sb->s_dev;
+                watch->ino = d_backing_inode(d)->i_ino;
+        }
++       inode_unlock(d_backing_inode(parent->dentry));
+        dput(d);
+        return 0;
+ }
 
-							Thanx, Paul
+For other fun bits and pieces see ceph bugs caught this week and crap in
+dget_parent() (not posted yet).  The former had been ceph violating the
+"turning a previously observable dentry positive requires exclusive lock
+on parent" rule, the latter - genuine insufficient barriers in the fast
+path of dget_parent().
+
+It is converging to a reasonably small and understandable surface, actually,
+most of that being in core pathname resolution.  Two big piles of nightmares
+left to review - overlayfs and (somewhat surprisingly) setxattr call chains,
+the latter due to IMA/EVM/LSM insanity...
+
+There's also some secondary stuff dropping out of that (e.g. ceph seeding
+dcache on readdir and blindly unhashing dentries it sees stale instead of
+doing d_invalidate() as it ought to - leads to fun results if you had
+something mounted on a subdirectory that got removed/recreated on server),
+but that's a separate pile of joy - doesn't affect this analysis, so
+it'll have to be dealt with later.  It had been an interesting couple of
+weeks...
