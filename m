@@ -2,133 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3175FECC07
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2019 00:46:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53CADECD1B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2019 05:25:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726532AbfKAXq0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Nov 2019 19:46:26 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:40806 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbfKAXqZ (ORCPT
+        id S1726670AbfKBEZ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 2 Nov 2019 00:25:27 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:45882 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726163AbfKBEZ1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Nov 2019 19:46:25 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iQgcY-0003GU-3x; Fri, 01 Nov 2019 23:46:22 +0000
-Date:   Fri, 1 Nov 2019 23:46:22 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        wugyuan@cn.ibm.com, jlayton@kernel.org, hsiangkao@aol.com,
-        Jan Kara <jack@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH RESEND 1/1] vfs: Really check for inode ptr in lookup_fast
-Message-ID: <20191101234622.GM26530@ZenIV.linux.org.uk>
-References: <20190927044243.18856-1-riteshh@linux.ibm.com>
- <20191015040730.6A84742047@d06av24.portsmouth.uk.ibm.com>
- <20191022133855.B1B4752050@d06av21.portsmouth.uk.ibm.com>
- <20191022143736.GX26530@ZenIV.linux.org.uk>
- <20191022201131.GZ26530@ZenIV.linux.org.uk>
- <20191023110551.D04AE4C044@d06av22.portsmouth.uk.ibm.com>
+        Sat, 2 Nov 2019 00:25:27 -0400
+Received: by mail-ot1-f65.google.com with SMTP id 77so5664627oti.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Nov 2019 21:25:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WVKY0SioYELJ6ImI8v503Lskf+dAkDXW4DKFTghrrvY=;
+        b=SHWv2jkO49HDcZocXLDXy78sL6G9/hjS58JuJUxYvtdb3mk1EEucfKJPlTLckUhr/J
+         YuA1vjvu+ra/1CvOsajcC5oiZ6IrRNsgwZQ4CefAkjgyaaVbYonwj6WcPQSTMaSlkFno
+         To/RTYODLOo8jttLyd+bE/2HvuMZRYa8SdNFzoCAjPx3wr+fSElVFlgBs/kxYnMgxq1A
+         +WiE9CcIUveR6MOhQHaTHl/UlIlugi9OMXaOxEkmYhIt32I/kYLnkgVpnYAroc7txWnC
+         HHR7UqKp5Bkie3I1vmlt0T6AJ9ifxAINOBUt4n04sEG4cVQfzRSP5Dyq0Q7T2CGrGfA1
+         OSmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WVKY0SioYELJ6ImI8v503Lskf+dAkDXW4DKFTghrrvY=;
+        b=LsN3du8LFo6jAse1cVWj0qfC4ZeXeJ9bcYyabFMgdTrhqwU259VXI5CTChLMHSUAve
+         QZTBftK1/iQyO+BIhyFO1SRIZcRxiuUS7GlSWmEoqrQsu67JZ/MjQphTsym+QYjn623/
+         on0ZJbkJJJgMKHsKjV5B/0E0nJezEdcU4Yii9bkM/FdstwYWL6YO0itmeR59SVLarIrW
+         s5fQjop2tUEUHjDZnRMp5sS8N1mL0j8E4vQ/gXLzxnyqT6HLphQlxZF6dVR8xoh010IN
+         jfzqAxN8XfSXt4gYQFcj6wrlFa4dUKcmqNOtHPXORPvBFWFLytiHcBvQKwkHgid9TOyM
+         gvNw==
+X-Gm-Message-State: APjAAAU4pUyX0A7d/7fPmPrL5nntsHxMmh01JuRzyO81auqEbuQXgtWg
+        5IpmG9Rz9nxIHSgixOuWn0LDryMZd22sZCH1YOGL+A==
+X-Google-Smtp-Source: APXvYqzuhvuy068R2WZlsZs6OALu7q7vZmg+l5pCz59QbwFS6qu8b/RiiqHO1Swr/2p2mNuDWmNLcgvs2qICNDvAVow=
+X-Received: by 2002:a9d:2d89:: with SMTP id g9mr11067444otb.126.1572668726439;
+ Fri, 01 Nov 2019 21:25:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191023110551.D04AE4C044@d06av22.portsmouth.uk.ibm.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20191023221332.GE2044@dread.disaster.area> <efffc9e7-8948-a117-dc7f-e394e50606ab@plexistor.com>
+ <20191024073446.GA4614@dread.disaster.area> <fb4f8be7-bca6-733a-7f16-ced6557f7108@plexistor.com>
+ <20191024213508.GB4614@dread.disaster.area> <ab101f90-6ec1-7527-1859-5f6309640cfa@plexistor.com>
+ <20191025003603.GE4614@dread.disaster.area> <20191025204926.GA26184@iweiny-DESK2.sc.intel.com>
+ <20191027221039.GL4614@dread.disaster.area> <20191031161757.GA14771@iweiny-DESK2.sc.intel.com>
+ <20191101224715.GY4614@dread.disaster.area>
+In-Reply-To: <20191101224715.GY4614@dread.disaster.area>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 1 Nov 2019 21:25:15 -0700
+Message-ID: <CAPcyv4juj9E1qKSXzOVfugmd=rBLZAvfbDdZT6ut0LdWwza=xA@mail.gmail.com>
+Subject: Re: [PATCH 0/5] Enable per-file/directory DAX operations
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Ira Weiny <ira.weiny@intel.com>, Boaz Harrosh <boaz@plexistor.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 04:35:50PM +0530, Ritesh Harjani wrote:
+On Fri, Nov 1, 2019 at 3:47 PM Dave Chinner <david@fromorbit.com> wrote:
+[..]
+> No, the flag does not get turned on until we've solved the problems
+> that resulted in us turning it off. We've gone over this mutliple
+> times, and nobody has solved the issues that need solving - everyone
+> seems to just hack around the issues rather than solving it
+> properly. If we thought taking some kind of shortcut full of
+> compromises and gotchas was the right solution, we would have never
+> turned the flag off in the first place.
 
-> > > What we have guaranteed is
-> > > 	* ->d_lock serializes ->d_flags/->d_inode changes
-> > > 	* ->d_seq is bumped before/after such changes
-> > > 	* positive dentry never changes ->d_inode as long as you hold
-> > > a reference (negative dentry *can* become positive right under you)
-> > > 
-> > > So there are 3 classes of valid users: those holding ->d_lock, those
-> > > sampling and rechecking ->d_seq and those relying upon having observed
-> > > the sucker they've pinned to be positive.
-> 
-> :) Thanks for simplifying like this. Agreed.
-
-FWIW, after fixing several ceph bugs, add to that the following:
-	* all places that turn a negative dentry into positive one are
-holding its parent exclusive or dentry has not been observable for
-anybody else.  It had been present in the parent's list of children
-(negative and unhashed) and it might have been present in in-lookup
-hashtable.  However, nobody is going to grab a reference to it from there
-without having grabbed ->d_lock on it and observed the state after
-it became positive. 
-
-Which means that holding a reference to dentry *and* holding its
-parent at least shared stabilizes both ->d_inode and type bits in
-->d_flags.  The situation with barriers is more subtle - *IF* we
-had sufficient barriers to have ->d_inode/type bits seen right
-after having gotten the reference, we are fine.  The only change
-possible after that point is negative->positive transition and
-that gets taken care of by barriers provided by ->i_rwsem.
-
-If we'd obtained that reference by d_lookup() or __d_lookup(),
-we are fine - ->d_lock gives a barrier.  The same goes for places
-that grab references during a tree traversal, provided that they
-hold ->d_lock around that (fs/autofs/expire.c stuff).  The same goes
-for having it found in inode's aliases list (->i_lock).
-
-I really hope that the same applies to accesses to file_dentry(file);
-on anything except alpha that would be pretty much automatic and
-on alpha we get the things along the lines of
-
-	f = fdt[n]
-	mb
-	d = f->f_path.dentry
-	i = d->d_inode
-	assert(i != NULL)
-vs.
-	see that d->d_inode is non-NULL
-	f->f_path.dentry = d
-	mb
-	fdt[n] = f
-
-IOW, the barriers that make it safe to fetch the fields of struct file
-(rcu_dereference_raw() in __fcheck_files() vs. smp_store_release()
-in __fd_install() in the above) should *hopefully* take care of all
-stores visible by the time of do_dentry_open().  Sure, alpha cache
-coherency is insane, but AFAICS it's not _that_ insane.
-
-Question to folks familiar with alpha memory model:
-
-A = 0, B = NULL, C = NULL
-CPU1:
-	A = 1
-
-CPU2:
-	r1 = A
-	if (r1) {
-		B = &A
-		mb
-		C = &B
-	}
-
-CPU3:
-	r2 = C;
-	mb
-	if (r2) {	// &B
-		r3 = *r2	// &A
-		r4 = *r3	// 1
-		assert(r4 == 1)
-	}
-
-is the above safe on alpha?
-
-[snip]
-
-> We may also need similar guarantees with __d_clear_type_and_inode().
-
-Not really - pinned dentry can't go negative.  In any case, with the
-audit I've done so far, I don't believe that blanket solutions like
-that are good idea - most of the places doing checks are safe as it is.
-The surface that needs to be taken care of is fairly small, actually;
-most of that is in fs/namei.c and fs/dcache.c.
+My fault. I thought the effective vs physical distinction was worth
+taking an incremental step forward. Ira was continuing to look at the
+a_ops issue in the meantime.
