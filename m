@@ -2,80 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF331ECEA2
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2019 13:16:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BB25ECEC6
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2019 14:13:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbfKBMQ3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 2 Nov 2019 08:16:29 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:41687 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726396AbfKBMQ3 (ORCPT
+        id S1726437AbfKBNNE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 2 Nov 2019 09:13:04 -0400
+Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:33616 "EHLO
+        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726329AbfKBNNE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 2 Nov 2019 08:16:29 -0400
-Received: by mail-io1-f66.google.com with SMTP id r144so13685285iod.8
-        for <linux-fsdevel@vger.kernel.org>; Sat, 02 Nov 2019 05:16:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=wxcZzS3cKDtizBHzu5MYBxfKlvrYJgDnLg6QIaSCRD8=;
-        b=oZN8jRPelKnFo1NxbuHkWwBgtprdny1Z1c44/pfyImXfqCDVwRHjOYymB4JMWCOnbT
-         Kg20tfKcQKLgs+nx2WaPc4Y+8gYbcXZLSFLGpzw1EJEgOYF/SP5IvZt0LkXkxrnY4Odc
-         YFQH4PIfgenr5gX0oqVxtyKsuKPBszVML9BLsewpD0TzD7X/nvHYOCcXvPI/es5SR4qk
-         5M/1uI7yPT3vkstjT4SesLj/cpK3O77lLckwZyTzBu3S8WWsO65k2r5ZNT760BIe+1ww
-         S0KzMyPOdV62LA700b0aITKGwlD+13rnpXnL4uDOswfFITfbB1gD0BJUoA27VZ6t02zl
-         MZCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=wxcZzS3cKDtizBHzu5MYBxfKlvrYJgDnLg6QIaSCRD8=;
-        b=q3Ts9RYvrNO/OllQ7NfNpqXfOJ00TVwVd0NzN6GD8kyYBvwftGbEN8nWWYj5cuM2Ss
-         Zp4Y4Rpwxmh95tAV2a60iQRuBHVOEUDUHGCcFG1jLF6Cz6yK1HFUl08NnUw+1vJYrd2o
-         iU/iLt50aiAFNsv5I9CvrTKzOXIj8NEW9F68WNBy4MoLNDlvCDS2oLm/TIQokLyXxxed
-         dFQhTADWORgLAohDJZrbaAufJBCGaUPhuuyx87hauzgqVLDbDxxHKXBk0bVkG0+btAzL
-         YCKPxhQ+8fk+xDuqHALvPO4RTWaEhKqYAuuzeJNndNMDbwf1cVsppZW3s6tiCYNhlkVs
-         VdDw==
-X-Gm-Message-State: APjAAAUyN85b/oHfyVo3bP5PZoenhL0agRmHIU2VH0cfkJI/CbLyWJyg
-        Rv7KxT5S88n3nTYa5dRHNRoMUal/cGJq3lX45qA=
-X-Google-Smtp-Source: APXvYqza4cXzXVByjO0vFgyNbbRzrGqxAeGMtbaWuakZ9fqSAXbmfz4O2bIfmfNGBHl3P87I3T6Hxo8fg/9ojX/uV0A=
-X-Received: by 2002:a02:3085:: with SMTP id q127mr1406004jaq.140.1572696987062;
- Sat, 02 Nov 2019 05:16:27 -0700 (PDT)
+        Sat, 2 Nov 2019 09:13:04 -0400
+Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
+        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id 86E512E1448;
+        Sat,  2 Nov 2019 16:13:00 +0300 (MSK)
+Received: from sas1-7fab0cd91cd2.qloud-c.yandex.net (sas1-7fab0cd91cd2.qloud-c.yandex.net [2a02:6b8:c14:3a93:0:640:7fab:cd9])
+        by mxbackcorp1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id WfxxPXTLLl-CxDGRls1;
+        Sat, 02 Nov 2019 16:13:00 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1572700380; bh=GjZu/WoaF6tLkOYo8V/8/nxWXOX7M22Xey9THKkbDAg=;
+        h=Message-ID:Date:To:From:Subject:Cc;
+        b=nVYU5bX0BbcH6zHWDjqI/XmQO+CTu5XFgYSDvYlaAwo5vYPo0aOqkVigo7zamEC8Y
+         EDDPzBGPap5oVpPYgXsfWXspAcqIfcl68YrX3o5oop+q/ZiGweb7Q5rmvOb6LLzlOY
+         g1AJ1NPneLX5yh9imdgFt3qWuUzGxQeCMDsce4+M=
+Authentication-Results: mxbackcorp1g.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:8554:53c0:3d75:2e8a])
+        by sas1-7fab0cd91cd2.qloud-c.yandex.net (nwsmtp/Yandex) with ESMTPSA id 2QDPdOoyS9-CxWep5NX;
+        Sat, 02 Nov 2019 16:12:59 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: [PATCH v2 1/3] fs: remove redundant cache invalidation after async
+ direct-io write
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Jan Kara <jack@suse.cz>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Date:   Sat, 02 Nov 2019 16:12:58 +0300
+Message-ID: <157270037850.4812.15036239021726025572.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Received: by 2002:a6b:4a10:0:0:0:0:0 with HTTP; Sat, 2 Nov 2019 05:16:26 -0700 (PDT)
-From:   Miss Basirat Ibrahim <tarhouni805@gmail.com>
-Date:   Sat, 2 Nov 2019 13:16:26 +0100
-Message-ID: <CAGD2OubikKuf+p7c75T28GLyXrrFW9XqD_j7TSWLMmdr4w=p6w@mail.gmail.com>
-Subject: With due respect From Miss Basirat Ibrahim
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi
+Function generic_file_direct_write() invalidates cache at entry. Second
+time this should be done when request completes. But this function calls
+second invalidation at exit unconditionally even for async requests.
 
-My Name is Miss.Basirat Ibrahim from Libya, am 23 years old, am
-presently in St.Christopher's Parish for refugee in Burkina Faso under
-United Nations High commission for Refugee,
+This patch skips second invalidation for async requests (-EIOCBQUEUED).
 
- I lost my parents in the recent war in  Libya, right now I am in
-Burkina Faso, please save my life i am in danger need your help in
-transferring my inheritance, my father left behind for me in a Bank in
-Burkina Faso here,
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+---
+ mm/filemap.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
- i have every necessary document for the fund, all i needed is a
-foreigner who will
-stand as the foreign partner to my father and beneficiary of the fund.
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 85b7d087eb45..288e38199068 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3218,9 +3218,11 @@ generic_file_direct_write(struct kiocb *iocb, struct iov_iter *from)
+ 	 * Most of the time we do not need this since dio_complete() will do
+ 	 * the invalidation for us. However there are some file systems that
+ 	 * do not end up with dio_complete() being called, so let's not break
+-	 * them by removing it completely
++	 * them by removing it completely.
++	 *
++	 * Skip invalidation for async writes or if mapping has no pages.
+ 	 */
+-	if (mapping->nrpages)
++	if (written > 0 && mapping->nrpages)
+ 		invalidate_inode_pages2_range(mapping,
+ 					pos >> PAGE_SHIFT, end);
+ 
 
-The money deposited in the Bank is US10.5 MILLION UNITED STATES
-DOLLAR) I just need this fund to be transfer to your bank account so
-that i will come over to your country and complete my education as you
-know that my country have been in deep crisis due to the war .And I
-cannot go back there again because I have nobody again all of my
-family were killed in the war. If you are interested to save me and
-help me receive my inheritance fund into your bank account with utmost
-good faith
-
-Please get back to me.through my private Email    hm36813999@gmail.com
-
-Miss.Basirat Ibrahim.
