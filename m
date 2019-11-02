@@ -2,83 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53CADECD1B
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2019 05:25:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 446B0ECD93
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Nov 2019 07:17:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbfKBEZ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 2 Nov 2019 00:25:27 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45882 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726163AbfKBEZ1 (ORCPT
+        id S1726430AbfKBGRJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 2 Nov 2019 02:17:09 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:45304 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726044AbfKBGRJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 2 Nov 2019 00:25:27 -0400
-Received: by mail-ot1-f65.google.com with SMTP id 77so5664627oti.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Nov 2019 21:25:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WVKY0SioYELJ6ImI8v503Lskf+dAkDXW4DKFTghrrvY=;
-        b=SHWv2jkO49HDcZocXLDXy78sL6G9/hjS58JuJUxYvtdb3mk1EEucfKJPlTLckUhr/J
-         YuA1vjvu+ra/1CvOsajcC5oiZ6IrRNsgwZQ4CefAkjgyaaVbYonwj6WcPQSTMaSlkFno
-         To/RTYODLOo8jttLyd+bE/2HvuMZRYa8SdNFzoCAjPx3wr+fSElVFlgBs/kxYnMgxq1A
-         +WiE9CcIUveR6MOhQHaTHl/UlIlugi9OMXaOxEkmYhIt32I/kYLnkgVpnYAroc7txWnC
-         HHR7UqKp5Bkie3I1vmlt0T6AJ9ifxAINOBUt4n04sEG4cVQfzRSP5Dyq0Q7T2CGrGfA1
-         OSmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WVKY0SioYELJ6ImI8v503Lskf+dAkDXW4DKFTghrrvY=;
-        b=LsN3du8LFo6jAse1cVWj0qfC4ZeXeJ9bcYyabFMgdTrhqwU259VXI5CTChLMHSUAve
-         QZTBftK1/iQyO+BIhyFO1SRIZcRxiuUS7GlSWmEoqrQsu67JZ/MjQphTsym+QYjn623/
-         on0ZJbkJJJgMKHsKjV5B/0E0nJezEdcU4Yii9bkM/FdstwYWL6YO0itmeR59SVLarIrW
-         s5fQjop2tUEUHjDZnRMp5sS8N1mL0j8E4vQ/gXLzxnyqT6HLphQlxZF6dVR8xoh010IN
-         jfzqAxN8XfSXt4gYQFcj6wrlFa4dUKcmqNOtHPXORPvBFWFLytiHcBvQKwkHgid9TOyM
-         gvNw==
-X-Gm-Message-State: APjAAAU4pUyX0A7d/7fPmPrL5nntsHxMmh01JuRzyO81auqEbuQXgtWg
-        5IpmG9Rz9nxIHSgixOuWn0LDryMZd22sZCH1YOGL+A==
-X-Google-Smtp-Source: APXvYqzuhvuy068R2WZlsZs6OALu7q7vZmg+l5pCz59QbwFS6qu8b/RiiqHO1Swr/2p2mNuDWmNLcgvs2qICNDvAVow=
-X-Received: by 2002:a9d:2d89:: with SMTP id g9mr11067444otb.126.1572668726439;
- Fri, 01 Nov 2019 21:25:26 -0700 (PDT)
+        Sat, 2 Nov 2019 02:17:09 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iQmig-0003Wx-Sb; Sat, 02 Nov 2019 06:17:07 +0000
+Date:   Sat, 2 Nov 2019 06:17:06 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        wugyuan@cn.ibm.com, jlayton@kernel.org, hsiangkao@aol.com,
+        Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ritesh Harjani <riteshh@linux.ibm.com>
+Subject: Re: [PATCH RESEND 1/1] vfs: Really check for inode ptr in lookup_fast
+Message-ID: <20191102061706.GA10268@ZenIV.linux.org.uk>
+References: <20190927044243.18856-1-riteshh@linux.ibm.com>
+ <20191015040730.6A84742047@d06av24.portsmouth.uk.ibm.com>
+ <20191022133855.B1B4752050@d06av21.portsmouth.uk.ibm.com>
+ <20191022143736.GX26530@ZenIV.linux.org.uk>
+ <20191022201131.GZ26530@ZenIV.linux.org.uk>
+ <20191023110551.D04AE4C044@d06av22.portsmouth.uk.ibm.com>
+ <20191101234622.GM26530@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-References: <20191023221332.GE2044@dread.disaster.area> <efffc9e7-8948-a117-dc7f-e394e50606ab@plexistor.com>
- <20191024073446.GA4614@dread.disaster.area> <fb4f8be7-bca6-733a-7f16-ced6557f7108@plexistor.com>
- <20191024213508.GB4614@dread.disaster.area> <ab101f90-6ec1-7527-1859-5f6309640cfa@plexistor.com>
- <20191025003603.GE4614@dread.disaster.area> <20191025204926.GA26184@iweiny-DESK2.sc.intel.com>
- <20191027221039.GL4614@dread.disaster.area> <20191031161757.GA14771@iweiny-DESK2.sc.intel.com>
- <20191101224715.GY4614@dread.disaster.area>
-In-Reply-To: <20191101224715.GY4614@dread.disaster.area>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 1 Nov 2019 21:25:15 -0700
-Message-ID: <CAPcyv4juj9E1qKSXzOVfugmd=rBLZAvfbDdZT6ut0LdWwza=xA@mail.gmail.com>
-Subject: Re: [PATCH 0/5] Enable per-file/directory DAX operations
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Ira Weiny <ira.weiny@intel.com>, Boaz Harrosh <boaz@plexistor.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191101234622.GM26530@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 1, 2019 at 3:47 PM Dave Chinner <david@fromorbit.com> wrote:
-[..]
-> No, the flag does not get turned on until we've solved the problems
-> that resulted in us turning it off. We've gone over this mutliple
-> times, and nobody has solved the issues that need solving - everyone
-> seems to just hack around the issues rather than solving it
-> properly. If we thought taking some kind of shortcut full of
-> compromises and gotchas was the right solution, we would have never
-> turned the flag off in the first place.
+On Fri, Nov 01, 2019 at 11:46:22PM +0000, Al Viro wrote:
+> on anything except alpha that would be pretty much automatic and
+> on alpha we get the things along the lines of
+> 
+> 	f = fdt[n]
+> 	mb
+> 	d = f->f_path.dentry
+> 	i = d->d_inode
+> 	assert(i != NULL)
+> vs.
+> 	see that d->d_inode is non-NULL
+> 	f->f_path.dentry = d
+> 	mb
+> 	fdt[n] = f
+> 
+> IOW, the barriers that make it safe to fetch the fields of struct file
+> (rcu_dereference_raw() in __fcheck_files() vs. smp_store_release()
+> in __fd_install() in the above) should *hopefully* take care of all
+> stores visible by the time of do_dentry_open().  Sure, alpha cache
+> coherency is insane, but AFAICS it's not _that_ insane.
+> 
+> Question to folks familiar with alpha memory model:
+> 
+> A = 0, B = NULL, C = NULL
+> CPU1:
+> 	A = 1
+> 
+> CPU2:
+> 	r1 = A
+> 	if (r1) {
+> 		B = &A
+> 		mb
+> 		C = &B
+> 	}
+> 
+> CPU3:
+> 	r2 = C;
+> 	mb
+> 	if (r2) {	// &B
+> 		r3 = *r2	// &A
+> 		r4 = *r3	// 1
+> 		assert(r4 == 1)
+> 	}
+> 
+> is the above safe on alpha?
 
-My fault. I thought the effective vs physical distinction was worth
-taking an incremental step forward. Ira was continuing to look at the
-a_ops issue in the meantime.
+Hmm...  After digging through alpha manuals, it should be -
+
+U1: W A, 1
+
+V1: R A, 1
+V2: W B, &A
+V3: MB
+V4: W C, &B
+
+W1: R C, &B
+W2: MB
+W3: R B, &A
+W4: R A, 0
+
+is rejected since
+	U1 BEFORE V1 (storage and visibility)
+	V1 BEFORE V3 BEFORE V4 (processor issue order constraints)
+	V4 BEFORE W1 (storage and visibility)
+	W1 BEFORE W2 BEFORE W4 (processor issue order constraints)
+and W4 BEFORE U1 (storage and visibility), which is impossible
+due to BEFORE being acyclic and transitive.
+
+I might very well be missing something, though...  Paul, could you
+take a look and tell if the above makes sense?
