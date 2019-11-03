@@ -2,140 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BAE5ED343
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Nov 2019 13:02:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCC2FED378
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Nov 2019 14:20:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbfKCMCM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 Nov 2019 07:02:12 -0500
-Received: from forwardcorp1p.mail.yandex.net ([77.88.29.217]:57400 "EHLO
-        forwardcorp1p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726998AbfKCMCM (ORCPT
+        id S1727648AbfKCNUe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 3 Nov 2019 08:20:34 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:42651 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727505AbfKCNUe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 Nov 2019 07:02:12 -0500
-Received: from mxbackcorp1j.mail.yandex.net (mxbackcorp1j.mail.yandex.net [IPv6:2a02:6b8:0:1619::162])
-        by forwardcorp1p.mail.yandex.net (Yandex) with ESMTP id 54FA82E12F1;
-        Sun,  3 Nov 2019 15:02:07 +0300 (MSK)
-Received: from myt5-6212ef07a9ec.qloud-c.yandex.net (myt5-6212ef07a9ec.qloud-c.yandex.net [2a02:6b8:c12:3b2d:0:640:6212:ef07])
-        by mxbackcorp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id E9iTHkqXmn-25RCivqh;
-        Sun, 03 Nov 2019 15:02:07 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1572782527; bh=22EDXIE7sdCqMg9/8WHEbWESicgc5h63XsjO5uxv1rM=;
-        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
-        b=dSxNOPO6KBTPwQVUMQsuoRYP2Rm4g+elu12lWUeOlbU6shBt2vVjk+8a9T+Ws1Crl
-         7M9I/RtuybtEgw/2CYq/3gOZp2rM6HlcFjEq+tAopJfR6tmmd46WeI5DCF7/o5oKNY
-         gSw+yqWfMiXCpvTo7HcNlk9jNn8xHug4DNIN8o/8=
-Authentication-Results: mxbackcorp1j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from unknown (unknown [2a02:6b8:b080:7101::1:7])
-        by myt5-6212ef07a9ec.qloud-c.yandex.net (nwsmtp/Yandex) with ESMTPSA id 1UOEXN5iqJ-25VW2Fdc;
-        Sun, 03 Nov 2019 15:02:05 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: Re: [RFC PATCH 11/10] pipe: Add fsync() support [ver #2]
-To:     Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>
-References: <CAHk-=wj1BLz6s9cG9Ptk4ULxrTy=MkF7ZH=HF67d7M5HL1fd_A@mail.gmail.com>
- <E590C3AF-1D09-4927-B83F-DD0A6A148B6D@amacapital.net>
- <CAHk-=wgzRU9RjkZG0L9_yrnFN69REkrSokTQOGZMUkvdispvuQ@mail.gmail.com>
- <CAHk-=wgPQutQ8d8kUCvAFi+hfNWgaNLiZPkbg-GXY2DCtD-Z5Q@mail.gmail.com>
- <CALCETrWZjW88OY2mh7v8cUU_6XTSJTkQhAfNbSC17AdhEWwVAA@mail.gmail.com>
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Message-ID: <c8001e7c-8039-3efb-948b-482b88005660@yandex-team.ru>
-Date:   Sun, 3 Nov 2019 15:02:05 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Sun, 3 Nov 2019 08:20:34 -0500
+Received: by mail-qt1-f193.google.com with SMTP id t20so4118401qtn.9
+        for <linux-fsdevel@vger.kernel.org>; Sun, 03 Nov 2019 05:20:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XvZDTg6KgNl1RRJLKsvptgnVUd3pDUaVxrmsOG02VjE=;
+        b=muXjX6EkZezEHv58wqoRy0ZDpqiHE3fYf2yWpgKEtHHZtSeOS67EAC1dFDnPwOBG1p
+         su1tdgHJeeFhUPw32pEMm8FshW8CXCSa3TLituQX/LqemUCa7mRUswutyhqTnLtB8gnJ
+         YTfbMDoie4ol7c1QHHTlzNJ01UVHaRtcczAGNrWFv3ZDc6wJYhY1h1OIpAmwh3p7L+jg
+         LCUrjcQOszBo5RrRpaDTh864H5qHc92SPQi349h5BclEeBBuPnO/uWjY/Eq4uM576jY4
+         l8mTHXBXF/bc8hF/hSb+WXSCn2ViBfMS4zybBwXnPfUfbUU8rOeIEO7cknSRmgBVWHHu
+         hDJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XvZDTg6KgNl1RRJLKsvptgnVUd3pDUaVxrmsOG02VjE=;
+        b=KMEB42Jd3SIBXtO1zG4c5ngbbFIfzzWRC55RKU418w2XG+ZVj9dk7+fx+saJNcSPmb
+         BCluKvAttMqN+7EA3IdvcTBG61rS4YiIEPmAx/5gMhMrwgyotUTAGAsHiLGTZOEiIRdj
+         vqcPfzmNGmhOGWIx0jj2frdC0Z0gLWcj/gpDeR/v7Wv14cK3lNxu8DeCcSSah+ybyfvb
+         ZOKIaGw41QavKQ2fVNDs1Gq+0W89wBRs9zm8POIS53ZEWmfmf4JnuKFCvQwBAmDrTvO+
+         58Th5j9VbBk0usplSwo3ClKLLQiBlqyjr8jiwUpvbwkDRcqltn0pHXi7hsWzt8/7dIyH
+         7+Wg==
+X-Gm-Message-State: APjAAAWnSZwEVB4/E4JQMzb+elH9dMT8a8KNoDAOvOPiwOiz9ZqKfhxt
+        8Xq7k/V5YF3SSI8p+TegBbKAjwAjkxMCvE/U8nr0Jw==
+X-Google-Smtp-Source: APXvYqy0g3Hr5wgbS0e99pI1t0rYFYpkV7KVM+rnH00eH2yx1wUc986D3sOmkMxjtt04cl411iCoHuUNzIFo7+FiCms=
+X-Received: by 2002:ac8:4157:: with SMTP id e23mr8391764qtm.158.1572787232201;
+ Sun, 03 Nov 2019 05:20:32 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CALCETrWZjW88OY2mh7v8cUU_6XTSJTkQhAfNbSC17AdhEWwVAA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+References: <20191020173010.GA14744@avx2> <CANpmjNPzkYQjQ1mtJ6-h+6-=igD=GSnN9Sr6B6jpXrH9UJEUxg@mail.gmail.com>
+ <20191021183216.GA28801@avx2>
+In-Reply-To: <20191021183216.GA28801@avx2>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Sun, 3 Nov 2019 14:20:20 +0100
+Message-ID: <CACT4Y+Y2JzAZ5OJg-5Ng3ArcGD3xyjNqgg2x4QnJLoc03znbLA@mail.gmail.com>
+Subject: Re: [PATCH] proc: fix inode uid/gid writeback race
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     Marco Elver <elver@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 03/11/2019 02.14, Andy Lutomirski wrote:
-> On Sat, Nov 2, 2019 at 4:10 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->>
->> On Sat, Nov 2, 2019 at 4:02 PM Linus Torvalds
->> <torvalds@linux-foundation.org> wrote:
->>>
->>> But I don't think anybody actually _did_ any of that. But that's
->>> basically the argument for the three splice operations:
->>> write/vmsplice/splice(). Which one you use depends on the lifetime and
->>> the source of your data. write() is obviously for the copy case (the
->>> source data might not be stable), while splice() is for the "data from
->>> another source", and vmsplace() is "data is from stable data in my
->>> vm".
->>
->> Btw, it's really worth noting that "splice()" and friends are from a
->> more happy-go-lucky time when we were experimenting with new
->> interfaces, and in a day and age when people thought that interfaces
->> like "sendpage()" and zero-copy and playing games with the VM was a
->> great thing to do.
-> 
-> I suppose a nicer interface might be:
-> 
-> 
-> madvise(buf, len, MADV_STABILIZE);
-> 
-> (MADV_STABILIZE is an imaginary operation that write protects the
-> memory a la fork() but without the copying part.)
-> 
-> vmsplice_safer(fd, ...);
-> 
-> Where vmsplice_safer() is like vmsplice, except that it only works on
-> write-protected pages.  If you vmsplice_safer() some memory and then
-> write to the memory, the pipe keeps the old copy.
-> 
-> But this can all be done with memfd and splice, too, I think.
+On Mon, Oct 21, 2019 at 8:32 PM Alexey Dobriyan <adobriyan@gmail.com> wrote:
+>
+> On Mon, Oct 21, 2019 at 11:24:27AM +0200, Marco Elver wrote:
+> > On Sun, 20 Oct 2019 at 19:30, Alexey Dobriyan <adobriyan@gmail.com> wrote:
+> > >
+> > > (euid, egid) pair is snapshotted correctly from task under RCU,
+> > > but writeback to inode can be done in any order.
+> > >
+> > > Fix by doing writeback under inode->i_lock where necessary
+> > > (/proc/* , /proc/*/fd/* , /proc/*/map_files/* revalidate).
+> > >
+> > > Reported-by: syzbot+e392f8008a294fdf8891@syzkaller.appspotmail.com
+> > > Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+> > > ---
+> >
+> > Thanks!
+> >
+> > This certainly fixes the problem of inconsistent uid/gid pair due to
+> > racing writebacks, as well as the data-race. If that is the only
+> > purpose of this patch, then from what I see this is fine:
+> >
+> > Acked-by: Marco Elver <elver@google.com>
+> >
+> > However, there is probably still a more fundamental problem as outlined below.
+> >
+> > >  fs/proc/base.c     |   25 +++++++++++++++++++++++--
+> > >  fs/proc/fd.c       |    2 +-
+> > >  fs/proc/internal.h |    2 ++
+> > >  3 files changed, 26 insertions(+), 3 deletions(-)
+> > >
+> > > --- a/fs/proc/base.c
+> > > +++ b/fs/proc/base.c
+> > > @@ -1743,6 +1743,25 @@ void task_dump_owner(struct task_struct *task, umode_t mode,
+> > >         *rgid = gid;
+> > >  }
+> > >
+> > > +/* use if inode is live */
+> > > +void task_dump_owner_to_inode(struct task_struct *task, umode_t mode,
+> > > +                             struct inode *inode)
+> > > +{
+> > > +       kuid_t uid;
+> > > +       kgid_t gid;
+> > > +
+> > > +       task_dump_owner(task, mode, &uid, &gid);
+> > > +       /*
+> > > +        * There is no atomic "change all credentials at once" system call,
+> > > +        * guaranteeing more than _some_ snapshot from "struct cred" ends up
+> > > +        * in inode is not possible.
+> > > +        */
+> > > +       spin_lock(&inode->i_lock);
+> > > +       inode->i_uid = uid;
+> > > +       inode->i_gid = gid;
+> > > +       spin_unlock(&inode->i_lock);
+> >
+> > 2 tasks can still race here, and the inconsistent scenario I outlined in
+> > https://lore.kernel.org/linux-fsdevel/000000000000328b2905951a7667@google.com/
+> > could still happen I think (although extremely unlikely). Mainly,
+> > causality may still be violated -- but I may be wrong as I don't know
+> > the rest of the code (so please be critical of my suggestion).
+> >
+> > The problem is that if 2 threads race here, one has snapshotted old
+> > uid/gid, and the other the new uid/gid. Then it is still possible for
+> > the old uid/gid to be written back after new uid/gid, which would
+> > result in this bad scenario:
+> >
+> > === TASK 1 ===
+> > | seteuid(1000);
+> > | seteuid(0);
+> > | stat("/proc/<pid-of-task-1>", &fstat);
+> > | assert(fstat.st_uid == 0);  // fails
+> > === TASK 2 ===
+> > | stat("/proc/<pid-of-task-1>", ...);
+> >
+> > AFAIK it's not something that can easily be fixed without some
+> > timestamp on the uid/gid pair (timestamp updated after setuid/seteuid
+> > etc) obtained in the RCU reader critical section. Then in this
+> > critical section, uid/gid should only be written if the current pair
+> > in inode is older according to snapshot timestamp.
+>
+> This probably requires bloating "struct cred" with generation number.
+> I'm not sure what to do other than cc our credential overlords.
 
-Looks monstrous. This will kill all fun and profit. =)
+Just in case, this bug can lead to bad observable behavior, e.g.
+bypassing LSM checks (apparmor) and this patch does not fix the
+underlying problem. For details see:
+https://groups.google.com/d/msg/syzkaller-bugs/mzwiXt4ml68/GuAUQrWtBQAJ
 
-I think vmsplice should at least deprecate and ignore SPLICE_F_GIFT.
 
-It almost never works - if page still mapped then page_count in
-generic_pipe_buf_steal() will be at least 2 (pte and pipe gup).
-But if user munmap vma between splicing and consuming (and page not
-stuck in lazy tlb and per-cpu vectors) then page from anon lru
-could be spliced into file. Ouch.
-
-And looks like fuse device still accepts SPLICE_F_MOVE.
-
-> 
-> 
->>
->> It turns out that VM games are almost always more expensive than just
->> copying the data in the first place, but hey, people didn't know that,
->> and zero-copy was seen a big deal.
->>
->> The reality is that almost nobody uses splice and vmsplice at all, and
->> they have been a much bigger headache than they are worth. If I could
->> go back in time and not do them, I would. But there have been a few
->> very special uses that seem to actually like the interfaces.
->>
->> But it's entirely possible that we should kill vmsplice() (likely by
->> just implementing the semantics as "write()") because it's not common
->> enough to have the complexity.
-> 
-> I think this is the right choice.
-> 
-> FWIW, the openssl vmsplice() call looks dubious, but I suspect it's
-> okay because it's vmsplicing to a netlink socket, and the kernel code
-> on the other end won't read the data after it returns a response.
-> 
-> --Andy
-> 
+> > > +}
+> > > +
+> > >  struct inode *proc_pid_make_inode(struct super_block * sb,
+> > >                                   struct task_struct *task, umode_t mode)
+> > >  {
+> > > @@ -1769,6 +1788,7 @@ struct inode *proc_pid_make_inode(struct super_block * sb,
+> > >         if (!ei->pid)
+> > >                 goto out_unlock;
+> > >
+> > > +       /* fresh inode -- no races */
+> > >         task_dump_owner(task, 0, &inode->i_uid, &inode->i_gid);
+> > >         security_task_to_inode(task, inode);
+> > >
+> > > @@ -1802,6 +1822,7 @@ int pid_getattr(const struct path *path, struct kstat *stat,
+> > >                          */
+> > >                         return -ENOENT;
+> > >                 }
+> > > +               /* "struct kstat" is thread local, atomic snapshot is enough */
+> > >                 task_dump_owner(task, inode->i_mode, &stat->uid, &stat->gid);
+> > >         }
+> > >         rcu_read_unlock();
+> > > @@ -1815,7 +1836,7 @@ int pid_getattr(const struct path *path, struct kstat *stat,
+> > >   */
+> > >  void pid_update_inode(struct task_struct *task, struct inode *inode)
+> > >  {
+> > > -       task_dump_owner(task, inode->i_mode, &inode->i_uid, &inode->i_gid);
+> > > +       task_dump_owner_to_inode(task, inode->i_mode, inode);
+> > >
+> > >         inode->i_mode &= ~(S_ISUID | S_ISGID);
+> > >         security_task_to_inode(task, inode);
+> > > @@ -1990,7 +2011,7 @@ static int map_files_d_revalidate(struct dentry *dentry, unsigned int flags)
+> > >         mmput(mm);
+> > >
+> > >         if (exact_vma_exists) {
+> > > -               task_dump_owner(task, 0, &inode->i_uid, &inode->i_gid);
+> > > +               task_dump_owner_to_inode(task, 0, inode);
+> > >
+> > >                 security_task_to_inode(task, inode);
+> > >                 status = 1;
+> > > --- a/fs/proc/fd.c
+> > > +++ b/fs/proc/fd.c
+> > > @@ -101,7 +101,7 @@ static bool tid_fd_mode(struct task_struct *task, unsigned fd, fmode_t *mode)
+> > >  static void tid_fd_update_inode(struct task_struct *task, struct inode *inode,
+> > >                                 fmode_t f_mode)
+> > >  {
+> > > -       task_dump_owner(task, 0, &inode->i_uid, &inode->i_gid);
+> > > +       task_dump_owner_to_inode(task, 0, inode);
+> > >
+> > >         if (S_ISLNK(inode->i_mode)) {
+> > >                 unsigned i_mode = S_IFLNK;
+> > > --- a/fs/proc/internal.h
+> > > +++ b/fs/proc/internal.h
+> > > @@ -123,6 +123,8 @@ static inline struct task_struct *get_proc_task(const struct inode *inode)
+> > >
+> > >  void task_dump_owner(struct task_struct *task, umode_t mode,
+> > >                      kuid_t *ruid, kgid_t *rgid);
+> > > +void task_dump_owner_to_inode(struct task_struct *task, umode_t mode,
+> > > +                             struct inode *inode);
+> > >
+> > >  unsigned name_to_int(const struct qstr *qstr);
+> > >  /*
