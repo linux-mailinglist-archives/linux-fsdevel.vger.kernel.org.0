@@ -2,103 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19E6CED461
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Nov 2019 20:39:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EDFE4ED476
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Nov 2019 20:53:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728063AbfKCTiy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 Nov 2019 14:38:54 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:38238 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727913AbfKCTiy (ORCPT
+        id S1728097AbfKCTxo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 3 Nov 2019 14:53:44 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:9104 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727343AbfKCTxo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 Nov 2019 14:38:54 -0500
-Received: by mail-lj1-f194.google.com with SMTP id y23so14887480ljc.5;
-        Sun, 03 Nov 2019 11:38:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=DA97c1OVaZrH8SvTZWoH5od6ijrQ6ybNR3pRj3cE098=;
-        b=FyDID7sVwcKA8u2OXigUOGeLpN0r0KJ3r2nEpMx0KzYOU04J9slKn6GMoVITpEqJuO
-         NI4tMie2/xsh3jpLitK6dLyd8M8EaccIOt1TejbOamSIFRby8AV4N5sL2uJqUwFFKXMU
-         N9d0oRR17KcF7aPixdnvTWNo4upGstyhwdGfP0mop5EWgRttjYfFxPP/m/IQdMnvSRZz
-         K4MYMdzB4JUaqpB45vL4aYjyrhEJLQgfLQdmRAdMPNTdlQtjzfCsOnjYVEqcgKTFv3WX
-         H+a7bWb5dLZI8JvzdxWN8m9e91gPfgdQTAGflmeuSSA4F//w3eGcuFkjgD4Fym33dRe2
-         0hYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=DA97c1OVaZrH8SvTZWoH5od6ijrQ6ybNR3pRj3cE098=;
-        b=PMoTSYxPhzxHAU9hIvOtUOix0XiqtPo3mtjrVpu44J6HHaEW9HS7rmppQFSYwSH+w7
-         8B4OwRy5+fa9EL7usQsIBuR4Z3ej6wJu/Ze8zUGrTTwphWHa4+I/bkv6IsAeQd99iza3
-         ni1eJw63tAPJWR7hiIQIQv1gD13EV3yYErSYWeGW2tMwcdCupuqIbjBOuvXVmHBi3JYr
-         hSItAjGlT+vfHp0haQmbTbn27CuPzZOtBK/Sq7BX93Wtoh0Wza5FQCzNYwFCTTZq870r
-         oTvIJrog6t4/uqjiMidLpH7l8NjhElPg/g6oGhFuAUJXoi9jn1q9RgyEUXvcw0B/eRlh
-         N1uA==
-X-Gm-Message-State: APjAAAXdbHiYSAr/5kNZZNR/qMRSVaiaZrX741TV3j5JvEBwEAuPC4NO
-        /lORtvYg4tbdQ/rb/6G0vf3v5Au9
-X-Google-Smtp-Source: APXvYqyI5+BujfgI/FWXMTlWmlpvJKcofGCBiYtBRXJQWqPdTY+AmdPXHL/kdDH4Ts+TNvIJ2IEotg==
-X-Received: by 2002:a2e:3a1a:: with SMTP id h26mr16166320lja.25.1572809931956;
-        Sun, 03 Nov 2019 11:38:51 -0800 (PST)
-Received: from [192.168.1.36] (88-114-211-119.elisa-laajakaista.fi. [88.114.211.119])
-        by smtp.gmail.com with ESMTPSA id v9sm5897917ljk.56.2019.11.03.11.38.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 03 Nov 2019 11:38:51 -0800 (PST)
-Subject: Re: [PATCH] Allow restricting permissions in /proc/sys
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:FILESYSTEMS (VFS and infrastructure)" 
-        <linux-fsdevel@vger.kernel.org>
-References: <74a91362-247c-c749-5200-7bdce704ed9e@gmail.com>
- <87d0e8g5f4.fsf@x220.int.ebiederm.org>
-From:   Topi Miettinen <toiwoton@gmail.com>
-Message-ID: <f272bdd3-526d-6737-c906-143d5e5fc478@gmail.com>
-Date:   Sun, 3 Nov 2019 21:38:50 +0200
+        Sun, 3 Nov 2019 14:53:44 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dbf30480000>; Sun, 03 Nov 2019 11:53:45 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Sun, 03 Nov 2019 11:53:38 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Sun, 03 Nov 2019 11:53:38 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 3 Nov
+ 2019 19:53:37 +0000
+Subject: Re: [PATCH 19/19] Documentation/vm: add pin_user_pages.rst
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20191030224930.3990755-1-jhubbard@nvidia.com>
+ <20191030224930.3990755-20-jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <58d3ef87-85ef-a69d-5cf7-1719ff356048@nvidia.com>
+Date:   Sun, 3 Nov 2019 11:53:37 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <87d0e8g5f4.fsf@x220.int.ebiederm.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20191030224930.3990755-20-jhubbard@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1572810825; bh=rTG1L9aHJoAtL42CYzuRVvyOXz7jlR1h5ExQz/00LXg=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=hz45cfuI6ZB24IXq0tlVG+4gOOw0rO1aR3a1v+mNE3URSP536c/QI/nw4iVi4Q3Fg
+         ZvhfjRg3c8U4Zeed5IN0S8La0/yhKPqXLcaka8zujsYCnTFzskkYWmX6ZMKm85uc53
+         903Xo+ojBBu648JazllTkreHad3wmqcM3sQfIPNK3XPWIubatS+4uPpiaSake+maws
+         O3mb+7lTk0b/qWmINewSdXIPlnBwUrlkcxoUQTGi1jJWPWnSrL74fzVKeEWjMvAjbH
+         5wXYgJG8qyFZYCSM/zx8jBY5FMvGDHZIQbt9J9oHql6kjp+O+lMMcuF1F8/mAcyFV4
+         Yo4Vz3wx3lQSQ==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3.11.2019 20.50, Eric W. Biederman wrote:
-> Topi Miettinen <toiwoton@gmail.com> writes:
-> 
->> Several items in /proc/sys need not be accessible to unprivileged
->> tasks. Let the system administrator change the permissions, but only
->> to more restrictive modes than what the sysctl tables allow.
-> 
-> This looks quite buggy.  You neither update table->mode nor
-> do you ever read from table->mode to initialize the inode.
-> I am missing something in my quick reading of your patch?
+On 10/30/19 3:49 PM, John Hubbard wrote:
+...
+> +* struct page may not be increased in size for this, and all fields are already
+> +  used.
+> +
+> +* Given the above, we can overload the page->_refcount field by using, sort of,
+> +  the upper bits in that field for a dma-pinned count. "Sort of", means that,
+> +  rather than dividing page->_refcount into bit fields, we simple add a medium-
+> +  large value (GUP_PIN_COUNTING_BIAS, initially chosen to be 1024: 10 bits) to
+> +  page->_refcount. This provides fuzzy behavior: if a page has get_page() called
+> +  on it 1024 times, then it will appear to have a single dma-pinned count.
+> +  And again, that's acceptable.
+> +
+> +This also leads to limitations: there are only 32-10==22 bits available for a
+> +counter that increments 10 bits at a time.
+> +
 
-inode->i_mode gets initialized in proc_sys_make_inode().
+The above claim is just a "bit" too optimistic, by one bit: page->_refcount, being 
+an atomic_t which uses a signed int (and we use the sign bit to check for overflow),
+only has 31 total bits available for actual counting, not 32.
 
-I didn't want to touch the table, so that the original permissions can 
-be used to restrict the changes made. In case the restrictions are 
-removed as suggested by Theodore Ts'o, table->mode could be changed. 
-Otherwise I'd rather add a new field to store the current mode and the 
-mode field can remain for reference. As the original author of the code 
-from 2007, would you let the administrator to chmod/chown the items in 
-/proc/sys without restrictions (e.g. 0400 -> 0777)?
+I'll adjust the documentation in v2, to account for this.
 
-> The not updating table->mode almost certainly means that as soon as the
-> cached inode is invalidated the mode changes will disappear.  Not to
-> mention they will fail to propogate between  different instances of
-> proc.
-> 
-> Loosing all of your changes at cache invalidation seems to make this a
-> useless feature.
+thanks,
 
-At least different proc instances seem to work just fine here (they show 
-the same changes), but I suppose you are right about cache invalidation.
+John Hubbard
+NVIDIA
 
--Topi
