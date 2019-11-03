@@ -2,119 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12C2AED105
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Nov 2019 00:15:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 499B6ED17F
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Nov 2019 03:05:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727379AbfKBXPA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 2 Nov 2019 19:15:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42872 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727320AbfKBXO7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 2 Nov 2019 19:14:59 -0400
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82BD521A49
-        for <linux-fsdevel@vger.kernel.org>; Sat,  2 Nov 2019 23:14:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572736498;
-        bh=REB5//Mg+2UUv5NMyr1MVdv8ocwrgYZM1pxYX5vl4iA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=M+eT3FUF2jmJ2jN5PXXRGK/Qoi8ZaXjyPmPt7vGC/lPRcyHAo5BCeJPPl7GT3D2vH
-         NREFz1CxaWKh03aYRPcbilVCC8pb01tix6xuZj4C6avNOQWC+IPC73Ws8tLGiGWf+O
-         me6ANt3XpP/7rESPToHqJsbo7vFYVaL+XK229Yrk=
-Received: by mail-wr1-f44.google.com with SMTP id e6so11281111wrw.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 02 Nov 2019 16:14:58 -0700 (PDT)
-X-Gm-Message-State: APjAAAWREUiYoz6O7XNshWmLQUj48hqdm4pL6eTlXuZqSr1+cCs1FIGZ
-        I6urs153zX8HHtHt9KyEPi3XhJfIF8EB7UAVWiB73w==
-X-Google-Smtp-Source: APXvYqwiaT/TYsPpvX/nSDbageOpVx9vUfoOUY5rzyPCC92h+QcJ3qEjOCN+6nwzv7Sif3nKLVFkueWLU7OXFbCI5Iw=
-X-Received: by 2002:adf:f7d1:: with SMTP id a17mr16289603wrq.111.1572736496889;
- Sat, 02 Nov 2019 16:14:56 -0700 (PDT)
+        id S1727420AbfKCCFI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 2 Nov 2019 22:05:08 -0400
+Received: from mail-il1-f194.google.com ([209.85.166.194]:38810 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727335AbfKCCFI (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 2 Nov 2019 22:05:08 -0400
+Received: by mail-il1-f194.google.com with SMTP id y5so11853420ilb.5;
+        Sat, 02 Nov 2019 19:05:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2Dt0AtL9r6sJ4IEe12mJVO75o0kUWJjuKUmQz0c8kdE=;
+        b=thQSEtfdRoQRWJx/2CEz1ZWrx5tln7Nl0HARQVYHFamL69ufLxfVGBKQOCQdA+C851
+         rtmUzCa9XfAKqt7Hbwubss7Fu/QOvVTF5vmg4SLlXY3AkN9JH/XtMKlKyju1HMIUn9UH
+         MP4xs88ZebxhC/j4iFZ3mjHJC7yKYJ6w4tNNpqDgKNsgr71BZUzzzUWvcqkQgHJsfQKI
+         Mleo+xe/eQhu1gSJs/E0Im+YZYqGhOw2qACfv/f3tqKyhAEj4SU5W/L3ypnzuURCPuJn
+         f0BwRlvvLu5DCEKLIwRemU3qEqhYKZRjiIsqQuRbbt8x/5dta7nNIYxUTLL+9ywFZ2dX
+         DfIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2Dt0AtL9r6sJ4IEe12mJVO75o0kUWJjuKUmQz0c8kdE=;
+        b=XOAt5xrHMcWBarRaUfFEckhdgsNwZd993t2TkGVdX67mmkhtho8/6x2eZWVI5a3a10
+         bzQ1w/mK7cOhapE+ciVT3ihROhxbX812gfnkaHKXcm/MDl2bjzfw9pPsorY1tZWfSkZs
+         74+n9iY0rgtJKzqQxi/z7KldG/2NGwp7mIwP35MPNJbLYQ60UByJuaBaPWWH2ri0TlRo
+         XSiAhTq5eYBatRcH2a+03yDypntMgRpKnGBfbGPCNBush1+ZCQlZf0DbBXhRjnIK8gqa
+         7t5yekMssf1Z4vv7UTJzWkf0uOGDr9z4KvGTyQxpvs4yy6REtJWqPIkm+xlkp2erKugb
+         xk0w==
+X-Gm-Message-State: APjAAAUmevSf3GnY58XyMO3l0LdOJDnHA8p5/utFS1RRr+btjTDxOyhs
+        Uo2v7RjmuXK7CxYwhVcOVb4oRYO3hRWKe80d/eU=
+X-Google-Smtp-Source: APXvYqz7ncSDxVWHT6VnSymB/1QNaKCbVXfsrbVt6IoQA6UfJPfpWbyZJGT50MsUpsawS1sqM5s+OvUgdQiXLY8IxY0=
+X-Received: by 2002:a92:48d8:: with SMTP id j85mr21159028ilg.272.1572746707214;
+ Sat, 02 Nov 2019 19:05:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHk-=wj1BLz6s9cG9Ptk4ULxrTy=MkF7ZH=HF67d7M5HL1fd_A@mail.gmail.com>
- <E590C3AF-1D09-4927-B83F-DD0A6A148B6D@amacapital.net> <CAHk-=wgzRU9RjkZG0L9_yrnFN69REkrSokTQOGZMUkvdispvuQ@mail.gmail.com>
- <CAHk-=wgPQutQ8d8kUCvAFi+hfNWgaNLiZPkbg-GXY2DCtD-Z5Q@mail.gmail.com>
-In-Reply-To: <CAHk-=wgPQutQ8d8kUCvAFi+hfNWgaNLiZPkbg-GXY2DCtD-Z5Q@mail.gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sat, 2 Nov 2019 16:14:45 -0700
-X-Gmail-Original-Message-ID: <CALCETrWZjW88OY2mh7v8cUU_6XTSJTkQhAfNbSC17AdhEWwVAA@mail.gmail.com>
-Message-ID: <CALCETrWZjW88OY2mh7v8cUU_6XTSJTkQhAfNbSC17AdhEWwVAA@mail.gmail.com>
-Subject: Re: [RFC PATCH 11/10] pipe: Add fsync() support [ver #2]
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20191031035514.20871-1-lsahlber@redhat.com>
+In-Reply-To: <20191031035514.20871-1-lsahlber@redhat.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Sat, 2 Nov 2019 21:04:56 -0500
+Message-ID: <CAH2r5mv1rGmGha-NDXzix6yjH4FmZ+RGvP61eEG3cF8sWVRG5w@mail.gmail.com>
+Subject: Re: [PATCH] cifs: don't use 'pre:' for MODULE_SOFTDEP
+To:     Ronnie Sahlberg <lsahlber@redhat.com>
+Cc:     linux-cifs <linux-cifs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 2, 2019 at 4:10 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+Tentatively merged into cifs-2.6.git for-next but am curious about the
+similar problem with ext4 and btrfs
+
+On Wed, Oct 30, 2019 at 10:59 PM Ronnie Sahlberg <lsahlber@redhat.com> wrote:
 >
-> On Sat, Nov 2, 2019 at 4:02 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > But I don't think anybody actually _did_ any of that. But that's
-> > basically the argument for the three splice operations:
-> > write/vmsplice/splice(). Which one you use depends on the lifetime and
-> > the source of your data. write() is obviously for the copy case (the
-> > source data might not be stable), while splice() is for the "data from
-> > another source", and vmsplace() is "data is from stable data in my
-> > vm".
+> It can cause
+> to fail with
+> modprobe: FATAL: Module <module> is builtin.
 >
-> Btw, it's really worth noting that "splice()" and friends are from a
-> more happy-go-lucky time when we were experimenting with new
-> interfaces, and in a day and age when people thought that interfaces
-> like "sendpage()" and zero-copy and playing games with the VM was a
-> great thing to do.
-
-I suppose a nicer interface might be:
-
-
-madvise(buf, len, MADV_STABILIZE);
-
-(MADV_STABILIZE is an imaginary operation that write protects the
-memory a la fork() but without the copying part.)
-
-vmsplice_safer(fd, ...);
-
-Where vmsplice_safer() is like vmsplice, except that it only works on
-write-protected pages.  If you vmsplice_safer() some memory and then
-write to the memory, the pipe keeps the old copy.
-
-But this can all be done with memfd and splice, too, I think.
-
-
+> RHBZ: 1767094
 >
-> It turns out that VM games are almost always more expensive than just
-> copying the data in the first place, but hey, people didn't know that,
-> and zero-copy was seen a big deal.
+> Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
+> ---
+>  fs/cifs/cifsfs.c | 24 ++++++++++++------------
+>  1 file changed, 12 insertions(+), 12 deletions(-)
 >
-> The reality is that almost nobody uses splice and vmsplice at all, and
-> they have been a much bigger headache than they are worth. If I could
-> go back in time and not do them, I would. But there have been a few
-> very special uses that seem to actually like the interfaces.
+> diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+> index f8e201c45ccb..a578699ce63c 100644
+> --- a/fs/cifs/cifsfs.c
+> +++ b/fs/cifs/cifsfs.c
+> @@ -1677,17 +1677,17 @@ MODULE_DESCRIPTION
+>         ("VFS to access SMB3 servers e.g. Samba, Macs, Azure and Windows (and "
+>         "also older servers complying with the SNIA CIFS Specification)");
+>  MODULE_VERSION(CIFS_VERSION);
+> -MODULE_SOFTDEP("pre: ecb");
+> -MODULE_SOFTDEP("pre: hmac");
+> -MODULE_SOFTDEP("pre: md4");
+> -MODULE_SOFTDEP("pre: md5");
+> -MODULE_SOFTDEP("pre: nls");
+> -MODULE_SOFTDEP("pre: aes");
+> -MODULE_SOFTDEP("pre: cmac");
+> -MODULE_SOFTDEP("pre: sha256");
+> -MODULE_SOFTDEP("pre: sha512");
+> -MODULE_SOFTDEP("pre: aead2");
+> -MODULE_SOFTDEP("pre: ccm");
+> -MODULE_SOFTDEP("pre: gcm");
+> +MODULE_SOFTDEP("ecb");
+> +MODULE_SOFTDEP("hmac");
+> +MODULE_SOFTDEP("md4");
+> +MODULE_SOFTDEP("md5");
+> +MODULE_SOFTDEP("nls");
+> +MODULE_SOFTDEP("aes");
+> +MODULE_SOFTDEP("cmac");
+> +MODULE_SOFTDEP("sha256");
+> +MODULE_SOFTDEP("sha512");
+> +MODULE_SOFTDEP("aead2");
+> +MODULE_SOFTDEP("ccm");
+> +MODULE_SOFTDEP("gcm");
+>  module_init(init_cifs)
+>  module_exit(exit_cifs)
+> --
+> 2.13.6
 >
-> But it's entirely possible that we should kill vmsplice() (likely by
-> just implementing the semantics as "write()") because it's not common
-> enough to have the complexity.
 
-I think this is the right choice.
 
-FWIW, the openssl vmsplice() call looks dubious, but I suspect it's
-okay because it's vmsplicing to a netlink socket, and the kernel code
-on the other end won't read the data after it returns a response.
+-- 
+Thanks,
 
---Andy
+Steve
