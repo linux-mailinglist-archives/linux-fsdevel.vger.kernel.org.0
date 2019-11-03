@@ -2,212 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCC2FED378
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Nov 2019 14:20:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E287ED39A
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Nov 2019 15:41:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727648AbfKCNUe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 Nov 2019 08:20:34 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:42651 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727505AbfKCNUe (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 Nov 2019 08:20:34 -0500
-Received: by mail-qt1-f193.google.com with SMTP id t20so4118401qtn.9
-        for <linux-fsdevel@vger.kernel.org>; Sun, 03 Nov 2019 05:20:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XvZDTg6KgNl1RRJLKsvptgnVUd3pDUaVxrmsOG02VjE=;
-        b=muXjX6EkZezEHv58wqoRy0ZDpqiHE3fYf2yWpgKEtHHZtSeOS67EAC1dFDnPwOBG1p
-         su1tdgHJeeFhUPw32pEMm8FshW8CXCSa3TLituQX/LqemUCa7mRUswutyhqTnLtB8gnJ
-         YTfbMDoie4ol7c1QHHTlzNJ01UVHaRtcczAGNrWFv3ZDc6wJYhY1h1OIpAmwh3p7L+jg
-         LCUrjcQOszBo5RrRpaDTh864H5qHc92SPQi349h5BclEeBBuPnO/uWjY/Eq4uM576jY4
-         l8mTHXBXF/bc8hF/hSb+WXSCn2ViBfMS4zybBwXnPfUfbUU8rOeIEO7cknSRmgBVWHHu
-         hDJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XvZDTg6KgNl1RRJLKsvptgnVUd3pDUaVxrmsOG02VjE=;
-        b=KMEB42Jd3SIBXtO1zG4c5ngbbFIfzzWRC55RKU418w2XG+ZVj9dk7+fx+saJNcSPmb
-         BCluKvAttMqN+7EA3IdvcTBG61rS4YiIEPmAx/5gMhMrwgyotUTAGAsHiLGTZOEiIRdj
-         vqcPfzmNGmhOGWIx0jj2frdC0Z0gLWcj/gpDeR/v7Wv14cK3lNxu8DeCcSSah+ybyfvb
-         ZOKIaGw41QavKQ2fVNDs1Gq+0W89wBRs9zm8POIS53ZEWmfmf4JnuKFCvQwBAmDrTvO+
-         58Th5j9VbBk0usplSwo3ClKLLQiBlqyjr8jiwUpvbwkDRcqltn0pHXi7hsWzt8/7dIyH
-         7+Wg==
-X-Gm-Message-State: APjAAAWnSZwEVB4/E4JQMzb+elH9dMT8a8KNoDAOvOPiwOiz9ZqKfhxt
-        8Xq7k/V5YF3SSI8p+TegBbKAjwAjkxMCvE/U8nr0Jw==
-X-Google-Smtp-Source: APXvYqy0g3Hr5wgbS0e99pI1t0rYFYpkV7KVM+rnH00eH2yx1wUc986D3sOmkMxjtt04cl411iCoHuUNzIFo7+FiCms=
-X-Received: by 2002:ac8:4157:: with SMTP id e23mr8391764qtm.158.1572787232201;
- Sun, 03 Nov 2019 05:20:32 -0800 (PST)
+        id S1727641AbfKCOlL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 3 Nov 2019 09:41:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44824 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727425AbfKCOlL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 3 Nov 2019 09:41:11 -0500
+Received: from paulmck-ThinkPad-P72.home (28.234-255-62.static.virginmediabusiness.co.uk [62.255.234.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38CFD20679;
+        Sun,  3 Nov 2019 14:41:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572792069;
+        bh=0YStxeRqFY8gXgXnkpgy5bxJi1uu8ndDck+oqaM1Dug=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=R7mXUNGAIkujaSvopF2S9oGbwrLCL+8YWGEdbvplTJxuChiIy6iXJZ3qD7H7Rp3sp
+         ttrjnqTvLBRo2VAzHMLx9bp6fcr8nQaM5ou9j6BSW2rB6juNkj8tjsuYMrdlWeDwcG
+         6zx6V9EipKK5M31jLzaOozDtOid2qAc6waUgSr3A=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 12689352038A; Sun,  3 Nov 2019 06:41:07 -0800 (PST)
+Date:   Sun, 3 Nov 2019 06:41:07 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Ritesh Harjani <riteshh@linux.ibm.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        wugyuan@cn.ibm.com, jlayton@kernel.org, hsiangkao@aol.com,
+        Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH RESEND 1/1] vfs: Really check for inode ptr in lookup_fast
+Message-ID: <20191103144107.GW20975@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20190927044243.18856-1-riteshh@linux.ibm.com>
+ <20191015040730.6A84742047@d06av24.portsmouth.uk.ibm.com>
+ <20191022133855.B1B4752050@d06av21.portsmouth.uk.ibm.com>
+ <20191022143736.GX26530@ZenIV.linux.org.uk>
+ <20191022201131.GZ26530@ZenIV.linux.org.uk>
+ <20191023110551.D04AE4C044@d06av22.portsmouth.uk.ibm.com>
+ <20191101234622.GM26530@ZenIV.linux.org.uk>
+ <20191102172229.GT20975@paulmck-ThinkPad-P72>
+ <20191102180842.GN26530@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-References: <20191020173010.GA14744@avx2> <CANpmjNPzkYQjQ1mtJ6-h+6-=igD=GSnN9Sr6B6jpXrH9UJEUxg@mail.gmail.com>
- <20191021183216.GA28801@avx2>
-In-Reply-To: <20191021183216.GA28801@avx2>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Sun, 3 Nov 2019 14:20:20 +0100
-Message-ID: <CACT4Y+Y2JzAZ5OJg-5Ng3ArcGD3xyjNqgg2x4QnJLoc03znbLA@mail.gmail.com>
-Subject: Re: [PATCH] proc: fix inode uid/gid writeback race
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     Marco Elver <elver@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191102180842.GN26530@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 21, 2019 at 8:32 PM Alexey Dobriyan <adobriyan@gmail.com> wrote:
->
-> On Mon, Oct 21, 2019 at 11:24:27AM +0200, Marco Elver wrote:
-> > On Sun, 20 Oct 2019 at 19:30, Alexey Dobriyan <adobriyan@gmail.com> wrote:
-> > >
-> > > (euid, egid) pair is snapshotted correctly from task under RCU,
-> > > but writeback to inode can be done in any order.
-> > >
-> > > Fix by doing writeback under inode->i_lock where necessary
-> > > (/proc/* , /proc/*/fd/* , /proc/*/map_files/* revalidate).
-> > >
-> > > Reported-by: syzbot+e392f8008a294fdf8891@syzkaller.appspotmail.com
-> > > Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-> > > ---
-> >
-> > Thanks!
-> >
-> > This certainly fixes the problem of inconsistent uid/gid pair due to
-> > racing writebacks, as well as the data-race. If that is the only
-> > purpose of this patch, then from what I see this is fine:
-> >
-> > Acked-by: Marco Elver <elver@google.com>
-> >
-> > However, there is probably still a more fundamental problem as outlined below.
-> >
-> > >  fs/proc/base.c     |   25 +++++++++++++++++++++++--
-> > >  fs/proc/fd.c       |    2 +-
-> > >  fs/proc/internal.h |    2 ++
-> > >  3 files changed, 26 insertions(+), 3 deletions(-)
-> > >
-> > > --- a/fs/proc/base.c
-> > > +++ b/fs/proc/base.c
-> > > @@ -1743,6 +1743,25 @@ void task_dump_owner(struct task_struct *task, umode_t mode,
-> > >         *rgid = gid;
-> > >  }
-> > >
-> > > +/* use if inode is live */
-> > > +void task_dump_owner_to_inode(struct task_struct *task, umode_t mode,
-> > > +                             struct inode *inode)
-> > > +{
-> > > +       kuid_t uid;
-> > > +       kgid_t gid;
-> > > +
-> > > +       task_dump_owner(task, mode, &uid, &gid);
-> > > +       /*
-> > > +        * There is no atomic "change all credentials at once" system call,
-> > > +        * guaranteeing more than _some_ snapshot from "struct cred" ends up
-> > > +        * in inode is not possible.
-> > > +        */
-> > > +       spin_lock(&inode->i_lock);
-> > > +       inode->i_uid = uid;
-> > > +       inode->i_gid = gid;
-> > > +       spin_unlock(&inode->i_lock);
-> >
-> > 2 tasks can still race here, and the inconsistent scenario I outlined in
-> > https://lore.kernel.org/linux-fsdevel/000000000000328b2905951a7667@google.com/
-> > could still happen I think (although extremely unlikely). Mainly,
-> > causality may still be violated -- but I may be wrong as I don't know
-> > the rest of the code (so please be critical of my suggestion).
-> >
-> > The problem is that if 2 threads race here, one has snapshotted old
-> > uid/gid, and the other the new uid/gid. Then it is still possible for
-> > the old uid/gid to be written back after new uid/gid, which would
-> > result in this bad scenario:
-> >
-> > === TASK 1 ===
-> > | seteuid(1000);
-> > | seteuid(0);
-> > | stat("/proc/<pid-of-task-1>", &fstat);
-> > | assert(fstat.st_uid == 0);  // fails
-> > === TASK 2 ===
-> > | stat("/proc/<pid-of-task-1>", ...);
-> >
-> > AFAIK it's not something that can easily be fixed without some
-> > timestamp on the uid/gid pair (timestamp updated after setuid/seteuid
-> > etc) obtained in the RCU reader critical section. Then in this
-> > critical section, uid/gid should only be written if the current pair
-> > in inode is older according to snapshot timestamp.
->
-> This probably requires bloating "struct cred" with generation number.
-> I'm not sure what to do other than cc our credential overlords.
+On Sat, Nov 02, 2019 at 06:08:42PM +0000, Al Viro wrote:
+> On Sat, Nov 02, 2019 at 10:22:29AM -0700, Paul E. McKenney wrote:
+> > Ignoring the possibility of the more exotic compiler optimizations, if
+> > the first task's load into f sees the value stored by the second task,
+> > then the pair of memory barriers guarantee that the first task's load
+> > into d will see the second task's store.
+> 
+> The question was about the load into i being also safe.
+> 
+> > In fact, you could instead say this in recent kernels:
+> > 
+> > 	f = READ_ONCE(fdt[n])  // provides dependency ordering via mb on Alpha
+> > 	mb
+> 
+> Er... that mb comes from expanded READ_ONCE(), actually - the call chain
+> is
+> 	fdget_pos() -> __fdget_pos() -> __fdget() -> __fget_light() ->
+> 	__fcheck_files(), either directly or via
+> 			__fget() -> fcheck_files() -> __fcheck_files()
+> 	rcu_dereference_raw() -> READ_ONCE() -> smp_read_barrier_depends()
+> which yields mb on alpha.
 
-Just in case, this bug can lead to bad observable behavior, e.g.
-bypassing LSM checks (apparmor) and this patch does not fix the
-underlying problem. For details see:
-https://groups.google.com/d/msg/syzkaller-bugs/mzwiXt4ml68/GuAUQrWtBQAJ
+Exactly.  But yes, my "provides dependency ordering via mb on Alpha"
+comment was not as clearly stated as it should have been.  Something about
+my having dispensed with proofreading in order to catch my plane...  :-/
 
+> > 	d = f->f_path.dentry
+> > 	i = d->d_inode  // But this is OK only if ->f_path.entry is
+> > 			// constant throughout
+> 
+> Yes, it is - once you hold a reference to a positive dentry, it can't
+> be made negative by anybody else.  See d_delete() for details; basically,
+> if you have refcount > 1, dentry will be unhashed, but not made negative.
 
-> > > +}
-> > > +
-> > >  struct inode *proc_pid_make_inode(struct super_block * sb,
-> > >                                   struct task_struct *task, umode_t mode)
-> > >  {
-> > > @@ -1769,6 +1788,7 @@ struct inode *proc_pid_make_inode(struct super_block * sb,
-> > >         if (!ei->pid)
-> > >                 goto out_unlock;
-> > >
-> > > +       /* fresh inode -- no races */
-> > >         task_dump_owner(task, 0, &inode->i_uid, &inode->i_gid);
-> > >         security_task_to_inode(task, inode);
-> > >
-> > > @@ -1802,6 +1822,7 @@ int pid_getattr(const struct path *path, struct kstat *stat,
-> > >                          */
-> > >                         return -ENOENT;
-> > >                 }
-> > > +               /* "struct kstat" is thread local, atomic snapshot is enough */
-> > >                 task_dump_owner(task, inode->i_mode, &stat->uid, &stat->gid);
-> > >         }
-> > >         rcu_read_unlock();
-> > > @@ -1815,7 +1836,7 @@ int pid_getattr(const struct path *path, struct kstat *stat,
-> > >   */
-> > >  void pid_update_inode(struct task_struct *task, struct inode *inode)
-> > >  {
-> > > -       task_dump_owner(task, inode->i_mode, &inode->i_uid, &inode->i_gid);
-> > > +       task_dump_owner_to_inode(task, inode->i_mode, inode);
-> > >
-> > >         inode->i_mode &= ~(S_ISUID | S_ISGID);
-> > >         security_task_to_inode(task, inode);
-> > > @@ -1990,7 +2011,7 @@ static int map_files_d_revalidate(struct dentry *dentry, unsigned int flags)
-> > >         mmput(mm);
-> > >
-> > >         if (exact_vma_exists) {
-> > > -               task_dump_owner(task, 0, &inode->i_uid, &inode->i_gid);
-> > > +               task_dump_owner_to_inode(task, 0, inode);
-> > >
-> > >                 security_task_to_inode(task, inode);
-> > >                 status = 1;
-> > > --- a/fs/proc/fd.c
-> > > +++ b/fs/proc/fd.c
-> > > @@ -101,7 +101,7 @@ static bool tid_fd_mode(struct task_struct *task, unsigned fd, fmode_t *mode)
-> > >  static void tid_fd_update_inode(struct task_struct *task, struct inode *inode,
-> > >                                 fmode_t f_mode)
-> > >  {
-> > > -       task_dump_owner(task, 0, &inode->i_uid, &inode->i_gid);
-> > > +       task_dump_owner_to_inode(task, 0, inode);
-> > >
-> > >         if (S_ISLNK(inode->i_mode)) {
-> > >                 unsigned i_mode = S_IFLNK;
-> > > --- a/fs/proc/internal.h
-> > > +++ b/fs/proc/internal.h
-> > > @@ -123,6 +123,8 @@ static inline struct task_struct *get_proc_task(const struct inode *inode)
-> > >
-> > >  void task_dump_owner(struct task_struct *task, umode_t mode,
-> > >                      kuid_t *ruid, kgid_t *rgid);
-> > > +void task_dump_owner_to_inode(struct task_struct *task, umode_t mode,
-> > > +                             struct inode *inode);
-> > >
-> > >  unsigned name_to_int(const struct qstr *qstr);
-> > >  /*
+Very good, then.  At least assuming that you are double-checking the ordering
+(as opposed to trying to figure out what is wrong with the ordering).  ;-)
+
+> > The result of the first task's load into i requires information outside
+> > of the two code fragments.
+> > 
+> > Or am I missing your point?
+> 
+> My point is that barriers sufficient to guarantee visibility of *f in
+> the reader will also suffice to guarantee visibility of *f->f_path.dentry.
+> 
+> On alpha it boils down to having load of d->d_inode when opening the
+> file orders before the barrier prior to storing the reference to f
+> in the descriptor table, so if it observes the store to d->d_inode done
+> by the same CPU, that store is ordered before the barrier due to
+> processor instruction order constraints and if it observes the store
+> to d->d_inode done by some other CPU, that store is ordered before
+> the load and before the barrier by transitivity.  So in either case
+> that store is ordered before the store into descriptor table.
+> IOW, the reader that has enough barriers to guarantee seing ->f_path.dentry
+> will be guaranteed to see ->f_path.dentry->d_inode.
+> 
+> And yes, we will need some barriers added near some positivity checks in
+> pathname resolution - that's what has started the entire thread.  This
+> part ("any place looking at file->f_path.dentry will have ->d_inode and
+> mode bits of ->d_flags visible and stable") covers quite a few places
+> that come up in the analysis...
+> 
+> This morning catch, BTW:
+> 
+>     audit_get_nd(): don't unlock parent too early
+>     
+>     if the child has been negative and just went positive
+>     under us, we want coherent d_is_positive() and ->d_inode.
+>     Don't unlock the parent until we'd done that work...
+>     
+>     Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> 
+> diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
+> index 1f31c2f1e6fc..4508d5e0cf69 100644
+> --- a/kernel/audit_watch.c
+> +++ b/kernel/audit_watch.c
+> @@ -351,12 +351,12 @@ static int audit_get_nd(struct audit_watch *watch, struct path *parent)
+>         struct dentry *d = kern_path_locked(watch->path, parent);
+>         if (IS_ERR(d))
+>                 return PTR_ERR(d);
+> -       inode_unlock(d_backing_inode(parent->dentry));
+>         if (d_is_positive(d)) {
+>                 /* update watch filter fields */
+>                 watch->dev = d->d_sb->s_dev;
+>                 watch->ino = d_backing_inode(d)->i_ino;
+>         }
+> +       inode_unlock(d_backing_inode(parent->dentry));
+>         dput(d);
+>         return 0;
+>  }
+> 
+> For other fun bits and pieces see ceph bugs caught this week and crap in
+> dget_parent() (not posted yet).  The former had been ceph violating the
+> "turning a previously observable dentry positive requires exclusive lock
+> on parent" rule, the latter - genuine insufficient barriers in the fast
+> path of dget_parent().
+> 
+> It is converging to a reasonably small and understandable surface, actually,
+> most of that being in core pathname resolution.  Two big piles of nightmares
+> left to review - overlayfs and (somewhat surprisingly) setxattr call chains,
+> the latter due to IMA/EVM/LSM insanity...
+> 
+> There's also some secondary stuff dropping out of that (e.g. ceph seeding
+> dcache on readdir and blindly unhashing dentries it sees stale instead of
+> doing d_invalidate() as it ought to - leads to fun results if you had
+> something mounted on a subdirectory that got removed/recreated on server),
+> but that's a separate pile of joy - doesn't affect this analysis, so
+> it'll have to be dealt with later.  It had been an interesting couple of
+> weeks...
+
+Looks like you are making a very productive (if perhaps somewhat painful)
+tour through the code, good show!
+
+							Thanx, Paul
