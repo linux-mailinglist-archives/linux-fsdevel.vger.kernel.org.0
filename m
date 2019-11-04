@@ -2,124 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CD66EE67B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2019 18:45:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77B8BEE6C9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2019 18:59:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728392AbfKDRpC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Nov 2019 12:45:02 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:60129 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728882AbfKDRpB (ORCPT
+        id S1729332AbfKDR7C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Nov 2019 12:59:02 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37771 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728174AbfKDR7C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Nov 2019 12:45:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572889500;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=YOrYp+dHNK++F3TdjbhwlDZUdTKuNCY8bLNbrJapJJQ=;
-        b=ZN2NiQ3rqfZx8iq/tcB47dII+1zdUZU6gUqQ4N8Z0uxbTlfsiZIkqz6vF1vrIrxOICEcO1
-        zXPYT73zyFDZ8egp7B9jlBNEp2PrQ2Fwmpat2lNWT0Yr8vtU7gIo2gYEhwFHA8E1WV4z2H
-        zB6SnQ6/dYsdwm16bO7XCMOS7zXdP1Q=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-426-fsjodwpeO-WySaLYuw_60g-1; Mon, 04 Nov 2019 12:44:56 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E3BE31005500;
-        Mon,  4 Nov 2019 17:44:52 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.178])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7484E600C4;
-        Mon,  4 Nov 2019 17:44:47 +0000 (UTC)
-Date:   Mon, 4 Nov 2019 12:44:45 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 09/18] drm/via: set FOLL_PIN via pin_user_pages_fast()
-Message-ID: <20191104174445.GF5134@redhat.com>
-References: <20191103211813.213227-1-jhubbard@nvidia.com>
- <20191103211813.213227-10-jhubbard@nvidia.com>
+        Mon, 4 Nov 2019 12:59:02 -0500
+Received: by mail-lj1-f196.google.com with SMTP id v2so18678514lji.4;
+        Mon, 04 Nov 2019 09:58:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=Hb0vhG4XzifRsCm/AwQzk1v4P4RCPqbW8YY2naw+uGI=;
+        b=akptdPyre/H4THZPklMLGraeHXYqofVqBfHeS4RBQ6GKMVCww98KrVf2Q1zCDyFCza
+         /Mn1W7BW4k+dYBBooPbP1YSZd+MKdEvwwKCx90QqmwcpqOs6MUwkEWqMmfGNs4HSCLq3
+         aeqSlvfcRcoY7cnOaRQ8/CFyu9p62iDq43Zqe25d7HRy5Bo28ZbCCHbKmKzCuWb9Lt9+
+         TH1LmJDizsGcRslsR3A2wWz1NbRvOMm2U13ImSMs/4y5YSEZLDG1HaM9oePwa78b14sj
+         FrV4mQOHZK/QBcBKHdKbHgkgcJrsSbX2Zb/KmOma11tASgUcEJnPvprBQRZ4wNAfyBLr
+         t3dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=Hb0vhG4XzifRsCm/AwQzk1v4P4RCPqbW8YY2naw+uGI=;
+        b=jmmGfnb6sqd3JerajE95bxWwBvcPrwu+OxZ6+aE6rvXBpfYwP5AUpn2+HJ/C5Uv9pU
+         OzkK+N/xcMrmF+DSQryUc7qjXjsaxNUwmDmFT6Nllq5rIDJSOVeVEPVk8fcyn90J473p
+         8Qw09cq9lxpnMfhcfLsFZj1qxMJCqzuLCTDwpMqHwyU8hp+qVIHhVYAFeACvG+PMf15N
+         Xt6cZ7diztlaCCZZAmmIA3eanuqxweCRY8+CI0uT+879HfGpUHsWB3V51DDGdbwoSzkC
+         wdMTVOBQBXxnoR5MaeMqXSbNB/1bc+N0lnXJtJZPEodZ1rCnaTn8cyp2QYRDhOeFCg2Q
+         lc8A==
+X-Gm-Message-State: APjAAAVPZC7ZfzNh8q0WGtUlhsn12rME150kpNvrtECUWMal5FjPCB/p
+        2PkEDuV6LE+TSFLBnLtBL01awbNq
+X-Google-Smtp-Source: APXvYqz2pGcMJfX9TtZAMtNXyj1xeoTSNo9CkQjxQlYlmzmhtCV6C94dR5JFqZHza7hGs7HpVldK4Q==
+X-Received: by 2002:a2e:3e18:: with SMTP id l24mr20047363lja.48.1572890337917;
+        Mon, 04 Nov 2019 09:58:57 -0800 (PST)
+Received: from [192.168.1.36] (88-114-211-119.elisa-laajakaista.fi. [88.114.211.119])
+        by smtp.gmail.com with ESMTPSA id z14sm7246566lfh.30.2019.11.04.09.58.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2019 09:58:57 -0800 (PST)
+Subject: Re: [PATCH] Allow restricting permissions in /proc/sys
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:FILESYSTEMS (VFS and infrastructure)" 
+        <linux-fsdevel@vger.kernel.org>
+References: <74a91362-247c-c749-5200-7bdce704ed9e@gmail.com>
+ <87d0e8g5f4.fsf@x220.int.ebiederm.org>
+ <f272bdd3-526d-6737-c906-143d5e5fc478@gmail.com>
+ <87h83jejei.fsf@x220.int.ebiederm.org>
+From:   Topi Miettinen <toiwoton@gmail.com>
+Message-ID: <eb2da7e4-23ff-597a-08e1-e0555d490f6f@gmail.com>
+Date:   Mon, 4 Nov 2019 19:58:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191103211813.213227-10-jhubbard@nvidia.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-MC-Unique: fsjodwpeO-WySaLYuw_60g-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+In-Reply-To: <87h83jejei.fsf@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Nov 03, 2019 at 01:18:04PM -0800, John Hubbard wrote:
-> Convert drm/via to use the new pin_user_pages_fast() call, which sets
-> FOLL_PIN. Setting FOLL_PIN is now required for code that requires
-> tracking of pinned pages, and therefore for any code that calls
-> put_user_page().
->=20
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+On 4.11.2019 17.44, Eric W. Biederman wrote:
+> Topi Miettinen <toiwoton@gmail.com> writes:
+> 
+>> On 3.11.2019 20.50, Eric W. Biederman wrote:
+>>> Topi Miettinen <toiwoton@gmail.com> writes:
+>>>
+>>>> Several items in /proc/sys need not be accessible to unprivileged
+>>>> tasks. Let the system administrator change the permissions, but only
+>>>> to more restrictive modes than what the sysctl tables allow.
+>>>
+>>> This looks quite buggy.  You neither update table->mode nor
+>>> do you ever read from table->mode to initialize the inode.
+>>> I am missing something in my quick reading of your patch?
+>>
+>> inode->i_mode gets initialized in proc_sys_make_inode().
+>>
+>> I didn't want to touch the table, so that the original permissions can
+>> be used to restrict the changes made. In case the restrictions are
+>> removed as suggested by Theodore Ts'o, table->mode could be
+>> changed. Otherwise I'd rather add a new field to store the current
+>> mode and the mode field can remain for reference. As the original
+>> author of the code from 2007, would you let the administrator to
+>> chmod/chown the items in /proc/sys without restrictions (e.g. 0400 ->
+>> 0777)?
+> 
+> At an architectural level I think we need to do this carefully and have
+> a compelling reason.  The code has survived nearly the entire life of
+> linux without this capability.
 
-Please be more explicit that via_dmablit.c is already using put_user_page()
-as i am expecting that any conversion to pin_user_pages*() must be pair wit=
-h
-a put_user_page(). I find above commit message bit unclear from that POV.
+I'd be happy with only allowing restrictions to access for now. Perhaps 
+later with more analysis, also relaxing changes and maybe UID/GID 
+changes can be allowed.
 
-Reviewed-by: J=E9r=F4me Glisse <jglisse@redhat.com>
+> I think right now the common solution is to mount another file over the
+> file you are trying to hide/limit.  Changing the permissions might be
+> better but that is not at all clear.
+> 
+> Do you have specific examples of the cases where you would like to
+> change the permissions?
 
+Unprivileged applications typically do not need to access most items in 
+/proc/sys, so I'd like to gradually find out which are needed. So far 
+I've seen no problems with 0500 mode for directories abi, crypto, debug, 
+dev, fs, user or vm.
 
-> ---
->  drivers/gpu/drm/via/via_dmablit.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/via/via_dmablit.c b/drivers/gpu/drm/via/via_=
-dmablit.c
-> index 3db000aacd26..37c5e572993a 100644
-> --- a/drivers/gpu/drm/via/via_dmablit.c
-> +++ b/drivers/gpu/drm/via/via_dmablit.c
-> @@ -239,7 +239,7 @@ via_lock_all_dma_pages(drm_via_sg_info_t *vsg,  drm_v=
-ia_dmablit_t *xfer)
->  =09vsg->pages =3D vzalloc(array_size(sizeof(struct page *), vsg->num_pag=
-es));
->  =09if (NULL =3D=3D vsg->pages)
->  =09=09return -ENOMEM;
-> -=09ret =3D get_user_pages_fast((unsigned long)xfer->mem_addr,
-> +=09ret =3D pin_user_pages_fast((unsigned long)xfer->mem_addr,
->  =09=09=09vsg->num_pages,
->  =09=09=09vsg->direction =3D=3D DMA_FROM_DEVICE ? FOLL_WRITE : 0,
->  =09=09=09vsg->pages);
-> --=20
-> 2.23.0
->=20
+I'm also using systemd's InaccessiblePaths to limit access (which mounts 
+an inaccessible directory over the path), but that's a bit too big 
+hammer. For example there are over 100 files in /proc/sys/kernel, 
+perhaps there will be issues when creating a mount for each, and that 
+multiplied by a number of services.
 
+>>> The not updating table->mode almost certainly means that as soon as the
+>>> cached inode is invalidated the mode changes will disappear.  Not to
+>>> mention they will fail to propogate between  different instances of
+>>> proc.
+>>>
+>>> Loosing all of your changes at cache invalidation seems to make this a
+>>> useless feature.
+>>
+>> At least different proc instances seem to work just fine here (they
+>> show the same changes), but I suppose you are right about cache
+>> invalidation.
+> 
+> It is going to take the creation of a pid namespace to see different
+> proc instances.  All mounts of the proc within the same pid_namespace
+> return the same instance.
+
+I see no problems by using Firejail (which uses PID namespacing) with 
+v2, the permissions in /proc/sys are the same as outside the namespace.
+
+-Topi
