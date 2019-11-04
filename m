@@ -2,116 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32D68EE3D4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2019 16:31:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43743EE3F3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2019 16:36:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729359AbfKDPa6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Nov 2019 10:30:58 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:37223 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729355AbfKDPa5 (ORCPT
+        id S1728507AbfKDPgG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Nov 2019 10:36:06 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:41623 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728188AbfKDPgG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Nov 2019 10:30:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572881457;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Mbwo60yuhf9zn/no1y4eRlxn1KfPxIVdxOh+1RcQBXI=;
-        b=XDos2O1tpK2qcXO+k6Vu+nMhqrJbV5ox4PoLkwBOu3hF4eRohS8nViJEkB/AX+WQtLKVIu
-        OkgUce8Kg9BErdW9/yMoRcIVXYg8eoQ/OUXigH2NgM/d+KkqwBuBNV3Y8/yiSXm+8qi1eN
-        n6eAPB7d/GvYR0CrrdbiKJMXD3SlSwA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-293-V26_gtMDPGyIgQsEcz9NSg-1; Mon, 04 Nov 2019 10:30:53 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4D800107ACC2;
-        Mon,  4 Nov 2019 15:30:52 +0000 (UTC)
-Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B00265D6C5;
-        Mon,  4 Nov 2019 15:30:51 +0000 (UTC)
-Date:   Mon, 4 Nov 2019 10:30:49 -0500
-From:   Brian Foster <bfoster@redhat.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 13/28] shrinker: clean up variable types and tracepoints
-Message-ID: <20191104153049.GD10665@bfoster>
-References: <20191031234618.15403-1-david@fromorbit.com>
- <20191031234618.15403-14-david@fromorbit.com>
-MIME-Version: 1.0
-In-Reply-To: <20191031234618.15403-14-david@fromorbit.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-MC-Unique: V26_gtMDPGyIgQsEcz9NSg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
+        Mon, 4 Nov 2019 10:36:06 -0500
+Received: by mail-yw1-f65.google.com with SMTP id j190so1313759ywf.8;
+        Mon, 04 Nov 2019 07:36:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=pLOPRhpmXjrgwcqIYfzopv6uLk2kDJFpocTgKt/ho7A=;
+        b=qaZHAby0y6x92nJLzV8VZz6JA8pAo4aAszvY3kwJ0vgHy9D+YJ6XJSqh+ycJancvuz
+         bd1PiNES3AaA4WhF8k6+u0PQwA8WQt6DHnI9+7zxcZNmnTWnrLh2GEss6QArMo07wHz+
+         j5n3Yc2Bmw6pmz7hJJZqSI5y6C3WyVl3o4ZoeQvMHt4V8pnm1A/KDnDj+sm8Vg94yv1b
+         MGjtSHTX1bQM8SU0a55WZcKHtKNdEIMsYVfOMb2/A+F9xXrzf6O7xLv9K7oVOuNb0eTg
+         52NJHzer5J4XRjUdF7RBfZs9go8eyuKsk46074vDxANNOIO5JLRSn4g5+idxuKo4WJSx
+         hhkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=pLOPRhpmXjrgwcqIYfzopv6uLk2kDJFpocTgKt/ho7A=;
+        b=jISeTuGxaBgSV/lHDH/j3mkO3Pr0v7BVWDT/rNRl7HrNgvQRXYc8LedJIf5KBgqmZh
+         jJQejl3qlDXC6Hr41qR1+ISDHAjBhrOFnxGxkIuwiKsKXpSv8ovXoBuqlU9d82EuRreI
+         0KmLQYrPkMfpOtypq45Vq4ZtgQrnR+8SRFcdRYovtgXNt7NUZ1Ranj9w8Y9RcxTVA0ra
+         oupDIv2eQgtxaY/Q9kpqijqhcP7agSHtR0iKeel9vmWToIqauj+CbDUHUBX3wwBVcW23
+         5VcbEhQNNR+YFFUDLofASN5ceDsB/oug+2C/72YJ+KN7/c/YjGgn5OS0mzOG1FbCAmAK
+         OEXQ==
+X-Gm-Message-State: APjAAAX23zthrktr9wA+ekpfzd2Hr8P9qCXkwHwpPDpk6gHELiriNYdI
+        hMrHFpDOIbuT5eIbxKP2ytMPRMw+rE0=
+X-Google-Smtp-Source: APXvYqz8CiOYvECxJkYLAullstmrcCAWveFe0OubmNejMFyQMkiI2hVSvRbJ0w7YnERvCD0F2pCyVw==
+X-Received: by 2002:a81:6589:: with SMTP id z131mr8807266ywb.299.1572881765559;
+        Mon, 04 Nov 2019 07:36:05 -0800 (PST)
+Received: from anon-dhcp-152.1015granger.net (c-68-61-232-219.hsd1.mi.comcast.net. [68.61.232.219])
+        by smtp.gmail.com with ESMTPSA id y204sm4005867ywg.67.2019.11.04.07.36.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Nov 2019 07:36:04 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: [RFC PATCH 00/35] user xattr support (RFC8276)
+From:   Chuck Lever <chucklever@gmail.com>
+In-Reply-To: <20191104030132.GD26578@fieldses.org>
+Date:   Mon, 4 Nov 2019 10:36:03 -0500
+Cc:     Bruce Fields <bfields@fieldses.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Message-Id: <358420D8-596E-4D3B-A01C-DACB101F0017@gmail.com>
+References: <cover.1568309119.git.fllinden@amazon.com>
+ <9CAEB69A-A92C-47D8-9871-BA6EA83E1881@gmail.com>
+ <20191024231547.GA16466@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
+ <18D2845F-27FF-4EDF-AB8A-E6051FA03DF0@gmail.com>
+ <20191104030132.GD26578@fieldses.org>
+To:     Frank van der Linden <fllinden@amazon.com>
+X-Mailer: Apple Mail (2.3445.104.11)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 01, 2019 at 10:46:03AM +1100, Dave Chinner wrote:
-> From: Dave Chinner <dchinner@redhat.com>
+
+
+> On Nov 3, 2019, at 10:01 PM, bfields@fieldses.org wrote:
 >=20
-> The tracepoint information in the shrinker code don't make a lot of
-
-Nit:=09=09=09=09=09=09  doesn't
-
-> sense anymore and contain redundant information as a result of the
-> changes in the patchset. Refine the information passed to the
-> tracepoints so they expose the operation of the shrinkers more
-> precisely and clean up the remaining code and varibles in the
-
-Nit:=09=09=09=09=09=09variables
-
-> shrinker code so it all makes sense.
+> On Fri, Oct 25, 2019 at 03:55:09PM -0400, Chuck Lever wrote:
+>>> On Oct 24, 2019, at 7:15 PM, Frank van der Linden =
+<fllinden@amazon.com> wrote:
+>>> I think both of these are cases of being careful. E.g. don't enable
+>>> something by default and allow it to be disabled at runtime in
+>>> case something goes terribly wrong.
+>>>=20
+>>> I didn't have any other reasons, really. I'm happy do to away with
+>>> the CONFIG options if that's the consensus, as well as the
+>>> nouser_xattr export option.
+>>=20
+>> I have similar patches adding support for access to a couple of
+>> security xattrs. I initially wrapped the new code with CONFIG
+>> but after some discussion it was decided there was really no
+>> need to be so cautious.
+>>=20
+>> The user_xattr export option is a separate matter, but again,
+>> if we don't know of a use case for it, I would leave it out for
+>> the moment.
 >=20
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> ---
->  include/trace/events/vmscan.h | 69 ++++++++++++++++-------------------
->  mm/vmscan.c                   | 24 +++++-------
->  2 files changed, 41 insertions(+), 52 deletions(-)
+> Agreed.
 >=20
-...
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index c0e2bf656e3f..7a8256322150 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-...
-> @@ -624,23 +622,21 @@ static unsigned long do_shrink_slab(struct shrink_c=
-ontrol *shrinkctl,
->  =09=09cond_resched();
->  =09}
->  done:
-...
->  =09if (next_deferred > 0)
-> -=09=09new_nr =3D atomic64_add_return(next_deferred,
-> -=09=09=09=09=09=09&shrinker->nr_deferred[nid]);
-> -=09else
-> -=09=09new_nr =3D atomic64_read(&shrinker->nr_deferred[nid]);
-> +=09=09atomic64_add(next_deferred, &shrinker->nr_deferred[nid]);
-> =20
-> -=09trace_mm_shrink_slab_end(shrinker, nid, freed, deferred_count, new_nr=
-,
-> -=09=09=09=09=09scan_count);
-> +=09trace_mm_shrink_slab_end(shrinker, nid, freed, scanned_objects,
-> +=09=09=09=09 next_deferred);
+> Do ext4, xfs, etc. have an option to turn off xattrs?  If so, maybe it
+> would be good enough to turn off xattrs on the exported filesystem
+> rather than on the export.
 
-I guess this invalidates my comment on the previous patch around new_nr.
-Looks Ok to me:
+Following the server's local file systems' mount options seems like a
+good way to go. In particular, is there a need to expose user xattrs
+on the server host, but prevent NFS clients' access to them? I can't
+think of one.
 
-Reviewed-by: Brian Foster <bfoster@redhat.com>
 
->  =09return freed;
->  }
-> =20
-> --=20
-> 2.24.0.rc0
+> If not, maybe that's a sign that hasn't been a need.
 >=20
+> --b.
+
+--
+Chuck Lever
+chucklever@gmail.com
+
+
 
