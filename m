@@ -2,116 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43743EE3F3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2019 16:36:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1579DEE419
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2019 16:44:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728507AbfKDPgG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Nov 2019 10:36:06 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:41623 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728188AbfKDPgG (ORCPT
+        id S1727989AbfKDPoU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Nov 2019 10:44:20 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:58238 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727796AbfKDPoT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Nov 2019 10:36:06 -0500
-Received: by mail-yw1-f65.google.com with SMTP id j190so1313759ywf.8;
-        Mon, 04 Nov 2019 07:36:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=pLOPRhpmXjrgwcqIYfzopv6uLk2kDJFpocTgKt/ho7A=;
-        b=qaZHAby0y6x92nJLzV8VZz6JA8pAo4aAszvY3kwJ0vgHy9D+YJ6XJSqh+ycJancvuz
-         bd1PiNES3AaA4WhF8k6+u0PQwA8WQt6DHnI9+7zxcZNmnTWnrLh2GEss6QArMo07wHz+
-         j5n3Yc2Bmw6pmz7hJJZqSI5y6C3WyVl3o4ZoeQvMHt4V8pnm1A/KDnDj+sm8Vg94yv1b
-         MGjtSHTX1bQM8SU0a55WZcKHtKNdEIMsYVfOMb2/A+F9xXrzf6O7xLv9K7oVOuNb0eTg
-         52NJHzer5J4XRjUdF7RBfZs9go8eyuKsk46074vDxANNOIO5JLRSn4g5+idxuKo4WJSx
-         hhkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=pLOPRhpmXjrgwcqIYfzopv6uLk2kDJFpocTgKt/ho7A=;
-        b=jISeTuGxaBgSV/lHDH/j3mkO3Pr0v7BVWDT/rNRl7HrNgvQRXYc8LedJIf5KBgqmZh
-         jJQejl3qlDXC6Hr41qR1+ISDHAjBhrOFnxGxkIuwiKsKXpSv8ovXoBuqlU9d82EuRreI
-         0KmLQYrPkMfpOtypq45Vq4ZtgQrnR+8SRFcdRYovtgXNt7NUZ1Ranj9w8Y9RcxTVA0ra
-         oupDIv2eQgtxaY/Q9kpqijqhcP7agSHtR0iKeel9vmWToIqauj+CbDUHUBX3wwBVcW23
-         5VcbEhQNNR+YFFUDLofASN5ceDsB/oug+2C/72YJ+KN7/c/YjGgn5OS0mzOG1FbCAmAK
-         OEXQ==
-X-Gm-Message-State: APjAAAX23zthrktr9wA+ekpfzd2Hr8P9qCXkwHwpPDpk6gHELiriNYdI
-        hMrHFpDOIbuT5eIbxKP2ytMPRMw+rE0=
-X-Google-Smtp-Source: APXvYqz8CiOYvECxJkYLAullstmrcCAWveFe0OubmNejMFyQMkiI2hVSvRbJ0w7YnERvCD0F2pCyVw==
-X-Received: by 2002:a81:6589:: with SMTP id z131mr8807266ywb.299.1572881765559;
-        Mon, 04 Nov 2019 07:36:05 -0800 (PST)
-Received: from anon-dhcp-152.1015granger.net (c-68-61-232-219.hsd1.mi.comcast.net. [68.61.232.219])
-        by smtp.gmail.com with ESMTPSA id y204sm4005867ywg.67.2019.11.04.07.36.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Nov 2019 07:36:04 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: [RFC PATCH 00/35] user xattr support (RFC8276)
-From:   Chuck Lever <chucklever@gmail.com>
-In-Reply-To: <20191104030132.GD26578@fieldses.org>
-Date:   Mon, 4 Nov 2019 10:36:03 -0500
-Cc:     Bruce Fields <bfields@fieldses.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <358420D8-596E-4D3B-A01C-DACB101F0017@gmail.com>
-References: <cover.1568309119.git.fllinden@amazon.com>
- <9CAEB69A-A92C-47D8-9871-BA6EA83E1881@gmail.com>
- <20191024231547.GA16466@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
- <18D2845F-27FF-4EDF-AB8A-E6051FA03DF0@gmail.com>
- <20191104030132.GD26578@fieldses.org>
-To:     Frank van der Linden <fllinden@amazon.com>
-X-Mailer: Apple Mail (2.3445.104.11)
+        Mon, 4 Nov 2019 10:44:19 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1iReWg-0001fq-Dd; Mon, 04 Nov 2019 08:44:18 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1iReWf-000835-Ge; Mon, 04 Nov 2019 08:44:18 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Topi Miettinen <toiwoton@gmail.com>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list\:FILESYSTEMS \(VFS and infrastructure\)" 
+        <linux-fsdevel@vger.kernel.org>
+References: <74a91362-247c-c749-5200-7bdce704ed9e@gmail.com>
+        <87d0e8g5f4.fsf@x220.int.ebiederm.org>
+        <f272bdd3-526d-6737-c906-143d5e5fc478@gmail.com>
+Date:   Mon, 04 Nov 2019 09:44:05 -0600
+In-Reply-To: <f272bdd3-526d-6737-c906-143d5e5fc478@gmail.com> (Topi
+        Miettinen's message of "Sun, 3 Nov 2019 21:38:50 +0200")
+Message-ID: <87h83jejei.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1iReWf-000835-Ge;;;mid=<87h83jejei.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+/SMoGN16q2hVm978SNtdL3kX2YwA8k1Q=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa08.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4946]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Topi Miettinen <toiwoton@gmail.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 487 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 4.6 (0.9%), b_tie_ro: 3.3 (0.7%), parse: 1.08
+        (0.2%), extract_message_metadata: 4.3 (0.9%), get_uri_detail_list:
+        1.84 (0.4%), tests_pri_-1000: 3.9 (0.8%), tests_pri_-950: 1.62 (0.3%),
+        tests_pri_-900: 1.43 (0.3%), tests_pri_-90: 25 (5.1%), check_bayes: 23
+        (4.7%), b_tokenize: 5 (1.1%), b_tok_get_all: 8 (1.7%), b_comp_prob:
+        2.8 (0.6%), b_tok_touch_all: 3.3 (0.7%), b_finish: 0.85 (0.2%),
+        tests_pri_0: 428 (88.0%), check_dkim_signature: 0.45 (0.1%),
+        check_dkim_adsp: 2.7 (0.6%), poll_dns_idle: 1.11 (0.2%), tests_pri_10:
+        2.2 (0.5%), tests_pri_500: 6 (1.2%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] Allow restricting permissions in /proc/sys
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Topi Miettinen <toiwoton@gmail.com> writes:
 
+> On 3.11.2019 20.50, Eric W. Biederman wrote:
+>> Topi Miettinen <toiwoton@gmail.com> writes:
+>>
+>>> Several items in /proc/sys need not be accessible to unprivileged
+>>> tasks. Let the system administrator change the permissions, but only
+>>> to more restrictive modes than what the sysctl tables allow.
+>>
+>> This looks quite buggy.  You neither update table->mode nor
+>> do you ever read from table->mode to initialize the inode.
+>> I am missing something in my quick reading of your patch?
+>
+> inode->i_mode gets initialized in proc_sys_make_inode().
+>
+> I didn't want to touch the table, so that the original permissions can
+> be used to restrict the changes made. In case the restrictions are
+> removed as suggested by Theodore Ts'o, table->mode could be
+> changed. Otherwise I'd rather add a new field to store the current
+> mode and the mode field can remain for reference. As the original
+> author of the code from 2007, would you let the administrator to
+> chmod/chown the items in /proc/sys without restrictions (e.g. 0400 ->
+> 0777)?
 
-> On Nov 3, 2019, at 10:01 PM, bfields@fieldses.org wrote:
->=20
-> On Fri, Oct 25, 2019 at 03:55:09PM -0400, Chuck Lever wrote:
->>> On Oct 24, 2019, at 7:15 PM, Frank van der Linden =
-<fllinden@amazon.com> wrote:
->>> I think both of these are cases of being careful. E.g. don't enable
->>> something by default and allow it to be disabled at runtime in
->>> case something goes terribly wrong.
->>>=20
->>> I didn't have any other reasons, really. I'm happy do to away with
->>> the CONFIG options if that's the consensus, as well as the
->>> nouser_xattr export option.
->>=20
->> I have similar patches adding support for access to a couple of
->> security xattrs. I initially wrapped the new code with CONFIG
->> but after some discussion it was decided there was really no
->> need to be so cautious.
->>=20
->> The user_xattr export option is a separate matter, but again,
->> if we don't know of a use case for it, I would leave it out for
->> the moment.
->=20
-> Agreed.
->=20
-> Do ext4, xfs, etc. have an option to turn off xattrs?  If so, maybe it
-> would be good enough to turn off xattrs on the exported filesystem
-> rather than on the export.
+At an architectural level I think we need to do this carefully and have
+a compelling reason.  The code has survived nearly the entire life of
+linux without this capability.
 
-Following the server's local file systems' mount options seems like a
-good way to go. In particular, is there a need to expose user xattrs
-on the server host, but prevent NFS clients' access to them? I can't
-think of one.
+I think right now the common solution is to mount another file over the
+file you are trying to hide/limit.  Changing the permissions might be
+better but that is not at all clear.
 
+Do you have specific examples of the cases where you would like to
+change the permissions?
 
-> If not, maybe that's a sign that hasn't been a need.
->=20
-> --b.
+>> The not updating table->mode almost certainly means that as soon as the
+>> cached inode is invalidated the mode changes will disappear.  Not to
+>> mention they will fail to propogate between  different instances of
+>> proc.
+>>
+>> Loosing all of your changes at cache invalidation seems to make this a
+>> useless feature.
+>
+> At least different proc instances seem to work just fine here (they
+> show the same changes), but I suppose you are right about cache
+> invalidation.
 
---
-Chuck Lever
-chucklever@gmail.com
+It is going to take the creation of a pid namespace to see different
+proc instances.  All mounts of the proc within the same pid_namespace
+return the same instance.
 
-
+Eric
 
