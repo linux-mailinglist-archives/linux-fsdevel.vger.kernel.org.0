@@ -2,138 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D95EBEEB35
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2019 22:34:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9153EEB5F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2019 22:46:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729587AbfKDVeK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Nov 2019 16:34:10 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:10442 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728602AbfKDVeK (ORCPT
+        id S1728987AbfKDVq0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Nov 2019 16:46:26 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37549 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729486AbfKDVq0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:34:10 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dc099520001>; Mon, 04 Nov 2019 13:34:10 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 04 Nov 2019 13:34:05 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 04 Nov 2019 13:34:05 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 4 Nov
- 2019 21:34:05 +0000
-Subject: Re: [PATCH v2 05/18] mm/gup: introduce pin_user_pages*() and FOLL_PIN
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-CC:     Jerome Glisse <jglisse@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20191103211813.213227-6-jhubbard@nvidia.com>
- <20191104173325.GD5134@redhat.com>
- <be9de35c-57e9-75c3-2e86-eae50904bbdf@nvidia.com>
- <20191104191811.GI5134@redhat.com>
- <e9656d47-b4a1-da8a-e8cc-ebcfb8cc06d6@nvidia.com>
- <20191104195248.GA7731@redhat.com>
- <25ec4bc0-caaa-2a01-2ae7-2d79663a40e1@nvidia.com>
- <20191104203153.GB7731@redhat.com> <20191104203702.GG30938@ziepe.ca>
- <d0890a8b-c349-0515-2570-10e83979836b@nvidia.com>
- <20191104211525.GJ30938@ziepe.ca>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <caaaaf52-490b-6ce1-81d8-675013354c73@nvidia.com>
-Date:   Mon, 4 Nov 2019 13:34:04 -0800
+        Mon, 4 Nov 2019 16:46:26 -0500
+Received: by mail-pg1-f194.google.com with SMTP id z24so7834355pgu.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Nov 2019 13:46:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=RKxr/z5Z+XCc3j/WLz6LF458INM7dnLvQiGuRgdea6I=;
+        b=aUeePDR4M3K0hR7Q/iY4hBk2QT31NbRREwi99q6z/u/H7pYqS80kMgv8cfnvtshvAv
+         VkJMotphwEiRP9kA7IZ4WieHSR5kijvuyO7V0Wq4QIfiPjshpuOvK8o2ZrydNAwfQdfE
+         OinYsra052NUoIMic9pUp++YgcScLmujdziWX1C+Al6yNoWfEZ4SKAmpuwGIyP95/E2O
+         vsMq9BacQ3oZyG9cCe2xyk2VvnpF/cqSuIZydpVueZTsqCkDC0jVqWq/MNxmHWgtxQ1x
+         oXk0ys7HrLlD+ZF3R3qe3p7Bsdyvw+gNuuzAEUdV+2SGbShHAqHGkM/vkCF6XzCa+mlL
+         Ndkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=RKxr/z5Z+XCc3j/WLz6LF458INM7dnLvQiGuRgdea6I=;
+        b=gT8+vZyBbDnvbO2TDxG4fA3UIyLAiiZETZCKewGgXqqZlH3Mb0uJKTwdp/3F7sJ1oO
+         DZPT5MyynKeMPgjt2ZnRz6Nda5XquHteMSxLPEva6AwkcM84PYTXjVdvOxlDG7BTfo/r
+         /YqCYK+zwy5u8BbSu5p3mJaRGJI3s5B3GOEPe9s5q0kQdS+WVAou0gas5BrmRD2JcMIU
+         iv7RrdqmH2R3IT7fpwhh5rRvlMFrlCmYJmCCzJrXp0oE6F6L97HkLDZRZTWCEoZ0nfRo
+         jWO0BmI5JFNvTnvPVTnpA5fgRqTlE54bnVaaR9I4f27ozOZ8CJZu+1IIACynPVmVRn2S
+         mR2w==
+X-Gm-Message-State: APjAAAWdbEoqw+I8655pKC3lh20uNo2QSi54LEIoDjxiGFSgi35BfVk9
+        BemEis20EFUGhGjzrjy5HQmoSQ==
+X-Google-Smtp-Source: APXvYqwuRMT5lNvuPuITVIvesrzmLt7bbeQv2zTddIBYVppkD8brZ4Ux1AopMTxEtLhaeVJ3FtMRQQ==
+X-Received: by 2002:aa7:980c:: with SMTP id e12mr33717564pfl.165.1572903985750;
+        Mon, 04 Nov 2019 13:46:25 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.79])
+        by smtp.gmail.com with ESMTPSA id i126sm18547901pfc.29.2019.11.04.13.46.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Nov 2019 13:46:25 -0800 (PST)
+To:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Cc:     io-uring@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] MAINTAINERS: update io_uring entry
+Message-ID: <efa17e7d-b33a-c032-1a90-c150d1632ab8@kernel.dk>
+Date:   Mon, 4 Nov 2019 14:46:22 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191104211525.GJ30938@ziepe.ca>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1572903250; bh=vbo/OzrYq7woOdeOQXzDRocZ8qkmDZ2GrWck8Ge0GIw=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=qKL2SABndBuE0IlTwGECBEmaXKNt9+NUVq+WFlqtOQFVTiU7nDI02BQTOx0obKarz
-         gpxOM5Y6JautiKfOu0FtwOKOgDIpCUi5YMn9VF5RbTl9cVhlQsO6c44+kqa1Gmkh8J
-         VEKyKNOG6Vqk5nkQbEsBguPgBI2Ja3iUp52oe4dwNevVkVV3ApvpTePgu21U23nzfu
-         yfLLAmDkD5PCoZMaxqbgr1s6DM7hOxhvmTI1aiChbyJF4tpKtWS0fJG0BnHlBMS2gJ
-         uFSIwTdydwTYYvW23EYrvHjEOYVqNSM3f00rEJ3//HPrJcaJAle1+bmyry6JSVv/h0
-         e3DYAyiBVB40w==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/4/19 1:15 PM, Jason Gunthorpe wrote:
-...
->> Right, and I thought about this when converting, and realized that the above 
->> code is working around the current gup.c limitations, which are "cannot support
->> gup remote with FOLL_LONGTERM".
-> 
-> But AFAICT it doesn't have a problem, the protection test is just too
-> strict, and I guess the control flow needs a bit of fixing..
-> 
-> The issue is this:
-> 
-> static __always_inline long __get_user_pages_locked():
-> {
->         if (locked) {
->                 /* if VM_FAULT_RETRY can be returned, vmas become invalid */
->                 BUG_ON(vmas);
->                 /* check caller initialized locked */
->                 BUG_ON(*locked != 1);
->         }
-> 
-> 
-> so remote could be written as:
-> 
-> if (gup_flags & FOLL_LONGTERM) {
->    if (WARN_ON_ONCE(locked))
->         return -EINVAL;
->    return __gup_longterm_locked(...)
-> }
-> 
-> return __get_user_pages_locked(...)
-> 
-> ??
+We now have a list that's appropriate for both kernel and userspace
+discussions on io_uring usage and development, add that to the
+MAINTAINERS entry.
 
-Yes, that loosens it up just enough for the vfio case (which doesn't set 
-"locked") to get through, great! OK, I'll put that (the above plus 
-corresponding vfio fix) in a separate patch first. 
+Also add the io-wq files.
 
-This should clear things up nicely.
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
+---
 
-thanks,
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c6c34d04ce95..7afb25707098 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8562,12 +8562,13 @@ F:	include/linux/iova.h
+ 
+ IO_URING
+ M:	Jens Axboe <axboe@kernel.dk>
+-L:	linux-block@vger.kernel.org
+-L:	linux-fsdevel@vger.kernel.org
++L:	io-uring@vger.kernel.org
+ T:	git git://git.kernel.dk/linux-block
+ T:	git git://git.kernel.dk/liburing
+ S:	Maintained
+ F:	fs/io_uring.c
++F:	fs/io-wq.c
++F:	fs/io-wq.h
+ F:	include/uapi/linux/io_uring.h
+ 
+ IPMI SUBSYSTEM
+
 -- 
-John Hubbard
-NVIDIA
+Jens Axboe
+
