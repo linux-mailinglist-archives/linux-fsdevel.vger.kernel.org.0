@@ -2,166 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98627EF026
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2019 23:26:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C7BEEEEB7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2019 23:16:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730136AbfKDW0O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Nov 2019 17:26:14 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39177 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730486AbfKDVvX (ORCPT
+        id S2389566AbfKDWDr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Nov 2019 17:03:47 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:7167 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388839AbfKDWDq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:51:23 -0500
-Received: by mail-pf1-f195.google.com with SMTP id x28so10206896pfo.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Nov 2019 13:51:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=bHzFpby5nBvLQoa1A3N45Iv5pE3sE4p/UO4W7iuituU=;
-        b=Pp8aTcTc4J8HQHJfK7XYOvTKX+0OBvRsnX5l3y4u4g4MM3j86RHYT5E3CyfwGjTx4M
-         OY4am3V6P04tfgMJdWaiBA4U4MVXNNXBLNBBKKsjLvm6Py+danTKFeA58zni2EwrZJ4a
-         LNM/Y81H3MGNqRtK9pfeV0H03aM+7nND2Zei+zqEbD1s4PqBPprHUisrBeteBubsbwSy
-         TVQ544cT0wpbyLgolGEW1xWW2VpX+SzNMXEAx14Fcr5iUkFTIem+fgkabRMzppRp0uwa
-         f1TaCzq6xMl1AGXBK5nQcB2Aq9iUTjOhumPtO956o84HKT+keZUKHTeZ+X7Z6JqxV9xJ
-         DqlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=bHzFpby5nBvLQoa1A3N45Iv5pE3sE4p/UO4W7iuituU=;
-        b=VnNVomfB8aMGUMCC9dfIIWIYzD4rjgE/GHzE+rw3lZAA+erGKCrS0xIvUQj/WIxQ08
-         iDeNtz4ZPk+HQASWOUhQlL9DhccyhqGQpT4WmH7r/Q7SjkdtUAl9O4kuvHPj8l5fDzHc
-         CeDvqdW/I7/2koInNla/9XKixxW9t/YH6ZbiUlO8bYCkIQHRZ4McudCM4178AhaUoHeW
-         1Yg4iEx3uZJACmON/94YR/SvwgBUiINoD9D+iK76wpYtA7iSpon4hxWEFN7k9jD3QkIr
-         q/8Kt1bSDZ0RSe1++nfabnIfMdLdpvvhvKELnmau7QdSZmS31JlI56z7gQup33j7J7dR
-         m57Q==
-X-Gm-Message-State: APjAAAVaKOGAObxG3LCcs5z2FhxBfx8hOWXdtEWNMJaUr/Hy2ElezN2C
-        ttKBQkbElX3Q9HBYB1JRVN2QpA==
-X-Google-Smtp-Source: APXvYqy8cbQrcNS2YZCm15LNXj84RCWobmcY3Yi0AKiVBFlHOjV+tLdHj1XjjIBLQcnlWN3fV+awgw==
-X-Received: by 2002:a63:dc45:: with SMTP id f5mr32464004pgj.250.1572904282035;
-        Mon, 04 Nov 2019 13:51:22 -0800 (PST)
-Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
-        by smtp.googlemail.com with ESMTPSA id z7sm10567610pgk.10.2019.11.04.13.51.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2019 13:51:21 -0800 (PST)
-Subject: Re: [PATCH v14 1/5] Add flags option to get xattr method paired to
- __vfs_getxattr
-To:     Amir Goldstein <amir73il@gmail.com>,
-        Andreas Dilger <adilger@dilger.ca>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org, CIFS <linux-cifs@vger.kernel.org>,
-        kernel-team@android.com, selinux@vger.kernel.org,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        ecryptfs@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>
-References: <20191022204453.97058-1-salyzyn@android.com>
- <20191022204453.97058-2-salyzyn@android.com>
- <8CE5B6E8-DCB7-4F0B-91C1-48030947F585@dilger.ca>
- <CAOQ4uxis-oQSjKrtBDi-8BQ2M3ve3w8o-YVGRwWLnq+5JLUttA@mail.gmail.com>
-From:   Mark Salyzyn <salyzyn@android.com>
-Message-ID: <7b5f2964-10ce-021b-01f7-6b662bf0c09a@android.com>
-Date:   Mon, 4 Nov 2019 13:51:20 -0800
+        Mon, 4 Nov 2019 17:03:46 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dc0a0470001>; Mon, 04 Nov 2019 14:03:51 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 04 Nov 2019 14:03:44 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 04 Nov 2019 14:03:44 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 4 Nov
+ 2019 22:03:44 +0000
+Subject: Re: [PATCH v2 07/18] infiniband: set FOLL_PIN, FOLL_LONGTERM via
+ pin_longterm_pages*()
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20191103211813.213227-1-jhubbard@nvidia.com>
+ <20191103211813.213227-8-jhubbard@nvidia.com>
+ <20191104203346.GF30938@ziepe.ca>
+ <578c1760-7221-4961-9f7d-c07c22e5c259@nvidia.com>
+ <20191104205738.GH30938@ziepe.ca>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <1560fa00-0c2b-0f3b-091c-d628f021ce09@nvidia.com>
+Date:   Mon, 4 Nov 2019 14:03:43 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAOQ4uxis-oQSjKrtBDi-8BQ2M3ve3w8o-YVGRwWLnq+5JLUttA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20191104205738.GH30938@ziepe.ca>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1572905031; bh=IKdbp+ZVTpqbHTn5cPPMdPyF8t8FSY9+XIKb+nTmNZA=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=Exr6wtS04dnOA7OKyG8C6jmfOJgvmOKQ4ryKtK8dYLUGAUhW1ANa3Y76nirEfKZWL
+         BfmKpwQhdZf164GA7TThLAA8XYE7rEB43E5uVykOUw8vjqq+Z5vuPr4RoWB+EBwJmI
+         82WUaxumGAw7uDlxCOHsZWA/nWll4Fj5SlWn1ViJ0PmXPDYlJ4UyJMEdDl6CCPpwkA
+         3kXnuXZEeEzWyHIHP7bnpZdIk11g5n/Fmufuu3stG/XnD2YhIKLkCmPY0tP07oCg3I
+         PY8WkQI5XHEQ8FF1wEe8DPqFUCcb0SNQiASk6Fs41GXmDSlssuX1FKG+oppzdi+q5D
+         gW3LGN7zuApVg==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/23/19 9:57 PM, Amir Goldstein wrote:
-> [excessive CC list reduced]
->
-> On Wed, Oct 23, 2019 at 11:07 AM Andreas Dilger via samba-technical
-> <samba-technical@lists.samba.org> wrote:
->>
->> On Oct 22, 2019, at 2:44 PM, Mark Salyzyn <salyzyn@android.com> wrote:
->>> Replace arguments for get and set xattr methods, and __vfs_getxattr
->>> and __vfs_setaxtr functions with a reference to the following now
->>> common argument structure:
+On 11/4/19 12:57 PM, Jason Gunthorpe wrote:
+> On Mon, Nov 04, 2019 at 12:48:13PM -0800, John Hubbard wrote:
+>> On 11/4/19 12:33 PM, Jason Gunthorpe wrote:
+>> ...
+>>>> diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
+>>>> index 24244a2f68cc..c5a78d3e674b 100644
+>>>> +++ b/drivers/infiniband/core/umem.c
+>>>> @@ -272,11 +272,10 @@ struct ib_umem *ib_umem_get(struct ib_udata *udata, unsigned long addr,
+>>>>  
+>>>>  	while (npages) {
+>>>>  		down_read(&mm->mmap_sem);
+>>>> -		ret = get_user_pages(cur_base,
+>>>> +		ret = pin_longterm_pages(cur_base,
+>>>>  				     min_t(unsigned long, npages,
+>>>>  					   PAGE_SIZE / sizeof (struct page *)),
+>>>> -				     gup_flags | FOLL_LONGTERM,
+>>>> -				     page_list, NULL);
+>>>> +				     gup_flags, page_list, NULL);
 >>>
->>> struct xattr_gs_args {
->>>        struct dentry *dentry;
->>>        struct inode *inode;
->>>        const char *name;
->>>        union {
->>>                void *buffer;
->>>                const void *value;
->>>        };
->>>        size_t size;
->>>        int flags;
->>> };
->>> Mark,
+>>> FWIW, this one should be converted to fast as well, I think we finally
+>>> got rid of all the blockers for that?
 >>>
->>> I do not see the first patch on fsdevel
->>> and I am confused from all the suggested APIs
->>> I recall Christoph's comment on v8 for not using xattr_gs_args
->>> and just adding flags to existing get() method.
->>> I agree to that comment.
->> As already responded, third (?) patch version was like that,
-> The problem is that because of the waaay too long CC list, most revisions
-> of the patch and discussion were bounced from fsdevel, most emails
-> I did not get and cannot find in archives, so the discussion around
-> them is not productive.
->
-> Please resend patch to fsdevel discarding the auto added CC list
-> of all fs maintainers.
-
-git send-email is not my friend :-(
-
->> gregkh@
->> said it passed the limit for number of arguments, is looking a bit silly
-> Well, you just matched get() to set() args list, so this is not a strong
-> argument IMO.
->
->> (my paraphrase), and that it should be passed as a structure. Two others
->> agreed. We gained because both set and get use the same structure after
->> this change (this allows a simplified read-modify-write cycle).
-> That sounds like a nice benefit if this was user API, but are there any
-> kernel users that intend to make use of that read-modify-write cycle?
-> I don't think so.
-(one user)
->
->> We will need a quorum on this, 3 (structure) to 2 (flag) now (but really
->> basically between Greg and Christoph?). Coding style issue: Add a flag,
->> or switch to a common xattr argument  structure?
 >>
-> IIRC, Christoph was asking why the silly struct and not simply add flags
-> (as did I). He probably did not see Greg's comments due to the list bounce
-> issue. If I read your second hand description of Greg's reaction correctly,
-> it doesn't sound so strong opinionated as well.
-> Me, I can live with flags or struct - I don't care, but...
->
-> Be prepared that if you are going ahead with struct you are going to
-> suffer from bike shedding, which has already started and you will be
-> instructed (just now) to also fix all the relevant and missing Documentation.
-> If, on the other hand, you can get Greg and the rest to concede to adding
-> flags arg and match get() arg list to set() arg list, you will have a much
-> easier job and the patch line count, especially in fs code will be *much*
-> smaller - just saying.
+>> I'm not aware of any blockers on the gup.c end, anyway. The only broken thing we
+>> have there is "gup remote + FOLL_LONGTERM". But we can do "gup fast + LONGTERM". 
+> 
+> I mean the use of the mmap_sem here is finally in a way where we can
+> just delete the mmap_sem and use _fast
+>  
+> ie, AFAIK there is no need for the mmap_sem to be held during
+> ib_umem_add_sg_table()
+> 
+> This should probably be a standalone patch however
+> 
 
-Respining back to the v4 version of the series incorporating some of the 
-fixes on the way.
+Yes. Oh, actually I guess the patch flow should be: change to 
+get_user_pages_fast() and remove the mmap_sem calls, as one patch. And then change 
+to pin_longterm_pages_fast() as the next patch. Otherwise, the internal fallback
+from _fast to slow gup would attempt to take the mmap_sem (again) in the same
+thread, which is not good. :)
 
-Automated testing in kernel not yet handled and will be noted in the 
-respin.
+Or just defer the change until after this series. Either way is fine, let me
+know if you prefer one over the other.
 
-> Thanks,
-> Amir.
+The patch itself is trivial, but runtime testing to gain confidence that
+it's solid is much harder. Is there a stress test you would recommend for that?
+(I'm not promising I can quickly run it yet--my local IB setup is still nascent 
+at best.)
 
-Mark
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
 
