@@ -2,88 +2,216 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BBD3EE48F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2019 17:21:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33C84EE4DD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2019 17:39:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728321AbfKDQVx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Nov 2019 11:21:53 -0500
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:60952 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727838AbfKDQVw (ORCPT
+        id S1729204AbfKDQji (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Nov 2019 11:39:38 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:26410 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729006AbfKDQjh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Nov 2019 11:21:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1572884512; x=1604420512;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SGnQPXWoTcvG1tC3eEcv7j0tgV54CAl4lGKMO+R9B4Y=;
-  b=USbRRchrA6MKInbnRNlMvLbyh7HT9dV9oSOZieAhEjJZUHaAA9VnXELb
-   OWS9FdR/PBk0n/R9qqWlI8FO1tKDPQOWydcZww8cP2dUHthKuaOWq5EvC
-   TPnsR7So4Myu3P7rsgxVX4GOurd4tNOsvZNP742GdzVKaDXd2QJQYtt5h
-   A=;
-IronPort-SDR: w6zYCs3swOAc/YkrJJHVivg8zdqPSpCmkcZm2pM51Uc9RrwGGI9XLhGDz4FqVI7EmrrhmQPqvp
- XmeLVfEZVjpw==
-X-IronPort-AV: E=Sophos;i="5.68,267,1569283200"; 
-   d="scan'208";a="3935220"
-Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-2a-d0be17ee.us-west-2.amazon.com) ([10.47.23.38])
-  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 04 Nov 2019 16:21:48 +0000
-Received: from EX13MTAUWB001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
-        by email-inbound-relay-2a-d0be17ee.us-west-2.amazon.com (Postfix) with ESMTPS id 01333A0644;
-        Mon,  4 Nov 2019 16:21:47 +0000 (UTC)
-Received: from EX13D28UWB001.ant.amazon.com (10.43.161.98) by
- EX13MTAUWB001.ant.amazon.com (10.43.161.249) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 4 Nov 2019 16:21:47 +0000
-Received: from EX13MTAUWB001.ant.amazon.com (10.43.161.207) by
- EX13D28UWB001.ant.amazon.com (10.43.161.98) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 4 Nov 2019 16:21:47 +0000
-Received: from dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com
- (172.23.141.97) by mail-relay.amazon.com (10.43.161.249) with Microsoft SMTP
- Server id 15.0.1367.3 via Frontend Transport; Mon, 4 Nov 2019 16:21:47 +0000
-Received: by dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com (Postfix, from userid 6262777)
-        id 7C154C7197; Mon,  4 Nov 2019 16:21:47 +0000 (UTC)
-Date:   Mon, 4 Nov 2019 16:21:47 +0000
-From:   Frank van der Linden <fllinden@amazon.com>
-To:     Chuck Lever <chucklever@gmail.com>
-CC:     Bruce Fields <bfields@fieldses.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC PATCH 00/35] user xattr support (RFC8276)
-Message-ID: <20191104162147.GA31399@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
-References: <cover.1568309119.git.fllinden@amazon.com>
- <9CAEB69A-A92C-47D8-9871-BA6EA83E1881@gmail.com>
- <20191024231547.GA16466@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
- <18D2845F-27FF-4EDF-AB8A-E6051FA03DF0@gmail.com>
- <20191104030132.GD26578@fieldses.org>
- <358420D8-596E-4D3B-A01C-DACB101F0017@gmail.com>
+        Mon, 4 Nov 2019 11:39:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572885575;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZKRtyHtWqxotoMRVCD2L231GIf5CzzOu6K7yMpGCV1E=;
+        b=EISj5KjZrUl3kZNHgeVxg9gzAbcLy4Tpe15p04ZJX+1X/PP0zhFi/jqdDWYjMDEhoU+i0C
+        JuU/cWz6scDZOZMQlwE2N2QuxICFFYXRzNVTjImH796mEQWD/wjXHkzq8BvJ4gOxbXcJlq
+        N9g+v2tQVhedXU+Lsqq3rbwA789furQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-368-XcpsC-lSP4a7ehsn9d2sxg-1; Mon, 04 Nov 2019 11:39:31 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1D6C88017DD;
+        Mon,  4 Nov 2019 16:39:27 +0000 (UTC)
+Received: from redhat.com (unknown [10.20.6.178])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id F0A6F5C240;
+        Mon,  4 Nov 2019 16:39:20 +0000 (UTC)
+Date:   Mon, 4 Nov 2019 11:39:19 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH v2 01/18] mm/gup: pass flags arg to __gup_device_*
+ functions
+Message-ID: <20191104163919.GA5134@redhat.com>
+References: <20191103211813.213227-1-jhubbard@nvidia.com>
+ <20191103211813.213227-2-jhubbard@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20191103211813.213227-2-jhubbard@nvidia.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-MC-Unique: XcpsC-lSP4a7ehsn9d2sxg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
-In-Reply-To: <358420D8-596E-4D3B-A01C-DACB101F0017@gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 04, 2019 at 10:36:03AM -0500, Chuck Lever wrote:
-> 
-> Following the server's local file systems' mount options seems like a
-> good way to go. In particular, is there a need to expose user xattrs
-> on the server host, but prevent NFS clients' access to them? I can't
-> think of one.
+On Sun, Nov 03, 2019 at 01:17:56PM -0800, John Hubbard wrote:
+> A subsequent patch requires access to gup flags, so
+> pass the flags argument through to the __gup_device_*
+> functions.
+>=20
+> Also placate checkpatch.pl by shortening a nearby line.
+>=20
+> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 
-Ok, that sounds fine to me - I'll remove the user_xattr export flag,
-and we had already agreed to do away with the CONFIGs.
+Reviewed-by: J=E9r=F4me Glisse <jglisse@redhat.com>
 
-That leaves one last item with regard to enabling support: the client side
-mount option. I assume the [no]user_xattr option should work the same as
-with other filesystems. What about the default setting?
+> ---
+>  mm/gup.c | 28 ++++++++++++++++++----------
+>  1 file changed, 18 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 8f236a335ae9..85caf76b3012 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -1890,7 +1890,8 @@ static int gup_pte_range(pmd_t pmd, unsigned long a=
+ddr, unsigned long end,
+> =20
+>  #if defined(CONFIG_ARCH_HAS_PTE_DEVMAP) && defined(CONFIG_TRANSPARENT_HU=
+GEPAGE)
+>  static int __gup_device_huge(unsigned long pfn, unsigned long addr,
+> -=09=09unsigned long end, struct page **pages, int *nr)
+> +=09=09=09     unsigned long end, unsigned int flags,
+> +=09=09=09     struct page **pages, int *nr)
+>  {
+>  =09int nr_start =3D *nr;
+>  =09struct dev_pagemap *pgmap =3D NULL;
+> @@ -1916,13 +1917,14 @@ static int __gup_device_huge(unsigned long pfn, u=
+nsigned long addr,
+>  }
+> =20
+>  static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long =
+addr,
+> -=09=09unsigned long end, struct page **pages, int *nr)
+> +=09=09=09=09 unsigned long end, unsigned int flags,
+> +=09=09=09=09 struct page **pages, int *nr)
+>  {
+>  =09unsigned long fault_pfn;
+>  =09int nr_start =3D *nr;
+> =20
+>  =09fault_pfn =3D pmd_pfn(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
+> -=09if (!__gup_device_huge(fault_pfn, addr, end, pages, nr))
+> +=09if (!__gup_device_huge(fault_pfn, addr, end, flags, pages, nr))
+>  =09=09return 0;
+> =20
+>  =09if (unlikely(pmd_val(orig) !=3D pmd_val(*pmdp))) {
+> @@ -1933,13 +1935,14 @@ static int __gup_device_huge_pmd(pmd_t orig, pmd_=
+t *pmdp, unsigned long addr,
+>  }
+> =20
+>  static int __gup_device_huge_pud(pud_t orig, pud_t *pudp, unsigned long =
+addr,
+> -=09=09unsigned long end, struct page **pages, int *nr)
+> +=09=09=09=09 unsigned long end, unsigned int flags,
+> +=09=09=09=09 struct page **pages, int *nr)
+>  {
+>  =09unsigned long fault_pfn;
+>  =09int nr_start =3D *nr;
+> =20
+>  =09fault_pfn =3D pud_pfn(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
+> -=09if (!__gup_device_huge(fault_pfn, addr, end, pages, nr))
+> +=09if (!__gup_device_huge(fault_pfn, addr, end, flags, pages, nr))
+>  =09=09return 0;
+> =20
+>  =09if (unlikely(pud_val(orig) !=3D pud_val(*pudp))) {
+> @@ -1950,14 +1953,16 @@ static int __gup_device_huge_pud(pud_t orig, pud_=
+t *pudp, unsigned long addr,
+>  }
+>  #else
+>  static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long =
+addr,
+> -=09=09unsigned long end, struct page **pages, int *nr)
+> +=09=09=09=09 unsigned long end, unsigned int flags,
+> +=09=09=09=09 struct page **pages, int *nr)
+>  {
+>  =09BUILD_BUG();
+>  =09return 0;
+>  }
+> =20
+>  static int __gup_device_huge_pud(pud_t pud, pud_t *pudp, unsigned long a=
+ddr,
+> -=09=09unsigned long end, struct page **pages, int *nr)
+> +=09=09=09=09 unsigned long end, unsigned int flags,
+> +=09=09=09=09 struct page **pages, int *nr)
+>  {
+>  =09BUILD_BUG();
+>  =09return 0;
+> @@ -2062,7 +2067,8 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, un=
+signed long addr,
+>  =09if (pmd_devmap(orig)) {
+>  =09=09if (unlikely(flags & FOLL_LONGTERM))
+>  =09=09=09return 0;
+> -=09=09return __gup_device_huge_pmd(orig, pmdp, addr, end, pages, nr);
+> +=09=09return __gup_device_huge_pmd(orig, pmdp, addr, end, flags,
+> +=09=09=09=09=09     pages, nr);
+>  =09}
+> =20
+>  =09refs =3D 0;
+> @@ -2092,7 +2098,8 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, un=
+signed long addr,
+>  }
+> =20
+>  static int gup_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
+> -=09=09unsigned long end, unsigned int flags, struct page **pages, int *n=
+r)
+> +=09=09=09unsigned long end, unsigned int flags,
+> +=09=09=09struct page **pages, int *nr)
+>  {
+>  =09struct page *head, *page;
+>  =09int refs;
+> @@ -2103,7 +2110,8 @@ static int gup_huge_pud(pud_t orig, pud_t *pudp, un=
+signed long addr,
+>  =09if (pud_devmap(orig)) {
+>  =09=09if (unlikely(flags & FOLL_LONGTERM))
+>  =09=09=09return 0;
+> -=09=09return __gup_device_huge_pud(orig, pudp, addr, end, pages, nr);
+> +=09=09return __gup_device_huge_pud(orig, pudp, addr, end, flags,
+> +=09=09=09=09=09     pages, nr);
+>  =09}
+> =20
+>  =09refs =3D 0;
+> --=20
+> 2.23.0
+>=20
 
-Also, currently, my code does not fail the mount operation if user xattrs
-are asked for, but the server does not support them. It just doesn't
-set NFS_CAP_XATTR for the server, and the xattr handler entry points
-eturn -EOPNOTSUPP, as they check for NFS_CAP_XATTR. What's the preferred
-behavior there?
-
-- Frank
