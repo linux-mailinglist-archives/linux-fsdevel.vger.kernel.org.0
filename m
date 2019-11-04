@@ -2,81 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A59CEE8F5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2019 20:53:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19207EE90A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2019 20:58:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728602AbfKDTxH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Nov 2019 14:53:07 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:40413 "EHLO
+        id S1728987AbfKDT6N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Nov 2019 14:58:13 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:26929 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728332AbfKDTxG (ORCPT
+        with ESMTP id S1728602AbfKDT6N (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Nov 2019 14:53:06 -0500
+        Mon, 4 Nov 2019 14:58:13 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572897185;
+        s=mimecast20190719; t=1572897491;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=5YqXY05LcZm45Xoi2n7UBvKIcNMM7euzmr8OM5rBxks=;
-        b=SWOX64X3h631KSFL54tCZM81FPwg2fEibD7E4548V65ao5qW5h7ULHfx3UQebxXVwj1vAb
-        sgSnpEVJVyFQjGC6mQz12C03Q9A/erdrPDL200oKkQ33y+QvUDoYL7NIgnK86jlVzzPgT2
-        ph1P9X30COD/zR28p+MPIBFXkz8/aP8=
+        bh=iX0Im6ez8fONq6vZ1zCe7AGoAcurOkQ0kqYgRpSpeq0=;
+        b=W+hTgELXNrMynbj7Bdlt9tjEQolLMDYRQyxMFMlXaGF96dyPwW3FUIiv40yRdUhhLgknuI
+        XnRpfzW9WV1r8qAU0Zz3t09TZZMEdT5O79KyWYqJ02wjl7CKUxijKyijmz0AommcInOxlO
+        JlVbMcJpy5yeOKze6uKmT5vlyttQsX0=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-92-ZQL91USHOcmTk___p7nkiA-1; Mon, 04 Nov 2019 14:53:03 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+ us-mta-350-3OxW0jTKP_-hNyjL7dQDdA-1; Mon, 04 Nov 2019 14:58:08 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 760D1107ACC2;
-        Mon,  4 Nov 2019 19:52:58 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.178])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E8A5B1FC;
-        Mon,  4 Nov 2019 19:52:49 +0000 (UTC)
-Date:   Mon, 4 Nov 2019 14:52:48 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 05/18] mm/gup: introduce pin_user_pages*() and FOLL_PIN
-Message-ID: <20191104195248.GA7731@redhat.com>
-References: <20191103211813.213227-1-jhubbard@nvidia.com>
- <20191103211813.213227-6-jhubbard@nvidia.com>
- <20191104173325.GD5134@redhat.com>
- <be9de35c-57e9-75c3-2e86-eae50904bbdf@nvidia.com>
- <20191104191811.GI5134@redhat.com>
- <e9656d47-b4a1-da8a-e8cc-ebcfb8cc06d6@nvidia.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 774391800D53;
+        Mon,  4 Nov 2019 19:58:07 +0000 (UTC)
+Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D9BE15D9E5;
+        Mon,  4 Nov 2019 19:58:06 +0000 (UTC)
+Date:   Mon, 4 Nov 2019 14:58:05 -0500
+From:   Brian Foster <bfoster@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 14/28] mm: reclaim_state records pages reclaimed, not
+ slabs
+Message-ID: <20191104195805.GE10665@bfoster>
+References: <20191031234618.15403-1-david@fromorbit.com>
+ <20191031234618.15403-15-david@fromorbit.com>
 MIME-Version: 1.0
-In-Reply-To: <e9656d47-b4a1-da8a-e8cc-ebcfb8cc06d6@nvidia.com>
+In-Reply-To: <20191031234618.15403-15-david@fromorbit.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-MC-Unique: ZQL91USHOcmTk___p7nkiA-1
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: 3OxW0jTKP_-hNyjL7dQDdA-1
 X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
@@ -86,243 +57,165 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 04, 2019 at 11:30:32AM -0800, John Hubbard wrote:
-> On 11/4/19 11:18 AM, Jerome Glisse wrote:
-> > On Mon, Nov 04, 2019 at 11:04:38AM -0800, John Hubbard wrote:
-> >> On 11/4/19 9:33 AM, Jerome Glisse wrote:
-> >> ...
-> >>>
-> >>> Few nitpick belows, nonetheless:
-> >>>
-> >>> Reviewed-by: J=E9r=F4me Glisse <jglisse@redhat.com>
-> >>> [...]
-> >>>> +
-> >>>> +CASE 3: ODP
-> >>>> +-----------
-> >>>> +(Mellanox/Infiniband On Demand Paging: the hardware supports
-> >>>> +replayable page faulting). There are GUP references to pages servin=
-g as DMA
-> >>>> +buffers. For ODP, MMU notifiers are used to synchronize with page_m=
-kclean()
-> >>>> +and munmap(). Therefore, normal GUP calls are sufficient, so neithe=
-r flag
-> >>>> +needs to be set.
-> >>>
-> >>> I would not include ODP or anything like it here, they do not use
-> >>> GUP anymore and i believe it is more confusing here. I would how-
-> >>> ever include some text in this documentation explaining that hard-
-> >>> ware that support page fault is superior as it does not incur any
-> >>> of the issues described here.
-> >>
-> >> OK, agreed, here's a new write up that I'll put in v3:
-> >>
-> >>
-> >> CASE 3: ODP
-> >> -----------
-> >=20
-> > ODP is RDMA, maybe Hardware with page fault support instead
-> >=20
-> >> Advanced, but non-CPU (DMA) hardware that supports replayable page fau=
-lts.
+On Fri, Nov 01, 2019 at 10:46:04AM +1100, Dave Chinner wrote:
+> From: Dave Chinner <dchinner@redhat.com>
 >=20
-> OK, so:
+> Add a wrapper to account for page freeing in shrinker reclaim so
+> that the high level scanning accounts for all the memory freed
+> during a shrinker scan.
 >=20
->     "RDMA hardware with page faulting support."
+> No logic changes, just replacing open coded checks with a simple
+> wrapper.
 >=20
-> for the first sentence.
+> Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> ---
 
-I would drop RDMA completely, RDMA is just one example, they are GPU, FPGA =
-and
-others that are in that category. See below
+Looks straightforward:
 
->=20
->=20
-> >> Here, a well-written driver doesn't normally need to pin pages at all.=
- However,
-> >> if the driver does choose to do so, it can register MMU notifiers for =
-the range,
-> >> and will be called back upon invalidation. Either way (avoiding page p=
-inning, or
-> >> using MMU notifiers to unpin upon request), there is proper synchroniz=
-ation with=20
-> >> both filesystem and mm (page_mkclean(), munmap(), etc).
-> >>
-> >> Therefore, neither flag needs to be set.
-> >=20
-> > In fact GUP should never be use with those.
->=20
->=20
-> Yes. The next paragraph says that, but maybe not strong enough.
->=20
->=20
-> >>
-> >> It's worth mentioning here that pinning pages should not be the first =
-design
-> >> choice. If page fault capable hardware is available, then the software=
- should
-> >> be written so that it does not pin pages. This allows mm and filesyste=
-ms to
-> >> operate more efficiently and reliably.
->=20
-> Here's what we have after the above changes:
->=20
-> CASE 3: ODP
-> -----------
-> RDMA hardware with page faulting support. Here, a well-written driver doe=
-sn't
+Reviewed-by: Brian Foster <bfoster@redhat.com>
 
-CASE3: Hardware with page fault support
----------------------------------------
-
-Here, a well-written ....
-
-
-> normally need to pin pages at all. However, if the driver does choose to =
-do so,
-> it can register MMU notifiers for the range, and will be called back upon
-> invalidation. Either way (avoiding page pinning, or using MMU notifiers t=
-o unpin
-> upon request), there is proper synchronization with both filesystem and m=
-m
-> (page_mkclean(), munmap(), etc).
+>  fs/inode.c           |  3 +--
+>  fs/xfs/xfs_buf.c     |  4 +---
+>  include/linux/swap.h | 20 ++++++++++++++++++--
+>  mm/slab.c            |  3 +--
+>  mm/slob.c            |  4 +---
+>  mm/slub.c            |  3 +--
+>  mm/vmscan.c          |  4 ++--
+>  7 files changed, 25 insertions(+), 16 deletions(-)
 >=20
-> Therefore, neither flag needs to be set.
+> diff --git a/fs/inode.c b/fs/inode.c
+> index fef457a42882..a77caf216659 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -764,8 +764,7 @@ static enum lru_status inode_lru_isolate(struct list_=
+head *item,
+>  =09=09=09=09__count_vm_events(KSWAPD_INODESTEAL, reap);
+>  =09=09=09else
+>  =09=09=09=09__count_vm_events(PGINODESTEAL, reap);
+> -=09=09=09if (current->reclaim_state)
+> -=09=09=09=09current->reclaim_state->reclaimed_slab +=3D reap;
+> +=09=09=09current_reclaim_account_pages(reap);
+>  =09=09}
+>  =09=09iput(inode);
+>  =09=09spin_lock(lru_lock);
+> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+> index d34e5d2edacd..55b082bc53b3 100644
+> --- a/fs/xfs/xfs_buf.c
+> +++ b/fs/xfs/xfs_buf.c
+> @@ -324,9 +324,7 @@ xfs_buf_free(
+> =20
+>  =09=09=09__free_page(page);
+>  =09=09}
+> -=09=09if (current->reclaim_state)
+> -=09=09=09current->reclaim_state->reclaimed_slab +=3D
+> -=09=09=09=09=09=09=09bp->b_page_count;
+> +=09=09current_reclaim_account_pages(bp->b_page_count);
+>  =09} else if (bp->b_flags & _XBF_KMEM)
+>  =09=09kmem_free(bp->b_addr);
+>  =09_xfs_buf_free_pages(bp);
+> diff --git a/include/linux/swap.h b/include/linux/swap.h
+> index 063c0c1e112b..72b855fe20b0 100644
+> --- a/include/linux/swap.h
+> +++ b/include/linux/swap.h
+> @@ -126,12 +126,28 @@ union swap_header {
+> =20
+>  /*
+>   * current->reclaim_state points to one of these when a task is running
+> - * memory reclaim
+> + * memory reclaim. It is typically used by shrinkers to return reclaim
+> + * information back to the main vmscan loop.
+>   */
+>  struct reclaim_state {
+> -=09unsigned long reclaimed_slab;
+> +=09unsigned long=09reclaimed_pages;=09/* pages freed by shrinkers */
+>  };
+> =20
+> +/*
+> + * When code frees a page that may be run from a memory reclaim context,=
+ it
+> + * needs to account for the pages it frees so memory reclaim can track t=
+hem.
+> + * Slab memory that is freed is accounted via this mechanism, so this is=
+ not
+> + * necessary for slab or heap memory being freed. However, if the object=
+ being
+> + * freed frees pages directly, then those pages should be accounted as w=
+ell when
+> + * in memory reclaim. This helper function takes care accounting for the=
+ pages
+> + * being reclaimed when it is required.
+> + */
+> +static inline void current_reclaim_account_pages(int nr_pages)
+> +{
+> +=09if (current->reclaim_state)
+> +=09=09current->reclaim_state->reclaimed_pages +=3D nr_pages;
+> +}
+> +
+>  #ifdef __KERNEL__
+> =20
+>  struct address_space;
+> diff --git a/mm/slab.c b/mm/slab.c
+> index 66e5d8032bae..419be005f41a 100644
+> --- a/mm/slab.c
+> +++ b/mm/slab.c
+> @@ -1395,8 +1395,7 @@ static void kmem_freepages(struct kmem_cache *cache=
+p, struct page *page)
+>  =09page_mapcount_reset(page);
+>  =09page->mapping =3D NULL;
+> =20
+> -=09if (current->reclaim_state)
+> -=09=09current->reclaim_state->reclaimed_slab +=3D 1 << order;
+> +=09current_reclaim_account_pages(1 << order);
+>  =09uncharge_slab_page(page, order, cachep);
+>  =09__free_pages(page, order);
+>  }
+> diff --git a/mm/slob.c b/mm/slob.c
+> index fa53e9f73893..c54a7eeee86d 100644
+> --- a/mm/slob.c
+> +++ b/mm/slob.c
+> @@ -211,9 +211,7 @@ static void slob_free_pages(void *b, int order)
+>  {
+>  =09struct page *sp =3D virt_to_page(b);
+> =20
+> -=09if (current->reclaim_state)
+> -=09=09current->reclaim_state->reclaimed_slab +=3D 1 << order;
+> -
+> +=09current_reclaim_account_pages(1 << order);
+>  =09mod_node_page_state(page_pgdat(sp), NR_SLAB_UNRECLAIMABLE,
+>  =09=09=09    -(1 << order));
+>  =09__free_pages(sp, order);
+> diff --git a/mm/slub.c b/mm/slub.c
+> index b25c807a111f..478554082079 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -1746,8 +1746,7 @@ static void __free_slab(struct kmem_cache *s, struc=
+t page *page)
+>  =09__ClearPageSlab(page);
+> =20
+>  =09page->mapping =3D NULL;
+> -=09if (current->reclaim_state)
+> -=09=09current->reclaim_state->reclaimed_slab +=3D pages;
+> +=09current_reclaim_account_pages(pages);
+>  =09uncharge_slab_page(page, order, s);
+>  =09__free_pages(page, order);
+>  }
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 7a8256322150..967e3d3c7748 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -2870,8 +2870,8 @@ static bool shrink_node(pg_data_t *pgdat, struct sc=
+an_control *sc)
+>  =09=09} while ((memcg =3D mem_cgroup_iter(root, memcg, NULL)));
+> =20
+>  =09=09if (reclaim_state) {
+> -=09=09=09sc->nr_reclaimed +=3D reclaim_state->reclaimed_slab;
+> -=09=09=09reclaim_state->reclaimed_slab =3D 0;
+> +=09=09=09sc->nr_reclaimed +=3D reclaim_state->reclaimed_pages;
+> +=09=09=09reclaim_state->reclaimed_pages =3D 0;
+>  =09=09}
+> =20
+>  =09=09/* Record the subtree's reclaim efficiency */
+> --=20
+> 2.24.0.rc0
 >=20
-> In this case, ideally, neither get_user_pages() nor pin_user_pages() shou=
-ld be=20
-> called. Instead, the software should be written so that it does not pin p=
-ages.=20
-> This allows mm and filesystems to operate more efficiently and reliably.
->=20
-> >>> [...]
-> >>>
-> >>>> @@ -1014,7 +1018,16 @@ static __always_inline long __get_user_pages_=
-locked(struct task_struct *tsk,
-> >>>>  =09=09BUG_ON(*locked !=3D 1);
-> >>>>  =09}
-> >>>> =20
-> >>>> -=09if (pages)
-> >>>> +=09/*
-> >>>> +=09 * FOLL_PIN and FOLL_GET are mutually exclusive. Traditional beh=
-avior
-> >>>> +=09 * is to set FOLL_GET if the caller wants pages[] filled in (but=
- has
-> >>>> +=09 * carelessly failed to specify FOLL_GET), so keep doing that, b=
-ut only
-> >>>> +=09 * for FOLL_GET, not for the newer FOLL_PIN.
-> >>>> +=09 *
-> >>>> +=09 * FOLL_PIN always expects pages to be non-null, but no need to =
-assert
-> >>>> +=09 * that here, as any failures will be obvious enough.
-> >>>> +=09 */
-> >>>> +=09if (pages && !(flags & FOLL_PIN))
-> >>>>  =09=09flags |=3D FOLL_GET;
-> >>>
-> >>> Did you look at user that have pages and not FOLL_GET set ?
-> >>> I believe it would be better to first fix them to end up
-> >>> with FOLL_GET set and then error out if pages is !=3D NULL but
-> >>> nor FOLL_GET or FOLL_PIN is set.
-> >>>
-> >>
-> >> I was perhaps overly cautious, and didn't go there. However, it's prob=
-ably
-> >> doable, given that there was already the following in __get_user_pages=
-():
-> >>
-> >>     VM_BUG_ON(!!pages !=3D !!(gup_flags & FOLL_GET));
-> >>
-> >> ...which will have conditioned people and code to set FOLL_GET togethe=
-r with
-> >> pages. So I agree that the time is right.
-> >>
-> >> In order to make bisecting future failures simpler, I can insert a pat=
-ch right=20
-> >> before this one, that changes the FOLL_GET setting into an assert, lik=
-e this:
-> >>
-> >> diff --git a/mm/gup.c b/mm/gup.c
-> >> index 8f236a335ae9..be338961e80d 100644
-> >> --- a/mm/gup.c
-> >> +++ b/mm/gup.c
-> >> @@ -1014,8 +1014,8 @@ static __always_inline long __get_user_pages_loc=
-ked(struct task_struct *tsk,
-> >>                 BUG_ON(*locked !=3D 1);
-> >>         }
-> >> =20
-> >> -       if (pages)
-> >> -               flags |=3D FOLL_GET;
-> >> +       if (pages && WARN_ON_ONCE(!(gup_flags & FOLL_GET)))
-> >> +               return -EINVAL;
-> >> =20
-> >>         pages_done =3D 0;
-> >>         lock_dropped =3D false;
-> >>
-> >>
-> >> ...and then add in FOLL_PIN, with this patch.
-> >=20
-> > looks good but double check that it should not happens, i will try
-> > to check on my side too.
->=20
-> Yes, I'll look.
->=20
-> ...
-> >>>> +=09 */
-> >>>> +=09gup_flags |=3D FOLL_REMOTE | FOLL_PIN;
-> >>>
-> >>> Wouldn't it be better to not add pin_longterm_pages_remote() until
-> >>> it can be properly implemented ?
-> >>>
-> >>
-> >> Well, the problem is that I need each call site that requires FOLL_PIN
-> >> to use a proper wrapper. It's the FOLL_PIN that is the focus here, bec=
-ause
-> >> there is a hard, bright rule, which is: if and only if a caller sets
-> >> FOLL_PIN, then the dma-page tracking happens, and put_user_page() must
-> >> be called.
-> >>
-> >> So this leaves me with only two reasonable choices:
-> >>
-> >> a) Convert the call site as above: pin_longterm_pages_remote(), which =
-sets
-> >> FOLL_PIN (the key point!), and leaves the FOLL_LONGTERM situation exac=
-tly
-> >> as it has been so far. When the FOLL_LONGTERM situation is fixed, the =
-call
-> >> site *might* not need any changes to adopt the working gup.c code.
-> >>
-> >> b) Convert the call site to pin_user_pages_remote(), which also sets
-> >> FOLL_PIN, and also leaves the FOLL_LONGTERM situation exactly as befor=
-e.
-> >> There would also be a comment at the call site, to the effect of, "thi=
-s
-> >> is the wrong call to make: it really requires FOLL_LONGTERM behavior".
-> >>
-> >> When the FOLL_LONGTERM situation is fixed, the call site will need to =
-be
-> >> changed to pin_longterm_pages_remote().
-> >>
-> >> So you can probably see why I picked (a).
-> >=20
-> > But right now nobody has FOLL_LONGTERM and FOLL_REMOTE. So you should
-> > never have the need for pin_longterm_pages_remote(). My fear is that
-> > longterm has implication and it would be better to not drop this implic=
-ation
-> > by adding a wrapper that does not do what the name says.
-> >=20
-> > So do not introduce pin_longterm_pages_remote() until its first user
-> > happens. This is option c)
-> >=20
->=20
-> Almost forgot, though: there is already another user: Infiniband:
->=20
-> drivers/infiniband/core/umem_odp.c:646:         npages =3D pin_longterm_p=
-ages_remote(owning_process, owning_mm,
-
-odp do not need that, i thought the HMM convertion was already upstream
-but seems not, in any case odp do not need the longterm case it only
-so best is to revert that user to gup_fast or something until it get
-converted to HMM.
-
-Cheers,
-J=E9r=F4me
 
