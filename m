@@ -2,112 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 386E6EDCF1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2019 11:54:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36980EDD2A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2019 11:58:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728467AbfKDKyJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Nov 2019 05:54:09 -0500
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:39396 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726364AbfKDKyJ (ORCPT
+        id S1728413AbfKDK62 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Nov 2019 05:58:28 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:36732 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727985AbfKDK61 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Nov 2019 05:54:09 -0500
-Received: from mr3.cc.vt.edu (mr3.cc.vt.edu [IPv6:2607:b400:92:8500:0:7f:b804:6b0a])
-        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id xA4As3IS006960
-        for <linux-fsdevel@vger.kernel.org>; Mon, 4 Nov 2019 05:54:03 -0500
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-        by mr3.cc.vt.edu (8.14.7/8.14.7) with ESMTP id xA4ArwZN013009
-        for <linux-fsdevel@vger.kernel.org>; Mon, 4 Nov 2019 05:54:03 -0500
-Received: by mail-qt1-f197.google.com with SMTP id v23so18264161qth.20
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Nov 2019 02:54:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-transfer-encoding:date:message-id;
-        bh=O4sSEohI+9ePFu7NIh17h34X06dA5Ss7wezIrk0/sMM=;
-        b=d9F5VdJCAh4foC234Yl0UM+hz/9mkbPP2XfMixqJ5TAGimgRcIOVqaq2NzIAfHy9ej
-         6sVLyLZ2fZ1aMz2Xyu+KWeza9KntiVEvDUi+ciRqvIERXUS7qMiySmwTYVVPzbqttPsy
-         fxBWE63NA9/Lr123jWpLcXEoBfxfJmSZDlaD/wrAPl5UC/yO4enjRxdXzUFLj87UROrg
-         OJ9qgdwGalR5XTeZ6nHAgsgn30WaYMLz5EbjMF3yoKlOJKkC7cikfoXBHoHbA2NDHAHd
-         wviJaHbJ+0UjJTKNehnMy5PWIGSg0GIpZnJCzVHGJZlR7rXzA+Td1+RFpksRb9fZwqUZ
-         WRUQ==
-X-Gm-Message-State: APjAAAV73/IkXdVrObyQcIvRs9XqynFzBrinXweQZR4rwENv83NdSu0g
-        AGLOn9xoL0mA4jJbh9Xg3tAKrZIz2Taq7EL0JRdZyuRtsxzaovWqaszmsQnv8GjW1HfHvE/kSX9
-        jOkcZBkJhqOM4U6+q/fhR/5obuy8sLlLOG+Li
-X-Received: by 2002:ad4:5349:: with SMTP id v9mr19958004qvs.55.1572864837952;
-        Mon, 04 Nov 2019 02:53:57 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwstpqpeboZZUEmIXv+bMXs6fTpFWmQmyQJOF4uLfKs2q0utFPvv23/qq1PCoH4UlOCj6735g==
-X-Received: by 2002:ad4:5349:: with SMTP id v9mr19957995qvs.55.1572864837661;
-        Mon, 04 Nov 2019 02:53:57 -0800 (PST)
-Received: from turing-police ([2601:5c0:c001:c9e1::359])
-        by smtp.gmail.com with ESMTPSA id l124sm193608qkf.122.2019.11.04.02.53.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2019 02:53:56 -0800 (PST)
-From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
-X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     Dan Carpenter <dan.carpenter@oracle.com>
+        Mon, 4 Nov 2019 05:58:27 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA4AtrM6192477;
+        Mon, 4 Nov 2019 10:58:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2019-08-05;
+ bh=4Huoh6wIugbFZjm22QuBBMKrcUJPLMn8KTchxHNOYUs=;
+ b=Us4rdO0EZAqnQE6q0ebNjGiLk/WCjwlneykewTNpgc7fSmdinOhKH/ZQeXpBmQOxxi7J
+ 51gnEg3dU75yEIGmH5ni4BnLMp5p2dNq0oyY6eqSyLUrBL7gc4XXdT3eKg65IQqgiNsl
+ 98ahwAuAyY8CqGaT4c+ITllsOKkqByJrJNr0yMTFTW4vGIBM+ezl/9Jl+ss9SwIIv7Ca
+ 30D6y0HsjcePt7sGVfu1Sv+TMS7GTmGSXFsqNW2ZfZDJQQFZx4Gu7/HX6tXyl7g6lIwZ
+ H1GmnuusRDTQa4uRFSAiWkAzNBYYVClL7XOv2VD8KodLu/ZSPyWg3smrrldWf8AKcdiU uQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2w12eqxa8e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 04 Nov 2019 10:58:21 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA4AssUd142627;
+        Mon, 4 Nov 2019 10:56:20 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2w1kxd1qcm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 04 Nov 2019 10:56:20 +0000
+Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xA4AuJ7s000754;
+        Mon, 4 Nov 2019 10:56:19 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 04 Nov 2019 02:56:19 -0800
+Date:   Mon, 4 Nov 2019 13:56:12 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>
 Cc:     linux-fsdevel@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 07/10] staging: exfat: Clean up return codes - FFS_SUCCESS
-In-Reply-To: <20191104100413.GC10409@kadam>
-References: <20191104014510.102356-1-Valdis.Kletnieks@vt.edu> <20191104014510.102356-8-Valdis.Kletnieks@vt.edu>
+Subject: Re: [PATCH v2 07/10] staging: exfat: Clean up return codes -
+ FFS_SUCCESS
+Message-ID: <20191104105612.GG21796@kadam>
+References: <20191104014510.102356-1-Valdis.Kletnieks@vt.edu>
+ <20191104014510.102356-8-Valdis.Kletnieks@vt.edu>
  <20191104100413.GC10409@kadam>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1572864835_14215P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 04 Nov 2019 05:53:55 -0500
-Message-ID: <128761.1572864835@turing-police>
+ <128761.1572864835@turing-police>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <128761.1572864835@turing-police>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9430 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1911040109
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9430 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1911040109
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---==_Exmh_1572864835_14215P
-Content-Type: text/plain; charset=us-ascii
+On Mon, Nov 04, 2019 at 05:53:55AM -0500, Valdis Klētnieks wrote:
+> On Mon, 04 Nov 2019 13:04:14 +0300, Dan Carpenter said:
+> > On Sun, Nov 03, 2019 at 08:45:03PM -0500, Valdis Kletnieks wrote:
+> > > -	if (sector_read(sb, sec, &bp->buf_bh, 1) != FFS_SUCCESS) {
+> > > +	if (sector_read(sb, sec, &bp->buf_bh, 1) != 0) {
+> >
+> > It's better to just remove the "!= 0" double negative.  != 0 should be
+> > used when we are talking about the number zero as in "cnt != 0" and for
+> > "strcmp(foo, bar) != 0" where it means that "foo != bar".
+> 
+> "Fix up ==0 and !=0" is indeed on the to-do list.
+> 
+> This patch converted 82 uses of FFS_SUCCESS, of which 33 had the != idiom in
+> use.  Meanwhile, overall there's 53 '!= 0' and 95 '== 0' uses.
+> 
+> In other words, even if I fixed all of those that were involved in this patch,
+> there would *still* be more patching to do.
 
-On Mon, 04 Nov 2019 13:04:14 +0300, Dan Carpenter said:
-> On Sun, Nov 03, 2019 at 08:45:03PM -0500, Valdis Kletnieks wrote:
-> > -	if (sector_read(sb, sec, &bp->buf_bh, 1) != FFS_SUCCESS) {
-> > +	if (sector_read(sb, sec, &bp->buf_bh, 1) != 0) {
->
-> It's better to just remove the "!= 0" double negative.  != 0 should be
-> used when we are talking about the number zero as in "cnt != 0" and for
-> "strcmp(foo, bar) != 0" where it means that "foo != bar".
+Very good.  Sounds like the plan.
 
-"Fix up ==0 and !=0" is indeed on the to-do list.
+regards,
+dan carpenter
 
-This patch converted 82 uses of FFS_SUCCESS, of which 33 had the != idiom in
-use.  Meanwhile, overall there's 53 '!= 0' and 95 '== 0' uses.
-
-In other words, even if I fixed all of those that were involved in this patch,
-there would *still* be more patching to do.
-
-
-
-
-
---==_Exmh_1572864835_14215P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.9.0 11/07/2018
-
-iQIVAwUBXcADQgdmEQWDXROgAQKAchAAtemIJM4rEnk/fzHoPM8wtbMrApsfS8oQ
-xZk0xQ6DGVGwCR67LvNuy3qU5sgSXDuI6+0Egf/63qzQdyZ4C87x49m0p3J6dctU
-wFwVlDwlr49ZbCcHDWD/lI7B3cc+1iwxAcMYVXQGMsF4dNckVLzHXjP7PEq0eMnP
-xZKkGxU9pvJLpiuCckiJTda+qG9xPJDh9BqsT6L3XQD/yN8ajurYPVkv1FXRiiBY
-Xzxw1Vd3vM8lxLyE2KtSB2VVlWGxK8HC9fw49p1RkKpcdXLBYPnf9dy7umSpTM4U
-7nPYVj/MMvis4pDb7dRDBicSqgoQd+Np3dz0bHRvHCmq5i3zrxhaYuCaJ+RreRXi
-3i4nanOeI43RZ5qfUkUZJm2AthINcNCRLysmprSherVa7jvCr7QJXtkizJgVeYou
-Kx/ND16wpQe96G8TzyQXHQx1Ki+0jnjkQLOp1xZ+I4/Zua8KPqrKXafIfzBhQSOx
-5FJCXe07qrjJUAfKR/oVTtlzqOQl6tbRNIjClPiJRwfocpEaZi5XBi8Og3cfEi44
-+RR9euNuePOCK4wpTOn9u5GBlCIy8IpRdOfMaU3Amh1uzo3rS8cU7fRQYfovmySI
-Js1wW1Jc4vdXm6Zx9ijVxxECcK/DfjxGKSTeCqt3Hlo3JxbBX2Q7jvGm4fu066bq
-/etC95DRebU=
-=E3XH
------END PGP SIGNATURE-----
-
---==_Exmh_1572864835_14215P--
