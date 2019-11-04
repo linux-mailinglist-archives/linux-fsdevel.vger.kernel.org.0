@@ -2,99 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9153EEB5F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2019 22:46:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98627EF026
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2019 23:26:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728987AbfKDVq0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Nov 2019 16:46:26 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37549 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729486AbfKDVq0 (ORCPT
+        id S1730136AbfKDW0O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Nov 2019 17:26:14 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:39177 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730486AbfKDVvX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Nov 2019 16:46:26 -0500
-Received: by mail-pg1-f194.google.com with SMTP id z24so7834355pgu.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Nov 2019 13:46:26 -0800 (PST)
+        Mon, 4 Nov 2019 16:51:23 -0500
+Received: by mail-pf1-f195.google.com with SMTP id x28so10206896pfo.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Nov 2019 13:51:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=RKxr/z5Z+XCc3j/WLz6LF458INM7dnLvQiGuRgdea6I=;
-        b=aUeePDR4M3K0hR7Q/iY4hBk2QT31NbRREwi99q6z/u/H7pYqS80kMgv8cfnvtshvAv
-         VkJMotphwEiRP9kA7IZ4WieHSR5kijvuyO7V0Wq4QIfiPjshpuOvK8o2ZrydNAwfQdfE
-         OinYsra052NUoIMic9pUp++YgcScLmujdziWX1C+Al6yNoWfEZ4SKAmpuwGIyP95/E2O
-         vsMq9BacQ3oZyG9cCe2xyk2VvnpF/cqSuIZydpVueZTsqCkDC0jVqWq/MNxmHWgtxQ1x
-         oXk0ys7HrLlD+ZF3R3qe3p7Bsdyvw+gNuuzAEUdV+2SGbShHAqHGkM/vkCF6XzCa+mlL
-         Ndkg==
+        d=android.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=bHzFpby5nBvLQoa1A3N45Iv5pE3sE4p/UO4W7iuituU=;
+        b=Pp8aTcTc4J8HQHJfK7XYOvTKX+0OBvRsnX5l3y4u4g4MM3j86RHYT5E3CyfwGjTx4M
+         OY4am3V6P04tfgMJdWaiBA4U4MVXNNXBLNBBKKsjLvm6Py+danTKFeA58zni2EwrZJ4a
+         LNM/Y81H3MGNqRtK9pfeV0H03aM+7nND2Zei+zqEbD1s4PqBPprHUisrBeteBubsbwSy
+         TVQ544cT0wpbyLgolGEW1xWW2VpX+SzNMXEAx14Fcr5iUkFTIem+fgkabRMzppRp0uwa
+         f1TaCzq6xMl1AGXBK5nQcB2Aq9iUTjOhumPtO956o84HKT+keZUKHTeZ+X7Z6JqxV9xJ
+         DqlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=RKxr/z5Z+XCc3j/WLz6LF458INM7dnLvQiGuRgdea6I=;
-        b=gT8+vZyBbDnvbO2TDxG4fA3UIyLAiiZETZCKewGgXqqZlH3Mb0uJKTwdp/3F7sJ1oO
-         DZPT5MyynKeMPgjt2ZnRz6Nda5XquHteMSxLPEva6AwkcM84PYTXjVdvOxlDG7BTfo/r
-         /YqCYK+zwy5u8BbSu5p3mJaRGJI3s5B3GOEPe9s5q0kQdS+WVAou0gas5BrmRD2JcMIU
-         iv7RrdqmH2R3IT7fpwhh5rRvlMFrlCmYJmCCzJrXp0oE6F6L97HkLDZRZTWCEoZ0nfRo
-         jWO0BmI5JFNvTnvPVTnpA5fgRqTlE54bnVaaR9I4f27ozOZ8CJZu+1IIACynPVmVRn2S
-         mR2w==
-X-Gm-Message-State: APjAAAWdbEoqw+I8655pKC3lh20uNo2QSi54LEIoDjxiGFSgi35BfVk9
-        BemEis20EFUGhGjzrjy5HQmoSQ==
-X-Google-Smtp-Source: APXvYqwuRMT5lNvuPuITVIvesrzmLt7bbeQv2zTddIBYVppkD8brZ4Ux1AopMTxEtLhaeVJ3FtMRQQ==
-X-Received: by 2002:aa7:980c:: with SMTP id e12mr33717564pfl.165.1572903985750;
-        Mon, 04 Nov 2019 13:46:25 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.79])
-        by smtp.gmail.com with ESMTPSA id i126sm18547901pfc.29.2019.11.04.13.46.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Nov 2019 13:46:25 -0800 (PST)
-To:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Cc:     io-uring@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] MAINTAINERS: update io_uring entry
-Message-ID: <efa17e7d-b33a-c032-1a90-c150d1632ab8@kernel.dk>
-Date:   Mon, 4 Nov 2019 14:46:22 -0700
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=bHzFpby5nBvLQoa1A3N45Iv5pE3sE4p/UO4W7iuituU=;
+        b=VnNVomfB8aMGUMCC9dfIIWIYzD4rjgE/GHzE+rw3lZAA+erGKCrS0xIvUQj/WIxQ08
+         iDeNtz4ZPk+HQASWOUhQlL9DhccyhqGQpT4WmH7r/Q7SjkdtUAl9O4kuvHPj8l5fDzHc
+         CeDvqdW/I7/2koInNla/9XKixxW9t/YH6ZbiUlO8bYCkIQHRZ4McudCM4178AhaUoHeW
+         1Yg4iEx3uZJACmON/94YR/SvwgBUiINoD9D+iK76wpYtA7iSpon4hxWEFN7k9jD3QkIr
+         q/8Kt1bSDZ0RSe1++nfabnIfMdLdpvvhvKELnmau7QdSZmS31JlI56z7gQup33j7J7dR
+         m57Q==
+X-Gm-Message-State: APjAAAVaKOGAObxG3LCcs5z2FhxBfx8hOWXdtEWNMJaUr/Hy2ElezN2C
+        ttKBQkbElX3Q9HBYB1JRVN2QpA==
+X-Google-Smtp-Source: APXvYqy8cbQrcNS2YZCm15LNXj84RCWobmcY3Yi0AKiVBFlHOjV+tLdHj1XjjIBLQcnlWN3fV+awgw==
+X-Received: by 2002:a63:dc45:: with SMTP id f5mr32464004pgj.250.1572904282035;
+        Mon, 04 Nov 2019 13:51:22 -0800 (PST)
+Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
+        by smtp.googlemail.com with ESMTPSA id z7sm10567610pgk.10.2019.11.04.13.51.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2019 13:51:21 -0800 (PST)
+Subject: Re: [PATCH v14 1/5] Add flags option to get xattr method paired to
+ __vfs_getxattr
+To:     Amir Goldstein <amir73il@gmail.com>,
+        Andreas Dilger <adilger@dilger.ca>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org, CIFS <linux-cifs@vger.kernel.org>,
+        kernel-team@android.com, selinux@vger.kernel.org,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        ecryptfs@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>
+References: <20191022204453.97058-1-salyzyn@android.com>
+ <20191022204453.97058-2-salyzyn@android.com>
+ <8CE5B6E8-DCB7-4F0B-91C1-48030947F585@dilger.ca>
+ <CAOQ4uxis-oQSjKrtBDi-8BQ2M3ve3w8o-YVGRwWLnq+5JLUttA@mail.gmail.com>
+From:   Mark Salyzyn <salyzyn@android.com>
+Message-ID: <7b5f2964-10ce-021b-01f7-6b662bf0c09a@android.com>
+Date:   Mon, 4 Nov 2019 13:51:20 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <CAOQ4uxis-oQSjKrtBDi-8BQ2M3ve3w8o-YVGRwWLnq+5JLUttA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We now have a list that's appropriate for both kernel and userspace
-discussions on io_uring usage and development, add that to the
-MAINTAINERS entry.
+On 10/23/19 9:57 PM, Amir Goldstein wrote:
+> [excessive CC list reduced]
+>
+> On Wed, Oct 23, 2019 at 11:07 AM Andreas Dilger via samba-technical
+> <samba-technical@lists.samba.org> wrote:
+>>
+>> On Oct 22, 2019, at 2:44 PM, Mark Salyzyn <salyzyn@android.com> wrote:
+>>> Replace arguments for get and set xattr methods, and __vfs_getxattr
+>>> and __vfs_setaxtr functions with a reference to the following now
+>>> common argument structure:
+>>>
+>>> struct xattr_gs_args {
+>>>        struct dentry *dentry;
+>>>        struct inode *inode;
+>>>        const char *name;
+>>>        union {
+>>>                void *buffer;
+>>>                const void *value;
+>>>        };
+>>>        size_t size;
+>>>        int flags;
+>>> };
+>>> Mark,
+>>>
+>>> I do not see the first patch on fsdevel
+>>> and I am confused from all the suggested APIs
+>>> I recall Christoph's comment on v8 for not using xattr_gs_args
+>>> and just adding flags to existing get() method.
+>>> I agree to that comment.
+>> As already responded, third (?) patch version was like that,
+> The problem is that because of the waaay too long CC list, most revisions
+> of the patch and discussion were bounced from fsdevel, most emails
+> I did not get and cannot find in archives, so the discussion around
+> them is not productive.
+>
+> Please resend patch to fsdevel discarding the auto added CC list
+> of all fs maintainers.
 
-Also add the io-wq files.
+git send-email is not my friend :-(
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>> gregkh@
+>> said it passed the limit for number of arguments, is looking a bit silly
+> Well, you just matched get() to set() args list, so this is not a strong
+> argument IMO.
+>
+>> (my paraphrase), and that it should be passed as a structure. Two others
+>> agreed. We gained because both set and get use the same structure after
+>> this change (this allows a simplified read-modify-write cycle).
+> That sounds like a nice benefit if this was user API, but are there any
+> kernel users that intend to make use of that read-modify-write cycle?
+> I don't think so.
+(one user)
+>
+>> We will need a quorum on this, 3 (structure) to 2 (flag) now (but really
+>> basically between Greg and Christoph?). Coding style issue: Add a flag,
+>> or switch to a common xattr argument  structure?
+>>
+> IIRC, Christoph was asking why the silly struct and not simply add flags
+> (as did I). He probably did not see Greg's comments due to the list bounce
+> issue. If I read your second hand description of Greg's reaction correctly,
+> it doesn't sound so strong opinionated as well.
+> Me, I can live with flags or struct - I don't care, but...
+>
+> Be prepared that if you are going ahead with struct you are going to
+> suffer from bike shedding, which has already started and you will be
+> instructed (just now) to also fix all the relevant and missing Documentation.
+> If, on the other hand, you can get Greg and the rest to concede to adding
+> flags arg and match get() arg list to set() arg list, you will have a much
+> easier job and the patch line count, especially in fs code will be *much*
+> smaller - just saying.
 
----
+Respining back to the v4 version of the series incorporating some of the 
+fixes on the way.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c6c34d04ce95..7afb25707098 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8562,12 +8562,13 @@ F:	include/linux/iova.h
- 
- IO_URING
- M:	Jens Axboe <axboe@kernel.dk>
--L:	linux-block@vger.kernel.org
--L:	linux-fsdevel@vger.kernel.org
-+L:	io-uring@vger.kernel.org
- T:	git git://git.kernel.dk/linux-block
- T:	git git://git.kernel.dk/liburing
- S:	Maintained
- F:	fs/io_uring.c
-+F:	fs/io-wq.c
-+F:	fs/io-wq.h
- F:	include/uapi/linux/io_uring.h
- 
- IPMI SUBSYSTEM
+Automated testing in kernel not yet handled and will be noted in the 
+respin.
 
--- 
-Jens Axboe
+> Thanks,
+> Amir.
+
+Mark
 
