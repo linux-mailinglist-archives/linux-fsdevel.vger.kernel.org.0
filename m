@@ -2,143 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77B8BEE6C9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2019 18:59:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4471BEE6F7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Nov 2019 19:11:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729332AbfKDR7C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Nov 2019 12:59:02 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37771 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728174AbfKDR7C (ORCPT
+        id S1729441AbfKDSLE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Nov 2019 13:11:04 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36201 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728709AbfKDSLD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Nov 2019 12:59:02 -0500
-Received: by mail-lj1-f196.google.com with SMTP id v2so18678514lji.4;
-        Mon, 04 Nov 2019 09:58:58 -0800 (PST)
+        Mon, 4 Nov 2019 13:11:03 -0500
+Received: by mail-wr1-f65.google.com with SMTP id w18so18242431wrt.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Nov 2019 10:10:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=Hb0vhG4XzifRsCm/AwQzk1v4P4RCPqbW8YY2naw+uGI=;
-        b=akptdPyre/H4THZPklMLGraeHXYqofVqBfHeS4RBQ6GKMVCww98KrVf2Q1zCDyFCza
-         /Mn1W7BW4k+dYBBooPbP1YSZd+MKdEvwwKCx90QqmwcpqOs6MUwkEWqMmfGNs4HSCLq3
-         aeqSlvfcRcoY7cnOaRQ8/CFyu9p62iDq43Zqe25d7HRy5Bo28ZbCCHbKmKzCuWb9Lt9+
-         TH1LmJDizsGcRslsR3A2wWz1NbRvOMm2U13ImSMs/4y5YSEZLDG1HaM9oePwa78b14sj
-         FrV4mQOHZK/QBcBKHdKbHgkgcJrsSbX2Zb/KmOma11tASgUcEJnPvprBQRZ4wNAfyBLr
-         t3dA==
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=j2dTn7Wj7MGJZeGgFXPtBogE4qg0BoOVrIkL6wJedbU=;
+        b=RPIdhIouR3j/Ac7neKFnGVsgwJtt56byt4O2813ik4ObcxN+6tPIIPEpIvd4bHdCQy
+         xfCULaOlOfNgr9pPNLunatyY1TT5oMd7MopfAimYN7Fzif9xA431/mZ6rvrz1NeweKf9
+         nhCRlvw6Mqd6dfgcS8I0AQ1BearSl/gQZ3yck=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=Hb0vhG4XzifRsCm/AwQzk1v4P4RCPqbW8YY2naw+uGI=;
-        b=jmmGfnb6sqd3JerajE95bxWwBvcPrwu+OxZ6+aE6rvXBpfYwP5AUpn2+HJ/C5Uv9pU
-         OzkK+N/xcMrmF+DSQryUc7qjXjsaxNUwmDmFT6Nllq5rIDJSOVeVEPVk8fcyn90J473p
-         8Qw09cq9lxpnMfhcfLsFZj1qxMJCqzuLCTDwpMqHwyU8hp+qVIHhVYAFeACvG+PMf15N
-         Xt6cZ7diztlaCCZZAmmIA3eanuqxweCRY8+CI0uT+879HfGpUHsWB3V51DDGdbwoSzkC
-         wdMTVOBQBXxnoR5MaeMqXSbNB/1bc+N0lnXJtJZPEodZ1rCnaTn8cyp2QYRDhOeFCg2Q
-         lc8A==
-X-Gm-Message-State: APjAAAVPZC7ZfzNh8q0WGtUlhsn12rME150kpNvrtECUWMal5FjPCB/p
-        2PkEDuV6LE+TSFLBnLtBL01awbNq
-X-Google-Smtp-Source: APXvYqz2pGcMJfX9TtZAMtNXyj1xeoTSNo9CkQjxQlYlmzmhtCV6C94dR5JFqZHza7hGs7HpVldK4Q==
-X-Received: by 2002:a2e:3e18:: with SMTP id l24mr20047363lja.48.1572890337917;
-        Mon, 04 Nov 2019 09:58:57 -0800 (PST)
-Received: from [192.168.1.36] (88-114-211-119.elisa-laajakaista.fi. [88.114.211.119])
-        by smtp.gmail.com with ESMTPSA id z14sm7246566lfh.30.2019.11.04.09.58.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2019 09:58:57 -0800 (PST)
-Subject: Re: [PATCH] Allow restricting permissions in /proc/sys
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:FILESYSTEMS (VFS and infrastructure)" 
-        <linux-fsdevel@vger.kernel.org>
-References: <74a91362-247c-c749-5200-7bdce704ed9e@gmail.com>
- <87d0e8g5f4.fsf@x220.int.ebiederm.org>
- <f272bdd3-526d-6737-c906-143d5e5fc478@gmail.com>
- <87h83jejei.fsf@x220.int.ebiederm.org>
-From:   Topi Miettinen <toiwoton@gmail.com>
-Message-ID: <eb2da7e4-23ff-597a-08e1-e0555d490f6f@gmail.com>
-Date:   Mon, 4 Nov 2019 19:58:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=j2dTn7Wj7MGJZeGgFXPtBogE4qg0BoOVrIkL6wJedbU=;
+        b=FlwePeWszarjK3DWNrbmtdl0QKYr7WFt8YP8oGR6mse8qLURUxbaHpZUaea7HdytmQ
+         k0crqR6kRWMyvaixNhk1ya0i9QDoQ+31z4VMNcyfs61+JdaAHgGu+KolNPELm1CgbFpu
+         nxXcqpXV9caQIMfwD832dLdleYZgwbpo6tM7N+q1wmEWNsRGC1KdIgpFbzlelBvN/IEm
+         Crg3PgUMFiefnn5Xt1kucRSx0FK2No+M6Fa8QqQs1g9lKo1+mdGxKcjiRjQIY4FnxGg6
+         4Y3qNJFxO97CBs+QvPcqErMj4JR0Rj1m+7S2LJS3lSP6qoDIuw3+M0vIsfnC8RlZKQ20
+         fSgA==
+X-Gm-Message-State: APjAAAVERorq+mVjl9YTyU8EY1fow57h2bTM1MiQy+M27ZY/o3W9o0cn
+        IvqfXHeecNmzX9Vb+AXykUgVxQ==
+X-Google-Smtp-Source: APXvYqwKkCPGo7mLK0jIbZGuRHh4x9upKlx8LPQBL5XTz+fwA202HVPHUNfjQCRnXVzy4o6JxOqyww==
+X-Received: by 2002:a5d:448a:: with SMTP id j10mr25997024wrq.79.1572891058912;
+        Mon, 04 Nov 2019 10:10:58 -0800 (PST)
+Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
+        by smtp.gmail.com with ESMTPSA id f13sm17508153wrq.96.2019.11.04.10.10.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2019 10:10:57 -0800 (PST)
+Date:   Mon, 4 Nov 2019 19:10:55 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     John Hubbard <jhubbard@nvidia.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 09/19] drm/via: set FOLL_PIN via pin_user_pages_fast()
+Message-ID: <20191104181055.GP10326@phenom.ffwll.local>
+Mail-Followup-To: Ira Weiny <ira.weiny@intel.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>, David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>, Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+References: <20191030224930.3990755-1-jhubbard@nvidia.com>
+ <20191030224930.3990755-10-jhubbard@nvidia.com>
+ <20191031233628.GI14771@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <87h83jejei.fsf@x220.int.ebiederm.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191031233628.GI14771@iweiny-DESK2.sc.intel.com>
+X-Operating-System: Linux phenom 5.2.0-3-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4.11.2019 17.44, Eric W. Biederman wrote:
-> Topi Miettinen <toiwoton@gmail.com> writes:
+On Thu, Oct 31, 2019 at 04:36:28PM -0700, Ira Weiny wrote:
+> On Wed, Oct 30, 2019 at 03:49:20PM -0700, John Hubbard wrote:
+> > Convert drm/via to use the new pin_user_pages_fast() call, which sets
+> > FOLL_PIN. Setting FOLL_PIN is now required for code that requires
+> > tracking of pinned pages, and therefore for any code that calls
+> > put_user_page().
+> > 
 > 
->> On 3.11.2019 20.50, Eric W. Biederman wrote:
->>> Topi Miettinen <toiwoton@gmail.com> writes:
->>>
->>>> Several items in /proc/sys need not be accessible to unprivileged
->>>> tasks. Let the system administrator change the permissions, but only
->>>> to more restrictive modes than what the sysctl tables allow.
->>>
->>> This looks quite buggy.  You neither update table->mode nor
->>> do you ever read from table->mode to initialize the inode.
->>> I am missing something in my quick reading of your patch?
->>
->> inode->i_mode gets initialized in proc_sys_make_inode().
->>
->> I didn't want to touch the table, so that the original permissions can
->> be used to restrict the changes made. In case the restrictions are
->> removed as suggested by Theodore Ts'o, table->mode could be
->> changed. Otherwise I'd rather add a new field to store the current
->> mode and the mode field can remain for reference. As the original
->> author of the code from 2007, would you let the administrator to
->> chmod/chown the items in /proc/sys without restrictions (e.g. 0400 ->
->> 0777)?
+> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+
+No one's touching the via driver anymore, so feel free to merge this
+through whatever tree suits best (aka I'll drop this on the floor and
+forget about it now).
+
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+
 > 
-> At an architectural level I think we need to do this carefully and have
-> a compelling reason.  The code has survived nearly the entire life of
-> linux without this capability.
+> > Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> > ---
+> >  drivers/gpu/drm/via/via_dmablit.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpu/drm/via/via_dmablit.c b/drivers/gpu/drm/via/via_dmablit.c
+> > index 3db000aacd26..37c5e572993a 100644
+> > --- a/drivers/gpu/drm/via/via_dmablit.c
+> > +++ b/drivers/gpu/drm/via/via_dmablit.c
+> > @@ -239,7 +239,7 @@ via_lock_all_dma_pages(drm_via_sg_info_t *vsg,  drm_via_dmablit_t *xfer)
+> >  	vsg->pages = vzalloc(array_size(sizeof(struct page *), vsg->num_pages));
+> >  	if (NULL == vsg->pages)
+> >  		return -ENOMEM;
+> > -	ret = get_user_pages_fast((unsigned long)xfer->mem_addr,
+> > +	ret = pin_user_pages_fast((unsigned long)xfer->mem_addr,
+> >  			vsg->num_pages,
+> >  			vsg->direction == DMA_FROM_DEVICE ? FOLL_WRITE : 0,
+> >  			vsg->pages);
+> > -- 
+> > 2.23.0
+> > 
 
-I'd be happy with only allowing restrictions to access for now. Perhaps 
-later with more analysis, also relaxing changes and maybe UID/GID 
-changes can be allowed.
-
-> I think right now the common solution is to mount another file over the
-> file you are trying to hide/limit.  Changing the permissions might be
-> better but that is not at all clear.
-> 
-> Do you have specific examples of the cases where you would like to
-> change the permissions?
-
-Unprivileged applications typically do not need to access most items in 
-/proc/sys, so I'd like to gradually find out which are needed. So far 
-I've seen no problems with 0500 mode for directories abi, crypto, debug, 
-dev, fs, user or vm.
-
-I'm also using systemd's InaccessiblePaths to limit access (which mounts 
-an inaccessible directory over the path), but that's a bit too big 
-hammer. For example there are over 100 files in /proc/sys/kernel, 
-perhaps there will be issues when creating a mount for each, and that 
-multiplied by a number of services.
-
->>> The not updating table->mode almost certainly means that as soon as the
->>> cached inode is invalidated the mode changes will disappear.  Not to
->>> mention they will fail to propogate between  different instances of
->>> proc.
->>>
->>> Loosing all of your changes at cache invalidation seems to make this a
->>> useless feature.
->>
->> At least different proc instances seem to work just fine here (they
->> show the same changes), but I suppose you are right about cache
->> invalidation.
-> 
-> It is going to take the creation of a pid namespace to see different
-> proc instances.  All mounts of the proc within the same pid_namespace
-> return the same instance.
-
-I see no problems by using Firejail (which uses PID namespacing) with 
-v2, the permissions in /proc/sys are the same as outside the namespace.
-
--Topi
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
