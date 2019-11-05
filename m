@@ -2,305 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C244F01C4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2019 16:44:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD50BF01C2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2019 16:44:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389905AbfKEPoP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Nov 2019 10:44:15 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:45328 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389571AbfKEPoP (ORCPT
+        id S2389849AbfKEPoK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Nov 2019 10:44:10 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:35480 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389571AbfKEPoK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Nov 2019 10:44:15 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA5Fhw54053329;
-        Tue, 5 Nov 2019 15:43:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=S8PS1Ol+7namJ8wS9uwQVS9IG0sqdyl/Y91bz+jueNw=;
- b=rIUygj+1yjQKL/QX4qdNDm7wJd+nKqZFagWt+k1MPgivYyW4YwHUYs08AK/HXMqHeLgZ
- gN+v+mIp0jC0Fla5zmTHK6ypAVs5VX0msaR4ArGZWlP/pxcVWhukrMfzVayX0qXul5fD
- NXr9Gp5d0qJPLPZ4Wql6kzCguL1uqRAVkGqDoifz2fJTQiStZ8bIl++7Qiefh/OV3doV
- iojzfhTJRKY2p78nnr2tqS2Cl8NYFpsWwCcjT+fVGIVR4lbN19n9NKVVe4yVT6DA0Tzs
- B9yvl/o6SFeofkunC1GF9Z3A94BWIi8nN0uihXCRsAX2A1sla/KjLZyQlanWr4Qvjbvo cQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2w11rpydyh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 05 Nov 2019 15:43:58 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA5Fgv1k110324;
-        Tue, 5 Nov 2019 15:43:56 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 2w2wck33ud-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 05 Nov 2019 15:43:56 +0000
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xA5Fhsxq005425;
-        Tue, 5 Nov 2019 15:43:54 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 05 Nov 2019 07:43:53 -0800
-Date:   Tue, 5 Nov 2019 07:43:47 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Cc:     tytso@mit.edu, jack@suse.cz, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        riteshh@linux.ibm.com
-Subject: Re: [PATCH v7 06/11] ext4: introduce new callback for IOMAP_REPORT
-Message-ID: <20191105154347.GB15203@magnolia>
-References: <cover.1572949325.git.mbobrowski@mbobrowski.org>
- <5c97a569e26ddb6696e3d3ac9fbde41317e029a0.1572949325.git.mbobrowski@mbobrowski.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5c97a569e26ddb6696e3d3ac9fbde41317e029a0.1572949325.git.mbobrowski@mbobrowski.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9432 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1911050128
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9432 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1911050128
+        Tue, 5 Nov 2019 10:44:10 -0500
+Received: by mail-yw1-f66.google.com with SMTP id r131so1874312ywh.2;
+        Tue, 05 Nov 2019 07:44:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=08WVEbhNhtnwwFfAggXo5kHnsDkJykTkYyyFy8JZdPk=;
+        b=uIt8lSknzzVMvqUotzhN/2/WopvdWeA5IQfm9S53iFkNWcWJNIcvmftiX32B7RSPxC
+         K5Y9vAPYmjQWwYPyBKUu8U6aokIYM89zGaKi2UztGP+VFJCmWuRvltnddqfeY7nDLndg
+         l+2VnlKee0opYVWlyTXwDu+kBU9TVH3bcJGlqR2rzaQm69fOlQi4cyhpfcbMoLViLQGQ
+         G+4fJTE4w/jVn9PpNYxnYDescFRjMB0ni0X1N5IPZOv+gdfkTOTRHTdTAIzX9xqmX6kL
+         AN5oxZwsP+D3d8uaoCP5qEQQmOyy6qa9CbkSNYPkkI7Hz2DUwI37Eq2aO4uepMdfAVmk
+         Vwzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=08WVEbhNhtnwwFfAggXo5kHnsDkJykTkYyyFy8JZdPk=;
+        b=d+Me0PV8exnUJw4BjjDrrYaS3F+/SSu5CpgOazSwm9uJOkodGjWpI+01AKUJYWcpI1
+         7CFVUgmMkANWxSh7h0edKDxCypdrmB0i+nSC0KjXdxdiCp2A30GCXaV8K3eEvzRbbUHT
+         g3woOKxb5nZs4KCeqRHpJVdX+orc5aRtSl+zlJEWsWaiiFXnfPFow5GrO7xyNq1KtLnr
+         Iy9jidhPY0i8sxYS80POIw1Ytz63zlh7FIyNIJgVsJw6zI4Tp4fjW18bjw8O3/+n9xzk
+         JHPoR0fbx5TikNV7Ffw8U2FBZTO8v3r+DKv/Ll5/I63NbcHV97yJFVmajOuRndr37DDu
+         vAkQ==
+X-Gm-Message-State: APjAAAUomorjkI2rCnbZKxhte8E8h0rJtyBD+U6QHRk5H9vc56B+a37M
+        cvIB+5Hk21l9mLzQ+0CVGNEoYy+Ry88=
+X-Google-Smtp-Source: APXvYqx+cJfy0zWrq4IIG9j90Og8qMN89GL+BvQ7qRX6dgP+VSFXrDPVIvtJZxdA64w2CRFhall4fA==
+X-Received: by 2002:a81:484d:: with SMTP id v74mr25233492ywa.448.1572968649266;
+        Tue, 05 Nov 2019 07:44:09 -0800 (PST)
+Received: from anon-dhcp-152.1015granger.net (c-68-61-232-219.hsd1.mi.comcast.net. [68.61.232.219])
+        by smtp.gmail.com with ESMTPSA id l207sm13998897ywl.20.2019.11.05.07.44.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Nov 2019 07:44:08 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: [RFC PATCH 00/35] user xattr support (RFC8276)
+From:   Chuck Lever <chucklever@gmail.com>
+In-Reply-To: <20191104225846.GA13469@fieldses.org>
+Date:   Tue, 5 Nov 2019 10:44:06 -0500
+Cc:     Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D1661F81-0232-4A35-B6BD-5857BF2D65A3@gmail.com>
+References: <cover.1568309119.git.fllinden@amazon.com>
+ <9CAEB69A-A92C-47D8-9871-BA6EA83E1881@gmail.com>
+ <20191024231547.GA16466@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
+ <18D2845F-27FF-4EDF-AB8A-E6051FA03DF0@gmail.com>
+ <20191104030132.GD26578@fieldses.org>
+ <358420D8-596E-4D3B-A01C-DACB101F0017@gmail.com>
+ <20191104162147.GA31399@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
+ <20191104225846.GA13469@fieldses.org>
+To:     Bruce Fields <bfields@fieldses.org>,
+        Frank van der Linden <fllinden@amazon.com>
+X-Mailer: Apple Mail (2.3445.104.11)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 05, 2019 at 11:03:31PM +1100, Matthew Bobrowski wrote:
-> As part of the ext4_iomap_begin() cleanups that precede this patch, we
-> also split up the IOMAP_REPORT branch into a completely separate
-> ->iomap_begin() callback named ext4_iomap_begin_report(). Again, the
-> raionale for this change is to reduce the overall clutter within
-> ext4_iomap_begin().
-> 
-> Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
-> ---
->  fs/ext4/ext4.h  |   1 +
->  fs/ext4/file.c  |   6 ++-
->  fs/ext4/inode.c | 134 +++++++++++++++++++++++++++++-------------------
->  3 files changed, 85 insertions(+), 56 deletions(-)
-> 
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 3616f1b0c987..5c6c4acea8b1 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -3388,6 +3388,7 @@ static inline void ext4_clear_io_unwritten_flag(ext4_io_end_t *io_end)
->  }
->  
->  extern const struct iomap_ops ext4_iomap_ops;
-> +extern const struct iomap_ops ext4_iomap_report_ops;
->  
->  static inline int ext4_buffer_uptodate(struct buffer_head *bh)
->  {
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index 8d2bbcc2d813..ab75aee3e687 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -494,12 +494,14 @@ loff_t ext4_llseek(struct file *file, loff_t offset, int whence)
->  						maxbytes, i_size_read(inode));
->  	case SEEK_HOLE:
->  		inode_lock_shared(inode);
-> -		offset = iomap_seek_hole(inode, offset, &ext4_iomap_ops);
-> +		offset = iomap_seek_hole(inode, offset,
-> +					 &ext4_iomap_report_ops);
->  		inode_unlock_shared(inode);
->  		break;
->  	case SEEK_DATA:
->  		inode_lock_shared(inode);
-> -		offset = iomap_seek_data(inode, offset, &ext4_iomap_ops);
-> +		offset = iomap_seek_data(inode, offset,
-> +					 &ext4_iomap_report_ops);
->  		inode_unlock_shared(inode);
->  		break;
->  	}
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index b540f2903faa..b5ba6767b276 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -3553,74 +3553,32 @@ static int ext4_iomap_alloc(struct inode *inode, struct ext4_map_blocks *map,
->  static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
->  		unsigned flags, struct iomap *iomap, struct iomap *srcmap)
->  {
-> -	unsigned int blkbits = inode->i_blkbits;
-> -	unsigned long first_block, last_block;
-> -	struct ext4_map_blocks map;
-> -	bool delalloc = false;
->  	int ret;
-> +	struct ext4_map_blocks map;
-> +	u8 blkbits = inode->i_blkbits;
->  
->  	if ((offset >> blkbits) > EXT4_MAX_LOGICAL_BLOCK)
->  		return -EINVAL;
-> -	first_block = offset >> blkbits;
-> -	last_block = min_t(loff_t, (offset + length - 1) >> blkbits,
-> -			   EXT4_MAX_LOGICAL_BLOCK);
-> -
-> -	if (flags & IOMAP_REPORT) {
-> -		if (ext4_has_inline_data(inode)) {
-> -			ret = ext4_inline_data_iomap(inode, iomap);
-> -			if (ret != -EAGAIN) {
-> -				if (ret == 0 && offset >= iomap->length)
-> -					ret = -ENOENT;
-> -				return ret;
-> -			}
-> -		}
-> -	} else {
-> -		if (WARN_ON_ONCE(ext4_has_inline_data(inode)))
-> -			return -ERANGE;
-> -	}
->  
-> -	map.m_lblk = first_block;
-> -	map.m_len = last_block - first_block + 1;
-> -
-> -	if (flags & IOMAP_REPORT) {
-> -		ret = ext4_map_blocks(NULL, inode, &map, 0);
-> -		if (ret < 0)
-> -			return ret;
-> -
-> -		if (ret == 0) {
-> -			ext4_lblk_t end = map.m_lblk + map.m_len - 1;
-> -			struct extent_status es;
-> -
-> -			ext4_es_find_extent_range(inode, &ext4_es_is_delayed,
-> -						  map.m_lblk, end, &es);
-> +	if (WARN_ON_ONCE(ext4_has_inline_data(inode)))
-> +		return -ERANGE;
->  
-> -			if (!es.es_len || es.es_lblk > end) {
-> -				/* entire range is a hole */
-> -			} else if (es.es_lblk > map.m_lblk) {
-> -				/* range starts with a hole */
-> -				map.m_len = es.es_lblk - map.m_lblk;
-> -			} else {
-> -				ext4_lblk_t offs = 0;
-> +	/*
-> +	 * Calculate the first and last logical blocks respectively.
-> +	 */
-> +	map.m_lblk = offset >> blkbits;
-> +	map.m_len = min_t(loff_t, (offset + length - 1) >> blkbits,
-> +			  EXT4_MAX_LOGICAL_BLOCK) - map.m_lblk + 1;
->  
-> -				if (es.es_lblk < map.m_lblk)
-> -					offs = map.m_lblk - es.es_lblk;
-> -				map.m_lblk = es.es_lblk + offs;
-> -				map.m_len = es.es_len - offs;
-> -				delalloc = true;
-> -			}
-> -		}
-> -	} else if (flags & IOMAP_WRITE) {
-> +	if (flags & IOMAP_WRITE)
->  		ret = ext4_iomap_alloc(inode, &map, flags);
 
-FWIW you could even split non-buffered read and write into separate iomap
-ops and avoid this split... but that's a cleanup that can wait until
-after the main series lands.
 
-> -	} else {
-> +	else
->  		ret = ext4_map_blocks(NULL, inode, &map, 0);
-> -	}
->  
->  	if (ret < 0)
->  		return ret;
->  
->  	ext4_set_iomap(inode, iomap, &map, offset, length);
-> -	if (delalloc && iomap->type == IOMAP_HOLE)
-> -		iomap->type = IOMAP_DELALLOC;
->  
->  	return 0;
->  }
-> @@ -3682,6 +3640,74 @@ const struct iomap_ops ext4_iomap_ops = {
->  	.iomap_end		= ext4_iomap_end,
->  };
->  
-> +static bool ext4_iomap_is_delalloc(struct inode *inode,
-> +				   struct ext4_map_blocks *map)
-> +{
-> +	struct extent_status es;
-> +	ext4_lblk_t offset = 0, end = map->m_lblk + map->m_len - 1;
-> +
-> +	ext4_es_find_extent_range(inode, &ext4_es_is_delayed,
-> +				  map->m_lblk, end, &es);
-> +
-> +	if (!es.es_len || es.es_lblk > end)
-> +		return false;
-> +
-> +	if (es.es_lblk > map->m_lblk) {
-> +		map->m_len = es.es_lblk - map->m_lblk;
-> +		return false;
-> +	}
-> +
-> +	offset = map->m_lblk - es.es_lblk;
-> +	map->m_len = es.es_len - offset;
-> +
-> +	return true;
-> +}
-> +
-> +static int ext4_iomap_begin_report(struct inode *inode, loff_t offset,
-> +				   loff_t length, unsigned int flags,
-> +				   struct iomap *iomap, struct iomap *srcmap)
-> +{
-> +	int ret;
-> +	bool delalloc = false;
-> +	struct ext4_map_blocks map;
-> +	u8 blkbits = inode->i_blkbits;
-> +
-> +	if ((offset >> blkbits) > EXT4_MAX_LOGICAL_BLOCK)
-> +		return -EINVAL;
-> +
-> +	if (ext4_has_inline_data(inode)) {
-> +		ret = ext4_inline_data_iomap(inode, iomap);
-> +		if (ret != -EAGAIN) {
-> +			if (ret == 0 && offset >= iomap->length)
-> +				ret = -ENOENT;
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	/*
-> +	 * Calculate the first and last logical block respectively.
-> +	 */
-> +	map.m_lblk = offset >> blkbits;
-> +	map.m_len = min_t(loff_t, (offset + length - 1) >> blkbits,
-> +			  EXT4_MAX_LOGICAL_BLOCK) - map.m_lblk + 1;
-> +
-> +	ret = ext4_map_blocks(NULL, inode, &map, 0);
-> +	if (ret < 0)
-> +		return ret;
-> +	if (ret == 0)
-> +		delalloc = ext4_iomap_is_delalloc(inode, &map);
+> On Nov 4, 2019, at 5:58 PM, Bruce Fields <bfields@fieldses.org> wrote:
+>=20
+> On Mon, Nov 04, 2019 at 04:21:47PM +0000, Frank van der Linden wrote:
+>> On Mon, Nov 04, 2019 at 10:36:03AM -0500, Chuck Lever wrote:
+>>>=20
+>>> Following the server's local file systems' mount options seems like =
+a
+>>> good way to go. In particular, is there a need to expose user xattrs
+>>> on the server host, but prevent NFS clients' access to them? I can't
+>>> think of one.
+>>=20
+>> Ok, that sounds fine to me - I'll remove the user_xattr export flag,
+>> and we had already agreed to do away with the CONFIGs.
+>>=20
+>> That leaves one last item with regard to enabling support: the client =
+side
+>> mount option. I assume the [no]user_xattr option should work the same =
+as
+>> with other filesystems. What about the default setting?
+>=20
+> Just checking code for other filesystems quickly; if I understand =
+right:
+>=20
+> 	- ext4 has user_xattr and nouser_xattr options, but you get a
+> 	  deprecation warning if you try to use the latter;
+> 	- xfs doesn't support either option;
+> 	- cifs supports both, with xattr support the default.
+>=20
+> Not necessarily my call, but just for simplicity's sake, I'd probably
+> leave out the option and see if anybody complains.
 
-If you can tell that a mapping is delalloc from @inode and @map, how
-about pushing the ext4_iomap_is_delalloc call into ext4_set_iomap?
+Agree, I would leave it out to begin with. Anyone on linux-fsdevel,
+feel free to chime in here about why some other file systems have
+this mount option. History lessons welcome.
 
-Oh, humm, the _is_delalloc function isn't a predicate after all; it
-modifies @map.  Urrk.
 
---D
+>> Also, currently, my code does not fail the mount operation if user =
+xattrs
+>> are asked for, but the server does not support them. It just doesn't
+>> set NFS_CAP_XATTR for the server, and the xattr handler entry points
+>> eturn -EOPNOTSUPP, as they check for NFS_CAP_XATTR. What's the =
+preferred
+>> behavior there?
+>=20
+> getxattr(2) under ERRORS says:
+>=20
+> 	ENOTSUP
+> 	      Extended attributes are not supported by the filesystem,
+> 	      or  are disabled.
+>=20
+> so I'm guessing just erroring out is clearest.
 
-> +
-> +	ext4_set_iomap(inode, iomap, &map, offset, length);
-> +	if (delalloc && iomap->type == IOMAP_HOLE)
-> +		iomap->type = IOMAP_DELALLOC;
-> +
-> +	return 0;
-> +}
-> +
-> +const struct iomap_ops ext4_iomap_report_ops = {
-> +	.iomap_begin = ext4_iomap_begin_report,
-> +};
-> +
->  static int ext4_end_io_dio(struct kiocb *iocb, loff_t offset,
->  			    ssize_t size, void *private)
->  {
-> -- 
-> 2.20.1
-> 
+IMO on the client, we want getxattr failure behavior to be consistent =
+among:
+
+- A version of NFS that does not support xattrs at all (say, v3)
+
+- A version of NFS that can support them but doesn't (say, NFSv4.2 =
+before these patches)
+
+- A version of NFS that can support them, but the server doesn't
+
+- A version of NFS that can support them, a server that can support =
+them, but it's filesystem doesn't
+
+
+> I also see there's an EOPNOTSUPP return in the nouser_xattr case in
+> ext4_xattr_user_get.  (errno(3) says ENOTSUP and EOPNOTSUPP are the =
+same
+> value on Linux.)
+>=20
+> --b.
+
+--
+Chuck Lever
+chucklever@gmail.com
+
+
+
