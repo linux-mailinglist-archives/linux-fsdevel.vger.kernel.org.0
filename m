@@ -2,108 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49749EF327
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2019 03:01:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2333EF382
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2019 03:32:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729796AbfKECBV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Nov 2019 21:01:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47146 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729428AbfKECBV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Nov 2019 21:01:21 -0500
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2ED04214D9;
-        Tue,  5 Nov 2019 02:01:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572919279;
-        bh=CtYzEOLUJiJVw7LkU0ikWGBxXmc2ytwbSO6nB3S0oOQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=b/LIMVC7ijyBb7xmYOfvkI9tl8E1YcrM/cjAWP8uE09ctUtNTqIy5xr+keK3nXmER
-         a2oCO2mbOYu1sVyde0YD9M9X7Vc+NCTbtiEs5LFzVl7NuCwKtdX1Bo811XRYGa11AX
-         8gUS2AAwnzBpNglST9wgGDyDkUkPi0Pmskgn5b34=
-Date:   Mon, 4 Nov 2019 18:01:17 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, Kim Boojin <boojin.kim@samsung.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Satya Tangirala <satyat@google.com>,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH v5 3/9] block: blk-crypto for Inline Encryption
-Message-ID: <20191105015411.GB692@sol.localdomain>
-Mail-Followup-To: Christoph Hellwig <hch@infradead.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, Kim Boojin <boojin.kim@samsung.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Satya Tangirala <satyat@google.com>, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-References: <20191028072032.6911-1-satyat@google.com>
- <20191028072032.6911-4-satyat@google.com>
- <20191031175713.GA23601@infradead.org>
- <20191031205045.GG16197@mit.edu>
- <20191031212234.GA32262@infradead.org>
+        id S1729917AbfKECck (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Nov 2019 21:32:40 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:38842 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730423AbfKECcj (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 4 Nov 2019 21:32:39 -0500
+Received: by mail-qt1-f193.google.com with SMTP id p20so8943264qtq.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Nov 2019 18:32:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4urm9i82HUz7ctZoqeaJ+eDwbY+Le9I8/NmP0pY1rnA=;
+        b=RrEUUprScGGCs1P3lOuGj4a5RoiWbVbfDZ4+HpgRvyTXCYVlJAXQB+MYamRZtedVHY
+         f5+sxNxk2K5wkp7PjMMeD8HJWFAJHo3RtLYXlCrUl00LuH1GNIO+43+qB9VoRPGoMtd2
+         MhxxJSrVmcyNdw2dcAOft+ieDHmjkqcbx3xo51HlgztpG3sVxpkHZVlG9m+fgORfqdhb
+         XySrfwIPRDIjnSUQNZ9F7DSfvHrKSEQZxN/D+pZKoiFoN1H+0mMnDQ/zYc1NegbKO5Qw
+         fR/889wgnwS9AagFL4h4X1w9N0H+8w+Cg8HTo2zBy3ABWuxHxMoo0KJgJWvcNzShW5B1
+         QLlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4urm9i82HUz7ctZoqeaJ+eDwbY+Le9I8/NmP0pY1rnA=;
+        b=RQVTRQzelmu+0W1g3FyEQsfUyRdQyKxmJWdKB9aJtlVGul8avVjoteZ/N6IVXyGgk3
+         pJRvMldVRHTYwgHC0fTjqhQhvcDsjKx4HyWhS04+Ofpvfx8GG+N6NeZ31e1+73jvLkRG
+         1ZF8odx4f97UsVHn2J8P/4Ck0jrBC0anCQ8jKSbX6w1QQCbjNOfE9s46Bx/xGdM7XFRM
+         hUt3sfUmu2vTB6ghzfqBuGT1RDA+zqMcwqhds09cZP2zDDb2cm1ZnXCYcEZy81N17Rqe
+         d3Juiea4VUHDNHIHSfkfPp7vsDAcajC4KgW2V3O1Vce1NpZHlerdtc8lfnpVuj+NfE0d
+         FGjQ==
+X-Gm-Message-State: APjAAAVhiT/WHQNs4VybMvZXdDg4RPlPAR8ZgoIxh60ifUkHqQq+BhIZ
+        VZjf5BkHVLsmOewk1NHAJggQtA==
+X-Google-Smtp-Source: APXvYqzymmufBg1PiSWGxkk4f7LXgsvyOrzTuuRBB+uFmwh9UO+iQP682ubsI0h94l7eDVroneUqZg==
+X-Received: by 2002:a0c:9838:: with SMTP id c53mr25556531qvd.250.1572921156814;
+        Mon, 04 Nov 2019 18:32:36 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-162-113-180.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.180])
+        by smtp.gmail.com with ESMTPSA id t65sm8907102qkh.23.2019.11.04.18.32.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 04 Nov 2019 18:32:36 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1iRoe3-0002uH-K9; Mon, 04 Nov 2019 22:32:35 -0400
+Date:   Mon, 4 Nov 2019 22:32:35 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 07/18] infiniband: set FOLL_PIN, FOLL_LONGTERM via
+ pin_longterm_pages*()
+Message-ID: <20191105023235.GA11093@ziepe.ca>
+References: <20191103211813.213227-1-jhubbard@nvidia.com>
+ <20191103211813.213227-8-jhubbard@nvidia.com>
+ <20191104203346.GF30938@ziepe.ca>
+ <578c1760-7221-4961-9f7d-c07c22e5c259@nvidia.com>
+ <20191104205738.GH30938@ziepe.ca>
+ <1560fa00-0c2b-0f3b-091c-d628f021ce09@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191031212234.GA32262@infradead.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <1560fa00-0c2b-0f3b-091c-d628f021ce09@nvidia.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 02:22:34PM -0700, Christoph Hellwig wrote:
-> On Thu, Oct 31, 2019 at 04:50:45PM -0400, Theodore Y. Ts'o wrote:
-> > One of the reasons I really want this is so I (as an upstream
-> > maintainer of ext4 and fscrypt) can test the new code paths using
-> > xfstests on GCE, without needing special pre-release hardware that has
-> > the ICE support.
+On Mon, Nov 04, 2019 at 02:03:43PM -0800, John Hubbard wrote:
+> On 11/4/19 12:57 PM, Jason Gunthorpe wrote:
+> > On Mon, Nov 04, 2019 at 12:48:13PM -0800, John Hubbard wrote:
+> >> On 11/4/19 12:33 PM, Jason Gunthorpe wrote:
+> >> ...
+> >>>> diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
+> >>>> index 24244a2f68cc..c5a78d3e674b 100644
+> >>>> +++ b/drivers/infiniband/core/umem.c
+> >>>> @@ -272,11 +272,10 @@ struct ib_umem *ib_umem_get(struct ib_udata *udata, unsigned long addr,
+> >>>>  
+> >>>>  	while (npages) {
+> >>>>  		down_read(&mm->mmap_sem);
+> >>>> -		ret = get_user_pages(cur_base,
+> >>>> +		ret = pin_longterm_pages(cur_base,
+> >>>>  				     min_t(unsigned long, npages,
+> >>>>  					   PAGE_SIZE / sizeof (struct page *)),
+> >>>> -				     gup_flags | FOLL_LONGTERM,
+> >>>> -				     page_list, NULL);
+> >>>> +				     gup_flags, page_list, NULL);
+> >>>
+> >>> FWIW, this one should be converted to fast as well, I think we finally
+> >>> got rid of all the blockers for that?
+> >>>
+> >>
+> >> I'm not aware of any blockers on the gup.c end, anyway. The only broken thing we
+> >> have there is "gup remote + FOLL_LONGTERM". But we can do "gup fast + LONGTERM". 
 > > 
-> > Yeah, I could probably get one of those dev boards internally at
-> > Google, but they're a pain in the tuckus to use, and I'd much rather
-> > be able to have my normal test infrastructure using gce-xfstests and
-> > kvm-xfstests be able to test inline-crypto.  So in terms of CI
-> > testing, having the blk-crypto is really going to be helpful.
+> > I mean the use of the mmap_sem here is finally in a way where we can
+> > just delete the mmap_sem and use _fast
+> >  
+> > ie, AFAIK there is no need for the mmap_sem to be held during
+> > ib_umem_add_sg_table()
+> > 
+> > This should probably be a standalone patch however
+> > 
 > 
-> Implementing the support in qemu or a special device mapper mode
-> seems like a much better idea for that use case over carrying the
-> code in the block layer and severely bloating the per-I/O data
-> structure.
+> Yes. Oh, actually I guess the patch flow should be: change to 
+> get_user_pages_fast() and remove the mmap_sem calls, as one patch. And then change 
+> to pin_longterm_pages_fast() as the next patch. Otherwise, the internal fallback
+> from _fast to slow gup would attempt to take the mmap_sem (again) in the same
+> thread, which is not good. :)
 > 
+> Or just defer the change until after this series. Either way is fine, let me
+> know if you prefer one over the other.
+> 
+> The patch itself is trivial, but runtime testing to gain confidence that
+> it's solid is much harder. Is there a stress test you would recommend for that?
+> (I'm not promising I can quickly run it yet--my local IB setup is still nascent 
+> at best.)
 
-QEMU doesn't support UFS, but even if it did and we added the UFS v2.1 crypto
-support, it would preclude testing with anything other than a custom QEMU VM or
-a system with real inline encryption hardware.  gce-xfstests wouldn't work.  So
-it would be much harder to test inline encrypted I/O, so e.g. in practice it
-wouldn't be tested as part of the regular ext4 regression testing.
+If you make a patch we can probably get it tested, it is something
+we should do I keep forgetting about.
 
-The advantages of blk-crypto over a device mapper target like "dm-inlinecrypt"
-are (a) blk-crypto is much easier for userspace to use, and (b) blk-crypto
-allows upper layers to simply use inline encryption rather than have to
-implement encryption twice, once manually and once with inline encryption.
-
-It's true that as of this patchset, the only user of this stuff (fscrypt) still
-implements both I/O paths anyway.  But that's something that could change later
-once blk-crypto is ready for it, with longer IV support, O(1) keyslot lookups,
-and a way to configure whether hardware is used or not.  Satya is already
-looking into longer IV support, and I have a proposal for making the keyslot
-lookups O(1) using a hash table.
-
-I think that "Severely bloating the per-I/O data structure" is an exaggeration,
-since that it's only 32 bytes, and it isn't in struct bio directly but rather in
-struct bio_crypt_ctx...
-
-In any case, Satya, it might be a good idea to reorganize this patchset so that
-it first adds all logic that's needed for "real" inline encryption support
-(including the needed parts of blk-crypto.c), then adds the crypto API fallback
-as a separate patch.  That would separate the concerns more cleanly and make the
-patchset easier to review, and make it easier to make the fallback
-de-configurable or even remove it entirely if that turns out to be needed.
-
-- Eric
+Jason
