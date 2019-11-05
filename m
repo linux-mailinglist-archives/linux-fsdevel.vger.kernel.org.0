@@ -2,109 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCA71EF24C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2019 01:55:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60083EF268
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2019 02:03:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730123AbfKEAzD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Nov 2019 19:55:03 -0500
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:50890 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729925AbfKEAzA (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Nov 2019 19:55:00 -0500
-Received: from mr5.cc.vt.edu (mr5.cc.vt.edu [IPv6:2607:b400:92:8400:0:72:232:758b])
-        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id xA50sw46017165
-        for <linux-fsdevel@vger.kernel.org>; Mon, 4 Nov 2019 19:54:58 -0500
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-        by mr5.cc.vt.edu (8.14.7/8.14.7) with ESMTP id xA50srmX026868
-        for <linux-fsdevel@vger.kernel.org>; Mon, 4 Nov 2019 19:54:58 -0500
-Received: by mail-qk1-f197.google.com with SMTP id q125so1945698qka.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Nov 2019 16:54:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-transfer-encoding:date:message-id;
-        bh=f2xKui4jCV1oC4mz8c3C4oOoH3JHAT+nc4LWmlpw1MY=;
-        b=TVZyItYpd7OTqWyrCe8cek62161Heba/X+kmXSpy3D2Ybc8jYzxoTJavZFA5DA9Xdn
-         vHg9V/PCEaXxis3vEK85hIc5VVKybbr5B3OQO99OBjBUItalcmIAx7SbDEaMAcltZVEk
-         wJ+R326ktS7VuRNhQ5NMMYyBx03jgZe7X7VqCQy0FXNSsPtaLQtY/ZNTe1z5BxH8WvP8
-         GK5kcn3bikb5ofyE6u7Lub02HvQ0GoqhnX+TRsUz8r7PVgI3lDbxzbb/A35VcUTzeeIs
-         Oc/ihI3+lz9G/7DUocxTs02x+acvufOWvhWt7W0HNE594urei6ne3s4kX/spCE1Wcx9E
-         iHNg==
-X-Gm-Message-State: APjAAAXX+BVPvPtAddWiTwgU2MNZ+hzPVTQY2K1S5U7uOKoRGdK5Ihj6
-        fsRhFrLl10q/GfL7OesyHThvw519MTUMovcJab+3A/Riad0KzZcWqGAtR0Ba4qgHKMdoiX76xhm
-        tNuMoof4qX2Yi41wUXpmY0An4AllOYO/Y1suE
-X-Received: by 2002:a37:a7c6:: with SMTP id q189mr18281716qke.469.1572915293232;
-        Mon, 04 Nov 2019 16:54:53 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyrX9VI+c8WOT6M7oWIp4pyDtJDt5bkVm4lsJ+Pto7z9dB2TfD2fE/LTt42veVX3e6Xy+Pgiw==
-X-Received: by 2002:a37:a7c6:: with SMTP id q189mr18281700qke.469.1572915292941;
-        Mon, 04 Nov 2019 16:54:52 -0800 (PST)
-Received: from turing-police ([2601:5c0:c001:c9e1::359])
-        by smtp.gmail.com with ESMTPSA id q17sm14389538qtq.58.2019.11.04.16.54.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2019 16:54:51 -0800 (PST)
-From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
-X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+        id S1729978AbfKEBDS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Nov 2019 20:03:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54846 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728761AbfKEBDS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 4 Nov 2019 20:03:18 -0500
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C60232067D;
+        Tue,  5 Nov 2019 01:03:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572915797;
+        bh=4Jmct+axA8jAkXluFcFQI+uLkQTpqnvf/DA6hb5ReCI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nnl5cMFG8BKuRG8ENOvinMxVE3HupXrzgoCoDukHlYgCMGI8K0oFkbfYfvj8iwGMZ
+         BzncIGhzlSd8Tq4p78mCz6fMFe+r9sH1z08KjMRUBKDvvQhIRWVYb/8d92xKHoIJYQ
+         zdX4RS+7YST5kTD4rUt+3j18FC1y0Lf5NWHcquyk=
+Date:   Mon, 4 Nov 2019 17:03:15 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
 To:     Christoph Hellwig <hch@infradead.org>
-Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Jan Kara <jack@suse.cz>, "Theodore Ts'o" <tytso@mit.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, linux-xfs@vger.kernel.org,
-        Jan Kara <jack@suse.com>, Arnd Bergmann <arnd@arndb.de>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-arch@vger.kernel.org
-Subject: Re: [PATCH 10/10] errno.h: Provide EFSCORRUPTED for everybody
-In-Reply-To: <20191105003306.GA22791@infradead.org>
-References: <20191104014510.102356-1-Valdis.Kletnieks@vt.edu> <20191104014510.102356-11-Valdis.Kletnieks@vt.edu>
- <20191105003306.GA22791@infradead.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1572915290_14215P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 04 Nov 2019 19:54:50 -0500
-Message-ID: <183873.1572915290@turing-police>
+Cc:     Satya Tangirala <satyat@google.com>, linux-scsi@vger.kernel.org,
+        Kim Boojin <boojin.kim@samsung.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-block@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v5 7/9] fscrypt: add inline encryption support
+Message-ID: <20191105010315.GA692@sol.localdomain>
+Mail-Followup-To: Christoph Hellwig <hch@infradead.org>,
+        Satya Tangirala <satyat@google.com>, linux-scsi@vger.kernel.org,
+        Kim Boojin <boojin.kim@samsung.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20191028072032.6911-1-satyat@google.com>
+ <20191028072032.6911-8-satyat@google.com>
+ <20191031183217.GF23601@infradead.org>
+ <20191031202125.GA111219@gmail.com>
+ <20191031212103.GA6244@infradead.org>
+ <20191031222500.GB111219@gmail.com>
+ <20191105001554.GA24056@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191105001554.GA24056@infradead.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---==_Exmh_1572915290_14215P
-Content-Type: text/plain; charset=us-ascii
+On Mon, Nov 04, 2019 at 04:15:54PM -0800, Christoph Hellwig wrote:
+> > I don't think combining these things is a good idea because it would restrict
+> > the use of inline encryption to filesystems that allow IV_INO_LBLK_64 encryption
+> > policies, i.e. filesystems that have stable inode numbers, 32-bit inodes, and
+> > 32-bit file logical block numbers.
+> > 
+> > The on-disk format (i.e. the type of encryption policy chosen) and the
+> > implementation (inline or filesystem-layer crypto) are really two separate
+> > things.  This was one of the changes in v4 => v5 of this patchset; these two
+> > things used to be conflated but now they are separate.  Now you can use inline
+> > encryption with the existing fscrypt policies too.
+> > 
+> > We could use two separate SB_* flags, like SB_INLINE_CRYPT and
+> > SB_IV_INO_LBLK_64_SUPPORT.
+> 
+> Yes, I think that is a good idea.
+> 
+> > However, the ->has_stable_inodes() and
+> > ->get_ino_and_lblk_bits() methods are nice because they separate the filesystem
+> > properties from the question of "is this encryption policy supported".
+> > Declaring the filesystem properties is easier to do because it doesn't require
+> > any fscrypt-specific knowledge.  Also, fs/crypto/ could use these properties in
+> > different ways in the future, e.g. if another IV generation scheme is added.
+> 
+> I don't really like writing up method boilerplates for something that
+> is a simple boolean flag.
 
-On Mon, 04 Nov 2019 16:33:06 -0800, Christoph Hellwig said:
-> On Sun, Nov 03, 2019 at 08:45:06PM -0500, Valdis Kletnieks wrote:
-> > There's currently 6 filesystems that have the same #define. Move it
-> > into errno.h so it's defined in just one place.
->
-> And 4 out of 6 also define EFSBADCRC, so please lift that as well.
+fs/crypto/ uses ->has_stable_inodes() and ->get_ino_and_lblk_bits() to print an
+appropriate error message.  If we changed it to a simple flag we'd have to print
+a less useful error message.  Also, people are basically guaranteed to not
+understand what "SB_IV_INO_LBLK_64_SUPPORT" means exactly, and are likely to
+copy-and-paste it incorrectly when adding fscrypt support to a new filesystem.
+Also it would make it more difficult to add other fscrypt IV generation schemes
+in the future as we'd then need to add another sb flag (e.g. SB_IV_INO_LBLK_128)
+and make filesystem-specific changes, rather than change fs/crypto/ only.
 
-Will do so in a separate patch shortly.
+So personally I'd prefer to keep ->has_stable_inodes() and
+->get_ino_and_lblk_bits() for now.
 
+Replacing ->inline_crypt_enabled() with SB_INLINE_CRYPT makes much more sense
+though.
 
---==_Exmh_1572915290_14215P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.9.0 11/07/2018
-
-iQIVAwUBXcDIWQdmEQWDXROgAQLCeRAAuaK/m71WLPW3IHgW8r5L9+3+x+9uaM3q
-1xF50a4RrgesQOcgCjLxlCHEj7RzckAn1cAh8KCEfckr5crfRHSqOkSop9jE5A4X
-BG71oLoyeYpSB1euVq/wxyUk7pk23uB3YfoPY3GD/zNUUxinrXRcc5AIBake1wfX
-1tuIjSwBgO6HILMF7PKK+ETFDGBDXKUfzep/1ooWpKYzqbMyLkrd5iYQy5a9Fy3r
-wbIOv0vg1dyMa3rcpFO6XKieD3yZkPO42lYIu6Te1wFnykmkCpgkMaOGP9/HWIPP
-vkm2vDMS7gbWWYgbs2k0IsKKKTjhO+sapW3QbYNnxYEBgwYaIfaKhJGpqWQ6qoqR
-Lr2OQWp/xv+g6bKr23kdXM+Iz8i6m38gl0LPwCa0K5I1WHSbelWoRniJ41jRcVeW
-GPr6Hu+CZxD0nYigQV7AXFnlk2E8X525kiTffPz+KtMpUS8VzaSCMkc7GQMMdPbI
-bZD328DLengZVicm271CUIiVhHvRD8tzw/6Z3UyM9lxCCjtkpFQI+ERMPATGTT/D
-hwZmJzEj5esJYzs+PyEDt/d7pA0kzpW0XObEjX7apDgMWXWk7WmczJPPJENH6lVw
-ULNeg4s+MlG6qt3eiC8+DPM6MxQtyen9NaE90UtCHunhRxt6tZSzbGSuHRYVWCdQ
-9OgZEz7s3DI=
-=W6JA
------END PGP SIGNATURE-----
-
---==_Exmh_1572915290_14215P--
+- Eric
