@@ -2,107 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14170EF3D1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2019 04:12:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B41C1EF42B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2019 04:43:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729808AbfKEDM0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Nov 2019 22:12:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36692 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729543AbfKEDMZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Nov 2019 22:12:25 -0500
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55C0D206B8;
-        Tue,  5 Nov 2019 03:12:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572923544;
-        bh=hCqiCSjlrDhL5SGAV3AMEdP6Wu47sW0wJnkXEfvsLDA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ri2wHRty9kxlKC9gQp5N8RoTQPWUoA55ALYg1PirNxKLDJn3ZgT/m/zKOqgfEIUqm
-         Ua2KFn6GvKBaanq+gHvxNHv86uoy/TSVumd9fbUnuZNJrrygfaLQn9RVQTUVh3s+Tu
-         TNbhm3BZI6egc58lOzR1Oc8dCl+b9DOCQFLY3J+w=
-Date:   Mon, 4 Nov 2019 19:12:22 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Satya Tangirala <satyat@google.com>, linux-scsi@vger.kernel.org,
-        Kim Boojin <boojin.kim@samsung.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-block@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 7/9] fscrypt: add inline encryption support
-Message-ID: <20191105031222.GE692@sol.localdomain>
-Mail-Followup-To: Christoph Hellwig <hch@infradead.org>,
-        Satya Tangirala <satyat@google.com>, linux-scsi@vger.kernel.org,
-        Kim Boojin <boojin.kim@samsung.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20191028072032.6911-1-satyat@google.com>
- <20191028072032.6911-8-satyat@google.com>
- <20191031183217.GF23601@infradead.org>
- <20191031202125.GA111219@gmail.com>
- <20191031212103.GA6244@infradead.org>
+        id S1730346AbfKEDna (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Nov 2019 22:43:30 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6150 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729711AbfKEDn3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 4 Nov 2019 22:43:29 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 800408998B034BFB165D;
+        Tue,  5 Nov 2019 11:43:25 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 5 Nov 2019
+ 11:43:20 +0800
+Subject: Re: [PATCH 10/10] errno.h: Provide EFSCORRUPTED for everybody
+To:     Valdis Kletnieks <valdis.kletnieks@vt.edu>
+CC:     "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, <linux-xfs@vger.kernel.org>,
+        Jan Kara <jack@suse.com>, Arnd Bergmann <arnd@arndb.de>,
+        <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        <linux-kernel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
+        <linux-ext4@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-arch@vger.kernel.org>
+References: <20191104014510.102356-1-Valdis.Kletnieks@vt.edu>
+ <20191104014510.102356-11-Valdis.Kletnieks@vt.edu>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <5c441427-7e65-fcae-3518-eb37cea5f875@huawei.com>
+Date:   Tue, 5 Nov 2019 11:43:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191031212103.GA6244@infradead.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191104014510.102356-11-Valdis.Kletnieks@vt.edu>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 02:21:03PM -0700, Christoph Hellwig wrote:
-> > > 
-> > > Btw, I'm not happy about the 8-byte IV assumptions everywhere here.
-> > > That really should be a parameter, not hardcoded.
-> > 
-> > To be clear, the 8-byte IV assumption doesn't really come from fs/crypto/, but
-> > rather in what the blk-crypto API provides.  If blk-crypto were to provide
-> > longer IV support, fs/crypto/ would pretty easily be able to make use of it.
+On 2019/11/4 9:45, Valdis Kletnieks wrote:
+> There's currently 6 filesystems that have the same #define. Move it
+> into errno.h so it's defined in just one place.
 > 
-> That's what I meant - we hardcode the value in fscrypt.  Instead we need
-> to expose the size from blk-crypt and check for it.
-> 
-> > 
-> > (And if IVs >= 24 bytes were supported and we added AES-128-CBC-ESSIV and
-> > Adiantum support to blk-crypto.c, then inline encryption would be able to do
-> > everything that the existing filesystem-layer contents encryption can do.)
-> > 
-> > Do you have anything in mind for how to make the API support longer IVs in a
-> > clean way?  Are you thinking of something like:
-> > 
-> > 	#define BLK_CRYPTO_MAX_DUN_SIZE	24
-> > 
-> > 	u8 dun[BLK_CRYPTO_MAX_DUN_SIZE];
-> > 	int dun_size;
-> > 
-> > We do have to perform arithmetic operations on it, so a byte array would make it
-> > ugly and slower, but it should be possible...
-> 
-> Well, we could make it an array of u64s, which means we can do all the
-> useful arithmetics on components on one of them.  But I see the point,
-> this adds significant complexity for no real short term gain, and we
-> should probably postponed it until needed.  Maybe just document the
-> assumptions a little better.
+> Signed-off-by: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>
+> Acked-by: Darrick J. Wong <darrick.wong@oracle.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Acked-by: Theodore Ts'o <tytso@mit.edu>
 
-Just in case it's not obvious to anyone, I should also mention that being
-limited to specifying a 64-bit DUN doesn't prevent hardware that accepts a
-longer IV (e.g. 128 bits) from being used.  It would just be a matter of
-zero-padding the IV in the driver rather than in hardware.
+>  fs/erofs/internal.h              | 2 --
 
-The actual limitation we're talking about here is in the range of IVs that can
-be specified.  A 64-bit DUN only allows the first 64 bits of the IV to be
-nonzero.  That works for fscrypt in all cases except DIRECT_KEY policies, and it
-would work for dm-crypt using the usual dm-crypt IV generator (plain64).
+>  fs/f2fs/f2fs.h                   | 1 -
 
-But for inline encryption to be compatible with DIRECT_KEY fscrypt policies or
-with certain other dm-crypt IV generators, we'd need the ability to specify more
-IV bits.
+Acked-by: Chao Yu <yuchao0@huawei.com>
 
-- Eric
+Thanks,
