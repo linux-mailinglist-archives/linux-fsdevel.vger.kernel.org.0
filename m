@@ -2,91 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEC48F078B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2019 22:00:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F32A6F07D9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2019 22:11:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729724AbfKEVAv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Nov 2019 16:00:51 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41970 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729399AbfKEVAv (ORCPT
+        id S1729871AbfKEVLK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Nov 2019 16:11:10 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40644 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725806AbfKEVLJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Nov 2019 16:00:51 -0500
-Received: by mail-pg1-f196.google.com with SMTP id l3so15318642pgr.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Nov 2019 13:00:51 -0800 (PST)
+        Tue, 5 Nov 2019 16:11:09 -0500
+Received: by mail-pf1-f195.google.com with SMTP id r4so16837582pfl.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Nov 2019 13:11:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=Nt3SLKHMKobpRywSNVwbpv8AwQhfDeZr5YI7OOdkAIs=;
-        b=e7TrStncNCzsbjR1RNNssue+KRAXg0cIf+2YUOc8a9bEstO6nMlR0nXVb8DH5rnhew
-         c+oh7zl7BDiuj3NnLnyyBk9L+v6c1KgTfdlyIAF2Qj8KAgO9fgKD71kzUjm1UkArhE3d
-         5Nwkn+NmrxjN20i730wYOW0tmLlrlrMS9SKh7/QMrapKnBqvAcRfdftaaLy8/bC96i4m
-         O1CagTJWoBqN8MOOxeZWTmgZtkyizTGcRb3FDAXcrT0SJArMCrwFIeNnFGlZl7LjQuDD
-         EAHtqzInMNItmFACYD3oJ5f1sNxXd4KDcjIkHkq9VJ4AGNvUydZiLqqkoTTrVtEiEB5Z
-         Mw+Q==
+        bh=BdIEF8K53YWXxsclPzxQcvlGt89ec6BCfGDQwCysi6M=;
+        b=Cf35WTH0kvIkkKNntFZTDAVSl+gDolMkqXbvBaDVXymCbDxuCbql06STsRiJ+ounfQ
+         Ju9S0HokQCF3ouOkyRn9w7CfKKiKbYo5yoZLZgzqR52GDErVINWUpKCI4B/Eun5bD3rA
+         WroEqbWD20BpC5fznAKstWb8Y1oqIQgR1CwbspFDOWRXJUji153GlVa9YfY5VTN1OcfK
+         kM5z3koEpfUl2cveS0uEX+ekeayg8iKyryPiPqkagd8cGMmBATmnmxIyhjaK+zZ9WIQu
+         GvHt0Odl8H2TKwVYqfMLrV9zqAcCdSOUSufYr2JV2vCB0leh86rCl8oCy8eYRncBRnlu
+         QVCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Nt3SLKHMKobpRywSNVwbpv8AwQhfDeZr5YI7OOdkAIs=;
-        b=F8Ubzo+sn1b5/SxHX4YLeEXHtR2JMCI/N0amKDGp1zr0lRw89V6mtLNIVcuqPFQQj6
-         o4IhyWm56SoK5/dze0uSgbwnZw5uQ4dj1sjgJhUWQGNt5+ccZ+UmpNg83eZiFRVIOGAT
-         ipp2MbI90ec5aVfQqAEraRRKawuoxibDub/yb78pKKudq/ErrIAZ9D02bNZdAOma2IzQ
-         crM/9de/orZHnvNeTr5gi5R0j6PM7Kwxg8QRjQlWfKxQrdSFDck8K2BS3oiluUJ+ZRyh
-         CtFL/nlfqY9XBLztzRdZ4Px17BsW1VLrrocARMNlurFus3ZYw88pIDtyumeCaaUq5mHZ
-         kEyw==
-X-Gm-Message-State: APjAAAV7qL7rsvcS84YrwyohLzcMbnNWMvKcnAgwKe0Fs6fnkYn0IlUW
-        H8LGwra93HWyYRT993fViglP
-X-Google-Smtp-Source: APXvYqyGSj0xcWMi6VxEtPzU2CuntPx/T6c3hBML1pNsvTHKcE2DnjwtMEgAUCnVxzV8Tk7oczT4EA==
-X-Received: by 2002:a62:7c52:: with SMTP id x79mr39555174pfc.18.1572987651049;
-        Tue, 05 Nov 2019 13:00:51 -0800 (PST)
+        bh=BdIEF8K53YWXxsclPzxQcvlGt89ec6BCfGDQwCysi6M=;
+        b=ggFRRdxrMjV8bKW7Pa1of+bRnKEIBK1Lbj5X79q5rbrLWU8pV9Dvo3xwIQOfUtzvkM
+         sr+h4BRK1t5q4yI7Lv6Pcqasg6pJ3bhaHm/CrEPbJXnlhAHRPmGWwksl3OwMdXv0Xswx
+         IYIlKJ/o4w5ftwzXQLgPnlix+UxAF1Tq9Iki417WrjqHZMg4vTARl6JQL13eFrNqRprA
+         chJAFt6G13oYdtP/wQQUq+vdZw7QWDO+G9+lK7TKGDPo1qTJ1P8lOvjULhD7yL1q7kPb
+         GZJgoUSgQTKcCb/UbK1nohBneUAlepdZ6lR0Mu9XrzayMc1yo4CaVOfwO1qaymerIkd+
+         UsSQ==
+X-Gm-Message-State: APjAAAV/aeqZs3kqHZQUmCyKTP/FZn2eVB24AJHuk5ZWrLMR1BvSEmJ9
+        nyuTVWIchlMfi/UeKycE0y1p
+X-Google-Smtp-Source: APXvYqwC6OvB1VmycMnaGfR7F4uavyr51d/1VLIcps5IKGn8aRQARfP7Ldc6kuT/25HvbNRfzPi1Kw==
+X-Received: by 2002:a63:541e:: with SMTP id i30mr38656865pgb.130.1572988266553;
+        Tue, 05 Nov 2019 13:11:06 -0800 (PST)
 Received: from bobrowski ([110.232.114.101])
-        by smtp.gmail.com with ESMTPSA id y11sm24666407pfq.1.2019.11.05.13.00.48
+        by smtp.gmail.com with ESMTPSA id s18sm5173866pfs.20.2019.11.05.13.11.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2019 13:00:50 -0800 (PST)
-Date:   Wed, 6 Nov 2019 08:00:44 +1100
+        Tue, 05 Nov 2019 13:11:05 -0800 (PST)
+Date:   Wed, 6 Nov 2019 08:10:59 +1100
 From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     Jan Kara <jack@suse.cz>, adilger.kernel@dilger.ca,
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     tytso@mit.edu, jack@suse.cz, adilger.kernel@dilger.ca,
         linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         riteshh@linux.ibm.com
-Subject: Re: [PATCH v7 11/11] ext4: introduce direct I/O write using iomap
- infrastructure
-Message-ID: <20191105210043.GC1739@bobrowski>
+Subject: Re: [PATCH v7 08/11] ext4: move inode extension/truncate code out
+ from ->iomap_end() callback
+Message-ID: <20191105211058.GD1739@bobrowski>
 References: <cover.1572949325.git.mbobrowski@mbobrowski.org>
- <e55db6f12ae6ff017f36774135e79f3e7b0333da.1572949325.git.mbobrowski@mbobrowski.org>
- <20191105135932.GN22379@quack2.suse.cz>
- <20191105203158.GA1739@bobrowski>
- <20191105205303.GA26959@mit.edu>
+ <d41ffa26e20b15b12895812c3cad7c91a6a59bc6.1572949325.git.mbobrowski@mbobrowski.org>
+ <20191105154950.GC15203@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191105205303.GA26959@mit.edu>
+In-Reply-To: <20191105154950.GC15203@magnolia>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 05, 2019 at 03:53:03PM -0500, Theodore Y. Ts'o wrote:
-> On Wed, Nov 06, 2019 at 07:32:00AM +1100, Matthew Bobrowski wrote:
-> > > Otherwise you would write out and invalidate too much AFAICT - the 'offset'
-> > > is position just before we fall back to buffered IO. Otherwise this hunk
-> > > looks good to me.
+On Tue, Nov 05, 2019 at 07:49:50AM -0800, Darrick J. Wong wrote:
+> On Tue, Nov 05, 2019 at 11:01:51PM +1100, Matthew Bobrowski wrote:
+> > In preparation for implementing the iomap direct I/O modifications,
+> > the inode extension/truncate code needs to be moved out from the
+> > ext4_iomap_end() callback. For direct I/O, if the current code
+> > remained, it would behave incorrrectly. Updating the inode size prior
+> > to converting unwritten extents would potentially allow a racing
+> > direct I/O read to find unwritten extents before being converted
+> > correctly.
 > > 
-> > Er, yes. That's right, it should rather be 'err' instead or else we
-> > would write/invalidate too much. I actually had this originally, but I
-> > must've muddled it up while rewriting this patch on my other computer.
+> > The inode extension/truncate code now resides within a new helper
+> > ext4_handle_inode_extension(). This function has been designed so that
+> > it can accommodate for both DAX and direct I/O extension/truncate
+> > operations.
 > > 
-> > Thanks for picking that up!
+> > Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
+> > Reviewed-by: Jan Kara <jack@suse.cz>
+> > Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
+> > ---
+> >  fs/ext4/file.c  | 89 ++++++++++++++++++++++++++++++++++++++++++++++++-
+> >  fs/ext4/inode.c | 48 +-------------------------
+> >  2 files changed, 89 insertions(+), 48 deletions(-)
+> > 
+> > diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> > index 440f4c6ba4ee..ec54fec96a81 100644
+> > --- a/fs/ext4/file.c
+> > +++ b/fs/ext4/file.c
+> > @@ -33,6 +33,7 @@
+> >  #include "ext4_jbd2.h"
+> >  #include "xattr.h"
+> >  #include "acl.h"
+> > +#include "truncate.h"
+> >  
+> >  static bool ext4_dio_supported(struct inode *inode)
+> >  {
+> > @@ -234,12 +235,95 @@ static ssize_t ext4_write_checks(struct kiocb *iocb, struct iov_iter *from)
+> >  	return iov_iter_count(from);
+> >  }
+> >  
+> > +static ssize_t ext4_handle_inode_extension(struct inode *inode, loff_t offset,
+> > +					   ssize_t written, size_t count)
+> > +{
+> > +	handle_t *handle;
+> > +	bool truncate = false;
+> > +	u8 blkbits = inode->i_blkbits;
+> > +	ext4_lblk_t written_blk, end_blk;
+> > +
+> > +	/*
+> > +	 * Note that EXT4_I(inode)->i_disksize can get extended up to
+> > +	 * inode->i_size while the I/O was running due to writeback of delalloc
+> > +	 * blocks. But, the code in ext4_iomap_alloc() is careful to use
+> > +	 * zeroed/unwritten extents if this is possible; thus we won't leave
+> > +	 * uninitialized blocks in a file even if we didn't succeed in writing
+> > +	 * as much as we intended.
+> > +	 */
+> > +	WARN_ON_ONCE(i_size_read(inode) < EXT4_I(inode)->i_disksize);
+> > +	if (offset + count <= EXT4_I(inode)->i_disksize) {
+> > +		/*
+> > +		 * We need to ensure that the inode is removed from the orphan
+> > +		 * list if it has been added prematurely, due to writeback of
+> > +		 * delalloc blocks.
+> > +		 */
+> > +		if (!list_empty(&EXT4_I(inode)->i_orphan) && inode->i_nlink) {
+> > +			handle = ext4_journal_start(inode, EXT4_HT_INODE, 2);
+> > +
+> > +			if (IS_ERR(handle)) {
+> > +				ext4_orphan_del(NULL, inode);
+> > +				return PTR_ERR(handle);
+> > +			}
+> > +
+> > +			ext4_orphan_del(handle, inode);
+> > +			ext4_journal_stop(handle);
 > 
-> I can fix that up in my tree, unless there are any other changes that
-> we need to make.
+> I keep seeing this chunk (and the ext4_orphan_add chunk) bouncing around
+> through this patchset, which causes me to wonder -- would it be useful
+> to refactor these into small helpers?  Or is it really just the same two
+> orphan_add/del chunks bouncing around multiple places?
 
-If you could, that would be super awesome as I don't really see
-anything else changing in this series. I'll probably send through some
-minor optimisations/refactoring cleanups after this series lands, but
-that can come at a later point.
+No, you're right. This and the other pattern is sprayed throughout the
+patchset, but also possibly throughout some of the other chunks of
+EXT4 code (I think), which I haven't touched here. So, my thought
+process was to actually introduce a small separate cleanup patchset
+that does exactly that i.e. moves out these duplicate chunks
+orphan_add/orphan_del into small helpers.
 
 /M
