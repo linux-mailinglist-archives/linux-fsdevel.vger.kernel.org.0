@@ -2,129 +2,260 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5CDFF03BF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2019 18:05:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19663F03C2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2019 18:05:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389908AbfKERFV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Nov 2019 12:05:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43254 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388958AbfKERFV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Nov 2019 12:05:21 -0500
-Received: from localhost (unknown [62.119.166.9])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2390340AbfKERF3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Nov 2019 12:05:29 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:20276 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2390304AbfKERF2 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 5 Nov 2019 12:05:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572973527;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/eDR/0pirtNuiOuE989IpBGTNQbLyeeJPfKz3K19tXI=;
+        b=WD7JqZp6yYBecwXsE2He/jh+7+4OW4WS4hy2F1U35FO+uCxK/omPevD1bz4jT0ERFxjbWs
+        Gs448ZMoSvVJICMKZIUi3h++pbXgUlcxRbRCcjEpoRYuGvYaYW5iVdMfqgrENmROoVs34g
+        kT2O1qR9duGlv8cj3im6IRXR9tCFa3w=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-173-_rGDOizNNZ2PwgnDIWN6nw-1; Tue, 05 Nov 2019 12:05:23 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46DDE2087E;
-        Tue,  5 Nov 2019 17:05:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572973520;
-        bh=jTO8reKcT4C5kCnNyyvTf8GTELx7dazG4WitwpYdsJE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HeBSfHogBHebaNjOYUBn6YSGujIWYFpHH6SK1/G8DvZ0qXliA7nwXkgqvwd+LvWrl
-         C4JGrsF4eNG0U2wVB0iEpgseqXIB4ewsamhCfis3ZYbB1m43kZXPCZE3zpJ5qUOi0b
-         2vLj3xuNAgfGmmG9t3FtgOqvC+uzwLvY5Oa09w4Y=
-Date:   Tue, 5 Nov 2019 18:05:15 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Valdis Kletnieks <valdis.kletnieks@vt.edu>
-Cc:     linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 01/10] staging: exfat: Clean up return codes -
- FFS_FORMATERR
-Message-ID: <20191105170515.GA2788121@kroah.com>
-References: <20191104014510.102356-1-Valdis.Kletnieks@vt.edu>
- <20191104014510.102356-2-Valdis.Kletnieks@vt.edu>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AEC9C107ACC4;
+        Tue,  5 Nov 2019 17:05:22 +0000 (UTC)
+Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1B16119C4F;
+        Tue,  5 Nov 2019 17:05:22 +0000 (UTC)
+Date:   Tue, 5 Nov 2019 12:05:20 -0500
+From:   Brian Foster <bfoster@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 20/28] xfs: kill background reclaim work
+Message-ID: <20191105170520.GD28493@bfoster>
+References: <20191031234618.15403-1-david@fromorbit.com>
+ <20191031234618.15403-21-david@fromorbit.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20191031234618.15403-21-david@fromorbit.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: _rGDOizNNZ2PwgnDIWN6nw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191104014510.102356-2-Valdis.Kletnieks@vt.edu>
-User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Nov 03, 2019 at 08:44:57PM -0500, Valdis Kletnieks wrote:
-> Convert FFS_FORMATERR to -EFSCORRUPTED
-> 
-> Signed-off-by: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>
+On Fri, Nov 01, 2019 at 10:46:10AM +1100, Dave Chinner wrote:
+> From: Dave Chinner <dchinner@redhat.com>
+>=20
+> This function is now entirely done by kswapd, so we don't need the
+> worker thread to do async reclaim anymore.
+>=20
+> Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 > ---
->  drivers/staging/exfat/exfat.h      | 3 ++-
->  drivers/staging/exfat/exfat_core.c | 8 ++++----
->  2 files changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
-> index acb73f47a253..4f9ba235d967 100644
-> --- a/drivers/staging/exfat/exfat.h
-> +++ b/drivers/staging/exfat/exfat.h
-> @@ -30,6 +30,8 @@
->  #undef DEBUG
->  #endif
->  
-> +#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
-> +
->  #define DENTRY_SIZE		32	/* dir entry size */
->  #define DENTRY_SIZE_BITS	5
->  
-> @@ -209,7 +211,6 @@ static inline u16 get_row_index(u16 i)
->  /* return values */
->  #define FFS_SUCCESS             0
->  #define FFS_MEDIAERR            1
-> -#define FFS_FORMATERR           2
->  #define FFS_MOUNTED             3
->  #define FFS_NOTMOUNTED          4
->  #define FFS_ALIGNMENTERR        5
-> diff --git a/drivers/staging/exfat/exfat_core.c b/drivers/staging/exfat/exfat_core.c
-> index b23fbf3ebaa5..e90b54a17150 100644
-> --- a/drivers/staging/exfat/exfat_core.c
-> +++ b/drivers/staging/exfat/exfat_core.c
-> @@ -573,7 +573,7 @@ s32 load_alloc_bitmap(struct super_block *sb)
->  			return FFS_MEDIAERR;
->  	}
->  
-> -	return FFS_FORMATERR;
-> +	return -EFSCORRUPTED;
+
+Reviewed-by: Brian Foster <bfoster@redhat.com>
+
+>  fs/xfs/xfs_icache.c | 44 --------------------------------------------
+>  fs/xfs/xfs_icache.h |  2 --
+>  fs/xfs/xfs_mount.c  |  2 --
+>  fs/xfs/xfs_mount.h  |  2 --
+>  fs/xfs/xfs_super.c  | 11 +----------
+>  5 files changed, 1 insertion(+), 60 deletions(-)
+>=20
+> diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
+> index 189cf423fe8f..7e175304e146 100644
+> --- a/fs/xfs/xfs_icache.c
+> +++ b/fs/xfs/xfs_icache.c
+> @@ -138,44 +138,6 @@ xfs_inode_free(
+>  =09__xfs_inode_free(ip);
 >  }
->  
->  void free_alloc_bitmap(struct super_block *sb)
-> @@ -3016,7 +3016,7 @@ s32 fat16_mount(struct super_block *sb, struct pbr_sector_t *p_pbr)
->  	struct bd_info_t *p_bd = &(EXFAT_SB(sb)->bd_info);
->  
->  	if (p_bpb->num_fats == 0)
-> -		return FFS_FORMATERR;
-> +		return -EFSCORRUPTED;
->  
->  	num_root_sectors = GET16(p_bpb->num_root_entries) << DENTRY_SIZE_BITS;
->  	num_root_sectors = ((num_root_sectors - 1) >>
-> @@ -3078,7 +3078,7 @@ s32 fat32_mount(struct super_block *sb, struct pbr_sector_t *p_pbr)
->  	struct bd_info_t *p_bd = &(EXFAT_SB(sb)->bd_info);
->  
->  	if (p_bpb->num_fats == 0)
-> -		return FFS_FORMATERR;
-> +		return -EFSCORRUPTED;
->  
->  	p_fs->sectors_per_clu = p_bpb->sectors_per_clu;
->  	p_fs->sectors_per_clu_bits = ilog2(p_bpb->sectors_per_clu);
-> @@ -3157,7 +3157,7 @@ s32 exfat_mount(struct super_block *sb, struct pbr_sector_t *p_pbr)
->  	struct bd_info_t *p_bd = &(EXFAT_SB(sb)->bd_info);
->  
->  	if (p_bpb->num_fats == 0)
-> -		return FFS_FORMATERR;
-> +		return -EFSCORRUPTED;
->  
->  	p_fs->sectors_per_clu = 1 << p_bpb->sectors_per_clu_bits;
->  	p_fs->sectors_per_clu_bits = p_bpb->sectors_per_clu_bits;
+> =20
+> -/*
+> - * Queue a new inode reclaim pass if there are reclaimable inodes and th=
+ere
+> - * isn't a reclaim pass already in progress. By default it runs every 5s=
+ based
+> - * on the xfs periodic sync default of 30s. Perhaps this should have it'=
+s own
+> - * tunable, but that can be done if this method proves to be ineffective=
+ or too
+> - * aggressive.
+> - */
+> -static void
+> -xfs_reclaim_work_queue(
+> -=09struct xfs_mount        *mp)
+> -{
+> -
+> -=09rcu_read_lock();
+> -=09if (radix_tree_tagged(&mp->m_perag_tree, XFS_ICI_RECLAIM_TAG)) {
+> -=09=09queue_delayed_work(mp->m_reclaim_workqueue, &mp->m_reclaim_work,
+> -=09=09=09msecs_to_jiffies(xfs_syncd_centisecs / 6 * 10));
+> -=09}
+> -=09rcu_read_unlock();
+> -}
+> -
+> -/*
+> - * This is a fast pass over the inode cache to try to get reclaim moving=
+ on as
+> - * many inodes as possible in a short period of time. It kicks itself ev=
+ery few
+> - * seconds, as well as being kicked by the inode cache shrinker when mem=
+ory
+> - * goes low. It scans as quickly as possible avoiding locked inodes or t=
+hose
+> - * already being flushed, and once done schedules a future pass.
+> - */
+> -void
+> -xfs_reclaim_worker(
+> -=09struct work_struct *work)
+> -{
+> -=09struct xfs_mount *mp =3D container_of(to_delayed_work(work),
+> -=09=09=09=09=09struct xfs_mount, m_reclaim_work);
+> -
+> -=09xfs_reclaim_inodes(mp, SYNC_TRYLOCK);
+> -=09xfs_reclaim_work_queue(mp);
+> -}
+> -
+>  static void
+>  xfs_perag_set_reclaim_tag(
+>  =09struct xfs_perag=09*pag)
+> @@ -192,9 +154,6 @@ xfs_perag_set_reclaim_tag(
+>  =09=09=09   XFS_ICI_RECLAIM_TAG);
+>  =09spin_unlock(&mp->m_perag_lock);
+> =20
+> -=09/* schedule periodic background inode reclaim */
+> -=09xfs_reclaim_work_queue(mp);
+> -
+>  =09trace_xfs_perag_set_reclaim(mp, pag->pag_agno, -1, _RET_IP_);
+>  }
+> =20
+> @@ -1393,9 +1352,6 @@ xfs_reclaim_inodes_nr(
+>  {
+>  =09int=09=09=09sync_mode =3D SYNC_TRYLOCK;
+> =20
+> -=09/* kick background reclaimer */
+> -=09xfs_reclaim_work_queue(mp);
+> -
+>  =09/*
+>  =09 * For kswapd, we kick background inode writeback. For direct
+>  =09 * reclaim, we issue and wait on inode writeback to throttle
+> diff --git a/fs/xfs/xfs_icache.h b/fs/xfs/xfs_icache.h
+> index 48f1fd2bb6ad..4c0d8920cc54 100644
+> --- a/fs/xfs/xfs_icache.h
+> +++ b/fs/xfs/xfs_icache.h
+> @@ -49,8 +49,6 @@ int xfs_iget(struct xfs_mount *mp, struct xfs_trans *tp=
+, xfs_ino_t ino,
+>  struct xfs_inode * xfs_inode_alloc(struct xfs_mount *mp, xfs_ino_t ino);
+>  void xfs_inode_free(struct xfs_inode *ip);
+> =20
+> -void xfs_reclaim_worker(struct work_struct *work);
+> -
+>  int xfs_reclaim_inodes(struct xfs_mount *mp, int mode);
+>  int xfs_reclaim_inodes_count(struct xfs_mount *mp);
+>  long xfs_reclaim_inodes_nr(struct xfs_mount *mp, int nr_to_scan);
+> diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
+> index 3e8eedf01eb2..8f76c2add18b 100644
+> --- a/fs/xfs/xfs_mount.c
+> +++ b/fs/xfs/xfs_mount.c
+> @@ -952,7 +952,6 @@ xfs_mountfs(
+>  =09 * qm_unmount_quotas and therefore rely on qm_unmount to release the
+>  =09 * quota inodes.
+>  =09 */
+> -=09cancel_delayed_work_sync(&mp->m_reclaim_work);
+>  =09xfs_reclaim_inodes(mp, SYNC_WAIT);
+>  =09xfs_health_unmount(mp);
+>   out_log_dealloc:
+> @@ -1035,7 +1034,6 @@ xfs_unmountfs(
+>  =09 * reclaim just to be sure. We can stop background inode reclaim
+>  =09 * here as well if it is still running.
+>  =09 */
+> -=09cancel_delayed_work_sync(&mp->m_reclaim_work);
+>  =09xfs_reclaim_inodes(mp, SYNC_WAIT);
+>  =09xfs_health_unmount(mp);
+> =20
+> diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
+> index a46cb3fd24b1..8c6885d3b085 100644
+> --- a/fs/xfs/xfs_mount.h
+> +++ b/fs/xfs/xfs_mount.h
+> @@ -163,7 +163,6 @@ typedef struct xfs_mount {
+>  =09uint=09=09=09m_chsize;=09/* size of next field */
+>  =09atomic_t=09=09m_active_trans;=09/* number trans frozen */
+>  =09struct xfs_mru_cache=09*m_filestream;  /* per-mount filestream data *=
+/
+> -=09struct delayed_work=09m_reclaim_work;=09/* background inode reclaim *=
+/
+>  =09struct delayed_work=09m_eofblocks_work; /* background eof blocks
+>  =09=09=09=09=09=09     trimming */
+>  =09struct delayed_work=09m_cowblocks_work; /* background cow blocks
+> @@ -180,7 +179,6 @@ typedef struct xfs_mount {
+>  =09struct workqueue_struct *m_buf_workqueue;
+>  =09struct workqueue_struct=09*m_unwritten_workqueue;
+>  =09struct workqueue_struct=09*m_cil_workqueue;
+> -=09struct workqueue_struct=09*m_reclaim_workqueue;
+>  =09struct workqueue_struct *m_eofblocks_workqueue;
+>  =09struct workqueue_struct=09*m_sync_workqueue;
+> =20
+> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> index ebe2ccd36127..a4fe679207ef 100644
+> --- a/fs/xfs/xfs_super.c
+> +++ b/fs/xfs/xfs_super.c
+> @@ -794,15 +794,10 @@ xfs_init_mount_workqueues(
+>  =09if (!mp->m_cil_workqueue)
+>  =09=09goto out_destroy_unwritten;
+> =20
+> -=09mp->m_reclaim_workqueue =3D alloc_workqueue("xfs-reclaim/%s",
+> -=09=09=09WQ_MEM_RECLAIM|WQ_FREEZABLE, 0, mp->m_fsname);
+> -=09if (!mp->m_reclaim_workqueue)
+> -=09=09goto out_destroy_cil;
+> -
+>  =09mp->m_eofblocks_workqueue =3D alloc_workqueue("xfs-eofblocks/%s",
+>  =09=09=09WQ_MEM_RECLAIM|WQ_FREEZABLE, 0, mp->m_fsname);
+>  =09if (!mp->m_eofblocks_workqueue)
+> -=09=09goto out_destroy_reclaim;
+> +=09=09goto out_destroy_cil;
+> =20
+>  =09mp->m_sync_workqueue =3D alloc_workqueue("xfs-sync/%s", WQ_FREEZABLE,=
+ 0,
+>  =09=09=09=09=09       mp->m_fsname);
+> @@ -813,8 +808,6 @@ xfs_init_mount_workqueues(
+> =20
+>  out_destroy_eofb:
+>  =09destroy_workqueue(mp->m_eofblocks_workqueue);
+> -out_destroy_reclaim:
+> -=09destroy_workqueue(mp->m_reclaim_workqueue);
+>  out_destroy_cil:
+>  =09destroy_workqueue(mp->m_cil_workqueue);
+>  out_destroy_unwritten:
+> @@ -831,7 +824,6 @@ xfs_destroy_mount_workqueues(
+>  {
+>  =09destroy_workqueue(mp->m_sync_workqueue);
+>  =09destroy_workqueue(mp->m_eofblocks_workqueue);
+> -=09destroy_workqueue(mp->m_reclaim_workqueue);
+>  =09destroy_workqueue(mp->m_cil_workqueue);
+>  =09destroy_workqueue(mp->m_unwritten_workqueue);
+>  =09destroy_workqueue(mp->m_buf_workqueue);
+> @@ -1520,7 +1512,6 @@ xfs_mount_alloc(
+>  =09spin_lock_init(&mp->m_perag_lock);
+>  =09mutex_init(&mp->m_growlock);
+>  =09atomic_set(&mp->m_active_trans, 0);
+> -=09INIT_DELAYED_WORK(&mp->m_reclaim_work, xfs_reclaim_worker);
+>  =09INIT_DELAYED_WORK(&mp->m_eofblocks_work, xfs_eofblocks_worker);
+>  =09INIT_DELAYED_WORK(&mp->m_cowblocks_work, xfs_cowblocks_worker);
+>  =09mp->m_kobj.kobject.kset =3D xfs_kset;
+> --=20
+> 2.24.0.rc0
+>=20
 
-This patch breaks the build:
-
-drivers/staging/exfat/exfat_super.c: In function ‘ffsMountVol’:
-drivers/staging/exfat/exfat_super.c:387:9: error: ‘FFS_FORMATERR’ undeclared (first use in this function)
-  387 |   ret = FFS_FORMATERR;
-      |         ^~~~~~~~~~~~~
-
-
-Did you test-build this thing?
-
-thanks,
-
-greg k-h
