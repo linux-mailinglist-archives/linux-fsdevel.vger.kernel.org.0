@@ -2,146 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92AEAF03BC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2019 18:05:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5CDFF03BF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2019 18:05:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389346AbfKERFT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Nov 2019 12:05:19 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:59829 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388958AbfKERFT (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Nov 2019 12:05:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572973518;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=IsOu4q2X4kFfjJDkAgnsGgmj0ZxKuSVx1mHE6HO+CpA=;
-        b=fIIxn6BXpTgXlRT4QRrrmkeWtikCp2cxKF9rm2k4qMoXwVGTBoBOhz8nhFgEa2R9PfVvOG
-        ffMH4/EHsUNVHnZgWfGmoUdtUUeaHK/sPh3U6Pb/lCA/eI9I42dhSra3e+9N0svzQl0Uhf
-        s34ksOcvRLHe6amSpLBAI01QGDtfDl0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-37-OAqz_rIDNxGv8KLlhjQsQQ-1; Tue, 05 Nov 2019 12:05:15 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2389908AbfKERFV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Nov 2019 12:05:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43254 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388958AbfKERFV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 5 Nov 2019 12:05:21 -0500
+Received: from localhost (unknown [62.119.166.9])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6949E107ACC3;
-        Tue,  5 Nov 2019 17:05:14 +0000 (UTC)
-Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CD02B608AC;
-        Tue,  5 Nov 2019 17:05:13 +0000 (UTC)
-Date:   Tue, 5 Nov 2019 12:05:12 -0500
-From:   Brian Foster <bfoster@redhat.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 19/28] xfs: reduce kswapd blocking on inode locking.
-Message-ID: <20191105170512.GC28493@bfoster>
-References: <20191031234618.15403-1-david@fromorbit.com>
- <20191031234618.15403-20-david@fromorbit.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 46DDE2087E;
+        Tue,  5 Nov 2019 17:05:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572973520;
+        bh=jTO8reKcT4C5kCnNyyvTf8GTELx7dazG4WitwpYdsJE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HeBSfHogBHebaNjOYUBn6YSGujIWYFpHH6SK1/G8DvZ0qXliA7nwXkgqvwd+LvWrl
+         C4JGrsF4eNG0U2wVB0iEpgseqXIB4ewsamhCfis3ZYbB1m43kZXPCZE3zpJ5qUOi0b
+         2vLj3xuNAgfGmmG9t3FtgOqvC+uzwLvY5Oa09w4Y=
+Date:   Tue, 5 Nov 2019 18:05:15 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Cc:     linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 01/10] staging: exfat: Clean up return codes -
+ FFS_FORMATERR
+Message-ID: <20191105170515.GA2788121@kroah.com>
+References: <20191104014510.102356-1-Valdis.Kletnieks@vt.edu>
+ <20191104014510.102356-2-Valdis.Kletnieks@vt.edu>
 MIME-Version: 1.0
-In-Reply-To: <20191031234618.15403-20-david@fromorbit.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-MC-Unique: OAqz_rIDNxGv8KLlhjQsQQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191104014510.102356-2-Valdis.Kletnieks@vt.edu>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 01, 2019 at 10:46:09AM +1100, Dave Chinner wrote:
-> From: Dave Chinner <dchinner@redhat.com>
->=20
-> When doing async node reclaiming, we grab a batch of inodes that we
-> are likely able to reclaim and ignore those that are already
-> flushing. However, when we actually go to reclaim them, the first
-> thing we do is lock the inode. If we are racing with something
-> else reclaiming the inode or flushing it because it is dirty,
-> we block on the inode lock. Hence we can still block kswapd here.
->=20
-> Further, if we flush an inode, we also cluster all the other dirty
-> inodes in that cluster into the same IO, flush locking them all.
-> However, if the workload is operating on sequential inodes (e.g.
-> created by a tarball extraction) most of these inodes will be
-> sequntial in the cache and so in the same batch
-> we've already grabbed for reclaim scanning.
->=20
-> As a result, it is common for all the inodes in the batch to be
-> dirty and it is common for the first inode flushed to also flush all
-> the inodes in the reclaim batch. In which case, they are now all
-> going to be flush locked and we do not want to block on them.
->=20
-> Hence, for async reclaim (SYNC_TRYLOCK) make sure we always use
-> trylock semantics and abort reclaim of an inode as quickly as we can
-> without blocking kswapd. This will be necessary for the upcoming
-> conversion to LRU lists for inode reclaim tracking.
->=20
-> Found via tracing and finding big batches of repeated lock/unlock
-> runs on inodes that we just flushed by write clustering during
-> reclaim.
->=20
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+On Sun, Nov 03, 2019 at 08:44:57PM -0500, Valdis Kletnieks wrote:
+> Convert FFS_FORMATERR to -EFSCORRUPTED
+> 
+> Signed-off-by: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>
 > ---
+>  drivers/staging/exfat/exfat.h      | 3 ++-
+>  drivers/staging/exfat/exfat_core.c | 8 ++++----
+>  2 files changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
+> index acb73f47a253..4f9ba235d967 100644
+> --- a/drivers/staging/exfat/exfat.h
+> +++ b/drivers/staging/exfat/exfat.h
+> @@ -30,6 +30,8 @@
+>  #undef DEBUG
+>  #endif
+>  
+> +#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
+> +
+>  #define DENTRY_SIZE		32	/* dir entry size */
+>  #define DENTRY_SIZE_BITS	5
+>  
+> @@ -209,7 +211,6 @@ static inline u16 get_row_index(u16 i)
+>  /* return values */
+>  #define FFS_SUCCESS             0
+>  #define FFS_MEDIAERR            1
+> -#define FFS_FORMATERR           2
+>  #define FFS_MOUNTED             3
+>  #define FFS_NOTMOUNTED          4
+>  #define FFS_ALIGNMENTERR        5
+> diff --git a/drivers/staging/exfat/exfat_core.c b/drivers/staging/exfat/exfat_core.c
+> index b23fbf3ebaa5..e90b54a17150 100644
+> --- a/drivers/staging/exfat/exfat_core.c
+> +++ b/drivers/staging/exfat/exfat_core.c
+> @@ -573,7 +573,7 @@ s32 load_alloc_bitmap(struct super_block *sb)
+>  			return FFS_MEDIAERR;
+>  	}
+>  
+> -	return FFS_FORMATERR;
+> +	return -EFSCORRUPTED;
+>  }
+>  
+>  void free_alloc_bitmap(struct super_block *sb)
+> @@ -3016,7 +3016,7 @@ s32 fat16_mount(struct super_block *sb, struct pbr_sector_t *p_pbr)
+>  	struct bd_info_t *p_bd = &(EXFAT_SB(sb)->bd_info);
+>  
+>  	if (p_bpb->num_fats == 0)
+> -		return FFS_FORMATERR;
+> +		return -EFSCORRUPTED;
+>  
+>  	num_root_sectors = GET16(p_bpb->num_root_entries) << DENTRY_SIZE_BITS;
+>  	num_root_sectors = ((num_root_sectors - 1) >>
+> @@ -3078,7 +3078,7 @@ s32 fat32_mount(struct super_block *sb, struct pbr_sector_t *p_pbr)
+>  	struct bd_info_t *p_bd = &(EXFAT_SB(sb)->bd_info);
+>  
+>  	if (p_bpb->num_fats == 0)
+> -		return FFS_FORMATERR;
+> +		return -EFSCORRUPTED;
+>  
+>  	p_fs->sectors_per_clu = p_bpb->sectors_per_clu;
+>  	p_fs->sectors_per_clu_bits = ilog2(p_bpb->sectors_per_clu);
+> @@ -3157,7 +3157,7 @@ s32 exfat_mount(struct super_block *sb, struct pbr_sector_t *p_pbr)
+>  	struct bd_info_t *p_bd = &(EXFAT_SB(sb)->bd_info);
+>  
+>  	if (p_bpb->num_fats == 0)
+> -		return FFS_FORMATERR;
+> +		return -EFSCORRUPTED;
+>  
+>  	p_fs->sectors_per_clu = 1 << p_bpb->sectors_per_clu_bits;
+>  	p_fs->sectors_per_clu_bits = p_bpb->sectors_per_clu_bits;
 
-Reviewed-by: Brian Foster <bfoster@redhat.com>
+This patch breaks the build:
 
->  fs/xfs/xfs_icache.c | 23 ++++++++++++++++++-----
->  1 file changed, 18 insertions(+), 5 deletions(-)
->=20
-> diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-> index edcc3f6bb3bf..189cf423fe8f 100644
-> --- a/fs/xfs/xfs_icache.c
-> +++ b/fs/xfs/xfs_icache.c
-> @@ -1104,11 +1104,23 @@ xfs_reclaim_inode(
-> =20
->  restart:
->  =09error =3D 0;
-> -=09xfs_ilock(ip, XFS_ILOCK_EXCL);
-> -=09if (!xfs_iflock_nowait(ip)) {
-> -=09=09if (!(sync_mode & SYNC_WAIT))
-> +=09/*
-> +=09 * Don't try to flush the inode if another inode in this cluster has
-> +=09 * already flushed it after we did the initial checks in
-> +=09 * xfs_reclaim_inode_grab().
-> +=09 */
-> +=09if (sync_mode & SYNC_TRYLOCK) {
-> +=09=09if (!xfs_ilock_nowait(ip, XFS_ILOCK_EXCL))
->  =09=09=09goto out;
-> -=09=09xfs_iflock(ip);
-> +=09=09if (!xfs_iflock_nowait(ip))
-> +=09=09=09goto out_unlock;
-> +=09} else {
-> +=09=09xfs_ilock(ip, XFS_ILOCK_EXCL);
-> +=09=09if (!xfs_iflock_nowait(ip)) {
-> +=09=09=09if (!(sync_mode & SYNC_WAIT))
-> +=09=09=09=09goto out_unlock;
-> +=09=09=09xfs_iflock(ip);
-> +=09=09}
->  =09}
-> =20
->  =09if (XFS_FORCED_SHUTDOWN(ip->i_mount)) {
-> @@ -1215,9 +1227,10 @@ xfs_reclaim_inode(
-> =20
->  out_ifunlock:
->  =09xfs_ifunlock(ip);
-> +out_unlock:
-> +=09xfs_iunlock(ip, XFS_ILOCK_EXCL);
->  out:
->  =09xfs_iflags_clear(ip, XFS_IRECLAIM);
-> -=09xfs_iunlock(ip, XFS_ILOCK_EXCL);
->  =09/*
->  =09 * We could return -EAGAIN here to make reclaim rescan the inode tree=
- in
->  =09 * a short while. However, this just burns CPU time scanning the tree
-> --=20
-> 2.24.0.rc0
->=20
+drivers/staging/exfat/exfat_super.c: In function ‘ffsMountVol’:
+drivers/staging/exfat/exfat_super.c:387:9: error: ‘FFS_FORMATERR’ undeclared (first use in this function)
+  387 |   ret = FFS_FORMATERR;
+      |         ^~~~~~~~~~~~~
 
+
+Did you test-build this thing?
+
+thanks,
+
+greg k-h
