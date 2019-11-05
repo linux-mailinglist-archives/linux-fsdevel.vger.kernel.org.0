@@ -2,77 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2FF2F01F9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2019 16:56:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE2F2F021F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2019 17:03:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390019AbfKEP4e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Nov 2019 10:56:34 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34654 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389918AbfKEP4c (ORCPT
+        id S2390039AbfKEQDK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Nov 2019 11:03:10 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:40951 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2389990AbfKEQDJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Nov 2019 10:56:32 -0500
-Received: by mail-pg1-f194.google.com with SMTP id e4so14550187pgs.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Nov 2019 07:56:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=XJsNFwwu/Jlc0782LDjp8YTgvefXfXVL1aCF2AU/E8g=;
-        b=YC3ddAr4UdMhHKju55t/KzWOVycmq5e0nLbh8V+2V27jOLCD1mPETt2q2qkDMtFvXk
-         b9j2uAop9Xq2J/+zt+LlJ4WrHmrLjL8IUXPrTvGC2YqgjNVPVATP1yeOWf8OR5n6It1u
-         iADfOJ5OXYpcDOkKEI4IHSj7dD4N4wVECKIdfev45eXq1eAR9l71SWPvaYo/sQn7tVO2
-         yjXhAairdX8rx49VY1RR9SVQjOHSSyXJwKw0VIU+Z8gZgSEhmVbiA/nf+FA2Asu66oMe
-         k5m3GIymIo6mP74AOUIsh6+Qd27uJz3gK32eIlcVUf210WxtTIlBoqc3pDdN82ytGfYN
-         2TDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=XJsNFwwu/Jlc0782LDjp8YTgvefXfXVL1aCF2AU/E8g=;
-        b=PNHcodbo2G95zNbRGhkZ8g/4HfvHHrSF8jyyaUcse53fo8VyxOPAqNQTLqn2io2zKC
-         WEHampJM8vsHZ/2ju6fVVkwfypnOOcxvT4DKw7lruFXKDvy6F2N6uQmspjG1VIJuvLYx
-         5PnPBhjix8O22LHyCqo12dmPBI6XnVkQz8O2q9vdRRX90uSEsIygpdwqmqEBT84MDhGo
-         oK4l/ESWx8imc4ejd+s2UXzbO9a57xNNc8gNzu1Q7SxNI0nu7ql8OShR8S1kjTSiddLc
-         6TTHLOBEFY++tLHaoGrGZfy6LK3ySV74h6aPIse8uwLAQcoHUHm89CKSvg0kvqDPE1IN
-         poxQ==
-X-Gm-Message-State: APjAAAWsP0ZRFcIFb8uUPzlRx8b2M+WA4Vj62xw2PaOY9dqzKmuYdNyJ
-        G6KInCcviI9Vg9p6y4MN6pjuSA==
-X-Google-Smtp-Source: APXvYqx865TcFioge9LAZA+i1UxRYOyJHhiIep6k07mIyKrFbOEQ1QQaUbGriZKXguMbJA39nlmSZQ==
-X-Received: by 2002:a65:6482:: with SMTP id e2mr3901602pgv.20.1572969389855;
-        Tue, 05 Nov 2019 07:56:29 -0800 (PST)
-Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
-        by smtp.googlemail.com with ESMTPSA id x2sm7984553pfn.167.2019.11.05.07.56.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2019 07:56:29 -0800 (PST)
-Subject: Re: [PATCH] afs: xattr: use scnprintf
-To:     linux-kernel@vger.kernel.org
-Cc:     kernel-team@android.com, linux-fsdevel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        linux-afs@lists.infradead.org, Jan Kara <jack@suse.cz>
-References: <20191105154850.187723-1-salyzyn@android.com>
-From:   Mark Salyzyn <salyzyn@android.com>
-Message-ID: <2e530f62-89bc-4314-8e78-e5cc049c5d69@android.com>
-Date:   Tue, 5 Nov 2019 07:56:28 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 5 Nov 2019 11:03:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572969788;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=pLj9LlV805f/L7J5FbyPXxXB07oTibsiCCSGb45ogQg=;
+        b=DAxnbXOel7GR/PEe2t6Mrv+03Xuzy/G2FGswsUfLa3WuDKMrcLU58JE3w5zv0Q9mvuNpPY
+        I1VMJVfrzlKq4LH4UyFmZKsbkrhlnt52r9X2+0oUwwfFrHC4TmVAq484vO9YuFSB3J2CDA
+        meGCgBaj17ZWJu0UuOPTyX1me2I6xBY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-350-9SUU8LceOXeOLaVGd4SGTA-1; Tue, 05 Nov 2019 11:03:06 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B43698017DD;
+        Tue,  5 Nov 2019 16:03:03 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-254.rdu2.redhat.com [10.10.120.254])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 980C81FA;
+        Tue,  5 Nov 2019 16:03:00 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <157262963995.13142.5568934007158044624.stgit@warthog.procyon.org.uk>
+References: <157262963995.13142.5568934007158044624.stgit@warthog.procyon.org.uk>
+To:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk
+Cc:     dhowells@redhat.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Details on the UAPI of implementing notifications on pipes
 MIME-Version: 1.0
-In-Reply-To: <20191105154850.187723-1-salyzyn@android.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
+Content-ID: <18579.1572969779.1@warthog.procyon.org.uk>
+Date:   Tue, 05 Nov 2019 16:02:59 +0000
+Message-ID: <18580.1572969779@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: 9SUU8LceOXeOLaVGd4SGTA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/5/19 7:48 AM, Mark Salyzyn wrote:
-> sprintf and snprintf are fragile in future maintenance, switch to
-> using scnprintf to ensure no accidental Use After Free conditions
-> are introduced.
+So to implement notifications on top of pipes, I've hacked it together a bi=
+t
+in the following ways:
 
-Urrrk Out of band stack access ...
+ (1) I'm passing O_TMPFILE to the pipe2() system call to indicate that you
+     want a notifications pipe.  This prohibits splice and co. from being
+     called on it as I don't want to have to try to fix iov_iter_revert() t=
+o
+     handle kernel notifications being intermixed with splices.
 
--- Mark
+     The choice of O_TMPFILE was just for convenience, but it needs to be
+     something different.  I could, for instance, add a constant,
+     O_NOTIFICATION_PIPE with the same *value* as O_TMPFILE.  I don't think
+     it's likely that it will make sense to use O_TMPFILE with a pipe, but =
+I
+     also don't want to eat up another O_* constant just for this.
+
+     Unfortunately, pipe2() doesn't have any other arguments into from whic=
+h I
+     can steal a bit.
+
+ (2) I've added a pair of ioctls to configure the notifications bits.  They=
+'re
+     ioctls as I just reused the ioctl code from my devmisc driver.  Should=
+ I
+     use fcntl() instead, such as is done for F_SETPIPE_SZ?
+
+     The ioctls do two things: set the ring size to a number of slots (so
+     similarish to F_SETPIPE_SZ) and set filters.
+
+Any thoughts on how better to represent these bits?
+
+Thanks,
+David
 
