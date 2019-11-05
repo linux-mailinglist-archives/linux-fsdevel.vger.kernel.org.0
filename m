@@ -2,179 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C705F058D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2019 20:00:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89D9BF05EA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2019 20:26:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390774AbfKETAL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Nov 2019 14:00:11 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:13342 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390404AbfKETAL (ORCPT
+        id S2390881AbfKETZ6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Nov 2019 14:25:58 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:46561 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390314AbfKETZ6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Nov 2019 14:00:11 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dc1c6bc0000>; Tue, 05 Nov 2019 11:00:12 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 05 Nov 2019 11:00:07 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 05 Nov 2019 11:00:07 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 5 Nov
- 2019 19:00:07 +0000
-Subject: Re: [PATCH v2 05/18] mm/gup: introduce pin_user_pages*() and FOLL_PIN
-To:     Mike Rapoport <rppt@kernel.org>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20191103211813.213227-1-jhubbard@nvidia.com>
- <20191103211813.213227-6-jhubbard@nvidia.com>
- <20191105131032.GG25005@rapoport-lnx>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <9ac948a4-59bf-2427-2007-e460aad2848a@nvidia.com>
-Date:   Tue, 5 Nov 2019 11:00:06 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 5 Nov 2019 14:25:58 -0500
+Received: by mail-yb1-f194.google.com with SMTP id g17so421185ybd.13;
+        Tue, 05 Nov 2019 11:25:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KChVl98RtUbkgrTOQAVv+rIQgGh7eAxBXODW2CW7diU=;
+        b=gr3DvwnNJUf3Y48Dj/m1is18b4uN/Ngwj7G0hU5nh705p48wIU/R6fdiQDM2RyKmS5
+         B4+tCC7gc0ICBXMdqQWvzmJ/ccdkGS4Km7CVRUycrScH451IQUia3g+sE/5gaXZddvvY
+         I2pDqQgPoVRbB+yNOiwgSxIWfFL1lb9JXhQoryEYHCs1nzLLtvoVwwUW9CvEZnMwR3m/
+         52DfEtsh/HX0a2fbBDrsFjV7uE9QVwgXfOs95DxVHZzqUhS04ytJ96mXTyCh105y/HUS
+         BjhzqqiChzRRcqdkexMbU3yMO8CqYb82E8llWTzjWYpzTlSKCxf65d3FE9VmBhPne6+j
+         bqsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KChVl98RtUbkgrTOQAVv+rIQgGh7eAxBXODW2CW7diU=;
+        b=bvy0uSTGcsUCj1g6EGeSu+9PcQMzbs5O7Dutdfuc34ULCVwNFSLorFL/6KtvhMQiJg
+         6nQIkmptAfk4Y+8GDkIBRJaDeeRsdPAfVSZcPhTe/qS8a1r3W92PqZqhszAYKAJ/Q1EO
+         nrJPUYo/CLLxy6Xlz66IBk56MHYFwDkKzKryDpZi7gh4qDCQDSbM6yheZV7wWZBXkavw
+         /BAEx6nVeu+/kDPUFCjxmStkA5T2xxwfAfZCEghWBnBxvJUFd6JDhtCWoM/qpJs9v755
+         4CCKNr7JzkS0uAk89froiXMKbuKdvyM25hIB53rS0OFFWJjchgEJ9wzQiR3P0AoQocOm
+         zfng==
+X-Gm-Message-State: APjAAAVf1j8MXsVljadlXxARs4/+VoWQKglRHuj5HiTeFRzWvFH5M19p
+        WWciCw76Fo3w9J4S175VZb5A77lAmBZRQ7PNLTQ=
+X-Google-Smtp-Source: APXvYqx6aFWSGHN0fNloB89+dY7LDFF8+dPoO/5MWUfPSHQSvaN/hiXzcFRfW+Ck3Kgv5gJ2I+zUDkQwtgzJ4cufWWU=
+X-Received: by 2002:a25:3744:: with SMTP id e65mr28077525yba.126.1572981956875;
+ Tue, 05 Nov 2019 11:25:56 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191105131032.GG25005@rapoport-lnx>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1572980412; bh=ojXJL7Jf2vtMqYP0b7gLz2fp+ItJt4NPdkhylbujo04=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=BS0Skgz5RbNv7FRT3SjRhdwpwr0ecQ8AOgMazMsduNtoC93TjDB3sb+UV4BVm8kS1
-         e2YIxx2R9GvEAZtEOkrlW3cAbcdFl/wyRSANMj//120w5PZgTkX7MC1O13jzRSXm0k
-         KFRmKs+Z0OYFmlbRMapMiylU4RVjtXOt6K/rgWvnwLDQgPciqV1nCOSRX3qgMUJrsh
-         MPxa2/es4pKZhwzhaTFebsG3i4fLxzYnNXRQBChEYKYp2xONV3pwMnS3x1UJtQUm9p
-         dbWIIJyjFTTd1aKcwIBzPf2GKUh34tHy3QJ9j5720Clm3FqPmta2g3ZZa8fKcxJoAO
-         rGK6L5pnX3YOQ==
+References: <20191104215253.141818-1-salyzyn@android.com> <CAOQ4uxhoozGgxYmucFpFx8N=b4x9H3sfp60TNzf0dmU9eQi2UQ@mail.gmail.com>
+ <97c4108f-3a9b-e58b-56e0-dfe2642cc1f5@android.com>
+In-Reply-To: <97c4108f-3a9b-e58b-56e0-dfe2642cc1f5@android.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 5 Nov 2019 21:25:44 +0200
+Message-ID: <CAOQ4uxindmuTdfW6NNM2=Bt=y7KDMQsfN=zA_Z7dgkrHfptoHA@mail.gmail.com>
+Subject: Re: [PATCH v15 0/4] overlayfs override_creds=off & nested get xattr fix
+To:     Mark Salyzyn <salyzyn@android.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-team@android.com, Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-doc@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/5/19 5:10 AM, Mike Rapoport wrote:
-...
->> ---
->>  Documentation/vm/index.rst          |   1 +
->>  Documentation/vm/pin_user_pages.rst | 212 ++++++++++++++++++++++
-> 
-> I think it belongs to Documentation/core-api.
+On Tue, Nov 5, 2019 at 5:20 PM Mark Salyzyn <salyzyn@android.com> wrote:
+>
+> On 11/4/19 11:56 PM, Amir Goldstein wrote:
+> > On Mon, Nov 4, 2019 at 11:53 PM Mark Salyzyn <salyzyn@android.com> wrote:
+> >> Patch series:
+> >>
+> >> Mark Salyzyn (4):
+> >>    Add flags option to get xattr method paired to __vfs_getxattr
+> > Sigh.. did not get to fsdevel (again...) I already told you several times
+> > that you need to use a shorter CC list.
+>
+> This is a direct result of the _required_ scripts/get_maintainer.pl
+> logic, I am not going to override it for first send. I was going to
+> forward to fsdevel after the messages settled, I am still waiting for
+> 1/4 to land on lore before continuing.
 
-Done:
+How do you expect it to land in lore if the mailing list server rejects it?
+If I were you, I would *first* post the patch to the small crowd of the
+patch set, which includes fsdevel and *then* forward patch 1 to all
+maintainers with a link to lore for the series.
 
-diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
-index ab0eae1c153a..413f7d7c8642 100644
---- a/Documentation/core-api/index.rst
-+++ b/Documentation/core-api/index.rst
-@@ -31,6 +31,7 @@ Core utilities
-    generic-radix-tree
-    memory-allocation
-    mm-api
-+   pin_user_pages
-    gfp_mask-from-fs-io
-    timekeeping
-    boot-time-mm
+The result as is was in your last 15 posting is much worst.
+There is a ghost patch in the series that nobody knows where to find.
 
+>
+> The first patch in the series needs to get in before the others. I was
+> told to send the first one individually because the series has so many
+> recipients and stakeholders, and <crickets> because no on could see the
+> reason for the patch once it was all by itself. So I rejoined the set so
+> they could see the reason for the first patch.
+>
+> If only the first patch in the series that added the flag argument got
+> in (somewhere), then the overlayfs portion would be much easier to handle.
+>
+> >>    overlayfs: handle XATTR_NOSECURITY flag for get xattr method
+> >>    overlayfs: internal getxattr operations without sepolicy checking
+> >>    overlayfs: override_creds=off option bypass creator_cred
+> > It would be better for review IMO if you rebase your series on top of
+> > git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git ovl-unpriv
+> Will do, send it only to fsdevel, other recipients? What do I do with
+> get_maintainer.pl? The first patch in the series is noisy, I am getting
+> more and more uncomfortable sending it to the list as it looks more and
+> more like spam.
 
-...
->> diff --git a/Documentation/vm/pin_user_pages.rst b/Documentation/vm/pin_user_pages.rst
->> new file mode 100644
->> index 000000000000..3910f49ca98c
->> --- /dev/null
->> +++ b/Documentation/vm/pin_user_pages.rst
->> @@ -0,0 +1,212 @@
->> +.. SPDX-License-Identifier: GPL-2.0
->> +
->> +====================================================
->> +pin_user_pages() and related calls
->> +====================================================
-> 
-> I know this is too much to ask, but having pin_user_pages() a part of more
-> general GUP description would be really great :)
-> 
+get_maintainer.pl is a suggestion. common sense should be applied.
+Sending the entire series to the crowd of this message seems fine to
+me (I also added fsdevel). LKML is quite an overkill IMO and
+linux-doc also seems out of context if you ask me.
 
-Yes, definitely. But until I saw the reaction to the pin_user_pages() API
-family, I didn't want to write too much--it could have all been tossed out
-in favor of a whole different API. But now that we've had some initial
-reviews, I'm much more confident in being able to write about the larger 
-API set.
-
-So yes, I'll put that on my pending list.
-
-
-...
->> +This document describes the following functions: ::
->> +
->> + pin_user_pages
->> + pin_user_pages_fast
->> + pin_user_pages_remote
->> +
->> + pin_longterm_pages
->> + pin_longterm_pages_fast
->> + pin_longterm_pages_remote
->> +
->> +Basic description of FOLL_PIN
->> +=============================
->> +
->> +A new flag for get_user_pages ("gup") has been added: FOLL_PIN. FOLL_PIN has
-> 
-> Consider reading this after, say, half a year ;-)
-> 
-
-OK, OK. I knew when I wrote that that it was not going to stay new forever, but
-somehow failed to write the right thing anyway. :) 
-
-Here's a revised set of paragraphs:
-
-Basic description of FOLL_PIN
-=============================
-
-FOLL_PIN and FOLL_LONGTERM are flags that can be passed to the get_user_pages*()
-("gup") family of functions. FOLL_PIN has significant interactions and
-interdependencies with FOLL_LONGTERM, so both are covered here.
-
-Both FOLL_PIN and FOLL_LONGTERM are internal to gup, meaning that neither
-FOLL_PIN nor FOLL_LONGTERM should not appear at the gup call sites. This allows
-the associated wrapper functions  (pin_user_pages() and others) to set the
-correct combination of these flags, and to check for problems as well.
-
-
-thanks,
-
-John Hubbard
-NVIDIA
+Thanks,
+Amir.
