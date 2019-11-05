@@ -2,127 +2,481 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1D8DEF67A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2019 08:35:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C21B6EF7CA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Nov 2019 10:07:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387831AbfKEHfv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Nov 2019 02:35:51 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:47089 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387648AbfKEHfv (ORCPT
+        id S1730525AbfKEJHB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Nov 2019 04:07:01 -0500
+Received: from mout-p-101.mailbox.org ([80.241.56.151]:52638 "EHLO
+        mout-p-101.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727093AbfKEJHA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Nov 2019 02:35:51 -0500
-Received: by mail-lj1-f196.google.com with SMTP id e9so7285512ljp.13;
-        Mon, 04 Nov 2019 23:35:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=cay3/WnjxU6wm6NbF5bf+wImiPBa6xb0ML2uvLs1A1Q=;
-        b=pXCBGTi3guJrHxMjzi4/2tE4H4AOt/1CHXZw1kW1T9jq0whADMepNtLCPc9cFCNPZ5
-         Pplvm4wE4iZEljvEkhJ4dsBKgR9eo2lZl1aLQQUpX3ivB3YCh0H86jD5/5rffJaRFH6B
-         2avwu2KxpwVFiCREittkp6YaLrfhYfKo6dNlpfRSWTnvlBJwMKWWbq1U/9YvFihKLsan
-         E4DC25TR9GMQfLzS+Zp5X6Rqf1Mwd5p8lCflZLvQS6EIdna4IUH3JdM1PQZpa/ol6VVp
-         NqxXrBk7DsrdykbhtQ3YJKcH7npe8qaxTVVBkGdej9+3d8il5Omcd5hXYln2LhLG+SxF
-         6lOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=cay3/WnjxU6wm6NbF5bf+wImiPBa6xb0ML2uvLs1A1Q=;
-        b=PCNIF/RretI8nTSNzYKZ7pfay54Wsf5nYIcqCAP0srzJptTjJKiqwKOMg9McM7iJEo
-         5Lgp8OSZadi7AGpohjR2tm7TEbB7C87HKUPzbimN8Mnxmwm681gwPFT9k7Jn4/jdefMy
-         uk1A8m8517F/5BDoDlIGgwpjW142HevtuVQ+1XqOZz83A3rbx/UaquL90mmi6Mah+QBP
-         ncu9hAOvlC+A5xKFb2A8yAT5rSzKtyssml3vjVJh8yFhqcKFDwk+AaIZflhdV8kHeb+7
-         rAsIS0fWBzs4tKT41IMZaouwyLcnmMH9CW6OJebmtYfzhE37vK6yB4y7BxHeUmIJeEbO
-         hJZQ==
-X-Gm-Message-State: APjAAAX1ztv2tAc5JD494qLgYwZx9Zl9z1yiNv37610L18qCxuNKCuA3
-        ZPKU+b4xcKdovdi+8IyZRFOpGCxS
-X-Google-Smtp-Source: APXvYqwSfnkECT6oaVzmxrR/nnJYWbkvhi5uFLMDTzWYVBBaOXVrB1FCm39zDJJXZVYkM2+OhKDELw==
-X-Received: by 2002:a2e:9985:: with SMTP id w5mr15202567lji.162.1572939349337;
-        Mon, 04 Nov 2019 23:35:49 -0800 (PST)
-Received: from [192.168.1.36] (88-114-211-119.elisa-laajakaista.fi. [88.114.211.119])
-        by smtp.gmail.com with ESMTPSA id n5sm9711531ljh.54.2019.11.04.23.35.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2019 23:35:48 -0800 (PST)
-Subject: Re: [PATCH] Allow restricting permissions in /proc/sys
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Tue, 5 Nov 2019 04:07:00 -0500
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 476kLl07fQzKmZ4;
+        Tue,  5 Nov 2019 10:06:55 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
+        with ESMTP id nHElvH1ovOoI; Tue,  5 Nov 2019 10:06:48 +0100 (CET)
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
         Kees Cook <keescook@chromium.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:FILESYSTEMS (VFS and infrastructure)" 
-        <linux-fsdevel@vger.kernel.org>
-References: <74a91362-247c-c749-5200-7bdce704ed9e@gmail.com>
- <87d0e8g5f4.fsf@x220.int.ebiederm.org>
- <f272bdd3-526d-6737-c906-143d5e5fc478@gmail.com>
- <87h83jejei.fsf@x220.int.ebiederm.org>
- <eb2da7e4-23ff-597a-08e1-e0555d490f6f@gmail.com>
- <87tv7jciq3.fsf@x220.int.ebiederm.org>
-From:   Topi Miettinen <toiwoton@gmail.com>
-Message-ID: <1b0f94ef-ab1c-cb79-dd52-954cf0438af1@gmail.com>
-Date:   Tue, 5 Nov 2019 09:35:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, libc-alpha@sourceware.org,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: [PATCH v15 0/9] open: introduce openat2(2) syscall
+Date:   Tue,  5 Nov 2019 20:05:44 +1100
+Message-Id: <20191105090553.6350-1-cyphar@cyphar.com>
 MIME-Version: 1.0
-In-Reply-To: <87tv7jciq3.fsf@x220.int.ebiederm.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5.11.2019 1.41, Eric W. Biederman wrote:
-> Topi Miettinen <toiwoton@gmail.com> writes:
-> 
->> On 4.11.2019 17.44, Eric W. Biederman wrote:
->>> Do you have specific examples of the cases where you would like to
->>> change the permissions?
->>
->> Unprivileged applications typically do not need to access most items
->> in /proc/sys, so I'd like to gradually find out which are needed. So
->> far I've seen no problems with 0500 mode for directories abi, crypto,
->> debug, dev, fs, user or vm.
-> 
-> But if there is no problem in letting everyone access the information
-> why reduce the permissions?
+This patchset is being developed here:
+  <https://github.com/cyphar/linux/tree/openat2/master>
 
-Because information could be useful to an attacker. If there is no 
-problem in not letting everyone access the information why not allow 
-reducing the permissions? There certainly is no need to know.
+Patch changelog:
+ v15:
+  * Fix code style for LOOKUP_IN_ROOT handling in path_init(). [Linus Torvalds]
+  * Split out patches for each individual LOOKUP flag.
+  * Reword commit messages to give more background information about the
+    series, as well as mention the semantics of each flag in more detail.
+ v14: <https://lore.kernel.org/lkml/20191010054140.8483-1-cyphar@cyphar.com/>
+      <https://lore.kernel.org/lkml/20191026185700.10708-1-cyphar@cyphar.com>
+ v13: <https://lore.kernel.org/lkml/20190930183316.10190-1-cyphar@cyphar.com/>
+ v12: <https://lore.kernel.org/lkml/20190904201933.10736-1-cyphar@cyphar.com/>
+ v11: <https://lore.kernel.org/lkml/20190820033406.29796-1-cyphar@cyphar.com/>
+      <https://lore.kernel.org/lkml/20190728010207.9781-1-cyphar@cyphar.com/>
+ v10: <https://lore.kernel.org/lkml/20190719164225.27083-1-cyphar@cyphar.com/>
+ v09: <https://lore.kernel.org/lkml/20190706145737.5299-1-cyphar@cyphar.com/>
+ v08: <https://lore.kernel.org/lkml/20190520133305.11925-1-cyphar@cyphar.com/>
+ v07: <https://lore.kernel.org/lkml/20190507164317.13562-1-cyphar@cyphar.com/>
+ v06: <https://lore.kernel.org/lkml/20190506165439.9155-1-cyphar@cyphar.com/>
+ v05: <https://lore.kernel.org/lkml/20190320143717.2523-1-cyphar@cyphar.com/>
+ v04: <https://lore.kernel.org/lkml/20181112142654.341-1-cyphar@cyphar.com/>
+ v03: <https://lore.kernel.org/lkml/20181009070230.12884-1-cyphar@cyphar.com/>
+ v02: <https://lore.kernel.org/lkml/20181009065300.11053-1-cyphar@cyphar.com/>
+ v01: <https://lore.kernel.org/lkml/20180929103453.12025-1-cyphar@cyphar.com/>
 
->> I'm also using systemd's InaccessiblePaths to limit access (which
->> mounts an inaccessible directory over the path), but that's a bit too
->> big hammer. For example there are over 100 files in /proc/sys/kernel,
->> perhaps there will be issues when creating a mount for each, and that
->> multiplied by a number of services.
-> 
-> My sense is that if there is any kind of compelling reason to make
-> world-readable values not world-readable, and it doesn't break anything
-> (except malicious applications) than a kernel patch is probably the way
-> to go.
+For a very long time, extending openat(2) with new features has been
+incredibly frustrating. This stems from the fact that openat(2) is
+possibly the most famous counter-example to the mantra "don't silently
+accept garbage from userspace" -- it doesn't check whether unknown flags
+are present[1].
 
-With kernel patch, do you propose to change individual sysctls to not 
-world-readable? That surely would help everybody instead of just those 
-who care enough to change /proc/sys permissions. I guess it would also 
-be more effort by an order of magnitude or two to convince each owner of 
-a sysctl to accept the change.
+This means that (generally) the addition of new flags to openat(2) has
+been fraught with backwards-compatibility issues (O_TMPFILE has to be
+defined as __O_TMPFILE|O_DIRECTORY|[O_RDWR or O_WRONLY] to ensure old
+kernels gave errors, since it's insecure to silently ignore the
+flag[2]). All new security-related flags therefore have a tough road to
+being added to openat(2).
 
-> Policy knobs like this on proc tend to break in normal maintenance
-> because they are not used enough so I am not a big fan of adding policy
-> knobs just because we can.
+Furthermore, the need for some sort of control over VFS's path resolution (to
+avoid malicious paths resulting in inadvertent breakouts) has been a very
+long-standing desire of many userspace applications. This patchset is a revival
+of Al Viro's old AT_NO_JUMPS[3] patchset (which was a variant of David
+Drysdale's O_BENEATH patchset[4] which was a spin-off of the Capsicum
+project[5]) with a few additions and changes made based on the previous
+discussion within [6] as well as others I felt were useful.
 
-But the rest of the /proc (except PID tree) allows changing permissions 
-(and also UID and GID), just /proc/sys doesn't. This doesn't seem very 
-logical to me.
+In line with the conclusions of the original discussion of AT_NO_JUMPS, the
+flag has been split up into separate flags. However, instead of being an
+openat(2) flag it is provided through a new syscall openat2(2) which provides
+several other improvements to the openat(2) interface (see the patch
+description for more details). The following new LOOKUP_* flags are added:
 
-These code paths have not changed much or at all since the initial 
-version in 2007, so I suppose the maintenance burden has not been 
-overwhelming.
+  * LOOKUP_NO_XDEV blocks all mountpoint crossings (upwards, downwards,
+    or through absolute links). Absolute pathnames alone in openat(2) do not
+    trigger this. Magic-link traversal which implies a vfsmount jump is also
+    blocked (though magic-link jumps on the same vfsmount are permitted).
 
-By the way, /proc/sys still allows changing the {a,c,m}time. I think 
-those are not backed anywhere, so they probably suffer from same caching 
-problems as my first version of the patch.
+  * LOOKUP_NO_MAGICLINKS blocks resolution through /proc/$pid/fd-style
+    links. This is done by blocking the usage of nd_jump_link() during
+    resolution in a filesystem. The term "magic-links" is used to match
+    with the only reference to these links in Documentation/, but I'm
+    happy to change the name.
 
--Topi
+    It should be noted that this is different to the scope of
+    ~LOOKUP_FOLLOW in that it applies to all path components. However,
+    you can do openat2(NO_FOLLOW|NO_MAGICLINKS) on a magic-link and it
+    will *not* fail (assuming that no parent component was a
+    magic-link), and you will have an fd for the magic-link.
+
+    In order to correctly detect magic-links, the introduction of a new
+    LOOKUP_MAGICLINK_JUMPED state flag was required.
+
+  * LOOKUP_BENEATH disallows escapes to outside the starting dirfd's
+    tree, using techniques such as ".." or absolute links. Absolute
+    paths in openat(2) are also disallowed. Conceptually this flag is to
+    ensure you "stay below" a certain point in the filesystem tree --
+    but this requires some additional to protect against various races
+    that would allow escape using "..".
+
+    Currently LOOKUP_BENEATH implies LOOKUP_NO_MAGICLINKS, because it
+    can trivially beam you around the filesystem (breaking the
+    protection). In future, there might be similar safety checks done as
+    in LOOKUP_IN_ROOT, but that requires more discussion.
+
+In addition, two new flags are added that expand on the above ideas:
+
+  * LOOKUP_NO_SYMLINKS does what it says on the tin. No symlink
+    resolution is allowed at all, including magic-links. Just as with
+    LOOKUP_NO_MAGICLINKS this can still be used with NOFOLLOW to open an
+    fd for the symlink as long as no parent path had a symlink
+    component.
+
+  * LOOKUP_IN_ROOT is an extension of LOOKUP_BENEATH that, rather than
+    blocking attempts to move past the root, forces all such movements
+    to be scoped to the starting point. This provides chroot(2)-like
+    protection but without the cost of a chroot(2) for each filesystem
+    operation, as well as being safe against race attacks that chroot(2)
+    is not.
+
+    If a race is detected (as with LOOKUP_BENEATH) then an error is
+    generated, and similar to LOOKUP_BENEATH it is not permitted to cross
+    magic-links with LOOKUP_IN_ROOT.
+
+    The primary need for this is from container runtimes, which
+    currently need to do symlink scoping in userspace[7] when opening
+    paths in a potentially malicious container. There is a long list of
+    CVEs that could have bene mitigated by having RESOLVE_THIS_ROOT
+    (such as CVE-2017-1002101, CVE-2017-1002102, CVE-2018-15664, and
+    CVE-2019-5736, just to name a few).
+
+In order to make all of the above more usable, I'm working on
+libpathrs[8] which is a C-friendly library for safe path resolution. It
+features a userspace-emulated backend if the kernel doesn't support
+openat2(2). Hopefully we can get userspace to switch to using it, and
+thus get openat2(2) support for free once it's ready.
+
+Future work would include implementing things like RESOLVE_NO_AUTOMOUNT and
+possibly a RESOLVE_NO_REMOTE (to allow programs to be sure they don't hit DoSes
+though stale NFS handles).
+
+[1]: https://lwn.net/Articles/588444/
+[2]: https://lore.kernel.org/lkml/CA+55aFyyxJL1LyXZeBsf2ypriraj5ut1XkNDsunRBqgVjZU_6Q@mail.gmail.com
+[3]: https://lore.kernel.org/lkml/20170429220414.GT29622@ZenIV.linux.org.uk
+[4]: https://lore.kernel.org/lkml/1415094884-18349-1-git-send-email-drysdale@google.com
+[5]: https://lore.kernel.org/lkml/1404124096-21445-1-git-send-email-drysdale@google.com
+[6]: https://lwn.net/Articles/723057/
+[7]: https://github.com/cyphar/filepath-securejoin
+[8]: https://github.com/openSUSE/libpathrs
+
+The current draft of the openat2(2) man-page is included below.
+
+--8<---------------------------------------------------------------------------
+OPENAT2(2)                          Linux Programmer's Manual                          OPENAT2(2)
+
+NAME
+       openat2 - open and possibly create a file (extended)
+
+SYNOPSIS
+       #include <sys/types.h>
+       #include <sys/stat.h>
+       #include <fcntl.h>
+
+       int openat2(int dirfd, const char *pathname, struct open_how *how, size_t size);
+
+       Note: There is no glibc wrapper for this system call; see NOTES.
+
+DESCRIPTION
+       The  openat2()  system  call  opens the file specified by pathname.  If the specified file
+       does not exist, it may optionally (if O_CREAT is specified in  how.flags)  be  created  by
+       openat2().
+
+       As  with openat(2), if pathname is relative, then it is interpreted relative to the direc-
+       tory referred to by the file descriptor dirfd (or the current  working  directory  of  the
+       calling  process,  if dirfd is the special value AT_FDCWD.)  If pathname is absolute, then
+       dirfd is ignored (unless how.resolve contains RESOLVE_IN_ROOT, in which case  pathname  is
+       resolved relative to dirfd.)
+
+       The  openat2()  system  call  is  an extension of openat(2) and provides a superset of its
+       functionality.  Rather than taking a single flag argument, an extensible  structure  (how)
+       is  passed  instead  to  allow  for  future extensions.  size must be set to sizeof(struct
+       open_how), to facilitate future extensions (see the "Extensibility" section of  the  NOTES
+       for more detail on how extensions are handled.)
+
+   The open_how structure
+       The following structure indicates how pathname should be opened, and acts as a superset of
+       the flag and mode arguments to openat(2).
+
+           struct open_how {
+               __aligned_u64 flags;         /* O_* flags. */
+               __u16         mode;          /* Mode for O_{CREAT,TMPFILE}. */
+               __u16         __padding[3];  /* Must be zeroed. */
+               __aligned_u64 resolve;       /* RESOLVE_* flags. */
+           };
+
+       Any future extensions to openat2() will be implemented as new fields appended to the above
+       structure (or through reuse of pre-existing padding space), with the zero value of the new
+       fields acting as though the extension were not present.
+
+       The meaning of each field is as follows:
+
+              flags
+                     The file creation and status flags to use for this operation.   All  of  the
+                     O_* flags defined for openat(2) are valid openat2() flag values.
+
+                     Unlike openat(2), it is an error to provide openat2() unknown or conflicting
+                     flags in flags.
+
+              mode
+                     File mode for the new file, with identical semantics to the mode argument to
+                     openat(2).   However,  unlike openat(2), it is an error to provide openat2()
+                     with a mode which contains bits other than 0777.
+
+                     It is an error to provide openat2() a non-zero mode if flags does  not  con-
+                     tain O_CREAT or O_TMPFILE.
+
+              resolve
+                     Change  how  the  components  of pathname will be resolved (see path_resolu-
+                     tion(7) for background information.)  The primary use case for  these  flags
+                     is  to  allow trusted programs to restrict how untrusted paths (or paths in-
+                     side untrusted directories) are resolved.  The full list of resolve flags is
+                     given below.
+
+                     RESOLVE_NO_XDEV
+                            Disallow  traversal of mount points during path resolution (including
+                            all bind mounts).
+
+                            Users of this flag are encouraged to make its use  configurable  (un-
+                            less  it is used for a specific security purpose), as bind mounts are
+                            very widely used by end-users.  Setting this flag indiscrimnately for
+                            all  uses  of  openat2() may result in spurious errors on previously-
+                            functional systems.
+
+                     RESOLVE_NO_SYMLINKS
+                            Disallow resolution of symbolic links during path  resolution.   This
+                            option implies RESOLVE_NO_MAGICLINKS.
+
+                            If the trailing component is a symbolic link, and flags contains both
+                            O_PATH and O_NOFOLLOW, then an O_PATH file descriptor referencing the
+                            symbolic link will be returned.
+
+                            Users  of  this flag are encouraged to make its use configurable (un-
+                            less it is used for a specific security purpose), as  symbolic  links
+                            are very widely used by end-users.  Setting this flag indiscrimnately
+                            for all uses of openat2() may result in  spurious  errors  on  previ-
+                            ously-functional systems.
+
+                     RESOLVE_NO_MAGICLINKS
+                            Disallow all magic link resolution during path resolution.
+
+                            If  the  trailing  component is a magic link, and flags contains both
+                            O_PATH and O_NOFOLLOW, then an O_PATH file descriptor referencing the
+                            magic link will be returned.
+
+                            Magic-links  are  symbolic  link-like  objects  that are most notably
+                            found   in   proc(5)   (examples    include    /proc/[pid]/exe    and
+                            /proc/[pid]/fd/*.)   Due to the potential danger of unknowingly open-
+                            ing these magic links, it may be  preferable  for  users  to  disable
+                            their resolution entirely (see symboliclink(7) for more details.)
+
+                     RESOLVE_BENEATH
+                            Do  not permit the path resolution to succeed if any component of the
+                            resolution is not a descendant of the directory indicated  by  dirfd.
+                            This results in absolute symbolic links (and absolute values of path-
+                            name) to be rejected.
+
+                            Currently, this flag also disables magic link  resolution.   However,
+                            this  may change in the future.  The caller should explicitly specify
+                            RESOLVE_NO_MAGICLINKS to ensure that magic links are not resolved.
+
+                     RESOLVE_IN_ROOT
+                            Treat dirfd as the root directory while resolving pathname (as though
+                            the user called chroot(2) with dirfd as the argument.)  Absolute sym-
+                            bolic links and ".." path components will be  scoped  to  dirfd.   If
+                            pathname is an absolute path, it is also treated relative to dirfd.
+
+                            However,  unlike  chroot(2) (which changes the filesystem root perma-
+                            nently for a process), RESOLVE_IN_ROOT  allows  a  program  to  effi-
+                            ciently  restrict  path  resolution  for only certain operations.  It
+                            also has several hardening features (such detecting  escape  attempts
+                            during ..  resolution) which chroot(2) does not.
+
+                            Currently,  this  flag also disables magic link resolution.  However,
+                            this may change in the future.  The caller should explicitly  specify
+                            RESOLVE_NO_MAGICLINKS to ensure that magic links are not resolved.
+
+                     It is an error to provide openat2() unknown flags in resolve.
+
+RETURN VALUE
+       On success, a new file descriptor is returned.  On error, -1 is returned, and errno is set
+       appropriately.
+
+ERRORS
+       The set of errors returned by openat2() includes all of the errors returned by  openat(2),
+       as well as the following additional errors:
+
+       EINVAL An unknown flag or invalid value was specified in how.
+
+       EINVAL mode is non-zero, but flags does not contain O_CREAT or O_TMPFILE.
+
+       EINVAL size was smaller than any known version of struct open_how.
+
+       E2BIG  An  extension  was specified in how, which the current kernel does not support (see
+              the "Extensibility" section of the NOTES for more detail on how extensions are han-
+              dled.)
+
+       EAGAIN resolve  contains  either  RESOLVE_IN_ROOT or RESOLVE_BENEATH, and the kernel could
+              not ensure that a ".." component didn't escape (due to a race condition  or  poten-
+              tial attack.)  Callers may choose to retry the openat2() call.
+
+       EXDEV  resolve  contains either RESOLVE_IN_ROOT or RESOLVE_BENEATH, and an escape from the
+              root during path resolution was detected.
+
+       EXDEV  resolve contains RESOLVE_NO_XDEV, and a path component attempted to cross  a  mount
+              point.
+
+       ELOOP  resolve contains RESOLVE_NO_SYMLINKS, and one of the path components was a symbolic
+              link (or magic link).
+
+       ELOOP  resolve contains RESOLVE_NO_MAGICLINKS, and one of the path components was a  magic
+              link.
+
+VERSIONS
+       openat2() was added to Linux in kernel 5.FOO.
+
+CONFORMING TO
+       This system call is Linux-specific.
+
+       The semantics of RESOLVE_BENEATH were modelled after FreeBSD's O_BENEATH.
+
+NOTES
+       Glibc does not provide a wrapper for this system call; call it using systemcall(2).
+
+   Extensibility
+       In order to allow for struct open_how to be extended in future kernel revisions, openat2()
+       requires userspace to specify the size of struct open_how structure they are passing.   By
+       providing  this  information,  it  is possible for openat2() to provide both forwards- and
+       backwards-compatibility — with size acting as an implicit version number (because new  ex-
+       tension  fields will always be appended, the size will always increase.)  This extensibil-
+       ity  design  is  very  similar  to   other   system   calls   such   as   perf_setattr(2),
+       perf_event_open(2), and clone(3).
+
+       If  we let usize be the size of the structure according to userspace and ksize be the size
+       of the structure which the kernel supports, then there are only three cases to consider:
+
+              *  If ksize equals usize, then there is no version mismatch and  how  can  be  used
+                 verbatim.
+
+              *  If  ksize  is  larger than usize, then there are some extensions the kernel sup-
+                 ports which the userspace program is unaware of.  Because  all  extensions  must
+                 have their zero values be a no-op, the kernel treats all of the extension fields
+                 not set by userspace to have zero values.  This  provides  backwards-compatibil-
+                 ity.
+
+              *  If  ksize  is  smaller  than  usize,  then  there  are some extensions which the
+                 userspace program is aware of but the kernel does not support.  Because all  ex-
+                 tensions  must  have  their zero values be a no-op, the kernel can safely ignore
+                 the unsupported extension fields if they are all-zero.  If any  unsupported  ex-
+                 tension  fields  are  non-zero,  then  -1 is returned and errno is set to E2BIG.
+                 This provides forwards-compatibility.
+
+       Therefore, most userspace programs will not need to have any special  handling  of  exten-
+       sions.   However,  if  a userspace program wishes to determine what extensions the running
+       kernel supports, they may conduct a binary search on size (to find the largest value which
+       doesn't produce an error of E2BIG.)
+
+SEE ALSO
+       openat(2), path_resolution(7), symlink(7)
+
+Linux                                       2019-11-05                                 OPENAT2(2)
+--8<---------------------------------------------------------------------------
+
+Aleksa Sarai (9):
+  namei: LOOKUP_NO_SYMLINKS: block symlink resolution
+  namei: LOOKUP_NO_MAGICLINKS: block magic-link resolution
+  namei: LOOKUP_NO_XDEV: block mountpoint crossing
+  namei: LOOKUP_BENEATH: O_BENEATH-like scoped resolution
+  namei: LOOKUP_IN_ROOT: chroot-like scoped resolution
+  namei: LOOKUP_{IN_ROOT,BENEATH}: permit limited ".." resolution
+  open: introduce openat2(2) syscall
+  selftests: add openat2(2) selftests
+  Documentation: path-lookup: mention LOOKUP_MAGICLINK_JUMPED
+
+ CREDITS                                       |   4 +-
+ Documentation/filesystems/path-lookup.rst     |  18 +-
+ arch/alpha/kernel/syscalls/syscall.tbl        |   1 +
+ arch/arm/tools/syscall.tbl                    |   1 +
+ arch/arm64/include/asm/unistd.h               |   2 +-
+ arch/arm64/include/asm/unistd32.h             |   2 +
+ arch/ia64/kernel/syscalls/syscall.tbl         |   1 +
+ arch/m68k/kernel/syscalls/syscall.tbl         |   1 +
+ arch/microblaze/kernel/syscalls/syscall.tbl   |   1 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl     |   1 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl     |   1 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl     |   1 +
+ arch/parisc/kernel/syscalls/syscall.tbl       |   1 +
+ arch/powerpc/kernel/syscalls/syscall.tbl      |   1 +
+ arch/s390/kernel/syscalls/syscall.tbl         |   1 +
+ arch/sh/kernel/syscalls/syscall.tbl           |   1 +
+ arch/sparc/kernel/syscalls/syscall.tbl        |   1 +
+ arch/x86/entry/syscalls/syscall_32.tbl        |   1 +
+ arch/x86/entry/syscalls/syscall_64.tbl        |   1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl       |   1 +
+ fs/namei.c                                    | 176 +++++-
+ fs/open.c                                     | 149 +++--
+ include/linux/fcntl.h                         |  12 +-
+ include/linux/namei.h                         |  11 +
+ include/linux/syscalls.h                      |   3 +
+ include/uapi/asm-generic/unistd.h             |   5 +-
+ include/uapi/linux/fcntl.h                    |  41 ++
+ tools/testing/selftests/Makefile              |   1 +
+ tools/testing/selftests/openat2/.gitignore    |   1 +
+ tools/testing/selftests/openat2/Makefile      |   8 +
+ tools/testing/selftests/openat2/helpers.c     | 109 ++++
+ tools/testing/selftests/openat2/helpers.h     | 107 ++++
+ .../testing/selftests/openat2/openat2_test.c  | 316 +++++++++++
+ .../selftests/openat2/rename_attack_test.c    | 160 ++++++
+ .../testing/selftests/openat2/resolve_test.c  | 523 ++++++++++++++++++
+ 35 files changed, 1591 insertions(+), 73 deletions(-)
+ create mode 100644 tools/testing/selftests/openat2/.gitignore
+ create mode 100644 tools/testing/selftests/openat2/Makefile
+ create mode 100644 tools/testing/selftests/openat2/helpers.c
+ create mode 100644 tools/testing/selftests/openat2/helpers.h
+ create mode 100644 tools/testing/selftests/openat2/openat2_test.c
+ create mode 100644 tools/testing/selftests/openat2/rename_attack_test.c
+ create mode 100644 tools/testing/selftests/openat2/resolve_test.c
+
+
+base-commit: a99d8080aaf358d5d23581244e5da23b35e340b9
+-- 
+2.23.0
+
