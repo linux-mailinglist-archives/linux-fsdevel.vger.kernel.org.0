@@ -2,118 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40675F204B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2019 22:04:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B15C4F2065
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2019 22:06:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727827AbfKFVEg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Nov 2019 16:04:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44344 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727351AbfKFVEg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Nov 2019 16:04:36 -0500
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D4E020663;
-        Wed,  6 Nov 2019 21:04:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573074274;
-        bh=gjl0DiLR6wZlVim/nV2ye21G7PfWS65h/U6LfKQDhOI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ar8VeiM8q2OQT8IoJYh3V+TV427A/Ul9oo2Nc+bBlNFftOaldwb8dJEju6gXLLTK/
-         c5jxp1YbNtAI2dpDUDyh2rsJ6O/CA8ifSHEB7Cem82mpMWsqXgP77/aM3UnnzJ9dOF
-         8vWJsJMWS7Rj2CGh8Qbh4EcGZaPviVhm4mbJmIo0=
-Date:   Wed, 6 Nov 2019 13:04:33 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-fscrypt@vger.kernel.org
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Satya Tangirala <satyat@google.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-ext4@vger.kernel.org, Paul Crowley <paulcrowley@google.com>
-Subject: Re: [PATCH v2 0/3] fscrypt: support for IV_INO_LBLK_64 policies
-Message-ID: <20191106210432.GB139580@gmail.com>
-Mail-Followup-To: linux-fscrypt@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Satya Tangirala <satyat@google.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-ext4@vger.kernel.org, Paul Crowley <paulcrowley@google.com>
-References: <20191024215438.138489-1-ebiggers@kernel.org>
+        id S1732645AbfKFVGv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Nov 2019 16:06:51 -0500
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:38611 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732012AbfKFVGu (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 6 Nov 2019 16:06:50 -0500
+X-Originating-IP: 78.194.159.98
+Received: from gandi.net (unknown [78.194.159.98])
+        (Authenticated sender: thibaut@sautereau.fr)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 1E25D1C0003;
+        Wed,  6 Nov 2019 21:06:46 +0000 (UTC)
+Date:   Wed, 6 Nov 2019 22:06:46 +0100
+From:   Thibaut Sautereau <thibaut@sautereau.fr>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Christian Brauner <christian@brauner.io>,
+        cgroups@vger.kernel.org
+Subject: Re: NULL pointer deref in put_fs_context with unprivileged LXC
+Message-ID: <20191106210646.GA1495@gandi.net>
+References: <20191010213512.GA875@gandi.net>
+ <20191011141403.ghjptf4nrttgg7jd@wittgenstein>
+ <20191105205830.GA871@gandi.net>
+ <20191106072407.GU26530@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191024215438.138489-1-ebiggers@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191106072407.GU26530@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 02:54:35PM -0700, Eric Biggers wrote:
-> Hello,
+On Wed, Nov 06, 2019 at 07:24:07AM +0000, Al Viro wrote:
+> On Tue, Nov 05, 2019 at 09:58:30PM +0100, Thibaut Sautereau wrote:
 > 
-> In preparation for adding inline encryption support to fscrypt, this
-> patchset adds a new fscrypt policy flag which modifies the encryption to
-> be optimized for inline encryption hardware compliant with the UFS v2.1
-> standard or the upcoming version of the eMMC standard.
+> > > > 	BUG: kernel NULL pointer dereference, address: 0000000000000043
 > 
-> This means using per-mode keys instead of per-file keys, and in
-> compensation including the inode number in the IVs.  For ext4, this
-> precludes filesystem shrinking, so I've also added a compat feature
-> which will prevent the filesystem from being shrunk.
+> ERR_PTR(something)->d_sb, most likely.
 > 
-> I've separated this from the full "Inline Encryption Support" patchset
-> (https://lkml.kernel.org/linux-fsdevel/20190821075714.65140-1-satyat@google.com/)
-> to avoid conflating an implementation (inline encryption) with a new
-> on-disk format (IV_INO_LBLK_64).  This patchset purely adds support for
-> IV_INO_LBLK_64 policies to fscrypt, but implements them using the
-> existing filesystem layer crypto.
+> > > > 	493		if (fc->root) {
+> > > > 	494			sb = fc->root->d_sb;
+> > > > 	495			dput(fc->root);
+> > > > 	496			fc->root = NULL;
+> > > > 	497			deactivate_super(sb);
+> > > > 	498		}
 > 
-> We're planning to make the *implementation* (filesystem layer or inline
-> crypto) be controlled by a mount option '-o inlinecrypt'.
+> > 	fs_context: DEBUG: fc->root = fffffffffffffff3
+> > 	fs_context: DEBUG: fc->source = cgroup2
 > 
-> This patchset applies to fscrypt.git#master and can also be retrieved from
-> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=inline-crypt-optimized-v2
+> Yup.  That'd be ERR_PTR(-13), i.e. ERR_PTR(-EACCES).  Most likely
+> from
+>                 nsdentry = kernfs_node_dentry(cgrp->kn, sb);
+>                 dput(fc->root);
+>                 fc->root = nsdentry;
+>                 if (IS_ERR(nsdentry)) {
+>                         ret = PTR_ERR(nsdentry);
+>                         deactivate_locked_super(sb);
+>                 }
 > 
-> I've written a ciphertext verification test for this new type of policy:
-> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/xfstests-dev.git/log/?h=inline-encryption
-> 
-> Work-in-progress patches for the inline encryption implementation of
-> both IV_INO_LBLK_64 and regular policies can be found at
-> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=inline-encryption-wip
-> 
-> Changes v1 => v2:
-> 
-> - Rename the flag from INLINE_CRYPT_OPTIMIZED to IV_INO_LBLK_64.
-> 
-> - Use the same key derivation and IV generation scheme for filenames
->   encryption too.
-> 
-> - Improve the documentation and commit messages.
-> 
-> Eric Biggers (3):
->   fscrypt: add support for IV_INO_LBLK_64 policies
->   ext4: add support for IV_INO_LBLK_64 encryption policies
->   f2fs: add support for IV_INO_LBLK_64 encryption policies
-> 
->  Documentation/filesystems/fscrypt.rst | 63 +++++++++++++++++----------
->  fs/crypto/crypto.c                    | 10 ++++-
->  fs/crypto/fscrypt_private.h           | 16 +++++--
->  fs/crypto/keyring.c                   |  6 ++-
->  fs/crypto/keysetup.c                  | 45 ++++++++++++++-----
->  fs/crypto/policy.c                    | 41 ++++++++++++++++-
->  fs/ext4/ext4.h                        |  2 +
->  fs/ext4/super.c                       | 14 ++++++
->  fs/f2fs/super.c                       | 26 ++++++++---
->  include/linux/fscrypt.h               |  3 ++
->  include/uapi/linux/fscrypt.h          |  3 +-
->  11 files changed, 182 insertions(+), 47 deletions(-)
-> 
-> -- 
+> in cgroup_do_get_tree().  As a quick test, try to add fc->root = NULL;
+> next to that deactivate_locked_super(sb); inside the if (IS_ERR(...))
+> body and see if it helps; it's not the best way to fix it (I'd rather
+> go for
+>                 if (IS_ERR(nsdentry)) {
+>                         ret = PTR_ERR(nsdentry);
+>                         deactivate_locked_super(sb);
+> 			nsdentry = NULL;
+>                 }
+>                 fc->root = nsdentry;
+> ), but it would serve to verify that this is the source of that crap.
 
-Applied to fscrypt.git#master for 5.5.
+Yes, you're absolutely right. Your first suggestion fixes the bug, as
+well as your second one. Thanks!
 
-- Eric
+By the way, I had just finished the bisection, confirming that
+71d883c37e8d ("cgroup_do_mount(): massage calling conventions") brought
+the issue.
+
+Do you want me to send a patch or are you dealing with that?
+
+-- 
+Thibaut
