@@ -2,75 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82CEEF1028
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2019 08:24:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02A28F10DF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2019 09:17:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729908AbfKFHYK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Nov 2019 02:24:10 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:56518 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728291AbfKFHYK (ORCPT
+        id S1729974AbfKFIRz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Nov 2019 03:17:55 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:49097 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729881AbfKFIRy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Nov 2019 02:24:10 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iSFfj-0005CX-5l; Wed, 06 Nov 2019 07:24:07 +0000
-Date:   Wed, 6 Nov 2019 07:24:07 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Thibaut Sautereau <thibaut@sautereau.fr>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Christian Brauner <christian@brauner.io>,
-        cgroups@vger.kernel.org
-Subject: Re: NULL pointer deref in put_fs_context with unprivileged LXC
-Message-ID: <20191106072407.GU26530@ZenIV.linux.org.uk>
-References: <20191010213512.GA875@gandi.net>
- <20191011141403.ghjptf4nrttgg7jd@wittgenstein>
- <20191105205830.GA871@gandi.net>
+        Wed, 6 Nov 2019 03:17:54 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1iSGVl-0004VZ-GX; Wed, 06 Nov 2019 09:17:53 +0100
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1iSGVk-0001TZ-Sa; Wed, 06 Nov 2019 09:17:52 +0100
+Date:   Wed, 6 Nov 2019 09:17:52 +0100
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/7] quota: Allow quota support without quota files
+Message-ID: <20191106081752.6dhmivu2e4qnkb5d@pengutronix.de>
+References: <20191104091335.7991-1-jack@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191105205830.GA871@gandi.net>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191104091335.7991-1-jack@suse.cz>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 09:13:24 up 121 days, 14:23, 107 users,  load average: 0.02, 0.10,
+ 0.12
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-fsdevel@vger.kernel.org
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 05, 2019 at 09:58:30PM +0100, Thibaut Sautereau wrote:
+Hi Jan,
 
-> > > 	BUG: kernel NULL pointer dereference, address: 0000000000000043
+On Mon, Nov 04, 2019 at 11:51:48AM +0100, Jan Kara wrote:
+> Hello,
+> 
+> this patch series refactors quota enabling / disabling code and allows
+> filesystems to implement quota support without providing quota files (ubifs
+> wants to do this).
+> 
+> Patches have passed testing with fstests, review is welcome.
 
-ERR_PTR(something)->d_sb, most likely.
+Thank you for creating this series. I can confirm my UBIFS quota patches
+are working fine on top of this series. I'll send an updated UBIFS quota
+series shortly.
 
-> > > 	493		if (fc->root) {
-> > > 	494			sb = fc->root->d_sb;
-> > > 	495			dput(fc->root);
-> > > 	496			fc->root = NULL;
-> > > 	497			deactivate_super(sb);
-> > > 	498		}
+Sascha
 
-> 	fs_context: DEBUG: fc->root = fffffffffffffff3
-> 	fs_context: DEBUG: fc->source = cgroup2
-
-Yup.  That'd be ERR_PTR(-13), i.e. ERR_PTR(-EACCES).  Most likely
-from
-                nsdentry = kernfs_node_dentry(cgrp->kn, sb);
-                dput(fc->root);
-                fc->root = nsdentry;
-                if (IS_ERR(nsdentry)) {
-                        ret = PTR_ERR(nsdentry);
-                        deactivate_locked_super(sb);
-                }
-
-in cgroup_do_get_tree().  As a quick test, try to add fc->root = NULL;
-next to that deactivate_locked_super(sb); inside the if (IS_ERR(...))
-body and see if it helps; it's not the best way to fix it (I'd rather
-go for
-                if (IS_ERR(nsdentry)) {
-                        ret = PTR_ERR(nsdentry);
-                        deactivate_locked_super(sb);
-			nsdentry = NULL;
-                }
-                fc->root = nsdentry;
-), but it would serve to verify that this is the source of that crap.
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
