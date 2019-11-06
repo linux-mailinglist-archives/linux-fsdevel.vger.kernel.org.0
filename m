@@ -2,162 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 997F2F1145
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2019 09:39:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C930CF11EB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2019 10:16:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731569AbfKFIjm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Nov 2019 03:39:42 -0500
-Received: from mail.parknet.co.jp ([210.171.160.6]:34886 "EHLO
-        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731551AbfKFIjl (ORCPT
+        id S1730332AbfKFJQG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Nov 2019 04:16:06 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:60241 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728495AbfKFJQG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Nov 2019 03:39:41 -0500
-X-Greylist: delayed 504 seconds by postgrey-1.27 at vger.kernel.org; Wed, 06 Nov 2019 03:39:41 EST
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-        by mail.parknet.co.jp (Postfix) with ESMTPSA id 401F015CBF5;
-        Wed,  6 Nov 2019 17:31:16 +0900 (JST)
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-15) with ESMTPS id xA68VErR024850
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Wed, 6 Nov 2019 17:31:15 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-15) with ESMTPS id xA68VEqa006768
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Wed, 6 Nov 2019 17:31:14 +0900
-Received: (from hirofumi@localhost)
-        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id xA68V8ZC006766;
-        Wed, 6 Nov 2019 17:31:08 +0900
-From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Marco Elver <elver@google.com>,
-        syzbot <syzbot+11010f0000e50c63c2cc@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: KCSAN: data-race in fat16_ent_put / fat_search_long
-References: <00000000000016a19d0596980568@google.com>
-        <20191105143923.GA87727@google.com>
-        <20191105152528.GD11823@bombadil.infradead.org>
-Date:   Wed, 06 Nov 2019 17:31:08 +0900
-In-Reply-To: <20191105152528.GD11823@bombadil.infradead.org> (Matthew Wilcox's
-        message of "Tue, 5 Nov 2019 07:25:28 -0800")
-Message-ID: <87k18d8kz7.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
+        Wed, 6 Nov 2019 04:16:06 -0500
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1iSHPg-0002eU-I7; Wed, 06 Nov 2019 10:15:40 +0100
+Received: from sha by dude.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1iSHPe-0000Am-GD; Wed, 06 Nov 2019 10:15:38 +0100
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-mtd@lists.infradead.org, Jan Kara <jack@suse.com>,
+        Richard Weinberger <richard@nod.at>, kernel@pengutronix.de,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Subject: [PATCH v3 0/7] Add quota support to UBIFS
+Date:   Wed,  6 Nov 2019 10:15:30 +0100
+Message-Id: <20191106091537.32480-1-s.hauer@pengutronix.de>
+X-Mailer: git-send-email 2.24.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-fsdevel@vger.kernel.org
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> writes:
+This series adds quota support to UBIFS.
 
-> On Tue, Nov 05, 2019 at 03:39:23PM +0100, Marco Elver wrote:
->> On Tue, 05 Nov 2019, syzbot wrote:
->> > ==================================================================
->> > BUG: KCSAN: data-race in fat16_ent_put / fat_search_long
->> > 
->> > write to 0xffff8880a209c96a of 2 bytes by task 11985 on cpu 0:
->> >  fat16_ent_put+0x5b/0x90 fs/fat/fatent.c:181
->> >  fat_ent_write+0x6d/0xf0 fs/fat/fatent.c:415
->> >  fat_chain_add+0x34e/0x400 fs/fat/misc.c:130
->> >  fat_add_cluster+0x92/0xd0 fs/fat/inode.c:112
->> >  __fat_get_block fs/fat/inode.c:154 [inline]
->> >  fat_get_block+0x3ae/0x4e0 fs/fat/inode.c:189
->> >  __block_write_begin_int+0x2ea/0xf20 fs/buffer.c:1968
->> >  __block_write_begin fs/buffer.c:2018 [inline]
->> >  block_write_begin+0x77/0x160 fs/buffer.c:2077
->> >  cont_write_begin+0x3d6/0x670 fs/buffer.c:2426
->> >  fat_write_begin+0x72/0xc0 fs/fat/inode.c:235
->> >  pagecache_write_begin+0x6b/0x90 mm/filemap.c:3148
->> >  cont_expand_zero fs/buffer.c:2353 [inline]
->> >  cont_write_begin+0x17a/0x670 fs/buffer.c:2416
->> >  fat_write_begin+0x72/0xc0 fs/fat/inode.c:235
->> >  pagecache_write_begin+0x6b/0x90 mm/filemap.c:3148
->> >  generic_cont_expand_simple+0xb0/0x120 fs/buffer.c:2317
->> > 
->> > read to 0xffff8880a209c96b of 1 bytes by task 11990 on cpu 1:
->> >  fat_search_long+0x20a/0xc60 fs/fat/dir.c:484
->> >  vfat_find+0xc1/0xd0 fs/fat/namei_vfat.c:698
->> >  vfat_lookup+0x75/0x350 fs/fat/namei_vfat.c:712
->> >  lookup_open fs/namei.c:3203 [inline]
->> >  do_last fs/namei.c:3314 [inline]
->> >  path_openat+0x15b6/0x36e0 fs/namei.c:3525
->> >  do_filp_open+0x11e/0x1b0 fs/namei.c:3555
->> >  do_sys_open+0x3b3/0x4f0 fs/open.c:1097
->> >  __do_sys_open fs/open.c:1115 [inline]
->> >  __se_sys_open fs/open.c:1110 [inline]
->> >  __x64_sys_open+0x55/0x70 fs/open.c:1110
->> >  do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
->> >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
->> > 
->> > Reported by Kernel Concurrency Sanitizer on:
->> > CPU: 1 PID: 11990 Comm: syz-executor.2 Not tainted 5.4.0-rc3+ #0
->> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->> > Google 01/01/2011
->> > ==================================================================
->> 
->> I was trying to understand what is happening here, but fail to see how
->> this can happen. So it'd be good if somebody who knows this code can
->> explain. We are quite positive this is not a false positive, given the
->> addresses accessed match.
->
-> Both of these accesses are into a buffer head; ie the data being accessed
-> is stored in the page cache.  Is it possible the page was reused for
-> different data between these two accesses?
+Biggest change this time is that most of the quota patches are no longer
+necessary as this series is based on Jans patches, see
+https://lwn.net/ml/linux-fsdevel/20191104091335.7991-1-jack@suse.cz/
 
-No and yes. Reader side is directory buffer, writer side is FAT buffer.
-So FAT buffer never be reused as directory buffer.  But the page cache
-itself can be freed and reused as different index. So if KCSAN can't
-detect the page cache recycle, it would be possible.
+This series follows a very simple approach to quota: Neither the quota
+limits nor the quota usage are ever written to the medium. The quota
+usage is reconstructed from the filesystem during mount time. The quota
+limits must be set by the user each time after mount. This is probably
+not very convenient for systems that are used interactively, but UBIFS
+is targetted to embedded systems and here running a script after mount
+shouldn't be a problem. This of course isn't the way quota was thought
+to be, but I believe this is a good compromise for a feature that I predict
+is only rarely used on UBIFS. The big upside of this approach is that
+no on-disk format changes are required and thus we can't get any
+broken/corrupt filesystems because of quota support. Reconstructing the
+quota data each time during mount has an noticable but I think for many
+cases acceptable time overhead. I mounted a ~56MiB rootfs with 1920 files
+which takes around 0.7s longer when quota is enabled.
 
-Is there anyway to know "why KCSAN thought this as data race"?
+As UBIFS works on mtd there is no block_device involved. The quotactl
+system call requires a path to a block device as argument. To overcome
+this we add support for passing the mount point instead. This is done
+with a new Q_PATH flag to the quotactl syscall indicating that the special
+argument belongs to the mount path rather than a path to the block device
+file
 
->> The two bits of code in question here are:
->> 
->> static void fat16_ent_put(struct fat_entry *fatent, int new)
->> {
->> 	if (new == FAT_ENT_EOF)
->> 		new = EOF_FAT16;
->> 
->> 	*fatent->u.ent16_p = cpu_to_le16(new);   <<== data race here
->> 	mark_buffer_dirty_inode(fatent->bhs[0], fatent->fat_inode);
->> }
+The UBIFS quota support itself is based on a series by Dongsheng Yang
+posted here:
+http://lists.infradead.org/pipermail/linux-mtd/2015-September/061812.html
+This part hasn't changed much, except that the code for reading and writing
+quota files has been dropped.
 
-This is updating FAT entry (index for data cluster placement) on FAT buffer.
+Sascha
 
->> int fat_search_long(struct inode *inode, const unsigned char *name,
->> 		    int name_len, struct fat_slot_info *sinfo)
->> {
->> 	struct super_block *sb = inode->i_sb;
->> 	struct msdos_sb_info *sbi = MSDOS_SB(sb);
->> 	struct buffer_head *bh = NULL;
->> 	struct msdos_dir_entry *de;
->> 	unsigned char nr_slots;
->> 	wchar_t *unicode = NULL;
->> 	unsigned char bufname[FAT_MAX_SHORT_SIZE];
->> 	loff_t cpos = 0;
->> 	int err, len;
->> 
->> 	err = -ENOENT;
->> 	while (1) {
->> 		if (fat_get_entry(inode, &cpos, &bh, &de) == -1)
->> 			goto end_of_dir;
->> parse_record:
->> 		nr_slots = 0;
->> 		if (de->name[0] == DELETED_FLAG)
->> 			continue;
->> 		if (de->attr != ATTR_EXT && (de->attr & ATTR_VOLUME))  <<== data race here
+changes since v2:
+- Rebase on Jans quota-without-inode series
+- Use recently introduced vfs_ioc_fssetxattr_check() and simple_fill_fsxattr()
+- fix project quota support (was broken in v2 due to upstream changes in UBIFS)
+- check for illegal renames due to different project id
 
-Checking attribute on directory buffer.
+Changes since v1:
+- Introduce Q_PATH flag to make passing a mountpath explicit
+- Do not mess with fs layer as suggested by Al Viro
+- create separate usrquota, grpquota and prjquota options rather than just
+  a single quota option
+- register a UBIFS specific quota_format and use dquot_enable()
+- drop "quota: Only module_put the format when existing" which is no
+  longer necesary
 
->> 			continue;
->> 		if (de->attr != ATTR_EXT && IS_FREE(de->name))
->> 			continue;
->> 		<snip>
->> }
->> 
->> Thanks,
->> -- Marco
+
+Sascha Hauer (7):
+  quota: Allow to pass mount path to quotactl
+  ubifs: move checks and preparation into setflags()
+  ubifs: Add support for FS_IOC_FS[SG]ETXATTR ioctls
+  ubifs: do not ubifs_inode() on potentially NULL pointer
+  ubifs: Add support for project id
+  ubifs: export get_znode
+  ubifs: Add quota support
+
+ Documentation/filesystems/ubifs.txt |   7 +-
+ fs/quota/quota.c                    |  37 +-
+ fs/ubifs/Makefile                   |   1 +
+ fs/ubifs/dir.c                      |  43 +-
+ fs/ubifs/file.c                     |  43 ++
+ fs/ubifs/ioctl.c                    | 209 ++++++++--
+ fs/ubifs/journal.c                  |   4 +-
+ fs/ubifs/quota.c                    | 612 ++++++++++++++++++++++++++++
+ fs/ubifs/super.c                    |  83 +++-
+ fs/ubifs/tnc.c                      |  34 +-
+ fs/ubifs/ubifs-media.h              |   6 +-
+ fs/ubifs/ubifs.h                    |  42 ++
+ include/uapi/linux/quota.h          |   2 +
+ 13 files changed, 1064 insertions(+), 59 deletions(-)
+ create mode 100644 fs/ubifs/quota.c
 
 -- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+2.24.0.rc1
+
