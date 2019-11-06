@@ -2,93 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6826DF1E32
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2019 20:04:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F172F1E77
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2019 20:17:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728670AbfKFTEJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Nov 2019 14:04:09 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:53930 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727410AbfKFTEJ (ORCPT
+        id S1728445AbfKFTRH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Nov 2019 14:17:07 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:46078 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727615AbfKFTRH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Nov 2019 14:04:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573067048;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=mWTSqOOTt3Dk2ZPvesbfsapc/5QXTzyY0nl7eR6Zqto=;
-        b=H5IPwGRGnMVmVXMXRnJYf9j+trPtCon5B6RnCIR06KlMitfBCrTH5cIPnQgYV2gZTPYF7E
-        Qpx89o2dBgVxZydikS9UGJMyz8+DNGXrrwgtMPg9QUrVlgwI//9zlpxeJUc5E8o4k7sYXi
-        wcQr1+hL05e24tO3Qc2yJ9QAVLxWEMM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-434-y9o0P_5YOvyqcIpOWoYuDA-1; Wed, 06 Nov 2019 14:04:05 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9C63D800C72;
-        Wed,  6 Nov 2019 19:04:03 +0000 (UTC)
-Received: from max.com (unknown [10.40.206.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3FD991001B35;
-        Wed,  6 Nov 2019 19:04:02 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-To:     linux-xfs@vger.kernel.org
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [PATCH] iomap: Fix overflow in iomap_page_mkwrite
-Date:   Wed,  6 Nov 2019 20:04:00 +0100
-Message-Id: <20191106190400.20969-1-agruenba@redhat.com>
+        Wed, 6 Nov 2019 14:17:07 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA6JD34e057478;
+        Wed, 6 Nov 2019 19:17:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=8Yh1KuLs+cjoPiXs+ulIFCtp/zGoRnvCASlft22/8eU=;
+ b=oqb6YNzvhAg27vIF2aBPBT7FJwW5avf0qKYDrwXtLSE8W/B34ZnnQ2IeYzXR0F0k9ECV
+ V2EJiVryYBeAfHQtxsy1fNlBYOuwHJJ2r/cGzsoloxIYMOo+Lm/1kQcJVK84gMXIx9v/
+ n5t3rxXHT4V5Kr7SuHQxiM7+Pj2reLNe7MoyWRwUcV80ynbYWGWUr8ZFbfV9VchtyUGc
+ E2SDUT04/6of6R/vUrM2coZtb+an/bw7j2fkAcj2fG0awpvHdJmvEnIDqN2PDxrTHS9U
+ V6y95sByEKChRSIBDpYKhRIFlLF+eIPwX1EKAIRfQdM9rU2yEdwvRjJ3VdUEbNWD7Xl6 Og== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2w41w0s3rr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 06 Nov 2019 19:17:00 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA6JBRFG186174;
+        Wed, 6 Nov 2019 19:17:00 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2w41wf8x8j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 06 Nov 2019 19:17:00 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xA6JGvCU020219;
+        Wed, 6 Nov 2019 19:16:58 GMT
+Received: from localhost (/10.159.234.83)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 06 Nov 2019 11:16:57 -0800
+Date:   Wed, 6 Nov 2019 11:16:56 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     linux-xfs@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH] iomap: Fix overflow in iomap_page_mkwrite
+Message-ID: <20191106191656.GC15212@magnolia>
+References: <20191106190400.20969-1-agruenba@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: y9o0P_5YOvyqcIpOWoYuDA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191106190400.20969-1-agruenba@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9433 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1910280000 definitions=main-1911060187
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9433 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
+ definitions=main-1911060187
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On architectures where ssize_t is wider than pgoff_t, the expression
-((page->index + 1) << PAGE_SHIFT) can overflow.  Rewrite to use the page
-offset, which we already compute here anyway.
+On Wed, Nov 06, 2019 at 08:04:00PM +0100, Andreas Gruenbacher wrote:
+> On architectures where ssize_t is wider than pgoff_t, the expression
 
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
----
- fs/iomap/buffered-io.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ssize_t?  But you're changing @offset, which is loff_t.   I'm confused.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index e25901ae3ff4..a30ea7ecb790 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1040,20 +1040,19 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf,=
- const struct iomap_ops *ops)
-=20
- =09lock_page(page);
- =09size =3D i_size_read(inode);
--=09if ((page->mapping !=3D inode->i_mapping) ||
--=09    (page_offset(page) > size)) {
-+=09offset =3D page_offset(page);
-+=09if (page->mapping !=3D inode->i_mapping || offset > size) {
- =09=09/* We overload EFAULT to mean page got truncated */
- =09=09ret =3D -EFAULT;
- =09=09goto out_unlock;
- =09}
-=20
- =09/* page is wholly or partially inside EOF */
--=09if (((page->index + 1) << PAGE_SHIFT) > size)
-+=09if (offset > size - PAGE_SIZE)
- =09=09length =3D offset_in_page(size);
- =09else
- =09=09length =3D PAGE_SIZE;
-=20
--=09offset =3D page_offset(page);
- =09while (length > 0) {
- =09=09ret =3D iomap_apply(inode, offset, length,
- =09=09=09=09IOMAP_WRITE | IOMAP_FAULT, ops, page,
---=20
-2.20.1
+Also, which architectures are you talking about here?
 
+--D
+
+> ((page->index + 1) << PAGE_SHIFT) can overflow.  Rewrite to use the page
+> offset, which we already compute here anyway.
+> 
+> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+> ---
+>  fs/iomap/buffered-io.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index e25901ae3ff4..a30ea7ecb790 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -1040,20 +1040,19 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops)
+>  
+>  	lock_page(page);
+>  	size = i_size_read(inode);
+> -	if ((page->mapping != inode->i_mapping) ||
+> -	    (page_offset(page) > size)) {
+> +	offset = page_offset(page);
+> +	if (page->mapping != inode->i_mapping || offset > size) {
+>  		/* We overload EFAULT to mean page got truncated */
+>  		ret = -EFAULT;
+>  		goto out_unlock;
+>  	}
+>  
+>  	/* page is wholly or partially inside EOF */
+> -	if (((page->index + 1) << PAGE_SHIFT) > size)
+> +	if (offset > size - PAGE_SIZE)
+>  		length = offset_in_page(size);
+>  	else
+>  		length = PAGE_SIZE;
+>  
+> -	offset = page_offset(page);
+>  	while (length > 0) {
+>  		ret = iomap_apply(inode, offset, length,
+>  				IOMAP_WRITE | IOMAP_FAULT, ops, page,
+> -- 
+> 2.20.1
+> 
