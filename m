@@ -2,95 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C870BF0D20
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2019 04:38:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56AFBF0D8A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2019 05:05:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730722AbfKFDiY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Nov 2019 22:38:24 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33524 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbfKFDiX (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Nov 2019 22:38:23 -0500
-Received: by mail-lf1-f66.google.com with SMTP id y9so747988lfy.0;
-        Tue, 05 Nov 2019 19:38:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PQNvjkqU67idBz4OClsv+GBdG1CkudkHJ4L8UJX4w/w=;
-        b=sw6iNRzNVysag3UPMEbh+Kn8on6rXPfvM9tKGSmC3XEjYBt44boYgzZl4C3FM3NJ0U
-         FaQiqVvJvWYX7LDrTPBV9mXzd5M29led45NN1+CftEh5QTL7rsc6pXruuvymoVu6RJ98
-         U6EdiJTElql9KXjcAm8BPjiVlUROKm22bl3GEjV56ji7BcvW+lqDHqe18k4OlZAi50WC
-         tVrNdQwzOQYBdRdYa25twOy6CV6cdMgEMB28ysF8ySX6+5Scz9o8NDw57H2u2vM3g9yS
-         lzvGCZkyQOqcl2VvHSvAwKRmzL4l2lPXO+sTQevXbHU1J7nudI0SZKkxkrIVkdzqpEAV
-         LmFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PQNvjkqU67idBz4OClsv+GBdG1CkudkHJ4L8UJX4w/w=;
-        b=nl89sMjVdyynv3Srux80NKBteSlY/NxRIxbx84C78nLRqHw/ndB3Z3w9FsrKxh95at
-         VKp7jf3rOLRmQVpCsUYiwb6/jxJXgaAFN84lEgtRin9fA5i1T8lTfKCdfPUJkhsEcvgP
-         60KYlHlmXTXp1t8JmbchXSuF0JN6s0O70N6wEhAA+hW+qmgtZhLHJvGLENBNYHxELDTL
-         v2E9NpuAUFKH6gyR8VvOMV1LFAAbZatn/VK/Fh/BaJcAM7cwfMf66y1H7Oob/rDeG1S0
-         ZDH2CfXTGE45kUKGtRYhtURHVxcYVWeuHMahq6O2eODprBI4lSgFt/xIrNH6iSmO0gOl
-         EvPA==
-X-Gm-Message-State: APjAAAUgDJK+loYuWTsDCp0ThD8vvSB7A+jF3+fuNxYG39+RjsrOkkbl
-        yTrGODGSzDNysXszwFEO3vOa4+lqoGs+CWDxMZM=
-X-Google-Smtp-Source: APXvYqwsChCPnzWywORig0kW/0YNBnseFKqWqgZ9Fh/5TQNFafS9PAOY1lUanc9n2WfrvRNPjoeKt/V48muf9nJQN0c=
-X-Received: by 2002:a19:f610:: with SMTP id x16mr10831876lfe.141.1573011501515;
- Tue, 05 Nov 2019 19:38:21 -0800 (PST)
+        id S1731131AbfKFEFW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Nov 2019 23:05:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43388 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725768AbfKFEFW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 5 Nov 2019 23:05:22 -0500
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 146A820717;
+        Wed,  6 Nov 2019 04:05:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573013121;
+        bh=Z0GxY95oJxO9ZLq8oaOmmcb0jIbpBQJAL5XisXjvaEc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UyEdLZm6RSRKo2uOnglC4+TurPB07Qt0Yie+qg069GiVrVlXNuPHZpNdCMdqunXXU
+         578Ib5wQ8lOqzDmUFMycgh3jvuHOYBSid4q5TnN+bbA4yivNJX9C48fHKvKoZ5tK+E
+         3BIlG4gNPpY7fJ5x6AkHqEZs4OxdQm+Sw+vpLKCI=
+Date:   Tue, 5 Nov 2019 20:05:19 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, Satya Tangirala <satyat@google.com>,
+        Paul Crowley <paulcrowley@google.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH v2 1/3] fscrypt: add support for IV_INO_LBLK_64 policies
+Message-ID: <20191106040519.GA705@sol.localdomain>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, Satya Tangirala <satyat@google.com>,
+        Paul Crowley <paulcrowley@google.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20191024215438.138489-1-ebiggers@kernel.org>
+ <20191024215438.138489-2-ebiggers@kernel.org>
+ <20191106033544.GG26959@mit.edu>
 MIME-Version: 1.0
-References: <20190816083246.169312-1-arul.jeniston@gmail.com>
- <CACAVd4izozzXNF9qwNcXC+EUx5n1sfsNeb9JNXNJF56LdZkkYg@mail.gmail.com>
- <alpine.DEB.2.21.1908191646350.2147@nanos.tec.linutronix.de>
- <CACAVd4j60pn=td5hh485SJOcoYZ_jWQDQg2DVasSodPtsaupkw@mail.gmail.com>
- <alpine.DEB.2.21.1908191752580.2147@nanos.tec.linutronix.de>
- <CACAVd4iRN7=eq_B1+Yb-xcspU-Sg1dmMo_=VtLXXVPkjN1hY5Q@mail.gmail.com>
- <alpine.DEB.2.21.1908191943280.1796@nanos.tec.linutronix.de>
- <CACAVd4jAJ5QcOH=q=Q9kAz20X4_nAc7=vVU_gPWTS1UuiGK-fg@mail.gmail.com>
- <alpine.DEB.2.21.1908201036200.2223@nanos.tec.linutronix.de>
- <CACAVd4jT4Ke7giPmKSzt+Wo3Ro-g9zWDRz_GHaRcs0Nb3_rkBw@mail.gmail.com>
- <CACAVd4gRoQih6f_K7kMzr=AwA_DvP0OksxBKj1bGPsP2F_9sFg@mail.gmail.com>
- <alpine.DEB.2.21.1909051707150.1902@nanos.tec.linutronix.de>
- <CACAVd4hS1i--fxWaarXP2psagW-JmBoLAJRrfu9gkRc49Ja4pg@mail.gmail.com>
- <alpine.DEB.2.21.1909071630000.1902@nanos.tec.linutronix.de>
- <CACAVd4grhGVVSYpwjof5YiS1duZ2_SFjvXtctP+cmR5Actkjyg@mail.gmail.com> <alpine.DEB.2.21.1911051100471.17054@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1911051100471.17054@nanos.tec.linutronix.de>
-From:   Arul Jeniston <arul.jeniston@gmail.com>
-Date:   Wed, 6 Nov 2019 09:08:10 +0530
-Message-ID: <CACAVd4geU0aFqvFhNQ4YGHDtLPwcqhubh8hcu4CT7CN+G2zpdA@mail.gmail.com>
-Subject: Re: [PATCH] FS: timerfd: Fix unexpected return value of timerfd_read function.
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, arul_mc@dell.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191106033544.GG26959@mit.edu>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-hi Tglx,
+On Tue, Nov 05, 2019 at 10:35:44PM -0500, Theodore Y. Ts'o wrote:
+> On Thu, Oct 24, 2019 at 02:54:36PM -0700, Eric Biggers wrote:
+> > @@ -83,6 +118,10 @@ bool fscrypt_supported_policy(const union fscrypt_policy *policy_u,
+> >  			return false;
+> >  		}
+> >  
+> > +		if ((policy->flags & FSCRYPT_POLICY_FLAG_IV_INO_LBLK_64) &&
+> > +		    !supported_iv_ino_lblk_64_policy(policy, inode))
+> > +			return false;
+> > +
+> >  		if (memchr_inv(policy->__reserved, 0,
+> >  			       sizeof(policy->__reserved))) {
+> >  			fscrypt_warn(inode,
+> 
+> fscrypt_supported_policy is getting more and more complicated, and
+> supported_iv_ino_lblk_64_policy calls a fs-supplied callback function,
+> etc.  And we need to use this every single time we need to set up an
+> inode.  Granted that compared to the crypto, even if it is ICE, it's
+> probably small beer --- but perhaps we should think about caching some
+> of what fscrypt_supported_policy does on a per-file system basis at
+> some point?
 
-Thank you for the update. We have few customers who are waiting for
-this patch. Please prioritize it.
+I don't think this will make any difference given everything else that needs to
+be done to set up a file's key.  Also, anything extra we spend here will be far
+less than the amount of time we save with IV_INO_LBLK_64 policies by not having
+to do the key derivation and tfm allocation for every file.
 
-Regards,
-Arul
+Christoph suggested replacing ->has_stable_inodes() and
+->get_ino_and_lblk_bits() with a new SB_* flag like SB_IV_INO_LBLK_64_SUPPORT.
+But I don't like that that would result in worse error messages and would "leak"
+a specific fscrypt policy flag into filesystems rather than having the
+filesystems declare their properties.
 
-On Tue, Nov 5, 2019 at 3:31 PM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> Arul,
->
-> On Tue, 5 Nov 2019, Arul Jeniston wrote:
-> > >  So I'm going to send a patch to document that in the manpage.
-> >
-> > Did you get a chance to make the manpage patch? if yes, please help us
-> > by sharing the link where we can find the patch.
->
-> No. I would have Cc'ed you when posting. It's somewhere on my todo list.
->
-> Thanks,
->
->         tglx
+If we really wanted to optimize fscrypt_get_encryption_info(), I think we
+probably shouldn't try to microoptimize fscrypt_supported_policy(), but rather
+take advantage of the fact that fscrypt_has_permitted_context() already ran.
+E.g., we could cache the xattr, or skip both the keyring lookup and
+fscrypt_supported_policy() by grabbing them from the parent directory.
+
+- Eric
