@@ -2,92 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40918F1210
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2019 10:22:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D657F130B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2019 10:59:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727899AbfKFJWf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Nov 2019 04:22:35 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:56736 "EHLO huawei.com"
+        id S1727485AbfKFJ7N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Nov 2019 04:59:13 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51284 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726891AbfKFJWf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Nov 2019 04:22:35 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id D30E2F0AD12F01B1D662;
-        Wed,  6 Nov 2019 17:22:32 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Wed, 6 Nov 2019
- 17:22:26 +0800
-From:   "zhangyi (F)" <yi.zhang@huawei.com>
-To:     <gregkh@linuxfoundation.org>
-CC:     <stable@vger.kernel.org>, <viro@zeniv.linux.org.uk>,
-        <linux-fsdevel@vger.kernel.org>, <yi.zhang@huawei.com>
-Subject: [PATCH for linux 4.4.y/3.16.y] fs/dcache: move security_d_instantiate() behind attaching dentry to inode
-Date:   Wed, 6 Nov 2019 17:43:52 +0800
-Message-ID: <20191106094352.9665-1-yi.zhang@huawei.com>
-X-Mailer: git-send-email 2.17.2
+        id S1727239AbfKFJ7N (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 6 Nov 2019 04:59:13 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id EC3E8B028;
+        Wed,  6 Nov 2019 09:59:11 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id B81A91E47E5; Wed,  6 Nov 2019 10:59:11 +0100 (CET)
+Date:   Wed, 6 Nov 2019 10:59:11 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/7] quota: Allow quota support without quota files
+Message-ID: <20191106095911.GB16085@quack2.suse.cz>
+References: <20191104091335.7991-1-jack@suse.cz>
+ <20191106081752.6dhmivu2e4qnkb5d@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191106081752.6dhmivu2e4qnkb5d@pengutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-During backport 1e2e547a93a "do d_instantiate/unlock_new_inode
-combinations safely", there was a error instantiating sequence of
-attaching dentry to inode and calling security_d_instantiate().
+On Wed 06-11-19 09:17:52, Sascha Hauer wrote:
+> Hi Jan,
+> 
+> On Mon, Nov 04, 2019 at 11:51:48AM +0100, Jan Kara wrote:
+> > Hello,
+> > 
+> > this patch series refactors quota enabling / disabling code and allows
+> > filesystems to implement quota support without providing quota files (ubifs
+> > wants to do this).
+> > 
+> > Patches have passed testing with fstests, review is welcome.
+> 
+> Thank you for creating this series. I can confirm my UBIFS quota patches
+> are working fine on top of this series. I'll send an updated UBIFS quota
+> series shortly.
 
-Before commit ce23e640133 "->getxattr(): pass dentry and inode as
-separate arguments" and b96809173e9 "security_d_instantiate(): move to
-the point prior to attaching dentry to inode", security_d_instantiate()
-should be called beind __d_instantiate(), otherwise it will trigger
-below problem when CONFIG_SECURITY_SMACK on ext4 was enabled because
-d_inode(dentry) used by ->getxattr() is NULL before __d_instantiate()
-instantiate inode.
+Thanks for testing! I've pushed the series to linux-next so that it gets
+wider exposure and will send it to Linus in the next maintenance window.
 
-[   31.858026] BUG: unable to handle kernel paging request at ffffffffffffff70
-...
-[   31.882024] Call Trace:
-[   31.882378]  [<ffffffffa347f75c>] ext4_xattr_get+0x8c/0x3e0
-[   31.883195]  [<ffffffffa3489454>] ext4_xattr_security_get+0x24/0x40
-[   31.884086]  [<ffffffffa336a56b>] generic_getxattr+0x5b/0x90
-[   31.884907]  [<ffffffffa3700514>] smk_fetch+0xb4/0x150
-[   31.885634]  [<ffffffffa3700772>] smack_d_instantiate+0x1c2/0x550
-[   31.886508]  [<ffffffffa36f9a5a>] security_d_instantiate+0x3a/0x80
-[   31.887389]  [<ffffffffa3353b26>] d_instantiate_new+0x36/0x130
-[   31.888223]  [<ffffffffa342b1ef>] ext4_mkdir+0x4af/0x6a0
-[   31.888928]  [<ffffffffa3343470>] vfs_mkdir+0x100/0x280
-[   31.889536]  [<ffffffffa334b086>] SyS_mkdir+0xb6/0x170
-[   31.890255]  [<ffffffffa307c855>] ? trace_do_page_fault+0x95/0x2b0
-[   31.891134]  [<ffffffffa3c5e078>] entry_SYSCALL_64_fastpath+0x18/0x73
-
-Cc: <stable@vger.kernel.org> # 3.16, 4.4
-Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
----
- fs/dcache.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 5a1c36dc5d65..baa00718d8d1 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1900,7 +1900,6 @@ void d_instantiate_new(struct dentry *entry, struct inode *inode)
- 	BUG_ON(!hlist_unhashed(&entry->d_u.d_alias));
- 	BUG_ON(!inode);
- 	lockdep_annotate_inode_mutex_key(inode);
--	security_d_instantiate(entry, inode);
- 	spin_lock(&inode->i_lock);
- 	__d_instantiate(entry, inode);
- 	WARN_ON(!(inode->i_state & I_NEW));
-@@ -1908,6 +1907,7 @@ void d_instantiate_new(struct dentry *entry, struct inode *inode)
- 	smp_mb();
- 	wake_up_bit(&inode->i_state, __I_NEW);
- 	spin_unlock(&inode->i_lock);
-+	security_d_instantiate(entry, inode);
- }
- EXPORT_SYMBOL(d_instantiate_new);
- 
+								Honza
 -- 
-2.17.2
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
