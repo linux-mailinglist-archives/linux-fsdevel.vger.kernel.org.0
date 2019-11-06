@@ -2,92 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B15C4F2065
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2019 22:06:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2311BF210A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Nov 2019 22:46:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732645AbfKFVGv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Nov 2019 16:06:51 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:38611 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732012AbfKFVGu (ORCPT
+        id S1732722AbfKFVqL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Nov 2019 16:46:11 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:59198 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727100AbfKFVqJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Nov 2019 16:06:50 -0500
-X-Originating-IP: 78.194.159.98
-Received: from gandi.net (unknown [78.194.159.98])
-        (Authenticated sender: thibaut@sautereau.fr)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 1E25D1C0003;
-        Wed,  6 Nov 2019 21:06:46 +0000 (UTC)
-Date:   Wed, 6 Nov 2019 22:06:46 +0100
-From:   Thibaut Sautereau <thibaut@sautereau.fr>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Christian Brauner <christian@brauner.io>,
-        cgroups@vger.kernel.org
-Subject: Re: NULL pointer deref in put_fs_context with unprivileged LXC
-Message-ID: <20191106210646.GA1495@gandi.net>
-References: <20191010213512.GA875@gandi.net>
- <20191011141403.ghjptf4nrttgg7jd@wittgenstein>
- <20191105205830.GA871@gandi.net>
- <20191106072407.GU26530@ZenIV.linux.org.uk>
+        Wed, 6 Nov 2019 16:46:09 -0500
+X-Greylist: delayed 520 seconds by postgrey-1.27 at vger.kernel.org; Wed, 06 Nov 2019 16:46:07 EST
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 36D4F1C09B6; Wed,  6 Nov 2019 22:37:26 +0100 (CET)
+Date:   Wed, 6 Nov 2019 22:37:25 +0100
+From:   Pavel Machek <pavel@denx.de>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, linux-xfs@vger.kernel.org,
+        Jan Kara <jack@suse.com>, Arnd Bergmann <arnd@arndb.de>,
+        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-arch@vger.kernel.org
+Subject: Re: [PATCH 10/10] errno.h: Provide EFSCORRUPTED for everybody
+Message-ID: <20191106213725.GB7020@amd>
+References: <20191104014510.102356-1-Valdis.Kletnieks@vt.edu>
+ <20191104014510.102356-11-Valdis.Kletnieks@vt.edu>
+ <5c441427-7e65-fcae-3518-eb37cea5f875@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="jq0ap7NbKX2Kqbes"
 Content-Disposition: inline
-In-Reply-To: <20191106072407.GU26530@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <5c441427-7e65-fcae-3518-eb37cea5f875@huawei.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 07:24:07AM +0000, Al Viro wrote:
-> On Tue, Nov 05, 2019 at 09:58:30PM +0100, Thibaut Sautereau wrote:
-> 
-> > > > 	BUG: kernel NULL pointer dereference, address: 0000000000000043
-> 
-> ERR_PTR(something)->d_sb, most likely.
-> 
-> > > > 	493		if (fc->root) {
-> > > > 	494			sb = fc->root->d_sb;
-> > > > 	495			dput(fc->root);
-> > > > 	496			fc->root = NULL;
-> > > > 	497			deactivate_super(sb);
-> > > > 	498		}
-> 
-> > 	fs_context: DEBUG: fc->root = fffffffffffffff3
-> > 	fs_context: DEBUG: fc->source = cgroup2
-> 
-> Yup.  That'd be ERR_PTR(-13), i.e. ERR_PTR(-EACCES).  Most likely
-> from
->                 nsdentry = kernfs_node_dentry(cgrp->kn, sb);
->                 dput(fc->root);
->                 fc->root = nsdentry;
->                 if (IS_ERR(nsdentry)) {
->                         ret = PTR_ERR(nsdentry);
->                         deactivate_locked_super(sb);
->                 }
-> 
-> in cgroup_do_get_tree().  As a quick test, try to add fc->root = NULL;
-> next to that deactivate_locked_super(sb); inside the if (IS_ERR(...))
-> body and see if it helps; it's not the best way to fix it (I'd rather
-> go for
->                 if (IS_ERR(nsdentry)) {
->                         ret = PTR_ERR(nsdentry);
->                         deactivate_locked_super(sb);
-> 			nsdentry = NULL;
->                 }
->                 fc->root = nsdentry;
-> ), but it would serve to verify that this is the source of that crap.
 
-Yes, you're absolutely right. Your first suggestion fixes the bug, as
-well as your second one. Thanks!
+--jq0ap7NbKX2Kqbes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-By the way, I had just finished the bisection, confirming that
-71d883c37e8d ("cgroup_do_mount(): massage calling conventions") brought
-the issue.
+Hi!
 
-Do you want me to send a patch or are you dealing with that?
+> > There's currently 6 filesystems that have the same #define. Move it
+> > into errno.h so it's defined in just one place.
+> >=20
+> > Signed-off-by: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>
+> > Acked-by: Darrick J. Wong <darrick.wong@oracle.com>
+> > Reviewed-by: Jan Kara <jack@suse.cz>
+> > Acked-by: Theodore Ts'o <tytso@mit.edu>
+>=20
+> >  fs/erofs/internal.h              | 2 --
+>=20
+> >  fs/f2fs/f2fs.h                   | 1 -
+>=20
+> Acked-by: Chao Yu <yuchao0@huawei.com>
 
--- 
-Thibaut
+Are we still using EUCLEAN for something else than EFSCORRUPTED? Could
+we perhaps change the glibc definiton to "your filesystem is
+corrupted" in the long run?
+
+Best regards,
+								Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--jq0ap7NbKX2Kqbes
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl3DPRUACgkQMOfwapXb+vIeLACgumqpgUAXyu1qs1LlH4i+wJ+u
+sPEAn0YdeU4hDroZD6g3yLDme7o5MHbL
+=nCbA
+-----END PGP SIGNATURE-----
+
+--jq0ap7NbKX2Kqbes--
