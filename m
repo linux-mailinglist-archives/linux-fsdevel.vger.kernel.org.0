@@ -2,59 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8539F2588
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2019 03:49:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A233F25AA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2019 03:59:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728315AbfKGCtj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Nov 2019 21:49:39 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:56989 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727443AbfKGCtj (ORCPT
+        id S1728134AbfKGC7f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Nov 2019 21:59:35 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:41656 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727665AbfKGC7e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Nov 2019 21:49:39 -0500
-Received: from callcc.thunk.org (ip-12-2-52-196.nyc.us.northamericancoax.com [196.52.2.12])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xA72nLni011638
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 6 Nov 2019 21:49:22 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 799C4420311; Wed,  6 Nov 2019 21:49:19 -0500 (EST)
-Date:   Wed, 6 Nov 2019 21:49:19 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, Satya Tangirala <satyat@google.com>,
-        Paul Crowley <paulcrowley@google.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v2 1/3] fscrypt: add support for IV_INO_LBLK_64 policies
-Message-ID: <20191107024919.GH26959@mit.edu>
-References: <20191024215438.138489-1-ebiggers@kernel.org>
- <20191024215438.138489-2-ebiggers@kernel.org>
- <20191106033544.GG26959@mit.edu>
- <20191106040519.GA705@sol.localdomain>
+        Wed, 6 Nov 2019 21:59:34 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA72x6UZ049384;
+        Thu, 7 Nov 2019 02:59:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
+ bh=Izj90tLsaov/YorCLiqVxfHSCf1b5ZXNjF9FQRUQE9U=;
+ b=ATYvOgcq0SmnbQ3xGkfR5tv1YLfbWBcUlc3KG5VBl19pFB0POhGQYKgMH2Zswed9nLnY
+ zP4l0dgqHJ2qCSh/bw4Ee8cW8yjfE9gSaeGQbjhncRXVD7I1ECiYro50XE3/35u6yz3t
+ MxZI7wHn7WgpMxA84cSTYO6VyouMXxOuYcvS+yEyOEg4o+cw2Z52lZzOE5EPsCOZcDp3
+ dS4iPZUjYldRHa03clJzrGYb9JoD5eHpZsi9BFMgXSQ/k8fPq2Mu47NVeqW7ztq26Xme
+ H8PrC9neS5dXb6k7/w7Ev7xNQK6iKrvohTYDV38F6IIRXXDAwGpR66l4dejV/AFqJPBD 8w== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2w41w13014-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 07 Nov 2019 02:59:31 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA72wJB8052085;
+        Thu, 7 Nov 2019 02:59:30 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2w41wfs6ct-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 07 Nov 2019 02:59:30 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xA72xS7K026492;
+        Thu, 7 Nov 2019 02:59:29 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 06 Nov 2019 18:59:28 -0800
+Date:   Wed, 6 Nov 2019 18:59:27 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] iomap: iomap_bmap should check iomap_apply return value
+Message-ID: <20191107025927.GA6219@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191106040519.GA705@sol.localdomain>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9433 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1910280000 definitions=main-1911070030
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9433 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
+ definitions=main-1911070031
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 05, 2019 at 08:05:19PM -0800, Eric Biggers wrote:
-> If we really wanted to optimize fscrypt_get_encryption_info(), I think we
-> probably shouldn't try to microoptimize fscrypt_supported_policy(), but rather
-> take advantage of the fact that fscrypt_has_permitted_context() already ran.
-> E.g., we could cache the xattr, or skip both the keyring lookup and
-> fscrypt_supported_policy() by grabbing them from the parent directory.
+From: Darrick J. Wong <darrick.wong@oracle.com>
 
-Yes, good point.  Certainly, if the parent is encrypted, given that we
-force files to have the same policy as the containing directory,
-there's no point calling fscrypt_supported_policy.  And if we're using
-a policy which isn't using per-inode keys, then we can certainly just
-grab the key from the parent directory.
+Check the return value of iomap_apply and return 0 (i.e. error) if it
+didn't succeed.
 
-				- Ted
+Coverity-id: 1437065
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+---
+ fs/iomap/fiemap.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/fs/iomap/fiemap.c b/fs/iomap/fiemap.c
+index 690ef2d7c6c8..bccf305ea9ce 100644
+--- a/fs/iomap/fiemap.c
++++ b/fs/iomap/fiemap.c
+@@ -133,12 +133,16 @@ iomap_bmap(struct address_space *mapping, sector_t bno,
+ 	struct inode *inode = mapping->host;
+ 	loff_t pos = bno << inode->i_blkbits;
+ 	unsigned blocksize = i_blocksize(inode);
++	int ret;
+ 
+ 	if (filemap_write_and_wait(mapping))
+ 		return 0;
+ 
+ 	bno = 0;
+-	iomap_apply(inode, pos, blocksize, 0, ops, &bno, iomap_bmap_actor);
++	ret = iomap_apply(inode, pos, blocksize, 0, ops, &bno,
++			  iomap_bmap_actor);
++	if (ret)
++		return 0;
+ 	return bno;
+ }
+ EXPORT_SYMBOL_GPL(iomap_bmap);
