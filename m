@@ -2,96 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BAC5F3672
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2019 18:59:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83D7FF36C1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2019 19:15:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730553AbfKGR7d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Nov 2019 12:59:33 -0500
-Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:38758 "EHLO
-        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727830AbfKGR7d (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Nov 2019 12:59:33 -0500
-Received: from mxbackcorp1j.mail.yandex.net (mxbackcorp1j.mail.yandex.net [IPv6:2a02:6b8:0:1619::162])
-        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id CB77A2E15E7;
-        Thu,  7 Nov 2019 20:59:29 +0300 (MSK)
-Received: from myt5-6212ef07a9ec.qloud-c.yandex.net (myt5-6212ef07a9ec.qloud-c.yandex.net [2a02:6b8:c12:3b2d:0:640:6212:ef07])
-        by mxbackcorp1j.mail.yandex.net (mxbackcorp/Yandex) with ESMTP id iFvPSonkQi-xTL8QSb6;
-        Thu, 07 Nov 2019 20:59:29 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1573149569; bh=UsTIMeG7xsDGua2wB4RGJCRGGAhXBbC4sAwyVZakSFM=;
-        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
-        b=zSzi0lmkJ4ng4EZjtCZJNHjGKtFkodF7uVs67LtyDETpYeiwdJS+vlaZsf1LIw/n8
-         /l6aKMa2Yo+BfyCpcX5Wv6yJaGs6q9AkYKlsORM2pIAOKIExvnxB9lrncf9B8rt7FF
-         BqXPRm0haiSnJq0THZ8NFsx3slDZBzwUdruDEXxo=
-Authentication-Results: mxbackcorp1j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:8554:53c0:3d75:2e8a])
-        by myt5-6212ef07a9ec.qloud-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id kC45TC5435-xTWKke1e;
-        Thu, 07 Nov 2019 20:59:29 +0300
+        id S1727041AbfKGSPm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Nov 2019 13:15:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50806 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725828AbfKGSPm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 7 Nov 2019 13:15:42 -0500
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: Re: [PATCH] fs/quota: use unsigned int helper for sysctl fs.quota.*
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jan Kara <jack@suse.com>,
-        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
-References: <157312129151.3890.6076128127053624123.stgit@buzz>
- <20191107115041.GC11400@quack2.suse.cz>
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Message-ID: <2bc0f9c6-76a7-f683-d6a2-c62e93698f83@yandex-team.ru>
-Date:   Thu, 7 Nov 2019 20:59:29 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93ECF222C2
+        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Nov 2019 18:15:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573150541;
+        bh=mkkJBDyIiAdnm/glQLkfsD0szVtlg4EXK/75ogcIUiU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=pQqJMQdtiWhzbkNUqqqm0gMcVuFUFO6KFRLn/L3tv6U+SHbk6Yl5nXLVb2nXQjgFW
+         YjXLXvGC8ZXU3YaPRHpZzlWR5Gjr/8D28yaAwzDWfK26KeGUzf3KvZ7inKo317qC7G
+         1cIx5r9ZIlXNLcSGM/Nd3hpDiNqLz/fqkOviuI2Q=
+Received: by mail-wr1-f54.google.com with SMTP id e6so4198078wrw.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Nov 2019 10:15:41 -0800 (PST)
+X-Gm-Message-State: APjAAAVDp+W3HOE++aIjLD2ewNtJfNz0fNDiApyYvw0X3TTdybozqUuJ
+        Bh0ieX/Kdl21ufBEEFJdTC8mkf4fYPN6N8+LyBYWdg==
+X-Google-Smtp-Source: APXvYqx20OM7QsTfSBvENmpd1ZzYDPmxA0e8l69FibUDYivV3Y4TzOtfUMdKVs1bwqiNP0U1tpOoZOTXhte3WmwIXm8=
+X-Received: by 2002:adf:e4c5:: with SMTP id v5mr4364675wrm.106.1573150540087;
+ Thu, 07 Nov 2019 10:15:40 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191107115041.GC11400@quack2.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+References: <157313371694.29677.15388731274912671071.stgit@warthog.procyon.org.uk>
+ <157313379331.29677.5209561321495531328.stgit@warthog.procyon.org.uk>
+In-Reply-To: <157313379331.29677.5209561321495531328.stgit@warthog.procyon.org.uk>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 7 Nov 2019 10:15:28 -0800
+X-Gmail-Original-Message-ID: <CALCETrWszYm9=-WEgSbhmGc3DYCvY6q3W4Lezm6YtKnGtRs_5g@mail.gmail.com>
+Message-ID: <CALCETrWszYm9=-WEgSbhmGc3DYCvY6q3W4Lezm6YtKnGtRs_5g@mail.gmail.com>
+Subject: Re: [RFC PATCH 08/14] pipe: Allow buffers to be marked
+ read-whole-or-error for notifications [ver #2]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 07/11/2019 14.50, Jan Kara wrote:
-> On Thu 07-11-19 13:08:11, Konstantin Khlebnikov wrote:
->> Report counters as unsigned, otherwise they turn negative at overflow:
->>
->> # sysctl fs.quota
->> fs.quota.allocated_dquots = 22327
->> fs.quota.cache_hits = -489852115
->> fs.quota.drops = -487288718
->> fs.quota.free_dquots = 22083
->> fs.quota.lookups = -486883485
->> fs.quota.reads = 22327
->> fs.quota.syncs = 335064
->> fs.quota.writes = 3088689
->>
->> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> 
-> Fair enough but then 'stats' array in dqstats should be unsigned as well
-> for consistency and why not actually make everything long when we are at
-> it? percpu_counter we use is s64 anyway...
+On Thu, Nov 7, 2019 at 5:39 AM David Howells <dhowells@redhat.com> wrote:
+>
+> Allow a buffer to be marked such that read() must return the entire buffer
+> in one go or return ENOBUFS.  Multiple buffers can be amalgamated into a
+> single read, but a short read will occur if the next "whole" buffer won't
+> fit.
+>
+> This is useful for watch queue notifications to make sure we don't split a
+> notification across multiple reads, especially given that we need to
+> fabricate an overrun record under some circumstances - and that isn't in
+> the buffers.
 
-Ok. I'll patch this too.
-
-> 
-> 								Honza
-> 
->> ---
->>   fs/quota/dquot.c |    2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
->> index 6e826b454082..606e1e39674b 100644
->> --- a/fs/quota/dquot.c
->> +++ b/fs/quota/dquot.c
->> @@ -2865,7 +2865,7 @@ static int do_proc_dqstats(struct ctl_table *table, int write,
->>   	/* Update global table */
->>   	dqstats.stat[type] =
->>   			percpu_counter_sum_positive(&dqstats.counter[type]);
->> -	return proc_dointvec(table, write, buffer, lenp, ppos);
->> +	return proc_douintvec(table, write, buffer, lenp, ppos);
->>   }
->>   
->>   static struct ctl_table fs_dqstats_table[] = {
->>
+Hmm.  I'm not totally in love with introducing a new error code like
+this for read(), especially if it could affect the kind of pipe that
+is bound to a file in a filesystem.  But maybe it's not a problem.
