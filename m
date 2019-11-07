@@ -2,107 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 997E6F374D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2019 19:34:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51F03F378A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2019 19:48:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725868AbfKGSeY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Nov 2019 13:34:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56988 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725823AbfKGSeX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Nov 2019 13:34:23 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726616AbfKGSsy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Nov 2019 13:48:54 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:24588 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727031AbfKGSsv (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 7 Nov 2019 13:48:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573152530;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=UHB0JrKl2/lgoy546a6o5x0iXWhc257PTYUJn/4Bje0=;
+        b=IzWCw6Joj6xY0pxmrt8uf+HitdTf1u5HxPuCNhyPwd+atj0HVEEvvcfqnXDHJq5Q3iMUs1
+        mYP8gP15+qfCHcfUawOYCNJ0A6HvzQWv3FpQSZZ40HpBK69B913VawjCUjhMl+9oEoazo5
+        wcoHY8T3eYEVFyOIQYvdO6F58R4aLKc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-270-B9RjU769P3eP409e546QHA-1; Thu, 07 Nov 2019 13:48:44 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0669214D8;
-        Thu,  7 Nov 2019 18:34:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573151663;
-        bh=bW1G6M0gI9u4OvtON+m4YYs0ZAALaGyOmm0QrPeUqCw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=CvuLizYXED57Fp/0P/Gn69Zf2894InNPu3/ZwyGP1ca8IBH4hHpDUofrSocIsEssD
-         bWu7hYEe0Krmsdz+X4Y82H2BDSfCfabx0lES4Wy7WUrbAtqtTK+/yHV3W6eeRj1M9u
-         Uqbzr1RviqX+4Zzvv9Ku9IcG1EhOS3s+ka8Pd11Y=
-Message-ID: <e9c46777ec0aaca768681eb144823f19185d9fa0.camel@kernel.org>
-Subject: Re: Deprecated mandatory file locking
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org
-Date:   Thu, 07 Nov 2019 13:34:21 -0500
-In-Reply-To: <20191107161514.GA21965@quack2.suse.cz>
-References: <20190814173345.GB10843@quack2.suse.cz>
-         <20190814174604.GC10843@quack2.suse.cz>
-         <01b6620186a18b167ca1bab1fadb2dbaffdd8379.camel@kernel.org>
-         <20190816153149.GD3041@quack2.suse.cz>
-         <20191107161514.GA21965@quack2.suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1 (3.34.1-1.fc31) 
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 70429800C61;
+        Thu,  7 Nov 2019 18:48:41 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-254.rdu2.redhat.com [10.10.120.254])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 54380600D3;
+        Thu,  7 Nov 2019 18:48:38 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CALCETrUka9KaOKFbNKUXcA6XvoFxiXPftctSHtN4DL35Cay61w@mail.gmail.com>
+References: <CALCETrUka9KaOKFbNKUXcA6XvoFxiXPftctSHtN4DL35Cay61w@mail.gmail.com> <157313371694.29677.15388731274912671071.stgit@warthog.procyon.org.uk> <157313375678.29677.15875689548927466028.stgit@warthog.procyon.org.uk>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     dhowells@redhat.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 04/14] pipe: Add O_NOTIFICATION_PIPE [ver #2]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-ID: <6963.1573152517.1@warthog.procyon.org.uk>
+Date:   Thu, 07 Nov 2019 18:48:37 +0000
+Message-ID: <6964.1573152517@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-MC-Unique: B9RjU769P3eP409e546QHA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2019-11-07 at 17:15 +0100, Jan Kara wrote:
-> Hi Jeff,
-> 
-> On Fri 16-08-19 17:31:49, Jan Kara wrote:
-> > On Thu 15-08-19 15:18:45, Jeff Layton wrote:
-> > > On Wed, 2019-08-14 at 19:46 +0200, Jan Kara wrote:
-> > > > Resending to proper Jeff's address...
-> > > > 
-> > > > On Wed 14-08-19 19:33:45, Jan Kara wrote:
-> > > > > Hello Jeff,
-> > > > > 
-> > > > > we've got a report from user
-> > > > > (https://bugzilla.suse.com/show_bug.cgi?id=1145007) wondering why his fstab
-> > > > > entry (for root filesystem!) using 'mand' mount option stopped working.
-> > > > > Now I understand your rationale in 9e8925b67a "locks: Allow disabling
-> > > > > mandatory locking at compile time" but I guess there's some work to do wrt
-> > > > > documentation. At least mount(8) manpage could mention that mandatory
-> > > > > locking is broken and may be disabled referencing the rationale in fcntl
-> > > > > manpage? Or the kernel could mention something in the log about failing
-> > > > > mount because of 'mand' mount option?  What do you think? Because it took
-> > > > > me some code searching to understand why the mount is actually failing
-> > > > > which we can hardly expect from a normal sysadmin...
-> > > > > 
-> > > > > 								Honza
-> > > 
-> > > Wow, I think this is the first actual user fallout we've ever had from
-> > > that change! Why was he setting that option? Does he actually use
-> > > mandatory locking?
-> > 
-> > Yeah, reportedly they had an application that required mandatory locking.
-> > But they don't use it anymore so they just removed the mount option.
-> > 
-> > > I think a pr_notice() or pr_warn() at mount time when someone tries to
-> > > use it sounds like a very reasonable thing to do. Perhaps we can just
-> > > stick one in may_mandlock()?
-> > 
-> > Yeah, sounds reasonable to me.
-> > 
-> > > I'll draft up a patch, and also update
-> > > Documentation/filesystems/mandatory-locking.txt with the current
-> > > situation.
-> > 
-> > Thanks!
-> 
-> Did you ever get to this?
-> 
-> 								Honza
+Andy Lutomirski <luto@kernel.org> wrote:
 
-Yes. It went into v5.4-rc1. You even reviewed it! ;)
+> > Add an O_NOTIFICATION_PIPE flag that can be passed to pipe2() to indica=
+te
+> > that the pipe being created is going to be used for notifications.  Thi=
+s
+> > suppresses the use of splice(), vmsplice(), tee() and sendfile() on the
+> > pipe as calling iov_iter_revert() on a pipe when a kernel notification
+> > message has been inserted into the middle of a multi-buffer splice will=
+ be
+> > messy.
+>
+> How messy?
 
-See:
+Well, iov_iter_revert() on a pipe iterator simply walks backwards along the
+ring discarding the last N contiguous slots (where N is normally the number=
+ of
+slots that were filled by whatever operation is being reverted).
 
-commit df2474a22c42ce419b67067c52d71da06c385501
-Author: Jeff Layton <jlayton@kernel.org>
-Date:   Thu Aug 15 15:21:17 2019 -0400
+However, unless the code that transfers stuff into the pipe takes the spinl=
+ock
+spinlock and disables softirqs for the duration of its ring filling, what w=
+ere
+N contiguous slots may now have kernel notifications interspersed - even if=
+ it
+has been holding the pipe mutex.
 
-    locks: print a warning when mount fails due to lack of "mand" support
+So, now what do you do?  You have to free up just the buffers relevant to t=
+he
+iterator and then you can either compact down the ring to free up the space=
+ or
+you can leave null slots and let the read side clean them up, thereby
+reducing the capacity of the pipe temporarily.
 
-Cheers,
--- 
-Jeff Layton <jlayton@kernel.org>
+Either way, iov_iter_revert() gets more complex and has to hold the spinloc=
+k.
+
+And if you don't take the spinlock whilst you're reverting, more notificati=
+ons
+can come in to make your life more interesting.
+
+There's also a problem with splicing out from a notification pipe that the
+messages are scribed onto preallocated buffers, but now the buffers need
+refcounts and, in any case, are of limited quantity.
+
+> And is there some way to make it impossible for this to happen?
+
+Yes.  That's what I'm doing by declaring the pipe to be unspliceable up fro=
+nt.
+
+> Adding a new flag to pipe2() to avoid messy kernel code seems
+> like a poor tradeoff.
+
+By far the easiest place to check whether a pipe can be spliced to is in
+get_pipe_info().  That's checking the file anyway.  After that, you can't m=
+ake
+the check until the pipe is locked.
+
+Furthermore, if it's not done upfront, the change to the pipe might happen
+during a splicing operation that's residing in pipe_wait()... which drops t=
+he
+pipe mutex.
+
+David
 
