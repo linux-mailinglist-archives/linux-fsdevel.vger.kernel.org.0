@@ -2,100 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A233F25AA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2019 03:59:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7B54F25E1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2019 04:16:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728134AbfKGC7f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Nov 2019 21:59:35 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:41656 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727665AbfKGC7e (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Nov 2019 21:59:34 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA72x6UZ049384;
-        Thu, 7 Nov 2019 02:59:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
- bh=Izj90tLsaov/YorCLiqVxfHSCf1b5ZXNjF9FQRUQE9U=;
- b=ATYvOgcq0SmnbQ3xGkfR5tv1YLfbWBcUlc3KG5VBl19pFB0POhGQYKgMH2Zswed9nLnY
- zP4l0dgqHJ2qCSh/bw4Ee8cW8yjfE9gSaeGQbjhncRXVD7I1ECiYro50XE3/35u6yz3t
- MxZI7wHn7WgpMxA84cSTYO6VyouMXxOuYcvS+yEyOEg4o+cw2Z52lZzOE5EPsCOZcDp3
- dS4iPZUjYldRHa03clJzrGYb9JoD5eHpZsi9BFMgXSQ/k8fPq2Mu47NVeqW7ztq26Xme
- H8PrC9neS5dXb6k7/w7Ev7xNQK6iKrvohTYDV38F6IIRXXDAwGpR66l4dejV/AFqJPBD 8w== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2w41w13014-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 07 Nov 2019 02:59:31 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xA72wJB8052085;
-        Thu, 7 Nov 2019 02:59:30 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 2w41wfs6ct-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 07 Nov 2019 02:59:30 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xA72xS7K026492;
-        Thu, 7 Nov 2019 02:59:29 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 06 Nov 2019 18:59:28 -0800
-Date:   Wed, 6 Nov 2019 18:59:27 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] iomap: iomap_bmap should check iomap_apply return value
-Message-ID: <20191107025927.GA6219@magnolia>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9433 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1910280000 definitions=main-1911070030
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9433 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
- definitions=main-1911070031
+        id S1728124AbfKGDQn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Nov 2019 22:16:43 -0500
+Received: from mga03.intel.com ([134.134.136.65]:33378 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727581AbfKGDQn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 6 Nov 2019 22:16:43 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 19:16:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,276,1569308400"; 
+   d="scan'208";a="233106400"
+Received: from chenyu-office.sh.intel.com ([10.239.158.173])
+  by fmsmga002.fm.intel.com with ESMTP; 06 Nov 2019 19:16:39 -0800
+From:   Chen Yu <yu.c.chen@intel.com>
+To:     x86@kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Chen Yu <yu.c.chen@intel.com>
+Subject: [PATCH] x86/resctrl: Add task resctrl information display
+Date:   Thu,  7 Nov 2019 11:27:31 +0800
+Message-Id: <20191107032731.7790-1-yu.c.chen@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Darrick J. Wong <darrick.wong@oracle.com>
+Monitoring tools that want to find out which resctrl CTRL
+and MONITOR groups a task belongs to must currently read
+the "tasks" file in every group until they locate the process
+ID.
 
-Check the return value of iomap_apply and return 0 (i.e. error) if it
-didn't succeed.
+Add an additional file /proc/{pid}/resctrl to provide this
+information.
 
-Coverity-id: 1437065
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+For example:
+ cat /proc/1193/resctrl
+CTRL_MON:/ctrl_grp0
+MON:/ctrl_grp0/mon_groups/mon_grp0
+
+If the resctrl filesystem has not been mounted,
+reading /proc/{pid}/resctrl returns an error:
+cat: /proc/1193/resctrl: No such device
+
+Tested-by: Jinshi Chen <jinshi.chen@intel.com>
+Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+Reviewed-by: Fenghua Yu <fenghua.yu@intel.com>
+Reviewed-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+
 ---
- fs/iomap/fiemap.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/resctrl_sched.h   |  4 +++
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 46 ++++++++++++++++++++++++++
+ fs/proc/base.c                         |  9 +++++
+ 3 files changed, 59 insertions(+)
 
-diff --git a/fs/iomap/fiemap.c b/fs/iomap/fiemap.c
-index 690ef2d7c6c8..bccf305ea9ce 100644
---- a/fs/iomap/fiemap.c
-+++ b/fs/iomap/fiemap.c
-@@ -133,12 +133,16 @@ iomap_bmap(struct address_space *mapping, sector_t bno,
- 	struct inode *inode = mapping->host;
- 	loff_t pos = bno << inode->i_blkbits;
- 	unsigned blocksize = i_blocksize(inode);
-+	int ret;
+diff --git a/arch/x86/include/asm/resctrl_sched.h b/arch/x86/include/asm/resctrl_sched.h
+index f6b7fe2833cc..bba362e0e00f 100644
+--- a/arch/x86/include/asm/resctrl_sched.h
++++ b/arch/x86/include/asm/resctrl_sched.h
+@@ -5,6 +5,7 @@
+ #ifdef CONFIG_X86_CPU_RESCTRL
  
- 	if (filemap_write_and_wait(mapping))
- 		return 0;
+ #include <linux/sched.h>
++#include <linux/proc_fs.h>
+ #include <linux/jump_label.h>
  
- 	bno = 0;
--	iomap_apply(inode, pos, blocksize, 0, ops, &bno, iomap_bmap_actor);
-+	ret = iomap_apply(inode, pos, blocksize, 0, ops, &bno,
-+			  iomap_bmap_actor);
-+	if (ret)
-+		return 0;
- 	return bno;
+ #define IA32_PQR_ASSOC	0x0c8f
+@@ -84,6 +85,9 @@ static inline void resctrl_sched_in(void)
+ 		__resctrl_sched_in();
  }
- EXPORT_SYMBOL_GPL(iomap_bmap);
+ 
++int proc_resctrl_show(struct seq_file *m, struct pid_namespace *ns,
++		      struct pid *pid, struct task_struct *tsk);
++
+ #else
+ 
+ static inline void resctrl_sched_in(void) {}
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index a46dee8e78db..2317174174e9 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -727,6 +727,52 @@ static int rdtgroup_tasks_show(struct kernfs_open_file *of,
+ 	return ret;
+ }
+ 
++int proc_resctrl_show(struct seq_file *s, struct pid_namespace *ns,
++		      struct pid *pid, struct task_struct *tsk)
++{
++	struct rdtgroup *rdtg;
++	int ret = 0;
++
++	mutex_lock(&rdtgroup_mutex);
++
++	/* Make sure resctrl has been mounted. */
++	if (!static_branch_unlikely(&rdt_enable_key)) {
++		ret = -ENODEV;
++		goto unlock;
++	}
++
++	list_for_each_entry(rdtg, &rdt_all_groups, rdtgroup_list) {
++		struct rdtgroup *crg;
++
++		/*
++		 * Task information is only relevant for shareable
++		 * and exclusive groups.
++		 */
++		if (rdtg->mode != RDT_MODE_SHAREABLE &&
++		    rdtg->mode != RDT_MODE_EXCLUSIVE)
++			continue;
++
++		if (rdtg->closid == tsk->closid) {
++			seq_printf(s, "CTRL_MON:/%s\n", rdtg->kn->name);
++			list_for_each_entry(crg, &rdtg->mon.crdtgrp_list,
++					    mon.crdtgrp_list) {
++				if (tsk->rmid != crg->mon.rmid)
++					continue;
++				seq_printf(s, "MON:%s%s/mon_groups/%s\n",
++					   rdtg == &rdtgroup_default ? "" : "/",
++					   rdtg->kn->name, crg->kn->name);
++				goto unlock;
++			}
++			goto unlock;
++		}
++	}
++	ret = -ENOENT;
++unlock:
++	mutex_unlock(&rdtgroup_mutex);
++
++	return ret;
++}
++
+ static int rdt_last_cmd_status_show(struct kernfs_open_file *of,
+ 				    struct seq_file *seq, void *v)
+ {
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index ebea9501afb8..d8a61db78db5 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -95,6 +95,9 @@
+ #include <linux/sched/stat.h>
+ #include <linux/posix-timers.h>
+ #include <trace/events/oom.h>
++#ifdef CONFIG_X86_CPU_RESCTRL
++#include <asm/resctrl_sched.h>
++#endif
+ #include "internal.h"
+ #include "fd.h"
+ 
+@@ -3060,6 +3063,9 @@ static const struct pid_entry tgid_base_stuff[] = {
+ #endif
+ #ifdef CONFIG_CGROUPS
+ 	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
++#endif
++#ifdef CONFIG_X86_CPU_RESCTRL
++	ONE("resctrl", S_IRUGO, proc_resctrl_show),
+ #endif
+ 	ONE("oom_score",  S_IRUGO, proc_oom_score),
+ 	REG("oom_adj",    S_IRUGO|S_IWUSR, proc_oom_adj_operations),
+@@ -3460,6 +3466,9 @@ static const struct pid_entry tid_base_stuff[] = {
+ #endif
+ #ifdef CONFIG_CGROUPS
+ 	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
++#endif
++#ifdef CONFIG_X86_CPU_RESCTRL
++	ONE("resctrl", S_IRUGO, proc_resctrl_show),
+ #endif
+ 	ONE("oom_score", S_IRUGO, proc_oom_score),
+ 	REG("oom_adj",   S_IRUGO|S_IWUSR, proc_oom_adj_operations),
+-- 
+2.17.1
+
