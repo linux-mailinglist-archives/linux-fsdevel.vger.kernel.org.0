@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B5C9F38ED
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2019 20:47:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DCD1F38EF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2019 20:48:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726349AbfKGTrR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Nov 2019 14:47:17 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:22218 "EHLO
+        id S1725882AbfKGTsx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Nov 2019 14:48:53 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:37236 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725385AbfKGTrR (ORCPT
+        with ESMTP id S1725385AbfKGTsx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Nov 2019 14:47:17 -0500
+        Thu, 7 Nov 2019 14:48:53 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573156036;
+        s=mimecast20190719; t=1573156131;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=0aQ04adiL2kkX8XgzDKzeQmw5/4A/kKf5joY6F9lzO0=;
-        b=a0Rm3VWu45HTCpd3W05uNj8+ZAxsCaDdv6lV7r2wqz7DttAAqoGTWvMotSjuKalMDukbhK
-        NidaTfz8hrDybFNRPlaxDiDQp2g6L1cwh62c3S6aaXMbqQUvwmiHu3Bd2x609KIH1RzJLk
-        biK+Xqd48jURCPO2cU0cV3djM9CsbnA=
+        bh=3YRu9QEU0TNp6qYcGvPetED2Tp+b6pubzp9ni6exZGY=;
+        b=E+9+jemrjGdiWjFKuoJYoL0VjQbYsrrNBBTAu4ynULRCSYPysIACWi9asO6u7Pn5s52O2Q
+        pqo3ZvL5ZJpzvDAvHms2TN9QhPLXCStNHMgrZvJJ3fWUfzm/0jEsM8Jp+FM7PKFXDGLYbQ
+        k+jwU5/wm/arWTsvZsGyJTWEXwIaqAg=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-239-c6vEJrMTOsyqIjxokbx96Q-1; Thu, 07 Nov 2019 14:47:12 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+ us-mta-375-T_z9GNdnOFuM2uo84T_9qA-1; Thu, 07 Nov 2019 14:48:50 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0D9438017DD;
-        Thu,  7 Nov 2019 19:47:12 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2CA0B8017DD;
+        Thu,  7 Nov 2019 19:48:49 +0000 (UTC)
 Received: from [IPv6:::1] (ovpn04.gateway.prod.ext.phx2.redhat.com [10.5.9.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C11E360FC2;
-        Thu,  7 Nov 2019 19:47:11 +0000 (UTC)
-Subject: [PATCH 1/2] fs: avoid softlockups in s_inodes iterators
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E521619757;
+        Thu,  7 Nov 2019 19:48:48 +0000 (UTC)
+Subject: [PATCH 2/2] fs: call fsnotify_sb_delete after evict_inodes
 From:   Eric Sandeen <sandeen@redhat.com>
 To:     fsdevel <linux-fsdevel@vger.kernel.org>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>
@@ -80,15 +80,15 @@ Autocrypt: addr=sandeen@redhat.com; prefer-encrypt=mutual; keydata=
  XQLj5HUlzt3JSwqSwx+++FFfWFMheG2HzkfXrvTpud5NrJkGGVn+ErXy6pNf6zSicb+bUXe9
  i92UTina2zWaaLEwXspqM338TlFC2JICu8pNt+wHpPCjgy2Ei4u5/4zSYjiA+X1I+V99YJhU
  +FpT2jzfLUoVsP/6WHWmM/tsS79i50G/PsXYzKOHj/0ZQCKOsJM14NMMCC8gkONe4tek
-Message-ID: <29aceb8b-5307-c04f-a20b-366be05eb365@redhat.com>
-Date:   Thu, 7 Nov 2019 13:47:11 -0600
+Message-ID: <541385e5-e186-65b2-e38e-54dfb4c98e47@redhat.com>
+Date:   Thu, 7 Nov 2019 13:48:48 -0600
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
  Gecko/20100101 Thunderbird/68.2.1
 MIME-Version: 1.0
 In-Reply-To: <cb77c8d5-e894-4e9d-bf6f-fc1be14c5423@redhat.com>
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: c6vEJrMTOsyqIjxokbx96Q-1
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: T_z9GNdnOFuM2uo84T_9qA-1
 X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -97,98 +97,59 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Anything that walks all inodes on sb->s_inodes list without rescheduling
-risks softlockups.
+When a filesystem is unmounted, we currently call fsnotify_sb_delete()
+before evict_inodes(), which means that fsnotify_unmount_inodes()
+must iterate over all inodes on the superblock, even though it will
+only act on inodes with a refcount.  This is inefficient and can lead
+to livelocks as it iterates over many unrefcounted inodes.
 
-Previous efforts were made in 2 functions, see:
+However, since fsnotify_sb_delete() and evict_inodes() are working
+on orthogonal sets of inodes (fsnotify_sb_delete() only cares about
+nonzero refcount, and evict_inodes() only cares about zero refcount),
+we can swap the order of the calls.  The fsnotify call will then have
+a much smaller list to walk (any refcounted inodes).
 
-c27d82f fs/drop_caches.c: avoid softlockups in drop_pagecache_sb()
-ac05fbb inode: don't softlockup when evicting inodes
-
-but there hasn't been an audit of all walkers, so do that now.  This
-also consistently moves the cond_resched() calls to the bottom of each
-loop in cases where it already exists.
-
-One loop remains: remove_dquot_ref(), because I'm not quite sure how
-to deal with that one w/o taking the i_lock.
+This should speed things up overall, and avoid livelocks in=20
+fsnotify_unmount_inodes().
 
 Signed-off-by: Eric Sandeen <sandeen@redhat.com>
 Reviewed-by: Jan Kara <jack@suse.cz>
 ---
 
-V2: Drop unrelated iput cleanups in fsnotify
-
-diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-index d31b6c72b476..dc1a1d5d825b 100644
---- a/fs/drop_caches.c
-+++ b/fs/drop_caches.c
-@@ -35,11 +35,11 @@ static void drop_pagecache_sb(struct super_block *sb, v=
-oid *unused)
-         spin_unlock(&inode->i_lock);
-         spin_unlock(&sb->s_inode_list_lock);
-=20
--        cond_resched();
-         invalidate_mapping_pages(inode->i_mapping, 0, -1);
-         iput(toput_inode);
-         toput_inode =3D inode;
-=20
-+        cond_resched();
-         spin_lock(&sb->s_inode_list_lock);
-     }
-     spin_unlock(&sb->s_inode_list_lock);
-diff --git a/fs/inode.c b/fs/inode.c
-index fef457a42882..b0c789bb3dba 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -676,6 +676,7 @@ int invalidate_inodes(struct super_block *sb, bool kill=
-_dirty)
-     struct inode *inode, *next;
-     LIST_HEAD(dispose);
-=20
-+again:
-     spin_lock(&sb->s_inode_list_lock);
-     list_for_each_entry_safe(inode, next, &sb->s_inodes, i_sb_list) {
-         spin_lock(&inode->i_lock);
-@@ -698,6 +699,13 @@ int invalidate_inodes(struct super_block *sb, bool kil=
-l_dirty)
-         inode_lru_list_del(inode);
-         spin_unlock(&inode->i_lock);
-         list_add(&inode->i_lru, &dispose);
-+
-+        if (need_resched()) {
-+            spin_unlock(&sb->s_inode_list_lock);
-+            cond_resched();
-+            dispose_list(&dispose);
-+            goto again;
-+        }
-     }
-     spin_unlock(&sb->s_inode_list_lock);
-=20
 diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index 2ecef6155fc0..ac9eb273e28c 100644
+index ac9eb273e28c..426f03b6e660 100644
 --- a/fs/notify/fsnotify.c
 +++ b/fs/notify/fsnotify.c
-@@ -77,6 +77,7 @@ static void fsnotify_unmount_inodes(struct super_block *s=
-b)
+@@ -57,6 +57,10 @@ static void fsnotify_unmount_inodes(struct super_block *=
+sb)
+ =09=09 * doing an __iget/iput with SB_ACTIVE clear would actually
+ =09=09 * evict all inodes with zero i_count from icache which is
+ =09=09 * unnecessarily violent and may in fact be illegal to do.
++=09=09 *
++=09=09 * However, we should have been called /after/ evict_inodes
++=09=09 * removed all zero refcount inodes, in any case.  Test to
++=09=09 * be sure.
+ =09=09 */
+ =09=09if (!atomic_read(&inode->i_count)) {
+ =09=09=09spin_unlock(&inode->i_lock);
+diff --git a/fs/super.c b/fs/super.c
+index cfadab2cbf35..cd352530eca9 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -448,10 +448,12 @@ void generic_shutdown_super(struct super_block *sb)
+ =09=09sync_filesystem(sb);
+ =09=09sb->s_flags &=3D ~SB_ACTIVE;
 =20
-         iput_inode =3D inode;
+-=09=09fsnotify_sb_delete(sb);
+ =09=09cgroup_writeback_umount();
 =20
-+        cond_resched();
-         spin_lock(&sb->s_inode_list_lock);
-     }
-     spin_unlock(&sb->s_inode_list_lock);
-diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index 6e826b454082..4a085b3c7cac 100644
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -985,6 +985,7 @@ static int add_dquot_ref(struct super_block *sb, int ty=
-pe)
-          * later.
-          */
-         old_inode =3D inode;
-+        cond_resched();
-         spin_lock(&sb->s_inode_list_lock);
-     }
-     spin_unlock(&sb->s_inode_list_lock);
++=09=09/* evict all inodes with zero refcount */
+ =09=09evict_inodes(sb);
++=09=09/* only nonzero refcount inodes can have marks */
++=09=09fsnotify_sb_delete(sb);
+=20
+ =09=09if (sb->s_dio_done_wq) {
+ =09=09=09destroy_workqueue(sb->s_dio_done_wq);
+
 
 
