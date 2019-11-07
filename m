@@ -2,86 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAE8AF3654
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2019 18:55:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BAC5F3672
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2019 18:59:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389893AbfKGRzA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Nov 2019 12:55:00 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:55108 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387473AbfKGRzA (ORCPT
+        id S1730553AbfKGR7d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Nov 2019 12:59:33 -0500
+Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:38758 "EHLO
+        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727830AbfKGR7d (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Nov 2019 12:55:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573149299;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=OcNFikfjq1BX5+nPgo4efKiLi5+1HMQMe6Ro0KRZSBk=;
-        b=b7bbGUq/5xBfBSQblOQZWi4/wN9riXzBRAg4K7gjBLALROTt0NUc6W6DahRSWppa04aMnu
-        alN26Q/4j9tjntG6HHod/wtw2YLuBwkzfk6xrH8ZyYLH0Jhy84cP98YogI26A475CdoNAu
-        tuDBiipavbCepLIwa145/E+vlZfkEUg=
-Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
- [209.85.210.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-249-Abx3Ze9ONP-28toTcRVeAQ-1; Thu, 07 Nov 2019 12:54:57 -0500
-Received: by mail-ot1-f70.google.com with SMTP id g17so1462780otg.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Nov 2019 09:54:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PTyEtIAxeTb5uCPTzRm1VfghpAdZyRKOiXCNpposzoM=;
-        b=Hl40KRvatWIF4uZ0bjNHuEfoqS4Yel7KlZc9wRNwKs7XSQ69MqWLf36vuNDf2zwdVG
-         5EvUugbb0x7Tw5aYMYyx6L26/V9l1RDQLX1PbxSbNfwltV/oFvakSu/Mv9294UHCsZwS
-         KqZVNYIbtSPSDeu4I2UgD1p0hr1owDEwzpQKU9NgQke/4WqE5QwYLL16zXmA9bsQr96Z
-         Ru/h5YZLb15EMTForSOa8/fr6mXEqYW7jx0+PVUWIJnx4O64Bq3K906dmi+wWwTwsGwo
-         RPUoVb32bO5NBa+P/O0mEjSNhTjEi5L2Prg2l0dxI2YUf7RijLzzbYxJcccZLjvvwfFe
-         unfw==
-X-Gm-Message-State: APjAAAV6WSHRFWyQQ1EUsSnDFSy0IsErEq+XO5oiKTMQOvKxJ7wwivqD
-        gWloW2nBa6ROjEPT6pFQo1N1UqoTIJBYKC0eEqgVRkV0xXtIjytkYBx1L4O2fwiAIf1BpNDztEE
-        plVDCrzociGc3qEMrh8FOtKWmRDjiU/xLDJ29uTTBhA==
-X-Received: by 2002:a05:6808:a93:: with SMTP id q19mr4586984oij.178.1573149297222;
-        Thu, 07 Nov 2019 09:54:57 -0800 (PST)
-X-Google-Smtp-Source: APXvYqw0A2DoTN7Dd2YoA7wNZdzvb4Bs3F8W8ZXlYA+sAvpG9vN1il3FFfXJ85lmrnNflzjHOBC3OdkylYKZdk7tGrA=
-X-Received: by 2002:a05:6808:a93:: with SMTP id q19mr4586966oij.178.1573149297020;
- Thu, 07 Nov 2019 09:54:57 -0800 (PST)
+        Thu, 7 Nov 2019 12:59:33 -0500
+Received: from mxbackcorp1j.mail.yandex.net (mxbackcorp1j.mail.yandex.net [IPv6:2a02:6b8:0:1619::162])
+        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id CB77A2E15E7;
+        Thu,  7 Nov 2019 20:59:29 +0300 (MSK)
+Received: from myt5-6212ef07a9ec.qloud-c.yandex.net (myt5-6212ef07a9ec.qloud-c.yandex.net [2a02:6b8:c12:3b2d:0:640:6212:ef07])
+        by mxbackcorp1j.mail.yandex.net (mxbackcorp/Yandex) with ESMTP id iFvPSonkQi-xTL8QSb6;
+        Thu, 07 Nov 2019 20:59:29 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1573149569; bh=UsTIMeG7xsDGua2wB4RGJCRGGAhXBbC4sAwyVZakSFM=;
+        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
+        b=zSzi0lmkJ4ng4EZjtCZJNHjGKtFkodF7uVs67LtyDETpYeiwdJS+vlaZsf1LIw/n8
+         /l6aKMa2Yo+BfyCpcX5Wv6yJaGs6q9AkYKlsORM2pIAOKIExvnxB9lrncf9B8rt7FF
+         BqXPRm0haiSnJq0THZ8NFsx3slDZBzwUdruDEXxo=
+Authentication-Results: mxbackcorp1j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:8554:53c0:3d75:2e8a])
+        by myt5-6212ef07a9ec.qloud-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id kC45TC5435-xTWKke1e;
+        Thu, 07 Nov 2019 20:59:29 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: Re: [PATCH] fs/quota: use unsigned int helper for sysctl fs.quota.*
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.com>,
+        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+References: <157312129151.3890.6076128127053624123.stgit@buzz>
+ <20191107115041.GC11400@quack2.suse.cz>
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Message-ID: <2bc0f9c6-76a7-f683-d6a2-c62e93698f83@yandex-team.ru>
+Date:   Thu, 7 Nov 2019 20:59:29 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191106190400.20969-1-agruenba@redhat.com> <20191106191656.GC15212@magnolia>
- <CAHc6FU4BXZ7fiLa_tVhZWZmqoXNCJWQwUvb7UPzGrWt_ZBBvxQ@mail.gmail.com> <20191107153732.GA6211@magnolia>
-In-Reply-To: <20191107153732.GA6211@magnolia>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Thu, 7 Nov 2019 18:54:45 +0100
-Message-ID: <CAHc6FU4MbJ5T+W_ku2gQzoquvMeh3Wbvus-c+tjOc6ZrOwTRiQ@mail.gmail.com>
-Subject: Re: [PATCH] iomap: Fix overflow in iomap_page_mkwrite
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-xfs@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-X-MC-Unique: Abx3Ze9ONP-28toTcRVeAQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191107115041.GC11400@quack2.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 7, 2019 at 4:37 PM Darrick J. Wong <darrick.wong@oracle.com> wr=
-ote:
-> I'll fix it on commit.
+On 07/11/2019 14.50, Jan Kara wrote:
+> On Thu 07-11-19 13:08:11, Konstantin Khlebnikov wrote:
+>> Report counters as unsigned, otherwise they turn negative at overflow:
+>>
+>> # sysctl fs.quota
+>> fs.quota.allocated_dquots = 22327
+>> fs.quota.cache_hits = -489852115
+>> fs.quota.drops = -487288718
+>> fs.quota.free_dquots = 22083
+>> fs.quota.lookups = -486883485
+>> fs.quota.reads = 22327
+>> fs.quota.syncs = 335064
+>> fs.quota.writes = 3088689
+>>
+>> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> 
+> Fair enough but then 'stats' array in dqstats should be unsigned as well
+> for consistency and why not actually make everything long when we are at
+> it? percpu_counter we use is s64 anyway...
 
-Thanks.
+Ok. I'll patch this too.
 
-So now the one remaining issue I have with those two functions is why
-we check for (offset > size) instead of (offset >=3D size) in
-
-  if (page->mapping !=3D inode->i_mapping || offset > size)
-
-When (offset =3D=3D size), we're clearly outside the page, and so we should=
- fail?
-
-Thanks,
-Andreas
-
+> 
+> 								Honza
+> 
+>> ---
+>>   fs/quota/dquot.c |    2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+>> index 6e826b454082..606e1e39674b 100644
+>> --- a/fs/quota/dquot.c
+>> +++ b/fs/quota/dquot.c
+>> @@ -2865,7 +2865,7 @@ static int do_proc_dqstats(struct ctl_table *table, int write,
+>>   	/* Update global table */
+>>   	dqstats.stat[type] =
+>>   			percpu_counter_sum_positive(&dqstats.counter[type]);
+>> -	return proc_dointvec(table, write, buffer, lenp, ppos);
+>> +	return proc_douintvec(table, write, buffer, lenp, ppos);
+>>   }
+>>   
+>>   static struct ctl_table fs_dqstats_table[] = {
+>>
