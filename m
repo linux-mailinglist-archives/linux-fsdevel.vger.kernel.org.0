@@ -2,87 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEB43F3477
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2019 17:15:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61AE4F3505
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2019 17:52:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbfKGQPQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Nov 2019 11:15:16 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50138 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726810AbfKGQPQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Nov 2019 11:15:16 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EA85CAFCB;
-        Thu,  7 Nov 2019 16:15:14 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 8B2491E4415; Thu,  7 Nov 2019 17:15:14 +0100 (CET)
-Date:   Thu, 7 Nov 2019 17:15:14 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: Deprecated mandatory file locking
-Message-ID: <20191107161514.GA21965@quack2.suse.cz>
-References: <20190814173345.GB10843@quack2.suse.cz>
- <20190814174604.GC10843@quack2.suse.cz>
- <01b6620186a18b167ca1bab1fadb2dbaffdd8379.camel@kernel.org>
- <20190816153149.GD3041@quack2.suse.cz>
+        id S1728410AbfKGQwM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Nov 2019 11:52:12 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36208 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726810AbfKGQwM (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 7 Nov 2019 11:52:12 -0500
+Received: by mail-lj1-f196.google.com with SMTP id k15so3080287lja.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Nov 2019 08:52:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QmbLva0bcejWfZ5vroXCCCNjtDh9+KzeuzRfAkUcNVw=;
+        b=RC+2jxnet1c9HEhXNBxtTTpEfLinckdbFJn5Bmrik3m/W7Num2OjpLxTQS23AoRNRr
+         Aj4dYDnclnksK9me7oG5iyDsfchGPA4TwVOyMbOGN2PJFpJroPg+VNW7luk63nWV0aoz
+         X/nFl5ue/aQhw5K+6Ogz8TNi8yWG86H2/HKz4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QmbLva0bcejWfZ5vroXCCCNjtDh9+KzeuzRfAkUcNVw=;
+        b=jf2AmeNJEWQELeRKvuw3ySMTLDtcG2jQFolXsw5O/XymXqKpi98CU40YF4nSV3TkYc
+         sJExOPh6kATXbxeFVp40cWv/QDwHJrh8SG8bOXZtapToWP0H91hwfdqrXra62rBLwqWT
+         R0vtTrYgQ3AN+Rg5yj0dqqYOGCCKNr2emIZXq+ALWzycrFs7ZHKl/loQTsxEcEu+kZiw
+         EWwjG1VtfZJvTO1W+o6AfgCUoxX8Sp3ABcYBKG3yj2x72h9mtrwILpRSavbtRbjrbRbb
+         lPxsQ7no1cKm/GDKIbdrG0TKHWH6+TKfupT4t82oN9dmwRbwbPmU4laYS+WRNhQQ1tM+
+         r/Rw==
+X-Gm-Message-State: APjAAAW6pCtBVekX18v/cEq/HxSLlpi2P3wB+e0gH+Dhrwsop4+l23x4
+        Oq4MXQ1/8lOySTVfO7GHO/oaIG+shdA=
+X-Google-Smtp-Source: APXvYqw207LlPZgqs9A2jjkNfswhfmKaSh9/pOrRk6JHy4Gw3iJCI6PWvWgwtn0Jo7shd7BmuAmQCQ==
+X-Received: by 2002:a2e:8204:: with SMTP id w4mr3241210ljg.3.1573145528692;
+        Thu, 07 Nov 2019 08:52:08 -0800 (PST)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
+        by smtp.gmail.com with ESMTPSA id t16sm1170722ljc.106.2019.11.07.08.52.06
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Nov 2019 08:52:07 -0800 (PST)
+Received: by mail-lf1-f44.google.com with SMTP id y6so2146720lfj.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Nov 2019 08:52:06 -0800 (PST)
+X-Received: by 2002:ac2:5bca:: with SMTP id u10mr3159115lfn.134.1573145526683;
+ Thu, 07 Nov 2019 08:52:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190816153149.GD3041@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <157262967752.13142.696874122947836210.stgit@warthog.procyon.org.uk>
+ <20191107090306.GV29418@shao2-debian>
+In-Reply-To: <20191107090306.GV29418@shao2-debian>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 7 Nov 2019 08:51:50 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiJ+jaT5Ev-wCg7iGNNO_JFUyMDcat0KDdA2b_+n_cZCQ@mail.gmail.com>
+Message-ID: <CAHk-=wiJ+jaT5Ev-wCg7iGNNO_JFUyMDcat0KDdA2b_+n_cZCQ@mail.gmail.com>
+Subject: Re: [pipe] d60337eff1: phoronix-test-suite.noise-level.0.activity_level
+ 144.0% improvement
+To:     lkp report check <rong.a.chen@intel.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        lkp@lists.01.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jeff,
+On Thu, Nov 7, 2019 at 1:03 AM lkp report check <rong.a.chen@intel.com> wrote:
+>
+> FYI, we noticed a 144.0% improvement of phoronix-test-suite.noise-level.0.activity_level due to commit:
+>
+> commit: d60337eff18a3c587832ab8053a567f1da9710d2 ("[RFC PATCH 04/11] pipe: Use head and tail pointers for the ring, not cursor and length [ver #3]")
 
-On Fri 16-08-19 17:31:49, Jan Kara wrote:
-> On Thu 15-08-19 15:18:45, Jeff Layton wrote:
-> > On Wed, 2019-08-14 at 19:46 +0200, Jan Kara wrote:
-> > > Resending to proper Jeff's address...
-> > > 
-> > > On Wed 14-08-19 19:33:45, Jan Kara wrote:
-> > > > Hello Jeff,
-> > > > 
-> > > > we've got a report from user
-> > > > (https://bugzilla.suse.com/show_bug.cgi?id=1145007) wondering why his fstab
-> > > > entry (for root filesystem!) using 'mand' mount option stopped working.
-> > > > Now I understand your rationale in 9e8925b67a "locks: Allow disabling
-> > > > mandatory locking at compile time" but I guess there's some work to do wrt
-> > > > documentation. At least mount(8) manpage could mention that mandatory
-> > > > locking is broken and may be disabled referencing the rationale in fcntl
-> > > > manpage? Or the kernel could mention something in the log about failing
-> > > > mount because of 'mand' mount option?  What do you think? Because it took
-> > > > me some code searching to understand why the mount is actually failing
-> > > > which we can hardly expect from a normal sysadmin...
-> > > > 
-> > > > 								Honza
-> > 
-> > Wow, I think this is the first actual user fallout we've ever had from
-> > that change! Why was he setting that option? Does he actually use
-> > mandatory locking?
-> 
-> Yeah, reportedly they had an application that required mandatory locking.
-> But they don't use it anymore so they just removed the mount option.
-> 
-> > I think a pr_notice() or pr_warn() at mount time when someone tries to
-> > use it sounds like a very reasonable thing to do. Perhaps we can just
-> > stick one in may_mandlock()?
-> 
-> Yeah, sounds reasonable to me.
-> 
-> > I'll draft up a patch, and also update
-> > Documentation/filesystems/mandatory-locking.txt with the current
-> > situation.
-> 
-> Thanks!
+That sounds nice, but is odd. That commit really shouldn't change
+anything noticeable. David, any idea?
 
-Did you ever get to this?
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+               Linus
