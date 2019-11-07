@@ -2,184 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7B54F25E1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2019 04:16:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7130F28B9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Nov 2019 09:07:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728124AbfKGDQn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Nov 2019 22:16:43 -0500
-Received: from mga03.intel.com ([134.134.136.65]:33378 "EHLO mga03.intel.com"
+        id S1727536AbfKGIHW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Nov 2019 03:07:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727581AbfKGDQn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Nov 2019 22:16:43 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2019 19:16:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,276,1569308400"; 
-   d="scan'208";a="233106400"
-Received: from chenyu-office.sh.intel.com ([10.239.158.173])
-  by fmsmga002.fm.intel.com with ESMTP; 06 Nov 2019 19:16:39 -0800
-From:   Chen Yu <yu.c.chen@intel.com>
-To:     x86@kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Chen Yu <yu.c.chen@intel.com>
-Subject: [PATCH] x86/resctrl: Add task resctrl information display
-Date:   Thu,  7 Nov 2019 11:27:31 +0800
-Message-Id: <20191107032731.7790-1-yu.c.chen@intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726791AbfKGIHV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 7 Nov 2019 03:07:21 -0500
+Received: from rapoport-lnx (nesher1.haifa.il.ibm.com [195.110.40.7])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14F2F2077C;
+        Thu,  7 Nov 2019 08:07:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573114040;
+        bh=Vs0vmuJFZJfCdBWbcef1JshwZZc9l+YrjwUdtsaNu3k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KypO2u9qQZOpCT97PagoJmJ05jNzzAwEOh5TQuJtaHcnw290kuyiCyRgXcpTDgoff
+         yL2r3/5Nv3OxL5iW1vDTUMldS7lvQVWUl8vBPDTErZIqUCYXU5EvD9rUB9CL4lekw9
+         M70s0IBFr/3wdhsUYXeg/j3kPNjd4MGq8LMTqoAU=
+Date:   Thu, 7 Nov 2019 10:07:07 +0200
+From:   Mike Rapoport <rppt@kernel.org>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 05/18] mm/gup: introduce pin_user_pages*() and FOLL_PIN
+Message-ID: <20191107080706.GB3239@rapoport-lnx>
+References: <20191103211813.213227-1-jhubbard@nvidia.com>
+ <20191103211813.213227-6-jhubbard@nvidia.com>
+ <20191105131032.GG25005@rapoport-lnx>
+ <9ac948a4-59bf-2427-2007-e460aad2848a@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9ac948a4-59bf-2427-2007-e460aad2848a@nvidia.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Monitoring tools that want to find out which resctrl CTRL
-and MONITOR groups a task belongs to must currently read
-the "tasks" file in every group until they locate the process
-ID.
+On Tue, Nov 05, 2019 at 11:00:06AM -0800, John Hubbard wrote:
+> On 11/5/19 5:10 AM, Mike Rapoport wrote:
+> ...
+> >> ---
+> >>  Documentation/vm/index.rst          |   1 +
+> >>  Documentation/vm/pin_user_pages.rst | 212 ++++++++++++++++++++++
+> > 
+> > I think it belongs to Documentation/core-api.
+> 
+> Done:
+> 
+> diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
+> index ab0eae1c153a..413f7d7c8642 100644
+> --- a/Documentation/core-api/index.rst
+> +++ b/Documentation/core-api/index.rst
+> @@ -31,6 +31,7 @@ Core utilities
+>     generic-radix-tree
+>     memory-allocation
+>     mm-api
+> +   pin_user_pages
+>     gfp_mask-from-fs-io
+>     timekeeping
+>     boot-time-mm
 
-Add an additional file /proc/{pid}/resctrl to provide this
-information.
+Thanks!
+ 
+> ...
+> >> diff --git a/Documentation/vm/pin_user_pages.rst b/Documentation/vm/pin_user_pages.rst
+> >> new file mode 100644
+> >> index 000000000000..3910f49ca98c
+> >> --- /dev/null
+> >> +++ b/Documentation/vm/pin_user_pages.rst
+> >> @@ -0,0 +1,212 @@
+> >> +.. SPDX-License-Identifier: GPL-2.0
+> >> +
+> >> +====================================================
+> >> +pin_user_pages() and related calls
+> >> +====================================================
+> > 
+> > I know this is too much to ask, but having pin_user_pages() a part of more
+> > general GUP description would be really great :)
+> > 
+> 
+> Yes, definitely. But until I saw the reaction to the pin_user_pages() API
+> family, I didn't want to write too much--it could have all been tossed out
+> in favor of a whole different API. But now that we've had some initial
+> reviews, I'm much more confident in being able to write about the larger 
+> API set.
+> 
+> So yes, I'll put that on my pending list.
+> 
+> 
+> ...
+> >> +This document describes the following functions: ::
+> >> +
+> >> + pin_user_pages
+> >> + pin_user_pages_fast
+> >> + pin_user_pages_remote
+> >> +
+> >> + pin_longterm_pages
+> >> + pin_longterm_pages_fast
+> >> + pin_longterm_pages_remote
+> >> +
+> >> +Basic description of FOLL_PIN
+> >> +=============================
+> >> +
+> >> +A new flag for get_user_pages ("gup") has been added: FOLL_PIN. FOLL_PIN has
+> > 
+> > Consider reading this after, say, half a year ;-)
+> > 
+> 
+> OK, OK. I knew when I wrote that that it was not going to stay new forever, but
+> somehow failed to write the right thing anyway. :) 
+> 
+> Here's a revised set of paragraphs:
+> 
+> Basic description of FOLL_PIN
+> =============================
+> 
+> FOLL_PIN and FOLL_LONGTERM are flags that can be passed to the get_user_pages*()
+> ("gup") family of functions. FOLL_PIN has significant interactions and
+> interdependencies with FOLL_LONGTERM, so both are covered here.
+> 
+> Both FOLL_PIN and FOLL_LONGTERM are internal to gup, meaning that neither
+> FOLL_PIN nor FOLL_LONGTERM should not appear at the gup call sites. This allows
+> the associated wrapper functions  (pin_user_pages() and others) to set the
+> correct combination of these flags, and to check for problems as well.
 
-For example:
- cat /proc/1193/resctrl
-CTRL_MON:/ctrl_grp0
-MON:/ctrl_grp0/mon_groups/mon_grp0
+Great, thanks! 
+ 
+> thanks,
+> 
+> John Hubbard
+> NVIDIA
 
-If the resctrl filesystem has not been mounted,
-reading /proc/{pid}/resctrl returns an error:
-cat: /proc/1193/resctrl: No such device
-
-Tested-by: Jinshi Chen <jinshi.chen@intel.com>
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
-Reviewed-by: Fenghua Yu <fenghua.yu@intel.com>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
-
----
- arch/x86/include/asm/resctrl_sched.h   |  4 +++
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 46 ++++++++++++++++++++++++++
- fs/proc/base.c                         |  9 +++++
- 3 files changed, 59 insertions(+)
-
-diff --git a/arch/x86/include/asm/resctrl_sched.h b/arch/x86/include/asm/resctrl_sched.h
-index f6b7fe2833cc..bba362e0e00f 100644
---- a/arch/x86/include/asm/resctrl_sched.h
-+++ b/arch/x86/include/asm/resctrl_sched.h
-@@ -5,6 +5,7 @@
- #ifdef CONFIG_X86_CPU_RESCTRL
- 
- #include <linux/sched.h>
-+#include <linux/proc_fs.h>
- #include <linux/jump_label.h>
- 
- #define IA32_PQR_ASSOC	0x0c8f
-@@ -84,6 +85,9 @@ static inline void resctrl_sched_in(void)
- 		__resctrl_sched_in();
- }
- 
-+int proc_resctrl_show(struct seq_file *m, struct pid_namespace *ns,
-+		      struct pid *pid, struct task_struct *tsk);
-+
- #else
- 
- static inline void resctrl_sched_in(void) {}
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index a46dee8e78db..2317174174e9 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -727,6 +727,52 @@ static int rdtgroup_tasks_show(struct kernfs_open_file *of,
- 	return ret;
- }
- 
-+int proc_resctrl_show(struct seq_file *s, struct pid_namespace *ns,
-+		      struct pid *pid, struct task_struct *tsk)
-+{
-+	struct rdtgroup *rdtg;
-+	int ret = 0;
-+
-+	mutex_lock(&rdtgroup_mutex);
-+
-+	/* Make sure resctrl has been mounted. */
-+	if (!static_branch_unlikely(&rdt_enable_key)) {
-+		ret = -ENODEV;
-+		goto unlock;
-+	}
-+
-+	list_for_each_entry(rdtg, &rdt_all_groups, rdtgroup_list) {
-+		struct rdtgroup *crg;
-+
-+		/*
-+		 * Task information is only relevant for shareable
-+		 * and exclusive groups.
-+		 */
-+		if (rdtg->mode != RDT_MODE_SHAREABLE &&
-+		    rdtg->mode != RDT_MODE_EXCLUSIVE)
-+			continue;
-+
-+		if (rdtg->closid == tsk->closid) {
-+			seq_printf(s, "CTRL_MON:/%s\n", rdtg->kn->name);
-+			list_for_each_entry(crg, &rdtg->mon.crdtgrp_list,
-+					    mon.crdtgrp_list) {
-+				if (tsk->rmid != crg->mon.rmid)
-+					continue;
-+				seq_printf(s, "MON:%s%s/mon_groups/%s\n",
-+					   rdtg == &rdtgroup_default ? "" : "/",
-+					   rdtg->kn->name, crg->kn->name);
-+				goto unlock;
-+			}
-+			goto unlock;
-+		}
-+	}
-+	ret = -ENOENT;
-+unlock:
-+	mutex_unlock(&rdtgroup_mutex);
-+
-+	return ret;
-+}
-+
- static int rdt_last_cmd_status_show(struct kernfs_open_file *of,
- 				    struct seq_file *seq, void *v)
- {
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index ebea9501afb8..d8a61db78db5 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -95,6 +95,9 @@
- #include <linux/sched/stat.h>
- #include <linux/posix-timers.h>
- #include <trace/events/oom.h>
-+#ifdef CONFIG_X86_CPU_RESCTRL
-+#include <asm/resctrl_sched.h>
-+#endif
- #include "internal.h"
- #include "fd.h"
- 
-@@ -3060,6 +3063,9 @@ static const struct pid_entry tgid_base_stuff[] = {
- #endif
- #ifdef CONFIG_CGROUPS
- 	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
-+#endif
-+#ifdef CONFIG_X86_CPU_RESCTRL
-+	ONE("resctrl", S_IRUGO, proc_resctrl_show),
- #endif
- 	ONE("oom_score",  S_IRUGO, proc_oom_score),
- 	REG("oom_adj",    S_IRUGO|S_IWUSR, proc_oom_adj_operations),
-@@ -3460,6 +3466,9 @@ static const struct pid_entry tid_base_stuff[] = {
- #endif
- #ifdef CONFIG_CGROUPS
- 	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
-+#endif
-+#ifdef CONFIG_X86_CPU_RESCTRL
-+	ONE("resctrl", S_IRUGO, proc_resctrl_show),
- #endif
- 	ONE("oom_score", S_IRUGO, proc_oom_score),
- 	REG("oom_adj",   S_IRUGO|S_IWUSR, proc_oom_adj_operations),
 -- 
-2.17.1
-
+Sincerely yours,
+Mike.
