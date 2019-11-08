@@ -2,121 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73589F49D5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2019 13:06:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E013F4CD7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2019 14:12:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391661AbfKHMEx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Nov 2019 07:04:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55558 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733048AbfKHLl5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:41:57 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 731F621D82;
-        Fri,  8 Nov 2019 11:41:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213317;
-        bh=KoIC1QyqhyN8DmbL2eUSeFGN3iQb5ME2i+EKkEFOJQU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iwn3mYGStOwDpU4cUBRpMK796LpxfH3UtvNZhM6rwhIycF6DslSpAqLVd/2FYJE+W
-         /3z67ghBXkhMi2SKebkCmIen5wqybvWafoYMvz4HTCAyYcbGYCkQ6faM9p2ixMriVs
-         CzWQeH7G/fMONnyaeyVbVCKttqUx6Pj6LTEg/Xqs=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 161/205] media: dvb: fix compat ioctl translation
-Date:   Fri,  8 Nov 2019 06:37:08 -0500
-Message-Id: <20191108113752.12502-161-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
-References: <20191108113752.12502-1-sashal@kernel.org>
+        id S1727532AbfKHNMl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Nov 2019 08:12:41 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46874 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726445AbfKHNMl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 8 Nov 2019 08:12:41 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 15F75AE2A;
+        Fri,  8 Nov 2019 13:12:39 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 8C0061E3BE4; Fri,  8 Nov 2019 14:12:38 +0100 (CET)
+Date:   Fri, 8 Nov 2019 14:12:38 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 5/5] fs/xfs: Allow toggle of physical DAX flag
+Message-ID: <20191108131238.GK20863@quack2.suse.cz>
+References: <20191020155935.12297-1-ira.weiny@intel.com>
+ <20191020155935.12297-6-ira.weiny@intel.com>
+ <20191021004536.GD8015@dread.disaster.area>
+ <20191021224931.GA25526@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191021224931.GA25526@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Mon 21-10-19 15:49:31, Ira Weiny wrote:
+> On Mon, Oct 21, 2019 at 11:45:36AM +1100, Dave Chinner wrote:
+> > On Sun, Oct 20, 2019 at 08:59:35AM -0700, ira.weiny@intel.com wrote:
+> > That, fundamentally, is the issue here - it's not setting/clearing
+> > the DAX flag that is the issue, it's doing a swap of the
+> > mapping->a_ops while there may be other code using that ops
+> > structure.
+> > 
+> > IOWs, if there is any code anywhere in the kernel that
+> > calls an address space op without holding one of the three locks we
+> > hold here (i_rwsem, MMAPLOCK, ILOCK) then it can race with the swap
+> > of the address space operations.
+> > 
+> > By limiting the address space swap to file sizes of zero, we rule
+> > out the page fault path (mmap of a zero length file segv's with an
+> > access beyond EOF on the first read/write page fault, right?).
+> 
+> Yes I checked that and thought we were safe here...
+> 
+> > However, other aops callers that might run unlocked and do the wrong
+> > thing if the aops pointer is swapped between check of the aop method
+> > existing and actually calling it even if the file size is zero?
+> > 
+> > A quick look shows that FIBMAP (ioctl_fibmap())) looks susceptible
+> > to such a race condition with the current definitions of the XFS DAX
+> > aops. I'm guessing there will be others, but I haven't looked
+> > further than this...
+> 
+> I'll check for others and think on what to do about this.  ext4 will have the
+> same problem I think.  :-(
 
-[ Upstream commit 1ccbeeb888ac33627d91f1ccf0b84ef3bcadef24 ]
+Just as a datapoint, ext4 is bold and sets inode->i_mapping->a_ops on
+existing inodes when switching journal data flag and so far it has not
+blown up. What we did to deal with issues Dave describes is that we
+introduced percpu rw-semaphore guarding switching of aops and then inside
+problematic functions redirect callbacks in the right direction under this
+semaphore. Somewhat ugly but it seems to work.
 
-The VIDEO_GET_EVENT and VIDEO_STILLPICTURE was added back in 2005 but
-it never worked because the command number is wrong.
-
-Using the right command number means we have a better chance of them
-actually doing the right thing, though clearly nobody has ever tried
-it successfully.
-
-I noticed these while auditing the remaining users of compat_time_t
-for y2038 bugs. This one is fine in that regard, it just never did
-anything.
-
-Fixes: 6e87abd0b8cb ("[DVB]: Add compat ioctl handling.")
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/compat_ioctl.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
-index 8f08095ee54e9..3a03f74a8cc4e 100644
---- a/fs/compat_ioctl.c
-+++ b/fs/compat_ioctl.c
-@@ -141,6 +141,7 @@ struct compat_video_event {
- 		unsigned int frame_rate;
- 	} u;
- };
-+#define VIDEO_GET_EVENT32 _IOR('o', 28, struct compat_video_event)
- 
- static int do_video_get_event(struct file *file,
- 		unsigned int cmd, struct compat_video_event __user *up)
-@@ -152,7 +153,7 @@ static int do_video_get_event(struct file *file,
- 	if (kevent == NULL)
- 		return -EFAULT;
- 
--	err = do_ioctl(file, cmd, (unsigned long)kevent);
-+	err = do_ioctl(file, VIDEO_GET_EVENT, (unsigned long)kevent);
- 	if (!err) {
- 		err  = convert_in_user(&kevent->type, &up->type);
- 		err |= convert_in_user(&kevent->timestamp, &up->timestamp);
-@@ -171,6 +172,7 @@ struct compat_video_still_picture {
-         compat_uptr_t iFrame;
-         int32_t size;
- };
-+#define VIDEO_STILLPICTURE32 _IOW('o', 30, struct compat_video_still_picture)
- 
- static int do_video_stillpicture(struct file *file,
- 		unsigned int cmd, struct compat_video_still_picture __user *up)
-@@ -193,7 +195,7 @@ static int do_video_stillpicture(struct file *file,
- 	if (err)
- 		return -EFAULT;
- 
--	err = do_ioctl(file, cmd, (unsigned long) up_native);
-+	err = do_ioctl(file, VIDEO_STILLPICTURE, (unsigned long) up_native);
- 
- 	return err;
- }
-@@ -1302,9 +1304,9 @@ static long do_ioctl_trans(unsigned int cmd,
- 		return rtc_ioctl(file, cmd, argp);
- 
- 	/* dvb */
--	case VIDEO_GET_EVENT:
-+	case VIDEO_GET_EVENT32:
- 		return do_video_get_event(file, cmd, argp);
--	case VIDEO_STILLPICTURE:
-+	case VIDEO_STILLPICTURE32:
- 		return do_video_stillpicture(file, cmd, argp);
- 	}
- 
+								Honza
 -- 
-2.20.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
