@@ -2,167 +2,263 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54EB2F5943
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2019 22:15:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A941F597C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2019 22:15:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730914AbfKHVIq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Nov 2019 16:08:46 -0500
-Received: from mout.kundenserver.de ([212.227.17.24]:43469 "EHLO
+        id S1732783AbfKHVPP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Nov 2019 16:15:15 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:36111 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726349AbfKHVIp (ORCPT
+        with ESMTP id S1731743AbfKHVPP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Nov 2019 16:08:45 -0500
+        Fri, 8 Nov 2019 16:15:15 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1Mv2pC-1hcBKf32ie-00r1bf; Fri, 08 Nov 2019 22:08:29 +0100
+ (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1M2ON6-1iUpU10hYc-003rip; Fri, 08 Nov 2019 22:14:55 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     y2038@lists.linaro.org, Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+To:     y2038@lists.linaro.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Benjamin LaHaise <bcrl@kvack.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         Stephen Boyd <sboyd@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
-        netdev@vger.kernel.org
-Subject: [PATCH 01/23] y2038: remove CONFIG_64BIT_TIME
-Date:   Fri,  8 Nov 2019 22:07:21 +0100
-Message-Id: <20191108210824.1534248-1-arnd@arndb.de>
+        Christian Brauner <christian@brauner.io>,
+        linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: [PATCH 12/23] y2038: syscalls: change remaining timeval to __kernel_old_timeval
+Date:   Fri,  8 Nov 2019 22:12:11 +0100
+Message-Id: <20191108211323.1806194-3-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191108210236.1296047-1-arnd@arndb.de>
 References: <20191108210236.1296047-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:H2tiCmOPXYw8s1qtnX/2cKq67XKFxksIA+eJap+sUEcVUWZWb+Y
- 8qBIXKy6r6bmI22vV77RnVQUuIj7iwJikQx6acqRH7nHsZTPjpxMcyvlS/WoqsCQJhc+0bI
- X/svWIrOH3ivqFs2+WfQmIBo7M1x9Coag63s5V0Nz6hOszrZ4K8t595MS92PQ3lbhuIvQop
- IEsAxjRtAtCpbkolITw/g==
+X-Provags-ID: V03:K1:L5MXbYk31wOXwoBz972x9kuLeZIEuu+iSFnMEMxFsvJUSyMZcA5
+ KJDBtqG97dBLfawBhDt9kcwvJVvuwOQ596SiSyGadN0etYEY4mHIcslPBMvhPxUeiASTwtE
+ 4HuvheJuT5lTmRZ2iJaCMwpj7E00u6pChQLfyfcNCai0JwzuRda/z3lx8uBV/SGvrx3+2hE
+ v3L/VsxyHbSgyY9NiNRbA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Ga9diiCQdOk=:i8WuivqPZNstauNeRgqfYF
- XxoGLuFx6ewBMCyp9wIrs18C/yqZN+6404yWmhT82msLSJeX2vSKHrAFnYnzg/8MdJ803WspP
- SeKEga2VQG3SKNkMdXbrPU8qlEGog0T3nd0aK+j7NxqbixbqnfRcgFyPRznM6I7CFpYXuhNG3
- hwBLs01rZjsBnn6CjQbQvPkvcNUXdW4u09kN5yoJ3EjXlItrfLObZSd7JLBUZC9+TXFRQf3z8
- Uq6KzhBTPCtKpmVHbGKmR5PAcuZIQ+oh8BpDo+r9+8KXGg7U6ePPPvFj5bdJU/CmGbTnbxuHK
- 4lvg0GaC/SouPKAT5KxCVR9w3ltBoVdSyEx/nDFNYTVU8nM1oFoU/mwhdQzyQYh87cuQZ3dUc
- c8xyLsvMCae1P4y9EjSF3z3U8KMBmlNOqBokGX/GVYghcOR2zvJyVT3IsepSNkfW+CHBlqWCV
- AIW9zf/jfzxipCBsntrLzHma+84YW0ajLN6J0pn7ZB+H3tlMdOM1YDRwhuX3ABeqSPv7Vjorv
- Xf11OoHQuaKkncSn9mfJRaPD050DbTjRckQjyKxRDHw8uDB0GxqHcv22gE5Qi051n44ItIxdM
- 09xIWJQQlN+Dz0XlXU2/h4Fqi40/NAAQm8m21mzw0BzuiYw+yEVDmTDC+aqhBAFTTsJU6bLOy
- j++yfRwfHZh0lgIcWboO7bYTO6gWwQ64I4U1YWyipuR571DU1pL3429Ca8FZOMrbMFG9g8hrp
- ugSbD3CgtnzJmTpy41Xc8CWytO8HqrSc7JdKcb4U1HK4c5XwlcVg+L3stkOQBKmy4qlP/0GIb
- 12JmTyvu9QAMNB2OeZwl9LfD8GHfEoWlW7JbT2kVWaPgydoIjMugiKOPDMqwCP0gtbbePHmlG
- 5GfM8WBlOtDbzNDlEwQQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:vzi6yde6b/Y=:ccalfERfsUEw5gS+vbBk40
+ 2pXxs9573zedbV97jmVac2Hd1aJR6bl5MYGgvW2fYC9hDjckcs4/aqqNfk4Mty8m6lYfGAHO6
+ 5js6bYy+kzIpVkubVkF9YsvcO3ZZHee5W4p2c9Ysx8xD9jjQpDoqBDPEyJbcwiHVaomVoj4bE
+ 0WD+6FuQCdvgxREISAkqwJlb7+QF/dBFT5Q6/ZyOfOqXzoH71fKgCQj7KwaSCEuuGd/A4h0aY
+ 6Px9rTYGebyI6et4h4wCRgTVuMjRrFPuLUQVKDm7opN+aIJUKcMLqYzSwcycK6xPujokgupip
+ UXhzNc46PDF4VGfT0TFv05d/rkqfwnz6IMvFI43cxdKN2jBDCPHqDYaF4IHjuLLfS8epEvDca
+ dW+YWaydV+DP4dNGpCCUMQ69Gry4TGR1rdE9Hv2g3+tgymMpoiN+PFS7yccDBHBtFgWMhB7uD
+ nRUGZXnkIc6ZlbhTmgTEDHv923hP6eoj461EDqMH6o17vOdPIUYLbRBEZdaWpppISWbfNJHFy
+ o+CsXM9xLVJ41r2GUsD3OlN9wDF57IkUMTdSP1TPHpLTg8tQt1KSx0liPDIBCsBjmOS27/8Gy
+ YgGivN27m6iSpVffP4eDtveIo4c6TU77s/QCmzH6pGzD8y/KWU0GmXMaOCWYHQLrZK4zuAMD2
+ +MbnM1nHjqbdI/+v4TPx6KLmftPRa6CP/2wO63/IlA1+yYihaDygxL7/ut0w6qZP/pcCHnD+P
+ 76rVbneRg0ADgYWIhuBGfGV4KDJJFcgrX/+bta7Ng8mQNlm2w5i0AvGMpldh8EN8mGS0OfNcU
+ mEmUPpx/EDdJ828L7cfx83d8ZMGPIKWUYJgwb5MpOxSoVtQw/G3/nESpKWbxtGOyPejhCQcmE
+ 1qC5qhTto/Pmq0rO3eWQ==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The CONFIG_64BIT_TIME option is defined on all architectures, and can
-be removed for simplicity now.
+All of the remaining syscalls that pass a timeval (gettimeofday, utime,
+futimesat) can trivially be changed to pass a __kernel_old_timeval
+instead, which has a compatible layout, but avoids ambiguity with
+the timeval type in user space.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/Kconfig          | 8 --------
- fs/aio.c              | 2 +-
- ipc/syscall.c         | 2 +-
- kernel/time/hrtimer.c | 2 +-
- kernel/time/time.c    | 4 ++--
- net/socket.c          | 2 +-
- 6 files changed, 6 insertions(+), 14 deletions(-)
+ arch/powerpc/include/asm/asm-prototypes.h |  3 ++-
+ arch/powerpc/kernel/syscalls.c            |  4 ++--
+ fs/select.c                               | 10 +++++-----
+ fs/utimes.c                               |  8 ++++----
+ include/linux/syscalls.h                  | 10 +++++-----
+ kernel/power/power.h                      |  2 +-
+ kernel/time/time.c                        |  2 +-
+ 7 files changed, 20 insertions(+), 19 deletions(-)
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 5f8a5d84dbbe..0e1fded2940e 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -796,14 +796,6 @@ config OLD_SIGACTION
- config COMPAT_OLD_SIGACTION
- 	bool
- 
--config 64BIT_TIME
--	def_bool y
--	help
--	  This should be selected by all architectures that need to support
--	  new system calls with a 64-bit time_t. This is relevant on all 32-bit
--	  architectures, and 64-bit architectures as part of compat syscall
--	  handling.
--
- config COMPAT_32BIT_TIME
- 	def_bool !64BIT || COMPAT
- 	help
-diff --git a/fs/aio.c b/fs/aio.c
-index 01e0fb9ae45a..447e3a0c572c 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -2056,7 +2056,7 @@ static long do_io_getevents(aio_context_t ctx_id,
-  *	specifies an infinite timeout. Note that the timeout pointed to by
-  *	timeout is relative.  Will fail with -ENOSYS if not implemented.
+diff --git a/arch/powerpc/include/asm/asm-prototypes.h b/arch/powerpc/include/asm/asm-prototypes.h
+index 8561498e653c..2c25dc079cb9 100644
+--- a/arch/powerpc/include/asm/asm-prototypes.h
++++ b/arch/powerpc/include/asm/asm-prototypes.h
+@@ -92,7 +92,8 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
+ long sys_debug_setcontext(struct ucontext __user *ctx,
+ 			  int ndbg, struct sig_dbg_op __user *dbg);
+ int
+-ppc_select(int n, fd_set __user *inp, fd_set __user *outp, fd_set __user *exp, struct timeval __user *tvp);
++ppc_select(int n, fd_set __user *inp, fd_set __user *outp, fd_set __user *exp,
++	   struct __kernel_old_timeval __user *tvp);
+ unsigned long __init early_init(unsigned long dt_ptr);
+ void __init machine_init(u64 dt_ptr);
+ #endif
+diff --git a/arch/powerpc/kernel/syscalls.c b/arch/powerpc/kernel/syscalls.c
+index 3bfb3888e897..078608ec2e92 100644
+--- a/arch/powerpc/kernel/syscalls.c
++++ b/arch/powerpc/kernel/syscalls.c
+@@ -79,7 +79,7 @@ SYSCALL_DEFINE6(mmap, unsigned long, addr, size_t, len,
+  * sys_select() with the appropriate args. -- Cort
   */
--#if !defined(CONFIG_64BIT_TIME) || defined(CONFIG_64BIT)
-+#ifdef CONFIG_64BIT
+ int
+-ppc_select(int n, fd_set __user *inp, fd_set __user *outp, fd_set __user *exp, struct timeval __user *tvp)
++ppc_select(int n, fd_set __user *inp, fd_set __user *outp, fd_set __user *exp, struct __kernel_old_timeval __user *tvp)
+ {
+ 	if ( (unsigned long)n >= 4096 )
+ 	{
+@@ -89,7 +89,7 @@ ppc_select(int n, fd_set __user *inp, fd_set __user *outp, fd_set __user *exp, s
+ 		    || __get_user(inp, ((fd_set __user * __user *)(buffer+1)))
+ 		    || __get_user(outp, ((fd_set  __user * __user *)(buffer+2)))
+ 		    || __get_user(exp, ((fd_set  __user * __user *)(buffer+3)))
+-		    || __get_user(tvp, ((struct timeval  __user * __user *)(buffer+4))))
++		    || __get_user(tvp, ((struct __kernel_old_timeval  __user * __user *)(buffer+4))))
+ 			return -EFAULT;
+ 	}
+ 	return sys_select(n, inp, outp, exp, tvp);
+diff --git a/fs/select.c b/fs/select.c
+index 53a0c149f528..11d0285d46b7 100644
+--- a/fs/select.c
++++ b/fs/select.c
+@@ -321,7 +321,7 @@ static int poll_select_finish(struct timespec64 *end_time,
+ 	switch (pt_type) {
+ 	case PT_TIMEVAL:
+ 		{
+-			struct timeval rtv;
++			struct __kernel_old_timeval rtv;
  
- SYSCALL_DEFINE5(io_getevents, aio_context_t, ctx_id,
- 		long, min_nr,
-diff --git a/ipc/syscall.c b/ipc/syscall.c
-index 581bdff4e7c5..dfb0e988d542 100644
---- a/ipc/syscall.c
-+++ b/ipc/syscall.c
-@@ -30,7 +30,7 @@ int ksys_ipc(unsigned int call, int first, unsigned long second,
- 		return ksys_semtimedop(first, (struct sembuf __user *)ptr,
- 				       second, NULL);
- 	case SEMTIMEDOP:
--		if (IS_ENABLED(CONFIG_64BIT) || !IS_ENABLED(CONFIG_64BIT_TIME))
-+		if (IS_ENABLED(CONFIG_64BIT))
- 			return ksys_semtimedop(first, ptr, second,
- 			        (const struct __kernel_timespec __user *)fifth);
- 		else if (IS_ENABLED(CONFIG_COMPAT_32BIT_TIME))
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 65605530ee34..9e20873148c6 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -1940,7 +1940,7 @@ long hrtimer_nanosleep(const struct timespec64 *rqtp,
- 	return ret;
+ 			if (sizeof(rtv) > sizeof(rtv.tv_sec) + sizeof(rtv.tv_usec))
+ 				memset(&rtv, 0, sizeof(rtv));
+@@ -698,10 +698,10 @@ int core_sys_select(int n, fd_set __user *inp, fd_set __user *outp,
  }
  
--#if !defined(CONFIG_64BIT_TIME) || defined(CONFIG_64BIT)
-+#ifdef CONFIG_64BIT
+ static int kern_select(int n, fd_set __user *inp, fd_set __user *outp,
+-		       fd_set __user *exp, struct timeval __user *tvp)
++		       fd_set __user *exp, struct __kernel_old_timeval __user *tvp)
+ {
+ 	struct timespec64 end_time, *to = NULL;
+-	struct timeval tv;
++	struct __kernel_old_timeval tv;
+ 	int ret;
  
- SYSCALL_DEFINE2(nanosleep, struct __kernel_timespec __user *, rqtp,
- 		struct __kernel_timespec __user *, rmtp)
-diff --git a/kernel/time/time.c b/kernel/time/time.c
-index 45a358953f09..ddbddf504c23 100644
---- a/kernel/time/time.c
-+++ b/kernel/time/time.c
-@@ -267,7 +267,7 @@ COMPAT_SYSCALL_DEFINE2(settimeofday, struct old_timeval32 __user *, tv,
+ 	if (tvp) {
+@@ -720,7 +720,7 @@ static int kern_select(int n, fd_set __user *inp, fd_set __user *outp,
  }
+ 
+ SYSCALL_DEFINE5(select, int, n, fd_set __user *, inp, fd_set __user *, outp,
+-		fd_set __user *, exp, struct timeval __user *, tvp)
++		fd_set __user *, exp, struct __kernel_old_timeval __user *, tvp)
+ {
+ 	return kern_select(n, inp, outp, exp, tvp);
+ }
+@@ -810,7 +810,7 @@ SYSCALL_DEFINE6(pselect6_time32, int, n, fd_set __user *, inp, fd_set __user *,
+ struct sel_arg_struct {
+ 	unsigned long n;
+ 	fd_set __user *inp, *outp, *exp;
+-	struct timeval __user *tvp;
++	struct __kernel_old_timeval __user *tvp;
+ };
+ 
+ SYSCALL_DEFINE1(old_select, struct sel_arg_struct __user *, arg)
+diff --git a/fs/utimes.c b/fs/utimes.c
+index 1ba3f7883870..c952b6b3d8a0 100644
+--- a/fs/utimes.c
++++ b/fs/utimes.c
+@@ -161,9 +161,9 @@ SYSCALL_DEFINE4(utimensat, int, dfd, const char __user *, filename,
+  * utimensat() instead.
+  */
+ static long do_futimesat(int dfd, const char __user *filename,
+-			 struct timeval __user *utimes)
++			 struct __kernel_old_timeval __user *utimes)
+ {
+-	struct timeval times[2];
++	struct __kernel_old_timeval times[2];
+ 	struct timespec64 tstimes[2];
+ 
+ 	if (utimes) {
+@@ -190,13 +190,13 @@ static long do_futimesat(int dfd, const char __user *filename,
+ 
+ 
+ SYSCALL_DEFINE3(futimesat, int, dfd, const char __user *, filename,
+-		struct timeval __user *, utimes)
++		struct __kernel_old_timeval __user *, utimes)
+ {
+ 	return do_futimesat(dfd, filename, utimes);
+ }
+ 
+ SYSCALL_DEFINE2(utimes, char __user *, filename,
+-		struct timeval __user *, utimes)
++		struct __kernel_old_timeval __user *, utimes)
+ {
+ 	return do_futimesat(AT_FDCWD, filename, utimes);
+ }
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 2f27bc9d5ef0..e665920fa359 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -51,7 +51,7 @@ struct statx;
+ struct __sysctl_args;
+ struct sysinfo;
+ struct timespec;
+-struct timeval;
++struct __kernel_old_timeval;
+ struct __kernel_timex;
+ struct timezone;
+ struct tms;
+@@ -732,7 +732,7 @@ asmlinkage long sys_prctl(int option, unsigned long arg2, unsigned long arg3,
+ asmlinkage long sys_getcpu(unsigned __user *cpu, unsigned __user *node, struct getcpu_cache __user *cache);
+ 
+ /* kernel/time.c */
+-asmlinkage long sys_gettimeofday(struct timeval __user *tv,
++asmlinkage long sys_gettimeofday(struct __kernel_old_timeval __user *tv,
+ 				struct timezone __user *tz);
+ asmlinkage long sys_settimeofday(struct timeval __user *tv,
+ 				struct timezone __user *tz);
+@@ -1082,9 +1082,9 @@ asmlinkage long sys_time32(old_time32_t __user *tloc);
+ asmlinkage long sys_utime(char __user *filename,
+ 				struct utimbuf __user *times);
+ asmlinkage long sys_utimes(char __user *filename,
+-				struct timeval __user *utimes);
++				struct __kernel_old_timeval __user *utimes);
+ asmlinkage long sys_futimesat(int dfd, const char __user *filename,
+-			      struct timeval __user *utimes);
++			      struct __kernel_old_timeval __user *utimes);
+ #endif
+ asmlinkage long sys_futimesat_time32(unsigned int dfd,
+ 				     const char __user *filename,
+@@ -1098,7 +1098,7 @@ asmlinkage long sys_getdents(unsigned int fd,
+ 				struct linux_dirent __user *dirent,
+ 				unsigned int count);
+ asmlinkage long sys_select(int n, fd_set __user *inp, fd_set __user *outp,
+-			fd_set __user *exp, struct timeval __user *tvp);
++			fd_set __user *exp, struct __kernel_old_timeval __user *tvp);
+ asmlinkage long sys_poll(struct pollfd __user *ufds, unsigned int nfds,
+ 				int timeout);
+ asmlinkage long sys_epoll_wait(int epfd, struct epoll_event __user *events,
+diff --git a/kernel/power/power.h b/kernel/power/power.h
+index 44bee462ff57..7cdc64dc2373 100644
+--- a/kernel/power/power.h
++++ b/kernel/power/power.h
+@@ -179,7 +179,7 @@ extern void swsusp_close(fmode_t);
+ extern int swsusp_unmark(void);
  #endif
  
--#if !defined(CONFIG_64BIT_TIME) || defined(CONFIG_64BIT)
-+#ifdef CONFIG_64BIT
- SYSCALL_DEFINE1(adjtimex, struct __kernel_timex __user *, txc_p)
+-struct timeval;
++struct __kernel_old_timeval;
+ /* kernel/power/swsusp.c */
+ extern void swsusp_show_speed(ktime_t, ktime_t, unsigned int, char *);
+ 
+diff --git a/kernel/time/time.c b/kernel/time/time.c
+index 7eba7c9a7e3e..bc114f0be8f1 100644
+--- a/kernel/time/time.c
++++ b/kernel/time/time.c
+@@ -137,7 +137,7 @@ SYSCALL_DEFINE1(stime32, old_time32_t __user *, tptr)
+ #endif /* __ARCH_WANT_SYS_TIME32 */
+ #endif
+ 
+-SYSCALL_DEFINE2(gettimeofday, struct timeval __user *, tv,
++SYSCALL_DEFINE2(gettimeofday, struct __kernel_old_timeval __user *, tv,
+ 		struct timezone __user *, tz)
  {
- 	struct __kernel_timex txc;		/* Local copy of parameter */
-@@ -884,7 +884,7 @@ int get_timespec64(struct timespec64 *ts,
- 	ts->tv_sec = kts.tv_sec;
- 
- 	/* Zero out the padding for 32 bit systems or in compat mode */
--	if (IS_ENABLED(CONFIG_64BIT_TIME) && in_compat_syscall())
-+	if (in_compat_syscall())
- 		kts.tv_nsec &= 0xFFFFFFFFUL;
- 
- 	ts->tv_nsec = kts.tv_nsec;
-diff --git a/net/socket.c b/net/socket.c
-index 6a9ab7a8b1d2..98f6544b0096 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -2833,7 +2833,7 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
- 				    a[2], true);
- 		break;
- 	case SYS_RECVMMSG:
--		if (IS_ENABLED(CONFIG_64BIT) || !IS_ENABLED(CONFIG_64BIT_TIME))
-+		if (IS_ENABLED(CONFIG_64BIT))
- 			err = __sys_recvmmsg(a0, (struct mmsghdr __user *)a1,
- 					     a[2], a[3],
- 					     (struct __kernel_timespec __user *)a[4],
+ 	if (likely(tv != NULL)) {
 -- 
 2.20.0
 
