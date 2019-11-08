@@ -2,92 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2320F5349
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2019 19:12:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28C13F5361
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2019 19:16:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727612AbfKHSMh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Nov 2019 13:12:37 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:35508 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726446AbfKHSMh (ORCPT
+        id S1729373AbfKHSQQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Nov 2019 13:16:16 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:41577 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728124AbfKHSQL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:12:37 -0500
-Received: by mail-lj1-f195.google.com with SMTP id r7so7202686ljg.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Nov 2019 10:12:35 -0800 (PST)
+        Fri, 8 Nov 2019 13:16:11 -0500
+Received: by mail-oi1-f194.google.com with SMTP id e9so6040078oif.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Nov 2019 10:16:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=UwOe/0M2mqJUTnI7Cbij9+EXC9Tu0LMdXKdxLl7NQv8=;
-        b=Tty72ZI+f/UrYcmEO8Ttap8J2ndzFJNgOvOIEsjOGXNDZDxbS3eJdFc1wvOgAkhTae
-         HLu2Gs/SEuoh93AyFYWuYVGXZRyvcZzwo9IRcP7UYgKpfdaT0318sOFFV7yfTAuoQUuM
-         qzCAoo7N2AMj7L2Iz8ESsZqrPCxDcoIImZAlU=
+        bh=5tUkPEobvq0D1LVe3HBgFyeSBazbNDJmhpV7AqtazYk=;
+        b=eOjJlMG++cIiJCf+41ocgxmN10k5xlvB3wJ0CksO002FTLGIfa1fJAK3O6Jkuvb+fx
+         PoYCLNW6D9YGSl/MRBgAgccJM9ZYaMcSWBKOR7v209fCgig2SLt9Ica4sc8EHdCSh8XH
+         Ux1kOwoLofwMYcXkC1qfLwNF+V8nJ+gsHx/B6VSj99yDTpBiHFF7QN7BQjdI0F/qpINc
+         9OuIsii0Utk16W6qPPnOPqVSFO9J2+ryFGyMIdT+r6lw0e2eERLZDQDBX+lKlXDdfOG5
+         5aoWOUYIE9AeSKenvkd6IZDEUieVABlwMtLu3qTnx16lM/SXZWP7UC29idEKMbV/UIQM
+         LPug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UwOe/0M2mqJUTnI7Cbij9+EXC9Tu0LMdXKdxLl7NQv8=;
-        b=Zi7LexkBf/xBD9oVWVpCcUth7t5Y869i5v/2Js2JEVVdqS4cgx3KLX0WV4XyvVpUt9
-         kYlP+briDXKA/EZNLPcSRTdPkQEug4rr8s3URTZaI183eGsj8KhnRLLqZXM37eRzUoU1
-         1+ktT3RDxr1n+pwnlP7hECmF/SvXC3vs/2BjWriXnFDvaESxstno+QGskoyfjwYQUbTL
-         qLHnE7xletVto/Oj3MmRCIQ+DQsVWuwJRbFcrIOfvhTk6y7GjQMv33NNqqDVUx4CrmD3
-         IOaoYPplPPQmLS2ZjSmjwmMFTFJ3OALYiZHd2gwlZAm73PU6t/JXsD3UEZawScPlf7iT
-         T+ig==
-X-Gm-Message-State: APjAAAXiVSSxwGx28TI0N6DbMPOIET3ZCBDpP6JIA9AIn0ZBNNMiSEpG
-        lpI+4Ro24MEB9FXJSDfbR7z0acBdeI0=
-X-Google-Smtp-Source: APXvYqyiEkLQZB8NPmzNvgCNsXJLIuEf+XJ35vlCWiXHTKrgAQqJFoQojAZG1u/68WbkXEpco0fsfw==
-X-Received: by 2002:a2e:9208:: with SMTP id k8mr7955365ljg.14.1573236754140;
-        Fri, 08 Nov 2019 10:12:34 -0800 (PST)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
-        by smtp.gmail.com with ESMTPSA id u2sm3168833lfc.23.2019.11.08.10.12.31
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2019 10:12:33 -0800 (PST)
-Received: by mail-lj1-f178.google.com with SMTP id 139so7190224ljf.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Nov 2019 10:12:31 -0800 (PST)
-X-Received: by 2002:a05:651c:331:: with SMTP id b17mr7846398ljp.133.1573236751292;
- Fri, 08 Nov 2019 10:12:31 -0800 (PST)
+        bh=5tUkPEobvq0D1LVe3HBgFyeSBazbNDJmhpV7AqtazYk=;
+        b=EJzJzIuJArH00+w56Wx24ysa6DzQay2fECnKtaWiEnaeTSDdP9mkkA7YF1rOOf5Srd
+         n0Ub+chpbrUKU/Kn/JO8QUgSG/VPe15Ei4d86qZBf7tox8Mdfmmj9CSsr1nJjF1fIVQf
+         vuBRq/mX++tZ90A4XXheyhAnuI189pBrzfWfB6b7/e0yrzca4pCw/+kNxMO36feR/6ed
+         V8FpcR+GB+p2bG/vmGJA9IpiurSrKPlACnvarXNnxf+6dkTC4DJLeihrNE/ZmtkKB5Sn
+         BxVJg5zMHhJEGkAn3qn20h3ZfMbnvgPM+xQ2/DnfPrW34ip/3+1AF8RoUOjjMXEueSeq
+         y1lw==
+X-Gm-Message-State: APjAAAXjJGlOjIhv3esmItwvQ+YnFt9wTKSc2ymk5mXcIY4isGvmStTM
+        rYYe0XiVvJgOokBGrbQTbDg12bWG2RaHaxUl8Lc7DA==
+X-Google-Smtp-Source: APXvYqxRJMUbSON3GrNlz4n2lBEX4xlXNxzvn2DMVWHU2QEnT8Nd2kjm7NF/1I3KGh6JRBri/HehhFEFXd1Cw4pZHpY=
+X-Received: by 2002:aca:fc0d:: with SMTP id a13mr10989363oii.83.1573236969814;
+ Fri, 08 Nov 2019 10:16:09 -0800 (PST)
 MIME-Version: 1.0
 References: <000000000000c422a80596d595ee@google.com> <6bddae34-93df-6820-0390-ac18dcbf0927@gmail.com>
  <CAHk-=whh5bcxCecEL5Fy4XvQjgBTJ9uqvyp7dW=CLU6VNxS9iA@mail.gmail.com>
  <CANn89iK9mTJ4BN-X3MeSx5LGXGYafXkhZyaUpdXDjVivTwA6Jg@mail.gmail.com>
  <CAHk-=whNBL63qmO176qOQpkY16xvomog5ocvM=9K55hUgAgOPA@mail.gmail.com>
- <CANn89iJJiB6avNtZ1qQNTeJwyjW32Pxk_2CwvEJxgQ==kgY0fA@mail.gmail.com>
- <CANn89i+RrngUr11_iOYDuqDvAZnPfG3ieJR025M78uhiwEPuvQ@mail.gmail.com> <CANn89iLN758CpQPKcd++NLdj62LS-ekiEUV91VREzMsamLn9bw@mail.gmail.com>
-In-Reply-To: <CANn89iLN758CpQPKcd++NLdj62LS-ekiEUV91VREzMsamLn9bw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 8 Nov 2019 10:12:15 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wg5+N2WS2vO6doxfza1G8zk4DP5RhodiaSeAyf+Ooy7wQ@mail.gmail.com>
-Message-ID: <CAHk-=wg5+N2WS2vO6doxfza1G8zk4DP5RhodiaSeAyf+Ooy7wQ@mail.gmail.com>
+ <CANn89iJJiB6avNtZ1qQNTeJwyjW32Pxk_2CwvEJxgQ==kgY0fA@mail.gmail.com> <CAHk-=wiZdSoweA-W_8iwLy6KLsd-DaZM0gN9_+f-aT4KL64U0g@mail.gmail.com>
+In-Reply-To: <CAHk-=wiZdSoweA-W_8iwLy6KLsd-DaZM0gN9_+f-aT4KL64U0g@mail.gmail.com>
+From:   Marco Elver <elver@google.com>
+Date:   Fri, 8 Nov 2019 19:15:58 +0100
+Message-ID: <CANpmjNOuRp0gdekQeodXm8O_yiXm7mA8WZsXZNmFfJYMs93x8w@mail.gmail.com>
 Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
-To:     Eric Dumazet <edumazet@google.com>
-Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Eric Dumazet <edumazet@google.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
         syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
-        Marco Elver <elver@google.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 8, 2019 at 10:02 AM Eric Dumazet <edumazet@google.com> wrote:
+On Fri, 8 Nov 2019 at 19:05, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> Another interesting KCSAN report :
+> On Fri, Nov 8, 2019 at 9:53 AM Eric Dumazet <edumazet@google.com> wrote:
+> >
+> > I personally like WRITE_ONCE() since it adds zero overhead on generated code,
+> > and is the facto accessor we used for many years (before KCSAN was conceived)
 >
-> static inline s64 percpu_counter_read_positive(struct percpu_counter *fbc)
-> {
->         s64 ret = fbc->count;   // data-race ....
+> So I generally prefer WRITE_ONCE() over adding "volatile" to random
+> data structure members.
+>
+> Because volatile *does* have potentially absolutely horrendous
+> overhead on generated code. It just happens to be ok for the simple
+> case of writing once to a variable.
+>
+> In fact, you bring that up yourself in your next email when you ask
+> for "ADD_ONCE()". Exactly because gcc generates absolutely horrendous
+> garbage for volatiles, for no actual good reason. Gcc *could* generate
+> a single add-to-memory instruction. But no, that's not at all what gcc
+> does.
+>
+> So for the kernel, we've generally had the rule to avoid 'volatile'
+> data structures as much as humanly possible, because it actually does
+> something much worse than it could do, and the source code _looks_
+> simple when the volatile is hidden in the data structures.
+>
+> Which is why we have READ_ONCE/WRITE_ONCE - it puts the volatile in
+> the code, and makes it clear not only what is going on, but also the
+> impact it has on code generation.
+>
+> But at the same time, I don't love WRITE_ONCE() when it's not actually
+> about writing once. It might be better to have another way to show
+> "this variable is a flag that we set to a single value". Even if maybe
+> the implementation is then the same (ie we use a 'volatile' assignment
+> to make KCSAN happy).
 
-Yeah, I think that's fundamentally broken on 32-bit. It might need a
-sequence lock instead of that raw_spinlock_t to be sanely done
-properly on 32-bit.
+(+some LKMM folks, in case I missed something on what the LKMM defines
+as data race.)
 
-Or we just admit that 32-bit doesn't really matter any more in the
-long run, and that this is not a problem in practice because the
-32-bit overflow basically never happens on small machines anyway.
+KCSAN does not use volatile to distinguish accesses. Right now
+READ_ONCE, WRITE_ONCE, atomic bitops, atomic_t (+ some arch specific
+primitives) are treated as marked atomic operations.
 
-               Linus
+The goal is to cover all primitives that the LKMM declares as
+marked/atomic. A data race is then detected for concurrent conflicting
+accesses where at least one is plain unmarked. In the end the LKMM
+should decide what KCSAN determines as a data race. As far as I can
+tell, none of the reported data races so far are false positives in
+that sense.
+
+Many thanks,
+-- Marco
