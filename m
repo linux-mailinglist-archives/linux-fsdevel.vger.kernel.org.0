@@ -2,99 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 541AEF44B9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2019 11:37:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 312B6F4880
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2019 12:57:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731028AbfKHKho (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Nov 2019 05:37:44 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55102 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726149AbfKHKho (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Nov 2019 05:37:44 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 48E3DB273;
-        Fri,  8 Nov 2019 10:37:42 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 12F0B1E4331; Fri,  8 Nov 2019 11:37:42 +0100 (CET)
-Date:   Fri, 8 Nov 2019 11:37:42 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: Deprecated mandatory file locking
-Message-ID: <20191108103742.GG20863@quack2.suse.cz>
-References: <20190814173345.GB10843@quack2.suse.cz>
- <20190814174604.GC10843@quack2.suse.cz>
- <01b6620186a18b167ca1bab1fadb2dbaffdd8379.camel@kernel.org>
- <20190816153149.GD3041@quack2.suse.cz>
- <20191107161514.GA21965@quack2.suse.cz>
- <e9c46777ec0aaca768681eb144823f19185d9fa0.camel@kernel.org>
+        id S2391033AbfKHLpI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Nov 2019 06:45:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60302 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391022AbfKHLpI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:45:08 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7CD72245B;
+        Fri,  8 Nov 2019 11:45:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573213507;
+        bh=oA0SjtyPdBmFx777on6n0gmKh9e4CxtsuhtGwP5lMsM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=p2yeuJOYkvYlRJu+b30DOz61y/CoUfIARVqGgEsTvAgcZ9eofJkBRqnfal0f3UcMQ
+         WrCllm5MEdSfaxTVNHY3Ipu1ekxqcrIPLY+alePGGY2lZwA9I7sdPUJUE2rZ4j9IEx
+         F9IdYkHpP47glRgVOF2wevrPe5CshaVzBVc02FY0=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 081/103] media: dvb: fix compat ioctl translation
+Date:   Fri,  8 Nov 2019 06:42:46 -0500
+Message-Id: <20191108114310.14363-81-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191108114310.14363-1-sashal@kernel.org>
+References: <20191108114310.14363-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e9c46777ec0aaca768681eb144823f19185d9fa0.camel@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 07-11-19 13:34:21, Jeff Layton wrote:
-> On Thu, 2019-11-07 at 17:15 +0100, Jan Kara wrote:
-> > Hi Jeff,
-> > 
-> > On Fri 16-08-19 17:31:49, Jan Kara wrote:
-> > > On Thu 15-08-19 15:18:45, Jeff Layton wrote:
-> > > > On Wed, 2019-08-14 at 19:46 +0200, Jan Kara wrote:
-> > > > > Resending to proper Jeff's address...
-> > > > > 
-> > > > > On Wed 14-08-19 19:33:45, Jan Kara wrote:
-> > > > > > Hello Jeff,
-> > > > > > 
-> > > > > > we've got a report from user
-> > > > > > (https://bugzilla.suse.com/show_bug.cgi?id=1145007) wondering why his fstab
-> > > > > > entry (for root filesystem!) using 'mand' mount option stopped working.
-> > > > > > Now I understand your rationale in 9e8925b67a "locks: Allow disabling
-> > > > > > mandatory locking at compile time" but I guess there's some work to do wrt
-> > > > > > documentation. At least mount(8) manpage could mention that mandatory
-> > > > > > locking is broken and may be disabled referencing the rationale in fcntl
-> > > > > > manpage? Or the kernel could mention something in the log about failing
-> > > > > > mount because of 'mand' mount option?  What do you think? Because it took
-> > > > > > me some code searching to understand why the mount is actually failing
-> > > > > > which we can hardly expect from a normal sysadmin...
-> > > > > > 
-> > > > > > 								Honza
-> > > > 
-> > > > Wow, I think this is the first actual user fallout we've ever had from
-> > > > that change! Why was he setting that option? Does he actually use
-> > > > mandatory locking?
-> > > 
-> > > Yeah, reportedly they had an application that required mandatory locking.
-> > > But they don't use it anymore so they just removed the mount option.
-> > > 
-> > > > I think a pr_notice() or pr_warn() at mount time when someone tries to
-> > > > use it sounds like a very reasonable thing to do. Perhaps we can just
-> > > > stick one in may_mandlock()?
-> > > 
-> > > Yeah, sounds reasonable to me.
-> > > 
-> > > > I'll draft up a patch, and also update
-> > > > Documentation/filesystems/mandatory-locking.txt with the current
-> > > > situation.
-> > > 
-> > > Thanks!
-> > 
-> > Did you ever get to this?
-> > 
-> > 								Honza
-> 
-> Yes. It went into v5.4-rc1. You even reviewed it! ;)
+From: Arnd Bergmann <arnd@arndb.de>
 
-Bah ;) I completely forgot and somehow didn't realize the section 7. in
-Documentation/filesystems/mandatory-locking.txt is describing what I
-wanted when I looked at it yesterday. Sorry for the noise!
+[ Upstream commit 1ccbeeb888ac33627d91f1ccf0b84ef3bcadef24 ]
 
-								Honza
+The VIDEO_GET_EVENT and VIDEO_STILLPICTURE was added back in 2005 but
+it never worked because the command number is wrong.
+
+Using the right command number means we have a better chance of them
+actually doing the right thing, though clearly nobody has ever tried
+it successfully.
+
+I noticed these while auditing the remaining users of compat_time_t
+for y2038 bugs. This one is fine in that regard, it just never did
+anything.
+
+Fixes: 6e87abd0b8cb ("[DVB]: Add compat ioctl handling.")
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/compat_ioctl.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
+index ea52b98b39fa1..033e8e6aabb77 100644
+--- a/fs/compat_ioctl.c
++++ b/fs/compat_ioctl.c
+@@ -161,6 +161,7 @@ struct compat_video_event {
+ 		unsigned int frame_rate;
+ 	} u;
+ };
++#define VIDEO_GET_EVENT32 _IOR('o', 28, struct compat_video_event)
+ 
+ static int do_video_get_event(struct file *file,
+ 		unsigned int cmd, struct compat_video_event __user *up)
+@@ -172,7 +173,7 @@ static int do_video_get_event(struct file *file,
+ 	if (kevent == NULL)
+ 		return -EFAULT;
+ 
+-	err = do_ioctl(file, cmd, (unsigned long)kevent);
++	err = do_ioctl(file, VIDEO_GET_EVENT, (unsigned long)kevent);
+ 	if (!err) {
+ 		err  = convert_in_user(&kevent->type, &up->type);
+ 		err |= convert_in_user(&kevent->timestamp, &up->timestamp);
+@@ -191,6 +192,7 @@ struct compat_video_still_picture {
+         compat_uptr_t iFrame;
+         int32_t size;
+ };
++#define VIDEO_STILLPICTURE32 _IOW('o', 30, struct compat_video_still_picture)
+ 
+ static int do_video_stillpicture(struct file *file,
+ 		unsigned int cmd, struct compat_video_still_picture __user *up)
+@@ -213,7 +215,7 @@ static int do_video_stillpicture(struct file *file,
+ 	if (err)
+ 		return -EFAULT;
+ 
+-	err = do_ioctl(file, cmd, (unsigned long) up_native);
++	err = do_ioctl(file, VIDEO_STILLPICTURE, (unsigned long) up_native);
+ 
+ 	return err;
+ }
+@@ -1476,9 +1478,9 @@ static long do_ioctl_trans(unsigned int cmd,
+ 		return rtc_ioctl(file, cmd, argp);
+ 
+ 	/* dvb */
+-	case VIDEO_GET_EVENT:
++	case VIDEO_GET_EVENT32:
+ 		return do_video_get_event(file, cmd, argp);
+-	case VIDEO_STILLPICTURE:
++	case VIDEO_STILLPICTURE32:
+ 		return do_video_stillpicture(file, cmd, argp);
+ 	case VIDEO_SET_SPU_PALETTE:
+ 		return do_video_set_spu_palette(file, cmd, argp);
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.20.1
+
