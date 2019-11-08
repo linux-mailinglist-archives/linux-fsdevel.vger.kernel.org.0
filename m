@@ -2,61 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08490F5334
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2019 19:05:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2320F5349
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2019 19:12:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728966AbfKHSF3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Nov 2019 13:05:29 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46645 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728852AbfKHSF3 (ORCPT
+        id S1727612AbfKHSMh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Nov 2019 13:12:37 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35508 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726446AbfKHSMh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:05:29 -0500
-Received: by mail-lj1-f193.google.com with SMTP id e9so7119641ljp.13
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Nov 2019 10:05:27 -0800 (PST)
+        Fri, 8 Nov 2019 13:12:37 -0500
+Received: by mail-lj1-f195.google.com with SMTP id r7so7202686ljg.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Nov 2019 10:12:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=d9NweSEf4drXt4A6DP1qgzu1cS6gHr1cMfGzVR+7ZWY=;
-        b=BFXx5UUjilC2VGGIFH0qbcrUE/AJuyx2/d46qw2iAAOeTsVx8j2aw2hoCox9tJS3wD
-         paX9fnyjuYtJC19oeyWD/gCxwI2Uq0qQyNq71XhkZ11olv7oacH0v1uAPcX/b+eFj2DD
-         4IPRZi+crMZ7QCrYaUhsZncB/RosCknDpvqSg=
+        bh=UwOe/0M2mqJUTnI7Cbij9+EXC9Tu0LMdXKdxLl7NQv8=;
+        b=Tty72ZI+f/UrYcmEO8Ttap8J2ndzFJNgOvOIEsjOGXNDZDxbS3eJdFc1wvOgAkhTae
+         HLu2Gs/SEuoh93AyFYWuYVGXZRyvcZzwo9IRcP7UYgKpfdaT0318sOFFV7yfTAuoQUuM
+         qzCAoo7N2AMj7L2Iz8ESsZqrPCxDcoIImZAlU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=d9NweSEf4drXt4A6DP1qgzu1cS6gHr1cMfGzVR+7ZWY=;
-        b=Nq5YVW3wyRbYN5CCUVxcWvAFL7HCv7i8amnokJ7AOEx99dC9oHn9AyBBE6LuibTCw8
-         tkgqEAiFNTV8tN44cyCl9fxb962mIaEBJilyct4QTG202MHBqN42OhqVGDaDRfJdM0jU
-         gtX5XVH/arElDsORYxlhzi1171WBtHBZH8otw2oTVM3Yfnr4U13YEavjdSdhNkv0T978
-         eDNOT2MJlbgpWp5JEbizlgbXuTcTYdnmvd98PbhzV0pJtVZ1oz6UQ6eFMeoDEW3rduPz
-         as5Edy+lb2Bhv0BzkSpknXui6wj96gCeoA+RMa2/j3+q+gMNobzn71DJW9y65o7Qg/pd
-         1XHQ==
-X-Gm-Message-State: APjAAAUbavplbAi5KEjnOZRAZMgO9mXmQqY8uR86kMMK4KITOAh6rfOg
-        uPYZPKhGzq7RXkWECHMDlM0AWVsCmxY=
-X-Google-Smtp-Source: APXvYqxDvkBWmP5qyN0CnS43U1EWAIJaIDIybLoZeWFwW4SbgMvA1jjRlhxLf4q/ltDOsTihCH5/Rg==
-X-Received: by 2002:a2e:7c10:: with SMTP id x16mr7885440ljc.120.1573236326259;
-        Fri, 08 Nov 2019 10:05:26 -0800 (PST)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id d19sm3069115lfc.12.2019.11.08.10.05.25
+        bh=UwOe/0M2mqJUTnI7Cbij9+EXC9Tu0LMdXKdxLl7NQv8=;
+        b=Zi7LexkBf/xBD9oVWVpCcUth7t5Y869i5v/2Js2JEVVdqS4cgx3KLX0WV4XyvVpUt9
+         kYlP+briDXKA/EZNLPcSRTdPkQEug4rr8s3URTZaI183eGsj8KhnRLLqZXM37eRzUoU1
+         1+ktT3RDxr1n+pwnlP7hECmF/SvXC3vs/2BjWriXnFDvaESxstno+QGskoyfjwYQUbTL
+         qLHnE7xletVto/Oj3MmRCIQ+DQsVWuwJRbFcrIOfvhTk6y7GjQMv33NNqqDVUx4CrmD3
+         IOaoYPplPPQmLS2ZjSmjwmMFTFJ3OALYiZHd2gwlZAm73PU6t/JXsD3UEZawScPlf7iT
+         T+ig==
+X-Gm-Message-State: APjAAAXiVSSxwGx28TI0N6DbMPOIET3ZCBDpP6JIA9AIn0ZBNNMiSEpG
+        lpI+4Ro24MEB9FXJSDfbR7z0acBdeI0=
+X-Google-Smtp-Source: APXvYqyiEkLQZB8NPmzNvgCNsXJLIuEf+XJ35vlCWiXHTKrgAQqJFoQojAZG1u/68WbkXEpco0fsfw==
+X-Received: by 2002:a2e:9208:: with SMTP id k8mr7955365ljg.14.1573236754140;
+        Fri, 08 Nov 2019 10:12:34 -0800 (PST)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id u2sm3168833lfc.23.2019.11.08.10.12.31
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2019 10:05:25 -0800 (PST)
-Received: by mail-lj1-f173.google.com with SMTP id t5so7188955ljk.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Nov 2019 10:05:25 -0800 (PST)
-X-Received: by 2002:a2e:22c1:: with SMTP id i184mr7860520lji.1.1573236324900;
- Fri, 08 Nov 2019 10:05:24 -0800 (PST)
+        Fri, 08 Nov 2019 10:12:33 -0800 (PST)
+Received: by mail-lj1-f178.google.com with SMTP id 139so7190224ljf.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Nov 2019 10:12:31 -0800 (PST)
+X-Received: by 2002:a05:651c:331:: with SMTP id b17mr7846398ljp.133.1573236751292;
+ Fri, 08 Nov 2019 10:12:31 -0800 (PST)
 MIME-Version: 1.0
 References: <000000000000c422a80596d595ee@google.com> <6bddae34-93df-6820-0390-ac18dcbf0927@gmail.com>
  <CAHk-=whh5bcxCecEL5Fy4XvQjgBTJ9uqvyp7dW=CLU6VNxS9iA@mail.gmail.com>
  <CANn89iK9mTJ4BN-X3MeSx5LGXGYafXkhZyaUpdXDjVivTwA6Jg@mail.gmail.com>
- <CAHk-=whNBL63qmO176qOQpkY16xvomog5ocvM=9K55hUgAgOPA@mail.gmail.com> <CANn89iJJiB6avNtZ1qQNTeJwyjW32Pxk_2CwvEJxgQ==kgY0fA@mail.gmail.com>
-In-Reply-To: <CANn89iJJiB6avNtZ1qQNTeJwyjW32Pxk_2CwvEJxgQ==kgY0fA@mail.gmail.com>
+ <CAHk-=whNBL63qmO176qOQpkY16xvomog5ocvM=9K55hUgAgOPA@mail.gmail.com>
+ <CANn89iJJiB6avNtZ1qQNTeJwyjW32Pxk_2CwvEJxgQ==kgY0fA@mail.gmail.com>
+ <CANn89i+RrngUr11_iOYDuqDvAZnPfG3ieJR025M78uhiwEPuvQ@mail.gmail.com> <CANn89iLN758CpQPKcd++NLdj62LS-ekiEUV91VREzMsamLn9bw@mail.gmail.com>
+In-Reply-To: <CANn89iLN758CpQPKcd++NLdj62LS-ekiEUV91VREzMsamLn9bw@mail.gmail.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 8 Nov 2019 10:05:08 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiZdSoweA-W_8iwLy6KLsd-DaZM0gN9_+f-aT4KL64U0g@mail.gmail.com>
-Message-ID: <CAHk-=wiZdSoweA-W_8iwLy6KLsd-DaZM0gN9_+f-aT4KL64U0g@mail.gmail.com>
+Date:   Fri, 8 Nov 2019 10:12:15 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wg5+N2WS2vO6doxfza1G8zk4DP5RhodiaSeAyf+Ooy7wQ@mail.gmail.com>
+Message-ID: <CAHk-=wg5+N2WS2vO6doxfza1G8zk4DP5RhodiaSeAyf+Ooy7wQ@mail.gmail.com>
 Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
 To:     Eric Dumazet <edumazet@google.com>
 Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
@@ -72,42 +74,20 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 8, 2019 at 9:53 AM Eric Dumazet <edumazet@google.com> wrote:
+On Fri, Nov 8, 2019 at 10:02 AM Eric Dumazet <edumazet@google.com> wrote:
 >
-> I personally like WRITE_ONCE() since it adds zero overhead on generated code,
-> and is the facto accessor we used for many years (before KCSAN was conceived)
+> Another interesting KCSAN report :
+>
+> static inline s64 percpu_counter_read_positive(struct percpu_counter *fbc)
+> {
+>         s64 ret = fbc->count;   // data-race ....
 
-So I generally prefer WRITE_ONCE() over adding "volatile" to random
-data structure members.
+Yeah, I think that's fundamentally broken on 32-bit. It might need a
+sequence lock instead of that raw_spinlock_t to be sanely done
+properly on 32-bit.
 
-Because volatile *does* have potentially absolutely horrendous
-overhead on generated code. It just happens to be ok for the simple
-case of writing once to a variable.
+Or we just admit that 32-bit doesn't really matter any more in the
+long run, and that this is not a problem in practice because the
+32-bit overflow basically never happens on small machines anyway.
 
-In fact, you bring that up yourself in your next email when you ask
-for "ADD_ONCE()". Exactly because gcc generates absolutely horrendous
-garbage for volatiles, for no actual good reason. Gcc *could* generate
-a single add-to-memory instruction. But no, that's not at all what gcc
-does.
-
-So for the kernel, we've generally had the rule to avoid 'volatile'
-data structures as much as humanly possible, because it actually does
-something much worse than it could do, and the source code _looks_
-simple when the volatile is hidden in the data structures.
-
-Which is why we have READ_ONCE/WRITE_ONCE - it puts the volatile in
-the code, and makes it clear not only what is going on, but also the
-impact it has on code generation.
-
-But at the same time, I don't love WRITE_ONCE() when it's not actually
-about writing once. It might be better to have another way to show
-"this variable is a flag that we set to a single value". Even if maybe
-the implementation is then the same (ie we use a 'volatile' assignment
-to make KCSAN happy).
-
-> Hmm, which questionable optimization are you referring to?
-
-The "avoid dirty cacheline" one by adding a read and a conditional.
-Yes, it can be an optimization. And it might not be.
-
-                Linus
+               Linus
