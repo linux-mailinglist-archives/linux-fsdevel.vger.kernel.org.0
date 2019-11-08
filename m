@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 312B6F4880
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2019 12:57:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2AECF47D5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2019 12:53:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391033AbfKHLpI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Nov 2019 06:45:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60302 "EHLO mail.kernel.org"
+        id S2391464AbfKHLqy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Nov 2019 06:46:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391022AbfKHLpI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:45:08 -0500
+        id S2391456AbfKHLqx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 8 Nov 2019 06:46:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7CD72245B;
-        Fri,  8 Nov 2019 11:45:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5AF1522459;
+        Fri,  8 Nov 2019 11:46:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213507;
-        bh=oA0SjtyPdBmFx777on6n0gmKh9e4CxtsuhtGwP5lMsM=;
+        s=default; t=1573213613;
+        bh=pK3JiVdDG4pG661QQcM6zzwb4qeK05/7/x0H6NkhWIs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p2yeuJOYkvYlRJu+b30DOz61y/CoUfIARVqGgEsTvAgcZ9eofJkBRqnfal0f3UcMQ
-         WrCllm5MEdSfaxTVNHY3Ipu1ekxqcrIPLY+alePGGY2lZwA9I7sdPUJUE2rZ4j9IEx
-         F9IdYkHpP47glRgVOF2wevrPe5CshaVzBVc02FY0=
+        b=FzXTv3ypcivacx+jgK7OxE9bY7cmpiv2xa3pSxgxMWMtdCdxcKglyAq+Ihq0p0Zn0
+         79HQf9CJoUHCgKM2pWgvsx/tPcWjU3SYyq5Jrzo2xfSaWWk2y2Cdi8RVTdUPREtnU0
+         8czwMVeEQ0HTcAVS7eRU1vPUVF/px0Azw7Szq5Bc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Arnd Bergmann <arnd@arndb.de>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 081/103] media: dvb: fix compat ioctl translation
-Date:   Fri,  8 Nov 2019 06:42:46 -0500
-Message-Id: <20191108114310.14363-81-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 48/64] media: dvb: fix compat ioctl translation
+Date:   Fri,  8 Nov 2019 06:45:29 -0500
+Message-Id: <20191108114545.15351-48-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191108114310.14363-1-sashal@kernel.org>
-References: <20191108114310.14363-1-sashal@kernel.org>
+In-Reply-To: <20191108114545.15351-1-sashal@kernel.org>
+References: <20191108114545.15351-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -68,10 +68,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
-index ea52b98b39fa1..033e8e6aabb77 100644
+index 4b7da4409c60c..5b832e83772a6 100644
 --- a/fs/compat_ioctl.c
 +++ b/fs/compat_ioctl.c
-@@ -161,6 +161,7 @@ struct compat_video_event {
+@@ -160,6 +160,7 @@ struct compat_video_event {
  		unsigned int frame_rate;
  	} u;
  };
@@ -79,7 +79,7 @@ index ea52b98b39fa1..033e8e6aabb77 100644
  
  static int do_video_get_event(struct file *file,
  		unsigned int cmd, struct compat_video_event __user *up)
-@@ -172,7 +173,7 @@ static int do_video_get_event(struct file *file,
+@@ -171,7 +172,7 @@ static int do_video_get_event(struct file *file,
  	if (kevent == NULL)
  		return -EFAULT;
  
@@ -88,7 +88,7 @@ index ea52b98b39fa1..033e8e6aabb77 100644
  	if (!err) {
  		err  = convert_in_user(&kevent->type, &up->type);
  		err |= convert_in_user(&kevent->timestamp, &up->timestamp);
-@@ -191,6 +192,7 @@ struct compat_video_still_picture {
+@@ -190,6 +191,7 @@ struct compat_video_still_picture {
          compat_uptr_t iFrame;
          int32_t size;
  };
@@ -96,7 +96,7 @@ index ea52b98b39fa1..033e8e6aabb77 100644
  
  static int do_video_stillpicture(struct file *file,
  		unsigned int cmd, struct compat_video_still_picture __user *up)
-@@ -213,7 +215,7 @@ static int do_video_stillpicture(struct file *file,
+@@ -212,7 +214,7 @@ static int do_video_stillpicture(struct file *file,
  	if (err)
  		return -EFAULT;
  
@@ -105,7 +105,7 @@ index ea52b98b39fa1..033e8e6aabb77 100644
  
  	return err;
  }
-@@ -1476,9 +1478,9 @@ static long do_ioctl_trans(unsigned int cmd,
+@@ -1484,9 +1486,9 @@ static long do_ioctl_trans(unsigned int cmd,
  		return rtc_ioctl(file, cmd, argp);
  
  	/* dvb */
