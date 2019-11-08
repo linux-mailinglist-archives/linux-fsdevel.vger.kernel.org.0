@@ -2,156 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 065E7F52E3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2019 18:49:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2748FF52FA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2019 18:53:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730743AbfKHRti (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Nov 2019 12:49:38 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35933 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726446AbfKHRti (ORCPT
+        id S1727148AbfKHRxO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Nov 2019 12:53:14 -0500
+Received: from mail-il1-f175.google.com ([209.85.166.175]:41325 "EHLO
+        mail-il1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726232AbfKHRxO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Nov 2019 12:49:38 -0500
-Received: by mail-lj1-f193.google.com with SMTP id k15so7131365lja.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Nov 2019 09:49:35 -0800 (PST)
+        Fri, 8 Nov 2019 12:53:14 -0500
+Received: by mail-il1-f175.google.com with SMTP id q15so747549ils.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Nov 2019 09:53:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=UVAbz2qNISBamKJ8aYyWKPdYYFUtEofFZoGab/xVx6Q=;
-        b=jVdpzmol350RlxFDs+MLHaRNphUMUP4OvQ5IAPmY8hbKQPQsDF4LD+P6ahIMsJ6Rpl
-         pUMnnGgEWZthCUvXmMqrer+tYk1QstqZ5L0VsSYXs5AIM8mttK7vKXNfkyoZk7SM78xu
-         uJTmzg7POCfLqH9zCG0s8CXDWcSswJF62aIKCvOlPVqevsasjpkz/5ZlbLdOMn0zCJ2j
-         C+dzIMZdnOFJ/mIbpTFmYjSGcDA/erk2dg8nzNoUV87zX7xBouMWtvkTjVmXM1YMpm38
-         Yi5lTSuQ/2AQzOGEB52mqbr8QWFQ7v6EjkHjKgKiTdFpkCcRJpUQpeBRrW2MOz6NXS1x
-         /4EQ==
+        bh=C9TsgJFTcfRwuc/WaCy1JpAsWZBRp62dC/cBlD5yCig=;
+        b=M5diUmqrAoGpBQVNj/NZt0ynuDchzXatuHboKTn50HBE6KCQLAak+nVQyXaOcAKnX7
+         Wc9plUO/jgMHq/HcqyCxMp55R3K2npPvE+D7TO/cglkFENINKLtlyLtvmiSXw5urmJhS
+         Fe01qGaMgW/rpcJ5KiYaidLJ+9C4BrEC2ym59dRxNTs1wboR7Q6zVcSxAUO78StZZTTM
+         Da7CqjNYfmBGkdRZJaAkMD1HQAv6AUd034rP+3d+Gzw3BI3JyZT0LJh1RFnm2Fzpm6EI
+         lWF2LmmJcs5o+6FmBTU9aNQ1FDI+PtwXi+rBh+bi1hpdAjh3uXDfyriYO8eDt4kbg1d/
+         5jHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UVAbz2qNISBamKJ8aYyWKPdYYFUtEofFZoGab/xVx6Q=;
-        b=RK/i7E5Hxw4qNJuE3O892a1bCN2XzYG05TjYBmO0hTDpVgFs5JQwsPXy6lk5GiMx+V
-         oBDdG2Wlgy/7xG1HlYjIEMajKWLD/ge22wfdkKHOeqJQMzg4W1SsaqI0waK/Z925lAj0
-         Kg83zgKhOBP2BzfvDDO6tuWv+pxhZYfyLG+XSsZqLl/skPR3ObeXXUDtCNeGpUlccHG0
-         WD7n8awlinuwP6/yL5sNhcSNxzzJpCLfTxUevMnEVPwNYlpE86RQpMZfvS2X/SdsZkBn
-         0DeUZP7UaFUYkGp6335n866QzaQ10aGsWPUbc8vW4TbzCWG6Zxfe8x/0GIHQdj2Qkz+W
-         sRhw==
-X-Gm-Message-State: APjAAAXdgYFl+DiOsSrsQ3q0Jb30Dj7rzohPM36VTsPBhqeDyDseASQx
-        nsI3LF0iz83/esOxcWjOVU2OHOsAFIgFrn9PWyhb
-X-Google-Smtp-Source: APXvYqwXdfG4GypAr+j8sH3slLDDTCL7KQFTcRwsFnuUnnR/MbQkn3eAVhzXbnZTJXwiGsLyrFAGgJuGlFt1dlMpA3Q=
-X-Received: by 2002:a2e:898d:: with SMTP id c13mr7895602lji.54.1573235374890;
- Fri, 08 Nov 2019 09:49:34 -0800 (PST)
+        bh=C9TsgJFTcfRwuc/WaCy1JpAsWZBRp62dC/cBlD5yCig=;
+        b=o+sGr77By5Y0bRZ0/0/z60YozkHWGx4ghvpHHKgvfhYvxRTu2r9MdlEz+fLPRBAyET
+         GsCiYoBgLuiu+U6Tv+8vuhN19UoG5r8zWS98LoXPWqgIEQosfAodp6wXyrpZzZIbV9vT
+         Lwhs1zna3ms8SoztLV1fd5eYUVKFBbk0nM5yEe9jzak8vxmHjFcU+Txm6p2UCjMUdtsg
+         rnoqRfJBHb2EtT/1WADxKey37TNTXlHnQUhVmFXZEmNLkCGkk8rstzu7hIOAVbgIg/Y0
+         a4DLLBWLoRrrRPalYsuWoMIQ8pNJau+a9q4EVjcyCVKlKCfFV9l1dayfUM5GOcLNKuHq
+         f80w==
+X-Gm-Message-State: APjAAAUrrjwLlYz59Aja1Avj7CtlO11ZpXVOgioje5nVwr1ZkT/TGsFi
+        PLgecuOp7qi/wD/eiOivsNk9yszPxlQr50eHlN4aUw==
+X-Google-Smtp-Source: APXvYqwOs6JqCzcRGiH00Hf71WJTMZ9paYvQQsox0aJ+DCKj4oP0w0FHCBKbg68rYymi75JgYW3loNUbGCT+bynPCxI=
+X-Received: by 2002:a92:ca8d:: with SMTP id t13mr13502229ilo.58.1573235592625;
+ Fri, 08 Nov 2019 09:53:12 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1568834524.git.rgb@redhat.com> <230e91cd3e50a3d8015daac135c24c4c58cf0a21.1568834524.git.rgb@redhat.com>
- <20190927125142.GA25764@hmswarspite.think-freely.org> <CAHC9VhRbSUCB0OZorC4+y+5uJDR5uMXdRn2LOTYGu2gcFJSrcA@mail.gmail.com>
- <20191024212335.y4ou7g4tsxnotvnk@madcap2.tricolour.ca>
-In-Reply-To: <20191024212335.y4ou7g4tsxnotvnk@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 8 Nov 2019 12:49:23 -0500
-Message-ID: <CAHC9VhTrKVQNvTPoX5xdx-TUX_ukpMv2tNFFqLa2Njs17GuQMg@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V7 06/21] audit: contid limit of 32k imposed to
- avoid DoS
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Neil Horman <nhorman@tuxdriver.com>,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        Dan Walsh <dwalsh@redhat.com>, mpatel@redhat.com
+References: <000000000000c422a80596d595ee@google.com> <6bddae34-93df-6820-0390-ac18dcbf0927@gmail.com>
+ <CAHk-=whh5bcxCecEL5Fy4XvQjgBTJ9uqvyp7dW=CLU6VNxS9iA@mail.gmail.com>
+ <CANn89iK9mTJ4BN-X3MeSx5LGXGYafXkhZyaUpdXDjVivTwA6Jg@mail.gmail.com> <CAHk-=whNBL63qmO176qOQpkY16xvomog5ocvM=9K55hUgAgOPA@mail.gmail.com>
+In-Reply-To: <CAHk-=whNBL63qmO176qOQpkY16xvomog5ocvM=9K55hUgAgOPA@mail.gmail.com>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Fri, 8 Nov 2019 09:53:01 -0800
+Message-ID: <CANn89iJJiB6avNtZ1qQNTeJwyjW32Pxk_2CwvEJxgQ==kgY0fA@mail.gmail.com>
+Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
+        Marco Elver <elver@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 5:23 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2019-10-10 20:38, Paul Moore wrote:
-> > On Fri, Sep 27, 2019 at 8:52 AM Neil Horman <nhorman@tuxdriver.com> wrote:
-> > > On Wed, Sep 18, 2019 at 09:22:23PM -0400, Richard Guy Briggs wrote:
-> > > > Set an arbitrary limit on the number of audit container identifiers to
-> > > > limit abuse.
-> > > >
-> > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > > ---
-> > > >  kernel/audit.c | 8 ++++++++
-> > > >  kernel/audit.h | 4 ++++
-> > > >  2 files changed, 12 insertions(+)
-> > > >
-> > > > diff --git a/kernel/audit.c b/kernel/audit.c
-> > > > index 53d13d638c63..329916534dd2 100644
-> > > > --- a/kernel/audit.c
-> > > > +++ b/kernel/audit.c
-> >
-> > ...
-> >
-> > > > @@ -2465,6 +2472,7 @@ int audit_set_contid(struct task_struct *task, u64 contid)
-> > > >                               newcont->owner = current;
-> > > >                               refcount_set(&newcont->refcount, 1);
-> > > >                               list_add_rcu(&newcont->list, &audit_contid_hash[h]);
-> > > > +                             audit_contid_count++;
-> > > >                       } else {
-> > > >                               rc = -ENOMEM;
-> > > >                               goto conterror;
-> > > > diff --git a/kernel/audit.h b/kernel/audit.h
-> > > > index 162de8366b32..543f1334ba47 100644
-> > > > --- a/kernel/audit.h
-> > > > +++ b/kernel/audit.h
-> > > > @@ -219,6 +219,10 @@ static inline int audit_hash_contid(u64 contid)
-> > > >       return (contid & (AUDIT_CONTID_BUCKETS-1));
-> > > >  }
-> > > >
-> > > > +extern int audit_contid_count;
-> > > > +
-> > > > +#define AUDIT_CONTID_COUNT   1 << 16
-> > > > +
-> > >
-> > > Just to ask the question, since it wasn't clear in the changelog, what
-> > > abuse are you avoiding here?  Ostensibly you should be able to create as
-> > > many container ids as you have space for, and the simple creation of
-> > > container ids doesn't seem like the resource strain I would be concerned
-> > > about here, given that an orchestrator can still create as many
-> > > containers as the system will otherwise allow, which will consume
-> > > significantly more ram/disk/etc.
-> >
-> > I've got a similar question.  Up to this point in the patchset, there
-> > is a potential issue of hash bucket chain lengths and traversing them
-> > with a spinlock held, but it seems like we shouldn't be putting an
-> > arbitrary limit on audit container IDs unless we have a good reason
-> > for it.  If for some reason we do want to enforce a limit, it should
-> > probably be a tunable value like a sysctl, or similar.
+On Fri, Nov 8, 2019 at 9:39 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+
+> I'd hope that there is some way to mark the cases we know about where
+> we just have a flag. I'm not sure what KCSAN uses right now - is it
+> just the "volatile" that makes KCSAN ignore it, or are there other
+> ways to do it?
+
+I dunno, Marco will comment on this.
+
+I personally like WRITE_ONCE() since it adds zero overhead on generated code,
+and is the facto accessor we used for many years (before KCSAN was conceived)
+
 >
-> Can you separate and clarify the concerns here?
+> "volatile" has huge problems with code generation for gcc. It would
+> probably be fine for "not_rcu" in this case, but I'd like to avoid it
+> in general otherwise, which is why I wonder if there are other
+> options.
+>
+> But worst comes to worst, I'd be ok with a WRITE_ONCE() and a comment
+> about why (and the reason being KCSAN, not the questionable
+> optimization).
 
-"Why are you doing this?" is about as simple as I can pose the question.
+Ok for a single WRITE_ONCE() with a comment.
 
-> I plan to move this patch to the end of the patchset and make it
-> optional, possibly adding a tuning mechanism.  Like the migration from
-> /proc to netlink for loginuid/sessionid/contid/capcontid, this was Eric
-> Biederman's concern and suggested mitigation.
-
-Okay, let's just drop it.  I *really* don't like this approach of
-tossing questionable stuff at the end of the patchset; I get why you
-are doing it, but I think we really need to focus on keeping this
-changeset small.  If the number of ACIDs (heh) become unwieldy the
-right solution is to improve the algorithms/structures, if we can't do
-that for some reason, *then* we can fall back to a limiting knob in a
-latter release.
-
-> As for the first issue of the bucket chain length traversal while
-> holding the list spin-lock, would you prefer to use the rcu lock to
-> traverse the list and then only hold the spin-lock when modifying the
-> list, and possibly even make the spin-lock more fine-grained per list?
-
-Until we have a better idea of how this is going to be used, I think
-it's okay for now.  It's also internal to the kernel so we can change
-it at any time.  My comments about the locking/structs was only to try
-and think of some reason why one might want to limit the number of
-ACIDs since neither you or Eric provided any reasoning that I could
-see.
-
--- 
-paul moore
-www.paul-moore.com
+Hmm, which questionable optimization are you referring to?
