@@ -2,240 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CDE6F537F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2019 19:26:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1781BF53A5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2019 19:41:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbfKHS0e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Nov 2019 13:26:34 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40691 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727894AbfKHS0e (ORCPT
+        id S1729737AbfKHSk5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Nov 2019 13:40:57 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41096 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729683AbfKHSk5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Nov 2019 13:26:34 -0500
-Received: by mail-lj1-f195.google.com with SMTP id q2so7224697ljg.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Nov 2019 10:26:30 -0800 (PST)
+        Fri, 8 Nov 2019 13:40:57 -0500
+Received: by mail-lj1-f194.google.com with SMTP id m9so7240670ljh.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Nov 2019 10:40:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=yfrqk4oAZSRdxNXU7NWHV3s/qknksusoqMId/97+bh8=;
-        b=y1K0awVaPkO46sJakcQS8uKieCdS/hCTRRGdp7q5Dcku0FUI40wj7F+zld2UORzEbf
-         t8YG8QSWNop4/suFu+5p6OBsjDlLmTswYjH/3bLUmv9AcOoVfZDeOxZjGeOYnoTXA6HQ
-         J8aMPm2axVmOGDf5xSwuijEvUOv5sKpFh9JUyrH0Kqx/t6feWNf2IUF+xYaJPauhde4n
-         IuGvkCufzn9sVUy4WXyW1gLblbgYB8D+aexe4RpGSB9pg3OV5iGRR2py7xDoNKIYBlIc
-         PZTrGRMZIlhMNrWif9jD4E8iCrXApMODQRFEsPi4vx5MLLJacWWpJdjOsLxXzD9bVAd1
-         r26w==
+        bh=nK0Zw7DLkFj9Fi972X4waBUlozfHM/3V2eGjeSiAYSA=;
+        b=NHeFmexs7Yz1xxa1LiwHuBGwXB+UPoBzyW8Ms19u2B7AJ+X1/cPn7PIRLnUcjY65zc
+         I1BM+BlXfL0H3tx4/zcFNIsihVYs0aG27mlRkRGJ6/azjW5Y6ie2SRZYkeLY9kmCSSKE
+         r/TQA/vggkYBJM0F9kfKGYF9kggQPVl/LeW+E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=yfrqk4oAZSRdxNXU7NWHV3s/qknksusoqMId/97+bh8=;
-        b=SciJSwxO6m6nEQHVcOUZgVLUo6iXKT700s3f7i/e5NC6seGXGiMDWqQs+i88MS11S8
-         rEmmPrA+ARH/3IleGC6yKrDUuk49TywZiZMxOWMIpXYcwScivnNpVzd5VjSl2/okdXPO
-         HEQWh+Ma35YMoUPIKVHwBw9Q8rpG+iTkvc6VVlcQSmIomXU6D27rE96LxV1h9LTcFlGA
-         t9n/NEPE4Oi5ap7Q3/zo2aM2HRa7KLLZcKSFn5fMU2yksrVgV5UZU8Zz1ywfVhxm5cig
-         OyiRm4hcw/K68VzXhinGb6kxUEsIJSCwCuw9+TwU0F7LFXe8HWqKLjzUOC87QWiJrDBe
-         Ur5w==
-X-Gm-Message-State: APjAAAV2r/hnvJB11Sb28ocFE/QfFxfyL4reDHs/sxEjjYFppq29EmgE
-        AH5FkQaxFRdFsQ2naQ/Mh/p/Uvt+qlENHclZVl5x
-X-Google-Smtp-Source: APXvYqw1CojLXlLXhi44VGUdhNOsRF4p9i8B7yLeQIjTFUXYF7RTFSwfHA6RC+gtdGcnk7X56NGlBF0xrTDt5/lxnqc=
-X-Received: by 2002:a2e:85d5:: with SMTP id h21mr7824291ljj.243.1573237589836;
- Fri, 08 Nov 2019 10:26:29 -0800 (PST)
+        bh=nK0Zw7DLkFj9Fi972X4waBUlozfHM/3V2eGjeSiAYSA=;
+        b=dN/3xs9tHSa5mDBlOoL32C9yQrNbCHQqGiTfKGqPKEEpGfCqtF6mjH1STs3QH+d3Py
+         /Kj9W2vhN362e3M/R5kpPcOwxL+JJTUlYtSwMh1/yQikG4tP0fOhMEgq6wx5j4Pi5wGx
+         oHCHBTv5qVh5ulBc1wgcUNC3wRfoQB2ZO84CKoSSOYIxy++NLQFSoBgNFzF5HyBsrB2T
+         FZWzXLD6nW9faOC3qcwfHcgVb7FOA66UlnI4EENNq/r0iA+WF9rXdG0GNUUtNp9blAZG
+         Ct9aLXvnRQuOa+XF+9cxH9i/6gcjXuey+pJG6pVIcnHdj+UJFlT6PZtAvP5HG60YbZ2s
+         1aIw==
+X-Gm-Message-State: APjAAAWaQxNMaoKgKzvwFLbuqvBc2gHfVkXYB4fsypON/Gzpn4yRhHEo
+        4uOh8LFAOB2VOv6DvYnSzd4lYyIEYJI=
+X-Google-Smtp-Source: APXvYqxgaCartOZDEbshq4YCj4wkqSwhF36rLjLLcEDJto/49XBINHfzh7P0BGY9TfoHByG8yPywUA==
+X-Received: by 2002:a2e:9889:: with SMTP id b9mr7591178ljj.187.1573238449793;
+        Fri, 08 Nov 2019 10:40:49 -0800 (PST)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id a18sm3323094lfi.15.2019.11.08.10.40.48
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2019 10:40:48 -0800 (PST)
+Received: by mail-lj1-f180.google.com with SMTP id n5so7253113ljc.9
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Nov 2019 10:40:48 -0800 (PST)
+X-Received: by 2002:a05:651c:331:: with SMTP id b17mr7922518ljp.133.1573238447956;
+ Fri, 08 Nov 2019 10:40:47 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1568834524.git.rgb@redhat.com> <6fb4e270bfafef3d0477a06b0365fdcc5a5305b5.1568834524.git.rgb@redhat.com>
- <CAHC9VhS2111YTQ_rbHKe6+n9coPNbcTJqf5wnBx9LYHSf69THA@mail.gmail.com> <20191025210004.jzkenjg6jrka22ak@madcap2.tricolour.ca>
-In-Reply-To: <20191025210004.jzkenjg6jrka22ak@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 8 Nov 2019 13:26:18 -0500
-Message-ID: <CAHC9VhRMJkeC7HkAMr1TwymtT7eHOB_B=_28R6zVfQQk-gW-DA@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V7 04/21] audit: convert to contid list to check
- for orch/engine ownership
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
-        mpatel@redhat.com
+References: <000000000000c422a80596d595ee@google.com> <6bddae34-93df-6820-0390-ac18dcbf0927@gmail.com>
+ <CAHk-=whh5bcxCecEL5Fy4XvQjgBTJ9uqvyp7dW=CLU6VNxS9iA@mail.gmail.com>
+ <CANn89iK9mTJ4BN-X3MeSx5LGXGYafXkhZyaUpdXDjVivTwA6Jg@mail.gmail.com>
+ <CAHk-=whNBL63qmO176qOQpkY16xvomog5ocvM=9K55hUgAgOPA@mail.gmail.com>
+ <CANn89iJJiB6avNtZ1qQNTeJwyjW32Pxk_2CwvEJxgQ==kgY0fA@mail.gmail.com>
+ <CAHk-=wiZdSoweA-W_8iwLy6KLsd-DaZM0gN9_+f-aT4KL64U0g@mail.gmail.com> <CANpmjNOuRp0gdekQeodXm8O_yiXm7mA8WZsXZNmFfJYMs93x8w@mail.gmail.com>
+In-Reply-To: <CANpmjNOuRp0gdekQeodXm8O_yiXm7mA8WZsXZNmFfJYMs93x8w@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 8 Nov 2019 10:40:32 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjodfXqd9=iW=ziFrfY7xqopgO3Ko_HrAUp-kUQHHyyqg@mail.gmail.com>
+Message-ID: <CAHk-=wjodfXqd9=iW=ziFrfY7xqopgO3Ko_HrAUp-kUQHHyyqg@mail.gmail.com>
+Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
+To:     Marco Elver <elver@google.com>
+Cc:     Eric Dumazet <edumazet@google.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 25, 2019 at 5:00 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2019-10-10 20:38, Paul Moore wrote:
-> > On Wed, Sep 18, 2019 at 9:24 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > Store the audit container identifier in a refcounted kernel object that
-> > > is added to the master list of audit container identifiers.  This will
-> > > allow multiple container orchestrators/engines to work on the same
-> > > machine without danger of inadvertantly re-using an existing identifier.
-> > > It will also allow an orchestrator to inject a process into an existing
-> > > container by checking if the original container owner is the one
-> > > injecting the task.  A hash table list is used to optimize searches.
-> > >
-> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > ---
-> > >  include/linux/audit.h | 26 ++++++++++++++--
-> > >  kernel/audit.c        | 86 ++++++++++++++++++++++++++++++++++++++++++++++++---
-> > >  kernel/audit.h        |  8 +++++
-> > >  3 files changed, 112 insertions(+), 8 deletions(-)
-> >
-> > One general comment before we go off into the weeds on this ... I can
-> > understand why you wanted to keep this patch separate from the earlier
-> > patches, but as we get closer to having mergeable code this should get
-> > folded into the previous patches.  For example, there shouldn't be a
-> > change in audit_task_info where you change the contid field from a u64
-> > to struct pointer, it should be a struct pointer from the start.
+On Fri, Nov 8, 2019 at 10:16 AM Marco Elver <elver@google.com> wrote:
 >
-> I should have marked this patchset as RFC even though it was v7 due to a
-> lot of new ideas/code that was added with uncertainties needing comment
-> and direction.
->
-> > It's also disappointing that idr appears to only be for 32-bit ID
-> > values, if we had a 64-bit idr I think we could simplify this greatly.
->
-> Perhaps.  I do still see value in letting the orchestrator choose the
-> value.
+> KCSAN does not use volatile to distinguish accesses. Right now
+> READ_ONCE, WRITE_ONCE, atomic bitops, atomic_t (+ some arch specific
+> primitives) are treated as marked atomic operations.
 
-Agreed.  I was just thinking out loud that it seems like much of what
-we need could be a generic library mechanism similar to, but not quite
-like, the existing idr code.
+Ok, so we'd have to do this in terms of ATOMIC_WRITE().
 
-> > > diff --git a/include/linux/audit.h b/include/linux/audit.h
-> > > index f2e3b81f2942..e317807cdd3e 100644
-> > > --- a/include/linux/audit.h
-> > > +++ b/include/linux/audit.h
-> > > @@ -95,10 +95,18 @@ struct audit_ntp_data {
-> > >  struct audit_ntp_data {};
-> > >  #endif
-> > >
-> > > +struct audit_cont {
-> > > +       struct list_head        list;
-> > > +       u64                     id;
-> > > +       struct task_struct      *owner;
-> > > +       refcount_t              refcount;
-> > > +       struct rcu_head         rcu;
-> > > +};
-> >
-> > It seems as though in most of the code you are using "contid", any
-> > reason why didn't stick with that naming scheme here, e.g. "struct
-> > audit_contid"?
->
-> I was using contid to refer to the value itself and cont to refer to the
-> refcounted object.  I find cont a bit too terse, so I'm still thinking
-> of changing it.  Perhaps contobj?
+One alternative might be KCSAN enhancement, where you notice the
+following pattern:
 
-Yes, just "cont" is a bit too ambiguous considering we have both
-integer values and structures being passed around.  Whatever you
-decide on, a common base with separate suffixes seems like a good
-idea.
+ - a field is initialized before the data structure gets exposed (I
+presume KCSAN already must understand about this issue -
+initializations are different and not atomic)
 
-FWIW, I still think the "audit container ID" : "ACID" thing is kinda funny ;)
+ - while the field is live, there are operations that write the same
+(let's call it "idempotent") value to the field under certain
+circumstances
 
-> > > @@ -203,11 +211,15 @@ static inline unsigned int audit_get_sessionid(struct task_struct *tsk)
-> > >
-> > >  static inline u64 audit_get_contid(struct task_struct *tsk)
-> > >  {
-> > > -       if (!tsk->audit)
-> > > +       if (!tsk->audit || !tsk->audit->cont)
-> > >                 return AUDIT_CID_UNSET;
-> > > -       return tsk->audit->contid;
-> > > +       return tsk->audit->cont->id;
-> > >  }
-> >
-> > Assuming for a moment that we implement an audit_contid_get() (see
-> > Neil's comment as well as mine below), we probably need to name this
-> > something different so we don't all lose our minds when we read this
-> > code.  On the plus side we can probably preface it with an underscore
-> > since it is a static, in which case _audit_contid_get() might be okay,
-> > but I'm open to suggestions.
->
-> I'm fine with the "_" prefix, can you point to precedent or convention?
+ - at release time, after all the reference counts are gone, the field
+is read for whether that situation happened. I'm assuming KCSAN
+already understands about this case too?
 
-Generally kernel functions which are "special"/private/unsafe/etc.
-have a one, or two, underscore prefix.  If you don't want to add the
-prefix, that's fine, but please change the name as mentioned
-previously.
+So it would only be the "idempotent writes" thing that would be
+something KCSAN would have to realize do not involve a race - because
+it simply doesn't matter if two writes of the same value race against
+each other.
 
-> > > @@ -231,7 +235,9 @@ int audit_alloc(struct task_struct *tsk)
-> > >         }
-> > >         info->loginuid = audit_get_loginuid(current);
-> > >         info->sessionid = audit_get_sessionid(current);
-> > > -       info->contid = audit_get_contid(current);
-> > > +       info->cont = audit_cont(current);
-> > > +       if (info->cont)
-> > > +               refcount_inc(&info->cont->refcount);
-> >
-> > See the other comments about a "get" function, but I think we need a
-> > RCU read lock around the above, no?
->
-> The rcu read lock is to protect the list rather than the cont object
-> itself, the latter of which is protected by its refcount.
+But I guess we could also just do
 
-What protects you from info->cont going away between when you fetch
-the pointer via audit_cont() to when you dereference it in
-refcount_inc()?
+   #define WRITE_IDEMPOTENT(x,y) WRITE_ONCE(x,y)
 
-> > > @@ -2397,8 +2438,43 @@ int audit_set_contid(struct task_struct *task, u64 contid)
-> > >         else if (audit_contid_set(task))
-> > >                 rc = -ECHILD;
-> > >         read_unlock(&tasklist_lock);
-> > > -       if (!rc)
-> > > -               task->audit->contid = contid;
-> > > +       if (!rc) {
-> > > +               struct audit_cont *oldcont = audit_cont(task);
-> >
-> > Previously we held the tasklist_lock to protect the audit container ID
-> > associated with the struct, should we still be holding it here?
->
-> We held the tasklist_lock to protect access to the target task's
-> child/parent/thread relationships.
+and use that in the kernel to annotate these things. And if we have
+that kind of annotation, we could then possibly change it to
 
-What protects us in the case of simultaneous calls to audit_set_contid()?
+  #define WRITE_IDEMPOTENT(x,y) \
+       if READ_ONCE(x)!=y WRITE_ONCE(x,y)
 
-> > Regardless, I worry that the lock dependencies between the
-> > tasklist_lock and the audit_contid_list_lock are going to be tricky.
-> > It might be nice to document the relationship in a comment up near
-> > where you declare audit_contid_list_lock.
->
-> I don't think there should be a conflict between the two.
->
-> The contid_list_lock doesn't care if the cont object is associated to a
-> particular task.
+if we have numbers that that actually helps (that macro written to be
+intentionally invalid C - it obviously needs statement protection and
+protection against evaluating the arguments multiple times etc).
 
-Please document the relationship between the two, I worry we could
-easily run into lockdep problems without a clearly defined ordering.
-
-> > > +               struct audit_cont *cont = NULL;
-> > > +               struct audit_cont *newcont = NULL;
-> > > +               int h = audit_hash_contid(contid);
-> > > +
-> > > +               spin_lock(&audit_contid_list_lock);
-> > > +               list_for_each_entry_rcu(cont, &audit_contid_hash[h], list)
-> > > +                       if (cont->id == contid) {
-> > > +                               /* task injection to existing container */
-> > > +                               if (current == cont->owner) {
-> >
-> > I understand the desire to limit a given audit container ID to the
-> > orchestrator that created it, but are we certain that we can track
-> > audit container ID "ownership" via a single instance of a task_struct?
->
-> Are you suggesting that a task_struct representing a task may be
-> replaced for a specific task?  I don't believe that will ever happen.
->
-> >  What happens when the orchestrator stops/restarts/crashes?  Do we
-> > even care?
->
-> Reap all of its containers?
-
-These were genuine questions, I'm not suggesting anything in
-particular, I'm just curious about how we handle an orchestrator that
-isn't continuously running ... is this possible?  Do we care?
-
--- 
-paul moore
-www.paul-moore.com
+                Linus
