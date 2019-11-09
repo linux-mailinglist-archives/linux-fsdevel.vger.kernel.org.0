@@ -2,98 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDDBCF60D8
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Nov 2019 19:26:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79106F6130
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Nov 2019 20:35:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726372AbfKIS0F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 9 Nov 2019 13:26:05 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:36720 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726240AbfKIS0F (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 9 Nov 2019 13:26:05 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iTVQv-00051B-Km; Sat, 09 Nov 2019 18:26:01 +0000
-Date:   Sat, 9 Nov 2019 18:26:01 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        wugyuan@cn.ibm.com, Jeff Layton <jlayton@kernel.org>,
-        hsiangkao@aol.com, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH][RFC] race in exportfs_decode_fh()
-Message-ID: <20191109182601.GW26530@ZenIV.linux.org.uk>
-References: <20191015040730.6A84742047@d06av24.portsmouth.uk.ibm.com>
- <20191022133855.B1B4752050@d06av21.portsmouth.uk.ibm.com>
- <20191022143736.GX26530@ZenIV.linux.org.uk>
- <20191022201131.GZ26530@ZenIV.linux.org.uk>
- <20191023110551.D04AE4C044@d06av22.portsmouth.uk.ibm.com>
- <20191101234622.GM26530@ZenIV.linux.org.uk>
- <20191102172229.GT20975@paulmck-ThinkPad-P72>
- <20191102180842.GN26530@ZenIV.linux.org.uk>
- <20191109031333.GA8566@ZenIV.linux.org.uk>
- <CAHk-=wg9e5PDG-y-j6uryc0RCbfZ36yB0a8qBb2hCWNrH4r_3g@mail.gmail.com>
+        id S1726457AbfKITfA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 9 Nov 2019 14:35:00 -0500
+Received: from mx01-fr.bfs.de ([193.174.231.67]:53442 "EHLO mx01-fr.bfs.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726240AbfKITe7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 9 Nov 2019 14:34:59 -0500
+Received: from mail-fr.bfs.de (mail-fr.bfs.de [10.177.18.200])
+        by mx01-fr.bfs.de (Postfix) with ESMTPS id 10EE720341;
+        Sat,  9 Nov 2019 20:34:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bfs.de; s=dkim201901;
+        t=1573328092; h=from:from:sender:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6SudR88lkF+lKSGJMK8+RxHhCApBdq5YQs6jZRSc0iw=;
+        b=SdkRUkSagrNMTjlf2lNoy4psNiZfyF+MeMTvYgob7vd96q5DqUIobqQL3gg778mGMVTAPH
+        TPFmDTheiHgZR/32jrEoziySqCn/Rb+9LAnZa6keObsD8+CW6n99rUa50DqQc9bRkvzbg8
+        +NX+vskYA3yVHhOW0hqigSOa1ET542P2mzIaGoJXLA1veXfCZitg7+SKhbI5qVBjd3QpoM
+        O3nwxgPeY5iLM9sygre3yzrqnGKKqP6U16pJ9FTPyoWfmBZMjG++mdOwBsUPtpZf32XBZ+
+        SMgc/HUYegliti2K4iu4P2KrUftQ1Fn5twmczL4y4kVWRs/netouVn4GcTOegQ==
+Received: from [134.92.181.33] (unknown [134.92.181.33])
+        by mail-fr.bfs.de (Postfix) with ESMTPS id 963F8BEEBD;
+        Sat,  9 Nov 2019 20:34:51 +0100 (CET)
+Message-ID: <5DC714DB.9060007@bfs.de>
+Date:   Sat, 09 Nov 2019 20:34:51 +0100
+From:   walter harms <wharms@bfs.de>
+Reply-To: wharms@bfs.de
+User-Agent: Mozilla/5.0 (X11; U; Linux x86_64; de; rv:1.9.1.16) Gecko/20101125 SUSE/3.0.11 Thunderbird/3.0.11
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wg9e5PDG-y-j6uryc0RCbfZ36yB0a8qBb2hCWNrH4r_3g@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+To:     linux-man@vger.kernel.org, darrick.wong@oracle.com,
+        dhowells@redhat.com, jaegeuk@kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        tytso@mit.edu, victorhsieh@google.com
+Subject: Re: [man-pages RFC PATCH] statx.2: document STATX_ATTR_VERITY
+References: <20191107014420.GD15212@magnolia> <20191107220248.32025-1-ebiggers@kernel.org> <5DC525E8.4060705@bfs.de> <20191108193557.GA12997@gmail.com>
+In-Reply-To: <20191108193557.GA12997@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.60
+Authentication-Results: mx01-fr.bfs.de
+X-Spamd-Result: default: False [-1.60 / 7.00];
+         HAS_REPLYTO(0.00)[wharms@bfs.de];
+         TO_DN_NONE(0.00)[];
+         REPLYTO_ADDR_EQ_FROM(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[11];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         MID_RHS_MATCH_FROM(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         ARC_NA(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         DKIM_SIGNED(0.00)[];
+         NEURAL_HAM(-0.00)[-0.998,0];
+         RCVD_COUNT_TWO(0.00)[2];
+         RCVD_TLS_ALL(0.00)[];
+         SUSPICIOUS_RECIPS(1.50)[]
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 09, 2019 at 08:55:38AM -0800, Linus Torvalds wrote:
-> On Fri, Nov 8, 2019 at 7:13 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > We have derived the parent from fhandle, we have a disconnected dentry for child,
-> > we go look for the name.  We even find it.  Now, we want to look it up.  And
-> > some bastard goes and unlinks it, just as we are trying to lock the parent.
-> > We do a lookup, and get a negative dentry.  Then we unlock the parent... and
-> > some other bastard does e.g. mkdir with the same name.  OK, nresult->d_inode
-> > is not NULL (anymore).  It has fuck-all to do with the original fhandle
-> > (different inumber, etc.) but we happily accept it.
+
+
+Am 08.11.2019 20:35, schrieb Eric Biggers:
+> On Fri, Nov 08, 2019 at 09:23:04AM +0100, walter harms wrote:
+>>
+>>
+>> Am 07.11.2019 23:02, schrieb Eric Biggers:
+>>> From: Eric Biggers <ebiggers@google.com>
+>>>
+>>> Document the verity attribute for statx().
+>>>
+>>> Signed-off-by: Eric Biggers <ebiggers@google.com>
+>>> ---
+>>>  man2/statx.2 | 4 ++++
+>>>  1 file changed, 4 insertions(+)
+>>>
+>>> RFC since the kernel patches are currently under review.
+>>> The kernel patches can be found here:
+>>> https://lkml.kernel.org/linux-fscrypt/20191029204141.145309-1-ebiggers@kernel.org/T/#u
+>>>
+>>> diff --git a/man2/statx.2 b/man2/statx.2
+>>> index d2f1b07b8..713bd1260 100644
+>>> --- a/man2/statx.2
+>>> +++ b/man2/statx.2
+>>> @@ -461,6 +461,10 @@ See
+>>>  .TP
+>>>  .B STATX_ATTR_ENCRYPTED
+>>>  A key is required for the file to be encrypted by the filesystem.
+>>> +.TP
+>>> +.B STATX_ATTR_VERITY
+>>> +The file has fs-verity enabled.  It cannot be written to, and all reads from it
+>>> +will be verified against a Merkle tree.
+>>
+>> Using "Merkle tree" opens a can of worm and what will happen when the methode will change ?
+>> Does it matter at all ? i would suggest "filesystem" here.
+>>
 > 
-> No arguments with your patch, although I doubt that this case has
-> actually ever happened in practice ;)
+> Fundamentally, fs-verity guarantees that all data read is verified against a
+> cryptographic hash that covers the entire file.  I think it will be helpful to
+> convey that here, e.g. to avoid confusion with non-cryptographic, individual
+> block checksums supported by filesystems like btrfs and zfs.
+> 
+> Now, the only sane way to implement this model is with a Merkle tree, and this
+> is part of the fs-verity UAPI (via the file hash), so that's where I'm coming
+> from here.  Perhaps the phrase "Merkle tree" could be interpreted too strictly,
+> though, so it would be better to emphasize the more abstract model.  How about
+> the following?:
+> 
+> 	The file has fs-verity enabled.  It cannot be written to, and all reads
+> 	from it will be verified against a cryptographic hash that covers the
+> 	entire file, e.g. via a Merkle tree.
+> 
 
-Frankly, by this point I'm rather tempted to introduce new sparse annotation for
-dentries - "might not be positive".  The thing is, there are four cases when
-->d_inode is guaranteed to be stable:
-	1) nobody else has seen that dentry; that includes in-lookup ones - they
-can be found in in-lookup hash by d_alloc_parallel(), but it'll wait until they
-cease to be in-lookup.
-	2) ->d_lock is held
-	3) pinned positive
-	4) pinned, parent held at least shared
-Anything else can have ->d_inode changed by another thread.  And class 3 is by
-far the most common.  As the matter of fact, most of dentry pointers in the
-system (as opposed to (h)lists traversing dentries) are such.
+"feels" better,. but from a programmers perspective it is important at what level
+this is actually done. To see my point look at the line before.
+"encrypted by the filesystem" mean i have to read the documentation of the fs first
+so if encryption is supported at all. Or do i think to complicated ?
 
-For obvious reasons we have shitloads of ->d_inode accesses; I'd been going
-through a tree-wide audit of those and doing that manually is bloody unpleasant.
-And we do have races in that area - the one above is the latest I'd caught;
-there had been more and I'm fairly sure that it's not the last.
+jm2c,
+re
+ wh
 
-Redoing that kind of audit every once in a while is something I wouldn't
-wish on anyone; it would be nice to use sparse to narrow the field.  Note
-that simply checking ->d_inode (or ->d_flags) is not enough unless we
-know them to be stable.  E.g. callers of lookup_one_len_unlocked() tend
-to be racy exactly because of such tests.  I'm going to add
-lookup_positive_unlocked() that would return ERR_PTR(-ENOENT) on
-negatives and convert the callers - with one exception they treat
-negatives the same way they would treat ERR_PTR(-ENOENT) and their
-tests are racy.  I'd rather have sufficient barriers done in one common
-helper, instead of trying to add them in 11 places and hope that new
-users won't fuck it up...
-
-I'm still not sure what's the best way to do the annotations - propagation
-is not a big deal, but expressing the transitions and checking that
-maybe-negative ones are not misused is trickier.  The last part can
-be actually left to manual audit - annotations would already reduce
-the search area big way.  A not too ugly way to say that now this dentry
-is known to be non-negative, OTOH...  I want to finish the audit and
-take a good look at the list of places where such transitions happen.
