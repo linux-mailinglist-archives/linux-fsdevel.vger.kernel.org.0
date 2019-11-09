@@ -2,127 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67BC0F5A8D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Nov 2019 23:07:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF9A5F5CB9
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Nov 2019 02:29:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729951AbfKHWGt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Nov 2019 17:06:49 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45882 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727001AbfKHWGs (ORCPT
+        id S1726078AbfKIB3k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Nov 2019 20:29:40 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35372 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725943AbfKIB3k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Nov 2019 17:06:48 -0500
-Received: by mail-lj1-f194.google.com with SMTP id n21so7740486ljg.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Nov 2019 14:06:45 -0800 (PST)
+        Fri, 8 Nov 2019 20:29:40 -0500
+Received: by mail-wr1-f68.google.com with SMTP id p2so9049049wro.2;
+        Fri, 08 Nov 2019 17:29:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PM7aXIqGlTv4ooyqCBP9d/aFSkST3hpJVxVLXow9peg=;
-        b=PS2bjVFaLslkBSK4KUWZW/tIht7XZkmjJaTGU2fPdPRjfl2o/Ml1nSc5Cg3cXbpjrn
-         uVwV0UkzJaP00ag8fp+t0sP9z4xcMjUm8fftb7VXNUC7o8uebivBnfsBFl0/gpgF8qbg
-         C7Lov0mQEbZd2DawPCA8y68rgZ/YLGOFrSlQo=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=pGP1mRt6HvkIHdUHLfILh9IOfF49YboAHeR6gZm7mIk=;
+        b=r2cjSGJ9qPWPBj+dKmeqFCTpvfAjISqy97GsxpwNvXoYX8YHEqgztVmZv/zGkNxTM5
+         9KxXYQB2k2Bb2GLVadnfQe5GbCjnFIGGoJxP/sjpoWQsUSKznqtHiQ29icXVOJ3vhH76
+         5eSkAUeYIkFXVTurK116vpc4ocvXKt4A2wQgQ9xs1oPuncZGhhEpyyUPp3MdWeeC/fpn
+         hyTzKxe1Pid+WwHdNY4XWJbSehHFNCmB8Xz7XKw0n0bz4eNpYUHNw/SIfS98ZyAjdUFc
+         LyCLRPxK4hRGknNZbL7GigYon/o6peKad52tCOJNE+S1Y8ngWj4DWfKY/D2S5jwOBZyF
+         k6QA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PM7aXIqGlTv4ooyqCBP9d/aFSkST3hpJVxVLXow9peg=;
-        b=W4QtzZis01Cq+RTgGYgxtvL48iXNxb0eg7MXqqeQgXS3gJ2qGxaC/s950CpMXDjhQn
-         rNK24pMSmTks9jaAMlrGiadNFAVy1pmILu/DLJasECko0iqiDDWxj4FIaFHXu8FxBOvh
-         uCOBiojMGBNFwko6AQQWI2MOmeBVwOFm7S7tyInrxFPRqGebFWAp8uAM0gWds5GvmcXu
-         q93VGu3oyQCytwmvNyyQOFbEhZzCJ2iynGTqedUKjQkFd/13snF/UsLsGuHvfjwLXYmY
-         SZkq//4P5/MYatfavdfZcA7R6RHf5MyDV7CIODidDogKtynPM/G9EWG4KiZ9B8i7xCb0
-         cqGQ==
-X-Gm-Message-State: APjAAAUL5oogKLHpFJ9hvPJvzjcfSWxq1w5CdLlVlbBwu2304UfLPw7f
-        0hIh/OfuCTJPlF49mp1gWQbK9A3tf/g=
-X-Google-Smtp-Source: APXvYqwEiLN5nFp8gkJlw18EJDZt/+rd7q4587DMvaWM6PzeE4hhzpHKFBE3i3bVp2ErqVq5z8xulQ==
-X-Received: by 2002:a2e:6e15:: with SMTP id j21mr8298691ljc.17.1573250803249;
-        Fri, 08 Nov 2019 14:06:43 -0800 (PST)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
-        by smtp.gmail.com with ESMTPSA id i190sm4946522lfi.45.2019.11.08.14.06.41
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2019 14:06:41 -0800 (PST)
-Received: by mail-lj1-f177.google.com with SMTP id q2so7770005ljg.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Nov 2019 14:06:41 -0800 (PST)
-X-Received: by 2002:a2e:9a8f:: with SMTP id p15mr8150237lji.148.1573250801141;
- Fri, 08 Nov 2019 14:06:41 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pGP1mRt6HvkIHdUHLfILh9IOfF49YboAHeR6gZm7mIk=;
+        b=cXsk+/NNd9vhue1mexMqVXBguzcvF82Mj3JHZm2iw5fjvS99E3rz43GFoHu0kb/uYD
+         zPwvviMgzlJtUs8fDHdOXZ2vBZCmljnb2Gk0IeYK5GCsGqiCrbsP1bi2CDRPoyVRGQqI
+         MfqljA9I0b9miSeSwVPQL4vsYBbtUeuymkfq3wVZix5jmvlZniErSbGQrZlBI/GwBIs9
+         Eq2TLDV5igFhX1xiLm+UtLaGXrsh8KpzasN6h0hPZ6cEjMmd9KmiSjMC5Ac/T9E4K5JX
+         34xZQttYGeDF4zLRx9iD4r0Lnqw2clghJn1GDlEjj5cTVfEmJSBEeL5GhwGN0qmA7Apt
+         aHZA==
+X-Gm-Message-State: APjAAAVR07F1GH180NW7vE/NYCWPGDKa0oUAbDjMmCNKMFxQbq725B14
+        FnAM2BxOWei6vwYGZ7NqJZQ=
+X-Google-Smtp-Source: APXvYqw/AszSb29O0bMVElK9vbU1TWC0CKx+HLQAl57LKW8EZ5dEvRpIn0z8uFjc6J7dMh+qf3CBNQ==
+X-Received: by 2002:a05:6000:104:: with SMTP id o4mr4783754wrx.309.1573262978063;
+        Fri, 08 Nov 2019 17:29:38 -0800 (PST)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id d4sm7197882wrw.83.2019.11.08.17.29.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 08 Nov 2019 17:29:37 -0800 (PST)
+Date:   Sat, 9 Nov 2019 01:29:36 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     Wei Yang <richardw.yang@linux.intel.com>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] fs/userfaultfd.c: remove a redundant check on end
+Message-ID: <20191109012936.fkqdczhl3sykius7@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20190912213110.3691-1-richardw.yang@linux.intel.com>
 MIME-Version: 1.0
-References: <CAHk-=wiGfnHopopFDhcGp1=wg7XY8iGm7tDjgf_zfZZy5tdRjA@mail.gmail.com>
- <Pine.LNX.4.44L0.1911081649030.1498-100000@iolanthe.rowland.org>
-In-Reply-To: <Pine.LNX.4.44L0.1911081649030.1498-100000@iolanthe.rowland.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 8 Nov 2019 14:06:25 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgu-QXU83ai4XBnh7JJUo2NBW41XhLWf=7wrydR4=ZP0g@mail.gmail.com>
-Message-ID: <CAHk-=wgu-QXU83ai4XBnh7JJUo2NBW41XhLWf=7wrydR4=ZP0g@mail.gmail.com>
-Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Marco Elver <elver@google.com>, Eric Dumazet <edumazet@google.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190912213110.3691-1-richardw.yang@linux.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 8, 2019 at 1:57 PM Alan Stern <stern@rowland.harvard.edu> wrote:
+On Fri, Sep 13, 2019 at 05:31:08AM +0800, Wei Yang wrote:
+>For the ending vma, there is a check to make sure the end is huge page
+>aligned.
 >
-> Can we please agree to call these writes something other than
-> "idempotent"?  After all, any write to normal memory is idempotent in
-> the sense that doing it twice has the same effect as doing it once
-> (ignoring possible races, of course).
+>The *if* check makes sure vm_start < end <= vm_end. While the first half
+>is not necessary, because the *for* clause makes sure vm_start < end.
+>
+>This patch just removes it.
+>
 
-No!
+Does this one look good?
 
-You're completely missing the point.
+>Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+>---
+> fs/userfaultfd.c | 3 +--
+> 1 file changed, 1 insertion(+), 2 deletions(-)
+>
+>diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+>index 653d8f7c453c..9ce09ac619a2 100644
+>--- a/fs/userfaultfd.c
+>+++ b/fs/userfaultfd.c
+>@@ -1402,8 +1402,7 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+> 		 * If this vma contains ending address, and huge pages
+> 		 * check alignment.
+> 		 */
+>-		if (is_vm_hugetlb_page(cur) && end <= cur->vm_end &&
+>-		    end > cur->vm_start) {
+>+		if (is_vm_hugetlb_page(cur) && end <= cur->vm_end) {
+> 			unsigned long vma_hpagesize = vma_kernel_pagesize(cur);
+> 
+> 			ret = -EINVAL;
+>-- 
+>2.17.1
 
-Two writes to normal memory are *not* idempotent if they write
-different values. The ordering very much matters, and it's racy and a
-tool should complain.
-
-But the point of WRITE_IDEMPOTENT() is that it *always* writes the
-same value, so it doesn't matter if two different writers race on it.
-
-So it really is about being idempotent.
-
-> A better name would be "write-if-different" or "write-if-changed"
-
-No.
-
-Again,  you're totally missing the point.
-
-It's not about "write-if-different".
-
-It's about idempotent writes.
-
-But if you do know that all the possible racing writes are idempotent,
-then AS A POSSIBLE CACHE OPTIMIZATION, you can then say "only do this
-write if somebody else didn't already do it".
-
-But that's a side effect of being idempotent, not the basic rule! And
-it's not necessarily obviously an optimization at all, because the
-cacheline may already be dirty, and checking the old value and having
-a conditional on it may be much more expensive than just writing the
-new value./
-
-The point is that certain writes DO NOT CARE ABOUT ORDERING, because
-they may be setting a sticky flag (or stickily clearing a flag, as in
-this case).  The ordering doesn't matter, because the operation is
-idempotent.
-
-That's what "idempotent" means. You can do it once, or a hundred
-times, and the end result is the same (but is different from not doing
-it at all).
-
-And no, not all writes are idempotent. That's just crazy talk. Writes
-have values.
-
-               Linus
+-- 
+Wei Yang
+Help you, Help me
