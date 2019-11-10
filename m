@@ -2,136 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74B99F6857
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Nov 2019 11:11:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A49EDF68CD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Nov 2019 12:49:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbfKJKLx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 Nov 2019 05:11:53 -0500
-Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:36361 "EHLO
-        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726653AbfKJKLx (ORCPT
+        id S1726806AbfKJLtC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 Nov 2019 06:49:02 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:54750 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726710AbfKJLtB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 10 Nov 2019 05:11:53 -0500
-Received: from [192.168.2.10] ([46.9.232.237])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id TkCAiNAD3QBsYTkCDi1SAO; Sun, 10 Nov 2019 11:11:50 +0100
-Subject: Re: [PATCH v2 13/18] media/v4l2-core: pin_longterm_pages (FOLL_PIN)
- and put_user_page() conversion
-To:     John Hubbard <jhubbard@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
-References: <20191103211813.213227-1-jhubbard@nvidia.com>
- <20191103211813.213227-14-jhubbard@nvidia.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <6d21391e-01c4-0605-0d0d-15f574cc3ed4@xs4all.nl>
-Date:   Sun, 10 Nov 2019 11:11:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Sun, 10 Nov 2019 06:49:01 -0500
+Received: by mail-io1-f69.google.com with SMTP id i15so10731907ion.21
+        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Nov 2019 03:49:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=muS40/M+U7unS7Nwdhba7+0opY/I2Z2pZGBBgPUq8C0=;
+        b=HFhXUGEGGYjANbNNIT6MRP9xXSu2RGQWCXcixtFUthF4Uf1g/Q5SVu+pg5nWzPoFhZ
+         ZV3PNOCuZHqGnchShNKmONXfZpku1GfpsZwXfMHlGjT7w6z5d2PErmhctpSZ+TG+Aj2q
+         Ssh6iuB8997nV9pYbQDbo3IvXzqh1Xsu0JLOdnEo6C7peBwGizV8e5Bfh3dm1e1CN9Sh
+         DPk5Xca1gS71O6TGsb1lo8NNy+gl7DBvaGvRag/R1AHBfwl8pevPW8dPzwJ92GLJMYu5
+         3Zbsg0MxnwQdE9yHnVta1oTGEzk5uPjbOu8dgTdFNs3shV6LmJJB0yx+lHTcmsdFwRxd
+         2wPw==
+X-Gm-Message-State: APjAAAXX39++hKK1VTc8PscLU2zpGwwQpZKoxsxlly3YNxNUkHxS2C2+
+        hzFvzRjMkOCiuybpbB7UjTPz0L2NkIeDO2PJFcTD9Um5vA43
+X-Google-Smtp-Source: APXvYqwG7iOuXUzrPn9C7IQw34I7LSwhAIRpMFyONIfQ9Z8ZWhdhx/QqVwYg/S2UFNW58oOzV3uQTeJdrwTJ/Pza/72hGbJAuyfE
 MIME-Version: 1.0
-In-Reply-To: <20191103211813.213227-14-jhubbard@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfFSTukyJqfxV4HrGGQ0j5/iKKr13OkEzy05WqAOfOSWrg/qEYKz7zmsSLuZTQBp28yCz+dvkf6VRv+kw027uNzPdnpP1TG1MNl/DxEey7uZK5/xalM5y
- 5mek2ggN11NHCI9OB51pAxH9HazB5AMpcNYWMTjkyDZlvUJtbfWW4ZUZq85nxiyCH9Wkwv75NaxcyvTMitOA+o4+U5rJjg8sA8gvfV9NbRRVFg3M6alu0IKv
- kyfdjDFwuG4F6JKpbt9v3E049Xx0YF8ppWdgVnIjGfusfyNaLb+90K4NGhzfPU11L+2UeV4HzuHSmBSjFWbsZNO99HRrZoUYxfZil98flfM0I4Tl92e2ZZ6T
- oLNGV585kbb26i0UwqgRbX0qClJpOQIX8JPemeIZHsAISH4A6EIzai79YkaAZrrdJDqsHcU/g5pBk7M+m8f1h0UhG93G+VP07un/zdrM5krNUgUcOHqWl6c8
- yg5UitZLkuZJeoj3AZIHtptGajhOljPiqFe3qrME7yIGvxpfurp6646fJOQdrdhgQ99ZW5ZVLjxCYcB39QCEQQpm6CL4XMXAsAilPNdyDqQvU26KgyC+BY4C
- EfgFzK7XJbQ28t/ACJ7DTyyH14NWDMPJXEZyBEirCE+SenjaNpo1ArEbqixnm5RCT+dULYmvp/soWFNQsgosWPukS+PH1BUonrmmMVLsT7pZ55bv6EkNWDl4
- 9ypHPyVuYZBeyd/QB3263NKtG9W94IRv7gkIMIXqe+gaZqosCCZGLoQ/R3NrX+UELfTllPBXIEjGQ6GcqW4vDLnC6e5LObzBu95S05AVd/j5Z489creqnOqz
- al1X+EBLb7SCFjH5bT0l7XPwxsPFls2nYnNC2VvjaojW5EGzj+P9FMGrDMXQYA5CwZYMR9jVieofsVzZROWuyWgzGX0IWmVMrVJ+O9Cd6w+r38l2u6VzMDO3
- vrKP72jlsDujiCNkz8SZOuEiycTOpqK7FnQXWC0vHy8ZQ5kE+5U3ZOrlf3bE5a7YMuwWWgEf1wyekRKSE5FPwRln1aFBkEu6RfHldiY5r6mScJHM0Hmz3L1G
- jmpevDng1F0dM0khzD8Rn/xNHOQmjygIoT2XjmtiT+xp1E4E+mkPp1qzmYUhF73no8Ws5q3/bDKWOdGuUrZQjRZdQtb3gNeBRaDBFMdPnfgT4QkU99ovX9La
- 0JO93Bw0hzkTQPZYGAQEEyZ5mT+kT8y0hQD80773+KE9/qHPFnhe80tvkU1RdNM3L33ptC7eREOqMAmdRO6tk0ZlucAIUVw5MRfKAm2acO9sl5to+l22CFB1
- ACY3IoeSiNIkXxalh1O2DqvLWJh0AapBIq9krEjBZouKIfbQ+FRgwsFcvPJZJS2eW70SQX+omUmZZ5xpSWDV1lpAjnprcaVW+xX7OhGfCCj2gQOCd9Q=
+X-Received: by 2002:a92:16d4:: with SMTP id 81mr24840022ilw.198.1573386541143;
+ Sun, 10 Nov 2019 03:49:01 -0800 (PST)
+Date:   Sun, 10 Nov 2019 03:49:01 -0800
+In-Reply-To: <0000000000003659ef0596fa4cae@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e11df90596fc9955@google.com>
+Subject: Re: KASAN: invalid-free in io_sqe_files_unregister
+From:   syzbot <syzbot+3254bc44113ae1e331ee@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/3/19 10:18 PM, John Hubbard wrote:
-> 1. Change v4l2 from get_user_pages(FOLL_LONGTERM), to
-> pin_longterm_pages(), which sets both FOLL_LONGTERM and FOLL_PIN.
-> 
-> 2. Because all FOLL_PIN-acquired pages must be released via
-> put_user_page(), also convert the put_page() call over to
-> put_user_pages_dirty_lock().
-> 
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+syzbot has bisected this bug to:
 
-Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+commit 65e19f54d29cd8559ce60cfd0d751bef7afbdc5c
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Sat Oct 26 13:20:21 2019 +0000
 
-Looks good, thanks!
+     io_uring: support for larger fixed file sets
 
-	Hans
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=154f483ce00000
+start commit:   5591cf00 Add linux-next specific files for 20191108
+git tree:       linux-next
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=174f483ce00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=134f483ce00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e1036c6ef52866f9
+dashboard link: https://syzkaller.appspot.com/bug?extid=3254bc44113ae1e331ee
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=116bb33ae00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=173f133ae00000
 
+Reported-by: syzbot+3254bc44113ae1e331ee@syzkaller.appspotmail.com
+Fixes: 65e19f54d29c ("io_uring: support for larger fixed file sets")
 
-> ---
->  drivers/media/v4l2-core/videobuf-dma-sg.c | 13 +++++--------
->  1 file changed, 5 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/media/v4l2-core/videobuf-dma-sg.c b/drivers/media/v4l2-core/videobuf-dma-sg.c
-> index 28262190c3ab..9b9c5b37bf59 100644
-> --- a/drivers/media/v4l2-core/videobuf-dma-sg.c
-> +++ b/drivers/media/v4l2-core/videobuf-dma-sg.c
-> @@ -183,12 +183,12 @@ static int videobuf_dma_init_user_locked(struct videobuf_dmabuf *dma,
->  	dprintk(1, "init user [0x%lx+0x%lx => %d pages]\n",
->  		data, size, dma->nr_pages);
->  
-> -	err = get_user_pages(data & PAGE_MASK, dma->nr_pages,
-> -			     flags | FOLL_LONGTERM, dma->pages, NULL);
-> +	err = pin_longterm_pages(data & PAGE_MASK, dma->nr_pages,
-> +				 flags, dma->pages, NULL);
->  
->  	if (err != dma->nr_pages) {
->  		dma->nr_pages = (err >= 0) ? err : 0;
-> -		dprintk(1, "get_user_pages: err=%d [%d]\n", err,
-> +		dprintk(1, "pin_longterm_pages: err=%d [%d]\n", err,
->  			dma->nr_pages);
->  		return err < 0 ? err : -EINVAL;
->  	}
-> @@ -349,11 +349,8 @@ int videobuf_dma_free(struct videobuf_dmabuf *dma)
->  	BUG_ON(dma->sglen);
->  
->  	if (dma->pages) {
-> -		for (i = 0; i < dma->nr_pages; i++) {
-> -			if (dma->direction == DMA_FROM_DEVICE)
-> -				set_page_dirty_lock(dma->pages[i]);
-> -			put_page(dma->pages[i]);
-> -		}
-> +		put_user_pages_dirty_lock(dma->pages, dma->nr_pages,
-> +					  dma->direction == DMA_FROM_DEVICE);
->  		kfree(dma->pages);
->  		dma->pages = NULL;
->  	}
-> 
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
