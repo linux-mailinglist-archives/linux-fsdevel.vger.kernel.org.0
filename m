@@ -2,71 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A49EDF68CD
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Nov 2019 12:49:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18C81F6962
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Nov 2019 15:17:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726806AbfKJLtC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 Nov 2019 06:49:02 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:54750 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726710AbfKJLtB (ORCPT
+        id S1726723AbfKJORC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 Nov 2019 09:17:02 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:39494 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726390AbfKJORC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 10 Nov 2019 06:49:01 -0500
-Received: by mail-io1-f69.google.com with SMTP id i15so10731907ion.21
-        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Nov 2019 03:49:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=muS40/M+U7unS7Nwdhba7+0opY/I2Z2pZGBBgPUq8C0=;
-        b=HFhXUGEGGYjANbNNIT6MRP9xXSu2RGQWCXcixtFUthF4Uf1g/Q5SVu+pg5nWzPoFhZ
-         ZV3PNOCuZHqGnchShNKmONXfZpku1GfpsZwXfMHlGjT7w6z5d2PErmhctpSZ+TG+Aj2q
-         Ssh6iuB8997nV9pYbQDbo3IvXzqh1Xsu0JLOdnEo6C7peBwGizV8e5Bfh3dm1e1CN9Sh
-         DPk5Xca1gS71O6TGsb1lo8NNy+gl7DBvaGvRag/R1AHBfwl8pevPW8dPzwJ92GLJMYu5
-         3Zbsg0MxnwQdE9yHnVta1oTGEzk5uPjbOu8dgTdFNs3shV6LmJJB0yx+lHTcmsdFwRxd
-         2wPw==
-X-Gm-Message-State: APjAAAXX39++hKK1VTc8PscLU2zpGwwQpZKoxsxlly3YNxNUkHxS2C2+
-        hzFvzRjMkOCiuybpbB7UjTPz0L2NkIeDO2PJFcTD9Um5vA43
-X-Google-Smtp-Source: APXvYqwG7iOuXUzrPn9C7IQw34I7LSwhAIRpMFyONIfQ9Z8ZWhdhx/QqVwYg/S2UFNW58oOzV3uQTeJdrwTJ/Pza/72hGbJAuyfE
+        Sun, 10 Nov 2019 09:17:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=fVmVEbEUawJP+2+xjtt5g4dGUc3Ync4wEewM8s7BWYg=; b=Defp8JuExBSKtlwz0CPfQZaKbN
+        ECVZJJwBIck+9HoH/47uXa7BCHZvfMr6ro9WerGEs/hAEkw1gDHjTJGZWD+pDBh/zU6vkglLdbQjs
+        aHzce1pNwwbpyA0UMUiZpsYBkY62oXLUmNGyeKYuN91eFqP1wt9JDXcKNQp9R/XmgfHT8KhkYkH5m
+        Ck1KAV6whVlG9yQpMPv93uMCuY6KgQrj/XuGg8bqMhtlknqt8egsYY6ETe0e8GBgjS2uIzsWGBmKc
+        43V9Bva4yQKCJHuPylo++WYbUgop14fU23xqX2QyVxKR4gnCu5SB6i8K4Y+5s2p/TNQyWm9zQZ2cv
+        3lWNwnfg==;
+Received: from [2001:4bb8:184:e48:c70:4a89:bc61:2] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iTo1V-0005HE-Ge; Sun, 10 Nov 2019 14:17:01 +0000
+Date:   Sun, 10 Nov 2019 15:16:48 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] configfs regression fix for 5.4-rc
+Message-ID: <20191110141648.GA23526@infradead.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:16d4:: with SMTP id 81mr24840022ilw.198.1573386541143;
- Sun, 10 Nov 2019 03:49:01 -0800 (PST)
-Date:   Sun, 10 Nov 2019 03:49:01 -0800
-In-Reply-To: <0000000000003659ef0596fa4cae@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e11df90596fc9955@google.com>
-Subject: Re: KASAN: invalid-free in io_sqe_files_unregister
-From:   syzbot <syzbot+3254bc44113ae1e331ee@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this bug to:
+The following changes since commit 26bc672134241a080a83b2ab9aa8abede8d30e1c:
 
-commit 65e19f54d29cd8559ce60cfd0d751bef7afbdc5c
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Sat Oct 26 13:20:21 2019 +0000
+  Merge tag 'for-linus-2019-11-05' of git://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux (2019-11-05 09:44:02 -0800)
 
-     io_uring: support for larger fixed file sets
+are available in the Git repository at:
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=154f483ce00000
-start commit:   5591cf00 Add linux-next specific files for 20191108
-git tree:       linux-next
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=174f483ce00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=134f483ce00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e1036c6ef52866f9
-dashboard link: https://syzkaller.appspot.com/bug?extid=3254bc44113ae1e331ee
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=116bb33ae00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=173f133ae00000
+  git://git.infradead.org/users/hch/configfs.git tags/configfs-for-5.4-2
 
-Reported-by: syzbot+3254bc44113ae1e331ee@syzkaller.appspotmail.com
-Fixes: 65e19f54d29c ("io_uring: support for larger fixed file sets")
+for you to fetch changes up to e2f238f7d5a1fa69ff1884d37acf9a2a3a01b308:
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+  configfs: calculate the depth of parent item (2019-11-06 18:36:01 +0100)
+
+----------------------------------------------------------------
+configfs regression fix for 5.4-rc
+
+ - fix a regression from this merge window in the configfs
+   symlink handling (Honggang Li)
+
+----------------------------------------------------------------
+Honggang Li (1):
+      configfs: calculate the depth of parent item
+
+ fs/configfs/symlink.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
