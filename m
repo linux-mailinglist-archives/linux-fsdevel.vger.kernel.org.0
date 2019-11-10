@@ -2,150 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40180F61D3
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Nov 2019 00:08:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91193F644A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Nov 2019 03:58:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbfKIXIZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 9 Nov 2019 18:08:25 -0500
-Received: from netrider.rowland.org ([192.131.102.5]:45177 "HELO
-        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1726530AbfKIXIZ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 9 Nov 2019 18:08:25 -0500
-Received: (qmail 31724 invoked by uid 500); 9 Nov 2019 18:08:24 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 9 Nov 2019 18:08:24 -0500
-Date:   Sat, 9 Nov 2019 18:08:24 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@netrider.rowland.org
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     Marco Elver <elver@google.com>, Eric Dumazet <edumazet@google.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
-In-Reply-To: <CAHk-=wgu-QXU83ai4XBnh7JJUo2NBW41XhLWf=7wrydR4=ZP0g@mail.gmail.com>
-Message-ID: <Pine.LNX.4.44L0.1911091708150.29750-100000@netrider.rowland.org>
+        id S1729851AbfKJC6w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 9 Nov 2019 21:58:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47278 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729382AbfKJC4r (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 9 Nov 2019 21:56:47 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82C582256E;
+        Sun, 10 Nov 2019 02:48:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573354119;
+        bh=Y73+dY1Y0k2XuM4+cKQsdic8Xpu6IH+WkIG2UhOnRI8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=A0JtwvucN9trG3O7QaeDTHJlk/2x0aVsqN56Zhj7y6YgPdxewMnnFYwFxkKQO1iwr
+         gpaq9GVb2H+M2MEfe01+v7zN/7VwR5a3VANx/ii+aqCm6rS5CDdraLgA7cmRu6LS1t
+         3xo8G/BJ7XmnOEqCuD8i9+kn0QJIGRnOO+bK2Znw=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 107/109] fuse: use READ_ONCE on congestion_threshold and max_background
+Date:   Sat,  9 Nov 2019 21:45:39 -0500
+Message-Id: <20191110024541.31567-107-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191110024541.31567-1-sashal@kernel.org>
+References: <20191110024541.31567-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 8 Nov 2019, Linus Torvalds wrote:
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
 
-> On Fri, Nov 8, 2019 at 1:57 PM Alan Stern <stern@rowland.harvard.edu> wrote:
-> >
-> > Can we please agree to call these writes something other than
-> > "idempotent"?  After all, any write to normal memory is idempotent in
-> > the sense that doing it twice has the same effect as doing it once
-> > (ignoring possible races, of course).
-> 
-> No!
-> 
-> You're completely missing the point.
-> 
-> Two writes to normal memory are *not* idempotent if they write
-> different values. The ordering very much matters, and it's racy and a
-> tool should complain.
+[ Upstream commit 2a23f2b8adbe4bd584f936f7ac17a99750eed9d7 ]
 
-What you have written strongly indicates that either you think the word
-"idempotent" means something different from its actual meaning or else
-you are misusing the word in a very confusing way.
+Since they are of unsigned int type, it's allowed to read them
+unlocked during reporting to userspace. Let's underline this fact
+with READ_ONCE() macroses.
 
-Your text seems to say that two operations are idempotent if they have 
-the same effect.  Compare that to the definition from Wikipedia (not 
-the best in the world, perhaps, but adequate for this discussion):
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/fuse/control.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-	Idempotence is the property of certain operations in
-	mathematics and computer science whereby they can be applied
-	multiple times without changing the result beyond the initial
-	application.
-
-For example, writing 5 to x is idempotent because performing that write
-multiple times will have the same result as performing it only once.
-Likewise for any write to normal memory.
-
-Therefore talking about idempotent writes as somehow being distinct 
-from other writes does not make sense.  Nor does it make sense to say 
-"Two writes to normal memory are *not* idempotent if they write
-different values", because idempotence is a property of individual 
-operations, not of pairs of operations.
-
-You should use a different word, because what you mean is different 
-from what "idempotent" actually means.
-
-> But the point of WRITE_IDEMPOTENT() is that it *always* writes the
-> same value, so it doesn't matter if two different writers race on it.
-> 
-> So it really is about being idempotent.
-
-Okay, I agree that I did completely miss the point of what you
-originally meant.  But what you meant wasn't "being idempotent".
-
-> > A better name would be "write-if-different" or "write-if-changed"
-> 
-> No.
-> 
-> Again,  you're totally missing the point.
-> 
-> It's not about "write-if-different".
-> 
-> It's about idempotent writes.
-
-Assuming you really are talking about writes (presumably in different
-threads) that store the same value to the same location: Yes, two such
-writes do not in practice race with each other -- even though they may
-satisfy the formal definition of a data race.
-
-On the other hand, they may each race with other accesses.
-
-> But if you do know that all the possible racing writes are idempotent,
-> then AS A POSSIBLE CACHE OPTIMIZATION, you can then say "only do this
-> write if somebody else didn't already do it".
-
-In fact, you can _always_ perform that possible optimization.  Whether
-it will be worthwhile is a separate matter...
-
-> But that's a side effect of being idempotent, not the basic rule! And
-> it's not necessarily obviously an optimization at all, because the
-> cacheline may already be dirty, and checking the old value and having
-> a conditional on it may be much more expensive than just writing the
-> new value./
-
-Agreed.
-
-> The point is that certain writes DO NOT CARE ABOUT ORDERING, because
-> they may be setting a sticky flag (or stickily clearing a flag, as in
-> this case).  The ordering doesn't matter, because the operation is
-> idempotent.
-
-Ah, here you use the word correctly.
-
-> That's what "idempotent" means. You can do it once, or a hundred
-> times, and the end result is the same (but is different from not doing
-> it at all).
-
-Precisely the point I make above.
-
-> And no, not all writes are idempotent. That's just crazy talk. Writes
-> have values.
-
-By "writes have values", do you mean that writes store values?  Of
-course they do.  But it is clear from what you wrote just above that
-all writes _are_ idempotent, because doing a write once or a hundred
-times will yield the same end result.
-
-On a more productive note, do you think we should change the LKMM so 
-that it won't consider two writes to race with each other if they store 
-the same value?
-
-Alan Stern
+diff --git a/fs/fuse/control.c b/fs/fuse/control.c
+index 5be0339dcceb2..42bed87dd5ea9 100644
+--- a/fs/fuse/control.c
++++ b/fs/fuse/control.c
+@@ -107,7 +107,7 @@ static ssize_t fuse_conn_max_background_read(struct file *file,
+ 	if (!fc)
+ 		return 0;
+ 
+-	val = fc->max_background;
++	val = READ_ONCE(fc->max_background);
+ 	fuse_conn_put(fc);
+ 
+ 	return fuse_conn_limit_read(file, buf, len, ppos, val);
+@@ -144,7 +144,7 @@ static ssize_t fuse_conn_congestion_threshold_read(struct file *file,
+ 	if (!fc)
+ 		return 0;
+ 
+-	val = fc->congestion_threshold;
++	val = READ_ONCE(fc->congestion_threshold);
+ 	fuse_conn_put(fc);
+ 
+ 	return fuse_conn_limit_read(file, buf, len, ppos, val);
+-- 
+2.20.1
 
