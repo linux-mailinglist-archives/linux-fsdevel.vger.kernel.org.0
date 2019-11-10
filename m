@@ -2,173 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EBFFF680A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Nov 2019 10:04:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FD82F6840
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Nov 2019 10:49:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726657AbfKJJEJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 Nov 2019 04:04:09 -0500
-Received: from mail-il1-f198.google.com ([209.85.166.198]:50050 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbfKJJEJ (ORCPT
+        id S1726684AbfKJJtL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 Nov 2019 04:49:11 -0500
+Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:38026 "EHLO
+        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726604AbfKJJtL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 10 Nov 2019 04:04:09 -0500
-Received: by mail-il1-f198.google.com with SMTP id c2so13317858ilj.16
-        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Nov 2019 01:04:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=+8ZnohStVkL6tapO0JWTtDMt8kk/Lc635P0c1MxZABA=;
-        b=qqGjYE3rYmmKPQnpwHWE21vESlkwWB3NO1tEgUoMsXySa4s1WQMryVARBVi+4xiI5y
-         +qsaw2gN8Q/7JN4bo531icJNiTBE6oeIIab/5mz8sczCof8xm4KVWVNDzMq5b8CeTdWz
-         zQSTdNuDZyJRayhuCIKr/wLwlfSGkMJ3LFKKuf72Rxte9sD+nEehJEkd9QjegyxE8OlG
-         ooV9B75DNacx12CkKC9y/FBtQAWYsJnpaL8yOV34AaxUfNPCx4XGcCrWaxZMsODbigEo
-         RdI73MqwjNsVwXUBJ0dNJNv8FNhuV8QzBFUxmx7E9x+ddAoVitpbFqCg2EVkSKQfdojB
-         9weg==
-X-Gm-Message-State: APjAAAUST8RbE1bplKwD2sfq025CESHtAMKwuVPs9K+XEQ3x/EQNL7Ho
-        lBSfCLNpvPPa94h9dFRKqCptbtbfkORsKF6UG7XHQ/Zy5hLZ
-X-Google-Smtp-Source: APXvYqy+AUqg0wSDZpVB9rBKoOGN6mwXueF3kL6EZqJOUJOzS2PLb8Q4d1jrez3tl2/CGtb1vjfX8OG4rblTD+NhDrEaGBDP2DsH
+        Sun, 10 Nov 2019 04:49:11 -0500
+Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
+        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id DCAD42E14F1;
+        Sun, 10 Nov 2019 12:49:07 +0300 (MSK)
+Received: from sas1-7fab0cd91cd2.qloud-c.yandex.net (sas1-7fab0cd91cd2.qloud-c.yandex.net [2a02:6b8:c14:3a93:0:640:7fab:cd9])
+        by mxbackcorp1g.mail.yandex.net (mxbackcorp/Yandex) with ESMTP id oNltWvvLUu-n7MSFmkg;
+        Sun, 10 Nov 2019 12:49:07 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1573379347; bh=N6WLw9leH2C8BydExCJ1WUmUrFVO+tlTJcRAk4eOP7E=;
+        h=Message-ID:Date:To:From:Subject:Cc;
+        b=YtTz9TlN4uZvukjvzOhP0Pj7EIpN0HJ6lRDoiTdhsqRcZL6mhA1RbF8YEVdlfkUVE
+         mayKLkgNxquGW4elAOxXxUHAyv0r8CTXtA/vxHrtvW3161C3Y2/30JF29ynAb7Awde
+         or5rD0hU9BkmbKhEvzD356uirXBci1kaz1fyoIMU=
+Authentication-Results: mxbackcorp1g.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:8554:53c0:3d75:2e8a])
+        by sas1-7fab0cd91cd2.qloud-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id W4H9ZUG3nu-n7UuSt9d;
+        Sun, 10 Nov 2019 12:49:07 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: [PATCH v2] fs/quota: handle overflows of sysctl fs.quota.* and
+ report as unsigned long
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.com>
+Cc:     Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+Date:   Sun, 10 Nov 2019 12:49:06 +0300
+Message-ID: <157337934693.2078.9842146413181153727.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-X-Received: by 2002:a6b:e403:: with SMTP id u3mr20170199iog.130.1573376648171;
- Sun, 10 Nov 2019 01:04:08 -0800 (PST)
-Date:   Sun, 10 Nov 2019 01:04:08 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003659ef0596fa4cae@google.com>
-Subject: KASAN: invalid-free in io_sqe_files_unregister
-From:   syzbot <syzbot+3254bc44113ae1e331ee@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Quota statistics counted as 64-bit per-cpu counter. Reading sums per-cpu
+fractions as signed 64-bit int, filters negative values and then reports
+lower half as signed 32-bit int.
 
-syzbot found the following crash on:
+Result may looks like:
 
-HEAD commit:    5591cf00 Add linux-next specific files for 20191108
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=176bdbece00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e1036c6ef52866f9
-dashboard link: https://syzkaller.appspot.com/bug?extid=3254bc44113ae1e331ee
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=116bb33ae00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=173f133ae00000
+fs.quota.allocated_dquots = 22327
+fs.quota.cache_hits = -489852115
+fs.quota.drops = -487288718
+fs.quota.free_dquots = 22083
+fs.quota.lookups = -486883485
+fs.quota.reads = 22327
+fs.quota.syncs = 335064
+fs.quota.writes = 3088689
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+3254bc44113ae1e331ee@syzkaller.appspotmail.com
+Values bigger than 2^31-1 reported as negative.
 
-RBP: 0000000000000005 R08: 0000000000000001 R09: 00007ffd5b970032
-R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000401ef0
-R13: 0000000000401f80 R14: 0000000000000000 R15: 0000000000000000
-==================================================================
-BUG: KASAN: double-free or invalid-free in  
-io_sqe_files_unregister+0x20b/0x300 fs/io_uring.c:3185
+All counters except "allocated_dquots" and "free_dquots" are monotonic,
+thus they should be reported as is without filtering negative values.
 
-CPU: 1 PID: 8819 Comm: syz-executor452 Not tainted 5.4.0-rc6-next-20191108  
-#0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x197/0x210 lib/dump_stack.c:118
-  print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
-  kasan_report_invalid_free+0x65/0xa0 mm/kasan/report.c:468
-  __kasan_slab_free+0x13a/0x150 mm/kasan/common.c:450
-  kasan_slab_free+0xe/0x10 mm/kasan/common.c:480
-  __cache_free mm/slab.c:3426 [inline]
-  kfree+0x10a/0x2c0 mm/slab.c:3757
-  io_sqe_files_unregister+0x20b/0x300 fs/io_uring.c:3185
-  io_ring_ctx_free fs/io_uring.c:3998 [inline]
-  io_ring_ctx_wait_and_kill+0x348/0x700 fs/io_uring.c:4060
-  io_uring_release+0x42/0x50 fs/io_uring.c:4068
-  __fput+0x2ff/0x890 fs/file_table.c:280
-  ____fput+0x16/0x20 fs/file_table.c:313
-  task_work_run+0x145/0x1c0 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x904/0x2e60 kernel/exit.c:817
-  do_group_exit+0x135/0x360 kernel/exit.c:921
-  __do_sys_exit_group kernel/exit.c:932 [inline]
-  __se_sys_exit_group kernel/exit.c:930 [inline]
-  __x64_sys_exit_group+0x44/0x50 kernel/exit.c:930
-  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x43f2c8
-Code: 31 b8 c5 f7 ff ff 48 8b 5c 24 28 48 8b 6c 24 30 4c 8b 64 24 38 4c 8b  
-6c 24 40 4c 8b 74 24 48 4c 8b 7c 24 50 48 83 c4 58 c3 66 <0f> 1f 84 00 00  
-00 00 00 48 8d 35 59 ca 00 00 0f b6 d2 48 89 fb 48
-RSP: 002b:00007ffd5b976008 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043f2c8
-RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
-RBP: 00000000004bf0a8 R08: 00000000000000e7 R09: ffffffffffffffd0
-R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000001
-R13: 00000000006d1180 R14: 0000000000000000 R15: 0000000000000000
+Kernel doesn't have generic helper for 64-bit sysctl yet,
+let's use at least unsigned long.
 
-Allocated by task 8819:
-  save_stack+0x23/0x90 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  __kasan_kmalloc mm/kasan/common.c:510 [inline]
-  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:483
-  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:524
-  __do_kmalloc mm/slab.c:3656 [inline]
-  __kmalloc+0x163/0x770 mm/slab.c:3665
-  kmalloc_array include/linux/slab.h:598 [inline]
-  kcalloc include/linux/slab.h:609 [inline]
-  io_sqe_files_register fs/io_uring.c:3373 [inline]
-  __io_uring_register+0x11d4/0x3120 fs/io_uring.c:4474
-  __do_sys_io_uring_register fs/io_uring.c:4526 [inline]
-  __se_sys_io_uring_register fs/io_uring.c:4508 [inline]
-  __x64_sys_io_uring_register+0x1a1/0x570 fs/io_uring.c:4508
-  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 8819:
-  save_stack+0x23/0x90 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  kasan_set_free_info mm/kasan/common.c:332 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:471
-  kasan_slab_free+0xe/0x10 mm/kasan/common.c:480
-  __cache_free mm/slab.c:3426 [inline]
-  kfree+0x10a/0x2c0 mm/slab.c:3757
-  io_sqe_files_register fs/io_uring.c:3379 [inline]
-  __io_uring_register+0x13a7/0x3120 fs/io_uring.c:4474
-  __do_sys_io_uring_register fs/io_uring.c:4526 [inline]
-  __se_sys_io_uring_register fs/io_uring.c:4508 [inline]
-  __x64_sys_io_uring_register+0x1a1/0x570 fs/io_uring.c:4508
-  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8880a7619140
-  which belongs to the cache kmalloc-32 of size 32
-The buggy address is located 0 bytes inside of
-  32-byte region [ffff8880a7619140, ffff8880a7619160)
-The buggy address belongs to the page:
-page:ffffea00029d8640 refcount:1 mapcount:0 mapping:ffff8880aa4001c0  
-index:0xffff8880a7619fc1
-flags: 0x1fffc0000000200(slab)
-raw: 01fffc0000000200 ffffea00025b2488 ffffea0002975c88 ffff8880aa4001c0
-raw: ffff8880a7619fc1 ffff8880a7619000 0000000100000024 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8880a7619000: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-  ffff8880a7619080: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-> ffff8880a7619100: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-                                            ^
-  ffff8880a7619180: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-  ffff8880a7619200: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-==================================================================
-
-
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fs/quota/dquot.c      |   29 +++++++++++++++++------------
+ include/linux/quota.h |    2 +-
+ 2 files changed, 18 insertions(+), 13 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+index 6e826b454082..fa6ec4f96791 100644
+--- a/fs/quota/dquot.c
++++ b/fs/quota/dquot.c
+@@ -2860,68 +2860,73 @@ EXPORT_SYMBOL(dquot_quotactl_sysfile_ops);
+ static int do_proc_dqstats(struct ctl_table *table, int write,
+ 		     void __user *buffer, size_t *lenp, loff_t *ppos)
+ {
+-	unsigned int type = (int *)table->data - dqstats.stat;
++	unsigned int type = (unsigned long *)table->data - dqstats.stat;
++	s64 value = percpu_counter_sum(&dqstats.counter[type]);
++
++	/* Filter negative values for non-monotonic counters */
++	if (value < 0 && (type == DQST_ALLOC_DQUOTS ||
++			  type == DQST_FREE_DQUOTS))
++		value = 0;
+ 
+ 	/* Update global table */
+-	dqstats.stat[type] =
+-			percpu_counter_sum_positive(&dqstats.counter[type]);
+-	return proc_dointvec(table, write, buffer, lenp, ppos);
++	dqstats.stat[type] = value;
++	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
+ }
+ 
+ static struct ctl_table fs_dqstats_table[] = {
+ 	{
+ 		.procname	= "lookups",
+ 		.data		= &dqstats.stat[DQST_LOOKUPS],
+-		.maxlen		= sizeof(int),
++		.maxlen		= sizeof(unsigned long),
+ 		.mode		= 0444,
+ 		.proc_handler	= do_proc_dqstats,
+ 	},
+ 	{
+ 		.procname	= "drops",
+ 		.data		= &dqstats.stat[DQST_DROPS],
+-		.maxlen		= sizeof(int),
++		.maxlen		= sizeof(unsigned long),
+ 		.mode		= 0444,
+ 		.proc_handler	= do_proc_dqstats,
+ 	},
+ 	{
+ 		.procname	= "reads",
+ 		.data		= &dqstats.stat[DQST_READS],
+-		.maxlen		= sizeof(int),
++		.maxlen		= sizeof(unsigned long),
+ 		.mode		= 0444,
+ 		.proc_handler	= do_proc_dqstats,
+ 	},
+ 	{
+ 		.procname	= "writes",
+ 		.data		= &dqstats.stat[DQST_WRITES],
+-		.maxlen		= sizeof(int),
++		.maxlen		= sizeof(unsigned long),
+ 		.mode		= 0444,
+ 		.proc_handler	= do_proc_dqstats,
+ 	},
+ 	{
+ 		.procname	= "cache_hits",
+ 		.data		= &dqstats.stat[DQST_CACHE_HITS],
+-		.maxlen		= sizeof(int),
++		.maxlen		= sizeof(unsigned long),
+ 		.mode		= 0444,
+ 		.proc_handler	= do_proc_dqstats,
+ 	},
+ 	{
+ 		.procname	= "allocated_dquots",
+ 		.data		= &dqstats.stat[DQST_ALLOC_DQUOTS],
+-		.maxlen		= sizeof(int),
++		.maxlen		= sizeof(unsigned long),
+ 		.mode		= 0444,
+ 		.proc_handler	= do_proc_dqstats,
+ 	},
+ 	{
+ 		.procname	= "free_dquots",
+ 		.data		= &dqstats.stat[DQST_FREE_DQUOTS],
+-		.maxlen		= sizeof(int),
++		.maxlen		= sizeof(unsigned long),
+ 		.mode		= 0444,
+ 		.proc_handler	= do_proc_dqstats,
+ 	},
+ 	{
+ 		.procname	= "syncs",
+ 		.data		= &dqstats.stat[DQST_SYNCS],
+-		.maxlen		= sizeof(int),
++		.maxlen		= sizeof(unsigned long),
+ 		.mode		= 0444,
+ 		.proc_handler	= do_proc_dqstats,
+ 	},
+diff --git a/include/linux/quota.h b/include/linux/quota.h
+index f32dd270b8e3..27aab84fcbaa 100644
+--- a/include/linux/quota.h
++++ b/include/linux/quota.h
+@@ -263,7 +263,7 @@ enum {
+ };
+ 
+ struct dqstats {
+-	int stat[_DQST_DQSTAT_LAST];
++	unsigned long stat[_DQST_DQSTAT_LAST];
+ 	struct percpu_counter counter[_DQST_DQSTAT_LAST];
+ };
+ 
+
