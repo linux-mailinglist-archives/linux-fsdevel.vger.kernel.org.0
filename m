@@ -2,138 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50BAFF8279
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 22:46:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C47D5F829A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 22:53:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbfKKVqV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Nov 2019 16:46:21 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:9442 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727121AbfKKVqU (ORCPT
+        id S1726910AbfKKVxV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Nov 2019 16:53:21 -0500
+Received: from mail-il1-f178.google.com ([209.85.166.178]:40583 "EHLO
+        mail-il1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726845AbfKKVxV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Nov 2019 16:46:20 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dc9d66d0000>; Mon, 11 Nov 2019 13:45:17 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 11 Nov 2019 13:46:18 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 11 Nov 2019 13:46:18 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 11 Nov
- 2019 21:46:18 +0000
-Subject: Re: [PATCH v2 04/18] media/v4l2-core: set pages dirty upon releasing
- DMA buffers
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC:     Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20191103211813.213227-1-jhubbard@nvidia.com>
- <20191103211813.213227-5-jhubbard@nvidia.com>
- <4b2337f6-102d-ae9d-e690-4331d77660c4@xs4all.nl>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <5846f15d-f03b-cd1a-051c-42b1519c4c48@nvidia.com>
-Date:   Mon, 11 Nov 2019 13:46:18 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 11 Nov 2019 16:53:21 -0500
+Received: by mail-il1-f178.google.com with SMTP id d83so13521321ilk.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2019 13:53:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=x5dR2X2FPjc0R4vKaFMq42of1ocjgN73FFpV0IAy3Es=;
+        b=Qy7hsN4rNqDIsADEty2zFKc9T419wkbTgjhkrGwsJBb0mS8oAXBvZmLuLbksEbS967
+         AS7SumZJtySJk+Uo7BlorvhZJ/5b9I8wZEi62BArK7PTRkStJ7lOmT7lWRpD/TaXyk5T
+         l6oBe+cBgOHBhzLF0fHedCG3gbw2w7v8poM7XnJ2Wn09xLoLqO1YnMHVB6a1ePNU/BV1
+         lnf39TjhLmTLV75aN6SI7p8VuObJkzj5PtJamPDhv3MorHUDsDjxbKsoeHQDmWdX35/+
+         dxJpPyl8uSV6uOrQzRkX654Dtdl5cZVmvYrKkMIcy8V2OMcGBQiHwjzO8KfKmXXoHsZ1
+         IFcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=x5dR2X2FPjc0R4vKaFMq42of1ocjgN73FFpV0IAy3Es=;
+        b=s3fduTY6UcV9VdtoVdajtsMIwHGXLY7xpWHwpAwSrLv1q3hcCS1vO0O9gPXYpoKTf3
+         LEcSVmQMzIxuSM0gzDLC7J8iKKBAV2A7uPpCPBqbIbAOoX5vQ7hov5YpGmXNcg8Rf8It
+         qPO1ypNV7siytBA6gdU/jVs/sXz8kGtCyIdfPhIzgE0zlAYlAGTXN6asYQVtZQn0D2BR
+         RNOMSmk+rLoHGeNv7kXJgtJNoQHgcBB94PhJ0XldZlBia5uIt0N86ovj8Y0wjbzEDIA7
+         xAtWQWB06lNq3RHDRIL/Jxehy6taYtLGWkeX9+vl+AgGaCmCXqFIZUPM4xwmm2i3emij
+         ftGw==
+X-Gm-Message-State: APjAAAWfxa+liIYQ7ZU64SSXg8A8gyEPtmT9NqFlOj74aQzEPdUq98hS
+        X2S0FwCq/ig+DjHfjdww/RZZ8WhjBQSoLm27ZpxN+A==
+X-Google-Smtp-Source: APXvYqyEKArgN/a9P0jAoaKNekFY1H9Ikjs3X+yMpFLujCjs7WSeV2O3zE/DTUMb+bgZ6AKrEPGh8EwSxNFXUbMagqA=
+X-Received: by 2002:a92:99cb:: with SMTP id t72mr29681319ilk.218.1573509199768;
+ Mon, 11 Nov 2019 13:53:19 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <4b2337f6-102d-ae9d-e690-4331d77660c4@xs4all.nl>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1573508717; bh=JgFNDA0v0XtnqpGBZO9zS12edBVCSHH4nhh2s8SsfW8=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=KJdHonRoY4lGZsGGXFA+s6C9dAs+F+pw/0M4pYcPJTv8UjN4AOAtOKwCMIML32E4J
-         r1oa+qdIiwIStrqpxJM1Ivl0+B4WzoS3hMuEMwbOHFQnWENnyAiOG7rxglRiMPOsG2
-         P1hEnkWRlMLt+KFRHY1ADSR7l9DzNOzOUd8zjn8ytb8H6XjFU3HR0TMaYulAaIN8Ej
-         W15iUuEbFCS+gYNQ7bbS2hBGFlr0gEiNZEHH94kd699lxQXaw52Pbe2bTEp8/kn2Gi
-         RR0P48w8xGu3BkU/HHy5EhGqoz+wSP++cOtfAjoHUddj6CK5tYXuhTndLB24+KM9Al
-         oii/NsVBT+BQA==
+References: <CANpmjNMvTbMJa+NmfD286vGVNQrxAnsujQZqaodw0VVUYdNjPw@mail.gmail.com>
+ <Pine.LNX.4.44L0.1911111030410.12295-100000@netrider.rowland.org>
+ <CAHk-=wjp6yR-gBNYXPzrHQHq+wX_t6WfwrF_S3EEUq9ccz3vng@mail.gmail.com>
+ <CANn89i+OBZOq-q4GWAxKVRau6nHYMo3v4y-c1vUb_O8nvra1RQ@mail.gmail.com>
+ <CAHk-=wg6Zaf09i0XNgCmOzKKWnoAPMfA7WX9OY1Ow1YtF0ZP3A@mail.gmail.com>
+ <CANn89i+hRhweL2N=r1chMpWKU2ue8fiQO=dLxGs9sgLFbgHEWQ@mail.gmail.com>
+ <CANn89iJiuOkKc2AVmccM8z9e_d4zbV61K-3z49ao1UwRDdFiHw@mail.gmail.com>
+ <CAHk-=wgkwBjQWyDQi8mu06DXr_v_4zui+33fk3eK89rPof5b+A@mail.gmail.com>
+ <CANn89i+x7Yxjxr4Fdaow-51-A-oBK3MqTscbQ4VXQuk4pX9aCg@mail.gmail.com>
+ <CAHk-=whRQuSrstW+cwNmUdLNwkZsKsXuie_1uTqJeKjMBWmr6Q@mail.gmail.com> <CAHk-=whWNkk7vCQr7LLshcB6B_=ikmpMXQ7RtO2FyDx-Np_UKg@mail.gmail.com>
+In-Reply-To: <CAHk-=whWNkk7vCQr7LLshcB6B_=ikmpMXQ7RtO2FyDx-Np_UKg@mail.gmail.com>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Mon, 11 Nov 2019 13:53:07 -0800
+Message-ID: <CANn89iJsh97aaAHhPTtkPjz4QFJgi9WHs3bbSTnLGrdE8qrJaA@mail.gmail.com>
+Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Marco Elver <elver@google.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/10/19 2:10 AM, Hans Verkuil wrote:
-> On 11/3/19 10:17 PM, John Hubbard wrote:
->> After DMA is complete, and the device and CPU caches are synchronized,
->> it's still required to mark the CPU pages as dirty, if the data was
->> coming from the device. However, this driver was just issuing a
->> bare put_page() call, without any set_page_dirty*() call.
->>
->> Fix the problem, by calling set_page_dirty_lock() if the CPU pages
->> were potentially receiving data from the device.
->>
->> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
->> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> 
-> Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-> 
-> Looks good, thanks!
-> 
+On Mon, Nov 11, 2019 at 12:47 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Mon, Nov 11, 2019 at 12:43 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > Yeah, maybe we could have some model for marking "this is statistics,
+> > doesn't need to be exact".
+>
+> Side note: that marking MUST NOT be "READ_ONCE + WRITE_ONCE", because
+> that makes gcc create horrible code, and only makes the race worse.
+>
+> At least with a regular add, it might stay as a single r-m-w
+> instruction on architectures that have that, and makes the quality of
+> the statistics slightly better (no preemption etc).
+>
+> So that's an excellent example of where changing code to use
+> WRITE_ONCE actually makes the code objectively worse in practice -
+> even if it might be the same in theory.
 
-Hi Hans, it's great that you could take a look at this and the other v4l2 
-patch, much appreciated.
+Yes, I believe that was the rationale of the ADD_ONCE() thing I
+mentioned earlier.
 
+I do not believe we have a solution right now ?
 
-thanks,
--- 
-John Hubbard
-NVIDIA
->> ---
->>  drivers/media/v4l2-core/videobuf-dma-sg.c | 5 ++++-
->>  1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/media/v4l2-core/videobuf-dma-sg.c b/drivers/media/v4l2-core/videobuf-dma-sg.c
->> index 66a6c6c236a7..28262190c3ab 100644
->> --- a/drivers/media/v4l2-core/videobuf-dma-sg.c
->> +++ b/drivers/media/v4l2-core/videobuf-dma-sg.c
->> @@ -349,8 +349,11 @@ int videobuf_dma_free(struct videobuf_dmabuf *dma)
->>  	BUG_ON(dma->sglen);
->>  
->>  	if (dma->pages) {
->> -		for (i = 0; i < dma->nr_pages; i++)
->> +		for (i = 0; i < dma->nr_pages; i++) {
->> +			if (dma->direction == DMA_FROM_DEVICE)
->> +				set_page_dirty_lock(dma->pages[i]);
->>  			put_page(dma->pages[i]);
->> +		}
->>  		kfree(dma->pages);
->>  		dma->pages = NULL;
->>  	}
->>
-> 
+We have similar non atomic increments in some virtual network drivers
+doing "dev->stats.tx_errors++;"  in their error path.
