@@ -2,144 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 187A4F7F8A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 20:14:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1A31F8121
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 21:22:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727493AbfKKTN1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Nov 2019 14:13:27 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:41762 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727487AbfKKTN1 (ORCPT
+        id S1727453AbfKKUV7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Nov 2019 15:21:59 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:40225 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726951AbfKKUV7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Nov 2019 14:13:27 -0500
-Received: by mail-io1-f68.google.com with SMTP id r144so15792159iod.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2019 11:13:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6/VuShNsnnLijV7FTC/n5bXISdKsCNAaXvgZUSZTI2M=;
-        b=LJD0mvfv2cmwh1rKoSNdTEkyl/8Q60pawfFcL1Kw3tYIjHphsWJZb2VHREb0zO65uc
-         hZvetOs6fqaX3107UfQ4zOYB7AaO45SnC7PkhUH4Kz31DyCORaPOy/9C6foVMLwO3D4p
-         7nt8q35NszzZrsPBZ8zY+O1iykoiIXmVu6glWUVlsHKfTAhoBU+4nR8qgwsgvBK6FfcO
-         LD+1TXFb6raocmGQk4b9Sh4KZObiELFVAoi4YgJ8I69l515pvcQGtQuRnIFnZlBpY8yP
-         HBSP3doCHTYo2Vgd8uGO38qecy2wPBX/Z5xB5jfDRmFU9N290xmG7r5aVThn9dt8MaIY
-         yHuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6/VuShNsnnLijV7FTC/n5bXISdKsCNAaXvgZUSZTI2M=;
-        b=f/UBFFz0a/9j3LtiiEhEFn8PzE42ekcEOqrd2e2TPO3cRTBsFJ8PmVe41wsC9s85FM
-         eHDFYW2TZDi3b3rYAtRJM4JRxXDLRIAqAjpYeVnZg06St+PeKbuJC/RMLVxmY78I6g7e
-         JND6GUhguNnIbFASHBARzLDASnvaSm19TE+vF7tWsQsqDlbapw7AdkLgHE/drrq7XlTZ
-         Kxtp7Nm8Ocdl+xLdYOIAMspWVb1Qv3eWp7vnaPmHCF1vbmBipi5itGjcwcX0xIvfTvoR
-         Xu7TC0ZoaLFAiEfPkQn7n6gl7pOuCwBx0UwbkJCqqYOydODX/rWXOuvC0VTNHOUFyeoA
-         YqIA==
-X-Gm-Message-State: APjAAAU1C4kQg2D/nxqg+HTOu1PLEXZAU/g/g82GCJ8z6WtYL93Q8Ymu
-        cx4QHgc8VVhgDArwvtZ75n3BFZ1a/tI5MLxxdeOXCg==
-X-Google-Smtp-Source: APXvYqwYT2bnWA0uOOetpBpSlXqEyNb8DbeCdss54JdYY85ZOwBw8QacpCiJTlDrPqsRtQrjpsB4m/+bxWyN8bzIj2Y=
-X-Received: by 2002:a05:6638:a27:: with SMTP id 7mr25838960jao.114.1573499604758;
- Mon, 11 Nov 2019 11:13:24 -0800 (PST)
+        Mon, 11 Nov 2019 15:21:59 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1M8yoa-1iaKeu0fEE-0063PN; Mon, 11 Nov 2019 21:16:46 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     linux-nfs@vger.kernel.org,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>
+Cc:     y2038@lists.linaro.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 00/19] nfs, nfsd: avoid 32-bit time_t
+Date:   Mon, 11 Nov 2019 21:16:20 +0100
+Message-Id: <20191111201639.2240623-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-References: <CANpmjNMvTbMJa+NmfD286vGVNQrxAnsujQZqaodw0VVUYdNjPw@mail.gmail.com>
- <Pine.LNX.4.44L0.1911111030410.12295-100000@netrider.rowland.org>
- <CAHk-=wjp6yR-gBNYXPzrHQHq+wX_t6WfwrF_S3EEUq9ccz3vng@mail.gmail.com>
- <CANn89i+OBZOq-q4GWAxKVRau6nHYMo3v4y-c1vUb_O8nvra1RQ@mail.gmail.com>
- <CAHk-=wg6Zaf09i0XNgCmOzKKWnoAPMfA7WX9OY1Ow1YtF0ZP3A@mail.gmail.com>
- <CANn89i+hRhweL2N=r1chMpWKU2ue8fiQO=dLxGs9sgLFbgHEWQ@mail.gmail.com>
- <CANn89iJiuOkKc2AVmccM8z9e_d4zbV61K-3z49ao1UwRDdFiHw@mail.gmail.com> <CAHk-=wgkwBjQWyDQi8mu06DXr_v_4zui+33fk3eK89rPof5b+A@mail.gmail.com>
-In-Reply-To: <CAHk-=wgkwBjQWyDQi8mu06DXr_v_4zui+33fk3eK89rPof5b+A@mail.gmail.com>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Mon, 11 Nov 2019 11:13:13 -0800
-Message-ID: <CANn89i+x7Yxjxr4Fdaow-51-A-oBK3MqTscbQ4VXQuk4pX9aCg@mail.gmail.com>
-Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Marco Elver <elver@google.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:JN3hpuFv/t2CfnZyt61MtRx0CiB1Qt5nIaW4ZS3du16NUH8dMu4
+ YzUQ3f6jQFhZwc/rSf6LciJS668cjuruv6UXtXMppewy+Zn4V39yi0GN92e2VmGblaGAITV
+ h0mJEZAO+IcXFKtZhdOWZZp/YUmpSC+HzcKZD6qECC93LLDUy5px+4sV3po6zUxaBuu9Bgm
+ yi4t9xYBfPDqzvmY2Uffw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:29bmaPZVYZ4=:3/cSUbtTGBhkrYm1WF+G8n
+ DZXhZSzdsRFBvSxzdPySopCDmZLeptnfFbV6F05/lmVN/2nSHbhskeq4HPAONDCZpyx1ucvIw
+ q67hshswo1euuPXMNk8a/lD1eBY2EEF5zA1eOvDjl7f89wyC59kem23VtX4w5JWK2YZAO4p7L
+ wRxKikw01WJKLcOCPeoRG/RqQF3QEXggeJ2XYhku8rDWm3nUDDNWkaZABw0tlyGWm2NLfrTFs
+ v4fAA0CAur7ySQZBbIL/Se4loN1bDsfNvVDINrA/HG94xyJgVcYMckaXqKf7nn/NHqAmtRlYQ
+ OuMzjTpEE7GAYCN6FjbyMadO/emufUYeSfD+KSc+ByGJrPDkQC2qjkPYkb7yAedbHceacBlv8
+ OEZ/kNI7EYh0MQJhBFELdkiFAjAuudk5HAXOphYeSVzXYyDbhBpha3k+PhpD3PnDuLnymMOhs
+ atpU6dvJGJAX8/McGWerLBEU651uZOa565q3tha6iygqnxBk3GSj7ZOuTFLbAVNc/TD6qVIjN
+ ++/duQKPiatSbhBpLTqhlA4B8RMjHBUzZSFsAm+henl5rfhWaDckPBDnLi7q31KsC+BwoSEch
+ QsnkszmQ8zEHxb6OOu6I3ANhEOLLVQjhMIySxVUg9cLFRLj1vylKHN4kVOGC9FtH380YpcdpS
+ JDEkGdIoeMhNwJxAUI7j8tDO7ZH2YC20ETjvUCkEPGBbVAW7Cya4+RnWay5/vEVwOv0F6Mz6p
+ ZQZSPfn95sds/UtHAEtaPdLsCDG4xipBm1aLNLd0iasSvW6pG2JTXWvjG0BBKy+vk6CCd+YhV
+ e/wXOp3iLyuNA82bcuYvzmsoDXVCn5/ZkyMk2EuMgDRw82JKKCt2XPr8I3WvAPHLP2LgNw7Lh
+ ZEzP5nFG3rhJEMOXHpqA==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 11:01 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Mon, Nov 11, 2019 at 10:44 AM Eric Dumazet <edumazet@google.com> wrote:
-> >
-> > An interesting case is the race in ksys_write()
->
-> Not really.
->
-> > if (ppos) {
-> >      pos = *ppos; // data-race
->
-> That code uses "fdget_pos().
->
-> Which does mutual exclusion _if_ the file is something we care about
-> pos for, and if it has more than one process using it.
->
-> Basically the rule there is that we don't care about the data race in
-> certain circumstances. We don't care about non-regular files, for
-> example, because those are what POSIX gives guarantees for.
->
-> (We have since moved towards FMODE_STREAM handling instead of the
-> older FMODE_ATOMIC_POS which does this better, and it's possible we
-> should get rid of the FMODE_ATOMIC_POS behavior in favor of
-> FMODE_STREAM entirely)
->
-> Again, that's pretty hard to tell something like KCSAN.
+I have finally found the time to convert all of NFS away from
+using time_t derived data structures to (mostly) time64_t,
+unifying the behavior between 32-bit and 64-bit architectures
+and paving the way to removing the old time_t definition from
+the kernel.
 
-Well, this is hard to explain to humans... Probably less than 10 on
-this planet could tell that.
+Please review and test. This may be a little late for linux-5.5,
+but I hope to get it all into linux-5.6 once all review comments
+are addressed.
 
-What about this other one, it looks like multiple threads can
-manipulate tsk->min_flt++; at the same time  in faultin_page()
+     Arnd
 
-Should we not care, or should we mirror min_flt with a second
-atomic_long_t, or simply convert min_flt to atomic_long_t ?
+Arnd Bergmann (19):
+  sunrpc: convert to time64_t for expiry
+  nfs: use time64_t internally
+  nfs: use timespec64 in nfs_fattr
+  nfs: callback: use timespec64 in cb_getattrres
+  nfs: fscache: use timespec64 in inode auxdata
+  nfs: remove timespec from xdr_encode_nfstime
+  nfs: encode nfsv4 timestamps as 64-bit
+  nfsd: use ktime_get_seconds() for timestamps
+  nfsd: print 64-bit timestamps in client_info_show
+  nfsd: handle nfs3 timestamps as unsigned
+  nfsd: use timespec64 in encode_time_delta
+  nfsd: make 'boot_time' 64-bit wide
+  nfsd: pass a 64-bit guardtime to nfsd_setattr()
+  nfsd: use time64_t in nfsd_proc_setattr() check
+  nfsd: fix delay timer on 32-bit architectures
+  nfsd: fix jiffies/time_t mixup in LRU list
+  nfsd: use boottime for lease expiry alculation
+  nfsd: use ktime_get_real_seconds() in nfs4_verifier
+  nfsd: remove nfs4_reset_lease() declarations
 
-BUG: KCSAN: data-race in __get_user_pages / __get_user_pages
+ fs/nfs/callback.h                     |  4 +-
+ fs/nfs/callback_proc.c                |  4 +-
+ fs/nfs/callback_xdr.c                 |  6 +--
+ fs/nfs/fscache-index.c                |  6 ++-
+ fs/nfs/fscache.c                      | 18 ++++---
+ fs/nfs/fscache.h                      |  8 ++--
+ fs/nfs/inode.c                        | 54 ++++++++++-----------
+ fs/nfs/internal.h                     |  6 +--
+ fs/nfs/nfs2xdr.c                      | 33 ++++++-------
+ fs/nfs/nfs3xdr.c                      | 14 ++----
+ fs/nfs/nfs4xdr.c                      | 35 +++++++-------
+ fs/nfsd/netns.h                       |  6 +--
+ fs/nfsd/nfs3xdr.c                     | 20 ++++----
+ fs/nfsd/nfs4callback.c                |  7 ++-
+ fs/nfsd/nfs4layouts.c                 |  2 +-
+ fs/nfsd/nfs4proc.c                    |  2 +-
+ fs/nfsd/nfs4recover.c                 |  8 ++--
+ fs/nfsd/nfs4state.c                   | 68 +++++++++++++--------------
+ fs/nfsd/nfs4xdr.c                     |  4 +-
+ fs/nfsd/nfsctl.c                      |  6 +--
+ fs/nfsd/nfsd.h                        |  2 -
+ fs/nfsd/nfsfh.h                       |  4 +-
+ fs/nfsd/nfsproc.c                     |  6 +--
+ fs/nfsd/state.h                       | 10 ++--
+ fs/nfsd/vfs.c                         |  4 +-
+ fs/nfsd/vfs.h                         |  2 +-
+ fs/nfsd/xdr3.h                        |  2 +-
+ include/linux/nfs_fs_sb.h             |  2 +-
+ include/linux/nfs_xdr.h               | 14 +++---
+ include/linux/sunrpc/cache.h          | 42 +++++++++--------
+ include/linux/sunrpc/gss_api.h        |  4 +-
+ include/linux/sunrpc/gss_krb5.h       |  2 +-
+ net/sunrpc/auth_gss/gss_krb5_mech.c   | 12 +++--
+ net/sunrpc/auth_gss/gss_krb5_seal.c   |  8 ++--
+ net/sunrpc/auth_gss/gss_krb5_unseal.c |  6 +--
+ net/sunrpc/auth_gss/gss_krb5_wrap.c   | 16 +++----
+ net/sunrpc/auth_gss/gss_mech_switch.c |  2 +-
+ net/sunrpc/auth_gss/svcauth_gss.c     |  6 +--
+ net/sunrpc/cache.c                    | 18 +++----
+ net/sunrpc/svcauth_unix.c             | 10 ++--
+ 40 files changed, 243 insertions(+), 240 deletions(-)
 
-read to 0xffff8880b0b8f650 of 8 bytes by task 11553 on cpu 1:
- faultin_page mm/gup.c:653 [inline]
- __get_user_pages+0x78f/0x1160 mm/gup.c:845
- __get_user_pages_locked mm/gup.c:1023 [inline]
- get_user_pages_remote+0x206/0x3e0 mm/gup.c:1163
- process_vm_rw_single_vec mm/process_vm_access.c:109 [inline]
- process_vm_rw_core.isra.0+0x3a4/0x8c0 mm/process_vm_access.c:216
- process_vm_rw+0x1c4/0x1e0 mm/process_vm_access.c:284
- __do_sys_process_vm_writev mm/process_vm_access.c:306 [inline]
- __se_sys_process_vm_writev mm/process_vm_access.c:301 [inline]
- __x64_sys_process_vm_writev+0x8b/0xb0 mm/process_vm_access.c:301
- do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
+-- 
+2.20.0
 
-write to 0xffff8880b0b8f650 of 8 bytes by task 11531 on cpu 0:
- faultin_page mm/gup.c:653 [inline]
- __get_user_pages+0x7b1/0x1160 mm/gup.c:845
- __get_user_pages_locked mm/gup.c:1023 [inline]
- get_user_pages_remote+0x206/0x3e0 mm/gup.c:1163
- process_vm_rw_single_vec mm/process_vm_access.c:109 [inline]
- process_vm_rw_core.isra.0+0x3a4/0x8c0 mm/process_vm_access.c:216
- process_vm_rw+0x1c4/0x1e0 mm/process_vm_access.c:284
- __do_sys_process_vm_writev mm/process_vm_access.c:306 [inline]
- __se_sys_process_vm_writev mm/process_vm_access.c:301 [inline]
- __x64_sys_process_vm_writev+0x8b/0xb0 mm/process_vm_access.c:301
- do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 0 PID: 11531 Comm: syz-executor.4 Not tainted 5.4.0-rc6+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine,
-BIOS Google 01/01/2011
