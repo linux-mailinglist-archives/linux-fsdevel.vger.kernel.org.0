@@ -2,102 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93573F8138
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 21:28:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30098F817A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 21:44:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727697AbfKKU2O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Nov 2019 15:28:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37024 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727010AbfKKU2O (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Nov 2019 15:28:14 -0500
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2B84206A3;
-        Mon, 11 Nov 2019 20:28:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573504094;
-        bh=Lu1K4hEFffFmujStmzKqcSWqDK91+nLfOMJq7cD0eW0=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=sW4RP7ZNpXAzaHbxsy+dMlmibHKiUFAofLNR/2Q9956XNaxJ9iJ9xDjPj6mZC0Cqq
-         BEeVWWq+luN4KafsrJGbOqM/VCDkinX1MRkz98KeNsM2YZiGq+Lazn8TVL1wJL1hyY
-         erA11VS49GBS0Mzv0TfuvvvaQ+mBZaRu18i87VZA=
-Date:   Mon, 11 Nov 2019 12:28:12 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Chandan Rajendra <chandan@linux.ibm.com>
-Subject: Re: [PATCH v2 0/2] ext4: support encryption with blocksize !=
- PAGE_SIZE
-Message-ID: <20191111202811.GE56300@gmail.com>
-Mail-Followup-To: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Chandan Rajendra <chandan@linux.ibm.com>
-References: <20191023033312.361355-1-ebiggers@kernel.org>
- <20191106215439.GC139580@gmail.com>
+        id S1727040AbfKKUoH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Nov 2019 15:44:07 -0500
+Received: from mail-lf1-f48.google.com ([209.85.167.48]:35462 "EHLO
+        mail-lf1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726964AbfKKUoG (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 11 Nov 2019 15:44:06 -0500
+Received: by mail-lf1-f48.google.com with SMTP id y6so10943252lfj.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2019 12:44:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GRpKFfWznVhj0rOmApAqWtyU5VUj2Sa8IVNQNnpT9os=;
+        b=HWedAvPLYel4dWRGlAl6RaJ3Yu3or3ICRF5dcXJUzKCmWReTCRRVOKzRS6Z3LxfDIr
+         l0e8MYVVHvCHAhgsOsOTZcnm+wKkf9HPI9/P3cBWrjFgw3bENmYWUazQx+bSFZG4Gm6Z
+         d/PZrJ7ylSByQPRbgQv5LTVX8eUcGbMpV4Ke4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GRpKFfWznVhj0rOmApAqWtyU5VUj2Sa8IVNQNnpT9os=;
+        b=n/FLTVomUtsd6HWf+/CtFZyAPQfu6+2D8ef70n/y9HfSUxkCqknL4xxf+QHu7RgLR9
+         PXvNSkjSe7eeafk3jtYGwm7N8Fn8nGvsUh3PDG8yLZrEyQnJ3BLLKMNvmNufaXeM/7ae
+         2KKIWxpOFRNNwM0zuxaa2TKPf6wgauG/aNnSPQjroFanbsCLI3fpyQ5mv1RjNBJHnled
+         l358e9CXLgrFgQR8HDonU2ANs1rOH2Ehtd8d2TEwwN39ES1LfOJxjBDQRY5JRVt5IqC6
+         8zZJi7TSDYPbOmotlg6kYqoDi5EsLOF2OBUw2x0M/d01j0lCTipBjGNlu2ecAAG3Joet
+         QluQ==
+X-Gm-Message-State: APjAAAWX10QuVYV2nahX1NaKRbHENQLJiozghfcw+YnHC07LTFrNxYsG
+        wVGz/EqXaLbn7PDsox8prrEVxBlPpy4=
+X-Google-Smtp-Source: APXvYqwHVe8eVLoOtZCFwWR6tnFrsPlloOnBcXvFMXY+tmYu/l9stmN5PQ+7nW+Hgh45db/yJ/hyKQ==
+X-Received: by 2002:a19:8a42:: with SMTP id m63mr3005319lfd.168.1573505043789;
+        Mon, 11 Nov 2019 12:44:03 -0800 (PST)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id 77sm6486595lfj.67.2019.11.11.12.44.02
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2019 12:44:02 -0800 (PST)
+Received: by mail-lj1-f180.google.com with SMTP id k15so15293677lja.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2019 12:44:02 -0800 (PST)
+X-Received: by 2002:a2e:8919:: with SMTP id d25mr17557153lji.97.1573505041971;
+ Mon, 11 Nov 2019 12:44:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191106215439.GC139580@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CANpmjNMvTbMJa+NmfD286vGVNQrxAnsujQZqaodw0VVUYdNjPw@mail.gmail.com>
+ <Pine.LNX.4.44L0.1911111030410.12295-100000@netrider.rowland.org>
+ <CAHk-=wjp6yR-gBNYXPzrHQHq+wX_t6WfwrF_S3EEUq9ccz3vng@mail.gmail.com>
+ <CANn89i+OBZOq-q4GWAxKVRau6nHYMo3v4y-c1vUb_O8nvra1RQ@mail.gmail.com>
+ <CAHk-=wg6Zaf09i0XNgCmOzKKWnoAPMfA7WX9OY1Ow1YtF0ZP3A@mail.gmail.com>
+ <CANn89i+hRhweL2N=r1chMpWKU2ue8fiQO=dLxGs9sgLFbgHEWQ@mail.gmail.com>
+ <CANn89iJiuOkKc2AVmccM8z9e_d4zbV61K-3z49ao1UwRDdFiHw@mail.gmail.com>
+ <CAHk-=wgkwBjQWyDQi8mu06DXr_v_4zui+33fk3eK89rPof5b+A@mail.gmail.com> <CANn89i+x7Yxjxr4Fdaow-51-A-oBK3MqTscbQ4VXQuk4pX9aCg@mail.gmail.com>
+In-Reply-To: <CANn89i+x7Yxjxr4Fdaow-51-A-oBK3MqTscbQ4VXQuk4pX9aCg@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 11 Nov 2019 12:43:45 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whRQuSrstW+cwNmUdLNwkZsKsXuie_1uTqJeKjMBWmr6Q@mail.gmail.com>
+Message-ID: <CAHk-=whRQuSrstW+cwNmUdLNwkZsKsXuie_1uTqJeKjMBWmr6Q@mail.gmail.com>
+Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
+To:     Eric Dumazet <edumazet@google.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Marco Elver <elver@google.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 01:54:40PM -0800, Eric Biggers wrote:
-> On Tue, Oct 22, 2019 at 08:33:10PM -0700, Eric Biggers wrote:
-> > Hello,
-> > 
-> > This patchset makes ext4 support encryption on filesystems where the
-> > filesystem block size is not equal to PAGE_SIZE.  This allows e.g.
-> > PowerPC systems to use ext4 encryption.
-> > 
-> > Most of the work for this was already done in prior kernel releases; now
-> > the only part missing is decryption support in block_read_full_page().
-> > Chandan Rajendra has proposed a patchset "Consolidate FS read I/O
-> > callbacks code" [1] to address this and do various other things like
-> > make ext4 use mpage_readpages() again, and make ext4 and f2fs share more
-> > code.  But it doesn't seem to be going anywhere.
-> > 
-> > Therefore, I propose we simply add decryption support to
-> > block_read_full_page() for now.  This is a fairly small change, and it
-> > gets ext4 encryption with subpage-sized blocks working.
-> > 
-> > Note: to keep things simple I'm just allocating the work object from the
-> > bi_end_io function with GFP_ATOMIC.  But if people think it's necessary,
-> > it could be changed to use preallocation like the page-based read path.
-> > 
-> > Tested with 'gce-xfstests -c ext4/encrypt_1k -g auto', using the new
-> > "encrypt_1k" config I created.  All tests pass except for those that
-> > already fail or are excluded with the encrypt or 1k configs, and 2 tests
-> > that try to create 1023-byte symlinks which fails since encrypted
-> > symlinks are limited to blocksize-3 bytes.  Also ran the dedicated
-> > encryption tests using 'kvm-xfstests -c ext4/1k -g encrypt'; all pass,
-> > including the on-disk ciphertext verification tests.
-> > 
-> > [1] https://lkml.kernel.org/linux-fsdevel/20190910155115.28550-1-chandan@linux.ibm.com/T/#u
-> > 
-> > Changed v1 => v2:
-> >   - Added check for S_ISREG() which technically should be there, though
-> >     it happens not to matter currently.
-> > 
-> > Chandan Rajendra (1):
-> >   ext4: Enable encryption for subpage-sized blocks
-> > 
-> > Eric Biggers (1):
-> >   fs/buffer.c: support fscrypt in block_read_full_page()
-> > 
-> >  Documentation/filesystems/fscrypt.rst |  4 +--
-> >  fs/buffer.c                           | 48 ++++++++++++++++++++++++---
-> >  fs/ext4/super.c                       |  7 ----
-> >  3 files changed, 45 insertions(+), 14 deletions(-)
-> > 
-> 
-> Any more comments on this?
-> 
-> Ted, are you interested in taking this through the ext4 tree for 5.5?
-> 
+On Mon, Nov 11, 2019 at 11:13 AM Eric Dumazet <edumazet@google.com> wrote:
+>
+> What about this other one, it looks like multiple threads can
+> manipulate tsk->min_flt++; at the same time  in faultin_page()
 
-Ping.
+Yeah, maybe we could have some model for marking "this is statistics,
+doesn't need to be exact".
+
+> Should we not care, or should we mirror min_flt with a second
+> atomic_long_t, or simply convert min_flt to atomic_long_t ?
+
+Definitely not make it atomic. Those are expensive, and there's no point.
+
+                    Linus
