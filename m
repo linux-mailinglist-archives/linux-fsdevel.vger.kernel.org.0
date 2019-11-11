@@ -2,164 +2,289 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86999F83C1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 00:51:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17FD4F83C8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 00:54:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbfKKXv0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Nov 2019 18:51:26 -0500
-Received: from mail-lf1-f48.google.com ([209.85.167.48]:46137 "EHLO
-        mail-lf1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726995AbfKKXvZ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Nov 2019 18:51:25 -0500
-Received: by mail-lf1-f48.google.com with SMTP id o65so7569822lff.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2019 15:51:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2Jr8GhMrrt/B5MXgl6TQY/T7xl692bmOyZCXN0LAOj8=;
-        b=IbYZZWEI4KLhUtWSkrs7hcs68+mEge6/KLgmu1047nQtr8xXaC+fl5/qcP+Z0UfI2r
-         FK4INqmH+Qpf28gOugYt+TB7BEFWjBUtO/OlIANn3GeMtU8xVQCR4bgX9tvJDsGcfGgt
-         8RhepscHXu3gvogkyKNhV60hOA+mHP91rWAbw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2Jr8GhMrrt/B5MXgl6TQY/T7xl692bmOyZCXN0LAOj8=;
-        b=Mz7OeT/T/EeHKzASZKFocYvRtIX6MGgtMFaKydPKb7JDsmYUInGWdokOaqUWOr3yxf
-         LKGmy8hSPT8BGXrHzoLM2beS0DzSW3nDJv5AWUtkOUdR7NSMeGxEx08Ak134q46MRFsM
-         TLp6OGquIkxIAOyy+FLQDSErjLpDn4tzJDfJXGOUIL2fORBExvkOO4uC4mDw+pZc45te
-         wgnUlbVOb4RpnvxBw3AldchYv0Y/buI+jMyWD8QVfZbr465FeRX6O/g5PeXAXvN6sRj7
-         wyAMwiEybrnlGQA14hqnb58lItiMT85YaroHx7f6jWy/DhB5tZA9a+LgF63AqRKabPNh
-         qCsQ==
-X-Gm-Message-State: APjAAAWVAtlJJLBDXfcXNT8E0GQQmxXgdfVEWL5oj3vdLQJwj7sinQOt
-        4xc/XwbGsa/pN4FbFSqhgDy4NF6zg8M=
-X-Google-Smtp-Source: APXvYqwpy92d2RIDrzGY6o6agnAkwzkleJOVV3Fi3p+Gyon4i63GTn6qHqRM7r0viuK9fVLWjGpKeA==
-X-Received: by 2002:a19:6b10:: with SMTP id d16mr17580284lfa.137.1573516282456;
-        Mon, 11 Nov 2019 15:51:22 -0800 (PST)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id a15sm5460929lfj.78.2019.11.11.15.51.19
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2019 15:51:20 -0800 (PST)
-Received: by mail-lf1-f45.google.com with SMTP id m6so11273224lfl.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2019 15:51:19 -0800 (PST)
-X-Received: by 2002:ac2:5bca:: with SMTP id u10mr17489031lfn.134.1573516279685;
- Mon, 11 Nov 2019 15:51:19 -0800 (PST)
+        id S1726958AbfKKXyf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Nov 2019 18:54:35 -0500
+Received: from mga05.intel.com ([192.55.52.43]:11843 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726887AbfKKXyf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 11 Nov 2019 18:54:35 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Nov 2019 15:54:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,294,1569308400"; 
+   d="scan'208";a="234647292"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga002.fm.intel.com with ESMTP; 11 Nov 2019 15:54:34 -0800
+Date:   Mon, 11 Nov 2019 15:54:34 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 5/5] fs/xfs: Allow toggle of physical DAX flag
+Message-ID: <20191111235433.GA318@iweiny-DESK2.sc.intel.com>
+References: <20191020155935.12297-1-ira.weiny@intel.com>
+ <20191020155935.12297-6-ira.weiny@intel.com>
+ <20191021004536.GD8015@dread.disaster.area>
+ <20191021224931.GA25526@iweiny-DESK2.sc.intel.com>
+ <20191108131238.GK20863@quack2.suse.cz>
+ <20191108134606.GL20863@quack2.suse.cz>
+ <20191108193612.GA4800@iweiny-DESK2.sc.intel.com>
+ <20191111160748.GE13307@quack2.suse.cz>
 MIME-Version: 1.0
-References: <CANpmjNMvTbMJa+NmfD286vGVNQrxAnsujQZqaodw0VVUYdNjPw@mail.gmail.com>
- <Pine.LNX.4.44L0.1911111030410.12295-100000@netrider.rowland.org>
- <CAHk-=wjp6yR-gBNYXPzrHQHq+wX_t6WfwrF_S3EEUq9ccz3vng@mail.gmail.com>
- <CANn89i+OBZOq-q4GWAxKVRau6nHYMo3v4y-c1vUb_O8nvra1RQ@mail.gmail.com>
- <CAHk-=wg6Zaf09i0XNgCmOzKKWnoAPMfA7WX9OY1Ow1YtF0ZP3A@mail.gmail.com>
- <CANn89i+hRhweL2N=r1chMpWKU2ue8fiQO=dLxGs9sgLFbgHEWQ@mail.gmail.com>
- <CANn89iJiuOkKc2AVmccM8z9e_d4zbV61K-3z49ao1UwRDdFiHw@mail.gmail.com> <CAHk-=wgkwBjQWyDQi8mu06DXr_v_4zui+33fk3eK89rPof5b+A@mail.gmail.com>
-In-Reply-To: <CAHk-=wgkwBjQWyDQi8mu06DXr_v_4zui+33fk3eK89rPof5b+A@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 11 Nov 2019 15:51:03 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whFejio0dC3T3a-5wuy9aum45unqacxkFpt5yo+-J502w@mail.gmail.com>
-Message-ID: <CAHk-=whFejio0dC3T3a-5wuy9aum45unqacxkFpt5yo+-J502w@mail.gmail.com>
-Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
-To:     Eric Dumazet <edumazet@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Kirill Smelkov <kirr@nexedi.com>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Marco Elver <elver@google.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
-Content-Type: multipart/mixed; boundary="000000000000e6518e05971aced8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191111160748.GE13307@quack2.suse.cz>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---000000000000e6518e05971aced8
-Content-Type: text/plain; charset="UTF-8"
+> 
+> > In the general case I don't think that correctly protects against:
+> > 
+> > 	if (a_ops->call)
+> > 		a_ops->call();
+> > 
+> > Because not all operations are defined in both ext4_aops and
+> > ext4_journalled_aops.  Specifically migratepage.
+> > 
+> > move_to_new_page() specifically follows the pattern above with migratepage.  So
+> > is there a bug here?
+> 
+> Looks like there could be.
 
-On Mon, Nov 11, 2019 at 11:00 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> > if (ppos) {
-> >      pos = *ppos; // data-race
->
-> That code uses "fdget_pos().
->
-> Which does mutual exclusion _if_ the file is something we care about
-> pos for, and if it has more than one process using it.
+Ok I'm going to leave this alone and whatever I come up with try and make sure
+that the ext4 journal a_ops fits.
 
-That said, the more I look at that code, the less I like it.
+[snip]
 
-I have this feeling we really should get rid of FMODE_ATOMIC_POS
-entirely, now that we have the much nicer FMODE_STREAM to indicate
-that 'pos' really doesn't matter.
+> > 
+> > However I have been looking at SRCU because we also have patterns like:
+> > 
+> > 
+> > 	generic_file_buffered_read
+> > 		if (a_ops->is_partially_uptodate)
+> > 			a_ops->is_partially_uptodate()
+> > 		page_cache_sync_readahead
+> > 			force_page_cache_readahead
+> > 				if (!a_ops->readpage && !a_ops->readpages)
+> > 					return;
+> > 				__do_page_cache_readahead
+> > 					read_pages
+> > 						if (a_ops->readpages)
+> > 							a_ops->readpages()
+> > 						a_ops->readpage
+> > 
+> > 
+> > So we would have to pass the a_ops through to use a rwsem.  Where SRCU I
+> > think would be fine to just take the SRCU read lock multiple times.  Am I
+> > wrong?
+> 
+> So the idea I had would not solve this issue because we'd release the rwsem
+> once we return from ->is_partially_uptodate(). This example shows that we
+> actually expect consistency among different aops as they are called in
+> sequence and that's much more difficult to achieve than just a consistency
+> within single aop call.
 
-Also, the test for "file_count(file) > 1" really is wrong, in that it
-means that we protect against other processes, but not other threads.
+I can't be sure but is seems like consistency for an operation is somewhat
+important.  OR we have to develop rules around when filesystems can, or can not
+change a_ops so that the consistency does not matter.
 
-So maybe we really should do the attached thing. Adding Al and Kirill
-to the cc for comments. Kirill did some fairly in-depth review of the
-whole locking on f_pos, it might be good to get his comments.
+I think what scares me the most is that I'm not really sure what those rules
+are...
 
-Al? Note the change from
+> 
+> > We also have a 3rd (2nd?) issue.  There are callers who check for the
+> > presence of an operation to be used later.  For example do_dentry_open():
+> > 
+> > do_dentry_open()
+> > {
+> > ...
+> > 	if (<flags> & O_DIRECT)
+> > 		if (!<a_ops> || !<a_ops>->direct_IO)
+> > 			return -EINVAL;
+> > ...
+> > }
+> > 
+> > After this open direct_IO better be there AFAICT so changing the a_ops
+> > later would not be good.  For ext4 direct_IO is defined for all the
+> > a_ops...  so I guess that is not a big deal.  However, is the user really
+> > getting the behavior they expect in this case?
+> 
+> In this particular case I don't think there's any practical harm for any
+> filesystem but in general this is another instance where consistency of
+> aops over time is assumed.
 
--               if (file_count(file) > 1) {
-+               if ((v & FDPUT_FPUT) || file_count(file) > 1) {
+Yes...  But this is just a more complex situation to maintain consistency.
+Again I don't have any idea if consistency is required.
 
-in __fdget_pos(). It basically says that the threaded case also does
-the pos locking.
+But the current definition/use of a_ops is very static (with the exception of
+the ext4 case you gave), so I'm thinking that much of the code is written with
+the assumption that the vectors do not change.
 
-NOTE! This is entirely untested. It might be totally broken. It passes
-my "LooksSuperficiallyFine(tm)" test, but that's all I'm going to say
-about the patch.
+> 
+> > I'm afraid of requiring FSs to have to follow rules in defining their a_ops.
+> > Because I'm afraid maintaining those rules would be hard and would eventually
+> > lead to crashes when someone did it wrong.
+> 
+> I guess this very much depends on the rules. But yes, anything non-obvious
+> or hard to check would quickly lead to bugs, I agree. But IMHO fully
+> general solution to above problems would clutter the generic code in rather
+> ugly way as well because usage of aops is pretty widespread in mm and fs
+> code. It isn't just a few places that call them...
 
-            Linus
+I agree it does clutter the code.  and the patches I have are not pretty and
+I'm not even sure they are not broken...  So yea I'm open to ideas!
 
---000000000000e6518e05971aced8
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_k2v2y66l0>
-X-Attachment-Id: f_k2v2y66l0
+> 
+> But I think we could significantly reduce the problem by looking at what's
+> in aops. We have lots of operations there that operate on pages. If we
+> mandate that before and during switching of aops, you must make sure
+> there's nothing in page cache for the inode, you've already dealt with 90%
+> of the problems.
 
-IGZzL2ZpbGUuYyAgICAgICAgICB8IDQgKystLQogZnMvb3Blbi5jICAgICAgICAgIHwgNiArLS0t
-LS0KIGluY2x1ZGUvbGludXgvZnMuaCB8IDIgLS0KIDMgZmlsZXMgY2hhbmdlZCwgMyBpbnNlcnRp
-b25zKCspLCA5IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2ZzL2ZpbGUuYyBiL2ZzL2ZpbGUu
-YwppbmRleCAzZGE5MWExMTJiYWIuLjcwOGU1YzJiN2Q2NSAxMDA2NDQKLS0tIGEvZnMvZmlsZS5j
-CisrKyBiL2ZzL2ZpbGUuYwpAQCAtNzk1LDggKzc5NSw4IEBAIHVuc2lnbmVkIGxvbmcgX19mZGdl
-dF9wb3ModW5zaWduZWQgaW50IGZkKQogCXVuc2lnbmVkIGxvbmcgdiA9IF9fZmRnZXQoZmQpOwog
-CXN0cnVjdCBmaWxlICpmaWxlID0gKHN0cnVjdCBmaWxlICopKHYgJiB+Myk7CiAKLQlpZiAoZmls
-ZSAmJiAoZmlsZS0+Zl9tb2RlICYgRk1PREVfQVRPTUlDX1BPUykpIHsKLQkJaWYgKGZpbGVfY291
-bnQoZmlsZSkgPiAxKSB7CisJaWYgKGZpbGUgJiYgIShmaWxlLT5mX21vZGUgJiBGTU9ERV9TVFJF
-QU0pKSB7CisJCWlmICgodiAmIEZEUFVUX0ZQVVQpIHx8IGZpbGVfY291bnQoZmlsZSkgPiAxKSB7
-CiAJCQl2IHw9IEZEUFVUX1BPU19VTkxPQ0s7CiAJCQltdXRleF9sb2NrKCZmaWxlLT5mX3Bvc19s
-b2NrKTsKIAkJfQpkaWZmIC0tZ2l0IGEvZnMvb3Blbi5jIGIvZnMvb3Blbi5jCmluZGV4IGI2MmY1
-YzA5MjNhOC4uNWM2ODI4MmVhNzllIDEwMDY0NAotLS0gYS9mcy9vcGVuLmMKKysrIGIvZnMvb3Bl
-bi5jCkBAIC03NzEsMTAgKzc3MSw2IEBAIHN0YXRpYyBpbnQgZG9fZGVudHJ5X29wZW4oc3RydWN0
-IGZpbGUgKmYsCiAJCWYtPmZfbW9kZSB8PSBGTU9ERV9XUklURVI7CiAJfQogCi0JLyogUE9TSVgu
-MS0yMDA4L1NVU3Y0IFNlY3Rpb24gWFNJIDIuOS43ICovCi0JaWYgKFNfSVNSRUcoaW5vZGUtPmlf
-bW9kZSkgfHwgU19JU0RJUihpbm9kZS0+aV9tb2RlKSkKLQkJZi0+Zl9tb2RlIHw9IEZNT0RFX0FU
-T01JQ19QT1M7Ci0KIAlmLT5mX29wID0gZm9wc19nZXQoaW5vZGUtPmlfZm9wKTsKIAlpZiAoV0FS
-Tl9PTighZi0+Zl9vcCkpIHsKIAkJZXJyb3IgPSAtRU5PREVWOwpAQCAtMTI1Niw3ICsxMjUyLDcg
-QEAgRVhQT1JUX1NZTUJPTChub25zZWVrYWJsZV9vcGVuKTsKICAqLwogaW50IHN0cmVhbV9vcGVu
-KHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBmaWxlICpmaWxwKQogewotCWZpbHAtPmZfbW9k
-ZSAmPSB+KEZNT0RFX0xTRUVLIHwgRk1PREVfUFJFQUQgfCBGTU9ERV9QV1JJVEUgfCBGTU9ERV9B
-VE9NSUNfUE9TKTsKKwlmaWxwLT5mX21vZGUgJj0gfihGTU9ERV9MU0VFSyB8IEZNT0RFX1BSRUFE
-IHwgRk1PREVfUFdSSVRFKTsKIAlmaWxwLT5mX21vZGUgfD0gRk1PREVfU1RSRUFNOwogCXJldHVy
-biAwOwogfQpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9mcy5oIGIvaW5jbHVkZS9saW51eC9m
-cy5oCmluZGV4IGUwZDkwOWQzNTc2My4uYTdjM2Y2ZGQ1NzAxIDEwMDY0NAotLS0gYS9pbmNsdWRl
-L2xpbnV4L2ZzLmgKKysrIGIvaW5jbHVkZS9saW51eC9mcy5oCkBAIC0xNDgsOCArMTQ4LDYgQEAg
-dHlwZWRlZiBpbnQgKGRpb19pb2RvbmVfdCkoc3RydWN0IGtpb2NiICppb2NiLCBsb2ZmX3Qgb2Zm
-c2V0LAogLyogRmlsZSBpcyBvcGVuZWQgd2l0aCBPX1BBVEg7IGFsbW9zdCBub3RoaW5nIGNhbiBi
-ZSBkb25lIHdpdGggaXQgKi8KICNkZWZpbmUgRk1PREVfUEFUSAkJKChfX2ZvcmNlIGZtb2RlX3Qp
-MHg0MDAwKQogCi0vKiBGaWxlIG5lZWRzIGF0b21pYyBhY2Nlc3NlcyB0byBmX3BvcyAqLwotI2Rl
-ZmluZSBGTU9ERV9BVE9NSUNfUE9TCSgoX19mb3JjZSBmbW9kZV90KTB4ODAwMCkKIC8qIFdyaXRl
-IGFjY2VzcyB0byB1bmRlcmx5aW5nIGZzICovCiAjZGVmaW5lIEZNT0RFX1dSSVRFUgkJKChfX2Zv
-cmNlIGZtb2RlX3QpMHgxMDAwMCkKIC8qIEhhcyByZWFkIG1ldGhvZChzKSAqLwo=
---000000000000e6518e05971aced8--
+Sounds promising...
+
+But digging into this it looks like we need a similar rule for the DAX side to
+have no mappings outstanding.  Perhaps you meant that when you said page cache?
+
+> 
+> Beside these we have:
+> * write_begin - that creates page in page cache so above rule should stop
+>   it as well
+
+Just to make sure I understand, do you propose that we put a check in
+pagecache_write_[begin|end]() to protect from these calls while changing?
+
+I just want to be sure because I've wondered if we can get away with minimal
+checks, or checks on individual functions, in the generic code.  But that
+seemed kind of ugly as well.
+
+> * bmap - honestly I'd be inclined to just move this to inode_operations
+>   just like fiemap. There's nothing about address_space in its functionality.
+
+Hmmm...  What about these call paths?
+
+ext4_bmap()
+	filemap_write_and_wait()
+		filemap_fdatawrite()
+			__filemap_fdatawrite()
+				__filemap_fdatawrite_range()
+					do_writepages()
+						a_ops->writepages()
+
+or
+
+xfs_vm_bmap()
+	iomap_bmap()
+		filemap_write_and_wait()
+			...
+:-/
+
+maybe we should leave it and have it covered under the page cache rule you
+propose?
+
+
+> * swap_activate / swap_deactivate - Either I'd move these to
+>   file_operations (what's there about address_space, right), or since all
+>   instances of this only care about the inode, we can as well just pass
+>   only inode to the function and move it to inode_operations.
+
+XFS calls iomap_swapfile_activate() which calls vfs_fsync() which needs the
+file.  Seems like file_operations would be better.
+
+I like the idea of cleaning this up a lot.  I've gone ahead with a couple of
+patches to do this.  At least this simplifies things a little bit...
+
+> 
+> And then the really problematic ones:
+> * direct_IO - Logically with how the IO path is structured, it belongs in
+>   aops so I wouldn't move it. With the advance of iomap it is on its way to
+>   being removed altogether but that will take a long time to happen
+>   completely. So for now I'd mandate that direct_IO path must be locked out
+>   while switching aops.
+
+How do we lock this out between checking for this support on open and using it
+later?
+
+I think if we go down this path we have to make a rule that says that direct_IO
+must be defined for both a_ops.  Right now for our 2 use case we are lucky that
+direct_IO is also defined as the same function.  So there is little danger of
+odd behavior.
+
+Let me explore more.
+
+> * readpages - these should be locked out by the rule that page creation is
+>   forbidden.
+
+Agreed.  Same question applies here as for pagecache_write_[begin|end]().
+Should I special case a check for this?
+
+> * writepages - these need to be locked out when switching aops.
+
+If nothing is in the pagecache could we ignore this as well?
+
+> 
+> And that should be it. So I don't think there's a need for reference-counting
+> of aops in the generic code, especially since I don't think it can be done
+> in an elegant way (but feel free to correct me). I think that just
+> providing a way to lock-out above three calls would be enough.
+
+Ok, I've been thinking about this whole email more today.  And what if we add a
+couple of FS specific lockout callbacks in struct address_space itself.
+
+If they are defined the FS has dynamic a_ops capability and these 3 functions
+will need to be locked out by a rw_sem controlled by the FS.
+
+We can then document the "rules" for dynamic a_ops better for FS's to support
+them by referencing the special cases and the fact that dynamic a_ops requires
+these callbacks to be defined.
+
+It clutters the generic code a bit, but not as much as my idea.  At the same
+time it helps to self document the special cases in both the FS's and the core
+code.
+
+[snip]
+
+> > 
+> > 
+> > I'm still working out the details of using SRCU and a ref count.  I have made
+> > at least 1 complete pass of all the a_ops users and I think this would cover
+> > them all.
+> 
+> Well, my concern with the use of interface like this is:
+> 
+> a) The clutter in the generic code
+
+There is a bit of clutter.  What I'm most concerned about is the amount of
+special casing.  I still think it would be cleaner in the long run...  And
+force some structure on the use of a_ops.  But after looking at it more there
+may be a middle ground.
+
+> b) It's difficult to make this work with SRCU because presumably you want
+>    to use synchronize_srcu() while switching aops. But then you have three
+>    operations to do:
+>    1) switch aops
+>    2) set inode flag
+>    3) synchronize_srcu
+> 
+>    and depending on the order in which you do these either "old aops"
+>    operations will see inode with a flag or "new aops" will see the inode
+>    without a flag and either can confuse those functions...
+
+Yes that might be a challenge.
+
+Ira
+
