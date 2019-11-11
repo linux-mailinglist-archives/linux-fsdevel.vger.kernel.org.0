@@ -2,66 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3711F78AE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 17:25:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A858EF78DD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 17:34:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbfKKQZE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Nov 2019 11:25:04 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:55388 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726845AbfKKQZD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Nov 2019 11:25:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xpsjH3Rxk+PTzoxkOgZp7C1flZE/0kiFWtXlSW8zmmw=; b=Peyngf2bhOnRCdtwxQx45nP8t
-        wAM5uTHozveypsI8OvzwXiRStp/WogTr0roVN/uKHuLazBH7c+mWXnXqQ1PKU5tSSg1e3alIDQiv3
-        FoYLONj0SfEZQMbaDMmpbxCW5xcYZ9L1SnHvEHDzhRtO7O0d7aMOcu56vmmClKNhy0qMGroZpe07j
-        g0d71Zzb1txtXYa9dO7Wuxk56P3CgfiqUMc+4tpfGEmKjdkM/OmNWYfloVPA/ijo8jtYfxjeSq4E8
-        eeVarnc5boRMwTbtMWZ2BRbavAOznWvd4Qfnl+WCs5qe+IPj7AwPuiJsA1G1sHW4F1KsiGV/oZmhZ
-        fSLdpIETw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iUCUv-0001T1-CH; Mon, 11 Nov 2019 16:25:01 +0000
-Date:   Mon, 11 Nov 2019 08:25:01 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [PATCH] fs/splice: ignore flag SPLICE_F_GIFT in syscall vmsplice
-Message-ID: <20191111162501.GB24952@infradead.org>
-References: <157338008330.5347.7117089871769008055.stgit@buzz>
+        id S1726916AbfKKQeu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Nov 2019 11:34:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59414 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726857AbfKKQeu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 11 Nov 2019 11:34:50 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 42899B157;
+        Mon, 11 Nov 2019 16:34:48 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id AF7D21E47E5; Mon, 11 Nov 2019 17:34:46 +0100 (CET)
+Date:   Mon, 11 Nov 2019 17:34:46 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     Jan Kara <jack@suse.cz>,
+        Dongsheng Yang <yangds.fnst@cn.fujitsu.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org, kernel@pengutronix.de,
+        Jan Kara <jack@suse.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 7/7] ubifs: Add quota support
+Message-ID: <20191111163446.GF13307@quack2.suse.cz>
+References: <20191106091537.32480-1-s.hauer@pengutronix.de>
+ <20191106091537.32480-8-s.hauer@pengutronix.de>
+ <20191106101428.GD16085@quack2.suse.cz>
+ <20191111085745.t6qbckcxt6byaoxq@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <157338008330.5347.7117089871769008055.stgit@buzz>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20191111085745.t6qbckcxt6byaoxq@pengutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Nov 10, 2019 at 01:01:23PM +0300, Konstantin Khlebnikov wrote:
-> Generic support of flag SPLICE_F_MOVE in syscall splice was removed in
-> kernel 2.6.21 commit 485ddb4b9741 ("1/2 splice: dont steal").
-> Infrastructure stay intact and this feature may came back.
-> At least driver or filesystem could provide own implementation.
-> 
-> But stealing mapped pages from userspace never worked and is very
-> unlikely that will ever make sense due to unmapping overhead.
-> Also lru handling is broken if gifted anon page spliced into file.
-> 
-> Let's seal entry point for marking page as a gift in vmsplice.
+Hi Sascha!
 
-Please kill off PIPE_BUF_FLAG_GIFT entirely, there is no need to keep
-dead code around.  Anyone who cares enough can resurrect it from git
-history.
+On Mon 11-11-19 09:57:45, Sascha Hauer wrote:
+> On Wed, Nov 06, 2019 at 11:14:28AM +0100, Jan Kara wrote:
+> > > +/**
+> > > + * ubifs_dqblk_find_next - find the next qid
+> > > + * @c: UBIFS file-system description object
+> > > + * @qid: The qid to look for
+> > > + *
+> > > + * Find the next dqblk entry with a qid that is bigger or equally big than the
+> > > + * given qid. Returns the next dqblk entry if found or NULL if no dqblk exists
+> > > + * with a qid that is at least equally big.
+> > > + */
+> > > +static struct ubifs_dqblk *ubifs_dqblk_find_next(struct ubifs_info *c,
+> > > +						 struct kqid qid)
+> > > +{
+> > > +	struct rb_node *node = c->dqblk_tree[qid.type].rb_node;
+> > > +	struct ubifs_dqblk *next = NULL;
+> > > +
+> > > +	while (node) {
+> > > +		struct ubifs_dqblk *ud = rb_entry(node, struct ubifs_dqblk, rb);
+> > > +
+> > > +		if (qid_eq(qid, ud->kqid))
+> > > +			return ud;
+> > > +
+> > > +		if (qid_lt(qid, ud->kqid)) {
+> > > +			if (!next || qid_lt(ud->kqid, next->kqid))
+			^^^
+This condition looks superfluous as it should be always true. The last node
+where you went left should be the least greater node if you didn't find the
+exact match...
+
+> > > +				next = ud;
+> > > +
+> > > +			node = node->rb_left;
+> > > +		} else {
+> > > +			node = node->rb_right;
+> > > +		}
+> > > +	}
+> > > +
+> > > +	return next;
+> > > +}
+> > 
+> > Why not use rb_next() here? It should do what you need, shouldn't it?
+> 
+> I could use rb_next(), but it defeats the purpose of a tree to iterate
+> over the whole tree to find an entry. If I wanted that I would have used
+> a list.
+
+I wasn't quite clear in my suggestion and now that I look at it it was
+actually misleading. I'm sorry for that. So a second try :):
+
+You have ubifs_dqblk_find() and ubifs_dqblk_find_next() doing very similar
+rbtree traversal. I think you could remove that duplication by using
+ubifs_dqblk_find_next() from ubifs_dqblk_find()?
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
