@@ -2,160 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 773F5F6C40
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 02:26:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DB4FF6F05
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 08:30:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726763AbfKKB0v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 Nov 2019 20:26:51 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:43124 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbfKKB0v (ORCPT
+        id S1726804AbfKKHaM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Nov 2019 02:30:12 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42372 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726785AbfKKHaL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 10 Nov 2019 20:26:51 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAB1O9GW089143;
-        Mon, 11 Nov 2019 01:26:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=rfHdU6/XNEaBywpxAH8t9QCjQ+pIBE8zfhrbaRJmplw=;
- b=QkWoTUzvtNRpdnRIMcpv//Ny6sAc+cat0JxoLpIaQKJh2JEDqZ0CUQTNfneOELaOREvT
- ksf4YKg20Lp5LR0MusZpDxX8OQV9HexLVERN5xw/hIJyx8GtxxEeBWsu7EwGI2LJjxZ8
- LTs9Hn2B/tFrK3ne81nAHEfVdYd/1gymyiSbsaYX7Si8tIHOThu5WKjyXmG5Blxeh4LB
- ijrt3/HEx87aNmWXhjNoQR9cfvBbrEiXchhbOUIM+fkNxcIRYwED2znn+S7cF8oTJC/N
- 4bZxy8xCKq9BMTuVUPv9QTVtdWS7YHTjDE6Vm+akNCfV3b1Yngx6sXAM2DxneSQmqvdQ Kw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2w5p3qc27x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 11 Nov 2019 01:26:28 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAB1MswV097958;
-        Mon, 11 Nov 2019 01:26:27 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2w66ytnuta-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 11 Nov 2019 01:26:27 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAB1QH9C001225;
-        Mon, 11 Nov 2019 01:26:17 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 10 Nov 2019 17:26:16 -0800
-Date:   Sun, 10 Nov 2019 17:26:14 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Jan Stancek <jstancek@redhat.com>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        LTP List <ltp@lists.linux.it>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, chrubis <chrubis@suse.cz>,
-        open list <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        lkft-triage@lists.linaro.org,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>
-Subject: Re: LTP: diotest4.c:476: read to read-only space. returns 0: Success
-Message-ID: <20191111012614.GC6235@magnolia>
-References: <CA+G9fYtmA5F174nTAtyshr03wkSqMS7+7NTDuJMd_DhJF6a4pw@mail.gmail.com>
- <852514139.11036267.1573172443439.JavaMail.zimbra@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <852514139.11036267.1573172443439.JavaMail.zimbra@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9437 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1910280000 definitions=main-1911110010
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9437 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
- definitions=main-1911110010
+        Mon, 11 Nov 2019 02:30:11 -0500
+Received: by mail-wr1-f68.google.com with SMTP id a15so13378359wrf.9;
+        Sun, 10 Nov 2019 23:30:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=NY5K7XoiMGGUj/e5AbZmCH/5tz6YlPNT7ys8PeCHnBo=;
+        b=eTKTmUVKe+sAUtiEjIll4p0x9ja0Q3uLF/osiHU5V5KowU6Kv9LUN4XeYfcRmvSjqf
+         McUAgNxxQSxCSXG7XVtan1vNw0rj1wbcmx2Zqt0Os2cD68MUAA7vBnR/On94FFcf4dgN
+         FpyAgYyQVr81uXnsJumM2b58bOeBHw8lrcX1kzHOq9N+B1Gmn3GWKBBxcDgwxSaa+Yow
+         RUL/76g0l6khK3o07kA8fpfkegCYg7d0LyaCs/+57FWeIFcmsyRpkDB2Lbe7tuBReXZv
+         9aKReHYw4+CO2WWoyrrfinmNnX9RtLUzq8bxlJIHJAhLwhSAQqTsSlMMA3/ylGs/RkC7
+         Z6RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=NY5K7XoiMGGUj/e5AbZmCH/5tz6YlPNT7ys8PeCHnBo=;
+        b=bufWZGvvJ85j/gadD6Fp9cfv6lDETnAUmXQ13j84Itf6kxOhQB1IcS18Wn3LfKDz2i
+         9N+U4aQNT9Z7PuegZ8/5iIFfPusGuBO29NqgHUsbUkIimpfomBOJYxgTHqFsBVURmcVJ
+         YRuMpzpt9mIMJ+dZxFBX7PMmiveTt/323Puo++j+Bcg8dEWE6OYLugFIb4XMq5an2J8d
+         uFyV/qnSQGm/5P7aIWyiO1bCBbb9ry7LXPUhHUGEgdXSn3+CoEIMNv9Df3iHNIn1rf+R
+         Sfzfim20RnHTyWSmvJJiG3WfNytAL0HhndDrA8lWGu/J8DHusDo1RVYAiZbb0GlIo96A
+         e/7A==
+X-Gm-Message-State: APjAAAXTkrxwDLvtWFIkKvr74RnyVWES+qQXyo3jYN2j9yMHQE8dOHR9
+        +EiliYfdLsJ/cxIBP0v0r3c=
+X-Google-Smtp-Source: APXvYqxRMATLlDFdxdTENYHygL9EJBYTfK+n2ZhiW1zS3MQ2uZBQQBxovLiP+oDNDjNuRVYoT4yHng==
+X-Received: by 2002:adf:b64e:: with SMTP id i14mr18500662wre.332.1573457407820;
+        Sun, 10 Nov 2019 23:30:07 -0800 (PST)
+Received: from localhost.localdomain ([94.230.83.228])
+        by smtp.gmail.com with ESMTPSA id a6sm18960800wrh.69.2019.11.10.23.30.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Nov 2019 23:30:07 -0800 (PST)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] ovl: fix timestamp limits
+Date:   Mon, 11 Nov 2019 09:30:00 +0200
+Message-Id: <20191111073000.2957-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[add the other iomap maintainer to cc]
-[add the ext4 list to cc since they just added iomap directio support]
-[add the ext4 maintainer for the same reason]
+Overlayfs timestamp overflow limits should be inherrited from upper
+filesystem.
 
-On Thu, Nov 07, 2019 at 07:20:43PM -0500, Jan Stancek wrote:
-> 
-> 
-> ----- Original Message -----
-> > LTP test case dio04 test failed on 32bit kernel running linux next
-> > 20191107 kernel.
-> > Linux version 5.4.0-rc6-next-20191107.
-> > 
-> > diotest4    1  TPASS  :  Negative Offset
-> > diotest4    2  TPASS  :  removed
-> > diotest4    3  TPASS  :  Odd count of read and write
-> > diotest4    4  TPASS  :  Read beyond the file size
-> > diotest4    5  TPASS  :  Invalid file descriptor
-> > diotest4    6  TPASS  :  Out of range file descriptor
-> > diotest4    7  TPASS  :  Closed file descriptor
-> > diotest4    8  TPASS  :  removed
-> > diotest4    9  TCONF  :  diotest4.c:345: Direct I/O on /dev/null is
-> > not supported
-> > diotest4   10  TPASS  :  read, write to a mmaped file
-> > diotest4   11  TPASS  :  read, write to an unmapped file
-> > diotest4   12  TPASS  :  read from file not open for reading
-> > diotest4   13  TPASS  :  write to file not open for writing
-> > diotest4   14  TPASS  :  read, write with non-aligned buffer
-> > diotest4   15  TFAIL  :  diotest4.c:476: read to read-only space.
-> > returns 0: Success
-> > diotest4   16  TFAIL  :  diotest4.c:180: read, write buffer in read-only
-> > space
-> > diotest4   17  TFAIL  :  diotest4.c:114: read allows  nonexistant
-> > space. returns 0: Success
-> > diotest4   18  TFAIL  :  diotest4.c:129: write allows  nonexistant
-> > space.returns -1: Invalid argument
-> > diotest4   19  TFAIL  :  diotest4.c:180: read, write in non-existant space
-> > diotest4   20  TPASS  :  read, write for file with O_SYNC
-> > diotest4    0  TINFO  :  2/15 test blocks failed
-> 
-> Smaller reproducer for 32-bit system and ext4 is:
->   openat(AT_FDCWD, "testdata-4.5918", O_RDWR|O_DIRECT) = 4
->   mmap2(NULL, 4096, PROT_READ, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb7f7b000
->   read(4, 0xb7f7b000, 4096)              = 0 // expects -EFAULT
-> 
-> Problem appears to be conversion in ternary operator at
-> iomap_dio_bio_actor() return. Test passes for me with
-> following tweak:
+The current behavior, when overlayfs is over an underlying filesystem
+that does not support post 2038 timestamps (e.g. xfs), is that overlayfs
+overflows post 2038 timestamps instead of clamping them.
 
-I can't do a whole lot with a code snippet that lacks a proper SOB
-header.
+This change fixes xfstest generic/402 (verify filesystem timestamps for
+supported ranges).
 
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 2f88d64c2a4d..8615b1f78389 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -318,7 +318,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
->                 if (pad)
->                         iomap_dio_zero(dio, iomap, pos, fs_block_size - pad);
->         }
-> -       return copied ? copied : ret;
-> +       return copied ? (loff_t) copied : ret;
+Cc: Deepa Dinamani <deepa.kernel@gmail.com>
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
 
-I'm a little confused on this proposed fix -- why does casting size_t
-(aka unsigned long) to loff_t (long long) on a 32-bit system change the
-test outcome?  Does this same diotest4 failure happen with XFS?  I ask
-because XFS has been using iomap for directio for ages.
+(*) generic/402 currently does 'notrun' on overlayfs and need
+    a small fix that I will post shortly
 
-AFAICT @copied is a simple byte counter, and the other variable @n that
-gets added to @copied is also a simple byte counter -- nobody should
-ever be trying to stuff a negative value in there?
+ fs/overlayfs/super.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-(Or is this a bug with the ext4 code that calls iomap_dio_rw?)
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index 5d4faab57ba0..44915874fccb 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -1621,6 +1621,8 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
+ 
+ 		sb->s_stack_depth = ofs->upper_mnt->mnt_sb->s_stack_depth;
+ 		sb->s_time_gran = ofs->upper_mnt->mnt_sb->s_time_gran;
++		sb->s_time_min = ofs->upper_mnt->mnt_sb->s_time_min;
++		sb->s_time_max = ofs->upper_mnt->mnt_sb->s_time_max;
+ 
+ 	}
+ 	oe = ovl_get_lowerstack(sb, ofs);
+-- 
+2.17.1
 
---D
-
->  }
-> 
->  static loff_t
-> 
