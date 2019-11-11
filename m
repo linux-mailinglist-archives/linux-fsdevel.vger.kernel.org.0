@@ -2,180 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86A9BF7158
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 11:06:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85A77F715D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 11:08:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbfKKKGt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Nov 2019 05:06:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59974 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726768AbfKKKGt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Nov 2019 05:06:49 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8FC55B126;
-        Mon, 11 Nov 2019 10:06:46 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 188F51E4AD6; Mon, 11 Nov 2019 11:06:46 +0100 (CET)
-Date:   Mon, 11 Nov 2019 11:06:46 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jan Kara <jack@suse.com>,
-        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
-Subject: Re: [PATCH v2] fs/quota: handle overflows of sysctl fs.quota.* and
- report as unsigned long
-Message-ID: <20191111100646.GA13307@quack2.suse.cz>
-References: <157337934693.2078.9842146413181153727.stgit@buzz>
+        id S1726879AbfKKKIJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Nov 2019 05:08:09 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:57763 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726768AbfKKKIJ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 11 Nov 2019 05:08:09 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1iU6cC-0006uV-5z; Mon, 11 Nov 2019 11:08:08 +0100
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1iU6cB-0000CY-8J; Mon, 11 Nov 2019 11:08:07 +0100
+Date:   Mon, 11 Nov 2019 11:08:07 +0100
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        Jan Kara <jack@suse.com>, Richard Weinberger <richard@nod.at>,
+        kernel@pengutronix.de
+Subject: Re: [PATCH 04/10] quota: Allow to pass mount path to quotactl
+Message-ID: <20191111100807.dzomp2o7n3mch6xx@pengutronix.de>
+References: <20191030152702.14269-1-s.hauer@pengutronix.de>
+ <20191030152702.14269-5-s.hauer@pengutronix.de>
+ <20191101160706.GA23441@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <157337934693.2078.9842146413181153727.stgit@buzz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191101160706.GA23441@quack2.suse.cz>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 11:03:12 up 126 days, 16:13, 138 users,  load average: 0.25, 0.27,
+ 0.19
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-fsdevel@vger.kernel.org
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun 10-11-19 12:49:06, Konstantin Khlebnikov wrote:
-> Quota statistics counted as 64-bit per-cpu counter. Reading sums per-cpu
-> fractions as signed 64-bit int, filters negative values and then reports
-> lower half as signed 32-bit int.
+On Fri, Nov 01, 2019 at 05:07:06PM +0100, Jan Kara wrote:
+> On Wed 30-10-19 16:26:56, Sascha Hauer wrote:
+> > This patch introduces the Q_PATH flag to the quotactl cmd argument.
+> > When given, the path given in the special argument to quotactl will
+> > be the mount path where the filesystem is mounted, instead of a path
+> > to the block device.
+> > This is necessary for filesystems which do not have a block device as
+> > backing store. Particularly this is done for upcoming UBIFS support.
+> > 
+> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 > 
-> Result may looks like:
+> Thanks for the patch! Some smaller comments below...
 > 
-> fs.quota.allocated_dquots = 22327
-> fs.quota.cache_hits = -489852115
-> fs.quota.drops = -487288718
-> fs.quota.free_dquots = 22083
-> fs.quota.lookups = -486883485
-> fs.quota.reads = 22327
-> fs.quota.syncs = 335064
-> fs.quota.writes = 3088689
+> > ---
+> >  fs/quota/quota.c           | 37 ++++++++++++++++++++++++++++---------
+> >  include/uapi/linux/quota.h |  1 +
+> >  2 files changed, 29 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/fs/quota/quota.c b/fs/quota/quota.c
+> > index cb13fb76dbee..035cdd1b022b 100644
+> > --- a/fs/quota/quota.c
+> > +++ b/fs/quota/quota.c
+> > @@ -19,6 +19,7 @@
+> >  #include <linux/types.h>
+> >  #include <linux/writeback.h>
+> >  #include <linux/nospec.h>
+> > +#include <linux/mount.h>
+> >  
+> >  static int check_quotactl_permission(struct super_block *sb, int type, int cmd,
+> >  				     qid_t id)
+> > @@ -825,12 +826,16 @@ int kernel_quotactl(unsigned int cmd, const char __user *special,
+> >  {
+> >  	uint cmds, type;
+> >  	struct super_block *sb = NULL;
+> > -	struct path path, *pathp = NULL;
+> > +	struct path path, *pathp = NULL, qpath;
 > 
-> Values bigger than 2^31-1 reported as negative.
+> Maybe call these two 'file_path', 'file_pathp', and 'sb_path' to make it
+> clearer which path is which?
 > 
-> All counters except "allocated_dquots" and "free_dquots" are monotonic,
-> thus they should be reported as is without filtering negative values.
+> >  	int ret;
+> > +	bool q_path;
+> >  
+> >  	cmds = cmd >> SUBCMDSHIFT;
+> >  	type = cmd & SUBCMDMASK;
+> >  
+> > +	q_path = cmds & Q_PATH;
+> > +	cmds &= ~Q_PATH;
+> > +
+> >  	/*
+> >  	 * As a special case Q_SYNC can be called without a specific device.
+> >  	 * It will iterate all superblocks that have quota enabled and call
+> > @@ -855,19 +860,33 @@ int kernel_quotactl(unsigned int cmd, const char __user *special,
+> >  			pathp = &path;
+> >  	}
+> >  
+> > -	sb = quotactl_block(special, cmds);
+> > -	if (IS_ERR(sb)) {
+> > -		ret = PTR_ERR(sb);
+> > -		goto out;
+> > +	if (q_path) {
+> > +		ret = user_path_at(AT_FDCWD, special, LOOKUP_FOLLOW|LOOKUP_AUTOMOUNT,
+> > +				   &qpath);
+> > +		if (ret)
+> > +			goto out1;
+> > +
+> > +		sb = qpath.mnt->mnt_sb;
+> > +	} else {
+> > +		sb = quotactl_block(special, cmds);
+> > +		if (IS_ERR(sb)) {
+> > +			ret = PTR_ERR(sb);
+> > +			goto out;
+> > +		}
+> >  	}
+> >  
+> >  	ret = do_quotactl(sb, type, cmds, id, addr, pathp);
+> >  
+> > -	if (!quotactl_cmd_onoff(cmds))
+> > -		drop_super(sb);
+> > -	else
+> > -		drop_super_exclusive(sb);
+> > +	if (!q_path) {
+> > +		if (!quotactl_cmd_onoff(cmds))
+> > +			drop_super(sb);
+> > +		else
+> > +			drop_super_exclusive(sb);
+> > +	}
+> >  out:
+> > +	if (q_path)
+> > +		path_put(&qpath);
+> > +out1:
 > 
-> Kernel doesn't have generic helper for 64-bit sysctl yet,
-> let's use at least unsigned long.
-> 
-> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> Why do you need out1? If you leave 'out' as is, things should just work.
+> And you can also combine the above if like:
 
-Thanks! I've added the patch to my tree.
+See above where out1 is used. In this case qpath is not valid and I
+cannot call path_put() on it.
 
-								Honza
+I see that having q_path and qpath as different variables is confusing,
+but as you say I will rename qpath to sb_path, so hopefully this
+already makes it clearer.
 
-> ---
->  fs/quota/dquot.c      |   29 +++++++++++++++++------------
->  include/linux/quota.h |    2 +-
->  2 files changed, 18 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-> index 6e826b454082..fa6ec4f96791 100644
-> --- a/fs/quota/dquot.c
-> +++ b/fs/quota/dquot.c
-> @@ -2860,68 +2860,73 @@ EXPORT_SYMBOL(dquot_quotactl_sysfile_ops);
->  static int do_proc_dqstats(struct ctl_table *table, int write,
->  		     void __user *buffer, size_t *lenp, loff_t *ppos)
->  {
-> -	unsigned int type = (int *)table->data - dqstats.stat;
-> +	unsigned int type = (unsigned long *)table->data - dqstats.stat;
-> +	s64 value = percpu_counter_sum(&dqstats.counter[type]);
-> +
-> +	/* Filter negative values for non-monotonic counters */
-> +	if (value < 0 && (type == DQST_ALLOC_DQUOTS ||
-> +			  type == DQST_FREE_DQUOTS))
-> +		value = 0;
->  
->  	/* Update global table */
-> -	dqstats.stat[type] =
-> -			percpu_counter_sum_positive(&dqstats.counter[type]);
-> -	return proc_dointvec(table, write, buffer, lenp, ppos);
-> +	dqstats.stat[type] = value;
-> +	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
->  }
->  
->  static struct ctl_table fs_dqstats_table[] = {
->  	{
->  		.procname	= "lookups",
->  		.data		= &dqstats.stat[DQST_LOOKUPS],
-> -		.maxlen		= sizeof(int),
-> +		.maxlen		= sizeof(unsigned long),
->  		.mode		= 0444,
->  		.proc_handler	= do_proc_dqstats,
->  	},
->  	{
->  		.procname	= "drops",
->  		.data		= &dqstats.stat[DQST_DROPS],
-> -		.maxlen		= sizeof(int),
-> +		.maxlen		= sizeof(unsigned long),
->  		.mode		= 0444,
->  		.proc_handler	= do_proc_dqstats,
->  	},
->  	{
->  		.procname	= "reads",
->  		.data		= &dqstats.stat[DQST_READS],
-> -		.maxlen		= sizeof(int),
-> +		.maxlen		= sizeof(unsigned long),
->  		.mode		= 0444,
->  		.proc_handler	= do_proc_dqstats,
->  	},
->  	{
->  		.procname	= "writes",
->  		.data		= &dqstats.stat[DQST_WRITES],
-> -		.maxlen		= sizeof(int),
-> +		.maxlen		= sizeof(unsigned long),
->  		.mode		= 0444,
->  		.proc_handler	= do_proc_dqstats,
->  	},
->  	{
->  		.procname	= "cache_hits",
->  		.data		= &dqstats.stat[DQST_CACHE_HITS],
-> -		.maxlen		= sizeof(int),
-> +		.maxlen		= sizeof(unsigned long),
->  		.mode		= 0444,
->  		.proc_handler	= do_proc_dqstats,
->  	},
->  	{
->  		.procname	= "allocated_dquots",
->  		.data		= &dqstats.stat[DQST_ALLOC_DQUOTS],
-> -		.maxlen		= sizeof(int),
-> +		.maxlen		= sizeof(unsigned long),
->  		.mode		= 0444,
->  		.proc_handler	= do_proc_dqstats,
->  	},
->  	{
->  		.procname	= "free_dquots",
->  		.data		= &dqstats.stat[DQST_FREE_DQUOTS],
-> -		.maxlen		= sizeof(int),
-> +		.maxlen		= sizeof(unsigned long),
->  		.mode		= 0444,
->  		.proc_handler	= do_proc_dqstats,
->  	},
->  	{
->  		.procname	= "syncs",
->  		.data		= &dqstats.stat[DQST_SYNCS],
-> -		.maxlen		= sizeof(int),
-> +		.maxlen		= sizeof(unsigned long),
->  		.mode		= 0444,
->  		.proc_handler	= do_proc_dqstats,
->  	},
-> diff --git a/include/linux/quota.h b/include/linux/quota.h
-> index f32dd270b8e3..27aab84fcbaa 100644
-> --- a/include/linux/quota.h
-> +++ b/include/linux/quota.h
-> @@ -263,7 +263,7 @@ enum {
->  };
->  
->  struct dqstats {
-> -	int stat[_DQST_DQSTAT_LAST];
-> +	unsigned long stat[_DQST_DQSTAT_LAST];
->  	struct percpu_counter counter[_DQST_DQSTAT_LAST];
->  };
->  
-> 
+Sascha
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
