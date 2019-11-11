@@ -2,364 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 531D8F72A8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 12:01:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE580F72B8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 12:06:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726888AbfKKLBH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Nov 2019 06:01:07 -0500
-Received: from relay.sw.ru ([185.231.240.75]:35558 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726791AbfKKLBH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Nov 2019 06:01:07 -0500
-Received: from dhcp-172-16-24-163.sw.ru ([172.16.24.163] helo=snorch.sw.ru)
-        by relay.sw.ru with esmtp (Exim 4.92.3)
-        (envelope-from <ptikhomirov@virtuozzo.com>)
-        id 1iU7Qu-00028X-SV; Mon, 11 Nov 2019 14:00:33 +0300
-From:   Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Paul Moore <paul@paul-moore.com>,
-        Richard Guy Briggs <rgb@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org,
-        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-        Andrei Vagin <avagin@gmail.com>, <devel@openvz.org>
-Subject: [PATCH] fs: add new O_MNT flag for opening mount root from mountpoint fd
-Date:   Mon, 11 Nov 2019 14:00:29 +0300
-Message-Id: <20191111110029.16483-1-ptikhomirov@virtuozzo.com>
-X-Mailer: git-send-email 2.21.0
+        id S1726823AbfKKLGC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Nov 2019 06:06:02 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60236 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726768AbfKKLGC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 11 Nov 2019 06:06:02 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A3FBBABBD;
+        Mon, 11 Nov 2019 11:05:59 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 39D281E4AD6; Mon, 11 Nov 2019 12:05:59 +0100 (CET)
+Date:   Mon, 11 Nov 2019 12:05:59 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, Jan Kara <jack@suse.com>,
+        Richard Weinberger <richard@nod.at>, kernel@pengutronix.de
+Subject: Re: [PATCH 04/10] quota: Allow to pass mount path to quotactl
+Message-ID: <20191111110559.GB13307@quack2.suse.cz>
+References: <20191030152702.14269-1-s.hauer@pengutronix.de>
+ <20191030152702.14269-5-s.hauer@pengutronix.de>
+ <20191101160706.GA23441@quack2.suse.cz>
+ <20191111100807.dzomp2o7n3mch6xx@pengutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191111100807.dzomp2o7n3mch6xx@pengutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Imagine that we have an open fd on the directory (or file) - dfd, and a
-new mount - mnt is created with these directory as a mountpoint. Before
-this patch we had no way to access the contents of mnt through these
-dfd.
+On Mon 11-11-19 11:08:07, Sascha Hauer wrote:
+> On Fri, Nov 01, 2019 at 05:07:06PM +0100, Jan Kara wrote:
+> > On Wed 30-10-19 16:26:56, Sascha Hauer wrote:
+> > > This patch introduces the Q_PATH flag to the quotactl cmd argument.
+> > > When given, the path given in the special argument to quotactl will
+> > > be the mount path where the filesystem is mounted, instead of a path
+> > > to the block device.
+> > > This is necessary for filesystems which do not have a block device as
+> > > backing store. Particularly this is done for upcoming UBIFS support.
+> > > 
+> > > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> > 
+> > Thanks for the patch! Some smaller comments below...
+> > 
+> > > ---
+> > >  fs/quota/quota.c           | 37 ++++++++++++++++++++++++++++---------
+> > >  include/uapi/linux/quota.h |  1 +
+> > >  2 files changed, 29 insertions(+), 9 deletions(-)
+> > > 
+> > > diff --git a/fs/quota/quota.c b/fs/quota/quota.c
+> > > index cb13fb76dbee..035cdd1b022b 100644
+> > > --- a/fs/quota/quota.c
+> > > +++ b/fs/quota/quota.c
+> > > @@ -19,6 +19,7 @@
+> > >  #include <linux/types.h>
+> > >  #include <linux/writeback.h>
+> > >  #include <linux/nospec.h>
+> > > +#include <linux/mount.h>
+> > >  
+> > >  static int check_quotactl_permission(struct super_block *sb, int type, int cmd,
+> > >  				     qid_t id)
+> > > @@ -825,12 +826,16 @@ int kernel_quotactl(unsigned int cmd, const char __user *special,
+> > >  {
+> > >  	uint cmds, type;
+> > >  	struct super_block *sb = NULL;
+> > > -	struct path path, *pathp = NULL;
+> > > +	struct path path, *pathp = NULL, qpath;
+> > 
+> > Maybe call these two 'file_path', 'file_pathp', and 'sb_path' to make it
+> > clearer which path is which?
+> > 
+> > >  	int ret;
+> > > +	bool q_path;
+> > >  
+> > >  	cmds = cmd >> SUBCMDSHIFT;
+> > >  	type = cmd & SUBCMDMASK;
+> > >  
+> > > +	q_path = cmds & Q_PATH;
+> > > +	cmds &= ~Q_PATH;
+> > > +
+> > >  	/*
+> > >  	 * As a special case Q_SYNC can be called without a specific device.
+> > >  	 * It will iterate all superblocks that have quota enabled and call
+> > > @@ -855,19 +860,33 @@ int kernel_quotactl(unsigned int cmd, const char __user *special,
+> > >  			pathp = &path;
+> > >  	}
+> > >  
+> > > -	sb = quotactl_block(special, cmds);
+> > > -	if (IS_ERR(sb)) {
+> > > -		ret = PTR_ERR(sb);
+> > > -		goto out;
+> > > +	if (q_path) {
+> > > +		ret = user_path_at(AT_FDCWD, special, LOOKUP_FOLLOW|LOOKUP_AUTOMOUNT,
+> > > +				   &qpath);
+> > > +		if (ret)
+> > > +			goto out1;
+> > > +
+> > > +		sb = qpath.mnt->mnt_sb;
+> > > +	} else {
+> > > +		sb = quotactl_block(special, cmds);
+> > > +		if (IS_ERR(sb)) {
+> > > +			ret = PTR_ERR(sb);
+> > > +			goto out;
+> > > +		}
+> > >  	}
+> > >  
+> > >  	ret = do_quotactl(sb, type, cmds, id, addr, pathp);
+> > >  
+> > > -	if (!quotactl_cmd_onoff(cmds))
+> > > -		drop_super(sb);
+> > > -	else
+> > > -		drop_super_exclusive(sb);
+> > > +	if (!q_path) {
+> > > +		if (!quotactl_cmd_onoff(cmds))
+> > > +			drop_super(sb);
+> > > +		else
+> > > +			drop_super_exclusive(sb);
+> > > +	}
+> > >  out:
+> > > +	if (q_path)
+> > > +		path_put(&qpath);
+> > > +out1:
+> > 
+> > Why do you need out1? If you leave 'out' as is, things should just work.
+> > And you can also combine the above if like:
+> 
+> See above where out1 is used. In this case qpath is not valid and I
+> cannot call path_put() on it.
 
-You would say - who cares, we can just open it by path. But actually it
-is not always possible: one can make a (I call it) "propagation trap"
-when mnt's propagation overmounts mnt and makes it unresolvable with
-simple open just after creation.
+Right. But you also don't need to do path_put(&qpath) in case
+quotactl_block() failed. So you can just jump to out1 there as well and
+then 'out' is unused...
 
-You can say - just pre-open the dfd's parent directory - pdfd like you
-did with dfd, and you will have access to mnt, but what is not generic,
-e.g. if mount point is '/', it can't have pdfd. And also this pdfd
-pre-open does not work in case you want to create a mount under some
-other mount (these can happen through propagation) there is no way to
-access the root of such a mount currently after it was created. (*)
-
-To be extra safe here, add a check that the new path which will be
-opened with O_MNT is not getting under MNT_LOCKED mount and can be
-accessed. Currently I see no way to get such an fd under locked mount
-but better have a precaution here.
-
-But why I actually need these:
-
-When we recreate mount tree in CRIU, we do it by recreating one mount at
-a time (we don't have mount-save / mount-restore like with iptables) and
-it is quiet hard to determine the right order in which mounts should be
-restored: if we mount mnt it can hide directories under it's mountpoint,
-so either we need to first create all mounts under mnt's mountpoint and
-only after these  mount mnt, or all mounts under mnt can be propagated
-and we can safely mount mnt now? Moreover if mnt is not mounted, it can
-also block other mounts with other "dependencies" (something like mnt's
-child can be in a propagation group with some of mnt's undermounts and
-they need to be mounted as one), and we can have circular dependency if
-we have wrong order chosen and will fail.
-
-So it would be easier for us if we can create mounts in the file tree
-even if the mountpoint is invisible from root. And one way how it could
-be done is: First, to have open fd to mountpoint under each mount,
-second, to have open fd to each mount root.
-
-More precisely the algorithm is:
-a) openat mpfd to a new mountpoint through parent mount's root -
-p_rootfd (which we already have) or mountpoint fd under a sibling mount
-- s_mpfd if our mountpoint is already overmounted.
-b) create a new mount on mpfd via /proc/<pid>/fd/<N> interface
-c) openat it's rootfd via O_MNT from mpfd
-
-If we have mpfd and rootfd for each mount through /proc/<pid>/fd/<N>
-interface we will be able to bindmount any part of each of already
-created mounts to restore other mounts  and we will be able to configure
-mounts, e.g. change sharing or other options even if mounts are
-invisible from fs-root.
-
-Here is an example of how O_MNT works:
-
-  #term1
-	  #term2
-
-  mkdir /test-mounts
-  mount -t tmpfs tmpfs-test-mounts /test-mounts
-  mount --make-private /test-mounts
-  cd /test-mounts/
-  mkdir sh1 sh2
-  mount -t tmpfs tmpfs_sh sh1
-  mount --make-shared sh1
-  mkdir sh1/mp
-  touch sh1/mp/1
-
-	  ./test_o_mnt /test-mounts/sh1/mp
-
-  mount -t tmpfs tmpfs_mp sh1/mp
-  touch sh1/mp/2
-
-	  input
-
-  mount --bind sh1 sh2
-  mount -t tmpfs tmpfs_prop sh2/mp
-  touch sh2/mp/3
-
-	  input
-
-And now through fds we have an access to all three files:
-
-  ls /proc/3799/fd/*
-  /proc/3799/fd/0  /proc/3799/fd/1  /proc/3799/fd/2
-
-  /proc/3799/fd/3:
-  1
-
-  /proc/3799/fd/4:
-  2
-
-  /proc/3799/fd/5:
-  1
-
-  /proc/3799/fd/6:
-  3
-
-  /proc/3799/fd/7:
-  1
-
-Code of test_o_mnt.c:
-
-  #include <stdio.h>
-  #include <sys/types.h>
-  #include <sys/stat.h>
-  #include <fcntl.h>
-
-  #define O_MNT 040000000
-
-  int main(int argc, char **argv)
-  {
-  	int dfd, fd, fd2;
-
-  	if (argc != 2) {
-  		printf("usage: %s <path/under/mountpoint>\n", argv[0]);
-  		return 1;
-  	}
-
-  	dfd = open(argv[1], O_DIRECTORY);
-  	if (dfd < 0) {
-  		perror("open");
-  		return 1;
-  	}
-
-  	scanf("%*s");
-
-  	fd = openat(dfd, ".", O_DIRECTORY | O_MNT);
-  	if (fd < 0) {
-  		perror("open");
-  		return 1;
-  	}
-
-  	fd2 = openat(dfd, ".", O_DIRECTORY);
-  	if (fd2 < 0) {
-  		perror("open");
-  		return 1;
-  	}
-
-  	scanf("%*s");
-
-  	fd = openat(dfd, ".", O_DIRECTORY | O_MNT);
-  	if (fd < 0) {
-  		perror("open");
-  		return 1;
-  	}
-
-  	fd2 = openat(dfd, ".", O_DIRECTORY);
-  	if (fd2 < 0) {
-  		perror("open");
-  		return 1;
-  	}
-
-  	while (1) {}
-
-  	return 0;
-  }
-
-Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
----
- fs/fcntl.c                       |  2 +-
- fs/namei.c                       | 66 ++++++++++++++++++++++++++++++++
- fs/open.c                        |  2 +
- include/linux/fcntl.h            |  2 +-
- include/linux/namei.h            |  1 +
- include/uapi/asm-generic/fcntl.h |  4 ++
- 6 files changed, 75 insertions(+), 2 deletions(-)
-
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 3d40771e8e7c..4cf05a2fd162 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -1031,7 +1031,7 @@ static int __init fcntl_init(void)
- 	 * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
- 	 * is defined as O_NONBLOCK on some platforms and not on others.
- 	 */
--	BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
-+	BUILD_BUG_ON(22 - 1 /* for O_RDONLY being 0 */ !=
- 		HWEIGHT32(
- 			(VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
- 			__FMODE_EXEC | __FMODE_NONOTIFY));
-diff --git a/fs/namei.c b/fs/namei.c
-index 671c3c1a3425..7b4c733fc5ef 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2158,10 +2158,71 @@ static int link_path_walk(const char *name, struct nameidata *nd)
- 	}
- }
- 
-+static int handle_mnt(struct nameidata *nd, unsigned int flags)
-+{
-+	if (!(flags & LOOKUP_MNT) || !d_mountpoint(nd->path.dentry))
-+		return 0;
-+
-+	if (flags & LOOKUP_RCU) {
-+		struct mount *mounted;
-+
-+		mounted = __lookup_mnt(nd->path.mnt, nd->path.dentry);
-+		if (unlikely(read_seqretry(&mount_lock, nd->m_seq)))
-+			return -ECHILD;
-+		if (!mounted)
-+			return 0;
-+
-+		if (d_mountpoint(mounted->mnt.mnt_root)) {
-+			struct mount *omounted;
-+
-+			omounted = __lookup_mnt(&mounted->mnt,
-+						mounted->mnt.mnt_root);
-+			if (unlikely(read_seqretry(&mount_lock, nd->m_seq)))
-+				return -ECHILD;
-+			if (omounted && omounted->mnt.mnt_flags & MNT_LOCKED)
-+				return -EINVAL;
-+		}
-+
-+		nd->path.mnt = &mounted->mnt;
-+		nd->path.dentry = mounted->mnt.mnt_root;
-+		nd->inode = nd->path.dentry->d_inode;
-+		nd->seq = read_seqcount_begin(&nd->path.dentry->d_seq);
-+	} else {
-+		struct vfsmount *mounted;
-+		struct path path;
-+
-+		mounted = lookup_mnt(&nd->path);
-+		if (!mounted)
-+			return 0;
-+
-+		path.mnt = mounted;
-+		path.dentry = dget(mounted->mnt_root);
-+
-+		if (d_mountpoint(mounted->mnt_root)) {
-+			struct vfsmount *omounted;
-+
-+			omounted = lookup_mnt(&path);
-+			if (omounted && omounted->mnt_flags & MNT_LOCKED) {
-+				mntput(omounted);
-+				path_put(&path);
-+				return -EINVAL;
-+			}
-+		}
-+
-+		dput(nd->path.dentry);
-+		mntput(nd->path.mnt);
-+		nd->path = path;
-+		nd->inode = nd->path.dentry->d_inode;
-+	}
-+
-+	return 0;
-+}
-+
- /* must be paired with terminate_walk() */
- static const char *path_init(struct nameidata *nd, unsigned flags)
- {
- 	const char *s = nd->name->name;
-+	int ret;
- 
- 	if (!*s)
- 		flags &= ~LOOKUP_RCU;
-@@ -2238,6 +2299,11 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
- 			nd->inode = nd->path.dentry->d_inode;
- 		}
- 		fdput(f);
-+
-+		ret = handle_mnt(nd, flags);
-+		if (ret)
-+			return ERR_PTR(ret);
-+
- 		return s;
- 	}
- }
-diff --git a/fs/open.c b/fs/open.c
-index b62f5c0923a8..5bebd98c2154 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -1022,6 +1022,8 @@ static inline int build_open_flags(int flags, umode_t mode, struct open_flags *o
- 		lookup_flags |= LOOKUP_DIRECTORY;
- 	if (!(flags & O_NOFOLLOW))
- 		lookup_flags |= LOOKUP_FOLLOW;
-+	if (flags & O_MNT)
-+		lookup_flags |= LOOKUP_MNT;
- 	op->lookup_flags = lookup_flags;
- 	return 0;
- }
-diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
-index d019df946cb2..06bdc2b70554 100644
---- a/include/linux/fcntl.h
-+++ b/include/linux/fcntl.h
-@@ -9,7 +9,7 @@
- 	(O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC | \
- 	 O_APPEND | O_NDELAY | O_NONBLOCK | O_NDELAY | __O_SYNC | O_DSYNC | \
- 	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
--	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
-+	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | O_MNT)
- 
- #ifndef force_o_largefile
- #define force_o_largefile() (!IS_ENABLED(CONFIG_ARCH_32BIT_OFF_T))
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index 397a08ade6a2..63414f065927 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -22,6 +22,7 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT, LAST_BIND};
- #define LOOKUP_AUTOMOUNT	0x0004  /* force terminal automount */
- #define LOOKUP_EMPTY		0x4000	/* accept empty path [user_... only] */
- #define LOOKUP_DOWN		0x8000	/* follow mounts in the starting point */
-+#define LOOKUP_MNT		0x10000 /* switch mountpoint fd to mount root */
- 
- #define LOOKUP_REVAL		0x0020	/* tell ->d_revalidate() to trust no cache */
- #define LOOKUP_RCU		0x0040	/* RCU pathwalk mode; semi-internal */
-diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
-index 9dc0bf0c5a6e..dcd5844b955e 100644
---- a/include/uapi/asm-generic/fcntl.h
-+++ b/include/uapi/asm-generic/fcntl.h
-@@ -89,6 +89,10 @@
- #define __O_TMPFILE	020000000
- #endif
- 
-+#ifndef O_MNT
-+#define O_MNT		040000000
-+#endif
-+
- /* a horrid kludge trying to make sure that this will fail on old kernels */
- #define O_TMPFILE (__O_TMPFILE | O_DIRECTORY)
- #define O_TMPFILE_MASK (__O_TMPFILE | O_DIRECTORY | O_CREAT)      
+								Honza
 -- 
-2.21.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
