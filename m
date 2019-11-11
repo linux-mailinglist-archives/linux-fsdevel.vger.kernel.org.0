@@ -2,91 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD8AFF80FD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 21:17:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93573F8138
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 21:28:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbfKKURl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Nov 2019 15:17:41 -0500
-Received: from mout.kundenserver.de ([212.227.17.13]:42367 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727059AbfKKURD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Nov 2019 15:17:03 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MiJdI-1i0zpq2YCs-00fOE5; Mon, 11 Nov 2019 21:16:52 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     linux-nfs@vger.kernel.org,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>
-Cc:     y2038@lists.linaro.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 19/19] nfsd: remove nfs4_reset_lease() declarations
-Date:   Mon, 11 Nov 2019 21:16:39 +0100
-Message-Id: <20191111201639.2240623-20-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20191111201639.2240623-1-arnd@arndb.de>
-References: <20191111201639.2240623-1-arnd@arndb.de>
+        id S1727697AbfKKU2O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Nov 2019 15:28:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37024 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727010AbfKKU2O (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 11 Nov 2019 15:28:14 -0500
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2B84206A3;
+        Mon, 11 Nov 2019 20:28:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573504094;
+        bh=Lu1K4hEFffFmujStmzKqcSWqDK91+nLfOMJq7cD0eW0=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=sW4RP7ZNpXAzaHbxsy+dMlmibHKiUFAofLNR/2Q9956XNaxJ9iJ9xDjPj6mZC0Cqq
+         BEeVWWq+luN4KafsrJGbOqM/VCDkinX1MRkz98KeNsM2YZiGq+Lazn8TVL1wJL1hyY
+         erA11VS49GBS0Mzv0TfuvvvaQ+mBZaRu18i87VZA=
+Date:   Mon, 11 Nov 2019 12:28:12 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Chandan Rajendra <chandan@linux.ibm.com>
+Subject: Re: [PATCH v2 0/2] ext4: support encryption with blocksize !=
+ PAGE_SIZE
+Message-ID: <20191111202811.GE56300@gmail.com>
+Mail-Followup-To: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Chandan Rajendra <chandan@linux.ibm.com>
+References: <20191023033312.361355-1-ebiggers@kernel.org>
+ <20191106215439.GC139580@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:iafSuqH4Bp5e/AWz4sqAojsBIoYJnl02pkxascDjDPERrJsK5XY
- LuEVM2fqvh7m8JQnJKf732b2ymBeNnsygXViheIEE3f6FrCguecj23HqhwZRfpUdu80LURB
- gckupp9jrTa2thabVPppYnnMb8tsb6lU4wvWKhYMJg5DALwIuE3EC/1jiQkFqODqYrE958R
- YtJs0Lv6+joejC+leu3ZQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:xGriYet1jFg=:/7jxH/nP273V1JjwioFy5f
- weSwzG82+77qaVH+KI7EcZrjwsUGhIVamdtpqMdnbCs36cuBxpsagITBnkyJngB6ZGKtZ/1kk
- lXrvwbV4AXeKGg1GnNOXhTM0GP4rP7rfBY7mEfeqiu9upppe0mKPZTlIVcip841Qcqx3Ma0nn
- vePqUtm2Y7a2NU1NHIeBQemiMDkQfV/Z+tCobAE2xfIsTLpi99QRU0FZnGbg7fldgd2XWy8V0
- JpwSqlZKos7f1wWwb7VgMYAHaLisxIzb3JX81eFVmTLbX0uNKMD0voZNZ+cWheh3i+HJaqbsF
- tKIOQ0ll6Y+Q6hndX7mZWCQdVFUeLAMDBSBgoLUs1nbH5a0xdOX7a6gz6ItLyU+BqP4KXH2DV
- rDFIpKRqnZqWvvYTdVqLx23v++HLYTnOu8E7My6GxofEUC3ePXcYWIRR8hp65uR15AdFRV/MS
- CLPyY0OiYkmJh7SU8TaQNza5iokt60ZZfr/rVVCv827HunPlTwtGV/AuAxLsMV2WYFGAg48P7
- Qb69Dlyva9zd4MpPR06pUmR5em8CsMZRDsmynkKANk1Xu6ZpJeQ/388Shfw8bo9PhTVlWZ2n7
- QAJx6wb8JPs7O0Wr12Hw2Ia0MvWpv1iA2vrcuoqlQ83cQLkywWKHRy0Lbrer7uG5YE+NuZByH
- SbTt0S3526fDNdnV8L9Yy2AAdw33Uz61+oC37Rx68D2Oc9JVDqrXcE66K1MIx/I5q2aVTcsPv
- c3SQzwHmdgY8Ub3y3w4m/EicJHOWEJZtHHr/RQiDBOa7uxazVPKTyk+onqlmKdEX+pFXM1jdX
- i754BZt1xhazqH80w7YY2OHBa7aaZ4CMa4ltQuuH/DfirTbR/AAZy3V6/VagRnhk31J7oFSZ4
- 7GX3Mi2TvHQhTkiGcQZw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191106215439.GC139580@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The function was removed a long time ago, but the declaration
-and a dummy implementation are still there, referencing the
-deprecated time_t type.
+On Wed, Nov 06, 2019 at 01:54:40PM -0800, Eric Biggers wrote:
+> On Tue, Oct 22, 2019 at 08:33:10PM -0700, Eric Biggers wrote:
+> > Hello,
+> > 
+> > This patchset makes ext4 support encryption on filesystems where the
+> > filesystem block size is not equal to PAGE_SIZE.  This allows e.g.
+> > PowerPC systems to use ext4 encryption.
+> > 
+> > Most of the work for this was already done in prior kernel releases; now
+> > the only part missing is decryption support in block_read_full_page().
+> > Chandan Rajendra has proposed a patchset "Consolidate FS read I/O
+> > callbacks code" [1] to address this and do various other things like
+> > make ext4 use mpage_readpages() again, and make ext4 and f2fs share more
+> > code.  But it doesn't seem to be going anywhere.
+> > 
+> > Therefore, I propose we simply add decryption support to
+> > block_read_full_page() for now.  This is a fairly small change, and it
+> > gets ext4 encryption with subpage-sized blocks working.
+> > 
+> > Note: to keep things simple I'm just allocating the work object from the
+> > bi_end_io function with GFP_ATOMIC.  But if people think it's necessary,
+> > it could be changed to use preallocation like the page-based read path.
+> > 
+> > Tested with 'gce-xfstests -c ext4/encrypt_1k -g auto', using the new
+> > "encrypt_1k" config I created.  All tests pass except for those that
+> > already fail or are excluded with the encrypt or 1k configs, and 2 tests
+> > that try to create 1023-byte symlinks which fails since encrypted
+> > symlinks are limited to blocksize-3 bytes.  Also ran the dedicated
+> > encryption tests using 'kvm-xfstests -c ext4/1k -g encrypt'; all pass,
+> > including the on-disk ciphertext verification tests.
+> > 
+> > [1] https://lkml.kernel.org/linux-fsdevel/20190910155115.28550-1-chandan@linux.ibm.com/T/#u
+> > 
+> > Changed v1 => v2:
+> >   - Added check for S_ISREG() which technically should be there, though
+> >     it happens not to matter currently.
+> > 
+> > Chandan Rajendra (1):
+> >   ext4: Enable encryption for subpage-sized blocks
+> > 
+> > Eric Biggers (1):
+> >   fs/buffer.c: support fscrypt in block_read_full_page()
+> > 
+> >  Documentation/filesystems/fscrypt.rst |  4 +--
+> >  fs/buffer.c                           | 48 ++++++++++++++++++++++++---
+> >  fs/ext4/super.c                       |  7 ----
+> >  3 files changed, 45 insertions(+), 14 deletions(-)
+> > 
+> 
+> Any more comments on this?
+> 
+> Ted, are you interested in taking this through the ext4 tree for 5.5?
+> 
 
-Remove both.
-
-Fixes: f958a1320ff7 ("nfsd4: remove unnecessary lease-setting function")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/nfsd/nfsd.h | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/fs/nfsd/nfsd.h b/fs/nfsd/nfsd.h
-index af2947551e9c..e74979b5849e 100644
---- a/fs/nfsd/nfsd.h
-+++ b/fs/nfsd/nfsd.h
-@@ -142,7 +142,6 @@ int nfs4_state_start(void);
- int nfs4_state_start_net(struct net *net);
- void nfs4_state_shutdown(void);
- void nfs4_state_shutdown_net(struct net *net);
--void nfs4_reset_lease(time_t leasetime);
- int nfs4_reset_recoverydir(char *recdir);
- char * nfs4_recoverydir(void);
- bool nfsd4_spo_must_allow(struct svc_rqst *rqstp);
-@@ -153,7 +152,6 @@ static inline int nfs4_state_start(void) { return 0; }
- static inline int nfs4_state_start_net(struct net *net) { return 0; }
- static inline void nfs4_state_shutdown(void) { }
- static inline void nfs4_state_shutdown_net(struct net *net) { }
--static inline void nfs4_reset_lease(time_t leasetime) { }
- static inline int nfs4_reset_recoverydir(char *recdir) { return 0; }
- static inline char * nfs4_recoverydir(void) {return NULL; }
- static inline bool nfsd4_spo_must_allow(struct svc_rqst *rqstp)
--- 
-2.20.0
-
+Ping.
