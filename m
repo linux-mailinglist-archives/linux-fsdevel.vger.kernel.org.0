@@ -2,109 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F2A5F72DE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 12:15:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E0C7F7332
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 12:37:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbfKKLPE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Nov 2019 06:15:04 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:44479 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbfKKLPE (ORCPT
+        id S1726908AbfKKLhY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Nov 2019 06:37:24 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:51345 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726791AbfKKLhX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Nov 2019 06:15:04 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1iU7er-0005tS-BT; Mon, 11 Nov 2019 12:14:57 +0100
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1iU7eo-0003JR-C1; Mon, 11 Nov 2019 12:14:54 +0100
-Date:   Mon, 11 Nov 2019 12:14:54 +0100
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
-        kernel@pengutronix.de, Jan Kara <jack@suse.com>,
+        Mon, 11 Nov 2019 06:37:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573472242;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fp61CWS//Q9E9TEcOwi1Jd6e8o1eEd928Hz82Hyjf68=;
+        b=cUMJ/FGzEk7UclqkZ2n/KcouEvQkaEfzu3dmW4/xMhvn/41M1Cexdvg0MnOfEEStr1cBgh
+        dZBcifFoP+9UN1asdK4A6limZVNjiFos9njh/2Pehs6YEBvVmm/Ib6BUdHEwIG8KmohdiR
+        kJvgNMT+bc3mPwFDGoiHhzLt/TG1TNs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-350-ocj4iVjXOM-sSiQWiIP7tQ-1; Mon, 11 Nov 2019 06:37:21 -0500
+X-MC-Unique: ocj4iVjXOM-sSiQWiIP7tQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1CE96DB20;
+        Mon, 11 Nov 2019 11:37:20 +0000 (UTC)
+Received: from localhost (ovpn-117-169.ams2.redhat.com [10.36.117.169])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A09FB100034E;
+        Mon, 11 Nov 2019 11:37:19 +0000 (UTC)
+Date:   Mon, 11 Nov 2019 11:37:18 +0000
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     zhengbin <zhengbin13@huawei.com>
+Cc:     vgoyal@redhat.com, mszeredi@redhat.com,
+        virtualization@lists.linux-foundation.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 04/10] quota: Allow to pass mount path to quotactl
-Message-ID: <20191111111454.7ebq4hhdcnakpnls@pengutronix.de>
-References: <20191030152702.14269-1-s.hauer@pengutronix.de>
- <20191030152702.14269-5-s.hauer@pengutronix.de>
- <20191101160706.GA23441@quack2.suse.cz>
- <20191111100807.dzomp2o7n3mch6xx@pengutronix.de>
- <20191111110559.GB13307@quack2.suse.cz>
+Subject: Re: [PATCH] virtiofs: Use static const, not const static
+Message-ID: <20191111113718.GG442334@stefanha-x1.localdomain>
+References: <1573464401-4917-1-git-send-email-zhengbin13@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1573464401-4917-1-git-send-email-zhengbin13@huawei.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Mimecast-Spam-Score: 0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="APlYHCtpeOhspHkB"
 Content-Disposition: inline
-In-Reply-To: <20191111110559.GB13307@quack2.suse.cz>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 12:14:02 up 126 days, 17:24, 139 users,  load average: 0.07, 0.14,
- 0.14
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-fsdevel@vger.kernel.org
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 11, 2019 at 12:05:59PM +0100, Jan Kara wrote:
-> On Mon 11-11-19 11:08:07, Sascha Hauer wrote:
-> > On Fri, Nov 01, 2019 at 05:07:06PM +0100, Jan Kara wrote:
-> > > On Wed 30-10-19 16:26:56, Sascha Hauer wrote:
-> > > > This patch introduces the Q_PATH flag to the quotactl cmd argument.
-> > > > When given, the path given in the special argument to quotactl will
-> > > > be the mount path where the filesystem is mounted, instead of a path
-> > > > to the block device.
-> > > > This is necessary for filesystems which do not have a block device as
-> > > > backing store. Particularly this is done for upcoming UBIFS support.
-> > > > 
-> > > > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> > > 
-> > > Thanks for the patch! Some smaller comments below...
-> > > 
-> > > > ---
-> > > >  fs/quota/quota.c           | 37 ++++++++++++++++++++++++++++---------
-> > > >  include/uapi/linux/quota.h |  1 +
-> > > >  2 files changed, 29 insertions(+), 9 deletions(-)
-> > > > 
-> > > > -	if (!quotactl_cmd_onoff(cmds))
-> > > > -		drop_super(sb);
-> > > > -	else
-> > > > -		drop_super_exclusive(sb);
-> > > > +	if (!q_path) {
-> > > > +		if (!quotactl_cmd_onoff(cmds))
-> > > > +			drop_super(sb);
-> > > > +		else
-> > > > +			drop_super_exclusive(sb);
-> > > > +	}
-> > > >  out:
-> > > > +	if (q_path)
-> > > > +		path_put(&qpath);
-> > > > +out1:
-> > > 
-> > > Why do you need out1? If you leave 'out' as is, things should just work.
-> > > And you can also combine the above if like:
-> > 
-> > See above where out1 is used. In this case qpath is not valid and I
-> > cannot call path_put() on it.
-> 
-> Right. But you also don't need to do path_put(&qpath) in case
-> quotactl_block() failed. So you can just jump to out1 there as well and
-> then 'out' is unused...
+--APlYHCtpeOhspHkB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ah, I see. Ok, will do this.
+On Mon, Nov 11, 2019 at 05:26:41PM +0800, zhengbin wrote:
+> Move the static keyword to the front of declarations.
 
-Sascha
+Please mention why this change is necessary in the commit description.
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+>=20
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: zhengbin <zhengbin13@huawei.com>
+> ---
+>  fs/fuse/virtio_fs.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> index b77acea..2ac6818 100644
+> --- a/fs/fuse/virtio_fs.c
+> +++ b/fs/fuse/virtio_fs.c
+> @@ -684,12 +684,12 @@ static int virtio_fs_restore(struct virtio_device *=
+vdev)
+>  }
+>  #endif /* CONFIG_PM_SLEEP */
+>=20
+> -const static struct virtio_device_id id_table[] =3D {
+> +static const struct virtio_device_id id_table[] =3D {
+>  =09{ VIRTIO_ID_FS, VIRTIO_DEV_ANY_ID },
+>  =09{},
+>  };
+>=20
+> -const static unsigned int feature_table[] =3D {};
+> +static const unsigned int feature_table[] =3D {};
+>=20
+>  static struct virtio_driver virtio_fs_driver =3D {
+>  =09.driver.name=09=09=3D KBUILD_MODNAME,
+> @@ -1026,7 +1026,7 @@ __releases(fiq->lock)
+>  =09}
+>  }
+>=20
+> -const static struct fuse_iqueue_ops virtio_fs_fiq_ops =3D {
+> +static const struct fuse_iqueue_ops virtio_fs_fiq_ops =3D {
+>  =09.wake_forget_and_unlock=09=09=3D virtio_fs_wake_forget_and_unlock,
+>  =09.wake_interrupt_and_unlock=09=3D virtio_fs_wake_interrupt_and_unlock,
+>  =09.wake_pending_and_unlock=09=3D virtio_fs_wake_pending_and_unlock,
+> --
+> 2.7.4
+>=20
+
+--APlYHCtpeOhspHkB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl3JR+4ACgkQnKSrs4Gr
+c8gGrQgAiUk45Og7Sz14vxdo8xHlcsLPekKa5syDhdvKdMTEvk0+dTmW+FcE1N5M
+EC7U13dTSLzKzBA5GWJ/3Wbj2nW5q38Kv8Ix4YDh+wX25e0DT+jrDDzpL9qQFUSq
+hn06s6VJtwDVhDBh1B2Uflu6C8D+4B2nKgQJlNeHQArlvTCLMy50+kk6gVm+iJFu
+Q71bIG7HEU7Hu3L/8xAPvQURVg9r5Mzcgq5ZXJI4Y/oMmfoYXdKSP5tvMzyyPaIh
+rY1XYhsr6O3Jbv1cKAW1eg9lpbsH0kq6TnrtY2kKFDfzc3YWAPIWpN4nNxNJ1nPJ
+LFU1K1nfHAr4Gl49rAPP1T36fImaxQ==
+=bTfD
+-----END PGP SIGNATURE-----
+
+--APlYHCtpeOhspHkB--
+
