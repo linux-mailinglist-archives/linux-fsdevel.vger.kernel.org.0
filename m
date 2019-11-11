@@ -2,162 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85A77F715D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 11:08:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94F28F71FF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 11:29:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbfKKKIJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Nov 2019 05:08:09 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:57763 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbfKKKIJ (ORCPT
+        id S1727136AbfKKK3a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Nov 2019 05:29:30 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:49666 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726923AbfKKK31 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Nov 2019 05:08:09 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1iU6cC-0006uV-5z; Mon, 11 Nov 2019 11:08:08 +0100
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1iU6cB-0000CY-8J; Mon, 11 Nov 2019 11:08:07 +0100
-Date:   Mon, 11 Nov 2019 11:08:07 +0100
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        Jan Kara <jack@suse.com>, Richard Weinberger <richard@nod.at>,
-        kernel@pengutronix.de
-Subject: Re: [PATCH 04/10] quota: Allow to pass mount path to quotactl
-Message-ID: <20191111100807.dzomp2o7n3mch6xx@pengutronix.de>
-References: <20191030152702.14269-1-s.hauer@pengutronix.de>
- <20191030152702.14269-5-s.hauer@pengutronix.de>
- <20191101160706.GA23441@quack2.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191101160706.GA23441@quack2.suse.cz>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 11:03:12 up 126 days, 16:13, 138 users,  load average: 0.25, 0.27,
- 0.19
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-fsdevel@vger.kernel.org
+        Mon, 11 Nov 2019 05:29:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573468166;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=pcVRVS2wigfNxAtSVYLPPaPRSK4c2t19oDRB3orBUZ8=;
+        b=Qu8oR+yS+SqKnZKhq7MLdSGa7rTRFICVguQD0H8Odfe6wr9GUAVwXwMnBOJSX7jzKbEi5o
+        gzUH6SjKbp9xeBjhAjRy6mERaKnfY9eSs1cQBcUOMDvMOm6UcGlBD92+7O6wB8xKtXIHXA
+        ZrAYGJhK0OkDbK4QJiUdDjUt72GFF2s=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-401-z809MnJvNym6fsK2ylp1rQ-1; Mon, 11 Nov 2019 05:29:23 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 531491005500;
+        Mon, 11 Nov 2019 10:29:21 +0000 (UTC)
+Received: from dustball.usersys.redhat.com (unknown [10.43.17.163])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 640765D6A3;
+        Mon, 11 Nov 2019 10:29:18 +0000 (UTC)
+From:   Jan Stancek <jstancek@redhat.com>
+To:     darrick.wong@oracle.com, naresh.kamboju@linaro.org,
+        hch@infradead.org
+Cc:     ltp@lists.linux.it, linux-next@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, chrubis@suse.cz,
+        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        broonie@kernel.org, arnd@arndb.de, lkft-triage@lists.linaro.org,
+        linux-ext4@vger.kernel.org, tytso@mit.edu, jstancek@redhat.com
+Subject: [PATCH] iomap: fix return value of iomap_dio_bio_actor on 32bit systems
+Date:   Mon, 11 Nov 2019 11:28:10 +0100
+Message-Id: <b757ff64ddf68519fc3d55b66fcd8a1d4b436395.1573467154.git.jstancek@redhat.com>
+In-Reply-To: <20191111083815.GA29540@infradead.org>
+References: <20191111083815.GA29540@infradead.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: z809MnJvNym6fsK2ylp1rQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 01, 2019 at 05:07:06PM +0100, Jan Kara wrote:
-> On Wed 30-10-19 16:26:56, Sascha Hauer wrote:
-> > This patch introduces the Q_PATH flag to the quotactl cmd argument.
-> > When given, the path given in the special argument to quotactl will
-> > be the mount path where the filesystem is mounted, instead of a path
-> > to the block device.
-> > This is necessary for filesystems which do not have a block device as
-> > backing store. Particularly this is done for upcoming UBIFS support.
-> > 
-> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> 
-> Thanks for the patch! Some smaller comments below...
-> 
-> > ---
-> >  fs/quota/quota.c           | 37 ++++++++++++++++++++++++++++---------
-> >  include/uapi/linux/quota.h |  1 +
-> >  2 files changed, 29 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/fs/quota/quota.c b/fs/quota/quota.c
-> > index cb13fb76dbee..035cdd1b022b 100644
-> > --- a/fs/quota/quota.c
-> > +++ b/fs/quota/quota.c
-> > @@ -19,6 +19,7 @@
-> >  #include <linux/types.h>
-> >  #include <linux/writeback.h>
-> >  #include <linux/nospec.h>
-> > +#include <linux/mount.h>
-> >  
-> >  static int check_quotactl_permission(struct super_block *sb, int type, int cmd,
-> >  				     qid_t id)
-> > @@ -825,12 +826,16 @@ int kernel_quotactl(unsigned int cmd, const char __user *special,
-> >  {
-> >  	uint cmds, type;
-> >  	struct super_block *sb = NULL;
-> > -	struct path path, *pathp = NULL;
-> > +	struct path path, *pathp = NULL, qpath;
-> 
-> Maybe call these two 'file_path', 'file_pathp', and 'sb_path' to make it
-> clearer which path is which?
-> 
-> >  	int ret;
-> > +	bool q_path;
-> >  
-> >  	cmds = cmd >> SUBCMDSHIFT;
-> >  	type = cmd & SUBCMDMASK;
-> >  
-> > +	q_path = cmds & Q_PATH;
-> > +	cmds &= ~Q_PATH;
-> > +
-> >  	/*
-> >  	 * As a special case Q_SYNC can be called without a specific device.
-> >  	 * It will iterate all superblocks that have quota enabled and call
-> > @@ -855,19 +860,33 @@ int kernel_quotactl(unsigned int cmd, const char __user *special,
-> >  			pathp = &path;
-> >  	}
-> >  
-> > -	sb = quotactl_block(special, cmds);
-> > -	if (IS_ERR(sb)) {
-> > -		ret = PTR_ERR(sb);
-> > -		goto out;
-> > +	if (q_path) {
-> > +		ret = user_path_at(AT_FDCWD, special, LOOKUP_FOLLOW|LOOKUP_AUTOMOUNT,
-> > +				   &qpath);
-> > +		if (ret)
-> > +			goto out1;
-> > +
-> > +		sb = qpath.mnt->mnt_sb;
-> > +	} else {
-> > +		sb = quotactl_block(special, cmds);
-> > +		if (IS_ERR(sb)) {
-> > +			ret = PTR_ERR(sb);
-> > +			goto out;
-> > +		}
-> >  	}
-> >  
-> >  	ret = do_quotactl(sb, type, cmds, id, addr, pathp);
-> >  
-> > -	if (!quotactl_cmd_onoff(cmds))
-> > -		drop_super(sb);
-> > -	else
-> > -		drop_super_exclusive(sb);
-> > +	if (!q_path) {
-> > +		if (!quotactl_cmd_onoff(cmds))
-> > +			drop_super(sb);
-> > +		else
-> > +			drop_super_exclusive(sb);
-> > +	}
-> >  out:
-> > +	if (q_path)
-> > +		path_put(&qpath);
-> > +out1:
-> 
-> Why do you need out1? If you leave 'out' as is, things should just work.
-> And you can also combine the above if like:
+Naresh reported LTP diotest4 failing for 32bit x86 and arm -next
+kernels on ext4. Same problem exists in 5.4-rc7 on xfs.
 
-See above where out1 is used. In this case qpath is not valid and I
-cannot call path_put() on it.
+The failure comes down to:
+  openat(AT_FDCWD, "testdata-4.5918", O_RDWR|O_DIRECT) =3D 4
+  mmap2(NULL, 4096, PROT_READ, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) =3D 0xb7f7=
+b000
+  read(4, 0xb7f7b000, 4096)              =3D 0 // expects -EFAULT
 
-I see that having q_path and qpath as different variables is confusing,
-but as you say I will rename qpath to sb_path, so hopefully this
-already makes it clearer.
+Problem is conversion at iomap_dio_bio_actor() return. Ternary
+operator has a return type and an attempt is made to convert each
+of operands to the type of the other. In this case "ret" (int)
+is converted to type of "copied" (unsigned long). Both have size
+of 4 bytes:
+    size_t copied =3D 0;
+    int ret =3D -14;
+    long long actor_ret =3D copied ? copied : ret;
 
-Sascha
+    On x86_64: actor_ret =3D=3D -14;
+    On x86   : actor_ret =3D=3D 4294967282
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Replace ternary operator with 2 return statements to avoid this
+unwanted conversion.
+
+Fixes: 4721a6010990 ("iomap: dio data corruption and spurious errors when p=
+ipes fill")
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Signed-off-by: Jan Stancek <jstancek@redhat.com>
+---
+ fs/iomap/direct-io.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 1fc28c2da279..7c58f51d7da7 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -318,7 +318,9 @@ static void iomap_dio_bio_end_io(struct bio *bio)
+ =09=09if (pad)
+ =09=09=09iomap_dio_zero(dio, iomap, pos, fs_block_size - pad);
+ =09}
+-=09return copied ? copied : ret;
++=09if (copied)
++=09=09return copied;
++=09return ret;
+ }
+=20
+ static loff_t
+--=20
+1.8.3.1
+
