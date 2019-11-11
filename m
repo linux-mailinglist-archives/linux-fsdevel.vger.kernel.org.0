@@ -2,112 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0F3BF6F99
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 09:16:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1619F6FA2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 09:19:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726857AbfKKIQi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Nov 2019 03:16:38 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37580 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726834AbfKKIQi (ORCPT
+        id S1726824AbfKKITx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Nov 2019 03:19:53 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:34983 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726768AbfKKITw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Nov 2019 03:16:38 -0500
-Received: by mail-pl1-f193.google.com with SMTP id g8so3304999plt.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2019 00:16:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ab0kK2oHM6lO8iZ9R6h+DRnRFocI2oaYPhhXxQ1txf0=;
-        b=z3Ov0zrW5pKVWZiuX6afIe1HwcGBXL/ZAOrf/X3AcxbxxjQQRyh1bY13fCTnXI/DMs
-         BqrRHko3WrBeGVhxfHD33oIaBUnZoBUhHbrFwp+BaYeLbsEuFJZABnk41EK/gi7kULeN
-         LjSZoU9GbUDaYOXwXSSvFewWFcmum4yLoN05nG6B4YR6RImXmmszM46C1hqOQ4iTtiWE
-         2OkOxxf1t+15SWU4xeB9bvtmf8B4lX2oBZe5+C6sxsJXw9T55dg5rB/EQIElzaeJGNTw
-         FFr3aYZE6VkOspuPwdNzNlnwUafWckN4kR7PoJ+tQNgKjYCIPtcJZR0wRQwJRp1FqgC2
-         9/VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ab0kK2oHM6lO8iZ9R6h+DRnRFocI2oaYPhhXxQ1txf0=;
-        b=pgQc9Wv/lN9/wFu1KQ7FXcBLa2eDfqnYOop+G9Bt0NW4CjTjlJKhS5cKdjJKMbgjxM
-         KFWWE8r+3B5Wt2dqmpEmin8eZD8uG/8WmoSU9h9XPCD6NxYqSJKwkVCZcUKc347Sh93E
-         S/fjuKnyqw34Rys8z3F+SJC7LEupBeEFiwRn8KhwQwaTCBgm6TzbuTSm5qVhT5tKtbzR
-         Xdaf6DjhKrQihBalDsfnciK69O+dX7QOlQsRS8hddPeTCRVZxCSMmUPSOuhKHskpEnxe
-         8qDfZPAikcwhgP21Boe3DC1nIQmkhkYCNMeu90R3iWpCGBzlqBZajTtxzR5aAMJo9Cvo
-         s6MA==
-X-Gm-Message-State: APjAAAWo2tsnh7xfc4ZVmHHpCF1dtXmS/guGNVSqiqcch5R3oZyo2AbD
-        4bnkpE2chJp75qwsoCWE3enF
-X-Google-Smtp-Source: APXvYqzDnT6gQYZ42is73xOlBKBgkqM0AarxPX+1UqoPZg2hvePO/xVhfBGiay3u77CDH/cIElpiIA==
-X-Received: by 2002:a17:902:7c8c:: with SMTP id y12mr24542085pll.260.1573460197164;
-        Mon, 11 Nov 2019 00:16:37 -0800 (PST)
-Received: from bobrowski ([110.232.114.101])
-        by smtp.gmail.com with ESMTPSA id 12sm16086321pjm.11.2019.11.11.00.16.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2019 00:16:36 -0800 (PST)
-Date:   Mon, 11 Nov 2019 19:16:29 +1100
-From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     syzbot <syzbot+991400e8eba7e00a26e1@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        riteshh@linux.ibm.com, syzkaller-bugs@googlegroups.com,
-        tytso@mit.edu, viro@zeniv.linux.org.uk
-Subject: Re: WARNING in iov_iter_pipe
-Message-ID: <20191111081628.GB14058@bobrowski>
-References: <000000000000d60aa50596c63063@google.com>
- <20191108103148.GE20863@quack2.suse.cz>
+        Mon, 11 Nov 2019 03:19:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573460390;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Y+d9HgiQd/ROeqheIWevtzZ1281FA0vSMCBkopaTcHI=;
+        b=dT2s5dAmT+wheA83Nw7+lNiR+wyzwBWdaTMts40zzh7gCofBz/D28p5hpBH715/RDn+HEz
+        78eWT0b2c69dvtYYuDNzPO4jcjrnh5tpMH0DzlTa5vZK9U0YsaN2mtfRKIqKrOVVjN2p6H
+        wdpBvHDpOJ4zO15Y+mUNodmBqz2sC5A=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-378-_0XAJepROSaUejme0jEEIQ-1; Mon, 11 Nov 2019 03:19:44 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0CAFC107ACC4;
+        Mon, 11 Nov 2019 08:19:42 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6BFE4100EBA6;
+        Mon, 11 Nov 2019 08:19:41 +0000 (UTC)
+Received: from zmail17.collab.prod.int.phx2.redhat.com (zmail17.collab.prod.int.phx2.redhat.com [10.5.83.19])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 9754118089C8;
+        Mon, 11 Nov 2019 08:19:40 +0000 (UTC)
+Date:   Mon, 11 Nov 2019 03:19:40 -0500 (EST)
+From:   Jan Stancek <jstancek@redhat.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        LTP List <ltp@lists.linux.it>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, chrubis <chrubis@suse.cz>,
+        open list <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        lkft-triage@lists.linaro.org,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>
+Message-ID: <1751469294.11431533.1573460380206.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20191111012614.GC6235@magnolia>
+References: <CA+G9fYtmA5F174nTAtyshr03wkSqMS7+7NTDuJMd_DhJF6a4pw@mail.gmail.com> <852514139.11036267.1573172443439.JavaMail.zimbra@redhat.com> <20191111012614.GC6235@magnolia>
+Subject: Re: LTP: diotest4.c:476: read to read-only space. returns 0:
+ Success
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191108103148.GE20863@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.43.17.163, 10.4.195.18]
+Thread-Topic: diotest4.c:476: read to read-only space. returns 0: Success
+Thread-Index: OoFxfOUloBUkdPsY/du59GUryWTVqQ==
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-MC-Unique: _0XAJepROSaUejme0jEEIQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 08, 2019 at 11:31:48AM +0100, Jan Kara wrote:
-> On Thu 07-11-19 10:54:10, syzbot wrote:
-> > syzbot found the following crash on:
-> > 
-> > HEAD commit:    c68c5373 Add linux-next specific files for 20191107
-> > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=13d6bcfce00000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=742545dcdea21726
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=991400e8eba7e00a26e1
-> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1529829ae00000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16a55c0ce00000
-> > 
-> > The bug was bisected to:
-> > 
-> > commit b1b4705d54abedfd69dcdf42779c521aa1e0fbd3
-> > Author: Matthew Bobrowski <mbobrowski@mbobrowski.org>
-> > Date:   Tue Nov 5 12:01:37 2019 +0000
-> > 
-> >     ext4: introduce direct I/O read using iomap infrastructure
-> 
-> Hum, interesting and from the first looks the problem looks real.
-> Deciphered reproducer is:
-> 
-> int fd0 = open("./file0", O_RDWR | O_CREAT | O_EXCL | O_DIRECT, 0);
-> int fd1 = open("./file0, O_RDONLY);
-> write(fd0, "some_data...", 512);
-> sendfile(fd0, fd1, NULL, 0x7fffffa7);
->   -> this is interesting as it will result in reading data from 'file0' at
->      offset X with buffered read and writing them with direct write to
->      offset X+512. So this way we'll grow the file up to those ~2GB in
->      512-byte chunks.
-> - not sure if we ever get there but the remainder of the reproducer is:
-> fd2 = open("./file0", O_RDWR | O_CREAT | O_NOATIME | O_SYNC, 0);
-> sendfile(fd2, fd0, NULL, 0xffffffff)
->   -> doesn't seem too interesting as fd0 is at EOF so this shouldn't do
->      anything.
-> 
-> Matthew, can you have a look?
 
-Sorry Jan, I've been crazy busy lately and I'm out at training this
-week. Let me take a look at this and see whether I can determine
-what's happening here.
+----- Original Message -----
+> I can't do a whole lot with a code snippet that lacks a proper SOB
+> header.
 
-/M
+I'll resend as a patch, maybe split it to 2 returns instead.
+
+> > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> > index 2f88d64c2a4d..8615b1f78389 100644
+> > --- a/fs/iomap/direct-io.c
+> > +++ b/fs/iomap/direct-io.c
+> > @@ -318,7 +318,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos=
+,
+> > loff_t length,
+> >                 if (pad)
+> >                         iomap_dio_zero(dio, iomap, pos, fs_block_size -
+> >                         pad);
+> >         }
+> > -       return copied ? copied : ret;
+> > +       return copied ? (loff_t) copied : ret;
+>=20
+> I'm a little confused on this proposed fix -- why does casting size_t
+> (aka unsigned long) to loff_t (long long) on a 32-bit system change the
+> test outcome?
+
+Ternary operator has a return type and an attempt is made to convert
+each of operands to the type of the other. So, in this case "ret"
+appears to be converted to type of "copied" first. Both have size of
+4 bytes on 32-bit x86:
+
+size_t copied =3D 0;
+int ret =3D -14;
+long long actor_ret =3D copied ? copied : ret;
+
+On x86_64: actor_ret =3D=3D -14;
+On x86   : actor_ret =3D=3D 4294967282
+
+> Does this same diotest4 failure happen with XFS?  I ask
+> because XFS has been using iomap for directio for ages.
+
+Yes, it fails on XFS too.
+
