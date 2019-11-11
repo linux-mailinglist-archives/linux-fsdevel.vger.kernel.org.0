@@ -2,19 +2,19 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C59BAF811B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 21:22:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF903F811D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 21:22:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbfKKUWb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Nov 2019 15:22:31 -0500
-Received: from mout.kundenserver.de ([212.227.17.10]:45651 "EHLO
+        id S1727893AbfKKUWc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Nov 2019 15:22:32 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:39699 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727189AbfKKUWA (ORCPT
+        with ESMTP id S1727341AbfKKUV7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Nov 2019 15:22:00 -0500
+        Mon, 11 Nov 2019 15:21:59 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1N5mSj-1hoaiJ1FJj-017Gmq; Mon, 11 Nov 2019 21:16:48 +0100
+ 1MtfVx-1hcRe32Xgl-00v9pY; Mon, 11 Nov 2019 21:16:48 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     linux-nfs@vger.kernel.org,
         "J. Bruce Fields" <bfields@fieldses.org>,
@@ -23,180 +23,93 @@ To:     linux-nfs@vger.kernel.org,
         Anna Schumaker <anna.schumaker@netapp.com>
 Cc:     y2038@lists.linaro.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 06/19] nfs: remove timespec from xdr_encode_nfstime
-Date:   Mon, 11 Nov 2019 21:16:26 +0100
-Message-Id: <20191111201639.2240623-7-arnd@arndb.de>
+Subject: [PATCH 07/19] nfs: encode nfsv4 timestamps as 64-bit
+Date:   Mon, 11 Nov 2019 21:16:27 +0100
+Message-Id: <20191111201639.2240623-8-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191111201639.2240623-1-arnd@arndb.de>
 References: <20191111201639.2240623-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:ulASBF1+CypKgZmdr6vqqtC9sCzj5wAM7ZBT75ycuyRcFZxDp04
- /y7j6iTDtCT5FVA0XpdkisAIwMRr+P6BqY97mKbHKceiGRMlZOUT5cmroSnuPqoyMBgmxvr
- +S8shOyk/fEUiXb+v721FKElnQXwtuPK++YwwtdoGuyKpOEsQ2Mnczt75989eM7HtLCsYXp
- GlC1a//CTD/vBd63J7thg==
+X-Provags-ID: V03:K1:dtnG94xvD5MjjNlVyWDb5eaSykSgG9mq8dv6e4ANjmnmD4CH84d
+ +nhvBnRu5porjpw0HIFP8ug4gFRLEyIZPisAIuOq9ZMj/rNA+1OYaj1HYy7+4eGlc6Pf9qI
+ 1kNf+O/muQQjPnMZzNDYlMHN4bLVVU2nz/bFzylh1TfhzZyPwf7V+nbOAGjRQj5xXDRrYb+
+ Sx4obN97lC+jV8jSmnboQ==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:dpvDW4n6B/4=:YETI2cfdvFQ4xu3uLthOma
- RBzBrLw2HtpGAfMpjBV8DcKbFcyfkSImvkN77jooiPBUaLNmSu62YWqg8i1tkI1jITJ4nWf7w
- t+1Y6saqriu7gQ8OHyKfO4tO8xRcpZaT7EOazvPEF0KdCEMBp5fXbf5/dAiHJj84nDmWaQxHQ
- S2zoGTVGLFO1G8E+aUxX2Jy7splEvJZcTCjD8Kmwghrn6fflZKsBDJaoFjDbV/SlfbhtPI0+z
- FfwFssNeXXfyO7nLcY4OY6eVkcncTbXywqPY4R2DqtoNiMpZvDrNF2I63W8AjPERp5SY+o8vU
- 8n871FVoO2fFmbvk95wynoxqeoC6HvYd+fRGlaW11Er/x/4YJxofySBc5OygYufW0CtTzx0tH
- GWdaZc7O94Q+E572DdFA4euZzVw2IB3NqtHBD+Il2NWyqNK2GWIO9euDaeXV73F/21GU9SQWP
- JtZlYEDFppWs+A43vX9atqBsMElGDamJ3StMz8w2SCRWlxXuBM75eCxUaAiU+lqIRqLRwvKRy
- hBCw6oKwjGanafA/KSugVm7JWps4izDpCn60e4GRyhxrpEaUYlipua2URgr82rzQMrh5mrOY2
- H5GxzrycciatLyQP3CxqcrFXwPqPlgS0xhJD0kzzeVT6G2BhELbXqykAHQiWqQgulzD3HK8Hp
- xDfsfJt5ozqdYRm+DjAsMajLQLSK/RY7cUd3WB84XQk97FEUZyExG31li9loFBo84qR3CDYPs
- iTlF5KTi2f4hovimeexveq/1m3Qm+AGp+OPFP7yKBshksBWmWgG1RUmJGiJbnUw7uEtSF0xLJ
- Kiv27Q7b5guyXjhw3/fvvwEaQHObozSLWNdVOuazmN2lAct+Y7aoqaXFsh8MkMb064Z4vTOo/
- gvp7vjUPeOGqms10vsZA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Xb2NUiu3Utc=:xVTipUWlDL+FBIPGUFolAo
+ seAacejDCYMT+ZhqgGDEceUE+W57sAZZKPKMykwNARU24vZY8ZC1FsBv4cUi2Is3n8hux0ixs
+ odeh1g2FdZbV8pGZdolOF4J0Ca4eDb4gvuqYO7MMVue9dUEYhfQLvcPJohRnhjTKr5r7i7it4
+ vpY/saUXnzQpJ8TuILGyE7W3f5JAJQyRAdHErgEys3Ukje4EDUiZcf4Cip1dL6LOP1n/zXSQn
+ c3xMNghoxiBhrl4lxLsBYc8019hvCyciYZhNT4QtBP1ZqrKyIl17sVLTA4NO/FzX7j9r50w6n
+ 8lZvs0ZzOt6kLgyCvKHo1LcHQcxVZ7p+gKg0hcTe960/9Bza+2IPYXdscB0KhSFsJ1JKXShMN
+ +n4TPoC7t2+PVUhuI0+FcKHFLGkfoRLUWqZeaSQNceNCgANuQnaTUyAgE2aGJmEJXfGY4NgBM
+ rI7ovIAan2TYM0eVPUmdrR/D3g4f1GBZU2LFx8LD2hcyGkYHYJyZLyd3/fFNDEqQdZslDZXRO
+ Mj+Vw7jyuGyCWb5SmAWj+w3iVwLdsJB1Mk07JhwHa/3E7MXMh24XHSuBXEY34xXv4gat6oPP9
+ QVK4Dk791/MfJX+ibE5RC13IOu15KCd2qd1vEuVrXJUcGUSjworyO8OFTJR7asIJj3mRksWAF
+ AQgnbJkm0BeAACUg5/Tkn6db2IS4iWmMax4LqJJ4VIV7Vxgo4USdfFcYSd46Ym3lzhXhewFiW
+ W7kxgSPPzKkH67nFMnnlhkhMgyW9c89M5VK/zDzJrS8e9PloSSGfbKUJC0tl0su9pi5AT463L
+ N8nz6E+JwS1f9nT9SgPx7wZK2YuGgpriSe9fLj69YZq4f2yL3Xs5H2ltYZfHBK1k2wkwdkXCl
+ UTwMF3mE7po1hOkWbAdA==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-For NFSv2 and NFSv3, timestamps are stored using 32-bit entities
-and overflow in y2038. For historic reasons we truncate the
-64-bit timestamps by converting from a timespec64 to a timespec
-first.
+On 32-bit architectures, xdr_encode_nfstime4() needlessly
+truncates timestamps to a 32-bit value in the range between
+year 1902 and 2038.
 
-Remove this unnecessary conversion step and do the truncation
-in the final functions that take a timestamp.
-
-This is transparent to users, but avoids one of the last uses
-of 'timespec' and lets us remove it later.
+Change it to use 'struct timespec64' to allow the entire range
+of values supported by the server.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/nfs/nfs2xdr.c        | 31 +++++++++++++------------------
- fs/nfs/nfs3xdr.c        | 12 ++++--------
- include/linux/nfs_xdr.h |  2 +-
- 3 files changed, 18 insertions(+), 27 deletions(-)
+ fs/nfs/nfs4xdr.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/fs/nfs/nfs2xdr.c b/fs/nfs/nfs2xdr.c
-index d4e144712034..0b8399fee8f7 100644
---- a/fs/nfs/nfs2xdr.c
-+++ b/fs/nfs/nfs2xdr.c
-@@ -209,9 +209,9 @@ static int decode_fhandle(struct xdr_stream *xdr, struct nfs_fh *fh)
-  *		unsigned int useconds;
-  *	};
-  */
--static __be32 *xdr_encode_time(__be32 *p, const struct timespec *timep)
-+static __be32 *xdr_encode_time(__be32 *p, const struct timespec64 *timep)
- {
--	*p++ = cpu_to_be32(timep->tv_sec);
-+	*p++ = cpu_to_be32((u32)timep->tv_sec);
- 	if (timep->tv_nsec != 0)
- 		*p++ = cpu_to_be32(timep->tv_nsec / NSEC_PER_USEC);
- 	else
-@@ -227,7 +227,7 @@ static __be32 *xdr_encode_time(__be32 *p, const struct timespec *timep)
-  * Illustrated" by Brent Callaghan, Addison-Wesley, ISBN 0-201-32750-5.
-  */
- static __be32 *xdr_encode_current_server_time(__be32 *p,
--					      const struct timespec *timep)
-+					      const struct timespec64 *timep)
- {
- 	*p++ = cpu_to_be32(timep->tv_sec);
- 	*p++ = cpu_to_be32(1000000);
-@@ -339,7 +339,6 @@ static __be32 *xdr_time_not_set(__be32 *p)
- static void encode_sattr(struct xdr_stream *xdr, const struct iattr *attr,
- 		struct user_namespace *userns)
- {
--	struct timespec ts;
- 	__be32 *p;
- 
- 	p = xdr_reserve_space(xdr, NFS_sattr_sz << 2);
-@@ -361,21 +360,17 @@ static void encode_sattr(struct xdr_stream *xdr, const struct iattr *attr,
- 	else
- 		*p++ = cpu_to_be32(NFS2_SATTR_NOT_SET);
- 
--	if (attr->ia_valid & ATTR_ATIME_SET) {
--		ts = timespec64_to_timespec(attr->ia_atime);
--		p = xdr_encode_time(p, &ts);
--	} else if (attr->ia_valid & ATTR_ATIME) {
--		ts = timespec64_to_timespec(attr->ia_atime);
--		p = xdr_encode_current_server_time(p, &ts);
--	} else
-+	if (attr->ia_valid & ATTR_ATIME_SET)
-+		p = xdr_encode_time(p, &attr->ia_atime);
-+	else if (attr->ia_valid & ATTR_ATIME)
-+		p = xdr_encode_current_server_time(p, &attr->ia_atime);
-+	else
- 		p = xdr_time_not_set(p);
--	if (attr->ia_valid & ATTR_MTIME_SET) {
--		ts = timespec64_to_timespec(attr->ia_atime);
--		xdr_encode_time(p, &ts);
--	} else if (attr->ia_valid & ATTR_MTIME) {
--		ts = timespec64_to_timespec(attr->ia_mtime);
--		xdr_encode_current_server_time(p, &ts);
--	} else
-+	if (attr->ia_valid & ATTR_MTIME_SET)
-+		xdr_encode_time(p, &attr->ia_atime);
-+	else if (attr->ia_valid & ATTR_MTIME)
-+		xdr_encode_current_server_time(p, &attr->ia_mtime);
-+	else
- 		xdr_time_not_set(p);
+diff --git a/fs/nfs/nfs4xdr.c b/fs/nfs/nfs4xdr.c
+index c917fb24c56f..a5737f0bac4d 100644
+--- a/fs/nfs/nfs4xdr.c
++++ b/fs/nfs/nfs4xdr.c
+@@ -1059,9 +1059,9 @@ static void encode_nfs4_verifier(struct xdr_stream *xdr, const nfs4_verifier *ve
  }
  
-diff --git a/fs/nfs/nfs3xdr.c b/fs/nfs/nfs3xdr.c
-index 2a16bbda3937..927eb680f161 100644
---- a/fs/nfs/nfs3xdr.c
-+++ b/fs/nfs/nfs3xdr.c
-@@ -456,9 +456,9 @@ static void zero_nfs_fh3(struct nfs_fh *fh)
-  *		uint32	nseconds;
-  *	};
-  */
--static __be32 *xdr_encode_nfstime3(__be32 *p, const struct timespec *timep)
-+static __be32 *xdr_encode_nfstime3(__be32 *p, const struct timespec64 *timep)
+ static __be32 *
+-xdr_encode_nfstime4(__be32 *p, const struct timespec *t)
++xdr_encode_nfstime4(__be32 *p, const struct timespec64 *t)
  {
--	*p++ = cpu_to_be32(timep->tv_sec);
-+	*p++ = cpu_to_be32((u32)timep->tv_sec);
- 	*p++ = cpu_to_be32(timep->tv_nsec);
+-	p = xdr_encode_hyper(p, (__s64)t->tv_sec);
++	p = xdr_encode_hyper(p, t->tv_sec);
+ 	*p++ = cpu_to_be32(t->tv_nsec);
  	return p;
  }
-@@ -533,7 +533,6 @@ static __be32 *xdr_decode_nfstime3(__be32 *p, struct timespec64 *timep)
- static void encode_sattr3(struct xdr_stream *xdr, const struct iattr *attr,
- 		struct user_namespace *userns)
+@@ -1072,7 +1072,6 @@ static void encode_attrs(struct xdr_stream *xdr, const struct iattr *iap,
+ 				const struct nfs_server *server,
+ 				const uint32_t attrmask[])
  {
 -	struct timespec ts;
- 	u32 nbytes;
- 	__be32 *p;
- 
-@@ -583,10 +582,8 @@ static void encode_sattr3(struct xdr_stream *xdr, const struct iattr *attr,
- 		*p++ = xdr_zero;
- 
- 	if (attr->ia_valid & ATTR_ATIME_SET) {
--		struct timespec ts;
- 		*p++ = xdr_two;
--		ts = timespec64_to_timespec(attr->ia_atime);
--		p = xdr_encode_nfstime3(p, &ts);
-+		p = xdr_encode_nfstime3(p, &attr->ia_atime);
- 	} else if (attr->ia_valid & ATTR_ATIME) {
- 		*p++ = xdr_one;
- 	} else
-@@ -594,8 +591,7 @@ static void encode_sattr3(struct xdr_stream *xdr, const struct iattr *attr,
- 
- 	if (attr->ia_valid & ATTR_MTIME_SET) {
- 		*p++ = xdr_two;
--		ts = timespec64_to_timespec(attr->ia_mtime);
--		xdr_encode_nfstime3(p, &ts);
-+		xdr_encode_nfstime3(p, &attr->ia_mtime);
- 	} else if (attr->ia_valid & ATTR_MTIME) {
- 		*p = xdr_one;
- 	} else
-diff --git a/include/linux/nfs_xdr.h b/include/linux/nfs_xdr.h
-index db5c01001937..22bc6613474e 100644
---- a/include/linux/nfs_xdr.h
-+++ b/include/linux/nfs_xdr.h
-@@ -869,7 +869,7 @@ struct nfs3_sattrargs {
- 	struct nfs_fh *		fh;
- 	struct iattr *		sattr;
- 	unsigned int		guard;
--	struct timespec		guardtime;
-+	struct timespec64	guardtime;
- };
- 
- struct nfs3_diropargs {
+ 	char owner_name[IDMAP_NAMESZ];
+ 	char owner_group[IDMAP_NAMESZ];
+ 	int owner_namelen = 0;
+@@ -1161,16 +1160,14 @@ static void encode_attrs(struct xdr_stream *xdr, const struct iattr *iap,
+ 	if (bmval[1] & FATTR4_WORD1_TIME_ACCESS_SET) {
+ 		if (iap->ia_valid & ATTR_ATIME_SET) {
+ 			*p++ = cpu_to_be32(NFS4_SET_TO_CLIENT_TIME);
+-			ts = timespec64_to_timespec(iap->ia_atime);
+-			p = xdr_encode_nfstime4(p, &ts);
++			p = xdr_encode_nfstime4(p, &iap->ia_atime);
+ 		} else
+ 			*p++ = cpu_to_be32(NFS4_SET_TO_SERVER_TIME);
+ 	}
+ 	if (bmval[1] & FATTR4_WORD1_TIME_MODIFY_SET) {
+ 		if (iap->ia_valid & ATTR_MTIME_SET) {
+ 			*p++ = cpu_to_be32(NFS4_SET_TO_CLIENT_TIME);
+-			ts = timespec64_to_timespec(iap->ia_mtime);
+-			p = xdr_encode_nfstime4(p, &ts);
++			p = xdr_encode_nfstime4(p, &iap->ia_mtime);
+ 		} else
+ 			*p++ = cpu_to_be32(NFS4_SET_TO_SERVER_TIME);
+ 	}
 -- 
 2.20.0
 
