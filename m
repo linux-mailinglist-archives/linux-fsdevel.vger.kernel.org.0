@@ -2,60 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D938F7DDA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 20:00:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39815F7F59
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Nov 2019 20:10:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbfKKTAE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Nov 2019 14:00:04 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:40380 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729538AbfKKTAE (ORCPT
+        id S1727793AbfKKSby (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Nov 2019 13:31:54 -0500
+Received: from mail-il1-f169.google.com ([209.85.166.169]:37426 "EHLO
+        mail-il1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727783AbfKKSbx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Nov 2019 14:00:04 -0500
-Received: by mail-oi1-f193.google.com with SMTP id 22so12442499oip.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2019 11:00:03 -0800 (PST)
+        Mon, 11 Nov 2019 13:31:53 -0500
+Received: by mail-il1-f169.google.com with SMTP id s5so12986749iln.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2019 10:31:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Hij9WRW9jexaTExPnUz0qaTqt1chIxl/l165TeSCuFk=;
-        b=RVbyU4ESVWlXQ8T3vJoN/oZeBZzpoGo5ihXG901x+xkoVGygn+QUOW8Q+wh00/DvOP
-         giok/SgrwR70kYfkO45hsvOAP+WhHiPqYwDj0dHHMkve8fY461e4iJtlRNi7eR1DhAnr
-         msvmqz3cgRr9WTZZh2vG1SNXT9gxsC4kYzoWV5sLY5uoS7y7h9f1x7peNvMd98iVG6e6
-         HxL1ITDDClLoV1YB9+VYGF7sapY8UPo3CA5UJHCfPI+qLRQi3yfO44XttBTSfdrQ6EaD
-         7jEOcmSiHHrw/5DNMhwm1YzJ+xQTSjO1kZJk+T45B0zkAzCPjVfZEJtuP1V0O9Lh2wbP
-         Pj6A==
+        bh=iWOXc+EiqcU5H2TykGQZYDpiMbC9s1fYB+z2D6AtvNM=;
+        b=YfoMu5DKYfsR0tNMI8Y6oXFEmrxVnNwbVT6yQu1skXYBRqdUK+d7Nz1mUfzIaTxEOf
+         LN7BdAHu+145MTzjapQ3ETRZ2DsWujz6s49PeX89txZlGlrxWEtw0DYkzCiv1fyF7EBX
+         C9jJEhk1XFJBTMSaHN0xFQwLnlDmvmb3QlngHaNvJ4CV7KZvZuO4ZWDl0yJdS19a+bz0
+         di5KbzXTFInAXCvWA87tDfct+ajuxct9GV9v8mPKgsi37A7vwMlWHKWU61zEWgibEcQh
+         AJvL2G5JpTXuM0LhmCOOhvBHJ7p+nA4+6IWpi7BPbKrUm5B6e6KNFKvu7PTC1isc691x
+         /4Hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Hij9WRW9jexaTExPnUz0qaTqt1chIxl/l165TeSCuFk=;
-        b=EUYgyTuE/uQOes2OBJ3rE/XsRbK7ljaZCrP5/AIq7ah1sU7MDOjMW/UWSK0wGk3bz8
-         A6Srh4Rh4TfqUANIxWnsFb1H6HxUhpH4sOjW0XWj9ctR2PSxKf6zCchcX73Wapsp2geZ
-         yu60tlxPBhh3B+sJcoR0yDx6rHhRF1Mqi7avzRP8RjlyB8X5oP37qw/JccweUPtRIXLk
-         2Cmkeiq+ts/DyU9+7vD2Ly0scP3vAIofuwyqeSxtix2GuZAuqI++45XC9oriKR3Jj0Bk
-         iLm01is3D6gZHPxmNoAoYL7n0Hkr30QkxRLlV2Kci5FffOA7fEMDDSKzqaK2lnQZsIyX
-         WTdA==
-X-Gm-Message-State: APjAAAUoaAypiTtdNqER/wjLsDw+Ao9ma9cca511eF/Unf9dcNRmPmYr
-        cv6BomWFIhLsOaV/u38URBBMOYedJxc1RDa45Mk+Rw==
-X-Google-Smtp-Source: APXvYqwuLe2W6zNidCS4fhh7tulT13NX4MB6+vyTZa/nE+xFjVDnEnM6AgSgW+nAjTQsXtyrboaM6eqO5Q/xA8t81gM=
-X-Received: by 2002:aca:5413:: with SMTP id i19mr388074oib.121.1573498802654;
- Mon, 11 Nov 2019 11:00:02 -0800 (PST)
+        bh=iWOXc+EiqcU5H2TykGQZYDpiMbC9s1fYB+z2D6AtvNM=;
+        b=R6QMa6yIRDYedFgWvZOW2bJJPzx+ox4xqyhjP+WKrjAA4mvQYIHD7G9AT+Y3k/n/pr
+         u9qjvx7MDpspPxoeXc6lEXWVjCYz4nKixw17WbC9ej6YZiNur+RnIwUtTAFo15SmHEci
+         CAToDb+lgj30o/9xra9iN5Iy3P0fPGhQhVqPkUmoW15dXo5L96aeqWvvpmCgB+L7EQ2b
+         xgaEkr4AgeYnk94e646kvZgD6+tVgVjHuKt4slhyMP/Slbv8CwVMie6j9P2kpgfKjM/e
+         8/QPvjLOEIxT5yMy/+gtvd111YmjKKOyDewPcV0ZXmahTBztatXuPqqrjOdpJ+dT8fZi
+         QQDA==
+X-Gm-Message-State: APjAAAUQp5DgEUmrozir3tGULcIOUdbg4pCp8LyK7L2oUe8UJJwe4Hld
+        L+uNMp/CWjL2dHNGkRYi3kwyeV4oqGJVyPj2khXYwA==
+X-Google-Smtp-Source: APXvYqzUEvYRTJe9cbdvlByvu6y7i8FNldZVzZrF5+/xcHTKkSFGpd6n+38fNwnltLonPBMO+6mWdvpiAX5UueUgUnI=
+X-Received: by 2002:a92:99cb:: with SMTP id t72mr28744656ilk.218.1573497112535;
+ Mon, 11 Nov 2019 10:31:52 -0800 (PST)
 MIME-Version: 1.0
 References: <CANpmjNMvTbMJa+NmfD286vGVNQrxAnsujQZqaodw0VVUYdNjPw@mail.gmail.com>
  <Pine.LNX.4.44L0.1911111030410.12295-100000@netrider.rowland.org>
  <CAHk-=wjp6yR-gBNYXPzrHQHq+wX_t6WfwrF_S3EEUq9ccz3vng@mail.gmail.com>
- <CANn89i+OBZOq-q4GWAxKVRau6nHYMo3v4y-c1vUb_O8nvra1RQ@mail.gmail.com>
- <CAHk-=wg6Zaf09i0XNgCmOzKKWnoAPMfA7WX9OY1Ow1YtF0ZP3A@mail.gmail.com>
- <CANn89i+hRhweL2N=r1chMpWKU2ue8fiQO=dLxGs9sgLFbgHEWQ@mail.gmail.com> <CAHk-=wgWf7Ma+iWuJTTr9HW1-yP26vEswC1Gids-A=eOP7LaOQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wgWf7Ma+iWuJTTr9HW1-yP26vEswC1Gids-A=eOP7LaOQ@mail.gmail.com>
-From:   Marco Elver <elver@google.com>
-Date:   Mon, 11 Nov 2019 19:59:50 +0100
-Message-ID: <CANpmjNOJOBcKh23tPi_+Lv1ONfL_kkK9q6qqS51LK4h63n2swA@mail.gmail.com>
+ <CANn89i+OBZOq-q4GWAxKVRau6nHYMo3v4y-c1vUb_O8nvra1RQ@mail.gmail.com> <CAHk-=wg6Zaf09i0XNgCmOzKKWnoAPMfA7WX9OY1Ow1YtF0ZP3A@mail.gmail.com>
+In-Reply-To: <CAHk-=wg6Zaf09i0XNgCmOzKKWnoAPMfA7WX9OY1Ow1YtF0ZP3A@mail.gmail.com>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Mon, 11 Nov 2019 10:31:40 -0800
+Message-ID: <CANn89i+hRhweL2N=r1chMpWKU2ue8fiQO=dLxGs9sgLFbgHEWQ@mail.gmail.com>
 Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Eric Dumazet <edumazet@google.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Marco Elver <elver@google.com>,
         Eric Dumazet <eric.dumazet@gmail.com>,
         syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
@@ -71,65 +69,52 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 11 Nov 2019 at 19:50, Linus Torvalds
+On Mon, Nov 11, 2019 at 10:05 AM Linus Torvalds
 <torvalds@linux-foundation.org> wrote:
 >
-> On Mon, Nov 11, 2019 at 10:31 AM Eric Dumazet <edumazet@google.com> wrote:
+> On Mon, Nov 11, 2019 at 9:52 AM Eric Dumazet <edumazet@google.com> wrote:
 > >
-> > Problem is that KASAN/KCSAN stops as soon as one issue is hit,
-> > regardless of it being a false positive or not.
+> > Now I wonder what to do with the ~400 KCSAN reports sitting in
+> > pre-moderation queue.
 >
-> So mayb e that - together with the known huge base of false positives
-> - just means that KCSAN needs some more work before it can be used as
-> a basis for sending out patches.
+> So regular KASAN reports are fairly easy to deal with: they report
+> actual bugs. They may be hard to hit, but generally there's no
+> question about something like a use-after-free or whatever.
 >
-> Maybe the reporting needs to create a hash of the location, and report
-> once per location? Or something like that.
+> The problem with KCSAN is that it's not clear how many of the reports
+> have been actual real honest-to-goodness bugs that could cause
+> problems, and how many of them are "this isn't actually a bug, but an
+> annotation will shut up KCSAN".
 >
-> Maybe KCSAN needs a way to filter out known false positives on a KCSAN
-> side, without having to change the source for a tool that gives too
-> much noise?
+> My gut feeling would be that it would be best to ignore the ones that
+> are "an annotation will shut up KCSAN", and look at the ones that are
+> real bugs.
 >
-> > If we do not annotate the false positive, the real issues might be
-> > hidden for years.
+> Is there a pattern to those real bugs? Is there perhaps a way to make
+> KCSAN notice _that_ pattern in particular, and suppress the ones that
+> are "we can shut these up with annotations that don't really change
+> the code"?
 >
-> I don't think "change the kernel source for a tool that isn't good
-> enough" is the solution.
+> I think it would be much better for the kernel - and much better for
+> KCSAN - if the problem reports KCSAN reports are real problems that
+> can actually be triggered as problems, and that it behaves much more
+> like KASAN in that respect.
 >
-> > There is no pattern really, only a lot of noise (small ' bugs'  that
-> > have no real impact)
+> Yes, yes, then once the *real* problems have been handled, maybe we
+> can expand the search to be "stylistic issues" and "in theory, this
+> could cause problems with a compiler that did X" issues.
 >
-> Yeah, if it hasn't shown any real bugs so far, that just strengthens
-> the "it needs much fewer false positives to be useful".
+> But I think the "just annotate" thing makes people more likely to
+> dismiss KCSAN issues, and I don't think it's healthy.
 >
-> KASAN and lockdep can afford to stop after the first problem, because
-> the problems they report - and the additional annotations you might
-> want to add - are quality problems and annotations.
 
-There is a fundamental limitation here. As I understand, in an ideal
-world we'd only find true logic bugs, *race conditions*, first, and
-*data races* later. Some data races are also race conditions, which a
-tool like KCSAN can report. However, not all race conditions are data
-races and vice-versa.
+Problem is that KASAN/KCSAN stops as soon as one issue is hit,
+regardless of it being a false positive or not.
 
-The intent is to report data races according to the LKMM. KCSAN
-currently does that. On syzbot, we do not even report all data races
-because we use a very conservative config, to filter things like data
-races between plain and ONCE/atomic accesses, etc. A data race
-detector can only work at the memory model/language level.
+(Same happens with LOCKDEP seeing only one issue, then disabling itself)
 
-Deeper analysis, to find only race conditions, requires conveying the
-intended logic and patterns to a tool. This requires 1) the developer
-either writing a spec or model of their code, and then 2) the tool
-verifying that the implementation matches.  People have done this for
-small bits of code using model checkers (and other formal methods),
-but this just doesn't scale!
+If we do not annotate the false positive, the real issues might be
+hidden for years.
 
-KCSAN finds real problems today. Maybe not all of them are race
-conditions, but they are data races. We already have several options
-to filter data races, and will keep adding more. However, a tool that
-magically proves that there are no concurrency related logic bugs is
-an entirely different beast.
-
-Thanks,
--- Marco
+There is no pattern really, only a lot of noise (small ' bugs'  that
+have no real impact)
