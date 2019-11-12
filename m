@@ -2,344 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16B81F9E29
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 00:25:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8678CF9E3E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 00:41:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbfKLXZ3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Nov 2019 18:25:29 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46694 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726910AbfKLXZ1 (ORCPT
+        id S1727002AbfKLXlO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Nov 2019 18:41:14 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:42491 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726970AbfKLXlO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Nov 2019 18:25:27 -0500
-Received: by mail-pf1-f193.google.com with SMTP id 193so180224pfc.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2019 15:25:25 -0800 (PST)
+        Tue, 12 Nov 2019 18:41:14 -0500
+Received: by mail-lf1-f68.google.com with SMTP id z12so301735lfj.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2019 15:41:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=v/05ewFGIu4TLNi9D2OL0wDmLlrmscOb/YagM09gAds=;
-        b=WVfBl5Z8fLpT/F7hpsoQIz/hJisIbSVPjS10XwLIRzWXm3MQ1kPy0fTIHhjTFBbjoS
-         icV23ZNFHmpydn/hnhXxmB3q4f4ZInOJ772AccCmjb8sc8u4v1LS8cPpS1UZ63887C2/
-         Jj4N5qkGo/1svgbFeMSpc6RsMo9iFpoLBHM+Y=
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EUXLb1uu1dcQwvM3XnfVOQS/u8rpUwxsukE0911wRv8=;
+        b=BlxyQF/k0RbNlmXP5IB58F/0Xz3h4ttVpHaMWy/tA5ZBmhF0Hc9KKgINDE4bq+7VOV
+         zqj7K+B23f5rkrn/XHC7xsbbzsc8AsUGEmABEH/wooLD/jCPv801/xBfUCp/v8T8n//8
+         yAvsBxLJ7ZGLbzPhrSobnyjECGiABuvCmT8hg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=v/05ewFGIu4TLNi9D2OL0wDmLlrmscOb/YagM09gAds=;
-        b=d2wLBAxlXPx6DeKT/rMrOolCxtITFLlhd9NbGGEMBOqP2yh0mw1rGhX3tcYS/pOe0F
-         n8E/c6kdIA1N6UEV+BpxK8ApLlFfMoCG2pFcIEdx/Ua1eB2Vd9X2uHtpAVnBlemEpmJE
-         2tXP4BTYbu9GR941K+ldew998y2wsIcCldire9VJeHXJdzmRpuCc8emEjflP3VOCIa59
-         +sOsHhaGUoZXiZvC9ghIQdosXYd8U2kX3FZIfKlaXgQEkzF7oys9pgliWIPx/W5Dxd/S
-         kc8SCKxmGC+pMu2PiYVrThzmJGrficC/lGD0gUY9UdShTRtnbNoiLxFAFxX8BLCT0VVx
-         Lvww==
-X-Gm-Message-State: APjAAAVVn4xWsrPdrZWPdE4/jp+yo4makYZ1Bmk9kPVSO9dLfHtGxGA1
-        G/bDy4UTf9QR7Hi9ZCeMxUNQ1g==
-X-Google-Smtp-Source: APXvYqyBx5mL5/sNTTkpUmdCOW/egLPUqOpRV5xLG78w/QrLUZolYDx4HfZ4l10HpUCpqdk4kHuVrQ==
-X-Received: by 2002:a17:90a:86c3:: with SMTP id y3mr524359pjv.102.1573601125368;
-        Tue, 12 Nov 2019 15:25:25 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id x2sm70930pge.76.2019.11.12.15.25.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 15:25:24 -0800 (PST)
-Date:   Tue, 12 Nov 2019 15:25:23 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Topi Miettinen <toiwoton@gmail.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:FILESYSTEMS (VFS and infrastructure)" 
-        <linux-fsdevel@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: Re: [PATCH] proc: Allow restricting permissions in /proc/sys
-Message-ID: <201911121523.9C097E7D2C@keescook>
-References: <ed51f7dd-50a2-fbf5-7ea8-4bab6d48279e@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EUXLb1uu1dcQwvM3XnfVOQS/u8rpUwxsukE0911wRv8=;
+        b=bRpi0QlMRiVgcPlV9lwnrMVgsIRRHU8OcvJ7ld5lQ5V400X/1pjc7VlaqvwCYo7nCL
+         TJ009TUcX5XmzlJtc77XF1e4YbcnbpPHEl8oypggLObs0MU/L0TMoHDKcUgoIOV0ezM+
+         noGHWONXHTgca87KDxgZ012wg7lXTrDOj5B8K5lYpnCYycLX69YB1UtNzG4LF0GRRDDH
+         HTCfSsiost2vw2GMAtzG28ZkSvqdr0X/lx6KVuNYOVybHlykeFhd57YwH6ppwkZQBlHF
+         b3zB9Xa9m7Pc9DyR09KlBPrcIeF5nh7ydYpkFw1oFNZdx0WIJggSxThXlkPH1BUOFvPQ
+         OqHQ==
+X-Gm-Message-State: APjAAAXGghiHcLsbnWyyoIikMLXh8xQyrXglQxHqC74ErRybYnvFPTVJ
+        aVf3kfFipHId571O5qK1def8gIISAcg=
+X-Google-Smtp-Source: APXvYqwuhuP0poM4pxYbmhLanzN0L4ECTYcmyj+X7gWm48b7NdCJje2FI0LO/QeHjw5AzYBItBDS1g==
+X-Received: by 2002:a19:41c8:: with SMTP id o191mr296234lfa.101.1573602070825;
+        Tue, 12 Nov 2019 15:41:10 -0800 (PST)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id j8sm80628lja.32.2019.11.12.15.41.08
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2019 15:41:09 -0800 (PST)
+Received: by mail-lj1-f176.google.com with SMTP id k15so409558lja.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2019 15:41:08 -0800 (PST)
+X-Received: by 2002:a2e:22c1:: with SMTP id i184mr233777lji.1.1573602068124;
+ Tue, 12 Nov 2019 15:41:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ed51f7dd-50a2-fbf5-7ea8-4bab6d48279e@gmail.com>
+References: <CAHk-=wgnjMEvqHnu_iJcbr_kdFyBQLhYojwv5T7p9F+CHxA9pg@mail.gmail.com>
+ <Pine.LNX.4.44L0.1911121639540.1567-100000@iolanthe.rowland.org>
+ <CANn89iKjWH86kChzPiVtCgVpt3GookwGk2x1YCTMeBSPpKU+Ww@mail.gmail.com>
+ <20191112224441.2kxmt727qy4l4ncb@ast-mbp.dhcp.thefacebook.com> <CANn89iKLy-5rnGmVt-nzf6as4MvXgZzSH+BSReXZKpSTjhoWAw@mail.gmail.com>
+In-Reply-To: <CANn89iKLy-5rnGmVt-nzf6as4MvXgZzSH+BSReXZKpSTjhoWAw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 12 Nov 2019 15:40:51 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wj_rFOPF9Sw_-h-6J93tP9qO_UOEvd-e02z9+DEDs2kLQ@mail.gmail.com>
+Message-ID: <CAHk-=wj_rFOPF9Sw_-h-6J93tP9qO_UOEvd-e02z9+DEDs2kLQ@mail.gmail.com>
+Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
+To:     Eric Dumazet <edumazet@google.com>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Marco Elver <elver@google.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ah! I see the v2 here now. :) Can you please include that in your
-Subject next time, as "[PATCH v2] proc: Allow restricting permissions
-in /proc/sys"? Also, can you adjust your MUA to not send a duplicate
-attachment? The patch inline is fine.
+On Tue, Nov 12, 2019 at 3:18 PM Eric Dumazet <edumazet@google.com> wrote:
+>
+> Hmm we have the ' volatile'  attribute on jiffies, and it causes
+> confusion already :p
 
-Please CC akpm as well, since I think this should likely go through the
--mm tree.
+The jiffies case is partly historical, but partly also because it's
+one of the very very few data structures where 99% of all uses are
+unlocked and for convenience reasons we really don't want to force
+those legacy cases to do anything special about it.
 
-Eric, do you have any other thoughts on this?
+"jiffies" really is very special for those kinds of legacy reasons.
+Look at the kinds of games we play with it on 32-bit architectures:
+the "real" storage is "jiffies_64", but nobody actually wants to use
+that, and because of load tearing issues it's actually hard to use
+too. So what everybody _uses_ is just the low 32 bits, and 'jiffies'
+isn't a real variable, it's done with linker tricks in our
+vmlinux.lds.S files. So, for example, on sparc32, you find this:
 
-Thanks!
+    jiffies = jiffies_64 + 4;
 
--Kees
+in the vmlinux.lds.S file, because it's big-endian, and the lower 32
+bits are at offset 4 from the real 64-bit variable.
 
-On Mon, Nov 04, 2019 at 02:07:29PM +0200, Topi Miettinen wrote:
-> Several items in /proc/sys need not be accessible to unprivileged
-> tasks. Let the system administrator change the permissions, but only
-> to more restrictive modes than what the sysctl tables allow.
-> 
-> Signed-off-by: Topi Miettinen <toiwoton@gmail.com>
-> ---
-> v2: actually keep track of changed permissions instead of relying on inode
-> cache
-> ---
->  fs/proc/proc_sysctl.c  | 42 ++++++++++++++++++++++++++++++++++++++----
->  include/linux/sysctl.h |  1 +
->  2 files changed, 39 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> index d80989b6c344..1f75382c49fd 100644
-> --- a/fs/proc/proc_sysctl.c
-> +++ b/fs/proc/proc_sysctl.c
-> @@ -818,6 +818,10 @@ static int proc_sys_permission(struct inode *inode, int
-> mask)
->         if ((mask & MAY_EXEC) && S_ISREG(inode->i_mode))
->                 return -EACCES;
-> 
-> +       error = generic_permission(inode, mask);
-> +       if (error)
-> +               return error;
-> +
->         head = grab_header(inode);
->         if (IS_ERR(head))
->                 return PTR_ERR(head);
-> @@ -835,17 +839,46 @@ static int proc_sys_permission(struct inode *inode,
-> int mask)
->  static int proc_sys_setattr(struct dentry *dentry, struct iattr *attr)
->  {
->         struct inode *inode = d_inode(dentry);
-> +       struct ctl_table_header *head = grab_header(inode);
-> +       struct ctl_table *table = PROC_I(inode)->sysctl_entry;
->         int error;
-> 
-> -       if (attr->ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID))
-> +       if (attr->ia_valid & (ATTR_UID | ATTR_GID))
->                 return -EPERM;
-> 
-> +       if (attr->ia_valid & ATTR_MODE) {
-> +               umode_t max_mode = 0777; /* Only these bits may change */
-> +
-> +               if (IS_ERR(head))
-> +                       return PTR_ERR(head);
-> +
-> +               if (!table) /* global root - r-xr-xr-x */
-> +                       max_mode &= ~0222;
-> +               else /*
-> +                     * Don't allow permissions to become less
-> +                     * restrictive than the sysctl table entry
-> +                     */
-> +                       max_mode &= table->mode;
-> +
-> +               /* Execute bits only allowed for directories */
-> +               if (!S_ISDIR(inode->i_mode))
-> +                       max_mode &= ~0111;
-> +
-> +               if (attr->ia_mode & ~S_IFMT & ~max_mode)
-> +                       return -EPERM;
-> +       }
-> +
->         error = setattr_prepare(dentry, attr);
->         if (error)
->                 return error;
-> 
->         setattr_copy(inode, attr);
->         mark_inode_dirty(inode);
-> +
-> +       if (table)
-> +               table->current_mode = inode->i_mode;
-> +       sysctl_head_finish(head);
-> +
->         return 0;
->  }
-> 
-> @@ -861,7 +894,7 @@ static int proc_sys_getattr(const struct path *path,
-> struct kstat *stat,
-> 
->         generic_fillattr(inode, stat);
->         if (table)
-> -               stat->mode = (stat->mode & S_IFMT) | table->mode;
-> +               stat->mode = (stat->mode & S_IFMT) | table->current_mode;
-> 
->         sysctl_head_finish(head);
->         return 0;
-> @@ -981,7 +1014,7 @@ static struct ctl_dir *new_dir(struct ctl_table_set
-> *set,
->         memcpy(new_name, name, namelen);
->         new_name[namelen] = '\0';
->         table[0].procname = new_name;
-> -       table[0].mode = S_IFDIR|S_IRUGO|S_IXUGO;
-> +       table[0].current_mode = table[0].mode = S_IFDIR|S_IRUGO|S_IXUGO;
->         init_header(&new->header, set->dir.header.root, set, node, table);
-> 
->         return new;
-> @@ -1155,6 +1188,7 @@ static int sysctl_check_table(const char *path, struct
-> ctl_table *table)
->                 if ((table->mode & (S_IRUGO|S_IWUGO)) != table->mode)
->                         err |= sysctl_err(path, table, "bogus .mode 0%o",
->                                 table->mode);
-> +               table->current_mode = table->mode;
->         }
->         return err;
->  }
-> @@ -1192,7 +1226,7 @@ static struct ctl_table_header *new_links(struct
-> ctl_dir *dir, struct ctl_table
->                 int len = strlen(entry->procname) + 1;
->                 memcpy(link_name, entry->procname, len);
->                 link->procname = link_name;
-> -               link->mode = S_IFLNK|S_IRWXUGO;
-> +               link->current_mode = link->mode = S_IFLNK|S_IRWXUGO;
->                 link->data = link_root;
->                 link_name += len;
->         }
-> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-> index 6df477329b76..7c519c35bf9c 100644
-> --- a/include/linux/sysctl.h
-> +++ b/include/linux/sysctl.h
-> @@ -126,6 +126,7 @@ struct ctl_table
->         void *data;
->         int maxlen;
->         umode_t mode;
-> +       umode_t current_mode;
->         struct ctl_table *child;        /* Deprecated */
->         proc_handler *proc_handler;     /* Callback for text formatting */
->         struct ctl_table_poll *poll;
-> -- 
-> 2.24.0.rc1
-> 
+Note that to actually read the "true" full 64-bit value, you have to
+then call a function that does the proper sequence counter stuff etc.
+But nobody really wants it, since what everybody actually _uses_ is
+the "time_after(x,jiffies+10)" kind of thing, which is only done in
+the wrapping "unsigned long" time base. So the odd "linker tricks with
+the atomic low bits marked as a volatile data structure" is actually
+exactly what we want, but people should realize that this is not
+normal.
 
-> From 3cde64e0aa2734c335355ee6d0d9f12c1f1e8a87 Mon Sep 17 00:00:00 2001
-> From: Topi Miettinen <toiwoton@gmail.com>
-> Date: Sun, 3 Nov 2019 16:36:43 +0200
-> Subject: [PATCH] proc: Allow restricting permissions in /proc/sys
-> 
-> Several items in /proc/sys need not be accessible to unprivileged
-> tasks. Let the system administrator change the permissions, but only
-> to more restrictive modes than what the sysctl tables allow.
-> 
-> Signed-off-by: Topi Miettinen <toiwoton@gmail.com>
-> ---
->  fs/proc/proc_sysctl.c  | 42 ++++++++++++++++++++++++++++++++++++++----
->  include/linux/sysctl.h |  1 +
->  2 files changed, 39 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> index d80989b6c344..1f75382c49fd 100644
-> --- a/fs/proc/proc_sysctl.c
-> +++ b/fs/proc/proc_sysctl.c
-> @@ -818,6 +818,10 @@ static int proc_sys_permission(struct inode *inode, int mask)
->  	if ((mask & MAY_EXEC) && S_ISREG(inode->i_mode))
->  		return -EACCES;
->  
-> +	error = generic_permission(inode, mask);
-> +	if (error)
-> +		return error;
-> +
->  	head = grab_header(inode);
->  	if (IS_ERR(head))
->  		return PTR_ERR(head);
-> @@ -835,17 +839,46 @@ static int proc_sys_permission(struct inode *inode, int mask)
->  static int proc_sys_setattr(struct dentry *dentry, struct iattr *attr)
->  {
->  	struct inode *inode = d_inode(dentry);
-> +	struct ctl_table_header *head = grab_header(inode);
-> +	struct ctl_table *table = PROC_I(inode)->sysctl_entry;
->  	int error;
->  
-> -	if (attr->ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID))
-> +	if (attr->ia_valid & (ATTR_UID | ATTR_GID))
->  		return -EPERM;
->  
-> +	if (attr->ia_valid & ATTR_MODE) {
-> +		umode_t max_mode = 0777; /* Only these bits may change */
-> +
-> +		if (IS_ERR(head))
-> +			return PTR_ERR(head);
-> +
-> +		if (!table) /* global root - r-xr-xr-x */
-> +			max_mode &= ~0222;
-> +		else /*
-> +		      * Don't allow permissions to become less
-> +		      * restrictive than the sysctl table entry
-> +		      */
-> +			max_mode &= table->mode;
-> +
-> +		/* Execute bits only allowed for directories */
-> +		if (!S_ISDIR(inode->i_mode))
-> +			max_mode &= ~0111;
-> +
-> +		if (attr->ia_mode & ~S_IFMT & ~max_mode)
-> +			return -EPERM;
-> +	}
-> +
->  	error = setattr_prepare(dentry, attr);
->  	if (error)
->  		return error;
->  
->  	setattr_copy(inode, attr);
->  	mark_inode_dirty(inode);
-> +
-> +	if (table)
-> +		table->current_mode = inode->i_mode;
-> +	sysctl_head_finish(head);
-> +
->  	return 0;
->  }
->  
-> @@ -861,7 +894,7 @@ static int proc_sys_getattr(const struct path *path, struct kstat *stat,
->  
->  	generic_fillattr(inode, stat);
->  	if (table)
-> -		stat->mode = (stat->mode & S_IFMT) | table->mode;
-> +		stat->mode = (stat->mode & S_IFMT) | table->current_mode;
->  
->  	sysctl_head_finish(head);
->  	return 0;
-> @@ -981,7 +1014,7 @@ static struct ctl_dir *new_dir(struct ctl_table_set *set,
->  	memcpy(new_name, name, namelen);
->  	new_name[namelen] = '\0';
->  	table[0].procname = new_name;
-> -	table[0].mode = S_IFDIR|S_IRUGO|S_IXUGO;
-> +	table[0].current_mode = table[0].mode = S_IFDIR|S_IRUGO|S_IXUGO;
->  	init_header(&new->header, set->dir.header.root, set, node, table);
->  
->  	return new;
-> @@ -1155,6 +1188,7 @@ static int sysctl_check_table(const char *path, struct ctl_table *table)
->  		if ((table->mode & (S_IRUGO|S_IWUGO)) != table->mode)
->  			err |= sysctl_err(path, table, "bogus .mode 0%o",
->  				table->mode);
-> +		table->current_mode = table->mode;
->  	}
->  	return err;
->  }
-> @@ -1192,7 +1226,7 @@ static struct ctl_table_header *new_links(struct ctl_dir *dir, struct ctl_table
->  		int len = strlen(entry->procname) + 1;
->  		memcpy(link_name, entry->procname, len);
->  		link->procname = link_name;
-> -		link->mode = S_IFLNK|S_IRWXUGO;
-> +		link->current_mode = link->mode = S_IFLNK|S_IRWXUGO;
->  		link->data = link_root;
->  		link_name += len;
->  	}
-> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-> index 6df477329b76..7c519c35bf9c 100644
-> --- a/include/linux/sysctl.h
-> +++ b/include/linux/sysctl.h
-> @@ -126,6 +126,7 @@ struct ctl_table
->  	void *data;
->  	int maxlen;
->  	umode_t mode;
-> +	umode_t current_mode;
->  	struct ctl_table *child;	/* Deprecated */
->  	proc_handler *proc_handler;	/* Callback for text formatting */
->  	struct ctl_table_poll *poll;
-> -- 
-> 2.24.0.rc1
-> 
+So 'jiffies' is really really special.
 
+And absolutely nothing else should use 'volatile' on data structures
+and be that special.  In the case of jiffies, the rule ends up being
+that nobody should ever write to it (you write to the real
+jiffies_64), and the real jiffies_64 thing gets the real locking, and
+'jiffies' is a read-only volatile thing.
 
--- 
-Kees Cook
+So "READ_ONCE()" is indeed unnecessary with jiffies, but it won't
+hurt. It's not really "confusion" - there's nothing _wrong_ with using
+READ_ONCE() on volatile data, but we just normally don't do volatile
+data in the kernel (because our normal model is that data is never
+really volatile in general - there may be locked and unlocked accesses
+to it, so it's stable or volatile depending on context, and thus the
+'volatile' goes on the _code_, not on the data structure)
+
+But while jiffies READ_ONCE() accesses isn't _wrong_, it is also not
+really paired with any WRITE_ONCE(), because the real update is to
+technically not even to the same full data structure.
+
+So don't look to jiffies for how to do things. It's an odd one-off.
+
+That said, for "this might be used racily", if there are annotations
+for clang to just make it shut up about one particular field in a
+structure, than I think that would be ok. As long as it doesn't then
+imply special code generation (outside of the checking, of course).
+
+                 Linus
