@@ -2,119 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 277C3F9638
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 17:55:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EDFDF965F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 17:56:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727874AbfKLQyw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Nov 2019 11:54:52 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35446 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727672AbfKLQx4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Nov 2019 11:53:56 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 80717ACFE;
-        Tue, 12 Nov 2019 16:53:53 +0000 (UTC)
-From:   Michal Suchanek <msuchanek@suse.de>
-To:     linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org
-Cc:     Michal Suchanek <msuchanek@suse.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Allison Randal <allison@lohutok.net>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Breno Leitao <leitao@debian.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        Russell Currey <ruscur@russell.cc>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Nicolai Stange <nstange@suse.de>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Diana Craciun <diana.craciun@nxp.com>,
-        Daniel Axtens <dja@axtens.net>,
-        Michael Neuling <mikey@neuling.org>,
-        Gustavo Romero <gromero@linux.ibm.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        "Steven Rostedt" <rostedt@goodmis.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Brajeswar Ghosh <brajeswar.linux@gmail.com>,
-        Jagadeesh Pagadala <jagdsh.linux@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 26/33] powerpc: Add back __ARCH_WANT_SYS_LLSEEK macro
-Date:   Tue, 12 Nov 2019 17:52:24 +0100
-Message-Id: <964c32e47c17190386f9257de050249834161115.1573576649.git.msuchanek@suse.de>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1573576649.git.msuchanek@suse.de>
-References: <cover.1573576649.git.msuchanek@suse.de>
+        id S1727493AbfKLQ4x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Nov 2019 11:56:53 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:37719 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726659AbfKLQ4w (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 12 Nov 2019 11:56:52 -0500
+Received: by mail-io1-f68.google.com with SMTP id 1so19486242iou.4;
+        Tue, 12 Nov 2019 08:56:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HqwJXeNY9wk6z2+t/J/8K5zGxXhn1Q+H3q7mr3NuIM0=;
+        b=lbfaVhljEpOI7EYfxB3HeVQRxYqUIq+gC/bIApH/dTVGxMV983jl+uPbDjF41nRql3
+         FOel9WxXNe3P6/35QiHWkGKYhHQWYXi+/h3MiQC5xVLnPlOGiHXbTnWjEtiUKtiIY8av
+         DHmv/ejyRRzheQlY4G+jGBwMUv8+n41gbh6lclYUZq8lqBrp4beZvsProiQMALL5kZNN
+         15Bt0CJBZL8xKPgcRLCIFmLkdrOItPr0EHZdddjSjtrcdexhqLgT0qk/IC7Mp/dCkMUk
+         l/8sCtftm4Wi8w1VEgNhVDnxWNkkQJRayMcZlVBPwMx9/MxM0Rlq5m8o2etPy8ALg8i4
+         3F4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HqwJXeNY9wk6z2+t/J/8K5zGxXhn1Q+H3q7mr3NuIM0=;
+        b=nFBs42A+FGnRvMRD1CGBuurG8Bx6nbFsvrCs0kJ8Y/9GIZovCyHCQtd1zWS0i1x+Gs
+         f0OCUP92/+fk5ZJT4pmSRROEipcWLTLR8rzo1mjDD4q9dXVZ3idfMnEcc5WViEGUMd97
+         fIrRj26pXILn9MWhogOaHHgax/WKLPW0zfbWANT/hDq7A+ghVkPqAEccGt81Ws+Rgm9y
+         U/m+11FDbMKRMuw2U5nYTKat3x8QYWmy3cMVzDyISf1uQzeNFK0AqNOcsumnsvOcRkLp
+         k2j4kzk4oKC7L9dXctgsRYVLp1ODywAESSWdY/8HaH6GOchDTJw7T5BYoY6Wv5eqracC
+         YZKQ==
+X-Gm-Message-State: APjAAAWvIztj0zeR9rOxAd17RE4hjVueR/bfcCQNUxX9A2lU7F5ZgmFy
+        8vlD0QxGw/Sd0VckyQeqXQ0MZs5pERiGO2E7E3g=
+X-Google-Smtp-Source: APXvYqyzAJg7T4N6pMBCrhN9eKsAC4ZA5oYgjBdRuxuM8bVioMoZjAH6MhGw4WgK8qmX4B90VhovBACFUrMr60ejB3k=
+X-Received: by 2002:a6b:e403:: with SMTP id u3mr31800360iog.130.1573577811692;
+ Tue, 12 Nov 2019 08:56:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191111073000.2957-1-amir73il@gmail.com> <CAJfpegvASSszZoYOdX9dcffo0EUNGVe_b8RU3JTtn-tXr9O7eg@mail.gmail.com>
+ <CAOQ4uxhMqYWYnXfXrzU7Qtv8xpR6k_tR9CFSo01NLZSvqBOxsw@mail.gmail.com>
+ <CABeXuvreoQkM1A3JBONtfD7uVLvC5MQ0hDRKX5rEQ_VUFGER8w@mail.gmail.com> <CAOQ4uxhH48Lso7ZLOngd904=YKFv8zbM=8oPfqYRPjD9fCzh7g@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhH48Lso7ZLOngd904=YKFv8zbM=8oPfqYRPjD9fCzh7g@mail.gmail.com>
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+Date:   Tue, 12 Nov 2019 08:56:40 -0800
+Message-ID: <CABeXuvqpyb5oQLuSLL5B6HvJNrd+Wn7ky6YezH5BLZ7O495mqA@mail.gmail.com>
+Subject: Re: [PATCH] ovl: fix timestamp limits
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This partially reverts commit caf6f9c8a326 ("asm-generic: Remove
-unneeded __ARCH_WANT_SYS_LLSEEK macro")
+On Tue, Nov 12, 2019 at 8:49 AM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> On Tue, Nov 12, 2019 at 6:45 PM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+> >
+> > On Tue, Nov 12, 2019 at 8:06 AM Amir Goldstein <amir73il@gmail.com> wrote:
+> > >
+> > > On Tue, Nov 12, 2019 at 5:48 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> > > >
+> > > > On Mon, Nov 11, 2019 at 8:30 AM Amir Goldstein <amir73il@gmail.com> wrote:
+> > > > >
+> > > > > Overlayfs timestamp overflow limits should be inherrited from upper
+> > > > > filesystem.
+> > > > >
+> > > > > The current behavior, when overlayfs is over an underlying filesystem
+> > > > > that does not support post 2038 timestamps (e.g. xfs), is that overlayfs
+> > > > > overflows post 2038 timestamps instead of clamping them.
+> > > >
+> > > > How?  Isn't the clamping supposed to happen in the underlying filesystem anyway?
+> > > >
+> > >
+> > > Not sure if it is supposed to be it doesn't.
+> > > It happens in do_utimes() -> utimes_common()
+> >
+> > Clamping also happens as part of current_time(). If this is called on
+> > an inode belonging to the upper fs, then the timestamps are clamped to
+> > those limits.
+> >
+>
+> OK, but from utimes syscall they do not get clamped inside filesystem
+> only in syscall itself. Right?
 
-When CONFIG_COMPAT is disabled on ppc64 the kernel does not build.
+Yes, that's right.
 
-There is resistance to both removing the llseek syscall from the 64bit
-syscall tables and building the llseek interface unconditionally.
-
-Link: https://lore.kernel.org/lkml/20190828151552.GA16855@infradead.org/
-Link: https://lore.kernel.org/lkml/20190829214319.498c7de2@naga/
-
-Signed-off-by: Michal Suchanek <msuchanek@suse.de>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/powerpc/include/asm/unistd.h | 1 +
- fs/read_write.c                   | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/include/asm/unistd.h b/arch/powerpc/include/asm/unistd.h
-index b0720c7c3fcf..700fcdac2e3c 100644
---- a/arch/powerpc/include/asm/unistd.h
-+++ b/arch/powerpc/include/asm/unistd.h
-@@ -31,6 +31,7 @@
- #define __ARCH_WANT_SYS_SOCKETCALL
- #define __ARCH_WANT_SYS_FADVISE64
- #define __ARCH_WANT_SYS_GETPGRP
-+#define __ARCH_WANT_SYS_LLSEEK
- #define __ARCH_WANT_SYS_NICE
- #define __ARCH_WANT_SYS_OLD_GETRLIMIT
- #define __ARCH_WANT_SYS_OLD_UNAME
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 5bbf587f5bc1..89aa2701dbeb 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -331,7 +331,8 @@ COMPAT_SYSCALL_DEFINE3(lseek, unsigned int, fd, compat_off_t, offset, unsigned i
- }
- #endif
- 
--#if !defined(CONFIG_64BIT) || defined(CONFIG_COMPAT)
-+#if !defined(CONFIG_64BIT) || defined(CONFIG_COMPAT) || \
-+	defined(__ARCH_WANT_SYS_LLSEEK)
- SYSCALL_DEFINE5(llseek, unsigned int, fd, unsigned long, offset_high,
- 		unsigned long, offset_low, loff_t __user *, result,
- 		unsigned int, whence)
--- 
-2.23.0
-
+-Deepa
