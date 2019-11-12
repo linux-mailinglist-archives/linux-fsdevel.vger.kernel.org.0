@@ -2,138 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8678CF9E3E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 00:41:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95297F9E44
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 00:42:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbfKLXlO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Nov 2019 18:41:14 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42491 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726970AbfKLXlO (ORCPT
+        id S1727126AbfKLXm4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Nov 2019 18:42:56 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:37401 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727077AbfKLXmy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Nov 2019 18:41:14 -0500
-Received: by mail-lf1-f68.google.com with SMTP id z12so301735lfj.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2019 15:41:12 -0800 (PST)
+        Tue, 12 Nov 2019 18:42:54 -0500
+Received: by mail-qt1-f195.google.com with SMTP id g50so494138qtb.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2019 15:42:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EUXLb1uu1dcQwvM3XnfVOQS/u8rpUwxsukE0911wRv8=;
-        b=BlxyQF/k0RbNlmXP5IB58F/0Xz3h4ttVpHaMWy/tA5ZBmhF0Hc9KKgINDE4bq+7VOV
-         zqj7K+B23f5rkrn/XHC7xsbbzsc8AsUGEmABEH/wooLD/jCPv801/xBfUCp/v8T8n//8
-         yAvsBxLJ7ZGLbzPhrSobnyjECGiABuvCmT8hg=
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vZiC7XI6w4qmcJhiszw5fcLLfKl81FBqJhCu/q1OZew=;
+        b=it8jHl8Aeod0zYq+Skrwrg8GwHh9Iu8Lk4aklL2UU1A7NrkgqGz5TacHTvuZENKCSO
+         zX5vQsxL6WoNuMWNKkEQjxDubFJia3lLQ6vtybpi5bU815x8TqvUIIt9Kr2Uo5cBSRzI
+         2VZYj93gQX0itc+geQUWbcwpbx7dsR+jspiqHjxUKDMEHdunGEQMz6R4qhshIz6xtcbf
+         Zhwk9IxmoxlDCj68H/K3Yi1WAV8gDwI3vnoSzzJ5OjxNZ+oTEONNaXk9owbEXpdua0Ac
+         Ytg9ljas4ej2TjoNx1nr1x9pd15vss2zsUb9mCqXq0UcPC7FIXHufZoDuL/IWSFTzLDE
+         UAww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EUXLb1uu1dcQwvM3XnfVOQS/u8rpUwxsukE0911wRv8=;
-        b=bRpi0QlMRiVgcPlV9lwnrMVgsIRRHU8OcvJ7ld5lQ5V400X/1pjc7VlaqvwCYo7nCL
-         TJ009TUcX5XmzlJtc77XF1e4YbcnbpPHEl8oypggLObs0MU/L0TMoHDKcUgoIOV0ezM+
-         noGHWONXHTgca87KDxgZ012wg7lXTrDOj5B8K5lYpnCYycLX69YB1UtNzG4LF0GRRDDH
-         HTCfSsiost2vw2GMAtzG28ZkSvqdr0X/lx6KVuNYOVybHlykeFhd57YwH6ppwkZQBlHF
-         b3zB9Xa9m7Pc9DyR09KlBPrcIeF5nh7ydYpkFw1oFNZdx0WIJggSxThXlkPH1BUOFvPQ
-         OqHQ==
-X-Gm-Message-State: APjAAAXGghiHcLsbnWyyoIikMLXh8xQyrXglQxHqC74ErRybYnvFPTVJ
-        aVf3kfFipHId571O5qK1def8gIISAcg=
-X-Google-Smtp-Source: APXvYqwuhuP0poM4pxYbmhLanzN0L4ECTYcmyj+X7gWm48b7NdCJje2FI0LO/QeHjw5AzYBItBDS1g==
-X-Received: by 2002:a19:41c8:: with SMTP id o191mr296234lfa.101.1573602070825;
-        Tue, 12 Nov 2019 15:41:10 -0800 (PST)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id j8sm80628lja.32.2019.11.12.15.41.08
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2019 15:41:09 -0800 (PST)
-Received: by mail-lj1-f176.google.com with SMTP id k15so409558lja.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2019 15:41:08 -0800 (PST)
-X-Received: by 2002:a2e:22c1:: with SMTP id i184mr233777lji.1.1573602068124;
- Tue, 12 Nov 2019 15:41:08 -0800 (PST)
-MIME-Version: 1.0
-References: <CAHk-=wgnjMEvqHnu_iJcbr_kdFyBQLhYojwv5T7p9F+CHxA9pg@mail.gmail.com>
- <Pine.LNX.4.44L0.1911121639540.1567-100000@iolanthe.rowland.org>
- <CANn89iKjWH86kChzPiVtCgVpt3GookwGk2x1YCTMeBSPpKU+Ww@mail.gmail.com>
- <20191112224441.2kxmt727qy4l4ncb@ast-mbp.dhcp.thefacebook.com> <CANn89iKLy-5rnGmVt-nzf6as4MvXgZzSH+BSReXZKpSTjhoWAw@mail.gmail.com>
-In-Reply-To: <CANn89iKLy-5rnGmVt-nzf6as4MvXgZzSH+BSReXZKpSTjhoWAw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 12 Nov 2019 15:40:51 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wj_rFOPF9Sw_-h-6J93tP9qO_UOEvd-e02z9+DEDs2kLQ@mail.gmail.com>
-Message-ID: <CAHk-=wj_rFOPF9Sw_-h-6J93tP9qO_UOEvd-e02z9+DEDs2kLQ@mail.gmail.com>
-Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
-To:     Eric Dumazet <edumazet@google.com>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Marco Elver <elver@google.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vZiC7XI6w4qmcJhiszw5fcLLfKl81FBqJhCu/q1OZew=;
+        b=YxYVxIDvh4Hy6lNHsBv4KdEvg6r/QrmW+YRo5hYGoKBZBG6iDTvYmQq1VfXK+fJZsp
+         RbjzpzVRFqUtBIx4mE5eOPkKSbtdq9THKtR5ijGEjcN9zNLRrXkJddodnfuc8Zw3aP90
+         cfsmwCh/OP2qZFnTC2/d3ry9yRxhhM3xhjW7eDo8GKP4VmBiLAFcf5RLvVc2JqA0HMhe
+         oG8qA88jOhxVIlHvingehD9kHBy6yWFQZJVKZf07kHcUYwQR2LpTlZJTtOSbOpsfrKGm
+         hR+B0v53XhwEiC394Bbd6Kb+pT3EWFpY64CGJIx+hgd+1tn9TC71ouitNxnwH6jRkS72
+         S35Q==
+X-Gm-Message-State: APjAAAX069Jm8xYo0slkAv8iA4H0DuILxioaOjrcwaULeF3dMFaud3CY
+        N85gP0laLuLogGV9LescYs/OgA==
+X-Google-Smtp-Source: APXvYqz3aftIVfOw8Wxd6a6UdmY0tmO8rvvaAb/aUmwkho+fgsveWFsBhLgURBNyxpICpzEXHNU+vQ==
+X-Received: by 2002:aed:26e2:: with SMTP id q89mr18576100qtd.391.1573602171951;
+        Tue, 12 Nov 2019 15:42:51 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-162-113-180.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.180])
+        by smtp.gmail.com with ESMTPSA id u11sm212203qtg.11.2019.11.12.15.42.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Nov 2019 15:42:51 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1iUfoA-0005Um-OB; Tue, 12 Nov 2019 19:42:50 -0400
+Date:   Tue, 12 Nov 2019 19:42:50 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     John Hubbard <jhubbard@nvidia.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, KVM list <kvm@vger.kernel.org>,
+        linux-block@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 08/23] vfio, mm: fix get_user_pages_remote() and
+ FOLL_LONGTERM
+Message-ID: <20191112234250.GA19615@ziepe.ca>
+References: <20191112000700.3455038-1-jhubbard@nvidia.com>
+ <20191112000700.3455038-9-jhubbard@nvidia.com>
+ <20191112204338.GE5584@ziepe.ca>
+ <0db36e86-b779-01af-77e7-469af2a2e19c@nvidia.com>
+ <CAPcyv4hAEgw6ySNS+EFRS4yNRVGz9A3Fu1vOk=XtpjYC64kQJw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4hAEgw6ySNS+EFRS4yNRVGz9A3Fu1vOk=XtpjYC64kQJw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 3:18 PM Eric Dumazet <edumazet@google.com> wrote:
->
-> Hmm we have the ' volatile'  attribute on jiffies, and it causes
-> confusion already :p
+On Tue, Nov 12, 2019 at 02:45:51PM -0800, Dan Williams wrote:
+> On Tue, Nov 12, 2019 at 2:43 PM John Hubbard <jhubbard@nvidia.com> wrote:
+> >
+> > On 11/12/19 12:43 PM, Jason Gunthorpe wrote:
+> > ...
+> > >> -            }
+> > >> +    ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags | FOLL_LONGTERM,
+> > >> +                                page, vmas, NULL);
+> > >> +    /*
+> > >> +     * The lifetime of a vaddr_get_pfn() page pin is
+> > >> +     * userspace-controlled. In the fs-dax case this could
+> > >> +     * lead to indefinite stalls in filesystem operations.
+> > >> +     * Disallow attempts to pin fs-dax pages via this
+> > >> +     * interface.
+> > >> +     */
+> > >> +    if (ret > 0 && vma_is_fsdax(vmas[0])) {
+> > >> +            ret = -EOPNOTSUPP;
+> > >> +            put_page(page[0]);
+> > >>      }
+> > >
+> > > AFAIK this chunk is redundant now as it is some hack to emulate
+> > > FOLL_LONGTERM? So vmas can be deleted too.
+> >
+> > Let me first make sure I understand what Dan has in mind for the vma
+> > checking, in the other thread...
+> 
+> It's not redundant relative to upstream which does not do anything the
+> FOLL_LONGTERM in the gup-slow path... but I have not looked at patches
+> 1-7 to see if something there made it redundant.
 
-The jiffies case is partly historical, but partly also because it's
-one of the very very few data structures where 99% of all uses are
-unlocked and for convenience reasons we really don't want to force
-those legacy cases to do anything special about it.
+Oh, the hunk John had below for get_user_pages_remote() also needs to
+call __gup_longterm_locked() when FOLL_LONGTERM is specified, then
+that calls check_dax_vmas() which duplicates the vma_is_fsdax() check
+above.
 
-"jiffies" really is very special for those kinds of legacy reasons.
-Look at the kinds of games we play with it on 32-bit architectures:
-the "real" storage is "jiffies_64", but nobody actually wants to use
-that, and because of load tearing issues it's actually hard to use
-too. So what everybody _uses_ is just the low 32 bits, and 'jiffies'
-isn't a real variable, it's done with linker tricks in our
-vmlinux.lds.S files. So, for example, on sparc32, you find this:
+Certainly no caller of FOLL_LONGTERM should have to do dax specific
+VMA checking.
 
-    jiffies = jiffies_64 + 4;
-
-in the vmlinux.lds.S file, because it's big-endian, and the lower 32
-bits are at offset 4 from the real 64-bit variable.
-
-Note that to actually read the "true" full 64-bit value, you have to
-then call a function that does the proper sequence counter stuff etc.
-But nobody really wants it, since what everybody actually _uses_ is
-the "time_after(x,jiffies+10)" kind of thing, which is only done in
-the wrapping "unsigned long" time base. So the odd "linker tricks with
-the atomic low bits marked as a volatile data structure" is actually
-exactly what we want, but people should realize that this is not
-normal.
-
-So 'jiffies' is really really special.
-
-And absolutely nothing else should use 'volatile' on data structures
-and be that special.  In the case of jiffies, the rule ends up being
-that nobody should ever write to it (you write to the real
-jiffies_64), and the real jiffies_64 thing gets the real locking, and
-'jiffies' is a read-only volatile thing.
-
-So "READ_ONCE()" is indeed unnecessary with jiffies, but it won't
-hurt. It's not really "confusion" - there's nothing _wrong_ with using
-READ_ONCE() on volatile data, but we just normally don't do volatile
-data in the kernel (because our normal model is that data is never
-really volatile in general - there may be locked and unlocked accesses
-to it, so it's stable or volatile depending on context, and thus the
-'volatile' goes on the _code_, not on the data structure)
-
-But while jiffies READ_ONCE() accesses isn't _wrong_, it is also not
-really paired with any WRITE_ONCE(), because the real update is to
-technically not even to the same full data structure.
-
-So don't look to jiffies for how to do things. It's an odd one-off.
-
-That said, for "this might be used racily", if there are annotations
-for clang to just make it shut up about one particular field in a
-structure, than I think that would be ok. As long as it doesn't then
-imply special code generation (outside of the checking, of course).
-
-                 Linus
+Jason
