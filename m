@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55D82F8571
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 01:35:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81380F856D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 01:35:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727025AbfKLAe6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Nov 2019 19:34:58 -0500
-Received: from mga07.intel.com ([134.134.136.100]:45567 "EHLO mga07.intel.com"
+        id S1727136AbfKLAfA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Nov 2019 19:35:00 -0500
+Received: from mga09.intel.com ([134.134.136.24]:63175 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726953AbfKLAe6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Nov 2019 19:34:58 -0500
+        id S1726953AbfKLAfA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 11 Nov 2019 19:35:00 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Nov 2019 16:34:57 -0800
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Nov 2019 16:34:58 -0800
 X-IronPort-AV: E=Sophos;i="5.68,294,1569308400"; 
-   d="scan'208";a="229127871"
+   d="scan'208";a="252014011"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.157])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Nov 2019 16:34:56 -0800
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Nov 2019 16:34:58 -0800
 From:   ira.weiny@intel.com
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>
@@ -31,10 +31,12 @@ Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net, linux-nfs@vger.kernel.org,
         linux-mm@kvack.org, Ira Weiny <ira.weiny@intel.com>
-Subject: [PATCH 0/2] Move swap functions out of address space operations
-Date:   Mon, 11 Nov 2019 16:34:50 -0800
-Message-Id: <20191112003452.4756-1-ira.weiny@intel.com>
+Subject: [PATCH 1/2] fs: Clean up mapping variable
+Date:   Mon, 11 Nov 2019 16:34:51 -0800
+Message-Id: <20191112003452.4756-2-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191112003452.4756-1-ira.weiny@intel.com>
+References: <20191112003452.4756-1-ira.weiny@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -44,28 +46,43 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Ira Weiny <ira.weiny@intel.com>
 
-As suggested by Jan Kara, move swap_[de]activate to file_operations to simplify
-address space operations for coming changes.
+The mapping variable is not directly used in these functions.  Just
+remove the additional variable.
 
-I'm not sure if this should go through Al Viro or Andrew Morton so I'm sending
-it to both of you.  Sorry if this is a problem.  Let me know if there is
-something else I should do.
+Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+---
+ fs/f2fs/data.c      | 3 +--
+ fs/iomap/swapfile.c | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-Ira Weiny (2):
-  fs: Clean up mapping variable
-  fs: Move swap_[de]activate to file_operations
-
- fs/btrfs/inode.c    |   4 +-
- fs/f2fs/data.c      | 123 --------------------------------------------
- fs/f2fs/file.c      | 122 +++++++++++++++++++++++++++++++++++++++++++
- fs/iomap/swapfile.c |   3 +-
- fs/nfs/file.c       |   4 +-
- fs/xfs/xfs_aops.c   |  13 -----
- fs/xfs/xfs_file.c   |  12 +++++
- include/linux/fs.h  |  10 ++--
- mm/swapfile.c       |  12 ++---
- 9 files changed, 149 insertions(+), 154 deletions(-)
-
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index ba3bcf4c7889..3c7777bfae17 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -3146,8 +3146,7 @@ int f2fs_migrate_page(struct address_space *mapping,
+ /* Copied from generic_swapfile_activate() to check any holes */
+ static int check_swap_activate(struct file *swap_file, unsigned int max)
+ {
+-	struct address_space *mapping = swap_file->f_mapping;
+-	struct inode *inode = mapping->host;
++	struct inode *inode = swap_file->f_mapping->host;
+ 	unsigned blocks_per_page;
+ 	unsigned long page_no;
+ 	unsigned blkbits;
+diff --git a/fs/iomap/swapfile.c b/fs/iomap/swapfile.c
+index a648dbf6991e..80571add0180 100644
+--- a/fs/iomap/swapfile.c
++++ b/fs/iomap/swapfile.c
+@@ -140,8 +140,7 @@ int iomap_swapfile_activate(struct swap_info_struct *sis,
+ 		.sis = sis,
+ 		.lowest_ppage = (sector_t)-1ULL,
+ 	};
+-	struct address_space *mapping = swap_file->f_mapping;
+-	struct inode *inode = mapping->host;
++	struct inode *inode = swap_file->f_mapping->host;
+ 	loff_t pos = 0;
+ 	loff_t len = ALIGN_DOWN(i_size_read(inode), PAGE_SIZE);
+ 	loff_t ret;
 -- 
 2.20.1
 
