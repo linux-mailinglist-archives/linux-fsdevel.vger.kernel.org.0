@@ -2,153 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E705DF9B8B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 22:11:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39046F9B9E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 22:13:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbfKLVKw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Nov 2019 16:10:52 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:1270 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727239AbfKLVKw (ORCPT
+        id S1727031AbfKLVNE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Nov 2019 16:13:04 -0500
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:37392 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726991AbfKLVNE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Nov 2019 16:10:52 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dcb1fa00000>; Tue, 12 Nov 2019 13:09:52 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 12 Nov 2019 13:10:48 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 12 Nov 2019 13:10:48 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 12 Nov
- 2019 21:10:47 +0000
-Subject: Re: [PATCH v3 00/23] mm/gup: track dma-pinned pages: FOLL_PIN,
- FOLL_LONGTERM
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20191112000700.3455038-1-jhubbard@nvidia.com>
- <20191112203802.GD5584@ziepe.ca>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <02fa935c-3469-b766-b691-5660084b60b9@nvidia.com>
-Date:   Tue, 12 Nov 2019 13:10:47 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 12 Nov 2019 16:13:04 -0500
+Received: from mr5.cc.vt.edu (mail.ipv6.vt.edu [IPv6:2607:b400:92:9:0:9d:8fcb:4116])
+        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id xACLD25k029401
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2019 16:13:02 -0500
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+        by mr5.cc.vt.edu (8.14.7/8.14.7) with ESMTP id xACLCvne025276
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2019 16:13:02 -0500
+Received: by mail-qk1-f199.google.com with SMTP id c77so44301qkb.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2019 13:13:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=WJCGNCQuaefXamcTcKNT2rb/G1MBbPGc68q4Yzm/TOg=;
+        b=fTuirjVZUG72gD/IlTM9mylLx+e+pOv6sdMZjYp1bs1BOwDEfqucHfNvn6oQvCfMdZ
+         Xj7tZBFkNzpVS7FjvphlvM5cLdiDDULAwvm5bir/+ZNoThwna7Xe1qORiKZYsFt5jXKR
+         BRY6kZBWBBoksH9cAOfHXHbMWhys1+tJ3uDAwVfgGrjSAWr9i8tW+wSvqhhyR/HK7aSM
+         ahxflkAtYyspmlR/+5uWj+7LxD0CQVYL7hvAXVgxo+2xKFaDipeenyNHVV0dhwiB7zl4
+         W5Fb4Zf6I9ZNLVk6PjqkYcY+nj0xfrLN/vycL5GreoVhC9Cnu4g9vwgTRJxqHJ6VV0ji
+         l1cw==
+X-Gm-Message-State: APjAAAXMPtKB+7VIGJwLJHN9IHeH2ixmOrwNTBiS1ax3mzDqS/3c+lsw
+        EKaGNVZm6lrrnaCP+ulC7XnlJ4t1by6Oj7u/XbZM/wGZjJsF4hTnW1TXdG4jHiS6fgo103hyM4L
+        IVrWes+aR9nd8k/b9laT39YNYOFUQgpO9PbBP
+X-Received: by 2002:a05:6214:852:: with SMTP id dg18mr31121808qvb.8.1573593177305;
+        Tue, 12 Nov 2019 13:12:57 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxsliWtv6xDWsmrevBQ5GtlwQfk6b3uvCdFIZKa5oLiD2vzGoyheoUDQPh5rXVBdDUZpoLpDA==
+X-Received: by 2002:a05:6214:852:: with SMTP id dg18mr31121782qvb.8.1573593176974;
+        Tue, 12 Nov 2019 13:12:56 -0800 (PST)
+Received: from turing-police.lan ([2601:5c0:c001:c9e1::359])
+        by smtp.gmail.com with ESMTPSA id 130sm9674214qkd.33.2019.11.12.13.12.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2019 13:12:55 -0800 (PST)
+From:   Valdis Kletnieks <valdis.kletnieks@vt.edu>
+X-Google-Original-From: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Valdis Kletnieks <Valdis.Kletnieks@vt.edu>,
+        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 00/12] staging: exfat: Heave FAT/VFAT over the side
+Date:   Tue, 12 Nov 2019 16:12:26 -0500
+Message-Id: <20191112211238.156490-1-Valdis.Kletnieks@vt.edu>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <20191112203802.GD5584@ziepe.ca>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1573592992; bh=FYNiQqIIwAjaPTLdgZDFjzpc3PZA+IOd8Qzq/L3NYFI=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=XDTPGbX/pfLSLEPMZj0U4ST8nWeqLQb9L0gJo2fojuRXhn2sbJZCbDvwG00vq+XIQ
-         colylZtLpZg40dx1ABr6UMyL7nDz+Ko0zZq5udmfA2v8o8KV6jbQ8nMJaMjSxXz3jT
-         /IQas6U39IMXowKsu+Lp15YvwNvsj9I4GEW1qSNrdbdQur8MbFNPpL74slNbnNTKiw
-         2tvXn1JIXwNPZ2+bJmHJ2nQzCpfl0RwWLH4Y7hj0SisnidmxgFdWv36tY7VU9S2345
-         uRxyqWTOY6lQqCfoY1uSgUmsGBjI6laWSw8oWM5BJSMXcH/MubF7tkJ0NoA3AfLsvB
-         eNrIf7Db8lhiQ==
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/12/19 12:38 PM, Jason Gunthorpe wrote:
-> On Mon, Nov 11, 2019 at 04:06:37PM -0800, John Hubbard wrote:
->> Hi,
->>
->> The cover letter is long, so the more important stuff is first:
->>
->> * Jason, if you or someone could look at the the VFIO cleanup (patch 8)
->>   and conversion to FOLL_PIN (patch 18), to make sure it's use of
->>   remote and longterm gup matches what we discussed during the review
->>   of v2, I'd appreciate it.
->>
->> * Also for Jason and IB: as noted below, in patch 11, I am (too?) boldly
->>   converting from put_user_pages() to release_pages().
-> 
-> Why are we doing this? I think things got confused here someplace, as
+The first 4 patches iteratively remove more and more of the
+FAT/VFAT code.
 
+The second 8 patches make a lot of functions static, and
+renames many of the rest to avoid namespace pollution.
 
-Because:
+Valdis Kletnieks (12):
+  staging: exfat: Remove FAT/VFAT mount support, part 1
+  staging: exfat: Remove FAT/VFAT mount support, part 2
+  staging: exfat: Remove FAT/VFAT mount support, part 3
+  staging: exfat: Remove FAT/VFAT mount support, part 4
+  staging: exfat: Clean up the namespace pollution part 1
+  staging: exfat: Clean up the namespace pollution part 2
+  staging: exfat: Clean up the namespace pollution part 3
+  staging: exfat: Clean up the namespace pollution part 4
+  staging: exfat: Clean up the namespace pollution part 5
+  staging: exfat: Clean up the namespace pollution part 6
+  staging: exfat: Clean up the namespace pollution part 7
+  staging: exfat: Clean up the namespace pollution part 8
 
-a) These need put_page() calls,  and
+ drivers/staging/exfat/Kconfig        |    9 -
+ drivers/staging/exfat/exfat.h        |  160 +--
+ drivers/staging/exfat/exfat_blkdev.c |   10 +-
+ drivers/staging/exfat/exfat_cache.c  |  251 +---
+ drivers/staging/exfat/exfat_core.c   | 1896 ++++++--------------------
+ drivers/staging/exfat/exfat_nls.c    |  192 ---
+ drivers/staging/exfat/exfat_super.c  |  359 ++---
+ 7 files changed, 595 insertions(+), 2282 deletions(-)
 
-b) there is no put_pages() call, but there is a release_pages() call that
-is, arguably, what put_pages() would be.
+-- 
+2.24.0
 
-
-> the comment still says:
-> 
-> /**
->  * put_user_page() - release a gup-pinned page
->  * @page:            pointer to page to be released
->  *
->  * Pages that were pinned via get_user_pages*() must be released via
->  * either put_user_page(), or one of the put_user_pages*() routines
->  * below.
-
-
-Ohhh, I missed those comments. They need to all be changed over to
-say "pages that were pinned via pin_user_pages*() or 
-pin_longterm_pages*() must be released via put_user_page*()."
-
-The get_user_pages*() pages must still be released via put_page.
-
-The churn is due to a fairly significant change in strategy, whis
-is: instead of changing all get_user_pages*() sites to call 
-put_user_page(), change selected sites to call pin_user_pages*() or 
-pin_longterm_pages*(), plus put_user_page().
-
-That allows incrementally converting the kernel over to using the
-new pin APIs, without taking on the huge risk of a big one-shot
-conversion. 
-
-So, I've ended up with one place that actually needs to get reverted
-back to get_user_pages(), and that's the IB ODP code.
-
-> 
-> I feel like if put_user_pages() is not the correct way to undo
-> get_user_pages() then it needs to be deleted.
-> 
-
-Yes, you're right. I'll fix the put_user_page comments() as described.
-
-
-thanks,
-
-John Hubbard
-NVIDIA
