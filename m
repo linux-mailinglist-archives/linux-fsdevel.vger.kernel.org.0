@@ -2,201 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 187B0F9BFB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 22:22:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66340F9C56
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 22:32:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727310AbfKLVV5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Nov 2019 16:21:57 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44948 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727279AbfKLVV4 (ORCPT
+        id S1726959AbfKLVcU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Nov 2019 16:32:20 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:59348 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726906AbfKLVcT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Nov 2019 16:21:56 -0500
-Received: by mail-pg1-f193.google.com with SMTP id f19so12656860pgk.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2019 13:21:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=56RmInZgI7Bh5RV3HY6BrZUpnFAVvdE9v++wifdVVbQ=;
-        b=ZfNUt0qSlG/eNpBtAZ0VTYWsyYp45EI1kg059Eym4v5QX0Rd4eJhUdGDHMn6QKbyy7
-         rAEVCINxRbPGFWvH2zmErPehM9LKyDLyBoDAInAHNKT4/quKkG/EtZO/FhCOkM/nDfkP
-         OwUp5RB5f4lGpDiCQlYFyWhQBMqbf0YFKIWuU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=56RmInZgI7Bh5RV3HY6BrZUpnFAVvdE9v++wifdVVbQ=;
-        b=cckRXFDB77BvdKIDD7g+e4mNa/rmoXZWDNkZMJA5pz34+F6G+vZHq8+JAPM11PgvxF
-         sej6bZK9FuNGO8Grt4MMgGl9T/fxIiuUfLnyoja52nS6+1Ca58VuDFtCDAPdcWYuSavL
-         vCnqbk75RkkrcmG1px6Nt9lv3t98zz8K4sLoYadQ7mlV5EPrPRu3leLBhwh7IwP6qF70
-         oFvlEHXxe19ZUkPpw4U+0C3q46OzuZ0uGJAroVFxDkbVpp6FuLX9dxLAvpxVsQfZPkBt
-         rzEXdjX46Logwzg8hjWBvxH32yeXHOqHawi0kQh74t8xySUg8meB7NxGsObqB8a059h2
-         ZsIQ==
-X-Gm-Message-State: APjAAAUfCzRUtpnFa/wJFaUHlMLyWmWzMNfZsFLrtdjmfuIP6ABRzW8R
-        geTPqhSs3BtdTD2f/z+B+5sCeQ==
-X-Google-Smtp-Source: APXvYqzdFzu4zPPFnJ9ABSyKsWziEZi4Dk2O2pVHeNcsXTcPeB3CKkazqUJ/8FJ/XZkexPEBBAMb2g==
-X-Received: by 2002:aa7:8d8b:: with SMTP id i11mr11186741pfr.45.1573593716214;
-        Tue, 12 Nov 2019 13:21:56 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id c21sm19635349pgh.25.2019.11.12.13.21.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 13:21:55 -0800 (PST)
-Date:   Tue, 12 Nov 2019 13:21:54 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Jiri Slaby <jslaby@suse.cz>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-kernel@vger.kernel.org, David Windsor <dave@nullcore.net>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christoph Lameter <cl@linux.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Dave Kleikamp <dave.kleikamp@oracle.com>,
-        Jan Kara <jack@suse.cz>,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Rik van Riel <riel@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Kubecek <mkubecek@suse.cz>
-Subject: Re: [kernel-hardening] [PATCH 09/38] usercopy: Mark kmalloc caches
- as usercopy caches
-Message-ID: <201911121313.1097D6EE@keescook>
-References: <1515636190-24061-1-git-send-email-keescook@chromium.org>
- <1515636190-24061-10-git-send-email-keescook@chromium.org>
- <9519edb7-456a-a2fa-659e-3e5a1ff89466@suse.cz>
+        Tue, 12 Nov 2019 16:32:19 -0500
+Received: from dread.disaster.area (pa49-180-67-183.pa.nsw.optusnet.com.au [49.180.67.183])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 11F763A0B50;
+        Wed, 13 Nov 2019 08:32:16 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1iUdlm-0007J1-JO; Wed, 13 Nov 2019 08:32:14 +1100
+Date:   Wed, 13 Nov 2019 08:32:14 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, y2038@lists.linaro.org,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Brian Foster <bfoster@redhat.com>,
+        Allison Collins <allison.henderson@oracle.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC 4/5] xfs: extend inode format for 40-bit timestamps
+Message-ID: <20191112213214.GP4614@dread.disaster.area>
+References: <20191112120910.1977003-1-arnd@arndb.de>
+ <20191112120910.1977003-5-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9519edb7-456a-a2fa-659e-3e5a1ff89466@suse.cz>
+In-Reply-To: <20191112120910.1977003-5-arnd@arndb.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
+        a=3wLbm4YUAFX2xaPZIabsgw==:117 a=3wLbm4YUAFX2xaPZIabsgw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=MeAgGD-zjQ4A:10
+        a=VwQbUJbxAAAA:8 a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8 a=R9Rnn_goW3qbCYCF-O0A:9
+        a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22 a=1CNFftbPRP8L7MoqJWF3:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 08:17:57AM +0100, Jiri Slaby wrote:
-> On 11. 01. 18, 3:02, Kees Cook wrote:
-> > From: David Windsor <dave@nullcore.net>
-> > 
-> > Mark the kmalloc slab caches as entirely whitelisted. These caches
-> > are frequently used to fulfill kernel allocations that contain data
-> > to be copied to/from userspace. Internal-only uses are also common,
-> > but are scattered in the kernel. For now, mark all the kmalloc caches
-> > as whitelisted.
-> > 
-> > This patch is modified from Brad Spengler/PaX Team's PAX_USERCOPY
-> > whitelisting code in the last public patch of grsecurity/PaX based on my
-> > understanding of the code. Changes or omissions from the original code are
-> > mine and don't reflect the original grsecurity/PaX code.
-> > 
-> > Signed-off-by: David Windsor <dave@nullcore.net>
-> > [kees: merged in moved kmalloc hunks, adjust commit log]
-> > Cc: Pekka Enberg <penberg@kernel.org>
-> > Cc: David Rientjes <rientjes@google.com>
-> > Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: linux-mm@kvack.org
-> > Cc: linux-xfs@vger.kernel.org
-> > Signed-off-by: Kees Cook <keescook@chromium.org>
-> > Acked-by: Christoph Lameter <cl@linux.com>
-> > ---
-> >  mm/slab.c        |  3 ++-
-> >  mm/slab.h        |  3 ++-
-> >  mm/slab_common.c | 10 ++++++----
-> >  3 files changed, 10 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/mm/slab.c b/mm/slab.c
-> > index b9b0df620bb9..dd367fe17a4e 100644
-> > --- a/mm/slab.c
-> > +++ b/mm/slab.c
-> ...
-> > @@ -1098,7 +1099,8 @@ void __init setup_kmalloc_cache_index_table(void)
-> >  static void __init new_kmalloc_cache(int idx, slab_flags_t flags)
-> >  {
-> >  	kmalloc_caches[idx] = create_kmalloc_cache(kmalloc_info[idx].name,
-> > -					kmalloc_info[idx].size, flags);
-> > +					kmalloc_info[idx].size, flags, 0,
-> > +					kmalloc_info[idx].size);
-> >  }
-> >  
-> >  /*
-> > @@ -1139,7 +1141,7 @@ void __init create_kmalloc_caches(slab_flags_t flags)
-> >  
-> >  			BUG_ON(!n);
-> >  			kmalloc_dma_caches[i] = create_kmalloc_cache(n,
-> > -				size, SLAB_CACHE_DMA | flags);
-> > +				size, SLAB_CACHE_DMA | flags, 0, 0);
+On Tue, Nov 12, 2019 at 01:09:09PM +0100, Arnd Bergmann wrote:
+> XFS is the only major file system that lacks timestamps beyond year 2038,
+> and is already being deployed in systems that may have to be supported
+> beyond that time.
 > 
-> Hi,
+> Fortunately, the inode format still has a few reserved bits that can be
+> used to extend the current format. There are two bits in the nanosecond
+> portion that could be used in the same way that ext4 does, extending
+> the timestamps until year 2378, as well as 12 unused bytes after the
+> already allocated fields.
 > 
-> was there any (undocumented) reason NOT to mark DMA caches as usercopy?
+> There are four timestamps that need to be extended, so using four
+> bytes out of the reserved space gets us all the way until year 36676,
+> by extending the current 1902-2036 with another 255 epochs, which
+> seems to be a reasonable range.
 > 
-> We are seeing this on s390x:
+> I am not sure whether this change to the inode format requires a
+> new version for the inode. All existing file system images remain
+> compatible, while mounting a file systems with extended timestamps
+> beyond 2038 would report that timestamp incorrectly in the 1902
+> through 2038 range, matching the traditional Linux behavior of
+> wrapping timestamps.
 > 
-> > usercopy: Kernel memory overwrite attempt detected to SLUB object
-> 'dma-kmalloc-1k' (offset 0, size 11)!
-> > ------------[ cut here ]------------
-> > kernel BUG at mm/usercopy.c:99!
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Interesting! I believe the rationale was that if the region is used for
-DMA, allowing direct access to it from userspace could be prone to
-races.
+This is basically what I proposed ~5 years or so ago and posted a
+patch to implement it in an early y2038 discussion with you. I jsut
+mentioned that very patch in my reposnse to Amir's timestamp
+extension patchset, pointing out that this isn't the way we want
+to proceed with >y2038 on-disk support.
 
-> See:
-> https://bugzilla.suse.com/show_bug.cgi?id=1156053
+https://lore.kernel.org/linux-xfs/20191112161242.GA19334@infradead.org/T/#maf6b2719ed561cc2865cc5e7eb82df206b971261
 
-For context from the bug, the trace is:
+I'd suggest taking the discussion there....
 
-(<0000000000386c5a> usercopy_abort+0xa2/0xa8) 
- <000000000036097a> __check_heap_object+0x11a/0x120  
- <0000000000386b3a> __check_object_size+0x18a/0x208  
- <000000000079b4ba> skb_copy_datagram_from_iter+0x62/0x240  
- <000003ff804edd5c> iucv_sock_sendmsg+0x1fc/0x858 Ýaf_iucv¨  
- <0000000000785894> sock_sendmsg+0x54/0x90  
- <0000000000785944> sock_write_iter+0x74/0xa0  
- <000000000038a3f0> new_sync_write+0x110/0x180  
- <000000000038d42e> vfs_write+0xa6/0x1d0  
- <000000000038d748> ksys_write+0x60/0xe8  
- <000000000096a660> system_call+0xdc/0x2e0  
+Cheers,
 
-I know Al worked on fixing up usercopy checking for iters. I wonder if
-there is redundant checking happening here? i.e. haven't iters already
-done object size verifications, so they're not needed during iter copy
-helpers?
-
-> This indeed fixes it:
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -1290,7 +1290,8 @@ void __init create_kmalloc_caches(slab_flags_t flags)
->                         kmalloc_caches[KMALLOC_DMA][i] =
-> create_kmalloc_cache(
->                                 kmalloc_info[i].name[KMALLOC_DMA],
->                                 kmalloc_info[i].size,
-> -                               SLAB_CACHE_DMA | flags, 0, 0);
-> +                               SLAB_CACHE_DMA | flags, 0,
-> +                               kmalloc_info[i].size);
->                 }
->         }
->  #endif
-
-How is iucv the only network protocol that has run into this? Do others
-use a bounce buffer?
-
+Dave.
 -- 
-Kees Cook
+Dave Chinner
+david@fromorbit.com
