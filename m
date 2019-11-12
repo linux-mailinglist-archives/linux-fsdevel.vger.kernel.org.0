@@ -2,138 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A275F9E06
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 00:17:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8834FF9E0E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 00:18:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727063AbfKLXRc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Nov 2019 18:17:32 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:8581 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726910AbfKLXRb (ORCPT
+        id S1727093AbfKLXR6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Nov 2019 18:17:58 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:38211 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727004AbfKLXR6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Nov 2019 18:17:31 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dcb3d4b0000>; Tue, 12 Nov 2019 15:16:27 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 12 Nov 2019 15:17:23 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 12 Nov 2019 15:17:23 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 12 Nov
- 2019 23:17:22 +0000
-Subject: Re: [PATCH v3 08/23] vfio, mm: fix get_user_pages_remote() and
- FOLL_LONGTERM
-To:     Dan Williams <dan.j.williams@intel.com>
-CC:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, KVM list <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>,
-        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20191112000700.3455038-1-jhubbard@nvidia.com>
- <20191112000700.3455038-9-jhubbard@nvidia.com>
- <20191112204338.GE5584@ziepe.ca>
- <0db36e86-b779-01af-77e7-469af2a2e19c@nvidia.com>
- <CAPcyv4hAEgw6ySNS+EFRS4yNRVGz9A3Fu1vOk=XtpjYC64kQJw@mail.gmail.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <85987617-9f6b-6bd3-fea2-9f2910d942bd@nvidia.com>
-Date:   Tue, 12 Nov 2019 15:17:22 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 12 Nov 2019 18:17:58 -0500
+Received: by mail-il1-f193.google.com with SMTP id u17so12342172ilq.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2019 15:17:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2wmRZDK37oUqP6+uI5Wq9SWuQ2Hmj0XKslCBjAECKVc=;
+        b=pfU5LFrMse1pSEkfylHbI3ThR2Y+Cw7OHPuSu2xiSoUYEvgyeHgdPu8QvG6CkhvCoe
+         WJYwzI1mqsA88zP/CjDJaF5Oz69q6+PW1qcnYJeuXy1pMh7Ba4hEZxRqZ+Q0u6o/dWM/
+         sVhx8vWPyecAQJtPiHMSx17SBrSEkZR+JDy3lcS/miLEsPYK9TNgNf8HPBTsr9f3Oh0r
+         /LBvR7yiViw18qkXpc4NKNV2xoNgEMV7UtGA0PvfFyCtlbsuCrP3VYbIQ/XHEnPScUkB
+         9GbS5RJ0I5dG+TQeq409bAOKeH6NU5DeP7mupTUsfMdSQGpJlr8ppG2clQtN7+vkfXSO
+         v7CA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2wmRZDK37oUqP6+uI5Wq9SWuQ2Hmj0XKslCBjAECKVc=;
+        b=FVTCh6LvrFDxERddiu1sWdocm9ZcDn7BIiBDaJaq3n0m1a25/mk0g5/h7TKn8b5ejk
+         Sb+l3eWd3dCjUQ1mzkP7otpd1OGtTZxID3m3YxwUrSPUHpAxk+PBD0IIhsrAx0ElnenU
+         nLDRI2p0hE1oTOlb+hqxm8f3yr5myqpwhTaj4trx6zVOWKtQjwJwetTe07+/jWBAmO20
+         DiQe3YHs2zJedvneLSL8ryUxtP7OYPxGuzd/7SfPdVAjSLnzmFI56A4ulwRgiASrWtxz
+         hb6Hg+WRqnWXvRCozTnIbEpcRJsLxOFUimYWNjLJ/J0Wn7DHyGRTZzN+iA0XxDSNOpZF
+         4GHA==
+X-Gm-Message-State: APjAAAXiXJzEEkoFioWF15sKE0fA6OImBNvvzMkfOabx9/Wd+lZtyVXB
+        eMnCB5N2c5xeWda99yAedQlez3x/A90slNfPnSbtWQ==
+X-Google-Smtp-Source: APXvYqwgnU/a21nfBNFsr9Op7EWEfA1m/SMTKYo3W1G2U2UNy2dJ91UWK8OVcS5yBL8G3n/K45v4vX9Pr75HtsohL8U=
+X-Received: by 2002:a92:7e0d:: with SMTP id z13mr505883ilc.168.1573600677105;
+ Tue, 12 Nov 2019 15:17:57 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4hAEgw6ySNS+EFRS4yNRVGz9A3Fu1vOk=XtpjYC64kQJw@mail.gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1573600587; bh=MjC1bPxvrMSKZyR0vfIkph3DH21vc9F8lPoYeam7DCg=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=p3qYKNzVf+yoWXVxXvdWjvLLch3+eBgZBZPzM5iL19+w8RiUo7ZDiZ6gW1HFxWncA
-         +kkprqimeUO8SSqHdah/r3BwJo4tDay3qaFNXlfKQCKgL2mn5vpeQtNa9DXVDSKAs9
-         R4vcNKCywQ8SHP3DUh8n5njcCPN6pw3P07lAmh8mqH74Fvgl1XHO+C/rjd/05WqSfr
-         CbI8v19uMzgduDq6l5KCW1YAmvvVqDA87KUBJVym8vf0Kv0kKAaenl3Op2+6yladeP
-         PH6kHbkLvI9QcVfTqnjU+9eG71rPYcWHuFxhGzrL4Y4JAkS0eHU4rmGDiCKR0r+10R
-         ZzG6cdcgSU6Ww==
+References: <CAHk-=wgnjMEvqHnu_iJcbr_kdFyBQLhYojwv5T7p9F+CHxA9pg@mail.gmail.com>
+ <Pine.LNX.4.44L0.1911121639540.1567-100000@iolanthe.rowland.org>
+ <CANn89iKjWH86kChzPiVtCgVpt3GookwGk2x1YCTMeBSPpKU+Ww@mail.gmail.com> <20191112224441.2kxmt727qy4l4ncb@ast-mbp.dhcp.thefacebook.com>
+In-Reply-To: <20191112224441.2kxmt727qy4l4ncb@ast-mbp.dhcp.thefacebook.com>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Tue, 12 Nov 2019 15:17:44 -0800
+Message-ID: <CANn89iKLy-5rnGmVt-nzf6as4MvXgZzSH+BSReXZKpSTjhoWAw@mail.gmail.com>
+Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Marco Elver <elver@google.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/12/19 2:45 PM, Dan Williams wrote:
-> On Tue, Nov 12, 2019 at 2:43 PM John Hubbard <jhubbard@nvidia.com> wrote:
->>
->> On 11/12/19 12:43 PM, Jason Gunthorpe wrote:
->> ...
->>>> -            }
->>>> +    ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags | FOLL_LONGTERM,
->>>> +                                page, vmas, NULL);
->>>> +    /*
->>>> +     * The lifetime of a vaddr_get_pfn() page pin is
->>>> +     * userspace-controlled. In the fs-dax case this could
->>>> +     * lead to indefinite stalls in filesystem operations.
->>>> +     * Disallow attempts to pin fs-dax pages via this
->>>> +     * interface.
->>>> +     */
->>>> +    if (ret > 0 && vma_is_fsdax(vmas[0])) {
->>>> +            ret = -EOPNOTSUPP;
->>>> +            put_page(page[0]);
->>>>      }
->>>
->>> AFAIK this chunk is redundant now as it is some hack to emulate
->>> FOLL_LONGTERM? So vmas can be deleted too.
->>
->> Let me first make sure I understand what Dan has in mind for the vma
->> checking, in the other thread...
-> 
-> It's not redundant relative to upstream which does not do anything the
-> FOLL_LONGTERM in the gup-slow path... but I have not looked at patches
-> 1-7 to see if something there made it redundant.
-> 
+On Tue, Nov 12, 2019 at 2:44 PM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Tue, Nov 12, 2019 at 02:07:03PM -0800, Eric Dumazet wrote:
+> >
+> > I would prefer some kind of explicit marking, instead of a comment.
+> >
+> > Even if we prefer having a sane compiler, having these clearly
+> > annotated can help
+> > code readability quite a lot.
+>
+> Annotating every line where tsk->min_flt is used with a comment
+> or explicit macro seems like a lot of churn.
+> How about adding an attribute to a field ?
+> Or an attribute to a type?
+>
+> clang attributes can be easily exteneded. We add bpf specific attributes
+> that are known to clang only when 'clang -target bpf' is used.
+> There could be x86 or generic attributes.
+> Then one can do:
+> typedef unsigned long __attribute__((ignore_data_race)) racy_u64;
+> struct task_struct {
+>    racy_u64 min_flt;
+> };
+>
+> Hopefully less churn and clear signal to clang.
 
-There is nothing in patches 1-7 that would make it redundant. 
+Hmm we have the ' volatile'  attribute on jiffies, and it causes
+confusion already :p
 
-About the only thing that you might find interesting in that subset is
-patch 4 ("mm: devmap: refactor 1-based refcounting for ZONE_DEVICE pages"),
-for devmap and ZONE_DEVICE interest. But it doesn't affect this
-discussion directly.
-
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+arch/x86/kernel/apic/apic.c:904:        jif_start = READ_ONCE(jiffies);
+arch/x86/kernel/apic/apic.c:927:
+unsigned long jif_now = READ_ONCE(jiffies);
+kernel/sched/wait_bit.c:218:    unsigned long now = READ_ONCE(jiffies);
+kernel/sched/wait_bit.c:232:    unsigned long now = READ_ONCE(jiffies);
+kernel/time/timer.c:891:        jnow = READ_ONCE(jiffies);
+kernel/time/timer.c:1681:       unsigned long now = READ_ONCE(jiffies);
+net/rxrpc/conn_client.c:1111:           now = READ_ONCE(jiffies);
