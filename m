@@ -2,69 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86399F90BD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 14:33:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7138CF91BB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 15:16:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbfKLNdv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Nov 2019 08:33:51 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50364 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725865AbfKLNdv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Nov 2019 08:33:51 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 64721B213;
-        Tue, 12 Nov 2019 13:33:49 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id AC6B71E4AD2; Tue, 12 Nov 2019 14:33:48 +0100 (CET)
-Date:   Tue, 12 Nov 2019 14:33:48 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     ira.weiny@intel.com, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org, Dave Chinner <david@fromorbit.com>,
-        Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 2/2] fs: Move swap_[de]activate to file_operations
-Message-ID: <20191112133348.GJ1241@quack2.suse.cz>
-References: <20191112003452.4756-1-ira.weiny@intel.com>
- <20191112003452.4756-3-ira.weiny@intel.com>
- <20191111164320.80f814161469055b14f27045@linux-foundation.org>
+        id S1727074AbfKLOQE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Nov 2019 09:16:04 -0500
+Received: from verein.lst.de ([213.95.11.211]:56042 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726645AbfKLOQE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 12 Nov 2019 09:16:04 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 3095168BE1; Tue, 12 Nov 2019 15:16:01 +0100 (CET)
+Date:   Tue, 12 Nov 2019 15:16:00 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, y2038@lists.linaro.org,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Dave Chinner <david@fromorbit.com>,
+        Brian Foster <bfoster@redhat.com>,
+        Allison Collins <allison.henderson@oracle.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC 1/5] xfs: [variant A] avoid time_t in user api
+Message-ID: <20191112141600.GB10922@lst.de>
+References: <20191112120910.1977003-1-arnd@arndb.de> <20191112120910.1977003-2-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191111164320.80f814161469055b14f27045@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191112120910.1977003-2-arnd@arndb.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 11-11-19 16:43:20, Andrew Morton wrote:
-> On Mon, 11 Nov 2019 16:34:52 -0800 ira.weiny@intel.com wrote:
+On Tue, Nov 12, 2019 at 01:09:06PM +0100, Arnd Bergmann wrote:
+> However, as long as two observations are true, a much simpler solution
+> can be used:
 > 
-> > From: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > swap_activate() and swap_deactivate() have nothing to do with
-> > address spaces.  We want to eventually make the address space operations
-> > dynamic to switch inode flags on the fly.
-> 
-> What does this mean?
+> 1. xfsprogs is the only user space project that has a copy of this header
 
-See my reply to Christoph [1]. Ira wants to make switching inodes between
-DAX and non-DAX mode work which means switching also
-address_space_operations pointer in the mapping. 
+We can't guarantee that.
 
-								Honza
+> 2. xfsprogs already has a replacement for all three affected ioctl commands,
+>    based on the xfs_bulkstat structure to pass 64-bit timestamps
+>    regardless of the architecture
 
-[1] lore.kernel.org/r/20191112133055.GI1241@quack2.suse.cz
+XFS_IOC_BULKSTAT replaces XFS_IOC_FSBULKSTAT directly, and can replace
+XFS_IOC_FSBULKSTAT_SINGLE indirectly, so that is easy.  Most users
+actually use the new one now through libfrog, although I found a user
+of the direct ioctl in the xfs_io tool, which could easily be fixed as
+well.
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+XFS_IOC_SWAPEXT does not have a direct replacement, but the timestamp
+is only used to verify that the file did not change vs the previous
+stat.  So not being able to represent > 2038 times is not a real
+problem anyway.
+
+At some point we should probably look into a file system independent
+defrag ioctl anyway, at which point we can deprecate XFS_IOC_SWAPEXT.
+
+> Based on those assumptions, changing xfs_bstime to use __kernel_long_t
+> instead of time_t in both the kernel and in xfsprogs preserves the current
+> ABI for any libc definition of time_t and solves the problem of passing
+> 64-bit timestamps to 32-bit user space.
+
+As said above their are not entirely true, but I still think this patch
+is the right thing to do, if only to get the time_t out of the ABI..
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
