@@ -2,118 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83B22F9D6B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 23:46:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 158C6F9DA6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 00:01:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726970AbfKLWqD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Nov 2019 17:46:03 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:33294 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726958AbfKLWqC (ORCPT
+        id S1727192AbfKLXBa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Nov 2019 18:01:30 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38831 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726988AbfKLXB3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Nov 2019 17:46:02 -0500
-Received: by mail-oi1-f195.google.com with SMTP id m193so16449060oig.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2019 14:46:02 -0800 (PST)
+        Tue, 12 Nov 2019 18:01:29 -0500
+Received: by mail-pl1-f195.google.com with SMTP id w8so167536plq.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2019 15:01:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7VZux41I9l8WsaFw4dnSKoQ+DL1POYbdTwXxPgsqOD8=;
-        b=g+shynx9wA4O7/ZPSOmOhvhdFUBcChFyBb7EYzal20VNZRr14tSC8CEEu8RhYVOSKP
-         ujUV0PqIhIH36zKviPook+HnkIHuRG88nmkcJhEvO3dJXo36vkvTp3d/Rv5+wpQSmOnU
-         bQU0r/Fslk/8pH+0JUylPowC6D4ZnT5PrmHiZ30JXUbKpZ1rMZQ7kmT50jl8KfJoHp7m
-         VvEK+ooBIm3vYED6+FUL9oFvr5SRhfXOEafMoAbLZrqHGNUi1aW7WiDjR5Rr2M+YKo5Q
-         1bTGao6fq7ZjCHqOdYHjYnxFv2rb5XbPoQBWE0A1WALsbQq7HL4C3F5HipXsfgbDt8Vf
-         nWjw==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=nExhpa8NtyhyvUyh20F6httON+9jpHubOC8X4R1/1QI=;
+        b=c4HijsXEjZGJqE7HF/OLTdBXGVnY9qLmNBULMzMpbSwMDUdlWMyYkBAj7Jv9KvJQq9
+         uQ/fhhX6CbwBVqkc6vhI0J9bVR6S+eypweTAwvYsABomRnDDk1wGcU2hJ/fV4/K6uu+1
+         c9+G8zkVxO8gfkNV8xNJ/wUCIdP5veO1BJPEs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7VZux41I9l8WsaFw4dnSKoQ+DL1POYbdTwXxPgsqOD8=;
-        b=aOBOUgPU2Wf7hQt4mh+6t4KbPiTkeBeG8AANRiBxNTpplpKWdWRTrNqCNUBkK19rKK
-         vCbGAoHFLrM0jOoKwWAdgy9HhX3Yel3J0aGQ9sn7fy5Al6qlUW4uCq3Mb94z7gAWc8pZ
-         YKtIUy6B7Fv5TywQGanY/Jq02XrdhkgJznDYIvmQB5opFwhhF5BzRqBAAzfzqzB2zorw
-         Pfhlcm6cvEHuJnmptRTHYy/Y+89OHXoyZ8grGpyyUvQMGTpbXAbuJ2rwcCzqnLJCfl9B
-         OJUkoDbhQ6/ce8u2FPWmmwJqDa38tBiV0zMnqTcwR/jsn3WkynSkIxKBmVKLq289q23t
-         +HDw==
-X-Gm-Message-State: APjAAAXUxyzJMNTSW6mTAsnnrIlCWqQ9AMiN2b9kT06ThYm6QtxZMImX
-        9qeZzPP2/pGTeX1WUs5gtQYE5zA8Za2gigky/suEtA==
-X-Google-Smtp-Source: APXvYqwYMdEjXlo/ZXkQ25Q7OqLij5wE38qfmFx+c4Kh6ETnZQ80hOGe2SgdovvfY1Nwmo4LDa9vLeLDcR91Ofxlyck=
-X-Received: by 2002:aca:ea57:: with SMTP id i84mr83905oih.73.1573598761920;
- Tue, 12 Nov 2019 14:46:01 -0800 (PST)
-MIME-Version: 1.0
-References: <20191112000700.3455038-1-jhubbard@nvidia.com> <20191112000700.3455038-9-jhubbard@nvidia.com>
- <20191112204338.GE5584@ziepe.ca> <0db36e86-b779-01af-77e7-469af2a2e19c@nvidia.com>
-In-Reply-To: <0db36e86-b779-01af-77e7-469af2a2e19c@nvidia.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 12 Nov 2019 14:45:51 -0800
-Message-ID: <CAPcyv4hAEgw6ySNS+EFRS4yNRVGz9A3Fu1vOk=XtpjYC64kQJw@mail.gmail.com>
-Subject: Re: [PATCH v3 08/23] vfio, mm: fix get_user_pages_remote() and FOLL_LONGTERM
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=nExhpa8NtyhyvUyh20F6httON+9jpHubOC8X4R1/1QI=;
+        b=Uim7ulwoeOkeJAxtLZvQXLo3MTiIzfJtzbiDUXB61XOXICYsTa3+FUtvxCCrb7aken
+         dDLZsYELaPnDrmsftcAsr0DGgA2oiJxXLUwrZwe6+bx0v0prRiUm2xOX+zSzLEnkB+6I
+         dQghJNoEankmcJvNuZ6T2mAscWy5u3d7MdEbl9jk+RNy4aRIIGHglhFzjMuaBfGdOWLc
+         ASw1chUol72wjYVjAcVVey/ySiEISE9g+7B9oQdtsaL0xZ8E70ABsCt6lqjoTh/Zcdya
+         hjBxs31QOw6aLerCfrKaawLrP59HcsK8J49VqLB3hwlGl7ZRuNYGw6V5fSZT/IIGxLUk
+         5B9w==
+X-Gm-Message-State: APjAAAWo1s4Co9clWYKQFY7Jo1cC5fASUBzBRcxfiTRsUN0ql2l9l+am
+        uCH9TUSySUYtZN5FFcABw4u7nw==
+X-Google-Smtp-Source: APXvYqy/dNw+1S0sgv4o54+xgQ9m/sDAbXJguDm6De1m1sF3Ucjez84Z50LDqlIQCV97XGMiY2eUjw==
+X-Received: by 2002:a17:902:b282:: with SMTP id u2mr266015plr.301.1573599688858;
+        Tue, 12 Nov 2019 15:01:28 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id em16sm159840pjb.21.2019.11.12.15.01.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2019 15:01:27 -0800 (PST)
+Date:   Tue, 12 Nov 2019 15:01:26 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
         Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, KVM list <kvm@vger.kernel.org>,
-        linux-block@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, libc-alpha@sourceware.org,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v15 0/9] open: introduce openat2(2) syscall
+Message-ID: <201911121457.7D02692@keescook>
+References: <20191105090553.6350-1-cyphar@cyphar.com>
+ <20191111132404.y523iqicbn6fivx5@yavin.dot.cyphar.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191111132404.y523iqicbn6fivx5@yavin.dot.cyphar.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 2:43 PM John Hubbard <jhubbard@nvidia.com> wrote:
->
-> On 11/12/19 12:43 PM, Jason Gunthorpe wrote:
-> ...
-> >> -            }
-> >> +    ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags | FOLL_LONGTERM,
-> >> +                                page, vmas, NULL);
-> >> +    /*
-> >> +     * The lifetime of a vaddr_get_pfn() page pin is
-> >> +     * userspace-controlled. In the fs-dax case this could
-> >> +     * lead to indefinite stalls in filesystem operations.
-> >> +     * Disallow attempts to pin fs-dax pages via this
-> >> +     * interface.
-> >> +     */
-> >> +    if (ret > 0 && vma_is_fsdax(vmas[0])) {
-> >> +            ret = -EOPNOTSUPP;
-> >> +            put_page(page[0]);
-> >>      }
-> >
-> > AFAIK this chunk is redundant now as it is some hack to emulate
-> > FOLL_LONGTERM? So vmas can be deleted too.
->
-> Let me first make sure I understand what Dan has in mind for the vma
-> checking, in the other thread...
+On Tue, Nov 12, 2019 at 12:24:04AM +1100, Aleksa Sarai wrote:
+> On 2019-11-05, Aleksa Sarai <cyphar@cyphar.com> wrote:
+> > This patchset is being developed here:
+> >   <https://github.com/cyphar/linux/tree/openat2/master>
+> > 
+> > Patch changelog:
+> >  v15:
+> >   * Fix code style for LOOKUP_IN_ROOT handling in path_init(). [Linus Torvalds]
+> >   * Split out patches for each individual LOOKUP flag.
+> >   * Reword commit messages to give more background information about the
+> >     series, as well as mention the semantics of each flag in more detail.
+> > [...]
+> 
+> Ping -- this patch hasn't been touched for a week. Thanks.
 
-It's not redundant relative to upstream which does not do anything the
-FOLL_LONGTERM in the gup-slow path... but I have not looked at patches
-1-7 to see if something there made it redundant.
+If I've been following correctly, everyone is happy with this series.
+(i.e. Linus's comment appear to have been addressed.)
+
+Perhaps the next question is should this go via a pull request by you to
+Linus directly during the v5.5 merge window, via akpm, via akpm, via
+Christian, or some other path? Besides Linus, it's not been clear who
+should "claim" this series. :)
+
+-- 
+Kees Cook
