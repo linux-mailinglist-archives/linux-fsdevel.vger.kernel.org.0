@@ -2,131 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C75A7F8F1B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 13:01:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7F69F8F52
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 13:09:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfKLMA5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Nov 2019 07:00:57 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41488 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725865AbfKLMA4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Nov 2019 07:00:56 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A8DD9AF9F;
-        Tue, 12 Nov 2019 12:00:53 +0000 (UTC)
-Subject: Re: [PATCH 2/2] fs: Move swap_[de]activate to file_operations
-To:     Andrew Morton <akpm@linux-foundation.org>, ira.weiny@intel.com
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org, Dave Chinner <david@fromorbit.com>,
-        Jan Kara <jack@suse.cz>
-References: <20191112003452.4756-1-ira.weiny@intel.com>
- <20191112003452.4756-3-ira.weiny@intel.com>
- <20191111164320.80f814161469055b14f27045@linux-foundation.org>
-From:   Nikolay Borisov <nborisov@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- mQINBFiKBz4BEADNHZmqwhuN6EAzXj9SpPpH/nSSP8YgfwoOqwrP+JR4pIqRK0AWWeWCSwmZ
- T7g+RbfPFlmQp+EwFWOtABXlKC54zgSf+uulGwx5JAUFVUIRBmnHOYi/lUiE0yhpnb1KCA7f
- u/W+DkwGerXqhhe9TvQoGwgCKNfzFPZoM+gZrm+kWv03QLUCr210n4cwaCPJ0Nr9Z3c582xc
- bCUVbsjt7BN0CFa2BByulrx5xD9sDAYIqfLCcZetAqsTRGxM7LD0kh5WlKzOeAXj5r8DOrU2
- GdZS33uKZI/kZJZVytSmZpswDsKhnGzRN1BANGP8sC+WD4eRXajOmNh2HL4P+meO1TlM3GLl
- EQd2shHFY0qjEo7wxKZI1RyZZ5AgJnSmehrPCyuIyVY210CbMaIKHUIsTqRgY5GaNME24w7h
- TyyVCy2qAM8fLJ4Vw5bycM/u5xfWm7gyTb9V1TkZ3o1MTrEsrcqFiRrBY94Rs0oQkZvunqia
- c+NprYSaOG1Cta14o94eMH271Kka/reEwSZkC7T+o9hZ4zi2CcLcY0DXj0qdId7vUKSJjEep
- c++s8ncFekh1MPhkOgNj8pk17OAESanmDwksmzh1j12lgA5lTFPrJeRNu6/isC2zyZhTwMWs
- k3LkcTa8ZXxh0RfWAqgx/ogKPk4ZxOXQEZetkEyTFghbRH2BIwARAQABtCNOaWtvbGF5IEJv
- cmlzb3YgPG5ib3Jpc292QHN1c2UuY29tPokCOAQTAQIAIgUCWIo48QIbAwYLCQgHAwIGFQgC
- CQoLBBYCAwECHgECF4AACgkQcb6CRuU/KFc0eg/9GLD3wTQz9iZHMFbjiqTCitD7B6dTLV1C
- ddZVlC8Hm/TophPts1bWZORAmYIihHHI1EIF19+bfIr46pvfTu0yFrJDLOADMDH+Ufzsfy2v
- HSqqWV/nOSWGXzh8bgg/ncLwrIdEwBQBN9SDS6aqsglagvwFD91UCg/TshLlRxD5BOnuzfzI
- Leyx2c6YmH7Oa1R4MX9Jo79SaKwdHt2yRN3SochVtxCyafDlZsE/efp21pMiaK1HoCOZTBp5
- VzrIP85GATh18pN7YR9CuPxxN0V6IzT7IlhS4Jgj0NXh6vi1DlmKspr+FOevu4RVXqqcNTSS
- E2rycB2v6cttH21UUdu/0FtMBKh+rv8+yD49FxMYnTi1jwVzr208vDdRU2v7Ij/TxYt/v4O8
- V+jNRKy5Fevca/1xroQBICXsNoFLr10X5IjmhAhqIH8Atpz/89ItS3+HWuE4BHB6RRLM0gy8
- T7rN6ja+KegOGikp/VTwBlszhvfLhyoyjXI44Tf3oLSFM+8+qG3B7MNBHOt60CQlMkq0fGXd
- mm4xENl/SSeHsiomdveeq7cNGpHi6i6ntZK33XJLwvyf00PD7tip/GUj0Dic/ZUsoPSTF/mG
- EpuQiUZs8X2xjK/AS/l3wa4Kz2tlcOKSKpIpna7V1+CMNkNzaCOlbv7QwprAerKYywPCoOSC
- 7P25Ag0EWIoHPgEQAMiUqvRBZNvPvki34O/dcTodvLSyOmK/MMBDrzN8Cnk302XfnGlW/YAQ
- csMWISKKSpStc6tmD+2Y0z9WjyRqFr3EGfH1RXSv9Z1vmfPzU42jsdZn667UxrRcVQXUgoKg
- QYx055Q2FdUeaZSaivoIBD9WtJq/66UPXRRr4H/+Y5FaUZx+gWNGmBT6a0S/GQnHb9g3nonD
- jmDKGw+YO4P6aEMxyy3k9PstaoiyBXnzQASzdOi39BgWQuZfIQjN0aW+Dm8kOAfT5i/yk59h
- VV6v3NLHBjHVw9kHli3jwvsizIX9X2W8tb1SefaVxqvqO1132AO8V9CbE1DcVT8fzICvGi42
- FoV/k0QOGwq+LmLf0t04Q0csEl+h69ZcqeBSQcIMm/Ir+NorfCr6HjrB6lW7giBkQl6hhomn
- l1mtDP6MTdbyYzEiBFcwQD4terc7S/8ELRRybWQHQp7sxQM/Lnuhs77MgY/e6c5AVWnMKd/z
- MKm4ru7A8+8gdHeydrRQSWDaVbfy3Hup0Ia76J9FaolnjB8YLUOJPdhI2vbvNCQ2ipxw3Y3c
- KhVIpGYqwdvFIiz0Fej7wnJICIrpJs/+XLQHyqcmERn3s/iWwBpeogrx2Lf8AGezqnv9woq7
- OSoWlwXDJiUdaqPEB/HmGfqoRRN20jx+OOvuaBMPAPb+aKJyle8zABEBAAGJAh8EGAECAAkF
- AliKBz4CGwwACgkQcb6CRuU/KFdacg/+M3V3Ti9JYZEiIyVhqs+yHb6NMI1R0kkAmzsGQ1jU
- zSQUz9AVMR6T7v2fIETTT/f5Oout0+Hi9cY8uLpk8CWno9V9eR/B7Ifs2pAA8lh2nW43FFwp
- IDiSuDbH6oTLmiGCB206IvSuaQCp1fed8U6yuqGFcnf0ZpJm/sILG2ECdFK9RYnMIaeqlNQm
- iZicBY2lmlYFBEaMXHoy+K7nbOuizPWdUKoKHq+tmZ3iA+qL5s6Qlm4trH28/fPpFuOmgP8P
- K+7LpYLNSl1oQUr+WlqilPAuLcCo5Vdl7M7VFLMq4xxY/dY99aZx0ZJQYFx0w/6UkbDdFLzN
- upT7NIN68lZRucImffiWyN7CjH23X3Tni8bS9ubo7OON68NbPz1YIaYaHmnVQCjDyDXkQoKC
- R82Vf9mf5slj0Vlpf+/Wpsv/TH8X32ajva37oEQTkWNMsDxyw3aPSps6MaMafcN7k60y2Wk/
- TCiLsRHFfMHFY6/lq/c0ZdOsGjgpIK0G0z6et9YU6MaPuKwNY4kBdjPNBwHreucrQVUdqRRm
- RcxmGC6ohvpqVGfhT48ZPZKZEWM+tZky0mO7bhZYxMXyVjBn4EoNTsXy1et9Y1dU3HVJ8fod
- 5UqrNrzIQFbdeM0/JqSLrtlTcXKJ7cYFa9ZM2AP7UIN9n1UWxq+OPY9YMOewVfYtL8M=
-Message-ID: <4fc3c3cf-fa23-db8c-f236-026716f77913@suse.com>
-Date:   Tue, 12 Nov 2019 14:00:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726725AbfKLMJd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Nov 2019 07:09:33 -0500
+Received: from mout.kundenserver.de ([212.227.126.131]:50723 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbfKLMJd (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 12 Nov 2019 07:09:33 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1Mow4E-1i6i501wis-00qSUF; Tue, 12 Nov 2019 13:09:12 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     "Darrick J . Wong" <darrick.wong@oracle.com>
+Cc:     linux-xfs@vger.kernel.org, y2038@lists.linaro.org, arnd@arndb.de,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Dave Chinner <david@fromorbit.com>,
+        Brian Foster <bfoster@redhat.com>,
+        Allison Collins <allison.henderson@oracle.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: [RFC 0/5] xfs: y2038 conversion
+Date:   Tue, 12 Nov 2019 13:09:05 +0100
+Message-Id: <20191112120910.1977003-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-In-Reply-To: <20191111164320.80f814161469055b14f27045@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:jy9HetgOdO3YgbWR57uIO7Yd3hfmVdHWEyuc5XdOauceZfzxZI+
+ 6Zu35EHoXSX4CpIkYQtUUrqafnLK1dtw8dCcUfG13KrYmRQk0+5k2NFziKU5HaYGeNjIhHD
+ 0EZrsaQCVW0qqafOpiz6OlHmfxpiOdPpR7LhvzOSE3/LRe3v3ksNOdwqVTu9qyNGGSj+5pP
+ L2n5mDebBOUMOhkBIxYOA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:1zdPUXtFy4E=:W5jxLg+LdGHfdeP1xnO0Ou
+ BKDmosS8v1KFMea59o9fnsAbixtRA/m1Ut32NT7wX8/8QxuiqR7K7R4C0wuQdIQR8TKP4nb6P
+ 3mNCATRcm9pE+PBfnCcyereL4U9pgOS3OP6u7N3SnbVLhYDEZu5y7LBbDL11y3A+FTL+Xc+e7
+ tB72LteqTh9pcOksq3hi+nU70NJ6iUoxv4C3VyvrZ6WW7TbT6f1RAtZkiERJzq8gYCtjf2u7C
+ zXUDGkZdmtGxg4H4FWHEZaqAR6H5k1ftYXkhNxlbvlMiOtAnzFmgAG1Jo/HaL6G9cgVSdxwxl
+ osMSnTphakqhnAs9lDSsTWVKd7S0nMQDN729be9US4Mlf+PgmpG8tCNPJB1CCLIqJ+AR6hk7n
+ nuOmyliHONl8URgx2X4fgHExwlcyxr0TdZRaOPzTQrt4sV+wpXUlzmWIC8jECKSscTMJiteoH
+ 0GjDLHoJrq1nLtnGXghM3hcRC9l7SsrgrSEoUVbAmmptNQbfTD7VoK+IMcbHsnSF1uGar75h0
+ rgNpjXZZNZmfLibBJ34v3YUFZJGOgEfivkm1a5WQYeTKKCcADvn11gjZ/eyxU5nrDuoDbKrsh
+ CRrpBGjurjgiQ81KSW/qTNYMYrRYhZEzpTDdgV3nAMCG3XQpALuL2dnAW2Y0ppQJfvjJlPgEu
+ OkuZkTkaP4HajwAjKiSZG1Oe88wka4gziQvbbdr+YVq6dm6b45GgcBGeCDYE5ODGHoEM57leE
+ 6KFhrGKW0EIBKA/amPCjJnj2CcVAYI/lsJWL2WyVMUWO1gUuPRR8aaiTql4//aXN9c392uehZ
+ feeKRYl0JfOHkk5qSu6fqlhlGVIdGZzJneRhgXd74tB3rHrqdrNk8SHhBIiEE/owUKBc8SI3l
+ B6tfPziPGMnpSzIDz63A==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+This is part of a longer set of changes to clean up the last remaining
+bits for the y2038 conversion. In XFS, three distinct problems need to
+be addressed:
 
+1. The use of time_t in kernel sources -- I'm in the process
+   of removing all of them so we can remove the definition itself,
+   making it harder to write new y2038-unsafe code. This part is
+   trivially done as a side-effect of the other two.
 
-On 12.11.19 г. 2:43 ч., Andrew Morton wrote:
-> On Mon, 11 Nov 2019 16:34:52 -0800 ira.weiny@intel.com wrote:
-> 
->> From: Ira Weiny <ira.weiny@intel.com>
->>
->> swap_activate() and swap_deactivate() have nothing to do with
->> address spaces.  We want to eventually make the address space operations
->> dynamic to switch inode flags on the fly.
-> 
-> What does this mean?
-> 
->>  So to simplify this code as
->> well as properly track these operations we move these functions to the
->> file_operations vector.
->>
->> This has been tested with XFS but not NFS, f2fs, or btrfs.
->>
->> Also note f2fs and xfs have simple moves of their functions to
->> facilitate compilation.  No functional changes are contained within
->> those functions.
->>
->> ...
->>
->> --- a/fs/btrfs/inode.c
->> +++ b/fs/btrfs/inode.c
->> @@ -11002,6 +11002,8 @@ static const struct file_operations btrfs_dir_file_operations = {
->>  #endif
->>  	.release        = btrfs_release_file,
->>  	.fsync		= btrfs_sync_file,
->> +	.swap_activate	= btrfs_swap_activate,
->> +	.swap_deactivate = btrfs_swap_deactivate,
->>  };
-> 
-> Shouldn't this be btrfs_file_operations?
+2. The use of time_t in a user API header for ioctls. When
+   building against a new 32-bit libc with 64-bit time_t, the structures
+   no longer match and we get incorrect data from ioctls.  Unfortunately,
+   there is no good way to fix XFS_IOC_FSBULKSTAT, I considered different
+   approaches and in the end came up with three variants that are all
+   part of this series. The idea is to pick just one of course.
 
-INdeed, having swap activate on a directory doesn't make much sense.
+3. On-disk timestamps hitting the y2038 limit. This applies to both
+   inode timestamps and quota data. Both are extended to 40 bits,
+   with the minimum timestamp still being year 1902, and the maximum
+   getting extended from 2038 to 36744.
 
-> 
-> 
+Please review and let me know which of ioctl API changes makes the
+most sense. I have not done any actual runtime testing on the patches,
+so this is clearly too late for the next merge window, but I hope to
+get it all merged for v5.6.
+
+      Arnd
+
+Arnd Bergmann (5):
+  xfs: [variant A] avoid time_t in user api
+  xfs: [variant B] add time64 version of xfs_bstat
+  xfs: [variant C] avoid i386-misaligned xfs_bstat
+  xfs: extend inode format for 40-bit timestamps
+  xfs: use 40-bit quota time limits
+
+ fs/xfs/libxfs/xfs_dquot_buf.c   |   6 +-
+ fs/xfs/libxfs/xfs_format.h      |  11 +-
+ fs/xfs/libxfs/xfs_fs.h          |  37 +++++-
+ fs/xfs/libxfs/xfs_inode_buf.c   |  28 +++--
+ fs/xfs/libxfs/xfs_inode_buf.h   |   1 +
+ fs/xfs/libxfs/xfs_log_format.h  |   6 +-
+ fs/xfs/libxfs/xfs_trans_inode.c |   3 +-
+ fs/xfs/xfs_dquot.c              |  29 +++--
+ fs/xfs/xfs_inode.c              |   3 +-
+ fs/xfs/xfs_inode_item.c         |  10 +-
+ fs/xfs/xfs_ioctl.c              | 195 +++++++++++++++++++++++++++++++-
+ fs/xfs/xfs_ioctl.h              |  12 ++
+ fs/xfs/xfs_ioctl32.c            | 160 +++++---------------------
+ fs/xfs/xfs_ioctl32.h            |  26 ++---
+ fs/xfs/xfs_iops.c               |   3 +-
+ fs/xfs/xfs_itable.c             |   2 +-
+ fs/xfs/xfs_qm.c                 |  18 ++-
+ fs/xfs/xfs_qm.h                 |   6 +-
+ fs/xfs/xfs_qm_syscalls.c        |  16 ++-
+ fs/xfs/xfs_quotaops.c           |   6 +-
+ fs/xfs/xfs_super.c              |   2 +-
+ fs/xfs/xfs_trans_dquot.c        |  17 ++-
+ 22 files changed, 387 insertions(+), 210 deletions(-)
+
+-- 
+2.20.0
+
