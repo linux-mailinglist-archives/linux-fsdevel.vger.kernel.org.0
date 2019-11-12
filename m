@@ -2,289 +2,335 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17FD4F83C8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 00:54:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19976F83E3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 01:07:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbfKKXyf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Nov 2019 18:54:35 -0500
-Received: from mga05.intel.com ([192.55.52.43]:11843 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726887AbfKKXyf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Nov 2019 18:54:35 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Nov 2019 15:54:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,294,1569308400"; 
-   d="scan'208";a="234647292"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga002.fm.intel.com with ESMTP; 11 Nov 2019 15:54:34 -0800
-Date:   Mon, 11 Nov 2019 15:54:34 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        id S1727151AbfKLAHN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Nov 2019 19:07:13 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:10605 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726949AbfKLAHN (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 11 Nov 2019 19:07:13 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dc9f7aa0001>; Mon, 11 Nov 2019 16:07:06 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 11 Nov 2019 16:07:04 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 11 Nov 2019 16:07:04 -0800
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 12 Nov
+ 2019 00:07:03 +0000
+Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 12 Nov 2019 00:07:02 +0000
+Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5dc9f7a50005>; Mon, 11 Nov 2019 16:07:02 -0800
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
         Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 5/5] fs/xfs: Allow toggle of physical DAX flag
-Message-ID: <20191111235433.GA318@iweiny-DESK2.sc.intel.com>
-References: <20191020155935.12297-1-ira.weiny@intel.com>
- <20191020155935.12297-6-ira.weiny@intel.com>
- <20191021004536.GD8015@dread.disaster.area>
- <20191021224931.GA25526@iweiny-DESK2.sc.intel.com>
- <20191108131238.GK20863@quack2.suse.cz>
- <20191108134606.GL20863@quack2.suse.cz>
- <20191108193612.GA4800@iweiny-DESK2.sc.intel.com>
- <20191111160748.GE13307@quack2.suse.cz>
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH v3 00/23] mm/gup: track dma-pinned pages: FOLL_PIN, FOLL_LONGTERM
+Date:   Mon, 11 Nov 2019 16:06:37 -0800
+Message-ID: <20191112000700.3455038-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191111160748.GE13307@quack2.suse.cz>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1573517227; bh=JNzo7F9Uhd78yzMBde3KTfKR6QFKvOysu7c55VwbHak=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:X-NVConfidentiality:Content-Type:
+         Content-Transfer-Encoding;
+        b=o9SF4xl64HRgEPHvkHoWRVd6NPoz/55me3p6LoD2kIji1LweghyUDktb6XSAQ3iJ3
+         cfhFxMryHc9DJrJcCIFZ3iGqYwt2ssscfuhFFw/XpSbJT58EIt8L9y6LerhnrPSHE3
+         EdEpFQ6NH4d8IOKai6LAR4Axw5mIKHuTnBygTtUlZdZPySg+d0A3Oy0fKaInMWyT9J
+         SvANrkrJ9clhDPNVmeNO+XuHM5bjvqzzMZ/NiVknqIu7c9yXMCGlTlzlbPMzqDPBT5
+         jrQ55E6H2Wxm3RXAN8Ep0kb7yVwABixc+8zsJQbE9QB8LK08Q0+uUWO2trTbA96gmB
+         /2JmtFtig54FQ==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> 
-> > In the general case I don't think that correctly protects against:
-> > 
-> > 	if (a_ops->call)
-> > 		a_ops->call();
-> > 
-> > Because not all operations are defined in both ext4_aops and
-> > ext4_journalled_aops.  Specifically migratepage.
-> > 
-> > move_to_new_page() specifically follows the pattern above with migratepage.  So
-> > is there a bug here?
-> 
-> Looks like there could be.
+Hi,
 
-Ok I'm going to leave this alone and whatever I come up with try and make sure
-that the ext4 journal a_ops fits.
+The cover letter is long, so the more important stuff is first:
 
-[snip]
+* Jason, if you or someone could look at the the VFIO cleanup (patch 8)
+  and conversion to FOLL_PIN (patch 18), to make sure it's use of
+  remote and longterm gup matches what we discussed during the review
+  of v2, I'd appreciate it.
 
-> > 
-> > However I have been looking at SRCU because we also have patterns like:
-> > 
-> > 
-> > 	generic_file_buffered_read
-> > 		if (a_ops->is_partially_uptodate)
-> > 			a_ops->is_partially_uptodate()
-> > 		page_cache_sync_readahead
-> > 			force_page_cache_readahead
-> > 				if (!a_ops->readpage && !a_ops->readpages)
-> > 					return;
-> > 				__do_page_cache_readahead
-> > 					read_pages
-> > 						if (a_ops->readpages)
-> > 							a_ops->readpages()
-> > 						a_ops->readpage
-> > 
-> > 
-> > So we would have to pass the a_ops through to use a rwsem.  Where SRCU I
-> > think would be fine to just take the SRCU read lock multiple times.  Am I
-> > wrong?
-> 
-> So the idea I had would not solve this issue because we'd release the rwsem
-> once we return from ->is_partially_uptodate(). This example shows that we
-> actually expect consistency among different aops as they are called in
-> sequence and that's much more difficult to achieve than just a consistency
-> within single aop call.
+* Also for Jason and IB: as noted below, in patch 11, I am (too?) boldly
+  converting from put_user_pages() to release_pages().
 
-I can't be sure but is seems like consistency for an operation is somewhat
-important.  OR we have to develop rules around when filesystems can, or can not
-change a_ops so that the consistency does not matter.
+* Jerome, I am going to take a look at doing your FOLL_GET change idea
+  (some callers should set FOLL_GET) separately, because it blew up "a
+  little bit" in my face. It's definitely a separate--tiny, but risky--proj=
+ect.
+  It also looks more reasonable when applied on top of this series here
+  (and it conflicts a lot), so I'm going to send it as a follow-up.
 
-I think what scares me the most is that I'm not really sure what those rules
-are...
+Changes since v2:
 
-> 
-> > We also have a 3rd (2nd?) issue.  There are callers who check for the
-> > presence of an operation to be used later.  For example do_dentry_open():
-> > 
-> > do_dentry_open()
-> > {
-> > ...
-> > 	if (<flags> & O_DIRECT)
-> > 		if (!<a_ops> || !<a_ops>->direct_IO)
-> > 			return -EINVAL;
-> > ...
-> > }
-> > 
-> > After this open direct_IO better be there AFAICT so changing the a_ops
-> > later would not be good.  For ext4 direct_IO is defined for all the
-> > a_ops...  so I guess that is not a big deal.  However, is the user really
-> > getting the behavior they expect in this case?
-> 
-> In this particular case I don't think there's any practical harm for any
-> filesystem but in general this is another instance where consistency of
-> aops over time is assumed.
+* Added a patch to convert IB/umem from normal gup, to gup_fast(). This
+  is also posted separately, in order to hopefully get some runtime
+  testing.
 
-Yes...  But this is just a more complex situation to maintain consistency.
-Again I don't have any idea if consistency is required.
+* Changed the page devmap code to be a little clearer,
+  thanks to Jerome for that.
 
-But the current definition/use of a_ops is very static (with the exception of
-the ext4 case you gave), so I'm thinking that much of the code is written with
-the assumption that the vectors do not change.
+* Split out the page devmap changes into a separate patch (and moved
+  Ira's Signed-off-by to that patch).
 
-> 
-> > I'm afraid of requiring FSs to have to follow rules in defining their a_ops.
-> > Because I'm afraid maintaining those rules would be hard and would eventually
-> > lead to crashes when someone did it wrong.
-> 
-> I guess this very much depends on the rules. But yes, anything non-obvious
-> or hard to check would quickly lead to bugs, I agree. But IMHO fully
-> general solution to above problems would clutter the generic code in rather
-> ugly way as well because usage of aops is pretty widespread in mm and fs
-> code. It isn't just a few places that call them...
+* Fixed my bug in IB: ODP code does not require pin_user_pages()
+  semantics. Therefore, revert the put_user_page() calls to put_page(),
+  and leave the get_user_pages() call as-is.
 
-I agree it does clutter the code.  and the patches I have are not pretty and
-I'm not even sure they are not broken...  So yea I'm open to ideas!
+      * As part of the revert, I am proposing here a change directly
+        from put_user_pages(), to release_pages(). I'd feel better if
+        someone agrees that this is the best way. It uses the more
+        efficient release_pages(), instead of put_page() in a loop,
+        and keep the change to just a few character on one line,
+        but OTOH it is not a pure revert.
 
-> 
-> But I think we could significantly reduce the problem by looking at what's
-> in aops. We have lots of operations there that operate on pages. If we
-> mandate that before and during switching of aops, you must make sure
-> there's nothing in page cache for the inode, you've already dealt with 90%
-> of the problems.
+* Loosened the FOLL_LONGTERM restrictions in the
+  __get_user_pages_locked() implementation, and used that in order
+  to fix up a VFIO bug. Thanks to Jason for that idea.
 
-Sounds promising...
+    * Note the use of release_pages() in IB: is that OK?
 
-But digging into this it looks like we need a similar rule for the DAX side to
-have no mappings outstanding.  Perhaps you meant that when you said page cache?
+* Added a few more WARN's and clarifying comments nearby.
 
-> 
-> Beside these we have:
-> * write_begin - that creates page in page cache so above rule should stop
->   it as well
+* Many documentation improvements in various comments.
 
-Just to make sure I understand, do you propose that we put a check in
-pagecache_write_[begin|end]() to protect from these calls while changing?
+* Moved the new pin_user_pages.rst from Documentation/vm/ to
+  Documentation/core-api/ .
 
-I just want to be sure because I've wondered if we can get away with minimal
-checks, or checks on individual functions, in the generic code.  But that
-seemed kind of ugly as well.
+* Commit descriptions: added clarifying notes to the three patches
+  (drm/via, fs/io_uring, net/xdp) that already had put_user_page()
+  calls in place.
 
-> * bmap - honestly I'd be inclined to just move this to inode_operations
->   just like fiemap. There's nothing about address_space in its functionality.
+* Collected all pending Reviewed-by and Acked-by tags, from v1 and v2
+  email threads.
 
-Hmmm...  What about these call paths?
+* Lot of churn from v2 --> v3, so it's possible that new bugs
+  sneaked in.
 
-ext4_bmap()
-	filemap_write_and_wait()
-		filemap_fdatawrite()
-			__filemap_fdatawrite()
-				__filemap_fdatawrite_range()
-					do_writepages()
-						a_ops->writepages()
+NOT DONE: separate patchset is required:
 
-or
+* __get_user_pages_locked(): stop compensating for
+  buggy callers who failed to set FOLL_GET. Instead, assert
+  that FOLL_GET is set (and fail if it's not).
 
-xfs_vm_bmap()
-	iomap_bmap()
-		filemap_write_and_wait()
-			...
-:-/
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Original cover letter (edited to fix up the patch description numbers)
 
-maybe we should leave it and have it covered under the page cache rule you
-propose?
+This applies cleanly to linux-next and mmotm, and also to linux.git if
+linux-next's commit 20cac10710c9 ("mm/gup_benchmark: fix MAP_HUGETLB
+case") is first applied there.
 
+This provides tracking of dma-pinned pages. This is a prerequisite to
+solving the larger problem of proper interactions between file-backed
+pages, and [R]DMA activities, as discussed in [1], [2], [3], and in
+a remarkable number of email threads since about 2017. :)
 
-> * swap_activate / swap_deactivate - Either I'd move these to
->   file_operations (what's there about address_space, right), or since all
->   instances of this only care about the inode, we can as well just pass
->   only inode to the function and move it to inode_operations.
+A new internal gup flag, FOLL_PIN is introduced, and thoroughly
+documented in the last patch's Documentation/vm/pin_user_pages.rst.
 
-XFS calls iomap_swapfile_activate() which calls vfs_fsync() which needs the
-file.  Seems like file_operations would be better.
+I believe that this will provide a good starting point for doing the
+layout lease work that Ira Weiny has been working on. That's because
+these new wrapper functions provide a clean, constrained, systematically
+named set of functionality that, again, is required in order to even
+know if a page is "dma-pinned".
 
-I like the idea of cleaning this up a lot.  I've gone ahead with a couple of
-patches to do this.  At least this simplifies things a little bit...
+In contrast to earlier approaches, the page tracking can be
+incrementally applied to the kernel call sites that, until now, have
+been simply calling get_user_pages() ("gup"). In other words, opt-in by
+changing from this:
 
-> 
-> And then the really problematic ones:
-> * direct_IO - Logically with how the IO path is structured, it belongs in
->   aops so I wouldn't move it. With the advance of iomap it is on its way to
->   being removed altogether but that will take a long time to happen
->   completely. So for now I'd mandate that direct_IO path must be locked out
->   while switching aops.
+    get_user_pages() (sets FOLL_GET)
+    put_page()
 
-How do we lock this out between checking for this support on open and using it
-later?
+to this:
+    pin_user_pages() (sets FOLL_PIN)
+    put_user_page()
 
-I think if we go down this path we have to make a rule that says that direct_IO
-must be defined for both a_ops.  Right now for our 2 use case we are lucky that
-direct_IO is also defined as the same function.  So there is little danger of
-odd behavior.
+Because there are interdependencies with FOLL_LONGTERM, a similar
+conversion as for FOLL_PIN, was applied. The change was from this:
 
-Let me explore more.
+    get_user_pages(FOLL_LONGTERM) (also sets FOLL_GET)
+    put_page()
 
-> * readpages - these should be locked out by the rule that page creation is
->   forbidden.
+to this:
+    pin_longterm_pages() (sets FOLL_PIN | FOLL_LONGTERM)
+    put_user_page()
 
-Agreed.  Same question applies here as for pagecache_write_[begin|end]().
-Should I special case a check for this?
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Patch summary:
 
-> * writepages - these need to be locked out when switching aops.
+* Patches 1-8: refactoring and preparatory cleanup, independent fixes
 
-If nothing is in the pagecache could we ignore this as well?
+* Patch 9: introduce pin_user_pages(), FOLL_PIN, but no functional
+           changes yet
+* Patches 10-15: Convert existing put_user_page() callers, to use the
+                new pin*()
+* Patch 16: Activate tracking of FOLL_PIN pages.
+* Patches 17-19: convert FOLL_LONGTERM callers
+* Patches: 20-22: gup_benchmark and run_vmtests support
+* Patch 23: enforce FOLL_LONGTERM as a gup-internal (only) flag
 
-> 
-> And that should be it. So I don't think there's a need for reference-counting
-> of aops in the generic code, especially since I don't think it can be done
-> in an elegant way (but feel free to correct me). I think that just
-> providing a way to lock-out above three calls would be enough.
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Testing:
 
-Ok, I've been thinking about this whole email more today.  And what if we add a
-couple of FS specific lockout callbacks in struct address_space itself.
+* I've done some overall kernel testing (LTP, and a few other goodies),
+  and some directed testing to exercise some of the changes. And as you
+  can see, gup_benchmark is enhanced to exercise this. Basically, I've been
+  able to runtime test the core get_user_pages() and pin_user_pages() and
+  related routines, but not so much on several of the call sites--but those
+  are generally just a couple of lines changed, each.
 
-If they are defined the FS has dynamic a_ops capability and these 3 functions
-will need to be locked out by a rw_sem controlled by the FS.
+  Not much of the kernel is actually using this, which on one hand
+  reduces risk quite a lot. But on the other hand, testing coverage
+  is low. So I'd love it if, in particular, the Infiniband and PowerPC
+  folks could do a smoke test of this series for me.
 
-We can then document the "rules" for dynamic a_ops better for FS's to support
-them by referencing the special cases and the fact that dynamic a_ops requires
-these callbacks to be defined.
+  Also, my runtime testing for the call sites so far is very weak:
 
-It clutters the generic code a bit, but not as much as my idea.  At the same
-time it helps to self document the special cases in both the FS's and the core
-code.
+    * io_uring: Some directed tests from liburing exercise this, and they p=
+ass.
+    * process_vm_access.c: A small directed test passes.
+    * gup_benchmark: the enhanced version hits the new gup.c code, and pass=
+es.
+    * infiniband (still only have crude "IB pingpong" working, on a
+                  good day: it's not exercising my conversions at runtime..=
+.)
+    * VFIO: compiles (I'm vowing to set up a run time test soon, but it's
+                      not ready just yet)
+    * powerpc: it compiles...
+    * drm/via: compiles...
+    * goldfish: compiles...
+    * net/xdp: compiles...
+    * media/v4l2: compiles...
 
-[snip]
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Next:
 
-> > 
-> > 
-> > I'm still working out the details of using SRCU and a ref count.  I have made
-> > at least 1 complete pass of all the a_ops users and I think this would cover
-> > them all.
-> 
-> Well, my concern with the use of interface like this is:
-> 
-> a) The clutter in the generic code
+* Get the block/bio_vec sites converted to use pin_user_pages().
 
-There is a bit of clutter.  What I'm most concerned about is the amount of
-special casing.  I still think it would be cleaner in the long run...  And
-force some structure on the use of a_ops.  But after looking at it more there
-may be a middle ground.
+* Work with Ira and Dave Chinner to weave this together with the
+  layout lease stuff.
 
-> b) It's difficult to make this work with SRCU because presumably you want
->    to use synchronize_srcu() while switching aops. But then you have three
->    operations to do:
->    1) switch aops
->    2) set inode flag
->    3) synchronize_srcu
-> 
->    and depending on the order in which you do these either "old aops"
->    operations will see inode with a flag or "new aops" will see the inode
->    without a flag and either can confuse those functions...
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-Yes that might be a challenge.
+[1] Some slow progress on get_user_pages() (Apr 2, 2019): https://lwn.net/A=
+rticles/784574/
+[2] DMA and get_user_pages() (LPC: Dec 12, 2018): https://lwn.net/Articles/=
+774411/
+[3] The trouble with get_user_pages() (Apr 30, 2018): https://lwn.net/Artic=
+les/753027/
 
-Ira
+John Hubbard (23):
+  mm/gup: pass flags arg to __gup_device_* functions
+  mm/gup: factor out duplicate code from four routines
+  mm/gup: move try_get_compound_head() to top, fix minor issues
+  mm: devmap: refactor 1-based refcounting for ZONE_DEVICE pages
+  goldish_pipe: rename local pin_user_pages() routine
+  IB/umem: use get_user_pages_fast() to pin DMA pages
+  media/v4l2-core: set pages dirty upon releasing DMA buffers
+  vfio, mm: fix get_user_pages_remote() and FOLL_LONGTERM
+  mm/gup: introduce pin_user_pages*() and FOLL_PIN
+  goldish_pipe: convert to pin_user_pages() and put_user_page()
+  IB/{core,hw,umem}: set FOLL_PIN, FOLL_LONGTERM via
+    pin_longterm_pages*()
+  mm/process_vm_access: set FOLL_PIN via pin_user_pages_remote()
+  drm/via: set FOLL_PIN via pin_user_pages_fast()
+  fs/io_uring: set FOLL_PIN via pin_user_pages()
+  net/xdp: set FOLL_PIN via pin_user_pages()
+  mm/gup: track FOLL_PIN pages
+  media/v4l2-core: pin_longterm_pages (FOLL_PIN) and put_user_page()
+    conversion
+  vfio, mm: pin_longterm_pages (FOLL_PIN) and put_user_page() conversion
+  powerpc: book3s64: convert to pin_longterm_pages() and put_user_page()
+  mm/gup_benchmark: use proper FOLL_WRITE flags instead of hard-coding
+    "1"
+  mm/gup_benchmark: support pin_user_pages() and related calls
+  selftests/vm: run_vmtests: invoke gup_benchmark with basic FOLL_PIN
+    coverage
+  mm/gup: remove support for gup(FOLL_LONGTERM)
+
+ Documentation/core-api/index.rst            |   1 +
+ Documentation/core-api/pin_user_pages.rst   | 218 +++++++
+ arch/powerpc/mm/book3s64/iommu_api.c        |  15 +-
+ drivers/gpu/drm/via/via_dmablit.c           |   2 +-
+ drivers/infiniband/core/umem.c              |  17 +-
+ drivers/infiniband/core/umem_odp.c          |  24 +-
+ drivers/infiniband/hw/hfi1/user_pages.c     |   4 +-
+ drivers/infiniband/hw/mthca/mthca_memfree.c |   3 +-
+ drivers/infiniband/hw/qib/qib_user_pages.c  |   8 +-
+ drivers/infiniband/hw/qib/qib_user_sdma.c   |   2 +-
+ drivers/infiniband/hw/usnic/usnic_uiom.c    |   9 +-
+ drivers/infiniband/sw/siw/siw_mem.c         |   5 +-
+ drivers/media/v4l2-core/videobuf-dma-sg.c   |  10 +-
+ drivers/platform/goldfish/goldfish_pipe.c   |  35 +-
+ drivers/vfio/vfio_iommu_type1.c             |  35 +-
+ fs/io_uring.c                               |   5 +-
+ include/linux/mm.h                          | 164 +++++-
+ include/linux/mmzone.h                      |   2 +
+ include/linux/page_ref.h                    |  10 +
+ mm/gup.c                                    | 608 ++++++++++++++++----
+ mm/gup_benchmark.c                          |  87 ++-
+ mm/huge_memory.c                            |  54 +-
+ mm/hugetlb.c                                |  39 +-
+ mm/memremap.c                               |  67 +--
+ mm/process_vm_access.c                      |  28 +-
+ mm/vmstat.c                                 |   2 +
+ net/xdp/xdp_umem.c                          |   4 +-
+ tools/testing/selftests/vm/gup_benchmark.c  |  34 +-
+ tools/testing/selftests/vm/run_vmtests      |  22 +
+ 29 files changed, 1180 insertions(+), 334 deletions(-)
+ create mode 100644 Documentation/core-api/pin_user_pages.rst
+
+--=20
+2.24.0
 
