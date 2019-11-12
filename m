@@ -2,100 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D622F9D54
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 23:44:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83B22F9D6B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 23:46:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbfKLWor (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Nov 2019 17:44:47 -0500
-Received: from mail-pf1-f177.google.com ([209.85.210.177]:43539 "EHLO
-        mail-pf1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726953AbfKLWor (ORCPT
+        id S1726970AbfKLWqD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Nov 2019 17:46:03 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:33294 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726958AbfKLWqC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Nov 2019 17:44:47 -0500
-Received: by mail-pf1-f177.google.com with SMTP id 3so116740pfb.10;
-        Tue, 12 Nov 2019 14:44:46 -0800 (PST)
+        Tue, 12 Nov 2019 17:46:02 -0500
+Received: by mail-oi1-f195.google.com with SMTP id m193so16449060oig.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2019 14:46:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YP6HXQfqzmkkZWDyrOvnEJK7kISWvdIhSDIzf9Us7t8=;
-        b=OcrokoyIrP6/2K/P/cPaAzNyafqPVWJGbTOeNMu4v5ASYwpfwhvhkehljA61C9f6GY
-         XyNZ2lffsKCNHYu9LGAJCsSyg/Y/v8fyiKntIqItHyY9sVZLZKhGFTk+beOxYshM7iEm
-         kmA76t5UG4F43tVYAYE6rljD5L+S1BGpml/gQ51PrjrrAVUgyaQ5SQGjlixMnrfrywKz
-         Qa5Z1XIA2tqQGH2i6fYipScsVBYBMY/75ILLWSX0ggD5jDCN8h1tiYEHZ5O/7a2C3Ag+
-         Y+zjruCVPl1sNPcPKmestiVm9vRZOCaV7TJ4Pd9M9jtVWz2I211E0c3vps5vwy/4ewhL
-         ZDEQ==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7VZux41I9l8WsaFw4dnSKoQ+DL1POYbdTwXxPgsqOD8=;
+        b=g+shynx9wA4O7/ZPSOmOhvhdFUBcChFyBb7EYzal20VNZRr14tSC8CEEu8RhYVOSKP
+         ujUV0PqIhIH36zKviPook+HnkIHuRG88nmkcJhEvO3dJXo36vkvTp3d/Rv5+wpQSmOnU
+         bQU0r/Fslk/8pH+0JUylPowC6D4ZnT5PrmHiZ30JXUbKpZ1rMZQ7kmT50jl8KfJoHp7m
+         VvEK+ooBIm3vYED6+FUL9oFvr5SRhfXOEafMoAbLZrqHGNUi1aW7WiDjR5Rr2M+YKo5Q
+         1bTGao6fq7ZjCHqOdYHjYnxFv2rb5XbPoQBWE0A1WALsbQq7HL4C3F5HipXsfgbDt8Vf
+         nWjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YP6HXQfqzmkkZWDyrOvnEJK7kISWvdIhSDIzf9Us7t8=;
-        b=kaeE+CcI7yDQ/BjLslpUpzCTWsJH7WExfVaAx4WEUHE2B+TuyZEcmDueR+jpbuIX9W
-         WwO0kgchqdA2DW6BHvFMNpaRvnvFWRoTvi3zQYEToRFRC/9yCTjhz3ZrmP2rFfzu3QR3
-         YXOXKyPAQ43hP6laN9tlsg5oOUNDFDGQremkYG6x6Hq2uB/ge9k+41D9qng8kJ9+AvyU
-         +uy7ygPSmZIoXmuW8BfW92PEslX2orYIfzGoZT0G4UKZCXrZLlpFn/iEFQ7Dz973uDBz
-         J9FHgQ/S8TpkGBhzO04zydrTkcfhzy4+h4CGO3wWLG1EcfqVUdoE4fex7YZ8ZXIS7kRG
-         I4ag==
-X-Gm-Message-State: APjAAAUoUaNrBFV6pxXIzhVfa+V5nQlhruO3ms7x7YxzjCvcTV1XXl91
-        7frgGXwYiDYyGw//Pr6Th/8LLzti
-X-Google-Smtp-Source: APXvYqweYCXNIbkVwq3Q28iNQJZLxJJhGWqlAFjHUjBOAF460Nj3e6jQLicpl8NTi7QmbU6q49jY2g==
-X-Received: by 2002:a63:d851:: with SMTP id k17mr7856562pgj.161.1573598685627;
-        Tue, 12 Nov 2019 14:44:45 -0800 (PST)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::1:e001])
-        by smtp.gmail.com with ESMTPSA id i32sm20900pgl.73.2019.11.12.14.44.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Nov 2019 14:44:44 -0800 (PST)
-Date:   Tue, 12 Nov 2019 14:44:43 -0800
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Eric Dumazet <edumazet@google.com>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Marco Elver <elver@google.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
-Message-ID: <20191112224441.2kxmt727qy4l4ncb@ast-mbp.dhcp.thefacebook.com>
-References: <CAHk-=wgnjMEvqHnu_iJcbr_kdFyBQLhYojwv5T7p9F+CHxA9pg@mail.gmail.com>
- <Pine.LNX.4.44L0.1911121639540.1567-100000@iolanthe.rowland.org>
- <CANn89iKjWH86kChzPiVtCgVpt3GookwGk2x1YCTMeBSPpKU+Ww@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7VZux41I9l8WsaFw4dnSKoQ+DL1POYbdTwXxPgsqOD8=;
+        b=aOBOUgPU2Wf7hQt4mh+6t4KbPiTkeBeG8AANRiBxNTpplpKWdWRTrNqCNUBkK19rKK
+         vCbGAoHFLrM0jOoKwWAdgy9HhX3Yel3J0aGQ9sn7fy5Al6qlUW4uCq3Mb94z7gAWc8pZ
+         YKtIUy6B7Fv5TywQGanY/Jq02XrdhkgJznDYIvmQB5opFwhhF5BzRqBAAzfzqzB2zorw
+         Pfhlcm6cvEHuJnmptRTHYy/Y+89OHXoyZ8grGpyyUvQMGTpbXAbuJ2rwcCzqnLJCfl9B
+         OJUkoDbhQ6/ce8u2FPWmmwJqDa38tBiV0zMnqTcwR/jsn3WkynSkIxKBmVKLq289q23t
+         +HDw==
+X-Gm-Message-State: APjAAAXUxyzJMNTSW6mTAsnnrIlCWqQ9AMiN2b9kT06ThYm6QtxZMImX
+        9qeZzPP2/pGTeX1WUs5gtQYE5zA8Za2gigky/suEtA==
+X-Google-Smtp-Source: APXvYqwYMdEjXlo/ZXkQ25Q7OqLij5wE38qfmFx+c4Kh6ETnZQ80hOGe2SgdovvfY1Nwmo4LDa9vLeLDcR91Ofxlyck=
+X-Received: by 2002:aca:ea57:: with SMTP id i84mr83905oih.73.1573598761920;
+ Tue, 12 Nov 2019 14:46:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANn89iKjWH86kChzPiVtCgVpt3GookwGk2x1YCTMeBSPpKU+Ww@mail.gmail.com>
-User-Agent: NeoMutt/20180223
+References: <20191112000700.3455038-1-jhubbard@nvidia.com> <20191112000700.3455038-9-jhubbard@nvidia.com>
+ <20191112204338.GE5584@ziepe.ca> <0db36e86-b779-01af-77e7-469af2a2e19c@nvidia.com>
+In-Reply-To: <0db36e86-b779-01af-77e7-469af2a2e19c@nvidia.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 12 Nov 2019 14:45:51 -0800
+Message-ID: <CAPcyv4hAEgw6ySNS+EFRS4yNRVGz9A3Fu1vOk=XtpjYC64kQJw@mail.gmail.com>
+Subject: Re: [PATCH v3 08/23] vfio, mm: fix get_user_pages_remote() and FOLL_LONGTERM
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, KVM list <kvm@vger.kernel.org>,
+        linux-block@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 02:07:03PM -0800, Eric Dumazet wrote:
-> 
-> I would prefer some kind of explicit marking, instead of a comment.
-> 
-> Even if we prefer having a sane compiler, having these clearly
-> annotated can help
-> code readability quite a lot.
+On Tue, Nov 12, 2019 at 2:43 PM John Hubbard <jhubbard@nvidia.com> wrote:
+>
+> On 11/12/19 12:43 PM, Jason Gunthorpe wrote:
+> ...
+> >> -            }
+> >> +    ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags | FOLL_LONGTERM,
+> >> +                                page, vmas, NULL);
+> >> +    /*
+> >> +     * The lifetime of a vaddr_get_pfn() page pin is
+> >> +     * userspace-controlled. In the fs-dax case this could
+> >> +     * lead to indefinite stalls in filesystem operations.
+> >> +     * Disallow attempts to pin fs-dax pages via this
+> >> +     * interface.
+> >> +     */
+> >> +    if (ret > 0 && vma_is_fsdax(vmas[0])) {
+> >> +            ret = -EOPNOTSUPP;
+> >> +            put_page(page[0]);
+> >>      }
+> >
+> > AFAIK this chunk is redundant now as it is some hack to emulate
+> > FOLL_LONGTERM? So vmas can be deleted too.
+>
+> Let me first make sure I understand what Dan has in mind for the vma
+> checking, in the other thread...
 
-Annotating every line where tsk->min_flt is used with a comment
-or explicit macro seems like a lot of churn.
-How about adding an attribute to a field ?
-Or an attribute to a type?
-
-clang attributes can be easily exteneded. We add bpf specific attributes
-that are known to clang only when 'clang -target bpf' is used.
-There could be x86 or generic attributes.
-Then one can do:
-typedef unsigned long __attribute__((ignore_data_race)) racy_u64;
-struct task_struct { 
-   racy_u64 min_flt;
-};
-
-Hopefully less churn and clear signal to clang.
-
+It's not redundant relative to upstream which does not do anything the
+FOLL_LONGTERM in the gup-slow path... but I have not looked at patches
+1-7 to see if something there made it redundant.
