@@ -2,99 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BC91F9E13
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 00:19:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA369F9E20
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 00:22:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727143AbfKLXTD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Nov 2019 18:19:03 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45099 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726995AbfKLXTD (ORCPT
+        id S1727002AbfKLXWq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Nov 2019 18:22:46 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:40934 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726932AbfKLXWq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Nov 2019 18:19:03 -0500
-Received: by mail-pf1-f195.google.com with SMTP id z4so171486pfn.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2019 15:19:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=6YV9sWAtldt7QV9Z/E9MQlXJpOYClepPj0qjQfRgXwA=;
-        b=XGXmNN3ZtFcSV8anGunyLg32IAPhkzgurDq12Of06HDlvW+4TU61212ZPbAEkps7J6
-         7Qa9r1bNn2sil0rw9KEflTbVHGutMm6nju0oQKdhZ8cmhPwwbf3vMV6roozAimYwRasg
-         CIYlbuKg0UiKlJiwToV1Ma+VBoqXB0UZf4iCw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=6YV9sWAtldt7QV9Z/E9MQlXJpOYClepPj0qjQfRgXwA=;
-        b=MKjdaztAV+Zd4YD6LmomGNZZ+BMC5+uqnBb8yf+IEt45vfH9V5nkSxokDZeraS6kui
-         EYe7Gt9EFCKa/szHYiOkRirZsJ1oNYnpuLRkMxj9cSN34HMwNRahDgYqiiXBjxA2k8mx
-         XSAM8K0EYwFIDc1HZ0GvZ/KOrWDFAnMGJWbJJu7aDVJPgfvTy9roRAlnGd8NuKF/JRzR
-         zJXanH2wWvdvrE7eD90DO/9+HA9DITtNmeLH64n0bccf8L9FqNAQss4bXWYe5OD5kRX1
-         qm697QInKqG+yckAviIxXpBiADnoHK+vwFTZpRkFFO+8fKiQ3k0Ez9T93wU3YCQbYRx/
-         RpzA==
-X-Gm-Message-State: APjAAAXFOMxRnpFYWRXW0aP0BkK1nbTqYhLAEnxoWY93nNXyb77GvK+n
-        U+6+K+opQ4CwhBKIi2J5pXM4ng==
-X-Google-Smtp-Source: APXvYqzQdx6tFm8+bFhI0MhOEBcFZb7HQJUVAkbjAwYjSIls6XpKRirm8QaRzCKijyu2DFLv8vtyGg==
-X-Received: by 2002:a63:f441:: with SMTP id p1mr78629pgk.362.1573600742209;
-        Tue, 12 Nov 2019 15:19:02 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id x192sm42848pfd.96.2019.11.12.15.19.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 15:19:01 -0800 (PST)
-Date:   Tue, 12 Nov 2019 15:19:00 -0800
-From:   Kees Cook <keescook@chromium.org>
+        Tue, 12 Nov 2019 18:22:46 -0500
+Received: from [213.220.153.21] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1iUfUe-0005iB-VZ; Tue, 12 Nov 2019 23:22:41 +0000
+Date:   Wed, 13 Nov 2019 00:22:40 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Topi Miettinen <toiwoton@gmail.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
         Alexey Dobriyan <adobriyan@gmail.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "open list:FILESYSTEMS (VFS and infrastructure)" 
-        <linux-fsdevel@vger.kernel.org>
+        <linux-fsdevel@vger.kernel.org>, linux-api@vger.kernel.org
 Subject: Re: [PATCH] Allow restricting permissions in /proc/sys
-Message-ID: <201911121517.DC317D5D@keescook>
+Message-ID: <20191112232239.yevpeemgxz4wy32b@wittgenstein>
 References: <74a91362-247c-c749-5200-7bdce704ed9e@gmail.com>
- <87d0e8g5f4.fsf@x220.int.ebiederm.org>
- <f272bdd3-526d-6737-c906-143d5e5fc478@gmail.com>
- <87h83jejei.fsf@x220.int.ebiederm.org>
- <eb2da7e4-23ff-597a-08e1-e0555d490f6f@gmail.com>
- <87tv7jciq3.fsf@x220.int.ebiederm.org>
- <1b0f94ef-ab1c-cb79-dd52-954cf0438af1@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1b0f94ef-ab1c-cb79-dd52-954cf0438af1@gmail.com>
+In-Reply-To: <74a91362-247c-c749-5200-7bdce704ed9e@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 05, 2019 at 09:35:46AM +0200, Topi Miettinen wrote:
-> On 5.11.2019 1.41, Eric W. Biederman wrote:
-> > My sense is that if there is any kind of compelling reason to make
-> > world-readable values not world-readable, and it doesn't break anything
-> > (except malicious applications) than a kernel patch is probably the way
-> > to go.
+[Cc+ linux-api@vger.kernel.org]
+
+since that's potentially relevant to quite a few people.
+
+On Sun, Nov 03, 2019 at 04:55:48PM +0200, Topi Miettinen wrote:
+> Several items in /proc/sys need not be accessible to unprivileged
+> tasks. Let the system administrator change the permissions, but only
+> to more restrictive modes than what the sysctl tables allow.
 > 
-> With kernel patch, do you propose to change individual sysctls to not
-> world-readable? That surely would help everybody instead of just those who
-> care enough to change /proc/sys permissions. I guess it would also be more
-> effort by an order of magnitude or two to convince each owner of a sysctl to
-> accept the change.
-
-I would think of this as a two-stage process: provide a mechanism to
-tighten permissions arbitrarily so that it is easier to gather evidence
-about which could have their default changed in the future.
-
-> These code paths have not changed much or at all since the initial version
-> in 2007, so I suppose the maintenance burden has not been overwhelming.
+> Signed-off-by: Topi Miettinen <toiwoton@gmail.com>
+> ---
+>  fs/proc/proc_sysctl.c | 41 +++++++++++++++++++++++++++++++----------
+>  1 file changed, 31 insertions(+), 10 deletions(-)
 > 
-> By the way, /proc/sys still allows changing the {a,c,m}time. I think those
-> are not backed anywhere, so they probably suffer from same caching problems
-> as my first version of the patch.
+> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+> index d80989b6c344..88c4ca7d2782 100644
+> --- a/fs/proc/proc_sysctl.c
+> +++ b/fs/proc/proc_sysctl.c
+> @@ -818,6 +818,10 @@ static int proc_sys_permission(struct inode *inode, int
+> mask)
+>         if ((mask & MAY_EXEC) && S_ISREG(inode->i_mode))
+>                 return -EACCES;
+> 
+> +       error = generic_permission(inode, mask);
+> +       if (error)
+> +               return error;
+> +
+>         head = grab_header(inode);
+>         if (IS_ERR(head))
+>                 return PTR_ERR(head);
+> @@ -837,9 +841,35 @@ static int proc_sys_setattr(struct dentry *dentry,
+> struct iattr *attr)
+>         struct inode *inode = d_inode(dentry);
+>         int error;
+> 
+> -       if (attr->ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID))
+> +       if (attr->ia_valid & (ATTR_UID | ATTR_GID))
+>                 return -EPERM;
+> 
+> +       if (attr->ia_valid & ATTR_MODE) {
+> +               struct ctl_table_header *head = grab_header(inode);
+> +               struct ctl_table *table = PROC_I(inode)->sysctl_entry;
+> +               umode_t max_mode = 0777; /* Only these bits may change */
+> +
+> +               if (IS_ERR(head))
+> +                       return PTR_ERR(head);
+> +
+> +               if (!table) /* global root - r-xr-xr-x */
+> +                       max_mode &= ~0222;
+> +               else /*
+> +                     * Don't allow permissions to become less
+> +                     * restrictive than the sysctl table entry
+> +                     */
+> +                       max_mode &= table->mode;
+> +
+> +               sysctl_head_finish(head);
+> +
+> +               /* Execute bits only allowed for directories */
+> +               if (!S_ISDIR(inode->i_mode))
+> +                       max_mode &= ~0111;
+> +
+> +               if (attr->ia_mode & ~S_IFMT & ~max_mode)
+> +                       return -EPERM;
+> +       }
+> +
+>         error = setattr_prepare(dentry, attr);
+>         if (error)
+>                 return error;
+> @@ -853,17 +883,8 @@ static int proc_sys_getattr(const struct path *path,
+> struct kstat *stat,
+>                             u32 request_mask, unsigned int query_flags)
+>  {
+>         struct inode *inode = d_inode(path->dentry);
+> -       struct ctl_table_header *head = grab_header(inode);
+> -       struct ctl_table *table = PROC_I(inode)->sysctl_entry;
+> -
+> -       if (IS_ERR(head))
+> -               return PTR_ERR(head);
+> 
+>         generic_fillattr(inode, stat);
+> -       if (table)
+> -               stat->mode = (stat->mode & S_IFMT) | table->mode;
+> -
+> -       sysctl_head_finish(head);
+>         return 0;
+>  }
+> 
+> -- 
+> 2.24.0.rc1
+> 
 
-Is a v2 of this patch needed? It wasn't clear to me if the inode modes
-were incorrectly cached...?
 
--- 
-Kees Cook
