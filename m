@@ -2,86 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7FC2F9DF4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 00:15:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A275F9E06
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 00:17:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbfKLXPS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Nov 2019 18:15:18 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40744 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726994AbfKLXPS (ORCPT
+        id S1727063AbfKLXRc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Nov 2019 18:17:32 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:8581 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726910AbfKLXRb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Nov 2019 18:15:18 -0500
-Received: by mail-pf1-f193.google.com with SMTP id r4so181628pfl.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2019 15:15:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=q/7zKomDvwvoQVmplaYbzXQkEiXPJRscqerdxI0XpvE=;
-        b=gMuZpNu2ZWWW1U1Djp24A57ML3WMX9pxLpjzy9vcatjVYek6YJx07FQmY8w0YIjtWk
-         npdddXUg54q759/2mZ1xUDLqAY/tN+mCvK2bLXfWZscdZbUFsmPrJ8mGS42dXbUexSqn
-         FLkNDOuNubyqmyvpl7RPVvVrXPThIpjdJPxl8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=q/7zKomDvwvoQVmplaYbzXQkEiXPJRscqerdxI0XpvE=;
-        b=Tydsex7Y+iM4S822ZTPmIqigB1M9RPmbsQgz8Hzcj/tok4C5rkMMltRJRwro3McQze
-         hgO22y2dTaKHh0CPRtkE/9O2bid3I9sgv5DJRp5z127ywmismq0tHLnPNrNz6D6qhWRB
-         eMEDUygcsNv6JGrEhBYalb/BqmNgYKplR2NpGvAMDLsiD95PfqaJWfNEUGfZntC7Y1Ld
-         DG3II4rUdABydY9pUop8bw9vcu6i7jRF1qO1zde8Cswa7AfeT1z5YQxmD8e4ZqXfjtYB
-         MZdmJVaRuY5l5dj0dIR8n1Vnw4GQbZTaLMEQPPDL/i4q04mCjVRQOnTnbXPqtIHQz36j
-         FeAQ==
-X-Gm-Message-State: APjAAAV0jVvOzrgMjjUprD8RsEO2AVCWs4pS1ZpMYa3TbnAbnScCinMk
-        xGWFnNovLbnFmt4eVySCJGWgVxSAmfM=
-X-Google-Smtp-Source: APXvYqy+Au3kYLmA11xfFKoZBV6/GOO9I8Z5Zy4Zp4gEbzdOoKsHxdFIrmkacipgx8+7hy/Mu8ANxw==
-X-Received: by 2002:a17:90a:3b0d:: with SMTP id d13mr473073pjc.86.1573600517339;
-        Tue, 12 Nov 2019 15:15:17 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id l74sm172205pje.29.2019.11.12.15.15.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 15:15:16 -0800 (PST)
-Date:   Tue, 12 Nov 2019 15:15:15 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     Topi Miettinen <toiwoton@gmail.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:FILESYSTEMS (VFS and infrastructure)" 
-        <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] Allow restricting permissions in /proc/sys
-Message-ID: <201911121514.DA3BEED0@keescook>
-References: <74a91362-247c-c749-5200-7bdce704ed9e@gmail.com>
- <20191103175648.GA4603@mit.edu>
+        Tue, 12 Nov 2019 18:17:31 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dcb3d4b0000>; Tue, 12 Nov 2019 15:16:27 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 12 Nov 2019 15:17:23 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 12 Nov 2019 15:17:23 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 12 Nov
+ 2019 23:17:22 +0000
+Subject: Re: [PATCH v3 08/23] vfio, mm: fix get_user_pages_remote() and
+ FOLL_LONGTERM
+To:     Dan Williams <dan.j.williams@intel.com>
+CC:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, KVM list <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>,
+        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20191112000700.3455038-1-jhubbard@nvidia.com>
+ <20191112000700.3455038-9-jhubbard@nvidia.com>
+ <20191112204338.GE5584@ziepe.ca>
+ <0db36e86-b779-01af-77e7-469af2a2e19c@nvidia.com>
+ <CAPcyv4hAEgw6ySNS+EFRS4yNRVGz9A3Fu1vOk=XtpjYC64kQJw@mail.gmail.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <85987617-9f6b-6bd3-fea2-9f2910d942bd@nvidia.com>
+Date:   Tue, 12 Nov 2019 15:17:22 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191103175648.GA4603@mit.edu>
+In-Reply-To: <CAPcyv4hAEgw6ySNS+EFRS4yNRVGz9A3Fu1vOk=XtpjYC64kQJw@mail.gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1573600587; bh=MjC1bPxvrMSKZyR0vfIkph3DH21vc9F8lPoYeam7DCg=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=p3qYKNzVf+yoWXVxXvdWjvLLch3+eBgZBZPzM5iL19+w8RiUo7ZDiZ6gW1HFxWncA
+         +kkprqimeUO8SSqHdah/r3BwJo4tDay3qaFNXlfKQCKgL2mn5vpeQtNa9DXVDSKAs9
+         R4vcNKCywQ8SHP3DUh8n5njcCPN6pw3P07lAmh8mqH74Fvgl1XHO+C/rjd/05WqSfr
+         CbI8v19uMzgduDq6l5KCW1YAmvvVqDA87KUBJVym8vf0Kv0kKAaenl3Op2+6yladeP
+         PH6kHbkLvI9QcVfTqnjU+9eG71rPYcWHuFxhGzrL4Y4JAkS0eHU4rmGDiCKR0r+10R
+         ZzG6cdcgSU6Ww==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Nov 03, 2019 at 12:56:48PM -0500, Theodore Y. Ts'o wrote:
-> On Sun, Nov 03, 2019 at 04:55:48PM +0200, Topi Miettinen wrote:
-> > Several items in /proc/sys need not be accessible to unprivileged
-> > tasks. Let the system administrator change the permissions, but only
-> > to more restrictive modes than what the sysctl tables allow.
-> > 
-> > Signed-off-by: Topi Miettinen <toiwoton@gmail.com>
+On 11/12/19 2:45 PM, Dan Williams wrote:
+> On Tue, Nov 12, 2019 at 2:43 PM John Hubbard <jhubbard@nvidia.com> wrote:
+>>
+>> On 11/12/19 12:43 PM, Jason Gunthorpe wrote:
+>> ...
+>>>> -            }
+>>>> +    ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags | FOLL_LONGTERM,
+>>>> +                                page, vmas, NULL);
+>>>> +    /*
+>>>> +     * The lifetime of a vaddr_get_pfn() page pin is
+>>>> +     * userspace-controlled. In the fs-dax case this could
+>>>> +     * lead to indefinite stalls in filesystem operations.
+>>>> +     * Disallow attempts to pin fs-dax pages via this
+>>>> +     * interface.
+>>>> +     */
+>>>> +    if (ret > 0 && vma_is_fsdax(vmas[0])) {
+>>>> +            ret = -EOPNOTSUPP;
+>>>> +            put_page(page[0]);
+>>>>      }
+>>>
+>>> AFAIK this chunk is redundant now as it is some hack to emulate
+>>> FOLL_LONGTERM? So vmas can be deleted too.
+>>
+>> Let me first make sure I understand what Dan has in mind for the vma
+>> checking, in the other thread...
 > 
-> Why should restruct the system administrator from changing the
-> permissions to one which is more lax than what the sysctl tables?
+> It's not redundant relative to upstream which does not do anything the
+> FOLL_LONGTERM in the gup-slow path... but I have not looked at patches
+> 1-7 to see if something there made it redundant.
 > 
-> The system administrator is already very much trusted.  Why should we
-> take that discretion away from the system administrator?
 
-Generally speaking, they're there to provide some sense of boundary
-between uid 0 and the kernel proper. I think it's correct to not allow
-weakening of these permissions (which is the current state: no change at
-all).
+There is nothing in patches 1-7 that would make it redundant. 
 
+About the only thing that you might find interesting in that subset is
+patch 4 ("mm: devmap: refactor 1-based refcounting for ZONE_DEVICE pages"),
+for devmap and ZONE_DEVICE interest. But it doesn't affect this
+discussion directly.
+
+
+thanks,
 -- 
-Kees Cook
+John Hubbard
+NVIDIA
