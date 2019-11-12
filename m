@@ -2,152 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C203DF9DEF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 00:15:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7FC2F9DF4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 00:15:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726970AbfKLXPL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Nov 2019 18:15:11 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:35963 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727022AbfKLXPK (ORCPT
+        id S1727237AbfKLXPS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Nov 2019 18:15:18 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40744 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726994AbfKLXPS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Nov 2019 18:15:10 -0500
-Received: by mail-oi1-f194.google.com with SMTP id j7so40500oib.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2019 15:15:10 -0800 (PST)
+        Tue, 12 Nov 2019 18:15:18 -0500
+Received: by mail-pf1-f193.google.com with SMTP id r4so181628pfl.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2019 15:15:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ahg4ogj/xxSIi3Tz2dndpoesa0PkRLQ36VHrjNwVguE=;
-        b=xlO/3o/FAhmPzmX5yHbU6ZNuHn4V9nHbloPGHpZqsb+DPkTsTeMinCTT3P2xrA0A3t
-         XjX5crvs+XLSDSgcai6PZWx41nUjrksNl4jkRdGfTQpb6e1yLtFehh/VkrzYDg6mpqa6
-         nIua0PamDKkJ2o4Dp1t2Oe3HiXMlIx7Jxg8UopWGV46jcBHLtzfhKxYanb2GfMvC3xgc
-         V252jaKpAjhpDskcu/pPNVnV9ekVH+4FC/dXONxMnvQ71JXMw8m5ltg2SL6haNirS3nS
-         2zfdpmAUDtoGxjGX0JdEV3chYwlXK5G60EaIDM8oX92yL7sroQqX5o/Sf8CBMjZV3ums
-         ZwPA==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=q/7zKomDvwvoQVmplaYbzXQkEiXPJRscqerdxI0XpvE=;
+        b=gMuZpNu2ZWWW1U1Djp24A57ML3WMX9pxLpjzy9vcatjVYek6YJx07FQmY8w0YIjtWk
+         npdddXUg54q759/2mZ1xUDLqAY/tN+mCvK2bLXfWZscdZbUFsmPrJ8mGS42dXbUexSqn
+         FLkNDOuNubyqmyvpl7RPVvVrXPThIpjdJPxl8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ahg4ogj/xxSIi3Tz2dndpoesa0PkRLQ36VHrjNwVguE=;
-        b=g6mjcq5QugOaurm8eNdLLrnF1WcK/pQKlSrsPMw5q0JgZGQe7aloQLozZY5N89URbm
-         igwXI7h8Ix11Tj3NGLOizj+mOz7ih72oA77RnY/ZKQFy+8mjpuZJmAw7u9Yw4WC6jKDG
-         1GrQF1JARWIplHrpUnICLjq6c8YyTWU/adkqCu6nHYUlN8o8gAtyAPF0kiZdXnuyBVzK
-         PlQTY1j+5QRVf3gbsEDXf9wP/ivlOXJgRU5/Ys6j+LiLjuOE4Co4otuCh/ehPVUc0O7U
-         d+YDDq8aR3RpQZoCtNb3Yw4BgWY3Bpli83eCQXmLcvT/etLhz0vW2nkMpEFWawjbUO3G
-         Mkyg==
-X-Gm-Message-State: APjAAAW4MmR/WLrFadn0/0ypwvuZ4X6HsN4yL1ukJqBfbaYRTCcRrLXq
-        au/OxyN+BCJPjSPTY6nR3M+HARiqoJFivsLpfzgD9w==
-X-Google-Smtp-Source: APXvYqw0y1/AL1ibfnKpdRZPCFvNtcNTDnagWkblsIboSxBlSGgp0qhR7HkhIvJGPGFUg8U4pz3vKkN+eKromPrOJOY=
-X-Received: by 2002:aca:ad52:: with SMTP id w79mr178668oie.149.1573600509804;
- Tue, 12 Nov 2019 15:15:09 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=q/7zKomDvwvoQVmplaYbzXQkEiXPJRscqerdxI0XpvE=;
+        b=Tydsex7Y+iM4S822ZTPmIqigB1M9RPmbsQgz8Hzcj/tok4C5rkMMltRJRwro3McQze
+         hgO22y2dTaKHh0CPRtkE/9O2bid3I9sgv5DJRp5z127ywmismq0tHLnPNrNz6D6qhWRB
+         eMEDUygcsNv6JGrEhBYalb/BqmNgYKplR2NpGvAMDLsiD95PfqaJWfNEUGfZntC7Y1Ld
+         DG3II4rUdABydY9pUop8bw9vcu6i7jRF1qO1zde8Cswa7AfeT1z5YQxmD8e4ZqXfjtYB
+         MZdmJVaRuY5l5dj0dIR8n1Vnw4GQbZTaLMEQPPDL/i4q04mCjVRQOnTnbXPqtIHQz36j
+         FeAQ==
+X-Gm-Message-State: APjAAAV0jVvOzrgMjjUprD8RsEO2AVCWs4pS1ZpMYa3TbnAbnScCinMk
+        xGWFnNovLbnFmt4eVySCJGWgVxSAmfM=
+X-Google-Smtp-Source: APXvYqy+Au3kYLmA11xfFKoZBV6/GOO9I8Z5Zy4Zp4gEbzdOoKsHxdFIrmkacipgx8+7hy/Mu8ANxw==
+X-Received: by 2002:a17:90a:3b0d:: with SMTP id d13mr473073pjc.86.1573600517339;
+        Tue, 12 Nov 2019 15:15:17 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id l74sm172205pje.29.2019.11.12.15.15.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2019 15:15:16 -0800 (PST)
+Date:   Tue, 12 Nov 2019 15:15:15 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     Topi Miettinen <toiwoton@gmail.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:FILESYSTEMS (VFS and infrastructure)" 
+        <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] Allow restricting permissions in /proc/sys
+Message-ID: <201911121514.DA3BEED0@keescook>
+References: <74a91362-247c-c749-5200-7bdce704ed9e@gmail.com>
+ <20191103175648.GA4603@mit.edu>
 MIME-Version: 1.0
-References: <20191112000700.3455038-1-jhubbard@nvidia.com> <20191112000700.3455038-9-jhubbard@nvidia.com>
- <CAPcyv4hgKEqoxeQJH9R=YiZosvazj308Kk7jJA1NLxJkNenDcQ@mail.gmail.com>
- <471e513c-833f-2f8b-60db-5d9c56a8f766@nvidia.com> <CAPcyv4it5fxU71uXFHW_WAAXBw4suQvwWTjX0Wru8xKFoz_dbw@mail.gmail.com>
- <729a16cb-3947-c7cb-c57f-6c917d240665@nvidia.com>
-In-Reply-To: <729a16cb-3947-c7cb-c57f-6c917d240665@nvidia.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 12 Nov 2019 15:14:58 -0800
-Message-ID: <CAPcyv4gUe__09cnAh3jeFogJH=sGm9U+8axRq_kCASkdbLfNbQ@mail.gmail.com>
-Subject: Re: [PATCH v3 08/23] vfio, mm: fix get_user_pages_remote() and FOLL_LONGTERM
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, KVM list <kvm@vger.kernel.org>,
-        linux-block@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191103175648.GA4603@mit.edu>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 3:08 PM John Hubbard <jhubbard@nvidia.com> wrote:
->
-> On 11/12/19 2:43 PM, Dan Williams wrote:
-> ...
-> > Ah, sorry. This was the first time I had looked at this series and
-> > jumped in without reading the background.
-> >
-> > Your patch as is looks ok, I assume you've removed the FOLL_LONGTERM
-> > warning in get_user_pages_remote in another patch?
-> >
->
-> Actually, I haven't gone quite that far. Actually this patch is the last
-> change to that function. Therefore, at the end of this patchset,
-> get_user_pages_remote() ends up with this check in it which
-> is a less-restrictive version of the warning:
->
->         /*
->          * Current FOLL_LONGTERM behavior is incompatible with
->          * FAULT_FLAG_ALLOW_RETRY because of the FS DAX check requirement on
->          * vmas. However, this only comes up if locked is set, and there are
->          * callers that do request FOLL_LONGTERM, but do not set locked. So,
->          * allow what we can.
->          */
->         if (gup_flags & FOLL_LONGTERM) {
->                 if (WARN_ON_ONCE(locked))
->                         return -EINVAL;
->         }
->
-> Is that OK, or did you want to go further (possibly in a follow-up
-> patchset, as I'm hoping to get this one in soon)?
+On Sun, Nov 03, 2019 at 12:56:48PM -0500, Theodore Y. Ts'o wrote:
+> On Sun, Nov 03, 2019 at 04:55:48PM +0200, Topi Miettinen wrote:
+> > Several items in /proc/sys need not be accessible to unprivileged
+> > tasks. Let the system administrator change the permissions, but only
+> > to more restrictive modes than what the sysctl tables allow.
+> > 
+> > Signed-off-by: Topi Miettinen <toiwoton@gmail.com>
+> 
+> Why should restruct the system administrator from changing the
+> permissions to one which is more lax than what the sysctl tables?
+> 
+> The system administrator is already very much trusted.  Why should we
+> take that discretion away from the system administrator?
 
-That looks ok. Something to maybe push down into the core in a future
-cleanup, but not something that needs to be done now.
+Generally speaking, they're there to provide some sense of boundary
+between uid 0 and the kernel proper. I think it's correct to not allow
+weakening of these permissions (which is the current state: no change at
+all).
 
-> ...
-> >>> I think check_vma_flags() should do the ((FOLL_LONGTERM | FOLL_GET) &&
-> >>> vma_is_fsdax()) check and that would also remove the need for
-> >>> __gup_longterm_locked.
-> >>>
-> >>
-> >> Good idea, but there is still the call to check_and_migrate_cma_pages(),
-> >> inside __gup_longterm_locked().  So it's a little more involved and
-> >> we can't trivially delete __gup_longterm_locked() yet, right?
-> >
-> > [ add Aneesh ]
-> >
-> > Yes, you're right. I had overlooked that had snuck in there. That to
-> > me similarly needs to be pushed down into the core with its own FOLL
-> > flag, or it needs to be an explicit fixup that each caller does after
-> > get_user_pages. The fact that migration silently happens as a side
-> > effect of gup is too magical for my taste.
-> >
->
-> Yes. It's an intrusive side effect that is surprising, and not in a
-> "happy surprise" way. :) .   Fixing up the CMA pages by splitting that
-> functionality into separate function calls sounds like an improvement
-> worth exploring.
-
-Right, future work.
+-- 
+Kees Cook
