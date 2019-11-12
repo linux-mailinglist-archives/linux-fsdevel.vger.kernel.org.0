@@ -2,201 +2,243 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4536BF842F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 01:08:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6DABF8502
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 01:19:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727728AbfKLAIE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Nov 2019 19:08:04 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:10792 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727631AbfKLAHb (ORCPT
+        id S1727021AbfKLATQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Nov 2019 19:19:16 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:25478 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726981AbfKLATQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Nov 2019 19:07:31 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dc9f7c50000>; Mon, 11 Nov 2019 16:07:33 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 11 Nov 2019 16:07:30 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 11 Nov 2019 16:07:30 -0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 12 Nov
- 2019 00:07:30 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 12 Nov 2019 00:07:29 +0000
-Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5dc9f7c00003>; Mon, 11 Nov 2019 16:07:29 -0800
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        Mon, 11 Nov 2019 19:19:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573517955;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=4Qp+qAWnA86YTq8ORascu57Z8nk2SYkcadQHnIe57pg=;
+        b=W9q/BaCee8xgeiXgeJr0rCsUo45s4KqHFXKvgF1tsET+fvhXjr0B7A5HUXcFGjKoshl2TK
+        iXtSOOt1mZdJ9iU0mTZjoKq1/k9FpbWPLvXPHpH/zPHPPmdzQGgCFAorMySuNcxzSzMNNy
+        yxJRgGG8arpCGA9gXbkzeTErgm7insM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-183-3uhtm5eUN8qa7yP-FZ0psw-1; Mon, 11 Nov 2019 19:19:05 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 30225800C72;
+        Tue, 12 Nov 2019 00:19:03 +0000 (UTC)
+Received: from rh2.redhat.com (ovpn-123-234.rdu2.redhat.com [10.10.123.234])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4351210027B6;
+        Tue, 12 Nov 2019 00:19:01 +0000 (UTC)
+From:   Mike Christie <mchristi@redhat.com>
+To:     linux-api@vger.kernel.org, idryomov@gmail.com, mhocko@kernel.org,
+        david@fromorbit.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        martin@urbackup.org, Damien.LeMoal@wdc.com
+Cc:     Mike Christie <mchristi@redhat.com>,
         Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v3 23/23] mm/gup: remove support for gup(FOLL_LONGTERM)
-Date:   Mon, 11 Nov 2019 16:07:00 -0800
-Message-ID: <20191112000700.3455038-24-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191112000700.3455038-1-jhubbard@nvidia.com>
-References: <20191112000700.3455038-1-jhubbard@nvidia.com>
+        Masato Suzuki <masato.suzuki@wdc.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>
+Subject: [PATCH] Add prctl support for controlling mem reclaim V4
+Date:   Mon, 11 Nov 2019 18:19:00 -0600
+Message-Id: <20191112001900.9206-1-mchristi@redhat.com>
 MIME-Version: 1.0
-X-NVConfidentiality: public
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-MC-Unique: 3uhtm5eUN8qa7yP-FZ0psw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1573517253; bh=cQGm03MwEI364eqhkDgW3lkBD2mDh5xmPmbbGUpAUxU=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
-         Content-Transfer-Encoding:Content-Type;
-        b=jeDFucw7tE0NfME1gtSntL7jl6FwAVKx401Zg0zd1OkOK23btFnhhwRkX1BypOId8
-         tB5L/HA86k7OcI07xiKO7SPq60A52WvJh6+uA0reTiW0Z5JqnjbNT8xfKH/mHa0AAf
-         LXGFigUduDHPhfFDSdZFC243oMyts/7+rCWm2Jy33t/ZP00CwXdKXT72ELCCro7Ypj
-         RelyojEcjFUpR+VNp3Kz50mWDTbe3Hqv0UhXwYhoLmNdXakM0Dw9hV3hWsEAA2x0LI
-         p1qiFqadYG8i1oiRlkGsryI6OZveEzbEGW+7+g6ht6r3kDox/sRMIxnR+qCRLVVO1J
-         rLJMc31P/tZAA==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now that all other kernel callers of get_user_pages(FOLL_LONGTERM)
-have been converted to pin_longterm_pages(), lock it down:
+There are several storage drivers like dm-multipath, iscsi, tcmu-runner,
+amd nbd that have userspace components that can run in the IO path. For
+example, iscsi and nbd's userspace deamons may need to recreate a socket
+and/or send IO on it, and dm-multipath's daemon multipathd may need to
+send SG IO or read/write IO to figure out the state of paths and re-set
+them up.
 
-1) Add an assertion to get_user_pages(), preventing callers from
-   passing FOLL_LONGTERM (in addition to the existing assertion that
-   prevents FOLL_PIN).
+In the kernel these drivers have access to GFP_NOIO/GFP_NOFS and the
+memalloc_*_save/restore functions to control the allocation behavior,
+but for userspace we would end up hitting an allocation that ended up
+writing data back to the same device we are trying to allocate for.
+The device is then in a state of deadlock, because to execute IO the
+device needs to allocate memory, but to allocate memory the memory
+layers want execute IO to the device.
 
-2) Remove the associated GUP_LONGTERM_BENCHMARK test.
+Here is an example with nbd using a local userspace daemon that performs
+network IO to a remote server. We are using XFS on top of the nbd device,
+but it can happen with any FS or other modules layered on top of the nbd
+device that can write out data to free memory.  Here a nbd daemon helper
+thread, msgr-worker-1, is performing a write/sendmsg on a socket to execute
+a request. This kicks off a reclaim operation which results in a WRITE to
+the nbd device and the nbd thread calling back into the mm layer.
 
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+[ 1626.609191] msgr-worker-1   D    0  1026      1 0x00004000
+[ 1626.609193] Call Trace:
+[ 1626.609195]  ? __schedule+0x29b/0x630
+[ 1626.609197]  ? wait_for_completion+0xe0/0x170
+[ 1626.609198]  schedule+0x30/0xb0
+[ 1626.609200]  schedule_timeout+0x1f6/0x2f0
+[ 1626.609202]  ? blk_finish_plug+0x21/0x2e
+[ 1626.609204]  ? _xfs_buf_ioapply+0x2e6/0x410
+[ 1626.609206]  ? wait_for_completion+0xe0/0x170
+[ 1626.609208]  wait_for_completion+0x108/0x170
+[ 1626.609210]  ? wake_up_q+0x70/0x70
+[ 1626.609212]  ? __xfs_buf_submit+0x12e/0x250
+[ 1626.609214]  ? xfs_bwrite+0x25/0x60
+[ 1626.609215]  xfs_buf_iowait+0x22/0xf0
+[ 1626.609218]  __xfs_buf_submit+0x12e/0x250
+[ 1626.609220]  xfs_bwrite+0x25/0x60
+[ 1626.609222]  xfs_reclaim_inode+0x2e8/0x310
+[ 1626.609224]  xfs_reclaim_inodes_ag+0x1b6/0x300
+[ 1626.609227]  xfs_reclaim_inodes_nr+0x31/0x40
+[ 1626.609228]  super_cache_scan+0x152/0x1a0
+[ 1626.609231]  do_shrink_slab+0x12c/0x2d0
+[ 1626.609233]  shrink_slab+0x9c/0x2a0
+[ 1626.609235]  shrink_node+0xd7/0x470
+[ 1626.609237]  do_try_to_free_pages+0xbf/0x380
+[ 1626.609240]  try_to_free_pages+0xd9/0x1f0
+[ 1626.609245]  __alloc_pages_slowpath+0x3a4/0xd30
+[ 1626.609251]  ? ___slab_alloc+0x238/0x560
+[ 1626.609254]  __alloc_pages_nodemask+0x30c/0x350
+[ 1626.609259]  skb_page_frag_refill+0x97/0xd0
+[ 1626.609274]  sk_page_frag_refill+0x1d/0x80
+[ 1626.609279]  tcp_sendmsg_locked+0x2bb/0xdd0
+[ 1626.609304]  tcp_sendmsg+0x27/0x40
+[ 1626.609307]  sock_sendmsg+0x54/0x60
+[ 1626.609308]  ___sys_sendmsg+0x29f/0x320
+[ 1626.609313]  ? sock_poll+0x66/0xb0
+[ 1626.609318]  ? ep_item_poll.isra.15+0x40/0xc0
+[ 1626.609320]  ? ep_send_events_proc+0xe6/0x230
+[ 1626.609322]  ? hrtimer_try_to_cancel+0x54/0xf0
+[ 1626.609324]  ? ep_read_events_proc+0xc0/0xc0
+[ 1626.609326]  ? _raw_write_unlock_irq+0xa/0x20
+[ 1626.609327]  ? ep_scan_ready_list.constprop.19+0x218/0x230
+[ 1626.609329]  ? __hrtimer_init+0xb0/0xb0
+[ 1626.609331]  ? _raw_spin_unlock_irq+0xa/0x20
+[ 1626.609334]  ? ep_poll+0x26c/0x4a0
+[ 1626.609337]  ? tcp_tsq_write.part.54+0xa0/0xa0
+[ 1626.609339]  ? release_sock+0x43/0x90
+[ 1626.609341]  ? _raw_spin_unlock_bh+0xa/0x20
+[ 1626.609342]  __sys_sendmsg+0x47/0x80
+[ 1626.609347]  do_syscall_64+0x5f/0x1c0
+[ 1626.609349]  ? prepare_exit_to_usermode+0x75/0xa0
+[ 1626.609351]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+This patch adds a new prctl command that daemons can use after they have
+done their initial setup, and before they start to do allocations that
+are in the IO path. It sets the PF_MEMALLOC_NOIO and PF_LESS_THROTTLE
+flags so both userspace block and FS threads can use it to avoid the
+allocation recursion and try to prevent from being throttled while
+writing out data to free up memory.
+
+Signed-off-by: Mike Christie <mchristi@redhat.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Tested-by: Masato Suzuki <masato.suzuki@wdc.com>
+Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
+
 ---
- mm/gup.c                                   | 8 ++++----
- mm/gup_benchmark.c                         | 9 +--------
- tools/testing/selftests/vm/gup_benchmark.c | 7 ++-----
- 3 files changed, 7 insertions(+), 17 deletions(-)
 
-diff --git a/mm/gup.c b/mm/gup.c
-index fc164c2ee6b5..db73ba216dff 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1743,11 +1743,11 @@ long get_user_pages(unsigned long start, unsigned l=
-ong nr_pages,
- 		struct vm_area_struct **vmas)
+V4:
+- Fix PR_GET_IO_FLUSHER check to match SET.
+
+V3:
+- Drop NOFS, set PF_LESS_THROTTLE and rename prctl flag to reflect it
+is more general and can support both FS and block devices. Both fuse
+and block device daemons, nbd and tcmu-runner, have been tested to
+confirm the more restrictive PF_MEMALLOC_NOIO also works for fuse.
+
+- Use CAP_SYS_RESOURCE instead of admin.
+
+V2:
+- Use prctl instead of procfs.
+- Add support for NOFS for fuse.
+- Check permissions.
+
+
+ include/uapi/linux/capability.h |  1 +
+ include/uapi/linux/prctl.h      |  4 ++++
+ kernel/sys.c                    | 25 +++++++++++++++++++++++++
+ 3 files changed, 30 insertions(+)
+
+diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capabilit=
+y.h
+index 240fdb9a60f6..272dc69fa080 100644
+--- a/include/uapi/linux/capability.h
++++ b/include/uapi/linux/capability.h
+@@ -301,6 +301,7 @@ struct vfs_ns_cap_data {
+ /* Allow more than 64hz interrupts from the real-time clock */
+ /* Override max number of consoles on console allocation */
+ /* Override max number of keymaps */
++/* Control memory reclaim behavior */
+=20
+ #define CAP_SYS_RESOURCE     24
+=20
+diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+index 7da1b37b27aa..07b4f8131e36 100644
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -234,4 +234,8 @@ struct prctl_mm_map {
+ #define PR_GET_TAGGED_ADDR_CTRL=09=0956
+ # define PR_TAGGED_ADDR_ENABLE=09=09(1UL << 0)
+=20
++/* Control reclaim behavior when allocating memory */
++#define PR_SET_IO_FLUSHER=09=0957
++#define PR_GET_IO_FLUSHER=09=0958
++
+ #endif /* _LINUX_PRCTL_H */
+diff --git a/kernel/sys.c b/kernel/sys.c
+index a611d1d58c7d..c1a360370d09 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -2259,6 +2259,8 @@ int __weak arch_prctl_spec_ctrl_set(struct task_struc=
+t *t, unsigned long which,
+ =09return -EINVAL;
+ }
+=20
++#define PR_IO_FLUSHER (PF_MEMALLOC_NOIO | PF_LESS_THROTTLE)
++
+ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, ar=
+g3,
+ =09=09unsigned long, arg4, unsigned long, arg5)
  {
- 	/*
--	 * FOLL_PIN must only be set internally by the pin_user_page*() and
--	 * pin_longterm_*() APIs, never directly by the caller, so enforce that
--	 * with an assertion:
-+	 * FOLL_PIN and FOLL_LONGTERM must only be set internally by the
-+	 * pin_user_page*() and pin_longterm_*() APIs, never directly by the
-+	 * caller, so enforce that with an assertion:
- 	 */
--	if (WARN_ON_ONCE(gup_flags & FOLL_PIN))
-+	if (WARN_ON_ONCE(gup_flags & (FOLL_PIN | FOLL_LONGTERM)))
- 		return -EINVAL;
-=20
- 	return __gup_longterm_locked(current, current->mm, start, nr_pages,
-diff --git a/mm/gup_benchmark.c b/mm/gup_benchmark.c
-index 8f980d91dbf5..679f0e6a0adb 100644
---- a/mm/gup_benchmark.c
-+++ b/mm/gup_benchmark.c
-@@ -6,7 +6,7 @@
- #include <linux/debugfs.h>
-=20
- #define GUP_FAST_BENCHMARK	_IOWR('g', 1, struct gup_benchmark)
--#define GUP_LONGTERM_BENCHMARK	_IOWR('g', 2, struct gup_benchmark)
-+/* Command 2 has been deleted. */
- #define GUP_BENCHMARK		_IOWR('g', 3, struct gup_benchmark)
- #define PIN_FAST_BENCHMARK	_IOWR('g', 4, struct gup_benchmark)
- #define PIN_LONGTERM_BENCHMARK	_IOWR('g', 5, struct gup_benchmark)
-@@ -28,7 +28,6 @@ static void put_back_pages(int cmd, struct page **pages, =
-unsigned long nr_pages)
-=20
- 	switch (cmd) {
- 	case GUP_FAST_BENCHMARK:
--	case GUP_LONGTERM_BENCHMARK:
- 	case GUP_BENCHMARK:
- 		for (i =3D 0; i < nr_pages; i++)
- 			put_page(pages[i]);
-@@ -97,11 +96,6 @@ static int __gup_benchmark_ioctl(unsigned int cmd,
- 			nr =3D get_user_pages_fast(addr, nr, gup->flags,
- 						 pages + i);
- 			break;
--		case GUP_LONGTERM_BENCHMARK:
--			nr =3D get_user_pages(addr, nr,
--					    gup->flags | FOLL_LONGTERM,
--					    pages + i, NULL);
--			break;
- 		case GUP_BENCHMARK:
- 			nr =3D get_user_pages(addr, nr, gup->flags, pages + i,
- 					    NULL);
-@@ -159,7 +153,6 @@ static long gup_benchmark_ioctl(struct file *filep, uns=
-igned int cmd,
-=20
- 	switch (cmd) {
- 	case GUP_FAST_BENCHMARK:
--	case GUP_LONGTERM_BENCHMARK:
- 	case GUP_BENCHMARK:
- 	case PIN_FAST_BENCHMARK:
- 	case PIN_LONGTERM_BENCHMARK:
-diff --git a/tools/testing/selftests/vm/gup_benchmark.c b/tools/testing/sel=
-ftests/vm/gup_benchmark.c
-index 03928e47a86f..836b7082db13 100644
---- a/tools/testing/selftests/vm/gup_benchmark.c
-+++ b/tools/testing/selftests/vm/gup_benchmark.c
-@@ -15,7 +15,7 @@
- #define PAGE_SIZE sysconf(_SC_PAGESIZE)
-=20
- #define GUP_FAST_BENCHMARK	_IOWR('g', 1, struct gup_benchmark)
--#define GUP_LONGTERM_BENCHMARK	_IOWR('g', 2, struct gup_benchmark)
-+/* Command 2 has been deleted. */
- #define GUP_BENCHMARK		_IOWR('g', 3, struct gup_benchmark)
-=20
- /*
-@@ -49,7 +49,7 @@ int main(int argc, char **argv)
- 	char *file =3D "/dev/zero";
- 	char *p;
-=20
--	while ((opt =3D getopt(argc, argv, "m:r:n:f:abctTLUuwSH")) !=3D -1) {
-+	while ((opt =3D getopt(argc, argv, "m:r:n:f:abctTUuwSH")) !=3D -1) {
- 		switch (opt) {
- 		case 'a':
- 			cmd =3D PIN_FAST_BENCHMARK;
-@@ -75,9 +75,6 @@ int main(int argc, char **argv)
- 		case 'T':
- 			thp =3D 0;
- 			break;
--		case 'L':
--			cmd =3D GUP_LONGTERM_BENCHMARK;
--			break;
- 		case 'U':
- 			cmd =3D GUP_BENCHMARK;
- 			break;
+@@ -2486,6 +2488,29 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, a=
+rg2, unsigned long, arg3,
+ =09=09=09return -EINVAL;
+ =09=09error =3D GET_TAGGED_ADDR_CTRL();
+ =09=09break;
++=09case PR_SET_IO_FLUSHER:
++=09=09if (!capable(CAP_SYS_RESOURCE))
++=09=09=09return -EPERM;
++
++=09=09if (arg3 || arg4 || arg5)
++=09=09=09return -EINVAL;
++
++=09=09if (arg2 =3D=3D 1)
++=09=09=09current->flags |=3D PR_IO_FLUSHER;
++=09=09else if (!arg2)
++=09=09=09current->flags &=3D ~PR_IO_FLUSHER;
++=09=09else
++=09=09=09return -EINVAL;
++=09=09break;
++=09case PR_GET_IO_FLUSHER:
++=09=09if (!capable(CAP_SYS_RESOURCE))
++=09=09=09return -EPERM;
++
++=09=09if (arg2 || arg3 || arg4 || arg5)
++=09=09=09return -EINVAL;
++
++=09=09error =3D (current->flags & PR_IO_FLUSHER) =3D=3D PR_IO_FLUSHER;
++=09=09break;
+ =09default:
+ =09=09error =3D -EINVAL;
+ =09=09break;
 --=20
-2.24.0
+2.20.1
 
