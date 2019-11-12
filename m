@@ -2,132 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FA88F9BDA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 22:15:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 187B0F9BFB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 22:22:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727338AbfKLVPE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Nov 2019 16:15:04 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:15900 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726376AbfKLVPE (ORCPT
+        id S1727310AbfKLVV5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Nov 2019 16:21:57 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44948 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727279AbfKLVV4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Nov 2019 16:15:04 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dcb20d50000>; Tue, 12 Nov 2019 13:15:01 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 12 Nov 2019 13:14:58 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 12 Nov 2019 13:14:58 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 12 Nov
- 2019 21:14:57 +0000
-Subject: Re: [PATCH v3 11/23] IB/{core,hw,umem}: set FOLL_PIN, FOLL_LONGTERM
- via pin_longterm_pages*()
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Tue, 12 Nov 2019 16:21:56 -0500
+Received: by mail-pg1-f193.google.com with SMTP id f19so12656860pgk.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2019 13:21:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=56RmInZgI7Bh5RV3HY6BrZUpnFAVvdE9v++wifdVVbQ=;
+        b=ZfNUt0qSlG/eNpBtAZ0VTYWsyYp45EI1kg059Eym4v5QX0Rd4eJhUdGDHMn6QKbyy7
+         rAEVCINxRbPGFWvH2zmErPehM9LKyDLyBoDAInAHNKT4/quKkG/EtZO/FhCOkM/nDfkP
+         OwUp5RB5f4lGpDiCQlYFyWhQBMqbf0YFKIWuU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=56RmInZgI7Bh5RV3HY6BrZUpnFAVvdE9v++wifdVVbQ=;
+        b=cckRXFDB77BvdKIDD7g+e4mNa/rmoXZWDNkZMJA5pz34+F6G+vZHq8+JAPM11PgvxF
+         sej6bZK9FuNGO8Grt4MMgGl9T/fxIiuUfLnyoja52nS6+1Ca58VuDFtCDAPdcWYuSavL
+         vCnqbk75RkkrcmG1px6Nt9lv3t98zz8K4sLoYadQ7mlV5EPrPRu3leLBhwh7IwP6qF70
+         oFvlEHXxe19ZUkPpw4U+0C3q46OzuZ0uGJAroVFxDkbVpp6FuLX9dxLAvpxVsQfZPkBt
+         rzEXdjX46Logwzg8hjWBvxH32yeXHOqHawi0kQh74t8xySUg8meB7NxGsObqB8a059h2
+         ZsIQ==
+X-Gm-Message-State: APjAAAUfCzRUtpnFa/wJFaUHlMLyWmWzMNfZsFLrtdjmfuIP6ABRzW8R
+        geTPqhSs3BtdTD2f/z+B+5sCeQ==
+X-Google-Smtp-Source: APXvYqzdFzu4zPPFnJ9ABSyKsWziEZi4Dk2O2pVHeNcsXTcPeB3CKkazqUJ/8FJ/XZkexPEBBAMb2g==
+X-Received: by 2002:aa7:8d8b:: with SMTP id i11mr11186741pfr.45.1573593716214;
+        Tue, 12 Nov 2019 13:21:56 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id c21sm19635349pgh.25.2019.11.12.13.21.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2019 13:21:55 -0800 (PST)
+Date:   Tue, 12 Nov 2019 13:21:54 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Jiri Slaby <jslaby@suse.cz>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-kernel@vger.kernel.org, David Windsor <dave@nullcore.net>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
         Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20191112000700.3455038-1-jhubbard@nvidia.com>
- <20191112000700.3455038-12-jhubbard@nvidia.com>
- <20191112204449.GF5584@ziepe.ca>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <3513d317-8e29-006f-1624-e9aa94ce9ad5@nvidia.com>
-Date:   Tue, 12 Nov 2019 13:14:57 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Christoph Lameter <cl@linux.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Dave Kleikamp <dave.kleikamp@oracle.com>,
+        Jan Kara <jack@suse.cz>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Rik van Riel <riel@redhat.com>,
+        Matthew Garrett <mjg59@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-hardening@lists.openwall.com,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Kubecek <mkubecek@suse.cz>
+Subject: Re: [kernel-hardening] [PATCH 09/38] usercopy: Mark kmalloc caches
+ as usercopy caches
+Message-ID: <201911121313.1097D6EE@keescook>
+References: <1515636190-24061-1-git-send-email-keescook@chromium.org>
+ <1515636190-24061-10-git-send-email-keescook@chromium.org>
+ <9519edb7-456a-a2fa-659e-3e5a1ff89466@suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20191112204449.GF5584@ziepe.ca>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1573593301; bh=IA5cc3Ug8y/Soy37I3lcgnCK4KJuS9HA5F969hpkGDk=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=M+zD7DiTvJEHWyZUscBaWsNyvdd7nW2Z8MINjy6zlNtzbk8yDqUSKZUYoDkjLfsT1
-         jhJdgaW8sOVEVYkkTrDIJJa4fwOit67TvUa2zybzBPmS46CYVBpq/47LCJQvGX/3++
-         kN6TX/8r3rAiSK8yfXz19Ap8X1CeF0WYNvVBYngtzVePIwXr6m7SCdxfr4dOboh5Y+
-         2hlHGc9hiYvLqwfEFqtP6wQ0eViLmw5Mlq+PhJcVMOubS+xNo9DKWwkDLrS4gEKUIZ
-         bPZcwVTnmn5+kG5LhprB02X6C6BdeIO1M4uKbavcouV5mwBgzW09isv1UnQ87weLii
-         Kt8d5q/apbk1g==
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9519edb7-456a-a2fa-659e-3e5a1ff89466@suse.cz>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-On 11/12/19 12:44 PM, Jason Gunthorpe wrote:
-> On Mon, Nov 11, 2019 at 04:06:48PM -0800, John Hubbard wrote:
->> @@ -542,7 +541,7 @@ static int ib_umem_odp_map_dma_single_page(
->>  	}
->>  
->>  out:
->> -	put_user_page(page);
->> +	put_page(page);
->>  
->>  	if (remove_existing_mapping) {
->>  		ib_umem_notifier_start_account(umem_odp);
->> @@ -639,13 +638,14 @@ int ib_umem_odp_map_dma_pages(struct ib_umem_odp *umem_odp, u64 user_virt,
->>  		/*
->>  		 * Note: this might result in redundent page getting. We can
->>  		 * avoid this by checking dma_list to be 0 before calling
->> -		 * get_user_pages. However, this make the code much more
->> -		 * complex (and doesn't gain us much performance in most use
->> -		 * cases).
->> +		 * get_user_pages. However, this makes the code much
->> +		 * more complex (and doesn't gain us much performance in most
->> +		 * use cases).
->>  		 */
->>  		npages = get_user_pages_remote(owning_process, owning_mm,
->> -				user_virt, gup_num_pages,
->> -				flags, local_page_list, NULL, NULL);
->> +					       user_virt, gup_num_pages,
->> +					       flags, local_page_list, NULL,
->> +					       NULL);
->>  		up_read(&owning_mm->mmap_sem);
+On Tue, Nov 12, 2019 at 08:17:57AM +0100, Jiri Slaby wrote:
+> On 11. 01. 18, 3:02, Kees Cook wrote:
+> > From: David Windsor <dave@nullcore.net>
+> > 
+> > Mark the kmalloc slab caches as entirely whitelisted. These caches
+> > are frequently used to fulfill kernel allocations that contain data
+> > to be copied to/from userspace. Internal-only uses are also common,
+> > but are scattered in the kernel. For now, mark all the kmalloc caches
+> > as whitelisted.
+> > 
+> > This patch is modified from Brad Spengler/PaX Team's PAX_USERCOPY
+> > whitelisting code in the last public patch of grsecurity/PaX based on my
+> > understanding of the code. Changes or omissions from the original code are
+> > mine and don't reflect the original grsecurity/PaX code.
+> > 
+> > Signed-off-by: David Windsor <dave@nullcore.net>
+> > [kees: merged in moved kmalloc hunks, adjust commit log]
+> > Cc: Pekka Enberg <penberg@kernel.org>
+> > Cc: David Rientjes <rientjes@google.com>
+> > Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: linux-mm@kvack.org
+> > Cc: linux-xfs@vger.kernel.org
+> > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > Acked-by: Christoph Lameter <cl@linux.com>
+> > ---
+> >  mm/slab.c        |  3 ++-
+> >  mm/slab.h        |  3 ++-
+> >  mm/slab_common.c | 10 ++++++----
+> >  3 files changed, 10 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/mm/slab.c b/mm/slab.c
+> > index b9b0df620bb9..dd367fe17a4e 100644
+> > --- a/mm/slab.c
+> > +++ b/mm/slab.c
+> ...
+> > @@ -1098,7 +1099,8 @@ void __init setup_kmalloc_cache_index_table(void)
+> >  static void __init new_kmalloc_cache(int idx, slab_flags_t flags)
+> >  {
+> >  	kmalloc_caches[idx] = create_kmalloc_cache(kmalloc_info[idx].name,
+> > -					kmalloc_info[idx].size, flags);
+> > +					kmalloc_info[idx].size, flags, 0,
+> > +					kmalloc_info[idx].size);
+> >  }
+> >  
+> >  /*
+> > @@ -1139,7 +1141,7 @@ void __init create_kmalloc_caches(slab_flags_t flags)
+> >  
+> >  			BUG_ON(!n);
+> >  			kmalloc_dma_caches[i] = create_kmalloc_cache(n,
+> > -				size, SLAB_CACHE_DMA | flags);
+> > +				size, SLAB_CACHE_DMA | flags, 0, 0);
 > 
-> This is just whitespace churn? Drop it..
+> Hi,
 > 
+> was there any (undocumented) reason NOT to mark DMA caches as usercopy?
+> 
+> We are seeing this on s390x:
+> 
+> > usercopy: Kernel memory overwrite attempt detected to SLUB object
+> 'dma-kmalloc-1k' (offset 0, size 11)!
+> > ------------[ cut here ]------------
+> > kernel BUG at mm/usercopy.c:99!
 
+Interesting! I believe the rationale was that if the region is used for
+DMA, allowing direct access to it from userspace could be prone to
+races.
 
-Whoops, yes. It got there because of going through the pin*() conversion
-and then a revert, and now it's just whitespace. I'll drop it, thanks for
-catching that.
+> See:
+> https://bugzilla.suse.com/show_bug.cgi?id=1156053
 
+For context from the bug, the trace is:
 
-thanks,
+(<0000000000386c5a> usercopy_abort+0xa2/0xa8) 
+ <000000000036097a> __check_heap_object+0x11a/0x120  
+ <0000000000386b3a> __check_object_size+0x18a/0x208  
+ <000000000079b4ba> skb_copy_datagram_from_iter+0x62/0x240  
+ <000003ff804edd5c> iucv_sock_sendmsg+0x1fc/0x858 Ýaf_iucv¨  
+ <0000000000785894> sock_sendmsg+0x54/0x90  
+ <0000000000785944> sock_write_iter+0x74/0xa0  
+ <000000000038a3f0> new_sync_write+0x110/0x180  
+ <000000000038d42e> vfs_write+0xa6/0x1d0  
+ <000000000038d748> ksys_write+0x60/0xe8  
+ <000000000096a660> system_call+0xdc/0x2e0  
 
-John Hubbard
-NVIDIA
+I know Al worked on fixing up usercopy checking for iters. I wonder if
+there is redundant checking happening here? i.e. haven't iters already
+done object size verifications, so they're not needed during iter copy
+helpers?
+
+> This indeed fixes it:
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -1290,7 +1290,8 @@ void __init create_kmalloc_caches(slab_flags_t flags)
+>                         kmalloc_caches[KMALLOC_DMA][i] =
+> create_kmalloc_cache(
+>                                 kmalloc_info[i].name[KMALLOC_DMA],
+>                                 kmalloc_info[i].size,
+> -                               SLAB_CACHE_DMA | flags, 0, 0);
+> +                               SLAB_CACHE_DMA | flags, 0,
+> +                               kmalloc_info[i].size);
+>                 }
+>         }
+>  #endif
+
+How is iucv the only network protocol that has run into this? Do others
+use a bounce buffer?
+
+-- 
+Kees Cook
