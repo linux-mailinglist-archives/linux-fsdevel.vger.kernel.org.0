@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 985F4F86B9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 03:11:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EEBBF86BC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Nov 2019 03:11:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727233AbfKLCK7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Nov 2019 21:10:59 -0500
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:45752 "EHLO
-        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727226AbfKLCK6 (ORCPT
+        id S1727265AbfKLCLH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Nov 2019 21:11:07 -0500
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:48076 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727093AbfKLCLH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Nov 2019 21:10:58 -0500
-Received: from mr3.cc.vt.edu (mr3.cc.vt.edu [IPv6:2607:b400:92:8500:0:7f:b804:6b0a])
-        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id xAC2Avrt028453
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2019 21:10:57 -0500
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-        by mr3.cc.vt.edu (8.14.7/8.14.7) with ESMTP id xAC2AqTe006382
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2019 21:10:57 -0500
-Received: by mail-qv1-f72.google.com with SMTP id d12so7518672qvm.12
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2019 18:10:57 -0800 (PST)
+        Mon, 11 Nov 2019 21:11:07 -0500
+Received: from mr2.cc.vt.edu (mr2.cc.vt.edu [IPv6:2607:b400:92:8400:0:90:e077:bf22])
+        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id xAC2B635011605
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2019 21:11:06 -0500
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+        by mr2.cc.vt.edu (8.14.7/8.14.7) with ESMTP id xAC2B1X9031499
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2019 21:11:06 -0500
+Received: by mail-qt1-f198.google.com with SMTP id g13so2682666qtq.16
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Nov 2019 18:11:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=mKMDzYn7O8CzU1QL2MbSfadNjjAv2gJEQl4nRG3tJ/I=;
-        b=p7XnmqhTa8xkytHyCkLBRFTC5QKdrP9e3N1mV6bsRAHDuMMCVnqJXEaocr6ap7zUcu
-         WD2Ri1VePd6Ak7rBR+MOf/vqx2LXK+PHmp2ZYy0YL33MNasTSX48qvLA5InObMyWU4TY
-         6G/TPahQNzMBsZA1fEMdZNISCa1IDlZjYp18tXNFxgfuz0xLi3nOzAA5podMWP7VAfxB
-         QNbZiAj8OnvcI2mOXjsdApY53VNVEU3LV/6Q/ydg1SFFZ+ZIvpqNs8J0IuQMdEHnOMA4
-         RPGPM186iRl1qLDoBEYizsMvA1HsrZ4e5xAzIOZHjmG3x7BT3Szcx2Nnk5oUoFqN5Mij
-         N/Xw==
-X-Gm-Message-State: APjAAAWK2HgaIlt1jDRJB+xHwjmKpok7HZk6HwhfyKFV27slFgmiVPmM
-        BmxfOJO4p4CrO55T1/UyyzoopDuzpX81SdZxCkDVVwBjXCT5V8SC5tRw3ssKONe+pRqjKtj0DcA
-        OMRfrhhzkFnsbIvdav4+0O6LXS7d1WnitgBWf
-X-Received: by 2002:ae9:ef0a:: with SMTP id d10mr12907174qkg.262.1573524651816;
-        Mon, 11 Nov 2019 18:10:51 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzBCHnK5zn+Y3sfl5pBsECOdz/SspzS/RWeqUG1JiE5JC74y8qvdBI3OPJ3biaNwpctsllt/w==
-X-Received: by 2002:ae9:ef0a:: with SMTP id d10mr12907161qkg.262.1573524651460;
-        Mon, 11 Nov 2019 18:10:51 -0800 (PST)
+        bh=CcYLAh/UyTxqCQmL3RjWyYe/kNKV5YS8PJV7/eSFSes=;
+        b=MOoYYUMi9OdZgh/RAom3GOeIbqVX34fWIdWARajvxECZKDtSb0ylVMXshYZTvEm1LD
+         /OZGkAMkQawAeeRHH0TkjiSwj0wm9FKVEX2hcNPN4vw1L/KaoDMaOmnFk1fy5D8LodJ1
+         pH8Ke++rkery3MDuIgcSseRqCtfcIUtdSHHjJ+pu6M1B1VPDMwLYsM6C58CwmZP7AAeL
+         PXyhhiRSPGPbpLgHJkATy5WBuCe8G8lBdFgiiPHIpPZhqhD7uJA4O5+osZApBiAJdFY0
+         i635QUFqJssYH+kDC+nrDwSY+0ZBiodI1Y31JHg1mvU7vP4ZEsY6GSgU/ECpoUNoerzR
+         5kwQ==
+X-Gm-Message-State: APjAAAXQdKIwicBIU3IZJ0bo7PMe/NsxtaoaMB3gb7G5OmIlaOA/aZo6
+        dn64uAR3GhJlwXJnn/ZiFTxfNI1mNJNj2mZCuBxqE2M+kUkX7zw1mTRsN8Pf+sNm4B4k/nd60ZR
+        9AzsbfahusTyIw6kERuQm8lJXD4bgegfWmHhJ
+X-Received: by 2002:a37:782:: with SMTP id 124mr13629138qkh.142.1573524660753;
+        Mon, 11 Nov 2019 18:11:00 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxZYuxGedyB7a+wA/llda6YOy1P21HsSw35yYTNEbYtMJL30UKBF+x5CPddS8qesmICNXkDXw==
+X-Received: by 2002:a37:782:: with SMTP id 124mr13629129qkh.142.1573524660504;
+        Mon, 11 Nov 2019 18:11:00 -0800 (PST)
 Received: from turing-police.lan ([2601:5c0:c001:c9e1::359])
-        by smtp.gmail.com with ESMTPSA id o195sm8004767qke.35.2019.11.11.18.10.50
+        by smtp.gmail.com with ESMTPSA id o195sm8004767qke.35.2019.11.11.18.10.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2019 18:10:50 -0800 (PST)
+        Mon, 11 Nov 2019 18:10:58 -0800 (PST)
 From:   Valdis Kletnieks <valdis.kletnieks@vt.edu>
 X-Google-Original-From: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>
 To:     gregkh@linuxfoundation.org
@@ -50,9 +50,9 @@ Cc:     Valdis Kletnieks <Valdis.Kletnieks@vt.edu>,
         Valdis Kletnieks <valdis.kletnieks@vt.edu>,
         linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 8/9] staging: exfat: Collapse redundant return code translations
-Date:   Mon, 11 Nov 2019 21:09:56 -0500
-Message-Id: <20191112021000.42091-9-Valdis.Kletnieks@vt.edu>
+Subject: [PATCH v3 9/9] staging: exfat: Correct return code
+Date:   Mon, 11 Nov 2019 21:09:57 -0500
+Message-Id: <20191112021000.42091-10-Valdis.Kletnieks@vt.edu>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191112021000.42091-1-Valdis.Kletnieks@vt.edu>
 References: <20191112021000.42091-1-Valdis.Kletnieks@vt.edu>
@@ -63,178 +63,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now that we no longer use odd internal return codes, we can
-heave the translation code over the side, and just pass the
-error code back up the call chain.
+Use -ENOTEMPTY rather than -EEXIST for attempting to remove
+a directory that still has files in it.
 
 Signed-off-by: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>
 ---
- drivers/staging/exfat/exfat_super.c | 92 +++++------------------------
- 1 file changed, 14 insertions(+), 78 deletions(-)
+ drivers/staging/exfat/exfat_super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
-index 5d538593b5f6..a97a61a60517 100644
+index a97a61a60517..e2254d45ef6e 100644
 --- a/drivers/staging/exfat/exfat_super.c
 +++ b/drivers/staging/exfat/exfat_super.c
-@@ -650,7 +650,7 @@ static int ffsCreateFile(struct inode *inode, char *path, u8 mode,
- 	struct uni_name_t uni_name;
- 	struct super_block *sb = inode->i_sb;
- 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
--	int ret;
-+	int ret = 0;
+@@ -2167,7 +2167,7 @@ static int ffsRemoveDir(struct inode *inode, struct file_id_t *fid)
+ 	clu_to_free.flags = fid->flags;
  
- 	/* check the validity of pointer parameters */
- 	if (!fid || !path || (*path == '\0'))
-@@ -2366,19 +2366,9 @@ static int exfat_create(struct inode *dir, struct dentry *dentry, umode_t mode,
- 	pr_debug("%s entered\n", __func__);
- 
- 	err = ffsCreateFile(dir, (u8 *)dentry->d_name.name, FM_REGULAR, &fid);
--	if (err) {
--		if (err == -EINVAL)
--			err = -EINVAL;
--		else if (err == -EEXIST)
--			err = -EEXIST;
--		else if (err == -ENOSPC)
--			err = -ENOSPC;
--		else if (err == -ENAMETOOLONG)
--			err = -ENAMETOOLONG;
--		else
--			err = -EIO;
-+	if (err)
- 		goto out;
--	}
-+
- 	INC_IVERSION(dir);
- 	curtime = current_time(dir);
- 	dir->i_ctime = curtime;
-@@ -2543,13 +2533,9 @@ static int exfat_unlink(struct inode *dir, struct dentry *dentry)
- 	EXFAT_I(inode)->fid.size = i_size_read(inode);
- 
- 	err = ffsRemoveFile(dir, &(EXFAT_I(inode)->fid));
--	if (err) {
--		if (err == -EPERM)
--			err = -EPERM;
--		else
--			err = -EIO;
-+	if (err)
- 		goto out;
--	}
-+
- 	INC_IVERSION(dir);
- 	curtime = current_time(dir);
- 	dir->i_mtime = curtime;
-@@ -2589,27 +2575,14 @@ static int exfat_symlink(struct inode *dir, struct dentry *dentry,
- 	pr_debug("%s entered\n", __func__);
- 
- 	err = ffsCreateFile(dir, (u8 *)dentry->d_name.name, FM_SYMLINK, &fid);
--	if (err) {
--		if (err == -EINVAL)
--			err = -EINVAL;
--		else if (err == -EEXIST)
--			err = -EEXIST;
--		else if (err == -ENOSPC)
--			err = -ENOSPC;
--		else
--			err = -EIO;
-+	if (err)
- 		goto out;
--	}
-+
- 
- 	err = ffsWriteFile(dir, &fid, (char *)target, len, &ret);
- 
- 	if (err) {
- 		ffsRemoveFile(dir, &fid);
--
--		if (err == -ENOSPC)
--			err = -ENOSPC;
--		else
--			err = -EIO;
+ 	if (!is_dir_empty(sb, &clu_to_free)) {
+-		ret = -EEXIST;
++		ret = -ENOTEMPTY;
  		goto out;
  	}
  
-@@ -2666,19 +2639,9 @@ static int exfat_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
- 	pr_debug("%s entered\n", __func__);
- 
- 	err = ffsCreateDir(dir, (u8 *)dentry->d_name.name, &fid);
--	if (err) {
--		if (err == -EINVAL)
--			err = -EINVAL;
--		else if (err == -EEXIST)
--			err = -EEXIST;
--		else if (err == -ENOSPC)
--			err = -ENOSPC;
--		else if (err == -ENAMETOOLONG)
--			err = -ENAMETOOLONG;
--		else
--			err = -EIO;
-+	if (err)
- 		goto out;
--	}
-+
- 	INC_IVERSION(dir);
- 	curtime = current_time(dir);
- 	dir->i_ctime = curtime;
-@@ -2727,19 +2690,9 @@ static int exfat_rmdir(struct inode *dir, struct dentry *dentry)
- 	EXFAT_I(inode)->fid.size = i_size_read(inode);
- 
- 	err = ffsRemoveDir(dir, &(EXFAT_I(inode)->fid));
--	if (err) {
--		if (err == -EINVAL)
--			err = -EINVAL;
--		else if (err == -EEXIST)
--			err = -ENOTEMPTY;
--		else if (err == -ENOENT)
--			err = -ENOENT;
--		else if (err == -EBUSY)
--			err = -EBUSY;
--		else
--			err = -EIO;
-+	if (err)
- 		goto out;
--	}
-+
- 	INC_IVERSION(dir);
- 	curtime = current_time(dir);
- 	dir->i_mtime = curtime;
-@@ -2787,21 +2740,9 @@ static int exfat_rename(struct inode *old_dir, struct dentry *old_dentry,
- 
- 	err = ffsMoveFile(old_dir, &(EXFAT_I(old_inode)->fid), new_dir,
- 			  new_dentry);
--	if (err) {
--		if (err == -EPERM)
--			err = -EPERM;
--		else if (err == -EINVAL)
--			err = -EINVAL;
--		else if (err == -EEXIST)
--			err = -EEXIST;
--		else if (err == -ENOENT)
--			err = -ENOENT;
--		else if (err == -ENOSPC)
--			err = -ENOSPC;
--		else
--			err = -EIO;
-+	if (err)
- 		goto out;
--	}
-+
- 	INC_IVERSION(new_dir);
- 	curtime = current_time(new_dir);
- 	new_dir->i_ctime = curtime;
-@@ -3161,12 +3102,7 @@ static int exfat_bmap(struct inode *inode, sector_t sector, sector_t *phys,
- 
- 	err = ffsMapCluster(inode, clu_offset, &cluster);
- 
--	if (err) {
--		if (err == -ENOSPC)
--			return -ENOSPC;
--		else
--			return -EIO;
--	} else if (cluster != CLUSTER_32(~0)) {
-+	if (!err && (cluster != CLUSTER_32(~0))) {
- 		*phys = START_SECTOR(cluster) + sec_offset;
- 		*mapped_blocks = p_fs->sectors_per_clu - sec_offset;
- 	}
 -- 
 2.24.0
 
