@@ -2,126 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23531FA931
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 05:51:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A82BAFA95E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 06:08:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727351AbfKMEvE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Nov 2019 23:51:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39686 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727339AbfKMEvE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Nov 2019 23:51:04 -0500
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C63F22469
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2019 04:51:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573620662;
-        bh=2HR5j4jMQZ8XywHpceKqovMUe9E/Z2E3JHrn6nNK8II=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Qu4dJD0Ni66AsrNrH/eEIXfa/16KZ7RZrotDsF6X9hceXsuaWXcl7wuQ7T/rYDBxl
-         By7fSfDHWoWWQjnnO2PrLJWTvVfX3Y7TIuLKwVqfS7WLH2H6jyIEh/Y6m1lih/jDGM
-         5Q5PY9YsYEMdHRvMYPLKPdGpB2dHJgQuoGNdPIJE=
-Received: by mail-wm1-f45.google.com with SMTP id q70so491834wme.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2019 20:51:02 -0800 (PST)
-X-Gm-Message-State: APjAAAUZn/2reVMR+85JUeXvqp5fQ5yRsyqhDDEpr2IVHIyt2+Ns9V6L
-        WQyoZTLBKg29lMEh02Jk2/eVuX7nnL2lU/bRUzWqrw==
-X-Google-Smtp-Source: APXvYqyc3oSgne3bep9Xp7B6mSwi2GF2tpFX9qEMJeGOYHuljwIi7kxpBBiOH4SJj7M2bzS/5n2f9qM3lSkXb7O7bOk=
-X-Received: by 2002:a1c:16:: with SMTP id 22mr943595wma.0.1573620660911; Tue,
- 12 Nov 2019 20:51:00 -0800 (PST)
+        id S1725908AbfKMFIo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Nov 2019 00:08:44 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:52850 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725446AbfKMFIo (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 Nov 2019 00:08:44 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAD4xJnx194744;
+        Wed, 13 Nov 2019 05:08:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=I5Y9z5o5t3CS3vcZITmaWGKBx8zW1AOCXd90p/9m3IA=;
+ b=JyUQMJNBR0b0ElBk3FAIxKqdf5seHz5YUt8ZvHZiat9k6ocFgx7CBQFjTDdax+D1tdK2
+ BVSZvcXQvi/pl1c99/srX2eHgv9+b9hnKkRzcOHkyjUaogPJCWZIdypDkuUlfP9wJgJA
+ tyiP6TIfsGGpEEEAyKvtDZKA+LtMn2hLTVxyun0Ct3ZNswlsmUPETqnSBRE3g+sDUO1V
+ rRndGYc+qkwIteZWF+s8ZEXWT5lU/q2ah7V91EySp5vr6b1+uY2kdVbgcE6MJ+GauQy+
+ VPpXxGbey8bnQ5gEeGnrkrDU8w1XFrwzGZFv761AFPXT8+O/u68hc9mkk0heFepDglk4 5g== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2w5mvtsqqd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Nov 2019 05:08:32 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAD53r3v137732;
+        Wed, 13 Nov 2019 05:06:32 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2w7khmn807-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Nov 2019 05:06:32 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xAD56UiJ014286;
+        Wed, 13 Nov 2019 05:06:30 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 12 Nov 2019 21:06:30 -0800
+Date:   Tue, 12 Nov 2019 21:06:28 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-xfs@vger.kernel.org,
+        y2038@lists.linaro.org, Deepa Dinamani <deepa.kernel@gmail.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Brian Foster <bfoster@redhat.com>,
+        Allison Collins <allison.henderson@oracle.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC 1/5] xfs: [variant A] avoid time_t in user api
+Message-ID: <20191113050628.GS6219@magnolia>
+References: <20191112120910.1977003-1-arnd@arndb.de>
+ <20191112120910.1977003-2-arnd@arndb.de>
+ <20191112141600.GB10922@lst.de>
 MIME-Version: 1.0
-References: <74a91362-247c-c749-5200-7bdce704ed9e@gmail.com> <20191112232239.yevpeemgxz4wy32b@wittgenstein>
-In-Reply-To: <20191112232239.yevpeemgxz4wy32b@wittgenstein>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 12 Nov 2019 20:50:50 -0800
-X-Gmail-Original-Message-ID: <CALCETrUEQMdugz1t6HfK5MvDq_kOw13yuF+98euqVJgZ4WR1VA@mail.gmail.com>
-Message-ID: <CALCETrUEQMdugz1t6HfK5MvDq_kOw13yuF+98euqVJgZ4WR1VA@mail.gmail.com>
-Subject: Re: [PATCH] Allow restricting permissions in /proc/sys
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Topi Miettinen <toiwoton@gmail.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:FILESYSTEMS (VFS and infrastructure)" 
-        <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191112141600.GB10922@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9439 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=903
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1910280000 definitions=main-1911130044
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9439 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=965 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
+ definitions=main-1911130044
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 3:22 PM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
->
-> [Cc+ linux-api@vger.kernel.org]
->
-> since that's potentially relevant to quite a few people.
->
-> On Sun, Nov 03, 2019 at 04:55:48PM +0200, Topi Miettinen wrote:
-> > Several items in /proc/sys need not be accessible to unprivileged
-> > tasks. Let the system administrator change the permissions, but only
-> > to more restrictive modes than what the sysctl tables allow.
-> >
-> > Signed-off-by: Topi Miettinen <toiwoton@gmail.com>
-> > ---
-> >  fs/proc/proc_sysctl.c | 41 +++++++++++++++++++++++++++++++----------
-> >  1 file changed, 31 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> > index d80989b6c344..88c4ca7d2782 100644
-> > --- a/fs/proc/proc_sysctl.c
-> > +++ b/fs/proc/proc_sysctl.c
-> > @@ -818,6 +818,10 @@ static int proc_sys_permission(struct inode *inode, int
-> > mask)
-> >         if ((mask & MAY_EXEC) && S_ISREG(inode->i_mode))
-> >                 return -EACCES;
-> >
-> > +       error = generic_permission(inode, mask);
-> > +       if (error)
-> > +               return error;
-> > +
-> >         head = grab_header(inode);
-> >         if (IS_ERR(head))
-> >                 return PTR_ERR(head);
-> > @@ -837,9 +841,35 @@ static int proc_sys_setattr(struct dentry *dentry,
-> > struct iattr *attr)
-> >         struct inode *inode = d_inode(dentry);
-> >         int error;
-> >
-> > -       if (attr->ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID))
-> > +       if (attr->ia_valid & (ATTR_UID | ATTR_GID))
-> >                 return -EPERM;
+On Tue, Nov 12, 2019 at 03:16:00PM +0100, Christoph Hellwig wrote:
+> On Tue, Nov 12, 2019 at 01:09:06PM +0100, Arnd Bergmann wrote:
+> > However, as long as two observations are true, a much simpler solution
+> > can be used:
+> > 
+> > 1. xfsprogs is the only user space project that has a copy of this header
+> 
+> We can't guarantee that.
+> 
+> > 2. xfsprogs already has a replacement for all three affected ioctl commands,
+> >    based on the xfs_bulkstat structure to pass 64-bit timestamps
+> >    regardless of the architecture
+> 
+> XFS_IOC_BULKSTAT replaces XFS_IOC_FSBULKSTAT directly, and can replace
+> XFS_IOC_FSBULKSTAT_SINGLE indirectly, so that is easy.  Most users
+> actually use the new one now through libfrog, although I found a user
+> of the direct ioctl in the xfs_io tool, which could easily be fixed as
+> well.
 
-Supporting at least ATTR_GID would make this much more useful.
+Agreed, XFS_IOC_BULKSTAT is the replacement for the two FSBULKSTAT
+variants.  The only question in my mind for the old ioctls is whether we
+should return EOVERFLOW if the timestamp would overflow?  Or just
+truncate the results?
 
-> >
-> > +       if (attr->ia_valid & ATTR_MODE) {
-> > +               struct ctl_table_header *head = grab_header(inode);
-> > +               struct ctl_table *table = PROC_I(inode)->sysctl_entry;
-> > +               umode_t max_mode = 0777; /* Only these bits may change */
-> > +
-> > +               if (IS_ERR(head))
-> > +                       return PTR_ERR(head);
-> > +
-> > +               if (!table) /* global root - r-xr-xr-x */
-> > +                       max_mode &= ~0222;
-> > +               else /*
-> > +                     * Don't allow permissions to become less
-> > +                     * restrictive than the sysctl table entry
-> > +                     */
-> > +                       max_mode &= table->mode;
+> XFS_IOC_SWAPEXT does not have a direct replacement, but the timestamp
+> is only used to verify that the file did not change vs the previous
+> stat.  So not being able to represent > 2038 times is not a real
+> problem anyway.
 
-Style nit: please put braces around multi-line if and else branches,
-even if they're only multi-line because of comments.
+Won't it become a problem when the tv_sec comparison in xfs_swap_extents
+is type-promoted to the larger type but lacks the upper bits?
 
-> > +
-> > +               sysctl_head_finish(head);
-> > +
-> > +               /* Execute bits only allowed for directories */
-> > +               if (!S_ISDIR(inode->i_mode))
-> > +                       max_mode &= ~0111;
+I guess we could force the check to the lower 32 bits on the assumption
+that those are the most likely to change due to a file write.
 
-Why is this needed?
+I kinda want to do a SWAPEXT v5, fwiw....
+
+> At some point we should probably look into a file system independent
+> defrag ioctl anyway, at which point we can deprecate XFS_IOC_SWAPEXT.
+> 
+> > Based on those assumptions, changing xfs_bstime to use __kernel_long_t
+> > instead of time_t in both the kernel and in xfsprogs preserves the current
+> > ABI for any libc definition of time_t and solves the problem of passing
+> > 64-bit timestamps to 32-bit user space.
+> 
+> As said above their are not entirely true, but I still think this patch
+> is the right thing to do, if only to get the time_t out of the ABI..
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+
+Seconded,
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+
+--D
+
