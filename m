@@ -2,138 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DDA5FAF7F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 12:15:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46249FAF81
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 12:16:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbfKMLP2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Nov 2019 06:15:28 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47422 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727316AbfKMLP1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Nov 2019 06:15:27 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 69351B4F8;
-        Wed, 13 Nov 2019 11:15:23 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id D45001E1498; Wed, 13 Nov 2019 12:15:21 +0100 (CET)
-Date:   Wed, 13 Nov 2019 12:15:21 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
-Subject: Re: [PATCH v4 02/23] mm/gup: factor out duplicate code from four
- routines
-Message-ID: <20191113111521.GI6367@quack2.suse.cz>
-References: <20191113042710.3997854-1-jhubbard@nvidia.com>
- <20191113042710.3997854-3-jhubbard@nvidia.com>
+        id S1727737AbfKMLQv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Nov 2019 06:16:51 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:51365 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727567AbfKMLQv (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 Nov 2019 06:16:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573643809;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9TgWHtedewyYVeKMWggk8MUBoMaDILcq3YknTA2TqKo=;
+        b=A7Vh6R9RPaIan9AJcLtD1tT68Mx9G4Uf/WVp26Y3rSvGqj9RgT1fNuw3EKI/PHgtcuTYLd
+        pWfm03gD12NkgshD63d2+rMcgurGXIoIG/JtwC7kxQuLmDLrFT2KQygpdeemBnAHuKIY6w
+        yRN5cr4BSjfEaPK62QV/xEf6ve9JyqM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-386-4VVjEkysN62eAxhJRTDr2w-1; Wed, 13 Nov 2019 06:16:46 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 56AAA18B5FA6;
+        Wed, 13 Nov 2019 11:16:45 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C2A0750FC7;
+        Wed, 13 Nov 2019 11:16:42 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id xADBGgKS023444;
+        Wed, 13 Nov 2019 06:16:42 -0500
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id xADBGfRf023440;
+        Wed, 13 Nov 2019 06:16:41 -0500
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Wed, 13 Nov 2019 06:16:41 -0500 (EST)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Nikos Tsironis <ntsironis@arrikto.com>
+cc:     tglx@linutronix.de, linux-rt-users@vger.kernel.org,
+        Mike Snitzer <msnitzer@redhat.com>,
+        Scott Wood <swood@redhat.com>,
+        Ilias Tsitsimpis <iliastsi@arrikto.com>, dm-devel@redhat.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Daniel Wagner <dwagner@suse.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH RT 2/2 v2] list_bl: avoid BUG when the list is not
+ locked
+In-Reply-To: <335dafcb-5e07-63ed-b288-196516170bde@arrikto.com>
+Message-ID: <alpine.LRH.2.02.1911130616240.20335@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1911121110430.12815@file01.intranet.prod.int.rdu2.redhat.com> <335dafcb-5e07-63ed-b288-196516170bde@arrikto.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191113042710.3997854-3-jhubbard@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: 4VVjEkysN62eAxhJRTDr2w-1
+X-Mimecast-Spam-Score: 0
+Content-Type: TEXT/PLAIN; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 12-11-19 20:26:49, John Hubbard wrote:
-> There are four locations in gup.c that have a fair amount of code
-> duplication. This means that changing one requires making the same
-> changes in four places, not to mention reading the same code four
-> times, and wondering if there are subtle differences.
-> 
-> Factor out the common code into static functions, thus reducing the
-> overall line count and the code's complexity.
-> 
-> Also, take the opportunity to slightly improve the efficiency of the
-> error cases, by doing a mass subtraction of the refcount, surrounded
-> by get_page()/put_page().
-> 
-> Also, further simplify (slightly), by waiting until the the successful
-> end of each routine, to increment *nr.
-> 
-> Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 85caf76b3012..199da99e8ffc 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -1969,6 +1969,34 @@ static int __gup_device_huge_pud(pud_t pud, pud_t *pudp, unsigned long addr,
->  }
->  #endif
->  
-> +static int __record_subpages(struct page *page, unsigned long addr,
-> +			     unsigned long end, struct page **pages, int nr)
-> +{
-> +	int nr_recorded_pages = 0;
-> +
-> +	do {
-> +		pages[nr] = page;
-> +		nr++;
-> +		page++;
-> +		nr_recorded_pages++;
-> +	} while (addr += PAGE_SIZE, addr != end);
-> +	return nr_recorded_pages;
-> +}
 
-Why don't you pass in already pages + nr?
+On Wed, 13 Nov 2019, Nikos Tsironis wrote:
 
-> +
-> +static void put_compound_head(struct page *page, int refs)
-> +{
-> +	/* Do a get_page() first, in case refs == page->_refcount */
-> +	get_page(page);
-> +	page_ref_sub(page, refs);
-> +	put_page(page);
-> +}
-> +
-> +static void __huge_pt_done(struct page *head, int nr_recorded_pages, int *nr)
-> +{
-> +	*nr += nr_recorded_pages;
-> +	SetPageReferenced(head);
-> +}
+> On 11/12/19 6:16 PM, Mikulas Patocka wrote:
+> > list_bl would crash with BUG() if we used it without locking. dm-snapsh=
+ot=20
+> > uses its own locking on realtime kernels (it can't use list_bl because=
+=20
+> > list_bl uses raw spinlock and dm-snapshot takes other non-raw spinlocks=
+=20
+> > while holding bl_lock).
+> >=20
+> > To avoid this BUG, we must set LIST_BL_LOCKMASK =3D 0.
+> >=20
+> > This patch is intended only for the realtime kernel patchset, not for t=
+he=20
+> > upstream kernel.
+> >=20
+> > Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+> >=20
+> > Index: linux-rt-devel/include/linux/list_bl.h
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > --- linux-rt-devel.orig/include/linux/list_bl.h=092019-11-07 14:01:51.0=
+00000000 +0100
+> > +++ linux-rt-devel/include/linux/list_bl.h=092019-11-08 10:12:49.000000=
+000 +0100
+> > @@ -19,7 +19,7 @@
+> >   * some fast and compact auxiliary data.
+> >   */
+> > =20
+> > -#if defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)
+> > +#if (defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)) && !define=
+d(CONFIG_PREEMPT_RT_BASE)
+> >  #define LIST_BL_LOCKMASK=091UL
+> >  #else
+> >  #define LIST_BL_LOCKMASK=090UL
+> > @@ -161,9 +161,6 @@ static inline void hlist_bl_lock(struct
+> >  =09bit_spin_lock(0, (unsigned long *)b);
+> >  #else
+> >  =09raw_spin_lock(&b->lock);
+> > -#if defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)
+> > -=09__set_bit(0, (unsigned long *)b);
+> > -#endif
+> >  #endif
+> >  }
+> > =20
+>=20
+> Hi Mikulas,
+>=20
+> I think removing __set_bit()/__clear_bit() breaks hlist_bl_is_locked(),
+> which is used by the RCU variant of list_bl.
+>=20
+> Nikos
 
-I don't find this last helper very useful. It seems to muddy water more
-than necessary...
+OK. so I can remove this part of the patch.
 
-Other than that the cleanup looks nice to me.
+Mikulas
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> > @@ -172,9 +169,6 @@ static inline void hlist_bl_unlock(struc
+> >  #ifndef CONFIG_PREEMPT_RT_BASE
+> >  =09__bit_spin_unlock(0, (unsigned long *)b);
+> >  #else
+> > -#if defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)
+> > -=09__clear_bit(0, (unsigned long *)b);
+> > -#endif
+> >  =09raw_spin_unlock(&b->lock);
+> >  #endif
+> >  }
+> >=20
+>=20
+
