@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A397FA342
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 03:12:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2562AFA2DB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 03:06:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730136AbfKMB6w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Nov 2019 20:58:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52880 "EHLO mail.kernel.org"
+        id S1730671AbfKMCBH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Nov 2019 21:01:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729090AbfKMB6v (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:58:51 -0500
+        id S1730647AbfKMCBF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 12 Nov 2019 21:01:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD3552245A;
-        Wed, 13 Nov 2019 01:58:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3CDD2245A;
+        Wed, 13 Nov 2019 02:01:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610330;
-        bh=BS6rKx4QK1VTGB6Ow00xYvFJ4tektkmDu92Gqm0uiNk=;
+        s=default; t=1573610464;
+        bh=yPJ2/XulO2bDi2HBr4ZZGwNMrmIfrdf5A0gQw9f4l5g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eVvLYY4nybhgtak+2M11OTyUpwSObuZJIzX5aob0+7TrnPI0KxTNNSFEktAjL8YgN
-         Vp4kjI4f8lbVsds2EliWsL9ooJSaOFLKC3RDMyru7Y4gJYK7rZ+UYEWyyFA/K+fGf3
-         n+uOX0EH2eBC146o8quUQH3xMAcOEdgpEgHVqeLA=
+        b=Uao3u0uFW32j/t00vERUHpv4oq8iKANWqeK/TVuYVHDkCMzWaL9kX3CLbG9Q6dTq7
+         1hph3FtaKN/Ih65cUHzhhGghgCteN2nKglT95HxU0x3MDli5S85MwfF3UqIsxXr31N
+         5xxA49aoLgdH4jazSX0wXflANM91hFwIZUwiZ+4M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Borislav Petkov <bp@suse.de>, Lianbo Jiang <lijiang@redhat.com>,
         x86@kernel.org, Sasha Levin <sashal@kernel.org>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 088/115] proc/vmcore: Fix i386 build error of missing copy_oldmem_page_encrypted()
-Date:   Tue, 12 Nov 2019 20:55:55 -0500
-Message-Id: <20191113015622.11592-88-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 51/68] proc/vmcore: Fix i386 build error of missing copy_oldmem_page_encrypted()
+Date:   Tue, 12 Nov 2019 20:59:15 -0500
+Message-Id: <20191113015932.12655-51-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191113015622.11592-1-sashal@kernel.org>
-References: <20191113015622.11592-1-sashal@kernel.org>
+In-Reply-To: <20191113015932.12655-1-sashal@kernel.org>
+References: <20191113015932.12655-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -64,7 +64,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 10 insertions(+)
 
 diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-index 885d445afa0d9..ce400f97370d3 100644
+index 8ab782d8b33dd..93d13f4010c14 100644
 --- a/fs/proc/vmcore.c
 +++ b/fs/proc/vmcore.c
 @@ -164,6 +164,16 @@ int __weak remap_oldmem_pfn_range(struct vm_area_struct *vma,
