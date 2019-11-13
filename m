@@ -2,159 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F2AAFB30D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 16:00:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 282CDFB336
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 16:09:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727922AbfKMPAh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Nov 2019 10:00:37 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:46594 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727550AbfKMPAg (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Nov 2019 10:00:36 -0500
-Received: by mail-ot1-f66.google.com with SMTP id n23so1819543otr.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2019 07:00:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hn0rE8EvQLayCzvR+VM/mjAxPaLh9HP6Et6bUGhBo8g=;
-        b=HBHsCShKPxflrvZ7COZyam7cSyPMVSE2Df2KInwngnmj3XC6CG1iIdad+zrmgxjpoL
-         pSxx4/TtFbnMa8p0ZzauIadXVwYEW8KF0fCHGOYcggwDmdl//Oog+V52wV3Flug/P1xp
-         tGL4mvdwDE/9Y8unvP2kivCJXLeetnnoiVjsYJwtZwlp7+cp3seRr7udcMQLGDVX8Xus
-         p3tPTd4KIL68djgdYqFrWe1NHLSxqA25dDRo8Ax/Ah0RoEO4FcK3d6EL95e6TVEyJJ1V
-         QnX0eZljqiSf+2Rb+ggZUNKxx58eTL0jxZ4uByrkKDFwEZe6fUdBiGg6md11I/g/g5Cx
-         FCaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hn0rE8EvQLayCzvR+VM/mjAxPaLh9HP6Et6bUGhBo8g=;
-        b=oy+6qibxdQA0mTzrQN2olczm9Q3LgDIswv3yNwbEfOnS+5yrOH4vcG8FGvIPUWsmQR
-         NxJIXbKT0ARyyNiFTZgl50LDyPzLdF/zgXEcyDHVwSLWFCpFD7FmN9YeZ/uXN9SH7GKw
-         suEUBYK4J71XEu6S6UxvjkmbnyD8XIbfSzxMtIxbCHKKIZLeizOmIiLZCL6m0oB4W/8I
-         W+SLCDbLMnqF3NZmEDoDBK/is10jULp6ZTcHso7o0da1E4jxkYHARhVfbsMiQ3uENfGh
-         zOubOZcK7g2xIz624+ZQirp3EL3cFqBESNAnfejOSQEkz/FdmFxzHrtjssqRcmyF00QB
-         6IHA==
-X-Gm-Message-State: APjAAAUgIIDzj2jsVhyAfblp8oE+Dry4AqCnDqnJhMBQt7KY18g/GM0b
-        TBvXqm2jfN1HehsPaUph+lXVMJuQ2C1rgU1l4a6Z4A==
-X-Google-Smtp-Source: APXvYqxJ3c6MEZ0/2hGP2/5UKDNPX6bPtZFJ9h4viwgj5WeAEavitL5ck3Xe6xnzWLwZazm4TAy56EBFRkAq0wZABQk=
-X-Received: by 2002:a9d:69cf:: with SMTP id v15mr3119489oto.251.1573657235271;
- Wed, 13 Nov 2019 07:00:35 -0800 (PST)
+        id S1727698AbfKMPJR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Nov 2019 10:09:17 -0500
+Received: from ms.lwn.net ([45.79.88.28]:48940 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726480AbfKMPJQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 Nov 2019 10:09:16 -0500
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 710685A0;
+        Wed, 13 Nov 2019 15:09:14 +0000 (UTC)
+Date:   Wed, 13 Nov 2019 08:09:12 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Michal =?UTF-8?B?S291dG7DvQ==?= <mkoutny@suse.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
+Subject: Re: [PATCH 3/3] sched/numa: documentation for per-cgroup numa stat
+Message-ID: <20191113080912.041918ce@lwn.net>
+In-Reply-To: <896a7da3-f139-32e7-8a64-b3562df1a091@linux.alibaba.com>
+References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
+        <896a7da3-f139-32e7-8a64-b3562df1a091@linux.alibaba.com>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-References: <CAHk-=wgnjMEvqHnu_iJcbr_kdFyBQLhYojwv5T7p9F+CHxA9pg@mail.gmail.com>
- <Pine.LNX.4.44L0.1911121639540.1567-100000@iolanthe.rowland.org>
- <CANn89iKjWH86kChzPiVtCgVpt3GookwGk2x1YCTMeBSPpKU+Ww@mail.gmail.com>
- <20191112224441.2kxmt727qy4l4ncb@ast-mbp.dhcp.thefacebook.com>
- <CANn89iKLy-5rnGmVt-nzf6as4MvXgZzSH+BSReXZKpSTjhoWAw@mail.gmail.com> <CAHk-=wj_rFOPF9Sw_-h-6J93tP9qO_UOEvd-e02z9+DEDs2kLQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wj_rFOPF9Sw_-h-6J93tP9qO_UOEvd-e02z9+DEDs2kLQ@mail.gmail.com>
-From:   Marco Elver <elver@google.com>
-Date:   Wed, 13 Nov 2019 16:00:21 +0100
-Message-ID: <CANpmjNNkbWoqckyPfhq52W4WfJWR2=rt8WXzs+WXEZzv9xxL0g@mail.gmail.com>
-Subject: Re: KCSAN: data-race in __alloc_file / __alloc_file
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Eric Dumazet <edumazet@google.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot <syzbot+3ef049d50587836c0606@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 13 Nov 2019 at 00:41, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Tue, Nov 12, 2019 at 3:18 PM Eric Dumazet <edumazet@google.com> wrote:
-> >
-> > Hmm we have the ' volatile'  attribute on jiffies, and it causes
-> > confusion already :p
->
-> The jiffies case is partly historical, but partly also because it's
-> one of the very very few data structures where 99% of all uses are
-> unlocked and for convenience reasons we really don't want to force
-> those legacy cases to do anything special about it.
->
-> "jiffies" really is very special for those kinds of legacy reasons.
-> Look at the kinds of games we play with it on 32-bit architectures:
-> the "real" storage is "jiffies_64", but nobody actually wants to use
-> that, and because of load tearing issues it's actually hard to use
-> too. So what everybody _uses_ is just the low 32 bits, and 'jiffies'
-> isn't a real variable, it's done with linker tricks in our
-> vmlinux.lds.S files. So, for example, on sparc32, you find this:
->
->     jiffies = jiffies_64 + 4;
->
-> in the vmlinux.lds.S file, because it's big-endian, and the lower 32
-> bits are at offset 4 from the real 64-bit variable.
->
-> Note that to actually read the "true" full 64-bit value, you have to
-> then call a function that does the proper sequence counter stuff etc.
-> But nobody really wants it, since what everybody actually _uses_ is
-> the "time_after(x,jiffies+10)" kind of thing, which is only done in
-> the wrapping "unsigned long" time base. So the odd "linker tricks with
-> the atomic low bits marked as a volatile data structure" is actually
-> exactly what we want, but people should realize that this is not
-> normal.
->
-> So 'jiffies' is really really special.
->
-> And absolutely nothing else should use 'volatile' on data structures
-> and be that special.  In the case of jiffies, the rule ends up being
-> that nobody should ever write to it (you write to the real
-> jiffies_64), and the real jiffies_64 thing gets the real locking, and
-> 'jiffies' is a read-only volatile thing.
->
-> So "READ_ONCE()" is indeed unnecessary with jiffies, but it won't
-> hurt. It's not really "confusion" - there's nothing _wrong_ with using
-> READ_ONCE() on volatile data, but we just normally don't do volatile
-> data in the kernel (because our normal model is that data is never
-> really volatile in general - there may be locked and unlocked accesses
-> to it, so it's stable or volatile depending on context, and thus the
-> 'volatile' goes on the _code_, not on the data structure)
->
-> But while jiffies READ_ONCE() accesses isn't _wrong_, it is also not
-> really paired with any WRITE_ONCE(), because the real update is to
-> technically not even to the same full data structure.
->
-> So don't look to jiffies for how to do things. It's an odd one-off.
->
-> That said, for "this might be used racily", if there are annotations
-> for clang to just make it shut up about one particular field in a
-> structure, than I think that would be ok. As long as it doesn't then
-> imply special code generation (outside of the checking, of course).
+On Wed, 13 Nov 2019 11:45:59 +0800
+王贇 <yun.wang@linux.alibaba.com> wrote:
 
-There are annotations that work for globals only. This limitation is
-because once you take a pointer of a variable, and just pass around
-the address, the attribute will be lost. So sometimes you might do the
-right thing, but other times you might not.
+> Add the description for 'cg_numa_stat', also a new doc to explain
+> the details on how to deal with the per-cgroup numa statistics.
+> 
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Michal Koutný <mkoutny@suse.com>
+> Cc: Mel Gorman <mgorman@suse.de>
+> Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
+> ---
+>  Documentation/admin-guide/cg-numa-stat.rst      | 161 ++++++++++++++++++++++++
+>  Documentation/admin-guide/kernel-parameters.txt |   4 +
+>  Documentation/admin-guide/sysctl/kernel.rst     |   9 ++
+>  3 files changed, 174 insertions(+)
+>  create mode 100644 Documentation/admin-guide/cg-numa-stat.rst
 
-Just to summarize the options we've had so far:
-1. Add a comment, and let the tool parse it somehow.
-2. Add attribute to variables.
-3. Add some new macro to use with expressions, which doesn't do
-anything if the tool is disabled. E.g. "racy__(counter++)",
-"lossy__(counter++);" or any suitable name.
+Thanks for adding documentation for your new feature!  When you add a new
+RST file, though, you should also add it to index.rst so that it becomes a
+part of the docs build.
 
-1 and 3 are almost equivalent, except that 3 introduces "structured"
-comments that are much easier to understand for tooling. Both 1 and 2
-need compiler support.
+A couple of nits below...
 
-Right now both gcc and clang support KCSAN, and doing 1 or 2 would
-probably imply dropping one of them. Both 1 and 2 are also brittle: 1
-because comments are not forced to be structured, and 2 because
-attributes on variables do not propagate through pointers.
+> diff --git a/Documentation/admin-guide/cg-numa-stat.rst b/Documentation/admin-guide/cg-numa-stat.rst
+> new file mode 100644
+> index 000000000000..87b716c51e16
+> --- /dev/null
+> +++ b/Documentation/admin-guide/cg-numa-stat.rst
+> @@ -0,0 +1,161 @@
+> +===============================
+> +Per-cgroup NUMA statistics
+> +===============================
+> +
+> +Background
+> +----------
+> +
+> +On NUMA platforms, remote memory accessing always has a performance penalty,
+> +although we have NUMA balancing working hard to maximum the local accessing
+> +proportion, there are still situations it can't helps.
+> +
+> +This could happen in modern production environment, using bunch of cgroups
+> +to classify and control resources which introduced complex configuration on
+> +memory policy, CPUs and NUMA node, NUMA balancing could facing the wrong
+> +memory policy or exhausted local NUMA node, lead into the low local page
+> +accessing proportion.
+> +
+> +We need to perceive such cases, figure out which workloads from which cgroup
+> +has introduced the issues, then we got chance to do adjustment to avoid
+> +performance damages.
+> +
+> +However, there are no hardware counter for per-task local/remote accessing
+> +info, we don't know how many remote page accessing has been done for a
+> +particular task.
+> +
+> +Statistics
+> +----------
+> +
+> +Fortunately, we have NUMA Balancing which scan task's mapping and trigger PF
+> +periodically, give us the opportunity to record per-task page accessing info.
+> +
+> +By "echo 1 > /proc/sys/kernel/cg_numa_stat" on runtime or add boot parameter
+> +'cg_numa_stat', we will enable the accounting of per-cgroup numa statistics,
+> +the 'cpu.numa_stat' entry of CPU cgroup will show statistics:
+> +
+> +  locality -- execution time sectioned by task NUMA locality (in ms)
+> +  exectime -- execution time sectioned by NUMA node (in ms)
+> +
+> +We define 'task NUMA locality' as:
+> +
+> +  nr_local_page_access * 100 / (nr_local_page_access + nr_remote_page_access)
+> +
+> +this per-task percentage value will be updated on the ticks for current task,
+> +and the access counter will be updated on task's NUMA balancing PF, so only
+> +the pages which NUMA Balancing paid attention to will be accounted.
+> +
+> +On each tick, we acquire the locality of current task on that CPU, accumulating
+> +the ticks into the counter of corresponding locality region, tasks from the
+> +same group sharing the counters, becoming the group locality.
+> +
+> +Similarly, we acquire the NUMA node of current CPU where the current task is
+> +executing on, accumulating the ticks into the counter of corresponding node,
+> +becoming the per-cgroup node execution time.
+> +
+> +To be noticed, the accounting is in a hierarchy way, which means the numa
+> +statistics representing not only the workload of this group, but also the
+> +workloads of all it's descendants.
+> +
+> +For example the 'cpu.numa_stat' show:
+> +  locality 39541 60962 36842 72519 118605 721778 946553
+> +  exectime 1220127 1458684
 
-From our perspective, macro-based annotations would be most reliable.
+You almost certainly want that rendered as a literal block, so say
+"show::".  There are other places where you'll want to do that as well. 
 
-Thanks,
--- Marco
+> +The locality is sectioned into 7 regions, closely as:
+> +  0-13% 14-27% 28-42% 43-56% 57-71% 72-85% 86-100%
+> +
+> +And exectime is sectioned into 2 nodes, 0 and 1 in this case.
+> +
+> +Thus we know the workload of this group and it's descendants have totally
+> +executed 1220127ms on node_0 and 1458684ms on node_1, tasks with locality
+> +around 0~13% executed for 39541 ms, and tasks with locality around 87~100%
+> +executed for 946553 ms, which imply most of the memory access are local.
+> +
+> +Monitoring
+> +-----------------
+
+A slightly long underline :)
+
+I'll stop here; thanks again for adding documentation.
+
+jon
