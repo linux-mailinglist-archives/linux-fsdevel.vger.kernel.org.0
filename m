@@ -2,347 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3334FFA9EC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 07:00:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B3DCFA9F9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 07:01:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726115AbfKMGAG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Nov 2019 01:00:06 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45103 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725858AbfKMGAF (ORCPT
+        id S1727077AbfKMGBg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Nov 2019 01:01:36 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:45784 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725858AbfKMGBf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Nov 2019 01:00:05 -0500
-Received: by mail-lj1-f195.google.com with SMTP id n21so1089263ljg.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Nov 2019 22:00:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=uORn80acVS0xvS2xTg8M3MbneXQszQ1xmPbEQnzYqDc=;
-        b=mbMrbNmNc+FEmZpWH5DJAoictHkYrtYorHLi+RtL9wr6NNpRravI/NQ82eiVNVFzFy
-         R/i+ScD8wohEDSwJuYo0PCdVKUb28VCZ6tGasKGBjF5mCI+db9uAKppqWbcJthGXpSmF
-         ZmYu/UiTdFDSgNhSmH/xX6K1dVmrnzv4X8XfY7rjGzn/7fmoOiyJe169O/RVh94w0s3+
-         0gsPqclKwum/y5dJXMY0ZFtBobPlByiO8Tx+jBV9BuRiSuxxn1kiyqRv+3jqF2ajScLq
-         kAqdxacZDeM1Byl/v7yKkS543y/q5s5JZkewRJwnUh+h+3aftQw4vpD2U9FszTh2veaN
-         SNEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=uORn80acVS0xvS2xTg8M3MbneXQszQ1xmPbEQnzYqDc=;
-        b=RbybUaCKd06mNayW81M3JAi8QLlA8HkzrgyZSd1JBS9cR52YPKWVOpxjGM7vGiV6CB
-         oHbS1NqJKYqWsGcxiVc622ETEmmQYkndpxT19mcLjG2zVFIMX9AoeTmuxVhcGyjhJwAx
-         zYZaKBaoGkHBNzIy1yUOnVTr1D5SpUstaZ3JTgPWDGa8FpDkcUXdE/f7f1N0Wevbjrfb
-         ufVPGRFcYl2FwYYdVuCyghPOUV2NWasO2D4mbBqTajcpMJmPRgwmAikq70zvQoPWCNn4
-         yAdH8Cf6VbvoHYvNstYo4XDsSAC/gaM6g55CvQzs+KiAUtVUrXlew7U2TAZNsJj6nJrg
-         AwLg==
-X-Gm-Message-State: APjAAAVzl8zEk6XcFO/FZnrcqmcndpeRT3ulUGZ0aVq9yyt0fcORv+zE
-        N45Ukq56Nl5sFOMLPF+gpNinOA==
-X-Google-Smtp-Source: APXvYqyEfWzBnezqyV8E1AuFZnunPIYn+lfxabHyTp8E5Crs/1JcUyIczPGSxchgcQ74Gz/XObS1mQ==
-X-Received: by 2002:a2e:8e27:: with SMTP id r7mr1125841ljk.101.1573624801007;
-        Tue, 12 Nov 2019 22:00:01 -0800 (PST)
-Received: from ?IPv6:2a00:1370:812c:3592:c978:3583:27b6:cdc5? ([2a00:1370:812c:3592:c978:3583:27b6:cdc5])
-        by smtp.gmail.com with ESMTPSA id y189sm552055lfc.9.2019.11.12.22.00.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Nov 2019 22:00:00 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3601.0.10\))
-Subject: Re: [PATCH 13/16] hfs/hfsplus: use 64-bit inode timestamps
-From:   Viacheslav Dubeyko <slava@dubeyko.com>
-In-Reply-To: <20191108213257.3097633-14-arnd@arndb.de>
-Date:   Wed, 13 Nov 2019 08:59:58 +0300
-Cc:     y2038@lists.linaro.org, LKML <linux-kernel@vger.kernel.org>,
-        =?utf-8?B?IkVybmVzdG8gQS4gRmVybsOhbmRleiI=?= 
-        <ernesto.mnd.fernandez@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org
+        Wed, 13 Nov 2019 01:01:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573624893;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=BI1DBbTBrcq16pSAoz/BMA31HAPi7JaaeyCMiqZAhfE=;
+        b=J6vyXx5TL4SivpuPm9SALV30pua4eYyY280l+uLdUS3cBB1xphJIlh/cU9aV1Z3UhvvNO4
+        I79JPm5fnOBFjrh5iE8cB3msXn6EanIVQlJtxdDBHUFpl1IknPiBzKcBrlPN/5V0IAFDXJ
+        VFXuUwUhFDL9KBgkQqRD/PEU6skUOeM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-210-ZdQCrH3AO6aLXcu4nSUO7g-1; Wed, 13 Nov 2019 01:01:30 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 03C51107ACC7;
+        Wed, 13 Nov 2019 06:01:29 +0000 (UTC)
+Received: from ovpn-116-229.phx2.redhat.com (ovpn-116-229.phx2.redhat.com [10.3.116.229])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7730C101E3CB;
+        Wed, 13 Nov 2019 06:01:22 +0000 (UTC)
+Message-ID: <048d9e5ea9ea9cebe18aa96d59bd0a67b3429529.camel@redhat.com>
+Subject: Re: [PATCH 1/2] dm-snapshot: fix crash with the realtime kernel
+From:   Scott Wood <swood@redhat.com>
+To:     Nikos Tsironis <ntsironis@arrikto.com>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Cc:     Ilias Tsitsimpis <iliastsi@arrikto.com>, dm-devel@redhat.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Daniel Wagner <dwagner@suse.de>, tglx@linutronix.de,
+        linux-rt-users@vger.kernel.org,
+        Paul Gortmaker <paul.gortmaker@windriver.com>
+In-Reply-To: <a6f588d3-2403-d50a-70a1-ed644082cc83@arrikto.com>
+References: <alpine.LRH.2.02.1911110811060.28408@file01.intranet.prod.int.rdu2.redhat.com>
+         <c9a772e9-e305-cf0b-1155-fb19bdb84e55@arrikto.com>
+         <20191112011444.GA32220@redhat.com>
+         <alpine.LRH.2.02.1911120240020.25757@file01.intranet.prod.int.rdu2.redhat.com>
+         <a6f588d3-2403-d50a-70a1-ed644082cc83@arrikto.com>
+Organization: Red Hat
+MIME-Version: 1.0
+Date:   Wed, 13 Nov 2019 00:01:06 -0600
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-MC-Unique: ZdQCrH3AO6aLXcu4nSUO7g-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <2520E708-4636-4CA8-B953-0F46F8E7454A@dubeyko.com>
-References: <20191108213257.3097633-1-arnd@arndb.de>
- <20191108213257.3097633-14-arnd@arndb.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-X-Mailer: Apple Mail (2.3601.0.10)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-> On Nov 9, 2019, at 12:32 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+On Tue, 2019-11-12 at 13:45 +0200, Nikos Tsironis wrote:
+> On 11/12/19 9:50 AM, Mikulas Patocka wrote:
+> >=20
+> > On Mon, 11 Nov 2019, Mike Snitzer wrote:
+> >=20
+> > > On Mon, Nov 11 2019 at 11:37am -0500,
+> > > Nikos Tsironis <ntsironis@arrikto.com> wrote:
+> > >=20
+> > > > On 11/11/19 3:59 PM, Mikulas Patocka wrote:
+> > > > > Snapshot doesn't work with realtime kernels since the commit
+> > > > > f79ae415b64c.
+> > > > > hlist_bl is implemented as a raw spinlock and the code takes two
+> > > > > non-raw
+> > > > > spinlocks while holding hlist_bl (non-raw spinlocks are blocking
+> > > > > mutexes
+> > > > > in the realtime kernel, so they couldn't be taken inside a raw
+> > > > > spinlock).
+> > > > >=20
+> > > > > This patch fixes the problem by using non-raw spinlock
+> > > > > exception_table_lock instead of the hlist_bl lock.
+> > > > >=20
+> > > > > Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+> > > > > Fixes: f79ae415b64c ("dm snapshot: Make exception tables
+> > > > > scalable")
+> > > > >=20
+> > > >=20
+> > > > Hi Mikulas,
+> > > >=20
+> > > > I wasn't aware that hlist_bl is implemented as a raw spinlock in th=
+e
+> > > > real time kernel. I would expect it to be a standard non-raw
+> > > > spinlock,
+> > > > so everything works as expected. But, after digging further in the
+> > > > real
+> > > > time tree, I found commit ad7675b15fd87f1 ("list_bl: Make list head
+> > > > locking RT safe") which suggests that such a conversion would break
+> > > > other parts of the kernel.
+> > >=20
+> > > Right, the proper fix is to update list_bl to work on realtime (which
+> > > I
+> > > assume the referenced commit does).  I do not want to take this
+> > > dm-snapshot specific workaround that open-codes what should be done
+> > > within hlist_{bl_lock,unlock}, etc.
+> >=20
+> > If we change list_bl to use non-raw spinlock, it fails in dentry lookup=
+=20
+> > code. The dentry code takes a seqlock (which is implemented as preempt=
+=20
+> > disable in the realtime kernel) and then takes a list_bl lock.
+> >=20
+> > This is wrong from the real-time perspective (the chain in the hash
+> > could=20
+> > be arbitrarily long, so using non-raw spinlock could cause unbounded=20
+> > wait), however we can't do anything with it.
+> >=20
+> > I think that fixing dm-snapshot is way easier than fixing the dentry
+> > code.=20
+> > If you have an idea how to fix the dentry code, tell us.
 >=20
-> The interpretation of on-disk timestamps in HFS and HFS+ differs
-> between 32-bit and 64-bit kernels at the moment. Use 64-bit timestamps
-> consistently so apply the current 64-bit behavior everyhere.
->=20
-> According to the official documentation for HFS+ [1], inode timestamps
-> are supposed to cover the time range from 1904 to 2040 as originally
-> used in classic MacOS.
->=20
-> The traditional Linux usage is to convert the timestamps into an =
-unsigned
-> 32-bit number based on the Unix epoch and from there to a time_t. On
-> 32-bit systems, that wraps the time from 2038 to 1902, so the last
-> two years of the valid time range become garbled. On 64-bit systems,
-> all times before 1970 get turned into timestamps between 2038 and =
-2106,
-> which is more convenient but also different from the documented =
-behavior.
->=20
-> Looking at the Darwin sources [2], it seems that MacOS is inconsistent =
-in
-> yet another way: all timestamps are wrapped around to a 32-bit =
-unsigned
-> number when written to the disk, but when read back, all numeric =
-values
-> lower than 2082844800U are assumed to be invalid, so we cannot =
-represent
-> the times before 1970 or the times after 2040.
->=20
-> While all implementations seem to agree on the interpretation of =
-values
-> between 1970 and 2038, they often differ on the exact range they =
-support
-> when reading back values outside of the common range:
->=20
-> MacOS (traditional):		1904-2040
-> Apple Documentation:		1904-2040
-> MacOS X source comments:	1970-2040
-> MacOS X source code:		1970-2038
-> 32-bit Linux:			1902-2038
-> 64-bit Linux:			1970-2106
-> hfsfuse:			1970-2040
-> hfsutils (32 bit, old libc)	1902-2038
-> hfsutils (32 bit, new libc)	1970-2106
-> hfsutils (64 bit)		1904-2040
-> hfsplus-utils			1904-2040
-> hfsexplorer			1904-2040
-> 7-zip				1904-2040
->=20
-> Out of the above, the range from 1970 to 2106 seems to be the most =
-useful,
-> as it allows using HFS and HFS+ beyond year 2038, and this matches the
-> behavior that most users would see today on Linux, as few people run
-> 32-bit kernels any more.
->=20
-> Link: [1] =
-https://developer.apple.com/library/archive/technotes/tn/tn1150.html
-> Link: [2] =
-https://opensource.apple.com/source/hfs/hfs-407.30.1/core/MacOSStubs.c.aut=
-o.html
-> Link: =
-https://lore.kernel.org/lkml/20180711224625.airwna6gzyatoowe@eaf/
-> Cc: Viacheslav Dubeyko <slava@dubeyko.com>
-> Suggested-by: "Ernesto A. Fern=C3=A1ndez" =
-<ernesto.mnd.fernandez@gmail.com>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> v3: revert back to 1970-2106 time range
->    fix bugs found in review
->    merge both patches into one
->    drop cc:stable tag
-> v2: treat pre-1970 dates as invalid following MacOS X behavior,
->    reword and expand changelog text
-> ---
-> fs/hfs/hfs_fs.h         | 26 ++++++++++++++++++++------
-> fs/hfs/inode.c          |  4 ++--
-> fs/hfsplus/hfsplus_fs.h | 26 +++++++++++++++++++++-----
-> fs/hfsplus/inode.c      | 12 ++++++------
-> 4 files changed, 49 insertions(+), 19 deletions(-)
->=20
-> diff --git a/fs/hfs/hfs_fs.h b/fs/hfs/hfs_fs.h
-> index 6d0783e2e276..26733051ee50 100644
-> --- a/fs/hfs/hfs_fs.h
-> +++ b/fs/hfs/hfs_fs.h
-> @@ -242,19 +242,33 @@ extern void hfs_mark_mdb_dirty(struct =
-super_block *sb);
-> /*
->  * There are two time systems.  Both are based on seconds since
->  * a particular time/date.
-> - *	Unix:	unsigned lil-endian since 00:00 GMT, Jan. 1, 1970
-> + *	Unix:	signed little-endian since 00:00 GMT, Jan. 1, 1970
->  *	mac:	unsigned big-endian since 00:00 GMT, Jan. 1, 1904
->  *
-> + * HFS implementations are highly inconsistent, this one matches the
-> + * traditional behavior of 64-bit Linux, giving the most useful
-> + * time range between 1970 and 2106, by treating any on-disk =
-timestamp
-> + * under 2082844800U (Jan 1 1970) as a time between 2040 and 2106.
->  */
-> -#define __hfs_u_to_mtime(sec)	cpu_to_be32(sec + 2082844800U - =
-sys_tz.tz_minuteswest * 60)
-> -#define __hfs_m_to_utime(sec)	(be32_to_cpu(sec) - 2082844800U  =
-+ sys_tz.tz_minuteswest * 60)
+> I too think that it would be better to fix list_bl. dm-snapshot isn't
+> really broken. One should be able to acquire a spinlock while holding
+> another spinlock.
 
-I believe it makes sense to introduce some constant instead of hardcoded =
-value (2082844800U and 60).
-It will be easier to understand the code without necessity to take a =
-look into the comments.
-What do you think?
+That's not universally true -- even in the absence of RT there are nesting
+considerations.  But it would probably be good if raw locks weren't hidden
+inside other locking primitives without making it clear (ideally in the
+function names) that it's a raw lock.
 
-> +static inline time64_t __hfs_m_to_utime(__be32 mt)
-> +{
-> +	time64_t ut =3D (u32)(be32_to_cpu(mt) - 2082844800U);
+> Moreover, apart from dm-snapshot, anyone ever using list_bl is at risk
+> of breaking the realtime kernel, if he or she is not aware of that
+> particular limitation of list_bl's implementation in the realtime tree.
 
-Ditto.
+In particular the non-rcu variant seems inherently bad unless you protect
+traversal with some other lock (in which case why use bl at all?).  Maybe
+fully separate the rcu version of list_bl and keep using raw locks there
+(with the name clearly indicating so), with the side benefit that
+accidentally mixing rcu and non-rcu operations on the same list would becom=
+e
+a build error, and convert the non-rcu list_bl to use non-raw locks on RT.
 
-> +
-> +	return ut + sys_tz.tz_minuteswest * 60;
-> +}
->=20
-> +static inline __be32 __hfs_u_to_mtime(time64_t ut)
-> +{
-> +	ut -=3D sys_tz.tz_minuteswest * 60;
-> +
-> +	return cpu_to_be32(lower_32_bits(ut) + 2082844800U);
+BTW, I'm wondering what makes bit spinlocks worse than raw spinlocks on
+RT...  commit ad7675b15fd87f19 says there's no lockdep visibility, but that
+seems orthogonal to RT, and could be addressed by adding a dep_map on debug
+builds the same way the raw lock is currently added.  The other bit spinloc=
+k
+conversion commits that I could find are replacing them with non-raw locks.
 
-Ditto.
+-Scott
 
-> +}
-> #define HFS_I(inode)	(container_of(inode, struct hfs_inode_info, =
-vfs_inode))
-> #define HFS_SB(sb)	((struct hfs_sb_info *)(sb)->s_fs_info)
->=20
-> -#define hfs_m_to_utime(time)	(struct timespec){ .tv_sec =3D =
-__hfs_m_to_utime(time) }
-> -#define hfs_u_to_mtime(time)	__hfs_u_to_mtime((time).tv_sec)
-> -#define hfs_mtime()		__hfs_u_to_mtime(get_seconds())
-> +#define hfs_m_to_utime(time)   (struct timespec64){ .tv_sec =3D =
-__hfs_m_to_utime(time) }
-> +#define hfs_u_to_mtime(time)   __hfs_u_to_mtime((time).tv_sec)
-> +#define hfs_mtime()		=
-__hfs_u_to_mtime(ktime_get_real_seconds())
->=20
-> static inline const char *hfs_mdb_name(struct super_block *sb)
-> {
-> diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
-> index da243c84e93b..2f224b98ee94 100644
-> --- a/fs/hfs/inode.c
-> +++ b/fs/hfs/inode.c
-> @@ -351,7 +351,7 @@ static int hfs_read_inode(struct inode *inode, =
-void *data)
-> 		inode->i_mode &=3D ~hsb->s_file_umask;
-> 		inode->i_mode |=3D S_IFREG;
-> 		inode->i_ctime =3D inode->i_atime =3D inode->i_mtime =3D
-> -				=
-timespec_to_timespec64(hfs_m_to_utime(rec->file.MdDat));
-> +				hfs_m_to_utime(rec->file.MdDat);
-> 		inode->i_op =3D &hfs_file_inode_operations;
-> 		inode->i_fop =3D &hfs_file_operations;
-> 		inode->i_mapping->a_ops =3D &hfs_aops;
-> @@ -362,7 +362,7 @@ static int hfs_read_inode(struct inode *inode, =
-void *data)
-> 		HFS_I(inode)->fs_blocks =3D 0;
-> 		inode->i_mode =3D S_IFDIR | (S_IRWXUGO & =
-~hsb->s_dir_umask);
-> 		inode->i_ctime =3D inode->i_atime =3D inode->i_mtime =3D
-> -				=
-timespec_to_timespec64(hfs_m_to_utime(rec->dir.MdDat));
-> +				hfs_m_to_utime(rec->dir.MdDat);
-> 		inode->i_op =3D &hfs_dir_inode_operations;
-> 		inode->i_fop =3D &hfs_dir_operations;
-> 		break;
-> diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
-> index b8471bf05def..22d0a22c41a3 100644
-> --- a/fs/hfsplus/hfsplus_fs.h
-> +++ b/fs/hfsplus/hfsplus_fs.h
-> @@ -533,13 +533,29 @@ int hfsplus_submit_bio(struct super_block *sb, =
-sector_t sector, void *buf,
-> 		       void **data, int op, int op_flags);
-> int hfsplus_read_wrapper(struct super_block *sb);
->=20
-> -/* time macros */
-> -#define __hfsp_mt2ut(t)		(be32_to_cpu(t) - 2082844800U)
-> -#define __hfsp_ut2mt(t)		(cpu_to_be32(t + 2082844800U))
-
-Ditto.
-
-> +/*
-> + * time helpers: convert between 1904-base and 1970-base timestamps
-> + *
-> + * HFS+ implementations are highly inconsistent, this one matches the
-> + * traditional behavior of 64-bit Linux, giving the most useful
-> + * time range between 1970 and 2106, by treating any on-disk =
-timestamp
-> + * under 2082844800U (Jan 1 1970) as a time between 2040 and 2106.
-> + */
-> +static inline time64_t __hfsp_mt2ut(__be32 mt)
-> +{
-> +	time64_t ut =3D (u32)(be32_to_cpu(mt) - 2082844800U);
-
-Ditto.
-
-> +
-> +	return ut;
-> +}
-> +
-> +static inline __be32 __hfsp_ut2mt(time64_t ut)
-> +{
-> +	return cpu_to_be32(lower_32_bits(ut) + 2082844800U);
-
-Ditto.
-
-> +}
->=20
-> /* compatibility */
-> -#define hfsp_mt2ut(t)		(struct timespec){ .tv_sec =3D =
-__hfsp_mt2ut(t) }
-> +#define hfsp_mt2ut(t)		(struct timespec64){ .tv_sec =3D =
-__hfsp_mt2ut(t) }
-> #define hfsp_ut2mt(t)		__hfsp_ut2mt((t).tv_sec)
-> -#define hfsp_now2mt()		__hfsp_ut2mt(get_seconds())
-> +#define hfsp_now2mt()		=
-__hfsp_ut2mt(ktime_get_real_seconds())
->=20
-> #endif
-> diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
-> index d131c8ea7eb6..94bd83b36644 100644
-> --- a/fs/hfsplus/inode.c
-> +++ b/fs/hfsplus/inode.c
-> @@ -504,9 +504,9 @@ int hfsplus_cat_read_inode(struct inode *inode, =
-struct hfs_find_data *fd)
-> 		hfsplus_get_perms(inode, &folder->permissions, 1);
-> 		set_nlink(inode, 1);
-> 		inode->i_size =3D 2 + be32_to_cpu(folder->valence);
-> -		inode->i_atime =3D =
-timespec_to_timespec64(hfsp_mt2ut(folder->access_date));
-> -		inode->i_mtime =3D =
-timespec_to_timespec64(hfsp_mt2ut(folder->content_mod_date));
-> -		inode->i_ctime =3D =
-timespec_to_timespec64(hfsp_mt2ut(folder->attribute_mod_date));
-> +		inode->i_atime =3D hfsp_mt2ut(folder->access_date);
-> +		inode->i_mtime =3D hfsp_mt2ut(folder->content_mod_date);
-> +		inode->i_ctime =3D =
-hfsp_mt2ut(folder->attribute_mod_date);
-> 		HFSPLUS_I(inode)->create_date =3D folder->create_date;
-> 		HFSPLUS_I(inode)->fs_blocks =3D 0;
-> 		if (folder->flags & =
-cpu_to_be16(HFSPLUS_HAS_FOLDER_COUNT)) {
-> @@ -542,9 +542,9 @@ int hfsplus_cat_read_inode(struct inode *inode, =
-struct hfs_find_data *fd)
-> 			init_special_inode(inode, inode->i_mode,
-> 					   =
-be32_to_cpu(file->permissions.dev));
-> 		}
-> -		inode->i_atime =3D =
-timespec_to_timespec64(hfsp_mt2ut(file->access_date));
-> -		inode->i_mtime =3D =
-timespec_to_timespec64(hfsp_mt2ut(file->content_mod_date));
-> -		inode->i_ctime =3D =
-timespec_to_timespec64(hfsp_mt2ut(file->attribute_mod_date));
-> +		inode->i_atime =3D hfsp_mt2ut(file->access_date);
-> +		inode->i_mtime =3D hfsp_mt2ut(file->content_mod_date);
-> +		inode->i_ctime =3D hfsp_mt2ut(file->attribute_mod_date);
-> 		HFSPLUS_I(inode)->create_date =3D file->create_date;
-> 	} else {
-> 		pr_err("bad catalog entry used to create inode\n");
-> =E2=80=94=20
-> 2.20.0
->=20
-
-The patch looks pretty clean and good.
-
-Thanks,
-Viacheslav Dubeyko.
 
