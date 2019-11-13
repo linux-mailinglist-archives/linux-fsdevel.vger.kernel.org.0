@@ -2,206 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 701ABFB806
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 19:48:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF3F9FB80F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 19:48:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727936AbfKMSr6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Nov 2019 13:47:58 -0500
-Received: from mga17.intel.com ([192.55.52.151]:43379 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727241AbfKMSr6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Nov 2019 13:47:58 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2019 10:47:57 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,301,1569308400"; 
-   d="scan'208";a="216489509"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga002.jf.intel.com with ESMTP; 13 Nov 2019 10:47:53 -0800
-Date:   Wed, 13 Nov 2019 10:47:53 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 08/23] vfio, mm: fix get_user_pages_remote() and
- FOLL_LONGTERM
-Message-ID: <20191113184752.GD12699@iweiny-DESK2.sc.intel.com>
-References: <20191113042710.3997854-1-jhubbard@nvidia.com>
- <20191113042710.3997854-9-jhubbard@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191113042710.3997854-9-jhubbard@nvidia.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+        id S1728085AbfKMSsa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Nov 2019 13:48:30 -0500
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:40576 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727607AbfKMSsa (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 Nov 2019 13:48:30 -0500
+Received: from mr3.cc.vt.edu (mr3.cc.ipv6.vt.edu [IPv6:2607:b400:92:8500:0:7f:b804:6b0a])
+        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id xADImSbB005533
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2019 13:48:28 -0500
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+        by mr3.cc.vt.edu (8.14.7/8.14.7) with ESMTP id xADImNmk011763
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2019 13:48:28 -0500
+Received: by mail-qt1-f199.google.com with SMTP id j18so2073804qtp.15
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2019 10:48:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=Fo4fEZjebs1UemMYCiGaOExD0sFqQ4EojFlLMcKIhuc=;
+        b=Roye/DlbgzjBxiH80BZ58qlteaLYaeDriOTG8bqM2BDYK8ArANd2vvJyp4FquaZ7LO
+         qfMRBQPsyTFzChMwCTwh9FXxcv4pIFPUSPIwz55OYk9ravPcEwr8h7SzkFPYICMcXj3N
+         B1Y1GeVLedWUKzyyJ//dBBafQsjL5XdXtGhn6lF0HMkp0F8gMzin86ntEL9ILYZFVQFY
+         tuSGCeh9SY2OveKaBQw+RnGm7cHyccO9HAOSkgfjNcj9n7jpoi4Rb5haQYE1gqnsybbs
+         2mD8Mx0zQoyX3vRBc7BPacTyxy2Oj4i9lJWzrDgxW6RPVPczqHKHRI8ru3uV+3igFDwU
+         EaLw==
+X-Gm-Message-State: APjAAAXVnGM6P2GfGCK7Jwj9InTd3dNJM3zLVHdQBtqaMYzriAY49tSS
+        CVuiaTxlXaMsCrixPmyzF1TWW6sTTbiLc6DS08IgRko6WA5gHSjbo2lVyoHgdeVxJdaQjGO+JUQ
+        zaJYqELNBYq/fyxm2MfmOrkIXGO68uAuutI+A
+X-Received: by 2002:a37:c40a:: with SMTP id d10mr3876430qki.126.1573670903314;
+        Wed, 13 Nov 2019 10:48:23 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwZyh3b02hf6ZQ5jDLWJPKaioEx6Et1AVdxUCjjrElpChyEZAr5poVO19WsI1sCXDYpXO7E8w==
+X-Received: by 2002:a37:c40a:: with SMTP id d10mr3876412qki.126.1573670902961;
+        Wed, 13 Nov 2019 10:48:22 -0800 (PST)
+Received: from turing-police ([2601:5c0:c001:c9e1::359])
+        by smtp.gmail.com with ESMTPSA id x39sm1788053qth.92.2019.11.13.10.48.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2019 10:48:21 -0800 (PST)
+From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     Namjae Jeon <namjae.jeon@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        gregkh@linuxfoundation.org, hch@lst.de, sj1557.seo@samsung.com,
+        linkinjeon@gmail.com
+Subject: Re: [PATCH 00/13] add the latest exfat driver
+In-Reply-To: <20191113081800.7672-1-namjae.jeon@samsung.com>
+References: <CGME20191113082216epcas1p2e712c23c9524e04be624ccc822b59bf0@epcas1p2.samsung.com>
+ <20191113081800.7672-1-namjae.jeon@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1573670900_10801P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 13 Nov 2019 13:48:20 -0500
+Message-ID: <286809.1573670900@turing-police>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 08:26:55PM -0800, John Hubbard wrote:
-> As it says in the updated comment in gup.c: current FOLL_LONGTERM
-> behavior is incompatible with FAULT_FLAG_ALLOW_RETRY because of the
-> FS DAX check requirement on vmas.
-> 
-> However, the corresponding restriction in get_user_pages_remote() was
-> slightly stricter than is actually required: it forbade all
-> FOLL_LONGTERM callers, but we can actually allow FOLL_LONGTERM callers
-> that do not set the "locked" arg.
-> 
-> Update the code and comments accordingly, and update the VFIO caller
-> to take advantage of this, fixing a bug as a result: the VFIO caller
-> is logically a FOLL_LONGTERM user.
-> 
-> Also, remove an unnessary pair of calls that were releasing and
-> reacquiring the mmap_sem. There is no need to avoid holding mmap_sem
-> just in order to call page_to_pfn().
-> 
-> Also, move the DAX check ("if a VMA is DAX, don't allow long term
-> pinning") from the VFIO call site, all the way into the internals
-> of get_user_pages_remote() and __gup_longterm_locked(). That is:
-> get_user_pages_remote() calls __gup_longterm_locked(), which in turn
-> calls check_dax_vmas(). It's lightly explained in the comments as well.
-> 
-> Thanks to Jason Gunthorpe for pointing out a clean way to fix this,
-> and to Dan Williams for helping clarify the DAX refactoring.
-> 
-> Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Jerome Glisse <jglisse@redhat.com>
-> Cc: Ira Weiny <ira.weiny@intel.com>
+--==_Exmh_1573670900_10801P
+Content-Type: text/plain; charset=us-ascii
 
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+On Wed, 13 Nov 2019 03:17:47 -0500, Namjae Jeon said:
+> This adds the latest Samsung exfat driver to fs/exfat. This is an
+> implementation of the Microsoft exFAT specification. Previous versions
+> of this shipped with millions of Android phones, an a random previous
+> snaphot has been merged in drivers/staging/.
+>
+> Compared to the sdfat driver shipped on the phones the following changes
+> have been made:
+>
+>  - the support for vfat has been removed as that is already supported
+>    by fs/fat
+>  - driver has been renamed to exfat
+>  - the code has been refactored and clean up to fully integrate into
+>    the upstream Linux version and follow the Linux coding style
+>  - metadata operations like create, lookup and readdir have been further
+>    optimized
+>  - various major and minor bugs have been fixed
+>
+> We plan to treat this version as the future upstream for the code base
+> once merged, and all new features and bug fixes will go upstream first.
 
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
->  drivers/vfio/vfio_iommu_type1.c | 25 ++-----------------------
->  mm/gup.c                        | 27 ++++++++++++++++++++++-----
->  2 files changed, 24 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-> index d864277ea16f..7301b710c9a4 100644
-> --- a/drivers/vfio/vfio_iommu_type1.c
-> +++ b/drivers/vfio/vfio_iommu_type1.c
-> @@ -340,7 +340,6 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
->  {
->  	struct page *page[1];
->  	struct vm_area_struct *vma;
-> -	struct vm_area_struct *vmas[1];
->  	unsigned int flags = 0;
->  	int ret;
->  
-> @@ -348,33 +347,13 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
->  		flags |= FOLL_WRITE;
->  
->  	down_read(&mm->mmap_sem);
-> -	if (mm == current->mm) {
-> -		ret = get_user_pages(vaddr, 1, flags | FOLL_LONGTERM, page,
-> -				     vmas);
-> -	} else {
-> -		ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags, page,
-> -					    vmas, NULL);
-> -		/*
-> -		 * The lifetime of a vaddr_get_pfn() page pin is
-> -		 * userspace-controlled. In the fs-dax case this could
-> -		 * lead to indefinite stalls in filesystem operations.
-> -		 * Disallow attempts to pin fs-dax pages via this
-> -		 * interface.
-> -		 */
-> -		if (ret > 0 && vma_is_fsdax(vmas[0])) {
-> -			ret = -EOPNOTSUPP;
-> -			put_page(page[0]);
-> -		}
-> -	}
-> -	up_read(&mm->mmap_sem);
-> -
-> +	ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags | FOLL_LONGTERM,
-> +				    page, NULL, NULL);
->  	if (ret == 1) {
->  		*pfn = page_to_pfn(page[0]);
->  		return 0;
->  	}
->  
-> -	down_read(&mm->mmap_sem);
-> -
->  	vaddr = untagged_addr(vaddr);
->  
->  	vma = find_vma_intersection(mm, vaddr, vaddr + 1);
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 933524de6249..83702b2e86c8 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -29,6 +29,13 @@ struct follow_page_context {
->  	unsigned int page_mask;
->  };
->  
-> +static __always_inline long __gup_longterm_locked(struct task_struct *tsk,
-> +						  struct mm_struct *mm,
-> +						  unsigned long start,
-> +						  unsigned long nr_pages,
-> +						  struct page **pages,
-> +						  struct vm_area_struct **vmas,
-> +						  unsigned int flags);
->  /*
->   * Return the compound head page with ref appropriately incremented,
->   * or NULL if that failed.
-> @@ -1167,13 +1174,23 @@ long get_user_pages_remote(struct task_struct *tsk, struct mm_struct *mm,
->  		struct vm_area_struct **vmas, int *locked)
->  {
->  	/*
-> -	 * FIXME: Current FOLL_LONGTERM behavior is incompatible with
-> +	 * Parts of FOLL_LONGTERM behavior are incompatible with
->  	 * FAULT_FLAG_ALLOW_RETRY because of the FS DAX check requirement on
-> -	 * vmas.  As there are no users of this flag in this call we simply
-> -	 * disallow this option for now.
-> +	 * vmas. However, this only comes up if locked is set, and there are
-> +	 * callers that do request FOLL_LONGTERM, but do not set locked. So,
-> +	 * allow what we can.
->  	 */
-> -	if (WARN_ON_ONCE(gup_flags & FOLL_LONGTERM))
-> -		return -EINVAL;
-> +	if (gup_flags & FOLL_LONGTERM) {
-> +		if (WARN_ON_ONCE(locked))
-> +			return -EINVAL;
-> +		/*
-> +		 * This will check the vmas (even if our vmas arg is NULL)
-> +		 * and return -ENOTSUPP if DAX isn't allowed in this case:
-> +		 */
-> +		return __gup_longterm_locked(tsk, mm, start, nr_pages, pages,
-> +					     vmas, gup_flags | FOLL_TOUCH |
-> +					     FOLL_REMOTE);
-> +	}
->  
->  	return __get_user_pages_locked(tsk, mm, start, nr_pages, pages, vmas,
->  				       locked,
-> -- 
-> 2.24.0
-> 
+For the record, I'm totally OK with this and glad to see more up-to-date code
+than the codebase I was working from.
+
+--==_Exmh_1573670900_10801P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.9.0 11/07/2018
+
+iQIVAwUBXcxP8wdmEQWDXROgAQIzfRAArTNRIzzMJEFimFdo3I3pwBAyCZYffO3D
+1gyYXolrSmLn/8QhOzrtDQKIM/ZMTIps1PGNQlH3WeLDxvlojnq0QXb0mu1QHdbW
+WQDF0hnAZKOzRNVdkafXlflXrFZN8gB+/YKRYn20xOjOVh4TQdVutKT6PvKvQPnf
+Uskad/slaxp70rpnqswpi+qr6ukKtU6TEfE5mW+OKhZ/PsH76DK9ihUfC3AsGK3V
+T1v2JYkxElw4WX75j7wNocz9opuDGJn273MkmrtWhI2egn3/kMASgAwZmUOLmueG
+WkHKYYNHmyY78f+IcYj1IffC4Db/8nmmue/4OSUaEGq9qXL1AVbZ4T39rqv9qtaD
+3c3BF6XLMctNTzMXNe6QIa+0UyMhEGv2fksmI5H0JL98YMcyKuzc7TcRadNzwCQu
+7o/5NwwGyf6d30VxrzPPx9b1bOlFOh+28m28r56nFxvgV+mQyLf7PG7Enpmbz85l
+tkH/KbzrjbQ4JAmItrY0bCkDKaiFgcDBnW/Ao7QEgSPtrVTCpXuCzyXwQqtO2VVY
+Uw1FZn7j0FWrpdTynKCTm5DQX9g/PyS1uMAawoSK7chVNsk3+H/e4s4hiIT9vFb7
+Oapyot3eKZcYXhRH5tcj5DzAx3iA0vmNpjHhBmzcHpMqBxcWN5hJ/MpaOwvaFq8e
+FB2ihtmGWwY=
+=1doZ
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1573670900_10801P--
