@@ -2,244 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55D6DFB6AE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 18:55:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1C9DFB6F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 19:00:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728120AbfKMRzi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Nov 2019 12:55:38 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:60695 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727001AbfKMRzg (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Nov 2019 12:55:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573667734;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=5hOxiCMZkC2udYRqxzprYUCZjx83pEXI0qIX/cevzrU=;
-        b=hP8mPH20EkMINGyRSxpd7d75yTyeJ5fQKLVXFrJlkowIqiR/UlHvaNev708/FTJtLa38V/
-        gYaek3XKq0JcVxmCBYGLlSamzgurdrP/BRfEDY0hhCvuyosa/cOX1c4pcjmgQkMAPMGkiy
-        Up4ndodjCr7a3l/76mSmnaq4+/wFLec=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-387-DAVqcWd6PVu2hWaYQGOl4Q-1; Wed, 13 Nov 2019 12:55:31 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 368B21088890;
-        Wed, 13 Nov 2019 17:55:29 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-254.rdu2.redhat.com [10.10.120.254])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0F49D620A5;
-        Wed, 13 Nov 2019 17:55:20 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     Steve French <sfrench@samba.org>, Jeff Layton <jlayton@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve Dickson <steved@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-cc:     dhowells@redhat.com, v9fs-developer@lists.sourceforge.net,
-        linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-        linux-cachefs@redhat.com, ceph-devel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: FS-Cache/CacheFiles rewrite
+        id S1727687AbfKMSAf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Nov 2019 13:00:35 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43264 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726120AbfKMSAf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 Nov 2019 13:00:35 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0135DADE4;
+        Wed, 13 Nov 2019 18:00:32 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 731841E1498; Wed, 13 Nov 2019 19:00:32 +0100 (CET)
+Date:   Wed, 13 Nov 2019 19:00:32 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-ext4@vger.kernel.org, Ted Tso <tytso@mit.edu>
+Subject: Splice & iomap dio problems
+Message-ID: <20191113180032.GB12013@quack2.suse.cz>
 MIME-Version: 1.0
-Content-ID: <24941.1573667720.1@warthog.procyon.org.uk>
-Date:   Wed, 13 Nov 2019 17:55:20 +0000
-Message-ID: <24942.1573667720@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-MC-Unique: DAVqcWd6PVu2hWaYQGOl4Q-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+Hello,
 
-I've been rewriting the local cache for network filesystems with the aim of
-simplifying it, speeding it up, reducing its memory overhead and making it
-more understandable and easier to debug.
+I've spent today tracking down the syzkaller report of a WARN_ON hit in
+iov_iter_pipe() [1]. The immediate problem is that syzkaller reproducer
+(calling sendfile(2) from different threads at the same time a file to the
+same file in rather evil way) results in splice code leaking pipe pages
+(nrbufs doesn't return to 0 after read+write in the splice) and eventually
+we run out of pipe pages and hit the warning in iov_iter_pipe(). The
+problem is not specific to ext4, I can see in my tracing that when the
+underlying filesystem is XFS, we can leak the pipe pages in the same way
+(but for XFS somehow the problem doesn't happen as often).  Rather the
+problem seems to be in how iomap direct IO code, pipe iter code, and splice
+code interact.
 
-For the moment fscache support is disabled in all network filesystems that
-were using, apart from afs.
+So the problematic situation is when we do direct IO read into pipe pages
+and the read hits EOF which is not on page boundary. Say the file has 4608
+(4096+512) bytes, block size == page size == 4096. What happens is that iomap
+code maps the extent, gets that the extent size is 8192 (mapping ignores
+i_size). Then we call iomap_dio_bio_actor(), which creates its private
+iter, truncates it to 8192, and calls bio_iov_iter_get_pages(). That
+eventually results in preparing two pipe buffers with length 4096 to accept
+the read. Then read completes, in iomap_dio_complete() we truncate the return
+value from 8192 (which was the real amount of IO we performed) to 4608. Now
+this amount (4608) gets passed through splice code to
+iter_file_splice_write(), we write out that amount, but then when cleaning
+up pipe buffers, the last pipe buffer has still 3584 unused so we leave
+the pipe buffer allocated and effectively leak it.
 
-To this end, I have so far made the following changes to fscache:
+Now I was also investigating why the old direct IO code doesn't leak pipe
+buffers like this and the trick is done by the iov_iter_revert() call
+generic_file_read_iter(). This results in setting iter position right to
+the position where direct IO read reported it ended (4608) and truncating
+pipe buffers after this point. So splice code then sees the second pipe
+buffer has length only 512 which matches the amount it was asked to write
+and so the pipe buffer gets freed after the write in
+iter_file_splice_write().
 
- (1) The fscache_cookie_def struct has gone, along with all the callback
-     functions it used to contain.  The filesystem stores the auxiliary dat=
-a
-     and file size into the cookie and these are written back lazily (possi=
-bly
-     too lazily at the moment).  Any necessary information is passed in to
-     fscache_acquire_cookie().
+The question is how to best fix this. The quick fix is to add
+iov_iter_revert() call to iomap_dio_rw() so that in case of sync IO (we
+always do only sync IO to pipes), we properly set iter position in case of
+short read / write. But it looks somewhat hacky to me and this whole
+interaction of iter and pipes looks fragile to me.
 
- (2) The object state machine has been removed and replaced by a much simpl=
-er
-     dispatcher that runs the entire cookie instantiation procedure, cookie
-     teardown procedure or cache object withdrawal procedure in one go with=
-out
-     breaking it down into cancellable/abortable states.
+Another option I can see is to truncate the iter to min(i_size-pos, length) in
+iomap_dio_bio_actor() which *should* do the trick AFAICT. But I'm not sure
+if it won't break something else.
 
-     To avoid latency issues, a thread pool is created to which these
-     operations will be handed off if any threads are idle; if no threads a=
-re
-     idle, the operation is run in the process that triggered it.
+Any other ideas?
 
- (3) The entire I/O API has been deleted and replaced with one that *only*
-     provides a "read cache to iter" function and a "write iter to cache"
-     function.  The cache therefore neither knows nor cares where netfs pag=
-es
-     are - and indeed, reads and writes don't need to go to such places.
+As a side note the logic copying iter in iomap_dio_bio_actor() looks
+suspicious. We copy 'dio->submit.iter' to 'iter' but then in the loop we call
+iov_iter_advance() on dio->submit.iter. So if bio_iov_iter_get_pages()
+didn't return enough pages and we loop again, 'iter' will have stale
+contents and things go sideways from there? What am I missing? And why do
+we do that strange copying of iter instead of using iov_iter_truncate() and
+iov_iter_reexpand() on the 'dio->submit.iter' directly?
 
- (4) The netfs must allow the cache the opportunity to 'shape' a read from =
-the
-     server, both from ->readpages() and from ->write_begin(), so that the
-     size and start of the read are of a suitably aligned for the cache
-     granularity.  Cachefiles is currently using a 256KiB granule size.
+								Honza
 
-     A helper is provided to do most of the work: fscache_read_helper().
+[1] https://lore.kernel.org/lkml/000000000000d60aa50596c63063@google.com
 
- (5) An additional layer, an fscache_io_handle, has been interposed in the =
-I/O
-     API that allows the cache to store transient stuff, such as the open f=
-ile
-     struct pointer to the backing file for the duration of the netfs file
-     being open.
-
-     I'm tempted on one hand to merge this into the fscache_object struct a=
-nd
-     on the other hand to use this to get rid of 'cookie enablement' and al=
-low
-     already open files to be connected to the cache.
-
- (6) The PG_fscache bit is now set on a page to indicate that the page is
-     being written to the cache and cleared upon completion.  write_begin,
-     page_mkwrite, releasepage, invalidatepage, etc. can wait on this.
-
- (7) Cookie removal now read-locks the semaphore that is used to manage
-     addition and removal of a cache.  This greatly simplifies the logic in
-     detaching an object from a cookie and cleaning it up as relinquishment
-     and withdrawal can't then happen simultaneously.
-
-     It does mean, though, that cookie relinquishment is held up by cache
-     removal.
-
-And the following changes to cachefiles:
-
- (1) The I/O code has been replaced.  The page waitqueue snooping and defer=
-red
-     backing-page to netfs-page copy is now entirely gone and asynchronous
-     direct I/O through kiocbs is now used instead to effect the transfer o=
-f
-     data to/from the cache.
-
-     This affords a speed increase of something like 40-50% and reduces the
-     amount of memory that is pinned during I/O.
-
- (2) bmap() is no longer used to detect the presence of blocks in the
-     filesystem.  With a modern extent based filesystem, this may give both
-     false positives and false negatives if the filesystem optimises an ext=
-ent
-     by eliminating a block of zeros or adds a block to bridge between two
-     close neighbours.
-
-     Instead, a content map is stored in an xattr on the backing file, with=
- 1
-     bit per 256KiB block.  The cache shapes the netfs's read requests to
-     request multiple-of-256KiB reads from the server, which are then writt=
-en
-     back.
-
- (3) The content map and attributes are then stored lazily when the object =
-is
-     destroyed.  This may be too lazy.
-
-To aid this I've added the following:
-
- (1) Wait/wake functions for the PG_fscache bit.
-
- (2) ITER_MAPPING iterator that refers to a contiguous sequence of pinned
-     pages with no holes in a mapping.  This means you don't have to alloca=
-te
-     a sequence of bio_vecs to represent the same thing.
-
-     As stated, the pages *must* be pinned - such as by PG_locked,
-     PG_writeback or PG_fscache - before iov_iter_mapping() is called to se=
-t
-     the mapping up.
-
-Things that still need doing:
-
- (1) afs (and any other netfs) needs to write changes to the cache at the s=
-ame
-     time it writes them to the server so that the cache doesn't get out of
-     sync.  This is also necessary to implement write-back caching and
-     disconnected operation.
-
- (2) The content map is limited by the maximum xattr size.  Is it possible =
-to
-     configure the backing filesystem so that it doesn't merge extents acro=
-ss
-     certain boundaries or eliminate blocks of zeros so that I don't need a
-     content map?
-
- (3) Use O_TMPFILE in the cache to effect immediate invalidation.  I/O can
-     then continue to progress whilst the cache driver replaces the linkage=
-.
-
- (4) The file in the cache needs to be truncated if the netfs file is
-     shortened by truncation.
-
- (5) Data insertion into the cache is not currently checked for space
-     availability.
-
- (6) The stats need going over.  Some of them are obsolete and there are no
-     I/O stats working at the moment.
-
- (7) Replacement I/O tracepoints are required.
-
-Future changes:
-
- (1) Get rid of cookie enablement.
-
- (2) Frame the limit on the cache capacity in terms of an amount of data th=
-at
-     can be stored in it rather than an amount of free space that must be
-     kept.
-
- (3) Move culling out of cachefilesd into the kernel.
-
- (4) Use the I/O handle to add caching to files that are already open, perh=
-aps
-     listing I/O handles from the cache tag.
-
-Questions:
-
- (*) Does it make sense to actually permit multiple caches?
-
- (*) Do we want to allow multiple filesystem instances (think NFS) to use t=
-he
-     same cache objects?  fscache no longer knows about the netfs state, an=
-d
-     the netfs now just reads and writes to the cache, so it's kind of
-     possible - but coherency management is tricky and would definitely be =
-up
-     to the netfs.
-
-The patches can be found here:
-
-=09https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/lo=
-g/?h=3Dfscache-iter
-
-I'm not going to post them for the moment unless someone really wants that.
-
-David
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
