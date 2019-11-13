@@ -2,126 +2,196 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20A34FAE7D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 11:29:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDC8FFAEB9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 11:43:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727321AbfKMK3P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Nov 2019 05:29:15 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:38657 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727211AbfKMK3P (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Nov 2019 05:29:15 -0500
-Received: by mail-lf1-f66.google.com with SMTP id q28so1504357lfa.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2019 02:29:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arrikto-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8U4ilfUNpUqe6+CIAyFMlutnwFO+5K2+9W49ylkKQMM=;
-        b=dr9wNmnJxNrZ9PPJKsPqmMMjxbqIyI5x2JwffJyh6U16UMWChMEkFgavLDzptF0dK8
-         zO//Ya1JQaLrJM5tO/uXc3HglBtN2n7jsPedHsLtfQ9nGDqBXC+sp2084iYPRJ3ul8J4
-         7SvLcN4W/CJ90c2AW+rqSX2aSAty2i9+dHXb3EWCLhCJ3JpG4IcOog+C2T3En8XpxPZB
-         iG1009PHMuXwTfNJX9jyEPOaTk0DKxrctJoL+//up1g5T34tGn2czJR1vJwczFT7lRM+
-         tnw3mNVOG1J7zGsZyujXZFckSrojnr8Mr9ACobYt4d9Ln+1nKkv+dTPBS6u4aoM5eK5q
-         u8YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8U4ilfUNpUqe6+CIAyFMlutnwFO+5K2+9W49ylkKQMM=;
-        b=OTReLogUtIglqYck6jPdKWYtPA8Y1uk2GRypVc5QM0rkB12rfqbieSS5UJQp+iJlCI
-         lZFFHK3pCoAGp4jHWYoauvv8bpXpZL/aTfdFwhMMISwXK+DBVQeJmfUwaB4T6S7PKYP/
-         iQVThzLbLqgtJSavtBntMlMpTCQgdLmpSxMGsmacU6lsfMTV7vPh5TYa0Pt3EgdMOM/h
-         efQaWWyNGr0IyX1JzfJdfPgU5uwxBL9Gf47SALMaUOFlVNPvFZBV8RfUfYM/iKtr1/Dk
-         mnOB67CiqdR1dskYhTZ2qdz3rWMqnRW1GoG7GzloaU7F2vr66aicCl1y8yhcDtawMC9J
-         IVFg==
-X-Gm-Message-State: APjAAAWwQ0Lut2BZLTck6Wev19CJYIe4rBM0DAtQUfoQkk2nog91hKfh
-        UWlGGA/em2AO0FkjyCrXaOWCzg==
-X-Google-Smtp-Source: APXvYqxXN3i85bszLn6MncK61pEPk1mQY39Ogn/cplUmKYNpImhuBr+oMEicCOaX6tobbAUTwzcbIA==
-X-Received: by 2002:ac2:4302:: with SMTP id l2mr461322lfh.116.1573640953556;
-        Wed, 13 Nov 2019 02:29:13 -0800 (PST)
-Received: from [10.94.250.119] ([31.177.62.212])
-        by smtp.gmail.com with ESMTPSA id u5sm826868lfu.4.2019.11.13.02.29.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Nov 2019 02:29:13 -0800 (PST)
-Subject: Re: [PATCH RT 2/2 v2] list_bl: avoid BUG when the list is not locked
-To:     Mikulas Patocka <mpatocka@redhat.com>, tglx@linutronix.de,
-        linux-rt-users@vger.kernel.org
-Cc:     Mike Snitzer <msnitzer@redhat.com>, Scott Wood <swood@redhat.com>,
-        Ilias Tsitsimpis <iliastsi@arrikto.com>, dm-devel@redhat.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Daniel Wagner <dwagner@suse.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-References: <alpine.LRH.2.02.1911121110430.12815@file01.intranet.prod.int.rdu2.redhat.com>
-From:   Nikos Tsironis <ntsironis@arrikto.com>
-Message-ID: <335dafcb-5e07-63ed-b288-196516170bde@arrikto.com>
-Date:   Wed, 13 Nov 2019 12:29:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727515AbfKMKnQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Nov 2019 05:43:16 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58618 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727113AbfKMKnQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 Nov 2019 05:43:16 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8E4ECB2D5;
+        Wed, 13 Nov 2019 10:43:11 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 7E7151E1498; Wed, 13 Nov 2019 11:43:08 +0100 (CET)
+Date:   Wed, 13 Nov 2019 11:43:08 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>
+Subject: Re: [PATCH v4 09/23] mm/gup: introduce pin_user_pages*() and FOLL_PIN
+Message-ID: <20191113104308.GE6367@quack2.suse.cz>
+References: <20191113042710.3997854-1-jhubbard@nvidia.com>
+ <20191113042710.3997854-10-jhubbard@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.02.1911121110430.12815@file01.intranet.prod.int.rdu2.redhat.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191113042710.3997854-10-jhubbard@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/12/19 6:16 PM, Mikulas Patocka wrote:
-> list_bl would crash with BUG() if we used it without locking. dm-snapshot 
-> uses its own locking on realtime kernels (it can't use list_bl because 
-> list_bl uses raw spinlock and dm-snapshot takes other non-raw spinlocks 
-> while holding bl_lock).
+On Tue 12-11-19 20:26:56, John Hubbard wrote:
+> Introduce pin_user_pages*() variations of get_user_pages*() calls,
+> and also pin_longterm_pages*() variations.
 > 
-> To avoid this BUG, we must set LIST_BL_LOCKMASK = 0.
+> These variants all set FOLL_PIN, which is also introduced, and
+> thoroughly documented.
 > 
-> This patch is intended only for the realtime kernel patchset, not for the 
-> upstream kernel.
+> The pin_longterm*() variants also set FOLL_LONGTERM, in addition
+> to FOLL_PIN:
 > 
-> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+>     pin_user_pages()
+>     pin_user_pages_remote()
+>     pin_user_pages_fast()
 > 
-> Index: linux-rt-devel/include/linux/list_bl.h
-> ===================================================================
-> --- linux-rt-devel.orig/include/linux/list_bl.h	2019-11-07 14:01:51.000000000 +0100
-> +++ linux-rt-devel/include/linux/list_bl.h	2019-11-08 10:12:49.000000000 +0100
-> @@ -19,7 +19,7 @@
->   * some fast and compact auxiliary data.
->   */
+>     pin_longterm_pages()
+>     pin_longterm_pages_remote()
+>     pin_longterm_pages_fast()
+> 
+> All pages that are pinned via the above calls, must be unpinned via
+> put_user_page().
+> 
+> The underlying rules are:
+> 
+> * These are gup-internal flags, so the call sites should not directly
+> set FOLL_PIN nor FOLL_LONGTERM. That behavior is enforced with
+> assertions, for the new FOLL_PIN flag. However, for the pre-existing
+> FOLL_LONGTERM flag, which has some call sites that still directly
+> set FOLL_LONGTERM, there is no assertion yet.
+> 
+> * Call sites that want to indicate that they are going to do DirectIO
+>   ("DIO") or something with similar characteristics, should call a
+>   get_user_pages()-like wrapper call that sets FOLL_PIN. These wrappers
+>   will:
+>         * Start with "pin_user_pages" instead of "get_user_pages". That
+>           makes it easy to find and audit the call sites.
+>         * Set FOLL_PIN
+> 
+> * For pages that are received via FOLL_PIN, those pages must be returned
+>   via put_user_page().
+> 
+> Thanks to Jan Kara and Vlastimil Babka for explaining the 4 cases
+> in this documentation. (I've reworded it and expanded upon it.)
+> 
+> Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>  # Documentation
+> Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+
+Thanks for the documentation. It looks great!
+
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 83702b2e86c8..4409e84dff51 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -201,6 +201,10 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
+>  	spinlock_t *ptl;
+>  	pte_t *ptep, pte;
 >  
-> -#if defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)
-> +#if (defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)) && !defined(CONFIG_PREEMPT_RT_BASE)
->  #define LIST_BL_LOCKMASK	1UL
->  #else
->  #define LIST_BL_LOCKMASK	0UL
-> @@ -161,9 +161,6 @@ static inline void hlist_bl_lock(struct
->  	bit_spin_lock(0, (unsigned long *)b);
->  #else
->  	raw_spin_lock(&b->lock);
-> -#if defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)
-> -	__set_bit(0, (unsigned long *)b);
-> -#endif
->  #endif
->  }
->  
+> +	/* FOLL_GET and FOLL_PIN are mutually exclusive. */
+> +	if (WARN_ON_ONCE((flags & (FOLL_PIN | FOLL_GET)) ==
+> +			 (FOLL_PIN | FOLL_GET)))
+> +		return ERR_PTR(-EINVAL);
+>  retry:
+>  	if (unlikely(pmd_bad(*pmd)))
+>  		return no_page_table(vma, flags);
 
-Hi Mikulas,
+How does FOLL_PIN result in grabbing (at least normal, for now) page reference?
+I didn't find that anywhere in this patch but it is a prerequisite to
+converting any user to pin_user_pages() interface, right?
 
-I think removing __set_bit()/__clear_bit() breaks hlist_bl_is_locked(),
-which is used by the RCU variant of list_bl.
+> +/**
+> + * pin_user_pages_fast() - pin user pages in memory without taking locks
+> + *
+> + * Nearly the same as get_user_pages_fast(), except that FOLL_PIN is set. See
+> + * get_user_pages_fast() for documentation on the function arguments, because
+> + * the arguments here are identical.
+> + *
+> + * FOLL_PIN means that the pages must be released via put_user_page(). Please
+> + * see Documentation/vm/pin_user_pages.rst for further details.
+> + *
+> + * This is intended for Case 1 (DIO) in Documentation/vm/pin_user_pages.rst. It
+> + * is NOT intended for Case 2 (RDMA: long-term pins).
+> + */
+> +int pin_user_pages_fast(unsigned long start, int nr_pages,
+> +			unsigned int gup_flags, struct page **pages)
+> +{
+> +	/* FOLL_GET and FOLL_PIN are mutually exclusive. */
+> +	if (WARN_ON_ONCE(gup_flags & FOLL_GET))
+> +		return -EINVAL;
+> +
+> +	gup_flags |= FOLL_PIN;
+> +	return internal_get_user_pages_fast(start, nr_pages, gup_flags, pages);
+> +}
+> +EXPORT_SYMBOL_GPL(pin_user_pages_fast);
 
-Nikos
+I was somewhat wondering about the number of functions you add here. So we
+have:
 
-> @@ -172,9 +169,6 @@ static inline void hlist_bl_unlock(struc
->  #ifndef CONFIG_PREEMPT_RT_BASE
->  	__bit_spin_unlock(0, (unsigned long *)b);
->  #else
-> -#if defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)
-> -	__clear_bit(0, (unsigned long *)b);
-> -#endif
->  	raw_spin_unlock(&b->lock);
->  #endif
->  }
-> 
+pin_user_pages()
+pin_user_pages_fast()
+pin_user_pages_remote()
+
+and then longterm variants:
+
+pin_longterm_pages()
+pin_longterm_pages_fast()
+pin_longterm_pages_remote()
+
+and obviously we have gup like:
+get_user_pages()
+get_user_pages_fast()
+get_user_pages_remote()
+... and some other gup variants ...
+
+I think we really should have pin_* vs get_* variants as they are very
+different in terms of guarantees and after conversion, any use of get_*
+variant in non-mm code should be closely scrutinized. OTOH pin_longterm_*
+don't look *that* useful to me and just using pin_* instead with
+FOLL_LONGTERM flag would look OK to me and somewhat reduce the number of
+functions which is already large enough? What do people think? I don't feel
+too strongly about this but wanted to bring this up.
+
+								Honza
+
+
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
