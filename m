@@ -2,138 +2,200 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A1C3FAFA0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 12:26:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FF99FAFEC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 12:43:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727907AbfKML0S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Nov 2019 06:26:18 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35660 "EHLO
+        id S1727959AbfKMLnW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Nov 2019 06:43:22 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45699 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727889AbfKML0R (ORCPT
+        with ESMTP id S1727843AbfKMLnS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Nov 2019 06:26:17 -0500
-Received: by mail-wr1-f67.google.com with SMTP id s5so1942259wrw.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2019 03:26:15 -0800 (PST)
+        Wed, 13 Nov 2019 06:43:18 -0500
+Received: by mail-wr1-f67.google.com with SMTP id z10so1952556wrs.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2019 03:43:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mTXRlZhRwusuOSk5qpblMfH+EvvvFoGPrh91430+T2U=;
-        b=aGTueDxO+mXVLN37aOrEaaqOt8iqIvL/FDxjzKYcWilMMybJgd+PML9WsuAxHRDi9x
-         90gS7o78/Ey7X2dc4jYiw2PyxwMKk4B8mAGvvEAFfcHM+CtkJz/rg+CZ6nStCzlrjJ7U
-         AtmQP0tNk39XbfF09tgx51WMv8pYUP2LKS9SY=
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NWmx5zlrVzI636UV5zn7jwNNYyPpT2kzazOSeqZFCPQ=;
+        b=C0Dbe7TCduZqSim4I/9b7E74bGQO34GH/iKoO+dE+3EHLfWv1lLPGbvorBCoaRGMDb
+         48v7HTSQHP1LaVgvLNGy/yOxyJTlvTeKuq2CZR/Q7GIgmnQIbkvYhHi8TV/Ec+0WSA8P
+         awH+k+k5IQBNK5RO6uqKbJl7dFmz19ED4sy2I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mTXRlZhRwusuOSk5qpblMfH+EvvvFoGPrh91430+T2U=;
-        b=nb8gjdL0NDlkhJQXVeMRkfq8IKd7sIjN2DdSTTW1mMucnAEO74sRvlc943VmdW9xgi
-         dPCdqEeSF1UV4QAOsq9iqAXAhtgEC3poin/B416/vsDKEFqkPnGV6o1p2OPdmzrBTMNI
-         mIOGBFjE4ZsHXRPKFAgEXKXxcAw7dQbIb4PIe+vqJbA2gIhID3k9ebDGpv0z/wc3wLgw
-         w5QNsD1N89IPItbclF1Tjmt7Nzr1Uc4nlwGHQhoXTihqMkdiGehCNxf1rSdF5CPGWWpD
-         AwKqahYsRiFCbspEz+wqSHTW6kgG5/7mxW0HPCHbKDWNq3n8nWkT6oIQYZkGZjg1g8rG
-         ei/g==
-X-Gm-Message-State: APjAAAUGyEU/Q5L2RS/wkpl566G1e0Rjl9AGdAbSioeLFPpB2ID+Bj6j
-        ynJY4U8rHwKNMbyH7HQG0IEL+g==
-X-Google-Smtp-Source: APXvYqzUBait63OW0AhXaaPpAWLX1TIz8EDCPO6Z+huQvod4nZOOQ8LdxkIXpDuLyjOP3m45KIvhrg==
-X-Received: by 2002:adf:f088:: with SMTP id n8mr2387085wro.115.1573644375190;
-        Wed, 13 Nov 2019 03:26:15 -0800 (PST)
-Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id s9sm1884689wmj.22.2019.11.13.03.26.13
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=NWmx5zlrVzI636UV5zn7jwNNYyPpT2kzazOSeqZFCPQ=;
+        b=aWXwXaiBbnwtvOPw6rxpR07qMoC9pwx0KL8fyuxjh6fuxH2TK6EVrufglMlCRjOXnx
+         +Yno4Rg4ynJ3v04jO2Ygiy+SJE1vq//Z/yg38Ar7Y+BODiYb93ZCau1o+UKXUwjplIC4
+         IVhXSNnSlZBWjAyyXO8q7HA1KflS0fZOZ7GT3lUpqs3g5BXyWqJcisiTA1B3wl+Mdn8D
+         sZbPNxg15SwStMMv8JqQzQphrm/vqzc4ZdeP4hGa0iOI4Pu6T4+xvws81nPMfqLRLyqG
+         atdvzCIIBIaq2aPpjPBJONQ+dDSHB3QZGrCpDExx85cy1tlpXcpKLj9g0xJ73p0ud+gc
+         3jKQ==
+X-Gm-Message-State: APjAAAX1gj1b3a0kOo6rllEU5+8xLmAImBzeKmXW1hN9CgE0jF8wqTmv
+        JT02CoR5YmyRfMFpQBIW5GiR4g==
+X-Google-Smtp-Source: APXvYqw4ALVmGTh9KFISsJCvLVpFEzXuyu2WMWEkcAdM7khXUlUWKA93QR1nKFP8k/o5YdLFIE0ItA==
+X-Received: by 2002:a5d:50ce:: with SMTP id f14mr2625324wrt.219.1573645394576;
+        Wed, 13 Nov 2019 03:43:14 -0800 (PST)
+Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
+        by smtp.gmail.com with ESMTPSA id w4sm2544060wrs.1.2019.11.13.03.43.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2019 03:26:14 -0800 (PST)
-Date:   Wed, 13 Nov 2019 12:26:08 +0100
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] ovl: fix timestamp limits
-Message-ID: <20191113112608.GA5569@miu.piliscsaba.redhat.com>
-References: <20191111073000.2957-1-amir73il@gmail.com>
- <CAJfpegvASSszZoYOdX9dcffo0EUNGVe_b8RU3JTtn-tXr9O7eg@mail.gmail.com>
- <CAOQ4uxhMqYWYnXfXrzU7Qtv8xpR6k_tR9CFSo01NLZSvqBOxsw@mail.gmail.com>
- <CAJfpeguvm=1Dw7V4XTr4gyo3uK+-EFNYKeDCFvUmuMPJxA=TcA@mail.gmail.com>
+        Wed, 13 Nov 2019 03:43:13 -0800 (PST)
+Date:   Wed, 13 Nov 2019 12:43:11 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Jan Kara <jack@suse.cz>
+Cc:     John Hubbard <jhubbard@nvidia.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf <bpf@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>, linux-rdma@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 00/23] mm/gup: track dma-pinned pages: FOLL_PIN,
+ FOLL_LONGTERM
+Message-ID: <20191113114311.GP23790@phenom.ffwll.local>
+Mail-Followup-To: Jan Kara <jack@suse.cz>,
+        John Hubbard <jhubbard@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>, David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>, Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf <bpf@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" <linux-media@vger.kernel.org>,
+        linux-rdma@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20191112000700.3455038-1-jhubbard@nvidia.com>
+ <20191112203802.GD5584@ziepe.ca>
+ <02fa935c-3469-b766-b691-5660084b60b9@nvidia.com>
+ <CAKMK7uHvk+ti00mCCF2006U003w1dofFg9nSfmZ4bS2Z2pEDNQ@mail.gmail.com>
+ <7b671bf9-4d94-f2cc-8453-863acd5a1115@nvidia.com>
+ <20191113101210.GD6367@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJfpeguvm=1Dw7V4XTr4gyo3uK+-EFNYKeDCFvUmuMPJxA=TcA@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191113101210.GD6367@quack2.suse.cz>
+X-Operating-System: Linux phenom 5.2.0-3-amd64 
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 11:26:13AM +0100, Miklos Szeredi wrote:
-> On Tue, Nov 12, 2019 at 5:06 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > On Tue, Nov 12, 2019 at 5:48 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > >
-> > > On Mon, Nov 11, 2019 at 8:30 AM Amir Goldstein <amir73il@gmail.com> wrote:
-> > > >
-> > > > Overlayfs timestamp overflow limits should be inherrited from upper
-> > > > filesystem.
-> > > >
-> > > > The current behavior, when overlayfs is over an underlying filesystem
-> > > > that does not support post 2038 timestamps (e.g. xfs), is that overlayfs
-> > > > overflows post 2038 timestamps instead of clamping them.
-> > >
-> > > How?  Isn't the clamping supposed to happen in the underlying filesystem anyway?
-> > >
-> >
-> > Not sure if it is supposed to be it doesn't.
-> > It happens in do_utimes() -> utimes_common()
+On Wed, Nov 13, 2019 at 11:12:10AM +0100, Jan Kara wrote:
+> On Wed 13-11-19 01:02:02, John Hubbard wrote:
+> > On 11/13/19 12:22 AM, Daniel Vetter wrote:
+> > ...
+> > > > > Why are we doing this? I think things got confused here someplace, as
+> > > > 
+> > > > 
+> > > > Because:
+> > > > 
+> > > > a) These need put_page() calls,  and
+> > > > 
+> > > > b) there is no put_pages() call, but there is a release_pages() call that
+> > > > is, arguably, what put_pages() would be.
+> > > > 
+> > > > 
+> > > > > the comment still says:
+> > > > > 
+> > > > > /**
+> > > > >   * put_user_page() - release a gup-pinned page
+> > > > >   * @page:            pointer to page to be released
+> > > > >   *
+> > > > >   * Pages that were pinned via get_user_pages*() must be released via
+> > > > >   * either put_user_page(), or one of the put_user_pages*() routines
+> > > > >   * below.
+> > > > 
+> > > > 
+> > > > Ohhh, I missed those comments. They need to all be changed over to
+> > > > say "pages that were pinned via pin_user_pages*() or
+> > > > pin_longterm_pages*() must be released via put_user_page*()."
+> > > > 
+> > > > The get_user_pages*() pages must still be released via put_page.
+> > > > 
+> > > > The churn is due to a fairly significant change in strategy, whis
+> > > > is: instead of changing all get_user_pages*() sites to call
+> > > > put_user_page(), change selected sites to call pin_user_pages*() or
+> > > > pin_longterm_pages*(), plus put_user_page().
+> > > 
+> > > Can't we call this unpin_user_page then, for some symmetry? Or is that
+> > > even more churn?
+> > > 
+> > > Looking from afar the naming here seems really confusing.
+> > 
+> > 
+> > That look from afar is valuable, because I'm too close to the problem to see
+> > how the naming looks. :)
+> > 
+> > unpin_user_page() sounds symmetrical. It's true that it would cause more
+> > churn (which is why I started off with a proposal that avoids changing the
+> > names of put_user_page*() APIs). But OTOH, the amount of churn is proportional
+> > to the change in direction here, and it's really only 10 or 20 lines changed,
+> > in the end.
+> > 
+> > So I'm open to changing to that naming. It would be nice to hear what others
+> > prefer, too...
 > 
-> Ah.   How about moving the timestamp_truncate() inside notify_change()?
+> FWIW I'd find unpin_user_page() also better than put_user_page() as a
+> counterpart to pin_user_pages().
 
-Untested patch below.
-
-BTW overlayfs isn't the only one calling notify_change().  There's knfsd and
-ecryptfs, neither of which seems to clamp timestamps according on the underlying
-filesystem.
-
-Thanks,
-Miklos
-
-diff --git a/fs/attr.c b/fs/attr.c
-index df28035aa23e..e8de5e636e66 100644
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -268,8 +268,13 @@ int notify_change(struct dentry * dentry, struct iattr * attr, struct inode **de
- 	attr->ia_ctime = now;
- 	if (!(ia_valid & ATTR_ATIME_SET))
- 		attr->ia_atime = now;
-+	else
-+		attr->ia_atime = timestamp_truncate(attr->ia_atime, inode);
- 	if (!(ia_valid & ATTR_MTIME_SET))
- 		attr->ia_mtime = now;
-+	else
-+		attr->ia_mtime = timestamp_truncate(attr->ia_mtime, inode);
-+
- 	if (ia_valid & ATTR_KILL_PRIV) {
- 		error = security_inode_need_killpriv(dentry);
- 		if (error < 0)
-diff --git a/fs/utimes.c b/fs/utimes.c
-index 1ba3f7883870..df483207da4e 100644
---- a/fs/utimes.c
-+++ b/fs/utimes.c
-@@ -35,17 +35,13 @@ static int utimes_common(const struct path *path, struct timespec64 *times)
- 	if (times) {
- 		if (times[0].tv_nsec == UTIME_OMIT)
- 			newattrs.ia_valid &= ~ATTR_ATIME;
--		else if (times[0].tv_nsec != UTIME_NOW) {
--			newattrs.ia_atime = timestamp_truncate(times[0], inode);
-+		else if (times[0].tv_nsec != UTIME_NOW)
- 			newattrs.ia_valid |= ATTR_ATIME_SET;
--		}
- 
- 		if (times[1].tv_nsec == UTIME_OMIT)
- 			newattrs.ia_valid &= ~ATTR_MTIME;
--		else if (times[1].tv_nsec != UTIME_NOW) {
--			newattrs.ia_mtime = timestamp_truncate(times[1], inode);
-+		else if (times[1].tv_nsec != UTIME_NOW)
- 			newattrs.ia_valid |= ATTR_MTIME_SET;
--		}
- 		/*
- 		 * Tell setattr_prepare(), that this is an explicit time
- 		 * update, even if neither ATTR_ATIME_SET nor ATTR_MTIME_SET
+One more point from afar on pin/unpin: We use that a lot in graphics for
+permanently pinned graphics buffer objects. Which really only should be
+used for scanout. So at least graphics folks should have an appropriate
+mindset and try to make sure we don't overuse this stuff.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
