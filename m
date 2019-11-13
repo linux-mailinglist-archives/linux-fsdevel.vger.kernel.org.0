@@ -2,123 +2,203 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DB6FFB518
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 17:30:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09EA7FB52E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 17:34:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727511AbfKMQae (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Nov 2019 11:30:34 -0500
-Received: from mout.kundenserver.de ([212.227.126.135]:54861 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbfKMQad (ORCPT
+        id S1728441AbfKMQeX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Nov 2019 11:34:23 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:51584 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726434AbfKMQeW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Nov 2019 11:30:33 -0500
-Received: from localhost.localdomain ([78.238.229.36]) by
- mrelayeu.kundenserver.de (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MTRAS-1iIqj91PGm-00Tiv9; Wed, 13 Nov 2019 17:30:27 +0100
-From:   Laurent Vivier <laurent@vivier.eu>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Laurent Vivier <laurent@vivier.eu>
-Subject: [RFC] binfmt_misc: pass binfmt_misc flags to the interpreter
-Date:   Wed, 13 Nov 2019 17:30:23 +0100
-Message-Id: <20191113163023.12093-1-laurent@vivier.eu>
-X-Mailer: git-send-email 2.21.0
+        Wed, 13 Nov 2019 11:34:22 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xADGOJCK005238;
+        Wed, 13 Nov 2019 16:34:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=uwOzuqofgFKh9CEoqNvzVkfLznB5nfyiXg6VNNfhcFk=;
+ b=HBCnFCelzgmakVWzg73V7nhlS1OQXWcHa07QisTyW2UrFi9oAfnuHUuODUuZv30DlqlF
+ dsa56DWJD91/+SDPrDavFw0knljOon4amqfR2J9qDzaZwKz/9Xk5Ha9UgZpJxBMqJAEu
+ 94s+QXHBNmKe0B//15+xn096nnlU2bmLAScpe8XdbwKWgZEgCJFDIkKsuS+iCDmpSaxu
+ X+jCfwh4+KQIWg+G1kfC+B5hcc4osjCphSB/nFpJKD5T5lxV6MDwvdwHor2Pl9hTJljz
+ qMLFvRbd/VJtv7MmUhM/57LfsdNaq2B4S0/PbOE0YjxpOnG1yx5GxeyvJxCUSVKT/Cg6 lA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2w5ndqdpp5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Nov 2019 16:34:11 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xADGQZwx186050;
+        Wed, 13 Nov 2019 16:34:11 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2w7vppj4q6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Nov 2019 16:34:10 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xADGY3V9006663;
+        Wed, 13 Nov 2019 16:34:03 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 13 Nov 2019 08:34:03 -0800
+Date:   Wed, 13 Nov 2019 08:34:01 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Brian Foster <bfoster@redhat.com>,
+        Allison Collins <allison.henderson@oracle.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC 1/5] xfs: [variant A] avoid time_t in user api
+Message-ID: <20191113163401.GW6219@magnolia>
+References: <20191112120910.1977003-1-arnd@arndb.de>
+ <20191112120910.1977003-2-arnd@arndb.de>
+ <20191112141600.GB10922@lst.de>
+ <20191113050628.GS6219@magnolia>
+ <CAK8P3a3c3kCXAPU-sJQvAvDQdAwVnQRiterdmqXufWkFdSSZ+g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:tKDMUG8kcwt6Ne6b/bU0I1DLrrXe8vTkpOS+u1umkGjkHDSF+JU
- A7lwtw6498ZdmmBz3K/VaEjT8J6PNt8keECx4g+9SGAHtcspsCjYiAdKlcF9xAEuufKb8y9
- pEgsZuyqKfdHBoOGNdB93fl6L6EmER3HmIEY64rmNEAShCmbAWpRSw7WIYy/qL2WTqVS1gI
- uETF245dKXzKYPRsFW1mQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Tvi5kkWmOQE=:ZFtWzL0TVRJ2aXPjbIWkcW
- 8Ju9ZhhcB0e3hPbGotiKy9DsFQJQw6G4WePxU34waM4OCqeQOQShcOcPp6prro9ATF4DBvjW0
- WuCz9+0Wg3fU16nIYJTiaDnSzbmwT9e53aQqCTTPI4UgoRffaFU7FIbKLm9/cs+ZGtOGWLIZR
- UgkfcNIeFQkZzQct5tHAv3wugtQjCitxxkt9On1X3gcG6h9kasI+9Ruo8s2cXeSFf9wFF4loO
- FiSyFT/HFqlOUeGnNwLO9qWBlD9458lL5OO27p8+5ZTX49C0+gzJIIfIZZZoJde4ztiFMm/GR
- ir+yGZbZpL8msdwP/AFXb6ClbzSTu8TVKDSjp91lf28Gy4cRR/6JfK+KTyG83qF6tsqRqIzxd
- 5O6iOKE/gkeSGC2ybVehvrfErfcoSxgpODFPwk/g/JVrP3ievnbD7KrlM16OATiAOidMUIgcs
- wRRSIcGfhXMs5S45B5+QoUCpVho2Q68XE5Ay9Ty8zPQ7A0z5enLM8rcLo9D1loum1LU4USgAF
- k4yMrbaJOIpogPsUNLBaAX68ec3tqRxmOzdLhLwbGe9sMUUEGJepGxLTAbG6jd8ae4BKXhBBf
- yEdeMopecLr5vyk0R7hZSR8XQgJeP7or4jdtCNdKZz76TW4EmTe5EkLnBgf6OHj7HuJxjQshf
- ts/MwAfP4HwLSbVUIMUMNjfocISmcl7dNXwJahZZQrUf5+7JaIk/rvkkWWGRto3qURXkt8Qa0
- CdADQegswy8fGsqZT8d7HFq2TA1URShuQcDuptGSZ6sLt4D1oRD26b6fvJbkIiZK9nAdXC67K
- 9ryYW2rag1fxD9krIb507bWQjxT313+lDNAciFzQMp2iMA1lGi7lxvhID8wqNGUgoBUtCds2X
- NdOLxUv2hlPHwV9TWcVg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a3c3kCXAPU-sJQvAvDQdAwVnQRiterdmqXufWkFdSSZ+g@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9440 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1910280000 definitions=main-1911130146
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9440 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
+ definitions=main-1911130146
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-It can be useful to the interpreter to know which flags are in use.
+On Wed, Nov 13, 2019 at 02:42:24PM +0100, Arnd Bergmann wrote:
+> On Wed, Nov 13, 2019 at 6:08 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+> > On Tue, Nov 12, 2019 at 03:16:00PM +0100, Christoph Hellwig wrote:
+> > > On Tue, Nov 12, 2019 at 01:09:06PM +0100, Arnd Bergmann wrote:
+> > > > However, as long as two observations are true, a much simpler solution
+> > > > can be used:
+> > > >
+> > > > 1. xfsprogs is the only user space project that has a copy of this header
+> > >
+> > > We can't guarantee that.
+> > >
+> > > > 2. xfsprogs already has a replacement for all three affected ioctl commands,
+> > > >    based on the xfs_bulkstat structure to pass 64-bit timestamps
+> > > >    regardless of the architecture
+> > >
+> > > XFS_IOC_BULKSTAT replaces XFS_IOC_FSBULKSTAT directly, and can replace
+> > > XFS_IOC_FSBULKSTAT_SINGLE indirectly, so that is easy.  Most users
+> > > actually use the new one now through libfrog, although I found a user
+> > > of the direct ioctl in the xfs_io tool, which could easily be fixed as
+> > > well.
+> >
+> > Agreed, XFS_IOC_BULKSTAT is the replacement for the two FSBULKSTAT
+> > variants.  The only question in my mind for the old ioctls is whether we
+> > should return EOVERFLOW if the timestamp would overflow?  Or just
+> > truncate the results?
+> 
+> I think neither of these would be particularly helpful, the result is that users
+> see no change in behavior until it's actually too late and the timestamps have
+> overrun.
+> 
+> If we take variant A and just fix the ABI to 32-bit time_t, it is important
+> that all user space stop using these ioctls and moves to the v5 interfaces
+> instead (including SWAPEXT I guess).
+> 
+> Something along the lines of this change would work:
+> 
+> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+> index d50135760622..87318486c96e 100644
+> --- a/fs/xfs/xfs_ioctl.c
+> +++ b/fs/xfs/xfs_ioctl.c
+> @@ -830,6 +830,23 @@ xfs_fsinumbers_fmt(
+>         return xfs_ibulk_advance(breq, sizeof(struct xfs_inogrp));
+>  }
+> 
+> +/* disallow y2038-unsafe ioctls with CONFIG_COMPAT_32BIT_TIME=n */
+> +static bool xfs_have_compat_bstat_time32(unsigned int cmd)
+> +{
 
-For instance, knowing if the preserve-argv[0] is in use would
-allow to skip the pathname argument.
+Wouldn't we want a test here like:
 
-This patch uses an unused auxiliary vector, AT_FLAGS,  to pass the
-content of the binfmt flags (bits for P, F, C, O, ...).
+	if (!xfs_sb_version_hasbigtimestamps(&mp->m_sb))
+		return true;
 
-Signed-off-by: Laurent Vivier <laurent@vivier.eu>
----
- fs/binfmt_elf.c         | 2 +-
- fs/binfmt_elf_fdpic.c   | 2 +-
- fs/binfmt_misc.c        | 2 ++
- include/linux/binfmts.h | 2 +-
- 4 files changed, 5 insertions(+), 3 deletions(-)
+Since date overflow isn't a problem for existing xfs with 32-bit
+timestamps, right?
 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index c5642bcb6b46..7a34c03e5857 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -250,7 +250,7 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
- 	NEW_AUX_ENT(AT_PHENT, sizeof(struct elf_phdr));
- 	NEW_AUX_ENT(AT_PHNUM, exec->e_phnum);
- 	NEW_AUX_ENT(AT_BASE, interp_load_addr);
--	NEW_AUX_ENT(AT_FLAGS, 0);
-+	NEW_AUX_ENT(AT_FLAGS, bprm->fmt_flags);
- 	NEW_AUX_ENT(AT_ENTRY, exec->e_entry);
- 	NEW_AUX_ENT(AT_UID, from_kuid_munged(cred->user_ns, cred->uid));
- 	NEW_AUX_ENT(AT_EUID, from_kuid_munged(cred->user_ns, cred->euid));
-diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-index d86ebd0dcc3d..8fe839be125e 100644
---- a/fs/binfmt_elf_fdpic.c
-+++ b/fs/binfmt_elf_fdpic.c
-@@ -647,7 +647,7 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
- 	NEW_AUX_ENT(AT_PHENT,	sizeof(struct elf_phdr));
- 	NEW_AUX_ENT(AT_PHNUM,	exec_params->hdr.e_phnum);
- 	NEW_AUX_ENT(AT_BASE,	interp_params->elfhdr_addr);
--	NEW_AUX_ENT(AT_FLAGS,	0);
-+	NEW_AUX_ENT(AT_FLAGS,	bprm->fmt_flags);
- 	NEW_AUX_ENT(AT_ENTRY,	exec_params->entry_addr);
- 	NEW_AUX_ENT(AT_UID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->uid));
- 	NEW_AUX_ENT(AT_EUID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->euid));
-diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-index cdb45829354d..b204fa5a2fe4 100644
---- a/fs/binfmt_misc.c
-+++ b/fs/binfmt_misc.c
-@@ -149,6 +149,8 @@ static int load_misc_binary(struct linux_binprm *bprm)
- 	if (!fmt)
- 		return retval;
- 
-+	bprm->fmt_flags = fmt->flags;
-+
- 	/* Need to be able to load the file after exec */
- 	retval = -ENOENT;
- 	if (bprm->interp_flags & BINPRM_FLAGS_PATH_INACCESSIBLE)
-diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-index b40fc633f3be..dae0d0d7b84d 100644
---- a/include/linux/binfmts.h
-+++ b/include/linux/binfmts.h
-@@ -60,7 +60,7 @@ struct linux_binprm {
- 				   different for binfmt_{misc,script} */
- 	unsigned interp_flags;
- 	unsigned interp_data;
--	unsigned long loader, exec;
-+	unsigned long loader, exec, fmt_flags;
- 
- 	struct rlimit rlim_stack; /* Saved RLIMIT_STACK used during exec. */
- 
--- 
-2.21.0
+> +       if (IS_ENABLED(CONFIG_COMPAT_32BIT_TIME))
 
+Heh, I didn't know that existed.
+
+> +               return true;
+> +
+> +       if (IS_ENABLED(CONFIG_64BIT) && !in_compat_syscall())
+> +               return true;
+> +       if (cmd == XFS_IOC_FSBULKSTAT_SINGLE ||
+> +           cmd == XFS_IOC_FSBULKSTAT ||
+> +           cmd == XFS_IOC_SWAPEXT)
+> +               return false;
+> +
+> +       return true;
+> +}
+> +
+>  STATIC int
+>  xfs_ioc_fsbulkstat(
+>         xfs_mount_t             *mp,
+> @@ -850,6 +867,9 @@ xfs_ioc_fsbulkstat(
+>         if (!capable(CAP_SYS_ADMIN))
+>                 return -EPERM;
+> 
+> +       if (!xfs_have_compat_bstat_time32())
+> +               return -EINVAL;
+> +
+>         if (XFS_FORCED_SHUTDOWN(mp))
+>                 return -EIO;
+> 
+> @@ -2051,6 +2071,11 @@ xfs_ioc_swapext(
+>         struct fd       f, tmp;
+>         int             error = 0;
+> 
+> +       if (xfs_have_compat_bstat_time32(XFS_IOC_SWAPEXT)) {
+> +               error = -EINVAL
+> +               got out;
+> +       }
+> +
+>         /* Pull information for the target fd */
+>         f = fdget((int)sxp->sx_fdtarget);
+>         if (!f.file) {
+> 
+> This way, at least users that intentionally turn off CONFIG_COMPAT_32BIT_TIME
+> run into the broken application right away, which forces them to upgrade or fix
+> the code to use the v5 ioctl.
+
+Sounds reasonable.
+
+--D
+
+> > > > Based on those assumptions, changing xfs_bstime to use __kernel_long_t
+> > > > instead of time_t in both the kernel and in xfsprogs preserves the current
+> > > > ABI for any libc definition of time_t and solves the problem of passing
+> > > > 64-bit timestamps to 32-bit user space.
+> > >
+> > > As said above their are not entirely true, but I still think this patch
+> > > is the right thing to do, if only to get the time_t out of the ABI..
+> > >
+> > > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> >
+> > Seconded,
+> > Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+> 
+> Thanks!
+> 
+>      Arnd
