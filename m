@@ -2,101 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1C9DFB6F1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 19:00:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C35E3FB71D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 19:19:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727687AbfKMSAf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Nov 2019 13:00:35 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43264 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726120AbfKMSAf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Nov 2019 13:00:35 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0135DADE4;
-        Wed, 13 Nov 2019 18:00:32 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 731841E1498; Wed, 13 Nov 2019 19:00:32 +0100 (CET)
-Date:   Wed, 13 Nov 2019 19:00:32 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-ext4@vger.kernel.org, Ted Tso <tytso@mit.edu>
-Subject: Splice & iomap dio problems
-Message-ID: <20191113180032.GB12013@quack2.suse.cz>
+        id S1727835AbfKMSTS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Nov 2019 13:19:18 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:46030 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726120AbfKMSTS (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 Nov 2019 13:19:18 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xADI97jv110780;
+        Wed, 13 Nov 2019 18:19:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=QqPLR23WbtLLmBLv1Y/qMpibvkpOaVLJ71YqnsOGErk=;
+ b=Bs4Ay0SbJRQz44r+iYu8kbiAT0IpoBiCDnukqLvyTDw784iMccDyO/YGpH1zYxz9r4T2
+ AvkMQDevx/10faleSSYf/eenNzt6qfkS0IkpKXTR5RRluFTDDZt5SORDZsed+M0JtoFA
+ f1N2Dpz4rvd2L70vpso4VLdPRXP2Ozt5S3a5rsjzvhB/8CmrQ0awcsWiNYZ28XduWeyC
+ F279alDiCS/WyWkG/dzO0j318w7eIz6+G9iGUHdoUDigTLDGZ8ZBiw8OtdqaXAICdnN8
+ 344t3/foyIUJ92MkZBauI0YAAxPMG8Kw0k7vKyGcIiyI5wItzJN70lnRfaAT/5J5LkhM uQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2w5mvtxckr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Nov 2019 18:19:15 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xADIDebh006778;
+        Wed, 13 Nov 2019 18:19:15 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2w7vbdatdr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Nov 2019 18:19:14 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xADIJEFd002374;
+        Wed, 13 Nov 2019 18:19:14 GMT
+Received: from kadam (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 13 Nov 2019 10:19:13 -0800
+Date:   Wed, 13 Nov 2019 21:19:04 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Cc:     gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 8/9] staging: exfat: Collapse redundant return code
+ translations
+Message-ID: <20191113181904.GD3284@kadam>
+References: <20191112021000.42091-1-Valdis.Kletnieks@vt.edu>
+ <20191112021000.42091-9-Valdis.Kletnieks@vt.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191112021000.42091-9-Valdis.Kletnieks@vt.edu>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9440 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1910280000 definitions=main-1911130157
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9440 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
+ definitions=main-1911130157
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Mon, Nov 11, 2019 at 09:09:56PM -0500, Valdis Kletnieks wrote:
+> Now that we no longer use odd internal return codes, we can
+> heave the translation code over the side, and just pass the
+> error code back up the call chain.
+> 
+> Signed-off-by: Valdis Kletnieks <Valdis.Kletnieks@vt.edu>
+> ---
+>  drivers/staging/exfat/exfat_super.c | 92 +++++------------------------
+>  1 file changed, 14 insertions(+), 78 deletions(-)
+> 
+> diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
+> index 5d538593b5f6..a97a61a60517 100644
+> --- a/drivers/staging/exfat/exfat_super.c
+> +++ b/drivers/staging/exfat/exfat_super.c
+> @@ -650,7 +650,7 @@ static int ffsCreateFile(struct inode *inode, char *path, u8 mode,
+>  	struct uni_name_t uni_name;
+>  	struct super_block *sb = inode->i_sb;
+>  	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
+> -	int ret;
+> +	int ret = 0;
 
-I've spent today tracking down the syzkaller report of a WARN_ON hit in
-iov_iter_pipe() [1]. The immediate problem is that syzkaller reproducer
-(calling sendfile(2) from different threads at the same time a file to the
-same file in rather evil way) results in splice code leaking pipe pages
-(nrbufs doesn't return to 0 after read+write in the splice) and eventually
-we run out of pipe pages and hit the warning in iov_iter_pipe(). The
-problem is not specific to ext4, I can see in my tracing that when the
-underlying filesystem is XFS, we can leak the pipe pages in the same way
-(but for XFS somehow the problem doesn't happen as often).  Rather the
-problem seems to be in how iomap direct IO code, pipe iter code, and splice
-code interact.
+Why are you adding this initializer?  It just disables static analysis
+warnings about uninitialized variables and it creates a static analysis
+warning about unused assignments.
 
-So the problematic situation is when we do direct IO read into pipe pages
-and the read hits EOF which is not on page boundary. Say the file has 4608
-(4096+512) bytes, block size == page size == 4096. What happens is that iomap
-code maps the extent, gets that the extent size is 8192 (mapping ignores
-i_size). Then we call iomap_dio_bio_actor(), which creates its private
-iter, truncates it to 8192, and calls bio_iov_iter_get_pages(). That
-eventually results in preparing two pipe buffers with length 4096 to accept
-the read. Then read completes, in iomap_dio_complete() we truncate the return
-value from 8192 (which was the real amount of IO we performed) to 4608. Now
-this amount (4608) gets passed through splice code to
-iter_file_splice_write(), we write out that amount, but then when cleaning
-up pipe buffers, the last pipe buffer has still 3584 unused so we leave
-the pipe buffer allocated and effectively leak it.
+>  
+>  	/* check the validity of pointer parameters */
+>  	if (!fid || !path || (*path == '\0'))
 
-Now I was also investigating why the old direct IO code doesn't leak pipe
-buffers like this and the trick is done by the iov_iter_revert() call
-generic_file_read_iter(). This results in setting iter position right to
-the position where direct IO read reported it ended (4608) and truncating
-pipe buffers after this point. So splice code then sees the second pipe
-buffer has length only 512 which matches the amount it was asked to write
-and so the pipe buffer gets freed after the write in
-iter_file_splice_write().
+[ snip ]
 
-The question is how to best fix this. The quick fix is to add
-iov_iter_revert() call to iomap_dio_rw() so that in case of sync IO (we
-always do only sync IO to pipes), we properly set iter position in case of
-short read / write. But it looks somewhat hacky to me and this whole
-interaction of iter and pipes looks fragile to me.
+> @@ -3161,12 +3102,7 @@ static int exfat_bmap(struct inode *inode, sector_t sector, sector_t *phys,
+>  
+>  	err = ffsMapCluster(inode, clu_offset, &cluster);
+>  
+> -	if (err) {
+> -		if (err == -ENOSPC)
+> -			return -ENOSPC;
+> -		else
+> -			return -EIO;
+> -	} else if (cluster != CLUSTER_32(~0)) {
+> +	if (!err && (cluster != CLUSTER_32(~0))) {
+>  		*phys = START_SECTOR(cluster) + sec_offset;
+>  		*mapped_blocks = p_fs->sectors_per_clu - sec_offset;
+>  	}
 
-Another option I can see is to truncate the iter to min(i_size-pos, length) in
-iomap_dio_bio_actor() which *should* do the trick AFAICT. But I'm not sure
-if it won't break something else.
 
-Any other ideas?
+If ffsMapCluster() fails then we return success now.  Is that
+intentional?
 
-As a side note the logic copying iter in iomap_dio_bio_actor() looks
-suspicious. We copy 'dio->submit.iter' to 'iter' but then in the loop we call
-iov_iter_advance() on dio->submit.iter. So if bio_iov_iter_get_pages()
-didn't return enough pages and we loop again, 'iter' will have stale
-contents and things go sideways from there? What am I missing? And why do
-we do that strange copying of iter instead of using iov_iter_truncate() and
-iov_iter_reexpand() on the 'dio->submit.iter' directly?
+regards,
+dan carpener
 
-								Honza
-
-[1] https://lore.kernel.org/lkml/000000000000d60aa50596c63063@google.com
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
