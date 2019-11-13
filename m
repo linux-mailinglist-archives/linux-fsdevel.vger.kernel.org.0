@@ -2,52 +2,30 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5790FFABF2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 09:22:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 591FEFAC88
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 10:05:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727324AbfKMIWy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Nov 2019 03:22:54 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:42806 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727321AbfKMIWt (ORCPT
+        id S1727113AbfKMJEv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Nov 2019 04:04:51 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:2292 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbfKMJEv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Nov 2019 03:22:49 -0500
-Received: by mail-oi1-f193.google.com with SMTP id i185so999991oif.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2019 00:22:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9ayY6gCXrrA3VgRAyrp2bK0EyrP0ektptyzgRBWzw5I=;
-        b=A+5ZDAwm0sisXEXV26bplYhx0LMI9tSEqcz5XKqugaaiNBsieQDhWSu2ezHIxsk3ok
-         PapqJ40EqXbuXexGXvb3dctMfbGHjaFuYDAai4pvCrk3ttwW8fkWJFMlnWK5Sh3WDfzP
-         au9tTKQUHDCal3qSVw21r18Mu3ZTlLggTEjdE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9ayY6gCXrrA3VgRAyrp2bK0EyrP0ektptyzgRBWzw5I=;
-        b=kccTtG5oELKeMVF3IDYEJJekO43fP3hyCRinV1gcIhotXU++e+A3YPRotSpHRhK+yf
-         fikKlB2TEL3YW2eyMjWIp7jgqc/ERKWf03jmR3RGTRE50TNRl2sOkwuszh53eSuHfGQ5
-         eVz0gjhRjELEE1S6lKx6iEy2R6jsllK7iVKd/RLxVaXAy4EqG8rydbPLNpFxTUti6hQV
-         xhXL0kfI4MZqtG205i8peRaAfrBnCkKNgy0vjWufoYpHVvMZMfQDM44ZbGNGrEngNoA4
-         yW6BySjhxHXZALIjCkG40mAhcihKNOQ/J+RbRIfi67Qr/AL2fN+OKkHLMJvpIskBbeMP
-         hn8w==
-X-Gm-Message-State: APjAAAV5jYKr+TG462UBSQyt+QY6TfM8SOjRJ0G95bwCVbDgNgQJfCvk
-        hj4Nl2/HGj+1+OCaYQwcnpiRgV5t6jwW3n97pFDHWw==
-X-Google-Smtp-Source: APXvYqxfSdLpxppf1Yvj8Pnz7e2iZsxyqjYKBICjfkF8MEX8zkGbqRRzZo57EW2FfCAXfyKFCc6JsAljOesoFoCv0a8=
-X-Received: by 2002:a05:6808:4cf:: with SMTP id a15mr1806257oie.132.1573633368138;
- Wed, 13 Nov 2019 00:22:48 -0800 (PST)
-MIME-Version: 1.0
-References: <20191112000700.3455038-1-jhubbard@nvidia.com> <20191112203802.GD5584@ziepe.ca>
- <02fa935c-3469-b766-b691-5660084b60b9@nvidia.com>
-In-Reply-To: <02fa935c-3469-b766-b691-5660084b60b9@nvidia.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Wed, 13 Nov 2019 09:22:36 +0100
-Message-ID: <CAKMK7uHvk+ti00mCCF2006U003w1dofFg9nSfmZ4bS2Z2pEDNQ@mail.gmail.com>
-Subject: Re: [PATCH v3 00/23] mm/gup: track dma-pinned pages: FOLL_PIN, FOLL_LONGTERM
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Wed, 13 Nov 2019 04:04:51 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dcbc7300000>; Wed, 13 Nov 2019 01:04:48 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 13 Nov 2019 01:04:48 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 13 Nov 2019 01:04:48 -0800
+Received: from [10.2.160.173] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 13 Nov
+ 2019 09:04:48 +0000
+Subject: Re: [PATCH v3 00/23] mm/gup: track dma-pinned pages: FOLL_PIN,
+ FOLL_LONGTERM
+To:     Daniel Vetter <daniel@ffwll.ch>
+CC:     Jason Gunthorpe <jgg@ziepe.ca>,
         Andrew Morton <akpm@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Alex Williamson <alex.williamson@redhat.com>,
@@ -69,101 +47,107 @@ Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
         Paul Mackerras <paulus@samba.org>,
         Shuah Khan <shuah@kernel.org>,
         Vlastimil Babka <vbabka@suse.cz>, bpf <bpf@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>, kvm@vger.kernel.org,
-        linux-block@vger.kernel.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        <kvm@vger.kernel.org>, <linux-block@vger.kernel.org>,
         Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
+        <linux-fsdevel@vger.kernel.org>,
         "open list:KERNEL SELFTEST FRAMEWORK" 
         <linux-kselftest@vger.kernel.org>,
         "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>, linux-rdma@vger.kernel.org,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
         linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
         netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
         LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <20191112000700.3455038-1-jhubbard@nvidia.com>
+ <20191112203802.GD5584@ziepe.ca>
+ <02fa935c-3469-b766-b691-5660084b60b9@nvidia.com>
+ <CAKMK7uHvk+ti00mCCF2006U003w1dofFg9nSfmZ4bS2Z2pEDNQ@mail.gmail.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <7b671bf9-4d94-f2cc-8453-863acd5a1115@nvidia.com>
+Date:   Wed, 13 Nov 2019 01:02:02 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAKMK7uHvk+ti00mCCF2006U003w1dofFg9nSfmZ4bS2Z2pEDNQ@mail.gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1573635888; bh=WuCLw1mNhRSSrQbzE2XtsJC46JZuOt82gJ5Z6A5sU6M=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=qgoX2qy8q+Pz4xwaUpJCPUDYqLc7AOyeowDXx94iSygezEmzpCR7ZZxo0cljsfswu
+         ukE0Cm+f0R483iPntRfn/ABXBRqJdTjYQOd5BMk3/+ahH8sNYpooo8xojMC+j2QKMp
+         YnZN0Muwss41C3UGdYFy5MS6hRmL0789DFptbHHfPd5vitO0CxsRYBJyPt01+pG4cX
+         6cPdl9NwtrthmFzBA5/mOnD1+FGwYZl+/Gsvcsk8njJ9ZjDk+S/T82e3qWgu+CaLxi
+         GAWOKJgmoqYLWXc9CemtInbG0/tG5R+23jPdDf2TY9FLXzVWhi+Ia12J1oxABZoP9Y
+         i24f/CxZw1J0Q==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 10:10 PM John Hubbard <jhubbard@nvidia.com> wrote:
->
-> On 11/12/19 12:38 PM, Jason Gunthorpe wrote:
-> > On Mon, Nov 11, 2019 at 04:06:37PM -0800, John Hubbard wrote:
-> >> Hi,
-> >>
-> >> The cover letter is long, so the more important stuff is first:
-> >>
-> >> * Jason, if you or someone could look at the the VFIO cleanup (patch 8)
-> >>   and conversion to FOLL_PIN (patch 18), to make sure it's use of
-> >>   remote and longterm gup matches what we discussed during the review
-> >>   of v2, I'd appreciate it.
-> >>
-> >> * Also for Jason and IB: as noted below, in patch 11, I am (too?) boldly
-> >>   converting from put_user_pages() to release_pages().
-> >
-> > Why are we doing this? I think things got confused here someplace, as
->
->
-> Because:
->
-> a) These need put_page() calls,  and
->
-> b) there is no put_pages() call, but there is a release_pages() call that
-> is, arguably, what put_pages() would be.
->
->
-> > the comment still says:
-> >
-> > /**
-> >  * put_user_page() - release a gup-pinned page
-> >  * @page:            pointer to page to be released
-> >  *
-> >  * Pages that were pinned via get_user_pages*() must be released via
-> >  * either put_user_page(), or one of the put_user_pages*() routines
-> >  * below.
->
->
-> Ohhh, I missed those comments. They need to all be changed over to
-> say "pages that were pinned via pin_user_pages*() or
-> pin_longterm_pages*() must be released via put_user_page*()."
->
-> The get_user_pages*() pages must still be released via put_page.
->
-> The churn is due to a fairly significant change in strategy, whis
-> is: instead of changing all get_user_pages*() sites to call
-> put_user_page(), change selected sites to call pin_user_pages*() or
-> pin_longterm_pages*(), plus put_user_page().
-
-Can't we call this unpin_user_page then, for some symmetry? Or is that
-even more churn?
-
-Looking from afar the naming here seems really confusing.
--Daniel
-
-> That allows incrementally converting the kernel over to using the
-> new pin APIs, without taking on the huge risk of a big one-shot
-> conversion.
->
-> So, I've ended up with one place that actually needs to get reverted
-> back to get_user_pages(), and that's the IB ODP code.
->
-> >
-> > I feel like if put_user_pages() is not the correct way to undo
-> > get_user_pages() then it needs to be deleted.
-> >
->
-> Yes, you're right. I'll fix the put_user_page comments() as described.
->
->
-> thanks,
->
-> John Hubbard
-> NVIDIA
+On 11/13/19 12:22 AM, Daniel Vetter wrote:
+...
+>>> Why are we doing this? I think things got confused here someplace, as
+>>
+>>
+>> Because:
+>>
+>> a) These need put_page() calls,  and
+>>
+>> b) there is no put_pages() call, but there is a release_pages() call that
+>> is, arguably, what put_pages() would be.
+>>
+>>
+>>> the comment still says:
+>>>
+>>> /**
+>>>   * put_user_page() - release a gup-pinned page
+>>>   * @page:            pointer to page to be released
+>>>   *
+>>>   * Pages that were pinned via get_user_pages*() must be released via
+>>>   * either put_user_page(), or one of the put_user_pages*() routines
+>>>   * below.
+>>
+>>
+>> Ohhh, I missed those comments. They need to all be changed over to
+>> say "pages that were pinned via pin_user_pages*() or
+>> pin_longterm_pages*() must be released via put_user_page*()."
+>>
+>> The get_user_pages*() pages must still be released via put_page.
+>>
+>> The churn is due to a fairly significant change in strategy, whis
+>> is: instead of changing all get_user_pages*() sites to call
+>> put_user_page(), change selected sites to call pin_user_pages*() or
+>> pin_longterm_pages*(), plus put_user_page().
+> 
+> Can't we call this unpin_user_page then, for some symmetry? Or is that
+> even more churn?
+> 
+> Looking from afar the naming here seems really confusing.
 
 
+That look from afar is valuable, because I'm too close to the problem to see
+how the naming looks. :)
 
+unpin_user_page() sounds symmetrical. It's true that it would cause more
+churn (which is why I started off with a proposal that avoids changing the
+names of put_user_page*() APIs). But OTOH, the amount of churn is proportional
+to the change in direction here, and it's really only 10 or 20 lines changed,
+in the end.
+
+So I'm open to changing to that naming. It would be nice to hear what others
+prefer, too...
+
+
+thanks,
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+John Hubbard
+NVIDIA
