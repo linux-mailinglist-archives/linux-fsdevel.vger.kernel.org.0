@@ -2,105 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E80F9FAF88
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 12:18:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A1C3FAFA0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 12:26:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727737AbfKMLSS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Nov 2019 06:18:18 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:39478 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727323AbfKMLSS (ORCPT
+        id S1727907AbfKML0S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Nov 2019 06:26:18 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35660 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727889AbfKML0R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Nov 2019 06:18:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573643896;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+4DKEG1YD9+fOubUldl9MnL4bU7MmbHESVaIk7Jx6mw=;
-        b=LerTC+FOqBT4kru6Y7lOowwUe14QAAnZqtbXZvo0JE2CmEqI/Y0RC35FO3V9SEZYDitAoo
-        jOgPdHMNMzEYCteAjZdEu5CfKdNBG9kK6AcXb8310DwihsuSoxOpQwCoxXp9C450uj/6PC
-        Dpyns1oGKHS9aJ69UDu2ra+pVlW2UzQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-40-i03voM_8MgmSRku1iW4VOA-1; Wed, 13 Nov 2019 06:18:13 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 48304107ACC5;
-        Wed, 13 Nov 2019 11:18:12 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4440D6106E;
-        Wed, 13 Nov 2019 11:18:09 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id xADBI8gN023568;
-        Wed, 13 Nov 2019 06:18:08 -0500
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id xADBI80c023564;
-        Wed, 13 Nov 2019 06:18:08 -0500
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Wed, 13 Nov 2019 06:18:08 -0500 (EST)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     tglx@linutronix.de, linux-rt-users@vger.kernel.org
-cc:     Mike Snitzer <msnitzer@redhat.com>,
-        Nikos Tsironis <ntsironis@arrikto.com>,
-        Scott Wood <swood@redhat.com>,
-        Ilias Tsitsimpis <iliastsi@arrikto.com>, dm-devel@redhat.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Daniel Wagner <dwagner@suse.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH RT 2/2 v3] list_bl: avoid BUG when the list is not locked
-In-Reply-To: <alpine.LRH.2.02.1911121110430.12815@file01.intranet.prod.int.rdu2.redhat.com>
-Message-ID: <alpine.LRH.2.02.1911130616570.20335@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1911121110430.12815@file01.intranet.prod.int.rdu2.redhat.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Wed, 13 Nov 2019 06:26:17 -0500
+Received: by mail-wr1-f67.google.com with SMTP id s5so1942259wrw.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2019 03:26:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mTXRlZhRwusuOSk5qpblMfH+EvvvFoGPrh91430+T2U=;
+        b=aGTueDxO+mXVLN37aOrEaaqOt8iqIvL/FDxjzKYcWilMMybJgd+PML9WsuAxHRDi9x
+         90gS7o78/Ey7X2dc4jYiw2PyxwMKk4B8mAGvvEAFfcHM+CtkJz/rg+CZ6nStCzlrjJ7U
+         AtmQP0tNk39XbfF09tgx51WMv8pYUP2LKS9SY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mTXRlZhRwusuOSk5qpblMfH+EvvvFoGPrh91430+T2U=;
+        b=nb8gjdL0NDlkhJQXVeMRkfq8IKd7sIjN2DdSTTW1mMucnAEO74sRvlc943VmdW9xgi
+         dPCdqEeSF1UV4QAOsq9iqAXAhtgEC3poin/B416/vsDKEFqkPnGV6o1p2OPdmzrBTMNI
+         mIOGBFjE4ZsHXRPKFAgEXKXxcAw7dQbIb4PIe+vqJbA2gIhID3k9ebDGpv0z/wc3wLgw
+         w5QNsD1N89IPItbclF1Tjmt7Nzr1Uc4nlwGHQhoXTihqMkdiGehCNxf1rSdF5CPGWWpD
+         AwKqahYsRiFCbspEz+wqSHTW6kgG5/7mxW0HPCHbKDWNq3n8nWkT6oIQYZkGZjg1g8rG
+         ei/g==
+X-Gm-Message-State: APjAAAUGyEU/Q5L2RS/wkpl566G1e0Rjl9AGdAbSioeLFPpB2ID+Bj6j
+        ynJY4U8rHwKNMbyH7HQG0IEL+g==
+X-Google-Smtp-Source: APXvYqzUBait63OW0AhXaaPpAWLX1TIz8EDCPO6Z+huQvod4nZOOQ8LdxkIXpDuLyjOP3m45KIvhrg==
+X-Received: by 2002:adf:f088:: with SMTP id n8mr2387085wro.115.1573644375190;
+        Wed, 13 Nov 2019 03:26:15 -0800 (PST)
+Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
+        by smtp.gmail.com with ESMTPSA id s9sm1884689wmj.22.2019.11.13.03.26.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2019 03:26:14 -0800 (PST)
+Date:   Wed, 13 Nov 2019 12:26:08 +0100
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] ovl: fix timestamp limits
+Message-ID: <20191113112608.GA5569@miu.piliscsaba.redhat.com>
+References: <20191111073000.2957-1-amir73il@gmail.com>
+ <CAJfpegvASSszZoYOdX9dcffo0EUNGVe_b8RU3JTtn-tXr9O7eg@mail.gmail.com>
+ <CAOQ4uxhMqYWYnXfXrzU7Qtv8xpR6k_tR9CFSo01NLZSvqBOxsw@mail.gmail.com>
+ <CAJfpeguvm=1Dw7V4XTr4gyo3uK+-EFNYKeDCFvUmuMPJxA=TcA@mail.gmail.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: i03voM_8MgmSRku1iW4VOA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: TEXT/PLAIN; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpeguvm=1Dw7V4XTr4gyo3uK+-EFNYKeDCFvUmuMPJxA=TcA@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-list_bl would crash with BUG() if we used it without locking. dm-snapshot=
-=20
-uses its own locking on realtime kernels (it can't use list_bl because=20
-list_bl uses raw spinlock and dm-snapshot takes other non-raw spinlocks=20
-while holding bl_lock).
+On Wed, Nov 13, 2019 at 11:26:13AM +0100, Miklos Szeredi wrote:
+> On Tue, Nov 12, 2019 at 5:06 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > On Tue, Nov 12, 2019 at 5:48 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> > >
+> > > On Mon, Nov 11, 2019 at 8:30 AM Amir Goldstein <amir73il@gmail.com> wrote:
+> > > >
+> > > > Overlayfs timestamp overflow limits should be inherrited from upper
+> > > > filesystem.
+> > > >
+> > > > The current behavior, when overlayfs is over an underlying filesystem
+> > > > that does not support post 2038 timestamps (e.g. xfs), is that overlayfs
+> > > > overflows post 2038 timestamps instead of clamping them.
+> > >
+> > > How?  Isn't the clamping supposed to happen in the underlying filesystem anyway?
+> > >
+> >
+> > Not sure if it is supposed to be it doesn't.
+> > It happens in do_utimes() -> utimes_common()
+> 
+> Ah.   How about moving the timestamp_truncate() inside notify_change()?
 
-To avoid this BUG, we must set LIST_BL_LOCKMASK =3D 0.
+Untested patch below.
 
-This patch is intended only for the realtime kernel patchset, not for the=
-=20
-upstream kernel.
+BTW overlayfs isn't the only one calling notify_change().  There's knfsd and
+ecryptfs, neither of which seems to clamp timestamps according on the underlying
+filesystem.
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Thanks,
+Miklos
 
----
- include/linux/list_bl.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-Index: linux-rt-devel/include/linux/list_bl.h
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
---- linux-rt-devel.orig/include/linux/list_bl.h=092019-11-13 12:15:50.00000=
-0000 +0100
-+++ linux-rt-devel/include/linux/list_bl.h=092019-11-13 12:15:50.000000000 =
-+0100
-@@ -19,7 +19,7 @@
-  * some fast and compact auxiliary data.
-  */
-=20
--#if defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)
-+#if (defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)) && !defined(CO=
-NFIG_PREEMPT_RT_BASE)
- #define LIST_BL_LOCKMASK=091UL
- #else
- #define LIST_BL_LOCKMASK=090UL
-
+diff --git a/fs/attr.c b/fs/attr.c
+index df28035aa23e..e8de5e636e66 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -268,8 +268,13 @@ int notify_change(struct dentry * dentry, struct iattr * attr, struct inode **de
+ 	attr->ia_ctime = now;
+ 	if (!(ia_valid & ATTR_ATIME_SET))
+ 		attr->ia_atime = now;
++	else
++		attr->ia_atime = timestamp_truncate(attr->ia_atime, inode);
+ 	if (!(ia_valid & ATTR_MTIME_SET))
+ 		attr->ia_mtime = now;
++	else
++		attr->ia_mtime = timestamp_truncate(attr->ia_mtime, inode);
++
+ 	if (ia_valid & ATTR_KILL_PRIV) {
+ 		error = security_inode_need_killpriv(dentry);
+ 		if (error < 0)
+diff --git a/fs/utimes.c b/fs/utimes.c
+index 1ba3f7883870..df483207da4e 100644
+--- a/fs/utimes.c
++++ b/fs/utimes.c
+@@ -35,17 +35,13 @@ static int utimes_common(const struct path *path, struct timespec64 *times)
+ 	if (times) {
+ 		if (times[0].tv_nsec == UTIME_OMIT)
+ 			newattrs.ia_valid &= ~ATTR_ATIME;
+-		else if (times[0].tv_nsec != UTIME_NOW) {
+-			newattrs.ia_atime = timestamp_truncate(times[0], inode);
++		else if (times[0].tv_nsec != UTIME_NOW)
+ 			newattrs.ia_valid |= ATTR_ATIME_SET;
+-		}
+ 
+ 		if (times[1].tv_nsec == UTIME_OMIT)
+ 			newattrs.ia_valid &= ~ATTR_MTIME;
+-		else if (times[1].tv_nsec != UTIME_NOW) {
+-			newattrs.ia_mtime = timestamp_truncate(times[1], inode);
++		else if (times[1].tv_nsec != UTIME_NOW)
+ 			newattrs.ia_valid |= ATTR_MTIME_SET;
+-		}
+ 		/*
+ 		 * Tell setattr_prepare(), that this is an explicit time
+ 		 * update, even if neither ATTR_ATIME_SET nor ATTR_MTIME_SET
