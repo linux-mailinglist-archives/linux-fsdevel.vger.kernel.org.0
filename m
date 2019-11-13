@@ -2,267 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF240FA789
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 04:46:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9AF5FA79E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 04:53:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727727AbfKMDqH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Nov 2019 22:46:07 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:52648 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727275AbfKMDqH (ORCPT
+        id S1727498AbfKMDxK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Nov 2019 22:53:10 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:45237 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726994AbfKMDxK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Nov 2019 22:46:07 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R741e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0ThxeNHV_1573616759;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0ThxeNHV_1573616759)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 13 Nov 2019 11:46:00 +0800
-Subject: [PATCH 3/3] sched/numa: documentation for per-cgroup numa stat
-From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
-Message-ID: <896a7da3-f139-32e7-8a64-b3562df1a091@linux.alibaba.com>
-Date:   Wed, 13 Nov 2019 11:45:59 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.0
+        Tue, 12 Nov 2019 22:53:10 -0500
+Received: by mail-qt1-f194.google.com with SMTP id 30so1033557qtz.12;
+        Tue, 12 Nov 2019 19:53:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=Nq/J9uMGWrTnPkmQnrMD87MZeTWzLPk7BmlVxfF/ZKA=;
+        b=YQYN9B7q/wgS02JIZyJ0TAbsW8KYwpEAmBGKKUlx67Z7+6Vb4gWCGYfdoBoMWpFmRG
+         JVRzh/a7fNH7ZVcp5hhFNu0tJdkpkvhEBYO3GcQXtfMh6XlNAEnA0s3rLwGvWwOzWHgz
+         t+uoeEU60G60xNt5bn0fN264JrnqVH7LkgqLnwRd2JEfGizjDV+sNR7dmO02endZWrwW
+         ZKeu1amBq3VjCe67KsNjpIBxIO6K6bfMg8Fg2Ugj2fbBDMNOxibjfnGDQz4U1nZssUvY
+         R9BZb48yYeyquwzTljIX1QXZlgf+Zd6mcJH4XrF98K94LJ7FYMxc5NsvHjIHQp8tX4Gm
+         JosQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=Nq/J9uMGWrTnPkmQnrMD87MZeTWzLPk7BmlVxfF/ZKA=;
+        b=d3MAqTFpGNagPFJwnGiXlfX2s0PqzZkLtppbwFh1sI2PI/hcbXThvwMhYOY4QNetya
+         1CncQEUIvYydCkfvnPmxF8KqKxxUGa3OIwha+FMXcdwugNLSUTKyEJGrboQpFxzyZdZC
+         tNlknB5UXOw7Am3SKxnFJ2HzCBFCqwaDDxqMEVEt78dTIdhAoBl10q9KDxquk0t3hC8e
+         HgO/Bwy6aLhyi6DVjd3kg7RO8cSLh94pNrmKJIHL3p4Cylk+5yNzIfh8D8u9leYpFadY
+         +sm0gzv0Qlwv5FAAvXJcI/PW0lUrAJOc+mOybU4nk8Rk+nxiEzOhAnj8eMjxXs0pXVlx
+         GxzA==
+X-Gm-Message-State: APjAAAXcya2ukUjf1PTDPz5HGlzGxcgE8R+dXsXpv6f1GIC6MxVj1Ge4
+        xE3wVZMR71oqtcqeDOh1J/JdHgP+
+X-Google-Smtp-Source: APXvYqyl3AbKpUGwgYcN0lQfHM1ZMlimpb/l1TpYE32YfSHOe37RyNtLc93445Ah2lYB3H0h1G7iug==
+X-Received: by 2002:ac8:23d3:: with SMTP id r19mr753535qtr.297.1573617189374;
+        Tue, 12 Nov 2019 19:53:09 -0800 (PST)
+Received: from eaf ([181.47.179.0])
+        by smtp.gmail.com with ESMTPSA id a4sm358914qkk.113.2019.11.12.19.53.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2019 19:53:08 -0800 (PST)
+Date:   Wed, 13 Nov 2019 00:53:04 -0300
+From:   Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= 
+        <ernesto.mnd.fernandez@gmail.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        Viacheslav Dubeyko <slava@dubeyko.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 13/16] hfs/hfsplus: use 64-bit inode timestamps
+Message-ID: <20191113035304.GA8753@eaf>
+References: <20191108213257.3097633-1-arnd@arndb.de>
+ <20191108213257.3097633-14-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191108213257.3097633-14-arnd@arndb.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add the description for 'cg_numa_stat', also a new doc to explain
-the details on how to deal with the per-cgroup numa statistics.
+On Fri, Nov 08, 2019 at 10:32:51PM +0100, Arnd Bergmann wrote:
+> The interpretation of on-disk timestamps in HFS and HFS+ differs
+> between 32-bit and 64-bit kernels at the moment. Use 64-bit timestamps
+> consistently so apply the current 64-bit behavior everyhere.
+> 
+> According to the official documentation for HFS+ [1], inode timestamps
+> are supposed to cover the time range from 1904 to 2040 as originally
+> used in classic MacOS.
+> 
+> The traditional Linux usage is to convert the timestamps into an unsigned
+> 32-bit number based on the Unix epoch and from there to a time_t. On
+> 32-bit systems, that wraps the time from 2038 to 1902, so the last
+> two years of the valid time range become garbled. On 64-bit systems,
+> all times before 1970 get turned into timestamps between 2038 and 2106,
+> which is more convenient but also different from the documented behavior.
+> 
+> Looking at the Darwin sources [2], it seems that MacOS is inconsistent in
+> yet another way: all timestamps are wrapped around to a 32-bit unsigned
+> number when written to the disk, but when read back, all numeric values
+> lower than 2082844800U are assumed to be invalid, so we cannot represent
+> the times before 1970 or the times after 2040.
+> 
+> While all implementations seem to agree on the interpretation of values
+> between 1970 and 2038, they often differ on the exact range they support
+> when reading back values outside of the common range:
+> 
+> MacOS (traditional):		1904-2040
+> Apple Documentation:		1904-2040
+> MacOS X source comments:	1970-2040
+> MacOS X source code:		1970-2038
+> 32-bit Linux:			1902-2038
+> 64-bit Linux:			1970-2106
+> hfsfuse:			1970-2040
+> hfsutils (32 bit, old libc)	1902-2038
+> hfsutils (32 bit, new libc)	1970-2106
+> hfsutils (64 bit)		1904-2040
+> hfsplus-utils			1904-2040
+> hfsexplorer			1904-2040
+> 7-zip				1904-2040
+> 
+> Out of the above, the range from 1970 to 2106 seems to be the most useful,
+> as it allows using HFS and HFS+ beyond year 2038, and this matches the
+> behavior that most users would see today on Linux, as few people run
+> 32-bit kernels any more.
+> 
+> Link: [1] https://developer.apple.com/library/archive/technotes/tn/tn1150.html
+> Link: [2] https://opensource.apple.com/source/hfs/hfs-407.30.1/core/MacOSStubs.c.auto.html
+> Link: https://lore.kernel.org/lkml/20180711224625.airwna6gzyatoowe@eaf/
+> Cc: Viacheslav Dubeyko <slava@dubeyko.com>
+> Suggested-by: "Ernesto A. Fernández" <ernesto.mnd.fernandez@gmail.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Michal Koutný <mkoutny@suse.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
----
- Documentation/admin-guide/cg-numa-stat.rst      | 161 ++++++++++++++++++++++++
- Documentation/admin-guide/kernel-parameters.txt |   4 +
- Documentation/admin-guide/sysctl/kernel.rst     |   9 ++
- 3 files changed, 174 insertions(+)
- create mode 100644 Documentation/admin-guide/cg-numa-stat.rst
-
-diff --git a/Documentation/admin-guide/cg-numa-stat.rst b/Documentation/admin-guide/cg-numa-stat.rst
-new file mode 100644
-index 000000000000..87b716c51e16
---- /dev/null
-+++ b/Documentation/admin-guide/cg-numa-stat.rst
-@@ -0,0 +1,161 @@
-+===============================
-+Per-cgroup NUMA statistics
-+===============================
-+
-+Background
-+----------
-+
-+On NUMA platforms, remote memory accessing always has a performance penalty,
-+although we have NUMA balancing working hard to maximum the local accessing
-+proportion, there are still situations it can't helps.
-+
-+This could happen in modern production environment, using bunch of cgroups
-+to classify and control resources which introduced complex configuration on
-+memory policy, CPUs and NUMA node, NUMA balancing could facing the wrong
-+memory policy or exhausted local NUMA node, lead into the low local page
-+accessing proportion.
-+
-+We need to perceive such cases, figure out which workloads from which cgroup
-+has introduced the issues, then we got chance to do adjustment to avoid
-+performance damages.
-+
-+However, there are no hardware counter for per-task local/remote accessing
-+info, we don't know how many remote page accessing has been done for a
-+particular task.
-+
-+Statistics
-+----------
-+
-+Fortunately, we have NUMA Balancing which scan task's mapping and trigger PF
-+periodically, give us the opportunity to record per-task page accessing info.
-+
-+By "echo 1 > /proc/sys/kernel/cg_numa_stat" on runtime or add boot parameter
-+'cg_numa_stat', we will enable the accounting of per-cgroup numa statistics,
-+the 'cpu.numa_stat' entry of CPU cgroup will show statistics:
-+
-+  locality -- execution time sectioned by task NUMA locality (in ms)
-+  exectime -- execution time sectioned by NUMA node (in ms)
-+
-+We define 'task NUMA locality' as:
-+
-+  nr_local_page_access * 100 / (nr_local_page_access + nr_remote_page_access)
-+
-+this per-task percentage value will be updated on the ticks for current task,
-+and the access counter will be updated on task's NUMA balancing PF, so only
-+the pages which NUMA Balancing paid attention to will be accounted.
-+
-+On each tick, we acquire the locality of current task on that CPU, accumulating
-+the ticks into the counter of corresponding locality region, tasks from the
-+same group sharing the counters, becoming the group locality.
-+
-+Similarly, we acquire the NUMA node of current CPU where the current task is
-+executing on, accumulating the ticks into the counter of corresponding node,
-+becoming the per-cgroup node execution time.
-+
-+To be noticed, the accounting is in a hierarchy way, which means the numa
-+statistics representing not only the workload of this group, but also the
-+workloads of all it's descendants.
-+
-+For example the 'cpu.numa_stat' show:
-+  locality 39541 60962 36842 72519 118605 721778 946553
-+  exectime 1220127 1458684
-+
-+The locality is sectioned into 7 regions, closely as:
-+  0-13% 14-27% 28-42% 43-56% 57-71% 72-85% 86-100%
-+
-+And exectime is sectioned into 2 nodes, 0 and 1 in this case.
-+
-+Thus we know the workload of this group and it's descendants have totally
-+executed 1220127ms on node_0 and 1458684ms on node_1, tasks with locality
-+around 0~13% executed for 39541 ms, and tasks with locality around 87~100%
-+executed for 946553 ms, which imply most of the memory access are local.
-+
-+Monitoring
-+-----------------
-+
-+By monitoring the increments of these statistics, we can easily know whether
-+NUMA balancing is working well for a particular workload.
-+
-+For example we take a 5 secs sample period, and consider locality under 27%
-+is bad, then on each sampling we have:
-+
-+  region_bad = region_1 + region_2
-+  region_all = region_1 + region_2 + ... + region_7
-+
-+and we have the increments as:
-+
-+  region_bad_diff = region_bad - last_region_bad
-+  region_all_diff = region_all - last_region_all
-+
-+which finally become:
-+
-+  region_bad_percent = region_bad_diff * 100 / region_all_diff
-+
-+we can draw a line for region_bad_percent, when the line close to 0 things
-+are good, when getting close to 100% something is wrong, we can pick a proper
-+watermark to trigger warning message.
-+
-+You may want to drop the data if the region_all is too small, which imply
-+there are not much available pages for NUMA Balancing, just ignore would be
-+fine since most likely the workload is insensitive to NUMA.
-+
-+Monitoring root group help you control the overall situation, while you may
-+also want to monitoring all the leaf groups which contain the workloads, this
-+help to catch the mouse.
-+
-+The exectime could be useful when NUMA Balancing is disabled, or when locality
-+become too small, for NUMA node X we have:
-+
-+  exectime_X_diff = exectime_X - last_exectime_X
-+  exectime_all_diff = exectime_all - last_exectime_all
-+
-+try put your workload into a memory cgroup which providing per-node memory
-+consumption by 'memory.numa_stat' entry, then we could get:
-+
-+  memory_percent_X = memory_X * 100 / memory_all
-+  exectime_percent_X = exectime_X_diff * 100 / exectime_all_diff
-+
-+These two percentage are usually matched on each node, workload should execute
-+mostly on the node contain most of it's memory, but it's not guaranteed.
-+
-+Depends on which part of the memory accessed mostly by the workload, locality
-+could still be good with just a little piece of memory locally.
-+
-+Thus to tell if things are find or not depends on the understanding of system
-+resource deployment, however, if you find node X got 100% memory percent but 0%
-+exectime percent, definitely something is wrong.
-+
-+Troubleshooting
-+---------------
-+
-+After locate which workloads introduced the bad locality, check:
-+
-+1). Is the workloads bind into a particular NUMA node?
-+2). Is there any NUMA node run out of resources?
-+
-+There are several ways to bind task's memory with a NUMA node, the strict way
-+like the MPOL_BIND memory policy or 'cpuset.mems' will limiting the memory
-+node where to allocate pages, in this situation, admin should make sure the
-+task is allowed to run on the CPUs of that NUMA node, and make sure there are
-+available CPU resource there.
-+
-+There are also ways to bind task's CPU with a NUMA node, like 'cpuset.cpus' or
-+sched_setaffinity() syscall, in this situation, NUMA Balancing help to migrate
-+pages into that node, admin should make sure there are available memory there.
-+
-+Admin could try rebind or unbind the NUMA node to erase the damage, make a
-+change then observe the statistics see if things get better until the situation
-+is acceptable.
-+
-+Highlights
-+----------
-+
-+For some tasks, NUMA Balancing may found no necessary to scan pages, and
-+locality could always be 0 or small number, don't pay attention to them
-+since they most likely insensitive to NUMA.
-+
-+There are no accounting until the option turned on, so enable it in advance
-+if you want to have the whole history.
-+
-+We have per-task migfailed counter to tell how many page migration has been
-+failed for a particular task, you will find it in /proc/PID/sched entry.
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 5e27d74e2b74..220df1f0beb8 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3191,6 +3191,10 @@
- 	numa_balancing=	[KNL,X86] Enable or disable automatic NUMA balancing.
- 			Allowed values are enable and disable
-
-+	cg_numa_atat	[KNL] Enable advanced per-cgroup numa statistics.
-+			Useful to debug NUMA efficiency problems when there are
-+			lot's of per-cgroup workloads.
-+
- 	numa_zonelist_order= [KNL, BOOT] Select zonelist order for NUMA.
- 			'node', 'default' can be specified
- 			This can be set from sysctl after boot.
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index 614179dc79a9..719593e8be20 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -572,6 +572,15 @@ rate for each task.
- numa_balancing_scan_size_mb is how many megabytes worth of pages are
- scanned for a given scan.
-
-+cg_numa_stat:
-+=============
-+
-+Enables/disables advanced per-cgroup NUMA statistic.
-+
-+0: disabled (default).
-+1: enabled.
-+
-+Check Documentation/admin-guide/cg-numa-stat.rst for details.
-
- osrelease, ostype & version:
- ============================
--- 
-2.14.4.44.g2045bb6
-
+Reviewed-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
