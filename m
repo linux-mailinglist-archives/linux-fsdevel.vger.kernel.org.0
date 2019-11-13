@@ -2,90 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81D61FB452
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 16:53:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F453FB45F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 16:55:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728203AbfKMPxW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Nov 2019 10:53:22 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:38999 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbfKMPxW (ORCPT
+        id S1727334AbfKMPzO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Nov 2019 10:55:14 -0500
+Received: from mail-il1-f197.google.com ([209.85.166.197]:51327 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727262AbfKMPzM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Nov 2019 10:53:22 -0500
-Received: by mail-ot1-f67.google.com with SMTP id w24so1534069otk.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2019 07:53:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=7nUTsUyFuV1Joe0Th3z9Twe1G0A6kzFQQxZuL7muiZ4=;
-        b=T6a9Tb8I5cPRZyrSMQvO0rJbtY9VZixdvbWPk4W28h5xSwpzJALgGyJbnYbJAh82MO
-         JjaGCkwDG/CxMv2UsJYswq0xfQ1iuzemLACUNyFTKCB/ZenoygZXTJIFMBqboJQAKSfD
-         LsAp7SAapoCr5enECA8SV155twtf1u7jr/fJORjOWE18v8BmIF8GqrcRSQGSUCJ80qe1
-         QjMhPUuYnHuMfvNiEXuCtley9t6nZTX0OtNlObQjOC6PCTnIIWSd38nD7Tg1RxHIoRtm
-         zDXX9xY44SPU5n6jAzSR0+dUIxE8oCf/VT8Ouep5MdFtTIyBFSQuOWIpr20XFljFlnJH
-         1pGQ==
+        Wed, 13 Nov 2019 10:55:12 -0500
+Received: by mail-il1-f197.google.com with SMTP id x2so2191554ilk.18
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2019 07:55:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=7nUTsUyFuV1Joe0Th3z9Twe1G0A6kzFQQxZuL7muiZ4=;
-        b=WefLkbURrrB3JZ2nsLoKmT86LN7XUIC1z4oJejfAOz1E/bIZevEAeXi3i7whBMNnE3
-         ux04TA3ZQZ7jVZVyObOoIRp24mLdfJhAEnONm0yWXt6MIBmRyHj1NItlEPE73/qdu7yS
-         dr3isqp/X4kbivnSSHLxAMRD/Q4k66HW47ISEwICxXCc3xghFvTKIAmZpPH+N9Dviyic
-         Usf1UpMqwMGfYS8fOOf478UfnxsAfPFMcuv6RVo2z/7DhLt/rBr47UCm9OdUU1AmvSLr
-         SALuI9+qiMXiczd46wo90BCNUEI0NpGUMUdcFTgeYRNMOu8/NG/gky3xaKVLRvScV4bi
-         d6JA==
-X-Gm-Message-State: APjAAAXPXyGaKyLRAIJqTzYV3K5Tp7wBzhGvr9FGibRjvjBfO+Q2P3Ma
-        zOIuofxtNc+Q5tctr9m1Xi557jdHQ7N8XCxrM44=
-X-Google-Smtp-Source: APXvYqwZxJ52PoROhPcy71MmG+uTbI6nL1iwka5ATkFuXLauUPcX6kqXvKUAEq78iY5M0xl+sZ/UjLpr64s96n7m45Y=
-X-Received: by 2002:a9d:77c5:: with SMTP id w5mr3262533otl.351.1573660400140;
- Wed, 13 Nov 2019 07:53:20 -0800 (PST)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=WAQU/KVIGRtJPg+lrZPV6jtYth/u9rAcRq10vUlzD3M=;
+        b=UmjtkkWRDgFLhOLpEqOUDJ2D1h7Ml8dGd5Ro6m+QRcEGMSvqBwFAofT+ZMCXVU7y2P
+         geOpCwDI9qepBn+fmepAvOafHzfFP4pTvWymSkVlH9NhtrO3y4PBYFKdkxRN30Up48g5
+         OtyGUdOoCioTkMBZugOVTNpCX/SBHY8SpH1fbZrfIjem3+mpnxs8Tv7x5X22PuBCst/5
+         legVF5IyyrzPE4kDbRvk2fuLhO6ktlZunIkMuxRICl8bfekTOpl7bKtNp5ODU8zArWfu
+         UeYn9utQvkDEhVjjmGsope/P+JUOAsAObbEKNaQhAWYriSXXEnkojiUB033Vp9IGkjSs
+         VP+A==
+X-Gm-Message-State: APjAAAUQ0KhctSNUFQvp3yC1o2rpkPj9YBL8WuubRyZoG2DNyXJWc/jZ
+        9bQ/Z3xQ3907hItmr7/Ob5cJIIBorfjOTz3JaWQJklxkD/VZ
+X-Google-Smtp-Source: APXvYqxM+EWEGb24Yj3BNyVsnDvwgQcGfqxkweLZuuTsA2HJZ/agzGyN5u/2InnOx4faFJWtO4IYYMwf+h+ZT8/xOoMGx8rJAacF
 MIME-Version: 1.0
-Received: by 2002:a4a:a194:0:0:0:0:0 with HTTP; Wed, 13 Nov 2019 07:53:19
- -0800 (PST)
-Reply-To: infobankatlanitctogo@gmail.com
-From:   BANK BTCI <directofficemailbox1@gmail.com>
-Date:   Wed, 13 Nov 2019 15:53:19 +0000
-Message-ID: <CAAMd7HjnjnqEiQqvekL3vMtLTMD4iuGrjr=bKJoCVN6sq3wxag@mail.gmail.com>
-Subject: Congratulations / Call / Whatsapp : +22892331995
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a92:dd8f:: with SMTP id g15mr4521438iln.145.1573660509827;
+ Wed, 13 Nov 2019 07:55:09 -0800 (PST)
+Date:   Wed, 13 Nov 2019 07:55:09 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000af7e9805973c6356@google.com>
+Subject: general protection fault in io_commit_cqring
+From:   syzbot <syzbot+21147d79607d724bd6f3@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ATTN:
+Hello,
 
-This is to inform you that the IMF office instructed us to transfer
-your $2.5 Million Dollars compensating for all the SCAM VICTIMS and
-your email were found as one of the VICTIMS By IMF Security leading
-team and IMF representative officers, so between now until 31th Of
-Dec. 2019 you will be receiving a sum of $5000 dollars per day.
+syzbot found the following crash on:
 
-However you are informed that we are waiting for your informations
-bellow as stated so that we will start by sending the first $ 5000
-dollars to you first thing tomorrow morning, for you to avoid
-cancellation of your payment. You have only 48 hours to Call(+22892331995 )
-or Email (infobankatlanitctogo@gmail.com ) this office upon the receipt of
-this Email the maximum amount you will be receiving per a day is $5000.
+HEAD commit:    4e8f108c Add linux-next specific files for 20191113
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=121ad2d2e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ace1bcdd76242fd2
+dashboard link: https://syzkaller.appspot.com/bug?extid=21147d79607d724bd6f3
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1649e706e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11397f72e00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+21147d79607d724bd6f3@syzkaller.appspotmail.com
+
+RSP: 002b:00007ffd6e8aa078 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441229
+RDX: 0000000000000002 RSI: 0000000020000140 RDI: 0000000000000d0d
+RBP: 00007ffd6e8aa090 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
+R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 8903 Comm: syz-executor410 Not tainted 5.4.0-rc7-next-20191113  
+#0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:__read_once_size include/linux/compiler.h:199 [inline]
+RIP: 0010:__io_commit_cqring fs/io_uring.c:496 [inline]
+RIP: 0010:io_commit_cqring+0x1e1/0xdb0 fs/io_uring.c:592
+Code: 03 0f 8e df 09 00 00 48 8b 45 d0 4c 8d a3 c0 00 00 00 4c 89 e2 48 c1  
+ea 03 44 8b b8 c0 01 00 00 48 b8 00 00 00 00 00 fc ff df <0f> b6 14 02 4c  
+89 e0 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 61
+RSP: 0018:ffff88808f51fc08 EFLAGS: 00010006
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff815abe4a
+RDX: 0000000000000018 RSI: ffffffff81d168d5 RDI: ffff8880a9166100
+RBP: ffff88808f51fc70 R08: 0000000000000004 R09: ffffed1011ea3f7d
+R10: ffffed1011ea3f7c R11: 0000000000000003 R12: 00000000000000c0
+R13: ffff8880a91661c0 R14: 1ffff1101522cc10 R15: 0000000000000000
+FS:  0000000001e7a880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000140 CR3: 000000009a74c000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  io_cqring_overflow_flush+0x6b9/0xa90 fs/io_uring.c:673
+  io_ring_ctx_wait_and_kill+0x24f/0x7c0 fs/io_uring.c:4260
+  io_uring_create fs/io_uring.c:4600 [inline]
+  io_uring_setup+0x1256/0x1cc0 fs/io_uring.c:4626
+  __do_sys_io_uring_setup fs/io_uring.c:4639 [inline]
+  __se_sys_io_uring_setup fs/io_uring.c:4636 [inline]
+  __x64_sys_io_uring_setup+0x54/0x80 fs/io_uring.c:4636
+  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x441229
+Code: e8 5c ae 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 bb 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffd6e8aa078 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441229
+RDX: 0000000000000002 RSI: 0000000020000140 RDI: 0000000000000d0d
+RBP: 00007ffd6e8aa090 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
+R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+---[ end trace b0f5b127a57f623f ]---
+RIP: 0010:__read_once_size include/linux/compiler.h:199 [inline]
+RIP: 0010:__io_commit_cqring fs/io_uring.c:496 [inline]
+RIP: 0010:io_commit_cqring+0x1e1/0xdb0 fs/io_uring.c:592
+Code: 03 0f 8e df 09 00 00 48 8b 45 d0 4c 8d a3 c0 00 00 00 4c 89 e2 48 c1  
+ea 03 44 8b b8 c0 01 00 00 48 b8 00 00 00 00 00 fc ff df <0f> b6 14 02 4c  
+89 e0 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 61
+RSP: 0018:ffff88808f51fc08 EFLAGS: 00010006
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff815abe4a
+RDX: 0000000000000018 RSI: ffffffff81d168d5 RDI: ffff8880a9166100
+RBP: ffff88808f51fc70 R08: 0000000000000004 R09: ffffed1011ea3f7d
+R10: ffffed1011ea3f7c R11: 0000000000000003 R12: 00000000000000c0
+R13: ffff8880a91661c0 R14: 1ffff1101522cc10 R15: 0000000000000000
+FS:  0000000001e7a880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000140 CR3: 000000009a74c000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
-So provided the below information:
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-1) Your: Full Name===================
-2) Your: Full Address================
-3) Your: contact telephone and fax number;=====
-4) Your: Age and Profession;=========
-5) Your:Copy of any valid form of your Identification;===
-6) Your:Marital status===========
-
-
-
-Further more you advised to call us as the instruction was passed that
-Within 48 hours without hearing from you, Count your payment canceled.
-
-
-Thanks
-Mr. Donald Phillipie
-Tell : WHATS UP : +22892331995
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
