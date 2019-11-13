@@ -2,243 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8649AFB7EB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 19:46:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 701ABFB806
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 19:48:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728458AbfKMSq2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Nov 2019 13:46:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60682 "EHLO mail.kernel.org"
+        id S1727936AbfKMSr6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Nov 2019 13:47:58 -0500
+Received: from mga17.intel.com ([192.55.52.151]:43379 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727241AbfKMSq2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Nov 2019 13:46:28 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31A64206F0;
-        Wed, 13 Nov 2019 18:46:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573670787;
-        bh=lESbQP5An6nmu6kVw/V4bAiGSPHD+7/u/nvGSyiNHFA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=IY3S1rOeLYoFo6cwP2f0D0wmiBYIEB93tBnn2xWHQstHGXXVgesJUVpJPtbZCyauM
-         b3gSWjK1YIXeUFpDGuvxkNB+UnPn9FRzcjdoyqW4zY0by1WtQBb+kt//ITqAQXxXRH
-         1D5pENoEbeAWkBrhEZHVMk6ZDWhGkW5zw6E1gmrk=
-Message-ID: <3a349de02d646e9f0a2c06405a9081eb44570344.camel@kernel.org>
-Subject: Re: FS-Cache/CacheFiles rewrite
-From:   Jeff Layton <jlayton@kernel.org>
-To:     David Howells <dhowells@redhat.com>,
-        Steve French <sfrench@samba.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve Dickson <steved@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     v9fs-developer@lists.sourceforge.net,
-        linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-        linux-cachefs@redhat.com, ceph-devel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 13 Nov 2019 13:46:23 -0500
-In-Reply-To: <24942.1573667720@warthog.procyon.org.uk>
-References: <24942.1573667720@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1 (3.34.1-1.fc31) 
+        id S1727241AbfKMSr6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 Nov 2019 13:47:58 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2019 10:47:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,301,1569308400"; 
+   d="scan'208";a="216489509"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga002.jf.intel.com with ESMTP; 13 Nov 2019 10:47:53 -0800
+Date:   Wed, 13 Nov 2019 10:47:53 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 08/23] vfio, mm: fix get_user_pages_remote() and
+ FOLL_LONGTERM
+Message-ID: <20191113184752.GD12699@iweiny-DESK2.sc.intel.com>
+References: <20191113042710.3997854-1-jhubbard@nvidia.com>
+ <20191113042710.3997854-9-jhubbard@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191113042710.3997854-9-jhubbard@nvidia.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2019-11-13 at 17:55 +0000, David Howells wrote:
-> Hi,
+On Tue, Nov 12, 2019 at 08:26:55PM -0800, John Hubbard wrote:
+> As it says in the updated comment in gup.c: current FOLL_LONGTERM
+> behavior is incompatible with FAULT_FLAG_ALLOW_RETRY because of the
+> FS DAX check requirement on vmas.
 > 
-> I've been rewriting the local cache for network filesystems with the aim of
-> simplifying it, speeding it up, reducing its memory overhead and making it
-> more understandable and easier to debug.
+> However, the corresponding restriction in get_user_pages_remote() was
+> slightly stricter than is actually required: it forbade all
+> FOLL_LONGTERM callers, but we can actually allow FOLL_LONGTERM callers
+> that do not set the "locked" arg.
 > 
-> For the moment fscache support is disabled in all network filesystems that
-> were using, apart from afs.
+> Update the code and comments accordingly, and update the VFIO caller
+> to take advantage of this, fixing a bug as a result: the VFIO caller
+> is logically a FOLL_LONGTERM user.
 > 
-> To this end, I have so far made the following changes to fscache:
+> Also, remove an unnessary pair of calls that were releasing and
+> reacquiring the mmap_sem. There is no need to avoid holding mmap_sem
+> just in order to call page_to_pfn().
 > 
->  (1) The fscache_cookie_def struct has gone, along with all the callback
->      functions it used to contain.  The filesystem stores the auxiliary data
->      and file size into the cookie and these are written back lazily (possibly
->      too lazily at the moment).  Any necessary information is passed in to
->      fscache_acquire_cookie().
+> Also, move the DAX check ("if a VMA is DAX, don't allow long term
+> pinning") from the VFIO call site, all the way into the internals
+> of get_user_pages_remote() and __gup_longterm_locked(). That is:
+> get_user_pages_remote() calls __gup_longterm_locked(), which in turn
+> calls check_dax_vmas(). It's lightly explained in the comments as well.
 > 
->  (2) The object state machine has been removed and replaced by a much simpler
->      dispatcher that runs the entire cookie instantiation procedure, cookie
->      teardown procedure or cache object withdrawal procedure in one go without
->      breaking it down into cancellable/abortable states.
+> Thanks to Jason Gunthorpe for pointing out a clean way to fix this,
+> and to Dan Williams for helping clarify the DAX refactoring.
 > 
->      To avoid latency issues, a thread pool is created to which these
->      operations will be handed off if any threads are idle; if no threads are
->      idle, the operation is run in the process that triggered it.
-> 
->  (3) The entire I/O API has been deleted and replaced with one that *only*
->      provides a "read cache to iter" function and a "write iter to cache"
->      function.  The cache therefore neither knows nor cares where netfs pages
->      are - and indeed, reads and writes don't need to go to such places.
-> 
->  (4) The netfs must allow the cache the opportunity to 'shape' a read from the
->      server, both from ->readpages() and from ->write_begin(), so that the
->      size and start of the read are of a suitably aligned for the cache
->      granularity.  Cachefiles is currently using a 256KiB granule size.
-> 
->      A helper is provided to do most of the work: fscache_read_helper().
-> 
->  (5) An additional layer, an fscache_io_handle, has been interposed in the I/O
->      API that allows the cache to store transient stuff, such as the open file
->      struct pointer to the backing file for the duration of the netfs file
->      being open.
-> 
->      I'm tempted on one hand to merge this into the fscache_object struct and
->      on the other hand to use this to get rid of 'cookie enablement' and allow
->      already open files to be connected to the cache.
-> 
->  (6) The PG_fscache bit is now set on a page to indicate that the page is
->      being written to the cache and cleared upon completion.  write_begin,
->      page_mkwrite, releasepage, invalidatepage, etc. can wait on this.
-> 
->  (7) Cookie removal now read-locks the semaphore that is used to manage
->      addition and removal of a cache.  This greatly simplifies the logic in
->      detaching an object from a cookie and cleaning it up as relinquishment
->      and withdrawal can't then happen simultaneously.
-> 
->      It does mean, though, that cookie relinquishment is held up by cache
->      removal.
-> 
-> And the following changes to cachefiles:
-> 
->  (1) The I/O code has been replaced.  The page waitqueue snooping and deferred
->      backing-page to netfs-page copy is now entirely gone and asynchronous
->      direct I/O through kiocbs is now used instead to effect the transfer of
->      data to/from the cache.
-> 
->      This affords a speed increase of something like 40-50% and reduces the
->      amount of memory that is pinned during I/O.
-> 
->  (2) bmap() is no longer used to detect the presence of blocks in the
->      filesystem.  With a modern extent based filesystem, this may give both
->      false positives and false negatives if the filesystem optimises an extent
->      by eliminating a block of zeros or adds a block to bridge between two
->      close neighbours.
-> 
->      Instead, a content map is stored in an xattr on the backing file, with 1
->      bit per 256KiB block.  The cache shapes the netfs's read requests to
->      request multiple-of-256KiB reads from the server, which are then written
->      back.
-> 
->  (3) The content map and attributes are then stored lazily when the object is
->      destroyed.  This may be too lazy.
-> 
+> Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Jerome Glisse <jglisse@redhat.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
 
-Having something that just provides a caching facility without so many
-tendrils back into the netfs seems like a big improvement.
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
 
-> To aid this I've added the following:
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+>  drivers/vfio/vfio_iommu_type1.c | 25 ++-----------------------
+>  mm/gup.c                        | 27 ++++++++++++++++++++++-----
+>  2 files changed, 24 insertions(+), 28 deletions(-)
 > 
->  (1) Wait/wake functions for the PG_fscache bit.
+> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+> index d864277ea16f..7301b710c9a4 100644
+> --- a/drivers/vfio/vfio_iommu_type1.c
+> +++ b/drivers/vfio/vfio_iommu_type1.c
+> @@ -340,7 +340,6 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
+>  {
+>  	struct page *page[1];
+>  	struct vm_area_struct *vma;
+> -	struct vm_area_struct *vmas[1];
+>  	unsigned int flags = 0;
+>  	int ret;
+>  
+> @@ -348,33 +347,13 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
+>  		flags |= FOLL_WRITE;
+>  
+>  	down_read(&mm->mmap_sem);
+> -	if (mm == current->mm) {
+> -		ret = get_user_pages(vaddr, 1, flags | FOLL_LONGTERM, page,
+> -				     vmas);
+> -	} else {
+> -		ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags, page,
+> -					    vmas, NULL);
+> -		/*
+> -		 * The lifetime of a vaddr_get_pfn() page pin is
+> -		 * userspace-controlled. In the fs-dax case this could
+> -		 * lead to indefinite stalls in filesystem operations.
+> -		 * Disallow attempts to pin fs-dax pages via this
+> -		 * interface.
+> -		 */
+> -		if (ret > 0 && vma_is_fsdax(vmas[0])) {
+> -			ret = -EOPNOTSUPP;
+> -			put_page(page[0]);
+> -		}
+> -	}
+> -	up_read(&mm->mmap_sem);
+> -
+> +	ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags | FOLL_LONGTERM,
+> +				    page, NULL, NULL);
+>  	if (ret == 1) {
+>  		*pfn = page_to_pfn(page[0]);
+>  		return 0;
+>  	}
+>  
+> -	down_read(&mm->mmap_sem);
+> -
+>  	vaddr = untagged_addr(vaddr);
+>  
+>  	vma = find_vma_intersection(mm, vaddr, vaddr + 1);
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 933524de6249..83702b2e86c8 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -29,6 +29,13 @@ struct follow_page_context {
+>  	unsigned int page_mask;
+>  };
+>  
+> +static __always_inline long __gup_longterm_locked(struct task_struct *tsk,
+> +						  struct mm_struct *mm,
+> +						  unsigned long start,
+> +						  unsigned long nr_pages,
+> +						  struct page **pages,
+> +						  struct vm_area_struct **vmas,
+> +						  unsigned int flags);
+>  /*
+>   * Return the compound head page with ref appropriately incremented,
+>   * or NULL if that failed.
+> @@ -1167,13 +1174,23 @@ long get_user_pages_remote(struct task_struct *tsk, struct mm_struct *mm,
+>  		struct vm_area_struct **vmas, int *locked)
+>  {
+>  	/*
+> -	 * FIXME: Current FOLL_LONGTERM behavior is incompatible with
+> +	 * Parts of FOLL_LONGTERM behavior are incompatible with
+>  	 * FAULT_FLAG_ALLOW_RETRY because of the FS DAX check requirement on
+> -	 * vmas.  As there are no users of this flag in this call we simply
+> -	 * disallow this option for now.
+> +	 * vmas. However, this only comes up if locked is set, and there are
+> +	 * callers that do request FOLL_LONGTERM, but do not set locked. So,
+> +	 * allow what we can.
+>  	 */
+> -	if (WARN_ON_ONCE(gup_flags & FOLL_LONGTERM))
+> -		return -EINVAL;
+> +	if (gup_flags & FOLL_LONGTERM) {
+> +		if (WARN_ON_ONCE(locked))
+> +			return -EINVAL;
+> +		/*
+> +		 * This will check the vmas (even if our vmas arg is NULL)
+> +		 * and return -ENOTSUPP if DAX isn't allowed in this case:
+> +		 */
+> +		return __gup_longterm_locked(tsk, mm, start, nr_pages, pages,
+> +					     vmas, gup_flags | FOLL_TOUCH |
+> +					     FOLL_REMOTE);
+> +	}
+>  
+>  	return __get_user_pages_locked(tsk, mm, start, nr_pages, pages, vmas,
+>  				       locked,
+> -- 
+> 2.24.0
 > 
->  (2) ITER_MAPPING iterator that refers to a contiguous sequence of pinned
->      pages with no holes in a mapping.  This means you don't have to allocate
->      a sequence of bio_vecs to represent the same thing.
-> 
->      As stated, the pages *must* be pinned - such as by PG_locked,
->      PG_writeback or PG_fscache - before iov_iter_mapping() is called to set
->      the mapping up.
-> 
-> Things that still need doing:
-> 
->  (1) afs (and any other netfs) needs to write changes to the cache at the same
->      time it writes them to the server so that the cache doesn't get out of
->      sync.  This is also necessary to implement write-back caching and
->      disconnected operation.
-> 
->  (2) The content map is limited by the maximum xattr size.  Is it possible to
->      configure the backing filesystem so that it doesn't merge extents across
->      certain boundaries or eliminate blocks of zeros so that I don't need a
->      content map?
-> 
->  (3) Use O_TMPFILE in the cache to effect immediate invalidation.  I/O can
->      then continue to progress whilst the cache driver replaces the linkage.
-> 
->  (4) The file in the cache needs to be truncated if the netfs file is
->      shortened by truncation.
-> 
->  (5) Data insertion into the cache is not currently checked for space
->      availability.
-> 
->  (6) The stats need going over.  Some of them are obsolete and there are no
->      I/O stats working at the moment.
-> 
->  (7) Replacement I/O tracepoints are required.
-> 
-> Future changes:
-> 
->  (1) Get rid of cookie enablement.
-> 
->  (2) Frame the limit on the cache capacity in terms of an amount of data that
->      can be stored in it rather than an amount of free space that must be
->      kept.
-> 
->  (3) Move culling out of cachefilesd into the kernel.
-> 
->  (4) Use the I/O handle to add caching to files that are already open, perhaps
->      listing I/O handles from the cache tag.
-> 
-> Questions:
-> 
->  (*) Does it make sense to actually permit multiple caches?
-> 
-
-I don't see a lot of value in having more than one per fstype. Given
-that the index_key can be as big as you'd reasonably need, it seems
-better to just require that the netfs drivers generate keys that are
-unique system-wide.
-
-fscache should however, be prepared to deal with collisions between
-different drivers (e.g. NFS and ceph). That said, we could just require
-that the fs' add some per-fstype value into each index_key.
-
->  (*) Do we want to allow multiple filesystem instances (think NFS) to use the
->      same cache objects?  fscache no longer knows about the netfs state, and
->      the netfs now just reads and writes to the cache, so it's kind of
->      possible - but coherency management is tricky and would definitely be up
->      to the netfs.
-
-NFS is sort of a difficult example. It aggressively shares superblocks
-where it can. You only get multiple inodes for the same server-side
-object when you mount with "-o nosharecache" (or some other option
-prevents sharing), and at that point you probably don't want to share
-objects.
-
-For something like ceph, you could have two mounts with different local
-superblocks that point to different subtrees of the root cephfs. In that
-configuration we can have two different inodes (in different sb's) for
-the same cephfs MDS inode (maybe hardlinked across the two mounted
-directories).
-
-I think it comes down to how atomic the read and write operations are.
-Are the reads and writes serialized such that a read will block until a
-write completes?
-
-Assuming that you won't end up with the data in some half-baked state,
-then leaving that up to the netfs seems like the right thing to do. That
-seems more in accordance with just having fscache be a simple(r) caching
-layer anyway.
-
-> The patches can be found here:
-> 
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-iter
-> 
-> I'm not going to post them for the moment unless someone really wants that.
-
-The diffstat looks great so far!
-
- 62 files changed, 4036 insertions(+), 7095 deletions(-)
-
--- 
-Jeff Layton <jlayton@kernel.org>
-
