@@ -2,192 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE06FFAEF5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 11:51:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4A15FAEFD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 11:52:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727470AbfKMKuz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Nov 2019 05:50:55 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34046 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726339AbfKMKuz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Nov 2019 05:50:55 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6B1ACB13C;
-        Wed, 13 Nov 2019 10:50:51 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 23C1B1E1498; Wed, 13 Nov 2019 11:50:51 +0100 (CET)
-Date:   Wed, 13 Nov 2019 11:50:51 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v4 01/23] mm/gup: pass flags arg to __gup_device_*
- functions
-Message-ID: <20191113105051.GH6367@quack2.suse.cz>
-References: <20191113042710.3997854-1-jhubbard@nvidia.com>
- <20191113042710.3997854-2-jhubbard@nvidia.com>
+        id S1727452AbfKMKwH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Nov 2019 05:52:07 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33598 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726340AbfKMKwH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 Nov 2019 05:52:07 -0500
+Received: by mail-lj1-f195.google.com with SMTP id t5so2062701ljk.0;
+        Wed, 13 Nov 2019 02:52:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=Ypz5d/EIOPP3+HgUGxWHqAdsciGE/zJP/FpY+Rga3WE=;
+        b=stnNNsN/sfAxPgiBtWDZj00CJI0auiagHBLWp7ywLng3NGgC00xPZQ6N3c/TgoSBSw
+         UldL3aKv/EVTpoXtF5TbxwzxWSrtRUMb67AVtCouH3nePmLbjEbunHen3z2ICaSkd99m
+         3sN1fMrbOr8mk/sm50/+LD1Kyf8jqBCdrvhxVGUXCOOrPQv2Eeg5aCqdEAZrYHyWvwHC
+         OtBvZrm8nvRIEMF3ad6LPv+0j2C0lM6qikbjkJDVn0GnwtpNvJrguwuKuUrA0CXSDEUG
+         jGef7C6p+1WzsESliOiLxuGYlkm2kAkmj8kiS8VcmW2AmYPR2G3VUcZcWcpyiy7Qttgm
+         3g9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=Ypz5d/EIOPP3+HgUGxWHqAdsciGE/zJP/FpY+Rga3WE=;
+        b=FOk9jXrMI3K3Zw1E6xKAyo3Tc61/jmsk7bdQE/xpfjuiu/u1LM3O4dhj+wlRn7UPX8
+         KrjkCBhXW9jjA2QK2I7v64psQG0cssjrrxMjvuyzpdiRU5OQ5IlayemDTG5dcnLjPEJO
+         CCWu50Nd3QvscxtsdZruXIDOTJ96FujTZtmq5Rlz9v7s1pY9rAnTkO7EoJHccLas+nMa
+         BRRx0R+RqCYpxnEatXWtx4X7LiedgY7gPuYFtuX7qydVgS4QP846dWM8BbKmooRZOEj9
+         ksjJQLldtFCmFnIspvKyaNy1DV+Ke70fImq7ExaV/O5PAK4iiMDTSaW+o7xITb1CPpGa
+         xAtw==
+X-Gm-Message-State: APjAAAXT29AOAAmhQbNnObzoHGHWBPOTQRR6iMmGv21Hljc8dNUMQJnl
+        18aYUo6TI4wWEUyoOmKm9Og=
+X-Google-Smtp-Source: APXvYqxTIaFXx7+vrJZk0Tb0sXjmjzbZPFYZVWLtIiEKoaaXbqHjUi3uPPdwmrlXOk8Y2QR0IezC4g==
+X-Received: by 2002:a05:651c:119b:: with SMTP id w27mr1940598ljo.221.1573642324819;
+        Wed, 13 Nov 2019 02:52:04 -0800 (PST)
+Received: from [192.168.1.36] (88-114-211-119.elisa-laajakaista.fi. [88.114.211.119])
+        by smtp.gmail.com with ESMTPSA id z20sm1208922ljj.85.2019.11.13.02.52.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Nov 2019 02:52:04 -0800 (PST)
+Subject: Re: [PATCH] Allow restricting permissions in /proc/sys
+To:     Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:FILESYSTEMS (VFS and infrastructure)" 
+        <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <74a91362-247c-c749-5200-7bdce704ed9e@gmail.com>
+ <20191112232239.yevpeemgxz4wy32b@wittgenstein>
+ <CALCETrUEQMdugz1t6HfK5MvDq_kOw13yuF+98euqVJgZ4WR1VA@mail.gmail.com>
+From:   Topi Miettinen <toiwoton@gmail.com>
+Message-ID: <0ba24187-caf6-c851-baaa-f768885cda47@gmail.com>
+Date:   Wed, 13 Nov 2019 12:52:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191113042710.3997854-2-jhubbard@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CALCETrUEQMdugz1t6HfK5MvDq_kOw13yuF+98euqVJgZ4WR1VA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 12-11-19 20:26:48, John Hubbard wrote:
-> A subsequent patch requires access to gup flags, so
-> pass the flags argument through to the __gup_device_*
-> functions.
+On 13.11.2019 6.50, Andy Lutomirski wrote:
+> On Tue, Nov 12, 2019 at 3:22 PM Christian Brauner
+> <christian.brauner@ubuntu.com> wrote:
+>>
+>> [Cc+ linux-api@vger.kernel.org]
+>>
+>> since that's potentially relevant to quite a few people.
+>>
+>> On Sun, Nov 03, 2019 at 04:55:48PM +0200, Topi Miettinen wrote:
+>>> Several items in /proc/sys need not be accessible to unprivileged
+>>> tasks. Let the system administrator change the permissions, but only
+>>> to more restrictive modes than what the sysctl tables allow.
+>>>
+>>> Signed-off-by: Topi Miettinen <toiwoton@gmail.com>
+>>> ---
+>>>   fs/proc/proc_sysctl.c | 41 +++++++++++++++++++++++++++++++----------
+>>>   1 file changed, 31 insertions(+), 10 deletions(-)
+>>>
+>>> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+>>> index d80989b6c344..88c4ca7d2782 100644
+>>> --- a/fs/proc/proc_sysctl.c
+>>> +++ b/fs/proc/proc_sysctl.c
+>>> @@ -818,6 +818,10 @@ static int proc_sys_permission(struct inode *inode, int
+>>> mask)
+>>>          if ((mask & MAY_EXEC) && S_ISREG(inode->i_mode))
+>>>                  return -EACCES;
+>>>
+>>> +       error = generic_permission(inode, mask);
+>>> +       if (error)
+>>> +               return error;
+>>> +
+>>>          head = grab_header(inode);
+>>>          if (IS_ERR(head))
+>>>                  return PTR_ERR(head);
+>>> @@ -837,9 +841,35 @@ static int proc_sys_setattr(struct dentry *dentry,
+>>> struct iattr *attr)
+>>>          struct inode *inode = d_inode(dentry);
+>>>          int error;
+>>>
+>>> -       if (attr->ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID))
+>>> +       if (attr->ia_valid & (ATTR_UID | ATTR_GID))
+>>>                  return -EPERM;
 > 
-> Also placate checkpatch.pl by shortening a nearby line.
+> Supporting at least ATTR_GID would make this much more useful.
+
+Yes, also XATTR/ACL support would be useful. But so far I've tried to 
+allow only tightening of permissions.
+
+>>>
+>>> +       if (attr->ia_valid & ATTR_MODE) {
+>>> +               struct ctl_table_header *head = grab_header(inode);
+>>> +               struct ctl_table *table = PROC_I(inode)->sysctl_entry;
+>>> +               umode_t max_mode = 0777; /* Only these bits may change */
+>>> +
+>>> +               if (IS_ERR(head))
+>>> +                       return PTR_ERR(head);
+>>> +
+>>> +               if (!table) /* global root - r-xr-xr-x */
+>>> +                       max_mode &= ~0222;
+>>> +               else /*
+>>> +                     * Don't allow permissions to become less
+>>> +                     * restrictive than the sysctl table entry
+>>> +                     */
+>>> +                       max_mode &= table->mode;
 > 
-> Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> Style nit: please put braces around multi-line if and else branches,
+> even if they're only multi-line because of comments.
 
-Looks good! You can add:
+OK, thanks.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  mm/gup.c | 28 ++++++++++++++++++----------
->  1 file changed, 18 insertions(+), 10 deletions(-)
+>>> +
+>>> +               sysctl_head_finish(head);
+>>> +
+>>> +               /* Execute bits only allowed for directories */
+>>> +               if (!S_ISDIR(inode->i_mode))
+>>> +                       max_mode &= ~0111;
 > 
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 8f236a335ae9..85caf76b3012 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -1890,7 +1890,8 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
->  
->  #if defined(CONFIG_ARCH_HAS_PTE_DEVMAP) && defined(CONFIG_TRANSPARENT_HUGEPAGE)
->  static int __gup_device_huge(unsigned long pfn, unsigned long addr,
-> -		unsigned long end, struct page **pages, int *nr)
-> +			     unsigned long end, unsigned int flags,
-> +			     struct page **pages, int *nr)
->  {
->  	int nr_start = *nr;
->  	struct dev_pagemap *pgmap = NULL;
-> @@ -1916,13 +1917,14 @@ static int __gup_device_huge(unsigned long pfn, unsigned long addr,
->  }
->  
->  static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
-> -		unsigned long end, struct page **pages, int *nr)
-> +				 unsigned long end, unsigned int flags,
-> +				 struct page **pages, int *nr)
->  {
->  	unsigned long fault_pfn;
->  	int nr_start = *nr;
->  
->  	fault_pfn = pmd_pfn(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
-> -	if (!__gup_device_huge(fault_pfn, addr, end, pages, nr))
-> +	if (!__gup_device_huge(fault_pfn, addr, end, flags, pages, nr))
->  		return 0;
->  
->  	if (unlikely(pmd_val(orig) != pmd_val(*pmdp))) {
-> @@ -1933,13 +1935,14 @@ static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
->  }
->  
->  static int __gup_device_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
-> -		unsigned long end, struct page **pages, int *nr)
-> +				 unsigned long end, unsigned int flags,
-> +				 struct page **pages, int *nr)
->  {
->  	unsigned long fault_pfn;
->  	int nr_start = *nr;
->  
->  	fault_pfn = pud_pfn(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
-> -	if (!__gup_device_huge(fault_pfn, addr, end, pages, nr))
-> +	if (!__gup_device_huge(fault_pfn, addr, end, flags, pages, nr))
->  		return 0;
->  
->  	if (unlikely(pud_val(orig) != pud_val(*pudp))) {
-> @@ -1950,14 +1953,16 @@ static int __gup_device_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
->  }
->  #else
->  static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
-> -		unsigned long end, struct page **pages, int *nr)
-> +				 unsigned long end, unsigned int flags,
-> +				 struct page **pages, int *nr)
->  {
->  	BUILD_BUG();
->  	return 0;
->  }
->  
->  static int __gup_device_huge_pud(pud_t pud, pud_t *pudp, unsigned long addr,
-> -		unsigned long end, struct page **pages, int *nr)
-> +				 unsigned long end, unsigned int flags,
-> +				 struct page **pages, int *nr)
->  {
->  	BUILD_BUG();
->  	return 0;
-> @@ -2062,7 +2067,8 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
->  	if (pmd_devmap(orig)) {
->  		if (unlikely(flags & FOLL_LONGTERM))
->  			return 0;
-> -		return __gup_device_huge_pmd(orig, pmdp, addr, end, pages, nr);
-> +		return __gup_device_huge_pmd(orig, pmdp, addr, end, flags,
-> +					     pages, nr);
->  	}
->  
->  	refs = 0;
-> @@ -2092,7 +2098,8 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
->  }
->  
->  static int gup_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
-> -		unsigned long end, unsigned int flags, struct page **pages, int *nr)
-> +			unsigned long end, unsigned int flags,
-> +			struct page **pages, int *nr)
->  {
->  	struct page *head, *page;
->  	int refs;
-> @@ -2103,7 +2110,8 @@ static int gup_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
->  	if (pud_devmap(orig)) {
->  		if (unlikely(flags & FOLL_LONGTERM))
->  			return 0;
-> -		return __gup_device_huge_pud(orig, pudp, addr, end, pages, nr);
-> +		return __gup_device_huge_pud(orig, pudp, addr, end, flags,
-> +					     pages, nr);
->  	}
->  
->  	refs = 0;
-> -- 
-> 2.24.0
+> Why is this needed?
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
+In general, /proc/sys does not allow executable permissions for the 
+files, so I've continued this policy.
+
+-Topi
