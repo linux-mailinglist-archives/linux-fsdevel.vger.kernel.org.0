@@ -2,251 +2,257 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1272FBBBE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 23:39:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D20FFBBDA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 23:49:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbfKMWjH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Nov 2019 17:39:07 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:47564 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726251AbfKMWjG (ORCPT
+        id S1726613AbfKMWti (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Nov 2019 17:49:38 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:12419 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726338AbfKMWti (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Nov 2019 17:39:06 -0500
-Received: from 79.184.253.153.ipv4.supernova.orange.pl (79.184.253.153) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
- id 695e88c4f6f8395e; Wed, 13 Nov 2019 23:39:02 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     y2038@lists.linaro.org,
+        Wed, 13 Nov 2019 17:49:38 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dcc887f0000>; Wed, 13 Nov 2019 14:49:35 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 13 Nov 2019 14:49:35 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 13 Nov 2019 14:49:35 -0800
+Received: from [10.2.160.107] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 13 Nov
+ 2019 22:49:35 +0000
+Subject: Re: [PATCH v4 04/23] mm: devmap: refactor 1-based refcounting for
+ ZONE_DEVICE pages
+To:     Dan Williams <dan.j.williams@intel.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 12/23] y2038: syscalls: change remaining timeval to __kernel_old_timeval
-Date:   Wed, 13 Nov 2019 23:39:01 +0100
-Message-ID: <43741269.9cZ5YESnMi@kreacher>
-In-Reply-To: <20191108211323.1806194-3-arnd@arndb.de>
-References: <20191108210236.1296047-1-arnd@arndb.de> <20191108211323.1806194-3-arnd@arndb.de>
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        "Paul Mackerras" <paulus@samba.org>, Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, KVM list <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>,
+        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ralph Campbell <rcampbell@nvidia.com>
+References: <20191113042710.3997854-1-jhubbard@nvidia.com>
+ <20191113042710.3997854-5-jhubbard@nvidia.com>
+ <CAPcyv4gGu=G-c1czSAYJ3joTYS_ZYOJ6i9umKzCQEFzpwZMiiA@mail.gmail.com>
+ <CAPcyv4hr64b-k4j7ZY796+k-+Dy11REMcvPJ+QjTsyJ3vSdfKg@mail.gmail.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <00148078-1795-da3e-916e-3ae2dcdd553d@nvidia.com>
+Date:   Wed, 13 Nov 2019 14:46:50 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CAPcyv4hr64b-k4j7ZY796+k-+Dy11REMcvPJ+QjTsyJ3vSdfKg@mail.gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1573685375; bh=M7Ik7ubSYX7OF1stdqZNif6HzttoKtqx7waxyFkzKWY=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=HRf688qze2GRqHnyahHLvRZ+e/6fvH6+Y1q+uYREZatis29SaWPmF7Yrn0hNJ5fki
+         H19OWHLxWg5fBjq4uhCaZuIv1bxbQc51YOO9wtnfWCKC6vgSD2z642SHYstveiEdW/
+         XqKRd607LdK6JAMtn52qX32U9Knbm5lNv1joK9r3pPuOV/AEZfYg1zmDoNNFM75fQM
+         n6MJ3uQfLBtl0aoWk9fBN2cNRViR2bv6RWI9vbCQBjOxgLTSwaiKPgMulSfUT2hZDH
+         JYAGHbrw0I2OznqDmLgaSKgmfKU0BBrFDVHomZrsYlwg3oZcnar1dWmuRE3/E8o/au
+         PoRkbbodX0mLw==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Friday, November 8, 2019 10:12:11 PM CET Arnd Bergmann wrote:
-> All of the remaining syscalls that pass a timeval (gettimeofday, utime,
-> futimesat) can trivially be changed to pass a __kernel_old_timeval
-> instead, which has a compatible layout, but avoids ambiguity with
-> the timeval type in user space.
+On 11/13/19 2:00 PM, Dan Williams wrote:
+...
+>> Ugh, when did all this HMM specific manipulation sneak into the
+>> generic ZONE_DEVICE path? It used to be gated by pgmap type with its
+>> own put_zone_device_private_page(). For example it's certainly
+>> unnecessary and might be broken (would need to check) to call
+>> mem_cgroup_uncharge() on a DAX page. ZONE_DEVICE users are not a
+>> monolith and the HMM use case leaks pages into code paths that DAX
+>> explicitly avoids.
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-For the change in power/power.h
-
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-> ---
->  arch/powerpc/include/asm/asm-prototypes.h |  3 ++-
->  arch/powerpc/kernel/syscalls.c            |  4 ++--
->  fs/select.c                               | 10 +++++-----
->  fs/utimes.c                               |  8 ++++----
->  include/linux/syscalls.h                  | 10 +++++-----
->  kernel/power/power.h                      |  2 +-
->  kernel/time/time.c                        |  2 +-
->  7 files changed, 20 insertions(+), 19 deletions(-)
+> It's been this way for a while and I did not react previously,
+> apologies for that. I think __ClearPageActive, __ClearPageWaiters, and
+> mem_cgroup_uncharge, belong behind a device-private conditional. The
+> history here is:
 > 
-> diff --git a/arch/powerpc/include/asm/asm-prototypes.h b/arch/powerpc/include/asm/asm-prototypes.h
-> index 8561498e653c..2c25dc079cb9 100644
-> --- a/arch/powerpc/include/asm/asm-prototypes.h
-> +++ b/arch/powerpc/include/asm/asm-prototypes.h
-> @@ -92,7 +92,8 @@ long sys_swapcontext(struct ucontext __user *old_ctx,
->  long sys_debug_setcontext(struct ucontext __user *ctx,
->  			  int ndbg, struct sig_dbg_op __user *dbg);
->  int
-> -ppc_select(int n, fd_set __user *inp, fd_set __user *outp, fd_set __user *exp, struct timeval __user *tvp);
-> +ppc_select(int n, fd_set __user *inp, fd_set __user *outp, fd_set __user *exp,
-> +	   struct __kernel_old_timeval __user *tvp);
->  unsigned long __init early_init(unsigned long dt_ptr);
->  void __init machine_init(u64 dt_ptr);
->  #endif
-> diff --git a/arch/powerpc/kernel/syscalls.c b/arch/powerpc/kernel/syscalls.c
-> index 3bfb3888e897..078608ec2e92 100644
-> --- a/arch/powerpc/kernel/syscalls.c
-> +++ b/arch/powerpc/kernel/syscalls.c
-> @@ -79,7 +79,7 @@ SYSCALL_DEFINE6(mmap, unsigned long, addr, size_t, len,
->   * sys_select() with the appropriate args. -- Cort
->   */
->  int
-> -ppc_select(int n, fd_set __user *inp, fd_set __user *outp, fd_set __user *exp, struct timeval __user *tvp)
-> +ppc_select(int n, fd_set __user *inp, fd_set __user *outp, fd_set __user *exp, struct __kernel_old_timeval __user *tvp)
->  {
->  	if ( (unsigned long)n >= 4096 )
->  	{
-> @@ -89,7 +89,7 @@ ppc_select(int n, fd_set __user *inp, fd_set __user *outp, fd_set __user *exp, s
->  		    || __get_user(inp, ((fd_set __user * __user *)(buffer+1)))
->  		    || __get_user(outp, ((fd_set  __user * __user *)(buffer+2)))
->  		    || __get_user(exp, ((fd_set  __user * __user *)(buffer+3)))
-> -		    || __get_user(tvp, ((struct timeval  __user * __user *)(buffer+4))))
-> +		    || __get_user(tvp, ((struct __kernel_old_timeval  __user * __user *)(buffer+4))))
->  			return -EFAULT;
->  	}
->  	return sys_select(n, inp, outp, exp, tvp);
-> diff --git a/fs/select.c b/fs/select.c
-> index 53a0c149f528..11d0285d46b7 100644
-> --- a/fs/select.c
-> +++ b/fs/select.c
-> @@ -321,7 +321,7 @@ static int poll_select_finish(struct timespec64 *end_time,
->  	switch (pt_type) {
->  	case PT_TIMEVAL:
->  		{
-> -			struct timeval rtv;
-> +			struct __kernel_old_timeval rtv;
->  
->  			if (sizeof(rtv) > sizeof(rtv.tv_sec) + sizeof(rtv.tv_usec))
->  				memset(&rtv, 0, sizeof(rtv));
-> @@ -698,10 +698,10 @@ int core_sys_select(int n, fd_set __user *inp, fd_set __user *outp,
->  }
->  
->  static int kern_select(int n, fd_set __user *inp, fd_set __user *outp,
-> -		       fd_set __user *exp, struct timeval __user *tvp)
-> +		       fd_set __user *exp, struct __kernel_old_timeval __user *tvp)
->  {
->  	struct timespec64 end_time, *to = NULL;
-> -	struct timeval tv;
-> +	struct __kernel_old_timeval tv;
->  	int ret;
->  
->  	if (tvp) {
-> @@ -720,7 +720,7 @@ static int kern_select(int n, fd_set __user *inp, fd_set __user *outp,
->  }
->  
->  SYSCALL_DEFINE5(select, int, n, fd_set __user *, inp, fd_set __user *, outp,
-> -		fd_set __user *, exp, struct timeval __user *, tvp)
-> +		fd_set __user *, exp, struct __kernel_old_timeval __user *, tvp)
->  {
->  	return kern_select(n, inp, outp, exp, tvp);
->  }
-> @@ -810,7 +810,7 @@ SYSCALL_DEFINE6(pselect6_time32, int, n, fd_set __user *, inp, fd_set __user *,
->  struct sel_arg_struct {
->  	unsigned long n;
->  	fd_set __user *inp, *outp, *exp;
-> -	struct timeval __user *tvp;
-> +	struct __kernel_old_timeval __user *tvp;
->  };
->  
->  SYSCALL_DEFINE1(old_select, struct sel_arg_struct __user *, arg)
-> diff --git a/fs/utimes.c b/fs/utimes.c
-> index 1ba3f7883870..c952b6b3d8a0 100644
-> --- a/fs/utimes.c
-> +++ b/fs/utimes.c
-> @@ -161,9 +161,9 @@ SYSCALL_DEFINE4(utimensat, int, dfd, const char __user *, filename,
->   * utimensat() instead.
->   */
->  static long do_futimesat(int dfd, const char __user *filename,
-> -			 struct timeval __user *utimes)
-> +			 struct __kernel_old_timeval __user *utimes)
->  {
-> -	struct timeval times[2];
-> +	struct __kernel_old_timeval times[2];
->  	struct timespec64 tstimes[2];
->  
->  	if (utimes) {
-> @@ -190,13 +190,13 @@ static long do_futimesat(int dfd, const char __user *filename,
->  
->  
->  SYSCALL_DEFINE3(futimesat, int, dfd, const char __user *, filename,
-> -		struct timeval __user *, utimes)
-> +		struct __kernel_old_timeval __user *, utimes)
->  {
->  	return do_futimesat(dfd, filename, utimes);
->  }
->  
->  SYSCALL_DEFINE2(utimes, char __user *, filename,
-> -		struct timeval __user *, utimes)
-> +		struct __kernel_old_timeval __user *, utimes)
->  {
->  	return do_futimesat(AT_FDCWD, filename, utimes);
->  }
-> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-> index 2f27bc9d5ef0..e665920fa359 100644
-> --- a/include/linux/syscalls.h
-> +++ b/include/linux/syscalls.h
-> @@ -51,7 +51,7 @@ struct statx;
->  struct __sysctl_args;
->  struct sysinfo;
->  struct timespec;
-> -struct timeval;
-> +struct __kernel_old_timeval;
->  struct __kernel_timex;
->  struct timezone;
->  struct tms;
-> @@ -732,7 +732,7 @@ asmlinkage long sys_prctl(int option, unsigned long arg2, unsigned long arg3,
->  asmlinkage long sys_getcpu(unsigned __user *cpu, unsigned __user *node, struct getcpu_cache __user *cache);
->  
->  /* kernel/time.c */
-> -asmlinkage long sys_gettimeofday(struct timeval __user *tv,
-> +asmlinkage long sys_gettimeofday(struct __kernel_old_timeval __user *tv,
->  				struct timezone __user *tz);
->  asmlinkage long sys_settimeofday(struct timeval __user *tv,
->  				struct timezone __user *tz);
-> @@ -1082,9 +1082,9 @@ asmlinkage long sys_time32(old_time32_t __user *tloc);
->  asmlinkage long sys_utime(char __user *filename,
->  				struct utimbuf __user *times);
->  asmlinkage long sys_utimes(char __user *filename,
-> -				struct timeval __user *utimes);
-> +				struct __kernel_old_timeval __user *utimes);
->  asmlinkage long sys_futimesat(int dfd, const char __user *filename,
-> -			      struct timeval __user *utimes);
-> +			      struct __kernel_old_timeval __user *utimes);
->  #endif
->  asmlinkage long sys_futimesat_time32(unsigned int dfd,
->  				     const char __user *filename,
-> @@ -1098,7 +1098,7 @@ asmlinkage long sys_getdents(unsigned int fd,
->  				struct linux_dirent __user *dirent,
->  				unsigned int count);
->  asmlinkage long sys_select(int n, fd_set __user *inp, fd_set __user *outp,
-> -			fd_set __user *exp, struct timeval __user *tvp);
-> +			fd_set __user *exp, struct __kernel_old_timeval __user *tvp);
->  asmlinkage long sys_poll(struct pollfd __user *ufds, unsigned int nfds,
->  				int timeout);
->  asmlinkage long sys_epoll_wait(int epfd, struct epoll_event __user *events,
-> diff --git a/kernel/power/power.h b/kernel/power/power.h
-> index 44bee462ff57..7cdc64dc2373 100644
-> --- a/kernel/power/power.h
-> +++ b/kernel/power/power.h
-> @@ -179,7 +179,7 @@ extern void swsusp_close(fmode_t);
->  extern int swsusp_unmark(void);
->  #endif
->  
-> -struct timeval;
-> +struct __kernel_old_timeval;
->  /* kernel/power/swsusp.c */
->  extern void swsusp_show_speed(ktime_t, ktime_t, unsigned int, char *);
->  
-> diff --git a/kernel/time/time.c b/kernel/time/time.c
-> index 7eba7c9a7e3e..bc114f0be8f1 100644
-> --- a/kernel/time/time.c
-> +++ b/kernel/time/time.c
-> @@ -137,7 +137,7 @@ SYSCALL_DEFINE1(stime32, old_time32_t __user *, tptr)
->  #endif /* __ARCH_WANT_SYS_TIME32 */
->  #endif
->  
-> -SYSCALL_DEFINE2(gettimeofday, struct timeval __user *, tv,
-> +SYSCALL_DEFINE2(gettimeofday, struct __kernel_old_timeval __user *, tv,
->  		struct timezone __user *, tz)
->  {
->  	if (likely(tv != NULL)) {
+> Move some, but not all HMM specifics to hmm_devmem_free():
+>      2fa147bdbf67 mm, dev_pagemap: Do not clear ->mapping on final put
 > 
+> Remove the clearing of mapping since no upstream consumers needed it:
+>      b7a523109fb5 mm: don't clear ->mapping in hmm_devmem_free
+> 
+> Add it back in once an upstream consumer arrived:
+>      7ab0ad0e74f8 mm/hmm: fix ZONE_DEVICE anon page mapping reuse
+> 
+> We're now almost entirely free of ->page_free callbacks except for
+> that weird nouveau case, can that FIXME in nouveau_dmem_page_free()
+> also result in killing the ->page_free() callback altogether? In the
+> meantime I'm proposing a cleanup like this:
 
 
+OK, assuming this is acceptable (no obvious problems jump out at me,
+and we can also test it with HMM), then how would you like to proceed, as
+far as patches go: add such a patch as part of this series here, or as a
+stand-alone patch either before or after this series? Or something else?
+And did you plan on sending it out as such?
+
+Also, the diffs didn't quite make it through intact to my "git apply", so
+I'm re-posting the diff in hopes that this time it survives:
+
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index f9f76f6ba07b..21db1ce8c0ae 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -338,13 +338,7 @@ static void pmem_release_disk(void *__pmem)
+  	put_disk(pmem->disk);
+  }
+  
+-static void pmem_pagemap_page_free(struct page *page)
+-{
+-	wake_up_var(&page->_refcount);
+-}
+-
+  static const struct dev_pagemap_ops fsdax_pagemap_ops = {
+-	.page_free		= pmem_pagemap_page_free,
+  	.kill			= pmem_pagemap_kill,
+  	.cleanup		= pmem_pagemap_cleanup,
+  };
+diff --git a/mm/memremap.c b/mm/memremap.c
+index 03ccbdfeb697..157edb8f7cf8 100644
+--- a/mm/memremap.c
++++ b/mm/memremap.c
+@@ -419,12 +419,6 @@ void __put_devmap_managed_page(struct page *page)
+  	 * holds a reference on the page.
+  	 */
+  	if (count == 1) {
+-		/* Clear Active bit in case of parallel mark_page_accessed */
+-		__ClearPageActive(page);
+-		__ClearPageWaiters(page);
+-
+-		mem_cgroup_uncharge(page);
+-
+  		/*
+  		 * When a device_private page is freed, the page->mapping field
+  		 * may still contain a (stale) mapping value. For example, the
+@@ -446,10 +440,17 @@ void __put_devmap_managed_page(struct page *page)
+  		 * handled differently or not done at all, so there is no need
+  		 * to clear page->mapping.
+  		 */
+-		if (is_device_private_page(page))
+-			page->mapping = NULL;
++		if (is_device_private_page(page)) {
++			/* Clear Active bit in case of parallel mark_page_accessed */
++			__ClearPageActive(page);
++			__ClearPageWaiters(page);
+  
+-		page->pgmap->ops->page_free(page);
++			mem_cgroup_uncharge(page);
++
++			page->mapping = NULL;
++			page->pgmap->ops->page_free(page);
++		} else
++			wake_up_var(&page->_refcount);
+  	} else if (!count)
+  		__put_page(page);
+  }
+-- 
+2.24.0
 
 
+thanks,
+-- 
+John Hubbard
+NVIDIA
+
+> 
+> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+> index ad8e4df1282b..4eae441f86c9 100644
+> --- a/drivers/nvdimm/pmem.c
+> +++ b/drivers/nvdimm/pmem.c
+> @@ -337,13 +337,7 @@ static void pmem_release_disk(void *__pmem)
+>          put_disk(pmem->disk);
+>   }
+> 
+> -static void pmem_pagemap_page_free(struct page *page)
+> -{
+> -       wake_up_var(&page->_refcount);
+> -}
+> -
+>   static const struct dev_pagemap_ops fsdax_pagemap_ops = {
+> -       .page_free              = pmem_pagemap_page_free,
+>          .kill                   = pmem_pagemap_kill,
+>          .cleanup                = pmem_pagemap_cleanup,
+>   };
+> diff --git a/mm/memremap.c b/mm/memremap.c
+> index 03ccbdfeb697..157edb8f7cf8 100644
+> --- a/mm/memremap.c
+> +++ b/mm/memremap.c
+> @@ -419,12 +419,6 @@ void __put_devmap_managed_page(struct page *page)
+>           * holds a reference on the page.
+>           */
+>          if (count == 1) {
+> -               /* Clear Active bit in case of parallel mark_page_accessed */
+> -               __ClearPageActive(page);
+> -               __ClearPageWaiters(page);
+> -
+> -               mem_cgroup_uncharge(page);
+> -
+>                  /*
+>                   * When a device_private page is freed, the page->mapping field
+>                   * may still contain a (stale) mapping value. For example, the
+> @@ -446,10 +440,17 @@ void __put_devmap_managed_page(struct page *page)
+>                   * handled differently or not done at all, so there is no need
+>                   * to clear page->mapping.
+>                   */
+> -               if (is_device_private_page(page))
+> -                       page->mapping = NULL;
+> +               if (is_device_private_page(page)) {
+> +                       /* Clear Active bit in case of parallel
+> mark_page_accessed */
+> +                       __ClearPageActive(page);
+> +                       __ClearPageWaiters(page);
+> 
+> -               page->pgmap->ops->page_free(page);
+> +                       mem_cgroup_uncharge(page);
+> +
+> +                       page->mapping = NULL;
+> +                       page->pgmap->ops->page_free(page);
+> +               } else
+> +                       wake_up_var(&page->_refcount);
+>          } else if (!count)
+>                  __put_page(page);
+>   }
+> 
