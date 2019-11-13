@@ -2,142 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F453FB45F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 16:55:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70CBAFB47E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 17:00:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbfKMPzO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Nov 2019 10:55:14 -0500
-Received: from mail-il1-f197.google.com ([209.85.166.197]:51327 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727262AbfKMPzM (ORCPT
+        id S1728217AbfKMQAr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Nov 2019 11:00:47 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:40399 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728199AbfKMQAr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Nov 2019 10:55:12 -0500
-Received: by mail-il1-f197.google.com with SMTP id x2so2191554ilk.18
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2019 07:55:10 -0800 (PST)
+        Wed, 13 Nov 2019 11:00:47 -0500
+Received: by mail-oi1-f195.google.com with SMTP id 22so2222615oip.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2019 08:00:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GcxXz/hy0yD4Dv/1aRup6B2d7cDG6vSzxW491ZecOnY=;
+        b=IkbtOt20hldM/bTM0mBSZl/lLqhj4os3wESjTi8qxWbG3L81gb5wKmTMIXPKKUGmJK
+         NNgkdbCScyvuJFDjMLFTdTsvkPUUGcyzZ5LAzlR2NI2iYw2KbA09cuEKLSaSZnMVrGzx
+         T/YO7QC4Q2XXwU+K6ElpD1LWMIflls/i19bT4v7D7mepGI1+BVABmGM/KFIb2HiMtf5V
+         VYGFnpcXMIBPgH3YGcbfVQit3z9aHZRd4455Xrn65g5X4mtB9J+a1ARi8O63tOSrydOc
+         tHE82uxnEeOpFrB7WM55hx/eR9Pz/5VeIDKJUAxwkdw3FHvbSEgMaabxRtI1ejn6g6H6
+         cNfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=WAQU/KVIGRtJPg+lrZPV6jtYth/u9rAcRq10vUlzD3M=;
-        b=UmjtkkWRDgFLhOLpEqOUDJ2D1h7Ml8dGd5Ro6m+QRcEGMSvqBwFAofT+ZMCXVU7y2P
-         geOpCwDI9qepBn+fmepAvOafHzfFP4pTvWymSkVlH9NhtrO3y4PBYFKdkxRN30Up48g5
-         OtyGUdOoCioTkMBZugOVTNpCX/SBHY8SpH1fbZrfIjem3+mpnxs8Tv7x5X22PuBCst/5
-         legVF5IyyrzPE4kDbRvk2fuLhO6ktlZunIkMuxRICl8bfekTOpl7bKtNp5ODU8zArWfu
-         UeYn9utQvkDEhVjjmGsope/P+JUOAsAObbEKNaQhAWYriSXXEnkojiUB033Vp9IGkjSs
-         VP+A==
-X-Gm-Message-State: APjAAAUQ0KhctSNUFQvp3yC1o2rpkPj9YBL8WuubRyZoG2DNyXJWc/jZ
-        9bQ/Z3xQ3907hItmr7/Ob5cJIIBorfjOTz3JaWQJklxkD/VZ
-X-Google-Smtp-Source: APXvYqxM+EWEGb24Yj3BNyVsnDvwgQcGfqxkweLZuuTsA2HJZ/agzGyN5u/2InnOx4faFJWtO4IYYMwf+h+ZT8/xOoMGx8rJAacF
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GcxXz/hy0yD4Dv/1aRup6B2d7cDG6vSzxW491ZecOnY=;
+        b=FYVUB3dvoxaXt0tT/eQ0abWOzumXhzNsWrh/LCKpY42auwHgxFk07Ah3Zcj7wobFB/
+         YPjsxcbZkSqb8rVeTjjxINHX140O2PeXw6NaCNj10g90r0WsP0XWYdCsFKkj0t7FPJQv
+         TYKG6EJxeNCdrkkJtLlBMIVwEZYB/ufU97us8Zqv7hA8uRVQd77hw0HXxZxZR2g2LK1t
+         7ldVlh6eOd9/pDjMfyuAi+nGYP7JIBxboxLvyUCfl1a8jl01VbkCLkMZ2n+ir0muxCWK
+         18PJhQ9mXkTk3E3kxUJ66G6XsMF3788IqSqSunsLvWZ1O3AeDZkqxhEQijMS2vB3dol/
+         2/yA==
+X-Gm-Message-State: APjAAAWAioIrnXsLAeCECbQo0eP+ZAFKNxDWQL7TSZXeSWGJFESSO8o/
+        it8r7mWqx2hO/b3ZkqBz13mDKXEPvwOdUCDRwLUY3g==
+X-Google-Smtp-Source: APXvYqx6LdgXxfOfErKByXfyOGZGi4ldWQzJ/kKriqc83ob1MBYgGQ3TZUA+L19NJgdsNKPAT47WF1DzoyGAlam7mec=
+X-Received: by 2002:aca:ccd1:: with SMTP id c200mr4406127oig.157.1573660845922;
+ Wed, 13 Nov 2019 08:00:45 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a92:dd8f:: with SMTP id g15mr4521438iln.145.1573660509827;
- Wed, 13 Nov 2019 07:55:09 -0800 (PST)
-Date:   Wed, 13 Nov 2019 07:55:09 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000af7e9805973c6356@google.com>
-Subject: general protection fault in io_commit_cqring
-From:   syzbot <syzbot+21147d79607d724bd6f3@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <74a91362-247c-c749-5200-7bdce704ed9e@gmail.com> <20191112232239.yevpeemgxz4wy32b@wittgenstein>
+In-Reply-To: <20191112232239.yevpeemgxz4wy32b@wittgenstein>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 13 Nov 2019 17:00:19 +0100
+Message-ID: <CAG48ez0j_7NyCyvGn8U8NS2p=CQQb=me-5KTa7k5E6xpHJphaA@mail.gmail.com>
+Subject: Re: [PATCH] Allow restricting permissions in /proc/sys
+To:     Topi Miettinen <toiwoton@gmail.com>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:FILESYSTEMS (VFS and infrastructure)" 
+        <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Wed, Nov 13, 2019 at 12:22 AM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+> On Sun, Nov 03, 2019 at 04:55:48PM +0200, Topi Miettinen wrote:
+> > Several items in /proc/sys need not be accessible to unprivileged
+> > tasks. Let the system administrator change the permissions, but only
+> > to more restrictive modes than what the sysctl tables allow.
+> >
+> > Signed-off-by: Topi Miettinen <toiwoton@gmail.com>
+> > ---
+> >  fs/proc/proc_sysctl.c | 41 +++++++++++++++++++++++++++++++----------
+> >  1 file changed, 31 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+> > index d80989b6c344..88c4ca7d2782 100644
+> > --- a/fs/proc/proc_sysctl.c
+> > +++ b/fs/proc/proc_sysctl.c
+> > @@ -818,6 +818,10 @@ static int proc_sys_permission(struct inode *inode, int
+> > mask)
+> >         if ((mask & MAY_EXEC) && S_ISREG(inode->i_mode))
+> >                 return -EACCES;
+> >
+> > +       error = generic_permission(inode, mask);
+> > +       if (error)
+> > +               return error;
 
-syzbot found the following crash on:
-
-HEAD commit:    4e8f108c Add linux-next specific files for 20191113
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=121ad2d2e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ace1bcdd76242fd2
-dashboard link: https://syzkaller.appspot.com/bug?extid=21147d79607d724bd6f3
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1649e706e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11397f72e00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+21147d79607d724bd6f3@syzkaller.appspotmail.com
-
-RSP: 002b:00007ffd6e8aa078 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441229
-RDX: 0000000000000002 RSI: 0000000020000140 RDI: 0000000000000d0d
-RBP: 00007ffd6e8aa090 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
-R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 8903 Comm: syz-executor410 Not tainted 5.4.0-rc7-next-20191113  
-#0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__read_once_size include/linux/compiler.h:199 [inline]
-RIP: 0010:__io_commit_cqring fs/io_uring.c:496 [inline]
-RIP: 0010:io_commit_cqring+0x1e1/0xdb0 fs/io_uring.c:592
-Code: 03 0f 8e df 09 00 00 48 8b 45 d0 4c 8d a3 c0 00 00 00 4c 89 e2 48 c1  
-ea 03 44 8b b8 c0 01 00 00 48 b8 00 00 00 00 00 fc ff df <0f> b6 14 02 4c  
-89 e0 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 61
-RSP: 0018:ffff88808f51fc08 EFLAGS: 00010006
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff815abe4a
-RDX: 0000000000000018 RSI: ffffffff81d168d5 RDI: ffff8880a9166100
-RBP: ffff88808f51fc70 R08: 0000000000000004 R09: ffffed1011ea3f7d
-R10: ffffed1011ea3f7c R11: 0000000000000003 R12: 00000000000000c0
-R13: ffff8880a91661c0 R14: 1ffff1101522cc10 R15: 0000000000000000
-FS:  0000000001e7a880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000140 CR3: 000000009a74c000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  io_cqring_overflow_flush+0x6b9/0xa90 fs/io_uring.c:673
-  io_ring_ctx_wait_and_kill+0x24f/0x7c0 fs/io_uring.c:4260
-  io_uring_create fs/io_uring.c:4600 [inline]
-  io_uring_setup+0x1256/0x1cc0 fs/io_uring.c:4626
-  __do_sys_io_uring_setup fs/io_uring.c:4639 [inline]
-  __se_sys_io_uring_setup fs/io_uring.c:4636 [inline]
-  __x64_sys_io_uring_setup+0x54/0x80 fs/io_uring.c:4636
-  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x441229
-Code: e8 5c ae 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 bb 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffd6e8aa078 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441229
-RDX: 0000000000000002 RSI: 0000000020000140 RDI: 0000000000000d0d
-RBP: 00007ffd6e8aa090 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
-R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace b0f5b127a57f623f ]---
-RIP: 0010:__read_once_size include/linux/compiler.h:199 [inline]
-RIP: 0010:__io_commit_cqring fs/io_uring.c:496 [inline]
-RIP: 0010:io_commit_cqring+0x1e1/0xdb0 fs/io_uring.c:592
-Code: 03 0f 8e df 09 00 00 48 8b 45 d0 4c 8d a3 c0 00 00 00 4c 89 e2 48 c1  
-ea 03 44 8b b8 c0 01 00 00 48 b8 00 00 00 00 00 fc ff df <0f> b6 14 02 4c  
-89 e0 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 61
-RSP: 0018:ffff88808f51fc08 EFLAGS: 00010006
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff815abe4a
-RDX: 0000000000000018 RSI: ffffffff81d168d5 RDI: ffff8880a9166100
-RBP: ffff88808f51fc70 R08: 0000000000000004 R09: ffffed1011ea3f7d
-R10: ffffed1011ea3f7c R11: 0000000000000003 R12: 00000000000000c0
-R13: ffff8880a91661c0 R14: 1ffff1101522cc10 R15: 0000000000000000
-FS:  0000000001e7a880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000140 CR3: 000000009a74c000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+In kernel/ucount.c, the ->permissions handler set_permissions() grants
+access based on whether the caller has CAP_SYS_RESOURCE. And in
+net/sysctl_net.c, the handler net_ctl_permissions() grants access
+based on whether the caller has CAP_NET_ADMIN. This added check is
+going to break those, right?
