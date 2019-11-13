@@ -2,82 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5827AFB8DB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 20:29:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9D7AFB8B5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 20:23:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727315AbfKMT3j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Nov 2019 14:29:39 -0500
-Received: from mta04.svc.cra.dublin.eircom.net ([159.134.118.171]:36149 "HELO
-        mta04.svc.cra.dublin.eircom.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with SMTP id S1726812AbfKMT3j (ORCPT
+        id S1726812AbfKMTXc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Nov 2019 14:23:32 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:41300 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726105AbfKMTXc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Nov 2019 14:29:39 -0500
-Received: (qmail 14675 messnum 3933198 invoked from network[213.94.190.15/avas03.vendorsvc.cra.dublin.eircom.net]); 13 Nov 2019 19:22:55 -0000
-Received: from avas03.vendorsvc.cra.dublin.eircom.net (HELO avas03) (213.94.190.15)
-  by mta04.svc.cra.dublin.eircom.net (qp 14675) with SMTP; 13 Nov 2019 19:22:55 -0000
-Received: from vzmbx18.eircom.net ([86.43.60.98])
-        by Cloudmark Gateway with SMTP
-        id UyEBihZ1sxi8gUyEBitZ0q; Wed, 13 Nov 2019 19:22:55 +0000
-X-Spam-Flag: NO
-X-CNFS-Analysis: v=2.2 cv=HooGIwbS c=1 sm=1 tr=0
- a=e7gqILOnBbllteVy7xBg4A==:117 a=9cW_t1CCXrUA:10 a=FKkrIqjQGGEA:10
- a=CtZj-PRnuFMA:10 a=IkcTkHD0fZMA:10 a=OInfx_3IAAcA:10 a=MEWDuUNxdpMA:10
- a=ZZnuYtJkoWoA:10 a=69EAbJreAAAA:8 a=CdXhuT_UVp6yClsh16sA:9
- a=B2tT3dhY4sW-9M1_:21 a=xLagpucJqED6qQk1:21 a=QEXdDO2ut3YA:10
- a=66l60b_nmaEA:10 a=5MgnXvm5AtQA:10
-Date:   Wed, 13 Nov 2019 19:22:55 +0000 (GMT)
-From:   ahmed <ksn4432@eircom.net>
-Message-ID: <91916376.105100.1573672975806.JavaMail.zimbra@eircom.net>
-Subject: Please Respond Urgently.
+        Wed, 13 Nov 2019 14:23:32 -0500
+Received: by mail-oi1-f195.google.com with SMTP id e9so2845646oif.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2019 11:23:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=4HKVOkxUXCqQFAssnrt5HN+d13KJzjRJ1pFFkgydGzo=;
+        b=bb6122LJyN4TYG5IK7mHh5xygfwPeVWP6I4JnFmlEb2IzPnSXePzt9c7h6VlwCNKNf
+         6iTeoCZ+WCekF2UjJKYypJ3VDkp2bZI1sBd8OZia/73qpNgBlVpDNRkT98ztqaV4Pdpl
+         ZVL0JboDgCGP8I4MHVFtdYs0p8UDQrSyipyLboTogqOsqYbQVAZcsnUwAJG32rUPMPmj
+         ssxQ90TSW2CRqTDYyVFKczonUtqdX4nXBKSakXhSzcp3X5BqgSICBAOxp0Q1Cy1lQWwq
+         g444805boKvN2nKVTBF8Zd13UMFnq8mUuIPok109u72I0derPDbhoGvKrYVRikRhE4Pc
+         Y6hQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=4HKVOkxUXCqQFAssnrt5HN+d13KJzjRJ1pFFkgydGzo=;
+        b=nZQTE0kDLPsASaatrUhJCMp7ro2GP07e+1IqhQIVnl2Eh4/n5ERRimUllwhqCHf0hA
+         cnbiISwWjICnsVhdwmh5P7IjXdtUtSeu990azWWGuu9DU0QgHJaONOr+ZDFguQBWwea9
+         zniuD/1dTkUZuxy/Bolj1eaBvUOYJEe49YAPYox53sdFbzupjWO/Ot8rRmby9/kWBoc9
+         fCKI/F8cOqnQ88oXAnGZ4s+ZZBxpmn3kX2yw3Q3HyeyVrUNOcy4PfPgtXPu1JgSRWGNT
+         TBt6KYYLmIpV4Y0Qvm+h+TtgZXrisHuWhzhH55BdMNwOzGrcfSI0KevJ2QI+EVWpFJmx
+         ffkw==
+X-Gm-Message-State: APjAAAVvm5JSUFHlCiOj8hO49+kZUj+DgmqGHIzwbkyh4liLdfElttIV
+        NrqKxLMIrF5BadM/OMMWD6LlDuYKPT+Nrb7bs2DQVQ==
+X-Google-Smtp-Source: APXvYqw/J/xJikM9Sn2uJoSKIkSXprx6L2hjLUq/51PEKKOZdQDk8LIwVzxcWXUccXtFtayP/c8+SilHtOvsl5tzGrQ=
+X-Received: by 2002:aca:ea57:: with SMTP id i84mr174326oih.73.1573673011067;
+ Wed, 13 Nov 2019 11:23:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [103.78.122.150]
-X-Mailer: Zimbra 8.6.0_GA_1242 (zclient/8.6.0_GA_1242)
-Thread-Topic: Please Respond Urgently.
-Thread-Index: WC/Lrm1jQC93x362tDlouK1xr6Dm6w==
-X-CMAE-Envelope: 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
-To:     unlisted-recipients:; (no To-header on input)
+References: <20191113042710.3997854-1-jhubbard@nvidia.com> <20191113042710.3997854-5-jhubbard@nvidia.com>
+In-Reply-To: <20191113042710.3997854-5-jhubbard@nvidia.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 13 Nov 2019 11:23:19 -0800
+Message-ID: <CAPcyv4gGu=G-c1czSAYJ3joTYS_ZYOJ6i9umKzCQEFzpwZMiiA@mail.gmail.com>
+Subject: Re: [PATCH v4 04/23] mm: devmap: refactor 1-based refcounting for
+ ZONE_DEVICE pages
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, KVM list <kvm@vger.kernel.org>,
+        linux-block@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-GREETINGS,
+On Tue, Nov 12, 2019 at 8:27 PM John Hubbard <jhubbard@nvidia.com> wrote:
+>
+> An upcoming patch changes and complicates the refcounting and
+> especially the "put page" aspects of it. In order to keep
+> everything clean, refactor the devmap page release routines:
+>
+> * Rename put_devmap_managed_page() to page_is_devmap_managed(),
+>   and limit the functionality to "read only": return a bool,
+>   with no side effects.
+>
+> * Add a new routine, put_devmap_managed_page(), to handle checking
+>   what kind of page it is, and what kind of refcount handling it
+>   requires.
+>
+> * Rename __put_devmap_managed_page() to free_devmap_managed_page(),
+>   and limit the functionality to unconditionally freeing a devmap
+>   page.
+>
+> This is originally based on a separate patch by Ira Weiny, which
+> applied to an early version of the put_user_page() experiments.
+> Since then, J=C3=A9r=C3=B4me Glisse suggested the refactoring described a=
+bove.
+>
+> Suggested-by: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+>  include/linux/mm.h | 27 ++++++++++++++++---
+>  mm/memremap.c      | 67 ++++++++++++++++++++--------------------------
+>  2 files changed, 53 insertions(+), 41 deletions(-)
+>
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index a2adf95b3f9c..96228376139c 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -967,9 +967,10 @@ static inline bool is_zone_device_page(const struct =
+page *page)
+>  #endif
+>
+>  #ifdef CONFIG_DEV_PAGEMAP_OPS
+> -void __put_devmap_managed_page(struct page *page);
+> +void free_devmap_managed_page(struct page *page);
+>  DECLARE_STATIC_KEY_FALSE(devmap_managed_key);
+> -static inline bool put_devmap_managed_page(struct page *page)
+> +
+> +static inline bool page_is_devmap_managed(struct page *page)
+>  {
+>         if (!static_branch_unlikely(&devmap_managed_key))
+>                 return false;
+> @@ -978,7 +979,6 @@ static inline bool put_devmap_managed_page(struct pag=
+e *page)
+>         switch (page->pgmap->type) {
+>         case MEMORY_DEVICE_PRIVATE:
+>         case MEMORY_DEVICE_FS_DAX:
+> -               __put_devmap_managed_page(page);
+>                 return true;
+>         default:
+>                 break;
+> @@ -986,6 +986,27 @@ static inline bool put_devmap_managed_page(struct pa=
+ge *page)
+>         return false;
+>  }
+>
+> +static inline bool put_devmap_managed_page(struct page *page)
+> +{
+> +       bool is_devmap =3D page_is_devmap_managed(page);
+> +
+> +       if (is_devmap) {
+> +               int count =3D page_ref_dec_return(page);
+> +
+> +               /*
+> +                * devmap page refcounts are 1-based, rather than 0-based=
+: if
+> +                * refcount is 1, then the page is free and the refcount =
+is
+> +                * stable because nobody holds a reference on the page.
+> +                */
+> +               if (count =3D=3D 1)
+> +                       free_devmap_managed_page(page);
+> +               else if (!count)
+> +                       __put_page(page);
+> +       }
+> +
+> +       return is_devmap;
+> +}
+> +
+>  #else /* CONFIG_DEV_PAGEMAP_OPS */
+>  static inline bool put_devmap_managed_page(struct page *page)
+>  {
+> diff --git a/mm/memremap.c b/mm/memremap.c
+> index 03ccbdfeb697..bc7e2a27d025 100644
+> --- a/mm/memremap.c
+> +++ b/mm/memremap.c
+> @@ -410,48 +410,39 @@ struct dev_pagemap *get_dev_pagemap(unsigned long p=
+fn,
+>  EXPORT_SYMBOL_GPL(get_dev_pagemap);
+>
+>  #ifdef CONFIG_DEV_PAGEMAP_OPS
+> -void __put_devmap_managed_page(struct page *page)
+> +void free_devmap_managed_page(struct page *page)
+>  {
+> -       int count =3D page_ref_dec_return(page);
+> +       /* Clear Active bit in case of parallel mark_page_accessed */
+> +       __ClearPageActive(page);
+> +       __ClearPageWaiters(page);
+> +
+> +       mem_cgroup_uncharge(page);
 
-I KNOW THAT THIS MAIL WILL COME TO YOU AS A SURPRISE AS WE HAVE NEVER MET BEFORE, BUT NEED NOT TO WORRY AS I AM CONTACTING YOU INDEPENDENTLY OF MY INVESTIGATION AND NO ONE IS INFORMED OF THIS COMMUNICATION. I NEED YOUR URGENT ASSISTANCE IN TRANSFERRING THE SUM OF $11.3MILLION IMMEDIATELY TO YOUR PRIVATE ACCOUNT WHERE THIS MONEY CAN BE SHARED BETWEEN US. THE MONEY HAS BEEN HERE IN OUR BANK LYING DORMANT FOR YEARS NOW WITHOUT ANYBODY COMING FOR THE CLAIM OF IT.
-
-I WANT TO RELEASE THE MONEY TO YOU AS THE RELATIVE TO OUR DECEASED CUSTOMER (THE ACCOUNT OWNER) WHO DIED A LONG WITH HIS SUPPOSED NEXT OF KIN SINCE 16TH OCTOBER 2005. THE BANKING LAWS HERE DOES NOT ALLOW SUCH MONEY TO STAY MORE THAN 14 YEARS, BECAUSE THE MONEY WILL BE RECALLED TO THE BANK TREASURY ACCOUNT AS UNCLAIMED FUND.
-
-BY INDICATING YOUR INTEREST I WILL SEND YOU THE FULL DETAILS ON HOW THE BUSINESS WILL BE EXECUTED.
-
-PLEASE SEND YOUR REPLY TO MY PRIVATE EMAIL.  MRAHMEDOUEDRAOGO@HOTMAIL.COM  
-
-BEST REGARDS,
-AHMED OUEDRAOGO.
+Ugh, when did all this HMM specific manipulation sneak into the
+generic ZONE_DEVICE path? It used to be gated by pgmap type with its
+own put_zone_device_private_page(). For example it's certainly
+unnecessary and might be broken (would need to check) to call
+mem_cgroup_uncharge() on a DAX page. ZONE_DEVICE users are not a
+monolith and the HMM use case leaks pages into code paths that DAX
+explicitly avoids.
