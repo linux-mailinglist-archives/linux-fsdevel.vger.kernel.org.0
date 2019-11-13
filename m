@@ -2,64 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46249FAF81
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 12:16:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E80F9FAF88
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 12:18:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727737AbfKMLQv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Nov 2019 06:16:51 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:51365 "EHLO
+        id S1727737AbfKMLSS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Nov 2019 06:18:18 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:39478 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727567AbfKMLQv (ORCPT
+        with ESMTP id S1727323AbfKMLSS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Nov 2019 06:16:51 -0500
+        Wed, 13 Nov 2019 06:18:18 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573643809;
+        s=mimecast20190719; t=1573643896;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=9TgWHtedewyYVeKMWggk8MUBoMaDILcq3YknTA2TqKo=;
-        b=A7Vh6R9RPaIan9AJcLtD1tT68Mx9G4Uf/WVp26Y3rSvGqj9RgT1fNuw3EKI/PHgtcuTYLd
-        pWfm03gD12NkgshD63d2+rMcgurGXIoIG/JtwC7kxQuLmDLrFT2KQygpdeemBnAHuKIY6w
-        yRN5cr4BSjfEaPK62QV/xEf6ve9JyqM=
+        bh=+4DKEG1YD9+fOubUldl9MnL4bU7MmbHESVaIk7Jx6mw=;
+        b=LerTC+FOqBT4kru6Y7lOowwUe14QAAnZqtbXZvo0JE2CmEqI/Y0RC35FO3V9SEZYDitAoo
+        jOgPdHMNMzEYCteAjZdEu5CfKdNBG9kK6AcXb8310DwihsuSoxOpQwCoxXp9C450uj/6PC
+        Dpyns1oGKHS9aJ69UDu2ra+pVlW2UzQ=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-386-4VVjEkysN62eAxhJRTDr2w-1; Wed, 13 Nov 2019 06:16:46 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+ us-mta-40-i03voM_8MgmSRku1iW4VOA-1; Wed, 13 Nov 2019 06:18:13 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 56AAA18B5FA6;
-        Wed, 13 Nov 2019 11:16:45 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 48304107ACC5;
+        Wed, 13 Nov 2019 11:18:12 +0000 (UTC)
 Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C2A0750FC7;
-        Wed, 13 Nov 2019 11:16:42 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4440D6106E;
+        Wed, 13 Nov 2019 11:18:09 +0000 (UTC)
 Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id xADBGgKS023444;
-        Wed, 13 Nov 2019 06:16:42 -0500
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id xADBI8gN023568;
+        Wed, 13 Nov 2019 06:18:08 -0500
 Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id xADBGfRf023440;
-        Wed, 13 Nov 2019 06:16:41 -0500
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id xADBI80c023564;
+        Wed, 13 Nov 2019 06:18:08 -0500
 X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Wed, 13 Nov 2019 06:16:41 -0500 (EST)
+Date:   Wed, 13 Nov 2019 06:18:08 -0500 (EST)
 From:   Mikulas Patocka <mpatocka@redhat.com>
 X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Nikos Tsironis <ntsironis@arrikto.com>
-cc:     tglx@linutronix.de, linux-rt-users@vger.kernel.org,
-        Mike Snitzer <msnitzer@redhat.com>,
+To:     tglx@linutronix.de, linux-rt-users@vger.kernel.org
+cc:     Mike Snitzer <msnitzer@redhat.com>,
+        Nikos Tsironis <ntsironis@arrikto.com>,
         Scott Wood <swood@redhat.com>,
         Ilias Tsitsimpis <iliastsi@arrikto.com>, dm-devel@redhat.com,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Daniel Wagner <dwagner@suse.de>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH RT 2/2 v2] list_bl: avoid BUG when the list is not
- locked
-In-Reply-To: <335dafcb-5e07-63ed-b288-196516170bde@arrikto.com>
-Message-ID: <alpine.LRH.2.02.1911130616240.20335@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1911121110430.12815@file01.intranet.prod.int.rdu2.redhat.com> <335dafcb-5e07-63ed-b288-196516170bde@arrikto.com>
+Subject: [PATCH RT 2/2 v3] list_bl: avoid BUG when the list is not locked
+In-Reply-To: <alpine.LRH.2.02.1911121110430.12815@file01.intranet.prod.int.rdu2.redhat.com>
+Message-ID: <alpine.LRH.2.02.1911130616570.20335@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1911121110430.12815@file01.intranet.prod.int.rdu2.redhat.com>
 User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-MC-Unique: 4VVjEkysN62eAxhJRTDr2w-1
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-MC-Unique: i03voM_8MgmSRku1iW4VOA-1
 X-Mimecast-Spam-Score: 0
 Content-Type: TEXT/PLAIN; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
@@ -68,77 +67,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On Wed, 13 Nov 2019, Nikos Tsironis wrote:
-
-> On 11/12/19 6:16 PM, Mikulas Patocka wrote:
-> > list_bl would crash with BUG() if we used it without locking. dm-snapsh=
-ot=20
-> > uses its own locking on realtime kernels (it can't use list_bl because=
+list_bl would crash with BUG() if we used it without locking. dm-snapshot=
 =20
-> > list_bl uses raw spinlock and dm-snapshot takes other non-raw spinlocks=
+uses its own locking on realtime kernels (it can't use list_bl because=20
+list_bl uses raw spinlock and dm-snapshot takes other non-raw spinlocks=20
+while holding bl_lock).
+
+To avoid this BUG, we must set LIST_BL_LOCKMASK =3D 0.
+
+This patch is intended only for the realtime kernel patchset, not for the=
 =20
-> > while holding bl_lock).
-> >=20
-> > To avoid this BUG, we must set LIST_BL_LOCKMASK =3D 0.
-> >=20
-> > This patch is intended only for the realtime kernel patchset, not for t=
-he=20
-> > upstream kernel.
-> >=20
-> > Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-> >=20
-> > Index: linux-rt-devel/include/linux/list_bl.h
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+upstream kernel.
+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+
+---
+ include/linux/list_bl.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: linux-rt-devel/include/linux/list_bl.h
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- linux-rt-devel.orig/include/linux/list_bl.h=092019-11-07 14:01:51.0=
-00000000 +0100
-> > +++ linux-rt-devel/include/linux/list_bl.h=092019-11-08 10:12:49.000000=
-000 +0100
-> > @@ -19,7 +19,7 @@
-> >   * some fast and compact auxiliary data.
-> >   */
-> > =20
-> > -#if defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)
-> > +#if (defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)) && !define=
-d(CONFIG_PREEMPT_RT_BASE)
-> >  #define LIST_BL_LOCKMASK=091UL
-> >  #else
-> >  #define LIST_BL_LOCKMASK=090UL
-> > @@ -161,9 +161,6 @@ static inline void hlist_bl_lock(struct
-> >  =09bit_spin_lock(0, (unsigned long *)b);
-> >  #else
-> >  =09raw_spin_lock(&b->lock);
-> > -#if defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)
-> > -=09__set_bit(0, (unsigned long *)b);
-> > -#endif
-> >  #endif
-> >  }
-> > =20
->=20
-> Hi Mikulas,
->=20
-> I think removing __set_bit()/__clear_bit() breaks hlist_bl_is_locked(),
-> which is used by the RCU variant of list_bl.
->=20
-> Nikos
-
-OK. so I can remove this part of the patch.
-
-Mikulas
-
-> > @@ -172,9 +169,6 @@ static inline void hlist_bl_unlock(struc
-> >  #ifndef CONFIG_PREEMPT_RT_BASE
-> >  =09__bit_spin_unlock(0, (unsigned long *)b);
-> >  #else
-> > -#if defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)
-> > -=09__clear_bit(0, (unsigned long *)b);
-> > -#endif
-> >  =09raw_spin_unlock(&b->lock);
-> >  #endif
-> >  }
-> >=20
->=20
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+--- linux-rt-devel.orig/include/linux/list_bl.h=092019-11-13 12:15:50.00000=
+0000 +0100
++++ linux-rt-devel/include/linux/list_bl.h=092019-11-13 12:15:50.000000000 =
++0100
+@@ -19,7 +19,7 @@
+  * some fast and compact auxiliary data.
+  */
+=20
+-#if defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)
++#if (defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)) && !defined(CO=
+NFIG_PREEMPT_RT_BASE)
+ #define LIST_BL_LOCKMASK=091UL
+ #else
+ #define LIST_BL_LOCKMASK=090UL
 
