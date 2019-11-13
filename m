@@ -2,272 +2,243 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BF21FAEC1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 11:44:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ED72FAEDA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 11:49:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727641AbfKMKoT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Nov 2019 05:44:19 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35097 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726422AbfKMKoS (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Nov 2019 05:44:18 -0500
-Received: by mail-lj1-f193.google.com with SMTP id r7so2021122ljg.2;
-        Wed, 13 Nov 2019 02:44:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=dhEmIfzmqI7tQAcEXbRXTf4UdaZklcdOSd4XS/O15mk=;
-        b=ibPduaEdNiokOHpZYkMSTiCcSRya3bI4nur19AswyIaJXjamlemLU8Djl86wrBPkva
-         ra4gCQZ2l/mDze6PqpRApTe7zL5OAaDSToJi0lZNEtArnVor/AWTKHqbFFqycF9MW0t1
-         5MNXx1t2N1poAqBQBSe+VgT/HzJyjoy+lDwmpjLK3DfQq16V0CYF/Fn12A7kx/XDA1hY
-         QqY6r8i3rZeRPJ9k0C7UadYpYJ5a2wCA8tiOY7RgoXAz1YjjS32u4exOe88rczoVFnHT
-         EvmODncxGKTRt5bHp2dDc4t+8Z0gHIzx1aKnjBktujZvYUYuI3668at0PtykhoIkr59s
-         35Bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=dhEmIfzmqI7tQAcEXbRXTf4UdaZklcdOSd4XS/O15mk=;
-        b=PAA+q1IRJpyp/weghKWSBzASY+c5N/zfriHq0XTU4H+n0o+VmIL2J9B2VTdkkbchtF
-         G8fZXoeg4XFdrKhZqWfcjpwuH/fOQeJ/VF8ol8sOThk5QfyKlk2GmXJUJmhqneuHgxhy
-         I9XifhKNsBLgk8uhK4WY1B3zKHvApvi1jj7beVm8N9bnTqfyek9t9zRKmbp65sGanlcV
-         4zd4Hz69bu40BUdm96q2HT5WBbVIA9AE89KFdjRGWEg8G3khW0nfxeTIZtRzcS3vPJbM
-         IM/SuYcH8nBd+eG7rmn/S7Kjbf9gZV17aWvwspYxDfUz/UpnMbMz3tnFYu4A6KUteIqU
-         JLEA==
-X-Gm-Message-State: APjAAAVVgGwIWcYqa4Oh1g0M0Ua2zNs6FXwQCNq6yDrbmB1Xwra+UGQd
-        asZ98EXvF7ECTQ1R//j0u++SwXUz
-X-Google-Smtp-Source: APXvYqzb0Gfz1wiPvicjLB+zCE7q5HitJzRnneD+hHncVMfFRam1eCI0E00qQ523jF/CkuNLU7ZWSA==
-X-Received: by 2002:a2e:b5b8:: with SMTP id f24mr2042067ljn.188.1573641854044;
-        Wed, 13 Nov 2019 02:44:14 -0800 (PST)
-Received: from [192.168.1.36] (88-114-211-119.elisa-laajakaista.fi. [88.114.211.119])
-        by smtp.gmail.com with ESMTPSA id n12sm1238584lfh.36.2019.11.13.02.44.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2019 02:44:13 -0800 (PST)
-Subject: Re: [PATCH] proc: Allow restricting permissions in /proc/sys
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:FILESYSTEMS (VFS and infrastructure)" 
-        <linux-fsdevel@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-api@vger.kernel.org
-References: <ed51f7dd-50a2-fbf5-7ea8-4bab6d48279e@gmail.com>
- <20191113003524.GQ11244@42.do-not-panic.com>
-From:   Topi Miettinen <toiwoton@gmail.com>
-Message-ID: <8942c5c9-f8b0-5c53-0fb6-ea816243bc22@gmail.com>
-Date:   Wed, 13 Nov 2019 12:44:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727415AbfKMKtZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Nov 2019 05:49:25 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33058 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726138AbfKMKtZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 Nov 2019 05:49:25 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B5441B20D;
+        Wed, 13 Nov 2019 10:49:20 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 1B6A71E1498; Wed, 13 Nov 2019 11:49:20 +0100 (CET)
+Date:   Wed, 13 Nov 2019 11:49:20 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 04/23] mm: devmap: refactor 1-based refcounting for
+ ZONE_DEVICE pages
+Message-ID: <20191113104920.GF6367@quack2.suse.cz>
+References: <20191113042710.3997854-1-jhubbard@nvidia.com>
+ <20191113042710.3997854-5-jhubbard@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20191113003524.GQ11244@42.do-not-panic.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191113042710.3997854-5-jhubbard@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 13.11.2019 2.35, Luis Chamberlain wrote:
-> On Mon, Nov 04, 2019 at 02:07:29PM +0200, Topi Miettinen wrote:
->> Several items in /proc/sys need not be accessible to unprivileged
->> tasks. Let the system administrator change the permissions, but only
->> to more restrictive modes than what the sysctl tables allow.
+On Tue 12-11-19 20:26:51, John Hubbard wrote:
+> An upcoming patch changes and complicates the refcounting and
+> especially the "put page" aspects of it. In order to keep
+> everything clean, refactor the devmap page release routines:
 > 
-> Thanks for taking the time for looking into this!
+> * Rename put_devmap_managed_page() to page_is_devmap_managed(),
+>   and limit the functionality to "read only": return a bool,
+>   with no side effects.
 > 
-> We don't get many eyeballs over this code, so while you're at it, if its
-> not too much trouble and since it seems you care: can you list proc sys
-> files which are glaring red flags to have their current defaults
-> permissions?
-
-I'm not aware if there are any problems with the defaults. It's just 
-that the defaults make so many files available to unprivileged tasks, 
-when in reality only a few of the files seem to be really needed or useful.
-
-For example, going through the few Debian Code Search hits for 
-/proc/sys/debug [1], it seems to me that the default could as well be 
-0500 for the directory without breaking anything.
-
-1: https://codesearch.debian.net/search?q=%2Fproc%2Fsys%2Fdebug&literal=1
-
->> Signed-off-by: Topi Miettinen <toiwoton@gmail.com>
->> ---
->> v2: actually keep track of changed permissions instead of relying on inode
->> cache
->> ---
->>   fs/proc/proc_sysctl.c  | 42 ++++++++++++++++++++++++++++++++++++++----
->>   include/linux/sysctl.h |  1 +
->>   2 files changed, 39 insertions(+), 4 deletions(-)
->>
->> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
->> index d80989b6c344..1f75382c49fd 100644
->> --- a/fs/proc/proc_sysctl.c
->> +++ b/fs/proc/proc_sysctl.c
->> @@ -818,6 +818,10 @@ static int proc_sys_permission(struct inode *inode, int
->> mask)
->>          if ((mask & MAY_EXEC) && S_ISREG(inode->i_mode))
->>                  return -EACCES;
->>
->> +       error = generic_permission(inode, mask);
->> +       if (error)
->> +               return error;
->> +
+> * Add a new routine, put_devmap_managed_page(), to handle checking
+>   what kind of page it is, and what kind of refcount handling it
+>   requires.
 > 
-> This alone checks to see if the inode's uid and gid are mapped to the
-> current namespace, amonst other things. A worthy change in and of
-> itself, worthy of it being a separate patch.
-
-OK, will separate.
-
-> Can it regress current uses? Well depends if namespaces exists today
-> where root is not mapped to other namespaces, and if that was *expected*
-> to work.
+> * Rename __put_devmap_managed_page() to free_devmap_managed_page(),
+>   and limit the functionality to unconditionally freeing a devmap
+>   page.
 > 
->>          head = grab_header(inode);
->>          if (IS_ERR(head))
->>                  return PTR_ERR(head);
->> @@ -835,17 +839,46 @@ static int proc_sys_permission(struct inode *inode,
->> int mask)
->>   static int proc_sys_setattr(struct dentry *dentry, struct iattr *attr)
->>   {
->>          struct inode *inode = d_inode(dentry);
->> +       struct ctl_table_header *head = grab_header(inode);
->> +       struct ctl_table *table = PROC_I(inode)->sysctl_entry;
->>          int error;
->>
->> -       if (attr->ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID))
->> +       if (attr->ia_valid & (ATTR_UID | ATTR_GID))
->>                  return -EPERM;
->>
->> +       if (attr->ia_valid & ATTR_MODE) {
->> +               umode_t max_mode = 0777; /* Only these bits may change */
->> +
->> +               if (IS_ERR(head))
->> +                       return PTR_ERR(head);
->> +
->> +               if (!table) /* global root - r-xr-xr-x */
->> +                       max_mode &= ~0222;
+> This is originally based on a separate patch by Ira Weiny, which
+> applied to an early version of the put_user_page() experiments.
+> Since then, Jérôme Glisse suggested the refactoring described above.
 > 
-> max_mode &= root->permissions(head, table) ?
+> Suggested-by: Jérôme Glisse <jglisse@redhat.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 
-Currently, writing is not allowed by default. For /proc/sys/net and 
-/proc/sys/user, which grant write access to suitably ns_capable tasks, I 
-think this would allow those tasks also to change the mode to world 
-writable. So far, I've tried to allow only tightening of permissions.
+Looks good to me. You can add:
 
-> But why are we setting this? More in context below.
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  include/linux/mm.h | 27 ++++++++++++++++---
+>  mm/memremap.c      | 67 ++++++++++++++++++++--------------------------
+>  2 files changed, 53 insertions(+), 41 deletions(-)
 > 
->> +               else /*
->> +                     * Don't allow permissions to become less
->> +                     * restrictive than the sysctl table entry
->> +                     */
->> +                       max_mode &= table->mode;
->> +
->> +               /* Execute bits only allowed for directories */
->> +               if (!S_ISDIR(inode->i_mode))
->> +                       max_mode &= ~0111;
->> +
->> +               if (attr->ia_mode & ~S_IFMT & ~max_mode)
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index a2adf95b3f9c..96228376139c 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -967,9 +967,10 @@ static inline bool is_zone_device_page(const struct page *page)
+>  #endif
+>  
+>  #ifdef CONFIG_DEV_PAGEMAP_OPS
+> -void __put_devmap_managed_page(struct page *page);
+> +void free_devmap_managed_page(struct page *page);
+>  DECLARE_STATIC_KEY_FALSE(devmap_managed_key);
+> -static inline bool put_devmap_managed_page(struct page *page)
+> +
+> +static inline bool page_is_devmap_managed(struct page *page)
+>  {
+>  	if (!static_branch_unlikely(&devmap_managed_key))
+>  		return false;
+> @@ -978,7 +979,6 @@ static inline bool put_devmap_managed_page(struct page *page)
+>  	switch (page->pgmap->type) {
+>  	case MEMORY_DEVICE_PRIVATE:
+>  	case MEMORY_DEVICE_FS_DAX:
+> -		__put_devmap_managed_page(page);
+>  		return true;
+>  	default:
+>  		break;
+> @@ -986,6 +986,27 @@ static inline bool put_devmap_managed_page(struct page *page)
+>  	return false;
+>  }
+>  
+> +static inline bool put_devmap_managed_page(struct page *page)
+> +{
+> +	bool is_devmap = page_is_devmap_managed(page);
+> +
+> +	if (is_devmap) {
+> +		int count = page_ref_dec_return(page);
+> +
+> +		/*
+> +		 * devmap page refcounts are 1-based, rather than 0-based: if
+> +		 * refcount is 1, then the page is free and the refcount is
+> +		 * stable because nobody holds a reference on the page.
+> +		 */
+> +		if (count == 1)
+> +			free_devmap_managed_page(page);
+> +		else if (!count)
+> +			__put_page(page);
+> +	}
+> +
+> +	return is_devmap;
+> +}
+> +
+>  #else /* CONFIG_DEV_PAGEMAP_OPS */
+>  static inline bool put_devmap_managed_page(struct page *page)
+>  {
+> diff --git a/mm/memremap.c b/mm/memremap.c
+> index 03ccbdfeb697..bc7e2a27d025 100644
+> --- a/mm/memremap.c
+> +++ b/mm/memremap.c
+> @@ -410,48 +410,39 @@ struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
+>  EXPORT_SYMBOL_GPL(get_dev_pagemap);
+>  
+>  #ifdef CONFIG_DEV_PAGEMAP_OPS
+> -void __put_devmap_managed_page(struct page *page)
+> +void free_devmap_managed_page(struct page *page)
+>  {
+> -	int count = page_ref_dec_return(page);
+> +	/* Clear Active bit in case of parallel mark_page_accessed */
+> +	__ClearPageActive(page);
+> +	__ClearPageWaiters(page);
+> +
+> +	mem_cgroup_uncharge(page);
+>  
+>  	/*
+> -	 * If refcount is 1 then page is freed and refcount is stable as nobody
+> -	 * holds a reference on the page.
+> +	 * When a device_private page is freed, the page->mapping field
+> +	 * may still contain a (stale) mapping value. For example, the
+> +	 * lower bits of page->mapping may still identify the page as
+> +	 * an anonymous page. Ultimately, this entire field is just
+> +	 * stale and wrong, and it will cause errors if not cleared.
+> +	 * One example is:
+> +	 *
+> +	 *  migrate_vma_pages()
+> +	 *    migrate_vma_insert_page()
+> +	 *      page_add_new_anon_rmap()
+> +	 *        __page_set_anon_rmap()
+> +	 *          ...checks page->mapping, via PageAnon(page) call,
+> +	 *            and incorrectly concludes that the page is an
+> +	 *            anonymous page. Therefore, it incorrectly,
+> +	 *            silently fails to set up the new anon rmap.
+> +	 *
+> +	 * For other types of ZONE_DEVICE pages, migration is either
+> +	 * handled differently or not done at all, so there is no need
+> +	 * to clear page->mapping.
+>  	 */
+> -	if (count == 1) {
+> -		/* Clear Active bit in case of parallel mark_page_accessed */
+> -		__ClearPageActive(page);
+> -		__ClearPageWaiters(page);
+> -
+> -		mem_cgroup_uncharge(page);
+> -
+> -		/*
+> -		 * When a device_private page is freed, the page->mapping field
+> -		 * may still contain a (stale) mapping value. For example, the
+> -		 * lower bits of page->mapping may still identify the page as
+> -		 * an anonymous page. Ultimately, this entire field is just
+> -		 * stale and wrong, and it will cause errors if not cleared.
+> -		 * One example is:
+> -		 *
+> -		 *  migrate_vma_pages()
+> -		 *    migrate_vma_insert_page()
+> -		 *      page_add_new_anon_rmap()
+> -		 *        __page_set_anon_rmap()
+> -		 *          ...checks page->mapping, via PageAnon(page) call,
+> -		 *            and incorrectly concludes that the page is an
+> -		 *            anonymous page. Therefore, it incorrectly,
+> -		 *            silently fails to set up the new anon rmap.
+> -		 *
+> -		 * For other types of ZONE_DEVICE pages, migration is either
+> -		 * handled differently or not done at all, so there is no need
+> -		 * to clear page->mapping.
+> -		 */
+> -		if (is_device_private_page(page))
+> -			page->mapping = NULL;
+> +	if (is_device_private_page(page))
+> +		page->mapping = NULL;
+>  
+> -		page->pgmap->ops->page_free(page);
+> -	} else if (!count)
+> -		__put_page(page);
+> +	page->pgmap->ops->page_free(page);
+>  }
+> -EXPORT_SYMBOL(__put_devmap_managed_page);
+> +EXPORT_SYMBOL(free_devmap_managed_page);
+>  #endif /* CONFIG_DEV_PAGEMAP_OPS */
+> -- 
+> 2.24.0
 > 
-> Shouldn't this error path call sysctl_head_finish(head) ?
-
-Right, will fix.
-
->> +                       return -EPERM;
->> +       }
->> +
->>          error = setattr_prepare(dentry, attr);
->>          if (error)
->>                  return error;
->>
->>          setattr_copy(inode, attr);
->>          mark_inode_dirty(inode);
->> +
->> +       if (table)
->> +               table->current_mode = inode->i_mode;
-> 
-> Here we only care about setting this current_mode if the
-> table is set is present, but above we did some processing
-> when it was not set. Why?
-
-The processing above when there was no table was to ensure that there is 
-some default (0444 for files, 0555 for directories). Here we store the 
-changed mode to table, if it is present.
-
-Though if there's no table, the change would remain only in the inode 
-cache, so using the table for backing storage for the mode looks now to 
-me as a bad idea. Perhaps struct proc_dir_entry should be used instead.
-
->> +       sysctl_head_finish(head);
->> +
->>          return 0;
->>   }
->>
->> @@ -861,7 +894,7 @@ static int proc_sys_getattr(const struct path *path,
->> struct kstat *stat,
->>
->>          generic_fillattr(inode, stat);
->>          if (table)
->> -               stat->mode = (stat->mode & S_IFMT) | table->mode;
->> +               stat->mode = (stat->mode & S_IFMT) | table->current_mode;
->>
->>          sysctl_head_finish(head);
->>          return 0;
->> @@ -981,7 +1014,7 @@ static struct ctl_dir *new_dir(struct ctl_table_set
->> *set,
->>          memcpy(new_name, name, namelen);
->>          new_name[namelen] = '\0';
->>          table[0].procname = new_name;
->> -       table[0].mode = S_IFDIR|S_IRUGO|S_IXUGO;
->> +       table[0].current_mode = table[0].mode = S_IFDIR|S_IRUGO|S_IXUGO;
->>          init_header(&new->header, set->dir.header.root, set, node, table);
->>
->>          return new;
->> @@ -1155,6 +1188,7 @@ static int sysctl_check_table(const char *path, struct
->> ctl_table *table)
->>                  if ((table->mode & (S_IRUGO|S_IWUGO)) != table->mode)
->>                          err |= sysctl_err(path, table, "bogus .mode 0%o",
->>                                  table->mode);
->> +               table->current_mode = table->mode;
->>          }
->>          return err;
->>   }
->> @@ -1192,7 +1226,7 @@ static struct ctl_table_header *new_links(struct
->> ctl_dir *dir, struct ctl_table
->>                  int len = strlen(entry->procname) + 1;
->>                  memcpy(link_name, entry->procname, len);
->>                  link->procname = link_name;
->> -               link->mode = S_IFLNK|S_IRWXUGO;
->> +               link->current_mode = link->mode = S_IFLNK|S_IRWXUGO;
->>                  link->data = link_root;
->>                  link_name += len;
->>          }
->> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
->> index 6df477329b76..7c519c35bf9c 100644
->> --- a/include/linux/sysctl.h
->> +++ b/include/linux/sysctl.h
->> @@ -126,6 +126,7 @@ struct ctl_table
->>          void *data;
->>          int maxlen;
->>          umode_t mode;
->> +       umode_t current_mode;
-> 
-> Please add kdoc, I know we don't have one, but we have to start, and
-> explain at least that mode is the original intended settings, and that
-> current_mode can only be stricter settings.
-
-OK, if this remains instead of using proc_dir_entry for storing the mode.
-
-> Also, I see your patch does a good sanity test on the input mask
-> and returns it back, howevever, I don't see how proc_sys_permission()
-> is using it?
-
-It's not, but the inode mode is checked by generic_permission() added by 
-the patch.
-
--Topi
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
