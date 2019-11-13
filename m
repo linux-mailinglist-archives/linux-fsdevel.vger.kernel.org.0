@@ -2,156 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B3DCFA9F9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 07:01:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF0D3FAA94
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 08:01:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727077AbfKMGBg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Nov 2019 01:01:36 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:45784 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725858AbfKMGBf (ORCPT
+        id S1726363AbfKMHBt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Nov 2019 02:01:49 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:38681 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbfKMHBt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Nov 2019 01:01:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573624893;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=BI1DBbTBrcq16pSAoz/BMA31HAPi7JaaeyCMiqZAhfE=;
-        b=J6vyXx5TL4SivpuPm9SALV30pua4eYyY280l+uLdUS3cBB1xphJIlh/cU9aV1Z3UhvvNO4
-        I79JPm5fnOBFjrh5iE8cB3msXn6EanIVQlJtxdDBHUFpl1IknPiBzKcBrlPN/5V0IAFDXJ
-        VFXuUwUhFDL9KBgkQqRD/PEU6skUOeM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-210-ZdQCrH3AO6aLXcu4nSUO7g-1; Wed, 13 Nov 2019 01:01:30 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 03C51107ACC7;
-        Wed, 13 Nov 2019 06:01:29 +0000 (UTC)
-Received: from ovpn-116-229.phx2.redhat.com (ovpn-116-229.phx2.redhat.com [10.3.116.229])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7730C101E3CB;
-        Wed, 13 Nov 2019 06:01:22 +0000 (UTC)
-Message-ID: <048d9e5ea9ea9cebe18aa96d59bd0a67b3429529.camel@redhat.com>
-Subject: Re: [PATCH 1/2] dm-snapshot: fix crash with the realtime kernel
-From:   Scott Wood <swood@redhat.com>
-To:     Nikos Tsironis <ntsironis@arrikto.com>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Cc:     Ilias Tsitsimpis <iliastsi@arrikto.com>, dm-devel@redhat.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Daniel Wagner <dwagner@suse.de>, tglx@linutronix.de,
-        linux-rt-users@vger.kernel.org,
-        Paul Gortmaker <paul.gortmaker@windriver.com>
-In-Reply-To: <a6f588d3-2403-d50a-70a1-ed644082cc83@arrikto.com>
-References: <alpine.LRH.2.02.1911110811060.28408@file01.intranet.prod.int.rdu2.redhat.com>
-         <c9a772e9-e305-cf0b-1155-fb19bdb84e55@arrikto.com>
-         <20191112011444.GA32220@redhat.com>
-         <alpine.LRH.2.02.1911120240020.25757@file01.intranet.prod.int.rdu2.redhat.com>
-         <a6f588d3-2403-d50a-70a1-ed644082cc83@arrikto.com>
-Organization: Red Hat
+        Wed, 13 Nov 2019 02:01:49 -0500
+Received: by mail-yw1-f68.google.com with SMTP id m196so380603ywd.5;
+        Tue, 12 Nov 2019 23:01:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PjvWzi5zAYDzWCzMMij4/zfnC+NCGyH/qKPEJGtsxFA=;
+        b=SiksfhJAN1W/uAeCuU4qY1s9ABOuCtBmJRiK+lb7NzZQRYuk0uO5tTA9KwN+GH+A0z
+         9OZ2PalvM9Nsd2P+QfroLRUCmQittDRndNaTPSbOawYIX0uLlNh3Kw7abLGTP5LRCgM7
+         NY3juym5/hTRXqlIn0G3OyvYokefg1pySjfNXhDzBdBMspQ23eIfhgqeyj9VD0eX5iqj
+         aGJn0vg/bHFzS7GUPVGz3xCDDGTc50XuGHa7p9aX/drh/0ISHp6UkXcV1QnZEEwjSK5l
+         ylZfR+5/s+h+CLsY0X/H46pFMBHhkVhPI+LIFj/UlbwsDSE2zT+4Aiyw/OIJWUyH4hYa
+         T4pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PjvWzi5zAYDzWCzMMij4/zfnC+NCGyH/qKPEJGtsxFA=;
+        b=Me9MTDA9al9UL3sM/HcfZkOR/mKZny40Q8+7KO0FKw8ad2hSHGMM38vZWrnsDu8f3Q
+         w8QjT8UBZ+rzKsp4QAl0FwW5Nca9gfI/QoZ2TaOj33Rz64JcVyg7LNtktvV2vcd0taay
+         VW0rvj6i1hdK2J2cP1sdf4XnvWsn7yxqQRgYYVF20WT5YKG3TPxGfTsRVGui5o1lZJf3
+         8cE4i84Dm48khn/W8S5DiLIu1NzpS9DDp8WYpodi81LRnFkwz1acN+Ftw1UzCYHxBQqb
+         A0cRNbSRWtgn2JA6Fez9BNJhSdn0XaYRVweSz8O6GK740WeTWdtwUYO6VT/M7PJ3QzQq
+         l/Fw==
+X-Gm-Message-State: APjAAAVmoVzeLLww1AYveq/NhsqSq4LB25MfyiJgFHtR9k3h4M8316ij
+        uu8a7suHOJ8plqBWVq881GKnZu8l7a4Ngtx0gXw=
+X-Google-Smtp-Source: APXvYqytmTgUznWrkZNaCm0wGchaTdWq2lIA2CGsbtK9nqE383blgmwrbwRQ5AdkDaQoV4z9HoievrtIxfwEhmytANY=
+X-Received: by 2002:a81:2f0f:: with SMTP id v15mr1186047ywv.183.1573628508049;
+ Tue, 12 Nov 2019 23:01:48 -0800 (PST)
 MIME-Version: 1.0
-Date:   Wed, 13 Nov 2019 00:01:06 -0600
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: ZdQCrH3AO6aLXcu4nSUO7g-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+References: <20191015040730.6A84742047@d06av24.portsmouth.uk.ibm.com>
+ <20191022133855.B1B4752050@d06av21.portsmouth.uk.ibm.com> <20191022143736.GX26530@ZenIV.linux.org.uk>
+ <20191022201131.GZ26530@ZenIV.linux.org.uk> <20191023110551.D04AE4C044@d06av22.portsmouth.uk.ibm.com>
+ <20191101234622.GM26530@ZenIV.linux.org.uk> <20191102172229.GT20975@paulmck-ThinkPad-P72>
+ <20191102180842.GN26530@ZenIV.linux.org.uk> <20191103163524.GO26530@ZenIV.linux.org.uk>
+ <20191103182058.GQ26530@ZenIV.linux.org.uk> <20191103185133.GR26530@ZenIV.linux.org.uk>
+In-Reply-To: <20191103185133.GR26530@ZenIV.linux.org.uk>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 13 Nov 2019 09:01:36 +0200
+Message-ID: <CAOQ4uxiHH=e=Y5Xb3bkv+USxE0AftHiP935GGQEKkv54E17oDA@mail.gmail.com>
+Subject: Re: [PATCH][RFC] ecryptfs_lookup_interpose(): lower_dentry->d_inode
+ is not stable
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, wugyuan@cn.ibm.com,
+        Jeff Layton <jlayton@kernel.org>,
+        Gao Xiang <hsiangkao@aol.com>, Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        ecryptfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2019-11-12 at 13:45 +0200, Nikos Tsironis wrote:
-> On 11/12/19 9:50 AM, Mikulas Patocka wrote:
-> >=20
-> > On Mon, 11 Nov 2019, Mike Snitzer wrote:
-> >=20
-> > > On Mon, Nov 11 2019 at 11:37am -0500,
-> > > Nikos Tsironis <ntsironis@arrikto.com> wrote:
-> > >=20
-> > > > On 11/11/19 3:59 PM, Mikulas Patocka wrote:
-> > > > > Snapshot doesn't work with realtime kernels since the commit
-> > > > > f79ae415b64c.
-> > > > > hlist_bl is implemented as a raw spinlock and the code takes two
-> > > > > non-raw
-> > > > > spinlocks while holding hlist_bl (non-raw spinlocks are blocking
-> > > > > mutexes
-> > > > > in the realtime kernel, so they couldn't be taken inside a raw
-> > > > > spinlock).
-> > > > >=20
-> > > > > This patch fixes the problem by using non-raw spinlock
-> > > > > exception_table_lock instead of the hlist_bl lock.
-> > > > >=20
-> > > > > Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-> > > > > Fixes: f79ae415b64c ("dm snapshot: Make exception tables
-> > > > > scalable")
-> > > > >=20
-> > > >=20
-> > > > Hi Mikulas,
-> > > >=20
-> > > > I wasn't aware that hlist_bl is implemented as a raw spinlock in th=
-e
-> > > > real time kernel. I would expect it to be a standard non-raw
-> > > > spinlock,
-> > > > so everything works as expected. But, after digging further in the
-> > > > real
-> > > > time tree, I found commit ad7675b15fd87f1 ("list_bl: Make list head
-> > > > locking RT safe") which suggests that such a conversion would break
-> > > > other parts of the kernel.
-> > >=20
-> > > Right, the proper fix is to update list_bl to work on realtime (which
-> > > I
-> > > assume the referenced commit does).  I do not want to take this
-> > > dm-snapshot specific workaround that open-codes what should be done
-> > > within hlist_{bl_lock,unlock}, etc.
-> >=20
-> > If we change list_bl to use non-raw spinlock, it fails in dentry lookup=
-=20
-> > code. The dentry code takes a seqlock (which is implemented as preempt=
-=20
-> > disable in the realtime kernel) and then takes a list_bl lock.
-> >=20
-> > This is wrong from the real-time perspective (the chain in the hash
-> > could=20
-> > be arbitrarily long, so using non-raw spinlock could cause unbounded=20
-> > wait), however we can't do anything with it.
-> >=20
-> > I think that fixing dm-snapshot is way easier than fixing the dentry
-> > code.=20
-> > If you have an idea how to fix the dentry code, tell us.
->=20
-> I too think that it would be better to fix list_bl. dm-snapshot isn't
-> really broken. One should be able to acquire a spinlock while holding
-> another spinlock.
+On Sun, Nov 3, 2019 at 8:52 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> lower_dentry can't go from positive to negative (we have it pinned),
+> but it *can* go from negative to positive.  So fetching ->d_inode
+> into a local variable, doing a blocking allocation, checking that
+> now ->d_inode is non-NULL and feeding the value we'd fetched
+> earlier to a function that won't accept NULL is not a good idea.
+>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+> diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+> index a905d5f4f3b0..3c2298721359 100644
+> --- a/fs/ecryptfs/inode.c
+> +++ b/fs/ecryptfs/inode.c
+> @@ -319,7 +319,7 @@ static int ecryptfs_i_size_read(struct dentry *dentry, struct inode *inode)
+>  static struct dentry *ecryptfs_lookup_interpose(struct dentry *dentry,
+>                                      struct dentry *lower_dentry)
+>  {
+> -       struct inode *inode, *lower_inode = d_inode(lower_dentry);
+> +       struct inode *inode, *lower_inode;
+>         struct ecryptfs_dentry_info *dentry_info;
+>         struct vfsmount *lower_mnt;
+>         int rc = 0;
+> @@ -339,7 +339,15 @@ static struct dentry *ecryptfs_lookup_interpose(struct dentry *dentry,
+>         dentry_info->lower_path.mnt = lower_mnt;
+>         dentry_info->lower_path.dentry = lower_dentry;
+>
+> -       if (d_really_is_negative(lower_dentry)) {
+> +       /*
+> +        * negative dentry can go positive under us here - its parent is not
+> +        * locked.  That's OK and that could happen just as we return from
+> +        * ecryptfs_lookup() anyway.  Just need to be careful and fetch
+> +        * ->d_inode only once - it's not stable here.
+> +        */
+> +       lower_inode = READ_ONCE(lower_dentry->d_inode);
+> +
+> +       if (!lower_inode) {
+>                 /* We want to add because we couldn't find in lower */
+>                 d_add(dentry, NULL);
+>                 return NULL;
 
-That's not universally true -- even in the absence of RT there are nesting
-considerations.  But it would probably be good if raw locks weren't hidden
-inside other locking primitives without making it clear (ideally in the
-function names) that it's a raw lock.
+Sigh!
 
-> Moreover, apart from dm-snapshot, anyone ever using list_bl is at risk
-> of breaking the realtime kernel, if he or she is not aware of that
-> particular limitation of list_bl's implementation in the realtime tree.
+Open coding a human readable macro to solve a subtle lookup race.
+That doesn't sound like a scalable solution.
+I have a feeling this is not the last patch we will be seeing along
+those lines.
 
-In particular the non-rcu variant seems inherently bad unless you protect
-traversal with some other lock (in which case why use bl at all?).  Maybe
-fully separate the rcu version of list_bl and keep using raw locks there
-(with the name clearly indicating so), with the side benefit that
-accidentally mixing rcu and non-rcu operations on the same list would becom=
-e
-a build error, and convert the non-rcu list_bl to use non-raw locks on RT.
+Seeing that developers already confused about when they should use
+d_really_is_negative() over d_is_negative() [1] and we probably
+don't want to add d_really_really_is_negative(), how about
+applying that READ_ONCE into d_really_is_negative() and
+re-purpose it as a macro to be used when races with lookup are
+a concern?
 
-BTW, I'm wondering what makes bit spinlocks worse than raw spinlocks on
-RT...  commit ad7675b15fd87f19 says there's no lockdep visibility, but that
-seems orthogonal to RT, and could be addressed by adding a dep_map on debug
-builds the same way the raw lock is currently added.  The other bit spinloc=
-k
-conversion commits that I could find are replacing them with non-raw locks.
+Thanks,
+Amir.
 
--Scott
-
-
+[1] https://lore.kernel.org/linux-fsdevel/20190903135803.GA25692@hsiangkao-HP-ZHAN-66-Pro-G1/
