@@ -2,130 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B1A4FABF5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 09:23:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5790FFABF2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Nov 2019 09:22:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727283AbfKMIWs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Nov 2019 03:22:48 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:56658 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727171AbfKMIW3 (ORCPT
+        id S1727324AbfKMIWy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Nov 2019 03:22:54 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:42806 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727321AbfKMIWt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Nov 2019 03:22:29 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20191113082226epoutp013a8d8ce3705e5ddbc66485aac21ac6ff~WqzEDnb_Q2730127301epoutp01x
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2019 08:22:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20191113082226epoutp013a8d8ce3705e5ddbc66485aac21ac6ff~WqzEDnb_Q2730127301epoutp01x
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1573633346;
-        bh=SNfwaZ1SrpMjqg07GVTUxUBoC0uFl6QDgaOnhDyXIss=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j3LD5YtZ6C1E8GVjl12CnHnkNirzfxJ7wCHMlHlaEHBDkFo2EFJnFl/x/pH17eTJm
-         UPxmQrWP4khlBCiDUvJzIPMJ07rizxafma6lQiFhu0orvDBm3OI97dQ3UnLzgxszjf
-         KLJ42BHiXOX/6hDYxlMMvF1t42vuWulYqjA490qM=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20191113082226epcas1p4a3f050e684458a43ee81d4afbd0b3d5b~WqzD0OBhe3012230122epcas1p4s;
-        Wed, 13 Nov 2019 08:22:26 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.165]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 47Cczj6V1MzMqYkh; Wed, 13 Nov
-        2019 08:22:25 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        3E.93.04068.14DBBCD5; Wed, 13 Nov 2019 17:22:25 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20191113082224epcas1p44018da1790279ac6d2fbb51105c121ba~WqzCLhNL-3079030790epcas1p4h;
-        Wed, 13 Nov 2019 08:22:24 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191113082224epsmtrp2de85e54fcd71e273f916b29d474f7854~WqzCKyRw72310523105epsmtrp2f;
-        Wed, 13 Nov 2019 08:22:24 +0000 (GMT)
-X-AuditID: b6c32a39-f5fff70000000fe4-54-5dcbbd418ca2
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        6F.84.24756.04DBBCD5; Wed, 13 Nov 2019 17:22:24 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.88.103.87]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191113082224epsmtip11bde97e9816d5d172838127e7da96b0e~WqzCAAVkC2165921659epsmtip1k;
-        Wed, 13 Nov 2019 08:22:24 +0000 (GMT)
-From:   Namjae Jeon <namjae.jeon@samsung.com>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com, linkinjeon@gmail.com,
-        Namjae Jeon <namjae.jeon@samsung.com>
-Subject: [PATCH 13/13] MAINTAINERS: add exfat filesystem
-Date:   Wed, 13 Nov 2019 03:18:00 -0500
-Message-Id: <20191113081800.7672-14-namjae.jeon@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191113081800.7672-1-namjae.jeon@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0gUYRTlc3ZmR2lr2KwuBrUOCL3M3da1MdxSkhhoowUpKpBtcKdV2hc7
-        q1iBSdFLSs0U0xSV0sg0N13KfKRoT3uhlrmSBD0kQ0yzLK2kHcce/84995xzL/f7SEw5joeQ
-        KXY377JzVpoIkt3oXKkOj2t9lKierCKYoxfrCObK1bsBzMvBAYxpaX0oY3qbSgjme+Fhxjtz
-        B2d6Po3JYkn2VvGgnG0rrZGzzb5Mgs32ViN2on4Z23FzhDASe6wxyTxn5l0q3p7kMKfYLXp6
-        a4Jps0kXpdaEa6KZ9bTKztl4PR1vMIZvSbH696FVaZw11U8ZOUGgIzbGuBypbl6V7BDcepp3
-        mq1Ojdq5VuBsQqrdsjbJYdugUavX6fzKvdbk/L423DmJpw9k58kyUSaehQJJoCLh1KkyPw4i
-        lVQjgv7bH+RS8RnBx5bHAVIxiaC36tVfS27f8zlVK4K6torZxqxlqkiXhUiSoFbDT+8ikQ6m
-        NkHDhXaZqMeoEgSNZ4qR2FhIMXBkXAwKJGVUGLzwzRAiVlAxMDL4FEnDlsNVTzsmZgb6+b5a
-        vZgDlIeAae/Y3ELxcK7mzJx+IXy875VLOAQmRlsJ0QvUIRhvwyT6JIIP3/QS1oKvzoOLEoxa
-        CXVNERIdCrd+lM4mYtR8GP16GpdSFHDyuFKShEF2T2eAhJdC1omxuaEsNHR+I6Tr5CD4kufD
-        c9Gy4n8TyhGqRot5p2Cz8ILGqfv/verR7HdbFd2I7j01dCCKRPQ8BVR0JSpxLk04YOtAQGJ0
-        sKIx/UGiUmHmDhzkXQ6TK9XKCx1I57/jWSxkUZLD/3ntbpNGt06r1TKRUeujdFp6iSLucmWi
-        krJwbn4/zzt51x9fABkYkok2Db+d8QxhRQNVRnQx9BqZ0Ty97V2P4UkB4enOk73fFm9R5VRQ
-        kSVrdr/N2Os2j/hO54fV7tx3vn+jMTa9fIW83hStgqjKzvbC7oRHu4LKNOx1w6/hZ66W3QOK
-        iKnecno041L/+JsK1XCctauga3slyxzrVg4tMOx4HTlBG/bRMiGZ06zCXAL3G+rAUeGEAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNLMWRmVeSWpSXmKPExsWy7bCSnK7D3tOxBs8e61g0L17PZrFy9VEm
-        i+t3bzFb7Nl7ksXi8q45bBY/ptdbbPl3hNXi0vsPLA4cHjtn3WX32D93DbvH7psNbB59W1Yx
-        enzeJOdxaPsbtgC2KC6blNSczLLUIn27BK6MKdf2sxZ8Y6241TeJpYGxgbWLkZNDQsBEYsK1
-        K+xdjFwcQgK7GSWmf/7ECJGQljh24gxzFyMHkC0scfhwMUTNB0aJU7tPMILE2QS0Jf5sEQUp
-        FxFwlOjddZgFpIZZYBGjxLuPk8EWCAtYSDR9BFnAycEioCpx9eY/NhCbV8BG4s3dc1C75CVW
-        bzgAtosTKH5trS1IWEjAWuLr2wPMExj5FjAyrGKUTC0ozk3PLTYsMMxLLdcrTswtLs1L10vO
-        z93ECA5CLc0djJeXxB9iFOBgVOLhlVh4KlaINbGsuDL3EKMEB7OSCO+OihOxQrwpiZVVqUX5
-        8UWlOanFhxilOViUxHmf5h2LFBJITyxJzU5NLUgtgskycXBKNTAmrlb6KBCjazbh+Oz8V33u
-        ltyfLq7VYnPifXLILsK8bdrO3VP9sw/HN8tPUf+obhm/Wf5T1YqejsOibwW2/8yYcV0gQ3Gp
-        xXQPaWenkCRerp+aoU7B4idMX06si5Xi29t388+5k6/O1M+r+bJ39nmmqT8rOnIkz60OPNV+
-        4NCquXPD7+1s2jhNiaU4I9FQi7moOBEA06+xvz4CAAA=
-X-CMS-MailID: 20191113082224epcas1p44018da1790279ac6d2fbb51105c121ba
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191113082224epcas1p44018da1790279ac6d2fbb51105c121ba
-References: <20191113081800.7672-1-namjae.jeon@samsung.com>
-        <CGME20191113082224epcas1p44018da1790279ac6d2fbb51105c121ba@epcas1p4.samsung.com>
+        Wed, 13 Nov 2019 03:22:49 -0500
+Received: by mail-oi1-f193.google.com with SMTP id i185so999991oif.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Nov 2019 00:22:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9ayY6gCXrrA3VgRAyrp2bK0EyrP0ektptyzgRBWzw5I=;
+        b=A+5ZDAwm0sisXEXV26bplYhx0LMI9tSEqcz5XKqugaaiNBsieQDhWSu2ezHIxsk3ok
+         PapqJ40EqXbuXexGXvb3dctMfbGHjaFuYDAai4pvCrk3ttwW8fkWJFMlnWK5Sh3WDfzP
+         au9tTKQUHDCal3qSVw21r18Mu3ZTlLggTEjdE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9ayY6gCXrrA3VgRAyrp2bK0EyrP0ektptyzgRBWzw5I=;
+        b=kccTtG5oELKeMVF3IDYEJJekO43fP3hyCRinV1gcIhotXU++e+A3YPRotSpHRhK+yf
+         fikKlB2TEL3YW2eyMjWIp7jgqc/ERKWf03jmR3RGTRE50TNRl2sOkwuszh53eSuHfGQ5
+         eVz0gjhRjELEE1S6lKx6iEy2R6jsllK7iVKd/RLxVaXAy4EqG8rydbPLNpFxTUti6hQV
+         xhXL0kfI4MZqtG205i8peRaAfrBnCkKNgy0vjWufoYpHVvMZMfQDM44ZbGNGrEngNoA4
+         yW6BySjhxHXZALIjCkG40mAhcihKNOQ/J+RbRIfi67Qr/AL2fN+OKkHLMJvpIskBbeMP
+         hn8w==
+X-Gm-Message-State: APjAAAV5jYKr+TG462UBSQyt+QY6TfM8SOjRJ0G95bwCVbDgNgQJfCvk
+        hj4Nl2/HGj+1+OCaYQwcnpiRgV5t6jwW3n97pFDHWw==
+X-Google-Smtp-Source: APXvYqxfSdLpxppf1Yvj8Pnz7e2iZsxyqjYKBICjfkF8MEX8zkGbqRRzZo57EW2FfCAXfyKFCc6JsAljOesoFoCv0a8=
+X-Received: by 2002:a05:6808:4cf:: with SMTP id a15mr1806257oie.132.1573633368138;
+ Wed, 13 Nov 2019 00:22:48 -0800 (PST)
+MIME-Version: 1.0
+References: <20191112000700.3455038-1-jhubbard@nvidia.com> <20191112203802.GD5584@ziepe.ca>
+ <02fa935c-3469-b766-b691-5660084b60b9@nvidia.com>
+In-Reply-To: <02fa935c-3469-b766-b691-5660084b60b9@nvidia.com>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Wed, 13 Nov 2019 09:22:36 +0100
+Message-ID: <CAKMK7uHvk+ti00mCCF2006U003w1dofFg9nSfmZ4bS2Z2pEDNQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/23] mm/gup: track dma-pinned pages: FOLL_PIN, FOLL_LONGTERM
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf <bpf@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>, linux-rdma@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add myself and Sungjong Seo as exfat maintainer.
+On Tue, Nov 12, 2019 at 10:10 PM John Hubbard <jhubbard@nvidia.com> wrote:
+>
+> On 11/12/19 12:38 PM, Jason Gunthorpe wrote:
+> > On Mon, Nov 11, 2019 at 04:06:37PM -0800, John Hubbard wrote:
+> >> Hi,
+> >>
+> >> The cover letter is long, so the more important stuff is first:
+> >>
+> >> * Jason, if you or someone could look at the the VFIO cleanup (patch 8)
+> >>   and conversion to FOLL_PIN (patch 18), to make sure it's use of
+> >>   remote and longterm gup matches what we discussed during the review
+> >>   of v2, I'd appreciate it.
+> >>
+> >> * Also for Jason and IB: as noted below, in patch 11, I am (too?) boldly
+> >>   converting from put_user_pages() to release_pages().
+> >
+> > Why are we doing this? I think things got confused here someplace, as
+>
+>
+> Because:
+>
+> a) These need put_page() calls,  and
+>
+> b) there is no put_pages() call, but there is a release_pages() call that
+> is, arguably, what put_pages() would be.
+>
+>
+> > the comment still says:
+> >
+> > /**
+> >  * put_user_page() - release a gup-pinned page
+> >  * @page:            pointer to page to be released
+> >  *
+> >  * Pages that were pinned via get_user_pages*() must be released via
+> >  * either put_user_page(), or one of the put_user_pages*() routines
+> >  * below.
+>
+>
+> Ohhh, I missed those comments. They need to all be changed over to
+> say "pages that were pinned via pin_user_pages*() or
+> pin_longterm_pages*() must be released via put_user_page*()."
+>
+> The get_user_pages*() pages must still be released via put_page.
+>
+> The churn is due to a fairly significant change in strategy, whis
+> is: instead of changing all get_user_pages*() sites to call
+> put_user_page(), change selected sites to call pin_user_pages*() or
+> pin_longterm_pages*(), plus put_user_page().
 
-Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+Can't we call this unpin_user_page then, for some symmetry? Or is that
+even more churn?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c2d80079dccc..18c2629b67d6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6216,6 +6216,13 @@ F:	include/trace/events/mdio.h
- F:	include/uapi/linux/mdio.h
- F:	include/uapi/linux/mii.h
- 
-+EXFAT FILE SYSTEM
-+M:	Namjae Jeon <namjae.jeon@samsung.com>
-+M:	Sungjong Seo <sj1557.seo@samsung.com>
-+L:	linux-fsdevel@vger.kernel.org
-+S:	Maintained
-+F:	fs/exfat/
-+
- EXFAT FILE SYSTEM
- M:	Valdis Kletnieks <valdis.kletnieks@vt.edu>
- L:	linux-fsdevel@vger.kernel.org
+Looking from afar the naming here seems really confusing.
+-Daniel
+
+> That allows incrementally converting the kernel over to using the
+> new pin APIs, without taking on the huge risk of a big one-shot
+> conversion.
+>
+> So, I've ended up with one place that actually needs to get reverted
+> back to get_user_pages(), and that's the IB ODP code.
+>
+> >
+> > I feel like if put_user_pages() is not the correct way to undo
+> > get_user_pages() then it needs to be deleted.
+> >
+>
+> Yes, you're right. I'll fix the put_user_page comments() as described.
+>
+>
+> thanks,
+>
+> John Hubbard
+> NVIDIA
+
+
+
 -- 
-2.17.1
-
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
