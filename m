@@ -2,188 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AEE2FCA7A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2019 17:04:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8232AFCA90
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2019 17:08:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbfKNQEb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Nov 2019 11:04:31 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45802 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726410AbfKNQEb (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Nov 2019 11:04:31 -0500
-Received: by mail-ed1-f68.google.com with SMTP id b5so5423332eds.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2019 08:04:29 -0800 (PST)
+        id S1726923AbfKNQIX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Nov 2019 11:08:23 -0500
+Received: from mail-eopbgr800075.outbound.protection.outlook.com ([40.107.80.75]:19215
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726605AbfKNQIW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 14 Nov 2019 11:08:22 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=h2zc3LtToEK+Viv2Y9fxhdPXwr9P1mwBICDUyENdAr6vjGKCrcZjnVx+YQJinCOk29BQo+Ekcs3reCYvaYnaoGea0JeucaGXrxYvWgmz5e6n81WWXxT384tCMbcBefVycIP8Cz3pz0br68x/R00OSEAj40qcQMshA55+3xdewOhyJb2OcZEpJdGOJmYClVlJORXp2hQM3C+RNsfkBNTlLCGUMevetV1tvQuGH/AyG/ND5mjb70/vY8DC9cSPi3eFnri9GmB8W/9WXX1EH50NfWvi5TkRrso5xj6aZibnG/eNgX3sYEUjAE/hKhDhK6R3ebzedEHXiQfyCVo56MY3SA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=F6bRkEzzVQcMlASVe4oXu/rgEVRgTu0Au/02upsF3+I=;
+ b=QE0Nl36WQWwncmqwzMhvHrY9Uv37ef9lLgfS8AKGev8Zzpt6oXDnFhmjW9hFdDQYmBjunqfmljnn00nKg7Qowi3IYhbCeWLB0AR0U7MJ6cCtefSiAK6MIsyIvURrgKmGVY+mSreIqGRNoATtoZre+aw8q/+wXYbWRGyRKfRD/twNzschBDBUm48eClm0IKAuUD9g2k6FeSxP+cSEiNeOrVh8J5fNr/5k9LUgpAuxcRNI30gDTv0EiIxUu9mJaiIbjE7bQnlBsFMsXsuRQP82UN7Cx0rAwXcQdkoeyw70FXovtJ+9DrNIdQf60SUF2fBE7tS6iM17aAob4FEqgBhKRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=netapp.com; dmarc=pass action=none header.from=netapp.com;
+ dkim=pass header.d=netapp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=plexistor-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=xNluNzljo4oepL4eZ8DPTsyRKvc1XCTxfiF0OmWAKuY=;
-        b=Esr0xHJyKwsCSFfK2dSh39lIrC+UowbEfHdn1RRhETWy7jyLFImcDzmM4RwGtMmYso
-         L5gdOH36H8nV/Ss+wOIZKja7qhiZNTncTaXGmOzFnDmSOX/SYYxIcUxpo2faSsr5xQPV
-         PoZ+RI5ihOn+rAf7Kk7g72a/E48DC0zjG8YXhY3UEZHiXkfSK9ceiMuk3J5jDElwGIty
-         BW6tFyvFKTQh4UUhSreyfgEgId8MvRWgpMXGpwJVpm/3Fhbe1gpsHJxyk8EmPIbmA6Ei
-         ojtlhBS/a1+uQD2QRKQUtzqxKdYRoQobiBvcI6SmDXi+5tDfpEm1a+OWF+ONOCe9MK62
-         0LNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=xNluNzljo4oepL4eZ8DPTsyRKvc1XCTxfiF0OmWAKuY=;
-        b=cm9sM9wtxSy2okHk/RKSC3LEvTJ5TIPs9cPYgfIKeRtRDSwCHPyRNfFO+mSZPUhHv3
-         i+jVj8Vs6LB5c2b/PTHB5YUoF5LaYLBHvrdcnPdnAiqF/MqaxYd1D/VwMVKKfWqyhlRX
-         9sGRSLa6z0BhHI9ZaYJyx6Md0pJ3fRZPyc1ZPS8YBXbFJ5z0iYu26crAg3ksEcLm5LnQ
-         yfyqwyPiyD3grliKAwes7thwypg2ii564e4BtM66FuOGK9okE128cC6hcOyoBivE0T9I
-         DFcepyqPgn0uxophVy/WmIGo2UqnzuQte0igm2HPMvW/gJ2uIweN1GZFLjAY06M01evk
-         PL0g==
-X-Gm-Message-State: APjAAAW7DCsZ8zzjHfdZI/oL6V+8rLVcBZsVahdgZvNp0T9ElzSMGBtd
-        vYdoMuHCC22yD5h8O0suZAMeOg==
-X-Google-Smtp-Source: APXvYqy6BcN1CKU46ZcMSS1jgPINC77AiCVHw4B74ghE0zkqUlu1EYFzGA+K4vs2mSG46f22PC7auA==
-X-Received: by 2002:aa7:d147:: with SMTP id r7mr2111229edo.198.1573747469083;
-        Thu, 14 Nov 2019 08:04:29 -0800 (PST)
-Received: from [10.68.217.182] ([217.70.210.43])
-        by smtp.googlemail.com with ESMTPSA id z69sm399121ede.88.2019.11.14.08.04.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2019 08:04:28 -0800 (PST)
-Subject: Re: Please add the zuf tree to linux-next
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        Boaz Harrosh <boaz@plexistor.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Christoph Hellwig <hch@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org
-References: <1b192a85-e1da-0925-ef26-178b93d0aa45@plexistor.com>
- <20191024023606.GA1884@infradead.org>
- <20191029160733.298c6539@canb.auug.org.au>
- <514e220d-3f93-7ce3-27cd-49240b498114@plexistor.com>
- <CAJfpegtT-nX7H_-5xpkP+fp8LfdVGbSTfnNf-c=a_EfOd3R5tA@mail.gmail.com>
-From:   Boaz Harrosh <boaz@plexistor.com>
-Message-ID: <e723e3cc-210a-4d6d-af86-b3a9c94cb379@plexistor.com>
-Date:   Thu, 14 Nov 2019 18:04:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
-MIME-Version: 1.0
-In-Reply-To: <CAJfpegtT-nX7H_-5xpkP+fp8LfdVGbSTfnNf-c=a_EfOd3R5tA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+ d=netapp.onmicrosoft.com; s=selector1-netapp-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=F6bRkEzzVQcMlASVe4oXu/rgEVRgTu0Au/02upsF3+I=;
+ b=nLV7El16pIWBGN0W7OlPSd5+rK7Qp08MQHwp+IvntevlugiHuiFdJLwk18bnwBs563LcScqxCtqqQDvrRL50nBXorShK4FbznSQnB4Y8M+63qgV6MRVC2P53DqKYWfck9K9fof79T0gadssi3URuBL6umILbMT08zQXmOwMuu4Q=
+Received: from BYAPR06MB6054.namprd06.prod.outlook.com (20.178.51.220) by
+ BYAPR06MB5765.namprd06.prod.outlook.com (20.179.157.77) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2430.23; Thu, 14 Nov 2019 16:08:18 +0000
+Received: from BYAPR06MB6054.namprd06.prod.outlook.com
+ ([fe80::918d:490e:90f0:61f8]) by BYAPR06MB6054.namprd06.prod.outlook.com
+ ([fe80::918d:490e:90f0:61f8%5]) with mapi id 15.20.2430.027; Thu, 14 Nov 2019
+ 16:08:18 +0000
+From:   "Schumaker, Anna" <Anna.Schumaker@netapp.com>
+To:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "mbenjami@redhat.com" <mbenjami@redhat.com>,
+        "boaz@plexistor.com" <boaz@plexistor.com>
+CC:     "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "mszeredi@redhat.com" <mszeredi@redhat.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "amir73il@gmail.com" <amir73il@gmail.com>,
+        "Manole, Sagi" <Sagi.Manole@netapp.com>
+Subject: Re: [PATCH 11/16] zuf: Write/Read implementation
+Thread-Topic: [PATCH 11/16] zuf: Write/Read implementation
+Thread-Index: AQHVdA//sJnd28EioU2o/wN+WZnZEadyQRGAgBjThwCAAA67gA==
+Date:   Thu, 14 Nov 2019 16:08:18 +0000
+Message-ID: <8bcfad422eb582349836544117babf01d3e81a47.camel@netapp.com>
+References: <20190926020725.19601-1-boazh@netapp.com>
+         <20190926020725.19601-12-boazh@netapp.com>
+         <db90d73233484d251755c5a0cb7ee570b3fc9d19.camel@netapp.com>
+         <46507231-91ba-0597-94f8-48f00da46077@plexistor.com>
+In-Reply-To: <46507231-91ba-0597-94f8-48f00da46077@plexistor.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.34.1 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Anna.Schumaker@netapp.com; 
+x-originating-ip: [68.32.74.190]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 2978ed2d-4fc3-4189-f5bc-08d7691cdd38
+x-ms-traffictypediagnostic: BYAPR06MB5765:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BYAPR06MB5765935F130BF06F12C6B11EF8710@BYAPR06MB5765.namprd06.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 02213C82F8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(136003)(396003)(366004)(346002)(199004)(189003)(2201001)(5660300002)(102836004)(478600001)(71200400001)(6116002)(99286004)(26005)(6506007)(2906002)(53546011)(476003)(3846002)(76176011)(36756003)(2616005)(11346002)(446003)(71190400001)(25786009)(2501003)(66066001)(14454004)(4001150100001)(81156014)(86362001)(66446008)(7736002)(118296001)(66946007)(229853002)(6512007)(8676002)(186003)(486006)(64756008)(256004)(5024004)(14444005)(6486002)(54906003)(58126008)(91956017)(66476007)(76116006)(110136005)(6436002)(4326008)(81166006)(6246003)(305945005)(107886003)(8936002)(66556008)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR06MB5765;H:BYAPR06MB6054.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: netapp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: OCkl3+ELfYDHDMrfpy4jrsU0q2nrbLZiyhQfUY6Qfo2HPrhHPqki8tnqB4PdCqFfMRBndeqduHQ94shtPRo7A8GZWBEEt8gUBZoe0XVWxoC83sM/JHRsgKt9wt+7AnAhmH/bzaMP0/phxDmH3dZWyBl3dHf/T8mvXua69s3s+34udz8M7qaruv5EIuPTWGb9tT7UY8sg8juu7PAbmnleusy3zg55TKjnd7fywWb9mpnaZVDRs6NJa+2tkdG2j7jBow3BkGJzx/IstHhsxcq5F0B8X78+2ZxuRPXl1241LHavexfNwwnfHOiujbXLQZh8ofSrHRYtsUi2Pjaf4Borv6j2858z0+o/001P1vDD/OeKEP2tDotOJJCmexSW6QQGtjS4STLfdF4aeewNZoxYzwHnLP8mKCDa5WUTEPn2NRRcgUpR8Y/qlwNEjz5bLE+t
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2855C6523AA3014BA6253AA35C8939E4@namprd06.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: netapp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2978ed2d-4fc3-4189-f5bc-08d7691cdd38
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2019 16:08:18.6033
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4b0911a0-929b-4715-944b-c03745165b3a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: R0dFUBl5jmp53Q3mrEzt2xISc8oKg1f6GWBioNSSlNf8VOCn4FXHCvtZ9CPdlPNOrydpq+z0bH5WdLl/lIRs2g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR06MB5765
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 14/11/2019 16:56, Miklos Szeredi wrote:
-> On Thu, Nov 14, 2019 at 3:02 PM Boaz Harrosh <boaz@plexistor.com> wrote:
-> 
->> At the last LSF. Steven from Red-Hat asked me to talk with Miklos about the fuse vs zufs.
->> We had a long talk where I have explained to him in detail How we do the mounting, how
->> Kernel owns the multy-devices. How we do the PMEM API and our IO API in general. How
->> we do pigi-back operations to minimize latencies. How we do DAX and mmap. At the end of the
->> talk he said to me that he understands how this is very different from FUSE and he wished
->> me "good luck".
->>
->> Miklos - you have seen both projects; do you think that All these new subsystems from ZUFS
->> can have a comfortable place under FUSE, including the new IO API?
-> 
-> It is quite true that ZUFS includes a lot of innovative ideas to
-> improve the performance of a certain class of userspace filesystems.
-> I think most, if not all of those ideas could be applied to the fuse
-> implementation as well, 
-
-This is not so:
-
-- The way we do the mount is very different. It is not the Server that does
-  The mount but the Kernel. So auto bind mount works (same device different dir)
-- The way zuf owns the devices in the Kernel, and supports multi-devices.
-  And has support for pmem devices as well as what we call t2 (regular) block
-  devices. And the all API for transfer between them. (The all md.* thing).
-  Proper locking of devices.
-- The way we are true zero-copy both pmem and t2.
-- The way we are DAX both pwrite and mmap.
-- The way we are NUMA aware both Kernel and Server.
-- The way we use shared memory pools that are deep in the protocol between
-  Server and Kernel for zero copy of meta-data as well as protocol buffers.
-- The way we do pigy-back of operations to save round-trips.
-- The way we use cookies in Kernel of all Server objects so there are no
-  i_ino hash tables or look-ups.
-- The way we use a single Server with loadable FS modules. That the ZUSD comes
-  with the distro and only the FS-pluging comes from Vendor. So Kernel=Server API
-  is in sync.
-- The way ZUFS supports root filesystem.
-- The way ZUFS supports VM-FS to SHARE same p-memory as HOST-FS
-- The way we do Zero-copy IO, both pmem and bdevs
-
-> but I can understand why this hasn't been
-> done.  Fuse is in serious need of a cleanup, which I've started to do,
-> but it's not there yet...
-> 
-
-This will not be wise. It will be a complete FULL zuf code drop into the
-current fuse code base (fuse is BTW bigger then zuf). I think this is the
-Last thing fuse needs.
-
-I know for a fact that the code of fuse+zuf will be bigger and slower than
-those two Separate.
-
-zufs is built from the ground up, built on all those subsystems as
-building blocks. Putting all these things into fuse will actually be like
-putting a pyramid on its head.
-
-> One of the major issues that I brought up when originally reviewing
-> ZUFS (but forgot to discuss at LSF) is about the userspace API.  I
-> think it would make sense to reuse FUSE protocol definition and extend
-> it where needed.   That does not mean ZUFS would need to be 100%
-> backward compatible with FUSE, it would just mean that we'd have a
-> common userspace API and each implementation could implement a subset
-> of features.
-
-This is easy to say. But believe me it is not possible. The shared structures
-are maybe 20% and not 80% as the theory might feel about it. The projects are
-really structured differently.
-
-I have looked at it long and hard, Many times. I do not know how to this.
-If I knew how I would.
-
-These codes and systems do very different things. It will need tones of
-if()s and operation changes. Sometimes you do a copy/paste of ext4 into
-ffs2 and so on. Because the combination is not always the best and the
-easiest.
-
-> I think this would be an immediate and significant
-> boon for ZUFS, since it would give it an already existing user/tester
-> base that it otherwise needs to build up.  It would also allow
-> filesystem implementation to be more easily switchable between the
-> kernel frameworks in case that's necessary.
-> 
-
-Thanks Miklos for your input. I have looked at this problems many times.
-This is not something that is interesting for me. Because these two projects
-come to solve different things.
-
-And it is not so easy to do as it sounds. There are fundamental difference
-between the projects. For example in fuse main() belongs to the FS. That needs
-to supply its own mount application. In ZUFS we do the regular Kernel's /sbin/mount.
-Also ZUS User-mode server has a huge facility for allocating pages, mlocking,
-per-cpu counters per-cpu variables, NUMA memory management. Thread management.
-The API with zuf is very very particular about tons of things. Involving threads
-and special files and mmap calls, and shared memory with Kernel. This will not be so
-easily interchangeable.
-
-> Thanks,
-> Miklos
-> 
-
-Sometimes a fresh new code is much easier more maintainable and faster / more capable
-then a do-it-all blob of code.
-I am not sure if you actually looked at the code both Kernel and Server. This is not so easy
-as it sounds. Even after a deep fuse cleanup.
-
-Yes perhaps we could share some core code, like what sits in zuf-core.c and the relay object
-but not more then that.
-
-Thanks
-Boaz
+T24gVGh1LCAyMDE5LTExLTE0IGF0IDE3OjE1ICswMjAwLCBCb2F6IEhhcnJvc2ggd3JvdGU6DQo+
+IE5ldEFwcCBTZWN1cml0eSBXQVJOSU5HOiBUaGlzIGlzIGFuIGV4dGVybmFsIGVtYWlsLiBEbyBu
+b3QgY2xpY2sgbGlua3Mgb3Igb3Blbg0KPiBhdHRhY2htZW50cyB1bmxlc3MgeW91IHJlY29nbml6
+ZSB0aGUgc2VuZGVyIGFuZCBrbm93IHRoZSBjb250ZW50IGlzIHNhZmUuDQo+IA0KPiANCj4gDQo+
+IA0KPiBPbiAyOS8xMC8yMDE5IDIyOjA4LCBTY2h1bWFrZXIsIEFubmEgd3JvdGU6DQo+ID4gSGkg
+Qm9heiwNCj4gPiANCj4gPiBPbiBUaHUsIDIwMTktMDktMjYgYXQgMDU6MDcgKzAzMDAsIEJvYXog
+SGFycm9zaCB3cm90ZToNCj4gPiA+IHp1ZnMgSGFzIHR3byB3YXlzIHRvIGRvIElPLg0KPiA8Pg0K
+PiA+ID4gK3N0YXRpYyBpbnQgcndfb3ZlcmZsb3dfaGFuZGxlcihzdHJ1Y3QgenVmX2Rpc3BhdGNo
+X29wICp6ZG8sIHZvaWQgKmFyZywNCj4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICB1bG9uZyBtYXhfYnl0ZXMpDQo+ID4gPiArew0KPiA+ID4gKyAgICAgICBzdHJ1Y3QgenVmc19p
+b2NfSU8gKmlvID0gY29udGFpbmVyX29mKHpkby0+aGRyLCB0eXBlb2YoKmlvKSwgaGRyKTsNCj4g
+DQo+IFRoaXMgb25lIGlzIHNldHRpbmcgdGhlIHR5cGVkIHBvaW50ZXIgQGlvIHRvIGJlIHRoZSBz
+YW1lIG9mIHdoYXQgQHpkby0+aGRyIGlzDQo+IA0KPiA+ID4gKyAgICAgICBzdHJ1Y3QgenVmc19p
+b2NfSU8gKmlvX3VzZXIgPSBhcmc7DQo+ID4gPiArICAgICAgIGludCBlcnI7DQo+ID4gPiArDQo+
+ID4gPiArICAgICAgICppbyA9ICppb191c2VyOw0KPiANCj4gVGhpcyBvbmUgaXMgZGVlcCBjb3B5
+aW5nIHRoZSBmdWxsIHNpemUgc3RydWN0dXJlIHBvaW50ZWQgdG8gYnkgaW9fdXNlcg0KPiB0byB0
+aGUgc3BhY2UgcG9pbnRlZCB0byBieSBpby4gKHNhbWUgYXMgemRvLT5oZHIpDQo+IA0KPiBTYW1l
+IGFzIG1lbWNweShpbywgaW9fdXNlciwgc2l6ZW9mKCppbykpDQo+IA0KPiA+IEl0IGxvb2tzIGxp
+a2UgeW91J3JlIHNldHRpbmcgKmlvIHVzaW5nIHRoZSBjb250YWluZXJfb2YoKSBtYWNybyBhIGZl
+dyBsaW5lcw0KPiA+IGFib3ZlLCBhbmQgdGhlbg0KPiA+IG92ZXJ3cml0aW5nIGl0IGhlcmUgd2l0
+aG91dCBldmVyIHVzaW5nIGl0LiBDYW4geW91IHJlbW92ZSBvbmUgb2YgdGhlc2UgdG8NCj4gPiBt
+YWtlIGl0IGNsZWFyZXIgd2hpY2gNCj4gPiBvbmUgeW91IG1lYW50IHRvIHVzZT8NCj4gPiANCj4g
+DQo+IFRoZXNlIGFyZSBub3QgcmVkdW5kYW50IGl0cyB0aGUgY29uZnVzaW5nIEMgdGhpbmcgd2hl
+cmUgZGVjbGFyYXRpb25zDQo+IG9mIHBvaW50ZXJzICsgYXNzaWdubWVudCBtZWFucyB0aGUgcG9p
+bnRlciBhbmQgbm90IHRoZSBjb250ZW50Lg0KPiANCj4gVGhpcyBjb2RlIGlzIGNvcnJlY3QNCj4g
+DQo+ID4gPiArDQo+ID4gPiArICAgICAgIGVyciA9IF9pb2NfYm91bmRzX2NoZWNrKCZpby0+emlv
+bSwgJmlvX3VzZXItPnppb20sIGFyZyArDQo+ID4gPiBtYXhfYnl0ZXMpOw0KPiA+ID4gKyAgICAg
+ICBpZiAodW5saWtlbHkoZXJyKSkNCj4gPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gZXJyOw0K
+PiA+ID4gKw0KPiA+ID4gKyAgICAgICBpZiAoKGlvLT5oZHIuZXJyID09IC1FWlVGU19SRVRSWSkg
+JiYNCj4gPiA+ICsgICAgICAgICAgIGlvLT56aW9tLmlvbV9uICYmIF96dWZzX2lvbV9wb3AoaW8t
+PmlvbV9lKSkgew0KPiA+ID4gKw0KPiA+ID4gKyAgICAgICAgICAgICAgIHp1Zl9kYmdfcncoDQo+
+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICAiWyVzXXp1Zl9pb21fZXhlY3V0ZV9zeW5jKCVk
+KSBtYXg9MHglbHggaW9tX2VbJWRdDQo+ID4gPiA9PiAlZFxuIiwNCj4gPiA+ICsgICAgICAgICAg
+ICAgICAgICAgICAgIHp1Zl9vcF9uYW1lKGlvLT5oZHIub3BlcmF0aW9uKSwgaW8tPnppb20uaW9t
+X24sDQo+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICBtYXhfYnl0ZXMsIF96dWZzX2lvbV9v
+cHRfdHlwZShpb191c2VyLT5pb21fZSksDQo+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICBp
+by0+aGRyLmVycik7DQo+ID4gPiArDQo+ID4gPiArICAgICAgICAgICAgICAgaW8tPmhkci5lcnIg
+PSB6dWZfaW9tX2V4ZWN1dGVfc3luYyh6ZG8tPnNiLCB6ZG8tPmlub2RlLA0KPiA+ID4gKyAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaW9fdXNlci0+aW9t
+X2UsDQo+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICBpby0+emlvbS5pb21fbik7DQo+ID4gPiArICAgICAgICAgICAgICAgcmV0dXJuIEVaVUZf
+UkVUUllfRE9ORTsNCj4gPiA+ICsgICAgICAgfQ0KPiANCj4gPD4NCj4gDQo+ID4gPiArc3RhdGlj
+IHNzaXplX3QgX0lPX2dtKHN0cnVjdCB6dWZfc2JfaW5mbyAqc2JpLCBzdHJ1Y3QgaW5vZGUgKmlu
+b2RlLA0KPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgIHVsb25nICpvbl9zdGFjaywgdWludCBt
+YXhfb25fc3RhY2ssDQo+ID4gPiArICAgICAgICAgICAgICAgICAgICAgc3RydWN0IGlvdl9pdGVy
+ICppaSwgc3RydWN0IGtpb2NiICpraW9jYiwNCj4gPiA+ICsgICAgICAgICAgICAgICAgICAgICBz
+dHJ1Y3QgZmlsZV9yYV9zdGF0ZSAqcmEsIHVpbnQgcncpDQo+ID4gPiArew0KPiA+ID4gKyAgICAg
+ICBzc2l6ZV90IHNpemUgPSAwOw0KPiA+ID4gKyAgICAgICBzc2l6ZV90IHJldCA9IDA7DQo+ID4g
+PiArICAgICAgIGVudW0gYmlnX2FsbG9jX3R5cGUgYmF0Ow0KPiA+ID4gKyAgICAgICB1bG9uZyAq
+Ym5zOw0KPiA+ID4gKyAgICAgICB1aW50IG1heF9ibnMgPSBtaW5fdCh1aW50LA0KPiA+ID4gKyAg
+ICAgICAgICAgICAgIG1kX28ycF91cChpb3ZfaXRlcl9jb3VudChpaSkgKyAoa2lvY2ItPmtpX3Bv
+cyAmDQo+ID4gPiB+UEFHRV9NQVNLKSksDQo+ID4gPiArICAgICAgICAgICAgICAgWlVTX0FQSV9N
+QVBfTUFYX1BBR0VTKTsNCj4gPiA+ICsNCj4gPiA+ICsgICAgICAgYm5zID0gYmlnX2FsbG9jKG1h
+eF9ibnMgKiBzaXplb2YodWxvbmcpLCBtYXhfb25fc3RhY2ssIG9uX3N0YWNrLA0KPiA+ID4gKyAg
+ICAgICAgICAgICAgICAgICAgICAgR0ZQX05PRlMsICZiYXQpOw0KPiA+ID4gKyAgICAgICBpZiAo
+dW5saWtlbHkoIWJucykpIHsNCj4gPiA+ICsgICAgICAgICAgICAgICB6dWZfZXJyKCJsaWZlIHdh
+cyBtb3JlIHNpbXBsZSBvbiB0aGUgc3RhY2sgbWF4X2Jucz0lZFxuIiwNCj4gPiA+ICsgICAgICAg
+ICAgICAgICAgICAgICAgIG1heF9ibnMpOw0KPiA+ID4gKyAgICAgICAgICAgICAgIHJldHVybiAt
+RU5PTUVNOw0KPiA+ID4gKyAgICAgICB9DQo+ID4gPiArDQo+ID4gPiArICAgICAgIHdoaWxlIChp
+b3ZfaXRlcl9jb3VudChpaSkpIHsNCj4gPiA+ICsgICAgICAgICAgICAgICByZXQgPSBfSU9fZ21f
+aW5uZXIoc2JpLCBpbm9kZSwgYm5zLCBtYXhfYm5zLCBpaSwgcmEsDQo+ID4gPiArICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIGtpb2NiLT5raV9wb3MsIHJ3KTsNCj4gPiA+ICsgICAg
+ICAgICAgICAgICBpZiAodW5saWtlbHkocmV0IDwgMCkpDQo+ID4gPiArICAgICAgICAgICAgICAg
+ICAgICAgICBicmVhazsNCj4gPiA+ICsNCj4gPiA+ICsgICAgICAgICAgICAgICBraW9jYi0+a2lf
+cG9zICs9IHJldDsNCj4gPiA+ICsgICAgICAgICAgICAgICBzaXplICs9IHJldDsNCj4gPiA+ICsg
+ICAgICAgfQ0KPiA+ID4gKw0KPiA+ID4gKyAgICAgICBiaWdfZnJlZShibnMsIGJhdCk7DQo+ID4g
+PiArDQo+ID4gPiArICAgICAgIHJldHVybiBzaXplID86IHJldDsNCj4gPiANCj4gPiBJdCBsb29r
+cyBsaWtlIHlvdSdyZSByZXR1cm5pbmcgInJldCIgaWYgdGhlIHRlcm5hcnkgZXZhbHVhdGVzIHRv
+IGZhbHNlLCBidXQNCj4gPiBpdCdzIG5vdCBjbGVhciB0bw0KPiA+IG1lIHdoYXQgaXMgcmV0dXJu
+ZWQgaWYgaXQgZXZhbHVhdGVzIHRvIHRydWUuIEl0J3MgcG9zc2libGUgaXQncyBva2F5LCBidXQg
+SQ0KPiA+IGp1c3QgZG9uJ3Qga25vdw0KPiA+IGVub3VnaCBhYm91dCBob3cgdGVybmFyaWVzIHdv
+cmsgaW4gdGhpcyBjYXNlLg0KPiA+IA0KPiANCj4gWWVzIFRoYW5rcywgV2lsbCBmaXguIE5vdCBz
+dXBwb3NlIHRvIHVzZSB0aGlzIGluIHRoZSBLZXJuZWwuDQo+IA0KPiA+ID4gK30NCj4gPiA+ICsN
+Cj4gPD4NCj4gPiA+ICtpbnQgenVmX2lvbV9leGVjdXRlX3N5bmMoc3RydWN0IHN1cGVyX2Jsb2Nr
+ICpzYiwgc3RydWN0IGlub2RlICppbm9kZSwNCj4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
+ICBfX3U2NCAqaW9tX2VfdXNlciwgdWludCBpb21fbikNCj4gPiA+ICt7DQo+ID4gPiArICAgICAg
+IHN0cnVjdCB6dWZfc2JfaW5mbyAqc2JpID0gU0JJKHNiKTsNCj4gPiA+ICsgICAgICAgc3RydWN0
+IHQyX2lvX3N0YXRlIHJkX3RpcyA9IHt9Ow0KPiA+ID4gKyAgICAgICBzdHJ1Y3QgdDJfaW9fc3Rh
+dGUgd3JfdGlzID0ge307DQo+ID4gPiArICAgICAgIHN0cnVjdCBfaW9tX2V4ZWNfaW5mbyBpZWkg
+PSB7fTsNCj4gPiA+ICsgICAgICAgaW50IGVyciwgZXJyX3IsIGVycl93Ow0KPiA+ID4gKw0KPiA+
+ID4gKyAgICAgICB0Ml9pb19iZWdpbihzYmktPm1kLCBSRUFELCBOVUxMLCAwLCAtMSwgJnJkX3Rp
+cyk7DQo+ID4gPiArICAgICAgIHQyX2lvX2JlZ2luKHNiaS0+bWQsIFdSSVRFLCBOVUxMLCAwLCAt
+MSwgJndyX3Rpcyk7DQo+ID4gPiArDQo+ID4gPiArICAgICAgIGllaS5zYiA9IHNiOw0KPiA+ID4g
+KyAgICAgICBpZWkuaW5vZGUgPSBpbm9kZTsNCj4gPiA+ICsgICAgICAgaWVpLnJkX3RpcyA9ICZy
+ZF90aXM7DQo+ID4gPiArICAgICAgIGllaS53cl90aXMgPSAmd3JfdGlzOw0KPiA+ID4gKyAgICAg
+ICBpZWkuaW9tX2UgPSBpb21fZV91c2VyOw0KPiA+ID4gKyAgICAgICBpZWkuaW9tX24gPSBpb21f
+bjsNCj4gPiA+ICsgICAgICAgaWVpLnByaW50ID0gMDsNCj4gPiA+ICsNCj4gPiA+ICsgICAgICAg
+ZXJyID0gX2lvbV9leGVjdXRlX2lubGluZSgmaWVpKTsNCj4gPiA+ICsNCj4gPiA+ICsgICAgICAg
+ZXJyX3IgPSB0Ml9pb19lbmQoJnJkX3RpcywgdHJ1ZSk7DQo+ID4gPiArICAgICAgIGVycl93ID0g
+dDJfaW9fZW5kKCZ3cl90aXMsIHRydWUpOw0KPiA+ID4gKw0KPiA+ID4gKyAgICAgICAvKiBUT0RP
+OiBub3Qgc3VyZSBpZiBPSyB3aGVuIF9pb21fZXhlY3V0ZSByZXR1cm4gd2l0aCAtRU5PTUVNDQo+
+ID4gPiArICAgICAgICAqIEluIHN1Y2ggYSBjYXNlLCB3ZSBtaWdodCBiZSBiZXR0ZXIgb2Ygc2tp
+cGluZyB0Ml9pb19lbmRzLg0KPiA+ID4gKyAgICAgICAgKi8NCj4gPiA+ICsgICAgICAgcmV0dXJu
+IGVyciA/OiAoZXJyX3IgPzogZXJyX3cpOw0KPiA+IA0KPiA+IFNhbWUgcXVlc3Rpb24gaGVyZS4N
+Cj4gPiANCj4gPiBUaGFua3MsDQo+ID4gQW5uYQ0KPiA+IA0KPiANCj4gWWVzIFdpbGwgZml4DQo+
+IA0KPiBUaGFua3MgQW5uYQ0KPiBDYW4gSSBwdXQgUmV2aWV3ZWQtYnkgb24gdGhpcyBwYXRjaD8N
+Cg0KR28gZm9yIGl0IQ0KDQo+IA0KPiA+ID4gK30NCj4gDQo+IE11Y2ggb2JsaWdlZA0KPiBCb2F6
+DQo=
