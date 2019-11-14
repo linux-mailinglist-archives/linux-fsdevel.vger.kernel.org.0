@@ -2,163 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88809FCFFD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2019 21:59:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7DD1FD010
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2019 22:05:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbfKNU7R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Nov 2019 15:59:17 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:46010 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726567AbfKNU7R (ORCPT
+        id S1727002AbfKNVEz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Nov 2019 16:04:55 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:52214 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726592AbfKNVEz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Nov 2019 15:59:17 -0500
-Received: from dread.disaster.area (pa49-181-255-80.pa.nsw.optusnet.com.au [49.181.255.80])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 972823A19FB;
-        Fri, 15 Nov 2019 07:59:13 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iVMCu-0003MN-5U; Fri, 15 Nov 2019 07:59:12 +1100
-Date:   Fri, 15 Nov 2019 07:59:12 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/28] mm: factor shrinker work calculations
-Message-ID: <20191114205912.GD4614@dread.disaster.area>
-References: <20191031234618.15403-1-david@fromorbit.com>
- <20191031234618.15403-12-david@fromorbit.com>
- <20191104152939.GB10665@bfoster>
+        Thu, 14 Nov 2019 16:04:55 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAEKxF1f037497;
+        Thu, 14 Nov 2019 21:02:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=dnfYmXtuTFJ/DUGz8VaA60fPJFIOkGVYuPayfZf2++o=;
+ b=bSs4UdzJaRXd5w6u7NH8KvOryp4qDuqBl2QKOnfFkm8e+GUSzUxMrW5W5ne7/6ajmZcy
+ JuPT4eXbme/Hdi0n6qZ3q/oBSozKpcPwSyrlzx5iEsnW3pIZxcmr5+sLSnU78MdEqARA
+ BPvkxJxP90K0jm0IWz0kTqFeY1DkZaNz8u2LSQK0kIhMldgKNru7dKPeNSSGeV/bOquf
+ jFiW5Cken3iYojwgMF6D8TM4z9dokFr2r8OSFdNywM8T6BZeK/VlG6Nm4YYcoF90vwWZ
+ uiz+H4Grq4upRp3EXXcyPRb7+RX+6ege7kvb5zXRgjV4zvMLzd9Ihd6mjsQgU9IFR6jt lw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2w5mvu5tpv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Nov 2019 21:02:47 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAEKsGXS001815;
+        Thu, 14 Nov 2019 21:02:47 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2w8g1a1ve1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Nov 2019 21:02:46 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAEL2fo9007838;
+        Thu, 14 Nov 2019 21:02:41 GMT
+Received: from localhost (/10.145.178.64)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 14 Nov 2019 13:02:41 -0800
+Date:   Thu, 14 Nov 2019 13:02:39 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     ira.weiny@intel.com
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH V2 1/2] fs: Clean up mapping variable
+Message-ID: <20191114210239.GH6211@magnolia>
+References: <20191113004244.9981-1-ira.weiny@intel.com>
+ <20191113004244.9981-2-ira.weiny@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191104152939.GB10665@bfoster>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
-        a=XqaD5fcB6dAc7xyKljs8OA==:117 a=XqaD5fcB6dAc7xyKljs8OA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=MeAgGD-zjQ4A:10
-        a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=XO7XY2mVLG3Fmeu3Gs4A:9
-        a=FyWulrztHRHRZgDo:21 a=54HOyl8hHVm350sv:21 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20191113004244.9981-2-ira.weiny@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9441 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1910280000 definitions=main-1911140173
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9441 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1910280000
+ definitions=main-1911140174
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 04, 2019 at 10:29:39AM -0500, Brian Foster wrote:
-> On Fri, Nov 01, 2019 at 10:46:01AM +1100, Dave Chinner wrote:
-> > From: Dave Chinner <dchinner@redhat.com>
-> > 
-> > Start to clean up the shrinker code by factoring out the calculation
-> > that determines how much work to do. This separates the calculation
-> > from clamping and other adjustments that are done before the
-> > shrinker work is run. Document the scan batch size calculation
-> > better while we are there.
-> > 
-> > Also convert the calculation for the amount of work to be done to
-> > use 64 bit logic so we don't have to keep jumping through hoops to
-> > keep calculations within 32 bits on 32 bit systems.
-> > 
-> > Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> > ---
+On Tue, Nov 12, 2019 at 04:42:43PM -0800, ira.weiny@intel.com wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
 > 
-> I assume the kbuild warning thing will be fixed up...
+> The mapping variable is not directly used in these functions.  Just
+> remove the additional variable.
 > 
-> >  mm/vmscan.c | 97 ++++++++++++++++++++++++++++++++++++++---------------
-> >  1 file changed, 70 insertions(+), 27 deletions(-)
-> > 
-> > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > index a215d71d9d4b..2d39ec37c04d 100644
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
-> > @@ -459,13 +459,68 @@ EXPORT_SYMBOL(unregister_shrinker);
-> >  
-> >  #define SHRINK_BATCH 128
-> >  
-> > +/*
-> > + * Calculate the number of new objects to scan this time around. Return
-> > + * the work to be done. If there are freeable objects, return that number in
-> > + * @freeable_objects.
-> > + */
-> > +static int64_t shrink_scan_count(struct shrink_control *shrinkctl,
-> > +			    struct shrinker *shrinker, int priority,
-> > +			    int64_t *freeable_objects)
-> > +{
-> > +	int64_t delta;
-> > +	int64_t freeable;
-> > +
-> > +	freeable = shrinker->count_objects(shrinker, shrinkctl);
-> > +	if (freeable == 0 || freeable == SHRINK_EMPTY)
-> > +		return freeable;
-> > +
-> > +	if (shrinker->seeks) {
-> > +		/*
-> > +		 * shrinker->seeks is a measure of how much IO is required to
-> > +		 * reinstantiate the object in memory. The default value is 2
-> > +		 * which is typical for a cold inode requiring a directory read
-> > +		 * and an inode read to re-instantiate.
-> > +		 *
-> > +		 * The scan batch size is defined by the shrinker priority, but
-> > +		 * to be able to bias the reclaim we increase the default batch
-> > +		 * size by 4. Hence we end up with a scan batch multipler that
-> > +		 * scales like so:
-> > +		 *
-> > +		 * ->seeks	scan batch multiplier
-> > +		 *    1		      4.00x
-> > +		 *    2               2.00x
-> > +		 *    3               1.33x
-> > +		 *    4               1.00x
-> > +		 *    8               0.50x
-> > +		 *
-> > +		 * IOWs, the more seeks it takes to pull the item into cache,
-> > +		 * the smaller the reclaim scan batch. Hence we put more reclaim
-> > +		 * pressure on caches that are fast to repopulate and to keep a
-> > +		 * rough balance between caches that have different costs.
-> > +		 */
-> > +		delta = freeable >> (priority - 2);
+> Acked-by: Darrick J. Wong <darrick.wong@oracle.com>
+
+Please upgrade this to:
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+
+--D
+
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> ---
+> Changes from V1
+> 	Update recipients list
 > 
-> Does anything prevent priority < 2 here?
-
-Nope. I regularly see priority 1 here when the OOM killer is about
-to strike. Doesn't appear to have caused any problems - the scan
-counts have all come out correct (i.e. ends up as a >> 0) according
-to the tracing, but I'll fix this up to avoid hitting this.
-
+>  fs/f2fs/data.c      | 3 +--
+>  fs/iomap/swapfile.c | 3 +--
+>  2 files changed, 2 insertions(+), 4 deletions(-)
 > 
-> > -		delta = freeable >> priority;
-> > -		delta *= 4;
-> > -		do_div(delta, shrinker->seeks);
-> > -	} else {
-> > -		/*
-> > -		 * These objects don't require any IO to create. Trim
-> > -		 * them aggressively under memory pressure to keep
-> > -		 * them from causing refetches in the IO caches.
-> > -		 */
-> > -		delta = freeable / 2;
-> > -	}
-> > -
-> > -	total_scan += delta;
-> > +	total_scan = nr + scan_count;
-> >  	if (total_scan < 0) {
-> >  		pr_err("shrink_slab: %pS negative objects to delete nr=%ld\n",
-> >  		       shrinker->scan_objects, total_scan);
-> > -		total_scan = freeable;
-> > +		total_scan = scan_count;
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index ba3bcf4c7889..3c7777bfae17 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -3146,8 +3146,7 @@ int f2fs_migrate_page(struct address_space *mapping,
+>  /* Copied from generic_swapfile_activate() to check any holes */
+>  static int check_swap_activate(struct file *swap_file, unsigned int max)
+>  {
+> -	struct address_space *mapping = swap_file->f_mapping;
+> -	struct inode *inode = mapping->host;
+> +	struct inode *inode = swap_file->f_mapping->host;
+>  	unsigned blocks_per_page;
+>  	unsigned long page_no;
+>  	unsigned blkbits;
+> diff --git a/fs/iomap/swapfile.c b/fs/iomap/swapfile.c
+> index a648dbf6991e..80571add0180 100644
+> --- a/fs/iomap/swapfile.c
+> +++ b/fs/iomap/swapfile.c
+> @@ -140,8 +140,7 @@ int iomap_swapfile_activate(struct swap_info_struct *sis,
+>  		.sis = sis,
+>  		.lowest_ppage = (sector_t)-1ULL,
+>  	};
+> -	struct address_space *mapping = swap_file->f_mapping;
+> -	struct inode *inode = mapping->host;
+> +	struct inode *inode = swap_file->f_mapping->host;
+>  	loff_t pos = 0;
+>  	loff_t len = ALIGN_DOWN(i_size_read(inode), PAGE_SIZE);
+>  	loff_t ret;
+> -- 
+> 2.21.0
 > 
-> Same question as before: why the change in assignment? freeable was the
-> ->count_objects() return value, which is now stored in freeable_objects.
-
-we don't want to try to free the entire cache on an 64-bit integer
-overflow. scan_count is the work we calculated we need to do this
-shrinker invocation, so if we overflow because of other factors then
-we should just do the work we need to do in this scan.
-
-> FWIW, the change seems to make sense in that it just factors out the
-> deferred count, but it's not clear if it's intentional...
-
-It was intentional.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
