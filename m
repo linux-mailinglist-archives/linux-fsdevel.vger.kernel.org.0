@@ -2,95 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50169FD0A0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2019 22:53:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F64DFD0AB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2019 23:00:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727063AbfKNVxx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Nov 2019 16:53:53 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:46844 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726812AbfKNVxx (ORCPT
+        id S1727021AbfKNWAW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Nov 2019 17:00:22 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48328 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726952AbfKNWAW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Nov 2019 16:53:53 -0500
-Received: from dread.disaster.area (pa49-181-255-80.pa.nsw.optusnet.com.au [49.181.255.80])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id CCFE13A235F;
-        Fri, 15 Nov 2019 08:53:50 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iVN3m-0003gD-4F; Fri, 15 Nov 2019 08:53:50 +1100
-Date:   Fri, 15 Nov 2019 08:53:50 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 26/28] xfs: use xfs_ail_push_all in xfs_reclaim_inodes
-Message-ID: <20191114215350.GI4614@dread.disaster.area>
-References: <20191031234618.15403-1-david@fromorbit.com>
- <20191031234618.15403-27-david@fromorbit.com>
- <20191106172215.GD37080@bfoster>
+        Thu, 14 Nov 2019 17:00:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=R9rapZsPL2Sc4OaIDs6c/5nQ15OuRRZR9anBWrXMzdI=; b=rLBqMtfqNB+uY84vih6nZntUG
+        ZnKfo9QJqJ8AcTVXQIqO5nbGL9jANx5BNOJ1UoqG3o46XOYt/bYMv9ksOEQq2KAmjKE3l0u2N/r1q
+        8zh9MWZNiZDLDX0UM0aTJcd56XWuoqXq1etH2ib4ShfZM791Y2z0C8JLb9p4GNFXWODKnLws59PJN
+        r4PU4/TrQp0qXt+lMbuDfZP+p3WSTbfOj1X0BLeKJn7dgexZdOT/cvwdr81bR8U1vSTl7WqShfzoE
+        KkhP6urUSTOpfXa8V6uP8SgbW9kJsdntcNwhZq+Lojj8Z1dr15jWpoMADBDzD/1evAL3+Atyqp2ud
+        aaxGeging==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iVN9z-0005AF-Gk; Thu, 14 Nov 2019 22:00:15 +0000
+Date:   Thu, 14 Nov 2019 14:00:15 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     xiang@kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [bug report] staging: erofs: tidy up decompression frontend
+Message-ID: <20191114220015.GA20752@bombadil.infradead.org>
+References: <20191114190848.f6tlqpnybagez76g@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191106172215.GD37080@bfoster>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=G6BsK5s5 c=1 sm=1 tr=0
-        a=XqaD5fcB6dAc7xyKljs8OA==:117 a=XqaD5fcB6dAc7xyKljs8OA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=MeAgGD-zjQ4A:10
-        a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=6BWFxZc-ePnZL1BRICgA:9
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20191114190848.f6tlqpnybagez76g@kili.mountain>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 06, 2019 at 12:22:15PM -0500, Brian Foster wrote:
-> On Fri, Nov 01, 2019 at 10:46:16AM +1100, Dave Chinner wrote:
-> > From: Dave Chinner <dchinner@redhat.com>
-> > 
-> > If we are reclaiming all inodes, it is likely we need to flush the
-> > entire AIL to do that. We have mechanisms to do that without needing
-> > to push to a specific LSN.
-> > 
-> > Convert xfs_relaim_all_inodes() to use xfs_ail_push_all variant so
-> > we can get rid of the hacky xfs_ail_push_sync() scaffolding we used
-> > to support the intermediate stages of the non-blocking reclaim
-> > changeset.
-> > 
-> > Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> > ---
-> >  fs/xfs/xfs_icache.c     | 17 +++++++++++------
-> >  fs/xfs/xfs_trans_ail.c  | 32 --------------------------------
-> >  fs/xfs/xfs_trans_priv.h |  2 --
-> >  3 files changed, 11 insertions(+), 40 deletions(-)
-> > 
-> > diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-> > index 71a729e29260..11bf4768d491 100644
-> > --- a/fs/xfs/xfs_icache.c
-> > +++ b/fs/xfs/xfs_icache.c
-> ...
-> > @@ -1066,13 +1074,10 @@ xfs_reclaim_all_inodes(
-> >  				      xfs_inode_reclaim_isolate, &ra, to_free);
-> >  		xfs_dispose_inodes(&ra.freeable);
-> >  
-> > -		if (freed == 0) {
-> > +		if (freed == 0)
-> >  			xfs_log_force(mp, XFS_LOG_SYNC);
-> > -			xfs_ail_push_all(mp->m_ail);
-> > -		} else if (ra.lowest_lsn != NULLCOMMITLSN) {
-> > -			xfs_ail_push_sync(mp->m_ail, ra.lowest_lsn);
-> > -		}
-> > -		cond_resched();
-> > +		else if (ra.dirty_skipped)
-> > +			congestion_wait(BLK_RW_ASYNC, HZ/10);
+On Thu, Nov 14, 2019 at 10:10:03PM +0300, Dan Carpenter wrote:
+> 	fs/erofs/zdata.c:443 z_erofs_register_collection()
+> 	error: double unlocked 'cl->lock' (orig line 439)
 > 
-> Why not use xfs_ail_push_all_sync() in this function and skip the direct
-> stall? This is only used in the unmount and quiesce paths so the big
-> hammer approach seems reasonable.
+> fs/erofs/zdata.c
+>    432          cl = z_erofs_primarycollection(pcl);
+>    433          cl->pageofs = map->m_la & ~PAGE_MASK;
+>    434  
+>    435          /*
+>    436           * lock all primary followed works before visible to others
+>    437           * and mutex_trylock *never* fails for a new pcluster.
+>    438           */
+>    439          mutex_trylock(&cl->lock);
+>                 ^^^^^^^^^^^^^^^^^^^^^^^^
+>    440  
+>    441          err = erofs_register_workgroup(inode->i_sb, &pcl->obj, 0);
+>    442          if (err) {
+>    443                  mutex_unlock(&cl->lock);
+>                         ^^^^^^^^^^^^^^^^^^^^^^^
+> How can we unlock if we don't know that the trylock succeeded?
 
-Ok, that's a good simplification :)
+The comment says it'll always succeed.  That said, this is an uncommon
+pattern -- usually we just mutex_lock().  If there's a good reason to use
+mutex_trylock() instead, then I'd prefer it to be guarded with a BUG_ON.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
