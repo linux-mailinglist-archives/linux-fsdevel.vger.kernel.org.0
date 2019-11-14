@@ -2,143 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CE2BFC5CE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2019 13:01:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08A0CFC634
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2019 13:18:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbfKNMBn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Nov 2019 07:01:43 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:50882 "EHLO huawei.com"
+        id S1726979AbfKNMSA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Nov 2019 07:18:00 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45366 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726057AbfKNMBn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Nov 2019 07:01:43 -0500
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 50BCC23F07ECCC0C5F4B;
-        Thu, 14 Nov 2019 20:01:40 +0800 (CST)
-Received: from [127.0.0.1] (10.133.219.224) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Thu, 14 Nov 2019
- 20:01:36 +0800
-Subject: Re: [PATCH] jffs2: Fix mounting under new mount API
-To:     Han Xu <xhnjupt@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Richard Weinberger <richard@nod.at>
-CC:     David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        <linux-fsdevel@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        <viro@zeniv.linux.org.uk>, <linux-kernel@vger.kernel.org>
-References: <156950767876.30879.17024491763471689960.stgit@warthog.procyon.org.uk>
- <f34aaf61-955a-7867-ef93-f22d3d8732c3@cogentembedded.com>
- <CA+EcR22=7F7X-9qYXb94dAp6w0_3FoKJPMRhFht+VWgKonoing@mail.gmail.com>
-From:   Hou Tao <houtao1@huawei.com>
-Message-ID: <2758feea-8d6e-c690-5cac-d42213f2024b@huawei.com>
-Date:   Thu, 14 Nov 2019 20:01:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1726263AbfKNMSA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 14 Nov 2019 07:18:00 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 607C0B22A;
+        Thu, 14 Nov 2019 12:17:48 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id DF9031E4331; Thu, 14 Nov 2019 13:17:46 +0100 (CET)
+Date:   Thu, 14 Nov 2019 13:17:46 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     linux-mm <linux-mm@kvack.org>,
+        fsdev <linux-fsdevel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Minchan Kim <minchan@kernel.org>, Mel Gorman <mgorman@suse.de>
+Subject: Re: [RFC v2] writeback: add elastic bdi in cgwb bdp
+Message-ID: <20191114121746.GD28486@quack2.suse.cz>
+References: <20191026104656.15176-1-hdanton@sina.com>
 MIME-Version: 1.0
-In-Reply-To: <CA+EcR22=7F7X-9qYXb94dAp6w0_3FoKJPMRhFht+VWgKonoing@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.219.224]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191026104656.15176-1-hdanton@sina.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Sat 26-10-19 18:46:56, Hillf Danton wrote:
+> 
+> The elastic bdi is the mirror bdi of spinning disks, SSD, USB and
+> other storage devices/instruments on market. The performance of
+> ebdi goes up and down as the pattern of IO dispatched changes, as
+> approximately estimated as below.
+> 
+> 	P = j(..., IO pattern);
+> 
+> In ebdi's view, the bandwidth currently measured in balancing dirty
+> pages has close relation to its performance because the former is a
+> part of the latter.
+> 
+> 	B = y(P);
+> 
+> The functions above suggest there may be a layer violation if it
+> could be better measured somewhere below fs.
+> 
+> It is measured however to the extent that makes every judge happy,
+> and is playing a role in dispatching IO with the IO pattern entirely
+> ignored that is volatile in nature.
+> 
+> And it helps to throttle the dirty speed, with the figure ignored
+> that DRAM in general is x10 faster than ebdi. If B is half of P for
+> instance, then it is near 5% of dirty speed, just 2 points from the
+> figure in the snippet below.
+> 
+> /*
+>  * If ratelimit_pages is too high then we can get into dirty-data overload
+>  * if a large number of processes all perform writes at the same time.
+>  * If it is too low then SMP machines will call the (expensive)
+>  * get_writeback_state too often.
+>  *
+>  * Here we set ratelimit_pages to a level which ensures that when all CPUs are
+>  * dirtying in parallel, we cannot go more than 3% (1/32) over the dirty memory
+>  * thresholds.
+>  */
+> 
+> To prevent dirty speed from running away from laundry speed, ebdi
+> suggests the walk-dog method to put in bdp as a leash seems to
+> churn less in IO pattern.
+> 
+> V2 is based on next-20191025.
 
-On 2019/11/14 4:38, Han Xu wrote:
-> Tested the JFFS2 on 5.4 kernel as the instruction said, still got some
-> errors, any ideas?
-> 
+Honestly, the changelog is still pretty incomprehensible as Andrew already
+mentioned. Also I completely miss there, what are the benefits of this work
+compared to what we currently have.
 
-> 
-> With the patch,
-> 
-> root@imx8mmevk:~# cat /proc/mtd
-> dev:    size   erasesize  name
-> mtd0: 00400000 00020000 "mtdram test device"
-> mtd1: 04000000 00020000 "5d120000.spi"
-> root@imx8mmevk:~# mtd_debug info /dev/mtd0
-> mtd.type = MTD_RAM
-> mtd.flags = MTD_CAP_RAM
-> mtd.size = 4194304 (4M)
-> mtd.erasesize = 131072 (128K)
-> mtd.writesize = 1
-> mtd.oobsize = 0
-> regions = 0
-> 
-> root@imx8mmevk:~# flash_erase /dev/mtd0 0 0
-> Erasing 128 Kibyte @ 3e0000 -- 100 % complete
-> root@imx8mmevk:~# mount -t jffs2 /dev/mtdblock0 test_dir/
-> root@imx8mmevk:~# mount
-> /dev/mtdblock0 on /home/root/test_dir type jffs2 (rw,relatime)
-> 
-> BUT, it's not writable.
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -1551,6 +1551,39 @@ static inline void wb_dirty_limits(struc
+>  	}
+>  }
+>  
+> +static bool cgwb_bdp_should_throttle(struct bdi_writeback *wb)
+> +{
+> +	struct dirty_throttle_control gdtc = { GDTC_INIT_NO_WB };
+> +
+> +	if (fatal_signal_pending(current))
+> +		return false;
+> +
+> +	gdtc.avail = global_dirtyable_memory();
+> +
+> +	domain_dirty_limits(&gdtc);
+> +
+> +	gdtc.dirty = global_node_page_state(NR_FILE_DIRTY) +
+> +			global_node_page_state(NR_UNSTABLE_NFS) +
+> +			global_node_page_state(NR_WRITEBACK);
+> +
+> +	if (gdtc.dirty < gdtc.bg_thresh)
+> +		return false;
+> +
+> +	if (!writeback_in_progress(wb))
+> +		wb_start_background_writeback(wb);
+> +
+> +	return gdtc.dirty > gdtc.thresh &&
+> +		wb_stat(wb, WB_DIRTIED) >
+> +		wb_stat(wb, WB_WRITTEN) +
+> +		wb_stat_error();
+> +}
 
-You should revert the following commit to make it work:
+This looks like a very primitive version of what we already have in
+balance_dirty_pages(). Just without support for cgroup-aware writeback, or
+any guarantees on amount of written out data.
 
-commit f2538f999345405f7d2e1194c0c8efa4e11f7b3a
-Author: Jia-Ju Bai <baijiaju1990@gmail.com>
-Date:   Wed Jul 24 10:46:58 2019 +0800
+> +
+> +static inline void cgwb_bdp(struct bdi_writeback *wb)
+> +{
+> +	wait_event_interruptible_timeout(wb->bdp_waitq,
+> +			!cgwb_bdp_should_throttle(wb), HZ);
+> +}
 
-    jffs2: Fix possible null-pointer dereferences in jffs2_add_frag_to_fragtree()
+This breaks dirty throttling as no dirtier is ever delayed for more than 1
+second. Under heavier IO load, it can clearly take longer to clean enough
+pages before dirtier can continue...
 
-The revert needs to get into v5.4. Maybe Richard has forget about it ?
+> +
+>  /*
+>   * balance_dirty_pages() must be called by processes which are generating dirty
+>   * data.  It looks at the number of dirty pages in the machine and will force
+> @@ -1910,7 +1943,7 @@ void balance_dirty_pages_ratelimited(str
+>  	preempt_enable();
+>  
+>  	if (unlikely(current->nr_dirtied >= ratelimit))
+> -		balance_dirty_pages(wb, current->nr_dirtied);
+> +		cgwb_bdp(wb);
+>  
+>  	wb_put(wb);
+>  }
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -811,6 +811,8 @@ static long wb_split_bdi_pages(struct bd
+>  	if (nr_pages == LONG_MAX)
+>  		return LONG_MAX;
+>  
+> +	return nr_pages;
+> +
 
-Regards,
-Tao
+So you've just broken cgroup aware writeback with this. I won't even speak
+of the fact that this is a return in the middle of the function. But let's
+take this as an experimental patch to show out something...
 
-> 
-> root@imx8mmevk:~# cp test_file test_dir/
-> cp: error writing 'test_dir/test_file': Invalid argument
-> 
-> root@imx8mmevk:~# dd if=/dev/urandom of=test_dir/test_file bs=1k count=1
-> dd: error writing 'test_dir/test_file': Invalid argument
-> 1+0 records in
-> 0+0 records out
-> 0 bytes copied, 0.000855156 s, 0.0 kB/s
-> 
-> 
-> On Fri, Sep 27, 2019 at 3:38 AM Sergei Shtylyov
-> <sergei.shtylyov@cogentembedded.com> wrote:
->>
->> Hello!
->>
->> On 26.09.2019 17:21, David Howells wrote:
->>
->>> The mounting of jffs2 is broken due to the changes from the new mount API
->>> because it specifies a "source" operation, but then doesn't actually
->>> process it.  But because it specified it, it doesn't return -ENOPARAM and
->>
->>     What specified what? Too many "it"'s to figure that out. :-)
->>
->>> the caller doesn't process it either and the source gets lost.
->>>
->>> Fix this by simply removing the source parameter from jffs2 and letting the
->>> VFS deal with it in the default manner.
->>>
->>> To test it, enable CONFIG_MTD_MTDRAM and allow the default size and erase
->>> block size parameters, then try and mount the /dev/mtdblock<N> file that
->>> that creates as jffs2.  No need to initialise it.
->>
->>     One "that" should be enough. :-)
->>
->>> Fixes: ec10a24f10c8 ("vfs: Convert jffs2 to use the new mount API")
->>> Reported-by: Al Viro <viro@zeniv.linux.org.uk>
->>> Signed-off-by: David Howells <dhowells@redhat.com>
->>> cc: David Woodhouse <dwmw2@infradead.org>
->>> cc: Richard Weinberger <richard@nod.at>
->>> cc: linux-mtd@lists.infradead.org
->> [...]
->>
->> MBR, Sergei
->>
->> ______________________________________________________
->> Linux MTD discussion mailing list
->> http://lists.infradead.org/mailman/listinfo/linux-mtd/
-> 
-> 
-> 
+>  	/*
+>  	 * This may be called on clean wb's and proportional distribution
+>  	 * may not make sense, just use the original @nr_pages in those
+> @@ -1604,6 +1606,7 @@ static long writeback_chunk_size(struct
+>  		pages = min(pages, work->nr_pages);
+>  		pages = round_down(pages + MIN_WRITEBACK_PAGES,
+>  				   MIN_WRITEBACK_PAGES);
+> +		pages = work->nr_pages;
+>  	}
 
+This breaks livelock prevention in the writeback code. Now we can write out
+single inode basically forever.
+
+> @@ -2092,6 +2095,9 @@ void wb_workfn(struct work_struct *work)
+>  		wb_wakeup_delayed(wb);
+>  
+>  	current->flags &= ~PF_SWAPWRITE;
+> +
+> +	if (waitqueue_active(&wb->bdp_waitq))
+> +		wake_up_all(&wb->bdp_waitq);
+>  }
+
+If anyone submits writeback work with a few pages, this will result in
+releasing dirtying processes prematurely (before we are guaranteed we have
+got below dirty limits).
+
+So to summarize, I'm sorry but this patch looks very broken to me and I
+don't see how your proposed throttling method is any better than what we
+already have.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
