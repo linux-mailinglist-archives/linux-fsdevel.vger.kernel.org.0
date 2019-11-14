@@ -2,199 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08A0CFC634
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2019 13:18:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3C0FFC718
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2019 14:14:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726979AbfKNMSA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Nov 2019 07:18:00 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45366 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726263AbfKNMSA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Nov 2019 07:18:00 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 607C0B22A;
-        Thu, 14 Nov 2019 12:17:48 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id DF9031E4331; Thu, 14 Nov 2019 13:17:46 +0100 (CET)
-Date:   Thu, 14 Nov 2019 13:17:46 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     linux-mm <linux-mm@kvack.org>,
-        fsdev <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Minchan Kim <minchan@kernel.org>, Mel Gorman <mgorman@suse.de>
-Subject: Re: [RFC v2] writeback: add elastic bdi in cgwb bdp
-Message-ID: <20191114121746.GD28486@quack2.suse.cz>
-References: <20191026104656.15176-1-hdanton@sina.com>
+        id S1726473AbfKNNOo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Nov 2019 08:14:44 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:49226 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726139AbfKNNOo (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 14 Nov 2019 08:14:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=He7TZydBqJdm6j9sMwQxIx5OY+kOVIAf9OOyvnsEo8I=; b=H8kXXk4c0DwI4SMpC88yvWlam
+        G0t6uhkTWxOyi9P4Pv/0bY/6oagZlpCILgiPEI6osgCmOuD2BWKkijjFF6YrGWUZjFr23c1hDWg3N
+        D6fTelb8eVI9h5qIKkP26X4UAmcJfKMi2N6RuOJF7QzaBqwN3DoVjWxM4jkqeD7XHAnW8zc7NWANi
+        nFnBKj0RnSAwMyObNRjVbHvLO7jKgfDVp0J9LtN19xmYVIcr96WDk6LQxUHL8ey4yLHDe0Q4Y8jkd
+        l/bwbFVmItcuydLKrrYdWcco07I2BBOR17Tlv9upt1Y4cUgcPsLrOHAfpKHIFRjXCFcwSmVPy00xl
+        OO4J1sI8g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iVExH-0006vR-Vb; Thu, 14 Nov 2019 13:14:36 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id DF8F5301120;
+        Thu, 14 Nov 2019 14:13:26 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 93E2829E032D8; Thu, 14 Nov 2019 14:14:34 +0100 (CET)
+Date:   Thu, 14 Nov 2019 14:14:34 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>
+Subject: Re: single aio thread is migrated crazily by scheduler
+Message-ID: <20191114131434.GQ4114@hirez.programming.kicks-ass.net>
+References: <20191114113153.GB4213@ming.t460p>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191026104656.15176-1-hdanton@sina.com>
+In-Reply-To: <20191114113153.GB4213@ming.t460p>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat 26-10-19 18:46:56, Hillf Danton wrote:
+On Thu, Nov 14, 2019 at 07:31:53PM +0800, Ming Lei wrote:
+> Hi Guys,
 > 
-> The elastic bdi is the mirror bdi of spinning disks, SSD, USB and
-> other storage devices/instruments on market. The performance of
-> ebdi goes up and down as the pattern of IO dispatched changes, as
-> approximately estimated as below.
-> 
-> 	P = j(..., IO pattern);
-> 
-> In ebdi's view, the bandwidth currently measured in balancing dirty
-> pages has close relation to its performance because the former is a
-> part of the latter.
-> 
-> 	B = y(P);
-> 
-> The functions above suggest there may be a layer violation if it
-> could be better measured somewhere below fs.
-> 
-> It is measured however to the extent that makes every judge happy,
-> and is playing a role in dispatching IO with the IO pattern entirely
-> ignored that is volatile in nature.
-> 
-> And it helps to throttle the dirty speed, with the figure ignored
-> that DRAM in general is x10 faster than ebdi. If B is half of P for
-> instance, then it is near 5% of dirty speed, just 2 points from the
-> figure in the snippet below.
-> 
-> /*
->  * If ratelimit_pages is too high then we can get into dirty-data overload
->  * if a large number of processes all perform writes at the same time.
->  * If it is too low then SMP machines will call the (expensive)
->  * get_writeback_state too often.
->  *
->  * Here we set ratelimit_pages to a level which ensures that when all CPUs are
->  * dirtying in parallel, we cannot go more than 3% (1/32) over the dirty memory
->  * thresholds.
->  */
-> 
-> To prevent dirty speed from running away from laundry speed, ebdi
-> suggests the walk-dog method to put in bdp as a leash seems to
-> churn less in IO pattern.
-> 
-> V2 is based on next-20191025.
+> It is found that single AIO thread is migrated crazely by scheduler, and
+> the migrate period can be < 10ms. Follows the test a):
 
-Honestly, the changelog is still pretty incomprehensible as Andrew already
-mentioned. Also I completely miss there, what are the benefits of this work
-compared to what we currently have.
-
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -1551,6 +1551,39 @@ static inline void wb_dirty_limits(struc
->  	}
->  }
->  
-> +static bool cgwb_bdp_should_throttle(struct bdi_writeback *wb)
-> +{
-> +	struct dirty_throttle_control gdtc = { GDTC_INIT_NO_WB };
-> +
-> +	if (fatal_signal_pending(current))
-> +		return false;
-> +
-> +	gdtc.avail = global_dirtyable_memory();
-> +
-> +	domain_dirty_limits(&gdtc);
-> +
-> +	gdtc.dirty = global_node_page_state(NR_FILE_DIRTY) +
-> +			global_node_page_state(NR_UNSTABLE_NFS) +
-> +			global_node_page_state(NR_WRITEBACK);
-> +
-> +	if (gdtc.dirty < gdtc.bg_thresh)
-> +		return false;
-> +
-> +	if (!writeback_in_progress(wb))
-> +		wb_start_background_writeback(wb);
-> +
-> +	return gdtc.dirty > gdtc.thresh &&
-> +		wb_stat(wb, WB_DIRTIED) >
-> +		wb_stat(wb, WB_WRITTEN) +
-> +		wb_stat_error();
-> +}
-
-This looks like a very primitive version of what we already have in
-balance_dirty_pages(). Just without support for cgroup-aware writeback, or
-any guarantees on amount of written out data.
-
-> +
-> +static inline void cgwb_bdp(struct bdi_writeback *wb)
-> +{
-> +	wait_event_interruptible_timeout(wb->bdp_waitq,
-> +			!cgwb_bdp_should_throttle(wb), HZ);
-> +}
-
-This breaks dirty throttling as no dirtier is ever delayed for more than 1
-second. Under heavier IO load, it can clearly take longer to clean enough
-pages before dirtier can continue...
-
-> +
->  /*
->   * balance_dirty_pages() must be called by processes which are generating dirty
->   * data.  It looks at the number of dirty pages in the machine and will force
-> @@ -1910,7 +1943,7 @@ void balance_dirty_pages_ratelimited(str
->  	preempt_enable();
->  
->  	if (unlikely(current->nr_dirtied >= ratelimit))
-> -		balance_dirty_pages(wb, current->nr_dirtied);
-> +		cgwb_bdp(wb);
->  
->  	wb_put(wb);
->  }
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -811,6 +811,8 @@ static long wb_split_bdi_pages(struct bd
->  	if (nr_pages == LONG_MAX)
->  		return LONG_MAX;
->  
-> +	return nr_pages;
-> +
-
-So you've just broken cgroup aware writeback with this. I won't even speak
-of the fact that this is a return in the middle of the function. But let's
-take this as an experimental patch to show out something...
-
->  	/*
->  	 * This may be called on clean wb's and proportional distribution
->  	 * may not make sense, just use the original @nr_pages in those
-> @@ -1604,6 +1606,7 @@ static long writeback_chunk_size(struct
->  		pages = min(pages, work->nr_pages);
->  		pages = round_down(pages + MIN_WRITEBACK_PAGES,
->  				   MIN_WRITEBACK_PAGES);
-> +		pages = work->nr_pages;
->  	}
-
-This breaks livelock prevention in the writeback code. Now we can write out
-single inode basically forever.
-
-> @@ -2092,6 +2095,9 @@ void wb_workfn(struct work_struct *work)
->  		wb_wakeup_delayed(wb);
->  
->  	current->flags &= ~PF_SWAPWRITE;
-> +
-> +	if (waitqueue_active(&wb->bdp_waitq))
-> +		wake_up_all(&wb->bdp_waitq);
->  }
-
-If anyone submits writeback work with a few pages, this will result in
-releasing dirtying processes prematurely (before we are guaranteed we have
-got below dirty limits).
-
-So to summarize, I'm sorry but this patch looks very broken to me and I
-don't see how your proposed throttling method is any better than what we
-already have.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+What does crazy mean? Does it cycle through the L3 mask?
