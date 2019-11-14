@@ -2,112 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED778FC815
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2019 14:47:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4748FC854
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2019 15:02:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbfKNNq5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Nov 2019 08:46:57 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:46727 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbfKNNq5 (ORCPT
+        id S1727187AbfKNOCV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Nov 2019 09:02:21 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:33379 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726374AbfKNOCU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Nov 2019 08:46:57 -0500
-Received: by mail-ot1-f67.google.com with SMTP id n23so4838395otr.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2019 05:46:56 -0800 (PST)
+        Thu, 14 Nov 2019 09:02:20 -0500
+Received: by mail-ed1-f66.google.com with SMTP id a24so5102186edt.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2019 06:02:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uI8XwCq8heWQgz9mOCei/A4zlcNK1RwWtVyxWKPoyCY=;
-        b=UahwqbSqvtof4ApznsHyp0AlKHLFzHrxsamAv0VQY+oZJtqKA78BYD2h5x/M/+1WNB
-         MO+4SiP6gjREXogK6tfVKyF/jAFocNey9Op4uCU+L2U2AmZDLu9J8JbOrwV6nBqwTo6z
-         xL039E7/kDRBfwveQp/13PSOuzm6DCMWu0J2Y0FxiXNGrvatHAppgJNfrbPWjw/mHj+l
-         SDnr1+6056C4QCRQid8YH9FasMJzNfCDPQj5oclNE2IqPhngj4fHqu4jKRWY6YTvxxn3
-         xvv671DVE21gaGobdem64IJEZNue8NNMRiWDl7H8OOrPVf4eRwu5iApOcrrLwVTGG+pa
-         GiUg==
+        d=plexistor-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=33PAA6r/k9VRl85H/xVoKlwt8JinRmzAIvZM9Tx3pHM=;
+        b=f/OICRwApIEBHjzK35OPs5SjQEx99JZRNDxNPjSkxXcz9WGT2l65dn755c5UPYn05M
+         JFgCFMSPOhrZRBfSZsTG28mPgbilqm9oG2mlKVUq2iR/rcov8bVWHeXZnljQXeuiTdB4
+         pc06r27kyk/A/00uVugzmOyIslqS7zYSYV1UWmiuaN0o9WmOlEi7pL/2cmpRH20so0Ai
+         wNIR4AoXXVHdmtuvXhPmkSibGhA1hesN9O27yFlcKXGe12lMcY5zjgkaVURlm2uphgtj
+         w/BYnKJvPHVttb0P63EU+NI7FSMl4ugLBiydhXllOGOZSTDRnL0PhyknOXXwqzFu+PBM
+         ptzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uI8XwCq8heWQgz9mOCei/A4zlcNK1RwWtVyxWKPoyCY=;
-        b=c1MoVYMjcnvd6i85Xs18S9yBLk2daaUtRc9b4xPIymgqcEZq1RcpOEhCEyVsXty54B
-         XQwRsI6O6n/Tkvc2lW87j1Y6Gt8ZYGzIRfAo/pWtM40rOTbSJF4KIy8x8toNjBztO/VM
-         ZddtWRi4bZ1nZqqvUjII09o+mgCeOtZ44S87v8nWR/OvtNnc9EfTmGlvkr5EFym410K8
-         imsT+cYyZnl/nUpMsZaQT0rT5cd486wZxu2RE0EtY3UHRclLpHhAPIyoJnEqEHhs0wQy
-         5DudZ64ZcQPckyRHnlnDA9PbY5g/vFzho7RSuQgfj4jHt8pV2Gpm+Q+jsv6a/mXGuhqZ
-         abog==
-X-Gm-Message-State: APjAAAXTaOHVKZ0ht394HF8/7a7UurfoK7Jb1NtSJool0uQOVuthPnxI
-        hO7OTb6SbikIxTWz/16DXLsIswSYzU0Nt6whzozr1A==
-X-Google-Smtp-Source: APXvYqwDZBkC3ZCnLaE6JyJHavd4O4J7fjyTaIFp+mvp+beXg9Dgi+Sa3lj0dJf2RuzfQII2ljxRH9p+6FWYUlXZ01Y=
-X-Received: by 2002:a9d:328:: with SMTP id 37mr6858344otv.228.1573739215541;
- Thu, 14 Nov 2019 05:46:55 -0800 (PST)
-MIME-Version: 1.0
-References: <58059c9c-adf9-1683-99f5-7e45280aea87@kernel.dk>
- <58246851-fa45-a72d-2c42-7e56461ec04e@kernel.dk> <ec3526fb-948a-70c0-4a7b-866d6cd6a788@rasmusvillemoes.dk>
-In-Reply-To: <ec3526fb-948a-70c0-4a7b-866d6cd6a788@rasmusvillemoes.dk>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 14 Nov 2019 14:46:29 +0100
-Message-ID: <CAG48ez3dpphoQGy8G1-QgZpkMBA2oDjNcttQKJtw5pD62QYwhw@mail.gmail.com>
-Subject: Re: [PATCH RFC] io_uring: make signalfd work with io_uring (and aio) POLL
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=33PAA6r/k9VRl85H/xVoKlwt8JinRmzAIvZM9Tx3pHM=;
+        b=H0DESQaJAoT1N1HXQoRPPV5lDfVf+0Wn1Viv5pHakk7nbQeN7rtyFV8kpxg8S7Ldlh
+         KsKXNCy0iRbgzOScyc3uDx2YQ1cnA1b/TgySJFkfccq471xmw+le126Zb0HR1IGlOjuG
+         RSDtnQvrjKKG58SqJEJ15tiaDk3BkVvNbSu7IyE61NFkIkhTsEjKx0wtFcRQEOT8UX6y
+         i/sWdxWD6WXNn378LW9iIvI97AGwum84aKPKshlBVFAh9XqM+vWYBbYonuVmZMrY9Xte
+         qZq/0euJaUimrkqR7D9UcsxviaWmL6YvgQ1retYXdYsM7nveL81ZFU4b3j/CVn1nqjxZ
+         0jCQ==
+X-Gm-Message-State: APjAAAX5YHjrZx+VrqBiQFh70njhjGH9I7YaFJp+xx5W63gwyNgmnT9H
+        1rzLe+8CX5DZfh7ksEiBpQ6jEQ==
+X-Google-Smtp-Source: APXvYqxsR3NNaXQDvYGd12/9s3QWnCadEINpEzkufZiFdqDh7qo1v2EMXTobGwnwhSwWcVV4VH6UqQ==
+X-Received: by 2002:a17:906:3019:: with SMTP id 25mr8627056ejz.280.1573740137638;
+        Thu, 14 Nov 2019 06:02:17 -0800 (PST)
+Received: from [10.68.217.182] ([217.70.210.43])
+        by smtp.googlemail.com with ESMTPSA id j23sm66197ede.52.2019.11.14.06.02.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Nov 2019 06:02:16 -0800 (PST)
+Subject: Re: Please add the zuf tree to linux-next
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Christoph Hellwig <hch@infradead.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Chinner <david@fromorbit.com>
+Cc:     Boaz Harrosh <boaz@plexistor.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@vger.kernel.org
+References: <1b192a85-e1da-0925-ef26-178b93d0aa45@plexistor.com>
+ <20191024023606.GA1884@infradead.org>
+ <20191029160733.298c6539@canb.auug.org.au>
+From:   Boaz Harrosh <boaz@plexistor.com>
+Message-ID: <514e220d-3f93-7ce3-27cd-49240b498114@plexistor.com>
+Date:   Thu, 14 Nov 2019 16:02:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
+MIME-Version: 1.0
+In-Reply-To: <20191029160733.298c6539@canb.auug.org.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 14, 2019 at 10:20 AM Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
-> On 14/11/2019 05.49, Jens Axboe wrote:
-> > On 11/13/19 9:31 PM, Jens Axboe wrote:
-> >> This is a case of "I don't really know what I'm doing, but this works
-> >> for me". Caveat emptor, but I'd love some input on this.
-> >>
-> >> I got a bug report that using the poll command with signalfd doesn't
-> >> work for io_uring. The reporter also noted that it doesn't work with the
-> >> aio poll implementation either. So I took a look at it.
-> >>
-> >> What happens is that the original task issues the poll request, we call
-> >> ->poll() (which ends up with signalfd for this fd), and find that
-> >> nothing is pending. Then we wait, and the poll is passed to async
-> >> context. When the requested signal comes in, that worker is woken up,
-> >> and proceeds to call ->poll() again, and signalfd unsurprisingly finds
-> >> no signals pending, since it's the async worker calling it.
-> >>
-> >> That's obviously no good. The below allows you to pass in the task in
-> >> the poll_table, and it does the right thing for me, signal is delivered
-> >> and the correct mask is checked in signalfd_poll().
-> >>
-> >> Similar patch for aio would be trivial, of course.
-> >
-> > From the probably-less-nasty category, Jann Horn helpfully pointed out
-> > that it'd be easier if signalfd just looked at the task that originally
-> > created the fd instead. That looks like the below, and works equally
-> > well for the test case at hand.
->
-> Eh, how should that work? If I create a signalfd() and fork(), the
-> child's signalfd should only be concerned with signals sent to the
-> child. Not to mention what happens after the parent dies and the child
-> polls its fd.
->
-> Or am I completely confused?
+On 29/10/2019 07:07, Stephen Rothwell wrote:
+> Hi Christoph,
+> 
+> On Wed, 23 Oct 2019 19:36:06 -0700 Christoph Hellwig <hch@infradead.org> wrote:
+>>
+>> On Thu, Oct 24, 2019 at 03:34:29AM +0300, Boaz Harrosh wrote:
+>>> Hello Stephen
+>>>
+>>> Please add the zuf tree below to the linux-next tree.
+>>> 	[https://github.com/NetApp/zufs-zuf zuf]  
+>>
 
-I think the child should not be getting signals for the child when
-it's reading from the parent's signalfd. read() and write() aren't
-supposed to look at properties of `current`. If I send an fd to some
-daemon via SCM_RIGHTS, and the daemon does a read() on it, that should
-never cause signals to disappear from the daemon's signal queue.
+Sorry for the late response was very sick for a few weeks, now doing better
 
-Of course, if someone does rely on the current (silly) semantics, this
-might break stuff.
+>> I don't remember us coming to the conclusion that this actually is
+>> useful doesn't just badly duplicate the fuse functionality.
+> 
 
-And we probably also don't want to just let the signalfd keep a
-reference to a task, because then if the task later goes through a
-setuid transition, you'd still be able to dequeue its signals. So it'd
-have to also check against ->self_exec_id or something like that.
+Dear Sir Christoph
+
+ZUFS is not at *all* a duplication of the FUSE functionality. In fact they are
+almost completely complementary. The systems that would benefit from fuse would
+do poorly under zufs. And the systems that benefit from zufs do very *very* poorly
+under fuse.
+From the get go I have explained on the mailing list and to the guys that a fuse
+replacement would just be a waist of time. That those async in nature, need page-cache
+not sensitive to latency Systems are better with fuse. And those Systems that need
+very low latency, zero copy, sync operations, highly parallel will do very poorly under
+fuse and we need to invent a new multy-dimentional wheel to address those.
+
+ZUFS was never a "better-fuse". It was from the get go a different animal to address
+systems and demands that are not possible under fuse.
+
+ZUFS is also (as opposed to fuse) A new way to communicate with User-mode servers, not
+necessarily FileSystems. It does implement the full FileSystem API but any server, Say
+MySQL under ZUFS will benefit from a low-latency, throughput and parallelizm unseen
+before. This is because at the core it is a zero-copy synchronous IPC between applications.
+
+And specially it is good with pmem. A pmem-only (NvDIMM based) FS running in user mode
+gives me *better* results then XFS-DAX in Kernel. Now how is that possible?
+(Under a zufs ported pmfs2)
+I guess we did not do such a "BAD" job as you were so happily declaring.
+
+The Linux Kernel was always about choice and diversity. There is a very respectable
+place for both fuse and zufs side by side tackling different workloads and setups.
+In fact, for example, EXT4 and XFS have 95% overlapping functionality. But we both know
+that those places where XFS is king EXT4 can't get close, Yet there are still places that
+EXT4 does better then XFS, such as single local disk, embedded systems, lighter wait ...
+ZUFS and FUSE have maybe at the most 20% over lap in functionality. They are not even
+cousins.
+
+So please why do you make such bold statements, which are not true. And clearly you
+have not studied the subject at all. I do not remember you ever participated at one of
+my talks? Or gave your opinion on the subject, since the 2 years I have first sent
+the RFD about the subject. (2.5 years)
+
+At the last LSF. Steven from Red-Hat asked me to talk with Miklos about the fuse vs zufs.
+We had a long talk where I have explained to him in detail How we do the mounting, how
+Kernel owns the multy-devices. How we do the PMEM API and our IO API in general. How
+we do pigi-back operations to minimize latencies. How we do DAX and mmap. At the end of the
+talk he said to me that he understands how this is very different from FUSE and he wished
+me "good luck".
+
+Miklos - you have seen both projects; do you think that All these new subsystems from ZUFS
+can have a comfortable place under FUSE, including the new IO API?
+Believe me I have tried. I am a most lazy person. I would not have slaved on ZUFS for
+2 years if it was a "badly duplicate the fuse functionality". Why would I?
+
+Latest fuse already took some very good ideas from ZUFS. We believe this is a very good
+project to have in the Kernel with new innovation.
+
+But Dearest Christoph. I have learned to trust your "guts" about things. Please look
+deeper into the subject (Perhaps review the code) and try to explain better what are your
+real concerns. Perhaps we can address them?
+
+> So is that a hard Nak on inclusion in linux-next at this time?
+> 
+
+I do not see what is the harm to anyone if it is to be included in linux-next?
+Would you please help me in testing and stabilizing a very serious and ambitious project.
+That has merit and is used by clients. I believe it is a very low risk project for the reset
+of the Kernel. If not we can remove it very fast.
+
+Cheers
+Boaz
