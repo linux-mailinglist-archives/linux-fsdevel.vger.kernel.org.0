@@ -2,133 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2572AFBEC8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2019 05:58:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9203CFBFD2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2019 06:44:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbfKNE6T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Nov 2019 23:58:19 -0500
-Received: from mout-p-102.mailbox.org ([80.241.56.152]:21844 "EHLO
-        mout-p-102.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726505AbfKNE6S (ORCPT
+        id S1726030AbfKNFoy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Nov 2019 00:44:54 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:33296 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725601AbfKNFox (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Nov 2019 23:58:18 -0500
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 47D8Pf2Sf9zKmdL;
-        Thu, 14 Nov 2019 05:58:14 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
-        with ESMTP id QpQxpch70Axr; Thu, 14 Nov 2019 05:58:06 +0100 (CET)
-Date:   Thu, 14 Nov 2019 15:57:44 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-ia64@vger.kernel.org, linux-sh@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Shuah Khan <shuah@kernel.org>, linux-arch@vger.kernel.org,
-        linux-s390@vger.kernel.org, Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-m68k@lists.linux-m68k.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Drysdale <drysdale@google.com>,
+        Thu, 14 Nov 2019 00:44:53 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iV7v2-0000Ln-Fm; Thu, 14 Nov 2019 05:43:48 +0000
+Date:   Thu, 14 Nov 2019 05:43:48 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
         "J. Bruce Fields" <bfields@fieldses.org>,
-        libc-alpha@sourceware.org, linux-parisc@vger.kernel.org,
-        linux-api@vger.kernel.org, Chanho Min <chanho.min@lge.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        linux-alpha@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        David Drysdale <drysdale@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        containers@lists.linux-foundation.org
-Subject: Re: [PATCH v15 4/9] namei: LOOKUP_BENEATH: O_BENEATH-like scoped
- resolution
-Message-ID: <20191114045744.d3e7mp3zrupfe2wr@yavin.dot.cyphar.com>
+        Eric Biederman <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Aleksa Sarai <asarai@suse.de>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, libc-alpha@sourceware.org,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v15 3/9] namei: LOOKUP_NO_XDEV: block mountpoint crossing
+Message-ID: <20191114054348.GH26530@ZenIV.linux.org.uk>
 References: <20191105090553.6350-1-cyphar@cyphar.com>
- <20191105090553.6350-5-cyphar@cyphar.com>
- <20191113015534.GA26530@ZenIV.linux.org.uk>
- <20191113074757.5b4u5vlyx2u6pbn6@yavin.dot.cyphar.com>
+ <20191105090553.6350-4-cyphar@cyphar.com>
+ <20191113013630.GZ26530@ZenIV.linux.org.uk>
+ <20191114044945.ldedzjrb4s7i7irr@yavin.dot.cyphar.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6gz2i7fpwlz4mefu"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191113074757.5b4u5vlyx2u6pbn6@yavin.dot.cyphar.com>
+In-Reply-To: <20191114044945.ldedzjrb4s7i7irr@yavin.dot.cyphar.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
---6gz2i7fpwlz4mefu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On 2019-11-13, Aleksa Sarai <cyphar@cyphar.com> wrote:
+On Thu, Nov 14, 2019 at 03:49:45PM +1100, Aleksa Sarai wrote:
 > On 2019-11-13, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > Minor nit here - I'd split "move the conditional call of set_root()
-> > into nd_jump_root()" into a separate patch before that one.  Makes
-> > for fewer distractions in this one.  I'd probably fold "and be
-> > ready for errors other than -ECHILD" into the same preliminary
-> > patch.
->=20
-> Will do.
->=20
-> > > +			/* Not currently safe for scoped-lookups. */
-> > > +			if (unlikely(nd->flags & LOOKUP_IS_SCOPED))
-> > > +				return ERR_PTR(-EXDEV);
-> >=20
-> > Also a candidate for doing in nd_jump_link()...
-> >=20
-> > > @@ -1373,8 +1403,11 @@ static int follow_dotdot_rcu(struct nameidata =
-*nd)
-> > >  	struct inode *inode =3D nd->inode;
-> > > =20
-> > >  	while (1) {
-> > > -		if (path_equal(&nd->path, &nd->root))
-> > > +		if (path_equal(&nd->path, &nd->root)) {
-> > > +			if (unlikely(nd->flags & LOOKUP_BENEATH))
-> > > +				return -EXDEV;
-> >=20
-> > Umm...  Are you sure it's not -ECHILD?
->=20
-> It wouldn't hurt to be -ECHILD -- though it's not clear to me how likely
-> a success would be in REF-walk if the parent components didn't already
-> trigger an unlazy_walk() in RCU-walk.
->=20
-> I guess that also means LOOKUP_NO_XDEV should trigger -ECHILD in
-> follow_dotdot_rcu()?
+> > On Tue, Nov 05, 2019 at 08:05:47PM +1100, Aleksa Sarai wrote:
+> > 
+> > > @@ -862,6 +870,8 @@ static int nd_jump_root(struct nameidata *nd)
+> > >  void nd_jump_link(struct path *path)
+> > >  {
+> > >  	struct nameidata *nd = current->nameidata;
+> > > +
+> > > +	nd->last_magiclink.same_mnt = (nd->path.mnt == path->mnt);
+> > >  	path_put(&nd->path);
+> > >  
+> > >  	nd->path = *path;
+> > > @@ -1082,6 +1092,10 @@ const char *get_link(struct nameidata *nd)
+> > >  		if (nd->flags & LOOKUP_MAGICLINK_JUMPED) {
+> > >  			if (unlikely(nd->flags & LOOKUP_NO_MAGICLINKS))
+> > >  				return ERR_PTR(-ELOOP);
+> > > +			if (unlikely(nd->flags & LOOKUP_NO_XDEV)) {
+> > > +				if (!nd->last_magiclink.same_mnt)
+> > > +					return ERR_PTR(-EXDEV);
+> > > +			}
+> > >  		}
+> > 
+> > Ugh...  Wouldn't it be better to take that logics (some equivalent thereof)
+> > into nd_jump_link()?  Or just have nd_jump_link() return an error...
+> 
+> This could be done, but the reason for stashing it away in
+> last_magiclink is because of the future magic-link re-opening patches
+> which can't be implemented like that without putting the open_flags
+> inside nameidata (which was decided to be too ugly a while ago).
+> 
+> My point being that I could implement it this way for this series, but
+> I'd have to implement something like last_magiclink when I end up
+> re-posting the magic-link stuff in a few weeks.
+> 
+> Looking at all the nd_jump_link() users, the other option is to just
+> disallow magic-link crossings entirely for LOOKUP_NO_XDEV. The only
+> thing allowing them permits is to resolve file descriptors that are
+> pointing to the same procfs mount -- and it's unclear to me how useful
+> that really is (apparmorfs and nsfs will always give -EXDEV because
+> aafs_mnt and nsfs_mnt are internal kernel vfsmounts).
 
-Scratch the last question -- AFAICS we don't need to do that for
-LOOKUP_NO_XDEV because we check against mount_lock so it's very unlikely
-that -ECHILD will have any benefit.
+I would rather keep the entire if (nd->flags & LOOKUP_MAGICLINK_JUMPED)
+out of the get_link().  If you want to generate some error if
+nd_jump_link() has been called, just do it right there.  The fewer
+pieces of state need to be carried around, the better...
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---6gz2i7fpwlz4mefu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXczexQAKCRCdlLljIbnQ
-Em3mAQDOIg6+v9zFmJZ9+uYnLQ8tGd3ay8OeAsu6/xVlfCimMwD/cMP8o+o1KTbo
-+rDSfA6D7b6Zhy7K3Vlf0k0OTebeSwI=
-=kHIA
------END PGP SIGNATURE-----
-
---6gz2i7fpwlz4mefu--
+And as for opening them...  Why would you need full open_flags in there?
+Details, please...
