@@ -2,277 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79AFDFCF25
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2019 21:07:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9CEAFCFE0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2019 21:49:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726628AbfKNUHV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Nov 2019 15:07:21 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:34632 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726474AbfKNUHV (ORCPT
+        id S1727119AbfKNUte (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Nov 2019 15:49:34 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:40500 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727016AbfKNUtc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Nov 2019 15:07:21 -0500
-Received: by mail-yb1-f193.google.com with SMTP id k17so3097481ybp.1;
-        Thu, 14 Nov 2019 12:07:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eTLK8UO96mmVMYxYGbP7Ho7asUvdokWxxBM9/ZbnysA=;
-        b=ne4RQfm7GyuW8MbsThnJ8aeu06ZnMurOva9NzBIbGveeyD4NKplFRw8nNoiw/iRii/
-         fi7tRVPczzw4ZkGJ0KHAw2MbaxSoKtceUh9YkovIqO5FRw2AK+scu7sx2yCNNXT1fZUl
-         U7eexymj51O/QRbdrRrfG4ohVmrl4ZooiZ3Jw8Inl3AMysDVI9EpeXSB2saOeuBEzhWP
-         4OBBSIlkNxpPpQmXfslyRkySgvu38BrAvNAnYNW9w8xuCJw3HezNewLI+4flzFow3Nwq
-         D5+rB5wPCNtnhcZK9O9Q4ffcCwF68qTwV54x+TpsHbAGPEeG6bdpzbBhKTxfYXnN7y6n
-         dGGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eTLK8UO96mmVMYxYGbP7Ho7asUvdokWxxBM9/ZbnysA=;
-        b=aWMYvAHeoueVLdN+7EU/4mN8idN6rnThOCIQUyLqb0KpVHRCH/boB/B2QBkT4N+4Xi
-         wfiauN+XbLnElkpTHPhnRAJx0RZs/6QqS18SO9xdByKyYLifarTM1W5kxxLhRIxDYku7
-         EFVXrPLk+Pvc39kaiZX5+KbdsIkSvWwNnrgobTD8gkMom1Das99pGIihLSLLnb5BaPi1
-         vXpJHTN7opzV8wMMRAlbTTkV0kkpXUYFWI6vVx6o3PULzYMtXoXOUa0Y3Y0taN6OtZiW
-         JstNXBIkZ0ti+dhz3nT6Tt7+upss4r5L9lK8xtz3qEYaKSrwIkClulj1QTbfveeGyeT4
-         +jxA==
-X-Gm-Message-State: APjAAAXdfR4a1hILaAQdkg7DRT5Qr6gpnNZKlYlOjBoHb8eTimLvZlra
-        FboQxVCAd6avN1foMiLyF1Jf5w1UAN/WPJA7upA=
-X-Google-Smtp-Source: APXvYqzgPeT5JYqAvD1x77d3/qrATRhNj8ku/mOSLoBtO8y9ueeSoxsJLSoQFBr2TmcbH3GI9EEyfS1pqE9RJKWXRWQ=
-X-Received: by 2002:a25:212:: with SMTP id 18mr8364283ybc.439.1573762039404;
- Thu, 14 Nov 2019 12:07:19 -0800 (PST)
+        Thu, 14 Nov 2019 15:49:32 -0500
+Received: from dread.disaster.area (pa49-181-255-80.pa.nsw.optusnet.com.au [49.181.255.80])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id D942B3A2217;
+        Fri, 15 Nov 2019 07:49:27 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1iVM3S-0003Bn-PF; Fri, 15 Nov 2019 07:49:26 +1100
+Date:   Fri, 15 Nov 2019 07:49:26 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/28] mm: directed shrinker work deferral
+Message-ID: <20191114204926.GC4614@dread.disaster.area>
+References: <20191031234618.15403-1-david@fromorbit.com>
+ <20191031234618.15403-10-david@fromorbit.com>
+ <20191104152525.GA10665@bfoster>
 MIME-Version: 1.0
-References: <20191114154723.GJ26530@ZenIV.linux.org.uk> <20191114195544.GB5569@miu.piliscsaba.redhat.com>
-In-Reply-To: <20191114195544.GB5569@miu.piliscsaba.redhat.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 14 Nov 2019 22:07:07 +0200
-Message-ID: <CAOQ4uxhjAwU_V0cUF+VkQbAwXKTJKsZuyysNXMecuM9Y1iuUsw@mail.gmail.com>
-Subject: Re: [RFC] is ovl_fh->fid really intended to be misaligned?
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191104152525.GA10665@bfoster>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
+        a=XqaD5fcB6dAc7xyKljs8OA==:117 a=XqaD5fcB6dAc7xyKljs8OA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=MeAgGD-zjQ4A:10
+        a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=pB-_RQp5JTZhIYxYDT0A:9
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 14, 2019 at 9:55 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Thu, Nov 14, 2019 at 03:47:23PM +0000, Al Viro wrote:
-> > AFAICS, this
-> >         bytes = (fh->len - offsetof(struct ovl_fh, fid));
-> >         real = exportfs_decode_fh(mnt, (struct fid *)fh->fid,
-> >                                   bytes >> 2, (int)fh->type,
-> >                                   connected ? ovl_acceptable : NULL, mnt);
-> > in ovl_decode_real_fh() combined with
-> >                 origin = ovl_decode_real_fh(fh, ofs->lower_layers[i].mnt,
-> >                                             connected);
-> > in ovl_check_origin_fh(),
-> >         /* First lookup overlay inode in inode cache by origin fh */
-> >         err = ovl_check_origin_fh(ofs, fh, false, NULL, &stack);
-> > in ovl_lower_fh_to_d() and
-> >         struct ovl_fh *fh = (struct ovl_fh *) fid;
-> > ...
-> >                  ovl_lower_fh_to_d(sb, fh);
-> > in ovl_fh_to_dentry() leads to the pointer to struct fid passed to
-> > exportfs_decode_fh() being 21 bytes ahead of that passed to
-> > ovl_fh_to_dentry().
-> >
-> > However, alignment of struct fid pointers is 32 bits and quite a few
-> > places dealing with those (including ->fh_to_dentry() instances)
-> > do access them directly.  Argument of ->fh_to_dentry() is supposed
-> > to be 32bit-aligned, and callers generally guarantee that.  Your
-> > code, OTOH, violates the alignment systematically there - what
-> > it passes to layers' ->fh_to_dentry() (by way of exportfs_decode_fh())
-> > always has two lower bits different from what it got itself.
-> >
-> > What do we do with that?  One solution would be to insert sane padding
-> > in ovl_fh, but the damn thing appears to be stored as-is in xattrs on
-> > disk, so that would require rather unpleasant operations reinserting
-> > the padding on the fly ;-/
->
-> Something like this?  Totally untested...
->
+On Mon, Nov 04, 2019 at 10:25:25AM -0500, Brian Foster wrote:
+> On Fri, Nov 01, 2019 at 10:45:59AM +1100, Dave Chinner wrote:
+> > From: Dave Chinner <dchinner@redhat.com>
+> > 
+> > Introduce a mechanism for ->count_objects() to indicate to the
+> > shrinker infrastructure that the reclaim context will not allow
+> > scanning work to be done and so the work it decides is necessary
+> > needs to be deferred.
+> > 
+> > This simplifies the code by separating out the accounting of
+> > deferred work from the actual doing of the work, and allows better
+> > decisions to be made by the shrinekr control logic on what action it
+> > can take.
+> > 
+> > Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> > ---
+> 
+> My understanding from the previous discussion(s) is that this is not
+> tied directly to the gfp mask because that is not the only intended use.
+> While it is currently a boolean tied to the the entire shrinker call,
+> the longer term objective is per-object granularity.
 
-I was going to suggest something similar using
+Longer term, yes, but right now such things are not possible as the
+shrinker needs more context to be able to make sane per-object
+decisions. shrinker policy decisions that affect the entire run
+scope should be handled by the ->count operation - it's the one that
+says whether the scan loop should run or not, and right now GFP_NOFS
+for all filesystem shrinkers is a pure boolean policy
+implementation.
 
-struct ovl_fhv1 {
-        u8 pad[3];
-        struct ovl_fh fhv0;
-} __packed;
+The next future step is to provide a superblock context with
+GFP_NOFS to indicate which filesystem we cannot recurse into. That
+is also a shrinker instance wide check, so again it's something that
+->count should be deciding.
 
-New overlayfs exported file handles on-wire could be ovl_fhv1,
-but we can easily convert old ovl_fhv to ovl_fhv1
-on-the-fly on decode (if we care about those few users at all)
+i.e. ->count determines what is to be done, ->scan iterates the work
+that has to be done until we are done.
 
-xattrs would still be stored and read as ovl_fh v0.
+> I find the argument reasonable enough, but if the above is true, why do
+> we move these checks from ->scan_objects() to ->count_objects() (in the
+> next patch) when per-object decisions will ultimately need to be made by
+> the former?
 
-Thanks,
-Amir.
+Because run/no-run policy belongs in one place, and things like
+GFP_NOFS do no change across calls to the ->scan loop. i.e. after
+the first ->scan call in a loop that calls it hundreds to thousands
+of times, the GFP_NOFS run/no-run check is completely redundant.
 
->
-> diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-> index b801c6353100..60a4ca72cb4e 100644
-> --- a/fs/overlayfs/copy_up.c
-> +++ b/fs/overlayfs/copy_up.c
-> @@ -253,7 +253,7 @@ struct ovl_fh *ovl_encode_real_fh(struct dentry *real, bool is_upper)
->
->         BUILD_BUG_ON(MAX_HANDLE_SZ + offsetof(struct ovl_fh, fid) > 255);
->         fh_len = offsetof(struct ovl_fh, fid) + buflen;
-> -       fh = kmalloc(fh_len, GFP_KERNEL);
-> +       fh = kzalloc(fh_len, GFP_KERNEL);
->         if (!fh) {
->                 fh = ERR_PTR(-ENOMEM);
->                 goto out;
-> @@ -271,7 +271,7 @@ struct ovl_fh *ovl_encode_real_fh(struct dentry *real, bool is_upper)
->          */
->         if (is_upper)
->                 fh->flags |= OVL_FH_FLAG_PATH_UPPER;
-> -       fh->len = fh_len;
-> +       fh->len = fh_len - OVL_FH_WIRE_OFFSET;
->         fh->uuid = *uuid;
->         memcpy(fh->fid, buf, buflen);
->
-> @@ -300,7 +300,8 @@ int ovl_set_origin(struct dentry *dentry, struct dentry *lower,
->         /*
->          * Do not fail when upper doesn't support xattrs.
->          */
-> -       err = ovl_check_setxattr(dentry, upper, OVL_XATTR_ORIGIN, fh,
-> +       err = ovl_check_setxattr(dentry, upper, OVL_XATTR_ORIGIN,
-> +                                fh ? OVL_FH_START(fh) : NULL,
->                                  fh ? fh->len : 0, 0);
->         kfree(fh);
->
-> @@ -317,7 +318,8 @@ static int ovl_set_upper_fh(struct dentry *upper, struct dentry *index)
->         if (IS_ERR(fh))
->                 return PTR_ERR(fh);
->
-> -       err = ovl_do_setxattr(index, OVL_XATTR_UPPER, fh, fh->len, 0);
-> +       err = ovl_do_setxattr(index, OVL_XATTR_UPPER,
-> +                             OVL_FH_START(fh), fh->len, 0);
->
->         kfree(fh);
->         return err;
-> diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
-> index 73c9775215b3..dedda95c7746 100644
-> --- a/fs/overlayfs/export.c
-> +++ b/fs/overlayfs/export.c
-> @@ -234,7 +234,7 @@ static int ovl_d_to_fh(struct dentry *dentry, char *buf, int buflen)
->         if (fh->len > buflen)
->                 goto fail;
->
-> -       memcpy(buf, (char *)fh, fh->len);
-> +       memcpy(buf, OVL_FH_START(fh), fh->len);
->         err = fh->len;
->
->  out:
-> @@ -260,6 +260,7 @@ static int ovl_dentry_to_fh(struct dentry *dentry, u32 *fid, int *max_len)
->
->         /* Round up to dwords */
->         *max_len = (len + 3) >> 2;
-> +       memset(fid + len, 0, (*max_len << 2) - len);
->         return OVL_FILEID;
->  }
->
-> @@ -781,7 +782,7 @@ static struct dentry *ovl_fh_to_dentry(struct super_block *sb, struct fid *fid,
->                                        int fh_len, int fh_type)
->  {
->         struct dentry *dentry = NULL;
-> -       struct ovl_fh *fh = (struct ovl_fh *) fid;
-> +       struct ovl_fh *fh = (void *) fid - OVL_FH_WIRE_OFFSET;
->         int len = fh_len << 2;
->         unsigned int flags = 0;
->         int err;
-> diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
-> index e9717c2f7d45..f22a65359df1 100644
-> --- a/fs/overlayfs/namei.c
-> +++ b/fs/overlayfs/namei.c
-> @@ -86,7 +86,8 @@ static int ovl_acceptable(void *ctx, struct dentry *dentry)
->   */
->  int ovl_check_fh_len(struct ovl_fh *fh, int fh_len)
->  {
-> -       if (fh_len < sizeof(struct ovl_fh) || fh_len < fh->len)
-> +       if (fh_len < sizeof(struct ovl_fh) - OVL_FH_WIRE_OFFSET ||
-> +           fh_len < fh->len)
->                 return -EINVAL;
->
->         if (fh->magic != OVL_FH_MAGIC)
-> @@ -119,11 +120,11 @@ static struct ovl_fh *ovl_get_fh(struct dentry *dentry, const char *name)
->         if (res == 0)
->                 return NULL;
->
-> -       fh = kzalloc(res, GFP_KERNEL);
-> +       fh = kzalloc(res + OVL_FH_WIRE_OFFSET, GFP_KERNEL);
->         if (!fh)
->                 return ERR_PTR(-ENOMEM);
->
-> -       res = vfs_getxattr(dentry, name, fh, res);
-> +       res = vfs_getxattr(dentry, name, fh + OVL_FH_WIRE_OFFSET, res);
->         if (res < 0)
->                 goto fail;
->
-> @@ -161,7 +162,7 @@ struct dentry *ovl_decode_real_fh(struct ovl_fh *fh, struct vfsmount *mnt,
->         if (!uuid_equal(&fh->uuid, &mnt->mnt_sb->s_uuid))
->                 return NULL;
->
-> -       bytes = (fh->len - offsetof(struct ovl_fh, fid));
-> +       bytes = (fh->len + OVL_FH_WIRE_OFFSET - offsetof(struct ovl_fh, fid));
->         real = exportfs_decode_fh(mnt, (struct fid *)fh->fid,
->                                   bytes >> 2, (int)fh->type,
->                                   connected ? ovl_acceptable : NULL, mnt);
-> @@ -433,7 +434,8 @@ int ovl_verify_set_fh(struct dentry *dentry, const char *name,
->
->         err = ovl_verify_fh(dentry, name, fh);
->         if (set && err == -ENODATA)
-> -               err = ovl_do_setxattr(dentry, name, fh, fh->len, 0);
-> +               err = ovl_do_setxattr(dentry, name,
-> +                                     OVL_FH_START(fh), fh->len, 0);
->         if (err)
->                 goto fail;
->
-> @@ -512,12 +514,12 @@ int ovl_verify_index(struct ovl_fs *ofs, struct dentry *index)
->
->         err = -ENOMEM;
->         len = index->d_name.len / 2;
-> -       fh = kzalloc(len, GFP_KERNEL);
-> +       fh = kzalloc(len + OVL_FH_WIRE_OFFSET, GFP_KERNEL);
->         if (!fh)
->                 goto fail;
->
->         err = -EINVAL;
-> -       if (hex2bin((u8 *)fh, index->d_name.name, len))
-> +       if (hex2bin(OVL_FH_START(fh), index->d_name.name, len))
->                 goto fail;
->
->         err = ovl_check_fh_len(fh, len);
-> @@ -603,7 +605,7 @@ static int ovl_get_index_name_fh(struct ovl_fh *fh, struct qstr *name)
->         if (!n)
->                 return -ENOMEM;
->
-> -       s  = bin2hex(n, fh, fh->len);
-> +       s  = bin2hex(n, OVL_FH_START(fh), fh->len);
->         *name = (struct qstr) QSTR_INIT(n, s - n);
->
->         return 0;
-> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> index 6934bcf030f0..c62083671a12 100644
-> --- a/fs/overlayfs/overlayfs.h
-> +++ b/fs/overlayfs/overlayfs.h
-> @@ -74,8 +74,13 @@ enum ovl_entry_flag {
->  /* The type returned by overlay exportfs ops when encoding an ovl_fh handle */
->  #define OVL_FILEID     0xfb
->
-> -/* On-disk and in-memeory format for redirect by file handle */
-> +#define OVL_FH_WIRE_OFFSET 3
-> +#define OVL_FH_START(fh) ((void *)(fh) + OVL_FH_WIRE_OFFSET)
->  struct ovl_fh {
-> +       /* make sure fid is 32bit aligned */
-> +       u8 padding[OVL_FH_WIRE_OFFSET];
-> +
-> +       /* Wire/xattr encoding begins here*/
->         u8 version;     /* 0 */
->         u8 magic;       /* 0xfb */
->         u8 len;         /* size of this header + size of fid */
+Once we introduce a new policy that allows the fs shrinker to do
+careful reclaim in GFP_NOFS conditions, we need to do substantial
+rework the shrinker scan loop and how it accounts the work that is
+done - we now have at least 3 or 4 different return counters
+(skipped because locked, skipped because referenced,
+reclaimed, deferred reclaim because couldn't lock/recursion) and
+the accounting and decisions to be made are a lot more complex.
+
+In that case, the ->count function will drop the GFP_NOFS check, but
+still do all the other things is needs to do. The GFP_NOFS check
+will go deep in the guts of the shrinker scan implementation where
+the per-object recursion problem exists. But for most shrinkers,
+it's still going to be a global boolean check...
+
+> That seems like unnecessary churn and inconsistent with the
+> argument against just temporarily doing something like what Christoph
+> suggested in the previous version, particularly since IIRC the only use
+> in this series was for gfp mask purposes.
+
+If people want to call avoiding repeated, unnecessary evaluation of
+the same condition hundreds of times instead of once "unnecessary
+churn", then I'll drop it.
+
+> >  include/linux/shrinker.h | 7 +++++++
+> >  mm/vmscan.c              | 8 ++++++++
+> >  2 files changed, 15 insertions(+)
+> > 
+> > diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
+> > index 0f80123650e2..3405c39ab92c 100644
+> > --- a/include/linux/shrinker.h
+> > +++ b/include/linux/shrinker.h
+> > @@ -31,6 +31,13 @@ struct shrink_control {
+> >  
+> >  	/* current memcg being shrunk (for memcg aware shrinkers) */
+> >  	struct mem_cgroup *memcg;
+> > +
+> > +	/*
+> > +	 * set by ->count_objects if reclaim context prevents reclaim from
+> > +	 * occurring. This allows the shrinker to immediately defer all the
+> > +	 * work and not even attempt to scan the cache.
+> > +	 */
+> > +	bool defer_work;
+> >  };
+> >  
+> >  #define SHRINK_STOP (~0UL)
+> > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > index ee4eecc7e1c2..a215d71d9d4b 100644
+> > --- a/mm/vmscan.c
+> > +++ b/mm/vmscan.c
+> > @@ -536,6 +536,13 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+> >  	trace_mm_shrink_slab_start(shrinker, shrinkctl, nr,
+> >  				   freeable, delta, total_scan, priority);
+> >  
+> > +	/*
+> > +	 * If the shrinker can't run (e.g. due to gfp_mask constraints), then
+> > +	 * defer the work to a context that can scan the cache.
+> > +	 */
+> > +	if (shrinkctl->defer_work)
+> > +		goto done;
+> > +
+> 
+> I still find the fact that this per-shrinker invocation field is never
+> reset unnecessarily fragile, and I don't see any good reason not to
+> reset it prior to the shrinker callback that potentially sets it.
+
+I missed that when updating. I'll reset it in the next version.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
