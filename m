@@ -2,117 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9203CFBFD2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2019 06:44:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24E48FC012
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2019 07:08:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726030AbfKNFoy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Nov 2019 00:44:54 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:33296 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725601AbfKNFox (ORCPT
+        id S1726179AbfKNGIP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Nov 2019 01:08:15 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:16008 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725601AbfKNGIO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Nov 2019 00:44:53 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iV7v2-0000Ln-Fm; Thu, 14 Nov 2019 05:43:48 +0000
-Date:   Thu, 14 Nov 2019 05:43:48 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
+        Thu, 14 Nov 2019 01:08:14 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dccef4c0000>; Wed, 13 Nov 2019 22:08:12 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 13 Nov 2019 22:08:13 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 13 Nov 2019 22:08:13 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 14 Nov
+ 2019 06:08:12 +0000
+Subject: Re: [PATCH v4 09/23] mm/gup: introduce pin_user_pages*() and FOLL_PIN
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Jan Kara <jack@suse.cz>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
         Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        David Drysdale <drysdale@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        Aleksa Sarai <asarai@suse.de>,
-        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
-        linux-api@vger.kernel.org, libc-alpha@sourceware.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v15 3/9] namei: LOOKUP_NO_XDEV: block mountpoint crossing
-Message-ID: <20191114054348.GH26530@ZenIV.linux.org.uk>
-References: <20191105090553.6350-1-cyphar@cyphar.com>
- <20191105090553.6350-4-cyphar@cyphar.com>
- <20191113013630.GZ26530@ZenIV.linux.org.uk>
- <20191114044945.ldedzjrb4s7i7irr@yavin.dot.cyphar.com>
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>
+References: <20191113042710.3997854-1-jhubbard@nvidia.com>
+ <20191113042710.3997854-10-jhubbard@nvidia.com>
+ <20191113104308.GE6367@quack2.suse.cz>
+ <3850aa22-6f03-bd2b-024f-5736c4461199@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <7c590a1a-25c6-a8e7-d471-8855ceea8606@nvidia.com>
+Date:   Wed, 13 Nov 2019 22:08:12 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191114044945.ldedzjrb4s7i7irr@yavin.dot.cyphar.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <3850aa22-6f03-bd2b-024f-5736c4461199@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1573711692; bh=DIdS7z+upWWwriggk7xvQh6W6C7nto/Dlb+Yd8YHyyo=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=f9GCQv7TfzjvQX+YKkhiJDV/kP32g+HvR9S+vDLbLe8tqa50A8oxNI045niH9oWR6
+         Q+cRQMMuOwkhrc3UyHNB5dnYTxj30KiXA71H5zxupkKbZfd2ps9XV2bsxg1JSEMDdw
+         qf9Vcd6U4xnrGLaZQaGULc5hp7BtrN3TQq1+4QNeiyHZ0EANBdTplhxuReTGSebwB/
+         f90gLRmPU4TtSLCTxR2K8crrcttWruVUEFFlnGiNse7TapK6yl28TNAEQQYeEakb+c
+         3z6jTyDq+9/ON54Pzsd2O5eKTbjzgyBeQwB7ztFRyxIYohzwkLXX9l0JxAXtOLXL+I
+         x4TC/t1hFahNQ==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 14, 2019 at 03:49:45PM +1100, Aleksa Sarai wrote:
-> On 2019-11-13, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > On Tue, Nov 05, 2019 at 08:05:47PM +1100, Aleksa Sarai wrote:
-> > 
-> > > @@ -862,6 +870,8 @@ static int nd_jump_root(struct nameidata *nd)
-> > >  void nd_jump_link(struct path *path)
-> > >  {
-> > >  	struct nameidata *nd = current->nameidata;
-> > > +
-> > > +	nd->last_magiclink.same_mnt = (nd->path.mnt == path->mnt);
-> > >  	path_put(&nd->path);
-> > >  
-> > >  	nd->path = *path;
-> > > @@ -1082,6 +1092,10 @@ const char *get_link(struct nameidata *nd)
-> > >  		if (nd->flags & LOOKUP_MAGICLINK_JUMPED) {
-> > >  			if (unlikely(nd->flags & LOOKUP_NO_MAGICLINKS))
-> > >  				return ERR_PTR(-ELOOP);
-> > > +			if (unlikely(nd->flags & LOOKUP_NO_XDEV)) {
-> > > +				if (!nd->last_magiclink.same_mnt)
-> > > +					return ERR_PTR(-EXDEV);
-> > > +			}
-> > >  		}
-> > 
-> > Ugh...  Wouldn't it be better to take that logics (some equivalent thereof)
-> > into nd_jump_link()?  Or just have nd_jump_link() return an error...
+On 11/13/19 3:22 PM, John Hubbard wrote:
+> On 11/13/19 2:43 AM, Jan Kara wrote:
+> ...
+>> How does FOLL_PIN result in grabbing (at least normal, for now) page reference?
+>> I didn't find that anywhere in this patch but it is a prerequisite to
+>> converting any user to pin_user_pages() interface, right?
 > 
-> This could be done, but the reason for stashing it away in
-> last_magiclink is because of the future magic-link re-opening patches
-> which can't be implemented like that without putting the open_flags
-> inside nameidata (which was decided to be too ugly a while ago).
 > 
-> My point being that I could implement it this way for this series, but
-> I'd have to implement something like last_magiclink when I end up
-> re-posting the magic-link stuff in a few weeks.
+> ohhh, I messed up on this intermediate patch: it doesn't quite stand alone as
+> it should, as you noticed. To correct this, I can do one of the following:
 > 
-> Looking at all the nd_jump_link() users, the other option is to just
-> disallow magic-link crossings entirely for LOOKUP_NO_XDEV. The only
-> thing allowing them permits is to resolve file descriptors that are
-> pointing to the same procfs mount -- and it's unclear to me how useful
-> that really is (apparmorfs and nsfs will always give -EXDEV because
-> aafs_mnt and nsfs_mnt are internal kernel vfsmounts).
+> a) move the new pin*() routines into the later patch 16 ("mm/gup:
+> track FOLL_PIN pages"), or
+> 
+> b) do a temporary thing here, such as setting FOLL_GET and adding a TODO,
+> within the pin*() implementations. And this switching it over to FOLL_PIN
+> in patch 16.
+> 
+> I'm thinking (a) is less error-prone, so I'm going with that unless someone
+> points out that that is stupid. :)
+> 
 
-I would rather keep the entire if (nd->flags & LOOKUP_MAGICLINK_JUMPED)
-out of the get_link().  If you want to generate some error if
-nd_jump_link() has been called, just do it right there.  The fewer
-pieces of state need to be carried around, the better...
+OK, just to save anyone from wasting time reading the above: (a) is, in fact,
+stupid, after all. ha. That is because pin_user_pages() is called in the 
+intervening patches.
+ 
+So anyway, I'll work out an ordering to fix it up, it's not complicated.
 
-And as for opening them...  Why would you need full open_flags in there?
-Details, please...
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
+
