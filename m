@@ -2,134 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2CE4FC883
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2019 15:12:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB02AFC88B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Nov 2019 15:13:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727247AbfKNOMi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Nov 2019 09:12:38 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:42886 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727238AbfKNOMh (ORCPT
+        id S1727316AbfKNONR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Nov 2019 09:13:17 -0500
+Received: from forwardcorp1p.mail.yandex.net ([77.88.29.217]:42410 "EHLO
+        forwardcorp1p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726812AbfKNONR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Nov 2019 09:12:37 -0500
-Received: by mail-lf1-f66.google.com with SMTP id z12so5161892lfj.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Nov 2019 06:12:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=EmOEKPkWsDxJa2wDMuLQCZmoxOFNjV+aIVNikHtlQFg=;
-        b=OZAvCUkinGNJMi0yfM5j380tLkdf3Nvf9dXfwD53dRIWfqgy9w1GQ5ZtYSasJ7qEZq
-         HTE+5qbBejQYkgBWdCQhKLgoL+7O2wunQlgX+mJaWL7AN8ebe+2tv2ORKqj4ibYB3Hmg
-         Qrnc1CNXFv/7qAPW/KW95kqh2eZ/cUaSZZUzM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=EmOEKPkWsDxJa2wDMuLQCZmoxOFNjV+aIVNikHtlQFg=;
-        b=RffjiO58F1tRb+/G9aRavB0sl0D1T9M/LPXiLpcWFcr2VMZBInUdTWzXEOwLJMtSMu
-         iYf3IDfIBDt61Y2cpl78B+B4YkqDcvvDYDEpJFXOfsGGmhUZ0KOZ7jzCpmp+NxxSnQ6i
-         FJHmmeQytKs18aOl3jN77aEgUx9QDLmV8IepAte2K+hIYC+4gEp3IqZ6HNZv20mVuZAf
-         ClKQkXqeY84byR55H1+SD2tm4umidu7o4Ms6ckYnOxowiExv4CJzDMUa5sf0ATwmK3To
-         T2D39N3YlMm29ent57hKOyZpUqv3fqFVHplhW2gjcauEmeHV+3sB+6ka1/P8Ai56FVPk
-         Z3gA==
-X-Gm-Message-State: APjAAAVpdqfI5LdDHDDB61Np9aOE1Xz8ZJLzsTyxKsJx9lGjMM7DhTwJ
-        Q+buOvWpfaVHBEonFd0wWpZm6Q==
-X-Google-Smtp-Source: APXvYqwxuf2Qn4SVRaNeTz1TqaUUZWOYLdFBOkRFoPorfnqZB0bn32yxhdQM6hE0Q3CW2gfKsMGZUQ==
-X-Received: by 2002:ac2:4c2b:: with SMTP id u11mr6961692lfq.171.1573740755398;
-        Thu, 14 Nov 2019 06:12:35 -0800 (PST)
-Received: from [172.16.11.28] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id g21sm2437151ljh.2.2019.11.14.06.12.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Nov 2019 06:12:34 -0800 (PST)
-Subject: Re: [PATCH RFC] io_uring: make signalfd work with io_uring (and aio)
- POLL
-To:     Jann Horn <jannh@google.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-References: <58059c9c-adf9-1683-99f5-7e45280aea87@kernel.dk>
- <58246851-fa45-a72d-2c42-7e56461ec04e@kernel.dk>
- <ec3526fb-948a-70c0-4a7b-866d6cd6a788@rasmusvillemoes.dk>
- <CAG48ez3dpphoQGy8G1-QgZpkMBA2oDjNcttQKJtw5pD62QYwhw@mail.gmail.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <ea7a428d-a5bd-b48e-9680-82a26710ec83@rasmusvillemoes.dk>
-Date:   Thu, 14 Nov 2019 15:12:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Thu, 14 Nov 2019 09:13:17 -0500
+Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
+        by forwardcorp1p.mail.yandex.net (Yandex) with ESMTP id 2B84A2E0AFA;
+        Thu, 14 Nov 2019 17:13:13 +0300 (MSK)
+Received: from vla5-2bf13a090f43.qloud-c.yandex.net (vla5-2bf13a090f43.qloud-c.yandex.net [2a02:6b8:c18:3411:0:640:2bf1:3a09])
+        by mxbackcorp1g.mail.yandex.net (mxbackcorp/Yandex) with ESMTP id R7MDNftX9t-DCL0jej8;
+        Thu, 14 Nov 2019 17:13:13 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1573740793; bh=T+yAvGPHhC54Ai0zkddCJxsjSTzQ1zamGJyadlfR0iE=;
+        h=Message-ID:Date:To:From:Subject:Cc;
+        b=JiHvYyiZRsN1XQ17pFnDbh5fw49M4czRrPmrqpKm8zJ6xW9osVRA/XHZTKxdP4GXJ
+         c2PWqcj4fLds6rdVGf+mlUQHDw4Vc0X64R7ZM6VotpOQytDo1bBp7gu4TgnXmOMfJa
+         feYqTPy8Q63agSfd5z3ehFbQkiDuLap+0dtry+Xc=
+Authentication-Results: mxbackcorp1g.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:8554:53c0:3d75:2e8a])
+        by vla5-2bf13a090f43.qloud-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id OZhp7enQie-DCWOiTNr;
+        Thu, 14 Nov 2019 17:13:12 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: [PATCH v2] fs/splice: ignore flag SPLICE_F_GIFT in syscall vmsplice
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     David Howells <dhowells@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 14 Nov 2019 17:13:11 +0300
+Message-ID: <157374079193.8131.5211902043079599773.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez3dpphoQGy8G1-QgZpkMBA2oDjNcttQKJtw5pD62QYwhw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 14/11/2019 14.46, Jann Horn wrote:
-> On Thu, Nov 14, 2019 at 10:20 AM Rasmus Villemoes
-> <linux@rasmusvillemoes.dk> wrote:
->> On 14/11/2019 05.49, Jens Axboe wrote:
->>> On 11/13/19 9:31 PM, Jens Axboe wrote:
->>>> This is a case of "I don't really know what I'm doing, but this works
->>>> for me". Caveat emptor, but I'd love some input on this.
->>>>
->>>> I got a bug report that using the poll command with signalfd doesn't
->>>> work for io_uring. The reporter also noted that it doesn't work with the
->>>> aio poll implementation either. So I took a look at it.
->>>>
->>>> What happens is that the original task issues the poll request, we call
->>>> ->poll() (which ends up with signalfd for this fd), and find that
->>>> nothing is pending. Then we wait, and the poll is passed to async
->>>> context. When the requested signal comes in, that worker is woken up,
->>>> and proceeds to call ->poll() again, and signalfd unsurprisingly finds
->>>> no signals pending, since it's the async worker calling it.
->>>>
->>>> That's obviously no good. The below allows you to pass in the task in
->>>> the poll_table, and it does the right thing for me, signal is delivered
->>>> and the correct mask is checked in signalfd_poll().
->>>>
->>>> Similar patch for aio would be trivial, of course.
->>>
->>> From the probably-less-nasty category, Jann Horn helpfully pointed out
->>> that it'd be easier if signalfd just looked at the task that originally
->>> created the fd instead. That looks like the below, and works equally
->>> well for the test case at hand.
->>
->> Eh, how should that work? If I create a signalfd() and fork(), the
->> child's signalfd should only be concerned with signals sent to the
->> child. Not to mention what happens after the parent dies and the child
->> polls its fd.
->>
->> Or am I completely confused?
-> 
-> I think the child should not be getting signals for the child when
-> it's reading from the parent's signalfd. read() and write() aren't
-> supposed to look at properties of `current`.
+Generic support of flag SPLICE_F_MOVE in syscall splice was removed in
+kernel 2.6.21 commit 485ddb4b9741 ("1/2 splice: dont steal").
+Infrastructure stay intact and this feature may came back.
+At least driver or filesystem could provide own implementation.
 
-That may be, but this has always been the semantics of signalfd(), quite
-clearly documented in 'man signalfd'.
+But stealing mapped pages from userspace never worked and is very
+unlikely that will ever make sense due to unmapping overhead.
+Also lru handling is broken if gifted anon page spliced into file.
 
-> Of course, if someone does rely on the current (silly) semantics, this
-> might break stuff.
+Let's seal entry point for marking page as a gift in vmsplice.
 
-That, and Jens' patch only seemed to change the poll callback, so the
-child (or whoever else got a hand on that signalfd) would wait for the
-parent to get a signal, but then a subsequent read would attempt to
-dequeue from the child itself.
+v2: remove PIPE_BUF_FLAG_GIFT and related dead code.
 
-So, I can't really think of anybody that might be relying on inheriting
-a signalfd instead of just setting it up in the child, but changing the
-semantics of it now seems rather dangerous. Also, I _can_ imagine
-threads in a process sharing a signalfd (initial thread sets it up and
-blocks the signals, all threads subsequently use that same fd), and for
-that case it would be wrong for one thread to dequeue signals directed
-at the initial thread. Plus the lifetime problems.
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Link: https://lore.kernel.org/lkml/CAHk-=wgPQutQ8d8kUCvAFi+hfNWgaNLiZPkbg-GXY2DCtD-Z5Q@mail.gmail.com/
+---
+ fs/fuse/dev.c             |    1 -
+ fs/splice.c               |   41 +++--------------------------------------
+ include/linux/pipe_fs_i.h |    1 -
+ 3 files changed, 3 insertions(+), 40 deletions(-)
 
-Rasmus
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index ed1abc9e33cf..aacc4fa639ba 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -1987,7 +1987,6 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
+ 				goto out_free;
+ 
+ 			*obuf = *ibuf;
+-			obuf->flags &= ~PIPE_BUF_FLAG_GIFT;
+ 			obuf->len = rem;
+ 			ibuf->offset += obuf->len;
+ 			ibuf->len -= obuf->len;
+diff --git a/fs/splice.c b/fs/splice.c
+index 98412721f056..6cc5098b164b 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -145,23 +145,6 @@ const struct pipe_buf_operations page_cache_pipe_buf_ops = {
+ 	.get = generic_pipe_buf_get,
+ };
+ 
+-static int user_page_pipe_buf_steal(struct pipe_inode_info *pipe,
+-				    struct pipe_buffer *buf)
+-{
+-	if (!(buf->flags & PIPE_BUF_FLAG_GIFT))
+-		return 1;
+-
+-	buf->flags |= PIPE_BUF_FLAG_LRU;
+-	return generic_pipe_buf_steal(pipe, buf);
+-}
+-
+-static const struct pipe_buf_operations user_page_pipe_buf_ops = {
+-	.confirm = generic_pipe_buf_confirm,
+-	.release = page_cache_pipe_buf_release,
+-	.steal = user_page_pipe_buf_steal,
+-	.get = generic_pipe_buf_get,
+-};
+-
+ static void wakeup_pipe_readers(struct pipe_inode_info *pipe)
+ {
+ 	smp_mb();
+@@ -1197,12 +1180,10 @@ static long do_splice(struct file *in, loff_t __user *off_in,
+ }
+ 
+ static int iter_to_pipe(struct iov_iter *from,
+-			struct pipe_inode_info *pipe,
+-			unsigned flags)
++			struct pipe_inode_info *pipe)
+ {
+ 	struct pipe_buffer buf = {
+-		.ops = &user_page_pipe_buf_ops,
+-		.flags = flags
++		.ops = &nosteal_pipe_buf_ops,
+ 	};
+ 	size_t total = 0;
+ 	int ret = 0;
+@@ -1286,10 +1267,6 @@ static long vmsplice_to_pipe(struct file *file, struct iov_iter *iter,
+ {
+ 	struct pipe_inode_info *pipe;
+ 	long ret = 0;
+-	unsigned buf_flag = 0;
+-
+-	if (flags & SPLICE_F_GIFT)
+-		buf_flag = PIPE_BUF_FLAG_GIFT;
+ 
+ 	pipe = get_pipe_info(file);
+ 	if (!pipe)
+@@ -1298,7 +1275,7 @@ static long vmsplice_to_pipe(struct file *file, struct iov_iter *iter,
+ 	pipe_lock(pipe);
+ 	ret = wait_for_space(pipe, flags);
+ 	if (!ret)
+-		ret = iter_to_pipe(iter, pipe, buf_flag);
++		ret = iter_to_pipe(iter, pipe);
+ 	pipe_unlock(pipe);
+ 	if (ret > 0)
+ 		wakeup_pipe_readers(pipe);
+@@ -1601,12 +1578,6 @@ static int splice_pipe_to_pipe(struct pipe_inode_info *ipipe,
+ 			}
+ 			*obuf = *ibuf;
+ 
+-			/*
+-			 * Don't inherit the gift flag, we need to
+-			 * prevent multiple steals of this page.
+-			 */
+-			obuf->flags &= ~PIPE_BUF_FLAG_GIFT;
+-
+ 			pipe_buf_mark_unmergeable(obuf);
+ 
+ 			obuf->len = len;
+@@ -1681,12 +1652,6 @@ static int link_pipe(struct pipe_inode_info *ipipe,
+ 		obuf = opipe->bufs + nbuf;
+ 		*obuf = *ibuf;
+ 
+-		/*
+-		 * Don't inherit the gift flag, we need to
+-		 * prevent multiple steals of this page.
+-		 */
+-		obuf->flags &= ~PIPE_BUF_FLAG_GIFT;
+-
+ 		pipe_buf_mark_unmergeable(obuf);
+ 
+ 		if (obuf->len > len)
+diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
+index 5c626fdc10db..1a3a5efb9c6f 100644
+--- a/include/linux/pipe_fs_i.h
++++ b/include/linux/pipe_fs_i.h
+@@ -6,7 +6,6 @@
+ 
+ #define PIPE_BUF_FLAG_LRU	0x01	/* page is on the LRU */
+ #define PIPE_BUF_FLAG_ATOMIC	0x02	/* was atomically mapped */
+-#define PIPE_BUF_FLAG_GIFT	0x04	/* page is a gift */
+ #define PIPE_BUF_FLAG_PACKET	0x08	/* read() as a packet */
+ 
+ /**
 
