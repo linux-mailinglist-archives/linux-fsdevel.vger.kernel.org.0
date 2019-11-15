@@ -2,87 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64F51FE1D4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2019 16:49:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A641FE26E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2019 17:14:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727625AbfKOPto (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Nov 2019 10:49:44 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:45276 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727626AbfKOPtm (ORCPT
+        id S1727557AbfKOQON (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Nov 2019 11:14:13 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:49458 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727461AbfKOQON (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Nov 2019 10:49:42 -0500
-Received: by mail-io1-f66.google.com with SMTP id v17so10885870iol.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2019 07:49:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=X5NAAOrJ3bS32ihsXavVCESX6DNfXdWEE7aVqtLVIHM=;
-        b=T96mBsWswYjsm0w7ecYkWpV509ib/ulk9bHbI0Xwo0rzkePegh7rSfOcmzGbyf8vTc
-         lns/HOXyf4/6jOYDVIgZ/CZyIfN2m2y88qVdmXSABhNsP0MXDIRsHGSOOd7wWkwuGiQx
-         ehcoBpFXp6INIFq3jwmveina1L3fsWjpzHRhMvlhwo8OJ8Dy4xuFXwCrYZiL/Ja/dmiU
-         sEvBblBcC09ww5H/W1Li3rJXBc1TYjMn46kjeboNwYGUiqFeNnjz46iJxarBlBzUTpau
-         7EU4w1MkRxjhgPFrJ2/ipVqnuE4IawmENFYcW1JVUg9OFLrEKZvfb77T8+3XayPV4Zd+
-         KrHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=X5NAAOrJ3bS32ihsXavVCESX6DNfXdWEE7aVqtLVIHM=;
-        b=CRVJqVyaEntAFrZcGvbZ42G03vJ7PfD6w3bbRHMTU+fzJ5n3NIyHFrAIIiAO2tRXZs
-         5wOQ6A6Jme7pgyupKhXQcbEtnoW5WXqenTGSw8ZAdn3+SrQ0PyyhUm7OIHIz352J12SM
-         mqLjiXCjV7zXk9i2oB0l6XW6NifulbGZMga9C3AVdUUsqkemfOsHloYb9wdpenFO/Vxc
-         GRFUEITsDFTuzPeGM8ZqhiuIszwZZaMwhX/EFpzjMkoqxvI+46Dra3WAtAGPU/hZj6IU
-         jje5wLT8PcpEPxAxvJ6KmEuEk9572O6xyNi8S8pIplzXl7Ci1HiYfzbeJ+24X2Zc8Fl4
-         mv8w==
-X-Gm-Message-State: APjAAAVbT4/rmKtMQPVMapFYOn30zTeytuYKwPiks1faeCt3TeWr3Npm
-        APXz0FaYaXvoQvey5urPP1zWiqBDITPahXrGqA==
-X-Google-Smtp-Source: APXvYqxEj1beLI6zhjihT/lmX2Dk324PGcIr8veC5c+0F/PFQKT7AeNYgljOGh72OwNqCMMZvqGkvMbSAqCkDjgGkjg=
-X-Received: by 2002:a5e:8e02:: with SMTP id a2mr1343031ion.269.1573832982053;
- Fri, 15 Nov 2019 07:49:42 -0800 (PST)
+        Fri, 15 Nov 2019 11:14:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1573834452;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Bh1m9G8+/YSs26f0udDCREZzDBIHMdCmZtMn/k0iIK0=;
+        b=evTDe7ODuZT8PWxVcNJk8RFYpUCz0ZtC+RQElY7xbj9zzoFgjdCWrt+M/HoReu5jysb3bk
+        qpdqA9QaxIES0or69/HQ4mrPvqwq0mtVecW/9pBKQLQLIC5MWhuo4fPrE398PHY6KOCyc0
+        gelVTj0p7Pel6lduuGhvNzJ0RfYGMFA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-78-AJMxQ3UsPEK9FzjXIw_ixw-1; Fri, 15 Nov 2019 11:14:08 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0578F1883531;
+        Fri, 15 Nov 2019 16:14:08 +0000 (UTC)
+Received: from madhat.boston.devel.redhat.com (ovpn-116-206.phx2.redhat.com [10.3.116.206])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B26545D6D0;
+        Fri, 15 Nov 2019 16:14:07 +0000 (UTC)
+From:   Steve Dickson <SteveD@RedHat.com>
+Subject: ANNOUNCE: nfs-utils-2.4.2 released.
+To:     Linux NFS Mailing list <linux-nfs@vger.kernel.org>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Message-ID: <34828ccd-3982-9278-fa5e-dd961731d7f6@RedHat.com>
+Date:   Fri, 15 Nov 2019 11:14:07 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Received: by 2002:a02:7749:0:0:0:0:0 with HTTP; Fri, 15 Nov 2019 07:49:41
- -0800 (PST)
-Reply-To: moneygram.1820@outlook.fr
-From:   "Ms.Mary Coster" <info.zennitbankplcnigerian@gmail.com>
-Date:   Fri, 15 Nov 2019 16:49:41 +0100
-Message-ID: <CABHzvrkUQbbmg0Gr7foD3OjAJiY7Fd37=SW3mU=fnOPOcOyNdQ@mail.gmail.com>
-Subject: Goodnews, I have deposited your transfer total amount US$4.8million
- Dollars with Money Gram this morning. we agreed you will be receiving it
- $5000.00 daily.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: AJMxQ3UsPEK9FzjXIw_ixw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Attn, Dear
-Goodnews, I have deposited your transfer total amount US$4.8million
-Dollars with Money Gram this morning. we agreed you will be receiving
-it $5000.00 daily.
-Contact Mr. John Dave Director, Money Gram to pick up your first Money
-Gram payment $5000.00 today.
-Contact Person; Mr. John Dave Director, Money Gram,International
-Remittance-Benin
-Email; moneygram.1820@outlook.fr
-Telephone; +229 62619517
-Please re-confirm your address to him once again such as listed below.
-1.Your Full Name..............................
-2.Address.........................
-3.Country....................
-4.Sex.........................................
-5.Your telephone numbers..........................
-6. Copy of your ID...........................
-This is to avoid sending your funds to wrong person, He is waiting to
-hear from you urgent today.
-Let me know once you pick up your transfer $5000.00 today.
-Finally, Note I have paid for the service fees, but only money will
-send to him is $90.00 transfer fee before you can pick up the transfer
-today.
-Ask, Mr. John Dave Director, Money Gram to give you direction where to
-send your transfer fee $90.00 only to Him Immediately so that you can
-pick up $5000.00 us dollars today.
-Thanks for undrstanding.
-Mary Coster
-m.coster@aol.com
+Hello,
+
+This is a maintenance release to fix some issues internal to the git tree..=
+. =20
+
+This release does include the update nfsdcld support=20
+as well as the updated mountstats and iostats commands.
+
+
+The tarballs can be found in
+  https://www.kernel.org/pub/linux/utils/nfs-utils/2.4.2/
+or
+  http://sourceforge.net/projects/nfs/files/nfs-utils/2.4.2
+
+The change log is in
+   https://www.kernel.org/pub/linux/utils/nfs-utils/2.4.2/2.4.2-Changelog
+or
+   http://sourceforge.net/projects/nfs/files/nfs-utils/2.4.2/
+
+The git tree is at:
+   git://linux-nfs.org/~steved/nfs-utils
+
+Please send comments/bugs to linux-nfs@vger.kernel.org
+
+steved.
+
