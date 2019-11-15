@@ -2,110 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B598FD9F8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2019 10:53:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 434CBFDA4B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2019 11:02:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbfKOJxD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Nov 2019 04:53:03 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35858 "EHLO mx1.suse.de"
+        id S1727323AbfKOKCO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Nov 2019 05:02:14 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6235 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726983AbfKOJxD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Nov 2019 04:53:03 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3AD6BB18D;
-        Fri, 15 Nov 2019 09:53:01 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 62F3C1E3BEA; Fri, 15 Nov 2019 10:53:00 +0100 (CET)
-Date:   Fri, 15 Nov 2019 10:53:00 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-mm <linux-mm@kvack.org>,
-        fsdev <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Minchan Kim <minchan@kernel.org>, Mel Gorman <mgorman@suse.de>
-Subject: Re: [RFC v2] writeback: add elastic bdi in cgwb bdp
-Message-ID: <20191115095300.GB9043@quack2.suse.cz>
-References: <20191026104656.15176-1-hdanton@sina.com>
- <20191115033240.11236-1-hdanton@sina.com>
+        id S1727208AbfKOKCO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 15 Nov 2019 05:02:14 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 9B515235D03C22C3EF3F;
+        Fri, 15 Nov 2019 18:02:12 +0800 (CST)
+Received: from [127.0.0.1] (10.173.220.96) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Fri, 15 Nov 2019
+ 18:02:06 +0800
+Subject: Re: [PATCH 1/3] dcache: add a new enum type for 'dentry_d_lock_class'
+To:     Greg KH <gregkh@linuxfoundation.org>
+CC:     <rafael@kernel.org>, <viro@zeniv.linux.org.uk>,
+        <rostedt@goodmis.org>, <oleg@redhat.com>,
+        <mchehab+samsung@kernel.org>, <corbet@lwn.net>, <tytso@mit.edu>,
+        <jmorris@namei.org>, <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <zhengbin13@huawei.com>,
+        <yi.zhang@huawei.com>, <chenxiang66@hisilicon.com>,
+        <xiexiuqi@huawei.com>
+References: <1573788472-87426-1-git-send-email-yukuai3@huawei.com>
+ <1573788472-87426-2-git-send-email-yukuai3@huawei.com>
+ <20191115032759.GA795729@kroah.com>
+From:   "yukuai (C)" <yukuai3@huawei.com>
+Message-ID: <50b4c5eb-c0a0-541f-1b3d-376d1751ec78@huawei.com>
+Date:   Fri, 15 Nov 2019 18:02:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191115033240.11236-1-hdanton@sina.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191115032759.GA795729@kroah.com>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.173.220.96]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 15-11-19 11:32:40, Hillf Danton wrote:
-> 
-> On Thu, 14 Nov 2019 13:17:46 +0100 Jan Kara wrote:
-> > 
-> > On Sat 26-10-19 18:46:56, Hillf Danton wrote:
-> > > 
-> > > The elastic bdi is the mirror bdi of spinning disks, SSD, USB and
-> > > other storage devices/instruments on market. The performance of
-> > > ebdi goes up and down as the pattern of IO dispatched changes, as
-> > > approximately estimated as below.
-> > > 
-> > > 	P = j(..., IO pattern);
-> > > 
-> > > In ebdi's view, the bandwidth currently measured in balancing dirty
-> > > pages has close relation to its performance because the former is a
-> > > part of the latter.
-> > > 
-> > > 	B = y(P);
-> > > 
-> > > The functions above suggest there may be a layer violation if it
-> > > could be better measured somewhere below fs.
-> > > 
-> > > It is measured however to the extent that makes every judge happy,
-> > > and is playing a role in dispatching IO with the IO pattern entirely
-> > > ignored that is volatile in nature.
-> > > 
-> > > And it helps to throttle the dirty speed, with the figure ignored
-> > > that DRAM in general is x10 faster than ebdi. If B is half of P for
-> > > instance, then it is near 5% of dirty speed, just 2 points from the
-> > > figure in the snippet below.
-> > > 
-> > > /*
-> > >  * If ratelimit_pages is too high then we can get into dirty-data overload
-> > >  * if a large number of processes all perform writes at the same time.
-> > >  * If it is too low then SMP machines will call the (expensive)
-> > >  * get_writeback_state too often.
-> > >  *
-> > >  * Here we set ratelimit_pages to a level which ensures that when all CPUs are
-> > >  * dirtying in parallel, we cannot go more than 3% (1/32) over the dirty memory
-> > >  * thresholds.
-> > >  */
-> > > 
-> > > To prevent dirty speed from running away from laundry speed, ebdi
-> > > suggests the walk-dog method to put in bdp as a leash seems to
-> > > churn less in IO pattern.
-> > > 
-> > > V2 is based on next-20191025.
-> > 
-> > Honestly, the changelog is still pretty incomprehensible as Andrew already
-> > mentioned. Also I completely miss there, what are the benefits of this work
-> > compared to what we currently have.
-> > 
-> Hey Jan
-> 
-> In the room which has been somewhere between 3% and 5% for bdp since
-> 143dfe8611a6 ("writeback: IO-less balance_dirty_pages()") a bdp is
-> proposed with target of surviving tests like LTP without regressions
-> introduced, so overall the concerned benefit is that bdp is becoming
-> more diverse if the diversity under linux/fs is good for the 99%.
 
-What do you mean by "balance_dirty_pages() is becoming more diverse"?
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+On 2019/11/15 11:27, Greg KH wrote:
+> On Fri, Nov 15, 2019 at 11:27:50AM +0800, yu kuai wrote:
+>> 'dentry_d_lock_class' can be used for spin_lock_nested in case lockdep
+>> confused about two different dentry take the 'd_lock'.
+>>
+>> However, a single 'DENTRY_D_LOCK_NESTED' may not be enough if more than
+>> two dentry are involed. So, and in 'DENTRY_D_LOCK_NESTED_2'
+>>
+>> Signed-off-by: yu kuai <yukuai3@huawei.com>
+>> ---
+>>   include/linux/dcache.h | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+>> index 10090f1..8eb84ef 100644
+>> --- a/include/linux/dcache.h
+>> +++ b/include/linux/dcache.h
+>> @@ -129,7 +129,8 @@ struct dentry {
+>>   enum dentry_d_lock_class
+>>   {
+>>   	DENTRY_D_LOCK_NORMAL, /* implicitly used by plain spin_lock() APIs. */
+>> -	DENTRY_D_LOCK_NESTED
+>> +	DENTRY_D_LOCK_NESTED,
+>> +	DENTRY_D_LOCK_NESTED_2
+> 
+> You should document this, as "_2" does not make much sense to anyone
+> only looking at the code :(
+> 
+> Or rename it better.
+> 
+Thank you for your advise, I'll try to rename it better with comments.
+
+Yu Kuai
+> thanks,
+> 
+> greg k-h
+> 
+> .
+> 
+
