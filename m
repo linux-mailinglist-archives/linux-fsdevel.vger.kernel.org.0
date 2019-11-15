@@ -2,26 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D5ABFE283
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2019 17:17:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B638FE285
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2019 17:18:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbfKOQRd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Nov 2019 11:17:33 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36822 "EHLO mx1.suse.de"
+        id S1727774AbfKOQRe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Nov 2019 11:17:34 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36880 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727461AbfKOQRb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Nov 2019 11:17:31 -0500
+        id S1727520AbfKOQRd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 15 Nov 2019 11:17:33 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E7517B150;
-        Fri, 15 Nov 2019 16:17:29 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 21025B1BA;
+        Fri, 15 Nov 2019 16:17:32 +0000 (UTC)
 From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
 To:     linux-btrfs@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, hch@infradead.org,
         darrick.wong@oracle.com, Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: [PATCH 2/7] btrfs: basic direct I/O read operation
-Date:   Fri, 15 Nov 2019 10:16:55 -0600
-Message-Id: <20191115161700.12305-3-rgoldwyn@suse.de>
+Subject: [PATCH 3/7] iomap: use a function pointer for dio submits
+Date:   Fri, 15 Nov 2019 10:16:56 -0600
+Message-Id: <20191115161700.12305-4-rgoldwyn@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20191115161700.12305-1-rgoldwyn@suse.de>
 References: <20191115161700.12305-1-rgoldwyn@suse.de>
@@ -32,110 +32,78 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-We will be getting rid of calling blockdev_direct_io. So, we need
-to make sure we perform btrfs_direct_read() to cover the reads.
-
-Introduce iomap begin function which calls get_iomap() to convert
-the position to iomap. Use iomap_dio_rw() to perform the direct
-reads.
+This helps filesystems to perform tasks on the bio while
+submitting for I/O. This could be post-write operations
+such as data CRC or data replication for fs-handled RAID.
 
 Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
 ---
- fs/btrfs/file.c | 65 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 64 insertions(+), 1 deletion(-)
+ fs/iomap/direct-io.c  | 14 +++++++++-----
+ include/linux/iomap.h |  2 ++
+ 2 files changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index 435a502a3226..eede9dcbb4b6 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -16,6 +16,7 @@
- #include <linux/btrfs.h>
- #include <linux/uio.h>
- #include <linux/iversion.h>
-+#include <linux/iomap.h>
- #include "ctree.h"
- #include "disk-io.h"
- #include "transaction.h"
-@@ -3415,6 +3416,57 @@ static int find_desired_extent(struct inode *inode, loff_t *offset, int whence)
- 	return ret;
- }
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 2f88d64c2a4d..1e93a8d99439 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -59,7 +59,7 @@ int iomap_dio_iopoll(struct kiocb *kiocb, bool spin)
+ EXPORT_SYMBOL_GPL(iomap_dio_iopoll);
  
-+/*
-+ * get_iomap: Get the block map and fill the iomap structure
-+ * @pos: file position
-+ * @length: I/O length
-+ * @iomap: The iomap structure to fill
-+ */
-+
-+static int get_iomap(struct inode *inode, loff_t pos, loff_t length,
-+		struct iomap *iomap)
-+{
-+	struct extent_map *em;
-+	iomap->addr = IOMAP_NULL_ADDR;
-+	em = btrfs_get_extent(BTRFS_I(inode), NULL, 0, pos, length, 0);
-+	if (IS_ERR(em))
-+		return PTR_ERR(em);
-+	/* XXX Do we need to check for em->flags here? */
-+	if (em->block_start == EXTENT_MAP_HOLE) {
-+		iomap->type = IOMAP_HOLE;
-+	} else {
-+		iomap->addr = em->block_start;
-+		iomap->type = IOMAP_MAPPED;
-+	}
-+	iomap->offset = em->start;
-+	iomap->bdev = em->bdev;
-+	iomap->length = em->len;
-+	free_extent_map(em);
-+	return 0;
-+}
-+
-+static int btrfs_dio_iomap_begin(struct inode *inode, loff_t pos,
-+		loff_t length, unsigned flags, struct iomap *iomap,
-+		struct iomap *srcmap)
-+{
-+	return get_iomap(inode, pos, length, iomap);
-+}
-+
-+static const struct iomap_ops btrfs_dio_iomap_ops = {
-+	.iomap_begin            = btrfs_dio_iomap_begin,
-+};
-+
-+static ssize_t btrfs_dio_iomap_read(struct kiocb *iocb, struct iov_iter *to)
-+{
-+	struct inode *inode = file_inode(iocb->ki_filp);
-+	ssize_t ret;
-+	inode_lock_shared(inode);
-+	ret = iomap_dio_rw(iocb, to, &btrfs_dio_iomap_ops, NULL,
-+			is_sync_kiocb(iocb));
-+	inode_unlock_shared(inode);
-+	return ret;
-+}
-+
- static loff_t btrfs_file_llseek(struct file *file, loff_t offset, int whence)
+ static void iomap_dio_submit_bio(struct iomap_dio *dio, struct iomap *iomap,
+-		struct bio *bio)
++		struct bio *bio, loff_t pos)
  {
- 	struct inode *inode = file->f_mapping->host;
-@@ -3452,9 +3504,20 @@ static int btrfs_file_open(struct inode *inode, struct file *filp)
- 	return generic_file_open(inode, filp);
+ 	atomic_inc(&dio->ref);
+ 
+@@ -67,7 +67,11 @@ static void iomap_dio_submit_bio(struct iomap_dio *dio, struct iomap *iomap,
+ 		bio_set_polled(bio, dio->iocb);
+ 
+ 	dio->submit.last_queue = bdev_get_queue(iomap->bdev);
+-	dio->submit.cookie = submit_bio(bio);
++	if (dio->dops && dio->dops->submit_io)
++		dio->submit.cookie = dio->dops->submit_io(bio,
++				file_inode(dio->iocb->ki_filp),	pos);
++	else
++		dio->submit.cookie = submit_bio(bio);
  }
  
-+static ssize_t btrfs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
-+{
-+	ssize_t ret = 0;
-+	if (iocb->ki_flags & IOCB_DIRECT)
-+		ret = btrfs_dio_iomap_read(iocb, to);
-+	if (ret < 0)
-+		return ret;
-+
-+	return generic_file_buffered_read(iocb, to, ret);
-+}
-+
- const struct file_operations btrfs_file_operations = {
- 	.llseek		= btrfs_file_llseek,
--	.read_iter      = generic_file_read_iter,
-+	.read_iter      = btrfs_file_read_iter,
- 	.splice_read	= generic_file_splice_read,
- 	.write_iter	= btrfs_file_write_iter,
- 	.mmap		= btrfs_file_mmap,
+ static ssize_t iomap_dio_complete(struct iomap_dio *dio)
+@@ -191,7 +195,7 @@ iomap_dio_zero(struct iomap_dio *dio, struct iomap *iomap, loff_t pos,
+ 	get_page(page);
+ 	__bio_add_page(bio, page, len, 0);
+ 	bio_set_op_attrs(bio, REQ_OP_WRITE, flags);
+-	iomap_dio_submit_bio(dio, iomap, bio);
++	iomap_dio_submit_bio(dio, iomap, bio, pos);
+ }
+ 
+ static loff_t
+@@ -297,11 +301,11 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+ 		iov_iter_advance(dio->submit.iter, n);
+ 
+ 		dio->size += n;
+-		pos += n;
+ 		copied += n;
+ 
+ 		nr_pages = iov_iter_npages(&iter, BIO_MAX_PAGES);
+-		iomap_dio_submit_bio(dio, iomap, bio);
++		iomap_dio_submit_bio(dio, iomap, bio, pos);
++		pos += n;
+ 	} while (nr_pages);
+ 
+ 	/*
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 8b09463dae0d..386ac8ff58d0 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -252,6 +252,8 @@ int iomap_writepages(struct address_space *mapping,
+ struct iomap_dio_ops {
+ 	int (*end_io)(struct kiocb *iocb, ssize_t size, int error,
+ 		      unsigned flags);
++	blk_qc_t (*submit_io)(struct bio *bio, struct inode *inode,
++			  loff_t file_offset);
+ };
+ 
+ ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
 -- 
 2.16.4
 
