@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C089BFE3D3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2019 18:21:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83840FE3D8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2019 18:23:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727573AbfKORVu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Nov 2019 12:21:50 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:59430 "EHLO
+        id S1727644AbfKORXL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Nov 2019 12:23:11 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:23936 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727543AbfKORVt (ORCPT
+        with ESMTP id S1727590AbfKORXL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Nov 2019 12:21:49 -0500
+        Fri, 15 Nov 2019 12:23:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573838507;
+        s=mimecast20190719; t=1573838589;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=DdDOR7FDv/WmPIQVIDx5aIjH2GXLxNyZ+4tY7JcKXZk=;
-        b=AVbJwHsGPpFvP9PaaOYFtmU1MEKx3mTMtLcIBwsJZSZTJzM6VFLkA33jAOr/yX+SZRdQna
-        UWzo19dDlJiqfGEj1oL75ZGDSQpXfEf77jWlS9Qp6KUvGhHlK5XXvY/Xtw7X/OzPExTLvC
-        bW1iOnNPPjkOEinTwF9lRAI3C3gHgzU=
+        bh=06kWqtx/26ngJrjOCfJyg6Cce2N2bE9JwILxSi+bOAI=;
+        b=gsOlK5F4ZYM3jqsry1S84abcxsIMy4ejIk2RAwysVOvQMHEOd5uHV0QQvTcnMuO1y7FNDT
+        jBoskBg7CGvklCzRDTYqEpd1clSUfQqkeJyzm0tTTRxudkN04XZErkIKWecGxbopkK3vb1
+        DTkjN+g5bG7UyZQHKQKWa3mTQU9g2CA=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-20-6d3nc2CFO3-lAzhrQJMhbw-1; Fri, 15 Nov 2019 12:21:44 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+ us-mta-273-R4y48ZzWOkGEjZwVb4saJQ-1; Fri, 15 Nov 2019 12:23:05 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6785F8048F3;
-        Fri, 15 Nov 2019 17:21:43 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E1D171083E80;
+        Fri, 15 Nov 2019 17:23:03 +0000 (UTC)
 Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B8D1668432;
-        Fri, 15 Nov 2019 17:21:42 +0000 (UTC)
-Date:   Fri, 15 Nov 2019 12:21:40 -0500
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0DC0828DDE;
+        Fri, 15 Nov 2019 17:23:02 +0000 (UTC)
+Date:   Fri, 15 Nov 2019 12:23:01 -0500
 From:   Brian Foster <bfoster@redhat.com>
 To:     Dave Chinner <david@fromorbit.com>
 Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/28] mm: directed shrinker work deferral
-Message-ID: <20191115172140.GA55854@bfoster>
+Subject: Re: [PATCH 12/28] shrinker: defer work only to kswapd
+Message-ID: <20191115172301.GB55854@bfoster>
 References: <20191031234618.15403-1-david@fromorbit.com>
- <20191031234618.15403-10-david@fromorbit.com>
- <20191104152525.GA10665@bfoster>
- <20191114204926.GC4614@dread.disaster.area>
+ <20191031234618.15403-13-david@fromorbit.com>
+ <20191104152954.GC10665@bfoster>
+ <20191114211150.GE4614@dread.disaster.area>
 MIME-Version: 1.0
-In-Reply-To: <20191114204926.GC4614@dread.disaster.area>
+In-Reply-To: <20191114211150.GE4614@dread.disaster.area>
 User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: 6d3nc2CFO3-lAzhrQJMhbw-1
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: R4y48ZzWOkGEjZwVb4saJQ-1
 X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
@@ -58,156 +58,106 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 07:49:26AM +1100, Dave Chinner wrote:
-> On Mon, Nov 04, 2019 at 10:25:25AM -0500, Brian Foster wrote:
-> > On Fri, Nov 01, 2019 at 10:45:59AM +1100, Dave Chinner wrote:
-> > > From: Dave Chinner <dchinner@redhat.com>
-> > >=20
-> > > Introduce a mechanism for ->count_objects() to indicate to the
-> > > shrinker infrastructure that the reclaim context will not allow
-> > > scanning work to be done and so the work it decides is necessary
-> > > needs to be deferred.
-> > >=20
-> > > This simplifies the code by separating out the accounting of
-> > > deferred work from the actual doing of the work, and allows better
-> > > decisions to be made by the shrinekr control logic on what action it
-> > > can take.
-> > >=20
-> > > Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> > > ---
+On Fri, Nov 15, 2019 at 08:11:50AM +1100, Dave Chinner wrote:
+> On Mon, Nov 04, 2019 at 10:29:54AM -0500, Brian Foster wrote:
+> > On Fri, Nov 01, 2019 at 10:46:02AM +1100, Dave Chinner wrote:
+> > > @@ -601,10 +605,10 @@ static unsigned long do_shrink_slab(struct shri=
+nk_control *shrinkctl,
+> > >  =09 * scanning at high prio and therefore should try to reclaim as m=
+uch as
+> > >  =09 * possible.
+> > >  =09 */
+> > > -=09while (total_scan >=3D batch_size ||
+> > > -=09       total_scan >=3D freeable_objects) {
+> > > +=09while (scan_count >=3D batch_size ||
+> > > +=09       scan_count >=3D freeable_objects) {
+> > >  =09=09unsigned long ret;
+> > > -=09=09unsigned long nr_to_scan =3D min(batch_size, total_scan);
+> > > +=09=09unsigned long nr_to_scan =3D min_t(long, batch_size, scan_coun=
+t);
+> > > =20
+> > >  =09=09shrinkctl->nr_to_scan =3D nr_to_scan;
+> > >  =09=09shrinkctl->nr_scanned =3D nr_to_scan;
+> > > @@ -614,29 +618,29 @@ static unsigned long do_shrink_slab(struct shri=
+nk_control *shrinkctl,
+> > >  =09=09freed +=3D ret;
+> > > =20
+> > >  =09=09count_vm_events(SLABS_SCANNED, shrinkctl->nr_scanned);
+> > > -=09=09total_scan -=3D shrinkctl->nr_scanned;
+> > > -=09=09scanned +=3D shrinkctl->nr_scanned;
+> > > +=09=09scan_count -=3D shrinkctl->nr_scanned;
+> > > +=09=09scanned_objects +=3D shrinkctl->nr_scanned;
+> > > =20
+> > >  =09=09cond_resched();
+> > >  =09}
+> > > -
+> > >  done:
+> > > -=09if (next_deferred >=3D scanned)
+> > > -=09=09next_deferred -=3D scanned;
+> > > +=09if (deferred_count)
+> > > +=09=09next_deferred =3D deferred_count - scanned_objects;
+> > >  =09else
+> > > -=09=09next_deferred =3D 0;
+> > > +=09=09next_deferred =3D scan_count;
 > >=20
-> > My understanding from the previous discussion(s) is that this is not
-> > tied directly to the gfp mask because that is not the only intended use=
-.
-> > While it is currently a boolean tied to the the entire shrinker call,
-> > the longer term objective is per-object granularity.
+> > Hmm.. so if there was no deferred count on this cycle, we set
+> > next_deferred to whatever is left from scan_count and add that back int=
+o
+> > the shrinker struct below. If there was a pending deferred count on thi=
+s
+> > cycle, we subtract what we scanned from that and add that value back.
+> > But what happens to the remaining scan_count in the latter case? Is it
+> > lost, or am I missing something?
 >=20
-> Longer term, yes, but right now such things are not possible as the
-> shrinker needs more context to be able to make sane per-object
-> decisions. shrinker policy decisions that affect the entire run
-> scope should be handled by the ->count operation - it's the one that
-> says whether the scan loop should run or not, and right now GFP_NOFS
-> for all filesystem shrinkers is a pure boolean policy
-> implementation.
->=20
-> The next future step is to provide a superblock context with
-> GFP_NOFS to indicate which filesystem we cannot recurse into. That
-> is also a shrinker instance wide check, so again it's something that
-> ->count should be deciding.
->=20
-> i.e. ->count determines what is to be done, ->scan iterates the work
-> that has to be done until we are done.
+> if deferred_count is not zero, then it is kswapd that is running. It
+> does the deferred work, and if it doesn't make progress then adding
+> it's scan count to the deferred work doesn't matter. That's because
+> it will come back with an increased priority in a short while and
+> try to scan more of the deferred count plus it's larger scan count.
 >=20
 
-Sure, makes sense in general.
+Ok, so perhaps there is no functional reason to defer remaining scan
+count from a context (i.e. kswapd) that attempts to process deferred
+work...
 
-> > I find the argument reasonable enough, but if the above is true, why do
-> > we move these checks from ->scan_objects() to ->count_objects() (in the
-> > next patch) when per-object decisions will ultimately need to be made b=
-y
-> > the former?
->=20
-> Because run/no-run policy belongs in one place, and things like
-> GFP_NOFS do no change across calls to the ->scan loop. i.e. after
-> the first ->scan call in a loop that calls it hundreds to thousands
-> of times, the GFP_NOFS run/no-run check is completely redundant.
->=20
-
-What loop is currently called hundreds to thousands of times that this
-change prevents? AFAICT the current nofs checks in the ->scan calls
-explicitly terminate the scan loop. So we're effectively saving a
-function call by doing this earlier in the count ->call. (Nothing wrong
-with that, I'm just not following the numbers used in this reasoning..).
-
-> Once we introduce a new policy that allows the fs shrinker to do
-> careful reclaim in GFP_NOFS conditions, we need to do substantial
-> rework the shrinker scan loop and how it accounts the work that is
-> done - we now have at least 3 or 4 different return counters
-> (skipped because locked, skipped because referenced,
-> reclaimed, deferred reclaim because couldn't lock/recursion) and
-> the accounting and decisions to be made are a lot more complex.
+> IOWs, if we defer kswapd unused scan count, we effectively increase
+> the pressure as the priority goes up, potentially making the
+> deferred count increase out of control. i.e. kswapd can make
+> progress and free items, but the result is that it increased the
+> deferred scan count rather than reducing it. This leads to excessive
+> reclaim of the slab caches and kswapd can trash the caches long
+> after the memory pressure has gone away...
 >=20
 
-Yeah, that's generally what I expected from your previous description.
+... yet if kswapd runs without pre-existing deferred work, that's
+precisely what it does. next_deferred is set to remaining scan_count and
+that is added back to the shrinker struct. So should kswapd generally
+defer work or not? If the answer is sometimes, then please add a comment
+to the next_deferred assignment to explain when/why.
 
-> In that case, the ->count function will drop the GFP_NOFS check, but
-> still do all the other things is needs to do. The GFP_NOFS check
-> will go deep in the guts of the shrinker scan implementation where
-> the per-object recursion problem exists. But for most shrinkers,
-> it's still going to be a global boolean check...
+> > For example, suppose we start this cycle with a large scan_count and
+> > ->scan_objects() returned SHRINK_STOP before doing much work. In that
+> > scenario, it looks like whether ->nr_deferred is 0 or not is the only
+> > thing that determines whether we defer the entire remaining scan_count
+> > or just what is left from the previous ->nr_deferred. The existing code
+> > appears to consistently factor in what is left from the current scan
+> > with the previous deferred count. Hm?
+>=20
+> If kswapd doesn't have any deferred work, then it's largely no
+> different in behaviour to direct reclaim. If it has no deferred
+> work, then the shrinker is not getting stopped early in direct
+> reclaim, so it's unlikely that kswapd is going to get stopped early,
+> either....
 >=20
 
-So once the nofs checks are lifted out of the ->count callback and into
-the core shrinker, is there still a use case to defer an entire ->count
-instance from the callback?
-
-> > That seems like unnecessary churn and inconsistent with the
-> > argument against just temporarily doing something like what Christoph
-> > suggested in the previous version, particularly since IIRC the only use
-> > in this series was for gfp mask purposes.
->=20
-> If people want to call avoiding repeated, unnecessary evaluation of
-> the same condition hundreds of times instead of once "unnecessary
-> churn", then I'll drop it.
->=20
-
-I'm not referring to the functional change as churn. What I was
-referring to is that we're shuffling around the boilerplate gfp checking
-code between the different shrinker callbacks, knowing that it's
-eventually going to be lifted out, when we could potentially just lift
-that code up a level now.
+Then perhaps the logic could be simplified to explicitly not defer from
+kswapd..?
 
 Brian
 
-> > >  include/linux/shrinker.h | 7 +++++++
-> > >  mm/vmscan.c              | 8 ++++++++
-> > >  2 files changed, 15 insertions(+)
-> > >=20
-> > > diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
-> > > index 0f80123650e2..3405c39ab92c 100644
-> > > --- a/include/linux/shrinker.h
-> > > +++ b/include/linux/shrinker.h
-> > > @@ -31,6 +31,13 @@ struct shrink_control {
-> > > =20
-> > >  =09/* current memcg being shrunk (for memcg aware shrinkers) */
-> > >  =09struct mem_cgroup *memcg;
-> > > +
-> > > +=09/*
-> > > +=09 * set by ->count_objects if reclaim context prevents reclaim fro=
-m
-> > > +=09 * occurring. This allows the shrinker to immediately defer all t=
-he
-> > > +=09 * work and not even attempt to scan the cache.
-> > > +=09 */
-> > > +=09bool defer_work;
-> > >  };
-> > > =20
-> > >  #define SHRINK_STOP (~0UL)
-> > > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > > index ee4eecc7e1c2..a215d71d9d4b 100644
-> > > --- a/mm/vmscan.c
-> > > +++ b/mm/vmscan.c
-> > > @@ -536,6 +536,13 @@ static unsigned long do_shrink_slab(struct shrin=
-k_control *shrinkctl,
-> > >  =09trace_mm_shrink_slab_start(shrinker, shrinkctl, nr,
-> > >  =09=09=09=09   freeable, delta, total_scan, priority);
-> > > =20
-> > > +=09/*
-> > > +=09 * If the shrinker can't run (e.g. due to gfp_mask constraints), =
-then
-> > > +=09 * defer the work to a context that can scan the cache.
-> > > +=09 */
-> > > +=09if (shrinkctl->defer_work)
-> > > +=09=09goto done;
-> > > +
-> >=20
-> > I still find the fact that this per-shrinker invocation field is never
-> > reset unnecessarily fragile, and I don't see any good reason not to
-> > reset it prior to the shrinker callback that potentially sets it.
+> Cheers,
 >=20
-> I missed that when updating. I'll reset it in the next version.
->=20
-> -Dave.
+> Dave.
 > --=20
 > Dave Chinner
 > david@fromorbit.com
