@@ -2,176 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67CC1FE464
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2019 18:54:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55E35FE48F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2019 19:06:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbfKORyv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Nov 2019 12:54:51 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:36942 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726131AbfKORyv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Nov 2019 12:54:51 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iVfnb-0008R8-21; Fri, 15 Nov 2019 17:54:23 +0000
-Date:   Fri, 15 Nov 2019 17:54:23 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, yu kuai <yukuai3@huawei.com>,
-        rafael@kernel.org, oleg@redhat.com, mchehab+samsung@kernel.org,
-        corbet@lwn.net, tytso@mit.edu, jmorris@namei.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        zhengbin13@huawei.com, yi.zhang@huawei.com,
-        chenxiang66@hisilicon.com, xiexiuqi@huawei.com
-Subject: Re: [PATCH 1/3] dcache: add a new enum type for 'dentry_d_lock_class'
-Message-ID: <20191115175423.GS26530@ZenIV.linux.org.uk>
-References: <1573788472-87426-1-git-send-email-yukuai3@huawei.com>
- <1573788472-87426-2-git-send-email-yukuai3@huawei.com>
- <20191115032759.GA795729@kroah.com>
- <20191115041243.GN26530@ZenIV.linux.org.uk>
- <20191115072011.GA1203354@kroah.com>
- <20191115131625.GO26530@ZenIV.linux.org.uk>
- <20191115083813.65f5523c@gandalf.local.home>
- <20191115134823.GQ26530@ZenIV.linux.org.uk>
- <20191115085805.008870cb@gandalf.local.home>
- <20191115141754.GR26530@ZenIV.linux.org.uk>
+        id S1726952AbfKOSGf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Nov 2019 13:06:35 -0500
+Received: from mga05.intel.com ([192.55.52.43]:12098 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726131AbfKOSGe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 15 Nov 2019 13:06:34 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2019 10:06:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,309,1569308400"; 
+   d="scan'208";a="203454343"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga008.fm.intel.com with ESMTP; 15 Nov 2019 10:06:32 -0800
+Date:   Fri, 15 Nov 2019 10:06:32 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 09/24] vfio, mm: fix get_user_pages_remote() and
+ FOLL_LONGTERM
+Message-ID: <20191115180631.GA23832@iweiny-DESK2.sc.intel.com>
+References: <20191115055340.1825745-1-jhubbard@nvidia.com>
+ <20191115055340.1825745-10-jhubbard@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191115141754.GR26530@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191115055340.1825745-10-jhubbard@nvidia.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 02:17:54PM +0000, Al Viro wrote:
-> On Fri, Nov 15, 2019 at 08:58:05AM -0500, Steven Rostedt wrote:
-> > On Fri, 15 Nov 2019 13:48:23 +0000
-> > Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > 
-> > > > BTW, what do you mean by "can debugfs_remove_recursive() rely upon the
-> > > > lack of attempts to create new entries inside the subtree it's trying
-> > > > to kill?"  
-> > > 
-> > > Is it possible for something to call e.g. debugfs_create_dir() (or any
-> > > similar primitive) with parent inside the subtree that has been
-> > > passed to debugfs_remove_recursive() call that is still in progress?
-> > > 
-> > > If debugfs needs to cope with that, debugfs_remove_recursive() needs
-> > > considerably heavier locking, to start with.
-> > 
-> > I don't know about debugfs, but at least tracefs (which cut and pasted
-> > from debugfs) does not allow that. At least in theory it doesn't allow
-> > that (and if it does, it's a bug in the locking at the higher levels).
-> > 
-> > And perhaps debugfs shouldn't allow that either. As it is only suppose
-> > to be a light weight way to interact with the kernel, hence the name
-> > "debugfs".
-> > 
-> > Yu, do you have a test case for the "infinite loop" case?
+On Thu, Nov 14, 2019 at 09:53:25PM -0800, John Hubbard wrote:
+> As it says in the updated comment in gup.c: current FOLL_LONGTERM
+> behavior is incompatible with FAULT_FLAG_ALLOW_RETRY because of the
+> FS DAX check requirement on vmas.
 > 
-> Infinite loop, AFAICS, is reasonably easy to trigger - just open
-> a non-empty subdirectory and lseek to e.g. next-to-last element
-> in it.  Again, list_empty() use in there is quite wrong - it can
-> give false negatives just on the cursors.  No arguments about
-> that part...
+> However, the corresponding restriction in get_user_pages_remote() was
+> slightly stricter than is actually required: it forbade all
+> FOLL_LONGTERM callers, but we can actually allow FOLL_LONGTERM callers
+> that do not set the "locked" arg.
+> 
+> Update the code and comments accordingly, and update the VFIO caller
+> to take advantage of this, fixing a bug as a result: the VFIO caller
+> is logically a FOLL_LONGTERM user.
+> 
+> Also, remove an unnessary pair of calls that were releasing and
+> reacquiring the mmap_sem. There is no need to avoid holding mmap_sem
+> just in order to call page_to_pfn().
+> 
+> Also, move the DAX check ("if a VMA is DAX, don't allow long term
+> pinning") from the VFIO call site, all the way into the internals
+> of get_user_pages_remote() and __gup_longterm_locked(). That is:
+> get_user_pages_remote() calls __gup_longterm_locked(), which in turn
+> calls check_dax_vmas(). It's lightly explained in the comments as well.
+> 
+> Thanks to Jason Gunthorpe for pointing out a clean way to fix this,
+> and to Dan Williams for helping clarify the DAX refactoring.
+> 
+> Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Jerome Glisse <jglisse@redhat.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
 
-FWIW, given that debugfs_remove_recursive() has no way to report an error
-*and* that we have a single chokepoint for all entry creations (start_creating())
-we could make sure nothing gets added pretty easily - just mark the victim
-dentry as "don't allow any creations here" when we first reach it and
-have start_creating check that, using e.g. inode_lock() for serialization.
-Marking could be done e.g. by setting ->d_fsdata to
-(void *)DEBUGFS_FSDATA_IS_REAL_FOPS_BIT, so that ->d_release() doesn't
-need any changes.
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
 
-BTW, this
-                if (!ret)
-                        d_delete(dentry);
-                if (d_is_reg(dentry))
-                        __debugfs_file_removed(dentry);
-                dput(dentry);
-in __debugfs_remove() is both subtle and bogus.  If we get here
-with refcount > 1, d_delete() is just a d_drop() - dentry can't
-be made negative, so it gets unhashed instead.  If we *do* get
-here with refcount 1, it will be made negative, all right.
-Only to be killed off by immediately following dput(), since
-debugfs doesn't retain unpinned dentries.
-
-Why immediate?  Because d_is_reg() is obviously false on
-negative dentries, so __debugfs_file_removed() is not called.
-That's where the subtle part begins: there should've been
-nobody for __debugfs_file_removed() to wait for, since they
-would've had to hold additional references to dentry and
-refcount wouldn't have been 1.  So that's actually not
-a bug.  However, it's too subtle to introduce without
-having bothered to even comment the damn thing.
-
-As for the "bogus" part - that d_delete() is bollocks.
-First of all, it is fully equivalent to d_drop().  Always
-had been.  What's more, that sucker should've been
-d_invalidate() instead.
-
-Anyway, AFAICS removal could be done this way:
-
-// parent is held exclusive, after is NULL or a child of parent
-find_next_child(parent, prev)
-	child = NULL
-	node = prev ? &prev->d_child : &parent->d_subdirs;
-	grab parent->d_lock
-	for each entry in the list starting at node->next
-		d = container_of(entry, struct dentry, d_child)
-		grab d->d_lock
-		if simple_positive(d)
-			bump d->d_count
-			child = d
-		drop d->d_lock
-		if child
-			break
-	drop parent->d_lock
-	dput(prev);
-	return child
-
-kill_it(victim, parent)
-	if simple_positive(victim)
-		d_invalidate(victim);	// needed to avoid lost mounts
-		if victim is a directory
-			fsnotify_rmdir
-		else
-			fsnotify_unlink
-		if victim is regular
-			__debugfs_file_removed(victim)
-		dput(victim)		// unpin it
-
-recursive_removal(dentry)
-	this = dentry;
-	while (true) {
-		victim = NULL;
-		inode = this->d_inode;
-		inode_lock(inode);
-		if (d_is_dir(this))
-			mark this doomed
-		while ((child = find_next_child(this, victim)) == NULL) {
-			// no children (left); kill and ascend
-			// update metadata while it's still locked
-			inode->i_ctime = current_time(inode);
-			clear_nlink(inode);
-			inode_unlock(inode);
-			victim = this;
-			this = this->d_parent;
-			inode = this->d_inode;
-			inode_lock(inode);
-			kill_it(victim, this);
-			if (victim == dentry) {
-				inode->i_ctime = inode->i_mtime = current_time(inode);
-				if (d_is_dir(dentry))
-					drop_nlink(inode);
-				inode_unlock(inode);
-				dput(dentry);
-				return;
-			}
-		}
-		inode_unlock(inode);
-		this = child;
-	}
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+>  drivers/vfio/vfio_iommu_type1.c | 30 +++++-------------------------
+>  mm/gup.c                        | 27 ++++++++++++++++++++++-----
+>  2 files changed, 27 insertions(+), 30 deletions(-)
+> 
+> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+> index d864277ea16f..c7a111ad9975 100644
+> --- a/drivers/vfio/vfio_iommu_type1.c
+> +++ b/drivers/vfio/vfio_iommu_type1.c
+> @@ -340,7 +340,6 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
+>  {
+>  	struct page *page[1];
+>  	struct vm_area_struct *vma;
+> -	struct vm_area_struct *vmas[1];
+>  	unsigned int flags = 0;
+>  	int ret;
+>  
+> @@ -348,33 +347,14 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
+>  		flags |= FOLL_WRITE;
+>  
+>  	down_read(&mm->mmap_sem);
+> -	if (mm == current->mm) {
+> -		ret = get_user_pages(vaddr, 1, flags | FOLL_LONGTERM, page,
+> -				     vmas);
+> -	} else {
+> -		ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags, page,
+> -					    vmas, NULL);
+> -		/*
+> -		 * The lifetime of a vaddr_get_pfn() page pin is
+> -		 * userspace-controlled. In the fs-dax case this could
+> -		 * lead to indefinite stalls in filesystem operations.
+> -		 * Disallow attempts to pin fs-dax pages via this
+> -		 * interface.
+> -		 */
+> -		if (ret > 0 && vma_is_fsdax(vmas[0])) {
+> -			ret = -EOPNOTSUPP;
+> -			put_page(page[0]);
+> -		}
+> -	}
+> -	up_read(&mm->mmap_sem);
+> -
+> +	ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags | FOLL_LONGTERM,
+> +				    page, NULL, NULL);
+>  	if (ret == 1) {
+>  		*pfn = page_to_pfn(page[0]);
+> -		return 0;
+> +		ret = 0;
+> +		goto done;
+>  	}
+>  
+> -	down_read(&mm->mmap_sem);
+> -
+>  	vaddr = untagged_addr(vaddr);
+>  
+>  	vma = find_vma_intersection(mm, vaddr, vaddr + 1);
+> @@ -384,7 +364,7 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
+>  		if (is_invalid_reserved_pfn(*pfn))
+>  			ret = 0;
+>  	}
+> -
+> +done:
+>  	up_read(&mm->mmap_sem);
+>  	return ret;
+>  }
+> diff --git a/mm/gup.c b/mm/gup.c
+> index b859bd4da4d7..6cf613bfe7dc 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -29,6 +29,13 @@ struct follow_page_context {
+>  	unsigned int page_mask;
+>  };
+>  
+> +static __always_inline long __gup_longterm_locked(struct task_struct *tsk,
+> +						  struct mm_struct *mm,
+> +						  unsigned long start,
+> +						  unsigned long nr_pages,
+> +						  struct page **pages,
+> +						  struct vm_area_struct **vmas,
+> +						  unsigned int flags);
+>  /*
+>   * Return the compound head page with ref appropriately incremented,
+>   * or NULL if that failed.
+> @@ -1167,13 +1174,23 @@ long get_user_pages_remote(struct task_struct *tsk, struct mm_struct *mm,
+>  		struct vm_area_struct **vmas, int *locked)
+>  {
+>  	/*
+> -	 * FIXME: Current FOLL_LONGTERM behavior is incompatible with
+> +	 * Parts of FOLL_LONGTERM behavior are incompatible with
+>  	 * FAULT_FLAG_ALLOW_RETRY because of the FS DAX check requirement on
+> -	 * vmas.  As there are no users of this flag in this call we simply
+> -	 * disallow this option for now.
+> +	 * vmas. However, this only comes up if locked is set, and there are
+> +	 * callers that do request FOLL_LONGTERM, but do not set locked. So,
+> +	 * allow what we can.
+>  	 */
+> -	if (WARN_ON_ONCE(gup_flags & FOLL_LONGTERM))
+> -		return -EINVAL;
+> +	if (gup_flags & FOLL_LONGTERM) {
+> +		if (WARN_ON_ONCE(locked))
+> +			return -EINVAL;
+> +		/*
+> +		 * This will check the vmas (even if our vmas arg is NULL)
+> +		 * and return -ENOTSUPP if DAX isn't allowed in this case:
+> +		 */
+> +		return __gup_longterm_locked(tsk, mm, start, nr_pages, pages,
+> +					     vmas, gup_flags | FOLL_TOUCH |
+> +					     FOLL_REMOTE);
+> +	}
+>  
+>  	return __get_user_pages_locked(tsk, mm, start, nr_pages, pages, vmas,
+>  				       locked,
+> -- 
+> 2.24.0
+> 
