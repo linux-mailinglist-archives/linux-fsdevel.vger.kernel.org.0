@@ -2,89 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69703FDFD7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2019 15:16:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D48BFDFE4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2019 15:18:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727627AbfKOOQf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Nov 2019 09:16:35 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:26589 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727585AbfKOOQd (ORCPT
+        id S1727655AbfKOOS1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Nov 2019 09:18:27 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:33242 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727438AbfKOOS1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Nov 2019 09:16:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573827392;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=z2e5+UW0tK//TE2S4dwCVwmhkXMhlbynSTZrZr8XjC8=;
-        b=a9gXLVhnm/99H37z9pPRS5L0tAtOURTcvhOz7+5GHvYkT71OWeFoKpO1i1bEhJ9GeCorpT
-        Idr8jVnJ6uWGo9PJR7uVMm7bLhLAu/bPE3KUljcpFa9AnHb3+VT3uT97UnYZ5VON5k8jvc
-        sJETnONwOu5D06rW/biqUEim06TCUTg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-396-J0vUecp5NuK4wnoKV_yKsw-1; Fri, 15 Nov 2019 09:16:29 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 40F3E102C86E;
-        Fri, 15 Nov 2019 14:16:27 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B5C157BF99;
-        Fri, 15 Nov 2019 14:16:15 +0000 (UTC)
-Date:   Fri, 15 Nov 2019 22:16:10 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>
-Subject: Re: single aio thread is migrated crazily by scheduler
-Message-ID: <20191115141610.GA3283@ming.t460p>
-References: <20191114113153.GB4213@ming.t460p>
- <20191114131434.GQ4114@hirez.programming.kicks-ass.net>
- <20191115000925.GB4847@ming.t460p>
+        Fri, 15 Nov 2019 09:18:27 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iVcQ6-0002OF-7r; Fri, 15 Nov 2019 14:17:54 +0000
+Date:   Fri, 15 Nov 2019 14:17:54 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, yu kuai <yukuai3@huawei.com>,
+        rafael@kernel.org, oleg@redhat.com, mchehab+samsung@kernel.org,
+        corbet@lwn.net, tytso@mit.edu, jmorris@namei.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        zhengbin13@huawei.com, yi.zhang@huawei.com,
+        chenxiang66@hisilicon.com, xiexiuqi@huawei.com
+Subject: Re: [PATCH 1/3] dcache: add a new enum type for 'dentry_d_lock_class'
+Message-ID: <20191115141754.GR26530@ZenIV.linux.org.uk>
+References: <1573788472-87426-1-git-send-email-yukuai3@huawei.com>
+ <1573788472-87426-2-git-send-email-yukuai3@huawei.com>
+ <20191115032759.GA795729@kroah.com>
+ <20191115041243.GN26530@ZenIV.linux.org.uk>
+ <20191115072011.GA1203354@kroah.com>
+ <20191115131625.GO26530@ZenIV.linux.org.uk>
+ <20191115083813.65f5523c@gandalf.local.home>
+ <20191115134823.GQ26530@ZenIV.linux.org.uk>
+ <20191115085805.008870cb@gandalf.local.home>
 MIME-Version: 1.0
-In-Reply-To: <20191115000925.GB4847@ming.t460p>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-MC-Unique: J0vUecp5NuK4wnoKV_yKsw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20191115085805.008870cb@gandalf.local.home>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 08:09:25AM +0800, Ming Lei wrote:
-> On Thu, Nov 14, 2019 at 02:14:34PM +0100, Peter Zijlstra wrote:
-> > On Thu, Nov 14, 2019 at 07:31:53PM +0800, Ming Lei wrote:
-> > > Hi Guys,
-> > >=20
-> > > It is found that single AIO thread is migrated crazely by scheduler, =
-and
-> > > the migrate period can be < 10ms. Follows the test a):
-> >=20
-> > What does crazy mean? Does it cycle through the L3 mask?
-> >=20
->=20
-> The single thread AIO thread is migrated in several milliseconds once.
+On Fri, Nov 15, 2019 at 08:58:05AM -0500, Steven Rostedt wrote:
+> On Fri, 15 Nov 2019 13:48:23 +0000
+> Al Viro <viro@zeniv.linux.org.uk> wrote:
+> 
+> > > BTW, what do you mean by "can debugfs_remove_recursive() rely upon the
+> > > lack of attempts to create new entries inside the subtree it's trying
+> > > to kill?"  
+> > 
+> > Is it possible for something to call e.g. debugfs_create_dir() (or any
+> > similar primitive) with parent inside the subtree that has been
+> > passed to debugfs_remove_recursive() call that is still in progress?
+> > 
+> > If debugfs needs to cope with that, debugfs_remove_recursive() needs
+> > considerably heavier locking, to start with.
+> 
+> I don't know about debugfs, but at least tracefs (which cut and pasted
+> from debugfs) does not allow that. At least in theory it doesn't allow
+> that (and if it does, it's a bug in the locking at the higher levels).
+> 
+> And perhaps debugfs shouldn't allow that either. As it is only suppose
+> to be a light weight way to interact with the kernel, hence the name
+> "debugfs".
+> 
+> Yu, do you have a test case for the "infinite loop" case?
 
-Today I found the migrate rate of single fio IO thread can reach
-11~12K/sec when I run './xfs_complete 512' on another real machine
-(single numa node, 8 cores).
-
-And the number is very close to IOPS of the test, that said the fio
-IO thread can be migrated once just when completing one IO on the
-scsi_debug device.
-
-
-Thanks,
-Ming
-
+Infinite loop, AFAICS, is reasonably easy to trigger - just open
+a non-empty subdirectory and lseek to e.g. next-to-last element
+in it.  Again, list_empty() use in there is quite wrong - it can
+give false negatives just on the cursors.  No arguments about
+that part...
