@@ -2,109 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CD14FD8C9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2019 10:24:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B598FD9F8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2019 10:53:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbfKOJY2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Nov 2019 04:24:28 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:32984 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725829AbfKOJY1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Nov 2019 04:24:27 -0500
-Received: from zn.tnic (p200300EC2F0CC300B4C5AF24BE56B25A.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:c300:b4c5:af24:be56:b25a])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 533251EC0D06;
-        Fri, 15 Nov 2019 10:24:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1573809866;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=E5NJCPvuc3oH2wYFT9cv75IPz3w+7olilEdrf/3xSRU=;
-        b=g9AgrIO9wgjkcYp8jRyNKRcrDnssjEh83KqxdpQWp2fIdYqh9E/PcsilJGdsWdKVCN8Xf2
-        LjvjtcxyGOCbcWmiVpRKbv7FPRg6kwHcRq6ekSGPqwOzTz/sa8NMLhQHAAsSjJoyPNVgQF
-        7qJDlykU9nRi7aBcsSDXvh5o1xqDSlg=
-Date:   Fri, 15 Nov 2019 10:24:20 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Chen Yu <yu.c.chen@intel.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
+        id S1727065AbfKOJxD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Nov 2019 04:53:03 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35858 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726983AbfKOJxD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 15 Nov 2019 04:53:03 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3AD6BB18D;
+        Fri, 15 Nov 2019 09:53:01 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 62F3C1E3BEA; Fri, 15 Nov 2019 10:53:00 +0100 (CET)
+Date:   Fri, 15 Nov 2019 10:53:00 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-mm <linux-mm@kvack.org>,
+        fsdev <linux-fsdevel@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        Christian Brauner <christian@brauner.io>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
         Shakeel Butt <shakeelb@google.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/2][v2] x86/resctrl: Add task resctrl information display
-Message-ID: <20191115092420.GF18929@zn.tnic>
-References: <cover.1573788882.git.yu.c.chen@intel.com>
- <5dcd6580b51342c0803db6bc27866dd569914b0d.1573788882.git.yu.c.chen@intel.com>
+        Minchan Kim <minchan@kernel.org>, Mel Gorman <mgorman@suse.de>
+Subject: Re: [RFC v2] writeback: add elastic bdi in cgwb bdp
+Message-ID: <20191115095300.GB9043@quack2.suse.cz>
+References: <20191026104656.15176-1-hdanton@sina.com>
+ <20191115033240.11236-1-hdanton@sina.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5dcd6580b51342c0803db6bc27866dd569914b0d.1573788882.git.yu.c.chen@intel.com>
+In-Reply-To: <20191115033240.11236-1-hdanton@sina.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 01:25:06PM +0800, Chen Yu wrote:
-> Monitoring tools that want to find out which resctrl CTRL
-> and MONITOR groups a task belongs to must currently read
-> the "tasks" file in every group until they locate the process
-> ID.
+On Fri 15-11-19 11:32:40, Hillf Danton wrote:
 > 
-> Add an additional file /proc/{pid}/resctrl to provide this
-> information.
+> On Thu, 14 Nov 2019 13:17:46 +0100 Jan Kara wrote:
+> > 
+> > On Sat 26-10-19 18:46:56, Hillf Danton wrote:
+> > > 
+> > > The elastic bdi is the mirror bdi of spinning disks, SSD, USB and
+> > > other storage devices/instruments on market. The performance of
+> > > ebdi goes up and down as the pattern of IO dispatched changes, as
+> > > approximately estimated as below.
+> > > 
+> > > 	P = j(..., IO pattern);
+> > > 
+> > > In ebdi's view, the bandwidth currently measured in balancing dirty
+> > > pages has close relation to its performance because the former is a
+> > > part of the latter.
+> > > 
+> > > 	B = y(P);
+> > > 
+> > > The functions above suggest there may be a layer violation if it
+> > > could be better measured somewhere below fs.
+> > > 
+> > > It is measured however to the extent that makes every judge happy,
+> > > and is playing a role in dispatching IO with the IO pattern entirely
+> > > ignored that is volatile in nature.
+> > > 
+> > > And it helps to throttle the dirty speed, with the figure ignored
+> > > that DRAM in general is x10 faster than ebdi. If B is half of P for
+> > > instance, then it is near 5% of dirty speed, just 2 points from the
+> > > figure in the snippet below.
+> > > 
+> > > /*
+> > >  * If ratelimit_pages is too high then we can get into dirty-data overload
+> > >  * if a large number of processes all perform writes at the same time.
+> > >  * If it is too low then SMP machines will call the (expensive)
+> > >  * get_writeback_state too often.
+> > >  *
+> > >  * Here we set ratelimit_pages to a level which ensures that when all CPUs are
+> > >  * dirtying in parallel, we cannot go more than 3% (1/32) over the dirty memory
+> > >  * thresholds.
+> > >  */
+> > > 
+> > > To prevent dirty speed from running away from laundry speed, ebdi
+> > > suggests the walk-dog method to put in bdp as a leash seems to
+> > > churn less in IO pattern.
+> > > 
+> > > V2 is based on next-20191025.
+> > 
+> > Honestly, the changelog is still pretty incomprehensible as Andrew already
+> > mentioned. Also I completely miss there, what are the benefits of this work
+> > compared to what we currently have.
+> > 
+> Hey Jan
 > 
-> For example:
->  cat /proc/1193/resctrl
-> CTRL_MON:/ctrl_grp0
-> MON:/ctrl_grp0/mon_groups/mon_grp0
-> 
-> If the resctrl filesystem has not been mounted,
-> reading /proc/{pid}/resctrl returns an error:
-> cat: /proc/1193/resctrl: No such device
+> In the room which has been somewhere between 3% and 5% for bdp since
+> 143dfe8611a6 ("writeback: IO-less balance_dirty_pages()") a bdp is
+> proposed with target of surviving tests like LTP without regressions
+> introduced, so overall the concerned benefit is that bdp is becoming
+> more diverse if the diversity under linux/fs is good for the 99%.
 
-Eww, this doesn't sound very user-friendly. How is the user supposed to
-know that the resctrl fs needs to be mounted for this to work?
+What do you mean by "balance_dirty_pages() is becoming more diverse"?
 
-Why does the resctrl fs need to be mounted at all to show this?
-
-I'm guessing if it is not mounted, you have no groups so you don't have
-to return an error - you simply return "". Right?
-
-> Tested-by: Jinshi Chen <jinshi.chen@intel.com>
-> Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
-> Reviewed-by: Fenghua Yu <fenghua.yu@intel.com>
-> Reviewed-by: Tony Luck <tony.luck@intel.com>
-
-When you send a new version which has non-trivial changes, you should
-drop those tags because they don't apply anymore. Unless those people
-have managed to review and test the new version ...
-
-Looking at CONFIG_PROC_PID_ARCH_STATUS for an example of proc/ calling
-arch-specific functions, I guess you need to do:
-
-select CPU_RESCTRL if PROC_FS
-
-Thx.
-
+								Honza
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
