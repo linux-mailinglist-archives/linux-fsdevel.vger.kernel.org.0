@@ -2,92 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07269FE0A9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2019 15:56:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64F51FE1D4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Nov 2019 16:49:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727812AbfKOO4l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Nov 2019 09:56:41 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40462 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727526AbfKOO4l (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Nov 2019 09:56:41 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3CBA7B15E;
-        Fri, 15 Nov 2019 14:56:39 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 3ABBE1E4407; Fri, 15 Nov 2019 15:56:38 +0100 (CET)
-Date:   Fri, 15 Nov 2019 15:56:38 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Sebastian Siewior <bigeasy@linutronix.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Julia Cartwright <julia@ni.com>, Jan Kara <jack@suse.cz>,
-        Theodore Tso <tytso@mit.edu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jan Kara <jack@suse.com>, Mark Fasheh <mark@fasheh.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Joel Becker <jlbec@evilplan.org>
-Subject: Re: [PATCH] fs/buffer: Make BH_Uptodate_Lock bit_spin_lock a regular
- spinlock_t
-Message-ID: <20191115145638.GA5461@quack2.suse.cz>
-References: <20190820170818.oldsdoumzashhcgh@linutronix.de>
- <20190820171721.GA4949@bombadil.infradead.org>
- <alpine.DEB.2.21.1908201959240.2223@nanos.tec.linutronix.de>
- <20191011112525.7dksg6ixb5c3hxn5@linutronix.de>
+        id S1727625AbfKOPto (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Nov 2019 10:49:44 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:45276 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727626AbfKOPtm (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 15 Nov 2019 10:49:42 -0500
+Received: by mail-io1-f66.google.com with SMTP id v17so10885870iol.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Nov 2019 07:49:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=X5NAAOrJ3bS32ihsXavVCESX6DNfXdWEE7aVqtLVIHM=;
+        b=T96mBsWswYjsm0w7ecYkWpV509ib/ulk9bHbI0Xwo0rzkePegh7rSfOcmzGbyf8vTc
+         lns/HOXyf4/6jOYDVIgZ/CZyIfN2m2y88qVdmXSABhNsP0MXDIRsHGSOOd7wWkwuGiQx
+         ehcoBpFXp6INIFq3jwmveina1L3fsWjpzHRhMvlhwo8OJ8Dy4xuFXwCrYZiL/Ja/dmiU
+         sEvBblBcC09ww5H/W1Li3rJXBc1TYjMn46kjeboNwYGUiqFeNnjz46iJxarBlBzUTpau
+         7EU4w1MkRxjhgPFrJ2/ipVqnuE4IawmENFYcW1JVUg9OFLrEKZvfb77T8+3XayPV4Zd+
+         KrHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=X5NAAOrJ3bS32ihsXavVCESX6DNfXdWEE7aVqtLVIHM=;
+        b=CRVJqVyaEntAFrZcGvbZ42G03vJ7PfD6w3bbRHMTU+fzJ5n3NIyHFrAIIiAO2tRXZs
+         5wOQ6A6Jme7pgyupKhXQcbEtnoW5WXqenTGSw8ZAdn3+SrQ0PyyhUm7OIHIz352J12SM
+         mqLjiXCjV7zXk9i2oB0l6XW6NifulbGZMga9C3AVdUUsqkemfOsHloYb9wdpenFO/Vxc
+         GRFUEITsDFTuzPeGM8ZqhiuIszwZZaMwhX/EFpzjMkoqxvI+46Dra3WAtAGPU/hZj6IU
+         jje5wLT8PcpEPxAxvJ6KmEuEk9572O6xyNi8S8pIplzXl7Ci1HiYfzbeJ+24X2Zc8Fl4
+         mv8w==
+X-Gm-Message-State: APjAAAVbT4/rmKtMQPVMapFYOn30zTeytuYKwPiks1faeCt3TeWr3Npm
+        APXz0FaYaXvoQvey5urPP1zWiqBDITPahXrGqA==
+X-Google-Smtp-Source: APXvYqxEj1beLI6zhjihT/lmX2Dk324PGcIr8veC5c+0F/PFQKT7AeNYgljOGh72OwNqCMMZvqGkvMbSAqCkDjgGkjg=
+X-Received: by 2002:a5e:8e02:: with SMTP id a2mr1343031ion.269.1573832982053;
+ Fri, 15 Nov 2019 07:49:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191011112525.7dksg6ixb5c3hxn5@linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a02:7749:0:0:0:0:0 with HTTP; Fri, 15 Nov 2019 07:49:41
+ -0800 (PST)
+Reply-To: moneygram.1820@outlook.fr
+From:   "Ms.Mary Coster" <info.zennitbankplcnigerian@gmail.com>
+Date:   Fri, 15 Nov 2019 16:49:41 +0100
+Message-ID: <CABHzvrkUQbbmg0Gr7foD3OjAJiY7Fd37=SW3mU=fnOPOcOyNdQ@mail.gmail.com>
+Subject: Goodnews, I have deposited your transfer total amount US$4.8million
+ Dollars with Money Gram this morning. we agreed you will be receiving it
+ $5000.00 daily.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 11-10-19 13:25:25, Sebastian Siewior wrote:
-> On 2019-08-20 20:01:14 [+0200], Thomas Gleixner wrote:
-> > On Tue, 20 Aug 2019, Matthew Wilcox wrote:
-> > > On Tue, Aug 20, 2019 at 07:08:18PM +0200, Sebastian Siewior wrote:
-> > > > Bit spinlocks are problematic if PREEMPT_RT is enabled, because they
-> > > > disable preemption, which is undesired for latency reasons and breaks when
-> > > > regular spinlocks are taken within the bit_spinlock locked region because
-> > > > regular spinlocks are converted to 'sleeping spinlocks' on RT. So RT
-> > > > replaces the bit spinlocks with regular spinlocks to avoid this problem.
-> > > > Bit spinlocks are also not covered by lock debugging, e.g. lockdep.
-> > > > 
-> > > > Substitute the BH_Uptodate_Lock bit spinlock with a regular spinlock.
-> > > > 
-> > > > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> > > > [bigeasy: remove the wrapper and use always spinlock_t]
-> > > 
-> > > Uhh ... always grow the buffer_head, even for non-PREEMPT_RT?  Why?
-> > 
-> > Christoph requested that:
-> > 
-> >   https://lkml.kernel.org/r/20190802075612.GA20962@infradead.org
-> 
-> What do we do about this one?
-
-I was thinking about this for quite some time. In the end I think the patch
-is almost fine but I'd name the lock b_update_lock and put it just after
-b_size element in struct buffer_head to use the hole there. That way we
-don't grow struct buffer_head.
-
-With some effort, we could even shrink struct buffer_head from 104 bytes
-(on x86_64) to 96 bytes but I don't think that effort is worth it (I'd find
-it better use of time to actually work on getting rid of buffer heads
-completely).
-
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Attn, Dear
+Goodnews, I have deposited your transfer total amount US$4.8million
+Dollars with Money Gram this morning. we agreed you will be receiving
+it $5000.00 daily.
+Contact Mr. John Dave Director, Money Gram to pick up your first Money
+Gram payment $5000.00 today.
+Contact Person; Mr. John Dave Director, Money Gram,International
+Remittance-Benin
+Email; moneygram.1820@outlook.fr
+Telephone; +229 62619517
+Please re-confirm your address to him once again such as listed below.
+1.Your Full Name..............................
+2.Address.........................
+3.Country....................
+4.Sex.........................................
+5.Your telephone numbers..........................
+6. Copy of your ID...........................
+This is to avoid sending your funds to wrong person, He is waiting to
+hear from you urgent today.
+Let me know once you pick up your transfer $5000.00 today.
+Finally, Note I have paid for the service fees, but only money will
+send to him is $90.00 transfer fee before you can pick up the transfer
+today.
+Ask, Mr. John Dave Director, Money Gram to give you direction where to
+send your transfer fee $90.00 only to Him Immediately so that you can
+pick up $5000.00 us dollars today.
+Thanks for undrstanding.
+Mary Coster
+m.coster@aol.com
