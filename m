@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80638FF0FA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Nov 2019 17:09:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B202EFF006
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Nov 2019 17:02:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730399AbfKPPuB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 16 Nov 2019 10:50:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57738 "EHLO mail.kernel.org"
+        id S1731365AbfKPQCn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 16 Nov 2019 11:02:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33260 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728865AbfKPPuA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:50:00 -0500
+        id S1729580AbfKPPw2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:52:28 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA2CF20729;
-        Sat, 16 Nov 2019 15:49:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75F0020728;
+        Sat, 16 Nov 2019 15:52:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919400;
-        bh=vf9NyO1jwL7+plQ/TeTCa2N+JhzY6AVedPGnUsDRKW0=;
+        s=default; t=1573919547;
+        bh=99+ozqhw15jcn46i8tnsS5mRIbqSjBnEL4IOQNmNxSk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HLC82lgocl46u1gvfADlHfxQkdbLY2x3GLl9cfTNQMyTT2kHm5P7pX3+2gG85D7lH
-         HCuVKrNs3bfkgGhjJarCA9WN5fML1hJQqh/Nr1+mwrhvdwexSFKHCIq0uHzh9Ag+CT
-         IWDiVg7f8mbZyLWEtZd5J4iqEj7YZ2HOOrQD4w0Y=
+        b=R6aVHjVJ5vkFkCnqvt927L09VDD6extVEfS6YSVPMoYNUm+qXkPop9D4P9lPefv0f
+         6wCrlj9IchwnCDqBg9BKgfRJ4yg+FtY86bIrTb/nT7c6k/KTRBC4lDzGMb3Wy/2dCX
+         S67Zr/iN4aWuF0uC5Myk4jhlwkJ08JtITqrBJOPk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     =?UTF-8?q?Ernesto=20A=2E=20Fern=C3=A1ndez?= 
         <ernesto.mnd.fernandez@gmail.com>,
-        Vyacheslav Dubeyko <slava@dubeyko.com>,
+        Christoph Hellwig <hch@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 102/150] hfs: update timestamp on truncate()
-Date:   Sat, 16 Nov 2019 10:46:40 -0500
-Message-Id: <20191116154729.9573-102-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 59/99] hfsplus: fix BUG on bnode parent update
+Date:   Sat, 16 Nov 2019 10:50:22 -0500
+Message-Id: <20191116155103.10971-59-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191116154729.9573-1-sashal@kernel.org>
-References: <20191116154729.9573-1-sashal@kernel.org>
+In-Reply-To: <20191116155103.10971-1-sashal@kernel.org>
+References: <20191116155103.10971-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-stable: review
@@ -49,34 +49,52 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
 
-[ Upstream commit 8cd3cb5061730af085a3f9890a3352f162b4e20c ]
+[ Upstream commit 19a9d0f1acf75e8be8cfba19c1a34e941846fa2b ]
 
-The vfs takes care of updating mtime on ftruncate(), but on truncate() it
-must be done by the module.
+Creating, renaming or deleting a file may hit BUG_ON() if the first
+record of both a leaf node and its parent are changed, and if this
+forces the parent to be split.  This bug is triggered by xfstests
+generic/027, somewhat rarely; here is a more reliable reproducer:
 
-Link: http://lkml.kernel.org/r/e1611eda2985b672ed2d8677350b4ad8c2d07e8a.1539316825.git.ernesto.mnd.fernandez@gmail.com
+  truncate -s 50M fs.iso
+  mkfs.hfsplus fs.iso
+  mount fs.iso /mnt
+  i=1000
+  while [ $i -le 2400 ]; do
+    touch /mnt/$i &>/dev/null
+    ((++i))
+  done
+  i=2400
+  while [ $i -ge 1000 ]; do
+    mv /mnt/$i /mnt/$(perl -e "print $i x61") &>/dev/null
+    ((--i))
+  done
+
+The issue is that a newly created bnode is being put twice.  Reset
+new_node to NULL in hfs_brec_update_parent() before reaching goto again.
+
+Link: http://lkml.kernel.org/r/5ee1db09b60373a15890f6a7c835d00e76bf601d.1535682461.git.ernesto.mnd.fernandez@gmail.com
 Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
-Reviewed-by: Vyacheslav Dubeyko <slava@dubeyko.com>
+Cc: Christoph Hellwig <hch@infradead.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/hfs/inode.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/hfsplus/brec.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
-index 2538b49cc349e..350afd67bd69e 100644
---- a/fs/hfs/inode.c
-+++ b/fs/hfs/inode.c
-@@ -642,6 +642,8 @@ int hfs_inode_setattr(struct dentry *dentry, struct iattr * attr)
- 
- 		truncate_setsize(inode, attr->ia_size);
- 		hfs_file_truncate(inode);
-+		inode->i_atime = inode->i_mtime = inode->i_ctime =
-+						  current_time(inode);
+diff --git a/fs/hfsplus/brec.c b/fs/hfsplus/brec.c
+index 1002a0c08319b..20ce698251ad1 100644
+--- a/fs/hfsplus/brec.c
++++ b/fs/hfsplus/brec.c
+@@ -447,6 +447,7 @@ static int hfs_brec_update_parent(struct hfs_find_data *fd)
+ 			/* restore search_key */
+ 			hfs_bnode_read_key(node, fd->search_key, 14);
+ 		}
++		new_node = NULL;
  	}
  
- 	setattr_copy(inode, attr);
+ 	if (!rec && node->parent)
 -- 
 2.20.1
 
