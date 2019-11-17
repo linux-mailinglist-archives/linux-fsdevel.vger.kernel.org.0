@@ -2,211 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58DE9FF71A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Nov 2019 02:29:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E4D8FF86D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Nov 2019 08:36:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbfKQB3h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 16 Nov 2019 20:29:37 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46212 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726174AbfKQB3h (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 16 Nov 2019 20:29:37 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D918BAC31;
-        Sun, 17 Nov 2019 01:29:28 +0000 (UTC)
-Date:   Sun, 17 Nov 2019 12:28:58 +1100
-From:   Aleksa Sarai <asarai@suse.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        dev@opencontainers.org, containers@lists.linux-foundation.org,
-        bpf@vger.kernel.org, netdev@vger.kernel.org,
-        linux-alpha@vger.kernel.org, linux-api@vger.kernel.org,
-        libc-alpha@sourceware.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Subject: [PATCH v17 13/13] Documentation: path-lookup: include new LOOKUP
- flags
-Message-ID: <20191117012858.47t7zd3pbdlqz2mv@yavin.dot.cyphar.com>
-References: <20191117011713.13032-1-cyphar@cyphar.com>
+        id S1726007AbfKQHgL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 17 Nov 2019 02:36:11 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:42356 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfKQHgL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 17 Nov 2019 02:36:11 -0500
+Received: by mail-il1-f194.google.com with SMTP id n18so13022971ilt.9
+        for <linux-fsdevel@vger.kernel.org>; Sat, 16 Nov 2019 23:36:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=VgHib5p25couFj1QUfpO3Tvrh1VTOEUNoZKSgR4JQrY=;
+        b=uGxgqHyec25gRKpkwQX+ZHpKJ08Zycaq4c33A+kKo9VpOIQu/MxBF8qLFKaBgs6F6P
+         t8euZ+LPXUkYzi1GUgjIQz4sp3q2DOka5JqSQ6SLWQALb2Il48nLqBt0aPqdMbEmzvGA
+         6hXedGn6yQNZsSFgs/YcEn4ifPwWo8w4F7RYfQZgh6v99vT8vWeJTrevkacPjNUNBkkq
+         7GtN9Hee9Rlg3rf8jkv2i5Ms+USP84edFE239hFAn7rOLatZuI3ZRe6IQJHuwIbCRWDF
+         ihGmKcyMV3VtbH6IHsXQhzO0fBOAuoUe57QjlPJICyIM4g4mp9EXSkP9TcptWpK2JUXb
+         u54Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=VgHib5p25couFj1QUfpO3Tvrh1VTOEUNoZKSgR4JQrY=;
+        b=KuPcQah0ZmQJxEsRWaA3p2QcWhhWGOITMmpAbuVyo7F5ooh22ZoXhDUEucFwIro0hS
+         uclvtK2BEfHdKAN9c5qO6v7rdrv03/Jgll9KdK3V+osRuC1z/IEDd3ldO0asBlXnz62Y
+         qzqxVjXtm9MMZjNE2vmiyj3VIJ/jm0+BGmx5Jkckp50SHibozXV6zzr8m9c4Sk3/mrMx
+         rjgHcUsn8SImlEo7WEG22grkJrUN1va6eFufrP37FuljBH2h6q4FZm1+p7+v+epi699t
+         SAvtRgn3YTPQtkTQbWZIiw1nkN7OZCpZqtP88rlNFANNw9/xGMfpbmNfVLGOZ4WXS6c3
+         1sfA==
+X-Gm-Message-State: APjAAAXsh31kzN4/LscxO8ouVVPLUs3frclDMb3mz22n6kYA/WuGpz0b
+        xPALQHjSYsjT80302Po9PiOOLVQAOzJmqkD/VKg=
+X-Google-Smtp-Source: APXvYqwMZMpzNiWeeUY3gFdzValFMtYk5as39vtwHfP2tP3z/PbfraVN/hW0DYG19sJ+9CnL7xJxfS577Ds438o0Ok4=
+X-Received: by 2002:a92:d981:: with SMTP id r1mr9395029iln.64.1573976170174;
+ Sat, 16 Nov 2019 23:36:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191117011713.13032-1-cyphar@cyphar.com>
-User-Agent: NeoMutt/20180716
+Received: by 2002:a92:8912:0:0:0:0:0 with HTTP; Sat, 16 Nov 2019 23:36:09
+ -0800 (PST)
+Reply-To: abdoulayediallo1973@yahoo.com
+From:   "Mr. Abdoulaye DIALLO." <mr.waliahzida@gmail.com>
+Date:   Sun, 17 Nov 2019 09:36:09 +0200
+Message-ID: <CALTxDve=GqsFB86oTSn6CpvDWiVvBO+H-BZ3=a901Vn5F_w5uA@mail.gmail.com>
+Subject: I need your urgent response.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now that we have new LOOKUP flags, we should document them in the
-relevant path-walking documentation. And now that we've settled on a
-common name for nd_jump_link() style symlinks ("magic links"), use that
-term where magic-link semantics are described.
+Dear Good Friend,
 
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
----
- Documentation/filesystems/path-lookup.rst | 68 +++++++++++++++++++++--
- 1 file changed, 62 insertions(+), 6 deletions(-)
+Good Day,
 
-diff --git a/Documentation/filesystems/path-lookup.rst b/Documentation/filesystems/path-lookup.rst
-index 434a07b0002b..a3216979298b 100644
---- a/Documentation/filesystems/path-lookup.rst
-+++ b/Documentation/filesystems/path-lookup.rst
-@@ -13,6 +13,7 @@ It has subsequently been updated to reflect changes in the kernel
- including:
- 
- - per-directory parallel name lookup.
-+- ``openat2()`` resolution restriction flags.
- 
- Introduction to pathname lookup
- ===============================
-@@ -235,6 +236,13 @@ renamed.  If ``d_lookup`` finds that a rename happened while it
- unsuccessfully scanned a chain in the hash table, it simply tries
- again.
- 
-+``rename_lock`` is also used to detect and defend against potential attacks
-+against ``LOOKUP_BENEATH`` and ``LOOKUP_IN_ROOT`` when resolving ".." (where
-+the parent directory is moved outside the root, bypassing the ``path_equal()``
-+check). If ``rename_lock`` is updated during the lookup and the path encounters
-+a "..", a potential attack occurred and ``handle_dots()`` will bail out with
-+``-EAGAIN``.
-+
- inode->i_rwsem
- ~~~~~~~~~~~~~~
- 
-@@ -348,6 +356,13 @@ any changes to any mount points while stepping up.  This locking is
- needed to stabilize the link to the mounted-on dentry, which the
- refcount on the mount itself doesn't ensure.
- 
-+``mount_lock`` is also used to detect and defend against potential attacks
-+against ``LOOKUP_BENEATH`` and ``LOOKUP_IN_ROOT`` when resolving ".." (where
-+the parent directory is moved outside the root, bypassing the ``path_equal()``
-+check). If ``mount_lock`` is updated during the lookup and the path encounters
-+a "..", a potential attack occurred and ``handle_dots()`` will bail out with
-+``-EAGAIN``.
-+
- RCU
- ~~~
- 
-@@ -405,6 +420,10 @@ is requested.  Keeping a reference in the ``nameidata`` ensures that
- only one root is in effect for the entire path walk, even if it races
- with a ``chroot()`` system call.
- 
-+It should be noted that in the case of ``LOOKUP_IN_ROOT`` or
-+``LOOKUP_BENEATH``, the effective root becomes the directory file descriptor
-+passed to ``openat2()`` (which exposes these ``LOOKUP_`` flags).
-+
- The root is needed when either of two conditions holds: (1) either the
- pathname or a symbolic link starts with a "'/'", or (2) a "``..``"
- component is being handled, since "``..``" from the root must always stay
-@@ -1149,7 +1168,7 @@ so ``NULL`` is returned to indicate that the symlink can be released and
- the stack frame discarded.
- 
- The other case involves things in ``/proc`` that look like symlinks but
--aren't really::
-+aren't really (and are therefore commonly referred to as "magic-links")::
- 
-      $ ls -l /proc/self/fd/1
-      lrwx------ 1 neilb neilb 64 Jun 13 10:19 /proc/self/fd/1 -> /dev/pts/4
-@@ -1286,7 +1305,9 @@ A few flags
- A suitable way to wrap up this tour of pathname walking is to list
- the various flags that can be stored in the ``nameidata`` to guide the
- lookup process.  Many of these are only meaningful on the final
--component, others reflect the current state of the pathname lookup.
-+component, others reflect the current state of the pathname lookup, and some
-+apply restrictions to all path components encountered in the path lookup.
-+
- And then there is ``LOOKUP_EMPTY``, which doesn't fit conceptually with
- the others.  If this is not set, an empty pathname causes an error
- very early on.  If it is set, empty pathnames are not considered to be
-@@ -1310,13 +1331,48 @@ longer needed.
- ``LOOKUP_JUMPED`` means that the current dentry was chosen not because
- it had the right name but for some other reason.  This happens when
- following "``..``", following a symlink to ``/``, crossing a mount point
--or accessing a "``/proc/$PID/fd/$FD``" symlink.  In this case the
--filesystem has not been asked to revalidate the name (with
--``d_revalidate()``).  In such cases the inode may still need to be
--revalidated, so ``d_op->d_weak_revalidate()`` is called if
-+or accessing a "``/proc/$PID/fd/$FD``" symlink (also known as a "magic
-+link"). In this case the filesystem has not been asked to revalidate the
-+name (with ``d_revalidate()``).  In such cases the inode may still need
-+to be revalidated, so ``d_op->d_weak_revalidate()`` is called if
- ``LOOKUP_JUMPED`` is set when the look completes - which may be at the
- final component or, when creating, unlinking, or renaming, at the penultimate component.
- 
-+Resolution-restriction flags
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+In order to allow userspace to protect itself against certain race conditions
-+and attack scenarios involving changing path components, a series of flags are
-+available which apply restrictions to all path components encountered during
-+path lookup. These flags are exposed through ``openat2()``'s ``resolve`` field.
-+
-+``LOOKUP_NO_SYMLINKS`` blocks all symlink traversals (including magic-links).
-+This is distinctly different from ``LOOKUP_FOLLOW``, because the latter only
-+relates to restricting the following of trailing symlinks.
-+
-+``LOOKUP_NO_MAGICLINKS`` blocks all magic-link traversals. Filesystems must
-+ensure that they return errors from ``nd_jump_link()``, because that is how
-+``LOOKUP_NO_MAGICLINKS`` and other magic-link restrictions are implemented.
-+
-+``LOOKUP_NO_XDEV`` blocks all ``vfsmount`` traversals (this includes both
-+bind-mounts and ordinary mounts). Note that the ``vfsmount`` which contains the
-+lookup is determined by the first mountpoint the path lookup reaches --
-+absolute paths start with the ``vfsmount`` of ``/``, and relative paths start
-+with the ``dfd``'s ``vfsmount``. Magic-links are only permitted if the
-+``vfsmount`` of the path is unchanged.
-+
-+``LOOKUP_BENEATH`` blocks any path components which resolve outside the
-+starting point of the resolution. This is done by blocking ``nd_jump_root()``
-+as well as blocking ".." if it would jump outside the starting point.
-+``rename_lock`` and ``mount_lock`` are used to detect attacks against the
-+resolution of "..". Magic-links are also blocked.
-+
-+``LOOKUP_IN_ROOT`` resolves all path components as though the starting point
-+were the filesystem root. ``nd_jump_root()`` brings the resolution back to to
-+the starting point, and ".." at the starting point will act as a no-op. As with
-+``LOOKUP_BENEATH``, ``rename_lock`` and ``mount_lock`` are used to detect
-+attacks against ".." resolution. Magic-links are also blocked.
-+
- Final-component flags
- ~~~~~~~~~~~~~~~~~~~~~
- 
--- 
-2.24.0
+I hope all is well. Considering the fact that i don't know you in
+person or even have seen you before but due to the true revelation
+that i should share this lucrative opportunity with you, i have no
+choice other than to contact you. So, kindly consider this message
+essential and confidential.
 
+May i use this opportunity to introduce myself to you, I am Mr.
+Abdoulaye DIALLO, from Burkina Faso in West Africa, the Audit and
+Account Manager Bank of Africa (BOA) in Ouagadougou Burkina Faso West
+Africa.
+
+I had the intent to contact you over transfer of fund worth the sum of
+Ten Million Five Hundred Thousand US Dollars. (Us$10.5m) for the
+betterment of our life, i agree that 40% of the total amount will be
+for you and 60% for me.
+
+I need your urgent response on assurance of trust that you will not
+deny my share when the fund is transferred to your personal bank
+account.
+
+Reply with your information as i stated it bellow, once i receive your
+information i will give you more details of this transaction and how
+you will apply to our bank on how to transfer the fund into your bank
+account.
+
+(1) FULL NAMES:
+(2) PRIVATE PHONE NUMBER:
+(3) OCCUPATION:
+
+Make sure you keep this transaction as top secret and make it
+confidential till we receive the fund into your bank account that you
+will provide to our bank, Don't disclose it to anybody, because the
+secret of this transaction is as well as the success of it.
+
+I look forward to hear from you.
+
+In Sincerity,
+Mr. Abdoulaye DIALLO.
