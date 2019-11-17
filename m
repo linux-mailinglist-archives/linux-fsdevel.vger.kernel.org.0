@@ -2,36 +2,34 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED819FF9DC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Nov 2019 14:30:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60A61FFA2F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Nov 2019 15:16:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726065AbfKQNal (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 17 Nov 2019 08:30:41 -0500
-Received: from mout.web.de ([212.227.17.11]:42953 "EHLO mout.web.de"
+        id S1726357AbfKQOQD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 17 Nov 2019 09:16:03 -0500
+Received: from mout.web.de ([212.227.17.12]:46271 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726037AbfKQNal (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 17 Nov 2019 08:30:41 -0500
+        id S1726177AbfKQOQC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 17 Nov 2019 09:16:02 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1573997425;
-        bh=fs8EIzdE6o0M6xTF24WLLY76qhiXvAckElAXZNS6GcE=;
-        h=X-UI-Sender-Class:Cc:References:Subject:To:From:Date:In-Reply-To;
-        b=GcONIYUHlAHo1D9DvWcN19p8MMXYZ6pEl9KBfWu5ikLFRVdBTza/mko4ig3ViVrtu
-         MKRUzdUDeAPOINICOjtU8zaC1BzdVoHo0sfsgOVRlNRKGs3F1G49wPMO1O1zI4quJM
-         HL4129fn8bHY+K9h5WuGnZN+EszsJMxTcTNKCYzM=
+        s=dbaedf251592; t=1574000146;
+        bh=khYjmsAlHeJ/yxNUCSYVsBtEtQ46bLQCesW0YQ4jjEE=;
+        h=X-UI-Sender-Class:Cc:References:Subject:From:To:Date:In-Reply-To;
+        b=SjzxEjqWiAP30V4pokfScQR5Do0oSG9E5vofcjFjAeQwrTgicM11dAe1X6R8ZujOG
+         Rh+Tko5K85j60wTO1VJ/Yj1z1n4gv4yRGdTPBzHusRgc54ahy3HFORvcYnTt6f+QsP
+         VAceP2npgzBNLahiBxKmuGEq2gpjevSPO4D6enE4=
 X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
 Received: from [192.168.1.3] ([93.131.59.42]) by smtp.web.de (mrweb102
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0MBkLb-1igXdG1NWJ-00Am9p; Sun, 17
- Nov 2019 14:30:25 +0100
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0MbyIM-1iGJrI0HGY-00JKlD; Sun, 17
+ Nov 2019 15:15:46 +0100
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christoph Hellwig <hch@lst.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sungjong Seo <sj1557.seo@samsung.com>,
         =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
         linkinjeon@gmail.com
-References: <20191113081800.7672-3-namjae.jeon@samsung.com>
-Subject: Re: [PATCH 02/13] exfat: add super block operations
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org
+References: <20191113081800.7672-4-namjae.jeon@samsung.com>
+Subject: Re: [PATCH 03/13] exfat: add inode operations
 From:   Markus Elfring <Markus.Elfring@web.de>
 Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
@@ -76,135 +74,81 @@ Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
  x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
  pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <9e9bac40-109c-3349-24da-532c540638c2@web.de>
-Date:   Sun, 17 Nov 2019 14:30:22 +0100
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-fsdevel@vger.kernel.org
+Message-ID: <82520012-9940-7f2b-3bac-bea5c2396ccd@web.de>
+Date:   Sun, 17 Nov 2019 15:15:44 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20191113081800.7672-3-namjae.jeon@samsung.com>
+In-Reply-To: <20191113081800.7672-4-namjae.jeon@samsung.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:x6FPQUW77SXUsE0vAGDnH2vv/GMkx23DD2vq9A22ez2SrO6lGIP
- Kfhf7UvkrXGY2LkLKwiPXyrwRELCjHuc3ppwRjw+qyIyqsKqw5Ye86uPHDX4hcT7SwHucbn
- 0cMwaOw7OUjX9+6zx0oEplPX6+XnmHywpfF0m77sF5BvmJGDF0Hq028oucBAmGpHbsk3e3K
- rF7y/OeetHj44jgKX63tg==
+X-Provags-ID: V03:K1:zf5nEkDn57Q5Ka1RPQHVODxHgldyqQQEzkQAVmuz2Kwcvj/OaQs
+ hXv/X/M260bK754j/ijQ6SSORwPGgZo7ytpXZtRy3FxSRSzoSZZiInPTn0icG5Rhed5NJQL
+ J0yqXGWBhtDIxU+pZXmT9A5KNbzAOtuoMN+yx/qTYOA4xpTVAZCauPjXMzY0hIxhjUwts0z
+ M80h4631Q6ix+y/QvO/NA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:lpOfVsHDkRc=:JWhm/kgUtsa+I84khD40nk
- jxG6BN4TShPK56P/QYBPe3oOh6Z2DPbtGvKZwTuX1/byELef8NGl6E+3xR1Uw2htCwTDrLacU
- 4Wcuqcaztn8GIPm293hAf1dpSoEaVHuPRtv8uouBoHd4zC0ZUpaTqujlHQoVmcTR2beBJHE2d
- vU+A5NLFhFwk8ZYwUQnB+VlXdzVOXuMUSq3A5e/YSWK4uOjpcNcfzDTrcPYq976mnulmDbMa2
- sSeWrXKC03ncgYm5oTD11RcIJpsgXhQKq38tErsOmvb+5jWJy72h9z8qrDa8kBjNX6NmaAnSa
- JETLLXYTRmewUUMSVSuUKpAdJkkGjFxa1vZe07HRA8tMs1bn1oEkCGOZx+wP/KNL0IY+l/49d
- rmv/MIP3zX9Rjhtl7L+OqRaLoAUzV9umsZN6qGSBORvfldrMhATXc36Yzb4wflirhS2JYnZSS
- FGXwdpKp+VyRNVebO6NL0UMfKx2sWsLr7rxxk7ajYTrIu5x8K73J5pH+EI9fHzUCngwDlouYj
- bPhWiNjw8O4BqEcVUXkhu3Wys1iMJZ2Xopv0oR7oCsu78/EhKfsfGcMeytIAQgnOV/mmty5db
- ZsXb/TytRsNF5q61HtBAkQWbNKkd18ocruqYN6beu+doF9ZUCYpV+1V9ATdC29YxK6f3/nxUg
- dt0xwQBygyPYPoMt/8sVON+qMd49pTFVvq+qL+V+tTJryKJeUeCqoN09mbqvgoJUS8CtTuIqO
- mD2PDQFtCTbXB0FuBmgffarY9HqttE0eHahG6wZBTZKF68N+GL7xTmavw8ktcS6NDXwXNazeG
- odPtCgiIvumWmdxzmEVmi7qm16LllyfeXPRaM02afoF39whwdZicXBJ6APhzspvQb82SN5Uad
- Kg+N7iYXx4KSXlWpiGYE+rVOBPcbuj1rmIsq8K1umRRVTMnKToKyEaH/A8485iAMZxmsJD8P2
- QM+XeCcDj4cj9gXR9ftInWeUt3o0mgIqDQQTCy7NXwLUrnCG8KEkQ74yW/q/KTzsjRq5h+3tL
- GhjYj/kgf+SAzBMgPWQURD46O0gcyjJNm8K8nVkKPgh1QhZjWHA8KDMxe9WbJVaDRg+xyHJGO
- g3/6OXm/3x0SEvwIMhxLoVlyVGu2fpOZyU3Psi4vEexiXBQqER+tSiUs2zNDaoh9p10RDqssh
- scPAADp/eQl3p/UoTglNLJsQhWlepcFbLgJCzcs0qmz/B2/M+lFHtsJGE3YqwZ+2x+mJqjQAU
- gpJsu8xNa+UcsSOKUQyf8FBUJN636LD5on48FhbAni5p2lzdCx1XfqPLA5Bo=
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Mlrv3wFmRxA=:HYZ1apU/qF5XMUnZoetoB4
+ fiuuGP/QQ9nJhlSlOgVueG8H3MjiR0r2b/gbJTKyWolkevhU7p2LXcWgkcHBWrh+zbCLveede
+ 2jqGCK+DSIuMrIbMOM1TTOZG8zFDtqlLBelleWhbLJQ7vC0HFMUBi6uTLUXVXxB7XidjL2IaB
+ iMFkx/UbS0lwnSeG8P2KsLYQZWcczPc+b7t1/b4/0J0UF+RyFjiSHX0/4Q5YemI6IyfCF0PKH
+ M49haKHYy9ESbkqcc6CKjdOJ7mZpDPPGgeF3KKxX46JY0hi4zH/MvQYCRBchP+MyABIiGoEzU
+ 31za4GC5BEvCB/SKVEBawCOY9jnQCF09R7/MxDZk1qmXDrHYeCaGrIF1knaijCGeezeo87FGT
+ sx8Oc/o94P8KUgzez06bK5zCEmdzM6K/kEjrATrUBc5mx2UEGvRZ/NCgiicd6q6cI4Mu5b500
+ XJLrb5n5vu1hFKJk9C2XocBYLUv0J3aEU9iLDNgONo9IOWgC1IGlCjuICj0um93ejLfaaKOrF
+ NX7tSVTPXpl+babhmycuxKfE7QeVAJsxOmY0l7JnVm0gAjILd/fSUsv4lKrF5wobKtYCtoWDm
+ iPQHZFLesQEdyyN2Ep5haOS+IwuBXYAlGFqYeulyelK+9s4wZj4bPncFYsZTS/zhWFVcnHSAE
+ wnBzEhyFlRMG+gazZtxfYrQnXbZU2W6BZk6lw1CRdge2Re3oVraGZHVSriWqoCYcnWEUadG/d
+ VjaS/lXeaoWec8TdYwODxsi52w3y/MRpKptZRscdlBwrxJSuSm6qpcWi5BKhEpctLnqE8sQuF
+ MDP0ZrvJglF+aU9ojE1gRstdxnqoWbLJN5hEV8IUXiDm2hUH0OeqcD7rCJ+OhCCSBGA9WuC0y
+ 1pGTBSJA9XBDBne/5XGW6z4SZGKlBsqTfZ/GLMffTW9K0CAcbFNH3cypSPh5EU4EobQkcr8l3
+ 5so5xKpXwqSV7bIrbkh4ucns7JSaeg5CR0hUVZ+yWz0nHkTu/4W33bAyRZGL6QoDDR9ddBrvg
+ RqE2TuArzHbd6W4b/4gnlJzHsjDJGbmzGBQCrnwV62bQG6tLbJHSWJ42TeEvsA4mwGfm4qfIU
+ GFCy8rWgPHaSrZxBDNjAmNa0FFNaEEQP9UyCdwNK7wBVzxm7UH+H+jnckzNr7eBOb0JTlCL09
+ 3zRfcETGsPKWEAAGJr84Ab8WXeCjfckZEOOLZMU8boey3cmgpSpwMrPDraMMxfjszcIOHdPby
+ Np+DzLdoOYtyAvm5XNnIXKDVf7FCAlLxtnwj0b6PjBhQkQ1HVHddD88RYNHI=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 =E2=80=A6
-> +++ b/fs/exfat/super.c
+> +++ b/fs/exfat/inode.c
 =E2=80=A6
-> +static int exfat_show_options(struct seq_file *m, struct dentry *root)
+> +static int exfat_create(struct inode *dir, struct dentry *dentry, umode=
+_t mode,
+> +		bool excl)
 > +{
 =E2=80=A6
-> +	seq_printf(m, ",fmask=3D%04o", opts->fs_fmask);
-> +	seq_printf(m, ",dmask=3D%04o", opts->fs_dmask);
++out:
++	mutex_unlock(&EXFAT_SB(sb)->s_lock);
 
-How do you think about to combine these two function calls into a single o=
-ne?
+Can the label =E2=80=9Cunlock=E2=80=9D be more appropriate?
 
 
-> +static int __exfat_fill_super(struct super_block *sb)
+> +static struct dentry *exfat_lookup(struct inode *dir, struct dentry *de=
+ntry,
+> +		unsigned int flags)
 > +{
 =E2=80=A6
-> +		exfat_msg(sb, KERN_ERR, "unable to read boot sector");
-> +		ret =3D -EIO;
-> +		goto out;
-=E2=80=A6
+> +error:
+> +	mutex_unlock(&EXFAT_SB(sb)->s_lock);
 
-Would you like to simplify this place?
-
-+		return -EIO;
+Would you like to use the label =E2=80=9Cunlock=E2=80=9D also at this plac=
+e (and similar ones)?
 
 
-=E2=80=A6
-> +		exfat_msg(sb, KERN_ERR, "failed to load upcase table");
-> +		goto out;
-
-Would you like to omit this label?
-
-+		return ret;
-
-
-> +static int exfat_fill_super(struct super_block *sb, struct fs_context *=
-fc)
+> +static int exfat_search_empty_slot(struct super_block *sb,
+> +		struct exfat_hint_femp *hint_femp, struct exfat_chain *p_dir,
+> +		int num_entries)
 > +{
 =E2=80=A6
-> +		exfat_msg(sb, KERN_ERR, "failed to recognize exfat type");
-> +		goto failed_mount;
+> +out:
+> +	kfree(clu);
 
-The local variable =E2=80=9Croot_inode=E2=80=9D contains still a null poin=
-ter at this place.
-
-* Thus I would find a jump target like =E2=80=9Creset_s_root=E2=80=9D more=
- appropriate.
-
-* Can the corresponding pointer initialisation be omitted then?
-
-
-=E2=80=A6
-> +failed_mount:
-> +	if (root_inode)
-> +		iput(root_inode);
-=E2=80=A6
-
-I am informed in the way that this function tolerates the passing
-of null pointers.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs=
-/inode.c?id=3D1d4c79ed324ad780cfc3ad38364ba1fd585dd2a8#n1567
-https://elixir.bootlin.com/linux/v5.4-rc7/source/fs/inode.c#L1567
-
-Thus I suggest to omit the extra pointer check also at this place.
-
-
-> +static int __init init_exfat_fs(void)
-> +{
-=E2=80=A6
-+	err =3D exfat_cache_init();
-+	if (err)
-+		goto error;
-
-Can it be nicer to return directly?
-
-
-=E2=80=A6
-> +	if (!exfat_inode_cachep)
-> +		goto error;
-
-Can an other jump target like =E2=80=9Cshutdown_cache=E2=80=9D be more app=
-ropriate?
-
-
-> +	err =3D register_filesystem(&exfat_fs_type);
-> +	if (err)
-> +		goto error;
-=E2=80=A6
-
-Can the label =E2=80=9Cdestroy_cache=E2=80=9D be more appropriate?
-
+How do you think about to rename the label to =E2=80=9Cfree_clu=E2=80=9D?
 
 Regards,
 Markus
