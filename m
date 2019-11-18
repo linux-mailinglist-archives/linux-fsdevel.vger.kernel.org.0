@@ -2,97 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A01DCFFCA2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2019 02:01:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19EA0FFD08
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2019 03:14:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726178AbfKRBAw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 17 Nov 2019 20:00:52 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:60376 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725905AbfKRBAw (ORCPT
+        id S1726332AbfKRCOC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 17 Nov 2019 21:14:02 -0500
+Received: from mail-il1-f197.google.com ([209.85.166.197]:35537 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726314AbfKRCOC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 17 Nov 2019 20:00:52 -0500
-Received: from dread.disaster.area (pa49-181-255-80.pa.nsw.optusnet.com.au [49.181.255.80])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 333503A1F83;
-        Mon, 18 Nov 2019 12:00:49 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iWVPL-0004U1-Vm; Mon, 18 Nov 2019 12:00:47 +1100
-Date:   Mon, 18 Nov 2019 12:00:47 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 28/28] xfs: rework unreferenced inode lookups
-Message-ID: <20191118010047.GS4614@dread.disaster.area>
-References: <20191031234618.15403-1-david@fromorbit.com>
- <20191031234618.15403-29-david@fromorbit.com>
- <20191106221846.GE37080@bfoster>
- <20191114221602.GJ4614@dread.disaster.area>
- <20191115172600.GC55854@bfoster>
+        Sun, 17 Nov 2019 21:14:02 -0500
+Received: by mail-il1-f197.google.com with SMTP id w69so15093696ilk.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Nov 2019 18:14:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=0hJK8rPWOFUddMB0lJimGQDZPQJFXDrAgb0buhY0TvU=;
+        b=T0TxwHn9/84d+Ov1yhVoAyAOGkhIzug4oAk/xsIG2advpgENcOn6ZGgp+TNVIg3l/P
+         v8pYMjMMLbNOC4oNfU+G/kgt0yqd/pTIc5M+NZ7tiSflc+QtGqftc+M9x3VNmrekmBpK
+         ZfDusSmagf9EL65gd3xBWBriJUNudjnVdcLaGmRyitMRnbKOx4KiqH7L5kQTUNXk7gld
+         TbIHS3A1XZYWckzDlpH3vjmmwWzIu0xsiolWz5FgJocMIFL0UyySHwGHbBKkfjd7R+A9
+         SkoLVSMps2N6sBMRanyAuxDKaKFKTesxegy+8HAegcXuRrWQg8IxJ+tjBCPEwdCgtxo6
+         1rnQ==
+X-Gm-Message-State: APjAAAUtrZFVa869xFeTw0x5rKhdRlrMOjJDkwo4wFZzK3t2GiClpX2C
+        MTDXZbroyHi/0jVIbIdGTAPL+e7S7nme4Rvw0l2lXs4ANUvX
+X-Google-Smtp-Source: APXvYqwZhRrNpOcp3K1jSna3NVMQ3Y9eKDGXT7VjA9/ZYXXiCNJMlXd57obKMz7tPT7gqZ5PakMzS/X78yIoSTTNHjwPUi2z8UDS
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191115172600.GC55854@bfoster>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=G6BsK5s5 c=1 sm=1 tr=0
-        a=XqaD5fcB6dAc7xyKljs8OA==:117 a=XqaD5fcB6dAc7xyKljs8OA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=MeAgGD-zjQ4A:10
-        a=7-415B0cAAAA:8 a=ETrtCZpq2FqVuZsvotgA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+X-Received: by 2002:a92:660e:: with SMTP id a14mr13677440ilc.235.1574043241343;
+ Sun, 17 Nov 2019 18:14:01 -0800 (PST)
+Date:   Sun, 17 Nov 2019 18:14:01 -0800
+In-Reply-To: <00000000000044cbf80576baaecd@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000042f41905979580cc@google.com>
+Subject: Re: possible deadlock in path_openat
+From:   syzbot <syzbot+a55ccfc8a853d3cff213@syzkaller.appspotmail.com>
+To:     amir73il@gmail.com, ast@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        miklos@szeredi.hu, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 12:26:00PM -0500, Brian Foster wrote:
-> On Fri, Nov 15, 2019 at 09:16:02AM +1100, Dave Chinner wrote:
-> > On Wed, Nov 06, 2019 at 05:18:46PM -0500, Brian Foster wrote:
-> > If so, most of this patch will go away....
-> > 
-> > > > +	 * attached to the buffer so we don't need to do anything more here.
-> > > >  	 */
-> > > > -	if (ip != free_ip) {
-> > > > -		if (!xfs_ilock_nowait(ip, XFS_ILOCK_EXCL)) {
-> > > > -			rcu_read_unlock();
-> > > > -			delay(1);
-> > > > -			goto retry;
-> > > > -		}
-> > > > -
-> > > > -		/*
-> > > > -		 * Check the inode number again in case we're racing with
-> > > > -		 * freeing in xfs_reclaim_inode().  See the comments in that
-> > > > -		 * function for more information as to why the initial check is
-> > > > -		 * not sufficient.
-> > > > -		 */
-> > > > -		if (ip->i_ino != inum) {
-> > > > +	if (__xfs_iflags_test(ip, XFS_ISTALE)) {
-> > > 
-> > > Is there a correctness reason for why we move the stale check to under
-> > > ilock (in both iflush/ifree)?
-> > 
-> > It's under the i_flags_lock, and so I moved it up under the lookup
-> > hold of the i_flags_lock so we don't need to cycle it again.
-> > 
-> 
-> Yeah, but in both cases it looks like it moved to under the ilock as
-> well, which comes after i_flags_lock. IOW, why grab ilock for stale
-> inodes when we're just going to skip them?
+syzbot has bisected this bug to:
 
-Because I was worrying about serialising against reclaim before
-changing the state of the inode. i.e. if the inode has already been
-isolated by not yet disposed of, we shouldn't touch the inode state
-at all. Serialisation against reclaim in this patch is via the
-ILOCK, hence we need to do that before setting ISTALE....
+commit 8e54cadab447dae779f80f79c87cbeaea9594f60
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Sun Nov 27 01:05:42 2016 +0000
 
-IOWs, ISTALE is not protected by ILOCK, we just can't modify the
-inode state until after we've gained the ILOCK to protect against
-reclaim....
+     fix default_file_splice_read()
 
-Cheers,
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=108f4416e00000
+start commit:   6d906f99 Merge tag 'arm64-fixes' of git://git.kernel.org/p..
+git tree:       upstream
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=128f4416e00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=148f4416e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=856fc6d0fbbeede9
+dashboard link: https://syzkaller.appspot.com/bug?extid=a55ccfc8a853d3cff213
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=101767b7200000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13c15013200000
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Reported-by: syzbot+a55ccfc8a853d3cff213@syzkaller.appspotmail.com
+Fixes: 8e54cadab447 ("fix default_file_splice_read()")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
