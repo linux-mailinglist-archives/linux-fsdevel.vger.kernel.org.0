@@ -2,71 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19EA0FFD08
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2019 03:14:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84700FFD12
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2019 03:24:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726332AbfKRCOC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 17 Nov 2019 21:14:02 -0500
-Received: from mail-il1-f197.google.com ([209.85.166.197]:35537 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726314AbfKRCOC (ORCPT
+        id S1726314AbfKRCYo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 17 Nov 2019 21:24:44 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:33672 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725905AbfKRCYo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 17 Nov 2019 21:14:02 -0500
-Received: by mail-il1-f197.google.com with SMTP id w69so15093696ilk.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Nov 2019 18:14:01 -0800 (PST)
+        Sun, 17 Nov 2019 21:24:44 -0500
+Received: by mail-qk1-f194.google.com with SMTP id 71so13141347qkl.0;
+        Sun, 17 Nov 2019 18:24:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=0PODx413zWYXfSobH+0+CB4Ms3JTa4kjwkVV1cKBF0I=;
+        b=rmjEArZt+40+6whHrw6ndvflf4Colo6cGXVekvJlkeRrMjkUod5apJCONqqT4UVuey
+         KJHpoxmAd2B/w6sVOUPRXpmHgQQSh2FsaQ28m6shiAZ7OKPzEhS/0Ilq3/1NEEhVC29k
+         zbTYIPnDmR4GKiYbWR/73N1wgIrjxq77uMlJ+7LNVmYLSfY3XW7CiK0ke66ner0HGenJ
+         0LuVUcu5jgnsLsEDYwCgL9Bi6qwDZZ49awAZahqJarg0niTRKSw0x0hu63HgmNeix3oZ
+         wbYcmFMFlDXC5Fu84M+oQbKneXjPl3JXfAuEVX5ktGKLobIoyZuT+X/qfByP7FMKlH3V
+         Rf6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=0hJK8rPWOFUddMB0lJimGQDZPQJFXDrAgb0buhY0TvU=;
-        b=T0TxwHn9/84d+Ov1yhVoAyAOGkhIzug4oAk/xsIG2advpgENcOn6ZGgp+TNVIg3l/P
-         v8pYMjMMLbNOC4oNfU+G/kgt0yqd/pTIc5M+NZ7tiSflc+QtGqftc+M9x3VNmrekmBpK
-         ZfDusSmagf9EL65gd3xBWBriJUNudjnVdcLaGmRyitMRnbKOx4KiqH7L5kQTUNXk7gld
-         TbIHS3A1XZYWckzDlpH3vjmmwWzIu0xsiolWz5FgJocMIFL0UyySHwGHbBKkfjd7R+A9
-         SkoLVSMps2N6sBMRanyAuxDKaKFKTesxegy+8HAegcXuRrWQg8IxJ+tjBCPEwdCgtxo6
-         1rnQ==
-X-Gm-Message-State: APjAAAUtrZFVa869xFeTw0x5rKhdRlrMOjJDkwo4wFZzK3t2GiClpX2C
-        MTDXZbroyHi/0jVIbIdGTAPL+e7S7nme4Rvw0l2lXs4ANUvX
-X-Google-Smtp-Source: APXvYqwZhRrNpOcp3K1jSna3NVMQ3Y9eKDGXT7VjA9/ZYXXiCNJMlXd57obKMz7tPT7gqZ5PakMzS/X78yIoSTTNHjwPUi2z8UDS
-MIME-Version: 1.0
-X-Received: by 2002:a92:660e:: with SMTP id a14mr13677440ilc.235.1574043241343;
- Sun, 17 Nov 2019 18:14:01 -0800 (PST)
-Date:   Sun, 17 Nov 2019 18:14:01 -0800
-In-Reply-To: <00000000000044cbf80576baaecd@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000042f41905979580cc@google.com>
-Subject: Re: possible deadlock in path_openat
-From:   syzbot <syzbot+a55ccfc8a853d3cff213@syzkaller.appspotmail.com>
-To:     amir73il@gmail.com, ast@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        miklos@szeredi.hu, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=0PODx413zWYXfSobH+0+CB4Ms3JTa4kjwkVV1cKBF0I=;
+        b=g/jv/OrVDJH5GXpcrEj5KwV3M3/autmmPPgBPYR6xmk2VubGFGpoBEqyzycGqYOl1K
+         Hw9UxENL58bPb0U4LsCGAcqChRhTBcN+h/yUWz1U3wF1Ks9BlD7xu0LKyfJFk3kttXnq
+         doJDbX82t3zpsNeldPRTWMz6y9EHFWivw4OajjAGdqjeYNONuWjPg/EJRprBYfib+wZ2
+         cDsHUeBfDn7uZdSwOhr/deiR/Q4nsoMzdbOrzUnIY79FqbD8Fbb92uZHgI/UscYGAvAD
+         WlMzmBAvx1Z/Tyd/kr8yAwLsR7PUGyXjqKk2VIklELHXoKHiUwnTG5N+mUz/ImeMmyMq
+         drNg==
+X-Gm-Message-State: APjAAAUp1t0xBXTyTdd65mUFyS93jAX1Rlq1MNnHsb1PC56zHaKpk3dA
+        y1na+9Kz1yltjNG8ZBaU6g==
+X-Google-Smtp-Source: APXvYqyck54SgVxduwvF2JuxnOVAELdcvpnIQqSktS7SoxNdd0A13dSN4e4J0HtjJBHoykci9Yv0Nw==
+X-Received: by 2002:a05:620a:159c:: with SMTP id d28mr21918417qkk.466.1574043882984;
+        Sun, 17 Nov 2019 18:24:42 -0800 (PST)
+Received: from gabell.redhat.com (209-6-122-159.s2973.c3-0.arl-cbr1.sbo-arl.ma.cable.rcncustomer.com. [209.6.122.159])
+        by smtp.gmail.com with ESMTPSA id w15sm9687938qtk.43.2019.11.17.18.24.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Nov 2019 18:24:42 -0800 (PST)
+From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org
+Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        linux-kernel@vger.kernel.org, virtio-fs@redhat.com
+Subject: [PATCH] fuse: Fix the return code of fuse_direct_IO() to deal with the error for aio
+Date:   Sun, 17 Nov 2019 21:24:10 -0500
+Message-Id: <20191118022410.21023-1-msys.mizuma@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this bug to:
+From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
 
-commit 8e54cadab447dae779f80f79c87cbeaea9594f60
-Author: Al Viro <viro@zeniv.linux.org.uk>
-Date:   Sun Nov 27 01:05:42 2016 +0000
+exit_aio() is sometimes stuck in wait_for_completion() after aio is issued
+with direct IO and the task receives a signal.
 
-     fix default_file_splice_read()
+That is because kioctx in mm->ioctx_table is in use by aio_kiocb.
+aio_kiocb->ki_refcnt is 1 at that time. That means iocb_put() isn't
+called correctly.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=108f4416e00000
-start commit:   6d906f99 Merge tag 'arm64-fixes' of git://git.kernel.org/p..
-git tree:       upstream
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=128f4416e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=148f4416e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=856fc6d0fbbeede9
-dashboard link: https://syzkaller.appspot.com/bug?extid=a55ccfc8a853d3cff213
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=101767b7200000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13c15013200000
+fuse_get_req() returns as -EINTR when it's blocked and receives a signal.
+fuse_direct_IO() deals with the -EINTER as -EIOCBQUEUED and returns as
+-EIOCBQUEUED even though the aio isn't queued.
+As the result, aio_rw_done() doesn't handle the error, so iocb_put() isn't
+called via aio_complete_rw(), which is the callback.
 
-Reported-by: syzbot+a55ccfc8a853d3cff213@syzkaller.appspotmail.com
-Fixes: 8e54cadab447 ("fix default_file_splice_read()")
+The flow is something like as:
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+  io_submit
+    aio_get_req
+      refcount_set(&req->ki_refcnt, 2)
+    __io_submit_one
+      aio_read
+      ...
+        fuse_direct_IO # return as -EIOCBQUEUED
+          __fuse_direct_read
+          ...
+            fuse_get_req # return as -EINTR
+        aio_rw_done
+          # Nothing to do because ret is -EIOCBQUEUED...
+    iocb_put
+      refcount_dec_and_test(&iocb->ki_refcnt) # 2->1
+
+Return as the error code of fuse_direct_io() or __fuse_direct_read() in
+fuse_direct_IO() so that aio_rw_done() can handle the error and call
+iocb_put().
+
+This issue is trucked as a virtio-fs issue:
+https://gitlab.com/virtio-fs/qemu/issues/14
+
+Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+---
+ fs/fuse/file.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index db48a5cf8620..87b151aec8f2 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -3115,8 +3115,12 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 		fuse_aio_complete(io, ret < 0 ? ret : 0, -1);
+ 
+ 		/* we have a non-extending, async request, so return */
+-		if (!blocking)
+-			return -EIOCBQUEUED;
++		if (!blocking) {
++			if (ret >= 0)
++				return -EIOCBQUEUED;
++			else
++				return ret;
++		}
+ 
+ 		wait_for_completion(&wait);
+ 		ret = fuse_get_res_by_io(io);
+-- 
+2.18.1
+
