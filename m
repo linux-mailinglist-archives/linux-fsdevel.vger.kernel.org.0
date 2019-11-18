@@ -2,254 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65268100676
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2019 14:28:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD59C100749
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2019 15:23:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727045AbfKRN2f convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Nov 2019 08:28:35 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:49961 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726898AbfKRN2f (ORCPT
+        id S1726939AbfKROXn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Nov 2019 09:23:43 -0500
+Received: from mail3.bemta25.messagelabs.com ([195.245.230.84]:58924 "EHLO
+        mail3.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726627AbfKROXm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Nov 2019 08:28:35 -0500
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1iWh4q-0003hR-Gc; Mon, 18 Nov 2019 14:28:24 +0100
-Date:   Mon, 18 Nov 2019 14:28:24 +0100
-From:   Sebastian Siewior <bigeasy@linutronix.de>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Julia Cartwright <julia@ni.com>, Theodore Tso <tytso@mit.edu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jan Kara <jack@suse.com>, Mark Fasheh <mark@fasheh.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Joel Becker <jlbec@evilplan.org>
-Subject: [PATCH v3] fs/buffer: Make BH_Uptodate_Lock bit_spin_lock a regular
- spinlock_t
-Message-ID: <20191118132824.rclhrbujqh4b4g4d@linutronix.de>
-References: <20190820170818.oldsdoumzashhcgh@linutronix.de>
- <20190820171721.GA4949@bombadil.infradead.org>
- <alpine.DEB.2.21.1908201959240.2223@nanos.tec.linutronix.de>
- <20191011112525.7dksg6ixb5c3hxn5@linutronix.de>
- <20191115145638.GA5461@quack2.suse.cz>
- <20191115175420.cotwwz5tmcwvllsq@linutronix.de>
- <20191118093845.GB17319@quack2.suse.cz>
+        Mon, 18 Nov 2019 09:23:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ts.fujitsu.com;
+        s=200619tsfj; t=1574087020; i=@ts.fujitsu.com;
+        bh=v4ugclb7Ac9tF4IOrOt6IMKMq2976QiWVp1FMkr4oPI=;
+        h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+         MIME-Version:Content-Transfer-Encoding:Content-Type;
+        b=KqJM0YdQy+mI0UAmdkgt4Cw2trosriqAuKEZOGbSaMu44rlE+BC5Yz/gjHYpF8vch
+         7CEhTtic98gkoUa1ro0adIJ5BQ4QmlJ953OOzaHsq1fSFbd0kS8NOUHTu86pU3gbAC
+         OHYp4zCZTg9N295BPktdkEnpC/ITWdaKA5vSGjOJW47V+ekj8NcQDXSlrTptc5Fm9W
+         UY8BsDNdy8XGywBj2hSampgVA16kW8+UccawKXdR7w9UyFGO+feT/ijO+Rvz5xi5tl
+         4MfgH965CharW3UUDSbXX9v95Y3DqlJalBTgnEzz58vsuFVIW8cIcaJlwLrC33IOFn
+         ABmD6OHX/edyg==
+Received: from [46.226.52.197] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-4.bemta.az-b.eu-west-1.aws.symcld.net id 7C/A5-03226-B69A2DD5; Mon, 18 Nov 2019 14:23:39 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOIsWRWlGSWpSXmKPExsViZ8MxVTd75aV
+  Yg2uzNC2+/Wlls9iz9ySLxeVdc9gszv89zurA4rFz1l12j8+b5Dw2PXnLFMAcxZqZl5RfkcCa
+  8XPvGsaCJ4IVR4/9ZWlgPMrTxcjFISQwh1Fi/6ZpTBDOAkaJ7r+djF2MnBxsAgYSu14dYgaxR
+  QRUJXbcncgKYjMLxEpcmrQBrEZYwFni4ouNYDYLUM3O50dYQGxeAUOJvR19QEM5ODgFLCTezA
+  drFQJqffd7MiNEiaDEyZlPWCBGykt0XG6EGq8jsWD3J7YJjLyzkJTNQlI2C0nZAkbmVYwWSUW
+  Z6RkluYmZObqGBga6hoZGuoaW5kBsppdYpZukl1qqW55aXKJrqJdYXqxXXJmbnJOil5dasokR
+  GKYpBUeP7GB89/Wt3iFGSQ4mJVFeefuLsUJ8SfkplRmJxRnxRaU5qcWHGGU4OJQkeMNWXIoVE
+  ixKTU+tSMvMAcYMTFqCg0dJhFdgOVCat7ggMbc4Mx0idYpRl+P6+71LmYVY8vLzUqXEeaeBFA
+  mAFGWU5sGNgMXvJUZZKWFeRgYGBiGegtSi3MwSVPlXjOIcjErCvFYgU3gy80rgNr0COoIJ6Aj
+  tHedAjihJREhJNTDJrUrdsFTegP/ZXO7wv703N39vb4ietDRPJU47u1Yzw6JWdfPZqBvz8rkv
+  L59zcvf9lENP5fg0HnzhdKict/6Iq+DMwLa0DdOat4eF2Roaund/Dj9wb9ok2z7dr/OvSv3kP
+  DTn1tJ7n6Letufseda6tu+Nq9QT1jvbUpMXb1LRnp4RxrVTcIHrG6/sewLGB6JZnmyeHvNvKQ
+  ufyOQym4KZW++Xz3b7m/e/LcZw2+b4bz0yDGK7W47F8r98Wuw6qWpmS2I617mPIjei0s5+UFn
+  35OeE7P/PA/7kWIhFzJkdw+lr8Lw7Ircp/YzGqvy/17ZncZ2fdun3IQ7+UqXjc92enl34QO+b
+  yvacvD2vT7IxKbEUZyQaajEXFScCAKGqYH9aAwAA
+X-Env-Sender: dietmar.hahn@ts.fujitsu.com
+X-Msg-Ref: server-7.tower-285.messagelabs.com!1574087019!272990!1
+X-Originating-IP: [62.60.8.149]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.44.22; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 5619 invoked from network); 18 Nov 2019 14:23:39 -0000
+Received: from unknown (HELO mailhost2.uk.fujitsu.com) (62.60.8.149)
+  by server-7.tower-285.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 18 Nov 2019 14:23:39 -0000
+Received: from sanpedro.mch.fsc.net ([172.17.20.6])
+        by mailhost2.uk.fujitsu.com (8.14.5/8.14.5) with SMTP id xAIENVO9001237;
+        Mon, 18 Nov 2019 14:23:31 GMT
+Received: from amur.mch.fsc.net (unknown [10.172.102.131])
+        by sanpedro.mch.fsc.net (Postfix) with ESMTP id 460259D00892;
+        Mon, 18 Nov 2019 15:23:26 +0100 (CET)
+From:   Dietmar Hahn <dietmar.hahn@ts.fujitsu.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        dieti.hahn@gmail.com
+Subject: Re: Kernel panic because of wrong contents in core_pattern
+Date:   Mon, 18 Nov 2019 15:23:26 +0100
+Message-ID: <2513527.0IqIISzq9R@amur.mch.fsc.net>
+In-Reply-To: <20191115132740.GP26530@ZenIV.linux.org.uk>
+References: <1856804.EHpamdVGlA@amur.mch.fsc.net> <20191115132740.GP26530@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20191118093845.GB17319@quack2.suse.cz>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+Am Freitag, 15. November 2019, 14:27:40 CET schrieb Al Viro:
+> On Fri, Nov 15, 2019 at 02:01:55PM +0100, Dietmar Hahn wrote:
+> 
+> > Later a user tool dumped with SIGSEGV and the linux system crashed.
+> > I investigated the crash dump and found the cause.
+> > 
+> > Via format_corename() in fs/coredump.c the helper_argv[] with 3 entries is
+> > created and helper_argv[0] == "" (because of the ' ' after the '|')
+> > ispipe is set to 1.
+> > Later in call_usermodehelper_setup():
+> >   sub_info->path = path;  == helper_argv[0] == ""
+> > This leads in call_usermodehelper_exec() to:
+> >   if (strlen(sub_info->path) == 0)
+> >                 goto out;
+> > with a return value of 0.
+> > But no pipe is created and thus cprm.file == NULL.
+> > This leads in file_start_write() to the panic because of dereferencing
+> >  file_inode(file)->i_mode)
+> > 
+> > I'am not sure what's the best way to fix this so I've no patch.
+> > Thanks.
+> 
+> Check in the caller of format_corename() for **argv being '\0' and fail
+> if it is?  I mean, turn that
+>                 if (ispipe < 0) {
+>                         printk(KERN_WARNING "format_corename failed\n");
+>                         printk(KERN_WARNING "Aborting core\n");
+>                         goto fail_unlock;
+>                 }   
+> in there into
+> 		if (ispipe < 0 || !**argv) {
+>                         printk(KERN_WARNING "format_corename failed\n");
+>                         printk(KERN_WARNING "Aborting core\n");
+>                         goto fail_unlock;
+>                 }
 
-Bit spinlocks are problematic if PREEMPT_RT is enabled, because they
-disable preemption, which is undesired for latency reasons and breaks when
-regular spinlocks are taken within the bit_spinlock locked region because
-regular spinlocks are converted to 'sleeping spinlocks' on RT. So RT
-replaces the bit spinlocks with regular spinlocks to avoid this problem.
-Bit spinlocks are also not covered by lock debugging, e.g. lockdep.
+Unfortunately this doesn't work because argv[0] is always 0 in case of ispipe
+in format_corename():
+	if (ispipe) {
+		int argvs = sizeof(core_pattern) / 2;
+		(*argv) = kmalloc_array(argvs, sizeof(**argv), GFP_KERNEL);
+		if (!(*argv))
+			return -ENOMEM;
+		(*argv)[(*argc)++] = 0;
+		++pat_ptr;
+	}
 
-Substitute the BH_Uptodate_Lock bit spinlock with a regular spinlock.
+The manpage says: The program must be ..., and must immediately
+follow the '|' character.
+Why not check this in format_corename(), maybe:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-[bigeasy: remove the wrapper and use always spinlock_t and move it into
-          the padding hole]
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
-v2…v3: rename uptodate_lock to b_uptodate_lock.
+@@ -211,6 +211,8 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm,
+                        return -ENOMEM;
+                (*argv)[(*argc)++] = 0;
+                ++pat_ptr;
++               if (isspace(*pat_ptr))
++                       return -EINVAL;
+        }
 
-v1…v2: Move the spinlock_t to the padding hole as per Jan Kara. pahole says
-its total size remained unchanged, before
+Dietmar.
 
-| atomic_t                   b_count;              /*    96     4 */
-|
-| /* size: 104, cachelines: 2, members: 12 */
-| /* padding: 4 */
-| /* last cacheline: 40 bytes */
 
-after
 
-| atomic_t                   b_count;              /*    96     4 */
-| spinlock_t                 uptodate_lock;        /*   100     4 */
-|
-| /* size: 104, cachelines: 2, members: 13 */
-| /* last cacheline: 40 bytes */
 
- fs/buffer.c                 | 19 +++++++------------
- fs/ext4/page-io.c           |  8 +++-----
- fs/ntfs/aops.c              |  9 +++------
- include/linux/buffer_head.h |  6 +++---
- 4 files changed, 16 insertions(+), 26 deletions(-)
-
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 86a38b9793235..4baea587981e0 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -275,8 +275,7 @@ static void end_buffer_async_read(struct buffer_head *bh, int uptodate)
- 	 * decide that the page is now completely done.
- 	 */
- 	first = page_buffers(page);
--	local_irq_save(flags);
--	bit_spin_lock(BH_Uptodate_Lock, &first->b_state);
-+	spin_lock_irqsave(&first->b_uptodate_lock, flags);
- 	clear_buffer_async_read(bh);
- 	unlock_buffer(bh);
- 	tmp = bh;
-@@ -289,8 +288,7 @@ static void end_buffer_async_read(struct buffer_head *bh, int uptodate)
- 		}
- 		tmp = tmp->b_this_page;
- 	} while (tmp != bh);
--	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
--	local_irq_restore(flags);
-+	spin_unlock_irqrestore(&first->b_uptodate_lock, flags);
- 
- 	/*
- 	 * If none of the buffers had errors and they are all
-@@ -302,8 +300,7 @@ static void end_buffer_async_read(struct buffer_head *bh, int uptodate)
- 	return;
- 
- still_busy:
--	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
--	local_irq_restore(flags);
-+	spin_unlock_irqrestore(&first->b_uptodate_lock, flags);
- 	return;
- }
- 
-@@ -331,8 +328,7 @@ void end_buffer_async_write(struct buffer_head *bh, int uptodate)
- 	}
- 
- 	first = page_buffers(page);
--	local_irq_save(flags);
--	bit_spin_lock(BH_Uptodate_Lock, &first->b_state);
-+	spin_lock_irqsave(&first->b_uptodate_lock, flags);
- 
- 	clear_buffer_async_write(bh);
- 	unlock_buffer(bh);
-@@ -344,14 +340,12 @@ void end_buffer_async_write(struct buffer_head *bh, int uptodate)
- 		}
- 		tmp = tmp->b_this_page;
- 	}
--	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
--	local_irq_restore(flags);
-+	spin_unlock_irqrestore(&first->b_uptodate_lock, flags);
- 	end_page_writeback(page);
- 	return;
- 
- still_busy:
--	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
--	local_irq_restore(flags);
-+	spin_unlock_irqrestore(&first->b_uptodate_lock, flags);
- 	return;
- }
- EXPORT_SYMBOL(end_buffer_async_write);
-@@ -3368,6 +3362,7 @@ struct buffer_head *alloc_buffer_head(gfp_t gfp_flags)
- 	struct buffer_head *ret = kmem_cache_zalloc(bh_cachep, gfp_flags);
- 	if (ret) {
- 		INIT_LIST_HEAD(&ret->b_assoc_buffers);
-+		spin_lock_init(&ret->b_uptodate_lock);
- 		preempt_disable();
- 		__this_cpu_inc(bh_accounting.nr);
- 		recalc_bh_state();
-diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-index 12ceadef32c5a..64d4c06fbf836 100644
---- a/fs/ext4/page-io.c
-+++ b/fs/ext4/page-io.c
-@@ -87,11 +87,10 @@ static void ext4_finish_bio(struct bio *bio)
- 		}
- 		bh = head = page_buffers(page);
- 		/*
--		 * We check all buffers in the page under BH_Uptodate_Lock
-+		 * We check all buffers in the page under b_uptodate_lock
- 		 * to avoid races with other end io clearing async_write flags
- 		 */
--		local_irq_save(flags);
--		bit_spin_lock(BH_Uptodate_Lock, &head->b_state);
-+		spin_lock_irqsave(&head->b_uptodate_lock, flags);
- 		do {
- 			if (bh_offset(bh) < bio_start ||
- 			    bh_offset(bh) + bh->b_size > bio_end) {
-@@ -103,8 +102,7 @@ static void ext4_finish_bio(struct bio *bio)
- 			if (bio->bi_status)
- 				buffer_io_error(bh);
- 		} while ((bh = bh->b_this_page) != head);
--		bit_spin_unlock(BH_Uptodate_Lock, &head->b_state);
--		local_irq_restore(flags);
-+		spin_unlock_irqrestore(&head->b_uptodate_lock, flags);
- 		if (!under_io) {
- 			fscrypt_free_bounce_page(bounce_page);
- 			end_page_writeback(page);
-diff --git a/fs/ntfs/aops.c b/fs/ntfs/aops.c
-index 7202a1e39d70c..554b744f41bf8 100644
---- a/fs/ntfs/aops.c
-+++ b/fs/ntfs/aops.c
-@@ -92,8 +92,7 @@ static void ntfs_end_buffer_async_read(struct buffer_head *bh, int uptodate)
- 				"0x%llx.", (unsigned long long)bh->b_blocknr);
- 	}
- 	first = page_buffers(page);
--	local_irq_save(flags);
--	bit_spin_lock(BH_Uptodate_Lock, &first->b_state);
-+	spin_lock_irqsave(&first->b_uptodate_lock, flags);
- 	clear_buffer_async_read(bh);
- 	unlock_buffer(bh);
- 	tmp = bh;
-@@ -108,8 +107,7 @@ static void ntfs_end_buffer_async_read(struct buffer_head *bh, int uptodate)
- 		}
- 		tmp = tmp->b_this_page;
- 	} while (tmp != bh);
--	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
--	local_irq_restore(flags);
-+	spin_unlock_irqrestore(&first->b_uptodate_lock, flags);
- 	/*
- 	 * If none of the buffers had errors then we can set the page uptodate,
- 	 * but we first have to perform the post read mst fixups, if the
-@@ -142,8 +140,7 @@ static void ntfs_end_buffer_async_read(struct buffer_head *bh, int uptodate)
- 	unlock_page(page);
- 	return;
- still_busy:
--	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
--	local_irq_restore(flags);
-+	spin_unlock_irqrestore(&first->b_uptodate_lock, flags);
- 	return;
- }
- 
-diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index 7b73ef7f902d4..e0b020eaf32e2 100644
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -22,9 +22,6 @@ enum bh_state_bits {
- 	BH_Dirty,	/* Is dirty */
- 	BH_Lock,	/* Is locked */
- 	BH_Req,		/* Has been submitted for I/O */
--	BH_Uptodate_Lock,/* Used by the first bh in a page, to serialise
--			  * IO completion of other buffers in the page
--			  */
- 
- 	BH_Mapped,	/* Has a disk mapping */
- 	BH_New,		/* Disk mapping was newly created by get_block */
-@@ -76,6 +73,9 @@ struct buffer_head {
- 	struct address_space *b_assoc_map;	/* mapping this buffer is
- 						   associated with */
- 	atomic_t b_count;		/* users using this buffer_head */
-+	spinlock_t b_uptodate_lock;	/* Used by the first bh in a page, to
-+					 * serialise IO completion of other
-+					 * buffers in the page */
- };
- 
- /*
--- 
-2.24.0
 
