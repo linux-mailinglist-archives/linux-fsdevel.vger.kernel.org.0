@@ -2,124 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84700FFD12
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2019 03:24:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88F62FFDAE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Nov 2019 05:59:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726314AbfKRCYo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 17 Nov 2019 21:24:44 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:33672 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbfKRCYo (ORCPT
+        id S1726481AbfKRE7s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 17 Nov 2019 23:59:48 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:58902 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726353AbfKRE7r (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 17 Nov 2019 21:24:44 -0500
-Received: by mail-qk1-f194.google.com with SMTP id 71so13141347qkl.0;
-        Sun, 17 Nov 2019 18:24:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=0PODx413zWYXfSobH+0+CB4Ms3JTa4kjwkVV1cKBF0I=;
-        b=rmjEArZt+40+6whHrw6ndvflf4Colo6cGXVekvJlkeRrMjkUod5apJCONqqT4UVuey
-         KJHpoxmAd2B/w6sVOUPRXpmHgQQSh2FsaQ28m6shiAZ7OKPzEhS/0Ilq3/1NEEhVC29k
-         zbTYIPnDmR4GKiYbWR/73N1wgIrjxq77uMlJ+7LNVmYLSfY3XW7CiK0ke66ner0HGenJ
-         0LuVUcu5jgnsLsEDYwCgL9Bi6qwDZZ49awAZahqJarg0niTRKSw0x0hu63HgmNeix3oZ
-         wbYcmFMFlDXC5Fu84M+oQbKneXjPl3JXfAuEVX5ktGKLobIoyZuT+X/qfByP7FMKlH3V
-         Rf6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=0PODx413zWYXfSobH+0+CB4Ms3JTa4kjwkVV1cKBF0I=;
-        b=g/jv/OrVDJH5GXpcrEj5KwV3M3/autmmPPgBPYR6xmk2VubGFGpoBEqyzycGqYOl1K
-         Hw9UxENL58bPb0U4LsCGAcqChRhTBcN+h/yUWz1U3wF1Ks9BlD7xu0LKyfJFk3kttXnq
-         doJDbX82t3zpsNeldPRTWMz6y9EHFWivw4OajjAGdqjeYNONuWjPg/EJRprBYfib+wZ2
-         cDsHUeBfDn7uZdSwOhr/deiR/Q4nsoMzdbOrzUnIY79FqbD8Fbb92uZHgI/UscYGAvAD
-         WlMzmBAvx1Z/Tyd/kr8yAwLsR7PUGyXjqKk2VIklELHXoKHiUwnTG5N+mUz/ImeMmyMq
-         drNg==
-X-Gm-Message-State: APjAAAUp1t0xBXTyTdd65mUFyS93jAX1Rlq1MNnHsb1PC56zHaKpk3dA
-        y1na+9Kz1yltjNG8ZBaU6g==
-X-Google-Smtp-Source: APXvYqyck54SgVxduwvF2JuxnOVAELdcvpnIQqSktS7SoxNdd0A13dSN4e4J0HtjJBHoykci9Yv0Nw==
-X-Received: by 2002:a05:620a:159c:: with SMTP id d28mr21918417qkk.466.1574043882984;
-        Sun, 17 Nov 2019 18:24:42 -0800 (PST)
-Received: from gabell.redhat.com (209-6-122-159.s2973.c3-0.arl-cbr1.sbo-arl.ma.cable.rcncustomer.com. [209.6.122.159])
-        by smtp.gmail.com with ESMTPSA id w15sm9687938qtk.43.2019.11.17.18.24.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Nov 2019 18:24:42 -0800 (PST)
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org
-Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-kernel@vger.kernel.org, virtio-fs@redhat.com
-Subject: [PATCH] fuse: Fix the return code of fuse_direct_IO() to deal with the error for aio
-Date:   Sun, 17 Nov 2019 21:24:10 -0500
-Message-Id: <20191118022410.21023-1-msys.mizuma@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Sun, 17 Nov 2019 23:59:47 -0500
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20191118045942epoutp02136f5fc385268e440893a5ceec74bb2c~YKQe5ouW_1795917959epoutp02U
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2019 04:59:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20191118045942epoutp02136f5fc385268e440893a5ceec74bb2c~YKQe5ouW_1795917959epoutp02U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1574053182;
+        bh=F/g2OIlz0/NDE5SEkzXk6lGEjX00S5KOP/k4w3J8IPk=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=Ivz9MF7Hz9TAi9mILj5t2tjy1E2Od6/jrpIApC6dsqr+Zgs0Li8/BmXhHxTdyG+bl
+         UpqwWMLtccciiH/fvKACqHAO7G3ZSiYu6NbKsxSE5/k+ToaItmidTVOGK31izrO1Dw
+         gwnicg7XyLQ8BWV0SGWVshumv9hf2GnvR4TNoM20=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20191118045942epcas1p451df2f81cbb35a60dd4ee3014e61fc7c~YKQeRI6_A1381413814epcas1p4o;
+        Mon, 18 Nov 2019 04:59:42 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.160]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 47GcFT4GwtzMqYkn; Mon, 18 Nov
+        2019 04:59:41 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        BF.86.04406.D3522DD5; Mon, 18 Nov 2019 13:59:41 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20191118045940epcas1p3b36eb532d8def2cafeb014eebab128e5~YKQc0r9Sr1368213682epcas1p3F;
+        Mon, 18 Nov 2019 04:59:40 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191118045940epsmtrp1b700fb0c572b1f5afa7fb3623dd8fcf5~YKQcz_gJP0339103391epsmtrp1C;
+        Mon, 18 Nov 2019 04:59:40 +0000 (GMT)
+X-AuditID: b6c32a38-95fff70000001136-39-5dd2253d1ff7
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E5.67.03654.C3522DD5; Mon, 18 Nov 2019 13:59:40 +0900 (KST)
+Received: from DONAMJAEJEO06 (unknown [10.88.104.63]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191118045940epsmtip2a193bb5e28e862e8b4fbf8cee8a0f624~YKQcqg2142534025340epsmtip2V;
+        Mon, 18 Nov 2019 04:59:40 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     "'Markus Elfring'" <Markus.Elfring@web.de>
+Cc:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "'Christoph Hellwig'" <hch@lst.de>,
+        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
+        "'Sungjong Seo'" <sj1557.seo@samsung.com>,
+        =?UTF-8?Q?'Valdis_Kl=C4=93tnieks'?= <valdis.kletnieks@vt.edu>,
+        <linkinjeon@gmail.com>, <linux-fsdevel@vger.kernel.org>
+In-Reply-To: <a4bd8e3e-fcdc-9739-5407-5345743fb0b9@web.de>
+Subject: RE: [PATCH 01/13] exfat: add in-memory and on-disk structures and
+ headers
+Date:   Mon, 18 Nov 2019 13:59:40 +0900
+Message-ID: <00ba01d59dcc$fc17e010$f447a030$@samsung.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 14.0
+Thread-Index: AQDyLF7pV5/eBb/pSO5+MuAyfY69HgGBvdAxAsnJjT2pNOSKMA==
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGJsWRmVeSWpSXmKPExsWy7bCmnq6t6qVYg5/ruS2aF69ns1i5+iiT
+        xdZb0hbX795ittiz9ySLxeVdc9gs/s96zmqx5d8RVotL7z+wOHB67Jx1l91j/9w17B67bzaw
+        efRtWcXo8XmTnMeh7W/YPG4/28YSwB6VY5ORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGto
+        aWGupJCXmJtqq+TiE6DrlpkDdJmSQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8DQ
+        oECvODG3uDQvXS85P9fK0MDAyBSoMiEn48PsvawFx1kqZj1sYW1g3MbSxcjJISFgIvFh/jO2
+        LkYuDiGBHYwS21bNZ4JwPjFKLJu8gRnC+cYoMe/RVGaYlmVTt7BAJPYySrRfns8I4bxilGjb
+        080EUsUmoCvx789+NhBbREBPYtKbw6wgRcwCJ5kkvi0+DjSKg4NTwEric6sQSI2wQIhE9/Rz
+        rCA2i4CqxJrufWDbeAUsJd7+XsEKYQtKnJz5BOxwZgFtiWULX0NdpCCx4+xrRpCRIgJOEq8m
+        ckGUiEjM7mwD+0BCoJldYueqvSwgNRICLhLTv3BDtApLvDq+hR3ClpJ42d/GDlFSLfFxP9T0
+        DkaJF99tIWxjiZvrN7CClDALaEqs36UPEVaU2Pl7LiPEVj6Jd197WCGm8Ep0tAlBlKhK9F06
+        zARhS0t0tX9gn8CoNAvJW7OQvDULyf2zEJYtYGRZxSiWWlCcm55abFhgghzVmxjBaVbLYgfj
+        nnM+hxgFOBiVeHgflF+MFWJNLCuuzD3EKMHBrCTC6/foQqwQb0piZVVqUX58UWlOavEhRlNg
+        qE9klhJNzgfmgLySeENTI2NjYwsTM3MzU2MlcV6OH0BzBNITS1KzU1MLUotg+pg4OKUaGDsK
+        GffmRvk/ZdrWoOslb81h8t/AM78ns0X0saH/3O9N/FVr+B/3ZRV92Lfe3eTDNOd6Ma3p7z4a
+        cn7fpmnFdmh5XJiQcEzDQvkb5Y718f2ui3qSykzZAyOiJF5xc9X+EqgtcLr4ao1M9t2VBguW
+        r2T9LMRp16hmyPMu69AZT46HgqJLIm4psRRnJBpqMRcVJwIAjlpiCskDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEIsWRmVeSWpSXmKPExsWy7bCSvK6N6qVYg8W71SyaF69ns1i5+iiT
+        xdZb0hbX795ittiz9ySLxeVdc9gs/s96zmqx5d8RVotL7z+wOHB67Jx1l91j/9w17B67bzaw
+        efRtWcXo8XmTnMeh7W/YPG4/28YSwB7FZZOSmpNZllqkb5fAlbGweQdzwQ+mijsvP7I2MC5i
+        6mLk5JAQMJFYNnULSxcjF4eQwG5GiStrbjFDJKQljp04A2RzANnCEocPF0PUvGCUuNk3A6yZ
+        TUBX4t+f/WwgtoiAnsSkN4dZQYqYBc4zSRyecJERbuqGXxNYQSZxClhJfG4VAmkQFgiSWLDx
+        IyuIzSKgKrGmex/YYl4BS4m3v1ewQtiCEidnPmEBsZkFtCV6H7YywtjLFr6GOlRBYsfZ14wg
+        40UEnCReTeSCKBGRmN3ZxjyBUXgWkkmzkEyahWTSLCQtCxhZVjFKphYU56bnFhsWGOallusV
+        J+YWl+al6yXn525iBMecluYOxstL4g8xCnAwKvHwWlRdjBViTSwrrsw9xCjBwawkwuv36EKs
+        EG9KYmVValF+fFFpTmrxIUZpDhYlcd6neccihQTSE0tSs1NTC1KLYLJMHJxSDYwqNQ4KwvqG
+        vw0t5kr/N6x375RLfNWiHMXkVxr9Is7eltm8aOfxD3rHXnT/9Jslvly+88U/G08FwcV3PFWs
+        t0VPiPTYWVgx61HslxcyF0QmmCiEi17Q+HC1lJn73Bqrcr67Kem/8k75qbOvnJ6xrHhWRwHn
+        kUWhch4b96xaw+9+N/K7w0/JN0osxRmJhlrMRcWJAKZvPqy1AgAA
+X-CMS-MailID: 20191118045940epcas1p3b36eb532d8def2cafeb014eebab128e5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20191117122540epcas4p2cd0e2b9658154c81ae9d2e46882efaa0
+References: <20191113081800.7672-2-namjae.jeon@samsung.com>
+        <CGME20191117122540epcas4p2cd0e2b9658154c81ae9d2e46882efaa0@epcas4p2.samsung.com>
+        <a4bd8e3e-fcdc-9739-5407-5345743fb0b9@web.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-
-exit_aio() is sometimes stuck in wait_for_completion() after aio is issued
-with direct IO and the task receives a signal.
-
-That is because kioctx in mm->ioctx_table is in use by aio_kiocb.
-aio_kiocb->ki_refcnt is 1 at that time. That means iocb_put() isn't
-called correctly.
-
-fuse_get_req() returns as -EINTR when it's blocked and receives a signal.
-fuse_direct_IO() deals with the -EINTER as -EIOCBQUEUED and returns as
--EIOCBQUEUED even though the aio isn't queued.
-As the result, aio_rw_done() doesn't handle the error, so iocb_put() isn't
-called via aio_complete_rw(), which is the callback.
-
-The flow is something like as:
-
-  io_submit
-    aio_get_req
-      refcount_set(&req->ki_refcnt, 2)
-    __io_submit_one
-      aio_read
-      ...
-        fuse_direct_IO # return as -EIOCBQUEUED
-          __fuse_direct_read
-          ...
-            fuse_get_req # return as -EINTR
-        aio_rw_done
-          # Nothing to do because ret is -EIOCBQUEUED...
-    iocb_put
-      refcount_dec_and_test(&iocb->ki_refcnt) # 2->1
-
-Return as the error code of fuse_direct_io() or __fuse_direct_read() in
-fuse_direct_IO() so that aio_rw_done() can handle the error and call
-iocb_put().
-
-This issue is trucked as a virtio-fs issue:
-https://gitlab.com/virtio-fs/qemu/issues/14
-
-Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
----
- fs/fuse/file.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index db48a5cf8620..87b151aec8f2 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -3115,8 +3115,12 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 		fuse_aio_complete(io, ret < 0 ? ret : 0, -1);
- 
- 		/* we have a non-extending, async request, so return */
--		if (!blocking)
--			return -EIOCBQUEUED;
-+		if (!blocking) {
-+			if (ret >= 0)
-+				return -EIOCBQUEUED;
-+			else
-+				return ret;
-+		}
- 
- 		wait_for_completion(&wait);
- 		ret = fuse_get_res_by_io(io);
--- 
-2.18.1
-
+> =E2=80=A6=0D=0A>=20>=20+++=20b/fs/exfat/exfat_fs.h=0D=0A>=20>=20=40=40=20=
+-0,0=20+1,533=20=40=40=0D=0A>=20=E2=80=A6=0D=0A>=20>=20+/*=20time=20modes=
+=20*/=0D=0A>=20>=20+=23define=20TM_CREATE=09=090=0D=0A>=20>=20+=23define=20=
+TM_MODIFY=09=091=0D=0A>=20=E2=80=A6=0D=0A>=20=0D=0A>=20Will=20it=20be=20hel=
+pful=20to=20work=20with=20more=20enumerations=20(besides=0D=0A>=20=E2=80=9C=
+exfat_error_mode=E2=80=9D)=0D=0A>=20at=20such=20places?=0D=0AYep,=20Will=20=
+fix=20it=20on=20V2.=0D=0AThanks=20for=20your=20review=21=0D=0A>=20=0D=0A>=
+=20Regards,=0D=0A>=20Markus=0D=0A=0D=0A
