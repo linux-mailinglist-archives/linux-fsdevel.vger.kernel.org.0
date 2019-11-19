@@ -2,100 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACBDB10194F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 07:22:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21BDA1019E9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 08:00:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbfKSGWe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Nov 2019 01:22:34 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:33616 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726671AbfKSGWd (ORCPT
+        id S1727511AbfKSHAg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Nov 2019 02:00:36 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:14990 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726792AbfKSHAg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Nov 2019 01:22:33 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJ69GPn164783;
-        Tue, 19 Nov 2019 06:22:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
- bh=wy+lF6MYsnlvt3ZFLCMryc3CssDPfdNSh6CIREwmXoY=;
- b=SpsxFGdpVfY67u71UbRQ99zRWPdoBJH/1+t27vsdZA6o7KqmA5dB+4ceDK2jyrRBE9nu
- /l4bvHNZVgjFiwYbrLk2L77UBWpMhEtB+3sy7xrHv1KTqkrFOJ60MnNTXDpb4CmoSfW9
- kcnUcf8+BB1fseU8Wp2wQ+Th37JZvm9UnuGOjHi9+kdS9FOX8LIdnUDxXGji0qYVhMWD
- 7yoU0aoiRJx09TzYtN+FGzAh7S82KfpiRahzFK3W7ntpMtJe7Yj/PQKIcI1UVZV9j0/g
- DsMOPASnV02zxaioYF2MOnqgivq3ibz8qadhP9OiQ9PvHJooRJEfqlATxNMXET9ZRq6u 3w== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2wa8htmtqn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Nov 2019 06:22:27 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJ68iYj034560;
-        Tue, 19 Nov 2019 06:22:26 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2wc0afu0w9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Nov 2019 06:22:26 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAJ6MPsM026518;
-        Tue, 19 Nov 2019 06:22:25 GMT
-Received: from kili.mountain (/41.210.141.188)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 18 Nov 2019 22:22:25 -0800
-Date:   Tue, 19 Nov 2019 09:22:16 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] io-wq: remove extra space characters
-Message-ID: <20191119062216.qhxmnrt2rdioirja@kili.mountain>
+        Tue, 19 Nov 2019 02:00:36 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dd3930f0000>; Mon, 18 Nov 2019 23:00:32 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 18 Nov 2019 23:00:34 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 18 Nov 2019 23:00:34 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 19 Nov
+ 2019 07:00:34 +0000
+Subject: Re: [PATCH v5 02/24] mm/gup: factor out duplicate code from four
+ routines
+To:     Jan Kara <jack@suse.cz>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
+References: <20191115055340.1825745-1-jhubbard@nvidia.com>
+ <20191115055340.1825745-3-jhubbard@nvidia.com>
+ <20191118094604.GC17319@quack2.suse.cz>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <152e2ea9-edd9-f868-7731-ff467d692f5f@nvidia.com>
+Date:   Mon, 18 Nov 2019 23:00:33 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=987
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1911190057
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1911190057
+In-Reply-To: <20191118094604.GC17319@quack2.suse.cz>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1574146832; bh=u3YCRE77HsuXbqK9BxFmzDLl8JhQHMG9gXXaYRfagTQ=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=OHB+eUp2jQQmHLrGYBTtAkydhQax1jgPbRIdqXv/zT7mJheOoxm2jC/o00J+31bDd
+         psR1uWZTYTlZpkmYbJIlMzoHbpxnwxoe7ZrZ8UMQNDddfR1HU1k+hUj3JCOx3ZRd5b
+         XT8Ag7PAkGX6G4pIQ7geJmQblkDOtgu1RTN+An2f8z0fTBevVuF5GINewI0N+iPfcv
+         YgagSYh5LQVW6KL8izWZSAMBRDSFlAEl3uHonusWk1CkuRAUgvh73saFcEMPgIKbUo
+         7msrJOumHG3EP3Mzt2Z3Dov3XH2Wq2MWpaj0JPNxYk4UIQaUft9LMOT0FAc0/WGi6i
+         OtciRBna4adWA==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-These lines are indented an extra space character.
+On 11/18/19 1:46 AM, Jan Kara wrote:
+> On Thu 14-11-19 21:53:18, John Hubbard wrote:
+>> There are four locations in gup.c that have a fair amount of code
+>> duplication. This means that changing one requires making the same
+>> changes in four places, not to mention reading the same code four
+>> times, and wondering if there are subtle differences.
+>>
+>> Factor out the common code into static functions, thus reducing the
+>> overall line count and the code's complexity.
+>>
+>> Also, take the opportunity to slightly improve the efficiency of the
+>> error cases, by doing a mass subtraction of the refcount, surrounded
+>> by get_page()/put_page().
+>>
+>> Also, further simplify (slightly), by waiting until the the successful
+>> end of each routine, to increment *nr.
+>>
+>> Reviewed-by: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+>> Cc: Jan Kara <jack@suse.cz>
+>> Cc: Ira Weiny <ira.weiny@intel.com>
+>> Cc: Christoph Hellwig <hch@lst.de>
+>> Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+>> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+>> ---
+>>  mm/gup.c | 95 ++++++++++++++++++++++++--------------------------------
+>>  1 file changed, 40 insertions(+), 55 deletions(-)
+>>
+>> diff --git a/mm/gup.c b/mm/gup.c
+>> index 85caf76b3012..858541ea30ce 100644
+>> --- a/mm/gup.c
+>> +++ b/mm/gup.c
+>> @@ -1969,6 +1969,29 @@ static int __gup_device_huge_pud(pud_t pud, pud_t=
+ *pudp, unsigned long addr,
+>>  }
+>>  #endif
+>> =20
+>> +static int __record_subpages(struct page *page, unsigned long addr,
+>> +			     unsigned long end, struct page **pages)
+>> +{
+>> +	int nr =3D 0;
+>> +	int nr_recorded_pages =3D 0;
+>> +
+>> +	do {
+>> +		pages[nr] =3D page;
+>> +		nr++;
+>> +		page++;
+>> +		nr_recorded_pages++;
+>> +	} while (addr +=3D PAGE_SIZE, addr !=3D end);
+>> +	return nr_recorded_pages;
+>=20
+> nr =3D=3D nr_recorded_pages so no need for both... BTW, structuring this =
+as a
+> for loop would be probably more logical and shorter now:
+>=20
+> 	for (nr =3D 0; addr !=3D end; addr +=3D PAGE_SIZE)
+> 		pages[nr++] =3D page++;
+> 	return nr;
+>=20
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-We often see this where the lines after a comment are indented one
-space extra.  I don't know if it's an editor thing maybe?
+Nice touch, I've applied it.
 
- fs/io-wq.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+thanks,
+--=20
+John Hubbard
+NVIDIA
 
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index fcb6c74209da..6d8f5e6c8167 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -333,9 +333,9 @@ static void __io_worker_busy(struct io_wqe *wqe, struct io_worker *worker,
- 	 * If worker is moving from bound to unbound (or vice versa), then
- 	 * ensure we update the running accounting.
- 	 */
--	 worker_bound = (worker->flags & IO_WORKER_F_BOUND) != 0;
--	 work_bound = (work->flags & IO_WQ_WORK_UNBOUND) == 0;
--	 if (worker_bound != work_bound) {
-+	worker_bound = (worker->flags & IO_WORKER_F_BOUND) != 0;
-+	work_bound = (work->flags & IO_WQ_WORK_UNBOUND) == 0;
-+	if (worker_bound != work_bound) {
- 		io_wqe_dec_running(wqe, worker);
- 		if (work_bound) {
- 			worker->flags |= IO_WORKER_F_BOUND;
--- 
-2.11.0
 
+
+> The rest of the patch looks good to me.
+>=20
+> 								Honza
+>=20
