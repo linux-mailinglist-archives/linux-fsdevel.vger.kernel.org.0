@@ -2,127 +2,274 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADBE21021A9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 11:08:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 903A51021EF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 11:19:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727399AbfKSKIb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Nov 2019 05:08:31 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34523 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726921AbfKSKIb (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Nov 2019 05:08:31 -0500
-Received: by mail-pg1-f196.google.com with SMTP id z188so11145841pgb.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Nov 2019 02:08:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0as+kqGp44tyRx+kW5oQfsxwSoGdl6l76oT22Nl8N74=;
-        b=v8Q3Ts5nxlnauS/2ghDpbPKFgU64xhcUk2q9N0EIKCrEeCO1UZzdvm7IxtaY2XYPox
-         DIHxrwKQ1tzXYSKoZY5C7lLdHvwJ4dTI9PGVyravK4EbkP01DQ9DhAzxQZutRDhxYmDT
-         VTY4TDGDSPgqLRcJYHp71FgLyYf6puBT63wzO3s3OClM8A+6XXuYqJd8iwbtvJia0tgj
-         yzx/SQrS4tR5h4Z4vSBYh3CE+03HV2elpZ/6xxadUkDMlG/70b7shQf2rPHa+BzqcXm+
-         AOeqQ7WXjQUfeoBP1EqMUCsJykbbdHJQHTfVaz4SF0i/z+y/+FeNRd+CCGbvVX78DTwn
-         FZFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0as+kqGp44tyRx+kW5oQfsxwSoGdl6l76oT22Nl8N74=;
-        b=qe540Uk1Sh+pII60fvIgYdPhOZv5YAaw6vuhNjH3E+FBZO+M8JJj3tieJ2vwu1eWzs
-         987qBeXDQm77wFJy45MZLoVWuUGyuHnyXvzvYwewBx6LcxBaGuhRB7v6iQ1fk7u7epeX
-         N2AweYhOd080naqpkX6yox0r6T0U+W3dTT3UUKaLA6zjj30RbNkGlT578ZH2HTZMjNHW
-         lcRQ31OP7t5hZyRZ2Nknu4JTGqDvnrppkfVxk8ERATMRAQW2hQvbwDE8e20a/twCxv82
-         fiIajulMHCFUjYTp2Jk+tCsIoESCFmt2Uktq3v8FveTULCHCOF6EBbSd0A3Qo7Dj4Nri
-         QRcw==
-X-Gm-Message-State: APjAAAUxMIGIHIkNy5yZ8i3VqnDbw2SJJ7PkEWbZ54kMAu/e39MfqYwX
-        bV+++VsriLl1m1UxvJE/nT8L
-X-Google-Smtp-Source: APXvYqxOjci1H8Ei4WdF79tc6UVvv6rGHGtq5HEtKINHp8jaqtc8G29vaDRMXLC+T1Tt4lx/p/J5UQ==
-X-Received: by 2002:a63:5f49:: with SMTP id t70mr4738291pgb.219.1574158110418;
-        Tue, 19 Nov 2019 02:08:30 -0800 (PST)
-Received: from bobrowski ([110.232.114.101])
-        by smtp.gmail.com with ESMTPSA id v128sm6167533pgv.24.2019.11.19.02.08.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2019 02:08:29 -0800 (PST)
-Date:   Tue, 19 Nov 2019 21:08:22 +1100
-From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>,
-        syzbot <syzbot+991400e8eba7e00a26e1@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        riteshh@linux.ibm.com, syzkaller-bugs@googlegroups.com,
-        tytso@mit.edu, viro@zeniv.linux.org.uk
-Subject: Re: WARNING in iov_iter_pipe
-Message-ID: <20191119100821.GB22484@bobrowski>
-References: <000000000000d60aa50596c63063@google.com>
- <20191108103148.GE20863@quack2.suse.cz>
- <20191111081628.GB14058@bobrowski>
- <20191119031021.GI3147@sol.localdomain>
+        id S1727631AbfKSKTS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Nov 2019 05:19:18 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49868 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726555AbfKSKTS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 19 Nov 2019 05:19:18 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 737CFAE87;
+        Tue, 19 Nov 2019 10:19:13 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id D586A1E47E5; Tue, 19 Nov 2019 11:19:10 +0100 (CET)
+Date:   Tue, 19 Nov 2019 11:19:10 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
+Subject: Re: [PATCH v6 02/24] mm/gup: factor out duplicate code from four
+ routines
+Message-ID: <20191119101910.GC25605@quack2.suse.cz>
+References: <20191119081643.1866232-1-jhubbard@nvidia.com>
+ <20191119081643.1866232-3-jhubbard@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20191119031021.GI3147@sol.localdomain>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191119081643.1866232-3-jhubbard@nvidia.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 18, 2019 at 07:10:21PM -0800, Eric Biggers wrote:
-> On Mon, Nov 11, 2019 at 07:16:29PM +1100, Matthew Bobrowski wrote:
-> > On Fri, Nov 08, 2019 at 11:31:48AM +0100, Jan Kara wrote:
-> > > On Thu 07-11-19 10:54:10, syzbot wrote:
-> > > > syzbot found the following crash on:
-> > > > 
-> > > > HEAD commit:    c68c5373 Add linux-next specific files for 20191107
-> > > > git tree:       linux-next
-> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=13d6bcfce00000
-> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=742545dcdea21726
-> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=991400e8eba7e00a26e1
-> > > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1529829ae00000
-> > > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16a55c0ce00000
-> > > > 
-> > > > The bug was bisected to:
-> > > > 
-> > > > commit b1b4705d54abedfd69dcdf42779c521aa1e0fbd3
-> > > > Author: Matthew Bobrowski <mbobrowski@mbobrowski.org>
-> > > > Date:   Tue Nov 5 12:01:37 2019 +0000
-> > > > 
-> > > >     ext4: introduce direct I/O read using iomap infrastructure
-> > > 
-> > > Hum, interesting and from the first looks the problem looks real.
-> > > Deciphered reproducer is:
-> > > 
-> > > int fd0 = open("./file0", O_RDWR | O_CREAT | O_EXCL | O_DIRECT, 0);
-> > > int fd1 = open("./file0, O_RDONLY);
-> > > write(fd0, "some_data...", 512);
-> > > sendfile(fd0, fd1, NULL, 0x7fffffa7);
-> > >   -> this is interesting as it will result in reading data from 'file0' at
-> > >      offset X with buffered read and writing them with direct write to
-> > >      offset X+512. So this way we'll grow the file up to those ~2GB in
-> > >      512-byte chunks.
-> > > - not sure if we ever get there but the remainder of the reproducer is:
-> > > fd2 = open("./file0", O_RDWR | O_CREAT | O_NOATIME | O_SYNC, 0);
-> > > sendfile(fd2, fd0, NULL, 0xffffffff)
-> > >   -> doesn't seem too interesting as fd0 is at EOF so this shouldn't do
-> > >      anything.
-> > > 
-> > > Matthew, can you have a look?
-> > 
-> > Sorry Jan, I've been crazy busy lately and I'm out at training this
-> > week. Let me take a look at this and see whether I can determine
-> > what's happening here.
-> > 
+On Tue 19-11-19 00:16:21, John Hubbard wrote:
+> There are four locations in gup.c that have a fair amount of code
+> duplication. This means that changing one requires making the same
+> changes in four places, not to mention reading the same code four
+> times, and wondering if there are subtle differences.
 > 
-> FYI, syzbot is still seeing this on linux-next.
+> Factor out the common code into static functions, thus reducing the
+> overall line count and the code's complexity.
 > 
-> Also, a new thread was started to discuss this:
-> https://lkml.kernel.org/linux-ext4/20191113180032.GB12013@quack2.suse.cz/T/#u
-> (Mentioning this in case anyone is following this thread only.)
+> Also, take the opportunity to slightly improve the efficiency of the
+> error cases, by doing a mass subtraction of the refcount, surrounded
+> by get_page()/put_page().
+> 
+> Also, further simplify (slightly), by waiting until the the successful
+> end of each routine, to increment *nr.
+> 
+> Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 
-Understood. I suppose this issue will get some more traction this
-week.
+Looks good to me now! You can add:
 
-/M
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  mm/gup.c | 91 ++++++++++++++++++++++----------------------------------
+>  1 file changed, 36 insertions(+), 55 deletions(-)
+> 
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 85caf76b3012..f3c7d6625817 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -1969,6 +1969,25 @@ static int __gup_device_huge_pud(pud_t pud, pud_t *pudp, unsigned long addr,
+>  }
+>  #endif
+>  
+> +static int __record_subpages(struct page *page, unsigned long addr,
+> +			     unsigned long end, struct page **pages)
+> +{
+> +	int nr;
+> +
+> +	for (nr = 0; addr != end; addr += PAGE_SIZE)
+> +		pages[nr++] = page++;
+> +
+> +	return nr;
+> +}
+> +
+> +static void put_compound_head(struct page *page, int refs)
+> +{
+> +	/* Do a get_page() first, in case refs == page->_refcount */
+> +	get_page(page);
+> +	page_ref_sub(page, refs);
+> +	put_page(page);
+> +}
+> +
+>  #ifdef CONFIG_ARCH_HAS_HUGEPD
+>  static unsigned long hugepte_addr_end(unsigned long addr, unsigned long end,
+>  				      unsigned long sz)
+> @@ -1998,32 +2017,20 @@ static int gup_hugepte(pte_t *ptep, unsigned long sz, unsigned long addr,
+>  	/* hugepages are never "special" */
+>  	VM_BUG_ON(!pfn_valid(pte_pfn(pte)));
+>  
+> -	refs = 0;
+>  	head = pte_page(pte);
+> -
+>  	page = head + ((addr & (sz-1)) >> PAGE_SHIFT);
+> -	do {
+> -		VM_BUG_ON(compound_head(page) != head);
+> -		pages[*nr] = page;
+> -		(*nr)++;
+> -		page++;
+> -		refs++;
+> -	} while (addr += PAGE_SIZE, addr != end);
+> +	refs = __record_subpages(page, addr, end, pages + *nr);
+>  
+>  	head = try_get_compound_head(head, refs);
+> -	if (!head) {
+> -		*nr -= refs;
+> +	if (!head)
+>  		return 0;
+> -	}
+>  
+>  	if (unlikely(pte_val(pte) != pte_val(*ptep))) {
+> -		/* Could be optimized better */
+> -		*nr -= refs;
+> -		while (refs--)
+> -			put_page(head);
+> +		put_compound_head(head, refs);
+>  		return 0;
+>  	}
+>  
+> +	*nr += refs;
+>  	SetPageReferenced(head);
+>  	return 1;
+>  }
+> @@ -2071,28 +2078,19 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
+>  					     pages, nr);
+>  	}
+>  
+> -	refs = 0;
+>  	page = pmd_page(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
+> -	do {
+> -		pages[*nr] = page;
+> -		(*nr)++;
+> -		page++;
+> -		refs++;
+> -	} while (addr += PAGE_SIZE, addr != end);
+> +	refs = __record_subpages(page, addr, end, pages + *nr);
+>  
+>  	head = try_get_compound_head(pmd_page(orig), refs);
+> -	if (!head) {
+> -		*nr -= refs;
+> +	if (!head)
+>  		return 0;
+> -	}
+>  
+>  	if (unlikely(pmd_val(orig) != pmd_val(*pmdp))) {
+> -		*nr -= refs;
+> -		while (refs--)
+> -			put_page(head);
+> +		put_compound_head(head, refs);
+>  		return 0;
+>  	}
+>  
+> +	*nr += refs;
+>  	SetPageReferenced(head);
+>  	return 1;
+>  }
+> @@ -2114,28 +2112,19 @@ static int gup_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
+>  					     pages, nr);
+>  	}
+>  
+> -	refs = 0;
+>  	page = pud_page(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
+> -	do {
+> -		pages[*nr] = page;
+> -		(*nr)++;
+> -		page++;
+> -		refs++;
+> -	} while (addr += PAGE_SIZE, addr != end);
+> +	refs = __record_subpages(page, addr, end, pages + *nr);
+>  
+>  	head = try_get_compound_head(pud_page(orig), refs);
+> -	if (!head) {
+> -		*nr -= refs;
+> +	if (!head)
+>  		return 0;
+> -	}
+>  
+>  	if (unlikely(pud_val(orig) != pud_val(*pudp))) {
+> -		*nr -= refs;
+> -		while (refs--)
+> -			put_page(head);
+> +		put_compound_head(head, refs);
+>  		return 0;
+>  	}
+>  
+> +	*nr += refs;
+>  	SetPageReferenced(head);
+>  	return 1;
+>  }
+> @@ -2151,28 +2140,20 @@ static int gup_huge_pgd(pgd_t orig, pgd_t *pgdp, unsigned long addr,
+>  		return 0;
+>  
+>  	BUILD_BUG_ON(pgd_devmap(orig));
+> -	refs = 0;
+> +
+>  	page = pgd_page(orig) + ((addr & ~PGDIR_MASK) >> PAGE_SHIFT);
+> -	do {
+> -		pages[*nr] = page;
+> -		(*nr)++;
+> -		page++;
+> -		refs++;
+> -	} while (addr += PAGE_SIZE, addr != end);
+> +	refs = __record_subpages(page, addr, end, pages + *nr);
+>  
+>  	head = try_get_compound_head(pgd_page(orig), refs);
+> -	if (!head) {
+> -		*nr -= refs;
+> +	if (!head)
+>  		return 0;
+> -	}
+>  
+>  	if (unlikely(pgd_val(orig) != pgd_val(*pgdp))) {
+> -		*nr -= refs;
+> -		while (refs--)
+> -			put_page(head);
+> +		put_compound_head(head, refs);
+>  		return 0;
+>  	}
+>  
+> +	*nr += refs;
+>  	SetPageReferenced(head);
+>  	return 1;
+>  }
+> -- 
+> 2.24.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
