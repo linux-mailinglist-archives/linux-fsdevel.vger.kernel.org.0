@@ -2,123 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 558DF1012E0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 06:17:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACBDB10194F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 07:22:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725878AbfKSFRa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Nov 2019 00:17:30 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:5661 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725280AbfKSFRa (ORCPT
+        id S1727474AbfKSGWe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Nov 2019 01:22:34 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:33616 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726671AbfKSGWd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Nov 2019 00:17:30 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dd37aeb0000>; Mon, 18 Nov 2019 21:17:32 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 18 Nov 2019 21:17:29 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 18 Nov 2019 21:17:29 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 19 Nov
- 2019 05:17:28 +0000
-Subject: Re: [PATCH v5 10/24] mm/gup: introduce pin_user_pages*() and FOLL_PIN
-To:     Jan Kara <jack@suse.cz>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>
-References: <20191115055340.1825745-1-jhubbard@nvidia.com>
- <20191115055340.1825745-11-jhubbard@nvidia.com>
- <20191118101601.GF17319@quack2.suse.cz>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <aa15a76f-7054-2db2-4a47-8fbe1594295a@nvidia.com>
-Date:   Mon, 18 Nov 2019 21:17:27 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Tue, 19 Nov 2019 01:22:33 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJ69GPn164783;
+        Tue, 19 Nov 2019 06:22:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
+ bh=wy+lF6MYsnlvt3ZFLCMryc3CssDPfdNSh6CIREwmXoY=;
+ b=SpsxFGdpVfY67u71UbRQ99zRWPdoBJH/1+t27vsdZA6o7KqmA5dB+4ceDK2jyrRBE9nu
+ /l4bvHNZVgjFiwYbrLk2L77UBWpMhEtB+3sy7xrHv1KTqkrFOJ60MnNTXDpb4CmoSfW9
+ kcnUcf8+BB1fseU8Wp2wQ+Th37JZvm9UnuGOjHi9+kdS9FOX8LIdnUDxXGji0qYVhMWD
+ 7yoU0aoiRJx09TzYtN+FGzAh7S82KfpiRahzFK3W7ntpMtJe7Yj/PQKIcI1UVZV9j0/g
+ DsMOPASnV02zxaioYF2MOnqgivq3ibz8qadhP9OiQ9PvHJooRJEfqlATxNMXET9ZRq6u 3w== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2wa8htmtqn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Nov 2019 06:22:27 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJ68iYj034560;
+        Tue, 19 Nov 2019 06:22:26 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2wc0afu0w9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Nov 2019 06:22:26 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAJ6MPsM026518;
+        Tue, 19 Nov 2019 06:22:25 GMT
+Received: from kili.mountain (/41.210.141.188)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 18 Nov 2019 22:22:25 -0800
+Date:   Tue, 19 Nov 2019 09:22:16 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] io-wq: remove extra space characters
+Message-ID: <20191119062216.qhxmnrt2rdioirja@kili.mountain>
 MIME-Version: 1.0
-In-Reply-To: <20191118101601.GF17319@quack2.suse.cz>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1574140652; bh=j4L4ESflFWPcWXUSa4QBFr0g8LzukvpI57j3tX0u+LI=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=HbjIjhLqDGlCz9fdO9WJ5XZ1MylRhdOt3hOrXOPV4rhTnQVDZpbMvOZlSwNGJc66E
-         /dS/T8ygBehTtSzMJwZ3TOTHElFkCJKdPHvXGZaLpQt9mjPgsblK2PBNnMrg02Wmdh
-         9Qm8oCkWiYkFORrigI0hEzL7aY7iY3cHZ1DrJYjhRQ5sx+Tmm0Tw8QlCh7Z2iKTLps
-         yMslWIbYXkh6S/YZKISH7oHSmmR+hcZRdC+ZCjemhpD6kLdzSXTQ0ykjer3SCrjsmC
-         1w7ai76vYnn+iNTaSLHytmXdlQYChVn5NpYDDm4H81+ayvHDf9eTllSFjtIJNz8Xoj
-         cb1UR17mTvf1w==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=987
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911190057
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9445 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911190057
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/18/19 2:16 AM, Jan Kara wrote:
-> On Thu 14-11-19 21:53:26, John Hubbard wrote:
->>  /*
->> - * NOTE on FOLL_LONGTERM:
->> + * FOLL_PIN and FOLL_LONGTERM may be used in various combinations with each
->> + * other. Here is what they mean, and how to use them:
->>   *
->>   * FOLL_LONGTERM indicates that the page will be held for an indefinite time
->> - * period _often_ under userspace control.  This is contrasted with
->> - * iov_iter_get_pages() where usages which are transient.
->> + * period _often_ under userspace control.  This is in contrast to
->> + * iov_iter_get_pages(), where usages which are transient.
->                           ^^^ when you touch this, please fix also the
-> second sentense. It doesn't quite make sense to me... I'd probably write
-> there "whose usages are transient" but maybe you can come up with something
-> even better.
+These lines are indented an extra space character.
 
-Fixed, using your wording, as I didn't see any obvious improvements beyond that.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+We often see this where the lines after a comment are indented one
+space extra.  I don't know if it's an editor thing maybe?
 
+ fs/io-wq.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-
-thanks,
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index fcb6c74209da..6d8f5e6c8167 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -333,9 +333,9 @@ static void __io_worker_busy(struct io_wqe *wqe, struct io_worker *worker,
+ 	 * If worker is moving from bound to unbound (or vice versa), then
+ 	 * ensure we update the running accounting.
+ 	 */
+-	 worker_bound = (worker->flags & IO_WORKER_F_BOUND) != 0;
+-	 work_bound = (work->flags & IO_WQ_WORK_UNBOUND) == 0;
+-	 if (worker_bound != work_bound) {
++	worker_bound = (worker->flags & IO_WORKER_F_BOUND) != 0;
++	work_bound = (work->flags & IO_WQ_WORK_UNBOUND) == 0;
++	if (worker_bound != work_bound) {
+ 		io_wqe_dec_running(wqe, worker);
+ 		if (work_bound) {
+ 			worker->flags |= IO_WORKER_F_BOUND;
 -- 
-John Hubbard
-NVIDIA
+2.11.0
 
-
-> 
-> Otherwise the patch looks good to me so feel free to add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> 
-> 								Honza
-> 
