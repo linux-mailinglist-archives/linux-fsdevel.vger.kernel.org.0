@@ -2,73 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8C711027F7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 16:21:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3D8A10285F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 16:45:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbfKSPVE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Nov 2019 10:21:04 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:39252 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727505AbfKSPVE (ORCPT
+        id S1728374AbfKSPpc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Nov 2019 10:45:32 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:46708 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728348AbfKSPpa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Nov 2019 10:21:04 -0500
-Received: by mail-io1-f65.google.com with SMTP id k1so23623345ioj.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Nov 2019 07:21:02 -0800 (PST)
+        Tue, 19 Nov 2019 10:45:30 -0500
+Received: by mail-io1-f68.google.com with SMTP id i11so92975iol.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Nov 2019 07:45:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wLB89YSfgFbBGVbXR/ZLzoyZwIzs8AJRlNKdafMUlZc=;
-        b=JZU5Egl9ZoaDwz0bdBgxNinwLYcLz3n+Hn0aSbO/AVFn/aCE1lLwcN1r/3QDejrEwj
-         6kglXsZ4RySU2HEjz8jO/+dMfP0KzreCJJzgp6h7hlw6u+wxrZj6UwrfdYtdIGDWXGiR
-         OYES5PwFK/+xSi0YVlN3UdH6klun9G6QoHg4Tc+ZnUsv6IMI/4muOABPexjk1oA0ADE5
-         b3zj+/FHbBkydFhTf4a73F5C1bOOVr937pWuybe9hb0lgDZmy5CuNokkTpHWHs08/nD+
-         f69g2JR9eA014LrlsmPjz5j30rtzeVJA7qw7ztGe066Nw7m/BfFu8Iv6+9T9ezL/N4tx
-         eaVA==
+        bh=ILms/bB5JEtUXlffrq/EMHXcgXCQzsaG2M1qIBlKUaQ=;
+        b=RwBME2OoqBztOI11Voq+RBDUpPBLExkw/VYGbmu1VlblBKOGHqNeO5L6Xz3qvALBPm
+         HuOxueoQr47BxFCKxsxDLxuGY0n6u1XaRW+BP/AinVTaQCRqOv9pAcv+i4LLlefza6ys
+         Mv829/6Gga0idOLiQo6yiK6DA35AzyH39OfCt/Mpl6b69udOzBI+266SvHciziY0ooTv
+         gEkuD4zAx32J4Bjif1LvH5kbNk2cKV+bjd0PMIkw/p4J/dmZ/aI0ar+8YWjNRCwMAcg4
+         PNnjDOv8HO+PWtQRtuQcJ3CVZ67QzJWtgNUY9Sh0Hg7WJBXdJ6n3iRhFDcyag4vDZPNU
+         hoqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=wLB89YSfgFbBGVbXR/ZLzoyZwIzs8AJRlNKdafMUlZc=;
-        b=PA4imHvhgqRyQCAl/YOoyu/pBNb7nb1AmGFh7UVMb3lJZMU7Od7ED1Zb8Tdo/sBiNd
-         VUu6z2yaN/6BrN9pw6b00+L7HuVu+cqWFOOFMJaXAgxhTPTQTpj8l6aLEE0xMpoLJang
-         vv+ymThtz1+dKt67i8B6G2ONVO+JHALmNCqQepUL3smRX2jBJ+wn6DMYOu4yZsZqAqNm
-         eZ8TVLNzkboEPefXQUdfGVXwr2EogjYkLHb0aRz3/WCylFnR7S5mTkKYdqAhmIIJLs32
-         SQdPuEUllqKmRUvT2DQevUzLgwqSyIjIpgzFlLp3NmoFkVWdVc9ZJ+/b3yZgENkuKdpa
-         1G/Q==
-X-Gm-Message-State: APjAAAU9nt+Lt511EdRcySkJc55J+7dhR9Tp7sO8WXQj+ipc/Ht5gnNQ
-        MAHJPNqkf8EvPEL1VemtXRSqRA==
-X-Google-Smtp-Source: APXvYqxS869fK817TTK5HMeIoHO8JiLIL3F6mOGHGin+8CiL/opZQabRZ2ZaAHZYToc+OJNCCgwA+A==
-X-Received: by 2002:a02:70cb:: with SMTP id f194mr19334335jac.126.1574176861577;
-        Tue, 19 Nov 2019 07:21:01 -0800 (PST)
+        bh=ILms/bB5JEtUXlffrq/EMHXcgXCQzsaG2M1qIBlKUaQ=;
+        b=Xzt9Yj3NXhEZyLXxYzQdP7/IBAH81jt+Na8uUbmgQAvB7+ou8pHRUQ66ObC3i1Oxnw
+         0+xiSK6tOFkFGtsg2cJlSh+Us6eUohQ87zTcN3VI7HBViroGzPkeQAhrTzi/GmJo7Q/9
+         zNS8ko0wzxThcEwn3KJaGXxc40yrd+MmgQpzUs6rMkqMfP1B2VtiePf+upM1uD2o1nsC
+         oCsfWE1MlLS/SANyGnfBHEq/7krp8LyRso40F+f6MIdYDslY0upYNw2QIxzuYmxUxhKP
+         gZorK4/GcLu+Wy9mozrc1pmeYVN5qXn5d6YUYYmM9Q9ZmjpcLzxGoJ4ywgJss5ErpFHQ
+         LprQ==
+X-Gm-Message-State: APjAAAWIKxRaUBb4pmGxcqvr4iP/y25tk7KWXE68wqkNMtdMHREPLl7g
+        zIS4pRNqOs+n3b8qxzxNS9bliQ==
+X-Google-Smtp-Source: APXvYqznPJlg+TnJQNzJlFLlkHhxBEEmh+lvMVKVsCOsZH+6WUZXKFc57WfrzoCx/y5oaecfPWPWwQ==
+X-Received: by 2002:a6b:400d:: with SMTP id k13mr19027339ioa.299.1574178328024;
+        Tue, 19 Nov 2019 07:45:28 -0800 (PST)
 Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id t7sm4262873iog.85.2019.11.19.07.20.59
+        by smtp.gmail.com with ESMTPSA id s18sm5604075ilo.21.2019.11.19.07.45.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Nov 2019 07:21:00 -0800 (PST)
-Subject: Re: INFO: task hung in io_wq_destroy
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     syzbot <syzbot+0f1cc17f85154f400465@syzkaller.appspotmail.com>,
-        andriy.shevchenko@linux.intel.com, davem@davemloft.net,
-        f.fainelli@gmail.com, gregkh@linuxfoundation.org,
-        idosch@mellanox.com, kimbrownkd@gmail.com,
+        Tue, 19 Nov 2019 07:45:26 -0800 (PST)
+Subject: Re: [PATCH] io-wq: remove extra space characters
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, petrm@mellanox.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        viro@zeniv.linux.org.uk, wanghai26@huawei.com,
-        yuehaibing@huawei.com
-References: <000000000000f86a4f0595fdb152@google.com>
- <f1a79e81-b41f-ba48-9bf3-aeae708f73ba@kernel.dk>
- <20191119022330.GC3147@sol.localdomain>
- <bc52115c-3951-54c6-7810-86797d8c4644@kernel.dk>
- <c7b9c600-724b-6df1-84ba-b74999d6f4a6@kernel.dk>
-Message-ID: <09cdf1d6-4660-9712-e374-4bbb120d6858@kernel.dk>
-Date:   Tue, 19 Nov 2019 08:20:58 -0700
+        kernel-janitors@vger.kernel.org
+References: <20191119062216.qhxmnrt2rdioirja@kili.mountain>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <ac841162-db41-0c8b-6ff8-d5b956961582@kernel.dk>
+Date:   Tue, 19 Nov 2019 08:45:25 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <c7b9c600-724b-6df1-84ba-b74999d6f4a6@kernel.dk>
+In-Reply-To: <20191119062216.qhxmnrt2rdioirja@kili.mountain>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -77,160 +67,25 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/18/19 9:34 PM, Jens Axboe wrote:
-> On 11/18/19 8:15 PM, Jens Axboe wrote:
->> On 11/18/19 7:23 PM, Eric Biggers wrote:
->>> Hi Jens,
->>>
->>> On Mon, Oct 28, 2019 at 03:00:08PM -0600, Jens Axboe wrote:
->>>> This is fixed in my for-next branch for a few days at least, unfortunately
->>>> linux-next is still on the old one. Next version should be better.
->>>
->>> This is still occurring on linux-next.  Here's a report on next-20191115 from
->>> https://syzkaller.appspot.com/text?tag=CrashReport&x=16fa3d1ce00000
->>
->> Hmm, I'll take a look. Looking at the reproducer, it's got a massive
->> sleep at the end. I take it this triggers before that time actually
->> passes? Because that's around 11.5 days of sleep.
->>
->> No luck reproducing this so far, I'll try on linux-next.
-> 
-> I see what it is - if the io-wq is setup and torn down before the
-> manager thread is started, then we won't create the workers we already
-> expected. The manager thread will exit without doing anything, but
-> teardown will wait for the expected workers to exit before being
-> allowed to proceed. That never happens.
-> 
-> I've got a patch for this, but I'll test it a bit and send it out
-> tomorrow.
+On 11/18/19 11:22 PM, Dan Carpenter wrote:
+> These lines are indented an extra space character.
 
-This should fix it - wait until the manager is started and has created
-the required fixed workers, then check if it failed or not. That closes
-the gap between startup and teardown, as we have settled things before
-anyone is allowed to call io_wq_destroy().
+Thanks, applied.
 
+> We often see this where the lines after a comment are indented one
+> space extra.  I don't know if it's an editor thing maybe?
 
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 9174007ce107..1f640c489f7c 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -33,6 +33,7 @@ enum {
- enum {
- 	IO_WQ_BIT_EXIT		= 0,	/* wq exiting */
- 	IO_WQ_BIT_CANCEL	= 1,	/* cancel work on list */
-+	IO_WQ_BIT_ERROR		= 2,	/* error on setup */
- };
- 
- enum {
-@@ -562,14 +563,14 @@ void io_wq_worker_sleeping(struct task_struct *tsk)
- 	spin_unlock_irq(&wqe->lock);
- }
- 
--static void create_io_worker(struct io_wq *wq, struct io_wqe *wqe, int index)
-+static bool create_io_worker(struct io_wq *wq, struct io_wqe *wqe, int index)
- {
- 	struct io_wqe_acct *acct =&wqe->acct[index];
- 	struct io_worker *worker;
- 
- 	worker = kcalloc_node(1, sizeof(*worker), GFP_KERNEL, wqe->node);
- 	if (!worker)
--		return;
-+		return false;
- 
- 	refcount_set(&worker->ref, 1);
- 	worker->nulls_node.pprev = NULL;
-@@ -581,7 +582,7 @@ static void create_io_worker(struct io_wq *wq, struct io_wqe *wqe, int index)
- 				"io_wqe_worker-%d/%d", index, wqe->node);
- 	if (IS_ERR(worker->task)) {
- 		kfree(worker);
--		return;
-+		return false;
- 	}
- 
- 	spin_lock_irq(&wqe->lock);
-@@ -599,6 +600,7 @@ static void create_io_worker(struct io_wq *wq, struct io_wqe *wqe, int index)
- 		atomic_inc(&wq->user->processes);
- 
- 	wake_up_process(worker->task);
-+	return true;
- }
- 
- static inline bool io_wqe_need_worker(struct io_wqe *wqe, int index)
-@@ -606,9 +608,6 @@ static inline bool io_wqe_need_worker(struct io_wqe *wqe, int index)
- {
- 	struct io_wqe_acct *acct = &wqe->acct[index];
- 
--	/* always ensure we have one bounded worker */
--	if (index == IO_WQ_ACCT_BOUND && !acct->nr_workers)
--		return true;
- 	/* if we have available workers or no work, no need */
- 	if (!hlist_nulls_empty(&wqe->free_list) || !io_wqe_run_queue(wqe))
- 		return false;
-@@ -621,10 +620,19 @@ static inline bool io_wqe_need_worker(struct io_wqe *wqe, int index)
- static int io_wq_manager(void *data)
- {
- 	struct io_wq *wq = data;
-+	int i;
- 
--	while (!kthread_should_stop()) {
--		int i;
-+	/* create fixed workers */
-+	for (i = 0; i < wq->nr_wqes; i++) {
-+		if (create_io_worker(wq, wq->wqes[i], IO_WQ_ACCT_BOUND))
-+			continue;
-+		goto err;
-+	}
- 
-+	refcount_set(&wq->refs, wq->nr_wqes);
-+	complete(&wq->done);
-+
-+	while (!kthread_should_stop()) {
- 		for (i = 0; i < wq->nr_wqes; i++) {
- 			struct io_wqe *wqe = wq->wqes[i];
- 			bool fork_worker[2] = { false, false };
-@@ -644,6 +652,10 @@ static int io_wq_manager(void *data)
- 		schedule_timeout(HZ);
- 	}
- 
-+	return 0;
-+err:
-+	set_bit(IO_WQ_BIT_ERROR, &wq->state);
-+	complete(&wq->done);
- 	return 0;
- }
- 
-@@ -982,7 +994,6 @@ struct io_wq *io_wq_create(unsigned bounded, struct mm_struct *mm,
- 	wq->user = user;
- 
- 	i = 0;
--	refcount_set(&wq->refs, wq->nr_wqes);
- 	for_each_online_node(node) {
- 		struct io_wqe *wqe;
- 
-@@ -1020,6 +1031,10 @@ struct io_wq *io_wq_create(unsigned bounded, struct mm_struct *mm,
- 	wq->manager = kthread_create(io_wq_manager, wq, "io_wq_manager");
- 	if (!IS_ERR(wq->manager)) {
- 		wake_up_process(wq->manager);
-+		wait_for_completion(&wq->done);
-+		if (test_bit(IO_WQ_BIT_ERROR, &wq->state))
-+			goto err;
-+		reinit_completion(&wq->done);
- 		return wq;
- 	}
- 
-@@ -1041,10 +1056,9 @@ void io_wq_destroy(struct io_wq *wq)
- {
- 	int i;
- 
--	if (wq->manager) {
--		set_bit(IO_WQ_BIT_EXIT, &wq->state);
-+	set_bit(IO_WQ_BIT_EXIT, &wq->state);
-+	if (wq->manager)
- 		kthread_stop(wq->manager);
--	}
- 
- 	rcu_read_lock();
- 	for (i = 0; i < wq->nr_wqes; i++) {
+I think I can explain that. I recently decided to try and use the
+vim auto-indent, to see if it'd make my life a little easier to
+save on typing. Unfortunately it has a bug where it indents that
+extra space following a comment form like:
+
+/*
+ * bla bla
+ */
+
+which is exactly what happened here. As diff doesn't show that
+as extra whitespace you can miss that it happened.
 
 -- 
 Jens Axboe
