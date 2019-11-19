@@ -2,132 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8406D1020F1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 10:41:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7F5B1020D6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 10:38:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbfKSJkp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Nov 2019 04:40:45 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:14118 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727640AbfKSJkd (ORCPT
+        id S1727001AbfKSJih (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Nov 2019 04:38:37 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:37030 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725784AbfKSJig (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Nov 2019 04:40:33 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191119094030epoutp04587c567663421d9cd3ef7c0c27fa8cfe~Yhu8EkFKI0888908889epoutp04Y
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Nov 2019 09:40:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191119094030epoutp04587c567663421d9cd3ef7c0c27fa8cfe~Yhu8EkFKI0888908889epoutp04Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1574156430;
-        bh=qOKAH/xLKFcgxQkDaZUSWSDe5GuU0Alfu+G9AfD13f4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m5SstefjLfER0KVgHoZ4QIpuK4sd/nDB0lr7xzTb3ZYVwz2/OqW+gKCOePopFhsfO
-         0THhlIHcq9htLDB6PgtDniNQZ1JIt+6CmSDzXiaEbthk025iz9KCRqN1EKvaVgKB/c
-         H21XqWV5MzzwBnXiI5VBADTolHIo2xDmad0hYO4s=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20191119094030epcas1p2f80550ea22fa01d8281f6a3a08584ce9~Yhu7kOKRY0594305943epcas1p2B;
-        Tue, 19 Nov 2019 09:40:30 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.161]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 47HLR15tmFzMqYlv; Tue, 19 Nov
-        2019 09:40:29 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        10.17.04080.C88B3DD5; Tue, 19 Nov 2019 18:40:28 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20191119094028epcas1p1b69cd151e3e574859a34e3a931d48cf2~Yhu5e1Sbf1202912029epcas1p1n;
-        Tue, 19 Nov 2019 09:40:28 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191119094028epsmtrp11752626f62460a50efbd63a3ddfac27e~Yhu5eNoNz0080100801epsmtrp1u;
-        Tue, 19 Nov 2019 09:40:28 +0000 (GMT)
-X-AuditID: b6c32a37-7cdff70000000ff0-cd-5dd3b88c353a
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        37.12.03654.B88B3DD5; Tue, 19 Nov 2019 18:40:28 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.88.103.87]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191119094027epsmtip26fb07c57a37db5118d506c3c4b73852f~Yhu5RX4eu0708907089epsmtip2I;
-        Tue, 19 Nov 2019 09:40:27 +0000 (GMT)
-From:   Namjae Jeon <namjae.jeon@samsung.com>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        linkinjeon@gmail.com, Markus.Elfring@web.de,
-        sj1557.seo@samsung.com, dwagner@suse.de,
-        Namjae Jeon <namjae.jeon@samsung.com>
-Subject: [PATCH v3 13/13] MAINTAINERS: add exfat filesystem
-Date:   Tue, 19 Nov 2019 04:37:18 -0500
-Message-Id: <20191119093718.3501-14-namjae.jeon@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191119093718.3501-1-namjae.jeon@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphk+LIzCtJLcpLzFFi42LZdlhTV7dnx+VYgwvnhS0OP57EbtG8eD2b
-        xcrVR5ksrt+9xWyxZ+9JFovLu+awWfyf9ZzV4sf0eost/46wWlx6/4HFgctj56y77B77565h
-        99h9s4HNo2/LKkaPzaerPT5vkvM4tP0Nm8ftZ9tYAjiicmwyUhNTUosUUvOS81My89JtlbyD
-        453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgE5UUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQX
-        l9gqpRak5BQYGhToFSfmFpfmpesl5+daGRoYGJkCVSbkZFy5spG54Btrxc3GtUwNjA2sXYyc
-        HBICJhIXp8xg62Lk4hAS2MEo8XpSAyOE84lRYvWPfywQzjdGiQO7b7LDtHx9+54JxBYS2Mso
-        Me24BVxHU9MioFkcHGwC2hJ/toiC1IgI2Etsnn0AbBCzwBFGiRdfJoANEhawlth+4BeYzSKg
-        KvFm0huwobwCNhI3P7+Huk9eYvWGA8wgNidQ/OHsZWDnSQicYJNYfuMvI0SRi8ST01OhrhOW
-        eHV8C5QtJfGyv40d5CAJgWqJj/uZIcIdQEd8t4WwjSVurt/AClLCLKApsX6XPkRYUWLn77lg
-        05kF+CTefe1hhZjCK9HRJgRRoirRd+kwE4QtLdHV/gFqkYfE/ZUOkBDpZ5T4cOw9+wRGuVkI
-        CxYwMq5iFEstKM5NTy02LDBGjq9NjOAUqGW+g3HDOZ9DjAIcjEo8vArql2OFWBPLiitzDzFK
-        cDArifD6PboQK8SbklhZlVqUH19UmpNafIjRFBiOE5mlRJPzgek5ryTe0NTI2NjYwsTM3MzU
-        WEmcl+PHxVghgfTEktTs1NSC1CKYPiYOTqkGRh4+09qznxJVtnK1XXE8PFN0h8sVE7G+2Lc7
-        fyw/6ly4pk+Vp3H130fMy3dbnfr7Yn9xIlfnJ9Z9Ar8v9TtsfXk8Lyz02flJTRPnVUyf9GGi
-        SX1VlvBBlugfSf7ijmcinzB4mnps6Eq8n/bGRMxJxdBr3447Jju076/tyjUW/FscJR3rryRR
-        osRSnJFoqMVcVJwIAKWEaL+XAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPLMWRmVeSWpSXmKPExsWy7bCSvG7PjsuxBucuM1ocfjyJ3aJ58Xo2
-        i5WrjzJZXL97i9liz96TLBaXd81hs/g/6zmrxY/p9RZb/h1htbj0/gOLA5fHzll32T32z13D
-        7rH7ZgObR9+WVYwem09Xe3zeJOdxaPsbNo/bz7axBHBEcdmkpOZklqUW6dslcGVcubKRueAb
-        a8XNxrVMDYwNrF2MnBwSAiYSX9++Z+pi5OIQEtjNKLHxzjpmiIS0xLETZ4BsDiBbWOLw4WKI
-        mg+MEl9OzWQFibMJaEv82SIKUi4i4CjRu+swC0gNs8A5Romdz5YxgiSEBawlth/4xQ5iswio
-        SryZ9IYJxOYVsJG4+fk91BHyEqs3HADbywkUfzgbolcIqLfxUTP7BEa+BYwMqxglUwuKc9Nz
-        iw0LDPNSy/WKE3OLS/PS9ZLzczcxgoNVS3MH4+Ul8YcYBTgYlXh4T6hcjhViTSwrrsw9xCjB
-        wawkwuv36EKsEG9KYmVValF+fFFpTmrxIUZpDhYlcd6neccihQTSE0tSs1NTC1KLYLJMHJxS
-        DYyr0k6Z1vRoBF52tGnLSznavt522YrJc7Xr/bb88l6j0nQ37LML/3rRVy/dKrse39v4ksmY
-        tVGv7WuqvO6n3hWd15g+1FssOdp/bOPdEAlzl/w3ji6fuDe+Fu3vmJReISLhMXX7R5b+zqk+
-        l/7qPTdeZd0Q2Pjnneql3Sulo4t3H2eccDxM6JISS3FGoqEWc1FxIgAvoKWRUgIAAA==
-X-CMS-MailID: 20191119094028epcas1p1b69cd151e3e574859a34e3a931d48cf2
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191119094028epcas1p1b69cd151e3e574859a34e3a931d48cf2
-References: <20191119093718.3501-1-namjae.jeon@samsung.com>
-        <CGME20191119094028epcas1p1b69cd151e3e574859a34e3a931d48cf2@epcas1p1.samsung.com>
+        Tue, 19 Nov 2019 04:38:36 -0500
+Received: by mail-yb1-f195.google.com with SMTP id q7so8519048ybk.4;
+        Tue, 19 Nov 2019 01:38:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=XV9TdHCwAgTh1DSZeE90GauN9czOwgzQKxUvB4bE7ZI=;
+        b=PMLXdH0fLbYsnkIW4DZdeTpD9/zeNmJgjcFFZN+jLkiAG49aKD1VA+HmTP4HAfpZSg
+         elX70sjUZdyRRlX9TUPLrmZLhnrr/swR9tPpSx0LL1ICGpWdMt6w3vSmSYqZddzJoxku
+         P5Bz5D/UrQLp1XmrjtbCRWPafSxIsfzt23tbeugj17TRGxwsAyts801mkHo64/V2LCeh
+         udky5arWbl4/QfJ7XKWqaPRjRs0PPpMNLKl/T4RBjVwZNGoM/BMYd5eX2xisZaQIHFjM
+         0IpEoIGKVSYLUSpF+yYI9ixw7mlDOcKx9QjZ6EQTzFlnCLE0CVtvCt20G7+HBkiZeXdG
+         +gmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=XV9TdHCwAgTh1DSZeE90GauN9czOwgzQKxUvB4bE7ZI=;
+        b=HBUhpYyzyO+iz3VRInSpblVziZ5h9P3iIlhI99nx8kjOSkl0in8ICmlagXjcU3Dal2
+         7f9JvL8QR0Gv7IwEkGRDuZlZkPw10kHTDI9Th5PKoMO3erDrE1ajRWnd4vntNaLIlHtd
+         fsTc3zcTZ1vr0duGAt42OFbMamYMxJ+ADe+BXV9ybcp2Ek9hWB17bVDOPmVFTJ1HO0qj
+         swh9eom7yZySodH/gjuHD5L8L9Oi8J9aEdeuZUSsXxNzNz5WLcS9bI3pC5mOASwsZ9FD
+         FfMiQ++Ip2hySh4E5Hgb9WZUtXk8QIqyEEvZ9LL3h70dFEgvsQvH0OWQhxtngV1F69To
+         JSHA==
+X-Gm-Message-State: APjAAAUyzbMn6W+AF6vtIUnjKGX61aSgCjfJOAdsa4GzoDcX3mtQy30k
+        ktHVv7LzmJc85NPYVM2ycAi1PL5fPTQo6pc7r7qKcSNh
+X-Google-Smtp-Source: APXvYqycetVdYBKXH9dAFp9riCP5n+JBr2OnqHm1agKt7VVk9T07vV61kzYK7hore5LntcoUX42e4BcH5QFjm8CNi6I=
+X-Received: by 2002:a25:212:: with SMTP id 18mr27185502ybc.439.1574156315282;
+ Tue, 19 Nov 2019 01:38:35 -0800 (PST)
+MIME-Version: 1.0
+References: <1574129643-14664-1-git-send-email-jiufei.xue@linux.alibaba.com>
+ <1574129643-14664-3-git-send-email-jiufei.xue@linux.alibaba.com>
+ <CAOQ4uxhU0NGqX-P4XTJ+kf6sXNCnUCBxgp1u2-aDV5p15Jh+tg@mail.gmail.com> <142a7524-2587-7b1c-c5e0-3eb2d42b2762@linux.alibaba.com>
+In-Reply-To: <142a7524-2587-7b1c-c5e0-3eb2d42b2762@linux.alibaba.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 19 Nov 2019 11:38:24 +0200
+Message-ID: <CAOQ4uxgR3KO9kXGdqif0A-QBrVLn9id2eFANMDprCz62jSAmaQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ovl: implement async IO routines
+To:     Jiufei Xue <jiufei.xue@linux.alibaba.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add myself and Sungjong Seo as exfat maintainer.
+On Tue, Nov 19, 2019 at 10:37 AM Jiufei Xue
+<jiufei.xue@linux.alibaba.com> wrote:
+>
+> Hi Amir,
+>
+> On 2019/11/19 =E4=B8=8B=E5=8D=8812:22, Amir Goldstein wrote:
+> > On Tue, Nov 19, 2019 at 4:14 AM Jiufei Xue <jiufei.xue@linux.alibaba.co=
+m> wrote:
+> >>
+> >> A performance regression is observed since linux v4.19 when we do aio
+> >> test using fio with iodepth 128 on overlayfs. And we found that queue
+> >> depth of the device is always 1 which is unexpected.
+> >>
+> >> After investigation, it is found that commit 16914e6fc7
+> >> (=E2=80=9Covl: add ovl_read_iter()=E2=80=9D) and commit 2a92e07edc
+> >> (=E2=80=9Covl: add ovl_write_iter()=E2=80=9D) use do_iter_readv_writev=
+() to submit
+> >> requests to real filesystem. Async IOs are converted to sync IOs here
+> >> and cause performance regression.
+> >>
+> >> So implement async IO for stacked reading and writing.
+> >>
+> >> Signed-off-by: Jiufei Xue <jiufei.xue@linux.alibaba.com>
+> >> ---
+> >>  fs/overlayfs/file.c      | 97 +++++++++++++++++++++++++++++++++++++++=
+++-------
+> >>  fs/overlayfs/overlayfs.h |  2 +
+> >>  fs/overlayfs/super.c     | 12 +++++-
+> >>  3 files changed, 95 insertions(+), 16 deletions(-)
+> >>
+> >> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+> >> index e235a63..07d94e7 100644
+> >> --- a/fs/overlayfs/file.c
+> >> +++ b/fs/overlayfs/file.c
+> >> @@ -11,6 +11,14 @@
+> >>  #include <linux/uaccess.h>
+> >>  #include "overlayfs.h"
+> >>
+> >> +struct ovl_aio_req {
+> >> +       struct kiocb iocb;
+> >> +       struct kiocb *orig_iocb;
+> >> +       struct fd fd;
+> >> +};
+> >> +
+> >> +static struct kmem_cache *ovl_aio_request_cachep;
+> >> +
+> >>  static char ovl_whatisit(struct inode *inode, struct inode *realinode=
+)
+> >>  {
+> >>         if (realinode !=3D ovl_inode_upper(inode))
+> >> @@ -225,6 +233,21 @@ static rwf_t ovl_iocb_to_rwf(struct kiocb *iocb)
+> >>         return flags;
+> >>  }
+> >>
+> >> +static void ovl_aio_rw_complete(struct kiocb *iocb, long res, long re=
+s2)
+> >> +{
+> >> +       struct ovl_aio_req *aio_req =3D container_of(iocb, struct ovl_=
+aio_req, iocb);
+> >> +       struct kiocb *orig_iocb =3D aio_req->orig_iocb;
+> >> +
+> >> +       if (iocb->ki_flags & IOCB_WRITE)
+> >> +               file_end_write(iocb->ki_filp);
+> >> +
+> >> +       orig_iocb->ki_pos =3D iocb->ki_pos;
+> >> +       orig_iocb->ki_complete(orig_iocb, res, res2);
+> >> +
+> >> +       fdput(aio_req->fd);
+> >> +       kmem_cache_free(ovl_aio_request_cachep, aio_req);
+> >> +}
+> >> +
+> >>  static ssize_t ovl_read_iter(struct kiocb *iocb, struct iov_iter *ite=
+r)
+> >>  {
+> >>         struct file *file =3D iocb->ki_filp;
+> >> @@ -240,14 +263,28 @@ static ssize_t ovl_read_iter(struct kiocb *iocb,=
+ struct iov_iter *iter)
+> >>                 return ret;
+> >>
+> >>         old_cred =3D ovl_override_creds(file_inode(file)->i_sb);
+> >> -       ret =3D vfs_iter_read(real.file, iter, &iocb->ki_pos,
+> >> -                           ovl_iocb_to_rwf(iocb));
+> >> +       if (is_sync_kiocb(iocb)) {
+> >> +               ret =3D vfs_iter_read(real.file, iter, &iocb->ki_pos,
+> >> +                                   ovl_iocb_to_rwf(iocb));
+> >> +               ovl_file_accessed(file);
+> >> +               fdput(real);
+> >> +       } else {
+> >> +               struct ovl_aio_req *aio_req =3D kmem_cache_alloc(ovl_a=
+io_request_cachep,
+> >> +                                                              GFP_NOF=
+S);
+> >> +               aio_req->fd =3D real;
+> >> +               aio_req->orig_iocb =3D iocb;
+> >> +               kiocb_clone(&aio_req->iocb, iocb, real.file);
+> >> +               aio_req->iocb.ki_complete =3D ovl_aio_rw_complete;
+> >> +               ret =3D vfs_iocb_iter_read(real.file, &aio_req->iocb, =
+iter);
+> >> +               ovl_file_accessed(file);
+> >
+> > That should be done in completion/error
+> >
+>
+> Refer to function generic_file_read_iter(), in direct IO path,
+> file_accessed() is done before IO submission, so I think ovl_file_accesse=
+d()
+> should be done here no matter completion/error or IO is queued.
 
-Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+Mmm, it doesn't matter much if atime is updated before or after,
+but ovl_file_accessed() does not only update atime, it also copies
+ctime which could have been modified as a result of the io, so
+I think it is safer to put it in the cleanup hook.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 89cb4dd0924d..0001db230e4c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6215,6 +6215,13 @@ F:	include/trace/events/mdio.h
- F:	include/uapi/linux/mdio.h
- F:	include/uapi/linux/mii.h
- 
-+EXFAT FILE SYSTEM
-+M:	Namjae Jeon <namjae.jeon@samsung.com>
-+M:	Sungjong Seo <sj1557.seo@samsung.com>
-+L:	linux-fsdevel@vger.kernel.org
-+S:	Maintained
-+F:	fs/exfat/
-+
- EXFAT FILE SYSTEM
- M:	Valdis Kletnieks <valdis.kletnieks@vt.edu>
- L:	linux-fsdevel@vger.kernel.org
--- 
-2.17.1
-
+Thanks,
+Amir.
