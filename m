@@ -2,63 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3D8A10285F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 16:45:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 836221028F9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 17:11:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728374AbfKSPpc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Nov 2019 10:45:32 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:46708 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728348AbfKSPpa (ORCPT
+        id S1728309AbfKSQLC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Nov 2019 11:11:02 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:32889 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728365AbfKSQLA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Nov 2019 10:45:30 -0500
-Received: by mail-io1-f68.google.com with SMTP id i11so92975iol.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Nov 2019 07:45:28 -0800 (PST)
+        Tue, 19 Nov 2019 11:11:00 -0500
+Received: by mail-io1-f65.google.com with SMTP id j13so615419ioe.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Nov 2019 08:10:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ILms/bB5JEtUXlffrq/EMHXcgXCQzsaG2M1qIBlKUaQ=;
-        b=RwBME2OoqBztOI11Voq+RBDUpPBLExkw/VYGbmu1VlblBKOGHqNeO5L6Xz3qvALBPm
-         HuOxueoQr47BxFCKxsxDLxuGY0n6u1XaRW+BP/AinVTaQCRqOv9pAcv+i4LLlefza6ys
-         Mv829/6Gga0idOLiQo6yiK6DA35AzyH39OfCt/Mpl6b69udOzBI+266SvHciziY0ooTv
-         gEkuD4zAx32J4Bjif1LvH5kbNk2cKV+bjd0PMIkw/p4J/dmZ/aI0ar+8YWjNRCwMAcg4
-         PNnjDOv8HO+PWtQRtuQcJ3CVZ67QzJWtgNUY9Sh0Hg7WJBXdJ6n3iRhFDcyag4vDZPNU
-         hoqw==
+        bh=yxTg9Jz6CUPbj7hb+zClDPA6shnTNr7Uh8vLjm12KTA=;
+        b=oGIJW8HfkgkobB0o2Qa1NbNfnl9mEqSGpPEO2LkogyZvOuMJQ7TF55da86qlugqMCd
+         338Wge2YPFXsoEIf9RGDawq7jpCCeV3jwC0W058T6wHLBemhZJS3koszJqUTfQULDiaX
+         2B6RyRY6HS9AE+8hVENsQBKSpUdhkmyAKNXz0Nm/Cxj0QFJRN/CWS+DE/OAhOnYHg0xk
+         tK1FlPGkzCpUU1kARsuIumFoSGAGKhbP5ourqDXhrP7e5xrJzr7bWyrrGYocI1tJI7bI
+         UgAaDI7OLq1bomHv0lR8zAsfor6M3fEsHwxDtlUp7bVspKwb2e69Lw3GuCnkI9VLqTxF
+         /QFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=ILms/bB5JEtUXlffrq/EMHXcgXCQzsaG2M1qIBlKUaQ=;
-        b=Xzt9Yj3NXhEZyLXxYzQdP7/IBAH81jt+Na8uUbmgQAvB7+ou8pHRUQ66ObC3i1Oxnw
-         0+xiSK6tOFkFGtsg2cJlSh+Us6eUohQ87zTcN3VI7HBViroGzPkeQAhrTzi/GmJo7Q/9
-         zNS8ko0wzxThcEwn3KJaGXxc40yrd+MmgQpzUs6rMkqMfP1B2VtiePf+upM1uD2o1nsC
-         oCsfWE1MlLS/SANyGnfBHEq/7krp8LyRso40F+f6MIdYDslY0upYNw2QIxzuYmxUxhKP
-         gZorK4/GcLu+Wy9mozrc1pmeYVN5qXn5d6YUYYmM9Q9ZmjpcLzxGoJ4ywgJss5ErpFHQ
-         LprQ==
-X-Gm-Message-State: APjAAAWIKxRaUBb4pmGxcqvr4iP/y25tk7KWXE68wqkNMtdMHREPLl7g
-        zIS4pRNqOs+n3b8qxzxNS9bliQ==
-X-Google-Smtp-Source: APXvYqznPJlg+TnJQNzJlFLlkHhxBEEmh+lvMVKVsCOsZH+6WUZXKFc57WfrzoCx/y5oaecfPWPWwQ==
-X-Received: by 2002:a6b:400d:: with SMTP id k13mr19027339ioa.299.1574178328024;
-        Tue, 19 Nov 2019 07:45:28 -0800 (PST)
+        bh=yxTg9Jz6CUPbj7hb+zClDPA6shnTNr7Uh8vLjm12KTA=;
+        b=ZfRc0jWiNtY9iBduaNb3pYTtqHAbE+3jsy3adghjLU7jy2bC73LTDiWL6gSyZZ8tbL
+         eIFkY7wMXYDZzPeGDRcs+8idLw8tcYFmkIG6T8Ujcr0IA4zImPMVbj5TH1+p05AdRFcN
+         v8jBMtn1OXbu7VfUdab/c7Yc6QEcBeAhD3nf1sWywiuKRmMDaOaIkGncgRVarT8QEgvN
+         gdSrUlotCH7im/uHUQThFXEE4OHtukVigMvii6Xk6K6xwbpLOZ9h4k7mPHeyb92kOZZ7
+         jFvqDir7eQ3N+uaQ/ew4LYNA6kMyw2xWRujCl/k4VUnkTk7o3Q9l5WjU6h+7erJMtuBs
+         uyxQ==
+X-Gm-Message-State: APjAAAVV4YNrMyQvTCPA8oNTM8/jivU/A607sM+z7qrPIEMVMDzhCLqg
+        EJHKmV0ktz1yPOEpuKTSND2sqQ==
+X-Google-Smtp-Source: APXvYqw/6l4rejQYc8a+bdmv6/89DOI3Ir5+fK0WCl1y9yQpIdn8Kiz4M9g4FLh+4h0UiHB53RA+ow==
+X-Received: by 2002:a02:140a:: with SMTP id 10mr18915165jag.72.1574179857938;
+        Tue, 19 Nov 2019 08:10:57 -0800 (PST)
 Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id s18sm5604075ilo.21.2019.11.19.07.45.26
+        by smtp.gmail.com with ESMTPSA id u6sm5616560ilm.22.2019.11.19.08.10.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Nov 2019 07:45:26 -0800 (PST)
-Subject: Re: [PATCH] io-wq: remove extra space characters
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <20191119062216.qhxmnrt2rdioirja@kili.mountain>
+        Tue, 19 Nov 2019 08:10:56 -0800 (PST)
+Subject: Re: [PATCH v6 15/24] fs/io_uring: set FOLL_PIN via pin_user_pages()
+To:     John Hubbard <jhubbard@nvidia.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+References: <20191119081643.1866232-1-jhubbard@nvidia.com>
+ <20191119081643.1866232-16-jhubbard@nvidia.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ac841162-db41-0c8b-6ff8-d5b956961582@kernel.dk>
-Date:   Tue, 19 Nov 2019 08:45:25 -0700
+Message-ID: <2ae65d1b-a3eb-74ed-afce-c493de5bbfd3@kernel.dk>
+Date:   Tue, 19 Nov 2019 09:10:54 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191119062216.qhxmnrt2rdioirja@kili.mountain>
+In-Reply-To: <20191119081643.1866232-16-jhubbard@nvidia.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,25 +94,23 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/18/19 11:22 PM, Dan Carpenter wrote:
-> These lines are indented an extra space character.
+On 11/19/19 1:16 AM, John Hubbard wrote:
+> Convert fs/io_uring to use the new pin_user_pages() call, which sets
+> FOLL_PIN. Setting FOLL_PIN is now required for code that requires
+> tracking of pinned pages, and therefore for any code that calls
+> put_user_page().
+> 
+> In partial anticipation of this work, the io_uring code was already
+> calling put_user_page() instead of put_page(). Therefore, in order to
+> convert from the get_user_pages()/put_page() model, to the
+> pin_user_pages()/put_user_page() model, the only change required
+> here is to change get_user_pages() to pin_user_pages().
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 
-Thanks, applied.
-
-> We often see this where the lines after a comment are indented one
-> space extra.  I don't know if it's an editor thing maybe?
-
-I think I can explain that. I recently decided to try and use the
-vim auto-indent, to see if it'd make my life a little easier to
-save on typing. Unfortunately it has a bug where it indents that
-extra space following a comment form like:
-
-/*
- * bla bla
- */
-
-which is exactly what happened here. As diff doesn't show that
-as extra whitespace you can miss that it happened.
+You dropped my reviewed-by now... Given the file, you'd probably want
+to keep that.
 
 -- 
 Jens Axboe
