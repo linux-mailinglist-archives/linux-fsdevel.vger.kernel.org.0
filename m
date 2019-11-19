@@ -2,161 +2,236 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EE5B1027CB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 16:13:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8C711027F7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 16:21:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbfKSPNu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Nov 2019 10:13:50 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:20845 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726637AbfKSPNt (ORCPT
+        id S1727968AbfKSPVE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Nov 2019 10:21:04 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:39252 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727505AbfKSPVE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Nov 2019 10:13:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574176428;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=widBx/i0o0g15mXBzX0xlHem4iGp/JqjGpNTCuPpt7c=;
-        b=ZhmVab4GB0Ou499NsXs4IclmKXggdLf8ZUpMB8fYZhE+Fb18YeiHanv0CV93thlWcRW/ZJ
-        ffAIJ5bBimcywC8Z6iCY/GB7+FkFkPujnKTS+6+g2CPNa4Rcb8qzbS9xnA/D/JGHzRpYAv
-        G3ch02TuHouLsZeHT/ltRH/DWY2LSzY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-31-ACVK68odNwylutUVZPDcFw-1; Tue, 19 Nov 2019 10:13:45 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7449818C35B6;
-        Tue, 19 Nov 2019 15:13:44 +0000 (UTC)
-Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D7A7150FCB;
-        Tue, 19 Nov 2019 15:13:43 +0000 (UTC)
-Date:   Tue, 19 Nov 2019 10:13:44 -0500
-From:   Brian Foster <bfoster@redhat.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 28/28] xfs: rework unreferenced inode lookups
-Message-ID: <20191119151344.GD10763@bfoster>
-References: <20191031234618.15403-1-david@fromorbit.com>
- <20191031234618.15403-29-david@fromorbit.com>
- <20191106221846.GE37080@bfoster>
- <20191114221602.GJ4614@dread.disaster.area>
- <20191115172600.GC55854@bfoster>
- <20191118010047.GS4614@dread.disaster.area>
+        Tue, 19 Nov 2019 10:21:04 -0500
+Received: by mail-io1-f65.google.com with SMTP id k1so23623345ioj.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Nov 2019 07:21:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=wLB89YSfgFbBGVbXR/ZLzoyZwIzs8AJRlNKdafMUlZc=;
+        b=JZU5Egl9ZoaDwz0bdBgxNinwLYcLz3n+Hn0aSbO/AVFn/aCE1lLwcN1r/3QDejrEwj
+         6kglXsZ4RySU2HEjz8jO/+dMfP0KzreCJJzgp6h7hlw6u+wxrZj6UwrfdYtdIGDWXGiR
+         OYES5PwFK/+xSi0YVlN3UdH6klun9G6QoHg4Tc+ZnUsv6IMI/4muOABPexjk1oA0ADE5
+         b3zj+/FHbBkydFhTf4a73F5C1bOOVr937pWuybe9hb0lgDZmy5CuNokkTpHWHs08/nD+
+         f69g2JR9eA014LrlsmPjz5j30rtzeVJA7qw7ztGe066Nw7m/BfFu8Iv6+9T9ezL/N4tx
+         eaVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wLB89YSfgFbBGVbXR/ZLzoyZwIzs8AJRlNKdafMUlZc=;
+        b=PA4imHvhgqRyQCAl/YOoyu/pBNb7nb1AmGFh7UVMb3lJZMU7Od7ED1Zb8Tdo/sBiNd
+         VUu6z2yaN/6BrN9pw6b00+L7HuVu+cqWFOOFMJaXAgxhTPTQTpj8l6aLEE0xMpoLJang
+         vv+ymThtz1+dKt67i8B6G2ONVO+JHALmNCqQepUL3smRX2jBJ+wn6DMYOu4yZsZqAqNm
+         eZ8TVLNzkboEPefXQUdfGVXwr2EogjYkLHb0aRz3/WCylFnR7S5mTkKYdqAhmIIJLs32
+         SQdPuEUllqKmRUvT2DQevUzLgwqSyIjIpgzFlLp3NmoFkVWdVc9ZJ+/b3yZgENkuKdpa
+         1G/Q==
+X-Gm-Message-State: APjAAAU9nt+Lt511EdRcySkJc55J+7dhR9Tp7sO8WXQj+ipc/Ht5gnNQ
+        MAHJPNqkf8EvPEL1VemtXRSqRA==
+X-Google-Smtp-Source: APXvYqxS869fK817TTK5HMeIoHO8JiLIL3F6mOGHGin+8CiL/opZQabRZ2ZaAHZYToc+OJNCCgwA+A==
+X-Received: by 2002:a02:70cb:: with SMTP id f194mr19334335jac.126.1574176861577;
+        Tue, 19 Nov 2019 07:21:01 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id t7sm4262873iog.85.2019.11.19.07.20.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Nov 2019 07:21:00 -0800 (PST)
+Subject: Re: INFO: task hung in io_wq_destroy
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     syzbot <syzbot+0f1cc17f85154f400465@syzkaller.appspotmail.com>,
+        andriy.shevchenko@linux.intel.com, davem@davemloft.net,
+        f.fainelli@gmail.com, gregkh@linuxfoundation.org,
+        idosch@mellanox.com, kimbrownkd@gmail.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, petrm@mellanox.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        viro@zeniv.linux.org.uk, wanghai26@huawei.com,
+        yuehaibing@huawei.com
+References: <000000000000f86a4f0595fdb152@google.com>
+ <f1a79e81-b41f-ba48-9bf3-aeae708f73ba@kernel.dk>
+ <20191119022330.GC3147@sol.localdomain>
+ <bc52115c-3951-54c6-7810-86797d8c4644@kernel.dk>
+ <c7b9c600-724b-6df1-84ba-b74999d6f4a6@kernel.dk>
+Message-ID: <09cdf1d6-4660-9712-e374-4bbb120d6858@kernel.dk>
+Date:   Tue, 19 Nov 2019 08:20:58 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191118010047.GS4614@dread.disaster.area>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-MC-Unique: ACVK68odNwylutUVZPDcFw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+In-Reply-To: <c7b9c600-724b-6df1-84ba-b74999d6f4a6@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 18, 2019 at 12:00:47PM +1100, Dave Chinner wrote:
-> On Fri, Nov 15, 2019 at 12:26:00PM -0500, Brian Foster wrote:
-> > On Fri, Nov 15, 2019 at 09:16:02AM +1100, Dave Chinner wrote:
-> > > On Wed, Nov 06, 2019 at 05:18:46PM -0500, Brian Foster wrote:
-> > > If so, most of this patch will go away....
-> > >=20
-> > > > > +=09 * attached to the buffer so we don't need to do anything mor=
-e here.
-> > > > >  =09 */
-> > > > > -=09if (ip !=3D free_ip) {
-> > > > > -=09=09if (!xfs_ilock_nowait(ip, XFS_ILOCK_EXCL)) {
-> > > > > -=09=09=09rcu_read_unlock();
-> > > > > -=09=09=09delay(1);
-> > > > > -=09=09=09goto retry;
-> > > > > -=09=09}
-> > > > > -
-> > > > > -=09=09/*
-> > > > > -=09=09 * Check the inode number again in case we're racing with
-> > > > > -=09=09 * freeing in xfs_reclaim_inode().  See the comments in th=
-at
-> > > > > -=09=09 * function for more information as to why the initial che=
-ck is
-> > > > > -=09=09 * not sufficient.
-> > > > > -=09=09 */
-> > > > > -=09=09if (ip->i_ino !=3D inum) {
-> > > > > +=09if (__xfs_iflags_test(ip, XFS_ISTALE)) {
-> > > >=20
-> > > > Is there a correctness reason for why we move the stale check to un=
-der
-> > > > ilock (in both iflush/ifree)?
-> > >=20
-> > > It's under the i_flags_lock, and so I moved it up under the lookup
-> > > hold of the i_flags_lock so we don't need to cycle it again.
-> > >=20
-> >=20
-> > Yeah, but in both cases it looks like it moved to under the ilock as
-> > well, which comes after i_flags_lock. IOW, why grab ilock for stale
-> > inodes when we're just going to skip them?
->=20
-> Because I was worrying about serialising against reclaim before
-> changing the state of the inode. i.e. if the inode has already been
-> isolated by not yet disposed of, we shouldn't touch the inode state
-> at all. Serialisation against reclaim in this patch is via the
-> ILOCK, hence we need to do that before setting ISTALE....
->=20
+On 11/18/19 9:34 PM, Jens Axboe wrote:
+> On 11/18/19 8:15 PM, Jens Axboe wrote:
+>> On 11/18/19 7:23 PM, Eric Biggers wrote:
+>>> Hi Jens,
+>>>
+>>> On Mon, Oct 28, 2019 at 03:00:08PM -0600, Jens Axboe wrote:
+>>>> This is fixed in my for-next branch for a few days at least, unfortunately
+>>>> linux-next is still on the old one. Next version should be better.
+>>>
+>>> This is still occurring on linux-next.  Here's a report on next-20191115 from
+>>> https://syzkaller.appspot.com/text?tag=CrashReport&x=16fa3d1ce00000
+>>
+>> Hmm, I'll take a look. Looking at the reproducer, it's got a massive
+>> sleep at the end. I take it this triggers before that time actually
+>> passes? Because that's around 11.5 days of sleep.
+>>
+>> No luck reproducing this so far, I'll try on linux-next.
+> 
+> I see what it is - if the io-wq is setup and torn down before the
+> manager thread is started, then we won't create the workers we already
+> expected. The manager thread will exit without doing anything, but
+> teardown will wait for the expected workers to exit before being
+> allowed to proceed. That never happens.
+> 
+> I've got a patch for this, but I'll test it a bit and send it out
+> tomorrow.
 
-Yeah, I think my question still isn't clear... I'm not talking about
-setting ISTALE. The code I referenced above is where we test for it and
-skip the inode if it is already set. For example, the code referenced
-above in xfs_ifree_get_one_inode() currently does the following with
-respect to i_flags_lock, ILOCK and XFS_ISTALE:
+This should fix it - wait until the manager is started and has created
+the required fixed workers, then check if it failed or not. That closes
+the gap between startup and teardown, as we have settled things before
+anyone is allowed to call io_wq_destroy().
 
-=09...
-=09spin_lock(i_flags_lock)
-=09xfs_ilock_nowait(XFS_ILOCK_EXCL)
-=09if !XFS_ISTALE
-=09=09skip
-=09set XFS_ISTALE
-=09...
 
-The reclaim isolate code does this, however:
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index 9174007ce107..1f640c489f7c 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -33,6 +33,7 @@ enum {
+ enum {
+ 	IO_WQ_BIT_EXIT		= 0,	/* wq exiting */
+ 	IO_WQ_BIT_CANCEL	= 1,	/* cancel work on list */
++	IO_WQ_BIT_ERROR		= 2,	/* error on setup */
+ };
+ 
+ enum {
+@@ -562,14 +563,14 @@ void io_wq_worker_sleeping(struct task_struct *tsk)
+ 	spin_unlock_irq(&wqe->lock);
+ }
+ 
+-static void create_io_worker(struct io_wq *wq, struct io_wqe *wqe, int index)
++static bool create_io_worker(struct io_wq *wq, struct io_wqe *wqe, int index)
+ {
+ 	struct io_wqe_acct *acct =&wqe->acct[index];
+ 	struct io_worker *worker;
+ 
+ 	worker = kcalloc_node(1, sizeof(*worker), GFP_KERNEL, wqe->node);
+ 	if (!worker)
+-		return;
++		return false;
+ 
+ 	refcount_set(&worker->ref, 1);
+ 	worker->nulls_node.pprev = NULL;
+@@ -581,7 +582,7 @@ static void create_io_worker(struct io_wq *wq, struct io_wqe *wqe, int index)
+ 				"io_wqe_worker-%d/%d", index, wqe->node);
+ 	if (IS_ERR(worker->task)) {
+ 		kfree(worker);
+-		return;
++		return false;
+ 	}
+ 
+ 	spin_lock_irq(&wqe->lock);
+@@ -599,6 +600,7 @@ static void create_io_worker(struct io_wq *wq, struct io_wqe *wqe, int index)
+ 		atomic_inc(&wq->user->processes);
+ 
+ 	wake_up_process(worker->task);
++	return true;
+ }
+ 
+ static inline bool io_wqe_need_worker(struct io_wqe *wqe, int index)
+@@ -606,9 +608,6 @@ static inline bool io_wqe_need_worker(struct io_wqe *wqe, int index)
+ {
+ 	struct io_wqe_acct *acct = &wqe->acct[index];
+ 
+-	/* always ensure we have one bounded worker */
+-	if (index == IO_WQ_ACCT_BOUND && !acct->nr_workers)
+-		return true;
+ 	/* if we have available workers or no work, no need */
+ 	if (!hlist_nulls_empty(&wqe->free_list) || !io_wqe_run_queue(wqe))
+ 		return false;
+@@ -621,10 +620,19 @@ static inline bool io_wqe_need_worker(struct io_wqe *wqe, int index)
+ static int io_wq_manager(void *data)
+ {
+ 	struct io_wq *wq = data;
++	int i;
+ 
+-	while (!kthread_should_stop()) {
+-		int i;
++	/* create fixed workers */
++	for (i = 0; i < wq->nr_wqes; i++) {
++		if (create_io_worker(wq, wq->wqes[i], IO_WQ_ACCT_BOUND))
++			continue;
++		goto err;
++	}
+ 
++	refcount_set(&wq->refs, wq->nr_wqes);
++	complete(&wq->done);
++
++	while (!kthread_should_stop()) {
+ 		for (i = 0; i < wq->nr_wqes; i++) {
+ 			struct io_wqe *wqe = wq->wqes[i];
+ 			bool fork_worker[2] = { false, false };
+@@ -644,6 +652,10 @@ static int io_wq_manager(void *data)
+ 		schedule_timeout(HZ);
+ 	}
+ 
++	return 0;
++err:
++	set_bit(IO_WQ_BIT_ERROR, &wq->state);
++	complete(&wq->done);
+ 	return 0;
+ }
+ 
+@@ -982,7 +994,6 @@ struct io_wq *io_wq_create(unsigned bounded, struct mm_struct *mm,
+ 	wq->user = user;
+ 
+ 	i = 0;
+-	refcount_set(&wq->refs, wq->nr_wqes);
+ 	for_each_online_node(node) {
+ 		struct io_wqe *wqe;
+ 
+@@ -1020,6 +1031,10 @@ struct io_wq *io_wq_create(unsigned bounded, struct mm_struct *mm,
+ 	wq->manager = kthread_create(io_wq_manager, wq, "io_wq_manager");
+ 	if (!IS_ERR(wq->manager)) {
+ 		wake_up_process(wq->manager);
++		wait_for_completion(&wq->done);
++		if (test_bit(IO_WQ_BIT_ERROR, &wq->state))
++			goto err;
++		reinit_completion(&wq->done);
+ 		return wq;
+ 	}
+ 
+@@ -1041,10 +1056,9 @@ void io_wq_destroy(struct io_wq *wq)
+ {
+ 	int i;
+ 
+-	if (wq->manager) {
+-		set_bit(IO_WQ_BIT_EXIT, &wq->state);
++	set_bit(IO_WQ_BIT_EXIT, &wq->state);
++	if (wq->manager)
+ 		kthread_stop(wq->manager);
+-	}
+ 
+ 	rcu_read_lock();
+ 	for (i = 0; i < wq->nr_wqes; i++) {
 
-=09spin_trylock(i_flags_lock)
-=09if !XFS_ISTALE
-=09=09skip
-=09xfs_ilock(XFS_ILOCK_EXCL)
-=09...=09
-
-So my question is why not do something like the following in the
-_get_one_inode() case?
-
-=09...
-=09spin_lock(i_flags_lock)
-=09if !XFS_ISTALE
-=09=09skip
-=09xfs_ilock_nowait(XFS_ILOCK_EXCL)
-=09set XFS_ISTALE
-=09...
-
-IOW, what is the need, if any, to acquire ilock in the iflush/ifree
-paths before testing for XFS_ISTALE? Is there some specific intermediate
-state I'm missing or is this just unintentional? The reason I ask is
-ilock failure triggers that ugly delay(1) and retry thing, so it seems
-slightly weird to allow that for a stale inode we're ultimately going to
-skip (regardless of whether that would actually ever occur).
-
-Brian
-
-> IOWs, ISTALE is not protected by ILOCK, we just can't modify the
-> inode state until after we've gained the ILOCK to protect against
-> reclaim....
->=20
-> Cheers,
->=20
-> Dave.
-> --=20
-> Dave Chinner
-> david@fromorbit.com
->=20
+-- 
+Jens Axboe
 
