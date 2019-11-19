@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78AF21026FB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 15:40:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BA6B1027A1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 16:06:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727910AbfKSOkf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Nov 2019 09:40:35 -0500
-Received: from mout.web.de ([212.227.17.11]:33701 "EHLO mout.web.de"
+        id S1728140AbfKSPGh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Nov 2019 10:06:37 -0500
+Received: from mout.web.de ([217.72.192.78]:53845 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727351AbfKSOkf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Nov 2019 09:40:35 -0500
+        id S1727352AbfKSPGh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 19 Nov 2019 10:06:37 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1574174419;
-        bh=JxsUoMHheXU/KdGBNnEpaHryq9RrGzadPVe4yz26uNM=;
+        s=dbaedf251592; t=1574175980;
+        bh=0zo7dDCKLAG/971IKZsBHSalBSXIX3bS03JGhfTsm+8=;
         h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=VsYVAiTx2UVbJEFVx04DUML3XkXoAfWhKOIyLw/7tgJoKOImy91w07thHIEFBdZTw
-         ryfTcb6JhJKyDuRdOMFBdy20OImaO0wM6PfRu0IgUpf8WRDfb0857zNhCVWkOZj3L8
-         uCNKxtYTg3FLbj5ReRRvnuhga33c+jguvGpDUIqw=
+        b=lsUVirKRFb2klkSrAhBgEtS5KmRGHQJqv90Ouqh7mHWcd6sNDP6vCkX89gQBXT7jr
+         0zOHZNaCyKPgdh2hoNz39Q/U1vQaoLtd1j6k33R9kW1txDR0TFRoSxZran4a1PTs+W
+         w0Qj+TLXgBz1ung5rWMSLuyfQuFTrl+lSt5QcjM8=
 X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.3] ([2.243.93.164]) by smtp.web.de (mrweb103
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0LoHcD-1hvEss1DIH-00gIgs; Tue, 19
- Nov 2019 15:40:19 +0100
-Subject: Re: [PATCH v3 08/13] exfat: add exfat cache
+Received: from [192.168.1.3] ([2.243.93.164]) by smtp.web.de (mrweb101
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0LhvyA-1i31WI2VPu-00n7DX; Tue, 19
+ Nov 2019 16:06:20 +0100
+Subject: Re: [PATCH v3 10/13] exfat: add nls operations
 To:     Namjae Jeon <namjae.jeon@samsung.com>,
         linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
@@ -33,8 +33,8 @@ Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
         linkinjeon@gmail.com
 References: <20191119093718.3501-1-namjae.jeon@samsung.com>
- <CGME20191119094024epcas1p1be385d521ef64ae0e62da3f6f9bf3401@epcas1p1.samsung.com>
- <20191119093718.3501-9-namjae.jeon@samsung.com>
+ <CGME20191119094026epcas1p3eea5c655f3b89383e02c0097c491f0bc@epcas1p3.samsung.com>
+ <20191119093718.3501-11-namjae.jeon@samsung.com>
 From:   Markus Elfring <Markus.Elfring@web.de>
 Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
@@ -79,56 +79,67 @@ Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
  x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
  pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <c1db28a9-7905-be5e-68fa-21e23400b4a5@web.de>
-Date:   Tue, 19 Nov 2019 15:40:17 +0100
+Message-ID: <705cb02b-7707-af52-c2b5-70660debc619@web.de>
+Date:   Tue, 19 Nov 2019 16:06:17 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20191119093718.3501-9-namjae.jeon@samsung.com>
+In-Reply-To: <20191119093718.3501-11-namjae.jeon@samsung.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:JEkbcMI3twANPqjwWQAeufGCc0HTvD4tuO7TVhn8Oa374e1bn63
- zsbJbNjxvrIu3mNyyvRUiwI7FFU4EIs1w7MJ42Y79BepxSQ11gka78Lvya9HJLHW2pREuuQ
- nHBqMJ8jd3qyc9LVHeVl4hY+1cYPgAvqpfGJmjCjrKv3de/+zLXkD4UywSDYVEsq3hRZaFS
- iUGCWvfwPll2RpgpbMfaA==
+X-Provags-ID: V03:K1:a+CKAml7B0/J/jY8wDGOYDt4BF9yEXk82djMmrglT4v/2w80zx6
+ 8yJlQTkxYNm2noHcVhZYbaStojM4qHlJQjSjk13Bd4pln+1rB/H7kCo61WhcXISps7rWGnV
+ l9ZN3NjmsPkJMGz8ol6mzxiufnf+uRxiMQjtVHj0f0NwAveNlRZ57b1Ul0Ka4O1eVsp7Jl0
+ xzQDfUdcONsTT9RPeAl6A==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:hr07JeH+9i0=:jrHSJRRtxMIwEoCTW5S3++
- rvUFmYULeDdbKli3zRS+PZfLVV36xCo1wgT6CvBdTaduV13bq9Msh57ZTRfOqstHgmozkDqp0
- L+Mdvl/HSnBMz0MmeQGFpbVtseBr2R4mh1aAkU2bvCy/gz/waDzHjwAtezMk8I7q4z8q14KmT
- tCxNeQCy57HVB7u/zaCX6feCumG80zJ8hjYn4UJGhAVVfM0qORSkvcNu4Ipzv3ffhETuxaQEX
- D6d19YZXFnIcApGMuwIDPBxZw+UEhuOle4ej7tCessBHVMBRISL3s4bGWYEU2tyujdnbb8zGa
- uIAYaJsKpMkDOmE3XGMeH2sdFz+9gqnXzQQkLO9tNo0PmJo/lWbPlVqFkzol6sehE2zoqnUQu
- ZkJb4R6XWN/eRQ85bVhvwfpfQlMPVrP5QLFLfvXNFAyvH7K/legySCcWvW/Yz3xVD8PqhGMek
- o0WGsYOMmGnsR/Pbsqw2c21lYqmWgfgEoGtt595W48JSbhTdi8NMcVVKiwi7kyJl0od4IQrSq
- P/w8TqfTtOiFgYuyqNC+uOD8uNtOi/tY2R+fHbwJ1flHbmpTFEOjXZz8lzO3Via6iSionLqSE
- kyErlrqG3sDUb+SBIHBorcotpoqdkpvIEKUPSb3ioinp6EHHpeLSbb9vjLdybKJ3n9Phyn0WM
- 09alF6Mr+qbPJxqLVOuA80Zw3/cJ5guYacPIouGIxjBrA5DiN2i47mq3aiRCACNNd8/QXDo0R
- UO3CyTRWmXZDPIksZW11+hVVA/t21K9zaxh7gxEqy00eQlznmWhEzD7Uprh629oHHtZDV51U0
- vcLR/AbKBR/HXGrxoDdSZKIKiaeIUFXOqxQdXISpS6SmUFIyIfqZIfN7ElvmYR11EcmQDh2tX
- MsjIP9k6Hsm/42caRY/+HLL/N9RthmtGTTRBip/lXdn6c2ShDMw6n3k2WXOXjgYAchX8e2Ih4
- vRL7h4iKSkmbo+x+CV/KiNtFul+86NRWqxpusizmvRHc52uOXLIP/uT1JAGoImT7vpeCYvOoQ
- kqOm8fNQSVxAnh0LA8iFt0TEh9dhrAOKlLRHQiqSy6HDm9oUgrlsg3wAAwgy3511VH7CBTfCa
- nsxdiYzYVVyO2HVfNOxqrg63eGULLJ8IhaQX87jVvk3QDJ8fO11yU7/oM0aGCUDmeRpEAgOiM
- LWGm+OCEtgcWkufKRn8QL+4fPbQ5MP0Yp/DR/OZGscqveErUe++sxiso7iHiV3PeX4/q/Mi0I
- eadh0oLMiTy68UVuv7BG4e1WZEDJcmhAIe28JQzN6OJ4T81Sy8KDHtvQ8IJ0=
+X-UI-Out-Filterresults: notjunk:1;V03:K0:hJOtlFpI/Ms=:nXdX6fBbKgf5iGIRtchLJo
+ vYB3hsPZJD5bi+C4IbuzJg9kQpPVA83QdpaH0mQHHeewF8+ajS6r6i7B5uqXNXJ0lMfuoAkqk
+ 8VvGoW7QUDPocxN98q+V7s3Dplzf3f5T7NZTgGkrC51TJJyVB3aXvn33iTE/aU4dFQReJMygd
+ F2HUubYFvRqzO/6nu3nga4J8hQFSNXTyrDNlV7k/bHFIJgZUVZSwL10wTy12bmCyfLcXp6Z2k
+ LA2sBLKhMOCGgVPxQ7YxR8GQONKNMV8L7qRRR/dMuNvjDQrZXrIEpYqYCZ+N5WNAUB5/zBnpN
+ w0e6L/SZGSDYPwav76Zn5AjTiSyIs31o90DCks+8ES2rZi2xnanIOZJvqfR2tyW7D+E4otaHy
+ Twmz2S/+rlv2YTR+YZD1d7X9aB4X+r1iQh1P5gNX2p9Sm56df54GPKVxYkwYHITNJRx4DQII4
+ wJQNenU3ezdmLTB93CgcpGfhyPPMGzhy28dKNSxemj4bSyf6/xmOXxdp16wllWppVuSUWffiF
+ poijsKeDgGV9J9u3jPtsBHbtQTryOPGp4jHgZf0lPD4J1xb6tBBmyUZwZPCDbb60tFntAKvwi
+ ifEelxGn/EpIlA1xnUN1VnBApfE1B6wHx2PdMtLqgYZcRIJmjsoJXAR/qaVHhZjV03hzXeNxq
+ PlmPQQmSNHGTwFVX3JSP1qs0e2rZpNHa7khk1IPKfd02zVbzuOl17WNDW2wtQQwvrqpJtSz7v
+ a5cHIxepSGwFF2ETB7XM5a5mNxqKIVyVf1CjJkXW1mKlR6RIgKo5/xosaYnExxdmPRl4x/k8H
+ hrDOY2rnDJW6BrS2HU1urb/wIBf5qQWA2OMZVbEyPFeoFJ+PmnKJz65F7xwW1W6Vpu77cz551
+ MA487lg9mpolhB0e5oVIBUojJ9TTYVqtFy5KGLPCzbUV0VZWLaLYQ6k+3/6Omo7aO9As2gHLD
+ GyGp7quaAaZ6zfh64JBPq19c/fFYGu0dLQnCv4pi7gq6sjooZF6ifU8c90wl9K+4SDxw/CQ2O
+ jSWrp9hO1Q+Nib8s5sfDmCMtXJh4hsnwzU/zI5Nw+kcqzBCuGp+NbQECVSS1GwWB/kedDZc7L
+ lXKOp1eOnSXn682FFF7qZXlZxmihMGMij9jheMmYlDj0OHy/wbVMUY6p+0K09GbhiHR5Hr7Z3
+ xnTeDMZV79PI2p8MThvgX1bH5Ctgc68idsjt9v7LXw4BywOI6cconBevLAzEDWQB6u+XoYX28
+ /cp8UqIA+5iKVS+kuKOpAmvIDAX9Q/MYb7xThghqR6/UDegJdlj9hqR1qUnQ=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 =E2=80=A6
-> +++ b/fs/exfat/cache.c
+> +++ b/fs/exfat/nls.c
 =E2=80=A6
-> +static void exfat_cache_add(struct inode *inode,
-> +		struct exfat_cache_id *new)
+> +static int exfat_load_upcase_table(struct super_block *sb,
+> +		sector_t sector, unsigned long long num_sectors,
+> +		unsigned int utbl_checksum)
 > +{
 =E2=80=A6
-> +out:
-> +	spin_unlock(&ei->cache_lru_lock);
-=E2=80=A6
+> +error:
+> +	if (bh)
+> +		brelse(bh);
 
-Can the label =E2=80=9Cunlock=E2=80=9D be more helpful?
+I am informed in the way that this function tolerates the passing
+of null pointers.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/in=
+clude/linux/buffer_head.h?id=3Daf42d3466bdc8f39806b26f593604fdc54140bcb#n2=
+92
+https://elixir.bootlin.com/linux/v5.4-rc8/source/include/linux/buffer_head=
+.h#L292
+
+Thus I suggest to omit the extra pointer check also at similar places.
+
+Can the label =E2=80=9Crelease_bh=E2=80=9D be more helpful?
 
 Regards,
 Markus
