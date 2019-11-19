@@ -2,96 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD857101114
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 03:02:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBFA8101124
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 03:14:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727160AbfKSCCp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Nov 2019 21:02:45 -0500
-Received: from mail-ed1-f49.google.com ([209.85.208.49]:36304 "EHLO
-        mail-ed1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726761AbfKSCCp (ORCPT
+        id S1726996AbfKSCOI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Nov 2019 21:14:08 -0500
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:39140 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726761AbfKSCOI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Nov 2019 21:02:45 -0500
-Received: by mail-ed1-f49.google.com with SMTP id f7so15661035edq.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Nov 2019 18:02:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=WMZG768ZhPxp5SvLqgbAZTewkvSghGpHsE7xRXqZJsw=;
-        b=C4r1jgmlBChBRQsPKbKtl9GXzgTx5be5KDKZYn4xsql1OQ0nccaGxaDnGKRp2LQMQy
-         QU4EMMDv/YEsXcLVvmHxN/D455ihth6pEODaKrU4kcZSPVgCz1kghWKUPBJjVi1MmCt6
-         9ZdArSU9fL04gTAQJfojiYX+dNHEAdQmzZmUvyX5s6xdAxw0XEGQFQMuVZ/uUW7//Ege
-         fNG6+vEaKhr8e5k4jPJUSbplzD5n1xTtAAX7rpODLTlcOV1ZvSP1bya4duDyF8gSmnvL
-         LuJosr8qeLB+ubZ68MkRrFQMeYGBux7KOJI41rPfHH2TYJQypn7bQvJxDLRTeFPO6Ynl
-         ph0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=WMZG768ZhPxp5SvLqgbAZTewkvSghGpHsE7xRXqZJsw=;
-        b=Wv2kDQV/AfY4WNjRP/i9hC+CPxng3hs9Md7VKN8nmoBy5oW/8AuTQeO/4/KCOwKkni
-         BVeft0PRW8HNhUEwCXJF4m57UW/2t0XRMbf0QXxqN+0RJdC2amcDujOK45EQxXN43mhO
-         TzXc79fq5DY1A26aFpjJzbOuBEE2EhL2ZidGrJGd40x67v8VsTrQslzffJuxAB0rP9a8
-         9QUVQrLXvfMLZYZCkZmyZmCW4EvXyRBtx2wCgxvmlko69PLn/S6gjh0bKVNY38e8jGzd
-         vf0LMWg+t54I9L8ZetQKa7XPpqXf7UVsYD5wLeaPwj0PCdJDENwEj19ZyDGKfyFEk9L+
-         pQWQ==
-X-Gm-Message-State: APjAAAXJhgbjNJvM70DyJzSdBj2/O00DI30ahX1H4QK88NYuUeCKWOiE
-        ez2z3Vz3EH+K+5+yfyXo/zpTle7cDymo/uNB0IyuK1lK
-X-Google-Smtp-Source: APXvYqxUD0+FlKDhnGiRmjYynuNXNKLeBlNmFJ/GY339mP73p0c6hvqq5fjz1qV43L746MC/x7Xo82mWASBgvgCO47Q=
-X-Received: by 2002:a17:906:f119:: with SMTP id gv25mr775665ejb.164.1574128962030;
- Mon, 18 Nov 2019 18:02:42 -0800 (PST)
-MIME-Version: 1.0
-From:   Meng Xu <mengxu.gatech@gmail.com>
-Date:   Mon, 18 Nov 2019 21:02:31 -0500
-Message-ID: <CAAwBoOKor7qvLs0OaXQ0-CLUpCssukdkfamTQN5c6OQiD2vY3w@mail.gmail.com>
-Subject: Possible data race on file->f_mode between __fget() and generic_fadvise()
-To:     linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 18 Nov 2019 21:14:08 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=jiufei.xue@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0TiWOCGf_1574129645;
+Received: from localhost(mailfrom:jiufei.xue@linux.alibaba.com fp:SMTPD_---0TiWOCGf_1574129645)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 19 Nov 2019 10:14:05 +0800
+From:   Jiufei Xue <jiufei.xue@linux.alibaba.com>
+To:     miklos@szeredi.hu, amir73il@gmail.com
+Cc:     linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/2] ovl: implement async IO routines 
+Date:   Tue, 19 Nov 2019 10:14:01 +0800
+Message-Id: <1574129643-14664-1-git-send-email-jiufei.xue@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi VFS developers,
+ovl stacks regular file operations now. However it doesn't implement
+async IO routines and will convert async IOs to sync IOs which is not
+expected.
 
-There might exists cases where file->f_mode may race in __fget() and
-generic_fadvise().
+This patchset implements overlayfs async IO routines.
 
-[Setup]
-mkdir(dir_foo, 0777) = 0;
-open(dir_foo, 0x10000, 0777) = 3;
-dup2(3, 199) = 199;
+Jiufei Xue (2)
+vfs: add vfs_iocb_iter_[read|write] helper functions
+ovl: implement async IO routines
 
-[Thread 1]: mkdirat(199, dir_foo, 0576) = 0;
-[Thread 2]: fadvise64(3, 140517292505364, 155, 0x2) = 0;
+ fs/overlayfs/file.c      |   97 ++++++-----------------------------------------
+ fs/overlayfs/overlayfs.h |    2
+ fs/overlayfs/super.c     |   12 -----
+ fs/read_write.c          |   58 ----------------------------
+ include/linux/fs.h       |   16 -------
+ 5 files changed, 16 insertions(+), 169 deletions(-)
 
-[Thread 1: SYS_mkdirat]
-__do_sys_mkdirat
-  do_mkdirat
-    user_path_create
-      filename_create
-        filename_parentat
-          path_parentat
-            path_init
-              fdget_raw
-                __fdget_raw
-                  __fget_light
-                    __fget
-                      [READ] if (file->f_mode & mask)
-
-[Thread 2: SYS_fadvise64]
-__do_sys_fadvise64
-  ksys_fadvise64_64
-    vfs_fadvise
-      generic_fadvise
-        [WRITE] file->f_mode &= ~FMODE_RANDOM;
-
-However, in this particular case, there is no issues caused as the
-mask passed in __fget() is always 0 and hence, does not matter what
-the [WRITE] statement is doing.
-
-But just in case there may be other cases where the mask is not 0, it
-may leads to weird situations and I am posting this issue here for
-more visibility. Feel free to comment on its validity.
-
-Best Regards,
-Meng
