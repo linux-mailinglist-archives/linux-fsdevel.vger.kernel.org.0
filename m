@@ -2,274 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 903A51021EF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 11:19:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F39E1022F2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 12:23:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727631AbfKSKTS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Nov 2019 05:19:18 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49868 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726555AbfKSKTS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Nov 2019 05:19:18 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 737CFAE87;
-        Tue, 19 Nov 2019 10:19:13 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id D586A1E47E5; Tue, 19 Nov 2019 11:19:10 +0100 (CET)
-Date:   Tue, 19 Nov 2019 11:19:10 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
-Subject: Re: [PATCH v6 02/24] mm/gup: factor out duplicate code from four
- routines
-Message-ID: <20191119101910.GC25605@quack2.suse.cz>
-References: <20191119081643.1866232-1-jhubbard@nvidia.com>
- <20191119081643.1866232-3-jhubbard@nvidia.com>
+        id S1727522AbfKSLXC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Nov 2019 06:23:02 -0500
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:37364 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725280AbfKSLXC (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 19 Nov 2019 06:23:02 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=jiufei.xue@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0TiYLaXm_1574162574;
+Received: from ali-186590e05fa3.local(mailfrom:jiufei.xue@linux.alibaba.com fp:SMTPD_---0TiYLaXm_1574162574)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 19 Nov 2019 19:22:54 +0800
+Subject: Re: [PATCH 2/2] ovl: implement async IO routines
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <1574129643-14664-1-git-send-email-jiufei.xue@linux.alibaba.com>
+ <1574129643-14664-3-git-send-email-jiufei.xue@linux.alibaba.com>
+ <CAOQ4uxhU0NGqX-P4XTJ+kf6sXNCnUCBxgp1u2-aDV5p15Jh+tg@mail.gmail.com>
+ <142a7524-2587-7b1c-c5e0-3eb2d42b2762@linux.alibaba.com>
+ <CAOQ4uxgR3KO9kXGdqif0A-QBrVLn9id2eFANMDprCz62jSAmaQ@mail.gmail.com>
+From:   Jiufei Xue <jiufei.xue@linux.alibaba.com>
+Message-ID: <e88b8262-c475-f969-ef65-d888aee20e20@linux.alibaba.com>
+Date:   Tue, 19 Nov 2019 19:22:54 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <CAOQ4uxgR3KO9kXGdqif0A-QBrVLn9id2eFANMDprCz62jSAmaQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191119081643.1866232-3-jhubbard@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 19-11-19 00:16:21, John Hubbard wrote:
-> There are four locations in gup.c that have a fair amount of code
-> duplication. This means that changing one requires making the same
-> changes in four places, not to mention reading the same code four
-> times, and wondering if there are subtle differences.
-> 
-> Factor out the common code into static functions, thus reducing the
-> overall line count and the code's complexity.
-> 
-> Also, take the opportunity to slightly improve the efficiency of the
-> error cases, by doing a mass subtraction of the refcount, surrounded
-> by get_page()/put_page().
-> 
-> Also, further simplify (slightly), by waiting until the the successful
-> end of each routine, to increment *nr.
-> 
-> Reviewed-by: J�r�me Glisse <jglisse@redhat.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 
-Looks good to me now! You can add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  mm/gup.c | 91 ++++++++++++++++++++++----------------------------------
->  1 file changed, 36 insertions(+), 55 deletions(-)
+Hi Amir,
+On 2019/11/19 下午5:38, Amir Goldstein wrote:
+> On Tue, Nov 19, 2019 at 10:37 AM Jiufei Xue
+> <jiufei.xue@linux.alibaba.com> wrote:
+>>
+>> Hi Amir,
+>>
+>> On 2019/11/19 下午12:22, Amir Goldstein wrote:
+>>> On Tue, Nov 19, 2019 at 4:14 AM Jiufei Xue <jiufei.xue@linux.alibaba.com> wrote:
+>>>>
+>>>> A performance regression is observed since linux v4.19 when we do aio
+>>>> test using fio with iodepth 128 on overlayfs. And we found that queue
+>>>> depth of the device is always 1 which is unexpected.
+>>>>
+>>>> After investigation, it is found that commit 16914e6fc7
+>>>> (“ovl: add ovl_read_iter()”) and commit 2a92e07edc
+>>>> (“ovl: add ovl_write_iter()”) use do_iter_readv_writev() to submit
+>>>> requests to real filesystem. Async IOs are converted to sync IOs here
+>>>> and cause performance regression.
+>>>>
+>>>> So implement async IO for stacked reading and writing.
+>>>>
+>>>> Signed-off-by: Jiufei Xue <jiufei.xue@linux.alibaba.com>
+>>>> ---
+>>>>  fs/overlayfs/file.c      | 97 +++++++++++++++++++++++++++++++++++++++++-------
+>>>>  fs/overlayfs/overlayfs.h |  2 +
+>>>>  fs/overlayfs/super.c     | 12 +++++-
+>>>>  3 files changed, 95 insertions(+), 16 deletions(-)
+>>>>
+>>>> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+>>>> index e235a63..07d94e7 100644
+>>>> --- a/fs/overlayfs/file.c
+>>>> +++ b/fs/overlayfs/file.c
+>>>> @@ -11,6 +11,14 @@
+>>>>  #include <linux/uaccess.h>
+>>>>  #include "overlayfs.h"
+>>>>
+>>>> +struct ovl_aio_req {
+>>>> +       struct kiocb iocb;
+>>>> +       struct kiocb *orig_iocb;
+>>>> +       struct fd fd;
+>>>> +};
+>>>> +
+>>>> +static struct kmem_cache *ovl_aio_request_cachep;
+>>>> +
+>>>>  static char ovl_whatisit(struct inode *inode, struct inode *realinode)
+>>>>  {
+>>>>         if (realinode != ovl_inode_upper(inode))
+>>>> @@ -225,6 +233,21 @@ static rwf_t ovl_iocb_to_rwf(struct kiocb *iocb)
+>>>>         return flags;
+>>>>  }
+>>>>
+>>>> +static void ovl_aio_rw_complete(struct kiocb *iocb, long res, long res2)
+>>>> +{
+>>>> +       struct ovl_aio_req *aio_req = container_of(iocb, struct ovl_aio_req, iocb);
+>>>> +       struct kiocb *orig_iocb = aio_req->orig_iocb;
+>>>> +
+>>>> +       if (iocb->ki_flags & IOCB_WRITE)
+>>>> +               file_end_write(iocb->ki_filp);
+>>>> +
+>>>> +       orig_iocb->ki_pos = iocb->ki_pos;
+>>>> +       orig_iocb->ki_complete(orig_iocb, res, res2);
+>>>> +
+>>>> +       fdput(aio_req->fd);
+>>>> +       kmem_cache_free(ovl_aio_request_cachep, aio_req);
+>>>> +}
+>>>> +
+>>>>  static ssize_t ovl_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+>>>>  {
+>>>>         struct file *file = iocb->ki_filp;
+>>>> @@ -240,14 +263,28 @@ static ssize_t ovl_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+>>>>                 return ret;
+>>>>
+>>>>         old_cred = ovl_override_creds(file_inode(file)->i_sb);
+>>>> -       ret = vfs_iter_read(real.file, iter, &iocb->ki_pos,
+>>>> -                           ovl_iocb_to_rwf(iocb));
+>>>> +       if (is_sync_kiocb(iocb)) {
+>>>> +               ret = vfs_iter_read(real.file, iter, &iocb->ki_pos,
+>>>> +                                   ovl_iocb_to_rwf(iocb));
+>>>> +               ovl_file_accessed(file);
+>>>> +               fdput(real);
+>>>> +       } else {
+>>>> +               struct ovl_aio_req *aio_req = kmem_cache_alloc(ovl_aio_request_cachep,
+>>>> +                                                              GFP_NOFS);
+>>>> +               aio_req->fd = real;
+>>>> +               aio_req->orig_iocb = iocb;
+>>>> +               kiocb_clone(&aio_req->iocb, iocb, real.file);
+>>>> +               aio_req->iocb.ki_complete = ovl_aio_rw_complete;
+>>>> +               ret = vfs_iocb_iter_read(real.file, &aio_req->iocb, iter);
+>>>> +               ovl_file_accessed(file);
+>>>
+>>> That should be done in completion/error
+>>>
+>>
+>> Refer to function generic_file_read_iter(), in direct IO path,
+>> file_accessed() is done before IO submission, so I think ovl_file_accessed()
+>> should be done here no matter completion/error or IO is queued.
 > 
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 85caf76b3012..f3c7d6625817 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -1969,6 +1969,25 @@ static int __gup_device_huge_pud(pud_t pud, pud_t *pudp, unsigned long addr,
->  }
->  #endif
->  
-> +static int __record_subpages(struct page *page, unsigned long addr,
-> +			     unsigned long end, struct page **pages)
-> +{
-> +	int nr;
-> +
-> +	for (nr = 0; addr != end; addr += PAGE_SIZE)
-> +		pages[nr++] = page++;
-> +
-> +	return nr;
-> +}
-> +
-> +static void put_compound_head(struct page *page, int refs)
-> +{
-> +	/* Do a get_page() first, in case refs == page->_refcount */
-> +	get_page(page);
-> +	page_ref_sub(page, refs);
-> +	put_page(page);
-> +}
-> +
->  #ifdef CONFIG_ARCH_HAS_HUGEPD
->  static unsigned long hugepte_addr_end(unsigned long addr, unsigned long end,
->  				      unsigned long sz)
-> @@ -1998,32 +2017,20 @@ static int gup_hugepte(pte_t *ptep, unsigned long sz, unsigned long addr,
->  	/* hugepages are never "special" */
->  	VM_BUG_ON(!pfn_valid(pte_pfn(pte)));
->  
-> -	refs = 0;
->  	head = pte_page(pte);
-> -
->  	page = head + ((addr & (sz-1)) >> PAGE_SHIFT);
-> -	do {
-> -		VM_BUG_ON(compound_head(page) != head);
-> -		pages[*nr] = page;
-> -		(*nr)++;
-> -		page++;
-> -		refs++;
-> -	} while (addr += PAGE_SIZE, addr != end);
-> +	refs = __record_subpages(page, addr, end, pages + *nr);
->  
->  	head = try_get_compound_head(head, refs);
-> -	if (!head) {
-> -		*nr -= refs;
-> +	if (!head)
->  		return 0;
-> -	}
->  
->  	if (unlikely(pte_val(pte) != pte_val(*ptep))) {
-> -		/* Could be optimized better */
-> -		*nr -= refs;
-> -		while (refs--)
-> -			put_page(head);
-> +		put_compound_head(head, refs);
->  		return 0;
->  	}
->  
-> +	*nr += refs;
->  	SetPageReferenced(head);
->  	return 1;
->  }
-> @@ -2071,28 +2078,19 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
->  					     pages, nr);
->  	}
->  
-> -	refs = 0;
->  	page = pmd_page(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
-> -	do {
-> -		pages[*nr] = page;
-> -		(*nr)++;
-> -		page++;
-> -		refs++;
-> -	} while (addr += PAGE_SIZE, addr != end);
-> +	refs = __record_subpages(page, addr, end, pages + *nr);
->  
->  	head = try_get_compound_head(pmd_page(orig), refs);
-> -	if (!head) {
-> -		*nr -= refs;
-> +	if (!head)
->  		return 0;
-> -	}
->  
->  	if (unlikely(pmd_val(orig) != pmd_val(*pmdp))) {
-> -		*nr -= refs;
-> -		while (refs--)
-> -			put_page(head);
-> +		put_compound_head(head, refs);
->  		return 0;
->  	}
->  
-> +	*nr += refs;
->  	SetPageReferenced(head);
->  	return 1;
->  }
-> @@ -2114,28 +2112,19 @@ static int gup_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
->  					     pages, nr);
->  	}
->  
-> -	refs = 0;
->  	page = pud_page(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
-> -	do {
-> -		pages[*nr] = page;
-> -		(*nr)++;
-> -		page++;
-> -		refs++;
-> -	} while (addr += PAGE_SIZE, addr != end);
-> +	refs = __record_subpages(page, addr, end, pages + *nr);
->  
->  	head = try_get_compound_head(pud_page(orig), refs);
-> -	if (!head) {
-> -		*nr -= refs;
-> +	if (!head)
->  		return 0;
-> -	}
->  
->  	if (unlikely(pud_val(orig) != pud_val(*pudp))) {
-> -		*nr -= refs;
-> -		while (refs--)
-> -			put_page(head);
-> +		put_compound_head(head, refs);
->  		return 0;
->  	}
->  
-> +	*nr += refs;
->  	SetPageReferenced(head);
->  	return 1;
->  }
-> @@ -2151,28 +2140,20 @@ static int gup_huge_pgd(pgd_t orig, pgd_t *pgdp, unsigned long addr,
->  		return 0;
->  
->  	BUILD_BUG_ON(pgd_devmap(orig));
-> -	refs = 0;
-> +
->  	page = pgd_page(orig) + ((addr & ~PGDIR_MASK) >> PAGE_SHIFT);
-> -	do {
-> -		pages[*nr] = page;
-> -		(*nr)++;
-> -		page++;
-> -		refs++;
-> -	} while (addr += PAGE_SIZE, addr != end);
-> +	refs = __record_subpages(page, addr, end, pages + *nr);
->  
->  	head = try_get_compound_head(pgd_page(orig), refs);
-> -	if (!head) {
-> -		*nr -= refs;
-> +	if (!head)
->  		return 0;
-> -	}
->  
->  	if (unlikely(pgd_val(orig) != pgd_val(*pgdp))) {
-> -		*nr -= refs;
-> -		while (refs--)
-> -			put_page(head);
-> +		put_compound_head(head, refs);
->  		return 0;
->  	}
->  
-> +	*nr += refs;
->  	SetPageReferenced(head);
->  	return 1;
->  }
-> -- 
-> 2.24.0
+> Mmm, it doesn't matter much if atime is updated before or after,
+> but ovl_file_accessed() does not only update atime, it also copies
+> ctime which could have been modified as a result of the io, so
+> I think it is safer to put it in the cleanup hook.
+>
+
+Can you give a more detailed description that a read op will modify
+ctime as a result of the io?
+
+I found that it will trigger BUG_ON(irqs_disabled()) while
+calling ovl_file_accessed() on async IO return path. The calltrace
+is pasted below:
+
+ovl_file_accessed
+  -> touch_atime
+    -> ovl_update_time
+      -> generic_update_time
+        -> __mark_inode_dirty
+          -> ext4_dirty_inode
+            -> __ext4_get_inode_loc
+              -> __find_get_block
+                -> lookup_bh_lru
+                   -> check_irqs_on
+
+So I need more detail to find how to fix this issue.
+
+Thanks,
+Jiufei.
+
+> Thanks,
+> Amir.
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
