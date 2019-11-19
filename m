@@ -2,144 +2,222 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BA6B1027A1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 16:06:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 759161027C2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 16:12:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728140AbfKSPGh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Nov 2019 10:06:37 -0500
-Received: from mout.web.de ([217.72.192.78]:53845 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727352AbfKSPGh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Nov 2019 10:06:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1574175980;
-        bh=0zo7dDCKLAG/971IKZsBHSalBSXIX3bS03JGhfTsm+8=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=lsUVirKRFb2klkSrAhBgEtS5KmRGHQJqv90Ouqh7mHWcd6sNDP6vCkX89gQBXT7jr
-         0zOHZNaCyKPgdh2hoNz39Q/U1vQaoLtd1j6k33R9kW1txDR0TFRoSxZran4a1PTs+W
-         w0Qj+TLXgBz1ung5rWMSLuyfQuFTrl+lSt5QcjM8=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.3] ([2.243.93.164]) by smtp.web.de (mrweb101
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0LhvyA-1i31WI2VPu-00n7DX; Tue, 19
- Nov 2019 16:06:20 +0100
-Subject: Re: [PATCH v3 10/13] exfat: add nls operations
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Daniel Wagner <dwagner@suse.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        linkinjeon@gmail.com
-References: <20191119093718.3501-1-namjae.jeon@samsung.com>
- <CGME20191119094026epcas1p3eea5c655f3b89383e02c0097c491f0bc@epcas1p3.samsung.com>
- <20191119093718.3501-11-namjae.jeon@samsung.com>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <705cb02b-7707-af52-c2b5-70660debc619@web.de>
-Date:   Tue, 19 Nov 2019 16:06:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1728291AbfKSPMN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Nov 2019 10:12:13 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:58996 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727836AbfKSPMM (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 19 Nov 2019 10:12:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574176331;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=U+AbGmVZAsgxtR8p0w2JArVCN5cmZvl+zRYfNpnj3bk=;
+        b=VfC4qS/8GwGy4wTmWpQTHHrqy1X1qNuK1NKyhuoRrBvHHgWbO8np/SYjjw9yWCZBY/ZJUf
+        Qzn6U7L74S9Wv48o0nsjkBwA0FCdTiC6rt27wCnVLmL+oQdZeTs0ughyRSndRqce9581ll
+        uRSajzoUkNv3OmeuIGhjNMbmshR/3Gk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-109-kBsFmQBxMi6_viXdcY9EYQ-1; Tue, 19 Nov 2019 10:12:07 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 093B5DBC8;
+        Tue, 19 Nov 2019 15:12:06 +0000 (UTC)
+Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 69B2046E78;
+        Tue, 19 Nov 2019 15:12:05 +0000 (UTC)
+Date:   Tue, 19 Nov 2019 10:12:05 -0500
+From:   Brian Foster <bfoster@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/28] mm: directed shrinker work deferral
+Message-ID: <20191119151205.GC10763@bfoster>
+References: <20191031234618.15403-1-david@fromorbit.com>
+ <20191031234618.15403-10-david@fromorbit.com>
+ <20191104152525.GA10665@bfoster>
+ <20191114204926.GC4614@dread.disaster.area>
+ <20191115172140.GA55854@bfoster>
+ <20191118004956.GR4614@dread.disaster.area>
 MIME-Version: 1.0
-In-Reply-To: <20191119093718.3501-11-namjae.jeon@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20191118004956.GR4614@dread.disaster.area>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: kBsFmQBxMi6_viXdcY9EYQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:a+CKAml7B0/J/jY8wDGOYDt4BF9yEXk82djMmrglT4v/2w80zx6
- 8yJlQTkxYNm2noHcVhZYbaStojM4qHlJQjSjk13Bd4pln+1rB/H7kCo61WhcXISps7rWGnV
- l9ZN3NjmsPkJMGz8ol6mzxiufnf+uRxiMQjtVHj0f0NwAveNlRZ57b1Ul0Ka4O1eVsp7Jl0
- xzQDfUdcONsTT9RPeAl6A==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:hJOtlFpI/Ms=:nXdX6fBbKgf5iGIRtchLJo
- vYB3hsPZJD5bi+C4IbuzJg9kQpPVA83QdpaH0mQHHeewF8+ajS6r6i7B5uqXNXJ0lMfuoAkqk
- 8VvGoW7QUDPocxN98q+V7s3Dplzf3f5T7NZTgGkrC51TJJyVB3aXvn33iTE/aU4dFQReJMygd
- F2HUubYFvRqzO/6nu3nga4J8hQFSNXTyrDNlV7k/bHFIJgZUVZSwL10wTy12bmCyfLcXp6Z2k
- LA2sBLKhMOCGgVPxQ7YxR8GQONKNMV8L7qRRR/dMuNvjDQrZXrIEpYqYCZ+N5WNAUB5/zBnpN
- w0e6L/SZGSDYPwav76Zn5AjTiSyIs31o90DCks+8ES2rZi2xnanIOZJvqfR2tyW7D+E4otaHy
- Twmz2S/+rlv2YTR+YZD1d7X9aB4X+r1iQh1P5gNX2p9Sm56df54GPKVxYkwYHITNJRx4DQII4
- wJQNenU3ezdmLTB93CgcpGfhyPPMGzhy28dKNSxemj4bSyf6/xmOXxdp16wllWppVuSUWffiF
- poijsKeDgGV9J9u3jPtsBHbtQTryOPGp4jHgZf0lPD4J1xb6tBBmyUZwZPCDbb60tFntAKvwi
- ifEelxGn/EpIlA1xnUN1VnBApfE1B6wHx2PdMtLqgYZcRIJmjsoJXAR/qaVHhZjV03hzXeNxq
- PlmPQQmSNHGTwFVX3JSP1qs0e2rZpNHa7khk1IPKfd02zVbzuOl17WNDW2wtQQwvrqpJtSz7v
- a5cHIxepSGwFF2ETB7XM5a5mNxqKIVyVf1CjJkXW1mKlR6RIgKo5/xosaYnExxdmPRl4x/k8H
- hrDOY2rnDJW6BrS2HU1urb/wIBf5qQWA2OMZVbEyPFeoFJ+PmnKJz65F7xwW1W6Vpu77cz551
- MA487lg9mpolhB0e5oVIBUojJ9TTYVqtFy5KGLPCzbUV0VZWLaLYQ6k+3/6Omo7aO9As2gHLD
- GyGp7quaAaZ6zfh64JBPq19c/fFYGu0dLQnCv4pi7gq6sjooZF6ifU8c90wl9K+4SDxw/CQ2O
- jSWrp9hO1Q+Nib8s5sfDmCMtXJh4hsnwzU/zI5Nw+kcqzBCuGp+NbQECVSS1GwWB/kedDZc7L
- lXKOp1eOnSXn682FFF7qZXlZxmihMGMij9jheMmYlDj0OHy/wbVMUY6p+0K09GbhiHR5Hr7Z3
- xnTeDMZV79PI2p8MThvgX1bH5Ctgc68idsjt9v7LXw4BywOI6cconBevLAzEDWQB6u+XoYX28
- /cp8UqIA+5iKVS+kuKOpAmvIDAX9Q/MYb7xThghqR6/UDegJdlj9hqR1qUnQ=
+Content-Disposition: inline
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-=E2=80=A6
-> +++ b/fs/exfat/nls.c
-=E2=80=A6
-> +static int exfat_load_upcase_table(struct super_block *sb,
-> +		sector_t sector, unsigned long long num_sectors,
-> +		unsigned int utbl_checksum)
-> +{
-=E2=80=A6
-> +error:
-> +	if (bh)
-> +		brelse(bh);
+On Mon, Nov 18, 2019 at 11:49:56AM +1100, Dave Chinner wrote:
+> On Fri, Nov 15, 2019 at 12:21:40PM -0500, Brian Foster wrote:
+> > On Fri, Nov 15, 2019 at 07:49:26AM +1100, Dave Chinner wrote:
+> > > On Mon, Nov 04, 2019 at 10:25:25AM -0500, Brian Foster wrote:
+> > > > On Fri, Nov 01, 2019 at 10:45:59AM +1100, Dave Chinner wrote:
+> > > > > From: Dave Chinner <dchinner@redhat.com>
+> > > > >=20
+> > > > > Introduce a mechanism for ->count_objects() to indicate to the
+> > > > > shrinker infrastructure that the reclaim context will not allow
+> > > > > scanning work to be done and so the work it decides is necessary
+> > > > > needs to be deferred.
+> > > > >=20
+> > > > > This simplifies the code by separating out the accounting of
+> > > > > deferred work from the actual doing of the work, and allows bette=
+r
+> > > > > decisions to be made by the shrinekr control logic on what action=
+ it
+> > > > > can take.
+> > > > >=20
+> > > > > Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> > > > > ---
+> > > >=20
+> > > > My understanding from the previous discussion(s) is that this is no=
+t
+> > > > tied directly to the gfp mask because that is not the only intended=
+ use.
+> > > > While it is currently a boolean tied to the the entire shrinker cal=
+l,
+> > > > the longer term objective is per-object granularity.
+> > >=20
+> > > Longer term, yes, but right now such things are not possible as the
+> > > shrinker needs more context to be able to make sane per-object
+> > > decisions. shrinker policy decisions that affect the entire run
+> > > scope should be handled by the ->count operation - it's the one that
+> > > says whether the scan loop should run or not, and right now GFP_NOFS
+> > > for all filesystem shrinkers is a pure boolean policy
+> > > implementation.
+> > >=20
+> > > The next future step is to provide a superblock context with
+> > > GFP_NOFS to indicate which filesystem we cannot recurse into. That
+> > > is also a shrinker instance wide check, so again it's something that
+> > > ->count should be deciding.
+> > >=20
+> > > i.e. ->count determines what is to be done, ->scan iterates the work
+> > > that has to be done until we are done.
+> > >=20
+> >=20
+> > Sure, makes sense in general.
+> >=20
+> > > > I find the argument reasonable enough, but if the above is true, wh=
+y do
+> > > > we move these checks from ->scan_objects() to ->count_objects() (in=
+ the
+> > > > next patch) when per-object decisions will ultimately need to be ma=
+de by
+> > > > the former?
+> > >=20
+> > > Because run/no-run policy belongs in one place, and things like
+> > > GFP_NOFS do no change across calls to the ->scan loop. i.e. after
+> > > the first ->scan call in a loop that calls it hundreds to thousands
+> > > of times, the GFP_NOFS run/no-run check is completely redundant.
+> > >=20
+> >=20
+> > What loop is currently called hundreds to thousands of times that this
+> > change prevents? AFAICT the current nofs checks in the ->scan calls
+> > explicitly terminate the scan loop.
+>=20
+> Right, but when we are in GFP_KERNEL context, every call to ->scan()
+> checks it and says "ok". If we are scanning tens of thousands of
+> objects in a scan, and we are using a befault batch size of 128
+> objects per scan, then we have hundreds of calls in a single scan
+> loop that check the GFP context and say "ok"....
+>=20
+> > So we're effectively saving a
+> > function call by doing this earlier in the count ->call. (Nothing wrong
+> > with that, I'm just not following the numbers used in this reasoning..)=
+.
+>=20
+> It's the don't terminate case. :)
+>=20
 
-I am informed in the way that this function tolerates the passing
-of null pointers.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/in=
-clude/linux/buffer_head.h?id=3Daf42d3466bdc8f39806b26f593604fdc54140bcb#n2=
-92
-https://elixir.bootlin.com/linux/v5.4-rc8/source/include/linux/buffer_head=
-.h#L292
+Oh, I see. You're talking about the number of executions of the gfp
+check itself. That makes sense, though my understanding is that we'll
+ultimately have a similar check anyways if we want per-object
+granularity based on the allocation constraints of the current context.
+OTOH, the check would still occur only once with an alloc flags field in
+the shrinker structure too, FWIW.
 
-Thus I suggest to omit the extra pointer check also at similar places.
+> > > Once we introduce a new policy that allows the fs shrinker to do
+> > > careful reclaim in GFP_NOFS conditions, we need to do substantial
+> > > rework the shrinker scan loop and how it accounts the work that is
+> > > done - we now have at least 3 or 4 different return counters
+> > > (skipped because locked, skipped because referenced,
+> > > reclaimed, deferred reclaim because couldn't lock/recursion) and
+> > > the accounting and decisions to be made are a lot more complex.
+> > >=20
+> >=20
+> > Yeah, that's generally what I expected from your previous description.
+> >=20
+> > > In that case, the ->count function will drop the GFP_NOFS check, but
+> > > still do all the other things is needs to do. The GFP_NOFS check
+> > > will go deep in the guts of the shrinker scan implementation where
+> > > the per-object recursion problem exists. But for most shrinkers,
+> > > it's still going to be a global boolean check...
+> > >=20
+> >=20
+> > So once the nofs checks are lifted out of the ->count callback and into
+> > the core shrinker, is there still a use case to defer an entire ->count
+> > instance from the callback?
+>=20
+> Not right now. There may be in future, but I don't want to make
+> things more complex than they need to be by trying to support
+> functionality that isn't used.
+>=20
 
-Can the label =E2=80=9Crelease_bh=E2=80=9D be more helpful?
+Ok, but do note that the reason I ask is to touch on simply whether it's
+worth putting this in the ->scan callback at all. It's not like _not_
+doing that is some big complexity adjustment. ;)
 
-Regards,
-Markus
+> > > If people want to call avoiding repeated, unnecessary evaluation of
+> > > the same condition hundreds of times instead of once "unnecessary
+> > > churn", then I'll drop it.
+> > >=20
+> >=20
+> > I'm not referring to the functional change as churn. What I was
+> > referring to is that we're shuffling around the boilerplate gfp checkin=
+g
+> > code between the different shrinker callbacks, knowing that it's
+> > eventually going to be lifted out, when we could potentially just lift
+> > that code up a level now.
+>=20
+> I don't think that lifting it up will save much code at all, once we
+> add all the gfp mask intialisation to all the shrinkers, etc. It's
+> just means we can't look at the shrinker implementation and know
+> that it can't run in GFP_NOFS context - we have to go look up
+> where it is instantiated instead to see if there are gfp context
+> constraints.
+>=20
+> I think it's better where it is, documenting the constraints the
+> shrinker implementation runs under in the implementation itself...
+>=20
+
+Fair enough.. I don't necessarily agree that this is the best approach,
+but the implementation is reasonable enough that I certainly don't
+object to it (provided the fragility nits are addressed) and I don't
+feel particularly tied to the suggested alternative. At the end of the
+day this isn't a lot of code and it's not difficult to change (which it
+probably will). I just wanted to make sure the alternative was fairly
+considered and to test the reasoning for the approach a bit. I'll
+move along from this topic on review of the next version...
+
+Brian
+
+> Cheers,
+>=20
+> Dave.
+> --=20
+> Dave Chinner
+> david@fromorbit.com
+>=20
+
