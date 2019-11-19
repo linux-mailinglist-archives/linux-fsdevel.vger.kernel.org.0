@@ -2,434 +2,1307 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBC51102AC2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 18:26:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38F8F102C1C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 19:57:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728467AbfKSR0a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Nov 2019 12:26:30 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:37842 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728379AbfKSR0a (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Nov 2019 12:26:30 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJHOTXK142817;
-        Tue, 19 Nov 2019 17:26:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2019-08-05;
- bh=I3kqbggfdxe776aGv7aL21Dch9dcVk02X/21i+aYZ4Y=;
- b=DqjxemGOIW4J/g7R0QwMqWKicqOLyt5Wxzz0YbHq9PQMh817uJGc2sgtLGhFfyO6IyzP
- viEIX4HrVp+5HrrI9CItad+GgkVXLDBVoys0+5+/vAWugQKHTHGrqIQdUr+Ouch+S0SL
- K3Yu8piH6lp8l1CbzSycJHFnpf+kZhlU+CCZcXYU5aYpg6ByNVvWd77n2r8A0ojnCPal
- 11O3CO9SetS07laRyvfyIFRSJSWhIcUCboe+ZfBG58W7PAXh8a34/n6J3TMapzHJIiI8
- rLW9PisE6tg6DlekSVNKoVsM3TzGKTu9k9MQxQ8RjY4ibn5GsNPLXgi9tLl+vyO+IWjs CQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2wa9rqgcag-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Nov 2019 17:26:18 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAJHNQ9q179301;
-        Tue, 19 Nov 2019 17:24:17 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2wcema4u5j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Nov 2019 17:24:17 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAJHOFfr002150;
-        Tue, 19 Nov 2019 17:24:16 GMT
-Received: from localhost (/10.159.131.108)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 19 Nov 2019 09:24:15 -0800
-Date:   Tue, 19 Nov 2019 09:24:14 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc:     Filipe Manana <fdmanana@gmail.com>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH 4/7] btrfs: Use iomap_dio_rw() for direct I/O
-Message-ID: <20191119172414.GT6235@magnolia>
-References: <20191115161700.12305-1-rgoldwyn@suse.de>
- <20191115161700.12305-5-rgoldwyn@suse.de>
- <CAL3q7H6Vwz9uu=JDD_ZFHkNsP4dMnCyqy2qCGH67nTNgL0Pa1w@mail.gmail.com>
- <20191119170129.o4ml7p57soznxps7@fiona>
+        id S1727036AbfKSS5a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Nov 2019 13:57:30 -0500
+Received: from mga05.intel.com ([192.55.52.43]:31932 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726711AbfKSS5a (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 19 Nov 2019 13:57:30 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2019 10:57:28 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,219,1571727600"; 
+   d="scan'208";a="209289900"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga003.jf.intel.com with ESMTP; 19 Nov 2019 10:57:26 -0800
+Date:   Tue, 19 Nov 2019 10:57:26 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, Dave Chinner <david@fromorbit.com>,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH V2 2/2] fs: Move swap_[de]activate to file_operations
+Message-ID: <20191119185725.GA13582@iweiny-DESK2.sc.intel.com>
+References: <20191113004244.9981-1-ira.weiny@intel.com>
+ <20191113004244.9981-3-ira.weiny@intel.com>
+ <20191114210347.GI6211@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191119170129.o4ml7p57soznxps7@fiona>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9446 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1911190150
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9446 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1911190150
+In-Reply-To: <20191114210347.GI6211@magnolia>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 11:01:29AM -0600, Goldwyn Rodrigues wrote:
-> On 16:54 18/11, Filipe Manana wrote:
-> > On Fri, Nov 15, 2019 at 4:19 PM Goldwyn Rodrigues <rgoldwyn@suse.de> wrote:
-> > >
-> > > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> > >
-> > > This is the main patch to switch call from
-> > > __blockdev_direct_IO() to iomap_dio_rw(). In this patch:
-> > >
-> > > Removed buffer_head references
-> > > Removed inode_dio_begin() and inode_dio_end() functions since
-> > > they are called in iomap_dio_rw().
-> > > Renamed btrfs_get_blocks_direct() to direct_iomap_begin() and
-> > > used it as iomap_begin()
-> > > address_space.direct_IO now is a noop since direct_IO is called
-> > > from __btrfs_write_direct().
-> > >
-> > > Removed flags parameter used for __blockdev_direct_IO(). iomap is
-> > > capable of direct I/O reads from a hole, so we don't need to
-> > > return -ENOENT.
-> > >
-> > > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> > > ---
-> > >  fs/btrfs/ctree.h |   1 +
-> > >  fs/btrfs/file.c  |   2 +-
-> > >  fs/btrfs/inode.c | 105 ++++++++++++++++++-------------------------------------
-> > >  3 files changed, 36 insertions(+), 72 deletions(-)
-> > >
-> > > diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-> > > index fe2b8765d9e6..cde8423673fc 100644
-> > > --- a/fs/btrfs/ctree.h
-> > > +++ b/fs/btrfs/ctree.h
-> > > @@ -2903,6 +2903,7 @@ int btrfs_writepage_cow_fixup(struct page *page, u64 start, u64 end);
-> > >  void btrfs_writepage_endio_finish_ordered(struct page *page, u64 start,
-> > >                                           u64 end, int uptodate);
-> > >  extern const struct dentry_operations btrfs_dentry_operations;
-> > > +ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter);
-> > >
-> > >  /* ioctl.c */
-> > >  long btrfs_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
-> > > diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-> > > index eede9dcbb4b6..d47da00fa61e 100644
-> > > --- a/fs/btrfs/file.c
-> > > +++ b/fs/btrfs/file.c
-> > > @@ -1835,7 +1835,7 @@ static ssize_t __btrfs_direct_write(struct kiocb *iocb, struct iov_iter *from)
-> > >         loff_t endbyte;
-> > >         int err;
-> > >
-> > > -       written = generic_file_direct_write(iocb, from);
-> > > +       written = btrfs_direct_IO(iocb, from);
-> > >
-> > >         if (written < 0 || !iov_iter_count(from))
-> > >                 return written;
-> > > diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> > > index c6dc4dd16cf7..e2e4dfb7a568 100644
-> > > --- a/fs/btrfs/inode.c
-> > > +++ b/fs/btrfs/inode.c
-> > > @@ -8,6 +8,7 @@
-> > >  #include <linux/buffer_head.h>
-> > >  #include <linux/file.h>
-> > >  #include <linux/fs.h>
-> > > +#include <linux/iomap.h>
-> > >  #include <linux/pagemap.h>
-> > >  #include <linux/highmem.h>
-> > >  #include <linux/time.h>
-> > > @@ -7619,28 +7620,7 @@ static struct extent_map *create_io_em(struct inode *inode, u64 start, u64 len,
-> > >  }
-> > >
-> > >
-> > > -static int btrfs_get_blocks_direct_read(struct extent_map *em,
-> > > -                                       struct buffer_head *bh_result,
-> > > -                                       struct inode *inode,
-> > > -                                       u64 start, u64 len)
-> > > -{
-> > > -       if (em->block_start == EXTENT_MAP_HOLE ||
-> > > -                       test_bit(EXTENT_FLAG_PREALLOC, &em->flags))
-> > > -               return -ENOENT;
-> > > -
-> > > -       len = min(len, em->len - (start - em->start));
-> > > -
-> > > -       bh_result->b_blocknr = (em->block_start + (start - em->start)) >>
-> > > -               inode->i_blkbits;
-> > > -       bh_result->b_size = len;
-> > > -       bh_result->b_bdev = em->bdev;
-> > > -       set_buffer_mapped(bh_result);
-> > > -
-> > > -       return 0;
-> > > -}
-> > > -
-> > >  static int btrfs_get_blocks_direct_write(struct extent_map **map,
-> > > -                                        struct buffer_head *bh_result,
-> > >                                          struct inode *inode,
-> > >                                          struct btrfs_dio_data *dio_data,
-> > >                                          u64 start, u64 len)
-> > > @@ -7702,7 +7682,6 @@ static int btrfs_get_blocks_direct_write(struct extent_map **map,
-> > >         }
-> > >
-> > >         /* this will cow the extent */
-> > > -       len = bh_result->b_size;
-> > >         free_extent_map(em);
-> > >         *map = em = btrfs_new_extent_direct(inode, start, len);
-> > >         if (IS_ERR(em)) {
-> > > @@ -7713,15 +7692,6 @@ static int btrfs_get_blocks_direct_write(struct extent_map **map,
-> > >         len = min(len, em->len - (start - em->start));
-> > >
-> > >  skip_cow:
-> > > -       bh_result->b_blocknr = (em->block_start + (start - em->start)) >>
-> > > -               inode->i_blkbits;
-> > > -       bh_result->b_size = len;
-> > > -       bh_result->b_bdev = em->bdev;
-> > > -       set_buffer_mapped(bh_result);
-> > > -
-> > > -       if (!test_bit(EXTENT_FLAG_PREALLOC, &em->flags))
-> > > -               set_buffer_new(bh_result);
-> > > -
-> > >         /*
-> > >          * Need to update the i_size under the extent lock so buffered
-> > >          * readers will get the updated i_size when we unlock.
-> > > @@ -7737,17 +7707,18 @@ static int btrfs_get_blocks_direct_write(struct extent_map **map,
-> > >         return ret;
-> > >  }
-> > >
-> > > -static int btrfs_get_blocks_direct(struct inode *inode, sector_t iblock,
-> > > -                                  struct buffer_head *bh_result, int create)
-> > > +static int direct_iomap_begin(struct inode *inode, loff_t start,
-> > > +               loff_t length, unsigned flags, struct iomap *iomap,
-> > > +               struct iomap *srcmap)
-> > >  {
-> > >         struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
-> > >         struct extent_map *em;
-> > >         struct extent_state *cached_state = NULL;
-> > >         struct btrfs_dio_data *dio_data = NULL;
-> > > -       u64 start = iblock << inode->i_blkbits;
-> > >         u64 lockstart, lockend;
-> > > -       u64 len = bh_result->b_size;
-> > > +       int create = flags & IOMAP_WRITE;
-> > >         int ret = 0;
-> > > +       u64 len = length;
-> > >
-> > >         if (!create)
-> > >                 len = min_t(u64, len, fs_info->sectorsize);
-> > > @@ -7803,7 +7774,7 @@ static int btrfs_get_blocks_direct(struct inode *inode, sector_t iblock,
-> > >         }
-> > >
-> > >         if (create) {
-> > > -               ret = btrfs_get_blocks_direct_write(&em, bh_result, inode,
-> > > +               ret = btrfs_get_blocks_direct_write(&em, inode,
-> > >                                                     dio_data, start, len);
-> > >                 if (ret < 0)
-> > >                         goto unlock_err;
-> > > @@ -7811,19 +7782,13 @@ static int btrfs_get_blocks_direct(struct inode *inode, sector_t iblock,
-> > >                 unlock_extent_cached(&BTRFS_I(inode)->io_tree, lockstart,
-> > >                                      lockend, &cached_state);
-> > >         } else {
-> > > -               ret = btrfs_get_blocks_direct_read(em, bh_result, inode,
-> > > -                                                  start, len);
-> > > -               /* Can be negative only if we read from a hole */
-> > > -               if (ret < 0) {
-> > > -                       ret = 0;
-> > > -                       free_extent_map(em);
-> > > -                       goto unlock_err;
-> > > -               }
-> > > +
-> > > +               len = min(len, em->len - (start - em->start));
-> > >                 /*
-> > >                  * We need to unlock only the end area that we aren't using.
-> > >                  * The rest is going to be unlocked by the endio routine.
-> > >                  */
-> > > -               lockstart = start + bh_result->b_size;
-> > > +               lockstart = start + len;
-> > >                 if (lockstart < lockend) {
-> > >                         unlock_extent_cached(&BTRFS_I(inode)->io_tree,
-> > >                                              lockstart, lockend, &cached_state);
-> > > @@ -7832,6 +7797,18 @@ static int btrfs_get_blocks_direct(struct inode *inode, sector_t iblock,
-> > >                 }
-> > >         }
-> > >
-> > > +       if ((em->block_start == EXTENT_MAP_HOLE) ||
-> > > +           (test_bit(EXTENT_FLAG_PREALLOC, &em->flags) && !create)) {
-> > > +               iomap->addr = IOMAP_NULL_ADDR;
-> > > +               iomap->type = IOMAP_HOLE;
-> > > +       } else {
-> > > +               iomap->addr = em->block_start - (start - em->start);
-> > > +               iomap->type = IOMAP_MAPPED;
-> > > +       }
-> > > +       iomap->offset = start;
-> > > +       iomap->bdev = em->bdev;
-> > > +       iomap->length = min(len, em->len - (start - em->start));
-> > > +
-> > >         free_extent_map(em);
-> > >
-> > >         return 0;
-> > > @@ -8199,9 +8176,8 @@ static void btrfs_endio_direct_read(struct bio *bio)
-> > >         kfree(dip);
-> > >
-> > >         dio_bio->bi_status = err;
-> > > -       dio_end_io(dio_bio);
-> > > +       bio_endio(dio_bio);
-> > >         btrfs_io_bio_free_csum(io_bio);
-> > > -       bio_put(bio);
-> > >  }
-> > >
-> > >  static void __endio_write_update_ordered(struct inode *inode,
-> > > @@ -8263,8 +8239,7 @@ static void btrfs_endio_direct_write(struct bio *bio)
-> > >         kfree(dip);
-> > >
-> > >         dio_bio->bi_status = bio->bi_status;
-> > > -       dio_end_io(dio_bio);
-> > > -       bio_put(bio);
-> > > +       bio_endio(dio_bio);
-> > >  }
-> > >
-> > >  static blk_status_t btrfs_submit_bio_start_direct_io(void *private_data,
-> > > @@ -8568,7 +8543,7 @@ static void btrfs_submit_direct(struct bio *dio_bio, struct inode *inode,
-> > >                 /*
-> > >                  * The end io callbacks free our dip, do the final put on bio
-> > >                  * and all the cleanup and final put for dio_bio (through
-> > > -                * dio_end_io()).
-> > > +                * end_io()).
-> > >                  */
-> > >                 dip = NULL;
-> > >                 bio = NULL;
-> > > @@ -8587,7 +8562,7 @@ static void btrfs_submit_direct(struct bio *dio_bio, struct inode *inode,
-> > >                  * Releases and cleans up our dio_bio, no need to bio_put()
-> > >                  * nor bio_endio()/bio_io_error() against dio_bio.
-> > >                  */
-> > > -               dio_end_io(dio_bio);
-> > > +               bio_endio(dio_bio);
+On Thu, Nov 14, 2019 at 01:03:47PM -0800, Darrick J. Wong wrote:
+> On Tue, Nov 12, 2019 at 04:42:44PM -0800, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
 > > 
-> > The comment above also needs to be updated. It explicitly mentions
-> > there's no need to call bio_endio(), but now the code it's calling
-> > that function.
+> > swap_activate() and swap_deactivate() have nothing to do with address
+> > spaces.  We want to be able to change the address space operations on
+> > the fly to allow changing inode flags dynamically.
 > > 
-> > >         }
-> > >         if (bio)
-> > >                 bio_put(bio);
-> > > @@ -8627,7 +8602,11 @@ static ssize_t check_direct_IO(struct btrfs_fs_info *fs_info,
-> > >         return retval;
-> > >  }
-> > >
-> > > -static ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
-> > > +static const struct iomap_ops dio_iomap_ops = {
-> > > +       .iomap_begin            = direct_iomap_begin,
-> > > +};
-> > > +
-> > > +ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
-> > >  {
-> > >         struct file *file = iocb->ki_filp;
-> > >         struct inode *inode = file->f_mapping->host;
-> > > @@ -8637,14 +8616,11 @@ static ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
-> > >         loff_t offset = iocb->ki_pos;
-> > >         size_t count = 0;
-> > >         int flags = 0;
-> > > -       bool wakeup = true;
-> > > -       bool relock = false;
-> > >         ssize_t ret;
-> > >
-> > >         if (check_direct_IO(fs_info, iter, offset))
-> > >                 return 0;
-> > >
-> > > -       inode_dio_begin(inode);
-> > >
-> > >         /*
-> > >          * The generic stuff only does filemap_write_and_wait_range, which
-> > > @@ -8664,11 +8640,7 @@ static ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
-> > >                  * the isize, but it is protected by i_mutex. So we can
-> > >                  * not unlock the i_mutex at this case.
-> > >                  */
-> > > -               if (offset + count <= inode->i_size) {
-> > > -                       dio_data.overwrite = 1;
-> > > -                       inode_unlock(inode);
-> > > -                       relock = true;
+> > Switching address space operations can be difficult to do reliably.[1]
+> > Therefore, to simplify switching address space operations we reduce the
+> > number of functions in those operations by moving swap_activate() and
+> > swap_deactivate() out of the address space operations.
 > > 
-> > I'm not familiar with iomap, but a quick grep at iomap/*.c (5.4-rc7)
-> > reveals no call to inode_unlock().
+> > No functionality is changed with this patch.
+> > 
+> > This has been tested with XFS but not NFS, f2fs, or btrfs.
+> > 
+> > Also note we move some functions to facilitate compilation.  But there
+> > are no functional changes are contained within those diffs.
+> > 
+> > [1] https://lkml.org/lkml/2019/11/11/572
+> > 
+> > Cc: Dave Chinner <david@fromorbit.com>
+> > Cc: linux-fsdevel@vger.kernel.org
+> > Cc: linux-kernel@vger.kernel.org
+> > Suggested-by: Jan Kara <jack@suse.cz>
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> 
+> Replace previous ack with:
+> 
+> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-iomap doesn't handle locking at all -- it's the caller's responsibility
-to set up the locking correctly before calling iomap_dio_rw.
+Thanks Darrick and David for the reviews.
 
-> > So this change is throwing away the optimization done by commit [1],
-> > which makes a lot of sense and when it landed I observed as well that
-> > it made a great difference (as expected).
-> > Correct me if I'm wrong, but that optimization is now gone isn't it?
-> > So concurrent direct IO writes to a file, that don't expand the
-> > inode's i_size and operate on non-overlapping ranges, will now be
-> > completely serialized.
+Are there any objections from NFS or F2FS?
 
-Yeah, I was thinking that too...
+NFS is pretty straight forward.  For F2FS the large changes are a simple
+copy/paste of the functions which, to me at least, make code maintenance easier
+in the long run.
 
-> Yes, I did not realize the consequences. Let me check the performance
-> and if we can rope in this optimization with the existing iomap
-> codebase. Thanks for pointing it out.
+Thanks,
+Ira
 
-...though I see in the old code you'd drop the inode lock before calling
-__blockdev_direct_IO, which (I hope) implies that it's safe to grab an
-extent mapping and turn that into a struct bio without holding the inode
-lock.  If that's the case, there's no reason why you can't do the same
-thing with iomap.
-
---D
-
-> -- 
-> Goldwyn
+> 
+> --D
 > 
 > > 
-> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=38851cc19adbfa1def2b47106d8050a80e0a3673
+> > ---
+> > Changes from V0:
+> > 	Update cover letter.
+> > 	fix btrfs as per Andrew's comments
+> > 	change xfs_iomap_swapfile_activate() to xfs_file_swap_activate()
 > > 
-> > Thanks
-> > 
-> > 
-> > > -               } else if (iocb->ki_flags & IOCB_NOWAIT) {
-> > > +               if (iocb->ki_flags & IOCB_NOWAIT) {
-> > >                         ret = -EAGAIN;
-> > >                         goto out;
-> > >                 }
-> > > @@ -8690,15 +8662,11 @@ static ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
-> > >                 down_read(&BTRFS_I(inode)->dio_sem);
-> > >         } else if (test_bit(BTRFS_INODE_READDIO_NEED_LOCK,
-> > >                                      &BTRFS_I(inode)->runtime_flags)) {
-> > > -               inode_dio_end(inode);
-> > >                 flags = DIO_LOCKING | DIO_SKIP_HOLES;
-> > > -               wakeup = false;
-> > >         }
-> > >
-> > > -       ret = __blockdev_direct_IO(iocb, inode,
-> > > -                                  fs_info->fs_devices->latest_bdev,
-> > > -                                  iter, btrfs_get_blocks_direct, NULL,
-> > > -                                  btrfs_submit_direct, flags);
-> > > +       ret = iomap_dio_rw(iocb, iter, &dio_iomap_ops, NULL, is_sync_kiocb(iocb));
-> > > +
-> > >         if (iov_iter_rw(iter) == WRITE) {
-> > >                 up_read(&BTRFS_I(inode)->dio_sem);
-> > >                 current->journal_info = NULL;
-> > > @@ -8725,11 +8693,6 @@ static ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
-> > >                 btrfs_delalloc_release_extents(BTRFS_I(inode), count);
-> > >         }
-> > >  out:
-> > > -       if (wakeup)
-> > > -               inode_dio_end(inode);
-> > > -       if (relock)
-> > > -               inode_lock(inode);
-> > > -
-> > >         extent_changeset_free(data_reserved);
-> > >         return ret;
-> > >  }
-> > > --
-> > > 2.16.4
-> > >
+> > Changes from V1:
+> > 	Update recipients list
 > > 
 > > 
+> >  fs/btrfs/file.c    | 341 +++++++++++++++++++++++++++++++++++++++++++++
+> >  fs/btrfs/inode.c   | 340 --------------------------------------------
+> >  fs/f2fs/data.c     | 122 ----------------
+> >  fs/f2fs/file.c     | 122 ++++++++++++++++
+> >  fs/nfs/file.c      |   4 +-
+> >  fs/xfs/xfs_aops.c  |  13 --
+> >  fs/xfs/xfs_file.c  |  12 ++
+> >  include/linux/fs.h |  10 +-
+> >  mm/swapfile.c      |  12 +-
+> >  9 files changed, 487 insertions(+), 489 deletions(-)
+> > 
+> > diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+> > index 0cb43b682789..117502311fe0 100644
+> > --- a/fs/btrfs/file.c
+> > +++ b/fs/btrfs/file.c
+> > @@ -16,6 +16,7 @@
+> >  #include <linux/btrfs.h>
+> >  #include <linux/uio.h>
+> >  #include <linux/iversion.h>
+> > +#include <linux/swap.h>
+> >  #include "ctree.h"
+> >  #include "disk-io.h"
+> >  #include "transaction.h"
+> > @@ -27,6 +28,7 @@
+> >  #include "qgroup.h"
+> >  #include "compression.h"
+> >  #include "delalloc-space.h"
+> > +#include "block-group.h"
+> >  
+> >  static struct kmem_cache *btrfs_inode_defrag_cachep;
+> >  /*
+> > @@ -3444,6 +3446,343 @@ static int btrfs_file_open(struct inode *inode, struct file *filp)
+> >  	return generic_file_open(inode, filp);
+> >  }
+> >  
+> > +#ifdef CONFIG_SWAP
+> > +/*
+> > + * Add an entry indicating a block group or device which is pinned by a
+> > + * swapfile. Returns 0 on success, 1 if there is already an entry for it, or a
+> > + * negative errno on failure.
+> > + */
+> > +static int btrfs_add_swapfile_pin(struct inode *inode, void *ptr,
+> > +				  bool is_block_group)
+> > +{
+> > +	struct btrfs_fs_info *fs_info = BTRFS_I(inode)->root->fs_info;
+> > +	struct btrfs_swapfile_pin *sp, *entry;
+> > +	struct rb_node **p;
+> > +	struct rb_node *parent = NULL;
+> > +
+> > +	sp = kmalloc(sizeof(*sp), GFP_NOFS);
+> > +	if (!sp)
+> > +		return -ENOMEM;
+> > +	sp->ptr = ptr;
+> > +	sp->inode = inode;
+> > +	sp->is_block_group = is_block_group;
+> > +
+> > +	spin_lock(&fs_info->swapfile_pins_lock);
+> > +	p = &fs_info->swapfile_pins.rb_node;
+> > +	while (*p) {
+> > +		parent = *p;
+> > +		entry = rb_entry(parent, struct btrfs_swapfile_pin, node);
+> > +		if (sp->ptr < entry->ptr ||
+> > +		    (sp->ptr == entry->ptr && sp->inode < entry->inode)) {
+> > +			p = &(*p)->rb_left;
+> > +		} else if (sp->ptr > entry->ptr ||
+> > +			   (sp->ptr == entry->ptr && sp->inode > entry->inode)) {
+> > +			p = &(*p)->rb_right;
+> > +		} else {
+> > +			spin_unlock(&fs_info->swapfile_pins_lock);
+> > +			kfree(sp);
+> > +			return 1;
+> > +		}
+> > +	}
+> > +	rb_link_node(&sp->node, parent, p);
+> > +	rb_insert_color(&sp->node, &fs_info->swapfile_pins);
+> > +	spin_unlock(&fs_info->swapfile_pins_lock);
+> > +	return 0;
+> > +}
+> > +
+> > +/* Free all of the entries pinned by this swapfile. */
+> > +static void btrfs_free_swapfile_pins(struct inode *inode)
+> > +{
+> > +	struct btrfs_fs_info *fs_info = BTRFS_I(inode)->root->fs_info;
+> > +	struct btrfs_swapfile_pin *sp;
+> > +	struct rb_node *node, *next;
+> > +
+> > +	spin_lock(&fs_info->swapfile_pins_lock);
+> > +	node = rb_first(&fs_info->swapfile_pins);
+> > +	while (node) {
+> > +		next = rb_next(node);
+> > +		sp = rb_entry(node, struct btrfs_swapfile_pin, node);
+> > +		if (sp->inode == inode) {
+> > +			rb_erase(&sp->node, &fs_info->swapfile_pins);
+> > +			if (sp->is_block_group)
+> > +				btrfs_put_block_group(sp->ptr);
+> > +			kfree(sp);
+> > +		}
+> > +		node = next;
+> > +	}
+> > +	spin_unlock(&fs_info->swapfile_pins_lock);
+> > +}
+> > +
+> > +struct btrfs_swap_info {
+> > +	u64 start;
+> > +	u64 block_start;
+> > +	u64 block_len;
+> > +	u64 lowest_ppage;
+> > +	u64 highest_ppage;
+> > +	unsigned long nr_pages;
+> > +	int nr_extents;
+> > +};
+> > +
+> > +static int btrfs_add_swap_extent(struct swap_info_struct *sis,
+> > +				 struct btrfs_swap_info *bsi)
+> > +{
+> > +	unsigned long nr_pages;
+> > +	u64 first_ppage, first_ppage_reported, next_ppage;
+> > +	int ret;
+> > +
+> > +	first_ppage = ALIGN(bsi->block_start, PAGE_SIZE) >> PAGE_SHIFT;
+> > +	next_ppage = ALIGN_DOWN(bsi->block_start + bsi->block_len,
+> > +				PAGE_SIZE) >> PAGE_SHIFT;
+> > +
+> > +	if (first_ppage >= next_ppage)
+> > +		return 0;
+> > +	nr_pages = next_ppage - first_ppage;
+> > +
+> > +	first_ppage_reported = first_ppage;
+> > +	if (bsi->start == 0)
+> > +		first_ppage_reported++;
+> > +	if (bsi->lowest_ppage > first_ppage_reported)
+> > +		bsi->lowest_ppage = first_ppage_reported;
+> > +	if (bsi->highest_ppage < (next_ppage - 1))
+> > +		bsi->highest_ppage = next_ppage - 1;
+> > +
+> > +	ret = add_swap_extent(sis, bsi->nr_pages, nr_pages, first_ppage);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +	bsi->nr_extents += ret;
+> > +	bsi->nr_pages += nr_pages;
+> > +	return 0;
+> > +}
+> > +
+> > +static void btrfs_swap_deactivate(struct file *file)
+> > +{
+> > +	struct inode *inode = file_inode(file);
+> > +
+> > +	btrfs_free_swapfile_pins(inode);
+> > +	atomic_dec(&BTRFS_I(inode)->root->nr_swapfiles);
+> > +}
+> > +
+> > +static int btrfs_swap_activate(struct swap_info_struct *sis, struct file *file,
+> > +			       sector_t *span)
+> > +{
+> > +	struct inode *inode = file_inode(file);
+> > +	struct btrfs_fs_info *fs_info = BTRFS_I(inode)->root->fs_info;
+> > +	struct extent_io_tree *io_tree = &BTRFS_I(inode)->io_tree;
+> > +	struct extent_state *cached_state = NULL;
+> > +	struct extent_map *em = NULL;
+> > +	struct btrfs_device *device = NULL;
+> > +	struct btrfs_swap_info bsi = {
+> > +		.lowest_ppage = (sector_t)-1ULL,
+> > +	};
+> > +	int ret = 0;
+> > +	u64 isize;
+> > +	u64 start;
+> > +
+> > +	/*
+> > +	 * If the swap file was just created, make sure delalloc is done. If the
+> > +	 * file changes again after this, the user is doing something stupid and
+> > +	 * we don't really care.
+> > +	 */
+> > +	ret = btrfs_wait_ordered_range(inode, 0, (u64)-1);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/*
+> > +	 * The inode is locked, so these flags won't change after we check them.
+> > +	 */
+> > +	if (BTRFS_I(inode)->flags & BTRFS_INODE_COMPRESS) {
+> > +		btrfs_warn(fs_info, "swapfile must not be compressed");
+> > +		return -EINVAL;
+> > +	}
+> > +	if (!(BTRFS_I(inode)->flags & BTRFS_INODE_NODATACOW)) {
+> > +		btrfs_warn(fs_info, "swapfile must not be copy-on-write");
+> > +		return -EINVAL;
+> > +	}
+> > +	if (!(BTRFS_I(inode)->flags & BTRFS_INODE_NODATASUM)) {
+> > +		btrfs_warn(fs_info, "swapfile must not be checksummed");
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	/*
+> > +	 * Balance or device remove/replace/resize can move stuff around from
+> > +	 * under us. The EXCL_OP flag makes sure they aren't running/won't run
+> > +	 * concurrently while we are mapping the swap extents, and
+> > +	 * fs_info->swapfile_pins prevents them from running while the swap file
+> > +	 * is active and moving the extents. Note that this also prevents a
+> > +	 * concurrent device add which isn't actually necessary, but it's not
+> > +	 * really worth the trouble to allow it.
+> > +	 */
+> > +	if (test_and_set_bit(BTRFS_FS_EXCL_OP, &fs_info->flags)) {
+> > +		btrfs_warn(fs_info,
+> > +	   "cannot activate swapfile while exclusive operation is running");
+> > +		return -EBUSY;
+> > +	}
+> > +	/*
+> > +	 * Snapshots can create extents which require COW even if NODATACOW is
+> > +	 * set. We use this counter to prevent snapshots. We must increment it
+> > +	 * before walking the extents because we don't want a concurrent
+> > +	 * snapshot to run after we've already checked the extents.
+> > +	 */
+> > +	atomic_inc(&BTRFS_I(inode)->root->nr_swapfiles);
+> > +
+> > +	isize = ALIGN_DOWN(inode->i_size, fs_info->sectorsize);
+> > +
+> > +	lock_extent_bits(io_tree, 0, isize - 1, &cached_state);
+> > +	start = 0;
+> > +	while (start < isize) {
+> > +		u64 logical_block_start, physical_block_start;
+> > +		struct btrfs_block_group_cache *bg;
+> > +		u64 len = isize - start;
+> > +
+> > +		em = btrfs_get_extent(BTRFS_I(inode), NULL, 0, start, len, 0);
+> > +		if (IS_ERR(em)) {
+> > +			ret = PTR_ERR(em);
+> > +			goto out;
+> > +		}
+> > +
+> > +		if (em->block_start == EXTENT_MAP_HOLE) {
+> > +			btrfs_warn(fs_info, "swapfile must not have holes");
+> > +			ret = -EINVAL;
+> > +			goto out;
+> > +		}
+> > +		if (em->block_start == EXTENT_MAP_INLINE) {
+> > +			/*
+> > +			 * It's unlikely we'll ever actually find ourselves
+> > +			 * here, as a file small enough to fit inline won't be
+> > +			 * big enough to store more than the swap header, but in
+> > +			 * case something changes in the future, let's catch it
+> > +			 * here rather than later.
+> > +			 */
+> > +			btrfs_warn(fs_info, "swapfile must not be inline");
+> > +			ret = -EINVAL;
+> > +			goto out;
+> > +		}
+> > +		if (test_bit(EXTENT_FLAG_COMPRESSED, &em->flags)) {
+> > +			btrfs_warn(fs_info, "swapfile must not be compressed");
+> > +			ret = -EINVAL;
+> > +			goto out;
+> > +		}
+> > +
+> > +		logical_block_start = em->block_start + (start - em->start);
+> > +		len = min(len, em->len - (start - em->start));
+> > +		free_extent_map(em);
+> > +		em = NULL;
+> > +
+> > +		ret = can_nocow_extent(inode, start, &len, NULL, NULL, NULL);
+> > +		if (ret < 0) {
+> > +			goto out;
+> > +		} else if (ret) {
+> > +			ret = 0;
+> > +		} else {
+> > +			btrfs_warn(fs_info,
+> > +				   "swapfile must not be copy-on-write");
+> > +			ret = -EINVAL;
+> > +			goto out;
+> > +		}
+> > +
+> > +		em = btrfs_get_chunk_map(fs_info, logical_block_start, len);
+> > +		if (IS_ERR(em)) {
+> > +			ret = PTR_ERR(em);
+> > +			goto out;
+> > +		}
+> > +
+> > +		if (em->map_lookup->type & BTRFS_BLOCK_GROUP_PROFILE_MASK) {
+> > +			btrfs_warn(fs_info,
+> > +				   "swapfile must have single data profile");
+> > +			ret = -EINVAL;
+> > +			goto out;
+> > +		}
+> > +
+> > +		if (device == NULL) {
+> > +			device = em->map_lookup->stripes[0].dev;
+> > +			ret = btrfs_add_swapfile_pin(inode, device, false);
+> > +			if (ret == 1)
+> > +				ret = 0;
+> > +			else if (ret)
+> > +				goto out;
+> > +		} else if (device != em->map_lookup->stripes[0].dev) {
+> > +			btrfs_warn(fs_info, "swapfile must be on one device");
+> > +			ret = -EINVAL;
+> > +			goto out;
+> > +		}
+> > +
+> > +		physical_block_start = (em->map_lookup->stripes[0].physical +
+> > +					(logical_block_start - em->start));
+> > +		len = min(len, em->len - (logical_block_start - em->start));
+> > +		free_extent_map(em);
+> > +		em = NULL;
+> > +
+> > +		bg = btrfs_lookup_block_group(fs_info, logical_block_start);
+> > +		if (!bg) {
+> > +			btrfs_warn(fs_info,
+> > +			   "could not find block group containing swapfile");
+> > +			ret = -EINVAL;
+> > +			goto out;
+> > +		}
+> > +
+> > +		ret = btrfs_add_swapfile_pin(inode, bg, true);
+> > +		if (ret) {
+> > +			btrfs_put_block_group(bg);
+> > +			if (ret == 1)
+> > +				ret = 0;
+> > +			else
+> > +				goto out;
+> > +		}
+> > +
+> > +		if (bsi.block_len &&
+> > +		    bsi.block_start + bsi.block_len == physical_block_start) {
+> > +			bsi.block_len += len;
+> > +		} else {
+> > +			if (bsi.block_len) {
+> > +				ret = btrfs_add_swap_extent(sis, &bsi);
+> > +				if (ret)
+> > +					goto out;
+> > +			}
+> > +			bsi.start = start;
+> > +			bsi.block_start = physical_block_start;
+> > +			bsi.block_len = len;
+> > +		}
+> > +
+> > +		start += len;
+> > +	}
+> > +
+> > +	if (bsi.block_len)
+> > +		ret = btrfs_add_swap_extent(sis, &bsi);
+> > +
+> > +out:
+> > +	if (!IS_ERR_OR_NULL(em))
+> > +		free_extent_map(em);
+> > +
+> > +	unlock_extent_cached(io_tree, 0, isize - 1, &cached_state);
+> > +
+> > +	if (ret)
+> > +		btrfs_swap_deactivate(file);
+> > +
+> > +	clear_bit(BTRFS_FS_EXCL_OP, &fs_info->flags);
+> > +
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	if (device)
+> > +		sis->bdev = device->bdev;
+> > +	*span = bsi.highest_ppage - bsi.lowest_ppage + 1;
+> > +	sis->max = bsi.nr_pages;
+> > +	sis->pages = bsi.nr_pages - 1;
+> > +	sis->highest_bit = bsi.nr_pages - 1;
+> > +	return bsi.nr_extents;
+> > +}
+> > +#else
+> > +static void btrfs_swap_deactivate(struct file *file)
+> > +{
+> > +}
+> > +
+> > +static int btrfs_swap_activate(struct swap_info_struct *sis, struct file *file,
+> > +			       sector_t *span)
+> > +{
+> > +	return -EOPNOTSUPP;
+> > +}
+> > +#endif
+> > +
+> >  const struct file_operations btrfs_file_operations = {
+> >  	.llseek		= btrfs_file_llseek,
+> >  	.read_iter      = generic_file_read_iter,
+> > @@ -3459,6 +3798,8 @@ const struct file_operations btrfs_file_operations = {
+> >  	.compat_ioctl	= btrfs_compat_ioctl,
+> >  #endif
+> >  	.remap_file_range = btrfs_remap_file_range,
+> > +	.swap_activate	= btrfs_swap_activate,
+> > +	.swap_deactivate = btrfs_swap_deactivate,
+> >  };
+> >  
+> >  void __cold btrfs_auto_defrag_exit(void)
+> > diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> > index 6d159df7b536..c11b86f2bf24 100644
+> > --- a/fs/btrfs/inode.c
+> > +++ b/fs/btrfs/inode.c
+> > @@ -27,7 +27,6 @@
+> >  #include <linux/uio.h>
+> >  #include <linux/magic.h>
+> >  #include <linux/iversion.h>
+> > -#include <linux/swap.h>
+> >  #include <linux/sched/mm.h>
+> >  #include <asm/unaligned.h>
+> >  #include "misc.h"
+> > @@ -10629,343 +10628,6 @@ void btrfs_set_range_writeback(struct extent_io_tree *tree, u64 start, u64 end)
+> >  	}
+> >  }
+> >  
+> > -#ifdef CONFIG_SWAP
+> > -/*
+> > - * Add an entry indicating a block group or device which is pinned by a
+> > - * swapfile. Returns 0 on success, 1 if there is already an entry for it, or a
+> > - * negative errno on failure.
+> > - */
+> > -static int btrfs_add_swapfile_pin(struct inode *inode, void *ptr,
+> > -				  bool is_block_group)
+> > -{
+> > -	struct btrfs_fs_info *fs_info = BTRFS_I(inode)->root->fs_info;
+> > -	struct btrfs_swapfile_pin *sp, *entry;
+> > -	struct rb_node **p;
+> > -	struct rb_node *parent = NULL;
+> > -
+> > -	sp = kmalloc(sizeof(*sp), GFP_NOFS);
+> > -	if (!sp)
+> > -		return -ENOMEM;
+> > -	sp->ptr = ptr;
+> > -	sp->inode = inode;
+> > -	sp->is_block_group = is_block_group;
+> > -
+> > -	spin_lock(&fs_info->swapfile_pins_lock);
+> > -	p = &fs_info->swapfile_pins.rb_node;
+> > -	while (*p) {
+> > -		parent = *p;
+> > -		entry = rb_entry(parent, struct btrfs_swapfile_pin, node);
+> > -		if (sp->ptr < entry->ptr ||
+> > -		    (sp->ptr == entry->ptr && sp->inode < entry->inode)) {
+> > -			p = &(*p)->rb_left;
+> > -		} else if (sp->ptr > entry->ptr ||
+> > -			   (sp->ptr == entry->ptr && sp->inode > entry->inode)) {
+> > -			p = &(*p)->rb_right;
+> > -		} else {
+> > -			spin_unlock(&fs_info->swapfile_pins_lock);
+> > -			kfree(sp);
+> > -			return 1;
+> > -		}
+> > -	}
+> > -	rb_link_node(&sp->node, parent, p);
+> > -	rb_insert_color(&sp->node, &fs_info->swapfile_pins);
+> > -	spin_unlock(&fs_info->swapfile_pins_lock);
+> > -	return 0;
+> > -}
+> > -
+> > -/* Free all of the entries pinned by this swapfile. */
+> > -static void btrfs_free_swapfile_pins(struct inode *inode)
+> > -{
+> > -	struct btrfs_fs_info *fs_info = BTRFS_I(inode)->root->fs_info;
+> > -	struct btrfs_swapfile_pin *sp;
+> > -	struct rb_node *node, *next;
+> > -
+> > -	spin_lock(&fs_info->swapfile_pins_lock);
+> > -	node = rb_first(&fs_info->swapfile_pins);
+> > -	while (node) {
+> > -		next = rb_next(node);
+> > -		sp = rb_entry(node, struct btrfs_swapfile_pin, node);
+> > -		if (sp->inode == inode) {
+> > -			rb_erase(&sp->node, &fs_info->swapfile_pins);
+> > -			if (sp->is_block_group)
+> > -				btrfs_put_block_group(sp->ptr);
+> > -			kfree(sp);
+> > -		}
+> > -		node = next;
+> > -	}
+> > -	spin_unlock(&fs_info->swapfile_pins_lock);
+> > -}
+> > -
+> > -struct btrfs_swap_info {
+> > -	u64 start;
+> > -	u64 block_start;
+> > -	u64 block_len;
+> > -	u64 lowest_ppage;
+> > -	u64 highest_ppage;
+> > -	unsigned long nr_pages;
+> > -	int nr_extents;
+> > -};
+> > -
+> > -static int btrfs_add_swap_extent(struct swap_info_struct *sis,
+> > -				 struct btrfs_swap_info *bsi)
+> > -{
+> > -	unsigned long nr_pages;
+> > -	u64 first_ppage, first_ppage_reported, next_ppage;
+> > -	int ret;
+> > -
+> > -	first_ppage = ALIGN(bsi->block_start, PAGE_SIZE) >> PAGE_SHIFT;
+> > -	next_ppage = ALIGN_DOWN(bsi->block_start + bsi->block_len,
+> > -				PAGE_SIZE) >> PAGE_SHIFT;
+> > -
+> > -	if (first_ppage >= next_ppage)
+> > -		return 0;
+> > -	nr_pages = next_ppage - first_ppage;
+> > -
+> > -	first_ppage_reported = first_ppage;
+> > -	if (bsi->start == 0)
+> > -		first_ppage_reported++;
+> > -	if (bsi->lowest_ppage > first_ppage_reported)
+> > -		bsi->lowest_ppage = first_ppage_reported;
+> > -	if (bsi->highest_ppage < (next_ppage - 1))
+> > -		bsi->highest_ppage = next_ppage - 1;
+> > -
+> > -	ret = add_swap_extent(sis, bsi->nr_pages, nr_pages, first_ppage);
+> > -	if (ret < 0)
+> > -		return ret;
+> > -	bsi->nr_extents += ret;
+> > -	bsi->nr_pages += nr_pages;
+> > -	return 0;
+> > -}
+> > -
+> > -static void btrfs_swap_deactivate(struct file *file)
+> > -{
+> > -	struct inode *inode = file_inode(file);
+> > -
+> > -	btrfs_free_swapfile_pins(inode);
+> > -	atomic_dec(&BTRFS_I(inode)->root->nr_swapfiles);
+> > -}
+> > -
+> > -static int btrfs_swap_activate(struct swap_info_struct *sis, struct file *file,
+> > -			       sector_t *span)
+> > -{
+> > -	struct inode *inode = file_inode(file);
+> > -	struct btrfs_fs_info *fs_info = BTRFS_I(inode)->root->fs_info;
+> > -	struct extent_io_tree *io_tree = &BTRFS_I(inode)->io_tree;
+> > -	struct extent_state *cached_state = NULL;
+> > -	struct extent_map *em = NULL;
+> > -	struct btrfs_device *device = NULL;
+> > -	struct btrfs_swap_info bsi = {
+> > -		.lowest_ppage = (sector_t)-1ULL,
+> > -	};
+> > -	int ret = 0;
+> > -	u64 isize;
+> > -	u64 start;
+> > -
+> > -	/*
+> > -	 * If the swap file was just created, make sure delalloc is done. If the
+> > -	 * file changes again after this, the user is doing something stupid and
+> > -	 * we don't really care.
+> > -	 */
+> > -	ret = btrfs_wait_ordered_range(inode, 0, (u64)-1);
+> > -	if (ret)
+> > -		return ret;
+> > -
+> > -	/*
+> > -	 * The inode is locked, so these flags won't change after we check them.
+> > -	 */
+> > -	if (BTRFS_I(inode)->flags & BTRFS_INODE_COMPRESS) {
+> > -		btrfs_warn(fs_info, "swapfile must not be compressed");
+> > -		return -EINVAL;
+> > -	}
+> > -	if (!(BTRFS_I(inode)->flags & BTRFS_INODE_NODATACOW)) {
+> > -		btrfs_warn(fs_info, "swapfile must not be copy-on-write");
+> > -		return -EINVAL;
+> > -	}
+> > -	if (!(BTRFS_I(inode)->flags & BTRFS_INODE_NODATASUM)) {
+> > -		btrfs_warn(fs_info, "swapfile must not be checksummed");
+> > -		return -EINVAL;
+> > -	}
+> > -
+> > -	/*
+> > -	 * Balance or device remove/replace/resize can move stuff around from
+> > -	 * under us. The EXCL_OP flag makes sure they aren't running/won't run
+> > -	 * concurrently while we are mapping the swap extents, and
+> > -	 * fs_info->swapfile_pins prevents them from running while the swap file
+> > -	 * is active and moving the extents. Note that this also prevents a
+> > -	 * concurrent device add which isn't actually necessary, but it's not
+> > -	 * really worth the trouble to allow it.
+> > -	 */
+> > -	if (test_and_set_bit(BTRFS_FS_EXCL_OP, &fs_info->flags)) {
+> > -		btrfs_warn(fs_info,
+> > -	   "cannot activate swapfile while exclusive operation is running");
+> > -		return -EBUSY;
+> > -	}
+> > -	/*
+> > -	 * Snapshots can create extents which require COW even if NODATACOW is
+> > -	 * set. We use this counter to prevent snapshots. We must increment it
+> > -	 * before walking the extents because we don't want a concurrent
+> > -	 * snapshot to run after we've already checked the extents.
+> > -	 */
+> > -	atomic_inc(&BTRFS_I(inode)->root->nr_swapfiles);
+> > -
+> > -	isize = ALIGN_DOWN(inode->i_size, fs_info->sectorsize);
+> > -
+> > -	lock_extent_bits(io_tree, 0, isize - 1, &cached_state);
+> > -	start = 0;
+> > -	while (start < isize) {
+> > -		u64 logical_block_start, physical_block_start;
+> > -		struct btrfs_block_group_cache *bg;
+> > -		u64 len = isize - start;
+> > -
+> > -		em = btrfs_get_extent(BTRFS_I(inode), NULL, 0, start, len, 0);
+> > -		if (IS_ERR(em)) {
+> > -			ret = PTR_ERR(em);
+> > -			goto out;
+> > -		}
+> > -
+> > -		if (em->block_start == EXTENT_MAP_HOLE) {
+> > -			btrfs_warn(fs_info, "swapfile must not have holes");
+> > -			ret = -EINVAL;
+> > -			goto out;
+> > -		}
+> > -		if (em->block_start == EXTENT_MAP_INLINE) {
+> > -			/*
+> > -			 * It's unlikely we'll ever actually find ourselves
+> > -			 * here, as a file small enough to fit inline won't be
+> > -			 * big enough to store more than the swap header, but in
+> > -			 * case something changes in the future, let's catch it
+> > -			 * here rather than later.
+> > -			 */
+> > -			btrfs_warn(fs_info, "swapfile must not be inline");
+> > -			ret = -EINVAL;
+> > -			goto out;
+> > -		}
+> > -		if (test_bit(EXTENT_FLAG_COMPRESSED, &em->flags)) {
+> > -			btrfs_warn(fs_info, "swapfile must not be compressed");
+> > -			ret = -EINVAL;
+> > -			goto out;
+> > -		}
+> > -
+> > -		logical_block_start = em->block_start + (start - em->start);
+> > -		len = min(len, em->len - (start - em->start));
+> > -		free_extent_map(em);
+> > -		em = NULL;
+> > -
+> > -		ret = can_nocow_extent(inode, start, &len, NULL, NULL, NULL);
+> > -		if (ret < 0) {
+> > -			goto out;
+> > -		} else if (ret) {
+> > -			ret = 0;
+> > -		} else {
+> > -			btrfs_warn(fs_info,
+> > -				   "swapfile must not be copy-on-write");
+> > -			ret = -EINVAL;
+> > -			goto out;
+> > -		}
+> > -
+> > -		em = btrfs_get_chunk_map(fs_info, logical_block_start, len);
+> > -		if (IS_ERR(em)) {
+> > -			ret = PTR_ERR(em);
+> > -			goto out;
+> > -		}
+> > -
+> > -		if (em->map_lookup->type & BTRFS_BLOCK_GROUP_PROFILE_MASK) {
+> > -			btrfs_warn(fs_info,
+> > -				   "swapfile must have single data profile");
+> > -			ret = -EINVAL;
+> > -			goto out;
+> > -		}
+> > -
+> > -		if (device == NULL) {
+> > -			device = em->map_lookup->stripes[0].dev;
+> > -			ret = btrfs_add_swapfile_pin(inode, device, false);
+> > -			if (ret == 1)
+> > -				ret = 0;
+> > -			else if (ret)
+> > -				goto out;
+> > -		} else if (device != em->map_lookup->stripes[0].dev) {
+> > -			btrfs_warn(fs_info, "swapfile must be on one device");
+> > -			ret = -EINVAL;
+> > -			goto out;
+> > -		}
+> > -
+> > -		physical_block_start = (em->map_lookup->stripes[0].physical +
+> > -					(logical_block_start - em->start));
+> > -		len = min(len, em->len - (logical_block_start - em->start));
+> > -		free_extent_map(em);
+> > -		em = NULL;
+> > -
+> > -		bg = btrfs_lookup_block_group(fs_info, logical_block_start);
+> > -		if (!bg) {
+> > -			btrfs_warn(fs_info,
+> > -			   "could not find block group containing swapfile");
+> > -			ret = -EINVAL;
+> > -			goto out;
+> > -		}
+> > -
+> > -		ret = btrfs_add_swapfile_pin(inode, bg, true);
+> > -		if (ret) {
+> > -			btrfs_put_block_group(bg);
+> > -			if (ret == 1)
+> > -				ret = 0;
+> > -			else
+> > -				goto out;
+> > -		}
+> > -
+> > -		if (bsi.block_len &&
+> > -		    bsi.block_start + bsi.block_len == physical_block_start) {
+> > -			bsi.block_len += len;
+> > -		} else {
+> > -			if (bsi.block_len) {
+> > -				ret = btrfs_add_swap_extent(sis, &bsi);
+> > -				if (ret)
+> > -					goto out;
+> > -			}
+> > -			bsi.start = start;
+> > -			bsi.block_start = physical_block_start;
+> > -			bsi.block_len = len;
+> > -		}
+> > -
+> > -		start += len;
+> > -	}
+> > -
+> > -	if (bsi.block_len)
+> > -		ret = btrfs_add_swap_extent(sis, &bsi);
+> > -
+> > -out:
+> > -	if (!IS_ERR_OR_NULL(em))
+> > -		free_extent_map(em);
+> > -
+> > -	unlock_extent_cached(io_tree, 0, isize - 1, &cached_state);
+> > -
+> > -	if (ret)
+> > -		btrfs_swap_deactivate(file);
+> > -
+> > -	clear_bit(BTRFS_FS_EXCL_OP, &fs_info->flags);
+> > -
+> > -	if (ret)
+> > -		return ret;
+> > -
+> > -	if (device)
+> > -		sis->bdev = device->bdev;
+> > -	*span = bsi.highest_ppage - bsi.lowest_ppage + 1;
+> > -	sis->max = bsi.nr_pages;
+> > -	sis->pages = bsi.nr_pages - 1;
+> > -	sis->highest_bit = bsi.nr_pages - 1;
+> > -	return bsi.nr_extents;
+> > -}
+> > -#else
+> > -static void btrfs_swap_deactivate(struct file *file)
+> > -{
+> > -}
+> > -
+> > -static int btrfs_swap_activate(struct swap_info_struct *sis, struct file *file,
+> > -			       sector_t *span)
+> > -{
+> > -	return -EOPNOTSUPP;
+> > -}
+> > -#endif
+> > -
+> >  static const struct inode_operations btrfs_dir_inode_operations = {
+> >  	.getattr	= btrfs_getattr,
+> >  	.lookup		= btrfs_lookup,
+> > @@ -11032,8 +10694,6 @@ static const struct address_space_operations btrfs_aops = {
+> >  	.releasepage	= btrfs_releasepage,
+> >  	.set_page_dirty	= btrfs_set_page_dirty,
+> >  	.error_remove_page = generic_error_remove_page,
+> > -	.swap_activate	= btrfs_swap_activate,
+> > -	.swap_deactivate = btrfs_swap_deactivate,
+> >  };
+> >  
+> >  static const struct inode_operations btrfs_file_inode_operations = {
+> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > index 3c7777bfae17..04b2a8f44fa9 100644
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -14,7 +14,6 @@
+> >  #include <linux/pagevec.h>
+> >  #include <linux/blkdev.h>
+> >  #include <linux/bio.h>
+> > -#include <linux/swap.h>
+> >  #include <linux/prefetch.h>
+> >  #include <linux/uio.h>
+> >  #include <linux/cleancache.h>
+> > @@ -3142,125 +3141,6 @@ int f2fs_migrate_page(struct address_space *mapping,
+> >  }
+> >  #endif
+> >  
+> > -#ifdef CONFIG_SWAP
+> > -/* Copied from generic_swapfile_activate() to check any holes */
+> > -static int check_swap_activate(struct file *swap_file, unsigned int max)
+> > -{
+> > -	struct inode *inode = swap_file->f_mapping->host;
+> > -	unsigned blocks_per_page;
+> > -	unsigned long page_no;
+> > -	unsigned blkbits;
+> > -	sector_t probe_block;
+> > -	sector_t last_block;
+> > -	sector_t lowest_block = -1;
+> > -	sector_t highest_block = 0;
+> > -
+> > -	blkbits = inode->i_blkbits;
+> > -	blocks_per_page = PAGE_SIZE >> blkbits;
+> > -
+> > -	/*
+> > -	 * Map all the blocks into the extent list.  This code doesn't try
+> > -	 * to be very smart.
+> > -	 */
+> > -	probe_block = 0;
+> > -	page_no = 0;
+> > -	last_block = i_size_read(inode) >> blkbits;
+> > -	while ((probe_block + blocks_per_page) <= last_block && page_no < max) {
+> > -		unsigned block_in_page;
+> > -		sector_t first_block;
+> > -
+> > -		cond_resched();
+> > -
+> > -		first_block = bmap(inode, probe_block);
+> > -		if (first_block == 0)
+> > -			goto bad_bmap;
+> > -
+> > -		/*
+> > -		 * It must be PAGE_SIZE aligned on-disk
+> > -		 */
+> > -		if (first_block & (blocks_per_page - 1)) {
+> > -			probe_block++;
+> > -			goto reprobe;
+> > -		}
+> > -
+> > -		for (block_in_page = 1; block_in_page < blocks_per_page;
+> > -					block_in_page++) {
+> > -			sector_t block;
+> > -
+> > -			block = bmap(inode, probe_block + block_in_page);
+> > -			if (block == 0)
+> > -				goto bad_bmap;
+> > -			if (block != first_block + block_in_page) {
+> > -				/* Discontiguity */
+> > -				probe_block++;
+> > -				goto reprobe;
+> > -			}
+> > -		}
+> > -
+> > -		first_block >>= (PAGE_SHIFT - blkbits);
+> > -		if (page_no) {	/* exclude the header page */
+> > -			if (first_block < lowest_block)
+> > -				lowest_block = first_block;
+> > -			if (first_block > highest_block)
+> > -				highest_block = first_block;
+> > -		}
+> > -
+> > -		page_no++;
+> > -		probe_block += blocks_per_page;
+> > -reprobe:
+> > -		continue;
+> > -	}
+> > -	return 0;
+> > -
+> > -bad_bmap:
+> > -	pr_err("swapon: swapfile has holes\n");
+> > -	return -EINVAL;
+> > -}
+> > -
+> > -static int f2fs_swap_activate(struct swap_info_struct *sis, struct file *file,
+> > -				sector_t *span)
+> > -{
+> > -	struct inode *inode = file_inode(file);
+> > -	int ret;
+> > -
+> > -	if (!S_ISREG(inode->i_mode))
+> > -		return -EINVAL;
+> > -
+> > -	if (f2fs_readonly(F2FS_I_SB(inode)->sb))
+> > -		return -EROFS;
+> > -
+> > -	ret = f2fs_convert_inline_inode(inode);
+> > -	if (ret)
+> > -		return ret;
+> > -
+> > -	ret = check_swap_activate(file, sis->max);
+> > -	if (ret)
+> > -		return ret;
+> > -
+> > -	set_inode_flag(inode, FI_PIN_FILE);
+> > -	f2fs_precache_extents(inode);
+> > -	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+> > -	return 0;
+> > -}
+> > -
+> > -static void f2fs_swap_deactivate(struct file *file)
+> > -{
+> > -	struct inode *inode = file_inode(file);
+> > -
+> > -	clear_inode_flag(inode, FI_PIN_FILE);
+> > -}
+> > -#else
+> > -static int f2fs_swap_activate(struct swap_info_struct *sis, struct file *file,
+> > -				sector_t *span)
+> > -{
+> > -	return -EOPNOTSUPP;
+> > -}
+> > -
+> > -static void f2fs_swap_deactivate(struct file *file)
+> > -{
+> > -}
+> > -#endif
+> > -
+> >  const struct address_space_operations f2fs_dblock_aops = {
+> >  	.readpage	= f2fs_read_data_page,
+> >  	.readpages	= f2fs_read_data_pages,
+> > @@ -3273,8 +3153,6 @@ const struct address_space_operations f2fs_dblock_aops = {
+> >  	.releasepage	= f2fs_release_page,
+> >  	.direct_IO	= f2fs_direct_IO,
+> >  	.bmap		= f2fs_bmap,
+> > -	.swap_activate  = f2fs_swap_activate,
+> > -	.swap_deactivate = f2fs_swap_deactivate,
+> >  #ifdef CONFIG_MIGRATION
+> >  	.migratepage    = f2fs_migrate_page,
+> >  #endif
+> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > index 483ad22a0946..de7f9cf36689 100644
+> > --- a/fs/f2fs/file.c
+> > +++ b/fs/f2fs/file.c
+> > @@ -21,6 +21,7 @@
+> >  #include <linux/uuid.h>
+> >  #include <linux/file.h>
+> >  #include <linux/nls.h>
+> > +#include <linux/swap.h>
+> >  
+> >  #include "f2fs.h"
+> >  #include "node.h"
+> > @@ -3466,6 +3467,125 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+> >  }
+> >  #endif
+> >  
+> > +#ifdef CONFIG_SWAP
+> > +/* Copied from generic_swapfile_activate() to check any holes */
+> > +static int check_swap_activate(struct file *swap_file, unsigned int max)
+> > +{
+> > +	struct inode *inode = swap_file->f_mapping->host;
+> > +	unsigned blocks_per_page;
+> > +	unsigned long page_no;
+> > +	unsigned blkbits;
+> > +	sector_t probe_block;
+> > +	sector_t last_block;
+> > +	sector_t lowest_block = -1;
+> > +	sector_t highest_block = 0;
+> > +
+> > +	blkbits = inode->i_blkbits;
+> > +	blocks_per_page = PAGE_SIZE >> blkbits;
+> > +
+> > +	/*
+> > +	 * Map all the blocks into the extent list.  This code doesn't try
+> > +	 * to be very smart.
+> > +	 */
+> > +	probe_block = 0;
+> > +	page_no = 0;
+> > +	last_block = i_size_read(inode) >> blkbits;
+> > +	while ((probe_block + blocks_per_page) <= last_block && page_no < max) {
+> > +		unsigned block_in_page;
+> > +		sector_t first_block;
+> > +
+> > +		cond_resched();
+> > +
+> > +		first_block = bmap(inode, probe_block);
+> > +		if (first_block == 0)
+> > +			goto bad_bmap;
+> > +
+> > +		/*
+> > +		 * It must be PAGE_SIZE aligned on-disk
+> > +		 */
+> > +		if (first_block & (blocks_per_page - 1)) {
+> > +			probe_block++;
+> > +			goto reprobe;
+> > +		}
+> > +
+> > +		for (block_in_page = 1; block_in_page < blocks_per_page;
+> > +					block_in_page++) {
+> > +			sector_t block;
+> > +
+> > +			block = bmap(inode, probe_block + block_in_page);
+> > +			if (block == 0)
+> > +				goto bad_bmap;
+> > +			if (block != first_block + block_in_page) {
+> > +				/* Discontiguity */
+> > +				probe_block++;
+> > +				goto reprobe;
+> > +			}
+> > +		}
+> > +
+> > +		first_block >>= (PAGE_SHIFT - blkbits);
+> > +		if (page_no) {	/* exclude the header page */
+> > +			if (first_block < lowest_block)
+> > +				lowest_block = first_block;
+> > +			if (first_block > highest_block)
+> > +				highest_block = first_block;
+> > +		}
+> > +
+> > +		page_no++;
+> > +		probe_block += blocks_per_page;
+> > +reprobe:
+> > +		continue;
+> > +	}
+> > +	return 0;
+> > +
+> > +bad_bmap:
+> > +	pr_err("swapon: swapfile has holes\n");
+> > +	return -EINVAL;
+> > +}
+> > +
+> > +static int f2fs_swap_activate(struct swap_info_struct *sis, struct file *file,
+> > +				sector_t *span)
+> > +{
+> > +	struct inode *inode = file_inode(file);
+> > +	int ret;
+> > +
+> > +	if (!S_ISREG(inode->i_mode))
+> > +		return -EINVAL;
+> > +
+> > +	if (f2fs_readonly(F2FS_I_SB(inode)->sb))
+> > +		return -EROFS;
+> > +
+> > +	ret = f2fs_convert_inline_inode(inode);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = check_swap_activate(file, sis->max);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	set_inode_flag(inode, FI_PIN_FILE);
+> > +	f2fs_precache_extents(inode);
+> > +	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+> > +	return 0;
+> > +}
+> > +
+> > +static void f2fs_swap_deactivate(struct file *file)
+> > +{
+> > +	struct inode *inode = file_inode(file);
+> > +
+> > +	clear_inode_flag(inode, FI_PIN_FILE);
+> > +}
+> > +#else
+> > +static int f2fs_swap_activate(struct swap_info_struct *sis, struct file *file,
+> > +				sector_t *span)
+> > +{
+> > +	return -EOPNOTSUPP;
+> > +}
+> > +
+> > +static void f2fs_swap_deactivate(struct file *file)
+> > +{
+> > +}
+> > +#endif
+> > +
+> >  const struct file_operations f2fs_file_operations = {
+> >  	.llseek		= f2fs_llseek,
+> >  	.read_iter	= generic_file_read_iter,
+> > @@ -3482,4 +3602,6 @@ const struct file_operations f2fs_file_operations = {
+> >  #endif
+> >  	.splice_read	= generic_file_splice_read,
+> >  	.splice_write	= iter_file_splice_write,
+> > +	.swap_activate  = f2fs_swap_activate,
+> > +	.swap_deactivate = f2fs_swap_deactivate,
+> >  };
+> > diff --git a/fs/nfs/file.c b/fs/nfs/file.c
+> > index 95dc90570786..1f82f92185d6 100644
+> > --- a/fs/nfs/file.c
+> > +++ b/fs/nfs/file.c
+> > @@ -520,8 +520,6 @@ const struct address_space_operations nfs_file_aops = {
+> >  	.launder_page = nfs_launder_page,
+> >  	.is_dirty_writeback = nfs_check_dirty_writeback,
+> >  	.error_remove_page = generic_error_remove_page,
+> > -	.swap_activate = nfs_swap_activate,
+> > -	.swap_deactivate = nfs_swap_deactivate,
+> >  };
+> >  
+> >  /*
+> > @@ -847,5 +845,7 @@ const struct file_operations nfs_file_operations = {
+> >  	.splice_write	= iter_file_splice_write,
+> >  	.check_flags	= nfs_check_flags,
+> >  	.setlease	= simple_nosetlease,
+> > +	.swap_activate = nfs_swap_activate,
+> > +	.swap_deactivate = nfs_swap_deactivate,
+> >  };
+> >  EXPORT_SYMBOL_GPL(nfs_file_operations);
+> > diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> > index 3a688eb5c5ae..99f578a9ed90 100644
+> > --- a/fs/xfs/xfs_aops.c
+> > +++ b/fs/xfs/xfs_aops.c
+> > @@ -631,17 +631,6 @@ xfs_vm_readpages(
+> >  	return iomap_readpages(mapping, pages, nr_pages, &xfs_read_iomap_ops);
+> >  }
+> >  
+> > -static int
+> > -xfs_iomap_swapfile_activate(
+> > -	struct swap_info_struct		*sis,
+> > -	struct file			*swap_file,
+> > -	sector_t			*span)
+> > -{
+> > -	sis->bdev = xfs_inode_buftarg(XFS_I(file_inode(swap_file)))->bt_bdev;
+> > -	return iomap_swapfile_activate(sis, swap_file, span,
+> > -			&xfs_read_iomap_ops);
+> > -}
+> > -
+> >  const struct address_space_operations xfs_address_space_operations = {
+> >  	.readpage		= xfs_vm_readpage,
+> >  	.readpages		= xfs_vm_readpages,
+> > @@ -655,7 +644,6 @@ const struct address_space_operations xfs_address_space_operations = {
+> >  	.migratepage		= iomap_migrate_page,
+> >  	.is_partially_uptodate  = iomap_is_partially_uptodate,
+> >  	.error_remove_page	= generic_error_remove_page,
+> > -	.swap_activate		= xfs_iomap_swapfile_activate,
+> >  };
+> >  
+> >  const struct address_space_operations xfs_dax_aops = {
+> > @@ -663,5 +651,4 @@ const struct address_space_operations xfs_dax_aops = {
+> >  	.direct_IO		= noop_direct_IO,
+> >  	.set_page_dirty		= noop_set_page_dirty,
+> >  	.invalidatepage		= noop_invalidatepage,
+> > -	.swap_activate		= xfs_iomap_swapfile_activate,
+> >  };
+> > diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> > index 865543e41fb4..225f58561f06 100644
+> > --- a/fs/xfs/xfs_file.c
+> > +++ b/fs/xfs/xfs_file.c
+> > @@ -1294,6 +1294,17 @@ xfs_file_mmap(
+> >  	return 0;
+> >  }
+> >  
+> > +static int
+> > +xfs_file_swap_activate(
+> > +	struct swap_info_struct		*sis,
+> > +	struct file			*swap_file,
+> > +	sector_t			*span)
+> > +{
+> > +	sis->bdev = xfs_inode_buftarg(XFS_I(file_inode(swap_file)))->bt_bdev;
+> > +	return iomap_swapfile_activate(sis, swap_file, span,
+> > +			&xfs_read_iomap_ops);
+> > +}
+> > +
+> >  const struct file_operations xfs_file_operations = {
+> >  	.llseek		= xfs_file_llseek,
+> >  	.read_iter	= xfs_file_read_iter,
+> > @@ -1314,6 +1325,7 @@ const struct file_operations xfs_file_operations = {
+> >  	.fallocate	= xfs_file_fallocate,
+> >  	.fadvise	= xfs_file_fadvise,
+> >  	.remap_file_range = xfs_file_remap_range,
+> > +	.swap_activate	= xfs_file_swap_activate,
+> >  };
+> >  
+> >  const struct file_operations xfs_dir_file_operations = {
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index 83e011e0df7f..1175815da3df 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -402,11 +402,6 @@ struct address_space_operations {
+> >  					unsigned long);
+> >  	void (*is_dirty_writeback) (struct page *, bool *, bool *);
+> >  	int (*error_remove_page)(struct address_space *, struct page *);
+> > -
+> > -	/* swapfile support */
+> > -	int (*swap_activate)(struct swap_info_struct *sis, struct file *file,
+> > -				sector_t *span);
+> > -	void (*swap_deactivate)(struct file *file);
+> >  };
+> >  
+> >  extern const struct address_space_operations empty_aops;
+> > @@ -1858,6 +1853,11 @@ struct file_operations {
+> >  				   struct file *file_out, loff_t pos_out,
+> >  				   loff_t len, unsigned int remap_flags);
+> >  	int (*fadvise)(struct file *, loff_t, loff_t, int);
+> > +
+> > +	/* swapfile support */
+> > +	int (*swap_activate)(struct swap_info_struct *sis, struct file *file,
+> > +				sector_t *span);
+> > +	void (*swap_deactivate)(struct file *file);
+> >  } __randomize_layout;
+> >  
+> >  struct inode_operations {
+> > diff --git a/mm/swapfile.c b/mm/swapfile.c
+> > index bb3261d45b6a..d2de8d668708 100644
+> > --- a/mm/swapfile.c
+> > +++ b/mm/swapfile.c
+> > @@ -2293,11 +2293,10 @@ static void destroy_swap_extents(struct swap_info_struct *sis)
+> >  
+> >  	if (sis->flags & SWP_ACTIVATED) {
+> >  		struct file *swap_file = sis->swap_file;
+> > -		struct address_space *mapping = swap_file->f_mapping;
+> >  
+> >  		sis->flags &= ~SWP_ACTIVATED;
+> > -		if (mapping->a_ops->swap_deactivate)
+> > -			mapping->a_ops->swap_deactivate(swap_file);
+> > +		if (swap_file->f_op->swap_deactivate)
+> > +			swap_file->f_op->swap_deactivate(swap_file);
+> >  	}
+> >  }
+> >  
+> > @@ -2381,8 +2380,7 @@ EXPORT_SYMBOL_GPL(add_swap_extent);
+> >  static int setup_swap_extents(struct swap_info_struct *sis, sector_t *span)
+> >  {
+> >  	struct file *swap_file = sis->swap_file;
+> > -	struct address_space *mapping = swap_file->f_mapping;
+> > -	struct inode *inode = mapping->host;
+> > +	struct inode *inode = swap_file->f_mapping->host;
+> >  	int ret;
+> >  
+> >  	if (S_ISBLK(inode->i_mode)) {
+> > @@ -2391,8 +2389,8 @@ static int setup_swap_extents(struct swap_info_struct *sis, sector_t *span)
+> >  		return ret;
+> >  	}
+> >  
+> > -	if (mapping->a_ops->swap_activate) {
+> > -		ret = mapping->a_ops->swap_activate(sis, swap_file, span);
+> > +	if (swap_file->f_op->swap_activate) {
+> > +		ret = swap_file->f_op->swap_activate(sis, swap_file, span);
+> >  		if (ret >= 0)
+> >  			sis->flags |= SWP_ACTIVATED;
+> >  		if (!ret) {
 > > -- 
-> > Filipe David Manana,
+> > 2.21.0
 > > 
-> > “Whether you think you can, or you think you can't — you're right.”
-> 
-> -- 
-> Goldwyn
