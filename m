@@ -2,158 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F42391020EC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 10:40:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63B491020F3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 10:41:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727664AbfKSJkd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Nov 2019 04:40:33 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:28273 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726510AbfKSJkd (ORCPT
+        id S1727716AbfKSJkr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Nov 2019 04:40:47 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:14102 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727615AbfKSJkc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Nov 2019 04:40:33 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20191119094030epoutp03511ed30ba0f4a68a1c3cf721441984d4~Yhu74cXJo1838918389epoutp033
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Nov 2019 09:40:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20191119094030epoutp03511ed30ba0f4a68a1c3cf721441984d4~Yhu74cXJo1838918389epoutp033
+        Tue, 19 Nov 2019 04:40:32 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191119094029epoutp042c8ef76c3ebee9e0a8dc24a3f4e117e8~Yhu66C1ey0888908889epoutp04W
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Nov 2019 09:40:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191119094029epoutp042c8ef76c3ebee9e0a8dc24a3f4e117e8~Yhu66C1ey0888908889epoutp04W
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1574156430;
-        bh=W/nvY8vh7b5VKEGm7/5P+NKNPdIjQbHkTzk7gijW0ro=;
+        s=mail20170921; t=1574156429;
+        bh=LzsUvoRQ+/EvYb4sCIgQeQ8VbnU5fmhs4hyN/5tdGrs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gOxU8gkSqCmuaDTzHij2kzAvzVbLJTCAdlynvCC8Ez2/t2NjkVurNSiLEWJGC5ghz
-         bBHjfFFViaoZ8xrTZzFNreJZs/PXMl4zQ3laQ3wN6r3Aos2b94QHgEUDh75ibifPCA
-         T2QWwd1MxTJqgqTE4ekbmWO4w9OMR1Y5hPC3lTBQ=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20191119094030epcas1p2612217083e19225efdd6fd8be210d1f1~Yhu7cYV4l0375303753epcas1p22;
-        Tue, 19 Nov 2019 09:40:30 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.163]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 47HLR01HwdzMqYll; Tue, 19 Nov
+        b=mqP6bN/L1cCNM6MuzQyTUdWtFJ2gQvtjsOzmG5ggwuXHLgEgwPfYr9VQPWvIBBq/2
+         eL4AVzSvReeJC3VPHb95Oi1uuQjRbQ8m2B8V59RmSrFptMa/0Du3tXjP0W7F14rKsL
+         p2+UCwJvFBwmWMmaEl+ojg6sDIyTfA+O7wROntXo=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20191119094028epcas1p16ea6bbbcc65534c8c7976482a703e7c9~Yhu6RQrhu0953509535epcas1p13;
+        Tue, 19 Nov 2019 09:40:28 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.162]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 47HLR00HGBzMqYkb; Tue, 19 Nov
         2019 09:40:28 +0000 (GMT)
 Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        BE.07.04080.B88B3DD5; Tue, 19 Nov 2019 18:40:27 +0900 (KST)
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        24.A4.04406.B88B3DD5; Tue, 19 Nov 2019 18:40:27 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
         epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20191119094026epcas1p4bee051f56352505eab919011ec740c5d~Yhu4RAffa0056700567epcas1p4m;
-        Tue, 19 Nov 2019 09:40:26 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        20191119094027epcas1p416eca98bc8ccefbcada87ae6b475d4c4~Yhu44AOD92221122211epcas1p4Z;
+        Tue, 19 Nov 2019 09:40:27 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
         epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191119094026epsmtrp244743dfa374fe7756d0f42f594ff68de~Yhu4QQuI50322403224epsmtrp2f;
-        Tue, 19 Nov 2019 09:40:26 +0000 (GMT)
-X-AuditID: b6c32a37-7cdff70000000ff0-c6-5dd3b88b1c39
+        20191119094027epsmtrp2ce954b0514e369a1ca8cc7e1d46b697d~Yhu43Wbrl0322303223epsmtrp2j;
+        Tue, 19 Nov 2019 09:40:27 +0000 (GMT)
+X-AuditID: b6c32a38-947ff70000001136-41-5dd3b88be542
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        16.12.03654.A88B3DD5; Tue, 19 Nov 2019 18:40:26 +0900 (KST)
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        20.A2.03814.B88B3DD5; Tue, 19 Nov 2019 18:40:27 +0900 (KST)
 Received: from localhost.localdomain (unknown [10.88.103.87]) by
         epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191119094026epsmtip26cc73e231a4e2faa3b695b1a0be389c7~Yhu4HBDA10817608176epsmtip2E;
-        Tue, 19 Nov 2019 09:40:26 +0000 (GMT)
+        20191119094027epsmtip2d6737fe0092ba5d731068cce22ee09f5~Yhu4sxHwG0597405974epsmtip2f;
+        Tue, 19 Nov 2019 09:40:27 +0000 (GMT)
 From:   Namjae Jeon <namjae.jeon@samsung.com>
 To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
         linkinjeon@gmail.com, Markus.Elfring@web.de,
         sj1557.seo@samsung.com, dwagner@suse.de,
         Namjae Jeon <namjae.jeon@samsung.com>
-Subject: [PATCH v3 11/13] exfat: add Kconfig and Makefile
-Date:   Tue, 19 Nov 2019 04:37:16 -0500
-Message-Id: <20191119093718.3501-12-namjae.jeon@samsung.com>
+Subject: [PATCH v3 12/13] exfat: add exfat in fs/Kconfig and fs/Makefile
+Date:   Tue, 19 Nov 2019 04:37:17 -0500
+Message-Id: <20191119093718.3501-13-namjae.jeon@samsung.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191119093718.3501-1-namjae.jeon@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmk+LIzCtJLcpLzFFi42LZdljTQLd7x+VYg3V3WS0OP57EbtG8eD2b
-        xcrVR5ksrt+9xWyxZ+9JFovLu+awWfyf9ZzV4sf0eost/46wWlx6/4HFgctj56y77B77565h
-        99h9s4HNo2/LKkaPzaerPT5vkvM4tP0Nm8ftZ9tYAjiicmwyUhNTUosUUvOS81My89JtlbyD
-        453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgE5UUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQX
-        l9gqpRak5BQYGhToFSfmFpfmpesl5+daGRoYGJkCVSbkZBx541nQwVsx4U8zSwPjJa4uRk4O
-        CQETieOLJzB1MXJxCAnsYJTY/+MzlPOJUeLg7DnMEM43Ron5y18wwrS0vu5kgUjsZZT4cGYR
-        Qsv6ybOAMhwcbALaEn+2iII0iAjYS2yefQCsgVngCKPEiy8T2EFqhAUsJTZMcgGpYRFQlbj9
-        6y/YAl4BG4nOvStZIJbJS6zecIAZxOYEij+cvYwRZI6EwBE2icZr69kgilwkJmw5zgphC0u8
-        Or6FHcKWkvj8bi8byC4JgWqJj/uZIcIdQDd8t4WwjSVurt/AClLCLKApsX6XPkRYUWLn77lg
-        5zAL8Em8+9rDCjGFV6KjTQiiRFWi79JhJghbWqKr/QM7RImHxN05XpAA6WeU+LznAdMERrlZ
-        CAsWMDKuYhRLLSjOTU8tNiwwRo6uTYzgBKhlvoNxwzmfQ4wCHIxKPLwK6pdjhVgTy4orcw8x
-        SnAwK4nw+j26ECvEm5JYWZValB9fVJqTWnyI0RQYjhOZpUST84HJOa8k3tDUyNjY2MLEzNzM
-        1FhJnJfjx8VYIYH0xJLU7NTUgtQimD4mDk6pBkY1/az6I2mucy58PWDQfDxrU8y2qKo1Ezt/
-        B5g52lqUGCWr7BZolAi4tO9s5r5u+1eH966+/3yH8oz5LdsXysatW7Rm921dReePm9f01Pyq
-        beuKa3JPPbjQTXmpbKbInfdOky42//ohqNGWbNQecfDgDq7MS2HH94qrnmJ9m2ZsOX+FGl/w
-        u8NKLMUZiYZazEXFiQDv4GRslgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLLMWRmVeSWpSXmKPExsWy7bCSvG7XjsuxBl836VocfjyJ3aJ58Xo2
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm29nOztTVaWV9LDE7tMBC29rFk2gFRZxIRIiCIrGDO+hoN87Z
+        LDVokHjLLAsytYsaM9JMU/NWy3BGRWne6CYSKZRZeMl0hVptO93+PTzv8z7v873fiyGyk6gc
+        M5htDGumjQQaIGx2hysjTrUOJCqLB3Wke/ScmDx5rQ4lb9Q8FJAvh98g5D3XEyE50H4JJX+W
+        fhCR34pPkE0/ukRk/+SUcHsA1VY6LKY6Lt8UU3dfO1CqsKkaUI1PM6mZhlCqs+UzSg29bxYm
+        YAeNMakMrWfYMMacbNEbzCmxxJ69STuStDqlKkK1hYwiwsy0iYkldsYlROwyGL0RibA02mj3
+        Ugk0xxGbtsawFruNCUu1cLZYgrHqjVaV0hrJ0SbObk6JTLaYolVK5WatV3nYmHpuxgmsVdix
+        h7UtiANMovlAgkFcA3vzvgryQQAmw1sBLDz/DPEVZPgXAO+UM3xhDsCKrLfiPx2jI/VCvuAC
+        MMsxL/jb8epMZD7AMBTfCBeagn30CnwbbCx74NcjeBeAY1/P+o2W4xTMrnT7pwlxBXTn3vT7
+        SPEYODy4CPhha2BN/QO/RuLl35VVAZ8RxB+j8Lqn5PcbdkJHX66Ix8vh+KOm30nlcGbChfoC
+        QTwTTncgPJ3rDeGJ5bEavq6rF/kkCB4O69o38fRa2DZ/2R8BwZfAidkCEe8ihbnZMl6igIX9
+        bgGPV8P8nCkxL6FgbZuS384ZALt7s8RnQWjpvwHlAFSDlYyVM6UwnMqq+f+7GoD/ADeQreBe
+        T1wnwDFABEkfrxtIlInoNC7d1AkghhArpPEjvYkyqZ5Oz2BYSxJrNzJcJ9B691iEyIOTLd5z
+        NtuSVNrNarWa1OiidFo1sUqKfetLlOEptI05wjBWhv3TJ8AkcgcIPLrMveaqIl2fNiTJdNqz
+        ivZPbTMoDhXfJjZ6OpzHt06f3idfDIl7VhrtqQxx3mqMx06PBxTkjYVHOEqaNabFo/eDZyuc
+        L3a35EgWxuPWf2SH7F0TW74HDb57r4samnvecCWwvTbD4OqavFjn+FTx9IKnZEx6sLsn+YBN
+        s5RdDCGEXCqt2oCwHP0LbpeWrZYDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPLMWRmVeSWpSXmKPExsWy7bCSvG73jsuxBmuWSFocfjyJ3aJ58Xo2
         i5WrjzJZXL97i9liz96TLBaXd81hs/g/6zmrxY/p9RZb/h1htbj0/gOLA5fHzll32T32z13D
-        7rH7ZgObR9+WVYwem09Xe3zeJOdxaPsbNo/bz7axBHBEcdmkpOZklqUW6dslcGUceeNZ0MFb
-        MeFPM0sD4yWuLkZODgkBE4nW150sXYxcHEICuxkldk99xwKRkJY4duIMcxcjB5AtLHH4cDFE
-        zQdGiTVbJoPF2QS0Jf5sEQUpFxFwlOjddRhsDrPAOUaJnc+WMYLUCAtYSmyY5AJSwyKgKnH7
-        119GEJtXwEaic+9KqFXyEqs3HGAGsTmB4g9nLwOrERKwlmh81Mw+gZFvASPDKkbJ1ILi3PTc
-        YsMCw7zUcr3ixNzi0rx0veT83E2M4EDV0tzBeHlJ/CFGAQ5GJR7eEyqXY4VYE8uKK3MPMUpw
-        MCuJ8Po9uhArxJuSWFmVWpQfX1Sak1p8iFGag0VJnPdp3rFIIYH0xJLU7NTUgtQimCwTB6dU
-        A2NsWH5hc9k7wcXTGf12u9psTPx7+dF254N5ySl1Z6IWiZU/E6/g2iUfct/hDpumqFqMa56y
-        27HaScdrhZRtDLOFJCprnXflnpO8PLdYuuTEH6vy5I0nnL6uLeP9J8y4UuO+t4udk9iHn1vl
-        4mqDHt7sFna1rpEXs1/05dqMrHsem899/awnqcRSnJFoqMVcVJwIAHdZpuZQAgAA
-X-CMS-MailID: 20191119094026epcas1p4bee051f56352505eab919011ec740c5d
+        7rH7ZgObR9+WVYwem09Xe3zeJOdxaPsbNo/bz7axBHBEcdmkpOZklqUW6dslcGVM+ryUsWAZ
+        R8XRtduZGxjfs3UxcnJICJhIPH60gaWLkYtDSGA3o8SVZW+ZIBLSEsdOnGHuYuQAsoUlDh8u
+        hqj5wCix7MsLNpA4m4C2xJ8toiDlIgKOEr27DoPNYRY4xyix89kyRpCEsICHRNuiw8wgNouA
+        qsThjjVg83kFbCTuXvnLCLFLXmL1hgNgNZxA8YezIXqFBKwlGh81s09g5FvAyLCKUTK1oDg3
+        PbfYsMAoL7Vcrzgxt7g0L10vOT93EyM4WLW0djCeOBF/iFGAg1GJh/eEyuVYIdbEsuLK3EOM
+        EhzMSiK8fo8uxArxpiRWVqUW5ccXleakFh9ilOZgURLnlc8/FikkkJ5YkpqdmlqQWgSTZeLg
+        lGpgtLmnbH4mjs170XwNjZvdm2I4uH4+k3Dzej+9JWO/LM/uk5y2EXwz7+ldSrqUJHRuWbbz
+        1G93L6+z9qzaozljolT8n64pR9r+2rYLNzrLMF5/5VaQn7YlIE+UqUPo6brFxhb2KybxBZm9
+        u/1w51rJBzwaG8Kn7Fc4tkVs7l/RLaxq7slLGq5vUWIpzkg01GIuKk4EAG/ZLghSAgAA
+X-CMS-MailID: 20191119094027epcas1p416eca98bc8ccefbcada87ae6b475d4c4
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191119094026epcas1p4bee051f56352505eab919011ec740c5d
+X-CMS-RootMailID: 20191119094027epcas1p416eca98bc8ccefbcada87ae6b475d4c4
 References: <20191119093718.3501-1-namjae.jeon@samsung.com>
-        <CGME20191119094026epcas1p4bee051f56352505eab919011ec740c5d@epcas1p4.samsung.com>
+        <CGME20191119094027epcas1p416eca98bc8ccefbcada87ae6b475d4c4@epcas1p4.samsung.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds the Kconfig and Makefile for exfat.
+Add exfat in fs/Kconfig and fs/Makefile.
 
 Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
 Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
 ---
- fs/exfat/Kconfig  | 21 +++++++++++++++++++++
- fs/exfat/Makefile |  8 ++++++++
- 2 files changed, 29 insertions(+)
- create mode 100644 fs/exfat/Kconfig
- create mode 100644 fs/exfat/Makefile
+ fs/Kconfig  | 3 ++-
+ fs/Makefile | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/exfat/Kconfig b/fs/exfat/Kconfig
-new file mode 100644
-index 000000000000..11d841a5f7f0
---- /dev/null
-+++ b/fs/exfat/Kconfig
-@@ -0,0 +1,21 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+
-+config EXFAT
-+	tristate "exFAT filesystem support"
-+	select NLS
-+	help
-+	  This allows you to mount devices formatted with the exFAT file system.
-+	  exFAT is typically used on SD-Cards or USB sticks.
-+
-+	  To compile this as a module, choose M here: the module will be called
-+	  exfat.
-+
-+config EXFAT_FS_DEFAULT_IOCHARSET
-+	string "Default iocharset for exFAT"
-+	default "utf8"
-+	depends on EXFAT
-+	help
-+	  Set this to the default input/output character set you'd
-+	  like exFAT to use. It should probably match the character set
-+	  that most of your exFAT filesystems use, and can be overridden
-+	  with the "iocharset" mount option for exFAT filesystems.
-diff --git a/fs/exfat/Makefile b/fs/exfat/Makefile
-new file mode 100644
-index 000000000000..e9193346c80c
---- /dev/null
-+++ b/fs/exfat/Makefile
-@@ -0,0 +1,8 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+#
-+# Makefile for the linux exFAT filesystem support.
-+#
-+obj-$(CONFIG_EXFAT) += exfat.o
-+
-+exfat-y	:= inode.o namei.o dir.o super.o fatent.o cache.o nls.o misc.o \
-+	   file.o balloc.o
+diff --git a/fs/Kconfig b/fs/Kconfig
+index 7b623e9fc1b0..5edd87eb5c13 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -139,9 +139,10 @@ endmenu
+ endif # BLOCK
+ 
+ if BLOCK
+-menu "DOS/FAT/NT Filesystems"
++menu "DOS/FAT/EXFAT/NT Filesystems"
+ 
+ source "fs/fat/Kconfig"
++source "fs/exfat/Kconfig"
+ source "fs/ntfs/Kconfig"
+ 
+ endmenu
+diff --git a/fs/Makefile b/fs/Makefile
+index 1148c555c4d3..4358dda56b1e 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -83,6 +83,7 @@ obj-$(CONFIG_HUGETLBFS)		+= hugetlbfs/
+ obj-$(CONFIG_CODA_FS)		+= coda/
+ obj-$(CONFIG_MINIX_FS)		+= minix/
+ obj-$(CONFIG_FAT_FS)		+= fat/
++obj-$(CONFIG_EXFAT)		+= exfat/
+ obj-$(CONFIG_BFS_FS)		+= bfs/
+ obj-$(CONFIG_ISO9660_FS)	+= isofs/
+ obj-$(CONFIG_HFSPLUS_FS)	+= hfsplus/ # Before hfs to find wrapped HFS+
 -- 
 2.17.1
 
