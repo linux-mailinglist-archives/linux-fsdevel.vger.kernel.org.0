@@ -2,142 +2,266 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29EBD102020
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 10:22:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 743F410206C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Nov 2019 10:30:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbfKSJWd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Nov 2019 04:22:33 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:60259 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725784AbfKSJWc (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Nov 2019 04:22:32 -0500
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191119092229epoutp045d87ff4b737993e875b845549112e752~YhfNXvo3V2842728427epoutp04Y
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Nov 2019 09:22:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191119092229epoutp045d87ff4b737993e875b845549112e752~YhfNXvo3V2842728427epoutp04Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1574155350;
-        bh=C5HpzZF/B40I1DytgsV5YV/JWUVpaZHra+uzjDkLEQI=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=Z34phKAZfGzrFPpxyMKoI/APRzjdlr1rpZ46fbfU8JcqK1AG3nWRdHfFm/ActxSdn
-         TgLTIPYJw9hRCCmiWJobaCDMPZxk15CAJ4na5/YaHtt0VfWPBXdlSsGaPTYeg/PqJF
-         Jjyu1x6g9iY/ktJEA5i4bXPF9wtDYt1VPq/bpu4k=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20191119092229epcas1p2e7c11995821098d63cec46cd3fdb80b5~YhfNG-tMe1921919219epcas1p25;
-        Tue, 19 Nov 2019 09:22:29 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.165]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 47HL2D5Jv5zMqYls; Tue, 19 Nov
-        2019 09:22:28 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4F.13.04080.454B3DD5; Tue, 19 Nov 2019 18:22:28 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20191119092228epcas1p3bd6eb5a18d813ce1e222e1700647662a~YhfL3YG0a0425704257epcas1p3a;
-        Tue, 19 Nov 2019 09:22:28 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191119092228epsmtrp200d78084ed50ab62b8e39b948d634912~YhfL2j-Ws2735327353epsmtrp2Z;
-        Tue, 19 Nov 2019 09:22:28 +0000 (GMT)
-X-AuditID: b6c32a37-7cdff70000000ff0-f5-5dd3b4548fb7
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B6.5F.03814.454B3DD5; Tue, 19 Nov 2019 18:22:28 +0900 (KST)
-Received: from DONAMJAEJEO06 (unknown [10.88.104.63]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191119092228epsmtip1a7ed9bcc4b06a8ecb5333369a159c8f9~YhfLq3ufr0678606786epsmtip1c;
-        Tue, 19 Nov 2019 09:22:28 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'Daniel Wagner'" <dwagner@suse.de>
-Cc:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>, <valdis.kletnieks@vt.edu>,
-        <hch@lst.de>, <linkinjeon@gmail.com>, <Markus.Elfring@web.de>,
-        <sj1557.seo@samsung.com>
-In-Reply-To: <20191119085639.kr4esp72dix4lvok@beryllium.lan>
-Subject: RE: [PATCH v2 02/13] exfat: add super block operations
-Date:   Tue, 19 Nov 2019 18:22:28 +0900
-Message-ID: <00d101d59eba$dcc373c0$964a5b40$@samsung.com>
+        id S1726658AbfKSJaG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Nov 2019 04:30:06 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46524 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725784AbfKSJaG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 19 Nov 2019 04:30:06 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E273BB1A9;
+        Tue, 19 Nov 2019 09:30:02 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 1CAE01E47E5; Tue, 19 Nov 2019 10:30:01 +0100 (CET)
+Date:   Tue, 19 Nov 2019 10:30:01 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Sebastian Siewior <bigeasy@linutronix.de>
+Cc:     Jan Kara <jack@suse.cz>, Thomas Gleixner <tglx@linutronix.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Julia Cartwright <julia@ni.com>, Theodore Tso <tytso@mit.edu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jan Kara <jack@suse.com>, Mark Fasheh <mark@fasheh.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Joel Becker <jlbec@evilplan.org>
+Subject: Re: [PATCH v3] fs/buffer: Make BH_Uptodate_Lock bit_spin_lock a
+ regular spinlock_t
+Message-ID: <20191119093001.GA25605@quack2.suse.cz>
+References: <20190820170818.oldsdoumzashhcgh@linutronix.de>
+ <20190820171721.GA4949@bombadil.infradead.org>
+ <alpine.DEB.2.21.1908201959240.2223@nanos.tec.linutronix.de>
+ <20191011112525.7dksg6ixb5c3hxn5@linutronix.de>
+ <20191115145638.GA5461@quack2.suse.cz>
+ <20191115175420.cotwwz5tmcwvllsq@linutronix.de>
+ <20191118093845.GB17319@quack2.suse.cz>
+ <20191118132824.rclhrbujqh4b4g4d@linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 14.0
-Thread-Index: AQEo1XJlLzywHhHshRBLsQkFEP9+bwICkZlvAboM/rECPrXdMKi77zBA
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFJsWRmVeSWpSXmKPExsWy7bCmnm7IlsuxBgeWaVocfjyJ3aJ58Xo2
-        i5WrjzJZXL97i9liz96TLBaXd81hs/g/6zmrxZZ/R1gtLr3/wOLA6bFz1l12j/1z17B77L7Z
-        wObRt2UVo8fm09UenzfJeRza/obN4/azbSwBHFE5NhmpiSmpRQqpecn5KZl56bZK3sHxzvGm
-        ZgaGuoaWFuZKCnmJuam2Si4+AbpumTlA5ykplCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJVS
-        C1JyCgwNCvSKE3OLS/PS9ZLzc60MDQyMTIEqE3Iyjj1fw1JwgLVi3R6TBsb5LF2MHBwSAiYS
-        e14EdzFycQgJ7GCUWLjsGDOE84lR4uXUDnYI5xujRP+WO6xdjJxgHZsvX4aq2sso0b36DBuE
-        84pRYm3TZCaQKjYBXYl/f/azgdgiAuoS9xsngxUxC9xklNjYtIcFJMEpYCPxpOcmmC0sYC9x
-        cf4+sGYWAVWJW7ebwQ7kFbCUeLPdHyTMKyAocXLmE7ByZgF5ie1v5zBDXKQgsePsa0aIXW4S
-        i5cdZ4KoEZGY3dkGdqmEwHR2iab7m6GedpG4+DsWoldY4tXxLewQtpTE53d72SBKqiU+7oca
-        38Eo8eK7LYRtLHFz/QZWkBJmAU2J9bv0IcKKEjt/z2WE2Mon8e5rDyvEFF6JjjYhiBJVib5L
-        h5kgbGmJrvYP7BMYlWYh+WsWkr9mIbl/FsKyBYwsqxjFUguKc9NTiw0LjJFjehMjON1qme9g
-        3HDO5xCjAAejEg+vgvrlWCHWxLLiytxDjBIczEoivH6PLsQK8aYkVlalFuXHF5XmpBYfYjQF
-        hvpEZinR5HxgLsgriTc0NTI2NrYwMTM3MzVWEufl+HExVkggPbEkNTs1tSC1CKaPiYNTqoFR
-        /+ifZJ98z4P5n5xTJB9XWDpt0f/95pRNO+/f+ti8eK3sr88F5Gd9OcL7Vi/v5CbvJi4ri5LX
-        j7L2753wK42rgkH8C8fqWXeWl9/fd+XlGdsTpfL6gSy2AQo2ts/3uH+0+qp/w/Giw77r2+YH
-        V6QqF7pt5ZxseuvB1TNm7MeOsT85csHYJHCpEktxRqKhFnNRcSIAUX/zhs0DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCIsWRmVeSWpSXmKPExsWy7bCSnG7IlsuxBrtvCVgcfjyJ3aJ58Xo2
-        i5WrjzJZXL97i9liz96TLBaXd81hs/g/6zmrxZZ/R1gtLr3/wOLA6bFz1l12j/1z17B77L7Z
-        wObRt2UVo8fm09UenzfJeRza/obN4/azbSwBHFFcNimpOZllqUX6dglcGceer2EpOMBasW6P
-        SQPjfJYuRk4OCQETic2XLzN3MXJxCAnsZpQ48uk8O0RCWuLYiTNACQ4gW1ji8OFiiJoXjBJ7
-        1i5jBqlhE9CV+PdnPxuILSKgLnG/cTIbSBGzwGNGiebeB2AbhATeMkpMumIAYnMK2Eg86bkJ
-        FhcWsJe4OH8fE4jNIqAqcet2MwvIMl4BS4k32/1BwrwCghInZz4BCzML6Em0bWQECTMLyEts
-        fzuHGeJMBYkdZ18zQpzgJrF42XEmiBoRidmdbcwTGIVnIZk0C2HSLCSTZiHpWMDIsopRMrWg
-        ODc9t9iwwCgvtVyvODG3uDQvXS85P3cTIzjutLR2MJ44EX+IUYCDUYmH94TK5Vgh1sSy4src
-        Q4wSHMxKIrx+jy7ECvGmJFZWpRblxxeV5qQWH2KU5mBREueVzz8WKSSQnliSmp2aWpBaBJNl
-        4uCUamAU/f7/0IIuYS6vMNlLW/4VfkhQqdz+3Mmm9qyMxqHH1+ui5328WXFkQa+u9kZNPuOz
-        j9Ydszd2Ohmu9Ptv/GnRtJkbnHvzFr7e5vFy2u6wzxr1OvFXXVmfTa0J+7bS8Xx17Kd629c8
-        1+YLnd6iufW0cmTpiXsZ/3v3/JfWjVmgaHBjdfXJkhk+SizFGYmGWsxFxYkAZohG+bcCAAA=
-X-CMS-MailID: 20191119092228epcas1p3bd6eb5a18d813ce1e222e1700647662a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191119071403epcas1p3f3d69faad57984fa3d079cf18f0a46dc
-References: <20191119071107.1947-1-namjae.jeon@samsung.com>
-        <CGME20191119071403epcas1p3f3d69faad57984fa3d079cf18f0a46dc@epcas1p3.samsung.com>
-        <20191119071107.1947-3-namjae.jeon@samsung.com>
-        <20191119085639.kr4esp72dix4lvok@beryllium.lan>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191118132824.rclhrbujqh4b4g4d@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon 18-11-19 14:28:24, Sebastian Siewior wrote:
+> From: Thomas Gleixner <tglx@linutronix.de>
+> 
+> Bit spinlocks are problematic if PREEMPT_RT is enabled, because they
+> disable preemption, which is undesired for latency reasons and breaks when
+> regular spinlocks are taken within the bit_spinlock locked region because
+> regular spinlocks are converted to 'sleeping spinlocks' on RT. So RT
+> replaces the bit spinlocks with regular spinlocks to avoid this problem.
+> Bit spinlocks are also not covered by lock debugging, e.g. lockdep.
+> 
+> Substitute the BH_Uptodate_Lock bit spinlock with a regular spinlock.
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> [bigeasy: remove the wrapper and use always spinlock_t and move it into
+>           the padding hole]
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-> Hi,
-Hi,
-> 
-> On Tue, Nov 19, 2019 at 02:10:56AM -0500, Namjae Jeon wrote:
-> > +static void exfat_put_super(struct super_block *sb)
-> > +{
-> > +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-> > +
-> > +	mutex_lock(&sbi->s_lock);
-> > +	if (READ_ONCE(sbi->s_dirt)) {
-> > +		WRITE_ONCE(sbi->s_dirt, true);
-> 
-> No idea what the code does. But I was just skimming over and find the
-> above pattern somehow strange. Shouldn't this be something like
-Right.
+OK, how do we push this? Do you plan to push this through tip tree?
 
-> 
-> 	if (!READ_ONCE(sbi->s_dirt)) {
-> 		WRITE_ONCE(sbi->s_dirt, true);
+								Honza
 
-It should be :
-	if (READ_ONCE(sbi->s_dirt)) {
- 		WRITE_ONCE(sbi->s_dirt, false);
-I will fix it on v3.
-Thanks for review!
+> ---
+> v2…v3: rename uptodate_lock to b_uptodate_lock.
 > 
-> ?
+> v1…v2: Move the spinlock_t to the padding hole as per Jan Kara. pahole says
+> its total size remained unchanged, before
 > 
-> Thanks,
-> Daniel
-
+> | atomic_t                   b_count;              /*    96     4 */
+> |
+> | /* size: 104, cachelines: 2, members: 12 */
+> | /* padding: 4 */
+> | /* last cacheline: 40 bytes */
+> 
+> after
+> 
+> | atomic_t                   b_count;              /*    96     4 */
+> | spinlock_t                 uptodate_lock;        /*   100     4 */
+> |
+> | /* size: 104, cachelines: 2, members: 13 */
+> | /* last cacheline: 40 bytes */
+> 
+>  fs/buffer.c                 | 19 +++++++------------
+>  fs/ext4/page-io.c           |  8 +++-----
+>  fs/ntfs/aops.c              |  9 +++------
+>  include/linux/buffer_head.h |  6 +++---
+>  4 files changed, 16 insertions(+), 26 deletions(-)
+> 
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index 86a38b9793235..4baea587981e0 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -275,8 +275,7 @@ static void end_buffer_async_read(struct buffer_head *bh, int uptodate)
+>  	 * decide that the page is now completely done.
+>  	 */
+>  	first = page_buffers(page);
+> -	local_irq_save(flags);
+> -	bit_spin_lock(BH_Uptodate_Lock, &first->b_state);
+> +	spin_lock_irqsave(&first->b_uptodate_lock, flags);
+>  	clear_buffer_async_read(bh);
+>  	unlock_buffer(bh);
+>  	tmp = bh;
+> @@ -289,8 +288,7 @@ static void end_buffer_async_read(struct buffer_head *bh, int uptodate)
+>  		}
+>  		tmp = tmp->b_this_page;
+>  	} while (tmp != bh);
+> -	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
+> -	local_irq_restore(flags);
+> +	spin_unlock_irqrestore(&first->b_uptodate_lock, flags);
+>  
+>  	/*
+>  	 * If none of the buffers had errors and they are all
+> @@ -302,8 +300,7 @@ static void end_buffer_async_read(struct buffer_head *bh, int uptodate)
+>  	return;
+>  
+>  still_busy:
+> -	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
+> -	local_irq_restore(flags);
+> +	spin_unlock_irqrestore(&first->b_uptodate_lock, flags);
+>  	return;
+>  }
+>  
+> @@ -331,8 +328,7 @@ void end_buffer_async_write(struct buffer_head *bh, int uptodate)
+>  	}
+>  
+>  	first = page_buffers(page);
+> -	local_irq_save(flags);
+> -	bit_spin_lock(BH_Uptodate_Lock, &first->b_state);
+> +	spin_lock_irqsave(&first->b_uptodate_lock, flags);
+>  
+>  	clear_buffer_async_write(bh);
+>  	unlock_buffer(bh);
+> @@ -344,14 +340,12 @@ void end_buffer_async_write(struct buffer_head *bh, int uptodate)
+>  		}
+>  		tmp = tmp->b_this_page;
+>  	}
+> -	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
+> -	local_irq_restore(flags);
+> +	spin_unlock_irqrestore(&first->b_uptodate_lock, flags);
+>  	end_page_writeback(page);
+>  	return;
+>  
+>  still_busy:
+> -	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
+> -	local_irq_restore(flags);
+> +	spin_unlock_irqrestore(&first->b_uptodate_lock, flags);
+>  	return;
+>  }
+>  EXPORT_SYMBOL(end_buffer_async_write);
+> @@ -3368,6 +3362,7 @@ struct buffer_head *alloc_buffer_head(gfp_t gfp_flags)
+>  	struct buffer_head *ret = kmem_cache_zalloc(bh_cachep, gfp_flags);
+>  	if (ret) {
+>  		INIT_LIST_HEAD(&ret->b_assoc_buffers);
+> +		spin_lock_init(&ret->b_uptodate_lock);
+>  		preempt_disable();
+>  		__this_cpu_inc(bh_accounting.nr);
+>  		recalc_bh_state();
+> diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
+> index 12ceadef32c5a..64d4c06fbf836 100644
+> --- a/fs/ext4/page-io.c
+> +++ b/fs/ext4/page-io.c
+> @@ -87,11 +87,10 @@ static void ext4_finish_bio(struct bio *bio)
+>  		}
+>  		bh = head = page_buffers(page);
+>  		/*
+> -		 * We check all buffers in the page under BH_Uptodate_Lock
+> +		 * We check all buffers in the page under b_uptodate_lock
+>  		 * to avoid races with other end io clearing async_write flags
+>  		 */
+> -		local_irq_save(flags);
+> -		bit_spin_lock(BH_Uptodate_Lock, &head->b_state);
+> +		spin_lock_irqsave(&head->b_uptodate_lock, flags);
+>  		do {
+>  			if (bh_offset(bh) < bio_start ||
+>  			    bh_offset(bh) + bh->b_size > bio_end) {
+> @@ -103,8 +102,7 @@ static void ext4_finish_bio(struct bio *bio)
+>  			if (bio->bi_status)
+>  				buffer_io_error(bh);
+>  		} while ((bh = bh->b_this_page) != head);
+> -		bit_spin_unlock(BH_Uptodate_Lock, &head->b_state);
+> -		local_irq_restore(flags);
+> +		spin_unlock_irqrestore(&head->b_uptodate_lock, flags);
+>  		if (!under_io) {
+>  			fscrypt_free_bounce_page(bounce_page);
+>  			end_page_writeback(page);
+> diff --git a/fs/ntfs/aops.c b/fs/ntfs/aops.c
+> index 7202a1e39d70c..554b744f41bf8 100644
+> --- a/fs/ntfs/aops.c
+> +++ b/fs/ntfs/aops.c
+> @@ -92,8 +92,7 @@ static void ntfs_end_buffer_async_read(struct buffer_head *bh, int uptodate)
+>  				"0x%llx.", (unsigned long long)bh->b_blocknr);
+>  	}
+>  	first = page_buffers(page);
+> -	local_irq_save(flags);
+> -	bit_spin_lock(BH_Uptodate_Lock, &first->b_state);
+> +	spin_lock_irqsave(&first->b_uptodate_lock, flags);
+>  	clear_buffer_async_read(bh);
+>  	unlock_buffer(bh);
+>  	tmp = bh;
+> @@ -108,8 +107,7 @@ static void ntfs_end_buffer_async_read(struct buffer_head *bh, int uptodate)
+>  		}
+>  		tmp = tmp->b_this_page;
+>  	} while (tmp != bh);
+> -	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
+> -	local_irq_restore(flags);
+> +	spin_unlock_irqrestore(&first->b_uptodate_lock, flags);
+>  	/*
+>  	 * If none of the buffers had errors then we can set the page uptodate,
+>  	 * but we first have to perform the post read mst fixups, if the
+> @@ -142,8 +140,7 @@ static void ntfs_end_buffer_async_read(struct buffer_head *bh, int uptodate)
+>  	unlock_page(page);
+>  	return;
+>  still_busy:
+> -	bit_spin_unlock(BH_Uptodate_Lock, &first->b_state);
+> -	local_irq_restore(flags);
+> +	spin_unlock_irqrestore(&first->b_uptodate_lock, flags);
+>  	return;
+>  }
+>  
+> diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+> index 7b73ef7f902d4..e0b020eaf32e2 100644
+> --- a/include/linux/buffer_head.h
+> +++ b/include/linux/buffer_head.h
+> @@ -22,9 +22,6 @@ enum bh_state_bits {
+>  	BH_Dirty,	/* Is dirty */
+>  	BH_Lock,	/* Is locked */
+>  	BH_Req,		/* Has been submitted for I/O */
+> -	BH_Uptodate_Lock,/* Used by the first bh in a page, to serialise
+> -			  * IO completion of other buffers in the page
+> -			  */
+>  
+>  	BH_Mapped,	/* Has a disk mapping */
+>  	BH_New,		/* Disk mapping was newly created by get_block */
+> @@ -76,6 +73,9 @@ struct buffer_head {
+>  	struct address_space *b_assoc_map;	/* mapping this buffer is
+>  						   associated with */
+>  	atomic_t b_count;		/* users using this buffer_head */
+> +	spinlock_t b_uptodate_lock;	/* Used by the first bh in a page, to
+> +					 * serialise IO completion of other
+> +					 * buffers in the page */
+>  };
+>  
+>  /*
+> -- 
+> 2.24.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
