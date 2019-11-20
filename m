@@ -2,178 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B6A7103509
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 08:17:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40E8910356A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 08:44:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727936AbfKTHRe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Nov 2019 02:17:34 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:19872 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727888AbfKTHRX (ORCPT
+        id S1727158AbfKTHoB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Nov 2019 02:44:01 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:44699 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725268AbfKTHoB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Nov 2019 02:17:23 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dd4e87e0000>; Tue, 19 Nov 2019 23:17:18 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 19 Nov 2019 23:17:17 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 19 Nov 2019 23:17:17 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 20 Nov
- 2019 07:17:16 +0000
-Subject: Re: [PATCH v6 17/24] mm/gup: track FOLL_PIN pages
-To:     Jan Kara <jack@suse.cz>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20191119081643.1866232-1-jhubbard@nvidia.com>
- <20191119081643.1866232-18-jhubbard@nvidia.com>
- <20191119113746.GD25605@quack2.suse.cz>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <92d0385a-90be-e900-e5ec-1eeafd24ff81@nvidia.com>
-Date:   Tue, 19 Nov 2019 23:17:16 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Wed, 20 Nov 2019 02:44:01 -0500
+Received: by mail-il1-f196.google.com with SMTP id i6so1196822ilr.11;
+        Tue, 19 Nov 2019 23:43:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QkQsYkZTBURdSBu7Km88dbeDD4v2tqzLVxlvJwXXnOc=;
+        b=MxFJyVx6PCgpMNt2O04IWjcDOolLOuLR/6AbsAd7e/3bC+tnlNFNdghV28/5eACfYt
+         ZbRyLzYtWFtJdIkz/avVtteHcmN+J3vdRPN/l6OqQZ84zvusS8DyBIRqIt3+XQgxY8+Z
+         Cd9nsmI6batsaWqIF/8luo2xdkJ3L23jacmiEsT5+JZPkwPb8ueAHQpVYQEXo3GzFczC
+         Pl1KNr2sOAIvpvhmIn9GkXTz0mnD1Uh9DJhSRW30FkQZayi3kagKP+0Dgc2qGAnnqSHm
+         8J/JgQ2f0xqLmGTrn6wIsm4Y8MkYF61DHDeh4lNgn25lvTtsbJxR1l9gw2AyjMGMreGQ
+         0L7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QkQsYkZTBURdSBu7Km88dbeDD4v2tqzLVxlvJwXXnOc=;
+        b=HqrtLkMEF34eBKXiJtuDVqI2qmYDfQXnlW8UBvKo+QNFWlNw4D7a5KGrlspRKu47DN
+         lV6ulcVrnc3Ssec0Qh6PPETH/fo/YAoIO8hhXQebsbCK7/CZCczjXBbISk4EODI4PqsQ
+         RWJEfxDGlFGu/p9YTzKtc09utNe4rBGiBB4FvqTth8q+VyHmbGPlThPTE1DmcevYKPQZ
+         g7IdTh+qBlRtDjfaX2EC5ooeH1QdXV7/Pi5HYPFUZrmNwt3ToW2eC/RSAd+njgqzQb1f
+         0vexfssj5nOY3JdGSYiBmZZ9ElgEJO+yW8MK1RhMxNe2zyNYmTCGXSC95ZAmcuOaWPBJ
+         nhBQ==
+X-Gm-Message-State: APjAAAVpoWC0t4kzYUqIgcKyygJCuXFUk/l0k8HxxPHHnKXzinmVFT/1
+        tV9KhkQIu3nLvNoXpMq/4afvWn+wdNf28MfwruM=
+X-Google-Smtp-Source: APXvYqzNksFY5wJfyJHnWvllXmrch0W6oTDjaDq5IVkhokY3fvgAPZkK2jYw6g6gMnJBNSvLZsU/tgMYfVY182IULmk=
+X-Received: by 2002:a92:c8c4:: with SMTP id c4mr2012169ilq.272.1574235839220;
+ Tue, 19 Nov 2019 23:43:59 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191119113746.GD25605@quack2.suse.cz>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1574234238; bh=XS1elsnwWY0rNKRca94CapnxJDsibdDqnD818d/G+io=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=cgfFkxVckFKph83JpaLozX1BPV67pcDvc4zYdLq9ggt/6dUFhjSjEUfkPlJ6YS85y
-         Tzbfkd2Ssh+1cnbHZVu22ZxAYWyCv1b8X10VXVS5hS2byaCvY0Vg9ipA7x3Fo3odW9
-         mJ8QOlZhdrlbORb/tooq8lEuT6AxTt5cVxDPZE9pOLHClbe3whACaJnf15veA5FbxQ
-         N7Z3c9PH3VSrAZwjy0whi7ko1Q5RU1C8PJUljAOR0JzSWQ7k8UX3NdOtoVh+QLcZ15
-         DmGFCQcpIJbV8FkJKisaDhzEEJcucwABlIhBeXVZln5jK7XEYXo5n/Z8Yardu3zdea
-         jFCxWfbFbwpdA==
+References: <cover.1573788882.git.yu.c.chen@intel.com> <5dcd6580b51342c0803db6bc27866dd569914b0d.1573788882.git.yu.c.chen@intel.com>
+ <20191115092420.GF18929@zn.tnic> <CADjb_WR_DNAR_4jVEJ1C4LO7Xfnc54J2u2AoqyCjZT39+AhrWA@mail.gmail.com>
+ <20191118144807.GE6363@zn.tnic>
+In-Reply-To: <20191118144807.GE6363@zn.tnic>
+From:   Yu Chen <yu.chen.surf@gmail.com>
+Date:   Wed, 20 Nov 2019 15:54:46 +0800
+Message-ID: <CADjb_WQVa0rFb0BXtu4xU7RfywUa36kLDgGLpLmUWifnLB2NAA@mail.gmail.com>
+Subject: Re: [PATCH 2/2][v2] x86/resctrl: Add task resctrl information display
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Chen Yu <yu.c.chen@intel.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        Christian Brauner <christian@brauner.io>,
+        Shakeel Butt <shakeelb@google.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/19/19 3:37 AM, Jan Kara wrote:
-> On Tue 19-11-19 00:16:36, John Hubbard wrote:
->> @@ -2025,6 +2149,20 @@ static int __record_subpages(struct page *page, unsigned long addr,
->>  	return nr;
->>  }
->>  
->> +static bool __pin_compound_head(struct page *head, int refs, unsigned int flags)
->> +{
-> 
-> I don't quite like the proliferation of names starting with __. I don't
-> think there's a good reason for that, particularly in this case. Also 'pin'
-> here is somewhat misleading as we already use term "pin" for the particular
-> way of pinning the page. We could have grab_compound_head() or maybe
-> nail_compound_head() :), but you're native speaker so you may come up with
-> better word.
+Hi Boris,
 
-
-Yes, it is ugly naming, I'll change these as follows:
-
-    __pin_compound_head() --> grab_compound_head()    
-    __record_subpages()   --> record_subpages()
-
-I loved the "nail_compound_head()" suggestion, it just seems very vivid, but
-in the end, I figured I'd better keep it relatively drab and colorless. :)
-
-> 
->> +	if (flags & FOLL_PIN) {
->> +		if (unlikely(!try_pin_compound_head(head, refs)))
->> +			return false;
->> +	} else {
->> +		head = try_get_compound_head(head, refs);
->> +		if (!head)
->> +			return false;
->> +	}
->> +
->> +	return true;
->> +}
->> +
->>  static void put_compound_head(struct page *page, int refs)
->>  {
->>  	/* Do a get_page() first, in case refs == page->_refcount */
-> 
-> put_compound_head() needs similar treatment as undo_dev_pagemap(), doesn't
-> it?
-> 
-
-Yes, will fix that up.
-
-
->> @@ -968,7 +973,18 @@ struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
->>  	if (!*pgmap)
->>  		return ERR_PTR(-EFAULT);
->>  	page = pfn_to_page(pfn);
->> -	get_page(page);
->> +
->> +	if (flags & FOLL_GET)
->> +		get_page(page);
->> +	else if (flags & FOLL_PIN) {
->> +		/*
->> +		 * try_pin_page() is not actually expected to fail here because
->> +		 * we hold the pmd lock so no one can unmap the pmd and free the
->> +		 * page that it points to.
->> +		 */
->> +		if (unlikely(!try_pin_page(page)))
->> +			page = ERR_PTR(-EFAULT);
->> +	}
-> 
-> This pattern is rather common. So maybe I'd add a helper grab_page(page,
-> flags) doing
-> 
-> 	if (flags & FOLL_GET)
-> 		get_page(page);
-> 	else if (flags & FOLL_PIN)
-> 		return try_pin_page(page);
-> 	return true;
-> 
-
-OK.
-
-> Otherwise the patch looks good to me now.
-> 
-> 								Honza
-
-Great! I thought I'd have a v7 out today, but fate decided to have me repair
-my test machine instead. So, soon. ha. :)
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+On Mon, Nov 18, 2019 at 10:48 PM Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Sat, Nov 16, 2019 at 11:01:12PM +0800, Ryan Chen wrote:
+> > Right, we can return 'blank' to user and let the user to parse the information.
+>
+> There is nothing to parse - the task doesn't belong to any groups. That's it.
+>
+> > And there is a similar behavior in cgroup that, for kernel thread that
+> > does not belong
+> > to any cgroup, /proc/{pid}/cgroup just show 'blank' without returning an error.
+>
+> By 'blank' I assume you mean the empty string '' ?
+>
+Yes, it is 'empty string'.
+> > Yes, only when PROC_FS is set, /proc/{pid}/resctrl
+> > can be displayed. However, CPU_RESCTRL might not
+> > depend on proc fs, it is possible that the CPU_RESCTRL
+> > is enabled but without PROC_FS set. If I understand correctly,
+> >  CPU_RESCTRL is the 'root' config for X86_CPU_RESCTRL,
+> > after reading this thread:
+> > https://lists.gt.net/linux/kernel/3211659
+>
+> I'm not sure I know what you mean here. There's no CPU_RESCTRL option - you've
+> added it in the previous patch:
+>
+> [ ~/kernel/linux> git grep -E CONFIG_CPU_RESCTRL
+> [ ~/kernel/linux> git grep -E "\WCPU_RESCTRL"
+> [ ~/kernel/linux>
+>
+> And if you want to use that option in proc/, then it needs
+> to depend on PROC_FS, like the the example I gave you with
+> CONFIG_PROC_PID_ARCH_STATUS.
+>
+> Or do you mean something else?
+>
+Previously I was thinking of introducing CONFIG_CPU_RESCTRL
+to the kernel, so that platform-independent resctrl code could be moved under
+this config. The idea was seen in the following commit log:
+commit e6d429313ea5c776d (x86/resctrl: Avoid confusion over the
+new X86_RESCTRL config)
+But since we only touch proc fs in this patch, I think a config named
+CONFIG_PROC_CPU_RESCTRL declared in fs/proc/Kconfig
+might be more appropriate(similar to CONFIG_PROC_PID_ARCH_STATUS).
+> >  If this is the case, shall we add the new file at kernel/resctrl/resctrl.c?
+> > And the generic proc_resctrl_show() could be put into this file. In the future
+> > the generic code for resctrl could be added/moved to kernel/resctrl/resctrl.c
+>
+> Not worth it for a single function. Leave it in
+> arch/x86/kernel/cpu/resctrl/rdtgroup.c where you had it.
+>
+Okay, got it. Let me send the v3 patch out and to see if it is suitable.
+Thanks,
+Chenyu
+> Thx.
+>
+> --
+> Regards/Gruss,
+>     Boris.
+>
+> https://people.kernel.org/tglx/notes-about-netiquette
