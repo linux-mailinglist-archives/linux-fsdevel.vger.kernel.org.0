@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4BBA104358
+	by mail.lfdr.de (Postfix) with ESMTP id 0199C104356
 	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 19:25:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728539AbfKTSZC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Nov 2019 13:25:02 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34748 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728496AbfKTSY6 (ORCPT
+        id S1728531AbfKTSZB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Nov 2019 13:25:01 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42614 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728459AbfKTSZA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Nov 2019 13:24:58 -0500
-Received: by mail-pf1-f195.google.com with SMTP id n13so153418pff.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2019 10:24:58 -0800 (PST)
+        Wed, 20 Nov 2019 13:25:00 -0500
+Received: by mail-pg1-f195.google.com with SMTP id q17so122369pgt.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2019 10:24:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=osandov-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=UITnFvX5GeaGsArn5VbTQFbb6fm1+utex+H31BrX7lo=;
-        b=pa4rOzYVpCl1ER8VDX3Dpc8SFMEJYr/HjJcgJGnRllnNNBz7ogCa52/eZATRyF3bFe
-         J5S4B3dUOID0x0xQHW5r5bYurYacDKknQYpZUWjJCgDXyW8G81M37fzPXj4zzscKPdbm
-         DlGlKF6MmC9BjpyyKUg+2JMstIlbKzJq70HdwYyMRukIg0SOcreh3IzP4kDooJGleJkK
-         mi37w6UwJ2ZOtnwseDOGewkPPl2psssSbRhxK3invITC4WAfB9zkCQZjyLpaRALxJpoz
-         hmhwGuWEJJqgQBENc9FiFsI2s072RSfzetBXsxCRbNdnuW1kPIQHqmv7kNHqUaGUcZPn
-         WfRw==
+        bh=8S0n7UBjrH5Tk6ePskIrfFRcf0GpPS7vFCDTAfm/wkg=;
+        b=VOfTPAcrnHu37GUZRw0cAG2EjoYkYIaUi3XOlZr9DPHhOXXPsRJdEb1GC/p6grcx60
+         huYC+DyoMHHdQfcnGDcXvihrSrodx5sEpU88XDUiqYq+qFbenzPHpy43ybuyBrfYpNtO
+         oPO10UJUzDY0jxxLw+MaaB2EX1cHBfF9Okn1f1SYxN9zmVkj0MEYPrq4zZhtHr0nA7Lo
+         176KAxuU46ilGq9IA5aYlHReJYcQucwj6FhUhy+476CRg2xI8PMHwJ0QR3KZlEvw1mE2
+         tmWQlPleCDWy4EAXF4hmHkrW+g458dze2DQ+C3RFjpe+53UJWK4L9/uAGqDIYwj7RCUQ
+         onYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=UITnFvX5GeaGsArn5VbTQFbb6fm1+utex+H31BrX7lo=;
-        b=Z5C3xRP5pjTgJYlHJdauHZuwyz+BuAZLWOykr2/EBS0k8uYRpiTAsWz+q3Ef9j9Vtv
-         THJ8jwGsqqlPXGjx1bPob4bBAkD79wUavCHhLDPAagH9vTPc/fMvjDCgpgmiAcqjcuxh
-         CFzHr10KInNTScx0LnNBVOixLhJCetwZJT2OSn4esiguze68lPcwy5REwuBtj3qf6Gs6
-         FUmArZKWaM0si3jHX8RN3FfjigmW4MAx0pcmGzeujtw1iJbOcA9vwpKKlDBxSdCrs2X6
-         t5JqecaQKzpgezvkjUZmfYrp0Q8X5oviH7GmdhOXvU+7bL4DdHPbxMH3ART6ZlkL3pWP
-         0R0A==
-X-Gm-Message-State: APjAAAU7b2w1A8dGa63c2iWrUwyRtt9Vsnhxki4KPqf4tvjsx3jT8iuK
-        LL9RaVJIcF+1pVfbShg6vI6vkiQaTD4=
-X-Google-Smtp-Source: APXvYqwdQwafgTnP2BIYzZtBSm+F64wF+CtZELHdbpht99PXCMxbYZ73F61WALyYtXO/slg6GU158w==
-X-Received: by 2002:a65:4342:: with SMTP id k2mr4906215pgq.63.1574274297353;
-        Wed, 20 Nov 2019 10:24:57 -0800 (PST)
+        bh=8S0n7UBjrH5Tk6ePskIrfFRcf0GpPS7vFCDTAfm/wkg=;
+        b=fi+j/0KWvEUUbF/an19Qa3AdoU9vKN4fvRHXed3JcORLfpOnUVsvGyJgvRpVnzOjcV
+         yKAg6DJw3ty2BJRz+fQJXjTa2JAmES8RsL/gQNH0kgGIM/29qV7GSrt4E8870vK+2m/i
+         ziLMXpFhn3cbioRovbfDdwMLDbS9sZdnuMVxkF5h6X8/iu38zmyzQLsxWImciZtDVlCR
+         /whYsbxdH3ZVmLRCt6ScZn5h/UNAOfA4AF1pBv4p0CxRWdPHUnF1sBcUP/25sDUHIyCS
+         11Y//UUAS25QM6a0OE64jBinM6sd4iaWddatzQme7IC/X+0dcOGbgr77l7i5iMKw5Mdi
+         +9pw==
+X-Gm-Message-State: APjAAAULvSUKQYjBp2j9CXthJr3wXDmXzivr/EXHdROMMJfYUIsBy+3v
+        281HXop0MrXNbZ+5MGDrdhCU5pyfqdE=
+X-Google-Smtp-Source: APXvYqy7Sd4gtfhVpNB0Sgu1D5piLM3zyO5yjulpkHP92sh5O8PC9BvLddlZ4hqAceObMCEgr+v+nQ==
+X-Received: by 2002:a63:d544:: with SMTP id v4mr4693179pgi.288.1574274298654;
+        Wed, 20 Nov 2019 10:24:58 -0800 (PST)
 Received: from vader.thefacebook.com ([2620:10d:c090:180::1a46])
-        by smtp.gmail.com with ESMTPSA id q34sm7937866pjb.15.2019.11.20.10.24.56
+        by smtp.gmail.com with ESMTPSA id q34sm7937866pjb.15.2019.11.20.10.24.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2019 10:24:56 -0800 (PST)
+        Wed, 20 Nov 2019 10:24:58 -0800 (PST)
 From:   Omar Sandoval <osandov@osandov.com>
 To:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
 Cc:     Dave Chinner <david@fromorbit.com>, Jann Horn <jannh@google.com>,
         Amir Goldstein <amir73il@gmail.com>,
         Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
         kernel-team@fb.com
-Subject: [RFC PATCH v3 05/12] btrfs: don't advance offset for compressed bios in btrfs_csum_one_bio()
-Date:   Wed, 20 Nov 2019 10:24:25 -0800
-Message-Id: <a669365a9165b18814c635f61ed566fdcd47a96f.1574273658.git.osandov@fb.com>
+Subject: [RFC PATCH v3 06/12] btrfs: remove dead snapshot-aware defrag code
+Date:   Wed, 20 Nov 2019 10:24:26 -0800
+Message-Id: <a33a0fddb55101eec47b815672aa42b6f85b3830.1574273658.git.osandov@fb.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1574273658.git.osandov@fb.com>
 References: <cover.1574273658.git.osandov@fb.com>
@@ -66,150 +66,768 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Omar Sandoval <osandov@fb.com>
 
-btrfs_csum_one_bio() loops over each sector in the bio while keeping a
-cursor of its current logical position in the file in order to look up
-the ordered extent to add the checksums to. However, this doesn't make
-much sense for compressed extents, as a sector on disk does not
-correspond to a sector of decompressed file data. It happens to work
-because 1) the compressed bio always covers one ordered extent and 2)
-the size of the bio is always less than the size of the ordered extent.
-However, the second point will not always be true for encoded writes.
+Snapshot-aware defrag has been disabled since commit 8101c8dbf624
+("Btrfs: disable snapshot aware defrag for now") almost 6 years ago.
+Let's remove the dead code. If someone is up to the task of bringing it
+back, they can dig it up from git.
 
-Let's add a boolean parameter to btrfs_csum_one_bio() to indicate that
-it can assume that the bio only covers one ordered extent. Since we're
-already changing the signature, let's make contig bool instead of int,
-too.
+This is logically a revert of commit 38c227d87c49 ("Btrfs:
+snapshot-aware defrag") except that now we have to clear the
+EXTENT_DEFRAG bit to avoid need_force_cow() returning true forever.
 
 Signed-off-by: Omar Sandoval <osandov@fb.com>
 ---
- fs/btrfs/compression.c |  5 +++--
- fs/btrfs/ctree.h       |  2 +-
- fs/btrfs/file-item.c   | 19 +++++++++++--------
- fs/btrfs/inode.c       |  8 ++++----
- 4 files changed, 19 insertions(+), 15 deletions(-)
+ fs/btrfs/inode.c | 695 +----------------------------------------------
+ 1 file changed, 11 insertions(+), 684 deletions(-)
 
-diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
-index 4df6f0c58dc9..05b6e404a291 100644
---- a/fs/btrfs/compression.c
-+++ b/fs/btrfs/compression.c
-@@ -374,7 +374,8 @@ blk_status_t btrfs_submit_compressed_write(struct inode *inode, u64 start,
- 			BUG_ON(ret); /* -ENOMEM */
- 
- 			if (!skip_sum) {
--				ret = btrfs_csum_one_bio(inode, bio, start, 1);
-+				ret = btrfs_csum_one_bio(inode, bio, start,
-+							 true, true);
- 				BUG_ON(ret); /* -ENOMEM */
- 			}
- 
-@@ -405,7 +406,7 @@ blk_status_t btrfs_submit_compressed_write(struct inode *inode, u64 start,
- 	BUG_ON(ret); /* -ENOMEM */
- 
- 	if (!skip_sum) {
--		ret = btrfs_csum_one_bio(inode, bio, start, 1);
-+		ret = btrfs_csum_one_bio(inode, bio, start, true, true);
- 		BUG_ON(ret); /* -ENOMEM */
- 	}
- 
-diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-index 4bc40bf49b0e..c32741879088 100644
---- a/fs/btrfs/ctree.h
-+++ b/fs/btrfs/ctree.h
-@@ -2802,7 +2802,7 @@ int btrfs_csum_file_blocks(struct btrfs_trans_handle *trans,
- 			   struct btrfs_root *root,
- 			   struct btrfs_ordered_sum *sums);
- blk_status_t btrfs_csum_one_bio(struct inode *inode, struct bio *bio,
--		       u64 file_start, int contig);
-+				u64 file_start, bool contig, bool one_ordered);
- int btrfs_lookup_csums_range(struct btrfs_root *root, u64 start, u64 end,
- 			     struct list_head *list, int search_commit);
- void btrfs_extent_item_to_extent_map(struct btrfs_inode *inode,
-diff --git a/fs/btrfs/file-item.c b/fs/btrfs/file-item.c
-index a87c40502267..c95772949b00 100644
---- a/fs/btrfs/file-item.c
-+++ b/fs/btrfs/file-item.c
-@@ -423,13 +423,14 @@ int btrfs_lookup_csums_range(struct btrfs_root *root, u64 start, u64 end,
-  * @inode:	 Owner of the data inside the bio
-  * @bio:	 Contains the data to be checksummed
-  * @file_start:  offset in file this bio begins to describe
-- * @contig:	 Boolean. If true/1 means all bio vecs in this bio are
-- *		 contiguous and they begin at @file_start in the file. False/0
-- *		 means this bio can contains potentially discontigous bio vecs
-- *		 so the logical offset of each should be calculated separately.
-+ * @contig:      If true, all bio vecs in @bio are contiguous and they begin at
-+ *               @file_start in the file. If false, @bio may contain
-+ *               discontigous bio vecs, so the logical offset of each should be
-+ *               calculated separately (@file_start is ignored).
-+ * @one_ordered: If true, @bio only refers to one ordered extent.
-  */
- blk_status_t btrfs_csum_one_bio(struct inode *inode, struct bio *bio,
--		       u64 file_start, int contig)
-+				u64 file_start, bool contig, bool one_ordered)
- {
- 	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
- 	SHASH_DESC_ON_STACK(shash, fs_info->csum_shash);
-@@ -482,8 +483,9 @@ blk_status_t btrfs_csum_one_bio(struct inode *inode, struct bio *bio,
- 						 - 1);
- 
- 		for (i = 0; i < nr_sectors; i++) {
--			if (offset >= ordered->file_offset + ordered->len ||
--				offset < ordered->file_offset) {
-+			if (!one_ordered &&
-+			    (offset >= ordered->file_offset + ordered->len ||
-+			     offset < ordered->file_offset)) {
- 				unsigned long bytes_left;
- 
- 				sums->len = this_sum_bytes;
-@@ -515,7 +517,8 @@ blk_status_t btrfs_csum_one_bio(struct inode *inode, struct bio *bio,
- 			kunmap_atomic(data);
- 			crypto_shash_final(shash, (char *)(sums->sums + index));
- 			index += csum_size;
--			offset += fs_info->sectorsize;
-+			if (!one_ordered)
-+				offset += fs_info->sectorsize;
- 			this_sum_bytes += fs_info->sectorsize;
- 			total_bytes += fs_info->sectorsize;
- 		}
 diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index ad5bffb24199..4c1ed6dddfd8 100644
+index 4c1ed6dddfd8..707b4d86409f 100644
 --- a/fs/btrfs/inode.c
 +++ b/fs/btrfs/inode.c
-@@ -2039,7 +2039,7 @@ static blk_status_t btrfs_submit_bio_start(void *private_data, struct bio *bio,
- 	struct inode *inode = private_data;
- 	blk_status_t ret = 0;
+@@ -44,7 +44,6 @@
+ #include "locking.h"
+ #include "free-space-cache.h"
+ #include "inode-map.h"
+-#include "backref.h"
+ #include "props.h"
+ #include "qgroup.h"
+ #include "delalloc-space.h"
+@@ -2353,649 +2352,6 @@ static int insert_reserved_file_extent(struct btrfs_trans_handle *trans,
+ 	return ret;
+ }
  
--	ret = btrfs_csum_one_bio(inode, bio, 0, 0);
-+	ret = btrfs_csum_one_bio(inode, bio, 0, false, false);
- 	BUG_ON(ret); /* -ENOMEM */
- 	return 0;
- }
-@@ -2104,7 +2104,7 @@ static blk_status_t btrfs_submit_bio_hook(struct inode *inode, struct bio *bio,
- 					  0, inode, btrfs_submit_bio_start);
- 		goto out;
- 	} else if (!skip_sum) {
--		ret = btrfs_csum_one_bio(inode, bio, 0, 0);
-+		ret = btrfs_csum_one_bio(inode, bio, 0, false, false);
- 		if (ret)
- 			goto out;
- 	}
-@@ -8272,7 +8272,7 @@ static blk_status_t btrfs_submit_bio_start_direct_io(void *private_data,
+-/* snapshot-aware defrag */
+-struct sa_defrag_extent_backref {
+-	struct rb_node node;
+-	struct old_sa_defrag_extent *old;
+-	u64 root_id;
+-	u64 inum;
+-	u64 file_pos;
+-	u64 extent_offset;
+-	u64 num_bytes;
+-	u64 generation;
+-};
+-
+-struct old_sa_defrag_extent {
+-	struct list_head list;
+-	struct new_sa_defrag_extent *new;
+-
+-	u64 extent_offset;
+-	u64 bytenr;
+-	u64 offset;
+-	u64 len;
+-	int count;
+-};
+-
+-struct new_sa_defrag_extent {
+-	struct rb_root root;
+-	struct list_head head;
+-	struct btrfs_path *path;
+-	struct inode *inode;
+-	u64 file_pos;
+-	u64 len;
+-	u64 bytenr;
+-	u64 disk_len;
+-	u8 compress_type;
+-};
+-
+-static int backref_comp(struct sa_defrag_extent_backref *b1,
+-			struct sa_defrag_extent_backref *b2)
+-{
+-	if (b1->root_id < b2->root_id)
+-		return -1;
+-	else if (b1->root_id > b2->root_id)
+-		return 1;
+-
+-	if (b1->inum < b2->inum)
+-		return -1;
+-	else if (b1->inum > b2->inum)
+-		return 1;
+-
+-	if (b1->file_pos < b2->file_pos)
+-		return -1;
+-	else if (b1->file_pos > b2->file_pos)
+-		return 1;
+-
+-	/*
+-	 * [------------------------------] ===> (a range of space)
+-	 *     |<--->|   |<---->| =============> (fs/file tree A)
+-	 * |<---------------------------->| ===> (fs/file tree B)
+-	 *
+-	 * A range of space can refer to two file extents in one tree while
+-	 * refer to only one file extent in another tree.
+-	 *
+-	 * So we may process a disk offset more than one time(two extents in A)
+-	 * and locate at the same extent(one extent in B), then insert two same
+-	 * backrefs(both refer to the extent in B).
+-	 */
+-	return 0;
+-}
+-
+-static void backref_insert(struct rb_root *root,
+-			   struct sa_defrag_extent_backref *backref)
+-{
+-	struct rb_node **p = &root->rb_node;
+-	struct rb_node *parent = NULL;
+-	struct sa_defrag_extent_backref *entry;
+-	int ret;
+-
+-	while (*p) {
+-		parent = *p;
+-		entry = rb_entry(parent, struct sa_defrag_extent_backref, node);
+-
+-		ret = backref_comp(backref, entry);
+-		if (ret < 0)
+-			p = &(*p)->rb_left;
+-		else
+-			p = &(*p)->rb_right;
+-	}
+-
+-	rb_link_node(&backref->node, parent, p);
+-	rb_insert_color(&backref->node, root);
+-}
+-
+-/*
+- * Note the backref might has changed, and in this case we just return 0.
+- */
+-static noinline int record_one_backref(u64 inum, u64 offset, u64 root_id,
+-				       void *ctx)
+-{
+-	struct btrfs_file_extent_item *extent;
+-	struct old_sa_defrag_extent *old = ctx;
+-	struct new_sa_defrag_extent *new = old->new;
+-	struct btrfs_path *path = new->path;
+-	struct btrfs_key key;
+-	struct btrfs_root *root;
+-	struct sa_defrag_extent_backref *backref;
+-	struct extent_buffer *leaf;
+-	struct inode *inode = new->inode;
+-	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
+-	int slot;
+-	int ret;
+-	u64 extent_offset;
+-	u64 num_bytes;
+-
+-	if (BTRFS_I(inode)->root->root_key.objectid == root_id &&
+-	    inum == btrfs_ino(BTRFS_I(inode)))
+-		return 0;
+-
+-	key.objectid = root_id;
+-	key.type = BTRFS_ROOT_ITEM_KEY;
+-	key.offset = (u64)-1;
+-
+-	root = btrfs_read_fs_root_no_name(fs_info, &key);
+-	if (IS_ERR(root)) {
+-		if (PTR_ERR(root) == -ENOENT)
+-			return 0;
+-		WARN_ON(1);
+-		btrfs_debug(fs_info, "inum=%llu, offset=%llu, root_id=%llu",
+-			 inum, offset, root_id);
+-		return PTR_ERR(root);
+-	}
+-
+-	key.objectid = inum;
+-	key.type = BTRFS_EXTENT_DATA_KEY;
+-	if (offset > (u64)-1 << 32)
+-		key.offset = 0;
+-	else
+-		key.offset = offset;
+-
+-	ret = btrfs_search_slot(NULL, root, &key, path, 0, 0);
+-	if (WARN_ON(ret < 0))
+-		return ret;
+-	ret = 0;
+-
+-	while (1) {
+-		cond_resched();
+-
+-		leaf = path->nodes[0];
+-		slot = path->slots[0];
+-
+-		if (slot >= btrfs_header_nritems(leaf)) {
+-			ret = btrfs_next_leaf(root, path);
+-			if (ret < 0) {
+-				goto out;
+-			} else if (ret > 0) {
+-				ret = 0;
+-				goto out;
+-			}
+-			continue;
+-		}
+-
+-		path->slots[0]++;
+-
+-		btrfs_item_key_to_cpu(leaf, &key, slot);
+-
+-		if (key.objectid > inum)
+-			goto out;
+-
+-		if (key.objectid < inum || key.type != BTRFS_EXTENT_DATA_KEY)
+-			continue;
+-
+-		extent = btrfs_item_ptr(leaf, slot,
+-					struct btrfs_file_extent_item);
+-
+-		if (btrfs_file_extent_disk_bytenr(leaf, extent) != old->bytenr)
+-			continue;
+-
+-		/*
+-		 * 'offset' refers to the exact key.offset,
+-		 * NOT the 'offset' field in btrfs_extent_data_ref, ie.
+-		 * (key.offset - extent_offset).
+-		 */
+-		if (key.offset != offset)
+-			continue;
+-
+-		extent_offset = btrfs_file_extent_offset(leaf, extent);
+-		num_bytes = btrfs_file_extent_num_bytes(leaf, extent);
+-
+-		if (extent_offset >= old->extent_offset + old->offset +
+-		    old->len || extent_offset + num_bytes <=
+-		    old->extent_offset + old->offset)
+-			continue;
+-		break;
+-	}
+-
+-	backref = kmalloc(sizeof(*backref), GFP_NOFS);
+-	if (!backref) {
+-		ret = -ENOENT;
+-		goto out;
+-	}
+-
+-	backref->root_id = root_id;
+-	backref->inum = inum;
+-	backref->file_pos = offset;
+-	backref->num_bytes = num_bytes;
+-	backref->extent_offset = extent_offset;
+-	backref->generation = btrfs_file_extent_generation(leaf, extent);
+-	backref->old = old;
+-	backref_insert(&new->root, backref);
+-	old->count++;
+-out:
+-	btrfs_release_path(path);
+-	WARN_ON(ret);
+-	return ret;
+-}
+-
+-static noinline bool record_extent_backrefs(struct btrfs_path *path,
+-				   struct new_sa_defrag_extent *new)
+-{
+-	struct btrfs_fs_info *fs_info = btrfs_sb(new->inode->i_sb);
+-	struct old_sa_defrag_extent *old, *tmp;
+-	int ret;
+-
+-	new->path = path;
+-
+-	list_for_each_entry_safe(old, tmp, &new->head, list) {
+-		ret = iterate_inodes_from_logical(old->bytenr +
+-						  old->extent_offset, fs_info,
+-						  path, record_one_backref,
+-						  old, false);
+-		if (ret < 0 && ret != -ENOENT)
+-			return false;
+-
+-		/* no backref to be processed for this extent */
+-		if (!old->count) {
+-			list_del(&old->list);
+-			kfree(old);
+-		}
+-	}
+-
+-	if (list_empty(&new->head))
+-		return false;
+-
+-	return true;
+-}
+-
+-static int relink_is_mergable(struct extent_buffer *leaf,
+-			      struct btrfs_file_extent_item *fi,
+-			      struct new_sa_defrag_extent *new)
+-{
+-	if (btrfs_file_extent_disk_bytenr(leaf, fi) != new->bytenr)
+-		return 0;
+-
+-	if (btrfs_file_extent_type(leaf, fi) != BTRFS_FILE_EXTENT_REG)
+-		return 0;
+-
+-	if (btrfs_file_extent_compression(leaf, fi) != new->compress_type)
+-		return 0;
+-
+-	if (btrfs_file_extent_encryption(leaf, fi) ||
+-	    btrfs_file_extent_other_encoding(leaf, fi))
+-		return 0;
+-
+-	return 1;
+-}
+-
+-/*
+- * Note the backref might has changed, and in this case we just return 0.
+- */
+-static noinline int relink_extent_backref(struct btrfs_path *path,
+-				 struct sa_defrag_extent_backref *prev,
+-				 struct sa_defrag_extent_backref *backref)
+-{
+-	struct btrfs_file_extent_item *extent;
+-	struct btrfs_file_extent_item *item;
+-	struct btrfs_ordered_extent *ordered;
+-	struct btrfs_trans_handle *trans;
+-	struct btrfs_ref ref = { 0 };
+-	struct btrfs_root *root;
+-	struct btrfs_key key;
+-	struct extent_buffer *leaf;
+-	struct old_sa_defrag_extent *old = backref->old;
+-	struct new_sa_defrag_extent *new = old->new;
+-	struct btrfs_fs_info *fs_info = btrfs_sb(new->inode->i_sb);
+-	struct inode *inode;
+-	struct extent_state *cached = NULL;
+-	int ret = 0;
+-	u64 start;
+-	u64 len;
+-	u64 lock_start;
+-	u64 lock_end;
+-	bool merge = false;
+-	int index;
+-
+-	if (prev && prev->root_id == backref->root_id &&
+-	    prev->inum == backref->inum &&
+-	    prev->file_pos + prev->num_bytes == backref->file_pos)
+-		merge = true;
+-
+-	/* step 1: get root */
+-	key.objectid = backref->root_id;
+-	key.type = BTRFS_ROOT_ITEM_KEY;
+-	key.offset = (u64)-1;
+-
+-	index = srcu_read_lock(&fs_info->subvol_srcu);
+-
+-	root = btrfs_read_fs_root_no_name(fs_info, &key);
+-	if (IS_ERR(root)) {
+-		srcu_read_unlock(&fs_info->subvol_srcu, index);
+-		if (PTR_ERR(root) == -ENOENT)
+-			return 0;
+-		return PTR_ERR(root);
+-	}
+-
+-	if (btrfs_root_readonly(root)) {
+-		srcu_read_unlock(&fs_info->subvol_srcu, index);
+-		return 0;
+-	}
+-
+-	/* step 2: get inode */
+-	key.objectid = backref->inum;
+-	key.type = BTRFS_INODE_ITEM_KEY;
+-	key.offset = 0;
+-
+-	inode = btrfs_iget(fs_info->sb, &key, root, NULL);
+-	if (IS_ERR(inode)) {
+-		srcu_read_unlock(&fs_info->subvol_srcu, index);
+-		return 0;
+-	}
+-
+-	srcu_read_unlock(&fs_info->subvol_srcu, index);
+-
+-	/* step 3: relink backref */
+-	lock_start = backref->file_pos;
+-	lock_end = backref->file_pos + backref->num_bytes - 1;
+-	lock_extent_bits(&BTRFS_I(inode)->io_tree, lock_start, lock_end,
+-			 &cached);
+-
+-	ordered = btrfs_lookup_first_ordered_extent(inode, lock_end);
+-	if (ordered) {
+-		btrfs_put_ordered_extent(ordered);
+-		goto out_unlock;
+-	}
+-
+-	trans = btrfs_join_transaction(root);
+-	if (IS_ERR(trans)) {
+-		ret = PTR_ERR(trans);
+-		goto out_unlock;
+-	}
+-
+-	key.objectid = backref->inum;
+-	key.type = BTRFS_EXTENT_DATA_KEY;
+-	key.offset = backref->file_pos;
+-
+-	ret = btrfs_search_slot(NULL, root, &key, path, 0, 0);
+-	if (ret < 0) {
+-		goto out_free_path;
+-	} else if (ret > 0) {
+-		ret = 0;
+-		goto out_free_path;
+-	}
+-
+-	extent = btrfs_item_ptr(path->nodes[0], path->slots[0],
+-				struct btrfs_file_extent_item);
+-
+-	if (btrfs_file_extent_generation(path->nodes[0], extent) !=
+-	    backref->generation)
+-		goto out_free_path;
+-
+-	btrfs_release_path(path);
+-
+-	start = backref->file_pos;
+-	if (backref->extent_offset < old->extent_offset + old->offset)
+-		start += old->extent_offset + old->offset -
+-			 backref->extent_offset;
+-
+-	len = min(backref->extent_offset + backref->num_bytes,
+-		  old->extent_offset + old->offset + old->len);
+-	len -= max(backref->extent_offset, old->extent_offset + old->offset);
+-
+-	ret = btrfs_drop_extents(trans, root, inode, start,
+-				 start + len, 1);
+-	if (ret)
+-		goto out_free_path;
+-again:
+-	key.objectid = btrfs_ino(BTRFS_I(inode));
+-	key.type = BTRFS_EXTENT_DATA_KEY;
+-	key.offset = start;
+-
+-	path->leave_spinning = 1;
+-	if (merge) {
+-		struct btrfs_file_extent_item *fi;
+-		u64 extent_len;
+-		struct btrfs_key found_key;
+-
+-		ret = btrfs_search_slot(trans, root, &key, path, 0, 1);
+-		if (ret < 0)
+-			goto out_free_path;
+-
+-		path->slots[0]--;
+-		leaf = path->nodes[0];
+-		btrfs_item_key_to_cpu(leaf, &found_key, path->slots[0]);
+-
+-		fi = btrfs_item_ptr(leaf, path->slots[0],
+-				    struct btrfs_file_extent_item);
+-		extent_len = btrfs_file_extent_num_bytes(leaf, fi);
+-
+-		if (extent_len + found_key.offset == start &&
+-		    relink_is_mergable(leaf, fi, new)) {
+-			btrfs_set_file_extent_num_bytes(leaf, fi,
+-							extent_len + len);
+-			btrfs_mark_buffer_dirty(leaf);
+-			inode_add_bytes(inode, len);
+-
+-			ret = 1;
+-			goto out_free_path;
+-		} else {
+-			merge = false;
+-			btrfs_release_path(path);
+-			goto again;
+-		}
+-	}
+-
+-	ret = btrfs_insert_empty_item(trans, root, path, &key,
+-					sizeof(*extent));
+-	if (ret) {
+-		btrfs_abort_transaction(trans, ret);
+-		goto out_free_path;
+-	}
+-
+-	leaf = path->nodes[0];
+-	item = btrfs_item_ptr(leaf, path->slots[0],
+-				struct btrfs_file_extent_item);
+-	btrfs_set_file_extent_disk_bytenr(leaf, item, new->bytenr);
+-	btrfs_set_file_extent_disk_num_bytes(leaf, item, new->disk_len);
+-	btrfs_set_file_extent_offset(leaf, item, start - new->file_pos);
+-	btrfs_set_file_extent_num_bytes(leaf, item, len);
+-	btrfs_set_file_extent_ram_bytes(leaf, item, new->len);
+-	btrfs_set_file_extent_generation(leaf, item, trans->transid);
+-	btrfs_set_file_extent_type(leaf, item, BTRFS_FILE_EXTENT_REG);
+-	btrfs_set_file_extent_compression(leaf, item, new->compress_type);
+-	btrfs_set_file_extent_encryption(leaf, item, 0);
+-	btrfs_set_file_extent_other_encoding(leaf, item, 0);
+-
+-	btrfs_mark_buffer_dirty(leaf);
+-	inode_add_bytes(inode, len);
+-	btrfs_release_path(path);
+-
+-	btrfs_init_generic_ref(&ref, BTRFS_ADD_DELAYED_REF, new->bytenr,
+-			       new->disk_len, 0);
+-	btrfs_init_data_ref(&ref, backref->root_id, backref->inum,
+-			    new->file_pos);  /* start - extent_offset */
+-	ret = btrfs_inc_extent_ref(trans, &ref);
+-	if (ret) {
+-		btrfs_abort_transaction(trans, ret);
+-		goto out_free_path;
+-	}
+-
+-	ret = 1;
+-out_free_path:
+-	btrfs_release_path(path);
+-	path->leave_spinning = 0;
+-	btrfs_end_transaction(trans);
+-out_unlock:
+-	unlock_extent_cached(&BTRFS_I(inode)->io_tree, lock_start, lock_end,
+-			     &cached);
+-	iput(inode);
+-	return ret;
+-}
+-
+-static void free_sa_defrag_extent(struct new_sa_defrag_extent *new)
+-{
+-	struct old_sa_defrag_extent *old, *tmp;
+-
+-	if (!new)
+-		return;
+-
+-	list_for_each_entry_safe(old, tmp, &new->head, list) {
+-		kfree(old);
+-	}
+-	kfree(new);
+-}
+-
+-static void relink_file_extents(struct new_sa_defrag_extent *new)
+-{
+-	struct btrfs_fs_info *fs_info = btrfs_sb(new->inode->i_sb);
+-	struct btrfs_path *path;
+-	struct sa_defrag_extent_backref *backref;
+-	struct sa_defrag_extent_backref *prev = NULL;
+-	struct rb_node *node;
+-	int ret;
+-
+-	path = btrfs_alloc_path();
+-	if (!path)
+-		return;
+-
+-	if (!record_extent_backrefs(path, new)) {
+-		btrfs_free_path(path);
+-		goto out;
+-	}
+-	btrfs_release_path(path);
+-
+-	while (1) {
+-		node = rb_first(&new->root);
+-		if (!node)
+-			break;
+-		rb_erase(node, &new->root);
+-
+-		backref = rb_entry(node, struct sa_defrag_extent_backref, node);
+-
+-		ret = relink_extent_backref(path, prev, backref);
+-		WARN_ON(ret < 0);
+-
+-		kfree(prev);
+-
+-		if (ret == 1)
+-			prev = backref;
+-		else
+-			prev = NULL;
+-		cond_resched();
+-	}
+-	kfree(prev);
+-
+-	btrfs_free_path(path);
+-out:
+-	free_sa_defrag_extent(new);
+-
+-	atomic_dec(&fs_info->defrag_running);
+-	wake_up(&fs_info->transaction_wait);
+-}
+-
+-static struct new_sa_defrag_extent *
+-record_old_file_extents(struct inode *inode,
+-			struct btrfs_ordered_extent *ordered)
+-{
+-	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
+-	struct btrfs_root *root = BTRFS_I(inode)->root;
+-	struct btrfs_path *path;
+-	struct btrfs_key key;
+-	struct old_sa_defrag_extent *old;
+-	struct new_sa_defrag_extent *new;
+-	int ret;
+-
+-	new = kmalloc(sizeof(*new), GFP_NOFS);
+-	if (!new)
+-		return NULL;
+-
+-	new->inode = inode;
+-	new->file_pos = ordered->file_offset;
+-	new->len = ordered->len;
+-	new->bytenr = ordered->start;
+-	new->disk_len = ordered->disk_len;
+-	new->compress_type = ordered->compress_type;
+-	new->root = RB_ROOT;
+-	INIT_LIST_HEAD(&new->head);
+-
+-	path = btrfs_alloc_path();
+-	if (!path)
+-		goto out_kfree;
+-
+-	key.objectid = btrfs_ino(BTRFS_I(inode));
+-	key.type = BTRFS_EXTENT_DATA_KEY;
+-	key.offset = new->file_pos;
+-
+-	ret = btrfs_search_slot(NULL, root, &key, path, 0, 0);
+-	if (ret < 0)
+-		goto out_free_path;
+-	if (ret > 0 && path->slots[0] > 0)
+-		path->slots[0]--;
+-
+-	/* find out all the old extents for the file range */
+-	while (1) {
+-		struct btrfs_file_extent_item *extent;
+-		struct extent_buffer *l;
+-		int slot;
+-		u64 num_bytes;
+-		u64 offset;
+-		u64 end;
+-		u64 disk_bytenr;
+-		u64 extent_offset;
+-
+-		l = path->nodes[0];
+-		slot = path->slots[0];
+-
+-		if (slot >= btrfs_header_nritems(l)) {
+-			ret = btrfs_next_leaf(root, path);
+-			if (ret < 0)
+-				goto out_free_path;
+-			else if (ret > 0)
+-				break;
+-			continue;
+-		}
+-
+-		btrfs_item_key_to_cpu(l, &key, slot);
+-
+-		if (key.objectid != btrfs_ino(BTRFS_I(inode)))
+-			break;
+-		if (key.type != BTRFS_EXTENT_DATA_KEY)
+-			break;
+-		if (key.offset >= new->file_pos + new->len)
+-			break;
+-
+-		extent = btrfs_item_ptr(l, slot, struct btrfs_file_extent_item);
+-
+-		num_bytes = btrfs_file_extent_num_bytes(l, extent);
+-		if (key.offset + num_bytes < new->file_pos)
+-			goto next;
+-
+-		disk_bytenr = btrfs_file_extent_disk_bytenr(l, extent);
+-		if (!disk_bytenr)
+-			goto next;
+-
+-		extent_offset = btrfs_file_extent_offset(l, extent);
+-
+-		old = kmalloc(sizeof(*old), GFP_NOFS);
+-		if (!old)
+-			goto out_free_path;
+-
+-		offset = max(new->file_pos, key.offset);
+-		end = min(new->file_pos + new->len, key.offset + num_bytes);
+-
+-		old->bytenr = disk_bytenr;
+-		old->extent_offset = extent_offset;
+-		old->offset = offset - key.offset;
+-		old->len = end - offset;
+-		old->new = new;
+-		old->count = 0;
+-		list_add_tail(&old->list, &new->head);
+-next:
+-		path->slots[0]++;
+-		cond_resched();
+-	}
+-
+-	btrfs_free_path(path);
+-	atomic_inc(&fs_info->defrag_running);
+-
+-	return new;
+-
+-out_free_path:
+-	btrfs_free_path(path);
+-out_kfree:
+-	free_sa_defrag_extent(new);
+-	return NULL;
+-}
+-
+ static void btrfs_release_delalloc_bytes(struct btrfs_fs_info *fs_info,
+ 					 u64 start, u64 len)
  {
- 	struct inode *inode = private_data;
- 	blk_status_t ret;
--	ret = btrfs_csum_one_bio(inode, bio, offset, 1);
-+	ret = btrfs_csum_one_bio(inode, bio, offset, true, false);
- 	BUG_ON(ret); /* -ENOMEM */
- 	return 0;
- }
-@@ -8379,7 +8379,7 @@ static inline blk_status_t btrfs_submit_dio_bio(struct bio *bio,
- 		 * If we aren't doing async submit, calculate the csum of the
- 		 * bio now.
- 		 */
--		ret = btrfs_csum_one_bio(inode, bio, file_offset, 1);
-+		ret = btrfs_csum_one_bio(inode, bio, file_offset, true, false);
- 		if (ret)
- 			goto err;
- 	} else {
+@@ -3023,7 +2379,6 @@ static int btrfs_finish_ordered_io(struct btrfs_ordered_extent *ordered_extent)
+ 	struct btrfs_trans_handle *trans = NULL;
+ 	struct extent_io_tree *io_tree = &BTRFS_I(inode)->io_tree;
+ 	struct extent_state *cached_state = NULL;
+-	struct new_sa_defrag_extent *new = NULL;
+ 	int compress_type = 0;
+ 	int ret = 0;
+ 	u64 logical_len = ordered_extent->len;
+@@ -3032,6 +2387,7 @@ static int btrfs_finish_ordered_io(struct btrfs_ordered_extent *ordered_extent)
+ 	bool range_locked = false;
+ 	bool clear_new_delalloc_bytes = false;
+ 	bool clear_reserved_extent = true;
++	unsigned int clear_bits;
+ 
+ 	if (!test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags) &&
+ 	    !test_bit(BTRFS_ORDERED_PREALLOC, &ordered_extent->flags) &&
+@@ -3090,20 +2446,6 @@ static int btrfs_finish_ordered_io(struct btrfs_ordered_extent *ordered_extent)
+ 			 ordered_extent->file_offset + ordered_extent->len - 1,
+ 			 &cached_state);
+ 
+-	ret = test_range_bit(io_tree, ordered_extent->file_offset,
+-			ordered_extent->file_offset + ordered_extent->len - 1,
+-			EXTENT_DEFRAG, 0, cached_state);
+-	if (ret) {
+-		u64 last_snapshot = btrfs_root_last_snapshot(&root->root_item);
+-		if (0 && last_snapshot >= BTRFS_I(inode)->generation)
+-			/* the inode is shared */
+-			new = record_old_file_extents(inode, ordered_extent);
+-
+-		clear_extent_bit(io_tree, ordered_extent->file_offset,
+-			ordered_extent->file_offset + ordered_extent->len - 1,
+-			EXTENT_DEFRAG, 0, 0, &cached_state);
+-	}
+-
+ 	if (nolock)
+ 		trans = btrfs_join_transaction_nolock(root);
+ 	else
+@@ -3164,21 +2506,16 @@ static int btrfs_finish_ordered_io(struct btrfs_ordered_extent *ordered_extent)
+ 	}
+ 	ret = 0;
+ out:
+-	if (range_locked || clear_new_delalloc_bytes) {
+-		unsigned int clear_bits = 0;
+-
+-		if (range_locked)
+-			clear_bits |= EXTENT_LOCKED;
+-		if (clear_new_delalloc_bytes)
+-			clear_bits |= EXTENT_DELALLOC_NEW;
+-		clear_extent_bit(&BTRFS_I(inode)->io_tree,
+-				 ordered_extent->file_offset,
+-				 ordered_extent->file_offset +
+-				 ordered_extent->len - 1,
+-				 clear_bits,
+-				 (clear_bits & EXTENT_LOCKED) ? 1 : 0,
+-				 0, &cached_state);
+-	}
++	clear_bits = EXTENT_DEFRAG;
++	if (range_locked)
++		clear_bits |= EXTENT_LOCKED;
++	if (clear_new_delalloc_bytes)
++		clear_bits |= EXTENT_DELALLOC_NEW;
++	clear_extent_bit(&BTRFS_I(inode)->io_tree,
++			 ordered_extent->file_offset,
++			 ordered_extent->file_offset + ordered_extent->len - 1,
++			 clear_bits, (clear_bits & EXTENT_LOCKED) ? 1 : 0, 0,
++			 &cached_state);
+ 
+ 	if (trans)
+ 		btrfs_end_transaction(trans);
+@@ -3222,16 +2559,6 @@ static int btrfs_finish_ordered_io(struct btrfs_ordered_extent *ordered_extent)
+ 	 */
+ 	btrfs_remove_ordered_extent(inode, ordered_extent);
+ 
+-	/* for snapshot-aware defrag */
+-	if (new) {
+-		if (ret) {
+-			free_sa_defrag_extent(new);
+-			atomic_dec(&fs_info->defrag_running);
+-		} else {
+-			relink_file_extents(new);
+-		}
+-	}
+-
+ 	/* once for us */
+ 	btrfs_put_ordered_extent(ordered_extent);
+ 	/* once for the tree */
 -- 
 2.24.0
 
