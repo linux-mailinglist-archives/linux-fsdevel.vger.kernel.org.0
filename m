@@ -2,144 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A91F0103A26
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 13:36:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00AAA103A3D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 13:42:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729801AbfKTMgZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Nov 2019 07:36:25 -0500
-Received: from mout.web.de ([212.227.15.3]:59625 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727876AbfKTMgZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Nov 2019 07:36:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1574253368;
-        bh=MxmyEzfAFTWwBXB89FoFsrUf5ujqlJkBwvTvCCN+JjQ=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=DvRJ3p9LIV7cJZkHg3gvRDUJcdttB3hzIdcOv3tHBpabX2lR/wEsEEyY1hdXPhq4O
-         Dus7YeRY65J0SkDH2FQBP4j+D98XBzBezpL19MOsQQZsLvj/JkpTp+oO18+aVITBwH
-         22mU7xvgK4ICJ4RA59Z/DlwF4aK3zgP0hBVA9+wc=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.3] ([93.132.176.80]) by smtp.web.de (mrweb003
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0LgYRZ-1i1K2U3lfZ-00nyyf; Wed, 20
- Nov 2019 13:36:08 +0100
-Subject: Re: [PATCH v3 10/13] exfat: add nls operations
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Daniel Wagner <dwagner@suse.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        linkinjeon@gmail.com
-References: <20191119093718.3501-1-namjae.jeon@samsung.com>
- <CGME20191119094026epcas1p3eea5c655f3b89383e02c0097c491f0bc@epcas1p3.samsung.com>
- <20191119093718.3501-11-namjae.jeon@samsung.com>
- <705cb02b-7707-af52-c2b5-70660debc619@web.de>
- <00b701d59f81$319c1d90$94d458b0$@samsung.com>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <cb82f263-4374-c483-7093-03de81618399@web.de>
-Date:   Wed, 20 Nov 2019 13:36:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1726872AbfKTMmb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Nov 2019 07:42:31 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:30616 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729871AbfKTMma (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 20 Nov 2019 07:42:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574253749;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IjiqMwk1Fsou6tGghqOXQu73ReEj37ZIEa08rkPnnp0=;
+        b=ctD55VJ1eJSpvLcbLEzlewDsKWX25SQf1MKvSGNgBpVWU3MHhgLI+RKB07ovLpNXF+aI7O
+        5hww88nTe0Dzxmn9p88ozUVfG0KYkegYnQwzJRO5IASgjeqsSNn6Wa4x6HpP7+QtXv0u+j
+        chH0qfPJQtlpWRfW+9A7svtCR4HnHuE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-21-nGJD-KGsPyyqy-xPYYGZlA-1; Wed, 20 Nov 2019 07:42:26 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E2EBA1005513;
+        Wed, 20 Nov 2019 12:42:24 +0000 (UTC)
+Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4286D67275;
+        Wed, 20 Nov 2019 12:42:24 +0000 (UTC)
+Date:   Wed, 20 Nov 2019 07:42:24 -0500
+From:   Brian Foster <bfoster@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 28/28] xfs: rework unreferenced inode lookups
+Message-ID: <20191120124224.GA15542@bfoster>
+References: <20191031234618.15403-1-david@fromorbit.com>
+ <20191031234618.15403-29-david@fromorbit.com>
+ <20191106221846.GE37080@bfoster>
+ <20191114221602.GJ4614@dread.disaster.area>
+ <20191115172600.GC55854@bfoster>
+ <20191118010047.GS4614@dread.disaster.area>
+ <20191119151344.GD10763@bfoster>
+ <20191119211834.GA4614@dread.disaster.area>
 MIME-Version: 1.0
-In-Reply-To: <00b701d59f81$319c1d90$94d458b0$@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20191119211834.GA4614@dread.disaster.area>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-MC-Unique: nGJD-KGsPyyqy-xPYYGZlA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:BKqTVjg296nd/3XyCwmU+BOe/V7LAkYtQpdMgcBGbcKjDHmLjVw
- aWD5lHdOL70ZnnKYbpOs9Ytzh7itr+eozBmaewX0knvWZN95f/7oBgOWVB2+ZoVsvJrLIzm
- aqjq6Vr14AstWil2S0/Uy4AAwdYH8EJc10HJG5BJ9QFTLIU84KhdAm0nivFyymhWTHQfZuf
- cpHGseP3PlTjwE3JbgO/w==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:aouy91mQMf8=:HAwCSCJTRAWPF0/nU22uoy
- vHUjaorgke45/23gJ++rgn3L2gzvu6pfSRqcNROdegu24P3vsZIgxqtSjHnh3TjJjuSN1LgZw
- 6x+qMaAjraWpoL303TaL78su4+T0FoTmJEdO8VPuAYAuhczbLj/u0/LMA8DKCSF0jLuPHGJhE
- mjIOk4pF20wIGIc6t/06C1KvpBUOrcI4nohNZWxfZvWnwFu1psptIQwa8p78Lm5tf1rzd1nci
- aAnTdwzWOusTt0vZTBd3nI7XnGl0lexK1yANI6S1fZ7VfQdomaviJ+kXI8xCfKQO33euSdIKo
- u39+DG/X+emKeHU5351hseB0qGgalKiK9FzicxbGr/Mnlsueyigfgk3ck5Hj6O4Dd865n3nvR
- mKyC7yowAO8qSWTVudQf9SHLtj1hvYcCbmd3dfT3YLizHIQnL3E0EqDojOAs4HXNxzIGruUvT
- vhOOxZOzhl8PkQX+8FkZkWmBKNf+nltbv8MZrRnVP6ID6lq3a7JuG+zlQTMNHCqsGIuEH/oJw
- 3DSaIDyD8r+8DfPnHx35vPFyp9KfGoj2MI445x6wRduo3gj6aPLaPoCts//eeahCnwGCVBTmr
- O6XIZGkdFU5jE4Pcnc4JCP+xd7QzBcyK7psGvWX7vUfJuSCnnc++XzD421DtR3IHo8YK52g6l
- qUBKgcNT25DrCTaQyeh7VwCeYeoQ0MnXNbU9KeXRlnyYyXQemBfb3wi6O3cVyxQ8pPSO5dv/3
- Gh8FTZzl9T/2OnnWrz7N3B3zLRlS+72E9I2TCnMf6TgQa6EqIOoQxcXKPoI3HWFqUZXcRPgkw
- BsAlCF32znrTNp+BdzLkjB57NkFFCH7UeAENFyZOHvWFakXslvoEywJteWqvrhGgTvlx+chLg
- 71WRRigjXugofZIs6kNn4ja2hduSJD7NxcK/eZO03GGQZ69NrRqN6V+PoUkCDVCcdD73px8Ac
- NmGNfpQ3773y+LfoeJdWp7/emOYndVch/BoqQvCFV9mrOHglR8AuvPmrHYWnQO5ZNVdJHhiDa
- NCZwsCastesc7GD/QgjQ/kyhpN8mKFdZNRQB4AvGVPukLcTP6WdSEqSIebQyCEckjEqsawrL7
- ISwGDRmHWj/sAMuTdF6nquATF3c6QygeOmR5cLy9kEBO1l6ywKtKOY4lvqb8FWe7rGcvdp+j6
- uz9HL+7KBA1jvHgs0Q8NMax5KWujQRFs1ln/Dua10s3nDQrSEw5Xx3GWyreRle3juGGxlARZA
- MxpjpOthezvVoG+o4p7aML+8zjZVCDxEyiSIgyT0bMRJTY8yVXHNDwKL2UgQ=
+Content-Disposition: inline
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->> =E2=80=A6
->>> +++ b/fs/exfat/nls.c
->> =E2=80=A6
->>> +static int exfat_load_upcase_table(struct super_block *sb,
->>> +		sector_t sector, unsigned long long num_sectors,
->>> +		unsigned int utbl_checksum)
->>> +{
->> =E2=80=A6
->>> +error:
->>> +	if (bh)
->>> +		brelse(bh);
-=E2=80=A6
->> Can the label =E2=80=9Crelease_bh=E2=80=9D be more helpful?
-=E2=80=A6
-> I checked not only review point but also your review points in
-> other patches, I will fix them on v4.
-=E2=80=A6
+On Wed, Nov 20, 2019 at 08:18:34AM +1100, Dave Chinner wrote:
+> On Tue, Nov 19, 2019 at 10:13:44AM -0500, Brian Foster wrote:
+> > On Mon, Nov 18, 2019 at 12:00:47PM +1100, Dave Chinner wrote:
+> > > On Fri, Nov 15, 2019 at 12:26:00PM -0500, Brian Foster wrote:
+> > > > On Fri, Nov 15, 2019 at 09:16:02AM +1100, Dave Chinner wrote:
+> > > > > On Wed, Nov 06, 2019 at 05:18:46PM -0500, Brian Foster wrote:
+> > > > > If so, most of this patch will go away....
+> > > > >=20
+> > > > > > > +=09 * attached to the buffer so we don't need to do anything=
+ more here.
+> > > > > > >  =09 */
+> > > > > > > -=09if (ip !=3D free_ip) {
+> > > > > > > -=09=09if (!xfs_ilock_nowait(ip, XFS_ILOCK_EXCL)) {
+> > > > > > > -=09=09=09rcu_read_unlock();
+> > > > > > > -=09=09=09delay(1);
+> > > > > > > -=09=09=09goto retry;
+> > > > > > > -=09=09}
+> > > > > > > -
+> > > > > > > -=09=09/*
+> > > > > > > -=09=09 * Check the inode number again in case we're racing w=
+ith
+> > > > > > > -=09=09 * freeing in xfs_reclaim_inode().  See the comments i=
+n that
+> > > > > > > -=09=09 * function for more information as to why the initial=
+ check is
+> > > > > > > -=09=09 * not sufficient.
+> > > > > > > -=09=09 */
+> > > > > > > -=09=09if (ip->i_ino !=3D inum) {
+> > > > > > > +=09if (__xfs_iflags_test(ip, XFS_ISTALE)) {
+> > > > > >=20
+> > > > > > Is there a correctness reason for why we move the stale check t=
+o under
+> > > > > > ilock (in both iflush/ifree)?
+> > > > >=20
+> > > > > It's under the i_flags_lock, and so I moved it up under the looku=
+p
+> > > > > hold of the i_flags_lock so we don't need to cycle it again.
+> > > > >=20
+> > > >=20
+> > > > Yeah, but in both cases it looks like it moved to under the ilock a=
+s
+> > > > well, which comes after i_flags_lock. IOW, why grab ilock for stale
+> > > > inodes when we're just going to skip them?
+> > >=20
+> > > Because I was worrying about serialising against reclaim before
+> > > changing the state of the inode. i.e. if the inode has already been
+> > > isolated by not yet disposed of, we shouldn't touch the inode state
+> > > at all. Serialisation against reclaim in this patch is via the
+> > > ILOCK, hence we need to do that before setting ISTALE....
+> > >=20
+> >=20
+> > Yeah, I think my question still isn't clear... I'm not talking about
+> > setting ISTALE. The code I referenced above is where we test for it and
+> > skip the inode if it is already set. For example, the code referenced
+> > above in xfs_ifree_get_one_inode() currently does the following with
+> > respect to i_flags_lock, ILOCK and XFS_ISTALE:
+> >=20
+> > =09...
+> > =09spin_lock(i_flags_lock)
+> > =09xfs_ilock_nowait(XFS_ILOCK_EXCL)
+> > =09if !XFS_ISTALE
+> > =09=09skip
+> > =09set XFS_ISTALE
+> > =09...
+>=20
+> There is another place in xfs_ifree_cluster that sets ISTALE without
+> the ILOCK held, so the ILOCK is being used here for a different
+> purpose...
+>=20
+> > The reclaim isolate code does this, however:
+> >=20
+> > =09spin_trylock(i_flags_lock)
+> > =09if !XFS_ISTALE
+> > =09=09skip
+> > =09xfs_ilock(XFS_ILOCK_EXCL)
+> > =09...=09
+>=20
+> Which is fine, because we're not trying to avoid racing with reclaim
+> here. :) i.e. all we need is the i_flags lock to check the ISTALE
+> flag safely.
+>=20
+> > So my question is why not do something like the following in the
+> > _get_one_inode() case?
+> >=20
+> > =09...
+> > =09spin_lock(i_flags_lock)
+> > =09if !XFS_ISTALE
+> > =09=09skip
+> > =09xfs_ilock_nowait(XFS_ILOCK_EXCL)
+> > =09set XFS_ISTALE
+> > =09...
+>=20
+> Because, like I said, I focussed on the lookup racing with reclaim
+> first. The above code could be used, but it puts object internal
+> state checks before we really know whether the object is safe to
+> access and whether we can trust it.
+>=20
+> I'm just following a basic RCU/lockless lookup principle here:
+> don't try to use object state before you've fully validated that the
+> object is live and guaranteed that it can be safely referenced.
+>=20
+> > IOW, what is the need, if any, to acquire ilock in the iflush/ifree
+> > paths before testing for XFS_ISTALE? Is there some specific intermediat=
+e
+> > state I'm missing or is this just unintentional?
+>=20
+> It's entirely intentional - validate and claim the object we've
+> found in the lockless lookup, then run the code that checks/changes
+> the object state. Smashing state checks and lockless lookup
+> validation together is a nasty landmine to leave behind...
+>=20
 
-Another software design alternative would be to use a jump target
-like =E2=80=9Cfree_table=E2=80=9D instead at this source code place, would=
-n't it?
+Ok, so this is intentional, but the purpose is simplification vs.
+technically being part of the lookup dance. I'm not sure I see the
+advantage given that IMO this trades off one landmine for another, but
+I'm not worried that much about it as long as the code is correct.
 
-Regards,
-Markus
+I guess we'll see how things change after reevaluation of the whole
+holding ilock across contexts behavior, but if we do end up with a
+similar pattern in the iflush/ifree paths please document that
+explicitly in the comments. Otherwise in a patch that swizzles this code
+around and explicitly plays games with ilock, the intent of this
+particular change is not clear to somebody reading the code IMO. In
+fact, I think it might be interesting to see if we could define a couple
+helpers (located closer to the reclaim code) to perform an unreferenced
+lookup/release of an inode, but that is secondary to nailing down the
+fundamental rules.
+
+Brian
+
+> Cheers,
+>=20
+> Dave.
+> --=20
+> Dave Chinner
+> david@fromorbit.com
+>=20
+
