@@ -2,134 +2,226 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 165D710328F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 05:33:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 376021032AB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 06:00:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727544AbfKTEdW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Nov 2019 23:33:22 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:19135 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727359AbfKTEdV (ORCPT
+        id S1726038AbfKTFAk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Nov 2019 00:00:40 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36900 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725263AbfKTFAi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Nov 2019 23:33:21 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20191120043318epoutp01e8c6ca182ed8fb97bbdbdb467d06ec43~YxMAOwaef2620926209epoutp01N
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2019 04:33:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20191120043318epoutp01e8c6ca182ed8fb97bbdbdb467d06ec43~YxMAOwaef2620926209epoutp01N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1574224398;
-        bh=+WrvUKRWjigTO8zWpKSQfeGnJ6UtPUA5CN1IJiTH4vs=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=aUeq+hBkpOw6oPebhKGGJoIhOKtfDqGg4jD5sN5eKMVQMvhlUO/1cIvc60TPulJyF
-         wAZtlMPjKfUcMM5tnWliBbYldUNlSjNMcIunTl1ITrlFr7U3fgVSrMPakJtnxYbtDd
-         9LMj1MdZ3sY75iZKjdvKpoIypiRCu2GEN80m6Xlc=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20191120043318epcas1p2e23d237b91c282f7c5c093a9613bd272~YxL-9mAQ11649016490epcas1p2w;
-        Wed, 20 Nov 2019 04:33:18 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.162]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 47HqZ53wWLzMqYkf; Wed, 20 Nov
-        2019 04:33:17 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        05.C0.04235.D02C4DD5; Wed, 20 Nov 2019 13:33:17 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191120043316epcas1p2ead7f625cfdd1574387fb4d58dc98365~YxL_btG0w3201932019epcas1p2R;
-        Wed, 20 Nov 2019 04:33:16 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191120043316epsmtrp21a6d7e0ee72ba6e30dd1a6d55354a333~YxL_a_RwI2914729147epsmtrp2X;
-        Wed, 20 Nov 2019 04:33:16 +0000 (GMT)
-X-AuditID: b6c32a36-defff7000000108b-8b-5dd4c20d2445
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        5E.54.03654.C02C4DD5; Wed, 20 Nov 2019 13:33:16 +0900 (KST)
-Received: from DONAMJAEJEO06 (unknown [10.88.104.63]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191120043316epsmtip2409e867c6a92859f2b0bd6e515c223a8~YxL_NZsuU0399303993epsmtip2U;
-        Wed, 20 Nov 2019 04:33:16 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'Christoph Hellwig'" <hch@lst.de>
-Cc:     "'Daniel Wagner'" <dwagner@suse.de>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>, <valdis.kletnieks@vt.edu>,
-        <linkinjeon@gmail.com>, <Markus.Elfring@web.de>,
-        <sj1557.seo@samsung.com>
-In-Reply-To: <20191119171752.GA20042@lst.de>
-Subject: RE: [PATCH v2 02/13] exfat: add super block operations
-Date:   Wed, 20 Nov 2019 13:33:16 +0900
-Message-ID: <007901d59f5b$a0eb6780$e2c23680$@samsung.com>
+        Wed, 20 Nov 2019 00:00:38 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAK4vVs6051549
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2019 00:00:36 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2wcf35fgdf-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2019 00:00:36 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
+        Wed, 20 Nov 2019 05:00:34 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 20 Nov 2019 05:00:31 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xAK50UeZ47710246
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Nov 2019 05:00:30 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5B4EFA4069;
+        Wed, 20 Nov 2019 05:00:29 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F0E9DA4057;
+        Wed, 20 Nov 2019 05:00:27 +0000 (GMT)
+Received: from localhost.localdomain.com (unknown [9.199.63.56])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 20 Nov 2019 05:00:27 +0000 (GMT)
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+To:     jack@suse.cz, tytso@mit.edu, linux-ext4@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, mbobrowski@mbobrowski.org,
+        riteshh@linux.ibm.com
+Subject: [RFCv3 0/4] ext4: Introducing ilock wrapper APIs & fixing i_rwsem scalablity prob. in DIO mixed-rw
+Date:   Wed, 20 Nov 2019 10:30:20 +0530
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 14.0
-Content-Language: ko
-Thread-Index: AQEo1XJlLzywHhHshRBLsQkFEP9+bwICkZlvAboM/rECPrXdMAJVBHmKAkbIIb+omFKvQA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNJsWRmVeSWpSXmKPExsWy7bCmgS7voSuxBl/OSlscfjyJ3aJ58Xo2
-        i5WrjzJZXL97i9liz96TLBaXd81hs/g/6zmrxZZ/R1gtLr3/wOLA6bFz1l12j/1z17B77L7Z
-        wObRt2UVo8fm09UenzfJeRza/obN4/azbSwBHFE5NhmpiSmpRQqpecn5KZl56bZK3sHxzvGm
-        ZgaGuoaWFuZKCnmJuam2Si4+AbpumTlA5ykplCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJVS
-        C1JyCgwNCvSKE3OLS/PS9ZLzc60MDQyMTIEqE3Iyfl/nL7jKWrHr9yymBsZNLF2MnBwSAiYS
-        vf/vs3YxcnEICexglPiw5w4jhPOJUWLBpAVsEM43Rokp0x4wwrQcv30dKrGXUeLb93csEM4r
-        RokJ69rYQKrYBHQl/v3ZD2aLCKhJnPnZxg5SxAwy9/7MbqBRHBycAjoSe++Ug9QIC9hLXJy/
-        jwnEZhFQlXj7eiPYNl4BS4mtKzZA2YISJ2c+ATucWUBeYvvbOcwQFylI7Dj7mhEiLiIxu7ON
-        GWS8iECYxIfNQSBrJQT62SW2d+yE+sBF4uLRGdAAEJZ4dXwLO4QtJfH53V42kF4JgWqJj/uh
-        xncwSrz4bgthG0vcXL+BFaSEWUBTYv0ufYiwosTO33OhLuCTePe1hxViCq9ER5sQRImqRN+l
-        w0wQtrREV/sH9gmMSrOQ/DULyV+zkPwyC2HZAkaWVYxiqQXFuempxYYFRshRvYkRnHC1zHYw
-        Ljrnc4hRgINRiYfX4tLlWCHWxLLiytxDjBIczEoivH6PLsQK8aYkVlalFuXHF5XmpBYfYjQF
-        BvtEZinR5HxgNsgriTc0NTI2NrYwMTM3MzVWEufl+HExVkggPbEkNTs1tSC1CKaPiYNTqoGR
-        LUJtS33szykCUTX7H2lO3XStedlr9uViCtt9q56VOSnf6ymIf/f/15T5X/b+n/480VE2PPI5
-        /1sp1mdlynd1OYyuX2i7wLeIt6SHX/2X6vLnzSxLvoamqKe/kTjy917M7ZPXRW65eaSXsk96
-        3Ph/5jdv1bli8Xf5L589lDqt2N7n6JpLufW5SizFGYmGWsxFxYkAN8F2+84DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEIsWRmVeSWpSXmKPExsWy7bCSvC7PoSuxBs27TSwOP57EbtG8eD2b
-        xcrVR5ksrt+9xWyxZ+9JFovLu+awWfyf9ZzVYsu/I6wWl95/YHHg9Ng56y67x/65a9g9dt9s
-        YPPo27KK0WPz6WqPz5vkPA5tf8PmcfvZNpYAjigum5TUnMyy1CJ9uwSujN/X+Quuslbs+j2L
-        qYFxE0sXIyeHhICJxPHb19lAbCGB3YwSRw7EQcSlJY6dOMPcxcgBZAtLHD5cDFHyglHi+oMM
-        EJtNQFfi35/9YK0iAmoSZ362sXcxcnEwC/xilDj3vosVxAGaySTR+vM7G8ggTgEdib13ykEa
-        hAXsJS7O38cEYrMIqEq8fb2REcTmFbCU2LpiA5QtKHFy5hMWkFZmAT2JNogSZgF5ie1v5zBD
-        nKkgsePsa6i4iMTszjawk0UEwiQ+bA6awCg8C8mgWQiDZiEZNAtJ8wJGllWMkqkFxbnpucWG
-        BYZ5qeV6xYm5xaV56XrJ+bmbGMExp6W5g/HykvhDjAIcjEo8vBaXLscKsSaWFVfmHmKU4GBW
-        EuH1e3QhVog3JbGyKrUoP76oNCe1+BCjNAeLkjjv07xjkUIC6YklqdmpqQWpRTBZJg5OqQbG
-        SEWVdI05u49mqYff/2zvm1h5I+VmM/9H+RMPfhTd5tN8deTj9nUiOZsd0z00X5hpTYzY++/a
-        k13LS0rq5y3sSTfaWV3O3bYr520Rq+77a2xL2e4rlAoXJGz99Tmp2fCss6RXzYSycwKbDacY
-        tNiejbWJvi954FCdDrdPY+fXliX5UenzhZ2VWIozEg21mIuKEwF1F7VBtQIAAA==
-X-CMS-MailID: 20191120043316epcas1p2ead7f625cfdd1574387fb4d58dc98365
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191119071403epcas1p3f3d69faad57984fa3d079cf18f0a46dc
-References: <20191119071107.1947-1-namjae.jeon@samsung.com>
-        <CGME20191119071403epcas1p3f3d69faad57984fa3d079cf18f0a46dc@epcas1p3.samsung.com>
-        <20191119071107.1947-3-namjae.jeon@samsung.com>
-        <20191119085639.kr4esp72dix4lvok@beryllium.lan>
-        <00d101d59eba$dcc373c0$964a5b40$@samsung.com>
-        <20191119171752.GA20042@lst.de>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19112005-4275-0000-0000-000003836F76
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19112005-4276-0000-0000-00003896E602
+Message-Id: <20191120050024.11161-1-riteshh@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-19_08:2019-11-15,2019-11-19 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ suspectscore=0 mlxlogscore=999 priorityscore=1501 clxscore=1015
+ lowpriorityscore=0 impostorscore=0 phishscore=0 spamscore=0 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1911200045
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> On Tue, Nov 19, 2019 at 06:22:28PM +0900, Namjae Jeon wrote:
-> > > No idea what the code does. But I was just skimming over and find the
-> > > above pattern somehow strange. Shouldn't this be something like
-> > Right.
-> >
-> > >
-> > > 	if (!READ_ONCE(sbi->s_dirt)) {
-> > > 		WRITE_ONCE(sbi->s_dirt, true);
-> >
-> > It should be :
-> > 	if (READ_ONCE(sbi->s_dirt)) {
-> >  		WRITE_ONCE(sbi->s_dirt, false);
-> > I will fix it on v3.
-> 
-> The other option would be to an unsigned long flags field and define
-> bits flags on it, then use test_and_set_bit, test_and_clear_bit etc.
-> Which might be closer to the pattern we use elsewhere in the kernel.
-I will replace it with test_and_set/clear_bit().
+These are ilock patches which helps improve the current inode lock scalabiliy
+problem in ext4 DIO mixed read/write workload case. The problem was first
+reported by Joseph [1]. These patches are based upon upstream discussion
+with Jan Kara & Joseph [2].
 
-Thanks!
+The problem really is that in case of DIO overwrites, we start with
+a exclusive lock and then downgrade it later to shared lock. This causes a
+scalability problem in case of mixed DIO read/write workload case. 
+i.e. if we have any ongoing DIO reads and then comes a DIO writes,
+(since writes starts with excl. inode lock) then it has to wait until the
+shared lock is released (which only happens when DIO read is completed). 
+Same is true for vice versa as well.
+The same can be easily observed with perf-tools trace analysis [3].
+
+This patch series (Patch-4) helps fix that situation even without
+dioread_nolock mount opt. This is inline with the discussions with Jan [4].
+More details about this are mentioned in commit msg of patch 3 & 4.
+
+These patches are based on the top of Ted's ext4 master tree.
+
+Patch description
+=================
+Patch-1: Fixes ext4_dax_read/write inode locking sequence for IOCB_NOWAIT
+
+Patch-2: Introduces ext4_ilock/unlock APIs for use in next patches
+Mainly a wrapper function for inode_lock/unlock.
+
+Patch-3: Starts with shared iolock in case of DIO instead of exclusive iolock
+This patchset helps fix the reported scalablity problem. But this Patch-3
+fixes it only for dioread_nolock mount option.
+
+Patch-4: In this we get away with dioread_nolock mount option condition
+to check for shared locking. But we still take excl. lock for data=journal or
+non-extent mode or non-regular file. This patch commit msg describe in
+detail about why we don't need excl. lock even without dioread_nolock.
+
+Git tree
+========
+https://github.com/riteshharjani/linux/tree/ext4-ilock-RFC-v3
+
+Testing
+=======
+Completed xfstests -g auto with default mkfs & mount opts.
+No new failures except the known one without these patches.
+
+
+Performance results
+===================
+Collected some performance numbers for DIO sync mixed random read/write
+workload w.r.t number of threads (ext4) to check for scalability.
+The performance historgram shown below is the percentage change in
+performance by using this ilock patchset as compared to vanilla kernel.
+
+
+FIO command:
+fio -name=DIO-mixed-randrw -filename=./testfile -direct=1 -iodepth=1 -thread \
+-rw=randrw -ioengine=psync -bs=$bs -size=10G -numjobs=$thread \
+-group_reporting=1 -runtime=120
+
+Used fioperf tool [5] for collecting this performance scores.
+
+Below shows the performance benefit hist with this ilock patchset in (%)
+w.r.t vanilla kernel for mixed randrw workload (for 4K block size).
+Notice, the percentage benefit increases with increasing number of
+threads. So this patchset help achieve good scalability in the mentioned
+workload. Also this gives upto ~140% perf improvement in 24 threads mixed randrw
+workload with 4K burst size.
+The performance difference can be even higher with high speed storage
+devices, since bw speeds without the patch seems to flatten due to lock
+contention problem in case of multiple threads.
+[Absolute perf delta can be seen at [6]]
+
+
+		Performance benefit (%) data randrw (read)-4K
+		    (default mount options)
+  160 +-+------+-------+--------+--------+-------+--------+-------+------+-+
+      |        +       +        +        +       +        +       +        |
+  140 +-+ 							   **    +-+
+      |                                                    **      **      |
+  120 +-+                                         **       **      **    +-+
+      |                                           **       **      **      |
+  100 +-+                                **       **       **      **    +-+
+      |                                  **       **       **      **      |
+   80 +-+                                **       **       **      **    +-+
+      |                                  **       **       **      **      |
+      |                          **      **       **       **      **      |
+   60 +-+                        **      **       **       **      **    +-+
+      |                          **      **       **       **      **      |
+   40 +-+                        **      **       **       **      **    +-+
+      |                 **       **      **       **       **      **      |
+   20 +-+               **       **      **       **       **      **    +-+
+      |                 **       **      **       **       **      **      |
+    0 +-+       **      **       **      **       **       **      **    +-+
+      |        +       +        +        +       +        +       +        |
+  -20 +-+------+-------+--------+--------+-------+--------+-------+------+-+
+               1       2        4        8      12       16      24
+	       		Threads
+
+
+		Performance benefit (%) data randrw (write)-4K
+		     (default mount options)
+  160 +-+------+-------+--------+--------+-------+--------+-------+------+-+
+      |        +       +        +        +       +        +       +        |
+  140 +-+ 							   **    +-+
+      |                                                    **      **      |
+  120 +-+                                         **       **      **    +-+
+      |                                           **       **      **      |
+  100 +-+                                **       **       **      **    +-+
+      |                                  **       **       **      **      |
+   80 +-+                                **       **       **      **    +-+
+      |                                  **       **       **      **      |
+      |                          **      **       **       **      **      |
+   60 +-+                        **      **       **       **      **    +-+
+      |                          **      **       **       **      **      |
+   40 +-+                        **      **       **       **      **    +-+
+      |                 **       **      **       **       **      **      |
+   20 +-+               **       **      **       **       **      **    +-+
+      |                 **       **      **       **       **      **      |
+    0 +-+       **      **       **      **       **       **      **    +-+
+      |        +       +        +        +       +        +       +        |
+  -20 +-+------+-------+--------+--------+-------+--------+-------+------+-+
+               1       2        4        8      12       16      24
+			Threads
+
+Previous version
+================
+v2: https://www.spinics.net/lists/kernel/msg3262531.html
+v1: https://patchwork.ozlabs.org/cover/1163286/
+
+References
+==========
+[1]: https://lore.kernel.org/linux-ext4/1566871552-60946-4-git-send-email-joseph.qi@linux.alibaba.com/
+[2]: https://lore.kernel.org/linux-ext4/20190910215720.GA7561@quack2.suse.cz/
+[3]: https://raw.githubusercontent.com/riteshharjani/LinuxStudy/master/ext4/perf.report
+[4]: https://patchwork.ozlabs.org/cover/1163286/
+[5]: https://github.com/riteshharjani/fioperf
+[6]: https://raw.githubusercontent.com/riteshharjani/LinuxStudy/master/ext4/diff_ilock_v3_default_dio_randrw_4K.txt
+
+-ritesh
+
+
+Ritesh Harjani (4):
+  ext4: fix ext4_dax_read/write inode locking sequence for IOCB_NOWAIT
+  ext4: Add ext4_ilock & ext4_iunlock API
+  ext4: start with shared iolock in case of DIO instead of excl. iolock
+  ext4: Move to shared iolock even without dioread_nolock mount opt
+
+ fs/ext4/ext4.h    |  33 ++++++
+ fs/ext4/extents.c |  16 +--
+ fs/ext4/file.c    | 252 +++++++++++++++++++++++++++++++++-------------
+ fs/ext4/inode.c   |   4 +-
+ fs/ext4/ioctl.c   |  16 +--
+ fs/ext4/super.c   |  12 +--
+ fs/ext4/xattr.c   |  17 ++--
+ 7 files changed, 246 insertions(+), 104 deletions(-)
+
+-- 
+2.21.0
 
