@@ -2,193 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1BF61039E0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 13:18:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A91F0103A26
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 13:36:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728711AbfKTMSl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Nov 2019 07:18:41 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54222 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728611AbfKTMSl (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Nov 2019 07:18:41 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAKCCiH7120078
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2019 07:18:40 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wcf5qpqed-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2019 07:18:39 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
-        Wed, 20 Nov 2019 12:18:37 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 20 Nov 2019 12:18:33 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xAKCIXK333292484
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Nov 2019 12:18:33 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E407542041;
-        Wed, 20 Nov 2019 12:18:32 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9639B42047;
-        Wed, 20 Nov 2019 12:18:31 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.199.63.56])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 20 Nov 2019 12:18:31 +0000 (GMT)
-Subject: Re: [RFCv3 2/4] ext4: Add ext4_ilock & ext4_iunlock API
-To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Cc:     jack@suse.cz, tytso@mit.edu, linux-ext4@vger.kernel.org,
+        id S1729801AbfKTMgZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Nov 2019 07:36:25 -0500
+Received: from mout.web.de ([212.227.15.3]:59625 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727876AbfKTMgZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 20 Nov 2019 07:36:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1574253368;
+        bh=MxmyEzfAFTWwBXB89FoFsrUf5ujqlJkBwvTvCCN+JjQ=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=DvRJ3p9LIV7cJZkHg3gvRDUJcdttB3hzIdcOv3tHBpabX2lR/wEsEEyY1hdXPhq4O
+         Dus7YeRY65J0SkDH2FQBP4j+D98XBzBezpL19MOsQQZsLvj/JkpTp+oO18+aVITBwH
+         22mU7xvgK4ICJ4RA59Z/DlwF4aK3zgP0hBVA9+wc=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.3] ([93.132.176.80]) by smtp.web.de (mrweb003
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0LgYRZ-1i1K2U3lfZ-00nyyf; Wed, 20
+ Nov 2019 13:36:08 +0100
+Subject: Re: [PATCH v3 10/13] exfat: add nls operations
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
         linux-fsdevel@vger.kernel.org
-References: <20191120050024.11161-1-riteshh@linux.ibm.com>
- <20191120050024.11161-3-riteshh@linux.ibm.com>
- <20191120112339.GB30486@bobrowski>
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Date:   Wed, 20 Nov 2019 17:48:30 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>,
+        Daniel Wagner <dwagner@suse.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        linkinjeon@gmail.com
+References: <20191119093718.3501-1-namjae.jeon@samsung.com>
+ <CGME20191119094026epcas1p3eea5c655f3b89383e02c0097c491f0bc@epcas1p3.samsung.com>
+ <20191119093718.3501-11-namjae.jeon@samsung.com>
+ <705cb02b-7707-af52-c2b5-70660debc619@web.de>
+ <00b701d59f81$319c1d90$94d458b0$@samsung.com>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
+ +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
+ mpVJgXGKkNJ1ey+QOXouzlErVvE2fRh+KXXN1Q7fSmTJlAW9XJYHS3BDHb0uRpymRSX3O+E2
+ lA87C7R8qAigPDZi6Z7UmwIA83ZMKXQ5stA0lhPyYgQcM7fh7V4ZYhnR0I5/qkUoxKpqaYLp
+ YHBczVP+Zx/zHOM0KQphOMbU7X3c1pmMruoe6ti9uZzqZSLsF+NKXFEPBS665tQr66HJvZvY
+ GMDlntZFAZ6xQvCC1r3MGoxEC1tuEa24vPCC9RZ9wk2sY5Csbva0WwYv3WKRZZBv8eIhGMxs
+ rcpeGShRFyZ/0BYO53wZAPV1pEhGLLxd8eLN/nEWjJE0ejakPC1H/mt5F+yQBJAzz9JzbToU
+ 5jKLu0SugNI18MspJut8AiA1M44CIWrNHXvWsQ+nnBKHDHHYZu7MoXlOmB32ndsfPthR3GSv
+ jN7YD4Ad724H8fhRijmC1+RpuSce7w2JLj5cYj4MlccmNb8YUxsE8brY2WkXQYS8Ivse39MX
+ BE66MQN0r5DQ6oqgoJ4gHIVBUv/ZwgcmUNS5gQkNCFA0dWXznQARAQABtCZNYXJrdXMgRWxm
+ cmluZyA8TWFya3VzLkVsZnJpbmdAd2ViLmRlPokCVAQTAQgAPhYhBHDP0hzibeXjwQ/ITuU9
+ Figxg9azBQJYNvsQAhsjBQkJZgGABQsJCAcCBhUICQoLAgQWAgMBAh4BAheAAAoJEOU9Figx
+ g9azcyMP/iVihZkZ4VyH3/wlV3nRiXvSreqg+pGPI3c8J6DjP9zvz7QHN35zWM++1yNek7Ar
+ OVXwuKBo18ASlYzZPTFJZwQQdkZSV+atwIzG3US50ZZ4p7VyUuDuQQVVqFlaf6qZOkwHSnk+
+ CeGxlDz1POSHY17VbJG2CzPuqMfgBtqIU1dODFLpFq4oIAwEOG6fxRa59qbsTLXxyw+PzRaR
+ LIjVOit28raM83Efk07JKow8URb4u1n7k9RGAcnsM5/WMLRbDYjWTx0lJ2WO9zYwPgRykhn2
+ sOyJVXk9xVESGTwEPbTtfHM+4x0n0gC6GzfTMvwvZ9G6xoM0S4/+lgbaaa9t5tT/PrsvJiob
+ kfqDrPbmSwr2G5mHnSM9M7B+w8odjmQFOwAjfcxoVIHxC4Cl/GAAKsX3KNKTspCHR0Yag78w
+ i8duH/eEd4tB8twcqCi3aCgWoIrhjNS0myusmuA89kAWFFW5z26qNCOefovCx8drdMXQfMYv
+ g5lRk821ZCNBosfRUvcMXoY6lTwHLIDrEfkJQtjxfdTlWQdwr0mM5ye7vd83AManSQwutgpI
+ q+wE8CNY2VN9xAlE7OhcmWXlnAw3MJLW863SXdGlnkA3N+U4BoKQSIToGuXARQ14IMNvfeKX
+ NphLPpUUnUNdfxAHu/S3tPTc/E/oePbHo794dnEm57LuuQINBFg2+xABEADZg/T+4o5qj4cw
+ nd0G5pFy7ACxk28mSrLuva9tyzqPgRZ2bdPiwNXJUvBg1es2u81urekeUvGvnERB/TKekp25
+ 4wU3I2lEhIXj5NVdLc6eU5czZQs4YEZbu1U5iqhhZmKhlLrhLlZv2whLOXRlLwi4jAzXIZAu
+ 76mT813jbczl2dwxFxcT8XRzk9+dwzNTdOg75683uinMgskiiul+dzd6sumdOhRZR7YBT+xC
+ wzfykOgBKnzfFscMwKR0iuHNB+VdEnZw80XGZi4N1ku81DHxmo2HG3icg7CwO1ih2jx8ik0r
+ riIyMhJrTXgR1hF6kQnX7p2mXe6K0s8tQFK0ZZmYpZuGYYsV05OvU8yqrRVL/GYvy4Xgplm3
+ DuMuC7/A9/BfmxZVEPAS1gW6QQ8vSO4zf60zREKoSNYeiv+tURM2KOEj8tCMZN3k3sNASfoG
+ fMvTvOjT0yzMbJsI1jwLwy5uA2JVdSLoWzBD8awZ2X/eCU9YDZeGuWmxzIHvkuMj8FfX8cK/
+ 2m437UA877eqmcgiEy/3B7XeHUipOL83gjfq4ETzVmxVswkVvZvR6j2blQVr+MhCZPq83Ota
+ xNB7QptPxJuNRZ49gtT6uQkyGI+2daXqkj/Mot5tKxNKtM1Vbr/3b+AEMA7qLz7QjhgGJcie
+ qp4b0gELjY1Oe9dBAXMiDwARAQABiQI8BBgBCAAmFiEEcM/SHOJt5ePBD8hO5T0WKDGD1rMF
+ Alg2+xACGwwFCQlmAYAACgkQ5T0WKDGD1rOYSw/+P6fYSZjTJDAl9XNfXRjRRyJSfaw6N1pA
+ Ahuu0MIa3djFRuFCrAHUaaFZf5V2iW5xhGnrhDwE1Ksf7tlstSne/G0a+Ef7vhUyeTn6U/0m
+ +/BrsCsBUXhqeNuraGUtaleatQijXfuemUwgB+mE3B0SobE601XLo6MYIhPh8MG32MKO5kOY
+ hB5jzyor7WoN3ETVNQoGgMzPVWIRElwpcXr+yGoTLAOpG7nkAUBBj9n9TPpSdt/npfok9ZfL
+ /Q+ranrxb2Cy4tvOPxeVfR58XveX85ICrW9VHPVq9sJf/a24bMm6+qEg1V/G7u/AM3fM8U2m
+ tdrTqOrfxklZ7beppGKzC1/WLrcr072vrdiN0icyOHQlfWmaPv0pUnW3AwtiMYngT96BevfA
+ qlwaymjPTvH+cTXScnbydfOQW8220JQwykUe+sHRZfAF5TS2YCkQvsyf7vIpSqo/ttDk4+xc
+ Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
+ x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
+ pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
+Message-ID: <cb82f263-4374-c483-7093-03de81618399@web.de>
+Date:   Wed, 20 Nov 2019 13:36:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20191120112339.GB30486@bobrowski>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <00b701d59f81$319c1d90$94d458b0$@samsung.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19112012-0012-0000-0000-00000369C9F0
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19112012-0013-0000-0000-000021A5594E
-Message-Id: <20191120121831.9639B42047@d06av24.portsmouth.uk.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-20_03:2019-11-15,2019-11-20 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- mlxscore=0 malwarescore=0 suspectscore=0 priorityscore=1501
- lowpriorityscore=0 mlxlogscore=999 clxscore=1015 impostorscore=0
- spamscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1911200112
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:BKqTVjg296nd/3XyCwmU+BOe/V7LAkYtQpdMgcBGbcKjDHmLjVw
+ aWD5lHdOL70ZnnKYbpOs9Ytzh7itr+eozBmaewX0knvWZN95f/7oBgOWVB2+ZoVsvJrLIzm
+ aqjq6Vr14AstWil2S0/Uy4AAwdYH8EJc10HJG5BJ9QFTLIU84KhdAm0nivFyymhWTHQfZuf
+ cpHGseP3PlTjwE3JbgO/w==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:aouy91mQMf8=:HAwCSCJTRAWPF0/nU22uoy
+ vHUjaorgke45/23gJ++rgn3L2gzvu6pfSRqcNROdegu24P3vsZIgxqtSjHnh3TjJjuSN1LgZw
+ 6x+qMaAjraWpoL303TaL78su4+T0FoTmJEdO8VPuAYAuhczbLj/u0/LMA8DKCSF0jLuPHGJhE
+ mjIOk4pF20wIGIc6t/06C1KvpBUOrcI4nohNZWxfZvWnwFu1psptIQwa8p78Lm5tf1rzd1nci
+ aAnTdwzWOusTt0vZTBd3nI7XnGl0lexK1yANI6S1fZ7VfQdomaviJ+kXI8xCfKQO33euSdIKo
+ u39+DG/X+emKeHU5351hseB0qGgalKiK9FzicxbGr/Mnlsueyigfgk3ck5Hj6O4Dd865n3nvR
+ mKyC7yowAO8qSWTVudQf9SHLtj1hvYcCbmd3dfT3YLizHIQnL3E0EqDojOAs4HXNxzIGruUvT
+ vhOOxZOzhl8PkQX+8FkZkWmBKNf+nltbv8MZrRnVP6ID6lq3a7JuG+zlQTMNHCqsGIuEH/oJw
+ 3DSaIDyD8r+8DfPnHx35vPFyp9KfGoj2MI445x6wRduo3gj6aPLaPoCts//eeahCnwGCVBTmr
+ O6XIZGkdFU5jE4Pcnc4JCP+xd7QzBcyK7psGvWX7vUfJuSCnnc++XzD421DtR3IHo8YK52g6l
+ qUBKgcNT25DrCTaQyeh7VwCeYeoQ0MnXNbU9KeXRlnyYyXQemBfb3wi6O3cVyxQ8pPSO5dv/3
+ Gh8FTZzl9T/2OnnWrz7N3B3zLRlS+72E9I2TCnMf6TgQa6EqIOoQxcXKPoI3HWFqUZXcRPgkw
+ BsAlCF32znrTNp+BdzLkjB57NkFFCH7UeAENFyZOHvWFakXslvoEywJteWqvrhGgTvlx+chLg
+ 71WRRigjXugofZIs6kNn4ja2hduSJD7NxcK/eZO03GGQZ69NrRqN6V+PoUkCDVCcdD73px8Ac
+ NmGNfpQ3773y+LfoeJdWp7/emOYndVch/BoqQvCFV9mrOHglR8AuvPmrHYWnQO5ZNVdJHhiDa
+ NCZwsCastesc7GD/QgjQ/kyhpN8mKFdZNRQB4AvGVPukLcTP6WdSEqSIebQyCEckjEqsawrL7
+ ISwGDRmHWj/sAMuTdF6nquATF3c6QygeOmR5cLy9kEBO1l6ywKtKOY4lvqb8FWe7rGcvdp+j6
+ uz9HL+7KBA1jvHgs0Q8NMax5KWujQRFs1ln/Dua10s3nDQrSEw5Xx3GWyreRle3juGGxlARZA
+ MxpjpOthezvVoG+o4p7aML+8zjZVCDxEyiSIgyT0bMRJTY8yVXHNDwKL2UgQ=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Matthew,
+>> =E2=80=A6
+>>> +++ b/fs/exfat/nls.c
+>> =E2=80=A6
+>>> +static int exfat_load_upcase_table(struct super_block *sb,
+>>> +		sector_t sector, unsigned long long num_sectors,
+>>> +		unsigned int utbl_checksum)
+>>> +{
+>> =E2=80=A6
+>>> +error:
+>>> +	if (bh)
+>>> +		brelse(bh);
+=E2=80=A6
+>> Can the label =E2=80=9Crelease_bh=E2=80=9D be more helpful?
+=E2=80=A6
+> I checked not only review point but also your review points in
+> other patches, I will fix them on v4.
+=E2=80=A6
 
-Thanks for the review.
+Another software design alternative would be to use a jump target
+like =E2=80=9Cfree_table=E2=80=9D instead at this source code place, would=
+n't it?
 
-On 11/20/19 4:53 PM, Matthew Bobrowski wrote:
-> On Wed, Nov 20, 2019 at 10:30:22AM +0530, Ritesh Harjani wrote:
->> This adds ext4_ilock/iunlock types of APIs.
->> This is the preparation APIs to make shared
->> locking/unlocking & restarting with exclusive
->> locking/unlocking easier in next patch.
-> 
-> *scratches head*
-> 
-> A nit, but what's with the changelog wrapping at like ~40 characters?
-
-Yup will fix that next time. Thanks.
-
-> 
->> +#define EXT4_IOLOCK_EXCL	(1 << 0)
->> +#define EXT4_IOLOCK_SHARED	(1 << 1)
->>
->> +static inline void ext4_ilock(struct inode *inode, unsigned int iolock)
->> +{
->> +	if (iolock == EXT4_IOLOCK_EXCL)
->> +		inode_lock(inode);
->> +	else
->> +		inode_lock_shared(inode);
->> +}
->> +
->> +static inline void ext4_iunlock(struct inode *inode, unsigned int iolock)
->> +{
->> +	if (iolock == EXT4_IOLOCK_EXCL)
->> +		inode_unlock(inode);
->> +	else
->> +		inode_unlock_shared(inode);
->> +}
->> +
->> +static inline int ext4_ilock_nowait(struct inode *inode, unsigned int iolock)
->> +{
->> +	if (iolock == EXT4_IOLOCK_EXCL)
->> +		return inode_trylock(inode);
->> +	else
->> +		return inode_trylock_shared(inode);
->> +}
-> 
-> Is it really necessary for all these helpers to actually have the
-> 'else' statement? Could we not just return/set whatever takes the
-> 'else' branch directly from the end of these functions? I think it
-> would be cleaner that way.
-
-Sure np.
-
-> 
-> /me doesn't really like the naming of these functions either.
-
-:) difference of opinion.
-
-> 
-> What's people's opinion on changing these for example:
->     - ext4_inode_lock()
->     - ext4_inode_unlock()
-> 
-
-ext4_ilock/iunlock sounds better to me as it is short too.
-But if others have also have a strong opinion towards
-ext4_inode_lock/unlock() - I am ok with that.
-
-
-> Or, better yet, is there any reason why we've never actually
-> considered naming such functions to have the verb precede the actual
-> object that we're performing the operation on? In my opinion, it
-> totally makes way more sense from a code readability standpoint and
-> overall intent of the function. For example:
->     - ext4_lock_inode()
->     - ext4_unlock_inode()
-
-Not against your suggestion here.
-But in kernel I do see a preference towards object followed by a verb.
-At least in vfs I see functions like inode_lock()/unlock().
-
-Plus I would not deny that this naming is also inspired from
-xfs_ilock()/iunlock API names.
-
-> 
->> +static inline void ext4_ilock_demote(struct inode *inode, unsigned int iolock)
->> +{
->> +	BUG_ON(iolock != EXT4_IOLOCK_EXCL);
->> +	downgrade_write(&inode->i_rwsem);
->> +}
->> +
-> 
-> Same principle would also apply here.
-> 
-> On an ending note, I'm not really sure that I like the name of these
-> macros. Like, for example, expand the macro 'EXT4_IOLOCK_EXCL' into
-> plain english words as if you were reading it. This would translate to
-> something like 'EXT4 INPUT/OUPUT LOCK EXCLUSIVE' or 'EXT4 IO LOCK
-> EXCLUSIVE'. Just flipping the words around make a significant
-> improvement for overall readability i.e. 'EXT4_EXCL_IOLOCK', which
-> would expand out to 'EXT4 EXCLUSIVE IO LOCK'. Speaking of, is there
-
-Ditto. Unless you and others have a strong objection, I would rather
-keep this as is :)
-
-
-> any reason why we don't mention 'INODE' here seeing as though that's
-> the object we're actually protecting by taking one of these locking
-> mechanisms?
-
-hmm, it was increasing the name of the macro if I do it that way.
-But that's ok. Is below macro name better?
-
-#define EXT4_INODE_IOLOCK_EXCL		(1 << 0)
-#define EXT4_INODE_IOLOCK_SHARED	(1 << 1)
-
-
-Thanks for the review!!
--ritesh
-
+Regards,
+Markus
