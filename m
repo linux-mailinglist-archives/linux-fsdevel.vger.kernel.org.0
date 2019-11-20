@@ -2,168 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1C8F103D50
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 15:33:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F96F103E5C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 16:28:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731469AbfKTOdD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Nov 2019 09:33:03 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45242 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729591AbfKTOdD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Nov 2019 09:33:03 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 84FFBBF50;
-        Wed, 20 Nov 2019 14:33:00 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 808061E484C; Wed, 20 Nov 2019 15:32:57 +0100 (CET)
-Date:   Wed, 20 Nov 2019 15:32:57 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     jack@suse.cz, tytso@mit.edu, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, mbobrowski@mbobrowski.org
-Subject: Re: [RFCv3 4/4] ext4: Move to shared iolock even without
- dioread_nolock mount opt
-Message-ID: <20191120143257.GE9509@quack2.suse.cz>
-References: <20191120050024.11161-1-riteshh@linux.ibm.com>
- <20191120050024.11161-5-riteshh@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191120050024.11161-5-riteshh@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1730661AbfKTP2F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Nov 2019 10:28:05 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:23130 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730571AbfKTP2E (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 20 Nov 2019 10:28:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574263683;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=kz9ekAzvSekRk4X6nJ8KA9PrKHAB3IZgOj/bQ01C+3w=;
+        b=V0d0g2Nn05W75bSaGY26cQqrdPP3/LbeqGPpo9JkEKJnrYxktrCmaZGHJFF/Un4/St7pW8
+        QxdHBUawhJs2yaGtMLmBGkPF7PhI59nzuwWtfX8h0MUcWTt+ALY9gU8Gmi81ktDn9PwHNT
+        ZjTcmivcDIeP+fXvG48+8pKLRFiK4tg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-76-ZlvB1-SHP5iyUq_z3j-4cg-1; Wed, 20 Nov 2019 10:28:02 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C1305100550E;
+        Wed, 20 Nov 2019 15:28:00 +0000 (UTC)
+Received: from coeurl.usersys.redhat.com (ovpn-123-90.rdu2.redhat.com [10.10.123.90])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9EE155C1D4;
+        Wed, 20 Nov 2019 15:28:00 +0000 (UTC)
+Received: by coeurl.usersys.redhat.com (Postfix, from userid 1000)
+        id 1DDDA20786; Wed, 20 Nov 2019 10:27:50 -0500 (EST)
+From:   Scott Mayhew <smayhew@redhat.com>
+To:     anna.schumaker@netapp.com, trond.myklebust@hammerspace.com
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 00/27] nfs: Mount API conversion
+Date:   Wed, 20 Nov 2019 10:27:23 -0500
+Message-Id: <20191120152750.6880-1-smayhew@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-MC-Unique: ZlvB1-SHP5iyUq_z3j-4cg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 20-11-19 10:30:24, Ritesh Harjani wrote:
-> We were using shared locking only in case of dioread_nolock
-> mount option in case of DIO overwrites. This mount condition
-> is not needed anymore with current code, since:-
-> 
-> 1. No race between buffered writes & DIO overwrites.
-> Since buffIO writes takes exclusive locks & DIO overwrites
-> will take share locking. Also DIO path will make sure
-> to flush and wait for any dirty page cache data.
-> 
-> 2. No race between buffered reads & DIO overwrites, since there
-> is no block allocation that is possible with DIO overwrites.
-> So no stale data exposure should happen. Same is the case
-> between DIO reads & DIO overwrites.
-> 
-> 3. Also other paths like truncate is protected,
-> since we wait there for any DIO in flight to be over.
-> 
-> 4. In case of buffIO writes followed by DIO reads:
-> Since here also we take exclusive locks in ext4_write_begin/end().
-> There is no risk of exposing any stale data in this case.
-> Since after ext4_write_end, iomap_dio_rw() will wait to flush &
-> wait for any dirty page cache data.
-> 
-> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+Hi Trond, Anna,
 
-There's one more case to consider here as I mentioned in [1]. There can be
-mmap write instantiating dirty page and then someone starting writeback
-against that page while DIO read is running still theoretically leading to
-stale data exposure. Now this patch does not have influence on that race
-but:
+Here's a set of patches that converts NFS to use the mount API.  Note that
+there are a lot of preliminary patches, some from David and some from Al.
+The final patch (the one that does the actual conversion) from the David's
+initial posting has been split into 5 separate patches, and the entire set
+has been rebased on top of 5.4-rc8.
 
-1) We need to close the race mentioned above. Maybe we could do that by
-proactively allocating unwritten blocks for a page being faulted when there
-is direct IO running against the file - the one who fills holes through
-mmap write while direct IO is running on the file deserves to suffer the
-performance penalty...
+Changes since v4:
+- further split the original "NFS: Add fs_context support" patch (new
+  patch is about 25% smaller than the v4 patch)
+- fixed NFSv4 referral mounts (broken in the original patch)
+- fixed leak of nfs_fattr when fs_context is freed
+Changes since v3:
+- changed license and copyright text in fs/nfs/fs_context.c
+Changes since v2:
+- fixed the conversion of the nconnect=3D option
+- added '#if IS_ENABLED(CONFIG_NFS_V4)' around nfs4_parse_monolithic()
+  to avoid unused-function warning when compiling with v4 disabled
+Chagnes since v1:
+- split up patch 23 into 4 separate patches
 
-2) After this patch there's no point in having dioread_nolock at all so we
-can just make that mount option no-op and drop all the precautions from the
-buffered IO path connected with dioread_nolock.
+-Scott
 
-[1] https://lore.kernel.org/linux-ext4/20190925092339.GB23277@quack2.suse.cz
+Al Viro (15):
+  saner calling conventions for nfs_fs_mount_common()
+  nfs: stash server into struct nfs_mount_info
+  nfs: lift setting mount_info from nfs4_remote{,_referral}_mount
+  nfs: fold nfs4_remote_fs_type and nfs4_remote_referral_fs_type
+  nfs: don't bother setting/restoring export_path around
+    do_nfs_root_mount()
+  nfs4: fold nfs_do_root_mount/nfs_follow_remote_path
+  nfs: lift setting mount_info from nfs_xdev_mount()
+  nfs: stash nfs_subversion reference into nfs_mount_info
+  nfs: don't bother passing nfs_subversion to ->try_mount() and
+    nfs_fs_mount_common()
+  nfs: merge xdev and remote file_system_type
+  nfs: unexport nfs_fs_mount_common()
+  nfs: don't pass nfs_subversion to ->create_server()
+  nfs: get rid of mount_info ->fill_super()
+  nfs_clone_sb_security(): simplify the check for server bogosity
+  nfs: get rid of ->set_security()
 
-								Honza
+David Howells (8):
+  NFS: Move mount parameterisation bits into their own file
+  NFS: Constify mount argument match tables
+  NFS: Rename struct nfs_parsed_mount_data to struct nfs_fs_context
+  NFS: Split nfs_parse_mount_options()
+  NFS: Deindent nfs_fs_context_parse_option()
+  NFS: Add a small buffer in nfs_fs_context to avoid string dup
+  NFS: Do some tidying of the parsing code
+  NFS: Add fs_context support.
 
-> ---
->  fs/ext4/file.c | 25 +++++++++++++++++++------
->  1 file changed, 19 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index 18cbf9fa52c6..b97efc89cd63 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -383,6 +383,17 @@ static const struct iomap_dio_ops ext4_dio_write_ops = {
->  	.end_io = ext4_dio_write_end_io,
->  };
->  
-> +static bool ext4_dio_should_shared_lock(struct inode *inode)
-> +{
-> +	if (!S_ISREG(inode->i_mode))
+Scott Mayhew (4):
+  NFS: rename nfs_fs_context pointer arg in a few functions
+  NFS: Convert mount option parsing to use functionality from
+    fs_parser.h
+  NFS: Additional refactoring for fs_context conversion
+  NFS: Attach supplementary error information to fs_context.
 
-This cannot happen for DIO so no point in checking here.
+ fs/nfs/Makefile         |    2 +-
+ fs/nfs/client.c         |   80 +-
+ fs/nfs/fs_context.c     | 1424 +++++++++++++++++++++++++
+ fs/nfs/fscache.c        |    2 +-
+ fs/nfs/getroot.c        |   73 +-
+ fs/nfs/internal.h       |  132 +--
+ fs/nfs/namespace.c      |  144 ++-
+ fs/nfs/nfs3_fs.h        |    2 +-
+ fs/nfs/nfs3client.c     |    6 +-
+ fs/nfs/nfs3proc.c       |    2 +-
+ fs/nfs/nfs4_fs.h        |    9 +-
+ fs/nfs/nfs4client.c     |   99 +-
+ fs/nfs/nfs4namespace.c  |  291 ++---
+ fs/nfs/nfs4proc.c       |    2 +-
+ fs/nfs/nfs4super.c      |  257 ++---
+ fs/nfs/proc.c           |    2 +-
+ fs/nfs/super.c          | 2219 +++++----------------------------------
+ include/linux/nfs_xdr.h |    9 +-
+ 18 files changed, 2283 insertions(+), 2472 deletions(-)
+ create mode 100644 fs/nfs/fs_context.c
 
-> +		return false;
-> +	if (!(ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)))
+--=20
+2.17.2
 
-Why this?
-
-> +		return false;
-> +	if (ext4_should_journal_data(inode))
-
-We don't do DIO when journalling data so no point in checking here
-(dio_supported() already checked this).
-
-								Honza
-> +		return false;
-> +	return true;
-> +}
-> +
->  /*
->   * The intention here is to start with shared lock acquired then see if any
->   * condition requires an exclusive inode lock. If yes, then we restart the
-> @@ -394,8 +405,8 @@ static const struct iomap_dio_ops ext4_dio_write_ops = {
->   * - For extending writes case we don't take the shared lock, since it requires
->   *   updating inode i_disksize and/or orphan handling with exclusive lock.
->   *
-> - * - shared locking will only be true mostly in case of overwrites with
-> - *   dioread_nolock mode. Otherwise we will switch to excl. iolock mode.
-> + * - shared locking will only be true mostly in case of overwrites.
-> + *   Otherwise we will switch to excl. iolock mode.
->   */
->  static ssize_t ext4_dio_write_checks(struct kiocb *iocb, struct iov_iter *from,
->  				 unsigned int *iolock, bool *unaligned_io,
-> @@ -433,15 +444,14 @@ static ssize_t ext4_dio_write_checks(struct kiocb *iocb, struct iov_iter *from,
->  		*extend = true;
->  	/*
->  	 * Determine whether the IO operation will overwrite allocated
-> -	 * and initialized blocks. If so, check to see whether it is
-> -	 * possible to take the dioread_nolock path.
-> +	 * and initialized blocks.
->  	 *
->  	 * We need exclusive i_rwsem for changing security info
->  	 * in file_modified().
->  	 */
->  	if (*iolock == EXT4_IOLOCK_SHARED &&
->  	    (!IS_NOSEC(inode) || *unaligned_io || *extend ||
-> -	     !ext4_should_dioread_nolock(inode) ||
-> +	     !ext4_dio_should_shared_lock(inode) ||
->  	     !ext4_overwrite_io(inode, offset, count))) {
->  		ext4_iunlock(inode, *iolock);
->  		*iolock = EXT4_IOLOCK_EXCL;
-> @@ -485,7 +495,10 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  		iolock = EXT4_IOLOCK_EXCL;
->  	}
->  
-> -	if (iolock == EXT4_IOLOCK_SHARED && !ext4_should_dioread_nolock(inode))
-> +	/*
-> +	 * Check if we should continue with shared iolock
-> +	 */
-> +	if (iolock == EXT4_IOLOCK_SHARED && !ext4_dio_should_shared_lock(inode))
->  		iolock = EXT4_IOLOCK_EXCL;
->  
->  	if (iocb->ki_flags & IOCB_NOWAIT) {
-> -- 
-> 2.21.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
