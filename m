@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC26810434F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 19:25:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41EC1104350
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 19:25:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728453AbfKTSY4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Nov 2019 13:24:56 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39955 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728391AbfKTSYz (ORCPT
+        id S1728482AbfKTSY5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Nov 2019 13:24:57 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37958 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728391AbfKTSY5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Nov 2019 13:24:55 -0500
-Received: by mail-pl1-f196.google.com with SMTP id f9so151004plr.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2019 10:24:53 -0800 (PST)
+        Wed, 20 Nov 2019 13:24:57 -0500
+Received: by mail-pg1-f193.google.com with SMTP id 15so134641pgh.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2019 10:24:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=osandov-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=o2+igEOnCXCoZoiAJpf5HHbPvlBNpJqwdgFjMnknAbY=;
-        b=eK7TtBsTTOswuydlQGQCX2MZgOEiLqA+PiWtbN5oI92q3BbkVN+U1v9tQPxo4a+nA8
-         qXLloGoiSXBYGYBi1uoMZ9N5DZHRylT68PwWBNEaIUgs7+98Ke7UlxU8LxMTzTtQ4RVF
-         79dPyl/ktVGqSBYNPDrSk/g29ZW5hl/rqcLDAWdxzeA4jxFWBc4WYKg6O5ya1geXHC2B
-         AmqWoym6YUG0n6A4ZdOF2sm3so8h4uvd0D+vOHQx54Tl5ln2OQLTkjyiq/sHLTm/rH8a
-         AhVHmKQgVa/zVc+Ussn1SSXr0zkUT4E/hsONWHKxEURZP+UKb8GJP0BFqBaHehqb40jK
-         bAHQ==
+        bh=8XzHxPi137x/pI2bsQL0zdjTY440X6mKNZblWdV6sp4=;
+        b=uGKzKYqmJGH7hI2tDaniyhEGGulXqY53tmyyMJ6u1QC9wf4UWQdvv73v4TXPFgfP1d
+         SLVzeT7GtMNTZTO7mklH1Fx0FgVvm/zP4VrpgsGoM4lXUVITZ2Xa6tw3+qLyCflrlMXe
+         AOdfLUO9Ybns0MeFETognL7BEakGHn09bWHEQCaFga9wY2Rlz/CKn4qkg2/ckyUhWws2
+         gKMHeaGSL5VdH3Y+VBufRtLbm4zQvzekc2YS2eEcR2wNwefNGF8+abYgZEG9ajNmNw0y
+         D6/5d7h46exwPpnJ6GfgDMDjW2171+M0MzHkd3o4M/lps18MzUT56BsuJvSZCDK0js7d
+         Uuxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=o2+igEOnCXCoZoiAJpf5HHbPvlBNpJqwdgFjMnknAbY=;
-        b=dKgwqEvj2zUtJRWTEtEOlQVi4S5DEzM8uwmva56S5F3vVGj5ZbEzdK2lAUYvRR8BoV
-         BmEgYMyqxp+UMO24qg6CFfrTk51zr+nDQRbLZ/p5a1Jua/h86D+zZEEFnNWn+YQvKhiq
-         H6uo6z0JS1I+NmRmENYNQFu+YcYSIgsGFNUeQrNKUcKRsw3Bf2iaxLgRtYgBMeS03xCp
-         1bMNv5fyn6LztGl+SUgS0qgQSYKeFXmCWgUDA0juqY20TJ7i5pASnA292DSa9RDuqMmf
-         mEWJTkQ97wdjCm0kQ3yzydhkccUnOjPSXH95NGXKXLsgTtZVrlwwn4UmfquZYBDUbn9D
-         ZxmQ==
-X-Gm-Message-State: APjAAAVWsKxaJ/WfZWSOsKgWi7GooItv2Boa3JHHRbcseIJ3ncCQ0zQJ
-        0Csg0r7v6OYhSFL5fYj3Sf6pMSB1pMg=
-X-Google-Smtp-Source: APXvYqz/nFa1LIb2dXpleNzDUkBRlPW/dFm2GFWU8U4h6SWYn5eD5w9bHRly15ufQHluyuVeanTRjA==
-X-Received: by 2002:a17:90a:f84:: with SMTP id 4mr5695411pjz.110.1574274292981;
-        Wed, 20 Nov 2019 10:24:52 -0800 (PST)
+        bh=8XzHxPi137x/pI2bsQL0zdjTY440X6mKNZblWdV6sp4=;
+        b=Cy7WokGO2n9wIcJ55PFCMIGo3CHKdR2dtXYjTftkEWtbfpCrxV3nu2qFKq6AWPyPUQ
+         fZvr48zSX6PtvCsni7eWoe78OdbHEYKumichTex93Yv1MG5BuGI9xwhmOKZ4GgAcM9AB
+         zF8m5QEzobrK6lt02GnGB9nAUrCyNsluHwh2O9R//QHcQO21wqgu4Z20hrIVATb64GZa
+         J+/yTDIWHeVXG66jeqb82Xti/L5gMsN2sMlQmgHepl2vwClvdzekSauGhbNECsb/S0bw
+         KKAUFaGwvgSSibx6LwJbilZxYBxQjyBz0KZQ4i0z7HJDicAmAvo+BWlTXvFLl7/PHGPg
+         Jiwg==
+X-Gm-Message-State: APjAAAUC6BkY0BOGYW/eyC4ZPGL/dZIMC2LKGMfDFZyGeei5vPYO3kxu
+        vkmoz0JPZlRmPW7k7+4U2M2kGGdP1ZQ=
+X-Google-Smtp-Source: APXvYqwFl2Y4PqQ4ZTgsWnt5DRDAiKjHqjz6UVVx2FEKN5ekCIRvh29PxvFoCftAn0iP1Qf5sUerLQ==
+X-Received: by 2002:a65:62d3:: with SMTP id m19mr4696325pgv.270.1574274294198;
+        Wed, 20 Nov 2019 10:24:54 -0800 (PST)
 Received: from vader.thefacebook.com ([2620:10d:c090:180::1a46])
-        by smtp.gmail.com with ESMTPSA id q34sm7937866pjb.15.2019.11.20.10.24.51
+        by smtp.gmail.com with ESMTPSA id q34sm7937866pjb.15.2019.11.20.10.24.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2019 10:24:52 -0800 (PST)
+        Wed, 20 Nov 2019 10:24:53 -0800 (PST)
 From:   Omar Sandoval <osandov@osandov.com>
 To:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
 Cc:     Dave Chinner <david@fromorbit.com>, Jann Horn <jannh@google.com>,
         Amir Goldstein <amir73il@gmail.com>,
         Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
         kernel-team@fb.com
-Subject: [RFC PATCH v3 02/12] fs: add O_ALLOW_ENCODED open flag
-Date:   Wed, 20 Nov 2019 10:24:22 -0800
-Message-Id: <f4f6d2902b3845b1193d39c69c1a38c0b286c78a.1574273658.git.osandov@fb.com>
+Subject: [RFC PATCH v3 03/12] fs: add RWF_ENCODED for reading/writing compressed data
+Date:   Wed, 20 Nov 2019 10:24:23 -0800
+Message-Id: <07f9cc1969052e94818fa50019e7589d206d1d18.1574273658.git.osandov@fb.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <cover.1574273658.git.osandov@fb.com>
 References: <cover.1574273658.git.osandov@fb.com>
@@ -66,148 +66,431 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Omar Sandoval <osandov@fb.com>
 
-The upcoming RWF_ENCODED operation introduces some security concerns:
+Btrfs supports transparent compression: data written by the user can be
+compressed when written to disk and decompressed when read back.
+However, we'd like to add an interface to write pre-compressed data
+directly to the filesystem, and the matching interface to read
+compressed data without decompressing it. This adds support for
+so-called "encoded I/O" via preadv2() and pwritev2().
 
-1. Compressed writes will pass arbitrary data to decompression
-   algorithms in the kernel.
-2. Compressed reads can leak truncated/hole punched data.
+A new RWF_ENCODED flags indicates that a read or write is "encoded". If
+this flag is set, iov[0].iov_base points to a struct encoded_iov which
+is used for metadata: namely, the compression algorithm, unencoded
+(i.e., decompressed) length, and what subrange of the unencoded data
+should be used (needed for truncated or hole-punched extents and when
+reading in the middle of an extent). For reads, the filesystem returns
+this information; for writes, the caller provides it to the filesystem.
+iov[0].iov_len must be set to sizeof(struct encoded_iov), which can be
+used to extend the interface in the future a la copy_struct_from_user().
+The remaining iovecs contain the encoded extent.
 
-Therefore, we need to require privilege for RWF_ENCODED. It's not
-possible to do the permissions checks at the time of the read or write
-because, e.g., io_uring submits IO from a worker thread. So, add an open
-flag which requires CAP_SYS_ADMIN. It can also be set and cleared with
-fcntl(). The flag is not cleared in any way on fork or exec; it should
-probably be used with O_CLOEXEC in most cases.
-
-Note that the usual issue that unknown open flags are ignored doesn't
-really matter for O_ALLOW_ENCODED; if the kernel doesn't support
-O_ALLOW_ENCODED, then it doesn't support RWF_ENCODED, either.
+This adds the VFS helpers for supporting encoded I/O and documentation
+for filesystem support.
 
 Signed-off-by: Omar Sandoval <osandov@fb.com>
 ---
- arch/alpha/include/uapi/asm/fcntl.h  |  1 +
- arch/parisc/include/uapi/asm/fcntl.h |  1 +
- arch/sparc/include/uapi/asm/fcntl.h  |  1 +
- fs/fcntl.c                           | 10 ++++++++--
- fs/namei.c                           |  4 ++++
- include/linux/fcntl.h                |  2 +-
- include/uapi/asm-generic/fcntl.h     |  4 ++++
- 7 files changed, 20 insertions(+), 3 deletions(-)
+ Documentation/filesystems/encoded_io.rst |  79 +++++++++++
+ Documentation/filesystems/index.rst      |   1 +
+ include/linux/fs.h                       |  16 +++
+ include/uapi/linux/fs.h                  |  33 ++++-
+ mm/filemap.c                             | 165 +++++++++++++++++++++--
+ 5 files changed, 280 insertions(+), 14 deletions(-)
+ create mode 100644 Documentation/filesystems/encoded_io.rst
 
-diff --git a/arch/alpha/include/uapi/asm/fcntl.h b/arch/alpha/include/uapi/asm/fcntl.h
-index 50bdc8e8a271..391e0d112e41 100644
---- a/arch/alpha/include/uapi/asm/fcntl.h
-+++ b/arch/alpha/include/uapi/asm/fcntl.h
-@@ -34,6 +34,7 @@
- 
- #define O_PATH		040000000
- #define __O_TMPFILE	0100000000
-+#define O_ALLOW_ENCODED	0200000000
- 
- #define F_GETLK		7
- #define F_SETLK		8
-diff --git a/arch/parisc/include/uapi/asm/fcntl.h b/arch/parisc/include/uapi/asm/fcntl.h
-index 03ce20e5ad7d..1188b27002b3 100644
---- a/arch/parisc/include/uapi/asm/fcntl.h
-+++ b/arch/parisc/include/uapi/asm/fcntl.h
-@@ -22,6 +22,7 @@
- 
- #define O_PATH		020000000
- #define __O_TMPFILE	040000000
-+#define O_ALLOW_ENCODED	100000000
- 
- #define F_GETLK64	8
- #define F_SETLK64	9
-diff --git a/arch/sparc/include/uapi/asm/fcntl.h b/arch/sparc/include/uapi/asm/fcntl.h
-index 67dae75e5274..ac3e8c9cb32c 100644
---- a/arch/sparc/include/uapi/asm/fcntl.h
-+++ b/arch/sparc/include/uapi/asm/fcntl.h
-@@ -37,6 +37,7 @@
- 
- #define O_PATH		0x1000000
- #define __O_TMPFILE	0x2000000
-+#define O_ALLOW_ENCODED	0x8000000
- 
- #define F_GETOWN	5	/*  for sockets. */
- #define F_SETOWN	6	/*  for sockets. */
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 3d40771e8e7c..407e663dff4a 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -30,7 +30,8 @@
- #include <asm/siginfo.h>
- #include <linux/uaccess.h>
- 
--#define SETFL_MASK (O_APPEND | O_NONBLOCK | O_NDELAY | O_DIRECT | O_NOATIME)
-+#define SETFL_MASK (O_APPEND | O_NONBLOCK | O_NDELAY | O_DIRECT | O_NOATIME | \
-+		    O_ALLOW_ENCODED)
- 
- static int setfl(int fd, struct file * filp, unsigned long arg)
- {
-@@ -49,6 +50,11 @@ static int setfl(int fd, struct file * filp, unsigned long arg)
- 		if (!inode_owner_or_capable(inode))
- 			return -EPERM;
- 
-+	/* O_ALLOW_ENCODED can only be set by superuser */
-+	if ((arg & O_ALLOW_ENCODED) && !(filp->f_flags & O_ALLOW_ENCODED) &&
-+	    !capable(CAP_SYS_ADMIN))
-+		return -EPERM;
+diff --git a/Documentation/filesystems/encoded_io.rst b/Documentation/filesystems/encoded_io.rst
+new file mode 100644
+index 000000000000..3ed1ba6e34de
+--- /dev/null
++++ b/Documentation/filesystems/encoded_io.rst
+@@ -0,0 +1,79 @@
++===========
++Encoded I/O
++===========
 +
- 	/* required for strict SunOS emulation */
- 	if (O_NONBLOCK != O_NDELAY)
- 	       if (arg & O_NDELAY)
-@@ -1031,7 +1037,7 @@ static int __init fcntl_init(void)
- 	 * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
- 	 * is defined as O_NONBLOCK on some platforms and not on others.
- 	 */
--	BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
-+	BUILD_BUG_ON(22 - 1 /* for O_RDONLY being 0 */ !=
- 		HWEIGHT32(
- 			(VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
- 			__FMODE_EXEC | __FMODE_NONOTIFY));
-diff --git a/fs/namei.c b/fs/namei.c
-index 671c3c1a3425..737d9f05b095 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2978,6 +2978,10 @@ static int may_open(const struct path *path, int acc_mode, int flag)
- 	if (flag & O_NOATIME && !inode_owner_or_capable(inode))
- 		return -EPERM;
- 
-+	/* O_ALLOW_ENCODED can only be set by superuser */
-+	if ((flag & O_ALLOW_ENCODED) && !capable(CAP_SYS_ADMIN))
-+		return -EPERM;
++Encoded I/O is a mechanism for reading and writing encoded (e.g., compressed
++and/or encrypted) data directly from/to the filesystem. The userspace interface
++is thoroughly described in the :manpage:`encoded_io(7)` man page; this document
++describes the requirements for filesystem support.
 +
++First of all, a filesystem supporting encoded I/O must indicate this by setting
++the ``FMODE_ENCODED_IO`` flag in its ``file_open`` file operation::
++
++    static int foo_file_open(struct inode *inode, struct file *filp)
++    {
++            ...
++            filep->f_mode |= FMODE_ENCODED_IO;
++            ...
++    }
++
++Encoded I/O goes through ``read_iter`` and ``write_iter``, designated by the
++``IOCB_ENCODED`` flag in ``kiocb->ki_flags``.
++
++Reads
++=====
++
++Encoded ``read_iter`` should:
++
++1. Call ``generic_encoded_read_checks()`` to validate the file and buffers
++   provided by userspace.
++2. Initialize the ``encoded_iov`` appropriately.
++3. Copy it to the user with ``copy_encoded_iov_to_iter()``.
++4. Copy the encoded data to the user.
++5. Advance ``kiocb->ki_pos`` by ``encoded_iov->len``.
++6. Return the size of the encoded data read, not including the ``encoded_iov``.
++
++There are a few details to be aware of:
++
++* Encoded ``read_iter`` should support reading unencoded data if the extent is
++  not encoded.
++* If the buffers provided by the user are not large enough to contain an entire
++  encoded extent, then ``read_iter`` should return ``-ENOBUFS``. This is to
++  avoid confusing userspace with truncated data that cannot be properly
++  decoded.
++* Reads in the middle of an encoded extent can be returned by setting
++  ``encoded_iov->unencoded_offset`` to non-zero.
++* Truncated unencoded data (e.g., because the file does not end on a block
++  boundary) may be returned by setting ``encoded_iov->len`` to a value smaller
++  value than ``encoded_iov->unencoded_len - encoded_iov->unencoded_offset``.
++* If ``encoded_iov->len`` is greater than ``encoded_iov->unencoded_len -
++  encoded_iov->unencoded_offset``, then the user will treat the remainder as
++  zero-filled. Therefore, holes may be returned by setting ``encoded_iov->len``
++  to the size of the hole, setting ``encoded_iov->unencoded_len`` to zero, and
++  copying no data to the user.
++
++Writes
++======
++
++Encoded ``write_iter`` should (in addition to the usual accounting/checks done
++by ``write_iter``):
++
++1. Call ``copy_encoded_iov_from_iter()`` to get and validate the
++   ``encoded_iov``.
++2. Call ``generic_encoded_write_checks()`` instead of
++   ``generic_write_checks()``.
++3. Check that the provided encoding in ``encoded_iov`` is supported.
++4. Advance ``kiocb->ki_pos`` by ``encoded_iov->len``.
++5. Return the size of the encoded data written.
++
++Again, there are a few details:
++
++* Encoded ``write_iter`` doesn't need to support writing unencoded data.
++* ``write_iter`` should either write all of the encoded data or none of it; it
++  must not do partial writes.
++* ``write_iter`` doesn't need to validate the encoded data; a subsequent read
++  may return, e.g., ``-EIO`` if the data is not valid.
++* The user may lie about the unencoded size of the data; a subsequent read
++  should truncate or zero-extend the unencoded data rather than returning an
++  error.
++* Be careful of page cache coherency.
+diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
+index 2c3a9f761205..ac9a46fc6120 100644
+--- a/Documentation/filesystems/index.rst
++++ b/Documentation/filesystems/index.rst
+@@ -37,6 +37,7 @@ filesystem implementations.
+    journalling
+    fscrypt
+    fsverity
++   encoded_io
+ 
+ Filesystems
+ ===========
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index e0d909d35763..b4f8949d3588 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -175,6 +175,9 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ /* File does not contribute to nr_files count */
+ #define FMODE_NOACCOUNT		((__force fmode_t)0x20000000)
+ 
++/* File supports encoded IO */
++#define FMODE_ENCODED_IO	((__force fmode_t)0x40000000)
++
+ /*
+  * Flag for rw_copy_check_uvector and compat_rw_copy_check_uvector
+  * that indicates that they should check the contents of the iovec are
+@@ -314,6 +317,7 @@ enum rw_hint {
+ #define IOCB_SYNC		(1 << 5)
+ #define IOCB_WRITE		(1 << 6)
+ #define IOCB_NOWAIT		(1 << 7)
++#define IOCB_ENCODED		(1 << 8)
+ 
+ struct kiocb {
+ 	struct file		*ki_filp;
+@@ -3088,6 +3092,13 @@ extern int sb_min_blocksize(struct super_block *, int);
+ extern int generic_file_mmap(struct file *, struct vm_area_struct *);
+ extern int generic_file_readonly_mmap(struct file *, struct vm_area_struct *);
+ extern ssize_t generic_write_checks(struct kiocb *, struct iov_iter *);
++struct encoded_iov;
++extern int generic_encoded_write_checks(struct kiocb *,
++					const struct encoded_iov *);
++extern int copy_encoded_iov_from_iter(struct encoded_iov *, struct iov_iter *);
++extern ssize_t generic_encoded_read_checks(struct kiocb *, struct iov_iter *);
++extern int copy_encoded_iov_to_iter(const struct encoded_iov *,
++				    struct iov_iter *);
+ extern int generic_remap_checks(struct file *file_in, loff_t pos_in,
+ 				struct file *file_out, loff_t pos_out,
+ 				loff_t *count, unsigned int remap_flags);
+@@ -3403,6 +3414,11 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
+ 			return -EOPNOTSUPP;
+ 		ki->ki_flags |= IOCB_NOWAIT;
+ 	}
++	if (flags & RWF_ENCODED) {
++		if (!(ki->ki_filp->f_mode & FMODE_ENCODED_IO))
++			return -EOPNOTSUPP;
++		ki->ki_flags |= IOCB_ENCODED;
++	}
+ 	if (flags & RWF_HIPRI)
+ 		ki->ki_flags |= IOCB_HIPRI;
+ 	if (flags & RWF_DSYNC)
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 379a612f8f1d..775d18bb0efc 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -284,6 +284,34 @@ struct fsxattr {
+ 
+ typedef int __bitwise __kernel_rwf_t;
+ 
++enum {
++	ENCODED_IOV_COMPRESSION_NONE,
++#define ENCODED_IOV_COMPRESSION_NONE ENCODED_IOV_COMPRESSION_NONE
++	ENCODED_IOV_COMPRESSION_ZLIB,
++#define ENCODED_IOV_COMPRESSION_ZLIB ENCODED_IOV_COMPRESSION_ZLIB
++	ENCODED_IOV_COMPRESSION_LZO,
++#define ENCODED_IOV_COMPRESSION_LZO ENCODED_IOV_COMPRESSION_LZO
++	ENCODED_IOV_COMPRESSION_ZSTD,
++#define ENCODED_IOV_COMPRESSION_ZSTD ENCODED_IOV_COMPRESSION_ZSTD
++	ENCODED_IOV_COMPRESSION_TYPES = ENCODED_IOV_COMPRESSION_ZSTD,
++};
++
++enum {
++	ENCODED_IOV_ENCRYPTION_NONE,
++#define ENCODED_IOV_ENCRYPTION_NONE ENCODED_IOV_ENCRYPTION_NONE
++	ENCODED_IOV_ENCRYPTION_TYPES = ENCODED_IOV_ENCRYPTION_NONE,
++};
++
++struct encoded_iov {
++	__aligned_u64 len;
++	__aligned_u64 unencoded_len;
++	__aligned_u64 unencoded_offset;
++	__u32 compression;
++	__u32 encryption;
++};
++
++#define ENCODED_IOV_SIZE_VER0 32
++
+ /* high priority request, poll if possible */
+ #define RWF_HIPRI	((__force __kernel_rwf_t)0x00000001)
+ 
+@@ -299,8 +327,11 @@ typedef int __bitwise __kernel_rwf_t;
+ /* per-IO O_APPEND */
+ #define RWF_APPEND	((__force __kernel_rwf_t)0x00000010)
+ 
++/* encoded (e.g., compressed and/or encrypted) IO */
++#define RWF_ENCODED	((__force __kernel_rwf_t)0x00000020)
++
+ /* mask of flags supported by the kernel */
+ #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
+-			 RWF_APPEND)
++			 RWF_APPEND | RWF_ENCODED)
+ 
+ #endif /* _UAPI_LINUX_FS_H */
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 85b7d087eb45..78b8535b58dd 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2949,24 +2949,15 @@ static int generic_write_check_limits(struct file *file, loff_t pos,
  	return 0;
  }
  
-diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
-index d019df946cb2..0dc6fa93f7cb 100644
---- a/include/linux/fcntl.h
-+++ b/include/linux/fcntl.h
-@@ -9,7 +9,7 @@
- 	(O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC | \
- 	 O_APPEND | O_NDELAY | O_NONBLOCK | O_NDELAY | __O_SYNC | O_DSYNC | \
- 	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
--	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
-+	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | O_ALLOW_ENCODED)
+-/*
+- * Performs necessary checks before doing a write
+- *
+- * Can adjust writing position or amount of bytes to write.
+- * Returns appropriate error code that caller should return or
+- * zero in case that write should be allowed.
+- */
+-inline ssize_t generic_write_checks(struct kiocb *iocb, struct iov_iter *from)
++static int generic_write_checks_common(struct kiocb *iocb, loff_t *count)
+ {
+ 	struct file *file = iocb->ki_filp;
+ 	struct inode *inode = file->f_mapping->host;
+-	loff_t count;
+-	int ret;
  
- #ifndef force_o_largefile
- #define force_o_largefile() (!IS_ENABLED(CONFIG_ARCH_32BIT_OFF_T))
-diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
-index 9dc0bf0c5a6e..75321c7a66ac 100644
---- a/include/uapi/asm-generic/fcntl.h
-+++ b/include/uapi/asm-generic/fcntl.h
-@@ -89,6 +89,10 @@
- #define __O_TMPFILE	020000000
- #endif
+ 	if (IS_SWAPFILE(inode))
+ 		return -ETXTBSY;
  
-+#ifndef O_ALLOW_ENCODED
-+#define O_ALLOW_ENCODED	040000000
-+#endif
+-	if (!iov_iter_count(from))
++	if (!*count)
+ 		return 0;
+ 
+ 	/* FIXME: this is for backwards compatibility with 2.4 */
+@@ -2976,8 +2967,21 @@ inline ssize_t generic_write_checks(struct kiocb *iocb, struct iov_iter *from)
+ 	if ((iocb->ki_flags & IOCB_NOWAIT) && !(iocb->ki_flags & IOCB_DIRECT))
+ 		return -EINVAL;
+ 
+-	count = iov_iter_count(from);
+-	ret = generic_write_check_limits(file, iocb->ki_pos, &count);
++	return generic_write_check_limits(iocb->ki_filp, iocb->ki_pos, count);
++}
 +
- /* a horrid kludge trying to make sure that this will fail on old kernels */
- #define O_TMPFILE (__O_TMPFILE | O_DIRECTORY)
- #define O_TMPFILE_MASK (__O_TMPFILE | O_DIRECTORY | O_CREAT)      
++/*
++ * Performs necessary checks before doing a write
++ *
++ * Can adjust writing position or amount of bytes to write.
++ * Returns a negative errno or the new number of bytes to write.
++ */
++inline ssize_t generic_write_checks(struct kiocb *iocb, struct iov_iter *from)
++{
++	loff_t count = iov_iter_count(from);
++	int ret;
++
++	ret = generic_write_checks_common(iocb, &count);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -2986,6 +2990,141 @@ inline ssize_t generic_write_checks(struct kiocb *iocb, struct iov_iter *from)
+ }
+ EXPORT_SYMBOL(generic_write_checks);
+ 
++/**
++ * generic_encoded_write_checks() - check an encoded write
++ * @iocb: I/O context.
++ * @encoded: Encoding metadata.
++ *
++ * This should be called by RWF_ENCODED write implementations rather than
++ * generic_write_checks(). Unlike generic_write_checks(), it returns -EFBIG
++ * instead of adjusting the size of the write.
++ *
++ * Return: 0 on success, -errno on error.
++ */
++int generic_encoded_write_checks(struct kiocb *iocb,
++				 const struct encoded_iov *encoded)
++{
++	loff_t count = encoded->len;
++	int ret;
++
++	if (!(iocb->ki_filp->f_flags & O_ALLOW_ENCODED))
++		return -EPERM;
++
++	ret = generic_write_checks_common(iocb, &count);
++	if (ret)
++		return ret;
++
++	if (count != encoded->len) {
++		/*
++		 * The write got truncated by generic_write_checks_common(). We
++		 * can't do a partial encoded write.
++		 */
++		return -EFBIG;
++	}
++	return 0;
++}
++EXPORT_SYMBOL(generic_encoded_write_checks);
++
++/**
++ * copy_encoded_iov_from_iter() - copy a &struct encoded_iov from userspace
++ * @encoded: Returned encoding metadata.
++ * @from: Source iterator.
++ *
++ * This copies in the &struct encoded_iov and does some basic sanity checks.
++ * This should always be used rather than a plain copy_from_iter(), as it does
++ * the proper handling for backward- and forward-compatibility.
++ *
++ * Return: 0 on success, -EFAULT if access to userspace failed, -E2BIG if the
++ *         copied structure contained non-zero fields that this kernel doesn't
++ *         support, -EINVAL if the copied structure was invalid.
++ */
++int copy_encoded_iov_from_iter(struct encoded_iov *encoded,
++			       struct iov_iter *from)
++{
++	size_t usize;
++	int ret;
++
++	usize = iov_iter_single_seg_count(from);
++	if (usize > PAGE_SIZE)
++		return -E2BIG;
++	if (usize < ENCODED_IOV_SIZE_VER0)
++		return -EINVAL;
++	ret = copy_struct_from_iter(encoded, sizeof(*encoded), from, usize);
++	if (ret)
++		return ret;
++
++	if (encoded->compression == ENCODED_IOV_COMPRESSION_NONE &&
++	    encoded->encryption == ENCODED_IOV_ENCRYPTION_NONE)
++		return -EINVAL;
++	if (encoded->compression > ENCODED_IOV_COMPRESSION_TYPES ||
++	    encoded->encryption > ENCODED_IOV_ENCRYPTION_TYPES)
++		return -EINVAL;
++	if (encoded->unencoded_len &&
++	    encoded->unencoded_offset >= encoded->unencoded_len)
++		return -EINVAL;
++	return 0;
++}
++EXPORT_SYMBOL(copy_encoded_iov_from_iter);
++
++/**
++ * generic_encoded_read_checks() - sanity check an RWF_ENCODED read
++ * @iocb: I/O context.
++ * @iter: Destination iterator for read.
++ *
++ * This should always be called by RWF_ENCODED read implementations before
++ * returning any data.
++ *
++ * Return: Number of bytes available to return encoded data in @iter on success,
++ *         -EPERM if the file was not opened with O_ALLOW_ENCODED, -EINVAL if
++ *         the size of the &struct encoded_iov iovec is invalid.
++ */
++ssize_t generic_encoded_read_checks(struct kiocb *iocb, struct iov_iter *iter)
++{
++	size_t usize;
++
++	if (!(iocb->ki_filp->f_flags & O_ALLOW_ENCODED))
++		return -EPERM;
++	usize = iov_iter_single_seg_count(iter);
++	if (usize > PAGE_SIZE || usize < ENCODED_IOV_SIZE_VER0)
++		return -EINVAL;
++	return iov_iter_count(iter) - usize;
++}
++EXPORT_SYMBOL(generic_encoded_read_checks);
++
++/**
++ * copy_encoded_iov_to_iter() - copy a &struct encoded_iov to userspace
++ * @encoded: Encoding metadata to return.
++ * @to: Destination iterator.
++ *
++ * This should always be used by RWF_ENCODED read implementations rather than a
++ * plain copy_to_iter(), as it does the proper handling for backward- and
++ * forward-compatibility. The iterator must be sanity-checked with
++ * generic_encoded_read_checks() before this is called.
++ *
++ * Return: 0 on success, -EFAULT if access to userspace failed, -E2BIG if there
++ *         were non-zero fields in @encoded that the user buffer could not
++ *         accommodate.
++ */
++int copy_encoded_iov_to_iter(const struct encoded_iov *encoded,
++			     struct iov_iter *to)
++{
++	size_t ksize = sizeof(*encoded);
++	size_t usize = iov_iter_single_seg_count(to);
++	size_t size = min(ksize, usize);
++
++	/* We already sanity-checked usize in generic_encoded_read_checks(). */
++
++	if (usize < ksize &&
++	    memchr_inv((char *)encoded + usize, 0, ksize - usize))
++		return -E2BIG;
++	if (copy_to_iter(encoded, size, to) != size ||
++	    (usize > ksize &&
++	     iov_iter_zero(usize - ksize, to) != usize - ksize))
++		return -EFAULT;
++	return 0;
++}
++EXPORT_SYMBOL(copy_encoded_iov_to_iter);
++
+ /*
+  * Performs necessary checks before doing a clone.
+  *
 -- 
 2.24.0
 
