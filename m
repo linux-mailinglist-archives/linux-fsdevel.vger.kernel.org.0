@@ -2,115 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA6301040C0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 17:26:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A52CA1040DE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 17:35:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732792AbfKTQ0d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Nov 2019 11:26:33 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:39944 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729857AbfKTQ0c (ORCPT
+        id S1728619AbfKTQfE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Nov 2019 11:35:04 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:56024 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728488AbfKTQfD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Nov 2019 11:26:32 -0500
-Received: by mail-il1-f193.google.com with SMTP id d83so178957ilk.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2019 08:26:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=JENUqEEnkMucQYcuF3hzwhPPTtO+OEvYvVNGiZXej+g=;
-        b=wKsYZexC5vSXvFpFtEIocMf7yXYGNIjjSpxvBiQ3kU+tGcaRX9fxHi1klf+UeIDRlf
-         1BndtbOC9kePbT8EBdXp+tTwbg/cw7wze8ojHoMHEPMitRgfiFgIlxVEpl9JjEtaQqlw
-         HrvOR1zHlx56yMYUvbGKZaywZibdxD/tf1Bfz6Ak4YebiOTMuI+c/hmEJdaGTduNE+yT
-         uDAOZwl5QJvZuKwye8LMsrYCFHHZ/7w5s6PPOUqBI0yJTqY/VU42woyfOYHaDRY36gMO
-         lIbMGLCb+U383g6ICFeMpzqktydwHsHc96E+L9DsX8DLPQJLLgsYOnPIitb6bDK0/m5Q
-         GgnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JENUqEEnkMucQYcuF3hzwhPPTtO+OEvYvVNGiZXej+g=;
-        b=a/nm6NxAVYCUY9i9IYhle1aT3fvZGKiQx61XorQVfrfb6qZoxSTCMJyYIu4K9AvUg8
-         6y6OXbaHmvCK3avBAzQCVCbXT2Zquv4IrXpi5z8cPTTPxRSvRD5J3yxhACaBnQD1zX9W
-         tzA09ZHvClRos3bDr/y/FKeVyk15a+L8kdgNSeoPsEG87gVPvcQ4FxH0B8bjfew4ZdLd
-         /4p8eVzlptKVsHe0/puFOaSFMVrtonlytrCL6m9rl8eDgjCVurpnSqgHxjJeB/Lcp/1A
-         BevOOK2qL53w4UJIbpALRBtVLW4zazF0MzROl6ZIeNDaTpoF5S1o8Qxh1z3XQfpgwy0v
-         i8Fw==
-X-Gm-Message-State: APjAAAVSpL1PVfnFCjufnl5VN1DFQpsTrDtED3VP57EyEJxfLwvcK1Gp
-        HK1xikeURo8UcSb4xepEtcevEg==
-X-Google-Smtp-Source: APXvYqw9AiyFurVMLfdttmCuAKXzB/ZMgeFzgo3mCBRzz20cZpDSuTxB1JfsmCsMEH8BHQeRHNt3kA==
-X-Received: by 2002:a92:868f:: with SMTP id l15mr4459061ilh.199.1574267190503;
-        Wed, 20 Nov 2019 08:26:30 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id o184sm6622713ila.45.2019.11.20.08.26.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Nov 2019 08:26:29 -0800 (PST)
-Subject: Re: INFO: trying to register non-static key in io_cqring_ev_posted
-To:     syzbot <syzbot+0d818c0d39399188f393@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-References: <0000000000003a1f180597c93ffe@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <3d507894-afcc-5b43-f8d6-ca7812a155e6@kernel.dk>
-Date:   Wed, 20 Nov 2019 09:26:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Wed, 20 Nov 2019 11:35:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MwZWupiSwoX5j5mENHy05kP0FGbIABMO7rM4iqDs5RY=; b=XVaRzTwwOoq7hudzEGLuX9k3n
+        uM8sKqABcsa6w1yOIAcJlYjbOhm3N9xRVOONrS+BpL1E0nNPub1CHPbYvikVjKVF83gA0PuNYW90Y
+        SioU9d2DR5GrA7wyoMguCWYjO5/6syitDEizuzVYliU2Thx7a0C6SLwpdJhY10UccagysVb9omnwz
+        EgVfA7yhE0AItWgroaFPYha37/r1VmuPhnuwTt1OPVbVF9Vn6mOL8/C3/lmzgmBYqYgmkDVSgWTtr
+        tE19NKad8yT5hYqoCtU3VyIAku1adrSVcLcT2DFWopP6LkGUnj6r9/aMEfUewbKFuBVB4U1sm5VDw
+        oZXksys3A==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iXSwW-0006Zw-IG; Wed, 20 Nov 2019 16:35:00 +0000
+Date:   Wed, 20 Nov 2019 08:35:00 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>, jack@suse.cz,
+        tytso@mit.edu, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFCv3 2/4] ext4: Add ext4_ilock & ext4_iunlock API
+Message-ID: <20191120163500.GT20752@bombadil.infradead.org>
+References: <20191120050024.11161-1-riteshh@linux.ibm.com>
+ <20191120050024.11161-3-riteshh@linux.ibm.com>
+ <20191120112339.GB30486@bobrowski>
+ <20191120121831.9639B42047@d06av24.portsmouth.uk.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <0000000000003a1f180597c93ffe@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191120121831.9639B42047@d06av24.portsmouth.uk.ibm.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/20/19 8:58 AM, syzbot wrote:
-> syzbot has found a reproducer for the following crash on:
+On Wed, Nov 20, 2019 at 05:48:30PM +0530, Ritesh Harjani wrote:
+> Not against your suggestion here.
+> But in kernel I do see a preference towards object followed by a verb.
+> At least in vfs I see functions like inode_lock()/unlock().
 > 
-> HEAD commit:    5d1131b4 Add linux-next specific files for 20191119
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=140b0412e00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=b60c562d89e5a8df
-> dashboard link: https://syzkaller.appspot.com/bug?extid=0d818c0d39399188f393
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=169b29d2e00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14b3956ae00000
+> Plus I would not deny that this naming is also inspired from
+> xfs_ilock()/iunlock API names.
+
+I see those names as being "classical Unix" heritage (eh, maybe SysV).
+
+> hmm, it was increasing the name of the macro if I do it that way.
+> But that's ok. Is below macro name better?
 > 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+0d818c0d39399188f393@syzkaller.appspotmail.com
+> #define EXT4_INODE_IOLOCK_EXCL		(1 << 0)
+> #define EXT4_INODE_IOLOCK_SHARED	(1 << 1)
 
-Thanks, the below should fix it.
+In particular, Linux tends to prefer read/write instead of
+shared/exclusive terminology.  rwlocks, rwsems, rcu_read_lock, seqlocks.
+shared/exclusive is used by file locks.  And XFS ;-)
 
+I agree with Jan; just leave them opencoded.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 100931b40301..066b59ffb54e 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -4568,12 +4568,18 @@ static int io_allocate_scq_urings(struct io_ring_ctx *ctx,
- 	ctx->cq_entries = rings->cq_ring_entries;
- 
- 	size = array_size(sizeof(struct io_uring_sqe), p->sq_entries);
--	if (size == SIZE_MAX)
-+	if (size == SIZE_MAX) {
-+		io_mem_free(ctx->rings);
-+		ctx->rings = NULL;
- 		return -EOVERFLOW;
-+	}
- 
- 	ctx->sq_sqes = io_mem_alloc(size);
--	if (!ctx->sq_sqes)
-+	if (!ctx->sq_sqes) {
-+		io_mem_free(ctx->rings);
-+		ctx->rings = NULL;
- 		return -ENOMEM;
-+	}
- 
- 	return 0;
- }
-
--- 
-Jens Axboe
-
+Probably worth adding inode_lock_downgrade() to fs.h instead of
+accessing i_rwsem directly.
