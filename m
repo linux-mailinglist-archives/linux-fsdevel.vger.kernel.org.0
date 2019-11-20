@@ -2,134 +2,236 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43BF6103ED5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 16:35:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 055FB103F23
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 16:41:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728590AbfKTPfo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Nov 2019 10:35:44 -0500
-Received: from UHIL19PA40.eemsg.mail.mil ([214.24.21.199]:44664 "EHLO
-        UHIL19PA40.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727928AbfKTPfn (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Nov 2019 10:35:43 -0500
-X-Greylist: delayed 428 seconds by postgrey-1.27 at vger.kernel.org; Wed, 20 Nov 2019 10:35:43 EST
-X-EEMSG-check-017: 50252330|UHIL19PA40_ESA_OUT06.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.69,222,1571702400"; 
-   d="scan'208";a="50252330"
-Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
-  by UHIL19PA40.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 20 Nov 2019 15:28:33 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1574263713; x=1605799713;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=SbonHAnJ65ofoJGSPztdBnhiqK+qDwU/5hUGN93Jeiw=;
-  b=P6DRL/oM82D31nXN10/RnZ3dcJRSsuTJnyFKM5QfsVvUcIJkqtSaElep
-   LNdEa/9XSPHMzsAi0J5lgvmOnAW9UKdHmALO7xmCKkXy9imCXpJJ6a8Sv
-   G/Esb+ufPg+mJdayrn86vsHbS0CQTXPdEGpws79hg4LAAlQsS+OfNdCHI
-   3gIBPb8Chl3LHmHQudtdmfMUWTpmoyXKFMJ8XlTanUtGTIdh4UqTNCvsU
-   QqUti9QSNzEuinypc3+qZ7jh9Mxy7sJZIKgS93Nf6mAt5WNUtmjKJUlHq
-   WavCjbL4uZN/xCDebUHm9063g35wopgdLolsssej/tfYdJ9+ey333IMXh
-   A==;
-X-IronPort-AV: E=Sophos;i="5.69,222,1571702400"; 
-   d="scan'208";a="35774017"
-IronPort-PHdr: =?us-ascii?q?9a23=3AqI7KQRVBRCbj8kIN7jKsyLGYakTV8LGtZVwlr6?=
- =?us-ascii?q?E/grcLSJyIuqrYZRWGvadThVPEFb/W9+hDw7KP9fy5AipZvM7K7ypKWacPfi?=
- =?us-ascii?q?dNsd8RkQ0kDZzNImzAB9muURYHGt9fXkRu5XCxPBsdMs//Y1rPvi/6tmZKSV?=
- =?us-ascii?q?3wOgVvO+v6BJPZgdip2OCu4Z3TZBhDiCagbb9oIxi6sAvcutMLjYZiNqo9xR?=
- =?us-ascii?q?nErmVVcOlK2G1kIk6ekQzh7cmq5p5j9CpQu/Ml98FeVKjxYro1Q79FAjk4Km?=
- =?us-ascii?q?45/MLkuwXNQguJ/XscT34ZkgFUDAjf7RH1RYn+vy3nvedgwiaaPMn2TbcpWT?=
- =?us-ascii?q?S+6qpgVRHlhDsbOzM/7WrakdJ7gr5Frx29phx/24/Ub5+TNPpiZaPWYNcWSX?=
- =?us-ascii?q?NcUspNSyBNB4WxYIUVD+oFIO1WsY/zqVUTphe6HAWhBOfixjpOi3Tr36M1zv?=
- =?us-ascii?q?4hHBnb0gI+EdIAsHfaotv7O6gdU++60KbGwC7fb/5Uwzrx9JTEfx4jrPyKQL?=
- =?us-ascii?q?l+cdDRyU4qFw7dk1uQtZLqPyuV1usTtWiQ8vduVee1hG4jrwF+vDiuzdorh4?=
- =?us-ascii?q?nSm40V0UvJ9Tl5wYkpJd24T1R3Ydi/EJRKrS2aOIx2Qt07TmxupS00yaUGtI?=
- =?us-ascii?q?amcCUFx5kr3R7SZ+Gdf4SW7R/vSvydLSp+iXl4YrywnQyy/lKlyuDkU8m010?=
- =?us-ascii?q?tFoTRdn9nXs3ANywTT6s+aSvth5kuh2SiA1wTU6uxcPUA7j7DbK588wr4rjJ?=
- =?us-ascii?q?YTrUTCETP2mEXxlqOWcFkr+vO05Oj9Z7Xmp5ucO5d1igH4LKsuhtSyDfk3Pw?=
- =?us-ascii?q?UBRWSW+fmw2Kf98UD2XrlGlOA6nrHcsJ/AJMQboqC5AxVS0oYm8xu/FCqp0M?=
- =?us-ascii?q?8DkHkbLFNKZBKHj4/zN1HIO/D3F+2zg1urkDd13/zGJKHuAo3RLnjfl7fsZb?=
- =?us-ascii?q?h8609YyAo31t1f5IxbCqsHIP3tXk/9rtvYDgU2Mwas2eboFM191p8CWWKIGq?=
- =?us-ascii?q?KZK73dsVuJ5uIpPumNa5QYuCjyK/c7/f7il3w5lkEHfamvw5QXbGq0HvN8I0?=
- =?us-ascii?q?WWeXDsmMsOEX8WvgoiS+znkFmCUT9VZ3avUKMw/zI7B5y8DYfFWI+thKeM3D?=
- =?us-ascii?q?m0HpJIfGBKEFOMHmnyd4WCRfgMbDieIsh7kjwLTbKhUZMu1QmytA/mzLpqNv?=
- =?us-ascii?q?TU+iwCtZLkz9V05vPclRcz9TxqFcid12CNT2dpnmIHXTM227p/oUNnxlee0q?=
- =?us-ascii?q?hym+ZYGsBL5/NVTgc6MobRz+h7C9D0RwLAcc6FSFi9Qtq7Hz4xUMw+w9sVbk?=
- =?us-ascii?q?ZjFNWtkArD0zCpA7ALjbyLAoI78qbG03j2PcZ9xG7M1LM9gFk+XstPKWqmi7?=
- =?us-ascii?q?Zl9wfPGo7EiFuZl6m0eqQGxiLN93mMzXCIvE5GVA58S6LFXWoQZhiekdOs2U?=
- =?us-ascii?q?LGS/eCBL0sNQ0JndGDLq9iadDzi1hCAvD5N4KNTXi2njKLGRuQxr6KJLHvcm?=
- =?us-ascii?q?EZ0TSVXFMIiCgP7H2GMk44HS7nrGXAWm89XWnzal/hpLEt4EiwSVU5mkTTMh?=
- =?us-ascii?q?xs?=
-X-IPAS-Result: =?us-ascii?q?A2BQAAA1WtVd/wHyM5BlGgEBAQEBAQEBAQMBAQEBEQEBA?=
- =?us-ascii?q?QICAQEBAYF+gXQsgUABMoRUj1ABAQEBAQEGgREliWaRQwkBAQEBAQEBAQE0A?=
- =?us-ascii?q?QIBAYRAAoInJDgTAhABAQEEAQEBAQEFAwEBbIVDgjspAYJtAQUjFUEQCxgCA?=
- =?us-ascii?q?iYCAlcGDQgBAYJfP4JTJbAugTKFToM2gUiBDiiMFhh4gQeBOAyCXz6EL4Mmg?=
- =?us-ascii?q?l4Ell5GlwqCNYI3kxIGG4I+jCOLMy2qOCKBWCsIAhgIIQ+DKE8RFIdtAQiNN?=
- =?us-ascii?q?CMDgTUBAYsnKoIWAQE?=
-Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 20 Nov 2019 15:28:32 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id xAKFSV1v032640;
-        Wed, 20 Nov 2019 10:28:32 -0500
-Subject: Re: [RFC PATCH 1/2] selinux: Don't call avc_compute_av() from RCU
- path walk
-To:     Will Deacon <will@kernel.org>
-Cc:     selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        linuxfs <linux-fsdevel@vger.kernel.org>, rcu@vger.kernel.org
-References: <20191119184057.14961-1-will@kernel.org>
- <20191119184057.14961-2-will@kernel.org>
- <5e51f9a5-ba76-a42d-fc2b-9255f8544859@tycho.nsa.gov>
- <20191120131229.GA21500@willie-the-truck>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <d8dbd290-0ffa-271f-0268-5e9148e7ee9b@tycho.nsa.gov>
-Date:   Wed, 20 Nov 2019 10:28:31 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1732102AbfKTPld (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Nov 2019 10:41:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39958 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732099AbfKTPld (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 20 Nov 2019 10:41:33 -0500
+Received: from hubcapsc.localdomain (adsl-074-187-100-144.sip.mia.bellsouth.net [74.187.100.144])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A09F220709;
+        Wed, 20 Nov 2019 15:41:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574264492;
+        bh=zwIi3KjbTJyA9nlUEN7sOsjcjcY0B6OVVYRZkrdYyUM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=JvoQxyASNfmrn7/hMU11pLlwhNjf14Lv5w58YbQidQDcjHrFMLKASLenlqfaouEvO
+         fk2ZWfTnPZMVrHrTNUNGsKckSO4p5I2jlLumuJTXAZvp44XbFmAwZSbXq9MEl0P9qn
+         BazJmIreo927OSzrWtQxIh7SXUN6NsU/vw1LAo1c=
+From:   hubcap@kernel.org
+To:     torvalds@linux-foundation.org
+Cc:     Mike Marshall <hubcap@omnibond.com>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] orangefs: posix read and write on open files.
+Date:   Wed, 20 Nov 2019 10:41:11 -0500
+Message-Id: <20191120154111.9788-1-hubcap@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20191120131229.GA21500@willie-the-truck>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/20/19 8:12 AM, Will Deacon wrote:
-> Hi Stephen,
-> 
-> Thanks for the quick reply.
-> 
-> On Tue, Nov 19, 2019 at 01:59:40PM -0500, Stephen Smalley wrote:
->> On 11/19/19 1:40 PM, Will Deacon wrote:
->>> 'avc_compute_av()' can block, so we carefully exit the RCU read-side
->>> critical section before calling it in 'avc_has_perm_noaudit()'.
->>> Unfortunately, if we're calling from the VFS layer on the RCU path walk
->>> via 'selinux_inode_permission()' then we're still actually in an RCU
->>> read-side critical section and must not block.
->>
->> avc_compute_av() should never block AFAIK. The blocking concern was with
->> slow_avc_audit(), and even that appears dubious to me. That seems to be more
->> about misuse of d_find_alias in dump_common_audit_data() than anything.
-> 
-> Apologies, I lost track of GFP_ATOMIC when I reading the code and didn't
-> think it was propagated down to all of the potential allocations and
-> string functions. Having looked at it again, I can't see where it blocks.
-> 
-> Might be worth a comment in avc_compute_av(), because the temporary
-> dropping of rcu_read_lock() looks really dodgy when we could be running
-> on the RCU path walk path anyway.
+From: Mike Marshall <hubcap@omnibond.com>
 
-I don't think that's a problem but I'll defer to the fsdevel and rcu 
-folks.  The use of RCU within the SELinux AVC long predates the 
-introduction of RCU path walk, and the rcu_read_lock()/unlock() pairs 
-inside the AVC are not related in any way to RCU path walk.  Hopefully 
-they don't break it.  The SELinux security server (i.e. 
-security_compute_av() and the rest of security/selinux/ss/*) internally 
-has its own locking for its data structures, primarily the policy 
-rwlock.  There was also a patch long ago to convert use of that policy 
-rwlock to RCU but it didn't seem justified at the time.  We are 
-interested in revisiting that however.  That would introduce its own set 
-of rcu_read_lock/unlock pairs inside of security_compute_av() as well.
+Orangefs doesn't have an open function. Orangefs performs
+permission checks on files each time they are accessed.
+Users create files with arbitrary permissions. A user
+might create a file with a mode that doesn't include write,
+or change the mode of a file he has opened to one that doesn't
+include write. Posix says the user can write on the file
+anyway since he was able to open it.
+
+Orangefs through the kernel module needs to seem posixy, so
+when someone creates or chmods a file to a mode that disallows owner
+read and/or write, we'll call orangefs_posix_open to stamp a
+temporary S_IRWXU acl on it in userspace without telling the kernel
+about the acl, and remove the acl later when the kernel passes through
+file_operations->release.
+
+This fixes known real-world problems: git, for example,
+uses openat(AT_FDCWD, argv[1], O_RDWR|O_CREAT|O_EXCL, 0444)
+on some important files it later tries to write on during clone.
+We don't actually know use cases where people chmod their open files to
+un-writability and then try to write on them, but they
+should be able to if they want to :-).
+
+Signed-off-by: Mike Marshall <hubcap@omnibond.com>
+---
+ fs/orangefs/file.c            | 16 ++++++++++++
+ fs/orangefs/inode.c           | 15 +++++++++++
+ fs/orangefs/namei.c           | 10 ++++++-
+ fs/orangefs/orangefs-kernel.h |  3 +++
+ fs/orangefs/orangefs-utils.c  | 49 +++++++++++++++++++++++++++++++++++
+ 5 files changed, 92 insertions(+), 1 deletion(-)
+
+diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
+index a5612abc0936..c582e7bc5d40 100644
+--- a/fs/orangefs/file.c
++++ b/fs/orangefs/file.c
+@@ -513,6 +513,22 @@ static int orangefs_file_release(struct inode *inode, struct file *file)
+ 		}
+ 
+ 	}
++	/*
++	 * Check to see if we're affecting posixness by keeping a temporary
++	 * owner rw ACL on this file while it is open, so that the process
++	 * that has it open can read and write it no matter what the mode is.
++	 * If there is a temporary ACL on the file, clean it and
++	 * its associated inode flag up. See the comments in
++	 * orangefs_posix_open for more info.
++	 */
++	if (ORANGEFS_I(inode)->opened) {
++		ORANGEFS_I(inode)->opened = 0;
++		orangefs_inode_setxattr(inode,
++			XATTR_NAME_POSIX_ACL_ACCESS,
++			NULL,
++			0,
++			0);
++	}
+ 	return 0;
+ }
+ 
+diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+index efb12197da18..af9eb24ad7c6 100644
+--- a/fs/orangefs/inode.c
++++ b/fs/orangefs/inode.c
+@@ -880,6 +880,20 @@ int __orangefs_setattr(struct inode *inode, struct iattr *iattr)
+ 		}
+ 	}
+ 
++	/*
++	 * if it seems like someone might be fixing to chmod an open file into
++	 * unread or unwritability, use the orangefs_posix_open hat-trick to
++	 * posixly provide read and writability.
++	 */
++	if ((iattr->ia_mode) &&
++	    (!ORANGEFS_I(inode)->opened) &&
++	    (iattr->ia_valid & ATTR_MODE) &&
++	    (!(iattr->ia_mode & S_IRUSR) || (!(iattr->ia_mode & S_IWUSR)))) {
++		ret = orangefs_posix_open(inode);
++		if (ret)
++			goto out;
++	}
++
+ 	if (iattr->ia_valid & ATTR_SIZE) {
+ 		ret = orangefs_setattr_size(inode, iattr);
+ 		if (ret)
+@@ -1060,6 +1074,7 @@ static int orangefs_set_inode(struct inode *inode, void *data)
+ 	hash_init(ORANGEFS_I(inode)->xattr_cache);
+ 	ORANGEFS_I(inode)->mapping_time = jiffies - 1;
+ 	ORANGEFS_I(inode)->bitlock = 0;
++	ORANGEFS_I(inode)->opened = 0;
+ 	return 0;
+ }
+ 
+diff --git a/fs/orangefs/namei.c b/fs/orangefs/namei.c
+index 3e7cf3d0a494..040ef164563e 100644
+--- a/fs/orangefs/namei.c
++++ b/fs/orangefs/namei.c
+@@ -86,7 +86,15 @@ static int orangefs_create(struct inode *dir,
+ 	iattr.ia_valid |= ATTR_MTIME | ATTR_CTIME;
+ 	iattr.ia_mtime = iattr.ia_ctime = current_time(dir);
+ 	__orangefs_setattr(dir, &iattr);
+-	ret = 0;
++
++	/*
++	 * If you can open (or create) a file, Posix says you should
++	 * be able to read or write to the file without regard to
++	 * the file's mode until the fd is closed.
++	 */
++	if (!(mode & S_IRUSR) || (!(mode & S_IWUSR)))
++		ret = orangefs_posix_open(inode);
++
+ out:
+ 	op_release(new_op);
+ 	gossip_debug(GOSSIP_NAME_DEBUG,
+diff --git a/fs/orangefs/orangefs-kernel.h b/fs/orangefs/orangefs-kernel.h
+index 34a6c99fa29b..cad7a7e08e34 100644
+--- a/fs/orangefs/orangefs-kernel.h
++++ b/fs/orangefs/orangefs-kernel.h
+@@ -198,6 +198,7 @@ struct orangefs_inode_s {
+ 	kuid_t attr_uid;
+ 	kgid_t attr_gid;
+ 	unsigned long bitlock;
++	int opened;
+ 
+ 	DECLARE_HASHTABLE(xattr_cache, 4);
+ };
+@@ -405,6 +406,8 @@ ssize_t do_readv_writev(enum ORANGEFS_io_type, struct file *, loff_t *,
+ /*
+  * defined in orangefs-utils.c
+  */
++int orangefs_posix_open(struct inode *inode);
++
+ __s32 fsid_of_op(struct orangefs_kernel_op_s *op);
+ 
+ ssize_t orangefs_inode_getxattr(struct inode *inode,
+diff --git a/fs/orangefs/orangefs-utils.c b/fs/orangefs/orangefs-utils.c
+index d4b7ae763186..3c60c65ec445 100644
+--- a/fs/orangefs/orangefs-utils.c
++++ b/fs/orangefs/orangefs-utils.c
+@@ -452,6 +452,55 @@ int orangefs_inode_setattr(struct inode *inode)
+ 	return ret;
+ }
+ 
++/*
++ * Orangefs doesn't have an open function. Orangefs performs
++ * permission checks on files each time they are accessed.
++ * Users create files with arbitrary permissions. A user
++ * might create a file with a mode that doesn't include write,
++ * or change the mode of a file he has opened to one that doesn't
++ * include write. Posix says the user can write on the file
++ * anyway since he was able to open it.
++ *
++ * Orangefs through the kernel module needs to seem posixy, so
++ * when someone creates or chmods a file to a mode that disallows owner
++ * read and/or write, we'll call orangefs_posix_open to stamp a
++ * temporary S_IRWXU acl on it in userspace without telling the kernel
++ * about the acl, and remove the acl later when the kernel passes through
++ * file_operations->release.
++ *
++ * This fixes known real-world problems: git, for example,
++ * uses openat(AT_FDCWD, argv[1], O_RDWR|O_CREAT|O_EXCL, 0444)
++ * on some important files it later tries to write on during clone.
++ * We don't actually know use cases where people chmod their open files to
++ * un-writability and then try to write on them, but they
++ * should be able to if they want to :-).
++ */
++int orangefs_posix_open(struct inode *inode) {
++	struct posix_acl_xattr_header *posix_header;
++	struct posix_acl_xattr_entry *posix_entry;
++	void *buffer;
++	int size = sizeof(struct posix_acl_xattr_header) +
++			sizeof(struct posix_acl_xattr_entry);
++	const char *name = XATTR_NAME_POSIX_ACL_ACCESS;
++	int ret;
++
++	buffer = kmalloc(size, GFP_KERNEL);
++	if (!buffer)
++		return -ENOMEM;
++
++	ORANGEFS_I(inode)->opened = 1;
++	posix_header = buffer;
++	posix_header->a_version = POSIX_ACL_XATTR_VERSION;
++	posix_entry = (void *)(posix_header + 1);
++	posix_entry->e_tag = ACL_USER;
++	posix_entry->e_perm = S_IRWXU >> 6;
++	posix_entry->e_id = from_kuid(&init_user_ns, current_fsuid());
++
++	ret = orangefs_inode_setxattr(inode, name, buffer, size, 0);
++	kfree(buffer);
++	return ret;
++}
++
+ /*
+  * The following is a very dirty hack that is now a permanent part of the
+  * ORANGEFS protocol. See protocol.h for more error definitions.
+-- 
+2.20.1
 
