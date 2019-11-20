@@ -2,134 +2,205 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 819F910364D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 10:02:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E982A103671
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 10:14:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728106AbfKTJCQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Nov 2019 04:02:16 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:15401 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728091AbfKTJCQ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Nov 2019 04:02:16 -0500
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20191120090213epoutp01968a6a69f97394a6bc84907f7b4e61f8~Y02yRveFH0925009250epoutp01Z
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2019 09:02:13 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20191120090213epoutp01968a6a69f97394a6bc84907f7b4e61f8~Y02yRveFH0925009250epoutp01Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1574240533;
-        bh=dfMXCj9n8r6qNtIvUmluN1atQMpnLaKyM+8HLByEO3I=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=bVTwoeiS/BbOxoUOpTAwpLOZ5ioT87+QZ5MHnWVdd+yOcKkVn8NagXq+lkTEhAAsO
-         8yB8gv8eykLnmPpBMKG9jRaumGWF7iIZ29DKS9qd+Q3ST8lWllngNhZROa5xDwVW6E
-         U0CSnAaH1sFZCSSAGxCHYWuKrvmCuRsDKVO+2/g4=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20191120090212epcas1p340b21382da1d3b4cabfcbb2215b4fb62~Y02xpLbnt0972109721epcas1p3F;
-        Wed, 20 Nov 2019 09:02:12 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.165]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 47HxXM2qtYzMqYkV; Wed, 20 Nov
-        2019 09:02:11 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        0D.8D.04237.31105DD5; Wed, 20 Nov 2019 18:02:11 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20191120090210epcas1p4d0f2fd524052392f5046495f4851809c~Y02wWQDD62759327593epcas1p4I;
-        Wed, 20 Nov 2019 09:02:10 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191120090210epsmtrp2ce5f70798920b9d801f8ec9fa69ad4f9~Y02wVhflp0720607206epsmtrp2k;
-        Wed, 20 Nov 2019 09:02:10 +0000 (GMT)
-X-AuditID: b6c32a39-913ff7000000108d-64-5dd501135724
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        2C.DC.03814.21105DD5; Wed, 20 Nov 2019 18:02:10 +0900 (KST)
-Received: from DONAMJAEJEO06 (unknown [10.88.104.63]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191120090210epsmtip15237292a741392c1dc5b598a195a08db~Y02wL_zj52993029930epsmtip1D;
-        Wed, 20 Nov 2019 09:02:10 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'Markus Elfring'" <Markus.Elfring@web.de>
-Cc:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "'Christoph Hellwig'" <hch@lst.de>,
-        "'Daniel Wagner'" <dwagner@suse.de>,
-        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
-        "'Sungjong Seo'" <sj1557.seo@samsung.com>,
-        =?UTF-8?Q?'Valdis_Kl=C4=93tnieks'?= <valdis.kletnieks@vt.edu>,
-        <linkinjeon@gmail.com>, <linux-fsdevel@vger.kernel.org>
-In-Reply-To: <705cb02b-7707-af52-c2b5-70660debc619@web.de>
-Subject: RE: [PATCH v3 10/13] exfat: add nls operations
-Date:   Wed, 20 Nov 2019 18:02:10 +0900
-Message-ID: <00b701d59f81$319c1d90$94d458b0$@samsung.com>
+        id S1728091AbfKTJOZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Nov 2019 04:14:25 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36294 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727816AbfKTJOZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 20 Nov 2019 04:14:25 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 93475AEC2;
+        Wed, 20 Nov 2019 09:14:22 +0000 (UTC)
+Subject: Re: [PATCH v2 05/13] exfat: add file operations
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
+        linkinjeon@gmail.com, Markus.Elfring@web.de, sj1557.seo@samsung.com
+References: <20191119071107.1947-1-namjae.jeon@samsung.com>
+ <CGME20191119071404epcas1p4f8df45690c07c4dd032af9cbfb5efcc6@epcas1p4.samsung.com>
+ <20191119071107.1947-6-namjae.jeon@samsung.com>
+From:   Nikolay Borisov <nborisov@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <398eeca9-e59f-385b-791d-561e56567026@suse.com>
+Date:   Wed, 20 Nov 2019 11:14:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 14.0
-Content-Language: ko
-Thread-Index: AQKGiVEIZXutAv+r8fum7Kkxtbdn/QHzs3lyAdI0Re0CJVjUg6YCisKg
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0hTcRTut3t379Vc3KbVyajWLYkSdXNOr6IRJXUjISH6I2vYxV3U2qvd
-        GT3J6D1Kyv6IrhnWIMhFhplptaytrBVFqT20J2o5VEyLXhTV5l3kf9/5znfO+c7vQWHqW0Q8
-        VWp1Cg4rb2aIaLzRPy8lKRY9NWp/dKhZf08lye521xHsOc8dBXu5axr7/HUXxl73BnC2/epJ
-        gv0j9SnZht+3lWzbx2F8YTTXLL0muZbq8yR3rbOc4CoaahF36cE27nP9DM53ZZDgXn5oxPOp
-        AnN2icCbBIdGsBbZTKXW4hxm+crCxYWGdK0uSZfJZjAaK28RcpjcvPykJaXmkEVGs4k3l4Wo
-        fF4UmZQF2Q5bmVPQlNhEZw4j2E1mu05rTxZ5i1hmLU4uslmydFptqiGkXGcu8fSdI+3umM01
-        nj68HH0f70JRFNBpcMb7DXOhaEpNNyGobB5AcvAJQWPrW0IOviKoedSt/FcyUnURlxNeBDdq
-        n0VK+hG43wdGVQSdBL9/tRBhHEcnQ+WgXxkWYfSwAlrdARRORNFZ4Hl1KYQpKpbOgBPS4jCN
-        0wlQ3vlCEcYqOhMe3qwkZTwRAid68TDG6EQ4e3oAkx1poOnhAJL5OKg6uA+T5y4Bz+3W0blA
-        HyPh04ceUi7IhftnayPrxEL/3YYIHw+fh7xE2A/Q22CkJdL/AILgtxwZ66Gz7qIyLMHoeVB3
-        NUWmZ0Hzz+qIhQkw9OWQUu6iggP71LIkASra/AoZTwPX/mHyCGKkMYtJYxaTxiwj/R9Wg/Ba
-        NFmwi5ZiQdTZDWMvux6NPt/5mU2o9VGeD9EUYmJURzrajWolv0ncYvEhoDAmTnX9eYdRrTLx
-        W7YKDluho8wsiD5kCJ37USx+UpEt9BmszkKdIVWv17Np6RnpBj0zRUV9f2JU08W8U9ggCHbB
-        8a9OQUXFl6M5O3e+7M87NdT1NZH6kRgz25+1jjt2V3PZp20YGY7p28uu3x7lxptuVNSvXjHS
-        Fly1qJQ+tcPV3T6dkx48Tj0ZvJAwbsrjqjcbgj3McRP17n3aVHPjigVS9i6jodfVnRuNvwve
-        W7N25sIJ+UsLAmkFGu/gsrneZRs3Hr65tpd0i3sYXCzhdfMxh8j/Bd3Mn63UAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsWy7bCSnK4Q49VYg5lLTC0OP57EbtG8eD2b
-        xcrVR5kstt6Strh+9xazxZ69J1ksLu+aw2bxf9ZzVost/46wWlx6/4HFgctj56y77B77565h
-        99h9s4HNo2/LKkaPzaerPT5vkvM4tP0Nm8ftZ9tYAjiiuGxSUnMyy1KL9O0SuDKWbHzNXDCT
-        s+Jd3yWmBsZb7F2MnBwSAiYSH2dvYOli5OIQEtjNKLHm+wVmiIS0xLETZ4BsDiBbWOLw4WKI
-        mheMEq+XNDKB1LAJ6Er8+7OfDcQWEdCTmPTmMCtIEbPANyaJ25/PsEN0vGGUmHvxHlgHp4CV
-        xOo7mxlBpgoLmEvMnOUMEmYRUJVouHkDrIRXwFLi7IFJ7BC2oMTJmU9YQGxmAW2J3oetjDD2
-        soWvoQ5VkNhx9jVUXERidmcbM8RBbhKrjxxjncAoPAvJqFlIRs1CMmoWkvYFjCyrGCVTC4pz
-        03OLDQuM8lLL9YoTc4tL89L1kvNzNzGC41BLawfjiRPxhxgFOBiVeHgnXLkcK8SaWFZcmXuI
-        UYKDWUmEd8/1K7FCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeeXzj0UKCaQnlqRmp6YWpBbBZJk4
-        OKUaGAUmzg+UNT5puy/zGueKN1kXS28L50vo+vstf9J58brWfaUvF09dZVus+iFwwocCXUHb
-        cn/bt6uOPljZ92G+5SqTkv9PmNOfvssTPKjEIqugy6P8t/+0oJx59HW941+Dl8iwZOm2diY8
-        b3Z2evb+f46AZ0Xs5gDxRPtVPR27k49eu+43ecO5zUosxRmJhlrMRcWJAF/Xf42/AgAA
-X-CMS-MailID: 20191120090210epcas1p4d0f2fd524052392f5046495f4851809c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191119094026epcas1p3eea5c655f3b89383e02c0097c491f0bc
-References: <20191119093718.3501-1-namjae.jeon@samsung.com>
-        <CGME20191119094026epcas1p3eea5c655f3b89383e02c0097c491f0bc@epcas1p3.samsung.com>
-        <20191119093718.3501-11-namjae.jeon@samsung.com>
-        <705cb02b-7707-af52-c2b5-70660debc619@web.de>
+In-Reply-To: <20191119071107.1947-6-namjae.jeon@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> =E2=80=A6=0D=0A>=20>=20+++=20b/fs/exfat/nls.c=0D=0A>=20=E2=80=A6=0D=0A>=
-=20>=20+static=20int=20exfat_load_upcase_table(struct=20super_block=20*sb,=
-=0D=0A>=20>=20+=09=09sector_t=20sector,=20unsigned=20long=20long=20num_sect=
-ors,=0D=0A>=20>=20+=09=09unsigned=20int=20utbl_checksum)=0D=0A>=20>=20+=7B=
-=0D=0A>=20=E2=80=A6=0D=0A>=20>=20+error:=0D=0A>=20>=20+=09if=20(bh)=0D=0A>=
-=20>=20+=09=09brelse(bh);=0D=0A>=20=0D=0A>=20I=20am=20informed=20in=20the=
-=20way=20that=20this=20function=20tolerates=20the=20passing=0D=0A>=20of=20n=
-ull=20pointers.=0D=0A>=20https://protect2.fireeye.com/url?k=3D58476862-0589=
-69b1-5846e32d-000babff317b-=0D=0A>=202bdcc1db1dc57528&u=3Dhttps://git.kerne=
-l.org/pub/scm/linux/kernel/git/torvalds/=0D=0A>=20linux.git/tree/include/li=
-nux/buffer_head.h?id=3Daf42d3466bdc8f39806b26f593604f=0D=0A>=20dc54140bcb=
-=23n292=0D=0A>=20https://protect2.fireeye.com/url?k=3D625424d5-3f9a2506-625=
-5af9a-000babff317b-=0D=0A>=20a544a35424b18c18&u=3Dhttps://elixir.bootlin.co=
-m/linux/v5.4-=0D=0A>=20rc8/source/include/linux/buffer_head.h=23L292=0D=0A>=
-=20=0D=0A>=20Thus=20I=20suggest=20to=20omit=20the=20extra=20pointer=20check=
-=20also=20at=20similar=20places.=0D=0A>=20=0D=0A>=20Can=20the=20label=20=E2=
-=80=9Crelease_bh=E2=80=9D=20be=20more=20helpful?=0D=0AHi=20Markus,=0D=0A=0D=
-=0AI=20checked=20not=20only=20review=20point=20but=20also=20your=20review=
-=20points=20in=0D=0Aother=20patches,=20I=20will=20fix=20them=20on=20v4.=0D=
-=0A=0D=0AThanks=20for=20your=20review=21=0D=0A>=20=0D=0A>=20Regards,=0D=0A>=
-=20Markus=0D=0A=0D=0A
+
+
+On 19.11.19 г. 9:10 ч., Namjae Jeon wrote:
+> This adds the implementation of file operations for exfat.
+> 
+> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
+> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
+> ---
+>  fs/exfat/file.c | 346 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 346 insertions(+)
+>  create mode 100644 fs/exfat/file.c
+> 
+> diff --git a/fs/exfat/file.c b/fs/exfat/file.c
+> new file mode 100644
+> index 000000000000..5afd65a36eb5
+> --- /dev/null
+> +++ b/fs/exfat/file.c
+> @@ -0,0 +1,346 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Copyright (C) 2012-2013 Samsung Electronics Co., Ltd.
+> + */
+> +
+> +#include <linux/slab.h>
+> +#include <linux/cred.h>
+> +#include <linux/buffer_head.h>
+> +
+> +#include "exfat_raw.h"
+> +#include "exfat_fs.h"
+> +
+
+<snip>
+
+> +
+> +static int exfat_allow_set_time(struct exfat_sb_info *sbi, struct inode *inode)
+> +{
+> +	mode_t allow_utime = sbi->options.allow_utime;
+> +
+> +	if (!uid_eq(current_fsuid(), inode->i_uid)) {
+> +		if (in_group_p(inode->i_gid))
+> +			allow_utime >>= 3;
+> +		if (allow_utime & MAY_WRITE)
+> +			return 1;
+> +	}
+> +
+> +	/* use a default check */
+> +	return 0;
+
+this function can be made to return bool.
+
+> +}
+> +
+
+<snip>
+
+> +/* resize the file length */
+> +int __exfat_truncate(struct inode *inode, loff_t new_size)
+> +{
+> +	unsigned int num_clusters_new, num_clusters_phys;
+> +	unsigned int last_clu = FREE_CLUSTER;
+> +	struct exfat_chain clu;
+> +	struct exfat_timestamp tm;
+> +	struct exfat_dentry *ep, *ep2;
+> +	struct super_block *sb = inode->i_sb;
+> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+> +	struct exfat_inode_info *ei = EXFAT_I(inode);
+> +	struct exfat_entry_set_cache *es = NULL;
+> +	int evict = (ei->dir.dir == DIR_DELETED) ? 1 : 0;
+> +
+> +	/* check if the given file ID is opened */
+> +	if (ei->type != TYPE_FILE && ei->type != TYPE_DIR)
+> +		return -EPERM;
+> +
+> +	exfat_set_vol_flags(sb, VOL_DIRTY);
+> +
+> +	num_clusters_new = EXFAT_B_TO_CLU_ROUND_UP(i_size_read(inode), sbi);
+> +	num_clusters_phys =
+> +		EXFAT_B_TO_CLU_ROUND_UP(EXFAT_I(inode)->i_size_ondisk, sbi);
+> +
+> +	exfat_chain_set(&clu, ei->start_clu, num_clusters_phys, ei->flags);
+> +
+> +	if (new_size > 0) {
+> +		/*
+> +		 * Truncate FAT chain num_clusters after the first cluster
+> +		 * num_clusters = min(new, phys);
+> +		 */
+> +		unsigned int num_clusters =
+> +			min(num_clusters_new, num_clusters_phys);
+> +
+> +		/*
+> +		 * Follow FAT chain
+> +		 * (defensive coding - works fine even with corrupted FAT table
+> +		 */
+> +		if (clu.flags == 0x03) {
+
+That 0x03 is magic constant, better define actual flags and check
+clu.flag == (FLAG1|FLAG2)
+
+> +			clu.dir += num_clusters;
+> +			clu.size -= num_clusters;
+> +		} else {
+> +			while (num_clusters > 0) {
+> +				last_clu = clu.dir;
+> +				if (exfat_get_next_cluster(sb, &(clu.dir)))
+> +					return -EIO;
+> +
+> +				num_clusters--;
+> +				clu.size--;
+> +			}
+> +		}
+> +	} else {
+> +		ei->flags = 0x03;
+
+again, magic constant.
+> +		ei->start_clu = EOF_CLUSTER;
+> +	}
+> +
+> +	i_size_write(inode, new_size);
+> +
+> +	if (ei->type == TYPE_FILE)
+> +		ei->attr |= ATTR_ARCHIVE;
+
+<snip>
