@@ -2,93 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4FAF1038A1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 12:23:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12D031038A4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 12:23:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729145AbfKTLXF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Nov 2019 06:23:05 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:56398 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728376AbfKTLXF (ORCPT
+        id S1729158AbfKTLXs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Nov 2019 06:23:48 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:38565 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728391AbfKTLXs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Nov 2019 06:23:05 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iXO4N-0005RU-Kd; Wed, 20 Nov 2019 12:22:47 +0100
-Date:   Wed, 20 Nov 2019 12:22:46 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Chen Yu <yu.c.chen@intel.com>
-cc:     x86@kernel.org, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chen Yu <yu.chen.surf@gmail.com>
-Subject: Re: [PATCH][v3] x86/resctrl: Add task resctrl information display
-In-Reply-To: <20191120081628.26701-1-yu.c.chen@intel.com>
-Message-ID: <alpine.DEB.2.21.1911201055260.6731@nanos.tec.linutronix.de>
-References: <20191120081628.26701-1-yu.c.chen@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 20 Nov 2019 06:23:48 -0500
+Received: by mail-pj1-f66.google.com with SMTP id f7so3983402pjw.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2019 03:23:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=I2Xo/a4CE3Y8LwPp0U+2KlzLXKiFkdTHaNAt0710fdc=;
+        b=l/kP8sv8rbBonNJD5hfKwtBrBCw261ACJMV1fHVcQI6eYOt80p4FGOcVz4f9hcnqt6
+         OznLYjU7zaT84MGfk6rlbz4Ri0l4NKpU48k/ejqZ3GbZq2Oq7IVfPNSnIRSnMxI9L/Hf
+         JiGF0x/3sof5R4YkndvPZCO36yesES8MGjAv7O4IfUt2spkEHJ8iG7zcqrYqx9oijjdf
+         QGX0Bhc6Sg8sD7B93/+xNoLH7HuV8HWhG01k8ZVhZOI4weyk1l3VCHzolQ5zcu4J6cP/
+         0P8CBYnr0fzdo5BPILwAd3tpoInZImFoOwBuK3CDUmsC/FrOecrpjjxYSjX8dnwSD2I/
+         Fv2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=I2Xo/a4CE3Y8LwPp0U+2KlzLXKiFkdTHaNAt0710fdc=;
+        b=L6ZFbCJg0Kje2EnCi+Zvi4Bc8pQiYmLfywpq2/KYLPJuC51pnreZObHVJEpiEbmwgM
+         0gQAl1r35JXEDrO5M++GF51IV36P+Ht7MsqeFSCHPWiA/lOv7S6DHzFoPOYD7v7DePnm
+         0RsZwl2IU+PIAZWT+srjPOYd5Xmiqu768Z0/zK4IPy9AMMVRsmb90nupWjO5d9MJDWiM
+         veTshYQ+QogoeFaiiVcNs/QoTQK/Hy/oKWGm/OxT+IXLrmlfWsMm0I0VmunclPJSrjaL
+         x6n7CKPNu/lMj7wE0cIvkUDDgbdymPy42Pua0uwq7x5DQwlNkj6nDkY58q+x27gbEjI9
+         XBmA==
+X-Gm-Message-State: APjAAAV/lsirGz3kNnJ2lVD3dVbkX1RcXX8xl4cShKGSh545+uiXdovc
+        2NxbKIqLBNBd/Oc7vEdlNGZI
+X-Google-Smtp-Source: APXvYqx4Lr40eT5S9gLyG3JOIwZD9HlkuClpOeh6sa+6dH2KgMDPTZuINDIm+9AJ1rLFf+FuLyZrbg==
+X-Received: by 2002:a17:90b:908:: with SMTP id bo8mr3493332pjb.1.1574249027381;
+        Wed, 20 Nov 2019 03:23:47 -0800 (PST)
+Received: from bobrowski ([110.232.114.101])
+        by smtp.gmail.com with ESMTPSA id j4sm7144530pjf.25.2019.11.20.03.23.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2019 03:23:46 -0800 (PST)
+Date:   Wed, 20 Nov 2019 22:23:40 +1100
+From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     jack@suse.cz, tytso@mit.edu, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFCv3 2/4] ext4: Add ext4_ilock & ext4_iunlock API
+Message-ID: <20191120112339.GB30486@bobrowski>
+References: <20191120050024.11161-1-riteshh@linux.ibm.com>
+ <20191120050024.11161-3-riteshh@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191120050024.11161-3-riteshh@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 20 Nov 2019, Chen Yu wrote:
-> Monitoring tools that want to find out which resctrl CTRL
-> and MONITOR groups a task belongs to must currently read
-> the "tasks" file in every group until they locate the process
-> ID.
-> 
-> Add an additional file /proc/{pid}/resctrl to provide this
-> information.
-> 
-> For example:
->  cat /proc/1193/resctrl
-> CTRL_MON:/ctrl_grp0
-> MON:/ctrl_grp0/mon_groups/mon_grp0
+On Wed, Nov 20, 2019 at 10:30:22AM +0530, Ritesh Harjani wrote:
+> This adds ext4_ilock/iunlock types of APIs.
+> This is the preparation APIs to make shared
+> locking/unlocking & restarting with exclusive
+> locking/unlocking easier in next patch.
 
-The formatting is quite ugly and I don't see why this needs to be multiple
-lines and have these uppercase prefixes.
+*scratches head*
 
-A task can only be part of one control group and of one monitoring group
-which is associated to the control group. So just providing:
+A nit, but what's with the changelog wrapping at like ~40 characters?
 
- 1)   ""
- 2)   "/"
- 3)   "/mon_groups/mon0"
- 4)   "/group0"
- 5)   "/group0/mon_groups/mon1"
+> +#define EXT4_IOLOCK_EXCL	(1 << 0)
+> +#define EXT4_IOLOCK_SHARED	(1 << 1)
+>
+> +static inline void ext4_ilock(struct inode *inode, unsigned int iolock)
+> +{
+> +	if (iolock == EXT4_IOLOCK_EXCL)
+> +		inode_lock(inode);
+> +	else
+> +		inode_lock_shared(inode);
+> +}
+> +
+> +static inline void ext4_iunlock(struct inode *inode, unsigned int iolock)
+> +{
+> +	if (iolock == EXT4_IOLOCK_EXCL)
+> +		inode_unlock(inode);
+> +	else
+> +		inode_unlock_shared(inode);
+> +}
+> +
+> +static inline int ext4_ilock_nowait(struct inode *inode, unsigned int iolock)
+> +{
+> +	if (iolock == EXT4_IOLOCK_EXCL)
+> +		return inode_trylock(inode);
+> +	else
+> +		return inode_trylock_shared(inode);
+> +}
 
-is simple and clear enough, i.e.:
+Is it really necessary for all these helpers to actually have the
+'else' statement? Could we not just return/set whatever takes the
+'else' branch directly from the end of these functions? I think it
+would be cleaner that way.
 
-#1: Resctrl is not available
+/me doesn't really like the naming of these functions either.
 
-#2: Task is part of the root group, task not associated to any monitoring
-    group
+What's people's opinion on changing these for example:
+   - ext4_inode_lock()
+   - ext4_inode_unlock()
 
-#3: Task is part of the root group and monitoring group mon0
+Or, better yet, is there any reason why we've never actually
+considered naming such functions to have the verb precede the actual
+object that we're performing the operation on? In my opinion, it
+totally makes way more sense from a code readability standpoint and
+overall intent of the function. For example:
+   - ext4_lock_inode()
+   - ext4_unlock_inode()
 
-#4: Task is part of control group group0, task not associated to any
-    monitoring group
+> +static inline void ext4_ilock_demote(struct inode *inode, unsigned int iolock)
+> +{
+> +	BUG_ON(iolock != EXT4_IOLOCK_EXCL);
+> +	downgrade_write(&inode->i_rwsem);
+> +}
+> +
 
-#5: Task is part of control group group0 and monitoring group mon1
+Same principle would also apply here.
 
-Hmm?
+On an ending note, I'm not really sure that I like the name of these
+macros. Like, for example, expand the macro 'EXT4_IOLOCK_EXCL' into
+plain english words as if you were reading it. This would translate to
+something like 'EXT4 INPUT/OUPUT LOCK EXCLUSIVE' or 'EXT4 IO LOCK
+EXCLUSIVE'. Just flipping the words around make a significant
+improvement for overall readability i.e. 'EXT4_EXCL_IOLOCK', which
+would expand out to 'EXT4 EXCLUSIVE IO LOCK'. Speaking of, is there
+any reason why we don't mention 'INODE' here seeing as though that's
+the object we're actually protecting by taking one of these locking
+mechanisms?
 
-Thanks,
-
-	tglx
+/M
