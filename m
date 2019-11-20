@@ -2,95 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35C3A104408
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 20:13:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75C83104415
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 20:16:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727705AbfKTTNr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Nov 2019 14:13:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53848 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727235AbfKTTNq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Nov 2019 14:13:46 -0500
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        id S1727363AbfKTTQn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Nov 2019 14:16:43 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:44620 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726236AbfKTTQn (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 20 Nov 2019 14:16:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+uiX8Y1FAOVx63BgGhdqk6UFOCjK1eb99TNr3TVgrIU=; b=BqmvakRCAIVKzYcDLg/Qch27X
+        35mFslRqqVAYqgbmgTvsmMp3M12VvLOROf5bcDJwZF/FJYUNy8Yk9NmXULSy5g8/pblUsDD2TDfpK
+        BniKwfa3nTylt+8dPT8sl3zfVEBzm0Sl8fe1gz+cvuGMeUX8ufazZqcpvN1pVjjUuPqUHyxXv+7J6
+        sRiuyR6E3hhc1T98sqjCzwFtFe5OXhKGngAlV1NO+c17X7ylg7mqaw2s6RKcSLWq/Xzz+4BUaIOc3
+        +Z7vjEmi3ttpbQKmB6yvBrmSPLbqfCfpJezR9+Ap2Uv2irNXBGTv2NOa/+d+zjFFsGU+S4d10iCDI
+        fTH6oSPeA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iXVSw-0005wN-CY; Wed, 20 Nov 2019 19:16:38 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70FAA208CE;
-        Wed, 20 Nov 2019 19:13:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574277225;
-        bh=La1HKQgpHIGqu+A9vJ9gXjbNnhWYrCWS1/SPTX2d5vQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=c6JjhgXzt0nJTTAkHYDRYBhe7xkv5MVuJTm+/X8D/w3p8ETLzbJjo4jkirb5ALekb
-         n1VP7YaJITSXQufLr1jumoC7xb2tOz9q8y1rsjgwEMuj8TXVJ/wNL7kkXNNBXzNkK3
-         izlDra5gLQYAl+phdEeUxZ2Not7WZJk2uSyKxGoc=
-Date:   Wed, 20 Nov 2019 19:13:40 +0000
-From:   Will Deacon <will@kernel.org>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        linuxfs <linux-fsdevel@vger.kernel.org>, rcu@vger.kernel.org
-Subject: Re: [RFC PATCH 1/2] selinux: Don't call avc_compute_av() from RCU
- path walk
-Message-ID: <20191120191340.GA4799@willie-the-truck>
-References: <20191119184057.14961-1-will@kernel.org>
- <20191119184057.14961-2-will@kernel.org>
- <5e51f9a5-ba76-a42d-fc2b-9255f8544859@tycho.nsa.gov>
- <20191120131229.GA21500@willie-the-truck>
- <d8dbd290-0ffa-271f-0268-5e9148e7ee9b@tycho.nsa.gov>
- <20191120190743.GT2889@paulmck-ThinkPad-P72>
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 9B0D130068E;
+        Wed, 20 Nov 2019 20:15:25 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 200F42B25DAAD; Wed, 20 Nov 2019 20:16:36 +0100 (CET)
+Date:   Wed, 20 Nov 2019 20:16:36 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jeff Moyer <jmoyer@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: single aio thread is migrated crazily by scheduler
+Message-ID: <20191120191636.GI4097@hirez.programming.kicks-ass.net>
+References: <20191114113153.GB4213@ming.t460p>
+ <20191114235415.GL4614@dread.disaster.area>
+ <20191115010824.GC4847@ming.t460p>
+ <20191115045634.GN4614@dread.disaster.area>
+ <20191115070843.GA24246@ming.t460p>
+ <20191115234005.GO4614@dread.disaster.area>
+ <20191118092121.GV4131@hirez.programming.kicks-ass.net>
+ <20191118204054.GV4614@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191120190743.GT2889@paulmck-ThinkPad-P72>
+In-Reply-To: <20191118204054.GV4614@dread.disaster.area>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 20, 2019 at 11:07:43AM -0800, Paul E. McKenney wrote:
-> On Wed, Nov 20, 2019 at 10:28:31AM -0500, Stephen Smalley wrote:
-> > On 11/20/19 8:12 AM, Will Deacon wrote:
-> > > Hi Stephen,
-> > > 
-> > > Thanks for the quick reply.
-> > > 
-> > > On Tue, Nov 19, 2019 at 01:59:40PM -0500, Stephen Smalley wrote:
-> > > > On 11/19/19 1:40 PM, Will Deacon wrote:
-> > > > > 'avc_compute_av()' can block, so we carefully exit the RCU read-side
-> > > > > critical section before calling it in 'avc_has_perm_noaudit()'.
-> > > > > Unfortunately, if we're calling from the VFS layer on the RCU path walk
-> > > > > via 'selinux_inode_permission()' then we're still actually in an RCU
-> > > > > read-side critical section and must not block.
-> > > > 
-> > > > avc_compute_av() should never block AFAIK. The blocking concern was with
-> > > > slow_avc_audit(), and even that appears dubious to me. That seems to be more
-> > > > about misuse of d_find_alias in dump_common_audit_data() than anything.
-> > > 
-> > > Apologies, I lost track of GFP_ATOMIC when I reading the code and didn't
-> > > think it was propagated down to all of the potential allocations and
-> > > string functions. Having looked at it again, I can't see where it blocks.
-> > > 
-> > > Might be worth a comment in avc_compute_av(), because the temporary
-> > > dropping of rcu_read_lock() looks really dodgy when we could be running
-> > > on the RCU path walk path anyway.
+On Tue, Nov 19, 2019 at 07:40:54AM +1100, Dave Chinner wrote:
+> On Mon, Nov 18, 2019 at 10:21:21AM +0100, Peter Zijlstra wrote:
+
+> > We typically only fall back to the active balancer when there is
+> > (persistent) imbalance and we fail to migrate anything else (of
+> > substance).
 > > 
-> > I don't think that's a problem but I'll defer to the fsdevel and rcu folks.
-> > The use of RCU within the SELinux AVC long predates the introduction of RCU
-> > path walk, and the rcu_read_lock()/unlock() pairs inside the AVC are not
-> > related in any way to RCU path walk.  Hopefully they don't break it.  The
-> > SELinux security server (i.e. security_compute_av() and the rest of
-> > security/selinux/ss/*) internally has its own locking for its data
-> > structures, primarily the policy rwlock.  There was also a patch long ago to
-> > convert use of that policy rwlock to RCU but it didn't seem justified at the
-> > time.  We are interested in revisiting that however.  That would introduce
-> > its own set of rcu_read_lock/unlock pairs inside of security_compute_av() as
-> > well.
+> > The tuning mentioned has the effect of less frequent scheduling, IOW,
+> > leaving (short) tasks on the runqueue longer. This obviously means the
+> > load-balancer will have a bigger chance of seeing them.
+> > 
+> > Now; it's been a while since I looked at the workqueue code but one
+> > possible explanation would be if the kworker that picks up the work item
+> > is pinned. That would make it runnable but not migratable, the exact
+> > situation in which we'll end up shooting the current task with active
+> > balance.
 > 
-> RCU readers nest, so it should be fine.  (Famous last words...)
+> Yes, that's precisely the problem - work is queued, by default, on a
+> specific CPU and it will wait for a kworker that is pinned to that
 
-Agreed. It was blocking that worried me, and it turns out that doesn't
-happen for this code.
+I'm thinking the problem is that it doesn't wait. If it went and waited
+for it, active balance wouldn't be needed, that only works on active
+tasks.
 
-Will
+> specific CPU to dispatch it. We've already tested that queuing on a
+> different CPU (via queue_work_on()) makes the problem largely go
+> away as the work is not longer queued behind the long running fio
+> task.
+> 
+> This, however, is not at viable solution to the problem. The pattern
+> of a long running process queuing small pieces of individual work
+> for processing in a separate context is pretty common...
+
+Right, but you're putting the scheduler in a bind. By overloading the
+CPU and only allowing the one task to migrate, it pretty much has no
+choice left.
+
+Anyway, I'm still going to have try and reproduce -- I got side-tracked
+into a crashing bug, I'll hopefully get back to this tomorrow. Lastly,
+one other thing to try is -next. Vincent reworked the load-balancer
+quite a bit.
