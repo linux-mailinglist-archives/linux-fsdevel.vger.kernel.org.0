@@ -2,371 +2,231 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7528E1035CE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 09:06:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D926F1035CD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 09:06:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727544AbfKTIGb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Nov 2019 03:06:31 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:40710 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726358AbfKTIGb (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Nov 2019 03:06:31 -0500
-Received: by mail-oi1-f195.google.com with SMTP id d22so14748578oic.7;
-        Wed, 20 Nov 2019 00:06:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=NHx35a0P8qkljAm5udvepYVHqZ/Vt2w27fHlzYjGi2w=;
-        b=BrDw6yK0T0Ob/E5KOmmLFxCluxzA+Yo/uWdzGO8KAff3P2mAlfyvNm34ReqXa5cn4e
-         hzzYDG1QoneY/7tCkk2TvjoSveDxLxZjbmb385r4FNZ1FlCRFX/B6F37Fwfa8PUU9Xc2
-         H9udFzRd0CoX9udo1AY1xVgrr6HJG85qwKl2eO1nQCHD+2SZP0gEckCK0M6tzRbJUDtl
-         ssGENyAG6XHlTqGjbIyofJR6hmKZU5N9DA2Q23qoZ7bsQyh1Hu1QlyytnFcyUSAhJJib
-         l0LNAiiHOfMoPBO2SCsUIiEpV1NZT8tI5a6aXIR3L37UqqnZzd/B618pdBNMnu1VSe02
-         yEmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=NHx35a0P8qkljAm5udvepYVHqZ/Vt2w27fHlzYjGi2w=;
-        b=tR5g4RFHHFFEx1gxXX76krJ/jatH9N1dDlE1MVvCxemTMZJrVTOwjH4i/3phzAvt6D
-         btJ67hYsUQBQDpDz9NBrKaqGYVzZ8D/eKDUs5cJd3GMRpyhiba38rrvIh4ztV56IYz/3
-         YOkHlDEgRaNUxTUnNkTWPfJwpz7yAePo5Z/CrzoKCqkrEnXr6pD4Q0lwvBqxrlD6JetC
-         wwmkUyP2AhFQNb6ZYfDAJNkd8kbKecI/DuYjDeMu439932SfJg1HIWeRSIyeNSpIf9Ui
-         C+bHEPjDd9kz/qVaRUc3mZYQVKW6P5sgcWw9VXZol/9MmHehNTgdUovJimrcBqXDnBF4
-         iOGw==
-X-Gm-Message-State: APjAAAUeWHPlY6VzW23wiTJUcuFXsbIJYqjhjrBN9VCUHLJyPPFjzPg8
-        HC6Hcai8mWkVs1NwTYRq5xgVpliQtIwulwvVFhc=
-X-Google-Smtp-Source: APXvYqzZbaUDEmTObrnMshkuzjQeZkeGHrH3trfShTz+SF+ze1HLbCRn7UbCymMVEmgP/Z63mQJGxQEthi2RzQjYckw=
-X-Received: by 2002:aca:ed85:: with SMTP id l127mr1676909oih.75.1574237189813;
- Wed, 20 Nov 2019 00:06:29 -0800 (PST)
-MIME-Version: 1.0
-References: <10805.1570726908@warthog.procyon.org.uk>
-In-Reply-To: <10805.1570726908@warthog.procyon.org.uk>
-From:   Zorro Lang <zorro.lang@gmail.com>
-Date:   Wed, 20 Nov 2019 16:06:17 +0800
-Message-ID: <CADVQ27qqh=iowaD3K65==7qJWvEXyvePTu+4+HsSDkotMkrHqg@mail.gmail.com>
-Subject: Re: [MANPAGE] fsopen.2, fsmount.2
-To:     David Howells <dhowells@redhat.com>
-Cc:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        id S1727269AbfKTIF4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Nov 2019 03:05:56 -0500
+Received: from mga04.intel.com ([192.55.52.120]:59852 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726358AbfKTIFz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 20 Nov 2019 03:05:55 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 00:05:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,221,1571727600"; 
+   d="scan'208";a="237639608"
+Received: from chenyu-office.sh.intel.com ([10.239.158.173])
+  by fmsmga002.fm.intel.com with ESMTP; 20 Nov 2019 00:05:52 -0800
+From:   Chen Yu <yu.c.chen@intel.com>
+To:     x86@kernel.org
+Cc:     Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Zorro Lang <zlang@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Chen Yu <yu.chen.surf@gmail.com>, Chen Yu <yu.c.chen@intel.com>
+Subject: [PATCH][v3] x86/resctrl: Add task resctrl information display
+Date:   Wed, 20 Nov 2019 16:16:28 +0800
+Message-Id: <20191120081628.26701-1-yu.c.chen@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> =E4=BA=8E2019=E5=B9=B410=E6=9C=8811=E6=
-=97=A5=E5=91=A8=E4=BA=94 =E4=B8=8A=E5=8D=881:03=E5=86=99=E9=81=93=EF=BC=9A
->
-> '\" t
-> .\" Copyright (c) 2019 David Howells <dhowells@redhat.com>
-> .\"
-> .\" %%%LICENSE_START(VERBATIM)
-> .\" Permission is granted to make and distribute verbatim copies of this
-> .\" manual provided the copyright notice and this permission notice are
-> .\" preserved on all copies.
-> .\"
-> .\" Permission is granted to copy and distribute modified versions of thi=
-s
-> .\" manual under the conditions for verbatim copying, provided that the
-> .\" entire resulting derived work is distributed under the terms of a
-> .\" permission notice identical to this one.
-> .\"
-> .\" Since the Linux kernel and libraries are constantly changing, this
-> .\" manual page may be incorrect or out-of-date.  The author(s) assume no
-> .\" responsibility for errors or omissions, or for damages resulting from
-> .\" the use of the information contained herein.  The author(s) may not
-> .\" have taken the same level of care in the production of this manual,
-> .\" which is licensed free of charge, as they might when working
-> .\" professionally.
-> .\"
-> .\" Formatted or processed versions of this manual, if unaccompanied by
-> .\" the source, must acknowledge the copyright and authors of this work.
-> .\" %%%LICENSE_END
-> .\"
-> .TH FSOPEN 2 2019-10-10 "Linux" "Linux Programmer's Manual"
-> .SH NAME
-> fsopen, fsmount \- Filesystem parameterisation and mount creation
-> .SH SYNOPSIS
-> .nf
-> .B #include <sys/types.h>
-> .br
-> .B #include <sys/mount.h>
-> .br
-> .B #include <unistd.h>
-> .br
-> .BR "#include <fcntl.h>           " "/* Definition of AT_* constants */"
-> .br
-> .BR "#include <sys/mount.h>       "
-> .PP
-> .BI "int fsopen(const char *" fsname ", unsigned int " flags );
-> .PP
-> .BI "int fsmount(int " fd ", unsigned int " flags ", unsigned int " mount=
-_attrs );
-> .fi
-> .PP
-> .IR Note :
-> There are no glibc wrappers for these system calls.
-> .SH DESCRIPTION
-> .PP
-> .BR fsopen ()
-> creates a blank filesystem configuration context within the kernel for th=
-e
-> filesystem named in the
-> .I fsname
-> parameter, puts it into creation mode and attaches it to a file descripto=
-r,
-> which it then returns.  The file descriptor can be marked close-on-exec b=
-y
-> setting
-> .B FSOPEN_CLOEXEC
-> in
-> .IR flags .
-> .PP
-> After calling fsopen(), the file descriptor should be passed to the
-> .BR fsconfig (2)
-> system call, using that to specify the desired filesystem and security
-> parameters.
-> .PP
-> When the parameters are all set, the
-> .BR fsconfig ()
-> system call should then be called again with
-> .B FSCONFIG_CMD_CREATE
-> as the command argument to effect the creation.
-> .RS
-> .PP
-> .BR "[!]\ NOTE" :
-> Depending on the filesystem type and parameters, this may rather share an
-> existing in-kernel filesystem representation instead of creating a new on=
-e.
-> In such a case, the parameters specified may be discarded or may overwrit=
-e the
-> parameters set by a previous mount - at the filesystem's discretion.
-> .RE
-> .PP
-> The file descriptor also serves as a channel by which more comprehensive =
-error,
-> warning and information messages may be retrieved from the kernel using
-> .BR read (2).
->
-> .PP
-> Once the creation command has been successfully run on a context, the con=
-text
-> is switched into need-mount mode which prevents further configuration.  A=
-t
-> this point,
-> .BR fsmount ()
-> should be called to create a mount object.
-> .PP
-> .BR fsmount ()
-> takes the file descriptor returned by
-> .BR fsopen ()
-> and creates a mount object for the filesystem root specified there.  The
-> attributes of the mount object are set from the
-> .I mount_attrs
-> parameter.  The attributes specify the propagation and mount restrictions=
- to
-> be applied to accesses through this mount.
-> .PP
-> The mount object is then attached to a new file descriptor that looks lik=
-e one
-> created by
-> .BR open "(2) with " O_PATH " or " open_tree (2).
-> This can be passed to
-> .BR move_mount (2)
-> to attach the mount object to a mountpoint, thereby completing the proces=
-s.
-> .PP
-> The file descriptor returned by fsmount() is marked close-on-exec if
-> FSMOUNT_CLOEXEC is specified in
-> .IR flags .
-> .PP
-> After fsmount() has completed, the context created by fsopen() is reset a=
-nd
-> moved to reconfiguration state, allowing the new superblock to be
-> reconfigured.  See
-> .BR fspick (2)
-> for details.
-> .PP
->
-> .\"________________________________________________________
-> .SS Message Retrieval Interface
-> The context file descriptor may be queried for message strings at any tim=
-e by
-> calling
-> .BR read (2)
-> on the file descriptor.  This will return formatted messages that are pre=
-fixed
-> to indicate their class:
-> .TP
-> \fB"e <message>"\fP
-> An error message string was logged.
-> .TP
-> \fB"i <message>"\fP
-> An informational message string was logged.
-> .TP
-> \fB"w <message>"\fP
-> An warning message string was logged.
-> .PP
-> Messages are removed from the queue as they're read.
->
-> .\"________________________________________________________
-> .SH EXAMPLES
-> To illustrate the process, here's an example whereby this can be used to =
-mount
-> an ext4 filesystem on /dev/sdb1 onto /mnt.
-> .PP
-> .in +4n
-> .nf
-> sfd =3D fsopen("ext4", FSOPEN_CLOEXEC);
-> fsconfig(sfd, FSCONFIG_SET_FLAG, "ro", NULL, 0);
-> fsconfig(sfd, FSCONFIG_SET_STRING, "source", "/dev/sdb1", 0);
-> fsconfig(sfd, FSCONFIG_SET_FLAG, "noatime", NULL, 0);
-> fsconfig(sfd, FSCONFIG_SET_FLAG, "acl", NULL, 0);
-> fsconfig(sfd, FSCONFIG_SET_FLAG, "user_attr", NULL, 0);
-> fsconfig(sfd, FSCONFIG_SET_FLAG, "iversion", NULL, 0);
-> fsconfig(sfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-> mfd =3D fsmount(sfd, FSMOUNT_CLOEXEC, MS_RELATIME);
+Monitoring tools that want to find out which resctrl CTRL
+and MONITOR groups a task belongs to must currently read
+the "tasks" file in every group until they locate the process
+ID.
 
-Hi David,
+Add an additional file /proc/{pid}/resctrl to provide this
+information.
 
-I tried to mount a XFS by "mfd =3D fsmount(sfd, FSMOUNT_CLOEXEC,
-MS_RELATIME);", but it returned EINVAL.
-The MS_RELATIME is defined as "(1<<21)" in my
-/usr/include/linux/mount.h, but I found that the fsmount syscall has:
+For example:
+ cat /proc/1193/resctrl
+CTRL_MON:/ctrl_grp0
+MON:/ctrl_grp0/mon_groups/mon_grp0
 
-        if (attr_flags & ~(MOUNT_ATTR_RDONLY |
-                           MOUNT_ATTR_NOSUID |
-                           MOUNT_ATTR_NODEV |
-                           MOUNT_ATTR_NOEXEC |
-                           MOUNT_ATTR__ATIME |
-                           MOUNT_ATTR_NODIRATIME))
-                return -EINVAL;
+If the resctrl filesystem has not been mounted,
+reading /proc/{pid}/resctrl returns an empty string.
 
-And:
-        case MOUNT_ATTR_RELATIME:
-                mnt_flags |=3D MNT_RELATIME;
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+---
+v2: Reduce indentation level in proc_resctrl_show()
+    according to Boris's suggestion.
+    Create the include/linux/resctrl.h header and
+    declare proc_resctrl_show() in this file, so
+    that other architectures would probably use it
+    in the future. Different architectures should
+    implement architectural specific proc_resctrl_show()
+    accordingly.
 
-The MOUNT_ATTR_RELATIME is defined as 0. I changed the MS_RELATIME to
-0 in my test code, then fsmount test passed.
+v3: Return empty string if the resctrl filesystem has
+    not been mounted per Boris's suggestion.
+    Rename the config from CPU_RESCTRL to PROC_CPU_RESCTRL
+    to better represent its usage. Move PROC_CPU_RESCTRL
+    from arch/Kconfig to fs/proc/Kconfig.
+    And let PROC_CPU_RESCTRL to be depended on PROC_FS.
+---
+ arch/x86/Kconfig                       |  1 +
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 52 ++++++++++++++++++++++++++
+ fs/proc/Kconfig                        |  4 ++
+ fs/proc/base.c                         |  7 ++++
+ include/linux/resctrl.h                | 16 ++++++++
+ 5 files changed, 80 insertions(+)
+ create mode 100644 include/linux/resctrl.h
 
-Should we keep using MS_* things, or use MOUNT_ATTR_* things for new mount =
-API?
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 8ef85139553f..252364d18887 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -455,6 +455,7 @@ config X86_CPU_RESCTRL
+ 	bool "x86 CPU resource control support"
+ 	depends on X86 && (CPU_SUP_INTEL || CPU_SUP_AMD)
+ 	select KERNFS
++	select PROC_CPU_RESCTRL		if PROC_FS
+ 	help
+ 	  Enable x86 CPU resource control support.
+ 
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index 2e3b06d6bbc6..657c21ffbdfa 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -725,6 +725,58 @@ static int rdtgroup_tasks_show(struct kernfs_open_file *of,
+ 	return ret;
+ }
+ 
++#ifdef CONFIG_PROC_CPU_RESCTRL
++
++int proc_resctrl_show(struct seq_file *s, struct pid_namespace *ns,
++		      struct pid *pid, struct task_struct *tsk)
++{
++	struct rdtgroup *rdtg;
++	int ret = 0;
++
++	mutex_lock(&rdtgroup_mutex);
++
++	/* Return empty if resctrl has not been mounted. */
++	if (!static_branch_unlikely(&rdt_enable_key))
++		goto unlock;
++
++	list_for_each_entry(rdtg, &rdt_all_groups, rdtgroup_list) {
++		struct rdtgroup *crg;
++
++		/*
++		 * Task information is only relevant for shareable
++		 * and exclusive groups.
++		 */
++		if (rdtg->mode != RDT_MODE_SHAREABLE &&
++		    rdtg->mode != RDT_MODE_EXCLUSIVE)
++			continue;
++
++		if (rdtg->closid != tsk->closid)
++			continue;
++
++		seq_printf(s, "CTRL_MON:/%s\n", rdtg->kn->name);
++		list_for_each_entry(crg, &rdtg->mon.crdtgrp_list,
++				    mon.crdtgrp_list) {
++			if (tsk->rmid != crg->mon.rmid)
++				continue;
++			seq_printf(s, "MON:%s%s/mon_groups/%s\n",
++				   rdtg == &rdtgroup_default ? "" : "/",
++				   rdtg->kn->name, crg->kn->name);
++			goto unlock;
++		}
++		goto unlock;
++	}
++	/*
++	 * The above search should succeed. Otherwise return
++	 * with an error.
++	 */
++	ret = -ENOENT;
++unlock:
++	mutex_unlock(&rdtgroup_mutex);
++
++	return ret;
++}
++#endif
++
+ static int rdt_last_cmd_status_show(struct kernfs_open_file *of,
+ 				    struct seq_file *seq, void *v)
+ {
+diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
+index cb5629bd5fff..ae96a339d24d 100644
+--- a/fs/proc/Kconfig
++++ b/fs/proc/Kconfig
+@@ -103,3 +103,7 @@ config PROC_CHILDREN
+ config PROC_PID_ARCH_STATUS
+ 	def_bool n
+ 	depends on PROC_FS
++
++config PROC_CPU_RESCTRL
++	def_bool n
++	depends on PROC_FS
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index ebea9501afb8..0e4b8bf2b986 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -94,6 +94,7 @@
+ #include <linux/sched/debug.h>
+ #include <linux/sched/stat.h>
+ #include <linux/posix-timers.h>
++#include <linux/resctrl.h>
+ #include <trace/events/oom.h>
+ #include "internal.h"
+ #include "fd.h"
+@@ -3060,6 +3061,9 @@ static const struct pid_entry tgid_base_stuff[] = {
+ #endif
+ #ifdef CONFIG_CGROUPS
+ 	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
++#endif
++#ifdef CONFIG_PROC_CPU_RESCTRL
++	ONE("resctrl", S_IRUGO, proc_resctrl_show),
+ #endif
+ 	ONE("oom_score",  S_IRUGO, proc_oom_score),
+ 	REG("oom_adj",    S_IRUGO|S_IWUSR, proc_oom_adj_operations),
+@@ -3460,6 +3464,9 @@ static const struct pid_entry tid_base_stuff[] = {
+ #endif
+ #ifdef CONFIG_CGROUPS
+ 	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
++#endif
++#ifdef CONFIG_PROC_CPU_RESCTRL
++	ONE("resctrl", S_IRUGO, proc_resctrl_show),
+ #endif
+ 	ONE("oom_score", S_IRUGO, proc_oom_score),
+ 	REG("oom_adj",   S_IRUGO|S_IWUSR, proc_oom_adj_operations),
+diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
+new file mode 100644
+index 000000000000..50b147784d55
+--- /dev/null
++++ b/include/linux/resctrl.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _RESCTRL_H
++#define _RESCTRL_H
++
++#ifdef CONFIG_PROC_CPU_RESCTRL
++
++#include <linux/proc_fs.h>
++
++int proc_resctrl_show(struct seq_file *m,
++		      struct pid_namespace *ns,
++		      struct pid *pid,
++		      struct task_struct *tsk);
++
++#endif
++
++#endif /* _RESCTRL_H */
+-- 
+2.17.1
 
-Thanks,
-Zorro
-
-
-> move_mount(mfd, "", sfd, AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
-> .fi
-> .in
-> .PP
-> Here, an ext4 context is created first and attached to sfd.  This is then=
- told
-> where its source will be, given a bunch of options and created.  Then
-> fsmount() is called to create a mount object and
-> .BR move_mount (2)
-> is called to attach it to its intended mountpoint.
-> .PP
-> And here's an example of mounting from an NFS server and setting a Smack
-> security module label on it too:
-> .PP
-> .in +4n
-> .nf
-> sfd =3D fsopen("nfs", 0);
-> fsconfig(sfd, FSCONFIG_SET_STRING, "source", "example.com/pub/linux", 0);
-> fsconfig(sfd, FSCONFIG_SET_STRING, "nfsvers", "3", 0);
-> fsconfig(sfd, FSCONFIG_SET_STRING, "rsize", "65536", 0);
-> fsconfig(sfd, FSCONFIG_SET_STRING, "wsize", "65536", 0);
-> fsconfig(sfd, FSCONFIG_SET_STRING, "smackfsdef", "foolabel", 0);
-> fsconfig(sfd, FSCONFIG_SET_FLAG, "rdma", NULL, 0);
-> fsconfig(sfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-> mfd =3D fsmount(sfd, 0, MS_NODEV);
-> move_mount(mfd, "", sfd, AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
-> .fi
-> .in
-> .PP
->
->
-> .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""=
-""""""
-> .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""=
-""""""
-> .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""=
-""""""
-> .SH RETURN VALUE
-> On success, both functions return a file descriptor.  On error, \-1 is
-> returned, and
-> .I errno
-> is set appropriately.
-> .SH ERRORS
-> The error values given below result from filesystem type independent
-> errors.
-> Each filesystem type may have its own special errors and its
-> own special behavior.
-> See the Linux kernel source code for details.
-> .TP
-> .B EBUSY
-> The context referred to by
-> .I fd
-> is not in the right state to be used by
-> .BR fsmount ().
-> .TP
-> .B EFAULT
-> One of the pointer arguments points outside the user address space.
-> .TP
-> .B EINVAL
-> .I flags
-> had an invalid flag set.
-> .TP
-> .B EINVAL
-> .I mount_attrs,
-> includes invalid
-> .BR MOUNT_ATTR_*
-> flags.
-> .TP
-> .B EMFILE
-> The system has too many open files to create more.
-> .TP
-> .B ENFILE
-> The process has too many open files to create more.
-> .TP
-> .B ENODEV
-> Filesystem
-> .I fsname
-> not configured in the kernel.
-> .TP
-> .B ENOMEM
-> The kernel could not allocate sufficient memory to complete the call.
-> .TP
-> .B EPERM
-> The caller does not have the required privileges.
-> .SH CONFORMING TO
-> These functions are Linux-specific and should not be used in programs int=
-ended
-> to be portable.
-> .SH VERSIONS
-> .BR fsopen "(), and " fsmount ()
-> were added to Linux in kernel 5.1.
-> .SH NOTES
-> Glibc does not (yet) provide a wrapper for the
-> .BR fsopen "() or " fsmount "()"
-> system calls; call them using
-> .BR syscall (2).
-> .SH SEE ALSO
-> .BR mountpoint (1),
-> .BR fsconfig (2),
-> .BR fspick (2),
-> .BR move_mount (2),
-> .BR open_tree (2),
-> .BR umount (2),
-> .BR mount_namespaces (7),
-> .BR path_resolution (7),
-> .BR findmnt (8),
-> .BR lsblk (8),
-> .BR mount (8),
-> .BR umount (8)
