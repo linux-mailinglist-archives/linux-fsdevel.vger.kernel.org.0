@@ -2,236 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 055FB103F23
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 16:41:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E0C010402E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Nov 2019 16:58:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732102AbfKTPld (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Nov 2019 10:41:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39958 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732099AbfKTPld (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Nov 2019 10:41:33 -0500
-Received: from hubcapsc.localdomain (adsl-074-187-100-144.sip.mia.bellsouth.net [74.187.100.144])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A09F220709;
-        Wed, 20 Nov 2019 15:41:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574264492;
-        bh=zwIi3KjbTJyA9nlUEN7sOsjcjcY0B6OVVYRZkrdYyUM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=JvoQxyASNfmrn7/hMU11pLlwhNjf14Lv5w58YbQidQDcjHrFMLKASLenlqfaouEvO
-         fk2ZWfTnPZMVrHrTNUNGsKckSO4p5I2jlLumuJTXAZvp44XbFmAwZSbXq9MEl0P9qn
-         BazJmIreo927OSzrWtQxIh7SXUN6NsU/vw1LAo1c=
-From:   hubcap@kernel.org
-To:     torvalds@linux-foundation.org
-Cc:     Mike Marshall <hubcap@omnibond.com>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] orangefs: posix read and write on open files.
-Date:   Wed, 20 Nov 2019 10:41:11 -0500
-Message-Id: <20191120154111.9788-1-hubcap@kernel.org>
-X-Mailer: git-send-email 2.20.1
+        id S1732210AbfKTP6L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Nov 2019 10:58:11 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:40549 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732191AbfKTP6L (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 20 Nov 2019 10:58:11 -0500
+Received: by mail-io1-f72.google.com with SMTP id 125so18798904iou.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2019 07:58:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=D0siQ5VXLYgnLbarDRDx2gxGicWQej9v5iWxcK9yLGk=;
+        b=K9wQgxY6csq1eN4b0ijBvMLkke8fip1BSp9d9mAmRYMombyQ2RRztz/d4+0RJWCqfr
+         ZzYYwJoxO0I7umBZd1rwPHNESRbVfIVRuWKp9fWm+sU8E3IkKa9GkvkdDxLwwFRMpv35
+         9W037UKvcH9wjZCdUBlz3AdcuuhTu2J0AJ4HtKp/ddbrxghRKDBfy5oVpF/Bbjyklf0P
+         jO1dSQfhCOc/aP9k7WcV/XTWSV1zCCsKYzmxXfjP7X9vPSMhCCNQkh0wawZXncC+UKhP
+         A2BgZ8FETKSJ/G93TxiWPZxXXmeTGRWfhZHtMFWfeSxluieY2HnaqOR1gJzxH+2FS893
+         TNSQ==
+X-Gm-Message-State: APjAAAUMCBiMvGCzigB+KD+WI0O8rcLvyiWEpgq69QmTCvbmzQOms+oZ
+        QEi6OSIffS0DnxY8dpMs6iNk8kF85FWylEAhvAS4LN+C3/qS
+X-Google-Smtp-Source: APXvYqx8TtWXlYIgsSif3jENuikx/9gZNwqg/6rX/P2UATgf96UTqCSv9ftqDJznlfzIUvUtrKRLnRUPeqsmE8ZjYTnKykjxr9qu
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:831d:: with SMTP id f29mr4379730ild.263.1574265488544;
+ Wed, 20 Nov 2019 07:58:08 -0800 (PST)
+Date:   Wed, 20 Nov 2019 07:58:08 -0800
+In-Reply-To: <00000000000072cb6c0597635d04@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003a1f180597c93ffe@google.com>
+Subject: Re: INFO: trying to register non-static key in io_cqring_ev_posted
+From:   syzbot <syzbot+0d818c0d39399188f393@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Mike Marshall <hubcap@omnibond.com>
+syzbot has found a reproducer for the following crash on:
 
-Orangefs doesn't have an open function. Orangefs performs
-permission checks on files each time they are accessed.
-Users create files with arbitrary permissions. A user
-might create a file with a mode that doesn't include write,
-or change the mode of a file he has opened to one that doesn't
-include write. Posix says the user can write on the file
-anyway since he was able to open it.
+HEAD commit:    5d1131b4 Add linux-next specific files for 20191119
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=140b0412e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b60c562d89e5a8df
+dashboard link: https://syzkaller.appspot.com/bug?extid=0d818c0d39399188f393
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=169b29d2e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14b3956ae00000
 
-Orangefs through the kernel module needs to seem posixy, so
-when someone creates or chmods a file to a mode that disallows owner
-read and/or write, we'll call orangefs_posix_open to stamp a
-temporary S_IRWXU acl on it in userspace without telling the kernel
-about the acl, and remove the acl later when the kernel passes through
-file_operations->release.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+0d818c0d39399188f393@syzkaller.appspotmail.com
 
-This fixes known real-world problems: git, for example,
-uses openat(AT_FDCWD, argv[1], O_RDWR|O_CREAT|O_EXCL, 0444)
-on some important files it later tries to write on during clone.
-We don't actually know use cases where people chmod their open files to
-un-writability and then try to write on them, but they
-should be able to if they want to :-).
-
-Signed-off-by: Mike Marshall <hubcap@omnibond.com>
----
- fs/orangefs/file.c            | 16 ++++++++++++
- fs/orangefs/inode.c           | 15 +++++++++++
- fs/orangefs/namei.c           | 10 ++++++-
- fs/orangefs/orangefs-kernel.h |  3 +++
- fs/orangefs/orangefs-utils.c  | 49 +++++++++++++++++++++++++++++++++++
- 5 files changed, 92 insertions(+), 1 deletion(-)
-
-diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
-index a5612abc0936..c582e7bc5d40 100644
---- a/fs/orangefs/file.c
-+++ b/fs/orangefs/file.c
-@@ -513,6 +513,22 @@ static int orangefs_file_release(struct inode *inode, struct file *file)
- 		}
- 
- 	}
-+	/*
-+	 * Check to see if we're affecting posixness by keeping a temporary
-+	 * owner rw ACL on this file while it is open, so that the process
-+	 * that has it open can read and write it no matter what the mode is.
-+	 * If there is a temporary ACL on the file, clean it and
-+	 * its associated inode flag up. See the comments in
-+	 * orangefs_posix_open for more info.
-+	 */
-+	if (ORANGEFS_I(inode)->opened) {
-+		ORANGEFS_I(inode)->opened = 0;
-+		orangefs_inode_setxattr(inode,
-+			XATTR_NAME_POSIX_ACL_ACCESS,
-+			NULL,
-+			0,
-+			0);
-+	}
- 	return 0;
- }
- 
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index efb12197da18..af9eb24ad7c6 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -880,6 +880,20 @@ int __orangefs_setattr(struct inode *inode, struct iattr *iattr)
- 		}
- 	}
- 
-+	/*
-+	 * if it seems like someone might be fixing to chmod an open file into
-+	 * unread or unwritability, use the orangefs_posix_open hat-trick to
-+	 * posixly provide read and writability.
-+	 */
-+	if ((iattr->ia_mode) &&
-+	    (!ORANGEFS_I(inode)->opened) &&
-+	    (iattr->ia_valid & ATTR_MODE) &&
-+	    (!(iattr->ia_mode & S_IRUSR) || (!(iattr->ia_mode & S_IWUSR)))) {
-+		ret = orangefs_posix_open(inode);
-+		if (ret)
-+			goto out;
-+	}
-+
- 	if (iattr->ia_valid & ATTR_SIZE) {
- 		ret = orangefs_setattr_size(inode, iattr);
- 		if (ret)
-@@ -1060,6 +1074,7 @@ static int orangefs_set_inode(struct inode *inode, void *data)
- 	hash_init(ORANGEFS_I(inode)->xattr_cache);
- 	ORANGEFS_I(inode)->mapping_time = jiffies - 1;
- 	ORANGEFS_I(inode)->bitlock = 0;
-+	ORANGEFS_I(inode)->opened = 0;
- 	return 0;
- }
- 
-diff --git a/fs/orangefs/namei.c b/fs/orangefs/namei.c
-index 3e7cf3d0a494..040ef164563e 100644
---- a/fs/orangefs/namei.c
-+++ b/fs/orangefs/namei.c
-@@ -86,7 +86,15 @@ static int orangefs_create(struct inode *dir,
- 	iattr.ia_valid |= ATTR_MTIME | ATTR_CTIME;
- 	iattr.ia_mtime = iattr.ia_ctime = current_time(dir);
- 	__orangefs_setattr(dir, &iattr);
--	ret = 0;
-+
-+	/*
-+	 * If you can open (or create) a file, Posix says you should
-+	 * be able to read or write to the file without regard to
-+	 * the file's mode until the fd is closed.
-+	 */
-+	if (!(mode & S_IRUSR) || (!(mode & S_IWUSR)))
-+		ret = orangefs_posix_open(inode);
-+
- out:
- 	op_release(new_op);
- 	gossip_debug(GOSSIP_NAME_DEBUG,
-diff --git a/fs/orangefs/orangefs-kernel.h b/fs/orangefs/orangefs-kernel.h
-index 34a6c99fa29b..cad7a7e08e34 100644
---- a/fs/orangefs/orangefs-kernel.h
-+++ b/fs/orangefs/orangefs-kernel.h
-@@ -198,6 +198,7 @@ struct orangefs_inode_s {
- 	kuid_t attr_uid;
- 	kgid_t attr_gid;
- 	unsigned long bitlock;
-+	int opened;
- 
- 	DECLARE_HASHTABLE(xattr_cache, 4);
- };
-@@ -405,6 +406,8 @@ ssize_t do_readv_writev(enum ORANGEFS_io_type, struct file *, loff_t *,
- /*
-  * defined in orangefs-utils.c
-  */
-+int orangefs_posix_open(struct inode *inode);
-+
- __s32 fsid_of_op(struct orangefs_kernel_op_s *op);
- 
- ssize_t orangefs_inode_getxattr(struct inode *inode,
-diff --git a/fs/orangefs/orangefs-utils.c b/fs/orangefs/orangefs-utils.c
-index d4b7ae763186..3c60c65ec445 100644
---- a/fs/orangefs/orangefs-utils.c
-+++ b/fs/orangefs/orangefs-utils.c
-@@ -452,6 +452,55 @@ int orangefs_inode_setattr(struct inode *inode)
- 	return ret;
- }
- 
-+/*
-+ * Orangefs doesn't have an open function. Orangefs performs
-+ * permission checks on files each time they are accessed.
-+ * Users create files with arbitrary permissions. A user
-+ * might create a file with a mode that doesn't include write,
-+ * or change the mode of a file he has opened to one that doesn't
-+ * include write. Posix says the user can write on the file
-+ * anyway since he was able to open it.
-+ *
-+ * Orangefs through the kernel module needs to seem posixy, so
-+ * when someone creates or chmods a file to a mode that disallows owner
-+ * read and/or write, we'll call orangefs_posix_open to stamp a
-+ * temporary S_IRWXU acl on it in userspace without telling the kernel
-+ * about the acl, and remove the acl later when the kernel passes through
-+ * file_operations->release.
-+ *
-+ * This fixes known real-world problems: git, for example,
-+ * uses openat(AT_FDCWD, argv[1], O_RDWR|O_CREAT|O_EXCL, 0444)
-+ * on some important files it later tries to write on during clone.
-+ * We don't actually know use cases where people chmod their open files to
-+ * un-writability and then try to write on them, but they
-+ * should be able to if they want to :-).
-+ */
-+int orangefs_posix_open(struct inode *inode) {
-+	struct posix_acl_xattr_header *posix_header;
-+	struct posix_acl_xattr_entry *posix_entry;
-+	void *buffer;
-+	int size = sizeof(struct posix_acl_xattr_header) +
-+			sizeof(struct posix_acl_xattr_entry);
-+	const char *name = XATTR_NAME_POSIX_ACL_ACCESS;
-+	int ret;
-+
-+	buffer = kmalloc(size, GFP_KERNEL);
-+	if (!buffer)
-+		return -ENOMEM;
-+
-+	ORANGEFS_I(inode)->opened = 1;
-+	posix_header = buffer;
-+	posix_header->a_version = POSIX_ACL_XATTR_VERSION;
-+	posix_entry = (void *)(posix_header + 1);
-+	posix_entry->e_tag = ACL_USER;
-+	posix_entry->e_perm = S_IRWXU >> 6;
-+	posix_entry->e_id = from_kuid(&init_user_ns, current_fsuid());
-+
-+	ret = orangefs_inode_setxattr(inode, name, buffer, size, 0);
-+	kfree(buffer);
-+	return ret;
-+}
-+
- /*
-  * The following is a very dirty hack that is now a permanent part of the
-  * ORANGEFS protocol. See protocol.h for more error definitions.
--- 
-2.20.1
+RSP: 002b:00007ffddd565408 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004412a9
+RDX: 0000000000000001 RSI: 0000000020000340 RDI: 00000000000002a6
+RBP: 0000000000011c3e R08: 0000000000000001 R09: 00000000004002c8
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004021f0
+R13: 0000000000402280 R14: 0000000000000000 R15: 0000000000000000
+INFO: trying to register non-static key.
+the code is fine but needs lockdep annotation.
+turning off the locking correctness validator.
+CPU: 1 PID: 8725 Comm: syz-executor376 Not tainted  
+5.4.0-rc8-next-20191119-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x197/0x210 lib/dump_stack.c:118
+  assign_lock_key kernel/locking/lockdep.c:881 [inline]
+  register_lock_class+0x179e/0x1850 kernel/locking/lockdep.c:1190
+  __lock_acquire+0xf4/0x4a00 kernel/locking/lockdep.c:3837
+  lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4485
+  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+  _raw_spin_lock_irqsave+0x95/0xcd kernel/locking/spinlock.c:159
+  __wake_up_common_lock+0xc8/0x150 kernel/sched/wait.c:122
+  __wake_up+0xe/0x10 kernel/sched/wait.c:142
+  io_cqring_ev_posted+0xaa/0x120 fs/io_uring.c:655
+  io_cqring_overflow_flush+0x6d4/0xa90 fs/io_uring.c:702
+  io_ring_ctx_wait_and_kill+0x20a/0x770 fs/io_uring.c:4382
+  io_uring_create fs/io_uring.c:4719 [inline]
+  io_uring_setup+0x123d/0x1ca0 fs/io_uring.c:4745
+  __do_sys_io_uring_setup fs/io_uring.c:4758 [inline]
+  __se_sys_io_uring_setup fs/io_uring.c:4755 [inline]
+  __x64_sys_io_uring_setup+0x54/0x80 fs/io_uring.c:4755
+  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4412a9
+Code: e8 5c ae 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 bb 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffddd565408 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004412a9
+RDX: 0000000000000001 RSI: 0000000020000340 RDI: 00000000000002a6
+RBP: 0000000000011c3e R08: 0000000000000001 R09: 00000000004002c8
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004021f0
+R13: 0000000000402280 R14: 0000000000000000 R15: 0000000000000000
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 8725 Comm: syz-executor376 Not tainted  
+5.4.0-rc8-next-20191119-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:__wake_up_common+0xdf/0x610 kernel/sched/wait.c:86
+Code: 05 00 00 4c 8b 43 38 49 83 e8 18 49 8d 78 18 48 39 7d d0 0f 84 64 02  
+00 00 48 b8 00 00 00 00 00 fc ff df 48 89 f9 48 c1 e9 03 <80> 3c 01 00 0f  
+85 0d 05 00 00 49 8b 40 18 89 55 b0 31 db 49 bc 00
+RSP: 0018:ffff888089c87b00 EFLAGS: 00010046
+RAX: dffffc0000000000 RBX: ffff8880880c1120 RCX: 0000000000000000
+RDX: 0000000000000001 RSI: 1ffffffff13913ee RDI: 0000000000000000
+RBP: ffff888089c87b58 R08: ffffffffffffffe8 R09: ffff888089c87ba8
+R10: ffffed1011390f59 R11: 0000000000000003 R12: 0000000000000001
+R13: 0000000000000286 R14: 0000000000000000 R15: 0000000000000003
+FS:  00000000025cb880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000340 CR3: 000000009a26b000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  __wake_up_common_lock+0xea/0x150 kernel/sched/wait.c:123
+  __wake_up+0xe/0x10 kernel/sched/wait.c:142
+  io_cqring_ev_posted+0xaa/0x120 fs/io_uring.c:655
+  io_cqring_overflow_flush+0x6d4/0xa90 fs/io_uring.c:702
+  io_ring_ctx_wait_and_kill+0x20a/0x770 fs/io_uring.c:4382
+  io_uring_create fs/io_uring.c:4719 [inline]
+  io_uring_setup+0x123d/0x1ca0 fs/io_uring.c:4745
+  __do_sys_io_uring_setup fs/io_uring.c:4758 [inline]
+  __se_sys_io_uring_setup fs/io_uring.c:4755 [inline]
+  __x64_sys_io_uring_setup+0x54/0x80 fs/io_uring.c:4755
+  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4412a9
+Code: e8 5c ae 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 bb 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffddd565408 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004412a9
+RDX: 0000000000000001 RSI: 0000000020000340 RDI: 00000000000002a6
+RBP: 0000000000011c3e R08: 0000000000000001 R09: 00000000004002c8
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004021f0
+R13: 0000000000402280 R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+---[ end trace 8d482760e7208707 ]---
+RIP: 0010:__wake_up_common+0xdf/0x610 kernel/sched/wait.c:86
+Code: 05 00 00 4c 8b 43 38 49 83 e8 18 49 8d 78 18 48 39 7d d0 0f 84 64 02  
+00 00 48 b8 00 00 00 00 00 fc ff df 48 89 f9 48 c1 e9 03 <80> 3c 01 00 0f  
+85 0d 05 00 00 49 8b 40 18 89 55 b0 31 db 49 bc 00
+RSP: 0018:ffff888089c87b00 EFLAGS: 00010046
+RAX: dffffc0000000000 RBX: ffff8880880c1120 RCX: 0000000000000000
+RDX: 0000000000000001 RSI: 1ffffffff13913ee RDI: 0000000000000000
+RBP: ffff888089c87b58 R08: ffffffffffffffe8 R09: ffff888089c87ba8
+R10: ffffed1011390f59 R11: 0000000000000003 R12: 0000000000000001
+R13: 0000000000000286 R14: 0000000000000000 R15: 0000000000000003
+FS:  00000000025cb880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000340 CR3: 000000009a26b000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
