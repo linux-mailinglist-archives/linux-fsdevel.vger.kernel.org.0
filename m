@@ -2,102 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A225105650
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 17:00:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 233D110566C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 17:04:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbfKUQAz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Nov 2019 11:00:55 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:30758 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726803AbfKUQAy (ORCPT
+        id S1727117AbfKUQEi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Nov 2019 11:04:38 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:38190 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726983AbfKUQEh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Nov 2019 11:00:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574352053;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fl5jon/Xn0As09tGosG/4/lknhZw/odWV00qKChGNfE=;
-        b=L+0WpVpk4/TEUGtTtK2sOxsth9++SaulmVf9svTKe7tJL/iy8FyRHkdEu92HFyl0AJSwmr
-        L609XPSuc0DxGTagLPK3AjgeXisfde1I4TGdnFXJpTE01WXBvXi5y/Hrxj+ukdkWIw6kOD
-        d1daaCEwCpxtt/paGVIiueQ7JLLyK7s=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-220-2dU94oSiO1SQ9yuKpiU7UA-1; Thu, 21 Nov 2019 11:00:50 -0500
-X-MC-Unique: 2dU94oSiO1SQ9yuKpiU7UA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C1644189DAF9;
-        Thu, 21 Nov 2019 16:00:49 +0000 (UTC)
-Received: from localhost (ovpn-117-83.ams2.redhat.com [10.36.117.83])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 970611823F;
-        Thu, 21 Nov 2019 16:00:46 +0000 (UTC)
-Date:   Thu, 21 Nov 2019 16:00:45 +0000
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     virtio-fs@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dgilbert@redhat.com,
-        miklos@szeredi.hu
-Subject: Re: [PATCH 2/4] virtiofs: Add an index to keep track of first
- request queue
-Message-ID: <20191121160045.GD445244@stefanha-x1.localdomain>
-References: <20191115205705.2046-1-vgoyal@redhat.com>
- <20191115205705.2046-3-vgoyal@redhat.com>
+        Thu, 21 Nov 2019 11:04:37 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xALFsQCU042866;
+        Thu, 21 Nov 2019 16:04:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=lPdzRkGQjx1NBncVBBW08mF7iSdoj3OKKNLTrQgVL1A=;
+ b=fZqcwRu6/297MXYL4AQrhH652KbdWwYD5hkeAy3ANx2APi7pkzdLg2SEwSEKnXtnhm/l
+ LP6sE5fDyy5cE1nuIVpJvi5e4fwn67KAcDpeHFbnnjNZa4EPf9o6cUhNYzjxeXoO5Wg/
+ 0IN166/jwdzGKEzEkS04DtxbO3+eG8bKHoiQVb+oyzGmTYa6vlikByCUrUfqERMq/bgM
+ ET3Zr4/lXjs3VoUgpQ8fHu/inSnjeLRiTkTpacdJQUCqoZm5Y66RkZJf31vL0x93nw9w
+ DebbKqkWFPgSI4s77cSm0Em66OEoPtGbtnyoIpk3VlZp3IMPIY2jkCWZE2HOSxOi09FM 6A== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2wa92q58kp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Nov 2019 16:04:34 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xALFquan057588;
+        Thu, 21 Nov 2019 16:04:34 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2wdfrtfur2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Nov 2019 16:04:33 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xALG4WhA010611;
+        Thu, 21 Nov 2019 16:04:32 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 21 Nov 2019 08:04:31 -0800
+Date:   Thu, 21 Nov 2019 08:04:30 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org,
+        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+Subject: Re: [PATCH] block: add iostat counters for flush requests
+Message-ID: <20191121160430.GJ6211@magnolia>
+References: <157433282607.7928.5202409984272248322.stgit@buzz>
+ <ff971ff6-9a10-c3f1-107d-4f7d378e8755@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <20191115205705.2046-3-vgoyal@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Mimecast-Spam-Score: 0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="NtwzykIc2mflq5ck"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <ff971ff6-9a10-c3f1-107d-4f7d378e8755@kernel.dk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9447 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911210142
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9447 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911210142
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---NtwzykIc2mflq5ck
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Nov 21, 2019 at 08:56:14AM -0700, Jens Axboe wrote:
+> On 11/21/19 3:40 AM, Konstantin Khlebnikov wrote:
+> > Requests that triggers flushing volatile writeback cache to disk (barriers)
+> > have significant effect to overall performance.
+> > 
+> > Block layer has sophisticated engine for combining several flush requests
+> > into one. But there is no statistics for actual flushes executed by disk.
+> > Requests which trigger flushes usually are barriers - zero-size writes.
+> > 
+> > This patch adds two iostat counters into /sys/class/block/$dev/stat and
+> > /proc/diskstats - count of completed flush requests and their total time.
+> 
+> This makes sense to me, and the "recent" discard addition already proved
+> that we're fine extending with more fields. Unless folks object, I'd be
+> happy to queue this up for 5.5.
 
-On Fri, Nov 15, 2019 at 03:57:03PM -0500, Vivek Goyal wrote:
-> @@ -990,7 +994,7 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq =
-*fsvq,
->  static void virtio_fs_wake_pending_and_unlock(struct fuse_iqueue *fiq)
->  __releases(fiq->lock)
->  {
-> -=09unsigned int queue_id =3D VQ_REQUEST; /* TODO multiqueue */
-> +=09unsigned int queue_id;
->  =09struct virtio_fs *fs;
->  =09struct fuse_req *req;
->  =09struct virtio_fs_vq *fsvq;
+Looks like a good addition to /me... :)
 
-Sorry, I removed too much context in my reply.  This TODO...
+--D
 
-> @@ -1004,6 +1008,7 @@ __releases(fiq->lock)
->  =09spin_unlock(&fiq->lock);
-> =20
->  =09fs =3D fiq->priv;
-> +=09queue_id =3D fs->first_reqq_idx;
-
-...should be moved here.
-
---NtwzykIc2mflq5ck
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl3WtK0ACgkQnKSrs4Gr
-c8gQ3Af+PW0BnVxXMs0ogKUzltp1vxcPYfq4/js7a6Q7fcsgCdJFpoDIxKkfC1t0
-/N8JzkRrlqCdSBJ9Y4dvTl7jE4eSK/gVTBcjPt/BM0UY4vr5uLVD4lEtBI56yman
-Nz4nZfZ2llDrIBy1mJy1lih/7bzt/q+qLKwkTKytDpJ9B+cFAJNZzLkFRPni+whc
-2rooMFvXYAa7r6fCV0SjtL8RHCK4G2d12GdWsR0/8bJjxCBW6ponacxps7JWn8fi
-soqP8w5UNmGKAvYZmIkDLOHM7HhpdBKqInNQ4e6ZJCawPNvsKOcv3b+dqrcfgTDe
-iKEo4xRR0AEwcKybfAjhs62bsVLopg==
-=UlMv
------END PGP SIGNATURE-----
-
---NtwzykIc2mflq5ck--
-
+> -- 
+> Jens Axboe
+> 
