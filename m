@@ -2,264 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E37F1050BD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 11:40:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46D5F1050C7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 11:42:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726573AbfKUKkc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Nov 2019 05:40:32 -0500
-Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:49232 "EHLO
-        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726230AbfKUKkb (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Nov 2019 05:40:31 -0500
-Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
-        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id 235CB2E18F1;
-        Thu, 21 Nov 2019 13:40:27 +0300 (MSK)
-Received: from vla5-2bf13a090f43.qloud-c.yandex.net (vla5-2bf13a090f43.qloud-c.yandex.net [2a02:6b8:c18:3411:0:640:2bf1:3a09])
-        by mxbackcorp1g.mail.yandex.net (mxbackcorp/Yandex) with ESMTP id 8k5UtZBVOc-eQuieGpg;
-        Thu, 21 Nov 2019 13:40:27 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1574332827; bh=jJPE2lkmi4is3srgVXQWiJk3+sodk/rEZ57R5XJTD2A=;
-        h=Message-ID:Date:To:From:Subject:Cc;
-        b=VdaT6ljRC2SUcekXlATqcMbKCncFOBIm5Zi1cy5Wj8O8rszKGb1kg2Akj6jgw+oED
-         0vQAdkbhCN4PU6T6/QE5xPLDLlw4ALeDhv7F1coCZUilJKIdu8gY1gJGOGCisicojB
-         8wTDqm+7Xp+WAXkdqGO9YIjiisnLX3FS2MV6X+Z4=
-Authentication-Results: mxbackcorp1g.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:1009:4fae:ad87:4eae])
-        by vla5-2bf13a090f43.qloud-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id 4uiq2DmQw7-eQV4np4t;
-        Thu, 21 Nov 2019 13:40:26 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: [PATCH] block: add iostat counters for flush requests
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-To:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
-Date:   Thu, 21 Nov 2019 13:40:26 +0300
-Message-ID: <157433282607.7928.5202409984272248322.stgit@buzz>
-User-Agent: StGit/0.17.1-dirty
+        id S1726858AbfKUKmP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Nov 2019 05:42:15 -0500
+Received: from mout.web.de ([212.227.15.3]:54527 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726358AbfKUKmP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Nov 2019 05:42:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1574332833;
+        bh=zqABGV6E0XXcJfNemMD7lS3T89i0D26feXTj3F4j5Jc=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=S27YYTB0C/DWhAlv+kvbZemWx69t9pV2LFPbDJpKjZZ1kL6wiMNlUVn5SXTxmiUn/
+         avItLIbUo6NMl10Op01W4rU8DKsMU/OOCYPoxkF3Bs6uMgECIXCGUSrUilxLOLJZvn
+         Vy2KH/41XRzDgLHUCRg0R5IO2fFgiOmd2Msrs3E8=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.3] ([78.48.172.213]) by smtp.web.de (mrweb004
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0LcUIo-1i5nfF18pq-00jsBl; Thu, 21
+ Nov 2019 11:40:31 +0100
+Subject: Re: [PATCH v4 03/13] exfat: add inode operations
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>,
+        Daniel Wagner <dwagner@suse.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        linkinjeon@gmail.com
+References: <20191121052618.31117-1-namjae.jeon@samsung.com>
+ <CGME20191121052916epcas1p3f00c8e510eb53f53f4e082848bd325d0@epcas1p3.samsung.com>
+ <20191121052618.31117-4-namjae.jeon@samsung.com>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <38716ae8-a056-4ee3-285a-a3c1ac8307a5@web.de>
+Date:   Thu, 21 Nov 2019 11:40:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20191121052618.31117-4-namjae.jeon@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Ygcxaw7j70vzsZzHTFJ/FB4gv8lg1tDIhewvUs3sKLfW//ptBul
+ sYDLEl7gzXhGWwSSJqPrzCretgiu6j+/jUPmtquzhBwq2zttEVXb5WGubyE3vMerWnAd9EI
+ QcAjkBXcJ9jLO7pT1up1sLXJjHVhIYCLP/vR5HDIexT1hJAAOvEjDSTI+5uDT5hUWm7cNoZ
+ NqLN9qVdzANBqHEJTCNDw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:B7blI2NU7LQ=:p/sWGhpWDBy+DgxUd9Fh1A
+ BnZbZvTrR+N2gDaWgTiuLSoKyMIgX4eqqhIrpHyA3eZ/kzkYrbGP7FeG/tn1zr4YKjtCksvC8
+ 2HvBSbj27+oXor8mYOxnbjXL5LNMqd3pcjbpaXlMA1tPo9Ud5ytlG9Pw1EAI8vZgucPdymNUT
+ kfP8r2gkXy325wBSNJQRqEvZTPpKHMv9HxONWTPTJz+JV24YeeBLiI1XCUUuw8cxnw+j5aHtU
+ Hxkd4pMR63F1sMzRgzZCeAMFiKTgbLj7ejfkSQ5H3MIo9sTIe/HttbQNh5LokoOroeu5BEvHV
+ hW/4ASc7upMcZDGmiSzhJMJNhAVi4IQvlHSYD43HuSKtpfiwaVn1lo7qrhEzoQ7u16gSU5ZE+
+ z27angQuZdUDGDoVl6lliU2cSTxC2DJP7LL9B5NZrdlEF5Nyb3dzmbMAeqdcUJ/kOWXUCFtd/
+ der29vTfiYm/bsyc+KWAIQr3sjmcSfnGBzIvRSIP63tIDLxLxydM1vCdUANQc0WVuOfRX4afW
+ X8pioOzTyF1+5v4yXxShPJ1y4+dE46KIxIevxU7NKhMdnq1Er2QulyWqM0DgrkaB2s2dft4uR
+ ENfwL1Byg3YcTIyKhbyfZcuDRf/ytiDUyVcWDjGpZMpzG3UiDgc8SALdK5Y+REXxV4aYHoIuj
+ nBCnoifsW9A7l/ahHo4UurTIXr/xCAQahSfLqeRtxk9Ha6dxViFkHDdI7Tsgvtu9Xh5f3QKWq
+ iu24ChOCLOdM94CKCkqP0CreNHzqJAvzCzTSkn79+5NDj1CmI+zqoD655W61F2uMJJ4UwAwT0
+ huzZ2wXoCmQWi3BBcoVUYobdwubJcAZoL8dl9NVft60IkevBgjMxdbieqNuDUr4xG8w/5RiZk
+ b21+gD8glS2ijOH5Rawhl8ZeiCBRbqx5b771bY17NOnn170xaGoMkZdtTFe4HwNMN+1C5jmbd
+ MniVQCliS7jPYwdTlwae8YAGvzsT469VJP3J4b4/CmY4ub7AmMlMsFiZqTqIfITEeuvaDCOmd
+ /Vo5lf4Aopz7fiNRkXDoVRRopCHLNeVhVep4V7e7Bd/jVWmtD2SgX1ZtGzc+1xVaJkKJ/z0k7
+ ZUUvEilztZhrnAOpL825nQbnrx2AWB3G7WOYpMK3DyZBFQGPl9ruxdggEaOhZXqdekLpY5C4i
+ 0IgOuTqtWTDhY8795TIEOBKcVlOw8lFj5/ZvEfIsh0B0yy5ZHGI4MZCwqmIN0O85iuYTRU8ou
+ cOmIWeqqatI3mXkkVlj9/TJyHEIQnMik1QgHiJC9wfFgFjKh6YRn1M+9n3Y4=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Requests that triggers flushing volatile writeback cache to disk (barriers)
-have significant effect to overall performance.
+=E2=80=A6
+> +++ b/fs/exfat/inode.c
+=E2=80=A6
+> +static int exfat_bmap(struct inode *inode, sector_t sector, sector_t *p=
+hys,
+> +		unsigned long *mapped_blocks, int *create)
+> +{
+=E2=80=A6
+> +	err =3D exfat_map_cluster(inode, clu_offset, &cluster,
+> +		*create & BMAP_ADD_CLUSTER);
 
-Block layer has sophisticated engine for combining several flush requests
-into one. But there is no statistics for actual flushes executed by disk.
-Requests which trigger flushes usually are barriers - zero-size writes.
+I find an other indentation more appropriate.
+Please align the last parameter below (or besides) the opening parenthesis=
+.
 
-This patch adds two iostat counters into /sys/class/block/$dev/stat and
-/proc/diskstats - count of completed flush requests and their total time.
 
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
----
- Documentation/ABI/testing/procfs-diskstats |    5 +++++
- Documentation/ABI/testing/sysfs-block      |    6 ++++++
- Documentation/admin-guide/iostats.rst      |    9 +++++++++
- Documentation/block/stat.rst               |   14 ++++++++++++--
- block/blk-flush.c                          |   15 ++++++++++++++-
- block/genhd.c                              |    8 ++++++--
- block/partition-generic.c                  |    7 +++++--
- include/linux/blk_types.h                  |    1 +
- 8 files changed, 58 insertions(+), 7 deletions(-)
+> +	if (err) {
+> +		if (err !=3D -ENOSPC)
+> +			return -EIO;
+> +		return err;
+> +	}
 
-diff --git a/Documentation/ABI/testing/procfs-diskstats b/Documentation/ABI/testing/procfs-diskstats
-index 2c44b4f1b060..70dcaf2481f4 100644
---- a/Documentation/ABI/testing/procfs-diskstats
-+++ b/Documentation/ABI/testing/procfs-diskstats
-@@ -29,4 +29,9 @@ Description:
- 		17 - sectors discarded
- 		18 - time spent discarding
- 
-+		Kernel 5.5+ appends two more fields for flush requests:
-+
-+		19 - flush requests completed successfully
-+		20 - time spent flushing
-+
- 		For more details refer to Documentation/admin-guide/iostats.rst
-diff --git a/Documentation/ABI/testing/sysfs-block b/Documentation/ABI/testing/sysfs-block
-index f8c7c7126bb1..ed8c14f161ee 100644
---- a/Documentation/ABI/testing/sysfs-block
-+++ b/Documentation/ABI/testing/sysfs-block
-@@ -15,6 +15,12 @@ Description:
- 		 9 - I/Os currently in progress
- 		10 - time spent doing I/Os (ms)
- 		11 - weighted time spent doing I/Os (ms)
-+		12 - discards completed
-+		13 - discards merged
-+		14 - sectors discarded
-+		15 - time spent discarding (ms)
-+		16 - flush requests completed
-+		17 - time spent flushing (ms)
- 		For more details refer Documentation/admin-guide/iostats.rst
- 
- 
-diff --git a/Documentation/admin-guide/iostats.rst b/Documentation/admin-guide/iostats.rst
-index 5d63b18bd6d1..4f0462af3ca7 100644
---- a/Documentation/admin-guide/iostats.rst
-+++ b/Documentation/admin-guide/iostats.rst
-@@ -121,6 +121,15 @@ Field 15 -- # of milliseconds spent discarding
-     This is the total number of milliseconds spent by all discards (as
-     measured from __make_request() to end_that_request_last()).
- 
-+Field 16 -- # of flush requests completed
-+    This is the total number of flush requests completed successfully.
-+
-+    Block layer combines flush requests and executes at most one at a time.
-+    This counts flush requests executed by disk. Not tracked for partitions.
-+
-+Field 17 -- # of milliseconds spent flushing
-+    This is the total number of milliseconds spent by all flush requests.
-+
- To avoid introducing performance bottlenecks, no locks are held while
- modifying these counters.  This implies that minor inaccuracies may be
- introduced when changes collide, so (for instance) adding up all the
-diff --git a/Documentation/block/stat.rst b/Documentation/block/stat.rst
-index 9c07bc22b0bc..77311335c08b 100644
---- a/Documentation/block/stat.rst
-+++ b/Documentation/block/stat.rst
-@@ -41,6 +41,8 @@ discard I/Os    requests      number of discard I/Os processed
- discard merges  requests      number of discard I/Os merged with in-queue I/O
- discard sectors sectors       number of sectors discarded
- discard ticks   milliseconds  total wait time for discard requests
-+flush I/Os      requests      number of flush I/Os processed
-+flush ticks     milliseconds  total wait time for flush requests
- =============== ============= =================================================
- 
- read I/Os, write I/Os, discard I/0s
-@@ -48,6 +50,14 @@ read I/Os, write I/Os, discard I/0s
- 
- These values increment when an I/O request completes.
- 
-+flush I/Os
-+==========
-+
-+These values increment when an flush I/O request completes.
-+
-+Block layer combines flush requests and executes at most one at a time.
-+This counts flush requests executed by disk. Not tracked for partitions.
-+
- read merges, write merges, discard merges
- =========================================
- 
-@@ -62,8 +72,8 @@ discarded from this block device.  The "sectors" in question are the
- standard UNIX 512-byte sectors, not any device- or filesystem-specific
- block size.  The counters are incremented when the I/O completes.
- 
--read ticks, write ticks, discard ticks
--======================================
-+read ticks, write ticks, discard ticks, flush ticks
-+===================================================
- 
- These values count the number of milliseconds that I/O requests have
- waited on this block device.  If there are multiple I/O requests waiting,
-diff --git a/block/blk-flush.c b/block/blk-flush.c
-index 1eec9cbe5a0a..1777346baf06 100644
---- a/block/blk-flush.c
-+++ b/block/blk-flush.c
-@@ -136,6 +136,17 @@ static void blk_flush_queue_rq(struct request *rq, bool add_front)
- 	blk_mq_add_to_requeue_list(rq, add_front, true);
- }
- 
-+static void blk_account_io_flush(struct request *rq)
-+{
-+	struct hd_struct *part = &rq->rq_disk->part0;
-+
-+	part_stat_lock();
-+	part_stat_inc(part, ios[STAT_FLUSH]);
-+	part_stat_add(part, nsecs[STAT_FLUSH],
-+		      ktime_get_ns() - rq->start_time_ns);
-+	part_stat_unlock();
-+}
-+
- /**
-  * blk_flush_complete_seq - complete flush sequence
-  * @rq: PREFLUSH/FUA request being sequenced
-@@ -185,7 +196,7 @@ static void blk_flush_complete_seq(struct request *rq,
- 
- 	case REQ_FSEQ_DONE:
- 		/*
--		 * @rq was previously adjusted by blk_flush_issue() for
-+		 * @rq was previously adjusted by blk_insert_flush() for
- 		 * flush sequencing and may already have gone through the
- 		 * flush data request completion path.  Restore @rq for
- 		 * normal completion and end it.
-@@ -212,6 +223,8 @@ static void flush_end_io(struct request *flush_rq, blk_status_t error)
- 	struct blk_flush_queue *fq = blk_get_flush_queue(q, flush_rq->mq_ctx);
- 	struct blk_mq_hw_ctx *hctx;
- 
-+	blk_account_io_flush(flush_rq);
-+
- 	/* release the tag's ownership to the req cloned from */
- 	spin_lock_irqsave(&fq->mq_flush_lock, flags);
- 
-diff --git a/block/genhd.c b/block/genhd.c
-index 26b31fcae217..ff6268970ddc 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -1385,7 +1385,9 @@ static int diskstats_show(struct seq_file *seqf, void *v)
- 			   "%lu %lu %lu %u "
- 			   "%lu %lu %lu %u "
- 			   "%u %u %u "
--			   "%lu %lu %lu %u\n",
-+			   "%lu %lu %lu %u "
-+			   "%lu %u"
-+			   "\n",
- 			   MAJOR(part_devt(hd)), MINOR(part_devt(hd)),
- 			   disk_name(gp, hd->partno, buf),
- 			   part_stat_read(hd, ios[STAT_READ]),
-@@ -1402,7 +1404,9 @@ static int diskstats_show(struct seq_file *seqf, void *v)
- 			   part_stat_read(hd, ios[STAT_DISCARD]),
- 			   part_stat_read(hd, merges[STAT_DISCARD]),
- 			   part_stat_read(hd, sectors[STAT_DISCARD]),
--			   (unsigned int)part_stat_read_msecs(hd, STAT_DISCARD)
-+			   (unsigned int)part_stat_read_msecs(hd, STAT_DISCARD),
-+			   part_stat_read(hd, ios[STAT_FLUSH]),
-+			   (unsigned int)part_stat_read_msecs(hd, STAT_FLUSH)
- 			);
- 	}
- 	disk_part_iter_exit(&piter);
-diff --git a/block/partition-generic.c b/block/partition-generic.c
-index aee643ce13d1..3db8b73a96b1 100644
---- a/block/partition-generic.c
-+++ b/block/partition-generic.c
-@@ -127,7 +127,8 @@ ssize_t part_stat_show(struct device *dev,
- 		"%8lu %8lu %8llu %8u "
- 		"%8lu %8lu %8llu %8u "
- 		"%8u %8u %8u "
--		"%8lu %8lu %8llu %8u"
-+		"%8lu %8lu %8llu %8u "
-+		"%8lu %8u"
- 		"\n",
- 		part_stat_read(p, ios[STAT_READ]),
- 		part_stat_read(p, merges[STAT_READ]),
-@@ -143,7 +144,9 @@ ssize_t part_stat_show(struct device *dev,
- 		part_stat_read(p, ios[STAT_DISCARD]),
- 		part_stat_read(p, merges[STAT_DISCARD]),
- 		(unsigned long long)part_stat_read(p, sectors[STAT_DISCARD]),
--		(unsigned int)part_stat_read_msecs(p, STAT_DISCARD));
-+		(unsigned int)part_stat_read_msecs(p, STAT_DISCARD),
-+		part_stat_read(p, ios[STAT_FLUSH]),
-+		(unsigned int)part_stat_read_msecs(p, STAT_FLUSH));
- }
- 
- ssize_t part_inflight_show(struct device *dev, struct device_attribute *attr,
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index d688b96d1d63..b811a673a300 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -371,6 +371,7 @@ enum stat_group {
- 	STAT_READ,
- 	STAT_WRITE,
- 	STAT_DISCARD,
-+	STAT_FLUSH,
- 
- 	NR_STAT_GROUPS
- };
+Can such source code become more succinct?
 
++	if (err)
++		return err !=3D -ENOSPC ? -EIO : err;
+
+Regards,
+Markus
