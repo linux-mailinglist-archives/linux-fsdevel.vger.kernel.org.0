@@ -2,96 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2738E105688
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 17:07:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CCA41056BE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 17:15:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbfKUQH3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Nov 2019 11:07:29 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:34791 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726541AbfKUQH3 (ORCPT
+        id S1726568AbfKUQPX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Nov 2019 11:15:23 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:49648 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726293AbfKUQPW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Nov 2019 11:07:29 -0500
-Received: by mail-il1-f193.google.com with SMTP id p6so3830094ilp.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2019 08:07:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=P4W4hyYZ6T+wL1O213mYLd96KdBzBHpg9/YQCjoVILM=;
-        b=MRC5GtQYRbjWjFGZ/vJsaClUMDJ7hy8XeLThYplbe7u/VBoJyVDfOQRYNCc9WHf1+R
-         YM8i3LUmqrCtDbaOPuE+/759ibNWitWsdr/1LB32m8NQp+rYS/R5MRMYP0SxrAH7pDW/
-         yzbDF1xvKxuXI/4YwDImOAMRtkxOBtfLCZb7Rn0Rg5lGNiLHY69oLwDT8tQHHONCPyOL
-         VRRMjJIF0O4osgapAp43czNPYKTjL442yIx7Ljhmy1ctls9w6UWWmnJ6QyM6DqVy3hqf
-         4k0Yi51vruRfdY62Nc1rpQ3KoiUObEVajgdICck/bxmpkaj8MaFGqq96EHvYxa8LmC1u
-         C7Og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=P4W4hyYZ6T+wL1O213mYLd96KdBzBHpg9/YQCjoVILM=;
-        b=kqUCoyI2O6lKnt6KmhRGN0updXWowDYpzN4n4HnexcXjhAzq/XERJ8k8GBmPZu78mQ
-         69OonDlXxRn+S9/wWkNCIxx18z6JiJCBMEFdUFVcxogby5X6xodtyOkd5UmBPtqWgRPP
-         jr6YCZJJupeVOGDL6FlISceIGwjzJZyA4MxXQanpRC3c5Xxdvw8mZAbg8qxEJkosCAj/
-         YXi2/Q+dRrNgLdCILqtuidmrQC/qeWxFoIC5ED04dCitP8LmUDdEzY0ssmUfgoH8XRQ8
-         srsPUGRkFdZ4ueOtY74T4BjDGAJT4TfflwUTq9iPgGrd3tCJ1BV6YDyH7IVYWCk7JKBT
-         w8eg==
-X-Gm-Message-State: APjAAAUmy4YYO7/s6FcdJXhWR7Nt70kXX/LW8xvhfhoIwj3ubXwDlelS
-        YeCdAjiTDOriYJT279iB8crMVg==
-X-Google-Smtp-Source: APXvYqwBuxR5GnmNrTTF+fDPqQ/m+MVGAFtj5D46hjZm7URBjIHtPwDjypsu1kC4QDIwCYtLqK4NhA==
-X-Received: by 2002:a92:9ace:: with SMTP id c75mr11197162ill.296.1574352448192;
-        Thu, 21 Nov 2019 08:07:28 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id v15sm1379208ilk.8.2019.11.21.08.07.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Nov 2019 08:07:27 -0800 (PST)
-Subject: Re: [PATCH] block: add iostat counters for flush requests
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org,
-        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
-References: <157433282607.7928.5202409984272248322.stgit@buzz>
- <ff971ff6-9a10-c3f1-107d-4f7d378e8755@kernel.dk>
- <20191121160430.GJ6211@magnolia>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <f542739c-7d43-1ea3-5235-c7809bb59f62@kernel.dk>
-Date:   Thu, 21 Nov 2019 09:07:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20191121160430.GJ6211@magnolia>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Thu, 21 Nov 2019 11:15:22 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id EDB4C8EE10C;
+        Thu, 21 Nov 2019 08:15:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1574352922;
+        bh=vsXCsg3ID4OaOFh2QxMCz8/ByYygZx/+8wdbBYQ03HA=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=fC9USl4Jby/qKS2uI0CmiftfMzzKNZgfN36NSzEH3nKDrbVN/oIH1RzggrbOttf5v
+         TLs1BEPJ3Td6L+EnZA7FwdiRBWuuT7jsE5PNIBH4jP2Zc3A17943LN2DZCF1kUWBt3
+         3G3w+Ibu85DiF4xYv0x8jQYQRG3GU5q80FUwqUpc=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id xYXMjVcV6qWT; Thu, 21 Nov 2019 08:15:21 -0800 (PST)
+Received: from jarvis.lan (unknown [50.35.76.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 74CA38EE0D2;
+        Thu, 21 Nov 2019 08:15:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1574352921;
+        bh=vsXCsg3ID4OaOFh2QxMCz8/ByYygZx/+8wdbBYQ03HA=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=lptKMjgHrSKmOJhdg07ZvL44wwqNI1RoG0wlkpsJlehmK30BCWg9MLx+BNuz77DZt
+         P98bAui1e28d0ElwToclsoqQ3oPcaKIl8U+Bx5pD2hg2Qp0vcM1SRmARneF8w5wnjx
+         XkgC5L1z6RMV50ShMgApsRPG8d3Jlc8K5nkIvrN8=
+Message-ID: <1574352920.3277.18.camel@HansenPartnership.com>
+Subject: Re: Feature bug with the new mount API: no way of doing read only
+ bind mounts
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     David Howells <dhowells@redhat.com>,
+        Christian Brauner <christian@brauner.io>
+Cc:     linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 21 Nov 2019 08:15:20 -0800
+In-Reply-To: <17268.1574323839@warthog.procyon.org.uk>
+References: <1574295100.17153.25.camel@HansenPartnership.com>
+         <17268.1574323839@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/21/19 9:04 AM, Darrick J. Wong wrote:
-> On Thu, Nov 21, 2019 at 08:56:14AM -0700, Jens Axboe wrote:
->> On 11/21/19 3:40 AM, Konstantin Khlebnikov wrote:
->>> Requests that triggers flushing volatile writeback cache to disk (barriers)
->>> have significant effect to overall performance.
->>>
->>> Block layer has sophisticated engine for combining several flush requests
->>> into one. But there is no statistics for actual flushes executed by disk.
->>> Requests which trigger flushes usually are barriers - zero-size writes.
->>>
->>> This patch adds two iostat counters into /sys/class/block/$dev/stat and
->>> /proc/diskstats - count of completed flush requests and their total time.
->>
->> This makes sense to me, and the "recent" discard addition already proved
->> that we're fine extending with more fields. Unless folks object, I'd be
->> happy to queue this up for 5.5.
+On Thu, 2019-11-21 at 08:10 +0000, David Howells wrote:
+> James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
 > 
-> Looks like a good addition to /me... :)
+> > I was looking to use the read only bind mount as a template for
+> > reimplementing shiftfs when I discovered that you can't actually
+> > create a read only bind mount with the new API.  The problem is
+> > that fspick() will only reconfigure the underlying superblock,
+> > which you don't want because you only want the bound subtree to
+> > become read only and open_tree()/move_mount() doesn't give you any
+> > facility to add or change options on the bind.
+> 
+> You'd use open_tree() with OPEN_TREE_CLONE and possibly AT_RECURSIVE
+> rather than fspick().  fspick() is, as you observed, more for
+> reconfiguring the superblock.
 
-That's all the encouragement I needed, added :-)
+In the abstract, I think the concept of a configuration file descriptor
+with the, open add parameters and execution to fd, and optionally
+convert to representation or reconfigure in place is a very generic
+one.  If we did agree to do that for bind mounts as well, I wouldn't
+overload the existing logic, I'd lift it up to the generic level,
+probably by hooking the execution parts, and make superblock and bind
+two implementations of it.  It would basically be 3 system calls:
+configopen, configparam and configconvert although obviously with more
+appealing names.
 
--- 
-Jens Axboe
+The reason for thinking like this is I can see it having utility in
+some of the more complex SCSI configuration operations we do today via
+a bunch of mechanisms including configfs that could more compactly be
+done by this file descriptor mechanism.
+
+I'd also note that this plethora of system calls you have could then go
+away: fspick itself would just become an open type to which the path
+file descriptor would then be a required parameter, as would open_tree
+and the missing mount_setattr would then just work.
+
+James
 
