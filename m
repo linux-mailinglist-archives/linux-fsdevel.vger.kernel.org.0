@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B79EC10537B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 14:46:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1D11105402
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 15:11:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbfKUNqo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Nov 2019 08:46:44 -0500
-Received: from mout.web.de ([217.72.192.78]:56623 "EHLO mout.web.de"
+        id S1726802AbfKUOLx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Nov 2019 09:11:53 -0500
+Received: from mout.web.de ([217.72.192.78]:57563 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726358AbfKUNqo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Nov 2019 08:46:44 -0500
+        id S1726293AbfKUOLx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Nov 2019 09:11:53 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1574343913;
-        bh=SNdi8SUvR/OK4MEe7DQ6cdvM9KRA9MnYswRn5kDoBGc=;
+        s=dbaedf251592; t=1574345413;
+        bh=t6HG9r5z5uOh+EyccYyFcQQXRYPM47FgwoCUoh+Yv/k=;
         h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=fOlPnxgZhf+zORQIIQD4ae0+j8QKTwzoZPwbPoExxdCtv+A9oQ8PCEzv//dblvXKA
-         YVyfboMrbm9pBOv/L3dwX3PExnryelJsXfuDzVKpPZsj84hbmHZknRxWbuTzDOKJYt
-         iQiP04bXqzPyXB6N2/ZbUzdolPGYYoI6a4rTUPl8=
+        b=ZMXz03pTMJj11ltPfcnRbMBbsTb1krYr6o92cnrpW3UIG4/AoXYXhVOUPlGBHD324
+         NPFWAaBgu6uC81fWWTtBz+uu0tF5LZWuvw6Wnh5VhiB1yEp2N3tupLH24htBxpUUip
+         t0YWXye4cyH9tLXgYqeMo5DCflVcggcR6eXxeTMY=
 X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.3] ([78.48.172.213]) by smtp.web.de (mrweb101
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0LcPf8-1i5dDL1zBG-00jn0H; Thu, 21
- Nov 2019 14:45:13 +0100
-Subject: Re: [PATCH v4 05/13] exfat: add file operations
+Received: from [192.168.1.3] ([78.48.172.213]) by smtp.web.de (mrweb103
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0Lw0q9-1hmiMb3xoD-017nv4; Thu, 21
+ Nov 2019 15:10:13 +0100
+Subject: Re: [PATCH v4 06/13] exfat: add exfat entry operations
 To:     Namjae Jeon <namjae.jeon@samsung.com>,
         linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
@@ -34,8 +34,8 @@ Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
         linkinjeon@gmail.com
 References: <20191121052618.31117-1-namjae.jeon@samsung.com>
- <CGME20191121052917epcas1p1f81875dcc2d1a64dc3420bedc68fb3ba@epcas1p1.samsung.com>
- <20191121052618.31117-6-namjae.jeon@samsung.com>
+ <CGME20191121052918epcas1p284be629c57ced93afe88b94a35437cb2@epcas1p2.samsung.com>
+ <20191121052618.31117-7-namjae.jeon@samsung.com>
 From:   Markus Elfring <Markus.Elfring@web.de>
 Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
@@ -80,54 +80,75 @@ Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
  x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
  pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <e648740d-1bf0-21f6-7073-f66e0947cc58@web.de>
-Date:   Thu, 21 Nov 2019 14:45:11 +0100
+Message-ID: <bf2e73f2-08b3-5221-2702-524ba6a07497@web.de>
+Date:   Thu, 21 Nov 2019 15:10:10 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20191121052618.31117-6-namjae.jeon@samsung.com>
+In-Reply-To: <20191121052618.31117-7-namjae.jeon@samsung.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:4j8N1FYEyXJj9o4Yhn0qfN+0CdTdgh8vWN58VB5cZ3Y1kobBbEV
- P+vNMnW/KcMMqEDWDe644g4hjtUHYd/vly1uLXexaCuPt/Iz4dg2FF2gcyxltgj7UDm/BX4
- aJMeqb6zZZQT6fAt/uQTs2wxwtBMp8Fp/TYaKG3hQTYUoa6jQA10P8OXx543PYtJ8tLz1y4
- HuUrYvBaqpff0fkXBknwA==
+X-Provags-ID: V03:K1:nEfaKSk2+J5qvh+3P1884Lzwc0LDikXQZ0UNtqWZZfYdTCtMNA6
+ Vbw/Y/l5q3GGkI27WsMXDFjkBEkWaFlseqgvlTZCveu+8jJ4N+aud+v6Ng9TUxR+NIqbMoo
+ fjw/2YQRpI15iPkvXVlf9RNvprfnKlvFfp051Xym3z0Yd+OMZF6BTPmign7L6ndDi9Q6X2w
+ Nc2V2yMseI1GQ/3p0q95w==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:toB7bn8OiUc=:gteXsXYfs0qpJSHwPtPnqx
- jKmzbTKHKNrNbqosaq1oUZl8oD7VY1P7umrQUdziQ1ZguI9XnhMm0J2F6s4Eem8RGdoIZYosj
- XiAW+1HCLSNLELinxrnSeCNFFoqX+j3Dp9e04IT/2M55gPVGPFIxdwWcXm4SKFTUk9n2fy3xh
- WWPPwMGWqmH0ch6UWKZd31snlTnb0wfD5/OrYNOwDpsbKhIz85byv6ZiW7f704H5oGvOxfXj4
- ILg+NEuhhKGqgnUEwJBScfNzmU3UALHzy7QyAcJhSo7YJAhsO5Oq0jlmoQbPfsNL1+j93W3D/
- Cc8UTNQ3tFU8NBYCc1i+opyDUkv99/9UyYq+U0HCwncfqDxz/4pq85YHF2hCEjrvsmrSemUr+
- AKxVeDKZMa2iJp0hZXvHfnGc5e4ZlT7W0E/67gp4xSltKCG3Zih3sccfCAcCdmGDb0FYkCe3x
- mo/X5KUBXJwBogLzOe9ZF++oy1Eo0Yxrt5vqi5WnjNUmiQJ9x0sRFtFG98DlB5QbD3989Cbqw
- /Z2IuomN1RAeCFdJYfPUbplb0ZvCyvT6CNE3YdAQoYJZ7isOA5pGrXen38JYq72VjzBUvlc+A
- XJb6H/Yqs7T17Ny1Uv6FoOwVbCePeKyPa8GtVKF7o+UR6UCTAFR6n/gsC+3aIQmb4oXVo44jy
- kNhwcz03trUKNpA7Hyqv8MtzV2G5LuQG0IDKPnw+fmcKvc8vwEUI7yGZkkpGFXR6O1XjNVRH5
- waBIidcYUG0CSDyV1vgZFGdRjp27ApbjZOI/69BaHccWufs62U5oJ/7PQTOCwMUF00zuBe6l2
- PsLgLDrFjpVEAgm7Mis7Bxlgz1gMFaIUyZ1n2+mvlbRuaILsFKd5S8l3GGDyFrMR7HBHxFJwp
- HRNYaEO+prgxh2zEwM6npa6Dod2TKhVGizh0onNyXweC2gmkQWDEGhsyR6BkeuvmEEj4PwqRM
- h755cqWpMTJeehaJ3erHFvAkwwxZBEKEC5sNvb8RDj+CJrMez+BRt7+iR8Pzl0dGmM7cM/shF
- 4bySYG7XVrX7JZmXLeY/0U5/L9AJRz6SuM2jeay8KyZOcZ93MBovVSH1skeVgv6d7cJKu04b3
- 2rXq12iMAmses7ejJp8t4qrDTW3EmeqCjEud5URtmDHW4oB6m24U4WFmbRoAYlhX4DCJoZsmw
- j8sW5FlzZY+OBB6buSR9PLKBDdYopVehc09w2ymV9afbuRBYMVododG0ifxk6xp6YZs2xA2TB
- bfyi9CDYxywzHemupT8CmoAIxsmGO0Ui3sAvai+mDeEYdI/hZ6sanZfgp2CM=
+X-UI-Out-Filterresults: notjunk:1;V03:K0:HGl+44/Q948=:hXqFhCiMzb2SSDyNVNkZAB
+ 71P6dDKTJgKu/jjR7fgLNzf8tHFnlr1mMIPgcKuuW2ujRjSIJ2bPSGreqlHioIuiY0Yt/vJvu
+ ORlWU72V52Pp+nQZPa7cgVwIlaxz/WcBMDUIkrfHQP+B86jNXWL4BoFdES26qujnkYN75IOSV
+ HvycF6yqR1LNM6y58eRe26iXaRfxmN045SoVdLILF1nftcQwdvqxD9zFsVU7Sz89oONKs3xWK
+ vqYAD9lbsDWSCHVQIzxD9K7In+aVxne8EaMJsVserVb9X89lYw5X02nTRynIYdlcuKsz7AbJZ
+ ECBEUMSZR0GUyts+h+vOXpjm9fzQjN5XMA06Zp4/Qn/qMRm2dz7liDfJRaXtrDyOwTD3RXsDZ
+ 5mLjnlpmAE3esmoVaY6udCDL6SvCPkH8hbM1hESZ9IiS9TKCNa/Tg6LctFu8DGDKijEwhPQjK
+ 8Ux53a+mmIXKQjCFYkqPJhkpH46IhLR44XUjRe5Z4I1+MM4HcuI1+3v+psQZJrsqmibjwzAFj
+ ImVLZAiL3ugaK446Q0W2F+GjkMFc5FFIVUjTxTowgSsDYQjk3MfMFFH18z169BVjZsvmPbvp6
+ AWM+2BqU7cc7gbQc0JtNpiL/taidYlw7cafvt1UOMN5FhHbQZ0PqO/PpLywPKIV5yEdZNZ2b0
+ bo/L2exEhx4Lw4Gtddwr5uFufdjkiFfQsVJE9vlnKOomCwcdfHwwY/grmPCuNJxeVkViLtGgh
+ zlB2HGywcPC1v+2lKMOweqHzaT+dBqJmdh2kaiHuokJBW1hlRgVvhSOBaPv0dN9VhSvOj6UrL
+ aB6v7ABI4oI+K8F8V0+8AzHIKR60tAB2Y+me47petNDxk2ohPDD/upYm8HepsOTEufHUrfksW
+ GbPZq/EQ0zpsR818rcOHXHYox/3XGDsK5sHXRkm0oDHit0GOE1CF7nXIHpt+6kI76RnT/Y7T7
+ L4eXK1PoV6PaYdu7ErmRKAmXx728LD8tJ+bm/p3tWHJ7h+8NNl2XaU9QSnZ0OUx+g2O6w2E1M
+ UsNXCvDpJY5pnodfFRfedHXkkZaebEfsk8mWbDjLxqiZsN7idBDZMnYzkBIuDL/FtlwXy/YUU
+ 628H1USRu05pyVhDged9n98Xe5ynuUz0WryuI7Yjrw0MxNl9xe+s47OF4TWgJEvpSV+RA14Mw
+ rkMqXMR2wOXRI9gEIJSCrVYZmebGqCw1zLTHlReh9YAPHwI+gcmM0BDqD7fjGutqlY79/cxFb
+ maKWckSy2Hs5PGcF4yDZJ9IZ8bUQm1YBhCgxCALx2/yD9i7LFL85k3J6qp8A=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 =E2=80=A6
-> +++ b/fs/exfat/file.c
+> +++ b/fs/exfat/fatent.c
 =E2=80=A6
-> +void exfat_truncate(struct inode *inode, loff_t size)
+> +int exfat_free_cluster(struct inode *inode, struct exfat_chain *p_chain=
+)
 > +{
 =E2=80=A6
 > +out:
-> +	aligned_size =3D i_size_read(inode);
+> +	sbi->used_clusters -=3D num_clusters;
 
-Can a label like =E2=80=9Cread_size=E2=80=9D be more helpful?
+Can a label like =E2=80=9Cdecrement_counter=E2=80=9D be more helpful?
+
+
+=E2=80=A6
+> +int exfat_mirror_bh(struct super_block *sb, sector_t sec,
+> +		struct buffer_head *bh)
+> +{
+=E2=80=A6
+> +		if (!c_bh) {
+> +			err =3D -ENOMEM;
+> +			goto out;
+> +		}
+
+Can it be nicer to return directly?
+
+=E2=80=A6
+> +out:
+> +	return err;
+> +}
+
+Would you like to omit such a label for this function implementation?
 
 Regards,
 Markus
