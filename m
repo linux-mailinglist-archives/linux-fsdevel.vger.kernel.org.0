@@ -2,88 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FC831056EE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 17:24:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC8421057B7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 18:00:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbfKUQYB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Nov 2019 11:24:01 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59100 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726279AbfKUQYA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Nov 2019 11:24:00 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 28362B3BA;
-        Thu, 21 Nov 2019 16:23:59 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 897F91E484C; Thu, 21 Nov 2019 17:23:58 +0100 (CET)
-Date:   Thu, 21 Nov 2019 17:23:58 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v2 3/3] fs: warn if stale pagecache is left after direct
- write
-Message-ID: <20191121162358.GC18158@quack2.suse.cz>
-References: <157270037850.4812.15036239021726025572.stgit@buzz>
- <157270038294.4812.2238891109785106069.stgit@buzz>
+        id S1727071AbfKURAQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Nov 2019 12:00:16 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:44552 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726944AbfKURAL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Nov 2019 12:00:11 -0500
+Received: by mail-oi1-f196.google.com with SMTP id s71so3790849oih.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2019 09:00:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SDymYy1Cr6msxqeKtzOvSyToG0ApR3Ly++FnBPiFfAU=;
+        b=f+VuCObIDRfrJmbTAA4m3SQhOXNZ4pbf+ZyigT8J2YciKJHX1toKS54ABD40/HbC1d
+         7Pkwsh8oyyINQzVpjfjsJLe3RxxCFvky++3gAGs9me3lgi9X2Cs94Bu46By7m8IZ2aX6
+         6VCe60NDY4cCmQm2ZZlTacWdZ6Ps9MXHsxEoPPvq4YYJFGrJauw8LzXEJJdEFg7nFNai
+         NT0xpYhDehIOprr6cUNw9YoHqOqwfQCKgM0QWVQ6U7LVeCnx2wYwSu33Ka73HmSeIHM7
+         JqrB5AsBrlMh6M533DPgzCdMMVEMlw9v2LJQn2e/uD0VclTth1B3dpfknn3iLontgkuH
+         3IWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SDymYy1Cr6msxqeKtzOvSyToG0ApR3Ly++FnBPiFfAU=;
+        b=UMy+/2yYzh6SFxH/tG6jDLiuhLHaNylItCkHo1E3oELC/lrFY7c1nN95Kz5pHPDGsZ
+         l2JWBpXWmnfOPhpsQaYrJ/82w/vt7qMmvE6KQrUrnYe2ZdfVJ8DqHJ6nGmrApbA3wLpb
+         O3sjII7MbghS9j9AlUa9+TcnXEOaMlQRLjjDo3a383YMz2T73UJCczuEqJHnN826m7so
+         V/qj30Iu/z+bB1AD8oywQEXYO4k7DptvF6u0h/UUTNYqag5FFw6NjjDLnhAIAq175lHn
+         AK8fR0kiVAiJjWZo0Xx9JoltSKQrd/DZ0xNMz3v1qXI+VsWyoXVmle/DEEj0vHDqXajx
+         ZzMw==
+X-Gm-Message-State: APjAAAX2hwTkjbdb2GZ2qbvjKSni54YlMbPy0ENwUtXlq3zJZVzoyfaX
+        Tt5lgsa9plfWA2x210mM9AJv6n3wcqJezYM+Rit5Gw==
+X-Google-Smtp-Source: APXvYqzaKFA5sHA2BoiQUxyQp/rlYSGdVkc2qiU+T2e7CfLgs6CP/GdyTJIUkjrV/y2OAJbT5zFGq6OvhTpLAGKVq9Q=
+X-Received: by 2002:aca:ea57:: with SMTP id i84mr8187454oih.73.1574355610298;
+ Thu, 21 Nov 2019 09:00:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <157270038294.4812.2238891109785106069.stgit@buzz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191121071354.456618-1-jhubbard@nvidia.com> <20191121071354.456618-6-jhubbard@nvidia.com>
+ <20191121080555.GC24784@lst.de> <c5f8750f-af82-8aec-ce70-116acf24fa82@nvidia.com>
+In-Reply-To: <c5f8750f-af82-8aec-ce70-116acf24fa82@nvidia.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 21 Nov 2019 08:59:57 -0800
+Message-ID: <CAPcyv4jzDfxFAnAYc6g8Zz=3DweQFEBLBQyA_tSDP2Wy-RoA4A@mail.gmail.com>
+Subject: Re: [PATCH v7 05/24] mm: devmap: refactor 1-based refcounting for
+ ZONE_DEVICE pages
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, KVM list <kvm@vger.kernel.org>,
+        linux-block@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat 02-11-19 16:13:03, Konstantin Khlebnikov wrote:
-> Function generic_file_direct_write() tries to invalidate pagecache after
-> O_DIRECT write. Unlike to similar code in dio_complete() this silently
-> ignores error returned from invalidate_inode_pages2_range().
-> 
-> According to comment this code here because not all filesystems call
-> dio_complete() to do proper invalidation after O_DIRECT write.
-> Noticeable example is a blkdev_direct_IO().
-> 
-> This patch calls dio_warn_stale_pagecache() if invalidation fails.
-> 
-> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+On Thu, Nov 21, 2019 at 12:57 AM John Hubbard <jhubbard@nvidia.com> wrote:
+>
+> On 11/21/19 12:05 AM, Christoph Hellwig wrote:
+> > So while this looks correct and I still really don't see the major
+> > benefit of the new code organization, especially as it bloats all
+> > put_page callers.
+> >
+> > I'd love to see code size change stats for an allyesconfig on this
+> > commit.
+> >
+>
+> Right, I'm running that now, will post the results. (btw, if there is
+> a script and/or standard format I should use, I'm all ears. I'll dig
+> through lwn...)
+>
 
-Looks good to me. You can add:
+Just run:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  mm/filemap.c |    8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 189b8f318da2..dc3b78db079b 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -3241,11 +3241,13 @@ generic_file_direct_write(struct kiocb *iocb, struct iov_iter *from)
->  	 * do not end up with dio_complete() being called, so let's not break
->  	 * them by removing it completely.
->  	 *
-> +	 * Noticeable example is a blkdev_direct_IO().
-> +	 *
->  	 * Skip invalidation for async writes or if mapping has no pages.
->  	 */
-> -	if (written > 0 && mapping->nrpages)
-> -		invalidate_inode_pages2_range(mapping,
-> -					pos >> PAGE_SHIFT, end);
-> +	if (written > 0 && mapping->nrpages &&
-> +	    invalidate_inode_pages2_range(mapping, pos >> PAGE_SHIFT, end))
-> +		dio_warn_stale_pagecache(file);
->  
->  	if (written > 0) {
->  		pos += written;
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+    size vmlinux
