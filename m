@@ -2,71 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77DA0104A75
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 06:56:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78607104C80
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 08:28:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726293AbfKUF4B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Nov 2019 00:56:01 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:41759 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbfKUF4B (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Nov 2019 00:56:01 -0500
-Received: by mail-io1-f69.google.com with SMTP id p2so1420925ioh.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Nov 2019 21:56:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=mfH1KiCJRKrkCk6Xo24N026hP3QeH2tnCMon9TkgaqE=;
-        b=UvU+0ARUBdQYMOUafvv6jKL4F9PMYZNcaIdWPwClzTeSuf1hl2Ey2MWdqN5T/7dSPI
-         EPmd11MnYliFA8jVCDApi+6fIhJRv5Zd9UVSU1LQdJScQMvJwu4CfUX4Qx8WpzyT9+3W
-         WEs7IOBkHri7mnRRjJvbndpsvO12B2uMtHEXpnETspOmT/FGGCM7XPbSkS8IHlvtXkI7
-         drAOhzEGE7TZ1lL7C3fmaDLB1BR8NcNY+IRKIn6PUZStwmFTyhGexmkocyRNDLNfPeOx
-         aJLbhPcnQYzgTFuSY52C1uUrPWcTjfG18UtpTHVWoIWWNj97S5nHFN+BxHHk5lcXHlGA
-         eHPA==
-X-Gm-Message-State: APjAAAUUPYqUy4xF+vHiYmjAX4qzueQ3An8vJUcpMEI9JyS947qzCcHA
-        hEol6pc7CG0+y5lvRl/svIIZhaCf3r57P9eP4cDGtTLRWIrO
-X-Google-Smtp-Source: APXvYqwUKLMPCVsGilywR82DgOMl8S8nXlNM4DAw4/+MPXBC9kph9vWN1fhkX08eEJ5ztd1Hs8pxMXnFldFW3iiHqxZP+FOWzVdW
+        id S1726574AbfKUH1k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Nov 2019 02:27:40 -0500
+Received: from mga04.intel.com ([192.55.52.120]:2742 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725842AbfKUH1k (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Nov 2019 02:27:40 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2019 23:27:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,224,1571727600"; 
+   d="scan'208";a="238065022"
+Received: from hu.sh.intel.com ([10.239.158.51])
+  by fmsmga002.fm.intel.com with ESMTP; 20 Nov 2019 23:27:38 -0800
+From:   "Chen, Hu" <hu1.chen@intel.com>
+Cc:     avagin@openvz.org, hu1.chen@intel.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] proc: align mnt_id in /proc/pid/fdinfo and /proc/pid/mountinfo
+Date:   Thu, 21 Nov 2019 15:06:12 +0800
+Message-Id: <20191121070613.4286-1-hu1.chen@intel.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-X-Received: by 2002:a6b:9245:: with SMTP id u66mr5976497iod.98.1574315760516;
- Wed, 20 Nov 2019 21:56:00 -0800 (PST)
-Date:   Wed, 20 Nov 2019 21:56:00 -0800
-In-Reply-To: <00000000000072cb6c0597635d04@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ab834f0597d4f337@google.com>
-Subject: Re: INFO: trying to register non-static key in io_cqring_ev_posted
-From:   syzbot <syzbot+0d818c0d39399188f393@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, liuyun01@kylinos.cn,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this bug to:
+For Android application process, we found that the mnt_id read from
+/proc/pid/fdinfo doesn't exist in /proc/pid/mountinfo. Thus CRIU fails
+to dump such process and it complains
 
-commit 206aefde4f886fdeb3b6339aacab3a85fb74cb7e
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Fri Nov 8 01:27:42 2019 +0000
+"(00.019206) Error (criu/files-reg.c:1299): Can't lookup mount=42 for
+fd=-3 path=/data/dalvik-cache/x86_64/system@framework@boot.art"
 
-     io_uring: reduce/pack size of io_ring_ctx
+This is due to how Android application is launched. In Android, there is
+a special process called Zygote which handles the forking of each new
+application process:
+0. Zygote opens and maps some files, for example
+   "/data/dalvik-cache/x86_64/system@framework@boot.art" in its current
+   mount namespace, say "old mnt ns".
+1. Zygote waits for the request to fork a new application.
+2. Zygote gets a request, it forks and run the new process in a new
+   mount namespace, say "new mnt ns".
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15f98af2e00000
-start commit:   5d1131b4 Add linux-next specific files for 20191119
-git tree:       linux-next
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=17f98af2e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=13f98af2e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b60c562d89e5a8df
-dashboard link: https://syzkaller.appspot.com/bug?extid=0d818c0d39399188f393
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=169b29d2e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14b3956ae00000
+The file opened in step 0 ties to the mount point in "old mnt ns". The
+mnt_id of that mount is listed in /proc/pid/fdinfo. However,
+/proc/pid/mountinfo points to current ns, i.e., "new mnt ns".
 
-Reported-by: syzbot+0d818c0d39399188f393@syzkaller.appspotmail.com
-Fixes: 206aefde4f88 ("io_uring: reduce/pack size of io_ring_ctx")
+Althgouh this issue is exposed in Android, we believe it's generic.
+Prcoess may open files and enter new mnt ns.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+To address it, this patch searches the mirror mount in current ns with
+MAJOR and MINOR and shows the mirror's mnt_id.
+
+Signed-off-by: Chen, Hu <hu1.chen@intel.com>
+
+diff --git a/fs/mount.h b/fs/mount.h
+index 711a4093e475..6bbfc2b3b8ba 100644
+--- a/fs/mount.h
++++ b/fs/mount.h
+@@ -153,3 +153,5 @@ static inline bool is_anon_ns(struct mnt_namespace *ns)
+ {
+ 	return ns->seq == 0;
+ }
++
++extern struct mount *lookup_mirror_mnt(const struct mount *mnt);
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 2adfe7b166a3..4ea9b4464cd0 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -683,6 +683,36 @@ bool __is_local_mountpoint(struct dentry *dentry)
+ 	return is_covered;
+ }
+ 
++/*
++ * lookup_mirror_mnt - Return @mnt's mirror mount in the current/local mount
++ * namespace. If mirror isn't found, just return NULL.
++ */
++struct mount *lookup_mirror_mnt(const struct mount *mnt)
++{
++	struct mnt_namespace *ns = current->nsproxy->mnt_ns;
++	struct mount *mnt_local;
++	bool is_matched = false;
++
++	/* mnt belongs to current namesapce */
++	if (mnt->mnt_ns == ns)
++		return mnt;
++
++	down_read(&namespace_sem);
++	list_for_each_entry(mnt_local, &ns->list, mnt_list) {
++		struct super_block *sb = mnt->mnt.mnt_sb;
++		struct super_block *sb_local = mnt_local->mnt.mnt_sb;
++
++		if (MAJOR(sb->s_dev) == MAJOR(sb_local->s_dev) &&
++		    MINOR(sb->s_dev) == MINOR(sb_local->s_dev)) {
++			is_matched = true;
++			break;
++		}
++	}
++	up_read(&namespace_sem);
++
++	return is_matched ? mnt_local : NULL;
++}
++
+ static struct mountpoint *lookup_mountpoint(struct dentry *dentry)
+ {
+ 	struct hlist_head *chain = mp_hash(dentry);
+diff --git a/fs/proc/fd.c b/fs/proc/fd.c
+index 81882a13212d..cbf2571b0620 100644
+--- a/fs/proc/fd.c
++++ b/fs/proc/fd.c
+@@ -23,6 +23,7 @@ static int seq_show(struct seq_file *m, void *v)
+ 	int f_flags = 0, ret = -ENOENT;
+ 	struct file *file = NULL;
+ 	struct task_struct *task;
++	struct mount *mount = NULL;
+ 
+ 	task = get_proc_task(m->private);
+ 	if (!task)
+@@ -53,9 +54,16 @@ static int seq_show(struct seq_file *m, void *v)
+ 	if (ret)
+ 		return ret;
+ 
++	/* After unshare -m, real_mount(file->f_path.mnt) is not meaningful in
++	 * current mount namesapce. We want to know the mnt_id in current mount
++	 * namespace
++	 */
++	mount = lookup_mirror_mnt(real_mount(file->f_path.mnt));
++	if (!mount)
++		mount = real_mount(file->f_path.mnt);
++
+ 	seq_printf(m, "pos:\t%lli\nflags:\t0%o\nmnt_id:\t%i\n",
+-		   (long long)file->f_pos, f_flags,
+-		   real_mount(file->f_path.mnt)->mnt_id);
++		   (long long)file->f_pos, f_flags, mount->mnt_id);
+ 
+ 	show_fd_locks(m, file, files);
+ 	if (seq_has_overflowed(m))
+-- 
+2.22.0
+
