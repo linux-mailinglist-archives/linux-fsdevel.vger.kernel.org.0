@@ -2,74 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF941105549
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 16:21:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 006BA10557A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 16:26:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727255AbfKUPVl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Nov 2019 10:21:41 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52032 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726279AbfKUPVl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Nov 2019 10:21:41 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EBC91B127;
-        Thu, 21 Nov 2019 15:21:38 +0000 (UTC)
-Date:   Thu, 21 Nov 2019 16:21:36 +0100
-From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-scsi@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Jens Axboe <axboe@kernel.dk>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Eric Biggers <ebiggers@google.com>,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Tejun Heo <tj@kernel.org>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 7/8] scsi: sr: workaround VMware ESXi cdrom emulation
- bug
-Message-ID: <20191121152136.GK11661@kitsune.suse.cz>
-References: <cover.1571834862.git.msuchanek@suse.de>
- <abf81ec4f8b6139fffc609df519856ff8dc01d0d.1571834862.git.msuchanek@suse.de>
- <20191024022307.GC11485@infradead.org>
+        id S1727173AbfKUP00 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Nov 2019 10:26:26 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:51131 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726658AbfKUP00 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Nov 2019 10:26:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574349985;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=1O8R3g+RY/ULKTfO6bXtG8ZXjTQs/NUP/a7VNwETFWY=;
+        b=Q4XelS6LZRzlRVvX2Fx1YK70kph1XrRog8f+IlGeusVcRcn+gBFqzCMWRWxfoz5+3gv1Pn
+        6FK+zun4/BDtSIzpwp8KTDoEl+i6POF7EK+rw1ySFA9E4XphNhX8NjUSuvU8yBFhHxL1GO
+        ELCvHkBikoD5L/gkuT2WNXVIrcqkW2s=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-299-6mxCoIUlPAS30GEnpQ80Eg-1; Thu, 21 Nov 2019 10:26:22 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CBCD7477;
+        Thu, 21 Nov 2019 15:26:20 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-161.rdu2.redhat.com [10.10.120.161])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 720CE60C23;
+        Thu, 21 Nov 2019 15:26:19 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] afs: Fix possible assert with callbacks from yfs servers
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     dhowells@redhat.com, marc.dionne@auristor.com,
+        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 21 Nov 2019 15:26:15 +0000
+Message-ID: <157434997544.8060.6772407595047113730.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191024022307.GC11485@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: 6mxCoIUlPAS30GEnpQ80Eg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 07:23:07PM -0700, Christoph Hellwig wrote:
-> On Wed, Oct 23, 2019 at 02:52:46PM +0200, Michal Suchanek wrote:
-> > 
-> > The drive claims to have a tray and claims to be able to close it.
-> > However, the UI has no notion of a tray - when medium is ejected it is
-> > dropped in the floor and the user must select a medium again before the
-> > drive can be re-loaded.  On the kernel side the tray_move call to close
-> > the tray succeeds but the drive state does not change as a result of the
-> > call.
-> > 
-> > The drive does not in fact emulate the tray state. There are two ways to
-> > get the medium state. One is the SCSI status:
-> 
-> Given that this is a buggy software emulation we should not add more
-> than 100 lines of kernel code to work around it.  Ask VMware to fix
-> their mess instead.
+From: Marc Dionne <marc.dionne@auristor.com>
 
-Where do you see 100 lines of code?
+Servers sending callback breaks to the YFS_CM_SERVICE service may
+send up to YFSCBMAX (1024) fids in a single RPC.  Anything over
+AFSCBMAX (50) will cause the assert in afs_break_callbacks to trigger.
 
-The patch has exactly 4.
+Remove the assert, as the count has already been checked against
+the appropriate max values in afs_deliver_cb_callback and
+afs_deliver_yfs_cb_callback.
 
-Thanks
+Fixes: 35dbfba3111a ("afs: Implement the YFS cache manager service")
+Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
 
-Michal
+ fs/afs/callback.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/fs/afs/callback.c b/fs/afs/callback.c
+index 6cdd7047c809..2dca8df1a18d 100644
+--- a/fs/afs/callback.c
++++ b/fs/afs/callback.c
+@@ -312,7 +312,6 @@ void afs_break_callbacks(struct afs_server *server, siz=
+e_t count,
+ =09_enter("%p,%zu,", server, count);
+=20
+ =09ASSERT(server !=3D NULL);
+-=09ASSERTCMP(count, <=3D, AFSCBMAX);
+=20
+ =09/* TODO: Sort the callback break list by volume ID */
+=20
+
