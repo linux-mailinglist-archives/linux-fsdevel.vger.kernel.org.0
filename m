@@ -2,59 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7309F105859
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 18:15:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21EAE1058D9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 18:54:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbfKURPu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Nov 2019 12:15:50 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55688 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726546AbfKURPu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Nov 2019 12:15:50 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D5D85B15A;
-        Thu, 21 Nov 2019 17:15:48 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 4DD471E484C; Thu, 21 Nov 2019 18:15:47 +0100 (CET)
-Date:   Thu, 21 Nov 2019 18:15:47 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        Eric Biggers <ebiggers@kernel.org>
-Subject: Re: [PATCH 0/2] iomap: Fix leakage of pipe pages while splicing
-Message-ID: <20191121171547.GE18158@quack2.suse.cz>
-References: <20191121161144.30802-1-jack@suse.cz>
- <20191121165829.GK6211@magnolia>
+        id S1726655AbfKURyl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Nov 2019 12:54:41 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:38798 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726293AbfKURyl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Nov 2019 12:54:41 -0500
+Received: from callcc.thunk.org (guestnat-104-133-8-103.corp.google.com [104.133.8.103] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xALHsJ6a011724
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 21 Nov 2019 12:54:21 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id CA5FF4202FD; Thu, 21 Nov 2019 12:54:18 -0500 (EST)
+Date:   Thu, 21 Nov 2019 12:54:18 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Rich Felker <dalias@libc.org>
+Cc:     Florian Weimer <fw@deneb.enyo.de>, linux-fsdevel@vger.kernel.org,
+        musl@lists.openwall.com, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org
+Subject: Re: [musl] getdents64 lost direntries with SMB/NFS and buffer size <
+ unknown threshold
+Message-ID: <20191121175418.GI4262@mit.edu>
+References: <20191120001522.GA25139@brightrain.aerifal.cx>
+ <8736eiqq1f.fsf@mid.deneb.enyo.de>
+ <20191120205913.GD16318@brightrain.aerifal.cx>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191121165829.GK6211@magnolia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191120205913.GD16318@brightrain.aerifal.cx>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 21-11-19 08:58:29, Darrick J. Wong wrote:
-> On Thu, Nov 21, 2019 at 05:15:33PM +0100, Jan Kara wrote:
-> > Hello,
-> > 
-> > here is a fix and a cleanup for iomap code. The first patch fixes a leakage
-> > of pipe pages when iomap_dio_rw() splices to a pipe, the second patch is
-> > a cleanup that removes strange copying of iter in iomap_dio_rw(). Patches
-> > have passed fstests for ext4 and xfs and fix the syzkaller reproducer for
-> > me.
+On Wed, Nov 20, 2019 at 03:59:13PM -0500, Rich Felker wrote:
 > 
-> Will have a look, but in the meantime -- do you have quick reproducer
-> that can be packaged for fstests?  Or is it just the syzbot reproducer?
+> POSIX only allows both behaviors (showing or not showing) the entry
+> that was deleted. It does not allow deletion of one entry to cause
+> other entries not to be seen.
 
-I have just the syzkaller reproducer but now that I understand the problem 
-I might be able to write something more readable... I'll try.
+Agreed, but POSIX requires this of *readdir*.  POSIX says nothing
+about getdents64(2), which is Linux's internal implementation which is
+exposed to a libc.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+So we would need to see what is exactly going on at the interfaces
+between the VFS and libc, the nfs client code and the VFS, the nfs
+client code and the nfs server, and possibly the behavior of the nfs
+server.
+
+First of all.... you can't reproduce this on anything other than with
+NFS, correct?  That is, does it show up if you are using ext4, xfs,
+btrfs, etc.?
+
+Secondly, have you tried this on more than one NFS server
+implementation?
+
+Finally, can you capture strace logs and tcpdump logs of the
+communication between the NFS client and server code?
+
+> > But many file systems simply provide not the necessary on-disk data
+> > structures which are need to ensure stable iteration in the face of
+> > modification of the directory.  There are hacks, of course, such as
+> > compacting the on-disk directory only on file creation, which solves
+> > the file removal case.
+
+Oh, that's not the worst of it.  You have to do a lot more if the file
+system needs to support telldir/seekdir, and if you want to export the
+file system over NFS.  If you are using anything other than a linear
+linked list implementation for your directory, you have to really turn
+sommersaults to make sure things work (and work efficiently) in the
+face of, say, node splits of you are using some kind of tree structure
+for your directory.
+
+Most file systems do get this right, at least if they hope to be
+safely able to be exportable via NFS, or via CIFS using Samba.
+
+       	       	  	     	      	 - Ted
