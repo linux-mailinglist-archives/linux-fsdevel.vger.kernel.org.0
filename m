@@ -2,224 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D6D5105C7B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 23:11:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4541105CA7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 23:25:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726822AbfKUWLA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Nov 2019 17:11:00 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:39292 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726563AbfKUWLA (ORCPT
+        id S1726944AbfKUWZP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Nov 2019 17:25:15 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:14864 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726714AbfKUWZO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Nov 2019 17:11:00 -0500
-Received: from dread.disaster.area (pa49-181-174-87.pa.nsw.optusnet.com.au [49.181.174.87])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id BC18043FDB6;
-        Fri, 22 Nov 2019 09:10:53 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iXuf5-0005LT-V4; Fri, 22 Nov 2019 09:10:51 +1100
-Date:   Fri, 22 Nov 2019 09:10:51 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Phil Auld <pauld@redhat.com>
-Cc:     Ming Lei <ming.lei@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: single aio thread is migrated crazily by scheduler
-Message-ID: <20191121221051.GG4614@dread.disaster.area>
-References: <20191115010824.GC4847@ming.t460p>
- <20191115045634.GN4614@dread.disaster.area>
- <20191115070843.GA24246@ming.t460p>
- <20191115234005.GO4614@dread.disaster.area>
- <20191118092121.GV4131@hirez.programming.kicks-ass.net>
- <20191118204054.GV4614@dread.disaster.area>
- <20191120191636.GI4097@hirez.programming.kicks-ass.net>
- <20191120220313.GC18056@pauld.bos.csb>
- <20191121041218.GK24548@ming.t460p>
- <20191121141207.GA18443@pauld.bos.csb>
+        Thu, 21 Nov 2019 17:25:14 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dd70ecc0001>; Thu, 21 Nov 2019 14:25:17 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 21 Nov 2019 14:25:13 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 21 Nov 2019 14:25:13 -0800
+Received: from [10.2.168.213] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 21 Nov
+ 2019 22:25:13 +0000
+Subject: Re: [PATCH v7 05/24] mm: devmap: refactor 1-based refcounting for
+ ZONE_DEVICE pages
+To:     Dan Williams <dan.j.williams@intel.com>
+CC:     Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, KVM list <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>,
+        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20191121071354.456618-1-jhubbard@nvidia.com>
+ <20191121071354.456618-6-jhubbard@nvidia.com> <20191121080555.GC24784@lst.de>
+ <c5f8750f-af82-8aec-ce70-116acf24fa82@nvidia.com>
+ <CAPcyv4jzDfxFAnAYc6g8Zz=3DweQFEBLBQyA_tSDP2Wy-RoA4A@mail.gmail.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <461d6611-0cfb-dd13-f827-0db1ff8a9f2d@nvidia.com>
+Date:   Thu, 21 Nov 2019 14:22:24 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191121141207.GA18443@pauld.bos.csb>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
-        a=3v0Do7u/0+cnL2zxahI5mg==:117 a=3v0Do7u/0+cnL2zxahI5mg==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=MeAgGD-zjQ4A:10
-        a=7-415B0cAAAA:8 a=YOsLQFoBVTFCsumd8cMA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <CAPcyv4jzDfxFAnAYc6g8Zz=3DweQFEBLBQyA_tSDP2Wy-RoA4A@mail.gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1574375117; bh=D/eKIo+FJi5bpXqwJfXr6PJt8uCFLnCZclyeodxgmoA=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=QiiyQjBd99PA4tfLyLMiUlQLWaGQU2+co6FamS71fAjNe7NqeNYDH8w7d2wRbOpAp
+         FO2FB4fRVvM6b8p6VFBEfZcwYG6pgVEpA9JmE6+ROgRRGxXCqZY/+YxPczpJznwImd
+         p6u80IPFPE4x/PJetPMB9IpPtmHNp690Ig3KD/FI3Pg1Spw0uK9yY10oBbvhOlh90u
+         VDHu/ArBa3unFu4nkBBDe7Ce1Uz+1D/XrvQ7tfArBFBClI1tdcdtAK+LKBrbmv90AQ
+         ydolBZYKkzfeBhYUC0ZjSrXWwqBfaUR0ElhSrvf057yQhGgjhUwUU8jj5KSdyTH5QE
+         YNZVYalLmeVQg==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 09:12:07AM -0500, Phil Auld wrote:
-> On Thu, Nov 21, 2019 at 12:12:18PM +0800 Ming Lei wrote:
-> > On Wed, Nov 20, 2019 at 05:03:13PM -0500, Phil Auld wrote:
-> > > Hi Peter,
-> > > 
-> > > On Wed, Nov 20, 2019 at 08:16:36PM +0100 Peter Zijlstra wrote:
-> > > > On Tue, Nov 19, 2019 at 07:40:54AM +1100, Dave Chinner wrote:
-> > > > > On Mon, Nov 18, 2019 at 10:21:21AM +0100, Peter Zijlstra wrote:
-> > > > 
-> > > > > > We typically only fall back to the active balancer when there is
-> > > > > > (persistent) imbalance and we fail to migrate anything else (of
-> > > > > > substance).
-> > > > > > 
-> > > > > > The tuning mentioned has the effect of less frequent scheduling, IOW,
-> > > > > > leaving (short) tasks on the runqueue longer. This obviously means the
-> > > > > > load-balancer will have a bigger chance of seeing them.
-> > > > > > 
-> > > > > > Now; it's been a while since I looked at the workqueue code but one
-> > > > > > possible explanation would be if the kworker that picks up the work item
-> > > > > > is pinned. That would make it runnable but not migratable, the exact
-> > > > > > situation in which we'll end up shooting the current task with active
-> > > > > > balance.
-> > > > > 
-> > > > > Yes, that's precisely the problem - work is queued, by default, on a
-> > > > > specific CPU and it will wait for a kworker that is pinned to that
-> > > > 
-> > > > I'm thinking the problem is that it doesn't wait. If it went and waited
-> > > > for it, active balance wouldn't be needed, that only works on active
-> > > > tasks.
-> > > 
-> > > Since this is AIO I wonder if it should queue_work on a nearby cpu by 
-> > > default instead of unbound.  
-> > 
-> > When the current CPU isn't busy enough, there is still cost for completing
-> > request remotely.
-> > 
-> > Or could we change queue_work() in the following way?
-> > 
-> >  * We try to queue the work to the CPU on which it was submitted, but if the
-> >  * CPU dies or is saturated enough it can be processed by another CPU.
-> > 
-> > Can we decide in a simple or efficient way if the current CPU is saturated
-> > enough?
-> > 
+On 11/21/19 8:59 AM, Dan Williams wrote:
+> On Thu, Nov 21, 2019 at 12:57 AM John Hubbard <jhubbard@nvidia.com> wrote:
+>>
+>> On 11/21/19 12:05 AM, Christoph Hellwig wrote:
+>>> So while this looks correct and I still really don't see the major
+>>> benefit of the new code organization, especially as it bloats all
+>>> put_page callers.
+>>>
+>>> I'd love to see code size change stats for an allyesconfig on this
+>>> commit.
+>>>
+>>
+>> Right, I'm running that now, will post the results. (btw, if there is
+>> a script and/or standard format I should use, I'm all ears. I'll dig
+>> through lwn...)
+>>
 > 
-> The scheduler doesn't know if the queued_work submitter is going to go to sleep.
-> That's why I was singling out AIO. My understanding of it is that you submit the IO
-> and then keep going. So in that case it might be better to pick a node-local nearby
-> cpu instead. But this is a user of work queue issue not a scheduler issue. 
+> Just run:
+> 
+>      size vmlinux
+> 
 
-I think the part people are missing completely here is that the
-workqueue in question here is the -completion- work queue, and is
-not actually directly connected to the submitter process that is
-getting migrated. This all happens on the one CPU:
+Beautiful. I thought it would involve a lot more. Here's results:
 
-Submitter		blk-mq completion (softirq)		wq
+linux.git (Linux 5.4-rc8+):
+==============================================
+   text	   data	    bss	    dec	    hex	filename
+227578032	213267935	76877984	517723951	1edbd72f	vmlinux
 
-io_submit()
-  aio_write
-    submit_bio
-  aio_write
-    submit_bio
-  .....
-			blk-mq bh triggered
-			bio_endio
-			  iomap_dio_endio(dio)
-			    queue_work(dio)
-							kworker queued
-			bio_endio
-			  iomap_dio_endio(dio)
-			    queue_work(dio)
-			....
-			<softirq ends, back to submitter>
-  aio_write
-    submit_bio
-  aio_write
-    submit_bio
-  ...
-  <scheduler migrates task>
-							iomap_dio_complete()
-							  aio_complete()
-							....
-							iomap_dio_complete()
-							  aio_complete()
-							....
-							iomap_dio_complete()
-							  aio_complete()
 
-IOWs, the reason we see this behaviour is the IO completion steering
-done by the blk-mq layer is, by default, directing completion back
-to the submitter CPU. IIUC, it's the per-cpu submission/completion
-queues that result in this behaviour, because local completion of
-IOs has been measured to be substantially faster for highly
-concurrent, high IOPS workloads.
+With patches 4 and 5 applied to linux.git:
+==========================================
+   text	   data	    bss	    dec	    hex	filename
+229698560	213288379	76853408	519840347	1efc225b	vmlinux
 
-What Ming's reproducer workload does is increase the amount of CPU
-that the submitter process uses to the point where it uses the
-entire CPU and starves the completion kworker thread from running.
-i.e. there is no idle CPU left for the completion to be processed
-without pre-empting the running submitter task in some way.
 
-Sometimes we see the scheduler run the kworker thread and switch
-straight back to the submitter task - this is what typically happens
-when the scheduler is using the default tunings. But when the
-non-default tunings are used, task migrations occur.
+Analysis:
+=========
 
-So the scheduler migrates the submitter task, because it cannot move
-the IO completion tasks. And then the blk-mq sees that submission
-are coming from a different CPU, and it queues the incoming
-completions to that new CPU, theyby repeating the pattern.
+This increased the size of text by 0.93%. Which is a measurable bloat, so
+the inlining really is undesirable here, yes. I'll do it differently.
 
-> Interestingly in our fio case the 4k one does not sleep and we get
-> the active balance case where it moves the actually running
-> thread.  The 512 byte case seems to be sleeping since the
-> migrations are all at wakeup time I believe. 
-
-The 512 byte case demonstrates a behaviour where the submitter task
-is ping ponging between CPUs on each IO submission. It is likely
-another corner case when the blk-mq behaviour of delivering
-completions to the submitter CPU triggers immediate migration rather
-than just context switching to the kworker thread. Further
-investigation needs to be done there to determine if the migration
-is caused by pre-emption, or whether it is a result of the submitter
-finishing work and yeilding the CPU, but then being woken and
-finding the CPU is held by a running bound task and so is migrated
-to an idle CPU. The next IO completion has the completion directed
-to the new CPU, and so it migrates back when woken.
-
-IOWs, Whatever the cause of the task migration is, it is likely that
-it is repeating because IO completions are following the submitter
-task around and repeatedly triggering the same migration heuristic
-over and over again.
-
-Also, keep in mind this is *not caused by AIO*. Workqueues are used
-in IO completion to avoid a basic "can't do filesystem modification
-work in irq context" problem. i.e. we can't take blocking locks or
-run transactions in bio completion context, because that will stall
-IO completion processing for that CPU completelyi, and then the
-fileystem deadlocks.
-
-And "non-AIO" example is page cache writeback: the bdi flusher
-threads are designed around an asynchrnous IO submission pattern
-where it never waits for completions. In this case, delayed
-allocation is the reason the submitter consumes a big chunk of CPU.
-And IO completion uses workqueues ifor the same reason as AIO -
-because we often have to run transactions to complete the metadata
-updates necessary to finish the IO correctly. We can't do those
-updates in the bio completion context (softirq) because we need to
-block and do stuff that is dependent on future IO completions being
-processed.
-
-So, yeah, this "queue small amounts of work to a workqueue from IO
-completion context" is fundamental to how the filesystem IO stack
-functions in a modern kernel. As such, this specific IO completion
-workqueue usage needs to be handled correctly by the default kernel
-config, and not fall apart when scheduler tunings are slightly
-tweaked.
-
-Cheers,
-
-Dave.
+thanks,
 -- 
-Dave Chinner
-david@fromorbit.com
+John Hubbard
+NVIDIA
