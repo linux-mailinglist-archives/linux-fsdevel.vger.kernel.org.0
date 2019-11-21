@@ -2,98 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 233D110566C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 17:04:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAA86105687
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 17:07:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727117AbfKUQEi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Nov 2019 11:04:38 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:38190 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726983AbfKUQEh (ORCPT
+        id S1727028AbfKUQHa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Nov 2019 11:07:30 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:33980 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726992AbfKUQHa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Nov 2019 11:04:37 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xALFsQCU042866;
-        Thu, 21 Nov 2019 16:04:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=lPdzRkGQjx1NBncVBBW08mF7iSdoj3OKKNLTrQgVL1A=;
- b=fZqcwRu6/297MXYL4AQrhH652KbdWwYD5hkeAy3ANx2APi7pkzdLg2SEwSEKnXtnhm/l
- LP6sE5fDyy5cE1nuIVpJvi5e4fwn67KAcDpeHFbnnjNZa4EPf9o6cUhNYzjxeXoO5Wg/
- 0IN166/jwdzGKEzEkS04DtxbO3+eG8bKHoiQVb+oyzGmTYa6vlikByCUrUfqERMq/bgM
- ET3Zr4/lXjs3VoUgpQ8fHu/inSnjeLRiTkTpacdJQUCqoZm5Y66RkZJf31vL0x93nw9w
- DebbKqkWFPgSI4s77cSm0Em66OEoPtGbtnyoIpk3VlZp3IMPIY2jkCWZE2HOSxOi09FM 6A== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2wa92q58kp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Nov 2019 16:04:34 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xALFquan057588;
-        Thu, 21 Nov 2019 16:04:34 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 2wdfrtfur2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Nov 2019 16:04:33 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xALG4WhA010611;
-        Thu, 21 Nov 2019 16:04:32 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 21 Nov 2019 08:04:31 -0800
-Date:   Thu, 21 Nov 2019 08:04:30 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org,
-        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
-Subject: Re: [PATCH] block: add iostat counters for flush requests
-Message-ID: <20191121160430.GJ6211@magnolia>
-References: <157433282607.7928.5202409984272248322.stgit@buzz>
- <ff971ff6-9a10-c3f1-107d-4f7d378e8755@kernel.dk>
+        Thu, 21 Nov 2019 11:07:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zwTICfRN5iACciAHZej7Yc13+NfID7IlxajfIE6j//U=; b=M9Dg9W3xQri5/iGpRMcBCnDHT
+        Rq+TUwNMYFn45MoG8UEYPNCuWZtZbFPkFKYwSp8k3Mr/WM/ConXVjW4ee0bYkrFXfihxS5iEog2R7
+        LqIhicHqEHG833ceHRr+8Ff2HRtkL2SUJxNhaVl0lo9382vdai2B4TrZiXxEaRwVric7HeYzhT38C
+        DHaL0WkAGuJ7nU8m+ydaWbjtQ/Flcva12OImgfH2Qg+Pf3AiKwmt3RHfF5TMNDAX3IueIVRrIgS5z
+        SL3r6r5qwi+8kITxgAJHXrY6uQgz3MqzkiWa1pjfiHOe5PkOpEwoJYu63zUuSpEzcsrGoq150/Cnx
+        A4DD4JI3Q==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iXozN-00055c-L3; Thu, 21 Nov 2019 16:07:25 +0000
+Date:   Thu, 21 Nov 2019 08:07:25 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, sfrench@samba.org,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] cifs: Don't use iov_iter::type directly
+Message-ID: <20191121160725.GA19291@infradead.org>
+References: <20191121081923.GA19366@infradead.org>
+ <157432403818.17624.9300948341879954830.stgit@warthog.procyon.org.uk>
+ <30992.1574327471@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ff971ff6-9a10-c3f1-107d-4f7d378e8755@kernel.dk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9447 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1911210142
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9447 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1911210142
+In-Reply-To: <30992.1574327471@warthog.procyon.org.uk>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 08:56:14AM -0700, Jens Axboe wrote:
-> On 11/21/19 3:40 AM, Konstantin Khlebnikov wrote:
-> > Requests that triggers flushing volatile writeback cache to disk (barriers)
-> > have significant effect to overall performance.
-> > 
-> > Block layer has sophisticated engine for combining several flush requests
-> > into one. But there is no statistics for actual flushes executed by disk.
-> > Requests which trigger flushes usually are barriers - zero-size writes.
-> > 
-> > This patch adds two iostat counters into /sys/class/block/$dev/stat and
-> > /proc/diskstats - count of completed flush requests and their total time.
+On Thu, Nov 21, 2019 at 09:11:11AM +0000, David Howells wrote:
+> What I've been exploring is moving to:
 > 
-> This makes sense to me, and the "recent" discard addition already proved
-> that we're fine extending with more fields. Unless folks object, I'd be
-> happy to queue this up for 5.5.
-
-Looks like a good addition to /me... :)
-
---D
-
-> -- 
-> Jens Axboe
+> 	ITER_IOVEC = 0
+> 	ITER_KVEC = 1,
+> 	ITER_BVEC = 2,
+> 	ITER_PIPE = 3,
+> 	ITER_DISCARD = 4,
 > 
+> and using switch statements - and then leaving it to the compiler to decide
+> how best to do things.  In some ways, it might be nice to let the compiler
+> decide what constants it might use for this so as to best optimise the use
+> cases, but there's no way to do that at the moment.
+
+I'm all in favor of that. 
+
+> However, all the code that is doing direct accesses using '&' has to change to
+> make that work - so I've converted it all to using accessors so that I only
+> have to change the header file, except that the patch to do that crossed with
+> a cifs patch that added more direct accesses, IIRC.
+
+But I still don't really see the point of the wrappers.  Maybe they are
+ok as a migration strategy, but in that case this patch mostly makes
+sense as part of the series only.
