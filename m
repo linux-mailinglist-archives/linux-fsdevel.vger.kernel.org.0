@@ -2,282 +2,377 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D8591057BD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 18:00:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FCF21057C2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 18:01:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727080AbfKURAb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Nov 2019 12:00:31 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:32254 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726293AbfKURAa (ORCPT
+        id S1726593AbfKURBR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Nov 2019 12:01:17 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:38812 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbfKURBQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Nov 2019 12:00:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574355628;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Honbl4Zku5a5XsQymvDZvAXgJz3hAEThX385Nai6VrU=;
-        b=SSMuFE9mekjIZ9VLSP3vwXCi3pLW4A2bQvNYxjMLjzDcb+0qRtfqSefE5NIXKUaUYFHSNb
-        yLEFo6a0iAj7DO69wc1fBjReLURrXenxz5JRZ51tYX0wIDYSVnbfGq/A//OTlbftB4GtBN
-        u09Gyy8tlkhBbGazxPb1rz8xZWprhdM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-95-8s09F0nEN2aECugKf6hkMQ-1; Thu, 21 Nov 2019 12:00:25 -0500
-X-MC-Unique: 8s09F0nEN2aECugKf6hkMQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9BDB518B5F6D;
-        Thu, 21 Nov 2019 17:00:24 +0000 (UTC)
-Received: from localhost (ovpn-117-83.ams2.redhat.com [10.36.117.83])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 80E0C1823F;
-        Thu, 21 Nov 2019 17:00:21 +0000 (UTC)
-Date:   Thu, 21 Nov 2019 17:00:20 +0000
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     virtio-fs@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dgilbert@redhat.com,
-        miklos@szeredi.hu
-Subject: Re: [PATCH 4/4] virtiofs: Support blocking posix locks
- (fcntl(F_SETLKW))
-Message-ID: <20191121170020.GE445244@stefanha-x1.localdomain>
-References: <20191115205705.2046-1-vgoyal@redhat.com>
- <20191115205705.2046-5-vgoyal@redhat.com>
+        Thu, 21 Nov 2019 12:01:16 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xALGx9lI115164;
+        Thu, 21 Nov 2019 17:01:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2019-08-05;
+ bh=smb47EpitmLlTtC+OH/ts2qiMK7UOBlf21eck/qRXMI=;
+ b=RP671506JhO+tBWaMtppuirKwKGmuxP0rCG/loc5G4SBqwEOCONFfHgM6G+x5Z0/INtu
+ PSdoh+KLNuhOE8s29ygtWao3zXDvAsgXehJiyU+g+lwPVHGx80defi65lCZuB2Y2xNIp
+ v4d5doluGopkm+7g3xL4DjuASqW3MX8huVc9M4A5UmolUhvzA/2evPMJ4tMVc9wAw8e7
+ VDLCyV/nHxOg4NqhNFqT4hGiW8+kC1KTbPtp+na6BF7Te/LveX2uouiGaek6pHdpSmPb
+ zuYt/4F6ykAB0S5CaiDwOJsEP8Dky2GY8n0JvfsFvWPiVvWdL+WtlotaFNhRpefnAT8K lQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2wa8hu5p91-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Nov 2019 17:01:11 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xALGx91u057259;
+        Thu, 21 Nov 2019 17:01:11 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2wd47xa5ga-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Nov 2019 17:01:10 +0000
+Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xALH18ir024843;
+        Thu, 21 Nov 2019 17:01:08 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 21 Nov 2019 09:01:08 -0800
+Date:   Thu, 21 Nov 2019 09:01:07 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     andreas.gruenbacher@gmail.com
+Cc:     xfs <linux-xfs@vger.kernel.org>, viro@zeniv.linux.org.uk,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        fstests <fstests@vger.kernel.org>
+Subject: Re: [RFC PATCH] generic: test splice() with pipes
+Message-ID: <20191121170107.GM6211@magnolia>
+References: <20190829161155.GA5360@magnolia>
+ <20190830004407.GA5340@magnolia>
 MIME-Version: 1.0
-In-Reply-To: <20191115205705.2046-5-vgoyal@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Mimecast-Spam-Score: 0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="84ND8YJRMFlzkrP4"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190830004407.GA5340@magnolia>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9447 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911210148
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9447 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911210148
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---84ND8YJRMFlzkrP4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Aug 29, 2019 at 05:44:07PM -0700, Darrick J. Wong wrote:
+> From: Darrick J. Wong <darrick.wong@oracle.com>
+> 
+> Andreas Grünbacher reports that on the two filesystems that support
+> iomap directio, it's possible for splice() to return -EAGAIN (instead of
+> a short splice) if the pipe being written to has less space available in
+> its pipe buffers than the length supplied by the calling process.
+> 
+> This is a regression test to check for correct operation.
+> 
+> XXX Andreas: Since you wrote the C reproducer, can you send me the
+> proper copyright and author attribution statement for the C program?
 
-On Fri, Nov 15, 2019 at 03:57:05PM -0500, Vivek Goyal wrote:
-> As of now we don't support blocking variant of posix locks and daemon ret=
-urns
-> -EOPNOTSUPP. Reason being that it can lead to deadlocks. Virtqueue size i=
-s
-> limited and it is possible we fill virtqueue with all the requests of
-> fcntl(F_SETLKW) and wait for reply. And later a subsequent unlock request
-> can't make progress because virtqueue is full. And that means F_SETLKW ca=
-n't
-> make progress and we are deadlocked.
->=20
-> Use notification queue to solve this problem. After submitting lock reque=
-st
-> device will send a reply asking requester to wait. Once lock is available=
-,
-> requester will get a notification saying locking is available. That way
-> we don't keep the request virtueue busy while we are waiting for lock
-> and further unlock requests can make progress.
->=20
-> When we get a reply in response to lock request, we need a way to know if
-> we need to wait for notification or not. I have overloaded the
-> fuse_out_header->error field. If value is ->error is 1, that's a signal
-> to caller to wait for lock notification.
->=20
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+Ping?  Andreas, can I get the above info so I can get this moving again?
+
+--D
+
+> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 > ---
->  fs/fuse/virtio_fs.c       | 78 ++++++++++++++++++++++++++++++++++++++-
->  include/uapi/linux/fuse.h |  7 ++++
->  2 files changed, 84 insertions(+), 1 deletion(-)
->=20
-> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> index 21d8d9d7d317..8aa9fc996556 100644
-> --- a/fs/fuse/virtio_fs.c
-> +++ b/fs/fuse/virtio_fs.c
-> @@ -35,6 +35,7 @@ struct virtio_fs_vq {
->  =09struct work_struct done_work;
->  =09struct list_head queued_reqs;
->  =09struct list_head end_reqs;=09/* End these requests */
-> +=09struct list_head wait_reqs;=09/* requests waiting for notification */
->  =09struct virtio_fs_notify_node *notify_nodes;
->  =09struct list_head notify_reqs;=09/* List for queuing notify requests *=
-/
->  =09struct delayed_work dispatch_work;
-> @@ -85,7 +86,6 @@ struct virtio_fs_notify_node {
-> =20
->  static int virtio_fs_enqueue_all_notify(struct virtio_fs_vq *fsvq);
-> =20
-> -
->  static inline struct virtio_fs_vq *vq_to_fsvq(struct virtqueue *vq)
->  {
->  =09struct virtio_fs *fs =3D vq->vdev->priv;
-> @@ -513,13 +513,75 @@ static int virtio_fs_enqueue_all_notify(struct virt=
-io_fs_vq *fsvq)
->  =09return 0;
->  }
-> =20
-> +static int notify_complete_waiting_req(struct virtio_fs *vfs,
-> +=09=09=09=09       struct fuse_notify_lock_out *out_args)
+>  .gitignore            |    1 
+>  src/Makefile          |    2 -
+>  src/splice-test.c     |  173 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  tests/generic/720     |   41 ++++++++++++
+>  tests/generic/720.out |    7 ++
+>  tests/generic/group   |    1 
+>  6 files changed, 224 insertions(+), 1 deletion(-)
+>  create mode 100644 src/splice-test.c
+>  create mode 100755 tests/generic/720
+>  create mode 100644 tests/generic/720.out
+> 
+> diff --git a/.gitignore b/.gitignore
+> index c8c815f9..26d4da11 100644
+> --- a/.gitignore
+> +++ b/.gitignore
+> @@ -112,6 +112,7 @@
+>  /src/runas
+>  /src/seek_copy_test
+>  /src/seek_sanity_test
+> +/src/splice-test
+>  /src/stale_handle
+>  /src/stat_test
+>  /src/swapon
+> diff --git a/src/Makefile b/src/Makefile
+> index c4fcf370..2920dfb1 100644
+> --- a/src/Makefile
+> +++ b/src/Makefile
+> @@ -28,7 +28,7 @@ LINUX_TARGETS = xfsctl bstat t_mtab getdevicesize preallo_rw_pattern_reader \
+>  	attr-list-by-handle-cursor-test listxattr dio-interleaved t_dir_type \
+>  	dio-invalidate-cache stat_test t_encrypted_d_revalidate \
+>  	attr_replace_test swapon mkswap t_attr_corruption t_open_tmpfiles \
+> -	fscrypt-crypt-util bulkstat_null_ocount
+> +	fscrypt-crypt-util bulkstat_null_ocount splice-test
+>  
+>  SUBDIRS = log-writes perf
+>  
+> diff --git a/src/splice-test.c b/src/splice-test.c
+> new file mode 100644
+> index 00000000..d3c12075
+> --- /dev/null
+> +++ b/src/splice-test.c
+> @@ -0,0 +1,173 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Copyright (C) 2019 ?????????????????????????????
+> + * Author: 
+> + *
+> + * Make sure that reading and writing to a pipe via splice.
+> + */
+> +#include <sys/types.h>
+> +#include <sys/stat.h>
+> +#include <sys/wait.h>
+> +#include <unistd.h>
+> +#include <fcntl.h>
+> +#include <err.h>
+> +
+> +#include <stdlib.h>
+> +#include <stdio.h>
+> +#include <stdbool.h>
+> +#include <string.h>
+> +#include <errno.h>
+> +
+> +#define SECTOR_SIZE 512
+> +#define BUFFER_SIZE (150 * SECTOR_SIZE)
+> +
+> +void read_from_pipe(int fd, const char *filename, size_t size)
 > +{
-> +=09struct virtio_fs_vq *fsvq =3D &vfs->vqs[VQ_REQUEST];
-> +=09struct fuse_req *req, *next;
-> +=09bool found =3D false;
-> +=09struct fuse_conn *fc =3D fsvq->fud->fc;
+> +	char buffer[SECTOR_SIZE];
+> +	size_t sz;
+> +	ssize_t ret;
 > +
-> +=09/* Find waiting request with the unique number and end it */
-> +=09spin_lock(&fsvq->lock);
-> +=09=09list_for_each_entry_safe(req, next, &fsvq->wait_reqs, list) {
-> +=09=09=09if (req->in.h.unique =3D=3D out_args->id) {
-> +=09=09=09=09list_del_init(&req->list);
-> +=09=09=09=09clear_bit(FR_SENT, &req->flags);
-> +=09=09=09=09/* Transfer error code from notify */
-> +=09=09=09=09req->out.h.error =3D out_args->error;
-> +=09=09=09=09found =3D true;
-> +=09=09=09=09break;
-> +=09=09=09}
-> +=09=09}
-> +=09spin_unlock(&fsvq->lock);
-> +
-> +=09/*
-> +=09 * TODO: It is possible that some re-ordering happens in notify
-> +=09 * comes before request is complete. Deal with it.
-> +=09 */
-> +=09if (found) {
-> +=09=09fuse_request_end(fc, req);
-> +=09=09spin_lock(&fsvq->lock);
-> +=09=09dec_in_flight_req(fsvq);
-> +=09=09spin_unlock(&fsvq->lock);
-> +=09} else
-> +=09=09pr_debug("virtio-fs: Did not find waiting request with"
-> +=09=09       " unique=3D0x%llx\n", out_args->id);
-> +
-> +=09return 0;
+> +	while (size) {
+> +		sz = size;
+> +		if (sz > sizeof buffer)
+> +			sz = sizeof buffer;
+> +		ret = read(fd, buffer, sz);
+> +		if (ret < 0)
+> +			err(1, "read: %s", filename);
+> +		if (ret == 0) {
+> +			fprintf(stderr, "read: %s: unexpected EOF\n", filename);
+> +			exit(1);
+> +		}
+> +		size -= sz;
+> +	}
 > +}
 > +
-> +static int virtio_fs_handle_notify(struct virtio_fs *vfs,
-> +=09=09=09=09   struct virtio_fs_notify *notify)
+> +void do_splice1(int fd, const char *filename, size_t size)
 > +{
-> +=09int ret =3D 0;
-> +=09struct fuse_out_header *oh =3D &notify->out_hdr;
-> +=09struct fuse_notify_lock_out *lo;
+> +	bool retried = false;
+> +	int pipefd[2];
 > +
-> +=09/*
-> +=09 * For notifications, oh.unique is 0 and oh->error contains code
-> +=09 * for which notification as arrived.
-> +=09 */
-> +=09switch(oh->error) {
-> +=09case FUSE_NOTIFY_LOCK:
-> +=09=09lo =3D (struct fuse_notify_lock_out *) &notify->outarg;
-> +=09=09notify_complete_waiting_req(vfs, lo);
-> +=09=09break;
-> +=09default:
-> +=09=09printk("virtio-fs: Unexpected notification %d\n", oh->error);
-> +=09}
-> +=09return ret;
+> +	if (pipe(pipefd) == -1)
+> +		err(1, "pipe");
+> +	while (size) {
+> +		ssize_t spliced;
+> +
+> +		spliced = splice(fd, NULL, pipefd[1], NULL, size, SPLICE_F_MOVE);
+> +		if (spliced == -1) {
+> +			if (errno == EAGAIN && !retried) {
+> +				retried = true;
+> +				fprintf(stderr, "retrying splice\n");
+> +				sleep(1);
+> +				continue;
+> +			}
+> +			err(1, "splice");
+> +		}
+> +		read_from_pipe(pipefd[0], filename, spliced);
+> +		size -= spliced;
+> +	}
+> +	close(pipefd[0]);
+> +	close(pipefd[1]);
 > +}
-
-Is this specific to virtio or can be it handled in common code?
-
 > +
->  static void virtio_fs_notify_done_work(struct work_struct *work)
->  {
->  =09struct virtio_fs_vq *fsvq =3D container_of(work, struct virtio_fs_vq,
->  =09=09=09=09=09=09 done_work);
->  =09struct virtqueue *vq =3D fsvq->vq;
-> +=09struct virtio_fs *vfs =3D vq->vdev->priv;
->  =09LIST_HEAD(reqs);
->  =09struct virtio_fs_notify_node *notify, *next;
-> +=09struct fuse_out_header *oh;
-> =20
->  =09spin_lock(&fsvq->lock);
->  =09do {
-> @@ -535,6 +597,10 @@ static void virtio_fs_notify_done_work(struct work_s=
-truct *work)
-> =20
->  =09/* Process notify */
->  =09list_for_each_entry_safe(notify, next, &reqs, list) {
-> +=09=09oh =3D &notify->notify.out_hdr;
-> +=09=09WARN_ON(oh->unique);
-> +=09=09/* Handle notification */
-> +=09=09virtio_fs_handle_notify(vfs, &notify->notify);
->  =09=09spin_lock(&fsvq->lock);
->  =09=09dec_in_flight_req(fsvq);
->  =09=09list_del_init(&notify->list);
-> @@ -656,6 +722,15 @@ static void virtio_fs_requests_done_work(struct work=
-_struct *work)
->  =09=09 * TODO verify that server properly follows FUSE protocol
->  =09=09 * (oh.uniq, oh.len)
->  =09=09 */
-> +=09=09if (req->out.h.error =3D=3D 1) {
-> +=09=09=09/* Wait for notification to complete request */
-> +=09=09=09list_del_init(&req->list);
-> +=09=09=09spin_lock(&fsvq->lock);
-> +=09=09=09list_add_tail(&req->list, &fsvq->wait_reqs);
-> +=09=09=09spin_unlock(&fsvq->lock);
-> +=09=09=09continue;
-> +=09=09}
+> +void do_splice2(int fd, const char *filename, size_t size)
+> +{
+> +	bool retried = false;
+> +	int pipefd[2];
+> +	int pid;
 > +
->  =09=09args =3D req->args;
->  =09=09copy_args_from_argbuf(args, req);
-> =20
-> @@ -705,6 +780,7 @@ static int virtio_fs_init_vq(struct virtio_fs *fs, st=
-ruct virtio_fs_vq *fsvq,
->  =09strncpy(fsvq->name, name, VQ_NAME_LEN);
->  =09spin_lock_init(&fsvq->lock);
->  =09INIT_LIST_HEAD(&fsvq->queued_reqs);
-> +=09INIT_LIST_HEAD(&fsvq->wait_reqs);
->  =09INIT_LIST_HEAD(&fsvq->end_reqs);
->  =09INIT_LIST_HEAD(&fsvq->notify_reqs);
->  =09init_completion(&fsvq->in_flight_zero);
-> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> index 373cada89815..45f0c4efec8e 100644
-> --- a/include/uapi/linux/fuse.h
-> +++ b/include/uapi/linux/fuse.h
-> @@ -481,6 +481,7 @@ enum fuse_notify_code {
->  =09FUSE_NOTIFY_STORE =3D 4,
->  =09FUSE_NOTIFY_RETRIEVE =3D 5,
->  =09FUSE_NOTIFY_DELETE =3D 6,
-> +=09FUSE_NOTIFY_LOCK =3D 7,
->  =09FUSE_NOTIFY_CODE_MAX,
->  };
-> =20
-> @@ -868,6 +869,12 @@ struct fuse_notify_retrieve_in {
->  =09uint64_t=09dummy4;
->  };
-> =20
-> +struct fuse_notify_lock_out {
-> +=09uint64_t=09id;
-
-Please call this field "unique" or "lock_unique" so it's clear this
-identifier is the fuse_header_in->unique value of the lock request.
-
-> +=09int32_t=09=09error;
-> +=09int32_t=09=09padding;
-> +};
+> +	if (pipe(pipefd) == -1)
+> +		err(1, "pipe");
 > +
->  /* Device ioctls: */
->  #define FUSE_DEV_IOC_CLONE=09_IOR(229, 0, uint32_t)
-> =20
-> --=20
-> 2.20.1
->=20
-
---84ND8YJRMFlzkrP4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl3WwqQACgkQnKSrs4Gr
-c8iDKgf+IaJQsBOeNmRpYFt/cBxDafpZUfqjpUomAe+/hVdOSaKdBNsJBtNNHCAJ
-IMiXvZtUYMGZVWBBNbdWrEXsqmEc8suV9E2XZZ/PpDkw1TQjXUnvU6lyG3G14ZZn
-Qqh/mo3BXS/sK6ep0pPxy3otbSZ19IWjAqWuA4IjKfPzz0idFYEk6YAGtTT3l4+C
-/26hVeQYoj9AfshE1Jcp5XCY3QtDvaP9BbSe0S7rDLxBfaHYwLYetX5RYgSOKdBJ
-+RTNgW5EBhAKKAntD6LzxJ6pPHpyiZSomaAj9N05MH4cHkAmIVwtqyq0fNYVQa7c
-vdVv9PY8ZR0vqgSUZBWM+ZkXZnzhEQ==
-=Ks93
------END PGP SIGNATURE-----
-
---84ND8YJRMFlzkrP4--
-
+> +	pid = fork();
+> +	if (pid == 0) {
+> +		close(pipefd[1]);
+> +		read_from_pipe(pipefd[0], filename, size);
+> +		exit(0);
+> +	} else {
+> +		close(pipefd[0]);
+> +		while (size) {
+> +			ssize_t spliced;
+> +
+> +			spliced = splice(fd, NULL, pipefd[1], NULL, size, SPLICE_F_MOVE);
+> +			if (spliced == -1) {
+> +				if (errno == EAGAIN && !retried) {
+> +					retried = true;
+> +					fprintf(stderr, "retrying splice\n");
+> +					sleep(1);
+> +					continue;
+> +				}
+> +				err(1, "splice");
+> +			}
+> +			size -= spliced;
+> +		}
+> +		close(pipefd[1]);
+> +		waitpid(pid, NULL, 0);
+> +	}
+> +}
+> +
+> +void usage(const char *argv0)
+> +{
+> +	fprintf(stderr, "USAGE: %s [-rd] {filename}\n", basename(argv0));
+> +	exit(2);
+> +}
+> +
+> +int main(int argc, char *argv[])
+> +{
+> +	void (*do_splice)(int fd, const char *filename, size_t size);
+> +	const char *filename;
+> +	char *buffer;
+> +	int opt, open_flags, fd;
+> +	ssize_t ret;
+> +
+> +	do_splice = do_splice1;
+> +	open_flags = O_CREAT | O_TRUNC | O_RDWR | O_DIRECT;
+> +
+> +	while ((opt = getopt(argc, argv, "rd")) != -1) {
+> +		switch(opt) {
+> +		case 'r':
+> +			do_splice = do_splice2;
+> +			break;
+> +		case 'd':
+> +			open_flags &= ~O_DIRECT;
+> +			break;
+> +		default:  /* '?' */
+> +			usage(argv[0]);
+> +		}
+> +	}
+> +
+> +	if (optind >= argc)
+> +		usage(argv[0]);
+> +	filename = argv[optind];
+> +
+> +	printf("%s reader %s O_DIRECT\n",
+> +		   do_splice == do_splice1 ? "sequential" : "concurrent",
+> +		   (open_flags & O_DIRECT) ? "with" : "without");
+> +
+> +	buffer = aligned_alloc(SECTOR_SIZE, BUFFER_SIZE);
+> +	if (buffer == NULL)
+> +		err(1, "aligned_alloc");
+> +
+> +	fd = open(filename, open_flags, 0666);
+> +	if (fd == -1)
+> +		err(1, "open: %s", filename);
+> +
+> +	memset(buffer, 'x', BUFFER_SIZE);
+> +	ret = write(fd, buffer, BUFFER_SIZE);
+> +	if (ret < 0)
+> +		err(1, "write: %s", filename);
+> +	if (ret != BUFFER_SIZE) {
+> +		fprintf(stderr, "%s: short write\n", filename);
+> +		exit(1);
+> +	}
+> +
+> +	ret = lseek(fd, 0, SEEK_SET);
+> +	if (ret != 0)
+> +		err(1, "lseek: %s", filename);
+> +
+> +	do_splice(fd, filename, BUFFER_SIZE);
+> +
+> +	if (unlink(filename) == -1)
+> +		err(1, "unlink: %s", filename);
+> +
+> +	return 0;
+> +}
+> diff --git a/tests/generic/720 b/tests/generic/720
+> new file mode 100755
+> index 00000000..b7f09c40
+> --- /dev/null
+> +++ b/tests/generic/720
+> @@ -0,0 +1,41 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0-or-later
+> +# Copyright (c) 2019, Oracle and/or its affiliates.  All Rights Reserved.
+> +#
+> +# FS QA Test No. 720
+> +#
+> +# Test using splice() to read from pipes.
+> +
+> +seq=`basename $0`
+> +seqres=$RESULT_DIR/$seq
+> +echo "QA output created by $seq"
+> +
+> +here=`pwd`
+> +tmp=/tmp/$$
+> +status=1    # failure is the default!
+> +trap "_cleanup; exit \$status" 0 1 2 3 15
+> +
+> +_cleanup()
+> +{
+> +	cd /
+> +	rm -f $TEST_DIR/a
+> +}
+> +
+> +# get standard environment, filters and checks
+> +. ./common/rc
+> +
+> +# real QA test starts here
+> +_supported_os Linux
+> +_supported_fs generic
+> +_require_test
+> +
+> +rm -f $seqres.full
+> +
+> +src/splice-test -r $TEST_DIR/a
+> +src/splice-test -rd $TEST_DIR/a
+> +src/splice-test $TEST_DIR/a
+> +src/splice-test -d $TEST_DIR/a
+> +
+> +# success, all done
+> +status=0
+> +exit
+> diff --git a/tests/generic/720.out b/tests/generic/720.out
+> new file mode 100644
+> index 00000000..b0fc9935
+> --- /dev/null
+> +++ b/tests/generic/720.out
+> @@ -0,0 +1,7 @@
+> +QA output created by 720
+> +concurrent reader with O_DIRECT
+> +concurrent reader with O_DIRECT
+> +concurrent reader without O_DIRECT
+> +concurrent reader without O_DIRECT
+> +sequential reader with O_DIRECT
+> +sequential reader without O_DIRECT
+> diff --git a/tests/generic/group b/tests/generic/group
+> index cd418106..f75d4e60 100644
+> --- a/tests/generic/group
+> +++ b/tests/generic/group
+> @@ -569,3 +569,4 @@
+>  564 auto quick copy_range
+>  565 auto quick copy_range
+>  719 auto quick quota metadata
+> +720 auto quick rw pipe splice
