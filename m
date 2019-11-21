@@ -2,354 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC5A5104F6F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 10:40:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FC91104F7C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 10:42:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbfKUJjs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Nov 2019 04:39:48 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34446 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726132AbfKUJjr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Nov 2019 04:39:47 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5D6CCB12B;
-        Thu, 21 Nov 2019 09:39:43 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id EADB11E47FC; Thu, 21 Nov 2019 10:39:41 +0100 (CET)
-Date:   Thu, 21 Nov 2019 10:39:41 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 17/24] mm/gup: track FOLL_PIN pages
-Message-ID: <20191121093941.GA18190@quack2.suse.cz>
-References: <20191121071354.456618-1-jhubbard@nvidia.com>
- <20191121071354.456618-18-jhubbard@nvidia.com>
+        id S1726695AbfKUJmW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Nov 2019 04:42:22 -0500
+Received: from mout.web.de ([212.227.15.4]:43043 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726165AbfKUJmW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Nov 2019 04:42:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1574329241;
+        bh=YIoQTG4bDJnKMejs3T7ERV32Zk7VF12+dw41Hf+WY34=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=XS6pFtakM7xygGm3VV1wbVc2vQcRaQREjrAtuKh5fYK0wPBd9/qFpSNFL4UP4MSl2
+         l5ciExFgOpAUoIelKdDbPj7Nx9PiszZlx4YCy3l16a0Fr3EmWDGyELOAbmwMHeUATa
+         tk8XPQxlwGiazHaA1jEPd2htX45mA8BSHGE5S2pE=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.3] ([78.48.172.213]) by smtp.web.de (mrweb003
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MJCR8-1iZMZv2XVK-002mUf; Thu, 21
+ Nov 2019 10:40:41 +0100
+Subject: Re: [PATCH v4 02/13] exfat: add super block operations
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>,
+        Daniel Wagner <dwagner@suse.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        linkinjeon@gmail.com
+References: <20191121052618.31117-1-namjae.jeon@samsung.com>
+ <CGME20191121052915epcas1p30f42f12990926942d24aa514ebc437ac@epcas1p3.samsung.com>
+ <20191121052618.31117-3-namjae.jeon@samsung.com>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <177371e7-9f52-407c-4f9b-ec9efb15f4a8@web.de>
+Date:   Thu, 21 Nov 2019 10:40:39 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191121071354.456618-18-jhubbard@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191121052618.31117-3-namjae.jeon@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:R1qBJGD04r4jJmDhih46YCu5L63wsz8Wovz29qWssmwhoW69GdB
+ +MuYe62XOQNuOduaul5SpxHvEGx5dEN3+WF9wEhrWIXozbjzwnnasvIbQ7FHukmQjZSCHdc
+ 1t7WACxEyec2t6SljebB39ELasNathu3S9U7bIpsxZlgUaVs7qyNnFgn/tDq+mQSuPZr5FK
+ bVejRx6FelN+klLZPG1Mg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:mJzi07PvMXQ=:nwfIfXIiriwYwJIpQiNnb8
+ HWPHXzD191YUsvg+EadngBPE32OKRUgp4Qif3xJi1HbIcPqZkAXhhdNhNVodN62Yw6IYYKcyv
+ T6pNQb5rhtmxRTM2fwiG0z9/glH7L08uSeok7NxDcnjHN/5i/kgemrwfIYN9xc7705bPbgD8n
+ Cmo29g1WNWmHRaKkWf7zBEPNnmSWpWH5jnCrcTf7QXPG2OUrQoqKakobhEFvTt/RhKB3xwwTw
+ 5Qlk/iiLWmMDxqNoUl+IImfjzf5tsDFht7q3PXAjLqWxuY91s3p043uCclo0VPguGPf5j6j6k
+ 68a9t0GDwA05YI17LGlpIZjuoBFxtUN6aak+llX4/r2LP4Zdt1kHtF1gedZh4hWjLwZPNW/Ff
+ T10Lqw4Fi68ODeNXYdxcQNVrC27nZgmvt5rKcKRwTQmYf2TSJRee7eFtRDvizCoH6fp93XO1x
+ b34USURAKiVXgtJ7g/I6NzB50DzjtiMXtgsTv6gc4vm4SeQkAxh6V3sBPm8QlG7efhpf1v+Wa
+ oPWoxiz6HYycN09OuSGaEfXE+jJ8s67NnKPN0znKX7SZKQ+ooFh8f+0gwPU3To09mKVPUuz87
+ y+dpRYFhbpbOCu4TyLa/y+u9fvGj9ylcmgq7KFXgf1ROPjrtrgfxDbZbKB/vZLOScfmPKfka6
+ UCyy0hB4oH3Y6hoIK94Bs4lnJM3b6dzvl/jtsw5nQJETaT8lgRGWIQeDzrA6US3PpMXS3vTdZ
+ QMCQ7zMwViYug0RxKaYq+7Hs9uv5yLKKgbLXIbMVAqZ0XUBAE/7X5w72VcV56bnEoPROqlZ9p
+ w14yLVhDTtEZwfyMvEU/DxymWso/Gdw4+s3gletEJWQgw1vIqMfYVKE0k78DnPDoKI13sanZ3
+ unbq+sdfFfUYEScwRVc6sjjywr2FtUwD+Zl0esnA/5d2BjyeGYypmcjZi9w7ylxQSbmAQ4qWY
+ h04X6wzk2CDEXv9JMmye62yz3mbxdsBFCjsrpd937B5eDeWDsl4hV08pCzFqFJnnv8YwDEzQR
+ CGiZCpg6EzFInRwF8Ij9o/fRGgq18NdoNg0QpHdLTgU7wTRmy7GeBbryWx3M27hd/kBTdXDYx
+ /SiYDnOHE7vCrY5YoEKdV0x6zxrPmBP+3sT4FglgRKl/yfxZnR2jFyuHe2rkGr9XoPHfSva8N
+ EoR8AMq3WJDwztbHomyRr/FFGaY8ByQmNB+faDYXrFtfg2GrZ0nPX+5UEIddDeoOaCtvALHZv
+ qAHwkaPiNTuSKI4BltMb9ZmDmu5M4Xryx8763n/3ch3xOM820DlxQI0GkUjo=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 20-11-19 23:13:47, John Hubbard wrote:
-> Add tracking of pages that were pinned via FOLL_PIN.
-> 
-> As mentioned in the FOLL_PIN documentation, callers who effectively set
-> FOLL_PIN are required to ultimately free such pages via put_user_page().
-> The effect is similar to FOLL_GET, and may be thought of as "FOLL_GET
-> for DIO and/or RDMA use".
-> 
-> Pages that have been pinned via FOLL_PIN are identifiable via a
-> new function call:
-> 
->    bool page_dma_pinned(struct page *page);
-> 
-> What to do in response to encountering such a page, is left to later
-> patchsets. There is discussion about this in [1], [2], and [3].
-> 
-> This also changes a BUG_ON(), to a WARN_ON(), in follow_page_mask().
-> 
-> [1] Some slow progress on get_user_pages() (Apr 2, 2019):
->     https://lwn.net/Articles/784574/
-> [2] DMA and get_user_pages() (LPC: Dec 12, 2018):
->     https://lwn.net/Articles/774411/
-> [3] The trouble with get_user_pages() (Apr 30, 2018):
->     https://lwn.net/Articles/753027/
-> 
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Suggested-by: Jérôme Glisse <jglisse@redhat.com>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-
-Thanks for the patch! We are mostly getting there. Some smaller comments
-below.
-
-> +/**
-> + * try_pin_compound_head() - mark a compound page as being used by
-> + * pin_user_pages*().
-> + *
-> + * This is the FOLL_PIN counterpart to try_get_compound_head().
-> + *
-> + * @page:	pointer to page to be marked
-> + * @Return:	true for success, false for failure
-> + */
-> +__must_check bool try_pin_compound_head(struct page *page, int refs)
+=E2=80=A6
+> +++ b/fs/exfat/super.c
+=E2=80=A6
+> +static int __init init_exfat_fs(void)
 > +{
-> +	page = try_get_compound_head(page, GUP_PIN_COUNTING_BIAS * refs);
-> +	if (!page)
-> +		return false;
-> +
-> +	__update_proc_vmstat(page, NR_FOLL_PIN_REQUESTED, refs);
-> +	return true;
-> +}
-> +
-> +#ifdef CONFIG_DEV_PAGEMAP_OPS
-> +static bool __put_devmap_managed_user_page(struct page *page)
+=E2=80=A6
+> +	err =3D -ENOMEM;
+> +	exfat_inode_cachep =3D kmem_cache_create("exfat_inode_cache",
+> +			sizeof(struct exfat_inode_info),
+> +			0, SLAB_RECLAIM_ACCOUNT | SLAB_MEM_SPREAD,
+> +			exfat_inode_init_once);
+> +	if (!exfat_inode_cachep)
+> +		goto shutdown_cache;
 
-Probably call this __unpin_devmap_managed_user_page()? To match the later
-conversion of put_user_page() to unpin_user_page()?
+Should such an error code assignment be performed only after a failed func=
+tion call?
 
-> +{
-> +	bool is_devmap = page_is_devmap_managed(page);
-> +
-> +	if (is_devmap) {
-> +		int count = page_ref_sub_return(page, GUP_PIN_COUNTING_BIAS);
-> +
-> +		__update_proc_vmstat(page, NR_FOLL_PIN_RETURNED, 1);
-> +		/*
-> +		 * devmap page refcounts are 1-based, rather than 0-based: if
-> +		 * refcount is 1, then the page is free and the refcount is
-> +		 * stable because nobody holds a reference on the page.
-> +		 */
-> +		if (count == 1)
-> +			free_devmap_managed_page(page);
-> +		else if (!count)
-> +			__put_page(page);
-> +	}
-> +
-> +	return is_devmap;
-> +}
-> +#else
-> +static bool __put_devmap_managed_user_page(struct page *page)
-> +{
-> +	return false;
-> +}
-> +#endif /* CONFIG_DEV_PAGEMAP_OPS */
-> +
-> +/**
-> + * put_user_page() - release a dma-pinned page
-> + * @page:            pointer to page to be released
-> + *
-> + * Pages that were pinned via pin_user_pages*() must be released via either
-> + * put_user_page(), or one of the put_user_pages*() routines. This is so that
-> + * such pages can be separately tracked and uniquely handled. In particular,
-> + * interactions with RDMA and filesystems need special handling.
-> + */
-> +void put_user_page(struct page *page)
-> +{
-> +	page = compound_head(page);
-> +
-> +	/*
-> +	 * For devmap managed pages we need to catch refcount transition from
-> +	 * GUP_PIN_COUNTING_BIAS to 1, when refcount reach one it means the
-> +	 * page is free and we need to inform the device driver through
-> +	 * callback. See include/linux/memremap.h and HMM for details.
-> +	 */
-> +	if (__put_devmap_managed_user_page(page))
-> +		return;
-> +
-> +	if (page_ref_sub_and_test(page, GUP_PIN_COUNTING_BIAS))
-> +		__put_page(page);
-> +
-> +	__update_proc_vmstat(page, NR_FOLL_PIN_RETURNED, 1);
-> +}
-> +EXPORT_SYMBOL(put_user_page);
-> +
->  /**
->   * put_user_pages_dirty_lock() - release and optionally dirty gup-pinned pages
->   * @pages:  array of pages to be maybe marked dirty, and definitely released.
-> @@ -237,10 +327,11 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
->  	}
->  
->  	page = vm_normal_page(vma, address, pte);
-> -	if (!page && pte_devmap(pte) && (flags & FOLL_GET)) {
-> +	if (!page && pte_devmap(pte) && (flags & (FOLL_GET | FOLL_PIN))) {
->  		/*
-> -		 * Only return device mapping pages in the FOLL_GET case since
-> -		 * they are only valid while holding the pgmap reference.
-> +		 * Only return device mapping pages in the FOLL_GET or FOLL_PIN
-> +		 * case since they are only valid while holding the pgmap
-> +		 * reference.
->  		 */
->  		*pgmap = get_dev_pagemap(pte_pfn(pte), *pgmap);
->  		if (*pgmap)
-> @@ -283,6 +374,11 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
->  			page = ERR_PTR(-ENOMEM);
->  			goto out;
->  		}
-> +	} else if (flags & FOLL_PIN) {
-> +		if (unlikely(!try_pin_page(page))) {
-> +			page = ERR_PTR(-ENOMEM);
-> +			goto out;
-> +		}
-
-Use grab_page() here?
-
->  	}
->  	if (flags & FOLL_TOUCH) {
->  		if ((flags & FOLL_WRITE) &&
-> @@ -1890,9 +2000,15 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
->  		VM_BUG_ON(!pfn_valid(pte_pfn(pte)));
->  		page = pte_page(pte);
->  
-> -		head = try_get_compound_head(page, 1);
-> -		if (!head)
-> -			goto pte_unmap;
-> +		if (flags & FOLL_PIN) {
-> +			head = page;
-> +			if (unlikely(!try_pin_page(head)))
-> +				goto pte_unmap;
-> +		} else {
-> +			head = try_get_compound_head(page, 1);
-> +			if (!head)
-> +				goto pte_unmap;
-> +		}
-
-Why don't you use grab_page() here? Also you seem to loose the head =
-compound_head(page) indirection here for the FOLL_PIN case?
-
->  
->  		if (unlikely(pte_val(pte) != pte_val(*ptep))) {
->  			put_page(head);
-> @@ -1946,12 +2062,20 @@ static int __gup_device_huge(unsigned long pfn, unsigned long addr,
->  
->  		pgmap = get_dev_pagemap(pfn, pgmap);
->  		if (unlikely(!pgmap)) {
-> -			undo_dev_pagemap(nr, nr_start, pages);
-> +			undo_dev_pagemap(nr, nr_start, flags, pages);
->  			return 0;
->  		}
->  		SetPageReferenced(page);
->  		pages[*nr] = page;
-> -		get_page(page);
-> +
-> +		if (flags & FOLL_PIN) {
-> +			if (unlikely(!try_pin_page(page))) {
-> +				undo_dev_pagemap(nr, nr_start, flags, pages);
-> +				return 0;
-> +			}
-> +		} else
-> +			get_page(page);
-> +
-
-Use grab_page() here?
-
->  		(*nr)++;
->  		pfn++;
->  	} while (addr += PAGE_SIZE, addr != end);
-...
-> @@ -2025,12 +2149,31 @@ static int __record_subpages(struct page *page, unsigned long addr,
->  	return nr;
->  }
->  
-> -static void put_compound_head(struct page *page, int refs)
-> +static bool grab_compound_head(struct page *head, int refs, unsigned int flags)
->  {
-> +	if (flags & FOLL_PIN) {
-> +		if (unlikely(!try_pin_compound_head(head, refs)))
-> +			return false;
-> +	} else {
-> +		head = try_get_compound_head(head, refs);
-> +		if (!head)
-> +			return false;
-> +	}
-> +
-> +	return true;
-> +}
-> +
-> +static void put_compound_head(struct page *page, int refs, unsigned int flags)
-> +{
-> +	struct page *head = compound_head(page);
-> +
-> +	if (flags & FOLL_PIN)
-> +		refs *= GUP_PIN_COUNTING_BIAS;
-> +
->  	/* Do a get_page() first, in case refs == page->_refcount */
-> -	get_page(page);
-> -	page_ref_sub(page, refs);
-> -	put_page(page);
-> +	get_page(head);
-> +	page_ref_sub(head, refs);
-> +	put_page(head);
->  }
->  
->  #ifdef CONFIG_ARCH_HAS_HUGEPD
-> @@ -2064,14 +2207,13 @@ static int gup_hugepte(pte_t *ptep, unsigned long sz, unsigned long addr,
->  
->  	head = pte_page(pte);
->  	page = head + ((addr & (sz-1)) >> PAGE_SHIFT);
-> -	refs = __record_subpages(page, addr, end, pages + *nr);
-> +	refs = record_subpages(page, addr, end, pages + *nr);
->  
-> -	head = try_get_compound_head(head, refs);
-> -	if (!head)
-> +	if (!grab_compound_head(head, refs, flags))
-
-Are you sure this is correct? Historically we seem to have always had logic
-like:
-
-	head = compound_head(pte_page / pmd_page / ... (orig))
-
-in this code. And you removed this now. Looking at the code I'm not sure
-whether the compound_head() indirection is really needed or not. We seem to
-have already huge page head in the page table but maybe there's some subtle
-case I'm missing. So I'd be calmer if we left the head=compound_head(...)
-in the code but if you really want to remove it, I'd like to see Ack from
-someone actually familiar with huge pages - e.g. Kirill Shutemov...
-
-And even if we find out that compound_head() indirection isn't really
-needed, that is big enough change in the logic that it would deserve to be
-done in a separate patch (if only for debugging by bisection purposes).
-
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 13cc93785006..981a9ea0b83f 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-...
-> @@ -5034,8 +5052,20 @@ follow_huge_pmd(struct mm_struct *mm, unsigned long address,
->  	pte = huge_ptep_get((pte_t *)pmd);
->  	if (pte_present(pte)) {
->  		page = pmd_page(*pmd) + ((address & ~PMD_MASK) >> PAGE_SHIFT);
-> +
->  		if (flags & FOLL_GET)
->  			get_page(page);
-> +		else if (flags & FOLL_PIN) {
-> +			/*
-> +			 * try_pin_page() is not actually expected to fail
-> +			 * here because we hold the ptl.
-> +			 */
-> +			if (unlikely(!try_pin_page(page))) {
-> +				WARN_ON_ONCE(1);
-> +				page = NULL;
-> +				goto out;
-> +			}
-> +		}
-
-Use grab_page() here?
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Regards,
+Markus
