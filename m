@@ -2,111 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC8421057B7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 18:00:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA47E1057BB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 18:00:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727071AbfKURAQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Nov 2019 12:00:16 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:44552 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726944AbfKURAL (ORCPT
+        id S1727088AbfKURAV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Nov 2019 12:00:21 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:46288 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726690AbfKURAV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Nov 2019 12:00:11 -0500
-Received: by mail-oi1-f196.google.com with SMTP id s71so3790849oih.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2019 09:00:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SDymYy1Cr6msxqeKtzOvSyToG0ApR3Ly++FnBPiFfAU=;
-        b=f+VuCObIDRfrJmbTAA4m3SQhOXNZ4pbf+ZyigT8J2YciKJHX1toKS54ABD40/HbC1d
-         7Pkwsh8oyyINQzVpjfjsJLe3RxxCFvky++3gAGs9me3lgi9X2Cs94Bu46By7m8IZ2aX6
-         6VCe60NDY4cCmQm2ZZlTacWdZ6Ps9MXHsxEoPPvq4YYJFGrJauw8LzXEJJdEFg7nFNai
-         NT0xpYhDehIOprr6cUNw9YoHqOqwfQCKgM0QWVQ6U7LVeCnx2wYwSu33Ka73HmSeIHM7
-         JqrB5AsBrlMh6M533DPgzCdMMVEMlw9v2LJQn2e/uD0VclTth1B3dpfknn3iLontgkuH
-         3IWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SDymYy1Cr6msxqeKtzOvSyToG0ApR3Ly++FnBPiFfAU=;
-        b=UMy+/2yYzh6SFxH/tG6jDLiuhLHaNylItCkHo1E3oELC/lrFY7c1nN95Kz5pHPDGsZ
-         l2JWBpXWmnfOPhpsQaYrJ/82w/vt7qMmvE6KQrUrnYe2ZdfVJ8DqHJ6nGmrApbA3wLpb
-         O3sjII7MbghS9j9AlUa9+TcnXEOaMlQRLjjDo3a383YMz2T73UJCczuEqJHnN826m7so
-         V/qj30Iu/z+bB1AD8oywQEXYO4k7DptvF6u0h/UUTNYqag5FFw6NjjDLnhAIAq175lHn
-         AK8fR0kiVAiJjWZo0Xx9JoltSKQrd/DZ0xNMz3v1qXI+VsWyoXVmle/DEEj0vHDqXajx
-         ZzMw==
-X-Gm-Message-State: APjAAAX2hwTkjbdb2GZ2qbvjKSni54YlMbPy0ENwUtXlq3zJZVzoyfaX
-        Tt5lgsa9plfWA2x210mM9AJv6n3wcqJezYM+Rit5Gw==
-X-Google-Smtp-Source: APXvYqzaKFA5sHA2BoiQUxyQp/rlYSGdVkc2qiU+T2e7CfLgs6CP/GdyTJIUkjrV/y2OAJbT5zFGq6OvhTpLAGKVq9Q=
-X-Received: by 2002:aca:ea57:: with SMTP id i84mr8187454oih.73.1574355610298;
- Thu, 21 Nov 2019 09:00:10 -0800 (PST)
-MIME-Version: 1.0
-References: <20191121071354.456618-1-jhubbard@nvidia.com> <20191121071354.456618-6-jhubbard@nvidia.com>
- <20191121080555.GC24784@lst.de> <c5f8750f-af82-8aec-ce70-116acf24fa82@nvidia.com>
-In-Reply-To: <c5f8750f-af82-8aec-ce70-116acf24fa82@nvidia.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 21 Nov 2019 08:59:57 -0800
-Message-ID: <CAPcyv4jzDfxFAnAYc6g8Zz=3DweQFEBLBQyA_tSDP2Wy-RoA4A@mail.gmail.com>
-Subject: Re: [PATCH v7 05/24] mm: devmap: refactor 1-based refcounting for
- ZONE_DEVICE pages
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Thu, 21 Nov 2019 12:00:21 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xALGxKH3090224;
+        Thu, 21 Nov 2019 16:59:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=4jTG7tKmtB4E4uAi7U1mKuZsrMojpmidKPmtl2mgAXo=;
+ b=BM7JOFtnKiuCpGbRQe87oiOeJ3lyAgUUs38WNHUNhJr5wMJo2OcLXusOSIlDgSpU4G9K
+ Fkcsb2TzKKJrkVz6DhABTP2mPnwkdl54RhtIc4rUW5y+At/Qi89Os7IE+C9jOxHqiNbH
+ /+2SjSNaYWxoyxzCrt2Fkyv8PFehmSLlWn+oMn/sUkZb+YVCFK6RMa4n5psyis0uQoqr
+ lHuaLZbhQVyLEiJn67vnRjFEhYhcvYDVmV2BCjM7bYRwZCf2CI6cTT1U5XYACmbJEA2C
+ v55vNcdb0GO9MbpAujl6h9Xzsrlr3m1xcZeB3NkeoBStSIsSBtKmf4GH1JOERk8QDhnQ 2A== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2wa9rqwhvp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Nov 2019 16:59:33 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xALGx9oB057244;
+        Thu, 21 Nov 2019 16:59:32 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2wd47xa0v4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Nov 2019 16:59:25 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xALGwUIQ022842;
+        Thu, 21 Nov 2019 16:58:30 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 21 Nov 2019 08:58:30 -0800
+Date:   Thu, 21 Nov 2019 08:58:29 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, KVM list <kvm@vger.kernel.org>,
-        linux-block@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        Eric Biggers <ebiggers@kernel.org>
+Subject: Re: [PATCH 0/2] iomap: Fix leakage of pipe pages while splicing
+Message-ID: <20191121165829.GK6211@magnolia>
+References: <20191121161144.30802-1-jack@suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191121161144.30802-1-jack@suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9447 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=749
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911210148
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9447 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=837 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911210148
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 12:57 AM John Hubbard <jhubbard@nvidia.com> wrote:
->
-> On 11/21/19 12:05 AM, Christoph Hellwig wrote:
-> > So while this looks correct and I still really don't see the major
-> > benefit of the new code organization, especially as it bloats all
-> > put_page callers.
-> >
-> > I'd love to see code size change stats for an allyesconfig on this
-> > commit.
-> >
->
-> Right, I'm running that now, will post the results. (btw, if there is
-> a script and/or standard format I should use, I'm all ears. I'll dig
-> through lwn...)
->
+On Thu, Nov 21, 2019 at 05:15:33PM +0100, Jan Kara wrote:
+> Hello,
+> 
+> here is a fix and a cleanup for iomap code. The first patch fixes a leakage
+> of pipe pages when iomap_dio_rw() splices to a pipe, the second patch is
+> a cleanup that removes strange copying of iter in iomap_dio_rw(). Patches
+> have passed fstests for ext4 and xfs and fix the syzkaller reproducer for
+> me.
 
-Just run:
+Will have a look, but in the meantime -- do you have quick reproducer
+that can be packaged for fstests?  Or is it just the syzbot reproducer?
 
-    size vmlinux
+--D
+
+> 
+> 								Honza
