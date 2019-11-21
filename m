@@ -2,395 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3F14105A38
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 20:15:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57C5F105B9E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 22:09:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbfKUTPB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Nov 2019 14:15:01 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:48082 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726541AbfKUTPB (ORCPT
+        id S1726563AbfKUVJn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Nov 2019 16:09:43 -0500
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:36547 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726293AbfKUVJm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Nov 2019 14:15:01 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xALJE8is022807;
-        Thu, 21 Nov 2019 19:14:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2019-08-05;
- bh=nH/gk6ZJ4ZG4cGze7Hmp7DFNJ+h12yx+iBlmHBVu3WU=;
- b=dZyvyipSNSQ4XSpF9xq6txAFeBaHglaSQSF50hnd2b2r5BHSkW8VPEUIoPe5CKktUqrU
- CkpN7fpOX2sh58ddzW9QNq3wPJBBzj4sKlcsyAToQQv6e5/paHkUoJldSjdyV4KFy1Gk
- M5xWKrcSriQs+xYpZy1KQ3yGRWTMN/lQ8Kvla7b7hQBP6B0vGcDbleynwyjhnHtvvSHA
- MoUbiEFo7FQ166KdmtMgavzD5793KoLdE2QEWGulNOivnXy8C4FtKr8RtuHRJXCwxYZ3
- phMb+0MF1oUM2OV+r39KYGZLl45i6y2B0/IQNfZ9ZS8qP0gTXWgznP/JUEAm6grtRzkl oA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2wa92q6cm6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Nov 2019 19:14:57 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xALJEElN089945;
-        Thu, 21 Nov 2019 19:14:57 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2wd47xgxtv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Nov 2019 19:14:57 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xALJEuef023060;
-        Thu, 21 Nov 2019 19:14:56 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 21 Nov 2019 11:14:56 -0800
-Date:   Thu, 21 Nov 2019 11:14:53 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Andreas =?iso-8859-1?Q?Gr=FCnbacher?= 
-        <andreas.gruenbacher@gmail.com>
-Cc:     xfs <linux-xfs@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        fstests <fstests@vger.kernel.org>
-Subject: Re: [RFC PATCH] generic: test splice() with pipes
-Message-ID: <20191121191453.GN6211@magnolia>
-References: <20190829161155.GA5360@magnolia>
- <20190830004407.GA5340@magnolia>
- <20191121170107.GM6211@magnolia>
- <CAHpGcMJYRVeNNjhMP8GEVD9Wr5g-7_sXkR=qxQTCqrwyskuDBw@mail.gmail.com>
+        Thu, 21 Nov 2019 16:09:42 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 9A0B71835;
+        Thu, 21 Nov 2019 16:09:41 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Thu, 21 Nov 2019 16:09:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm2; bh=27hbmoeIqxabDlUJntEU4zb9PL
+        bVfwu+9iKmFJEM9FA=; b=Sb4Rx4QInA4iamfK6ROAyVi2hOx5lE9DTzJiBQye0o
+        FB+07rmWCb1OR5kNUFha8oXty/dgoYsOJ7VH02hXeKTwSaF/+Olp1byAOmmThLs6
+        tRENCbxQkWzyDZHlaUpYk+vbNyQ/j/FFhdrOxYFNS8Hk4N+uDoLzCPvABR/foB8C
+        ed1zPDWYaFOvIQMbx2Xm8be9IgBDFeF0oTzCIQY/G5GFwE42RdVJ60qgZPYSZ4/h
+        Hboy31tUMjPhi2j2zbLdcNjoU8N4TUQOFfmLWjX/fJyqbQyN+UEmfqzslIcKX/uJ
+        olyy8D4tjKWo1WEy74zt92ePPjsAmIa/nkXk/hJtmnzQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=27hbmoeIqxabDlUJn
+        tEU4zb9PLbVfwu+9iKmFJEM9FA=; b=IilgPL0AawnpMBPE3SEa02TXcETb75AxH
+        qGok+0p58FKL8CdG5SqvkzH+w/D2GnVncTDhuVCnnbLolcKuOPZN/W0iRorjrmXK
+        GOfK54/uAnWjMhMCcb7OdFcVbX6t6kWsUKZlrK9RqNFFHBjVFMcC3Fu2lo/sGBWB
+        EXC8EHJsIgh2Vp6cRgqzr34JNT6bTwCuwg5G+nJHVKOvmtKcOvTgWnz85J1ShOrA
+        c8WYoxuQwE8FYhA3zb3qpglSj4MbB7Xn58KznWLWE4rreJJpgxSP5redH8oGju11
+        bH/EwjMF06QuLGG0J/wTBEE92NUibpru/9ZhoAzBErtqaw1Sj7f6Q==
+X-ME-Sender: <xms:E_3WXVctaq-l-8ybDYRjQ2xC_8KK1vrfYWhrF7nesdItbLsZHmudqw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudehvddgudegkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecufghrlhcuvffnffculdejtddmnecujfgurhephf
+    fvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeffrghnihgvlhcuighuuceougig
+    uhesugiguhhuuhdrgiihiieqnecukfhppeduieefrdduudegrddufedtrdduvdeknecurf
+    grrhgrmhepmhgrihhlfhhrohhmpegugihusegugihuuhhurdighiiinecuvehluhhsthgv
+    rhfuihiivgeptd
+X-ME-Proxy: <xmx:E_3WXdcq5V8A95Y0moLHK3M_gTpG-1nHNDXRjOEIQldW0rcXHIBY8g>
+    <xmx:E_3WXT8DbUbtTSmrCxc9dZiDQKY2OsYyyqMA2hbIJ3XClRQaGY_24g>
+    <xmx:E_3WXVMbCNj07A_CqDSShq-s_mk_PopJi3j3tZtcbat2wqke9kmIXQ>
+    <xmx:Ff3WXZIWvhbvRPjKWDqjESlYe_76uqaj6fY-WUl6gPo8bKl_O5mGBQ>
+Received: from dlxu-fedora-R90QNFJV.thefacebook.com (unknown [163.114.130.128])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 85F7880060;
+        Thu, 21 Nov 2019 16:09:38 -0500 (EST)
+From:   Daniel Xu <dxu@dxuuu.xyz>
+To:     adobriyan@gmail.com, christian@brauner.io,
+        akpm@linux-foundation.org, tglx@linutronix.de, mhocko@suse.com,
+        keescook@chromium.org, shakeelb@google.com, casey@schaufler-ca.com,
+        khlebnikov@yandex-team.ru, kent.overstreet@gmail.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     Daniel Xu <dxu@dxuuu.xyz>, dschatzberg@fb.com, htejun@fb.com,
+        dennis@kernel.org, kernel-team@fb.com
+Subject: [PATCH] proc: Make /proc/<pid>/io world readable
+Date:   Thu, 21 Nov 2019 13:09:09 -0800
+Message-Id: <20191121210909.15086-1-dxu@dxuuu.xyz>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHpGcMJYRVeNNjhMP8GEVD9Wr5g-7_sXkR=qxQTCqrwyskuDBw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9448 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1911210160
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9448 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1911210160
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 07:48:54PM +0100, Andreas Grünbacher wrote:
-> Am Do., 21. Nov. 2019 um 18:01 Uhr schrieb Darrick J. Wong
-> <darrick.wong@oracle.com>:
-> > On Thu, Aug 29, 2019 at 05:44:07PM -0700, Darrick J. Wong wrote:
-> > > From: Darrick J. Wong <darrick.wong@oracle.com>
-> > >
-> > > Andreas Grünbacher reports that on the two filesystems that support
-> > > iomap directio, it's possible for splice() to return -EAGAIN (instead of
-> > > a short splice) if the pipe being written to has less space available in
-> > > its pipe buffers than the length supplied by the calling process.
-> > >
-> > > This is a regression test to check for correct operation.
-> > >
-> > > XXX Andreas: Since you wrote the C reproducer, can you send me the
-> > > proper copyright and author attribution statement for the C program?
-> >
-> > Ping?  Andreas, can I get the above info so I can get this moving again?
-> 
-> Oops, sure, this is:
-> 
-> Copyright (c) 2019 RedHat Inc.  All Rights Reserved.
-> Author: Andreas Gruenbacher <agruenba@redhat.com>
+/proc/<pid>/io is currently only owner readable. This forces monitoring
+programs (such as atop) to run with elevated permissions to collect disk
+stats. Changing this file to world readable can add a measure of safety to
+userspace.
 
-Ok thanks.  It's appropriate to tag it as GPL v2 licensed, correct?
+Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+---
+ fs/proc/base.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---D
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index ebea9501afb8..1d1c1d680e16 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -3076,7 +3076,7 @@ static const struct pid_entry tgid_base_stuff[] = {
+ 	REG("coredump_filter", S_IRUGO|S_IWUSR, proc_coredump_filter_operations),
+ #endif
+ #ifdef CONFIG_TASK_IO_ACCOUNTING
+-	ONE("io",	S_IRUSR, proc_tgid_io_accounting),
++	ONE("io",	S_IRUGO, proc_tgid_io_accounting),
+ #endif
+ #ifdef CONFIG_USER_NS
+ 	REG("uid_map",    S_IRUGO|S_IWUSR, proc_uid_map_operations),
+@@ -3473,7 +3473,7 @@ static const struct pid_entry tid_base_stuff[] = {
+ 	REG("fail-nth", 0644, proc_fail_nth_operations),
+ #endif
+ #ifdef CONFIG_TASK_IO_ACCOUNTING
+-	ONE("io",	S_IRUSR, proc_tid_io_accounting),
++	ONE("io",	S_IRUGO, proc_tid_io_accounting),
+ #endif
+ #ifdef CONFIG_USER_NS
+ 	REG("uid_map",    S_IRUGO|S_IWUSR, proc_uid_map_operations),
+-- 
+2.21.0
 
-> > --D
-> >
-> > > Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-> > > ---
-> > >  .gitignore            |    1
-> > >  src/Makefile          |    2 -
-> > >  src/splice-test.c     |  173 +++++++++++++++++++++++++++++++++++++++++++++++++
-> > >  tests/generic/720     |   41 ++++++++++++
-> > >  tests/generic/720.out |    7 ++
-> > >  tests/generic/group   |    1
-> > >  6 files changed, 224 insertions(+), 1 deletion(-)
-> > >  create mode 100644 src/splice-test.c
-> > >  create mode 100755 tests/generic/720
-> > >  create mode 100644 tests/generic/720.out
-> > >
-> > > diff --git a/.gitignore b/.gitignore
-> > > index c8c815f9..26d4da11 100644
-> > > --- a/.gitignore
-> > > +++ b/.gitignore
-> > > @@ -112,6 +112,7 @@
-> > >  /src/runas
-> > >  /src/seek_copy_test
-> > >  /src/seek_sanity_test
-> > > +/src/splice-test
-> > >  /src/stale_handle
-> > >  /src/stat_test
-> > >  /src/swapon
-> > > diff --git a/src/Makefile b/src/Makefile
-> > > index c4fcf370..2920dfb1 100644
-> > > --- a/src/Makefile
-> > > +++ b/src/Makefile
-> > > @@ -28,7 +28,7 @@ LINUX_TARGETS = xfsctl bstat t_mtab getdevicesize preallo_rw_pattern_reader \
-> > >       attr-list-by-handle-cursor-test listxattr dio-interleaved t_dir_type \
-> > >       dio-invalidate-cache stat_test t_encrypted_d_revalidate \
-> > >       attr_replace_test swapon mkswap t_attr_corruption t_open_tmpfiles \
-> > > -     fscrypt-crypt-util bulkstat_null_ocount
-> > > +     fscrypt-crypt-util bulkstat_null_ocount splice-test
-> > >
-> > >  SUBDIRS = log-writes perf
-> > >
-> > > diff --git a/src/splice-test.c b/src/splice-test.c
-> > > new file mode 100644
-> > > index 00000000..d3c12075
-> > > --- /dev/null
-> > > +++ b/src/splice-test.c
-> > > @@ -0,0 +1,173 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > > +/*
-> > > + * Copyright (C) 2019 ????????????????????????????
-> > > + * Author:
-> > > + *
-> > > + * Make sure that reading and writing to a pipe via splice.
-> > > + */
-> > > +#include <sys/types.h>
-> > > +#include <sys/stat.h>
-> > > +#include <sys/wait.h>
-> > > +#include <unistd.h>
-> > > +#include <fcntl.h>
-> > > +#include <err.h>
-> > > +
-> > > +#include <stdlib.h>
-> > > +#include <stdio.h>
-> > > +#include <stdbool.h>
-> > > +#include <string.h>
-> > > +#include <errno.h>
-> > > +
-> > > +#define SECTOR_SIZE 512
-> > > +#define BUFFER_SIZE (150 * SECTOR_SIZE)
-> > > +
-> > > +void read_from_pipe(int fd, const char *filename, size_t size)
-> > > +{
-> > > +     char buffer[SECTOR_SIZE];
-> > > +     size_t sz;
-> > > +     ssize_t ret;
-> > > +
-> > > +     while (size) {
-> > > +             sz = size;
-> > > +             if (sz > sizeof buffer)
-> > > +                     sz = sizeof buffer;
-> > > +             ret = read(fd, buffer, sz);
-> > > +             if (ret < 0)
-> > > +                     err(1, "read: %s", filename);
-> > > +             if (ret == 0) {
-> > > +                     fprintf(stderr, "read: %s: unexpected EOF\n", filename);
-> > > +                     exit(1);
-> > > +             }
-> > > +             size -= sz;
-> > > +     }
-> > > +}
-> > > +
-> > > +void do_splice1(int fd, const char *filename, size_t size)
-> > > +{
-> > > +     bool retried = false;
-> > > +     int pipefd[2];
-> > > +
-> > > +     if (pipe(pipefd) == -1)
-> > > +             err(1, "pipe");
-> > > +     while (size) {
-> > > +             ssize_t spliced;
-> > > +
-> > > +             spliced = splice(fd, NULL, pipefd[1], NULL, size, SPLICE_F_MOVE);
-> > > +             if (spliced == -1) {
-> > > +                     if (errno == EAGAIN && !retried) {
-> > > +                             retried = true;
-> > > +                             fprintf(stderr, "retrying splice\n");
-> > > +                             sleep(1);
-> > > +                             continue;
-> > > +                     }
-> > > +                     err(1, "splice");
-> > > +             }
-> > > +             read_from_pipe(pipefd[0], filename, spliced);
-> > > +             size -= spliced;
-> > > +     }
-> > > +     close(pipefd[0]);
-> > > +     close(pipefd[1]);
-> > > +}
-> > > +
-> > > +void do_splice2(int fd, const char *filename, size_t size)
-> > > +{
-> > > +     bool retried = false;
-> > > +     int pipefd[2];
-> > > +     int pid;
-> > > +
-> > > +     if (pipe(pipefd) == -1)
-> > > +             err(1, "pipe");
-> > > +
-> > > +     pid = fork();
-> > > +     if (pid == 0) {
-> > > +             close(pipefd[1]);
-> > > +             read_from_pipe(pipefd[0], filename, size);
-> > > +             exit(0);
-> > > +     } else {
-> > > +             close(pipefd[0]);
-> > > +             while (size) {
-> > > +                     ssize_t spliced;
-> > > +
-> > > +                     spliced = splice(fd, NULL, pipefd[1], NULL, size, SPLICE_F_MOVE);
-> > > +                     if (spliced == -1) {
-> > > +                             if (errno == EAGAIN && !retried) {
-> > > +                                     retried = true;
-> > > +                                     fprintf(stderr, "retrying splice\n");
-> > > +                                     sleep(1);
-> > > +                                     continue;
-> > > +                             }
-> > > +                             err(1, "splice");
-> > > +                     }
-> > > +                     size -= spliced;
-> > > +             }
-> > > +             close(pipefd[1]);
-> > > +             waitpid(pid, NULL, 0);
-> > > +     }
-> > > +}
-> > > +
-> > > +void usage(const char *argv0)
-> > > +{
-> > > +     fprintf(stderr, "USAGE: %s [-rd] {filename}\n", basename(argv0));
-> > > +     exit(2);
-> > > +}
-> > > +
-> > > +int main(int argc, char *argv[])
-> > > +{
-> > > +     void (*do_splice)(int fd, const char *filename, size_t size);
-> > > +     const char *filename;
-> > > +     char *buffer;
-> > > +     int opt, open_flags, fd;
-> > > +     ssize_t ret;
-> > > +
-> > > +     do_splice = do_splice1;
-> > > +     open_flags = O_CREAT | O_TRUNC | O_RDWR | O_DIRECT;
-> > > +
-> > > +     while ((opt = getopt(argc, argv, "rd")) != -1) {
-> > > +             switch(opt) {
-> > > +             case 'r':
-> > > +                     do_splice = do_splice2;
-> > > +                     break;
-> > > +             case 'd':
-> > > +                     open_flags &= ~O_DIRECT;
-> > > +                     break;
-> > > +             default:  /* '?' */
-> > > +                     usage(argv[0]);
-> > > +             }
-> > > +     }
-> > > +
-> > > +     if (optind >= argc)
-> > > +             usage(argv[0]);
-> > > +     filename = argv[optind];
-> > > +
-> > > +     printf("%s reader %s O_DIRECT\n",
-> > > +                do_splice == do_splice1 ? "sequential" : "concurrent",
-> > > +                (open_flags & O_DIRECT) ? "with" : "without");
-> > > +
-> > > +     buffer = aligned_alloc(SECTOR_SIZE, BUFFER_SIZE);
-> > > +     if (buffer == NULL)
-> > > +             err(1, "aligned_alloc");
-> > > +
-> > > +     fd = open(filename, open_flags, 0666);
-> > > +     if (fd == -1)
-> > > +             err(1, "open: %s", filename);
-> > > +
-> > > +     memset(buffer, 'x', BUFFER_SIZE);
-> > > +     ret = write(fd, buffer, BUFFER_SIZE);
-> > > +     if (ret < 0)
-> > > +             err(1, "write: %s", filename);
-> > > +     if (ret != BUFFER_SIZE) {
-> > > +             fprintf(stderr, "%s: short write\n", filename);
-> > > +             exit(1);
-> > > +     }
-> > > +
-> > > +     ret = lseek(fd, 0, SEEK_SET);
-> > > +     if (ret != 0)
-> > > +             err(1, "lseek: %s", filename);
-> > > +
-> > > +     do_splice(fd, filename, BUFFER_SIZE);
-> > > +
-> > > +     if (unlink(filename) == -1)
-> > > +             err(1, "unlink: %s", filename);
-> > > +
-> > > +     return 0;
-> > > +}
-> > > diff --git a/tests/generic/720 b/tests/generic/720
-> > > new file mode 100755
-> > > index 00000000..b7f09c40
-> > > --- /dev/null
-> > > +++ b/tests/generic/720
-> > > @@ -0,0 +1,41 @@
-> > > +#! /bin/bash
-> > > +# SPDX-License-Identifier: GPL-2.0-or-later
-> > > +# Copyright (c) 2019, Oracle and/or its affiliates.  All Rights Reserved.
-> > > +#
-> > > +# FS QA Test No. 720
-> > > +#
-> > > +# Test using splice() to read from pipes.
-> > > +
-> > > +seq=`basename $0`
-> > > +seqres=$RESULT_DIR/$seq
-> > > +echo "QA output created by $seq"
-> > > +
-> > > +here=`pwd`
-> > > +tmp=/tmp/$$
-> > > +status=1    # failure is the default!
-> > > +trap "_cleanup; exit \$status" 0 1 2 3 15
-> > > +
-> > > +_cleanup()
-> > > +{
-> > > +     cd /
-> > > +     rm -f $TEST_DIR/a
-> > > +}
-> > > +
-> > > +# get standard environment, filters and checks
-> > > +. ./common/rc
-> > > +
-> > > +# real QA test starts here
-> > > +_supported_os Linux
-> > > +_supported_fs generic
-> > > +_require_test
-> > > +
-> > > +rm -f $seqres.full
-> > > +
-> > > +src/splice-test -r $TEST_DIR/a
-> > > +src/splice-test -rd $TEST_DIR/a
-> > > +src/splice-test $TEST_DIR/a
-> > > +src/splice-test -d $TEST_DIR/a
-> > > +
-> > > +# success, all done
-> > > +status=0
-> > > +exit
-> > > diff --git a/tests/generic/720.out b/tests/generic/720.out
-> > > new file mode 100644
-> > > index 00000000..b0fc9935
-> > > --- /dev/null
-> > > +++ b/tests/generic/720.out
-> > > @@ -0,0 +1,7 @@
-> > > +QA output created by 720
-> > > +concurrent reader with O_DIRECT
-> > > +concurrent reader with O_DIRECT
-> > > +concurrent reader without O_DIRECT
-> > > +concurrent reader without O_DIRECT
-> > > +sequential reader with O_DIRECT
-> > > +sequential reader without O_DIRECT
-> > > diff --git a/tests/generic/group b/tests/generic/group
-> > > index cd418106..f75d4e60 100644
-> > > --- a/tests/generic/group
-> > > +++ b/tests/generic/group
-> > > @@ -569,3 +569,4 @@
-> > >  564 auto quick copy_range
-> > >  565 auto quick copy_range
-> > >  719 auto quick quota metadata
-> > > +720 auto quick rw pipe splice
-> 
-> Thanks,
-> Andreas
