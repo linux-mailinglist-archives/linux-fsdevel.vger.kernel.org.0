@@ -2,105 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57E641048E6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 04:19:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E42BD104963
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 04:39:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbfKUDS4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Nov 2019 22:18:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60404 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725842AbfKUDSz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Nov 2019 22:18:55 -0500
-Received: from PC-kkoz.proceq.com (unknown [213.160.61.66])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1CDDA20721;
-        Thu, 21 Nov 2019 03:18:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574306335;
-        bh=9H2OF06r0z9vuOQPos4thK3Jm060C1E9j+rNO8kjxq8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=xO/lSD7umPYQXXuA+UM2wrEcjh6DDQvk1VEFM1pOYc6haFTNaMK8JboxifYKnrK9H
-         cGHZ+QCLhOaCtJJON2poYJje3WJyebxlOYW8Opitpfi96pfwEVuIDizfjk8dmzbDqH
-         t2gM+3c0M5o4Z9MZ07T488l2pjPh8iSJZkphJ/EY=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2] fs: Fix Kconfig indentation
-Date:   Thu, 21 Nov 2019 04:18:51 +0100
-Message-Id: <1574306331-28973-1-git-send-email-krzk@kernel.org>
-X-Mailer: git-send-email 2.7.4
+        id S1726265AbfKUDjj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Nov 2019 22:39:39 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:58787 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbfKUDjj (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 20 Nov 2019 22:39:39 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20191121033934epoutp01127d0ca6ef8a4bcca3b4ba26835e50df~ZEGX0a_uP1418414184epoutp01O
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2019 03:39:34 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20191121033934epoutp01127d0ca6ef8a4bcca3b4ba26835e50df~ZEGX0a_uP1418414184epoutp01O
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1574307574;
+        bh=uQNbH50lNFfugAkg2yFVCKuYW7I5kKvXlaRcbbWS5PE=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=B3HCn4y85BRIz8YqC98ZJyfPmR5Eopx8DxzsZ0pcbwZv23nj1Sy8MBZLJPEwq8ALn
+         NIImVF3JPw2rgrBY0Dc2Iaao1yktrXJcYt+X4r85+4x9sHXAL4qNHXX3ZwQODOAm8E
+         JuIJ/wGZiB1Sin8lGdBtKIBM/rzEzYOFJh1s0RNs=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20191121033934epcas1p453727c81c1517e448da6431e4b29b161~ZEGXMrETe2622126221epcas1p4R;
+        Thu, 21 Nov 2019 03:39:34 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.161]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 47JQKd21fpzMqYkd; Thu, 21 Nov
+        2019 03:39:33 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        CA.B1.04406.3F606DD5; Thu, 21 Nov 2019 12:39:31 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20191121033930epcas1p221152c49adc0bcc2a8d2664515dbcbd3~ZEGT5sI0q2663826638epcas1p2a;
+        Thu, 21 Nov 2019 03:39:30 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191121033930epsmtrp125cd19ce6e3661c38e62fd26d702e51c~ZEGT5Ba2z1812818128epsmtrp1O;
+        Thu, 21 Nov 2019 03:39:30 +0000 (GMT)
+X-AuditID: b6c32a38-95fff70000001136-d5-5dd606f3a6b4
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        12.AF.03814.2F606DD5; Thu, 21 Nov 2019 12:39:30 +0900 (KST)
+Received: from DONAMJAEJEO06 (unknown [10.88.104.63]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191121033930epsmtip2d8a298d0e2e602ae24814c235b2b4700~ZEGTwHdHB0367903679epsmtip2g;
+        Thu, 21 Nov 2019 03:39:30 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     =?windows-1257?Q?'Valdis_Kl=E7tnieks'?= <valdis.kletnieks@vt.edu>
+Cc:     "'Nikolay Borisov'" <nborisov@suse.com>,
+        <gregkh@linuxfoundation.org>, <hch@lst.de>, <linkinjeon@gmail.com>,
+        <Markus.Elfring@web.de>, <sj1557.seo@samsung.com>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+In-Reply-To: <87255.1574306312@turing-police>
+Subject: RE: [PATCH v2 05/13] exfat: add file operations
+Date:   Thu, 21 Nov 2019 12:39:30 +0900
+Message-ID: <010201d5a01d$48493270$d8db9750$@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="windows-1257"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 14.0
+Content-Language: ko
+Thread-Index: AQEo1XJlLzywHhHshRBLsQkFEP9+bwE2rzOUAX+3+6QCnhKN6gFMKmQnAnC4oSSopgQxUA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Tf0hTURTHu3tvb2/R4rWsDpNqvTJKWO41Z89qEfSDUUJSEWGIvfTprO1t
+        7U3J+keyZkloUotcSj+kKAuMNDXTtrQI+2FkvzBTi6IflqmzsjCqzbdi/33uued77vecey+J
+        qZsJDZktuHinwFlpYjxe1zpfpxsmnqXqm0sptqCymmAvXLwtY593v8DYpuY2nH3cWE6wf7zv
+        5eyfz/twtvb3LTnbMTCIL1ear3m7FWZfxSWF+XpnPmEurq1C5urap7h5+MoMc0v9Z8Lc9a4O
+        TyZTrEstPJfBO7W8kG7PyBayTPTaDWkr0owJekbHJLKLaK3A2XgTvTIpWbc62xr0R2tzOWtO
+        MJTMiSIdt2yp057j4rUWu+gy0bwjw+pg9I4FImcTc4SsBel222JGr19oDGZutVp6igdwx0/Z
+        rpvPbsny0VFZEVKSQMXDSNu5MVZTDQj8pVuL0PggBxC883hwafEdgae68b/ixaefhLTRjODq
+        6FlMkvch6GlPDDFB6eD3Lx8R4ihqFVS4C1BIgFEfEbReagyWJUllMKnLYwrhZIqF24VzQ+k4
+        FQPtnld4iFVUIhy+XhPmSdBW9naMMUoP/vtnkcQzob6/HJO8aaHhwadwPApOHHRjkoVNcHNv
+        DRayAFSJAnpLzxOSYCWUjR5DEk+Gvju1Cok18LHErQh5A2oPDPnC9Q8g+DBiktgAndWX5RLP
+        gmujFeFzJ8KXb4fkklQFB9xqKSUGijtawyOMhqLCQcVhRHsjOvNGdOaN6Mwb0c0phFehqbxD
+        tGXxIuOIj7zrK2js6cayDaipPakFUSSiJ6gs856mquVcrphna0FAYnSUqun5k1S1KoPL2807
+        7WnOHCsvtiBjcPKlmGZKuj34EQRXGmNcaDAY2PiERQlGAz1NRf54lKqmsjgXv4PnHbzzn05G
+        KjX5qJLxz/Br1BCzvFK+ZqBbk1lmeTTT81Lw5cb2REcfT/jatH1cXpQfqxS2nFSeiQukFBew
+        XwuHc/e/sVYFyG+ZJTcuJvb2Ne7HV21rD6z3uYf7M2fPuZc+WFJjz9t8mjqy5PW6O9OHuoeS
+        7z7u7awfIR/2k2VxOwNdDn35KwY2dtC4aOGYWMwpcn8B8MTEctADAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOIsWRmVeSWpSXmKPExsWy7bCSvO4ntmuxBt92KVo0L17PZrFy9VEm
+        i+t3bzFb7Nl7ksXi8q45bBb/Zz1ntfj/poXFYsu/I6wWl95/YHHg9Ng56y67x/65a9g9dt9s
+        YPPo27KK0WP9lqssHp83yXkc2v6GzeP2s20sARxRXDYpqTmZZalF+nYJXBn3+t6zFPxkqjh4
+        7QhTA+MUpi5GTg4JAROJW69/snUxcnEICexmlNj9bQ0jREJa4tiJM8xdjBxAtrDE4cPFEDUv
+        GCW2zl7JDFLDJqAr8e/PfjYQW0TAVWJuWzNYL7PAR0aJq3s5IRr2MEncXnuQFWQQJ1DD7am2
+        IKawgIXE0XY1kHIWAVWJc1MfsIDYvAKWEhN2b4ayBSVOznzCAjHSSGJS53smCFteYvvbOcwQ
+        ZypI7Dj7GmqtiMTszjZmiHPCJA42bWaewCg8C8moWUhGzUIyahaS9gWMLKsYJVMLinPTc4sN
+        C4zyUsv1ihNzi0vz0vWS83M3MYKjT0trB+OJE/GHGAU4GJV4eDM0rsYKsSaWFVfmHmKU4GBW
+        EuHdc/1KrBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe+fxjkUIC6YklqdmpqQWpRTBZJg5OqQbG
+        6U1HVRTfrdllevn9wdwvU39ZS/eKpbgeeO55pGO65q+nFrseP7/1/k/ZlxCXhT6rtVnflnaF
+        PGNIt28q7Ijq/SXkLvDrmOHqklvPLuz6opuWvDdmk18tV9hK14BjZeWrfSbrTzZJ0FVbPE9j
+        RbpR46cp7O4ajjc6CzNEt3JevCyh8i/KUeiVEktxRqKhFnNRcSIAhw2EQboCAAA=
+X-CMS-MailID: 20191121033930epcas1p221152c49adc0bcc2a8d2664515dbcbd3
+X-Msg-Generator: CA
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20191119071404epcas1p4f8df45690c07c4dd032af9cbfb5efcc6
+References: <20191119071107.1947-1-namjae.jeon@samsung.com>
+        <CGME20191119071404epcas1p4f8df45690c07c4dd032af9cbfb5efcc6@epcas1p4.samsung.com>
+        <20191119071107.1947-6-namjae.jeon@samsung.com>
+        <398eeca9-e59f-385b-791d-561e56567026@suse.com>
+        <00d201d5a00c$e6273ac0$b275b040$@samsung.com>
+        <87255.1574306312@turing-police>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Adjust indentation from spaces to tab (+optional two spaces) as in
-coding style with command like:
-	$ sed -e 's/^        /\t/' -i */Kconfig
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
----
-
-Changes since v1:
-1. Fix also 7-space and tab+1 space indentation issues.
----
- fs/Kconfig        | 6 +++---
- fs/Kconfig.binfmt | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 7b623e9fc1b0..59ad80f92446 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -7,7 +7,7 @@ menu "File systems"
- 
- # Use unaligned word dcache accesses
- config DCACHE_WORD_ACCESS
--       bool
-+	bool
- 
- config VALIDATE_FS_PARSER
- 	bool "Validate filesystem parameter description"
-@@ -97,8 +97,8 @@ config FILE_LOCKING
- 	default y
- 	help
- 	  This option enables standard file locking support, required
--          for filesystems like NFS and for the flock() system
--          call. Disabling this option saves about 11k.
-+	  for filesystems like NFS and for the flock() system
-+	  call. Disabling this option saves about 11k.
- 
- config MANDATORY_FILE_LOCKING
- 	bool "Enable Mandatory file locking"
-diff --git a/fs/Kconfig.binfmt b/fs/Kconfig.binfmt
-index 62dc4f577ba1..72c5daeb257d 100644
---- a/fs/Kconfig.binfmt
-+++ b/fs/Kconfig.binfmt
-@@ -127,7 +127,7 @@ config BINFMT_SHARED_FLAT
- 	  Support FLAT shared libraries
- 
- config HAVE_AOUT
--       def_bool n
-+	def_bool n
- 
- config BINFMT_AOUT
- 	tristate "Kernel support for a.out and ECOFF binaries"
-@@ -191,9 +191,9 @@ config BINFMT_MISC
- 	  <file:Documentation/admin-guide/binfmt-misc.rst> to learn how to use this
- 	  feature, <file:Documentation/admin-guide/java.rst> for information about how
- 	  to include Java support. and <file:Documentation/admin-guide/mono.rst> for
--          information about how to include Mono-based .NET support.
-+	  information about how to include Mono-based .NET support.
- 
--          To use binfmt_misc, you will need to mount it:
-+	  To use binfmt_misc, you will need to mount it:
- 		mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
- 
- 	  You may say M here for module support and later load the module when
--- 
-2.7.4
+> 
+> On Thu, 21 Nov 2019 10:42:13 +0900, "Namjae Jeon" said:
+> 
+> > > > +		if (clu.flags == 0x03) {
+> > >
+> > > That 0x03 is magic constant, better define actual flags and check
+> > > clu.flag == (FLAG1|FLAG2)
+> > Okay, Will fix it on v4.
+> 
+> Make sure you catch all the cases.  I seem to remember a lot of 0x01's
+> in the code as well....
+Yes, I know.
+Thanks!
 
