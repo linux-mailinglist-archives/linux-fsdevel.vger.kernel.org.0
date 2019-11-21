@@ -2,91 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80D84104FEB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 11:03:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C9BE105006
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 11:06:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726984AbfKUKDb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Nov 2019 05:03:31 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:38030 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726962AbfKUKDb (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Nov 2019 05:03:31 -0500
-Received: by mail-io1-f66.google.com with SMTP id u24so983882iob.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2019 02:03:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=azm6258Y/h1Yi1v25/cgX4nZQFn/wXyDk4OUzPAogIw=;
-        b=VIxmx3lBXUc/OsjeFNHkalvySAflAWkvsgeR9sJSmDV3UMExPqRNneJibNAVZx0ORP
-         TNOoZyXyQ0AHvM5PmbjOyt50zoipblJXoCN9Cp925i1ScOTrpzzHGB9QnW8rvvZR9eVN
-         ogW18j8FBdeFL19T3L64w40J70OFSxaWsJUuc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=azm6258Y/h1Yi1v25/cgX4nZQFn/wXyDk4OUzPAogIw=;
-        b=Q/9/kt3bX2JfwGYm8jiStF4pTQnTquPlRosUU0viwxn28SswDFXcNdv8+rsejeeB/7
-         CzxdXONqMtGlRYwnFLil/u4nx3PkF4jkY/SsmTXaxpzWHTwNMtgljFSwR80Ig7VA2jF+
-         IBfonIoMEbiHsg35o22bKnbDVsFe0Xy8WMiSNd6wtpc5/3tFoGXA8WO7QAr2s/k3Q2mq
-         LPK9e8BcJ+oD7MPoT3GhFfkZmEB3rQbRJdyMO3mMOlasyTBbT+nPU/cRAIOkqyxWOM6J
-         lA4QKExHud8dc7EPPrTCwjAN7my9ESyNgGN7vlw7ZlbUlZIUmrgzqwq1HPAfKHvOezGY
-         O7Zw==
-X-Gm-Message-State: APjAAAVcGpF2TzsquE2Vd8Z/yO/VF15/gQq/oIliwWTedduJdQRW7Ipg
-        whv3KicuGVRNvV8eBvp2vJQw248kwtAmOGdJeV2FAQ==
-X-Google-Smtp-Source: APXvYqws6nCsGqtiQ5vj9FfGy8eiccfE7OIokaC4SxeEjLC2HogWwLfVUDZczbVj8ubWEH2ncp7v39SVWv6PXJFH4UY=
-X-Received: by 2002:a02:c05a:: with SMTP id u26mr8022037jam.58.1574330609772;
- Thu, 21 Nov 2019 02:03:29 -0800 (PST)
-MIME-Version: 1.0
-References: <20191121070613.4286-1-hu1.chen@intel.com>
-In-Reply-To: <20191121070613.4286-1-hu1.chen@intel.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 21 Nov 2019 11:03:18 +0100
-Message-ID: <CAJfpegtK_S3K0j_qP6x3+qKBPdLag+ayCWHAakJvMtVXMdmXtw@mail.gmail.com>
-Subject: Re: [PATCH] proc: align mnt_id in /proc/pid/fdinfo and /proc/pid/mountinfo
-To:     "Chen, Hu" <hu1.chen@intel.com>
-Cc:     Andrey Vagin <avagin@openvz.org>,
+        id S1726685AbfKUKGS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Nov 2019 05:06:18 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49890 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726014AbfKUKGS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Nov 2019 05:06:18 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 38FAEADC8;
+        Thu, 21 Nov 2019 10:06:16 +0000 (UTC)
+Date:   Thu, 21 Nov 2019 11:06:14 +0100
+From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-scsi@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        "Ewan D. Milne" <emilne@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        "J. Bruce Fields" <bfields@redhat.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Tejun Heo <tj@kernel.org>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 5/7] bdev: add open_finish.
+Message-ID: <20191121100614.GH11661@kitsune.suse.cz>
+References: <cover.1572002144.git.msuchanek@suse.de>
+ <31f640791d9cc20cdbbb3000dfcf8370cf3c6223.1572002144.git.msuchanek@suse.de>
+ <20191105001727.GA29826@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191105001727.GA29826@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 8:28 AM Chen, Hu <hu1.chen@intel.com> wrote:
->
-> For Android application process, we found that the mnt_id read from
-> /proc/pid/fdinfo doesn't exist in /proc/pid/mountinfo. Thus CRIU fails
-> to dump such process and it complains
->
-> "(00.019206) Error (criu/files-reg.c:1299): Can't lookup mount=42 for
-> fd=-3 path=/data/dalvik-cache/x86_64/system@framework@boot.art"
->
-> This is due to how Android application is launched. In Android, there is
-> a special process called Zygote which handles the forking of each new
-> application process:
-> 0. Zygote opens and maps some files, for example
->    "/data/dalvik-cache/x86_64/system@framework@boot.art" in its current
->    mount namespace, say "old mnt ns".
-> 1. Zygote waits for the request to fork a new application.
-> 2. Zygote gets a request, it forks and run the new process in a new
->    mount namespace, say "new mnt ns".
->
-> The file opened in step 0 ties to the mount point in "old mnt ns". The
-> mnt_id of that mount is listed in /proc/pid/fdinfo. However,
-> /proc/pid/mountinfo points to current ns, i.e., "new mnt ns".
->
-> Althgouh this issue is exposed in Android, we believe it's generic.
-> Prcoess may open files and enter new mnt ns.
->
-> To address it, this patch searches the mirror mount in current ns with
-> MAJOR and MINOR and shows the mirror's mnt_id.
+On Mon, Nov 04, 2019 at 04:17:27PM -0800, Christoph Hellwig wrote:
+> Please make sure you CC linux-block if you add block device ops.
+> 
+> On Fri, Oct 25, 2019 at 01:21:42PM +0200, Michal Suchanek wrote:
+> > Opening a block device may require a long operation such as waiting for
+> > the cdrom tray to close. Performing this operation with locks held locks
+> > out other attempts to open the device. These processes waiting to open
+> > the device are not killable.
+> > 
+> > To avoid this issue and still be able to perform time-consuming checks
+> > at open() time the block device driver can provide open_finish(). If it
+> > does opening the device proceeds even when an error is returned from
+> > open(), bd_mutex is released and open_finish() is called. If
+> > open_finish() succeeds the device is now open, if it fails release() is
+> > called.
+> > 
+> > When -ERESTARTSYS is returned from open() blkdev_get may loop without
+> > calling open_finish(). On -ERESTARTSYS open_finish() is not called.
+> > 
+> > Move a ret = 0 assignment up in the if/else branching to avoid returning
+> > -ENXIO. Previously the return value was ignored on the unhandled branch.
+> 
+> Still a complete nack for splitting a fundamental operation over two
+> ops, especially just for working around a piece of buggy software.
 
-This is a hack.   I suggest instead to add a new line to fdinfo with
-the MAJOR:MINOR number of the device.
+Still did not provide an awesome alternative that does not sneed
+splitting the operation.
 
-Thanks,
-Miklos
+What is it, specifically?
+
+Thanks
+
+Michal
