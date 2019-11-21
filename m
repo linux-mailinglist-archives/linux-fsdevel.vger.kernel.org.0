@@ -2,80 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A78C01054F8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 16:00:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E3BB1054F9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 16:00:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbfKUPAF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Nov 2019 10:00:05 -0500
+        id S1727059AbfKUPAG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Nov 2019 10:00:06 -0500
 Received: from USFB19PA33.eemsg.mail.mil ([214.24.26.196]:46914 "EHLO
         USFB19PA33.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727047AbfKUPAF (ORCPT
+        with ESMTP id S1727016AbfKUPAG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Nov 2019 10:00:05 -0500
+        Thu, 21 Nov 2019 10:00:06 -0500
 X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Thu, 21 Nov 2019 10:00:05 EST
-X-EEMSG-check-017: 28892406|USFB19PA33_ESA_OUT03.csd.disa.mil
+X-EEMSG-check-017: 28892412|USFB19PA33_ESA_OUT03.csd.disa.mil
 X-IronPort-AV: E=Sophos;i="5.69,226,1571702400"; 
-   d="scan'208";a="28892406"
+   d="scan'208";a="28892412"
 Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
   by USFB19PA33.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 21 Nov 2019 14:52:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1574347975; x=1605883975;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=lbTlVgtbWT2SqCD5ezZSdGjFU3X0qbqiNGxy8Lm/8fw=;
-  b=pdmxTQzCMONPSN2IO5n3bSN3Ipyaoq4R3uF74UnLTjg9tINHwl/vZvW3
-   KtfznE1EOVj+uapa0i14193vI7n2oLZbLZ1pa3nKzYqP+kvIKd9Eldbly
-   y0U6PTcsybZlRdw4A0358z5Mn6/e6364NJoCIhwfjGD5HtJ3vDlx0Pftz
-   vMXdCVmX7YOkpAqJWDn8Pqzqm7QoNUECUSbzkXc95FLpR0qf5kYI6qqyB
-   ShaZ7doA/yf3xwqQyFwW1SkuQxnHTVXocJg7eGrsEhXq34w/Sn/NsNXwI
-   FK8J9clbsJpK95+lhgNEUiUe94I7au3mHk+rV312iN4lvQ6x/95shptBW
+  s=tycho.nsa.gov; t=1574347976; x=1605883976;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=tcKnvQLgqBXv7HLv3hHK9qIGEuQsTJADxqlEnP3ZuKA=;
+  b=GXy/YbawVYhMtiAIoDb3yzz6cW8RZP8S2/RieYAhzT1S5kC35R2llbmP
+   Ybi20OGfs753XyKHdfi9OY+Tk0BGlBswzu5n1Z5s/+An7ncybMwtSnhMr
+   LDnEE+aAQmxTGGrd+8LqVmpi6u9IwpqpErSLwKvsuhAhSlmd5TNevso7E
+   Sr5sZa0EQrwHAg6kvYD//dKfEfjq/OF8NHVsDPXpMlUmeO9t7EZyw0v/Z
+   kFLyCPzhKZC8X1bbS1eNwJqYbxwCQ7jZVmDnAstf+qWN983kst+/A8q8u
+   627GeAmv0J3GxGfC+c2IxXHDU1TYav7NWteDhcp0ma/ksK90W/Sl024mO
    g==;
 X-IronPort-AV: E=Sophos;i="5.69,226,1571702400"; 
-   d="scan'208";a="35831864"
-IronPort-PHdr: =?us-ascii?q?9a23=3ABAznLR8Ayd2JDf9uRHKM819IXTAuvvDOBiVQ1K?=
- =?us-ascii?q?B+0+gRIJqq85mqBkHD//Il1AaPAdyArasZ0aGI6ejJYi8p2d65qncMcZhBBV?=
- =?us-ascii?q?cuqP49uEgeOvODElDxN/XwbiY3T4xoXV5h+GynYwAOQJ6tL1LdrWev4jEMBx?=
- =?us-ascii?q?7xKRR6JvjvGo7Vks+7y/2+94fcbglVijexe65+IRWooQnet8Qan5ZpJ7osxB?=
- =?us-ascii?q?fOvnZGYfldy3lyJVKUkRb858Ow84Bm/i9Npf8v9NNOXLvjcaggQrNWEDopM2?=
- =?us-ascii?q?Yu5M32rhbDVheA5mEdUmoNjBVFBRXO4QzgUZfwtiv6sfd92DWfMMbrQ704RS?=
- =?us-ascii?q?iu4qF2QxDmkicHMyMy/n/RhMJ+kalXpAutqhx7zoLRZoyeKfhwcb7Hfd4CRW?=
- =?us-ascii?q?RPQNtfWSJCDI27YIQBAPEMMfpbooTnu1cDtweyCRWqCejyyjFInHj23agi3u?=
- =?us-ascii?q?o8DQHJwhQgH9IQv3TSsd77KaISXvqxzKnM0zrCb+5d1DDm6IfVaRAsuu2MXL?=
- =?us-ascii?q?JsfsrRzkkjDQXFjk6KpoD/MDOV0foNvnGd4uF9Vuyvk3Yqpxx+rzWg3Mship?=
- =?us-ascii?q?TFipgLxl3L6yl12ps5KNulQ0Bhe9GkCoFftySCOotzRcMtXn9ntT4hyr0DpZ?=
- =?us-ascii?q?67ZC8KyIk7xxLHa/yIbYyI4hX7WeaNOzh4nnNleK+khxqo7UihyvHzVsmz0F?=
- =?us-ascii?q?pQqCpKjsLMuWwX2xzW68iHTuNx/kan2TmRywDe8vxILE87mKbBK5Mt36Q8mo?=
- =?us-ascii?q?QcvEjdBCP6hV36jKqMeUUl/uio5f7nYrLjppKELI97lxr+P78yms2/Hes4Mg?=
- =?us-ascii?q?8OU3Kd+eSnzrLv50L5QLJUjvEuiKnWrIjaJdgHpq6+GwJV1ocj6xCiDzapyd?=
- =?us-ascii?q?gYk2IHI09bdxKZkYfpP0rDIO73DfihmVSgijRryO7cPr3nHJrNKmLPkLD7fb?=
- =?us-ascii?q?Zy80Rc0hY8zchD55JIDbEMOPTzVVHwtNzcFRA0KBe0w/v8CNpjzI8RRHyACL?=
- =?us-ascii?q?eDMKzOqV+I+v4vI+6UaY8LuTb9Mf8l6uXvjHAnn18dfLep0YETaHC5GPRmPk?=
- =?us-ascii?q?qYbWDrgtcbHmcGpBc+TO/ygl2YTTFTf2qyX7475jwjBoOmDIPDRoS2jbyCwi?=
- =?us-ascii?q?i7BJtWaX5CClyWFnfobYqEUe8WaC2OOs9hjiAEVb+5Ro85zx6uqQv6xqF/Lu?=
- =?us-ascii?q?XO5y0YsYvv1N1y5+3UjxE96yZ4ANia02GIV2t0hH8HRycq3KBjpkxw0kyD3r?=
- =?us-ascii?q?Z8g/xZE9xT+vxIXxwkNZ7T0eN6Ecr+WgHfcdeTTlapXNGmDSs2TtIrzN9dK3?=
- =?us-ascii?q?p6Ts6vihHFwjqCHbAYjfqICYYy/6aa2GL+dOhnzHOT77Usl1krRIN0MGSigq?=
- =?us-ascii?q?Nuv1zIC5Xhj1SSl6Hsc78VmiHK6jHQniK1oEhEXVsoAu3+VncFax6T8IX0?=
-X-IPAS-Result: =?us-ascii?q?A2DzAgBeodZd/wHyM5BkHAEBAQEBBwEBEQEEBAEBgX6Bd?=
- =?us-ascii?q?CyBQTIqlAAGix6RQwkBAQEBAQEBAQEbGQECAQGEQIIqJDgTAhABAQEEAQEBA?=
- =?us-ascii?q?QEFAwEBbIVDgjspgxsLAUaBUYJjP4JTJa87M4kHgUiBNoc9hFkaeIEHhGGKM?=
- =?us-ascii?q?wSNI4oClwuCNYI3kw0MG5oYLao4IoFYKwgCGAghD4MnUBEUhlQXFY4sIwMwg?=
- =?us-ascii?q?QUBAZA+AQE?=
+   d="scan'208";a="35831872"
+IronPort-PHdr: =?us-ascii?q?9a23=3AKreBqx07kNQ7upt6smDT+DRfVm0co7zxezQtwd?=
+ =?us-ascii?q?8ZsesWKf3xwZ3uMQTl6Ol3ixeRBMOHsqkC0reM+P66EUU7or+5+EgYd5JNUx?=
+ =?us-ascii?q?JXwe43pCcHRPC/NEvgMfTxZDY7FskRHHVs/nW8LFQHUJ2mPw6arXK99yMdFQ?=
+ =?us-ascii?q?viPgRpOOv1BpTSj8Oq3Oyu5pHfeQpFiCezbL9oMRm7rRvdusYXjId8N6081g?=
+ =?us-ascii?q?bHrnxUdupM2GhmP0iTnxHy5sex+J5s7SFdsO8/+sBDTKv3Yb02QaRXAzo6PW?=
+ =?us-ascii?q?814tbrtQTYQguU+nQcSGQWnQFWDAXD8Rr3Q43+sir+tup6xSmaIcj7Rq06VD?=
+ =?us-ascii?q?i+86tmTgLjhykdNz497WrZlMp+gqxGqx6lvhByw4rZbISTOfFjfK3SYMkaSH?=
+ =?us-ascii?q?JBUMhPSiJPDICyYYwNAOoPMulWoJLwq0cNoBakGQWhHv/jxiNOi3Tr3aM6ye?=
+ =?us-ascii?q?MhEQTe0QI9A9IBrmzUrNXrO6cUTOu70azIwi/Hb/NSxzj86JXDfxc6of6RRr?=
+ =?us-ascii?q?J9atbRyEkzGAPFiVWcs4rlPyiP2egXvGib6PRgWPuphmU6qA9xuiCiytojh4?=
+ =?us-ascii?q?TGnI4Yyk3I+T9nzIs6O9G0UlN3bNi5G5VKrS6aLZF5QsY6TmFtvyY116MJtI?=
+ =?us-ascii?q?agfCgP1JQn3xnfa+Gbc4SQ4hLsSuKRITBgiXJ5Yr2/nRey8VW7yuHmSsm10E?=
+ =?us-ascii?q?pFripCktXWsHACywfT5dSdRvt4/0eh3S6D1wHV6u5aPUA5jbfXJpEuz7Iqlp?=
+ =?us-ascii?q?cfrF7PEjH5lUnolqOaa10o+u2y5OTmZrXmqIWcN4hxigzmKaQhh9e/DP8kMg?=
+ =?us-ascii?q?kOQ2eb+eO82Kfl/U3iWrpGlPI2kq7HsJzCP8QUura5AxNJ0oYk8xu/Czam0N?=
+ =?us-ascii?q?IFnXgINV5FdgmHgJX3NFHQPv/4Ceyyg0qjkDh13fDKJL7hDYvXLnjFjrjhea?=
+ =?us-ascii?q?xx60lGyAo81dpf/Y5bCqkdIPLvXU/8rNrYAQE4Mwyw2OnqE8591p4FWW2RGK?=
+ =?us-ascii?q?OWLb3du0eS5u0zO+mMeJMVuDHlJvg75v7ul3g5lEQcfKa325sXaW64Eu5iI0?=
+ =?us-ascii?q?WYZ3rsn9gAHX0NvgokQ+zmkkCCUT1LbXaoQ608/i07CJ6hDYrbSIGtgbiB3C?=
+ =?us-ascii?q?OgE51VeG9GEFaMHmnsd4meXPcMci2SKNd7kjMYTbihV5Mh1Ra2uQ/i0bVnM+?=
+ =?us-ascii?q?7U9zYAtZ35ydh14/TflRQ19TxzFcSSzXuBQH1znmMNXzU2xrxwoVRhylef1q?=
+ =?us-ascii?q?h1m+dYGsJX5/NIVAc6KJHdwvdkC9D9RA3BZM2FSFW4TdW8BzE+UNYxz8UJY0?=
+ =?us-ascii?q?ZnFNXxxizEijGnB74TiqyjGpM56OTf0mL3KsI7zGzJh4c7iFxzeddCLW2rgO?=
+ =?us-ascii?q?ZE8gHXA4PY2xGCm72CabUX3CmL8nyKi2WJohcLA0ZLTazZUCVHNQPtptPj6x?=
+ =?us-ascii?q?aHEu6j?=
+X-IPAS-Result: =?us-ascii?q?A2D3AgBeodZd/wHyM5BkHAEBAQEBBwEBEQEEBAEBgX6Bd?=
+ =?us-ascii?q?CyBQTIqlAAGix6KH4ckCQEBAQEBAQEBARsZAQIBAYRAAoIoJDgTAhABAQEEA?=
+ =?us-ascii?q?QEBAQEFAwEBbIVDgjspgm4GJwsBRhBRVxmCYz+CUyWvOzOJB4FIgTaHPYRZG?=
+ =?us-ascii?q?niBB4RhhA6BBIUhBI0digh0lheCNYI3kw0MG5oYLao4IoFYKwgCGAghD4MnU?=
+ =?us-ascii?q?BEUlSwjAzCBBQEBjX6CQAEB?=
 Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 21 Nov 2019 14:52:53 +0000
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 21 Nov 2019 14:52:55 +0000
 Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id xALEqqJQ015567;
-        Thu, 21 Nov 2019 09:52:52 -0500
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id xALEqqJR015567;
+        Thu, 21 Nov 2019 09:52:55 -0500
 From:   Stephen Smalley <sds@tycho.nsa.gov>
 To:     selinux@vger.kernel.org
 Cc:     paul@paul-moore.com, will@kernel.org, viro@zeniv.linux.org.uk,
         neilb@suse.de, linux-fsdevel@vger.kernel.org,
         Stephen Smalley <sds@tycho.nsa.gov>
-Subject: [RFC PATCH 1/2] selinux: revert "stop passing MAY_NOT_BLOCK to the AVC upon follow_link"
-Date:   Thu, 21 Nov 2019 09:52:44 -0500
-Message-Id: <20191121145245.8637-1-sds@tycho.nsa.gov>
+Subject: [RFC PATCH 2/2] selinux: fall back to ref-walk upon LSM_AUDIT_DATA_DENTRY too
+Date:   Thu, 21 Nov 2019 09:52:45 -0500
+Message-Id: <20191121145245.8637-2-sds@tycho.nsa.gov>
 X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191121145245.8637-1-sds@tycho.nsa.gov>
+References: <20191121145245.8637-1-sds@tycho.nsa.gov>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -83,93 +86,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This reverts commit e46e01eebbbc ("selinux: stop passing MAY_NOT_BLOCK
-to the AVC upon follow_link"). The correct fix is to instead adjust
-the test within slow_avc_audit() to handle LSM_AUDIT_DATA_DENTRY as
-well as LSM_AUDIT_DATA_INODE.  This will be done by the next commit.
+commit bda0be7ad994 ("security: make inode_follow_link RCU-walk aware")
+passed down the rcu flag to the SELinux AVC, but failed to adjust the
+test in slow_avc_audit() to also return -ECHILD on LSM_AUDIT_DATA_DENTRY.
+Previously, we only returned -ECHILD if generating an audit record with
+LSM_AUDIT_DATA_INODE since this was only relevant from inode_permission.
+Return -ECHILD on either LSM_AUDIT_DATA_INODE or LSM_AUDIT_DATA_DENTRY.
+LSM_AUDIT_DATA_INODE only requires this handling due to the fact
+that dump_common_audit_data() calls d_find_alias() and collects the
+dname from the result if any.
+Other cases that might require similar treatment in the future are
+LSM_AUDIT_DATA_PATH and LSM_AUDIT_DATA_FILE if any hook that takes
+a path or file is called under RCU-walk.
 
-Fixes: e46e01eebbbc ("selinux: stop passing MAY_NOT_BLOCK to the AVC upon follow_link")
+Fixes: bda0be7ad994 ("security: make inode_follow_link RCU-walk aware")
 Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
 ---
- security/selinux/avc.c         | 24 ++++++++++++++++++++++--
- security/selinux/hooks.c       |  5 +++--
- security/selinux/include/avc.h |  5 +++++
- 3 files changed, 30 insertions(+), 4 deletions(-)
+ security/selinux/avc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/security/selinux/avc.c b/security/selinux/avc.c
-index ecd3829996aa..74c43ebe34bb 100644
+index 74c43ebe34bb..f1fa1072230c 100644
 --- a/security/selinux/avc.c
 +++ b/security/selinux/avc.c
-@@ -862,8 +862,9 @@ static int avc_update_node(struct selinux_avc *avc,
- 	 * permissive mode that only appear when in enforcing mode.
- 	 *
- 	 * See the corresponding handling in slow_avc_audit(), and the
--	 * logic in selinux_inode_permission for the MAY_NOT_BLOCK flag,
--	 * which is transliterated into AVC_NONBLOCKING.
-+	 * logic in selinux_inode_follow_link and selinux_inode_permission
-+	 * for the VFS MAY_NOT_BLOCK flag, which is transliterated into
-+	 * AVC_NONBLOCKING for avc_has_perm_noaudit().
+@@ -779,7 +779,8 @@ noinline int slow_avc_audit(struct selinux_state *state,
+ 	 * during retry. However this is logically just as if the operation
+ 	 * happened a little later.
  	 */
- 	if (flags & AVC_NONBLOCKING)
- 		return 0;
-@@ -1205,6 +1206,25 @@ int avc_has_perm(struct selinux_state *state, u32 ssid, u32 tsid, u16 tclass,
- 	return rc;
- }
+-	if ((a->type == LSM_AUDIT_DATA_INODE) &&
++	if ((a->type == LSM_AUDIT_DATA_INODE ||
++	     a->type == LSM_AUDIT_DATA_DENTRY) &&
+ 	    (flags & MAY_NOT_BLOCK))
+ 		return -ECHILD;
  
-+int avc_has_perm_flags(struct selinux_state *state,
-+		       u32 ssid, u32 tsid, u16 tclass, u32 requested,
-+		       struct common_audit_data *auditdata,
-+		       int flags)
-+{
-+	struct av_decision avd;
-+	int rc, rc2;
-+
-+	rc = avc_has_perm_noaudit(state, ssid, tsid, tclass, requested,
-+				  (flags & MAY_NOT_BLOCK) ? AVC_NONBLOCKING : 0,
-+				  &avd);
-+
-+	rc2 = avc_audit(state, ssid, tsid, tclass, requested, &avd, rc,
-+			auditdata, flags);
-+	if (rc2)
-+		return rc2;
-+	return rc;
-+}
-+
- u32 avc_policy_seqno(struct selinux_state *state)
- {
- 	return state->avc->avc_cache.latest_notif;
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 36e531b91df2..3eaa3b419463 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3008,8 +3008,9 @@ static int selinux_inode_follow_link(struct dentry *dentry, struct inode *inode,
- 	if (IS_ERR(isec))
- 		return PTR_ERR(isec);
- 
--	return avc_has_perm(&selinux_state,
--			    sid, isec->sid, isec->sclass, FILE__READ, &ad);
-+	return avc_has_perm_flags(&selinux_state,
-+				  sid, isec->sid, isec->sclass, FILE__READ, &ad,
-+				  rcu ? MAY_NOT_BLOCK : 0);
- }
- 
- static noinline int audit_inode_permission(struct inode *inode,
-diff --git a/security/selinux/include/avc.h b/security/selinux/include/avc.h
-index 7be0e1e90e8b..74ea50977c20 100644
---- a/security/selinux/include/avc.h
-+++ b/security/selinux/include/avc.h
-@@ -153,6 +153,11 @@ int avc_has_perm(struct selinux_state *state,
- 		 u32 ssid, u32 tsid,
- 		 u16 tclass, u32 requested,
- 		 struct common_audit_data *auditdata);
-+int avc_has_perm_flags(struct selinux_state *state,
-+		       u32 ssid, u32 tsid,
-+		       u16 tclass, u32 requested,
-+		       struct common_audit_data *auditdata,
-+		       int flags);
- 
- int avc_has_extended_perms(struct selinux_state *state,
- 			   u32 ssid, u32 tsid, u16 tclass, u32 requested,
 -- 
 2.23.0
 
