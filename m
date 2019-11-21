@@ -2,18 +2,18 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C584104D30
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 09:04:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFFD9104D3E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 09:06:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726762AbfKUIEY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Nov 2019 03:04:24 -0500
-Received: from verein.lst.de ([213.95.11.211]:44668 "EHLO verein.lst.de"
+        id S1726502AbfKUIF7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Nov 2019 03:05:59 -0500
+Received: from verein.lst.de ([213.95.11.211]:44693 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725842AbfKUIEY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Nov 2019 03:04:24 -0500
+        id S1725842AbfKUIF6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Nov 2019 03:05:58 -0500
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id 0915C68C7B; Thu, 21 Nov 2019 09:04:20 +0100 (CET)
-Date:   Thu, 21 Nov 2019 09:04:19 +0100
+        id 3649368BFE; Thu, 21 Nov 2019 09:05:55 +0100 (CET)
+Date:   Thu, 21 Nov 2019 09:05:55 +0100
 From:   Christoph Hellwig <hch@lst.de>
 To:     John Hubbard <jhubbard@nvidia.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -21,6 +21,7 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Alex Williamson <alex.williamson@redhat.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
         Dan Williams <dan.j.williams@intel.com>,
         Daniel Vetter <daniel@ffwll.ch>,
         Dave Chinner <david@fromorbit.com>,
@@ -45,20 +46,23 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
         linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
         Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v7 04/24] mm: Cleanup __put_devmap_managed_page() vs
- ->page_free()
-Message-ID: <20191121080419.GB24784@lst.de>
-References: <20191121071354.456618-1-jhubbard@nvidia.com> <20191121071354.456618-5-jhubbard@nvidia.com>
+Subject: Re: [PATCH v7 05/24] mm: devmap: refactor 1-based refcounting for
+ ZONE_DEVICE pages
+Message-ID: <20191121080555.GC24784@lst.de>
+References: <20191121071354.456618-1-jhubbard@nvidia.com> <20191121071354.456618-6-jhubbard@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191121071354.456618-5-jhubbard@nvidia.com>
+In-Reply-To: <20191121071354.456618-6-jhubbard@nvidia.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Looks good,
+So while this looks correct and I still really don't see the major
+benefit of the new code organization, especially as it bloats all
+put_page callers.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+I'd love to see code size change stats for an allyesconfig on this
+commit.
