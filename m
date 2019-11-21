@@ -2,71 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6272810561E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 16:55:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DD6E105637
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 16:56:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbfKUPz6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Nov 2019 10:55:58 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:57818 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727040AbfKUPz5 (ORCPT
+        id S1727261AbfKUP41 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Nov 2019 10:56:27 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:35764 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727205AbfKUP4S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Nov 2019 10:55:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574351756;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=lWsgKVybaH+JezO0Xvxir4xXLVYM64AtUYc2fCA9+9I=;
-        b=XH5DWmJE6muJQ5rdIP0NpL3HOfUBS2BJJit3Lawff3/5GHjUH2f3sSoIujyNx8Dzvo4J03
-        6t4I+/xAmdj2pCC/Q0LCifIENWOdLVRS/9G8vkg4F+wUPY6M6vgHg2docw8zM23TnthXd1
-        IctN5ZmRF2BU5R+lgi4hfigM5wruY/E=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-181-XW1zfSQvObO2k-13Np5W9Q-1; Thu, 21 Nov 2019 10:55:53 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 09526593A1;
-        Thu, 21 Nov 2019 15:55:52 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-161.rdu2.redhat.com [10.10.120.161])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C5ABF60F8B;
-        Thu, 21 Nov 2019 15:55:50 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <157435064653.9583.16369826233033888377.stgit@warthog.procyon.org.uk>
-References: <157435064653.9583.16369826233033888377.stgit@warthog.procyon.org.uk>
-To:     torvalds@linux-foundation.org
-Cc:     dhowells@redhat.com, marc.dionne@auristor.com,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] afs: Fix large file support
+        Thu, 21 Nov 2019 10:56:18 -0500
+Received: by mail-il1-f195.google.com with SMTP id z12so3769968ilp.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2019 07:56:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=i6XZTTQSHJKM+KBZCHJbpNr3leYiOU/zZyc4Kt/q1ls=;
+        b=p9f61F2qEE4/QwqhzVpQxRpsxX+tV3SxRebeynsmRfBNHvoMnRcPAeQBMJ4vetLpDz
+         shfSAjNsSLR8/AyOjsQjN2cfgMUQmKjudar8cuqkQT4utDF/Fg0xyKUILGxfQL2m4ykC
+         v2dKDPfCeTVXelv8ErH8wWKv+orr2ysEDzISJsEE+qs4wfsyfactwDmLH8MnBWJzVSmY
+         XCTDegH0huTSluHvW6LcnV5C2iycu99pwuw2Q/YxucMfTo227eo59/I8ZMNVpzMswrI3
+         2Efr4431bVIGY+4pWPJ+b3TiJoIazJewBg9vmPs5YlVPxg8N869vnJ+tezxnZ3CO4XTi
+         5d9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=i6XZTTQSHJKM+KBZCHJbpNr3leYiOU/zZyc4Kt/q1ls=;
+        b=et0VHgg2l30f+F1AI+g13pn8KdsJXw7aMFTiNcJjCKsgQ7TBYd+gqSPEcgup4YS6V5
+         3+NORF3SjRKzCQC8wvO6yoKww5edTwCYZkjcaepR8tyxZkqUTSDrufEmFuyNyUIdC13f
+         Yza+H7Cv/QT0b8H87INAsKRnLHcL4ofJVlOup3VOb9iMovz6Ind/rWDPybuWwhrhaiFN
+         nVxD28eu71XQ8YhgkyiTARq6gGAkc+8IW1f8TkD9K2kfUSZmaEqticjh+AWDyKQF8jUg
+         q05o8Z1kI4km6HMQIBVX8X3awU3URL7t4Ta8/HCj/zU+ZVm6fuTUSg4oN6ITqW+IPvYu
+         ccyw==
+X-Gm-Message-State: APjAAAUVnwA/QXeXXoeh05dhRPYy5GVW9dgXaCcJaE1SEI6l6FcRnwQE
+        vo0QWZmOVxSwYoBv2L0DIsCzMA==
+X-Google-Smtp-Source: APXvYqyBx1nTqGMRn9GsWSj0/giOcMCoKn/OjZ4stbz+xyyRba03IeYJrruyiFFcHRXe1jGKDNx4oA==
+X-Received: by 2002:a05:6e02:100b:: with SMTP id n11mr10655778ilj.212.1574351776819;
+        Thu, 21 Nov 2019 07:56:16 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id 133sm1342001ila.25.2019.11.21.07.56.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Nov 2019 07:56:15 -0800 (PST)
+Subject: Re: [PATCH] block: add iostat counters for flush requests
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+References: <157433282607.7928.5202409984272248322.stgit@buzz>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <ff971ff6-9a10-c3f1-107d-4f7d378e8755@kernel.dk>
+Date:   Thu, 21 Nov 2019 08:56:14 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-ID: <11835.1574351749.1@warthog.procyon.org.uk>
-Date:   Thu, 21 Nov 2019 15:55:49 +0000
-Message-ID: <11836.1574351749@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: XW1zfSQvObO2k-13Np5W9Q-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <157433282607.7928.5202409984272248322.stgit@buzz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On 11/21/19 3:40 AM, Konstantin Khlebnikov wrote:
+> Requests that triggers flushing volatile writeback cache to disk (barriers)
+> have significant effect to overall performance.
+> 
+> Block layer has sophisticated engine for combining several flush requests
+> into one. But there is no statistics for actual flushes executed by disk.
+> Requests which trigger flushes usually are barriers - zero-size writes.
+> 
+> This patch adds two iostat counters into /sys/class/block/$dev/stat and
+> /proc/diskstats - count of completed flush requests and their total time.
 
-> By default s_maxbytes is set to MAX_NON_LFS, which limits the usable
-> file size to 2GB, enforced by the vfs.
+This makes sense to me, and the "recent" discard addition already proved
+that we're fine extending with more fields. Unless folks object, I'd be
+happy to queue this up for 5.5.
 
-Note that this isn't fixing a critical failure, so you might want to punt i=
-t
-to the next cycle.
-
-David
+-- 
+Jens Axboe
 
