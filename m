@@ -2,90 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9663D104FC2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 10:54:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80D84104FEB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 11:03:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfKUJyR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Nov 2019 04:54:17 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42156 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726132AbfKUJyQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Nov 2019 04:54:16 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1B5FCAC46;
-        Thu, 21 Nov 2019 09:54:13 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 5A11F1E47FC; Thu, 21 Nov 2019 10:54:11 +0100 (CET)
-Date:   Thu, 21 Nov 2019 10:54:11 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
-Subject: Re: [PATCH v7 02/24] mm/gup: factor out duplicate code from four
- routines
-Message-ID: <20191121095411.GC18190@quack2.suse.cz>
-References: <20191121071354.456618-1-jhubbard@nvidia.com>
- <20191121071354.456618-3-jhubbard@nvidia.com>
- <20191121080356.GA24784@lst.de>
- <852f6c27-8b65-547b-89e0-e8f32a4d17b9@nvidia.com>
+        id S1726984AbfKUKDb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Nov 2019 05:03:31 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:38030 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726962AbfKUKDb (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Nov 2019 05:03:31 -0500
+Received: by mail-io1-f66.google.com with SMTP id u24so983882iob.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2019 02:03:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=azm6258Y/h1Yi1v25/cgX4nZQFn/wXyDk4OUzPAogIw=;
+        b=VIxmx3lBXUc/OsjeFNHkalvySAflAWkvsgeR9sJSmDV3UMExPqRNneJibNAVZx0ORP
+         TNOoZyXyQ0AHvM5PmbjOyt50zoipblJXoCN9Cp925i1ScOTrpzzHGB9QnW8rvvZR9eVN
+         ogW18j8FBdeFL19T3L64w40J70OFSxaWsJUuc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=azm6258Y/h1Yi1v25/cgX4nZQFn/wXyDk4OUzPAogIw=;
+        b=Q/9/kt3bX2JfwGYm8jiStF4pTQnTquPlRosUU0viwxn28SswDFXcNdv8+rsejeeB/7
+         CzxdXONqMtGlRYwnFLil/u4nx3PkF4jkY/SsmTXaxpzWHTwNMtgljFSwR80Ig7VA2jF+
+         IBfonIoMEbiHsg35o22bKnbDVsFe0Xy8WMiSNd6wtpc5/3tFoGXA8WO7QAr2s/k3Q2mq
+         LPK9e8BcJ+oD7MPoT3GhFfkZmEB3rQbRJdyMO3mMOlasyTBbT+nPU/cRAIOkqyxWOM6J
+         lA4QKExHud8dc7EPPrTCwjAN7my9ESyNgGN7vlw7ZlbUlZIUmrgzqwq1HPAfKHvOezGY
+         O7Zw==
+X-Gm-Message-State: APjAAAVcGpF2TzsquE2Vd8Z/yO/VF15/gQq/oIliwWTedduJdQRW7Ipg
+        whv3KicuGVRNvV8eBvp2vJQw248kwtAmOGdJeV2FAQ==
+X-Google-Smtp-Source: APXvYqws6nCsGqtiQ5vj9FfGy8eiccfE7OIokaC4SxeEjLC2HogWwLfVUDZczbVj8ubWEH2ncp7v39SVWv6PXJFH4UY=
+X-Received: by 2002:a02:c05a:: with SMTP id u26mr8022037jam.58.1574330609772;
+ Thu, 21 Nov 2019 02:03:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <852f6c27-8b65-547b-89e0-e8f32a4d17b9@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191121070613.4286-1-hu1.chen@intel.com>
+In-Reply-To: <20191121070613.4286-1-hu1.chen@intel.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 21 Nov 2019 11:03:18 +0100
+Message-ID: <CAJfpegtK_S3K0j_qP6x3+qKBPdLag+ayCWHAakJvMtVXMdmXtw@mail.gmail.com>
+Subject: Re: [PATCH] proc: align mnt_id in /proc/pid/fdinfo and /proc/pid/mountinfo
+To:     "Chen, Hu" <hu1.chen@intel.com>
+Cc:     Andrey Vagin <avagin@openvz.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 21-11-19 00:29:59, John Hubbard wrote:
-> > 
-> > Otherwise this looks fine and might be a worthwhile cleanup to feed
-> > Andrew for 5.5 independent of the gut of the changes.
-> > 
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > 
-> 
-> Thanks for the reviews! Say, it sounds like your view here is that this
-> series should be targeted at 5.6 (not 5.5), is that what you have in mind?
-> And get the preparatory patches (1-9, and maybe even 10-16) into 5.5?
+On Thu, Nov 21, 2019 at 8:28 AM Chen, Hu <hu1.chen@intel.com> wrote:
+>
+> For Android application process, we found that the mnt_id read from
+> /proc/pid/fdinfo doesn't exist in /proc/pid/mountinfo. Thus CRIU fails
+> to dump such process and it complains
+>
+> "(00.019206) Error (criu/files-reg.c:1299): Can't lookup mount=42 for
+> fd=-3 path=/data/dalvik-cache/x86_64/system@framework@boot.art"
+>
+> This is due to how Android application is launched. In Android, there is
+> a special process called Zygote which handles the forking of each new
+> application process:
+> 0. Zygote opens and maps some files, for example
+>    "/data/dalvik-cache/x86_64/system@framework@boot.art" in its current
+>    mount namespace, say "old mnt ns".
+> 1. Zygote waits for the request to fork a new application.
+> 2. Zygote gets a request, it forks and run the new process in a new
+>    mount namespace, say "new mnt ns".
+>
+> The file opened in step 0 ties to the mount point in "old mnt ns". The
+> mnt_id of that mount is listed in /proc/pid/fdinfo. However,
+> /proc/pid/mountinfo points to current ns, i.e., "new mnt ns".
+>
+> Althgouh this issue is exposed in Android, we believe it's generic.
+> Prcoess may open files and enter new mnt ns.
+>
+> To address it, this patch searches the mirror mount in current ns with
+> MAJOR and MINOR and shows the mirror's mnt_id.
 
-One more note :) If you are going to push pin_user_pages() interfaces
-(which I'm fine with), it would probably make sense to push also the
-put_user_pages() -> unpin_user_pages() renaming so that that inconsistency
-in naming does not exist in the released upstream kernel.
+This is a hack.   I suggest instead to add a new line to fdinfo with
+the MAJOR:MINOR number of the device.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Miklos
