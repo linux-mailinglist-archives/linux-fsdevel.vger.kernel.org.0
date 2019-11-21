@@ -2,78 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8EA1104D84
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 09:11:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B18C104D76
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Nov 2019 09:10:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727233AbfKUIKz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Nov 2019 03:10:55 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:43306 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727219AbfKUIKx (ORCPT
+        id S1726869AbfKUIKs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Nov 2019 03:10:48 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:40637 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726343AbfKUIKr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Nov 2019 03:10:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=DZddNdyW5FRrAXgTdc6w5huJMr/L+GTDCsXkrpDZQWE=; b=Mafq4UPzuRzO9+6g0idvgtn8y
-        WcDSiCT7hQFVoaJkaXestyiwMGnqfYjgbEOz0r27XeQ+Y5KvjD4Nuhy0YaDkgeX1N2nHrE2fymh9/
-        Kl6qsPzn8bgO9GwKGkSXLJ6yif29++yxYwWthonAbKTOkkQzaykODs/kBCpIPvEL9IlVjXYjhMRJE
-        HObsxeSD97VjwE1Ac50vXPpo12MNChRAcbknrDS9loF08kQwig/wzQVsPl/cwUiTKkHvJYvfDWnFU
-        FO6tlhkm1YjoPatb8/UhLvWJuQFmCn5wpi+24IGZ7mIRAGQpgH/fHbaZ8f9hs4dGNlP7WUQjseLo0
-        O4T8RJ40Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iXhXf-0001ki-FW; Thu, 21 Nov 2019 08:10:19 +0000
-Date:   Thu, 21 Nov 2019 00:10:19 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: Re: [PATCH v7 09/24] vfio, mm: fix get_user_pages_remote() and
- FOLL_LONGTERM
-Message-ID: <20191121081019.GF30991@infradead.org>
-References: <20191121071354.456618-1-jhubbard@nvidia.com>
- <20191121071354.456618-10-jhubbard@nvidia.com>
+        Thu, 21 Nov 2019 03:10:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574323846;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=UTGfLpHLVQj6rfsHQU768KhiCjRcdVYmV+JB5Ady93s=;
+        b=E/+hQeNwDtEFtoPH3p4T+eOMF0xOagIU2lCc1ua6XTAxXKvAXJIiS638Jqls3m+0lO7WoT
+        AqyQBi4Jzzb3rjpX6SD7OBJeNlSegCSQ0l77E8xm/Qp0uALs54LOpf9HnGiiLHB1IAyvqQ
+        93/1ZU0dGvCJm5qpRWHxhelj+K41NbE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-200-Zz3B_4G_Pk-que01Y4zS8Q-1; Thu, 21 Nov 2019 03:10:43 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CF0CC107ACCA;
+        Thu, 21 Nov 2019 08:10:41 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-161.rdu2.redhat.com [10.10.120.161])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 46FBBF6D0;
+        Thu, 21 Nov 2019 08:10:40 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <1574295100.17153.25.camel@HansenPartnership.com>
+References: <1574295100.17153.25.camel@HansenPartnership.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Christian Brauner <christian@brauner.io>
+Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: Feature bug with the new mount API: no way of doing read only bind mounts
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191121071354.456618-10-jhubbard@nvidia.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-ID: <17267.1574323839.1@warthog.procyon.org.uk>
+Date:   Thu, 21 Nov 2019 08:10:39 +0000
+Message-ID: <17268.1574323839@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: Zz3B_4G_Pk-que01Y4zS8Q-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Should this be two patches, one for th core infrastructure and one for
-the user?  These changes also look like another candidate to pre-load.
+James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
+
+> I was looking to use the read only bind mount as a template for
+> reimplementing shiftfs when I discovered that you can't actually create a
+> read only bind mount with the new API.  The problem is that fspick() will
+> only reconfigure the underlying superblock, which you don't want because =
+you
+> only want the bound subtree to become read only and open_tree()/move_moun=
+t()
+> doesn't give you any facility to add or change options on the bind.
+
+You'd use open_tree() with OPEN_TREE_CLONE and possibly AT_RECURSIVE rather
+than fspick().  fspick() is, as you observed, more for reconfiguring the
+superblock.
+
+What is missing is a mount_setattr() syscall - something like:
+
+=09mount_setattr(int dfd, const char *path, unsigned int at_flags,
+=09=09      unsigned int attr_change_mask, unsigned int attrs);
+
+which would allow what you want to be done like:
+
+=09fd =3D open_tree(AT_FDCWD, "/my/source/", OPEN_TREE_CLONE);
+=09mount_setattr(fd, "", AT_EMPTY_PATH | AT_RECURSIVE,
+=09=09      MOUNT_ATTR_RDONLY, MOUNT_ATTR_RDONLY);
+=09move_mount(fd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+
+Christian: you said you wanted to have a look at doing this - is that still
+your intention?
+
+Al: Is it too late to change OPEN_TREE_CLONE to be a definite value rather
+than tying it to O_CLOEXEC?  OPEN_TREE_CLONE shares its space with the
+AT_flags, but O_CLOEXEC has one of three different values, depending on arc=
+h.
+Perhaps we can nail it to 02000000 (0x80000), which is what's used on
+everything but alpha, mips, parisc and sparc.
+
+David
+
