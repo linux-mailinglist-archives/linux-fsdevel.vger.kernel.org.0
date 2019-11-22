@@ -2,404 +2,232 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3103105E3D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2019 02:28:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12B61105E5C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2019 02:46:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbfKVB17 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Nov 2019 20:27:59 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:36923 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726343AbfKVB17 (ORCPT
+        id S1726335AbfKVBqP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Nov 2019 20:46:15 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:38654 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726265AbfKVBqO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Nov 2019 20:27:59 -0500
-Received: by mail-il1-f194.google.com with SMTP id s5so5291576iln.4;
-        Thu, 21 Nov 2019 17:27:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=rPCJO7GnHksxBlMw8PoFikzTQVlqGerblR7VxrP8op8=;
-        b=ASlw3CCaFyR7q32GfxFccLOWoxnvXOTa6ScK3/dkhxFAmkjvMTsDw/oYeroX/UONIN
-         1dg5+8/eS6TvDRHxqLr9dWmYSpNN3jTahRkvZvtS1HaTgqcze5cSO4io7cfCfaaUTCCU
-         Cqxwt00jbCZia2fmxB8EiJt3rQUz6nWain09sdY0XnT6q34tSY3npp17ts8KADzFGAvN
-         KbNE1t+EjaSnPYjKPW4n/Tqa6NhY5wFBCIEKgqRIL6dtpuOVrS8m0HblUwIa0QebSk2D
-         PORn+VK9gepAf5J4/n/pYIBS1+cn2fzbwUJrerpGGiquQr328/JRqY/7GR0vrvyskOmS
-         kaVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=rPCJO7GnHksxBlMw8PoFikzTQVlqGerblR7VxrP8op8=;
-        b=CBME4DUJqMcJPy2HBB7gsDZHouKATVr6ygpsAJQ2aAdbvIVt+RraztHBpUfD4L2TJj
-         r/5i64r11THsHbYi1ahioxBPngkdUrYMiMYh2ctNlafE0AuthteUss1rXXo/jcyIoQBj
-         JShoYL99LIEooXM6XSycrFXqws0+Sh5moXpWhG8GvkgnSTI37gYiQlKwP3kcQWoqlblM
-         Kx2e8FQhg+PEevzwA/W7oCP5YoY27NEY1Zlue78JMzC5sWUoygkpsa2LaOSYZ0VvfeM3
-         ALsNiuCIve8G8pCK30r3/EDrVYcBcJgzO5ji2gjjGldeAy68AD0iAzF3ypeOBZ970L9P
-         29qg==
-X-Gm-Message-State: APjAAAV1Dle3tNu3UNdKGUP0go9Xc/rKnAMPtTBYrju/PCrNZZ7oRpmU
-        /Gttzc4tcUyKsLAGUKn5m0hUEbB72H9sO0Gixew=
-X-Google-Smtp-Source: APXvYqx85lCERWslzGv41CtcOyxqAyw6OMEf34F51kHE4PdFepqxGk1J7gmJsjOA+WHZErki5D7vpMXvmmXglZ/6t+0=
-X-Received: by 2002:a92:2451:: with SMTP id k78mr14095595ilk.300.1574386077542;
- Thu, 21 Nov 2019 17:27:57 -0800 (PST)
+        Thu, 21 Nov 2019 20:46:14 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAM1iJoV114927;
+        Fri, 22 Nov 2019 01:46:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
+ bh=OwY+D9qGKI49K3+/ouo1AvQdPJnLK/yuze3zbUyDGv8=;
+ b=i55wGTcgYS/KkN4KPy/IXeuZbpI+0Key3N8rQoWVcF+sYcYLHq3XPSpCCB6FSsBjMJBK
+ Ye8/PRTpj16M66Kc0jwcCVVmeizXoFuWOfz0UJ+7M1FFrY/NMFOAwQEyR/EqF37bATtg
+ e2cXuQbyNSthYtuXV1f2IopTMG0nZKVT3pDAWK6oiAD7gswUoFNhPtYFHZgqgs18APSE
+ 9j5iLt6m6E/dS3PeOM6G+oCgR3wwzJsgnTym3f5A41HQkLQ6oVH5yYxegUrEeJbH39bj
+ BJgTZQZjWJGBFEUW0SfBUrZeTCsV5HtVmpIH/8WvGEffcWRfRybbELtajIk/LPZktq1X Lg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2wa92q7ta2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 22 Nov 2019 01:46:05 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAM1hvTb003474;
+        Fri, 22 Nov 2019 01:46:04 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2wda072689-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 22 Nov 2019 01:46:04 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xAM1k2nT003105;
+        Fri, 22 Nov 2019 01:46:02 GMT
+Received: from localhost (/10.145.178.64)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 21 Nov 2019 17:46:02 -0800
+Date:   Thu, 21 Nov 2019 17:46:01 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: [PATCH] iomap: trace iomap_appply results
+Message-ID: <20191122014601.GQ6211@magnolia>
 MIME-Version: 1.0
-References: <20190829161155.GA5360@magnolia> <20190830004407.GA5340@magnolia>
- <20191121170107.GM6211@magnolia> <CAHpGcMJYRVeNNjhMP8GEVD9Wr5g-7_sXkR=qxQTCqrwyskuDBw@mail.gmail.com>
- <20191121191453.GN6211@magnolia>
-In-Reply-To: <20191121191453.GN6211@magnolia>
-From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
-Date:   Fri, 22 Nov 2019 02:27:46 +0100
-Message-ID: <CAHpGcMK_pJA1KU0fbX28e41a8X9Fa7Kw12k8=P955LUW8yYEkw@mail.gmail.com>
-Subject: Re: [RFC PATCH] generic: test splice() with pipes
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     xfs <linux-xfs@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        fstests <fstests@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9448 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=959
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911220013
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9448 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911220013
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Am Do., 21. Nov. 2019 um 20:14 Uhr schrieb Darrick J. Wong
-<darrick.wong@oracle.com>:
-> On Thu, Nov 21, 2019 at 07:48:54PM +0100, Andreas Gr=C3=BCnbacher wrote:
-> > Am Do., 21. Nov. 2019 um 18:01 Uhr schrieb Darrick J. Wong
-> > <darrick.wong@oracle.com>:
-> > > On Thu, Aug 29, 2019 at 05:44:07PM -0700, Darrick J. Wong wrote:
-> > > > From: Darrick J. Wong <darrick.wong@oracle.com>
-> > > >
-> > > > Andreas Gr=C3=BCnbacher reports that on the two filesystems that su=
-pport
-> > > > iomap directio, it's possible for splice() to return -EAGAIN (inste=
-ad of
-> > > > a short splice) if the pipe being written to has less space availab=
-le in
-> > > > its pipe buffers than the length supplied by the calling process.
-> > > >
-> > > > This is a regression test to check for correct operation.
-> > > >
-> > > > XXX Andreas: Since you wrote the C reproducer, can you send me the
-> > > > proper copyright and author attribution statement for the C program=
-?
-> > >
-> > > Ping?  Andreas, can I get the above info so I can get this moving aga=
-in?
-> >
-> > Oops, sure, this is:
-> >
-> > Copyright (c) 2019 RedHat Inc.  All Rights Reserved.
-> > Author: Andreas Gruenbacher <agruenba@redhat.com>
->
-> Ok thanks.  It's appropriate to tag it as GPL v2 licensed, correct?
+This is basically a debugging patch that I've been using to monitor what
+exactly xfs is sending back to iomap, and thought I ought to pitch it to
+the mailing list universe to see what reaction I get.
 
-My prevous reply didn't quite make it, so again, yes, that's correct.
+--D
 
-Thanks,
-Andreas
+---
+From: Darrick J. Wong <darrick.wong@oracle.com>
 
-> --D
->
-> > > --D
-> > >
-> > > > Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-> > > > ---
-> > > >  .gitignore            |    1
-> > > >  src/Makefile          |    2 -
-> > > >  src/splice-test.c     |  173 +++++++++++++++++++++++++++++++++++++=
-++++++++++++
-> > > >  tests/generic/720     |   41 ++++++++++++
-> > > >  tests/generic/720.out |    7 ++
-> > > >  tests/generic/group   |    1
-> > > >  6 files changed, 224 insertions(+), 1 deletion(-)
-> > > >  create mode 100644 src/splice-test.c
-> > > >  create mode 100755 tests/generic/720
-> > > >  create mode 100644 tests/generic/720.out
-> > > >
-> > > > diff --git a/.gitignore b/.gitignore
-> > > > index c8c815f9..26d4da11 100644
-> > > > --- a/.gitignore
-> > > > +++ b/.gitignore
-> > > > @@ -112,6 +112,7 @@
-> > > >  /src/runas
-> > > >  /src/seek_copy_test
-> > > >  /src/seek_sanity_test
-> > > > +/src/splice-test
-> > > >  /src/stale_handle
-> > > >  /src/stat_test
-> > > >  /src/swapon
-> > > > diff --git a/src/Makefile b/src/Makefile
-> > > > index c4fcf370..2920dfb1 100644
-> > > > --- a/src/Makefile
-> > > > +++ b/src/Makefile
-> > > > @@ -28,7 +28,7 @@ LINUX_TARGETS =3D xfsctl bstat t_mtab getdevicesi=
-ze preallo_rw_pattern_reader \
-> > > >       attr-list-by-handle-cursor-test listxattr dio-interleaved t_d=
-ir_type \
-> > > >       dio-invalidate-cache stat_test t_encrypted_d_revalidate \
-> > > >       attr_replace_test swapon mkswap t_attr_corruption t_open_tmpf=
-iles \
-> > > > -     fscrypt-crypt-util bulkstat_null_ocount
-> > > > +     fscrypt-crypt-util bulkstat_null_ocount splice-test
-> > > >
-> > > >  SUBDIRS =3D log-writes perf
-> > > >
-> > > > diff --git a/src/splice-test.c b/src/splice-test.c
-> > > > new file mode 100644
-> > > > index 00000000..d3c12075
-> > > > --- /dev/null
-> > > > +++ b/src/splice-test.c
-> > > > @@ -0,0 +1,173 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > > > +/*
-> > > > + * Copyright (C) 2019 ????????????????????????????
-> > > > + * Author:
-> > > > + *
-> > > > + * Make sure that reading and writing to a pipe via splice.
-> > > > + */
-> > > > +#include <sys/types.h>
-> > > > +#include <sys/stat.h>
-> > > > +#include <sys/wait.h>
-> > > > +#include <unistd.h>
-> > > > +#include <fcntl.h>
-> > > > +#include <err.h>
-> > > > +
-> > > > +#include <stdlib.h>
-> > > > +#include <stdio.h>
-> > > > +#include <stdbool.h>
-> > > > +#include <string.h>
-> > > > +#include <errno.h>
-> > > > +
-> > > > +#define SECTOR_SIZE 512
-> > > > +#define BUFFER_SIZE (150 * SECTOR_SIZE)
-> > > > +
-> > > > +void read_from_pipe(int fd, const char *filename, size_t size)
-> > > > +{
-> > > > +     char buffer[SECTOR_SIZE];
-> > > > +     size_t sz;
-> > > > +     ssize_t ret;
-> > > > +
-> > > > +     while (size) {
-> > > > +             sz =3D size;
-> > > > +             if (sz > sizeof buffer)
-> > > > +                     sz =3D sizeof buffer;
-> > > > +             ret =3D read(fd, buffer, sz);
-> > > > +             if (ret < 0)
-> > > > +                     err(1, "read: %s", filename);
-> > > > +             if (ret =3D=3D 0) {
-> > > > +                     fprintf(stderr, "read: %s: unexpected EOF\n",=
- filename);
-> > > > +                     exit(1);
-> > > > +             }
-> > > > +             size -=3D sz;
-> > > > +     }
-> > > > +}
-> > > > +
-> > > > +void do_splice1(int fd, const char *filename, size_t size)
-> > > > +{
-> > > > +     bool retried =3D false;
-> > > > +     int pipefd[2];
-> > > > +
-> > > > +     if (pipe(pipefd) =3D=3D -1)
-> > > > +             err(1, "pipe");
-> > > > +     while (size) {
-> > > > +             ssize_t spliced;
-> > > > +
-> > > > +             spliced =3D splice(fd, NULL, pipefd[1], NULL, size, S=
-PLICE_F_MOVE);
-> > > > +             if (spliced =3D=3D -1) {
-> > > > +                     if (errno =3D=3D EAGAIN && !retried) {
-> > > > +                             retried =3D true;
-> > > > +                             fprintf(stderr, "retrying splice\n");
-> > > > +                             sleep(1);
-> > > > +                             continue;
-> > > > +                     }
-> > > > +                     err(1, "splice");
-> > > > +             }
-> > > > +             read_from_pipe(pipefd[0], filename, spliced);
-> > > > +             size -=3D spliced;
-> > > > +     }
-> > > > +     close(pipefd[0]);
-> > > > +     close(pipefd[1]);
-> > > > +}
-> > > > +
-> > > > +void do_splice2(int fd, const char *filename, size_t size)
-> > > > +{
-> > > > +     bool retried =3D false;
-> > > > +     int pipefd[2];
-> > > > +     int pid;
-> > > > +
-> > > > +     if (pipe(pipefd) =3D=3D -1)
-> > > > +             err(1, "pipe");
-> > > > +
-> > > > +     pid =3D fork();
-> > > > +     if (pid =3D=3D 0) {
-> > > > +             close(pipefd[1]);
-> > > > +             read_from_pipe(pipefd[0], filename, size);
-> > > > +             exit(0);
-> > > > +     } else {
-> > > > +             close(pipefd[0]);
-> > > > +             while (size) {
-> > > > +                     ssize_t spliced;
-> > > > +
-> > > > +                     spliced =3D splice(fd, NULL, pipefd[1], NULL,=
- size, SPLICE_F_MOVE);
-> > > > +                     if (spliced =3D=3D -1) {
-> > > > +                             if (errno =3D=3D EAGAIN && !retried) =
-{
-> > > > +                                     retried =3D true;
-> > > > +                                     fprintf(stderr, "retrying spl=
-ice\n");
-> > > > +                                     sleep(1);
-> > > > +                                     continue;
-> > > > +                             }
-> > > > +                             err(1, "splice");
-> > > > +                     }
-> > > > +                     size -=3D spliced;
-> > > > +             }
-> > > > +             close(pipefd[1]);
-> > > > +             waitpid(pid, NULL, 0);
-> > > > +     }
-> > > > +}
-> > > > +
-> > > > +void usage(const char *argv0)
-> > > > +{
-> > > > +     fprintf(stderr, "USAGE: %s [-rd] {filename}\n", basename(argv=
-0));
-> > > > +     exit(2);
-> > > > +}
-> > > > +
-> > > > +int main(int argc, char *argv[])
-> > > > +{
-> > > > +     void (*do_splice)(int fd, const char *filename, size_t size);
-> > > > +     const char *filename;
-> > > > +     char *buffer;
-> > > > +     int opt, open_flags, fd;
-> > > > +     ssize_t ret;
-> > > > +
-> > > > +     do_splice =3D do_splice1;
-> > > > +     open_flags =3D O_CREAT | O_TRUNC | O_RDWR | O_DIRECT;
-> > > > +
-> > > > +     while ((opt =3D getopt(argc, argv, "rd")) !=3D -1) {
-> > > > +             switch(opt) {
-> > > > +             case 'r':
-> > > > +                     do_splice =3D do_splice2;
-> > > > +                     break;
-> > > > +             case 'd':
-> > > > +                     open_flags &=3D ~O_DIRECT;
-> > > > +                     break;
-> > > > +             default:  /* '?' */
-> > > > +                     usage(argv[0]);
-> > > > +             }
-> > > > +     }
-> > > > +
-> > > > +     if (optind >=3D argc)
-> > > > +             usage(argv[0]);
-> > > > +     filename =3D argv[optind];
-> > > > +
-> > > > +     printf("%s reader %s O_DIRECT\n",
-> > > > +                do_splice =3D=3D do_splice1 ? "sequential" : "conc=
-urrent",
-> > > > +                (open_flags & O_DIRECT) ? "with" : "without");
-> > > > +
-> > > > +     buffer =3D aligned_alloc(SECTOR_SIZE, BUFFER_SIZE);
-> > > > +     if (buffer =3D=3D NULL)
-> > > > +             err(1, "aligned_alloc");
-> > > > +
-> > > > +     fd =3D open(filename, open_flags, 0666);
-> > > > +     if (fd =3D=3D -1)
-> > > > +             err(1, "open: %s", filename);
-> > > > +
-> > > > +     memset(buffer, 'x', BUFFER_SIZE);
-> > > > +     ret =3D write(fd, buffer, BUFFER_SIZE);
-> > > > +     if (ret < 0)
-> > > > +             err(1, "write: %s", filename);
-> > > > +     if (ret !=3D BUFFER_SIZE) {
-> > > > +             fprintf(stderr, "%s: short write\n", filename);
-> > > > +             exit(1);
-> > > > +     }
-> > > > +
-> > > > +     ret =3D lseek(fd, 0, SEEK_SET);
-> > > > +     if (ret !=3D 0)
-> > > > +             err(1, "lseek: %s", filename);
-> > > > +
-> > > > +     do_splice(fd, filename, BUFFER_SIZE);
-> > > > +
-> > > > +     if (unlink(filename) =3D=3D -1)
-> > > > +             err(1, "unlink: %s", filename);
-> > > > +
-> > > > +     return 0;
-> > > > +}
-> > > > diff --git a/tests/generic/720 b/tests/generic/720
-> > > > new file mode 100755
-> > > > index 00000000..b7f09c40
-> > > > --- /dev/null
-> > > > +++ b/tests/generic/720
-> > > > @@ -0,0 +1,41 @@
-> > > > +#! /bin/bash
-> > > > +# SPDX-License-Identifier: GPL-2.0-or-later
-> > > > +# Copyright (c) 2019, Oracle and/or its affiliates.  All Rights Re=
-served.
-> > > > +#
-> > > > +# FS QA Test No. 720
-> > > > +#
-> > > > +# Test using splice() to read from pipes.
-> > > > +
-> > > > +seq=3D`basename $0`
-> > > > +seqres=3D$RESULT_DIR/$seq
-> > > > +echo "QA output created by $seq"
-> > > > +
-> > > > +here=3D`pwd`
-> > > > +tmp=3D/tmp/$$
-> > > > +status=3D1    # failure is the default!
-> > > > +trap "_cleanup; exit \$status" 0 1 2 3 15
-> > > > +
-> > > > +_cleanup()
-> > > > +{
-> > > > +     cd /
-> > > > +     rm -f $TEST_DIR/a
-> > > > +}
-> > > > +
-> > > > +# get standard environment, filters and checks
-> > > > +. ./common/rc
-> > > > +
-> > > > +# real QA test starts here
-> > > > +_supported_os Linux
-> > > > +_supported_fs generic
-> > > > +_require_test
-> > > > +
-> > > > +rm -f $seqres.full
-> > > > +
-> > > > +src/splice-test -r $TEST_DIR/a
-> > > > +src/splice-test -rd $TEST_DIR/a
-> > > > +src/splice-test $TEST_DIR/a
-> > > > +src/splice-test -d $TEST_DIR/a
-> > > > +
-> > > > +# success, all done
-> > > > +status=3D0
-> > > > +exit
-> > > > diff --git a/tests/generic/720.out b/tests/generic/720.out
-> > > > new file mode 100644
-> > > > index 00000000..b0fc9935
-> > > > --- /dev/null
-> > > > +++ b/tests/generic/720.out
-> > > > @@ -0,0 +1,7 @@
-> > > > +QA output created by 720
-> > > > +concurrent reader with O_DIRECT
-> > > > +concurrent reader with O_DIRECT
-> > > > +concurrent reader without O_DIRECT
-> > > > +concurrent reader without O_DIRECT
-> > > > +sequential reader with O_DIRECT
-> > > > +sequential reader without O_DIRECT
-> > > > diff --git a/tests/generic/group b/tests/generic/group
-> > > > index cd418106..f75d4e60 100644
-> > > > --- a/tests/generic/group
-> > > > +++ b/tests/generic/group
-> > > > @@ -569,3 +569,4 @@
-> > > >  564 auto quick copy_range
-> > > >  565 auto quick copy_range
-> > > >  719 auto quick quota metadata
-> > > > +720 auto quick rw pipe splice
-> >
-> > Thanks,
-> > Andreas
+Add some tracepoints so that we can more easily debug what the
+filesystem is returning from ->iomap_begin.
+
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+---
+ fs/iomap/apply.c |    7 ++++
+ fs/iomap/trace.h |  103 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 110 insertions(+)
+
+diff --git a/fs/iomap/apply.c b/fs/iomap/apply.c
+index 484dd8eda861..76925b40b5fd 100644
+--- a/fs/iomap/apply.c
++++ b/fs/iomap/apply.c
+@@ -7,6 +7,7 @@
+ #include <linux/compiler.h>
+ #include <linux/fs.h>
+ #include <linux/iomap.h>
++#include "trace.h"
+ 
+ /*
+  * Execute a iomap write on a segment of the mapping that spans a
+@@ -28,6 +29,8 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
+ 	loff_t written = 0, ret;
+ 	u64 end;
+ 
++	trace_iomap_apply(inode, pos, length, flags, ops, actor, _RET_IP_);
++
+ 	/*
+ 	 * Need to map a range from start position for length bytes. This can
+ 	 * span multiple pages - it is only guaranteed to return a range of a
+@@ -48,6 +51,10 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
+ 	if (WARN_ON(iomap.length == 0))
+ 		return -EIO;
+ 
++	trace_iomap_apply_dstmap(inode, &iomap);
++	if (srcmap.type != IOMAP_HOLE)
++		trace_iomap_apply_srcmap(inode, &srcmap);
++
+ 	/*
+ 	 * Cut down the length to the one actually provided by the filesystem,
+ 	 * as it might not be able to give us the whole size that we requested.
+diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+index 4ca1aa2f3f6e..6dc227b8c47e 100644
+--- a/fs/iomap/trace.h
++++ b/fs/iomap/trace.h
+@@ -80,6 +80,109 @@ DEFINE_PAGE_EVENT(iomap_writepage);
+ DEFINE_PAGE_EVENT(iomap_releasepage);
+ DEFINE_PAGE_EVENT(iomap_invalidatepage);
+ 
++#define IOMAP_TYPE_STRINGS \
++	{ IOMAP_HOLE,		"HOLE" }, \
++	{ IOMAP_DELALLOC,	"DELALLOC" }, \
++	{ IOMAP_MAPPED,		"MAPPED" }, \
++	{ IOMAP_UNWRITTEN,	"UNWRITTEN" }, \
++	{ IOMAP_INLINE,		"INLINE" }
++
++#define IOMAP_FLAGS_STRINGS \
++	{ IOMAP_WRITE,		"WRITE" }, \
++	{ IOMAP_ZERO,		"ZERO" }, \
++	{ IOMAP_REPORT,		"REPORT" }, \
++	{ IOMAP_FAULT,		"FAULT" }, \
++	{ IOMAP_DIRECT,		"DIRECT" }, \
++	{ IOMAP_NOWAIT,		"NOWAIT" }
++
++#define IOMAP_F_FLAGS_STRINGS \
++	{ IOMAP_F_NEW,		"NEW" }, \
++	{ IOMAP_F_DIRTY,	"DIRTY" }, \
++	{ IOMAP_F_SHARED,	"SHARED" }, \
++	{ IOMAP_F_MERGED,	"MERGED" }, \
++	{ IOMAP_F_BUFFER_HEAD,	"BH" }, \
++	{ IOMAP_F_SIZE_CHANGED,	"SIZE_CHANGED" }
++
++DECLARE_EVENT_CLASS(iomap_class,
++	TP_PROTO(struct inode *inode, struct iomap *iomap),
++	TP_ARGS(inode, iomap),
++	TP_STRUCT__entry(
++		__field(dev_t, dev)
++		__field(u64, ino)
++		__field(u64, addr)
++		__field(loff_t, offset)
++		__field(u64, length)
++		__field(u16, type)
++		__field(u16, flags)
++		__field(dev_t, bdev)
++	),
++	TP_fast_assign(
++		__entry->dev = inode->i_sb->s_dev;
++		__entry->ino = inode->i_ino;
++		__entry->addr = iomap->addr;
++		__entry->offset = iomap->offset;
++		__entry->length = iomap->length;
++		__entry->type = iomap->type;
++		__entry->flags = iomap->flags;
++		__entry->bdev = iomap->bdev ? iomap->bdev->bd_dev : 0;
++	),
++	TP_printk("dev %d:%d ino 0x%llx bdev %d:%d addr %lld offset %lld "
++		  "length %llu type %s flags %s",
++		  MAJOR(__entry->dev), MINOR(__entry->dev),
++		  __entry->ino,
++		  MAJOR(__entry->bdev), MINOR(__entry->bdev),
++		  __entry->addr,
++		  __entry->offset,
++		  __entry->length,
++		  __print_symbolic(__entry->type, IOMAP_TYPE_STRINGS),
++		  __print_flags(__entry->flags, "|", IOMAP_F_FLAGS_STRINGS))
++)
++
++#define DEFINE_IOMAP_EVENT(name)		\
++DEFINE_EVENT(iomap_class, name,	\
++	TP_PROTO(struct inode *inode, struct iomap *iomap), \
++	TP_ARGS(inode, iomap))
++DEFINE_IOMAP_EVENT(iomap_apply_dstmap);
++DEFINE_IOMAP_EVENT(iomap_apply_srcmap);
++
++TRACE_EVENT(iomap_apply,
++	TP_PROTO(struct inode *inode, loff_t pos, loff_t length,
++		unsigned int flags, const void *ops, void *actor,
++		unsigned long caller),
++	TP_ARGS(inode, pos, length, flags, ops, actor, caller),
++	TP_STRUCT__entry(
++		__field(dev_t, dev)
++		__field(u64, ino)
++		__field(loff_t, pos)
++		__field(loff_t, length)
++		__field(unsigned int, flags)
++		__field(const void *, ops)
++		__field(void *, actor)
++		__field(unsigned long, caller)
++	),
++	TP_fast_assign(
++		__entry->dev = inode->i_sb->s_dev;
++		__entry->ino = inode->i_ino;
++		__entry->pos = pos;
++		__entry->length = length;
++		__entry->flags = flags;
++		__entry->ops = ops;
++		__entry->actor = actor;
++		__entry->caller = caller;
++	),
++	TP_printk("dev %d:%d ino 0x%llx pos %lld length %lld flags %s (0x%x) "
++		  "ops %ps caller %pS actor %ps",
++		  MAJOR(__entry->dev), MINOR(__entry->dev),
++		   __entry->ino,
++		   __entry->pos,
++		   __entry->length,
++		   __print_flags(__entry->flags, "|", IOMAP_FLAGS_STRINGS),
++		   __entry->flags,
++		   __entry->ops,
++		   (void *)__entry->caller,
++		   __entry->actor)
++);
++
+ #endif /* _IOMAP_TRACE_H */
+ 
+ #undef TRACE_INCLUDE_PATH
