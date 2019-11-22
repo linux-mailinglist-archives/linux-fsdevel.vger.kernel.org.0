@@ -2,114 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B03F9105DB5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2019 01:31:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86B32105E1E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2019 02:23:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726568AbfKVAbG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Nov 2019 19:31:06 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36864 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbfKVAbG (ORCPT
+        id S1726329AbfKVBXE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Nov 2019 20:23:04 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:42006 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726265AbfKVBXE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Nov 2019 19:31:06 -0500
-Received: by mail-lj1-f195.google.com with SMTP id d5so5314872ljl.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Nov 2019 16:31:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+m1pwplJ30Bep93aDbdfEJ9vAZLrZyvHM6LLGil5DrE=;
-        b=fFffJpBcNP5KlCoPJyVS7leFtzwDcxucbvD1eA/+wCzFq/UVoYR9h4skO0sWRXOzk0
-         YjucFEffwXOALFPXM+Qm81wUnorR8diHqxUmKa6e53Y913DMkacDQ0onN/N4d2vd2s0K
-         lisJOgcU1GkuEdZyq6bTCfho2o0kvp2W8h2UVa5dJPbBnrJLhSEXbPaWIE9K/dqEVl3e
-         3ZZxuGbq3mV9rhdiJe9ZXjiCXqQrjn7TVoi8N/hTR41Aa7/gDeC1d3jVsDbnrOszjLtE
-         ZZPVigF5U9YWC2w/H+ANkccYCT1tIDQhMdpUyCzt0AYg9qT+f/B5ELMo36krcHIBuzR8
-         rOeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+m1pwplJ30Bep93aDbdfEJ9vAZLrZyvHM6LLGil5DrE=;
-        b=NnR1b4nIqoh6Qdqb1jdZm+yKspVXtaFH08gvELUs0CvYV3XIwx69OjUeG7E4c24GkL
-         nmYG7HJmQbXHxzWAgexsUTVIR7UhGN467r9tqiX/1xHeeF7HCm2TZBlVE9sxKnYiszvr
-         n2stpP17uElxBLtwStIr64bc4qfYbr6IUKzIu6UynSXqHG0pRD+GNaqiNmzASnW5Fyj0
-         BKBQt16UzKjd22ZGu8BM9NgEsHCVaAjAyzDjSkImpbxD1CNJ//COgFvvRPDSXSV8ZM0w
-         mSmVONoYGOrz4NKZiJ4E3SJztgjNWeqPtSO3UGeKW1uW/Cp4efHFpA+/eNd8fcU3VDPI
-         Sr+g==
-X-Gm-Message-State: APjAAAXxF7VY5ZDHay3yBHnMR/d4RIo7HhbsPXcMN5IUBN0YknBn5Ccm
-        2bkVL1mnB2CktfmzdMHOTmgTdje63JMVPC91mFLe
-X-Google-Smtp-Source: APXvYqwEsdAd8hHuUJzIbcSqXw20Xq2weLP0O5hIyGKfwgyHFNsSbMRg+jC9chn67A8MoGbc6uXiErxWFAcTbMtMI/A=
-X-Received: by 2002:a2e:95c5:: with SMTP id y5mr10020421ljh.184.1574382663070;
- Thu, 21 Nov 2019 16:31:03 -0800 (PST)
+        Thu, 21 Nov 2019 20:23:04 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAM1JAJv098566;
+        Fri, 22 Nov 2019 01:22:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2019-08-05;
+ bh=W7Z0/78KkuLGOt8nvVnlz5n4XqpDduln29tQLHywO7Y=;
+ b=Ww/XfdGsaN0GfvC0jNmg+NJ4PK+fwdhF1CTaoxSsbbQCt9eswyq05KLTzXAjQLkNlS41
+ EnRMjW0x+FoWi3J15wtVDCW9jpBQxKcsP0o5nJc3utoToIOnUNnwXOrTPJEyr57171zV
+ 2lOkN2DrGbrBcfIhscheoSu1sJb1YwIiWalTou7+HXm/Z8v8HbYAXZp7lsu5LKU6NkTK
+ b7WEJwoM+MLc6sP7c0o21GweF/kHiojUEa73uQ+NgaeQ0IyPEmhBwwZ105+MMRwFN1R9
+ Dc/c6ETYHTBMVsLYLXjQDFQP4h1nwpYyoVrhIjBoLuiJMNBagN124sy13Tf52i/P97QF ng== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2wa92q7rkw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 22 Nov 2019 01:22:58 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAM1J9bg142041;
+        Fri, 22 Nov 2019 01:20:57 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2wda071951-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 22 Nov 2019 01:20:57 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xAM1Ktlg004305;
+        Fri, 22 Nov 2019 01:20:56 GMT
+Received: from localhost (/10.145.178.64)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 21 Nov 2019 17:20:55 -0800
+Date:   Thu, 21 Nov 2019 17:20:54 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Bob Peterson <rpeterso@redhat.com>, ebiggers@kernel.org,
+        Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH v4] splice: only read in as much information as there is
+ pipe buffer space
+Message-ID: <20191122012054.GB2981917@magnolia>
+References: <20191019161138.GA6726@magnolia>
+ <CAHc6FU57p6p7FXoYCe1AQNz54Fg2BZ5UsEW3BBUnhLaGq2SmsQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20191121145245.8637-1-sds@tycho.nsa.gov> <20191121145245.8637-2-sds@tycho.nsa.gov>
- <CAHC9VhTAq7CgcRRcvZCYis7ELAo+bo2q8pCUXfHUP9YAcUhwsQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhTAq7CgcRRcvZCYis7ELAo+bo2q8pCUXfHUP9YAcUhwsQ@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 21 Nov 2019 19:30:51 -0500
-Message-ID: <CAHC9VhRURZMtEDagtSKEuuOLEJen=4PQZig3iGNomzXC1HTNSA@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] selinux: fall back to ref-walk upon
- LSM_AUDIT_DATA_DENTRY too
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     selinux@vger.kernel.org, will@kernel.org, viro@zeniv.linux.org.uk,
-        neilb@suse.de, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHc6FU57p6p7FXoYCe1AQNz54Fg2BZ5UsEW3BBUnhLaGq2SmsQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9448 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911220009
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9448 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911220009
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 7:12 PM Paul Moore <paul@paul-moore.com> wrote:
-> On Thu, Nov 21, 2019 at 9:52 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> > commit bda0be7ad994 ("security: make inode_follow_link RCU-walk aware")
-> > passed down the rcu flag to the SELinux AVC, but failed to adjust the
-> > test in slow_avc_audit() to also return -ECHILD on LSM_AUDIT_DATA_DENTRY.
-> > Previously, we only returned -ECHILD if generating an audit record with
-> > LSM_AUDIT_DATA_INODE since this was only relevant from inode_permission.
-> > Return -ECHILD on either LSM_AUDIT_DATA_INODE or LSM_AUDIT_DATA_DENTRY.
-> > LSM_AUDIT_DATA_INODE only requires this handling due to the fact
-> > that dump_common_audit_data() calls d_find_alias() and collects the
-> > dname from the result if any.
-> > Other cases that might require similar treatment in the future are
-> > LSM_AUDIT_DATA_PATH and LSM_AUDIT_DATA_FILE if any hook that takes
-> > a path or file is called under RCU-walk.
+On Thu, Nov 21, 2019 at 06:57:55PM +0100, Andreas Gruenbacher wrote:
+> On Sat, Oct 19, 2019 at 6:14 PM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+> > From: Darrick J. Wong <darrick.wong@oracle.com>
 > >
-> > Fixes: bda0be7ad994 ("security: make inode_follow_link RCU-walk aware")
-> > Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
+> > Andreas Grünbacher reports that on the two filesystems that support
+> > iomap directio, it's possible for splice() to return -EAGAIN (instead of
+> > a short splice) if the pipe being written to has less space available in
+> > its pipe buffers than the length supplied by the calling process.
+> >
+> > Months ago we fixed splice_direct_to_actor to clamp the length of the
+> > read request to the size of the splice pipe.  Do the same to do_splice.
+> >
+> > Fixes: 17614445576b6 ("splice: don't read more than available pipe space")
+> > Reported-by: Andreas Grünbacher <andreas.gruenbacher@gmail.com>
+> 
+> Reviewed-by: Andreas Grünbacher <andreas.gruenbacher@gmail.com>
+
+Cool, thanks.  I'll try to push this to Linus next week.
+
+--D
+
+> > Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 > > ---
-> >  security/selinux/avc.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > v4: use size_t for pipe_pages
+> > ---
+> >  fs/splice.c |   14 +++++++++++---
+> >  1 file changed, 11 insertions(+), 3 deletions(-)
 > >
-> > diff --git a/security/selinux/avc.c b/security/selinux/avc.c
-> > index 74c43ebe34bb..f1fa1072230c 100644
-> > --- a/security/selinux/avc.c
-> > +++ b/security/selinux/avc.c
-> > @@ -779,7 +779,8 @@ noinline int slow_avc_audit(struct selinux_state *state,
-> >          * during retry. However this is logically just as if the operation
-> >          * happened a little later.
-> >          */
-> > -       if ((a->type == LSM_AUDIT_DATA_INODE) &&
-> > +       if ((a->type == LSM_AUDIT_DATA_INODE ||
-> > +            a->type == LSM_AUDIT_DATA_DENTRY) &&
-> >             (flags & MAY_NOT_BLOCK))
-> >                 return -ECHILD;
-
-With LSM_AUDIT_DATA_INODE we eventually end up calling d_find_alias()
-in dump_common_audit_data() which could block, which is bad, that I
-understand.  However, looking at LSM_AUDIT_DATA_DENTRY I'm less clear
-on why that is bad?  It makes a few audit_log*() calls and one call to
-d_backing_inode() which is non-blocking and trivial.
-
-What am I missing?
-
-> Added the LSM list as I'm beginning to wonder if we should push this
-> logic down into common_lsm_audit(), this problem around blocking
-> shouldn't be SELinux specific.
->
-> For the LSM folks just joining, the full patchset can be found here:
-> * https://lore.kernel.org/selinux/20191121145245.8637-1-sds@tycho.nsa.gov/T/#t
-
---
-paul moore
-www.paul-moore.com
+> > diff --git a/fs/splice.c b/fs/splice.c
+> > index 98412721f056..9b9b22d2215a 100644
+> > --- a/fs/splice.c
+> > +++ b/fs/splice.c
+> > @@ -945,12 +945,13 @@ ssize_t splice_direct_to_actor(struct file *in, struct splice_desc *sd,
+> >         WARN_ON_ONCE(pipe->nrbufs != 0);
+> >
+> >         while (len) {
+> > +               size_t pipe_pages;
+> >                 size_t read_len;
+> >                 loff_t pos = sd->pos, prev_pos = pos;
+> >
+> >                 /* Don't try to read more the pipe has space for. */
+> > -               read_len = min_t(size_t, len,
+> > -                                (pipe->buffers - pipe->nrbufs) << PAGE_SHIFT);
+> > +               pipe_pages = pipe->buffers - pipe->nrbufs;
+> > +               read_len = min(len, pipe_pages << PAGE_SHIFT);
+> >                 ret = do_splice_to(in, &pos, pipe, read_len, flags);
+> >                 if (unlikely(ret <= 0))
+> >                         goto out_release;
+> > @@ -1180,8 +1181,15 @@ static long do_splice(struct file *in, loff_t __user *off_in,
+> >
+> >                 pipe_lock(opipe);
+> >                 ret = wait_for_space(opipe, flags);
+> > -               if (!ret)
+> > +               if (!ret) {
+> > +                       size_t pipe_pages;
+> > +
+> > +                       /* Don't try to read more the pipe has space for. */
+> > +                       pipe_pages = opipe->buffers - opipe->nrbufs;
+> > +                       len = min(len, pipe_pages << PAGE_SHIFT);
+> > +
+> >                         ret = do_splice_to(in, &offset, opipe, len, flags);
+> > +               }
+> >                 pipe_unlock(opipe);
+> >                 if (ret > 0)
+> >                         wakeup_pipe_readers(opipe);
+> 
