@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A09E107BAD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2019 00:53:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 593BF107BB3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2019 00:54:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbfKVXxo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Nov 2019 18:53:44 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:33463 "EHLO
+        id S1727096AbfKVXxr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Nov 2019 18:53:47 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:21573 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726705AbfKVXxm (ORCPT
+        by vger.kernel.org with ESMTP id S1726961AbfKVXxq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Nov 2019 18:53:42 -0500
+        Fri, 22 Nov 2019 18:53:46 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574466821;
+        s=mimecast20190719; t=1574466825;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=rvAGjXKzggaIcjor/eU/2AoEyqgwEZJGtnOKutcJ+6k=;
-        b=EuBBMcP3R9KIehvnddA7lDPlfznXcpOCwY1T4dFsmK56aSaOB9pme7DAMJiwx7Y1ZOyHnr
-        jdL/ewlnEgAN745LCCd55cp5c/OSItcY4y6oVwQ4NYnswvjkUxHw3wrdkriiWo1hITJXi/
-        /obLBqa2cs9XyUyOWp0nidt88QRviIw=
+        bh=CQZMohj51Rvu4NKQeTHUm4c49yOWaO0z0fTazdBpmzU=;
+        b=BSUZSIr0IFdGQK3hwZnSzw35h84etc4HpJpb+18UhYUz9aSdLZVsokRMzkvVcy93g2Gn0a
+        k7+XzokNwQ+xiwUc1dMcpo9rX0oPg3LOwAMVIB77G3XIuZv0CmmDG0GnQNZyIwJy6nHmDb
+        kpkOkPydqi9a/1KYQ41yMcKRjuZ3gRs=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-45-ZgnG4BKfPseZDtuQScqjhQ-1; Fri, 22 Nov 2019 18:53:40 -0500
+ us-mta-34-eUKUTjKfNcuoqx_xi4L-iA-1; Fri, 22 Nov 2019 18:53:44 -0500
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 73D761005509;
-        Fri, 22 Nov 2019 23:53:38 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8F516802689;
+        Fri, 22 Nov 2019 23:53:42 +0000 (UTC)
 Received: from max.com (ovpn-204-21.brq.redhat.com [10.40.204.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E21FE5C1BB;
-        Fri, 22 Nov 2019 23:53:34 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CC6135C1B5;
+        Fri, 22 Nov 2019 23:53:38 +0000 (UTC)
 From:   Andreas Gruenbacher <agruenba@redhat.com>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Steven Whitehouse <swhiteho@redhat.com>,
@@ -46,14 +46,14 @@ Cc:     Steven Whitehouse <swhiteho@redhat.com>,
         Steve French <sfrench@samba.org>,
         Bob Peterson <rpeterso@redhat.com>,
         Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [RFC PATCH 1/3] fs: Add IOCB_CACHED flag for generic_file_read_iter
-Date:   Sat, 23 Nov 2019 00:53:22 +0100
-Message-Id: <20191122235324.17245-2-agruenba@redhat.com>
+Subject: [RFC PATCH 2/3] fs: Add FAULT_FLAG_CACHED flag for filemap_fault
+Date:   Sat, 23 Nov 2019 00:53:23 +0100
+Message-Id: <20191122235324.17245-3-agruenba@redhat.com>
 In-Reply-To: <20191122235324.17245-1-agruenba@redhat.com>
 References: <20191122235324.17245-1-agruenba@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-MC-Unique: ZgnG4BKfPseZDtuQScqjhQ-1
+X-MC-Unique: eUKUTjKfNcuoqx_xi4L-iA-1
 X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
@@ -62,99 +62,148 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add an IOCB_CACHED flag which indicates to generic_file_read_iter that
-it should only look at the page cache, without triggering any filesystem
-I/O for the actual request or for readahead.  When filesystem I/O would
-be triggered, an error code should be returned instead.
+Add a FAULT_FLAG_CACHED flag which indicates to filemap_fault that it
+should only look at the page cache, without triggering filesystem I/O
+for the actual request or for readahead.  When filesystem I/O would be
+triggered, VM_FAULT_RETRY should be returned instead.
 
-This allows the caller to perform a tentative read out of the page
-cache, and to retry the read after taking the necessary steps when the
-requested pages are not cached.
-
-When readahead would be triggered, we return -ECANCELED instead of
--EAGAIN.  This allows to distinguish attempted readheads from attempted
-reads (with IOCB_NOWAIT).
+This allows the caller to tentatively satisfy a minor page fault out of
+the page cache, and to retry the operation after taking the necessary
+steps when that isn't possible.
 
 Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 ---
- include/linux/fs.h |  1 +
- mm/filemap.c       | 17 ++++++++++++++---
- 2 files changed, 15 insertions(+), 3 deletions(-)
+ include/linux/mm.h |  4 +++-
+ mm/filemap.c       | 43 ++++++++++++++++++++++++++++++-------------
+ 2 files changed, 33 insertions(+), 14 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e0d909d35763..4ca5e2885452 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -314,6 +314,7 @@ enum rw_hint {
- #define IOCB_SYNC=09=09(1 << 5)
- #define IOCB_WRITE=09=09(1 << 6)
- #define IOCB_NOWAIT=09=09(1 << 7)
-+#define IOCB_CACHED=09=09(1 << 8)
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index a2adf95b3f9c..b3317e4b2607 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -392,6 +392,7 @@ extern pgprot_t protection_map[16];
+ #define FAULT_FLAG_USER=09=090x40=09/* The fault originated in userspace *=
+/
+ #define FAULT_FLAG_REMOTE=090x80=09/* faulting for non current tsk/mm */
+ #define FAULT_FLAG_INSTRUCTION  0x100=09/* The fault was during an instruc=
+tion fetch */
++#define FAULT_FLAG_CACHED=09=090x200=09/* Only look at the page cache */
 =20
- struct kiocb {
- =09struct file=09=09*ki_filp;
+ #define FAULT_FLAG_TRACE \
+ =09{ FAULT_FLAG_WRITE,=09=09"WRITE" }, \
+@@ -402,7 +403,8 @@ extern pgprot_t protection_map[16];
+ =09{ FAULT_FLAG_TRIED,=09=09"TRIED" }, \
+ =09{ FAULT_FLAG_USER,=09=09"USER" }, \
+ =09{ FAULT_FLAG_REMOTE,=09=09"REMOTE" }, \
+-=09{ FAULT_FLAG_INSTRUCTION,=09"INSTRUCTION" }
++=09{ FAULT_FLAG_INSTRUCTION,=09"INSTRUCTION" }, \
++=09{ FAULT_FLAG_CACHED,=09=09"CACHED" }
+=20
+ /*
+  * vm_fault is filled by the the pagefault handler and passed to the vma's
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 85b7d087eb45..024ff0b5fcb6 100644
+index 024ff0b5fcb6..2297fad3b03a 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -2046,7 +2046,7 @@ static ssize_t generic_file_buffered_read(struct kioc=
-b *iocb,
+@@ -2383,7 +2383,7 @@ static int lock_page_maybe_drop_mmap(struct vm_fault =
+*vmf, struct page *page,
+ =09 * the mmap_sem still held. That's how FAULT_FLAG_RETRY_NOWAIT
+ =09 * is supposed to work. We have way too many special cases..
+ =09 */
+-=09if (vmf->flags & FAULT_FLAG_RETRY_NOWAIT)
++=09if (vmf->flags & (FAULT_FLAG_RETRY_NOWAIT | FAULT_FLAG_CACHED))
+ =09=09return 0;
 =20
- =09=09page =3D find_get_page(mapping, index);
- =09=09if (!page) {
--=09=09=09if (iocb->ki_flags & IOCB_NOWAIT)
-+=09=09=09if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_CACHED))
- =09=09=09=09goto would_block;
- =09=09=09page_cache_sync_readahead(mapping,
- =09=09=09=09=09ra, filp,
-@@ -2056,12 +2056,16 @@ static ssize_t generic_file_buffered_read(struct ki=
-ocb *iocb,
- =09=09=09=09goto no_cached_page;
- =09=09}
- =09=09if (PageReadahead(page)) {
-+=09=09=09if (iocb->ki_flags & IOCB_CACHED) {
-+=09=09=09=09error =3D -ECANCELED;
-+=09=09=09=09goto out;
-+=09=09=09}
- =09=09=09page_cache_async_readahead(mapping,
- =09=09=09=09=09ra, filp, page,
- =09=09=09=09=09index, last_index - index);
- =09=09}
- =09=09if (!PageUptodate(page)) {
--=09=09=09if (iocb->ki_flags & IOCB_NOWAIT) {
-+=09=09=09if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_CACHED)) {
- =09=09=09=09put_page(page);
- =09=09=09=09goto would_block;
- =09=09=09}
-@@ -2266,6 +2270,13 @@ static ssize_t generic_file_buffered_read(struct kio=
-cb *iocb,
+ =09*fpin =3D maybe_unlock_mmap_for_io(vmf, *fpin);
+@@ -2460,26 +2460,28 @@ static struct file *do_sync_mmap_readahead(struct v=
+m_fault *vmf)
+  * so we want to possibly extend the readahead further.  We return the fil=
+e that
+  * was pinned if we have to drop the mmap_sem in order to do IO.
+  */
+-static struct file *do_async_mmap_readahead(struct vm_fault *vmf,
+-=09=09=09=09=09    struct page *page)
++static vm_fault_t do_async_mmap_readahead(struct vm_fault *vmf,
++=09=09=09=09=09  struct page *page,
++=09=09=09=09=09  struct file **fpin)
+ {
+ =09struct file *file =3D vmf->vma->vm_file;
+ =09struct file_ra_state *ra =3D &file->f_ra;
+ =09struct address_space *mapping =3D file->f_mapping;
+-=09struct file *fpin =3D NULL;
+ =09pgoff_t offset =3D vmf->pgoff;
+=20
+ =09/* If we don't want any read-ahead, don't bother */
+ =09if (vmf->vma->vm_flags & VM_RAND_READ)
+-=09=09return fpin;
++=09=09return 0;
+ =09if (ra->mmap_miss > 0)
+ =09=09ra->mmap_miss--;
+ =09if (PageReadahead(page)) {
+-=09=09fpin =3D maybe_unlock_mmap_for_io(vmf, fpin);
++=09=09if (vmf->flags & FAULT_FLAG_CACHED)
++=09=09=09return VM_FAULT_RETRY;
++=09=09*fpin =3D maybe_unlock_mmap_for_io(vmf, *fpin);
+ =09=09page_cache_async_readahead(mapping, ra, file,
+ =09=09=09=09=09   page, offset, ra->ra_pages);
+ =09}
+-=09return fpin;
++=09return 0;
+ }
+=20
+ /**
+@@ -2495,8 +2497,11 @@ static struct file *do_async_mmap_readahead(struct v=
+m_fault *vmf,
   *
-  * This is the "read_iter()" routine for all filesystems
-  * that can use the page cache directly.
-+ *
-+ * In the IOCB_NOWAIT flag in iocb->ki_flags indicates that -EAGAIN should=
- be
-+ * returned if completing the request would require I/O; this does not pre=
-vent
-+ * readahead.  The IOCB_CACHED flag indicates that -EAGAIN should be retur=
-ned
-+ * as under the IOCB_NOWAIT flag, and that -ECANCELED should be returned w=
-hen
-+ * readhead would be triggered.
-+ *
-  * Return:
-  * * number of bytes copied, even for partial reads
-  * * negative error code if nothing was read
-@@ -2286,7 +2297,7 @@ generic_file_read_iter(struct kiocb *iocb, struct iov=
-_iter *iter)
- =09=09loff_t size;
+  * vma->vm_mm->mmap_sem must be held on entry.
+  *
+- * If our return value has VM_FAULT_RETRY set, it's because the mmap_sem
+- * may be dropped before doing I/O or by lock_page_maybe_drop_mmap().
++ * This function may drop the mmap_sem before doing I/O or waiting for a p=
+age
++ * lock; this is indicated by the VM_FAULT_RETRY flag in our return value.
++ * Setting FAULT_FLAG_CACHED or FAULT_FLAG_RETRY_NOWAIT in vmf->flags will
++ * prevent dropping the mmap_sem; in that case, VM_FAULT_RETRY indicates t=
+hat
++ * the mmap_sem would have been dropped.
+  *
+  * If our return value does not have VM_FAULT_RETRY set, the mmap_sem
+  * has not been released.
+@@ -2518,9 +2523,15 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ =09struct page *page;
+ =09vm_fault_t ret =3D 0;
 =20
- =09=09size =3D i_size_read(inode);
--=09=09if (iocb->ki_flags & IOCB_NOWAIT) {
-+=09=09if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_CACHED)) {
- =09=09=09if (filemap_range_has_page(mapping, iocb->ki_pos,
- =09=09=09=09=09=09   iocb->ki_pos + count - 1))
- =09=09=09=09return -EAGAIN;
+-=09max_off =3D DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
+-=09if (unlikely(offset >=3D max_off))
+-=09=09return VM_FAULT_SIGBUS;
++=09/*
++=09 * FAULT_FLAG_CACHED indicates that the inode size is only guaranteed
++=09 * to be valid when the page we are looking for is in the page cache.
++=09 */
++=09if (!(vmf->flags & FAULT_FLAG_CACHED)) {
++=09=09max_off =3D DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
++=09=09if (unlikely(offset >=3D max_off))
++=09=09=09return VM_FAULT_SIGBUS;
++=09}
+=20
+ =09/*
+ =09 * Do we have something in the page cache already?
+@@ -2531,8 +2542,14 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ =09=09 * We found the page, so try async readahead before
+ =09=09 * waiting for the lock.
+ =09=09 */
+-=09=09fpin =3D do_async_mmap_readahead(vmf, page);
++=09=09ret =3D do_async_mmap_readahead(vmf, page, &fpin);
++=09=09if (ret) {
++=09=09=09put_page(page);
++=09=09=09return ret;
++=09=09}
+ =09} else if (!page) {
++=09=09if (vmf->flags & FAULT_FLAG_CACHED)
++=09=09=09goto out_retry;
+ =09=09/* No page in the page cache at all */
+ =09=09count_vm_event(PGMAJFAULT);
+ =09=09count_memcg_event_mm(vmf->vma->vm_mm, PGMAJFAULT);
 --=20
 2.20.1
 
