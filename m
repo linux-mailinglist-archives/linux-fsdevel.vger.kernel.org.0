@@ -2,237 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D535B107672
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2019 18:30:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBC9A107661
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2019 18:25:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbfKVRaL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Nov 2019 12:30:11 -0500
-Received: from USAT19PA24.eemsg.mail.mil ([214.24.22.198]:4964 "EHLO
-        USAT19PA24.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726046AbfKVRaL (ORCPT
+        id S1726634AbfKVRZH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Nov 2019 12:25:07 -0500
+Received: from mail-qk1-f180.google.com ([209.85.222.180]:41710 "EHLO
+        mail-qk1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbfKVRZG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Nov 2019 12:30:11 -0500
-X-Greylist: delayed 429 seconds by postgrey-1.27 at vger.kernel.org; Fri, 22 Nov 2019 12:30:09 EST
-X-EEMSG-check-017: 53842449|USAT19PA24_ESA_OUT05.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.69,230,1571702400"; 
-   d="scan'208";a="53842449"
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by USAT19PA24.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 22 Nov 2019 17:22:59 +0000
+        Fri, 22 Nov 2019 12:25:06 -0500
+Received: by mail-qk1-f180.google.com with SMTP id m125so6927259qkd.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Nov 2019 09:25:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1574443380; x=1605979380;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=xXBbc/svmcsnGs3eWp8lTAV7Z/+Ww1EYI2DNJkgS/1U=;
-  b=OgX2mWphqEXpQNgFrT+cmpbPbtSm/Exkzubbi7+p/tS4sRax7PLO0yFr
-   t0pcFg6wzHFux6RyEQNGubDpKtyhzkZbHTJ4OSRpMV/xOGsxyKPvHwDqq
-   lmg9Hyx2AcW6LKAT91pAwP7SvtD8N6TmIPk719/w9MzH3AlVK1jBCVlHo
-   KKYWsz/N114iqK/kcXEI6I7bjDC3Hw122Io137sUGH+kV5SpaDkCV+U/X
-   lpqsDKmHpfKTns8eHhQPmQMe3K8BYeD2V/wB2Ik41DCQeoeXP72IT0qH4
-   8ijbJ61uE2gtoaYARNuE4hK9MY9AgSlqcPBORveZKjWgnsIZtdEHk12E3
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.69,230,1571702400"; 
-   d="scan'208";a="30419210"
-IronPort-PHdr: =?us-ascii?q?9a23=3AfQo4whY4vd9rRWYCUK0hVOz/LSx+4OfEezUN45?=
- =?us-ascii?q?9isYplN5qZps25Yx7h7PlgxGXEQZ/co6odzbaP6Oa5BDBLsMbJmUtBWaQEbw?=
- =?us-ascii?q?UCh8QSkl5oK+++Imq/EsTXaTcnFt9JTl5v8iLzG0FUHMHjew+a+SXqvnYdFR?=
- =?us-ascii?q?rlKAV6OPn+FJLMgMSrzeCy/IDYbxlViDanbr5+MRu7oR/MusQWjoZuJaI8xx?=
- =?us-ascii?q?jUqXZUZupawn9lK0iOlBjm/Mew+5Bj8yVUu/0/8sNLTLv3caclQ7FGFToqK2?=
- =?us-ascii?q?866tHluhnFVguP+2ATUn4KnRpSAgjK9w/1U5HsuSbnrOV92S2aPcrrTbAoXD?=
- =?us-ascii?q?mp8qlmRAP0hCoBKjU2/nvXishth6xFphyvqQF0z4rNbI2LMPdye6XQds4YS2?=
- =?us-ascii?q?VcRMZcTyxPDJ2hYYUBDOQPOuRXr4fyqFUBthayGQqhCfnzxjJSmnP6was32P?=
- =?us-ascii?q?khHwHc2wwgGsoDvmnIrNrrLKcSUf66zK/VxjveavNZwzP96IzWfREhvPqBWq?=
- =?us-ascii?q?lwftfKyUQ0CwPEjkmfqYziPz+P0OQNqHKU4/BvVeKolW4qsgd8qSWsyMc0ko?=
- =?us-ascii?q?TFm40Yx1/e+Sh53Yo5P8O0RUFlbdK+DZddsTyROZFsTcM4WW5ovT43yrgBuZ?=
- =?us-ascii?q?GmYicH0I8nxxvDa/yfdIiI/w7jWP6RIThmgHJlf6qyhwqo/ki6y+38S9K03E?=
- =?us-ascii?q?xLripDnNnMsWsN2ALP5cSdVvt8/luu2TaI1wzJ7OFLPVs0mrbBJ54kw74wko?=
- =?us-ascii?q?IfsUXFHiDohEX7lLKae0or9+Sy6+nrf6/qqoGTOoNqkA3yL7wimsmlDuQ5Ng?=
- =?us-ascii?q?gOUXKb+eO51LD75k32Xa5Kg+YqkqjZrJ/aJcMbqrS/Aw9OyIkv8Rm/DzC40N?=
- =?us-ascii?q?gAh3kIMEpFeA6bj4juI1zOJPH4DfGig1WjiTtr3O7JMaH8ApXXL3jDjLfgca?=
- =?us-ascii?q?94605b1QUz0NRf6IxPB7EfL/L8RFXxuMbbDhAnKQy0xfjoCNFn2oMZQ2KPDb?=
- =?us-ascii?q?eTMLnOvl+Q+uIvP+6MaZcRuDb8Lfgl+vHvgWY3mV8GYKamw4UXZ268Hvl9PU?=
- =?us-ascii?q?WZbmTjgs0bHWcJoAU+Vurqh0OGUTJJYHayRa087CkhCI26FYfDWpytgLuZ0S?=
- =?us-ascii?q?e9AJJWZ2RGBUuXHHfzaoWEQOkDZDiPLcB/ijYET6SuS5c91RGysw/306RnLu?=
- =?us-ascii?q?vO+i0frp/i1cZ65+vSlREs7zB0C8Wd02eQT2B7hG8IQCU23K9lrUxgyVeJyb?=
- =?us-ascii?q?J4jOBAFdxP+/NJVR83NJDdz+x+D9D/QQHBccmTSFagXNqmBSs9TtUrw98Be0?=
- =?us-ascii?q?x9Acmtjgjf3yq2BL8Yj6SLC4Yp8qLYxHXxP9xyy2vC1KU4ilkmRcxPNXe4ia?=
- =?us-ascii?q?Jl6wfTAIvJmV2Dl6m2baQcwDLN9GCbwGqVok5YVA9wUaPYXXEQfUbWs9v56V?=
- =?us-ascii?q?3YT7O0CrQoLBFBycicJatOcNHpik9GRPiwcOjZNnm8n2a2GAag2LyBdszpdn?=
- =?us-ascii?q?8b0SGbD1ILwC4J+nPTDhQzHiespSrlCTVqEV/+Kxf3/fJWtGKwTkhyyRqDKU?=
- =?us-ascii?q?JmyezmqVYumfWARqZLjfo/syA7pmAxRgew?=
-X-IPAS-Result: =?us-ascii?q?A2DrAAAYGdhd/wHyM5BlGwEBAQEBAQEFAQEBEQEBAwMBA?=
- =?us-ascii?q?QGBfoF0gW0gEiqNLYZTBosekUMJAQEBAQEBAQEBGxwBAYRAAoJOOBMCEAEBA?=
- =?us-ascii?q?QQBAQEBAQUDAQFshUOCOymCbgYnCwFGEFFXGYJjP4JTJbBUM4kLgUiBNoc9h?=
- =?us-ascii?q?HN4gQeEYYozBI0SCwqJfnSWF4I1gjeTDQwbmhiqZSKBWCsIAhgIIQ+DJ1ARF?=
- =?us-ascii?q?IZUF45BIwMwkUUBAQ?=
-Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 22 Nov 2019 17:22:51 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id xAMHMlUl099086;
-        Fri, 22 Nov 2019 12:22:50 -0500
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-To:     selinux@vger.kernel.org
-Cc:     paul@paul-moore.com, will@kernel.org, viro@zeniv.linux.org.uk,
-        neilb@suse.de, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Subject: [PATCH 2/2] selinux: fall back to ref-walk if audit is required
-Date:   Fri, 22 Nov 2019 12:22:45 -0500
-Message-Id: <20191122172245.7875-2-sds@tycho.nsa.gov>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191122172245.7875-1-sds@tycho.nsa.gov>
-References: <20191122172245.7875-1-sds@tycho.nsa.gov>
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding;
+        bh=x/t7YYwiNsScpRNZxre9kXNgeO6TrTQHVlcYwrBCrmw=;
+        b=hgmkiI/tZFKNu2W5QdfvM49rKbFOs7bBlKXRcGQuWUpeB9HVnV7xPQvLfZFsHGrcgp
+         /sLYsLft4o106guDCcDSTYez9sFUVFecJ71E7kyba4rIArbBT4iKkopzLMS36Go22kP5
+         fcYXTTSuTWOZBRPy0ELYTiskw5s57Y8gPtMYmwYqvUaFcPBnJpKzQsAjtsjxB8lKr69s
+         a7iq6JE3aUqT+o/Dr7lNJNSA3I+y4Q3ksVfYa9E2EhF3v6H47xgaTcNlzlbAVZ0fV5J/
+         blbgb4ln/ZEjoNzLcybGwttpT9/wr0pflt3fK3tkzMWxqvn7oSZSzJ6LTXSKxNYU+Gha
+         iGOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding;
+        bh=x/t7YYwiNsScpRNZxre9kXNgeO6TrTQHVlcYwrBCrmw=;
+        b=DMPLVHxpq1+bip5I3dbT15tBFK+nVBr5Y5NEhA1Rk9pceuz1ekacl9iU/7X612nEDZ
+         6i/hjymeGjhF6+Bo7pBsPKSms33vXGG+R3fQ5dz3MwvQXYVrVPYDu55FOj3rx/WKLUHv
+         Q58Kt7dCjczc/7vYwj4OLAOa2j2DfCsDF7jZgyZsrLwRve67MF3IlI2l5INJgZHqmrfj
+         xsT9NqoilC5WaIEzC70a8EqNc4QSwcgWP/1REc8OolQJ0pl/XJqVx1pxFFDhsD84Nd0U
+         pnJpWynIdg7VYYhI7MBUEw04Ltv4dJoM/K0bf8UoWxn5BUUFxqQ0WEsk80IbNe+j0nc5
+         6wGw==
+X-Gm-Message-State: APjAAAVj5IZPLVybb+ShLX9x3WyJN8lswCirxDaepJowTtxUZcCZF8Fy
+        wJ4/xcNihKnajDTmaNE0A9neLMyOij10fg==
+X-Google-Smtp-Source: APXvYqx99CvvuJPnYd+Rq7afdv0vTgv7dWSgTIm3gn4xoBOvZhWu0Jdh2wyfyVQMdyNPJWGIaahWcw==
+X-Received: by 2002:a05:620a:13d1:: with SMTP id g17mr14227390qkl.313.1574443505421;
+        Fri, 22 Nov 2019 09:25:05 -0800 (PST)
+Received: from localhost ([2620:10d:c091:480::64e2])
+        by smtp.gmail.com with ESMTPSA id v189sm3302167qkc.37.2019.11.22.09.25.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 22 Nov 2019 09:25:04 -0800 (PST)
+Date:   Fri, 22 Nov 2019 12:25:02 -0500
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     lsf-pc@lists.linuxfoundation.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-nvme@lists.infradead.org, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: LSF/MM/BPF: 2020: Call for Proposals
+Message-ID: <20191122172502.vffyfxlqejthjib6@macbook-pro-91.dhcp.thefacebook.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-commit bda0be7ad994 ("security: make inode_follow_link RCU-walk aware")
-passed down the rcu flag to the SELinux AVC, but failed to adjust the
-test in slow_avc_audit() to also return -ECHILD on LSM_AUDIT_DATA_DENTRY.
-Previously, we only returned -ECHILD if generating an audit record with
-LSM_AUDIT_DATA_INODE since this was only relevant from inode_permission.
-Move the handling of MAY_NOT_BLOCK to avc_audit() and its inlined
-equivalent in selinux_inode_permission() immediately after we determine
-that audit is required, and always fall back to ref-walk in this case.
+The annual Linux Storage, Filesystem, Memory Management, and BPF
+(LSF/MM/BPF) Summit for 2020 will be held from April 27 - April 29 at
+The Riviera Palm Springs, A Tribute Portfolio Resort in Palm Springs,
+California. LSF/MM/BPF is an invitation-only technical workshop to map
+out improvements to the Linux storage, filesystem, BPF, and memory
+management subsystems that will make their way into the mainline kernel
+within the coming years.
 
-Fixes: bda0be7ad994 ("security: make inode_follow_link RCU-walk aware")
-Reported-by: Will Deacon <will@kernel.org>
-Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
----
- security/selinux/avc.c         | 24 +++++-------------------
- security/selinux/hooks.c       | 11 +++++++----
- security/selinux/include/avc.h |  8 +++++---
- 3 files changed, 17 insertions(+), 26 deletions(-)
+LSF/MM/BPF 2020 will be a three day, stand-alone conference with four
+subsystem-specific tracks, cross-track discussions, as well as BoF and
+hacking sessions.
 
-diff --git a/security/selinux/avc.c b/security/selinux/avc.c
-index 74c43ebe34bb..23dc888ae305 100644
---- a/security/selinux/avc.c
-+++ b/security/selinux/avc.c
-@@ -424,7 +424,7 @@ static inline int avc_xperms_audit(struct selinux_state *state,
- 	if (likely(!audited))
- 		return 0;
- 	return slow_avc_audit(state, ssid, tsid, tclass, requested,
--			audited, denied, result, ad, 0);
-+			audited, denied, result, ad);
- }
- 
- static void avc_node_free(struct rcu_head *rhead)
-@@ -758,8 +758,7 @@ static void avc_audit_post_callback(struct audit_buffer *ab, void *a)
- noinline int slow_avc_audit(struct selinux_state *state,
- 			    u32 ssid, u32 tsid, u16 tclass,
- 			    u32 requested, u32 audited, u32 denied, int result,
--			    struct common_audit_data *a,
--			    unsigned int flags)
-+			    struct common_audit_data *a)
- {
- 	struct common_audit_data stack_data;
- 	struct selinux_audit_data sad;
-@@ -772,17 +771,6 @@ noinline int slow_avc_audit(struct selinux_state *state,
- 		a->type = LSM_AUDIT_DATA_NONE;
- 	}
- 
--	/*
--	 * When in a RCU walk do the audit on the RCU retry.  This is because
--	 * the collection of the dname in an inode audit message is not RCU
--	 * safe.  Note this may drop some audits when the situation changes
--	 * during retry. However this is logically just as if the operation
--	 * happened a little later.
--	 */
--	if ((a->type == LSM_AUDIT_DATA_INODE) &&
--	    (flags & MAY_NOT_BLOCK))
--		return -ECHILD;
--
- 	sad.tclass = tclass;
- 	sad.requested = requested;
- 	sad.ssid = ssid;
-@@ -855,16 +843,14 @@ static int avc_update_node(struct selinux_avc *avc,
- 	/*
- 	 * If we are in a non-blocking code path, e.g. VFS RCU walk,
- 	 * then we must not add permissions to a cache entry
--	 * because we cannot safely audit the denial.  Otherwise,
-+	 * because we will not audit the denial.  Otherwise,
- 	 * during the subsequent blocking retry (e.g. VFS ref walk), we
- 	 * will find the permissions already granted in the cache entry
- 	 * and won't audit anything at all, leading to silent denials in
- 	 * permissive mode that only appear when in enforcing mode.
- 	 *
--	 * See the corresponding handling in slow_avc_audit(), and the
--	 * logic in selinux_inode_follow_link and selinux_inode_permission
--	 * for the VFS MAY_NOT_BLOCK flag, which is transliterated into
--	 * AVC_NONBLOCKING for avc_has_perm_noaudit().
-+	 * See the corresponding handling of MAY_NOT_BLOCK in avc_audit()
-+	 * and selinux_inode_permission().
- 	 */
- 	if (flags & AVC_NONBLOCKING)
- 		return 0;
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 3eaa3b419463..fd34e25c016f 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3015,8 +3015,7 @@ static int selinux_inode_follow_link(struct dentry *dentry, struct inode *inode,
- 
- static noinline int audit_inode_permission(struct inode *inode,
- 					   u32 perms, u32 audited, u32 denied,
--					   int result,
--					   unsigned flags)
-+					   int result)
- {
- 	struct common_audit_data ad;
- 	struct inode_security_struct *isec = selinux_inode(inode);
-@@ -3027,7 +3026,7 @@ static noinline int audit_inode_permission(struct inode *inode,
- 
- 	rc = slow_avc_audit(&selinux_state,
- 			    current_sid(), isec->sid, isec->sclass, perms,
--			    audited, denied, result, &ad, flags);
-+			    audited, denied, result, &ad);
- 	if (rc)
- 		return rc;
- 	return 0;
-@@ -3074,7 +3073,11 @@ static int selinux_inode_permission(struct inode *inode, int mask)
- 	if (likely(!audited))
- 		return rc;
- 
--	rc2 = audit_inode_permission(inode, perms, audited, denied, rc, flags);
-+	/* fall back to ref-walk if we have to generate audit */
-+	if (flags & MAY_NOT_BLOCK)
-+		return -ECHILD;
-+
-+	rc2 = audit_inode_permission(inode, perms, audited, denied, rc);
- 	if (rc2)
- 		return rc2;
- 	return rc;
-diff --git a/security/selinux/include/avc.h b/security/selinux/include/avc.h
-index 74ea50977c20..cf4cc3ef959b 100644
---- a/security/selinux/include/avc.h
-+++ b/security/selinux/include/avc.h
-@@ -100,8 +100,7 @@ static inline u32 avc_audit_required(u32 requested,
- int slow_avc_audit(struct selinux_state *state,
- 		   u32 ssid, u32 tsid, u16 tclass,
- 		   u32 requested, u32 audited, u32 denied, int result,
--		   struct common_audit_data *a,
--		   unsigned flags);
-+		   struct common_audit_data *a);
- 
- /**
-  * avc_audit - Audit the granting or denial of permissions.
-@@ -135,9 +134,12 @@ static inline int avc_audit(struct selinux_state *state,
- 	audited = avc_audit_required(requested, avd, result, 0, &denied);
- 	if (likely(!audited))
- 		return 0;
-+	/* fall back to ref-walk if we have to generate audit */
-+	if (flags & MAY_NOT_BLOCK)
-+		return -ECHILD;
- 	return slow_avc_audit(state, ssid, tsid, tclass,
- 			      requested, audited, denied, result,
--			      a, flags);
-+			      a);
- }
- 
- #define AVC_STRICT 1 /* Ignore permissive mode. */
--- 
-2.23.0
+On behalf of the committee I am issuing a call for agenda proposals
+that are suitable for cross-track discussion as well as technical
+subjects for the breakout sessions.
 
+If advance notice is required for visa applications then please point
+that out in your proposal or request to attend, and submit the topic
+as soon as possible.
+
+This year will be a little different for requesting attendance.  Please
+do the following by February 15th, 2020.
+
+1) Fill out the following Google form to request attendance and
+suggest any topics
+
+	https://forms.gle/voWi1j9kDs13Lyqf9
+
+In previous years we have accidentally missed people's attendance
+requests because they either didn't cc lsf-pc@ or we simply missed them
+in the flurry of emails we get.  Our community is large and our
+volunteers are busy, filling this out will help us make sure we don't
+miss anybody.
+
+2) Proposals for agenda topics should still be sent to the following
+lists to allow for discussion among your peers.  This will help us
+figure out which topics are important for the agenda.
+
+        lsf-pc@lists.linux-foundation.org
+
+and CC the mailing lists that are relevant for the topic in question:
+
+        FS:     linux-fsdevel@vger.kernel.org
+        MM:     linux-mm@kvack.org
+        Block:  linux-block@vger.kernel.org
+        ATA:    linux-ide@vger.kernel.org
+        SCSI:   linux-scsi@vger.kernel.org
+        NVMe:   linux-nvme@lists.infradead.org
+        BPF:    bpf@vger.kernel.org
+
+Please tag your proposal with [LSF/MM/BPF TOPIC] to make it easier to
+track. In addition, please make sure to start a new thread for each
+topic rather than following up to an existing one. Agenda topics and
+attendees will be selected by the program committee, but the final
+agenda will be formed by consensus of the attendees on the day.
+
+We will try to cap attendance at around 25-30 per track to facilitate
+discussions although the final numbers will depend on the room sizes
+at the venue.
+
+For discussion leaders, slides and visualizations are encouraged to
+outline the subject matter and focus the discussions. Please refrain
+from lengthy presentations and talks; the sessions are supposed to be
+interactive, inclusive discussions.
+
+There will be no recording or audio bridge. However, we expect that
+written minutes will be published as we did in previous years:
+
+2019: https://lwn.net/Articles/lsfmm2019/
+
+2018: https://lwn.net/Articles/lsfmm2018/
+
+2017: https://lwn.net/Articles/lsfmm2017/
+
+2016: https://lwn.net/Articles/lsfmm2016/
+
+2015: https://lwn.net/Articles/lsfmm2015/
+
+2014: http://lwn.net/Articles/LSFMM2014/
+
+3) If you have feedback on last year's meeting that we can use to
+improve this year's, please also send that to:
+
+        lsf-pc@lists.linux-foundation.org
+
+Thank you on behalf of the program committee:
+
+	Josef Bacik (Filesystems)
+	Amir Goldstein (Filesystems)
+	Martin K. Petersen (Storage)
+	Omar Sandoval (Storage)
+	Michal Hocko (MM)
+	Dan Williams (MM)
+	Alexei Starovoitov (BPF)
+	Daniel Borkmann (BPF)
