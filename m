@@ -2,173 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEFFB10743D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2019 15:49:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50978107488
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2019 16:08:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbfKVOti (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Nov 2019 09:49:38 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:44588 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726100AbfKVOtg (ORCPT
+        id S1727022AbfKVPIl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Nov 2019 10:08:41 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:52367 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726563AbfKVPIk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Nov 2019 09:49:36 -0500
-Received: by mail-lf1-f67.google.com with SMTP id v201so4663880lfa.11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Nov 2019 06:49:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xk3Xp9XDcJZJv6VkHVhLVg5CXbqI1WOmPTup8QlYQ68=;
-        b=eRlW+SqL/mOmMXhdJHBTtxZsobKc16zRhyql3CFTSR7CPFHVEOCStfDF3clHisNpMq
-         JSjO3PEe0acbExXCd2OSVVevgLpDZfeyJLuwjjewfVOEfaEMaj3aWJhKWtgkcAblGVk0
-         p+m2Xy7Oh4r/0Ux5vxcCsMX5CaTZSLpH63gi561LqP33xVpo6OGX+LjYU4hmq2wwWK9J
-         GPu0DmoetMCrq7cG42zAfnOLYopUF+rrhRyBnLEpIZ9SM2D9Vi/RwUKfi8BD4jnBj43P
-         hffIl+GT9TrXJjmevE6f1WKIejC3nCSa6ibVr42xI6OKmG9yo/1qrEmLGz/A16kI+8VP
-         Vi7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xk3Xp9XDcJZJv6VkHVhLVg5CXbqI1WOmPTup8QlYQ68=;
-        b=CHZNgH8gy2knyliUf2AwglgYESxnUVdalT/Ct2i0E/lpsoxNG0L7OZzzmOT/HDGEmb
-         mlFe1MSly4kOs2nOwzYv9JHcAtXAIOvcSWJ0LbV/T9kckcO1OXybgEYpZYYvQcPTNyW8
-         ES7Q5M1tfD8fl7VBiUyu8rodw7YcT2ydgHTbuOFy+ldDjFaS8JKIa+UwD+viWgdZn0WA
-         CvMpH/xvCnVzAmQwI1GLsgBysroAgxcAqsMHfP6L1VId/tmJZoYOiHuM/MCSPcNhv5DI
-         58bvKWhlTsR/n3xsGWX7buRs08+CuNAgcLOmF6BEyw3ow2dUm1HpJWcvyCdi2EMK018J
-         So4A==
-X-Gm-Message-State: APjAAAW0IiV00Co4AOn4CK0E3bPKZ2LZAMWMAM3LJ2yoiGiVGlPaPaES
-        CQdYttRjAwbRtrctVlr97JsbwNeCSjZYUufG7qjU
-X-Google-Smtp-Source: APXvYqwVmlcHH4QooB5Mqu4fC/eYdQZnl0cmoxgW2Xv32I+RGXv3qL8CeSrHMILzNFjensl712UwHgW60fTOulvG/XQ=
-X-Received: by 2002:ac2:428d:: with SMTP id m13mr6297196lfh.64.1574434172631;
- Fri, 22 Nov 2019 06:49:32 -0800 (PST)
+        Fri, 22 Nov 2019 10:08:40 -0500
+Received: from localhost.localdomain ([78.238.229.36]) by
+ mrelayeu.kundenserver.de (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1MNccf-1iDS4A3GTj-00P4Ht; Fri, 22 Nov 2019 16:08:33 +0100
+From:   Laurent Vivier <laurent@vivier.eu>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Laurent Vivier <laurent@vivier.eu>
+Subject: [RFC v2] binfmt_misc: pass binfmt_misc flags to the interpreter
+Date:   Fri, 22 Nov 2019 16:08:30 +0100
+Message-Id: <20191122150830.15855-1-laurent@vivier.eu>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20191121145245.8637-1-sds@tycho.nsa.gov> <20191121145245.8637-2-sds@tycho.nsa.gov>
- <CAHC9VhTAq7CgcRRcvZCYis7ELAo+bo2q8pCUXfHUP9YAcUhwsQ@mail.gmail.com>
- <CAHC9VhRURZMtEDagtSKEuuOLEJen=4PQZig3iGNomzXC1HTNSA@mail.gmail.com> <9d825be2-c3ae-f4ad-9f82-adce7e2059d7@tycho.nsa.gov>
-In-Reply-To: <9d825be2-c3ae-f4ad-9f82-adce7e2059d7@tycho.nsa.gov>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 22 Nov 2019 09:49:21 -0500
-Message-ID: <CAHC9VhRiRdWfqP8sp8YKRdc4D9r9u1QYP5o2sRh7QwvgCRYYbg@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] selinux: fall back to ref-walk upon
- LSM_AUDIT_DATA_DENTRY too
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     selinux@vger.kernel.org, will@kernel.org, viro@zeniv.linux.org.uk,
-        neilb@suse.de, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:NEbcxsm+SkmB3SNa2ecYAw74OLAO27N+abnqS0hw6qizot3DkL/
+ oIZPMS1Fl4h2KcTVxsaiMjun8uGWTNb3MBUF3AgUHh1PAyXn9mp+dZOb+WIXeHyIeJ9aNXg
+ SiJpEBEOeG4f9FM1q6B8fWmzCXye4JNtGJzNOG9SludRw/0uTQKV/UC/MlrsdGlT8vjHQ3J
+ Mfd7+LCmAsMD1tVcKE+EA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:r7soFzH1jcU=:wSVdgrQR0o0d3Ul5DZ+2Qw
+ c1obj69GkbQmgRldov7tQJuXqhHluogD7Uk688a/NiNREejKTACBYmQHFsbUEtfq+szeImKYx
+ JjIE6ePBCuxrNjpGMTFG/p2oEIIbvlYdyGBVSPJs7hToLg1keKbCJ1HgvksG2Gu9BM/II+nnt
+ KeBYDVyNhcFJVT79wqqia8c5XvWfMiuPwQP1SYIki2ZOxuOqJM6iuJT4IClsnHmUEbRZFiJs8
+ TJskALBuBaw26JHOasAjsfHZfd5eObd3HD1nIF9BrcIC/WNyMcrLvyVDY67Baq5bxCELAS2mY
+ /G5nPERmhK2bCvrcJDaBSPQb2t8/VWAX+4he6j7hjOS4FnxgpLwbtz+t/OCEuHCRa/yZSxSwb
+ +vArW9GYM02zGTqZ0LwdJ2l2Sqh7s3ucWM5gA8r/JlxbxvFvLfpx04dARJTfGoo3vU5gH4aQf
+ gwe6dkZucPNqHr0McZ2qcLmltnnX67TyZ1X82c2JHiEuiX39CfqQMAcbmhsr37uVB00nU7sdF
+ WFV6bT8MJI59ZVu3GGuz3zXg5YhIh4WoY8UwOQyRD4qRPNbFRewzfmaIi0cftTYg0mp2M18yu
+ eVqVRNNWmQKCHRUgHtqyru6RjUuKhP4HXdTyp6PeZ8/Mo89FzkK8Pq9SDjsM7xDo0MoREKuUD
+ nTMTccJtiElBBF/R6zfIwsdCd3oTjeBzUUzC0WYQ5v4RjXvxcwcbj59y20NFhrT9D0Fe39hy+
+ wKFjdglhZugsU+gTyT9Oe9yqVeXQzAbh6m1BYrEpNi/pab/HOe4Xtm9SmnpMEW3fKRV9vBJMt
+ cbssmiip3eTNkCb4Xtj5OCV943C9EUcLQ2dl0+Q4WNQtDBi5s8lhv1Vb+iQTS3q83XlhOOkQZ
+ 4rDn+dXTriymz8iDH75A==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 22, 2019 at 8:37 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> On 11/21/19 7:30 PM, Paul Moore wrote:
-> > On Thu, Nov 21, 2019 at 7:12 PM Paul Moore <paul@paul-moore.com> wrote:
-> >> On Thu, Nov 21, 2019 at 9:52 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> >>> commit bda0be7ad994 ("security: make inode_follow_link RCU-walk aware")
-> >>> passed down the rcu flag to the SELinux AVC, but failed to adjust the
-> >>> test in slow_avc_audit() to also return -ECHILD on LSM_AUDIT_DATA_DENTRY.
-> >>> Previously, we only returned -ECHILD if generating an audit record with
-> >>> LSM_AUDIT_DATA_INODE since this was only relevant from inode_permission.
-> >>> Return -ECHILD on either LSM_AUDIT_DATA_INODE or LSM_AUDIT_DATA_DENTRY.
-> >>> LSM_AUDIT_DATA_INODE only requires this handling due to the fact
-> >>> that dump_common_audit_data() calls d_find_alias() and collects the
-> >>> dname from the result if any.
-> >>> Other cases that might require similar treatment in the future are
-> >>> LSM_AUDIT_DATA_PATH and LSM_AUDIT_DATA_FILE if any hook that takes
-> >>> a path or file is called under RCU-walk.
-> >>>
-> >>> Fixes: bda0be7ad994 ("security: make inode_follow_link RCU-walk aware")
-> >>> Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
-> >>> ---
-> >>>   security/selinux/avc.c | 3 ++-
-> >>>   1 file changed, 2 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/security/selinux/avc.c b/security/selinux/avc.c
-> >>> index 74c43ebe34bb..f1fa1072230c 100644
-> >>> --- a/security/selinux/avc.c
-> >>> +++ b/security/selinux/avc.c
-> >>> @@ -779,7 +779,8 @@ noinline int slow_avc_audit(struct selinux_state *state,
-> >>>           * during retry. However this is logically just as if the operation
-> >>>           * happened a little later.
-> >>>           */
-> >>> -       if ((a->type == LSM_AUDIT_DATA_INODE) &&
-> >>> +       if ((a->type == LSM_AUDIT_DATA_INODE ||
-> >>> +            a->type == LSM_AUDIT_DATA_DENTRY) &&
-> >>>              (flags & MAY_NOT_BLOCK))
-> >>>                  return -ECHILD;
-> >
-> > With LSM_AUDIT_DATA_INODE we eventually end up calling d_find_alias()
-> > in dump_common_audit_data() which could block, which is bad, that I
-> > understand.  However, looking at LSM_AUDIT_DATA_DENTRY I'm less clear
-> > on why that is bad?  It makes a few audit_log*() calls and one call to
-> > d_backing_inode() which is non-blocking and trivial.
-> >
-> > What am I missing?
->
-> For those who haven't, you may wish to also read the earlier thread here
-> that led to this one:
-> https://lore.kernel.org/selinux/20191119184057.14961-1-will@kernel.org/T/#t
->
-> AFAIK, neither the LSM_AUDIT_DATA_INODE nor the LSM_AUDIT_DATA_DENTRY
-> case truly block (d_find_alias does not block AFAICT, nor should
-> audit_log* as long as we use audit_log_start with GFP_ATOMIC or
-> GFP_NOWAIT).
+It can be useful to the interpreter to know which flags are in use.
 
-Yes, the audit_log*() functions should be safe, if not I would
-consider that a bug; I thought d_find_alias() might block, but it's
-very likely I'm wrong in that regard.
+For instance, knowing if the preserve-argv[0] is in use would
+allow to skip the pathname argument.
 
-> My impression from the comment in slow_avc_audit() is that
-> the issue is not really about blocking but rather about the inability to
-> safely dereference the dentry->d_name during RCU walk, which is
-> something that can occur under LSM_AUDIT_DATA_INODE or _DENTRY (or _PATH
-> or _FILE, but neither of the latter two are currently used from the two
-> hooks that are called during RCU walk, inode_permission and
-> inode_follow_link).  Originally _PATH, _DENTRY, and _INODE were all
-> under a single _FS type and the original test in slow_avc_audit() was
-> against LSM_AUDIT_DATA_FS before the split.
+This patch uses an unused auxiliary vector, AT_FLAGS,  to pass the
+content of the binfmt flags (special flags: P, F, C, O).
 
-Thanks, I think that is the part I was missing.  I was focused too
-much on the VFS stuff that I didn't pay enough attention to
-slow_avc_audit().
+Signed-off-by: Laurent Vivier <laurent@vivier.eu>
+---
 
-If that is the case, the comment and code in dentry_cmp() would seem
-to indicate that it would be safe to fetch the dentry name string as
-long as we use READ_ONCE().  The length field in the qstr might be
-off, but the audit_log_untrustedstring() function doesn't use the
-qstr's length information.  I suppose if we don't mind the extra
-spinlock we could use take_dentry_name_snapshot(); that should be safe
-and we are already in the "slow" path.  I didn't check the _PATH or
-_FILE cases.
+Notes:
+    v2: only pass special flags (remove Magic and Enabled flags)
 
-Once again, let me know if I'm missing something.
+ fs/binfmt_elf.c         | 2 +-
+ fs/binfmt_elf_fdpic.c   | 2 +-
+ fs/binfmt_misc.c        | 6 ++++++
+ include/linux/binfmts.h | 2 +-
+ 4 files changed, 9 insertions(+), 3 deletions(-)
 
-As an aside, if we somehow can guarantee (e.g. via a name_snapshot)
-that qstr length information is valid, we might want to consider
-moving from audit_log_unstrustedstring() to
-audit_log_n_untrustedstring() to save us a call to strlen().
-
-> >> Added the LSM list as I'm beginning to wonder if we should push this
-> >> logic down into common_lsm_audit(), this problem around blocking
-> >> shouldn't be SELinux specific.
->
-> That would require passing down the MAY_NOT_BLOCK flag or a rcu bool to
-> common_lsm_audit() just so that it could immediately return if that is
-> set and a->type is _INODE or _DENTRY (or _PATH or _FILE).  And the
-> individual security module still needs to have its own handling of
-> MAY_NOT_BLOCK/rcu for its own processing, so it won't free the security
-> module authors from thinking about it.
-
-Looking at the current SELinux code, all we do is bail out early with
--ECHILD.  If we didn't have that check it looks like the only impact
-would be some extra assignments into a struct living on the stack and
-a call into common_lsm_audit().  That doesn't seem terrible for a slow
-path, especially if it pushes this code into a LSM common function.
-
-> >> For the LSM folks just joining, the full patchset can be found here:
-> >> * https://lore.kernel.org/selinux/20191121145245.8637-1-sds@tycho.nsa.gov/T/#t
-
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index c5642bcb6b46..7a34c03e5857 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -250,7 +250,7 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
+ 	NEW_AUX_ENT(AT_PHENT, sizeof(struct elf_phdr));
+ 	NEW_AUX_ENT(AT_PHNUM, exec->e_phnum);
+ 	NEW_AUX_ENT(AT_BASE, interp_load_addr);
+-	NEW_AUX_ENT(AT_FLAGS, 0);
++	NEW_AUX_ENT(AT_FLAGS, bprm->fmt_flags);
+ 	NEW_AUX_ENT(AT_ENTRY, exec->e_entry);
+ 	NEW_AUX_ENT(AT_UID, from_kuid_munged(cred->user_ns, cred->uid));
+ 	NEW_AUX_ENT(AT_EUID, from_kuid_munged(cred->user_ns, cred->euid));
+diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
+index d86ebd0dcc3d..8fe839be125e 100644
+--- a/fs/binfmt_elf_fdpic.c
++++ b/fs/binfmt_elf_fdpic.c
+@@ -647,7 +647,7 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
+ 	NEW_AUX_ENT(AT_PHENT,	sizeof(struct elf_phdr));
+ 	NEW_AUX_ENT(AT_PHNUM,	exec_params->hdr.e_phnum);
+ 	NEW_AUX_ENT(AT_BASE,	interp_params->elfhdr_addr);
+-	NEW_AUX_ENT(AT_FLAGS,	0);
++	NEW_AUX_ENT(AT_FLAGS,	bprm->fmt_flags);
+ 	NEW_AUX_ENT(AT_ENTRY,	exec_params->entry_addr);
+ 	NEW_AUX_ENT(AT_UID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->uid));
+ 	NEW_AUX_ENT(AT_EUID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->euid));
+diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+index cdb45829354d..25a392f23409 100644
+--- a/fs/binfmt_misc.c
++++ b/fs/binfmt_misc.c
+@@ -48,6 +48,9 @@ enum {Enabled, Magic};
+ #define MISC_FMT_OPEN_BINARY (1 << 30)
+ #define MISC_FMT_CREDENTIALS (1 << 29)
+ #define MISC_FMT_OPEN_FILE (1 << 28)
++#define MISC_FMT_FLAGS_MASK (MISC_FMT_PRESERVE_ARGV0 | MISC_FMT_OPEN_BINARY | \
++			     MISC_FMT_CREDENTIALS | MISC_FMT_OPEN_FILE)
++
+ 
+ typedef struct {
+ 	struct list_head list;
+@@ -149,6 +152,9 @@ static int load_misc_binary(struct linux_binprm *bprm)
+ 	if (!fmt)
+ 		return retval;
+ 
++	/* pass special flags to the interpreter */
++	bprm->fmt_flags = fmt->flags & MISC_FMT_FLAGS_MASK;
++
+ 	/* Need to be able to load the file after exec */
+ 	retval = -ENOENT;
+ 	if (bprm->interp_flags & BINPRM_FLAGS_PATH_INACCESSIBLE)
+diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+index b40fc633f3be..dae0d0d7b84d 100644
+--- a/include/linux/binfmts.h
++++ b/include/linux/binfmts.h
+@@ -60,7 +60,7 @@ struct linux_binprm {
+ 				   different for binfmt_{misc,script} */
+ 	unsigned interp_flags;
+ 	unsigned interp_data;
+-	unsigned long loader, exec;
++	unsigned long loader, exec, fmt_flags;
+ 
+ 	struct rlimit rlim_stack; /* Saved RLIMIT_STACK used during exec. */
+ 
 -- 
-paul moore
-www.paul-moore.com
+2.21.0
+
