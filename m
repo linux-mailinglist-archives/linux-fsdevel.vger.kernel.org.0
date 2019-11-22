@@ -2,125 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE466105ECC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2019 03:57:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6D58105ED6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Nov 2019 04:00:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726500AbfKVC5A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Nov 2019 21:57:00 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:4158 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726343AbfKVC47 (ORCPT
+        id S1726813AbfKVDA3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Nov 2019 22:00:29 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:64249 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726736AbfKVDA3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Nov 2019 21:56:59 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dd74e740000>; Thu, 21 Nov 2019 18:56:52 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 21 Nov 2019 18:56:51 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 21 Nov 2019 18:56:51 -0800
-Received: from [10.2.168.213] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 22 Nov
- 2019 02:56:50 +0000
-Subject: Re: [PATCH v7 02/24] mm/gup: factor out duplicate code from four
- routines
-To:     Jan Kara <jack@suse.cz>
-CC:     Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
-References: <20191121071354.456618-1-jhubbard@nvidia.com>
- <20191121071354.456618-3-jhubbard@nvidia.com> <20191121080356.GA24784@lst.de>
- <852f6c27-8b65-547b-89e0-e8f32a4d17b9@nvidia.com>
- <20191121095411.GC18190@quack2.suse.cz>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <9d0846af-2c4f-7cda-dfcb-1f642943afea@nvidia.com>
-Date:   Thu, 21 Nov 2019 18:54:02 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Thu, 21 Nov 2019 22:00:29 -0500
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20191122030026epoutp02fb0aadcb51ddac4a400e0e7bcc23dfb1~ZXNfAJBKB2604926049epoutp02c
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Nov 2019 03:00:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20191122030026epoutp02fb0aadcb51ddac4a400e0e7bcc23dfb1~ZXNfAJBKB2604926049epoutp02c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1574391626;
+        bh=jR9JDOrzxDxFjd+KH+FnSxCDcPOdDJG/HnjXXkic4t8=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=D4hMWuJQ631TjJVRG9xzpgbMUNFWuGkp9SHkikiX9l37rPlYvg0ydCmp5L6KpZwiJ
+         3UkYnPwVolY+sLLe6yTm3Rkt6MeuTHBYnJr8lL4d5vvJCt1VjKJ8tHQ08hsfQRXOl2
+         pOL3LvbfVjz+nBQxw2LbsJVKiUMWeOmL5UBP4juc=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20191122030020epcas1p4375d4ec1b17cbe32a4ce3d5fe00f6b11~ZXNY-2wO-2233022330epcas1p4_;
+        Fri, 22 Nov 2019 03:00:20 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.166]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 47K1Pv2krWzMqYkb; Fri, 22 Nov
+        2019 03:00:19 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        BE.5C.04406.34F47DD5; Fri, 22 Nov 2019 12:00:19 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20191122030016epcas1p13fc5d28cd56527a4d760758bae1b9e3e~ZXNWHlHxL2551125511epcas1p1D;
+        Fri, 22 Nov 2019 03:00:16 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191122030016epsmtrp13607f69341bf4b7660a0b7716ca92a3d~ZXNWG6hnj2174221742epsmtrp1I;
+        Fri, 22 Nov 2019 03:00:16 +0000 (GMT)
+X-AuditID: b6c32a38-947ff70000001136-b2-5dd74f4389fd
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        54.CB.03814.04F47DD5; Fri, 22 Nov 2019 12:00:16 +0900 (KST)
+Received: from DONAMJAEJEO06 (unknown [10.88.104.63]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191122030016epsmtip15f756ff689bf918de48b6844e2131c92~ZXNV41NIx2923129231epsmtip1j;
+        Fri, 22 Nov 2019 03:00:16 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     "'Markus Elfring'" <Markus.Elfring@web.de>
+Cc:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "'Christoph Hellwig'" <hch@lst.de>,
+        "'Daniel Wagner'" <dwagner@suse.de>,
+        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
+        "'Nikolay Borisov'" <nborisov@suse.com>,
+        "'Sungjong Seo'" <sj1557.seo@samsung.com>,
+        =?UTF-8?Q?'Valdis_Kl=C4=93tnieks'?= <valdis.kletnieks@vt.edu>,
+        <linkinjeon@gmail.com>, <linux-fsdevel@vger.kernel.org>
+In-Reply-To: <498a958f-9066-09c6-7240-114234965c1a@web.de>
+Subject: RE: [PATCH v4 04/13] exfat: add directory operations
+Date:   Fri, 22 Nov 2019 12:00:16 +0900
+Message-ID: <004901d5a0e0$f7bf1030$e73d3090$@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20191121095411.GC18190@quack2.suse.cz>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1574391412; bh=qs/HIaIDAchvyMkQnxvFfFcxB81lObthoFNUVM9HFsU=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=ea5W7/2c5vGNy7OLObdGvq5o0IpGBD08qzI9LgcD4V8BzKvR7hLDcVgsFBzIPWltE
-         d8PXmpt/WgSDLuhJB1bSFzEA5jjhwY4dlcU7E+jQRx3TB5rkLOwlZyYegEL3tsBCr8
-         8qN6mxRQSSTP+FNbJyR7Zo1HLIMkYFYKo0hlXeg0mt5hFKo6iVEhrdf4E8SgIeOW2y
-         us/ORlXUDHvqcnaCH9l42SZAxDz+ZaaZrH8tpmFx0pDTmT79WYa//P0TZxa1PMT2Ec
-         60tYwrFVvqZaHos2D7eAOKA1eeY7xDL9USjPj3cYeVVtnic4Fxyow9kLNCXK7YejUg
-         or0Rt6li4HM5w==
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 14.0
+Thread-Index: AQGvn6iTTExTp6OkCy7f8aJjab+B9AHpvZ4UAavVuMIBPbFUKae75+zw
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFJsWRmVeSWpSXmKPExsWy7bCmga6z//VYgxMtIhaHH09it2hevJ7N
+        YuXqo0wWW29JW1y/e4vZYs/ekywWl3fNYbP4P+s5q8X/Ny0sFlv+HWG1uPT+A4sDt8fOWXfZ
+        PfbPXcPusftmA5tH35ZVjB7rt1xl8dh8utrj8yY5j0Pb37B53H62jSWAMyrHJiM1MSW1SCE1
+        Lzk/JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8xN9VWycUnQNctMwfoWCWFssScUqBQQGJxsZK+
+        nU1RfmlJqkJGfnGJrVJqQUpOgaFBgV5xYm5xaV66XnJ+rpWhgYGRKVBlQk7G6tM/2Au+sVfs
+        P3iQsYHxJnsXIyeHhICJxMTTU4BsLg4hgR2MEmfOXmCFcD4xSkx8fYIRwvnGKLHv7VxWmJZv
+        ezYxQST2MkpsuHwGqv8Vo8Spj6uZQKrYBHQl/v3ZzwZiiwjoSUx6cxhsLrPATGaJIy/PsoAk
+        OAWsJI68PwvUwMEhLGArsacjDCTMIqAq8frebmYQm1fAUuJx910oW1Di5MwnYK3MAtoSyxa+
+        Zoa4SEFix9nXjBC73CRO9F5gg6gRkZjd2QZVs4xdYuYjfwjbRWLfpf9Q3whLvDq+BRoYUhIv
+        +9vYQc6REKiW+LgfqrWDUeLFd1sI21ji5voNrCAlzAKaEut36UOEFSV2/p7LCLGVT+Ld1x5W
+        iCm8Eh1tQhAlqhJ9lw4zQdjSEl3tH9gnMCrNQvLXLCR/zUJy/yyEZQsYWVYxiqUWFOempxYb
+        Fpggx/UmRnA61rLYwbjnnM8hRgEORiUe3gnl12KFWBPLiitzDzFKcDArifDuuX4lVog3JbGy
+        KrUoP76oNCe1+BCjKTDYJzJLiSbnA3NFXkm8oamRsbGxhYmZuZmpsZI4L8ePi7FCAumJJanZ
+        qakFqUUwfUwcnFINjLsPhx3VZHnX4hJ/ZfXjqWcWdBsvuiVxmks3f7LKmhXnDaXsDpVlKyxU
+        rH399ubKx48SK/asPh89f+Kd0iKGDTfPtrV7v7De32ixeMlD095JGjk2T95M1nxSU8Ewr+Tw
+        gye3/7VvqpZ1tpCZFf3nb8iCcvcl/7YHll6pV3zvKz+vqSPdXmcZ83YlluKMREMt5qLiRAAe
+        1t2x3QMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGIsWRmVeSWpSXmKPExsWy7bCSnK6D//VYg/+HjC0OP57EbtG8eD2b
+        xcrVR5kstt6Strh+9xazxZ69J1ksLu+aw2bxf9ZzVov/b1pYLLb8O8Jqcen9BxYHbo+ds+6y
+        e+yfu4bdY/fNBjaPvi2rGD3Wb7nK4rH5dLXH501yHoe2v2HzuP1sG0sAZxSXTUpqTmZZapG+
+        XQJXRtPj50wF31gq5h04zNzAeJS5i5GTQ0LAROLbnk1MXYxcHEICuxklLrfugEpISxw7cQbI
+        5gCyhSUOHy6GqHnBKNF7/D0jSA2bgK7Evz/72UBsEQE9iUlvDrOCFDELLGSWODdnAiNEx1tG
+        iaNtu1hAqjgFrCSOvD/LBDJVWMBWYk9HGEiYRUBV4vW93WCLeQUsJR5334WyBSVOznwC1sos
+        oC3R+7CVEcZetvA11KEKEjvOvmaEOMJN4kTvBTaIGhGJ2Z1tzBMYhWchGTULyahZSEbNQtKy
+        gJFlFaNkakFxbnpusWGBUV5quV5xYm5xaV66XnJ+7iZGcGxqae1gPHEi/hCjAAejEg/vhPJr
+        sUKsiWXFlbmHGCU4mJVEePdcvxIrxJuSWFmVWpQfX1Sak1p8iFGag0VJnFc+/1ikkEB6Yklq
+        dmpqQWoRTJaJg1OqgbH+koXwe9HsVUc+rlxW7iX/uzv85/qHPGqJshMbK1uqlrZoNM3yruNt
+        7TTYuVYtsH5NUYJl5od7TueFNu2sDpaYd/tdmOwdyRXHvv73M+CouLE3dUZw45aV9Zs5Zsyq
+        3fPu5bQbcXN7Mh6uyP65MeLfz0Id30cbueae1PA5dMbZXDd7d8DSlw5KLMUZiYZazEXFiQBG
+        0Cl6yQIAAA==
+X-CMS-MailID: 20191122030016epcas1p13fc5d28cd56527a4d760758bae1b9e3e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20191121052917epcas1p259b8cb61ab86975cabc0cf4815a8dc38
+References: <20191121052618.31117-1-namjae.jeon@samsung.com>
+        <CGME20191121052917epcas1p259b8cb61ab86975cabc0cf4815a8dc38@epcas1p2.samsung.com>
+        <20191121052618.31117-5-namjae.jeon@samsung.com>
+        <498a958f-9066-09c6-7240-114234965c1a@web.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/21/19 1:54 AM, Jan Kara wrote:
-> On Thu 21-11-19 00:29:59, John Hubbard wrote:
->>>
->>> Otherwise this looks fine and might be a worthwhile cleanup to feed
->>> Andrew for 5.5 independent of the gut of the changes.
->>>
->>> Reviewed-by: Christoph Hellwig <hch@lst.de>
->>>
->>
->> Thanks for the reviews! Say, it sounds like your view here is that this
->> series should be targeted at 5.6 (not 5.5), is that what you have in mind?
->> And get the preparatory patches (1-9, and maybe even 10-16) into 5.5?
-> 
-> One more note :) If you are going to push pin_user_pages() interfaces
-> (which I'm fine with), it would probably make sense to push also the
-> put_user_pages() -> unpin_user_pages() renaming so that that inconsistency
-> in naming does not exist in the released upstream kernel.
-> 
-> 								Honza
-
-Yes, that's what this patch series does. But I'm not sure if "push" here
-means, "push out: defer to 5.6", "push (now) into 5.5", or "advocate for"?
-
-I will note that it's not going to be easy to rename in one step, now
-that this is being split up. Because various put_user_pages()-based items
-are going into 5.5 via different maintainer trees now. Probably I'd need
-to introduce unpin_user_page() alongside put_user_page()...thoughts?
-
-thanks,
--- 
-John Hubbard
-NVIDIA
-  
+>=20
+> =E2=80=A6=0D=0A>=20>=20+++=20b/fs/exfat/dir.c=0D=0A>=20=E2=80=A6=0D=0A>=
+=20>=20+static=20int=20exfat_readdir(struct=20inode=20*inode,=20struct=20ex=
+fat_dir_entry=0D=0A>=20*dir_entry)=0D=0A>=20>=20+=7B=0D=0A>=20=E2=80=A6=0D=
+=0A>=20>=20+=09=09=09if=20(=21ep)=20=7B=0D=0A>=20>=20+=09=09=09=09ret=20=3D=
+=20-EIO;=0D=0A>=20>=20+=09=09=09=09goto=20free_clu;=0D=0A>=20>=20+=09=09=09=
+=7D=0D=0A>=20=0D=0A>=20How=20do=20you=20think=20about=20to=20move=20a=20bit=
+=20of=20common=20exception=20handling=20code=0D=0A>=20(at=20similar=20place=
+s)?=0D=0ANot=20sure=20it=20is=20good.=20Other=20review=20comments=20are=20o=
+kay.=20Will=20fix=20them=20on=20v5.=0D=0A>=20=0D=0A>=20+=09=09=09if=20(=21e=
+p)=0D=0A>=20+=09=09=09=09goto=20e_io;=0D=0A>=20=0D=0A>=20=0D=0A>=20=E2=80=
+=A6=0D=0A>=20>=20+free_clu:=0D=0A>=20>=20+=09kfree(clu);=0D=0A>=20>=20+=09r=
+eturn=20ret;=0D=0A>=20=0D=0A>=20+=0D=0A>=20+e_io:=0D=0A>=20+=09ret=20=3D=20=
+-EIO;=0D=0A>=20+=09goto=20free_clu;=0D=0A>=20=0D=0A>=20>=20+=7D=0D=0A=0D=0A
