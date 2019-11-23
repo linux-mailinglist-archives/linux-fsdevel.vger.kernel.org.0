@@ -2,108 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD712107D43
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2019 07:04:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15DBB107E43
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2019 12:51:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726357AbfKWGEy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 23 Nov 2019 01:04:54 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45078 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725800AbfKWGEy (ORCPT
+        id S1726487AbfKWLvz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 23 Nov 2019 06:51:55 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60924 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726451AbfKWLvz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 23 Nov 2019 01:04:54 -0500
-Received: by mail-pg1-f193.google.com with SMTP id k1so4459490pgg.12;
-        Fri, 22 Nov 2019 22:04:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TsdUFXwI/NP2wCqkX0MN5IOUKQLHKe3NYK3DcrYEplg=;
-        b=BarH2V7KScDfJ35roVlDpHTUNpffubJ6bLIiIV0K/HjRI+FB2siuPWtDyd7OJbpWYH
-         HFPMkkGJbTYuumJXsnFEpC742yl06X6jF5nQeHj+GzXA31hDl8w2+/Xc7tR9h1RLx1zl
-         3vlQEKUfgJgzyM+QzBCyoIec7HeVAGny8Qj6iKim6bb8WPaKi60pXX1K7OqaEJiZYo9n
-         gtwFcy5hFhpGFcpGcn410sK+xQOupsh9q96hVagA4XqYCBXnw9OdBRLvwmK94N2u4INC
-         Ex0TlnOWUfv6aJ27DtBXsMfKRM806/99WOU5FLmIUmLnKujIQE1z0uWyWEF8v0b07iLx
-         ofnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TsdUFXwI/NP2wCqkX0MN5IOUKQLHKe3NYK3DcrYEplg=;
-        b=oE4zFdoQclarr+M800dly9tqYTRrgH+dbTDw72IypHsJU2PUu7X+nCY5a6RXSfi4Br
-         WT/APFz44pqmUQOzBE/987IhbStbBZXcjDj029lyH0eQshzqq6EfcI+iI/dsjzJ/c6dy
-         xzSSWiq6MZOZaFUmLgimpVIwyhaUoweFYF6umGm4fiXM+kj/M943xhkmL4cltaCHX9jE
-         x/j+W/BQg1pzD/s5vz1V/wE6mtB/4MMLwWwWAieehaM/5yaMLCtP48xRnKgEtinuQJ/V
-         c+kvKt4je3VMsIvlmv+pYWzbSy9hNlLMIj67oH1kALVjFa9PozTM03dpjnlsqJQug0wA
-         6pgg==
-X-Gm-Message-State: APjAAAUlSZmXk3SGzlKS5EwrLS5VQGZWTzj5u20Ca7+23z3efcqYc++T
-        QdoDP8WsuPENWxQun1j6Dn6Vz4mv
-X-Google-Smtp-Source: APXvYqyzVoJjxeaiIH9Tlb2xf/uDwkkld0NHCsYVPG4ngmXhToskMjtYdJGXNSEWq30XVq0DDt4g+Q==
-X-Received: by 2002:a63:4721:: with SMTP id u33mr20175746pga.159.1574489093359;
-        Fri, 22 Nov 2019 22:04:53 -0800 (PST)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::2490])
-        by smtp.gmail.com with ESMTPSA id j21sm9409603pfa.58.2019.11.22.22.04.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Nov 2019 22:04:52 -0800 (PST)
-Date:   Fri, 22 Nov 2019 22:04:50 -0800
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Wenbo Zhang <ethercflow@gmail.com>, bpf@vger.kernel.org,
-        ast@kernel.org.com, daniel@iogearbox.net, yhs@fb.com,
-        andrii.nakryiko@gmail.com, netdev@vger.kernel.org,
+        Sat, 23 Nov 2019 06:51:55 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xANBpf3l092580
+        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Nov 2019 06:51:54 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2wf265tr11-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Sat, 23 Nov 2019 06:51:54 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
+        Sat, 23 Nov 2019 11:51:52 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 23 Nov 2019 11:51:50 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xANBpnYK58458236
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 23 Nov 2019 11:51:49 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1A23F5204F;
+        Sat, 23 Nov 2019 11:51:49 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.199.55.140])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id BC07652050;
+        Sat, 23 Nov 2019 11:51:47 +0000 (GMT)
+Subject: Re: [RFCv3 2/4] ext4: Add ext4_ilock & ext4_iunlock API
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>, jack@suse.cz,
+        tytso@mit.edu, linux-ext4@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH bpf-next v10 1/2] bpf: add new helper get_file_path for
- mapping a file descriptor to a pathname
-Message-ID: <20191123060448.7crcqwkfmbq3gsze@ast-mbp.dhcp.thefacebook.com>
-References: <cover.1574162990.git.ethercflow@gmail.com>
- <e8b1281b7405eb4b6c1f094169e6efd2c8cc95da.1574162990.git.ethercflow@gmail.com>
- <20191123031826.j2dj7mzto57ml6pr@ast-mbp.dhcp.thefacebook.com>
- <20191123045151.GH26530@ZenIV.linux.org.uk>
- <20191123051919.dsw7v6jyad4j4ilc@ast-mbp.dhcp.thefacebook.com>
- <20191123053514.GJ26530@ZenIV.linux.org.uk>
+References: <20191120050024.11161-1-riteshh@linux.ibm.com>
+ <20191120050024.11161-3-riteshh@linux.ibm.com>
+ <20191120112339.GB30486@bobrowski>
+ <20191120121831.9639B42047@d06av24.portsmouth.uk.ibm.com>
+ <20191120163500.GT20752@bombadil.infradead.org>
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+Date:   Sat, 23 Nov 2019 17:21:46 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191123053514.GJ26530@ZenIV.linux.org.uk>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <20191120163500.GT20752@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19112311-0008-0000-0000-0000033682B2
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19112311-0009-0000-0000-00004A55B2F5
+Message-Id: <20191123115147.BC07652050@d06av21.portsmouth.uk.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-23_02:2019-11-21,2019-11-23 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ mlxscore=0 adultscore=0 clxscore=1015 malwarescore=0 lowpriorityscore=0
+ suspectscore=0 phishscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=734
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
+ definitions=main-1911230098
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 23, 2019 at 05:35:14AM +0000, Al Viro wrote:
-> On Fri, Nov 22, 2019 at 09:19:21PM -0800, Alexei Starovoitov wrote:
-> 
-> > hard to tell. It will be run out of bpf prog that attaches to kprobe or
-> > tracepoint. What is the concern about locking?
-> > d_path() doesn't take any locks and doesn't depend on any locks. Above 'if'
-> > checks that plain d_path() is used and not some specilized callback with
-> > unknown logic.
-> 
-> It sure as hell does.  It might end up taking rename_lock and/or mount_lock
-> spinlock components.  It'll try not to, but if the first pass ends up with
-> seqlock mismatch, it will just grab the spinlock the second time around.
 
-ohh. got it. I missed _or_lock() part in there.
-The need_seqretry() logic is tricky. afaics there is no way for the checks
-outside of prepend_path() to prevent spin_lock to happen. And adding a flag to
-prepend_path() to return early if retry is needed is too ugly. So this helper
-won't be safe to be run out of kprobe. But if we allow it for tracepoints only
-it should be ok. I think. There are no tracepoints in inner guts of vfs and I
-don't think they will ever be. So running in tracepoint->bpf_prog->d_path we
-will be sure that rename_lock+mount_lock can be safely spinlocked. Am I missing
-something?
 
-> > > with this number; quite possibly never before that function had been called
-> > > _and_ not once after it has returned.
-> > 
-> > Right. TOCTOU is not a concern here. It's tracing. It's ok for full path to be
-> > 'one time deal'.
+On 11/20/19 10:05 PM, Matthew Wilcox wrote:
+> On Wed, Nov 20, 2019 at 05:48:30PM +0530, Ritesh Harjani wrote:
+>> Not against your suggestion here.
+>> But in kernel I do see a preference towards object followed by a verb.
+>> At least in vfs I see functions like inode_lock()/unlock().
+>>
+>> Plus I would not deny that this naming is also inspired from
+>> xfs_ilock()/iunlock API names.
 > 
-> It might very well be a full path of something completely unrelated to what
-> the syscall ends up operating upon.  It's not that the file might've been
-> moved; it might be a different file.  IOW, results of that tracing might be
-> misleading.
+> I see those names as being "classical Unix" heritage (eh, maybe SysV).
+> 
+>> hmm, it was increasing the name of the macro if I do it that way.
+>> But that's ok. Is below macro name better?
+>>
+>> #define EXT4_INODE_IOLOCK_EXCL		(1 << 0)
+>> #define EXT4_INODE_IOLOCK_SHARED	(1 << 1)
+> 
+> In particular, Linux tends to prefer read/write instead of
+> shared/exclusive terminology.  rwlocks, rwsems, rcu_read_lock, seqlocks.
+> shared/exclusive is used by file locks.  And XFS ;-)
+> 
+> I agree with Jan; just leave them opencoded.
 
-That is correct. Tracing is fine with such limitation. Still better than probe_read.
+Sure.
+
+> 
+> Probably worth adding inode_lock_downgrade() to fs.h instead of
+> accessing i_rwsem directly.
+> 
+
+Yup, make sense. but since this series is independent of that change,
+let me add that as a separate patch after this series.
+
+
+Thanks for the review!!
+-ritesh
 
