@@ -2,74 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C225F107C58
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2019 02:56:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E4A4107C6C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Nov 2019 03:27:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726401AbfKWB4S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Nov 2019 20:56:18 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:41279 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbfKWB4S (ORCPT
+        id S1726704AbfKWC1B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Nov 2019 21:27:01 -0500
+Received: from mail-il1-f200.google.com ([209.85.166.200]:44092 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725962AbfKWC1B (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Nov 2019 20:56:18 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 94so7876646oty.8;
-        Fri, 22 Nov 2019 17:56:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=fY97mssNbAeaJnSeJ7M7A2khmxP4s+EvF0WZGzWhLEg=;
-        b=HpS9wGU0jSPTrbPJM8uiVLTycsT5dAMsJVw5oViQrC7O+wTxxLq6a9cBg7HyTCwITf
-         2MPSHRoa9M4VfdZaQfiq3vUSjvqwSVu8SRaym9QdYlkzBv04y2stu80uyRZwCN6kGQNH
-         OcLljOxoAkJ07ygSHPAnt7OT+EMh9SaUZoS/K4w/UkhzQ3YzdHGxWuAlSIScLQ/RXmBI
-         rF9svIaX2/9sZkmASBDYGgXr0tUGTh+2w2/GCjuBzqBSW/HfYg3bMo6gJXGlL7sYCxiG
-         gJwH9plzNFXjGlyzQ+wAKJkkVu7Pt/72Falw1bebhmiGLNiEhbKSC+TK4iGw5ow/8B6R
-         IJYA==
+        Fri, 22 Nov 2019 21:27:01 -0500
+Received: by mail-il1-f200.google.com with SMTP id b12so7926927iln.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Nov 2019 18:27:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=fY97mssNbAeaJnSeJ7M7A2khmxP4s+EvF0WZGzWhLEg=;
-        b=WMsVBVmc7wCCN+H+9GUz2f/g0Y3/wBO3M/3j3ezkLMIIBDb0AHRRUO1UzCeJwgEeI6
-         5HG1IOlDJolXmyRAFfXsTdXy9P7PFjMI+pWdfszq0oRCjzoOoGreEEjXq0trb0KVut1o
-         7HE2nj/CdjD5sDiilN56AGHx5OXuP8NwuQbmslq9JXU/9PkdOuX0LBm4CxYsdb+AH9LU
-         oorCSPESOy0OZuDDX0RVZrZbjTAsHutIi/Ic1xdLjBYS4cnMvY/N84AHkJS1egGuZ2FB
-         a5qMHKY8dRY5OEHNSTdad0zBrj61IMYOSoj/Q5qnid32u5RqWOEDn8l85+f/JLghV6F1
-         VlqQ==
-X-Gm-Message-State: APjAAAWkKsgWunYSJhZXI0tKRvp32PvuDxCq4v6h7o7mKbXyxEuP9Nb6
-        CNS1mWmAMfiDjSvkoBGB5yPEhNPsded//2dO7fU=
-X-Google-Smtp-Source: APXvYqweuiDUAqKWWbHjUkQuHpDpE/vKYacYjR0QWYtVdKG+sYvDCaZENumf/zswBUvwMqXy8bBmlP7Oh1bdxLjuIbY=
-X-Received: by 2002:a9d:66a:: with SMTP id 97mr13128755otn.114.1574474177107;
- Fri, 22 Nov 2019 17:56:17 -0800 (PST)
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=AXD7gA5IclP9MlEfBt3hOECjOVr1z7Xrb3xxCpv2mBI=;
+        b=LOc94rV6ca8QUsT6kXIspMa1VzagXKHuKffhgE9UeHlJKRU3dSEBXT843vPIHdDo8U
+         hxWIDtCFMHelUntJ9WrkeR2d1Xqi2dEoGevzpxRs7qF/i06TQ7p9+vQKwuL9yC44gEKr
+         eA3vDI1AcKXq21zFIu/y35S59hokszL2pIdv845K55vNR+d1pYGrL6JT0hYUt8pXD1Qk
+         juNUTMsXfNX0HHGVw4u5st0hen/rxEWk63gQsfe2oTEQV9TgeDHOp+hIzlixe24KYgwq
+         uDhXinX9spNKpl14VLDX6Q7zoQbE8Qfm3X3bGomrPVdWzxpeNkh3v0ePRecWPjuQYWLw
+         p3tA==
+X-Gm-Message-State: APjAAAXJx/PuCMnzHS+xVJt90V7bJ80L767KwX1ACxALukgkDX5jExgi
+        WZAzOks6YAaNjQckTHfR/etG17hMlEg13/Rjy8d62a6mRPNU
+X-Google-Smtp-Source: APXvYqw+zwi8wEAChrZq2ZVReXjmVskvTdckaXjZ2KbBA0nnhxgLvaWwwG2piW1E9CjkkowM30p50xw7NE0F2nHtTiaknnYm/gUD
 MIME-Version: 1.0
-Received: by 2002:ac9:3c4a:0:0:0:0:0 with HTTP; Fri, 22 Nov 2019 17:56:16
- -0800 (PST)
-In-Reply-To: <20191122170202.GE26530@ZenIV.linux.org.uk>
-References: <20191119093718.3501-1-namjae.jeon@samsung.com>
- <CGME20191119094021epcas1p16e9ebb9fd8a1b25c64b09899a31988b9@epcas1p1.samsung.com>
- <20191119093718.3501-4-namjae.jeon@samsung.com> <20191122170202.GE26530@ZenIV.linux.org.uk>
-From:   Namjae Jeon <linkinjeon@gmail.com>
-Date:   Sat, 23 Nov 2019 10:56:16 +0900
-Message-ID: <CAKYAXd_FqMxUE2VtsASMcwNdMF+4wGkzkF0gRPSpKOkZYGYomg@mail.gmail.com>
-Subject: Re: [PATCH v3 03/13] exfat: add inode operations
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        Markus.Elfring@web.de, sj1557.seo@samsung.com, dwagner@suse.de
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a92:bb95:: with SMTP id x21mr20040816ilk.128.1574476020687;
+ Fri, 22 Nov 2019 18:27:00 -0800 (PST)
+Date:   Fri, 22 Nov 2019 18:27:00 -0800
+In-Reply-To: <000000000000d03eea0571adfe83@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ebac4d0597fa4340@google.com>
+Subject: Re: possible deadlock in mnt_want_write
+From:   syzbot <syzbot+ae82084b07d0297e566b@syzkaller.appspotmail.com>
+To:     amir73il@gmail.com, ast@kernel.org, dvyukov@google.com,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        mszeredi@redhat.com, rgoldwyn@suse.de,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        zohar@linux.ibm.com, zohar@linux.vnet.ibm.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2019-11-23 2:02 GMT+09:00, Al Viro <viro@zeniv.linux.org.uk>:
-> On Tue, Nov 19, 2019 at 04:37:08AM -0500, Namjae Jeon wrote:
->> This adds the implementation of inode operations for exfat.
->
-> Could you explain where is ->d_time ever read?
-Oops, That's leftover from the clean-up that use d_fsdata instead of ->d_time.
-Will remove it on next version.
+syzbot has bisected this bug to:
 
-Thanks for review!
->
+commit 8e54cadab447dae779f80f79c87cbeaea9594f60
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Sun Nov 27 01:05:42 2016 +0000
+
+     fix default_file_splice_read()
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15147a36e00000
+start commit:   6d906f99 Merge tag 'arm64-fixes' of git://git.kernel.org/p..
+git tree:       upstream
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=17147a36e00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=13147a36e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=856fc6d0fbbeede9
+dashboard link: https://syzkaller.appspot.com/bug?extid=ae82084b07d0297e566b
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=111767b7200000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1611ab2d200000
+
+Reported-by: syzbot+ae82084b07d0297e566b@syzkaller.appspotmail.com
+Fixes: 8e54cadab447 ("fix default_file_splice_read()")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
