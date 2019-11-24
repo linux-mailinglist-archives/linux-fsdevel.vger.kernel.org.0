@@ -2,84 +2,283 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A42E108514
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2019 22:14:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CD3210851B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2019 22:34:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727091AbfKXVOS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 24 Nov 2019 16:14:18 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:41505 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726840AbfKXVOR (ORCPT
+        id S1726907AbfKXVeV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 24 Nov 2019 16:34:21 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:52718 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726840AbfKXVeV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 24 Nov 2019 16:14:17 -0500
-Received: by mail-io1-f66.google.com with SMTP id z26so10410952iot.8;
-        Sun, 24 Nov 2019 13:14:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0e1h0bmFBv4pGulW4oyFQcIH6yM8oTNM6xO610ks6Qo=;
-        b=Y1D4bSLhHXiVhG1ezWmTDEQ0K4pBJIJ+JLL8YxU5szSurT4IInpJ2wfogUBy8sJbV4
-         kb9VJY3DaeeUTxtRg8KyS80kkacxGky2v3v5FIMB7a7ieZnkQNwk2YEJJ+aErpJfX94z
-         AISZgnbLzVzeSBM8gIeRt/4pDdQ4+1pONDYJmV/nztTPrsKK8UjSfn+Ca95nvffNPkxs
-         Wx7oOSWeBtmyP1U83gDaYJcO7ymnhhjIekrZNReoiXXfnSkUGzOgK3sv5Ihc6E/9s7J8
-         JSnColw98tP0Y2QspRZEMrkugeLy6KyN9rcQncW35noFGEL0ncGHeTsG8K8+mt7otIgt
-         D3aA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0e1h0bmFBv4pGulW4oyFQcIH6yM8oTNM6xO610ks6Qo=;
-        b=AblDzoEYCYuhHx3mgj6QcK9VHqkCcVCO0BBnDTtiqeEqrFv/bktrBWdHVscqSMcRpl
-         e8OY64hzgionk1e5xQAMBWgM9A1KDfB4Y9RlOd4ID1LYwFzmPren+3og0JMjzp8mUX48
-         iy5NP/P14ZVbY/wIVSEbSyk+3fmnsFhy8c174f2nwmZEgOCbwbkNrAI6Mixtww3XkCZY
-         Q9bUzBbCOFhxo845nBCObenQoUv8hTfg1URHGbqk9KX5UAdl33t0gn5j7zr9QT1p99Cx
-         nlhORwIwZP19/4EHhDshimg+x+LXnL/5QM3tStaaHYf8MjeKaVensb0LV+wkRrtTsaw4
-         zEIQ==
-X-Gm-Message-State: APjAAAWCL7IAlB/+UZBpbikJZ5NyDEnjdjTPNfEFwNpheRQzk2XV8/XO
-        sDGFUyo3PFqjywzBuql2ws/P/hbUNY8iwiYOby0=
-X-Google-Smtp-Source: APXvYqwzbZxJYV6JfYOYDA2sbuggdt1UO6BCHSrUH+SS4dLjTaiD0BVRe1zth55ZTUk9u2jUG+VJS7rxU7h36QyhKZo=
-X-Received: by 2002:a5e:8d0b:: with SMTP id m11mr24630045ioj.81.1574630056408;
- Sun, 24 Nov 2019 13:14:16 -0800 (PST)
-MIME-Version: 1.0
-References: <20191124193145.22945-1-amir73il@gmail.com> <20191124194934.GB4203@ZenIV.linux.org.uk>
- <CAOQ4uxjsOM+th1f4=wss4SCrwueUYuVT0FKX0GxtmHBG2juw+A@mail.gmail.com>
-In-Reply-To: <CAOQ4uxjsOM+th1f4=wss4SCrwueUYuVT0FKX0GxtmHBG2juw+A@mail.gmail.com>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Sun, 24 Nov 2019 13:14:04 -0800
-Message-ID: <CABeXuvr3Xm+++hpo38jJLY_ZpELURV5p=egyAN9X6RtoDsm2JQ@mail.gmail.com>
-Subject: Re: [PATCH] utimes: Clamp the timestamps in notify_change()
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+        Sun, 24 Nov 2019 16:34:21 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iYzWJ-0007zX-VF; Sun, 24 Nov 2019 21:34:16 +0000
+Date:   Sun, 24 Nov 2019 21:34:15 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
         Jeff Layton <jlayton@kernel.org>,
         "J . Bruce Fields" <bfields@fieldses.org>,
         Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
         overlayfs <linux-unionfs@vger.kernel.org>,
         Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
         y2038 Mailman List <y2038@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] utimes: Clamp the timestamps in notify_change()
+Message-ID: <20191124213415.GD4203@ZenIV.linux.org.uk>
+References: <20191124193145.22945-1-amir73il@gmail.com>
+ <20191124194934.GB4203@ZenIV.linux.org.uk>
+ <CABeXuvqZUK4UMLA=hU5i9r0k6G7E+RCi58Om-KVeZuA3OjL4fA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABeXuvqZUK4UMLA=hU5i9r0k6G7E+RCi58Om-KVeZuA3OjL4fA@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Nov 24, 2019 at 12:50 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Sun, Nov 24, 2019 at 9:49 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > On Sun, Nov 24, 2019 at 09:31:45PM +0200, Amir Goldstein wrote:
-> > > Push clamping timestamps down the call stack into notify_change(), so
-> > > in-kernel callers like nfsd and overlayfs will get similar timestamp
-> > > set behavior as utimes.
-> >
-> > Makes sense; said that, shouldn't we go through ->setattr() instances and
-> > get rid of that there, now that notify_change() is made to do it?
-> >
->
-> Sounds reasonable. But I'd rather leave this cleanup to Deepa,
-> who did all this work.
+On Sun, Nov 24, 2019 at 01:13:50PM -0800, Deepa Dinamani wrote:
 
-Thanks, I can post a patch for this.
+> We also want to replace all uses of timespec64_trunc() with
+> timestamp_truncate() for all fs cases.
+> 
+> In that case we have a few more:
+> 
+> fs/ceph/mds_client.c:   req->r_stamp = timespec64_trunc(ts,
+> mdsc->fsc->sb->s_time_gran);
 
--Deepa
+Umm... That comes from ktime_get_coarse_real_ts64(&ts);
+
+> fs/cifs/inode.c:        fattr->cf_mtime =
+> timespec64_trunc(fattr->cf_mtime, sb->s_time_gran);
+ktime_get_real_ts64(&fattr->cf_mtime) here
+
+> fs/cifs/inode.c:                fattr->cf_atime =
+> timespec64_trunc(fattr->cf_atime, sb->s_time_gran);
+ditto
+
+> fs/fat/misc.c:                  inode->i_ctime =
+> timespec64_trunc(*now, 10000000);
+
+I wonder... some are from setattr, some (with NULL passed to fat_truncate_time())
+from current_time()...  Wouldn't it make more sense to move the truncation into
+the few callers that really need it (if any)?  Quite a few of those are *also*
+getting the value from current_time(), after all.  fat_fill_inode() looks like
+the only case that doesn't fall into these classes; does it need truncation?
+
+BTW, could we *please* do something about fs/inode.c:update_time()?  I mean,
+sure, local variable shadows file-scope function, so it's legitimate C, but
+this is not IOCCC and having a function called 'update_time' end with
+        return update_time(inode, time, flags);
+is actively hostile towards casual readers...
+
+> fs/fat/misc.c:                  inode->i_ctime =
+> fat_timespec64_trunc_2secs(*now);
+> fs/fat/misc.c:          inode->i_mtime = fat_timespec64_trunc_2secs(*now);
+> fs/ubifs/sb.c:  ts = timespec64_trunc(ts, DEFAULT_TIME_GRAN);
+> 
+> These do not follow from notify_change(), so these might still need
+> timestamp_truncate() exported.
+> I will post a cleanup series for timespec64_trunc() also, then we can decide.
+
+What I've got right now is
+
+commit 6d13412e2b27970810037f7b1b418febcd7013aa
+Author: Amir Goldstein <amir73il@gmail.com>
+Date:   Sun Nov 24 21:31:45 2019 +0200
+
+    utimes: Clamp the timestamps in notify_change()
+    
+    Push clamping timestamps into notify_change(), so in-kernel
+    callers like nfsd and overlayfs will get similar timestamp
+    set behavior as utimes.
+    
+    AV: get rid of clamping in ->setattr() instances; we don't need
+    to bother with that there, with notify_change() doing normalization
+    in all cases now (it already did for implicit case, since current_time()
+    clamps).
+    
+    Suggested-by: Miklos Szeredi <mszeredi@redhat.com>
+    Fixes: 42e729b9ddbb ("utimes: Clamp the timestamps before update")
+    Cc: stable@vger.kernel.org # v5.4
+    Cc: Deepa Dinamani <deepa.kernel@gmail.com>
+    Cc: Jeff Layton <jlayton@kernel.org>
+    Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+
+diff --git a/fs/attr.c b/fs/attr.c
+index df28035aa23e..b4bbdbd4c8ca 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -183,18 +183,12 @@ void setattr_copy(struct inode *inode, const struct iattr *attr)
+ 		inode->i_uid = attr->ia_uid;
+ 	if (ia_valid & ATTR_GID)
+ 		inode->i_gid = attr->ia_gid;
+-	if (ia_valid & ATTR_ATIME) {
+-		inode->i_atime = timestamp_truncate(attr->ia_atime,
+-						  inode);
+-	}
+-	if (ia_valid & ATTR_MTIME) {
+-		inode->i_mtime = timestamp_truncate(attr->ia_mtime,
+-						  inode);
+-	}
+-	if (ia_valid & ATTR_CTIME) {
+-		inode->i_ctime = timestamp_truncate(attr->ia_ctime,
+-						  inode);
+-	}
++	if (ia_valid & ATTR_ATIME)
++		inode->i_atime = attr->ia_atime;
++	if (ia_valid & ATTR_MTIME)
++		inode->i_mtime = attr->ia_mtime;
++	if (ia_valid & ATTR_CTIME)
++		inode->i_ctime = attr->ia_ctime;
+ 	if (ia_valid & ATTR_MODE) {
+ 		umode_t mode = attr->ia_mode;
+ 
+@@ -268,8 +262,13 @@ int notify_change(struct dentry * dentry, struct iattr * attr, struct inode **de
+ 	attr->ia_ctime = now;
+ 	if (!(ia_valid & ATTR_ATIME_SET))
+ 		attr->ia_atime = now;
++	else
++		attr->ia_atime = timestamp_truncate(attr->ia_atime, inode);
+ 	if (!(ia_valid & ATTR_MTIME_SET))
+ 		attr->ia_mtime = now;
++	else
++		attr->ia_mtime = timestamp_truncate(attr->ia_mtime, inode);
++
+ 	if (ia_valid & ATTR_KILL_PRIV) {
+ 		error = security_inode_need_killpriv(dentry);
+ 		if (error < 0)
+diff --git a/fs/configfs/inode.c b/fs/configfs/inode.c
+index 680aba9c00d5..fd0b5dd68f9e 100644
+--- a/fs/configfs/inode.c
++++ b/fs/configfs/inode.c
+@@ -76,14 +76,11 @@ int configfs_setattr(struct dentry * dentry, struct iattr * iattr)
+ 	if (ia_valid & ATTR_GID)
+ 		sd_iattr->ia_gid = iattr->ia_gid;
+ 	if (ia_valid & ATTR_ATIME)
+-		sd_iattr->ia_atime = timestamp_truncate(iattr->ia_atime,
+-						      inode);
++		sd_iattr->ia_atime = iattr->ia_atime;
+ 	if (ia_valid & ATTR_MTIME)
+-		sd_iattr->ia_mtime = timestamp_truncate(iattr->ia_mtime,
+-						      inode);
++		sd_iattr->ia_mtime = iattr->ia_mtime;
+ 	if (ia_valid & ATTR_CTIME)
+-		sd_iattr->ia_ctime = timestamp_truncate(iattr->ia_ctime,
+-						      inode);
++		sd_iattr->ia_ctime = iattr->ia_ctime;
+ 	if (ia_valid & ATTR_MODE) {
+ 		umode_t mode = iattr->ia_mode;
+ 
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 29bc0a542759..a286564ba2e1 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -751,18 +751,12 @@ static void __setattr_copy(struct inode *inode, const struct iattr *attr)
+ 		inode->i_uid = attr->ia_uid;
+ 	if (ia_valid & ATTR_GID)
+ 		inode->i_gid = attr->ia_gid;
+-	if (ia_valid & ATTR_ATIME) {
+-		inode->i_atime = timestamp_truncate(attr->ia_atime,
+-						  inode);
+-	}
+-	if (ia_valid & ATTR_MTIME) {
+-		inode->i_mtime = timestamp_truncate(attr->ia_mtime,
+-						  inode);
+-	}
+-	if (ia_valid & ATTR_CTIME) {
+-		inode->i_ctime = timestamp_truncate(attr->ia_ctime,
+-						  inode);
+-	}
++	if (ia_valid & ATTR_ATIME)
++		inode->i_atime = attr->ia_atime;
++	if (ia_valid & ATTR_MTIME)
++		inode->i_mtime = attr->ia_mtime;
++	if (ia_valid & ATTR_CTIME)
++		inode->i_ctime = attr->ia_ctime;
+ 	if (ia_valid & ATTR_MODE) {
+ 		umode_t mode = attr->ia_mode;
+ 
+diff --git a/fs/ntfs/inode.c b/fs/ntfs/inode.c
+index 6c7388430ad3..d4359a1df3d5 100644
+--- a/fs/ntfs/inode.c
++++ b/fs/ntfs/inode.c
+@@ -2899,18 +2899,12 @@ int ntfs_setattr(struct dentry *dentry, struct iattr *attr)
+ 			ia_valid |= ATTR_MTIME | ATTR_CTIME;
+ 		}
+ 	}
+-	if (ia_valid & ATTR_ATIME) {
+-		vi->i_atime = timestamp_truncate(attr->ia_atime,
+-					       vi);
+-	}
+-	if (ia_valid & ATTR_MTIME) {
+-		vi->i_mtime = timestamp_truncate(attr->ia_mtime,
+-					       vi);
+-	}
+-	if (ia_valid & ATTR_CTIME) {
+-		vi->i_ctime = timestamp_truncate(attr->ia_ctime,
+-					       vi);
+-	}
++	if (ia_valid & ATTR_ATIME)
++		vi->i_atime = attr->ia_atime;
++	if (ia_valid & ATTR_MTIME)
++		vi->i_mtime = attr->ia_mtime;
++	if (ia_valid & ATTR_CTIME)
++		vi->i_ctime = attr->ia_ctime;
+ 	mark_inode_dirty(vi);
+ out:
+ 	return err;
+diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
+index cd52585c8f4f..91362079f82a 100644
+--- a/fs/ubifs/file.c
++++ b/fs/ubifs/file.c
+@@ -1078,18 +1078,12 @@ static void do_attr_changes(struct inode *inode, const struct iattr *attr)
+ 		inode->i_uid = attr->ia_uid;
+ 	if (attr->ia_valid & ATTR_GID)
+ 		inode->i_gid = attr->ia_gid;
+-	if (attr->ia_valid & ATTR_ATIME) {
+-		inode->i_atime = timestamp_truncate(attr->ia_atime,
+-						  inode);
+-	}
+-	if (attr->ia_valid & ATTR_MTIME) {
+-		inode->i_mtime = timestamp_truncate(attr->ia_mtime,
+-						  inode);
+-	}
+-	if (attr->ia_valid & ATTR_CTIME) {
+-		inode->i_ctime = timestamp_truncate(attr->ia_ctime,
+-						  inode);
+-	}
++	if (attr->ia_valid & ATTR_ATIME)
++		inode->i_atime = attr->ia_atime;
++	if (attr->ia_valid & ATTR_MTIME)
++		inode->i_mtime = attr->ia_mtime;
++	if (attr->ia_valid & ATTR_CTIME)
++		inode->i_ctime = attr->ia_ctime;
+ 	if (attr->ia_valid & ATTR_MODE) {
+ 		umode_t mode = attr->ia_mode;
+ 
+diff --git a/fs/utimes.c b/fs/utimes.c
+index 1ba3f7883870..090739322463 100644
+--- a/fs/utimes.c
++++ b/fs/utimes.c
+@@ -36,14 +36,14 @@ static int utimes_common(const struct path *path, struct timespec64 *times)
+ 		if (times[0].tv_nsec == UTIME_OMIT)
+ 			newattrs.ia_valid &= ~ATTR_ATIME;
+ 		else if (times[0].tv_nsec != UTIME_NOW) {
+-			newattrs.ia_atime = timestamp_truncate(times[0], inode);
++			newattrs.ia_atime = times[0];
+ 			newattrs.ia_valid |= ATTR_ATIME_SET;
+ 		}
+ 
+ 		if (times[1].tv_nsec == UTIME_OMIT)
+ 			newattrs.ia_valid &= ~ATTR_MTIME;
+ 		else if (times[1].tv_nsec != UTIME_NOW) {
+-			newattrs.ia_mtime = timestamp_truncate(times[1], inode);
++			newattrs.ia_mtime = times[1];
+ 			newattrs.ia_valid |= ATTR_MTIME_SET;
+ 		}
+ 		/*
