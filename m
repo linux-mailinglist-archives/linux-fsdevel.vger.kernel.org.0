@@ -2,122 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AE8310835F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2019 14:25:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C14D610836F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2019 14:29:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726797AbfKXNZV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 24 Nov 2019 08:25:21 -0500
-Received: from mail-wm1-f51.google.com ([209.85.128.51]:53149 "EHLO
-        mail-wm1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbfKXNZV (ORCPT
+        id S1726887AbfKXN3v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 24 Nov 2019 08:29:51 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:41716 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726779AbfKXN3u (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 24 Nov 2019 08:25:21 -0500
-Received: by mail-wm1-f51.google.com with SMTP id l1so12370514wme.2;
-        Sun, 24 Nov 2019 05:25:19 -0800 (PST)
+        Sun, 24 Nov 2019 08:29:50 -0500
+Received: by mail-il1-f194.google.com with SMTP id q15so11662625ils.8
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Nov 2019 05:29:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Ht9UUup2TX0xxPIbxBhXRv5NvHEMASjnlgsqsYatr+o=;
-        b=H8rWUsvsMBuqav+SU6Org6cYDcDduGql7qBv3DIREbCjbkguuCdZJbg07eoz2FkZ8j
-         1DQiDcgu/d8GZ9IC740dNmZ2si36Ec8eBQfyVD5daq37++uQprh4G9FPwBooSJ99ydJB
-         55nCill72IuyqaE5AWNBeeuYIyZsK5Yy4qsd1Q1avZSp5/eHDIIU7rE+Av1fH+bCWMok
-         QR5y9cPLtQcj6jbEqh147d7IhgFLUhKe+y2M+jG2I5DSTiridN+lgUFUQOD7tosuuWzi
-         PpQZn7+ITS16YynTnQ5N/vF8dkKHZG+5NNw2GydLnCzP/2f6zi3fyA8T51qmWQdoN63a
-         Vm/Q==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=pI7cV3FDgc1XH+A619u5I2fUvKpFMBjQiQlWPO2Scvc=;
+        b=VvA1R91asHbC2LEqUbtvKL4TEiv3LeQrWMe7y8quWmIhCym5hrzKz1Ig2jnsGhhpg0
+         mk1tpZRvM+9p/fER4FGvhZkY46ejrfDDf+ahZ5gYXRhcaSJ7SEnPVFzHoodpYeJs5MKc
+         VO3piZh1eorbo4pT0GSTTdkUAoWH3k7JNcot4/H0Fsz2PhBl0mYlV3VFS8bqJamCKJ2t
+         i0baLYcqVgylX7Js7hjs9SN0XhPSR+Azj2K6h1fcbP1O83aXd2MMgoxfv0bbQXnN1r2o
+         L1DWGGxatmR4VO8IY8mB/rNWAiHSLYXZtgByc38K7flizV8vSxsRtE6GRGf/8MqAbWp5
+         Mgsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ht9UUup2TX0xxPIbxBhXRv5NvHEMASjnlgsqsYatr+o=;
-        b=kMmIeLTnaKZFk+QQtpNgaagGOnKSTl9ohO4JZA3WakDqEnIFx1mSstYiQCYAS2KvE8
-         ZxxatFaA0bpl/LAS8S/B7YcTVobTLz3WWIL3wR2qAAGTA/kqXMpLA+Ti43bkmqS3fbQm
-         ItSXM/U+o2O9XHuIVA+NiD5suU4o+BuketFJ/sxWh+peudQYFgDh+yKPsrGzSWdHBBus
-         BHQkhQH8SytQVNpHrqyDznCmg+3qLFa/RKGerGipW8O6DS6zv7gB4whSPJs4NTOTDfJz
-         6JbQvzQDA7V8owv4OMOZ3GJjlWH8JUIZ0GeeO9fIW/yFvTkRBpIgCK7ljAVu4NMlBsqZ
-         PdKg==
-X-Gm-Message-State: APjAAAW4ztW+bM8HLV4BGWoY52sSjlFRSqWwU8m1PI3R2gDNjt4JJpgo
-        sfrbB13KcgkYuJGNUaFPYg==
-X-Google-Smtp-Source: APXvYqw1mBrZte82t9/JtxDM7dPpYmdS4Mj0JsdsJp6Dnodj+0XQp+Q3uvxJ/0KnnAsgZh3kl2DKsw==
-X-Received: by 2002:a1c:5415:: with SMTP id i21mr25169901wmb.120.1574601919029;
-        Sun, 24 Nov 2019 05:25:19 -0800 (PST)
-Received: from avx2 ([46.53.250.34])
-        by smtp.gmail.com with ESMTPSA id b2sm6150871wrr.76.2019.11.24.05.25.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Nov 2019 05:25:18 -0800 (PST)
-Date:   Sun, 24 Nov 2019 16:25:13 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Chen Yu <yu.c.chen@intel.com>
-Cc:     x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Chen Yu <yu.chen.surf@gmail.com>
-Subject: Re: [PATCH][v4] x86/resctrl: Add task resctrl information display
-Message-ID: <20191124132513.GA30453@avx2>
-References: <20191122095833.20861-1-yu.c.chen@intel.com>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=pI7cV3FDgc1XH+A619u5I2fUvKpFMBjQiQlWPO2Scvc=;
+        b=RIqRcp38RXP7saJIVqoivkUoKofLP8MC6rMQeOP6tOIxs2UGgZw4lxhmwikSfeEuoZ
+         2TqeUJmq129as5ZfV78aWElaFPj8LtCqZlP9nfhUalKdgQATl0zLDkvtkhph4trTK2aL
+         PhpFl0PLzhTsG0QUhlS2dq1lsRcE+eI8BuqJWFUIsDJY6ErXTh2vPgxtoI+5gHvqwOu7
+         KfA2IXbGdYdSDpMv/PxZfpzXiYG3uHtbYLR+/IpMswlgw/lSiktfQ9LV0TQpp7oKDCZ7
+         bqz8lwO9VqNYJ6kBG2ZFzGmwF5QQdEL2e70oR+JkWSPHWkCT0EeTihnsD0Mryviiu1Yn
+         egOw==
+X-Gm-Message-State: APjAAAUDsRh6+IanNfpPXQL1nyctuqj/Jh9O0moBerUcpQldDOVF96zU
+        jhpG0zKrv7SI81vBGSnles5eVSJnHpOH8aEd6jQe5pgZ
+X-Google-Smtp-Source: APXvYqxGncSeX4U55wK9LMj4S51ArLt5C+MhppJNXdT+hNI350ZjfDfW8nkfo1nT+uTL9RqdZxRa3ATzMiejtpCdmZQ=
+X-Received: by 2002:a92:9c43:: with SMTP id h64mr6741427ili.109.1574602189774;
+ Sun, 24 Nov 2019 05:29:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191122095833.20861-1-yu.c.chen@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a4f:4fd0:0:0:0:0:0 with HTTP; Sun, 24 Nov 2019 05:29:49
+ -0800 (PST)
+Reply-To: afginvestmentbrokers@al-faisaliah.org
+From:   "Mr. Joon-Kyu Lin" <johnpfox60@gmail.com>
+Date:   Sun, 24 Nov 2019 05:29:49 -0800
+Message-ID: <CAHLmmYOhrkDdE_9==j3REj+XWHt0UmtrKa9EWeVBxbh0zbSmpA@mail.gmail.com>
+Subject: Venture Capital & Private Investors
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 22, 2019 at 05:58:33PM +0800, Chen Yu wrote:
-> Monitoring tools that want to find out which resctrl control
-> and monitor groups a task belongs to must currently read
-> the "tasks" file in every group until they locate the process
-> ID.
-> 
-> Add an additional file /proc/{pid}/resctrl to provide this
-> information.
+Attention:
 
-> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+I am an investor that can provide funding for any viable business idea or
+venture.
 
-> +		seq_printf(s, "/%s", rdtg->kn->name);
-> +		list_for_each_entry(crg, &rdtg->mon.crdtgrp_list,
-> +				    mon.crdtgrp_list) {
-> +			if (tsk->rmid != crg->mon.rmid)
-> +				continue;
-> +			seq_printf(s, "%smon_groups/%s",
-> +				   rdtg == &rdtgroup_default ? "" : "/",
-> +				   crg->kn->name);
-> +			break;
-> +		}
-> +		seq_puts(s, "\n");
-
-This should be seq_putc().
+Please do let me know if you have fund management abilities, credible
+projects in need of funding or advanced stage projects requiring Bank
+Guarantees, Loans or Partnership, Joint Venture, Equity, we would be
+delighted to work with you.
 
 
-> --- /dev/null
-> +++ b/include/linux/resctrl.h
-> @@ -0,0 +1,16 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _RESCTRL_H
-> +#define _RESCTRL_H
-> +
-> +#ifdef CONFIG_PROC_CPU_RESCTRL
-> +
-> +#include <linux/proc_fs.h>
+Best Regards,
+Mr. Joon-Kyu Lim
+Al Faisaliah Group (AFG)
+Venture Capital & Private Investors
 
-Forward declaring stuff should be more than enough.
-
-> +int proc_resctrl_show(struct seq_file *m,
-> +		      struct pid_namespace *ns,
-> +		      struct pid *pid,
-> +		      struct task_struct *tsk);
-> +
-> +#endif
-> +
-> +#endif /* _RESCTRL_H */
+--
+*This email and any attachments are intended for the named recipients only
+and contain confidential materials. Any unauthorized copying, reviewing,
+dissemination or other use by anyone other than the named recipients of
+this communication is strictly prohibited. If you received this email in
+error and/or are not a named recipient, please notify the sender (Al
+Faisaliah Group) and delete all copies of this email. Thank you.
