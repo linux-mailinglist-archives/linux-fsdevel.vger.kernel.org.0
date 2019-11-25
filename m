@@ -2,124 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 295E41090C9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 16:12:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AE9C1090CE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 16:14:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728399AbfKYPMb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Nov 2019 10:12:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40808 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728172AbfKYPMb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Nov 2019 10:12:31 -0500
-Received: from hubcapsc.localdomain (adsl-074-187-100-144.sip.mia.bellsouth.net [74.187.100.144])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7811B20740;
-        Mon, 25 Nov 2019 15:12:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574694750;
-        bh=dK/5+v9DW/csw7it9hEQJvhNqq/h2Yo7jkCBisKEIE8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=YnFp4d7TRO4mJIqRfHYGt5+t3E+BgmEnu6HFfOekUZg/rnoqy1VcE1iDvlK1qyUUZ
-         Qv+/Dh+GhssUYzJjhhcAJuwUA5y3YFywSrbhbSlo5MlXOxQw1i/J+dMbDQi6WyfPs7
-         7EZvkV94oiknPrEjUtF3XyYFJYLQnQh75gsU4fzg=
-From:   hubcap@kernel.org
-To:     torvalds@linux-foundation.org
-Cc:     Mike Marshall <hubcap@omnibond.com>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH V2] orangefs: posix open permission checking
-Date:   Mon, 25 Nov 2019 10:12:14 -0500
-Message-Id: <20191125151214.6514-1-hubcap@kernel.org>
-X-Mailer: git-send-email 2.20.1
+        id S1728390AbfKYPON (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Nov 2019 10:14:13 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:34775 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728368AbfKYPON (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 Nov 2019 10:14:13 -0500
+Received: by mail-io1-f67.google.com with SMTP id z193so16642834iof.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Nov 2019 07:14:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ALu9igSRSsKi52hn+f9OyAjdyB0mBhNXe9BnXNqIOe4=;
+        b=Uhh7wOIqPQR81MSbRooLEt8qyy+07qluJoDtNGDtuedJKTsKjd14fVckV+hyDQmbo6
+         78MPzzDXsUkzjxgRhAEm9siOrRhNZUiy8r2DTW7OWcdnHo7YHAbfbIO7lH/4mUPXSThw
+         yCn+Oo5iRpC87zL2LqOdI1JCfz+ssecH+ma6A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ALu9igSRSsKi52hn+f9OyAjdyB0mBhNXe9BnXNqIOe4=;
+        b=jrmPtvaHXaYdDKBcfoHZ+vHdlN0jyHMy36vuvd6cRhc44c6tU9crHk90jw7K+PAl//
+         BUTl3rEB3xRiP/Y5/7GPyTjrWP2PTc+e/iU6uuns6WGMpF9g4Zegu2NQAlwe9aAO0oT9
+         ZbUuAGluub70ME67BTn9XC433QZ5zBFFoMYJaiSdAupD1Bw77zEbxXg6V5DrP2q4JjC9
+         c/qG+7JfrRQiF57pb6sQ11nKC5MlMZ/lp/FzQRKmlYGyggz2qC4eUtQEUlltgXRkfIFa
+         eMBepcZJFuV7yidrT5vF2WOpRCx7VAuQdQlpdHW9yXOW9umF1jlmFKuwxyNOEUuk9qme
+         Yh6A==
+X-Gm-Message-State: APjAAAXm/Sjg8/imR04mtOhLvVqrtbAEGdL8ujOyBSgk92Rg0deIkDiI
+        ubcUYrFAKMtdoL/eheGJ5VH/h6EtqnWNRmcMMItN5g==
+X-Google-Smtp-Source: APXvYqymUw8TAznCvAM14YFrTvY36Km1p/Eylp7nwOHjzN72m1nqZQk+qCIweSmRGc14oNLOCMmjpk2sZSwXjZnmUyo=
+X-Received: by 2002:a5d:91da:: with SMTP id k26mr26131450ior.252.1574694852323;
+ Mon, 25 Nov 2019 07:14:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191025112917.22518-1-mszeredi@redhat.com> <87r231rlfj.fsf@x220.int.ebiederm.org>
+In-Reply-To: <87r231rlfj.fsf@x220.int.ebiederm.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 25 Nov 2019 16:14:01 +0100
+Message-ID: <CAJfpegt_haMDwd6jo3mQzX2vchk_LLMH+V+h4yDs7geLmo4NhA@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/5] allow unprivileged overlay mounts
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Mike Marshall <hubcap@omnibond.com>
+On Fri, Oct 25, 2019 at 3:43 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+> Miklos Szeredi <mszeredi@redhat.com> writes:
+>
+> > Hi Eric,
+> >
+> > Can you please have a look at this patchset?
+> >
+> > The most interesting one is the last oneliner adding FS_USERNS_MOUNT;
+> > whether I'm correct in stating that this isn't going to introduce any
+> > holes, or not...
+>
+> I will take some time and dig through this.
+>
+> From a robustness standpoint I worry about the stackable filesystem
+> side.  As that is uniquely an attack vector with overlayfs.
+>
+> There is definitely demand for this.
 
+Hi Eric,
 
-Here's another approach that might not be as broken...
+Have you had time to look into this yet?
 
-Orangefs has no open. Orangefs does permission
-checking each time a file is accessed. The Posix
-model is for permission checks to be done at open.
-
-This patch brings orangefs-through-the-kernel closer
-to Posix by marking inodes "opened" when they pass
-through file_operations->open and using a UID whose
-capabilities include PINT_CAP_WRITE and PINT_CAP_READ
-for IO associated with open files.
-
-I have another proof-of-concept version of this patch which sends a
-message to the userspace server to add PINT_CAP_WRITE and PINT_CAP_READ
-to whatever arbitrary UID is doing IO, in case using the
-root UID for the entire IO is not conservative enough... this
-version also requires a patch to the userspace part of Orangefs.
-
-  "root has every possible capability - PINT_get_capabilities"
-
-Signed-off-by: Mike Marshall <hubcap@omnibond.com>
----
- fs/orangefs/file.c            | 4 ++++
- fs/orangefs/inode.c           | 1 +
- fs/orangefs/orangefs-kernel.h | 1 +
- 3 files changed, 6 insertions(+)
-
-diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
-index a5612abc0936..a6de17889682 100644
---- a/fs/orangefs/file.c
-+++ b/fs/orangefs/file.c
-@@ -90,6 +90,8 @@ ssize_t wait_for_direct_io(enum ORANGEFS_io_type type, struct inode *inode,
- 		new_op->upcall.uid = from_kuid(&init_user_ns, wr->uid);
- 		new_op->upcall.gid = from_kgid(&init_user_ns, wr->gid);
- 	}
-+	if (new_op->upcall.uid && (ORANGEFS_I(inode)->opened))
-+		new_op->upcall.uid = 0;
- 
- 	gossip_debug(GOSSIP_FILE_DEBUG,
- 		     "%s(%pU): offset: %llu total_size: %zd\n",
-@@ -495,6 +497,7 @@ static int orangefs_file_release(struct inode *inode, struct file *file)
- 		     "orangefs_file_release: called on %pD\n",
- 		     file);
- 
-+	ORANGEFS_I(inode)->opened = 0;
- 	/*
- 	 * remove all associated inode pages from the page cache and
- 	 * readahead cache (if any); this forces an expensive refresh of
-@@ -618,6 +621,7 @@ static int orangefs_lock(struct file *filp, int cmd, struct file_lock *fl)
- static int orangefs_file_open(struct inode * inode, struct file *file)
- {
- 	file->private_data = NULL;
-+	ORANGEFS_I(inode)->opened = 1;
- 	return generic_file_open(inode, file);
- }
- 
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index efb12197da18..dc6ced95e888 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -1060,6 +1060,7 @@ static int orangefs_set_inode(struct inode *inode, void *data)
- 	hash_init(ORANGEFS_I(inode)->xattr_cache);
- 	ORANGEFS_I(inode)->mapping_time = jiffies - 1;
- 	ORANGEFS_I(inode)->bitlock = 0;
-+	ORANGEFS_I(inode)->opened = 0;
- 	return 0;
- }
- 
-diff --git a/fs/orangefs/orangefs-kernel.h b/fs/orangefs/orangefs-kernel.h
-index 34a6c99fa29b..0ce4a6af716d 100644
---- a/fs/orangefs/orangefs-kernel.h
-+++ b/fs/orangefs/orangefs-kernel.h
-@@ -198,6 +198,7 @@ struct orangefs_inode_s {
- 	kuid_t attr_uid;
- 	kgid_t attr_gid;
- 	unsigned long bitlock;
-+	int opened;
- 
- 	DECLARE_HASHTABLE(xattr_cache, 4);
- };
--- 
-2.20.1
-
+Thanks,
+Miklos
