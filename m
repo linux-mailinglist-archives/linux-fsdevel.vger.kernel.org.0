@@ -2,130 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9677D108B04
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 10:36:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51355108BF2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 11:42:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727367AbfKYJgF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Nov 2019 04:36:05 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:34826 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725793AbfKYJgF (ORCPT
+        id S1727468AbfKYKmJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Nov 2019 05:42:09 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:46618 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727133AbfKYKmJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Nov 2019 04:36:05 -0500
-Received: by mail-lj1-f195.google.com with SMTP id j6so5958488lja.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Nov 2019 01:36:04 -0800 (PST)
+        Mon, 25 Nov 2019 05:42:09 -0500
+Received: by mail-io1-f65.google.com with SMTP id i11so15584142iol.13
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Nov 2019 02:42:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Lltk+ABKwMzN4Q3qE+TFYH7hNAzWoOTyrBpQNHINGWg=;
-        b=pOGsDGS1zDV3Ji0L/1c0M+QXhoBqekXbOPlVWITZTZtMhTIefNFnDfdvq1VmiXPfbf
-         teEowcVmzNnApS8P56bu43c43VqftJ+caG5ytLqALGFHSUZCOIRlV1A8/+RVEIBwuAEI
-         cu/kBnw3wE2btTRTTWCz9VSZjeRAOeuskHgL4D1BbzdpssJDQyIeRK3FaZEIlFgoGOIm
-         nzKJABybFIShwvGdy9JUFpJioZ0tQ5huegi1TvIpCsQUuX2J5pKSTnZHluPLlqg2Rs8j
-         EL12ZUlwcre5plySoqzI3zcopFpHXNFi1WncaBkmxw0V9KkOWTGLJ/yCYwkp7e/3wyJ0
-         w27Q==
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=R+B/nVdafVBM5/dMhmn3bx+mejZS7Z1pG2S9hER1tbY=;
+        b=UoGRlg/aCwPzEcnNH5oLQwU1wHejhiY4zlbMgpRVenqBQYvr0oU3s1HuYXUnBOpGaZ
+         jSkG26bpnd7Z+2y621l1kUW4x2gy1WCbGVL34x+sDpMld724Yz/fQsNL/MwH4bIUORuH
+         SV2LudJzIm7OVSUNO+c8CxfBRDsByThe02Ibo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Lltk+ABKwMzN4Q3qE+TFYH7hNAzWoOTyrBpQNHINGWg=;
-        b=PqK2tdce/Bdm/JnbHvOpUXHWgqe3WDAXeJhMAGLjW0LxKoXsXGIl6eEJAgUr0xGJDr
-         k6DdTBoMFzFwzc0s8y+gbko+VHNyQfkCMHrC/BMJb2GT7VqxxA5eVPYLi00+IWa2n+LZ
-         SwA97HUvtw61WIyl2uoNXgRZ1xTggrBdqJ55dhBuO+T6bCILkXbIhHfATnvgALO5t7Qv
-         IsgO1qTPwEhNM9ciou1iLdsduIcJA3MH1PFF3BvQXJnEseBul4bK/4newFLDPA1FVBYu
-         30fJRNzwxjwPxdkNTY4vL3UBjpDGmCCinx9wov00FTVdMbVZfb7sDVUDhuJFs5mCq6XP
-         4Otg==
-X-Gm-Message-State: APjAAAVExe1pL776gHEyrIesXayPDnFX//tENOJ5kgf1Di5Fhu/RPQZV
-        ap25Qw4CrK7q/PpH0fP5GBN3yQ==
-X-Google-Smtp-Source: APXvYqxvw9ut+oWe1WULJjWqDhYOkJfFZmIR+tYdPozGStrfGODy3Zu4B71kR/bcLVYFsAgb14RoKA==
-X-Received: by 2002:a2e:84d0:: with SMTP id q16mr10206471ljh.48.1574674563554;
-        Mon, 25 Nov 2019 01:36:03 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id u67sm3581116lja.78.2019.11.25.01.36.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2019 01:36:02 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id BBB581032C4; Mon, 25 Nov 2019 12:36:11 +0300 (+03)
-Date:   Mon, 25 Nov 2019 12:36:11 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     hughd@google.com, kirill.shutemov@linux.intel.com,
-        aarcange@redhat.com, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] mm: shmem: allow split THP when truncating THP
- partially
-Message-ID: <20191125093611.hlamtyo4hvefwibi@box>
-References: <1574471132-55639-1-git-send-email-yang.shi@linux.alibaba.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=R+B/nVdafVBM5/dMhmn3bx+mejZS7Z1pG2S9hER1tbY=;
+        b=Q9u+mJMnL/r4FvfE4MLBxBRKgf1g1lErQBbT7yOTgB9c0hjCr5r3CrMm1U9wxPIS4H
+         wcyYUJ4Vmekt3YYc67UzzSj/NTc+VMJa6/Pu7W7S/lSYipO+fnVDgQKngbm56Fpp8d+S
+         nIXZMjnX4M4rlaUo/1x606fc61xUIw5d/RBUnHeiADQXIyrUFxCbXDnTAcEDFA1kdfbU
+         Q15mb0hX8pGtuRYfLU5CXjdDhbzu03wO2yMrbuERdcvodEdd2d0+wUzQSJSX2DXS9jUE
+         un6N6brpXxjqRyeToEqa19N0RM2z4Mr9IZu8ptLTXoxSr70B5vFC92NQYD5hT5a6PBob
+         2kkQ==
+X-Gm-Message-State: APjAAAW+JQ6xFGTF2TSa2NTrdhxtZeh8DZ1rkIh1a6Rk+tSNHG1/K6S+
+        TuRnjR6fZc4E/DtQGj6rGC3Cmv9dOXplzVyP4gOIaA==
+X-Google-Smtp-Source: APXvYqwCxLkdsT8rBQH9Cd/qrlw5KUr81ZdbOyC/YXzhlOlZ5vfdgNrOJPgX7JYFLYBy6AmC+NrP8lZ13cYy8QnYAh8=
+X-Received: by 2002:a5d:91da:: with SMTP id k26mr25050284ior.252.1574678528733;
+ Mon, 25 Nov 2019 02:42:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1574471132-55639-1-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: NeoMutt/20180716
+References: <20191120192655.33709-1-dwlsalmeida@gmail.com>
+In-Reply-To: <20191120192655.33709-1-dwlsalmeida@gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 25 Nov 2019 11:41:57 +0100
+Message-ID: <CAJfpegsxXJN1Z5fGzcv=+sid6gSzyD=KtA2omF2Xsx8dy00tRw@mail.gmail.com>
+Subject: Re: [PATCH v2] Documentation: filesystems: convert fuse to RST
+To:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 23, 2019 at 09:05:32AM +0800, Yang Shi wrote:
-> Currently when truncating shmem file, if the range is partial of THP
-> (start or end is in the middle of THP), the pages actually will just get
-> cleared rather than being freed unless the range cover the whole THP.
-> Even though all the subpages are truncated (randomly or sequentially),
-> the THP may still be kept in page cache.  This might be fine for some
-> usecases which prefer preserving THP.
-> 
-> But, when doing balloon inflation in QEMU, QEMU actually does hole punch
-> or MADV_DONTNEED in base page size granulairty if hugetlbfs is not used.
-> So, when using shmem THP as memory backend QEMU inflation actually doesn't
-> work as expected since it doesn't free memory.  But, the inflation
-> usecase really needs get the memory freed.  Anonymous THP will not get
-> freed right away too but it will be freed eventually when all subpages are
-> unmapped, but shmem THP would still stay in page cache.
-> 
-> To protect the usecases which may prefer preserving THP, introduce a
-> new fallocate mode: FALLOC_FL_SPLIT_HPAGE, which means spltting THP is
-> preferred behavior if truncating partial THP.  This mode just makes
-> sense to tmpfs for the time being.
+On Wed, Nov 20, 2019 at 8:34 PM Daniel W. S. Almeida
+<dwlsalmeida@gmail.com> wrote:
+>
+> From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+>
+>
+> Converts fuse.txt to reStructuredText format, improving the presentation
+> without changing much of the underlying content.
 
-We need to clarify interaction with khugepaged. This implementation
-doesn't do anything to prevent khugepaged from collapsing the range back
-to THP just after the split.
+Hmm, most of this document is *not* an admin-guide at all.  The only
+sections that really belong in that category are "What is FUSE?" and
+"Control filesystem" and maybe some of the definitions as well.   The
+mount options for fuse filesystem are not generally usable for
+actually performing a mount, most of those are actually internal
+details of the filesystem implementation.
 
-> @@ -976,8 +1022,31 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
->  			}
->  			unlock_page(page);
->  		}
-> +rescan_split:
->  		pagevec_remove_exceptionals(&pvec);
->  		pagevec_release(&pvec);
-> +
-> +		if (split && PageTransCompound(page)) {
-> +			/* The THP may get freed under us */
-> +			if (!get_page_unless_zero(compound_head(page)))
-> +				goto rescan_out;
-> +
-> +			lock_page(page);
-> +
-> +			/*
-> +			 * The extra pins from page cache lookup have been
-> +			 * released by pagevec_release().
-> +			 */
-> +			if (!split_huge_page(page)) {
-> +				unlock_page(page);
-> +				put_page(page);
-> +				/* Re-look up page cache from current index */
-> +				goto again;
-> +			}
-> +			unlock_page(page);
-> +			put_page(page);
-> +		}
-> +rescan_out:
->  		index++;
->  	}
+So I suggest leaving this file under Documentation/filesystems/ for
+now and later work towards splitting out the admin-guide parts into a
+separate document.
 
-Doing get_page_unless_zero() just after you've dropped the pin for the
-page looks very suboptimal.
-
--- 
- Kirill A. Shutemov
+Thanks,
+Miklos
