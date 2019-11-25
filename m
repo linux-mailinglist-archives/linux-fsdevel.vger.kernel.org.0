@@ -2,131 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39D47108AA5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 10:17:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7667E108AD5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 10:27:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbfKYJRg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Nov 2019 04:17:36 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45557 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726873AbfKYJRg (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Nov 2019 04:17:36 -0500
-Received: by mail-lj1-f193.google.com with SMTP id n21so14860069ljg.12
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Nov 2019 01:17:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZHZjuct0CLXN3AYcQ+YfYJz+luTtYA/oliVypF8e6hc=;
-        b=Kv+a6C+O8YeU1QaBfhf0j35CEfH/LR23KqQcSQNZ8dEsGWE2Q23YPJVaSt1OOuaLbd
-         5jBPpWKpaHfKNAEUsyutTc6kHaSoIg23DbBYqQy5weekxhj35gYoDoaifr46Yq7lW5RQ
-         mO1FmglcYhLebSjuvQ6EwuP5ZB4NPus1UBDqlh3NXwcinyYbUY4541wS9uNzZXRax1lz
-         lBxJCiPU1GZ2UM5E7rweB19wEagyR1dGyqpqvWo++g9AjoWy4VNJfxkbhzaFzDXPcaPv
-         FL9wu6KlgjOU68rQLaWeTMflE/baiE/V+KVXwhMxvwy8Us681Uhnj9vpSVntW6kQ82FD
-         c8TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZHZjuct0CLXN3AYcQ+YfYJz+luTtYA/oliVypF8e6hc=;
-        b=XcchYHilMlLVE+UmCqvQM7rxZ28fT6T1gqrubba841uZPirNzIOUOGBNEV4Njvr2Mz
-         v1zFei+WrbMarNA7IZAAr4TivTb7tnFPCRAjMCnrQmsW8frJ3H4+VyR+QL1vfaNyam3H
-         VQrkGj843hZ2X48Yf9ums6+yZnFBQqJ+SI7XcGSd/X9qDn3jFWbSkzGDFyQTOgBpU7r1
-         Gim8rYoRrH8p/RtBWQ9ori8ECjDRbbfroHO2soFgR3CwT17+I+7+mpIxtSOHSIgWwedN
-         IGRLiHvNTFUOBoL0InFq6crkMEOEFDb337b0x4LcJIszqWzdcpVyxXaANnQ65Eyag1Ey
-         N/0g==
-X-Gm-Message-State: APjAAAWM0iv2g+Ai8FYPJiBRFzLdolBosr1OnYTykQBRkJ3cyhrDgkt9
-        I/wznXhZSeOA6cNhH3OglLuX3Q==
-X-Google-Smtp-Source: APXvYqxd5dos5A6z8ycGXVe7nHwhuoFOM7ml7F4GD0vhqjvmIeNnVd78WDsUG2ScyfwFJZNDkXJSMg==
-X-Received: by 2002:a2e:760d:: with SMTP id r13mr20970401ljc.15.1574673453729;
-        Mon, 25 Nov 2019 01:17:33 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id b3sm3238431lfq.10.2019.11.25.01.17.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2019 01:17:33 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id E895C1032C4; Mon, 25 Nov 2019 12:17:41 +0300 (+03)
-Date:   Mon, 25 Nov 2019 12:17:41 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>, cluster-devel@redhat.com,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <sfrench@samba.org>,
-        Bob Peterson <rpeterso@redhat.com>
-Subject: Re: [RFC PATCH 0/3] Rework the gfs2 read and page fault locking
-Message-ID: <20191125091741.firh7stqcpniwvga@box>
-References: <20191122235324.17245-1-agruenba@redhat.com>
+        id S1727263AbfKYJ1t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Nov 2019 04:27:49 -0500
+Received: from mout.web.de ([212.227.17.11]:54593 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727006AbfKYJ1s (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 Nov 2019 04:27:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1574673967;
+        bh=q1sAJv2V0p+xOdIEo8orruYj5GJ7Ns4QAVOLhuRMv7w=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=lYxAgR/TbHJqDDLeWAttAYhfSVHOmpIDe9LBe72JixA76eKfRpH5+2iuB3g0xH6FQ
+         Fr4p0wUtQRYmzs+gHFr+z1NB0Z1A2/ALGgZWvg1oy9NR8JjorwtLYoKx78In4fWTBu
+         j3/aHYwDBWGxMUKw3jJccr073eRMuRtGqL+96g6I=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.3] ([93.135.130.213]) by smtp.web.de (mrweb102
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0LwHkw-1hl3dw45Gg-01811S; Mon, 25
+ Nov 2019 10:26:07 +0100
+Subject: Re: [PATCH v5 04/13] exfat: add directory operations
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Daniel Wagner <dwagner@suse.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        linkinjeon@gmail.com
+References: <20191125000326.24561-1-namjae.jeon@samsung.com>
+ <CGME20191125000630epcas1p23c2ac4216a044a19916f6aeb99166fde@epcas1p2.samsung.com>
+ <20191125000326.24561-5-namjae.jeon@samsung.com>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <9fb7a74f-abf4-0842-5602-d8e5706fc75d@web.de>
+Date:   Mon, 25 Nov 2019 10:26:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191122235324.17245-1-agruenba@redhat.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20191125000326.24561-5-namjae.jeon@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:cn1TRwErewaa9WdsJCQypyG5yBNn3E/wJy8G/ALopUACgPpsv3U
+ U9BJtniJVf+JyzX906GqLZwojv2t4TlraromiGh/cY1SW8+6lARggXb/qkigr8fBEbu4tVP
+ gSkDR9uaSg2sblLBw/bF62kCDb8WX7VL5DWup7iQU+tCYnLbGIb6aLSanEN0SOS/y0dX9si
+ 5DUH3RsgtdWRzFIgvzigg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:+cls4Fba/Rk=:jkK71OlUyUCaUMHPm6fXsj
+ 85aAGKxdhRci09p8oHM3QeH3aRRGNCcZi+JU5F5F17TWDLnEZmaM4QqVjgRZbpuKeHbtTtTCZ
+ zWWGyDq3drOySdgMG8TNwn8YwniMOvq9RUdQF9vPInhQOlNRN62l7wvjObs2v43GF5Xs/6KEf
+ HZTyE8E3KL70zxaNEudQZI9befvjN2/uvTe2xKwJ6Daj4h47XOpX2EFfERQ94H2QRUrQJEEXK
+ EQ2nWG4DyCbmBX7u7fHhb4tXGipFl/SvqfK550l74FTtI+Ct5wz+SykQAmzGgvyQ1qI4GmuPG
+ bRE1RkD+GD5Li8FY3MctQKDSoHxeAEFgSxviQP+wlvPlFRX5qLe2hj2LEyp0Q0kwA/7zbaSXx
+ FV7eLzJPMyOSBET7heLlgPm1kUkztz5SHZ1VzYkg32dPftaRxpnVrk2n/rUWeLsQpILUjw4Od
+ tbxBy1Rs7xIj6MYzKY4Hy8oNYXXgGK5pWvmiDrHSco8IA3VwpawLUzDld3Vb3COyfwNtGdqex
+ +GL0uV07Qdgy1GjRHbcDPZ4+0NDSUHhDmsGblUfKpJKrKKV8alUFSotlDdj24/JoYS2WvsRIX
+ Q8zuVmIWmKP1AUyZOJ+cCv+CRSpkHAB78sdtgB6IJgewibcD6vewi62IEhP/T2pGNF83rEnyl
+ 0WPrhv/uTz1f+MgP0m6odtQ2fMkyaGRQClDP5TpwKGs9Nad5k8xUO8jvinGlrp3xV5ZSVZi1D
+ kZ/A6YqIhKP6bxo1MGo7Aw2qKkDMysDRQ8XbSQk/c8tykXRkJhg0acqHeWONBZasEdM/QHsKO
+ FvHy+LwAqp/67CHTtUNlnykQPU7lVlVmXaFacG2NttZS2YdfmaQcmr75a0dVnlSOgX7nxqraq
+ soEdUdMoai1n2DtnRAImR052hdpzNEb5TdmSAPgqqy+ojLWtB/etKndbnx3auw+bE7+fqmaTC
+ TBLUGF1OoxYe9lLJZPBSsUXXtBFmAyjnw0n6jfpJLXy5QuE2sH8Vs0rZtMhOcmm+2SJSr5pZV
+ Emapos01xWZ2g4DoekV4mz/MezMRKTrY//VfgYzv4OWa38i44q5ik+AucXzKRNML70MRDiMUy
+ xW6aziqWFXd8/cuNc31UrP/ieAEzyzF+ZmWu+WmW437vu21TDMGl4cW4H892ojmMCMxhfghAR
+ Pe7Llyjz4XWVU3UAjoDEnw6zylVqPSgqTz+xOEQhgCj3HLlLAZlEVu8D2/gDntSKqk8IMjL73
+ x90c+rCB2GRKx4STQTnd+xWa6X/sgR6V+noO2rkvsCyo84C+vPFWbuznHx/0=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 23, 2019 at 12:53:21AM +0100, Andreas Gruenbacher wrote:
-> Hello,
-> 
-> this patch series moves the glock lock taking in gfs2 from the
-> ->readpage and ->readpages inode operations to the ->read_iter file and
-> ->fault vm operations.  To achieve that, we add flags to the
-> generic_file_read_iter and filemap_fault generic helpers.
-> 
-> This proposal was triggered by the following discussion:
-> 
-> https://lore.kernel.org/linux-fsdevel/157225677483.3442.4227193290486305330.stgit@buzz/
-> 
-> In that thread, Linus argued that filesystems should make sure the inode
-> size is sufficiently up-to-date before calling the generic helpers, and
-> that filesystems can do it themselves if they want more than that.
-> That's surely doable.  However, implementing those operations properly
-> at the filesystem level quickly becomes complicated when it gets to
-> things like readahead.  In addition, those slightly modified copies of
-> those helpers would surely diverge from their originals over time, and
-> maintaining them properly would become hard.  So I hope the relatively
-> small changes to make the original helpers slightly more flexible will
-> be acceptable instead.
-> 
-> With the IOCB_CACHED flag added by one of the patches in this series,
-> the code that Konstantin's initial patch adds to
-> generic_file_buffered_read could be made conditional on the IOCB_CACHED
-> flag being cleared.  That way, it won't misfire on filesystems that
-> allow a stale inode size.  (I'm not sure if any filesystems other than
-> gfs2 are actually affected.)
-> 
-> Some additional explanation:
-> 
-> The cache consistency model of filesystems like gfs2 is such that if
-> pages are found in an inode's address space, those pages as well as the
-> inode size are up to date and can be used without taking any filesystem
-> locks.  If a page is not cached, filesystem locks must be taken before
-> the page can be read; this will also bring the inode size up to date.
-> 
-> Thus far, gfs2 has taken the filesystem locks inside the ->readpage and
-> ->readpages address space operations.  A better approach seems to be to
-> take those locks earlier, in the ->read_iter file and ->fault vm
-> operations.  This would also avoid a lock inversion in ->readpages.
-> 
-> We obviously want to avoid taking the filesystem locks unnecessarily
-> when the pages we are looking for are already cached; otherwise, we
-> would cripple performance.  So we need to check if those pages are
-> present first.  That's actually exactly what the generic_file_read_iter
-> and filemap_fault helpers do already anyway, except that they will call
-> into ->readpage and ->readpages when they find pages missing.  Instead
-> of that, we'd like those helpers to return with an error code that
-> allows us to retry the operation after taking the filesystem locks.
+=E2=80=A6
+> +int exfat_find_dir_entry(struct super_block *sb, struct exfat_inode_inf=
+o *ei,
+> +		struct exfat_chain *p_dir, struct exfat_uni_name *p_uniname,
+> +		int num_entries, unsigned int type)
+> +{
+=E2=80=A6
+> +	unsigned short entry_uniname[16], *uniname =3D NULL, unichar;
 
-Do you see IOCB_CACHED/FAULT_FLAG_CACHED semantics being usable for
-anyting beyond gfs2?
+Would you like to reduce the scope for these variables according to an if =
+branch
+for the condition =E2=80=9Centry_type =3D=3D TYPE_EXTEND=E2=80=9D?
 
--- 
- Kirill A. Shutemov
+
+=E2=80=A6
+> +	struct buffer_head *bh =3D NULL;
+
+* How do you think about to move the definition for this variable
+  to the beginning of the for loop?
+
+* Can this pointer initialisation be omitted?
+
+Regards,
+Markus
