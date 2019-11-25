@@ -2,283 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CD3210851B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Nov 2019 22:34:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A436D1085BF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 01:06:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbfKXVeV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 24 Nov 2019 16:34:21 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:52718 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726840AbfKXVeV (ORCPT
+        id S1727133AbfKYAGb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 24 Nov 2019 19:06:31 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:21605 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727052AbfKYAGb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 24 Nov 2019 16:34:21 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iYzWJ-0007zX-VF; Sun, 24 Nov 2019 21:34:16 +0000
-Date:   Sun, 24 Nov 2019 21:34:15 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>
-Subject: Re: [PATCH] utimes: Clamp the timestamps in notify_change()
-Message-ID: <20191124213415.GD4203@ZenIV.linux.org.uk>
-References: <20191124193145.22945-1-amir73il@gmail.com>
- <20191124194934.GB4203@ZenIV.linux.org.uk>
- <CABeXuvqZUK4UMLA=hU5i9r0k6G7E+RCi58Om-KVeZuA3OjL4fA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABeXuvqZUK4UMLA=hU5i9r0k6G7E+RCi58Om-KVeZuA3OjL4fA@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        Sun, 24 Nov 2019 19:06:31 -0500
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191125000629epoutp042fc01bf974b4b9634b768c05d2a69241~aPxdg6Gwz1290312903epoutp047
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Nov 2019 00:06:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191125000629epoutp042fc01bf974b4b9634b768c05d2a69241~aPxdg6Gwz1290312903epoutp047
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1574640389;
+        bh=LB45WzBOQI0KmJUhhSFF2FmDFRt66YAbZuIxnR+Pkxg=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=ORgRROeb50CxL2xLredYk/oPgYUEdFSQ7PY1TqdBP+JGZzL1PiM7v0mNmZv9utWLU
+         QCgUf2lOmHKN1vhgdYFwki6mtUOUaljqtgktzN3WN4h0n53Dcfx2ipnXLANdsu6DMR
+         UmHiQohawTZW2FDoXnq6xYLgrcT1+tlv+fedhByU=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20191125000628epcas1p3c2f193b9e78380d777a27a8899352661~aPxdAM__B3108631086epcas1p37;
+        Mon, 25 Nov 2019 00:06:28 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.161]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 47LnPv6QTFzMqYkv; Mon, 25 Nov
+        2019 00:06:27 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        40.32.48019.30B1BDD5; Mon, 25 Nov 2019 09:06:27 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20191125000627epcas1p376a5a32c90e491f8cac92d053fb5e453~aPxb2y35Y0344003440epcas1p3o;
+        Mon, 25 Nov 2019 00:06:27 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191125000627epsmtrp2a86715a5ca073b192f0740cb1756eadf~aPxb1-u0_2415424154epsmtrp2h;
+        Mon, 25 Nov 2019 00:06:27 +0000 (GMT)
+X-AuditID: b6c32a38-257ff7000001bb93-8c-5ddb1b036d04
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        EA.60.10238.30B1BDD5; Mon, 25 Nov 2019 09:06:27 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.88.103.87]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191125000627epsmtip2e63a7a60173d2f4e4bba8e12ce19a1f3~aPxbqXmvE2594225942epsmtip2F;
+        Mon, 25 Nov 2019 00:06:27 +0000 (GMT)
+From:   Namjae Jeon <namjae.jeon@samsung.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
+        linkinjeon@gmail.com, Markus.Elfring@web.de,
+        sj1557.seo@samsung.com, dwagner@suse.de, nborisov@suse.com,
+        Namjae Jeon <namjae.jeon@samsung.com>
+Subject: [PATCH v5 00/13] add the latest exfat driver
+Date:   Sun, 24 Nov 2019 19:03:13 -0500
+Message-Id: <20191125000326.24561-1-namjae.jeon@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SWUwTURTN60ynA1gyFJQnBKkT+UAFWktxUIoakYzKB3H5UNPUkU4KsVs6
+        hQhGrWCAEDViP1QU1JiYCJhWqIisFUQ07hiUJRiX4IKENSoqFVsG1L/z7jnnnfvuuzgiycfC
+        8CyjlbUYGT2J+aN17dGyGCS8Xy2zX46n2t+fFlEFVxwYda2qQ0C9GuhDqKbmByj1ouECRs2U
+        fRRSU2eOUDPDx1DK9fuukOoaHUPXB9C3ywZEdGt5tYhu7LVh9ElXJaAdrm6Urn14kJ6sWUK3
+        3RrG6P4PdWi63259UibLaFmLlDVmmLRZRp2K3Lpds1GjTJDJY+SJ1GpSamQMrIpMSUuPSc3S
+        e5slpTmMPttbSmc4joxLTrKYsq2sNNPEWVUka9bqzXKZOZZjDFy2URebYTKskctkq5Re5V59
+        ZvdQjcg8GnGg2PMFtYHG0BLgh0MiHhYNtwAflhD1AF6YjCwB/l48AeDbiinAH74B2PjIBeYd
+        1Y5BAU80A1hvt4n+Wl523/CqcBwjVsBp10KfIYRYB2vPu1GfBiFeAfih76zQRwQTSliRP4j6
+        MEpEwTs/RmaxmEiCzx4UC/m0SFjldCM+MyTcGLzf8U3AEylwsunRHA6GQ50uEY/D4ORIM+Zr
+        AhIH4XgrwpeLAfz0XcVjBex1OIU+CUJEQ0dDHF9eCm//Kp99JEIEwpGvx4X8LWJYXCjhJVHw
+        ZFf7XGg4LCkamwulocN+TcRPUQ2f2i4ip0BE2b+ASwBUgkWsmTPoWE5ujv//j2rA7P4tp+pB
+        05O0NkDggFwgdl7vU0uETA6Xa2gDEEfIEHHq4x61RKxlcvNYi0ljydazXBtQemdXioQtzDB5
+        t9lo1ciVqxQKBRWfsDpBqSBDxfjUc7WE0DFWdj/LmlnLvE+A+4XZQOQ65FOp0dPz075nMPr4
+        tN/Ko/njyfS08035YWnL1q6gd2Ld07htHqGgUj/k1ow4r6YEFKwtDBw4sW1i8ee8XbWvQ5d1
+        nfP3vOtBinLc9lOHTmvrdgRETNX0pe4TdUoqzBvUQeOS2HuBnjTMvy5ZNUZpRzdvwWJ2Ribu
+        KpVtujlAolwmI1+OWDjmDwXYhEmVAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrALMWRmVeSWpSXmKPExsWy7bCSvC6z9O1Yg0m7ZC0OP57EbtG8eD2b
+        xcrVR5ksrt+9xWyxZ+9JFovLu+awWfyf9ZzV4sf0eov/b1pYLLb8O8Jqcen9BxYHbo+ds+6y
+        e+yfu4bdY/fNBjaPvi2rGD3Wb7nK4rH5dLXH501yHoe2v2HzuP1sG0sAZxSXTUpqTmZZapG+
+        XQJXxtVXm9gL3stWdPx9zdLAuFu8i5GTQ0LARGLN+qdMILaQwG5GieUHnCDi0hLHTpxh7mLk
+        ALKFJQ4fLu5i5AIq+cAosfLBS7A4m4C2xJ8toiDlIgKOEr27DrOA1DALPGaUOHH+CSNIQljA
+        VGJe01MWEJtFQFXi4M93YDavgI3EhZMdrBC75CVWbzjAPIGRZwEjwypGydSC4tz03GLDAsO8
+        1HK94sTc4tK8dL3k/NxNjOBw1NLcwXh5SfwhRgEORiUe3g1rb8UKsSaWFVfmHmKU4GBWEuF1
+        O3sjVog3JbGyKrUoP76oNCe1+BCjNAeLkjjv07xjkUIC6YklqdmpqQWpRTBZJg5OqQZGfbM3
+        mTEpywJOnpQ3NJh0pW/1pBdBm/9mL9jUaXnN07knfucSvTli0je2m2eLXYqq3T3PZ9kd/jce
+        nEx859055LN0vMV5kxfP2xbftFTrxbnpO/R9g2QslxfdPHfe8zyPce3G8PbwzLsXftZ7hgsV
+        3FhXts41+22vUPpksdLpLYINHR3+tn5KLMUZiYZazEXFiQD3N5KTQwIAAA==
+X-CMS-MailID: 20191125000627epcas1p376a5a32c90e491f8cac92d053fb5e453
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20191125000627epcas1p376a5a32c90e491f8cac92d053fb5e453
+References: <CGME20191125000627epcas1p376a5a32c90e491f8cac92d053fb5e453@epcas1p3.samsung.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Nov 24, 2019 at 01:13:50PM -0800, Deepa Dinamani wrote:
+This adds the latest Samsung exfat driver to fs/exfat. This is an
+implementation of the Microsoft exFAT specification. Previous versions
+of this shipped with millions of Android phones, and a random previous
+snaphot has been merged in drivers/staging/.
 
-> We also want to replace all uses of timespec64_trunc() with
-> timestamp_truncate() for all fs cases.
-> 
-> In that case we have a few more:
-> 
-> fs/ceph/mds_client.c:   req->r_stamp = timespec64_trunc(ts,
-> mdsc->fsc->sb->s_time_gran);
+Compared to the sdfat driver shipped on the phones the following changes
+have been made:
 
-Umm... That comes from ktime_get_coarse_real_ts64(&ts);
+ - the support for vfat has been removed as that is already supported
+   by fs/fat
+ - driver has been renamed to exfat
+ - the code has been refactored and clean up to fully integrate into
+   the upstream Linux version and follow the Linux coding style
+ - metadata operations like create, lookup and readdir have been further
+   optimized
+ - various major and minor bugs have been fixed
 
-> fs/cifs/inode.c:        fattr->cf_mtime =
-> timespec64_trunc(fattr->cf_mtime, sb->s_time_gran);
-ktime_get_real_ts64(&fattr->cf_mtime) here
+We plan to treat this version as the future upstream for the code base
+once merged, and all new features and bug fixes will go upstream first.
 
-> fs/cifs/inode.c:                fattr->cf_atime =
-> timespec64_trunc(fattr->cf_atime, sb->s_time_gran);
-ditto
+v5:
+ - Remove a blank line between the message and the error code in
+   exfat_load_upcase_table.
+ - Move brelse to the end of the while loop and rename label with
+   free_table in exfat_load_upcase_table.
+ - Move an error code assignment after a failed function call.
+ - Rename labels and directly return instead of goto.
+ - Improve the exception handling in exfat_get_dentry_set().
+ - Remove ->d_time leftover.
+ - fix boolreturn.cocci warnings.
 
-> fs/fat/misc.c:                  inode->i_ctime =
-> timespec64_trunc(*now, 10000000);
+v4:
+ - Declare ALLOC_FAT_CHAIN and ALLOC_NO_FAT_CHAIN macros.
+ - Rename labels with proper name.
+ - Remove blank lines.
+ - Remove pointer check for bh.
+ - Move ep into loop in exfat_load_bitmap().
+ - Replace READ/WRITE_ONCE() with test_and_clear_bit() and set_bit().
+ - Change exfat_allow_set_time return type with bool.
 
-I wonder... some are from setattr, some (with NULL passed to fat_truncate_time())
-from current_time()...  Wouldn't it make more sense to move the truncation into
-the few callers that really need it (if any)?  Quite a few of those are *also*
-getting the value from current_time(), after all.  fat_fill_inode() looks like
-the only case that doesn't fall into these classes; does it need truncation?
+v3:
+ - fix wrong sbi->s_dirt set.
 
-BTW, could we *please* do something about fs/inode.c:update_time()?  I mean,
-sure, local variable shadows file-scope function, so it's legitimate C, but
-this is not IOCCC and having a function called 'update_time' end with
-        return update_time(inode, time, flags);
-is actively hostile towards casual readers...
+v2:
+ - Check the bitmap count up to the total clusters.
+ - Rename goto labels in several places.
+ - Change time mode type with enumeration.
+ - Directly return error instead of goto at first error check.
+ - Combine seq_printf calls into a single one.
 
-> fs/fat/misc.c:                  inode->i_ctime =
-> fat_timespec64_trunc_2secs(*now);
-> fs/fat/misc.c:          inode->i_mtime = fat_timespec64_trunc_2secs(*now);
-> fs/ubifs/sb.c:  ts = timespec64_trunc(ts, DEFAULT_TIME_GRAN);
-> 
-> These do not follow from notify_change(), so these might still need
-> timestamp_truncate() exported.
-> I will post a cleanup series for timespec64_trunc() also, then we can decide.
+Namjae Jeon (13):
+  exfat: add in-memory and on-disk structures and headers
+  exfat: add super block operations
+  exfat: add inode operations
+  exfat: add directory operations
+  exfat: add file operations
+  exfat: add exfat entry operations
+  exfat: add bitmap operations
+  exfat: add exfat cache
+  exfat: add misc operations
+  exfat: add nls operations
+  exfat: add Kconfig and Makefile
+  exfat: add exfat in fs/Kconfig and fs/Makefile
+  MAINTAINERS: add exfat filesystem
 
-What I've got right now is
+ MAINTAINERS          |    7 +
+ fs/Kconfig           |    3 +-
+ fs/Makefile          |    1 +
+ fs/exfat/Kconfig     |   21 +
+ fs/exfat/Makefile    |    8 +
+ fs/exfat/balloc.c    |  272 ++++++++
+ fs/exfat/cache.c     |  325 ++++++++++
+ fs/exfat/dir.c       | 1307 +++++++++++++++++++++++++++++++++++++
+ fs/exfat/exfat_fs.h  |  538 ++++++++++++++++
+ fs/exfat/exfat_raw.h |  191 ++++++
+ fs/exfat/fatent.c    |  472 ++++++++++++++
+ fs/exfat/file.c      |  343 ++++++++++
+ fs/exfat/inode.c     |  693 ++++++++++++++++++++
+ fs/exfat/misc.c      |  240 +++++++
+ fs/exfat/namei.c     | 1459 ++++++++++++++++++++++++++++++++++++++++++
+ fs/exfat/nls.c       |  808 +++++++++++++++++++++++
+ fs/exfat/super.c     |  738 +++++++++++++++++++++
+ 17 files changed, 7425 insertions(+), 1 deletion(-)
+ create mode 100644 fs/exfat/Kconfig
+ create mode 100644 fs/exfat/Makefile
+ create mode 100644 fs/exfat/balloc.c
+ create mode 100644 fs/exfat/cache.c
+ create mode 100644 fs/exfat/dir.c
+ create mode 100644 fs/exfat/exfat_fs.h
+ create mode 100644 fs/exfat/exfat_raw.h
+ create mode 100644 fs/exfat/fatent.c
+ create mode 100644 fs/exfat/file.c
+ create mode 100644 fs/exfat/inode.c
+ create mode 100644 fs/exfat/misc.c
+ create mode 100644 fs/exfat/namei.c
+ create mode 100644 fs/exfat/nls.c
+ create mode 100644 fs/exfat/super.c
 
-commit 6d13412e2b27970810037f7b1b418febcd7013aa
-Author: Amir Goldstein <amir73il@gmail.com>
-Date:   Sun Nov 24 21:31:45 2019 +0200
+-- 
+2.17.1
 
-    utimes: Clamp the timestamps in notify_change()
-    
-    Push clamping timestamps into notify_change(), so in-kernel
-    callers like nfsd and overlayfs will get similar timestamp
-    set behavior as utimes.
-    
-    AV: get rid of clamping in ->setattr() instances; we don't need
-    to bother with that there, with notify_change() doing normalization
-    in all cases now (it already did for implicit case, since current_time()
-    clamps).
-    
-    Suggested-by: Miklos Szeredi <mszeredi@redhat.com>
-    Fixes: 42e729b9ddbb ("utimes: Clamp the timestamps before update")
-    Cc: stable@vger.kernel.org # v5.4
-    Cc: Deepa Dinamani <deepa.kernel@gmail.com>
-    Cc: Jeff Layton <jlayton@kernel.org>
-    Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-
-diff --git a/fs/attr.c b/fs/attr.c
-index df28035aa23e..b4bbdbd4c8ca 100644
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -183,18 +183,12 @@ void setattr_copy(struct inode *inode, const struct iattr *attr)
- 		inode->i_uid = attr->ia_uid;
- 	if (ia_valid & ATTR_GID)
- 		inode->i_gid = attr->ia_gid;
--	if (ia_valid & ATTR_ATIME) {
--		inode->i_atime = timestamp_truncate(attr->ia_atime,
--						  inode);
--	}
--	if (ia_valid & ATTR_MTIME) {
--		inode->i_mtime = timestamp_truncate(attr->ia_mtime,
--						  inode);
--	}
--	if (ia_valid & ATTR_CTIME) {
--		inode->i_ctime = timestamp_truncate(attr->ia_ctime,
--						  inode);
--	}
-+	if (ia_valid & ATTR_ATIME)
-+		inode->i_atime = attr->ia_atime;
-+	if (ia_valid & ATTR_MTIME)
-+		inode->i_mtime = attr->ia_mtime;
-+	if (ia_valid & ATTR_CTIME)
-+		inode->i_ctime = attr->ia_ctime;
- 	if (ia_valid & ATTR_MODE) {
- 		umode_t mode = attr->ia_mode;
- 
-@@ -268,8 +262,13 @@ int notify_change(struct dentry * dentry, struct iattr * attr, struct inode **de
- 	attr->ia_ctime = now;
- 	if (!(ia_valid & ATTR_ATIME_SET))
- 		attr->ia_atime = now;
-+	else
-+		attr->ia_atime = timestamp_truncate(attr->ia_atime, inode);
- 	if (!(ia_valid & ATTR_MTIME_SET))
- 		attr->ia_mtime = now;
-+	else
-+		attr->ia_mtime = timestamp_truncate(attr->ia_mtime, inode);
-+
- 	if (ia_valid & ATTR_KILL_PRIV) {
- 		error = security_inode_need_killpriv(dentry);
- 		if (error < 0)
-diff --git a/fs/configfs/inode.c b/fs/configfs/inode.c
-index 680aba9c00d5..fd0b5dd68f9e 100644
---- a/fs/configfs/inode.c
-+++ b/fs/configfs/inode.c
-@@ -76,14 +76,11 @@ int configfs_setattr(struct dentry * dentry, struct iattr * iattr)
- 	if (ia_valid & ATTR_GID)
- 		sd_iattr->ia_gid = iattr->ia_gid;
- 	if (ia_valid & ATTR_ATIME)
--		sd_iattr->ia_atime = timestamp_truncate(iattr->ia_atime,
--						      inode);
-+		sd_iattr->ia_atime = iattr->ia_atime;
- 	if (ia_valid & ATTR_MTIME)
--		sd_iattr->ia_mtime = timestamp_truncate(iattr->ia_mtime,
--						      inode);
-+		sd_iattr->ia_mtime = iattr->ia_mtime;
- 	if (ia_valid & ATTR_CTIME)
--		sd_iattr->ia_ctime = timestamp_truncate(iattr->ia_ctime,
--						      inode);
-+		sd_iattr->ia_ctime = iattr->ia_ctime;
- 	if (ia_valid & ATTR_MODE) {
- 		umode_t mode = iattr->ia_mode;
- 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 29bc0a542759..a286564ba2e1 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -751,18 +751,12 @@ static void __setattr_copy(struct inode *inode, const struct iattr *attr)
- 		inode->i_uid = attr->ia_uid;
- 	if (ia_valid & ATTR_GID)
- 		inode->i_gid = attr->ia_gid;
--	if (ia_valid & ATTR_ATIME) {
--		inode->i_atime = timestamp_truncate(attr->ia_atime,
--						  inode);
--	}
--	if (ia_valid & ATTR_MTIME) {
--		inode->i_mtime = timestamp_truncate(attr->ia_mtime,
--						  inode);
--	}
--	if (ia_valid & ATTR_CTIME) {
--		inode->i_ctime = timestamp_truncate(attr->ia_ctime,
--						  inode);
--	}
-+	if (ia_valid & ATTR_ATIME)
-+		inode->i_atime = attr->ia_atime;
-+	if (ia_valid & ATTR_MTIME)
-+		inode->i_mtime = attr->ia_mtime;
-+	if (ia_valid & ATTR_CTIME)
-+		inode->i_ctime = attr->ia_ctime;
- 	if (ia_valid & ATTR_MODE) {
- 		umode_t mode = attr->ia_mode;
- 
-diff --git a/fs/ntfs/inode.c b/fs/ntfs/inode.c
-index 6c7388430ad3..d4359a1df3d5 100644
---- a/fs/ntfs/inode.c
-+++ b/fs/ntfs/inode.c
-@@ -2899,18 +2899,12 @@ int ntfs_setattr(struct dentry *dentry, struct iattr *attr)
- 			ia_valid |= ATTR_MTIME | ATTR_CTIME;
- 		}
- 	}
--	if (ia_valid & ATTR_ATIME) {
--		vi->i_atime = timestamp_truncate(attr->ia_atime,
--					       vi);
--	}
--	if (ia_valid & ATTR_MTIME) {
--		vi->i_mtime = timestamp_truncate(attr->ia_mtime,
--					       vi);
--	}
--	if (ia_valid & ATTR_CTIME) {
--		vi->i_ctime = timestamp_truncate(attr->ia_ctime,
--					       vi);
--	}
-+	if (ia_valid & ATTR_ATIME)
-+		vi->i_atime = attr->ia_atime;
-+	if (ia_valid & ATTR_MTIME)
-+		vi->i_mtime = attr->ia_mtime;
-+	if (ia_valid & ATTR_CTIME)
-+		vi->i_ctime = attr->ia_ctime;
- 	mark_inode_dirty(vi);
- out:
- 	return err;
-diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
-index cd52585c8f4f..91362079f82a 100644
---- a/fs/ubifs/file.c
-+++ b/fs/ubifs/file.c
-@@ -1078,18 +1078,12 @@ static void do_attr_changes(struct inode *inode, const struct iattr *attr)
- 		inode->i_uid = attr->ia_uid;
- 	if (attr->ia_valid & ATTR_GID)
- 		inode->i_gid = attr->ia_gid;
--	if (attr->ia_valid & ATTR_ATIME) {
--		inode->i_atime = timestamp_truncate(attr->ia_atime,
--						  inode);
--	}
--	if (attr->ia_valid & ATTR_MTIME) {
--		inode->i_mtime = timestamp_truncate(attr->ia_mtime,
--						  inode);
--	}
--	if (attr->ia_valid & ATTR_CTIME) {
--		inode->i_ctime = timestamp_truncate(attr->ia_ctime,
--						  inode);
--	}
-+	if (attr->ia_valid & ATTR_ATIME)
-+		inode->i_atime = attr->ia_atime;
-+	if (attr->ia_valid & ATTR_MTIME)
-+		inode->i_mtime = attr->ia_mtime;
-+	if (attr->ia_valid & ATTR_CTIME)
-+		inode->i_ctime = attr->ia_ctime;
- 	if (attr->ia_valid & ATTR_MODE) {
- 		umode_t mode = attr->ia_mode;
- 
-diff --git a/fs/utimes.c b/fs/utimes.c
-index 1ba3f7883870..090739322463 100644
---- a/fs/utimes.c
-+++ b/fs/utimes.c
-@@ -36,14 +36,14 @@ static int utimes_common(const struct path *path, struct timespec64 *times)
- 		if (times[0].tv_nsec == UTIME_OMIT)
- 			newattrs.ia_valid &= ~ATTR_ATIME;
- 		else if (times[0].tv_nsec != UTIME_NOW) {
--			newattrs.ia_atime = timestamp_truncate(times[0], inode);
-+			newattrs.ia_atime = times[0];
- 			newattrs.ia_valid |= ATTR_ATIME_SET;
- 		}
- 
- 		if (times[1].tv_nsec == UTIME_OMIT)
- 			newattrs.ia_valid &= ~ATTR_MTIME;
- 		else if (times[1].tv_nsec != UTIME_NOW) {
--			newattrs.ia_mtime = timestamp_truncate(times[1], inode);
-+			newattrs.ia_mtime = times[1];
- 			newattrs.ia_valid |= ATTR_MTIME_SET;
- 		}
- 		/*
