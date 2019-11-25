@@ -2,160 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8D7E1094CB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 21:47:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F6451094F4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 22:11:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726033AbfKYUrF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Nov 2019 15:47:05 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:3447 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725912AbfKYUrF (ORCPT
+        id S1725938AbfKYVL6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Nov 2019 16:11:58 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43421 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725882AbfKYVL6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Nov 2019 15:47:05 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5ddc3dc40000>; Mon, 25 Nov 2019 12:47:00 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 25 Nov 2019 12:46:58 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 25 Nov 2019 12:46:58 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 25 Nov
- 2019 20:46:57 +0000
-Subject: Re: [PATCH 17/19] powerpc: book3s64: convert to pin_user_pages() and
- put_user_page()
+        Mon, 25 Nov 2019 16:11:58 -0500
+Received: by mail-pf1-f194.google.com with SMTP id 3so7968633pfb.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Nov 2019 13:11:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6o5NYyDBGL/EVz4SYOfBWL21/h3T7rTFl1vCLW5trJo=;
+        b=pWeihM7DhgnJf/RVP8a6WJktdbhg8qq3XzSSnNjbIgzDBwzfKIgZ/Sk8PHixYuLuXq
+         Cqu+0QQdBoAkIDbaBtvtuUknO1lnBj2dWK4jaMaKDIGdaJ9gqsCOrVtmTHW03nyP9cyk
+         z252G3A3wEhTPUsllVCG6Ur4sQZLMQi82pqXjMSsVOifyDunoa3YvjRp1Hoc+3PI6UGt
+         HN/kRygG8VFgco6C/SZS6MNk13qgf1ZBWCmfOjU18gD8FIoGa6gRHSaI26Cy1+0w5BXz
+         SQo85fKRKsaJ0nAoMOxAIku2H/Af2JQmHEsTH3EMWOvUhsanJo+55jpJwZGV1URDoiof
+         qTdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6o5NYyDBGL/EVz4SYOfBWL21/h3T7rTFl1vCLW5trJo=;
+        b=o0IzYtUfwgLhGKyfcR0udXGelbG1OuISWED0skRI+WDyLQLXlCcpC0P3wjw44dQQZs
+         Q7olN/gHHsW41wT1bk3GzO1oC5qV9Yo3P8IYAb8sviseEIdDf0BkkXptS8kQOg5PoYK6
+         +YT47RFIQ3ova0LVPXYf+xCD/KwVbHdgbgd7gq4RP8NQMHMNk+m3SrDjbQI9gUJqwvA1
+         1FNFRteSPxCx5g56SDV+QF3+o9uJTBhtK/xuVVavE43S/NkjvxHAt6IC4dEtO9W79xa/
+         WbEV4eXNoS1skSYQfeVRlD+QMdxAbDJb2M/TgZQRqiGo7F9R/zI+419GFE0u7AJmbqi5
+         +kuA==
+X-Gm-Message-State: APjAAAXD23NiPnv7FIIEN33ORSQKmIUHiA0nfpDJJviXG3ot0GtEKCcT
+        1c3nD7NfzasOL9UdTlkfAp09
+X-Google-Smtp-Source: APXvYqyNxrJ0GiUGghtnWJeHNGQUaMXo5agaWRTUhP36Enj/MThXP7IdSj3hHsMIx0J4l0mHvt3CiQ==
+X-Received: by 2002:a63:fb04:: with SMTP id o4mr17115078pgh.122.1574716317349;
+        Mon, 25 Nov 2019 13:11:57 -0800 (PST)
+Received: from bobrowski (bobrowski.net. [110.232.114.101])
+        by smtp.gmail.com with ESMTPSA id w69sm9666920pfc.164.2019.11.25.13.11.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2019 13:11:56 -0800 (PST)
+Date:   Tue, 26 Nov 2019 08:11:50 +1100
+From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
 To:     Jan Kara <jack@suse.cz>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
         Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20191125042011.3002372-1-jhubbard@nvidia.com>
- <20191125042011.3002372-18-jhubbard@nvidia.com>
- <20191125085915.GB1797@quack2.suse.cz>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <9abfd0bf-ffb9-9fad-848c-caff4a490773@nvidia.com>
-Date:   Mon, 25 Nov 2019 12:46:56 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        linux-fsdevel@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>
+Subject: Re: [PATCH] iomap: Do not create fake iter in iomap_dio_bio_actor()
+Message-ID: <20191125211149.GC3748@bobrowski>
+References: <20191125083930.11854-1-jack@suse.cz>
+ <20191125111901.11910-1-jack@suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20191125085915.GB1797@quack2.suse.cz>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1574714820; bh=7Gmrre2tneNEWRU9G5+DIn5rrxtRLBtJ55Uj7bfaWRw=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=Vc2WP6DAAbNZStXBl+ln2+kB/EuUuvRZHzMpZNW80Fm3ZctGnvM4O+tZRCgS3669B
-         /qldmeczkVi9pQJMXYF/4i2XGVt4Gm+gOJ/tFv/RnDb4dopV+tz5b0cyQc9YOTVtBS
-         P/yYNUzd4pjDhuvvDyZmybC/J7abTjT/ntYJJMbyGr8NCKnGXhEtDqS5T7TKRE2hwU
-         dbPgyN9eu9VXPtG/lD5Uk37zf69kjzXTl/JkUlunTht14kOdHqRRRORI90fFcZ/kGC
-         NFhCuK40TfQ4yRLkmLaKp7qlIx6xeGOy5CzKXKx/3W33foWMDjA/xuDpoO/15JsFQy
-         0FiT0Aycu6K+g==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191125111901.11910-1-jack@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/25/19 12:59 AM, Jan Kara wrote:
-> On Sun 24-11-19 20:20:09, John Hubbard wrote:
->> 1. Convert from get_user_pages() to pin_user_pages().
->>
->> 2. As required by pin_user_pages(), release these pages via
->> put_user_page(). In this case, do so via put_user_pages_dirty_lock().
->>
->> That has the side effect of calling set_page_dirty_lock(), instead
->> of set_page_dirty(). This is probably more accurate.
->>
->> As Christoph Hellwig put it, "set_page_dirty() is only safe if we are
->> dealing with a file backed page where we have reference on the inode it
->> hangs off." [1]
->>
->> 3. Release each page in mem->hpages[] (instead of mem->hpas[]), because
->> that is the array that pin_longterm_pages() filled in. This is more
->> accurate and should be a little safer from a maintenance point of
->> view.
-> 
-> Except that this breaks the code. hpages is unioned with hpas...
-> 
+On Mon, Nov 25, 2019 at 12:18:57PM +0100, Jan Kara wrote:
+> iomap_dio_bio_actor() copies iter to a local variable and then limits it
+> to a file extent we have mapped. When IO is submitted,
+> iomap_dio_bio_actor() advances the original iter while the copied iter
+> is advanced inside bio_iov_iter_get_pages(). This logic is non-obvious
+> especially because both iters still point to same shared structures
+> (such as pipe info) so if iov_iter_advance() changes anything in the
+> shared structure, this scheme breaks. Let's just truncate and reexpand
+> the original iter as needed instead of playing games with copying iters
+> and keeping them in sync.
 
-OK. 
+Looks good. Just one minor nit below which is eating me. I guess
+Darrick can fix it up when applying it to his tree, if deemed
+necessary to fix up.
 
->> @@ -212,10 +211,9 @@ static void mm_iommu_unpin(struct mm_iommu_table_group_mem_t *mem)
->>  		if (!page)
->>  			continue;
->>  
->> -		if (mem->hpas[i] & MM_IOMMU_TABLE_GROUP_PAGE_DIRTY)
->> -			SetPageDirty(page);
->> +		put_user_pages_dirty_lock(&mem->hpages[i], 1,
->> +					  MM_IOMMU_TABLE_GROUP_PAGE_DIRTY);
-> 
-> And the dirtying condition is wrong here as well. Currently it is always
-> true.
-> 
-> 								Honza
-> 
+Feel free to add:
 
-Yes. Fixed up locally. The function now looks like this (for this patch, not for
-the entire series, which renames "put" to "unpin"):
+Reviewed-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
 
+>  	/*
+> -	 * Operate on a partial iter trimmed to the extent we were called for.
+> -	 * We'll update the iter in the dio once we're done with this extent.
+> +	 * Save the original count and trim the iter to just the extent we
+> +	 * are operating on right now.  The iter will be re-expanded once
+  	       		    	      ^^
+				      Extra whitespace here.
 
-static void mm_iommu_unpin(struct mm_iommu_table_group_mem_t *mem)
-{
-	long i;
-	struct page *page = NULL;
+IMO, I think we can word the last sentence a little better too i.e.
 
-	if (!mem->hpas)
-		return;
+/*                                                                               
+ * Save the original count and trim the iter to the extent that we're            
+ * currently operating on right now. The iter will then again be                 
+ * expanded out once we're done.                                                 
+ */
 
-	for (i = 0; i < mem->entries; ++i) {
-		if (!mem->hpas[i])
-			continue;
-
-		page = pfn_to_page(mem->hpas[i] >> PAGE_SHIFT);
-		if (!page)
-			continue;
-
-		put_user_pages_dirty_lock(&page, 1,
-				mem->hpas[i] & MM_IOMMU_TABLE_GROUP_PAGE_DIRTY);
-
-		mem->hpas[i] = 0;
-	}
-}
-
-thanks,
--- 
-John Hubbard
-NVIDIA
-
+/M
