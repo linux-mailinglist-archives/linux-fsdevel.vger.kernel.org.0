@@ -2,96 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E18B109262
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 17:58:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B68E8109299
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 18:06:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728943AbfKYQ60 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Nov 2019 11:58:26 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:40391 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728915AbfKYQ60 (ORCPT
+        id S1729130AbfKYRFz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Nov 2019 12:05:55 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38959 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729073AbfKYRFy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Nov 2019 11:58:26 -0500
-Received: by mail-qk1-f194.google.com with SMTP id a137so11544083qkc.7;
-        Mon, 25 Nov 2019 08:58:25 -0800 (PST)
+        Mon, 25 Nov 2019 12:05:54 -0500
+Received: by mail-lj1-f196.google.com with SMTP id e10so7611501ljj.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Nov 2019 09:05:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=pu8Eznl5GQtTXPjOvQ9qkpsA+I6ie4l2E52E9iodSKg=;
-        b=kI85VaEUlSWtCUuPFkbQTFWUQOHiHVp00qvsZKCR40vRjJ7HbRRfRKHmOgeCtFNOHJ
-         8DDCLa00uLyj2I6rTtVEjA5+HEtebq+ScYFeXJDfb7hrGvscihd69ZlCg+c7VwuO5NmN
-         9Dxl1DLsqBsV65H4fZN2pnbtO82hguY2+I9Ul5SewP0/adDMhSznjp9DMfMRq5H/ZjIx
-         r8KIf9ouPRbpWKLAKO51I/K7Ra33s3Xh6+BOuzKvB2smCVeO0KFgLMOXxvPplgi0XNxc
-         6JnexIvZikj6CcF1I2baJ2wW9XWWPgDlKdc+QuVoGyhDPclWK9Nbi535sUKs0RXxK9HW
-         HxXA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IP1wfK3f8gL3K5of14NSdEE7VLJRLmDh9Mjfd6jLIUg=;
+        b=di9eo39CEUbDhJQGDGRbvoBzSIsf4IsJ2vpQB30wyKTQ4oZuoI8I8FAMQktMgORFFP
+         8fBVLWpCUhdrhl0hj+dykFizgaSzPbdXAW3q2epeOP6k+UZ1g4c/aPYroPhY+MX/X+vS
+         wBXrAbq1U0ohLCJc7HXm2ySYQ4bv4evW0kCik=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=pu8Eznl5GQtTXPjOvQ9qkpsA+I6ie4l2E52E9iodSKg=;
-        b=sE53gTKzBPh2HrjLo5ZBrBLWfNLvODyLtm/zziqmZhGiA+pRnsEbmIy6zDOEgnrhkv
-         tp+8BUedWUWXD3EyS8hfx2UwA52cI5mT5qtZ/JlyBfWs7QYiflW794HGjsR1+Nyjg8BY
-         ZUhhEkmw5U/55VKjO7r+7PagouJvW76kz13Q/8tsmdLTNafiCmdB21nE+gv5Eb+7L7+C
-         LyAG9qVqksS7p0CMX1z6RDecY/wATNN6NkgNd88cnLffs9dKknMHFLXxBSKTF42Tz9GM
-         AzKQtUcGglbaX8y60Rwdy2juJmBIhzX4o6twKrN7TSXKgByrlT893qNkg6MzS40yergu
-         z2UQ==
-X-Gm-Message-State: APjAAAUH2RiMkT9ZZOKUUPCNI1P8gGErDbauS1TxICsqQ/HkHz/sPtPH
-        XBsljiHOZHeBlhP+5VhNUg==
-X-Google-Smtp-Source: APXvYqxO5SzbSMf2GM1QIJxnbLV23bNiR0O9Mm5BFzBdYR1tMAFMsiVe0B+KMLvPAY93McNzzPGxjQ==
-X-Received: by 2002:a37:674d:: with SMTP id b74mr27861468qkc.396.1574701104739;
-        Mon, 25 Nov 2019 08:58:24 -0800 (PST)
-Received: from gabell (209-6-122-159.s2973.c3-0.arl-cbr1.sbo-arl.ma.cable.rcncustomer.com. [209.6.122.159])
-        by smtp.gmail.com with ESMTPSA id j10sm4205971qtb.34.2019.11.25.08.58.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 25 Nov 2019 08:58:24 -0800 (PST)
-Date:   Mon, 25 Nov 2019 11:58:19 -0500
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-kernel@vger.kernel.org, virtio-fs@redhat.com
-Subject: Re: [PATCH] fuse: Fix the return code of fuse_direct_IO() to deal
- with the error for aio
-Message-ID: <20191125165819.k2ghv7h4tzyvyr6e@gabell>
-References: <20191118022410.21023-1-msys.mizuma@gmail.com>
- <CAJfpegveuh3b0GMOmC3SuMOq=yi9sgBeOS2LGEetbfKqyS1xtQ@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IP1wfK3f8gL3K5of14NSdEE7VLJRLmDh9Mjfd6jLIUg=;
+        b=hpgzTbXHWrMIcNZB3x1BiZJvYLyWbRAc3OOwO7noHBeml4ldYITa1u1FAi8a1RQ9is
+         VF70BcPAiDaSuHK/CiYWzXKs3626Hp3kXE3C0UIlD+FRXwcuj+lASKzoDNuIhdyqc65/
+         zzLP0OzurcgWU/MdhEjRbdX4l26AhW3r10DaH+zNstPRms2f5L2K1Jh4HJKLmsHw2OoW
+         9egpRaeOlvb8uFU1ZeVDN1yCUZwnZuwXurwvieQ3KBfEp4bgzmpaEfaXimjQ/r1/N7Pi
+         sLX7TFe3Y3YqNRUrXgEJrGwOYwe/obWFoPiXrgCUwCjvwDfJxEVJ5BDNy/6W//bTODWv
+         Wc3Q==
+X-Gm-Message-State: APjAAAW8mvGc65kpgh5zxbbqsRpax8t1k3yl6rFgUqG+0ePEZ0N2hdxb
+        dbizH701KjFFgsc+WOzIh1yrS9wTSEc=
+X-Google-Smtp-Source: APXvYqzzBpLvlVJncw7UaaOyYqSfzreVk9bQ/z6V3ph6ak89XUna4eWVwLQFHt5irAQ/Trf5zIqaRA==
+X-Received: by 2002:a05:651c:1059:: with SMTP id x25mr23696128ljm.255.1574701552468;
+        Mon, 25 Nov 2019 09:05:52 -0800 (PST)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
+        by smtp.gmail.com with ESMTPSA id f14sm4234369ljn.105.2019.11.25.09.05.46
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2019 09:05:47 -0800 (PST)
+Received: by mail-lf1-f44.google.com with SMTP id r15so8694534lff.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Nov 2019 09:05:46 -0800 (PST)
+X-Received: by 2002:ac2:5a08:: with SMTP id q8mr21390671lfn.106.1574701545622;
+ Mon, 25 Nov 2019 09:05:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegveuh3b0GMOmC3SuMOq=yi9sgBeOS2LGEetbfKqyS1xtQ@mail.gmail.com>
+References: <157225677483.3442.4227193290486305330.stgit@buzz>
+ <20191028124222.ld6u3dhhujfqcn7w@box> <CAHk-=wgQ-Dcs2keNJPovTb4gG33M81yANH6KZM9d5NLUb-cJ1g@mail.gmail.com>
+ <20191028125702.xdfbs7rqhm3wer5t@box> <ac83fee6-9bcd-8c66-3596-2c0fbe6bcf96@yandex-team.ru>
+ <CAHk-=who0HS=NT8U7vFDT7er_CD7+ZreRJMxjYrRXs5G6dbpyw@mail.gmail.com>
+ <f0140b13-cca2-af9e-eb4b-82eda134eb8f@redhat.com> <CAHk-=wh4SKRxKQf5LawRMSijtjRVQevaFioBK+tOZAVPt7ek0Q@mail.gmail.com>
+ <640bbe51-706b-8d9f-4abc-5f184de6a701@redhat.com> <CAHpGcM+o2OwXdrj+A2_OqRg6YokfauFNiBJF-BQp0dJFvq_BrQ@mail.gmail.com>
+ <22f04f02-86e4-b379-81c8-08c002a648f0@redhat.com>
+In-Reply-To: <22f04f02-86e4-b379-81c8-08c002a648f0@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 25 Nov 2019 09:05:29 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whRuPkm7zFUiGe_BXkLvEdShZGngkb=uRufgU65ogCxfg@mail.gmail.com>
+Message-ID: <CAHk-=whRuPkm7zFUiGe_BXkLvEdShZGngkb=uRufgU65ogCxfg@mail.gmail.com>
+Subject: Re: [PATCH] mm/filemap: do not allocate cache pages beyond end of
+ file at read
+To:     Steven Whitehouse <swhiteho@redhat.com>
+Cc:     =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "cluster-devel@redhat.com" <cluster-devel@redhat.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <sfrench@samba.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 25, 2019 at 01:38:38PM +0100, Miklos Szeredi wrote:
-> On Mon, Nov 18, 2019 at 3:24 AM Masayoshi Mizuma <msys.mizuma@gmail.com> wrote:
-> >
-> > From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-> >
-> > exit_aio() is sometimes stuck in wait_for_completion() after aio is issued
-> > with direct IO and the task receives a signal.
-> >
-> > That is because kioctx in mm->ioctx_table is in use by aio_kiocb.
-> > aio_kiocb->ki_refcnt is 1 at that time. That means iocb_put() isn't
-> > called correctly.
-> >
-> > fuse_get_req() returns as -EINTR when it's blocked and receives a signal.
-> > fuse_direct_IO() deals with the -EINTER as -EIOCBQUEUED and returns as
-> > -EIOCBQUEUED even though the aio isn't queued.
-> > As the result, aio_rw_done() doesn't handle the error, so iocb_put() isn't
-> > called via aio_complete_rw(), which is the callback.
-> 
-> Hi,
-> 
-> Thanks for the report.
-> 
-> Can you please test the attached patch (without your patch)?
+On Mon, Nov 25, 2019 at 2:53 AM Steven Whitehouse <swhiteho@redhat.com> wrote:
+>
+> Linus, is that roughly what you were thinking of?
 
-The patch you attached works well, thanks! I tested it with virtiofs.
+So the concept looks ok, but I don't really like the new flags as they
+seem to be gfs2-specific rather than generic.
 
-Should I post the patch? Or could you take care of it? Let me know.
+That said, I don't _gate_ them either, since they aren't in any
+critical code sequence, and it's not like they do anything really odd.
 
-Thanks!
-Masa
+I still think the whole gfs2 approach is broken. You're magically ok
+with using stale data from the cache just because it's cached, even if
+another client might have truncated the file or something.
+
+So you're ok with saying "the file used to be X bytes in size, so
+we'll just give you this data because we trust that the X is correct".
+
+But you're not ok to say "oh, the file used to be X bytes in size, but
+we don't want to give you a short read because it might not be correct
+any more".
+
+See the disconnect? You trust the size in one situation, but not in another one.
+
+I also don't really see that you *need* the new flag at all. Since
+you're doing to do a speculative read and then a real read anyway, and
+since the only thing that you seem to care about is the file size
+(because the *data* you will trust if it is cached), then why don't
+you just use the *existing* generic read, and *IFF* you get a
+truncated return value, then you go and double-check that the file
+hasn't changed in size?
+
+See what I'm saying? I think gfs2 is being very inconsistent in when
+it trusts the file size, and I don't see that you even need the new
+behavior that patch gives, because you might as well just use the
+existing code (just move the i_size check earlier, and then teach gfs2
+to double-check the "I didn't get as much as I expected" case).
+
+                 Linus
