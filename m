@@ -2,287 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9AEE1086E0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 04:49:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6F24108756
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 05:21:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbfKYDtb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 24 Nov 2019 22:49:31 -0500
-Received: from mga04.intel.com ([192.55.52.120]:43951 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726921AbfKYDtb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 24 Nov 2019 22:49:31 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Nov 2019 19:49:31 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,240,1571727600"; 
-   d="scan'208";a="260285512"
-Received: from chenyu-office.sh.intel.com ([10.239.158.173])
-  by FMSMGA003.fm.intel.com with ESMTP; 24 Nov 2019 19:49:28 -0800
-From:   Chen Yu <yu.c.chen@intel.com>
-To:     x86@kernel.org
-Cc:     Chen Yu <yu.chen.surf@gmail.com>, Chen Yu <yu.c.chen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
+        id S1727551AbfKYEVY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 24 Nov 2019 23:21:24 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:9464 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727296AbfKYEUW (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 24 Nov 2019 23:20:22 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5ddb567f0000>; Sun, 24 Nov 2019 20:20:15 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Sun, 24 Nov 2019 20:20:13 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Sun, 24 Nov 2019 20:20:13 -0800
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 25 Nov
+ 2019 04:20:13 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 25 Nov 2019 04:20:13 +0000
+Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5ddb567c0004>; Sun, 24 Nov 2019 20:20:12 -0800
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Michal Hocko <mhocko@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][v5] x86/resctrl: Add task resctrl information display
-Date:   Mon, 25 Nov 2019 12:00:01 +0800
-Message-Id: <20191125040001.28943-1-yu.c.chen@intel.com>
-X-Mailer: git-send-email 2.17.1
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH 00/19] pin_user_pages(): reduced-risk series for Linux 5.5
+Date:   Sun, 24 Nov 2019 20:19:52 -0800
+Message-ID: <20191125042011.3002372-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.24.0
+MIME-Version: 1.0
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1574655615; bh=Fa0GcWCGWaf6H8ghJjmadoVQ5H4DM60WuhiwHk9NYQE=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:X-NVConfidentiality:Content-Type:
+         Content-Transfer-Encoding;
+        b=AWa8smvs+trFNp2hhl6PxcctFNiNkjEPFnL7k3PRf09kncIE/1QuOINHJt/Mcs+cL
+         q46mTymRrWH5hIMQjSDcsL6l4MZjGcZ8rEBd95QdLk6OBQpItd8SHAKNmI2s8cgL9A
+         TZQx79R+51iPaHlmCxHSrFK4tWN8+/SXha4vPWAk/KUrYtR0z/7ZhQ7IWXBFOwOoWY
+         W0JiJYCm5y2Z/s4+iIPAmR7MUQyE8Vno4We33aI2zVWyTzl8693ZWHPydM0PHA73fx
+         6y5VYOaw3hqt0dvEDHJk7maQ9GNpqGigBAeOy1HQoT6CNDjnaIYlNwCoCcMA/StzjT
+         GubxucVjrnhAA==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Monitoring tools that want to find out which resctrl control
-and monitor groups a task belongs to must currently read
-the "tasks" file in every group until they locate the process
-ID.
+Hi,
 
-Add an additional file /proc/{pid}/resctrl to provide this
-information.
+Here is a set of well-reviewed (expect for one patch), lower-risk  items
+that can go into Linux 5.5. The one patch that wasn't reviewed is the
+powerpc conversion, and it's still at this point a no-op, because
+tracking isn't yet activated.
 
-The output is as followed according to Thomas's suggestion,
-for example:
+This is based on linux-next: b9d3d01405061bb42358fe53f824e894a1922ced
+("Add linux-next specific files for 20191122").
 
- 1)   ""
-      Resctrl is not available.
+This is essentially a cut-down v8 of "mm/gup: track dma-pinned pages:
+FOLL_PIN" [1], and with one of the VFIO patches split into two patches.
+The idea here is to get this long list of "noise" checked into 5.5, so
+that the actual, higher-risk "track FOLL_PIN pages" (which is deferred:
+not part of this series) will be a much shorter patchset to review.
 
- 2)   "/"
-      Task is part of the root group, task is not associated to
-      any monitoring group.
+For the v4l2-core changes, I've left those here (instead of sending
+them separately to the -media tree), in order to get the name change
+done now (put_user_page --> unpin_user_page). However, I've added a Cc
+stable, as recommended during the last round of reviews.
 
- 3)   "/mon_groups/mon0"
-      Task is part of the root group and monitoring group mon0.
+Here are the relevant notes from the original cover letter, edited to
+match the current situation:
 
- 4)   "/group0"
-      Task is part of control group group0, task is not associated
-      to any monitoring group.
+This is a prerequisite to tracking dma-pinned pages. That in turn is a
+prerequisite to solving the larger problem of proper interactions
+between file-backed pages, and [R]DMA activities, as discussed in [1],
+[2], [3], and in a remarkable number of email threads since about
+2017. :)
 
- 5)   "/group0/mon_groups/mon1"
-      Task is part of control group group0 and monitoring group mon1.
+A new internal gup flag, FOLL_PIN is introduced, and thoroughly
+documented in the last patch's Documentation/vm/pin_user_pages.rst.
 
-Tested-by: Jinshi Chen <jinshi.chen@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
----
-v2: Reduce indentation level in proc_resctrl_show()
-    according to Boris's suggestion.
-    Create the include/linux/resctrl.h header and
-    declare proc_resctrl_show() in this file, so
-    that other architectures would probably use it
-    in the future. Different architectures should
-    implement architectural specific proc_resctrl_show()
-    accordingly.
+I believe that this will provide a good starting point for doing the
+layout lease work that Ira Weiny has been working on. That's because
+these new wrapper functions provide a clean, constrained, systematically
+named set of functionality that, again, is required in order to even
+know if a page is "dma-pinned".
 
-v3: Return empty string if the resctrl filesystem has
-    not been mounted per Boris's suggestion.
-    Rename the config from CPU_RESCTRL to PROC_CPU_RESCTRL
-    to better represent its usage. Move PROC_CPU_RESCTRL
-    from arch/Kconfig to fs/proc/Kconfig.
-    And let PROC_CPU_RESCTRL to be depended on PROC_FS.
+In contrast to earlier approaches, the page tracking can be
+incrementally applied to the kernel call sites that, until now, have
+been simply calling get_user_pages() ("gup"). In other words, opt-in by
+changing from this:
 
-v4: According to Thomas's suggestion, changed the output
-    from multiple lines to one single line.
+    get_user_pages() (sets FOLL_GET)
+    put_page()
 
-v5: According to Alexey's feedback, removed the header file
-    proc_fs.h in resctrl.h, and changed seq_puts() to
-    seq_putc() for simplicity.
----
- arch/x86/Kconfig                       |  1 +
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 78 ++++++++++++++++++++++++++
- fs/proc/Kconfig                        |  4 ++
- fs/proc/base.c                         |  7 +++
- include/linux/resctrl.h                | 14 +++++
- 5 files changed, 104 insertions(+)
- create mode 100644 include/linux/resctrl.h
+to this:
+    pin_user_pages() (sets FOLL_PIN)
+    put_user_page()
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 8ef85139553f..252364d18887 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -455,6 +455,7 @@ config X86_CPU_RESCTRL
- 	bool "x86 CPU resource control support"
- 	depends on X86 && (CPU_SUP_INTEL || CPU_SUP_AMD)
- 	select KERNFS
-+	select PROC_CPU_RESCTRL		if PROC_FS
- 	help
- 	  Enable x86 CPU resource control support.
- 
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index 2e3b06d6bbc6..f786e7626a65 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -725,6 +725,84 @@ static int rdtgroup_tasks_show(struct kernfs_open_file *of,
- 	return ret;
- }
- 
-+#ifdef CONFIG_PROC_CPU_RESCTRL
-+
-+/*
-+ * A task can only be part of one control
-+ * group and of one monitoring group which
-+ * is associated to that control group.
-+ * So one line is simple and clear enough:
-+ *
-+ * 1)   ""
-+ *    Resctrl is not available.
-+ *
-+ * 2)   "/"
-+ *    Task is part of the root group, and it is
-+ *    not associated to any monitoring group.
-+ *
-+ * 3)   "/mon_groups/mon0"
-+ *    Task is part of the root group and monitoring
-+ *    group mon0.
-+ *
-+ * 4)   "/group0"
-+ *    Task is part of control group group0, and it is
-+ *    not associated to any monitoring group.
-+ *
-+ * 5)   "/group0/mon_groups/mon1"
-+ *    Task is part of control group group0 and monitoring
-+ *    group mon1.
-+ */
-+int proc_resctrl_show(struct seq_file *s, struct pid_namespace *ns,
-+		      struct pid *pid, struct task_struct *tsk)
-+{
-+	struct rdtgroup *rdtg;
-+	int ret = 0;
-+
-+	mutex_lock(&rdtgroup_mutex);
-+
-+	/* Return empty if resctrl has not been mounted. */
-+	if (!static_branch_unlikely(&rdt_enable_key))
-+		goto unlock;
-+
-+	list_for_each_entry(rdtg, &rdt_all_groups, rdtgroup_list) {
-+		struct rdtgroup *crg;
-+
-+		/*
-+		 * Task information is only relevant for shareable
-+		 * and exclusive groups.
-+		 */
-+		if (rdtg->mode != RDT_MODE_SHAREABLE &&
-+		    rdtg->mode != RDT_MODE_EXCLUSIVE)
-+			continue;
-+
-+		if (rdtg->closid != tsk->closid)
-+			continue;
-+
-+		seq_printf(s, "/%s", rdtg->kn->name);
-+		list_for_each_entry(crg, &rdtg->mon.crdtgrp_list,
-+				    mon.crdtgrp_list) {
-+			if (tsk->rmid != crg->mon.rmid)
-+				continue;
-+			seq_printf(s, "%smon_groups/%s",
-+				   rdtg == &rdtgroup_default ? "" : "/",
-+				   crg->kn->name);
-+			break;
-+		}
-+		seq_putc(s, '\n');
-+		goto unlock;
-+	}
-+	/*
-+	 * The above search should succeed. Otherwise return
-+	 * with an error.
-+	 */
-+	ret = -ENOENT;
-+unlock:
-+	mutex_unlock(&rdtgroup_mutex);
-+
-+	return ret;
-+}
-+#endif
-+
- static int rdt_last_cmd_status_show(struct kernfs_open_file *of,
- 				    struct seq_file *seq, void *v)
- {
-diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
-index cb5629bd5fff..ae96a339d24d 100644
---- a/fs/proc/Kconfig
-+++ b/fs/proc/Kconfig
-@@ -103,3 +103,7 @@ config PROC_CHILDREN
- config PROC_PID_ARCH_STATUS
- 	def_bool n
- 	depends on PROC_FS
-+
-+config PROC_CPU_RESCTRL
-+	def_bool n
-+	depends on PROC_FS
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index ebea9501afb8..0e4b8bf2b986 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -94,6 +94,7 @@
- #include <linux/sched/debug.h>
- #include <linux/sched/stat.h>
- #include <linux/posix-timers.h>
-+#include <linux/resctrl.h>
- #include <trace/events/oom.h>
- #include "internal.h"
- #include "fd.h"
-@@ -3060,6 +3061,9 @@ static const struct pid_entry tgid_base_stuff[] = {
- #endif
- #ifdef CONFIG_CGROUPS
- 	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
-+#endif
-+#ifdef CONFIG_PROC_CPU_RESCTRL
-+	ONE("resctrl", S_IRUGO, proc_resctrl_show),
- #endif
- 	ONE("oom_score",  S_IRUGO, proc_oom_score),
- 	REG("oom_adj",    S_IRUGO|S_IWUSR, proc_oom_adj_operations),
-@@ -3460,6 +3464,9 @@ static const struct pid_entry tid_base_stuff[] = {
- #endif
- #ifdef CONFIG_CGROUPS
- 	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
-+#endif
-+#ifdef CONFIG_PROC_CPU_RESCTRL
-+	ONE("resctrl", S_IRUGO, proc_resctrl_show),
- #endif
- 	ONE("oom_score", S_IRUGO, proc_oom_score),
- 	REG("oom_adj",   S_IRUGO|S_IWUSR, proc_oom_adj_operations),
-diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-new file mode 100644
-index 000000000000..daf5cf64c6a6
---- /dev/null
-+++ b/include/linux/resctrl.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _RESCTRL_H
-+#define _RESCTRL_H
-+
-+#ifdef CONFIG_PROC_CPU_RESCTRL
-+
-+int proc_resctrl_show(struct seq_file *m,
-+		      struct pid_namespace *ns,
-+		      struct pid *pid,
-+		      struct task_struct *tsk);
-+
-+#endif
-+
-+#endif /* _RESCTRL_H */
--- 
-2.17.1
+Because there are interdependencies with FOLL_LONGTERM, a similar
+conversion as for FOLL_PIN, was applied. The change was from this:
+
+    get_user_pages(FOLL_LONGTERM) (also sets FOLL_GET)
+    put_page()
+
+to this:
+    pin_longterm_pages() (sets FOLL_PIN | FOLL_LONGTERM)
+    put_user_page()
+
+[1] https://lore.kernel.org/r/20191121071354.456618-1-jhubbard@nvidia.com
+
+thanks,
+John Hubbard
+NVIDIA
+
+
+Dan Williams (1):
+  mm: Cleanup __put_devmap_managed_page() vs ->page_free()
+
+John Hubbard (18):
+  mm/gup: factor out duplicate code from four routines
+  mm/gup: move try_get_compound_head() to top, fix minor issues
+  goldish_pipe: rename local pin_user_pages() routine
+  mm: fix get_user_pages_remote()'s handling of FOLL_LONGTERM
+  vfio: fix FOLL_LONGTERM use, simplify get_user_pages_remote() call
+  mm/gup: introduce pin_user_pages*() and FOLL_PIN
+  goldish_pipe: convert to pin_user_pages() and put_user_page()
+  IB/{core,hw,umem}: set FOLL_PIN via pin_user_pages*(), fix up ODP
+  mm/process_vm_access: set FOLL_PIN via pin_user_pages_remote()
+  drm/via: set FOLL_PIN via pin_user_pages_fast()
+  fs/io_uring: set FOLL_PIN via pin_user_pages()
+  net/xdp: set FOLL_PIN via pin_user_pages()
+  media/v4l2-core: set pages dirty upon releasing DMA buffers
+  media/v4l2-core: pin_user_pages (FOLL_PIN) and put_user_page()
+    conversion
+  vfio, mm: pin_user_pages (FOLL_PIN) and put_user_page() conversion
+  powerpc: book3s64: convert to pin_user_pages() and put_user_page()
+  mm/gup_benchmark: use proper FOLL_WRITE flags instead of hard-coding
+    "1"
+  mm, tree-wide: rename put_user_page*() to unpin_user_page*()
+
+ Documentation/core-api/index.rst            |   1 +
+ Documentation/core-api/pin_user_pages.rst   | 233 ++++++++++++++
+ arch/powerpc/mm/book3s64/iommu_api.c        |  12 +-
+ drivers/gpu/drm/via/via_dmablit.c           |   6 +-
+ drivers/infiniband/core/umem.c              |   4 +-
+ drivers/infiniband/core/umem_odp.c          |  13 +-
+ drivers/infiniband/hw/hfi1/user_pages.c     |   4 +-
+ drivers/infiniband/hw/mthca/mthca_memfree.c |   8 +-
+ drivers/infiniband/hw/qib/qib_user_pages.c  |   4 +-
+ drivers/infiniband/hw/qib/qib_user_sdma.c   |   8 +-
+ drivers/infiniband/hw/usnic/usnic_uiom.c    |   4 +-
+ drivers/infiniband/sw/siw/siw_mem.c         |   4 +-
+ drivers/media/v4l2-core/videobuf-dma-sg.c   |   8 +-
+ drivers/nvdimm/pmem.c                       |   6 -
+ drivers/platform/goldfish/goldfish_pipe.c   |  35 +--
+ drivers/vfio/vfio_iommu_type1.c             |  35 +--
+ fs/io_uring.c                               |   6 +-
+ include/linux/mm.h                          |  77 +++--
+ mm/gup.c                                    | 332 +++++++++++++-------
+ mm/gup_benchmark.c                          |   9 +-
+ mm/memremap.c                               |  80 ++---
+ mm/process_vm_access.c                      |  28 +-
+ net/xdp/xdp_umem.c                          |   4 +-
+ tools/testing/selftests/vm/gup_benchmark.c  |   6 +-
+ 24 files changed, 642 insertions(+), 285 deletions(-)
+ create mode 100644 Documentation/core-api/pin_user_pages.rst
+
+--=20
+2.24.0
 
