@@ -2,100 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 397F110865F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 02:36:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56984108694
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 03:48:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727218AbfKYBgb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 24 Nov 2019 20:36:31 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:45359 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727072AbfKYBgb (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 24 Nov 2019 20:36:31 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0Tiyc3wU_1574645775;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0Tiyc3wU_1574645775)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 25 Nov 2019 09:36:16 +0800
-Subject: Re: [PATCH 0/3] sched/numa: introduce advanced numa statistic
-From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
-Message-ID: <50f167ed-12b5-24b7-a2f7-38d32bf6647a@linux.alibaba.com>
-Date:   Mon, 25 Nov 2019 09:35:30 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.0
+        id S1726994AbfKYCsL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 24 Nov 2019 21:48:11 -0500
+Received: from mga17.intel.com ([192.55.52.151]:34958 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726895AbfKYCsK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 24 Nov 2019 21:48:10 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Nov 2019 18:48:10 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,240,1571727600"; 
+   d="scan'208";a="205972989"
+Received: from hu.sh.intel.com ([10.239.158.51])
+  by fmsmga008.fm.intel.com with ESMTP; 24 Nov 2019 18:48:08 -0800
+From:   "Chen, Hu" <hu1.chen@intel.com>
+Cc:     avagin@openvz.org, hu1.chen@intel.com, lkp@intel.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] proc: align mnt_id in /proc/pid/fdinfo and /proc/pid/mountinfo
+Date:   Mon, 25 Nov 2019 10:26:37 +0800
+Message-Id: <20191125022641.4169-1-hu1.chen@intel.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <201911221116.HjFCwKbG%lkp@intel.com>
+References: <201911221116.HjFCwKbG%lkp@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi, Peter
+For Android application process, we found that the mnt_id read from
+/proc/pid/fdinfo doesn't exist in /proc/pid/mountinfo. Thus CRIU fails
+to dump such process and it complains
 
-How do you think about this version, does it looks fine to you?
+"(00.019206) Error (criu/files-reg.c:1299): Can't lookup mount=42 for
+fd=-3 path=/data/dalvik-cache/x86_64/system@framework@boot.art"
 
-Regards,
-Michael Wang
+This is due to how Android application is launched. In Android, there is
+a special process called Zygote which handles the forking of each new
+application process:
+0. Zygote opens and maps some files, for example
+   "/data/dalvik-cache/x86_64/system@framework@boot.art" in its current
+   mount namespace, say "old mnt ns".
+1. Zygote waits for the request to fork a new application.
+2. Zygote gets a request, it forks and run the new process in a new
+   mount namespace, say "new mnt ns".
 
-On 2019/11/13 上午11:43, 王贇 wrote:
-> Modern production environment could use hundreds of cgroup to control
-> the resources for different workloads, along with the complicated
-> resource binding.
-> 
-> On NUMA platforms where we have multiple nodes, things become even more
-> complicated, we hope there are more local memory access to improve the
-> performance, and NUMA Balancing keep working hard to achieve that,
-> however, wrong memory policy or node binding could easily waste the
-> effort, result a lot of remote page accessing.
-> 
-> We need to perceive such problems, then we got chance to fix it before
-> there are too much damages, however, there are no good approach yet to
-> help catch the mouse who introduced the remote access.
-> 
-> This patch set is trying to fill in the missing pieces， by introduce
-> the per-cgroup NUMA locality/exectime statistics, and expose the per-task
-> page migration failure counter, with these statistics, we could achieve
-> the daily monitoring on NUMA efficiency, to give warning when things going
-> too wrong.
-> 
-> Please check the third patch for more details.
-> 
-> Thanks to Peter, Mel and Michal for the good advices :-)
-> 
-> Michael Wang (3):
->   sched/numa: advanced per-cgroup numa statistic
->   sched/numa: expose per-task pages-migration-failure counter
->   sched/numa: documentation for per-cgroup numa stat
-> 
->  Documentation/admin-guide/cg-numa-stat.rst      | 161 ++++++++++++++++++++++++
->  Documentation/admin-guide/kernel-parameters.txt |   4 +
->  Documentation/admin-guide/sysctl/kernel.rst     |   9 ++
->  include/linux/sched.h                           |  18 ++-
->  include/linux/sched/sysctl.h                    |   6 +
->  init/Kconfig                                    |   9 ++
->  kernel/sched/core.c                             |  91 ++++++++++++++
->  kernel/sched/debug.c                            |   1 +
->  kernel/sched/fair.c                             |  33 +++++
->  kernel/sched/sched.h                            |  17 +++
->  kernel/sysctl.c                                 |  11 ++
->  11 files changed, 359 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/admin-guide/cg-numa-stat.rst
-> 
-> 
+The file opened in step 0 ties to the mount point in "old mnt ns". The
+mnt_id of that mount is listed in /proc/pid/fdinfo. However,
+/proc/pid/mountinfo points to current ns, i.e., "new mnt ns".
+
+Althgouh this issue is exposed in Android, we believe it's generic.
+Prcoess may open files and enter new mnt ns.
+
+To address it, this patch searches the mirror mount in current ns with
+MAJOR and MINOR and shows the mirror's mnt_id.
+
+v2: fix warning reported by lkp
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Chen, Hu <hu1.chen@intel.com>
+---
+ fs/mount.h     |  2 ++
+ fs/namespace.c | 30 ++++++++++++++++++++++++++++++
+ fs/proc/fd.c   | 12 ++++++++++--
+ 3 files changed, 42 insertions(+), 2 deletions(-)
+
+diff --git a/fs/mount.h b/fs/mount.h
+index 711a4093e475..6bbfc2b3b8ba 100644
+--- a/fs/mount.h
++++ b/fs/mount.h
+@@ -153,3 +153,5 @@ static inline bool is_anon_ns(struct mnt_namespace *ns)
+ {
+ 	return ns->seq == 0;
+ }
++
++extern struct mount *lookup_mirror_mnt(const struct mount *mnt);
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 2adfe7b166a3..131b36517472 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -683,6 +683,36 @@ bool __is_local_mountpoint(struct dentry *dentry)
+ 	return is_covered;
+ }
+ 
++/*
++ * lookup_mirror_mnt - Return @mnt's mirror mount in the current/local mount
++ * namespace. If mirror isn't found, just return NULL.
++ */
++struct mount *lookup_mirror_mnt(const struct mount *mnt)
++{
++	struct mnt_namespace *ns = current->nsproxy->mnt_ns;
++	struct mount *mnt_local;
++	bool is_matched = false;
++
++	/* mnt belongs to current namesapce */
++	if (mnt->mnt_ns == ns)
++		return (struct mount *) mnt;
++
++	down_read(&namespace_sem);
++	list_for_each_entry(mnt_local, &ns->list, mnt_list) {
++		struct super_block *sb = mnt->mnt.mnt_sb;
++		struct super_block *sb_local = mnt_local->mnt.mnt_sb;
++
++		if (MAJOR(sb->s_dev) == MAJOR(sb_local->s_dev) &&
++		    MINOR(sb->s_dev) == MINOR(sb_local->s_dev)) {
++			is_matched = true;
++			break;
++		}
++	}
++	up_read(&namespace_sem);
++
++	return is_matched ? mnt_local : NULL;
++}
++
+ static struct mountpoint *lookup_mountpoint(struct dentry *dentry)
+ {
+ 	struct hlist_head *chain = mp_hash(dentry);
+diff --git a/fs/proc/fd.c b/fs/proc/fd.c
+index 81882a13212d..cbf2571b0620 100644
+--- a/fs/proc/fd.c
++++ b/fs/proc/fd.c
+@@ -23,6 +23,7 @@ static int seq_show(struct seq_file *m, void *v)
+ 	int f_flags = 0, ret = -ENOENT;
+ 	struct file *file = NULL;
+ 	struct task_struct *task;
++	struct mount *mount = NULL;
+ 
+ 	task = get_proc_task(m->private);
+ 	if (!task)
+@@ -53,9 +54,16 @@ static int seq_show(struct seq_file *m, void *v)
+ 	if (ret)
+ 		return ret;
+ 
++	/* After unshare -m, real_mount(file->f_path.mnt) is not meaningful in
++	 * current mount namesapce. We want to know the mnt_id in current mount
++	 * namespace
++	 */
++	mount = lookup_mirror_mnt(real_mount(file->f_path.mnt));
++	if (!mount)
++		mount = real_mount(file->f_path.mnt);
++
+ 	seq_printf(m, "pos:\t%lli\nflags:\t0%o\nmnt_id:\t%i\n",
+-		   (long long)file->f_pos, f_flags,
+-		   real_mount(file->f_path.mnt)->mnt_id);
++		   (long long)file->f_pos, f_flags, mount->mnt_id);
+ 
+ 	show_fd_locks(m, file, files);
+ 	if (seq_has_overflowed(m))
+-- 
+2.22.0
+
