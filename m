@@ -2,164 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EBB81093FF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 20:09:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B7BA109447
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 20:33:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbfKYTJK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Nov 2019 14:09:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46732 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725823AbfKYTJK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Nov 2019 14:09:10 -0500
-Received: from localhost (c-67-169-218-210.hsd1.or.comcast.net [67.169.218.210])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84FC12071E;
-        Mon, 25 Nov 2019 19:09:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574708948;
-        bh=tf1axfqXEdRY/GSmyEZH3oDNTjKvKlm98mhfFZbNYHk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=J2ijnbMBCQbSlPJnQk34IRKwaRZVgYrKT0hZqMNt0ofNXpngQ8NawFe/iRU+9x/VI
-         WA5y4sQu28T8fBq2ajuTQc/SEdNqOEk9frTjf17S+l531k2vlHie1fJ7KVLEtDJBeq
-         RpOJs4yx1t7WZxYnUJmDCcE9gt6BEYaKc3sdHu7A=
-Date:   Mon, 25 Nov 2019 11:09:07 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de, agruenba@redhat.com,
-        rpeterso@redhat.com, cluster-devel@redhat.com,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>
-Subject: [GIT PULL] iomap: new code for 5.5
-Message-ID: <20191125190907.GN6219@magnolia>
+        id S1726866AbfKYTdw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Nov 2019 14:33:52 -0500
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:58372 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725823AbfKYTdw (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 Nov 2019 14:33:52 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R601e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0Tj5FL5p_1574710425;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0Tj5FL5p_1574710425)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 26 Nov 2019 03:33:49 +0800
+Subject: Re: [RFC PATCH] mm: shmem: allow split THP when truncating THP
+ partially
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     hughd@google.com, kirill.shutemov@linux.intel.com,
+        aarcange@redhat.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1574471132-55639-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20191125093611.hlamtyo4hvefwibi@box>
+ <3a35da3a-dff0-a8ca-8269-3018fff8f21b@linux.alibaba.com>
+ <20191125183350.5gmcln6t3ofszbsy@box>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <9a68b929-2f84-083d-0ac8-2ceb3eab8785@linux.alibaba.com>
+Date:   Mon, 25 Nov 2019 11:33:41 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191125183350.5gmcln6t3ofszbsy@box>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
 
-Please pull this series containing all the new iomap code for 5.5.  In
-this release, we hoisted as much of XFS' writeback code into iomap as
-was practicable, refactored the unshare file data function, added the
-ability to perform buffered io copy on write, and tweaked various parts
-of the directio implementation as needed to port ext4's directio code
-(that will be a separate pull).
 
-The branch merges cleanly against this morning's HEAD and survived a few
-days' worth of xfstests.  The merge was completely straightforward, so
-please let me know if you run into anything weird.  I think there'll be
-a second pull request in a week with a few more small cleanups that have
-trickled in.
+On 11/25/19 10:33 AM, Kirill A. Shutemov wrote:
+> On Mon, Nov 25, 2019 at 10:24:38AM -0800, Yang Shi wrote:
+>>
+>> On 11/25/19 1:36 AM, Kirill A. Shutemov wrote:
+>>> On Sat, Nov 23, 2019 at 09:05:32AM +0800, Yang Shi wrote:
+>>>> Currently when truncating shmem file, if the range is partial of THP
+>>>> (start or end is in the middle of THP), the pages actually will just get
+>>>> cleared rather than being freed unless the range cover the whole THP.
+>>>> Even though all the subpages are truncated (randomly or sequentially),
+>>>> the THP may still be kept in page cache.  This might be fine for some
+>>>> usecases which prefer preserving THP.
+>>>>
+>>>> But, when doing balloon inflation in QEMU, QEMU actually does hole punch
+>>>> or MADV_DONTNEED in base page size granulairty if hugetlbfs is not used.
+>>>> So, when using shmem THP as memory backend QEMU inflation actually doesn't
+>>>> work as expected since it doesn't free memory.  But, the inflation
+>>>> usecase really needs get the memory freed.  Anonymous THP will not get
+>>>> freed right away too but it will be freed eventually when all subpages are
+>>>> unmapped, but shmem THP would still stay in page cache.
+>>>>
+>>>> To protect the usecases which may prefer preserving THP, introduce a
+>>>> new fallocate mode: FALLOC_FL_SPLIT_HPAGE, which means spltting THP is
+>>>> preferred behavior if truncating partial THP.  This mode just makes
+>>>> sense to tmpfs for the time being.
+>>> We need to clarify interaction with khugepaged. This implementation
+>>> doesn't do anything to prevent khugepaged from collapsing the range back
+>>> to THP just after the split.
+>> Yes, it doesn't. Will clarify this in the commit log.
+> Okay, but I'm not sure that documention alone will be enough. We need
+> proper design.
 
---D
+Maybe we could try to hold inode lock with read during collapse_file(). 
+The shmem fallocate does acquire inode lock with write, this should be 
+able to synchronize hole punch and khugepaged. And, shmem just needs 
+hold inode lock for llseek and fallocate, I'm supposed they are should 
+be called not that frequently to have impact on khugepaged. The llseek 
+might be often, but it should be quite fast. However, they might get 
+blocked by khugepaged.
 
-The following changes since commit 4f5cafb5cb8471e54afdc9054d973535614f7675:
+It sounds safe to hold a rwsem during collapsing THP.
 
-  Linux 5.4-rc3 (2019-10-13 16:37:36 -0700)
+Or we could set VM_NOHUGEPAGE in shmem inode's flag with hole punch and 
+clear it after truncate, then check the flag before doing collapse in 
+khugepaged. khugepaged should not need hold the inode lock during 
+collapse since it could be released after the flag is checked.
 
-are available in the Git repository at:
+>
+>>>> @@ -976,8 +1022,31 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+>>>>    			}
+>>>>    			unlock_page(page);
+>>>>    		}
+>>>> +rescan_split:
+>>>>    		pagevec_remove_exceptionals(&pvec);
+>>>>    		pagevec_release(&pvec);
+>>>> +
+>>>> +		if (split && PageTransCompound(page)) {
+>>>> +			/* The THP may get freed under us */
+>>>> +			if (!get_page_unless_zero(compound_head(page)))
+>>>> +				goto rescan_out;
+>>>> +
+>>>> +			lock_page(page);
+>>>> +
+>>>> +			/*
+>>>> +			 * The extra pins from page cache lookup have been
+>>>> +			 * released by pagevec_release().
+>>>> +			 */
+>>>> +			if (!split_huge_page(page)) {
+>>>> +				unlock_page(page);
+>>>> +				put_page(page);
+>>>> +				/* Re-look up page cache from current index */
+>>>> +				goto again;
+>>>> +			}
+>>>> +			unlock_page(page);
+>>>> +			put_page(page);
+>>>> +		}
+>>>> +rescan_out:
+>>>>    		index++;
+>>>>    	}
+>>> Doing get_page_unless_zero() just after you've dropped the pin for the
+>>> page looks very suboptimal.
+>> If I don't drop the pins the THP can't be split. And, there might be more
+>> than one pins from find_get_entries() if I read the code correctly. For
+>> example, truncate 8K length in the middle of THP, the THP's refcount would
+>> get bumpped twice since  two sub pages would be returned.
+> Pin the page before pagevec_release() and avoid get_page_unless_zero().
+>
+> Current code is buggy. You need to check that the page is still belong to
+> the file after speculative lookup.
 
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/iomap-5.5-merge-11
+Yes, I missed this point. Thanks for the suggestion.
 
-for you to fetch changes up to 419e9c38aa075ed0cd3c13d47e15954b686bcdb6:
+>
 
-  iomap: Fix pipe page leakage during splicing (2019-11-22 08:36:02 -0800)
-
-----------------------------------------------------------------
-New code for 5.5:
-- Make iomap_dio_rw callers explicitly tell us if they want us to wait
-- Port the xfs writeback code to iomap to complete the buffered io
-  library functions
-- Refactor the unshare code to share common pieces
-- Add support for performing copy on write with buffered writes
-- Other minor fixes
-- Fix unchecked return in iomap_bmap
-- Fix a type casting bug in a ternary statement in iomap_dio_bio_actor
-- Improve tracepoints for easier diagnostic ability
-- Fix pipe page leakage in directio reads
-
-----------------------------------------------------------------
-Andreas Gruenbacher (1):
-      iomap: Fix overflow in iomap_page_mkwrite
-
-Christoph Hellwig (20):
-      xfs: initialize iomap->flags in xfs_bmbt_to_iomap
-      xfs: set IOMAP_F_NEW more carefully
-      xfs: use a struct iomap in xfs_writepage_ctx
-      xfs: refactor the ioend merging code
-      xfs: turn io_append_trans into an io_private void pointer
-      xfs: remove the fork fields in the writepage_ctx and ioend
-      iomap: zero newly allocated mapped blocks
-      iomap: lift common tracing code from xfs to iomap
-      iomap: lift the xfs writeback code to iomap
-      iomap: warn on inline maps in iomap_writepage_map
-      iomap: move struct iomap_page out of iomap.h
-      iomap: cleanup iomap_ioend_compare
-      iomap: pass a struct page to iomap_finish_page_writeback
-      iomap: better document the IOMAP_F_* flags
-      iomap: remove the unused iomap argument to __iomap_write_end
-      iomap: always use AOP_FLAG_NOFS in iomap_write_begin
-      iomap: ignore non-shared or non-data blocks in xfs_file_dirty
-      iomap: move the zeroing case out of iomap_read_page_sync
-      iomap: use write_begin to read pages to unshare
-      iomap: renumber IOMAP_HOLE to 0
-
-Darrick J. Wong (3):
-      iomap: enhance writeback error message
-      iomap: iomap_bmap should check iomap_apply return value
-      iomap: trace iomap_appply results
-
-Dave Chinner (1):
-      iomap: iomap that extends beyond EOF should be marked dirty
-
-Goldwyn Rodrigues (1):
-      iomap: use a srcmap for a read-modify-write I/O
-
-Jan Kara (3):
-      iomap: Allow forcing of waiting for running DIO in iomap_dio_rw()
-      xfs: Use iomap_dio_rw to wait for unaligned direct IO
-      iomap: Fix pipe page leakage during splicing
-
-Jan Stancek (1):
-      iomap: fix return value of iomap_dio_bio_actor on 32bit systems
-
-Joseph Qi (1):
-      fs/iomap: remove redundant check in iomap_dio_rw()
-
- fs/dax.c                 |  13 +-
- fs/ext2/inode.c          |   2 +-
- fs/ext4/inode.c          |   2 +-
- fs/gfs2/bmap.c           |   3 +-
- fs/gfs2/file.c           |   6 +-
- fs/iomap/Makefile        |  16 +-
- fs/iomap/apply.c         |  32 +-
- fs/iomap/buffered-io.c   | 756 +++++++++++++++++++++++++++++++++++++++++------
- fs/iomap/direct-io.c     |  24 +-
- fs/iomap/fiemap.c        |  10 +-
- fs/iomap/seek.c          |   4 +-
- fs/iomap/swapfile.c      |   3 +-
- fs/iomap/trace.c         |  12 +
- fs/iomap/trace.h         | 191 ++++++++++++
- fs/xfs/libxfs/xfs_bmap.c |  14 +-
- fs/xfs/libxfs/xfs_bmap.h |   3 +-
- fs/xfs/xfs_aops.c        | 754 ++++++++--------------------------------------
- fs/xfs/xfs_aops.h        |  17 --
- fs/xfs/xfs_file.c        |  13 +-
- fs/xfs/xfs_iomap.c       |  51 +++-
- fs/xfs/xfs_iomap.h       |   2 +-
- fs/xfs/xfs_pnfs.c        |   2 +-
- fs/xfs/xfs_reflink.c     |   2 +-
- fs/xfs/xfs_super.c       |  11 +-
- fs/xfs/xfs_trace.h       |  65 ----
- include/linux/iomap.h    | 129 +++++---
- 26 files changed, 1215 insertions(+), 922 deletions(-)
- create mode 100644 fs/iomap/trace.c
- create mode 100644 fs/iomap/trace.h
