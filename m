@@ -2,137 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B7BA109447
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 20:33:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77E18109494
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 21:14:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726866AbfKYTdw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Nov 2019 14:33:52 -0500
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:58372 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725823AbfKYTdw (ORCPT
+        id S1726980AbfKYUN6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Nov 2019 15:13:58 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:10773 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725882AbfKYUN5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Nov 2019 14:33:52 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R601e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0Tj5FL5p_1574710425;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0Tj5FL5p_1574710425)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 26 Nov 2019 03:33:49 +0800
-Subject: Re: [RFC PATCH] mm: shmem: allow split THP when truncating THP
- partially
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     hughd@google.com, kirill.shutemov@linux.intel.com,
-        aarcange@redhat.com, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1574471132-55639-1-git-send-email-yang.shi@linux.alibaba.com>
- <20191125093611.hlamtyo4hvefwibi@box>
- <3a35da3a-dff0-a8ca-8269-3018fff8f21b@linux.alibaba.com>
- <20191125183350.5gmcln6t3ofszbsy@box>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <9a68b929-2f84-083d-0ac8-2ceb3eab8785@linux.alibaba.com>
-Date:   Mon, 25 Nov 2019 11:33:41 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Mon, 25 Nov 2019 15:13:57 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5ddc36070000>; Mon, 25 Nov 2019 12:14:00 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 25 Nov 2019 12:13:56 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 25 Nov 2019 12:13:56 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 25 Nov
+ 2019 20:13:55 +0000
+Subject: Re: [PATCH 07/19] mm/gup: introduce pin_user_pages*() and FOLL_PIN
+To:     kbuild test robot <lkp@intel.com>
+CC:     <kbuild-all@lists.01.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Jan Kara <jack@suse.cz>,
+        <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Dave Chinner <david@fromorbit.com>,
+        <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        Paul Mackerras <paulus@samba.org>,
+        <linux-kselftest@vger.kernel.org>, Ira Weiny <ira.weiny@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>, <linux-rdma@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        <linux-media@vger.kernel.org>, Shuah Khan <shuah@kernel.org>,
+        <linux-block@vger.kernel.org>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Jens Axboe <axboe@kernel.dk>, <netdev@vger.kernel.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        <linux-fsdevel@vger.kernel.org>, <bpf@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+References: <20191125042011.3002372-8-jhubbard@nvidia.com>
+ <201911251639.UWS3hE3Y%lkp@intel.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <3989f406-c333-59f8-027a-e3506af59028@nvidia.com>
+Date:   Mon, 25 Nov 2019 12:13:55 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20191125183350.5gmcln6t3ofszbsy@box>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <201911251639.UWS3hE3Y%lkp@intel.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1574712840; bh=xIrvhzi9FQlGBM90SU8S2M4hsd9JLL89vrPzYePQebc=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=nLQ5e77gFGxdvd47gRiRGHQbc1wVG8bwNbuGbyST1Q+jBowT4WflUsZ9otzD54lLB
+         J2wcW1AWxZ1vtAVadAvnnzHYEB9/RMQVx2Q02xRhkx6jKeVYJqp1Vzd24M3MZT/KvC
+         2r/IXfhmoHhQNFs1s+Ijlm3sbCcfcCTqQLXfh/u6EJodBjYv13WjZ+5uA/qpRqF5KJ
+         cgfhkSAYwIIVs+guU8WDjo4g7p8fk0VqKWKusesTvojs5xnlpb4TJcK/V2onbK8LWW
+         ksqnqfXGTA8sAX8XklRUC+OhMkFBYvdHQY7BxmxtkVVkFbYIpBRqVJEp1i5QjV+FwU
+         IkbF7UmcnHQ6g==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 11/25/19 12:44 AM, kbuild test robot wrote:
+> Hi John,
+> 
+> Thank you for the patch! Yet something to improve:
+> 
+> [auto build test ERROR on rdma/for-next]
+> [cannot apply to v5.4 next-20191122]
+> [if your patch is applied to the wrong git tree, please drop us a note to help
+> improve the system. BTW, we also suggest to use '--base' option to specify the
+> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+> 
+> url:    https://github.com/0day-ci/linux/commits/John-Hubbard/pin_user_pages-reduced-risk-series-for-Linux-5-5/20191125-125637
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git for-next
+> config: arm-randconfig-a001-20191125 (attached as .config)
+> compiler: arm-linux-gnueabi-gcc (GCC) 7.4.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         GCC_VERSION=7.4.0 make.cross ARCH=arm 
+> 
+> If you fix the issue, kindly add following tag
+> Reported-by: kbuild test robot <lkp@intel.com>
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    mm/gup.o: In function `pin_user_pages_remote':
+>>> mm/gup.c:2528: undefined reference to `get_user_pages_remote'
+> 
+> vim +2528 mm/gup.c
 
 
-On 11/25/19 10:33 AM, Kirill A. Shutemov wrote:
-> On Mon, Nov 25, 2019 at 10:24:38AM -0800, Yang Shi wrote:
->>
->> On 11/25/19 1:36 AM, Kirill A. Shutemov wrote:
->>> On Sat, Nov 23, 2019 at 09:05:32AM +0800, Yang Shi wrote:
->>>> Currently when truncating shmem file, if the range is partial of THP
->>>> (start or end is in the middle of THP), the pages actually will just get
->>>> cleared rather than being freed unless the range cover the whole THP.
->>>> Even though all the subpages are truncated (randomly or sequentially),
->>>> the THP may still be kept in page cache.  This might be fine for some
->>>> usecases which prefer preserving THP.
->>>>
->>>> But, when doing balloon inflation in QEMU, QEMU actually does hole punch
->>>> or MADV_DONTNEED in base page size granulairty if hugetlbfs is not used.
->>>> So, when using shmem THP as memory backend QEMU inflation actually doesn't
->>>> work as expected since it doesn't free memory.  But, the inflation
->>>> usecase really needs get the memory freed.  Anonymous THP will not get
->>>> freed right away too but it will be freed eventually when all subpages are
->>>> unmapped, but shmem THP would still stay in page cache.
->>>>
->>>> To protect the usecases which may prefer preserving THP, introduce a
->>>> new fallocate mode: FALLOC_FL_SPLIT_HPAGE, which means spltting THP is
->>>> preferred behavior if truncating partial THP.  This mode just makes
->>>> sense to tmpfs for the time being.
->>> We need to clarify interaction with khugepaged. This implementation
->>> doesn't do anything to prevent khugepaged from collapsing the range back
->>> to THP just after the split.
->> Yes, it doesn't. Will clarify this in the commit log.
-> Okay, but I'm not sure that documention alone will be enough. We need
-> proper design.
+This, and the other (sh) report, is due to !CONFIG_MMU lacking a get_user_pages_remote(), 
+but pin_user_pages_remote() needs it for a (temporary) implementation. I'll post the fix, 
+in v2.
 
-Maybe we could try to hold inode lock with read during collapse_file(). 
-The shmem fallocate does acquire inode lock with write, this should be 
-able to synchronize hole punch and khugepaged. And, shmem just needs 
-hold inode lock for llseek and fallocate, I'm supposed they are should 
-be called not that frequently to have impact on khugepaged. The llseek 
-might be often, but it should be quite fast. However, they might get 
-blocked by khugepaged.
 
-It sounds safe to hold a rwsem during collapsing THP.
-
-Or we could set VM_NOHUGEPAGE in shmem inode's flag with hole punch and 
-clear it after truncate, then check the flag before doing collapse in 
-khugepaged. khugepaged should not need hold the inode lock during 
-collapse since it could be released after the flag is checked.
-
->
->>>> @@ -976,8 +1022,31 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
->>>>    			}
->>>>    			unlock_page(page);
->>>>    		}
->>>> +rescan_split:
->>>>    		pagevec_remove_exceptionals(&pvec);
->>>>    		pagevec_release(&pvec);
->>>> +
->>>> +		if (split && PageTransCompound(page)) {
->>>> +			/* The THP may get freed under us */
->>>> +			if (!get_page_unless_zero(compound_head(page)))
->>>> +				goto rescan_out;
->>>> +
->>>> +			lock_page(page);
->>>> +
->>>> +			/*
->>>> +			 * The extra pins from page cache lookup have been
->>>> +			 * released by pagevec_release().
->>>> +			 */
->>>> +			if (!split_huge_page(page)) {
->>>> +				unlock_page(page);
->>>> +				put_page(page);
->>>> +				/* Re-look up page cache from current index */
->>>> +				goto again;
->>>> +			}
->>>> +			unlock_page(page);
->>>> +			put_page(page);
->>>> +		}
->>>> +rescan_out:
->>>>    		index++;
->>>>    	}
->>> Doing get_page_unless_zero() just after you've dropped the pin for the
->>> page looks very suboptimal.
->> If I don't drop the pins the THP can't be split. And, there might be more
->> than one pins from find_get_entries() if I read the code correctly. For
->> example, truncate 8K length in the middle of THP, the THP's refcount would
->> get bumpped twice since  two sub pages would be returned.
-> Pin the page before pagevec_release() and avoid get_page_unless_zero().
->
-> Current code is buggy. You need to check that the page is still belong to
-> the file after speculative lookup.
-
-Yes, I missed this point. Thanks for the suggestion.
-
->
-
+thanks,
+-- 
+John Hubbard
+NVIDIA
