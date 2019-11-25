@@ -2,86 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01DE510935C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 19:17:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31BC7109378
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 19:24:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727985AbfKYSRM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Nov 2019 13:17:12 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:36506 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727865AbfKYSRL (ORCPT
+        id S1727901AbfKYSYr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Nov 2019 13:24:47 -0500
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:51861 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727269AbfKYSYr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Nov 2019 13:17:11 -0500
-Received: by mail-il1-f195.google.com with SMTP id s75so15105333ilc.3;
-        Mon, 25 Nov 2019 10:17:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XNvmuvfR13K+bepkBmPkJQDh2DcCBvXY1vhlGmjrkSQ=;
-        b=cfpPCKztKRoWFw9gU0+NsNuYAetbF3Z/a4D/7R0eDl7/zhS7+oVdMGW62X2CKXoRwH
-         jfeDbMcGYFyGsRJ6DY2ACog0bpH++4TlJeHXHBbAN4UTbjWyCzBQOXQbTfmBkqtOFffb
-         L2cifP060mBBHiocqRCzV7sTnJb+CGEp+hkt1h3OVURv+kRe5ddgiaA9SmZHEE81PHly
-         QFY3FDXZswnaPgB3kqmMJLdTbghNw5MNntz8P7mTwEDUej5pr5fNq7+7+T/gEczCO+XN
-         hXUjtj70mm5RIC5G7pb1J875Gpr+43Ed3rWK7wCi71W4StwsMwzr1exl4jD5rBlvyT65
-         qTwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XNvmuvfR13K+bepkBmPkJQDh2DcCBvXY1vhlGmjrkSQ=;
-        b=RTZFKUoPhSyaEotRxD0LhOf5eqAJnPS0pGPg2sd80SmZUCxYrx9D/tTVEMkIWUx4Lj
-         9gOaupdnWNvMNB4PEvOJn/fnHX8fcmYdV114hQHaUsIyHtWvXLqncDnGx+JD3lVQKoyP
-         sOcPEa3S8VONXifC36D6Eo/ymlYDP+KOV3F/Sp1ljcDtnoLx3JNSFLE+looVxZy+qgaV
-         TcjIcKmlLUSPVIMw+aFthbp1xvgn1LU6dp1O1FOkal13Ky0pBXpMzlH7ojelIlo37/XL
-         jnHppFXsJbmX77hRF7w2VHOiBdv6GmVUuynHQEU/cvs2TnQqZC2Y3Cnt/gQiP+2bCUMl
-         uo1A==
-X-Gm-Message-State: APjAAAWWV5wOgEhpjW4mLVo4s+hHQKgvD9Q0vhUGT+wxH3PPTyA8tltZ
-        9oTuW1zEiAB6XFd57kej1uuNmkwrWTinAKRZdyM=
-X-Google-Smtp-Source: APXvYqw78v3arYJMRZHIVLUyH0UknW8rGs2UZ5LBxnpquKgU2PPRG0oB/krijAz/74tFXtSGiOCOUuYep3Lc7hWfR5U=
-X-Received: by 2002:a92:d390:: with SMTP id o16mr34224478ilo.110.1574705830800;
- Mon, 25 Nov 2019 10:17:10 -0800 (PST)
+        Mon, 25 Nov 2019 13:24:47 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04427;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0Tj5DfgO_1574706281;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0Tj5DfgO_1574706281)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 26 Nov 2019 02:24:44 +0800
+Subject: Re: [RFC PATCH] mm: shmem: allow split THP when truncating THP
+ partially
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     hughd@google.com, kirill.shutemov@linux.intel.com,
+        aarcange@redhat.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1574471132-55639-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20191125093611.hlamtyo4hvefwibi@box>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <3a35da3a-dff0-a8ca-8269-3018fff8f21b@linux.alibaba.com>
+Date:   Mon, 25 Nov 2019 10:24:38 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <20191124193145.22945-1-amir73il@gmail.com> <20191125164625.GB28608@fieldses.org>
-In-Reply-To: <20191125164625.GB28608@fieldses.org>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Mon, 25 Nov 2019 10:16:57 -0800
-Message-ID: <CABeXuvo3pToaexO26JarHHkQBWO9355YEyO=NeZh-36KciJu6Q@mail.gmail.com>
-Subject: Re: [PATCH] utimes: Clamp the timestamps in notify_change()
-To:     "J . Bruce Fields" <bfields@fieldses.org>
-Cc:     Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-        Jeff Layton <jlayton@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191125093611.hlamtyo4hvefwibi@box>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 25, 2019 at 8:46 AM J . Bruce Fields <bfields@fieldses.org> wrote:
->
-> On Sun, Nov 24, 2019 at 09:31:45PM +0200, Amir Goldstein wrote:
-> > Push clamping timestamps down the call stack into notify_change(), so
-> > in-kernel callers like nfsd and overlayfs will get similar timestamp
-> > set behavior as utimes.
->
-> So, nfsd has always bypassed timestamp_truncate() and we've never
-> noticed till now?  What are the symptoms?  (Do timestamps go backwards
-> after cache eviction on filesystems with large time granularity?)
->
-> Looks like generic/402 has never run in my tests:
->
->         generic/402     [not run] no kernel support for y2038 sysfs switch
 
-You need this in your xfstest:
-https://patchwork.kernel.org/patch/11049745/ . The test has been
-updated recently.
 
-And, you need a change like for overlayfs as Amir pointed out.
+On 11/25/19 1:36 AM, Kirill A. Shutemov wrote:
+> On Sat, Nov 23, 2019 at 09:05:32AM +0800, Yang Shi wrote:
+>> Currently when truncating shmem file, if the range is partial of THP
+>> (start or end is in the middle of THP), the pages actually will just get
+>> cleared rather than being freed unless the range cover the whole THP.
+>> Even though all the subpages are truncated (randomly or sequentially),
+>> the THP may still be kept in page cache.  This might be fine for some
+>> usecases which prefer preserving THP.
+>>
+>> But, when doing balloon inflation in QEMU, QEMU actually does hole punch
+>> or MADV_DONTNEED in base page size granulairty if hugetlbfs is not used.
+>> So, when using shmem THP as memory backend QEMU inflation actually doesn't
+>> work as expected since it doesn't free memory.  But, the inflation
+>> usecase really needs get the memory freed.  Anonymous THP will not get
+>> freed right away too but it will be freed eventually when all subpages are
+>> unmapped, but shmem THP would still stay in page cache.
+>>
+>> To protect the usecases which may prefer preserving THP, introduce a
+>> new fallocate mode: FALLOC_FL_SPLIT_HPAGE, which means spltting THP is
+>> preferred behavior if truncating partial THP.  This mode just makes
+>> sense to tmpfs for the time being.
+> We need to clarify interaction with khugepaged. This implementation
+> doesn't do anything to prevent khugepaged from collapsing the range back
+> to THP just after the split.
 
--Deepa
+Yes, it doesn't. Will clarify this in the commit log.
+
+>
+>> @@ -976,8 +1022,31 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+>>   			}
+>>   			unlock_page(page);
+>>   		}
+>> +rescan_split:
+>>   		pagevec_remove_exceptionals(&pvec);
+>>   		pagevec_release(&pvec);
+>> +
+>> +		if (split && PageTransCompound(page)) {
+>> +			/* The THP may get freed under us */
+>> +			if (!get_page_unless_zero(compound_head(page)))
+>> +				goto rescan_out;
+>> +
+>> +			lock_page(page);
+>> +
+>> +			/*
+>> +			 * The extra pins from page cache lookup have been
+>> +			 * released by pagevec_release().
+>> +			 */
+>> +			if (!split_huge_page(page)) {
+>> +				unlock_page(page);
+>> +				put_page(page);
+>> +				/* Re-look up page cache from current index */
+>> +				goto again;
+>> +			}
+>> +			unlock_page(page);
+>> +			put_page(page);
+>> +		}
+>> +rescan_out:
+>>   		index++;
+>>   	}
+> Doing get_page_unless_zero() just after you've dropped the pin for the
+> page looks very suboptimal.
+
+If I don't drop the pins the THP can't be split. And, there might be 
+more than one pins from find_get_entries() if I read the code correctly. 
+For example, truncate 8K length in the middle of THP, the THP's refcount 
+would get bumpped twice since  two sub pages would be returned.
+
+>
+
