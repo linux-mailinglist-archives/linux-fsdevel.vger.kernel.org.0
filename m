@@ -2,142 +2,312 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7667E108AD5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 10:27:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DAA5108AEC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 10:32:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727263AbfKYJ1t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Nov 2019 04:27:49 -0500
-Received: from mout.web.de ([212.227.17.11]:54593 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727006AbfKYJ1s (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Nov 2019 04:27:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1574673967;
-        bh=q1sAJv2V0p+xOdIEo8orruYj5GJ7Ns4QAVOLhuRMv7w=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=lYxAgR/TbHJqDDLeWAttAYhfSVHOmpIDe9LBe72JixA76eKfRpH5+2iuB3g0xH6FQ
-         Fr4p0wUtQRYmzs+gHFr+z1NB0Z1A2/ALGgZWvg1oy9NR8JjorwtLYoKx78In4fWTBu
-         j3/aHYwDBWGxMUKw3jJccr073eRMuRtGqL+96g6I=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.3] ([93.135.130.213]) by smtp.web.de (mrweb102
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0LwHkw-1hl3dw45Gg-01811S; Mon, 25
- Nov 2019 10:26:07 +0100
-Subject: Re: [PATCH v5 04/13] exfat: add directory operations
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Daniel Wagner <dwagner@suse.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        linkinjeon@gmail.com
-References: <20191125000326.24561-1-namjae.jeon@samsung.com>
- <CGME20191125000630epcas1p23c2ac4216a044a19916f6aeb99166fde@epcas1p2.samsung.com>
- <20191125000326.24561-5-namjae.jeon@samsung.com>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
- +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
- mpVJgXGKkNJ1ey+QOXouzlErVvE2fRh+KXXN1Q7fSmTJlAW9XJYHS3BDHb0uRpymRSX3O+E2
- lA87C7R8qAigPDZi6Z7UmwIA83ZMKXQ5stA0lhPyYgQcM7fh7V4ZYhnR0I5/qkUoxKpqaYLp
- YHBczVP+Zx/zHOM0KQphOMbU7X3c1pmMruoe6ti9uZzqZSLsF+NKXFEPBS665tQr66HJvZvY
- GMDlntZFAZ6xQvCC1r3MGoxEC1tuEa24vPCC9RZ9wk2sY5Csbva0WwYv3WKRZZBv8eIhGMxs
- rcpeGShRFyZ/0BYO53wZAPV1pEhGLLxd8eLN/nEWjJE0ejakPC1H/mt5F+yQBJAzz9JzbToU
- 5jKLu0SugNI18MspJut8AiA1M44CIWrNHXvWsQ+nnBKHDHHYZu7MoXlOmB32ndsfPthR3GSv
- jN7YD4Ad724H8fhRijmC1+RpuSce7w2JLj5cYj4MlccmNb8YUxsE8brY2WkXQYS8Ivse39MX
- BE66MQN0r5DQ6oqgoJ4gHIVBUv/ZwgcmUNS5gQkNCFA0dWXznQARAQABtCZNYXJrdXMgRWxm
- cmluZyA8TWFya3VzLkVsZnJpbmdAd2ViLmRlPokCVAQTAQgAPhYhBHDP0hzibeXjwQ/ITuU9
- Figxg9azBQJYNvsQAhsjBQkJZgGABQsJCAcCBhUICQoLAgQWAgMBAh4BAheAAAoJEOU9Figx
- g9azcyMP/iVihZkZ4VyH3/wlV3nRiXvSreqg+pGPI3c8J6DjP9zvz7QHN35zWM++1yNek7Ar
- OVXwuKBo18ASlYzZPTFJZwQQdkZSV+atwIzG3US50ZZ4p7VyUuDuQQVVqFlaf6qZOkwHSnk+
- CeGxlDz1POSHY17VbJG2CzPuqMfgBtqIU1dODFLpFq4oIAwEOG6fxRa59qbsTLXxyw+PzRaR
- LIjVOit28raM83Efk07JKow8URb4u1n7k9RGAcnsM5/WMLRbDYjWTx0lJ2WO9zYwPgRykhn2
- sOyJVXk9xVESGTwEPbTtfHM+4x0n0gC6GzfTMvwvZ9G6xoM0S4/+lgbaaa9t5tT/PrsvJiob
- kfqDrPbmSwr2G5mHnSM9M7B+w8odjmQFOwAjfcxoVIHxC4Cl/GAAKsX3KNKTspCHR0Yag78w
- i8duH/eEd4tB8twcqCi3aCgWoIrhjNS0myusmuA89kAWFFW5z26qNCOefovCx8drdMXQfMYv
- g5lRk821ZCNBosfRUvcMXoY6lTwHLIDrEfkJQtjxfdTlWQdwr0mM5ye7vd83AManSQwutgpI
- q+wE8CNY2VN9xAlE7OhcmWXlnAw3MJLW863SXdGlnkA3N+U4BoKQSIToGuXARQ14IMNvfeKX
- NphLPpUUnUNdfxAHu/S3tPTc/E/oePbHo794dnEm57LuuQINBFg2+xABEADZg/T+4o5qj4cw
- nd0G5pFy7ACxk28mSrLuva9tyzqPgRZ2bdPiwNXJUvBg1es2u81urekeUvGvnERB/TKekp25
- 4wU3I2lEhIXj5NVdLc6eU5czZQs4YEZbu1U5iqhhZmKhlLrhLlZv2whLOXRlLwi4jAzXIZAu
- 76mT813jbczl2dwxFxcT8XRzk9+dwzNTdOg75683uinMgskiiul+dzd6sumdOhRZR7YBT+xC
- wzfykOgBKnzfFscMwKR0iuHNB+VdEnZw80XGZi4N1ku81DHxmo2HG3icg7CwO1ih2jx8ik0r
- riIyMhJrTXgR1hF6kQnX7p2mXe6K0s8tQFK0ZZmYpZuGYYsV05OvU8yqrRVL/GYvy4Xgplm3
- DuMuC7/A9/BfmxZVEPAS1gW6QQ8vSO4zf60zREKoSNYeiv+tURM2KOEj8tCMZN3k3sNASfoG
- fMvTvOjT0yzMbJsI1jwLwy5uA2JVdSLoWzBD8awZ2X/eCU9YDZeGuWmxzIHvkuMj8FfX8cK/
- 2m437UA877eqmcgiEy/3B7XeHUipOL83gjfq4ETzVmxVswkVvZvR6j2blQVr+MhCZPq83Ota
- xNB7QptPxJuNRZ49gtT6uQkyGI+2daXqkj/Mot5tKxNKtM1Vbr/3b+AEMA7qLz7QjhgGJcie
- qp4b0gELjY1Oe9dBAXMiDwARAQABiQI8BBgBCAAmFiEEcM/SHOJt5ePBD8hO5T0WKDGD1rMF
- Alg2+xACGwwFCQlmAYAACgkQ5T0WKDGD1rOYSw/+P6fYSZjTJDAl9XNfXRjRRyJSfaw6N1pA
- Ahuu0MIa3djFRuFCrAHUaaFZf5V2iW5xhGnrhDwE1Ksf7tlstSne/G0a+Ef7vhUyeTn6U/0m
- +/BrsCsBUXhqeNuraGUtaleatQijXfuemUwgB+mE3B0SobE601XLo6MYIhPh8MG32MKO5kOY
- hB5jzyor7WoN3ETVNQoGgMzPVWIRElwpcXr+yGoTLAOpG7nkAUBBj9n9TPpSdt/npfok9ZfL
- /Q+ranrxb2Cy4tvOPxeVfR58XveX85ICrW9VHPVq9sJf/a24bMm6+qEg1V/G7u/AM3fM8U2m
- tdrTqOrfxklZ7beppGKzC1/WLrcr072vrdiN0icyOHQlfWmaPv0pUnW3AwtiMYngT96BevfA
- qlwaymjPTvH+cTXScnbydfOQW8220JQwykUe+sHRZfAF5TS2YCkQvsyf7vIpSqo/ttDk4+xc
- Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
- x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
- pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <9fb7a74f-abf4-0842-5602-d8e5706fc75d@web.de>
-Date:   Mon, 25 Nov 2019 10:26:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727295AbfKYJcV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Nov 2019 04:32:21 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41245 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725793AbfKYJcV (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 Nov 2019 04:32:21 -0500
+Received: by mail-wr1-f68.google.com with SMTP id b18so17026183wrj.8;
+        Mon, 25 Nov 2019 01:32:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9g1dsHSkZyIuogn9FJsE8Uhy7HUmJyPQt4umj/Cy1qM=;
+        b=ebZrraCX980kznxsj6PVadip6OfG7OxiQeybCaI5jAz4hgrM5H3JhZTgCx4wo8yphS
+         TBGAXJhH+2aBOfSKm2z+STT4xUISLzsKbb8N8krp0yAwwKPiYxK/41ThPpz4cXsaVH+K
+         ovcWS49YswZOZp5ajy3kvAt3MTqTfEEJrDmRPntsdGuzYxiBMf0aiqDSSPi2mB4Bl6v2
+         pMPJNqW0pX7nl/UHV/3acbVMAYQwbkBMpGjcAfQ+GAHL4BKHFjJ9QlWPskYgDlsKjFiM
+         clzJp/IVuwoXQE/XyNW0XlwDC7BTjD6RKhya2661HKMvCpxZfoCiK/KFKu/zo02stEQl
+         4ICA==
+X-Gm-Message-State: APjAAAUWTMkMbD3uMIQi8Y+HFnW0ZDeTjij9C9QYmIsdZeDz+4MFcRFn
+        GjNU9dFKcOMY7dtBg6LsFXk=
+X-Google-Smtp-Source: APXvYqxVLtRMAmG3OtLqwN04F1cLQln/PkStBpS9dqyei6x12GwZXrBMjfGzYE/Q4E+36GpGh+1hVw==
+X-Received: by 2002:adf:f5c6:: with SMTP id k6mr29557791wrp.245.1574674337631;
+        Mon, 25 Nov 2019 01:32:17 -0800 (PST)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id q15sm8447341wrv.61.2019.11.25.01.32.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2019 01:32:16 -0800 (PST)
+Date:   Mon, 25 Nov 2019 10:32:16 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Chen Yu <yu.c.chen@intel.com>
+Cc:     x86@kernel.org, Chen Yu <yu.chen.surf@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH][v5] x86/resctrl: Add task resctrl information display
+Message-ID: <20191125093216.GF31714@dhcp22.suse.cz>
+References: <20191125040001.28943-1-yu.c.chen@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20191125000326.24561-5-namjae.jeon@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:cn1TRwErewaa9WdsJCQypyG5yBNn3E/wJy8G/ALopUACgPpsv3U
- U9BJtniJVf+JyzX906GqLZwojv2t4TlraromiGh/cY1SW8+6lARggXb/qkigr8fBEbu4tVP
- gSkDR9uaSg2sblLBw/bF62kCDb8WX7VL5DWup7iQU+tCYnLbGIb6aLSanEN0SOS/y0dX9si
- 5DUH3RsgtdWRzFIgvzigg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:+cls4Fba/Rk=:jkK71OlUyUCaUMHPm6fXsj
- 85aAGKxdhRci09p8oHM3QeH3aRRGNCcZi+JU5F5F17TWDLnEZmaM4QqVjgRZbpuKeHbtTtTCZ
- zWWGyDq3drOySdgMG8TNwn8YwniMOvq9RUdQF9vPInhQOlNRN62l7wvjObs2v43GF5Xs/6KEf
- HZTyE8E3KL70zxaNEudQZI9befvjN2/uvTe2xKwJ6Daj4h47XOpX2EFfERQ94H2QRUrQJEEXK
- EQ2nWG4DyCbmBX7u7fHhb4tXGipFl/SvqfK550l74FTtI+Ct5wz+SykQAmzGgvyQ1qI4GmuPG
- bRE1RkD+GD5Li8FY3MctQKDSoHxeAEFgSxviQP+wlvPlFRX5qLe2hj2LEyp0Q0kwA/7zbaSXx
- FV7eLzJPMyOSBET7heLlgPm1kUkztz5SHZ1VzYkg32dPftaRxpnVrk2n/rUWeLsQpILUjw4Od
- tbxBy1Rs7xIj6MYzKY4Hy8oNYXXgGK5pWvmiDrHSco8IA3VwpawLUzDld3Vb3COyfwNtGdqex
- +GL0uV07Qdgy1GjRHbcDPZ4+0NDSUHhDmsGblUfKpJKrKKV8alUFSotlDdj24/JoYS2WvsRIX
- Q8zuVmIWmKP1AUyZOJ+cCv+CRSpkHAB78sdtgB6IJgewibcD6vewi62IEhP/T2pGNF83rEnyl
- 0WPrhv/uTz1f+MgP0m6odtQ2fMkyaGRQClDP5TpwKGs9Nad5k8xUO8jvinGlrp3xV5ZSVZi1D
- kZ/A6YqIhKP6bxo1MGo7Aw2qKkDMysDRQ8XbSQk/c8tykXRkJhg0acqHeWONBZasEdM/QHsKO
- FvHy+LwAqp/67CHTtUNlnykQPU7lVlVmXaFacG2NttZS2YdfmaQcmr75a0dVnlSOgX7nxqraq
- soEdUdMoai1n2DtnRAImR052hdpzNEb5TdmSAPgqqy+ojLWtB/etKndbnx3auw+bE7+fqmaTC
- TBLUGF1OoxYe9lLJZPBSsUXXtBFmAyjnw0n6jfpJLXy5QuE2sH8Vs0rZtMhOcmm+2SJSr5pZV
- Emapos01xWZ2g4DoekV4mz/MezMRKTrY//VfgYzv4OWa38i44q5ik+AucXzKRNML70MRDiMUy
- xW6aziqWFXd8/cuNc31UrP/ieAEzyzF+ZmWu+WmW437vu21TDMGl4cW4H892ojmMCMxhfghAR
- Pe7Llyjz4XWVU3UAjoDEnw6zylVqPSgqTz+xOEQhgCj3HLlLAZlEVu8D2/gDntSKqk8IMjL73
- x90c+rCB2GRKx4STQTnd+xWa6X/sgR6V+noO2rkvsCyo84C+vPFWbuznHx/0=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191125040001.28943-1-yu.c.chen@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-=E2=80=A6
-> +int exfat_find_dir_entry(struct super_block *sb, struct exfat_inode_inf=
-o *ei,
-> +		struct exfat_chain *p_dir, struct exfat_uni_name *p_uniname,
-> +		int num_entries, unsigned int type)
+[Cc linux-api]
+
+On Mon 25-11-19 12:00:01, Chen Yu wrote:
+> Monitoring tools that want to find out which resctrl control
+> and monitor groups a task belongs to must currently read
+> the "tasks" file in every group until they locate the process
+> ID.
+> 
+> Add an additional file /proc/{pid}/resctrl to provide this
+> information.
+> 
+> The output is as followed according to Thomas's suggestion,
+> for example:
+> 
+>  1)   ""
+>       Resctrl is not available.
+> 
+>  2)   "/"
+>       Task is part of the root group, task is not associated to
+>       any monitoring group.
+> 
+>  3)   "/mon_groups/mon0"
+>       Task is part of the root group and monitoring group mon0.
+> 
+>  4)   "/group0"
+>       Task is part of control group group0, task is not associated
+>       to any monitoring group.
+> 
+>  5)   "/group0/mon_groups/mon1"
+>       Task is part of control group group0 and monitoring group mon1.
+> 
+> Tested-by: Jinshi Chen <jinshi.chen@intel.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Alexey Dobriyan <adobriyan@gmail.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Reinette Chatre <reinette.chatre@intel.com>
+> Cc: Fenghua Yu <fenghua.yu@intel.com>
+> Cc: Tony Luck <tony.luck@intel.com>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+> ---
+> v2: Reduce indentation level in proc_resctrl_show()
+>     according to Boris's suggestion.
+>     Create the include/linux/resctrl.h header and
+>     declare proc_resctrl_show() in this file, so
+>     that other architectures would probably use it
+>     in the future. Different architectures should
+>     implement architectural specific proc_resctrl_show()
+>     accordingly.
+> 
+> v3: Return empty string if the resctrl filesystem has
+>     not been mounted per Boris's suggestion.
+>     Rename the config from CPU_RESCTRL to PROC_CPU_RESCTRL
+>     to better represent its usage. Move PROC_CPU_RESCTRL
+>     from arch/Kconfig to fs/proc/Kconfig.
+>     And let PROC_CPU_RESCTRL to be depended on PROC_FS.
+> 
+> v4: According to Thomas's suggestion, changed the output
+>     from multiple lines to one single line.
+> 
+> v5: According to Alexey's feedback, removed the header file
+>     proc_fs.h in resctrl.h, and changed seq_puts() to
+>     seq_putc() for simplicity.
+> ---
+>  arch/x86/Kconfig                       |  1 +
+>  arch/x86/kernel/cpu/resctrl/rdtgroup.c | 78 ++++++++++++++++++++++++++
+>  fs/proc/Kconfig                        |  4 ++
+>  fs/proc/base.c                         |  7 +++
+>  include/linux/resctrl.h                | 14 +++++
+>  5 files changed, 104 insertions(+)
+>  create mode 100644 include/linux/resctrl.h
+> 
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 8ef85139553f..252364d18887 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -455,6 +455,7 @@ config X86_CPU_RESCTRL
+>  	bool "x86 CPU resource control support"
+>  	depends on X86 && (CPU_SUP_INTEL || CPU_SUP_AMD)
+>  	select KERNFS
+> +	select PROC_CPU_RESCTRL		if PROC_FS
+>  	help
+>  	  Enable x86 CPU resource control support.
+>  
+> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> index 2e3b06d6bbc6..f786e7626a65 100644
+> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> @@ -725,6 +725,84 @@ static int rdtgroup_tasks_show(struct kernfs_open_file *of,
+>  	return ret;
+>  }
+>  
+> +#ifdef CONFIG_PROC_CPU_RESCTRL
+> +
+> +/*
+> + * A task can only be part of one control
+> + * group and of one monitoring group which
+> + * is associated to that control group.
+> + * So one line is simple and clear enough:
+> + *
+> + * 1)   ""
+> + *    Resctrl is not available.
+> + *
+> + * 2)   "/"
+> + *    Task is part of the root group, and it is
+> + *    not associated to any monitoring group.
+> + *
+> + * 3)   "/mon_groups/mon0"
+> + *    Task is part of the root group and monitoring
+> + *    group mon0.
+> + *
+> + * 4)   "/group0"
+> + *    Task is part of control group group0, and it is
+> + *    not associated to any monitoring group.
+> + *
+> + * 5)   "/group0/mon_groups/mon1"
+> + *    Task is part of control group group0 and monitoring
+> + *    group mon1.
+> + */
+> +int proc_resctrl_show(struct seq_file *s, struct pid_namespace *ns,
+> +		      struct pid *pid, struct task_struct *tsk)
 > +{
-=E2=80=A6
-> +	unsigned short entry_uniname[16], *uniname =3D NULL, unichar;
+> +	struct rdtgroup *rdtg;
+> +	int ret = 0;
+> +
+> +	mutex_lock(&rdtgroup_mutex);
+> +
+> +	/* Return empty if resctrl has not been mounted. */
+> +	if (!static_branch_unlikely(&rdt_enable_key))
+> +		goto unlock;
+> +
+> +	list_for_each_entry(rdtg, &rdt_all_groups, rdtgroup_list) {
+> +		struct rdtgroup *crg;
+> +
+> +		/*
+> +		 * Task information is only relevant for shareable
+> +		 * and exclusive groups.
+> +		 */
+> +		if (rdtg->mode != RDT_MODE_SHAREABLE &&
+> +		    rdtg->mode != RDT_MODE_EXCLUSIVE)
+> +			continue;
+> +
+> +		if (rdtg->closid != tsk->closid)
+> +			continue;
+> +
+> +		seq_printf(s, "/%s", rdtg->kn->name);
+> +		list_for_each_entry(crg, &rdtg->mon.crdtgrp_list,
+> +				    mon.crdtgrp_list) {
+> +			if (tsk->rmid != crg->mon.rmid)
+> +				continue;
+> +			seq_printf(s, "%smon_groups/%s",
+> +				   rdtg == &rdtgroup_default ? "" : "/",
+> +				   crg->kn->name);
+> +			break;
+> +		}
+> +		seq_putc(s, '\n');
+> +		goto unlock;
+> +	}
+> +	/*
+> +	 * The above search should succeed. Otherwise return
+> +	 * with an error.
+> +	 */
+> +	ret = -ENOENT;
+> +unlock:
+> +	mutex_unlock(&rdtgroup_mutex);
+> +
+> +	return ret;
+> +}
+> +#endif
+> +
+>  static int rdt_last_cmd_status_show(struct kernfs_open_file *of,
+>  				    struct seq_file *seq, void *v)
+>  {
+> diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
+> index cb5629bd5fff..ae96a339d24d 100644
+> --- a/fs/proc/Kconfig
+> +++ b/fs/proc/Kconfig
+> @@ -103,3 +103,7 @@ config PROC_CHILDREN
+>  config PROC_PID_ARCH_STATUS
+>  	def_bool n
+>  	depends on PROC_FS
+> +
+> +config PROC_CPU_RESCTRL
+> +	def_bool n
+> +	depends on PROC_FS
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index ebea9501afb8..0e4b8bf2b986 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -94,6 +94,7 @@
+>  #include <linux/sched/debug.h>
+>  #include <linux/sched/stat.h>
+>  #include <linux/posix-timers.h>
+> +#include <linux/resctrl.h>
+>  #include <trace/events/oom.h>
+>  #include "internal.h"
+>  #include "fd.h"
+> @@ -3060,6 +3061,9 @@ static const struct pid_entry tgid_base_stuff[] = {
+>  #endif
+>  #ifdef CONFIG_CGROUPS
+>  	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
+> +#endif
+> +#ifdef CONFIG_PROC_CPU_RESCTRL
+> +	ONE("resctrl", S_IRUGO, proc_resctrl_show),
+>  #endif
+>  	ONE("oom_score",  S_IRUGO, proc_oom_score),
+>  	REG("oom_adj",    S_IRUGO|S_IWUSR, proc_oom_adj_operations),
+> @@ -3460,6 +3464,9 @@ static const struct pid_entry tid_base_stuff[] = {
+>  #endif
+>  #ifdef CONFIG_CGROUPS
+>  	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
+> +#endif
+> +#ifdef CONFIG_PROC_CPU_RESCTRL
+> +	ONE("resctrl", S_IRUGO, proc_resctrl_show),
+>  #endif
+>  	ONE("oom_score", S_IRUGO, proc_oom_score),
+>  	REG("oom_adj",   S_IRUGO|S_IWUSR, proc_oom_adj_operations),
+> diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
+> new file mode 100644
+> index 000000000000..daf5cf64c6a6
+> --- /dev/null
+> +++ b/include/linux/resctrl.h
+> @@ -0,0 +1,14 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _RESCTRL_H
+> +#define _RESCTRL_H
+> +
+> +#ifdef CONFIG_PROC_CPU_RESCTRL
+> +
+> +int proc_resctrl_show(struct seq_file *m,
+> +		      struct pid_namespace *ns,
+> +		      struct pid *pid,
+> +		      struct task_struct *tsk);
+> +
+> +#endif
+> +
+> +#endif /* _RESCTRL_H */
+> -- 
+> 2.17.1
 
-Would you like to reduce the scope for these variables according to an if =
-branch
-for the condition =E2=80=9Centry_type =3D=3D TYPE_EXTEND=E2=80=9D?
-
-
-=E2=80=A6
-> +	struct buffer_head *bh =3D NULL;
-
-* How do you think about to move the definition for this variable
-  to the beginning of the for loop?
-
-* Can this pointer initialisation be omitted?
-
-Regards,
-Markus
+-- 
+Michal Hocko
+SUSE Labs
