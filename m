@@ -2,52 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B768109320
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 18:53:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01DE510935C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 19:17:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729217AbfKYRxX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Nov 2019 12:53:23 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48152 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbfKYRxW (ORCPT
+        id S1727985AbfKYSRM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Nov 2019 13:17:12 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:36506 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727865AbfKYSRL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Nov 2019 12:53:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=CUspaLOyQtYXf/XJRMblfacdM
-        uSDKI465v20UC1JNlRSflesBQMrqV49/8cJX8u0q4ojKkY5DR34Qa6rvqd4hTKsLCcXlcrg4dBw+l
-        esG8xIBT/whpBplU1N6FgoJtnFKjJ8c3uzG5dlqtO6vsVjhQm1iTzagsDhdV2+rn2iNGRTom5QaQF
-        IpPU41FxuRgM5xeGpU+JMJS/tpUE5js42uB8Cy4e3bpx9Yd0flrVxsaMYbK812ibE7xYpIRZxkyoj
-        7o1XxRZ+7gBpsWjsA1FE9WSsDPbs98VBLl9A+t3Ff2BjcXhXU5GyLdSkD2IkuyV49Tk77ZVZcNFnt
-        KUqdkQHKg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iZIY3-0005aP-Qd; Mon, 25 Nov 2019 17:53:19 +0000
-Date:   Mon, 25 Nov 2019 09:53:19 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Subject: Re: [PATCH] iomap: Do not create fake iter in iomap_dio_bio_actor()
-Message-ID: <20191125175319.GA21279@infradead.org>
-References: <20191125083930.11854-1-jack@suse.cz>
- <20191125111901.11910-1-jack@suse.cz>
+        Mon, 25 Nov 2019 13:17:11 -0500
+Received: by mail-il1-f195.google.com with SMTP id s75so15105333ilc.3;
+        Mon, 25 Nov 2019 10:17:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XNvmuvfR13K+bepkBmPkJQDh2DcCBvXY1vhlGmjrkSQ=;
+        b=cfpPCKztKRoWFw9gU0+NsNuYAetbF3Z/a4D/7R0eDl7/zhS7+oVdMGW62X2CKXoRwH
+         jfeDbMcGYFyGsRJ6DY2ACog0bpH++4TlJeHXHBbAN4UTbjWyCzBQOXQbTfmBkqtOFffb
+         L2cifP060mBBHiocqRCzV7sTnJb+CGEp+hkt1h3OVURv+kRe5ddgiaA9SmZHEE81PHly
+         QFY3FDXZswnaPgB3kqmMJLdTbghNw5MNntz8P7mTwEDUej5pr5fNq7+7+T/gEczCO+XN
+         hXUjtj70mm5RIC5G7pb1J875Gpr+43Ed3rWK7wCi71W4StwsMwzr1exl4jD5rBlvyT65
+         qTwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XNvmuvfR13K+bepkBmPkJQDh2DcCBvXY1vhlGmjrkSQ=;
+        b=RTZFKUoPhSyaEotRxD0LhOf5eqAJnPS0pGPg2sd80SmZUCxYrx9D/tTVEMkIWUx4Lj
+         9gOaupdnWNvMNB4PEvOJn/fnHX8fcmYdV114hQHaUsIyHtWvXLqncDnGx+JD3lVQKoyP
+         sOcPEa3S8VONXifC36D6Eo/ymlYDP+KOV3F/Sp1ljcDtnoLx3JNSFLE+looVxZy+qgaV
+         TcjIcKmlLUSPVIMw+aFthbp1xvgn1LU6dp1O1FOkal13Ky0pBXpMzlH7ojelIlo37/XL
+         jnHppFXsJbmX77hRF7w2VHOiBdv6GmVUuynHQEU/cvs2TnQqZC2Y3Cnt/gQiP+2bCUMl
+         uo1A==
+X-Gm-Message-State: APjAAAWWV5wOgEhpjW4mLVo4s+hHQKgvD9Q0vhUGT+wxH3PPTyA8tltZ
+        9oTuW1zEiAB6XFd57kej1uuNmkwrWTinAKRZdyM=
+X-Google-Smtp-Source: APXvYqw78v3arYJMRZHIVLUyH0UknW8rGs2UZ5LBxnpquKgU2PPRG0oB/krijAz/74tFXtSGiOCOUuYep3Lc7hWfR5U=
+X-Received: by 2002:a92:d390:: with SMTP id o16mr34224478ilo.110.1574705830800;
+ Mon, 25 Nov 2019 10:17:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191125111901.11910-1-jack@suse.cz>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20191124193145.22945-1-amir73il@gmail.com> <20191125164625.GB28608@fieldses.org>
+In-Reply-To: <20191125164625.GB28608@fieldses.org>
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+Date:   Mon, 25 Nov 2019 10:16:57 -0800
+Message-ID: <CABeXuvo3pToaexO26JarHHkQBWO9355YEyO=NeZh-36KciJu6Q@mail.gmail.com>
+Subject: Re: [PATCH] utimes: Clamp the timestamps in notify_change()
+To:     "J . Bruce Fields" <bfields@fieldses.org>
+Cc:     Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+        Jeff Layton <jlayton@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Looks good,
+On Mon, Nov 25, 2019 at 8:46 AM J . Bruce Fields <bfields@fieldses.org> wrote:
+>
+> On Sun, Nov 24, 2019 at 09:31:45PM +0200, Amir Goldstein wrote:
+> > Push clamping timestamps down the call stack into notify_change(), so
+> > in-kernel callers like nfsd and overlayfs will get similar timestamp
+> > set behavior as utimes.
+>
+> So, nfsd has always bypassed timestamp_truncate() and we've never
+> noticed till now?  What are the symptoms?  (Do timestamps go backwards
+> after cache eviction on filesystems with large time granularity?)
+>
+> Looks like generic/402 has never run in my tests:
+>
+>         generic/402     [not run] no kernel support for y2038 sysfs switch
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+You need this in your xfstest:
+https://patchwork.kernel.org/patch/11049745/ . The test has been
+updated recently.
+
+And, you need a change like for overlayfs as Amir pointed out.
+
+-Deepa
