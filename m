@@ -2,82 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0370710863B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 02:15:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 397F110865F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Nov 2019 02:36:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727172AbfKYBPR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 24 Nov 2019 20:15:17 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41689 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727154AbfKYBPR (ORCPT
+        id S1727218AbfKYBgb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 24 Nov 2019 20:36:31 -0500
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:45359 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727072AbfKYBgb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 24 Nov 2019 20:15:17 -0500
-Received: by mail-pf1-f193.google.com with SMTP id p26so6477464pfq.8
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Nov 2019 17:15:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=1OTCzRuZLXKgKtG0YjZ5OtZ6bjyEuVtHenJ+Tqkqok8=;
-        b=MiPiIX+FQla5J05mdl78JALG26TaMMitW+PrtdM+n9xIli+yPctZJfy+H7rJboL8GI
-         V0FgfkpjkhcPqr9AsCYE+6wIjzm/Mcm23GSgSWEHvT/KiG/8fB9DjiDS3+m7LrX0K3T9
-         dMe7b7dgH+HXwN2oIl08lMaUVhfDrTbREjAuLoCAysaa5N7ynLTYiQGCpd40byKNLmYo
-         mJZE+1c1Xhk2Rx7LVar2Py3/Dl8cYOXgFLWQGA7/ENtFS/UJQx+hJZ436vfOHrpK6Iwy
-         MSrRAvH+CrZfsRsNFx7u+ANlvlvlCwgg0mmIzOa9QenMN/bLG3ERxK4pEZqVMv8SGDyX
-         Rsfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=1OTCzRuZLXKgKtG0YjZ5OtZ6bjyEuVtHenJ+Tqkqok8=;
-        b=Kh+bEY/wOhPtlJ/RHbbvvBbOrmxxI8Rx7oDMqiRDigU0bFcm9hisWCn3e3kTNllzZt
-         vJzq9De2887MEnIW0rTYrBzQ9eLcI7pxi/wSR+NpONVrERmPodj36ee+k+BFjG7tryGO
-         VeSGfNGup1hFJrkE0FvugBLFIAUMlFuDyRGZYoTCC7Imq7yoHnTH0xIuDPpvSW3RcfRz
-         Bmo/4KB286ZryzSejVRhgr2GlK6LPSMs14pOj7fwvZTQeXvLetK0u8+x7DsSOMvErSuu
-         gJiCLcCNDdGfaws+yMx7lExABCUt07i/jIdANQ6C1gkjekEj97gFm4V69i7SrMT9YMoL
-         MfTQ==
-X-Gm-Message-State: APjAAAXG4o+1MuiMAi/W2mjLDcIbskKv+m+fzwob9CU0cXxrew7JGvyi
-        t8ySPDaYv5jaFqTryzjYh0lG/DaCyso5uk+Ciq8=
-X-Google-Smtp-Source: APXvYqzpnhEXyCzclZ3fO4rwhMhmmMgFwwtZjdj6PPk4jFqs+x6Ccus2z8WDPirco8BEiOmfHEP5gsjWytMeR+Ra1Xg=
-X-Received: by 2002:a63:c802:: with SMTP id z2mr21810188pgg.158.1574644516736;
- Sun, 24 Nov 2019 17:15:16 -0800 (PST)
+        Sun, 24 Nov 2019 20:36:31 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0Tiyc3wU_1574645775;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0Tiyc3wU_1574645775)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 25 Nov 2019 09:36:16 +0800
+Subject: Re: [PATCH 0/3] sched/numa: introduce advanced numa statistic
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
+References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
+Message-ID: <50f167ed-12b5-24b7-a2f7-38d32bf6647a@linux.alibaba.com>
+Date:   Mon, 25 Nov 2019 09:35:30 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.9.0
 MIME-Version: 1.0
-Received: by 2002:a17:90a:1863:0:0:0:0 with HTTP; Sun, 24 Nov 2019 17:15:16
- -0800 (PST)
-Reply-To: aishagaddafi969@aol.com
-From:   AISHA GADDAFI <vijairaja789@gmail.com>
-Date:   Sun, 24 Nov 2019 17:15:16 -0800
-Message-ID: <CAGZ0r_LJQH_Ri6GJmWGLhWx2cbzumT_XA82KSiURvRrO=Oisnw@mail.gmail.com>
-Subject: Dear Friend (Assalamu Alaikum),
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
--- 
-Dear Friend (Assalamu Alaikum),
+Hi, Peter
 
-I came across your e-mail contact prior a private search while in need of
-your assistance. My name is Aisha  Al-Qaddafi a single Mother and a Widow
-with three Children. I am the only biological Daughter of late Libyan
-President (Late Colonel Muammar Gaddafi).
+How do you think about this version, does it looks fine to you?
 
-I have investment funds worth Twenty Seven Million Five Hundred Thousand
-United State Dollar ($27.500.000.00 ) and i need a trusted investment
-Manager/Partner because of my current refugee status, however, I am
-interested in you for investment project assistance in your country, may be
-from there, we can build business relationship in the nearest future.
+Regards,
+Michael Wang
 
-I am willing to negotiate investment/business profit sharing ratio with you
-base on the future investment earning profits.
-
-If you are willing to handle this project on my behalf kindly reply urgent
-to enable me provide you more information about the investment funds.
-
-Your Urgent Reply Will Be Appreciated. write me at this email address(
-aishagaddafi969@aol.com ) for further discussion.
-
-Best Regards
-Mrs Aisha Al-Qaddafi
-Reply to: aishagaddafi969@aol.com
+On 2019/11/13 上午11:43, 王贇 wrote:
+> Modern production environment could use hundreds of cgroup to control
+> the resources for different workloads, along with the complicated
+> resource binding.
+> 
+> On NUMA platforms where we have multiple nodes, things become even more
+> complicated, we hope there are more local memory access to improve the
+> performance, and NUMA Balancing keep working hard to achieve that,
+> however, wrong memory policy or node binding could easily waste the
+> effort, result a lot of remote page accessing.
+> 
+> We need to perceive such problems, then we got chance to fix it before
+> there are too much damages, however, there are no good approach yet to
+> help catch the mouse who introduced the remote access.
+> 
+> This patch set is trying to fill in the missing pieces， by introduce
+> the per-cgroup NUMA locality/exectime statistics, and expose the per-task
+> page migration failure counter, with these statistics, we could achieve
+> the daily monitoring on NUMA efficiency, to give warning when things going
+> too wrong.
+> 
+> Please check the third patch for more details.
+> 
+> Thanks to Peter, Mel and Michal for the good advices :-)
+> 
+> Michael Wang (3):
+>   sched/numa: advanced per-cgroup numa statistic
+>   sched/numa: expose per-task pages-migration-failure counter
+>   sched/numa: documentation for per-cgroup numa stat
+> 
+>  Documentation/admin-guide/cg-numa-stat.rst      | 161 ++++++++++++++++++++++++
+>  Documentation/admin-guide/kernel-parameters.txt |   4 +
+>  Documentation/admin-guide/sysctl/kernel.rst     |   9 ++
+>  include/linux/sched.h                           |  18 ++-
+>  include/linux/sched/sysctl.h                    |   6 +
+>  init/Kconfig                                    |   9 ++
+>  kernel/sched/core.c                             |  91 ++++++++++++++
+>  kernel/sched/debug.c                            |   1 +
+>  kernel/sched/fair.c                             |  33 +++++
+>  kernel/sched/sched.h                            |  17 +++
+>  kernel/sysctl.c                                 |  11 ++
+>  11 files changed, 359 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/admin-guide/cg-numa-stat.rst
+> 
+> 
