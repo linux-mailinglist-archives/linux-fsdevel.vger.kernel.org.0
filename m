@@ -2,26 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A87A5109E1D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 13:38:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A591109E24
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 13:40:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727502AbfKZMig (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Nov 2019 07:38:36 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49248 "EHLO mx1.suse.de"
+        id S1727047AbfKZMkD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Nov 2019 07:40:03 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50142 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725911AbfKZMig (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Nov 2019 07:38:36 -0500
+        id S1725911AbfKZMkD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 Nov 2019 07:40:03 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DFD08B217;
-        Tue, 26 Nov 2019 12:38:33 +0000 (UTC)
-Subject: Re: [PATCH 4/5] btrfs: Wait for extent bits to release page
+        by mx1.suse.de (Postfix) with ESMTP id 34C44AE24;
+        Tue, 26 Nov 2019 12:40:01 +0000 (UTC)
+Subject: Re: [PATCH 5/5] fs: Remove dio_end_io()
 To:     Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-btrfs@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, hch@infradead.org,
         darrick.wong@oracle.com, fdmanana@kernel.org,
         Goldwyn Rodrigues <rgoldwyn@suse.com>
 References: <20191126031456.12150-1-rgoldwyn@suse.de>
- <20191126031456.12150-5-rgoldwyn@suse.de>
+ <20191126031456.12150-6-rgoldwyn@suse.de>
 From:   Nikolay Borisov <nborisov@suse.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
@@ -66,12 +66,12 @@ Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
  TCiLsRHFfMHFY6/lq/c0ZdOsGjgpIK0G0z6et9YU6MaPuKwNY4kBdjPNBwHreucrQVUdqRRm
  RcxmGC6ohvpqVGfhT48ZPZKZEWM+tZky0mO7bhZYxMXyVjBn4EoNTsXy1et9Y1dU3HVJ8fod
  5UqrNrzIQFbdeM0/JqSLrtlTcXKJ7cYFa9ZM2AP7UIN9n1UWxq+OPY9YMOewVfYtL8M=
-Message-ID: <852c6344-4d05-efff-1194-b60363df3f2e@suse.com>
-Date:   Tue, 26 Nov 2019 14:38:32 +0200
+Message-ID: <c5890694-0b32-17c3-3e6b-6fe1f8b35539@suse.com>
+Date:   Tue, 26 Nov 2019 14:39:59 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191126031456.12150-5-rgoldwyn@suse.de>
+In-Reply-To: <20191126031456.12150-6-rgoldwyn@suse.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -85,30 +85,12 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On 26.11.19 г. 5:14 ч., Goldwyn Rodrigues wrote:
 > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
 > 
-> While trying to release a page, the extent containing the page may be locked
-> which would stop the page from being released. Wait for the
-> extent lock to be cleared, if blocking is allowed and then clear
-> the bits.
-> 
-> While we are at it, clean the code of try_release_extent_state() to make
-> it simpler.
+> Since we removed the last user of dio_end_io(), remove the helper
+> function dio_end_io().
 > 
 > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> ---
->  fs/btrfs/extent_io.c | 33 ++++++++++++++-------------------
->  1 file changed, 14 insertions(+), 19 deletions(-)
-> 
-> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-> index cceaf05aada2..a7c32276702d 100644
-> --- a/fs/btrfs/extent_io.c
-> +++ b/fs/btrfs/extent_io.c
-> @@ -4367,28 +4367,23 @@ static int try_release_extent_state(struct extent_io_tree *tree,
-
-nit: While on it you can change the return type to bool and propagate it
-up to try_release_extent_mapping and __btrfs_releasepage.
-
-But in any case it looks good :
 
 Reviewed-by: Nikolay Borisov <nborisov@suse.com>
 
-<snip>
+Imo this and the previous patch need to be re-ordered. Since 4/5 is an
+unrelated cleanup and this one is directly dependent on 3/5.
