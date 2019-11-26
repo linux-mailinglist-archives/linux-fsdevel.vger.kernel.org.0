@@ -2,88 +2,191 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCF0910A38E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 18:50:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E56E410A42D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 19:50:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726050AbfKZRuV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Nov 2019 12:50:21 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:39071 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbfKZRuV (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Nov 2019 12:50:21 -0500
-Received: by mail-pj1-f68.google.com with SMTP id v93so5363589pjb.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Nov 2019 09:50:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=59Vgy8vcI52/DliuLIm2lvu2SIX3lTZeIDQ7bzNt55A=;
-        b=2P86c4crOOWqvpSJVJ2SeRKrNeze8qhqQtkv34djNbIVTGgRMwwI8pLRCecox3XRUv
-         9xDeyNtqO3Hsi5wL2+5aF5XBWgBlAQdjBsXg3P8cMnDRDRKPWzyOMHlnN8RCb06XOVJX
-         JwwUa+yjSqSxur4anwq+ESdm2aFh/TY2fStmsP17N23n55lgodF7qnYbN2KAtFg79JL7
-         8n7AG0dK5GuqBwjuYkFSBZnBlaigtqYe1fVgB5b26phYc7hoUGEDoM5h5p5ld03tRjQD
-         VRksa6Fw/DnjFiy88YkxTfaBYc77F+LuZLdjkoD83sRj5w8aWWySrOAzL71YDCW1K26p
-         ddKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=59Vgy8vcI52/DliuLIm2lvu2SIX3lTZeIDQ7bzNt55A=;
-        b=PKbtszFzHGIUtU9EKqFuGUsQrg0+uH+I+duf+aFi5P4uRYLNnWtzt8/HqJeFxnQ1+C
-         PHnprVo1X1uk+B7K7/+tb6sYS7lnFTL9EuJ1v61UKkUfdja+St17gi56NhH7qzwm4HBl
-         yOfxYZc0IdOv66OuXec2e0X+b6TNV1kkjdn5Fl5/Ayd+GqlmkB+BIK0cWpxi7OqO0zWD
-         KS8cq6F+ghRgFHc4TXznPaTIzbhDyRnYolOj9dXQ5eAX9rZ84xISqaPkpIY9NvvjC8go
-         xgaQ+x2HCQPuEzYqds1BQfujIVB2rqC/qK3ztVF9T/4hYHnVrCMwgIFadWsRDwa/Rizg
-         rF4Q==
-X-Gm-Message-State: APjAAAWjwY8eZistQZ/LLfuv2an85ktdfKIBn+pV1HDO0s7ggX/Pa6H3
-        Kqogd/L1Nz+OnnrZxOUIZWWTKA==
-X-Google-Smtp-Source: APXvYqz+pZ81z29BEoNRF6pU6va0mwYVHg7ekqwOjyXpK7uAsydkEqLGGja3NjeTYfxyfO+YmTPbsA==
-X-Received: by 2002:a17:902:8508:: with SMTP id bj8mr1477005plb.178.1574790620287;
-        Tue, 26 Nov 2019 09:50:20 -0800 (PST)
-Received: from vader ([2620:10d:c090:180::aa28])
-        by smtp.gmail.com with ESMTPSA id 67sm3107387pfw.82.2019.11.26.09.50.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2019 09:50:19 -0800 (PST)
-Date:   Tue, 26 Nov 2019 09:50:15 -0800
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Nikolay Borisov <nborisov@suse.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        Dave Chinner <david@fromorbit.com>,
-        Jann Horn <jannh@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [RFC PATCH v3 05/12] btrfs: don't advance offset for compressed
- bios in btrfs_csum_one_bio()
-Message-ID: <20191126175015.GA658856@vader>
-References: <cover.1574273658.git.osandov@fb.com>
- <a669365a9165b18814c635f61ed566fdcd47a96f.1574273658.git.osandov@fb.com>
- <9669273e-5a73-540f-2091-5ce64e093062@suse.com>
+        id S1726049AbfKZSuY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Nov 2019 13:50:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39756 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725990AbfKZSuY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 Nov 2019 13:50:24 -0500
+Received: from hubcapsc.localdomain (adsl-074-187-100-144.sip.mia.bellsouth.net [74.187.100.144])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 175402071E;
+        Tue, 26 Nov 2019 18:50:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574794223;
+        bh=8zSkI0uA1bKe68hzq2SOswi5i3s+OEr2w+qMlRDib3Q=;
+        h=From:To:Cc:Subject:Date:From;
+        b=zxTfgz98ncQJTwSQyqMClPw+2vEnkz4BYFWvmru9BW/NUbNkSTv+jncaLJBkGkF08
+         mw72FdPqeqcZ3Q1sEp3ZiSfnedty8qfZJMQbbJLXLQEEAGZqkGcrqn7khrA/NfiH7e
+         YSWdd0ZJPoS+zmBptKCKlBnHD1aYFZkUgSztbn7Q=
+From:   hubcap@kernel.org
+To:     torvalds@linux-foundation.org
+Cc:     Mike Marshall <hubcap@omnibond.com>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH V3] orangefs: posix open permission checking...
+Date:   Tue, 26 Nov 2019 13:50:18 -0500
+Message-Id: <20191126185018.8283-1-hubcap@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9669273e-5a73-540f-2091-5ce64e093062@suse.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 26, 2019 at 04:18:45PM +0200, Nikolay Borisov wrote:
-> 
-> 
-> On 20.11.19 г. 20:24 ч., Omar Sandoval wrote:
-> > From: Omar Sandoval <osandov@fb.com>
-> > 
-> > btrfs_csum_one_bio() loops over each sector in the bio while keeping a
-> 
-> 'sector' here is ambiguous it really loops over every fs block (which in
-> btrfs is also known as sector). SO perhaps change the wording in the
-> changelog but also in the function instead of nr_sectors perhahps it
-> could be renamed to blockcount?
+From: Mike Marshall <hubcap@omnibond.com>
 
-Fixed, thanks.
+Here's another version that is hopefully closer to
+usable...
+
+ Orangefs has no open, and orangefs checks file permissions
+ on each file access. Posix requires that file permissions
+ be checked on open and nowhere else. Orangefs-through-the-kernel
+ needs to seem posix compliant.
+
+ The VFS opens files, even if the filesystem provides no
+ method. We can see if a file was successfully opened for
+ read and or for write by looking at file->f_mode.
+
+ When writes are flowing from the page cache, file is no
+ longer available. We can trust the VFS to have checked
+ file->f_mode before writing to the page cache.
+
+ The mode of a file might change between when it is opened
+ and IO commences, or it might be created with an arbitrary mode.
+
+ We'll make sure we don't hit EACCES during the IO stage by
+ using UID 0. Some of the time we have access without changing
+ to UID 0 - how to check?
+
+Signed-off-by: Mike Marshall <hubcap@omnibond.com>
+---
+ fs/orangefs/file.c            | 39 +++++++++++++++++++++++++++++++++--
+ fs/orangefs/inode.c           |  8 +++----
+ fs/orangefs/orangefs-kernel.h |  3 ++-
+ 3 files changed, 43 insertions(+), 7 deletions(-)
+
+diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
+index a5612abc0936..c740159d9ad1 100644
+--- a/fs/orangefs/file.c
++++ b/fs/orangefs/file.c
+@@ -46,8 +46,9 @@ static int flush_racache(struct inode *inode)
+  * Post and wait for the I/O upcall to finish
+  */
+ ssize_t wait_for_direct_io(enum ORANGEFS_io_type type, struct inode *inode,
+-    loff_t *offset, struct iov_iter *iter, size_t total_size,
+-    loff_t readahead_size, struct orangefs_write_range *wr, int *index_return)
++	loff_t *offset, struct iov_iter *iter, size_t total_size,
++	loff_t readahead_size, struct orangefs_write_range *wr,
++	int *index_return, struct file *file)
+ {
+ 	struct orangefs_inode_s *orangefs_inode = ORANGEFS_I(inode);
+ 	struct orangefs_khandle *handle = &orangefs_inode->refn.khandle;
+@@ -55,6 +56,8 @@ ssize_t wait_for_direct_io(enum ORANGEFS_io_type type, struct inode *inode,
+ 	int buffer_index;
+ 	ssize_t ret;
+ 	size_t copy_amount;
++	int open_for_read;
++	int open_for_write;
+ 
+ 	new_op = op_alloc(ORANGEFS_VFS_OP_FILE_IO);
+ 	if (!new_op)
+@@ -90,6 +93,38 @@ ssize_t wait_for_direct_io(enum ORANGEFS_io_type type, struct inode *inode,
+ 		new_op->upcall.uid = from_kuid(&init_user_ns, wr->uid);
+ 		new_op->upcall.gid = from_kgid(&init_user_ns, wr->gid);
+ 	}
++	/*
++	 * Orangefs has no open, and orangefs checks file permissions
++	 * on each file access. Posix requires that file permissions
++	 * be checked on open and nowhere else. Orangefs-through-the-kernel
++	 * needs to seem posix compliant.
++	 *
++	 * The VFS opens files, even if the filesystem provides no
++	 * method. We can see if a file was successfully opened for
++	 * read and or for write by looking at file->f_mode.
++	 *
++	 * When writes are flowing from the page cache, file is no
++	 * longer available. We can trust the VFS to have checked
++	 * file->f_mode before writing to the page cache.
++	 *
++	 * The mode of a file might change between when it is opened
++	 * and IO commences, or it might be created with an arbitrary mode.
++	 *
++	 * We'll make sure we don't hit EACCES during the IO stage by
++	 * using UID 0. Some of the time we have access without changing
++	 * to UID 0 - how to check?
++	 */
++	if (file) {
++		open_for_write = file->f_mode & FMODE_WRITE;
++		open_for_read = file->f_mode & FMODE_READ;
++	} else {
++		open_for_write = 1;
++		open_for_read = 0; /* not relevant? */
++	}
++	if ((type == ORANGEFS_IO_WRITE) && open_for_write)
++		new_op->upcall.uid = 0;
++	if ((type == ORANGEFS_IO_READ) && open_for_read)
++		new_op->upcall.uid = 0;
+ 
+ 	gossip_debug(GOSSIP_FILE_DEBUG,
+ 		     "%s(%pU): offset: %llu total_size: %zd\n",
+diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+index efb12197da18..961c0fd8675a 100644
+--- a/fs/orangefs/inode.c
++++ b/fs/orangefs/inode.c
+@@ -55,7 +55,7 @@ static int orangefs_writepage_locked(struct page *page,
+ 	iov_iter_bvec(&iter, WRITE, &bv, 1, wlen);
+ 
+ 	ret = wait_for_direct_io(ORANGEFS_IO_WRITE, inode, &off, &iter, wlen,
+-	    len, wr, NULL);
++	    len, wr, NULL, NULL);
+ 	if (ret < 0) {
+ 		SetPageError(page);
+ 		mapping_set_error(page->mapping, ret);
+@@ -126,7 +126,7 @@ static int orangefs_writepages_work(struct orangefs_writepages *ow,
+ 	wr.uid = ow->uid;
+ 	wr.gid = ow->gid;
+ 	ret = wait_for_direct_io(ORANGEFS_IO_WRITE, inode, &off, &iter, ow->len,
+-	    0, &wr, NULL);
++	    0, &wr, NULL, NULL);
+ 	if (ret < 0) {
+ 		for (i = 0; i < ow->npages; i++) {
+ 			SetPageError(ow->pages[i]);
+@@ -311,7 +311,7 @@ static int orangefs_readpage(struct file *file, struct page *page)
+ 	iov_iter_bvec(&iter, READ, &bv, 1, PAGE_SIZE);
+ 
+ 	ret = wait_for_direct_io(ORANGEFS_IO_READ, inode, &off, &iter,
+-	    read_size, inode->i_size, NULL, &buffer_index);
++	    read_size, inode->i_size, NULL, &buffer_index, file);
+ 	remaining = ret;
+ 	/* this will only zero remaining unread portions of the page data */
+ 	iov_iter_zero(~0U, &iter);
+@@ -651,7 +651,7 @@ static ssize_t orangefs_direct_IO(struct kiocb *iocb,
+ 			     (int)*offset);
+ 
+ 		ret = wait_for_direct_io(type, inode, offset, iter,
+-				each_count, 0, NULL, NULL);
++				each_count, 0, NULL, NULL, file);
+ 		gossip_debug(GOSSIP_FILE_DEBUG,
+ 			     "%s(%pU): return from wait_for_io:%d\n",
+ 			     __func__,
+diff --git a/fs/orangefs/orangefs-kernel.h b/fs/orangefs/orangefs-kernel.h
+index 34a6c99fa29b..ed67f39fa7ce 100644
+--- a/fs/orangefs/orangefs-kernel.h
++++ b/fs/orangefs/orangefs-kernel.h
+@@ -398,7 +398,8 @@ bool __is_daemon_in_service(void);
+  */
+ int orangefs_revalidate_mapping(struct inode *);
+ ssize_t wait_for_direct_io(enum ORANGEFS_io_type, struct inode *, loff_t *,
+-    struct iov_iter *, size_t, loff_t, struct orangefs_write_range *, int *);
++    struct iov_iter *, size_t, loff_t, struct orangefs_write_range *, int *,
++    struct file *);
+ ssize_t do_readv_writev(enum ORANGEFS_io_type, struct file *, loff_t *,
+     struct iov_iter *);
+ 
+-- 
+2.20.1
+
