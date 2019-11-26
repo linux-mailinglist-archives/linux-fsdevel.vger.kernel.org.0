@@ -2,108 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CB6F10A6BB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 23:43:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7893E10A6BC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 23:43:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbfKZWnu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Nov 2019 17:43:50 -0500
-Received: from mail-vk1-f171.google.com ([209.85.221.171]:35253 "EHLO
-        mail-vk1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726103AbfKZWnu (ORCPT
+        id S1726985AbfKZWnz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Nov 2019 17:43:55 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:28023 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726103AbfKZWny (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Nov 2019 17:43:50 -0500
-Received: by mail-vk1-f171.google.com with SMTP id o187so872899vka.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Nov 2019 14:43:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=NIKLkvM4xMfYGbffg8jQ0rMypbxQgK1rbaThbLEhpZw=;
-        b=RGpoCWCkbrDlTMcqplO/MgmulD7nCGJ+EaMqI5rhYCHa2SnYnkLPyWj9xW18EE4r2a
-         6V2NIImEar+30DoDZvFnPOVS+HOWqfXTrWFgVfSvOLyTRziwds4dOZk9DjPFGR/VIo/s
-         V7umYNUI8oxymPv1NFBFoCIKmOdx8hg4zZm3SoFg0IFYXBAoLVqvoPa13rrfkRDmk+0S
-         jwZlPrE+sQbEK8UzVsbqpWmVCpJq9f9gUcZQXBXuGEXRgknJro1y8leB5mksz4s0URhw
-         MW/GJ2Hty11J07qFNmz2RuzrIkRyksvu237SpHOPywSS340rMO2CwuJoxwLoR15j5fAG
-         ZR/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=NIKLkvM4xMfYGbffg8jQ0rMypbxQgK1rbaThbLEhpZw=;
-        b=C8TmGHNl4g1w3UGdjMBWJuWEucO8sfDrRwMm1Njmq/UUwf8szqpJLuTEbikXVmMb/7
-         5EXSwFN5bcobGzw10Y8zLF51oAdGHm/Fr6+HOZqJYPPA/6HVehmDwCS+tn1sFUAIp1gY
-         64u0cuy8BwQIbCfneUPc9sOMZRpWAUwWv1wmGMjdamJ/hkPc2gZFWsCMUeESa8OdcWAE
-         Qy/ERKwmBR91Gm5g2o1/FMsSyUABzEo30gm5FqqMO6xFR/VOoeNPo3zx3DVJR+S+dQAi
-         jsZK0537gOEIGtUobEtHDIFnV1rHhw/92TxhFMaWqekhWtjjN51OeS7X8wMtizOoyO7R
-         FuSg==
-X-Gm-Message-State: APjAAAVv/a/vQ4VaHEY+8YzHxopGkL2GPkeVPxmnctkyLcoB6scCq5ym
-        s19oM6Z2+jj1tgtNG5NM8f6aK++Vn6pitBhZwXx43Fr9
-X-Google-Smtp-Source: APXvYqxFuF8WD8ZUtLYX+bHCboPaJWjra7Jy3M1ZriUHQzl4f0r1KrXCnJPu3Q268ekUr6Sm/gmu7FYZfjEkBwIfwA8=
-X-Received: by 2002:a05:6122:305:: with SMTP id c5mr769977vko.42.1574808228332;
- Tue, 26 Nov 2019 14:43:48 -0800 (PST)
+        Tue, 26 Nov 2019 17:43:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574808233;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=BDiy4464Umn5P4mtuCmXuryCcZFijTYcLQRYOPE+8D8=;
+        b=AD8bZVrqD3R/nspQ2749ppZNHiuREuRIpgml7yzJ/c3WwubUPHbM5Tgg9aGBlim91oNbMI
+        KivCiKs30B0SGXKBFC6ZxB7zpe02oklpH4S/nqI1j8vuktL0F10flVKHidWz49gzzt5TNJ
+        PFn8IVXryBNJt6n9mT1sdsmRBUtxDbw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-277-UhEfoINhPkm7Z_9hqYNzmA-1; Tue, 26 Nov 2019 17:43:52 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AE1B9800C76;
+        Tue, 26 Nov 2019 22:43:50 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-161.rdu2.redhat.com [10.10.120.161])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C22EB60BE2;
+        Tue, 26 Nov 2019 22:43:48 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] afs: Minor cleanups and a minor bugfix
 MIME-Version: 1.0
-References: <20191126185018.8283-1-hubcap@kernel.org> <CAHk-=wgbKoRHsbLGDBAA7c6frAtO7GVQt4nxx5kPsixCpTLCDg@mail.gmail.com>
- <CAOg9mSQ5hURb-e-hfg-q5_rgCfBC+wh7Z6mLUS_Tdu6iLquDhg@mail.gmail.com>
-In-Reply-To: <CAOg9mSQ5hURb-e-hfg-q5_rgCfBC+wh7Z6mLUS_Tdu6iLquDhg@mail.gmail.com>
-From:   Mike Marshall <hubcap@omnibond.com>
-Date:   Tue, 26 Nov 2019 17:43:37 -0500
-Message-ID: <CAOg9mSRLCL5FbyPK6KqTWJtJfOuNUXoCHUV2SUoYzOh4N6rEVA@mail.gmail.com>
-Subject: Fwd: [PATCH V3] orangefs: posix open permission checking...
-To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-ID: <27496.1574808228.1@warthog.procyon.org.uk>
+Date:   Tue, 26 Nov 2019 22:43:48 +0000
+Message-ID: <27497.1574808228@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-MC-Unique: UhEfoINhPkm7Z_9hqYNzmA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
----------- Forwarded message ---------
-From: Mike Marshall <hubcap@omnibond.com>
-Date: Tue, Nov 26, 2019 at 4:02 PM
-Subject: Re: [PATCH V3] orangefs: posix open permission checking...
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: <hubcap@kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Hi Linus,
 
+Can you pull these AFS patches please?  They are:
 
+ (1) Minor fix to make some debugging statements display information from
+     the correct iov_iter.
 
->> I don't know what side effects that "new_op->upcall.uid = 0;" will
->> have on the server side
+ (2,3) Rename some members and variables to make things more obvious or
+     consistent.
 
-I believe that the 0 is only used for whatever filesystem operations
-(usually one) are required to get this service_operation done.
-I think it will only kick in during discrete IO operations
-that we've already posixly promised to complete.
+ (4) Provide a helper to wrap increments of the usage count on the afs_read
+     struct.
 
-I still am looking for a kernel access()-like thing so
-I can only use UID 0 when needed - I see your argument about
-always doing it...
+ (5) Use scnprintf() to print into a stack buffer rather than sprintf().
 
-The orangefs people are interested in this, so they'll be looking
-at this last iteration. Thanks for helping me to understand the
-right way to look at it from the kernel's perspective.
+ (6,7) Remove some set but unused variables.
 
--Mike
+There should be no functional changes from (2) - (7).
 
-On Tue, Nov 26, 2019 at 2:23 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Tue, Nov 26, 2019 at 10:50 AM <hubcap@kernel.org> wrote:
-> >
-> > Here's another version that is hopefully closer to
-> > usable...
->
-> This looks like it should work.
->
-> I don't know what side effects that "new_op->upcall.uid = 0;" will
-> have on the server side, and it still looks a bit hacky to me, but at
-> least it doesn't have the obvious problems on the client side.
->
-> Arguably, if you trust the client, you might as well just *always* do
-> that upcall.uid clearing.
->
-> And if you don't trust the client, then you'd have to do some NFS-like
-> root squash anyway, at which point the uid clearing will actually
-> remove permissions and break this situation again.
->
-> So I do think this shows a deeper issue still, but at least it is an
-> understandable workaround for a non-posix filesystem.
->
->                Linus
+Thanks,
+David
+---
+The following changes since commit a99d8080aaf358d5d23581244e5da23b35e340b9=
+:
+
+  Linux 5.4-rc6 (2019-11-03 14:07:26 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/=
+afs-next-20191121
+
+for you to fetch changes up to 4fe171bb81b13b40bf568330ec3716dfb304ced1:
+
+  afs: Remove set but not used variable 'ret' (2019-11-21 20:36:04 +0000)
+
+----------------------------------------------------------------
+AFS development
+
+----------------------------------------------------------------
+David Howells (4):
+      afs: Use call->_iter not &call->iter in debugging statements
+      afs: Switch the naming of call->iter and call->_iter
+      afs: Rename desc -> req in afs_fetch_data()
+      afs: Introduce an afs_get_read() refcount helper
+
+Mark Salyzyn (1):
+      afs: xattr: use scnprintf
+
+zhengbin (2):
+      afs: Remove set but not used variables 'before', 'after'
+      afs: Remove set but not used variable 'ret'
+
+ fs/afs/cmservice.c |  6 +++---
+ fs/afs/dir_edit.c  | 12 ++----------
+ fs/afs/file.c      |  6 +++---
+ fs/afs/fsclient.c  | 16 +++++++---------
+ fs/afs/internal.h  | 16 +++++++++++-----
+ fs/afs/rxrpc.c     | 12 ++++++------
+ fs/afs/server.c    |  3 +--
+ fs/afs/vlclient.c  |  6 +++---
+ fs/afs/xattr.c     | 16 +++++++++-------
+ fs/afs/yfsclient.c | 11 +++++------
+ 10 files changed, 50 insertions(+), 54 deletions(-)
+
