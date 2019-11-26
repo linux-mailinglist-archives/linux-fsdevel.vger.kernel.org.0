@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D742109803
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 04:15:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8DEB109806
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 04:16:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727286AbfKZDPx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Nov 2019 22:15:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34268 "EHLO mx1.suse.de"
+        id S1727300AbfKZDQB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Nov 2019 22:16:01 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34322 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726016AbfKZDPx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Nov 2019 22:15:53 -0500
+        id S1726016AbfKZDQB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 Nov 2019 22:16:01 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F3945B390;
-        Tue, 26 Nov 2019 03:15:51 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 798F9B0BA;
+        Tue, 26 Nov 2019 03:15:59 +0000 (UTC)
 From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
 To:     linux-btrfs@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, hch@infradead.org,
         darrick.wong@oracle.com, fdmanana@kernel.org,
         Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: [PATCH 4/5] btrfs: Wait for extent bits to release page
-Date:   Mon, 25 Nov 2019 21:14:55 -0600
-Message-Id: <20191126031456.12150-5-rgoldwyn@suse.de>
+Subject: [PATCH 5/5] fs: Remove dio_end_io()
+Date:   Mon, 25 Nov 2019 21:14:56 -0600
+Message-Id: <20191126031456.12150-6-rgoldwyn@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20191126031456.12150-1-rgoldwyn@suse.de>
 References: <20191126031456.12150-1-rgoldwyn@suse.de>
@@ -33,66 +33,57 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-While trying to release a page, the extent containing the page may be locked
-which would stop the page from being released. Wait for the
-extent lock to be cleared, if blocking is allowed and then clear
-the bits.
-
-While we are at it, clean the code of try_release_extent_state() to make
-it simpler.
+Since we removed the last user of dio_end_io(), remove the helper
+function dio_end_io().
 
 Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
 ---
- fs/btrfs/extent_io.c | 33 ++++++++++++++-------------------
- 1 file changed, 14 insertions(+), 19 deletions(-)
+ fs/direct-io.c     | 19 -------------------
+ include/linux/fs.h |  1 -
+ 2 files changed, 20 deletions(-)
 
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index cceaf05aada2..a7c32276702d 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -4367,28 +4367,23 @@ static int try_release_extent_state(struct extent_io_tree *tree,
- {
- 	u64 start = page_offset(page);
- 	u64 end = start + PAGE_SIZE - 1;
--	int ret = 1;
- 
- 	if (test_range_bit(tree, start, end, EXTENT_LOCKED, 0, NULL)) {
--		ret = 0;
--	} else {
--		/*
--		 * at this point we can safely clear everything except the
--		 * locked bit and the nodatasum bit
--		 */
--		ret = __clear_extent_bit(tree, start, end,
--				 ~(EXTENT_LOCKED | EXTENT_NODATASUM),
--				 0, 0, NULL, mask, NULL);
--
--		/* if clear_extent_bit failed for enomem reasons,
--		 * we can't allow the release to continue.
--		 */
--		if (ret < 0)
--			ret = 0;
--		else
--			ret = 1;
-+		if (!gfpflags_allow_blocking(mask))
-+			return 0;
-+		wait_extent_bit(tree, start, end, EXTENT_LOCKED);
- 	}
--	return ret;
-+	/*
-+	 * At this point we can safely clear everything except the locked and
-+	 * nodatasum bits. If clear_extent_bit failed due to -ENOMEM,
-+	 * don't allow release.
-+	 */
-+	if (__clear_extent_bit(tree, start, end,
-+				~(EXTENT_LOCKED | EXTENT_NODATASUM), 0, 0,
-+				NULL, mask, NULL) < 0)
-+		return 0;
-+
-+	return 1;
+diff --git a/fs/direct-io.c b/fs/direct-io.c
+index 9329ced91f1d..9d6fc6467d9c 100644
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -405,25 +405,6 @@ static void dio_bio_end_io(struct bio *bio)
+ 	spin_unlock_irqrestore(&dio->bio_lock, flags);
  }
  
- /*
+-/**
+- * dio_end_io - handle the end io action for the given bio
+- * @bio: The direct io bio thats being completed
+- *
+- * This is meant to be called by any filesystem that uses their own dio_submit_t
+- * so that the DIO specific endio actions are dealt with after the filesystem
+- * has done it's completion work.
+- */
+-void dio_end_io(struct bio *bio)
+-{
+-	struct dio *dio = bio->bi_private;
+-
+-	if (dio->is_async)
+-		dio_bio_end_aio(bio);
+-	else
+-		dio_bio_end_io(bio);
+-}
+-EXPORT_SYMBOL_GPL(dio_end_io);
+-
+ static inline void
+ dio_bio_alloc(struct dio *dio, struct dio_submit *sdio,
+ 	      struct block_device *bdev,
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 5bc75cff3536..eab2c26fb32a 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3154,7 +3154,6 @@ enum {
+ 	DIO_SKIP_HOLES	= 0x02,
+ };
+ 
+-void dio_end_io(struct bio *bio);
+ void dio_warn_stale_pagecache(struct file *filp);
+ 
+ ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
 -- 
 2.16.4
 
