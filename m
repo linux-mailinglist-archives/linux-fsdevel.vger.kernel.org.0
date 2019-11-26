@@ -2,186 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B943010A38C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 18:49:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCF0910A38E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 18:50:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726036AbfKZRtN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Nov 2019 12:49:13 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:60976 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725870AbfKZRrw (ORCPT
+        id S1726050AbfKZRuV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Nov 2019 12:50:21 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:39071 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbfKZRuV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Nov 2019 12:47:52 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAQHiE6g008010;
-        Tue, 26 Nov 2019 17:47:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=VLb/YMJCsrWhkvFIIjrbjJTaLfIayBXhXUM0yEnRDWo=;
- b=Jh9MUTMxEOm/dG3iFRfvsYLovnV1zqT4f07gIo4HvvCmRIeQGo7Cui9Qh2qlmOqNQHuZ
- qXkPiZU07/d7vp7nctgUHrm/gHHTqJIZhnR+JPvf+K2tpDNePStwdTK6/u2PNaHBNVla
- KrhNmsiPCTrcqYvODaU8CG1dZ1BvkswwWwjEvrXODclRVJ2xhuSHYi/EvWyKNVjnNwWF
- KPqxLCH5q9czNMNzl1QuVBSqDCsn8D3KL4k/2yGvWvPPQ4RQN/cr4uAoF7U6Nkiym609
- cxVL8y6umD5WduoWuudIJ4aZQITft44ojo9nw/fVnya9Mx4XT7lCt2nYaPbR6xqLemYG Fg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2wewdr8bt0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Nov 2019 17:47:33 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAQHdT4B014627;
-        Tue, 26 Nov 2019 17:47:33 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2wgvfjwm9t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Nov 2019 17:47:33 +0000
-Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xAQHlVFd025458;
-        Tue, 26 Nov 2019 17:47:32 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 26 Nov 2019 09:47:31 -0800
-Date:   Tue, 26 Nov 2019 09:47:30 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Subject: Re: [PATCH] iomap: Do not create fake iter in iomap_dio_bio_actor()
-Message-ID: <20191126174730.GT6211@magnolia>
-References: <20191125083930.11854-1-jack@suse.cz>
- <20191125111901.11910-1-jack@suse.cz>
+        Tue, 26 Nov 2019 12:50:21 -0500
+Received: by mail-pj1-f68.google.com with SMTP id v93so5363589pjb.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Nov 2019 09:50:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=59Vgy8vcI52/DliuLIm2lvu2SIX3lTZeIDQ7bzNt55A=;
+        b=2P86c4crOOWqvpSJVJ2SeRKrNeze8qhqQtkv34djNbIVTGgRMwwI8pLRCecox3XRUv
+         9xDeyNtqO3Hsi5wL2+5aF5XBWgBlAQdjBsXg3P8cMnDRDRKPWzyOMHlnN8RCb06XOVJX
+         JwwUa+yjSqSxur4anwq+ESdm2aFh/TY2fStmsP17N23n55lgodF7qnYbN2KAtFg79JL7
+         8n7AG0dK5GuqBwjuYkFSBZnBlaigtqYe1fVgB5b26phYc7hoUGEDoM5h5p5ld03tRjQD
+         VRksa6Fw/DnjFiy88YkxTfaBYc77F+LuZLdjkoD83sRj5w8aWWySrOAzL71YDCW1K26p
+         ddKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=59Vgy8vcI52/DliuLIm2lvu2SIX3lTZeIDQ7bzNt55A=;
+        b=PKbtszFzHGIUtU9EKqFuGUsQrg0+uH+I+duf+aFi5P4uRYLNnWtzt8/HqJeFxnQ1+C
+         PHnprVo1X1uk+B7K7/+tb6sYS7lnFTL9EuJ1v61UKkUfdja+St17gi56NhH7qzwm4HBl
+         yOfxYZc0IdOv66OuXec2e0X+b6TNV1kkjdn5Fl5/Ayd+GqlmkB+BIK0cWpxi7OqO0zWD
+         KS8cq6F+ghRgFHc4TXznPaTIzbhDyRnYolOj9dXQ5eAX9rZ84xISqaPkpIY9NvvjC8go
+         xgaQ+x2HCQPuEzYqds1BQfujIVB2rqC/qK3ztVF9T/4hYHnVrCMwgIFadWsRDwa/Rizg
+         rF4Q==
+X-Gm-Message-State: APjAAAWjwY8eZistQZ/LLfuv2an85ktdfKIBn+pV1HDO0s7ggX/Pa6H3
+        Kqogd/L1Nz+OnnrZxOUIZWWTKA==
+X-Google-Smtp-Source: APXvYqz+pZ81z29BEoNRF6pU6va0mwYVHg7ekqwOjyXpK7uAsydkEqLGGja3NjeTYfxyfO+YmTPbsA==
+X-Received: by 2002:a17:902:8508:: with SMTP id bj8mr1477005plb.178.1574790620287;
+        Tue, 26 Nov 2019 09:50:20 -0800 (PST)
+Received: from vader ([2620:10d:c090:180::aa28])
+        by smtp.gmail.com with ESMTPSA id 67sm3107387pfw.82.2019.11.26.09.50.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2019 09:50:19 -0800 (PST)
+Date:   Tue, 26 Nov 2019 09:50:15 -0800
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Nikolay Borisov <nborisov@suse.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        Dave Chinner <david@fromorbit.com>,
+        Jann Horn <jannh@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [RFC PATCH v3 05/12] btrfs: don't advance offset for compressed
+ bios in btrfs_csum_one_bio()
+Message-ID: <20191126175015.GA658856@vader>
+References: <cover.1574273658.git.osandov@fb.com>
+ <a669365a9165b18814c635f61ed566fdcd47a96f.1574273658.git.osandov@fb.com>
+ <9669273e-5a73-540f-2091-5ce64e093062@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191125111901.11910-1-jack@suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9453 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1911260148
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9453 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1911260149
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9669273e-5a73-540f-2091-5ce64e093062@suse.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
- n Mon, Nov 25, 2019 at 12:18:57PM +0100, Jan Kara wrote:
-> iomap_dio_bio_actor() copies iter to a local variable and then limits it
-> to a file extent we have mapped. When IO is submitted,
-> iomap_dio_bio_actor() advances the original iter while the copied iter
-> is advanced inside bio_iov_iter_get_pages(). This logic is non-obvious
-> especially because both iters still point to same shared structures
-> (such as pipe info) so if iov_iter_advance() changes anything in the
-> shared structure, this scheme breaks. Let's just truncate and reexpand
-> the original iter as needed instead of playing games with copying iters
-> and keeping them in sync.
+On Tue, Nov 26, 2019 at 04:18:45PM +0200, Nikolay Borisov wrote:
 > 
-> Signed-off-by: Jan Kara <jack@suse.cz>
-
-Looks ok, seems to test ok too
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-
---D
-
-> ---
->  fs/iomap/direct-io.c | 31 ++++++++++++++++++-------------
->  1 file changed, 18 insertions(+), 13 deletions(-)
 > 
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 420c0c82f0ac..b75cd0b0609b 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -201,12 +201,12 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
->  	unsigned int blkbits = blksize_bits(bdev_logical_block_size(iomap->bdev));
->  	unsigned int fs_block_size = i_blocksize(inode), pad;
->  	unsigned int align = iov_iter_alignment(dio->submit.iter);
-> -	struct iov_iter iter;
->  	struct bio *bio;
->  	bool need_zeroout = false;
->  	bool use_fua = false;
->  	int nr_pages, ret = 0;
->  	size_t copied = 0;
-> +	size_t orig_count;
->  
->  	if ((pos | length | align) & ((1 << blkbits) - 1))
->  		return -EINVAL;
-> @@ -236,15 +236,18 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
->  	}
->  
->  	/*
-> -	 * Operate on a partial iter trimmed to the extent we were called for.
-> -	 * We'll update the iter in the dio once we're done with this extent.
-> +	 * Save the original count and trim the iter to just the extent we
-> +	 * are operating on right now.  The iter will be re-expanded once
-> +	 * we are done.
->  	 */
-> -	iter = *dio->submit.iter;
-> -	iov_iter_truncate(&iter, length);
-> +	orig_count = iov_iter_count(dio->submit.iter);
-> +	iov_iter_truncate(dio->submit.iter, length);
->  
-> -	nr_pages = iov_iter_npages(&iter, BIO_MAX_PAGES);
-> -	if (nr_pages <= 0)
-> -		return nr_pages;
-> +	nr_pages = iov_iter_npages(dio->submit.iter, BIO_MAX_PAGES);
-> +	if (nr_pages <= 0) {
-> +		ret = nr_pages;
-> +		goto out;
-> +	}
->  
->  	if (need_zeroout) {
->  		/* zero out from the start of the block to the write offset */
-> @@ -257,7 +260,8 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
->  		size_t n;
->  		if (dio->error) {
->  			iov_iter_revert(dio->submit.iter, copied);
-> -			return 0;
-> +			copied = ret = 0;
-> +			goto out;
->  		}
->  
->  		bio = bio_alloc(GFP_KERNEL, nr_pages);
-> @@ -268,7 +272,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
->  		bio->bi_private = dio;
->  		bio->bi_end_io = iomap_dio_bio_end_io;
->  
-> -		ret = bio_iov_iter_get_pages(bio, &iter);
-> +		ret = bio_iov_iter_get_pages(bio, dio->submit.iter);
->  		if (unlikely(ret)) {
->  			/*
->  			 * We have to stop part way through an IO. We must fall
-> @@ -294,13 +298,11 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
->  				bio_set_pages_dirty(bio);
->  		}
->  
-> -		iov_iter_advance(dio->submit.iter, n);
-> -
->  		dio->size += n;
->  		pos += n;
->  		copied += n;
->  
-> -		nr_pages = iov_iter_npages(&iter, BIO_MAX_PAGES);
-> +		nr_pages = iov_iter_npages(dio->submit.iter, BIO_MAX_PAGES);
->  		iomap_dio_submit_bio(dio, iomap, bio);
->  	} while (nr_pages);
->  
-> @@ -318,6 +320,9 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
->  		if (pad)
->  			iomap_dio_zero(dio, iomap, pos, fs_block_size - pad);
->  	}
-> +out:
-> +	/* Undo iter limitation to current extent */
-> +	iov_iter_reexpand(dio->submit.iter, orig_count - copied);
->  	if (copied)
->  		return copied;
->  	return ret;
-> -- 
-> 2.16.4
+> On 20.11.19 г. 20:24 ч., Omar Sandoval wrote:
+> > From: Omar Sandoval <osandov@fb.com>
+> > 
+> > btrfs_csum_one_bio() loops over each sector in the bio while keeping a
 > 
+> 'sector' here is ambiguous it really loops over every fs block (which in
+> btrfs is also known as sector). SO perhaps change the wording in the
+> changelog but also in the function instead of nr_sectors perhahps it
+> could be renamed to blockcount?
+
+Fixed, thanks.
