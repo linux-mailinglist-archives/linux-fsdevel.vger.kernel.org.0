@@ -2,185 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 340B9109B96
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 10:56:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C44A9109BFC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 11:10:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727603AbfKZJ4f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Nov 2019 04:56:35 -0500
-Received: from mout.gmx.net ([212.227.15.19]:57567 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727397AbfKZJ4f (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Nov 2019 04:56:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1574762192;
-        bh=VpvycKW78m8Tny68PRS337gHW3Qist9GghGv0ECx258=;
-        h=X-UI-Sender-Class:Subject:From:To:References:Date:In-Reply-To;
-        b=ZG16Fsk1upt6cEGbZqX+keSLj/sUyYswoejVdCpBn3Ow3Wo4ccjh2ykCYjmxlg/PG
-         TuOvuAt7heacxN0u3z3Wiwwe6tbxD+nin48GXuDHpQkNSIFIGjIqlAMY5E+4b2yWX7
-         AziScnD/JnxhJUwKQey9g7DyNO5zeTL0HhLzscU4=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [0.0.0.0] ([13.231.109.76]) by mail.gmx.com (mrgmx005
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1MFKGZ-1ibyR43Zur-00FmkE; Tue, 26
- Nov 2019 10:56:32 +0100
-Subject: Re: btrfs/058 deadlock with lseek
-From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
-To:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        David Sterba <dsterba@suse.cz>
-References: <3310d598-bd2f-6024-e5ac-c1c6080c0fd7@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; prefer-encrypt=mutual; keydata=
- mQENBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAG0IlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT6JAU4EEwEIADgCGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCXZw1oQAKCRDC
- PZHzoSX+qCY6CACd+mWu3okGwRKXju6bou+7VkqCaHTdyXwWFTsr+/0ly5nUdDtT3yEVggPJ
- 3VP70wjlrxUjNjFb6iIvGYxiPOrop1NGwGYvQktgRhaIhALG6rPoSSAhGNjwGVRw0km0PlIN
- D29BTj/lYEk+jVM1YL0QLgAE1AI3krihg/lp/fQT53wLhR8YZIF8ETXbClQG1vJ0cllPuEEv
- efKxRyiTSjB+PsozSvYWhXsPeJ+KKjFen7ebE5reQTPFzSHctCdPnoR/4jSPlnTlnEvLeqcD
- ZTuKfQe1gWrPeevQzgCtgBF/WjIOeJs41klnYzC3DymuQlmFubss0jShLOW8eSOOWhLRuQEN
- BFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcgaCbPEwhLj
- 1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj/IrRUUka
- 68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fNGSsRb+pK
- EKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0q1eW4Jrv
- 0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEvABEBAAGJ
- ATwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCXZw1rgUJCWpOfwAKCRDCPZHz
- oSX+qFcEB/95cs8cM1OQdE/GgOfCGxwgckMeWyzOR7bkAWW0lDVp2hpgJuxBW/gyfmtBnUai
- fnggx3EE3ev8HTysZU9q0h+TJwwJKGv6sUc8qcTGFDtavnnl+r6xDUY7A6GvXEsSoCEEynby
- 72byGeSovfq/4AWGNPBG1L61Exl+gbqfvbECP3ziXnob009+z9I4qXodHSYINfAkZkA523JG
- ap12LndJeLk3gfWNZfXEWyGnuciRGbqESkhIRav8ootsCIops/SqXm0/k+Kcl4gGUO/iD/T5
- oagaDh0QtOd8RWSMwLxwn8uIhpH84Q4X1LadJ5NCgGa6xPP5qqRuiC+9gZqbq4Nj
-Message-ID: <b99618bc-1215-6c2d-5bdb-e43cb79cbd8e@gmx.com>
-Date:   Tue, 26 Nov 2019 17:56:27 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727855AbfKZKKz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Nov 2019 05:10:55 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58604 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727603AbfKZKKz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 Nov 2019 05:10:55 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A5527BACA;
+        Tue, 26 Nov 2019 10:10:52 +0000 (UTC)
+Subject: Re: [PATCH 1/5] fs: Export generic_file_buffered_read()
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-btrfs@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, hch@infradead.org,
+        darrick.wong@oracle.com, fdmanana@kernel.org,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>
+References: <20191126031456.12150-1-rgoldwyn@suse.de>
+ <20191126031456.12150-2-rgoldwyn@suse.de>
+From:   Johannes Thumshirn <jthumshirn@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <f3b4b146-face-98d6-70c8-cbb9f9696036@suse.de>
+Date:   Tue, 26 Nov 2019 11:10:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <3310d598-bd2f-6024-e5ac-c1c6080c0fd7@gmx.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="ecgI3Yf6QlNUfyBCjk8fhKB2vq3LAIImf"
-X-Provags-ID: V03:K1:KEJ314lmnLnvbhj0GOA4nthFUXJK0EKzltuElC2bQh/ZErhQt19
- c8OG4hoL9+QE19ZmR8Ksf802kcrBScztGLDQeTOCmxSLolefG1+dHbj9RBX9aCOaX0oopf9
- wXjrfUNq5N/B1sNDQ8ADZbZsJXEqizDOloPl0t2bI2oStqdSjY/oZYSeDV6ZN/V6TMSSRd0
- pm0zJ8pzbhoZHayNJE3uw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:McVKMgu8IiE=:rQN+2H8u4JwtBj8EmAROPg
- VRmISAHVPFwKpnV4OyYKtDOHL8MMi8CrdqAVPwyVeyiv18JjbmxUjmGd4fVtnIYCJPYjS02Lt
- UR8Za+381qTF4ErB+zW9Tq4ypDvEQjcZYGsDy0Im55GmUHGYW+xYiRfL3EF9mzdWcvMHCWTT4
- Jw8hxEgLSZdRtS6dIuHinwWAtroWQpRGtQ5x8ZFMIKCpR8EbUufaxDxQKiMiur0PQqb5cppE+
- OM6qprl7SgMGgojKmHw4CnEl0NWYJUZVgjtarA+uxn8vF3PJhtWTTtizotuaXLoFPTJ6szK0R
- 0LJdymQ7oFrar87GtMayOAyHLy9GTRb1iAcZEjH07KLc1Yn1NrpsTOZ7lKiGB4vWKx3G47orf
- kgCgxv3Qhi1M0kccE3rcOnKCAXtk1l57vPHuog0l+yDqnjSO1DyNULIofE0TPJI7zLrGePjOK
- 82Ui3rh/s3alsnev9xHxmgEguF6ivwUQ/Zcjb9LCe9kKizytKH4Jwr59NEKvLLsoU7TzeTf1M
- R0Oj4mzjgN0/aeKOZUknNxMK3+otYOk1LkyK7lJdFp3dD6awGDc9pFzTWNjXgG/yEuol5AxN0
- lQ8HdoSOvNuwK70nnZWrNy1/Lj4HjvAaHRG8dv4oUU15YUU322wGHfPJhUOiEBUcjz0ENlJDg
- SS8pXVurNrNA5r8W/v6fz6sv5lMAelHHech2rzkY5dZ2kXP15QAK1R2nb5E25J/0aRDIPz4TE
- fVLvEh3HqUYo6prIeAS6IbEqntKdDIcCNLI/PAC3nIuyYBadBG+VhSjYCOF8pBhN6GY86/Sx3
- 707l4+SxCObGuUrLPmQZx0HzUibXpnZrVYJyQPdZUztyiyUZ1UIK2txvm+e8L5ukPX8oB3QBF
- KM9PU220HnWmMEwW35chJL0wKHS3F1RrvzA0qTBxXS9/jCclGodnBaM0lqOpr7qhtaKOy95dQ
- RRzjuLYGHB8Bl+LNdBeZQgbQt3DRtV8MGAmK8LISuxMP6RAMeMDiRJL9C3+wFIXLmlmT5fLVD
- SGyYvsGPWlLJZ1LpIPixxCV5PqfQBqUMufk+VDuYEH6p0jXaZXjw/LumYbeD9RiVDtbL81is9
- erW+Rr4iLEd9cy3ytE8pEKbaNp2eoUzG+/y7Y1x+Qaviu3Q2o+lNdQTe3wkSdWCnTk0JpGPHs
- X+2S7TPisCBxuzEDtRoP4fM5qcJkzuhDNRyiyowQS+LVEFo8vuOLqfLhVuRHIasI6ysll+8Sq
- sQ1kmd/9Y3AprreTIVmeLnWFRSiCNBkePN7l7255N739ZK6pLjVl09FMCKtI=
+In-Reply-To: <20191126031456.12150-2-rgoldwyn@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---ecgI3Yf6QlNUfyBCjk8fhKB2vq3LAIImf
-Content-Type: multipart/mixed; boundary="E1ivtHTUZ01qqBxok0xP9IlNJ212PPRNe"
-
---E1ivtHTUZ01qqBxok0xP9IlNJ212PPRNe
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-
-
-
-On 2019/11/26 =E4=B8=8B=E5=8D=884:17, Qu Wenruo wrote:
-> Hi guys,
->=20
-> Just got a reproducible error in btrfs/058.
-> The backtrace is completely in VFS territory, not btrfs related lock at=
- all:
-
-With the help of Nikolay and Johannes, the offending commit is pinned
-down to 0be0ee71816b ("vfs: properly and reliably lock f_pos in
-fdget_pos()"), and Linus will soon revert it.
-
-Not a big deal, but testers would have a much easier life using David's
-misc-5.5 (still based on v5.4-rc).
-
-And to David, would you please keep your misc-5.5 branch until the
-offending patch get reverted?
-
-Thanks,
-Qu
-
-> BTRFS info (device dm-5): checking UUID tree
-> sysrq: Show Blocked State
->   task                        PC stack   pid father
-> rm              D    0 560678 560445 0x00000000
-> Call Trace:
->  __schedule+0x5c7/0xea0
->  ? __sched_text_start+0x8/0x8
->  ? lock_downgrade+0x380/0x380
->  ? lock_contended+0x730/0x730
->  ? debug_check_no_locks_held+0x60/0x60
->  schedule+0x7b/0x170
->  schedule_preempt_disabled+0x18/0x30
->  __mutex_lock+0x481/0xc70
->  ? __fdget_pos+0x7e/0x80
->  ? mutex_trylock+0x190/0x190
->  ? debug_lockdep_rcu_enabled+0x26/0x40
->  ? kmem_cache_free+0x157/0x3b0
->  ? putname+0x73/0x80
->  ? __ia32_sys_rmdir+0x30/0x30
->  ? __check_object_size+0x134/0x1e6
->  mutex_lock_nested+0x1b/0x20
->  ? mutex_lock_nested+0x1b/0x20
->  __fdget_pos+0x7e/0x80
->  ksys_lseek+0x1d/0xf0
->  __x64_sys_lseek+0x43/0x50
->  do_syscall_64+0x79/0xe0
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x7f7518e5652b
-> Code: Bad RIP value.
-> RSP: 002b:00007ffead7508e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000008
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f7518e5652b
-> RDX: 0000000000000001 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: 00007f7518f267e0 R08: 0000000000000001 R09: 0000000000000001
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 0000000000000002 R14: 00007f7518f2be68 R15: 00007f7518f287e0
->=20
-> Is this a known bug in VFS layer?
->=20
-> Thanks,
-> Qu
->=20
-
-
---E1ivtHTUZ01qqBxok0xP9IlNJ212PPRNe--
-
---ecgI3Yf6QlNUfyBCjk8fhKB2vq3LAIImf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEELd9y5aWlW6idqkLhwj2R86El/qgFAl3c9ssACgkQwj2R86El
-/qjrjQgAqVQz8K4bilA1qqBXVKdWaTmuSBjRzP5nslHwXErZHrEJNe6R9DUg//i6
-EpsapiMI40dP7FTcXQAyDljWJrZW1IvIGaFIBJu/m87TdEpClJNDDCBVOg15LmpS
-O1rtQsCBi8ns75vTRslflAuBgqSwI8o3i371cVp2pmdugLFfOisSfXw2Sh7/TE6n
-HYIcU95MZy9HbvL1YSp4ia+dfw5RTcu3R/l806tw4qd7Z0Eja5v6Ah0VfbC9PQBD
-8g8At9MWZyMZdeccnKl9jZgnyOIi1VY9L+qlpveE863Lce1cH5NHSxU+ThxTZqIc
-3oyQ1he5KaGr4a4cv5yLJ04dNnqSUQ==
-=R3Is
------END PGP SIGNATURE-----
-
---ecgI3Yf6QlNUfyBCjk8fhKB2vq3LAIImf--
+Apart from Willy's comment
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+-- 
+Johannes Thumshirn                            SUSE Labs Filesystems
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5
+90409 Nürnberg
+Germany
+(HRB 36809, AG Nürnberg)
+Geschäftsführer: Felix Imendörffer
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
