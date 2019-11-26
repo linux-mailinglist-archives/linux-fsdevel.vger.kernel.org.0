@@ -2,19 +2,19 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AF93109D53
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 12:54:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23C54109DA2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 13:13:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727574AbfKZLyT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Nov 2019 06:54:19 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51420 "EHLO mx1.suse.de"
+        id S1728245AbfKZMNa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Nov 2019 07:13:30 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35378 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727258AbfKZLyT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Nov 2019 06:54:19 -0500
+        id S1727650AbfKZMNa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 Nov 2019 07:13:30 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9F57BAB7F;
-        Tue, 26 Nov 2019 11:54:16 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id C4E35ADDD;
+        Tue, 26 Nov 2019 12:13:26 +0000 (UTC)
 Subject: Re: [PATCH 3/5] btrfs: Switch to iomap_dio_rw() for dio
 To:     Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-btrfs@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, hch@infradead.org,
@@ -66,8 +66,8 @@ Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
  TCiLsRHFfMHFY6/lq/c0ZdOsGjgpIK0G0z6et9YU6MaPuKwNY4kBdjPNBwHreucrQVUdqRRm
  RcxmGC6ohvpqVGfhT48ZPZKZEWM+tZky0mO7bhZYxMXyVjBn4EoNTsXy1et9Y1dU3HVJ8fod
  5UqrNrzIQFbdeM0/JqSLrtlTcXKJ7cYFa9ZM2AP7UIN9n1UWxq+OPY9YMOewVfYtL8M=
-Message-ID: <c5b05ecd-b25c-5b5e-8b50-1c39871ea620@suse.com>
-Date:   Tue, 26 Nov 2019 13:54:14 +0200
+Message-ID: <b49d3208-3652-53ba-f3c3-f62e4c92c023@suse.com>
+Date:   Tue, 26 Nov 2019 14:13:25 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
@@ -109,9 +109,123 @@ On 26.11.19 г. 5:14 ч., Goldwyn Rodrigues wrote:
 >  fs/btrfs/inode.c | 171 ++++++++++++++++++++++++++-----------------------------
 >  3 files changed, 97 insertions(+), 91 deletions(-)
 > 
-
-<snip>
-
+> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+> index fe2b8765d9e6..6f038ba34512 100644
+> --- a/fs/btrfs/ctree.h
+> +++ b/fs/btrfs/ctree.h
+> @@ -2903,6 +2903,8 @@ int btrfs_writepage_cow_fixup(struct page *page, u64 start, u64 end);
+>  void btrfs_writepage_endio_finish_ordered(struct page *page, u64 start,
+>  					  u64 end, int uptodate);
+>  extern const struct dentry_operations btrfs_dentry_operations;
+> +ssize_t btrfs_dio_read(struct kiocb *iocb, struct iov_iter *iter);
+> +ssize_t btrfs_dio_write(struct kiocb *iocb, struct iov_iter *iter);
+>  
+>  /* ioctl.c */
+>  long btrfs_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+> diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+> index 435a502a3226..960a0767f532 100644
+> --- a/fs/btrfs/file.c
+> +++ b/fs/btrfs/file.c
+> @@ -1834,7 +1834,7 @@ static ssize_t __btrfs_direct_write(struct kiocb *iocb, struct iov_iter *from)
+>  	loff_t endbyte;
+>  	int err;
+>  
+> -	written = generic_file_direct_write(iocb, from);
+> +	written = btrfs_dio_write(iocb, from);
+>  
+>  	if (written < 0 || !iov_iter_count(from))
+>  		return written;
+> @@ -3452,9 +3452,20 @@ static int btrfs_file_open(struct inode *inode, struct file *filp)
+>  	return generic_file_open(inode, filp);
+>  }
+>  
+> +static ssize_t btrfs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> +{
+> +	ssize_t ret = 0;
+> +	if (iocb->ki_flags & IOCB_DIRECT)
+> +		ret = btrfs_dio_read(iocb, to);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return generic_file_buffered_read(iocb, to, ret);
+> +}
+> +
+>  const struct file_operations btrfs_file_operations = {
+>  	.llseek		= btrfs_file_llseek,
+> -	.read_iter      = generic_file_read_iter,
+> +	.read_iter      = btrfs_file_read_iter,
+>  	.splice_read	= generic_file_splice_read,
+>  	.write_iter	= btrfs_file_write_iter,
+>  	.mmap		= btrfs_file_mmap,
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index 015910079e73..9a39a53b9068 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -29,6 +29,7 @@
+>  #include <linux/iversion.h>
+>  #include <linux/swap.h>
+>  #include <linux/sched/mm.h>
+> +#include <linux/iomap.h>
+>  #include <asm/unaligned.h>
+>  #include "misc.h"
+>  #include "ctree.h"
+> @@ -7619,28 +7620,7 @@ static struct extent_map *create_io_em(struct inode *inode, u64 start, u64 len,
+>  }
+>  
+>  
+> -static int btrfs_get_blocks_direct_read(struct extent_map *em,
+> -					struct buffer_head *bh_result,
+> -					struct inode *inode,
+> -					u64 start, u64 len)
+> -{
+> -	if (em->block_start == EXTENT_MAP_HOLE ||
+> -			test_bit(EXTENT_FLAG_PREALLOC, &em->flags))
+> -		return -ENOENT;
+> -
+> -	len = min(len, em->len - (start - em->start));
+> -
+> -	bh_result->b_blocknr = (em->block_start + (start - em->start)) >>
+> -		inode->i_blkbits;
+> -	bh_result->b_size = len;
+> -	bh_result->b_bdev = em->bdev;
+> -	set_buffer_mapped(bh_result);
+> -
+> -	return 0;
+> -}
+> -
+>  static int btrfs_get_blocks_direct_write(struct extent_map **map,
+> -					 struct buffer_head *bh_result,
+>  					 struct inode *inode,
+>  					 struct btrfs_dio_data *dio_data,
+>  					 u64 start, u64 len)
+> @@ -7702,7 +7682,6 @@ static int btrfs_get_blocks_direct_write(struct extent_map **map,
+>  	}
+>  
+>  	/* this will cow the extent */
+> -	len = bh_result->b_size;
+>  	free_extent_map(em);
+>  	*map = em = btrfs_new_extent_direct(inode, start, len);
+>  	if (IS_ERR(em)) {
+> @@ -7713,15 +7692,6 @@ static int btrfs_get_blocks_direct_write(struct extent_map **map,
+>  	len = min(len, em->len - (start - em->start));
+>  
+>  skip_cow:
+> -	bh_result->b_blocknr = (em->block_start + (start - em->start)) >>
+> -		inode->i_blkbits;
+> -	bh_result->b_size = len;
+> -	bh_result->b_bdev = em->bdev;
+> -	set_buffer_mapped(bh_result);
+> -
+> -	if (!test_bit(EXTENT_FLAG_PREALLOC, &em->flags))
+> -		set_buffer_new(bh_result);
+> -
+>  	/*
+>  	 * Need to update the i_size under the extent lock so buffered
+>  	 * readers will get the updated i_size when we unlock.
+> @@ -7737,17 +7707,19 @@ static int btrfs_get_blocks_direct_write(struct extent_map **map,
+>  	return ret;
+>  }
+>  
 > -static int btrfs_get_blocks_direct(struct inode *inode, sector_t iblock,
 > -				   struct buffer_head *bh_result, int create)
 > +static int btrfs_dio_iomap_begin(struct inode *inode, loff_t start,
@@ -126,65 +240,94 @@ On 26.11.19 г. 5:14 ч., Goldwyn Rodrigues wrote:
 >  	u64 lockstart, lockend;
 > -	u64 len = bh_result->b_size;
 > +	int create = flags & IOMAP_WRITE;
-
-nit: Imo this should be turned into a bool and renamed to write or
-is_write. Create implies we are always creating blocks which is not true
-if we are doing overwrite. This has been a misnomer ever since it was
-introduced. We really care to distinguish read vs write.
-
-<snip>
-
-> @@ -8636,28 +8637,13 @@ static ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->  	struct extent_changeset *data_reserved = NULL;
->  	loff_t offset = iocb->ki_pos;
->  	size_t count = 0;
-> -	int flags = 0;
-> -	bool wakeup = true;
->  	bool relock = false;
->  	ssize_t ret;
+>  	int ret = 0;
+> +	u64 len = length;
+> +	bool unlock_extents = false;
 >  
->  	if (check_direct_IO(fs_info, iter, offset))
->  		return 0;
+>  	if (!create)
+>  		len = min_t(u64, len, fs_info->sectorsize);
+> @@ -7755,6 +7727,17 @@ static int btrfs_get_blocks_direct(struct inode *inode, sector_t iblock,
+>  	lockstart = start;
+>  	lockend = start + len - 1;
 >  
-> -	inode_dio_begin(inode);
-> -
-> -	/*
-> -	 * The generic stuff only does filemap_write_and_wait_range, which
-> -	 * isn't enough if we've written compressed pages to this area, so
-> -	 * we need to flush the dirty pages again to make absolutely sure
-> -	 * that any outstanding dirty pages are on disk.
-> -	 */
->  	count = iov_iter_count(iter);
-> -	if (test_bit(BTRFS_INODE_HAS_ASYNC_EXTENT,
-> -		     &BTRFS_I(inode)->runtime_flags))
-> -		filemap_fdatawrite_range(inode->i_mapping, offset,
-> -					 offset + count - 1);
-> -
->  	if (iov_iter_rw(iter) == WRITE) {
+> +	/*
+> +	 * The generic stuff only does filemap_write_and_wait_range, which
+> +	 * isn't enough if we've written compressed pages to this area, so
+> +	 * we need to flush the dirty pages again to make absolutely sure
+> +	 * that any outstanding dirty pages are on disk.
+> +	 */
+> +	if (test_bit(BTRFS_INODE_HAS_ASYNC_EXTENT,
+> +		     &BTRFS_I(inode)->runtime_flags))
+> +		ret = filemap_fdatawrite_range(inode->i_mapping, start,
+> +					 start + length - 1);
+> +
+>  	if (current->journal_info) {
 >  		/*
->  		 * If the write DIO is beyond the EOF, we need update
-> @@ -8688,17 +8674,11 @@ static ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->  		dio_data.unsubmitted_oe_range_end = (u64)offset;
->  		current->journal_info = &dio_data;
->  		down_read(&BTRFS_I(inode)->dio_sem);
-> -	} else if (test_bit(BTRFS_INODE_READDIO_NEED_LOCK,
-> -				     &BTRFS_I(inode)->runtime_flags)) {
-
-This is the sole reader of BTRFS_INODE_READDIO_NEED_LOCK flag. Have you
-verified this is correct w.r.t btrfs_setsize. I'm very much in favor or
-removing the subtle behavior this flag introduced.
-
-On the other hand, with iomap we no longer have control over when
-inode_dio_end is called e.g. inode_dio_begin is called before calling
-iomap_apply and then it's finished in iomap_dio_complete. Also for DIO
-reads you now hold the inode lock which is also held during setattr
-(notify_change calls ->setattr callback and it has a
-WARN_ON_ONCE(!inode_is_locked(inode)); at the beginning) so perhaps you
-can simply delete relevant code in btrfs_setattr as well.
-
-> -		inode_dio_end(inode);
-> -		flags = DIO_LOCKING | DIO_SKIP_HOLES;
-> -		wakeup = false;
+>  		 * Need to pull our outstanding extents and set journal_info to NULL so
+> @@ -7803,35 +7786,45 @@ static int btrfs_get_blocks_direct(struct inode *inode, sector_t iblock,
 >  	}
+>  
+>  	if (create) {
+> -		ret = btrfs_get_blocks_direct_write(&em, bh_result, inode,
+> +		ret = btrfs_get_blocks_direct_write(&em, inode,
+>  						    dio_data, start, len);
+>  		if (ret < 0)
+>  			goto unlock_err;
+> -
+> -		unlock_extent_cached(&BTRFS_I(inode)->io_tree, lockstart,
+> -				     lockend, &cached_state);
+> +		unlock_extents = true;
+> +	} else if (em->block_start == EXTENT_MAP_HOLE ||
+> +			test_bit(EXTENT_FLAG_PREALLOC, &em->flags)) {
+> +		/* Unlock in case of direct reading from a hole */
+> +		unlock_extents = true;
+>  	} else {
+> -		ret = btrfs_get_blocks_direct_read(em, bh_result, inode,
+> -						   start, len);
+> -		/* Can be negative only if we read from a hole */
+> -		if (ret < 0) {
+> -			ret = 0;
+> -			free_extent_map(em);
+> -			goto unlock_err;
+> -		}
+> +
+> +		len = min(len, em->len - (start - em->start));
+>  		/*
+>  		 * We need to unlock only the end area that we aren't using.
+>  		 * The rest is going to be unlocked by the endio routine.
+>  		 */
+> -		lockstart = start + bh_result->b_size;
+> -		if (lockstart < lockend) {
+> -			unlock_extent_cached(&BTRFS_I(inode)->io_tree,
+> -					     lockstart, lockend, &cached_state);
+> -		} else {
+> +		lockstart = start + len;
+> +		if (lockstart < lockend)
+> +			unlock_extents = true;
+> +		else
+>  			free_extent_state(cached_state);
+> -		}
+>  	}
+>  
+> +	if (unlock_extents)
+> +		unlock_extent_cached(&BTRFS_I(inode)->io_tree,
+> +				lockstart, lockend, &cached_state);
+> +
+> +	if ((em->block_start == EXTENT_MAP_HOLE) ||
+> +	    (test_bit(EXTENT_FLAG_PREALLOC, &em->flags) && !create)) {
+> +		iomap->addr = IOMAP_NULL_ADDR;
+> +		iomap->type = IOMAP_HOLE;
+> +	} else {
+> +		iomap->addr = em->block_start;
+> +		iomap->type = IOMAP_MAPPED;
+> +	}
+> +	iomap->offset = em->start;
+> +	iomap->bdev = em->bdev;
+> +	iomap->length = em->len;
+> +
 
-<snip>
+So here you always return a full extent worth of data, why not trimming
+it to the requested range? I think this is still correct because the
+generic iomap infrastructure will only process the requested range, at
+least as far as iomap->length is concerned. But I'm not so sure about
+iomap->offset though.
