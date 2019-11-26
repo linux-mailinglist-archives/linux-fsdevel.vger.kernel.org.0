@@ -2,62 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA05F10A0D5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 15:58:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A937010A0FC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 16:12:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbfKZO6F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Nov 2019 09:58:05 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51864 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726049AbfKZO6F (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Nov 2019 09:58:05 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7FB4EAC28;
-        Tue, 26 Nov 2019 14:58:03 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id DA3B0DA898; Tue, 26 Nov 2019 15:58:01 +0100 (CET)
-Date:   Tue, 26 Nov 2019 15:58:01 +0100
-From:   David Sterba <dsterba@suse.cz>
-To:     Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        David Sterba <dsterba@suse.cz>
-Subject: Re: btrfs/058 deadlock with lseek
-Message-ID: <20191126145801.GF2734@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Qu Wenruo <quwenruo.btrfs@gmx.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-References: <3310d598-bd2f-6024-e5ac-c1c6080c0fd7@gmx.com>
- <b99618bc-1215-6c2d-5bdb-e43cb79cbd8e@gmx.com>
+        id S1727927AbfKZPMT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Nov 2019 10:12:19 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:40098 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727418AbfKZPMT (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 Nov 2019 10:12:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=qlHMGMW/mER/ug0FVdMjPHGf7gqNNs79oj6hmUgpqe4=; b=HRYoQzdRi8MtTqcped00ddh/p
+        fKt4WGGRVtOtbj1mKwLNArdn1roSySJ1XldB97OfClfOV0xcJ6OAzvtlUHzZLeVlVIp1iDg5n5Cdp
+        htG0qfii7XfaEIcQIjgu08I+9SJLYRvvIZwshTXlHl9nxpsv4v9gW7ZKQLGmQftsbPwdvsdavQeZ/
+        +zfHPeL91WMiYo3ImcMjPcIhpg4yi4sDMA69B0hprhLI3kUkKOFc8PWGRplHd6DPvtSvLJFBO2xVA
+        JLTJz3Txths2/HRvG4DHomqowRuBP1sY67TpVV50Pr5unIexL3uZRPRm6FNOPFJRPrLLSEoapS4zt
+        /gUyT+ECQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iZcVk-0000bD-GK; Tue, 26 Nov 2019 15:12:16 +0000
+Date:   Tue, 26 Nov 2019 07:12:16 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Cc:     Jan Kara <jack@suse.cz>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>
+Subject: Re: [PATCH] iomap: Do not create fake iter in iomap_dio_bio_actor()
+Message-ID: <20191126151216.GD20752@bombadil.infradead.org>
+References: <20191125083930.11854-1-jack@suse.cz>
+ <20191125111901.11910-1-jack@suse.cz>
+ <20191125211149.GC3748@bobrowski>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b99618bc-1215-6c2d-5bdb-e43cb79cbd8e@gmx.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+In-Reply-To: <20191125211149.GC3748@bobrowski>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 26, 2019 at 05:56:27PM +0800, Qu Wenruo wrote:
-> On 2019/11/26 下午4:17, Qu Wenruo wrote:
-> > Just got a reproducible error in btrfs/058.
-> > The backtrace is completely in VFS territory, not btrfs related lock at all:
-> 
-> With the help of Nikolay and Johannes, the offending commit is pinned
-> down to 0be0ee71816b ("vfs: properly and reliably lock f_pos in
-> fdget_pos()"), and Linus will soon revert it.
-> 
-> Not a big deal, but testers would have a much easier life using David's
-> misc-5.5 (still based on v5.4-rc).
-> 
-> And to David, would you please keep your misc-5.5 branch until the
-> offending patch get reverted?
+On Tue, Nov 26, 2019 at 08:11:50AM +1100, Matthew Bobrowski wrote:
+> > +	 * are operating on right now.  The iter will be re-expanded once
+>   	       		    	      ^^
+> 				      Extra whitespace here.
 
-misc-5.5 will not rebase, it's the branch that gets pulled to master.
-I won't rebase misc-next until rc1 at least and will rebase only after I
-see that tests pass. During merge window lots of things are in flux so
-breakage is expected so we need a development base for testing.
+That's controversial, not wrong.  We don't normally enforce a style there.
+https://www.theatlantic.com/science/archive/2018/05/two-spaces-after-a-period/559304/
+(for example.  you can find many many many pieces extolling one or
+two spaces).
