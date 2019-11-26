@@ -2,99 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72E4D10A55D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 21:22:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2731110A62A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 22:47:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726984AbfKZUV4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Nov 2019 15:21:56 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52240 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726036AbfKZUV4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Nov 2019 15:21:56 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D5F01B147;
-        Tue, 26 Nov 2019 20:21:53 +0000 (UTC)
-Date:   Tue, 26 Nov 2019 21:21:51 +0100
-From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Biggers <ebiggers@google.com>,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        Ming Lei <ming.lei@redhat.com>,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Hou Tao <houtao1@huawei.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, Hannes Reinecke <hare@suse.com>,
-        "Ewan D. Milne" <emilne@redhat.com>,
+        id S1727016AbfKZVrU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Nov 2019 16:47:20 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:39735 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726118AbfKZVrT (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 Nov 2019 16:47:19 -0500
+Received: by mail-pj1-f66.google.com with SMTP id v93so5644715pjb.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Nov 2019 13:47:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KFhdOn90Fti7JE5QyN26X7BwGNx6h4gloValNPbrSLg=;
+        b=IfCawLHbaEt8FD7nRs/gvbRk47OJhOhEHuv0lWdW3MuIJK8M414nyXPgo47mJIFeN7
+         PaBMCVfl1x0wwVWip+WmSBigPOHJJiuZ0B+TXeZ9RBNdvd5OpFgGDj2I/pMuuRNvlsno
+         stVl4+y5iGv1PMWKQJxgrUFe2r9kDtKxtRFufA0wt8dd78h7dn56xwa9R4MTPEGhXwd0
+         GS/ubITYNkLp5iBjzjJ+Gggjyfypkx+sZsjIB5UxweZzLOWZVIB9CVWzS8n9fEUHItDi
+         4hUgNm/87MQDcsfWVnWVtuiqEPBdErYSij7cdo7G+r9pVbB3g0Kbdnp/hnb5UrE6Ji3V
+         4JWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KFhdOn90Fti7JE5QyN26X7BwGNx6h4gloValNPbrSLg=;
+        b=qaqDhMv3IfOCJCzNMeUudbYtHAcDgvvaVpWIQqd6WClr79i7rHPeK1cLxtx2klzxoq
+         hxZ62k/ulCwNCh+eTjVY1vK4PiLbbs7I/o6l5fy1jZ2ziuto0gosS0OwFoLJg1OVFvGv
+         wIjFtiK2k3qttiiXcruWDQhxeXixqXm8k5pH68+1nhuo+G1EMnkVC/gbsoDmrdyVFGjZ
+         5M0eYjtHnB/o+bcmkmt3k6LRzKZtJU4ZBpawKSFQzRQllc7vgN6b+3ZHFbCKBGs1YeSb
+         sY2k0xdO6POR716GRbZ3DqRTNHUdYI+NAxnvIGQgEvT/BpMBXFTpHGMEahbIP8+xGwE5
+         TpJg==
+X-Gm-Message-State: APjAAAWHyt0ztVo8rLxuw9CENvDuEuCkF2YFE6NoQig+3wcLmZ1Tl2b6
+        a0XuJJwiELlhEFqPoYhgKDUp
+X-Google-Smtp-Source: APXvYqyIY6rc51MCcvspRmZcVyOW9dwwtHhFMhC7SrUpiiXWoM1Cn/6GCIJVGKi2KqAoGfANcVftJA==
+X-Received: by 2002:a17:90a:1424:: with SMTP id j33mr1733161pja.2.1574804838387;
+        Tue, 26 Nov 2019 13:47:18 -0800 (PST)
+Received: from bobrowski (bobrowski.net. [110.232.114.101])
+        by smtp.gmail.com with ESMTPSA id o124sm13924729pfb.56.2019.11.26.13.47.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2019 13:47:17 -0800 (PST)
+Date:   Wed, 27 Nov 2019 08:47:11 +1100
+From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jan Kara <jack@suse.cz>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
         Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v4 rebase 00/10] Fix cdrom autoclose
-Message-ID: <20191126202151.GY11661@kitsune.suse.cz>
-References: <cover.1574797504.git.msuchanek@suse.de>
- <c6fe572c-530e-93eb-d62a-cb2f89c7b4ec@kernel.dk>
+        linux-fsdevel@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>
+Subject: Re: [PATCH] iomap: Do not create fake iter in iomap_dio_bio_actor()
+Message-ID: <20191126214707.GB23868@bobrowski>
+References: <20191125083930.11854-1-jack@suse.cz>
+ <20191125111901.11910-1-jack@suse.cz>
+ <20191125211149.GC3748@bobrowski>
+ <20191126151216.GD20752@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c6fe572c-530e-93eb-d62a-cb2f89c7b4ec@kernel.dk>
+In-Reply-To: <20191126151216.GD20752@bombadil.infradead.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 26, 2019 at 01:01:42PM -0700, Jens Axboe wrote:
-> On 11/26/19 12:54 PM, Michal Suchanek wrote:
-> > Hello,
-> > 
-> > there is cdrom autoclose feature that is supposed to close the tray,
-> > wait for the disc to become ready, and then open the device.
-> > 
-> > This used to work in ancient times. Then in old times there was a hack
-> > in util-linux which worked around the breakage which probably resulted
-> > from switching to scsi emulation.
-> > 
-> > Currently util-linux maintainer refuses to merge another hack on the
-> > basis that kernel still has the feature so it should be fixed there.
-> > The code needs not be replicated in every userspace utility like mount
-> > or dd which has no business knowing which devices are CD-roms and where
-> > the autoclose setting is in the kernel.
-> > 
-> > This is rebase on top of current master.
-> > 
-> > Also it seems that most people think that this is fix for WMware because
-> > there is one patch dealing with WMware.
+On Tue, Nov 26, 2019 at 07:12:16AM -0800, Matthew Wilcox wrote:
+> On Tue, Nov 26, 2019 at 08:11:50AM +1100, Matthew Bobrowski wrote:
+> > > +	 * are operating on right now.  The iter will be re-expanded once
+> >   	       		    	      ^^
+> > 				      Extra whitespace here.
 > 
-> I think the main complaint with this is that it's kind of a stretch to
-> add core functionality for a device type that's barely being
-> manufactured anymore and is mostly used in a virtualized fashion. I
-> think it you could fix this without 10 patches of churn and without
-> adding a new ->open() addition to fops, then people would be a lot more
-> receptive to the idea of improving cdrom auto-close.
+> That's controversial, not wrong.  We don't normally enforce a style there.
+> https://www.theatlantic.com/science/archive/2018/05/two-spaces-after-a-period/559304/
+> (for example.  you can find many many many pieces extolling one or
+> two spaces).
 
-I see no way to do that cleanly.
+Indeed controversial, a good read, and thank you for sharing. I guess
+that I haven't been brought up with two spaces after a period being a
+"thing", so it makes my wires trip when glancing over a snippet of
+text.
 
-There are two open modes for cdrom devices - blocking and non-blocking.
+At least I'll know this for next time. :)
 
-In blocking mode open() should analyze the medium so that it's ready
-when it returns. In non-blocking mode it should return immediately so
-long as you can talk to the device.
-
-When waiting in open() with locks held the processes trying to open the
-device are locked out regradless of the mode they use.
-
-The only way to solve this is to pretend that the device is open and do
-the wait afterwards with the device unlocked.
-
-Thanks
-
-Michal
+/M
