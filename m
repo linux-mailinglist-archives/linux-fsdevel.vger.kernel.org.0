@@ -2,27 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C44A9109BFC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 11:10:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC7D4109C75
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 11:43:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727855AbfKZKKz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Nov 2019 05:10:55 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58604 "EHLO mx1.suse.de"
+        id S1727737AbfKZKnp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Nov 2019 05:43:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35114 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727603AbfKZKKz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Nov 2019 05:10:55 -0500
+        id S1727603AbfKZKnp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 Nov 2019 05:43:45 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A5527BACA;
-        Tue, 26 Nov 2019 10:10:52 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id F3886ADC8;
+        Tue, 26 Nov 2019 10:43:41 +0000 (UTC)
 Subject: Re: [PATCH 1/5] fs: Export generic_file_buffered_read()
+From:   Johannes Thumshirn <jthumshirn@suse.de>
 To:     Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-btrfs@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, hch@infradead.org,
         darrick.wong@oracle.com, fdmanana@kernel.org,
         Goldwyn Rodrigues <rgoldwyn@suse.com>
 References: <20191126031456.12150-1-rgoldwyn@suse.de>
  <20191126031456.12150-2-rgoldwyn@suse.de>
-From:   Johannes Thumshirn <jthumshirn@suse.de>
+ <f3b4b146-face-98d6-70c8-cbb9f9696036@suse.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
  xsFNBFTTwPEBEADOadCyru0ZmVLaBn620Lq6WhXUlVhtvZF5r1JrbYaBROp8ZpiaOc9YpkN3
@@ -79,12 +80,12 @@ Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
  l2t2TyTuHm7wVUY2J3gJYgG723/PUGW4LaoqNrYQUr/rqo6NXw6c+EglRpm1BdpkwPwAng63
  W5VOQMdnozD2RsDM5GfA4aEFi5m00tE+8XPICCtkduyWw+Z+zIqYk2v+zraPLs9Gs0X2C7X0
  yvqY9voUoJjG6skkOToGZbqtMX9K4GOv9JAxVs075QRXL3brHtHONDt6udYobzz+
-Message-ID: <f3b4b146-face-98d6-70c8-cbb9f9696036@suse.de>
-Date:   Tue, 26 Nov 2019 11:10:51 +0100
+Message-ID: <b55f6033-a062-badc-32d7-0bb5bb2d45cb@suse.de>
+Date:   Tue, 26 Nov 2019 11:43:41 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20191126031456.12150-2-rgoldwyn@suse.de>
+In-Reply-To: <f3b4b146-face-98d6-70c8-cbb9f9696036@suse.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -93,8 +94,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Apart from Willy's comment
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+On 26/11/2019 11:10, Johannes Thumshirn wrote:
+> Apart from Willy's comment
+> Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+
+On the other hand, you could as well do:
+
+static ssize_t btrfs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
++{
++	ssize_t ret = 0;
++	if (iocb->ki_flags & IOCB_DIRECT)
++		ret = btrfs_dio_read(iocb, to);
++	if (ret < 0)
++		return ret;
++
++	return generic_file_read_iter(iocb, ret);
++}
+
+In patch 3/5, if IOCB_DIRECT is set we're branching into
+btrfs_dio_read() above and if not generic_file_read_iter() will then
+directly call generic_file_buffered_read()
+
 -- 
 Johannes Thumshirn                            SUSE Labs Filesystems
 jthumshirn@suse.de                                +49 911 74053 689
