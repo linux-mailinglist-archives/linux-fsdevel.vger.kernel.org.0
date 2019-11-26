@@ -2,19 +2,19 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59AD110A4DD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 20:55:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18BA210A4E1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 20:55:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726970AbfKZTyn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Nov 2019 14:54:43 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40240 "EHLO mx1.suse.de"
+        id S1727050AbfKZTyo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Nov 2019 14:54:44 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40276 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725970AbfKZTyn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Nov 2019 14:54:43 -0500
+        id S1726618AbfKZTyo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 Nov 2019 14:54:44 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A0A04B01C;
-        Tue, 26 Nov 2019 19:54:40 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 882D6B061;
+        Tue, 26 Nov 2019 19:54:41 +0000 (UTC)
 From:   Michal Suchanek <msuchanek@suse.de>
 To:     linux-scsi@vger.kernel.org, linux-block@vger.kernel.org
 Cc:     Michal Suchanek <msuchanek@suse.de>,
@@ -37,9 +37,9 @@ Cc:     Michal Suchanek <msuchanek@suse.de>,
         "Ewan D. Milne" <emilne@redhat.com>,
         Christoph Hellwig <hch@infradead.org>,
         Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v4 rebase 03/10] cdrom: wait for the tray to close
-Date:   Tue, 26 Nov 2019 20:54:22 +0100
-Message-Id: <e602b67d19dbbdc2009ec5932d2f5e9d33785144.1574797504.git.msuchanek@suse.de>
+Subject: [PATCH v4 rebase 04/10] cdrom: export autoclose logic as a separate function
+Date:   Tue, 26 Nov 2019 20:54:23 +0100
+Message-Id: <80d5a59f37de16b6157987122001bc03f040bac8.1574797504.git.msuchanek@suse.de>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <cover.1574797504.git.msuchanek@suse.de>
 References: <cover.1574797504.git.msuchanek@suse.de>
@@ -50,94 +50,144 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The scsi command to close the tray only starts the motor and does not
-wait for the tray to close. Wait until the state chages from TRAY_OPEN
-so users do not race with the tray closing.
-
-This looks like inifinte wait but unless the drive is broken it either
-closes the tray shortly or reports an error when it detects the tray is
-blocked. At worst the wait can be interrupted by the user.
-
-Also wait for the drive to become ready once the tray closes.
+This allows the sr driver to call it without blocking other processes
+accessing the device. This solves a issue with process waiting in open()
+on broken drive to close the tray blocking out all access to the device,
+including nonblocking access to determine drive status.
 
 Signed-off-by: Michal Suchanek <msuchanek@suse.de>
 ---
-v2:
- - check drive_status exists before using it
- - rename tray_close -> cdrom_tray_close
- - also wait for drive to become ready after tray closes
- - do not wait in cdrom_ioctl_closetray
-v4: add a status change poll wrapper
+v2: new patch
+v3:
+ - change IOCTL to export
+ - fix the logic about reporting cdroms inability to close tray
+v4:
+ - move the autoclose code to the open code, align debug messages with
+ the open code
 ---
- drivers/cdrom/cdrom.c | 36 +++++++++++++++++++++++++++++++++---
- 1 file changed, 33 insertions(+), 3 deletions(-)
+ drivers/cdrom/cdrom.c | 85 ++++++++++++++++++++++++++++++-------------
+ include/linux/cdrom.h |  1 +
+ 2 files changed, 61 insertions(+), 25 deletions(-)
 
 diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
-index bb32decdadf1..b2bc0c8f9a69 100644
+index b2bc0c8f9a69..38e6db879de0 100644
 --- a/drivers/cdrom/cdrom.c
 +++ b/drivers/cdrom/cdrom.c
-@@ -1045,6 +1045,28 @@ static void cdrom_count_tracks(struct cdrom_device_info *cdi, tracktype *tracks)
- 	       tracks->cdi, tracks->xa);
+@@ -1067,6 +1067,56 @@ static int cdrom_tray_close(struct cdrom_device_info *cdi)
+ 	return cdrom_wait_for_status_change(cdi, &ret);
  }
  
-+static int cdrom_wait_for_status_change(struct cdrom_device_info *cdi,
-+					int *status)
-+{
-+	int saved = *status;
-+	const struct cdrom_device_ops *cdo = cdi->ops;
-+
-+	return poll_event_interruptible(saved !=
-+			(*status = cdo->drive_status(cdi, CDSL_CURRENT)), 500);
-+}
-+
-+static int cdrom_tray_close(struct cdrom_device_info *cdi)
++int cdrom_autoclose(struct cdrom_device_info *cdi)
 +{
 +	int ret;
++	const struct cdrom_device_ops *cdo = cdi->ops;
 +
-+	ret = cdi->ops->tray_move(cdi, 0);
-+	if (ret || !cdi->ops->drive_status)
-+		return ret;
++	cd_dbg(CD_OPEN, "entering cdrom_autoclose\n");
++	if (!cdo->drive_status)
++		return -EOPNOTSUPP;
 +
-+	ret = CDS_TRAY_OPEN;
-+	return cdrom_wait_for_status_change(cdi, &ret);
++	ret = cdo->drive_status(cdi, CDSL_CURRENT);
++	cd_dbg(CD_OPEN, "drive_status=%d\n", ret);
++
++	if (ret == CDS_TRAY_OPEN) {
++		cd_dbg(CD_OPEN, "the tray is open...\n");
++		if (CDROM_CAN(CDC_CLOSE_TRAY)) {
++			if (!(cdi->options & CDO_AUTO_CLOSE))
++				return -ENOMEDIUM;
++			cd_dbg(CD_OPEN, "trying to close the tray\n");
++			ret = cdrom_tray_close(cdi);
++			if (ret == -ERESTARTSYS)
++				return ret;
++			if (ret) {
++				cd_dbg(CD_OPEN, "bummer. tried to close the tray but failed.\n");
++				return -ENOMEDIUM;
++			}
++			ret = cdo->drive_status(cdi, CDSL_CURRENT);
++			if (ret == CDS_NO_DISC)
++				cd_dbg(CD_OPEN, "tray might not contain a medium\n");
++		} else {
++			cd_dbg(CD_OPEN, "bummer. this drive can't close the tray.\n");
++			return -ENOMEDIUM;
++		}
++	}
++
++	if (ret == CDS_DRIVE_NOT_READY) {
++		int poll_res;
++
++		cd_dbg(CD_OPEN, "waiting for drive to become ready...\n");
++		poll_res = cdrom_wait_for_status_change(cdi, &ret);
++		if (poll_res == -ERESTARTSYS)
++			return poll_res;
++	}
++
++	if (ret != CDS_DISC_OK)
++		return -ENOMEDIUM;
++
++	return 0;
 +}
++EXPORT_SYMBOL_GPL(cdrom_autoclose);
 +
  static int open_for_common(struct cdrom_device_info *cdi, tracktype *tracks)
  {
  	int ret;
-@@ -1062,14 +1084,14 @@ static int open_for_common(struct cdrom_device_info *cdi, tracktype *tracks)
- 				if (!(cdi->options & CDO_AUTO_CLOSE))
- 					return -ENOMEDIUM;
- 				cd_dbg(CD_OPEN, "trying to close the tray\n");
--				ret=cdo->tray_move(cdi,0);
-+				ret = cdrom_tray_close(cdi);
-+				if (ret == -ERESTARTSYS)
-+					return ret;
- 				if (ret) {
- 					cd_dbg(CD_OPEN, "bummer. tried to close the tray but failed.\n");
- 					return -ENOMEDIUM;
- 				}
- 				ret = cdo->drive_status(cdi, CDSL_CURRENT);
--				if (ret == CDS_TRAY_OPEN)
--					cd_dbg(CD_OPEN, "bummer. the tray is still not closed.\n");
- 				if (ret == CDS_NO_DISC)
- 					cd_dbg(CD_OPEN, "tray might not contain a medium\n");
- 			} else {
-@@ -1077,6 +1099,14 @@ static int open_for_common(struct cdrom_device_info *cdi, tracktype *tracks)
- 				return -ENOMEDIUM;
- 			}
+@@ -1080,35 +1130,20 @@ static int open_for_common(struct cdrom_device_info *cdi, tracktype *tracks)
+ 		cd_dbg(CD_OPEN, "drive_status=%d\n", ret);
+ 		if (ret == CDS_TRAY_OPEN) {
+ 			cd_dbg(CD_OPEN, "the tray is open...\n");
+-			if (CDROM_CAN(CDC_CLOSE_TRAY)) {
+-				if (!(cdi->options & CDO_AUTO_CLOSE))
+-					return -ENOMEDIUM;
+-				cd_dbg(CD_OPEN, "trying to close the tray\n");
+-				ret = cdrom_tray_close(cdi);
+-				if (ret == -ERESTARTSYS)
+-					return ret;
+-				if (ret) {
+-					cd_dbg(CD_OPEN, "bummer. tried to close the tray but failed.\n");
+-					return -ENOMEDIUM;
+-				}
+-				ret = cdo->drive_status(cdi, CDSL_CURRENT);
+-				if (ret == CDS_NO_DISC)
+-					cd_dbg(CD_OPEN, "tray might not contain a medium\n");
+-			} else {
+-				cd_dbg(CD_OPEN, "bummer. this drive can't close the tray.\n");
+-				return -ENOMEDIUM;
+-			}
++			return -ENOMEDIUM;
  		}
-+		if (ret == CDS_DRIVE_NOT_READY) {
-+			int poll_res;
-+
-+			cd_dbg(CD_OPEN, "waiting for drive to become ready...\n");
-+			poll_res = cdrom_wait_for_status_change(cdi, &ret);
-+			if (poll_res == -ERESTARTSYS)
-+				return poll_res;
-+		}
- 		if (ret != CDS_DISC_OK)
+ 		if (ret == CDS_DRIVE_NOT_READY) {
+-			int poll_res;
+-
+-			cd_dbg(CD_OPEN, "waiting for drive to become ready...\n");
+-			poll_res = cdrom_wait_for_status_change(cdi, &ret);
+-			if (poll_res == -ERESTARTSYS)
+-				return poll_res;
++			cd_dbg(CD_OPEN, "the drive is not ready...\n");
++			return -ENOMEDIUM;
+ 		}
+-		if (ret != CDS_DISC_OK)
++		if (ret == CDS_NO_DISC) {
++			cd_dbg(CD_OPEN, "tray might not contain a medium...\n");
  			return -ENOMEDIUM;
++		}
++		if (ret != CDS_DISC_OK) {
++			cd_dbg(CD_OPEN, "drive returned status %i...\n", ret);
++			return -ENOMEDIUM;
++		}
  	}
+ 	cdrom_count_tracks(cdi, tracks);
+ 	if (tracks->error == CDS_NO_DISC) {
+diff --git a/include/linux/cdrom.h b/include/linux/cdrom.h
+index 528271c60018..ea0415ba9f9d 100644
+--- a/include/linux/cdrom.h
++++ b/include/linux/cdrom.h
+@@ -126,6 +126,7 @@ extern void init_cdrom_command(struct packet_command *cgc,
+ 			       void *buffer, int len, int type);
+ extern int cdrom_dummy_generic_packet(struct cdrom_device_info *cdi,
+ 				      struct packet_command *cgc);
++int cdrom_autoclose(struct cdrom_device_info *cdi);
+ 
+ /* The SCSI spec says there could be 256 slots. */
+ #define CDROM_MAX_SLOTS	256
 -- 
 2.23.0
 
