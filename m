@@ -2,87 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAA5C10A46A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 20:23:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BF9210A4D9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 20:55:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726036AbfKZTXI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Nov 2019 14:23:08 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40821 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725970AbfKZTXI (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Nov 2019 14:23:08 -0500
-Received: by mail-lj1-f193.google.com with SMTP id s22so2557247ljs.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Nov 2019 11:23:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gVU8aUvCwunnwvZoc9ZhH3ujI7aR4VD5kE4pYV1Vkas=;
-        b=EgkRn4Q7NHQ5QIKE0czhFgPREUU/56yr7pVF4OoQfwq+lrhdqpgMhqNobcCo9dDvJA
-         Mf/9k3DSG/qijMMbyy6EjYTwCX7FjQ0RQAqPLLnbcFmIdtnuq7K8zYk98PhbYlX4EwGy
-         UpB2mwuSWKZUITnmLFz/zHqMols2HefF4AAs8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gVU8aUvCwunnwvZoc9ZhH3ujI7aR4VD5kE4pYV1Vkas=;
-        b=LxE9R4Nt/ecGen7brO23nAYwlV3pY9h1BM2BD07zYBKVTsTZgf5XEvOasxElY/L1CT
-         3DksMtG0BlIwYg6pDjrKb61fAc+9nvynmw0Qz6RH6+FMzMgZ++Z3AvQ3LLACqQqmvE66
-         5pVSxMQZglKJTOYQJdUN/HP+73Bf4ycQV9AppAbc6g1apQ4CcJbuaJ+tSn010AV13Qpd
-         M9HReLsymK/HbRQavpQ922yCfFmd+kOtR10DmBUcpSEb0CJt+xy6OT3vuu7sZVNVdmLN
-         5nEgh0oljDAuOwbfslUQcCtGbS27VkHvrwQFNio56Kn/OJ6qbPm2FTX+pqcq6xLXJnUt
-         jvcQ==
-X-Gm-Message-State: APjAAAV9w4ZxGkjLYL7aN4qBJk3xEw7aIqhjcMLxgRuXAPx+4OWIJFhI
-        EMAjnFcd1ScApjqvMhZ7DcWJ7cNH9mM=
-X-Google-Smtp-Source: APXvYqzaOIJu/BnU8/pRkNWrdx7wODLyb1sPGst3k/8B38gpBFJ9R+0jrslnDjucxrcF+UNZT/3mjQ==
-X-Received: by 2002:a2e:7c10:: with SMTP id x16mr28065531ljc.120.1574796183101;
-        Tue, 26 Nov 2019 11:23:03 -0800 (PST)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id i8sm5684696lfl.80.2019.11.26.11.23.01
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2019 11:23:02 -0800 (PST)
-Received: by mail-lf1-f44.google.com with SMTP id l14so15034588lfh.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Nov 2019 11:23:01 -0800 (PST)
-X-Received: by 2002:a19:4bd4:: with SMTP id y203mr23590528lfa.61.1574796181641;
- Tue, 26 Nov 2019 11:23:01 -0800 (PST)
+        id S1726231AbfKZTyk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Nov 2019 14:54:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40116 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725970AbfKZTyk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 Nov 2019 14:54:40 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CB75BAD26;
+        Tue, 26 Nov 2019 19:54:37 +0000 (UTC)
+From:   Michal Suchanek <msuchanek@suse.de>
+To:     linux-scsi@vger.kernel.org, linux-block@vger.kernel.org
+Cc:     Michal Suchanek <msuchanek@suse.de>,
+        Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biggers <ebiggers@google.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Hou Tao <houtao1@huawei.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Hannes Reinecke <hare@suse.com>,
+        "Ewan D. Milne" <emilne@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v4 rebase 00/10] Fix cdrom autoclose
+Date:   Tue, 26 Nov 2019 20:54:19 +0100
+Message-Id: <cover.1574797504.git.msuchanek@suse.de>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-References: <20191126185018.8283-1-hubcap@kernel.org>
-In-Reply-To: <20191126185018.8283-1-hubcap@kernel.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 26 Nov 2019 11:22:45 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgbKoRHsbLGDBAA7c6frAtO7GVQt4nxx5kPsixCpTLCDg@mail.gmail.com>
-Message-ID: <CAHk-=wgbKoRHsbLGDBAA7c6frAtO7GVQt4nxx5kPsixCpTLCDg@mail.gmail.com>
-Subject: Re: [PATCH V3] orangefs: posix open permission checking...
-To:     hubcap@kernel.org
-Cc:     Mike Marshall <hubcap@omnibond.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 26, 2019 at 10:50 AM <hubcap@kernel.org> wrote:
->
-> Here's another version that is hopefully closer to
-> usable...
+Hello,
 
-This looks like it should work.
+there is cdrom autoclose feature that is supposed to close the tray,
+wait for the disc to become ready, and then open the device.
 
-I don't know what side effects that "new_op->upcall.uid = 0;" will
-have on the server side, and it still looks a bit hacky to me, but at
-least it doesn't have the obvious problems on the client side.
+This used to work in ancient times. Then in old times there was a hack
+in util-linux which worked around the breakage which probably resulted
+from switching to scsi emulation.
 
-Arguably, if you trust the client, you might as well just *always* do
-that upcall.uid clearing.
+Currently util-linux maintainer refuses to merge another hack on the
+basis that kernel still has the feature so it should be fixed there.
+The code needs not be replicated in every userspace utility like mount
+or dd which has no business knowing which devices are CD-roms and where
+the autoclose setting is in the kernel.
 
-And if you don't trust the client, then you'd have to do some NFS-like
-root squash anyway, at which point the uid clearing will actually
-remove permissions and break this situation again.
+This is rebase on top of current master.
 
-So I do think this shows a deeper issue still, but at least it is an
-understandable workaround for a non-posix filesystem.
+Also it seems that most people think that this is fix for WMware because
+there is one patch dealing with WMware.
 
-               Linus
+This is fix for Linux.
+
+Expected (ca Linux 2.4):
+
+eject
+< put CD on tray >
+mount /dev/cdrom
+...
+< cdrom now mounted >
+
+Actual:
+mount: /mnt: no medium found on /dev/sr0.
+
+Thanks
+
+Michal
+
+v3:
+- change the VMware workaround to use blacklist flag
+- use exported function instead of ioctl
+v4:
+- fix crash reported by kernel test robot
+- fix the debug message logic while refactoring cdrom_open
+- move repeated code out of __blkdev_get
+
+Link: https://lore.kernel.org/lkml/cover.1571834862.git.msuchanek@suse.de/
+Link: https://lore.kernel.org/lkml/cover.1513263482.git.msuchanek@suse.de/
+
+Michal Suchanek (10):
+  cdrom: add poll_event_interruptible
+  cdrom: factor out common open_for_* code
+  cdrom: wait for the tray to close
+  cdrom: export autoclose logic as a separate function
+  cdrom: unify log messages.
+  bdev: reset first_open when looping in __blkget_dev
+  bdev: separate parts of __blkdev_get as helper functions
+  bdev: add open_finish
+  scsi: blacklist: add VMware ESXi cdrom - broken tray emulation
+  scsi: sr: wait for the medium to become ready
+
+ Documentation/filesystems/locking.rst |   2 +
+ drivers/cdrom/cdrom.c                 | 471 +++++++++++++-------------
+ drivers/scsi/scsi_devinfo.c           |  15 +-
+ drivers/scsi/sr.c                     |  60 +++-
+ fs/block_dev.c                        |  72 ++--
+ include/linux/blkdev.h                |   1 +
+ include/linux/cdrom.h                 |   1 +
+ include/scsi/scsi_devinfo.h           |   7 +-
+ 8 files changed, 357 insertions(+), 272 deletions(-)
+
+-- 
+2.23.0
+
