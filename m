@@ -2,19 +2,19 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6B0D10A4D2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 20:55:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A648A10A4D4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Nov 2019 20:55:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbfKZTzG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1727228AbfKZTzG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Tue, 26 Nov 2019 14:55:06 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40240 "EHLO mx1.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:40276 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727091AbfKZTys (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S1727109AbfKZTys (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 26 Nov 2019 14:54:48 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5F567B0BD;
-        Tue, 26 Nov 2019 19:54:45 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 4B0E6B166;
+        Tue, 26 Nov 2019 19:54:46 +0000 (UTC)
 From:   Michal Suchanek <msuchanek@suse.de>
 To:     linux-scsi@vger.kernel.org, linux-block@vger.kernel.org
 Cc:     Michal Suchanek <msuchanek@suse.de>,
@@ -37,9 +37,9 @@ Cc:     Michal Suchanek <msuchanek@suse.de>,
         "Ewan D. Milne" <emilne@redhat.com>,
         Christoph Hellwig <hch@infradead.org>,
         Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v4 rebase 08/10] bdev: add open_finish
-Date:   Tue, 26 Nov 2019 20:54:27 +0100
-Message-Id: <6f59e6a45b8e8a9117abfe00ecf88c27958d3391.1574797504.git.msuchanek@suse.de>
+Subject: [PATCH v4 rebase 09/10] scsi: blacklist: add VMware ESXi cdrom - broken tray emulation
+Date:   Tue, 26 Nov 2019 20:54:28 +0100
+Message-Id: <1d01db2460f0e75bbe5d2b87f6335a0add7a954d.1574797504.git.msuchanek@suse.de>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <cover.1574797504.git.msuchanek@suse.de>
 References: <cover.1574797504.git.msuchanek@suse.de>
@@ -50,140 +50,154 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Opening a block device may require a long operation such as waiting for
-the cdrom tray to close or disk to spin up. Performing this operation
-with locks held locks out other attempts to open the device from
-processes that donn't care about the medium state.
+The WMware ESXi cdrom identifies itself as:
+sr 0:0:0:0: [sr0] scsi3-mmc drive: vendor: "NECVMWarVMware SATA CD001.00"
+model: "VMware SATA CD001.00"
+with the following get_capabilities print in sr.c:
+        sr_printk(KERN_INFO, cd,
+                  "scsi3-mmc drive: vendor: \"%s\" model: \"%s\"\n",
+                  cd->device->vendor, cd->device->model);
 
-To avoid this issue and still be able to perform time-consuming checks
-at open() the block device driver can provide open_finish(). If it does
-opening the device proceeds even when an error is returned from open(),
-bd_mutex is released and open_finish() is called. If open_finish()
-succeeds the device is now open, if it fails release() is called.
+The model looks like reliable identification while vendor does not.
 
-When -ERESTARTSYS is returned from open() blkdev_get may loop without
-calling open_finish(). On -ERESTARTSYS open_finish() is not called.
+The drive claims to have a tray and claims to be able to close it.
+However, the UI has no notion of a tray - when medium is ejected it is
+dropped in the floor and the user must select a medium again before the
+drive can be re-loaded.  On the kernel side the tray_move call to close
+the tray succeeds but the drive state does not change as a result of the
+call.
 
-When -ENXIO is returned there is no device to retry opening so this
-error needs to be honored and open_finish() not called.
+The drive does not in fact emulate the tray state. There are two ways to
+get the medium state. One is the SCSI status:
 
-Move a ret = 0 assignment up in the if/else branching to avoid returning
--ENXIO. Previously the return value was ignored on the unhandled branch.
+Physical drive:
+
+Fixed format, current; Sense key: Not Ready
+Additional sense: Medium not present - tray open
+Raw sense data (in hex):
+        70 00 02 00 00 00 00 0a  00 00 00 00 3a 02 00 00
+        00 00
+
+Fixed format, current; Sense key: Not Ready
+Additional sense: Medium not present - tray closed
+ Raw sense data (in hex):
+        70 00 02 00 00 00 00 0a  00 00 00 00 3a 01 00 00
+        00 00
+
+VMware ESXi:
+
+Fixed format, current; Sense key: Not Ready
+Additional sense: Medium not present
+  Info fld=0x0 [0]
+ Raw sense data (in hex):
+        f0 00 02 00 00 00 00 0a  00 00 00 00 3a 00 00 00
+        00 00
+
+So the tray state is not reported here. Other is medium status which the
+kernel prefers if available. Adding a print here gives:
+
+cdrom: get_media_event success: code = 0, door_open = 1, medium_present = 0
+
+door_open is interpreted as open tray. This is fine so long as tray_move
+would close the tray when requested or report an error which never
+happens on VMware ESXi servers (5.5 and 6.5 tested).
+
+This is a popular virtualization platform so a workaround is worthwhile.
 
 Signed-off-by: Michal Suchanek <msuchanek@suse.de>
 ---
 v2: new patch
-v4:
- - fix crash on ENXIO
- - initialize capacity and partitions after open_finish
+v3: change into a blacklist flag
+v4: fix vendor match condition
 ---
- Documentation/filesystems/locking.rst |  2 ++
- fs/block_dev.c                        | 27 +++++++++++++++++++++++----
- include/linux/blkdev.h                |  1 +
- 3 files changed, 26 insertions(+), 4 deletions(-)
+ drivers/scsi/scsi_devinfo.c | 15 +++++++++------
+ drivers/scsi/sr.c           |  6 ++++++
+ include/scsi/scsi_devinfo.h |  7 ++++++-
+ 3 files changed, 21 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
-index fc3a0704553c..2471ced5a8cf 100644
---- a/Documentation/filesystems/locking.rst
-+++ b/Documentation/filesystems/locking.rst
-@@ -456,6 +456,7 @@ block_device_operations
- prototypes::
+diff --git a/drivers/scsi/scsi_devinfo.c b/drivers/scsi/scsi_devinfo.c
+index df14597752ec..923f54b88d24 100644
+--- a/drivers/scsi/scsi_devinfo.c
++++ b/drivers/scsi/scsi_devinfo.c
+@@ -252,6 +252,7 @@ static struct {
+ 	{"TOSHIBA", "CD-ROM", NULL, BLIST_ISROM},
+ 	{"Traxdata", "CDR4120", NULL, BLIST_NOLUN},	/* locks up */
+ 	{"USB2.0", "SMARTMEDIA/XD", NULL, BLIST_FORCELUN | BLIST_INQUIRY_36},
++	{"VMware", "VMware", NULL, BLIST_NO_MATCH_VENDOR | BLIST_NO_TRAY},
+ 	{"WangDAT", "Model 2600", "01.7", BLIST_SELECT_NO_ATN},
+ 	{"WangDAT", "Model 3200", "02.2", BLIST_SELECT_NO_ATN},
+ 	{"WangDAT", "Model 1300", "02.4", BLIST_SELECT_NO_ATN},
+@@ -454,10 +455,11 @@ static struct scsi_dev_info_list *scsi_dev_info_list_find(const char *vendor,
+ 			/*
+ 			 * vendor strings must be an exact match
+ 			 */
+-			if (vmax != strnlen(devinfo->vendor,
+-					    sizeof(devinfo->vendor)) ||
+-			    memcmp(devinfo->vendor, vskip, vmax))
+-				continue;
++			if (!(devinfo->flags & BLIST_NO_MATCH_VENDOR))
++				if (vmax != strnlen(devinfo->vendor,
++						    sizeof(devinfo->vendor)) ||
++				    memcmp(devinfo->vendor, vskip, vmax))
++					continue;
  
- 	int (*open) (struct block_device *, fmode_t);
-+	int (*open_finish) (struct block_device *, fmode_t, int);
- 	int (*release) (struct gendisk *, fmode_t);
- 	int (*ioctl) (struct block_device *, fmode_t, unsigned, unsigned long);
- 	int (*compat_ioctl) (struct block_device *, fmode_t, unsigned, unsigned long);
-@@ -473,6 +474,7 @@ locking rules:
- ops			bd_mutex
- ======================= ===================
- open:			yes
-+open_finish:		no
- release:		yes
- ioctl:			no
- compat_ioctl:		no
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index a386ebd997fb..787b204467f9 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -1579,6 +1579,7 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
- 	int partno;
- 	int perm = 0;
- 	bool first_open;
-+	bool need_finish = false;
- 
- 	if (mode & FMODE_READ)
- 		perm |= MAY_READ;
-@@ -1635,13 +1636,16 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
- 					put_disk_and_module(disk);
- 					goto restart;
- 				}
-+				if ((ret != -ENXIO) &&
-+				    bdev->bd_disk->fops->open_finish)
-+					need_finish = true;
- 			}
- 
- 			if (!ret)
- 				blkdev_init_size(bdev);
- 			blkdev_do_partitions(bdev, ret);
- 
--			if (ret)
-+			if (ret && !need_finish)
- 				goto out_clear;
+ 			/*
+ 			 * @model specifies the full string, and
+@@ -468,8 +470,9 @@ static struct scsi_dev_info_list *scsi_dev_info_list_find(const char *vendor,
+ 				continue;
+ 			return devinfo;
  		} else {
- 			struct block_device *whole;
-@@ -1667,14 +1671,18 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
- 		if (bdev->bd_bdi == &noop_backing_dev_info)
- 			bdev->bd_bdi = bdi_get(disk->queue->backing_dev_info);
- 	} else {
-+		ret = 0;
- 		if (bdev->bd_contains == bdev) {
--			ret = 0;
--			if (bdev->bd_disk->fops->open)
-+			if (bdev->bd_disk->fops->open) {
- 				ret = bdev->bd_disk->fops->open(bdev, mode);
+-			if (!memcmp(devinfo->vendor, vendor,
+-				    sizeof(devinfo->vendor)) &&
++			if ((!memcmp(devinfo->vendor, vendor,
++				    sizeof(devinfo->vendor))
++			       || (devinfo->flags & BLIST_NO_MATCH_VENDOR)) &&
+ 			    !memcmp(devinfo->model, model,
+ 				    sizeof(devinfo->model)))
+ 				return devinfo;
+diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
+index 4664fdf75c0f..07c319494bf4 100644
+--- a/drivers/scsi/sr.c
++++ b/drivers/scsi/sr.c
+@@ -58,6 +58,7 @@
+ #include <scsi/scsi_eh.h>
+ #include <scsi/scsi_host.h>
+ #include <scsi/scsi_ioctl.h>	/* For the door lock/unlock commands */
++#include <scsi/scsi_devinfo.h>
  
-+				if ((ret != -ERESTARTSYS) && (ret != -ENXIO) &&
-+				    bdev->bd_disk->fops->open_finish)
-+					need_finish = true;
-+			}
- 			blkdev_do_partitions(bdev, ret);
+ #include "scsi_logging.h"
+ #include "sr.h"
+@@ -922,6 +923,11 @@ static void get_capabilities(struct scsi_cd *cd)
+ 		  buffer[n + 4] & 0x20 ? "xa/form2 " : "",	/* can read xa/from2 */
+ 		  buffer[n + 5] & 0x01 ? "cdda " : "", /* can read audio data */
+ 		  loadmech[buffer[n + 6] >> 5]);
++	if (cd->device->sdev_bflags & BLIST_NO_TRAY) {
++		buffer[n + 6] &= ~(0xff << 5);
++		sr_printk(KERN_INFO, cd,
++			  "Tray emulation bug workaround: tray -> caddy\n");
++	}
+ 	if ((buffer[n + 6] >> 5) == 0)
+ 		/* caddy drives can't close tray... */
+ 		cd->cdi.mask |= CDC_CLOSE_TRAY;
+diff --git a/include/scsi/scsi_devinfo.h b/include/scsi/scsi_devinfo.h
+index 3fdb322d4c4b..17ea96936cc6 100644
+--- a/include/scsi/scsi_devinfo.h
++++ b/include/scsi/scsi_devinfo.h
+@@ -67,8 +67,13 @@
+ #define BLIST_RETRY_ITF		((__force blist_flags_t)(1ULL << 32))
+ /* Always retry ABORTED_COMMAND with ASC 0xc1 */
+ #define BLIST_RETRY_ASC_C1	((__force blist_flags_t)(1ULL << 33))
++/* Device reports to have a tray but it cannot be operated reliably */
++#define BLIST_NO_TRAY		((__force blist_flags_t)(1ULL << 34))
++/* Vendor string is bogus */
++#define BLIST_NO_MATCH_VENDOR	((__force blist_flags_t)(1ULL << 35))
  
--			if (ret)
-+			if (ret && !need_finish)
- 				goto out_unlock_bdev;
- 		}
- 	}
-@@ -1686,6 +1694,17 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
- 	/* only one opener holds refs to the module and disk */
- 	if (!first_open)
- 		put_disk_and_module(disk);
-+	if (ret && need_finish) {
-+		ret = bdev->bd_disk->fops->open_finish(bdev, mode, ret);
+-#define __BLIST_LAST_USED BLIST_RETRY_ASC_C1
 +
-+		if (!ret && first_open)
-+			blkdev_init_size(bdev);
-+		blkdev_do_partitions(bdev, ret);
-+	}
-+	if (ret) {
-+		__blkdev_put(bdev, mode, for_part);
-+		return ret;
-+	}
- 	return 0;
++#define __BLIST_LAST_USED BLIST_NO_MATCH_VENDOR
  
-  out_clear:
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 397bb9bc230b..d26264f5da39 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1694,6 +1694,7 @@ static inline struct bio_vec *rq_integrity_vec(struct request *rq)
- 
- struct block_device_operations {
- 	int (*open) (struct block_device *, fmode_t);
-+	int (*open_finish)(struct block_device *bdev, fmode_t mode, int ret);
- 	void (*release) (struct gendisk *, fmode_t);
- 	int (*rw_page)(struct block_device *, sector_t, struct page *, unsigned int);
- 	int (*ioctl) (struct block_device *, fmode_t, unsigned, unsigned long);
+ #define __BLIST_HIGH_UNUSED (~(__BLIST_LAST_USED | \
+ 			       (__force blist_flags_t) \
 -- 
 2.23.0
 
