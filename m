@@ -2,297 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8604E10AB3F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 08:41:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC7B610AB7A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 09:11:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726111AbfK0HlG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Nov 2019 02:41:06 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:43826 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726112AbfK0HlF (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Nov 2019 02:41:05 -0500
-Received: by mail-lf1-f65.google.com with SMTP id l14so16284447lfh.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Nov 2019 23:41:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:date:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=fvlez50dkLc3ycj12T6MpGIcHBcasKqBK4u/T3P3tA8=;
-        b=14RkV+ioZLf9NHRY1e6D34GGuK3RdBfEZZJRKPmO/tjHqg76uGuGsgvzcqPNoe1Rxo
-         jOpqwubNKq4WxL50bhsAV4eUCCefHZJs+qxmSaV05/vXGgxbaALGgonXLrib81mGlv1w
-         G2KM8csxAubSeg/h4yOO0Z7bQcP8zb9ScGGx6x+Jdm8vbbDP1VioTHy1U3WCFE36rB2U
-         404Pz42ptmQi3Bta3H+1bhfOBgk7Fzsj8jeW/X19KBwqkM3Da0EHT6/WU5Tc7yvPdqpC
-         nhcbCOVaxihSLyU4LV0X7cLfmKVJSuRX2PVT3+p65f7RVf1Nreh2b/u2tLkygsE2k2zx
-         LYlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=fvlez50dkLc3ycj12T6MpGIcHBcasKqBK4u/T3P3tA8=;
-        b=g05JSJ6kSXYvoX3LuVbTnDp67KXWkyZFRQUo/aao+Ynnz8e5XFG0r+aq1KnzN+5CEV
-         XBY+aek22Zov6qd8A6kuw1+wScH7X+HGJqygGVd0Et31JXVzHLtHbjTvKZ6QyV3gqpm4
-         GrdB6TtTPQrw5vj20cpTb/bPcHrFwWECY1FGTb1ODGABoLeM2Xhk0jK4bPOoWVQmmX7H
-         MQxFPeJ8VVG1Gtb2lzTYcPBBiwtdggYrYlQL5uCGsuhdr04yBtb++rPSWf2J6ZQ31fwT
-         1q5qvQ1fcp2RYjbLeva2wMR8cnHzlc3f7jSRG5ABm9Zpc8q9ddZQpy+E8HzqV2VEHPaV
-         zTAQ==
-X-Gm-Message-State: APjAAAWJniunPszHC6bTt8667Lr0Wwnf5jWPATpWxHQRaH09z7SPMa4c
-        3EwzLvbUpix3idu815iXFsP9GTFtmyVxpc7H/H0=
-X-Google-Smtp-Source: APXvYqzZd1w8eXl2HmBm1Lx6joX3Pi8mHUFHepMR1vu3mTBmNdqnQY5kRDDK+XY6DyFio3WFXVvP7w==
-X-Received: by 2002:ac2:533c:: with SMTP id f28mr21940056lfh.12.1574840460448;
-        Tue, 26 Nov 2019 23:41:00 -0800 (PST)
-Received: from msk1wst115n.omp.ru (mail.omprussia.ru. [5.134.221.218])
-        by smtp.gmail.com with ESMTPSA id k9sm6438058lfj.97.2019.11.26.23.40.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Nov 2019 23:40:59 -0800 (PST)
-Message-ID: <8ece0424ceeeffbc4df5d52bfa270a9522f81cda.camel@dubeyko.com>
-Subject: Re: [RFC] Thing 1: Shardmap fox Ext4
-From:   Vyacheslav Dubeyko <slava@dubeyko.com>
-To:     Daniel Phillips <daniel@phunq.net>, linux-ext4@vger.kernel.org,
+        id S1726219AbfK0ILu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Nov 2019 03:11:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58342 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726125AbfK0ILu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 27 Nov 2019 03:11:50 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 26FB3B9F7;
+        Wed, 27 Nov 2019 08:11:47 +0000 (UTC)
+Date:   Wed, 27 Nov 2019 09:11:44 +0100
+From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biggers <ebiggers@google.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Hou Tao <houtao1@huawei.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Date:   Wed, 27 Nov 2019 10:40:59 +0300
-In-Reply-To: <176a1773-f5ea-e686-ec7b-5f0a46c6f731@phunq.net>
-References: <176a1773-f5ea-e686-ec7b-5f0a46c6f731@phunq.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Jan Kara <jack@suse.cz>, Hannes Reinecke <hare@suse.com>,
+        "Ewan D. Milne" <emilne@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v4 rebase 00/10] Fix cdrom autoclose
+Message-ID: <20191127081144.GZ11661@kitsune.suse.cz>
+References: <cover.1574797504.git.msuchanek@suse.de>
+ <c6fe572c-530e-93eb-d62a-cb2f89c7b4ec@kernel.dk>
+ <20191126202151.GY11661@kitsune.suse.cz>
+ <08bcfd0a-7433-2fa4-9ca2-ea008836b747@kernel.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <08bcfd0a-7433-2fa4-9ca2-ea008836b747@kernel.dk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2019-11-26 at 17:47 -0800, Daniel Phillips wrote:
-> Hi folks,
+On Tue, Nov 26, 2019 at 04:13:32PM -0700, Jens Axboe wrote:
+> On 11/26/19 1:21 PM, Michal Suchánek wrote:
+> > On Tue, Nov 26, 2019 at 01:01:42PM -0700, Jens Axboe wrote:
+> >> On 11/26/19 12:54 PM, Michal Suchanek wrote:
+> >>> Hello,
+> >>>
+> >>> there is cdrom autoclose feature that is supposed to close the tray,
+> >>> wait for the disc to become ready, and then open the device.
+> >>>
+> >>> This used to work in ancient times. Then in old times there was a hack
+> >>> in util-linux which worked around the breakage which probably resulted
+> >>> from switching to scsi emulation.
+> >>>
+> >>> Currently util-linux maintainer refuses to merge another hack on the
+> >>> basis that kernel still has the feature so it should be fixed there.
+> >>> The code needs not be replicated in every userspace utility like mount
+> >>> or dd which has no business knowing which devices are CD-roms and where
+> >>> the autoclose setting is in the kernel.
+> >>>
+> >>> This is rebase on top of current master.
+> >>>
+> >>> Also it seems that most people think that this is fix for WMware because
+> >>> there is one patch dealing with WMware.
+> >>
+> >> I think the main complaint with this is that it's kind of a stretch to
+> >> add core functionality for a device type that's barely being
+> >> manufactured anymore and is mostly used in a virtualized fashion. I
+> >> think it you could fix this without 10 patches of churn and without
+> >> adding a new ->open() addition to fops, then people would be a lot more
+> >> receptive to the idea of improving cdrom auto-close.
+> > 
+> > I see no way to do that cleanly.
+> > 
+> > There are two open modes for cdrom devices - blocking and
+> > non-blocking.
+> > 
+> > In blocking mode open() should analyze the medium so that it's ready
+> > when it returns. In non-blocking mode it should return immediately so
+> > long as you can talk to the device.
+> > 
+> > When waiting in open() with locks held the processes trying to open
+> > the device are locked out regradless of the mode they use.
+> > 
+> > The only way to solve this is to pretend that the device is open and
+> > do the wait afterwards with the device unlocked.
 > 
-> Here is my somewhat tardy followup to my Three Things post from
-> earlier
-> this fall. I give you Thing 1, Shardmap. What I hope to accomplish
-> today
-> is to initiate a conversation with Ext4 developers, and other
-> interested
-> observers, which will eventually result in merging the new Shardmap
-> directory index code into Ext4, thereby solving a number of
-> longstanding
-> issues with the venerable and somewhat problematic HTree.
-> 
-> HTree is the most used directory index in the known universe. HTree
-> does
-> some things fantastically well, particularly in the most common range
-> of
-> directory sizes, but also exhibits some well known flaws and at least
-> one
-> previously unknown flaw, explained below. Shardmap is a new index
-> design,
-> just seven years old, an O(1) extensible hash table, meant to address
-> all
-> of HTree's flaws while improving performance and scaling into the
-> previously inaccessible billion file per directory range. Subject to
-> verifying these claims, it would seem to be logical to move on to the
-> logistics of porting Shardmap to Ext4 as an optional index algorithm,
-> eventually deprecating HTree.
-> 
+> How is this any different from an open on a file that needs to bring in
+> meta data on a busy rotating device, which can also take seconds?
 
+First, accessing a file will take seconds only when your system is
+seriously overloaded or misconfigured. The access time for rotational
+storage is tens of milliseconds. With cdrom the access time after
+closing the door is measured in tens of seconds on common hardware. It
+can be shorter but also possibly longer. I am not aware of any limit
+there. It may be reasonable to want to get device status during this
+time.
 
-As far as I know, usually, a folder contains dozens or hundreds
-files/folders in average. There are many research works that had showed
-this fact. Do you mean some special use-case when folder could contain
-the billion files? Could you share some research work that describes
-some practical use-case with billion files per folder?
+Second, fetching the metadata for the file does not block operations that
+don't need the metadata. Here waiting for the drive to get ready blocks
+all access. You could get drive status if you did not try to open it
+but once you do you can no longer talk to it.
 
-If you are talking about improving the performance then do you mean
-some special open-source implementation?
+Thanks
 
-
-> Shardmap equals or outperforms HTree at all scales, with the single
-> exception of one theoretical case with a likewise theoretical
-> solution.
-> Shardmap is O(1) in all operations - insert, delete, lookup and
-> readdir,
-> while HTree is O(log N) in the first three and suffers from a
-> relatively
-> large constant readdir overhead. This is not the only reason Shardmap
-> is
-> faster than HTree, far from it.
-> 
-> I will break performance discussion down into four ranges:
->    1) unindexed single block, to about 300 entries
->    2) indexed up to 30 thousand entries
->    3) indexed up to 3 million entries
->    4) indexed up to 1 billion entries.
-> 
-> In theory, Shardmap and HTree are exactly tied in the common single
-> block case, because creating the index is delayed in both cases until
-> there are at least two blocks to index. However, Shardmap broke away
-> from the traditional Ext2 entry block format in order to improve
-> block
-> level operation efficiency and to prevent record fragmentation under
-> heavy aging, and is therefore significantly faster than HTree even in
-> the single block case.
-> 
-> Shardmap does not function at all in the fourth range, up to 1
-> billion
-> entries, because its Btree has at most 2 levels. This simple flaw
-> could be
-> corrected without much difficulty but Shardmap would remain superior
-> for
-> a number of reasons.
-> 
-> The most interesting case is the 300 to 30 thousand entry range,
-> where
-> Htree and Shardmap should theoretically be nearly equal, each
-> requiring
-> two accesses per lookup. However, HTree does two radix tree lookups
-> while
-> Shardmap does one, and the other lookup is in a cached memory object.
-> Coupled with the faster record level operations, Shardmap is
-> significantly
-> faster in this range. In the 30 thousand to 3 million range,
-> Shardmap's
-> performance advantage further widens in accordance with O(1) / O(log
-> N).
-> 
-> For inserts, Shardmap's streaming update strategy is far superior to
-> HTree's random index block write approach. HTree will tend to dirty
-> every
-> index block under heavy insert load, so that every index block must
-> be
-> written to media per commit, causing serious write multiplication
-> issues. In fact, all Btree schemes suffer from this issue, which on
-> the
-> face of it appears to be enough reason to eliminate the Btree as a
-> realistic design alternative. Shardmap dramatically reduces such per
-> commit write multiplication by appending new index entries linearly
-> to
-> the tail blocks of a small number of index shards. For delete,
-> Shardmap avoids write multiplication by appending tombstone entries
-> to
-> index shards, thereby addressing a well known HTree delete
-> performance
-> issue.
-
-
-Do you mean Copy-On-Write policy here or some special technique? How
-could be good Shardmap for the SSD use-case? Do you mean that we could
-reduce write amplification issue for NAND flash case?
-
-
-> 
-> HTree has always suffered from a serious mismatch between name
-> storage
-> order and inode storage order, greatly exacerbated by the large
-> number
-> of directory entries and inodes stored per block (false sharing). In
-> particular, a typical HTree hash order directory traversal accesses
-> the
-> inode table randomly, multiplying both the cache footprint and write
-> traffic. Historically, this was the cause of many performance
-> complaints
-> about HTree, though to be sure, such complaints have fallen off with
-> the advent of solid state storage. Even so, this issue will continue
-> rear
-> its ugly head when users push the boundaries of cache and directory
-> size
-> (google telldir+horror). Shardmap avoids this issue entirely by
-> storing
-> and traversing directory entries in simple, classic linear order.
-> 
-> This touches on the single most significant difference between
-> Shardmap
-> and HTree: Shardmap strictly separates its index from record entry
-> blocks,
-> while HTree embeds entries directly in the BTree index. The HTree
-> strategy performs impressively well at low to medium directory
-> scales,
-> but at higher scales it causes significantly more cache pressure, due
-> to
-> the fact that the cache footprint of any randomly accessed index is
-> necessarily the entire index. In contrast, Shardmap stores directory
-> entries permanently in creation order, so that directory traversal is
-> in simple linear order with effectively zero overhead. This avoids
-> perhaps HTree's most dubious design feature, its arcane and not
-> completely
-> reliable hash order readdir traversal, which miraculously has avoided
-> serious meltdown over these past two decades due to a legendary hack
-> by
-> Ted and subsequent careful adaptation to handle various corner cases.
-> Nowhere in Shardmap will you find any such arcane and marginally
-> supportable code, which should be a great relief to Ext4 maintainers.
-> Or to put it another way, if somebody out there wishes to export a
-> billion file directory using NFSv2, Shardmap will not be the reason
-> why that does not work whereas HTree most probably would be.
-> 
-> Besides separating out the index from entry records and accessing
-> those
-> records linearly in most situations, Shardmap also benefits from a
-> very
-> compact index design. Even if a directory has a billion entries, each
-> index entry is only eight bytes in size. This exercise in structure
-> compaction proved possible because the number of hash bits needed for
-> the
-> hash code decreases as the number of index shards increases, freeing
-> up
-> bits for larger block numbers as the directory expands. Shardmap
-> therefore implements an index entry as several variable sized fields.
-> This strategy works well up to the billion entry range, above which
-> the
-> number of hash index collisions (each of which must be resolved by
-> accessing an underlying record block) starts to increase noticeably.
-> This is really the only factor that limits Shardmap performance above
-> a billion entries. Should we wish Shardmap to scale to trillions of
-> entries without losing performance, we will need to increase the
-> index
-> entry size to ten bytes or so, or come up with some as yet unknown
-> clever improvement (potential thesis project goes here).
-> 
-> There are many additional technical details of Shardmap that ought to
-> be
-> explained, however today my primary purpose is simply to introduce
-> what
-> I view as a compelling case for obsoleting HTree. To that end, fewer
-> words are better and this post is already quite long enough. I would
-> love
-> to get into some other interesting details, for example, the Bigmap
-> free
-> space mapping strategy, but that really needs its own post to do it
-> justice, as do a number of other subjects.
-> 
-> Wrapping up, what about that theoretical case where HTree outperforms
-> Shardmap? This is theoretical because one needs to operate on a huge
-> directory with tiny cache to trigger it. Both Shardmap and HTree will
-> exhibit read multiplication under such conditions, due to frequent
-> cache evictions, however the Shardmap read multiplication will be
-> many
-> times higher than HTree because of its coarser cache granularity. In
-> the
-> unlikely event that we ever need to fix this, one viable solution is
-> to
-> add paging support for Shardmap's in-memory cache structure, a
-> standard
-> technique sometimes called "anticache".
-> 
-> That is it for today. There remains much to explain about Shardmap
-> both
-> within and beyond the Ext4 context. For example, Shardmap has proved
-> to
-> work very well as a standalone key value store, particularly with
-> persistent memory. In fact, we have benchmarked Shardmap at over
-> three
-> million atomic, durable database operations per second on an Intel
-> Optane server, which might well be a new world record. The details of
-> how this was done are fascinating, however this post is far too small
-> to
-> contain them today. Perhaps this should be thing 1(b) for next week.
-> 
-
-
-Let's imagine that it needs to implement the Shardmap approach. Could
-you estimate the implementation and stabilization time? How expensive
-and long-term efforts could it be?
-
-Thanks,
-Viacheslav Dubeyko.
-
-
+Michal
