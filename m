@@ -2,311 +2,295 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BDCA10BF90
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 22:45:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97E3710BE91
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 22:38:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727805AbfK0UiK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Nov 2019 15:38:10 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:57298 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728683AbfK0UiG (ORCPT
+        id S1730163AbfK0VgJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Nov 2019 16:36:09 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37967 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730157AbfK0Usd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:38:06 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 492818EE133;
-        Wed, 27 Nov 2019 12:38:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1574887086;
-        bh=QIZNCMB80ftV5d1UinGrc84GdeVRvJxclpCio76u7Fs=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=MqMylRWuTLs5KGzMrrmTGLUmshusbHt/kUF3atlBjUcIf3/YYcO+MncpS9pfEeQkm
-         gf0jBq9aA1A46fXJxdm3vnfhS64RTu1vsPdeyikmFMrWPoRHR+2JdLRpK3hh/4LNkV
-         DuN98tcYqy4QX//1bh8qQbfifymZc/q/m9PM4950=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id zK_TOr3ZYZN7; Wed, 27 Nov 2019 12:38:06 -0800 (PST)
-Received: from jarvis.lan (unknown [50.35.76.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id DA8428EE130;
-        Wed, 27 Nov 2019 12:38:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1574887086;
-        bh=QIZNCMB80ftV5d1UinGrc84GdeVRvJxclpCio76u7Fs=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=MqMylRWuTLs5KGzMrrmTGLUmshusbHt/kUF3atlBjUcIf3/YYcO+MncpS9pfEeQkm
-         gf0jBq9aA1A46fXJxdm3vnfhS64RTu1vsPdeyikmFMrWPoRHR+2JdLRpK3hh/4LNkV
-         DuN98tcYqy4QX//1bh8qQbfifymZc/q/m9PM4950=
-Message-ID: <1574887085.21593.13.camel@HansenPartnership.com>
-Subject: [RFC 6/6] fs: bind: add configfs type for bind mounts
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     David Howells <dhowells@redhat.com>,
-        Christian Brauner <christian@brauner.io>
-Cc:     linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 27 Nov 2019 12:38:05 -0800
-In-Reply-To: <1574886778.21593.7.camel@HansenPartnership.com>
-References: <1574295100.17153.25.camel@HansenPartnership.com>
-         <17268.1574323839@warthog.procyon.org.uk>
-         <1574352920.3277.18.camel@HansenPartnership.com>
-         <1574886778.21593.7.camel@HansenPartnership.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+        Wed, 27 Nov 2019 15:48:33 -0500
+Received: by mail-pf1-f194.google.com with SMTP id c13so11737726pfp.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Nov 2019 12:48:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Y6LYqA1009w6/0ukN0Ib/bql9rL9dUoPmyEoPz0e4AE=;
+        b=FdkcHHVvIY3IEFp0+wECGStXgSWXF4l63Es+grBYcdduCC7OlLsRIWiHcAceeoSO0c
+         KE0p4VBA6wuzuhj5W0xVaHoLemUCW42tcOtTP+cZ+h2pgIpk+E/D3wCOKVQUIM+vbQeD
+         r227ZE4R8e355lnIjtEEyv7foBGflEwCdB+rrMnT3BGtEawzPn0rS2mjsjtJQxaES0ma
+         eJ/eamuR4soalOyEHTTDv8WPVrjK73knNLLbRQvV61uDf2IZW9VCQ8huhMtc5lyBy5Vv
+         6I9el17XC6e3uHm27KZt//D+ZWGQ5xffzzug2d10YB5s8pc6U+zTQfApYxQWmT3KvFdF
+         Cteg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Y6LYqA1009w6/0ukN0Ib/bql9rL9dUoPmyEoPz0e4AE=;
+        b=QHtUVa8FWIcAE3S5hMOL2O+X6PqaNwCOfBoi3GrGruzML1dtjsF6EGZQPyF9a74XfZ
+         BFUUT7MJVJAMVt2UBQfBYyuKHZCMtgC7PBcGI0aEetWmpKgu5eGVEeQlPiz7w8WHeI+V
+         HIt37jPc2MeiiSXn+EvDPtxjc8XwsO8DjKpI+syXd3ema48qtxQPSrpQE+rJRSmpdgQC
+         LZI1yhFJXdutJuqDVFydKECm4mkvnpy1Wqp/qi6nSkmCdxnMENNE/yedNGk8V0Ob/Cef
+         vau8xiEr7G6w8sQsqm1BL5/LVF8H9Gw5kITzB8J7QTtEZMxRq42D1PVBHDJUJb1gMu9A
+         WyUA==
+X-Gm-Message-State: APjAAAV2kgLGMhf2V+5g1IW2jNTxswOWO2sclaeZX5PXv+LScJdDa+xA
+        qXrbdn4HyZ5GuBhvfrUhCxAWt3XT1CJwHA==
+X-Google-Smtp-Source: APXvYqxQ65bEvXdycLMXbBtX1P9RFv4BXVKPMqYZ/aYjR1KmPzyt6bVrEPZZCdlnLzb3SEwPi+GajQ==
+X-Received: by 2002:a63:4b52:: with SMTP id k18mr7079804pgl.394.1574887712054;
+        Wed, 27 Nov 2019 12:48:32 -0800 (PST)
+Received: from ?IPv6:2605:e000:100e:8c61:814b:c5b0:7860:90ce? ([2605:e000:100e:8c61:814b:c5b0:7860:90ce])
+        by smtp.gmail.com with ESMTPSA id l7sm3479413pfl.11.2019.11.27.12.48.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2019 12:48:31 -0800 (PST)
+Subject: Re: [PATCH RFC] signalfd: add support for SFD_TASK
+To:     Jann Horn <jannh@google.com>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <254505c9-2b76-ebeb-306c-02aaf1704b88@kernel.dk>
+ <CAG48ez33ewwQB26cag+HhjbgGfQCdOLt6CvfmV1A5daCJoXiZQ@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <1d3a458a-fa79-5e33-b5ce-b473122f6d1a@kernel.dk>
+Date:   Wed, 27 Nov 2019 12:48:29 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
+MIME-Version: 1.0
+In-Reply-To: <CAG48ez33ewwQB26cag+HhjbgGfQCdOLt6CvfmV1A5daCJoXiZQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This can do the equivalent of open_tree and also do bind mount
-reconfiguration from ro to rw and vice versa.
+On 11/27/19 12:23 PM, Jann Horn wrote:
+> On Wed, Nov 27, 2019 at 6:11 AM Jens Axboe <axboe@kernel.dk> wrote:
+>> I posted this a few weeks back, took another look at it and refined it a
+>> bit. I'd like some input on the viability of this approach.
+>>
+>> A new signalfd setup flag is added, SFD_TASK. This is only valid if used
+>> with SFD_CLOEXEC. If set, the task setting up the signalfd descriptor is
+>> remembered in the signalfd context, and will be the one we use for
+>> checking signals in the poll/read handlers in signalfd.
+>>
+>> This is needed to make signalfd useful with io_uring and aio, of which
+>> the former in particular has my interest.
+>>
+>> I _think_ this is sane. To prevent the case of a task clearing O_CLOEXEC
+>> on the signalfd descriptor, forking, and then exiting, we grab a
+>> reference to the task when we assign it. If that original task exits, we
+>> catch it in signalfd_flush() and ensure waiters are woken up.
+> 
+> Mh... that's not really reliable, because you only get ->flush() from
+> the last exiting thread (or more precisely, the last exiting task that
+> shares the files_struct).
+> 
+> What is your goal here? To have a reference to a task without keeping
+> the entire task_struct around in memory if someone leaks the signalfd
+> to another process - basically like a weak pointer? If so, you could
+> store a refcounted reference to "struct pid" instead of a refcounted
+> reference to the task_struct, and then do the lookup of the
+> task_struct on ->poll and ->read (similar to what procfs does).
 
-To get the equvalent of open tree you need to do
+Yeah, I think that works out much better (and cleaner). How about this,
+then? Follows your advice and turns it into a struct pid instead. I
+don't particularly like the -ESRCH in dequeue and setup, what do you
+think? For poll, POLLERR seems like a prudent choice.
 
-   mnt = open("/path/to/tree", O_PATH);
-   fd = configfs_open(bind, O_CLOEXEC);
-   configfs_action(fd, CONFIGFD_SET_FD, "pathfd", NULL, mnt);
-   configfs_action(fd, CONFIGFD_SET_FLAG, "detached", NULL, 0);
-   configfs_action(fd, CONFIGFD_SET_FLAG, "recursive", NULL, 0);
-   configfs_action(fd, CONFIGFD_CMD_CREATE, NULL, NULL, 0);
-   configfs_action(fd, CONFIGFD_GET_FD, "bindfd", &bfd, NULL, O_CLOEXEC);
+Tested with the test cases I sent out yesterday, works for me.
 
-And bfd will now contain the file descriptor to pass to move_tree.
-There is a deficiency over the original implementation in that the
-open system call has no way of clearing the LOOKUP_AUTOMOUNT path, but
-that's fixable.
-
-To do a mount reconfigure to change the bind mount to readonly do
-
-   mnt = open("/path/to/tree", O_PATH);
-   fd = configfs_open(bind, O_CLOEXEC);
-   configfs_action(fd, CONFIGFD_SET_FD, "pathfd", NULL, mnt);
-   configfs_action(fd, CONFIGFD_SET_FLAG, "ro", NULL, 0);
-   configfs_action(fd, CONFIGFD_CMD_RECONFIGURE, NULL, NULL, 0);
-
-And the bind properties will be changed.  You can also pass the "rw"
-flag to reset the read only.
-
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
----
- fs/Makefile |   2 +-
- fs/bind.c   | 193 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 194 insertions(+), 1 deletion(-)
- create mode 100644 fs/bind.c
-
-diff --git a/fs/Makefile b/fs/Makefile
-index 569563f6c0d5..c676ca15c644 100644
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@ -14,7 +14,7 @@ obj-y :=	open.o read_write.o file_table.o super.o \
- 		pnode.o splice.o sync.o utimes.o d_path.o \
- 		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
- 		fs_types.o fs_context.o fs_parser.o fsopen.o \
--		configfd.o
-+		configfd.o bind.o
- 
- ifeq ($(CONFIG_BLOCK),y)
- obj-y +=	buffer.o block_dev.o direct-io.o mpage.o
-diff --git a/fs/bind.c b/fs/bind.c
-new file mode 100644
-index 000000000000..905572c70260
---- /dev/null
-+++ b/fs/bind.c
-@@ -0,0 +1,193 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/* Dummy configfd handler for doing context based configuration
-+ * on bind mounts
-+ *
-+ * Copyright (C) James.Bottomley@HansenPartnership.com
-+ */
-+
-+#include <linux/configfd.h>
-+#include <linux/file.h>
-+#include <linux/fs.h>
-+#include <linux/mount.h>
-+#include <linux/nsproxy.h>
-+
-+#include "internal.h"
-+#include "mount.h"
-+
-+struct bind_data {
-+	bool		ro:1;
-+	bool		detached:1;
-+	bool		recursive:1;
-+	struct file	*file;
-+	struct file	*retfile;
-+};
-+
-+struct bind_data *to_bind_data(const struct configfd_context *cfc)
+diff --git a/fs/signalfd.c b/fs/signalfd.c
+index 44b6845b071c..ccb1173b20aa 100644
+--- a/fs/signalfd.c
++++ b/fs/signalfd.c
+@@ -50,6 +50,7 @@ void signalfd_cleanup(struct sighand_struct *sighand)
+  
+  struct signalfd_ctx {
+  	sigset_t sigmask;
++	struct pid *task_pid;
+  };
+  
+  static int signalfd_release(struct inode *inode, struct file *file)
+@@ -58,20 +59,41 @@ static int signalfd_release(struct inode *inode, struct file *file)
+  	return 0;
+  }
+  
++static void signalfd_put_task(struct signalfd_ctx *ctx, struct task_struct *tsk)
 +{
-+	return cfc->data;
++	if (ctx->task_pid)
++		put_task_struct(tsk);
 +}
 +
-+static int bind_set_fd(const struct configfd_context *cfc,
-+		       struct configfd_param *p)
++static struct task_struct *signalfd_get_task(struct signalfd_ctx *ctx)
 +{
-+	struct bind_data *bd = to_bind_data(cfc);
-+	struct path *path;
++	if (ctx->task_pid)
++		return get_pid_task(ctx->task_pid, PIDTYPE_PID);
 +
-+	if (strcmp(p->key, "pathfd") != 0)
-+		return -EINVAL;
-+
-+	path = &p->file->f_path;
-+
-+	if (cfc->op == CONFIGFD_CMD_RECONFIGURE &&
-+	    path->mnt->mnt_root != path->dentry) {
-+		logger_err(cfc->log, "pathfd must be a bind mount");
-+		return -EINVAL;
-+	}
-+	bd->file = p->file;
-+	p->file = NULL;	/* we now own */
-+	return 0;
++	return current;
 +}
 +
-+static int bind_set_flag(const struct configfd_context *cfc,
-+			 struct configfd_param *p)
-+{
-+	struct bind_data *bd = to_bind_data(cfc);
-+
-+	if (strcmp(p->key, "ro") == 0 &&
-+	    cfc->op == CONFIGFD_CMD_RECONFIGURE) {
-+		bd->ro = true;
-+	} else if (strcmp(p->key, "rw") == 0 &&
-+		   cfc->op == CONFIGFD_CMD_RECONFIGURE) {
-+		bd->ro = false;
-+	} else if (strcmp(p->key, "recursive") == 0 &&
-+		   cfc->op == CONFIGFD_CMD_CREATE) {
-+		bd->recursive = true;
-+	} else if (strcmp(p->key, "detached") == 0 &&
-+		   cfc->op == CONFIGFD_CMD_CREATE) {
-+		if (!ns_capable(current->nsproxy->mnt_ns->user_ns,
-+				CAP_SYS_ADMIN)) {
-+			logger_err(cfc->log, "bind set: insufficient permission for detached tree");
-+			return -EPERM;
-+		}
-+		bd->detached = true;
+  static __poll_t signalfd_poll(struct file *file, poll_table *wait)
+  {
+  	struct signalfd_ctx *ctx = file->private_data;
++	struct task_struct *tsk;
+  	__poll_t events = 0;
+  
+-	poll_wait(file, &current->sighand->signalfd_wqh, wait);
++	tsk = signalfd_get_task(ctx);
++	if (tsk) {
++		poll_wait(file, &tsk->sighand->signalfd_wqh, wait);
+  
+-	spin_lock_irq(&current->sighand->siglock);
+-	if (next_signal(&current->pending, &ctx->sigmask) ||
+-	    next_signal(&current->signal->shared_pending,
+-			&ctx->sigmask))
+-		events |= EPOLLIN;
+-	spin_unlock_irq(&current->sighand->siglock);
++		spin_lock_irq(&tsk->sighand->siglock);
++		if (next_signal(&tsk->pending, &ctx->sigmask) ||
++		    next_signal(&tsk->signal->shared_pending,
++				&ctx->sigmask))
++			events |= EPOLLIN;
++		spin_unlock_irq(&tsk->sighand->siglock);
+  
++		signalfd_put_task(ctx, tsk);
 +	} else {
-+		logger_err(cfc->log, "bind set: invalid flag %s", p->key);
-+		return -EINVAL;
++		events |= EPOLLERR;
 +	}
-+	return 0;
-+}
-+static int bind_set(const struct configfd_context *cfc,
-+		    struct configfd_param *p)
-+{
-+	switch (p->cmd) {
-+	case CONFIGFD_SET_FLAG:
-+		return bind_set_flag(cfc, p);
-+	case CONFIGFD_SET_FD:
-+		return bind_set_fd(cfc, p);
-+	default:
-+		logger_err(cfc->log, "bind only takes a flag or fd argument");
+  	return events;
+  }
+  
+@@ -167,10 +189,15 @@ static ssize_t signalfd_dequeue(struct signalfd_ctx *ctx, kernel_siginfo_t *info
+  				int nonblock)
+  {
+  	ssize_t ret;
++	struct task_struct *tsk;
+  	DECLARE_WAITQUEUE(wait, current);
+  
+-	spin_lock_irq(&current->sighand->siglock);
+-	ret = dequeue_signal(current, &ctx->sigmask, info);
++	tsk = signalfd_get_task(ctx);
++	if (!tsk)
++		return -ESRCH;
++
++	spin_lock_irq(&tsk->sighand->siglock);
++	ret = dequeue_signal(tsk, &ctx->sigmask, info);
+  	switch (ret) {
+  	case 0:
+  		if (!nonblock)
+@@ -178,29 +205,31 @@ static ssize_t signalfd_dequeue(struct signalfd_ctx *ctx, kernel_siginfo_t *info
+  		ret = -EAGAIN;
+  		/* fall through */
+  	default:
+-		spin_unlock_irq(&current->sighand->siglock);
++		spin_unlock_irq(&tsk->sighand->siglock);
++		signalfd_put_task(ctx, tsk);
+  		return ret;
+  	}
+  
+-	add_wait_queue(&current->sighand->signalfd_wqh, &wait);
++	add_wait_queue(&tsk->sighand->signalfd_wqh, &wait);
+  	for (;;) {
+  		set_current_state(TASK_INTERRUPTIBLE);
+-		ret = dequeue_signal(current, &ctx->sigmask, info);
++		ret = dequeue_signal(tsk, &ctx->sigmask, info);
+  		if (ret != 0)
+  			break;
+  		if (signal_pending(current)) {
+  			ret = -ERESTARTSYS;
+  			break;
+  		}
+-		spin_unlock_irq(&current->sighand->siglock);
++		spin_unlock_irq(&tsk->sighand->siglock);
+  		schedule();
+-		spin_lock_irq(&current->sighand->siglock);
++		spin_lock_irq(&tsk->sighand->siglock);
+  	}
+-	spin_unlock_irq(&current->sighand->siglock);
++	spin_unlock_irq(&tsk->sighand->siglock);
+  
+-	remove_wait_queue(&current->sighand->signalfd_wqh, &wait);
++	remove_wait_queue(&tsk->sighand->signalfd_wqh, &wait);
+  	__set_current_state(TASK_RUNNING);
+  
++	signalfd_put_task(ctx, tsk);
+  	return ret;
+  }
+  
+@@ -267,19 +296,24 @@ static int do_signalfd4(int ufd, sigset_t *mask, int flags)
+  	/* Check the SFD_* constants for consistency.  */
+  	BUILD_BUG_ON(SFD_CLOEXEC != O_CLOEXEC);
+  	BUILD_BUG_ON(SFD_NONBLOCK != O_NONBLOCK);
++	BUILD_BUG_ON(SFD_TASK & (SFD_CLOEXEC | SFD_NONBLOCK));
+  
+-	if (flags & ~(SFD_CLOEXEC | SFD_NONBLOCK))
++	if (flags & ~(SFD_CLOEXEC | SFD_NONBLOCK | SFD_TASK))
 +		return -EINVAL;
-+	}
-+}
-+
-+static int bind_get(const struct configfd_context *cfc,
-+		    struct configfd_param *p)
-+{
-+	struct bind_data *bd = to_bind_data(cfc);
-+
-+	if (strcmp(p->key, "bindfd") != 0 || p->cmd != CONFIGFD_GET_FD)
-+		return -EINVAL;
-+
-+	if (!bd->retfile)
-+		return -EINVAL;
-+
-+	p->file = bd->retfile;
-+	bd->retfile = NULL;
-+
-+	return 0;
-+}
-+
-+static int bind_reconfigure(const struct configfd_context *cfc)
-+{
-+	struct bind_data *bd = to_bind_data(cfc);
-+	unsigned int mnt_flags = 0;
-+
-+	if (!bd->file) {
-+		logger_err(cfc->log, "bind reconfigure: fd must be set");
-+		return -EINVAL;
-+	}
-+	if (bd->ro)
-+		mnt_flags |= MNT_READONLY;
-+
-+	return do_reconfigure_mnt(&bd->file->f_path, mnt_flags);
-+}
-+
-+static int bind_create(const struct configfd_context *cfc)
-+{
-+	struct bind_data *bd = to_bind_data(cfc);
-+	struct path *p;
-+	struct file *f;
-+
-+	if (!bd->file) {
-+		logger_err(cfc->log, "bind create: fd must be set");
-+		return -EINVAL;
-+	}
-+	if (bd->recursive && !bd->detached) {
-+		logger_err(cfc->log, "bind create: recursive cannot be set without detached");
-+		return -EINVAL;
-+	}
-+
-+	p = &bd->file->f_path;
-+
-+	if (bd->detached)
-+		f = open_detached_copy(p, bd->recursive);
-+	else
-+		f = dentry_open(p, O_PATH, current_cred());
-+	if (IS_ERR(f))
-+		return PTR_ERR(f);
-+
-+	bd->retfile = f;
-+	return 0;
-+}
-+
-+static int bind_act(const struct configfd_context *cfc, unsigned int cmd)
-+{
-+	switch (cmd) {
-+	case CONFIGFD_CMD_RECONFIGURE:
-+		return bind_reconfigure(cfc);
-+	case CONFIGFD_CMD_CREATE:
-+		return bind_create(cfc);
-+	default:
-+		logger_err(cfc->log, "bind only responds to reconfigure or create actions");
-+		return -EINVAL;
-+	}
-+}
-+
-+static void bind_free(const struct configfd_context *cfc)
-+{
-+	struct bind_data *bd = to_bind_data(cfc);
-+
-+	if (bd->file)
-+		fput(bd->file);
-+}
-+
-+static struct configfd_ops bind_type_ops = {
-+	.free = bind_free,
-+	.get = bind_get,
-+	.set = bind_set,
-+	.act = bind_act,
-+};
-+
-+static struct configfd_type bind_type = {
-+	.name		= "bind",
-+	.ops		= &bind_type_ops,
-+	.data_size	= sizeof(struct bind_data),
-+};
-+
-+static int __init bind_setup(void)
-+{
-+	configfd_type_register(&bind_type);
-+
-+	return 0;
-+}
-+fs_initcall(bind_setup);
++	if ((flags & (SFD_CLOEXEC | SFD_TASK)) == SFD_TASK)
+  		return -EINVAL;
+  
+  	sigdelsetmask(mask, sigmask(SIGKILL) | sigmask(SIGSTOP));
+  	signotset(mask);
+  
+  	if (ufd == -1) {
+-		ctx = kmalloc(sizeof(*ctx), GFP_KERNEL);
++		ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+  		if (!ctx)
+  			return -ENOMEM;
+  
+  		ctx->sigmask = *mask;
++		if (flags & SFD_TASK)
++			ctx->task_pid = get_task_pid(current, PIDTYPE_PID);
+  
+  		/*
+  		 * When we call this, the initialization must be complete, since
+@@ -290,6 +324,7 @@ static int do_signalfd4(int ufd, sigset_t *mask, int flags)
+  		if (ufd < 0)
+  			kfree(ctx);
+  	} else {
++		struct task_struct *tsk;
+  		struct fd f = fdget(ufd);
+  		if (!f.file)
+  			return -EBADF;
+@@ -298,11 +333,17 @@ static int do_signalfd4(int ufd, sigset_t *mask, int flags)
+  			fdput(f);
+  			return -EINVAL;
+  		}
+-		spin_lock_irq(&current->sighand->siglock);
++		tsk = signalfd_get_task(ctx);
++		if (!tsk) {
++			fdput(f);
++			return -ESRCH;
++		}
++		spin_lock_irq(&tsk->sighand->siglock);
+  		ctx->sigmask = *mask;
+-		spin_unlock_irq(&current->sighand->siglock);
++		spin_unlock_irq(&tsk->sighand->siglock);
+  
+-		wake_up(&current->sighand->signalfd_wqh);
++		wake_up(&tsk->sighand->signalfd_wqh);
++		signalfd_put_task(ctx, tsk);
+  		fdput(f);
+  	}
+  
+diff --git a/include/uapi/linux/signalfd.h b/include/uapi/linux/signalfd.h
+index 83429a05b698..064c5dc3eb99 100644
+--- a/include/uapi/linux/signalfd.h
++++ b/include/uapi/linux/signalfd.h
+@@ -16,6 +16,7 @@
+  /* Flags for signalfd4.  */
+  #define SFD_CLOEXEC O_CLOEXEC
+  #define SFD_NONBLOCK O_NONBLOCK
++#define SFD_TASK 00000001
+  
+  struct signalfd_siginfo {
+  	__u32 ssi_signo;
+
 -- 
-2.16.4
+Jens Axboe
 
