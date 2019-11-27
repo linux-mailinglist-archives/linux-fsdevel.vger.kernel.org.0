@@ -2,167 +2,200 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89A7210B293
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 16:42:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AC3010B2C0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 16:52:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727138AbfK0PmJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Nov 2019 10:42:09 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:34933 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726558AbfK0PmJ (ORCPT
+        id S1727130AbfK0Pwy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Nov 2019 10:52:54 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:38300 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726514AbfK0Pwx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Nov 2019 10:42:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574869327;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rTiplu3jVVG57/goTxX/EWtlHVQFyeygebJxT1iF7jE=;
-        b=NP4zJgSxRdtEh5kJoYt6wHBchePLp7N22H5wxOT7UVjdejkqmQtyETS+1Yhtv8xPEPyXdm
-        AdN/Dknww0GOIs6rwzK6C01c00vviANp4AJ8rN1KfalK5zv+5PQu56uh5AovJ4moBBT5Om
-        b5diZsepnkFSN5tUIjvmNXKGxnVKlOk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-165-KTmG-I0VOJaQbcSWsc6Yig-1; Wed, 27 Nov 2019 10:42:06 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4E31A101F4E0;
-        Wed, 27 Nov 2019 15:42:04 +0000 (UTC)
-Received: from fogou.chygwyn.com (unknown [10.33.36.46])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 43F691001DE1;
-        Wed, 27 Nov 2019 15:41:55 +0000 (UTC)
-Subject: Re: [PATCH] mm/filemap: do not allocate cache pages beyond end of
- file at read
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     =?UTF-8?Q?Andreas_Gr=c3=bcnbacher?= <andreas.gruenbacher@gmail.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Wed, 27 Nov 2019 10:52:53 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xARFi6ak075759;
+        Wed, 27 Nov 2019 15:52:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=H+/wgbi6zpbbhzBcnf3ZgXVMUMhhbOupxJKtToXxUKY=;
+ b=Kg0k/vAlSe8xFiAPHV3p230uhEAIhD+RfNy3L2xMgLeJjWzANRMgYHEoE0Ep3N7qUiEj
+ vcF15VBYr8vifEfZfiVr6t7u8ViSjjCg7FNvuwZfLuggXSVyPGlhSN6JUTfYB83peZvJ
+ 2Uo59BKL0j0vX1rUEJqlR/o/pNlsdkvaPc0SHw+2iWbYlZWmF6wiaTespaEP5ykBV9AG
+ ImLwc8stIz9ZL95hlZuIpbBT4NAPPaz+UgI3qRiVr/uxeOf58bY1exPNLO2+wgw9Fc9C
+ Rl8vZBiL+t0XTNoRZlRlrnqJqMZNYYPP0oHZxwuNG+rB9l114hLMSs0+hA/EVvczaecf TQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2wewdrecda-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Nov 2019 15:52:06 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xARFdTWt031310;
+        Wed, 27 Nov 2019 15:50:06 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2wgvhccg37-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Nov 2019 15:50:05 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xARFnumk003050;
+        Wed, 27 Nov 2019 15:49:56 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 27 Nov 2019 07:49:56 -0800
+Date:   Wed, 27 Nov 2019 07:49:54 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "cluster-devel@redhat.com" <cluster-devel@redhat.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <sfrench@samba.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>
-References: <157225677483.3442.4227193290486305330.stgit@buzz>
- <20191028124222.ld6u3dhhujfqcn7w@box>
- <CAHk-=wgQ-Dcs2keNJPovTb4gG33M81yANH6KZM9d5NLUb-cJ1g@mail.gmail.com>
- <20191028125702.xdfbs7rqhm3wer5t@box>
- <ac83fee6-9bcd-8c66-3596-2c0fbe6bcf96@yandex-team.ru>
- <CAHk-=who0HS=NT8U7vFDT7er_CD7+ZreRJMxjYrRXs5G6dbpyw@mail.gmail.com>
- <f0140b13-cca2-af9e-eb4b-82eda134eb8f@redhat.com>
- <CAHk-=wh4SKRxKQf5LawRMSijtjRVQevaFioBK+tOZAVPt7ek0Q@mail.gmail.com>
- <640bbe51-706b-8d9f-4abc-5f184de6a701@redhat.com>
- <CAHpGcM+o2OwXdrj+A2_OqRg6YokfauFNiBJF-BQp0dJFvq_BrQ@mail.gmail.com>
- <22f04f02-86e4-b379-81c8-08c002a648f0@redhat.com>
- <CAHk-=whRuPkm7zFUiGe_BXkLvEdShZGngkb=uRufgU65ogCxfg@mail.gmail.com>
-From:   Steven Whitehouse <swhiteho@redhat.com>
-Message-ID: <cdd48a4d-42a4-dd15-2701-e08e26fef17f@redhat.com>
-Date:   Wed, 27 Nov 2019 15:41:53 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Richard Weinberger <richard@nod.at>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org
+Subject: Re: [PATCH] fs: Fix page_mkwrite off-by-one errors
+Message-ID: <20191127154954.GT6219@magnolia>
+References: <20191127151811.9229-1-agruenba@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=whRuPkm7zFUiGe_BXkLvEdShZGngkb=uRufgU65ogCxfg@mail.gmail.com>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: KTmG-I0VOJaQbcSWsc6Yig-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191127151811.9229-1-agruenba@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9454 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911270137
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9454 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911270137
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Wed, Nov 27, 2019 at 04:18:11PM +0100, Andreas Gruenbacher wrote:
+> Fix a check in block_page_mkwrite meant to determine whether an offset
+> is within the inode size.  This error has spread to several filesystems
+> and to iomap_page_mkwrite, so fix those instances as well.
 
-On 25/11/2019 17:05, Linus Torvalds wrote:
-> On Mon, Nov 25, 2019 at 2:53 AM Steven Whitehouse <swhiteho@redhat.com> wrote:
->> Linus, is that roughly what you were thinking of?
-> So the concept looks ok, but I don't really like the new flags as they
-> seem to be gfs2-specific rather than generic.
->
-> That said, I don't _gate_ them either, since they aren't in any
-> critical code sequence, and it's not like they do anything really odd.
->
-> I still think the whole gfs2 approach is broken. You're magically ok
-> with using stale data from the cache just because it's cached, even if
-> another client might have truncated the file or something.
+Seeing how this has gotten screwed up at least six times in the kernel,
+maybe we need a static inline helper to do this for us?
 
-If another node tries to truncate the file, that will require an 
-exclusive glock, and in turn that means the all the other nodes will 
-have to drop their glock(s) shared or exclusive. That process 
-invalidates the page cache on those nodes, such that any further 
-requests on those nodes will find the cache empty and have to call into 
-the filesystem.
+> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 
-If a page is truncated on another node, then when the local node gives 
-up its glock, after any copying (e.g. for read) has completed then the 
-truncate will take place. The local node will then have to reread any 
-data relating to new pages or return an error in case the next page to 
-be read has vanished due to the truncate. It is a pretty small window, 
-and the advantage is that in cases where the page is in cache, we can 
-directly use the cached page without having to call into the filesystem 
-at all. So it is page atomic in that sense.
+The iomap part looks ok,
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-The overall aim here is to avoid taking (potentially slow) cluster locks 
-when at all possible, yet at the same time deliver close to local fs 
-semantics whenever we can. You can think of GFS2's glock concept (at 
-least as far as the inodes we are discussing here) as providing a 
-combination of (page) cache control and cluster (dlm) locking.
+(I might just extract the iomap part and put it in the iomap tree if
+someone doesn't merge this one before I get to it...)
 
->
-> So you're ok with saying "the file used to be X bytes in size, so
-> we'll just give you this data because we trust that the X is correct".
->
-> But you're not ok to say "oh, the file used to be X bytes in size, but
-> we don't want to give you a short read because it might not be correct
-> any more".
->
-> See the disconnect? You trust the size in one situation, but not in another one.
+--D
 
-Well we are not trusting the size at all... the original algorithm 
-worked entirely off "is this page in cache and uptodate?" and for 
-exactly the reason that we know the size in the inode might be out of 
-date, if we are not currently holding a glock in either shared or 
-exclusive mode. We also know that if there is a page in cache and 
-uptodate then we must be holding the glock too.
-
-
->
-> I also don't really see that you *need* the new flag at all. Since
-> you're doing to do a speculative read and then a real read anyway, and
-> since the only thing that you seem to care about is the file size
-> (because the *data* you will trust if it is cached), then why don't
-> you just use the *existing* generic read, and *IFF* you get a
-> truncated return value, then you go and double-check that the file
-> hasn't changed in size?
->
-> See what I'm saying? I think gfs2 is being very inconsistent in when
-> it trusts the file size, and I don't see that you even need the new
-> behavior that patch gives, because you might as well just use the
-> existing code (just move the i_size check earlier, and then teach gfs2
-> to double-check the "I didn't get as much as I expected" case).
->
->                   Linus
-
-I'll leave the finer details to Andreas here, since it is his patch, and 
-hopefully we can figure out a good path forward. We are perhaps also a 
-bit reluctant to go off and (nearly) duplicate code that is already in 
-the core vfs library functions, since that often leads to things getting 
-out of sync (our implementation of ->writepages is one case where that 
-happened in the past) and missing important bug fixes/features in some 
-cases. Hopefully though we can iterate on this a bit and come up with 
-something which will resolve all the issues,
-
-Steve.
-
-
->
-
+> 
+> ---
+> 
+> This patch has a trivial conflict with commit "iomap: Fix overflow in
+> iomap_page_mkwrite" in Darrick's iomap pull request for 5.5:
+> 
+>   https://lore.kernel.org/lkml/20191125190907.GN6219@magnolia/
+> ---
+>  fs/buffer.c            | 2 +-
+>  fs/ceph/addr.c         | 2 +-
+>  fs/ext4/inode.c        | 2 +-
+>  fs/f2fs/file.c         | 2 +-
+>  fs/iomap/buffered-io.c | 2 +-
+>  fs/ubifs/file.c        | 2 +-
+>  6 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index 86a38b979323..152d391858d4 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -2465,7 +2465,7 @@ int block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
+>  	lock_page(page);
+>  	size = i_size_read(inode);
+>  	if ((page->mapping != inode->i_mapping) ||
+> -	    (page_offset(page) > size)) {
+> +	    (page_offset(page) >= size)) {
+>  		/* We overload EFAULT to mean page got truncated */
+>  		ret = -EFAULT;
+>  		goto out_unlock;
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index 7ab616601141..9fa0729ece41 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -1575,7 +1575,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+>  	do {
+>  		lock_page(page);
+>  
+> -		if ((off > size) || (page->mapping != inode->i_mapping)) {
+> +		if ((off >= size) || (page->mapping != inode->i_mapping)) {
+>  			unlock_page(page);
+>  			ret = VM_FAULT_NOPAGE;
+>  			break;
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 516faa280ced..6dd4efe2fb63 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -6224,7 +6224,7 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
+>  	lock_page(page);
+>  	size = i_size_read(inode);
+>  	/* Page got truncated from under us? */
+> -	if (page->mapping != mapping || page_offset(page) > size) {
+> +	if (page->mapping != mapping || page_offset(page) >= size) {
+>  		unlock_page(page);
+>  		ret = VM_FAULT_NOPAGE;
+>  		goto out;
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 29bc0a542759..3436be01af45 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -71,7 +71,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+>  	down_read(&F2FS_I(inode)->i_mmap_sem);
+>  	lock_page(page);
+>  	if (unlikely(page->mapping != inode->i_mapping ||
+> -			page_offset(page) > i_size_read(inode) ||
+> +			page_offset(page) >= i_size_read(inode) ||
+>  			!PageUptodate(page))) {
+>  		unlock_page(page);
+>  		err = -EFAULT;
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index e25901ae3ff4..d454dbab5133 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -1041,7 +1041,7 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops)
+>  	lock_page(page);
+>  	size = i_size_read(inode);
+>  	if ((page->mapping != inode->i_mapping) ||
+> -	    (page_offset(page) > size)) {
+> +	    (page_offset(page) >= size)) {
+>  		/* We overload EFAULT to mean page got truncated */
+>  		ret = -EFAULT;
+>  		goto out_unlock;
+> diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
+> index cd52585c8f4f..ca0148ec77e6 100644
+> --- a/fs/ubifs/file.c
+> +++ b/fs/ubifs/file.c
+> @@ -1564,7 +1564,7 @@ static vm_fault_t ubifs_vm_page_mkwrite(struct vm_fault *vmf)
+>  
+>  	lock_page(page);
+>  	if (unlikely(page->mapping != inode->i_mapping ||
+> -		     page_offset(page) > i_size_read(inode))) {
+> +		     page_offset(page) >= i_size_read(inode))) {
+>  		/* Page got truncated out from underneath us */
+>  		goto sigbus;
+>  	}
+> -- 
+> 2.20.1
+> 
