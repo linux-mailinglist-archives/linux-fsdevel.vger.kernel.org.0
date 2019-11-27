@@ -2,50 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94AC310B78E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 21:35:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2E4A10B7B8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 21:36:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727758AbfK0Ue4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Nov 2019 15:34:56 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:57188 "EHLO
+        id S1728126AbfK0Ug2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Nov 2019 15:36:28 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:57238 "EHLO
         bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727750AbfK0Uez (ORCPT
+        by vger.kernel.org with ESMTP id S1727391AbfK0Ug1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:34:55 -0500
+        Wed, 27 Nov 2019 15:36:27 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 8BD908EE133;
-        Wed, 27 Nov 2019 12:34:55 -0800 (PST)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id DBEF38EE133;
+        Wed, 27 Nov 2019 12:36:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1574886895;
-        bh=Jj1Z0rQKmPwLQovtxxW0PpRdd5UMLYEhGVBpKnn6KAo=;
+        s=20151216; t=1574886986;
+        bh=IyXCavKJ3ifTB3wYTKBa3p3sw3/XTkCsgPrzYeOf7nM=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Bt37d6qMGgLUvz5TqfmxsCKMaoeYOlpEfXf09upZ+HX2oIUROBkW9RL8O0zhc4jJ8
-         xfxGvUEfjS7Hkiknt+gX1GNJNFCcdp6/91ZT+UUXTfe8IGENPB2HCqHkUy+NSENR6V
-         qIBULvRZDZZseFYDrsjuWL5pexeOiEe/ioXn7RzI=
+        b=aDQ05cU5bvaVh8hFzw7wCv8fxxfXtG4g4YkqBPIqen7d3GHSpL4s0mqDCYG2i0pcg
+         vrQBLcqMYko/uLqiigwm9OTx7nKtduhzvoPWQBH7TZfvMeivPYijuKi0w0S4AhNQaw
+         D9IbLGs0hgdw+5/I2QJ1Po5blZJXijHC0c+1u6BA=
 Received: from bedivere.hansenpartnership.com ([127.0.0.1])
         by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id vrNaA4lpdpqA; Wed, 27 Nov 2019 12:34:55 -0800 (PST)
+        with ESMTP id F1r59tgaDIAh; Wed, 27 Nov 2019 12:36:26 -0800 (PST)
 Received: from jarvis.lan (unknown [50.35.76.230])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 224658EE130;
-        Wed, 27 Nov 2019 12:34:55 -0800 (PST)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 4D60E8EE130;
+        Wed, 27 Nov 2019 12:36:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1574886895;
-        bh=Jj1Z0rQKmPwLQovtxxW0PpRdd5UMLYEhGVBpKnn6KAo=;
+        s=20151216; t=1574886986;
+        bh=IyXCavKJ3ifTB3wYTKBa3p3sw3/XTkCsgPrzYeOf7nM=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Bt37d6qMGgLUvz5TqfmxsCKMaoeYOlpEfXf09upZ+HX2oIUROBkW9RL8O0zhc4jJ8
-         xfxGvUEfjS7Hkiknt+gX1GNJNFCcdp6/91ZT+UUXTfe8IGENPB2HCqHkUy+NSENR6V
-         qIBULvRZDZZseFYDrsjuWL5pexeOiEe/ioXn7RzI=
-Message-ID: <1574886894.21593.9.camel@HansenPartnership.com>
-Subject: [RFC 2/6] configfd: add generic file descriptor based configuration
- parser
+        b=aDQ05cU5bvaVh8hFzw7wCv8fxxfXtG4g4YkqBPIqen7d3GHSpL4s0mqDCYG2i0pcg
+         vrQBLcqMYko/uLqiigwm9OTx7nKtduhzvoPWQBH7TZfvMeivPYijuKi0w0S4AhNQaw
+         D9IbLGs0hgdw+5/I2QJ1Po5blZJXijHC0c+1u6BA=
+Message-ID: <1574886985.21593.11.camel@HansenPartnership.com>
+Subject: [RFC 4/6] fs: implement fsconfig via configfd
 From:   James Bottomley <James.Bottomley@HansenPartnership.com>
 To:     David Howells <dhowells@redhat.com>,
         Christian Brauner <christian@brauner.io>
 Cc:     linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
         Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 27 Nov 2019 12:34:54 -0800
+Date:   Wed, 27 Nov 2019 12:36:25 -0800
 In-Reply-To: <1574886778.21593.7.camel@HansenPartnership.com>
 References: <1574295100.17153.25.camel@HansenPartnership.com>
          <17268.1574323839@warthog.procyon.org.uk>
@@ -60,584 +59,1133 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This code is based on the original filesystem context based
-configuration parser by David Howells, but lifted up so it can apply
-to anything rather than only filesystem contexts.
+This changes the internal implementation of fsconfig, while keeping
+all the external system calls.  However, it now becomes possible to
+all the same operations via configfd instead of fsconfig.
+
+For example a filesystem remount read-only can be done:
+
+fd = configfd_open("mount", O_CLOEXEC, CONFIGFD_CMD_RECONFIGURE);
+mntpnt = open("/path/to/mount", O_PATH);
+configfd_action(fd, CONFIGFD_SET_FD, "pathfd", NULL, mntpnt);
+configfd_action(fd, CONFIGFD_SET_FLAG, "ro", NULL, 0);
+configfd_action(fd, CONFIGFD_CMD_RECONFIGURE, NULL, NULL, 0);
+
+And mounting a tmpfs filesystem nodev,noexec:
+
+fd = configfd_open("tmpfs", O_CLOEXEC, CONFIGFD_CMD_CREATE);
+configfd_action(fd, CONFIGFD_SET_INT, "mount_attrs", NULL,
+		MOUNT_ATTR_NODEV|MOUNT_ATTR_NOEXEC);
+configfd_action(fd, CONFIGFD_CMD_CREATE, NULL, NULL, 0);
+configfd_action(fd, CONFIGFD_GET_FD, "mountfd", &mfd, O_CLOEXEC);
+mount_move("", mfd, AT_FDCWD, "/mountpoint", MOVE_MOUNT_F_EMPTY_PATH);
 
 Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
 ---
- fs/Makefile                   |   3 +-
- fs/configfd.c                 | 450 ++++++++++++++++++++++++++++++++++++++++++
- include/linux/configfd.h      |  61 ++++++
- include/uapi/linux/configfd.h |  20 ++
- 4 files changed, 533 insertions(+), 1 deletion(-)
- create mode 100644 fs/configfd.c
- create mode 100644 include/linux/configfd.h
- create mode 100644 include/uapi/linux/configfd.h
+ fs/filesystems.c           |   8 +-
+ fs/fs_context.c            | 124 ++---------
+ fs/fsopen.c                | 535 ++++++++++++++++++++++-----------------------
+ fs/internal.h              |   4 +
+ fs/namespace.c             | 111 ++++------
+ include/linux/fs.h         |   2 +
+ include/linux/fs_context.h |  23 +-
+ include/linux/fs_parser.h  |   2 +
+ 8 files changed, 342 insertions(+), 467 deletions(-)
 
-diff --git a/fs/Makefile b/fs/Makefile
-index 14231b4cf383..569563f6c0d5 100644
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@ -13,7 +13,8 @@ obj-y :=	open.o read_write.o file_table.o super.o \
- 		seq_file.o xattr.o libfs.o fs-writeback.o \
- 		pnode.o splice.o sync.o utimes.o d_path.o \
- 		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
--		fs_types.o fs_context.o fs_parser.o fsopen.o
-+		fs_types.o fs_context.o fs_parser.o fsopen.o \
-+		configfd.o
+diff --git a/fs/filesystems.c b/fs/filesystems.c
+index 9135646e41ac..ceb6532754c1 100644
+--- a/fs/filesystems.c
++++ b/fs/filesystems.c
+@@ -7,6 +7,7 @@
+  *  table of configured filesystems
+  */
  
- ifeq ($(CONFIG_BLOCK),y)
- obj-y +=	buffer.o block_dev.o direct-io.o mpage.o
-diff --git a/fs/configfd.c b/fs/configfd.c
-new file mode 100644
-index 000000000000..7f2c750ac7e3
---- /dev/null
-+++ b/fs/configfd.c
-@@ -0,0 +1,450 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Generic configuration file descriptor handling
-+ *
-+ * Copyright (C) 2019 James.Bottomley@HansenPartnership.com
-+ */
-+
-+#include <linux/anon_inodes.h>
 +#include <linux/configfd.h>
-+#include <linux/namei.h>
-+#include <linux/slab.h>
-+#include <linux/syscalls.h>
-+#include <linux/rwlock.h>
-+#include <linux/uaccess.h>
-+
-+
-+static struct configfd_type *configfds;
-+static DEFINE_RWLOCK(configfds_lock);
-+
-+static ssize_t configfd_read(struct file *file,
-+			     char __user *buf, size_t len, loff_t *pos)
-+{
-+	struct configfd_context *cfc = file->private_data;
-+
-+	return logger_read(cfc->log, buf, len);
-+}
-+
-+static void configfd_type_put(const struct configfd_type *cft)
-+{
-+	module_put(cft->owner);
-+}
-+
-+static void configfd_context_free(struct configfd_context *cfc)
-+{
-+	if (cfc->cft->ops->free)
-+		cfc->cft->ops->free(cfc);
-+	logger_put(&cfc->log);
-+	configfd_type_put(cfc->cft);
-+	kfree(cfc);
-+}
-+
-+static int configfd_release(struct inode *inode, struct file *file)
-+{
-+	struct configfd_context *cfc = file->private_data;
-+
-+	if (cfc) {
-+		file->private_data = NULL;
-+		configfd_context_free(cfc);
+ #include <linux/syscalls.h>
+ #include <linux/fs.h>
+ #include <linux/proc_fs.h>
+@@ -82,10 +83,12 @@ int register_filesystem(struct file_system_type * fs)
+ 		return -EBUSY;
+ 	write_lock(&file_systems_lock);
+ 	p = find_filesystem(fs->name, strlen(fs->name));
+-	if (*p)
++	if (*p) {
+ 		res = -EBUSY;
+-	else
++	} else {
+ 		*p = fs;
++		res = fs_context_register(fs);
 +	}
+ 	write_unlock(&file_systems_lock);
+ 	return res;
+ }
+@@ -114,6 +117,7 @@ int unregister_filesystem(struct file_system_type * fs)
+ 		if (fs == *tmp) {
+ 			*tmp = fs->next;
+ 			fs->next = NULL;
++			fs_context_unregister(fs);
+ 			write_unlock(&file_systems_lock);
+ 			synchronize_rcu();
+ 			return 0;
+diff --git a/fs/fs_context.c b/fs/fs_context.c
+index 138b5b4d621d..59bd0aeb0723 100644
+--- a/fs/fs_context.c
++++ b/fs/fs_context.c
+@@ -235,6 +235,13 @@ int generic_parse_monolithic(struct fs_context *fc, void *data)
+ }
+ EXPORT_SYMBOL(generic_parse_monolithic);
+ 
++void fs_context_set_reconfigure(struct fs_context *fc, struct dentry *reference)
++{
++	atomic_inc(&reference->d_sb->s_active);
++	fc->user_ns = get_user_ns(reference->d_sb->s_user_ns);
++	fc->root = dget(reference);
++}
++
+ /**
+  * alloc_fs_context - Create a filesystem context.
+  * @fs_type: The filesystem type.
+@@ -279,9 +286,8 @@ static struct fs_context *alloc_fs_context(struct file_system_type *fs_type,
+ 		fc->user_ns = get_user_ns(reference->d_sb->s_user_ns);
+ 		break;
+ 	case FS_CONTEXT_FOR_RECONFIGURE:
+-		atomic_inc(&reference->d_sb->s_active);
+-		fc->user_ns = get_user_ns(reference->d_sb->s_user_ns);
+-		fc->root = dget(reference);
++		if (reference)
++			fs_context_set_reconfigure(fc, reference);
+ 		break;
+ 	}
+ 
+@@ -313,7 +319,11 @@ struct fs_context *fs_context_for_reconfigure(struct dentry *dentry,
+ 					unsigned int sb_flags,
+ 					unsigned int sb_flags_mask)
+ {
+-	return alloc_fs_context(dentry->d_sb->s_type, dentry, sb_flags,
++	struct file_system_type *fs_type = NULL;
++
++	if (dentry)
++		fs_type = dentry->d_sb->s_type;
++	return alloc_fs_context(fs_type, dentry, sb_flags,
+ 				sb_flags_mask, FS_CONTEXT_FOR_RECONFIGURE);
+ }
+ EXPORT_SYMBOL(fs_context_for_reconfigure);
+@@ -361,8 +371,7 @@ struct fs_context *vfs_dup_fs_context(struct fs_context *src_fc)
+ 	get_net(fc->net_ns);
+ 	get_user_ns(fc->user_ns);
+ 	get_cred(fc->cred);
+-	if (fc->log)
+-		refcount_inc(&fc->log->usage);
++	logger_get(fc->cfc->log);
+ 
+ 	/* Can't call put until we've called ->dup */
+ 	ret = fc->ops->dup(fc, src_fc);
+@@ -380,108 +389,6 @@ struct fs_context *vfs_dup_fs_context(struct fs_context *src_fc)
+ }
+ EXPORT_SYMBOL(vfs_dup_fs_context);
+ 
+-/**
+- * logfc - Log a message to a filesystem context
+- * @fc: The filesystem context to log to.
+- * @fmt: The format of the buffer.
+- */
+-void logfc(struct fs_context *fc, const char *fmt, ...)
+-{
+-	static const char store_failure[] = "OOM: Can't store error string";
+-	struct fc_log *log = fc ? fc->log : NULL;
+-	const char *p;
+-	va_list va;
+-	char *q;
+-	u8 freeable;
+-
+-	va_start(va, fmt);
+-	if (!strchr(fmt, '%')) {
+-		p = fmt;
+-		goto unformatted_string;
+-	}
+-	if (strcmp(fmt, "%s") == 0) {
+-		p = va_arg(va, const char *);
+-		goto unformatted_string;
+-	}
+-
+-	q = kvasprintf(GFP_KERNEL, fmt, va);
+-copied_string:
+-	if (!q)
+-		goto store_failure;
+-	freeable = 1;
+-	goto store_string;
+-
+-unformatted_string:
+-	if ((unsigned long)p >= (unsigned long)__start_rodata &&
+-	    (unsigned long)p <  (unsigned long)__end_rodata)
+-		goto const_string;
+-	if (log && within_module_core((unsigned long)p, log->owner))
+-		goto const_string;
+-	q = kstrdup(p, GFP_KERNEL);
+-	goto copied_string;
+-
+-store_failure:
+-	p = store_failure;
+-const_string:
+-	q = (char *)p;
+-	freeable = 0;
+-store_string:
+-	if (!log) {
+-		switch (fmt[0]) {
+-		case 'w':
+-			printk(KERN_WARNING "%s\n", q + 2);
+-			break;
+-		case 'e':
+-			printk(KERN_ERR "%s\n", q + 2);
+-			break;
+-		default:
+-			printk(KERN_NOTICE "%s\n", q + 2);
+-			break;
+-		}
+-		if (freeable)
+-			kfree(q);
+-	} else {
+-		unsigned int logsize = ARRAY_SIZE(log->buffer);
+-		u8 index;
+-
+-		index = log->head & (logsize - 1);
+-		BUILD_BUG_ON(sizeof(log->head) != sizeof(u8) ||
+-			     sizeof(log->tail) != sizeof(u8));
+-		if ((u8)(log->head - log->tail) == logsize) {
+-			/* The buffer is full, discard the oldest message */
+-			if (log->need_free & (1 << index))
+-				kfree(log->buffer[index]);
+-			log->tail++;
+-		}
+-
+-		log->buffer[index] = q;
+-		log->need_free &= ~(1 << index);
+-		log->need_free |= freeable << index;
+-		log->head++;
+-	}
+-	va_end(va);
+-}
+-EXPORT_SYMBOL(logfc);
+-
+-/*
+- * Free a logging structure.
+- */
+-static void put_fc_log(struct fs_context *fc)
+-{
+-	struct fc_log *log = fc->log;
+-	int i;
+-
+-	if (log) {
+-		if (refcount_dec_and_test(&log->usage)) {
+-			fc->log = NULL;
+-			for (i = 0; i <= 7; i++)
+-				if (log->need_free & (1 << i))
+-					kfree(log->buffer[i]);
+-			kfree(log);
+-		}
+-	}
+-}
+-
+ /**
+  * put_fs_context - Dispose of a superblock configuration context.
+  * @fc: The context to dispose of.
+@@ -504,7 +411,6 @@ void put_fs_context(struct fs_context *fc)
+ 	put_net(fc->net_ns);
+ 	put_user_ns(fc->user_ns);
+ 	put_cred(fc->cred);
+-	put_fc_log(fc);
+ 	put_filesystem(fc->fs_type);
+ 	kfree(fc->source);
+ 	kfree(fc);
+diff --git a/fs/fsopen.c b/fs/fsopen.c
+index 043ffa8dc263..e83df6fc2b08 100644
+--- a/fs/fsopen.c
++++ b/fs/fsopen.c
+@@ -5,6 +5,7 @@
+  * Written by David Howells (dhowells@redhat.com)
+  */
+ 
++#include <linux/configfd.h>
+ #include <linux/fs_context.h>
+ #include <linux/fs_parser.h>
+ #include <linux/slab.h>
+@@ -18,90 +19,41 @@
+ #include "internal.h"
+ #include "mount.h"
+ 
+-/*
+- * Allow the user to read back any error, warning or informational messages.
+- */
+-static ssize_t fscontext_read(struct file *file,
+-			      char __user *_buf, size_t len, loff_t *pos)
++static void fsopen_cf_free(const struct configfd_context *cfc)
+ {
+-	struct fs_context *fc = file->private_data;
+-	struct fc_log *log = fc->log;
+-	unsigned int logsize = ARRAY_SIZE(log->buffer);
+-	ssize_t ret;
+-	char *p;
+-	bool need_free;
+-	int index, n;
+-
+-	ret = mutex_lock_interruptible(&fc->uapi_mutex);
+-	if (ret < 0)
+-		return ret;
++	struct fs_context *fc = cfc->data;
+ 
+-	if (log->head == log->tail) {
+-		mutex_unlock(&fc->uapi_mutex);
+-		return -ENODATA;
+-	}
+-
+-	index = log->tail & (logsize - 1);
+-	p = log->buffer[index];
+-	need_free = log->need_free & (1 << index);
+-	log->buffer[index] = NULL;
+-	log->need_free &= ~(1 << index);
+-	log->tail++;
+-	mutex_unlock(&fc->uapi_mutex);
+-
+-	ret = -EMSGSIZE;
+-	n = strlen(p);
+-	if (n > len)
+-		goto err_free;
+-	ret = -EFAULT;
+-	if (copy_to_user(_buf, p, n) != 0)
+-		goto err_free;
+-	ret = n;
+-
+-err_free:
+-	if (need_free)
+-		kfree(p);
+-	return ret;
++	put_fs_context(fc);
+ }
+ 
+-static int fscontext_release(struct inode *inode, struct file *file)
++static int fsopen_cf_alloc(struct configfd_context *cfc)
+ {
+-	struct fs_context *fc = file->private_data;
++	struct fs_context *fc;
++	struct file_system_type *fs_type;
+ 
+-	if (fc) {
+-		file->private_data = NULL;
+-		put_fs_context(fc);
+-	}
+-	return 0;
+-}
++	if (cfc->op != CONFIGFD_CMD_CREATE)
++		return -EINVAL;
+ 
+-const struct file_operations fscontext_fops = {
+-	.read		= fscontext_read,
+-	.release	= fscontext_release,
+-	.llseek		= no_llseek,
+-};
++	fs_type = get_fs_type(cfc->cft->name);
++	if (WARN(!fs_type, "BUG: fs_type %s should exist if configfd type does",
++		 cfc->cft->name))
++		return -ENODEV;
+ 
+-/*
+- * Attach a filesystem context to a file and an fd.
+- */
+-static int fscontext_create_fd(struct fs_context *fc, unsigned int o_flags)
+-{
+-	int fd;
++	if (cfc->op == CONFIGFD_CMD_RECONFIGURE)
++		fc = fs_context_for_reconfigure(NULL, 0, 0);
++	else
++		fc = fs_context_for_mount(fs_type, 0);
++	put_filesystem(fs_type);
++	if (IS_ERR(fc))
++		return PTR_ERR(fc);
+ 
+-	fd = anon_inode_getfd("[fscontext]", &fscontext_fops, fc,
+-			      O_RDWR | o_flags);
+-	if (fd < 0)
+-		put_fs_context(fc);
+-	return fd;
+-}
++	if (cfc->op == CONFIGFD_CMD_RECONFIGURE)
++		fc->phase = FS_CONTEXT_RECONF_PARAMS;
++	else
++		fc->phase = FS_CONTEXT_CREATE_PARAMS;
++	cfc->data = fc;
++	fc->cfc = cfc;
+ 
+-static int fscontext_alloc_log(struct fs_context *fc)
+-{
+-	fc->log = kzalloc(sizeof(*fc->log), GFP_KERNEL);
+-	if (!fc->log)
+-		return -ENOMEM;
+-	refcount_set(&fc->log->usage, 1);
+-	fc->log->owner = fc->fs_type->owner;
+ 	return 0;
+ }
+ 
+@@ -114,42 +66,14 @@ static int fscontext_alloc_log(struct fs_context *fc)
+  */
+ SYSCALL_DEFINE2(fsopen, const char __user *, _fs_name, unsigned int, flags)
+ {
+-	struct file_system_type *fs_type;
+-	struct fs_context *fc;
+-	const char *fs_name;
+-	int ret;
+-
+ 	if (!ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
+ 	if (flags & ~FSOPEN_CLOEXEC)
+ 		return -EINVAL;
+ 
+-	fs_name = strndup_user(_fs_name, PAGE_SIZE);
+-	if (IS_ERR(fs_name))
+-		return PTR_ERR(fs_name);
+-
+-	fs_type = get_fs_type(fs_name);
+-	kfree(fs_name);
+-	if (!fs_type)
+-		return -ENODEV;
+-
+-	fc = fs_context_for_mount(fs_type, 0);
+-	put_filesystem(fs_type);
+-	if (IS_ERR(fc))
+-		return PTR_ERR(fc);
+-
+-	fc->phase = FS_CONTEXT_CREATE_PARAMS;
+-
+-	ret = fscontext_alloc_log(fc);
+-	if (ret < 0)
+-		goto err_fc;
+-
+-	return fscontext_create_fd(fc, flags & FSOPEN_CLOEXEC ? O_CLOEXEC : 0);
+-
+-err_fc:
+-	put_fs_context(fc);
+-	return ret;
++	return  ksys_configfd_open(_fs_name, flags ? O_CLOEXEC : 0,
++				   CONFIGFD_CMD_CREATE);
+ }
+ 
+ /*
+@@ -157,10 +81,14 @@ SYSCALL_DEFINE2(fsopen, const char __user *, _fs_name, unsigned int, flags)
+  */
+ SYSCALL_DEFINE3(fspick, int, dfd, const char __user *, path, unsigned int, flags)
+ {
+-	struct fs_context *fc;
+-	struct path target;
++	struct path *target;
+ 	unsigned int lookup_flags;
+ 	int ret;
++	int fd;
++	struct configfd_param cp;
++	struct open_flags of;
++	struct filename *name;
++	struct file *file;
+ 
+ 	if (!ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMIN))
+ 		return -EPERM;
+@@ -178,34 +106,49 @@ SYSCALL_DEFINE3(fspick, int, dfd, const char __user *, path, unsigned int, flags
+ 		lookup_flags &= ~LOOKUP_AUTOMOUNT;
+ 	if (flags & FSPICK_EMPTY_PATH)
+ 		lookup_flags |= LOOKUP_EMPTY;
+-	ret = user_path_at(dfd, path, lookup_flags, &target);
+-	if (ret < 0)
+-		goto err;
+ 
+-	ret = -EINVAL;
+-	if (target.mnt->mnt_root != target.dentry)
+-		goto err_path;
++	of.lookup_flags = lookup_flags;
++	of.intent = LOOKUP_OPEN;
++	of.acc_mode = 0;
++	of.mode = 0;
++	of.open_flag = O_PATH;
+ 
+-	fc = fs_context_for_reconfigure(target.dentry, 0, 0);
+-	if (IS_ERR(fc)) {
+-		ret = PTR_ERR(fc);
+-		goto err_path;
+-	}
++	name = getname_kernel(path);
++	if (IS_ERR(name))
++		return PTR_ERR(name);
+ 
+-	fc->phase = FS_CONTEXT_RECONF_PARAMS;
++	file = do_filp_open(dfd, name, &of);
++	putname(name);
++	if (IS_ERR(file))
++		return PTR_ERR(file);
+ 
+-	ret = fscontext_alloc_log(fc);
+-	if (ret < 0)
+-		goto err_fc;
++	target = &file->f_path;
++	ret = -EINVAL;
++	if (target->mnt->mnt_root != target->dentry)
++		goto err_file;
+ 
+-	path_put(&target);
+-	return fscontext_create_fd(fc, flags & FSPICK_CLOEXEC ? O_CLOEXEC : 0);
++	ret = fd = kern_configfd_open("mount",
++				      flags & FSPICK_CLOEXEC ? O_CLOEXEC : 0,
++				      CONFIGFD_CMD_RECONFIGURE);
++	if (ret < 0)
++		goto err_file;
++	cp = (struct configfd_param) {
++		.key = "pathfd",
++		.file = file,
++		.cmd = CONFIGFD_SET_FD,
++	};
++	ret = kern_configfd_action(fd, &cp);
++	/* file gets NULL'd if successfully installed otherwise we put */
++	if (cp.file)
++		fput(file);
++	if (ret < 0)
++		goto err_close;
++	return fd;
+ 
+-err_fc:
+-	put_fs_context(fc);
+-err_path:
+-	path_put(&target);
+-err:
++ err_close:
++	ksys_close(fd);
++ err_file:
++	fput(file);
+ 	return ret;
+ }
+ 
+@@ -268,6 +211,161 @@ static int vfs_fsconfig_locked(struct fs_context *fc, int cmd,
+ 	return ret;
+ }
+ 
++static int fsopen_cf_mount_set(const struct configfd_context *icfc,
++			       struct configfd_param *p)
++{
++	struct fs_context *fc;
++	struct path *path;
++	/* cheat: we're going to mutate the context so drop the const */
++	struct configfd_context *cfc = (struct configfd_context *)icfc;
++
++	if (strcmp(p->key, "pathfd") != 0 || p->cmd != CONFIGFD_SET_FD) {
++		logger_err(cfc->log, "must set pathfd before any other parameter");
++		return -EINVAL;
++	}
++	if (cfc->op != CONFIGFD_CMD_RECONFIGURE) {
++		logger_err(cfc->log, "may only be opened for reconfigure");
++		return -EINVAL;
++	}
++
++	path = &p->file->f_path;
++	if (path->mnt->mnt_root != path->dentry) {
++		logger_err(cfc->log, "pathfd must identify a mount point");
++		return -EINVAL;
++	}
++	fc = fs_context_for_reconfigure(path->dentry, 0, 0);
++	if (IS_ERR(fc))
++		return PTR_ERR(fc);
++	fc->phase = FS_CONTEXT_RECONF_PARAMS;
++	/* hacky: reconfigure the cfc so all ops now pass to the
++	 * correct filesystem type */
++	cfc->cft = &path->dentry->d_sb->s_type->cft;
++	/* more hackery: mount type is built in so no module ref, but
++	 * filesystem may be modular, so acquire a reference to the
++	 * module for configfd_free to put later */
++	try_module_get(cfc->cft->owner);
++	cfc->data = fc;
++	fc->cfc = cfc;
++
 +	return 0;
 +}
 +
-+const struct file_operations configfd_context_fops = {
-+	.read		= configfd_read,
-+	.release	= configfd_release,
-+	.llseek		= no_llseek,
-+};
-+
-+static int configfd_create_fd(struct configfd_context *cfc,
-+			      unsigned int flags)
++static int fsopen_cf_set(const struct configfd_context *cfc,
++			 struct configfd_param *p)
 +{
-+	int fd;
-+
-+	fd = anon_inode_getfd("[configfd]", &configfd_context_fops, cfc,
-+			      O_RDWR | flags);
-+	if (fd < 0)
-+		configfd_context_free(cfc);
-+	return fd;
-+}
-+
-+static struct configfd_type **configfd_type_find(const char *name)
-+{
-+	struct configfd_type **c;
-+
-+	for (c = &configfds; *c; c = &(*c)->next) {
-+		if (strcmp((*c)->name, name) == 0)
-+			break;
-+	}
-+
-+	return c;
-+}
-+
-+static struct configfd_type *configfd_type_get(const char *name)
-+{
-+	struct configfd_type *cft;
-+
-+	read_lock(&configfds_lock);
-+	cft = *(configfd_type_find(name));
-+	if (cft && !try_module_get(cft->owner))
-+		cft = NULL;
-+	read_unlock(&configfds_lock);
-+
-+	return cft;
-+}
-+
-+struct configfd_context *configfd_context_alloc(const struct configfd_type *cft,
-+						unsigned int op)
-+{
-+	struct configfd_context *cfc;
-+	struct logger *log;
++	struct fs_context *fc = cfc->data;
 +	int ret;
 +
-+	cfc = kzalloc(sizeof(*cfc) + cft->data_size, GFP_KERNEL);
-+	if (!cfc)
-+		return ERR_PTR(-ENOMEM);
-+
-+	if (cft->data_size)
-+		cfc->data = &cfc[1];
-+
-+	cfc->cft = cft;
-+	cfc->op = op;
-+	log = logger_alloc(cft->owner);
-+	if (IS_ERR(log)) {
-+		ret = PTR_ERR(log);
-+		goto out_free;
-+	}
-+
-+	cfc->log = log;
-+	if (cft->ops->alloc) {
-+		ret = cft->ops->alloc(cfc);
-+		if (ret)
-+			goto out_put;
-+	}
-+
-+	return cfc;
-+ out_put:
-+	logger_put(&cfc->log);
-+ out_free:
-+	kfree(cfc);
-+	return ERR_PTR(ret);
-+}
-+
-+int kern_configfd_open(const char *config_name, unsigned int flags,
-+			unsigned int op)
-+{
-+	const struct configfd_type *cft;
-+	struct configfd_context *cfc;
-+
-+	if (flags & ~O_CLOEXEC)
-+		return -EINVAL;
-+	if (op != CONFIGFD_CMD_CREATE && op != CONFIGFD_CMD_RECONFIGURE)
-+		return -EINVAL;
-+
-+	cft = configfd_type_get(config_name);
-+	if (!cft)
-+		return -ENODEV;
-+	cfc = configfd_context_alloc(cft, op);
-+	if (IS_ERR(cfc)) {
-+		configfd_type_put(cft);
-+		return PTR_ERR(cfc);
-+	}
-+
-+	return configfd_create_fd(cfc, flags);
-+}
-+
-+long ksys_configfd_open(const char __user *_config_name, unsigned int flags,
-+			unsigned int op)
-+{
-+	const char *config_name = strndup_user(_config_name, PAGE_SIZE);
-+	int ret;
-+
-+	if (IS_ERR(config_name))
-+		return PTR_ERR(config_name);
-+	ret = kern_configfd_open(config_name, flags, op);
-+	kfree(config_name);
-+
-+	return ret;
-+}
-+
-+SYSCALL_DEFINE3(configfd_open,
-+		const char __user *, _config_name,
-+		unsigned int, flags,
-+		unsigned int, op)
-+{
-+	return ksys_configfd_open(_config_name, flags, op);
-+}
-+
-+int kern_configfd_action(int fd, struct configfd_param *p)
-+{
-+	struct fd f = fdget(fd);
-+	struct configfd_context *cfc;
-+	const struct configfd_ops *ops;
-+	int ret = -EINVAL;
-+	/* upper 24 bits are available to consumers */
-+	u8 our_cmd = p->cmd & 0xff;
-+
-+	if (!f.file)
-+		return -EBADF;
-+	if (f.file->f_op != &configfd_context_fops)
-+		goto out_f;
-+	cfc = f.file->private_data;
-+
-+	ops = cfc->cft->ops;
-+
-+	/* check allowability */
-+	ret = -EOPNOTSUPP;
-+	switch (our_cmd) {
-+	case CONFIGFD_SET_FLAG:
-+	case CONFIGFD_SET_STRING:
-+	case CONFIGFD_SET_BINARY:
-+	case CONFIGFD_SET_PATH:
-+	case CONFIGFD_SET_PATH_EMPTY:
-+	case CONFIGFD_SET_INT:
-+		if (!ops->set)
-+			goto out_f;
-+		break;
-+	case CONFIGFD_GET_FD:
-+		if (!ops->get)
-+			goto out_f;
-+		break;
-+	case CONFIGFD_CMD_CREATE:
-+	case CONFIGFD_CMD_RECONFIGURE:
-+		if (our_cmd != cfc->op) {
-+			logger_err(cfc->log, "Wrong operation, we were opened for %d", cfc->op);
-+			goto out_f;
-+		}
-+		if (!ops->act)
-+			goto out_f;
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	/*
-+	 * Execute
-+	 */
-+	switch (our_cmd) {
-+	case CONFIGFD_SET_STRING:
-+	case CONFIGFD_SET_BINARY:
-+	case CONFIGFD_SET_PATH:
-+	case CONFIGFD_SET_PATH_EMPTY:
-+	case CONFIGFD_SET_FD:
-+	case CONFIGFD_SET_FLAG:
-+	case CONFIGFD_SET_INT:
-+		ret = ops->set(cfc, p);
-+		break;
-+	case CONFIGFD_GET_FD:
-+		ret = ops->get(cfc, p);
-+		if (ret == 0) {
-+			int fd;
-+
-+			fd = get_unused_fd_flags(p->aux & O_CLOEXEC);
-+			if (fd < 0) {
-+				ret = fd;
-+				break;
-+			}
-+			fd_install(fd, p->file);
-+			p->file = NULL; /* consume the file */
-+			p->aux = fd;
-+		}
-+		break;
-+	case CONFIGFD_CMD_RECONFIGURE:
-+	case CONFIGFD_CMD_CREATE:
-+		ret = ops->act(cfc, p->cmd);
-+		break;
-+	default:
-+		break;
-+	}
-+out_f:
-+	fdput(f);
-+	return ret;
-+}
-+
-+long ksys_configfd_action(int fd, unsigned int cmd, const char __user *_key,
-+			  void __user *_value, int aux)
-+{
-+	struct configfd_param param = {
-+		.cmd = cmd,
++	struct fs_parameter param = {
++		.type	= fs_value_is_undefined,
++		.key	= p->key,
 +	};
-+	u8 our_cmd = cmd & 0xff;
-+	int ret;
 +
-+	/* check parameters required for action */
-+	switch (our_cmd) {
-+	case CONFIGFD_SET_FLAG:
-+		if (!_key || _value || aux)
++	/* parameter we intercept */
++	if (strcmp(p->key, "mount_attrs") == 0 &&
++		   p->cmd == CONFIGFD_SET_INT) {
++		fc->mnt_flags = 0;
++		if (p->aux & ~(MOUNT_ATTR_RDONLY |
++			       MOUNT_ATTR_NOSUID |
++			       MOUNT_ATTR_NODEV |
++			       MOUNT_ATTR_NOEXEC |
++			       MOUNT_ATTR__ATIME |
++			       MOUNT_ATTR_NODIRATIME))
 +			return -EINVAL;
-+		break;
-+	case CONFIGFD_SET_STRING:
-+	case CONFIGFD_GET_FD:
-+		if (!_key || !_value)
++
++		if (p->aux & MOUNT_ATTR_RDONLY)
++			fc->mnt_flags |= MNT_READONLY;
++		if (p->aux & MOUNT_ATTR_NOSUID)
++			fc->mnt_flags |= MNT_NOSUID;
++		if (p->aux & MOUNT_ATTR_NODEV)
++			fc->mnt_flags |= MNT_NODEV;
++		if (p->aux & MOUNT_ATTR_NOEXEC)
++			fc->mnt_flags |= MNT_NOEXEC;
++		if (p->aux & MOUNT_ATTR_NODIRATIME)
++			fc->mnt_flags |= MNT_NODIRATIME;
++
++		switch (p->aux & MOUNT_ATTR__ATIME) {
++		case MOUNT_ATTR_STRICTATIME:
++			break;
++		case MOUNT_ATTR_NOATIME:
++			fc->mnt_flags |= MNT_NOATIME;
++			break;
++		case MOUNT_ATTR_RELATIME:
++			fc->mnt_flags |= MNT_RELATIME;
++			break;
++		default:
 +			return -EINVAL;
-+		break;
-+	case CONFIGFD_SET_BINARY:
-+		if (!_key || !_value || aux <= 0 || aux > 1024 * 1024)
-+			return -EINVAL;
-+		break;
-+	case CONFIGFD_SET_PATH:
-+	case CONFIGFD_SET_PATH_EMPTY:
-+		if (!_key || !_value || (aux != AT_FDCWD && aux < 0))
-+			return -EINVAL;
-+		break;
-+	case CONFIGFD_SET_FD:
-+		if (!_key || _value || aux < 0)
-+			return -EINVAL;
-+		break;
-+	case CONFIGFD_SET_INT:
-+		if (!_key)
-+			return -EINVAL;
-+		break;
-+	case CONFIGFD_CMD_CREATE:
-+	case CONFIGFD_CMD_RECONFIGURE:
-+		if (_key || _value || aux)
-+			return -EINVAL;
-+		break;
-+	default:
-+		return -EOPNOTSUPP;
++		}
++
++		return 0;
 +	}
 +
-+	if (_key) {
-+		param.key = strndup_user(_key, 256);
-+		if (IS_ERR(param.key))
-+			return PTR_ERR(param.key);
++	if (fc->ops == &legacy_fs_context_ops) {
++		switch (p->cmd) {
++		case FSCONFIG_SET_BINARY:
++		case FSCONFIG_SET_PATH:
++		case FSCONFIG_SET_PATH_EMPTY:
++		case FSCONFIG_SET_FD:
++			return -EOPNOTSUPP;
++		default:
++			break;
++		}
 +	}
-+
-+	/* now pull the parameters into the kernel */
-+	switch (our_cmd) {
-+	case CONFIGFD_SET_STRING:
-+		param.string = strndup_user(_value, 256);
-+		if (IS_ERR(param.string)) {
-+			ret = PTR_ERR(param.string);
-+			goto out_key;
-+		}
-+		param.size = strlen(param.string);
++	switch (p->cmd) {
++	case FSCONFIG_SET_FLAG:
++		param.type = fs_value_is_flag;
 +		break;
-+	case CONFIGFD_SET_BINARY:
-+		param.size = aux;
-+		param.blob = memdup_user_nul(_value, aux);
-+		if (IS_ERR(param.blob)) {
-+			ret = PTR_ERR(param.blob);
-+			goto out_key;
-+		}
++	case FSCONFIG_SET_STRING:
++		param.type = fs_value_is_string;
++		param.string = p->string;
++		param.size = p->size;
 +		break;
-+	case CONFIGFD_SET_PATH:
-+		param.name = getname_flags(_value, 0, NULL);
-+		if (IS_ERR(param.name)) {
-+			ret = PTR_ERR(param.name);
-+			goto out_key;
-+		}
-+		param.aux = aux;
-+		param.size = strlen(param.name->name);
++	case FSCONFIG_SET_BINARY:
++		param.type = fs_value_is_blob;
++		param.size = p->size;
++		param.blob = p->blob;
 +		break;
-+	case CONFIGFD_SET_PATH_EMPTY:
-+		param.name = getname_flags(_value, LOOKUP_EMPTY, NULL);
-+		if (IS_ERR(param.name)) {
-+			ret = PTR_ERR(param.name);
-+			goto out_key;
-+		}
-+		param.aux = aux;
-+		param.size = strlen(param.name->name);
++	case FSCONFIG_SET_PATH:
++		param.type = fs_value_is_filename;
++		param.name = p->name;
++		param.dirfd = p->aux;
++		param.size = p->size;
 +		break;
-+	case CONFIGFD_SET_FD:
-+		ret = -EBADF;
-+		param.file = fget_raw(aux);
-+		if (!param.file)
-+			goto out_key;
++	case FSCONFIG_SET_PATH_EMPTY:
++		param.type = fs_value_is_filename_empty;
++		param.name = p->name;
++		param.dirfd = p->aux;
++		param.size = p->size;
 +		break;
-+	case CONFIGFD_SET_INT:
-+		param.aux = aux;
++	case FSCONFIG_SET_FD:
++		param.type = fs_value_is_file;
++		param.file = p->file;
 +		break;
 +	default:
 +		break;
 +	}
-+	ret = kern_configfd_action(fd, &param);
-+	/* clean up unconsumed parameters */
-+	switch (our_cmd) {
-+	case CONFIGFD_SET_STRING:
-+	case CONFIGFD_SET_BINARY:
-+		kfree(param.string);
-+		break;
-+	case CONFIGFD_SET_PATH:
-+	case CONFIGFD_SET_PATH_EMPTY:
-+		if (param.name)
-+			putname(param.name);
-+		break;
-+	case CONFIGFD_GET_FD:
-+		if (!ret)
-+			ret = put_user(param.aux, (int __user *)_value);
-+		/* FALL THROUGH */
-+	case CONFIGFD_SET_FD:
-+		if (param.file)
-+			fput(param.file);
-+		break;
-+	default:
-+		break;
-+	}
-+ out_key:
-+	kfree(param.key);
 +
++	ret = mutex_lock_interruptible(&fc->uapi_mutex);
++	if (ret == 0) {
++		ret = vfs_fsconfig_locked(fc, p->cmd, &param);
++		mutex_unlock(&fc->uapi_mutex);
++	}
 +	return ret;
 +}
 +
-+
-+SYSCALL_DEFINE5(configfd_action,
-+		int, fd, unsigned int, cmd,
-+		const char __user *, _key,
-+		void __user *, _value,
-+		int, aux)
++static int fsopen_cf_act(const struct configfd_context *cfc,
++			 unsigned int cmd)
 +{
++	struct fs_context *fc = cfc->data;
++	int ret = mutex_lock_interruptible(&fc->uapi_mutex);
++
++	if (ret == 0) {
++		ret = vfs_fsconfig_locked(fc, cmd, NULL);
++		mutex_unlock(&fc->uapi_mutex);
++	}
++	return ret;
++}
++
+ /**
+  * sys_fsconfig - Set parameters and trigger actions on a context
+  * @fd: The filesystem context to act upon
+@@ -315,161 +413,50 @@ SYSCALL_DEFINE5(fsconfig,
+ 		int, fd,
+ 		unsigned int, cmd,
+ 		const char __user *, _key,
+-		const void __user *, _value,
++		void __user *, _value,
+ 		int, aux)
+ {
+-	struct fs_context *fc;
+-	struct fd f;
+-	int ret;
 +	return ksys_configfd_action(fd, cmd, _key, _value, aux);
 +}
-+
-+int configfd_type_register(struct configfd_type *cft)
+ 
+-	struct fs_parameter param = {
+-		.type	= fs_value_is_undefined,
+-	};
++static struct configfd_ops fsopen_cf_ops = {
++	.alloc = fsopen_cf_alloc,
++	.free = fsopen_cf_free,
++	.set = fsopen_cf_set,
++	.act = fsopen_cf_act,
++	.get = fsopen_cf_get,
++};
+ 
+-	if (fd < 0)
+-		return -EINVAL;
++static struct configfd_ops fsopen_cf_mount_ops = {
++	.set = fsopen_cf_mount_set,
++};
+ 
+-	switch (cmd) {
+-	case FSCONFIG_SET_FLAG:
+-		if (!_key || _value || aux)
+-			return -EINVAL;
+-		break;
+-	case FSCONFIG_SET_STRING:
+-		if (!_key || !_value || aux)
+-			return -EINVAL;
+-		break;
+-	case FSCONFIG_SET_BINARY:
+-		if (!_key || !_value || aux <= 0 || aux > 1024 * 1024)
+-			return -EINVAL;
+-		break;
+-	case FSCONFIG_SET_PATH:
+-	case FSCONFIG_SET_PATH_EMPTY:
+-		if (!_key || !_value || (aux != AT_FDCWD && aux < 0))
+-			return -EINVAL;
+-		break;
+-	case FSCONFIG_SET_FD:
+-		if (!_key || _value || aux < 0)
+-			return -EINVAL;
+-		break;
+-	case FSCONFIG_CMD_CREATE:
+-	case FSCONFIG_CMD_RECONFIGURE:
+-		if (_key || _value || aux)
+-			return -EINVAL;
+-		break;
+-	default:
+-		return -EOPNOTSUPP;
+-	}
++static struct configfd_type fsopen_mount_type = {
++	.name = "mount",
++	.ops = &fsopen_cf_mount_ops,
++};
+ 
+-	f = fdget(fd);
+-	if (!f.file)
+-		return -EBADF;
+-	ret = -EINVAL;
+-	if (f.file->f_op != &fscontext_fops)
+-		goto out_f;
++int fs_context_register(struct file_system_type *fs)
 +{
-+	int ret = 0;
-+	struct configfd_type **c;
-+
-+	if (WARN(cft->next,
-+		 "BUG: registering already registered configfd_type: %s",
-+		 cft->name))
-+		return -EBUSY;
-+
-+	if (WARN(cft->ops == NULL,
-+		 "BUG: configfd_type has no ops set: %s", cft->name))
-+		return -EINVAL;
-+
-+	if (WARN(cft->ops->alloc && (!cft->ops->free),
-+		 "BUG: if configfd ops alloc is set, free must also be"))
-+		return -EINVAL;
-+
-+	if (WARN(cft->name == NULL || cft->name[0] == '\0',
-+		 "BUG: configfd_type has no name"))
-+		return -EINVAL;
-+
-+	write_lock(&configfds_lock);
-+	c = configfd_type_find(cft->name);
-+	if (WARN(*c, "BUG: configfd_type name already exists: %s",
-+		 cft->name))
-+		ret = -EBUSY;
-+	else
-+		*c = cft;
-+	write_unlock(&configfds_lock);
-+
-+	return ret;
++	int res;
+ 
+-	fc = f.file->private_data;
+-	if (fc->ops == &legacy_fs_context_ops) {
+-		switch (cmd) {
+-		case FSCONFIG_SET_BINARY:
+-		case FSCONFIG_SET_PATH:
+-		case FSCONFIG_SET_PATH_EMPTY:
+-		case FSCONFIG_SET_FD:
+-			ret = -EOPNOTSUPP;
+-			goto out_f;
+-		}
+-	}
++	fs->cft.name = fs->name;
++	fs->cft.ops = &fsopen_cf_ops;
++	fs->cft.owner = fs->owner;
++	res = configfd_type_register(&(fs->cft));
+ 
+-	if (_key) {
+-		param.key = strndup_user(_key, 256);
+-		if (IS_ERR(param.key)) {
+-			ret = PTR_ERR(param.key);
+-			goto out_f;
+-		}
+-	}
++	return res;
 +}
-+
-+void configfd_type_unregister(struct configfd_type *cft)
+ 
+-	switch (cmd) {
+-	case FSCONFIG_SET_FLAG:
+-		param.type = fs_value_is_flag;
+-		break;
+-	case FSCONFIG_SET_STRING:
+-		param.type = fs_value_is_string;
+-		param.string = strndup_user(_value, 256);
+-		if (IS_ERR(param.string)) {
+-			ret = PTR_ERR(param.string);
+-			goto out_key;
+-		}
+-		param.size = strlen(param.string);
+-		break;
+-	case FSCONFIG_SET_BINARY:
+-		param.type = fs_value_is_blob;
+-		param.size = aux;
+-		param.blob = memdup_user_nul(_value, aux);
+-		if (IS_ERR(param.blob)) {
+-			ret = PTR_ERR(param.blob);
+-			goto out_key;
+-		}
+-		break;
+-	case FSCONFIG_SET_PATH:
+-		param.type = fs_value_is_filename;
+-		param.name = getname_flags(_value, 0, NULL);
+-		if (IS_ERR(param.name)) {
+-			ret = PTR_ERR(param.name);
+-			goto out_key;
+-		}
+-		param.dirfd = aux;
+-		param.size = strlen(param.name->name);
+-		break;
+-	case FSCONFIG_SET_PATH_EMPTY:
+-		param.type = fs_value_is_filename_empty;
+-		param.name = getname_flags(_value, LOOKUP_EMPTY, NULL);
+-		if (IS_ERR(param.name)) {
+-			ret = PTR_ERR(param.name);
+-			goto out_key;
+-		}
+-		param.dirfd = aux;
+-		param.size = strlen(param.name->name);
+-		break;
+-	case FSCONFIG_SET_FD:
+-		param.type = fs_value_is_file;
+-		ret = -EBADF;
+-		param.file = fget(aux);
+-		if (!param.file)
+-			goto out_key;
+-		break;
+-	default:
+-		break;
+-	}
++void fs_context_unregister(struct file_system_type *fs)
 +{
-+	struct configfd_type **c;
-+
-+	write_lock(&configfds_lock);
-+	c = configfd_type_find(cft->name);
-+	if (WARN(*c != cft, "BUG: trying to register %s from wrong structure",
-+		 cft->name))
-+		goto out;
-+	*c = cft->next;
-+	cft->next = NULL;
-+ out:
-+	write_unlock(&configfds_lock);
++	configfd_type_unregister(&(fs->cft));
 +}
-diff --git a/include/linux/configfd.h b/include/linux/configfd.h
-new file mode 100644
-index 000000000000..2a2efd7eabe2
---- /dev/null
-+++ b/include/linux/configfd.h
-@@ -0,0 +1,61 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
+ 
+-	ret = mutex_lock_interruptible(&fc->uapi_mutex);
+-	if (ret == 0) {
+-		ret = vfs_fsconfig_locked(fc, cmd, &param);
+-		mutex_unlock(&fc->uapi_mutex);
+-	}
++static int __init fsopen_init(void)
++{
++	configfd_type_register(&fsopen_mount_type);
+ 
+-	/* Clean up the our record of any value that we obtained from
+-	 * userspace.  Note that the value may have been stolen by the LSM or
+-	 * filesystem, in which case the value pointer will have been cleared.
+-	 */
+-	switch (cmd) {
+-	case FSCONFIG_SET_STRING:
+-	case FSCONFIG_SET_BINARY:
+-		kfree(param.string);
+-		break;
+-	case FSCONFIG_SET_PATH:
+-	case FSCONFIG_SET_PATH_EMPTY:
+-		if (param.name)
+-			putname(param.name);
+-		break;
+-	case FSCONFIG_SET_FD:
+-		if (param.file)
+-			fput(param.file);
+-		break;
+-	default:
+-		break;
+-	}
+-out_key:
+-	kfree(param.key);
+-out_f:
+-	fdput(f);
+-	return ret;
++	return 0;
+ }
++fs_initcall(fsopen_init);
+diff --git a/fs/internal.h b/fs/internal.h
+index 315fcd8d237c..e3039de79134 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -91,6 +91,10 @@ extern int __mnt_want_write_file(struct file *);
+ extern void __mnt_drop_write_file(struct file *);
+ 
+ extern void dissolve_on_fput(struct vfsmount *);
 +
-+#ifndef _LINUX_CONFIGFD_H
-+#define _LINUX_CONFIGFD_H
++int fsopen_cf_get(const struct configfd_context *cfc,
++		  struct configfd_param *p);
 +
-+#include <linux/logger.h>
+ /*
+  * fs_struct.c
+  */
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 2adfe7b166a3..13be853e9225 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -30,6 +30,7 @@
+ #include <uapi/linux/mount.h>
+ #include <linux/fs_context.h>
+ #include <linux/shmem_fs.h>
++#include <linux/configfd.h>
+ 
+ #include "pnode.h"
+ #include "internal.h"
+@@ -3365,70 +3366,19 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
+ 	return ksys_mount(dev_name, dir_name, type, flags, data);
+ }
+ 
+-/*
+- * Create a kernel mount representation for a new, prepared superblock
+- * (specified by fs_fd) and attach to an open_tree-like file descriptor.
+- */
+-SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
+-		unsigned int, attr_flags)
++int fsopen_cf_get(const struct configfd_context *cfc,
++			 struct configfd_param *p)
+ {
+ 	struct mnt_namespace *ns;
+-	struct fs_context *fc;
++	struct fs_context *fc = cfc->data;
+ 	struct file *file;
+ 	struct path newmount;
+ 	struct mount *mnt;
+-	struct fd f;
+-	unsigned int mnt_flags = 0;
+ 	long ret;
+ 
+-	if (!may_mount())
+-		return -EPERM;
+-
+-	if ((flags & ~(FSMOUNT_CLOEXEC)) != 0)
++	if (strcmp(p->key, "mountfd") != 0 || p->cmd != CONFIGFD_GET_FD)
+ 		return -EINVAL;
+ 
+-	if (attr_flags & ~(MOUNT_ATTR_RDONLY |
+-			   MOUNT_ATTR_NOSUID |
+-			   MOUNT_ATTR_NODEV |
+-			   MOUNT_ATTR_NOEXEC |
+-			   MOUNT_ATTR__ATIME |
+-			   MOUNT_ATTR_NODIRATIME))
+-		return -EINVAL;
+-
+-	if (attr_flags & MOUNT_ATTR_RDONLY)
+-		mnt_flags |= MNT_READONLY;
+-	if (attr_flags & MOUNT_ATTR_NOSUID)
+-		mnt_flags |= MNT_NOSUID;
+-	if (attr_flags & MOUNT_ATTR_NODEV)
+-		mnt_flags |= MNT_NODEV;
+-	if (attr_flags & MOUNT_ATTR_NOEXEC)
+-		mnt_flags |= MNT_NOEXEC;
+-	if (attr_flags & MOUNT_ATTR_NODIRATIME)
+-		mnt_flags |= MNT_NODIRATIME;
+-
+-	switch (attr_flags & MOUNT_ATTR__ATIME) {
+-	case MOUNT_ATTR_STRICTATIME:
+-		break;
+-	case MOUNT_ATTR_NOATIME:
+-		mnt_flags |= MNT_NOATIME;
+-		break;
+-	case MOUNT_ATTR_RELATIME:
+-		mnt_flags |= MNT_RELATIME;
+-		break;
+-	default:
+-		return -EINVAL;
+-	}
+-
+-	f = fdget(fs_fd);
+-	if (!f.file)
+-		return -EBADF;
+-
+-	ret = -EINVAL;
+-	if (f.file->f_op != &fscontext_fops)
+-		goto err_fsfd;
+-
+-	fc = f.file->private_data;
+-
+ 	ret = mutex_lock_interruptible(&fc->uapi_mutex);
+ 	if (ret < 0)
+ 		goto err_fsfd;
+@@ -3439,7 +3389,7 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
+ 		goto err_unlock;
+ 
+ 	ret = -EPERM;
+-	if (mount_too_revealing(fc->root->d_sb, &mnt_flags)) {
++	if (mount_too_revealing(fc->root->d_sb, &fc->mnt_flags)) {
+ 		pr_warn("VFS: Mount too revealing\n");
+ 		goto err_unlock;
+ 	}
+@@ -3458,7 +3408,7 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
+ 		goto err_unlock;
+ 	}
+ 	newmount.dentry = dget(fc->root);
+-	newmount.mnt->mnt_flags = mnt_flags;
++	newmount.mnt->mnt_flags = fc->mnt_flags;
+ 
+ 	/* We've done the mount bit - now move the file context into more or
+ 	 * less the same state as if we'd done an fspick().  We don't want to
+@@ -3488,23 +3438,56 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
+ 		ret = PTR_ERR(file);
+ 		goto err_path;
+ 	}
++	ret = 0;
+ 	file->f_mode |= FMODE_NEED_UNMOUNT;
+-
+-	ret = get_unused_fd_flags((flags & FSMOUNT_CLOEXEC) ? O_CLOEXEC : 0);
+-	if (ret >= 0)
+-		fd_install(ret, file);
+-	else
+-		fput(file);
++	p->file = file;
+ 
+ err_path:
+ 	path_put(&newmount);
+ err_unlock:
+ 	mutex_unlock(&fc->uapi_mutex);
+ err_fsfd:
+-	fdput(f);
 +
-+#include <uapi/linux/configfd.h>
-+
-+struct configfd_context;
-+
-+struct configfd_param {
-+	const char			*key;
-+	union {
-+		char			*string;
-+		void			*blob;
-+		struct filename		*name;
-+		struct file		*file;
+ 	return ret;
+ }
+ 
++/*
++ * Create a kernel mount representation for a new, prepared superblock
++ * (specified by fs_fd) and attach to an open_tree-like file descriptor.
++ */
++SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
++		unsigned int, attr_flags)
++{
++	int ret;
++	int oflags;
++	struct configfd_param p = {
++		.key = "mount_opts",
++		.cmd = CONFIGFD_SET_INT,
++		.aux = attr_flags,
 +	};
-+	int				aux;
-+	unsigned int			cmd;
-+	size_t				size;
-+};
 +
-+struct configfd_ops {
-+	int (*alloc)(struct configfd_context *cfc);
-+	void (*free)(const struct configfd_context *cfc);
-+	int (*set)(const struct configfd_context *cfc,
-+		   struct configfd_param *p);
-+	int (*get)(const struct configfd_context *cfc,
-+		   struct configfd_param *p);
-+	int (*act)(const struct configfd_context *cfc, unsigned int cmd);
-+};
++	if (!may_mount())
++		return -EPERM;
 +
-+struct configfd_type {
-+	const char		*name;
-+	size_t			data_size;
-+	struct module		*owner;
-+	struct configfd_ops	*ops;
-+	struct configfd_type	*next;
-+};
++	if ((flags & ~(FSMOUNT_CLOEXEC)) != 0)
++		return -EINVAL;
 +
-+struct configfd_context {
-+	const struct configfd_type	*cft;
-+	struct logger			*log;
-+	void				*data;
-+	unsigned int			op;
-+};
++	oflags = (flags & ~(FSMOUNT_CLOEXEC)) ? O_CLOEXEC : 0;
 +
-+int configfd_type_register(struct configfd_type *cft);
-+void configfd_type_unregister(struct configfd_type *cft);
++	ret = kern_configfd_action(fs_fd, &p);
++	if (ret < 0)
++		return ret;
++	p = (struct configfd_param) {
++		.key = "mountfd",
++		.cmd = CONFIGFD_GET_FD,
++		.aux = oflags,
++	};
++	ret = kern_configfd_action(fs_fd, &p);
++	if (ret < 0)
++		return ret;
++	return p.aux;
++}
 +
-+long ksys_configfd_open(const char __user *config_name, unsigned int flags,
-+			unsigned int op);
-+long ksys_configfd_action(int fd, unsigned int cmd, const char __user *key,
-+			  void __user *value, int aux);
-+int kern_configfd_action(int fd, struct configfd_param *p);
-+int kern_configfd_open(const char *name, unsigned int flags,
-+		       unsigned int op);
-+
-+#endif
-diff --git a/include/uapi/linux/configfd.h b/include/uapi/linux/configfd.h
-new file mode 100644
-index 000000000000..3e54cfef0182
---- /dev/null
-+++ b/include/uapi/linux/configfd.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later WITH Linux-syscall-note */
-+
-+#ifndef _UAPI_LINUX_CONFIGFD_H
-+#define _UAPI_LINUX_CONFIGFD_H
-+
-+enum configfd_cmd {
-+	CONFIGFD_SET_FLAG		= 0,
-+	CONFIGFD_SET_STRING		= 1,
-+	CONFIGFD_SET_BINARY		= 2,
-+	CONFIGFD_SET_PATH		= 3,
-+	CONFIGFD_SET_PATH_EMPTY		= 4,
-+	CONFIGFD_SET_FD			= 5,
-+	CONFIGFD_CMD_CREATE		= 6,
-+	CONFIGFD_CMD_RECONFIGURE	= 7,
-+	/* gap for 30 other commands */
-+	CONFIGFD_SET_INT		= 38,
-+	CONFIGFD_GET_FD			= 39,
-+};
-+
-+#endif
+ /*
+  * Move a mount from one place to another.  In combination with
+  * fsopen()/fsmount() this is used to install a new mount and in combination
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index e0d909d35763..51f1408180f5 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2,6 +2,7 @@
+ #ifndef _LINUX_FS_H
+ #define _LINUX_FS_H
+ 
++#include <linux/configfd.h>
+ #include <linux/linkage.h>
+ #include <linux/wait_bit.h>
+ #include <linux/kdev_t.h>
+@@ -2233,6 +2234,7 @@ struct file_system_type {
+ 	struct lock_class_key i_lock_key;
+ 	struct lock_class_key i_mutex_key;
+ 	struct lock_class_key i_mutex_dir_key;
++	struct configfd_type cft;
+ };
+ 
+ #define MODULE_ALIAS_FS(NAME) MODULE_ALIAS("fs-" NAME)
+diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
+index e5c14e2c53d3..83686c0c9fed 100644
+--- a/include/linux/fs_context.h
++++ b/include/linux/fs_context.h
+@@ -97,10 +97,12 @@ struct fs_context {
+ 	const char		*source;	/* The source name (eg. dev path) */
+ 	void			*security;	/* Linux S&M options */
+ 	void			*s_fs_info;	/* Proposed s_fs_info */
++	struct configfd_context	*cfc;
+ 	unsigned int		sb_flags;	/* Proposed superblock flags (SB_*) */
+ 	unsigned int		sb_flags_mask;	/* Superblock flags that were changed */
+ 	unsigned int		s_iflags;	/* OR'd with sb->s_iflags */
+ 	unsigned int		lsm_flags;	/* Information flags from the fs to the LSM */
++	unsigned int		mnt_flags;	/* mnt flags translated from MOUNT_ATTRS */
+ 	enum fs_context_purpose	purpose:8;
+ 	enum fs_context_phase	phase:8;	/* The phase the context is in */
+ 	bool			need_free:1;	/* Need to call ops->free() */
+@@ -134,6 +136,8 @@ extern int vfs_parse_fs_string(struct fs_context *fc, const char *key,
+ extern int generic_parse_monolithic(struct fs_context *fc, void *data);
+ extern int vfs_get_tree(struct fs_context *fc);
+ extern void put_fs_context(struct fs_context *fc);
++extern void fs_context_set_reconfigure(struct fs_context *fc,
++				       struct dentry *reference);
+ 
+ /*
+  * sget() wrappers to be called from the ->get_tree() op.
+@@ -166,24 +170,7 @@ extern int get_tree_keyed(struct fs_context *fc,
+ extern int get_tree_bdev(struct fs_context *fc,
+ 			       int (*fill_super)(struct super_block *sb,
+ 						 struct fs_context *fc));
+-
+-extern const struct file_operations fscontext_fops;
+-
+-/*
+- * Mount error, warning and informational message logging.  This structure is
+- * shareable between a mount and a subordinate mount.
+- */
+-struct fc_log {
+-	refcount_t	usage;
+-	u8		head;		/* Insertion index in buffer[] */
+-	u8		tail;		/* Removal index in buffer[] */
+-	u8		need_free;	/* Mask of kfree'able items in buffer[] */
+-	struct module	*owner;		/* Owner module for strings that don't then need freeing */
+-	char		*buffer[8];
+-};
+-
+-extern __attribute__((format(printf, 2, 3)))
+-void logfc(struct fs_context *fc, const char *fmt, ...);
++#define logfc(fc, fmt, ...) ({ logger_log(fc->cfc->log, fmt, ## __VA_ARGS__); })
+ 
+ /**
+  * infof - Store supplementary informational message
+diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
+index dee140db6240..c41af1b51af6 100644
+--- a/include/linux/fs_parser.h
++++ b/include/linux/fs_parser.h
+@@ -143,5 +143,7 @@ static inline bool fs_validate_description(const struct fs_parameter_description
+ #define fsparam_path(NAME, OPT)	__fsparam(fs_param_is_path, NAME, OPT, 0)
+ #define fsparam_fd(NAME, OPT)	__fsparam(fs_param_is_fd, NAME, OPT, 0)
+ 
++int fs_context_register(struct file_system_type *fs);
++void fs_context_unregister(struct file_system_type *fs);
+ 
+ #endif /* _LINUX_FS_PARSER_H */
 -- 
 2.16.4
 
