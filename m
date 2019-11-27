@@ -2,49 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 789E110BFB6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 22:45:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BDCA10BF90
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 22:45:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727927AbfK0Ufk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Nov 2019 15:35:40 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:57218 "EHLO
+        id S1727805AbfK0UiK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Nov 2019 15:38:10 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:57298 "EHLO
         bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727923AbfK0Ufj (ORCPT
+        by vger.kernel.org with ESMTP id S1728683AbfK0UiG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:35:39 -0500
+        Wed, 27 Nov 2019 15:38:06 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 0714F8EE133;
-        Wed, 27 Nov 2019 12:35:39 -0800 (PST)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 492818EE133;
+        Wed, 27 Nov 2019 12:38:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1574886939;
-        bh=sqpDdZVPTASvDTc+oSNhQ8+T74MGd++49IFLfDf/b4w=;
+        s=20151216; t=1574887086;
+        bh=QIZNCMB80ftV5d1UinGrc84GdeVRvJxclpCio76u7Fs=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ws5Szq8q6CAQditQz/KuTwMI189Vz268k+s8cIlMFyQ1ibJpAOyVU91GwaMUTwAms
-         II5difeFGszysQ9sIsvBLohqZhfun1/dAmpTt3hcyWOtJxaeY1HYnn4chxAb5Z4dGd
-         fPBbwCArD/ID6wIMkNmr4Q4SpeqSbAHkEsl0RUS8=
+        b=MqMylRWuTLs5KGzMrrmTGLUmshusbHt/kUF3atlBjUcIf3/YYcO+MncpS9pfEeQkm
+         gf0jBq9aA1A46fXJxdm3vnfhS64RTu1vsPdeyikmFMrWPoRHR+2JdLRpK3hh/4LNkV
+         DuN98tcYqy4QX//1bh8qQbfifymZc/q/m9PM4950=
 Received: from bedivere.hansenpartnership.com ([127.0.0.1])
         by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id n-TKmYVEdNKZ; Wed, 27 Nov 2019 12:35:38 -0800 (PST)
+        with ESMTP id zK_TOr3ZYZN7; Wed, 27 Nov 2019 12:38:06 -0800 (PST)
 Received: from jarvis.lan (unknown [50.35.76.230])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 8D3CE8EE130;
-        Wed, 27 Nov 2019 12:35:38 -0800 (PST)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id DA8428EE130;
+        Wed, 27 Nov 2019 12:38:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1574886938;
-        bh=sqpDdZVPTASvDTc+oSNhQ8+T74MGd++49IFLfDf/b4w=;
+        s=20151216; t=1574887086;
+        bh=QIZNCMB80ftV5d1UinGrc84GdeVRvJxclpCio76u7Fs=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=l5U0S/8VEi8jSGiJPmWrxwPIt/oenIwLB5Q0J7mMCeSUxZC+niJJHSgvwZ121vco7
-         noDTDYG8JyGPdWVaUDVkN3Q+Q5Evzowt0hy5A0TQKdgQRQuFVKMCa97UEomhZW0hWU
-         yupvGD8zHXWKYkcCZrla/FHMq+zg0HasRXmXxuwk=
-Message-ID: <1574886937.21593.10.camel@HansenPartnership.com>
-Subject: [RFC 3/6] configfd: syscall: wire up configfd syscalls
+        b=MqMylRWuTLs5KGzMrrmTGLUmshusbHt/kUF3atlBjUcIf3/YYcO+MncpS9pfEeQkm
+         gf0jBq9aA1A46fXJxdm3vnfhS64RTu1vsPdeyikmFMrWPoRHR+2JdLRpK3hh/4LNkV
+         DuN98tcYqy4QX//1bh8qQbfifymZc/q/m9PM4950=
+Message-ID: <1574887085.21593.13.camel@HansenPartnership.com>
+Subject: [RFC 6/6] fs: bind: add configfs type for bind mounts
 From:   James Bottomley <James.Bottomley@HansenPartnership.com>
 To:     David Howells <dhowells@redhat.com>,
         Christian Brauner <christian@brauner.io>
 Cc:     linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
         Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 27 Nov 2019 12:35:37 -0800
+Date:   Wed, 27 Nov 2019 12:38:05 -0800
 In-Reply-To: <1574886778.21593.7.camel@HansenPartnership.com>
 References: <1574295100.17153.25.camel@HansenPartnership.com>
          <17268.1574323839@warthog.procyon.org.uk>
@@ -59,258 +59,254 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+This can do the equivalent of open_tree and also do bind mount
+reconfiguration from ro to rw and vice versa.
+
+To get the equvalent of open tree you need to do
+
+   mnt = open("/path/to/tree", O_PATH);
+   fd = configfs_open(bind, O_CLOEXEC);
+   configfs_action(fd, CONFIGFD_SET_FD, "pathfd", NULL, mnt);
+   configfs_action(fd, CONFIGFD_SET_FLAG, "detached", NULL, 0);
+   configfs_action(fd, CONFIGFD_SET_FLAG, "recursive", NULL, 0);
+   configfs_action(fd, CONFIGFD_CMD_CREATE, NULL, NULL, 0);
+   configfs_action(fd, CONFIGFD_GET_FD, "bindfd", &bfd, NULL, O_CLOEXEC);
+
+And bfd will now contain the file descriptor to pass to move_tree.
+There is a deficiency over the original implementation in that the
+open system call has no way of clearing the LOOKUP_AUTOMOUNT path, but
+that's fixable.
+
+To do a mount reconfigure to change the bind mount to readonly do
+
+   mnt = open("/path/to/tree", O_PATH);
+   fd = configfs_open(bind, O_CLOEXEC);
+   configfs_action(fd, CONFIGFD_SET_FD, "pathfd", NULL, mnt);
+   configfs_action(fd, CONFIGFD_SET_FLAG, "ro", NULL, 0);
+   configfs_action(fd, CONFIGFD_CMD_RECONFIGURE, NULL, NULL, 0);
+
+And the bind properties will be changed.  You can also pass the "rw"
+flag to reset the read only.
+
 Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
 ---
- arch/alpha/kernel/syscalls/syscall.tbl      | 2 ++
- arch/arm/tools/syscall.tbl                  | 2 ++
- arch/arm64/include/asm/unistd.h             | 2 +-
- arch/arm64/include/asm/unistd32.h           | 4 ++++
- arch/ia64/kernel/syscalls/syscall.tbl       | 2 ++
- arch/m68k/kernel/syscalls/syscall.tbl       | 2 ++
- arch/microblaze/kernel/syscalls/syscall.tbl | 2 ++
- arch/mips/kernel/syscalls/syscall_n32.tbl   | 2 ++
- arch/mips/kernel/syscalls/syscall_n64.tbl   | 2 ++
- arch/mips/kernel/syscalls/syscall_o32.tbl   | 2 ++
- arch/parisc/kernel/syscalls/syscall.tbl     | 2 ++
- arch/powerpc/kernel/syscalls/syscall.tbl    | 2 ++
- arch/s390/kernel/syscalls/syscall.tbl       | 2 ++
- arch/sh/kernel/syscalls/syscall.tbl         | 2 ++
- arch/sparc/kernel/syscalls/syscall.tbl      | 2 ++
- arch/x86/entry/syscalls/syscall_32.tbl      | 2 ++
- arch/x86/entry/syscalls/syscall_64.tbl      | 2 ++
- arch/xtensa/kernel/syscalls/syscall.tbl     | 2 ++
- include/linux/syscalls.h                    | 5 +++++
- include/uapi/asm-generic/unistd.h           | 7 ++++++-
- 20 files changed, 48 insertions(+), 2 deletions(-)
+ fs/Makefile |   2 +-
+ fs/bind.c   | 193 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 194 insertions(+), 1 deletion(-)
+ create mode 100644 fs/bind.c
 
-diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-index 728fe028c02c..eb13483c2867 100644
---- a/arch/alpha/kernel/syscalls/syscall.tbl
-+++ b/arch/alpha/kernel/syscalls/syscall.tbl
-@@ -475,3 +475,5 @@
- 543	common	fspick				sys_fspick
- 544	common	pidfd_open			sys_pidfd_open
- # 545 reserved for clone3
-+546	common	configfd_open			configfd_open
-+547	common	configfd_action			configfd_action
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index 6da7dc4d79cc..024ae0ca80d1 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -449,3 +449,5 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 435	common	clone3				sys_clone3
-+436	common	configfd_open			sys_configfd_open
-+437	common	configfd_action			sys_configfd_action
-diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-index 2629a68b8724..8aa00ccb0b96 100644
---- a/arch/arm64/include/asm/unistd.h
-+++ b/arch/arm64/include/asm/unistd.h
-@@ -38,7 +38,7 @@
- #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
- #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
+diff --git a/fs/Makefile b/fs/Makefile
+index 569563f6c0d5..c676ca15c644 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -14,7 +14,7 @@ obj-y :=	open.o read_write.o file_table.o super.o \
+ 		pnode.o splice.o sync.o utimes.o d_path.o \
+ 		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
+ 		fs_types.o fs_context.o fs_parser.o fsopen.o \
+-		configfd.o
++		configfd.o bind.o
  
--#define __NR_compat_syscalls		436
-+#define __NR_compat_syscalls		438
- #endif
- 
- #define __ARCH_WANT_SYS_CLONE
-diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-index 94ab29cf4f00..785fc47ede34 100644
---- a/arch/arm64/include/asm/unistd32.h
-+++ b/arch/arm64/include/asm/unistd32.h
-@@ -879,6 +879,10 @@ __SYSCALL(__NR_fspick, sys_fspick)
- __SYSCALL(__NR_pidfd_open, sys_pidfd_open)
- #define __NR_clone3 435
- __SYSCALL(__NR_clone3, sys_clone3)
-+#define __NR_configfd_open 436
-+__SYSCALL(__NR_configfd_open, sys_configfd_open)
-+#define __NR_configfd_action 437
-+__SYSCALL(__NR_configfd_action, sys_configfd_action)
- 
- /*
-  * Please add new compat syscalls above this comment and update
-diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
-index 36d5faf4c86c..9679b0e06dea 100644
---- a/arch/ia64/kernel/syscalls/syscall.tbl
-+++ b/arch/ia64/kernel/syscalls/syscall.tbl
-@@ -356,3 +356,5 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- # 435 reserved for clone3
-+436	common	configfd_open			sys_configfd_open
-+437	common	configfd_action			sys_configfd_action
-diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-index a88a285a0e5f..a78740ac8285 100644
---- a/arch/m68k/kernel/syscalls/syscall.tbl
-+++ b/arch/m68k/kernel/syscalls/syscall.tbl
-@@ -435,3 +435,5 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- # 435 reserved for clone3
-+436	common	configfd_open			sys_configfd_open
-+437	common	configfd_action			sys_configfd_action
-diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-index 09b0cd7dab0a..c0ae38557315 100644
---- a/arch/microblaze/kernel/syscalls/syscall.tbl
-+++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-@@ -441,3 +441,5 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 435	common	clone3				sys_clone3
-+436	common	configfd_open			sys_configfd_open
-+437	common	configfd_action			sys_configfd_action
-diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-index e7c5ab38e403..8a85da0a2fe5 100644
---- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-@@ -374,3 +374,5 @@
- 433	n32	fspick				sys_fspick
- 434	n32	pidfd_open			sys_pidfd_open
- 435	n32	clone3				__sys_clone3
-+436	n32	configfd_open			sys_configfd_open
-+437	n32	configfd_action			sys_configfd_action
-diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
-index 13cd66581f3b..cafd5c2cf6f4 100644
---- a/arch/mips/kernel/syscalls/syscall_n64.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
-@@ -350,3 +350,5 @@
- 433	n64	fspick				sys_fspick
- 434	n64	pidfd_open			sys_pidfd_open
- 435	n64	clone3				__sys_clone3
-+436	n64	configfd_open			sys_configfd_open
-+437	n64	configfd_action			sys_configfd_action
-diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-index 353539ea4140..8745d12c06c4 100644
---- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-@@ -423,3 +423,5 @@
- 433	o32	fspick				sys_fspick
- 434	o32	pidfd_open			sys_pidfd_open
- 435	o32	clone3				__sys_clone3
-+436	o32	configfd_open			sys_configfd_open
-+437	o32	configfd_action			sys_configfd_action
-diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-index 285ff516150c..fad358f6c107 100644
---- a/arch/parisc/kernel/syscalls/syscall.tbl
-+++ b/arch/parisc/kernel/syscalls/syscall.tbl
-@@ -433,3 +433,5 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 435	common	clone3				sys_clone3_wrapper
-+436	common	configfd_open			sys_configfd_open
-+437	common	configfd_action			sys_configfd_action
-diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-index 43f736ed47f2..2fa485b229fa 100644
---- a/arch/powerpc/kernel/syscalls/syscall.tbl
-+++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-@@ -517,3 +517,5 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 435	nospu	clone3				ppc_clone3
-+436	common	configfd_open			sys_configfd_open
-+437	common	configfd_action			sys_configfd_action
-diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-index 3054e9c035a3..e6401600f8e9 100644
---- a/arch/s390/kernel/syscalls/syscall.tbl
-+++ b/arch/s390/kernel/syscalls/syscall.tbl
-@@ -438,3 +438,5 @@
- 433  common	fspick			sys_fspick			sys_fspick
- 434  common	pidfd_open		sys_pidfd_open			sys_pidfd_open
- 435  common	clone3			sys_clone3			sys_clone3
-+436  common	configfd_open		sys_configfd_open		sys_configfd_open
-+437  common	configfd_action		sys_configfd_action		sys_configfd_action
-diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-index b5ed26c4c005..d97009f75bf9 100644
---- a/arch/sh/kernel/syscalls/syscall.tbl
-+++ b/arch/sh/kernel/syscalls/syscall.tbl
-@@ -438,3 +438,5 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- # 435 reserved for clone3
-+436	common	configfd_open			sys_configfd_open
-+437	common	configfd_action			sys_configfd_action
-diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-index 8c8cc7537fb2..d899bcef3279 100644
---- a/arch/sparc/kernel/syscalls/syscall.tbl
-+++ b/arch/sparc/kernel/syscalls/syscall.tbl
-@@ -481,3 +481,5 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- # 435 reserved for clone3
-+436	common	configfd_open			sys_configfd_open
-+437	common	configfd_action			sys_configfd_action
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 3fe02546aed3..077cdd659227 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -440,3 +440,5 @@
- 433	i386	fspick			sys_fspick			__ia32_sys_fspick
- 434	i386	pidfd_open		sys_pidfd_open			__ia32_sys_pidfd_open
- 435	i386	clone3			sys_clone3			__ia32_sys_clone3
-+436	i386	configfd_open		sys_configfd_open		__ia32_sys_configfd_open
-+437	i386	configfd_action		sys_configfd_action		__ia32_sys_configfd_action
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index c29976eca4a8..e5d24b9ed28c 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -357,6 +357,8 @@
- 433	common	fspick			__x64_sys_fspick
- 434	common	pidfd_open		__x64_sys_pidfd_open
- 435	common	clone3			__x64_sys_clone3/ptregs
-+436	common	configfd_open		__x64_sys_configfd_open
-+437	common	configfd_action		__x64_sys_configfd_action
- 
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-index 25f4de729a6d..77ec1f6997e4 100644
---- a/arch/xtensa/kernel/syscalls/syscall.tbl
-+++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-@@ -406,3 +406,5 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 435	common	clone3				sys_clone3
-+436	common	configfd_open			sys_configfd_open
-+437	common	configfd_action			sys_configfd_action
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index f7c561c4dcdd..9dd70803e2b1 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -1000,6 +1000,11 @@ asmlinkage long sys_fspick(int dfd, const char __user *path, unsigned int flags)
- asmlinkage long sys_pidfd_send_signal(int pidfd, int sig,
- 				       siginfo_t __user *info,
- 				       unsigned int flags);
-+asmlinkage long sys_configfd_open(const char __user *config_name,
-+				  unsigned int flags, unsigned int op);
-+asmlinkage long sys_configfd_action(int fd, unsigned int cmd,
-+				    const char __user *key, void __user *value,
-+				    int aux);
- 
- /*
-  * Architecture-specific system calls
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index 1fc8faa6e973..6ae20cdfb081 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -849,10 +849,15 @@ __SYSCALL(__NR_pidfd_open, sys_pidfd_open)
- #ifdef __ARCH_WANT_SYS_CLONE3
- #define __NR_clone3 435
- __SYSCALL(__NR_clone3, sys_clone3)
+ ifeq ($(CONFIG_BLOCK),y)
+ obj-y +=	buffer.o block_dev.o direct-io.o mpage.o
+diff --git a/fs/bind.c b/fs/bind.c
+new file mode 100644
+index 000000000000..905572c70260
+--- /dev/null
++++ b/fs/bind.c
+@@ -0,0 +1,193 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/* Dummy configfd handler for doing context based configuration
++ * on bind mounts
++ *
++ * Copyright (C) James.Bottomley@HansenPartnership.com
++ */
 +
- #endif
-+#define __NR_configfd_open 436
-+__SYSCALL(__NR_configfd_open, sys_configfd_open)
-+#define __NR_configfd_action 437
-+__SYSCALL(__NR_configfd_action, sys_configfd_action)
- 
- #undef __NR_syscalls
--#define __NR_syscalls 436
-+#define __NR_syscalls 438
- 
- /*
-  * 32 bit systems traditionally used different
++#include <linux/configfd.h>
++#include <linux/file.h>
++#include <linux/fs.h>
++#include <linux/mount.h>
++#include <linux/nsproxy.h>
++
++#include "internal.h"
++#include "mount.h"
++
++struct bind_data {
++	bool		ro:1;
++	bool		detached:1;
++	bool		recursive:1;
++	struct file	*file;
++	struct file	*retfile;
++};
++
++struct bind_data *to_bind_data(const struct configfd_context *cfc)
++{
++	return cfc->data;
++}
++
++static int bind_set_fd(const struct configfd_context *cfc,
++		       struct configfd_param *p)
++{
++	struct bind_data *bd = to_bind_data(cfc);
++	struct path *path;
++
++	if (strcmp(p->key, "pathfd") != 0)
++		return -EINVAL;
++
++	path = &p->file->f_path;
++
++	if (cfc->op == CONFIGFD_CMD_RECONFIGURE &&
++	    path->mnt->mnt_root != path->dentry) {
++		logger_err(cfc->log, "pathfd must be a bind mount");
++		return -EINVAL;
++	}
++	bd->file = p->file;
++	p->file = NULL;	/* we now own */
++	return 0;
++}
++
++static int bind_set_flag(const struct configfd_context *cfc,
++			 struct configfd_param *p)
++{
++	struct bind_data *bd = to_bind_data(cfc);
++
++	if (strcmp(p->key, "ro") == 0 &&
++	    cfc->op == CONFIGFD_CMD_RECONFIGURE) {
++		bd->ro = true;
++	} else if (strcmp(p->key, "rw") == 0 &&
++		   cfc->op == CONFIGFD_CMD_RECONFIGURE) {
++		bd->ro = false;
++	} else if (strcmp(p->key, "recursive") == 0 &&
++		   cfc->op == CONFIGFD_CMD_CREATE) {
++		bd->recursive = true;
++	} else if (strcmp(p->key, "detached") == 0 &&
++		   cfc->op == CONFIGFD_CMD_CREATE) {
++		if (!ns_capable(current->nsproxy->mnt_ns->user_ns,
++				CAP_SYS_ADMIN)) {
++			logger_err(cfc->log, "bind set: insufficient permission for detached tree");
++			return -EPERM;
++		}
++		bd->detached = true;
++	} else {
++		logger_err(cfc->log, "bind set: invalid flag %s", p->key);
++		return -EINVAL;
++	}
++	return 0;
++}
++static int bind_set(const struct configfd_context *cfc,
++		    struct configfd_param *p)
++{
++	switch (p->cmd) {
++	case CONFIGFD_SET_FLAG:
++		return bind_set_flag(cfc, p);
++	case CONFIGFD_SET_FD:
++		return bind_set_fd(cfc, p);
++	default:
++		logger_err(cfc->log, "bind only takes a flag or fd argument");
++		return -EINVAL;
++	}
++}
++
++static int bind_get(const struct configfd_context *cfc,
++		    struct configfd_param *p)
++{
++	struct bind_data *bd = to_bind_data(cfc);
++
++	if (strcmp(p->key, "bindfd") != 0 || p->cmd != CONFIGFD_GET_FD)
++		return -EINVAL;
++
++	if (!bd->retfile)
++		return -EINVAL;
++
++	p->file = bd->retfile;
++	bd->retfile = NULL;
++
++	return 0;
++}
++
++static int bind_reconfigure(const struct configfd_context *cfc)
++{
++	struct bind_data *bd = to_bind_data(cfc);
++	unsigned int mnt_flags = 0;
++
++	if (!bd->file) {
++		logger_err(cfc->log, "bind reconfigure: fd must be set");
++		return -EINVAL;
++	}
++	if (bd->ro)
++		mnt_flags |= MNT_READONLY;
++
++	return do_reconfigure_mnt(&bd->file->f_path, mnt_flags);
++}
++
++static int bind_create(const struct configfd_context *cfc)
++{
++	struct bind_data *bd = to_bind_data(cfc);
++	struct path *p;
++	struct file *f;
++
++	if (!bd->file) {
++		logger_err(cfc->log, "bind create: fd must be set");
++		return -EINVAL;
++	}
++	if (bd->recursive && !bd->detached) {
++		logger_err(cfc->log, "bind create: recursive cannot be set without detached");
++		return -EINVAL;
++	}
++
++	p = &bd->file->f_path;
++
++	if (bd->detached)
++		f = open_detached_copy(p, bd->recursive);
++	else
++		f = dentry_open(p, O_PATH, current_cred());
++	if (IS_ERR(f))
++		return PTR_ERR(f);
++
++	bd->retfile = f;
++	return 0;
++}
++
++static int bind_act(const struct configfd_context *cfc, unsigned int cmd)
++{
++	switch (cmd) {
++	case CONFIGFD_CMD_RECONFIGURE:
++		return bind_reconfigure(cfc);
++	case CONFIGFD_CMD_CREATE:
++		return bind_create(cfc);
++	default:
++		logger_err(cfc->log, "bind only responds to reconfigure or create actions");
++		return -EINVAL;
++	}
++}
++
++static void bind_free(const struct configfd_context *cfc)
++{
++	struct bind_data *bd = to_bind_data(cfc);
++
++	if (bd->file)
++		fput(bd->file);
++}
++
++static struct configfd_ops bind_type_ops = {
++	.free = bind_free,
++	.get = bind_get,
++	.set = bind_set,
++	.act = bind_act,
++};
++
++static struct configfd_type bind_type = {
++	.name		= "bind",
++	.ops		= &bind_type_ops,
++	.data_size	= sizeof(struct bind_data),
++};
++
++static int __init bind_setup(void)
++{
++	configfd_type_register(&bind_type);
++
++	return 0;
++}
++fs_initcall(bind_setup);
 -- 
 2.16.4
 
