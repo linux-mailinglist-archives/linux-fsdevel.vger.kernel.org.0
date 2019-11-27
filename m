@@ -2,108 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5390E10B7D5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 21:37:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B3BB10B95B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 21:52:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727641AbfK0UhX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Nov 2019 15:37:23 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:57270 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728167AbfK0UhW (ORCPT
+        id S1730593AbfK0UwW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Nov 2019 15:52:22 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:51515 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730596AbfK0UwV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:37:22 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 440608EE133;
-        Wed, 27 Nov 2019 12:37:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1574887042;
-        bh=bRDcnN7yw64KKmiz+v8oSaprM7jS6fqRB+bRIuxPcJg=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ecltZKHUqnU/Yf3+urIiGIQsJrCkgFBcLViP4+8HL6EtWTisGjf6/wypXeVjAjq23
-         fUMoClOu1a2Jvl143DAeI9yiYMovKk8+c3ZonQfeS8TOJ7rum3I/UQa2T9mypzQ7Kc
-         me1IfYgIfEnjT/Am54Mr4L0dVut7R8N+aCqVWyN4=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id m5X-ICHApB_h; Wed, 27 Nov 2019 12:37:22 -0800 (PST)
-Received: from jarvis.lan (unknown [50.35.76.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id BCA9D8EE130;
-        Wed, 27 Nov 2019 12:37:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1574887042;
-        bh=bRDcnN7yw64KKmiz+v8oSaprM7jS6fqRB+bRIuxPcJg=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ecltZKHUqnU/Yf3+urIiGIQsJrCkgFBcLViP4+8HL6EtWTisGjf6/wypXeVjAjq23
-         fUMoClOu1a2Jvl143DAeI9yiYMovKk8+c3ZonQfeS8TOJ7rum3I/UQa2T9mypzQ7Kc
-         me1IfYgIfEnjT/Am54Mr4L0dVut7R8N+aCqVWyN4=
-Message-ID: <1574887041.21593.12.camel@HansenPartnership.com>
-Subject: [RFC 5/6] fs: expose internal interfaces open_detached_copy and
- do_reconfigure_mount
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     David Howells <dhowells@redhat.com>,
-        Christian Brauner <christian@brauner.io>
-Cc:     linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 27 Nov 2019 12:37:21 -0800
-In-Reply-To: <1574886778.21593.7.camel@HansenPartnership.com>
-References: <1574295100.17153.25.camel@HansenPartnership.com>
-         <17268.1574323839@warthog.procyon.org.uk>
-         <1574352920.3277.18.camel@HansenPartnership.com>
-         <1574886778.21593.7.camel@HansenPartnership.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 27 Nov 2019 15:52:21 -0500
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id C6A41227BA;
+        Wed, 27 Nov 2019 15:52:20 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Wed, 27 Nov 2019 15:52:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=from
+        :to:cc:subject:references:date:in-reply-to:message-id
+        :mime-version:content-type:content-transfer-encoding; s=fm1; bh=
+        V0nvbw8WupJOsKEB+UWGp4IdWzQhYIZ2S+3nnXpSNeU=; b=UqD+YE72uKeDOGtV
+        J88ybhO5cDKXxNtFffy8Q2AaN67/FbopNXNFhSrHrBcAuj2d68lhRns1ioPqOqok
+        a1mQtbgmC/E8zALXGD84+5Q6VXbPKT8rbwT3EXTo+MDkFvbghGmNQ4hh7dem14cG
+        9f+0fFtpZ0bhdkb+harmobbShWkYc4+BoVi5NOiXNoaWSqqgw+pXdo2MaR2uTZnM
+        mA/j4qVusHv2Oa5HR4McOiIuW4GoC4CEAsoFfFhtp6HjjoWAn6ULFVjguj3GWfQt
+        KmBu5jIps6WEiod/L2GL5dYaILnJ8787786qGdWNnzzYIxy2MAGsw+46A2Jpktt9
+        C3fWiQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=V0nvbw8WupJOsKEB+UWGp4IdWzQhYIZ2S+3nnXpSN
+        eU=; b=vJwGywUmenFrYeVTix8SPcSQe15Ch7li2MGJzWIEVxmlvCulWsp5Fzdtj
+        eixLX6i5lXX1SuJeP4KmSaCvttdMm+4fjlpw5pqJbpHe9dsgYCwt7SNpCgbwY1EN
+        k90soD+/BepH5jAzG9YJ1puCU0CA4zui7qMOo3thQcBc1IXeZe6XXjUNJaHH6N0H
+        qzANaFzh0N2TxcBZXG9NA1Ji9yayQCuqiSEtkF8MW8eOu1MhL9n643OdFS5ljtky
+        GVBfMeuUoh+CLSFx1DtU85mT1w3Je0562oLjYCqJXT4OIMPAZcmZOHZMJWu3NbY2
+        eecC0OurqY0XLoS9PZknv8cIu67pQ==
+X-ME-Sender: <xms:BOLeXdZb4j-TtnZsNJnaYgwC-qUIKANVGPSBDuQ9HMp_wijve6uNHA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudeihedgudegtdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefhvffufhffjgfkfgggtgfgsehtqhdttddtreejnecuhfhrohhmpefpihhk
+    ohhlrghushcutfgrthhhuceopfhikhholhgruhhssehrrghthhdrohhrgheqnecukfhppe
+    dukeehrdefrdelgedrudelgeenucfrrghrrghmpehmrghilhhfrhhomheppfhikhholhgr
+    uhhssehrrghthhdrohhrghenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:BOLeXXV8LN9ZAzuepSK7Rj8ONk-vA9IGp2aKIMUZCnoAdZCYAM4EbQ>
+    <xmx:BOLeXYJwZoxc2ABd2DmIGMThlUvvI1kvncVwEmBP2Ys3F1Dng3kUtQ>
+    <xmx:BOLeXadXhOGXY3L9xGWqBErA3e4d_3VnNWr32fmHDxiYnEfIlaf4bg>
+    <xmx:BOLeXdsImfE1E-5Z0YI6Ioep7GypL8POoAs8sUfS8BrV0f9dp8SPQw>
+Received: from ebox.rath.org (ebox.rath.org [185.3.94.194])
+        by mail.messagingengine.com (Postfix) with ESMTPA id DF1B83060060;
+        Wed, 27 Nov 2019 15:52:19 -0500 (EST)
+Received: from vostro.rath.org (vostro [192.168.12.4])
+        by ebox.rath.org (Postfix) with ESMTPS id E6EB945;
+        Wed, 27 Nov 2019 20:52:18 +0000 (UTC)
+Received: by vostro.rath.org (Postfix, from userid 1000)
+        id AFD63E1E90; Wed, 27 Nov 2019 20:52:18 +0000 (GMT)
+From:   Nikolaus Rath <Nikolaus@rath.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     fuse-devel <fuse-devel@lists.sourceforge.net>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [fuse-devel] Handling of 32/64 bit off_t by getdents64()
+References: <8736e9d5p4.fsf@vostro.rath.org>
+        <CAJfpegtOf6mV4m3W1v2N8eOD-ep=tFOhKDCFk+-M3=tzc7wVig@mail.gmail.com>
+Mail-Copies-To: never
+Mail-Followup-To: Miklos Szeredi <miklos@szeredi.hu>, fuse-devel
+        <fuse-devel@lists.sourceforge.net>, linux-fsdevel
+        <linux-fsdevel@vger.kernel.org>
+Date:   Wed, 27 Nov 2019 20:52:18 +0000
+In-Reply-To: <CAJfpegtOf6mV4m3W1v2N8eOD-ep=tFOhKDCFk+-M3=tzc7wVig@mail.gmail.com>
+        (Miklos Szeredi's message of "Wed, 27 Nov 2019 15:30:30 +0100")
+Message-ID: <87muchyrct.fsf@vostro.rath.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-These are needed for the forthcoming bind configure type to work.
+On Nov 27 2019, Miklos Szeredi <miklos@szeredi.hu> wrote:
+>> Is there a way for a 64 bit process (in this case the FUSE daemon) to
+>> ask for 32 bit d_off values from getdents64()?
+>
+> Looking at ext4 d_off encoding, it looks like the simple workaround is
+> to use the *high* 32 bits of the offset.
+>
+> Just tried, and this works.  The lower bits are the "minor" number of
+> the offset, and no issue with zeroing those bits out, other than
+> increasing the chance of hash collision from practically zero to very
+> close to zero.
+>
+>> Would it be feasible to extend the FUSE protocol to include information
+>> about the available bits in d_off?
+>
+> Yes.
+>
+> The relevant bits from ext4 are:
+>
+> static inline int is_32bit_api(void)
+> {
+> #ifdef CONFIG_COMPAT
+>     return in_compat_syscall();
+> #else
+>     return (BITS_PER_LONG =3D=3D 32);
+> #endif
+> }
 
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
----
- fs/internal.h  | 3 +++
- fs/namespace.c | 4 ++--
- 2 files changed, 5 insertions(+), 2 deletions(-)
+Thanks for the quick response!
 
-diff --git a/fs/internal.h b/fs/internal.h
-index e3039de79134..f27136058d7d 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -95,6 +95,9 @@ extern void dissolve_on_fput(struct vfsmount *);
- int fsopen_cf_get(const struct configfd_context *cfc,
- 		  struct configfd_param *p);
- 
-+extern int do_reconfigure_mnt(struct path *path, unsigned int mnt_flags);
-+extern struct file *open_detached_copy(struct path *path, bool recursive);
-+
- /*
-  * fs_struct.c
-  */
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 13be853e9225..9dcbafe62e4e 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2318,7 +2318,7 @@ static int do_loopback(struct path *path, const char *old_name,
- 	return err;
- }
- 
--static struct file *open_detached_copy(struct path *path, bool recursive)
-+struct file *open_detached_copy(struct path *path, bool recursive)
- {
- 	struct user_namespace *user_ns = current->nsproxy->mnt_ns->user_ns;
- 	struct mnt_namespace *ns = alloc_mnt_ns(user_ns, true);
-@@ -2494,7 +2494,7 @@ static void mnt_warn_timestamp_expiry(struct path *mountpoint, struct vfsmount *
-  * superblock it refers to.  This is triggered by specifying MS_REMOUNT|MS_BIND
-  * to mount(2).
-  */
--static int do_reconfigure_mnt(struct path *path, unsigned int mnt_flags)
-+int do_reconfigure_mnt(struct path *path, unsigned int mnt_flags)
- {
- 	struct super_block *sb = path->mnt->mnt_sb;
- 	struct mount *mnt = real_mount(path->mnt);
--- 
-2.16.4
+Is there a way to do the same without relying on ext4 internals, i.e. by
+manually calling getdents64() in such a way that in_compat_syscall()
+gives true even if the caller is 64 bit?
 
+
+
+Best,
+-Nikolaus
+
+--=20
+GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
+
+             =C2=BBTime flies like an arrow, fruit flies like a Banana.=C2=
+=AB
