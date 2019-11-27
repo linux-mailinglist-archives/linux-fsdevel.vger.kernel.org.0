@@ -2,335 +2,475 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAD5510A98C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 05:58:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0016510A9D7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 06:11:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbfK0E6a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Nov 2019 23:58:30 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:60636 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726576AbfK0E6a (ORCPT
+        id S1726112AbfK0FLs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Nov 2019 00:11:48 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:43553 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726061AbfK0FLs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Nov 2019 23:58:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=K9hTuzCHbAYzj1xCpMz13v3VR7aCPjv4f1pPE00Xhr0=; b=OWw7WqYIwWPvh2z/0Fk3Oob2R
-        pZiwWjIp+Th1rxNo10mlyghAxKfE3qnapJvBSxrZqs5MT7DAnAAtIdtV2OiMwGi2TXyOfCZ3xp8dK
-        IiR1Wxj9djGUOQ+anNt78JXxy44bYwunTKjtbOTLzWfayyWjCq9dtYTTpkBxWKobDfeJdDxO4TBos
-        MVN1V09kQtz0p87yvzjEErA4qUyBLODFdtgiH8iikLCdaP3VL5wpvcRjrcW9xt4JUMq0lg1XmEUMk
-        7POqYKGyBCag3/ApTHPHpW6/KPQFSlWnnepDK4vwkr3/UTMgyyiYZJJCB/aQk7GrY3KKUPscWTCOG
-        JL3qGwOeQ==;
-Received: from [2601:1c0:6280:3f0::5a22]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iZpPG-0007Xd-JQ; Wed, 27 Nov 2019 04:58:26 +0000
-Subject: Re: [PATCH v2 3/3] sched/numa: documentation for per-cgroup numa stat
-To:     =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
- <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
- <cc35a710-c2ec-6c61-e30e-ee707798c5e9@linux.alibaba.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <9ce01935-84ba-e8b4-461b-8be388433950@infradead.org>
-Date:   Tue, 26 Nov 2019 20:58:25 -0800
+        Wed, 27 Nov 2019 00:11:48 -0500
+Received: by mail-pl1-f194.google.com with SMTP id q16so5020964plr.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Nov 2019 21:11:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language;
+        bh=3WUZxNq/iUK4LqDCwROiTaUO/Kf6cWdZbuCr5MlpkgY=;
+        b=TOMvLyVWWpSppZapKy91zhWlqSeGklWcw5WyFHKA9sh5SXIhBwvsCLx48XeEG8Zj71
+         pdO2Axp4rnZCvUDLT6eLzrm6nZM0UHzDqYqoOgMgXy6KClk9Xfr8ljoH7WnW2k3dIfUU
+         Ujq+xA4F2V5mD64JYyZv7/zunRj8fEx6tvO+r++7M+Cd0+S57tSygw+4QEK23CjZ1Sbh
+         PTdLqGV/fHOUtDr6p4LOO90hYQ7+Zx/PUzEbYSG96VpBs529byKt6a8uupjEfbgDSUXb
+         coIA4H6QzxhXRb2BjHtV/cM6CWWbJDMQAKGA7+Nqo0p1tRhL82J7Eb0FNIOYuLwZ0Lgl
+         DeMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language;
+        bh=3WUZxNq/iUK4LqDCwROiTaUO/Kf6cWdZbuCr5MlpkgY=;
+        b=h/QQr9+8NbM5cOizsAlYFLPGY9I/iN0FG8mWU2hYh8fkUFilCQcGHNUzqIZ1WIIf51
+         drQ55sU9Rux2hvXTaFNDfp4YeqRZX7p98IIIrpyTULioc5hs/1c0BPtMT3Z0QxWpirqz
+         K7udSCS9bCKxZOVhzSFdnk3V3WV1g3STi71BSIOOk1IYyVD7rZdtlDfm7mG2w6eKEBW5
+         spsTx9/og5BkoPOW9p1xl/F6nZtkzeRql79k3pNw8fR+5j7rcLJNtWRbS/UyR14sDdkP
+         Qu4pZvI0rvwT8kZwhJT9qv91IoX/hTWybQaVuLexE2sXgdOEbD8e7CINZl0RvICgObM8
+         d6TQ==
+X-Gm-Message-State: APjAAAVrYmNcQeEXG6FSsOw6H/nJhz3Zwhi4rN9z99vGZF9KZmuxtGHf
+        vKzb7eaaQclRry7Xg2XZ1OZXapLaZs8=
+X-Google-Smtp-Source: APXvYqx6h2w/JtfYH+geZm4TGKlsTuoAsKQ6Jt/TjbNJCmPIJr/k3aSXPBht25xi7Qv5yjMPUsh34Q==
+X-Received: by 2002:a17:902:24b:: with SMTP id 69mr2080192plc.203.1574831504966;
+        Tue, 26 Nov 2019 21:11:44 -0800 (PST)
+Received: from ?IPv6:2600:380:491b:510:a048:61f:d592:c4b4? ([2600:380:491b:510:a048:61f:d592:c4b4])
+        by smtp.gmail.com with ESMTPSA id e7sm14044590pfi.29.2019.11.26.21.11.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2019 21:11:43 -0800 (PST)
+To:     io-uring <io-uring@vger.kernel.org>
+Cc:     Jann Horn <jannh@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH RFC] signalfd: add support for SFD_TASK
+Message-ID: <254505c9-2b76-ebeb-306c-02aaf1704b88@kernel.dk>
+Date:   Tue, 26 Nov 2019 22:11:38 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.1
 MIME-Version: 1.0
-In-Reply-To: <cc35a710-c2ec-6c61-e30e-ee707798c5e9@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/mixed;
+ boundary="------------87DB3E5ABFD4EB218E95005E"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/26/19 5:50 PM, 王贇 wrote:
-> Since v1:
->   * thanks to Iurii for the better sentence
->   * thanks to Jonathan for the better format
-> 
-> Add the description for 'cg_numa_stat', also a new doc to explain
-> the details on how to deal with the per-cgroup numa statistics.
-> 
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Michal Koutný <mkoutny@suse.com>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Iurii Zaikin <yzaikin@google.com>
-> Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
+This is a multi-part message in MIME format.
+--------------87DB3E5ABFD4EB218E95005E
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
-I have a few comments/corrections. Please see below.
+I posted this a few weeks back, took another look at it and refined it a
+bit. I'd like some input on the viability of this approach.
 
-> ---
->  Documentation/admin-guide/cg-numa-stat.rst      | 163 ++++++++++++++++++++++++
->  Documentation/admin-guide/index.rst             |   1 +
->  Documentation/admin-guide/kernel-parameters.txt |   4 +
->  Documentation/admin-guide/sysctl/kernel.rst     |   9 ++
->  4 files changed, 177 insertions(+)
->  create mode 100644 Documentation/admin-guide/cg-numa-stat.rst
-> 
-> diff --git a/Documentation/admin-guide/cg-numa-stat.rst b/Documentation/admin-guide/cg-numa-stat.rst
-> new file mode 100644
-> index 000000000000..6f505f46fe00
-> --- /dev/null
-> +++ b/Documentation/admin-guide/cg-numa-stat.rst
-> @@ -0,0 +1,163 @@
-> +===============================
-> +Per-cgroup NUMA statistics
-> +===============================
-> +
-> +Background
-> +----------
-> +
-> +On NUMA platforms, remote memory accessing always has a performance penalty,
+A new signalfd setup flag is added, SFD_TASK. This is only valid if used
+with SFD_CLOEXEC. If set, the task setting up the signalfd descriptor is
+remembered in the signalfd context, and will be the one we use for
+checking signals in the poll/read handlers in signalfd.
 
-                                                                       penalty.
+This is needed to make signalfd useful with io_uring and aio, of which
+the former in particular has my interest.
 
-> +although we have NUMA balancing working hard to maximize the access locality,
+I _think_ this is sane. To prevent the case of a task clearing O_CLOEXEC
+on the signalfd descriptor, forking, and then exiting, we grab a
+reference to the task when we assign it. If that original task exits, we
+catch it in signalfd_flush() and ensure waiters are woken up. The
+waiters also hold a task reference, so we don't have to wait for them to
+go away.
 
-   Although
+Need to double check we can't race between original task exiting and new
+task grabbing a reference. I don't think this is solid in the version
+below. Probably need to add a refcount for ctx->task (the pointer, not
+the task) for that.
 
-> +there are still situations it can't help.
-> +
-> +This could happen in modern production environment. When a large number of
-> +cgroups are used to classify and control resources, this creates a complex
-> +configuration for memory policy, CPUs and NUMA nodes. In such cases NUMA
-> +balancing could end up with the wrong memory policy or exhausted local NUMA
-> +node, which would lead to low percentage of local page accesses.
-> +
-> +We need to detect such cases, figure out which workloads from which cgroup
-> +has introduced the issues, then we get chance to do adjustment to avoid
+Comments? Attaching two test programs using io_uring, one using poll and
+the other read. Remove SFD_TASK from either of them, and they will fail
+ala:
 
-   have
+./signalfd-read
+Timed out waiting for cqe
 
-> +performance degradation.
-> +
-> +However, there are no hardware counters for per-task local/remote accessing
-> +info, we don't know how many remote page accesses have occurred for a
-> +particular task.
-> +
-> +Statistics
-> +----------
-> +
-> +Fortunately, we have NUMA Balancing which scans task's mapping and triggers PF
-> +periodically, gives us the opportunity to record per-task page accessing info.
+and with SFD_TASK set, both will exit silent with a value of 0. You need
+liburing installed, then compile them with:
 
-                 giving
+gcc -Wall -O2 -o signalfd-read signalfd-read.c -luring
 
-> +
-> +By "echo 1 > /proc/sys/kernel/cg_numa_stat" at runtime or adding boot parameter
-> +'cg_numa_stat', we will enable the accounting of per-cgroup numa statistics,
+---
 
-                                                               NUMA
-
-> +the 'cpu.numa_stat' entry of CPU cgroup will show statistics::
-> +
-> +  locality -- execution time sectioned by task NUMA locality (in ms)
-> +  exectime -- execution time sectioned by NUMA node (in ms)
-> +
-> +We define 'task NUMA locality' as::
-> +
-> +  nr_local_page_access * 100 / (nr_local_page_access + nr_remote_page_access)
-> +
-> +this per-task percentage value will be updated on the ticks for current task,
-
-   This
-
-> +and the access counter will be updated on task's NUMA balancing PF, so only
-> +the pages which NUMA Balancing paid attention to will be accounted.
-> +
-> +On each tick, we acquire the locality of current task on that CPU, accumulating
-> +the ticks into the counter of corresponding locality region, tasks from the
-> +same group sharing the counters, becoming the group locality.
-> +
-> +Similarly, we acquire the NUMA node of current CPU where the current task is
-> +executing on, accumulating the ticks into the counter of corresponding node,
-> +becoming the per-cgroup node execution time.
-> +
-> +Note that the accounting is hierarchical, which means the numa statistics for
-
-                                                             NUMA
-
-> +a given group represents not only the workload of this group, but also the
-
-                 represent
-
-> +workloads of all it's descendants.
-
-                    its
-
-> +
-> +For example the 'cpu.numa_stat' show::
-> +
-> +  locality 39541 60962 36842 72519 118605 721778 946553
-> +  exectime 1220127 1458684
-> +
-> +The locality is sectioned into 7 regions, approximately as::
-> +
-> +  0-13% 14-27% 28-42% 43-56% 57-71% 72-85% 86-100%
-> +
-> +And exectime is sectioned into 2 nodes, 0 and 1 in this case.
-> +
-> +Thus we know the workload of this group and it's descendants have totally
-
-                                               its
-
-> +executed 1220127ms on node_0 and 1458684ms on node_1, tasks with locality
-> +around 0~13% executed for 39541 ms, and tasks with locality around 87~100%
-> +executed for 946553 ms, which imply most of the memory access are local.
-> +
-> +Monitoring
-> +----------
-> +
-> +By monitoring the increments of these statistics, we can easily know whether
-> +NUMA balancing is working well for a particular workload.
-> +
-> +For example we take a 5 secs sample period, and consider locality under 27%
-
-                           seconds
-
-> +is bad, then on each sampling we have::
-> +
-> +  region_bad = region_1 + region_2
-> +  region_all = region_1 + region_2 + ... + region_7
-> +
-> +and we have the increments as::
-> +
-> +  region_bad_diff = region_bad - last_region_bad
-> +  region_all_diff = region_all - last_region_all
-> +
-> +which finally become::
-> +
-> +  region_bad_percent = region_bad_diff * 100 / region_all_diff
-> +
-> +we can plot a line for region_bad_percent, when the line close to 0 things
-
-   We
-
-> +are good, when getting close to 100% something is wrong, we can pick a proper
-> +watermark to trigger warning message.
-> +
-> +You may want to drop the data if the region_all is too small, which implies
-> +there are not many available pages for NUMA Balancing, ignoring would be fine
-> +since most likely the workload is insensitive to NUMA.
-> +
-> +Monitoring root group helps you control the overall situation, while you may
-> +also want to monitor all the leaf groups which contain the workloads, this
-> +helps to catch the mouse.
-> +
-> +The exectime could be useful when NUMA Balancing is disabled, or when locality
-> +becomes too small, for NUMA node X we have::
-
-               small. For
-
-> +
-> +  exectime_X_diff = exectime_X - last_exectime_X
-> +  exectime_all_diff = exectime_all - last_exectime_all
-> +
-> +try to put your workload into a memory cgroup which providing per-node memory
-
-   Try                                                 provides
-
-
-> +consumption by 'memory.numa_stat' entry, then we could get::
-> +
-> +  memory_percent_X = memory_X * 100 / memory_all
-> +  exectime_percent_X = exectime_X_diff * 100 / exectime_all_diff
-> +
-> +These two percentages are usually matched on each node, workload should execute
-> +mostly on the node contain most of it's memory, but it's not guaranteed.
-
-                 node that contains most of its
-
-> +
-> +The workload may only access a small part of it's memory, in such cases although
-
-                                                its
-
-> +the majority of memory are remotely, locality could still be good.
-> +
-> +Thus to tell if things are fine or not depends on the understanding of system
-> +resource deployment, however, if you find node X got 100% memory percent but 0%
-> +exectime percent, definitely something is wrong.
-> +
-> +Troubleshooting
-> +---------------
-> +
-> +After identifying which workload introduced the bad locality, check:
-> +
-> +1). Is the workload bound to a particular NUMA node?
-> +2). Has any NUMA node run out of resources?
-> +
-> +There are several ways to bind task's memory with a NUMA node, the strict way
-> +like the MPOL_BIND memory policy or 'cpuset.mems' will limiting the memory
-
-                                                     will limit
-
-> +node where to allocate pages, in this situation, admin should make sure the
-
-                          pages. In
-
-> +task is allowed to run on the CPUs of that NUMA node, and make sure there are
-> +available CPU resource there.
-> +
-> +There are also ways to bind task's CPU with a NUMA node, like 'cpuset.cpus' or
-> +sched_setaffinity() syscall, in this situation, NUMA Balancing help to migrate
-
-                       syscall. In
-
-> +pages into that node, admin should make sure there are available memory there.
-> +
-> +Admin could try rebind or unbind the NUMA node to erase the damage, make a
-
-               try to
-
-> +change then observe the statistics see if things get better until the situation
-
-               observe the statistics to see if
-
-> +is acceptable.
-> +
-> +Highlights
-> +----------
-> +
-> +For some tasks, NUMA Balancing may found no necessary to scan pages, and
-> +locality could always be 0 or small number, don't pay attention to them
-> +since they most likely insensitive to NUMA.
-> +
-> +There are no accounting until the option turned on, so enable it in advance
-
-         is no accounting until the option is turned on,
-
-> +if you want to have the whole history.
-> +
-> +We have per-task migfailed counter to tell how many page migration has been
-
-I can't find any occurrence of 'migfailed' in the entire kernel source tree.
-Maybe it is misspelled?
-
-> +failed for a particular task, you will find it in /proc/PID/sched entry.
-
-
-HTH.
+diff --git a/fs/signalfd.c b/fs/signalfd.c
+index 44b6845b071c..4bbdab9438c1 100644
+--- a/fs/signalfd.c
++++ b/fs/signalfd.c
+@@ -50,28 +50,62 @@ void signalfd_cleanup(struct sighand_struct *sighand)
+  
+  struct signalfd_ctx {
+  	sigset_t sigmask;
++	struct task_struct *task;
+  };
+  
++static int signalfd_flush(struct file *file, void *data)
++{
++	struct signalfd_ctx *ctx = file->private_data;
++	struct task_struct *tsk = ctx->task;
++
++	if (tsk == current) {
++		ctx->task = NULL;
++		wake_up(&tsk->sighand->signalfd_wqh);
++		put_task_struct(tsk);
++	}
++
++	return 0;
++}
++
+  static int signalfd_release(struct inode *inode, struct file *file)
+  {
+-	kfree(file->private_data);
++	struct signalfd_ctx *ctx = file->private_data;
++
++	if (ctx->task)
++		put_task_struct(ctx->task);
++	kfree(ctx);
+  	return 0;
+  }
+  
++static void signalfd_put_task(struct task_struct *tsk)
++{
++	put_task_struct(tsk);
++}
++
++static struct task_struct *signalfd_get_task(struct signalfd_ctx *ctx)
++{
++	struct task_struct *tsk = ctx->task ?: current;
++
++	get_task_struct(tsk);
++	return tsk;
++}
++
+  static __poll_t signalfd_poll(struct file *file, poll_table *wait)
+  {
+  	struct signalfd_ctx *ctx = file->private_data;
++	struct task_struct *tsk = signalfd_get_task(ctx);
+  	__poll_t events = 0;
+  
+-	poll_wait(file, &current->sighand->signalfd_wqh, wait);
++	poll_wait(file, &tsk->sighand->signalfd_wqh, wait);
+  
+-	spin_lock_irq(&current->sighand->siglock);
+-	if (next_signal(&current->pending, &ctx->sigmask) ||
+-	    next_signal(&current->signal->shared_pending,
++	spin_lock_irq(&tsk->sighand->siglock);
++	if (next_signal(&tsk->pending, &ctx->sigmask) ||
++	    next_signal(&tsk->signal->shared_pending,
+  			&ctx->sigmask))
+  		events |= EPOLLIN;
+-	spin_unlock_irq(&current->sighand->siglock);
++	spin_unlock_irq(&tsk->sighand->siglock);
+  
++	signalfd_put_task(tsk);
+  	return events;
+  }
+  
+@@ -167,10 +201,11 @@ static ssize_t signalfd_dequeue(struct signalfd_ctx *ctx, kernel_siginfo_t *info
+  				int nonblock)
+  {
+  	ssize_t ret;
++	struct task_struct *tsk = signalfd_get_task(ctx);
+  	DECLARE_WAITQUEUE(wait, current);
+  
+-	spin_lock_irq(&current->sighand->siglock);
+-	ret = dequeue_signal(current, &ctx->sigmask, info);
++	spin_lock_irq(&tsk->sighand->siglock);
++	ret = dequeue_signal(tsk, &ctx->sigmask, info);
+  	switch (ret) {
+  	case 0:
+  		if (!nonblock)
+@@ -178,29 +213,35 @@ static ssize_t signalfd_dequeue(struct signalfd_ctx *ctx, kernel_siginfo_t *info
+  		ret = -EAGAIN;
+  		/* fall through */
+  	default:
+-		spin_unlock_irq(&current->sighand->siglock);
++		spin_unlock_irq(&tsk->sighand->siglock);
++		signalfd_put_task(tsk);
+  		return ret;
+  	}
+  
+-	add_wait_queue(&current->sighand->signalfd_wqh, &wait);
++	add_wait_queue(&tsk->sighand->signalfd_wqh, &wait);
+  	for (;;) {
+  		set_current_state(TASK_INTERRUPTIBLE);
+-		ret = dequeue_signal(current, &ctx->sigmask, info);
++		ret = dequeue_signal(tsk, &ctx->sigmask, info);
+  		if (ret != 0)
+  			break;
+  		if (signal_pending(current)) {
+  			ret = -ERESTARTSYS;
+  			break;
+  		}
+-		spin_unlock_irq(&current->sighand->siglock);
++		spin_unlock_irq(&tsk->sighand->siglock);
+  		schedule();
+-		spin_lock_irq(&current->sighand->siglock);
++		spin_lock_irq(&tsk->sighand->siglock);
++		if (tsk != current && !ctx->task) {
++			ret = -ESRCH;
++			break;
++		}
+  	}
+-	spin_unlock_irq(&current->sighand->siglock);
++	spin_unlock_irq(&tsk->sighand->siglock);
+  
+-	remove_wait_queue(&current->sighand->signalfd_wqh, &wait);
++	remove_wait_queue(&tsk->sighand->signalfd_wqh, &wait);
+  	__set_current_state(TASK_RUNNING);
+  
++	signalfd_put_task(tsk);
+  	return ret;
+  }
+  
+@@ -254,6 +295,7 @@ static const struct file_operations signalfd_fops = {
+  #ifdef CONFIG_PROC_FS
+  	.show_fdinfo	= signalfd_show_fdinfo,
+  #endif
++	.flush		= signalfd_flush,
+  	.release	= signalfd_release,
+  	.poll		= signalfd_poll,
+  	.read		= signalfd_read,
+@@ -267,19 +309,26 @@ static int do_signalfd4(int ufd, sigset_t *mask, int flags)
+  	/* Check the SFD_* constants for consistency.  */
+  	BUILD_BUG_ON(SFD_CLOEXEC != O_CLOEXEC);
+  	BUILD_BUG_ON(SFD_NONBLOCK != O_NONBLOCK);
++	BUILD_BUG_ON(SFD_TASK & (SFD_CLOEXEC | SFD_NONBLOCK));
+  
+-	if (flags & ~(SFD_CLOEXEC | SFD_NONBLOCK))
++	if (flags & ~(SFD_CLOEXEC | SFD_NONBLOCK | SFD_TASK))
++		return -EINVAL;
++	if ((flags & (SFD_CLOEXEC | SFD_TASK)) == SFD_TASK)
+  		return -EINVAL;
+  
+  	sigdelsetmask(mask, sigmask(SIGKILL) | sigmask(SIGSTOP));
+  	signotset(mask);
+  
+  	if (ufd == -1) {
+-		ctx = kmalloc(sizeof(*ctx), GFP_KERNEL);
++		ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+  		if (!ctx)
+  			return -ENOMEM;
+  
+  		ctx->sigmask = *mask;
++		if (flags & SFD_TASK) {
++			ctx->task = current;
++			get_task_struct(ctx->task);
++		}
+  
+  		/*
+  		 * When we call this, the initialization must be complete, since
+@@ -290,6 +339,7 @@ static int do_signalfd4(int ufd, sigset_t *mask, int flags)
+  		if (ufd < 0)
+  			kfree(ctx);
+  	} else {
++		struct task_struct *tsk;
+  		struct fd f = fdget(ufd);
+  		if (!f.file)
+  			return -EBADF;
+@@ -298,11 +348,13 @@ static int do_signalfd4(int ufd, sigset_t *mask, int flags)
+  			fdput(f);
+  			return -EINVAL;
+  		}
+-		spin_lock_irq(&current->sighand->siglock);
++		tsk = signalfd_get_task(ctx);
++		spin_lock_irq(&tsk->sighand->siglock);
+  		ctx->sigmask = *mask;
+-		spin_unlock_irq(&current->sighand->siglock);
++		spin_unlock_irq(&tsk->sighand->siglock);
+  
+-		wake_up(&current->sighand->signalfd_wqh);
++		wake_up(&tsk->sighand->signalfd_wqh);
++		signalfd_put_task(tsk);
+  		fdput(f);
+  	}
+  
+diff --git a/include/uapi/linux/signalfd.h b/include/uapi/linux/signalfd.h
+index 83429a05b698..064c5dc3eb99 100644
+--- a/include/uapi/linux/signalfd.h
++++ b/include/uapi/linux/signalfd.h
+@@ -16,6 +16,7 @@
+  /* Flags for signalfd4.  */
+  #define SFD_CLOEXEC O_CLOEXEC
+  #define SFD_NONBLOCK O_NONBLOCK
++#define SFD_TASK 00000001
+  
+  struct signalfd_siginfo {
+  	__u32 ssi_signo;
 
 -- 
-~Randy
+Jens Axboe
 
+
+--------------87DB3E5ABFD4EB218E95005E
+Content-Type: text/x-csrc; charset=UTF-8;
+ name="signalfd-poll.c"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="signalfd-poll.c"
+
+#include <unistd.h>
+#include <sys/signalfd.h>
+#include <sys/poll.h>
+#include <sys/time.h>
+#include <errno.h>
+#include <stdio.h>
+#include <string.h>
+
+#include <liburing.h>
+
+#define SFD_TASK	00000001
+
+int main(int argc, char *argv[])
+{
+	struct __kernel_timespec ts;
+	struct io_uring_sqe *sqe;
+	struct io_uring_cqe *cqe;
+	struct io_uring ring;
+	struct itimerval itv;
+	sigset_t mask;
+	int sfd, ret;
+
+	sigemptyset(&mask);
+	sigaddset(&mask, SIGALRM);
+	sigprocmask(SIG_BLOCK, &mask, NULL);
+
+	sfd = signalfd(-1, &mask, SFD_CLOEXEC | SFD_TASK);
+	if (sfd < 0) {
+		if (errno == EINVAL) {
+			printf("Not supported\n");
+			return 0;
+		}
+		perror("signalfd");
+		return 1;
+	}
+
+	memset(&itv, 0, sizeof(itv));
+	itv.it_value.tv_sec = 0;
+	itv.it_value.tv_usec = 100000;
+	setitimer(ITIMER_REAL, &itv, NULL);
+
+	io_uring_queue_init(32, &ring, 0);
+	sqe = io_uring_get_sqe(&ring);
+	io_uring_prep_poll_add(sqe, sfd, POLLIN);
+	io_uring_submit(&ring);
+
+	ts.tv_sec = 1;
+	ts.tv_nsec = 0;
+	ret = io_uring_wait_cqe_timeout(&ring, &cqe, &ts);
+	if (ret < 0) {
+		fprintf(stderr, "Timed out waiting for cqe\n");
+		ret = 1;
+	} else {
+		if (cqe->res < 0) {
+			fprintf(stderr, "cqe failed with %d\n", cqe->res);
+			ret = 1;
+		} else if (!(cqe->res & POLLIN)) {
+			fprintf(stderr, "POLLIN not set in result mask?\n");
+			ret = 1;
+		} else {
+			ret = 0;
+		}
+	}
+	io_uring_cqe_seen(&ring, cqe);
+
+	io_uring_queue_exit(&ring);
+	close(sfd);
+	return ret;
+}
+
+--------------87DB3E5ABFD4EB218E95005E
+Content-Type: text/x-csrc; charset=UTF-8;
+ name="signalfd-read.c"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="signalfd-read.c"
+
+#include <unistd.h>
+#include <sys/signalfd.h>
+#include <sys/poll.h>
+#include <sys/time.h>
+#include <errno.h>
+#include <stdio.h>
+#include <string.h>
+
+#include <liburing.h>
+
+#define SFD_TASK	00000001
+
+int main(int argc, char *argv[])
+{
+	struct __kernel_timespec ts;
+	struct signalfd_siginfo si;
+	struct iovec iov = {
+		.iov_base = &si,
+		.iov_len = sizeof(si),
+	};
+	struct io_uring_sqe *sqe;
+	struct io_uring_cqe *cqe;
+	struct io_uring ring;
+	struct itimerval itv;
+	sigset_t mask;
+	int sfd, ret;
+
+	sigemptyset(&mask);
+	sigaddset(&mask, SIGALRM);
+	sigprocmask(SIG_BLOCK, &mask, NULL);
+
+	sfd = signalfd(-1, &mask, SFD_CLOEXEC | SFD_TASK);
+	if (sfd < 0) {
+		if (errno == EINVAL) {
+			printf("Not supported\n");
+			return 0;
+		}
+		perror("signalfd");
+		return 1;
+	}
+
+	memset(&itv, 0, sizeof(itv));
+	itv.it_value.tv_sec = 0;
+	itv.it_value.tv_usec = 100000;
+	setitimer(ITIMER_REAL, &itv, NULL);
+
+	io_uring_queue_init(32, &ring, 0);
+	sqe = io_uring_get_sqe(&ring);
+	io_uring_prep_readv(sqe, sfd, &iov, 1, 0);
+	io_uring_submit(&ring);
+
+	ts.tv_sec = 1;
+	ts.tv_nsec = 0;
+	ret = io_uring_wait_cqe_timeout(&ring, &cqe, &ts);
+	if (ret < 0) {
+		fprintf(stderr, "Timed out waiting for cqe\n");
+		ret = 1;
+	} else {
+		ret = 0;
+		if (cqe->res < 0) {
+			fprintf(stderr, "cqe failed with %d\n", cqe->res);
+			ret = 1;
+		} else if (cqe->res != sizeof(si)) {
+			fprintf(stderr, "Read %d, wanted %d\n", cqe->res, (int)sizeof(si));
+			ret = 1;
+		}
+	}
+	io_uring_cqe_seen(&ring, cqe);
+
+	io_uring_queue_exit(&ring);
+	close(sfd);
+	return ret;
+}
+
+--------------87DB3E5ABFD4EB218E95005E--
