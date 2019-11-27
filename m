@@ -2,118 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDB8F10B2B5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 16:51:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 593EC10B339
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 17:29:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbfK0PvN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Nov 2019 10:51:13 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50434 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726634AbfK0PvN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Nov 2019 10:51:13 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A5FCCBD7C;
-        Wed, 27 Nov 2019 15:51:10 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 92150DA733; Wed, 27 Nov 2019 16:51:08 +0100 (CET)
-Date:   Wed, 27 Nov 2019 16:51:08 +0100
-From:   David Sterba <dsterba@suse.cz>
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc:     linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        hch@infradead.org, darrick.wong@oracle.com, fdmanana@kernel.org
-Subject: Re: [PATCH 0/5 v2] btrfs direct-io using iomap
-Message-ID: <20191127155108.GT2734@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        hch@infradead.org, darrick.wong@oracle.com, fdmanana@kernel.org
-References: <20191126031456.12150-1-rgoldwyn@suse.de>
+        id S1726957AbfK0Q3w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Nov 2019 11:29:52 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:56182 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726514AbfK0Q3w (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 27 Nov 2019 11:29:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574872189;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=rcyN5dGoMhhF+8wU9SDW3LRuwC7oWgcs+VV9XVwODaY=;
+        b=cAS73JCD+nO+Xquvs5svzUBvD7QBcWuve9WQBgF5D1dGk1eiV5fNx9oUGBoGfpBj5PlzQ6
+        ffj0G1lumi/9LswcL6NWRHpd3Z21a1pLMSP03EfX99eHI+0qXQJkZ46v/gmwwb0+bkA9p4
+        J7X+Vv3mIOusZluLwGQnQbkuWSHBB3o=
+Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com
+ [209.85.167.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-47-Y4z0AUziPQGZAp7ge7BSXg-1; Wed, 27 Nov 2019 11:29:48 -0500
+Received: by mail-oi1-f198.google.com with SMTP id n30so11396889oij.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Nov 2019 08:29:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kIu1VyYGNbaIKqeZUoUtiDvput7821e7oFhQavConxk=;
+        b=BOJZc7a3zwVV9tdDYLPzFe+NUxl4pKdu+n1Xdkvb0pvdFZISGhIbAkYwWHhAwHW3ix
+         1OXIbj7boG+27r+Ze4xgy/HNpljasmwOHEXBXH7wAey0fCuZMk5jsYGjQv5wOo1updrc
+         W2gAWYv0LI6zqKUOdETFSjCsL1xvJhuETJ5lzOXxz2lLK/zZzXYcBEYQ/l/YdMuM0Gqg
+         ShSU2sPDplFDZ2rlsz+a8Ki/mSChT+g1NVgIv8FsWQmBPAqfUTKSo2zwA/+HLRQ02gr8
+         au2Syww17ysbI+0bmz97nTcZJadNg8pBzG+1GUd2IezPNUWPrdstPqq1AtcOUIBfFMQ1
+         g2NA==
+X-Gm-Message-State: APjAAAXglVl/oRRjsr2ZeBS2UOkE1/57OSI7KlDRpYNHYypWcGMBKiDP
+        NHbS00uiTMPSwNrRcmi+C+McN51ORj5PFlkdB/ThEY7VaNJPEqqwr8OKZl6sX/Q+p+LUujzZl0E
+        VrNG5k5wd/wsW2JyGmZEbDt2XRJZvnUjioEibHzW4KQ==
+X-Received: by 2002:aca:d14:: with SMTP id 20mr4877846oin.178.1574872187661;
+        Wed, 27 Nov 2019 08:29:47 -0800 (PST)
+X-Google-Smtp-Source: APXvYqw3yLKNT7wsw1AqyVf2knKKoyFNMFDOQF5O+7hYYWvVBZw57Km8zJVbATfvGULvCZMZmqbPRh8opF4b2Zj5pdE=
+X-Received: by 2002:aca:d14:: with SMTP id 20mr4877821oin.178.1574872187328;
+ Wed, 27 Nov 2019 08:29:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191126031456.12150-1-rgoldwyn@suse.de>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+References: <157225677483.3442.4227193290486305330.stgit@buzz>
+ <20191028124222.ld6u3dhhujfqcn7w@box> <CAHk-=wgQ-Dcs2keNJPovTb4gG33M81yANH6KZM9d5NLUb-cJ1g@mail.gmail.com>
+ <20191028125702.xdfbs7rqhm3wer5t@box> <ac83fee6-9bcd-8c66-3596-2c0fbe6bcf96@yandex-team.ru>
+ <CAHk-=who0HS=NT8U7vFDT7er_CD7+ZreRJMxjYrRXs5G6dbpyw@mail.gmail.com>
+ <f0140b13-cca2-af9e-eb4b-82eda134eb8f@redhat.com> <CAHk-=wh4SKRxKQf5LawRMSijtjRVQevaFioBK+tOZAVPt7ek0Q@mail.gmail.com>
+ <640bbe51-706b-8d9f-4abc-5f184de6a701@redhat.com> <CAHpGcM+o2OwXdrj+A2_OqRg6YokfauFNiBJF-BQp0dJFvq_BrQ@mail.gmail.com>
+ <22f04f02-86e4-b379-81c8-08c002a648f0@redhat.com> <CAHk-=whRuPkm7zFUiGe_BXkLvEdShZGngkb=uRufgU65ogCxfg@mail.gmail.com>
+ <cdd48a4d-42a4-dd15-2701-e08e26fef17f@redhat.com>
+In-Reply-To: <cdd48a4d-42a4-dd15-2701-e08e26fef17f@redhat.com>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Wed, 27 Nov 2019 17:29:36 +0100
+Message-ID: <CAHc6FU4Mx_=qMYOBc0VYdn-paFXKVffq=k72LCJgTWONv9chng@mail.gmail.com>
+Subject: Re: [PATCH] mm/filemap: do not allocate cache pages beyond end of
+ file at read
+To:     Steven Whitehouse <swhiteho@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "cluster-devel@redhat.com" <cluster-devel@redhat.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <sfrench@samba.org>,
+        Bob Peterson <rpeterso@redhat.com>
+X-MC-Unique: Y4z0AUziPQGZAp7ge7BSXg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 25, 2019 at 09:14:51PM -0600, Goldwyn Rodrigues wrote:
-> This is an effort to use iomap for direct I/O in btrfs. This would
-> change the call from __blockdev_direct_io() to iomap_dio_rw().
-> 
-> The main objective is to lose the buffer head and use bio defined by
-> iomap code, and hopefully to use more of generic-FS codebase.
-> 
-> These patches are based on xfs/iomap-for-next, though I tested it
-> against the patches on xfs/iomap-for-next on top of v5.4 (there are no
-> changes to existing iomap patches).
-> 
-> I have tested it against xfstests/btrfs.
-> 
-> Changes since v1
-> - Incorporated back the efficiency change for inode locking
-> - Review comments about coding style and git comments
-> - Merge related patches into one
-> - Direct read to go through btrfs_direct_IO()
-> - Removal of no longer used function dio_end_io()
+On Wed, Nov 27, 2019 at 4:42 PM Steven Whitehouse <swhiteho@redhat.com> wro=
+te:
+> Hi,
+>
+> On 25/11/2019 17:05, Linus Torvalds wrote:
+> > On Mon, Nov 25, 2019 at 2:53 AM Steven Whitehouse <swhiteho@redhat.com>=
+ wrote:
+> >> Linus, is that roughly what you were thinking of?
+> > So the concept looks ok, but I don't really like the new flags as they
+> > seem to be gfs2-specific rather than generic.
+> >
+> > That said, I don't _gate_ them either, since they aren't in any
+> > critical code sequence, and it's not like they do anything really odd.
+> >
+> > I still think the whole gfs2 approach is broken. You're magically ok
+> > with using stale data from the cache just because it's cached, even if
+> > another client might have truncated the file or something.
+>
+> If another node tries to truncate the file, that will require an
+> exclusive glock, and in turn that means the all the other nodes will
+> have to drop their glock(s) shared or exclusive. That process
+> invalidates the page cache on those nodes, such that any further
+> requests on those nodes will find the cache empty and have to call into
+> the filesystem.
+>
+> If a page is truncated on another node, then when the local node gives
+> up its glock, after any copying (e.g. for read) has completed then the
+> truncate will take place. The local node will then have to reread any
+> data relating to new pages or return an error in case the next page to
+> be read has vanished due to the truncate. It is a pretty small window,
+> and the advantage is that in cases where the page is in cache, we can
+> directly use the cached page without having to call into the filesystem
+> at all. So it is page atomic in that sense.
+>
+> The overall aim here is to avoid taking (potentially slow) cluster locks
+> when at all possible, yet at the same time deliver close to local fs
+> semantics whenever we can. You can think of GFS2's glock concept (at
+> least as far as the inodes we are discussing here) as providing a
+> combination of (page) cache control and cluster (dlm) locking.
+>
+> >
+> > So you're ok with saying "the file used to be X bytes in size, so
+> > we'll just give you this data because we trust that the X is correct".
+> >
+> > But you're not ok to say "oh, the file used to be X bytes in size, but
+> > we don't want to give you a short read because it might not be correct
+> > any more".
+> >
+> > See the disconnect? You trust the size in one situation, but not in ano=
+ther one.
+>
+> Well we are not trusting the size at all... the original algorithm
+> worked entirely off "is this page in cache and uptodate?" and for
+> exactly the reason that we know the size in the inode might be out of
+> date, if we are not currently holding a glock in either shared or
+> exclusive mode. We also know that if there is a page in cache and
+> uptodate then we must be holding the glock too.
+>
+>
+> >
+> > I also don't really see that you *need* the new flag at all. Since
+> > you're doing to do a speculative read and then a real read anyway, and
+> > since the only thing that you seem to care about is the file size
+> > (because the *data* you will trust if it is cached), then why don't
+> > you just use the *existing* generic read, and *IFF* you get a
+> > truncated return value, then you go and double-check that the file
+> > hasn't changed in size?
+> >
+> > See what I'm saying? I think gfs2 is being very inconsistent in when
+> > it trusts the file size, and I don't see that you even need the new
+> > behavior that patch gives, because you might as well just use the
+> > existing code (just move the i_size check earlier, and then teach gfs2
+> > to double-check the "I didn't get as much as I expected" case).
 
-I see a lockdep assertion during test btrfs/004
+We can identify short reads, but we won't get information about
+readahead back from generic_file_read_iter or filemap_fault. We could
+try to work around this with filesystem specific flags for ->readpage
+and ->readpages, but that would break down with multiple concurrent
+readers in addition to being a real mess. I'm currently out of better
+ideas that avoid duplicating the generic code.
 
-iomap_dio_rw()
-...
-	lockdep_assert_held(&inode->i_rwsem);
+> >                   Linus
+>
+> I'll leave the finer details to Andreas here, since it is his patch, and
+> hopefully we can figure out a good path forward. We are perhaps also a
+> bit reluctant to go off and (nearly) duplicate code that is already in
+> the core vfs library functions, since that often leads to things getting
+> out of sync (our implementation of ->writepages is one case where that
+> happened in the past) and missing important bug fixes/features in some
+> cases. Hopefully though we can iterate on this a bit and come up with
+> something which will resolve all the issues,
+>
+> Steve.
 
-btrfs/004               [15:46:30][   69.749908] run fstests btrfs/004 at 2019-11-27 15:46:30
-[   70.180401] BTRFS info (device vda): disk space caching is enabled
-[   70.183496] BTRFS info (device vda): has skinny extents
-[   70.378865] BTRFS: device fsid a10200b4-f17d-49a0-8c82-b06b69871613 devid 1 transid 5 /dev/vdb scanned by mkfs.btrfs (21271)
-[   70.405858] BTRFS info (device vdb): turning on discard
-[   70.408279] BTRFS info (device vdb): disk space caching is enabled
-[   70.410630] BTRFS info (device vdb): has skinny extents
-[   70.412358] BTRFS info (device vdb): flagging fs with big metadata feature
-[   70.420386] BTRFS info (device vdb): checking UUID tree
-[   70.427675] ------------[ cut here ]------------
-[   70.429375] WARNING: CPU: 2 PID: 21300 at fs/iomap/direct-io.c:413 iomap_dio_rw+0x255/0x560
-[   70.432208] Modules linked in: xxhash_generic btrfs blake2b_generic libcrc32c crc32c_intel xor zstd_decompress zstd_compress xxhash lzo_compress lzo_decompress raid6_pq loop
-[   70.437096] CPU: 2 PID: 21300 Comm: fsstress Not tainted 5.4.0-default+ #881
-[   70.439135] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58-rebuilt.opensuse.org 04/01/2014
-[   70.442462] RIP: 0010:iomap_dio_rw+0x255/0x560
-[   70.449092] RSP: 0018:ffffa36dc5b37c80 EFLAGS: 00010246
-[   70.450701] RAX: 0000000000000000 RBX: ffffa36dc5b37e78 RCX: 0000000000000001
-[   70.453062] RDX: ffff88d5b3f75500 RSI: ffff88d5a0c29018 RDI: ffff88d5b3f75d10
-[   70.455308] RBP: ffffa36dc5b37d20 R08: 0000000000000001 R09: ffffffffaef84850
-[   70.457479] R10: ffffa36dc5b37d40 R11: 0000000000007000 R12: ffffa36dc5b37e50
-[   70.459479] R13: 0000000000049000 R14: ffff88d5a0c28ec0 R15: 0000000000049000
-[   70.461790] FS:  00007fab1f5cdb80(0000) GS:ffff88d5bda00000(0000) knlGS:0000000000000000
-[   70.464601] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   70.466503] CR2: 000000000041e000 CR3: 0000000061097006 CR4: 0000000000160ee0
-[   70.468475] Call Trace:
-[   70.469477]  ? btrfs_direct_IO+0x215/0x360 [btrfs]
-[   70.471201]  ? __lock_acquired+0x1f0/0x320
-[   70.472837]  ? btrfs_direct_IO+0xda/0x360 [btrfs]
-[   70.474453]  btrfs_direct_IO+0xda/0x360 [btrfs]
-[   70.476101]  ? lockdep_hardirqs_on+0x103/0x190
-[   70.477732]  btrfs_file_write_iter+0x20b/0x5f0 [btrfs]
-[   70.479450]  ? _copy_to_user+0x76/0x90
-[   70.480943]  new_sync_write+0x118/0x1b0
-[   70.482446]  vfs_write+0xde/0x1d0
-[   70.483789]  ksys_write+0x68/0xe0
-[   70.485136]  do_syscall_64+0x50/0x210
-[   70.486578]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[   70.488390] RIP: 0033:0x7fab1f7a8f93
-[   70.495054] RSP: 002b:00007ffea7b21208 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-[   70.497693] RAX: ffffffffffffffda RBX: 0000000000007000 RCX: 00007fab1f7a8f93
-[   70.499708] RDX: 0000000000007000 RSI: 0000000000416000 RDI: 0000000000000003
-[   70.501754] RBP: 0000000000000003 R08: 0000000000416000 R09: 0000000000000231
-[   70.503682] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000009
-[   70.505622] R13: 0000000000049000 R14: 0000000000416000 R15: 0000000000000000
-[   70.507683] irq event stamp: 1532
-[   70.508931] hardirqs last  enabled at (1531): [<ffffffffc01d7bfb>] get_alloc_profile+0x1ab/0x2b0 [btrfs]
-[   70.512256] hardirqs last disabled at (1532): [<ffffffffad002a8b>] trace_hardirqs_off_thunk+0x1a/0x1c
-[   70.515039] softirqs last  enabled at (0): [<ffffffffad07efd0>] copy_process+0x680/0x1b70
-[   70.517193] softirqs last disabled at (0): [<0000000000000000>] 0x0
-[   70.519153] ---[ end trace 7fa25c75a89dbc97 ]---
+Thanks,
+Andreas
 
-The branch is xfs/iomap-for-next + this patchset.
