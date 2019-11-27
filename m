@@ -2,289 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA2FF10A826
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 02:52:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D123810A89C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 03:07:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbfK0BwR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Nov 2019 20:52:17 -0500
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:53567 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725871AbfK0BwR (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Nov 2019 20:52:17 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R321e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0TjBBq.j_1574819522;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TjBBq.j_1574819522)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 27 Nov 2019 09:52:05 +0800
-Subject: [PATCH v2 3/3] sched/numa: documentation for per-cgroup numa stat
-From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
- <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
-Message-ID: <cc35a710-c2ec-6c61-e30e-ee707798c5e9@linux.alibaba.com>
-Date:   Wed, 27 Nov 2019 09:50:35 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.0
+        id S1726725AbfK0CHa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Nov 2019 21:07:30 -0500
+Received: from mail.phunq.net ([66.183.183.73]:58330 "EHLO phunq.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725940AbfK0CH3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 Nov 2019 21:07:29 -0500
+X-Greylist: delayed 1204 seconds by postgrey-1.27 at vger.kernel.org; Tue, 26 Nov 2019 21:07:29 EST
+Received: from [172.16.1.14]
+        by phunq.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+        (Exim 4.92.3)
+        (envelope-from <daniel@phunq.net>)
+        id 1iZmQN-0002Ed-42; Tue, 26 Nov 2019 17:47:23 -0800
+To:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, "Theodore Y. Ts'o" <tytso@mit.edu>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+From:   Daniel Phillips <daniel@phunq.net>
+Subject: [RFC] Thing 1: Shardmap fox Ext4
+Message-ID: <176a1773-f5ea-e686-ec7b-5f0a46c6f731@phunq.net>
+Date:   Tue, 26 Nov 2019 17:47:22 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Since v1:
-  * thanks to Iurii for the better sentence
-  * thanks to Jonathan for the better format
+Hi folks,
 
-Add the description for 'cg_numa_stat', also a new doc to explain
-the details on how to deal with the per-cgroup numa statistics.
+Here is my somewhat tardy followup to my Three Things post from earlier
+this fall. I give you Thing 1, Shardmap. What I hope to accomplish today
+is to initiate a conversation with Ext4 developers, and other interested
+observers, which will eventually result in merging the new Shardmap
+directory index code into Ext4, thereby solving a number of longstanding
+issues with the venerable and somewhat problematic HTree.
 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Michal Koutný <mkoutny@suse.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Iurii Zaikin <yzaikin@google.com>
-Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
----
- Documentation/admin-guide/cg-numa-stat.rst      | 163 ++++++++++++++++++++++++
- Documentation/admin-guide/index.rst             |   1 +
- Documentation/admin-guide/kernel-parameters.txt |   4 +
- Documentation/admin-guide/sysctl/kernel.rst     |   9 ++
- 4 files changed, 177 insertions(+)
- create mode 100644 Documentation/admin-guide/cg-numa-stat.rst
+HTree is the most used directory index in the known universe. HTree does
+some things fantastically well, particularly in the most common range of
+directory sizes, but also exhibits some well known flaws and at least one
+previously unknown flaw, explained below. Shardmap is a new index design,
+just seven years old, an O(1) extensible hash table, meant to address all
+of HTree's flaws while improving performance and scaling into the
+previously inaccessible billion file per directory range. Subject to
+verifying these claims, it would seem to be logical to move on to the
+logistics of porting Shardmap to Ext4 as an optional index algorithm,
+eventually deprecating HTree.
 
-diff --git a/Documentation/admin-guide/cg-numa-stat.rst b/Documentation/admin-guide/cg-numa-stat.rst
-new file mode 100644
-index 000000000000..6f505f46fe00
---- /dev/null
-+++ b/Documentation/admin-guide/cg-numa-stat.rst
-@@ -0,0 +1,163 @@
-+===============================
-+Per-cgroup NUMA statistics
-+===============================
-+
-+Background
-+----------
-+
-+On NUMA platforms, remote memory accessing always has a performance penalty,
-+although we have NUMA balancing working hard to maximize the access locality,
-+there are still situations it can't help.
-+
-+This could happen in modern production environment. When a large number of
-+cgroups are used to classify and control resources, this creates a complex
-+configuration for memory policy, CPUs and NUMA nodes. In such cases NUMA
-+balancing could end up with the wrong memory policy or exhausted local NUMA
-+node, which would lead to low percentage of local page accesses.
-+
-+We need to detect such cases, figure out which workloads from which cgroup
-+has introduced the issues, then we get chance to do adjustment to avoid
-+performance degradation.
-+
-+However, there are no hardware counters for per-task local/remote accessing
-+info, we don't know how many remote page accesses have occurred for a
-+particular task.
-+
-+Statistics
-+----------
-+
-+Fortunately, we have NUMA Balancing which scans task's mapping and triggers PF
-+periodically, gives us the opportunity to record per-task page accessing info.
-+
-+By "echo 1 > /proc/sys/kernel/cg_numa_stat" at runtime or adding boot parameter
-+'cg_numa_stat', we will enable the accounting of per-cgroup numa statistics,
-+the 'cpu.numa_stat' entry of CPU cgroup will show statistics::
-+
-+  locality -- execution time sectioned by task NUMA locality (in ms)
-+  exectime -- execution time sectioned by NUMA node (in ms)
-+
-+We define 'task NUMA locality' as::
-+
-+  nr_local_page_access * 100 / (nr_local_page_access + nr_remote_page_access)
-+
-+this per-task percentage value will be updated on the ticks for current task,
-+and the access counter will be updated on task's NUMA balancing PF, so only
-+the pages which NUMA Balancing paid attention to will be accounted.
-+
-+On each tick, we acquire the locality of current task on that CPU, accumulating
-+the ticks into the counter of corresponding locality region, tasks from the
-+same group sharing the counters, becoming the group locality.
-+
-+Similarly, we acquire the NUMA node of current CPU where the current task is
-+executing on, accumulating the ticks into the counter of corresponding node,
-+becoming the per-cgroup node execution time.
-+
-+Note that the accounting is hierarchical, which means the numa statistics for
-+a given group represents not only the workload of this group, but also the
-+workloads of all it's descendants.
-+
-+For example the 'cpu.numa_stat' show::
-+
-+  locality 39541 60962 36842 72519 118605 721778 946553
-+  exectime 1220127 1458684
-+
-+The locality is sectioned into 7 regions, approximately as::
-+
-+  0-13% 14-27% 28-42% 43-56% 57-71% 72-85% 86-100%
-+
-+And exectime is sectioned into 2 nodes, 0 and 1 in this case.
-+
-+Thus we know the workload of this group and it's descendants have totally
-+executed 1220127ms on node_0 and 1458684ms on node_1, tasks with locality
-+around 0~13% executed for 39541 ms, and tasks with locality around 87~100%
-+executed for 946553 ms, which imply most of the memory access are local.
-+
-+Monitoring
-+----------
-+
-+By monitoring the increments of these statistics, we can easily know whether
-+NUMA balancing is working well for a particular workload.
-+
-+For example we take a 5 secs sample period, and consider locality under 27%
-+is bad, then on each sampling we have::
-+
-+  region_bad = region_1 + region_2
-+  region_all = region_1 + region_2 + ... + region_7
-+
-+and we have the increments as::
-+
-+  region_bad_diff = region_bad - last_region_bad
-+  region_all_diff = region_all - last_region_all
-+
-+which finally become::
-+
-+  region_bad_percent = region_bad_diff * 100 / region_all_diff
-+
-+we can plot a line for region_bad_percent, when the line close to 0 things
-+are good, when getting close to 100% something is wrong, we can pick a proper
-+watermark to trigger warning message.
-+
-+You may want to drop the data if the region_all is too small, which implies
-+there are not many available pages for NUMA Balancing, ignoring would be fine
-+since most likely the workload is insensitive to NUMA.
-+
-+Monitoring root group helps you control the overall situation, while you may
-+also want to monitor all the leaf groups which contain the workloads, this
-+helps to catch the mouse.
-+
-+The exectime could be useful when NUMA Balancing is disabled, or when locality
-+becomes too small, for NUMA node X we have::
-+
-+  exectime_X_diff = exectime_X - last_exectime_X
-+  exectime_all_diff = exectime_all - last_exectime_all
-+
-+try to put your workload into a memory cgroup which providing per-node memory
-+consumption by 'memory.numa_stat' entry, then we could get::
-+
-+  memory_percent_X = memory_X * 100 / memory_all
-+  exectime_percent_X = exectime_X_diff * 100 / exectime_all_diff
-+
-+These two percentages are usually matched on each node, workload should execute
-+mostly on the node contain most of it's memory, but it's not guaranteed.
-+
-+The workload may only access a small part of it's memory, in such cases although
-+the majority of memory are remotely, locality could still be good.
-+
-+Thus to tell if things are fine or not depends on the understanding of system
-+resource deployment, however, if you find node X got 100% memory percent but 0%
-+exectime percent, definitely something is wrong.
-+
-+Troubleshooting
-+---------------
-+
-+After identifying which workload introduced the bad locality, check:
-+
-+1). Is the workload bound to a particular NUMA node?
-+2). Has any NUMA node run out of resources?
-+
-+There are several ways to bind task's memory with a NUMA node, the strict way
-+like the MPOL_BIND memory policy or 'cpuset.mems' will limiting the memory
-+node where to allocate pages, in this situation, admin should make sure the
-+task is allowed to run on the CPUs of that NUMA node, and make sure there are
-+available CPU resource there.
-+
-+There are also ways to bind task's CPU with a NUMA node, like 'cpuset.cpus' or
-+sched_setaffinity() syscall, in this situation, NUMA Balancing help to migrate
-+pages into that node, admin should make sure there are available memory there.
-+
-+Admin could try rebind or unbind the NUMA node to erase the damage, make a
-+change then observe the statistics see if things get better until the situation
-+is acceptable.
-+
-+Highlights
-+----------
-+
-+For some tasks, NUMA Balancing may found no necessary to scan pages, and
-+locality could always be 0 or small number, don't pay attention to them
-+since they most likely insensitive to NUMA.
-+
-+There are no accounting until the option turned on, so enable it in advance
-+if you want to have the whole history.
-+
-+We have per-task migfailed counter to tell how many page migration has been
-+failed for a particular task, you will find it in /proc/PID/sched entry.
-diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
-index 4405b7485312..c75a3fdfcd94 100644
---- a/Documentation/admin-guide/index.rst
-+++ b/Documentation/admin-guide/index.rst
-@@ -112,6 +112,7 @@ configure specific aspects of kernel behavior to your liking.
-    video-output
-    wimax/index
-    xfs
-+   cg-numa-stat
+Shardmap equals or outperforms HTree at all scales, with the single
+exception of one theoretical case with a likewise theoretical solution.
+Shardmap is O(1) in all operations - insert, delete, lookup and readdir,
+while HTree is O(log N) in the first three and suffers from a relatively
+large constant readdir overhead. This is not the only reason Shardmap is
+faster than HTree, far from it.
 
- .. only::  subproject and html
+I will break performance discussion down into four ranges:
+   1) unindexed single block, to about 300 entries
+   2) indexed up to 30 thousand entries
+   3) indexed up to 3 million entries
+   4) indexed up to 1 billion entries.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 0945611b3877..674c1a4bae14 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3227,6 +3227,10 @@
- 	numa_balancing=	[KNL,X86] Enable or disable automatic NUMA balancing.
- 			Allowed values are enable and disable
+In theory, Shardmap and HTree are exactly tied in the common single
+block case, because creating the index is delayed in both cases until
+there are at least two blocks to index. However, Shardmap broke away
+from the traditional Ext2 entry block format in order to improve block
+level operation efficiency and to prevent record fragmentation under
+heavy aging, and is therefore significantly faster than HTree even in
+the single block case.
 
-+	cg_numa_atat	[KNL] Enable advanced per-cgroup numa statistics.
-+			Useful to debug NUMA efficiency problems when there are
-+			lots of per-cgroup workloads.
-+
- 	numa_zonelist_order= [KNL, BOOT] Select zonelist order for NUMA.
- 			'node', 'default' can be specified
- 			This can be set from sysctl after boot.
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index 7e203b3ed331..918a26d2bd77 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -572,6 +572,15 @@ rate for each task.
- numa_balancing_scan_size_mb is how many megabytes worth of pages are
- scanned for a given scan.
+Shardmap does not function at all in the fourth range, up to 1 billion
+entries, because its Btree has at most 2 levels. This simple flaw could be
+corrected without much difficulty but Shardmap would remain superior for
+a number of reasons.
 
-+cg_numa_stat:
-+=============
-+
-+Enables/disables advanced per-cgroup NUMA statistic.
-+
-+0: disabled (default).
-+1: enabled.
-+
-+Check Documentation/admin-guide/cg-numa-stat.rst for details.
+The most interesting case is the 300 to 30 thousand entry range, where
+Htree and Shardmap should theoretically be nearly equal, each requiring
+two accesses per lookup. However, HTree does two radix tree lookups while
+Shardmap does one, and the other lookup is in a cached memory object.
+Coupled with the faster record level operations, Shardmap is significantly
+faster in this range. In the 30 thousand to 3 million range, Shardmap's
+performance advantage further widens in accordance with O(1) / O(log N).
 
- osrelease, ostype & version:
- ============================
--- 
-2.14.4.44.g2045bb6
+For inserts, Shardmap's streaming update strategy is far superior to
+HTree's random index block write approach. HTree will tend to dirty every
+index block under heavy insert load, so that every index block must be
+written to media per commit, causing serious write multiplication
+issues. In fact, all Btree schemes suffer from this issue, which on the
+face of it appears to be enough reason to eliminate the Btree as a
+realistic design alternative. Shardmap dramatically reduces such per
+commit write multiplication by appending new index entries linearly to
+the tail blocks of a small number of index shards. For delete,
+Shardmap avoids write multiplication by appending tombstone entries to
+index shards, thereby addressing a well known HTree delete performance
+issue.
 
+HTree has always suffered from a serious mismatch between name storage
+order and inode storage order, greatly exacerbated by the large number
+of directory entries and inodes stored per block (false sharing). In
+particular, a typical HTree hash order directory traversal accesses the
+inode table randomly, multiplying both the cache footprint and write
+traffic. Historically, this was the cause of many performance complaints
+about HTree, though to be sure, such complaints have fallen off with
+the advent of solid state storage. Even so, this issue will continue rear
+its ugly head when users push the boundaries of cache and directory size
+(google telldir+horror). Shardmap avoids this issue entirely by storing
+and traversing directory entries in simple, classic linear order.
+
+This touches on the single most significant difference between Shardmap
+and HTree: Shardmap strictly separates its index from record entry blocks,
+while HTree embeds entries directly in the BTree index. The HTree
+strategy performs impressively well at low to medium directory scales,
+but at higher scales it causes significantly more cache pressure, due to
+the fact that the cache footprint of any randomly accessed index is
+necessarily the entire index. In contrast, Shardmap stores directory
+entries permanently in creation order, so that directory traversal is
+in simple linear order with effectively zero overhead. This avoids
+perhaps HTree's most dubious design feature, its arcane and not completely
+reliable hash order readdir traversal, which miraculously has avoided
+serious meltdown over these past two decades due to a legendary hack by
+Ted and subsequent careful adaptation to handle various corner cases.
+Nowhere in Shardmap will you find any such arcane and marginally
+supportable code, which should be a great relief to Ext4 maintainers.
+Or to put it another way, if somebody out there wishes to export a
+billion file directory using NFSv2, Shardmap will not be the reason
+why that does not work whereas HTree most probably would be.
+
+Besides separating out the index from entry records and accessing those
+records linearly in most situations, Shardmap also benefits from a very
+compact index design. Even if a directory has a billion entries, each
+index entry is only eight bytes in size. This exercise in structure
+compaction proved possible because the number of hash bits needed for the
+hash code decreases as the number of index shards increases, freeing up
+bits for larger block numbers as the directory expands. Shardmap
+therefore implements an index entry as several variable sized fields.
+This strategy works well up to the billion entry range, above which the
+number of hash index collisions (each of which must be resolved by
+accessing an underlying record block) starts to increase noticeably.
+This is really the only factor that limits Shardmap performance above
+a billion entries. Should we wish Shardmap to scale to trillions of
+entries without losing performance, we will need to increase the index
+entry size to ten bytes or so, or come up with some as yet unknown
+clever improvement (potential thesis project goes here).
+
+There are many additional technical details of Shardmap that ought to be
+explained, however today my primary purpose is simply to introduce what
+I view as a compelling case for obsoleting HTree. To that end, fewer
+words are better and this post is already quite long enough. I would love
+to get into some other interesting details, for example, the Bigmap free
+space mapping strategy, but that really needs its own post to do it
+justice, as do a number of other subjects.
+
+Wrapping up, what about that theoretical case where HTree outperforms
+Shardmap? This is theoretical because one needs to operate on a huge
+directory with tiny cache to trigger it. Both Shardmap and HTree will
+exhibit read multiplication under such conditions, due to frequent
+cache evictions, however the Shardmap read multiplication will be many
+times higher than HTree because of its coarser cache granularity. In the
+unlikely event that we ever need to fix this, one viable solution is to
+add paging support for Shardmap's in-memory cache structure, a standard
+technique sometimes called "anticache".
+
+That is it for today. There remains much to explain about Shardmap both
+within and beyond the Ext4 context. For example, Shardmap has proved to
+work very well as a standalone key value store, particularly with
+persistent memory. In fact, we have benchmarked Shardmap at over three
+million atomic, durable database operations per second on an Intel
+Optane server, which might well be a new world record. The details of
+how this was done are fascinating, however this post is far too small to
+contain them today. Perhaps this should be thing 1(b) for next week.
+
+Regards,
+
+Daniel
