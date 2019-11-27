@@ -2,191 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E91610C02D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 23:27:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9514710C09E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2019 00:27:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbfK0W1b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Nov 2019 17:27:31 -0500
-Received: from mail.phunq.net ([66.183.183.73]:33890 "EHLO phunq.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726947AbfK0W1a (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Nov 2019 17:27:30 -0500
-Received: from [172.16.1.14]
-        by phunq.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
-        (Exim 4.92.3)
-        (envelope-from <daniel@phunq.net>)
-        id 1ia5mS-00083g-5q; Wed, 27 Nov 2019 14:27:28 -0800
-Subject: Re: [RFC] Thing 1: Shardmap fox Ext4
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-References: <176a1773-f5ea-e686-ec7b-5f0a46c6f731@phunq.net>
- <20191127142508.GB5143@mit.edu>
-From:   Daniel Phillips <daniel@phunq.net>
-Message-ID: <c3636a43-6ae9-25d4-9483-34770b6929d0@phunq.net>
-Date:   Wed, 27 Nov 2019 14:27:27 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727031AbfK0X1a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Nov 2019 18:27:30 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:39750 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727258AbfK0X1a (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 27 Nov 2019 18:27:30 -0500
+Received: by mail-oi1-f194.google.com with SMTP id a67so2901376oib.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Nov 2019 15:27:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=o17+8CbvEVhOy52GU617H5c27TW8wRMeItKugWda1E8=;
+        b=gEfFygk6zlq4YjlSAWZP+mBposTPLDRB0XxbdPfaSa+M9iiNgVGB8mYWVDeb9AVTsk
+         YrA3GXh9ZLq4Z+xsJQhqojijbIxtEdSI1+fWzY+kmoYOLvqpkzqR6rXb56Y09ug897bC
+         eWBu9yWelTnScG+tv6mjz4fDwDi9w38OTIl6SHxAWgCSIC6PMa4eWYVdx2GMzV9dcLcQ
+         Se5pJt/Ybo+2hmCxGnMZDi2tDNMQExJNlLyEYnebNDH34CYmhwqbBfPpOu5pjURX3AuE
+         MUaRGQUqSsCf162tumHS06Y/2RmW7YNUzvfGIddWVqJq/34EW44h1+ePcEqcxOEhJKYU
+         4YPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=o17+8CbvEVhOy52GU617H5c27TW8wRMeItKugWda1E8=;
+        b=Tm89jmAz7pzGAT2mjhXruTr5rcyuxh0A9O4EXMWzuydPt0lZh5wCMoXoUN/RJ4CUe9
+         qM+DHKdgB95D+88Al2QvEsUKc8I4q8XVJZnKx6qYbr2SVXpqO30wlfRpoaZnTjCV218z
+         JzhGxSBHgBzkBU9BihyANjYvnj5KgqTVX7kK4Ws/uIAVTExTKriPZ3mME1NGqNCknshc
+         56oIi6HxJuRoFPe7EAyrSYF09oi4afw5XwtkhwUPBaWiIYX/kMaaaclxeKfZvVBeRufR
+         25Ksf7GVWZNNZR7YzaS8azSm/Jyz20j/yTl1FkdVq3NRqiP4qK6LTSo85xRdT08pgc9n
+         nD8w==
+X-Gm-Message-State: APjAAAWwUVSMDJz4rs7UMADY9uq6oYDmjkHMvd4q/tb92UVTZlth8Lkc
+        nVk6ir/+oA2UdK6JhV2C7HBZ+fRVyIuikPTYgoa3gTANzqY=
+X-Google-Smtp-Source: APXvYqz/AUEd3lH0kPPmUTqXkVmSb9WSAhqCK7EciEEtyrVLgZRj53oKw15Kf7wNjADfJLYnoAQVfAgL4uUDIqrpQDY=
+X-Received: by 2002:a05:6808:9a1:: with SMTP id e1mr6352651oig.175.1574897248917;
+ Wed, 27 Nov 2019 15:27:28 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191127142508.GB5143@mit.edu>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <254505c9-2b76-ebeb-306c-02aaf1704b88@kernel.dk>
+ <CAG48ez33ewwQB26cag+HhjbgGfQCdOLt6CvfmV1A5daCJoXiZQ@mail.gmail.com> <1d3a458a-fa79-5e33-b5ce-b473122f6d1a@kernel.dk>
+In-Reply-To: <1d3a458a-fa79-5e33-b5ce-b473122f6d1a@kernel.dk>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 28 Nov 2019 00:27:02 +0100
+Message-ID: <CAG48ez2VBS4bVJqdCU9cUhYePYCiUURvXZWneBx2KGkg3L9d4g@mail.gmail.com>
+Subject: Re: [PATCH RFC] signalfd: add support for SFD_TASK
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Ted,
+On Wed, Nov 27, 2019 at 9:48 PM Jens Axboe <axboe@kernel.dk> wrote:
+> On 11/27/19 12:23 PM, Jann Horn wrote:
+> > On Wed, Nov 27, 2019 at 6:11 AM Jens Axboe <axboe@kernel.dk> wrote:
+> >> I posted this a few weeks back, took another look at it and refined it a
+> >> bit. I'd like some input on the viability of this approach.
+> >>
+> >> A new signalfd setup flag is added, SFD_TASK. This is only valid if used
+> >> with SFD_CLOEXEC. If set, the task setting up the signalfd descriptor is
+> >> remembered in the signalfd context, and will be the one we use for
+> >> checking signals in the poll/read handlers in signalfd.
+> >>
+> >> This is needed to make signalfd useful with io_uring and aio, of which
+> >> the former in particular has my interest.
+> >>
+> >> I _think_ this is sane. To prevent the case of a task clearing O_CLOEXEC
+> >> on the signalfd descriptor, forking, and then exiting, we grab a
+> >> reference to the task when we assign it. If that original task exits, we
+> >> catch it in signalfd_flush() and ensure waiters are woken up.
+> >
+> > Mh... that's not really reliable, because you only get ->flush() from
+> > the last exiting thread (or more precisely, the last exiting task that
+> > shares the files_struct).
+> >
+> > What is your goal here? To have a reference to a task without keeping
+> > the entire task_struct around in memory if someone leaks the signalfd
+> > to another process - basically like a weak pointer? If so, you could
+> > store a refcounted reference to "struct pid" instead of a refcounted
+> > reference to the task_struct, and then do the lookup of the
+> > task_struct on ->poll and ->read (similar to what procfs does).
+>
+> Yeah, I think that works out much better (and cleaner). How about this,
+> then? Follows your advice and turns it into a struct pid instead. I
+> don't particularly like the -ESRCH in dequeue and setup, what do you
+> think? For poll, POLLERR seems like a prudent choice.
 
-I trust you will find your initial points satisfactorily addressed below.
+-ESRCH may be kinda weird, but I also can't think of anything
+better... and it does describe the problem pretty accurately: The task
+whose signal state you're trying to inspect is gone. I went through
+the list of errnos, and everything else sounded more weird...
 
-On 2019-11-27 6:25 a.m., Theodore Y. Ts'o wrote:
-> A couple of quick observations about Shardmap.
-> 
-> (1) It's licensed[1] under the GPLv3, so it's not compatible with the
-> kernel license.  That doesn't matter much for ext4, because...
-> 
-> [1] https://github.com/danielbot/Shardmap/blob/master/LICENSE
 
-The kernel port of Shardmap will (necessarily) be licensed under GPLv2.
+One more thing, though: We'll have to figure out some way to
+invalidate the fd when the target goes through execve(), in particular
+if it's a setuid execution. Otherwise we'll be able to just steal
+signals that were intended for the other task, that's probably not
+good.
 
-> (2) It's implemented as userspace code (e.g., it uses open(2),
-> mmap(2), et. al) and using C++, so it would need to be reimplemented
-> from scratch for use in the kernel.
+So we should:
+ a) prevent using ->wait() on an old signalfd once the task has gone
+through execve()
+ b) kick off all existing waiters
+ c) most importantly, prevent ->read() on an old signalfd once the
+task has gone through execve()
 
-Right. Some of these details, like open, are obviously trivial, others
-less so. Reimplementing from scratch is an overstatement because the
-actual intrusions of user space code are just a small portion of the code
-and nearly all abstracted behind APIs that can be implemented as needed
-for userspace or kernel in out of line helpers, so that the main source
-is strictly unaware of the difference. That said, we can just fork off a
-kernel version and not worry about keeping compatiblity with user space
-if you wish, though putting in the extra effort to make it dual mode
-would probably be helpful for e2fsck.
+We probably want to avoid using the cred_guard_mutex here, since it is
+quite broad and has some deadlocking issues; it might make sense to
+put the update of ->self_exec_id in fs/exec.c under something like the
+siglock, and then for a) and c) we can check whether the
+->self_exec_id changed while holding the siglock, and for b) we can
+add a call to signalfd_cleanup() after the ->self_exec_id change.
 
-Also, most of this work is already being done for Tux3, so the only
-Ext4-specific work needing doing may well be the differences in atomic
-commit required to accommodate Ext4's ordered journaling, versus Tux3's
-(more precise) delta commit. To that end, we could discuss the atomic
-commit strategy that we use for the persistent memory implementation of
-Shardmap, which may turn out to be largely applicable to Ext4's journal
-transaction model.
+> +static void signalfd_put_task(struct signalfd_ctx *ctx, struct task_struct *tsk)
+> +{
+> +       if (ctx->task_pid)
+> +               put_task_struct(tsk);
+> +}
+> +
+> +static struct task_struct *signalfd_get_task(struct signalfd_ctx *ctx)
+> +{
+> +       if (ctx->task_pid)
+> +               return get_pid_task(ctx->task_pid, PIDTYPE_PID);
+> +
+> +       return current;
+> +}
 
-> (3) It's not particularly well documented, making the above more
-> challenging, but it appears to be a variation of an extensible hashing
-> scheme, which was used by dbx and Berkley DB.
+This works, and I guess it's a question of coding style... but I'd
+kinda prefer to do the refcount operation in both cases, so that the
+semantics of the returned reference are simply "holds a reference"
+instead of "either holds a reference or borrows from current depending
+on ctx->task_pid". But if you feel strongly about it, feel free to
+keep it as-is.
 
-Sorry about that. There is this post from a few years back:
+[...]
+> -       add_wait_queue(&current->sighand->signalfd_wqh, &wait);
+> +       add_wait_queue(&tsk->sighand->signalfd_wqh, &wait);
+>         for (;;) {
+>                 set_current_state(TASK_INTERRUPTIBLE);
+> -               ret = dequeue_signal(current, &ctx->sigmask, info);
+> +               ret = dequeue_signal(tsk, &ctx->sigmask, info);
+>                 if (ret != 0)
+>                         break;
+>                 if (signal_pending(current)) {
+>                         ret = -ERESTARTSYS;
+>                         break;
+>                 }
+> -               spin_unlock_irq(&current->sighand->siglock);
+> +               spin_unlock_irq(&tsk->sighand->siglock);
+>                 schedule();
 
-   https://lkml.org/lkml/2013/6/18/869
+Should we be dropping the reference to the task before schedule() and
+re-acquiring it afterwards so that if we're blocked on a signalfd read
+and then the corresponding task dies, the refcount can drop to zero
+and we can get woken up? Probably doesn't matter, but seems a bit
+cleaner to me.
 
-And there is a paper in the works. I can also follow up here with a post
-on Shardmap internals, a number of which are interesting and unique.
+> -               spin_lock_irq(&current->sighand->siglock);
+> +               spin_lock_irq(&tsk->sighand->siglock);
+>         }
+> -       spin_unlock_irq(&current->sighand->siglock);
+> +       spin_unlock_irq(&tsk->sighand->siglock);
+>
+> -       remove_wait_queue(&current->sighand->signalfd_wqh, &wait);
+> +       remove_wait_queue(&tsk->sighand->signalfd_wqh, &wait);
+>         __set_current_state(TASK_RUNNING);
+>
+> +       signalfd_put_task(ctx, tsk);
+>         return ret;
+>   }
+>
+> @@ -267,19 +296,24 @@ static int do_signalfd4(int ufd, sigset_t *mask, int flags)
+>         /* Check the SFD_* constants for consistency.  */
+>         BUILD_BUG_ON(SFD_CLOEXEC != O_CLOEXEC);
+>         BUILD_BUG_ON(SFD_NONBLOCK != O_NONBLOCK);
+> +       BUILD_BUG_ON(SFD_TASK & (SFD_CLOEXEC | SFD_NONBLOCK));
+>
+> -       if (flags & ~(SFD_CLOEXEC | SFD_NONBLOCK))
+> +       if (flags & ~(SFD_CLOEXEC | SFD_NONBLOCK | SFD_TASK))
+> +               return -EINVAL;
+> +       if ((flags & (SFD_CLOEXEC | SFD_TASK)) == SFD_TASK)
+>                 return -EINVAL;
 
-Shardmap (introduced above as an "an O(1) extensible hash table") is indeed
-an extensible hashing scheme. Fixed size hash tables are impractical for
-databases and file system directories because small data sets waste too
-much table space and large data sets have too many collisions. Therefore
-every such design must incorporate some form of extensibility. Shardmap's
-extension scheme is unique, and worthy of note in its own right as a
-contribution to hash table technology. We did benchmark against Berkeley
-DB and found Shardmap to be markedly faster. I will hunt around for those
-numbers.
-
-Very briefly, the Shardmap index has two distinct forms, one optimized
-for media and the other for cache. These are bijective, each being
-constructable from the other. The media form (the backing store) only
-has a single purpose: to reconstruct the cache form on demand, one shard
-at a time.
-
-The cache form is the main source of Shardmap's efficiency. This is a
-two level hash table with each entry in the top level table being a
-pointer to a self contained hash table object. In contrast to other
-extensible hashing schemes, these cache shard are not themselves
-extensible. Rather, we simply rewrite entire shards into subshards
-as needed.
-
-The top level hash table is where the extensibility happens. At some
-threshold, the top level table is expanded by duplicating the pointers
-to the hash objects so that multiple buckets may reference the same
-hash object. When any of those objects passes a threshold number of
-entries, it is split into multiple, smaller hash objects, each with a
-unique pointer from the top level table. Traversing this two level
-table for lookup or existence tests takes just a few nanoseconds.
-
-Extending the hash in cache is mirrored by extending the media form,
-by serializing the cache shard into multiple linear regions on media.
-Now here is the key idea: even taking the cost of this media rewrite
-into account, insert performance remains O(1), just with a slightly
-higher constant factor. Shardmap exploits this subtle mathematical
-fact to get the best of both worlds: O(1) performance like a hash and
-extensibility like a BTree.
-
-In fact, if you wish to avoid that constant media rewrite factor
-entirely, Shardmap lets you do it, by allowing you to specify the
-number and size of shards at directory creation time. I have not
-benchmarked this, but it could improve average create performance by 20%
-or so. However, even with the "extra" media copy, Shardmap still has
-impressively high insert performance, in fact it is significantly
-faster than any of the high performance key value stores we have tried
-so far.
-
-> (4) Because of (2), we won't be able to do any actual benchmarks for a
-> while.
-
-(2) is not an issue, the copyright is entirely mine and the license can
-be retuned as convenient. Just indicate where the GPLv2 version should
-be posted and I will make it so. Perhaps a new Github repo, or Gitlab?
-
-> I just checked the latest version of Tux3[2], and it appears
-> to be be still using a linear search scheme for its directory ---
-> e.g., an O(n) lookup ala ext2.  So I'm guessing Shardmap may have been
-> *designed* for Tux3, but it has not yet been *implemented* for Tux3?
-> 
-> [2] https://github.com/OGAWAHirofumi/linux-tux3/blob/hirofumi/fs/tux3/dir.c#L283
-
-Correct, not yet ported to Tux3, however this work is in progress. There
-are some sticky little points to work out such as how to implement the
-largish cache shard objects without using virtual memory. The PAGEMAP
-compilation option in the current source breaks those objects up into
-pages, essentially doing virtual memory by hand, which will add some
-small amount of additional overhead to the kernel version versus the
-user space version, nothing to worry about. However it does make me wish
-that we had better kernel support for virtual memory.
-
-There are various other kernel porting details that are maybe a bit too
-fine grained for this post. Example: Shardmap is a memory mapped db but
-we don't have mmap in kernel, so must do this by hand also.
-
-> (5) The claim is made that readdir() accesses files sequentially; but
-> there is also mention in Shardmap of compressing shards (e.g.,
-> rewriting them) to squeeze out deleted and tombstone entries.  This
-> pretty much guarantees that it will not be possible to satisfy POSIX
-> requirements of telldir(2)/seekdir(3) (using a 32-bit or 64-bitt
-> cookie), NFS (which also requires use of a 32-bit or 64-bit cookie
-> while doing readdir scan), or readdir() semantics in the face of
-> directory entries getting inserted or removed from the directory.
-
-No problem, the data blocks are completely separate from the index so
-readdir just walks through them in linear order a la classic UFS/Ext2.
-What could possibly be simpler, faster or more POSIX compliant?
-
-> (To be specific, POSIX requires readdir returns each entry in a
-> directory once and only once, and in the case of a directory entry
-> which is removed or inserted, that directory entry must be returned
-> exactly zero or one times.  This is true even if telldir(2) ort
-> seekdir(2) is used to memoize a particular location in the directory,
-> which means you have a 32-bit or 64-bit cookie to define a particular
-> location in the readdir(2) stream.  If the file system wants to be
-> exportable via NFS, it must meet similar requirements ---- except the
-> 32-bit or 64-bit cookie MUST survive a reboot.)
-
-So we finally get to fix this nagging HTree defect after all these
-years. Thank you once again for that sweet hack, but with luck we
-will be able to obsolete it by this time next year.
-
-Regards,
-
-Daniel
+(non-actionable comment: It seems kinda weird that you can specify
+these parameters with no effect for the `uffd != -1` case... but since
+the existing parameters already work that way, I guess it's
+consistent.)
