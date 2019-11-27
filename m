@@ -2,232 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BE3C10B6D8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 20:35:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E644310B75B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 21:21:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbfK0TfV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Nov 2019 14:35:21 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:37705 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727945AbfK0TfU (ORCPT
+        id S1727010AbfK0UVr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Nov 2019 15:21:47 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:41582 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726703AbfK0UVr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Nov 2019 14:35:20 -0500
-Received: by mail-lf1-f66.google.com with SMTP id b20so18113284lfp.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Nov 2019 11:35:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=uTDWkxIvzQK+lQ6yvWXXgVNUrJqpN09xTPjHaxPQoxg=;
-        b=lJJ0Qj7D+dByWJS0P6lbl2YTSw5nnndoomDD1/OzRqldJjevFbG79ofjqOuANzJHli
-         l65FVcWNEp7RGL6g5oYA7NG9p3mxo+nRF4a3TXUdUQjpwmQitca7JJID5APlQ7L/gLWh
-         eyE+16ND26CWr5DhHmj5hPyJaj/Yi9QiYbQ7WF6GfkMfSbF3SkkrQY2b/bQ404Bv+bR5
-         TwxKwlbGI4guP7fMs6PipnKw5eaeC6HKgwgl3uaR6cYSXODM+K8LO9SVqJd8JcM4Z0u0
-         b46DIgYZCGVfmTXhT64lQsJIUii2Tou/XhLqm9K1EyGTL+VAyTXrblOWGsS5FKmJCAje
-         yDMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=uTDWkxIvzQK+lQ6yvWXXgVNUrJqpN09xTPjHaxPQoxg=;
-        b=N4ZLR5MjK49BSJ6EE+dOZFr8M71gfdwIPylkj6xGd+bkGMJt+LRIQT+ywJV+qSa3yE
-         4AiWGQrqqTEycUZofHH7XjespqBujgmy7FUlZT3WIdWkLBmAG2F+PxZmUrxtf8acidlI
-         pfyYfhURV0G6z0tMkjh1hEmRAH7eL8GnDZYQJORWe9oSxvQrOEyJ1omT90K9GE2MvWOs
-         wy1vFClvhc2Xg1UVrAaM0vajtJLOXgVUiLaIwaOGouU6XN3um4Cd6M3U8k8lq5LCL2wi
-         pvSLB1dlHR5RsxW1wIOcSP2KBFCY93sa8MRRxZN4YX+kvcyuB5MhmkihlY8lNuNKXVGB
-         g8Vg==
-X-Gm-Message-State: APjAAAWIG17A/bJ6zPD42G8cEBLMOBwX7xkMoHQ12ucik6TDuYGLjC3k
-        S/ANUrA0Vt4nixmtbYbU2Eg52w==
-X-Google-Smtp-Source: APXvYqyTR9+SLPlISNvDfDWPlEthYrImWYnPuGVb+3H6C39rsGqaoxdYBYdMOlpFIMkU7cN4gQ8WEg==
-X-Received: by 2002:a19:3f16:: with SMTP id m22mr26994057lfa.116.1574883316489;
-        Wed, 27 Nov 2019 11:35:16 -0800 (PST)
-Received: from ?IPv6:2a00:1370:812c:3592:7897:598b:7870:e1b? ([2a00:1370:812c:3592:7897:598b:7870:e1b])
-        by smtp.gmail.com with ESMTPSA id p24sm7366773lfc.96.2019.11.27.11.35.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Nov 2019 11:35:15 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3601.0.10\))
-Subject: Re: [RFC] Thing 1: Shardmap fox Ext4
-From:   Viacheslav Dubeyko <slava@dubeyko.com>
-In-Reply-To: <5c9b5bd3-028a-5211-30a6-a5a8706b373e@phunq.net>
-Date:   Wed, 27 Nov 2019 22:35:13 +0300
-Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, "Theodore Y. Ts'o" <tytso@mit.edu>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <B9F8658C-B88F-44A1-BBEF-98A8259E0712@dubeyko.com>
-References: <176a1773-f5ea-e686-ec7b-5f0a46c6f731@phunq.net>
- <8ece0424ceeeffbc4df5d52bfa270a9522f81cda.camel@dubeyko.com>
- <5c9b5bd3-028a-5211-30a6-a5a8706b373e@phunq.net>
-To:     Daniel Phillips <daniel@phunq.net>
-X-Mailer: Apple Mail (2.3601.0.10)
+        Wed, 27 Nov 2019 15:21:47 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xARKJvRU126170;
+        Wed, 27 Nov 2019 20:21:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=95mfLhm4vghNr8cf39wWPNrlxfRQ9+/3VOjVBZT7JzY=;
+ b=NCD166AcV9/rhzIIX/QgAs4CIE3Fs1OMwo7tJh/SjzDS1WAtlhtJE9m65MDMb34cKlhT
+ RVkU4uMN/eNSbFiPZo/4uZnkX9W+h7ncRgcCmK8CkzMhHY9KSAAzPZgaHnyrV5mn7Eiy
+ Lo0EPDpooUidRqfZbnTRQBaSIiONTJtLJmcHdS7aIp5DsXjDJRqekgnbghQLnxyUX25V
+ 7qty/MGC3b2TV5bRte5bXZP/rWs25C7EyNz20gUl5Ly1Jh2kv8SpgeyNzrWEP1MnzQ+x
+ elDpRrnXQ2RBBavtDpU6Z/6D0BCDRgqHHUwBxZWAj8ul99HVXN3hBv+RSzKgj8RjVe9V nQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2wev6uftg2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Nov 2019 20:21:42 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xARKJ4Fa092823;
+        Wed, 27 Nov 2019 20:21:42 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2whx5r556n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Nov 2019 20:21:42 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xARKLcMZ028437;
+        Wed, 27 Nov 2019 20:21:40 GMT
+Received: from localhost (/10.145.178.64)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 27 Nov 2019 12:21:38 -0800
+Date:   Wed, 27 Nov 2019 12:21:36 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Trond Myklebust <trondmy@hammerspace.com>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+Subject: Re: Question about clone_range() metadata stability
+Message-ID: <20191127202136.GV6211@magnolia>
+References: <f063089fb62c219ea6453c7b9b0aaafd50946dae.camel@hammerspace.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f063089fb62c219ea6453c7b9b0aaafd50946dae.camel@hammerspace.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9454 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911270163
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9454 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911270163
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Nov 27, 2019 at 06:38:46PM +0000, Trond Myklebust wrote:
+> Hi all
+> 
+> A quick question about clone_range() and guarantees around metadata
+> stability.
+> 
+> Are users required to call fsync/fsync_range() after calling
+> clone_range() in order to guarantee that the cloned range metadata is
+> persisted?
 
+Yes.
 
-> On Nov 27, 2019, at 11:28 AM, Daniel Phillips <daniel@phunq.net> =
-wrote:
->=20
-> On 2019-11-26 11:40 p.m., Vyacheslav Dubeyko wrote:
->> As far as I know, usually, a folder contains dozens or hundreds
->> files/folders in average. There are many research works that had =
-showed
->> this fact. Do you mean some special use-case when folder could =
-contain
->> the billion files? Could you share some research work that describes
->> some practical use-case with billion files per folder?
->=20
-> You are entirely correct that the vast majority of directories contain
-> only a handful of files. That is my case (1). A few directories on a
-> typical server can go into the tens of thousands of files. There was
-> a time when we could not handle those efficiently, and now thanks to
-> HTree we can. Some directories go into the millions, ask the Lustre
-> people about that. If you could have a directory with a billion files
-> then somebody will have a use for it. For example, you may be able to
-> avoid a database for a particular application and just use the file
-> system instead.
->=20
-> Now, scaling to a billion files is just one of several things that
-> Shardmap does better than HTree. More immediately, Shardmap implements
-> readdir simply, accurately and efficiently, unlike HTree. See here for
-> some discussion:
->=20
->   https://lwn.net/Articles/544520/
->   "Widening ext4's readdir() cookie"
->=20
+> I'm assuming that it is required in order to guarantee that
+> data is persisted.
 
+Data and metadata.  XFS and ocfs2's reflink implementations will flush
+the page cache before starting the remap, but they both require fsync to
+force the log/journal to disk.
 
-So, it looks like that Shardmap could be better for the case of billion =
-files in one folder.
-But what=E2=80=99s about the regular case when it could be =
-dozens/hundreds of files in one
-folder? Will Shardmap be better than HTree? If the ordinary user =
-hasn=E2=80=99t visible
-performance improvement then it makes sense to consider Shardmap like =
-the
-optional feature. What do you think?
+(AFAICT the same reasoning applies to btrfs, but don't trust my word for
+it.)
 
-Does it mean that Shardmap is ext4 oriented only? Could it be used for =
-another
-file systems?
+> I'm asking because knfsd currently just does a call to
+> vfs_clone_file_range() when parsing a NFSv4.2 CLONE operation. It does
+> not call fsync()/fsync_range() on the destination file, and since the
+> NFSv4.2 protocol does not require you to perform any other operation in
+> order to persist data/metadata, I'm worried that we may be corrupting
+> the cloned file if the NFS server crashes at the wrong moment after the
+> client has been told the clone completed.
 
+That analysis seems correct.
 
-> See the recommendation that is sometimes offered to work around
-> HTree's issues with processing files in hash order. Basically, read
-> the entire directory into memory, sort by inode number, then process
-> in that order. As an application writer do you really want to do this,
-> or would you prefer that the filesystem just take care of for you so
-> the normal, simple and readable code is also the most efficient code?
->=20
+--D
 
-
-I slightly missed the point here. To read the whole directory sounds =
-like to read
-the dentries tree from the volume. As far as I can see, the dentries are =
-ordered
-by names or by hashes. But if we are talking about inode number then we =
-mean
-the inodes tree. So, I have misunderstanding here. What do you mean?
-
-
->> If you are talking about improving the performance then do you mean
->> some special open-source implementation?
->=20
-> I mean the same kind of kernel filesystem implementation that HTree
-> currently has. Open source of course, GPLv2 to be specific.
->=20
-
-I meant the Shardmap implementation. As far as I can see, the user-space =
-implementation
-is available only now. So, my question is still here. It=E2=80=99s hard =
-to say how efficient the Shardmap
-could be on kernel side as ext4 subsystem, for example.
-
-
->>> For delete, Shardmap avoids write multiplication by appending =
-tombstone
->>> entries to index shards, thereby addressing a well known HTree =
-delete
->>> performance issue.
->>=20
->> Do you mean Copy-On-Write policy here or some special technique?
->=20
-> The technique Shardmap uses to reduce write amplication under heavy
-> load is somewhat similar to the technique used by Google's Bigtable to
-> achieve a similar result for data files. (However, the resemblance to
-> Bigtable ends there.)
->=20
-> Each update to a Shardmap index is done twice: once in a highly
-> optimized hash table shard in cache, then again by appending an
-> entry to the tail of the shard's media "fifo". Media writes are
-> therefore mostly linear. I say mostly, because if there is a large
-> number of shards then a single commit may need to update the tail
-> block of each one, which still adds up to vastly fewer blocks than
-> the BTree case, where it is easy to construct cases where every
-> index block must be updated on every commit, a nasty example of
-> n**2 performance overhead.
->=20
-
-
-It sounds like adding updates in log-structured manner. But what=E2=80=99s=
- about
-the obsolete/invalid blocks? Does it mean that it need to use some GC =
-technique
-here? I am not completely sure that it could be beneficial for the ext4.
-
-By the way, could the old index blocks be used like the snapshots in the =
-case
-of corruptions or other nasty issues?
-
-
->> How could be good Shardmap for the SSD use-case? Do you mean that we
->> could reduce write amplification issue for NAND flash case?
->=20
-> Correct. Reducing write amplification is particularly important for
-> flash based storage. It also has a noticeable beneficial effect on
-> efficiency under many common and not so common loads.
->=20
->> Let's imagine that it needs to implement the Shardmap approach. Could
->> you estimate the implementation and stabilization time? How expensive
->> and long-term efforts could it be?
->=20
-> Shardmap is already implemented and stable, though it does need wider
-> usage and testing. Code is available here:
->=20
->   https://github.com/danielbot/Shardmap
->=20
-> Shardmap needs to be ported to kernel, already planned and in progress
-> for Tux3. Now I am proposing that the Ext4 team should consider =
-porting
-> Shardmap to Ext4, or at least enter into a serious discussion of the
-> logistics.
->=20
-> Added Darrick to cc, as he is already fairly familiar with this =
-subject,
-> once was an Ext4 developer, and perhaps still is should the need =
-arise.
-> By the way, is there a reason that Ted's MIT address bounced on my
-> original post?
->=20
-
-It=E2=80=99s hard to talk about stability because we haven=E2=80=99t =
-kernel-side implementation
-of Shardmap for ext4. I suppose that it needs to spend about a year for =
-the porting
-and twice more time for the stabilization. To port a user-space code to =
-the kernel
-could be the tricky task. Could you estimate how many lines of code the =
-core
-part of Shardmap contains? Does it need to change the ext4 on-disk =
-layout for
-this feature? How easy ext4 functionality can be modified for Shardmap =
-support?
-
-Thanks,
-Viacheslav Dubeyko.
-
+> Cheers
+>   Trond
+> -- 
+> Trond Myklebust
+> Linux NFS client maintainer, Hammerspace
+> trond.myklebust@hammerspace.com
+> 
+> 
