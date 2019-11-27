@@ -2,56 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 773B110ACCA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 10:44:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D10010ACF6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 10:55:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726267AbfK0Jod (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Nov 2019 04:44:33 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:33990 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbfK0Jod (ORCPT
+        id S1726478AbfK0JzJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Nov 2019 04:55:09 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:34803 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726133AbfK0JzJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Nov 2019 04:44:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=IxSIQ26rUhAtDgNrOM63lKcRo
-        zmmz2KZXA07dfQvpYQCT1iFwE8RUxnpZe0IeUeK/itnlBhIA1sNVGg7DG3SD4HoczoGEmXxGBYMiv
-        NPX7XusTThdDloqEQ7V0Z4LrKto0SZgYzuZLFw4ttMisDAttwu9otuaIRmlbv/s+ecjrCEouJQaQV
-        DU5Gfijc1xV6LxwMU7q2bUFil/pSVRFpn+20dd/0m6N6YfAUw2Y4MwAQ8XDhJmzNc4Da/zYbVXYxy
-        IT2+5nHWlNdRuGO0EzF/YrF3//OdqHJXKj0W4d+n5XZIHHN5nP4xczhBACRyGsofbyeeDtYSDGzQ0
-        6s2ZXvnzg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iZts6-0005U7-4D; Wed, 27 Nov 2019 09:44:30 +0000
-Date:   Wed, 27 Nov 2019 01:44:30 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [PATCH v2] fs/splice: ignore flag SPLICE_F_GIFT in syscall
- vmsplice
-Message-ID: <20191127094430.GA20895@infradead.org>
-References: <157374079193.8131.5211902043079599773.stgit@buzz>
+        Wed, 27 Nov 2019 04:55:09 -0500
+Received: by mail-pg1-f193.google.com with SMTP id z188so10554815pgb.1;
+        Wed, 27 Nov 2019 01:55:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8SObqhRlU5cENlMfk694hRi6SokTDPOUWbcmFxW6OtU=;
+        b=Al97Xly0W55m2GYZr19HjBr1Hp/XGVBMD8EVexz3l1qrvyNaGgDCqOYX9a28wb5BWi
+         B/Tz1LL/IS8ndjha0JxV8qHW/LRlWtKiqzv5s4fi56BOwsOQlFR73rl+9RYmUbrNXRj6
+         TCWStkal38DyE4rAtwuO5efCEHB9N/ouq78cM8XWyT7aOgKqq7Ix0otLdg+fiRM9JldB
+         mnuDidmhYYLwqgYJUvFli5r/dPOpLANuO+j0S/t3xVzVzfctb7FUD13IkdJ7e4PP/PD+
+         TARzjOlrQ8346809ulD075MW3ikXazrpawuQWE6sg7TPFY7V8JS61gUY8ep2YtXsg7lG
+         KgDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8SObqhRlU5cENlMfk694hRi6SokTDPOUWbcmFxW6OtU=;
+        b=Y1E6mCygU5IvGKjnyejt6oyvslJAOR+cdxtULopVaibeg8W/1qrm+j0sxkP5sBUADC
+         3qEg7RwGd+YkG5I6xSfB+WoFiyLb8bWuI1pPT6Arvq03EjoTjIpzF5FkM2daxXqPAZkg
+         Azfajf73hac5HqCa0QshDGwJpogMwWMQYVglx09u9I41VWOj4tF8NBnNsY7bbmpkbg+m
+         T/+v0TV4ICdxDrr2VBvJiRhlw4N7wURKSMHgnULKus/2qew1ZP3ZpnU1k8sS8cX3tknt
+         jkw0bHZC90a3zmUyN7JjtzaiYXnKwROffENJ1imVtPSHNuNrHWZVwop7sxre73s7rss/
+         A5ag==
+X-Gm-Message-State: APjAAAXuNcJH8KBqACjPe8EfIhkkwnwJaleM/INTDzN6ubkofh0jGZf+
+        zrfqNjpaKiOg7j7OgShzuwo=
+X-Google-Smtp-Source: APXvYqw6YwH9CkD3t2PbwHeHkYwI50XpNPSYUSfBcBM+X6Kvoza9K6V63rtUP/za8X0iTbm2TEklWA==
+X-Received: by 2002:a65:530d:: with SMTP id m13mr3854619pgq.172.1574848508080;
+        Wed, 27 Nov 2019 01:55:08 -0800 (PST)
+Received: from athina.mtv.corp.google.com ([2620:15c:211:0:c786:d9fd:ab91:6283])
+        by smtp.gmail.com with ESMTPSA id g11sm5772454pjv.8.2019.11.27.01.55.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2019 01:55:07 -0800 (PST)
+From:   =?UTF-8?q?Maciej=20=C5=BBenczykowski?= <zenczykowski@gmail.com>
+To:     =?UTF-8?q?Maciej=20=C5=BBenczykowski?= <maze@google.com>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus FS Devel Mailing List <linux-fsdevel@vger.kernel.org>
+Subject: [PATCH] proc_do_large_bitmap - return error on writes to non-existant bitmap
+Date:   Wed, 27 Nov 2019 01:54:59 -0800
+Message-Id: <20191127095459.168324-1-zenczykowski@gmail.com>
+X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <157374079193.8131.5211902043079599773.stgit@buzz>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Looks good,
+From: Maciej Żenczykowski <maze@google.com>
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Writing to an unallocated bitmap (with echo) results in an infinite
+loop - although I'm not clear if this is in kernel or in userspace.
+
+We return ENOMEDIUM 'No medium found', because it's the best error
+I could come up with to describe the situation.
+
+(Note: I'm not aware of any actual way to hit this with current
+kernel code, I hit this while testing new code, but it still seems
+like it should be fixed, especially since it prevented my machine
+from booting, and didn't even have the dignity to crash...)
+
+Cc: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Iurii Zaikin <yzaikin@google.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Linus FS Devel Mailing List <linux-fsdevel@vger.kernel.org>
+Signed-off-by: Maciej Żenczykowski <maze@google.com>
+---
+ kernel/sysctl.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 2c3958d2f463..431966967c99 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -3174,6 +3174,11 @@ int proc_do_large_bitmap(struct ctl_table *table, int write,
+ 	unsigned long *tmp_bitmap = NULL;
+ 	char tr_a[] = { '-', ',', '\n' }, tr_b[] = { ',', '\n', 0 }, c;
+ 
++	if (write && (!bitmap || !bitmap_len))
++		/* returning 0 could cause an infinite loop */
++		return -ENOMEDIUM;
++	}
++
+ 	if (!bitmap || !bitmap_len || !left || (*ppos && !write)) {
+ 		*lenp = 0;
+ 		return 0;
+-- 
+2.24.0.432.g9d3f5f5b63-goog
+
