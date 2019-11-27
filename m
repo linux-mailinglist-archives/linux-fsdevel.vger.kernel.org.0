@@ -2,121 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC7B610AB7A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 09:11:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DE8E10ABB4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 09:28:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726219AbfK0ILu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Nov 2019 03:11:50 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58342 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726125AbfK0ILu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Nov 2019 03:11:50 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 26FB3B9F7;
-        Wed, 27 Nov 2019 08:11:47 +0000 (UTC)
-Date:   Wed, 27 Nov 2019 09:11:44 +0100
-From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Biggers <ebiggers@google.com>,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        Ming Lei <ming.lei@redhat.com>,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Hou Tao <houtao1@huawei.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
+        id S1726426AbfK0I2a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Nov 2019 03:28:30 -0500
+Received: from mail.phunq.net ([66.183.183.73]:58710 "EHLO phunq.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726125AbfK0I2a (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 27 Nov 2019 03:28:30 -0500
+Received: from [172.16.1.14]
+        by phunq.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+        (Exim 4.92.3)
+        (envelope-from <daniel@phunq.net>)
+        id 1iZsgU-0003Z4-HJ; Wed, 27 Nov 2019 00:28:26 -0800
+Subject: Re: [RFC] Thing 1: Shardmap fox Ext4
+To:     Vyacheslav Dubeyko <slava@dubeyko.com>, linux-ext4@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, Hannes Reinecke <hare@suse.com>,
-        "Ewan D. Milne" <emilne@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v4 rebase 00/10] Fix cdrom autoclose
-Message-ID: <20191127081144.GZ11661@kitsune.suse.cz>
-References: <cover.1574797504.git.msuchanek@suse.de>
- <c6fe572c-530e-93eb-d62a-cb2f89c7b4ec@kernel.dk>
- <20191126202151.GY11661@kitsune.suse.cz>
- <08bcfd0a-7433-2fa4-9ca2-ea008836b747@kernel.dk>
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        "Darrick J. Wong" <djwong@kernel.org>
+References: <176a1773-f5ea-e686-ec7b-5f0a46c6f731@phunq.net>
+ <8ece0424ceeeffbc4df5d52bfa270a9522f81cda.camel@dubeyko.com>
+From:   Daniel Phillips <daniel@phunq.net>
+Message-ID: <5c9b5bd3-028a-5211-30a6-a5a8706b373e@phunq.net>
+Date:   Wed, 27 Nov 2019 00:28:26 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <08bcfd0a-7433-2fa4-9ca2-ea008836b747@kernel.dk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <8ece0424ceeeffbc4df5d52bfa270a9522f81cda.camel@dubeyko.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 26, 2019 at 04:13:32PM -0700, Jens Axboe wrote:
-> On 11/26/19 1:21 PM, Michal Suchánek wrote:
-> > On Tue, Nov 26, 2019 at 01:01:42PM -0700, Jens Axboe wrote:
-> >> On 11/26/19 12:54 PM, Michal Suchanek wrote:
-> >>> Hello,
-> >>>
-> >>> there is cdrom autoclose feature that is supposed to close the tray,
-> >>> wait for the disc to become ready, and then open the device.
-> >>>
-> >>> This used to work in ancient times. Then in old times there was a hack
-> >>> in util-linux which worked around the breakage which probably resulted
-> >>> from switching to scsi emulation.
-> >>>
-> >>> Currently util-linux maintainer refuses to merge another hack on the
-> >>> basis that kernel still has the feature so it should be fixed there.
-> >>> The code needs not be replicated in every userspace utility like mount
-> >>> or dd which has no business knowing which devices are CD-roms and where
-> >>> the autoclose setting is in the kernel.
-> >>>
-> >>> This is rebase on top of current master.
-> >>>
-> >>> Also it seems that most people think that this is fix for WMware because
-> >>> there is one patch dealing with WMware.
-> >>
-> >> I think the main complaint with this is that it's kind of a stretch to
-> >> add core functionality for a device type that's barely being
-> >> manufactured anymore and is mostly used in a virtualized fashion. I
-> >> think it you could fix this without 10 patches of churn and without
-> >> adding a new ->open() addition to fops, then people would be a lot more
-> >> receptive to the idea of improving cdrom auto-close.
-> > 
-> > I see no way to do that cleanly.
-> > 
-> > There are two open modes for cdrom devices - blocking and
-> > non-blocking.
-> > 
-> > In blocking mode open() should analyze the medium so that it's ready
-> > when it returns. In non-blocking mode it should return immediately so
-> > long as you can talk to the device.
-> > 
-> > When waiting in open() with locks held the processes trying to open
-> > the device are locked out regradless of the mode they use.
-> > 
-> > The only way to solve this is to pretend that the device is open and
-> > do the wait afterwards with the device unlocked.
+On 2019-11-26 11:40 p.m., Vyacheslav Dubeyko wrote:
+> As far as I know, usually, a folder contains dozens or hundreds
+> files/folders in average. There are many research works that had showed
+> this fact. Do you mean some special use-case when folder could contain
+> the billion files? Could you share some research work that describes
+> some practical use-case with billion files per folder?
+
+You are entirely correct that the vast majority of directories contain
+only a handful of files. That is my case (1). A few directories on a
+typical server can go into the tens of thousands of files. There was
+a time when we could not handle those efficiently, and now thanks to
+HTree we can. Some directories go into the millions, ask the Lustre
+people about that. If you could have a directory with a billion files
+then somebody will have a use for it. For example, you may be able to
+avoid a database for a particular application and just use the file
+system instead.
+
+Now, scaling to a billion files is just one of several things that
+Shardmap does better than HTree. More immediately, Shardmap implements
+readdir simply, accurately and efficiently, unlike HTree. See here for
+some discussion:
+
+   https://lwn.net/Articles/544520/
+   "Widening ext4's readdir() cookie"
+
+See the recommendation that is sometimes offered to work around
+HTree's issues with processing files in hash order. Basically, read
+the entire directory into memory, sort by inode number, then process
+in that order. As an application writer do you really want to do this,
+or would you prefer that the filesystem just take care of for you so
+the normal, simple and readable code is also the most efficient code?
+
+> If you are talking about improving the performance then do you mean
+> some special open-source implementation?
+
+I mean the same kind of kernel filesystem implementation that HTree
+currently has. Open source of course, GPLv2 to be specific.
+
+>> For delete, Shardmap avoids write multiplication by appending tombstone
+>> entries to index shards, thereby addressing a well known HTree delete
+>> performance issue.
 > 
-> How is this any different from an open on a file that needs to bring in
-> meta data on a busy rotating device, which can also take seconds?
+> Do you mean Copy-On-Write policy here or some special technique?
 
-First, accessing a file will take seconds only when your system is
-seriously overloaded or misconfigured. The access time for rotational
-storage is tens of milliseconds. With cdrom the access time after
-closing the door is measured in tens of seconds on common hardware. It
-can be shorter but also possibly longer. I am not aware of any limit
-there. It may be reasonable to want to get device status during this
-time.
+The technique Shardmap uses to reduce write amplication under heavy
+load is somewhat similar to the technique used by Google's Bigtable to
+achieve a similar result for data files. (However, the resemblance to
+Bigtable ends there.)
 
-Second, fetching the metadata for the file does not block operations that
-don't need the metadata. Here waiting for the drive to get ready blocks
-all access. You could get drive status if you did not try to open it
-but once you do you can no longer talk to it.
+Each update to a Shardmap index is done twice: once in a highly
+optimized hash table shard in cache, then again by appending an
+entry to the tail of the shard's media "fifo". Media writes are
+therefore mostly linear. I say mostly, because if there is a large
+number of shards then a single commit may need to update the tail
+block of each one, which still adds up to vastly fewer blocks than
+the BTree case, where it is easy to construct cases where every
+index block must be updated on every commit, a nasty example of
+n**2 performance overhead.
 
-Thanks
+> How could be good Shardmap for the SSD use-case? Do you mean that we
+> could reduce write amplification issue for NAND flash case?
 
-Michal
+Correct. Reducing write amplification is particularly important for
+flash based storage. It also has a noticeable beneficial effect on
+efficiency under many common and not so common loads.
+
+> Let's imagine that it needs to implement the Shardmap approach. Could
+> you estimate the implementation and stabilization time? How expensive
+> and long-term efforts could it be?
+
+Shardmap is already implemented and stable, though it does need wider
+usage and testing. Code is available here:
+
+   https://github.com/danielbot/Shardmap
+
+Shardmap needs to be ported to kernel, already planned and in progress
+for Tux3. Now I am proposing that the Ext4 team should consider porting
+Shardmap to Ext4, or at least enter into a serious discussion of the
+logistics.
+
+Added Darrick to cc, as he is already fairly familiar with this subject,
+once was an Ext4 developer, and perhaps still is should the need arise.
+By the way, is there a reason that Ted's MIT address bounced on my
+original post?
+
+Regards,
+
+Daniel
