@@ -2,100 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9097E10AA6B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 06:54:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D43A710AAC1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 07:47:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726130AbfK0FyU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Nov 2019 00:54:20 -0500
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:42135 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726078AbfK0FyT (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Nov 2019 00:54:19 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=17;SR=0;TI=SMTPD_---0TjCTZdE_1574834051;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TjCTZdE_1574834051)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 27 Nov 2019 13:54:11 +0800
-Subject: Re: [PATCH v2 3/3] sched/numa: documentation for per-cgroup numa stat
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
- <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
- <cc35a710-c2ec-6c61-e30e-ee707798c5e9@linux.alibaba.com>
- <9ce01935-84ba-e8b4-461b-8be388433950@infradead.org>
-From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-Message-ID: <7169fba4-220f-a4a7-d6e7-0f025a3cd308@linux.alibaba.com>
-Date:   Wed, 27 Nov 2019 13:54:11 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.0
+        id S1726181AbfK0GrJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Nov 2019 01:47:09 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:59208 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726078AbfK0GrJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 27 Nov 2019 01:47:09 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 028AC1D2611040F19A2B;
+        Wed, 27 Nov 2019 14:47:05 +0800 (CST)
+Received: from [127.0.0.1] (10.173.220.96) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Wed, 27 Nov 2019
+ 14:46:56 +0800
+Subject: Re: [PATCH] mm/shmem.c: don't set 'seals' to 'F_SEAL_SEAL' in
+ shmem_get_inode
+To:     Hugh Dickins <hughd@google.com>
+CC:     <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <yi.zhang@huawei.com>, <zhengbin13@huawei.com>
+References: <20191127040051.39169-1-yukuai3@huawei.com>
+ <alpine.LSU.2.11.1911262008330.2204@eggly.anvils>
+From:   "yukuai (C)" <yukuai3@huawei.com>
+Message-ID: <f4ffdbc2-6728-1838-1a82-c0de4c484a54@huawei.com>
+Date:   Wed, 27 Nov 2019 14:46:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <9ce01935-84ba-e8b4-461b-8be388433950@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.LSU.2.11.1911262008330.2204@eggly.anvils>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.173.220.96]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi, Randy
 
-On 2019/11/27 下午12:58, Randy Dunlap wrote:
-> On 11/26/19 5:50 PM, 王贇 wrote:
->> Since v1:
->>   * thanks to Iurii for the better sentence
->>   * thanks to Jonathan for the better format
+
+On 2019/11/27 12:24, Hugh Dickins Wrote:
+> On Wed, 27 Nov 2019, yu kuai wrote:
+> 
+>> 'seals' is set to 'F_SEAL_SEAL' in shmem_get_inode, which means "prevent
+>> further seals from being set", thus sealing API will be useless and many
+>> code in shmem.c will never be reached. For example:
+> 
+> The sealing API is not useless, and that code can be reached.
+> 
 >>
->> Add the description for 'cg_numa_stat', also a new doc to explain
->> the details on how to deal with the per-cgroup numa statistics.
+>> shmem_setattr
+>> 	if ((newsize < oldsize && (info->seals & F_SEAL_SHRINK)) ||
+>> 	    (newsize > oldsize && (info->seals & F_SEAL_GROW)))
+>> 		return -EPERM;
 >>
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Cc: Michal Koutný <mkoutny@suse.com>
->> Cc: Mel Gorman <mgorman@suse.de>
->> Cc: Jonathan Corbet <corbet@lwn.net>
->> Cc: Iurii Zaikin <yzaikin@google.com>
->> Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
+>> So, initialize 'seals' to zero is more reasonable.
+>>
+>> Signed-off-by: yu kuai <yukuai3@huawei.com>
 > 
-> Hi,
-> I have a few comments/corrections. Please see below.
+> NAK.
+> 
+> See memfd_create in mm/memfd.c (code which originated in mm/shmem.c,
+> then was extended to support hugetlbfs also): sealing is for memfds,
+> not for tmpfs or hugetlbfs files or SHM.  Without thinking about it too
+> hard, I believe that to allow sealing on tmpfs files would introduce
+> surprising new behaviors on them, which might well raise security issues;
+> and also be incompatible with the guarantees intended by sealing.
 
-Thanks for the comments :-) will apply them all in next version.
+Thank you for your response.
+Yu Kuai
 
-> 
->> ---
->>  Documentation/admin-guide/cg-numa-stat.rst      | 163 
-[snip]
->> +if you want to have the whole history.
->> +
->> +We have per-task migfailed counter to tell how many page migration has been
-> 
-> I can't find any occurrence of 'migfailed' in the entire kernel source tree.
-> Maybe it is misspelled?
-
-This one is added by the secondary patch:
-  [PATCH v2 2/3] sched/numa: expose per-task pages-migration-failure
-
-As suggested by Mel.
-
-Regards,
-Michael Wang
-
-> 
->> +failed for a particular task, you will find it in /proc/PID/sched entry.
-> 
-> 
-> HTH.
-> 
