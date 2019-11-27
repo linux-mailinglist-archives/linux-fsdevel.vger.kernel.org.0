@@ -2,128 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DE8E10ABB4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 09:28:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17E5510AC54
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 10:00:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbfK0I2a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Nov 2019 03:28:30 -0500
-Received: from mail.phunq.net ([66.183.183.73]:58710 "EHLO phunq.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726125AbfK0I2a (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Nov 2019 03:28:30 -0500
-Received: from [172.16.1.14]
-        by phunq.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
-        (Exim 4.92.3)
-        (envelope-from <daniel@phunq.net>)
-        id 1iZsgU-0003Z4-HJ; Wed, 27 Nov 2019 00:28:26 -0800
-Subject: Re: [RFC] Thing 1: Shardmap fox Ext4
-To:     Vyacheslav Dubeyko <slava@dubeyko.com>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        "Darrick J. Wong" <djwong@kernel.org>
-References: <176a1773-f5ea-e686-ec7b-5f0a46c6f731@phunq.net>
- <8ece0424ceeeffbc4df5d52bfa270a9522f81cda.camel@dubeyko.com>
-From:   Daniel Phillips <daniel@phunq.net>
-Message-ID: <5c9b5bd3-028a-5211-30a6-a5a8706b373e@phunq.net>
-Date:   Wed, 27 Nov 2019 00:28:26 -0800
+        id S1726145AbfK0JAV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Nov 2019 04:00:21 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51786 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726112AbfK0JAU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 27 Nov 2019 04:00:20 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id F1D15ACBD;
+        Wed, 27 Nov 2019 09:00:17 +0000 (UTC)
+Subject: Re: [RFC PATCH v3 03/12] fs: add RWF_ENCODED for reading/writing
+ compressed data
+To:     Omar Sandoval <osandov@osandov.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        Dave Chinner <david@fromorbit.com>,
+        Jann Horn <jannh@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
+        kernel-team@fb.com
+References: <cover.1574273658.git.osandov@fb.com>
+ <07f9cc1969052e94818fa50019e7589d206d1d18.1574273658.git.osandov@fb.com>
+ <d1886c1f-f19e-f3a7-32d6-8803a71a510c@suse.com>
+ <20191126173607.GA657777@vader>
+From:   Nikolay Borisov <nborisov@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <73e9b52f-afed-fa0d-5463-222e41fead56@suse.com>
+Date:   Wed, 27 Nov 2019 11:00:15 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <8ece0424ceeeffbc4df5d52bfa270a9522f81cda.camel@dubeyko.com>
+In-Reply-To: <20191126173607.GA657777@vader>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019-11-26 11:40 p.m., Vyacheslav Dubeyko wrote:
-> As far as I know, usually, a folder contains dozens or hundreds
-> files/folders in average. There are many research works that had showed
-> this fact. Do you mean some special use-case when folder could contain
-> the billion files? Could you share some research work that describes
-> some practical use-case with billion files per folder?
 
-You are entirely correct that the vast majority of directories contain
-only a handful of files. That is my case (1). A few directories on a
-typical server can go into the tens of thousands of files. There was
-a time when we could not handle those efficiently, and now thanks to
-HTree we can. Some directories go into the millions, ask the Lustre
-people about that. If you could have a directory with a billion files
-then somebody will have a use for it. For example, you may be able to
-avoid a database for a particular application and just use the file
-system instead.
 
-Now, scaling to a billion files is just one of several things that
-Shardmap does better than HTree. More immediately, Shardmap implements
-readdir simply, accurately and efficiently, unlike HTree. See here for
-some discussion:
-
-   https://lwn.net/Articles/544520/
-   "Widening ext4's readdir() cookie"
-
-See the recommendation that is sometimes offered to work around
-HTree's issues with processing files in hash order. Basically, read
-the entire directory into memory, sort by inode number, then process
-in that order. As an application writer do you really want to do this,
-or would you prefer that the filesystem just take care of for you so
-the normal, simple and readable code is also the most efficient code?
-
-> If you are talking about improving the performance then do you mean
-> some special open-source implementation?
-
-I mean the same kind of kernel filesystem implementation that HTree
-currently has. Open source of course, GPLv2 to be specific.
-
->> For delete, Shardmap avoids write multiplication by appending tombstone
->> entries to index shards, thereby addressing a well known HTree delete
->> performance issue.
+On 26.11.19 г. 19:36 ч., Omar Sandoval wrote:
+> On Tue, Nov 26, 2019 at 03:53:02PM +0200, Nikolay Borisov wrote:
+>>
+>>
+>> On 20.11.19 г. 20:24 ч., Omar Sandoval wrote:
+>>> From: Omar Sandoval <osandov@fb.com>
+>>
+>> <snip>
+>>
+>>>  
+>>> +enum {
+>>> +	ENCODED_IOV_COMPRESSION_NONE,
+>>> +#define ENCODED_IOV_COMPRESSION_NONE ENCODED_IOV_COMPRESSION_NONE
+>>> +	ENCODED_IOV_COMPRESSION_ZLIB,
+>>> +#define ENCODED_IOV_COMPRESSION_ZLIB ENCODED_IOV_COMPRESSION_ZLIB
+>>> +	ENCODED_IOV_COMPRESSION_LZO,
+>>> +#define ENCODED_IOV_COMPRESSION_LZO ENCODED_IOV_COMPRESSION_LZO
+>>> +	ENCODED_IOV_COMPRESSION_ZSTD,
+>>> +#define ENCODED_IOV_COMPRESSION_ZSTD ENCODED_IOV_COMPRESSION_ZSTD
+>>> +	ENCODED_IOV_COMPRESSION_TYPES = ENCODED_IOV_COMPRESSION_ZSTD,
+>>
+>> This looks very dodgy, what am I missing?
 > 
-> Do you mean Copy-On-Write policy here or some special technique?
+> This is a somewhat common trick so that enum values can be checked for
+> with ifdef/ifndef. See include/uapi/linux.in.h, for example.
 
-The technique Shardmap uses to reduce write amplication under heavy
-load is somewhat similar to the technique used by Google's Bigtable to
-achieve a similar result for data files. (However, the resemblance to
-Bigtable ends there.)
+I cannot seem to have this file on my system (or any .in.h file for that
+matter in the kernel source dir).
 
-Each update to a Shardmap index is done twice: once in a highly
-optimized hash table shard in cache, then again by appending an
-entry to the tail of the shard's media "fifo". Media writes are
-therefore mostly linear. I say mostly, because if there is a large
-number of shards then a single commit may need to update the tail
-block of each one, which still adds up to vastly fewer blocks than
-the BTree case, where it is easy to construct cases where every
-index block must be updated on every commit, a nasty example of
-n**2 performance overhead.
-
-> How could be good Shardmap for the SSD use-case? Do you mean that we
-> could reduce write amplification issue for NAND flash case?
-
-Correct. Reducing write amplification is particularly important for
-flash based storage. It also has a noticeable beneficial effect on
-efficiency under many common and not so common loads.
-
-> Let's imagine that it needs to implement the Shardmap approach. Could
-> you estimate the implementation and stabilization time? How expensive
-> and long-term efforts could it be?
-
-Shardmap is already implemented and stable, though it does need wider
-usage and testing. Code is available here:
-
-   https://github.com/danielbot/Shardmap
-
-Shardmap needs to be ported to kernel, already planned and in progress
-for Tux3. Now I am proposing that the Ext4 team should consider porting
-Shardmap to Ext4, or at least enter into a serious discussion of the
-logistics.
-
-Added Darrick to cc, as he is already fairly familiar with this subject,
-once was an Ext4 developer, and perhaps still is should the need arise.
-By the way, is there a reason that Ted's MIT address bounced on my
-original post?
-
-Regards,
-
-Daniel
+> 
