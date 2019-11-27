@@ -2,135 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEB9B10B155
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 15:30:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7631110B243
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 16:18:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbfK0Oao (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Nov 2019 09:30:44 -0500
-Received: from mail-il1-f172.google.com ([209.85.166.172]:46117 "EHLO
-        mail-il1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726655AbfK0Oan (ORCPT
+        id S1727169AbfK0PSc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Nov 2019 10:18:32 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:25311 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726698AbfK0PSb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Nov 2019 09:30:43 -0500
-Received: by mail-il1-f172.google.com with SMTP id q1so21168624ile.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Nov 2019 06:30:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=ptLCc+chD9/5P/FEB5njrZbzbaHkLbrZ72eiHctEqeY=;
-        b=BB4oevXQKJdDx26LTGjgjDIkECjoVwaxIFr1KV0ozsynRU8PFe7mfT0bGbd3qnaUDT
-         tiYj72B9F2CyFln8dS204fQJaGuMMkGgKeZUV51AiWQvuChWvqxO9DF2Aa/fjqarkihS
-         Vpj+EeL2rwrCPKT/J+sJ9ddPjfhJ+YZ6haiSk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=ptLCc+chD9/5P/FEB5njrZbzbaHkLbrZ72eiHctEqeY=;
-        b=ePIcXW+iXmbbPOh6HvyXDkPJyQkkL7ng2l8iu3w+Vdj9r6uTPeQ69DzkHunG5YOJDF
-         QqNZEb6REQxgkmrpIL1kTuA5eG/msrqevZoNte0+fLCjIva7/bKKRa1eXbAY61KZBzTz
-         +i3a4JJvgb41wo6L5xIUNKK2zR81AG8gspg20e8lp5YNHcZ4Vb4U1K4Br7E4///6z98n
-         e/uPwxrtBxYOPqwbko6C/zWmPBfiTo7RSuXzqxy7jxY+Qbg19Yk9E0cMb4ZlPuNF7YxP
-         ig7h3q6BMIdmVYqlKfO0WVc2eszJgpqN+EtTt1dhDjljpl7mRW4+WHXNf/pVNHVH7kbL
-         cU/Q==
-X-Gm-Message-State: APjAAAVVDq2DQI10TshUDA4qE6ZSVtbyPkcEPDbyh+P8Itq9xhnHOQi4
-        Xcbx2cPRKPW0EEL4JSIrOFY9P6NiZB1qBxWJuyMvkGMq0uk=
-X-Google-Smtp-Source: APXvYqz9eMuPaxENYXIrALdoEZFupj2xTUPuJbhAntsntbEVfw1JpUVXg1AibOhhfC09RH77j0RC1MJA4wVtkQ0eE1E=
-X-Received: by 2002:a92:320f:: with SMTP id z15mr26149499ile.252.1574865041356;
- Wed, 27 Nov 2019 06:30:41 -0800 (PST)
+        Wed, 27 Nov 2019 10:18:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574867910;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=MKRMqYZcMSPOI1ZGGK/kSwrsQZTCaWDdryNtYrwk8A4=;
+        b=MTwMRqNu+MeR4QaIT5ScdTi3FY3q4TIbuScZCw7D1Q/tdgkXeTHJIgVCon5MbH5HY3Smfk
+        kwpurQunGpQ/srUNR5GqysQLb5Cd1g5u2UjmQ4/O/Ads1THgydWuoyLyKy2gV5YnApSEIr
+        nAjbrGSucYE0aWx0G5+mXCDgafrGAco=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-147-GM3JGt2IPoeXL76p6qeU6w-1; Wed, 27 Nov 2019 10:18:26 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EA8C11007271;
+        Wed, 27 Nov 2019 15:18:22 +0000 (UTC)
+Received: from max.com (ovpn-204-21.brq.redhat.com [10.40.204.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 477BF1001DE1;
+        Wed, 27 Nov 2019 15:18:14 +0000 (UTC)
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Richard Weinberger <richard@nod.at>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org
+Subject: [PATCH] fs: Fix page_mkwrite off-by-one errors
+Date:   Wed, 27 Nov 2019 16:18:11 +0100
+Message-Id: <20191127151811.9229-1-agruenba@redhat.com>
 MIME-Version: 1.0
-References: <8736e9d5p4.fsf@vostro.rath.org>
-In-Reply-To: <8736e9d5p4.fsf@vostro.rath.org>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 27 Nov 2019 15:30:30 +0100
-Message-ID: <CAJfpegtOf6mV4m3W1v2N8eOD-ep=tFOhKDCFk+-M3=tzc7wVig@mail.gmail.com>
-Subject: Re: Handling of 32/64 bit off_t by getdents64()
-To:     fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-MC-Unique: GM3JGt2IPoeXL76p6qeU6w-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 27, 2019 at 10:33 AM Nikolaus Rath <Nikolaus@rath.org> wrote:
->
-> Hello,
->
-> For filesystems like ext4, the d_off values returned by getdents64()
-> seem to depend on the kind of process that issues the syscall.
->
-> For example, if I compile test program with -m32 I get:
->
-> $ ./readdir32
-> --------------- nread=616 ---------------
-> inode#    file type  d_reclen  d_off   d_name
-> 32253478  ???          40  770981411  test_readlog.py
-> 32260181  ???          24  776189020  ..
-> [...]
->
-> If I compile for 64 bit, I get:
->
-> $ ./readdir64
-> --------------- nread=616 ---------------
-> inode#    file type  d_reclen  d_off   d_name
-> 32253478  ???          40 3311339950278905338  test_readlog.py
-> 32260181  ???          24 3333706456980390508  ..
-> [...]
->
-> This is despite d_off being declared as ino64_t in the linux_dirent64
-> struct.
->
->
-> This is presumably intentional, because (again as far as I can tell), if
-> getdents64 returns a full 64 bit value for a 32 bit system, libc's
-> readdir() will return an error because it cannot fit the value into
-> struct dirent.
->
->
-> As far as I know, there is no way for a FUSE filesystem to tell if the
-> client process is 64 bit or 32 bit. So effectively, a FUSE filesystem is
-> limited to using only the lower 32 bits for readdir offsets. Is that
-> correct?
->
-> This would be quite annoying because it means that passthrough
-> filesystems cannot re-use the underlying filesystems d_off values
-> (since they will be full 64 bit for a 64 bit FUSE process).
->
->
-> Is there a way for a 64 bit process (in this case the FUSE daemon) to
-> ask for 32 bit d_off values from getdents64()?
+Fix a check in block_page_mkwrite meant to determine whether an offset
+is within the inode size.  This error has spread to several filesystems
+and to iomap_page_mkwrite, so fix those instances as well.
 
-Looking at ext4 d_off encoding, it looks like the simple workaround is
-to use the *high* 32 bits of the offset.
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 
-Just tried, and this works.  The lower bits are the "minor" number of
-the offset, and no issue with zeroing those bits out, other than
-increasing the chance of hash collision from practically zero to very
-close to zero.
+---
 
-> Would it be feasible to extend the FUSE protocol to include information
-> about the available bits in d_off?
+This patch has a trivial conflict with commit "iomap: Fix overflow in
+iomap_page_mkwrite" in Darrick's iomap pull request for 5.5:
 
-Yes.
+  https://lore.kernel.org/lkml/20191125190907.GN6219@magnolia/
+---
+ fs/buffer.c            | 2 +-
+ fs/ceph/addr.c         | 2 +-
+ fs/ext4/inode.c        | 2 +-
+ fs/f2fs/file.c         | 2 +-
+ fs/iomap/buffered-io.c | 2 +-
+ fs/ubifs/file.c        | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
 
-The relevant bits from ext4 are:
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 86a38b979323..152d391858d4 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -2465,7 +2465,7 @@ int block_page_mkwrite(struct vm_area_struct *vma, st=
+ruct vm_fault *vmf,
+ =09lock_page(page);
+ =09size =3D i_size_read(inode);
+ =09if ((page->mapping !=3D inode->i_mapping) ||
+-=09    (page_offset(page) > size)) {
++=09    (page_offset(page) >=3D size)) {
+ =09=09/* We overload EFAULT to mean page got truncated */
+ =09=09ret =3D -EFAULT;
+ =09=09goto out_unlock;
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 7ab616601141..9fa0729ece41 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -1575,7 +1575,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *=
+vmf)
+ =09do {
+ =09=09lock_page(page);
+=20
+-=09=09if ((off > size) || (page->mapping !=3D inode->i_mapping)) {
++=09=09if ((off >=3D size) || (page->mapping !=3D inode->i_mapping)) {
+ =09=09=09unlock_page(page);
+ =09=09=09ret =3D VM_FAULT_NOPAGE;
+ =09=09=09break;
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 516faa280ced..6dd4efe2fb63 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -6224,7 +6224,7 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
+ =09lock_page(page);
+ =09size =3D i_size_read(inode);
+ =09/* Page got truncated from under us? */
+-=09if (page->mapping !=3D mapping || page_offset(page) > size) {
++=09if (page->mapping !=3D mapping || page_offset(page) >=3D size) {
+ =09=09unlock_page(page);
+ =09=09ret =3D VM_FAULT_NOPAGE;
+ =09=09goto out;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 29bc0a542759..3436be01af45 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -71,7 +71,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *v=
+mf)
+ =09down_read(&F2FS_I(inode)->i_mmap_sem);
+ =09lock_page(page);
+ =09if (unlikely(page->mapping !=3D inode->i_mapping ||
+-=09=09=09page_offset(page) > i_size_read(inode) ||
++=09=09=09page_offset(page) >=3D i_size_read(inode) ||
+ =09=09=09!PageUptodate(page))) {
+ =09=09unlock_page(page);
+ =09=09err =3D -EFAULT;
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index e25901ae3ff4..d454dbab5133 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1041,7 +1041,7 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, c=
+onst struct iomap_ops *ops)
+ =09lock_page(page);
+ =09size =3D i_size_read(inode);
+ =09if ((page->mapping !=3D inode->i_mapping) ||
+-=09    (page_offset(page) > size)) {
++=09    (page_offset(page) >=3D size)) {
+ =09=09/* We overload EFAULT to mean page got truncated */
+ =09=09ret =3D -EFAULT;
+ =09=09goto out_unlock;
+diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
+index cd52585c8f4f..ca0148ec77e6 100644
+--- a/fs/ubifs/file.c
++++ b/fs/ubifs/file.c
+@@ -1564,7 +1564,7 @@ static vm_fault_t ubifs_vm_page_mkwrite(struct vm_fau=
+lt *vmf)
+=20
+ =09lock_page(page);
+ =09if (unlikely(page->mapping !=3D inode->i_mapping ||
+-=09=09     page_offset(page) > i_size_read(inode))) {
++=09=09     page_offset(page) >=3D i_size_read(inode))) {
+ =09=09/* Page got truncated out from underneath us */
+ =09=09goto sigbus;
+ =09}
+--=20
+2.20.1
 
-static inline int is_32bit_api(void)
-{
-#ifdef CONFIG_COMPAT
-    return in_compat_syscall();
-#else
-    return (BITS_PER_LONG == 32);
-#endif
-}
-
-and:
-
-    if ((filp->f_mode & FMODE_32BITHASH) ||
-        (!(filp->f_mode & FMODE_64BITHASH) && is_32bit_api()))
-        /* 32bits offset */;
-    else
-        /* 64bits offset */;
-
-Thanks,
-Miklos
