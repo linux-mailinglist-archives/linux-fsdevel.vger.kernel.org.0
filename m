@@ -2,109 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E79710AC68
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 10:10:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D300710ACA2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 10:33:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726143AbfK0JKS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Nov 2019 04:10:18 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46510 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726133AbfK0JKS (ORCPT
+        id S1726149AbfK0Jdb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Nov 2019 04:33:31 -0500
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:33279 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726130AbfK0Jdb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Nov 2019 04:10:18 -0500
-Received: by mail-pf1-f193.google.com with SMTP id 193so10646027pfc.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Nov 2019 01:10:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=b7QOe1FC70muESaz9+PbY6FufdbspFqUvVZugA4Sa+U=;
-        b=0koaoRgTcCXSbsVMOueG/T1xOoCZjxRg7Ck1FnRhPBQpjQL8TDUssP74bTyJ8kO3Yo
-         fdzH/H9Q2b0SAT8KoRvvHS8UbFWC20phZRtVdomf5sddxeyyRIBM6Wrq57nWYJksCyyB
-         5U/taeGmZu5+IwwgrxGaBIfpS3sr0RNemBeV6FUIMJdalnTTD1ZCbFxxVhMitRQ1sZaX
-         sfMSyNK/R8AY2IfmxU2Av7kifDFIAWsqZvd84DsLXYyHo/bfHVhZQembtiw1xj+Z8zBp
-         3tzZ8NI7ztt06WFVwwLwums3NhoR2V2vyVzxwOxh5Nv0PYXJe7PFY/Fg/Hppfm7BHg7z
-         sGbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=b7QOe1FC70muESaz9+PbY6FufdbspFqUvVZugA4Sa+U=;
-        b=YpDWPwXwQwcwq4vPofeQDETVhCJMnPpe9XXogC0y00D6qLwHvfcYFZN2FWkbK3tV9J
-         Sf0ts2Acaw9LxtfmAxNfLLvZaHBWfehZ8hjQLVhkXA1jbLmeifVm7xKmto076TQwxfc8
-         mYN7KFjxkKYC8q8WGP2/WY8dsAL0UL9DEiaIcfu9IgZUdRJElUnQ1ABn6d+8BsDC6Dru
-         CH00k190UGZyz0ImDZRA/43Bn2g1llGITdJq9EvpeFKRI0dDGJXRCOpDvWA4af9lggol
-         rivhXXvotnR7KnuhMqVh/4k0dF8RgJv+spACUuyIuGrGu22CwYWyvjvJTqOPBD84QMjY
-         bHjQ==
-X-Gm-Message-State: APjAAAUc8qo7qR425dBjId+g9DCKgsOk70jxE0mLzNYRLIcdfQGO5OOH
-        a+cIkuIgfjqzMVRlrhkzQIppTQ==
-X-Google-Smtp-Source: APXvYqzy16Q7SuEKGV2/xSlWDFfb755gazILIRyDnfF1b2B7Nx18qVkR3Eu9ZcpFAzfP7Qq95Ey0OA==
-X-Received: by 2002:a65:55cc:: with SMTP id k12mr3818296pgs.184.1574845817569;
-        Wed, 27 Nov 2019 01:10:17 -0800 (PST)
-Received: from vader ([2601:602:8b80:8e0:e6a7:a0ff:fe0b:c9a8])
-        by smtp.gmail.com with ESMTPSA id r203sm15762366pfr.184.2019.11.27.01.10.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2019 01:10:17 -0800 (PST)
-Date:   Wed, 27 Nov 2019 01:10:14 -0800
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Nikolay Borisov <nborisov@suse.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        Dave Chinner <david@fromorbit.com>,
-        Jann Horn <jannh@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [RFC PATCH v3 03/12] fs: add RWF_ENCODED for reading/writing
- compressed data
-Message-ID: <20191127091014.GA745151@vader>
-References: <cover.1574273658.git.osandov@fb.com>
- <07f9cc1969052e94818fa50019e7589d206d1d18.1574273658.git.osandov@fb.com>
- <d1886c1f-f19e-f3a7-32d6-8803a71a510c@suse.com>
- <20191126173607.GA657777@vader>
- <73e9b52f-afed-fa0d-5463-222e41fead56@suse.com>
+        Wed, 27 Nov 2019 04:33:31 -0500
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id 344EA22623;
+        Wed, 27 Nov 2019 04:33:30 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Wed, 27 Nov 2019 04:33:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=from
+        :to:cc:subject:date:message-id:mime-version:content-type
+        :content-transfer-encoding; s=fm1; bh=lwe326uEXvaC7fsnwhP8exjpk7
+        KcUMWJwe7cF/fYfQY=; b=IQpJuwgsfwjhgaBhxiMnF7MAr28r5I0rmRCW6YnusS
+        xlCMVfBDi8yghZEghNc2OezkGJWCIAio2CdsLIw/s9ckP5Wnpu/CmP6p0Q6cR3p4
+        wNBhEJ12PqW9o0WqegKnBcy9QR2LjKkn1Xyv//UTFEEvrsT1HDA6kRykIeDCbaYw
+        +eSBEuq6KeRRvfadK7opdn8/40/LJcW09mCrqY2Frzx6Ax1tLp1YF//AjOSnnRRO
+        zjsit5B2p1Q9GJ+MDrXg1dN3vKuAAS9qEn9y2Xjfdug01wB7HYa1CJ8d3lCU5nHE
+        fYbSIcHMkCHxjyEKFplXAFIPViBQI9L7VGdrY8UtvGcw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:message-id:mime-version:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=lwe326
+        uEXvaC7fsnwhP8exjpk7KcUMWJwe7cF/fYfQY=; b=ppmQtmPkVJnJxqUXbyD137
+        E/On3lRMJmqbExKRAi0uPvOveH6i//AtiWj1eXadFrWWBsiuvfSuXgERKoxoI8hM
+        89BKb7PEyw10qr9lc92TDw0MStERzcZbx4DyFbjhQM2FowazAjc2frR2Ayx+zoGH
+        odsMOTKKJf3R1as464RiHWzfPSgCcNVcy61stt9liEVSnHUvjLGenViIHgp21FKB
+        vcO9rzXNnbROcWAblUoHfk3JRbHDQdOdRpJ/HeyAQto4Z/8h9jBhwdy7qnzI+MBp
+        nSpbBH9r7KnYK2ahAMdcXdEZigKsm7Bjnv8CzntTz3u/ExLiWdzfzN4KLvgpOf2Q
+        ==
+X-ME-Sender: <xms:6ULeXXZSwzcOI0CVSpVUWQDfpcMvpyxYe5RugtFIqL5P6lNj5coADw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudeihedgtdegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvufffkfgfgggtgfesthhqtddttderjeenucfhrhhomheppfhikhholhgr
+    uhhsucftrghthhcuoefpihhkohhlrghushesrhgrthhhrdhorhhgqeenucfkphepudekhe
+    drfedrleegrdduleegnecurfgrrhgrmhepmhgrihhlfhhrohhmpefpihhkohhlrghushes
+    rhgrthhhrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:6ULeXde2Y1McBDzSnvNwwPILGvFW9pAYbuhQ-mJteoy8tAtnjW7OzQ>
+    <xmx:6ULeXRoluCGwdSBGcxXWALuKyZqVHvBhIdXtIpAGXUcpJ-Cnh0MZWw>
+    <xmx:6ULeXUDcw1aLqQoFVwfwOd-m74NApQs7VkuWeIV7S-wa7JaKMugUKw>
+    <xmx:6kLeXRkYu23ZEc3EGcKBOQSGQnoTIJYmZlzRQUHMYEGO1rxTGgsZUQ>
+Received: from ebox.rath.org (ebox.rath.org [185.3.94.194])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 4825E80060;
+        Wed, 27 Nov 2019 04:33:29 -0500 (EST)
+Received: from vostro.rath.org (vostro [192.168.12.4])
+        by ebox.rath.org (Postfix) with ESMTPS id 3479333;
+        Wed, 27 Nov 2019 09:33:28 +0000 (UTC)
+Received: by vostro.rath.org (Postfix, from userid 1000)
+        id 004C1E0451; Wed, 27 Nov 2019 09:33:27 +0000 (GMT)
+From:   Nikolaus Rath <Nikolaus@rath.org>
+To:     fuse-devel@lists.sourceforge.net,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>
+Subject: Handling of 32/64 bit off_t by getdents64()
+Mail-Copies-To: never
+Mail-Followup-To: fuse-devel@lists.sourceforge.net, linux-fsdevel
+        <linux-fsdevel@vger.kernel.org>, Miklos Szeredi <mszeredi@redhat.com>
+Date:   Wed, 27 Nov 2019 09:33:27 +0000
+Message-ID: <8736e9d5p4.fsf@vostro.rath.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <73e9b52f-afed-fa0d-5463-222e41fead56@suse.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 27, 2019 at 11:00:15AM +0200, Nikolay Borisov wrote:
-> 
-> 
-> On 26.11.19 г. 19:36 ч., Omar Sandoval wrote:
-> > On Tue, Nov 26, 2019 at 03:53:02PM +0200, Nikolay Borisov wrote:
-> >>
-> >>
-> >> On 20.11.19 г. 20:24 ч., Omar Sandoval wrote:
-> >>> From: Omar Sandoval <osandov@fb.com>
-> >>
-> >> <snip>
-> >>
-> >>>  
-> >>> +enum {
-> >>> +	ENCODED_IOV_COMPRESSION_NONE,
-> >>> +#define ENCODED_IOV_COMPRESSION_NONE ENCODED_IOV_COMPRESSION_NONE
-> >>> +	ENCODED_IOV_COMPRESSION_ZLIB,
-> >>> +#define ENCODED_IOV_COMPRESSION_ZLIB ENCODED_IOV_COMPRESSION_ZLIB
-> >>> +	ENCODED_IOV_COMPRESSION_LZO,
-> >>> +#define ENCODED_IOV_COMPRESSION_LZO ENCODED_IOV_COMPRESSION_LZO
-> >>> +	ENCODED_IOV_COMPRESSION_ZSTD,
-> >>> +#define ENCODED_IOV_COMPRESSION_ZSTD ENCODED_IOV_COMPRESSION_ZSTD
-> >>> +	ENCODED_IOV_COMPRESSION_TYPES = ENCODED_IOV_COMPRESSION_ZSTD,
-> >>
-> >> This looks very dodgy, what am I missing?
-> > 
-> > This is a somewhat common trick so that enum values can be checked for
-> > with ifdef/ifndef. See include/uapi/linux.in.h, for example.
-> 
-> I cannot seem to have this file on my system (or any .in.h file for that
-> matter in the kernel source dir).
+Hello,
 
-Whoops, that should be include/uapi/linux/in.h
+For filesystems like ext4, the d_off values returned by getdents64()
+seem to depend on the kind of process that issues the syscall.
+
+For example, if I compile test program with -m32 I get:
+
+$ ./readdir32=20
+--------------- nread=3D616 ---------------
+inode#    file type  d_reclen  d_off   d_name
+32253478  ???          40  770981411  test_readlog.py
+32260181  ???          24  776189020  ..
+[...]
+
+If I compile for 64 bit, I get:
+
+$ ./readdir64=20
+--------------- nread=3D616 ---------------
+inode#    file type  d_reclen  d_off   d_name
+32253478  ???          40 3311339950278905338  test_readlog.py
+32260181  ???          24 3333706456980390508  ..
+[...]
+
+This is despite d_off being declared as ino64_t in the linux_dirent64
+struct.
+
+
+This is presumably intentional, because (again as far as I can tell), if
+getdents64 returns a full 64 bit value for a 32 bit system, libc's
+readdir() will return an error because it cannot fit the value into
+struct dirent.
+
+
+As far as I know, there is no way for a FUSE filesystem to tell if the
+client process is 64 bit or 32 bit. So effectively, a FUSE filesystem is
+limited to using only the lower 32 bits for readdir offsets. Is that
+correct?
+
+This would be quite annoying because it means that passthrough
+filesystems cannot re-use the underlying filesystems d_off values
+(since they will be full 64 bit for a 64 bit FUSE process).
+
+
+Is there a way for a 64 bit process (in this case the FUSE daemon) to
+ask for 32 bit d_off values from getdents64()?
+
+
+Would it be feasible to extend the FUSE protocol to include information
+about the available bits in d_off?
+
+
+Best,
+-Nikolaus
+
+--=20
+GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
+
+             =C2=BBTime flies like an arrow, fruit flies like a Banana.=C2=
+=AB
