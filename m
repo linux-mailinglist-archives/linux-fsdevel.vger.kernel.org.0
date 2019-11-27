@@ -2,107 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D10010ACF6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 10:55:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D075A10AD19
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 11:00:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726478AbfK0JzJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Nov 2019 04:55:09 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34803 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726133AbfK0JzJ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Nov 2019 04:55:09 -0500
-Received: by mail-pg1-f193.google.com with SMTP id z188so10554815pgb.1;
-        Wed, 27 Nov 2019 01:55:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8SObqhRlU5cENlMfk694hRi6SokTDPOUWbcmFxW6OtU=;
-        b=Al97Xly0W55m2GYZr19HjBr1Hp/XGVBMD8EVexz3l1qrvyNaGgDCqOYX9a28wb5BWi
-         B/Tz1LL/IS8ndjha0JxV8qHW/LRlWtKiqzv5s4fi56BOwsOQlFR73rl+9RYmUbrNXRj6
-         TCWStkal38DyE4rAtwuO5efCEHB9N/ouq78cM8XWyT7aOgKqq7Ix0otLdg+fiRM9JldB
-         mnuDidmhYYLwqgYJUvFli5r/dPOpLANuO+j0S/t3xVzVzfctb7FUD13IkdJ7e4PP/PD+
-         TARzjOlrQ8346809ulD075MW3ikXazrpawuQWE6sg7TPFY7V8JS61gUY8ep2YtXsg7lG
-         KgDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8SObqhRlU5cENlMfk694hRi6SokTDPOUWbcmFxW6OtU=;
-        b=Y1E6mCygU5IvGKjnyejt6oyvslJAOR+cdxtULopVaibeg8W/1qrm+j0sxkP5sBUADC
-         3qEg7RwGd+YkG5I6xSfB+WoFiyLb8bWuI1pPT6Arvq03EjoTjIpzF5FkM2daxXqPAZkg
-         Azfajf73hac5HqCa0QshDGwJpogMwWMQYVglx09u9I41VWOj4tF8NBnNsY7bbmpkbg+m
-         T/+v0TV4ICdxDrr2VBvJiRhlw4N7wURKSMHgnULKus/2qew1ZP3ZpnU1k8sS8cX3tknt
-         jkw0bHZC90a3zmUyN7JjtzaiYXnKwROffENJ1imVtPSHNuNrHWZVwop7sxre73s7rss/
-         A5ag==
-X-Gm-Message-State: APjAAAXuNcJH8KBqACjPe8EfIhkkwnwJaleM/INTDzN6ubkofh0jGZf+
-        zrfqNjpaKiOg7j7OgShzuwo=
-X-Google-Smtp-Source: APXvYqw6YwH9CkD3t2PbwHeHkYwI50XpNPSYUSfBcBM+X6Kvoza9K6V63rtUP/za8X0iTbm2TEklWA==
-X-Received: by 2002:a65:530d:: with SMTP id m13mr3854619pgq.172.1574848508080;
-        Wed, 27 Nov 2019 01:55:08 -0800 (PST)
-Received: from athina.mtv.corp.google.com ([2620:15c:211:0:c786:d9fd:ab91:6283])
-        by smtp.gmail.com with ESMTPSA id g11sm5772454pjv.8.2019.11.27.01.55.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2019 01:55:07 -0800 (PST)
-From:   =?UTF-8?q?Maciej=20=C5=BBenczykowski?= <zenczykowski@gmail.com>
-To:     =?UTF-8?q?Maciej=20=C5=BBenczykowski?= <maze@google.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        id S1726383AbfK0KAw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Nov 2019 05:00:52 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60146 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726143AbfK0KAw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 27 Nov 2019 05:00:52 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3A3F3B286;
+        Wed, 27 Nov 2019 10:00:50 +0000 (UTC)
+Date:   Wed, 27 Nov 2019 10:00:46 +0000
+From:   Mel Gorman <mgorman@suse.de>
+To:     ?????? <yun.wang@linux.alibaba.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
         Kees Cook <keescook@chromium.org>,
         Iurii Zaikin <yzaikin@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus FS Devel Mailing List <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH] proc_do_large_bitmap - return error on writes to non-existant bitmap
-Date:   Wed, 27 Nov 2019 01:54:59 -0800
-Message-Id: <20191127095459.168324-1-zenczykowski@gmail.com>
-X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
+        Michal Koutn? <mkoutny@suse.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
+Subject: Re: [PATCH v2 2/3] sched/numa: expose per-task
+ pages-migration-failure
+Message-ID: <20191127100046.GM28938@suse.de>
+References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
+ <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
+ <3931bf05-2939-0499-7660-8cc9a6f71c9a@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <3931bf05-2939-0499-7660-8cc9a6f71c9a@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Maciej Żenczykowski <maze@google.com>
+On Wed, Nov 27, 2019 at 09:50:01AM +0800, ?????? wrote:
+> NUMA balancing will try to migrate pages between nodes, which
+> could caused by memory policy or numa group aggregation, while
+> the page migration could failed too for eg when the target node
+> run out of memory.
+> 
+> Since this is critical to the performance, admin should know
+> how serious the problem is, and take actions before it causing
+> too much performance damage, thus this patch expose the counter
+> as 'migfailed' in '/proc/PID/sched'.
+> 
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Michal Koutn� <mkoutny@suse.com>
+> Suggested-by: Mel Gorman <mgorman@suse.de>
+> Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
 
-Writing to an unallocated bitmap (with echo) results in an infinite
-loop - although I'm not clear if this is in kernel or in userspace.
+This patch can be treated independently of the rest of the series as
+it's not directly related.
 
-We return ENOMEDIUM 'No medium found', because it's the best error
-I could come up with to describe the situation.
+Acked-by: Mel Gorman <mgorman@suse.de>
 
-(Note: I'm not aware of any actual way to hit this with current
-kernel code, I hit this while testing new code, but it still seems
-like it should be fixed, especially since it prevented my machine
-from booting, and didn't even have the dignity to crash...)
-
-Cc: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Iurii Zaikin <yzaikin@google.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Linus FS Devel Mailing List <linux-fsdevel@vger.kernel.org>
-Signed-off-by: Maciej Żenczykowski <maze@google.com>
----
- kernel/sysctl.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 2c3958d2f463..431966967c99 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -3174,6 +3174,11 @@ int proc_do_large_bitmap(struct ctl_table *table, int write,
- 	unsigned long *tmp_bitmap = NULL;
- 	char tr_a[] = { '-', ',', '\n' }, tr_b[] = { ',', '\n', 0 }, c;
- 
-+	if (write && (!bitmap || !bitmap_len))
-+		/* returning 0 could cause an infinite loop */
-+		return -ENOMEDIUM;
-+	}
-+
- 	if (!bitmap || !bitmap_len || !left || (*ppos && !write)) {
- 		*lenp = 0;
- 		return 0;
 -- 
-2.24.0.432.g9d3f5f5b63-goog
-
+Mel Gorman
+SUSE Labs
