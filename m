@@ -2,101 +2,234 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 073E510AD57
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 11:13:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90E7310AD6E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 11:19:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726556AbfK0KNi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Nov 2019 05:13:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39820 "EHLO mx1.suse.de"
+        id S1726373AbfK0KTk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Nov 2019 05:19:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43110 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726194AbfK0KNh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Nov 2019 05:13:37 -0500
+        id S1726149AbfK0KTk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 27 Nov 2019 05:19:40 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E2E3AB4E7;
-        Wed, 27 Nov 2019 10:13:34 +0000 (UTC)
-Subject: Re: [RFC PATCH v3 08/12] btrfs: add ram_bytes and offset to
- btrfs_ordered_extent
-To:     Omar Sandoval <osandov@osandov.com>, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-Cc:     Dave Chinner <david@fromorbit.com>, Jann Horn <jannh@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
-        kernel-team@fb.com
-References: <cover.1574273658.git.osandov@fb.com>
- <acc02c48287b503195a513e4210d6ddd9e89418a.1574273658.git.osandov@fb.com>
-From:   Nikolay Borisov <nborisov@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <5f344a25-c537-5bf0-40a8-44b9130b4b3c@suse.com>
-Date:   Wed, 27 Nov 2019 12:13:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        by mx1.suse.de (Postfix) with ESMTP id 8F09BB209;
+        Wed, 27 Nov 2019 10:19:36 +0000 (UTC)
+Date:   Wed, 27 Nov 2019 10:19:32 +0000
+From:   Mel Gorman <mgorman@suse.de>
+To:     ?????? <yun.wang@linux.alibaba.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Michal Koutn? <mkoutny@suse.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
+Subject: Re: [PATCH v2 1/3] sched/numa: advanced per-cgroup numa statistic
+Message-ID: <20191127101932.GN28938@suse.de>
+References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
+ <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
+ <9354ffe8-81ba-9e76-e0b3-222bc942b3fc@linux.alibaba.com>
 MIME-Version: 1.0
-In-Reply-To: <acc02c48287b503195a513e4210d6ddd9e89418a.1574273658.git.osandov@fb.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <9354ffe8-81ba-9e76-e0b3-222bc942b3fc@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 20.11.19 г. 20:24 ч., Omar Sandoval wrote:
-> From: Omar Sandoval <osandov@fb.com>
+On Wed, Nov 27, 2019 at 09:49:34AM +0800, ?????? wrote:
+> Currently there are no good approach to monitoring the per-cgroup
+> numa efficiency, this could be a trouble especially when groups
+> are sharing CPUs, it's impossible to tell which one caused the
+> remote-memory access by reading hardware counter since multiple
+> workloads could sharing the same CPU, which make it painful when
+> one want to find out the root cause and fix the issue.
 > 
-> Currently, we only create ordered extents when ram_bytes == num_bytes
-> and offset == 0. However, RWF_ENCODED writes may create extents which
-> only refer to a subset of the full unencoded extent, so we need to plumb
-> these fields through the ordered extent infrastructure and pass them
-> down to insert_reserved_file_extent().
-> 
-> Since we're changing the btrfs_add_ordered_extent* signature, let's get
-> rid of the trivial wrappers and add a kernel-doc.
-> 
-> Signed-off-by: Omar Sandoval <osandov@fb.com>
 
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+It's already possible to identify specific tasks triggering PMU events
+so this is not exactly true.
+
+> In order to address this, we introduced new per-cgroup statistic
+> for numa:
+>   * the numa locality to imply the numa balancing efficiency
+>   * the numa execution time on each node
+> 
+> The task locality is the local page accessing ratio traced on numa
+> balancing PF, and the group locality is the topology of task execution
+> time, sectioned by the locality into 7 regions.
+> 
+> For example the new entry 'cpu.numa_stat' show:
+>   locality 39541 60962 36842 72519 118605 721778 946553
+>   exectime 1220127 1458684
+> 
+> Here we know the workloads in hierarchy executed 1220127ms on node_0
+> and 1458684ms on node_1 in total, tasks with locality around 0~13%
+> executed for 39541 ms, and tasks with locality around 86~100% executed
+> for 946553 ms, which imply most of the memory access are local access.
+> 
+> By monitoring the new statistic, we will be able to know the numa
+> efficiency of each per-cgroup workloads on machine, whatever they
+> sharing the CPUs or not, we will be able to find out which one
+> introduced the remote access mostly.
+> 
+> Besides, per-node memory topology from 'memory.numa_stat' become
+> more useful when we have the per-node execution time, workloads
+> always executing on node_0 while it's memory is all on node_1 is
+> usually a bad case.
+> 
+> Cc: Mel Gorman <mgorman@suse.de>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Michal Koutn� <mkoutny@suse.com>
+> Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
+> ---
+>  include/linux/sched.h        | 18 ++++++++-
+>  include/linux/sched/sysctl.h |  6 +++
+>  init/Kconfig                 |  9 +++++
+>  kernel/sched/core.c          | 91 ++++++++++++++++++++++++++++++++++++++++++++
+>  kernel/sched/fair.c          | 33 ++++++++++++++++
+>  kernel/sched/sched.h         | 17 +++++++++
+>  kernel/sysctl.c              | 11 ++++++
+>  7 files changed, 184 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 8f6607cd40ac..505b041594ef 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1118,9 +1118,25 @@ struct task_struct {
+>  	 * numa_faults_locality tracks if faults recorded during the last
+>  	 * scan window were remote/local or failed to migrate. The task scan
+>  	 * period is adapted based on the locality of the faults with different
+> -	 * weights depending on whether they were shared or private faults
+> +	 * weights depending on whether they were shared or private faults.
+> +	 *
+> +	 * Counter id stand for:
+> +	 * 0 -- remote faults
+> +	 * 1 -- local faults
+> +	 * 2 -- page migration failure
+> +	 *
+> +	 * Extra counters when CONFIG_CGROUP_NUMA_STAT enabled:
+> +	 * 3 -- remote page accessing
+> +	 * 4 -- local page accessing
+> +	 *
+> +	 * The 'remote/local faults' records the cpu-page relationship before
+> +	 * page migration, while the 'remote/local page accessing' is after.
+>  	 */
+> +#ifndef CONFIG_CGROUP_NUMA_STAT
+>  	unsigned long			numa_faults_locality[3];
+> +#else
+> +	unsigned long			numa_faults_locality[5];
+> +#endif
+> 
+>  	unsigned long			numa_pages_migrated;
+>  #endif /* CONFIG_NUMA_BALANCING */
+> diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
+> index 89f55e914673..2d6a515df544 100644
+> --- a/include/linux/sched/sysctl.h
+> +++ b/include/linux/sched/sysctl.h
+> @@ -102,4 +102,10 @@ extern int sched_energy_aware_handler(struct ctl_table *table, int write,
+>  				 loff_t *ppos);
+>  #endif
+> 
+> +#ifdef CONFIG_CGROUP_NUMA_STAT
+> +extern int sysctl_cg_numa_stat(struct ctl_table *table, int write,
+> +				 void __user *buffer, size_t *lenp,
+> +				 loff_t *ppos);
+> +#endif
+> +
+>  #endif /* _LINUX_SCHED_SYSCTL_H */
+> diff --git a/init/Kconfig b/init/Kconfig
+> index 4d8d145c41d2..b31d2b560493 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -817,6 +817,15 @@ config NUMA_BALANCING_DEFAULT_ENABLED
+>  	  If set, automatic NUMA balancing will be enabled if running on a NUMA
+>  	  machine.
+> 
+> +config CGROUP_NUMA_STAT
+> +	bool "Advanced per-cgroup NUMA statistics"
+> +	default n
+> +	depends on CGROUP_SCHED && NUMA_BALANCING
+> +	help
+> +	  This option adds support for per-cgroup NUMA locality/execution
+> +	  statistics, for monitoring NUMA efficiency of per-cgroup workloads
+> +	  on NUMA platforms with NUMA Balancing enabled.
+> +
+>  menuconfig CGROUPS
+>  	bool "Control Group support"
+>  	select KERNFS
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index aaa1740e6497..eabcab25be50 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -7657,6 +7657,84 @@ static u64 cpu_rt_period_read_uint(struct cgroup_subsys_state *css,
+>  }
+>  #endif /* CONFIG_RT_GROUP_SCHED */
+> 
+> +#ifdef CONFIG_CGROUP_NUMA_STAT
+> +DEFINE_STATIC_KEY_FALSE(sched_cg_numa_stat);
+> +
+> +#ifdef CONFIG_PROC_SYSCTL
+> +int sysctl_cg_numa_stat(struct ctl_table *table, int write,
+> +			 void __user *buffer, size_t *lenp, loff_t *ppos)
+> +{
+> +	struct ctl_table t;
+> +	int err;
+> +	int state = static_branch_likely(&sched_cg_numa_stat);
+> +
+> +	if (write && !capable(CAP_SYS_ADMIN))
+> +		return -EPERM;
+> +
+> +	t = *table;
+> +	t.data = &state;
+> +	err = proc_dointvec_minmax(&t, write, buffer, lenp, ppos);
+> +	if (err < 0 || !write)
+> +		return err;
+> +
+> +	if (state)
+> +		static_branch_enable(&sched_cg_numa_stat);
+> +	else
+> +		static_branch_disable(&sched_cg_numa_stat);
+> +
+> +	return err;
+> +}
+> +#endif
+> +
+
+Why is this implemented as a toggle? I'm finding it hard to make sense
+of this. The numa_stat should not even exist if the feature is disabled.
+
+Assuming that is fixed then the runtime overhead is fine but the same
+issues with the quality of the information relying on NUMA balancing
+limits the usefulness of this. Disabling NUMA balancing or the scan rate
+dropping to a very low frequency would lead in misleading conclusions as
+well as false positives if the CPU and memory policies force remote memory
+usage. Similarly, the timing of the information available is variable du
+to how numa_faults_locality gets reset so sometimes the information is
+fine-grained and sometimes it's coarse grained. It will also pretend to
+display useful information even if NUMA balancing is disabled.
+
+I find it hard to believe it would be useful in practice and I think users
+would have real trouble interpreting the data given how much it relies on
+internal implementation details of NUMA balancing. I cannot be certain
+as clearly something motivated the creation of this patch although it's
+unclear if it has ever been used to debug and fix an actual problem in
+the field. Hence, I'm neutral on the patch and will neither ack or nack
+it and will defer to the scheduler maintainers but if I was pushed on it,
+I would be disinclined to merge the patch due to the potential confusion
+caused by users who believe it provides accurate information when at best
+it gives a rough approximation with variable granularity.
+
+-- 
+Mel Gorman
+SUSE Labs
