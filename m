@@ -2,173 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7631110B243
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 16:18:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89A7210B293
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 16:42:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727169AbfK0PSc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Nov 2019 10:18:32 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:25311 "EHLO
+        id S1727138AbfK0PmJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Nov 2019 10:42:09 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:34933 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726698AbfK0PSb (ORCPT
+        with ESMTP id S1726558AbfK0PmJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Nov 2019 10:18:31 -0500
+        Wed, 27 Nov 2019 10:42:09 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574867910;
+        s=mimecast20190719; t=1574869327;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=MKRMqYZcMSPOI1ZGGK/kSwrsQZTCaWDdryNtYrwk8A4=;
-        b=MTwMRqNu+MeR4QaIT5ScdTi3FY3q4TIbuScZCw7D1Q/tdgkXeTHJIgVCon5MbH5HY3Smfk
-        kwpurQunGpQ/srUNR5GqysQLb5Cd1g5u2UjmQ4/O/Ads1THgydWuoyLyKy2gV5YnApSEIr
-        nAjbrGSucYE0aWx0G5+mXCDgafrGAco=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=rTiplu3jVVG57/goTxX/EWtlHVQFyeygebJxT1iF7jE=;
+        b=NP4zJgSxRdtEh5kJoYt6wHBchePLp7N22H5wxOT7UVjdejkqmQtyETS+1Yhtv8xPEPyXdm
+        AdN/Dknww0GOIs6rwzK6C01c00vviANp4AJ8rN1KfalK5zv+5PQu56uh5AovJ4moBBT5Om
+        b5diZsepnkFSN5tUIjvmNXKGxnVKlOk=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-147-GM3JGt2IPoeXL76p6qeU6w-1; Wed, 27 Nov 2019 10:18:26 -0500
+ us-mta-165-KTmG-I0VOJaQbcSWsc6Yig-1; Wed, 27 Nov 2019 10:42:06 -0500
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EA8C11007271;
-        Wed, 27 Nov 2019 15:18:22 +0000 (UTC)
-Received: from max.com (ovpn-204-21.brq.redhat.com [10.40.204.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 477BF1001DE1;
-        Wed, 27 Nov 2019 15:18:14 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4E31A101F4E0;
+        Wed, 27 Nov 2019 15:42:04 +0000 (UTC)
+Received: from fogou.chygwyn.com (unknown [10.33.36.46])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 43F691001DE1;
+        Wed, 27 Nov 2019 15:41:55 +0000 (UTC)
+Subject: Re: [PATCH] mm/filemap: do not allocate cache pages beyond end of
+ file at read
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-kernel@vger.kernel.org,
+Cc:     =?UTF-8?Q?Andreas_Gr=c3=bcnbacher?= <andreas.gruenbacher@gmail.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Richard Weinberger <richard@nod.at>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org
-Subject: [PATCH] fs: Fix page_mkwrite off-by-one errors
-Date:   Wed, 27 Nov 2019 16:18:11 +0100
-Message-Id: <20191127151811.9229-1-agruenba@redhat.com>
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "cluster-devel@redhat.com" <cluster-devel@redhat.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <sfrench@samba.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>
+References: <157225677483.3442.4227193290486305330.stgit@buzz>
+ <20191028124222.ld6u3dhhujfqcn7w@box>
+ <CAHk-=wgQ-Dcs2keNJPovTb4gG33M81yANH6KZM9d5NLUb-cJ1g@mail.gmail.com>
+ <20191028125702.xdfbs7rqhm3wer5t@box>
+ <ac83fee6-9bcd-8c66-3596-2c0fbe6bcf96@yandex-team.ru>
+ <CAHk-=who0HS=NT8U7vFDT7er_CD7+ZreRJMxjYrRXs5G6dbpyw@mail.gmail.com>
+ <f0140b13-cca2-af9e-eb4b-82eda134eb8f@redhat.com>
+ <CAHk-=wh4SKRxKQf5LawRMSijtjRVQevaFioBK+tOZAVPt7ek0Q@mail.gmail.com>
+ <640bbe51-706b-8d9f-4abc-5f184de6a701@redhat.com>
+ <CAHpGcM+o2OwXdrj+A2_OqRg6YokfauFNiBJF-BQp0dJFvq_BrQ@mail.gmail.com>
+ <22f04f02-86e4-b379-81c8-08c002a648f0@redhat.com>
+ <CAHk-=whRuPkm7zFUiGe_BXkLvEdShZGngkb=uRufgU65ogCxfg@mail.gmail.com>
+From:   Steven Whitehouse <swhiteho@redhat.com>
+Message-ID: <cdd48a4d-42a4-dd15-2701-e08e26fef17f@redhat.com>
+Date:   Wed, 27 Nov 2019 15:41:53 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
+In-Reply-To: <CAHk-=whRuPkm7zFUiGe_BXkLvEdShZGngkb=uRufgU65ogCxfg@mail.gmail.com>
+Content-Language: en-US
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: GM3JGt2IPoeXL76p6qeU6w-1
+X-MC-Unique: KTmG-I0VOJaQbcSWsc6Yig-1
 X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fix a check in block_page_mkwrite meant to determine whether an offset
-is within the inode size.  This error has spread to several filesystems
-and to iomap_page_mkwrite, so fix those instances as well.
+Hi,
 
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+On 25/11/2019 17:05, Linus Torvalds wrote:
+> On Mon, Nov 25, 2019 at 2:53 AM Steven Whitehouse <swhiteho@redhat.com> wrote:
+>> Linus, is that roughly what you were thinking of?
+> So the concept looks ok, but I don't really like the new flags as they
+> seem to be gfs2-specific rather than generic.
+>
+> That said, I don't _gate_ them either, since they aren't in any
+> critical code sequence, and it's not like they do anything really odd.
+>
+> I still think the whole gfs2 approach is broken. You're magically ok
+> with using stale data from the cache just because it's cached, even if
+> another client might have truncated the file or something.
 
----
+If another node tries to truncate the file, that will require an 
+exclusive glock, and in turn that means the all the other nodes will 
+have to drop their glock(s) shared or exclusive. That process 
+invalidates the page cache on those nodes, such that any further 
+requests on those nodes will find the cache empty and have to call into 
+the filesystem.
 
-This patch has a trivial conflict with commit "iomap: Fix overflow in
-iomap_page_mkwrite" in Darrick's iomap pull request for 5.5:
+If a page is truncated on another node, then when the local node gives 
+up its glock, after any copying (e.g. for read) has completed then the 
+truncate will take place. The local node will then have to reread any 
+data relating to new pages or return an error in case the next page to 
+be read has vanished due to the truncate. It is a pretty small window, 
+and the advantage is that in cases where the page is in cache, we can 
+directly use the cached page without having to call into the filesystem 
+at all. So it is page atomic in that sense.
 
-  https://lore.kernel.org/lkml/20191125190907.GN6219@magnolia/
----
- fs/buffer.c            | 2 +-
- fs/ceph/addr.c         | 2 +-
- fs/ext4/inode.c        | 2 +-
- fs/f2fs/file.c         | 2 +-
- fs/iomap/buffered-io.c | 2 +-
- fs/ubifs/file.c        | 2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
+The overall aim here is to avoid taking (potentially slow) cluster locks 
+when at all possible, yet at the same time deliver close to local fs 
+semantics whenever we can. You can think of GFS2's glock concept (at 
+least as far as the inodes we are discussing here) as providing a 
+combination of (page) cache control and cluster (dlm) locking.
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 86a38b979323..152d391858d4 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -2465,7 +2465,7 @@ int block_page_mkwrite(struct vm_area_struct *vma, st=
-ruct vm_fault *vmf,
- =09lock_page(page);
- =09size =3D i_size_read(inode);
- =09if ((page->mapping !=3D inode->i_mapping) ||
--=09    (page_offset(page) > size)) {
-+=09    (page_offset(page) >=3D size)) {
- =09=09/* We overload EFAULT to mean page got truncated */
- =09=09ret =3D -EFAULT;
- =09=09goto out_unlock;
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 7ab616601141..9fa0729ece41 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -1575,7 +1575,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *=
-vmf)
- =09do {
- =09=09lock_page(page);
-=20
--=09=09if ((off > size) || (page->mapping !=3D inode->i_mapping)) {
-+=09=09if ((off >=3D size) || (page->mapping !=3D inode->i_mapping)) {
- =09=09=09unlock_page(page);
- =09=09=09ret =3D VM_FAULT_NOPAGE;
- =09=09=09break;
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 516faa280ced..6dd4efe2fb63 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -6224,7 +6224,7 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
- =09lock_page(page);
- =09size =3D i_size_read(inode);
- =09/* Page got truncated from under us? */
--=09if (page->mapping !=3D mapping || page_offset(page) > size) {
-+=09if (page->mapping !=3D mapping || page_offset(page) >=3D size) {
- =09=09unlock_page(page);
- =09=09ret =3D VM_FAULT_NOPAGE;
- =09=09goto out;
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 29bc0a542759..3436be01af45 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -71,7 +71,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *v=
-mf)
- =09down_read(&F2FS_I(inode)->i_mmap_sem);
- =09lock_page(page);
- =09if (unlikely(page->mapping !=3D inode->i_mapping ||
--=09=09=09page_offset(page) > i_size_read(inode) ||
-+=09=09=09page_offset(page) >=3D i_size_read(inode) ||
- =09=09=09!PageUptodate(page))) {
- =09=09unlock_page(page);
- =09=09err =3D -EFAULT;
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index e25901ae3ff4..d454dbab5133 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1041,7 +1041,7 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, c=
-onst struct iomap_ops *ops)
- =09lock_page(page);
- =09size =3D i_size_read(inode);
- =09if ((page->mapping !=3D inode->i_mapping) ||
--=09    (page_offset(page) > size)) {
-+=09    (page_offset(page) >=3D size)) {
- =09=09/* We overload EFAULT to mean page got truncated */
- =09=09ret =3D -EFAULT;
- =09=09goto out_unlock;
-diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
-index cd52585c8f4f..ca0148ec77e6 100644
---- a/fs/ubifs/file.c
-+++ b/fs/ubifs/file.c
-@@ -1564,7 +1564,7 @@ static vm_fault_t ubifs_vm_page_mkwrite(struct vm_fau=
-lt *vmf)
-=20
- =09lock_page(page);
- =09if (unlikely(page->mapping !=3D inode->i_mapping ||
--=09=09     page_offset(page) > i_size_read(inode))) {
-+=09=09     page_offset(page) >=3D i_size_read(inode))) {
- =09=09/* Page got truncated out from underneath us */
- =09=09goto sigbus;
- =09}
---=20
-2.20.1
+>
+> So you're ok with saying "the file used to be X bytes in size, so
+> we'll just give you this data because we trust that the X is correct".
+>
+> But you're not ok to say "oh, the file used to be X bytes in size, but
+> we don't want to give you a short read because it might not be correct
+> any more".
+>
+> See the disconnect? You trust the size in one situation, but not in another one.
+
+Well we are not trusting the size at all... the original algorithm 
+worked entirely off "is this page in cache and uptodate?" and for 
+exactly the reason that we know the size in the inode might be out of 
+date, if we are not currently holding a glock in either shared or 
+exclusive mode. We also know that if there is a page in cache and 
+uptodate then we must be holding the glock too.
+
+
+>
+> I also don't really see that you *need* the new flag at all. Since
+> you're doing to do a speculative read and then a real read anyway, and
+> since the only thing that you seem to care about is the file size
+> (because the *data* you will trust if it is cached), then why don't
+> you just use the *existing* generic read, and *IFF* you get a
+> truncated return value, then you go and double-check that the file
+> hasn't changed in size?
+>
+> See what I'm saying? I think gfs2 is being very inconsistent in when
+> it trusts the file size, and I don't see that you even need the new
+> behavior that patch gives, because you might as well just use the
+> existing code (just move the i_size check earlier, and then teach gfs2
+> to double-check the "I didn't get as much as I expected" case).
+>
+>                   Linus
+
+I'll leave the finer details to Andreas here, since it is his patch, and 
+hopefully we can figure out a good path forward. We are perhaps also a 
+bit reluctant to go off and (nearly) duplicate code that is already in 
+the core vfs library functions, since that often leads to things getting 
+out of sync (our implementation of ->writepages is one case where that 
+happened in the past) and missing important bug fixes/features in some 
+cases. Hopefully though we can iterate on this a bit and come up with 
+something which will resolve all the issues,
+
+Steve.
+
+
+>
 
