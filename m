@@ -2,200 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AC3010B2C0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 16:52:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDB8F10B2B5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Nov 2019 16:51:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727130AbfK0Pwy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Nov 2019 10:52:54 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:38300 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726514AbfK0Pwx (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Nov 2019 10:52:53 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xARFi6ak075759;
-        Wed, 27 Nov 2019 15:52:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=H+/wgbi6zpbbhzBcnf3ZgXVMUMhhbOupxJKtToXxUKY=;
- b=Kg0k/vAlSe8xFiAPHV3p230uhEAIhD+RfNy3L2xMgLeJjWzANRMgYHEoE0Ep3N7qUiEj
- vcF15VBYr8vifEfZfiVr6t7u8ViSjjCg7FNvuwZfLuggXSVyPGlhSN6JUTfYB83peZvJ
- 2Uo59BKL0j0vX1rUEJqlR/o/pNlsdkvaPc0SHw+2iWbYlZWmF6wiaTespaEP5ykBV9AG
- ImLwc8stIz9ZL95hlZuIpbBT4NAPPaz+UgI3qRiVr/uxeOf58bY1exPNLO2+wgw9Fc9C
- Rl8vZBiL+t0XTNoRZlRlrnqJqMZNYYPP0oHZxwuNG+rB9l114hLMSs0+hA/EVvczaecf TQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2wewdrecda-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 27 Nov 2019 15:52:06 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xARFdTWt031310;
-        Wed, 27 Nov 2019 15:50:06 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2wgvhccg37-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 27 Nov 2019 15:50:05 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xARFnumk003050;
-        Wed, 27 Nov 2019 15:49:56 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 27 Nov 2019 07:49:56 -0800
-Date:   Wed, 27 Nov 2019 07:49:54 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Richard Weinberger <richard@nod.at>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org
-Subject: Re: [PATCH] fs: Fix page_mkwrite off-by-one errors
-Message-ID: <20191127154954.GT6219@magnolia>
-References: <20191127151811.9229-1-agruenba@redhat.com>
+        id S1727031AbfK0PvN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Nov 2019 10:51:13 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50434 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726634AbfK0PvN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 27 Nov 2019 10:51:13 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A5FCCBD7C;
+        Wed, 27 Nov 2019 15:51:10 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 92150DA733; Wed, 27 Nov 2019 16:51:08 +0100 (CET)
+Date:   Wed, 27 Nov 2019 16:51:08 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc:     linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        hch@infradead.org, darrick.wong@oracle.com, fdmanana@kernel.org
+Subject: Re: [PATCH 0/5 v2] btrfs direct-io using iomap
+Message-ID: <20191127155108.GT2734@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        hch@infradead.org, darrick.wong@oracle.com, fdmanana@kernel.org
+References: <20191126031456.12150-1-rgoldwyn@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191127151811.9229-1-agruenba@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9454 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1911270137
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9454 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1911270137
+In-Reply-To: <20191126031456.12150-1-rgoldwyn@suse.de>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 27, 2019 at 04:18:11PM +0100, Andreas Gruenbacher wrote:
-> Fix a check in block_page_mkwrite meant to determine whether an offset
-> is within the inode size.  This error has spread to several filesystems
-> and to iomap_page_mkwrite, so fix those instances as well.
-
-Seeing how this has gotten screwed up at least six times in the kernel,
-maybe we need a static inline helper to do this for us?
-
-> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-
-The iomap part looks ok,
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-
-(I might just extract the iomap part and put it in the iomap tree if
-someone doesn't merge this one before I get to it...)
-
---D
-
+On Mon, Nov 25, 2019 at 09:14:51PM -0600, Goldwyn Rodrigues wrote:
+> This is an effort to use iomap for direct I/O in btrfs. This would
+> change the call from __blockdev_direct_io() to iomap_dio_rw().
 > 
-> ---
+> The main objective is to lose the buffer head and use bio defined by
+> iomap code, and hopefully to use more of generic-FS codebase.
 > 
-> This patch has a trivial conflict with commit "iomap: Fix overflow in
-> iomap_page_mkwrite" in Darrick's iomap pull request for 5.5:
+> These patches are based on xfs/iomap-for-next, though I tested it
+> against the patches on xfs/iomap-for-next on top of v5.4 (there are no
+> changes to existing iomap patches).
 > 
->   https://lore.kernel.org/lkml/20191125190907.GN6219@magnolia/
-> ---
->  fs/buffer.c            | 2 +-
->  fs/ceph/addr.c         | 2 +-
->  fs/ext4/inode.c        | 2 +-
->  fs/f2fs/file.c         | 2 +-
->  fs/iomap/buffered-io.c | 2 +-
->  fs/ubifs/file.c        | 2 +-
->  6 files changed, 6 insertions(+), 6 deletions(-)
+> I have tested it against xfstests/btrfs.
 > 
-> diff --git a/fs/buffer.c b/fs/buffer.c
-> index 86a38b979323..152d391858d4 100644
-> --- a/fs/buffer.c
-> +++ b/fs/buffer.c
-> @@ -2465,7 +2465,7 @@ int block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
->  	lock_page(page);
->  	size = i_size_read(inode);
->  	if ((page->mapping != inode->i_mapping) ||
-> -	    (page_offset(page) > size)) {
-> +	    (page_offset(page) >= size)) {
->  		/* We overload EFAULT to mean page got truncated */
->  		ret = -EFAULT;
->  		goto out_unlock;
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 7ab616601141..9fa0729ece41 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -1575,7 +1575,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
->  	do {
->  		lock_page(page);
->  
-> -		if ((off > size) || (page->mapping != inode->i_mapping)) {
-> +		if ((off >= size) || (page->mapping != inode->i_mapping)) {
->  			unlock_page(page);
->  			ret = VM_FAULT_NOPAGE;
->  			break;
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 516faa280ced..6dd4efe2fb63 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -6224,7 +6224,7 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
->  	lock_page(page);
->  	size = i_size_read(inode);
->  	/* Page got truncated from under us? */
-> -	if (page->mapping != mapping || page_offset(page) > size) {
-> +	if (page->mapping != mapping || page_offset(page) >= size) {
->  		unlock_page(page);
->  		ret = VM_FAULT_NOPAGE;
->  		goto out;
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 29bc0a542759..3436be01af45 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -71,7 +71,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
->  	down_read(&F2FS_I(inode)->i_mmap_sem);
->  	lock_page(page);
->  	if (unlikely(page->mapping != inode->i_mapping ||
-> -			page_offset(page) > i_size_read(inode) ||
-> +			page_offset(page) >= i_size_read(inode) ||
->  			!PageUptodate(page))) {
->  		unlock_page(page);
->  		err = -EFAULT;
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index e25901ae3ff4..d454dbab5133 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1041,7 +1041,7 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops)
->  	lock_page(page);
->  	size = i_size_read(inode);
->  	if ((page->mapping != inode->i_mapping) ||
-> -	    (page_offset(page) > size)) {
-> +	    (page_offset(page) >= size)) {
->  		/* We overload EFAULT to mean page got truncated */
->  		ret = -EFAULT;
->  		goto out_unlock;
-> diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
-> index cd52585c8f4f..ca0148ec77e6 100644
-> --- a/fs/ubifs/file.c
-> +++ b/fs/ubifs/file.c
-> @@ -1564,7 +1564,7 @@ static vm_fault_t ubifs_vm_page_mkwrite(struct vm_fault *vmf)
->  
->  	lock_page(page);
->  	if (unlikely(page->mapping != inode->i_mapping ||
-> -		     page_offset(page) > i_size_read(inode))) {
-> +		     page_offset(page) >= i_size_read(inode))) {
->  		/* Page got truncated out from underneath us */
->  		goto sigbus;
->  	}
-> -- 
-> 2.20.1
-> 
+> Changes since v1
+> - Incorporated back the efficiency change for inode locking
+> - Review comments about coding style and git comments
+> - Merge related patches into one
+> - Direct read to go through btrfs_direct_IO()
+> - Removal of no longer used function dio_end_io()
+
+I see a lockdep assertion during test btrfs/004
+
+iomap_dio_rw()
+...
+	lockdep_assert_held(&inode->i_rwsem);
+
+btrfs/004               [15:46:30][   69.749908] run fstests btrfs/004 at 2019-11-27 15:46:30
+[   70.180401] BTRFS info (device vda): disk space caching is enabled
+[   70.183496] BTRFS info (device vda): has skinny extents
+[   70.378865] BTRFS: device fsid a10200b4-f17d-49a0-8c82-b06b69871613 devid 1 transid 5 /dev/vdb scanned by mkfs.btrfs (21271)
+[   70.405858] BTRFS info (device vdb): turning on discard
+[   70.408279] BTRFS info (device vdb): disk space caching is enabled
+[   70.410630] BTRFS info (device vdb): has skinny extents
+[   70.412358] BTRFS info (device vdb): flagging fs with big metadata feature
+[   70.420386] BTRFS info (device vdb): checking UUID tree
+[   70.427675] ------------[ cut here ]------------
+[   70.429375] WARNING: CPU: 2 PID: 21300 at fs/iomap/direct-io.c:413 iomap_dio_rw+0x255/0x560
+[   70.432208] Modules linked in: xxhash_generic btrfs blake2b_generic libcrc32c crc32c_intel xor zstd_decompress zstd_compress xxhash lzo_compress lzo_decompress raid6_pq loop
+[   70.437096] CPU: 2 PID: 21300 Comm: fsstress Not tainted 5.4.0-default+ #881
+[   70.439135] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58-rebuilt.opensuse.org 04/01/2014
+[   70.442462] RIP: 0010:iomap_dio_rw+0x255/0x560
+[   70.449092] RSP: 0018:ffffa36dc5b37c80 EFLAGS: 00010246
+[   70.450701] RAX: 0000000000000000 RBX: ffffa36dc5b37e78 RCX: 0000000000000001
+[   70.453062] RDX: ffff88d5b3f75500 RSI: ffff88d5a0c29018 RDI: ffff88d5b3f75d10
+[   70.455308] RBP: ffffa36dc5b37d20 R08: 0000000000000001 R09: ffffffffaef84850
+[   70.457479] R10: ffffa36dc5b37d40 R11: 0000000000007000 R12: ffffa36dc5b37e50
+[   70.459479] R13: 0000000000049000 R14: ffff88d5a0c28ec0 R15: 0000000000049000
+[   70.461790] FS:  00007fab1f5cdb80(0000) GS:ffff88d5bda00000(0000) knlGS:0000000000000000
+[   70.464601] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   70.466503] CR2: 000000000041e000 CR3: 0000000061097006 CR4: 0000000000160ee0
+[   70.468475] Call Trace:
+[   70.469477]  ? btrfs_direct_IO+0x215/0x360 [btrfs]
+[   70.471201]  ? __lock_acquired+0x1f0/0x320
+[   70.472837]  ? btrfs_direct_IO+0xda/0x360 [btrfs]
+[   70.474453]  btrfs_direct_IO+0xda/0x360 [btrfs]
+[   70.476101]  ? lockdep_hardirqs_on+0x103/0x190
+[   70.477732]  btrfs_file_write_iter+0x20b/0x5f0 [btrfs]
+[   70.479450]  ? _copy_to_user+0x76/0x90
+[   70.480943]  new_sync_write+0x118/0x1b0
+[   70.482446]  vfs_write+0xde/0x1d0
+[   70.483789]  ksys_write+0x68/0xe0
+[   70.485136]  do_syscall_64+0x50/0x210
+[   70.486578]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[   70.488390] RIP: 0033:0x7fab1f7a8f93
+[   70.495054] RSP: 002b:00007ffea7b21208 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+[   70.497693] RAX: ffffffffffffffda RBX: 0000000000007000 RCX: 00007fab1f7a8f93
+[   70.499708] RDX: 0000000000007000 RSI: 0000000000416000 RDI: 0000000000000003
+[   70.501754] RBP: 0000000000000003 R08: 0000000000416000 R09: 0000000000000231
+[   70.503682] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000009
+[   70.505622] R13: 0000000000049000 R14: 0000000000416000 R15: 0000000000000000
+[   70.507683] irq event stamp: 1532
+[   70.508931] hardirqs last  enabled at (1531): [<ffffffffc01d7bfb>] get_alloc_profile+0x1ab/0x2b0 [btrfs]
+[   70.512256] hardirqs last disabled at (1532): [<ffffffffad002a8b>] trace_hardirqs_off_thunk+0x1a/0x1c
+[   70.515039] softirqs last  enabled at (0): [<ffffffffad07efd0>] copy_process+0x680/0x1b70
+[   70.517193] softirqs last disabled at (0): [<0000000000000000>] 0x0
+[   70.519153] ---[ end trace 7fa25c75a89dbc97 ]---
+
+The branch is xfs/iomap-for-next + this patchset.
