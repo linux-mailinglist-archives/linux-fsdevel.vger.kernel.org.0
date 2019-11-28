@@ -2,451 +2,324 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BEE610C5C0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2019 10:15:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CFBA10C636
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2019 10:53:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726143AbfK1JPh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Nov 2019 04:15:37 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46252 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726092AbfK1JPh (ORCPT
+        id S1726634AbfK1Jxu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Nov 2019 04:53:50 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46167 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726648AbfK1Jxt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Nov 2019 04:15:37 -0500
-Received: by mail-pl1-f195.google.com with SMTP id k20so6863903pll.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Nov 2019 01:15:36 -0800 (PST)
+        Thu, 28 Nov 2019 04:53:49 -0500
+Received: by mail-lj1-f194.google.com with SMTP id e9so27770854ljp.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Nov 2019 01:53:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=Yeizz9D4j1OC4gBLkhtpZ1xhi5xFu/DauuoTJtwkR4w=;
-        b=HCv7+isFzKEIU4OboFxOfEwShjfBlFYwxCZ1UfJ/B8KDWNQfaeFb6CThKhDye0Ne0+
-         MlL6eMoQLLaIpmdmfL6vN1NafpLDOx0HfKWkH1oGlmf5W3pJw4xbKwgBWjTAg2s8XI/E
-         3yklWr+v4V7qTHQYvwOoUiebct5C6TDXEyI2pgGD2M51bCfoqf0aADZQ6JfPYl+fao0u
-         01vXyje5yoYcIE3hr6eurrz28yHxpqLIMY6yeD+RNeisMA1EwcyiiJnZl1154NaaG/OD
-         RnP1mgrPX9VdFLDyD60A+QIsZ/DqHgxKxz/40hi92qe/zlaOD5WeWMoH/ilCqPJpKLzO
-         9EZg==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Dvoqq6lg6uAO0koRLmAz/MR5uOAYKRgR9ZwJ/yNYPpc=;
+        b=lvbXvRLTHYmqmw9gxM9S2njRJ7fsmYqDfDpZ+M3OrafY5MxhTwGk+owws2qC9nl8jt
+         M+v1D7djTn48w3voWRd2Ksln6ehI9xqqignuTuuVPopc0mBRIms/hjZ35o3k+s9L/B3D
+         UbvNvjl5L/vmwx6KlRqth4rz6dtDYEok/rLzgwREMsZIk76NIAihFStNic0LcNYKxx9X
+         D79YZfc7jGyEzvtEmn8b7k3caoUnWnpR79AwFZuBrexBLzy1wGfFu9KAR+Hg6dpAogbv
+         kQjqPO8q89Z7ITNX9ou3zLgNeDsYjMYWqfHGenm6+q3DyMkYL20S7VNBKRaGb/eX1WXS
+         Mxfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=Yeizz9D4j1OC4gBLkhtpZ1xhi5xFu/DauuoTJtwkR4w=;
-        b=quv8+KfTm+RRW0zYIy/0hSdth0lTfq+WrrsHIsFDr+ElOx7XUEhPhovbbZbnN1+DlO
-         ew/XIJb7hRClaROZXfNcHY0e5S3x1W+az1QKDIKm7TPYmQ9sgP/NJI83sL7eZGw1yjR9
-         PgqJMxIL0TmM/BF7s+LjK5M0VXV9G2gcq3jLFjgU6hNATP6ULQeC8pvoCk65uj/3rwc0
-         Zzm/2Hr9BQ0z+h4aaVunFP8X00gZS4CIbHn+uhpu53dEEOSlXPncNwAFzRyv+dgIl+0m
-         RZHiqnFx5QNDJAVyaeUB9bRgJAq4+xhfCi/MhlsM6nPJzUqRdEA7LnoenkpKESQT0D9K
-         jQRw==
-X-Gm-Message-State: APjAAAWZcHEqXAkm2+qK/iVbM3C02By67z7s2juvR05kdPhdFasTWm7z
-        AG45et30bJrtDVszMGCZh2GE5g==
-X-Google-Smtp-Source: APXvYqzYgt1dPNMT8rEy8RtxQtSc5l4sJTgDp130GflHOODKwATgtmyUsDicLcPpNFWCrNZwVgX5dw==
-X-Received: by 2002:a17:902:aa95:: with SMTP id d21mr7896334plr.263.1574932536024;
-        Thu, 28 Nov 2019 01:15:36 -0800 (PST)
-Received: from cabot-wlan.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
-        by smtp.gmail.com with ESMTPSA id q13sm8694135pjc.4.2019.11.28.01.15.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 28 Nov 2019 01:15:34 -0800 (PST)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <A94F595C-462B-456C-ADBE-809C61886A2D@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_EEF2C231-6F18-4AE0-AFFB-BD039873C085";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [RFC] Thing 1: Shardmap fox Ext4
-Date:   Thu, 28 Nov 2019 02:15:24 -0700
-In-Reply-To: <5e909ace-b5c9-9bf2-616f-018b52e065de@phunq.net>
-Cc:     Viacheslav Dubeyko <slava@dubeyko.com>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        "Darrick J. Wong" <djwong@kernel.org>
-To:     Daniel Phillips <daniel@phunq.net>
-References: <176a1773-f5ea-e686-ec7b-5f0a46c6f731@phunq.net>
- <8ece0424ceeeffbc4df5d52bfa270a9522f81cda.camel@dubeyko.com>
- <5c9b5bd3-028a-5211-30a6-a5a8706b373e@phunq.net>
- <B9F8658C-B88F-44A1-BBEF-98A8259E0712@dubeyko.com>
- <5e909ace-b5c9-9bf2-616f-018b52e065de@phunq.net>
-X-Mailer: Apple Mail (2.3273)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Dvoqq6lg6uAO0koRLmAz/MR5uOAYKRgR9ZwJ/yNYPpc=;
+        b=TkZeFHOsVtkdt/t6HT3xDZ3NmQBHyk4rb/dCwNnHSqK/lHP9J3HiGGaaB8k7evQgMX
+         jMgMQytrA7SXS/PNfUT69nXWx/d13KPEwkoHByUFosIx9sYL/yZ0NbigiFtJnm/2Mn+W
+         d11Wsq2gayPNQx2kTF4r6Q2qHdp5pXESNkwfBvKB9N1J/9RnhbdGIEY5qvx9oP+8xurM
+         WMfjVCk6xhVgM8DQZB0OpDR/raZtCvC8OcDNX+lph+lyCC9j+0OFEd20uMKZQvtMcqhb
+         SkUbylwfCU7GTtp9cYNYAYZu6bJ+92hkH+OFef90xKWkB41/Tpp90hnhiSkHriMcg9/h
+         YCRQ==
+X-Gm-Message-State: APjAAAWMjNyAzaKZdM9/Urzi1pLFUskF+K52or9Oan8NcTi2zsayeurQ
+        gLMMHqULeXKiV5ExoGpn0YGrfMP4jX/KEehWnyFU3Q==
+X-Google-Smtp-Source: APXvYqxi/yeVgLXvlOXMw779bmMTyreRfJvW1r8g175TT9qooUjERaSsq+3vdXMiR/o1BhNGYSfMVkY2zg9w3UieaqM=
+X-Received: by 2002:a2e:84d0:: with SMTP id q16mr22780320ljh.48.1574934825335;
+ Thu, 28 Nov 2019 01:53:45 -0800 (PST)
+MIME-Version: 1.0
+References: <20191114113153.GB4213@ming.t460p> <20191114235415.GL4614@dread.disaster.area>
+ <20191115010824.GC4847@ming.t460p> <20191115045634.GN4614@dread.disaster.area>
+ <20191115070843.GA24246@ming.t460p> <20191128094003.752-1-hdanton@sina.com>
+In-Reply-To: <20191128094003.752-1-hdanton@sina.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Thu, 28 Nov 2019 10:53:33 +0100
+Message-ID: <CAKfTPtA23ErKGCEJVmg6vk-QoufkiUM3NbXd31mZmKnuwbTkFw@mail.gmail.com>
+Subject: Re: single aio thread is migrated crazily by scheduler
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     Dave Chinner <david@fromorbit.com>, Ming Lei <ming.lei@redhat.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-fs <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rong Chen <rong.a.chen@intel.com>, Tejun Heo <tj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, 28 Nov 2019 at 10:40, Hillf Danton <hdanton@sina.com> wrote:
+>
+>
+> On Sat, 16 Nov 2019 10:40:05 Dave Chinner wrote:
+> > On Fri, Nov 15, 2019 at 03:08:43PM +0800, Ming Lei wrote:
+> > > On Fri, Nov 15, 2019 at 03:56:34PM +1100, Dave Chinner wrote:
+> > > > On Fri, Nov 15, 2019 at 09:08:24AM +0800, Ming Lei wrote:
+> > > I can reproduce the issue with 4k block size on another RH system, an=
+d
+> > > the login info of that system has been shared to you in RH BZ.
+> > >
+> > > 1)
+> > > sysctl kernel.sched_min_granularity_ns=3D10000000
+> > > sysctl kernel.sched_wakeup_granularity_ns=3D15000000
+> >
+> > So, these settings definitely influence behaviour.
+> >
+> > If these are set to kernel defaults (4ms and 3ms each):
+> >
+> > sysctl kernel.sched_min_granularity_ns=3D4000000
+> > sysctl kernel.sched_wakeup_granularity_ns=3D3000000
+> >
+> > The migration problem largely goes away - the fio task migration
+> > event count goes from ~2,000 a run down to 200/run.
+> >
+> > That indicates that the migration trigger is likely load/timing
+> > based. The analysis below is based on the 10/15ms numbers above,
+> > because it makes it so much easier to reproduce.
+> >
+> > > 2)
+> > > ./xfs_complete 4k
+> > >
+> > > Then you should see 1k~1.5k fio io thread migration in above test,
+> > > either v5.4-rc7(build with rhel8 config) or RHEL 4.18 kernel.
+> >
+> > Almost all the fio task migrations are coming from migration/X
+> > kernel threads. i.e it's the scheduler active balancing that is
+> > causing the fio thread to bounce around.
+> >
+> > This is typical a typical trace, trimmed to remove extraneous noise.
+> > The fio process is running on CPU 10:
+> >
+> >              fio-3185  [010] 50419.285954: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D1004014 [ns] vruntime=3D27067882290 [ns]
+> >              fio-3185  [010] 50419.286953: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D979458 [ns] vruntime=3D27068861748 [ns]
+> >              fio-3185  [010] 50419.287998: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D1028471 [ns] vruntime=3D27069890219 [ns]
+> >              fio-3185  [010] 50419.289973: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D989989 [ns] vruntime=3D27071836208 [ns]
+> >              fio-3185  [010] 50419.290958: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D963914 [ns] vruntime=3D27072800122 [ns]
+> >              fio-3185  [010] 50419.291952: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D972532 [ns] vruntime=3D27073772654 [ns]
+> >
+> > fio consumes CPU for several milliseconds, then:
+> >
+> >              fio-3185  [010] 50419.292935: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D966032 [ns] vruntime=3D27074738686 [ns]
+> >              fio-3185  [010] 50419.292941: sched_switch:         fio:31=
+85 [120] S =3D=3D> kworker/10:0:2763 [120]
+> >     kworker/10:0-2763  [010] 50419.292954: sched_stat_runtime:   comm=
+=3Dkworker/10:0 pid=3D2763 runtime=3D13423 [ns] vruntime=3D27052479694 [ns]
+> >     kworker/10:0-2763  [010] 50419.292956: sched_switch:         kworke=
+r/10:0:2763 [120] R =3D=3D> fio:3185 [120]
+> >              fio-3185  [010] 50419.293115: sched_waking:         comm=
+=3Dkworker/10:0 pid=3D2763 prio=3D120 target_cpu=3D010
+> >              fio-3185  [010] 50419.293116: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D160370 [ns] vruntime=3D27074899056 [ns]
+> >              fio-3185  [010] 50419.293118: sched_wakeup:         kworke=
+r/10:0:2763 [120] success=3D1 CPU:010
+> >
+> > A context switch out to a kworker, then 13us later we immediately
+> > switch back to the fio process, and go on running. No doubt
+> > somewhere in what the fio process is doing, we queue up more work to
+> > be run on the cpu, but the fio task keeps running
+> > (due to CONFIG_PREEMPT=3Dn).
+> >
+> >              fio-3185  [010] 50419.293934: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D803135 [ns] vruntime=3D27075702191 [ns]
+> >              fio-3185  [010] 50419.294936: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D988478 [ns] vruntime=3D27076690669 [ns]
+> >              fio-3185  [010] 50419.295934: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D982219 [ns] vruntime=3D27077672888 [ns]
+> >              fio-3185  [010] 50419.296935: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D984781 [ns] vruntime=3D27078657669 [ns]
+> >              fio-3185  [010] 50419.297934: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D981703 [ns] vruntime=3D27079639372 [ns]
+> >              fio-3185  [010] 50419.298937: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D990057 [ns] vruntime=3D27080629429 [ns]
+> >              fio-3185  [010] 50419.299935: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D977554 [ns] vruntime=3D27081606983 [ns]
+> >
+> > About 6ms later, CPU 0 kicks the active load balancer on CPU 10...
+> >
+> >           <idle>-0     [000] 50419.300014: sched_waking:         comm=
+=3Dmigration/10 pid=3D70 prio=3D0 target_cpu=3D010
+> >              fio-3185  [010] 50419.300024: sched_wakeup:         migrat=
+ion/10:70 [0] success=3D1 CPU:010
+> >              fio-3185  [010] 50419.300026: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D79291 [ns] vruntime=3D27081686274 [ns]
+> >              fio-3185  [010] 50419.300027: sched_switch:         fio:31=
+85 [120] S =3D=3D> migration/10:70 [0]
+> >     migration/10-70    [010] 50419.300032: sched_migrate_task:   comm=
+=3Dfio pid=3D3185 prio=3D120 orig_cpu=3D10 dest_cpu=3D12
+> >     migration/10-70    [010] 50419.300040: sched_switch:         migrat=
+ion/10:70 [0] D =3D=3D> kworker/10:0:2763 [120]
+> >
+> > And 10us later the fio process is switched away, the active load
+> > balancer work is run and migrates the fio process to CPU 12. Then...
+> >
+> >     kworker/10:0-2763  [010] 50419.300048: sched_stat_runtime:   comm=
+=3Dkworker/10:0 pid=3D2763 runtime=3D9252 [ns] vruntime=3D27062908308 [ns]
+> >     kworker/10:0-2763  [010] 50419.300062: sched_switch:         kworke=
+r/10:0:2763 [120] R =3D=3D> swapper/10:0 [120]
+> >           <idle>-0     [010] 50419.300067: sched_waking:         comm=
+=3Dkworker/10:0 pid=3D2763 prio=3D120 target_cpu=3D010
+> >           <idle>-0     [010] 50419.300069: sched_wakeup:         kworke=
+r/10:0:2763 [120] success=3D1 CPU:010
+> >           <idle>-0     [010] 50419.300071: sched_switch:         swappe=
+r/10:0 [120] S =3D=3D> kworker/10:0:2763 [120]
+> >     kworker/10:0-2763  [010] 50419.300073: sched_switch:         kworke=
+r/10:0:2763 [120] R =3D=3D> swapper/10:0 [120]
+> >
+> > The kworker runs for another 10us and the CPU goes idle. Shortly
+> > after this, CPU 12 is woken:
+> >
+> >           <idle>-0     [012] 50419.300113: sched_switch:         swappe=
+r/12:0 [120] S =3D=3D> fio:3185 [120]
+> >              fio-3185  [012] 50419.300596: sched_waking:         comm=
+=3Dkworker/12:1 pid=3D227 prio=3D120 target_cpu=3D012
+> >              fio-3185  [012] 50419.300598: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D561137 [ns] vruntime=3D20361153275 [ns]
+> >              fio-3185  [012] 50419.300936: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D326187 [ns] vruntime=3D20361479462 [ns]
+> >              fio-3185  [012] 50419.301935: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D981201 [ns] vruntime=3D20362460663 [ns]
+> >              fio-3185  [012] 50419.302935: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D983160 [ns] vruntime=3D20363443823 [ns]
+> >              fio-3185  [012] 50419.303934: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D983855 [ns] vruntime=3D20364427678 [ns]
+> >              fio-3185  [012] 50419.304934: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D977757 [ns] vruntime=3D20365405435 [ns]
+> >              fio-3185  [012] 50419.305948: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D999563 [ns] vruntime=3D20366404998 [ns]
+> >
+> >
+> > and fio goes on running there. The pattern repeats very soon afterwards=
+:
+> >
+> >           <idle>-0     [000] 50419.314982: sched_waking:         comm=
+=3Dmigration/12 pid=3D82 prio=3D0 target_cpu=3D012
+> >              fio-3185  [012] 50419.314988: sched_wakeup:         migrat=
+ion/12:82 [0] success=3D1 CPU:012
+> >              fio-3185  [012] 50419.314990: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D46342 [ns] vruntime=3D20375268656 [ns]
+> >              fio-3185  [012] 50419.314991: sched_switch:         fio:31=
+85 [120] S =3D=3D> migration/12:82 [0]
+> >     migration/12-82    [012] 50419.314995: sched_migrate_task:   comm=
+=3Dfio pid=3D3185 prio=3D120 orig_cpu=3D12 dest_cpu=3D5
+> >     migration/12-82    [012] 50419.315001: sched_switch:         migrat=
+ion/12:82 [0] D =3D=3D> kworker/12:1:227 [120]
+> >     kworker/12:1-227   [012] 50419.315022: sched_stat_runtime:   comm=
+=3Dkworker/12:1 pid=3D227 runtime=3D21453 [ns] vruntime=3D20359477889 [ns]
+> >     kworker/12:1-227   [012] 50419.315028: sched_switch:         kworke=
+r/12:1:227 [120] R =3D=3D> swapper/12:0 [120]
+> >           <idle>-0     [005] 50419.315053: sched_switch:         swappe=
+r/5:0 [120] S =3D=3D> fio:3185 [120]
+> >              fio-3185  [005] 50419.315286: sched_waking:         comm=
+=3Dkworker/5:0 pid=3D2646 prio=3D120 target_cpu=3D005
+> >              fio-3185  [005] 50419.315288: sched_stat_runtime:   comm=
+=3Dfio pid=3D3185 runtime=3D287737 [ns] vruntime=3D33779011507 [ns]
+> >
+> > And fio is now running on CPU 5 - it only ran on CPU 12 for about
+> > 15ms. Hmmm:
+> >
+> > $ grep fio-3185 ~/tmp/sched.out | awk 'BEGIN {totcpu =3D 0.0; switches =
+=3D 0.0; prev_waket =3D 0.0 }/sched_waking/ { cpu =3D $2; split($3, t, ":")=
+; waket =3D t[1]; if (cpu !=3D prev_cpu) { t_on_cpu =3D waket - prev_waket;=
+ if (prev_waket) { print "time on CPU", cpu, "was", t_on_cpu; totcpu +=3D t=
+_on_cpu; switches++ } prev_waket =3D waket; prev_cpu =3D cpu; } } END { pri=
+nt "switches", switches, "time on cpu", totcpu, "aver time on cpu", (totcpu=
+ / switches) } ' | stats --trim-outliers
+> > switches 2211 time on cpu 30.0994 aver time on cpu 0.0136135
+> > time on CPU [0-23(8.8823+/-6.2)] was 0.000331-0.330772(0.0134759+/-0.01=
+2)
+> >
+> > Yeah, the fio task averages 13.4ms on any given CPU before being
+> > switched to another CPU. Mind you, the stddev is 12ms, so the range
+> > of how long it spends on any one CPU is pretty wide (330us to
+> > 330ms).
+> >
+> Hey Dave
+>
+> > IOWs, this doesn't look like a workqueue problem at all - this looks
+>
+> Surprised to see you're so sure it has little to do with wq,
+>
+> > like the scheduler is repeatedly making the wrong load balancing
+> > decisions when mixing a very short runtime task (queued work) with a
+> > long runtime task on the same CPU....
+> >
+> and it helps more to know what is driving lb to make decisions like
+> this. Because for 70+ per cent of communters in cities like London it
+> is supposed tube is better than cab on work days, the end_io cb is
+> tweaked to be a lookalike of execute_in_process_context() in the diff
+> with the devoted s_dio_done_wq taken out of account. It's interesting
+> to see what difference lb will make in the tube environment.
+>
+> Hillf
+>
+> > This is not my area of expertise, so I have no idea why this might
+> > be happening. Scheduler experts: is this expected behaviour? What
+> > tunables directly influence the active load balancer (and/or CONFIG
+> > options) to change how aggressive it's behaviour is?
+> >
+> > > Not reproduced the issue with 512 block size on the RH system yet,
+> > > maybe it is related with my kernel config.
+> >
+> > I doubt it - this looks like a load specific corner case in the
+> > scheduling algorithm....
+> >
+> > Cheers,
+> >
+> > Dave.
+> > --
+> > Dave Chinner
+> > david@fromorbit.com
+>
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -157,10 +157,8 @@ static void iomap_dio_bio_end_io(struct
+>                         WRITE_ONCE(dio->submit.waiter, NULL);
+>                         blk_wake_io_task(waiter);
+>                 } else if (dio->flags & IOMAP_DIO_WRITE) {
+> -                       struct inode *inode =3D file_inode(dio->iocb->ki_=
+filp);
+> -
+>                         INIT_WORK(&dio->aio.work, iomap_dio_complete_work=
+);
+> -                       queue_work(inode->i_sb->s_dio_done_wq, &dio->aio.=
+work);
+> +                       schedule_work(&dio->aio.work);
 
---Apple-Mail=_EEF2C231-6F18-4AE0-AFFB-BD039873C085
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
-
-On Nov 27, 2019, at 7:54 PM, Daniel Phillips <daniel@phunq.net> wrote:
->=20
-> On 2019-11-27 11:35 a.m., Viacheslav Dubeyko wrote:
->> So, it looks like that Shardmap could be better for the case of =
-billion files in one folder.  But what=E2=80=99s about the regular case =
-when it could be
->> dozens/hundreds of files in one folder? Will Shardmap be better than =
-HTree?
->=20
-> Yes, Shardmap is also faster than HTree in that case. Both Shardmap =
-and
-> HTree are unindexed in that range, however Shardmap is faster because =
-of
-> two things:
->=20
-> 1) Shardmap uses a more efficient record block format that =
-incorporates
-> a single byte hash code that avoids 99% of failed string compares.
->=20
-> 2) Shardmap "pins" the current target block in which new entries are
-> created, avoiding repeated radix tree lookups for insert under load.
->=20
-> As soon as you get into thousands of files, the difference between
-> Shardmap and HTree widens dramatically so that Shardmap ends up faster
-> by a factor of 2, 3, 4, etc as directory size increases. Not just
-> faster than HTree, but faster than any tree based scheme, because of
-> the O(1) / O(log N) equation.
->=20
-> Up in the millions and billions of files, HTree just drops out of the
-> running, but if it were actually improved to operate in that range =
-then
-
-Actually, 3-level htree was implemented for ext4 several years ago, but
-was held back because there was no e2fsck support for it.  That was
-finished and the 3-level htree support was landed to ext4 in 2017 in
-commit v4.12-rc2-15-ge08ac99.  In theory it could allow ~5B entries in
-a single directory (the 2GB size limit was also removed at the same =
-time).
-
-The code change for this was relatively straight forward, but as you
-wrote elsewhere the big problem is each htree insert/lookup/remove
-operation degrades to random 4KB IOPS for every change (for the
-directory leaf blocks on insert/remove, and for the itable blocks on
-readdir), so has about 4096 / 64 =3D 64x write inflation or more.
-
-A log-structured directory insert/remove feature is appealing to me
-if it can avoid this overhead in practise.
-
-> lookups would be at least 4 times slower due to index block probes, =
-and
-> heavy insert loads would be orders of magnitude slower due to write
-> multiplication on commit. Of course I hear you when you say that you
-> don't have any million file directories to worry about, but some folks
-> do. (Any comment, Andreas?)
-
-We regularly have directories in the 1M+ size, because of users can =
-easily
-run many thousands of processes concurrently creating files in the same
-directory.  The 2-level htree topped out around 10-12M entries, which =
-was
-hit occasionally.  At the same time, we also put in directory size =
-limits
-so that admins could *prevent* users from doing this, because it also =
-can
-cause problems for the user/admin when they need to process such large
-directories ("ls -l" will of course never finish).
-
->> If the ordinary user hasn=E2=80=99t visible performance improvement =
-then it makes
->> sense to consider Shardmap like the optional feature. What do you =
-think?
->=20
-> I am confident that a significant number of users will perceive the
-> performance improvement, and that few if any will perceive a slowdown =
-for
-> any reason short of an outright bug.
->=20
->> Does it mean that Shardmap is ext4 oriented only? Could it be used =
-for
->> another file systems?
->=20
-> Shardmap is not Ext4-only. In fact, Shardmap is firstly the directory
-> index for Tux3, and I am now proposing that Shardmap should also be
-> the new directory index for Ext4.
->=20
-> I also heard a suggestion that Shardmap could/should become a generic
-> kernel library facility that could be used by any file system or
-> kernel subsystem that requires a high performance persistent
-> associative string mapping.
->=20
-> Shardmap is also well on its way to being released as a generic high
-> performance KVS, including supporting persistent memory, a role it
-> performs in a highly satisfactory way. There will be a post about
-> this later, but for today, a spoiler: atomic, durable KVS database
-> transactions at a rate in excess of three per microsecond(!)
->=20
->>> See the recommendation that is sometimes offered to work around
->>> HTree's issues with processing files in hash order. Basically, read
->>> the entire directory into memory, sort by inode number, then process
->>> in that order. As an application writer do you really want to do =
-this,
->>> or would you prefer that the filesystem just take care of for you so
->>> the normal, simple and readable code is also the most efficient =
-code?
->>=20
->> I slightly missed the point here. To read the whole directory sounds =
-like
->> to read the dentries tree from the volume. As far as I can see, the
->> dentries are ordered by names or by hashes. But if we are talking =
-about
->> inode number then we mean the inodes tree. So, I have =
-misunderstanding
->> here. What do you mean?
->=20
-> It's a bit of a horror show. Ted is the expert on it, I was largely a
-> bystander at the time this was implemented. Basically, the issue is =
-that
-> HTree is a hash-ordered BTree (the H in HTree) and the only way to
-> traverse it for readdir that can possibly satisfy POSIX requirements =
-is
-> by hash order. If you try to traverse in linear block order then a
-> simultaneous insert could split a block and move some entries to other
-> blocks, which then may be returned by readdir twice or not at all. So
-> hash order traversal is necessary, but this is not easy because hashes
-> can collide. So what Ted did is, create a temporary structure that
-> persists for some period of time, to utilize a higher resolution hash
-> code which is used to resolve collisions and provide telldir cookies
-> for readdir. Basically. This is even more tricky than it sounds for
-> various horrifying reasons.
->=20
-> If you want the whole story you will have to ask Ted. Suffice to say =
-that
-> it takes a special kind of mind to even conceive of such a mechanism, =
-let
-> alone get it working so well that we have not seen a single complaint
-> about it for years. However, this code is by any standard, scary and =
-only
-> marginally maintainable. It further seems likely that a sufficiently
-> determined person could construct a case where it fails, though I =
-cannot
-> swear to that one way or the other.
->=20
-> Why did we go to all this effort as opposed to just introducing some
-> additional ordering metadata as XFS does? Because HTree is faster
-> without that additional metadata to maintain, and more compact. The
-> user perceives this; the user does not perceive the pain suffered by
-> implementors to get this working, nor does the user need to confront
-> the full horror of the source code. The user cares only about how it
-> works, and it does work pretty darn well. That said, deprecating this
-> code will still be immensely satisfying from where I sit. It is more
-> than likely that Ted shares the same view, though I certainly cannot
-> speak for him.
->=20
-> In summary, we should all just be happy that this readdir hack worked
-> well enough over the last 15 years or so to run the world's internet
-> and phones so reliably. Now let's retire it please, and move on to
-> something with a sounder design basis, and which is far easier to
-> understand and maintain, and runs faster to boot. Now, with Shardmap,
-> readdir runs at media transfer speed, with near zero cpu, unlike
-> HTree.
->=20
->>>> If you are talking about improving the performance then do you mean
->>>> some special open-source implementation?
->>>=20
->>> I mean the same kind of kernel filesystem implementation that HTree
->>> currently has. Open source of course, GPLv2 to be specific.
->>=20
->> I meant the Shardmap implementation. As far as I can see, the
->> user-space implementation is available only now. So, my question is
->> still here. It=E2=80=99s hard to say how efficient the Shardmap could =
-be on
->> kernel side as ext4 subsystem, for example.
->=20
-> That is actually quite easy to predict. All of our benchmarking so far
-> has been with user space Shardmap running on top of Ext4, so we =
-already
-> have a pretty accurate picture of the overheads involved. That said,
-> there will be two main differences between the user space code and the
-> kernel code:
->=20
->   1) We don't have virtual memory in kernel in any practical form, so
->   we need to simulate it with explicit lookups in a vector of page
->   pointers, costing a tiny but likely measurable amount of cpu =
-compared
->   to the hardware implementation that user space enjoys.
->=20
->   2) We don't know the overhead of atomic commit for Ext4 yet. We do
->   have a pretty good picture for Tux3: near zero. And we have a very
->   clear picture of the atomic commit overhead for persistent memory,
->   which is nonzero but much less than annoying. So atomic commit
->   overhead for Ext4 should be similar. This is really where the skill
->   of Ext4 developers kicks in, and of course I expect great things
->   in that regard, as has been the case consistently to date.
->=20
->>>>> For delete, Shardmap avoids write multiplication by appending =
-tombstone
->>>>> entries to index shards, thereby addressing a well known HTree =
-delete
->>>>> performance issue.
->>>>=20
->>>> Do you mean Copy-On-Write policy here or some special technique?
->>>=20
->>> The technique Shardmap uses to reduce write amplication under heavy
->>> load is somewhat similar to the technique used by Google's Bigtable =
-to
->>> achieve a similar result for data files. (However, the resemblance =
-to
->>> Bigtable ends there.)
->>>=20
->>> Each update to a Shardmap index is done twice: once in a highly
->>> optimized hash table shard in cache, then again by appending an
->>> entry to the tail of the shard's media "fifo". Media writes are
->>> therefore mostly linear. I say mostly, because if there is a large
->>> number of shards then a single commit may need to update the tail
->>> block of each one, which still adds up to vastly fewer blocks than
->>> the BTree case, where it is easy to construct cases where every
->>> index block must be updated on every commit, a nasty example of
->>> n**2 performance overhead.
->>=20
->> It sounds like adding updates in log-structured manner. But what=E2=80=99=
-s about
->> the obsolete/invalid blocks? Does it mean that it need to use some GC
->> here? I am not completely sure that it could be beneficial for the =
-ext4.
->=20
-> This is vaguely similar to log structured updating, but then again, it
-> is more different than similar. A better term might be "streaming
-> updates". This is a popular theme of modern file system and database
-> design, and the basis of many recent performance breakthroughs.
->=20
-> Shardmap never garbage collects. Instead, when a shard fifo gets too
-> many tombstones, it is just compacted by writing out the entire cache
-> shard on top of the old, excessively fluffy shard fifo. This is both
-> efficient and rare, for various reasons that require detailed analysis
-> of the data structures involved. I will get to that eventually, but =
-now
-> is probably not the best time. The source code makes it clear.
->=20
->> By the way, could the old index blocks be used like the snapshots in =
-the
->> case of corruptions or other nasty issues?
->=20
-> My feeling is, that is not a natural fit. However, rescuing Shardmap =
-from
-> index corruption is easy: just throw away the entire index and =
-construct
-> a new one by walking the entry record blocks. Maybe there are cute =
-ways
-> to make that incremental, but the simplest easiest way should actually =
-be
-> enough for the long term.
->=20
->>>> Let's imagine that it needs to implement the Shardmap approach. =
-Could
->>>> you estimate the implementation and stabilization time? How =
-expensive
->>>> and long-term efforts could it be?
->>>=20
->>> Shardmap is already implemented and stable, though it does need =
-wider
->>> usage and testing. Code is available here:
->>>=20
->>>   https://github.com/danielbot/Shardmap
->>>=20
->>> Shardmap needs to be ported to kernel, already planned and in =
-progress
->>> for Tux3. Now I am proposing that the Ext4 team should consider =
-porting
->>> Shardmap to Ext4, or at least enter into a serious discussion of the
->>> logistics.
->>>=20
->>> Added Darrick to cc, as he is already fairly familiar with this =
-subject,
->>> once was an Ext4 developer, and perhaps still is should the need =
-arise.
->>> By the way, is there a reason that Ted's MIT address bounced on my
->>> original post?
->>=20
->> It=E2=80=99s hard to talk about stability because we haven=E2=80=99t =
-kernel-side implementation
->> of Shardmap for ext4. I suppose that it needs to spend about a year =
-for the
->> porting and twice more time for the stabilization.
->=20
-> Agreed, my best guess is roughly similar.
->=20
->> To port a user-space code to the kernel could be the tricky task.
->=20
-> Sometimes true, however not in this case. Shardmap is broadly similar =
-to
-> other code we have ported from user space to kernel in the past, with =
-the
-> two exceptions I noted above. All just part of a kernel hacker's =
-normal day
-> in my humble opinion.
->=20
->> Could you estimate how many lines of code the core
->> part of Shardmap contains?
->=20
-> The finished Ext4 code should be somewhere between 2k and 3k lines, =
-about
-> the same as HTree.
->=20
->> Does it need to change the ext4 on-disk layout for this feature?
->=20
-> No, this new form of index would be a mount option, and only used for
-> new directories. The HTree code will necessarily remain part of Ext4
-> forever, for compatibility with existing volumes. By "deprecate HTree"
-> I meant, eventually make the Shardmap index the default after it has
-> gone through its stabilization period of who knows how long? Three
-> years? Five? It's hard to know the future in that regard.
->=20
-> This would be roughly similar to the transition we did from unindexed
-> to HTree index some 18 years ago. (Deja vu all over again!) Last time =
-it
-> went smoothly and this time we additionally have the benefit of having
-> done it before.
->=20
-> How easy ext4 functionality can be modified for Shardmap support?
->=20
-> =46rom the user's point of view, completely trivial. Initially just a =
-mount
-> option, and later, no action at all. =46rom the sysadmin's point of =
-view,
-> something new to learn about, some new procedures in case things go =
-wrong,
-> but essentially all in a day's work. =46rom the developer's point of =
-view,
-> one of the easier major hacks that one could contemplate, I expect.
-> Technical risk is nearly nil because Shardmap is already already quite
-> mature, being seven years old as it is, and having had the benefit of
-> considerable earlier design experience.
->=20
-> Regards,
->=20
-> Daniel
+I'm not sure that this will make a real difference because it ends up
+to call queue_work(system_wq, ...) and system_wq is bounded as well so
+the work will still be pinned to a CPU
+Using system_unbound_wq should make a difference because it doesn't
+pin the work on a CPU
+ +                       queue_work(system_unbound_wq, &dio->aio.work);
 
 
-Cheers, Andreas
-
-
-
-
-
-
---Apple-Mail=_EEF2C231-6F18-4AE0-AFFB-BD039873C085
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl3fkCwACgkQcqXauRfM
-H+A2iQ/+KkaaA8fLogG82yUWrCWf2a5Au0QbWksU13uf7vp4FDh3XcC9oYpQPLwA
-AKumtMrfJrREYKerRBSATPZjaP24Om+cmi6gAs3g8HWkqh0e1+Wp/Z6MFrBQrqLK
-flEUhqBND0qhdIvMUjBOZ1r8oPi0qjqEyP5yYNNOf+WNIBf3MUPBpEj/lfa6eTr0
-k2Fstmkox7bjKHRPu/SnwTRyLGVVm+cVM68NoU4Qjfiyc3qFByqJA0fVtt/Ukxtf
-xdx6c73JetWLN2gOoBN2YKWWL+IWJ2yAwpoacmpkAaVpsmwUkTduP721JEE34MzN
-Vf0C6uyXHKUzn1gq72Xvl3Pc1DDRldV8Q/EcFGNPmvvnXjbrG2rU1+wi9K+0ZqB9
-aRtuKiYYoAJpRFgjC97Vwti1PjUZ2cVKLH0w11gIW2QxHoCSKxXLbT/ure/MAOxU
-nIaVTDi+s7XsjgfKeBSj/wRxBWeOdmFGA975sGNf74qvNo5rhh8WX+UZMZENHblE
-wTS/j9iSASNcvsYCZnQvYdWLhz/+4yV1STfGh7lbCCfI24Tw+2cub02IQPiDOF4H
-EQJFABCn/L9b/GTCSVlgGDmucwNKACkJ+kUvXkKLzsx3Ze5J6jTObOCp0paAWQFW
-gHDM3R0JMZ4MtZIxmMxdg5fmhzSyUDm29U0aGbDfh1szIkyrljM=
-=/Tz4
------END PGP SIGNATURE-----
-
---Apple-Mail=_EEF2C231-6F18-4AE0-AFFB-BD039873C085--
+>                 } else {
+>                         iomap_dio_complete_work(&dio->aio.work);
+>                 }
+> --
+>
