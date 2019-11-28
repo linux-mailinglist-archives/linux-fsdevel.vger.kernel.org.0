@@ -2,175 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18C5610C68E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2019 11:20:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 022D210C807
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2019 12:35:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726520AbfK1KUn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Nov 2019 05:20:43 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:8268 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726227AbfK1KUm (ORCPT
+        id S1726699AbfK1LfD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Nov 2019 06:35:03 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:37960 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726653AbfK1LfA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Nov 2019 05:20:42 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xASAHaeD119980
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Nov 2019 05:20:42 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2whcxrwbt2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Nov 2019 05:20:42 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
-        Thu, 28 Nov 2019 10:20:39 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 28 Nov 2019 10:20:36 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xASAKZFA66322460
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 28 Nov 2019 10:20:35 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6525152054;
-        Thu, 28 Nov 2019 10:20:35 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.87.233])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 6085952057;
-        Thu, 28 Nov 2019 10:20:32 +0000 (GMT)
-Subject: Re: [PATCH] f2fs: Fix direct IO handling
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        "linux-f2fs-devel@lists.sourceforge.net" 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Javier Gonzalez <javier@javigon.com>,
-        Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>
-References: <20191126075719.1046485-1-damien.lemoal@wdc.com>
- <20191126083443.F1FD5A405B@b06wcsmtp001.portsmouth.uk.ibm.com>
- <BYAPR04MB5816C82F708612381216895BE7470@BYAPR04MB5816.namprd04.prod.outlook.com>
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Date:   Thu, 28 Nov 2019 15:50:30 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Thu, 28 Nov 2019 06:35:00 -0500
+Received: by mail-lj1-f195.google.com with SMTP id k8so17589936ljh.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Nov 2019 03:34:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=XOqt1jA1mHDLa304qf2rgZ/MgYLbFa3pf/BnMQUaDUU=;
+        b=jXLwhfyTQDXvRp9KdmQMJpPvWCMrvfQGfjoalvLtnweIxV6eaWL6+FxOW54SN3/lCi
+         O8wSfDPhKFc69w1M5A955/eZVWOjKZCY/VB7lrcL39YTZx+dE4acIA6eJOzhzHS4CzKa
+         VCxz0bz0HA6fDAJnVxCT0n7LlVuwO7g3xojM1ysv1c/UlW/yOQavAWvsJMFoopU+AeCa
+         yrGiEyCYkuRjGYQcrkmvfPA3+2JFT3nyOxyLG+kO5sEvy+SMFWuPQEby779MxARBw7+0
+         4+N8ie63zkjuc/DuanK9ypI5ccyxAyMBz4aB6uafa3Kb/4C7OcOLaXQfXzQudgKPd0RU
+         QYKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=XOqt1jA1mHDLa304qf2rgZ/MgYLbFa3pf/BnMQUaDUU=;
+        b=XKrr+NCySwS+liX0OrGgYoil/ShJkAUzzpeYIqPDk01QUwVS7VqxxLbjoSWoyQm6Gg
+         Ziu2LrNTLx6T6SJcvVFXbxDPv9JC83M1shGwhwyW3iM7Egw8YFd7DmiSVDAC61qBJgvr
+         WWpmS5tgfZw3HZO87D42QppA0FjziRTr8aoeq2eg0SDAWDrpUxSwaleu/wg/L9XK4kGm
+         1tC5pX8hRao6qkcCWtcRma/rRZYNSCiMoooBgjbpb/syzB+JaoezIdlnyhb+kQhLKmXy
+         yHUqaLgGNHB88+BhHMxUzEiegz49ofs5bKPSMaJyjxgUiPvT9TC8IRGwxSh7Rd9/J3Et
+         72vg==
+X-Gm-Message-State: APjAAAWjC+9fyj8mKeJFwTdANOzFlTmoxwGhs35oJdi7uit2YyUNoDDW
+        wnXOm2xhQebhgvCldXad/0o8wg==
+X-Google-Smtp-Source: APXvYqxtsM0j/fet/8Hd0wppyL5kmHFHQSC8L5N/GAw4xOFXmFoZ5D9szeElJt5bgd2+LoHbl99hcA==
+X-Received: by 2002:a2e:8e27:: with SMTP id r7mr34842858ljk.101.1574940898131;
+        Thu, 28 Nov 2019 03:34:58 -0800 (PST)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id f11sm4228455lfa.9.2019.11.28.03.34.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2019 03:34:57 -0800 (PST)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 6B5A310188A; Thu, 28 Nov 2019 14:34:56 +0300 (+03)
+Date:   Thu, 28 Nov 2019 14:34:56 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Yang Shi <yang.shi@linux.alibaba.com>,
+        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] mm: shmem: allow split THP when truncating THP
+ partially
+Message-ID: <20191128113456.5phjhd3ajgky3h3i@box>
+References: <1574471132-55639-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20191125093611.hlamtyo4hvefwibi@box>
+ <3a35da3a-dff0-a8ca-8269-3018fff8f21b@linux.alibaba.com>
+ <20191125183350.5gmcln6t3ofszbsy@box>
+ <9a68b929-2f84-083d-0ac8-2ceb3eab8785@linux.alibaba.com>
+ <14b7c24b-706e-79cf-6fbc-f3c042f30f06@linux.alibaba.com>
+ <alpine.LSU.2.11.1911271718130.652@eggly.anvils>
 MIME-Version: 1.0
-In-Reply-To: <BYAPR04MB5816C82F708612381216895BE7470@BYAPR04MB5816.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19112810-4275-0000-0000-0000038770F9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19112810-4276-0000-0000-0000389B0254
-Message-Id: <20191128102033.6085952057@d06av21.portsmouth.uk.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-28_01:2019-11-28,2019-11-28 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
- impostorscore=0 mlxlogscore=999 suspectscore=0 priorityscore=1501
- spamscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1911280089
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.LSU.2.11.1911271718130.652@eggly.anvils>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 11/28/19 7:40 AM, Damien Le Moal wrote:
-> On 2019/11/26 17:34, Ritesh Harjani wrote:
->> Hello Damien,
->>
->> IIUC, you are trying to fix a stale data read by DIO read for the case
->> you explained in your patch w.r.t. DIO-write forced to write as buffIO.
->>
->> Coincidentally I was just looking at the same code path just now.
->> So I do have a query to you/f2fs group. Below could be silly one, as I
->> don't understand F2FS in great detail.
->>
->> How is the stale data by DIO read, is protected against a mmap
->> writes via f2fs_vm_page_mkwrite?
->>
->> f2fs_vm_page_mkwrite()		 f2fs_direct_IO (read)
->> 					filemap_write_and_wait_range()
->> 	-> f2fs_get_blocks()				
->> 					 -> submit_bio()
->>
->> 	-> set_page_dirty()
->>
->> Is above race possible with current f2fs code?
->> i.e. f2fs_direct_IO could read the stale data from the blocks
->> which were allocated due to mmap fault?
+On Wed, Nov 27, 2019 at 07:06:01PM -0800, Hugh Dickins wrote:
+> On Tue, 26 Nov 2019, Yang Shi wrote:
+> > On 11/25/19 11:33 AM, Yang Shi wrote:
+> > > On 11/25/19 10:33 AM, Kirill A. Shutemov wrote:
+> > > > On Mon, Nov 25, 2019 at 10:24:38AM -0800, Yang Shi wrote:
+> > > > > On 11/25/19 1:36 AM, Kirill A. Shutemov wrote:
+> > > > > > On Sat, Nov 23, 2019 at 09:05:32AM +0800, Yang Shi wrote:
+> > > > > > > Currently when truncating shmem file, if the range is partial of
+> > > > > > > THP
+> > > > > > > (start or end is in the middle of THP), the pages actually will
+> > > > > > > just get
+> > > > > > > cleared rather than being freed unless the range cover the whole
+> > > > > > > THP.
+> > > > > > > Even though all the subpages are truncated (randomly or
+> > > > > > > sequentially),
+> > > > > > > the THP may still be kept in page cache.  This might be fine for
+> > > > > > > some
+> > > > > > > usecases which prefer preserving THP.
+> > > > > > > 
+> > > > > > > But, when doing balloon inflation in QEMU, QEMU actually does hole
+> > > > > > > punch
+> > > > > > > or MADV_DONTNEED in base page size granulairty if hugetlbfs is not
+> > > > > > > used.
+> > > > > > > So, when using shmem THP as memory backend QEMU inflation actually
+> > > > > > > doesn't
+> > > > > > > work as expected since it doesn't free memory.  But, the inflation
+> > > > > > > usecase really needs get the memory freed.  Anonymous THP will not
+> > > > > > > get
+> > > > > > > freed right away too but it will be freed eventually when all
+> > > > > > > subpages are
+> > > > > > > unmapped, but shmem THP would still stay in page cache.
+> > > > > > > 
+> > > > > > > To protect the usecases which may prefer preserving THP, introduce
+> > > > > > > a
+> > > > > > > new fallocate mode: FALLOC_FL_SPLIT_HPAGE, which means spltting THP
+> > > > > > > is
+> > > > > > > preferred behavior if truncating partial THP.  This mode just makes
+> > > > > > > sense to tmpfs for the time being.
 > 
-> The faulted page is locked until the fault is fully processed so direct
-> IO has to wait for that to complete first.
-
-How about below parallelism?
-
-  f2fs_vm_page_mkwrite()		 f2fs_direct_IO (read)
-  					filemap_write_and_wait_range()
-	-> down_read(->i_mmap_sem);
-	-> lock_page()
-	-> f2fs_get_blocks()				
-  					 -> submit_bio()
-
-  	-> set_page_dirty()
-
-Can above DIO read not expose the stale data from block which was
-allocated in f2fs_vm_page_mkwrite path?
-
-
+> Sorry, I haven't managed to set aside enough time for this until now.
 > 
->>
->> Am I missing something here?
->>
->> -ritesh
->>
->> On 11/26/19 1:27 PM, Damien Le Moal wrote:
->>> f2fs_preallocate_blocks() identifies direct IOs using the IOCB_DIRECT
->>> flag for a kiocb structure. However, the file system direct IO handler
->>> function f2fs_direct_IO() may have decided that a direct IO has to be
->>> exececuted as a buffered IO using the function f2fs_force_buffered_io().
->>> This is the case for instance for volumes including zoned block device
->>> and for unaligned write IOs with LFS mode enabled.
->>>
->>> These 2 different methods of identifying direct IOs can result in
->>> inconsistencies generating stale data access for direct reads after a
->>> direct IO write that is treated as a buffered write. Fix this
->>> inconsistency by combining the IOCB_DIRECT flag test with the result
->>> of f2fs_force_buffered_io().
->>>
->>> Reported-by: Javier Gonzalez <javier@javigon.com>
->>> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
->>> ---
->>>    fs/f2fs/data.c | 4 +++-
->>>    1 file changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>> index 5755e897a5f0..8ac2d3b70022 100644
->>> --- a/fs/f2fs/data.c
->>> +++ b/fs/f2fs/data.c
->>> @@ -1073,6 +1073,8 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
->>>    	int flag;
->>>    	int err = 0;
->>>    	bool direct_io = iocb->ki_flags & IOCB_DIRECT;
->>> +	bool do_direct_io = direct_io &&
->>> +		!f2fs_force_buffered_io(inode, iocb, from);
->>>    
->>>    	/* convert inline data for Direct I/O*/
->>>    	if (direct_io) {
->>> @@ -1081,7 +1083,7 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
->>>    			return err;
->>>    	}
->>>    
->>> -	if (direct_io && allow_outplace_dio(inode, iocb, from))
->>> +	if (do_direct_io && allow_outplace_dio(inode, iocb, from))
->>>    		return 0;
->>>    
->>>    	if (is_inode_flag_set(inode, FI_NO_PREALLOC))
->>>
->>
->>
+> First off, let me say that I firmly believe this punch-split behavior
+> should be the standard behavior (like in my huge tmpfs implementation),
+> and we should not need a special FALLOC_FL_SPLIT_HPAGE to do it.
+> But I don't know if I'll be able to persuade Kirill of that.
 > 
+> If the caller wants to write zeroes into the file, she can do so with the
+> write syscall: the caller has asked to punch a hole or truncate the file,
+> and in our case, like your QEMU case, hopes that memory and memcg charge
+> will be freed by doing so.  I'll be surprised if changing the behavior
+> to yours and mine turns out to introduce a regression, but if it does,
+> I guess we'll then have to put it behind a sysctl or whatever.
 > 
+> IIUC the reason that it's currently implemented by clearing the hole
+> is because split_huge_page() (unlike in older refcounting days) cannot
+> be guaranteed to succeed.  Which is unfortunate, and none of us is very
+> keen to build a filesystem on unreliable behavior; but the failure cases
+> appear in practice to be rare enough, that it's on balance better to give
+> the punch-hole-truncate caller what she asked for whenever possible.
 
+I don't have a firm position here. Maybe you are right and we should try
+to split pages right away.
+
+It might be useful to consider case wider than shmem.
+
+On traditional filesystem with a backing storage semantics of the same
+punch hole operation is somewhat different. It doesn't have explicit
+implications on memory footprint. It's about managing persistent storage.
+With shmem/tmpfs it is lumped together.
+
+It might be nice to write down pages that can be discarded under memory
+pressure and leave the huge page intact until then...
+
+[ I don't see a problem with your patch as long as we agree that it's
+desired semantics for the interface. ]
+
+-- 
+ Kirill A. Shutemov
