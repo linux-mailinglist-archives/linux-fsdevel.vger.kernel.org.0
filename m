@@ -2,99 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD86910CFCE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2019 23:47:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A1D010D006
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2019 00:57:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbfK1Wra (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Nov 2019 17:47:30 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:40284 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726582AbfK1Wra (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Nov 2019 17:47:30 -0500
-Received: by mail-ot1-f67.google.com with SMTP id m15so23361590otq.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Nov 2019 14:47:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CUk7v7UPe6VTRCevALfgnUC9KL2cGJpFHn8mL3idLe0=;
-        b=Y8Ea/smQHjouC6SBRXFZkjwTn2tarmmechSnFeym66dooOOnkxhT2nHCmkSARtdQUe
-         ZXdW78yhSFGWQa9ZEKD+TSdGevk4bhR+ccadD5qPzyAVHBSeBpKWvJNNtVxHxWYdKSlw
-         tsLHHiQ1/WZPQ7fJQVfpJxtzU5skIztwBNzX5XZeRT1BCWYgL3D14cJyuo171iKI4apV
-         7E/2u7t3FvJMNVr/zLBD1kmeCWN/E3GUMZmzjsEZ0yKeEv5iUJpSKP1JivJYGprcKcsb
-         cVpqaAEL62COc9FyK1lg2vZAtfyTW3MfKZ4yqB7r/BorGWp6TDqqVlQRslci132N+iyF
-         Zafw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CUk7v7UPe6VTRCevALfgnUC9KL2cGJpFHn8mL3idLe0=;
-        b=ShTVI4/tTDj8J+fqnIH+NNp5+hjEf2Hjci9RtetoYYWhIzX//EiwL7gOZajlUboTMC
-         wRRU/R1YlD1Si7vkslo1t9Tl6G8TyjYz7NKyx8ICmW+HIdknga/6I2niADwu2lWUpWob
-         rQHF4KeR+Nrr5//TXxBsszZn/MwHIYIUVOJgO8d2V3N8vpRzw17EK+AVOzVZJ005jN9I
-         OgnW+v1GCABaUT7yubY3ZH0MK8KiE0d1KMAS6dfHXeFmU6H9CfEllMDLCe5d4VNkbBB9
-         Q/voDM8AbRYWvMyNwDFzUuAKAj4tjxm62MGmmTXiH+kOe5n1wbcHdQo3Nrx04tFXn7dO
-         7+xA==
-X-Gm-Message-State: APjAAAXhTrLc1wn6z38VvC5c5MsLd8u44UaC+rvEG+cqVgjpUYxPFX8o
-        JymItbJMBF6bLZd0HUdHft9W5dOyOKKDQE5qnuW2xA==
-X-Google-Smtp-Source: APXvYqwtrGRoVpfoYUQbpfscgR1YvjNIoEJwTjGpNh374JxCwGJYz8mI0UDKMJGK2aEAi5yUqMGk7HFD34Er13qtUfQ=
-X-Received: by 2002:a9d:4801:: with SMTP id c1mr8740496otf.32.1574981248999;
- Thu, 28 Nov 2019 14:47:28 -0800 (PST)
+        id S1726747AbfK1X5M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Nov 2019 18:57:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49982 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726582AbfK1X5M (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 28 Nov 2019 18:57:12 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 030D72081B;
+        Thu, 28 Nov 2019 23:57:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574985431;
+        bh=edWTwfLQ26x6fZFRXwo6KBhZijf9kYSEdQlEERXKrSQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=NVcVIS57ikz6SpW1WqeyHONWoRdStFvstxZVI01EQAqQJbvtwRejZW+x2neD9GeFR
+         I7sDkkyO3fvwtWjmUso1ZTAQtQjynpAdPRLBFU3obfB84m6T+89a7W2HjeOwbA1HF7
+         WwKtRRxx2sssqcSLKILKspdWPBWRcwDeiOURoaDw=
+Subject: Re: [PATCH 4.19 000/306] 4.19.87-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        jouni.hogander@unikie.com, "David S. Miller" <davem@davemloft.net>,
+        lukas.bulwahn@gmail.com, shuah <shuah@kernel.org>
+References: <20191127203114.766709977@linuxfoundation.org>
+ <CA+G9fYuAY+14aPiRVUcXLbsr5zJ-GLjULX=s9jcGWcw_vb5Kzw@mail.gmail.com>
+ <20191128073623.GE3317872@kroah.com>
+ <b4e6e9df-7334-763a-170a-6758916f420a@kernel.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <ad21dd80-ac0c-a6c0-5e17-0814121bd33e@kernel.org>
+Date:   Thu, 28 Nov 2019 16:57:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-References: <254505c9-2b76-ebeb-306c-02aaf1704b88@kernel.dk>
- <CAG48ez33ewwQB26cag+HhjbgGfQCdOLt6CvfmV1A5daCJoXiZQ@mail.gmail.com>
- <1d3a458a-fa79-5e33-b5ce-b473122f6d1a@kernel.dk> <CAG48ez2VBS4bVJqdCU9cUhYePYCiUURvXZWneBx2KGkg3L9d4g@mail.gmail.com>
- <f4144a96-58ef-fba7-79f0-e5178147b6bb@rasmusvillemoes.dk> <CAG48ez1v5EmuSvn+LY8od_ZMt1QVdUWqi9DWLSp0CgMxkL=sNg@mail.gmail.com>
- <CAG48ez1FK6h4tEv=cGGtm84NXDkeiMV+woFmqQYPbcsOZjKxZw@mail.gmail.com>
-In-Reply-To: <CAG48ez1FK6h4tEv=cGGtm84NXDkeiMV+woFmqQYPbcsOZjKxZw@mail.gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 28 Nov 2019 23:46:59 +0100
-Message-ID: <CAG48ez11PjWtaFrPqtU6yPKsm0_0Sb3Te-8bvVQLEozDzx7cFw@mail.gmail.com>
-Subject: Re: [PATCH RFC] signalfd: add support for SFD_TASK
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <b4e6e9df-7334-763a-170a-6758916f420a@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 28, 2019 at 8:18 PM Jann Horn <jannh@google.com> wrote:
-> On Thu, Nov 28, 2019 at 11:07 AM Jann Horn <jannh@google.com> wrote:
-> > On Thu, Nov 28, 2019 at 10:02 AM Rasmus Villemoes
-> > <linux@rasmusvillemoes.dk> wrote:
-> > > On 28/11/2019 00.27, Jann Horn wrote:
-> > >
-> > > > One more thing, though: We'll have to figure out some way to
-> > > > invalidate the fd when the target goes through execve(), in particular
-> > > > if it's a setuid execution. Otherwise we'll be able to just steal
-> > > > signals that were intended for the other task, that's probably not
-> > > > good.
-> > > >
-> > > > So we should:
-> > > >  a) prevent using ->wait() on an old signalfd once the task has gone
-> > > > through execve()
-> > > >  b) kick off all existing waiters
-> > > >  c) most importantly, prevent ->read() on an old signalfd once the
-> > > > task has gone through execve()
-> > > >
-> > > > We probably want to avoid using the cred_guard_mutex here, since it is
-> > > > quite broad and has some deadlocking issues; it might make sense to
-> > > > put the update of ->self_exec_id in fs/exec.c under something like the
-> > > > siglock,
-> > >
-> > > What prevents one from exec'ing a trivial helper 2^32-1 times before
-> > > exec'ing into the victim binary?
-> >
-> > Uh, yeah... that thing should probably become 64 bits wide, too.
->
-> Actually, that'd still be wrong even with the existing kernel code for
-> two reasons:
->
->  - if you reparent to a subreaper, the existing exec_id comparison breaks
+On 11/28/19 8:56 AM, shuah wrote:
+> On 11/28/19 12:36 AM, Greg Kroah-Hartman wrote:
+>> On Thu, Nov 28, 2019 at 12:23:41PM +0530, Naresh Kamboju wrote:
+>>> On Thu, 28 Nov 2019 at 02:25, Greg Kroah-Hartman
+>>> <gregkh@linuxfoundation.org> wrote:
+>>>>
+>>>> This is the start of the stable review cycle for the 4.19.87 release.
+>>>> There are 306 patches in this series, all will be posted as a response
+>>>> to this one.  If anyone has any issues with these being applied, please
+>>>> let me know.
+>>>>
+>>>> Responses should be made by Fri, 29 Nov 2019 20:18:09 +0000.
+>>>> Anything received after that time might be too late.
+>>>>
+>>>> The whole patch series can be found in one patch at:
+>>>>          
+>>>> https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.87-rc1.gz 
+>>>>
+>>>> or in the git tree and branch at:
+>>>>          
+>>>> git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git 
+>>>> linux-4.19.y
+>>>> and the diffstat can be found below.
+>>>>
+>>>> thanks,
+>>>>
+>>>> greg k-h
+>>>
+>>> Kernel BUG noticed on x86_64 device while booting 4.19.87-rc1 kernel.
+>>>
+>>> The problematic patch is,
+>>>
+>>>> Jouni Hogander <jouni.hogander@unikie.com>
+>>>>      net-sysfs: Fix reference count leak in rx|netdev_queue_add_kobject
+>>>
+>>> And this kernel panic is been fixed by below patch,
+>>>
+>>> commit 48a322b6f9965b2f1e4ce81af972f0e287b07ed0
+>>> Author: Eric Dumazet <edumazet@google.com>
+>>> Date:   Wed Nov 20 19:19:07 2019 -0800
+>>>
+>>>      net-sysfs: fix netdev_queue_add_kobject() breakage
+>>>
+>>>      kobject_put() should only be called in error path.
+>>>
+>>>      Fixes: b8eb718348b8 ("net-sysfs: Fix reference count leak in
+>>> rx|netdev_queue_add_kobject")
+>>>      Signed-off-by: Eric Dumazet <edumazet@google.com>
+>>>      Cc: Jouni Hogander <jouni.hogander@unikie.com>
+>>>      Signed-off-by: David S. Miller <davem@davemloft.net>
+>>
+>> Now queued up, I'll push out -rc2 versions with this fix.
+>>
+>> greg k-h
+>>
+> 
+> Ran into this on my test system. I will try rc2.
+> 
 
-... actually, I was wrong about this, this case is fine because the
-->exit_signal is reset in reparent_leader().
+rc2 worked for me.
+
+thanks,
+-- Shuah
+
