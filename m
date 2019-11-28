@@ -2,65 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50DA810CC56
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2019 17:00:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE64110CC59
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2019 17:00:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726856AbfK1P7z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Nov 2019 10:59:55 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:31235 "EHLO
+        id S1726881AbfK1P75 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Nov 2019 10:59:57 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:35972 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726835AbfK1P7y (ORCPT
+        by vger.kernel.org with ESMTP id S1726858AbfK1P74 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Nov 2019 10:59:54 -0500
+        Thu, 28 Nov 2019 10:59:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574956792;
+        s=mimecast20190719; t=1574956795;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=++SFQmyMsWq4exmbdoSpQ2cr72U0QKtKCLX6290nr5k=;
-        b=SCOQkmKti1yqzW9VzRLqKLDzaHBYHQmui4g1ff3uAlD7+T+ZnCHFaOynTVcS8w7sLcMt7U
-        nY+nlFt+lK8lMn75AilAN8kZd3GjH1afbizYHDZgUoULzR9BPF2k/L0A+UgS6CP5Qtrg3M
-        n4t5aRyO/ButMbv7I+9FWnAloLqwjuA=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-79-tZeNVJVOPcOQ4X-6stlOwA-1; Thu, 28 Nov 2019 10:59:51 -0500
-Received: by mail-wr1-f72.google.com with SMTP id k15so13976866wrp.22
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Nov 2019 07:59:51 -0800 (PST)
+        bh=wNUceLOrPg3Ojt0+jzV1YE7ipnujQFhaT5nWXOsQUC8=;
+        b=YiiZ2ahruH3Qrumm6OkN+xYBbpJW6ckXdmuXyxKwVBzarA2CoN2mx5v4gTPQUjzRcl3Rai
+        34nEFFUMHsGRPUWlTHeSNJXZMGj/CyZz/wSKH94JOzQ3jeWPY9IMOxH/YSZkUhJN0gMd7p
+        8eX6FNGZBgfm+YHHFSIxtjLkr9bJpTY=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-369-6LABOQRdPdOjV5JHgGlyOA-1; Thu, 28 Nov 2019 10:59:52 -0500
+Received: by mail-wr1-f71.google.com with SMTP id c12so12751347wrq.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Nov 2019 07:59:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=WV43MHYixZY7eKNI8jC3xjsYFEcLSUPr+KYHrksoiEI=;
-        b=FuzLXfFVlt5rX5YZuPnKw/ZqDEkPuYsaYCdcXWRcwqtqqAdpmsS/jyBWo6ycSXfy3R
-         NiFd1IzCJjt7yZvpM9MbOxK/Vi+NeF1j8uyenzNxhsT6FVARFAwwnbtnZuKxKPjv74yR
-         5fvR4AMSv45l6f3rfs2S/7gWMbALNVqO74su9O3HwJVyuoWasoFBQXdtQFaD+tC/N0ZT
-         xpNtHHjrILzwov1a3n/LaRpXcCoOsRR9UAW/BENKPBAkq5gQY5N8I3Va+UsKXoQBoICc
-         76RPcDo3MJ3nrsICT3rN3crulJHpva9bOwPygcsY3a0M41trg1JFdMkZknSh0LKVaTn8
-         IGsg==
-X-Gm-Message-State: APjAAAWmXMAjl/5t3majy+xTcMbWUgUE8ImzuEn4hgZheEuX0iSIUEmC
-        yW7tBG/UCa35TxTki/8R/ei0qg29Y3MjZRVcp/g3ZQ2dt034gYVL6okefXQmf+LKdJp7DaAcjV+
-        YxpCIAr3cmxmIvsPIBSg/wMHcTQ==
-X-Received: by 2002:adf:ea42:: with SMTP id j2mr12177102wrn.270.1574956790350;
-        Thu, 28 Nov 2019 07:59:50 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwp5bvhWAOaiRuMR96ArIY/Y981BLL4CkQKEnXAsc167f7gqMcg3rP2HUwxNCAGZc8eO4RAaA==
-X-Received: by 2002:adf:ea42:: with SMTP id j2mr12177091wrn.270.1574956790118;
-        Thu, 28 Nov 2019 07:59:50 -0800 (PST)
+        bh=6FebG/9swWxaWpyYUPZp3GybSxxVwd4FC4Ek6DX6CHk=;
+        b=GugPghNFPuaWha1NTKcWXy6E/XF9lVNrASp0n7WMK9ALvBrcm2RUZs3NiGDyCiy7AD
+         G2CY3xqi5CHFzNo7M4EBfjv8fajkhzaEOa2GmQBBre1mK9iWlQLq+Jd/tU+zZsra2sXx
+         St4VH4U2/4M4QYyrpCNVKgV6mlWVQVX2KHHFmrVRt1KQPRCVWmKNoQtsQPRioRcb39We
+         vEUXX/mXEz4pfSu7ApthMeAqAosbPaeWZWfe6ecyWT9MsoIcecJvEOwoxEb8NmnDDrYZ
+         /IUCBZ/LEirsYfFGyi+yEjVLCeSp+ETNtnBUL/lIX0K1UDo+Kdxu23G0bhNsekRRrAqB
+         Vg3w==
+X-Gm-Message-State: APjAAAU5zUA46uijr743WZ6nUMn3y59pz+lmH/ntduL/15CXJ76bapzr
+        3+J8SZIcUqKBG5P5/Q1PrQrkrmxR4DsAqPhkwaKfQ4igBy41Cb4da6OpX1D7+qWq7IqRL+zLMDX
+        8zIx1b9oyfQeYcEyYZZafKoa8Uw==
+X-Received: by 2002:a05:6000:149:: with SMTP id r9mr9469817wrx.147.1574956791688;
+        Thu, 28 Nov 2019 07:59:51 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzIdXC8BX5EGsOQHtObeNRf8i4Cuwph0s8VBTuzdjw7D1anaxGwXrq6M3ONrwiABcsmwrnDJQ==
+X-Received: by 2002:a05:6000:149:: with SMTP id r9mr9469808wrx.147.1574956791513;
+        Thu, 28 Nov 2019 07:59:51 -0800 (PST)
 Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id 2sm23689474wrq.31.2019.11.28.07.59.48
+        by smtp.gmail.com with ESMTPSA id 2sm23689474wrq.31.2019.11.28.07.59.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2019 07:59:49 -0800 (PST)
+        Thu, 28 Nov 2019 07:59:50 -0800 (PST)
 From:   Miklos Szeredi <mszeredi@redhat.com>
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH 06/12] utimensat: AT_EMPTY_PATH support
-Date:   Thu, 28 Nov 2019 16:59:34 +0100
-Message-Id: <20191128155940.17530-7-mszeredi@redhat.com>
+Subject: [PATCH 07/12] f*xattr: allow O_PATH descriptors
+Date:   Thu, 28 Nov 2019 16:59:35 +0100
+Message-Id: <20191128155940.17530-8-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191128155940.17530-1-mszeredi@redhat.com>
 References: <20191128155940.17530-1-mszeredi@redhat.com>
 MIME-Version: 1.0
-X-MC-Unique: tZeNVJVOPcOQ4X-6stlOwA-1
+X-MC-Unique: 6LABOQRdPdOjV5JHgGlyOA-1
 X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
@@ -69,47 +69,73 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This makes it possible to use utimensat on an O_PATH file (including
-symlinks).
+This allows xattr ops on symlink/special files referenced by an O_PATH
+descriptor without having to play games with /proc/self/fd/NN (which
+doesn't work for symlinks anyway).
 
-It supersedes the nonstandard utimensat(fd, NULL, ...) form.
+This capability is the same as would be given by introducing ...at()
+variants with an AT_EMPTY_PATH argument.  Looking at getattr/setattr type
+syscalls, this is allowed for fstatat() and fchownat(), but not for
+fchmodat() and utimensat().  What's the logic?
+
+While this carries a minute risk of someone relying on the property of
+xattr syscalls rejecting O_PATH descriptors, it saves the trouble of
+introducing another set of syscalls.
+
+Only file->f_path and file->f_inode are accessed in these functions.
+
+Current versions return EBADF, hence easy to detect the presense of this
+feature and fall back in case it's missing.
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/utimes.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/xattr.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/utimes.c b/fs/utimes.c
-index 1ba3f7883870..c07cb0dddbb6 100644
---- a/fs/utimes.c
-+++ b/fs/utimes.c
-@@ -95,13 +95,13 @@ long do_utimes(int dfd, const char __user *filename, st=
-ruct timespec64 *times,
- =09=09goto out;
- =09}
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 90dd78f0eb27..fd1335b86e60 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -495,7 +495,7 @@ SYSCALL_DEFINE5(lsetxattr, const char __user *, pathnam=
+e,
+ SYSCALL_DEFINE5(fsetxattr, int, fd, const char __user *, name,
+ =09=09const void __user *,value, size_t, size, int, flags)
+ {
+-=09struct fd f =3D fdget(fd);
++=09struct fd f =3D fdget_raw(fd);
+ =09int error =3D -EBADF;
 =20
--=09if (flags & ~AT_SYMLINK_NOFOLLOW)
-+=09if (flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH))
- =09=09goto out;
+ =09if (!f.file)
+@@ -587,7 +587,7 @@ SYSCALL_DEFINE4(lgetxattr, const char __user *, pathnam=
+e,
+ SYSCALL_DEFINE4(fgetxattr, int, fd, const char __user *, name,
+ =09=09void __user *, value, size_t, size)
+ {
+-=09struct fd f =3D fdget(fd);
++=09struct fd f =3D fdget_raw(fd);
+ =09ssize_t error =3D -EBADF;
 =20
- =09if (filename =3D=3D NULL && dfd !=3D AT_FDCWD) {
- =09=09struct fd f;
+ =09if (!f.file)
+@@ -662,7 +662,7 @@ SYSCALL_DEFINE3(llistxattr, const char __user *, pathna=
+me, char __user *, list,
 =20
--=09=09if (flags & AT_SYMLINK_NOFOLLOW)
-+=09=09if (flags)
- =09=09=09goto out;
+ SYSCALL_DEFINE3(flistxattr, int, fd, char __user *, list, size_t, size)
+ {
+-=09struct fd f =3D fdget(fd);
++=09struct fd f =3D fdget_raw(fd);
+ =09ssize_t error =3D -EBADF;
 =20
- =09=09f =3D fdget(dfd);
-@@ -117,6 +117,8 @@ long do_utimes(int dfd, const char __user *filename, st=
-ruct timespec64 *times,
+ =09if (!f.file)
+@@ -727,7 +727,7 @@ SYSCALL_DEFINE2(lremovexattr, const char __user *, path=
+name,
 =20
- =09=09if (!(flags & AT_SYMLINK_NOFOLLOW))
- =09=09=09lookup_flags |=3D LOOKUP_FOLLOW;
-+=09=09if (flags & AT_EMPTY_PATH)
-+=09=09=09lookup_flags |=3D LOOKUP_EMPTY;
- retry:
- =09=09error =3D user_path_at(dfd, filename, lookup_flags, &path);
- =09=09if (error)
+ SYSCALL_DEFINE2(fremovexattr, int, fd, const char __user *, name)
+ {
+-=09struct fd f =3D fdget(fd);
++=09struct fd f =3D fdget_raw(fd);
+ =09int error =3D -EBADF;
+=20
+ =09if (!f.file)
 --=20
 2.21.0
 
