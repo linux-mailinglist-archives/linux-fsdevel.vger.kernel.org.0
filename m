@@ -2,252 +2,292 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D40C410C26F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2019 03:35:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0071E10C2A3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2019 03:55:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728294AbfK1CfD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Nov 2019 21:35:03 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:2077 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727297AbfK1CfC (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Nov 2019 21:35:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1574908502; x=1606444502;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=ekOU0kQbuGm474hNED4kL5Grj2ms63FFsolVYJZiCHY=;
-  b=jQeTsCNcAp3mpij1Z6t0xe57M+ny2BTvrewXXBAN7Wc/u1fBQPAGRk29
-   HVZylzmcoeFN+1fPvi/PGslsV9XkzpNuf+L39qKMmp2AZqj0JlVnVbAPS
-   fWdeRDZmpFMeOi9AW/rb3anUhui9kTA3OVbN7fbabaDyl0ayZaVoeVShJ
-   VfAZZsHtz3AFOirmuMfnGrCfumiVL9iKFLFrrx74fjrj7LrkXzikLDC/+
-   /TIfElKMQhJrzhtQNQ3zE44tgJtvnm77hjVgM5vfK+jw/HyOXGR/ci7cJ
-   l59JIIzo/S4FduqTLMYspSEmJKkipRo78YBKdjQoMgjhuw+rdmb8I10hU
-   Q==;
-IronPort-SDR: FuRXnZE6TNurlsFlI2EFnxpRsrc1khzPPiRU1vaBeusXcydWP0uNw5lB8rziiu6/E1oPQFtvQ1
- k4rZYzfCBainmouXAhd6Q6dGMxNY09ZyhqYMt1P1XYCT3bIvUYZNdYMAplqScf39bdtFzdcnuf
- cu6k6Drq+TaAYJAQzc7Ta0SoGH+65P7f9E9MP9phZEV/vQbe/PjAAhrXhrKzL4f61mdIFF6yHj
- FyK7CSk6jA7ZwlzNceqW2DsfNYUXLKk8UOzpJrADH7azNyEbCajrNh8fgYEY0yRNn/xbN+t7cy
- XWI=
-X-IronPort-AV: E=Sophos;i="5.69,251,1571673600"; 
-   d="scan'208";a="125783808"
-Received: from mail-dm3nam03lp2051.outbound.protection.outlook.com (HELO NAM03-DM3-obe.outbound.protection.outlook.com) ([104.47.41.51])
-  by ob1.hgst.iphmx.com with ESMTP; 28 Nov 2019 10:34:59 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AIqG80hJbFcIU4SUUrUJDmAcJbHPxYmh0LUmMnJQSgk7E+TIBtOGSlUoi28eCIJg9uSQZuJMmTUEjbjqmBnMQalav2H3B6w1d2A6kTMzOdTVgWvQrY0PRHwIMAGNwViJltpntfbUBeVR2JVh0qfqhvJ9etSYmpBtV6KcbRsITpzz5jirhDUVI3assCsWKaNA6HrzRLqtFXD7AZsijGBWrwYnx5KQqU22gDUoXngVrBhPBfMi/L88QU8JFI+pJTmjXJ/MZqrcR0MehMgDdddkyaBW+FK53g4n3gWtB0MKGiZ2IDoeiWPzwnBp3IOBuhZrBYGnWwgx+pvwmyVedjMz4Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BQRqcICeNNZJ0xH03yCocvcOCIXayx13klFQGr0ucD0=;
- b=f2+DRNFypMK2w49jlfooEwHDXsDu7kL7x5178ivzIEWR4v2+TeDI5mkzdLg7Q7Trwwr/jWpzdiYmkZji+KwM6vQnxjOQPFVkUsjoUrfjvBjoQnmtYZstQtnYvw4FmvO9UtkRB1mriGL0c78dBZEstmfsEyT/fquS03o07jSxrajZGFC/8Gvy9loilLbdIQho6RZBxR90BXpppcU9Z6MYn4BnZg7No1rTM/B85R96ZNeVgCXgWttXt+6HFOJ7SsaZlftRNiG5Kf49vvf0/3TmnA9xswOfCehwHKQCIV9DDyWm51kIzCf1xfyL2xAj1DpZhAxTUZtpb3A18eHIVg4y6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BQRqcICeNNZJ0xH03yCocvcOCIXayx13klFQGr0ucD0=;
- b=GIm36vf0tqWcGBvb5s+YZRS0V67pQcSYqD/fuT/b+elBKMv9kb5u1RvTbCPO9nl1r65TS7S07QwGGoN5JPNerMdxai/a9ebEsYVvF7TQLKUg3qapZTOU2aUQ2JxIE1EARxBq8zjPqohtUMCqRL21Qio46q1/nH1jLdnKiQD/TWw=
-Received: from CY1PR04MB2268.namprd04.prod.outlook.com (10.167.10.135) by
- CY1PR04MB2348.namprd04.prod.outlook.com (10.167.17.149) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2474.17; Thu, 28 Nov 2019 02:34:55 +0000
-Received: from CY1PR04MB2268.namprd04.prod.outlook.com
- ([fe80::ac1b:af88:c028:7d74]) by CY1PR04MB2268.namprd04.prod.outlook.com
- ([fe80::ac1b:af88:c028:7d74%11]) with mapi id 15.20.2474.023; Thu, 28 Nov
- 2019 02:34:55 +0000
-From:   Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        "linux-f2fs-devel@lists.sourceforge.net" 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Javier Gonzalez <javier@javigon.com>
-Subject: Re: [PATCH] f2fs: Fix direct IO handling
-Thread-Topic: [PATCH] f2fs: Fix direct IO handling
-Thread-Index: AQHVpC8oudPXEy0mBEmfCTgj/M+d7aeeHoMAgAHB64A=
-Date:   Thu, 28 Nov 2019 02:34:55 +0000
-Message-ID: <20191128023447.wopisf4nh2l63evv@shindev.dhcp.fujisawa.hgst.com>
-References: <20191126075719.1046485-1-damien.lemoal@wdc.com>
- <20191126234428.GB20652@jaegeuk-macbookpro.roam.corp.google.com>
-In-Reply-To: <20191126234428.GB20652@jaegeuk-macbookpro.roam.corp.google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=shinichiro.kawasaki@wdc.com; 
-x-originating-ip: [199.255.47.12]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 7c26b4f5-2a66-49db-fe5c-08d773ab8e00
-x-ms-traffictypediagnostic: CY1PR04MB2348:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <CY1PR04MB2348C068F495A456F0195811ED470@CY1PR04MB2348.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 0235CBE7D0
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(376002)(396003)(366004)(136003)(39860400002)(199004)(189003)(81166006)(8936002)(76116006)(64756008)(86362001)(71190400001)(478600001)(11346002)(102836004)(9686003)(6512007)(14454004)(14444005)(6436002)(44832011)(2906002)(446003)(7736002)(6486002)(256004)(1076003)(54906003)(6116002)(99286004)(6246003)(186003)(4326008)(3846002)(5660300002)(26005)(76176011)(66066001)(6506007)(71200400001)(6916009)(66476007)(66556008)(66946007)(229853002)(91956017)(8676002)(81156014)(316002)(25786009)(66446008)(305945005);DIR:OUT;SFP:1102;SCL:1;SRVR:CY1PR04MB2348;H:CY1PR04MB2268.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: SSyzbA1xyzV8lkgzdHZbCtR+3y8LVe7qLh+TYjJdIYIdsZC4oEPDRMJteciRBDyVyV7gZBYHqvdGYVQwwNeaPlk6BK/Ny92/Ic3yxB+iQPa7Gus+UAQJBtUv42gazBtMsTMVGNqMTnJutlx5D6DkC89GVHiIun9WZ+rqq8YBGMbvXKlGbUYOd5elIT6mVdTrW3Z78cBvsq0YBQeqKdpv0mtTocfYTZssLANPzesFZfLckXDnVI3d/0fSMbH4W7/wr/pPdNpqV7Vccs4fYme3XyPQy5jXeqKSpUslNdP9vOB5/8BqLIcZw7VxTLH5e/MmqQyQIUFrrDiwVw5jiaXvtbz7Emi94bv2qOjBr1hkPLvouYdIL/5XeA/TtRe7Z8x6at8DFb2ilcbTlMEExEftqCCpgHD2JZi/A3EjPX1jeqLpDRJ3McKw0eF9DYvaNx7c
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <8E365806411AA54BB3C5D02C69405593@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1727885AbfK1CzA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Nov 2019 21:55:00 -0500
+Received: from mail.phunq.net ([66.183.183.73]:34250 "EHLO phunq.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727138AbfK1Cy7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 27 Nov 2019 21:54:59 -0500
+Received: from [172.16.1.14]
+        by phunq.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+        (Exim 4.92.3)
+        (envelope-from <daniel@phunq.net>)
+        id 1ia9xG-0000l7-Ll; Wed, 27 Nov 2019 18:54:54 -0800
+Subject: Re: [RFC] Thing 1: Shardmap fox Ext4
+To:     Viacheslav Dubeyko <slava@dubeyko.com>
+Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, "Theodore Y. Ts'o" <tytso@mit.edu>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Andreas Dilger <adilger@dilger.ca>
+References: <176a1773-f5ea-e686-ec7b-5f0a46c6f731@phunq.net>
+ <8ece0424ceeeffbc4df5d52bfa270a9522f81cda.camel@dubeyko.com>
+ <5c9b5bd3-028a-5211-30a6-a5a8706b373e@phunq.net>
+ <B9F8658C-B88F-44A1-BBEF-98A8259E0712@dubeyko.com>
+From:   Daniel Phillips <daniel@phunq.net>
+Message-ID: <5e909ace-b5c9-9bf2-616f-018b52e065de@phunq.net>
+Date:   Wed, 27 Nov 2019 18:54:54 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7c26b4f5-2a66-49db-fe5c-08d773ab8e00
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Nov 2019 02:34:55.3836
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: JGo1IL/Vftfu8a2vUOxKLgB/1n8p0AcXit+g5GiIes8yl+MMnPYiylvyr0Rf410Y3fgDzOKMjC3LPRzht7trWuCAlOcoqudwG+SqqaOnHJY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR04MB2348
+In-Reply-To: <B9F8658C-B88F-44A1-BBEF-98A8259E0712@dubeyko.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Nov 26, 2019 / 15:44, Jaegeuk Kim wrote:
-> On 11/26, Damien Le Moal wrote:
-> > f2fs_preallocate_blocks() identifies direct IOs using the IOCB_DIRECT
-> > flag for a kiocb structure. However, the file system direct IO handler
-> > function f2fs_direct_IO() may have decided that a direct IO has to be
-> > exececuted as a buffered IO using the function f2fs_force_buffered_io()=
-.
-> > This is the case for instance for volumes including zoned block device
-> > and for unaligned write IOs with LFS mode enabled.
-> >=20
-> > These 2 different methods of identifying direct IOs can result in
-> > inconsistencies generating stale data access for direct reads after a
-> > direct IO write that is treated as a buffered write. Fix this
-> > inconsistency by combining the IOCB_DIRECT flag test with the result
-> > of f2fs_force_buffered_io().
-> >=20
-> > Reported-by: Javier Gonzalez <javier@javigon.com>
-> > Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-> > ---
-> >  fs/f2fs/data.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > index 5755e897a5f0..8ac2d3b70022 100644
-> > --- a/fs/f2fs/data.c
-> > +++ b/fs/f2fs/data.c
-> > @@ -1073,6 +1073,8 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, s=
-truct iov_iter *from)
-> >  	int flag;
-> >  	int err =3D 0;
-> >  	bool direct_io =3D iocb->ki_flags & IOCB_DIRECT;
-> > +	bool do_direct_io =3D direct_io &&
-> > +		!f2fs_force_buffered_io(inode, iocb, from);
-> > =20
-> >  	/* convert inline data for Direct I/O*/
-> >  	if (direct_io) {
-> > @@ -1081,7 +1083,7 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, s=
-truct iov_iter *from)
-> >  			return err;
-> >  	}
-> > =20
-> > -	if (direct_io && allow_outplace_dio(inode, iocb, from))
-> > +	if (do_direct_io && allow_outplace_dio(inode, iocb, from))
->=20
-> It seems f2fs_force_buffered_io() includes allow_outplace_dio().
->=20
-> How about this?
+On 2019-11-27 11:35 a.m., Viacheslav Dubeyko wrote:
+> So, it looks like that Shardmap could be better for the case of billion files in one folder.
+> But what’s about the regular case when it could be dozens/hundreds of files in one
+> folder? Will Shardmap be better than HTree?
 
-Thanks. I confirmed that the issue is gone with your patch.
+Yes, Shardmap is also faster than HTree in that case. Both Shardmap and
+HTree are unindexed in that range, however Shardmap is faster because of
+two things:
 
-Tested-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+ 1) Shardmap uses a more efficient record block format that incorporates
+ a single byte hash code that avoids 99% of failed string compares.
 
-> ---
->  fs/f2fs/data.c | 13 -------------
->  fs/f2fs/file.c | 35 +++++++++++++++++++++++++----------
->  2 files changed, 25 insertions(+), 23 deletions(-)
->=20
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index a034cd0ce021..fc40a72f7827 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -1180,19 +1180,6 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, st=
-ruct iov_iter *from)
->  	int err =3D 0;
->  	bool direct_io =3D iocb->ki_flags & IOCB_DIRECT;
-> =20
-> -	/* convert inline data for Direct I/O*/
-> -	if (direct_io) {
-> -		err =3D f2fs_convert_inline_inode(inode);
-> -		if (err)
-> -			return err;
-> -	}
-> -
-> -	if (direct_io && allow_outplace_dio(inode, iocb, from))
-> -		return 0;
-> -
-> -	if (is_inode_flag_set(inode, FI_NO_PREALLOC))
-> -		return 0;
-> -
->  	map.m_lblk =3D F2FS_BLK_ALIGN(iocb->ki_pos);
->  	map.m_len =3D F2FS_BYTES_TO_BLK(iocb->ki_pos + iov_iter_count(from));
->  	if (map.m_len > map.m_lblk)
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index c0560d62dbee..6b32ac6c3382 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -3386,18 +3386,33 @@ static ssize_t f2fs_file_write_iter(struct kiocb =
-*iocb, struct iov_iter *from)
->  				ret =3D -EAGAIN;
->  				goto out;
->  			}
-> -		} else {
-> -			preallocated =3D true;
-> -			target_size =3D iocb->ki_pos + iov_iter_count(from);
-> +			goto write;
-> +		}
-> =20
-> -			err =3D f2fs_preallocate_blocks(iocb, from);
-> -			if (err) {
-> -				clear_inode_flag(inode, FI_NO_PREALLOC);
-> -				inode_unlock(inode);
-> -				ret =3D err;
-> -				goto out;
-> -			}
-> +		if (is_inode_flag_set(inode, FI_NO_PREALLOC))
-> +			goto write;
-> +
-> +		if (iocb->ki_flags & IOCB_DIRECT) {
-> +			/* convert inline data for Direct I/O*/
-> +			err =3D f2fs_convert_inline_inode(inode);
-> +			if (err)
-> +				goto out_err;
-> +
-> +			if (!f2fs_force_buffered_io(inode, iocb, from))
-> +				goto write;
-> +		}
-> +		preallocated =3D true;
-> +		target_size =3D iocb->ki_pos + iov_iter_count(from);
-> +
-> +		err =3D f2fs_preallocate_blocks(iocb, from);
-> +		if (err) {
-> +out_err:
-> +			clear_inode_flag(inode, FI_NO_PREALLOC);
-> +			inode_unlock(inode);
-> +			ret =3D err;
-> +			goto out;
->  		}
-> +write:
->  		ret =3D __generic_file_write_iter(iocb, from);
->  		clear_inode_flag(inode, FI_NO_PREALLOC);
-> =20
-> --=20
-> 2.19.0.605.g01d371f741-goog
->=20
+ 2) Shardmap "pins" the current target block in which new entries are
+ created, avoiding repeated radix tree lookups for insert under load.
 
---
-Best Regards,
-Shin'ichiro Kawasaki=
+As soon as you get into thousands of files, the difference between
+Shardmap and HTree widens dramatically so that Shardmap ends up faster
+by a factor of 2, 3, 4, etc as directory size increases. Not just
+faster than HTree, but faster than any tree based scheme, because of
+the O(1) / O(log N) equation.
+
+Up in the millions and billions of files, HTree just drops out of the
+running, but if it were actually improved to operate in that range then
+lookups would be at least 4 times slower due to index block probes, and
+heavy insert loads would be orders of magnitude slower due to write
+multiplication on commit. Of course I hear you when you say that you
+don't have any million file directories to worry about, but some folks
+do. (Any comment, Andreas?)
+
+> If the ordinary user hasn’t visible
+> performance improvement then it makes sense to consider Shardmap like the
+> optional feature. What do you think?
+
+I am confident that a significant number of users will perceive the
+performance improvement, and that few if any will perceive a slowdown for
+any reason short of an outright bug.
+
+> Does it mean that Shardmap is ext4 oriented only? Could it be used for another
+> file systems?
+
+Shardmap is not Ext4-only. In fact, Shardmap is firstly the directory
+index for Tux3, and I am now proposing that Shardmap should also be
+the new directory index for Ext4.
+
+I also heard a suggestion that Shardmap could/should become a generic
+kernel library facility that could be used by any file system or
+kernel subsystem that requires a high performance persistent
+associative string mapping.
+
+Shardmap is also well on its way to being released as a generic high
+performance KVS, including supporting persistent memory, a role it
+performs in a highly satisfactory way. There will be a post about
+this later, but for today, a spoiler: atomic, durable KVS database
+transactions at a rate in excess of three per microsecond(!)
+
+>> See the recommendation that is sometimes offered to work around
+>> HTree's issues with processing files in hash order. Basically, read
+>> the entire directory into memory, sort by inode number, then process
+>> in that order. As an application writer do you really want to do this,
+>> or would you prefer that the filesystem just take care of for you so
+>> the normal, simple and readable code is also the most efficient code?
+> 
+> I slightly missed the point here. To read the whole directory sounds like to read
+> the dentries tree from the volume. As far as I can see, the dentries are ordered
+> by names or by hashes. But if we are talking about inode number then we mean
+> the inodes tree. So, I have misunderstanding here. What do you mean?
+
+It's a bit of a horror show. Ted is the expert on it, I was largely a
+bystander at the time this was implemented. Basically, the issue is that
+HTree is a hash-ordered BTree (the H in HTree) and the only way to
+traverse it for readdir that can possibly satisfy POSIX requirements is
+by hash order. If you try to traverse in linear block order then a
+simultaneous insert could split a block and move some entries to other
+blocks, which then may be returned by readdir twice or not at all. So
+hash order traversal is necessary, but this is not easy because hashes
+can collide. So what Ted did is, create a temporary structure that
+persists for some period of time, to utilize a higher resolution hash
+code which is used to resolve collisions and provide telldir cookies
+for readdir. Basically. This is even more tricky than it sounds for
+various horrifying reasons.
+
+If you want the whole story you will have to ask Ted. Suffice to say that
+it takes a special kind of mind to even conceive of such a mechanism, let
+alone get it working so well that we have not seen a single complaint
+about it for years. However, this code is by any standard, scary and only
+marginally maintainable. It further seems likely that a sufficiently
+determined person could construct a case where it fails, though I cannot
+swear to that one way or the other.
+
+Why did we go to all this effort as opposed to just introducing some
+additional ordering metadata as XFS does? Because HTree is faster
+without that additional metadata to maintain, and more compact. The
+user perceives this; the user does not perceive the pain suffered by
+implementors to get this working, nor does the user need to confront
+the full horror of the source code. The user cares only about how it
+works, and it does work pretty darn well. That said, deprecating this
+code will still be immensely satisfying from where I sit. It is more
+than likely that Ted shares the same view, though I certainly cannot
+speak for him.
+
+In summary, we should all just be happy that this readdir hack worked
+well enough over the last 15 years or so to run the world's internet
+and phones so reliably. Now let's retire it please, and move on to
+something with a sounder design basis, and which is far easier to
+understand and maintain, and runs faster to boot. Now, with Shardmap,
+readdir runs at media transfer speed, with near zero cpu, unlike
+HTree.
+
+>>> If you are talking about improving the performance then do you mean
+>>> some special open-source implementation?
+>>
+>> I mean the same kind of kernel filesystem implementation that HTree
+>> currently has. Open source of course, GPLv2 to be specific.
+> 
+> I meant the Shardmap implementation. As far as I can see, the
+> user-space implementation is available only now. So, my question is
+> still here. It’s hard to say how efficient the Shardmap could be on> kernel side as ext4 subsystem, for example.
+
+That is actually quite easy to predict. All of our benchmarking so far
+has been with user space Shardmap running on top of Ext4, so we already
+have a pretty accurate picture of the overheads involved. That said,
+there will be two main differences between the user space code and the
+kernel code:
+
+   1) We don't have virtual memory in kernel in any practical form, so
+   we need to simulate it with explicit lookups in a vector of page
+   pointers, costing a tiny but likely measurable amount of cpu compared
+   to the hardware implementation that user space enjoys.
+
+   2) We don't know the overhead of atomic commit for Ext4 yet. We do
+   have a pretty good picture for Tux3: near zero. And we have a very
+   clear picture of the atomic commit overhead for persistent memory,
+   which is nonzero but much less than annoying. So atomic commit
+   overhead for Ext4 should be similar. This is really where the skill
+   of Ext4 developers kicks in, and of course I expect great things
+   in that regard, as has been the case consistently to date.
+
+>>>> For delete, Shardmap avoids write multiplication by appending tombstone
+>>>> entries to index shards, thereby addressing a well known HTree delete
+>>>> performance issue.
+>>>
+>>> Do you mean Copy-On-Write policy here or some special technique?
+>>
+>> The technique Shardmap uses to reduce write amplication under heavy
+>> load is somewhat similar to the technique used by Google's Bigtable to
+>> achieve a similar result for data files. (However, the resemblance to
+>> Bigtable ends there.)
+>>
+>> Each update to a Shardmap index is done twice: once in a highly
+>> optimized hash table shard in cache, then again by appending an
+>> entry to the tail of the shard's media "fifo". Media writes are
+>> therefore mostly linear. I say mostly, because if there is a large
+>> number of shards then a single commit may need to update the tail
+>> block of each one, which still adds up to vastly fewer blocks than
+>> the BTree case, where it is easy to construct cases where every
+>> index block must be updated on every commit, a nasty example of
+>> n**2 performance overhead.
+> 
+> It sounds like adding updates in log-structured manner. But what’s about
+> the obsolete/invalid blocks? Does it mean that it need to use some GC technique
+> here? I am not completely sure that it could be beneficial for the ext4.
+
+This is vaguely similar to log structured updating, but then again, it
+is more different than similar. A better term might be "streaming
+updates". This is a popular theme of modern file system and database
+design, and the basis of many recent performance breakthroughs.
+
+Shardmap never garbage collects. Instead, when a shard fifo gets too
+many tombstones, it is just compacted by writing out the entire cache
+shard on top of the old, excessively fluffy shard fifo. This is both
+efficient and rare, for various reasons that require detailed analysis
+of the data structures involved. I will get to that eventually, but now
+is probably not the best time. The source code makes it clear.
+
+> By the way, could the old index blocks be used like the snapshots in the case
+> of corruptions or other nasty issues?
+
+My feeling is, that is not a natural fit. However, rescuing Shardmap from
+index corruption is easy: just throw away the entire index and construct
+a new one by walking the entry record blocks. Maybe there are cute ways
+to make that incremental, but the simplest easiest way should actually be
+enough for the long term.
+
+>>> Let's imagine that it needs to implement the Shardmap approach. Could
+>>> you estimate the implementation and stabilization time? How expensive
+>>> and long-term efforts could it be?
+>>
+>> Shardmap is already implemented and stable, though it does need wider
+>> usage and testing. Code is available here:
+>>
+>>    https://github.com/danielbot/Shardmap
+>>
+>> Shardmap needs to be ported to kernel, already planned and in progress
+>> for Tux3. Now I am proposing that the Ext4 team should consider porting
+>> Shardmap to Ext4, or at least enter into a serious discussion of the
+>> logistics.
+>>
+>> Added Darrick to cc, as he is already fairly familiar with this subject,
+>> once was an Ext4 developer, and perhaps still is should the need arise.
+>> By the way, is there a reason that Ted's MIT address bounced on my
+>> original post?
+> 
+> It’s hard to talk about stability because we haven’t kernel-side implementation
+> of Shardmap for ext4. I suppose that it needs to spend about a year for the porting
+> and twice more time for the stabilization.
+
+Agreed, my best guess is roughly similar.
+
+> To port a user-space code to the kernel could be the tricky task.
+
+Sometimes true, however not in this case. Shardmap is broadly similar to
+other code we have ported from user space to kernel in the past, with the
+two exceptions I noted above. All just part of a kernel hacker's normal day
+in my humble opinion.
+
+> Could you estimate how many lines of code the core
+> part of Shardmap contains?
+
+The finished Ext4 code should be somewhere between 2k and 3k lines, about
+the same as HTree.
+
+> Does it need to change the ext4 on-disk layout for this feature?
+
+No, this new form of index would be a mount option, and only used for
+new directories. The HTree code will necessarily remain part of Ext4
+forever, for compatibility with existing volumes. By "deprecate HTree"
+I meant, eventually make the Shardmap index the default after it has
+gone through its stabilization period of who knows how long? Three
+years? Five? It's hard to know the future in that regard.
+
+This would be roughly similar to the transition we did from unindexed
+to HTree index some 18 years ago. (Deja vu all over again!) Last time it
+went smoothly and this time we additionally have the benefit of having
+done it before.
+
+How easy ext4 functionality can be modified for Shardmap support?
+
+From the user's point of view, completely trivial. Initially just a mount
+option, and later, no action at all. From the sysadmin's point of view,
+something new to learn about, some new procedures in case things go wrong,
+but essentially all in a day's work. From the developer's point of view,
+one of the easier major hacks that one could contemplate, I expect.
+Technical risk is nearly nil because Shardmap is already already quite
+mature, being seven years old as it is, and having had the benefit of
+considerable earlier design experience.
+
+Regards,
+
+Daniel
