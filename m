@@ -2,90 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D865A10CBB2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2019 16:29:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4724E10CBFC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2019 16:45:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726716AbfK1P3b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Nov 2019 10:29:31 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:34481 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726510AbfK1P3b (ORCPT
+        id S1726664AbfK1PpX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Nov 2019 10:45:23 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57104 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726569AbfK1PpX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Nov 2019 10:29:31 -0500
-Received: by mail-oi1-f195.google.com with SMTP id l136so7996048oig.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Nov 2019 07:29:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8jbWiJP8zuPwo1h57bhn9bSCas9rrkjtaMb7mPh1IdA=;
-        b=N+fcqekoOxQDhlpJGKAWkheEt+gN07VZ81/73rXPn1PTzGgsLa3Rcmh9TY+xjk+3Ih
-         qDS65BfoaV4kxITCwQ9aynD1HSih7wmCgb7HKN1o0H2yuxRclj9Ujkcv+DZ9XG9qqLfs
-         gYcHNBi7EmNxtYpBo1DwprVnLxrTtjU6Ewc2Z1bEnBpr9dgcHgNpZdxeFGtuNGpYZLXB
-         hvMrqTF858ayZPTPJw8NVYywiC4NY9H/sx9/Hg0jnT8HOwWZT4svLjw62xcIlt+rlAQX
-         SzBMJVlbbVULZs/zzvLYp6VnC0pl64WDBL9U0f3CF54c3vg/K2F81DElVEZbPOtUntZY
-         PnQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8jbWiJP8zuPwo1h57bhn9bSCas9rrkjtaMb7mPh1IdA=;
-        b=AYlaOqUaKOf5GsW9JUIqydPbU+fsKXIWrhJv+CIprA3r0AS6DgyyP5NTwQZWnFcNkS
-         8bNGDbf7sHwPax2TyPNM4fTCcsDWyuaQXPGf85keLhoPhWPOrasMghXq/2bVkLaty+0f
-         AT6sgUw2mvHx5y9UrcQgkR3OLaMNGCDjcEI3GdqnPlaFdmYLGW1umgSFaZqw1O0ggRrO
-         r+SCYV2Z7v4K0DXe4VNOxqIaPjymnOZJH4nAtfcDnrFqiGO5nFrAeeEOUn5ceWpakBA8
-         D9nwpCDtq2tC4dbgZDeL/MASlgW75GQZsANs7b1O7VR6SXVxBQxTlfyRmyTLIBcmK86e
-         75Ag==
-X-Gm-Message-State: APjAAAXpl6T4XgtQdJssc/SmaE7AiNtxdUBJBBzDp+Qfxl/YySox+AhW
-        DCyLm2qJyyO36VeRZRTItCmcmaMRwlFmp+a7VIbiSw==
-X-Google-Smtp-Source: APXvYqwQF8gySZpP3ML3y1V5QupQwMNy5TOx2Z2uDdHPjHuyVgwkY34m3prkUOx4mIROyml0+fITWq8uzCmVDZn6HVs=
-X-Received: by 2002:aca:d783:: with SMTP id o125mr1403513oig.68.1574954969803;
- Thu, 28 Nov 2019 07:29:29 -0800 (PST)
+        Thu, 28 Nov 2019 10:45:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1Ua9kzhqWdT/XmuB+JkZPQ/zR7CbGzhbDxmS9/PUHRg=; b=lYn5QAbbuOgCVzO0wK72zGcGg
+        mQTVtUtKdl4KYiJHp4I5I3FXK/6FWZhfra4tUuTFV7QC78oDUm8NKzHIrgasl+8sbPlrCdG0T67u3
+        kgAQ57kaMp3R3h1Z+mwXZn4SMTDknO5FcjPcWJhT6kEGYu4yyJ+8h7G98UfdWJKrqUQljjAF2xpQv
+        RhfjlbJLk4dNosXzbNYjYOLiCEP2PZWfBnLjpu5EMP/cgJOBC3HTYk0zTcErIw08z7ffMbdnD/r09
+        tSSlveUJqScNNE8ME81M1Rd4A954YOsGafxeRRIk7ktZ64V53SmN+UKMgMG5kfHDds764Ihn7lkwx
+        SsNl980Fw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iaLym-0005vg-OI; Thu, 28 Nov 2019 15:45:16 +0000
+Date:   Thu, 28 Nov 2019 07:45:16 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Richard Weinberger <richard@nod.at>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org
+Subject: Re: [PATCH] fs: Fix page_mkwrite off-by-one errors
+Message-ID: <20191128154516.GA17166@infradead.org>
+References: <20191127151811.9229-1-agruenba@redhat.com>
+ <20191127154954.GT6219@magnolia>
 MIME-Version: 1.0
-References: <0000000000009f46d4059863fdea@google.com> <71b86056-944f-c5e1-b4cf-35833a82761c@kernel.dk>
-In-Reply-To: <71b86056-944f-c5e1-b4cf-35833a82761c@kernel.dk>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 28 Nov 2019 16:29:03 +0100
-Message-ID: <CAG48ez09ZN2v2rTvnSgybrZu7BAa28vcnkcOU=Z7549rbpqz1A@mail.gmail.com>
-Subject: Re: INFO: trying to register non-static key in io_cqring_overflow_flush
-To:     Jens Axboe <axboe@kernel.dk>,
-        syzbot <syzbot+be9e13497969768c0e6e@syzkaller.appspotmail.com>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191127154954.GT6219@magnolia>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 28, 2019 at 4:19 PM Jens Axboe <axboe@kernel.dk> wrote:
-> On 11/28/19 12:35 AM, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:    d7688697 Merge tag 'for-linus' of git://git.kernel.org/pub..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=145e5fcee00000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=12f2051e3d8cdb3f
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=be9e13497969768c0e6e
-> > compiler:       clang version 9.0.0 (/home/glider/llvm/clang
-> > 80fee25776c2fb61e74c1ecb1a523375c2500b69)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=146c517ae00000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16550b12e00000
-> >
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+be9e13497969768c0e6e@syzkaller.appspotmail.com
->
-> This is the same as:
->
-> syzbot+0d818c0d39399188f393@syzkaller.appspotmail.com
+On Wed, Nov 27, 2019 at 07:49:54AM -0800, Darrick J. Wong wrote:
+> On Wed, Nov 27, 2019 at 04:18:11PM +0100, Andreas Gruenbacher wrote:
+> > Fix a check in block_page_mkwrite meant to determine whether an offset
+> > is within the inode size.  This error has spread to several filesystems
+> > and to iomap_page_mkwrite, so fix those instances as well.
+> 
+> Seeing how this has gotten screwed up at least six times in the kernel,
+> maybe we need a static inline helper to do this for us?
 
-syzbot listens to specific commands, see
-<https://github.com/google/syzkaller/blob/master/docs/syzbot.md#status>
-(linked in the report):
+Yes.  I think we really want a little helper that checks the mapping
+and the offset.  That also gives us the opportunity to document the
+semantics.
 
-#syz dup: INFO: trying to register non-static key in io_cqring_ev_posted
+> 
+> > Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+> 
+> The iomap part looks ok,
+> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+> 
+> (I might just extract the iomap part and put it in the iomap tree if
+> someone doesn't merge this one before I get to it...)
+
+I think we should just pull in the helper and conversions through
+some tree after all iomap bits are merged.  It might as well be
+the iomap tree as that seems to the place for file system read/write
+infrastructure these days.
