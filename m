@@ -2,102 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E505010C45D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2019 08:38:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 460F310C466
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2019 08:42:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727301AbfK1HiA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Nov 2019 02:38:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58324 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727142AbfK1HiA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Nov 2019 02:38:00 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8EA9F21736;
-        Thu, 28 Nov 2019 07:37:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574926678;
-        bh=cOkm7TWMCJ+gUlFjEYNdlFcXOzFTCWmQpq+5HclC0/Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bMbaOFimZ3QPj3fps1kS64u0fJxrxH1n/Ny7wM6A02u8689pkuD9JcLpWvACL7xdn
-         dW8eZO12e28H8VwReMK58nmoZyD6r+wEzxToFCGBzj0JFBWUbzEQcFUqgg3ROoACX5
-         TO+nkCucGNAY5WxyyEDjXGMvji+Jb3k3BdtGtJqo=
-Date:   Thu, 28 Nov 2019 08:36:23 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        jouni.hogander@unikie.com, "David S. Miller" <davem@davemloft.net>,
-        lukas.bulwahn@gmail.com
-Subject: Re: [PATCH 4.19 000/306] 4.19.87-stable review
-Message-ID: <20191128073623.GE3317872@kroah.com>
-References: <20191127203114.766709977@linuxfoundation.org>
- <CA+G9fYuAY+14aPiRVUcXLbsr5zJ-GLjULX=s9jcGWcw_vb5Kzw@mail.gmail.com>
+        id S1726656AbfK1Hmr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Nov 2019 02:42:47 -0500
+Received: from mail-il1-f179.google.com ([209.85.166.179]:34407 "EHLO
+        mail-il1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbfK1Hmr (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 28 Nov 2019 02:42:47 -0500
+Received: by mail-il1-f179.google.com with SMTP id p6so23446011ilp.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Nov 2019 23:42:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=pD/mTkWcKezUCQxY5cso9hi2rhVzk4pk/wrhuo+DIQA=;
+        b=UcgWqxVvSWYY8FEkGu0uUNoKegVaLEauuw3ZD/Gn19/Y9rZ30sf+5P8PMpiO3G+8r9
+         8/hqHRaHVcJHRzMMwyDhaKcDydhbmsk0GI7XxzIUOg8rU50/eNOEwl+Q8xRBppbHH4Dj
+         0AxrQKPNxSaX0nWNEOnMk8GzhX2vICbxeQNlg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=pD/mTkWcKezUCQxY5cso9hi2rhVzk4pk/wrhuo+DIQA=;
+        b=qt7uxXkn6EnjS3PxW6/e7m3+2ZJ73Ha8g1MGajSAM22k2wqinHKF35Z52lt6XpAPR5
+         o4d+ucDPYVm8fND//d/4D9GcsAyL6bszIdfSxEYsCriGalmsmeFLGQD1y6qwB4JgeIf8
+         gLTEAaIKLnnpS6nexW/UJPDVYDTpZZvaDNAXGqGBXeQiKviBGi0F0UrWNBvAIWdy7Scm
+         OcWLYxofxDVS4UpC8/L5MRLdtubh22nFq4tu5WJpWNZZbavhiWvLosYNqHU9ljdnCQkv
+         jS2q8k0NNMHBr/tDAfMzUeJQFgiHyNUf7WBOfc3/qXi62ccXnM/7HxHGK6MrwNEQrq/w
+         Te4g==
+X-Gm-Message-State: APjAAAUjhpKlca7SiFL60mZt80YejsY5V9BPGRIn5DCynl43Ncy3HjK1
+        Xn668KcnfkoWBNSbOSv4zzYThMvHvsg6o2Vg34+KNw==
+X-Google-Smtp-Source: APXvYqwOStMjl4lyL8tZ8r17cZjGYSF4W86pzI2nHec3NvEKDE1vr6JL3YzvuA/dybzcvr9iiGWBWQtUSYRr0cp4gcU=
+X-Received: by 2002:a92:320f:: with SMTP id z15mr29924285ile.252.1574926964737;
+ Wed, 27 Nov 2019 23:42:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYuAY+14aPiRVUcXLbsr5zJ-GLjULX=s9jcGWcw_vb5Kzw@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+References: <8736e9d5p4.fsf@vostro.rath.org> <CAJfpegtOf6mV4m3W1v2N8eOD-ep=tFOhKDCFk+-M3=tzc7wVig@mail.gmail.com>
+ <87muchyrct.fsf@vostro.rath.org>
+In-Reply-To: <87muchyrct.fsf@vostro.rath.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 28 Nov 2019 08:42:33 +0100
+Message-ID: <CAJfpegsZBLZ=w_tsk8AzV-kcmu0_PpfP86G9tuEnyuP+-19r-Q@mail.gmail.com>
+Subject: Re: [fuse-devel] Handling of 32/64 bit off_t by getdents64()
+To:     Miklos Szeredi <miklos@szeredi.hu>,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 28, 2019 at 12:23:41PM +0530, Naresh Kamboju wrote:
-> On Thu, 28 Nov 2019 at 02:25, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
+On Wed, Nov 27, 2019 at 9:52 PM Nikolaus Rath <Nikolaus@rath.org> wrote:
+>
+> On Nov 27 2019, Miklos Szeredi <miklos@szeredi.hu> wrote:
+> >> Is there a way for a 64 bit process (in this case the FUSE daemon) to
+> >> ask for 32 bit d_off values from getdents64()?
 > >
-> > This is the start of the stable review cycle for the 4.19.87 release.
-> > There are 306 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
+> > Looking at ext4 d_off encoding, it looks like the simple workaround is
+> > to use the *high* 32 bits of the offset.
 > >
-> > Responses should be made by Fri, 29 Nov 2019 20:18:09 +0000.
-> > Anything received after that time might be too late.
+> > Just tried, and this works.  The lower bits are the "minor" number of
+> > the offset, and no issue with zeroing those bits out, other than
+> > increasing the chance of hash collision from practically zero to very
+> > close to zero.
 > >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.87-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> > and the diffstat can be found below.
+> >> Would it be feasible to extend the FUSE protocol to include information
+> >> about the available bits in d_off?
 > >
-> > thanks,
+> > Yes.
 > >
-> > greg k-h
-> 
-> Kernel BUG noticed on x86_64 device while booting 4.19.87-rc1 kernel.
-> 
-> The problematic patch is,
-> 
-> > Jouni Hogander <jouni.hogander@unikie.com>
-> >     net-sysfs: Fix reference count leak in rx|netdev_queue_add_kobject
-> 
-> And this kernel panic is been fixed by below patch,
-> 
-> commit 48a322b6f9965b2f1e4ce81af972f0e287b07ed0
-> Author: Eric Dumazet <edumazet@google.com>
-> Date:   Wed Nov 20 19:19:07 2019 -0800
-> 
->     net-sysfs: fix netdev_queue_add_kobject() breakage
-> 
->     kobject_put() should only be called in error path.
-> 
->     Fixes: b8eb718348b8 ("net-sysfs: Fix reference count leak in
-> rx|netdev_queue_add_kobject")
->     Signed-off-by: Eric Dumazet <edumazet@google.com>
->     Cc: Jouni Hogander <jouni.hogander@unikie.com>
->     Signed-off-by: David S. Miller <davem@davemloft.net>
+> > The relevant bits from ext4 are:
+> >
+> > static inline int is_32bit_api(void)
+> > {
+> > #ifdef CONFIG_COMPAT
+> >     return in_compat_syscall();
+> > #else
+> >     return (BITS_PER_LONG == 32);
+> > #endif
+> > }
+>
+> Thanks for the quick response!
+>
+> Is there a way to do the same without relying on ext4 internals, i.e. by
+> manually calling getdents64() in such a way that in_compat_syscall()
+> gives true even if the caller is 64 bit?
 
-Now queued up, I'll push out -rc2 versions with this fix.
+Generally that's not doable.   Might be able to do a 32bit syscall
+specifically on x86_64, but I don't know the details.
 
-greg k-h
+Thanks,
+Miklos
