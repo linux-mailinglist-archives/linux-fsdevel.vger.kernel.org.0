@@ -2,245 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C58210CB29
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2019 16:01:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A96EE10CB98
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Nov 2019 16:18:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726934AbfK1PAn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Nov 2019 10:00:43 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:39048 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726715AbfK1PAm (ORCPT
+        id S1726610AbfK1PSd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Nov 2019 10:18:33 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:33448 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726556AbfK1PSd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Nov 2019 10:00:42 -0500
-Received: by mail-vs1-f67.google.com with SMTP id x21so17637171vsp.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Nov 2019 07:00:41 -0800 (PST)
+        Thu, 28 Nov 2019 10:18:33 -0500
+Received: by mail-pg1-f193.google.com with SMTP id 6so8510452pgk.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Nov 2019 07:18:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6crMzgWteZyK/LvENyZ4por3Dhew5CTRDJGapKLhnQY=;
-        b=VHHtMiQQ4bK0STpBXMd2GN/M4ves8ZndW0AafUdme1nrqgJEBh6ygmxqWF2sOp+BWH
-         2J3J1WPS0Pkj21DTv3+f+b6/M9CwZ2dH4DgtP4cFFI85JIQZcolUgj0wqMQu+1T3ZDQM
-         2EI7+wdTAI1L7N2Rx9AFMY7q0C49Bunti+9AUuF3DEKKWK16iorqiQS9s0oIqz9OTWT4
-         ELvXEgfjQMhNXa4RyamemFTJRlmebEuhKCn2MiFBFXhGGUTo958FN8W4MqA1rC3Dyso8
-         VU3pXdhfifM18j47kHWtHzD4zGN3+9gWD4WPPCmVJxzQBxldOxRvPEZ8Yg6ABqqNPJQj
-         8f0g==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=Vz09qS99hyvV+5cErCqS+LojQyYSm3WMnbpZQwjAQlI=;
+        b=ghfm9r4DFsb5fHfnc7g/ko5YJHWygsZv/hcBNlfcXpfFlyQiVMMlre6OpoJDyEbw8K
+         Q4sx8HPS+CiM/ZpJ+APk4eKAqEJdDWSNmB43GmpDJ2+LW2A6DEpKnbHxBp3ijXaGOWv1
+         sktDV5DC+ccHnARwl9EStR4Br0fwqX9bBHQ3155uy+xUB+yjfSKRPk+OXL9F4r2zywkW
+         P8unVis3ScqzW8ZAzsZjRCAwHisRBGEVzMhrlcVt0djct49hzEi8VnFkkOzL13FVWu8Z
+         /Xf0LC/h6I0YVUE+R5LoIKId8sa2tAaRzgk8TFvP5/nwRTjhbQ1Q7OZyviiab8oW8gJb
+         JCOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6crMzgWteZyK/LvENyZ4por3Dhew5CTRDJGapKLhnQY=;
-        b=AM/tfNXii8nhpxVbUwUAhuiF9WE7EzjXaCXuHTiQuAYkIbvqaNKuG2/9S4zFCBnW7a
-         9DjXojUiFOPBmGf4zJnuNDgiJ1CY1AgeTYZewr1G0f1ByaMX/zfzOelQuZVakyhW2bNX
-         G99Bj7bcNQocD9Pxsq02pKlg2bv2/8f2hJ20RX92Bu9U8RN0ZD2eClyfDp0+/pDRLVUP
-         jOENU0JZVSxEOxH2ckxkwANLstpDh4HUZ3z0aXBkbO4uHvNWoCiyO0ezYk0xziNU8/nn
-         r4dLKJrw3XhHApB9bhNOFHcfticz7mFr3Ab+0SHvCAxiscyozUw0/49A0wC4EYLYRDS2
-         RG0A==
-X-Gm-Message-State: APjAAAUbOC+T8p67oNe0R2j6bGoISFw/H5fmKqBkoeR99/QbnWqWuJj3
-        6ZSNRoRIUK3iK/N2O2L4Tq2TVUMN5kzA1OKg97876jq/Wky+QA==
-X-Google-Smtp-Source: APXvYqxX+wbMarx3ZSOsmQ8rZj5Wam/g7UMR/qUFIdtTo05aHjWJICb9sOss+pW6SYuNfjnkfnH1sOv4hoSNuUgO8Bw=
-X-Received: by 2002:a67:e411:: with SMTP id d17mr8594255vsf.158.1574953240652;
- Thu, 28 Nov 2019 07:00:40 -0800 (PST)
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Vz09qS99hyvV+5cErCqS+LojQyYSm3WMnbpZQwjAQlI=;
+        b=P03F1sMVP+nLJU8Rq6Qnmr4toK+H+LiFlx38OtlnEtE8V61Vr25u0EJTum93MUQE63
+         0OaQVj6xEntHrAR2xCnsA2RowUiP8i3Fc5Ui9/B52GI0s4ypIU6IxrJQgf1E4cune5mq
+         0M/p3pQhkx1VB4dju5SFfdzvrWHAR/d9akAfhHT9tWexll5UBF6jbhLMoGWWGMmoyQbl
+         ukgiQhUyIeWjDEzybszuk/6UJq+/xgiO7vVkG6pIMRI9IEqEMl4YAJLt0BoF3gsqafTX
+         y3an88Jwrf9aL4nyAQAuXuYM1U7V8hgK+iNWVcoIk8fV8Pf6FbZRu/Uqzi6jd8LkNzHF
+         zFyw==
+X-Gm-Message-State: APjAAAUp+6Hj0ZpT11ThQd/JddD6FSbST8sTy5nJfZtBXMoU5KwSAlVF
+        7JtjLNXA/7M1dd9NaCsi9WL+MA==
+X-Google-Smtp-Source: APXvYqzDYfEjpOkxYsikOF3AlK0ttrBHAuqSaebABsl7aoIPyBRlEbusIMhiOewSWE05ceC8nHS3UA==
+X-Received: by 2002:a65:6815:: with SMTP id l21mr11337032pgt.283.1574954312463;
+        Thu, 28 Nov 2019 07:18:32 -0800 (PST)
+Received: from ?IPv6:2605:e000:100e:8c61:bc69:2e63:573c:4afd? ([2605:e000:100e:8c61:bc69:2e63:573c:4afd])
+        by smtp.gmail.com with ESMTPSA id w2sm21460471pgm.18.2019.11.28.07.18.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Nov 2019 07:18:31 -0800 (PST)
+Subject: Re: INFO: trying to register non-static key in
+ io_cqring_overflow_flush
+To:     syzbot <syzbot+be9e13497969768c0e6e@syzkaller.appspotmail.com>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+References: <0000000000009f46d4059863fdea@google.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <71b86056-944f-c5e1-b4cf-35833a82761c@kernel.dk>
+Date:   Thu, 28 Nov 2019 07:18:28 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-References: <20191126185018.8283-1-hubcap@kernel.org>
-In-Reply-To: <20191126185018.8283-1-hubcap@kernel.org>
-From:   Mike Marshall <hubcap@omnibond.com>
-Date:   Thu, 28 Nov 2019 10:00:28 -0500
-Message-ID: <CAOg9mSQLR0G7aUU-X_=FpvC3B=j0qf5SR00728JaWo=BvYBCUA@mail.gmail.com>
-Subject: Re: [PATCH V3] orangefs: posix open permission checking...
-To:     hubcap@kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <0000000000009f46d4059863fdea@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Happy Thanksgiving everyone...
+On 11/28/19 12:35 AM, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    d7688697 Merge tag 'for-linus' of git://git.kernel.org/pub..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=145e5fcee00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=12f2051e3d8cdb3f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=be9e13497969768c0e6e
+> compiler:       clang version 9.0.0 (/home/glider/llvm/clang
+> 80fee25776c2fb61e74c1ecb1a523375c2500b69)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=146c517ae00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16550b12e00000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+be9e13497969768c0e6e@syzkaller.appspotmail.com
 
-I wish I only used UID 0 when necessary. I changed my
-code like this:
+This is the same as:
 
--       if ((type == ORANGEFS_IO_WRITE) && open_for_write)
--               new_op->upcall.uid = 0;
--       if ((type == ORANGEFS_IO_READ) && open_for_read)
--               new_op->upcall.uid = 0;
-+       if ((type == ORANGEFS_IO_WRITE) && open_for_write) {
-+               if (inode_permission(inode, MAY_WRITE))
-+                       new_op->upcall.uid = 0;
-+       }
-+       if ((type == ORANGEFS_IO_READ) && open_for_read) {
-+               if (inode_permission(inode, MAY_READ))
-+                       new_op->upcall.uid = 0;
-+       }
+syzbot+0d818c0d39399188f393@syzkaller.appspotmail.com
 
-At first this seems to work, then, whatever process is using my
-filesystem wedges up... nothing in dmesg, nothing in the orangefs
-userspace logs... vim on a /pvfsmnt/file does it every time, open
-a new line and the whole terminal's locked up. If you strace the vim pid,
-that locks up :-) ... I've watched ftrace output while this is happening,
-inode_permission sure does call orangefs_permission a whole bunch of times.
+which is fixed by eb065d301e8c83643367bdb0898becc364046bda in my
+for-5.5/io_uring-post branch, which will go upstream soon. Letting
+you know so we don't have duplicate entries for this one.
 
-Anywho... I think inode_permission will return 0 when I can read
-(or write) and non-zero when I can't. I'll be trying to figure out
-what is happening, if anyone here sees right off how I might be
-mis-using inode_permission, please let me know...
+-- 
+Jens Axboe
 
--Mike
-
-On Tue, Nov 26, 2019 at 1:50 PM <hubcap@kernel.org> wrote:
->
-> From: Mike Marshall <hubcap@omnibond.com>
->
-> Here's another version that is hopefully closer to
-> usable...
->
->  Orangefs has no open, and orangefs checks file permissions
->  on each file access. Posix requires that file permissions
->  be checked on open and nowhere else. Orangefs-through-the-kernel
->  needs to seem posix compliant.
->
->  The VFS opens files, even if the filesystem provides no
->  method. We can see if a file was successfully opened for
->  read and or for write by looking at file->f_mode.
->
->  When writes are flowing from the page cache, file is no
->  longer available. We can trust the VFS to have checked
->  file->f_mode before writing to the page cache.
->
->  The mode of a file might change between when it is opened
->  and IO commences, or it might be created with an arbitrary mode.
->
->  We'll make sure we don't hit EACCES during the IO stage by
->  using UID 0. Some of the time we have access without changing
->  to UID 0 - how to check?
->
-> Signed-off-by: Mike Marshall <hubcap@omnibond.com>
-> ---
->  fs/orangefs/file.c            | 39 +++++++++++++++++++++++++++++++++--
->  fs/orangefs/inode.c           |  8 +++----
->  fs/orangefs/orangefs-kernel.h |  3 ++-
->  3 files changed, 43 insertions(+), 7 deletions(-)
->
-> diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
-> index a5612abc0936..c740159d9ad1 100644
-> --- a/fs/orangefs/file.c
-> +++ b/fs/orangefs/file.c
-> @@ -46,8 +46,9 @@ static int flush_racache(struct inode *inode)
->   * Post and wait for the I/O upcall to finish
->   */
->  ssize_t wait_for_direct_io(enum ORANGEFS_io_type type, struct inode *inode,
-> -    loff_t *offset, struct iov_iter *iter, size_t total_size,
-> -    loff_t readahead_size, struct orangefs_write_range *wr, int *index_return)
-> +       loff_t *offset, struct iov_iter *iter, size_t total_size,
-> +       loff_t readahead_size, struct orangefs_write_range *wr,
-> +       int *index_return, struct file *file)
->  {
->         struct orangefs_inode_s *orangefs_inode = ORANGEFS_I(inode);
->         struct orangefs_khandle *handle = &orangefs_inode->refn.khandle;
-> @@ -55,6 +56,8 @@ ssize_t wait_for_direct_io(enum ORANGEFS_io_type type, struct inode *inode,
->         int buffer_index;
->         ssize_t ret;
->         size_t copy_amount;
-> +       int open_for_read;
-> +       int open_for_write;
->
->         new_op = op_alloc(ORANGEFS_VFS_OP_FILE_IO);
->         if (!new_op)
-> @@ -90,6 +93,38 @@ ssize_t wait_for_direct_io(enum ORANGEFS_io_type type, struct inode *inode,
->                 new_op->upcall.uid = from_kuid(&init_user_ns, wr->uid);
->                 new_op->upcall.gid = from_kgid(&init_user_ns, wr->gid);
->         }
-> +       /*
-> +        * Orangefs has no open, and orangefs checks file permissions
-> +        * on each file access. Posix requires that file permissions
-> +        * be checked on open and nowhere else. Orangefs-through-the-kernel
-> +        * needs to seem posix compliant.
-> +        *
-> +        * The VFS opens files, even if the filesystem provides no
-> +        * method. We can see if a file was successfully opened for
-> +        * read and or for write by looking at file->f_mode.
-> +        *
-> +        * When writes are flowing from the page cache, file is no
-> +        * longer available. We can trust the VFS to have checked
-> +        * file->f_mode before writing to the page cache.
-> +        *
-> +        * The mode of a file might change between when it is opened
-> +        * and IO commences, or it might be created with an arbitrary mode.
-> +        *
-> +        * We'll make sure we don't hit EACCES during the IO stage by
-> +        * using UID 0. Some of the time we have access without changing
-> +        * to UID 0 - how to check?
-> +        */
-> +       if (file) {
-> +               open_for_write = file->f_mode & FMODE_WRITE;
-> +               open_for_read = file->f_mode & FMODE_READ;
-> +       } else {
-> +               open_for_write = 1;
-> +               open_for_read = 0; /* not relevant? */
-> +       }
-> +       if ((type == ORANGEFS_IO_WRITE) && open_for_write)
-> +               new_op->upcall.uid = 0;
-> +       if ((type == ORANGEFS_IO_READ) && open_for_read)
-> +               new_op->upcall.uid = 0;
->
->         gossip_debug(GOSSIP_FILE_DEBUG,
->                      "%s(%pU): offset: %llu total_size: %zd\n",
-> diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-> index efb12197da18..961c0fd8675a 100644
-> --- a/fs/orangefs/inode.c
-> +++ b/fs/orangefs/inode.c
-> @@ -55,7 +55,7 @@ static int orangefs_writepage_locked(struct page *page,
->         iov_iter_bvec(&iter, WRITE, &bv, 1, wlen);
->
->         ret = wait_for_direct_io(ORANGEFS_IO_WRITE, inode, &off, &iter, wlen,
-> -           len, wr, NULL);
-> +           len, wr, NULL, NULL);
->         if (ret < 0) {
->                 SetPageError(page);
->                 mapping_set_error(page->mapping, ret);
-> @@ -126,7 +126,7 @@ static int orangefs_writepages_work(struct orangefs_writepages *ow,
->         wr.uid = ow->uid;
->         wr.gid = ow->gid;
->         ret = wait_for_direct_io(ORANGEFS_IO_WRITE, inode, &off, &iter, ow->len,
-> -           0, &wr, NULL);
-> +           0, &wr, NULL, NULL);
->         if (ret < 0) {
->                 for (i = 0; i < ow->npages; i++) {
->                         SetPageError(ow->pages[i]);
-> @@ -311,7 +311,7 @@ static int orangefs_readpage(struct file *file, struct page *page)
->         iov_iter_bvec(&iter, READ, &bv, 1, PAGE_SIZE);
->
->         ret = wait_for_direct_io(ORANGEFS_IO_READ, inode, &off, &iter,
-> -           read_size, inode->i_size, NULL, &buffer_index);
-> +           read_size, inode->i_size, NULL, &buffer_index, file);
->         remaining = ret;
->         /* this will only zero remaining unread portions of the page data */
->         iov_iter_zero(~0U, &iter);
-> @@ -651,7 +651,7 @@ static ssize_t orangefs_direct_IO(struct kiocb *iocb,
->                              (int)*offset);
->
->                 ret = wait_for_direct_io(type, inode, offset, iter,
-> -                               each_count, 0, NULL, NULL);
-> +                               each_count, 0, NULL, NULL, file);
->                 gossip_debug(GOSSIP_FILE_DEBUG,
->                              "%s(%pU): return from wait_for_io:%d\n",
->                              __func__,
-> diff --git a/fs/orangefs/orangefs-kernel.h b/fs/orangefs/orangefs-kernel.h
-> index 34a6c99fa29b..ed67f39fa7ce 100644
-> --- a/fs/orangefs/orangefs-kernel.h
-> +++ b/fs/orangefs/orangefs-kernel.h
-> @@ -398,7 +398,8 @@ bool __is_daemon_in_service(void);
->   */
->  int orangefs_revalidate_mapping(struct inode *);
->  ssize_t wait_for_direct_io(enum ORANGEFS_io_type, struct inode *, loff_t *,
-> -    struct iov_iter *, size_t, loff_t, struct orangefs_write_range *, int *);
-> +    struct iov_iter *, size_t, loff_t, struct orangefs_write_range *, int *,
-> +    struct file *);
->  ssize_t do_readv_writev(enum ORANGEFS_io_type, struct file *, loff_t *,
->      struct iov_iter *);
->
-> --
-> 2.20.1
->
