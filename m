@@ -2,122 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A1D010D006
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2019 00:57:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4751210D008
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2019 00:59:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbfK1X5M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Nov 2019 18:57:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49982 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726582AbfK1X5M (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Nov 2019 18:57:12 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 030D72081B;
-        Thu, 28 Nov 2019 23:57:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574985431;
-        bh=edWTwfLQ26x6fZFRXwo6KBhZijf9kYSEdQlEERXKrSQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=NVcVIS57ikz6SpW1WqeyHONWoRdStFvstxZVI01EQAqQJbvtwRejZW+x2neD9GeFR
-         I7sDkkyO3fvwtWjmUso1ZTAQtQjynpAdPRLBFU3obfB84m6T+89a7W2HjeOwbA1HF7
-         WwKtRRxx2sssqcSLKILKspdWPBWRcwDeiOURoaDw=
-Subject: Re: [PATCH 4.19 000/306] 4.19.87-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        jouni.hogander@unikie.com, "David S. Miller" <davem@davemloft.net>,
-        lukas.bulwahn@gmail.com, shuah <shuah@kernel.org>
-References: <20191127203114.766709977@linuxfoundation.org>
- <CA+G9fYuAY+14aPiRVUcXLbsr5zJ-GLjULX=s9jcGWcw_vb5Kzw@mail.gmail.com>
- <20191128073623.GE3317872@kroah.com>
- <b4e6e9df-7334-763a-170a-6758916f420a@kernel.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <ad21dd80-ac0c-a6c0-5e17-0814121bd33e@kernel.org>
-Date:   Thu, 28 Nov 2019 16:57:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1726641AbfK1X7s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Nov 2019 18:59:48 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:42125 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726582AbfK1X7s (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 28 Nov 2019 18:59:48 -0500
+Received: by mail-qt1-f196.google.com with SMTP id j5so5536785qtq.9;
+        Thu, 28 Nov 2019 15:59:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hQwL4adBgXITc3PkYkwHn1sVmJQxAI5c44/ZAMQ909k=;
+        b=SzvDGgqDbhXRLCNx2yAvCitr/MeJnBLqu0VZWKbEKIIM6e/tradTFioO2kNcvyLsDS
+         N1GjfKiKATmESqzIG7MV0zf+Ge17s3lu8rITgQzXVgMQDvZ7/L80K/eSJeNsAmbp7g6C
+         Rp5dEWUc98LpgXd+0f6qCXoBTHbIhl2BKWCIo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hQwL4adBgXITc3PkYkwHn1sVmJQxAI5c44/ZAMQ909k=;
+        b=dt318LtLLdBMtoneHQtMnKSbW+2Kpt+ioUQOtfRRvH1Bae0otyKNPD+kFhgOGNVymk
+         wgnJsFbtNPHJfH+KqGg0BbWqDJzzoJUpthATYKDZ03GaAEKENm2RekZXAZvo3JtYhUPh
+         dkge/z588b9oTr69wSev/nz9fQmQ78u5E50PCImiP3w/5aTvgKgmcePS1FzEwcPg/Vb4
+         mssbDua1P7rwP4s3rGbpW18aZFDq+7u7ftMfhXz3Cqw/vcPE7AnonIzrRDGLQdx6sqep
+         g5LobTXEjrd4NHNuJ/5tE3JmobM3iLZHRlmbaqZzIvra+7qmAKSMm7G/pFkNHlfxAHji
+         0/Fg==
+X-Gm-Message-State: APjAAAWIuzw5be8bS/naqRqw6OCjP0vk92Kxlb8oCXN9SAzciqyyONfc
+        VpmcwUlTyrkIA6Rc1SSlOuTePqvSu3k5hOnHZRg=
+X-Google-Smtp-Source: APXvYqzXePwMmNs55hixBu4+IfrZ4gkETYPVrExEHD2UWD0h2FOIELUjUmdNdLDG9KQCXq8x8FQZdxVZh7rv0QNJ1Yc=
+X-Received: by 2002:ac8:7292:: with SMTP id v18mr1945327qto.169.1574985585624;
+ Thu, 28 Nov 2019 15:59:45 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <b4e6e9df-7334-763a-170a-6758916f420a@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <156950767876.30879.17024491763471689960.stgit@warthog.procyon.org.uk>
+ <f34aaf61-955a-7867-ef93-f22d3d8732c3@cogentembedded.com> <CA+EcR22=7F7X-9qYXb94dAp6w0_3FoKJPMRhFht+VWgKonoing@mail.gmail.com>
+ <2758feea-8d6e-c690-5cac-d42213f2024b@huawei.com>
+In-Reply-To: <2758feea-8d6e-c690-5cac-d42213f2024b@huawei.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Thu, 28 Nov 2019 23:59:33 +0000
+Message-ID: <CACPK8Xcv=sm94jA7+g144TMUpy=t=0juKochCvkb2AcG9e-u-g@mail.gmail.com>
+Subject: Re: [PATCH] jffs2: Fix mounting under new mount API
+To:     Hou Tao <houtao1@huawei.com>
+Cc:     Han Xu <xhnjupt@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        viro@zeniv.linux.org.uk,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Jeffery <andrew@aj.id.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/28/19 8:56 AM, shuah wrote:
-> On 11/28/19 12:36 AM, Greg Kroah-Hartman wrote:
->> On Thu, Nov 28, 2019 at 12:23:41PM +0530, Naresh Kamboju wrote:
->>> On Thu, 28 Nov 2019 at 02:25, Greg Kroah-Hartman
->>> <gregkh@linuxfoundation.org> wrote:
->>>>
->>>> This is the start of the stable review cycle for the 4.19.87 release.
->>>> There are 306 patches in this series, all will be posted as a response
->>>> to this one.  If anyone has any issues with these being applied, please
->>>> let me know.
->>>>
->>>> Responses should be made by Fri, 29 Nov 2019 20:18:09 +0000.
->>>> Anything received after that time might be too late.
->>>>
->>>> The whole patch series can be found in one patch at:
->>>>          
->>>> https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.87-rc1.gz 
->>>>
->>>> or in the git tree and branch at:
->>>>          
->>>> git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git 
->>>> linux-4.19.y
->>>> and the diffstat can be found below.
->>>>
->>>> thanks,
->>>>
->>>> greg k-h
->>>
->>> Kernel BUG noticed on x86_64 device while booting 4.19.87-rc1 kernel.
->>>
->>> The problematic patch is,
->>>
->>>> Jouni Hogander <jouni.hogander@unikie.com>
->>>>      net-sysfs: Fix reference count leak in rx|netdev_queue_add_kobject
->>>
->>> And this kernel panic is been fixed by below patch,
->>>
->>> commit 48a322b6f9965b2f1e4ce81af972f0e287b07ed0
->>> Author: Eric Dumazet <edumazet@google.com>
->>> Date:   Wed Nov 20 19:19:07 2019 -0800
->>>
->>>      net-sysfs: fix netdev_queue_add_kobject() breakage
->>>
->>>      kobject_put() should only be called in error path.
->>>
->>>      Fixes: b8eb718348b8 ("net-sysfs: Fix reference count leak in
->>> rx|netdev_queue_add_kobject")
->>>      Signed-off-by: Eric Dumazet <edumazet@google.com>
->>>      Cc: Jouni Hogander <jouni.hogander@unikie.com>
->>>      Signed-off-by: David S. Miller <davem@davemloft.net>
->>
->> Now queued up, I'll push out -rc2 versions with this fix.
->>
->> greg k-h
->>
-> 
-> Ran into this on my test system. I will try rc2.
-> 
+On Thu, 14 Nov 2019 at 12:05, Hou Tao <houtao1@huawei.com> wrote:
+>
+> Hi,
+>
+> On 2019/11/14 4:38, Han Xu wrote:
+> > Tested the JFFS2 on 5.4 kernel as the instruction said, still got some
+> > errors, any ideas?
+> >
+>
+> >
+> > With the patch,
+> >
+> > root@imx8mmevk:~# cat /proc/mtd
+> > dev:    size   erasesize  name
+> > mtd0: 00400000 00020000 "mtdram test device"
+> > mtd1: 04000000 00020000 "5d120000.spi"
+> > root@imx8mmevk:~# mtd_debug info /dev/mtd0
+> > mtd.type = MTD_RAM
+> > mtd.flags = MTD_CAP_RAM
+> > mtd.size = 4194304 (4M)
+> > mtd.erasesize = 131072 (128K)
+> > mtd.writesize = 1
+> > mtd.oobsize = 0
+> > regions = 0
+> >
+> > root@imx8mmevk:~# flash_erase /dev/mtd0 0 0
+> > Erasing 128 Kibyte @ 3e0000 -- 100 % complete
+> > root@imx8mmevk:~# mount -t jffs2 /dev/mtdblock0 test_dir/
+> > root@imx8mmevk:~# mount
+> > /dev/mtdblock0 on /home/root/test_dir type jffs2 (rw,relatime)
+> >
+> > BUT, it's not writable.
+>
+> You should revert the following commit to make it work:
+>
+> commit f2538f999345405f7d2e1194c0c8efa4e11f7b3a
+> Author: Jia-Ju Bai <baijiaju1990@gmail.com>
+> Date:   Wed Jul 24 10:46:58 2019 +0800
+>
+>     jffs2: Fix possible null-pointer dereferences in jffs2_add_frag_to_fragtree()
+>
+> The revert needs to get into v5.4. Maybe Richard has forget about it ?
 
-rc2 worked for me.
+I hit this today. The error I saw was:
 
-thanks,
--- Shuah
+[    4.975868] jffs2: error: (77) jffs2_build_inode_fragtree: Add node
+to tree failed -22
+[    4.983923] jffs2: error: (77) jffs2_do_read_inode_internal: Failed
+to build final fragtree for inode #5377: error -22
+[    4.994709] jffs2: Returned error for crccheck of ino #5377. Expect
+badness...
 
+Reverting the f2538f999345 commit fixed things.
+
+Is the revert queued for stable?
+
+Cheers,
+
+Joel
