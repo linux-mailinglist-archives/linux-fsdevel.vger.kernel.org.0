@@ -2,196 +2,238 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDDD510D0A8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2019 04:35:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F00010D0B0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2019 04:40:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbfK2DfV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Nov 2019 22:35:21 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39756 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726764AbfK2DfV (ORCPT
+        id S1726800AbfK2DkJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Nov 2019 22:40:09 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:44139 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726773AbfK2DkJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Nov 2019 22:35:21 -0500
-Received: by mail-wm1-f67.google.com with SMTP id s14so6658248wmh.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Nov 2019 19:35:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=javigon-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=QJ0BehjFJkWJyP8RtCONd9xszCsERb/O9WmeExTQd5k=;
-        b=QfkEgP0LSNnXnXJcK7sI02htl820DB5bfsY47OwRNyzmGbQX/PzK/FxsZx3bI28akq
-         LeDtDTO+1gBXwVGMvLEnATIxv7qa7CjbeB0ls0dcWEM78aKuIiAPgr2fcnEL7efCNIgQ
-         KsbuiUjKC4h/6cCfw7Y+LWD+RHGWQS35wN2Dlb/F+3qx7SbAInmdwnRtQgCF33LeVFby
-         RmHDDK6gVQpiZb+mqxjyG4hYbCTcncu3C3OlFxGou2TT8n/6sBG6aWB0dsQ5+iMuy8Jo
-         Sa924LLfQY3/gWJ5RWOzAjTBjsgu5fS7Ti1KvcBpxmvI6r8ackcKQW+IabakzoOM3mZx
-         ZSIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=QJ0BehjFJkWJyP8RtCONd9xszCsERb/O9WmeExTQd5k=;
-        b=bM4/kbdVnuTc1E6/6aNdILgscpMnHnE7CnhYpLEzbkfIYLxQ7lcL1gkeGwcLgLDfdW
-         t/uAyiWYJC+GfflFMUXFrsNomsPbBKLpgXmWtAJAILpBS/O30ftSlXPx/Ssmg/EpBWRv
-         yRx8cWHgz9ybSe7nKbhId9xJPGO1fntAVUILrdFQMSc6myfxm6B4AgE2RShdtIBs5dfo
-         l6qdDAYRe5icadz6B9VALD3ww9idJkx7sI04De7ClRG1kOdYSEJbO9/BCjjV8k/L76sQ
-         uoSJPVSZmF7LH8d6P41vG+9d1oEyuQrgnhnXhJNcFkHwBFBkl9kvLOup8IeOMXdSnjoK
-         EocA==
-X-Gm-Message-State: APjAAAX6nm6hHbTkQOV5AGcOMYrVmtColyPcw/y/0SXJRd+TPWpN3tHm
-        qlN69uw+pzntoGR4g1mbxaJiAw==
-X-Google-Smtp-Source: APXvYqyY5Ag9efnLxT+G22Uef6sbiZvKYbuON7L6+paT+DCwuPK/MrDIWZduK2bBn25khLS06VtYyA==
-X-Received: by 2002:a1c:3941:: with SMTP id g62mr11971950wma.165.1574998517292;
-        Thu, 28 Nov 2019 19:35:17 -0800 (PST)
-Received: from localhost (ip-5-186-122-168.cgn.fibianet.dk. [5.186.122.168])
-        by smtp.gmail.com with ESMTPSA id x9sm25131773wru.32.2019.11.28.19.35.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2019 19:35:16 -0800 (PST)
-Date:   Fri, 29 Nov 2019 04:35:15 +0100
-From:   Javier Gonzalez <javier@javigon.com>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-Cc:     Damien Le Moal <damien.lemoal@wdc.com>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        linux-fsdevel@vger.kernel.org,
-        Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>
-Subject: Re: [PATCH] f2fs: Fix direct IO handling
-Message-ID: <20191129033515.ehkdf65toblntkrq@MacBook-Pro.gnusmas>
-References: <20191126075719.1046485-1-damien.lemoal@wdc.com>
- <20191126234428.GB20652@jaegeuk-macbookpro.roam.corp.google.com>
+        Thu, 28 Nov 2019 22:40:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574998807;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/d6tuiBJ3b12PVCKr9K7EHkZtjL8t4Ip6HwrxaUPIpk=;
+        b=ebkWYDRkwcDEbHaNwAZo+7IKtmnWE8OQCH2hXt9RDYXCm+N+r4HfQJ20iUu9zQ8uWcoXWg
+        iHxkCVrm2w0FSE1TI2UZNxj9eVObXvcpiV/DCkCh9mpBmoQwmCTlVQonfK19OqPqmcCFp/
+        3+0X6G4Gnf9zLmMd0zDlwCyix4+Fpxk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-204-8GnzunOeOPGP-Q3DWm9r-A-1; Thu, 28 Nov 2019 22:40:04 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E617E80183D;
+        Fri, 29 Nov 2019 03:40:02 +0000 (UTC)
+Received: from localhost (dhcp-12-102.nay.redhat.com [10.66.12.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 01912600F8;
+        Fri, 29 Nov 2019 03:40:01 +0000 (UTC)
+Date:   Fri, 29 Nov 2019 11:48:02 +0800
+From:   Zorro Lang <zlang@redhat.com>
+To:     Petr Vorel <pvorel@suse.cz>
+Cc:     ltp@lists.linux.it, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] syscalls/newmount: new test case for new mount API
+Message-ID: <20191129034802.GE4601@dhcp-12-102.nay.redhat.com>
+Mail-Followup-To: Petr Vorel <pvorel@suse.cz>, ltp@lists.linux.it,
+        linux-fsdevel@vger.kernel.org
+References: <20191128173532.6468-1-zlang@redhat.com>
+ <20191128191442.GB5202@dell5510>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20191128191442.GB5202@dell5510>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-MC-Unique: 8GnzunOeOPGP-Q3DWm9r-A-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191126234428.GB20652@jaegeuk-macbookpro.roam.corp.google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 26.11.2019 15:44, Jaegeuk Kim wrote:
->On 11/26, Damien Le Moal wrote:
->> f2fs_preallocate_blocks() identifies direct IOs using the IOCB_DIRECT
->> flag for a kiocb structure. However, the file system direct IO handler
->> function f2fs_direct_IO() may have decided that a direct IO has to be
->> exececuted as a buffered IO using the function f2fs_force_buffered_io().
->> This is the case for instance for volumes including zoned block device
->> and for unaligned write IOs with LFS mode enabled.
->>
->> These 2 different methods of identifying direct IOs can result in
->> inconsistencies generating stale data access for direct reads after a
->> direct IO write that is treated as a buffered write. Fix this
->> inconsistency by combining the IOCB_DIRECT flag test with the result
->> of f2fs_force_buffered_io().
->>
->> Reported-by: Javier Gonzalez <javier@javigon.com>
->> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
->> ---
->>  fs/f2fs/data.c | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->> index 5755e897a5f0..8ac2d3b70022 100644
->> --- a/fs/f2fs/data.c
->> +++ b/fs/f2fs/data.c
->> @@ -1073,6 +1073,8 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
->>  	int flag;
->>  	int err = 0;
->>  	bool direct_io = iocb->ki_flags & IOCB_DIRECT;
->> +	bool do_direct_io = direct_io &&
->> +		!f2fs_force_buffered_io(inode, iocb, from);
->>
->>  	/* convert inline data for Direct I/O*/
->>  	if (direct_io) {
->> @@ -1081,7 +1083,7 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
->>  			return err;
->>  	}
->>
->> -	if (direct_io && allow_outplace_dio(inode, iocb, from))
->> +	if (do_direct_io && allow_outplace_dio(inode, iocb, from))
->
->It seems f2fs_force_buffered_io() includes allow_outplace_dio().
->
->How about this?
->---
-> fs/f2fs/data.c | 13 -------------
-> fs/f2fs/file.c | 35 +++++++++++++++++++++++++----------
-> 2 files changed, 25 insertions(+), 23 deletions(-)
->
->diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->index a034cd0ce021..fc40a72f7827 100644
->--- a/fs/f2fs/data.c
->+++ b/fs/f2fs/data.c
->@@ -1180,19 +1180,6 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
-> 	int err = 0;
-> 	bool direct_io = iocb->ki_flags & IOCB_DIRECT;
->
->-	/* convert inline data for Direct I/O*/
->-	if (direct_io) {
->-		err = f2fs_convert_inline_inode(inode);
->-		if (err)
->-			return err;
->-	}
->-
->-	if (direct_io && allow_outplace_dio(inode, iocb, from))
->-		return 0;
->-
->-	if (is_inode_flag_set(inode, FI_NO_PREALLOC))
->-		return 0;
->-
-> 	map.m_lblk = F2FS_BLK_ALIGN(iocb->ki_pos);
-> 	map.m_len = F2FS_BYTES_TO_BLK(iocb->ki_pos + iov_iter_count(from));
-> 	if (map.m_len > map.m_lblk)
->diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->index c0560d62dbee..6b32ac6c3382 100644
->--- a/fs/f2fs/file.c
->+++ b/fs/f2fs/file.c
->@@ -3386,18 +3386,33 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
-> 				ret = -EAGAIN;
-> 				goto out;
-> 			}
->-		} else {
->-			preallocated = true;
->-			target_size = iocb->ki_pos + iov_iter_count(from);
->+			goto write;
->+		}
->
->-			err = f2fs_preallocate_blocks(iocb, from);
->-			if (err) {
->-				clear_inode_flag(inode, FI_NO_PREALLOC);
->-				inode_unlock(inode);
->-				ret = err;
->-				goto out;
->-			}
->+		if (is_inode_flag_set(inode, FI_NO_PREALLOC))
->+			goto write;
->+
->+		if (iocb->ki_flags & IOCB_DIRECT) {
->+			/* convert inline data for Direct I/O*/
->+			err = f2fs_convert_inline_inode(inode);
->+			if (err)
->+				goto out_err;
->+
->+			if (!f2fs_force_buffered_io(inode, iocb, from))
->+				goto write;
->+		}
->+		preallocated = true;
->+		target_size = iocb->ki_pos + iov_iter_count(from);
->+
->+		err = f2fs_preallocate_blocks(iocb, from);
->+		if (err) {
->+out_err:
->+			clear_inode_flag(inode, FI_NO_PREALLOC);
->+			inode_unlock(inode);
->+			ret = err;
->+			goto out;
-> 		}
->+write:
-> 		ret = __generic_file_write_iter(iocb, from);
-> 		clear_inode_flag(inode, FI_NO_PREALLOC);
->
->-- 
->2.19.0.605.g01d371f741-goog
->
-This also addresses the original problem.
+On Thu, Nov 28, 2019 at 08:14:42PM +0100, Petr Vorel wrote:
+> Hi Zorro,
+>=20
+> > Linux supports new mount syscalls from 5.2, so add new test cases
+> > to cover these new API. This newmount01 case make sure new API -
+> > fsopen(), fsconfig(), fsmount() and move_mount() can mount a
+> > filesystem, then can be unmounted.
+> Thanks for writing test for recently added kernel functionality.
+> This is important.
+> Test itself looks ok to me.
+> There are few code style differences (note below), but that's not importa=
+nt.
+> Reviewed-by: Petr Vorel <pvorel@suse.cz>
+>=20
+> BTW I thought it'd be nice to use more filesystems via .all_filesystems =
+=3D 1 [1]
+> but at least it breaks nfs. And IMHO we don't have blacklist support for
+> .all_filesystems.
 
-Tested-by: Javier González <javier@javigon.com>
+I(or with my colleagues) would like to add more filesystem specified test l=
+ater,
+to make sure filesystem specified mount options still works well with new m=
+ount
+syscalls.
+
+>=20
+> >  configure.ac                                  |   4 +
+> >  include/lapi/newmount.h                       | 106 +++++++++++++
+> >  include/lapi/syscalls/aarch64.in              |   4 +
+> >  include/lapi/syscalls/powerpc64.in            |   4 +
+> >  include/lapi/syscalls/s390x.in                |   4 +
+> >  include/lapi/syscalls/x86_64.in               |   4 +
+> In final version we'd want to add syscall numbers for all archs.
+
+Yeah, I tried to find a .in file for all archs, but didn't find, so had to
+add these __NR_ definition separately.
+
+>=20
+> ...
+> > +++ b/include/lapi/newmount.h
+> > @@ -0,0 +1,106 @@
+> > +/*
+> > + * Copyright (C) 2019 Red Hat, Inc.  All rights reserved.
+> > + *
+> > + * This program is free software; you can redistribute it and/or
+> > + * modify it under the terms of the GNU General Public License as
+> > + * published by the Free Software Foundation; either version 2 of
+> > + * the License, or (at your option) any later version.
+> > + *
+> > + * This program is distributed in the hope that it would be useful,
+> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> > + * GNU General Public License for more details.
+> > + *
+> > + * You should have received a copy of the GNU General Public License
+> > + * along with this program; if not, write the Free Software Foundation=
+,
+> > + * Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+> > + */
+> Use SPDX license identifier instead of verbose GPL everywhere (including =
+headers
+> and makefiles; we don't want any HISTORY: text, but feel free to add Auth=
+or:
+> your name).
+
+Wow, sorry I don't learn about the license things so much, just copy from o=
+ther file:)
+I'll search how to use the SPDX license.
+
+> > +
+> > +#ifndef __NEWMOUNT_H__
+> > +#define __NEWMOUNT_H__
+> Double underscore at the beginning and end (__FOO_H__) is IMHO reserved f=
+or library
+> (use NEWMOUNT_H__).
+
+Sure, I'll change it to a proper one.
+
+> ...
+>=20
+> > diff --git a/m4/ltp-fsconfig.m4 b/m4/ltp-fsconfig.m4
+> > new file mode 100644
+> > index 000000000..397027f1b
+> > --- /dev/null
+> > +++ b/m4/ltp-fsconfig.m4
+> > @@ -0,0 +1,7 @@
+> > +dnl SPDX-License-Identifier: GPL-2.0-or-later
+> > +dnl Copyright (C) 2019 Red Hat, Inc. All Rights Reserved.
+> > +
+> > +AC_DEFUN([LTP_CHECK_FSCONFIG],[
+> > +AC_CHECK_FUNCS(fsconfig,,)
+> > +AC_CHECK_HEADER(sys/mount.h,,,)
+> > +])
+> > diff --git a/m4/ltp-fsmount.m4 b/m4/ltp-fsmount.m4
+> > new file mode 100644
+> > index 000000000..ee32ef713
+> > --- /dev/null
+> > +++ b/m4/ltp-fsmount.m4
+> > @@ -0,0 +1,7 @@
+> > +dnl SPDX-License-Identifier: GPL-2.0-or-later
+> > +dnl Copyright (C) 2019 Red Hat, Inc. All Rights Reserved.
+> > +
+> > +AC_DEFUN([LTP_CHECK_FSMOUNT],[
+> > +AC_CHECK_FUNCS(fsmount,,)
+> > +AC_CHECK_HEADER(sys/mount.h,,,)
+> > +])
+> > diff --git a/m4/ltp-fsopen.m4 b/m4/ltp-fsopen.m4
+> > new file mode 100644
+> > index 000000000..6e23d437d
+> > --- /dev/null
+> > +++ b/m4/ltp-fsopen.m4
+> > @@ -0,0 +1,7 @@
+> > +dnl SPDX-License-Identifier: GPL-2.0-or-later
+> > +dnl Copyright (C) 2019 Red Hat, Inc. All Rights Reserved.
+> > +
+> > +AC_DEFUN([LTP_CHECK_FSOPEN],[
+> > +AC_CHECK_FUNCS(fsopen,,)
+> > +AC_CHECK_HEADER(sys/mount.h,,,)
+> > +])
+> > diff --git a/m4/ltp-move_mount.m4 b/m4/ltp-move_mount.m4
+> > new file mode 100644
+> > index 000000000..d6bfd82e9
+> > --- /dev/null
+> > +++ b/m4/ltp-move_mount.m4
+> > @@ -0,0 +1,7 @@
+> > +dnl SPDX-License-Identifier: GPL-2.0-or-later
+> > +dnl Copyright (C) 2019 Red Hat, Inc. All Rights Reserved.
+> > +
+> > +AC_DEFUN([LTP_CHECK_MOVE_MOUNT],[
+> > +AC_CHECK_FUNCS(move_mount,,)
+> > +AC_CHECK_HEADER(sys/mount.h,,,)
+> > +])
+> As all of these require <sys/mount.h>, I'd add them into single file
+> m4/ltp-newmount.m4.
+
+OK, I'll do that.
+
+> BTW it might take a time before it get into <sys/mount.h>, they're now ju=
+st <linux/mount.h> (even in musl, which is unlike glic fast with porting ne=
+w things).
+
+Yes, there're still in kernel-headers, glibc doesn't have patch for that. M=
+aybe
+they're waiting. I don't know if there'll be more newmount syscalls (e.g fs=
+info
+or something else), or fsdevel might would like to disconnect umount() in t=
+he
+feature:)
+
+>=20
+> ...
+> > +++ b/testcases/kernel/syscalls/newmount/Makefile
+> ...
+> > +
+> > +top_srcdir=09=09?=3D ../../../..
+> > +
+> > +include $(top_srcdir)/include/mk/testcases.mk
+> > +
+> > +CFLAGS=09=09=09+=3D -D_GNU_SOURCE
+> Is _GNU_SOURCE needed?
+
+Hmm... I'm not sure, just copy this Makefile from syscalls/mount/Makefile ;=
+)
+I think the new mount API might not be POSIX defined?
+
+Thanks for your review so much, I'll send V2 patch soon.
+
+Thanks,
+Zorro
+
+> > +
+> > +include $(top_srcdir)/include/mk/generic_leaf_target.mk
+>=20
+> Kind regards,
+> Petr
+>=20
+> [1] https://github.com/linux-test-project/ltp/wiki/Test-Writing-Guideline=
+s#2215-testing-with-a-block-device
+>=20
+
