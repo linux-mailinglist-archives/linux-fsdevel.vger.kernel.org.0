@@ -2,124 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F64A10D2DA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2019 09:58:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 871AE10D3A6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2019 11:06:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726684AbfK2I6E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Nov 2019 03:58:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55780 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726143AbfK2I6D (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Nov 2019 03:58:03 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76CF120833;
-        Fri, 29 Nov 2019 08:58:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575017882;
-        bh=hxgcVGCFjV8KdJ5bsDJdVKwzzbFr9eQ1ZdMO+leIuvg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aGKDLLLQFx1z6UmOairq0IA62Xbya1bbl3Ix4JpSKTXVXRKlmGnj6rrCY4IWKumhE
-         ItOpB0kGPcGwCazlrFFyQX04B7ldKBpzVL1Tyfi/kwpFBlCViVAPVZ5GRy5wQ3FYfy
-         kuBHRbuE9VJOWRkcy4lVjJhugKt3UuJQTxW5PE9w=
-Date:   Fri, 29 Nov 2019 09:58:00 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Jouni =?iso-8859-1?Q?H=F6gander?= <jouni.hogander@unikie.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH 4.19 000/306] 4.19.87-stable review
-Message-ID: <20191129085800.GF3584430@kroah.com>
-References: <20191127203114.766709977@linuxfoundation.org>
- <CA+G9fYuAY+14aPiRVUcXLbsr5zJ-GLjULX=s9jcGWcw_vb5Kzw@mail.gmail.com>
- <20191128073623.GE3317872@kroah.com>
- <CAKXUXMy_=gVVw656AL5Rih_DJrdrFLoURS-et0+dpJ2cKaw6SQ@mail.gmail.com>
+        id S1726785AbfK2KGo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Nov 2019 05:06:44 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35702 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725892AbfK2KGo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 29 Nov 2019 05:06:44 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D7179B1AD;
+        Fri, 29 Nov 2019 10:06:41 +0000 (UTC)
+Date:   Fri, 29 Nov 2019 11:06:39 +0100
+From:   Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+To:     =?utf-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Cc:     Mel Gorman <mgorman@suse.de>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
+Subject: Re: [PATCH v2 1/3] sched/numa: advanced per-cgroup numa statistic
+Message-ID: <20191129100639.GI831@blackbody.suse.cz>
+References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
+ <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
+ <9354ffe8-81ba-9e76-e0b3-222bc942b3fc@linux.alibaba.com>
+ <20191127101932.GN28938@suse.de>
+ <3ff78d18-fa29-13f3-81e5-a05537a2e344@linux.alibaba.com>
+ <20191128123924.GD831@blackbody.suse.cz>
+ <e008fef6-06d2-28d3-f4d3-229f4b181b4f@linux.alibaba.com>
+ <20191128155818.GE831@blackbody.suse.cz>
+ <b97ce489-c5c5-0670-a553-0e45d593de2c@linux.alibaba.com>
+ <f9da5ce8-519e-62b4-36f7-8e5bbf0485fd@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tctmm6wHVGT/P6vA"
 Content-Disposition: inline
-In-Reply-To: <CAKXUXMy_=gVVw656AL5Rih_DJrdrFLoURS-et0+dpJ2cKaw6SQ@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <f9da5ce8-519e-62b4-36f7-8e5bbf0485fd@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 29, 2019 at 06:46:23AM +0100, Lukas Bulwahn wrote:
-> On Thu, Nov 28, 2019 at 8:37 AM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Thu, Nov 28, 2019 at 12:23:41PM +0530, Naresh Kamboju wrote:
-> > > On Thu, 28 Nov 2019 at 02:25, Greg Kroah-Hartman
-> > > <gregkh@linuxfoundation.org> wrote:
-> > > >
-> > > > This is the start of the stable review cycle for the 4.19.87 release.
-> > > > There are 306 patches in this series, all will be posted as a response
-> > > > to this one.  If anyone has any issues with these being applied, please
-> > > > let me know.
-> > > >
-> > > > Responses should be made by Fri, 29 Nov 2019 20:18:09 +0000.
-> > > > Anything received after that time might be too late.
-> > > >
-> > > > The whole patch series can be found in one patch at:
-> > > >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.87-rc1.gz
-> > > > or in the git tree and branch at:
-> > > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> > > > and the diffstat can be found below.
-> > > >
-> > > > thanks,
-> > > >
-> > > > greg k-h
-> > >
-> > > Kernel BUG noticed on x86_64 device while booting 4.19.87-rc1 kernel.
-> > >
-> > > The problematic patch is,
-> > >
-> > > > Jouni Hogander <jouni.hogander@unikie.com>
-> > > >     net-sysfs: Fix reference count leak in rx|netdev_queue_add_kobject
-> > >
-> > > And this kernel panic is been fixed by below patch,
-> > >
-> > > commit 48a322b6f9965b2f1e4ce81af972f0e287b07ed0
-> > > Author: Eric Dumazet <edumazet@google.com>
-> > > Date:   Wed Nov 20 19:19:07 2019 -0800
-> > >
-> > >     net-sysfs: fix netdev_queue_add_kobject() breakage
-> > >
-> > >     kobject_put() should only be called in error path.
-> > >
-> > >     Fixes: b8eb718348b8 ("net-sysfs: Fix reference count leak in
-> > > rx|netdev_queue_add_kobject")
-> > >     Signed-off-by: Eric Dumazet <edumazet@google.com>
-> > >     Cc: Jouni Hogander <jouni.hogander@unikie.com>
-> > >     Signed-off-by: David S. Miller <davem@davemloft.net>
-> >
-> > Now queued up, I'll push out -rc2 versions with this fix.
-> >
-> > greg k-h
-> 
-> We have also been informed about another regression these two commits
-> are causing:
-> 
-> https://lore.kernel.org/lkml/ace19af4-7cae-babd-bac5-cd3505dcd874@I-love.SAKURA.ne.jp/
-> 
-> I suggest to drop these two patches from this queue, and give us a
-> week to shake out the regressions of the change, and once ready, we
-> can include the complete set of fixes to stable (probably in a week or
-> two).
 
-Ok, thanks for the information, I've now dropped them from all of the
-queues that had them in them.
+--tctmm6wHVGT/P6vA
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-greg k-h
+On Fri, Nov 29, 2019 at 01:19:33PM +0800, =E7=8E=8B=E8=B4=87 <yun.wang@linu=
+x.alibaba.com> wrote:
+> I did some research regarding cpuacct, and find cpuacct_charge() is a good
+> place to do hierarchical update, however, what we get there is the execut=
+ion
+> time delta since last update_curr().
+I wouldn't extend cpuacct, I'd like to look into using the rstat
+mechanism for per-CPU runtime collection. (Most certainly I won't get
+down to this until mid December though.)
+
+> I'm afraid we can't just do local/remote accumulation since the sample pe=
+riod
+> now is changing, still have to accumulate the execution time into locality
+> regions.
+My idea was to decouple time from the locality counters completely. It'd
+be up to the monitoring application to normalize differences wrt
+sampling rate (and handle wrap arounds).
+
+
+Michal
+
+--tctmm6wHVGT/P6vA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEEoQaUCWq8F2Id1tNia1+riC5qSgFAl3g7aoACgkQia1+riC5
+qSj6ihAAjGL+AfasV1mBclWNhpl6+ocgSIbO11onVPt4IbQHizY925prKB3WfEqc
+n/rv5OykoWSLCtZsSQAzqN7th9XYzqaALVJ7/CDfQP4QBIlPxBQ/nSQvE1mg5f5e
+Dyon80A94xAxWScMCXhpL1BgmNJH9PxgI/1rVq0RuAn2OE5XN/95xzesZh89SWLa
+A8iJ/4rvUwF7aQZLpG75U03Kejo16aBPcaSh8M9dqCPTa9R0/iXMc20bzVBhpqZq
+GvT+V5NjgOmM4mxwa1atcOXdsb5w+J3NRTxl4fl8rwr01WTwR6OiU2ZTV3+OMqwe
+DK0UaLdwKc9X7uzioPiVZlICOz8lBccd19ZvmMUVPgZdwIfXLT52S30dp38gq6vd
+RVOGf68MWI0swndpgnVcSHpSyIgMOvQBdWaA0Yv8GkfIcADwCceeFQ0joyhm+SbU
+wnhfEB6/gwWn5CU9bhhNJF2yILxxmQYfjE4hgkMg4fvdddisAvha7AVDYS5dXadW
+xSnvCXgI1gRXm4SmF8SmuLDVsLdmFJf2OIjKBbOZ2lY1yxnO66bc/cSKQZlYGyVg
+7cFZDhjUCKPEys1sn7SwV4KGpa9AQVBL18D6AvAAwnWRxJxPdSJP2lKB0u4sIDJQ
+kqGtI30Ny4C8ClB1XqB1YAMHYjObuuGfBG0NtCLap6bOxI0hdc0=
+=+0n3
+-----END PGP SIGNATURE-----
+
+--tctmm6wHVGT/P6vA--
