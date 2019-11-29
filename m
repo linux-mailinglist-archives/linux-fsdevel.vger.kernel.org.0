@@ -2,108 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13FAA10D491
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2019 12:13:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ACDD10D4AF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2019 12:23:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbfK2LNA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Nov 2019 06:13:00 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:60200 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725892AbfK2LM7 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Nov 2019 06:12:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575025978;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=bxScUU+tLhB/hy64e2JXaID7fYPwFs1dmqeZUURfU1Y=;
-        b=grK9S56op4D4kvZ0Z4TrwspqLYeF/q+OF+H3t3a9dLUl1VMsL1ApNdKB/eFvLFg4TH7yFN
-        eW8B2iDR7jHtfcRmxJBMGV3t6QWjh8z9/E2ab6p3nK7tDP0D5VexN2kQcInorKOXaxIzTE
-        udEwoEWtu3CXu2V69J2kzJJSAmWvqrs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-173-GquHScysM--BQVo7FW-s3A-1; Fri, 29 Nov 2019 06:12:55 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 56E22107ACC7;
-        Fri, 29 Nov 2019 11:12:53 +0000 (UTC)
-Received: from localhost (dhcp-12-102.nay.redhat.com [10.66.12.102])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 92A1360903;
-        Fri, 29 Nov 2019 11:12:52 +0000 (UTC)
-Date:   Fri, 29 Nov 2019 19:20:54 +0800
-From:   Zorro Lang <zlang@redhat.com>
-To:     Yang Xu <xuyang2018.jy@cn.fujitsu.com>
-Cc:     ltp@lists.linux.it, linux-fsdevel@vger.kernel.org
-Subject: Re: [LTP] [PATCH] syscalls/newmount: new test case for new mount API
-Message-ID: <20191129112053.GF4601@dhcp-12-102.nay.redhat.com>
-Mail-Followup-To: Yang Xu <xuyang2018.jy@cn.fujitsu.com>,
-        ltp@lists.linux.it, linux-fsdevel@vger.kernel.org
-References: <20191128173532.6468-1-zlang@redhat.com>
- <9c487d75-0de0-af8f-a439-d3ce9d965808@cn.fujitsu.com>
- <fa006742-d29d-4d19-c628-30b0454c8f72@cn.fujitsu.com>
+        id S1726810AbfK2LXW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Nov 2019 06:23:22 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35050 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725892AbfK2LXW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 29 Nov 2019 06:23:22 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id EA9F5AC82;
+        Fri, 29 Nov 2019 11:23:17 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 4E8A01E0B6A; Fri, 29 Nov 2019 12:23:15 +0100 (CET)
+Date:   Fri, 29 Nov 2019 12:23:15 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 17/19] powerpc: book3s64: convert to pin_user_pages()
+ and put_user_page()
+Message-ID: <20191129112315.GB1121@quack2.suse.cz>
+References: <20191125231035.1539120-1-jhubbard@nvidia.com>
+ <20191125231035.1539120-18-jhubbard@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <fa006742-d29d-4d19-c628-30b0454c8f72@cn.fujitsu.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-MC-Unique: GquHScysM--BQVo7FW-s3A-1
-X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
+In-Reply-To: <20191125231035.1539120-18-jhubbard@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 29, 2019 at 01:29:35PM +0800, Yang Xu wrote:
->=20
->=20
-> on 2019/11/29 11:39, Yang Xu wrote:
-> > --- /dev/null
-> > +++ b/include/lapi/newmount.h
-> > @@ -0,0 +1,106 @@
-> > +/*
-> > + * Copyright (C) 2019 Red Hat, Inc.  All rights reserved.
-> > + *
-> > + * This program is free software; you can redistribute it and/or
-> > + * modify it under the terms of the GNU General Public License as
-> > + * published by the Free Software Foundation; either version 2 of
-> > + * the License, or (at your option) any later version.
-> > + *
-> > + * This program is distributed in the hope that it would be useful,
-> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + * GNU General Public License for more details.
-> > + *
-> > + * You should have received a copy of the GNU General Public License
-> > + * along with this program; if not, write the Free Software Foundation=
-,
-> > + * Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-> > + */
-> > +
-> > +#ifndef __NEWMOUNT_H__
-> > +#define __NEWMOUNT_H__
-> > +
-> > +#include <stdint.h>
-> > +#include <unistd.h>
-> > +#include "lapi/syscalls.h"
-> > +
-> > +#if !defined(HAVE_FSOPEN)
-> When we run make autotools and ./configure, this macro is in
-> "include/config.h". You should include this header file like other lapi
-> files.
+On Mon 25-11-19 15:10:33, John Hubbard wrote:
+> 1. Convert from get_user_pages() to pin_user_pages().
+> 
+> 2. As required by pin_user_pages(), release these pages via
+> put_user_page(). In this case, do so via put_user_pages_dirty_lock().
+> 
+> That has the side effect of calling set_page_dirty_lock(), instead
+> of set_page_dirty(). This is probably more accurate.
 
-Oh, thanks, I refered to the include/lapi/stat.h file, it doesn't include
-config.h, I don't know if it's needed.
+Maybe more accurate but it doesn't work for mm_iommu_unpin(). As I'm
+checking mm_iommu_unpin() gets called from RCU callback which is executed
+interrupt context and you cannot lock pages from such context. So you need
+to queue work from the RCU callback and then do the real work from the
+workqueue...
 
-Thanks,
-Zorro
+								Honza
 
-> > +static inline int fsopen(const char *fs_name, unsigned int flags)
-> > +{
->=20
->=20
-
+> 
+> As Christoph Hellwig put it, "set_page_dirty() is only safe if we are
+> dealing with a file backed page where we have reference on the inode it
+> hangs off." [1]
+> 
+> [1] https://lore.kernel.org/r/20190723153640.GB720@lst.de
+> 
+> Cc: Jan Kara <jack@suse.cz>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+>  arch/powerpc/mm/book3s64/iommu_api.c | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/powerpc/mm/book3s64/iommu_api.c b/arch/powerpc/mm/book3s64/iommu_api.c
+> index 56cc84520577..fc1670a6fc3c 100644
+> --- a/arch/powerpc/mm/book3s64/iommu_api.c
+> +++ b/arch/powerpc/mm/book3s64/iommu_api.c
+> @@ -103,7 +103,7 @@ static long mm_iommu_do_alloc(struct mm_struct *mm, unsigned long ua,
+>  	for (entry = 0; entry < entries; entry += chunk) {
+>  		unsigned long n = min(entries - entry, chunk);
+>  
+> -		ret = get_user_pages(ua + (entry << PAGE_SHIFT), n,
+> +		ret = pin_user_pages(ua + (entry << PAGE_SHIFT), n,
+>  				FOLL_WRITE | FOLL_LONGTERM,
+>  				mem->hpages + entry, NULL);
+>  		if (ret == n) {
+> @@ -167,9 +167,8 @@ static long mm_iommu_do_alloc(struct mm_struct *mm, unsigned long ua,
+>  	return 0;
+>  
+>  free_exit:
+> -	/* free the reference taken */
+> -	for (i = 0; i < pinned; i++)
+> -		put_page(mem->hpages[i]);
+> +	/* free the references taken */
+> +	put_user_pages(mem->hpages, pinned);
+>  
+>  	vfree(mem->hpas);
+>  	kfree(mem);
+> @@ -212,10 +211,9 @@ static void mm_iommu_unpin(struct mm_iommu_table_group_mem_t *mem)
+>  		if (!page)
+>  			continue;
+>  
+> -		if (mem->hpas[i] & MM_IOMMU_TABLE_GROUP_PAGE_DIRTY)
+> -			SetPageDirty(page);
+> +		put_user_pages_dirty_lock(&page, 1,
+> +				mem->hpas[i] & MM_IOMMU_TABLE_GROUP_PAGE_DIRTY);
+>  
+> -		put_page(page);
+>  		mem->hpas[i] = 0;
+>  	}
+>  }
+> -- 
+> 2.24.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
