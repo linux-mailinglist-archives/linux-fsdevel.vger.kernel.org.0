@@ -2,122 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94E5510D882
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2019 17:33:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10C7C10D899
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2019 17:36:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727269AbfK2QdM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Nov 2019 11:33:12 -0500
-Received: from mga09.intel.com ([134.134.136.24]:10816 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727235AbfK2QdL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Nov 2019 11:33:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Nov 2019 08:33:10 -0800
-X-IronPort-AV: E=Sophos;i="5.69,257,1571727600"; 
-   d="scan'208";a="217811674"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.157])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Nov 2019 08:33:09 -0800
-From:   ira.weiny@intel.com
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
+        id S1727022AbfK2QgB convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Nov 2019 11:36:01 -0500
+Received: from lithops.sigma-star.at ([195.201.40.130]:44102 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726608AbfK2QgA (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 29 Nov 2019 11:36:00 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id A3CB6607BDB2;
+        Fri, 29 Nov 2019 17:35:56 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id kOcQPONK-3hk; Fri, 29 Nov 2019 17:35:54 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id D5E1B6083139;
+        Fri, 29 Nov 2019 17:35:53 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id Au7ORLC9cK4z; Fri, 29 Nov 2019 17:35:53 +0100 (CET)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 8329F607BDB2;
+        Fri, 29 Nov 2019 17:35:53 +0100 (CET)
+Date:   Fri, 29 Nov 2019 17:35:53 +0100 (CET)
+From:   Richard Weinberger <richard@nod.at>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Darrick <darrick.wong@oracle.com>,
+        torvalds <torvalds@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>, tytso <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
         Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org, Ira Weiny <ira.weiny@intel.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>
-Subject: [PATCH V3 3/3] Documentation/fs: Move swap_[de]activate() to file_operations
-Date:   Fri, 29 Nov 2019 08:33:00 -0800
-Message-Id: <20191129163300.14749-4-ira.weiny@intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191129163300.14749-1-ira.weiny@intel.com>
-References: <20191129163300.14749-1-ira.weiny@intel.com>
+        linux-xfs@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>
+Message-ID: <51833696.101442.1575045353332.JavaMail.zimbra@nod.at>
+In-Reply-To: <20191129142045.7215-1-agruenba@redhat.com>
+References: <20191129142045.7215-1-agruenba@redhat.com>
+Subject: Re: [PATCH v2] fs: Fix page_mkwrite off-by-one errors
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [195.201.40.130]
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF68 (Linux)/8.8.12_GA_3809)
+Thread-Topic: Fix page_mkwrite off-by-one errors
+Thread-Index: OwUcLuBZ37Awg+4d3rXFBEMLhx0YIg==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Ira Weiny <ira.weiny@intel.com>
+----- Ursprüngliche Mail -----
+> Von: "Andreas Gruenbacher" <agruenba@redhat.com>
+> An: "Christoph Hellwig" <hch@infradead.org>, "Darrick" <darrick.wong@oracle.com>
+> CC: "Andreas Gruenbacher" <agruenba@redhat.com>, "torvalds" <torvalds@linux-foundation.org>, "linux-kernel"
+> <linux-kernel@vger.kernel.org>, "Al Viro" <viro@zeniv.linux.org.uk>, "Jeff Layton" <jlayton@kernel.org>, "Sage Weil"
+> <sage@redhat.com>, "Ilya Dryomov" <idryomov@gmail.com>, "tytso" <tytso@mit.edu>, "Andreas Dilger"
+> <adilger.kernel@dilger.ca>, "Jaegeuk Kim" <jaegeuk@kernel.org>, "Chao Yu" <chao@kernel.org>, linux-xfs@vger.kernel.org,
+> "linux-fsdevel" <linux-fsdevel@vger.kernel.org>, "richard" <richard@nod.at>, "Artem Bityutskiy" <dedekind1@gmail.com>,
+> "Adrian Hunter" <adrian.hunter@intel.com>, ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+> linux-f2fs-devel@lists.sourceforge.net, "linux-mtd" <linux-mtd@lists.infradead.org>, "Chris Mason" <clm@fb.com>, "Josef
+> Bacik" <josef@toxicpanda.com>, "David Sterba" <dsterba@suse.com>, "linux-btrfs" <linux-btrfs@vger.kernel.org>
+> Gesendet: Freitag, 29. November 2019 15:20:45
+> Betreff: [PATCH v2] fs: Fix page_mkwrite off-by-one errors
 
-Update the documentation for the move of the swap_* functions out of
-address_space_operations and into file_operations.
+> The check in block_page_mkwrite meant to determine whether an offset is
+> within the inode size is off by one.  This bug has spread to
+> iomap_page_mkwrite and to several filesystems (ubifs, ext4, f2fs, ceph).
+> To fix that, introduce a new page_mkwrite_check_truncate helper that
+> checks for truncate and computes the bytes in the page up to EOF, and
+> use that helper in the above mentioned filesystems and in btrfs.
+> 
+> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Thank you for fixing UBIFS!
 
----
-Changes from V0:
-	Add to original series (now V3)
-	Add reviews
+Acked-by: Richard Weinberger <richard@nod.at>
 
- Documentation/filesystems/vfs.rst | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index 7d4d09dd5e6d..03a740d7faa4 100644
---- a/Documentation/filesystems/vfs.rst
-+++ b/Documentation/filesystems/vfs.rst
-@@ -731,8 +731,6 @@ cache in your filesystem.  The following members are defined:
- 					      unsigned long);
- 		void (*is_dirty_writeback) (struct page *, bool *, bool *);
- 		int (*error_remove_page) (struct mapping *mapping, struct page *page);
--		int (*swap_activate)(struct file *);
--		int (*swap_deactivate)(struct file *);
- 	};
- 
- ``writepage``
-@@ -924,16 +922,6 @@ cache in your filesystem.  The following members are defined:
- 	Setting this implies you deal with pages going away under you,
- 	unless you have them locked or reference counts increased.
- 
--``swap_activate``
--	Called when swapon is used on a file to allocate space if
--	necessary and pin the block lookup information in memory.  A
--	return value of zero indicates success, in which case this file
--	can be used to back swapspace.
--
--``swap_deactivate``
--	Called during swapoff on files where swap_activate was
--	successful.
--
- 
- The File Object
- ===============
-@@ -988,6 +976,8 @@ This describes how the VFS can manipulate an open file.  As of kernel
- 					   struct file *file_out, loff_t pos_out,
- 					   loff_t len, unsigned int remap_flags);
- 		int (*fadvise)(struct file *, loff_t, loff_t, int);
-+		int (*swap_activate)(struct file *);
-+		int (*swap_deactivate)(struct file *);
- 	};
- 
- Again, all methods are called without any locks being held, unless
-@@ -1108,6 +1098,16 @@ otherwise noted.
- ``fadvise``
- 	possibly called by the fadvise64() system call.
- 
-+``swap_activate``
-+	Called when swapon is used on a file to allocate space if
-+	necessary and pin the block lookup information in memory.  A
-+	return value of zero indicates success, in which case this file
-+	can be used to back swapspace.
-+
-+``swap_deactivate``
-+	Called during swapoff on files where swap_activate was
-+	successful.
-+
- Note that the file operations are implemented by the specific
- filesystem in which the inode resides.  When opening a device node
- (character or block special) most filesystems will call special
--- 
-2.21.0
-
+Thanks,
+//richard
