@@ -2,81 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9071410D215
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2019 08:51:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1CA410D2CB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2019 09:54:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726857AbfK2HvD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Nov 2019 02:51:03 -0500
-Received: from mail-lj1-f180.google.com ([209.85.208.180]:43042 "EHLO
-        mail-lj1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726360AbfK2HvC (ORCPT
+        id S1727177AbfK2IyU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Nov 2019 03:54:20 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:34370 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726909AbfK2IyU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Nov 2019 02:51:02 -0500
-Received: by mail-lj1-f180.google.com with SMTP id a13so7765913ljm.10;
-        Thu, 28 Nov 2019 23:50:59 -0800 (PST)
+        Fri, 29 Nov 2019 03:54:20 -0500
+Received: by mail-lj1-f193.google.com with SMTP id m6so23746633ljc.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Nov 2019 00:54:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=G7htS148MLHne5gcdg1L2MpYQYz/l/iKEwv8PYFcG2E=;
-        b=F1sUJA6CQo0FU6YJTe8zF3XS9wn1GdYIGYKKW0FkH1WZjpFUNLduWY7619x4knvYuL
-         II29bxpBYNCe1WTppKZPD3gWAjLNZvPN8OYY+bRDbydx8UvRceDBEacyqW7eHUDwYexn
-         TeX/cu4QgfvFSzOQo2tyqLXKl6WzzWLcts+u+DBj+apKQ0DLv2jyN1R6JN4TwG89ZHNM
-         yuCv43rlcM8ImNJ/JymVpNIGiWmBNW8ivSjHfB+WQ3C8K+rDH6OoA1h1H+YcuX6fiPn1
-         8ODbdSJiZdXp3rJ/vf1zqTG3Tv7a/o7gxl+QC/JTulZCeDkOil1FNdS/SAYXzfr5txH9
-         wiYg==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=4cIdzPem1gtTXrJfo2HafRoTCZRg5FNv5NypT6qP45U=;
+        b=sh5xZc0HwFEOqs7cDdnGBQgbaeliG0TskKpvg+mwd4TC21KSG2qJ/o+imPQXc6NWG6
+         yuRvf2zqJy38q5WSSxIc9fdihJHQU2pYdLKSW61stgQlkMTRuUzoUCk6XXgIKwxz/ZY4
+         4rTZDgMnnVV3HVPzqWIK0bAOZgqTk6t5VxoMUGNnDgLm078nn20Bipn52oF5rb35d4Zx
+         WT2IXY64UN6YFzZr1/RrDbW5cvy5IYP7esrM7kUJzPKX4oCduuCFMcx94gzixd5PM7qh
+         pWNblWuTGHM+MrP+TR0lsDqEvELeq0ck1PlctY9UiRzEniK94N2mJG3RQ/MhVfiPG+fg
+         lRHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=G7htS148MLHne5gcdg1L2MpYQYz/l/iKEwv8PYFcG2E=;
-        b=WERmLLP1De0aqa6XNds/ch61d1gpqSQQNwVWrJGYNYCWOu1JlPyyJBH91vY1Hwz0rp
-         NMClHvRIS1g6vAi1YgkRQDeQmrQIWV3LY6Pw6kWGJppulS+LBuF8gkstqbG/qBoGu6kU
-         FcyIWpkg/FuTCfTNaPd/EiE8bWpvevtx3WV698FuTXhLtmeDU5+GAfp8kPcxRivTs6w3
-         U8gkul+4SHcnwVAYsA6QBXZQTkJQqHwmKNXTMZ2Dt3zl1cSbybqSYZFGW+unM+fOsZ6x
-         Ak67SX3VGMD4N6tdCndXDU5xKBu894V648qE05TlyvQSvupjwHFrCY8OUF0h6ueWyMnF
-         ranw==
-X-Gm-Message-State: APjAAAUSY7cg+zu+RC7eR0R9ZY1yYwn49HTcSGUQrlkwr/ldhyM+FuRB
-        DOMlkrueBErC0sUeEZINRgWYGM6rYBZTIVIMdCc3pujz
-X-Google-Smtp-Source: APXvYqzTIyrUoGUmL075z/BU7X+QXiOWAeMrU+mvmklSZUzJDlwkcaucXHnotp5Tm7JwlrZBFFBcw/VvT1SXB0VSACM=
-X-Received: by 2002:a2e:984f:: with SMTP id e15mr36803147ljj.109.1575013858719;
- Thu, 28 Nov 2019 23:50:58 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=4cIdzPem1gtTXrJfo2HafRoTCZRg5FNv5NypT6qP45U=;
+        b=dSzgBuPklh6yW5Wb814e9f0bcGhngV5UtRzto5/cUqrpMfa5QV5wcxXgfyz8BsOY47
+         jRjRxsNoTlDAYXdEOobC8XGaHZAj0PLlFL1MAWegYLoIYu2PiaP50mAD6uKwAn1KBjOf
+         dJz8GpG1Kt0mqr9CpbujoVYa1p5Nu6SxE9C7iL9AhyS5eTtTD6AlaGzbstQlUPrdfo9S
+         8NUvQi5EwDUm2Gz3KCGDdxTxDgSsJHjgCIXgiNzo2EpTKHhmquU4Pi1L4vPWr/ufyF1P
+         M5WDB8SG1f8jnrcl/2uhA1qNDw29xMnDTg3MO7wZXorUS3vGL76JJBcIxHgHv7uWxkbK
+         +fDw==
+X-Gm-Message-State: APjAAAVE1MtvOkNzorGb+VzxITVBi0MkD6yOkEg52Zwf4te/n9dplTzM
+        1bihlSioFaM8X6/P9i5oVPWhdcyNlaL1WyESg/a4gA==
+X-Google-Smtp-Source: APXvYqyt+7PQVsnFlfoRnd/SSRNCt5JxFY7QCWPcBAiJ7bkcleAU7YSSvhv9WR+7iwmYdFhc3x1cmkttsKVYTTRvJsU=
+X-Received: by 2002:a2e:a0c6:: with SMTP id f6mr69283ljm.46.1575017657691;
+ Fri, 29 Nov 2019 00:54:17 -0800 (PST)
 MIME-Version: 1.0
-From:   Jason Xing <kerneljasonxing@gmail.com>
-Date:   Fri, 29 Nov 2019 15:50:22 +0800
-Message-ID: <CAL+tcoD8o5A4vgLHHp8dyFV5PmJVL5tu0h-XQavLOiAexmVLRQ@mail.gmail.com>
-Subject: About whether we should support the alignment in the
- generic_file_splice_read() ?
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+References: <20191127203114.766709977@linuxfoundation.org> <CA+G9fYuAY+14aPiRVUcXLbsr5zJ-GLjULX=s9jcGWcw_vb5Kzw@mail.gmail.com>
+ <20191128073623.GE3317872@kroah.com>
+In-Reply-To: <20191128073623.GE3317872@kroah.com>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 29 Nov 2019 14:24:06 +0530
+Message-ID: <CA+G9fYtPJLNVvXapfr1vtpH=T6MxU7NY_Kac-T7U31w-kQu62A@mail.gmail.com>
+Subject: Re: [PATCH 4.19 000/306] 4.19.87-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        jouni.hogander@unikie.com, "David S. Miller" <davem@davemloft.net>,
+        lukas.bulwahn@gmail.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi all,
+On Thu, 28 Nov 2019 at 13:07, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 
-Sorry to send this email to you all. I recently noticed there're some
-incompatibilities existing in the generic_file_splice_read() function
-between 3.X and 4.X kernel. The result will goes wrong if we're using
-sendfile() with unaligned offset in 4.X/5.X kernel. But if we do the
-same in 3.X kernel, it will surely return success.
 
-Here is the call trace:
-1. Using sendfile() with unaligned offset
-2. Then it runs into the kernel:
-sendfile64()->do_sendfile()->do_splice_direct()->splice_direct_to_actor()->do_splice_to()->splice_read()
-3. splice_read() calls the __generic_file_splice_read() in 3.X kernel,
-generic_file_splice_read() in 4.X kernel.
+> Now queued up, I'll push out -rc2 versions with this fix.
 
-In 3.X kernel, this function handles the alignment by using the
-PAGE_SHIFT and PAGE_MASK. However, after applying this
-commit(82c156f853840645604acd7c2cebcb75ed1b6652) the 4.X no longer
-supports the unaligned data.
+Results from Linaro=E2=80=99s test farm.
+Regressions detected on i386.
 
-I'm wondering should we add the alignment process code back again?
-Does anyone have idea about why this part got removed? Any information
-and suggestions are welcome:-)
+i386 build failed on 4.19 and 4.14
 
-Thanks,
-Jason
+In function 'setup_cpu_entry_area_ptes',
+    inlined from 'setup_cpu_entry_areas' at arch/x86/mm/cpu_entry_area.c:20=
+9:2:
+include/linux/compiler.h:348:38: error: call to
+'__compiletime_assert_192' declared with attribute error: BUILD_BUG_ON
+failed: (CPU_ENTRY_AREA_PAGES+1)*PAGE_SIZE !=3D CPU_ENTRY_AREA_MAP_SIZE
+  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+                                      ^
+include/linux/compiler.h:329:4: note: in definition of macro
+'__compiletime_assert'
+    prefix ## suffix();    \
+    ^~~~~~
+include/linux/compiler.h:348:2: note: in expansion of macro
+'_compiletime_assert'
+  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+  ^~~~~~~~~~~~~~~~~~~
+include/linux/build_bug.h:45:37: note: in expansion of macro
+'compiletime_assert'
+ #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+                                     ^~~~~~~~~~~~~~~~~~
+
+Bisection points to "x86/cpu_entry_area: Add guard page for entry
+stack on 32bit" (e50622b4a1, also present in 4.14.y as 880a98c339).
+
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.19.87-rc2
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.19.y
+git commit: 63633b307be0161e7bd6f854a28d7d9fa05f69ef
+git describe: v4.19.86-309-g63633b307be0
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
+ild/v4.19.86-309-g63633b307be0
+
+Regressions (compared to build v4.19.86)
+------------------------------------------------------------------------
+
+i386:
+  build:
+    * build_process
+
+
+No fixes (compared to build v4.19.86)
+
+
+Ran 18913 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* linux-log-parser
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* perf
+* spectre-meltdown-checker-test
+* v4l2-compliance
+* ltp-fs-tests
+* network-basic-tests
+* kvm-unit-tests
+* ltp-open-posix-tests
+* ssuite
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
