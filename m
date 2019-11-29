@@ -2,104 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 871AE10D3A6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2019 11:06:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13FAA10D491
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2019 12:13:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbfK2KGo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Nov 2019 05:06:44 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35702 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725892AbfK2KGo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Nov 2019 05:06:44 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D7179B1AD;
-        Fri, 29 Nov 2019 10:06:41 +0000 (UTC)
-Date:   Fri, 29 Nov 2019 11:06:39 +0100
-From:   Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-To:     =?utf-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-Cc:     Mel Gorman <mgorman@suse.de>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: Re: [PATCH v2 1/3] sched/numa: advanced per-cgroup numa statistic
-Message-ID: <20191129100639.GI831@blackbody.suse.cz>
-References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
- <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
- <9354ffe8-81ba-9e76-e0b3-222bc942b3fc@linux.alibaba.com>
- <20191127101932.GN28938@suse.de>
- <3ff78d18-fa29-13f3-81e5-a05537a2e344@linux.alibaba.com>
- <20191128123924.GD831@blackbody.suse.cz>
- <e008fef6-06d2-28d3-f4d3-229f4b181b4f@linux.alibaba.com>
- <20191128155818.GE831@blackbody.suse.cz>
- <b97ce489-c5c5-0670-a553-0e45d593de2c@linux.alibaba.com>
- <f9da5ce8-519e-62b4-36f7-8e5bbf0485fd@linux.alibaba.com>
+        id S1726778AbfK2LNA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Nov 2019 06:13:00 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:60200 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725892AbfK2LM7 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 29 Nov 2019 06:12:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575025978;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=bxScUU+tLhB/hy64e2JXaID7fYPwFs1dmqeZUURfU1Y=;
+        b=grK9S56op4D4kvZ0Z4TrwspqLYeF/q+OF+H3t3a9dLUl1VMsL1ApNdKB/eFvLFg4TH7yFN
+        eW8B2iDR7jHtfcRmxJBMGV3t6QWjh8z9/E2ab6p3nK7tDP0D5VexN2kQcInorKOXaxIzTE
+        udEwoEWtu3CXu2V69J2kzJJSAmWvqrs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-173-GquHScysM--BQVo7FW-s3A-1; Fri, 29 Nov 2019 06:12:55 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 56E22107ACC7;
+        Fri, 29 Nov 2019 11:12:53 +0000 (UTC)
+Received: from localhost (dhcp-12-102.nay.redhat.com [10.66.12.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 92A1360903;
+        Fri, 29 Nov 2019 11:12:52 +0000 (UTC)
+Date:   Fri, 29 Nov 2019 19:20:54 +0800
+From:   Zorro Lang <zlang@redhat.com>
+To:     Yang Xu <xuyang2018.jy@cn.fujitsu.com>
+Cc:     ltp@lists.linux.it, linux-fsdevel@vger.kernel.org
+Subject: Re: [LTP] [PATCH] syscalls/newmount: new test case for new mount API
+Message-ID: <20191129112053.GF4601@dhcp-12-102.nay.redhat.com>
+Mail-Followup-To: Yang Xu <xuyang2018.jy@cn.fujitsu.com>,
+        ltp@lists.linux.it, linux-fsdevel@vger.kernel.org
+References: <20191128173532.6468-1-zlang@redhat.com>
+ <9c487d75-0de0-af8f-a439-d3ce9d965808@cn.fujitsu.com>
+ <fa006742-d29d-4d19-c628-30b0454c8f72@cn.fujitsu.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tctmm6wHVGT/P6vA"
-Content-Disposition: inline
-In-Reply-To: <f9da5ce8-519e-62b4-36f7-8e5bbf0485fd@linux.alibaba.com>
+In-Reply-To: <fa006742-d29d-4d19-c628-30b0454c8f72@cn.fujitsu.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: GquHScysM--BQVo7FW-s3A-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Nov 29, 2019 at 01:29:35PM +0800, Yang Xu wrote:
+>=20
+>=20
+> on 2019/11/29 11:39, Yang Xu wrote:
+> > --- /dev/null
+> > +++ b/include/lapi/newmount.h
+> > @@ -0,0 +1,106 @@
+> > +/*
+> > + * Copyright (C) 2019 Red Hat, Inc.  All rights reserved.
+> > + *
+> > + * This program is free software; you can redistribute it and/or
+> > + * modify it under the terms of the GNU General Public License as
+> > + * published by the Free Software Foundation; either version 2 of
+> > + * the License, or (at your option) any later version.
+> > + *
+> > + * This program is distributed in the hope that it would be useful,
+> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> > + * GNU General Public License for more details.
+> > + *
+> > + * You should have received a copy of the GNU General Public License
+> > + * along with this program; if not, write the Free Software Foundation=
+,
+> > + * Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+> > + */
+> > +
+> > +#ifndef __NEWMOUNT_H__
+> > +#define __NEWMOUNT_H__
+> > +
+> > +#include <stdint.h>
+> > +#include <unistd.h>
+> > +#include "lapi/syscalls.h"
+> > +
+> > +#if !defined(HAVE_FSOPEN)
+> When we run make autotools and ./configure, this macro is in
+> "include/config.h". You should include this header file like other lapi
+> files.
 
---tctmm6wHVGT/P6vA
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Oh, thanks, I refered to the include/lapi/stat.h file, it doesn't include
+config.h, I don't know if it's needed.
 
-On Fri, Nov 29, 2019 at 01:19:33PM +0800, =E7=8E=8B=E8=B4=87 <yun.wang@linu=
-x.alibaba.com> wrote:
-> I did some research regarding cpuacct, and find cpuacct_charge() is a good
-> place to do hierarchical update, however, what we get there is the execut=
-ion
-> time delta since last update_curr().
-I wouldn't extend cpuacct, I'd like to look into using the rstat
-mechanism for per-CPU runtime collection. (Most certainly I won't get
-down to this until mid December though.)
+Thanks,
+Zorro
 
-> I'm afraid we can't just do local/remote accumulation since the sample pe=
-riod
-> now is changing, still have to accumulate the execution time into locality
-> regions.
-My idea was to decouple time from the locality counters completely. It'd
-be up to the monitoring application to normalize differences wrt
-sampling rate (and handle wrap arounds).
+> > +static inline int fsopen(const char *fs_name, unsigned int flags)
+> > +{
+>=20
+>=20
 
-
-Michal
-
---tctmm6wHVGT/P6vA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEEoQaUCWq8F2Id1tNia1+riC5qSgFAl3g7aoACgkQia1+riC5
-qSj6ihAAjGL+AfasV1mBclWNhpl6+ocgSIbO11onVPt4IbQHizY925prKB3WfEqc
-n/rv5OykoWSLCtZsSQAzqN7th9XYzqaALVJ7/CDfQP4QBIlPxBQ/nSQvE1mg5f5e
-Dyon80A94xAxWScMCXhpL1BgmNJH9PxgI/1rVq0RuAn2OE5XN/95xzesZh89SWLa
-A8iJ/4rvUwF7aQZLpG75U03Kejo16aBPcaSh8M9dqCPTa9R0/iXMc20bzVBhpqZq
-GvT+V5NjgOmM4mxwa1atcOXdsb5w+J3NRTxl4fl8rwr01WTwR6OiU2ZTV3+OMqwe
-DK0UaLdwKc9X7uzioPiVZlICOz8lBccd19ZvmMUVPgZdwIfXLT52S30dp38gq6vd
-RVOGf68MWI0swndpgnVcSHpSyIgMOvQBdWaA0Yv8GkfIcADwCceeFQ0joyhm+SbU
-wnhfEB6/gwWn5CU9bhhNJF2yILxxmQYfjE4hgkMg4fvdddisAvha7AVDYS5dXadW
-xSnvCXgI1gRXm4SmF8SmuLDVsLdmFJf2OIjKBbOZ2lY1yxnO66bc/cSKQZlYGyVg
-7cFZDhjUCKPEys1sn7SwV4KGpa9AQVBL18D6AvAAwnWRxJxPdSJP2lKB0u4sIDJQ
-kqGtI30Ny4C8ClB1XqB1YAMHYjObuuGfBG0NtCLap6bOxI0hdc0=
-=+0n3
------END PGP SIGNATURE-----
-
---tctmm6wHVGT/P6vA--
