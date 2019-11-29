@@ -2,139 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ACDD10D4AF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2019 12:23:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CA0F10D4E0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Nov 2019 12:31:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbfK2LXW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Nov 2019 06:23:22 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35050 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725892AbfK2LXW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Nov 2019 06:23:22 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EA9F5AC82;
-        Fri, 29 Nov 2019 11:23:17 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 4E8A01E0B6A; Fri, 29 Nov 2019 12:23:15 +0100 (CET)
-Date:   Fri, 29 Nov 2019 12:23:15 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 17/19] powerpc: book3s64: convert to pin_user_pages()
- and put_user_page()
-Message-ID: <20191129112315.GB1121@quack2.suse.cz>
-References: <20191125231035.1539120-1-jhubbard@nvidia.com>
- <20191125231035.1539120-18-jhubbard@nvidia.com>
+        id S1726215AbfK2Lbe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Nov 2019 06:31:34 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:33550 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726586AbfK2Lbd (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 29 Nov 2019 06:31:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575027092;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=YdpoK6aXLSJcDdFCbNgtPgEP940wC0mFml1bPEtXfps=;
+        b=aGeXFEDaYz4e4ngCuRl/PeqblSm0wm1x4RAtHIsvWD/eZ0VcAVctQt1WFZiDR+vUPnVCA0
+        kGDq97GrfpI6JFVOwodyRAkmKE7cmav77dyxO/+kFmcvwfiFjo4AKUn5RYS2asISrKXq2/
+        73GgVY8Xtz1cwwVardcB/fCqSCxXeJI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-409-18R8PMqJNYSHFKnv-xroYA-1; Fri, 29 Nov 2019 06:31:31 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9EE4A593A0;
+        Fri, 29 Nov 2019 11:31:30 +0000 (UTC)
+Received: from [10.33.36.147] (unknown [10.33.36.147])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BDB1519C4F;
+        Fri, 29 Nov 2019 11:31:28 +0000 (UTC)
+Subject: Re: [PATCH 02/12] fs_parse: fix fs_param_v_optional handling
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+        David Howells <dhowells@redhat.com>, stable@vger.kernel.org
+References: <20191128155940.17530-1-mszeredi@redhat.com>
+ <20191128155940.17530-3-mszeredi@redhat.com>
+From:   Andrew Price <anprice@redhat.com>
+Message-ID: <8694f75f-e947-d369-6be3-b08287c381e9@redhat.com>
+Date:   Fri, 29 Nov 2019 11:31:27 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191125231035.1539120-18-jhubbard@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191128155940.17530-3-mszeredi@redhat.com>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: 18R8PMqJNYSHFKnv-xroYA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 25-11-19 15:10:33, John Hubbard wrote:
-> 1. Convert from get_user_pages() to pin_user_pages().
+On 28/11/2019 15:59, Miklos Szeredi wrote:
+> String options always have parameters, hence the check for optional
+> parameter will never trigger.
 > 
-> 2. As required by pin_user_pages(), release these pages via
-> put_user_page(). In this case, do so via put_user_pages_dirty_lock().
+> Check for param type being a flag first (flag is the only type that does
+> not have a parameter) and report "Missing value" if the parameter is
+> mandatory.
 > 
-> That has the side effect of calling set_page_dirty_lock(), instead
-> of set_page_dirty(). This is probably more accurate.
+> Tested with gfs2's "quota" option, which is currently the only user of
+> fs_param_v_optional.
 
-Maybe more accurate but it doesn't work for mm_iommu_unpin(). As I'm
-checking mm_iommu_unpin() gets called from RCU callback which is executed
-interrupt context and you cannot lock pages from such context. So you need
-to queue work from the RCU callback and then do the real work from the
-workqueue...
+It's not clear to me what the bug is here. My tests with the quota 
+option are giving expected results. Perhaps I missed a case?
 
-								Honza
+Andy
 
-> 
-> As Christoph Hellwig put it, "set_page_dirty() is only safe if we are
-> dealing with a file backed page where we have reference on the inode it
-> hangs off." [1]
-> 
-> [1] https://lore.kernel.org/r/20190723153640.GB720@lst.de
-> 
-> Cc: Jan Kara <jack@suse.cz>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> Cc: Andrew Price <anprice@redhat.com>
+> Cc: David Howells <dhowells@redhat.com>
+> Fixes: 31d921c7fb96 ("vfs: Add configuration parser helpers")
+> Cc: <stable@vger.kernel.org> # v5.4
 > ---
->  arch/powerpc/mm/book3s64/iommu_api.c | 12 +++++-------
->  1 file changed, 5 insertions(+), 7 deletions(-)
+>   fs/fs_parser.c | 10 ++++++----
+>   1 file changed, 6 insertions(+), 4 deletions(-)
 > 
-> diff --git a/arch/powerpc/mm/book3s64/iommu_api.c b/arch/powerpc/mm/book3s64/iommu_api.c
-> index 56cc84520577..fc1670a6fc3c 100644
-> --- a/arch/powerpc/mm/book3s64/iommu_api.c
-> +++ b/arch/powerpc/mm/book3s64/iommu_api.c
-> @@ -103,7 +103,7 @@ static long mm_iommu_do_alloc(struct mm_struct *mm, unsigned long ua,
->  	for (entry = 0; entry < entries; entry += chunk) {
->  		unsigned long n = min(entries - entry, chunk);
->  
-> -		ret = get_user_pages(ua + (entry << PAGE_SHIFT), n,
-> +		ret = pin_user_pages(ua + (entry << PAGE_SHIFT), n,
->  				FOLL_WRITE | FOLL_LONGTERM,
->  				mem->hpages + entry, NULL);
->  		if (ret == n) {
-> @@ -167,9 +167,8 @@ static long mm_iommu_do_alloc(struct mm_struct *mm, unsigned long ua,
->  	return 0;
->  
->  free_exit:
-> -	/* free the reference taken */
-> -	for (i = 0; i < pinned; i++)
-> -		put_page(mem->hpages[i]);
-> +	/* free the references taken */
-> +	put_user_pages(mem->hpages, pinned);
->  
->  	vfree(mem->hpas);
->  	kfree(mem);
-> @@ -212,10 +211,9 @@ static void mm_iommu_unpin(struct mm_iommu_table_group_mem_t *mem)
->  		if (!page)
->  			continue;
->  
-> -		if (mem->hpas[i] & MM_IOMMU_TABLE_GROUP_PAGE_DIRTY)
-> -			SetPageDirty(page);
-> +		put_user_pages_dirty_lock(&page, 1,
-> +				mem->hpas[i] & MM_IOMMU_TABLE_GROUP_PAGE_DIRTY);
->  
-> -		put_page(page);
->  		mem->hpas[i] = 0;
->  	}
->  }
-> -- 
-> 2.24.0
+> diff --git a/fs/fs_parser.c b/fs/fs_parser.c
+> index d1930adce68d..5d8833d71b37 100644
+> --- a/fs/fs_parser.c
+> +++ b/fs/fs_parser.c
+> @@ -127,13 +127,15 @@ int fs_parse(struct fs_context *fc,
+>   	case fs_param_is_u64:
+>   	case fs_param_is_enum:
+>   	case fs_param_is_string:
+> -		if (param->type != fs_value_is_string)
+> -			goto bad_value;
+> -		if (!result->has_value) {
+> +		if (param->type == fs_value_is_flag) {
+>   			if (p->flags & fs_param_v_optional)
+>   				goto okay;
+> -			goto bad_value;
+> +
+> +			return invalf(fc, "%s: Missing value for '%s'",
+> +				      desc->name, param->key);
+>   		}
+> +		if (param->type != fs_value_is_string)
+> +			goto bad_value;
+>   		/* Fall through */
+>   	default:
+>   		break;
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
