@@ -2,230 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81AD810DC45
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2019 04:44:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8009110DC62
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2019 06:06:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727196AbfK3Doq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Nov 2019 22:44:46 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:33954 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727175AbfK3Doq (ORCPT
+        id S1725874AbfK3FF5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 30 Nov 2019 00:05:57 -0500
+Received: from mail-qk1-f180.google.com ([209.85.222.180]:35709 "EHLO
+        mail-qk1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725298AbfK3FF4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Nov 2019 22:44:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=lV4uw+gaYRWbW1eWDpyMQCkqCu9PdBiUUsVW1HFSueI=; b=nuqW/nv5PpexoOa3FQ/20rync
-        nlnrQ7TY/5SK6OvPl12Wjou2bzDq0lMN1p6zUU1lCrFaakfcumxvZaPWPVRY+EiCFDsMkalJb5Ndn
-        nbjs1fCtFWrvLZiAh6bgX92rbbCDl0pBeMP+x0YrW/5kbXriWeuoW702VV8tSl+6ltgSxtVGJ/G31
-        stPmm0w3UKiwDLpRVZtBEt5/FP+mXTptK1TcoqU9roQHxILl16cPv+5ygUslS8Poaz2DlInKIIPSF
-        AlqrzYK4pZGkptZRiZtcVQhSorDnbOUCpxZUHPAJ5iglQhkUXCpCpveyasdHzWrO3AdDT7r1TCsu9
-        yyNC6jgLQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iatfX-0002t5-34; Sat, 30 Nov 2019 03:43:39 +0000
-Date:   Fri, 29 Nov 2019 19:43:39 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     yu kuai <yukuai3@huawei.com>
-Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        viro@zeniv.linux.org.uk, rostedt@goodmis.org, oleg@redhat.com,
-        mchehab+samsung@kernel.org, corbet@lwn.net, tytso@mit.edu,
-        jmorris@namei.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, zhengbin13@huawei.com,
-        yi.zhang@huawei.com, chenxiang66@hisilicon.com, xiexiuqi@huawei.com
-Subject: Re: [PATCH V2 1/3] dcache: add a new enum type for
- 'dentry_d_lock_class'
-Message-ID: <20191130034339.GI20752@bombadil.infradead.org>
-References: <20191130020225.20239-1-yukuai3@huawei.com>
- <20191130020225.20239-2-yukuai3@huawei.com>
+        Sat, 30 Nov 2019 00:05:56 -0500
+Received: by mail-qk1-f180.google.com with SMTP id v23so19615069qkg.2;
+        Fri, 29 Nov 2019 21:05:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=Do2B9jmWha/bcrRzWjITtxu2d5yYxoA4WCpoK6RtSa8=;
+        b=IOidwmBSl2SbB0Szc6pVQ1hRHfq5gYJXQCUbmKsJCmgg/F710XP8IxQdEl/NazxUlS
+         r2TUjQHmjFNaME7rCTN0DPdvp1oQ8rPppICbHAg3WGC6CX8t/AtYMQYzwvjhSvH3R4jR
+         uZo+n8vMuXn/1JPGywxw5kciB74Q9JtePfYxz+YqtikuYdA35qh08GWlMNh1r/yb91GH
+         Uya/+/usS+jP2KRWJZVAmqel32lzZs9FyZP/Iwe2qt9XAcx53gMx/0ejl725kqykbF/u
+         vjSSAyZAIzQJ6hrTDMJOcGehdNjhixEPOUTtTrHK3LJPySxJdGXblBz4itDqB3AqCZoS
+         AeAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=Do2B9jmWha/bcrRzWjITtxu2d5yYxoA4WCpoK6RtSa8=;
+        b=N0bUlc18UrR2RcU1HL4KzpCf0+aqeBpJNibnrv25JIjLbRLC6ir85ygm44/guUM7sD
+         Y7lSoz60O8dbqZXypvWsA/I+AEkamJR/SJ8p9DyfXd20+beLomLYuc3HghyZMBtOQR5b
+         qr2HcB52gGqgoTWIb0ksuyIIQa+05fVpCAfnWWeFpBI7WNrLsJMHx0QG7inLy7ekX3r7
+         XW08qVd3se8r8ux5G1bxpqh3tFQ2twyhyxAqHbUSeqBPm49dPtsABkv1IwfE9MV7LGpI
+         3f6a4xm3EeJlGAcSQ2kvwD3Xl8MQKFZDAQ9YUQ5wK3gzAoaDkxYscsYnXP0X5h0FvskA
+         DBLg==
+X-Gm-Message-State: APjAAAWs0vES2WB6Z9B3KT7HSAUELBFrRj5ObENvaMIpTpoFhvRRdRvL
+        JaZuOdhHdmJWe4A3GQAvRkpBmgd6Tc2MdQ==
+X-Google-Smtp-Source: APXvYqx82AHLwYTgOhEPpRdIU8/HQVpv/h+gzSO42GuNeCO5QGFqXtZZlHYAUxRHkYh0yc+G/qg0bQ==
+X-Received: by 2002:a37:4841:: with SMTP id v62mr19841347qka.444.1575090353773;
+        Fri, 29 Nov 2019 21:05:53 -0800 (PST)
+Received: from ?IPv6:2804:14d:72b1:8920:a2ce:f815:f14d:bfac? ([2804:14d:72b1:8920:a2ce:f815:f14d:bfac])
+        by smtp.gmail.com with ESMTPSA id 62sm4814617qkm.121.2019.11.29.21.05.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Nov 2019 21:05:53 -0800 (PST)
+Subject: Re: [PATCH v2] Documentation: filesystems: convert fuse to RST
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-fsdevel@vger.kernel.org
+References: <20191120192655.33709-1-dwlsalmeida@gmail.com>
+ <CAJfpegsxXJN1Z5fGzcv=+sid6gSzyD=KtA2omF2Xsx8dy00tRw@mail.gmail.com>
+From:   "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+Message-ID: <d7bc2ab8-c1b5-85fb-6de3-c9c939d2e678@gmail.com>
+Date:   Sat, 30 Nov 2019 01:58:08 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191130020225.20239-2-yukuai3@huawei.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <CAJfpegsxXJN1Z5fGzcv=+sid6gSzyD=KtA2omF2Xsx8dy00tRw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 30, 2019 at 10:02:23AM +0800, yu kuai wrote:
-> However, a single 'DENTRY_D_LOCK_NESTED' may not be enough if more than
-> two dentry are involed. So, add in 'DENTRY_D_LOCK_NESTED_TWICE'.
+Hey Miklos, thank you for taking the time to review my work!
 
-No.  These need meaningful names.  Indeed, I think D_LOCK_NESTED is
-a terrible name.
 
-Looking at the calls:
+I can send v3 and put the doc back where it was. How about the 
+conversion itself, is it OK to you?
 
-$ git grep -n nested.*d_lock fs
-fs/autofs/expire.c:82:          spin_lock_nested(&child->d_lock, DENTRY_D_LOCK_NESTED);
-fs/dcache.c:619:                spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
-fs/dcache.c:1086:       spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
-fs/dcache.c:1303:               spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
-fs/dcache.c:2822:               spin_lock_nested(&old_parent->d_lock, DENTRY_D_LOCK_NESTED);
-fs/dcache.c:2827:                       spin_lock_nested(&target->d_parent->d_lock,
-fs/dcache.c:2830:       spin_lock_nested(&dentry->d_lock, 2);
-fs/dcache.c:2831:       spin_lock_nested(&target->d_lock, 3);
-fs/dcache.c:3121:       spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
-fs/libfs.c:112:                 spin_lock_nested(&d->d_lock, DENTRY_D_LOCK_NESTED);
-fs/libfs.c:341:         spin_lock_nested(&child->d_lock, DENTRY_D_LOCK_NESTED);
-fs/notify/fsnotify.c:129:                       spin_lock_nested(&child->d_lock, DENTRY_D_LOCK_NESTED);
 
-Most of these would be well-expressed by DENTRY_D_LOCK_CHILD.
+Thanks,
 
-The exception is __d_move() where I think we should actually name the
-different lock classes instead of using a bare '2' and '3'.  Something
-like this, perhaps:
+Daniel.
 
-diff --git a/fs/autofs/expire.c b/fs/autofs/expire.c
-index 2866fabf497f..f604175243eb 100644
---- a/fs/autofs/expire.c
-+++ b/fs/autofs/expire.c
-@@ -79,7 +79,7 @@ static struct dentry *positive_after(struct dentry *p, struct dentry *child)
- 		child = list_first_entry(&p->d_subdirs, struct dentry, d_child);
- 
- 	list_for_each_entry_from(child, &p->d_subdirs, d_child) {
--		spin_lock_nested(&child->d_lock, DENTRY_D_LOCK_NESTED);
-+		spin_lock_nested(&child->d_lock, DENTRY_D_LOCK_CHILD);
- 		if (simple_positive(child)) {
- 			dget_dlock(child);
- 			spin_unlock(&child->d_lock);
-diff --git a/fs/dcache.c b/fs/dcache.c
-index e88cf0554e65..c73b7d7bc785 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -616,7 +616,7 @@ static struct dentry *__lock_parent(struct dentry *dentry)
- 	}
- 	rcu_read_unlock();
- 	if (parent != dentry)
--		spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
-+		spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_CHILD);
- 	else
- 		parent = NULL;
- 	return parent;
-@@ -1083,7 +1083,7 @@ static bool shrink_lock_dentry(struct dentry *dentry)
- 		spin_lock(&dentry->d_lock);
- 		goto out;
- 	}
--	spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
-+	spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_CHILD);
- 	if (likely(!dentry->d_lockref.count))
- 		return true;
- 	spin_unlock(&parent->d_lock);
-@@ -1300,7 +1300,7 @@ static void d_walk(struct dentry *parent, void *data,
- 		if (unlikely(dentry->d_flags & DCACHE_DENTRY_CURSOR))
- 			continue;
- 
--		spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
-+		spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_CHILD);
- 
- 		ret = enter(data, dentry);
- 		switch (ret) {
-@@ -2819,16 +2819,16 @@ static void __d_move(struct dentry *dentry, struct dentry *target,
- 	} else if (!p) {
- 		/* target is not a descendent of dentry->d_parent */
- 		spin_lock(&target->d_parent->d_lock);
--		spin_lock_nested(&old_parent->d_lock, DENTRY_D_LOCK_NESTED);
-+		spin_lock_nested(&old_parent->d_lock, DENTRY_D_LOCK_PARENT_2);
- 	} else {
- 		BUG_ON(p == dentry);
- 		spin_lock(&old_parent->d_lock);
- 		if (p != target)
- 			spin_lock_nested(&target->d_parent->d_lock,
--					DENTRY_D_LOCK_NESTED);
-+					DENTRY_D_LOCK_PARENT_2);
- 	}
--	spin_lock_nested(&dentry->d_lock, 2);
--	spin_lock_nested(&target->d_lock, 3);
-+	spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_CHILD);
-+	spin_lock_nested(&target->d_lock, DENTRY_D_LOCK_CHILD_2);
- 
- 	if (unlikely(d_in_lookup(target))) {
- 		dir = target->d_parent->d_inode;
-@@ -2837,7 +2837,7 @@ static void __d_move(struct dentry *dentry, struct dentry *target,
- 	}
- 
- 	write_seqcount_begin(&dentry->d_seq);
--	write_seqcount_begin_nested(&target->d_seq, DENTRY_D_LOCK_NESTED);
-+	write_seqcount_begin_nested(&target->d_seq, DENTRY_D_LOCK_CHILD);
- 
- 	/* unhash both */
- 	if (!d_unhashed(dentry))
-@@ -3118,7 +3118,7 @@ void d_tmpfile(struct dentry *dentry, struct inode *inode)
- 		!hlist_unhashed(&dentry->d_u.d_alias) ||
- 		!d_unlinked(dentry));
- 	spin_lock(&dentry->d_parent->d_lock);
--	spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
-+	spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_CHILD);
- 	dentry->d_name.len = sprintf(dentry->d_iname, "#%llu",
- 				(unsigned long long)inode->i_ino);
- 	spin_unlock(&dentry->d_lock);
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 1463b038ffc4..c68dedbf4ad2 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -109,7 +109,7 @@ static struct dentry *scan_positives(struct dentry *cursor,
- 		if (d->d_flags & DCACHE_DENTRY_CURSOR)
- 			continue;
- 		if (simple_positive(d) && !--count) {
--			spin_lock_nested(&d->d_lock, DENTRY_D_LOCK_NESTED);
-+			spin_lock_nested(&d->d_lock, DENTRY_D_LOCK_CHILD);
- 			if (simple_positive(d))
- 				found = dget_dlock(d);
- 			spin_unlock(&d->d_lock);
-@@ -336,9 +336,9 @@ int simple_empty(struct dentry *dentry)
- 	struct dentry *child;
- 	int ret = 0;
- 
--	spin_lock(&dentry->d_lock);
-+	spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_PARENT_2);
- 	list_for_each_entry(child, &dentry->d_subdirs, d_child) {
--		spin_lock_nested(&child->d_lock, DENTRY_D_LOCK_NESTED);
-+		spin_lock_nested(&child->d_lock, DENTRY_D_LOCK_CHILD_2);
- 		if (simple_positive(child)) {
- 			spin_unlock(&child->d_lock);
- 			goto out;
-diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index 2ecef6155fc0..23492f2e4915 100644
---- a/fs/notify/fsnotify.c
-+++ b/fs/notify/fsnotify.c
-@@ -126,7 +126,7 @@ void __fsnotify_update_child_dentry_flags(struct inode *inode)
- 			if (!child->d_inode)
- 				continue;
- 
--			spin_lock_nested(&child->d_lock, DENTRY_D_LOCK_NESTED);
-+			spin_lock_nested(&child->d_lock, DENTRY_D_LOCK_CHILD);
- 			if (watched)
- 				child->d_flags |= DCACHE_FSNOTIFY_PARENT_WATCHED;
- 			else
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index 10090f11ab95..6a497c63bd38 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -121,15 +121,20 @@ struct dentry {
- } __randomize_layout;
- 
- /*
-- * dentry->d_lock spinlock nesting subclasses:
-+ * dentry->d_lock spinlock nesting subclasses.  Always taken in increasing
-+ * order although some subclasses may be skipped.
-  *
-  * 0: normal
-- * 1: nested
-+ * 1: either a descendent of "normal" or a cousin.
-+ * 2: child of the "normal" dentry
-+ * 3: child of the "parent2" dentry
-  */
- enum dentry_d_lock_class
- {
--	DENTRY_D_LOCK_NORMAL, /* implicitly used by plain spin_lock() APIs. */
--	DENTRY_D_LOCK_NESTED
-+	DENTRY_D_LOCK_NORMAL,   /* implicitly used by plain spin_lock() APIs */
-+	DENTRY_D_LOCK_PARENT_2, /* not an ancestor of parent */
-+	DENTRY_D_LOCK_CHILD,    /* nests under parent's lock */
-+	DENTRY_D_LOCK_CHILD_2,  /* PARENT_2's child */
- };
- 
- struct dentry_operations {
+
+
