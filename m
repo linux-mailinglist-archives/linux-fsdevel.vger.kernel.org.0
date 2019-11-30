@@ -2,129 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB25F10DE2D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2019 16:53:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1869110DEB0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Nov 2019 19:57:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726965AbfK3PxZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 30 Nov 2019 10:53:25 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:37663 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbfK3PxY (ORCPT
+        id S1727266AbfK3S4y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 30 Nov 2019 13:56:54 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:58274 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726799AbfK3S4y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 30 Nov 2019 10:53:24 -0500
-Received: by mail-qt1-f196.google.com with SMTP id w47so31912047qtk.4
-        for <linux-fsdevel@vger.kernel.org>; Sat, 30 Nov 2019 07:53:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=jdRfuJtU8uqmsqgyTo2pn3PG7sCQI4AYvfljBHLyej8=;
-        b=h9Xa8Eyclllyo//fAfdA6VQ/NNyTP9f+uLFtD4bmksqFDq4S1bbFxwzDeEJttovLA+
-         mnwtZFGkAVHm2+wV2IzyZoYpsKsJ2mGHYOGv/vz+DTZx2bwuZsa1brlObLw2VA+4ZGN6
-         Nw9LyJRgKaSgaDal3R88V8Juyb61wmzvdJFLNs4LxfF7Zx10YTWNLoSBEOFLPEZwbjtM
-         htYm2/jz6i4wavsnGNSvO3yVXMGN0MBqufBY3UhFTkEhs20UhTH4m4c5ljTqY/e6b63v
-         /i5m96jPlK/2c5m63NicterXuUVD9gx3YQMVkaWwLLAtjOLkyi5NgBTXzvjoFEiz2GNl
-         tmXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=jdRfuJtU8uqmsqgyTo2pn3PG7sCQI4AYvfljBHLyej8=;
-        b=h10Y9Y911Gm3I7DpMuV0eIINlxUon+C5LSmcsOMM1hNC/eAo8J8a6/Gp+Zt5oFTpZK
-         Kgn+9xec/uIwYTgpzYWyTEeG1GQ/SDenOzZPMYkuM0NQmH7KeUck9XN7dfYXZFjQcrbe
-         ktmY23WpwoVWYLRTFlV0AMsnwlq6fupkCO0y1wiEFlNc2RiM11S35CwliJ1dhXf90CdF
-         psVJDcKUcv0mgyBeaC8KhiTtwaWSuSMCf1zXgjpHSJCulfwJutRKSbCZc6tKftCi5ccA
-         DOq61TPNv7vC689e0fi3s6M1rRHmdX3QNMO5ZEMrTLrd/jcd7U6dLvo+Csb0JLn0Hd2u
-         DOoQ==
-X-Gm-Message-State: APjAAAX7SARxqFyGXBdCbSKREE5Vkh/Jy9wETpAE3qtdIvtVmDceRyPi
-        yOPi1cfPYaErE65BihfLAtyj1UgJZFvLan2z1xsntQ==
-X-Google-Smtp-Source: APXvYqwd50hiQXx0poflgh573lP3ofw793nvHMJ0u0cS4TDPRH9X6wxqaksQSt8m/TXYBMG15l5vLxsJFaq5/XgjMew=
-X-Received: by 2002:ac8:3905:: with SMTP id s5mr40808406qtb.158.1575129203287;
- Sat, 30 Nov 2019 07:53:23 -0800 (PST)
+        Sat, 30 Nov 2019 13:56:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
+        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=dtDNU5sJrpQrH2YZuWtZnAQZGfS/Szp5dKIJMLrH2NQ=; b=bEeUz/nIiuE8mV7phq5Zje58L
+        F52B0xp4sOqF2KbwO12ZLwt/L8jYT4xIBG7E7pOIEq118Aw5Szw36Q70sZimDGjoCge9T9gdrAiUx
+        sxo69Ft81pZGFQzOE5cKSmGT+gza4H7/F63XE1j7JNX1vX27RDV/s7AF6P5xc2AwZ57vESvhG0KC/
+        pJLBFu6XUNpKaARxLaK2cQjijzY9SVdKQ/k9q6Fb/yl7DqFRUk0utdzX2rnr5ayxtP05M9tDIVuLp
+        fegOXw6NzVHi+XVCFofCuSS8+iB6wmda7bsLY1WUH1dLXnefI7bpyvBc0PY1TytoT4NubG5SY/X4u
+        aFvb7Cg1w==;
+Received: from [2601:1c0:6280:3f0::5a22]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ib7vE-0006e1-Gi; Sat, 30 Nov 2019 18:56:48 +0000
+Subject: Re: Regression in squashfs mount option handling in v5.4
+To:     Jeremi Piotrowski <jeremi.piotrowski@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>
+References: <20191130181548.GA28459@gentoo-tp.home>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <6af16095-eab0-9e99-6782-374705d545e4@infradead.org>
+Date:   Sat, 30 Nov 2019 10:56:47 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-References: <000000000000e59aab056e8873ae@google.com> <0000000000000beff305981c5ac6@google.com>
- <20191124193035.GA4203@ZenIV.linux.org.uk> <20191130110645.GA4405@dimstar.local.net>
-In-Reply-To: <20191130110645.GA4405@dimstar.local.net>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Sat, 30 Nov 2019 16:53:12 +0100
-Message-ID: <CACT4Y+bg7bZOSg0P9VXq8yG2odAJMg6b6N2fXxbamOmKiz3ohw@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in blkdev_get
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Chris Metcalf <cmetcalf@ezchip.com>, coreteam@netfilter.org,
-        David Miller <davem@davemloft.net>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Chen Gang <gang.chen.5i5j@gmail.com>,
-        Patrick McHardy <kaber@trash.net>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        NetFilter <netfilter-devel@vger.kernel.org>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191130181548.GA28459@gentoo-tp.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 30, 2019 at 12:06 PM Duncan Roe <duncan_roe@optusnet.com.au> wrote:
-> > > syzbot has bisected this bug to:
-> > >
-> > > commit 77ef8f5177599efd0cedeb52c1950c1bd73fa5e3
-> > > Author: Chris Metcalf <cmetcalf@ezchip.com>
-> > > Date:   Mon Jan 25 20:05:34 2016 +0000
-> > >
-> > >     tile kgdb: fix bug in copy to gdb regs, and optimize memset
-> > >
-> > > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1131bc0ee00000
-> > > start commit:   f5b7769e Revert "debugfs: inode: debugfs_create_dir uses m..
-> > > git tree:       upstream
-> > > final crash:    https://syzkaller.appspot.com/x/report.txt?x=1331bc0ee00000
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=1531bc0ee00000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=709f8187af941e84
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=eaeb616d85c9a0afec7d
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=177f898f800000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=147eb85f800000
-> > >
-> > > Reported-by: syzbot+eaeb616d85c9a0afec7d@syzkaller.appspotmail.com
-> > > Fixes: 77ef8f517759 ("tile kgdb: fix bug in copy to gdb regs, and optimize
-> > > memset")
-> > >
-> > > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> >
-> > Seriously?  How can the commit in question (limited to arch/tile/kernel/kgdb.c)
-> > possibly affect a bug that manages to produce a crash report with
-> > RSP: 0018:ffffffff82e03eb8  EFLAGS: 00000282
-> > RAX: 0000000000000000 RBX: ffffffff82e00000 RCX: 0000000000000000
-> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffff81088779
-> > RBP: ffffffff82e03eb8 R08: 0000000000000000 R09: 0000000000000001
-> > R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-> > R13: 0000000000000000 R14: 0000000000000000 R15: ffffffff82e00000
-> > FS:  0000000000000000(0000) GS:ffff88021fc00000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 000000c420447ff8 CR3: 0000000213184000 CR4: 00000000001406f0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > in it?  Unless something very odd has happened to tile, this crash has
-> > been observed on 64bit x86; the names of registers alone are enough
-> > to be certain of that.
-> >
-> > And the binaries produced by an x86 build should not be affected by any
-> > changes in arch/tile; not unless something is very wrong with the build
-> > system.  It's not even that this commit has fixed an earlier bug that
-> > used to mask the one manifested here - it really should have had zero
-> > impact on x86 builds, period.
-> >
-> > So I'm sorry, but I'm calling bullshit.  Something's quite wrong with
-> > the bot - either its build system or the bisection process.
->
-> The acid test would be: does reverting that commit make the problem go away?
->
-> See, for example, https://bugzilla.kernel.org/show_bug.cgi?id=203935
->
-> Cheers ... Duncan.
+[adding Cc-s]
 
-This is done as part of any bisection by definition, right? The test
-was done on the previous commit (effectively this one reverted) and no
-crash was observed. Otherwise bisection would have been pointed to a
-different commit.
+On 11/30/19 10:15 AM, Jeremi Piotrowski wrote:
+> Hi,
+> 
+> I'm working on an embedded project which uses 'rauc' as an updater. rauc mounts
+> a squashfs image using
+> 
+>   mount -t squashfs -o ro,loop,sizelimit=xxx squashfs.img /mnt
+> 
+> On my system mount is busybox, and busybox does not know the sizelimit
+> parameter, so it simply passes it on to the mount syscall. The syscall
+> arguments end up being:
+> 
+>   mount("/dev/loop0", "dir", "squashfs", MS_RDONLY|MS_SILENT, "sizelimit=xxx")
+> 
+> Until kernel 5.4 this worked, since 5.4 this returns EINVAL and dmesg contains
+> the line "squashfs: Unknown parameter 'sizelimit'". I believe this has to do
+> with the conversion of squashfs to the new mount api. 
+> 
+> This is an unfortunate regression, and it does not seem like this can be simply
+> reverted. What is the suggested course of action?
+> 
+> Please cc me on replies, I'm not subscribed to the list.
+> 
+> Thanks,
+> Jeremi
+> 
+
+
+-- 
+~Randy
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
