@@ -2,89 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F4DA10E2FC
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Dec 2019 19:19:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0715F10E30B
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Dec 2019 19:23:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbfLASTd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Dec 2019 13:19:33 -0500
-Received: from mtax.cdmx.gob.mx ([187.141.35.197]:8821 "EHLO mtax.cdmx.gob.mx"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727237AbfLASTc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Dec 2019 13:19:32 -0500
-X-Greylist: delayed 6561 seconds by postgrey-1.27 at vger.kernel.org; Sun, 01 Dec 2019 13:19:32 EST
-X-NAI-Header: Modified by McAfee Email Gateway (4500)
+        id S1727275AbfLASXa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Dec 2019 13:23:30 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:40208 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727072AbfLASXa (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 1 Dec 2019 13:23:30 -0500
+Received: by mail-io1-f66.google.com with SMTP id x1so3850058iop.7;
+        Sun, 01 Dec 2019 10:23:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cdmx.gob.mx; s=72359050-3965-11E6-920A-0192F7A2F08E;
-        t=1575217619; h=DKIM-Filter:X-Virus-Scanned:
-         Content-Type:MIME-Version:Content-Transfer-Encoding:
-         Content-Description:Subject:To:From:Date:Message-Id:
-         X-AnalysisOut:X-AnalysisOut:X-AnalysisOut:
-         X-AnalysisOut:X-AnalysisOut:X-SAAS-TrackingID:
-         X-NAI-Spam-Flag:X-NAI-Spam-Threshold:X-NAI-Spam-Score:
-         X-NAI-Spam-Rules:X-NAI-Spam-Version; bh=M
-        8rWdUYQ57RAYAgTWJQ4Rsch0kO0UXllaAVDzocOs4
-        8=; b=I4KWlXU2IQ1+Ii4r9/EHoWOVeMwNyP246RGWyz+3e3NJ
-        xDFiG+HWOUO+aX6vZE8ahm17pNkFRkZjKukE4K68WKMlbOkGCZ
-        xJAEz/j4RfYrXz49g7xFhM1a3PXBrK0/E6+oVVt0O/1t87f6tn
-        ku7uWu1pMVe3Nb0Z1wDkpg87++U=
-Received: from cdmx.gob.mx (correo.cdmx.gob.mx [10.250.108.150]) by mtax.cdmx.gob.mx with smtp
-        (TLS: TLSv1/SSLv3,256bits,ECDHE-RSA-AES256-GCM-SHA384)
-         id 1a22_5067_4dc8dd07_86a5_4137_ae5d_e5e48d70640d;
-        Sun, 01 Dec 2019 10:26:58 -0600
-Received: from localhost (localhost [127.0.0.1])
-        by cdmx.gob.mx (Postfix) with ESMTP id 19B931E286F;
-        Sun,  1 Dec 2019 10:18:30 -0600 (CST)
-Received: from cdmx.gob.mx ([127.0.0.1])
-        by localhost (cdmx.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id kKDvlhESbM14; Sun,  1 Dec 2019 10:18:29 -0600 (CST)
-Received: from localhost (localhost [127.0.0.1])
-        by cdmx.gob.mx (Postfix) with ESMTP id 6B8981E2A63;
-        Sun,  1 Dec 2019 10:13:19 -0600 (CST)
-DKIM-Filter: OpenDKIM Filter v2.9.2 cdmx.gob.mx 6B8981E2A63
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cdmx.gob.mx;
-        s=72359050-3965-11E6-920A-0192F7A2F08E; t=1575216799;
-        bh=M8rWdUYQ57RAYAgTWJQ4Rsch0kO0UXllaAVDzocOs48=;
-        h=Content-Type:MIME-Version:Content-Transfer-Encoding:Subject:To:
-         From:Date:Message-Id;
-        b=p/M4d9B7g7DcQYk+lgORDCOIORXwIQ8qTHP3InHzyECKq9RxyEA/VBfTsxVlnDXlu
-         vzO1Hc/I01tYM5+mdj667C7dylcFimSRxt3rwml9mSRlwvusUVzrzSSUHCgsfE+ocl
-         SRuL6VPmWWg3d59fWHtnC7VFaYmFckdar1HZiscQ=
-X-Virus-Scanned: amavisd-new at cdmx.gob.mx
-Received: from cdmx.gob.mx ([127.0.0.1])
-        by localhost (cdmx.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id v0nfljcHvMQF; Sun,  1 Dec 2019 10:13:19 -0600 (CST)
-Received: from [192.168.0.104] (unknown [188.125.168.160])
-        by cdmx.gob.mx (Postfix) with ESMTPSA id C57D21E3121;
-        Sun,  1 Dec 2019 10:04:58 -0600 (CST)
-Content-Type: text/plain; charset="iso-8859-1"
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=t4fUTcYfY7mcYP+c65DBEIJpXiFt8LYo795Cww6uf7s=;
+        b=sYEA8DkLPgcYVj56eQRC2KgRU8mAoN0Y4yX4WPEted0p2cPvpxeHV6kFg1Bt5vkWpR
+         GD0qlbdEIpaWZvAAvuHJcVwHwdGgHp+rI6tCcxNpZOBLSnDspMKql9uh9YDIGXzJFuLn
+         fRMrIKvCs/W8X/WxPq6g7Rbh/7I6EhlodIl4g68EJyq840BDu84QIijfpeTtUl9rpecz
+         iJgNwA66nKwrlcf+NNK9mP4lhDdDOop/5mV3c3K9IKg2my0o5G4K0FuGQ4R2KT1yHhMm
+         G6KxM36Y3C2wav4jm4vPIVqowk/T1tRrtpCaxXOUeyNzKvlfdTyPQ5o0HhRYDioO4Lda
+         8H1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=t4fUTcYfY7mcYP+c65DBEIJpXiFt8LYo795Cww6uf7s=;
+        b=pJ73YZz64BqgoddbW0oqG5n+UT/lY5L3SW+vITGNDD9uajt9kzuUBcU8T0yVpR28hG
+         lrbWqPlRXJrfTrdC+IYShStB6I3W6K+c20qJO87RfGTUahgj/tr7P+B7qpjfnVoicVDL
+         JF2yzBvFKnM7wsGQO60XA0DRsXYgo/KHb6dDUvkYKLWOJtl4my8ncSviOxBS7Vz9Q28h
+         C8VPWF1q5n8dB1ERMv6sQgQcZqrIJtq5UCHHmUTM8dfcPwJFwhja5uJMVgTbwv/qwJ2y
+         HCB+5PKZlGeuu8sbLf/Skw9fRE7kIO8mnLZ4SqI/XURaonQePIa+/xrJ3WqbCi3reI20
+         WjAQ==
+X-Gm-Message-State: APjAAAVGdG/1tyB5KbluKgltgSLEfKL0JxUZc2P1/tR1sy46+DL3mw0h
+        XqxxUSj57lISo6fbMouUNlUcBaAJndCeO0V6z9c=
+X-Google-Smtp-Source: APXvYqyanFaFt+dQgUwQsnQO62oDza8XXXGaXpcAuSWg6JdtXjyEKBLOhmjDYnWZuzkdL71TMBuMWyUH7OX6G5k4Dzw=
+X-Received: by 2002:a5d:83c9:: with SMTP id u9mr8142629ior.272.1575224609504;
+ Sun, 01 Dec 2019 10:23:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: Congratulations
-To:     Recipients <aac-styfe@cdmx.gob.mx>
-From:   "Bishop Johnr" <aac-styfe@cdmx.gob.mx>
-Date:   Sun, 01 Dec 2019 17:04:50 +0100
-Message-Id: <20191201160458.C57D21E3121@cdmx.gob.mx>
-X-AnalysisOut: [v=2.2 cv=HeFkdmM8 c=1 sm=1 tr=0 p=6K-Ig8iNAUou4E5wYCEA:9 p]
-X-AnalysisOut: [=zRI05YRXt28A:10 a=T6zFoIZ12MK39YzkfxrL7A==:117 a=9152RP8M]
-X-AnalysisOut: [6GQqDhC/mI/QXQ==:17 a=8nJEP1OIZ-IA:10 a=pxVhFHJ0LMsA:10 a=]
-X-AnalysisOut: [pGLkceISAAAA:8 a=wPNLvfGTeEIA:10 a=M8O0W8wq6qAA:10 a=Ygvjr]
-X-AnalysisOut: [iKHvHXA2FhpO6d-:22]
-X-SAAS-TrackingID: 0d9e3ed5.0.23901732.00-2305.40383966.s12p02m002.mxlogic.net
-X-NAI-Spam-Flag: NO
-X-NAI-Spam-Threshold: 3
-X-NAI-Spam-Score: -5000
-X-NAI-Spam-Rules: 1 Rules triggered
-        WHITELISTED=-5000
-X-NAI-Spam-Version: 2.3.0.9418 : core <6686> : inlines <7165> : streams
- <1840193> : uri <2949749>
+References: <20191130053030.7868-1-deepa.kernel@gmail.com> <20191130053030.7868-3-deepa.kernel@gmail.com>
+In-Reply-To: <20191130053030.7868-3-deepa.kernel@gmail.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Sun, 1 Dec 2019 12:23:18 -0600
+Message-ID: <CAH2r5mukfX6mSY0eHwm0wHnkaLPb2RLAKxnBrScgoZJhtdYZfQ@mail.gmail.com>
+Subject: Re: [PATCH 2/7] fs: cifs: Fix atime update check vs mtime
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Steve French <stfrench@microsoft.com>,
+        CIFS <linux-cifs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Money was donated to you by Mr and Mrs Allen and Violet Large, just contact=
- them with this email for more information =
+merged into cifs-2.6.git for-next
+
+On Fri, Nov 29, 2019 at 11:34 PM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+>
+> According to the comment in the code and commit log, some apps
+> expect atime >= mtime; but the introduced code results in
+> atime==mtime.  Fix the comparison to guard against atime<mtime.
+>
+> Fixes: 9b9c5bea0b96 ("cifs: do not return atime less than mtime")
+> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+> Cc: stfrench@microsoft.com
+> Cc: linux-cifs@vger.kernel.org
+> ---
+>  fs/cifs/inode.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/cifs/inode.c b/fs/cifs/inode.c
+> index 8a76195e8a69..ca76a9287456 100644
+> --- a/fs/cifs/inode.c
+> +++ b/fs/cifs/inode.c
+> @@ -163,7 +163,7 @@ cifs_fattr_to_inode(struct inode *inode, struct cifs_fattr *fattr)
+>
+>         spin_lock(&inode->i_lock);
+>         /* we do not want atime to be less than mtime, it broke some apps */
+> -       if (timespec64_compare(&fattr->cf_atime, &fattr->cf_mtime))
+> +       if (timespec64_compare(&fattr->cf_atime, &fattr->cf_mtime) < 0)
+>                 inode->i_atime = fattr->cf_mtime;
+>         else
+>                 inode->i_atime = fattr->cf_atime;
+> --
+> 2.17.1
+>
 
 
-EMail: allenandvioletlargeaward@gmail.com
+-- 
+Thanks,
+
+Steve
