@@ -2,96 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAC8F10E385
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Dec 2019 22:05:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D27910E3BD
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Dec 2019 22:58:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727167AbfLAVFZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Dec 2019 16:05:25 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:57952 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726965AbfLAVFZ (ORCPT
+        id S1727279AbfLAV62 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Dec 2019 16:58:28 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:36800 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727167AbfLAV62 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Dec 2019 16:05:25 -0500
-Received: from dread.disaster.area (pa49-179-150-192.pa.nsw.optusnet.com.au [49.179.150.192])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 759FA3A0A97;
-        Mon,  2 Dec 2019 08:05:20 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1ibWP9-00056e-SX; Mon, 02 Dec 2019 08:05:19 +1100
-Date:   Mon, 2 Dec 2019 08:05:19 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
+        Sun, 1 Dec 2019 16:58:28 -0500
+Received: by mail-qk1-f194.google.com with SMTP id v19so11036453qkv.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Dec 2019 13:58:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jonmasters-org.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wGf8SOslmQtXKi1QI9BMUXk6iVKg26mOeGKK2Ks7MYE=;
+        b=haC2yWerrh/EPaAEWE30LtPPVcYglspCRi6YH2nLwTymB5BM0YVdLfcoNnZKG3q3Bp
+         nOSJ41/CKSvenze+4GkAAoq9bgeuRouOnCj/Es44/V2bwrq26knTKVbWMzAGr0r749mb
+         l9l7id8p4zBh9Bje3/MjsdxqHSo5evu/yTNVQi8BvsDS+18ao29L2rZrywVaBAa5E+Bn
+         x0RXh5ocXSXB2kcnHvuNdkfBFp74hGdBEPxb3dVc9RanQywc+6L9xpOsFqptvfDXXicS
+         mFu5VCz81jgRJ+DlsgqYbP8yL+YXeDjRXyJey+9AqIWUJ9fl43km/G+rUxio59oiON8g
+         B+JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=wGf8SOslmQtXKi1QI9BMUXk6iVKg26mOeGKK2Ks7MYE=;
+        b=bpdT1Lfvy5rf8oOaV9WC/DAYNaw9fTbnMwTDqgRa+8u/ta+kbFht8dUq+chnPEFmoy
+         LWkm/B+DZXfgl90Ziyw9wG+vwfd3mzGKcNhZMjo2FZ17zfFHJ+3aA/lr1tARGVLh/48q
+         KLgzEXSRe0dm10WdxOPwVUpf2wS6IJpYYxGvxkSNwoYbAbad2k7MvKdHx2LNu68eB7mt
+         B4SBDjW+yiZQrTdoLURNwY0EFfsmK2hcjimjrCOvHH8aYA4570IrMTRBNVNB2EGEppuq
+         f2QbJhbUN2xrvPDxzj/7J4lYwCMZgyDxjGe9IFOdjg5N2LoesRxzlGOVTFts9ekU0Gwj
+         /rqg==
+X-Gm-Message-State: APjAAAULo783eLapnHL5eMFBLqEmlMfCxQtv/rGXofaVVGjpX78WC9SJ
+        dM/m5WJhfw0EmhXI4lXsqg7ypg==
+X-Google-Smtp-Source: APXvYqyneloIKBeXc5AlpZqXq7qebSG4Sm7XfSawnJmWBKgRDS3WvxrB+RD3J2nDCv0D3KoFXS2jaA==
+X-Received: by 2002:a37:434d:: with SMTP id q74mr28864727qka.187.1575237507536;
+        Sun, 01 Dec 2019 13:58:27 -0800 (PST)
+Received: from independence.bos.jonmasters.org (24-148-33-89.s2391.c3-0.grn-cbr1.chi-grn.il.cable.rcncustomer.com. [24.148.33.89])
+        by smtp.gmail.com with ESMTPSA id t38sm4905845qta.78.2019.12.01.13.58.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 01 Dec 2019 13:58:27 -0800 (PST)
+Subject: Re: DAX filesystem support on ARMv8
+To:     Bharat Kumar Gogada <bharatku@xilinx.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>
+Cc:     "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
-Subject: Re: Question about clone_range() metadata stability
-Message-ID: <20191201210519.GB2418@dread.disaster.area>
-References: <f063089fb62c219ea6453c7b9b0aaafd50946dae.camel@hammerspace.com>
- <20191127202136.GV6211@magnolia>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "jack@suse.cz" <jack@suse.cz>
+References: <MN2PR02MB63362F7B019844D94D243CE2A5770@MN2PR02MB6336.namprd02.prod.outlook.com>
+ <CAPcyv4j75cQ4dSqyKGuioyyf0O9r0BG0TjFgv+w=64gLah5z6w@mail.gmail.com>
+ <20191112220212.GC7934@bombadil.infradead.org>
+ <MN2PR02MB6336070627E66ED8AE646BACA5710@MN2PR02MB6336.namprd02.prod.outlook.com>
+From:   Jon Masters <jcm@jonmasters.org>
+Organization: World Organi{s,z}ation of Broken Dreams
+Message-ID: <e01ee855-cb11-d059-6c46-836283b9e251@jonmasters.org>
+Date:   Sun, 1 Dec 2019 13:54:45 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191127202136.GV6211@magnolia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
-        a=ZXpxJgW8/q3NVgupyyvOCQ==:117 a=ZXpxJgW8/q3NVgupyyvOCQ==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=pxVhFHJ0LMsA:10
-        a=7-415B0cAAAA:8 a=y7B9AfDEBtBswh77-68A:9 a=Sca554UL9fLBSYta:21
-        a=MLJJ3OMF_MbDVCWc:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <MN2PR02MB6336070627E66ED8AE646BACA5710@MN2PR02MB6336.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 27, 2019 at 12:21:36PM -0800, Darrick J. Wong wrote:
-> On Wed, Nov 27, 2019 at 06:38:46PM +0000, Trond Myklebust wrote:
-> > Hi all
-> > 
-> > A quick question about clone_range() and guarantees around metadata
-> > stability.
-> > 
-> > Are users required to call fsync/fsync_range() after calling
-> > clone_range() in order to guarantee that the cloned range metadata is
-> > persisted?
+On 11/14/19 1:54 AM, Bharat Kumar Gogada wrote:
+>>
+>> On Tue, Nov 12, 2019 at 09:15:18AM -0800, Dan Williams wrote:
+>>> On Mon, Nov 11, 2019 at 6:12 PM Bharat Kumar Gogada
+>> <bharatku@xilinx.com> wrote:
+>>>>
+>>>> Hi All,
+>>>>
+>>>> As per Documentation/filesystems/dax.txt
+>>>>
+>>>> The DAX code does not work correctly on architectures which have
+>>>> virtually mapped caches such as ARM, MIPS and SPARC.
+>>>>
+>>>> Can anyone please shed light on dax filesystem issue w.r.t ARM architecture
+>> ?
+>>>
+>>> The concern is VIVT caches since the kernel will want to flush pmem
+>>> addresses with different virtual addresses than what userspace is
+>>> using. As far as I know, ARMv8 has VIPT caches, so should not have an
+>>> issue. Willy initially wrote those restrictions, but I am assuming
+>>> that the concern was managing the caches in the presence of virtual
+>>> aliases.
+>>
+>> The kernel will also access data at different virtual addresses from userspace.
+>> So VIVT CPUs will be mmap/read/write incoherent, as well as being flush
+>> incoherent.
 > 
-> Yes.
-> 
-> > I'm assuming that it is required in order to guarantee that
-> > data is persisted.
-> 
-> Data and metadata.  XFS and ocfs2's reflink implementations will flush
-> the page cache before starting the remap, but they both require fsync to
-> force the log/journal to disk.
+> Thanks a lot Wilcox and Dan for clarification.
+> So the above restriction only applies to ARM architectures with VIVT caches and not
+> for VIPT caches.
 
-So we need to call xfs_fs_nfs_commit_metadata() to get that done
-post vfs_clone_file_range() completion on the server side, yes?
+VMSAv8-64 (Armv8) requires that data caches behave as if they were PIPT. 
+Meaning there is not a situation as described above.
 
-> 
-> (AFAICT the same reasoning applies to btrfs, but don't trust my word for
-> it.)
-> 
-> > I'm asking because knfsd currently just does a call to
-> > vfs_clone_file_range() when parsing a NFSv4.2 CLONE operation. It does
-> > not call fsync()/fsync_range() on the destination file, and since the
-> > NFSv4.2 protocol does not require you to perform any other operation in
-> > order to persist data/metadata, I'm worried that we may be corrupting
-> > the cloned file if the NFS server crashes at the wrong moment after the
-> > client has been told the clone completed.
+Jon.
 
-Yup, that's exactly what server side calls to commit_metadata() are
-supposed to address.
-
-I suspect to be correct, this might require commit_metadata() to be
-called on both the source and destination inodes, as both of them
-may have modified metadata as a result of the clone operation. For
-XFS one of them will be a no-op, but for other filesystems that
-don't implement ->commit_metadata, we'll need to call
-sync_inode_metadata() on both inodes...
-
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Computer Architect
