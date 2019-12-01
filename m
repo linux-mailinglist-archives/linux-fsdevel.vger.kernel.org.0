@@ -2,437 +2,196 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35CD610E0F0
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Dec 2019 08:04:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7646210E10F
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Dec 2019 09:22:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725887AbfLAHET (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Dec 2019 02:04:19 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:38587 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbfLAHET (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Dec 2019 02:04:19 -0500
-Received: by mail-yb1-f196.google.com with SMTP id l129so4942395ybf.5;
-        Sat, 30 Nov 2019 23:04:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TctkMlPAVLSjzuawMAd1EQqIa06301VLE5mTWaDVXjY=;
-        b=G/NjmXxeOWiyc4NjVZFUa8tvZXn/K7tGuznlSGfWNK42dtxqbGP8sDd3pyu5e05D2+
-         8iCCFFQNFVs95BcySfXzkP/EuQBcQEhuWzLw7NXDKLHAGArVUh9hQK7+bU24L5aSa153
-         ZQaB6UgnX0K0qMLzcwHm/hvmgN9nIrky1AdKQJC/XeK4FRi8jDI5VK4ou/svXR9z1rc6
-         iL9gsE9ZoenxwoeahsfDT4sEHmV7OaegPcHy5TNizAycMQMxWIFIIqE6nCKBrKvjDg/w
-         qUlgqPHHmgJqnImo9W3GC3D8MxQAUdxzU5+xgebKqoxMj9wTnvpGaDPli/k7igMt/tW5
-         455A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TctkMlPAVLSjzuawMAd1EQqIa06301VLE5mTWaDVXjY=;
-        b=qUMzPo9TZqvKP+D4PrmXhGz0a0Lbv+RtK8BiO9RXMpHAwgG8+yQU3uFVUYLRSk1tCX
-         +6qtw/wXpnxuEnt4NQfq/0zscda7k1nbolsSvvEQzDTwhf75LoDR0RHfXVmbULWr2dCD
-         FzVa0ggp+hHmZ9myMy/3mO+4UOlxrkQUUc+XE3Ko2+0rmNLva3t6bghfVZQyEpZCNKT0
-         49ma/KbJzBSVN2qa+NiwOuqzCiE+VKeMfT23b1J1E0fLCH/qpQp6ijb1BWbeRuFNOjVP
-         2wYJr+ngmINHj3I/wIgfq5e459+xLFjn3Hyt5/ALsDvfJMOd+FXAX7icB0gnvkmZnqkV
-         /eWw==
-X-Gm-Message-State: APjAAAW+vYXs3NwbFh3jH8Aoo77Gi3p9sSO0mMulbiioq3/yok32Izpx
-        4dXPzBsW8uZ2r49X1fwmG0ixeo97dfLH7dW5NPcgJCiR
-X-Google-Smtp-Source: APXvYqzGZgnkzJ/8c0H5BbxHYUnNw++7wlztC7Xws3VVV420R+a5g/emDTweTHxVTF3l8Yy8HA35FS+pYLV9565zFtM=
-X-Received: by 2002:a25:212:: with SMTP id 18mr45953804ybc.439.1575183857401;
- Sat, 30 Nov 2019 23:04:17 -0800 (PST)
+        id S1726129AbfLAIVu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Dec 2019 03:21:50 -0500
+Received: from mail.phunq.net ([66.183.183.73]:38372 "EHLO phunq.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725817AbfLAIVu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 1 Dec 2019 03:21:50 -0500
+Received: from [172.16.1.14]
+        by phunq.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+        (Exim 4.92.3)
+        (envelope-from <daniel@phunq.net>)
+        id 1ibKUG-0007z8-4U; Sun, 01 Dec 2019 00:21:48 -0800
+Subject: Re: [RFC] Thing 1: Shardmap fox Ext4
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+References: <176a1773-f5ea-e686-ec7b-5f0a46c6f731@phunq.net>
+ <20191127142508.GB5143@mit.edu>
+ <c3636a43-6ae9-25d4-9483-34770b6929d0@phunq.net>
+ <20191128022817.GE22921@mit.edu>
+ <3b5f28e5-2b88-47bb-1b32-5c2fed989f0b@phunq.net>
+ <20191130175046.GA6655@mit.edu>
+From:   Daniel Phillips <daniel@phunq.net>
+Message-ID: <76ddbdba-55ba-3426-2e29-0fa17db9b6d8@phunq.net>
+Date:   Sun, 1 Dec 2019 00:21:47 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <1575148763.5563.28.camel@HansenPartnership.com> <1575148868.5563.30.camel@HansenPartnership.com>
-In-Reply-To: <1575148868.5563.30.camel@HansenPartnership.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sun, 1 Dec 2019 09:04:05 +0200
-Message-ID: <CAOQ4uxggMt77HHD4GOk4Rth8KAVz17f5CcZdgAfiMpTuQLz3PA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] fs: rethread notify_change to take a path instead of
- a dentry
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Seth Forshee <seth.forshee@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191130175046.GA6655@mit.edu>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi James!
-
-On Sat, Nov 30, 2019 at 11:21 PM James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
->
-> In order to prepare for implementing shiftfs as a property changing
-> bind mount, the path (which contains the vfsmount) must be threaded
-> through everywhere we are going to do either a permission check or an
-
-I am curious how bind/shift mount is expected to handle inode_permission().
-
-Otherwise, I am fine with the change, short of some style comments
-below...
-
-> attribute get/set so that we can arrange for the credentials for the
-> operation to be based on the bind mount properties rather than those
-> of current.
->
-> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> ---
->  drivers/base/devtmpfs.c   |  8 +++++--
->  fs/attr.c                 |  4 +++-
->  fs/cachefiles/interface.c |  6 +++--
->  fs/coredump.c             |  4 ++--
->  fs/ecryptfs/inode.c       |  9 ++++---
->  fs/inode.c                |  7 +++---
->  fs/namei.c                |  2 +-
->  fs/nfsd/vfs.c             |  9 +++++--
->  fs/open.c                 | 19 ++++++++-------
->  fs/overlayfs/copy_up.c    | 60 +++++++++++++++++++++++++++--------------------
->  fs/overlayfs/dir.c        | 16 ++++++++++---
->  fs/overlayfs/inode.c      |  6 +++--
->  fs/overlayfs/overlayfs.h  |  2 +-
->  fs/overlayfs/super.c      |  3 ++-
->  fs/utimes.c               |  2 +-
->  include/linux/fs.h        |  6 ++---
->  16 files changed, 102 insertions(+), 61 deletions(-)
->
-[...]
-
-> diff --git a/fs/attr.c b/fs/attr.c
-> index df28035aa23e..370b18807f05 100644
-> --- a/fs/attr.c
-> +++ b/fs/attr.c
-> @@ -226,8 +226,10 @@ EXPORT_SYMBOL(setattr_copy);
->   * the file open for write, as there can be no conflicting delegation in
->   * that case.
->   */
-> -int notify_change(struct dentry * dentry, struct iattr * attr, struct inode **delegated_inode)
-> +int notify_change(const struct path *path, struct iattr * attr,
-> +                 struct inode **delegated_inode)
->  {
-> +       struct dentry *dentry = path->dentry;
-
-I suppose passing path down to all security/ima hooks is the next step?
-
->         struct inode *inode = dentry->d_inode;
->         umode_t mode = inode->i_mode;
->         int error;
-> diff --git a/fs/cachefiles/interface.c b/fs/cachefiles/interface.c
-> index 4cea5fbf695e..aa82d95890fa 100644
-> --- a/fs/cachefiles/interface.c
-> +++ b/fs/cachefiles/interface.c
-> @@ -436,6 +436,7 @@ static int cachefiles_attr_changed(struct fscache_object *_object)
->         uint64_t ni_size;
->         loff_t oi_size;
->         int ret;
-> +       struct path *path;
->
->         ni_size = _object->store_limit_l;
->
-> @@ -466,18 +467,19 @@ static int cachefiles_attr_changed(struct fscache_object *_object)
->         /* if there's an extension to a partial page at the end of the backing
->          * file, we need to discard the partial page so that we pick up new
->          * data after it */
-> +       path = &(struct path) { .mnt = cache->mnt, .dentry = object->backer };
-
-This style is weird for me. Is it just me?
-If you just need the struct once, I rather you define it inside function args.
-Otherwise, I'd rather the local path var wasn't a pointer, but the
-actual struct.
 
 
-[...]
+On 2019-11-30 9:50 a.m., Theodore Y. Ts'o wrote:
+> On Wed, Nov 27, 2019 at 08:27:59PM -0800, Daniel Phillips wrote:
+>> You are right that Shardmap also must update the shard fifo tail block,
+>> however there is only one index shard up to 64K entries, so all the new
+>> index entries go into the same tail block(s).
+> 
+> So how big is an index shard?  If it is 64k entries, and each entry is
+> 16 bytes (8 bytes hash, 8 bytes block number), then a shard is a
+> megabyte, right?  Are entries in an index shard stored in sorted or
+> unsorted manner?  If they are stored in an unsorted manner, then when
+> trying to do a lookup, you need to search all of the index shard ---
+> which means for a directory that is being frequently accessed, the
+> entire index shard has to be kept in memory, no?  (Or paged in as
+> necessary, if you are using mmap in userspace).
 
-> diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
-> index e23752d9a79f..72c45b9419d0 100644
-> --- a/fs/ecryptfs/inode.c
-> +++ b/fs/ecryptfs/inode.c
-> @@ -852,10 +852,11 @@ int ecryptfs_truncate(struct dentry *dentry, loff_t new_length)
->
->         rc = truncate_upper(dentry, &ia, &lower_ia);
->         if (!rc && lower_ia.ia_valid & ATTR_SIZE) {
-> -               struct dentry *lower_dentry = ecryptfs_dentry_to_lower(dentry);
-> +               struct path *path = ecryptfs_dentry_to_lower_path(dentry);
-> +               struct dentry *lower_dentry = path->dentry;
->
+Exactly correct, except that in cache a shard is a hash table, while
+on media it is just an unordered collection that is entered into hash
+buckets at shard load time.
 
-Use lower_path for conformity.
+This is actually the main defining characteristic of Shardmap, both
+giving rise to the theoretical read multiply issue alluded to above
+and on the positive side, acting as a kind of cache read ahead due to
+the coarse demand read granularity. In other words, each time we hit
+a not present shard, we read multiple blocks of the given shard into
+cache all at once, instead of loading blocks piecemeal with lots of
+inefficient little reads. This is especially beneficial for spinning
+disk, which we Tux3 devs still worry about, and I would think, you
+also. Paraphrasing the immortal bard, "it's not dead yet".
 
+Shard size is tunable at directory creation time. A shard entry is
+actually 8 bytes, not 16, because block number can initially be very
+small, just 10 bits by default, leaving 53 bits for the hash and one
+bit to indicate tombstone or not. As the directory size increases,
+the block number field size increases to accommodate more record
+blocks and the hash field size decreases, however number of shards
+increases at the same rate (more or less linear, enforced by logic)
+so that, together with the hash bits implied by the shard number,
+the hash resolution stays constant. Isn't that nice?
 
-[...]
+The importance of hash resolution is that, at high scale any hash
+collision within a bucket must be resolved by accessing the record
+block and resolving it there. So high collision rate corresponds to
+significant slowdown in operations, getting worse linearly as the
+directory expands. This is N**2 behavior in the sense that the time
+to perform N operations increases as N**2 (IOW our usual definition
+of file system performance.) It turns out that 53 hash bits are
+sufficient to hold the collision rate to a few tens in one billion
+inserts, insignificant at that scale, even more so at typical scale.
 
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -1810,7 +1810,7 @@ int dentry_needs_remove_privs(struct dentry *dentry)
->         return mask;
->  }
->
-> -static int __remove_privs(struct dentry *dentry, int kill)
-> +static int __remove_privs(struct path *path, int kill)
->  {
->         struct iattr newattrs;
->
-> @@ -1819,7 +1819,7 @@ static int __remove_privs(struct dentry *dentry, int kill)
->          * Note we call this on write, so notify_change will not
->          * encounter any conflicting delegations:
->          */
-> -       return notify_change(dentry, &newattrs, NULL);
-> +       return notify_change(path, &newattrs, NULL);
->  }
->
->  /*
-> @@ -1828,6 +1828,7 @@ static int __remove_privs(struct dentry *dentry, int kill)
->   */
->  int file_remove_privs(struct file *file)
->  {
-> +       struct path *path = &file->f_path;
->         struct dentry *dentry = file_dentry(file);
->         struct inode *inode = file_inode(file);
->         int kill;
-> @@ -1846,7 +1847,7 @@ int file_remove_privs(struct file *file)
+The question of cache footprint is indeed central, as you imply. 8
+bytes per entry cuts the cache footprint in half, so that is nice.
+But would it be better if we could hold only the pieces of index
+in cache that we actually need? This question is far more subtle
+than it first seems. Here is a possibly surprising mathematical
+fact: when number of accesses is similar to the number of cache
+blocks the cache footprint of any randomly accessed index is the
+entire cache. This entirely independent of the index algorithm in
+use: you see exactly the same behavior with BTrees. The best and
+possibly only remedy is to make the index as compact as possible,
+hence the impact of 8 byte vs 16 byte entries.
 
-I suppose next step is to pass path down to
-dentry_needs_remove_privs() => security_inode_need_killpriv()
-or rather a new security_path_need_killpriv()?
+This highlights another significant advantage that Shardmap has
+over HTree: HTree embeds its entries directly in the index while
+Shardmap separates them out into traditional record entry blocks.
+The HTree strategy does save significant CPU by avoiding one
+block level deference, however as mentioned earlier, this merely
+allows HTree to tie Shardmap in block accesses at the lowest
+index scale, because Shardmap does one of its accesses into a
+cache object, this avoiding radix tree overhead. The cost of
+HTree's strategy at high scale, or with a large number of
+directories open, is large, a factor of 2 or more greater cache
+pressure depending on average name size.
 
-[...]
+So Shardmap is significantly more cache friendly than HTree, however,
+as you deduced, if cache thrashing does happen then Shardmap with
+shard size in the 256K to 1 Mbyte range might have to read a hundred
+times as many blocks to reload an evicted shard than HTree does to
+load a single btree block. On the other hand, the thrashing knee 
+occurs with 3-5 times less cache for Shardmap than HTree, so which
+one wins here? I say Shardmap, because Shardmap does more with less
+cache. If you are thrashing that badly then your machine must be
+grossly misconfigured for its load.
 
-> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-> index bd0a385df3fc..5e758749cbc4 100644
-> --- a/fs/nfsd/vfs.c
-> +++ b/fs/nfsd/vfs.c
-> @@ -362,6 +362,7 @@ nfsd_setattr(struct svc_rqst *rqstp, struct svc_fh *fhp, struct iattr *iap,
->  {
->         struct dentry   *dentry;
->         struct inode    *inode;
-> +       const struct path *path;
->         int             accmode = NFSD_MAY_SATTR;
->         umode_t         ftype = 0;
->         __be32          err;
-> @@ -402,6 +403,10 @@ nfsd_setattr(struct svc_rqst *rqstp, struct svc_fh *fhp, struct iattr *iap,
->
->         dentry = fhp->fh_dentry;
->         inode = d_inode(dentry);
-> +       path = &(struct path){
-> +               .mnt = fhp->fh_export->ex_path.mnt,
-> +               .dentry = dentry,
-> +       };
->
+Now suppose you wanted to fix this theoretical read multiplication,
+then how? An emerging technique aimed at precisely the kind of dual
+format caching scheme that Shardmap uses has been dubbed "anticache".
+Instead of evicting and reloading the cache object, page the cache
+to swap, or any available backing store (e.g., to the file system
+volume itself). Then the cache object can be reloaded at your choice
+of granularity, for example, 4K pages, loaded in via the hash table
+walk algorithm. This will be one or more steps: 1) look up hash chain
+head in table possibly loading a page; 2+) if entry not already found
+then look up in next chain entry, possibly loading a page.
 
-There is no longer use for local var dentry.
-Use local var path and assign fhp->fh_dentry directly to path.dentry.
+The thing is, I can't imagine any Linux configuration that could hit
+this, short of an artificial construction. Take the case of a 1M file
+directory. The shardmap media fifos for that will be 8MB, there will
+be 16 of them (depending on tuning) and each cache shard will be
+somewhere around 640K or 160 pages per shard for a total of 1280
+cache pages, or 5 MB cache footprint. If this is going to put your
+system into thrash then I submit that the real problem is not
+Shardmap.
 
+So this theoretical read multiplication issue is essentially just a
+question of how fast can we thrash. If somebody does come up with a
+valid use case where we need to thrash faster than now, we can always
+implement anticache or something similar, and maybe make that a
+generic facility while at it, because again, the real problem is not
+Shardmap, it is somebody feeding in an inappropriate load for their
+machine configuration.
 
-[...]
+>> Important example: how is atomic directory commit going to work for
+>> Ext4?
+> 
+> The same way all metadata updates work in ext4.  Which is to say, you
+> need to declare the maximum number of 4k metadata blocks that an
+> operation might need to change when calling ext4_journal_start() to
+> create a handle; and before modifying a 4k block, you need to call
+> ext4_journal_get_write_access(), passing in the handle and the block's
+> buffer_head.  After modifying the block, you must call
+> ext4_handle_dirty_metadata() on the buffer_head.  And when you are
+> doing with the changes in an atomic metadata operation, you call
+> ext4_journal_stop() on the handle.
+> 
+> This hasn't changed since the days of ext3 and htree.
 
-> diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-> index b801c6353100..52bfca5016fe 100644
-> --- a/fs/overlayfs/copy_up.c
-> +++ b/fs/overlayfs/copy_up.c
-> @@ -177,17 +177,17 @@ static int ovl_copy_up_data(struct path *old, struct path *new, loff_t len)
->         return error;
->  }
->
-> -static int ovl_set_size(struct dentry *upperdentry, struct kstat *stat)
-> +static int ovl_set_size(struct path *upperpath, struct kstat *stat)
->  {
->         struct iattr attr = {
->                 .ia_valid = ATTR_SIZE,
->                 .ia_size = stat->size,
->         };
->
-> -       return notify_change(upperdentry, &attr, NULL);
-> +       return notify_change(upperpath, &attr, NULL);
->  }
->
-> -static int ovl_set_timestamps(struct dentry *upperdentry, struct kstat *stat)
-> +static int ovl_set_timestamps(struct path *upperpath, struct kstat *stat)
->  {
->         struct iattr attr = {
->                 .ia_valid =
-> @@ -196,10 +196,10 @@ static int ovl_set_timestamps(struct dentry *upperdentry, struct kstat *stat)
->                 .ia_mtime = stat->mtime,
->         };
->
-> -       return notify_change(upperdentry, &attr, NULL);
-> +       return notify_change(upperpath, &attr, NULL);
->  }
->
-> -int ovl_set_attr(struct dentry *upperdentry, struct kstat *stat)
-> +int ovl_set_attr(struct path *upperpath, struct kstat *stat)
->  {
->         int err = 0;
->
-> @@ -208,7 +208,7 @@ int ovl_set_attr(struct dentry *upperdentry, struct kstat *stat)
->                         .ia_valid = ATTR_MODE,
->                         .ia_mode = stat->mode,
->                 };
-> -               err = notify_change(upperdentry, &attr, NULL);
-> +               err = notify_change(upperpath, &attr, NULL);
->         }
->         if (!err) {
->                 struct iattr attr = {
-> @@ -216,10 +216,10 @@ int ovl_set_attr(struct dentry *upperdentry, struct kstat *stat)
->                         .ia_uid = stat->uid,
->                         .ia_gid = stat->gid,
->                 };
-> -               err = notify_change(upperdentry, &attr, NULL);
-> +               err = notify_change(upperpath, &attr, NULL);
->         }
->         if (!err)
-> -               ovl_set_timestamps(upperdentry, stat);
-> +               ovl_set_timestamps(upperpath, stat);
->
->         return err;
->  }
-> @@ -389,7 +389,7 @@ struct ovl_copy_up_ctx {
->         struct kstat stat;
->         struct kstat pstat;
->         const char *link;
-> -       struct dentry *destdir;
-> +       struct path *destpath;
+OK good. And I presume that directory updates are prevented until
+the journal transaction is at least fully written to buffers. Maybe
+delayed until the journal transaction is actually committed?
 
-It seems like you caused a lot of churn for that change and you only
-use c->destpath in one place for ovl_set_timestamps(), so it might be
-easier to compose destpath from c->destdir just in that one call site.
+In Tux3 we don't block directory updates during backend commit, and I
+just assumed that Ext4 and others also do that now, so thanks for the
+correction. As far I can see, there will be no new issue with Shardmap,
+as you say. My current plan is that user space mmap will become kmap in
+kernel. I am starting on this part for Tux3 right now. My goal is to
+refine the current Shardmap data access api to hide the fact that mmap
+is used in user space but kmap in kernel. Again, I wish we actually had
+mmap in kernel and maybe we should consider properly supporting it in
+the future, perhaps by improving kmalloc.
 
->         struct qstr destname;
->         struct dentry *workdir;
->         bool origin;
-> @@ -403,6 +403,9 @@ static int ovl_link_up(struct ovl_copy_up_ctx *c)
->         struct dentry *upper;
->         struct dentry *upperdir = ovl_dentry_upper(c->parent);
->         struct inode *udir = d_inode(upperdir);
-> +       struct path upperpath;
-> +
-> +       ovl_path_upper(c->parent, &upperpath);
->
->         /* Mark parent "impure" because it may now contain non-pure upper */
->         err = ovl_set_impure(c->parent, upperdir);
-> @@ -423,7 +426,7 @@ static int ovl_link_up(struct ovl_copy_up_ctx *c)
->
->                 if (!err) {
->                         /* Restore timestamps on parent (best effort) */
-> -                       ovl_set_timestamps(upperdir, &c->pstat);
-> +                       ovl_set_timestamps(&upperpath, &c->pstat);
->                         ovl_dentry_set_upper_alias(c->dentry);
->                 }
->         }
-> @@ -439,7 +442,9 @@ static int ovl_link_up(struct ovl_copy_up_ctx *c)
->  static int ovl_copy_up_inode(struct ovl_copy_up_ctx *c, struct dentry *temp)
->  {
->         int err;
-> +       struct path upperpath, *path;
-struct path temppath please.
+One thing we do a bit differently frou our traditional fs is, in the
+common, unfragmented case, mass inserts go into the same block until
+the block is full. So we get a significant speedup by avoiding a page
+cache lookup and kmap per insert. Borrowing a bit of mechanism from
+the persistent memory version of Shardmap, we create the new entries
+in a separate cache page. Then, on commit, copy this "front buffer" to
+the page cache. I think that will translate pretty well to Ext4 also.
 
-... skipping a lot of unneeded churn...
+Regards,
 
-> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> index 702aa63f6774..d694c5740bdb 100644
-> --- a/fs/overlayfs/dir.c
-> +++ b/fs/overlayfs/dir.c
-> @@ -334,7 +334,7 @@ static struct dentry *ovl_clear_empty(struct dentry *dentry,
->         struct inode *wdir = workdir->d_inode;
->         struct dentry *upperdir = ovl_dentry_upper(dentry->d_parent);
->         struct inode *udir = upperdir->d_inode;
-> -       struct path upperpath;
-> +       struct path upperpath, *opaquepath;
->         struct dentry *upper;
->         struct dentry *opaquedir;
->         struct kstat stat;
-> @@ -373,8 +373,13 @@ static struct dentry *ovl_clear_empty(struct dentry *dentry,
->         if (err)
->                 goto out_cleanup;
->
-> +       opaquepath = &(struct path){
-> +               .mnt = upperpath.mnt,
-> +               .dentry = opaquedir
-> +       };
-> +
-
-Please skip the local opaquepath pointer and use directly in function args.
-
->         inode_lock(opaquedir->d_inode);
-> -       err = ovl_set_attr(opaquedir, &stat);
-> +       err = ovl_set_attr(opaquepath, &stat);
->         inode_unlock(opaquedir->d_inode);
->         if (err)
->                 goto out_cleanup;
-> @@ -435,10 +440,13 @@ static int ovl_create_over_whiteout(struct dentry *dentry, struct inode *inode,
->         struct inode *udir = upperdir->d_inode;
->         struct dentry *upper;
->         struct dentry *newdentry;
-> +       struct path path;
-
-upperpath or newpath please.
-
->         int err;
->         struct posix_acl *acl, *default_acl;
->         bool hardlink = !!cattr->hardlink;
->
-> +       ovl_path_upper(dentry, &path);
-> +
->         if (WARN_ON(!workdir))
->                 return -EROFS;
->
-> @@ -478,8 +486,10 @@ static int ovl_create_over_whiteout(struct dentry *dentry, struct inode *inode,
->                         .ia_valid = ATTR_MODE,
->                         .ia_mode = cattr->mode,
->                 };
-> +
-> +               path.dentry = newdentry;
->                 inode_lock(newdentry->d_inode);
-> -               err = notify_change(newdentry, &attr, NULL);
-> +               err = notify_change(&path, &attr, NULL);
->                 inode_unlock(newdentry->d_inode);
->                 if (err)
->                         goto out_cleanup;
-> diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-> index bc14781886bf..218540003872 100644
-> --- a/fs/overlayfs/inode.c
-> +++ b/fs/overlayfs/inode.c
-> @@ -45,8 +45,10 @@ int ovl_setattr(struct dentry *dentry, struct iattr *attr)
->                 err = ovl_copy_up_with_data(dentry);
->         if (!err) {
->                 struct inode *winode = NULL;
-> +               struct path path;
-
-upperpath please. Otherwise it gets harder to tell between overlay path
-and underlying path when reading the code.
-
->
-> -               upperdentry = ovl_dentry_upper(dentry);
-> +               ovl_path_upper(dentry, &path);
-> +               upperdentry = path.dentry;
->
->                 if (attr->ia_valid & ATTR_SIZE) {
->                         winode = d_inode(upperdentry);
-> @@ -60,7 +62,7 @@ int ovl_setattr(struct dentry *dentry, struct iattr *attr)
->
->                 inode_lock(upperdentry->d_inode);
->                 old_cred = ovl_override_creds(dentry->d_sb);
-> -               err = notify_change(upperdentry, attr, NULL);
-> +               err = notify_change(&path, attr, NULL);
->                 revert_creds(old_cred);
->                 if (!err)
->                         ovl_copyattr(upperdentry->d_inode, dentry->d_inode);
-> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> index 6934bcf030f0..dc50b97a5e68 100644
-> --- a/fs/overlayfs/overlayfs.h
-> +++ b/fs/overlayfs/overlayfs.h
-> @@ -423,7 +423,7 @@ int ovl_copy_up_with_data(struct dentry *dentry);
->  int ovl_copy_up_flags(struct dentry *dentry, int flags);
->  int ovl_maybe_copy_up(struct dentry *dentry, int flags);
->  int ovl_copy_xattr(struct dentry *old, struct dentry *new);
-> -int ovl_set_attr(struct dentry *upper, struct kstat *stat);
-> +int ovl_set_attr(struct path *upper, struct kstat *stat);
-
-upperpath please, otherwise local var names for upper dentry/inode
-can get messy.
-
-Thanks,
-Amir.
+Daniel
