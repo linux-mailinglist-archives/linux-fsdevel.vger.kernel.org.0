@@ -2,147 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9127610F39D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 00:53:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7826210F3AF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 00:59:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726074AbfLBXx2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Dec 2019 18:53:28 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:41335 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725775AbfLBXx1 (ORCPT
+        id S1725944AbfLBX7b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Dec 2019 18:59:31 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:38698 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725899AbfLBX7b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Dec 2019 18:53:27 -0500
-Received: from dread.disaster.area (pa49-179-150-192.pa.nsw.optusnet.com.au [49.179.150.192])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 60BD27E9A0F;
-        Tue,  3 Dec 2019 10:53:23 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1ibvVJ-0006vv-Nh; Tue, 03 Dec 2019 10:53:21 +1100
-Date:   Tue, 3 Dec 2019 10:53:21 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Ming Lei <ming.lei@redhat.com>, Hillf Danton <hdanton@sina.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-fs <linux-fsdevel@vger.kernel.org>,
+        Mon, 2 Dec 2019 18:59:31 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB2NsNgT149510;
+        Mon, 2 Dec 2019 23:58:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=+ZmXwAnD2Aq57WrF0VXR5s5mei/X7zf/fv/3U7krmxY=;
+ b=an0kG+K7UhIa6GsG2pz03eOO1JmV4CUTsRUcIfDRsdfpv3x6lRqVDXpHR0gP+1UW8arH
+ 1Oiaw6z5x8Q1a4C6DJxjhxF+2nxQKb503IXyUBfYFoolZ9ixVJoR1pVpttNekdfyjBp/
+ oRNEHC5dbwWJTsygXxlVdogulTCqu2INb5iUiUj8o0wZM0C81UCbaB3h9j5snlcJRsE0
+ uYbP0EEu9ZAU9Kr929dIMHofg1MKhbRuxW0iig+amj5EJE8TPLu362olVZz8ocmR/Cyy
+ hE36UBQMCy6mglvTakKXoIjkfYpq126UkADHMA3RWCN2Citupkg/qhWQ1acg9jSt6Kc4 XQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2wkh2r3g91-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 02 Dec 2019 23:58:59 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB2NwmOs013799;
+        Mon, 2 Dec 2019 23:58:58 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2wn8k1bf53-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 02 Dec 2019 23:58:58 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xB2NwMbH026350;
+        Mon, 2 Dec 2019 23:58:23 GMT
+Received: from localhost (/10.159.148.223)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 02 Dec 2019 15:58:22 -0800
+Date:   Mon, 2 Dec 2019 15:58:21 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rong Chen <rong.a.chen@intel.com>, Tejun Heo <tj@kernel.org>
-Subject: Re: single aio thread is migrated crazily by scheduler
-Message-ID: <20191202235321.GJ2695@dread.disaster.area>
-References: <20191114113153.GB4213@ming.t460p>
- <20191114235415.GL4614@dread.disaster.area>
- <20191115010824.GC4847@ming.t460p>
- <20191115045634.GN4614@dread.disaster.area>
- <20191115070843.GA24246@ming.t460p>
- <20191128094003.752-1-hdanton@sina.com>
- <CAKfTPtA23ErKGCEJVmg6vk-QoufkiUM3NbXd31mZmKnuwbTkFw@mail.gmail.com>
- <20191202024625.GD24512@ming.t460p>
- <20191202040256.GE2695@dread.disaster.area>
- <CAKfTPtD8Q97qJ_+hdCXQRt=gy7k96XrhnFmGYP1G88YSFW0vNA@mail.gmail.com>
+        Dave Chinner <david@fromorbit.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [GIT PULL] xfs: new code for 5.5
+Message-ID: <20191202235821.GF7335@magnolia>
+References: <20191201184814.GA7335@magnolia>
+ <CAHk-=wi+0suvJAw8hxLkKJHgYwRy-0vg4-dw9_Co6nQHK-XF9Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKfTPtD8Q97qJ_+hdCXQRt=gy7k96XrhnFmGYP1G88YSFW0vNA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
-        a=ZXpxJgW8/q3NVgupyyvOCQ==:117 a=ZXpxJgW8/q3NVgupyyvOCQ==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=pxVhFHJ0LMsA:10
-        a=7-415B0cAAAA:8 a=QY18SFpNAAAA:8 a=0-rSKxhP8GJoaAKyaOwA:9
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22 a=LYL6_n6_bXSRrjLcjcND:22
+In-Reply-To: <CAHk-=wi+0suvJAw8hxLkKJHgYwRy-0vg4-dw9_Co6nQHK-XF9Q@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9459 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912020206
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9459 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912020205
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 02, 2019 at 02:45:42PM +0100, Vincent Guittot wrote:
-> On Mon, 2 Dec 2019 at 05:02, Dave Chinner <david@fromorbit.com> wrote:
+On Mon, Dec 02, 2019 at 03:22:31PM -0800, Linus Torvalds wrote:
+> On Sun, Dec 1, 2019 at 10:48 AM Darrick J. Wong <djwong@kernel.org> wrote:
 > >
-> > On Mon, Dec 02, 2019 at 10:46:25AM +0800, Ming Lei wrote:
-> > > On Thu, Nov 28, 2019 at 10:53:33AM +0100, Vincent Guittot wrote:
-> > > > On Thu, 28 Nov 2019 at 10:40, Hillf Danton <hdanton@sina.com> wrote:
-> > > > > --- a/fs/iomap/direct-io.c
-> > > > > +++ b/fs/iomap/direct-io.c
-> > > > > @@ -157,10 +157,8 @@ static void iomap_dio_bio_end_io(struct
-> > > > >                         WRITE_ONCE(dio->submit.waiter, NULL);
-> > > > >                         blk_wake_io_task(waiter);
-> > > > >                 } else if (dio->flags & IOMAP_DIO_WRITE) {
-> > > > > -                       struct inode *inode = file_inode(dio->iocb->ki_filp);
-> > > > > -
-> > > > >                         INIT_WORK(&dio->aio.work, iomap_dio_complete_work);
-> > > > > -                       queue_work(inode->i_sb->s_dio_done_wq, &dio->aio.work);
-> > > > > +                       schedule_work(&dio->aio.work);
-> > > >
-> > > > I'm not sure that this will make a real difference because it ends up
-> > > > to call queue_work(system_wq, ...) and system_wq is bounded as well so
-> > > > the work will still be pinned to a CPU
-> > > > Using system_unbound_wq should make a difference because it doesn't
-> > > > pin the work on a CPU
-> > > >  +                       queue_work(system_unbound_wq, &dio->aio.work);
-> > >
-> > > Indeed, just run a quick test on my KVM guest, looks the following patch
-> > > makes a difference:
-> > >
-> > > diff --git a/fs/direct-io.c b/fs/direct-io.c
-> > > index 9329ced91f1d..2f4488b0ecec 100644
-> > > --- a/fs/direct-io.c
-> > > +++ b/fs/direct-io.c
-> > > @@ -613,7 +613,8 @@ int sb_init_dio_done_wq(struct super_block *sb)
-> > >  {
-> > >         struct workqueue_struct *old;
-> > >         struct workqueue_struct *wq = alloc_workqueue("dio/%s",
-> > > -                                                     WQ_MEM_RECLAIM, 0,
-> > > +                                                     WQ_MEM_RECLAIM |
-> > > +                                                     WQ_UNBOUND, 0,
-> > >                                                       sb->s_id);
-> >
-> > That's not an answer to the user task migration issue.
-> >
-> > That is, all this patch does is trade user task migration when the
-> > CPU is busy for migrating all the queued work off the CPU so the
-> > user task does not get migrated. IOWs, this forces all the queued
-> > work to be migrated rather than the user task. IOWs, it does not
-> > address the issue we've exposed in the scheduler between tasks with
-> > competing CPU affinity scheduling requirements - it just hides the
-> > symptom.
-> >
-> > Maintaining CPU affinity across dispatch and completion work has
-> > been proven to be a significant performance win. Right throughout
-> > the IO stack we try to keep this submitter/completion affinity,
-> > and that's the whole point of using a bound wq in the first place:
-> > efficient delayed batch processing of work on the local CPU.
+> > FYI, Stephen Rothwell reported a merge conflict with the y2038 tree at
+> > the end of October[1].  His resolution looked pretty straightforward,
+> > though the current y2038 for-next branch no longer changes fs/ioctl.c
+> > (and the changes that were in it are not in upstream master), so that
+> > may not be necessary.
 > 
-> Do you really want to target the same CPU ? looks like what you really
-> want to target the same cache instead
+> The changes and conflicts are definitely still there (now upstream),
+> I'm not sure what made you not see them.  But thanks for the note, I
+> compared my end result with linux-next to verify.
 
-Well, yes, ideally we want to target the same cache, but we can't do
-that with workqueues.
+Aha!  I pulled master yesterday morning, tried a test merge with xfs,
+saw the lack of merge conflicts, and sent you the xfs pull request.  A
+few hours later you pulled in the compat ioctl changes from Arnd's git
+tree, but the branch in his repo that feeds the -next tree doesn't
+contain the compat ioctl changes, so I assumed that meant he wasn't
+going to send them for 5.5... and then thought better of myself and
+attached an FYI anyway.
 
-However, the block layer already does that same-cache steering for
-it's directed completions (see __blk_mq_complete_request()), so we
-are *already running in a "hot cache" CPU context* when we queue
-work. When we queue to the same CPU, we are simply maintaining the
-"cache-hot" context that we are already running in.
+> My resolution is different from Stephen's. All my non-x86-64 FS_IOC_*
+> cases just do "goto found_handler", because the compat case is
+> identical for the native case outside of the special x86-64 alignment
+> behavior, and I think that's what Arnd meant to happen.
 
-Besides, selecting a specific "hot cache" CPU and bind the work to
-that CPU (via queue_work_on()) doesn't fix the scheduler problem -
-it just moves it to another CPU. If the destination CPU is loaded
-like the local CPU, then it's jsut going to cause migrations on the
-destination CPU instead of the local CPU.
+Yeah, that looks correct to me.  Stephen's solution backed out the
+changes that Arnd made for the !x86_64 compat ioctl case, so I or
+someone would have had to re-apply them.
 
-IOWs, this is -not a fix- for the scheduler making an incorrect
-migration decisions when we are mixing bound and unbound tasks on
-the local run queue. Yes, it will hide the problem from this
-specific workload instance but it doesn't fix it. We'll just hit it
-under heavier load, such as when production workloads start running
-AIO submission from tens of CPUs at a time while burning near 100%
-CPU in userspace.......
+> There was some other minor difference too, but it's also possible I
+> could have messed up, so cc'ing Stephen and Arnd on this just in case
+> they have comments.
 
-Cheers,
+<nod> Thanks for sorting this out.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+--D
+
+> 
+> 
+>                Linus
