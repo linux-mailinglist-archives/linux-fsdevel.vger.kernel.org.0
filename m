@@ -2,216 +2,399 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF0DF10E842
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2019 11:10:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9198910E84A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2019 11:13:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727362AbfLBKKk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Dec 2019 05:10:40 -0500
-Received: from mail.loongson.cn ([114.242.206.163]:58674 "EHLO loongson.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726276AbfLBKKk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Dec 2019 05:10:40 -0500
-Received: from linux.localdomain (unknown [123.138.236.242])
-        by mail.loongson.cn (Coremail) with SMTP id AQAAf9DxbxUP4+RdcvAFAA--.28S2;
-        Mon, 02 Dec 2019 18:10:25 +0800 (CST)
-From:   Tiezhu Yang <yangtiezhu@loongson.cn>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Tyler Hicks <tyhicks@canonical.com>
-Cc:     linux-fsdevel@vger.kernel.org, ecryptfs@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
+        id S1727378AbfLBKN0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Dec 2019 05:13:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58246 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726276AbfLBKN0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Dec 2019 05:13:26 -0500
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB219215E5;
+        Mon,  2 Dec 2019 10:13:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575281604;
+        bh=Jx/a2lqOVX1mVtT0Ox1aDXFmtSFfFLBmqwec5AgKxMs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=iBaDkh5lzoOTO9E0k82H03xPukWTsg9HIVFJyLAXNxEEcky1niwSx1b/Meu5mVF6G
+         VdcV7t8HKmZkdYnHYXXFkqsnyNTqmbZEdxue9vMnRP35rsPUTuHX0ebmw3PRyQGpzS
+         0SThFyJ7BjM5waMx6lxMJaK+d+5NgwVdRBlb3l/M=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] fs: introduce is_dot_dotdot helper for cleanup
-Date:   Mon,  2 Dec 2019 18:10:13 +0800
-Message-Id: <1575281413-6753-1-git-send-email-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.1.0
-X-CM-TRANSID: AQAAf9DxbxUP4+RdcvAFAA--.28S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3GF1xZFWrCrykGryfWFyUJrb_yoW7GFWDpF
-        43JF97Jrn7JFyY9rn5tF1rZ34av34xGr17GrZ7Ga4Iyr12qr1Fqr4IyFy093Z3JFZ8Wan0
-        gFs5G34rCa43taDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkKb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
-        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-        A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xII
-        jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwV
-        C2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-        0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
-        1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY
-        04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
-        0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y
-        0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-        W8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_
-        Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU56c_D
-        UUUUU==
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+Subject: [RFC PATCH v4 00/22] tracing: bootconfig: Boot-time tracing and Extra boot config
+Date:   Mon,  2 Dec 2019 19:13:18 +0900
+Message-Id: <157528159833.22451.14878731055438721716.stgit@devnote2>
+X-Mailer: git-send-email 2.20.1
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There exists many similar and duplicate codes to check "." and "..",
-so introduce is_dot_dotdot helper to make the code more clean.
+Hello,
 
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+This is the 4th version of the series for the boot-time tracing.
+
+Previous version is here.
+
+https://lkml.kernel.org/r/156678933823.21459.4100380582025186209.stgit@devnote2
+
+After submitted the previous one, I had a talk on Plumbers
+tracing track, and got positive feedbacks (Thanks everyone!)
+and some concerns about bootloader modification to load
+an SKC file.
+
+I got many ideas from the discussion instead of passing
+configuration file via bootloader. It seems most feasible way
+is embedding the SKC in vmlinux or initrd.
+
+In this version, I renamed the SKC to "extra boot config" so that
+user can easier understand what it does. And I changed it to load
+with the initrd image.
+
+I also tried to integrate a part of configs into current
+kernel command line. With this change, we can write long
+options for subsystems, module and systemd into the boot config.
+(we maybe possible to set sysctl default value via boot config,
+ but it's another story.)
+
+This series can be applied on Steve's tracing tree (ftrace/core)
+or directly available at;
+
+https://github.com/mhiramat/linux.git ftrace-boottrace-v4
+
+
+Extra Boot Config
+=================
+
+Extra boot config allows admin to pass a tree-structured key-value
+list when booting up the kernel. This expands the kernel command
+line in an efficient way.
+
+Each key is described as a dot-jointed-words. And user can write
+the key-words in tree stlye. (In this version, the tailing ';'
+becomes optional. See Documentation/admin-guide/bootconfig.rst)
+
+For example,
+
+ feature.option.foo = 1
+ feature.option.bar = 2
+
+can be also written in
+
+ feature.option {
+    foo = 1
+    bar = 2
+ }
+
+or more compact,
+
+ feature.option{foo=1;bar=2}
+
+(Note that in both style, the same words are merged automatically
+ and make a single tree)
+All values are treated as a string, or array of strings, e.g.
+
+ feature.options = "foo", "bar"
+
+User can see the loaded key-value list via /proc/bootconfig.
+The size is limited upto 32KB and 1024 key-words and values
+in total.
+
+Boot with a Boot Config
+=======================
+
+This version doesn't require to modify boot loaders anymore.
+The boot config is loaded with initrd, and there is new "bootconfig"
+command under tools/bootconfig.
+To add (append) a bootconfig file to an initrd, you can use the
+bootconfig command like:
+
+ # tools/bootconfig/bootconfig -a your-config /boot/initrd.img-X.Y.Z
+
+This verifies the configuration file too. 
+
+
+Boot-time Tracing
+=================
+
+Boot-time tracing supports following boot configs. Please read
+Documentation/trace/boottime-trace.rst for details.
+
+     - kernel.dump_on_oops [= MODE]
+     - kernel.traceoff_on_warning
+     - kernel.tp_printk
+     - kernel.fgraph_filters = FILTER[, FILTER2...]
+     - kernel.fgraph_notraces = FILTER[, FILTER2...]
+     - kernel.fgraph_max_depth = MAX_DEPTH
+     - ftrace.[instance.INSTANCE.]options = OPT1[,OPT2...]
+     - ftrace.[instance.INSTANCE.]trace_clock = CLOCK
+     - ftrace.[instance.INSTANCE.]buffer_size = SIZE
+     - ftrace.[instance.INSTANCE.]alloc_snapshot
+     - ftrace.[instance.INSTANCE.]cpumask = CPUMASK
+     - ftrace.[instance.INSTANCE.]events = EVENT[, EVENT2...]
+     - ftrace.[instance.INSTANCE.]tracer = TRACER
+     - ftrace.[instance.INSTANCE.]ftrace.filters
+     - ftrace.[instance.INSTANCE.]ftrace.notraces
+     - ftrace.[instance.INSTANCE.]event.GROUP.EVENT.filter = FILTER
+     - ftrace.[instance.INSTANCE.]event.GROUP.EVENT.actions = ACTION[, ACTION2...]
+     - ftrace.[instance.INSTANCE.]event.GROUP.EVENT.enable
+     - ftrace.[instance.INSTANCE.]event.kprobes.EVENT.probes = PROBE[, PROBE2...]
+     - ftrace.[instance.INSTANCE.]event.synthetic.EVENT.fields = FIELD[, FIELD2...]
+
+Kernel and Init Command Line
+============================
+
+Boot config also supports kernel and init command line parameters
+except for early kernel parameters.
+
+In boot config, all key-values start with "kernel." are automatically
+merged into user passed boot command line, and key-values which
+start with "init." are also passed to init. These options are visible
+on /proc/cmdline.
+
+For example,
+
+kernel {
+  audit = on
+  audit_backlog_limit = 256
+}
+init.systemd.unified_cgroup_hierarchy = 1
+
+
+Usage
+=====
+
+With this series, we can setup new kprobe and synthetic events, more
+complicated event filters and trigger actions including histogram
+via supplemental kernel cmdline.
+
+We can add filter and actions for each event, define kprobe events,
+and synthetic events with histogram like below.
+
+ftrace.event {
+	task.task_newtask {
+		filter = "pid < 128"
+		enable
+	}
+	kprobes.vfs_read {
+		probes = "vfs_read $arg1 $arg2"
+		filter = "common_pid < 200"
+		enable
+	}
+	synthetic.initcall_latency {
+		fields = "unsigned long func", "u64 lat"
+		actions = "hist:keys=func.sym,lat:vals=lat:sort=lat"
+	}
+	initcall.initcall_start {
+		actions = "hist:keys=func:ts0=common_timestamp.usecs"
+	}
+	initcall.initcall_finish {
+		actions = "hist:keys=func:lat=common_timestamp.usecs-$ts0:onmatch(initcall.initcall_start).initcall_latency(func,$lat)"
+	}
+}
+
+Also, this supports "instance" node, which allows us to run several
+tracers for different purpose at once. For example, one tracer is for
+tracing functions start with "user_", and others tracing "kernel_",
+you can write boot config as:
+
+ftrace.instance {
+	foo {
+		tracer = "function"
+		ftrace-filters = "user_*"
+	}
+	bar {
+		tracer = "function"
+		ftrace-filters = "function_*"
+	}
+}
+
+The instance node also accepts event nodes so that each instance
+can customize its event tracing.
+
+This boot-time trace also supports ftrace kernel parameters.
+For example, following kernel parameters
+
+trace_options=sym-addr trace_event=initcall:* tp_printk trace_buf_size=1M ftrace=function ftrace_filter="vfs*"
+
+it can be written in boot config like below.
+
+ftrace {
+	options = sym-addr;
+	events = "initcall:*";
+	tp-printk;
+	buffer-size = 1MB;
+	ftrace-filters = "vfs*";
+}
+
+However, since the initialization timing is different, if you need
+to trace very early boot, please use normal kernel parameters.
+
+Some Notes
+==========
+
+- Since it is not easy to write boot-time tracing without any bug
+  in bootconfig, a user-helper command will be needed.
+  That command will generate a boot config file from current ftrace
+  settings, or try to apply given boot config setting to the ftrace.
+
+- It is also possible to embed boot config file into the kernel
+  image for the environment which doesn't use initrd. But in that
+  case, user can not update the boot config.
+
+- As you can see, the EVENT.actions value is a bit ugly since histogram
+  interface settings are bit complicated. Maybe we can introduce more
+  abstractive syntax for that. e.g.
+
+ftrace.event.synthetic.initcall_latency {
+	fields = "unsigned long func", "u64 lat"
+	hist {
+		from {
+			event = initcall.initcall_start
+			key = func
+			assigns = "ts0=common_timestamp.usecs"
+		}
+		to {
+			event = initcall.initcall_finish
+			key = func
+			assigns = "lat=common_timestamp.usecs-$ts0"
+			onmatch = func, $lat
+		}
+		keys = func.sym, lat
+		vals = lat
+		sort = lat
+	}
+}
+
+Any suggestions, thoughts?
+
+Thank you,
+
 ---
- fs/crypto/fname.c    | 15 ++-------------
- fs/ecryptfs/crypto.c | 13 ++-----------
- fs/f2fs/f2fs.h       | 11 -----------
- fs/libfs.c           | 12 ++++++++++++
- fs/namei.c           |  6 ++----
- include/linux/fs.h   |  2 ++
- 6 files changed, 20 insertions(+), 39 deletions(-)
 
-diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-index 3da3707..36be864 100644
---- a/fs/crypto/fname.c
-+++ b/fs/crypto/fname.c
-@@ -15,17 +15,6 @@
- #include <crypto/skcipher.h>
- #include "fscrypt_private.h"
- 
--static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
--{
--	if (str->len == 1 && str->name[0] == '.')
--		return true;
--
--	if (str->len == 2 && str->name[0] == '.' && str->name[1] == '.')
--		return true;
--
--	return false;
--}
--
- /**
-  * fname_encrypt() - encrypt a filename
-  *
-@@ -255,7 +244,7 @@ int fscrypt_fname_disk_to_usr(struct inode *inode,
- 	const struct qstr qname = FSTR_TO_QSTR(iname);
- 	struct fscrypt_digested_name digested_name;
- 
--	if (fscrypt_is_dot_dotdot(&qname)) {
-+	if (is_dot_dotdot(&qname)) {
- 		oname->name[0] = '.';
- 		oname->name[iname->len - 1] = '.';
- 		oname->len = iname->len;
-@@ -323,7 +312,7 @@ int fscrypt_setup_filename(struct inode *dir, const struct qstr *iname,
- 	memset(fname, 0, sizeof(struct fscrypt_name));
- 	fname->usr_fname = iname;
- 
--	if (!IS_ENCRYPTED(dir) || fscrypt_is_dot_dotdot(iname)) {
-+	if (!IS_ENCRYPTED(dir) || is_dot_dotdot(iname)) {
- 		fname->disk_name.name = (unsigned char *)iname->name;
- 		fname->disk_name.len = iname->len;
- 		return 0;
-diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
-index f91db24..6f4db74 100644
---- a/fs/ecryptfs/crypto.c
-+++ b/fs/ecryptfs/crypto.c
-@@ -1991,16 +1991,6 @@ int ecryptfs_encrypt_and_encode_filename(
- 	return rc;
- }
- 
--static bool is_dot_dotdot(const char *name, size_t name_size)
--{
--	if (name_size == 1 && name[0] == '.')
--		return true;
--	else if (name_size == 2 && name[0] == '.' && name[1] == '.')
--		return true;
--
--	return false;
--}
--
- /**
-  * ecryptfs_decode_and_decrypt_filename - converts the encoded cipher text name to decoded plaintext
-  * @plaintext_name: The plaintext name
-@@ -2020,6 +2010,7 @@ int ecryptfs_decode_and_decrypt_filename(char **plaintext_name,
- {
- 	struct ecryptfs_mount_crypt_stat *mount_crypt_stat =
- 		&ecryptfs_superblock_to_private(sb)->mount_crypt_stat;
-+	const struct qstr file_name = {.name = name, .len = name_size};
- 	char *decoded_name;
- 	size_t decoded_name_size;
- 	size_t packet_size;
-@@ -2027,7 +2018,7 @@ int ecryptfs_decode_and_decrypt_filename(char **plaintext_name,
- 
- 	if ((mount_crypt_stat->flags & ECRYPTFS_GLOBAL_ENCRYPT_FILENAMES) &&
- 	    !(mount_crypt_stat->flags & ECRYPTFS_ENCRYPTED_VIEW_ENABLED)) {
--		if (is_dot_dotdot(name, name_size)) {
-+		if (is_dot_dotdot(&file_name)) {
- 			rc = ecryptfs_copy_filename(plaintext_name,
- 						    plaintext_name_size,
- 						    name, name_size);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 5a888a0..3d5e684 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2767,17 +2767,6 @@ static inline bool f2fs_cp_error(struct f2fs_sb_info *sbi)
- 	return is_set_ckpt_flags(sbi, CP_ERROR_FLAG);
- }
- 
--static inline bool is_dot_dotdot(const struct qstr *str)
--{
--	if (str->len == 1 && str->name[0] == '.')
--		return true;
--
--	if (str->len == 2 && str->name[0] == '.' && str->name[1] == '.')
--		return true;
--
--	return false;
--}
--
- static inline bool f2fs_may_extent_tree(struct inode *inode)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 1463b03..876b1b6 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1291,3 +1291,15 @@ bool is_empty_dir_inode(struct inode *inode)
- 	return (inode->i_fop == &empty_dir_operations) &&
- 		(inode->i_op == &empty_dir_inode_operations);
- }
-+
-+bool is_dot_dotdot(const struct qstr *str)
-+{
-+	if (str->len == 1 && str->name[0] == '.')
-+		return true;
-+
-+	if (str->len == 2 && str->name[0] == '.' && str->name[1] == '.')
-+		return true;
-+
-+	return false;
-+}
-+EXPORT_SYMBOL(is_dot_dotdot);
-diff --git a/fs/namei.c b/fs/namei.c
-index 2dda552..7730a3b 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2458,10 +2458,8 @@ static int lookup_one_len_common(const char *name, struct dentry *base,
- 	if (!len)
- 		return -EACCES;
- 
--	if (unlikely(name[0] == '.')) {
--		if (len < 2 || (len == 2 && name[1] == '.'))
--			return -EACCES;
--	}
-+	if (unlikely(is_dot_dotdot(this)))
-+		return -EACCES;
- 
- 	while (len--) {
- 		unsigned int c = *(const unsigned char *)name++;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c159a8b..e999826 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3627,4 +3627,6 @@ static inline int inode_drain_writes(struct inode *inode)
- 	return filemap_write_and_wait(inode->i_mapping);
- }
- 
-+extern bool is_dot_dotdot(const struct qstr *str);
-+
- #endif /* _LINUX_FS_H */
--- 
-2.1.0
+Masami Hiramatsu (22):
+      bootconfig: Add Extra Boot Config support
+      bootconfig: Load boot config from the tail of initrd
+      tools: bootconfig: Add bootconfig command
+      tools: bootconfig: Add bootconfig test script
+      proc: bootconfig: Add /proc/bootconfig to show boot config list
+      init/main.c: Alloc initcall_command_line in do_initcall() and free it
+      bootconfig: init: Allow admin to use bootconfig for kernel command line
+      bootconfig: init: Allow admin to use bootconfig for init command line
+      Documentation: bootconfig: Add a doc for extended boot config
+      tracing: Apply soft-disabled and filter to tracepoints printk
+      tracing: kprobes: Output kprobe event to printk buffer
+      tracing: kprobes: Register to dynevent earlier stage
+      tracing: Accept different type for synthetic event fields
+      tracing: Add NULL trace-array check in print_synth_event()
+      tracing/boot: Add boot-time tracing
+      tracing/boot: Add per-event settings
+      tracing/boot Add kprobe event support
+      tracing/boot: Add synthetic event support
+      tracing/boot: Add instance node support
+      tracing/boot: Add cpu_mask option support
+      tracing/boot: Add function tracer filter options
+      Documentation: tracing: Add boot-time tracing document
 
+
+ Documentation/admin-guide/bootconfig.rst      |  176 ++++++
+ Documentation/admin-guide/index.rst           |    1 
+ Documentation/trace/boottime-trace.rst        |  184 ++++++
+ Documentation/trace/index.rst                 |    1 
+ MAINTAINERS                                   |    9 
+ fs/proc/Makefile                              |    1 
+ fs/proc/bootconfig.c                          |   89 +++
+ include/linux/bootconfig.h                    |  221 +++++++
+ include/linux/trace_events.h                  |    1 
+ init/Kconfig                                  |   12 
+ init/main.c                                   |  213 ++++++-
+ kernel/trace/Kconfig                          |    9 
+ kernel/trace/Makefile                         |    1 
+ kernel/trace/trace.c                          |   63 +-
+ kernel/trace/trace_boot.c                     |  353 +++++++++++
+ kernel/trace/trace_events.c                   |    1 
+ kernel/trace/trace_events_hist.c              |   14 
+ kernel/trace/trace_events_trigger.c           |    2 
+ kernel/trace/trace_kprobe.c                   |   81 ++-
+ lib/Kconfig                                   |    3 
+ lib/Makefile                                  |    2 
+ lib/bootconfig.c                              |  783 +++++++++++++++++++++++++
+ tools/Makefile                                |   11 
+ tools/bootconfig/.gitignore                   |    1 
+ tools/bootconfig/Makefile                     |   25 +
+ tools/bootconfig/include/linux/bootconfig.h   |    7 
+ tools/bootconfig/include/linux/bug.h          |   12 
+ tools/bootconfig/include/linux/ctype.h        |    7 
+ tools/bootconfig/include/linux/errno.h        |    7 
+ tools/bootconfig/include/linux/kernel.h       |   18 +
+ tools/bootconfig/include/linux/printk.h       |   13 
+ tools/bootconfig/include/linux/string.h       |   32 +
+ tools/bootconfig/main.c                       |  337 +++++++++++
+ tools/bootconfig/samples/bad-dotword.bconf    |    4 
+ tools/bootconfig/samples/bad-empty.bconf      |    1 
+ tools/bootconfig/samples/bad-keyerror.bconf   |    2 
+ tools/bootconfig/samples/bad-longkey.bconf    |    1 
+ tools/bootconfig/samples/bad-manywords.bconf  |    1 
+ tools/bootconfig/samples/bad-no-keyword.bconf |    2 
+ tools/bootconfig/samples/bad-spaceword.bconf  |    2 
+ tools/bootconfig/samples/bad-tree.bconf       |    5 
+ tools/bootconfig/samples/bad-value.bconf      |    3 
+ tools/bootconfig/samples/good-simple.bconf    |   11 
+ tools/bootconfig/samples/good-single.bconf    |    4 
+ tools/bootconfig/samples/good-tree.bconf      |   15 
+ tools/bootconfig/test-bootconfig.sh           |   80 +++
+ 46 files changed, 2742 insertions(+), 79 deletions(-)
+ create mode 100644 Documentation/admin-guide/bootconfig.rst
+ create mode 100644 Documentation/trace/boottime-trace.rst
+ create mode 100644 fs/proc/bootconfig.c
+ create mode 100644 include/linux/bootconfig.h
+ create mode 100644 kernel/trace/trace_boot.c
+ create mode 100644 lib/bootconfig.c
+ create mode 100644 tools/bootconfig/.gitignore
+ create mode 100644 tools/bootconfig/Makefile
+ create mode 100644 tools/bootconfig/include/linux/bootconfig.h
+ create mode 100644 tools/bootconfig/include/linux/bug.h
+ create mode 100644 tools/bootconfig/include/linux/ctype.h
+ create mode 100644 tools/bootconfig/include/linux/errno.h
+ create mode 100644 tools/bootconfig/include/linux/kernel.h
+ create mode 100644 tools/bootconfig/include/linux/printk.h
+ create mode 100644 tools/bootconfig/include/linux/string.h
+ create mode 100644 tools/bootconfig/main.c
+ create mode 100644 tools/bootconfig/samples/bad-dotword.bconf
+ create mode 100644 tools/bootconfig/samples/bad-empty.bconf
+ create mode 100644 tools/bootconfig/samples/bad-keyerror.bconf
+ create mode 100644 tools/bootconfig/samples/bad-longkey.bconf
+ create mode 100644 tools/bootconfig/samples/bad-manywords.bconf
+ create mode 100644 tools/bootconfig/samples/bad-no-keyword.bconf
+ create mode 100644 tools/bootconfig/samples/bad-spaceword.bconf
+ create mode 100644 tools/bootconfig/samples/bad-tree.bconf
+ create mode 100644 tools/bootconfig/samples/bad-value.bconf
+ create mode 100644 tools/bootconfig/samples/good-simple.bconf
+ create mode 100644 tools/bootconfig/samples/good-single.bconf
+ create mode 100644 tools/bootconfig/samples/good-tree.bconf
+ create mode 100755 tools/bootconfig/test-bootconfig.sh
+
+--
+Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
