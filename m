@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C46D610E86B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2019 11:14:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E054610E872
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2019 11:15:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbfLBKOz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Dec 2019 05:14:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59740 "EHLO mail.kernel.org"
+        id S1727616AbfLBKPG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Dec 2019 05:15:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727494AbfLBKOy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Dec 2019 05:14:54 -0500
+        id S1727494AbfLBKPG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Dec 2019 05:15:06 -0500
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D80321835;
-        Mon,  2 Dec 2019 10:14:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80380215E5;
+        Mon,  2 Dec 2019 10:15:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575281693;
-        bh=+yEowJLKOMjPDHTuH6PUsFeC4DPmKVnwMvOyi0ajpUM=;
+        s=default; t=1575281704;
+        bh=cLvSNkEQ8OBtq9Zy2vqE1OadBbjneSpyct9QaNueIVg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JNQipn6AS5mrhjEskiiRKRXsIG9NqPoabSId7LAF4Ew0nm+N8Gw6J+2fmv17rR/a7
-         YE0QnmfYoLbFJzY+UtDP6W4t3iLOcbRW77SrJ8U47mKOvGwXPvlnomIH3TqzDM2eXW
-         CkxiCxbS8nVSP/6EbMCY2h5uu2KuO1YoJj8j/xg4=
+        b=SCoCN6JepQnFF68NzM6JzB33dKhyzZySN+7M6TL5GKoh6glP//KeE9iyL5UYtW250
+         YwxJC57QgND8EFewV1X0xw2xCDCXDA3Y2YOXm2vdFXh6A3coVl9ySACEaAguo2dEJT
+         qx3YzeofZjVbBvZuEJGgPei58MQAJRnCsqsmw9BI=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Steven Rostedt <rostedt@goodmis.org>,
         Frank Rowand <frowand.list@gmail.com>
@@ -39,9 +39,9 @@ Cc:     Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v4 08/22] bootconfig: init: Allow admin to use bootconfig for init command line
-Date:   Mon,  2 Dec 2019 19:14:48 +0900
-Message-Id: <157528168803.22451.13616097455333249096.stgit@devnote2>
+Subject: [RFC PATCH v4 09/22] Documentation: bootconfig: Add a doc for extended boot config
+Date:   Mon,  2 Dec 2019 19:14:58 +0900
+Message-Id: <157528169879.22451.14360457853087960991.stgit@devnote2>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <157528159833.22451.14878731055438721716.stgit@devnote2>
 References: <157528159833.22451.14878731055438721716.stgit@devnote2>
@@ -54,101 +54,225 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Since the current kernel command line is too short to describe
-long and many options for init (e.g. systemd command line options),
-this allows admin to use boot config for init command line.
-
-All init command line under "init." keywords will be passed to
-init.
-
-For example,
-
-init.systemd {
-	unified_cgroup_hierarchy = 1
-	debug_shell
-	default_timeout_start_sec = 60
-}
+Add a documentation for extended boot config under
+admin-guide, since it is including the syntax of boot config.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- init/main.c |   31 ++++++++++++++++++++++++++++---
- 1 file changed, 28 insertions(+), 3 deletions(-)
+ Changes in v4:
+  - Rename suppremental kernel command line to boot config.
+  - Update document according to the recent changes.
+  - Add How to load it on boot.
+  - Style bugfix.
+---
+ Documentation/admin-guide/bootconfig.rst |  174 ++++++++++++++++++++++++++++++
+ Documentation/admin-guide/index.rst      |    1 
+ MAINTAINERS                              |    1 
+ 3 files changed, 176 insertions(+)
+ create mode 100644 Documentation/admin-guide/bootconfig.rst
 
-diff --git a/init/main.c b/init/main.c
-index b2aac7ec2862..c138b2068602 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -139,6 +139,8 @@ char *saved_command_line;
- static char *static_command_line;
- /* Untouched extra command line */
- static char *extra_command_line;
-+/* Extra init arguments */
-+static char *extra_init_args;
- 
- static char *execute_command;
- static char *ramdisk_execute_command;
-@@ -372,6 +374,8 @@ static void __init setup_boot_config(void)
- 		pr_info("Load boot config: %d bytes\n", size);
- 		/* keys starting with "kernel." are passed via cmdline */
- 		extra_command_line = xbc_make_cmdline("kernel");
-+		/* Also, "init." keys are init arguments */
-+		extra_init_args = xbc_make_cmdline("init");
- 	}
- }
- #else
-@@ -507,16 +511,18 @@ static inline void smp_prepare_cpus(unsigned int maxcpus) { }
-  */
- static void __init setup_command_line(char *command_line)
- {
--	size_t len, xlen = 0;
-+	size_t len, xlen = 0, ilen = 0;
- 
- 	if (extra_command_line)
- 		xlen = strlen(extra_command_line);
-+	if (extra_init_args)
-+		ilen = strlen(extra_init_args) + 4; /* for " -- " */
- 
- 	len = xlen + strlen(boot_command_line) + 1;
- 
--	saved_command_line = memblock_alloc(len, SMP_CACHE_BYTES);
-+	saved_command_line = memblock_alloc(len + ilen, SMP_CACHE_BYTES);
- 	if (!saved_command_line)
--		panic("%s: Failed to allocate %zu bytes\n", __func__, len);
-+		panic("%s: Failed to allocate %zu bytes\n", __func__, len + ilen);
- 
- 	static_command_line = memblock_alloc(len, SMP_CACHE_BYTES);
- 	if (!static_command_line)
-@@ -533,6 +539,22 @@ static void __init setup_command_line(char *command_line)
- 	}
- 	strcpy(saved_command_line + xlen, boot_command_line);
- 	strcpy(static_command_line + xlen, command_line);
+diff --git a/Documentation/admin-guide/bootconfig.rst b/Documentation/admin-guide/bootconfig.rst
+new file mode 100644
+index 000000000000..db35cee8a00a
+--- /dev/null
++++ b/Documentation/admin-guide/bootconfig.rst
+@@ -0,0 +1,174 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
-+	if (ilen) {
-+		/*
-+		 * Append supplemental init boot args to saved_command_line
-+		 * so that user can check what command line options passed
-+		 * to init.
-+		 */
-+		len = strlen(saved_command_line);
-+		if (!strstr(boot_command_line, " -- ")) {
-+			strcpy(saved_command_line + len, " -- ");
-+			len += 4;
-+		} else
-+			saved_command_line[len++] = ' ';
++==================
++Boot Configuration
++==================
 +
-+		strcpy(saved_command_line + len, extra_init_args);
-+	}
- }
++:Author: Masami Hiramatsu <mhiramat@kernel.org>
++
++Overview
++========
++
++The boot configuration is expanding current kernel cmdline to support
++additional key-value data when boot the kernel in an efficient way.
++This allows adoministrators to pass a structured-Key config file.
++
++Config File Syntax
++==================
++
++The boot config syntax is a simple structured key-value. Each key consists
++of dot-connected-words, and key and value are connected by "=". The value
++has to be terminated by semi-colon (";") or newline ("\n").
++For array value, array entries are separated by comma (",").
++
++KEY[.WORD[...]] = VALUE[, VALUE2[...]][;]
++
++Each key word only contains alphabet, number, dash ("-") or underscore ("_").
++If a value need to contain comma (",") as delimiter, you can use double-quotes
++or single-quotes to quote it. Quotes in VALUE can be escaped by backslash("\")
++(however, the backslash + quotes are passed AS-IS.)
++
++There can be a key which doesn't have value or has an empty value. Those keys
++are used for checking the key exists or not (like a boolean).
++
++Key-Value Syntax
++----------------
++
++The boot config file syntax allows user to merge partially same word keys
++by brace. For example::
++
++ foo.bar.baz = value1
++ foo.bar.qux.quux = value2
++
++These can be written also in::
++
++ foo.bar {
++    baz = value1
++    qux.quux = value2
++ }
++
++Or more shorter, written as following::
++
++ foo.bar { baz = value1; qux.quux = value2 }
++
++In both styles, same key words are automatically merged when parsing it
++at boot time. So you can append similar trees or key-values.
++
++Comments
++--------
++
++The config syntax accepts shell-script style comments. The comments start
++with hash ("#") until newline ("\n") will be ignored.
++
++::
++
++ # comment line
++ foo = value # value is set to foo.
++ bar = 1, # 1st element
++       2, # 2nd element
++       3  # 3rd element
++
++This is parsed as below::
++
++ foo = value
++ bar = 1, 2, 3
++
++
++/proc/bootconfig
++================
++
++/proc/bootconfig is a user-space interface of the boot config.
++Unlike /proc/cmdline, this file shows the key-value style list.
++Each key-value pair is shown in each line with following style::
++
++ KEY[.WORDS...] = "[VALUE]"[,"VALUE2"...]
++
++
++Boot Kernel With a Boot Config
++==============================
++
++Since the boot configuration file is loaded with initrd, it will be added
++to the end of the initrd (initramfs) image file. The Linux kernel decodes
++the last part of the initrd image in memory to get the boot configuration
++data.
++Because of this "piggyback" method, there is no need to change or
++update the boot loader and the kernel image itself.
++
++To do this operation, Linux kernel provides "bootconfig" command under
++tools/bootconfig, which allows admin to apply or delete the config file
++to/from initrd image. You can build it by follwoing command::
++
++ # make -C tools/bootconfig
++
++To add your boot config file to initrd image, run bootconfig as below
++(Old data is removed automatically if exists)::
++
++ # tools/bootconfig/bootconfig -a your-config /boot/initrd.img-X.Y.Z
++
++To remove the config from the image, you can use -d option as below::
++
++ # tools/bootconfig/bootconfig -d /boot/initrd.img-X.Y.Z
++
++
++Config File Limitation
++======================
++
++Currently the maximum config size size is 32KB and the total key-words (not
++key-value entries) must be under 1024 nodes.
++Note: this is not the number of entries but nodes, an entry must consume
++more than 2 nodes (a key-word and a value). So theoretically, it will be
++up to 512 key-value pairs. If keys contains 3 words in average, it can
++contain 256 key-value pairs. In most cases, the number of config items
++will be under 100 entries and smaller than 8KB, so it would be enough.
++If the node number exceeds 1024, parser returns an error even if the file
++size is smaller than 32KB.
++Anyway, since bootconfig command verifies it when appending a boot config
++to initrd image, user can notice it before boot.
++
++
++Bootconfig APIs
++===============
++
++User can query or loop on key-value pairs, also it is possible to find
++a root (prefix) key node and find key-values under that node.
++
++If you have a key string, you can query the value directly with the key
++using xbc_find_value(). If you want to know what keys exist in the SKC
++tree, you can use xbc_for_each_key_value() to iterate key-value pairs.
++Note that you need to use xbc_array_for_each_value() for accessing
++each arraies value, e.g.::
++
++ vnode = NULL;
++ xbc_find_value("key.word", &vnode);
++ if (vnode && xbc_node_is_array(vnode))
++    xbc_array_for_each_value(vnode, value) {
++      printk("%s ", value);
++    }
++
++If you want to focus on keys which has a prefix string, you can use
++xbc_find_node() to find a node which prefix key words, and iterate
++keys under the prefix node with xbc_node_for_each_key_value().
++
++But the most typical usage is to get the named value under prefix
++or get the named array under prefix as below::
++
++ root = xbc_find_node("key.prefix");
++ value = xbc_node_find_value(root, "option", &vnode);
++ ...
++ xbc_node_for_each_array_value(root, "array-option", value, anode) {
++    ...
++ }
++
++This accesses a value of "key.prefix.option" and an array of
++"key.prefix.array-option".
++
++Locking is not needed, since after initialized, the config becomes readonly.
++All data and keys must be copied if you need to modify it.
++
++
++Functions and structures
++========================
++
++.. kernel-doc:: include/linux/bootconfig.h
++.. kernel-doc:: lib/bootconfig.c
++
+diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
+index 34cc20ee7f3a..01e0994a435b 100644
+--- a/Documentation/admin-guide/index.rst
++++ b/Documentation/admin-guide/index.rst
+@@ -111,6 +111,7 @@ configure specific aspects of kernel behavior to your liking.
+    svga
+    wimax/index
+    video-output
++   bootconfig
  
- /*
-@@ -759,6 +781,9 @@ asmlinkage __visible void __init start_kernel(void)
- 	if (!IS_ERR_OR_NULL(after_dashes))
- 		parse_args("Setting init args", after_dashes, NULL, 0, -1, -1,
- 			   NULL, set_init_arg);
-+	if (extra_init_args)
-+		parse_args("Setting extra init args", extra_init_args,
-+			   NULL, 0, -1, -1, NULL, set_init_arg);
+ .. only::  subproject and html
  
- 	/*
- 	 * These use large bootmem allocations and must precede
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 08185de1652b..dffe3ecdec7a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15696,6 +15696,7 @@ F:	lib/bootconfig.c
+ F:	fs/proc/bootconfig.c
+ F:	include/linux/bootconfig.h
+ F:	tools/bootconfig/*
++F:	Documentation/admin-guide/bootconfig.rst
+ 
+ SUN3/3X
+ M:	Sam Creasey <sammy@sammy.net>
 
