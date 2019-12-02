@@ -2,142 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C510F10F219
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2019 22:22:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5CE810F31C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 00:06:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726443AbfLBVWX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Dec 2019 16:22:23 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:51275 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725834AbfLBVWW (ORCPT
+        id S1725919AbfLBXG0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Dec 2019 18:06:26 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:44607 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725834AbfLBXG0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Dec 2019 16:22:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575321740;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=GNy5mzrbFUfF+VYedCZNaTyj28AJmYDxC867Fp4tmD4=;
-        b=MaNUiHwjSfyvj0/YdTuNSf4Jcybr1VFBnTE7FATZ4IblM4CtQaeQInhmw1r056mhbHdvL0
-        HFzvrcmv7tKpiGr7V/djoi+MF4+R75De/fJ/KGMJm0CNmbkSO2GPiTNbMvT9m7CiJuDvug
-        tkI+EEe3fAXy5qq3Ivfw7Cv3iFlKFoM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-89-uh2s1mFnOQ66DD7AEEL6HA-1; Mon, 02 Dec 2019 16:22:17 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C1FE11005502;
-        Mon,  2 Dec 2019 21:22:15 +0000 (UTC)
-Received: from lorien.usersys.redhat.com (ovpn-117-37.phx2.redhat.com [10.3.117.37])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2C41C5D6A7;
-        Mon,  2 Dec 2019 21:22:12 +0000 (UTC)
-Date:   Mon, 2 Dec 2019 16:22:10 -0500
-From:   Phil Auld <pauld@redhat.com>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Dave Chinner <david@fromorbit.com>, Ming Lei <ming.lei@redhat.com>,
-        Hillf Danton <hdanton@sina.com>,
+        Mon, 2 Dec 2019 18:06:26 -0500
+Received: from dread.disaster.area (pa49-179-150-192.pa.nsw.optusnet.com.au [49.179.150.192])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 861A83A30BB;
+        Tue,  3 Dec 2019 10:06:18 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1ibulm-0006jy-5F; Tue, 03 Dec 2019 10:06:18 +1100
+Date:   Tue, 3 Dec 2019 10:06:18 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     Ming Lei <ming.lei@redhat.com>,
         linux-block <linux-block@vger.kernel.org>,
         linux-fs <linux-fsdevel@vger.kernel.org>,
         linux-xfs <linux-xfs@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
         Peter Zijlstra <peterz@infradead.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
         Rong Chen <rong.a.chen@intel.com>, Tejun Heo <tj@kernel.org>
 Subject: Re: single aio thread is migrated crazily by scheduler
-Message-ID: <20191202212210.GA32767@lorien.usersys.redhat.com>
+Message-ID: <20191202230618.GI2695@dread.disaster.area>
 References: <20191114113153.GB4213@ming.t460p>
  <20191114235415.GL4614@dread.disaster.area>
  <20191115010824.GC4847@ming.t460p>
  <20191115045634.GN4614@dread.disaster.area>
  <20191115070843.GA24246@ming.t460p>
  <20191128094003.752-1-hdanton@sina.com>
- <CAKfTPtA23ErKGCEJVmg6vk-QoufkiUM3NbXd31mZmKnuwbTkFw@mail.gmail.com>
- <20191202024625.GD24512@ming.t460p>
- <20191202040256.GE2695@dread.disaster.area>
- <CAKfTPtD8Q97qJ_+hdCXQRt=gy7k96XrhnFmGYP1G88YSFW0vNA@mail.gmail.com>
+ <20191202090158.15016-1-hdanton@sina.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtD8Q97qJ_+hdCXQRt=gy7k96XrhnFmGYP1G88YSFW0vNA@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-MC-Unique: uh2s1mFnOQ66DD7AEEL6HA-1
-X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
+In-Reply-To: <20191202090158.15016-1-hdanton@sina.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=ZXpxJgW8/q3NVgupyyvOCQ==:117 a=ZXpxJgW8/q3NVgupyyvOCQ==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=pxVhFHJ0LMsA:10
+        a=7-415B0cAAAA:8 a=vHaZCrEJwQDmUnyvPvAA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Vincent,
+On Mon, Dec 02, 2019 at 05:01:58PM +0800, Hillf Danton wrote:
+> 
+> On Mon, 2 Dec 2019 14:08:44 +1100 Dave Chinner wrote:
+> > On Thu, Nov 28, 2019 at 05:40:03PM +0800, Hillf Danton wrote:
+> > > On Sat, 16 Nov 2019 10:40:05 Dave Chinner wrote:
+> > > > Yeah, the fio task averages 13.4ms on any given CPU before being
+> > > > switched to another CPU. Mind you, the stddev is 12ms, so the range
+> > > > of how long it spends on any one CPU is pretty wide (330us to
+> > > > 330ms).
+> > > > 
+> > > Hey Dave
+> > > 
+> > > > IOWs, this doesn't look like a workqueue problem at all - this looks
+> > > 
+> > > Surprised to see you're so sure it has little to do with wq,
+> > 
+> > Because I understand how the workqueue is used here.
+> > 
+> > Essentially, the workqueue is not necessary for a -pure- overwrite
+> > where no metadata updates or end-of-io filesystem work is required.
+> > 
+> > However, change the workload just slightly, such as allocating the
+> > space, writing into preallocated space (unwritten extents), using
+> > AIO writes to extend the file, using O_DSYNC, etc, and we *must*
+> > use a workqueue as we have to take blocking locks and/or run
+> > transactions.
+> > 
+> > These may still be very short (e.g. updating inode size) and in most
+> > cases will not block, but if they do, then if we don't move the work
+> > out of the block layer completion context (i.e. softirq running the
+> > block bh) then we risk deadlocking the code.
+> > 
+> > Not to mention none of the filesytem inode locks are irq safe.
+> > 
+> > IOWs, we can remove the workqueue for this -one specific instance-
+> > but it does not remove the requirement for using a workqueue for all
+> > the other types of write IO that pass through this code.
+> > 
+> So it's not true that it doesn't has anything to do with workqueue.
 
-On Mon, Dec 02, 2019 at 02:45:42PM +0100 Vincent Guittot wrote:
-> On Mon, 2 Dec 2019 at 05:02, Dave Chinner <david@fromorbit.com> wrote:
+You misunderstood what I was saying. I meant that this adverse
+schdeuler behaviour is not *unique to this specific workqueue
+instance* or workload. There are another 5+ workqueues in XFS alone
+that are based around the same "do all the deferred work on the same
+CPU" queuing behaviour. Several of them are IO completion
+processing workqueues, and it is designed this way to avoid running
+completion work that access common structures across all the CPUs in
+the system.
 
-...
+And, FWIW, we've had this "per-cpu delayed work" processing
+mechanism in XFS since ~2002 when per-cpu work queues were
+introduced in ~2.5.40. What we are doing with workqueues here is not
+new or novel, and it's worked just fine for most of this time...
 
-> > So, we can fiddle with workqueues, but it doesn't address the
-> > underlying issue that the scheduler appears to be migrating
-> > non-bound tasks off a busy CPU too easily....
->=20
-> The root cause of the problem is that the sched_wakeup_granularity_ns
-> is in the same range or higher than load balance period. As Peter
-> explained, This make the kworker waiting for the CPU for several load
-> period and a transient unbalanced state becomes a stable one that the
-> scheduler to fix. With default value, the scheduler doesn't try to
-> migrate any task.
+> > >  			INIT_WORK(&dio->aio.work, iomap_dio_complete_work);
+> > > -			queue_work(inode->i_sb->s_dio_done_wq, &dio->aio.work);
+> > > +			schedule_work(&dio->aio.work);
+> > 
+> > This does nothing but change the workqueue from a per-sb wq to the
+> > system wq. The work is still bound to the same CPU it is queued on,
+> > so nothing will change.
+> > 
+> The system wq is enough here to make some visible difference as CFS will
+> be looking to make new lb decision in particular when submitter and
+> completion are running on different CPUs.
 
-There are actually two issues here.   With the high wakeup granularity
-we get the user task actively migrated. This causes the significant
-performance hit Ming was showing. With the fast wakeup_granularity
-(or smaller IOs - 512 instead of 4k) we get, instead, the user task
-migrated at wakeup to a new CPU for every IO completion.
+That's noise caused by slightly different loading of the system
+workqueue vs a private work queue. It's likely just enough to move
+the scheduler out of the window where it makes incorrect decisions.
+i.e. Add a bit more user load or load onto other CPUs, and the
+problem will reappear.
 
-This is the 11k migrations per sec doing 11k iops.  In this test it
-is not by itself causing the measured performance issue. It generally
-flips back and forth between 2 cpus for large periods. I think it is
-crossing cache boundaries at times (but I have not looked closely
-at the traces compared to the topology, yet).
+As I said, this is *not* a fix for the problem - it just moves it
+around so that you can't see it for this specific workload instance.
 
-The active balances are what really hurts in thie case but I agree
-that seems to be a tuning problem.
+> It's claimed that "Maintaining CPU affinity across dispatch and completion
+> work has been proven to be a significant performance win." If completion
+> is running in the softirq context then it would take some time to sort
+> out why irq (not CPU) affinity is making difference across CPUs.
 
+We use irq steering to provide CPU affinity for the structures being
+used by completion because they are the same ones used by
+submission. If completion happens quickly enough, those structures
+are still hot in the cache of the submission CPU, and so we don't
+drag bio and filesystem structures out of the CPU cache they sit in
+by steering the completion to the submission CPU.
+
+Most of the modern high perofrmance storage hardware has hardware
+interrupt steering so the block layer doesn't have to do this. See
+__blk_mq_complete_request() and __blk_complete_request(). If the
+device has multiple hardware queues, they are already delivering CPU
+affine completions. Otherwise __blk_complete_request() uses IPIs
+to steer the completion to a CPU that shares a cache with the
+submission CPU....
+
+IOWs, we are trying to ensure that we run the data IO completion on
+the CPU with that has that data hot in cache. When we are running
+millions of IOs every second, this matters -a lot-. IRQ steering is
+just a mechansim that is used to ensure completion processing hits
+hot caches.
 
 Cheers,
-Phil
 
-
->=20
-> Then, I agree that having an ack close to the request makes sense but
-> forcing it on the exact same CPU is too restrictive IMO. Being able to
-> use another CPU on the same core should not harm the performance and
-> may even improve it. And that may still be the case while CPUs share
-> their cache.
->=20
-> >
-> > -Dave.
-> >
-> > [*] Pay attention to the WQ_POWER_EFFICIENT definition for a work
-> > queue: it's designed for interrupt routines that defer work via work
-> > queues to avoid doing work on otherwise idle CPUs. It does this by
-> > turning the per-cpu wq into an unbound wq so that work gets
-> > scheduled on a non-idle CPUs in preference to the local idle CPU
-> > which can then remain in low power states.
-> >
-> > That's the exact opposite of what using WQ_UNBOUND ends up doing in
-> > this IO completion context: it pushes the work out over idle CPUs
-> > rather than keeping them confined on the already busy CPUs where CPU
-> > affinity allows the work to be done quickly. So while WQ_UNBOUND
-> > avoids the user task being migrated frequently, it results in the
-> > work being spread around many more CPUs and we burn more power to do
-> > the same work.
-> >
-> > --
-> > Dave Chinner
-> > david@fromorbit.com
->=20
-
---=20
-
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
