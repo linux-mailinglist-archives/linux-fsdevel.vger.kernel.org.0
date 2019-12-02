@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3021710E884
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2019 11:16:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7E5310E888
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2019 11:16:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727416AbfLBKQC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Dec 2019 05:16:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60936 "EHLO mail.kernel.org"
+        id S1727699AbfLBKQO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Dec 2019 05:16:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727354AbfLBKQB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Dec 2019 05:16:01 -0500
+        id S1727433AbfLBKQN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Dec 2019 05:16:13 -0500
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81C3A217D9;
-        Mon,  2 Dec 2019 10:15:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A96A6215E5;
+        Mon,  2 Dec 2019 10:16:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575281761;
-        bh=XFUFq878wx8ulylKj+mozx37qxZmGp3eAXgARqgqM+U=;
+        s=default; t=1575281772;
+        bh=FUVKNTbwYTZ1DLOiA4kcOk9dZe2xfMBYl7zgEEx3/PA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JtzBU/s38nrPqUf1ry6hevb4//dMP8J4G7izDWfMOJnSDw802eLgtJSc1gyBq8t5i
-         AtWcPSJME3wUq82qKsP2h3bHPmooeOqOAOni6/4hPa9VjvfcQrccOVCBkOvIMfSGzh
-         mPvTw0xp6T81ewuBuXbZn+kUwgm38KLzRakYjH1M=
+        b=JUgGLswYzCXamieBo38CS+hXR+XwIz8lSmzZRN8kQUDeLa/U7sSnhlaHa4p07ZkKl
+         YCqO7PLr985cZVnUuPm2O73FOTuyWmRuFFMZP8TkBHTpf0M3REciN4hqCll6k/6mHZ
+         zyqXkF3Eipb7vc1asiaOWqwMZlD72uRO18MjUiDM=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Steven Rostedt <rostedt@goodmis.org>,
         Frank Rowand <frowand.list@gmail.com>
@@ -39,9 +39,9 @@ Cc:     Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v4 14/22] tracing: Add NULL trace-array check in print_synth_event()
-Date:   Mon,  2 Dec 2019 19:15:55 +0900
-Message-Id: <157528175542.22451.2622783120594712316.stgit@devnote2>
+Subject: [RFC PATCH v4 15/22] tracing/boot: Add boot-time tracing
+Date:   Mon,  2 Dec 2019 19:16:06 +0900
+Message-Id: <157528176637.22451.7632859779349327019.stgit@devnote2>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <157528159833.22451.14878731055438721716.stgit@devnote2>
 References: <157528159833.22451.14878731055438721716.stgit@devnote2>
@@ -54,25 +54,236 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add NULL trace-array check in print_synth_event(), because
-if we enable tp_printk option, iter->tr can be NULL.
+Setup tracing options via extra boot config in addition to kernel
+command line.
+
+This adds following commands support. These are applied to
+the global trace instance.
+
+ - ftrace.options = OPT1[,OPT2...]
+   Enable given ftrace options.
+
+ - ftrace.trace_clock = CLOCK
+   Set given CLOCK to ftrace's trace_clock.
+
+ - ftrace.buffer_size = SIZE
+   Configure ftrace buffer size to SIZE. You can use "KB" or "MB"
+   for that SIZE.
+
+ - ftrace.events = EVENT[, EVENT2...]
+   Enable given events on boot. You can use a wild card in EVENT.
+
+ - ftrace.tracer = TRACER
+   Set TRACER to current tracer on boot. (e.g. function)
+
+Note that this is NOT replacing the kernel parameters, because
+this boot config based setting is later than that. If you want to
+trace earlier boot events, you still need kernel parameters.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- kernel/trace/trace_events_hist.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  Changes in v4:
+   - Remove parameter which is not related to instance.
+   - Use bootconfig.
+---
+ kernel/trace/Kconfig      |    9 ++++
+ kernel/trace/Makefile     |    1 
+ kernel/trace/trace.c      |   10 ++--
+ kernel/trace/trace_boot.c |  113 +++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 128 insertions(+), 5 deletions(-)
+ create mode 100644 kernel/trace/trace_boot.c
 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 06d91bb59297..d902a61775c4 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -833,7 +833,7 @@ static enum print_line_t print_synth_event(struct trace_iterator *iter,
- 		fmt = synth_field_fmt(se->fields[i]->type);
+diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+index cdf5afa87f65..1f133f1e0d12 100644
+--- a/kernel/trace/Kconfig
++++ b/kernel/trace/Kconfig
+@@ -805,6 +805,15 @@ config GCOV_PROFILE_FTRACE
+ 	  Note that on a kernel compiled with this config, ftrace will
+ 	  run significantly slower.
  
- 		/* parameter types */
--		if (tr->trace_flags & TRACE_ITER_VERBOSE)
-+		if (tr && tr->trace_flags & TRACE_ITER_VERBOSE)
- 			trace_seq_printf(s, "%s ", fmt);
++config BOOTTIME_TRACING
++	bool "Boot-time Tracing support"
++	depends on BOOT_CONFIG && TRACING
++	default y
++	help
++	  Enable developer to setup ftrace subsystem via supplemental
++	  kernel cmdline at boot time for debugging (tracing) driver
++	  initialization and boot process.
++
+ endif # FTRACE
  
- 		snprintf(print_fmt, sizeof(print_fmt), "%%s=%s%%s", fmt);
+ endif # TRACING_SUPPORT
+diff --git a/kernel/trace/Makefile b/kernel/trace/Makefile
+index c2b2148bb1d2..f9d3c2c72fb5 100644
+--- a/kernel/trace/Makefile
++++ b/kernel/trace/Makefile
+@@ -82,6 +82,7 @@ endif
+ obj-$(CONFIG_DYNAMIC_EVENTS) += trace_dynevent.o
+ obj-$(CONFIG_PROBE_EVENTS) += trace_probe.o
+ obj-$(CONFIG_UPROBE_EVENTS) += trace_uprobe.o
++obj-$(CONFIG_BOOTTIME_TRACING) += trace_boot.o
+ 
+ obj-$(CONFIG_TRACEPOINT_BENCHMARK) += trace_benchmark.o
+ 
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index dbf57e9ae937..c19dce22f5bd 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -162,7 +162,7 @@ union trace_eval_map_item {
+ static union trace_eval_map_item *trace_eval_maps;
+ #endif /* CONFIG_TRACE_EVAL_MAP_FILE */
+ 
+-static int tracing_set_tracer(struct trace_array *tr, const char *buf);
++int tracing_set_tracer(struct trace_array *tr, const char *buf);
+ static void ftrace_trace_userstack(struct ring_buffer *buffer,
+ 				   unsigned long flags, int pc);
+ 
+@@ -4737,7 +4737,7 @@ int set_tracer_flag(struct trace_array *tr, unsigned int mask, int enabled)
+ 	return 0;
+ }
+ 
+-static int trace_set_options(struct trace_array *tr, char *option)
++int trace_set_options(struct trace_array *tr, char *option)
+ {
+ 	char *cmp;
+ 	int neg = 0;
+@@ -5635,8 +5635,8 @@ static int __tracing_resize_ring_buffer(struct trace_array *tr,
+ 	return ret;
+ }
+ 
+-static ssize_t tracing_resize_ring_buffer(struct trace_array *tr,
+-					  unsigned long size, int cpu_id)
++ssize_t tracing_resize_ring_buffer(struct trace_array *tr,
++				  unsigned long size, int cpu_id)
+ {
+ 	int ret = size;
+ 
+@@ -5715,7 +5715,7 @@ static void add_tracer_options(struct trace_array *tr, struct tracer *t)
+ 	create_trace_option_files(tr, t);
+ }
+ 
+-static int tracing_set_tracer(struct trace_array *tr, const char *buf)
++int tracing_set_tracer(struct trace_array *tr, const char *buf)
+ {
+ 	struct tracer *t;
+ #ifdef CONFIG_TRACER_MAX_TRACE
+diff --git a/kernel/trace/trace_boot.c b/kernel/trace/trace_boot.c
+new file mode 100644
+index 000000000000..4b41310184df
+--- /dev/null
++++ b/kernel/trace/trace_boot.c
+@@ -0,0 +1,113 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * trace_boot.c
++ * Tracing kernel boot-time
++ */
++
++#define pr_fmt(fmt)	"trace_boot: " fmt
++
++#include <linux/ftrace.h>
++#include <linux/init.h>
++#include <linux/bootconfig.h>
++
++#include "trace.h"
++
++#define MAX_BUF_LEN 256
++
++extern int trace_set_options(struct trace_array *tr, char *option);
++extern int tracing_set_tracer(struct trace_array *tr, const char *buf);
++extern ssize_t tracing_resize_ring_buffer(struct trace_array *tr,
++					  unsigned long size, int cpu_id);
++
++static void __init
++trace_boot_set_ftrace_options(struct trace_array *tr, struct xbc_node *node)
++{
++	struct xbc_node *anode;
++	const char *p;
++	char buf[MAX_BUF_LEN];
++	unsigned long v = 0;
++
++	/* Common ftrace options */
++	xbc_node_for_each_array_value(node, "options", anode, p) {
++		if (strlcpy(buf, p, ARRAY_SIZE(buf)) >= ARRAY_SIZE(buf)) {
++			pr_err("String is too long: %s\n", p);
++			continue;
++		}
++
++		if (trace_set_options(tr, buf) < 0)
++			pr_err("Failed to set option: %s\n", buf);
++	}
++
++	p = xbc_node_find_value(node, "trace_clock", NULL);
++	if (p && *p != '\0') {
++		if (tracing_set_clock(tr, p) < 0)
++			pr_err("Failed to set trace clock: %s\n", p);
++	}
++
++	p = xbc_node_find_value(node, "buffer_size", NULL);
++	if (p && *p != '\0') {
++		v = memparse(p, NULL);
++		if (v < PAGE_SIZE)
++			pr_err("Buffer size is too small: %s\n", p);
++		if (tracing_resize_ring_buffer(tr, v, RING_BUFFER_ALL_CPUS) < 0)
++			pr_err("Failed to resize trace buffer to %s\n", p);
++	}
++}
++
++#ifdef CONFIG_EVENT_TRACING
++extern int ftrace_set_clr_event(struct trace_array *tr, char *buf, int set);
++
++static void __init
++trace_boot_enable_events(struct trace_array *tr, struct xbc_node *node)
++{
++	struct xbc_node *anode;
++	char buf[MAX_BUF_LEN];
++	const char *p;
++
++	xbc_node_for_each_array_value(node, "events", anode, p) {
++		if (strlcpy(buf, p, ARRAY_SIZE(buf)) >= ARRAY_SIZE(buf)) {
++			pr_err("String is too long: %s\n", p);
++			continue;
++		}
++
++		if (ftrace_set_clr_event(tr, buf, 1) < 0)
++			pr_err("Failed to enable event: %s\n", p);
++	}
++}
++#else
++#define trace_boot_enable_events(tr, node) do {} while (0)
++#endif
++
++static void __init
++trace_boot_enable_tracer(struct trace_array *tr, struct xbc_node *node)
++{
++	const char *p;
++
++	p = xbc_node_find_value(node, "tracer", NULL);
++	if (p && *p != '\0') {
++		if (tracing_set_tracer(tr, p) < 0)
++			pr_err("Failed to set given tracer: %s\n", p);
++	}
++}
++
++static int __init trace_boot_init(void)
++{
++	struct xbc_node *trace_node;
++	struct trace_array *tr;
++
++	trace_node = xbc_find_node("ftrace");
++	if (!trace_node)
++		return 0;
++
++	tr = top_trace_array();
++	if (!tr)
++		return 0;
++
++	trace_boot_set_ftrace_options(tr, trace_node);
++	trace_boot_enable_events(tr, trace_node);
++	trace_boot_enable_tracer(tr, trace_node);
++
++	return 0;
++}
++
++fs_initcall(trace_boot_init);
 
