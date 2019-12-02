@@ -2,378 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E14710F31F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 00:07:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF79310F333
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 00:11:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725899AbfLBXHk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Dec 2019 18:07:40 -0500
-Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:59747 "EHLO
-        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725834AbfLBXHk (ORCPT
+        id S1725944AbfLBXL3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Dec 2019 18:11:29 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45597 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725899AbfLBXL2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Dec 2019 18:07:40 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R581e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0TjlHfCQ_1575328051;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TjlHfCQ_1575328051)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 03 Dec 2019 07:07:34 +0800
-Subject: Re: [RFC PATCH] mm: shmem: allow split THP when truncating THP
- partially
-To:     Hugh Dickins <hughd@google.com>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1574471132-55639-1-git-send-email-yang.shi@linux.alibaba.com>
- <20191125093611.hlamtyo4hvefwibi@box>
- <3a35da3a-dff0-a8ca-8269-3018fff8f21b@linux.alibaba.com>
- <20191125183350.5gmcln6t3ofszbsy@box>
- <9a68b929-2f84-083d-0ac8-2ceb3eab8785@linux.alibaba.com>
- <14b7c24b-706e-79cf-6fbc-f3c042f30f06@linux.alibaba.com>
- <alpine.LSU.2.11.1911271718130.652@eggly.anvils>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <c687299a-574a-b35f-4ba4-ca67dc498ebd@linux.alibaba.com>
-Date:   Mon, 2 Dec 2019 15:07:25 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Mon, 2 Dec 2019 18:11:28 -0500
+Received: by mail-pl1-f194.google.com with SMTP id w7so702173plz.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Dec 2019 15:11:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6ttWimjLiXo63sviyZXeskbVa8xbd/IUQeCe9EeQR2I=;
+        b=07JfQToOePKknamvbiMnGD/w7Ik2MKvRUdZyYWPALMrR1m63c5WhBC3NTZvsGCvkmg
+         LJ8x8qg/sAdJVkYz/9j86JNuAloTBB56ZXQGpds+uo0V0sjL2/NXbKqHpbJxMfndhMJ+
+         YDtTNK9VK3qIgYaL43TBNND4s2KDZ1djWDuBUSQGbFSBruEgxShPKwT5+pk6AhXLwWVW
+         6nTy5QH3AWxYTpOzetI1+rU0R7XhEIRM6fnktSz6OwP1InRx0pDqSohsyM1Z3NcKStj6
+         0iJWgzBiOBZ0w8bfymOXRHFVdV9uZm1A0Xnz+LInd73arJYWaPHGEYrdbTvFEqN47eO8
+         AE6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6ttWimjLiXo63sviyZXeskbVa8xbd/IUQeCe9EeQR2I=;
+        b=l4wYUHVrBaCHvJkw6cCcDcM4aZiOPAoyJc3PsVs8oqB4fZzCSIPIIjhSREpqlV6qZd
+         FEl1BMmVv8vK7ArRzUkuSxsTVvJF+PKjBNOUhB0OeKiOhG94hrbKeOdJL6eeLdVCD7rn
+         Rp3I78toJyLQYZVeLRhoH3T1jISrRMc/Qb8lj9aubGzcM3NlkP+zuus+uk7xhGkc2ayd
+         fj6fgJcLUI0xHYx0Ez/Mo/aDCeXI1PtdW0XNe5EvsU9RwntYRTF1UKTqOkpUlC4Xix25
+         lfHZMkOPP1OKdJagiwhOE0E+18Y98LR/tl5q1b2lVSbTAMyKgonK7oXUgV2V6DIba2df
+         W+Yg==
+X-Gm-Message-State: APjAAAVX52LuswJIJisfcone05XpDI8oSy7OV3gabMpCRMWlvSPVakau
+        WhdiYtNCDkGi4AMoRKAegWRR
+X-Google-Smtp-Source: APXvYqxSUTsW2jHcg+3zHC4y4PzD26UjmdTsw/aGLBYVnEMAl5wDdTD4j1/sNpnU0t45fmaRH2xKIQ==
+X-Received: by 2002:a17:90b:3109:: with SMTP id gc9mr1889774pjb.30.1575328287945;
+        Mon, 02 Dec 2019 15:11:27 -0800 (PST)
+Received: from bobrowski.net (bobrowski.net. [110.232.114.101])
+        by smtp.gmail.com with ESMTPSA id m68sm576196pfm.85.2019.12.02.15.11.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2019 15:11:27 -0800 (PST)
+Date:   Tue, 3 Dec 2019 10:11:20 +1100
+From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     syzbot <syzbot+bea68382bae9490e7dd6@syzkaller.appspotmail.com>,
+        darrick.wong@oracle.com, hch@infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        linux-ext4@vger.kernel.org
+Subject: Re: KASAN: use-after-free Read in iov_iter_alignment
+Message-ID: <20191202231118.GA7527@bobrowski.net>
+References: <000000000000ad9f910598bbb867@google.com>
+ <20191202211037.GF2695@dread.disaster.area>
 MIME-Version: 1.0
-In-Reply-To: <alpine.LSU.2.11.1911271718130.652@eggly.anvils>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191202211037.GF2695@dread.disaster.area>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Dec 03, 2019 at 08:10:37AM +1100, Dave Chinner wrote:
+> [cc linux-ext4@vger.kernel.org - this is reported from the new ext4
+> dio->iomap code]
+> 
+> On Mon, Dec 02, 2019 at 09:15:08AM -0800, syzbot wrote:
+> > Hello,
+> > 
+> > syzbot found the following crash on:
+> > 
+> > HEAD commit:    b94ae8ad Merge tag 'seccomp-v5.5-rc1' of git://git.kernel...
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=135a8d7ae00000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=c2e464ae414aee8c
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=bea68382bae9490e7dd6
+> > compiler:       clang version 9.0.0 (/home/glider/llvm/clang
+> > 80fee25776c2fb61e74c1ecb1a523375c2500b69)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1135cb36e00000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14e90abce00000
+> > 
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+bea68382bae9490e7dd6@syzkaller.appspotmail.com
+> > 
+> > ==================================================================
+> > BUG: KASAN: use-after-free in iov_iter_alignment+0x6a1/0x7b0
+> > lib/iov_iter.c:1225
+> > Read of size 4 at addr ffff888098d40f54 by task loop0/8203
+> > 
+> > CPU: 0 PID: 8203 Comm: loop0 Not tainted 5.4.0-syzkaller #0
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > Call Trace:
+> >  __dump_stack lib/dump_stack.c:77 [inline]
+> >  dump_stack+0x1fb/0x318 lib/dump_stack.c:118
+> >  print_address_description+0x75/0x5c0 mm/kasan/report.c:374
+> >  __kasan_report+0x14b/0x1c0 mm/kasan/report.c:506
+> >  kasan_report+0x26/0x50 mm/kasan/common.c:634
+> >  __asan_report_load4_noabort+0x14/0x20 mm/kasan/generic_report.c:131
+> >  iov_iter_alignment+0x6a1/0x7b0 lib/iov_iter.c:1225
+> >  iomap_dio_bio_actor+0x1a7/0x11e0 fs/iomap/direct-io.c:203
+> >  iomap_dio_actor+0x2b4/0x4a0 fs/iomap/direct-io.c:375
+> >  iomap_apply+0x370/0x490 fs/iomap/apply.c:80
+> >  iomap_dio_rw+0x8ad/0x1010 fs/iomap/direct-io.c:493
+> >  ext4_dio_read_iter fs/ext4/file.c:77 [inline]
+> >  ext4_file_read_iter+0x834/0xc20 fs/ext4/file.c:128
+> >  lo_rw_aio+0xcbb/0xea0 include/linux/fs.h:1889
+> 
+> loopback -> ext4 direct IO, bad access on iov passed to iomap DIO
+> code.
+> 
+> >  do_req_filebacked drivers/block/loop.c:616 [inline]
+> >  loop_handle_cmd drivers/block/loop.c:1952 [inline]
+> >  loop_queue_work+0x13ab/0x2590 drivers/block/loop.c:1966
+> >  kthread_worker_fn+0x449/0x700 kernel/kthread.c:671
+> >  loop_kthread_worker_fn+0x40/0x60 drivers/block/loop.c:901
+> >  kthread+0x332/0x350 kernel/kthread.c:255
+> >  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+> > 
+> > Allocated by task 4198:
+> >  save_stack mm/kasan/common.c:69 [inline]
+> >  set_track mm/kasan/common.c:77 [inline]
+> >  __kasan_kmalloc+0x11c/0x1b0 mm/kasan/common.c:510
+> >  kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:518
+> >  slab_post_alloc_hook mm/slab.h:584 [inline]
+> >  slab_alloc mm/slab.c:3319 [inline]
+> >  kmem_cache_alloc+0x1f5/0x2e0 mm/slab.c:3483
+> >  mempool_alloc_slab+0x4d/0x70 mm/mempool.c:513
+> >  mempool_alloc+0x104/0x5e0 mm/mempool.c:393
+> >  bio_alloc_bioset+0x1b0/0x5f0 block/bio.c:477
+> >  bio_alloc include/linux/bio.h:400 [inline]
+> >  mpage_alloc fs/mpage.c:79 [inline]
+> >  do_mpage_readpage+0x1685/0x1d10 fs/mpage.c:306
+> >  mpage_readpages+0x2a9/0x440 fs/mpage.c:404
+> >  blkdev_readpages+0x2c/0x40 fs/block_dev.c:620
+> >  read_pages+0xad/0x4d0 mm/readahead.c:126
+> >  __do_page_cache_readahead+0x480/0x530 mm/readahead.c:212
+> >  force_page_cache_readahead mm/readahead.c:243 [inline]
+> >  page_cache_sync_readahead+0x329/0x3b0 mm/readahead.c:522
+> >  generic_file_buffered_read+0x41d/0x2570 mm/filemap.c:2051
+> >  generic_file_read_iter+0xa9/0x450 mm/filemap.c:2324
+> >  blkdev_read_iter+0x12e/0x140 fs/block_dev.c:2039
+> >  call_read_iter include/linux/fs.h:1889 [inline]
+> >  new_sync_read fs/read_write.c:414 [inline]
+> >  __vfs_read+0x59e/0x730 fs/read_write.c:427
+> >  vfs_read+0x1dd/0x420 fs/read_write.c:461
+> >  ksys_read+0x117/0x220 fs/read_write.c:587
+> >  __do_sys_read fs/read_write.c:597 [inline]
+> >  __se_sys_read fs/read_write.c:595 [inline]
+> >  __x64_sys_read+0x7b/0x90 fs/read_write.c:595
+> >  do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
+> >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > 
+> > Freed by task 4205:
+> >  save_stack mm/kasan/common.c:69 [inline]
+> >  set_track mm/kasan/common.c:77 [inline]
+> >  kasan_set_free_info mm/kasan/common.c:332 [inline]
+> >  __kasan_slab_free+0x12a/0x1e0 mm/kasan/common.c:471
+> >  kasan_slab_free+0xe/0x10 mm/kasan/common.c:480
+> >  __cache_free mm/slab.c:3425 [inline]
+> >  kmem_cache_free+0x81/0xf0 mm/slab.c:3693
+> >  mempool_free_slab+0x1d/0x30 mm/mempool.c:520
+> >  mempool_free+0xd5/0x350 mm/mempool.c:502
+> >  bio_put+0x38b/0x460 block/bio.c:255
+> >  mpage_end_io+0x2f5/0x330 fs/mpage.c:58
+> >  bio_endio+0x4ff/0x570 block/bio.c:1818
+> >  req_bio_endio block/blk-core.c:245 [inline]
+> >  blk_update_request+0x438/0x10d0 block/blk-core.c:1464
+> >  scsi_end_request+0x8c/0xa20 drivers/scsi/scsi_lib.c:579
+> >  scsi_io_completion+0x17c/0x1b80 drivers/scsi/scsi_lib.c:963
+> >  scsi_finish_command+0x3b3/0x560 drivers/scsi/scsi.c:228
+> >  scsi_softirq_done+0x289/0x310 drivers/scsi/scsi_lib.c:1477
+> >  blk_done_softirq+0x312/0x370 block/blk-softirq.c:37
+> >  __do_softirq+0x333/0x7c4 arch/x86/include/asm/paravirt.h:762
+> 
+> Looks like buffered read IO on a loopback device on an ext4 image
+> file, and something is being tripped over in the new ext4 direct IO
+> path.  Might be an iomap issue, might be an ext4 issue, but it looks
+> like the buffered read bio completion is running while the iov is
+> still being submitted...
 
+Thanks Dave.
 
-On 11/27/19 7:06 PM, Hugh Dickins wrote:
-> On Tue, 26 Nov 2019, Yang Shi wrote:
->> On 11/25/19 11:33 AM, Yang Shi wrote:
->>> On 11/25/19 10:33 AM, Kirill A. Shutemov wrote:
->>>> On Mon, Nov 25, 2019 at 10:24:38AM -0800, Yang Shi wrote:
->>>>> On 11/25/19 1:36 AM, Kirill A. Shutemov wrote:
->>>>>> On Sat, Nov 23, 2019 at 09:05:32AM +0800, Yang Shi wrote:
->>>>>>> Currently when truncating shmem file, if the range is partial of
->>>>>>> THP
->>>>>>> (start or end is in the middle of THP), the pages actually will
->>>>>>> just get
->>>>>>> cleared rather than being freed unless the range cover the whole
->>>>>>> THP.
->>>>>>> Even though all the subpages are truncated (randomly or
->>>>>>> sequentially),
->>>>>>> the THP may still be kept in page cache.  This might be fine for
->>>>>>> some
->>>>>>> usecases which prefer preserving THP.
->>>>>>>
->>>>>>> But, when doing balloon inflation in QEMU, QEMU actually does hole
->>>>>>> punch
->>>>>>> or MADV_DONTNEED in base page size granulairty if hugetlbfs is not
->>>>>>> used.
->>>>>>> So, when using shmem THP as memory backend QEMU inflation actually
->>>>>>> doesn't
->>>>>>> work as expected since it doesn't free memory.  But, the inflation
->>>>>>> usecase really needs get the memory freed.  Anonymous THP will not
->>>>>>> get
->>>>>>> freed right away too but it will be freed eventually when all
->>>>>>> subpages are
->>>>>>> unmapped, but shmem THP would still stay in page cache.
->>>>>>>
->>>>>>> To protect the usecases which may prefer preserving THP, introduce
->>>>>>> a
->>>>>>> new fallocate mode: FALLOC_FL_SPLIT_HPAGE, which means spltting THP
->>>>>>> is
->>>>>>> preferred behavior if truncating partial THP.  This mode just makes
->>>>>>> sense to tmpfs for the time being.
-> Sorry, I haven't managed to set aside enough time for this until now.
->
-> First off, let me say that I firmly believe this punch-split behavior
-> should be the standard behavior (like in my huge tmpfs implementation),
-> and we should not need a special FALLOC_FL_SPLIT_HPAGE to do it.
-> But I don't know if I'll be able to persuade Kirill of that.
->
-> If the caller wants to write zeroes into the file, she can do so with the
-> write syscall: the caller has asked to punch a hole or truncate the file,
-> and in our case, like your QEMU case, hopes that memory and memcg charge
-> will be freed by doing so.  I'll be surprised if changing the behavior
-> to yours and mine turns out to introduce a regression, but if it does,
-> I guess we'll then have to put it behind a sysctl or whatever.
+I will take a look at this when I get home this evening and see
+whether I can pinpoint what's going on here...
 
-I'm not sure if there may be regression or not so I added the flag to 
-have a choice. But, sysctl may seem better. Anyway, I agree we don't 
-have to consider the potential regression until the real regression is 
-found.
-
->
-> IIUC the reason that it's currently implemented by clearing the hole
-> is because split_huge_page() (unlike in older refcounting days) cannot
-> be guaranteed to succeed.  Which is unfortunate, and none of us is very
-> keen to build a filesystem on unreliable behavior; but the failure cases
-> appear in practice to be rare enough, that it's on balance better to give
-> the punch-hole-truncate caller what she asked for whenever possible.
->
->>>>>> We need to clarify interaction with khugepaged. This implementation
->>>>>> doesn't do anything to prevent khugepaged from collapsing the range
->>>>>> back
->>>>>> to THP just after the split.
->>>>> Yes, it doesn't. Will clarify this in the commit log.
->>>> Okay, but I'm not sure that documention alone will be enough. We need
->>>> proper design.
->>> Maybe we could try to hold inode lock with read during collapse_file(). The
->>> shmem fallocate does acquire inode lock with write, this should be able to
->>> synchronize hole punch and khugepaged. And, shmem just needs hold inode
->>> lock for llseek and fallocate, I'm supposed they are should be called not
->>> that frequently to have impact on khugepaged. The llseek might be often,
->>> but it should be quite fast. However, they might get blocked by khugepaged.
->>>
->>> It sounds safe to hold a rwsem during collapsing THP.
-> No, I don't think we want to take any more locks while collapsing THP,
-> but that wasn't really the point.  We're not concerned about a *race*
-> between splitting and khugepaged reassembling (I'm assuming that any
-> such race would already exist, and be well-guarded against by all the
-> refcount checks, punchhole not adding anything new here; but perhaps
-> I'm assuming too blithely, and it is worth checking over).
->
-> The point, as I see it anyway, is the contradiction in effort: the
-> caller asks for hole to be punched, we do that, then a few seconds
-> or minutes later, khugepaged comes along and fills in the hole (if
-> huge page availability and memcg limit allow it).
->
-> I agree that's not very satisfactory, but I think it's a side issue:
-> we don't have a good mechanism to tell khugepaged to keep off a range.
-> As it is, fallocate and ftruncate ought to do the job expected of them,
-> and khugepaged ought to do the job expected of it.  And in many cases,
-> the punched file will not even be mapped (visible to khugepaged), or
-> max_ptes_none set to exclude working on such holes.
->
-> Is khugepaged's action an issue for your QEMU case?
-
-So far not.
-
->
->>> Or we could set VM_NOHUGEPAGE in shmem inode's flag with hole punch and
->>> clear it after truncate, then check the flag before doing collapse in
->>> khugepaged. khugepaged should not need hold the inode lock during collapse
->>> since it could be released after the flag is checked.
->> By relooking the code, it looks the latter one (check VM_NOHUGEPAGE) doesn't
->> make sense, it can't prevent khugepaged from collapsing THP in parallel.
->>
->>>>>>> @@ -976,8 +1022,31 @@ static void shmem_undo_range(struct inode
->>>>>>> *inode, loff_t lstart, loff_t lend,
->>>>>>>                 }
->>>>>>>                 unlock_page(page);
->>>>>>>             }
->>>>>>> +rescan_split:
->>>>>>>             pagevec_remove_exceptionals(&pvec);
->>>>>>>             pagevec_release(&pvec);
->>>>>>> +
->>>>>>> +        if (split && PageTransCompound(page)) {
->>>>>>> +            /* The THP may get freed under us */
->>>>>>> +            if (!get_page_unless_zero(compound_head(page)))
->>>>>>> +                goto rescan_out;
->>>>>>> +
->>>>>>> +            lock_page(page);
->>>>>>> +
->>>>>>> +            /*
->>>>>>> +             * The extra pins from page cache lookup have been
->>>>>>> +             * released by pagevec_release().
->>>>>>> +             */
->>>>>>> +            if (!split_huge_page(page)) {
->>>>>>> +                unlock_page(page);
->>>>>>> +                put_page(page);
->>>>>>> +                /* Re-look up page cache from current index */
->>>>>>> +                goto again;
->>>>>>> +            }
->>>>>>> +            unlock_page(page);
->>>>>>> +            put_page(page);
->>>>>>> +        }
->>>>>>> +rescan_out:
->>>>>>>             index++;
->>>>>>>         }
->>>>>> Doing get_page_unless_zero() just after you've dropped the pin for
->>>>>> the
->>>>>> page looks very suboptimal.
->>>>> If I don't drop the pins the THP can't be split. And, there might be
->>>>> more
->>>>> than one pins from find_get_entries() if I read the code correctly. For
->>>>> example, truncate 8K length in the middle of THP, the THP's refcount
->>>>> would
->>>>> get bumpped twice since  two sub pages would be returned.
->>>> Pin the page before pagevec_release() and avoid get_page_unless_zero().
->>>>
->>>> Current code is buggy. You need to check that the page is still belong to
->>>> the file after speculative lookup.
-> Yes indeed (I think you can even keep the page locked, but I may be wrong).
->
->>> Yes, I missed this point. Thanks for the suggestion.
-> The main problem I see is your "goto retry" and "goto again":
-> split_huge_page() may fail because a get_page() somewhere is holding
-> a transient reference to the page, or it may fail because there's a
-> GUP that holds a reference for days: you do not want to be stuck here
-> going round and around the loop waiting for that GUP to be released!
-
-I think my code already handled this case. Once the split is failed, it 
-just falls through to next index. It just does retry as long as split 
-succeeds.
-
-But my patch does clear before split.
-
->
-> It's nice that we already have a trylock_page() loop followed by a
-> lock_page() loop.  When split_huge_page() fails, the trylock_page()
-> loop can simply move on to the next page (skip over the compound page,
-> or retry it subpage by subpage? I've forgotten the pros and cons),
-> and leave final resolution to the later lock_page() loop: which has to
-> accept when split_huge_page() failed, and fall back to clearing instead.
->
-> I would prefer a smaller patch than your RFC: making split the
-> default behavior cuts out a lot of it, but I think there's still
-> more that can be cut.  Here's the patch we've been using internally,
-> which deletes quite a lot of the old code; but you'll quickly notice
-> has a "Revisit later" hack in find_get_entries(), which I've not got
-> around to revisiting yet.  Please blend what you can from my patch
-> into yours, or vice versa.
-
-Thank you very much. It looks your "Revisit later" hack tries to keep 
-just one extra pin for the THP so that split could succeed.
-
-I will try to blend the two patches.
-
->
-> Hugh
->
-> ---
->
->   mm/filemap.c |    3 +
->   mm/shmem.c   |   86 +++++++++++++++++--------------------------------
->   2 files changed, 34 insertions(+), 55 deletions(-)
->
-> --- v5.4/mm/filemap.c	2019-11-24 16:32:01.000000000 -0800
-> +++ linux/mm/filemap.c	2019-11-27 16:21:16.316801433 -0800
-> @@ -1752,6 +1752,9 @@ unsigned find_get_entries(struct address
->   			goto put_page;
->   		page = find_subpage(page, xas.xa_index);
->   
-> +		/* Revisit later: make shmem_undo_range() easier for now */
-> +		if (PageTransCompound(page))
-> +			nr_entries = ret + 1;
->   export:
->   		indices[ret] = xas.xa_index;
->   		entries[ret] = page;
-> --- v5.4/mm/shmem.c	2019-11-24 16:32:01.000000000 -0800
-> +++ linux/mm/shmem.c	2019-11-27 16:21:16.320801450 -0800
-> @@ -788,6 +788,20 @@ void shmem_unlock_mapping(struct address
->   	}
->   }
->   
-> +static bool shmem_punch_compound(struct page *page, pgoff_t start, pgoff_t end)
-> +{
-> +	if (!PageTransCompound(page))
-> +		return true;
-> +
-> +	/* Just proceed to delete a huge page wholly within the range punched */
-> +	if (PageHead(page) &&
-> +	    page->index >= start && page->index + HPAGE_PMD_NR <= end)
-> +		return true;
-> +
-> +	/* Try to split huge page, so we can truly punch the hole or truncate */
-> +	return split_huge_page(page) >= 0;
-> +}
-> +
->   /*
->    * Remove range of pages and swap entries from page cache, and free them.
->    * If !unfalloc, truncate or punch hole; if unfalloc, undo failed fallocate.
-> @@ -838,31 +852,11 @@ static void shmem_undo_range(struct inod
->   			if (!trylock_page(page))
->   				continue;
->   
-> -			if (PageTransTail(page)) {
-> -				/* Middle of THP: zero out the page */
-> -				clear_highpage(page);
-> -				unlock_page(page);
-> -				continue;
-> -			} else if (PageTransHuge(page)) {
-> -				if (index == round_down(end, HPAGE_PMD_NR)) {
-> -					/*
-> -					 * Range ends in the middle of THP:
-> -					 * zero out the page
-> -					 */
-> -					clear_highpage(page);
-> -					unlock_page(page);
-> -					continue;
-> -				}
-> -				index += HPAGE_PMD_NR - 1;
-> -				i += HPAGE_PMD_NR - 1;
-> -			}
-> -
-> -			if (!unfalloc || !PageUptodate(page)) {
-> -				VM_BUG_ON_PAGE(PageTail(page), page);
-> -				if (page_mapping(page) == mapping) {
-> -					VM_BUG_ON_PAGE(PageWriteback(page), page);
-> +			if ((!unfalloc || !PageUptodate(page)) &&
-> +			    page_mapping(page) == mapping) {
-> +				VM_BUG_ON_PAGE(PageWriteback(page), page);
-> +				if (shmem_punch_compound(page, start, end))
->   					truncate_inode_page(mapping, page);
-> -				}
->   			}
->   			unlock_page(page);
->   		}
-> @@ -936,43 +930,25 @@ static void shmem_undo_range(struct inod
->   
->   			lock_page(page);
->   
-> -			if (PageTransTail(page)) {
-> -				/* Middle of THP: zero out the page */
-> -				clear_highpage(page);
-> -				unlock_page(page);
-> -				/*
-> -				 * Partial thp truncate due 'start' in middle
-> -				 * of THP: don't need to look on these pages
-> -				 * again on !pvec.nr restart.
-> -				 */
-> -				if (index != round_down(end, HPAGE_PMD_NR))
-> -					start++;
-> -				continue;
-> -			} else if (PageTransHuge(page)) {
-> -				if (index == round_down(end, HPAGE_PMD_NR)) {
-> -					/*
-> -					 * Range ends in the middle of THP:
-> -					 * zero out the page
-> -					 */
-> -					clear_highpage(page);
-> -					unlock_page(page);
-> -					continue;
-> -				}
-> -				index += HPAGE_PMD_NR - 1;
-> -				i += HPAGE_PMD_NR - 1;
-> -			}
-> -
->   			if (!unfalloc || !PageUptodate(page)) {
-> -				VM_BUG_ON_PAGE(PageTail(page), page);
-> -				if (page_mapping(page) == mapping) {
-> -					VM_BUG_ON_PAGE(PageWriteback(page), page);
-> -					truncate_inode_page(mapping, page);
-> -				} else {
-> +				if (page_mapping(page) != mapping) {
->   					/* Page was replaced by swap: retry */
->   					unlock_page(page);
->   					index--;
->   					break;
->   				}
-> +				VM_BUG_ON_PAGE(PageWriteback(page), page);
-> +				if (shmem_punch_compound(page, start, end))
-> +					truncate_inode_page(mapping, page);
-> +				else {
-> +					/* Wipe the page and don't get stuck */
-> +					clear_highpage(page);
-> +					flush_dcache_page(page);
-> +					set_page_dirty(page);
-> +					if (index <
-> +					    round_up(start, HPAGE_PMD_NR))
-> +						start = index + 1;
-> +				}
->   			}
->   			unlock_page(page);
->   		}
-
+/M
