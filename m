@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8228810E6C4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2019 09:15:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAFFA10E6BC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2019 09:14:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726374AbfLBIOX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Dec 2019 03:14:23 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:37318 "EHLO huawei.com"
+        id S1727366AbfLBIOZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Dec 2019 03:14:25 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:44864 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726057AbfLBIOX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Dec 2019 03:14:23 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 9CEB786D8616E3D309D1;
-        Mon,  2 Dec 2019 16:14:17 +0800 (CST)
+        id S1726486AbfLBIOZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Dec 2019 03:14:25 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id AAB21B4B9543D1B553E4;
+        Mon,  2 Dec 2019 16:14:22 +0800 (CST)
 Received: from huawei.com (10.175.124.28) by DGGEMS405-HUB.china.huawei.com
  (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Mon, 2 Dec 2019
- 16:14:11 +0800
+ 16:14:12 +0800
 From:   "zhangyi (F)" <yi.zhang@huawei.com>
 To:     <gregkh@linuxfoundation.org>
 CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
@@ -25,9 +25,9 @@ CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
         <peterz@infradead.org>, <bigeasy@linutronix.de>, <mhocko@suse.com>,
         <john.ogness@linutronix.de>, <yi.zhang@huawei.com>,
         <nixiaoming@huawei.com>
-Subject: [PATCH 4.4 5/7] fs/proc: Report eip/esp in /prod/PID/stat for coredumping
-Date:   Mon, 2 Dec 2019 16:35:17 +0800
-Message-ID: <20191202083519.23138-6-yi.zhang@huawei.com>
+Subject: [PATCH 4.4 6/7] proc: fix coredump vs read /proc/*/stat race
+Date:   Mon, 2 Dec 2019 16:35:18 +0800
+Message-ID: <20191202083519.23138-7-yi.zhang@huawei.com>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20191202083519.23138-1-yi.zhang@huawei.com>
 References: <20191202083519.23138-1-yi.zhang@huawei.com>
@@ -40,72 +40,106 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: John Ogness <john.ogness@linutronix.de>
+From: Alexey Dobriyan <adobriyan@gmail.com>
 
-commit fd7d56270b526ca3ed0c224362e3c64a0f86687a upstream.
+commit 8bb2ee192e482c5d500df9f2b1b26a560bd3026f upstream.
 
-Commit 0a1eb2d474ed ("fs/proc: Stop reporting eip and esp in
-/proc/PID/stat") stopped reporting eip/esp because it is
-racy and dangerous for executing tasks. The comment adds:
+do_task_stat() accesses IP and SP of a task without bumping reference
+count of a stack (which became an entity with independent lifetime at
+some point).
 
-    As far as I know, there are no use programs that make any
-    material use of these fields, so just get rid of them.
+Steps to reproduce:
 
-However, existing userspace core-dump-handler applications (for
-example, minicoredumper) are using these fields since they
-provide an excellent cross-platform interface to these valuable
-pointers. So that commit introduced a user space visible
-regression.
+    #include <stdio.h>
+    #include <sys/types.h>
+    #include <sys/stat.h>
+    #include <fcntl.h>
+    #include <sys/time.h>
+    #include <sys/resource.h>
+    #include <unistd.h>
+    #include <sys/wait.h>
 
-Partially revert the change and make the readout possible for
-tasks with the proper permissions and only if the target task
-has the PF_DUMPCORE flag set.
+    int main(void)
+    {
+    	setrlimit(RLIMIT_CORE, &(struct rlimit){});
 
-Fixes: 0a1eb2d474ed ("fs/proc: Stop reporting eip and esp in> /proc/PID/stat")
-Reported-by: Marco Felsch <marco.felsch@preh.de>
-Signed-off-by: John Ogness <john.ogness@linutronix.de>
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
-Cc: Tycho Andersen <tycho.andersen@canonical.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: stable@vger.kernel.org
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linux API <linux-api@vger.kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: http://lkml.kernel.org/r/87poatfwg6.fsf@linutronix.de
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+    	while (1) {
+    		char buf[64];
+    		char buf2[4096];
+    		pid_t pid;
+    		int fd;
 
-[ zhangyi: 68db0cf10678 does not merged, skip the task_stack.h for 4.4]
+    		pid = fork();
+    		if (pid == 0) {
+    			*(volatile int *)0 = 0;
+    		}
 
+    		snprintf(buf, sizeof(buf), "/proc/%u/stat", pid);
+    		fd = open(buf, O_RDONLY);
+    		read(fd, buf2, sizeof(buf2));
+    		close(fd);
+
+    		waitpid(pid, NULL, 0);
+    	}
+    	return 0;
+    }
+
+    BUG: unable to handle kernel paging request at 0000000000003fd8
+    IP: do_task_stat+0x8b4/0xaf0
+    PGD 800000003d73e067 P4D 800000003d73e067 PUD 3d558067 PMD 0
+    Oops: 0000 [#1] PREEMPT SMP PTI
+    CPU: 0 PID: 1417 Comm: a.out Not tainted 4.15.0-rc8-dirty #2
+    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1.fc27 04/01/2014
+    RIP: 0010:do_task_stat+0x8b4/0xaf0
+    Call Trace:
+     proc_single_show+0x43/0x70
+     seq_read+0xe6/0x3b0
+     __vfs_read+0x1e/0x120
+     vfs_read+0x84/0x110
+     SyS_read+0x3d/0xa0
+     entry_SYSCALL_64_fastpath+0x13/0x6c
+    RIP: 0033:0x7f4d7928cba0
+    RSP: 002b:00007ffddb245158 EFLAGS: 00000246
+    Code: 03 b7 a0 01 00 00 4c 8b 4c 24 70 4c 8b 44 24 78 4c 89 74 24 18 e9 91 f9 ff ff f6 45 4d 02 0f 84 fd f7 ff ff 48 8b 45 40 48 89 ef <48> 8b 80 d8 3f 00 00 48 89 44 24 20 e8 9b 97 eb ff 48 89 44 24
+    RIP: do_task_stat+0x8b4/0xaf0 RSP: ffffc90000607cc8
+    CR2: 0000000000003fd8
+
+John Ogness said: for my tests I added an else case to verify that the
+race is hit and correctly mitigated.
+
+Link: http://lkml.kernel.org/r/20180116175054.GA11513@avx2
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+Reported-by: "Kohli, Gaurav" <gkohli@codeaurora.org>
+Tested-by: John Ogness <john.ogness@linutronix.de>
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: Ingo Molnar <mingo@elte.hu>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
 ---
- fs/proc/array.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ fs/proc/array.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/fs/proc/array.c b/fs/proc/array.c
-index 618c83f1866d..c3e1732bcaa5 100644
+index c3e1732bcaa5..42e33ea50d1c 100644
 --- a/fs/proc/array.c
 +++ b/fs/proc/array.c
-@@ -429,7 +429,15 @@ static int do_task_stat(struct seq_file *m, struct pid_namespace *ns,
- 		 * esp and eip are intentionally zeroed out.  There is no
- 		 * non-racy way to read them without freezing the task.
- 		 * Programs that need reliable values can use ptrace(2).
-+		 *
-+		 * The only exception is if the task is core dumping because
-+		 * a program is not able to use ptrace(2) in that case. It is
-+		 * safe because the task has stopped executing permanently.
+@@ -435,8 +435,11 @@ static int do_task_stat(struct seq_file *m, struct pid_namespace *ns,
+ 		 * safe because the task has stopped executing permanently.
  		 */
-+		if (permitted && (task->flags & PF_DUMPCORE)) {
-+			eip = KSTK_EIP(task);
-+			esp = KSTK_ESP(task);
-+		}
+ 		if (permitted && (task->flags & PF_DUMPCORE)) {
+-			eip = KSTK_EIP(task);
+-			esp = KSTK_ESP(task);
++			if (try_get_task_stack(task)) {
++				eip = KSTK_EIP(task);
++				esp = KSTK_ESP(task);
++				put_task_stack(task);
++			}
+ 		}
  	}
  
- 	get_task_comm(tcomm, task);
 -- 
 2.17.2
 
