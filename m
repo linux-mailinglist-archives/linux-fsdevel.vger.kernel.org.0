@@ -2,149 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B57610E616
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2019 07:45:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F20C10E620
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2019 07:47:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbfLBGpJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Dec 2019 01:45:09 -0500
-Received: from mail-il1-f199.google.com ([209.85.166.199]:43798 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726949AbfLBGpJ (ORCPT
+        id S1726482AbfLBGr1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Dec 2019 01:47:27 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:43406 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727455AbfLBGr0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Dec 2019 01:45:09 -0500
-Received: by mail-il1-f199.google.com with SMTP id m67so7293444ill.10
-        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Dec 2019 22:45:08 -0800 (PST)
+        Mon, 2 Dec 2019 01:47:26 -0500
+Received: by mail-qt1-f193.google.com with SMTP id q8so37652493qtr.10
+        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Dec 2019 22:47:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=w5F3Y8zqEkCwkUMXUn9FFeKvhwvA4xUSSc7Xy06U26E=;
+        b=WoudGpAXy+WLLgqCY/1HXkL7kxkpmMmaAywYNCPy+DV5kFlauvDt+MVGIj3voqs8EB
+         a4dMaDFhyaHUPnV2HnAODhoa4UJ4Hdpg9plGJqhykWqQX2UZb5wL6ktmuwP2PnILoY/V
+         t4IcagIqscxpDzHd6Ornm0PNMMibtXhiwkbSmQ+uvsXI2QS12RqDEiWpzThWlZcZvgqc
+         ajMSS3bm7BLDbzEAAYh/GMjIL+m6EjZC1VQqHEBHs0lRsKNwebEnA5yF00moDshiqY1v
+         V2+wqSLocate/712Js6yG63IJS0XSPZ2VPeptYYCyzhhFrV6eXdBTGoc5CFKJKHt8yt3
+         2ACQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=T6F075c2AlO7kBdIl91BZLO/CgKYWJ1O7qBf3Ha1UWA=;
-        b=amskhu7A7Nr061kMumhWsfn9KH7G3ydO0e1kolBDDUM+zyDPPQ9QUkiOa4C9Eq3rqr
-         MR3N5g15SJ+KXWAt2XCSvaqZxUioX2eef/HYsTgYZBH2CjB1HS1jKo+Mbx6Q+22RxNGi
-         il9YNCgH+uTtePQehgdkxJupfkUAD+hvl0wMzW6r8aAPj0Jtub2dEUk7Zot+wb6veePU
-         D+xshzLR3zghcdXcEI0MCr5deTpyCV7hgs+YVCbH/S1D23NkkZw6GqS61lnHniLdSNhu
-         Bx1R9mbyj112gCtgBOGb+kKYtI5+UPjQ5CR/p8HSfg3HjrQG4Pic+VGpXtTmuL/gj/xY
-         OPWg==
-X-Gm-Message-State: APjAAAWkRpB15j49x/u0BJsUZ1pTqEllTmOTBkhQkvCgpSzRbBJx0Bzl
-        F6ONxdfW0AuEhcJF4JwtqrJWFo1iAmuuFqPFl7HCsgtpM+n+
-X-Google-Smtp-Source: APXvYqw0QJ56YYxYAqgJf5iwMd/9ToZM16u0ZTFXZ72SR0m98bQ8IRzgsJlla2LIj04ktpigr9Mn+9MyxDA/gcZ97ZGXzXR48E9M
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=w5F3Y8zqEkCwkUMXUn9FFeKvhwvA4xUSSc7Xy06U26E=;
+        b=NO9x7lhFKKa0y5R17DHuPVQudYlMsTl/iVhUsEuPxRQmdyqTlOIL1+s4UdGsP5wfrD
+         E1yJCcN/rzlUNdLaEi3RibDY+KxirViWV6wy9Y/BDYQx+R+1zhSsJXXQnlYEjRVtEExp
+         vxbS5HtiIdQAhsc4I9o4BdpgmnPxltaEDbqvICZ1DDk3TVrSP7sFKkVWGCwqziRSDt/b
+         24wau1k7F1SwbOQHcbaYWBwQywETCt0jN/fznrgkY9mqVKlAlKElYGPqHL2485p4XfEk
+         e2otORN3TGKveCQT0DbeKRnSH8MmWccr+HNjq36dgweR6Uojo7YW48X5ZqxOxnMtRDTQ
+         jX9g==
+X-Gm-Message-State: APjAAAViMqUQnTt6u88m44COaXlPI4bV1oYk50krDhtuOXnbhCBcOmik
+        bnvDSoblz4cfNf4ZSRjxog8DdC9K+f5JRffsoB+99Q==
+X-Google-Smtp-Source: APXvYqyKDu9/tqAvMtHO6VvbWtZqcaxmYBnv+++IWHqBoEDkHy5Y/Zgs72zDEMHhogHxbnZKh2USvOUFIKpcipPq2AA=
+X-Received: by 2002:ac8:ccf:: with SMTP id o15mr65633251qti.380.1575269243204;
+ Sun, 01 Dec 2019 22:47:23 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a92:79d2:: with SMTP id u201mr67821204ilc.103.1575269108688;
- Sun, 01 Dec 2019 22:45:08 -0800 (PST)
-Date:   Sun, 01 Dec 2019 22:45:08 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a6324b0598b2eb59@google.com>
-Subject: KASAN: slab-out-of-bounds Write in pipe_write
-From:   syzbot <syzbot+838eb0878ffd51f27c41@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <000000000000e59aab056e8873ae@google.com> <0000000000000beff305981c5ac6@google.com>
+ <20191124193035.GA4203@ZenIV.linux.org.uk> <20191130110645.GA4405@dimstar.local.net>
+ <CACT4Y+bg7bZOSg0P9VXq8yG2odAJMg6b6N2fXxbamOmKiz3ohw@mail.gmail.com> <20191201000439.GA15496@dimstar.local.net>
+In-Reply-To: <20191201000439.GA15496@dimstar.local.net>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 2 Dec 2019 07:47:11 +0100
+Message-ID: <CACT4Y+YhYaEC2of_6bZ6aZxX_kc3+4Li=MZU-MB1RcNr6Z7iww@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in blkdev_get
+To:     Dmitry Vyukov <dvyukov@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Chris Metcalf <cmetcalf@ezchip.com>, coreteam@netfilter.org,
+        David Miller <davem@davemloft.net>,
+        Chen Gang <gang.chen.5i5j@gmail.com>,
+        Patrick McHardy <kaber@trash.net>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Sun, Dec 1, 2019 at 1:04 AM Duncan Roe <duncan_roe@optusnet.com.au> wrote:
+>
+> On Sat, Nov 30, 2019 at 04:53:12PM +0100, Dmitry Vyukov wrote:
+> > On Sat, Nov 30, 2019 at 12:06 PM Duncan Roe <duncan_roe@optusnet.com.au> wrote:
+> > > > > syzbot has bisected this bug to:
+> > > > >
+> > > > > commit 77ef8f5177599efd0cedeb52c1950c1bd73fa5e3
+> > > > > Author: Chris Metcalf <cmetcalf@ezchip.com>
+> > > > > Date:   Mon Jan 25 20:05:34 2016 +0000
+> > > > >
+> > > > >     tile kgdb: fix bug in copy to gdb regs, and optimize memset
+> > > > >
+> > > > > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1131bc0ee00000
+> > > > > start commit:   f5b7769e Revert "debugfs: inode: debugfs_create_dir uses m..
+> > > > > git tree:       upstream
+> > > > > final crash:    https://syzkaller.appspot.com/x/report.txt?x=1331bc0ee00000
+> > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=1531bc0ee00000
+> > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=709f8187af941e84
+> > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=eaeb616d85c9a0afec7d
+> > > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=177f898f800000
+> > > > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=147eb85f800000
+> > > > >
+> > > > > Reported-by: syzbot+eaeb616d85c9a0afec7d@syzkaller.appspotmail.com
+> > > > > Fixes: 77ef8f517759 ("tile kgdb: fix bug in copy to gdb regs, and optimize
+> > > > > memset")
+> > > > >
+> > > > > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> > > >
+> > > > Seriously?  How can the commit in question (limited to arch/tile/kernel/kgdb.c)
+> > > > possibly affect a bug that manages to produce a crash report with
+> > > > RSP: 0018:ffffffff82e03eb8  EFLAGS: 00000282
+> > > > RAX: 0000000000000000 RBX: ffffffff82e00000 RCX: 0000000000000000
+> > > > RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffff81088779
+> > > > RBP: ffffffff82e03eb8 R08: 0000000000000000 R09: 0000000000000001
+> > > > R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+> > > > R13: 0000000000000000 R14: 0000000000000000 R15: ffffffff82e00000
+> > > > FS:  0000000000000000(0000) GS:ffff88021fc00000(0000) knlGS:0000000000000000
+> > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > > CR2: 000000c420447ff8 CR3: 0000000213184000 CR4: 00000000001406f0
+> > > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > > > in it?  Unless something very odd has happened to tile, this crash has
+> > > > been observed on 64bit x86; the names of registers alone are enough
+> > > > to be certain of that.
+> > > >
+> > > > And the binaries produced by an x86 build should not be affected by any
+> > > > changes in arch/tile; not unless something is very wrong with the build
+> > > > system.  It's not even that this commit has fixed an earlier bug that
+> > > > used to mask the one manifested here - it really should have had zero
+> > > > impact on x86 builds, period.
+> > > >
+> > > > So I'm sorry, but I'm calling bullshit.  Something's quite wrong with
+> > > > the bot - either its build system or the bisection process.
+> > >
+> > > The acid test would be: does reverting that commit make the problem go away?
+> > >
+> > > See, for example, https://bugzilla.kernel.org/show_bug.cgi?id=203935
+> > >
+> > > Cheers ... Duncan.
+> >
+> > This is done as part of any bisection by definition, right? The test
+> > was done on the previous commit (effectively this one reverted) and no
+> > crash was observed. Otherwise bisection would have been pointed to a
+> > different commit.
+> >
+> Agree that's what bisecting does. What I had in mind was to make a patch to
+> remove the identified commit, and apply that to the most recent revision
+> possible. Then see if that makes the problem go away.
 
-syzbot found the following crash on:
+I wonder in what percent of cases:
+1. It gives signal different from reverting the commit in place.
+2. The revert can be cleanly applied to head.
+3. The revert does not introduce other bugs.
 
-HEAD commit:    b94ae8ad Merge tag 'seccomp-v5.5-rc1' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=106a34a2e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ff560c3de405258c
-dashboard link: https://syzkaller.appspot.com/bug?extid=838eb0878ffd51f27c41
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=146a9f86e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1791d82ae00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+838eb0878ffd51f27c41@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-out-of-bounds in pipe_write+0xe30/0x1000 fs/pipe.c:488
-Write of size 8 at addr ffff8880a8399228 by task syz-executor795/9550
-
-CPU: 1 PID: 9550 Comm: syz-executor795 Not tainted 5.4.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x197/0x210 lib/dump_stack.c:118
-  print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
-  __kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
-  kasan_report+0x12/0x20 mm/kasan/common.c:634
-  __asan_report_store8_noabort+0x17/0x20 mm/kasan/generic_report.c:137
-  pipe_write+0xe30/0x1000 fs/pipe.c:488
-  call_write_iter include/linux/fs.h:1895 [inline]
-  new_sync_write+0x4d3/0x770 fs/read_write.c:483
-  __vfs_write+0xe1/0x110 fs/read_write.c:496
-  vfs_write+0x268/0x5d0 fs/read_write.c:558
-  ksys_write+0x220/0x290 fs/read_write.c:611
-  __do_sys_write fs/read_write.c:623 [inline]
-  __se_sys_write fs/read_write.c:620 [inline]
-  __x64_sys_write+0x73/0xb0 fs/read_write.c:620
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4466c9
-Code: e8 5c b3 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 0b 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fbd2a7abdb8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00000000006dbc28 RCX: 00000000004466c9
-RDX: 00000000fffffef3 RSI: 00000000200001c0 RDI: 0000000000000004
-RBP: 00000000006dbc20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc2c
-R13: 00007ffc2fcd0f6f R14: 00007fbd2a7ac9c0 R15: 20c49ba5e353f7cf
-
-Allocated by task 9552:
-  save_stack+0x23/0x90 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  __kasan_kmalloc mm/kasan/common.c:510 [inline]
-  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:483
-  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:524
-  __do_kmalloc mm/slab.c:3655 [inline]
-  __kmalloc+0x163/0x770 mm/slab.c:3664
-  kmalloc_array include/linux/slab.h:618 [inline]
-  kcalloc include/linux/slab.h:629 [inline]
-  pipe_set_size fs/pipe.c:1143 [inline]
-  pipe_fcntl+0x3f7/0x8e0 fs/pipe.c:1209
-  do_fcntl+0x255/0x1030 fs/fcntl.c:417
-  __do_sys_fcntl fs/fcntl.c:463 [inline]
-  __se_sys_fcntl fs/fcntl.c:448 [inline]
-  __x64_sys_fcntl+0x16d/0x1e0 fs/fcntl.c:448
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 0:
-(stack is not available)
-
-The buggy address belongs to the object at ffff8880a8399200
-  which belongs to the cache kmalloc-64 of size 64
-The buggy address is located 40 bytes inside of
-  64-byte region [ffff8880a8399200, ffff8880a8399240)
-The buggy address belongs to the page:
-page:ffffea0002a0e640 refcount:1 mapcount:0 mapping:ffff8880aa400380  
-index:0x0
-raw: 00fffe0000000200 ffffea0002752548 ffffea00029d3648 ffff8880aa400380
-raw: 0000000000000000 ffff8880a8399000 0000000100000020 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8880a8399100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8880a8399180: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff8880a8399200: 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc fc
-                                   ^
-  ffff8880a8399280: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-  ffff8880a8399300: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+For this to be worth doing, all these 3 should be reasonably high. I
+can imagine 3 may be high (?), but I am not sure about 1 and 2.
