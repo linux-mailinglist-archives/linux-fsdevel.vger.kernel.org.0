@@ -2,66 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60C0910EDB9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2019 18:03:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38A5F10EDDD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2019 18:09:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbfLBRDg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Dec 2019 12:03:36 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:41710 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727493AbfLBRDg (ORCPT
+        id S1727650AbfLBRJj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Dec 2019 12:09:39 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:58776 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727493AbfLBRJi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Dec 2019 12:03:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=4Bog2FcHzbVHTGABIFboxW3D8q+dKfFuUFtGCAvbJN8=; b=SbCAbqhl8BRByWXfNxrs1pif9
-        h1kuXOWtY5KlKFGagbhiuSkdoQ8JTC3tVkOtyn7IDbslxfoLacwaCo9JhBbnclgHD6EiMIarWctt4
-        BmfhVDD8DdqCJwKvltRp77ZzUz2+t7BrAuuxTADLlgCvFrdC/Sw6UFGWmY9MucMUflWd6YH2SCb49
-        AxZksLP9TKMgCA7M/p3ge6FA0nY77A+fBYDdZGQY/B1xIiUwbDL9leZ9CoKm16Tz2b47hwQQuu16T
-        sjQENJmZI8qWH53Ebo13NhIo60AsJeRUiBsd0r2yUYqFXTj3rTafZNTQvNrBDM/sFqG0ix3JICDw2
-        Ya7gGk/lw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ibp57-000150-Vc; Mon, 02 Dec 2019 17:01:53 +0000
-Date:   Mon, 2 Dec 2019 09:01:53 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     ira.weiny@intel.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org, Dave Chinner <david@fromorbit.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH V3 2/3] fs: Move swap_[de]activate to file_operations
-Message-ID: <20191202170153.GA2870@infradead.org>
-References: <20191129163300.14749-1-ira.weiny@intel.com>
- <20191129163300.14749-3-ira.weiny@intel.com>
+        Mon, 2 Dec 2019 12:09:38 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB2GsS8d005525;
+        Mon, 2 Dec 2019 17:09:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=Bbe3gDdEP0eJTwUIZaW8+QYkjdYfh8aDqS2vODKLAQs=;
+ b=WumvQAi7iRLd7p4QVlUUnPMBV25wpwF74Ofd4kECizaZcawWz9UijTOhyKAtOEAtCgwF
+ 5YobxEedKwO24Wti5sZ60jITN46XydqBk+nMN3J7AYiIC1MnNVON30Rl/7Bb+TxbN907
+ vRiWs+dyf48i8BjFBkGt6RH00oMtLMZDwia9M3PYplEoXupOGuLbt2PbpOh7MG+bBSP4
+ p5oKXUjNKYI9k53FznkBHbIw4Pjp/B+7g+p0PkExlfghOE1NS2bWa520IUfgY3C2AZhq
+ 5Aqi2TJdvVBBvhPRx16Qnp9vOjW/I7Tpu0KIZHev2SblrNWp6kcjUt7VaLdxDXTjY6i6 0w== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2wkgcq1eyu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 02 Dec 2019 17:09:33 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB2GsbXc156460;
+        Mon, 2 Dec 2019 17:09:33 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2wm1w2xhj9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 02 Dec 2019 17:09:32 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xB2H9Sq7024423;
+        Mon, 2 Dec 2019 17:09:31 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 02 Dec 2019 09:09:27 -0800
+Date:   Mon, 2 Dec 2019 09:09:26 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Trond Myklebust <trondmy@hammerspace.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+Subject: Re: Question about clone_range() metadata stability
+Message-ID: <20191202170926.GA7323@magnolia>
+References: <f063089fb62c219ea6453c7b9b0aaafd50946dae.camel@hammerspace.com>
+ <20191127202136.GV6211@magnolia>
+ <20191201210519.GB2418@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191129163300.14749-3-ira.weiny@intel.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20191201210519.GB2418@dread.disaster.area>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9459 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912020145
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9459 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912020145
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-While the patch itself looks fine, I kinda disagree with the rationale.
-If we want different ops for DAX that applies to file operations just
-as much as to the address space operations.
+On Mon, Dec 02, 2019 at 08:05:19AM +1100, Dave Chinner wrote:
+> On Wed, Nov 27, 2019 at 12:21:36PM -0800, Darrick J. Wong wrote:
+> > On Wed, Nov 27, 2019 at 06:38:46PM +0000, Trond Myklebust wrote:
+> > > Hi all
+> > > 
+> > > A quick question about clone_range() and guarantees around metadata
+> > > stability.
+> > > 
+> > > Are users required to call fsync/fsync_range() after calling
+> > > clone_range() in order to guarantee that the cloned range metadata is
+> > > persisted?
+> > 
+> > Yes.
+> > 
+> > > I'm assuming that it is required in order to guarantee that
+> > > data is persisted.
+> > 
+> > Data and metadata.  XFS and ocfs2's reflink implementations will flush
+> > the page cache before starting the remap, but they both require fsync to
+> > force the log/journal to disk.
+> 
+> So we need to call xfs_fs_nfs_commit_metadata() to get that done
+> post vfs_clone_file_range() completion on the server side, yes?
 
-However I agree that the ops are logically a better fit for the file
-operations, so:
+That sounds like a much better/less hastily researched answer! :)
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+> 
+> > 
+> > (AFAICT the same reasoning applies to btrfs, but don't trust my word for
+> > it.)
+> > 
+> > > I'm asking because knfsd currently just does a call to
+> > > vfs_clone_file_range() when parsing a NFSv4.2 CLONE operation. It does
+> > > not call fsync()/fsync_range() on the destination file, and since the
+> > > NFSv4.2 protocol does not require you to perform any other operation in
+> > > order to persist data/metadata, I'm worried that we may be corrupting
+> > > the cloned file if the NFS server crashes at the wrong moment after the
+> > > client has been told the clone completed.
+> 
+> Yup, that's exactly what server side calls to commit_metadata() are
+> supposed to address.
+> 
+> I suspect to be correct, this might require commit_metadata() to be
+> called on both the source and destination inodes, as both of them
+> may have modified metadata as a result of the clone operation. For
+> XFS one of them will be a no-op,
+
+Hmm.  If xfs had to set its reflink flag on the source inode then we
+want to ->commit_metadata the source inode to push the log forward far
+enough to record the metadata change.  That said, we set the reflink
+flag on both inodes before we remap anything, so chances are that
+->commit_metadata on the dest inode will be enough to push the log
+forward.
+
+I suspect that from NFS' point of view it probably ought to
+->commit_metadata both inodes to insulate itself from fs-specific
+behaviors and avoid weird crash dataloss bugs.  Someday, someone will
+design a filesystem with per-inode logs /and/ hook it up to NFS.
+
+> but for other filesystems that
+> don't implement ->commit_metadata, we'll need to call
+> sync_inode_metadata() on both inodes...
+
+<nod>
+
+--D
+
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
