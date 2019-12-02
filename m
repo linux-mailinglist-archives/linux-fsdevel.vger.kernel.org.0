@@ -2,95 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1230A10E448
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2019 02:45:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 530B910E473
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2019 03:12:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727377AbfLBBpH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Dec 2019 20:45:07 -0500
-Received: from mail.phunq.net ([66.183.183.73]:38782 "EHLO phunq.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727279AbfLBBpH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Dec 2019 20:45:07 -0500
-Received: from [172.16.1.14]
-        by phunq.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
-        (Exim 4.92.3)
-        (envelope-from <daniel@phunq.net>)
-        id 1ibalt-00027V-Dm; Sun, 01 Dec 2019 17:45:05 -0800
-Subject: Re: [RFC] Thing 1: Shardmap fox Ext4
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-References: <176a1773-f5ea-e686-ec7b-5f0a46c6f731@phunq.net>
- <20191127142508.GB5143@mit.edu>
-From:   Daniel Phillips <daniel@phunq.net>
-Message-ID: <6b6242d9-f88b-824d-afe9-d42382a93b34@phunq.net>
-Date:   Sun, 1 Dec 2019 17:45:05 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727370AbfLBCMN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Dec 2019 21:12:13 -0500
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:39806 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727285AbfLBCMN (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 1 Dec 2019 21:12:13 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04427;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0Tjbq8zw_1575252725;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0Tjbq8zw_1575252725)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 02 Dec 2019 10:12:06 +0800
+Subject: Re: [PATCH v2 1/3] sched/numa: advanced per-cgroup numa statistic
+To:     =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>
+Cc:     Mel Gorman <mgorman@suse.de>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
+References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
+ <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
+ <9354ffe8-81ba-9e76-e0b3-222bc942b3fc@linux.alibaba.com>
+ <20191127101932.GN28938@suse.de>
+ <3ff78d18-fa29-13f3-81e5-a05537a2e344@linux.alibaba.com>
+ <20191128123924.GD831@blackbody.suse.cz>
+ <e008fef6-06d2-28d3-f4d3-229f4b181b4f@linux.alibaba.com>
+ <20191128155818.GE831@blackbody.suse.cz>
+ <b97ce489-c5c5-0670-a553-0e45d593de2c@linux.alibaba.com>
+ <f9da5ce8-519e-62b4-36f7-8e5bbf0485fd@linux.alibaba.com>
+ <20191129100639.GI831@blackbody.suse.cz>
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Message-ID: <89d49efa-23a5-4bed-cd81-0de05500c518@linux.alibaba.com>
+Date:   Mon, 2 Dec 2019 10:11:14 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191127142508.GB5143@mit.edu>
+In-Reply-To: <20191129100639.GI831@blackbody.suse.cz>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019-11-27 6:25 a.m., Theodore Y. Ts'o wrote:
-> (3) It's not particularly well documented...
 
-We regard that as an issue needing attention. Here is a pretty picture
-to get started:
 
-   https://github.com/danielbot/Shardmap/wiki/Shardmap-media-format
+On 2019/11/29 下午6:06, Michal Koutný wrote:
+> On Fri, Nov 29, 2019 at 01:19:33PM +0800, 王贇 <yun.wang@linux.alibaba.com> wrote:
+>> I did some research regarding cpuacct, and find cpuacct_charge() is a good
+>> place to do hierarchical update, however, what we get there is the execution
+>> time delta since last update_curr().
+> I wouldn't extend cpuacct, I'd like to look into using the rstat
+> mechanism for per-CPU runtime collection. (Most certainly I won't get
+> down to this until mid December though.)
+> 
+>> I'm afraid we can't just do local/remote accumulation since the sample period
+>> now is changing, still have to accumulate the execution time into locality
+>> regions.y
+> My idea was to decouple time from the locality counters completely. It'd
+> be up to the monitoring application to normalize differences wrt
+> sampling rate (and handle wrap arounds).
 
-This needs some explaining. The bottom part of the directory file is
-a simple linear range of directory blocks, with a freespace map block
-appearing once every 4K blocks or so. This freespace mapping needs a
-post of its own, it is somewhat subtle. This will be a couple of posts
-in the future.
-
-The Shardmap index appears at a higher logical address, sufficiently
-far above the directory base to accommodate a reasonable number of
-record entry blocks below it. We try not to place the index at so high
-an address that the radix tree gets extra levels, slowing everything
-down.
-
-When the index needs to be expanded, either because some shard exceeded
-a threshold number of entries, or the record entry blocks ran into the
-the bottom of the index, then a new index tier with more shards is
-created at a higher logical address. The lower index tier is not copied
-immediately to the upper tier, but rather, each shard is incrementally
-split when it hits the threshold because of an insert. This bounds the
-latency of any given insert to the time needed to split one shard, which
-we target nominally at less than one millisecond. Thus, Shardmap takes a
-modest step in the direction of real time response.
-
-Each index tier is just a simple array of shards, each of which fills
-up with 8 byte entries from bottom to top. The count of entries in each
-shard is stored separately in a table just below the shard array. So at
-shard load time, we can determine rapidly from the count table which
-tier a given shard belongs to. There are other advantages to breaking
-the shard counts out separately having to do with the persistent memory
-version of Shardmap, interesting details that I will leave for later.
-
-When all lower tier shards have been deleted, the lower tier may be
-overwritten by the expanding record entry block region. In practice,
-a Shardmap file normally has just one tier most of the time, the other
-tier existing only long enough to complete the incremental expansion
-of the shard table, insert by insert.
-
-There is a small header in the lowest record entry block, giving the
-positions of the one or two index tiers, count of entry blocks, and
-various tuning parameters such as maximum shard size and average depth
-of cache hash collision lists.
-
-That is it for media format. Very simple, is it not? My next post
-will explain the Shardmap directory block format, with a focus on
-deficiencies of the traditional Ext2 format that were addressed.
+I see, basically I understand your proposal as utilize cpuacct's runtime
+and only expose per-cgroup local/remote counters, I'm not sure if the
+locality still helpful after decouple time factor from it, both need some
+investigation, anyway, once I could convince myself it's working, I'll
+be happy to make things simple ;-)
 
 Regards,
+Michael Wang
 
-Daniel
+> 
+> 
+> Michal
+> 
