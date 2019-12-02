@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADE3F10E881
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2019 11:15:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3021710E884
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2019 11:16:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727681AbfLBKPu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Dec 2019 05:15:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60764 "EHLO mail.kernel.org"
+        id S1727416AbfLBKQC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Dec 2019 05:16:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727354AbfLBKPu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Dec 2019 05:15:50 -0500
+        id S1727354AbfLBKQB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Dec 2019 05:16:01 -0500
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBC40215E5;
-        Mon,  2 Dec 2019 10:15:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81C3A217D9;
+        Mon,  2 Dec 2019 10:15:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575281750;
-        bh=hdYbB4vD+XKPDgul8kiAuaD8Mpa52ktV2BlgFHqJLuw=;
+        s=default; t=1575281761;
+        bh=XFUFq878wx8ulylKj+mozx37qxZmGp3eAXgARqgqM+U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s18OkJB4LZEBAKa3XVdCFoX9sfhSkMX01oilYDEsvo3/seTgplmeSBmMTbR+AMI12
-         Tts69iVzvmfXldnnAZVcHx0LoW5GB+VetO9FIj/AdZZN8oBffiQ0HF8l6Xb4S//vDL
-         zfc5xqmax4CQf/BuVt+uxghKkNLDIDK8xq1kXH4U=
+        b=JtzBU/s38nrPqUf1ry6hevb4//dMP8J4G7izDWfMOJnSDw802eLgtJSc1gyBq8t5i
+         AtWcPSJME3wUq82qKsP2h3bHPmooeOqOAOni6/4hPa9VjvfcQrccOVCBkOvIMfSGzh
+         mPvTw0xp6T81ewuBuXbZn+kUwgm38KLzRakYjH1M=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Steven Rostedt <rostedt@goodmis.org>,
         Frank Rowand <frowand.list@gmail.com>
@@ -39,9 +39,9 @@ Cc:     Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v4 13/22] tracing: Accept different type for synthetic event fields
-Date:   Mon,  2 Dec 2019 19:15:43 +0900
-Message-Id: <157528174379.22451.7159526649325076423.stgit@devnote2>
+Subject: [RFC PATCH v4 14/22] tracing: Add NULL trace-array check in print_synth_event()
+Date:   Mon,  2 Dec 2019 19:15:55 +0900
+Message-Id: <157528175542.22451.2622783120594712316.stgit@devnote2>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <157528159833.22451.14878731055438721716.stgit@devnote2>
 References: <157528159833.22451.14878731055438721716.stgit@devnote2>
@@ -54,30 +54,25 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Make the synthetic event accepts a different type field to record.
-However, the size and signed flag must be same.
+Add NULL trace-array check in print_synth_event(), because
+if we enable tp_printk option, iter->tr can be NULL.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- kernel/trace/trace_events_hist.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ kernel/trace/trace_events_hist.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index f49d1a36d3ae..06d91bb59297 100644
+index 06d91bb59297..d902a61775c4 100644
 --- a/kernel/trace/trace_events_hist.c
 +++ b/kernel/trace/trace_events_hist.c
-@@ -4091,8 +4091,11 @@ static int check_synth_field(struct synth_event *event,
+@@ -833,7 +833,7 @@ static enum print_line_t print_synth_event(struct trace_iterator *iter,
+ 		fmt = synth_field_fmt(se->fields[i]->type);
  
- 	field = event->fields[field_pos];
+ 		/* parameter types */
+-		if (tr->trace_flags & TRACE_ITER_VERBOSE)
++		if (tr && tr->trace_flags & TRACE_ITER_VERBOSE)
+ 			trace_seq_printf(s, "%s ", fmt);
  
--	if (strcmp(field->type, hist_field->type) != 0)
--		return -EINVAL;
-+	if (strcmp(field->type, hist_field->type) != 0) {
-+		if (field->size != hist_field->size ||
-+		    field->is_signed != hist_field->is_signed)
-+			return -EINVAL;
-+	}
- 
- 	return 0;
- }
+ 		snprintf(print_fmt, sizeof(print_fmt), "%%s=%s%%s", fmt);
 
