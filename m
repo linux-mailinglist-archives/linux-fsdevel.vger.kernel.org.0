@@ -2,147 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38A5F10EDDD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2019 18:09:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21A8C10EDFC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Dec 2019 18:15:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbfLBRJj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Dec 2019 12:09:39 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:58776 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727493AbfLBRJi (ORCPT
+        id S1727644AbfLBRPJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Dec 2019 12:15:09 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:52301 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727460AbfLBRPI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Dec 2019 12:09:38 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB2GsS8d005525;
-        Mon, 2 Dec 2019 17:09:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=Bbe3gDdEP0eJTwUIZaW8+QYkjdYfh8aDqS2vODKLAQs=;
- b=WumvQAi7iRLd7p4QVlUUnPMBV25wpwF74Ofd4kECizaZcawWz9UijTOhyKAtOEAtCgwF
- 5YobxEedKwO24Wti5sZ60jITN46XydqBk+nMN3J7AYiIC1MnNVON30Rl/7Bb+TxbN907
- vRiWs+dyf48i8BjFBkGt6RH00oMtLMZDwia9M3PYplEoXupOGuLbt2PbpOh7MG+bBSP4
- p5oKXUjNKYI9k53FznkBHbIw4Pjp/B+7g+p0PkExlfghOE1NS2bWa520IUfgY3C2AZhq
- 5Aqi2TJdvVBBvhPRx16Qnp9vOjW/I7Tpu0KIZHev2SblrNWp6kcjUt7VaLdxDXTjY6i6 0w== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2wkgcq1eyu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 02 Dec 2019 17:09:33 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB2GsbXc156460;
-        Mon, 2 Dec 2019 17:09:33 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2wm1w2xhj9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 02 Dec 2019 17:09:32 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xB2H9Sq7024423;
-        Mon, 2 Dec 2019 17:09:31 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 02 Dec 2019 09:09:27 -0800
-Date:   Mon, 2 Dec 2019 09:09:26 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
-Subject: Re: Question about clone_range() metadata stability
-Message-ID: <20191202170926.GA7323@magnolia>
-References: <f063089fb62c219ea6453c7b9b0aaafd50946dae.camel@hammerspace.com>
- <20191127202136.GV6211@magnolia>
- <20191201210519.GB2418@dread.disaster.area>
+        Mon, 2 Dec 2019 12:15:08 -0500
+Received: by mail-io1-f71.google.com with SMTP id e124so44346iof.19
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Dec 2019 09:15:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=jJwI23GQ7UoBdhmtwPeNfel6AzBv3Y3n6KsCAm4HCIY=;
+        b=GfvUZCDYOyu08Ko+jR/yrB2cxhKaqkvdobxOTUUsIeRxYIbz7uHjI9B2bS1d/hSUvS
+         9f64fqX50OVfLv1N5S88f/6b/qLzUC6zsjs4fNgCfRCKdaOBjDc31IKn4kZ/q4ZxU4KU
+         YJud8k407U9wDrPqZaESVpBvrjge5LiqhLguSlIT1WoGyKG9WUkR7q/KgTUwJ/SIrjQT
+         mh4O31QhXDYqEDlBSX2xITPHSOpzxVAzVuEC8OB8VfcDwrztdafFqCLfa7ZTZz7ckGYQ
+         xFJSAsrPq/aAWjICyWch1EhsNj2aZtjtFDBa50vE6Rn+q48rhlVSCKV3yVEc6vYCYd2B
+         V1Lw==
+X-Gm-Message-State: APjAAAWCesD+8seE89hr/G89s6hoYIOWGCLFU+seT32HgW00UWgLw349
+        Osarks9btYEi/W4oEso32agERt2mMnSP4rjgAyoxcNpohjr2
+X-Google-Smtp-Source: APXvYqyQZcrh/4cqBQ8PN1IbFlHFVgnMEdv1ZKtKoSFgOSoIO+GSqFC25S9kw9MSwcwWAFvXwWUvjtq98HAtxauk9/2c6OJS2NXw
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191201210519.GB2418@dread.disaster.area>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9459 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1912020145
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9459 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1912020145
+X-Received: by 2002:a5d:874b:: with SMTP id k11mr50084251iol.222.1575306908241;
+ Mon, 02 Dec 2019 09:15:08 -0800 (PST)
+Date:   Mon, 02 Dec 2019 09:15:08 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ad9f910598bbb867@google.com>
+Subject: KASAN: use-after-free Read in iov_iter_alignment
+From:   syzbot <syzbot+bea68382bae9490e7dd6@syzkaller.appspotmail.com>
+To:     darrick.wong@oracle.com, hch@infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 02, 2019 at 08:05:19AM +1100, Dave Chinner wrote:
-> On Wed, Nov 27, 2019 at 12:21:36PM -0800, Darrick J. Wong wrote:
-> > On Wed, Nov 27, 2019 at 06:38:46PM +0000, Trond Myklebust wrote:
-> > > Hi all
-> > > 
-> > > A quick question about clone_range() and guarantees around metadata
-> > > stability.
-> > > 
-> > > Are users required to call fsync/fsync_range() after calling
-> > > clone_range() in order to guarantee that the cloned range metadata is
-> > > persisted?
-> > 
-> > Yes.
-> > 
-> > > I'm assuming that it is required in order to guarantee that
-> > > data is persisted.
-> > 
-> > Data and metadata.  XFS and ocfs2's reflink implementations will flush
-> > the page cache before starting the remap, but they both require fsync to
-> > force the log/journal to disk.
-> 
-> So we need to call xfs_fs_nfs_commit_metadata() to get that done
-> post vfs_clone_file_range() completion on the server side, yes?
+Hello,
 
-That sounds like a much better/less hastily researched answer! :)
+syzbot found the following crash on:
 
-> 
-> > 
-> > (AFAICT the same reasoning applies to btrfs, but don't trust my word for
-> > it.)
-> > 
-> > > I'm asking because knfsd currently just does a call to
-> > > vfs_clone_file_range() when parsing a NFSv4.2 CLONE operation. It does
-> > > not call fsync()/fsync_range() on the destination file, and since the
-> > > NFSv4.2 protocol does not require you to perform any other operation in
-> > > order to persist data/metadata, I'm worried that we may be corrupting
-> > > the cloned file if the NFS server crashes at the wrong moment after the
-> > > client has been told the clone completed.
-> 
-> Yup, that's exactly what server side calls to commit_metadata() are
-> supposed to address.
-> 
-> I suspect to be correct, this might require commit_metadata() to be
-> called on both the source and destination inodes, as both of them
-> may have modified metadata as a result of the clone operation. For
-> XFS one of them will be a no-op,
+HEAD commit:    b94ae8ad Merge tag 'seccomp-v5.5-rc1' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=135a8d7ae00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c2e464ae414aee8c
+dashboard link: https://syzkaller.appspot.com/bug?extid=bea68382bae9490e7dd6
+compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
+80fee25776c2fb61e74c1ecb1a523375c2500b69)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1135cb36e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14e90abce00000
 
-Hmm.  If xfs had to set its reflink flag on the source inode then we
-want to ->commit_metadata the source inode to push the log forward far
-enough to record the metadata change.  That said, we set the reflink
-flag on both inodes before we remap anything, so chances are that
-->commit_metadata on the dest inode will be enough to push the log
-forward.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+bea68382bae9490e7dd6@syzkaller.appspotmail.com
 
-I suspect that from NFS' point of view it probably ought to
-->commit_metadata both inodes to insulate itself from fs-specific
-behaviors and avoid weird crash dataloss bugs.  Someday, someone will
-design a filesystem with per-inode logs /and/ hook it up to NFS.
+==================================================================
+BUG: KASAN: use-after-free in iov_iter_alignment+0x6a1/0x7b0  
+lib/iov_iter.c:1225
+Read of size 4 at addr ffff888098d40f54 by task loop0/8203
 
-> but for other filesystems that
-> don't implement ->commit_metadata, we'll need to call
-> sync_inode_metadata() on both inodes...
+CPU: 0 PID: 8203 Comm: loop0 Not tainted 5.4.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1fb/0x318 lib/dump_stack.c:118
+  print_address_description+0x75/0x5c0 mm/kasan/report.c:374
+  __kasan_report+0x14b/0x1c0 mm/kasan/report.c:506
+  kasan_report+0x26/0x50 mm/kasan/common.c:634
+  __asan_report_load4_noabort+0x14/0x20 mm/kasan/generic_report.c:131
+  iov_iter_alignment+0x6a1/0x7b0 lib/iov_iter.c:1225
+  iomap_dio_bio_actor+0x1a7/0x11e0 fs/iomap/direct-io.c:203
+  iomap_dio_actor+0x2b4/0x4a0 fs/iomap/direct-io.c:375
+  iomap_apply+0x370/0x490 fs/iomap/apply.c:80
+  iomap_dio_rw+0x8ad/0x1010 fs/iomap/direct-io.c:493
+  ext4_dio_read_iter fs/ext4/file.c:77 [inline]
+  ext4_file_read_iter+0x834/0xc20 fs/ext4/file.c:128
+  lo_rw_aio+0xcbb/0xea0 include/linux/fs.h:1889
+  do_req_filebacked drivers/block/loop.c:616 [inline]
+  loop_handle_cmd drivers/block/loop.c:1952 [inline]
+  loop_queue_work+0x13ab/0x2590 drivers/block/loop.c:1966
+  kthread_worker_fn+0x449/0x700 kernel/kthread.c:671
+  loop_kthread_worker_fn+0x40/0x60 drivers/block/loop.c:901
+  kthread+0x332/0x350 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
 
-<nod>
+Allocated by task 4198:
+  save_stack mm/kasan/common.c:69 [inline]
+  set_track mm/kasan/common.c:77 [inline]
+  __kasan_kmalloc+0x11c/0x1b0 mm/kasan/common.c:510
+  kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:518
+  slab_post_alloc_hook mm/slab.h:584 [inline]
+  slab_alloc mm/slab.c:3319 [inline]
+  kmem_cache_alloc+0x1f5/0x2e0 mm/slab.c:3483
+  mempool_alloc_slab+0x4d/0x70 mm/mempool.c:513
+  mempool_alloc+0x104/0x5e0 mm/mempool.c:393
+  bio_alloc_bioset+0x1b0/0x5f0 block/bio.c:477
+  bio_alloc include/linux/bio.h:400 [inline]
+  mpage_alloc fs/mpage.c:79 [inline]
+  do_mpage_readpage+0x1685/0x1d10 fs/mpage.c:306
+  mpage_readpages+0x2a9/0x440 fs/mpage.c:404
+  blkdev_readpages+0x2c/0x40 fs/block_dev.c:620
+  read_pages+0xad/0x4d0 mm/readahead.c:126
+  __do_page_cache_readahead+0x480/0x530 mm/readahead.c:212
+  force_page_cache_readahead mm/readahead.c:243 [inline]
+  page_cache_sync_readahead+0x329/0x3b0 mm/readahead.c:522
+  generic_file_buffered_read+0x41d/0x2570 mm/filemap.c:2051
+  generic_file_read_iter+0xa9/0x450 mm/filemap.c:2324
+  blkdev_read_iter+0x12e/0x140 fs/block_dev.c:2039
+  call_read_iter include/linux/fs.h:1889 [inline]
+  new_sync_read fs/read_write.c:414 [inline]
+  __vfs_read+0x59e/0x730 fs/read_write.c:427
+  vfs_read+0x1dd/0x420 fs/read_write.c:461
+  ksys_read+0x117/0x220 fs/read_write.c:587
+  __do_sys_read fs/read_write.c:597 [inline]
+  __se_sys_read fs/read_write.c:595 [inline]
+  __x64_sys_read+0x7b/0x90 fs/read_write.c:595
+  do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
---D
+Freed by task 4205:
+  save_stack mm/kasan/common.c:69 [inline]
+  set_track mm/kasan/common.c:77 [inline]
+  kasan_set_free_info mm/kasan/common.c:332 [inline]
+  __kasan_slab_free+0x12a/0x1e0 mm/kasan/common.c:471
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:480
+  __cache_free mm/slab.c:3425 [inline]
+  kmem_cache_free+0x81/0xf0 mm/slab.c:3693
+  mempool_free_slab+0x1d/0x30 mm/mempool.c:520
+  mempool_free+0xd5/0x350 mm/mempool.c:502
+  bio_put+0x38b/0x460 block/bio.c:255
+  mpage_end_io+0x2f5/0x330 fs/mpage.c:58
+  bio_endio+0x4ff/0x570 block/bio.c:1818
+  req_bio_endio block/blk-core.c:245 [inline]
+  blk_update_request+0x438/0x10d0 block/blk-core.c:1464
+  scsi_end_request+0x8c/0xa20 drivers/scsi/scsi_lib.c:579
+  scsi_io_completion+0x17c/0x1b80 drivers/scsi/scsi_lib.c:963
+  scsi_finish_command+0x3b3/0x560 drivers/scsi/scsi.c:228
+  scsi_softirq_done+0x289/0x310 drivers/scsi/scsi_lib.c:1477
+  blk_done_softirq+0x312/0x370 block/blk-softirq.c:37
+  __do_softirq+0x333/0x7c4 arch/x86/include/asm/paravirt.h:762
 
-> Cheers,
-> 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+The buggy address belongs to the object at ffff888098d40f00
+  which belongs to the cache bio-0 of size 192
+The buggy address is located 84 bytes inside of
+  192-byte region [ffff888098d40f00, ffff888098d40fc0)
+The buggy address belongs to the page:
+page:ffffea0002635000 refcount:1 mapcount:0 mapping:ffff88821acf5700  
+index:0xffff888098d40c00
+raw: 00fffe0000000200 ffffea0002805188 ffff8880a7b42738 ffff88821acf5700
+raw: ffff888098d40c00 ffff888098d40000 000000010000000e 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff888098d40e00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffff888098d40e80: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+> ffff888098d40f00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                  ^
+  ffff888098d40f80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+  ffff888098d41000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
