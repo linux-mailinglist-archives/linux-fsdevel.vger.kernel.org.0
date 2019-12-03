@@ -2,121 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7F7311003B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 15:35:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFB9911007A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 15:40:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726105AbfLCOfe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Dec 2019 09:35:34 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:20023 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725848AbfLCOfe (ORCPT
+        id S1726190AbfLCOkR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Dec 2019 09:40:17 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:35524 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725848AbfLCOkR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Dec 2019 09:35:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575383733;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=caPtWip/0Fp5+ectyuqp7DEQ7XYV0c3s4L4d01Olulc=;
-        b=AzPIOR0cQ4QwFssd64O86+QvmLvTWqSDr1sl4NXITH7woDa0TAT0VtXwz1O7vQ+7ttB91g
-        MV2++pQiLjliyfPO2SpMiVsuoNi6QjITgjM587sCRvMIZn8jWx4sZRna/30pgtyEd7/eaZ
-        drv56r5yeDfOF15JQ2ozEKPmWXClJaY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-153-nTjUyosROfSoxodUoDcwQA-1; Tue, 03 Dec 2019 09:35:30 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 3 Dec 2019 09:40:17 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 959D98EE12C;
+        Tue,  3 Dec 2019 06:40:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1575384016;
+        bh=qVkS5/TnlW/6UlIqPLHFGwLupPI1Ycqzwc+IE9PQWxs=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=bgwEgdBwAKekOHf7dcTyEHqJDDad3cpLEIXV9V6LKcD27guTamLYEjVgJlgY4t0v/
+         sUxfIrgyrz4QTjDHplf6TAD1oBW2nFuri/8t7BVI9jN5cNNvrhMWK27E32WotcOVC3
+         vy2iPfIJuImza9uda62XvmoZ9+oZuMYDCf3Z/MDM=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Bbvy5NeLiQrI; Tue,  3 Dec 2019 06:40:16 -0800 (PST)
+Received: from jarvis.lan (unknown [50.35.76.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3ED932F2E;
-        Tue,  3 Dec 2019 14:35:29 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 123BB600CC;
-        Tue,  3 Dec 2019 14:35:28 +0000 (UTC)
-Received: from zmail17.collab.prod.int.phx2.redhat.com (zmail17.collab.prod.int.phx2.redhat.com [10.5.83.19])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 5EEB35BBFA;
-        Tue,  3 Dec 2019 14:35:28 +0000 (UTC)
-Date:   Tue, 3 Dec 2019 09:35:28 -0500 (EST)
-From:   Jan Stancek <jstancek@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        darrick wong <darrick.wong@oracle.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        Memory Management <mm-qe@redhat.com>,
-        LTP Mailing List <ltp@lists.linux.it>,
-        Linux Stable maillist <stable@vger.kernel.org>,
-        CKI Project <cki-project@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Message-ID: <433638211.14837331.1575383728189.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20191203130757.GA2267@infradead.org>
-References: <cki.6C6A189643.3T2ZUWEMOI@redhat.com> <1738119916.14437244.1575151003345.JavaMail.zimbra@redhat.com> <8736e3ffen.fsf@mpe.ellerman.id.au> <1420623640.14527843.1575289859701.JavaMail.zimbra@redhat.com> <1766807082.14812757.1575377439007.JavaMail.zimbra@redhat.com> <20191203130757.GA2267@infradead.org>
-Subject: Re: [bug] userspace hitting sporadic SIGBUS on xfs (Power9,
- ppc64le), v4.19 and later
-MIME-Version: 1.0
-X-Originating-IP: [10.43.17.163, 10.4.195.10]
-Thread-Topic: userspace hitting sporadic SIGBUS on xfs (Power9, ppc64le), v4.19 and later
-Thread-Index: cD3CqeEaO/UMqfbg0OYzRaML88GplQ==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-MC-Unique: nTjUyosROfSoxodUoDcwQA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=utf-8
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id E94648EE0D2;
+        Tue,  3 Dec 2019 06:40:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1575384016;
+        bh=qVkS5/TnlW/6UlIqPLHFGwLupPI1Ycqzwc+IE9PQWxs=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=bgwEgdBwAKekOHf7dcTyEHqJDDad3cpLEIXV9V6LKcD27guTamLYEjVgJlgY4t0v/
+         sUxfIrgyrz4QTjDHplf6TAD1oBW2nFuri/8t7BVI9jN5cNNvrhMWK27E32WotcOVC3
+         vy2iPfIJuImza9uda62XvmoZ9+oZuMYDCf3Z/MDM=
+Message-ID: <1575384015.3435.16.camel@HansenPartnership.com>
+Subject: Re: [PATCH 1/2] fs: introduce uid/gid shifting bind mount
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Date:   Tue, 03 Dec 2019 06:40:15 -0800
+In-Reply-To: <CAOQ4uxgcD5gwOXJfXaNki8t3=6oq32TB9URDpsoQo9A5tyCfqw@mail.gmail.com>
+References: <1575335637.24227.26.camel@HansenPartnership.com>
+         <1575335700.24227.27.camel@HansenPartnership.com>
+         <CAOQ4uxiqc_bsa88kZG2PNLPcTqFojJU_24qL32qw-VVLG+rRFw@mail.gmail.com>
+         <1575349974.31937.11.camel@HansenPartnership.com>
+         <CAOQ4uxgcD5gwOXJfXaNki8t3=6oq32TB9URDpsoQo9A5tyCfqw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
------ Original Message -----
-> On Tue, Dec 03, 2019 at 07:50:39AM -0500, Jan Stancek wrote:
-> > My theory is that there's a race in iomap. There appear to be
-> > interleaved calls to iomap_set_range_uptodate() for same page
-> > with varying offset and length. Each call sees bitmap as _not_
-> > entirely "uptodate" and hence doesn't call SetPageUptodate().
-> > Even though each bit in bitmap ends up uptodate by the time
-> > all calls finish.
+On Tue, 2019-12-03 at 08:55 +0200, Amir Goldstein wrote:
+> On Tue, Dec 3, 2019 at 7:12 AM James Bottomley
+> <James.Bottomley@hansenpartnership.com> wrote:
+> > 
+> > On Tue, 2019-12-03 at 06:51 +0200, Amir Goldstein wrote:
+> > > [cc: ebiederman]
+[...]
+> > > 4. This is currently not overlayfs (stacked fs) nor nfsd
+> > > friendly. Those modules do not call the path based vfs APIs, but
+> > > they do have the mnt stored internally.
+> > 
+> > OK, so I've got to confess that I've only tested it with my
+> > container use case, which doesn't involve overlay or nfs.  However,
+> > as long as we thread path down to the API that nfds and overlayfs
+> > use, it should easily be made compatible with them ... do we have
+> > any documentation of what API this is?
 > 
-> Weird.  That should be prevented by the page lock that all callers
-> of iomap_set_range_uptodate.  But in case I miss something, does
-> the patch below trigger?  If not it is not jut a race, but might
-> be some weird ordering problem with the bitops, especially if it
-> only triggers on ppc, which is very weakly ordered.
+> No proper doc AFAIK, but please take a look at:
+> https://lore.kernel.org/linux-fsdevel/20191025112917.22518-2-mszeredi
+> @redhat.com/
+> It is part of a series to make overlayfs an FS_USERNS_MOUNT.
 > 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index d33c7bc5ee92..25e942c71590 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -148,6 +148,8 @@ iomap_set_range_uptodate(struct page *page, unsigned off,
-> unsigned len)
->  	unsigned int i;
->  	bool uptodate = true;
->  
-> +	WARN_ON_ONCE(!PageLocked(page));
-> +
->  	if (iop) {
->  		for (i = 0; i < PAGE_SIZE / i_blocksize(inode); i++) {
->  			if (i >= first && i <= last)
+> The simplest case goes typically something like this:
+> rmdir -> do_rmdir -(change_userns_creds)-> vfs_rmdir ->
+>     ovl_rmdir -(ovl_override_creds)-> vfs_rmdir -> ext4_rmdir
+
+Yes, I figured it would mostly be the vfs_ functions.
+
+> So if you shift mounted the overlayfs mount, you won't end up
+> using shifted creds in ext4 operations.
+> And if you shift mounted ext4 *before* creating the overlay, then
+> still, overlay doesn't go through do_rmdir, so your method won't
+> work either.
+
+So I think the upper use case (shift above overlay) is fairly easily
+solvable: it involves making ovl_override_creds shift aware, so that
+when it does the override it keeps the shift.  This might involve
+stashing the overlay creds where the shift ones are in the task
+structure so cred_is_shifted() still works.
+
+The lower use case is more problematic because that would involve
+changing most of the vfs_ API.  I think we can take a phased approach:
+
+   1. Get agreement for the approach using the unstacked case (current
+      patch effectively)
+   2. Make the upper case work because it's the low hanging fruit; I can
+      start looking at this (although I'll have to figure out how to get
+      overlayfs working first).
+   3. Investigate the lower case if there's an actual use.
+
+> Similar situation with nfsd, although I have no idea if there are
+> plans to make nfsd userns aware.
+
+It's a similar upper and lower issue, although upper just involves
+playing nicely with the name remapping.
+
+> > > I suppose you do want to be able to mount overlays and export nfs
+> > > out of those shifted mounts, as they are merely the foundation
+> > > for unprivileged container storage stack. right?
+> > 
+> > If the plan of doing this as a bind mount holds, then certainly
+> > because any underlying filesystem has to work with it.
+> > 
 > 
+> I am talking above, not under.
 
-Hit it pretty quick this time:
+Hopefully I addressed that above.  I think above is easier and should
+be the first target, but to make this works completely eventually needs
+the under case as well.
 
-# uptime
- 09:27:42 up 22 min,  2 users,  load average: 0.09, 13.38, 26.18
+> You shift mount an ext4 fs and hand it over to container fake root
+> (or mark it and let fake root shit mount).
+> The container fake root should be able to (after overlayfs unpriv
+> changes) create an overlay from inside container.
+> IOW, try to mount an overlay over your shifted fs and see how it
+> behaves.
+> 
+> > > For overlayfs, you should at least look at ovl_override_creds()
+> > > for incorporating shift mount logic - or more likely at the
+> > > creation of ofs->creator_cred.
+> > 
+> > Well, we had this discussion when I proposed shiftfs as a
+> > superblock based stackable filesytem, I think: the way the shift
+> > needs to use creds is fundamentally different from the way
+> > overlayfs uses them.  The ovl_override_creds is overriding with the
+> > creator's creds but the shifting bind mound needs to backshift
+> > through the user namespace currently in effect.  Since uid shifts
+> > can stack, we can make them work together, but they are
+> > fundamentally different things.
+> > 
+> 
+> Right.
+> Please take a look at the override_cred code in ovl_create_or_link().
+> This code has some fsuid dance that you need to check for shift
+> friendliness.
 
-# /mnt/testarea/ltp/testcases/bin/genbessel                                                                                                                                     
-Bus error (core dumped)
+Certainly, I've added it to my todo list.
 
-# dmesg | grep -i -e warn -e call                                                                                                                                               
-[    0.000000] dt-cpu-ftrs: not enabling: system-call-vectored (disabled or unsupported by kernel)
-[    0.000000] random: get_random_u64 called from cache_random_seq_create+0x98/0x1e0 with crng_init=0
-[    0.000000] rcu:     Offload RCU callbacks from CPUs: (none).
-[    5.312075] megaraid_sas 0031:01:00.0: megasas_disable_intr_fusion is called outbound_intr_mask:0x40000009
-[    5.357307] megaraid_sas 0031:01:00.0: megasas_disable_intr_fusion is called outbound_intr_mask:0x40000009
-[    5.485126] megaraid_sas 0031:01:00.0: megasas_enable_intr_fusion is called outbound_intr_mask:0x40000000
+> The entire security model of overlayfs needs to be reexamined in the
+> face of shift mount, but as I wrote, I don't think its going to be
+> too hard to make ovl_override_creds() shift mount aware.
+> Overlayfs mimics vfs behavior in many cases.
 
-So, extra WARN_ON_ONCE applied on top of v5.4-8836-g81b6b96475ac
-did not trigger.
+Agreed.
 
-Is it possible for iomap code to submit multiple bio-s for same
-locked page and then receive callbacks in parallel?
+> Unless you shift mount both overlayfs and underlying (say) ext4, then
+> you still have only one mnt_cred to cache in any given call stack.
+
+Heh well the double shift case will be the stress test of getting 2.
+and 3. working right.
+
+James
 
