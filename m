@@ -2,59 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F1B811056A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 20:45:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A648411057D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 20:49:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727060AbfLCTpB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Dec 2019 14:45:01 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:36160 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726564AbfLCTpA (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Dec 2019 14:45:00 -0500
-Received: from localhost (unknown [IPv6:2610:98:8005::647])
+        id S1727333AbfLCTtb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Dec 2019 14:49:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39494 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726893AbfLCTtb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Dec 2019 14:49:31 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: krisman)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 28F2D28D559;
-        Tue,  3 Dec 2019 19:44:59 +0000 (GMT)
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     Daniel Rosenberg <drosen@google.com>
-Cc:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH 6/8] ext4: Use struct super_block's casefold data
-Organization: Collabora
-References: <20191203051049.44573-1-drosen@google.com>
-        <20191203051049.44573-7-drosen@google.com>
-Date:   Tue, 03 Dec 2019 14:44:56 -0500
-In-Reply-To: <20191203051049.44573-7-drosen@google.com> (Daniel Rosenberg's
-        message of "Mon, 2 Dec 2019 21:10:47 -0800")
-Message-ID: <85sgm1b3d3.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        by mail.kernel.org (Postfix) with ESMTPSA id 381D220803;
+        Tue,  3 Dec 2019 19:49:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575402570;
+        bh=XZYdwxIyyXzrV+GgI6eO+IzRghYU+tO8fxY7E4KpR+4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=GBGFpXZ8pmDVTbUWqrO01MKmWInej3wCsbBIxpEFNf77grDTPWjQz5crY7RW0GAUl
+         YAx2r1XowsvtsipWC5N7w+JAc3z71BDEHBGfg9CsuDuqPwegHUm6rojrKv9LmC8Al4
+         0Mc/VUmeti9VYQhTCOqKTcthgIqrObblIWLiZ5Zk=
+Message-ID: <24dc8c6760b3ea2797c13558d8eca124e2c629f1.camel@kernel.org>
+Subject: Re: [PATCH v2 3/6] fs: ceph: Delete timespec64_trunc() usage
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 03 Dec 2019 14:49:29 -0500
+In-Reply-To: <CABeXuvouZTBnugzNhDq2EUt8o9U-frV-xh8vsbxf+Jx6Mm4FEQ@mail.gmail.com>
+References: <20191203051945.9440-1-deepa.kernel@gmail.com>
+         <20191203051945.9440-4-deepa.kernel@gmail.com>
+         <aef16571cebc9979c73533c98b6b682618fd64a8.camel@kernel.org>
+         <CABeXuvouZTBnugzNhDq2EUt8o9U-frV-xh8vsbxf+Jx6Mm4FEQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Daniel Rosenberg <drosen@google.com> writes:
+On Tue, 2019-12-03 at 11:41 -0800, Deepa Dinamani wrote:
+> > Thanks Deepa. We'll plan to take this one in via the ceph tree.
+> 
+> Actually, deletion of the timespec64_trunc() will depend on this
+> patch. Can we merge the series through a common tree? Otherwise,
+> whoever takes the [PATCH 6/7] ("fs:
+> Delete timespec64_trunc()") would have to depend on your tree. If you
+> are ok with the change, can you ack it?
+> 
+> Thanks,
+> Deepa
 
-> Switch over to using the struct entries added to the VFS, and
-> remove the redundant dentry operations.
+Sure, no problem if that works better for you.
 
-getting this in VFS instead of per filesystem is gonna allow us to mix
-not only fscrypt with case-insensitive but also overlayfs.
+Acked-by: Jeff Layton <jlayton@kernel.org>
 
-Need to do a closer review, but thanks for doing this!!
-
--- 
-Gabriel Krisman Bertazi
