@@ -2,137 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 383D210FF13
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 14:48:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C623A10FF6E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 14:57:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726087AbfLCNsG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Dec 2019 08:48:06 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59922 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726024AbfLCNsG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Dec 2019 08:48:06 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A05F0ADB5;
-        Tue,  3 Dec 2019 13:48:04 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 334C81E0B7B; Tue,  3 Dec 2019 14:48:04 +0100 (CET)
-Date:   Tue, 3 Dec 2019 14:48:04 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     Jan Kara <jack@suse.cz>, tytso@mit.edu, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, mbobrowski@mbobrowski.org
-Subject: Re: [RFCv3 4/4] ext4: Move to shared iolock even without
- dioread_nolock mount opt
-Message-ID: <20191203134804.GF8206@quack2.suse.cz>
-References: <20191120050024.11161-1-riteshh@linux.ibm.com>
- <20191120050024.11161-5-riteshh@linux.ibm.com>
- <20191120143257.GE9509@quack2.suse.cz>
- <20191126105122.75EC6A4060@b06wcsmtp001.portsmouth.uk.ibm.com>
- <20191129171836.GB27588@quack2.suse.cz>
- <20191203115445.6F802AE059@d06av26.portsmouth.uk.ibm.com>
- <20191203123929.GE8206@quack2.suse.cz>
- <20191203131048.A4559A4051@d06av23.portsmouth.uk.ibm.com>
+        id S1726224AbfLCN5j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Dec 2019 08:57:39 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:58434 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727180AbfLCN5J (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Dec 2019 08:57:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=pGZjUh8ellhVGI9ssg4DQAJRtWM/oSsrAhWz58uDLYE=; b=K+oWswS7BbZQhmXrTzt62YVxf
+        mKNwgluw/QFfsuhI2q2SwT2RGIfB+UDz+XkbodHVayXzf4yZ7U49NGvpJETvrCpbzXtFKKe0ncN5F
+        z6psPTwUdiyKtaWK2e1noIWYD+8MPgF0q5TJg5ftlWJ0jKgOyoxoykYbaP8J2zz7psj19Eh4snUbU
+        hfs/OXm9cR1EtryubmeT6YOH4/24FbG8gPGIVAQnIfvxnFFjfFQFRCnUIHBOMbBk35mty6yv3ZH+w
+        p1QwiAlusOVQVbSUVFmbnmZjsqCs/12YIeIKqZgxSOg3M5PdmftpMCXuZBdzfMwupQO1aGNv04Zcz
+        c0SdgoDgw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ic8fb-0005Ec-5g; Tue, 03 Dec 2019 13:56:51 +0000
+Date:   Tue, 3 Dec 2019 05:56:51 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        linux-fsdevel@vger.kernel.org, ecryptfs@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] fs: introduce is_dot_dotdot helper for cleanup
+Message-ID: <20191203135651.GU20752@bombadil.infradead.org>
+References: <1575377810-3574-1-git-send-email-yangtiezhu@loongson.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191203131048.A4559A4051@d06av23.portsmouth.uk.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1575377810-3574-1-git-send-email-yangtiezhu@loongson.cn>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 03-12-19 18:40:47, Ritesh Harjani wrote:
-> On 12/3/19 6:09 PM, Jan Kara wrote:
-> > 
-> > Hello Ritesh!
-> > 
-> > On Tue 03-12-19 17:24:44, Ritesh Harjani wrote:
-> > > On 11/29/19 10:48 PM, Jan Kara wrote:
-> > > > > Also, I wanted to have some more discussions on this race before
-> > > > > making the changes.
-> > > > > But nevertheless, it's the right time to discuss those changes here.
-> > > > > 
-> > > > > > mmap write instantiating dirty page and then someone starting writeback
-> > > > > > against that page while DIO read is running still theoretically leading to
-> > > > > > stale data exposure. Now this patch does not have influence on that race
-> > > > > > but:
-> > > > > 
-> > > > > Yes, agreed.
-> > > > > 
-> > > > > > 
-> > > > > > 1) We need to close the race mentioned above. Maybe we could do that by
-> > > > > > proactively allocating unwritten blocks for a page being faulted when there
-> > > > > > is direct IO running against the file - the one who fills holes through
-> > > > > > mmap write while direct IO is running on the file deserves to suffer the
-> > > > > > performance penalty...
-> > > > > 
-> > > > > I was giving this a thought. So even if we try to penalize mmap
-> > > > > write as you mentioned above, what I am not sure about it, is that, how can
-> > > > > we reliably detect that the DIO is in progress?
-> > > > > 
-> > > > > Say even if we try to check for atomic_read(&inode->i_dio_count) in mmap
-> > > > > ext4_page_mkwrite path, it cannot be reliable unless there is some sort of a
-> > > > > lock protection, no?
-> > > > > Because after the check the DIO can still snoop in, right?
-> > > > 
-> > > > Yes, doing this reliably will need some code tweaking. Also thinking about
-> > > > this in detail, doing a reliable check in ext4_page_mkwrite() is
-> > > > somewhat difficult so it will be probably less error-prone to deal with the
-> > > > race in the writeback path.
-> > > 
-> > > hmm. But if we don't do in ext4_page_mkwrite, then I am afraid on
-> > > how to handle nodelalloc scenario. Where we will directly go and
-> > > allocate block via ext4_get_block() in ext4_page_mkwrite(),
-> > > as explained below.
-> > > I guess we may need some tweaking at both places.
-> > 
-> > Ok, I forgot to mention that. Yes, the nodelalloc case in
-> > ext4_page_mkwrite() still needs tweaking. But that is not performance
-> > sensitive path at all. So we can just have there:
+On Tue, Dec 03, 2019 at 08:56:50PM +0800, Tiezhu Yang wrote:
+> There exists many similar and duplicate codes to check "." and "..",
+> so introduce is_dot_dotdot helper to make the code more clean.
 > 
-> hmm. I was of the opinion that why use unwritten blocks or move
-> from written to unwritten method while we can still avoid it.
+> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+> ---
 > 
-> > 
-> > 	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
-> > 		get_block = ext4_get_block_unwritten;
-> > 	else
-> > 		get_block = ext4_get_block;
-> > 
-> 
-> Although adding a function ext4_dio_check_get_block() as described in
-> previous email is also trivial, which could avoid using unwritten
-> blocks here when DIO is not in progress.
-> But if you think it's not worth it, then I will go with your suggestion
-> here.
+> v2:
+>   - use the better performance implementation of is_dot_dotdot
+>   - make it static inline and move it to include/linux/fs.h
 
-Yeah, I would prefer to keep it simple. Otherwise you would have a rare
-subcase of a rare case meaning that code path will hardly ever get tested
-and that's not good for maintainability... Also note that check is not 100%
-reliable. There's still a race like:
+Ugh, not more crap in fs.h.
 
-ext4_page_mkwrite()
-  block_page_mkwrite()
-    lock_page(page);
-    ...
-    -> get_block()
-      if (inode_dio_count(inode) > 0)
-      -> false - use ext4_get_block()
-					iomap_dio_rw()
-					  inode_dio_begin()
-					  filemap_write_and_wait()
-					    -> no dirty page yet -> bails
-					  invalidate_mapping_pages2()
-    set_page_dirty(page);
-  unlock_page(page);
- 					    -> bails with error because the
-					    page is dirty. Warning is
-					    issued but stale data is still
-					    exposed.
+$ ls -l --sort=size include/linux |head
+-rw-r--r--  1 willy willy 154148 Nov 29 22:35 netdevice.h
+-rw-r--r--  1 willy willy 130488 Nov 29 22:35 skbuff.h
+-rw-r--r--  1 willy willy 123540 Nov 29 22:35 pci_ids.h
+-rw-r--r--  1 willy willy 118991 Nov 29 22:35 fs.h
 
-									Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I think this probably fits well in namei.h.  And I think it works
+better with bare 'name' and 'len' arguments, rather than taking a qstr.
+
+And, as I asked twice in the last round of review, did you benchmark
+this change?
