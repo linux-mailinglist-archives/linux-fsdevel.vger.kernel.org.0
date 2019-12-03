@@ -2,199 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4667D10F3D5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 01:14:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9B5710F3DC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 01:19:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726008AbfLCAOJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Dec 2019 19:14:09 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:39026 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbfLCAOJ (ORCPT
+        id S1725957AbfLCATE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Dec 2019 19:19:04 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:39970 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725834AbfLCATE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Dec 2019 19:14:09 -0500
-Received: by mail-oi1-f193.google.com with SMTP id a67so1569998oib.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Dec 2019 16:14:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jU8zQM7dQsl7j+C2HShiZHxrCqA16lgqBbZmIQjuFsE=;
-        b=UdtIHWXsgA1cgpVIddyD/Sekot8kmzIvm9AkSrHSOZneyL3PfXwLCGrfd2C7oZrezJ
-         e8qaDNGxII/RljQThXGhEK53xQlKGoHxvaU6wwSyag3/jkfaemJH/tfN/uNdLN94XfOL
-         aVFVvIau+de3pcuRbNR7xT4Zu8AUADkU1oGkw1GizVGGrbAZB7rMydqYyNTn5c5au9iu
-         YF28TyNBvvlTW+2V6dmrnMmGITVDsNi6ylMGS8G0Ym7Rx20w4FJf7W18LzPkd4ix1ubm
-         lTY6XBoQjMu5H2nB1yRLjVmVwFFJbQN437b5r37RMCynvnUwjOF/bmGTunHUMdy83uvP
-         3eeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jU8zQM7dQsl7j+C2HShiZHxrCqA16lgqBbZmIQjuFsE=;
-        b=HOWDiB51QSiwiw0IgBSllm0dpPkpqDx575jB9wogZ6YOd8D8R4dYk6+GsWnWCei/y2
-         bt5h2MXgWeQXImM9MJd0GSfpd0f4Sgwbw+wJriTOLRB8cFMopMXiC0oRHcY1TTSvAG68
-         7Qh5SqTl4qveCpVVrZZSTeBVszVlxOq6lgoTUxzAVZi1QNiUTGUB9usFPD1EBQ4L2BPD
-         d1LD7nDFw5WIeS0y+OG8PlfygRnj8KEZcRSCV9v0zF4xeOfftSVa65NFCVTVuEEMKpi4
-         9QxtqSnk+vYo1WlbqHiLmgUGeuLioAjWD7Rkx4N+Dj8ulrIRTxnUnUudC53ruRyIJp1f
-         RZTQ==
-X-Gm-Message-State: APjAAAWRxp0l9lvS6Q6qznCCL7adCoVGlo6eEYSvJQ/5gumf57vh1SMK
-        7CKWnw8+z/G6uvblXK+sOBSGgsCgq0xh8BFq4U+sqA==
-X-Google-Smtp-Source: APXvYqxHMoMNJtSea2KbnT6kI5KkGt3Sur+DvCkMAz+DyiTipaX++WIG/yH7EvjF/HQkpI5hCJ3YCuHSS9BQklKkN6Y=
-X-Received: by 2002:aca:670b:: with SMTP id z11mr1401696oix.79.1575332047908;
- Mon, 02 Dec 2019 16:14:07 -0800 (PST)
+        Mon, 2 Dec 2019 19:19:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575332342;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IGy9gNxFygdeVSOn26qERscsGS2TmpnSERzq58aUv+M=;
+        b=U/RDFWVTkHFvjhh8TR01NbvNHJaFhD6GeicAHPZoB1LGabPQqqQkfgZ/n72M/D3i45qC5U
+        f6LgMKgVTRgIvZ62vu+BWvg8uKVuRxtIqXE4Ikr0w3ZZ2ktPh4XAFwdeu3FvPWm6TVp8kD
+        5Cq/V39dxTs5up2mVSLhSPjDU+/xyJ0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-414-JjZf2RbAMwWcrpXGTlnKsg-1; Mon, 02 Dec 2019 19:18:59 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 675A2CF989;
+        Tue,  3 Dec 2019 00:18:56 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-19.pek2.redhat.com [10.72.8.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CDED660BEC;
+        Tue,  3 Dec 2019 00:18:47 +0000 (UTC)
+Date:   Tue, 3 Dec 2019 08:18:43 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        Hillf Danton <hdanton@sina.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-fs <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rong Chen <rong.a.chen@intel.com>, Tejun Heo <tj@kernel.org>
+Subject: Re: single aio thread is migrated crazily by scheduler
+Message-ID: <20191203001843.GA25002@ming.t460p>
+References: <20191114235415.GL4614@dread.disaster.area>
+ <20191115010824.GC4847@ming.t460p>
+ <20191115045634.GN4614@dread.disaster.area>
+ <20191115070843.GA24246@ming.t460p>
+ <20191128094003.752-1-hdanton@sina.com>
+ <CAKfTPtA23ErKGCEJVmg6vk-QoufkiUM3NbXd31mZmKnuwbTkFw@mail.gmail.com>
+ <20191202024625.GD24512@ming.t460p>
+ <20191202040256.GE2695@dread.disaster.area>
+ <CAKfTPtD8Q97qJ_+hdCXQRt=gy7k96XrhnFmGYP1G88YSFW0vNA@mail.gmail.com>
+ <20191202235321.GJ2695@dread.disaster.area>
 MIME-Version: 1.0
-References: <20191129214541.3110-1-ptikhomirov@virtuozzo.com> <4e2d959a-0b0e-30aa-59b4-8e37728e9793@virtuozzo.com>
-In-Reply-To: <4e2d959a-0b0e-30aa-59b4-8e37728e9793@virtuozzo.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Mon, 2 Dec 2019 16:13:56 -0800
-Message-ID: <CALvZod7rhaOBUNR=Pt5a1vAEPimrwN=41dmDD9dekCGztAe=NQ@mail.gmail.com>
-Subject: Re: [PATCH] mm: fix hanging shrinker management on long do_shrink_slab
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc:     Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Roman Gushchin <guro@fb.com>,
-        Chris Down <chris@chrisdown.name>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Tejun Heo <tj@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Konstantin Khorenko <khorenko@virtuozzo.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        linux-nfs@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191202235321.GJ2695@dread.disaster.area>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-MC-Unique: JjZf2RbAMwWcrpXGTlnKsg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 2, 2019 at 8:37 AM Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
->
->
-> On 11/30/19 12:45 AM, Pavel Tikhomirov wrote:
-> > We have a problem that shrinker_rwsem can be held for a long time for
-> > read in shrink_slab, at the same time any process which is trying to
-> > manage shrinkers hangs.
-> >
-> > The shrinker_rwsem is taken in shrink_slab while traversing shrinker_list.
-> > It tries to shrink something on nfs (hard) but nfs server is dead at
-> > these moment already and rpc will never succeed. Generally any shrinker
-> > can take significant time to do_shrink_slab, so it's a bad idea to hold
-> > the list lock here.
-> >
-> > We have a similar problem in shrink_slab_memcg, except that we are
-> > traversing shrinker_map+shrinker_idr there.
-> >
-> > The idea of the patch is to inc a refcount to the chosen shrinker so it
-> > won't disappear and release shrinker_rwsem while we are in
-> > do_shrink_slab, after that we will reacquire shrinker_rwsem, dec
-> > the refcount and continue the traversal.
-> >
-> > We also need a wait_queue so that unregister_shrinker can wait for the
-> > refcnt to become zero. Only after these we can safely remove the
-> > shrinker from list and idr, and free the shrinker.
-> >
-> > I've reproduced the nfs hang in do_shrink_slab with the patch applied on
-> > ms kernel, all other mount/unmount pass fine without any hang.
-> >
-> > Here is a reproduction on kernel without patch:
-> >
-> > 1) Setup nfs on server node with some files in it (e.g. 200)
-> >
-> > [server]# cat /etc/exports
-> > /vz/nfs2 *(ro,no_root_squash,no_subtree_check,async)
-> >
-> > 2) Hard mount it on client node
-> >
-> > [client]# mount -ohard 10.94.3.40:/vz/nfs2 /mnt
-> >
-> > 3) Open some (e.g. 200) files on the mount
-> >
-> > [client]# for i in $(find /mnt/ -type f | head -n 200); \
-> >   do setsid sleep 1000 &>/dev/null <$i & done
-> >
-> > 4) Kill all openers
-> >
-> > [client]# killall sleep -9
-> >
-> > 5) Put your network cable out on client node
-> >
-> > 6) Drop caches on the client, it will hang on nfs while holding
-> >   shrinker_rwsem lock for read
-> >
-> > [client]# echo 3 > /proc/sys/vm/drop_caches
-> >
-> >   crash> bt ...
-> >   PID: 18739  TASK: ...  CPU: 3   COMMAND: "bash"
-> >    #0 [...] __schedule at ...
-> >    #1 [...] schedule at ...
-> >    #2 [...] rpc_wait_bit_killable at ... [sunrpc]
-> >    #3 [...] __wait_on_bit at ...
-> >    #4 [...] out_of_line_wait_on_bit at ...
-> >    #5 [...] _nfs4_proc_delegreturn at ... [nfsv4]
-> >    #6 [...] nfs4_proc_delegreturn at ... [nfsv4]
-> >    #7 [...] nfs_do_return_delegation at ... [nfsv4]
-> >    #8 [...] nfs4_evict_inode at ... [nfsv4]
-> >    #9 [...] evict at ...
-> >   #10 [...] dispose_list at ...
-> >   #11 [...] prune_icache_sb at ...
-> >   #12 [...] super_cache_scan at ...
-> >   #13 [...] do_shrink_slab at ...
-> >   #14 [...] shrink_slab at ...
-> >   #15 [...] drop_slab_node at ...
-> >   #16 [...] drop_slab at ...
-> >   #17 [...] drop_caches_sysctl_handler at ...
-> >   #18 [...] proc_sys_call_handler at ...
-> >   #19 [...] vfs_write at ...
-> >   #20 [...] ksys_write at ...
-> >   #21 [...] do_syscall_64 at ...
-> >   #22 [...] entry_SYSCALL_64_after_hwframe at ...
-> >
-> > 7) All other mount/umount activity now hangs with no luck to take
-> >   shrinker_rwsem for write.
-> >
-> > [client]# mount -t tmpfs tmpfs /tmp
-> >
-> >   crash> bt ...
-> >   PID: 5464   TASK: ...  CPU: 3   COMMAND: "mount"
-> >    #0 [...] __schedule at ...
-> >    #1 [...] schedule at ...
-> >    #2 [...] rwsem_down_write_slowpath at ...
-> >    #3 [...] prealloc_shrinker at ...
-> >    #4 [...] alloc_super at ...
-> >    #5 [...] sget at ...
-> >    #6 [...] mount_nodev at ...
-> >    #7 [...] legacy_get_tree at ...
-> >    #8 [...] vfs_get_tree at ...
-> >    #9 [...] do_mount at ...
-> >   #10 [...] ksys_mount at ...
-> >   #11 [...] __x64_sys_mount at ...
-> >   #12 [...] do_syscall_64 at ...
-> >   #13 [...] entry_SYSCALL_64_after_hwframe at ...
-> >
->
->
-> I don't think this patch solves the problem, it only fixes one minor symptom of it.
-> The actual problem here the reclaim hang in the nfs.
-> It means that any process, including kswapd, may go into nfs inode reclaim and stuck there.
->
-> Even mount() itself has GFP_KERNEL allocations in its path, so it still might stuck there even with your patch.
->
-> I think this should be handled on nfs/vfs level by making  inode eviction during reclaim more asynchronous.
+On Tue, Dec 03, 2019 at 10:53:21AM +1100, Dave Chinner wrote:
+> On Mon, Dec 02, 2019 at 02:45:42PM +0100, Vincent Guittot wrote:
+> > On Mon, 2 Dec 2019 at 05:02, Dave Chinner <david@fromorbit.com> wrote:
+> > >
+> > > On Mon, Dec 02, 2019 at 10:46:25AM +0800, Ming Lei wrote:
+> > > > On Thu, Nov 28, 2019 at 10:53:33AM +0100, Vincent Guittot wrote:
+> > > > > On Thu, 28 Nov 2019 at 10:40, Hillf Danton <hdanton@sina.com> wro=
+te:
+> > > > > > --- a/fs/iomap/direct-io.c
+> > > > > > +++ b/fs/iomap/direct-io.c
+> > > > > > @@ -157,10 +157,8 @@ static void iomap_dio_bio_end_io(struct
+> > > > > >                         WRITE_ONCE(dio->submit.waiter, NULL);
+> > > > > >                         blk_wake_io_task(waiter);
+> > > > > >                 } else if (dio->flags & IOMAP_DIO_WRITE) {
+> > > > > > -                       struct inode *inode =3D file_inode(dio-=
+>iocb->ki_filp);
+> > > > > > -
+> > > > > >                         INIT_WORK(&dio->aio.work, iomap_dio_com=
+plete_work);
+> > > > > > -                       queue_work(inode->i_sb->s_dio_done_wq, =
+&dio->aio.work);
+> > > > > > +                       schedule_work(&dio->aio.work);
+> > > > >
+> > > > > I'm not sure that this will make a real difference because it end=
+s up
+> > > > > to call queue_work(system_wq, ...) and system_wq is bounded as we=
+ll so
+> > > > > the work will still be pinned to a CPU
+> > > > > Using system_unbound_wq should make a difference because it doesn=
+'t
+> > > > > pin the work on a CPU
+> > > > >  +                       queue_work(system_unbound_wq, &dio->aio.=
+work);
+> > > >
+> > > > Indeed, just run a quick test on my KVM guest, looks the following =
+patch
+> > > > makes a difference:
+> > > >
+> > > > diff --git a/fs/direct-io.c b/fs/direct-io.c
+> > > > index 9329ced91f1d..2f4488b0ecec 100644
+> > > > --- a/fs/direct-io.c
+> > > > +++ b/fs/direct-io.c
+> > > > @@ -613,7 +613,8 @@ int sb_init_dio_done_wq(struct super_block *sb)
+> > > >  {
+> > > >         struct workqueue_struct *old;
+> > > >         struct workqueue_struct *wq =3D alloc_workqueue("dio/%s",
+> > > > -                                                     WQ_MEM_RECLAI=
+M, 0,
+> > > > +                                                     WQ_MEM_RECLAI=
+M |
+> > > > +                                                     WQ_UNBOUND, 0=
+,
+> > > >                                                       sb->s_id);
+> > >
+> > > That's not an answer to the user task migration issue.
+> > >
+> > > That is, all this patch does is trade user task migration when the
+> > > CPU is busy for migrating all the queued work off the CPU so the
+> > > user task does not get migrated. IOWs, this forces all the queued
+> > > work to be migrated rather than the user task. IOWs, it does not
+> > > address the issue we've exposed in the scheduler between tasks with
+> > > competing CPU affinity scheduling requirements - it just hides the
+> > > symptom.
+> > >
+> > > Maintaining CPU affinity across dispatch and completion work has
+> > > been proven to be a significant performance win. Right throughout
+> > > the IO stack we try to keep this submitter/completion affinity,
+> > > and that's the whole point of using a bound wq in the first place:
+> > > efficient delayed batch processing of work on the local CPU.
+> >=20
+> > Do you really want to target the same CPU ? looks like what you really
+> > want to target the same cache instead
+>=20
+> Well, yes, ideally we want to target the same cache, but we can't do
+> that with workqueues.
+>=20
+> However, the block layer already does that same-cache steering for
+> it's directed completions (see __blk_mq_complete_request()), so we
+> are *already running in a "hot cache" CPU context* when we queue
+> work. When we queue to the same CPU, we are simply maintaining the
+> "cache-hot" context that we are already running in.
 
-Though I agree that we should be fixing shrinkers to not get stuck
-(and be more async), I still think the problem this patch is solving
-is worth fixing. On machines running multiple workloads, one job stuck
-in slab shrinker and blocking all other unrelated jobs wanting
-shrinker_rwsem, breaks the isolation and causes DoS.
+__blk_mq_complete_request() doesn't always complete the request on
+the submission CPU, which is only done in case of 1:1 queue mapping
+and N:1 mapping when nr_hw_queues < nr_nodes. Also, the default
+completion flag is SAME_GROUP, which just requires the completion
+CPU to share cache with submission CPU:
 
-Shakeel
+#define QUEUE_FLAG_SAME_COMP    4       /* complete on same CPU-group */
+
+
+
+Thanks,=20
+Ming
+
