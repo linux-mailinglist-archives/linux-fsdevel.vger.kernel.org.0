@@ -2,256 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B88D110F6BD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 06:11:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD6E310F6D2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 06:12:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbfLCFLm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Dec 2019 00:11:42 -0500
-Received: from mail-pf1-f202.google.com ([209.85.210.202]:49258 "EHLO
-        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727132AbfLCFLj (ORCPT
+        id S1726550AbfLCFM5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Dec 2019 00:12:57 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:55056 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725907AbfLCFM5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Dec 2019 00:11:39 -0500
-Received: by mail-pf1-f202.google.com with SMTP id b15so1437470pfo.16
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Dec 2019 21:11:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=8c3eVVk8ABGDZTJOomUNLBljUeAWHPLfmm8OYMOygK0=;
-        b=oteLf7N3qbZYVjncqfLGA35MNoLNyK5bhXImCiwSRn+6fiSbsFuJbMRE6gWfyVjNPe
-         Og932LtndCbABZdP1w0ocZDRInigouXSWrDI3b8o3dKLEFTZKzkADdIKDQYo4b/DHdFk
-         mbMDSCm3b0aqMpX0xNVYs8YjTftAE9V3OzJr1klNESjbku9d/N6rK+PeOBegUEgZ0CII
-         cIVtfx0krdmO0+9m0DyAzo4H+HvtdeikT93i5iYvInW+TE3f7JX61Ee4NEmpN632Mw83
-         CnGeO3lKi2fHV9V7pvjyUBedXrE45c7uAyu85CRsKhyQsT3S3O3fPS8xBRflmMvRYGPr
-         YR3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=8c3eVVk8ABGDZTJOomUNLBljUeAWHPLfmm8OYMOygK0=;
-        b=cCFNQgXVm7n4WDnCevPgQ1t4W9ymSuq0JSf69eyVWAWmVEOtu6t+23var+3hEwT+i4
-         18UrxK5p9iQlMxLVsdzJ1AIscqeAjKC7CnLIiwguU2VlD3X92l+dszM7fOJYAaniAQ1s
-         EAWkqjMDdA2weJ24547fMleugPj4uY6vO+oNjfDOOY/m1iX7+upEoubC7BEf0GHW+CKD
-         0kurYTf5DlC6sgc+On7yLzZmeIxb2wbfnwEW3u55JKWTpe/HtHm3tXK8BVRWHtdfVZtu
-         twQM9N/UDhYwEKvQkdld5G/ed++831TmG6GObsZjjN1oNOrMkvtf2SY2Oi3dR2AvwRqa
-         5dVw==
-X-Gm-Message-State: APjAAAVfx0MzrZfMCSgJH1lueVKJlUxzp+U3ioQTn2tUxEOuUEjyLixs
-        EDYkshtfda68riikgi+c+PPllL52i5I=
-X-Google-Smtp-Source: APXvYqxs0GmfjTuZRzU9OqqYkBnp2/dJZPB77L72bpUcJ78IvKiht+67nFiNcmf43OSpi5CswMqkIUEsYvs=
-X-Received: by 2002:a63:c849:: with SMTP id l9mr3486754pgi.330.1575349898899;
- Mon, 02 Dec 2019 21:11:38 -0800 (PST)
-Date:   Mon,  2 Dec 2019 21:10:49 -0800
-In-Reply-To: <20191203051049.44573-1-drosen@google.com>
-Message-Id: <20191203051049.44573-9-drosen@google.com>
-Mime-Version: 1.0
-References: <20191203051049.44573-1-drosen@google.com>
-X-Mailer: git-send-email 2.24.0.393.g34dc348eaf-goog
-Subject: [PATCH 8/8] ext4: Optimize match for casefolded encrypted dirs
-From:   Daniel Rosenberg <drosen@google.com>
-To:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel-team@android.com, Daniel Rosenberg <drosen@google.com>
+        Tue, 3 Dec 2019 00:12:57 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 631728EE180;
+        Mon,  2 Dec 2019 21:12:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1575349976;
+        bh=IpOZTUY4+3g7VaXxosMa/0FaXgPeCEDiC0Yew7/7PnE=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=AZ1ual4vte1KqON/lZQs3qiBvpkqwQeA05PKVsWYPIggHILnNaL39Glns5feUKRW+
+         yggCSWriolWRUE6x2KQHL4vMXvMcJF0pOBYqWKnGsKa+7k6osiQ6VkJk0yZDQksFxG
+         tV3czrKOXo4L4iwn0SfzAhzn4LIMM6m9hP2k9VOo=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id O4Pj0WFsGk1G; Mon,  2 Dec 2019 21:12:56 -0800 (PST)
+Received: from jarvis.lan (unknown [50.35.76.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id C5E1C8EE11D;
+        Mon,  2 Dec 2019 21:12:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1575349976;
+        bh=IpOZTUY4+3g7VaXxosMa/0FaXgPeCEDiC0Yew7/7PnE=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=AZ1ual4vte1KqON/lZQs3qiBvpkqwQeA05PKVsWYPIggHILnNaL39Glns5feUKRW+
+         yggCSWriolWRUE6x2KQHL4vMXvMcJF0pOBYqWKnGsKa+7k6osiQ6VkJk0yZDQksFxG
+         tV3czrKOXo4L4iwn0SfzAhzn4LIMM6m9hP2k9VOo=
+Message-ID: <1575349974.31937.11.camel@HansenPartnership.com>
+Subject: Re: [PATCH 1/2] fs: introduce uid/gid shifting bind mount
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Date:   Mon, 02 Dec 2019 21:12:54 -0800
+In-Reply-To: <CAOQ4uxiqc_bsa88kZG2PNLPcTqFojJU_24qL32qw-VVLG+rRFw@mail.gmail.com>
+References: <1575335637.24227.26.camel@HansenPartnership.com>
+         <1575335700.24227.27.camel@HansenPartnership.com>
+         <CAOQ4uxiqc_bsa88kZG2PNLPcTqFojJU_24qL32qw-VVLG+rRFw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matching names with casefolded encrypting directories requires
-decrypting entries to confirm case since we are case preserving. We can
-avoid needing to decrypt if our hash values don't match.
+On Tue, 2019-12-03 at 06:51 +0200, Amir Goldstein wrote:
+> [cc: ebiederman]
+> 
+> On Tue, Dec 3, 2019 at 3:15 AM James Bottomley
+> <James.Bottomley@hansenpartnership.com> wrote:
+> > 
+> > This implementation reverse shifts according to the user_ns
+> > belonging
+> > to the mnt_ns.  So if the vfsmount has the newly introduced flag
+> > MNT_SHIFT and the current user_ns is the same as the mount_ns-
+> > >user_ns
+> > then we shift back using the user_ns before committing to the
+> > underlying filesystem.
+> > 
+> > For example, if a user_ns is created where interior (fake root, uid
+> > 0)
+> > is mapped to kernel uid 100000 then writes from interior root
+> > normally
+> > go to the filesystem at the kernel uid.  However, if MNT_SHIFT is
+> > set,
+> > they will be shifted back to write at uid 0, meaning we can bind
+> > mount
+> > real image filesystems to user_ns protected faker root.
+> > 
+> > In essence there are several things which have to be done for this
+> > to
+> > occur safely.  Firstly for all operations on the filesystem, new
+> > credentials have to be installed where fsuid and fsgid are set to
+> > the
+> > *interior* values. Next all inodes used from the filesystem have to
+> > have i_uid and i_gid shifted back to the kernel values and
+> > attributes
+> > set from user space have to have ia_uid and ia_gid shifted from the
+> > kernel values to the interior values.  The capability checks have
+> > to
+> > be done using ns_capable against the kernel values, but the inode
+> > capability checks have to be done against the shifted ids.
+> > 
+> > Since creating a new credential is a reasonably expensive
+> > proposition
+> > and we have to shift and unshift many times during path walking, a
+> > cached copy of the shifted credential is saved to a newly created
+> > place in the task structure.  This serves the dual purpose of
+> > allowing
+> > us to use a pre-prepared copy of the shifted credentials and also
+> > allows us to recognise whenever the shift is actually in effect
+> > (the
+> > cached shifted credential pointer being equal to the current_cred()
+> > pointer).
+> > 
+> > To get this all to work, we have a check for the vfsmount flag and
+> > the
+> > user_ns gating a shifting of the credentials over all user space
+> > entries to filesystem functions.  In theory the path has to be
+> > present
+> > everywhere we do this, so we can check the vfsmount
+> > flags.  However,
+> > for lower level functions we can cheat this path check of vfsmount
+> > simply to check whether a shifted credential is in effect or not to
+> > gate things like the inode permission check, which means the path
+> > doesn't have to be threaded all the way through the permission
+> > checking functions.  if the credential is shifted check passes, we
+> > can
+> > also be sure that the current user_ns is the same as the mnt-
+> > >user_ns,
+> > so we can use it and thus have no need of the struct mount at the
+> > point of the shift.
+> > 
+> 
+> 1. Smart
 
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
----
- fs/ext4/ext4.h  | 17 ++++++++-------
- fs/ext4/namei.c | 57 ++++++++++++++++++++++++++-----------------------
- 2 files changed, 39 insertions(+), 35 deletions(-)
+Heh, thanks.
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index f06bab489d37..f104c46a6895 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -2393,9 +2393,9 @@ extern unsigned ext4_free_clusters_after_init(struct super_block *sb,
- ext4_fsblk_t ext4_inode_to_goal_block(struct inode *);
- 
- #ifdef CONFIG_UNICODE
--extern void ext4_fname_setup_ci_filename(struct inode *dir,
-+extern int ext4_fname_setup_ci_filename(struct inode *dir,
- 					 const struct qstr *iname,
--					 struct fscrypt_str *fname);
-+					 struct ext4_filename *fname);
- #endif
- 
- #ifdef CONFIG_FS_ENCRYPTION
-@@ -2426,9 +2426,9 @@ static inline int ext4_fname_setup_filename(struct inode *dir,
- 	ext4_fname_from_fscrypt_name(fname, &name);
- 
- #ifdef CONFIG_UNICODE
--	ext4_fname_setup_ci_filename(dir, iname, &fname->cf_name);
-+	err = ext4_fname_setup_ci_filename(dir, iname, fname);
- #endif
--	return 0;
-+	return err;
- }
- 
- static inline int ext4_fname_prepare_lookup(struct inode *dir,
-@@ -2445,9 +2445,9 @@ static inline int ext4_fname_prepare_lookup(struct inode *dir,
- 	ext4_fname_from_fscrypt_name(fname, &name);
- 
- #ifdef CONFIG_UNICODE
--	ext4_fname_setup_ci_filename(dir, &dentry->d_name, &fname->cf_name);
-+	err = ext4_fname_setup_ci_filename(dir, &dentry->d_name, fname);
- #endif
--	return 0;
-+	return err;
- }
- 
- static inline void ext4_fname_free_filename(struct ext4_filename *fname)
-@@ -2472,15 +2472,16 @@ static inline int ext4_fname_setup_filename(struct inode *dir,
- 					    int lookup,
- 					    struct ext4_filename *fname)
- {
-+	int err = 0;
- 	fname->usr_fname = iname;
- 	fname->disk_name.name = (unsigned char *) iname->name;
- 	fname->disk_name.len = iname->len;
- 
- #ifdef CONFIG_UNICODE
--	ext4_fname_setup_ci_filename(dir, iname, &fname->cf_name);
-+	err = ext4_fname_setup_ci_filename(dir, iname, fname);
- #endif
- 
--	return 0;
-+	return err;
- }
- 
- static inline int ext4_fname_prepare_lookup(struct inode *dir,
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index f536cfc626bd..58b58fb532ba 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -784,7 +784,9 @@ dx_probe(struct ext4_filename *fname, struct inode *dir,
- 	if (hinfo->hash_version <= DX_HASH_TEA)
- 		hinfo->hash_version += EXT4_SB(dir->i_sb)->s_hash_unsigned;
- 	hinfo->seed = EXT4_SB(dir->i_sb)->s_hash_seed;
--	if (fname && fname_name(fname))
-+	/* hash is already computed for encrypted casefolded directory */
-+	if (fname && fname_name(fname) &&
-+				!(IS_ENCRYPTED(dir) && IS_CASEFOLDED(dir)))
- 		ext4fs_dirhash(dir, fname_name(fname), fname_len(fname), hinfo);
- 	hash = hinfo->hash;
- 
-@@ -1352,19 +1354,21 @@ int ext4_ci_compare(struct inode *parent, const struct qstr *name,
- 	return ret;
- }
- 
--void ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
--				  struct fscrypt_str *cf_name)
-+int ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
-+				  struct ext4_filename *name)
- {
-+	struct fscrypt_str *cf_name = &name->cf_name;
-+	struct dx_hash_info *hinfo = &name->hinfo;
- 	int len;
- 
--	if (!IS_CASEFOLDED(dir) || !dir->i_sb->s_encoding) {
-+	if (!needs_casefold(dir) || !dir->i_sb->s_encoding) {
- 		cf_name->name = NULL;
--		return;
-+		return 0;
- 	}
- 
- 	cf_name->name = kmalloc(EXT4_NAME_LEN, GFP_NOFS);
- 	if (!cf_name->name)
--		return;
-+		return -ENOMEM;
- 
- 	len = utf8_casefold(dir->i_sb->s_encoding,
- 			    iname, cf_name->name,
-@@ -1372,10 +1376,18 @@ void ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
- 	if (len <= 0) {
- 		kfree(cf_name->name);
- 		cf_name->name = NULL;
--		return;
- 	}
- 	cf_name->len = (unsigned) len;
-+	if (!IS_ENCRYPTED(dir))
-+		return 0;
- 
-+	hinfo->hash_version = DX_HASH_SIPHASH;
-+	hinfo->seed = NULL;
-+	if (cf_name->name)
-+		ext4fs_dirhash(dir, cf_name->name, cf_name->len, hinfo);
-+	else
-+		ext4fs_dirhash(dir, iname->name, iname->len, hinfo);
-+	return 0;
- }
- #endif
- 
-@@ -1405,16 +1417,12 @@ static bool ext4_match(struct inode *parent,
- 			struct qstr cf = {.name = fname->cf_name.name,
- 					  .len = fname->cf_name.len};
- 			if (IS_ENCRYPTED(parent)) {
--				struct dx_hash_info hinfo;
--
--				hinfo.hash_version = DX_HASH_SIPHASH;
--				hinfo.seed = NULL;
--				ext4fs_dirhash(parent, fname->cf_name.name,
--						fname_len(fname), &hinfo);
--				if (hinfo.hash != EXT4_DIRENT_HASH(de) ||
--						hinfo.minor_hash !=
--						    EXT4_DIRENT_MINOR_HASH(de))
-+				if (fname->hinfo.hash != EXT4_DIRENT_HASH(de) ||
-+					fname->hinfo.minor_hash !=
-+						EXT4_DIRENT_MINOR_HASH(de)) {
-+
- 					return 0;
-+				}
- 			}
- 			return !ext4_ci_compare(parent, &cf, de->name,
- 							de->name_len, true);
-@@ -2036,15 +2044,11 @@ void ext4_insert_dentry(struct inode *dir,
- 	de->name_len = fname_len(fname);
- 	memcpy(de->name, fname_name(fname), fname_len(fname));
- 	if (ext4_hash_in_dirent(dir)) {
--		struct dx_hash_info hinfo;
-+		struct dx_hash_info *hinfo = &fname->hinfo;
- 
--		hinfo.hash_version = DX_HASH_SIPHASH;
--		hinfo.seed = NULL;
--		ext4fs_dirhash(dir, fname_usr_name(fname),
--				fname_len(fname), &hinfo);
--		EXT4_EXTENDED_DIRENT(de)->hash = cpu_to_le32(hinfo.hash);
-+		EXT4_EXTENDED_DIRENT(de)->hash = cpu_to_le32(hinfo->hash);
- 		EXT4_EXTENDED_DIRENT(de)->minor_hash =
--				cpu_to_le32(hinfo.minor_hash);
-+						cpu_to_le32(hinfo->minor_hash);
- 	}
- }
- 
-@@ -2195,10 +2199,9 @@ static int make_indexed_dir(handle_t *handle, struct ext4_filename *fname,
- 	if (fname->hinfo.hash_version <= DX_HASH_TEA)
- 		fname->hinfo.hash_version += EXT4_SB(dir->i_sb)->s_hash_unsigned;
- 	fname->hinfo.seed = EXT4_SB(dir->i_sb)->s_hash_seed;
--	if (ext4_hash_in_dirent(dir))
--		ext4fs_dirhash(dir, fname_usr_name(fname),
--				fname_len(fname), &fname->hinfo);
--	else
-+
-+	/* casefolded encrypted hashes are computed on fname setup */
-+	if (!ext4_hash_in_dirent(dir))
- 		ext4fs_dirhash(dir, fname_name(fname),
- 				fname_len(fname), &fname->hinfo);
- 
--- 
-2.24.0.393.g34dc348eaf-goog
+> 2. Needs serious vetting by Eric (cc'ed)
+> 3. A lot of people have been asking me for filtering of "dirent"
+> fsnotify events (i.e. create/delete) by path, which is not available
+> in those vfs functions, so ifthe concept of current->mnt flies,
+> fsnotify is going to want to use it as well.
+
+Just a caveat: current->mnt is used in this patch simply as a tag,
+which means it doesn't need to be refcounted.  I think I can prove that
+it is absolutely valid if the cred is shifted because the reference is
+held by the code that shifted the cred, but it's definitely not valid
+except for a tag comparison outside of that.  Thus, if it is useful for
+fsnotify, more thought will have to be given to refcounting it.
+
+> 4. This is currently not overlayfs (stacked fs) nor nfsd friendly.
+> Those modules do not call the path based vfs APIs, but they do have
+> the mnt stored internally.
+
+OK, so I've got to confess that I've only tested it with my container
+use case, which doesn't involve overlay or nfs.  However, as long as we
+thread path down to the API that nfds and overlayfs use, it should
+easily be made compatible with them ... do we have any documentation of
+what API this is?
+
+> I suppose you do want to be able to mount overlays and export nfs out
+> of those shifted mounts, as they are merely the foundation for
+> unprivileged container storage stack. right?
+
+If the plan of doing this as a bind mount holds, then certainly because
+any underlying filesystem has to work with it.
+
+> For overlayfs, you should at least look at ovl_override_creds() for
+> incorporating shift mount logic - or more likely at the creation of
+> ofs->creator_cred.
+
+Well, we had this discussion when I proposed shiftfs as a superblock
+based stackable filesytem, I think: the way the shift needs to use
+creds is fundamentally different from the way overlayfs uses them.  The
+ovl_override_creds is overriding with the creator's creds but the
+shifting bind mound needs to backshift through the user namespace
+currently in effect.  Since uid shifts can stack, we can make them work
+together, but they are fundamentally different things.
+
+James
 
