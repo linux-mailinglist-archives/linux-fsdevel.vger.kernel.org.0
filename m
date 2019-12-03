@@ -2,76 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C623A10FF6E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 14:57:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 262C510FFA2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 15:10:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726224AbfLCN5j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Dec 2019 08:57:39 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:58434 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727180AbfLCN5J (ORCPT
+        id S1726074AbfLCOKy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Dec 2019 09:10:54 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:34954 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725848AbfLCOKy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Dec 2019 08:57:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=pGZjUh8ellhVGI9ssg4DQAJRtWM/oSsrAhWz58uDLYE=; b=K+oWswS7BbZQhmXrTzt62YVxf
-        mKNwgluw/QFfsuhI2q2SwT2RGIfB+UDz+XkbodHVayXzf4yZ7U49NGvpJETvrCpbzXtFKKe0ncN5F
-        z6psPTwUdiyKtaWK2e1noIWYD+8MPgF0q5TJg5ftlWJ0jKgOyoxoykYbaP8J2zz7psj19Eh4snUbU
-        hfs/OXm9cR1EtryubmeT6YOH4/24FbG8gPGIVAQnIfvxnFFjfFQFRCnUIHBOMbBk35mty6yv3ZH+w
-        p1QwiAlusOVQVbSUVFmbnmZjsqCs/12YIeIKqZgxSOg3M5PdmftpMCXuZBdzfMwupQO1aGNv04Zcz
-        c0SdgoDgw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ic8fb-0005Ec-5g; Tue, 03 Dec 2019 13:56:51 +0000
-Date:   Tue, 3 Dec 2019 05:56:51 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        linux-fsdevel@vger.kernel.org, ecryptfs@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] fs: introduce is_dot_dotdot helper for cleanup
-Message-ID: <20191203135651.GU20752@bombadil.infradead.org>
-References: <1575377810-3574-1-git-send-email-yangtiezhu@loongson.cn>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1575377810-3574-1-git-send-email-yangtiezhu@loongson.cn>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        Tue, 3 Dec 2019 09:10:54 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 1DB038EE12C;
+        Tue,  3 Dec 2019 06:10:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1575382253;
+        bh=3nuYzvU4W0IRrZhc/Onz6qcXlfU1cLwtsW8xZrCdAQA=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=qrMTmuxt577cP50KHGbeCxK41/XB8T+mSVMn0tJqYc0+oaZwrDGhSOVkbtmYoJOAV
+         YteWXY7sWQQCGlhpgeiFqWZ9qEJ83EIYOdgedTYBOA0cdlRw67xhV6Sa6WUaCRzzyM
+         LRGUlBxGTxF9hYTeDx6LzDK/qWaEaqdXShd0lEJM=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id OOVPYLao4Iy5; Tue,  3 Dec 2019 06:10:52 -0800 (PST)
+Received: from jarvis.lan (unknown [50.35.76.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 43FB78EE0D2;
+        Tue,  3 Dec 2019 06:10:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1575382252;
+        bh=3nuYzvU4W0IRrZhc/Onz6qcXlfU1cLwtsW8xZrCdAQA=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Q/0oXsFR4O6RqjoSvHHxCqAeEz6xvfRv/fqalskRH+aUEHk54xMHwCuJ31EscHovJ
+         L3vmw+mZvJinAPoanvQgpdVop48pk5sbnCkDzyW9T+tH+J7k8Q5EJsDkgjxYvbVltW
+         Bv3nO+Px9OhSLE229zabngtRrIWMlgFuG8lMiUVc=
+Message-ID: <1575382251.3435.4.camel@HansenPartnership.com>
+Subject: Re: [PATCH 1/2] fs: introduce uid/gid shifting bind mount
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Date:   Tue, 03 Dec 2019 06:10:51 -0800
+In-Reply-To: <CAOQ4uxgcD5gwOXJfXaNki8t3=6oq32TB9URDpsoQo9A5tyCfqw@mail.gmail.com>
+References: <1575335637.24227.26.camel@HansenPartnership.com>
+         <1575335700.24227.27.camel@HansenPartnership.com>
+         <CAOQ4uxiqc_bsa88kZG2PNLPcTqFojJU_24qL32qw-VVLG+rRFw@mail.gmail.com>
+         <1575349974.31937.11.camel@HansenPartnership.com>
+         <CAOQ4uxgcD5gwOXJfXaNki8t3=6oq32TB9URDpsoQo9A5tyCfqw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 03, 2019 at 08:56:50PM +0800, Tiezhu Yang wrote:
-> There exists many similar and duplicate codes to check "." and "..",
-> so introduce is_dot_dotdot helper to make the code more clean.
+[splitting topics for ease of threading]
+On Tue, 2019-12-03 at 08:55 +0200, Amir Goldstein wrote:
+> On Tue, Dec 3, 2019 at 7:12 AM James Bottomley
+> <James.Bottomley@hansenpartnership.com> wrote:
+> > 
+> > On Tue, 2019-12-03 at 06:51 +0200, Amir Goldstein wrote:
+> > > [cc: ebiederman]
+[...]
+> > > 2. Needs serious vetting by Eric (cc'ed)
+> > > 3. A lot of people have been asking me for filtering of "dirent"
+> > > fsnotify events (i.e. create/delete) by path, which is not
+> > > available in those vfs functions, so ifthe concept of current-
+> > > >mnt flies, fsnotify is going to want to use it as well.
+> > 
+> > Just a caveat: current->mnt is used in this patch simply as a tag,
+> > which means it doesn't need to be refcounted.  I think I can prove
+> > that it is absolutely valid if the cred is shifted because the
+> > reference is held by the code that shifted the cred, but it's
+> > definitely not valid except for a tag comparison outside of
+> > that.  Thus, if it is useful for fsnotify, more thought will have
+> > to be given to refcounting it.
+> > 
 > 
-> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-> ---
-> 
-> v2:
->   - use the better performance implementation of is_dot_dotdot
->   - make it static inline and move it to include/linux/fs.h
+> Yes. Is there anything preventing us from taking refcount on
+> current->mnt?
 
-Ugh, not more crap in fs.h.
+We could, but what would it usefully mean?  It would just be the last
+mnt that had its credentials shifted.  I think stashing a refcounted
+mnt in the task structure is reasonably easy:  The creds are
+refcounted, so you simply follow all the task mnt_cred logic I added
+for releasing the ref in the correct places, so if you want to do that,
+I can simply rename this tag to something less generic ... unless you
+have some idea about using the last shift mnt?
 
-$ ls -l --sort=size include/linux |head
--rw-r--r--  1 willy willy 154148 Nov 29 22:35 netdevice.h
--rw-r--r--  1 willy willy 130488 Nov 29 22:35 skbuff.h
--rw-r--r--  1 willy willy 123540 Nov 29 22:35 pci_ids.h
--rw-r--r--  1 willy willy 118991 Nov 29 22:35 fs.h
+James
 
-I think this probably fits well in namei.h.  And I think it works
-better with bare 'name' and 'len' arguments, rather than taking a qstr.
 
-And, as I asked twice in the last round of review, did you benchmark
-this change?
