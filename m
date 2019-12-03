@@ -2,201 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0317F11016C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 16:42:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D85BB1101E6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 17:09:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726131AbfLCPmf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Dec 2019 10:42:35 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:50160 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbfLCPmf (ORCPT
+        id S1726811AbfLCQJl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Dec 2019 11:09:41 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:38240 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726131AbfLCQJl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Dec 2019 10:42:35 -0500
-Received: from [81.92.17.147] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1icAHg-0004aI-Cd; Tue, 03 Dec 2019 15:40:16 +0000
-Date:   Tue, 3 Dec 2019 16:40:13 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Laurent Vivier <laurent@vivier.eu>
-Cc:     linux-kernel@vger.kernel.org,
-        Henning Schild <henning.schild@siemens.com>,
-        Dmitry Safonov <dima@arista.com>, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        Jann Horn <jannh@google.com>, Greg Kurz <groug@kaod.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        linux-fsdevel@vger.kernel.org,
-        =?utf-8?Q?C=C3=A9dric?= Le Goater <clg@kaod.org>,
-        dhowells@redhat.com
-Subject: Re: [PATCH v7 1/1] ns: add binfmt_misc to the user namespace
-Message-ID: <20191203154012.opirpicsuc6ou3cx@wittgenstein>
-References: <20191107140304.8426-1-laurent@vivier.eu>
- <20191107140304.8426-2-laurent@vivier.eu>
+        Tue, 3 Dec 2019 11:09:41 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB3G9101187017;
+        Tue, 3 Dec 2019 16:09:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=C0csOh2IiwBU5rvm/p9C2Rx3FifNjZcosDBlbkKZ43o=;
+ b=boQXu3APvvYLEv5xvZUy66ylMTjWdR8SQ8XqXS/bsfn4lRshgT6DmNGUWx475cUzj13b
+ M5pssdl5Wudwqxkldan7mmqoPL+RfjvQtP6meKmRqnSnzsdJUIpV45NodVSYd0n+8W3+
+ zt0LSUYI3j1GX7AZgBaWYFvKqq3beN+jJJXRy8tfORrs4hv8S0ymJyVAYq59fIB8rRsI
+ VxEX2Alcz5CE4XB8RnIXuCPEWAYjZeVAPv3B/UZ8eLx185N+11H9ORIsmVYaty4igRV+
+ 8VIE3lmuyUn+VG+yQYJvuZv69TFc9dFDmLXOMp1r7XiPbc/m0WKF615cEs4eBF+alVeS 7w== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2wkfuu8tgr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Dec 2019 16:09:05 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB3G8lZh034082;
+        Tue, 3 Dec 2019 16:09:04 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2wn4qq6cg0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Dec 2019 16:09:04 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xB3G8e93008786;
+        Tue, 3 Dec 2019 16:08:40 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 03 Dec 2019 08:08:40 -0800
+Date:   Tue, 3 Dec 2019 08:08:39 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Jan Stancek <jstancek@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Memory Management <mm-qe@redhat.com>,
+        LTP Mailing List <ltp@lists.linux.it>,
+        Linux Stable maillist <stable@vger.kernel.org>,
+        CKI Project <cki-project@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [bug] userspace hitting sporadic SIGBUS on xfs (Power9,
+ ppc64le), v4.19 and later
+Message-ID: <20191203160839.GJ7335@magnolia>
+References: <cki.6C6A189643.3T2ZUWEMOI@redhat.com>
+ <1738119916.14437244.1575151003345.JavaMail.zimbra@redhat.com>
+ <8736e3ffen.fsf@mpe.ellerman.id.au>
+ <1420623640.14527843.1575289859701.JavaMail.zimbra@redhat.com>
+ <1766807082.14812757.1575377439007.JavaMail.zimbra@redhat.com>
+ <20191203130757.GA2267@infradead.org>
+ <433638211.14837331.1575383728189.JavaMail.zimbra@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191107140304.8426-2-laurent@vivier.eu>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <433638211.14837331.1575383728189.JavaMail.zimbra@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9460 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912030122
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9460 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912030122
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 07, 2019 at 03:03:04PM +0100, Laurent Vivier wrote:
-> This patch allows to have a different binfmt_misc configuration
-> for each new user namespace. By default, the binfmt_misc configuration
-> is the one of the previous level, but if the binfmt_misc filesystem is
-> mounted in the new namespace a new empty binfmt instance is created and
-> used in this namespace.
+On Tue, Dec 03, 2019 at 09:35:28AM -0500, Jan Stancek wrote:
 > 
-> For instance, using "unshare" we can start a chroot of another
-> architecture and configure the binfmt_misc interpreter without being root
-> to run the binaries in this chroot.
+> ----- Original Message -----
+> > On Tue, Dec 03, 2019 at 07:50:39AM -0500, Jan Stancek wrote:
+> > > My theory is that there's a race in iomap. There appear to be
+> > > interleaved calls to iomap_set_range_uptodate() for same page
+> > > with varying offset and length. Each call sees bitmap as _not_
+> > > entirely "uptodate" and hence doesn't call SetPageUptodate().
+> > > Even though each bit in bitmap ends up uptodate by the time
+> > > all calls finish.
+> > 
+> > Weird.  That should be prevented by the page lock that all callers
+> > of iomap_set_range_uptodate.  But in case I miss something, does
+> > the patch below trigger?  If not it is not jut a race, but might
+> > be some weird ordering problem with the bitops, especially if it
+> > only triggers on ppc, which is very weakly ordered.
+> > 
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index d33c7bc5ee92..25e942c71590 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -148,6 +148,8 @@ iomap_set_range_uptodate(struct page *page, unsigned off,
+> > unsigned len)
+> >  	unsigned int i;
+> >  	bool uptodate = true;
+> >  
+> > +	WARN_ON_ONCE(!PageLocked(page));
+> > +
+> >  	if (iop) {
+> >  		for (i = 0; i < PAGE_SIZE / i_blocksize(inode); i++) {
+> >  			if (i >= first && i <= last)
+> > 
 > 
-> Signed-off-by: Laurent Vivier <laurent@vivier.eu>
-> Acked-by: Andrei Vagin <avagin@gmail.com>
-> ---
->  fs/binfmt_misc.c               | 115 +++++++++++++++++++++++++--------
->  include/linux/user_namespace.h |  15 +++++
->  kernel/user.c                  |  14 ++++
->  kernel/user_namespace.c        |   3 +
->  4 files changed, 119 insertions(+), 28 deletions(-)
+> Hit it pretty quick this time:
 > 
-> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-> index cdb45829354d..ba5f0d2ade96 100644
-> --- a/fs/binfmt_misc.c
-> +++ b/fs/binfmt_misc.c
-> @@ -40,9 +40,6 @@ enum {
->  	VERBOSE_STATUS = 1 /* make it zero to save 400 bytes kernel memory */
->  };
->  
-> -static LIST_HEAD(entries);
-> -static int enabled = 1;
-> -
->  enum {Enabled, Magic};
->  #define MISC_FMT_PRESERVE_ARGV0 (1 << 31)
->  #define MISC_FMT_OPEN_BINARY (1 << 30)
-> @@ -62,10 +59,7 @@ typedef struct {
->  	struct file *interp_file;
->  } Node;
->  
-> -static DEFINE_RWLOCK(entries_lock);
->  static struct file_system_type bm_fs_type;
-> -static struct vfsmount *bm_mnt;
-> -static int entry_count;
->  
->  /*
->   * Max length of the register string.  Determined by:
-> @@ -82,18 +76,37 @@ static int entry_count;
->   */
->  #define MAX_REGISTER_LENGTH 1920
->  
-> +static struct binfmt_namespace *binfmt_ns(struct user_namespace *ns)
-> +{
-> +	struct binfmt_namespace *b_ns;
-> +
-> +	while (ns) {
-> +		b_ns = READ_ONCE(ns->binfmt_ns);
-> +		if (b_ns)
-> +			return b_ns;
-> +		ns = ns->parent;
-> +	}
-> +	/* as the first user namespace is initialized with
-> +	 * &init_binfmt_ns we should never come here
-> +	 * but we try to stay safe by logging a warning
-> +	 * and returning a sane value
-> +	 */
-> +	WARN_ON_ONCE(1);
-> +	return &init_binfmt_ns;
-> +}
-> +
->  /*
->   * Check if we support the binfmt
->   * if we do, return the node, else NULL
->   * locking is done in load_misc_binary
->   */
-> -static Node *check_file(struct linux_binprm *bprm)
-> +static Node *check_file(struct binfmt_namespace *ns, struct linux_binprm *bprm)
->  {
->  	char *p = strrchr(bprm->interp, '.');
->  	struct list_head *l;
->  
->  	/* Walk all the registered handlers. */
-> -	list_for_each(l, &entries) {
-> +	list_for_each(l, &ns->entries) {
->  		Node *e = list_entry(l, Node, list);
->  		char *s;
->  		int j;
-> @@ -135,17 +148,18 @@ static int load_misc_binary(struct linux_binprm *bprm)
->  	struct file *interp_file = NULL;
->  	int retval;
->  	int fd_binary = -1;
-> +	struct binfmt_namespace *ns = binfmt_ns(current_user_ns());
->  
->  	retval = -ENOEXEC;
-> -	if (!enabled)
-> +	if (!ns->enabled)
->  		return retval;
->  
->  	/* to keep locking time low, we copy the interpreter string */
-> -	read_lock(&entries_lock);
-> -	fmt = check_file(bprm);
-> +	read_lock(&ns->entries_lock);
-> +	fmt = check_file(ns, bprm);
->  	if (fmt)
->  		dget(fmt->dentry);
-> -	read_unlock(&entries_lock);
-> +	read_unlock(&ns->entries_lock);
->  	if (!fmt)
->  		return retval;
->  
-> @@ -611,19 +625,19 @@ static void bm_evict_inode(struct inode *inode)
->  	kfree(e);
->  }
->  
-> -static void kill_node(Node *e)
-> +static void kill_node(struct binfmt_namespace *ns, Node *e)
->  {
->  	struct dentry *dentry;
->  
-> -	write_lock(&entries_lock);
-> +	write_lock(&ns->entries_lock);
->  	list_del_init(&e->list);
-> -	write_unlock(&entries_lock);
-> +	write_unlock(&ns->entries_lock);
->  
->  	dentry = e->dentry;
->  	drop_nlink(d_inode(dentry));
->  	d_drop(dentry);
->  	dput(dentry);
-> -	simple_release_fs(&bm_mnt, &entry_count);
-> +	simple_release_fs(&ns->bm_mnt, &ns->entry_count);
->  }
->  
->  /* /<entry> */
-> @@ -653,6 +667,9 @@ static ssize_t bm_entry_write(struct file *file, const char __user *buffer,
->  	struct dentry *root;
->  	Node *e = file_inode(file)->i_private;
->  	int res = parse_command(buffer, count);
-> +	struct binfmt_namespace *ns;
-> +
-> +	ns = binfmt_ns(file->f_path.dentry->d_sb->s_user_ns);
+> # uptime
+>  09:27:42 up 22 min,  2 users,  load average: 0.09, 13.38, 26.18
+> 
+> # /mnt/testarea/ltp/testcases/bin/genbessel                                                                                                                                     
+> Bus error (core dumped)
+> 
+> # dmesg | grep -i -e warn -e call                                                                                                                                               
+> [    0.000000] dt-cpu-ftrs: not enabling: system-call-vectored (disabled or unsupported by kernel)
+> [    0.000000] random: get_random_u64 called from cache_random_seq_create+0x98/0x1e0 with crng_init=0
+> [    0.000000] rcu:     Offload RCU callbacks from CPUs: (none).
+> [    5.312075] megaraid_sas 0031:01:00.0: megasas_disable_intr_fusion is called outbound_intr_mask:0x40000009
+> [    5.357307] megaraid_sas 0031:01:00.0: megasas_disable_intr_fusion is called outbound_intr_mask:0x40000009
+> [    5.485126] megaraid_sas 0031:01:00.0: megasas_enable_intr_fusion is called outbound_intr_mask:0x40000000
+> 
+> So, extra WARN_ON_ONCE applied on top of v5.4-8836-g81b6b96475ac
+> did not trigger.
+> 
+> Is it possible for iomap code to submit multiple bio-s for same
+> locked page and then receive callbacks in parallel?
 
-Sorry for being so late to the party.
+Yes, if (say) you have 64k pages on a 4k-block filesystem and the extent
+mapping for all 16 blocks aren't contiguous, then iomap will issue
+separate bios for each physical fragment it finds.  iomap will call
+submit_bio on those bios whenever it thinks it's done filling the bio,
+so you can indeed get multiple callbacks in parallel.
 
-The naked dereferences here are not very pretty and also likely mean you
-access the wrong dentry when you do (weird but possible) things like:
-
-mount -t overlay overlay -o lowerdir=/proc/sys/fs/binfmt_misc,workdir=/work,upperdir=/upper /merged
-
-(which might already cause trouble in other parts of this code)
-
-so I think it's better if you replace 
-file->f_path.dentry->d_sb->s_user_ns
-with
-file_dentry(file)->d_sb->s_user_ns
-in places where you do naked dereferences now.
+--D
