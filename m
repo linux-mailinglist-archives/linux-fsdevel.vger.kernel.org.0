@@ -2,203 +2,208 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6466510FE13
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 13:50:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D722710FE38
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 13:57:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726190AbfLCMur (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Dec 2019 07:50:47 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:48299 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726086AbfLCMur (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Dec 2019 07:50:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575377445;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vUK+qbv4vcR++ilRAwdwA/Hrp9NPAPx99bcSEG1xv8w=;
-        b=MqDtkLKXV5FWiVTfwBWsuyDRDAUbVCn+lFGbDRVEbCyUmVUamgzFtLg7FQqqy43k18enwo
-        udmLBoWGKvvOVpsn3nBpYm9HhNnzxPSMZ9NuS1Mwx8Ug43/u+r3bDF6VehEy2jpIg02fxM
-        E/uMDEAu0FT6WLNCNVdLil5nVfR1pEw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-329-twkIHNhdORWSSUH0wNu3iA-1; Tue, 03 Dec 2019 07:50:41 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0AABB18C35A4;
-        Tue,  3 Dec 2019 12:50:40 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D0F9A67E5D;
-        Tue,  3 Dec 2019 12:50:39 +0000 (UTC)
-Received: from zmail17.collab.prod.int.phx2.redhat.com (zmail17.collab.prod.int.phx2.redhat.com [10.5.83.19])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 4498918089C8;
-        Tue,  3 Dec 2019 12:50:39 +0000 (UTC)
-Date:   Tue, 3 Dec 2019 07:50:39 -0500 (EST)
-From:   Jan Stancek <jstancek@redhat.com>
-To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        hch@infradead.org, darrick.wong@oracle.com
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        Memory Management <mm-qe@redhat.com>,
-        LTP Mailing List <ltp@lists.linux.it>,
-        Linux Stable maillist <stable@vger.kernel.org>,
-        CKI Project <cki-project@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Message-ID: <1766807082.14812757.1575377439007.JavaMail.zimbra@redhat.com>
-In-Reply-To: <1420623640.14527843.1575289859701.JavaMail.zimbra@redhat.com>
-References: <cki.6C6A189643.3T2ZUWEMOI@redhat.com> <1738119916.14437244.1575151003345.JavaMail.zimbra@redhat.com> <8736e3ffen.fsf@mpe.ellerman.id.au> <1420623640.14527843.1575289859701.JavaMail.zimbra@redhat.com>
-Subject: [bug] userspace hitting sporadic SIGBUS on xfs (Power9, ppc64le),
- v4.19 and later
-MIME-Version: 1.0
-X-Originating-IP: [10.43.17.163, 10.4.195.10]
-Thread-Topic: =?utf-8?B?4p2MIEZBSUw6?= Test report for kernel
- 5.3.13-3b5f971.cki (stable-queue)
-Thread-Index: cteAZVs1buDEh+CFMxyFiJYhnT9cJLxMrbue
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-MC-Unique: twkIHNhdORWSSUH0wNu3iA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+        id S1726086AbfLCM5a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Dec 2019 07:57:30 -0500
+Received: from mail.loongson.cn ([114.242.206.163]:55734 "EHLO loongson.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725957AbfLCM5a (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Dec 2019 07:57:30 -0500
+Received: from linux.localdomain (unknown [123.138.236.242])
+        by mail.loongson.cn (Coremail) with SMTP id AQAAf9DxLxelW+ZdeWkGAA--.10S2;
+        Tue, 03 Dec 2019 20:57:10 +0800 (CST)
+From:   Tiezhu Yang <yangtiezhu@loongson.cn>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Tyler Hicks <tyhicks@canonical.com>
+Cc:     linux-fsdevel@vger.kernel.org, ecryptfs@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] fs: introduce is_dot_dotdot helper for cleanup
+Date:   Tue,  3 Dec 2019 20:56:50 +0800
+Message-Id: <1575377810-3574-1-git-send-email-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.1.0
+X-CM-TRANSID: AQAAf9DxLxelW+ZdeWkGAA--.10S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCFWktry5XFykKr13Zr43Wrg_yoWrKrWxpF
+        43JF97Jrn7JFyY9rn5tF1rA34Yv34xGr17GrZ7Ga4Iyry2qrnYqrWIyryF93Z3JFZ8Zws0
+        gan5G34rCa43taDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvvb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+        A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
+        jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwV
+        C2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+        0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr
+        1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY
+        04v7MxkIecxEwVAFwVW5JwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
+        C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
+        wI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
+        v20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E
+        87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
+        IFyTuYvjxUg0JmDUUUU
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+There exists many similar and duplicate codes to check "." and "..",
+so introduce is_dot_dotdot helper to make the code more clean.
 
-(This bug report is summary from thread [1] with some additions)
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+---
 
-User-space binaries on Power9 ppc64le (with 64k pages) on xfs
-filesystem are sporadically hitting SIGBUS:
+v2:
+  - use the better performance implementation of is_dot_dotdot
+  - make it static inline and move it to include/linux/fs.h
 
----------- 8< ----------
-(gdb) r
-Starting program: /mnt/testarea/ltp/testcases/bin/genasin
+ fs/crypto/fname.c    | 15 ++-------------
+ fs/ecryptfs/crypto.c | 13 ++-----------
+ fs/f2fs/f2fs.h       | 11 -----------
+ fs/namei.c           |  6 ++----
+ include/linux/fs.h   | 10 ++++++++++
+ 5 files changed, 16 insertions(+), 39 deletions(-)
 
-Program received signal SIGBUS, Bus error.
-dl_main (phdr=0x10000040, phnum=<optimized out>, user_entry=0x7fffffffe760, auxv=<optimized out>) at rtld.c:1362
-1362        switch (ph->p_type)
-
-(gdb) p ph
-$1 = (const Elf64_Phdr *) 0x10000040
-
-(gdb) p *ph
-Cannot access memory at address 0x10000040
-
-(gdb) info proc map
-process 1110670
-Mapped address spaces:
-
-          Start Addr           End Addr       Size     Offset objfile
-          0x10000000         0x10010000    0x10000        0x0 /mnt/testarea/ltp/testcases/bin/genasin
-          0x10010000         0x10030000    0x20000        0x0 /mnt/testarea/ltp/testcases/bin/genasin
-      0x7ffff7f90000     0x7ffff7fb0000    0x20000        0x0 [vdso]
-      0x7ffff7fb0000     0x7ffff7fe0000    0x30000        0x0 /usr/lib64/ld-2.30.so
-      0x7ffff7fe0000     0x7ffff8000000    0x20000    0x20000 /usr/lib64/ld-2.30.so
-      0x7ffffffd0000     0x800000000000    0x30000        0x0 [stack]
-
-(gdb) x/1x 0x10000040
-0x10000040:     Cannot access memory at address 0x10000040
----------- >8 ----------
-
-When this happens the binary continues to hit SIGBUS until page
-is released, for example by: echo 3 > /proc/sys/vm/drop_caches
-
-The issue goes back to at least v4.19.
-
-I can semi-reliably reproduce it with LTP is installed to /mnt/testarea/ltp by:
-while [ True ]; do
-        echo 3 > /proc/sys/vm/drop_caches
-        rm -f /mnt/testarea/ltp/results/RUNTEST.log /mnt/testarea/ltp/output/RUNTEST.run.log
-        ./runltp -p -d results -l RUNTEST.log -o RUNTEST.run.log -f math
-        grep FAIL /mnt/testarea/ltp/results/RUNTEST.log && exit 1
-done
-
-and some stress activity in other terminal (e.g. kernel build).
-Sometimes in minutes, sometimes in hours. It is not reliable
-enough to get meaningful bisect results.
-
-My theory is that there's a race in iomap. There appear to be
-interleaved calls to iomap_set_range_uptodate() for same page
-with varying offset and length. Each call sees bitmap as _not_
-entirely "uptodate" and hence doesn't call SetPageUptodate().
-Even though each bit in bitmap ends up uptodate by the time
-all calls finish.
-
-For example, with following traces:
-
-iomap_set_range_uptodate()
-...
-        if (uptodate && !PageError(page))
-                SetPageUptodate(page);
-+       
-+       if (mycheck(page)) {
-+               trace_printk("page: %px, iop: %px, uptodate: %d, !PageError(page): %d, flags: %lx\n", page, iop, uptodate, !PageError(page), page->flags);
-+               trace_printk("first: %u, last: %u, off: %u, len: %u, i: %u\n", first, last, off, len, i);
-+       }
-
-I get:
-         genacos-18471 [057] ....   162.465730: iomap_readpages: mapping: c000003f185a1ab0
-         genacos-18471 [057] ....   162.465732: iomap_page_create: iomap_page_create page: c00c00000fe26180, page->private: 0000000000000000, iop: c000003fc70a19c0, flags: 3ffff800000001
-         genacos-18471 [057] ....   162.465736: iomap_set_range_uptodate: page: c00c00000fe26180, iop: c000003fc70a19c0, uptodate: 0, !PageError(page): 1, flags: 3ffff800002001
-         genacos-18471 [057] ....   162.465736: iomap_set_range_uptodate: first: 1, last: 14, off: 4096, len: 57344, i: 16
-          <idle>-0     [060] ..s.   162.534862: iomap_set_range_uptodate: page: c00c00000fe26180, iop: c000003fc70a19c0, uptodate: 0, !PageError(page): 1, flags: 3ffff800002081
-          <idle>-0     [061] ..s.   162.534862: iomap_set_range_uptodate: page: c00c00000fe26180, iop: c000003fc70a19c0, uptodate: 0, !PageError(page): 1, flags: 3ffff800002081
-          <idle>-0     [060] ..s.   162.534864: iomap_set_range_uptodate: first: 0, last: 0, off: 0, len: 4096, i: 16
-          <idle>-0     [061] ..s.   162.534864: iomap_set_range_uptodate: first: 15, last: 15, off: 61440, len: 4096, i: 16
-
-This page doesn't have Uptodate flag set, which leads to filemap_fault()
-returning VM_FAULT_SIGBUS:
-
-crash> p/x ((struct page *) 0xc00c00000fe26180)->flags                                                                                                                                             
-$1 = 0x3ffff800002032
-
-crash> kmem -g 0x3ffff800002032
-FLAGS: 3ffff800002032
-  PAGE-FLAG       BIT  VALUE
-  PG_error          1  0000002
-  PG_dirty          4  0000010
-  PG_lru            5  0000020
-  PG_private_2     13  0002000
-  PG_fscache       13  0002000
-  PG_savepinned     4  0000010
-  PG_double_map    13  0002000
-
-But iomap_page->uptodate in page->private suggests all bits are uptodate:
-
-crash> p/x ((struct page *) 0xc00c00000fe26180)->private
-$2 = 0xc000003fc70a19c0
-
-crash> p/x ((struct iomap_page *) 0xc000003fc70a19c0)->uptodate                                                                                                                                    
-$3 = {0xffff, 0x0}
-
-
-It appears (after ~4 hours) that I can avoid the problem if I split
-the loop so that bits are checked only after all updates are made.
-Not sure if this correct approach, or just making it less reproducible:
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index e25901ae3ff4..abe37031c93d 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -131,7 +131,11 @@ iomap_set_range_uptodate(struct page *page, unsigned off, unsigned len)
-                for (i = 0; i < PAGE_SIZE / i_blocksize(inode); i++) {
-                        if (i >= first && i <= last)
-                                set_bit(i, iop->uptodate);
--                       else if (!test_bit(i, iop->uptodate))
-+               }
-+               for (i = 0; i < PAGE_SIZE / i_blocksize(inode); i++) {
-+                       if (i >= first && i <= last)
-+                               continue;
-+                       if (!test_bit(i, iop->uptodate))
-                                uptodate = false;
-                }
-        }
-
-Thanks,
-Jan
-
-[1] https://lore.kernel.org/stable/1420623640.14527843.1575289859701.JavaMail.zimbra@redhat.com/T/#u
+diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+index 3da3707..36be864 100644
+--- a/fs/crypto/fname.c
++++ b/fs/crypto/fname.c
+@@ -15,17 +15,6 @@
+ #include <crypto/skcipher.h>
+ #include "fscrypt_private.h"
+ 
+-static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
+-{
+-	if (str->len == 1 && str->name[0] == '.')
+-		return true;
+-
+-	if (str->len == 2 && str->name[0] == '.' && str->name[1] == '.')
+-		return true;
+-
+-	return false;
+-}
+-
+ /**
+  * fname_encrypt() - encrypt a filename
+  *
+@@ -255,7 +244,7 @@ int fscrypt_fname_disk_to_usr(struct inode *inode,
+ 	const struct qstr qname = FSTR_TO_QSTR(iname);
+ 	struct fscrypt_digested_name digested_name;
+ 
+-	if (fscrypt_is_dot_dotdot(&qname)) {
++	if (is_dot_dotdot(&qname)) {
+ 		oname->name[0] = '.';
+ 		oname->name[iname->len - 1] = '.';
+ 		oname->len = iname->len;
+@@ -323,7 +312,7 @@ int fscrypt_setup_filename(struct inode *dir, const struct qstr *iname,
+ 	memset(fname, 0, sizeof(struct fscrypt_name));
+ 	fname->usr_fname = iname;
+ 
+-	if (!IS_ENCRYPTED(dir) || fscrypt_is_dot_dotdot(iname)) {
++	if (!IS_ENCRYPTED(dir) || is_dot_dotdot(iname)) {
+ 		fname->disk_name.name = (unsigned char *)iname->name;
+ 		fname->disk_name.len = iname->len;
+ 		return 0;
+diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
+index f91db24..6f4db74 100644
+--- a/fs/ecryptfs/crypto.c
++++ b/fs/ecryptfs/crypto.c
+@@ -1991,16 +1991,6 @@ int ecryptfs_encrypt_and_encode_filename(
+ 	return rc;
+ }
+ 
+-static bool is_dot_dotdot(const char *name, size_t name_size)
+-{
+-	if (name_size == 1 && name[0] == '.')
+-		return true;
+-	else if (name_size == 2 && name[0] == '.' && name[1] == '.')
+-		return true;
+-
+-	return false;
+-}
+-
+ /**
+  * ecryptfs_decode_and_decrypt_filename - converts the encoded cipher text name to decoded plaintext
+  * @plaintext_name: The plaintext name
+@@ -2020,6 +2010,7 @@ int ecryptfs_decode_and_decrypt_filename(char **plaintext_name,
+ {
+ 	struct ecryptfs_mount_crypt_stat *mount_crypt_stat =
+ 		&ecryptfs_superblock_to_private(sb)->mount_crypt_stat;
++	const struct qstr file_name = {.name = name, .len = name_size};
+ 	char *decoded_name;
+ 	size_t decoded_name_size;
+ 	size_t packet_size;
+@@ -2027,7 +2018,7 @@ int ecryptfs_decode_and_decrypt_filename(char **plaintext_name,
+ 
+ 	if ((mount_crypt_stat->flags & ECRYPTFS_GLOBAL_ENCRYPT_FILENAMES) &&
+ 	    !(mount_crypt_stat->flags & ECRYPTFS_ENCRYPTED_VIEW_ENABLED)) {
+-		if (is_dot_dotdot(name, name_size)) {
++		if (is_dot_dotdot(&file_name)) {
+ 			rc = ecryptfs_copy_filename(plaintext_name,
+ 						    plaintext_name_size,
+ 						    name, name_size);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 5a888a0..3d5e684 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2767,17 +2767,6 @@ static inline bool f2fs_cp_error(struct f2fs_sb_info *sbi)
+ 	return is_set_ckpt_flags(sbi, CP_ERROR_FLAG);
+ }
+ 
+-static inline bool is_dot_dotdot(const struct qstr *str)
+-{
+-	if (str->len == 1 && str->name[0] == '.')
+-		return true;
+-
+-	if (str->len == 2 && str->name[0] == '.' && str->name[1] == '.')
+-		return true;
+-
+-	return false;
+-}
+-
+ static inline bool f2fs_may_extent_tree(struct inode *inode)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+diff --git a/fs/namei.c b/fs/namei.c
+index 2dda552..babe7e8 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2458,10 +2458,8 @@ static int lookup_one_len_common(const char *name, struct dentry *base,
+ 	if (!len)
+ 		return -EACCES;
+ 
+-	if (unlikely(name[0] == '.')) {
+-		if (len < 2 || (len == 2 && name[1] == '.'))
+-			return -EACCES;
+-	}
++	if (is_dot_dotdot(this))
++		return -EACCES;
+ 
+ 	while (len--) {
+ 		unsigned int c = *(const unsigned char *)name++;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 98e0349..78a2932 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3627,4 +3627,14 @@ static inline int inode_drain_writes(struct inode *inode)
+ 	return filemap_write_and_wait(inode->i_mapping);
+ }
+ 
++static inline bool is_dot_dotdot(const struct qstr *str)
++{
++	if (unlikely(str->name[0] == '.')) {
++		if (str->len < 2 || (str->len == 2 && str->name[1] == '.'))
++			return true;
++	}
++
++	return false;
++}
++
+ #endif /* _LINUX_FS_H */
+-- 
+2.1.0
 
