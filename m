@@ -2,306 +2,228 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0857110F797
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 07:02:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E58DF10F825
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 07:56:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbfLCGC2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Dec 2019 01:02:28 -0500
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:41629 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726521AbfLCGC1 (ORCPT
+        id S1727276AbfLCGzy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Dec 2019 01:55:54 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:40875 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727192AbfLCGzy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Dec 2019 01:02:27 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R481e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0TjnKXaQ_1575352938;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TjnKXaQ_1575352938)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 03 Dec 2019 14:02:22 +0800
-Subject: [PATCH v3 2/2] sched/numa: documentation for per-cgroup numa
- statistics
-From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>
-References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
- <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
- <040def80-9c38-4bcc-e4a8-8a0d10f131ed@linux.alibaba.com>
-Message-ID: <d295141d-e1bf-10f5-a489-a7055ca6d509@linux.alibaba.com>
-Date:   Tue, 3 Dec 2019 14:02:18 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.0
+        Tue, 3 Dec 2019 01:55:54 -0500
+Received: by mail-yw1-f67.google.com with SMTP id i126so914145ywe.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Dec 2019 22:55:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Nc18I09yB+Mc8wuPxVSss0W24eagOvvGI4YSUAB9G6g=;
+        b=rTSRUnF1FwGCIkkrkvlqQJLStZC0vxh3g5+mH9+a+6tc4PBj1YuvvRCa0XRCg+jH/2
+         0TMaNpQ05sPBkJon/uuSOHb/gn/PCtNDaZsz5VbXpCG0NJfFYPqHLg/xFydUELCAYDpF
+         p3uO8v/hFwrFDP59hjZW2J9GMTUVHnHS5p53T7fdX8JaCRlbHv4nzZ+1GxIt7u6YNo/R
+         slCBAk4QYT3Mqt3jIr4/MuAvNC5Lq4du9EClWLNVt5MhOobA/EGK1Bz9tZJka5/F1EcY
+         iaZOIPKHlq9Xa+UFxVxTy8sEEQM0LvStLzi79dmgd0/4EJXAahQGc7hO0c8cm6zVNd4F
+         regA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Nc18I09yB+Mc8wuPxVSss0W24eagOvvGI4YSUAB9G6g=;
+        b=Ym6IuPmKlly4u0ibntxfdTs7yllLZnTMHaWi2JiH/fM877QFpiuGhbheiU/E1jc+Or
+         /rtOJG/xkpwZkbxYE1XhLmCB7rwz5G+0I8uNYej+pX7VfNwjDq3CAUsamoUiPYqcTK1k
+         z+HnakiPw46C9avgELJ/hHONFTGJko5EPbKmFYpaEvN+EiVU6zRtFgK+4+kfML3JPv0C
+         V3vErD0fq6f7ZW8myAgZVLFnFwwL0uyhgiPPJxLAmp8vqhMcsxu95pPsNPsrxdl+DpS5
+         cJrAh/eXs+kwgT9IX5ZSWD9/9grmtWORP3pQDKNUR6ZnApjg6de9L1OP6g78Th88qAnO
+         zAeQ==
+X-Gm-Message-State: APjAAAXX+5oTlicZwnX5XnppMr2XwWh5GiVWinAqC62Y17u07Cr5+t13
+        Cox2NZC3Xih9LGteiYp1m6DzaM6FgzmnMXxWPeU=
+X-Google-Smtp-Source: APXvYqybYsJGGY2ZSwf6ikMWT8HxiI9B7kJJ49oKPF7Q6VGg5h93bu31eHQsCPiHmxhzf2IWHBobum4Bf4T9BOK22Y0=
+X-Received: by 2002:a81:1887:: with SMTP id 129mr2528978ywy.25.1575356152525;
+ Mon, 02 Dec 2019 22:55:52 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <040def80-9c38-4bcc-e4a8-8a0d10f131ed@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <1575335637.24227.26.camel@HansenPartnership.com>
+ <1575335700.24227.27.camel@HansenPartnership.com> <CAOQ4uxiqc_bsa88kZG2PNLPcTqFojJU_24qL32qw-VVLG+rRFw@mail.gmail.com>
+ <1575349974.31937.11.camel@HansenPartnership.com>
+In-Reply-To: <1575349974.31937.11.camel@HansenPartnership.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 3 Dec 2019 08:55:41 +0200
+Message-ID: <CAOQ4uxgcD5gwOXJfXaNki8t3=6oq32TB9URDpsoQo9A5tyCfqw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fs: introduce uid/gid shifting bind mount
+To:     James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add the description for 'numa_locality', also a new doc to explain
-the details on how to deal with the per-cgroup numa statistics.
+On Tue, Dec 3, 2019 at 7:12 AM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+>
+> On Tue, 2019-12-03 at 06:51 +0200, Amir Goldstein wrote:
+> > [cc: ebiederman]
+> >
+> > On Tue, Dec 3, 2019 at 3:15 AM James Bottomley
+> > <James.Bottomley@hansenpartnership.com> wrote:
+> > >
+> > > This implementation reverse shifts according to the user_ns
+> > > belonging
+> > > to the mnt_ns.  So if the vfsmount has the newly introduced flag
+> > > MNT_SHIFT and the current user_ns is the same as the mount_ns-
+> > > >user_ns
+> > > then we shift back using the user_ns before committing to the
+> > > underlying filesystem.
+> > >
+> > > For example, if a user_ns is created where interior (fake root, uid
+> > > 0)
+> > > is mapped to kernel uid 100000 then writes from interior root
+> > > normally
+> > > go to the filesystem at the kernel uid.  However, if MNT_SHIFT is
+> > > set,
+> > > they will be shifted back to write at uid 0, meaning we can bind
+> > > mount
+> > > real image filesystems to user_ns protected faker root.
+> > >
+> > > In essence there are several things which have to be done for this
+> > > to
+> > > occur safely.  Firstly for all operations on the filesystem, new
+> > > credentials have to be installed where fsuid and fsgid are set to
+> > > the
+> > > *interior* values. Next all inodes used from the filesystem have to
+> > > have i_uid and i_gid shifted back to the kernel values and
+> > > attributes
+> > > set from user space have to have ia_uid and ia_gid shifted from the
+> > > kernel values to the interior values.  The capability checks have
+> > > to
+> > > be done using ns_capable against the kernel values, but the inode
+> > > capability checks have to be done against the shifted ids.
+> > >
+> > > Since creating a new credential is a reasonably expensive
+> > > proposition
+> > > and we have to shift and unshift many times during path walking, a
+> > > cached copy of the shifted credential is saved to a newly created
+> > > place in the task structure.  This serves the dual purpose of
+> > > allowing
+> > > us to use a pre-prepared copy of the shifted credentials and also
+> > > allows us to recognise whenever the shift is actually in effect
+> > > (the
+> > > cached shifted credential pointer being equal to the current_cred()
+> > > pointer).
+> > >
+> > > To get this all to work, we have a check for the vfsmount flag and
+> > > the
+> > > user_ns gating a shifting of the credentials over all user space
+> > > entries to filesystem functions.  In theory the path has to be
+> > > present
+> > > everywhere we do this, so we can check the vfsmount
+> > > flags.  However,
+> > > for lower level functions we can cheat this path check of vfsmount
+> > > simply to check whether a shifted credential is in effect or not to
+> > > gate things like the inode permission check, which means the path
+> > > doesn't have to be threaded all the way through the permission
+> > > checking functions.  if the credential is shifted check passes, we
+> > > can
+> > > also be sure that the current user_ns is the same as the mnt-
+> > > >user_ns,
+> > > so we can use it and thus have no need of the struct mount at the
+> > > point of the shift.
+> > >
+> >
+> > 1. Smart
+>
+> Heh, thanks.
+>
+> > 2. Needs serious vetting by Eric (cc'ed)
+> > 3. A lot of people have been asking me for filtering of "dirent"
+> > fsnotify events (i.e. create/delete) by path, which is not available
+> > in those vfs functions, so ifthe concept of current->mnt flies,
+> > fsnotify is going to want to use it as well.
+>
+> Just a caveat: current->mnt is used in this patch simply as a tag,
+> which means it doesn't need to be refcounted.  I think I can prove that
+> it is absolutely valid if the cred is shifted because the reference is
+> held by the code that shifted the cred, but it's definitely not valid
+> except for a tag comparison outside of that.  Thus, if it is useful for
+> fsnotify, more thought will have to be given to refcounting it.
+>
 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Michal Koutný <mkoutny@suse.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Iurii Zaikin <yzaikin@google.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
----
- Documentation/admin-guide/cg-numa-stat.rst      | 176 ++++++++++++++++++++++++
- Documentation/admin-guide/index.rst             |   1 +
- Documentation/admin-guide/kernel-parameters.txt |   4 +
- Documentation/admin-guide/sysctl/kernel.rst     |   9 ++
- include/linux/sched.h                           |  10 +-
- init/Kconfig                                    |   4 +-
- kernel/sched/fair.c                             |   4 +-
- 7 files changed, 200 insertions(+), 8 deletions(-)
- create mode 100644 Documentation/admin-guide/cg-numa-stat.rst
+Yes. Is there anything preventing us from taking refcount on
+current->mnt?
 
-diff --git a/Documentation/admin-guide/cg-numa-stat.rst b/Documentation/admin-guide/cg-numa-stat.rst
-new file mode 100644
-index 000000000000..49167db36f37
---- /dev/null
-+++ b/Documentation/admin-guide/cg-numa-stat.rst
-@@ -0,0 +1,176 @@
-+===============================
-+Per-cgroup NUMA statistics
-+===============================
-+
-+Background
-+----------
-+
-+On NUMA platforms, remote memory accessing always has a performance penalty.
-+Although we have NUMA balancing working hard to maximize the access locality,
-+there are still situations it can't help.
-+
-+This could happen in modern production environment. When a large number of
-+cgroups are used to classify and control resources, this creates a complex
-+configuration for memory policy, CPUs and NUMA nodes. In such cases NUMA
-+balancing could end up with the wrong memory policy or exhausted local NUMA
-+node, which would lead to low percentage of local page accesses.
-+
-+We need to detect such cases, figure out which workloads from which cgroup
-+have introduced the issues, then we get chance to do adjustment to avoid
-+performance degradation.
-+
-+However, there are no hardware counters for per-task local/remote accessing
-+info, we don't know how many remote page accesses have occurred for a
-+particular task.
-+
-+NUMA Locality
-+-------------
-+
-+Fortunately, we have NUMA Balancing which scans task's mapping and triggers
-+page fault periodically, giving us the opportunity to record per-task page
-+accessing info, when the CPU fall into PF is from the same node of pages, we
-+consider task as doing local page accessing, otherwise the remote page
-+accessing, we call these two counter the locality info.
-+
-+On each tick, we acquire the locality info of current task on that CPU, update
-+the increments into it's cgroup, becoming the group locality info.
-+
-+By "echo 1 > /proc/sys/kernel/numa_locality" at runtime or adding boot parameter
-+'numa_locality', we will enable the accounting of per-cgroup NUMA locality info,
-+the 'cpu.numa_stat' entry of CPU cgroup will show statistics::
-+
-+  page_access local=NR_LOCAL_PAGE_ACCESS remote=NR_REMOTE_PAGE_ACCESS
-+
-+We define 'NUMA locality' as::
-+
-+  NR_LOCAL_PAGE_ACCESS * 100 / (NR_LOCAL_PAGE_ACCESS + NR_REMOTE_PAGE_ACCESS)
-+
-+This per-cgroup percentage number help to represent the NUMA Balancing behavior.
-+
-+Note that the accounting is hierarchical, which means the NUMA locality info for
-+a given group represent not only the workload of this group, but also the
-+workloads of all its descendants.
-+
-+For example the 'cpu.numa_stat' show::
-+
-+  page_access local=129909383 remote=18265810
-+
-+The NUMA locality calculated as::
-+
-+  129909383 * 100 / (129909383 + 18265810) = 87.67
-+
-+Thus we know the workload of this group and its descendants have totally done
-+129909383 times of local page accessing and 18265810 times of remotes, locality
-+is 87.67% which imply most of the memory access are local.
-+
-+NUMA Consumption
-+----------------
-+
-+There are also other cgroup entry help us to estimate NUMA efficiency, which is
-+'cpuacct.usage_percpu' and 'memory.numa_stat'.
-+
-+By reading 'cpuacct.usage_percpu' we will get per-cpu runtime (in nanoseconds)
-+info (in hierarchy) as::
-+
-+  CPU_0_RUNTIME CPU_1_RUNTIME CPU_2_RUNTIME ... CPU_X_RUNTIME
-+
-+Combined with the info from::
-+
-+  cat /sys/devices/system/node/nodeX/cpulist
-+
-+We would be able to accumulate the runtime of CPUs into NUMA nodes, to get the
-+per-cgroup node runtime info.
-+
-+By reading 'memory.numa_stat' we will get per-cgroup node memory consumption
-+info as::
-+
-+  total=TOTAL_MEM N0=MEM_ON_NODE0 N1=MEM_ON_NODE1 ... NX=MEM_ON_NODEX
-+
-+Together we call these the per-cgroup NUMA consumption info, tell us how many
-+resources a particular workload has consumed, on a particular NUMA node.
-+
-+Monitoring
-+----------
-+
-+By monitoring the increments of locality info, we can easily know whether NUMA
-+Balancing is working well for a particular workload.
-+
-+For example we take a 5 seconds sample period, then on each sampling we have::
-+
-+  local_diff = last_nr_local_page_access - nr_local_page_access
-+  remote_diff = last_nr_remote_page_access - nr_remote_page_access
-+
-+and we get the locality in this period as::
-+
-+  locality = local_diff * 100 / (local_diff + remote_diff)
-+
-+We can plot a line for locality, when the line close to 100% things are good,
-+when getting close to 0% something is wrong, we can pick a proper watermark to
-+trigger warning message.
-+
-+You may want to drop the data if the local/remote_diff is too small, which
-+implies there are not many available pages for NUMA Balancing to scan, ignoring
-+would be fine since most likely the workload is insensitive to NUMA, or the
-+memory topology is already good enough.
-+
-+Monitoring root group helps you control the overall situation, while you may
-+also want to monitor all the leaf groups which contain the workloads, this
-+helps to catch the mouse.
-+
-+Try to put your workload into also the cpuacct & memory cgroup, when NUMA
-+Balancing is disabled or locality becomes too small, we may want to monitoring
-+the per-node runtime & memory info to see if the node consumption meet the
-+requirements.
-+
-+For NUMA node X on each sampling we have::
-+
-+  runtime_X_diff = runtime_X - last_runtime_X
-+  runtime_all_diff = runtime_all - last_runtime_all
-+
-+  runtime_percent_X = runtime_X_diff * 100 / runtime_all_diff
-+  memory_percent_X = memory_X * 100 / memory_all
-+
-+These two percentages are usually matched on each node, workload should execute
-+mostly on the node that contains most of its memory, but it's not guaranteed.
-+
-+The workload may only access a small part of its memory, in such cases although
-+the majority of memory are remotely, locality could still be good.
-+
-+Thus to tell if things are fine or not depends on the understanding of system
-+resource deployment, however, if you find node X got 100% memory percent but 0%
-+runtime percent, definitely something is wrong.
-+
-+Troubleshooting
-+---------------
-+
-+After identifying which workload introduced the bad locality, check:
-+
-+1). Is the workload bound to a particular NUMA node?
-+2). Has any NUMA node run out of resources?
-+
-+There are several ways to bind task's memory with a NUMA node, the strict way
-+like the MPOL_BIND memory policy or 'cpuset.mems' will limit the memory
-+node where to allocate pages. In this situation, admin should make sure the
-+task is allowed to run on the CPUs of that NUMA node, and make sure there are
-+available CPU resource there.
-+
-+There are also ways to bind task's CPU with a NUMA node, like 'cpuset.cpus' or
-+sched_setaffinity() syscall. In this situation, NUMA Balancing help to migrate
-+pages into that node, admin should make sure there are available memory there.
-+
-+Admin could try to rebind or unbind the NUMA node to erase the damage, make a
-+change then observe the statistics to see if things get better until the
-+situation is acceptable.
-+
-+Highlights
-+----------
-+
-+For some tasks, NUMA Balancing may found no necessary to scan pages, and
-+locality could always be 0 or small number, don't pay attention to them
-+since they most likely insensitive to NUMA.
-+
-+There is no accounting until the option is turned on, so enable it in advance
-+if you want to have the whole history.
-+
-+We have per-task migfailed counter to tell how many page migration has been
-+failed for a particular task, you will find it in /proc/PID/sched entry.
-diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
-index 4405b7485312..c75a3fdfcd94 100644
---- a/Documentation/admin-guide/index.rst
-+++ b/Documentation/admin-guide/index.rst
-@@ -112,6 +112,7 @@ configure specific aspects of kernel behavior to your liking.
-    video-output
-    wimax/index
-    xfs
-+   cg-numa-stat
+> > 4. This is currently not overlayfs (stacked fs) nor nfsd friendly.
+> > Those modules do not call the path based vfs APIs, but they do have
+> > the mnt stored internally.
+>
+> OK, so I've got to confess that I've only tested it with my container
+> use case, which doesn't involve overlay or nfs.  However, as long as we
+> thread path down to the API that nfds and overlayfs use, it should
+> easily be made compatible with them ... do we have any documentation of
+> what API this is?
 
- .. only::  subproject and html
+No proper doc AFAIK, but please take a look at:
+https://lore.kernel.org/linux-fsdevel/20191025112917.22518-2-mszeredi@redhat.com/
+It is part of a series to make overlayfs an FS_USERNS_MOUNT.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 0945611b3877..9d9e57d19af3 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3227,6 +3227,10 @@
- 	numa_balancing=	[KNL,X86] Enable or disable automatic NUMA balancing.
- 			Allowed values are enable and disable
+The simplest case goes typically something like this:
+rmdir -> do_rmdir -(change_userns_creds)-> vfs_rmdir ->
+    ovl_rmdir -(ovl_override_creds)-> vfs_rmdir -> ext4_rmdir
 
-+	numa_locality	[KNL] Enable per-cgroup numa locality info.
-+			Useful to debug NUMA efficiency problems when there are
-+			lots of per-cgroup workloads.
-+
- 	numa_zonelist_order= [KNL, BOOT] Select zonelist order for NUMA.
- 			'node', 'default' can be specified
- 			This can be set from sysctl after boot.
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index 7e203b3ed331..efa995e757fd 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -572,6 +572,15 @@ rate for each task.
- numa_balancing_scan_size_mb is how many megabytes worth of pages are
- scanned for a given scan.
+So if you shift mounted the overlayfs mount, you won't end up
+using shifted creds in ext4 operations.
+And if you shift mounted ext4 *before* creating the overlay, then
+still, overlay doesn't go through do_rmdir, so your method won't
+work either.
 
-+numa_locality:
-+=============
-+
-+Enables/disables per-cgroup NUMA locality info.
-+
-+0: disabled (default).
-+1: enabled.
-+
-+Check Documentation/admin-guide/cg-numa-stat.rst for details.
+Similar situation with nfsd, although I have no idea if there are plans
+to make nfsd userns aware.
 
- osrelease, ostype & version:
- ============================
--- 
-2.14.4.44.g2045bb6
+>
+> > I suppose you do want to be able to mount overlays and export nfs out
+> > of those shifted mounts, as they are merely the foundation for
+> > unprivileged container storage stack. right?
+>
+> If the plan of doing this as a bind mount holds, then certainly because
+> any underlying filesystem has to work with it.
+>
 
+I am talking above, not under.
+You shift mount an ext4 fs and hand it over to container fake root
+(or mark it and let fake root shit mount).
+The container fake root should be able to (after overlayfs unpriv changes)
+create an overlay from inside container.
+IOW, try to mount an overlay over your shifted fs and see how it
+behaves.
+
+> > For overlayfs, you should at least look at ovl_override_creds() for
+> > incorporating shift mount logic - or more likely at the creation of
+> > ofs->creator_cred.
+>
+> Well, we had this discussion when I proposed shiftfs as a superblock
+> based stackable filesytem, I think: the way the shift needs to use
+> creds is fundamentally different from the way overlayfs uses them.  The
+> ovl_override_creds is overriding with the creator's creds but the
+> shifting bind mound needs to backshift through the user namespace
+> currently in effect.  Since uid shifts can stack, we can make them work
+> together, but they are fundamentally different things.
+>
+
+Right.
+Please take a look at the override_cred code in ovl_create_or_link().
+This code has some fsuid dance that you need to check for shift friendliness.
+
+The entire security model of overlayfs needs to be reexamined in the face
+of shift mount, but as I wrote, I don't think its going to be too hard to
+make ovl_override_creds() shift mount aware.
+Overlayfs mimics vfs behavior in many cases.
+
+Unless you shift mount both overlayfs and underlying (say) ext4, then
+you still have only one mnt_cred to cache in any given call stack.
+
+Thanks,
+Amir.
