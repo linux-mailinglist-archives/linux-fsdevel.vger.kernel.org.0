@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B0D810F6DE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 06:20:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04AC510F6EC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 06:20:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbfLCFUM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Dec 2019 00:20:12 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:39529 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725845AbfLCFUM (ORCPT
+        id S1727009AbfLCFUO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Dec 2019 00:20:14 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34988 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727007AbfLCFUN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Dec 2019 00:20:12 -0500
-Received: by mail-pl1-f193.google.com with SMTP id o9so1206938plk.6;
-        Mon, 02 Dec 2019 21:20:11 -0800 (PST)
+        Tue, 3 Dec 2019 00:20:13 -0500
+Received: by mail-pl1-f196.google.com with SMTP id s10so1215187plp.2;
+        Mon, 02 Dec 2019 21:20:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=CmhQS/RvxHM1ZkF3nWKmxpQ+xBfLTIt05/c08FcGCIs=;
-        b=tFIXbngRA4bGs0uS8LLLRx+A3m9DXCcFsNIgWW2kxkRU54hEbCfsAvgc/imoM22i5s
-         lV87TdnsLHtXV0Zr5JeLF3A4+pXWRkHO3ZMtH8AzJWLSy4pH2jO5p/hB7ML+5bkylb3p
-         tH87QBhRzlc4si01TiIqKov2fmZ4RbPHfu8M556gOBHMqjutm5SWQBcM4jT8pdbPNSs4
-         SGSFWgks/LU+qsIAZZp12qHRq8Jj7zUPji6w9Pz3RMfo3SGIALpwicZ5972AnkKWLkwb
-         56uisz8CWXbcuYmR4IHfs9xJ+1pwLaGFDQAPKKwmJAPDiBnRMRRRHso4CtBys8sSsWbq
-         rGUQ==
+        bh=uY2QG58kzGEqaCGR7UmQKvscEap1XpvW7KPcaFFGZH0=;
+        b=Dwv7oCgyLvufvYLeLRzMwe6yJWXvwTZcsL4hY36GtT6tUoG+/ujy697/eU9HOVoVeD
+         61kUnWfMnw7InOz5Zx+IyK06HBrzit+48tCEBba3bnstghTMM9BteNOU2CostXaY5GB+
+         OHgQJ9Yayd96Vj1r8Xic4WDPeQgfxVAopDZIzhAYkCcyAf2A5ZMRWnE23CdHsV2aYsV8
+         S9ZrVro0inM5m8RIkdpmz7FpcwAAtMdXoKVR30kQ8o57N3N5uCg1IwTfyWUtlhdWD08p
+         P+VhLoJ+X3adQP86EiasnJ+zwhKSLVh/3Hyz0Q25jZzqycSzZYx2BJ1kQ1L5NMjqwQQj
+         MUQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=CmhQS/RvxHM1ZkF3nWKmxpQ+xBfLTIt05/c08FcGCIs=;
-        b=IttnAAQHOMIGMUOFwfKfOzdFjh01sP9FWiGKvIdaT8evMJxK/+O5Gwwtm5EqkE+IXZ
-         JBUQfJhwqVALjV465OD0MYwgI5uzK8LAUs3C1lW+IHVTMo+LgwhGxgSfhocc9pmj8eyE
-         Aq8SLSvpwB3mSbG8Ea1RauHutpnxAEyPOKxCHFizbBDTmoGNZ/qgflNO5ojPjQROiMjv
-         K8mrHwVAQzO3LNmCDFOxgPzSdybC+eRcCGd9FamxuL5NQND440TI3QnpP3Pc7jgEGNUD
-         ESlTh9r8XFCQIGKs9/fXOqylbOcf0MszYAiUZExTaAChCiG8+T9mXwgOEFnmcVeWx8q9
-         FU0Q==
-X-Gm-Message-State: APjAAAV452GRGTHIwRi8+SAUCErZPDLxuoPd2GfvGAaqeUgjvE1zOLov
-        nOK4LHExzgF6wlDyT5vbiKk=
-X-Google-Smtp-Source: APXvYqwgeQm9CquMiw2X8iXh0kvR4EbK2Pkb/9nW8nXpFjl2hMrC3Icouk50DpciJNUXFFPtA+ze9g==
-X-Received: by 2002:a17:90a:9bc6:: with SMTP id b6mr3527181pjw.77.1575350411171;
-        Mon, 02 Dec 2019 21:20:11 -0800 (PST)
+        bh=uY2QG58kzGEqaCGR7UmQKvscEap1XpvW7KPcaFFGZH0=;
+        b=VeW8C8i6kG0rTm8MAiyWJKTITzei1PlfKz/zqy2GMi5i5LIlYgqHeiZQzqoH40GYtD
+         y027rKoKLEEOF+WZofXcaRn4BJdsGt8YleoMoTj8HH8ppcekTPM8gINZpE+q/WDJkuPn
+         cFBviotIJcezvn0z3W0Etq5zcG98LC14iK3qwDN9kmHAufk8sf8kMtvEYO05V/PhoBHH
+         IEabXvaQF0ir/leuN4o2JQmWqmgxGD5p66NxdyPXZi3MAB9HY2SY+/2KUu7UTb9OBbxI
+         9UdNCjW4Tzorbl/6Itm76b1udpjzeB4Sap1PPh/MBBv+3QN7ZBUDDIOyDMBPnr2r9mSe
+         YZDA==
+X-Gm-Message-State: APjAAAU+P7LgnsuQsWvkBB6hjp6vLpP00ZrvaLxp0pv1XVsiTTRShNNu
+        KXLEB57+zPKaVvd1Hwx30IslQuJR
+X-Google-Smtp-Source: APXvYqzDgx8INoeZxdQp1PJtJjENI+ChJSa1vX6DYbZjaNzNcWkYL193jZVNhMWOY/a0Mw1ZTEqQsw==
+X-Received: by 2002:a17:90a:a114:: with SMTP id s20mr3579555pjp.44.1575350413045;
+        Mon, 02 Dec 2019 21:20:13 -0800 (PST)
 Received: from deepa-ubuntu.lan (c-98-234-52-230.hsd1.ca.comcast.net. [98.234.52.230])
-        by smtp.gmail.com with ESMTPSA id h9sm1451915pgk.84.2019.12.02.21.20.10
+        by smtp.gmail.com with ESMTPSA id h9sm1451915pgk.84.2019.12.02.21.20.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2019 21:20:10 -0800 (PST)
+        Mon, 02 Dec 2019 21:20:12 -0800 (PST)
 From:   Deepa Dinamani <deepa.kernel@gmail.com>
 To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, arnd@arndb.de,
-        stfrench@microsoft.com, linux-cifs@vger.kernel.org
-Subject: [PATCH v2 2/6] fs: cifs: Delete usage of timespec64_trunc
-Date:   Mon,  2 Dec 2019 21:19:41 -0800
-Message-Id: <20191203051945.9440-3-deepa.kernel@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, arnd@arndb.de, jlayton@kernel.org,
+        ceph-devel@vger.kernel.org
+Subject: [PATCH v2 3/6] fs: ceph: Delete timespec64_trunc() usage
+Date:   Mon,  2 Dec 2019 21:19:42 -0800
+Message-Id: <20191203051945.9440-4-deepa.kernel@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191203051945.9440-1-deepa.kernel@gmail.com>
 References: <20191203051945.9440-1-deepa.kernel@gmail.com>
@@ -59,72 +59,38 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-timestamp_truncate() is the replacement api for
-timespec64_trunc. timestamp_truncate() additionally clamps
-timestamps to make sure the timestamps lie within the
-permitted range for the filesystem.
-
-Truncate the timestamps in the struct cifs_attr at the
-site of assignment to inode times. This
-helps us use the right fs api timestamp_trucate() to
-perform the truncation.
-
-Also update the ktime_get_* api to match the one used in
-current_time(). This allows for timestamps to be updated
-the same way always.
+Since ceph always uses ns granularity, skip the
+truncation which is a no-op.
 
 Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-Cc: stfrench@microsoft.com
-Cc: linux-cifs@vger.kernel.org
+Cc: jlayton@kernel.org
+Cc: ceph-devel@vger.kernel.org
 ---
- fs/cifs/inode.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ fs/ceph/mds_client.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/fs/cifs/inode.c b/fs/cifs/inode.c
-index ca76a9287456..026ed49e8aa4 100644
---- a/fs/cifs/inode.c
-+++ b/fs/cifs/inode.c
-@@ -113,6 +113,7 @@ cifs_revalidate_cache(struct inode *inode, struct cifs_fattr *fattr)
- 	}
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 068b029cf073..88687ed65cff 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -2069,7 +2069,6 @@ struct ceph_mds_request *
+ ceph_mdsc_create_request(struct ceph_mds_client *mdsc, int op, int mode)
+ {
+ 	struct ceph_mds_request *req = kzalloc(sizeof(*req), GFP_NOFS);
+-	struct timespec64 ts;
  
- 	 /* revalidate if mtime or size have changed */
-+	fattr->cf_mtime = timestamp_truncate(fattr->cf_mtime, inode);
- 	if (timespec64_equal(&inode->i_mtime, &fattr->cf_mtime) &&
- 	    cifs_i->server_eof == fattr->cf_eof) {
- 		cifs_dbg(FYI, "%s: inode %llu is unchanged\n",
-@@ -162,6 +163,9 @@ cifs_fattr_to_inode(struct inode *inode, struct cifs_fattr *fattr)
- 	cifs_revalidate_cache(inode, fattr);
+ 	if (!req)
+ 		return ERR_PTR(-ENOMEM);
+@@ -2088,8 +2087,7 @@ ceph_mdsc_create_request(struct ceph_mds_client *mdsc, int op, int mode)
+ 	init_completion(&req->r_safe_completion);
+ 	INIT_LIST_HEAD(&req->r_unsafe_item);
  
- 	spin_lock(&inode->i_lock);
-+	fattr->cf_mtime = timestamp_truncate(fattr->cf_mtime, inode);
-+	fattr->cf_atime = timestamp_truncate(fattr->cf_atime, inode);
-+	fattr->cf_ctime = timestamp_truncate(fattr->cf_ctime, inode);
- 	/* we do not want atime to be less than mtime, it broke some apps */
- 	if (timespec64_compare(&fattr->cf_atime, &fattr->cf_mtime) < 0)
- 		inode->i_atime = fattr->cf_mtime;
-@@ -329,8 +333,7 @@ cifs_create_dfs_fattr(struct cifs_fattr *fattr, struct super_block *sb)
- 	fattr->cf_mode = S_IFDIR | S_IXUGO | S_IRWXU;
- 	fattr->cf_uid = cifs_sb->mnt_uid;
- 	fattr->cf_gid = cifs_sb->mnt_gid;
--	ktime_get_real_ts64(&fattr->cf_mtime);
--	fattr->cf_mtime = timespec64_trunc(fattr->cf_mtime, sb->s_time_gran);
-+	ktime_get_coarse_real_ts64(&fattr->cf_mtime);
- 	fattr->cf_atime = fattr->cf_ctime = fattr->cf_mtime;
- 	fattr->cf_nlink = 2;
- 	fattr->cf_flags = CIFS_FATTR_DFS_REFERRAL;
-@@ -609,10 +612,8 @@ cifs_all_info_to_fattr(struct cifs_fattr *fattr, FILE_ALL_INFO *info,
+-	ktime_get_coarse_real_ts64(&ts);
+-	req->r_stamp = timespec64_trunc(ts, mdsc->fsc->sb->s_time_gran);
++	ktime_get_coarse_real_ts64(&req->r_stamp);
  
- 	if (info->LastAccessTime)
- 		fattr->cf_atime = cifs_NTtimeToUnix(info->LastAccessTime);
--	else {
--		ktime_get_real_ts64(&fattr->cf_atime);
--		fattr->cf_atime = timespec64_trunc(fattr->cf_atime, sb->s_time_gran);
--	}
-+	else
-+		ktime_get_coarse_real_ts64(&fattr->cf_atime);
- 
- 	fattr->cf_ctime = cifs_NTtimeToUnix(info->ChangeTime);
- 	fattr->cf_mtime = cifs_NTtimeToUnix(info->LastWriteTime);
+ 	req->r_op = op;
+ 	req->r_direct_mode = mode;
 -- 
 2.17.1
 
