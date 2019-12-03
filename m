@@ -2,159 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7550C10F9EF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 09:34:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02DDE10FAF2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 10:41:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726190AbfLCIe1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Dec 2019 03:34:27 -0500
-Received: from mail.loongson.cn ([114.242.206.163]:45716 "EHLO loongson.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726017AbfLCIe0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Dec 2019 03:34:26 -0500
-Received: from [10.130.0.36] (unknown [123.138.236.242])
-        by mail.loongson.cn (Coremail) with SMTP id AQAAf9Dx79LwHeZde1YGAA--.0S3;
-        Tue, 03 Dec 2019 16:34:02 +0800 (CST)
-Subject: Re: [PATCH] fs: introduce is_dot_dotdot helper for cleanup
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-References: <1575281413-6753-1-git-send-email-yangtiezhu@loongson.cn>
- <20191202200302.GN20752@bombadil.infradead.org>
- <357ad021-a58c-ad46-42bd-d5012126276f@loongson.cn>
- <20191203023954.GB7323@magnolia>
-Cc:     Matthew Wilcox <willy@infradead.org>,
+        id S1726179AbfLCJlE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Dec 2019 04:41:04 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:37763 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725848AbfLCJlD (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Dec 2019 04:41:03 -0500
+Received: from [192.168.100.1] ([78.238.229.36]) by mrelayeu.kundenserver.de
+ (mreue011 [213.165.67.103]) with ESMTPSA (Nemesis) id
+ 1MNc1T-1iQsYQ12xH-00P1Yn; Tue, 03 Dec 2019 10:40:53 +0100
+Subject: Re: [RFC v2] binfmt_misc: pass binfmt_misc flags to the interpreter
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        linux-fsdevel@vger.kernel.org, ecryptfs@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-From:   Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <f242be33-f55b-e914-ffc4-f79e74b3e13b@loongson.cn>
-Date:   Tue, 3 Dec 2019 16:33:47 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        James Bottomley <James.Bottomley@HansenPartnership.com>
+References: <20191122150830.15855-1-laurent@vivier.eu>
+From:   Laurent Vivier <laurent@vivier.eu>
+Message-ID: <27b62e32-1092-d334-6cc0-4029bda19a25@vivier.eu>
+Date:   Tue, 3 Dec 2019 10:40:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20191203023954.GB7323@magnolia>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: AQAAf9Dx79LwHeZde1YGAA--.0S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxJF48WF1DZF4xAw48GFW3KFg_yoW5ZF18pa
-        y8JFsFgF4ktryUJ3Wjqw4DXrWqg3yxJr1DGr90gryUur1qvrnIq3WrAr4j93s7JF4DuF1r
-        Z390yrW5u34FyFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUvKb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
-        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-        A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
-        jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwV
-        C2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-        0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
-        1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7
-        Mxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
-        0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
-        17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
-        C0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF
-        0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-        VjvjDU0xZFpf9x07beAp5UUUUU=
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+In-Reply-To: <20191122150830.15855-1-laurent@vivier.eu>
+Content-Type: text/plain; charset=utf-8
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:vEqQ39WOdCsrFQCuCjUa8VvyjX2ZQngTuPDxdeDo7C7kVlje/+K
+ bJAYckn/GzqLOY5qskaUbacJHjpLF6sVDSyylRNCMRJkC9aQzE5RTJsG9u3ey22dpwO6AQo
+ g2vBo4cWOjnimnuMJgaScKJ6xzbw+zlxHtIeev4K2fbFyfzQkAy+SDqCg2FdMvMcka5VnQ3
+ 8mXwu5edQIacf92FA4+KQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:d+Gj1rrjLGA=:DQHLtUzCqCGwx0kY9K0OSF
+ WCQvILpbUroJ/x4Wti7+xNpGziV6nPnMefh462T5fTDaQMLobue0guFqPePBw4CFAPrxX4JRL
+ uijcIsWVFqY5WsgZHxfW7GvDVwWMZAsA1WvId3o7RP6CCA9VHRYO7VtU+wishSN028f0qNBI+
+ XdxGYuH4HapIHpCncdmaJ1C0ostoCp6sRf8nYBxO8HXec7N8YQNmi/6SSIrhGMN9eBoEogO3c
+ KOredgUm18CQJishcF7A/+QdtIjd3tKzapB+tZDdf6gbmztJra8gFOBFuESza1oTuwIGpXq4u
+ ZdXhqLyE4RPlcTqssHB4OeWpISyEoNyIZhljDtX/5ujMj+t8Y3KN4nwzUQ9etziwos0Bmqn6+
+ bX/6srhfpMfVtSsFwDlD7P2LqsJ+b9Z2LrVYxZp/a9uFIT+NJ6U55aXi9Kx5t0GvpyBAHSTWA
+ GNsX49KT7jvImFinmCT209rW9X9hKB2IYTfWvT2WPEqcG8aP6b4br714qEW/4XuSDIEM0x/j9
+ pBpMNMD9xZRc8M0c7nH510tGnJA+lZUnaPbtfzxS0+Dw3B9oh0dwxrBpYm+GliFWz3RHsMkgo
+ KjsSBj6ihLp/tXnPZDdpgtLRb4+62uvETkffKZ/IvgBNJaFbgWK5Z/SZ6z+M5oOj+0/PF6Cl9
+ 1YkgyBcJPBVw7AwZm5OtQUjhS4f2b4ycefmbi7NLsNz/1/4p54RQYqNAZMlh0IuuSDBxFBrSA
+ G+b6p81i11copDmeGJYsm4r77+ERqAn42FambVw057oO9CCx8wSirUjSxxh/UKavxQGU/ELzK
+ zAgZPTfUueOiNq86o2BCYVMsDZ5KYIkt3JDtxbnLfw02z285Of3RXOtyLINOg6sIMqpUbv8Yk
+ x76YMZK190Z1NXTKrZi4pQXIQ3pb0Cj9LLSbhwlWI=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/03/2019 10:39 AM, Darrick J. Wong wrote:
-> On Tue, Dec 03, 2019 at 10:07:41AM +0800, Tiezhu Yang wrote:
->> On 12/03/2019 04:03 AM, Matthew Wilcox wrote:
->>> On Mon, Dec 02, 2019 at 06:10:13PM +0800, Tiezhu Yang wrote:
->>>> There exists many similar and duplicate codes to check "." and "..",
->>>> so introduce is_dot_dotdot helper to make the code more clean.
->>> The idea is good.  The implementation is, I'm afraid, badly chosen.
->>> Did you benchmark this change at all?  In general, you should prefer the
->>> core kernel implementation to that of some less-interesting filesystems.
->>> I measured the performance with the attached test program on my laptop
->>> (Core-i7 Kaby Lake):
->>>
->>> qstr . time_1 0.020531 time_2 0.005786
->>> qstr .. time_1 0.017892 time_2 0.008798
->>> qstr a time_1 0.017633 time_2 0.003634
->>> qstr matthew time_1 0.011820 time_2 0.003605
->>> qstr .a time_1 0.017909 time_2 0.008710
->>> qstr , time_1 0.017631 time_2 0.003619
->>>
->>> The results are quite stable:
->>>
->>> qstr . time_1 0.021137 time_2 0.005780
->>> qstr .. time_1 0.017964 time_2 0.008675
->>> qstr a time_1 0.017899 time_2 0.003654
->>> qstr matthew time_1 0.011821 time_2 0.003620
->>> qstr .a time_1 0.017889 time_2 0.008662
->>> qstr , time_1 0.017764 time_2 0.003613
->>>
->>> Feel free to suggest some different strings we could use for testing.
->>> These seemed like interesting strings to test with.  It's always possible
->>> I've messed up something with this benchmark that causes it to not
->>> accurately represent the performance of each algorithm, so please check
->>> that too.
->> [Sorry to resend this email because the mail list server
->> was denied due to it is not plain text.]
->>
->> Hi Matthew,
->>
->> Thanks for your reply and suggestion. I measured the
->> performance with the test program, the following
->> implementation is better for various of test cases:
->>
->> bool is_dot_dotdot(const struct qstr *str)
->> {
->>          if (unlikely(str->name[0] == '.')) {
->>                  if (str->len < 2 || (str->len == 2 && str->name[1] == '.'))
->>                          return true;
->>          }
->>
->>          return false;
->> }
->>
->> I will send a v2 patch used with this implementation.
-> Can you make it a static inline since it's such a short function?
-
-Thanks for your suggestion, I will make it static inline and
-move it to include/linux/fs.h in the v2 patch.
+Ping
 
 Thanks,
+Laurent
 
-Tiezhu Yang
 
->
-> --D
->
->> Thanks,
->>
->> Tiezhu Yang
->>
->>>> +bool is_dot_dotdot(const struct qstr *str)
->>>> +{
->>>> +	if (str->len == 1 && str->name[0] == '.')
->>>> +		return true;
->>>> +
->>>> +	if (str->len == 2 && str->name[0] == '.' && str->name[1] == '.')
->>>> +		return true;
->>>> +
->>>> +	return false;
->>>> +}
->>>> +EXPORT_SYMBOL(is_dot_dotdot);
->>>> diff --git a/fs/namei.c b/fs/namei.c
->>>> index 2dda552..7730a3b 100644
->>>> --- a/fs/namei.c
->>>> +++ b/fs/namei.c
->>>> @@ -2458,10 +2458,8 @@ static int lookup_one_len_common(const char *name, struct dentry *base,
->>>>    	if (!len)
->>>>    		return -EACCES;
->>>> -	if (unlikely(name[0] == '.')) {
->>>> -		if (len < 2 || (len == 2 && name[1] == '.'))
->>>> -			return -EACCES;
->>>> -	}
->>>> +	if (unlikely(is_dot_dotdot(this)))
->>>> +		return -EACCES;
->>>>    	while (len--) {
->>>>    		unsigned int c = *(const unsigned char *)name++;
+Le 22/11/2019 à 16:08, Laurent Vivier a écrit :
+> It can be useful to the interpreter to know which flags are in use.
+> 
+> For instance, knowing if the preserve-argv[0] is in use would
+> allow to skip the pathname argument.
+> 
+> This patch uses an unused auxiliary vector, AT_FLAGS,  to pass the
+> content of the binfmt flags (special flags: P, F, C, O).
+> 
+> Signed-off-by: Laurent Vivier <laurent@vivier.eu>
+> ---
+> 
+> Notes:
+>     v2: only pass special flags (remove Magic and Enabled flags)
+> 
+>  fs/binfmt_elf.c         | 2 +-
+>  fs/binfmt_elf_fdpic.c   | 2 +-
+>  fs/binfmt_misc.c        | 6 ++++++
+>  include/linux/binfmts.h | 2 +-
+>  4 files changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index c5642bcb6b46..7a34c03e5857 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -250,7 +250,7 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
+>  	NEW_AUX_ENT(AT_PHENT, sizeof(struct elf_phdr));
+>  	NEW_AUX_ENT(AT_PHNUM, exec->e_phnum);
+>  	NEW_AUX_ENT(AT_BASE, interp_load_addr);
+> -	NEW_AUX_ENT(AT_FLAGS, 0);
+> +	NEW_AUX_ENT(AT_FLAGS, bprm->fmt_flags);
+>  	NEW_AUX_ENT(AT_ENTRY, exec->e_entry);
+>  	NEW_AUX_ENT(AT_UID, from_kuid_munged(cred->user_ns, cred->uid));
+>  	NEW_AUX_ENT(AT_EUID, from_kuid_munged(cred->user_ns, cred->euid));
+> diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
+> index d86ebd0dcc3d..8fe839be125e 100644
+> --- a/fs/binfmt_elf_fdpic.c
+> +++ b/fs/binfmt_elf_fdpic.c
+> @@ -647,7 +647,7 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
+>  	NEW_AUX_ENT(AT_PHENT,	sizeof(struct elf_phdr));
+>  	NEW_AUX_ENT(AT_PHNUM,	exec_params->hdr.e_phnum);
+>  	NEW_AUX_ENT(AT_BASE,	interp_params->elfhdr_addr);
+> -	NEW_AUX_ENT(AT_FLAGS,	0);
+> +	NEW_AUX_ENT(AT_FLAGS,	bprm->fmt_flags);
+>  	NEW_AUX_ENT(AT_ENTRY,	exec_params->entry_addr);
+>  	NEW_AUX_ENT(AT_UID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->uid));
+>  	NEW_AUX_ENT(AT_EUID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->euid));
+> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+> index cdb45829354d..25a392f23409 100644
+> --- a/fs/binfmt_misc.c
+> +++ b/fs/binfmt_misc.c
+> @@ -48,6 +48,9 @@ enum {Enabled, Magic};
+>  #define MISC_FMT_OPEN_BINARY (1 << 30)
+>  #define MISC_FMT_CREDENTIALS (1 << 29)
+>  #define MISC_FMT_OPEN_FILE (1 << 28)
+> +#define MISC_FMT_FLAGS_MASK (MISC_FMT_PRESERVE_ARGV0 | MISC_FMT_OPEN_BINARY | \
+> +			     MISC_FMT_CREDENTIALS | MISC_FMT_OPEN_FILE)
+> +
+>  
+>  typedef struct {
+>  	struct list_head list;
+> @@ -149,6 +152,9 @@ static int load_misc_binary(struct linux_binprm *bprm)
+>  	if (!fmt)
+>  		return retval;
+>  
+> +	/* pass special flags to the interpreter */
+> +	bprm->fmt_flags = fmt->flags & MISC_FMT_FLAGS_MASK;
+> +
+>  	/* Need to be able to load the file after exec */
+>  	retval = -ENOENT;
+>  	if (bprm->interp_flags & BINPRM_FLAGS_PATH_INACCESSIBLE)
+> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+> index b40fc633f3be..dae0d0d7b84d 100644
+> --- a/include/linux/binfmts.h
+> +++ b/include/linux/binfmts.h
+> @@ -60,7 +60,7 @@ struct linux_binprm {
+>  				   different for binfmt_{misc,script} */
+>  	unsigned interp_flags;
+>  	unsigned interp_data;
+> -	unsigned long loader, exec;
+> +	unsigned long loader, exec, fmt_flags;
+>  
+>  	struct rlimit rlim_stack; /* Saved RLIMIT_STACK used during exec. */
+>  
+> 
 
