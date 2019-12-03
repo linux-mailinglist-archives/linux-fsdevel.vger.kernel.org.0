@@ -2,228 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E58DF10F825
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 07:56:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91CAC10F8E8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 08:37:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727276AbfLCGzy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Dec 2019 01:55:54 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:40875 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727192AbfLCGzy (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Dec 2019 01:55:54 -0500
-Received: by mail-yw1-f67.google.com with SMTP id i126so914145ywe.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Dec 2019 22:55:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Nc18I09yB+Mc8wuPxVSss0W24eagOvvGI4YSUAB9G6g=;
-        b=rTSRUnF1FwGCIkkrkvlqQJLStZC0vxh3g5+mH9+a+6tc4PBj1YuvvRCa0XRCg+jH/2
-         0TMaNpQ05sPBkJon/uuSOHb/gn/PCtNDaZsz5VbXpCG0NJfFYPqHLg/xFydUELCAYDpF
-         p3uO8v/hFwrFDP59hjZW2J9GMTUVHnHS5p53T7fdX8JaCRlbHv4nzZ+1GxIt7u6YNo/R
-         slCBAk4QYT3Mqt3jIr4/MuAvNC5Lq4du9EClWLNVt5MhOobA/EGK1Bz9tZJka5/F1EcY
-         iaZOIPKHlq9Xa+UFxVxTy8sEEQM0LvStLzi79dmgd0/4EJXAahQGc7hO0c8cm6zVNd4F
-         regA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Nc18I09yB+Mc8wuPxVSss0W24eagOvvGI4YSUAB9G6g=;
-        b=Ym6IuPmKlly4u0ibntxfdTs7yllLZnTMHaWi2JiH/fM877QFpiuGhbheiU/E1jc+Or
-         /rtOJG/xkpwZkbxYE1XhLmCB7rwz5G+0I8uNYej+pX7VfNwjDq3CAUsamoUiPYqcTK1k
-         z+HnakiPw46C9avgELJ/hHONFTGJko5EPbKmFYpaEvN+EiVU6zRtFgK+4+kfML3JPv0C
-         V3vErD0fq6f7ZW8myAgZVLFnFwwL0uyhgiPPJxLAmp8vqhMcsxu95pPsNPsrxdl+DpS5
-         cJrAh/eXs+kwgT9IX5ZSWD9/9grmtWORP3pQDKNUR6ZnApjg6de9L1OP6g78Th88qAnO
-         zAeQ==
-X-Gm-Message-State: APjAAAXX+5oTlicZwnX5XnppMr2XwWh5GiVWinAqC62Y17u07Cr5+t13
-        Cox2NZC3Xih9LGteiYp1m6DzaM6FgzmnMXxWPeU=
-X-Google-Smtp-Source: APXvYqybYsJGGY2ZSwf6ikMWT8HxiI9B7kJJ49oKPF7Q6VGg5h93bu31eHQsCPiHmxhzf2IWHBobum4Bf4T9BOK22Y0=
-X-Received: by 2002:a81:1887:: with SMTP id 129mr2528978ywy.25.1575356152525;
- Mon, 02 Dec 2019 22:55:52 -0800 (PST)
+        id S1727488AbfLCHge (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Dec 2019 02:36:34 -0500
+Received: from mail-eopbgr800123.outbound.protection.outlook.com ([40.107.80.123]:16543
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727429AbfLCHge (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Dec 2019 02:36:34 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fP5xOIUdhpAlyC5oaMaP9knMXIHCgvabBBZIw6pqAX6H3lRA8O8VAqoZt7StGOryPiPw6PHr+DnS/amsECIAaU0y1lQg4zEynkJhFGsKAUiwE+mguBe3DfQXURLDY6w4R8kvfw9XNRXMRsg46tNTaXxboC6o1K11Aleb2voYNrP9ogrFRcUsGKi08eBDXCBmraXy1dnFFJajzVeWU03aCq/gdrn71eypjfG9vyl6dhn6+TNdjK8DmH51cwaknk6r3VtwQ2HYpT35lLeFaD57LTEFkISUtHJqnBtHqnU8UDHnny+wxktEPV6vYWcLA6eVmeg+gKk9kXKtN9IB0rVUow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6tqgasao2bCK2+9caG+7xuXBXBJBk7YD7kcoe+EmrF4=;
+ b=jGhEBFGFd2bXU3YFSGM5sgFYGgQ3Ld++Gw9229NDFlzG3ysc6ry8wgYMGk4GIEnOEH0nxnHCs2hOi5+By9sdMOs4mPxykuRtgrFVWTSqIsq5mPYOZQfAMkBS+H6QLDeURY7MXwU+5cXyia9REu/IgtnTVgCuRIypNlhTuD+bqL31Kisou6QPVGJflJTd5MCmmhAErJJDfhqr/n+HpZMJt9ctvwEsSnclBY+yQ5VC/bI3ajeBZa5HFgb/00F9+bJNwGfuZbliOwM4T3psXW+ho9xo//5zsZ/5SnsD2ERpo7v0hC27bxZuUqKy1qE0gCEFkSChypLZf/UMWIpyiJO0TA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=hammerspace.com; dmarc=pass action=none
+ header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6tqgasao2bCK2+9caG+7xuXBXBJBk7YD7kcoe+EmrF4=;
+ b=bSBhIs+63P5D/047NEPYgIq5rwmsvOncmwnvYy2IdmXJYs7uASWysVwUz9ZXqVVm/88BloRHwRgFqcioB56rVewrcLcHHU2pCCh9ofe5euorsrcstLUG+4kXXCX/9JxOUr/a1TcfCpoTRwzdyyx8t7q0YXBHJATAgJCPq0MEeGY=
+Received: from DM5PR1301MB2108.namprd13.prod.outlook.com (10.174.186.34) by
+ DM5PR1301MB2124.namprd13.prod.outlook.com (10.174.185.27) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2516.5; Tue, 3 Dec 2019 07:36:29 +0000
+Received: from DM5PR1301MB2108.namprd13.prod.outlook.com
+ ([fe80::2d23:b456:d67:f230]) by DM5PR1301MB2108.namprd13.prod.outlook.com
+ ([fe80::2d23:b456:d67:f230%6]) with mapi id 15.20.2516.003; Tue, 3 Dec 2019
+ 07:36:29 +0000
+From:   Trond Myklebust <trondmy@hammerspace.com>
+To:     "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "david@fromorbit.com" <david@fromorbit.com>
+CC:     "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: Question about clone_range() metadata stability
+Thread-Topic: Question about clone_range() metadata stability
+Thread-Index: AQHVpVHnjYPZ0FhJIUe2yp+YUANojKefdeQAgAZVi4CAAkKrgA==
+Date:   Tue, 3 Dec 2019 07:36:29 +0000
+Message-ID: <52f1afb6e0a2026840da6f4b98a5e01a247447e5.camel@hammerspace.com>
+References: <f063089fb62c219ea6453c7b9b0aaafd50946dae.camel@hammerspace.com>
+         <20191127202136.GV6211@magnolia>
+         <20191201210519.GB2418@dread.disaster.area>
+In-Reply-To: <20191201210519.GB2418@dread.disaster.area>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=trondmy@hammerspace.com; 
+x-originating-ip: [88.95.63.95]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 0b2ded4c-4030-413b-f1c3-08d777c38303
+x-ms-traffictypediagnostic: DM5PR1301MB2124:
+x-microsoft-antispam-prvs: <DM5PR1301MB2124515881A83D942E82872CB8420@DM5PR1301MB2124.namprd13.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 02408926C4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(376002)(136003)(39840400004)(366004)(53754006)(199004)(189003)(446003)(186003)(99286004)(2616005)(316002)(76176011)(118296001)(6436002)(2501003)(26005)(229853002)(11346002)(6486002)(3846002)(6116002)(66066001)(2906002)(86362001)(5660300002)(54906003)(102836004)(110136005)(6506007)(64756008)(66446008)(36756003)(305945005)(66946007)(25786009)(81166006)(8936002)(14444005)(14454004)(66556008)(66476007)(81156014)(76116006)(71200400001)(91956017)(71190400001)(7736002)(6246003)(6512007)(508600001)(4326008)(256004)(8676002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR1301MB2124;H:DM5PR1301MB2108.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: hammerspace.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 9AmBhyMlad4jtOa1HTOUwuSgn4CsKvvU2sGgZv5htEPKheHqPNzamf56d88qghWyI0y0Hc1gso+Gh8QMfG5fX4N7nDrXITGsOEw7/wtwJc7d+6xhYzt99+ewNDP4XN30sWWxzIt0xO16vTxf5j9+FC4szmKwpuLSLd6AdiyAFp6KW9CA/zQ4HtsXdbBwPBslXQfqQfWKZjYEICvD7vL8YQbardVTUBZTD6pKB86t0qbeGm1ruUndGUXRjgjU45e+4Lt/QVXoBOAjLoUAomtxZPP4K5yHexqVLFbrOw0ea7adZO/PzYSKT19h3iWjdqDcdstCxbxw5s2SEUUD1Zr6QkToAqkl7a7o3nMGd8NohLC7MZrH05ggr5HoyfbZ+ZcuAIYmQoLLGptxieDrZ5cKN7Nieq4y+OyXbkHgx1nb6lax24SadM0TfhAP8XPuYpgg
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <CABD97CF5C91B74C94163AF67F45E24C@namprd13.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <1575335637.24227.26.camel@HansenPartnership.com>
- <1575335700.24227.27.camel@HansenPartnership.com> <CAOQ4uxiqc_bsa88kZG2PNLPcTqFojJU_24qL32qw-VVLG+rRFw@mail.gmail.com>
- <1575349974.31937.11.camel@HansenPartnership.com>
-In-Reply-To: <1575349974.31937.11.camel@HansenPartnership.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 3 Dec 2019 08:55:41 +0200
-Message-ID: <CAOQ4uxgcD5gwOXJfXaNki8t3=6oq32TB9URDpsoQo9A5tyCfqw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] fs: introduce uid/gid shifting bind mount
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: hammerspace.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b2ded4c-4030-413b-f1c3-08d777c38303
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2019 07:36:29.5197
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: mnZVs93QQ8uBLlzwbK04EgyUJ6oWyLr5btVnsCbOAH6G0ZnRktMl25oEpRZHV3D5dvM+DIYcn142Oz0Qr/BY/Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR1301MB2124
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 3, 2019 at 7:12 AM James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
->
-> On Tue, 2019-12-03 at 06:51 +0200, Amir Goldstein wrote:
-> > [cc: ebiederman]
-> >
-> > On Tue, Dec 3, 2019 at 3:15 AM James Bottomley
-> > <James.Bottomley@hansenpartnership.com> wrote:
-> > >
-> > > This implementation reverse shifts according to the user_ns
-> > > belonging
-> > > to the mnt_ns.  So if the vfsmount has the newly introduced flag
-> > > MNT_SHIFT and the current user_ns is the same as the mount_ns-
-> > > >user_ns
-> > > then we shift back using the user_ns before committing to the
-> > > underlying filesystem.
-> > >
-> > > For example, if a user_ns is created where interior (fake root, uid
-> > > 0)
-> > > is mapped to kernel uid 100000 then writes from interior root
-> > > normally
-> > > go to the filesystem at the kernel uid.  However, if MNT_SHIFT is
-> > > set,
-> > > they will be shifted back to write at uid 0, meaning we can bind
-> > > mount
-> > > real image filesystems to user_ns protected faker root.
-> > >
-> > > In essence there are several things which have to be done for this
-> > > to
-> > > occur safely.  Firstly for all operations on the filesystem, new
-> > > credentials have to be installed where fsuid and fsgid are set to
-> > > the
-> > > *interior* values. Next all inodes used from the filesystem have to
-> > > have i_uid and i_gid shifted back to the kernel values and
-> > > attributes
-> > > set from user space have to have ia_uid and ia_gid shifted from the
-> > > kernel values to the interior values.  The capability checks have
-> > > to
-> > > be done using ns_capable against the kernel values, but the inode
-> > > capability checks have to be done against the shifted ids.
-> > >
-> > > Since creating a new credential is a reasonably expensive
-> > > proposition
-> > > and we have to shift and unshift many times during path walking, a
-> > > cached copy of the shifted credential is saved to a newly created
-> > > place in the task structure.  This serves the dual purpose of
-> > > allowing
-> > > us to use a pre-prepared copy of the shifted credentials and also
-> > > allows us to recognise whenever the shift is actually in effect
-> > > (the
-> > > cached shifted credential pointer being equal to the current_cred()
-> > > pointer).
-> > >
-> > > To get this all to work, we have a check for the vfsmount flag and
-> > > the
-> > > user_ns gating a shifting of the credentials over all user space
-> > > entries to filesystem functions.  In theory the path has to be
-> > > present
-> > > everywhere we do this, so we can check the vfsmount
-> > > flags.  However,
-> > > for lower level functions we can cheat this path check of vfsmount
-> > > simply to check whether a shifted credential is in effect or not to
-> > > gate things like the inode permission check, which means the path
-> > > doesn't have to be threaded all the way through the permission
-> > > checking functions.  if the credential is shifted check passes, we
-> > > can
-> > > also be sure that the current user_ns is the same as the mnt-
-> > > >user_ns,
-> > > so we can use it and thus have no need of the struct mount at the
-> > > point of the shift.
-> > >
-> >
-> > 1. Smart
->
-> Heh, thanks.
->
-> > 2. Needs serious vetting by Eric (cc'ed)
-> > 3. A lot of people have been asking me for filtering of "dirent"
-> > fsnotify events (i.e. create/delete) by path, which is not available
-> > in those vfs functions, so ifthe concept of current->mnt flies,
-> > fsnotify is going to want to use it as well.
->
-> Just a caveat: current->mnt is used in this patch simply as a tag,
-> which means it doesn't need to be refcounted.  I think I can prove that
-> it is absolutely valid if the cred is shifted because the reference is
-> held by the code that shifted the cred, but it's definitely not valid
-> except for a tag comparison outside of that.  Thus, if it is useful for
-> fsnotify, more thought will have to be given to refcounting it.
->
-
-Yes. Is there anything preventing us from taking refcount on
-current->mnt?
-
-> > 4. This is currently not overlayfs (stacked fs) nor nfsd friendly.
-> > Those modules do not call the path based vfs APIs, but they do have
-> > the mnt stored internally.
->
-> OK, so I've got to confess that I've only tested it with my container
-> use case, which doesn't involve overlay or nfs.  However, as long as we
-> thread path down to the API that nfds and overlayfs use, it should
-> easily be made compatible with them ... do we have any documentation of
-> what API this is?
-
-No proper doc AFAIK, but please take a look at:
-https://lore.kernel.org/linux-fsdevel/20191025112917.22518-2-mszeredi@redhat.com/
-It is part of a series to make overlayfs an FS_USERNS_MOUNT.
-
-The simplest case goes typically something like this:
-rmdir -> do_rmdir -(change_userns_creds)-> vfs_rmdir ->
-    ovl_rmdir -(ovl_override_creds)-> vfs_rmdir -> ext4_rmdir
-
-So if you shift mounted the overlayfs mount, you won't end up
-using shifted creds in ext4 operations.
-And if you shift mounted ext4 *before* creating the overlay, then
-still, overlay doesn't go through do_rmdir, so your method won't
-work either.
-
-Similar situation with nfsd, although I have no idea if there are plans
-to make nfsd userns aware.
-
->
-> > I suppose you do want to be able to mount overlays and export nfs out
-> > of those shifted mounts, as they are merely the foundation for
-> > unprivileged container storage stack. right?
->
-> If the plan of doing this as a bind mount holds, then certainly because
-> any underlying filesystem has to work with it.
->
-
-I am talking above, not under.
-You shift mount an ext4 fs and hand it over to container fake root
-(or mark it and let fake root shit mount).
-The container fake root should be able to (after overlayfs unpriv changes)
-create an overlay from inside container.
-IOW, try to mount an overlay over your shifted fs and see how it
-behaves.
-
-> > For overlayfs, you should at least look at ovl_override_creds() for
-> > incorporating shift mount logic - or more likely at the creation of
-> > ofs->creator_cred.
->
-> Well, we had this discussion when I proposed shiftfs as a superblock
-> based stackable filesytem, I think: the way the shift needs to use
-> creds is fundamentally different from the way overlayfs uses them.  The
-> ovl_override_creds is overriding with the creator's creds but the
-> shifting bind mound needs to backshift through the user namespace
-> currently in effect.  Since uid shifts can stack, we can make them work
-> together, but they are fundamentally different things.
->
-
-Right.
-Please take a look at the override_cred code in ovl_create_or_link().
-This code has some fsuid dance that you need to check for shift friendliness.
-
-The entire security model of overlayfs needs to be reexamined in the face
-of shift mount, but as I wrote, I don't think its going to be too hard to
-make ovl_override_creds() shift mount aware.
-Overlayfs mimics vfs behavior in many cases.
-
-Unless you shift mount both overlayfs and underlying (say) ext4, then
-you still have only one mnt_cred to cache in any given call stack.
-
-Thanks,
-Amir.
+T24gTW9uLCAyMDE5LTEyLTAyIGF0IDA4OjA1ICsxMTAwLCBEYXZlIENoaW5uZXIgd3JvdGU6DQo+
+IE9uIFdlZCwgTm92IDI3LCAyMDE5IGF0IDEyOjIxOjM2UE0gLTA4MDAsIERhcnJpY2sgSi4gV29u
+ZyB3cm90ZToNCj4gPiBPbiBXZWQsIE5vdiAyNywgMjAxOSBhdCAwNjozODo0NlBNICswMDAwLCBU
+cm9uZCBNeWtsZWJ1c3Qgd3JvdGU6DQo+ID4gPiBIaSBhbGwNCj4gPiA+IA0KPiA+ID4gQSBxdWlj
+ayBxdWVzdGlvbiBhYm91dCBjbG9uZV9yYW5nZSgpIGFuZCBndWFyYW50ZWVzIGFyb3VuZA0KPiA+
+ID4gbWV0YWRhdGENCj4gPiA+IHN0YWJpbGl0eS4NCj4gPiA+IA0KPiA+ID4gQXJlIHVzZXJzIHJl
+cXVpcmVkIHRvIGNhbGwgZnN5bmMvZnN5bmNfcmFuZ2UoKSBhZnRlciBjYWxsaW5nDQo+ID4gPiBj
+bG9uZV9yYW5nZSgpIGluIG9yZGVyIHRvIGd1YXJhbnRlZSB0aGF0IHRoZSBjbG9uZWQgcmFuZ2UN
+Cj4gPiA+IG1ldGFkYXRhIGlzDQo+ID4gPiBwZXJzaXN0ZWQ/DQo+ID4gDQo+ID4gWWVzLg0KPiA+
+IA0KPiA+ID4gSSdtIGFzc3VtaW5nIHRoYXQgaXQgaXMgcmVxdWlyZWQgaW4gb3JkZXIgdG8gZ3Vh
+cmFudGVlIHRoYXQNCj4gPiA+IGRhdGEgaXMgcGVyc2lzdGVkLg0KPiA+IA0KPiA+IERhdGEgYW5k
+IG1ldGFkYXRhLiAgWEZTIGFuZCBvY2ZzMidzIHJlZmxpbmsgaW1wbGVtZW50YXRpb25zIHdpbGwN
+Cj4gPiBmbHVzaA0KPiA+IHRoZSBwYWdlIGNhY2hlIGJlZm9yZSBzdGFydGluZyB0aGUgcmVtYXAs
+IGJ1dCB0aGV5IGJvdGggcmVxdWlyZQ0KPiA+IGZzeW5jIHRvDQo+ID4gZm9yY2UgdGhlIGxvZy9q
+b3VybmFsIHRvIGRpc2suDQo+IA0KPiBTbyB3ZSBuZWVkIHRvIGNhbGwgeGZzX2ZzX25mc19jb21t
+aXRfbWV0YWRhdGEoKSB0byBnZXQgdGhhdCBkb25lDQo+IHBvc3QgdmZzX2Nsb25lX2ZpbGVfcmFu
+Z2UoKSBjb21wbGV0aW9uIG9uIHRoZSBzZXJ2ZXIgc2lkZSwgeWVzPw0KPiANCg0KSSBjaG9zZSB0
+byBpbXBsZW1lbnQgdGhpcyB1c2luZyBhIGZ1bGwgY2FsbCB0byB2ZnNfZnN5bmNfcmFuZ2UoKSwg
+c2luY2UNCndlIHJlYWxseSBkbyB3YW50IHRvIGVuc3VyZSBkYXRhIHN0YWJpbGl0eSBhcyB3ZWxs
+LiBDb25zaWRlciwgZm9yDQppbnN0YW5jZSwgdGhlIGNhc2Ugd2hlcmUgY2xpZW50IEEgaXMgcnVu
+bmluZyBhbiBhcHBsaWNhdGlvbiwgYW5kIGNsaWVudA0KQiBydW5zIHZmc19jbG9uZV9maWxlX3Jh
+bmdlKCkgaW4gb3JkZXIgdG8gY3JlYXRlIGEgcG9pbnQgaW4gdGltZQ0Kc25hcHNob3Qgb2YgdGhl
+IGZpbGUgZm9yIGRpc2FzdGVyIHJlY292ZXJ5IHB1cnBvc2VzLi4uDQoNCj4gPiAoQUZBSUNUIHRo
+ZSBzYW1lIHJlYXNvbmluZyBhcHBsaWVzIHRvIGJ0cmZzLCBidXQgZG9uJ3QgdHJ1c3QgbXkNCj4g
+PiB3b3JkIGZvcg0KPiA+IGl0LikNCj4gPiANCj4gPiA+IEknbSBhc2tpbmcgYmVjYXVzZSBrbmZz
+ZCBjdXJyZW50bHkganVzdCBkb2VzIGEgY2FsbCB0bw0KPiA+ID4gdmZzX2Nsb25lX2ZpbGVfcmFu
+Z2UoKSB3aGVuIHBhcnNpbmcgYSBORlN2NC4yIENMT05FIG9wZXJhdGlvbi4gSXQNCj4gPiA+IGRv
+ZXMNCj4gPiA+IG5vdCBjYWxsIGZzeW5jKCkvZnN5bmNfcmFuZ2UoKSBvbiB0aGUgZGVzdGluYXRp
+b24gZmlsZSwgYW5kIHNpbmNlDQo+ID4gPiB0aGUNCj4gPiA+IE5GU3Y0LjIgcHJvdG9jb2wgZG9l
+cyBub3QgcmVxdWlyZSB5b3UgdG8gcGVyZm9ybSBhbnkgb3RoZXINCj4gPiA+IG9wZXJhdGlvbiBp
+bg0KPiA+ID4gb3JkZXIgdG8gcGVyc2lzdCBkYXRhL21ldGFkYXRhLCBJJ20gd29ycmllZCB0aGF0
+IHdlIG1heSBiZQ0KPiA+ID4gY29ycnVwdGluZw0KPiA+ID4gdGhlIGNsb25lZCBmaWxlIGlmIHRo
+ZSBORlMgc2VydmVyIGNyYXNoZXMgYXQgdGhlIHdyb25nIG1vbWVudA0KPiA+ID4gYWZ0ZXIgdGhl
+DQo+ID4gPiBjbGllbnQgaGFzIGJlZW4gdG9sZCB0aGUgY2xvbmUgY29tcGxldGVkLg0KPiANCj4g
+WXVwLCB0aGF0J3MgZXhhY3RseSB3aGF0IHNlcnZlciBzaWRlIGNhbGxzIHRvIGNvbW1pdF9tZXRh
+ZGF0YSgpIGFyZQ0KPiBzdXBwb3NlZCB0byBhZGRyZXNzLg0KPiANCj4gSSBzdXNwZWN0IHRvIGJl
+IGNvcnJlY3QsIHRoaXMgbWlnaHQgcmVxdWlyZSBjb21taXRfbWV0YWRhdGEoKSB0byBiZQ0KPiBj
+YWxsZWQgb24gYm90aCB0aGUgc291cmNlIGFuZCBkZXN0aW5hdGlvbiBpbm9kZXMsIGFzIGJvdGgg
+b2YgdGhlbQ0KPiBtYXkgaGF2ZSBtb2RpZmllZCBtZXRhZGF0YSBhcyBhIHJlc3VsdCBvZiB0aGUg
+Y2xvbmUgb3BlcmF0aW9uLiBGb3INCj4gWEZTIG9uZSBvZiB0aGVtIHdpbGwgYmUgYSBuby1vcCwg
+YnV0IGZvciBvdGhlciBmaWxlc3lzdGVtcyB0aGF0DQo+IGRvbid0IGltcGxlbWVudCAtPmNvbW1p
+dF9tZXRhZGF0YSwgd2UnbGwgbmVlZCB0byBjYWxsDQo+IHN5bmNfaW5vZGVfbWV0YWRhdGEoKSBv
+biBib3RoIGlub2Rlcy4uLg0KPiANCg0KVGhhdCdzIGludGVyZXN0aW5nLiBJIGhhZG4ndCBjb25z
+aWRlcmVkIHRoYXQgYSBjbG9uZSBtaWdodCBjYXVzZSB0aGUNCnNvdXJjZSBtZXRhZGF0YSB0byBj
+aGFuZ2UgYXMgd2VsbC4gV2hhdCBraW5kIG9mIGNoYW5nZSBzcGVjaWZpY2FsbHkgYXJlDQp3ZSB0
+YWxraW5nIGFib3V0PyBJcyBpdCBqdXN0IGRlbGF5ZWQgYmxvY2sgYWxsb2NhdGlvbiwgb3IgaXMg
+dGhlcmUNCm1vcmU/DQoNClRoYW5rcw0KICBUcm9uZA0KDQotLSANClRyb25kIE15a2xlYnVzdA0K
+TGludXggTkZTIGNsaWVudCBtYWludGFpbmVyLCBIYW1tZXJzcGFjZQ0KdHJvbmQubXlrbGVidXN0
+QGhhbW1lcnNwYWNlLmNvbQ0KDQoNCg==
