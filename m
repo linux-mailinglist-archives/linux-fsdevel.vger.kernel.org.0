@@ -2,42 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFB9911007A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 15:40:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AFBD1100AE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Dec 2019 15:58:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726190AbfLCOkR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Dec 2019 09:40:17 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:35524 "EHLO
+        id S1726131AbfLCO6k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Dec 2019 09:58:40 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:35844 "EHLO
         bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725848AbfLCOkR (ORCPT
+        by vger.kernel.org with ESMTP id S1726105AbfLCO6k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Dec 2019 09:40:17 -0500
+        Tue, 3 Dec 2019 09:58:40 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 959D98EE12C;
-        Tue,  3 Dec 2019 06:40:16 -0800 (PST)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 5B8608EE12C;
+        Tue,  3 Dec 2019 06:58:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1575384016;
-        bh=qVkS5/TnlW/6UlIqPLHFGwLupPI1Ycqzwc+IE9PQWxs=;
+        s=20151216; t=1575385119;
+        bh=8GsY9I2j5RnjcOT+y4MYYiuU4UBwE8BfLfDbXA8wbWQ=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=bgwEgdBwAKekOHf7dcTyEHqJDDad3cpLEIXV9V6LKcD27guTamLYEjVgJlgY4t0v/
-         sUxfIrgyrz4QTjDHplf6TAD1oBW2nFuri/8t7BVI9jN5cNNvrhMWK27E32WotcOVC3
-         vy2iPfIJuImza9uda62XvmoZ9+oZuMYDCf3Z/MDM=
+        b=s7vor2yxcL+6Fx3KIsktfqh+K6yzCu606uFCvEZ0CqDTKdN7rUyr6AWbzDCXcQP2b
+         dqC9rA9LQIyrMWS9fsVx9+DtdWzwjFDfzSFAnBcA0ZUUo5n7d3WxU01gDsl64T0SyY
+         kJTuu5Fx20DIqwFUcuapv6Ek7/UmWf6BORKWv94M=
+X-Amavis-Alert: BAD HEADER SECTION, Improper use of control character (char 0D
+        hex): References: ...5tyCfqw@mail.gmail.com>     <1575382251.34[...]
 Received: from bedivere.hansenpartnership.com ([127.0.0.1])
         by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Bbvy5NeLiQrI; Tue,  3 Dec 2019 06:40:16 -0800 (PST)
+        with ESMTP id 8Wtkb539zmMZ; Tue,  3 Dec 2019 06:58:38 -0800 (PST)
 Received: from jarvis.lan (unknown [50.35.76.230])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id E94648EE0D2;
-        Tue,  3 Dec 2019 06:40:15 -0800 (PST)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id B35B18EE0D2;
+        Tue,  3 Dec 2019 06:58:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1575384016;
-        bh=qVkS5/TnlW/6UlIqPLHFGwLupPI1Ycqzwc+IE9PQWxs=;
+        s=20151216; t=1575385118;
+        bh=8GsY9I2j5RnjcOT+y4MYYiuU4UBwE8BfLfDbXA8wbWQ=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=bgwEgdBwAKekOHf7dcTyEHqJDDad3cpLEIXV9V6LKcD27guTamLYEjVgJlgY4t0v/
-         sUxfIrgyrz4QTjDHplf6TAD1oBW2nFuri/8t7BVI9jN5cNNvrhMWK27E32WotcOVC3
-         vy2iPfIJuImza9uda62XvmoZ9+oZuMYDCf3Z/MDM=
-Message-ID: <1575384015.3435.16.camel@HansenPartnership.com>
+        b=NO9N05EALOT9Dcaod95Uk90Lo95fPEQiaIeqRcM+0LTkN26z66F3Mnc91qedgefpc
+         /EzNfD6svai/bmrXO6mnwATNsAvM059l6w+zFT3tAKDKdfDVy2EggyIu39kyJUOyCS
+         kJX1U+PPPoV1EzI0XwpYZ7j+1JL5WZ1O0NA/EQRw=
+Message-ID: <1575385116.3435.22.camel@HansenPartnership.com>
 Subject: Re: [PATCH 1/2] fs: introduce uid/gid shifting bind mount
 From:   James Bottomley <James.Bottomley@HansenPartnership.com>
 To:     Amir Goldstein <amir73il@gmail.com>
@@ -47,13 +49,15 @@ Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Miklos Szeredi <miklos@szeredi.hu>,
         Seth Forshee <seth.forshee@canonical.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>
-Date:   Tue, 03 Dec 2019 06:40:15 -0800
-In-Reply-To: <CAOQ4uxgcD5gwOXJfXaNki8t3=6oq32TB9URDpsoQo9A5tyCfqw@mail.gmail.com>
+Date:   Tue, 03 Dec 2019 06:58:36 -0800
+In-Reply-To: <CAOQ4uxh8R_GG+LMScoeuY32rx3sOeMuEK5z+rx=KO8QwGEGyXA@mail.gmail.com>
 References: <1575335637.24227.26.camel@HansenPartnership.com>
          <1575335700.24227.27.camel@HansenPartnership.com>
          <CAOQ4uxiqc_bsa88kZG2PNLPcTqFojJU_24qL32qw-VVLG+rRFw@mail.gmail.com>
          <1575349974.31937.11.camel@HansenPartnership.com>
          <CAOQ4uxgcD5gwOXJfXaNki8t3=6oq32TB9URDpsoQo9A5tyCfqw@mail.gmail.com>
+         <1575382251.3435.4.camel@HansenPartnership.com>
+         <CAOQ4uxh8R_GG+LMScoeuY32rx3sOeMuEK5z+rx=KO8QwGEGyXA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.26.6 
 Mime-Version: 1.0
@@ -63,116 +67,71 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2019-12-03 at 08:55 +0200, Amir Goldstein wrote:
-> On Tue, Dec 3, 2019 at 7:12 AM James Bottomley
+On Tue, 2019-12-03 at 16:33 +0200, Amir Goldstein wrote:
+> On Tue, Dec 3, 2019 at 4:10 PM James Bottomley
 > <James.Bottomley@hansenpartnership.com> wrote:
 > > 
-> > On Tue, 2019-12-03 at 06:51 +0200, Amir Goldstein wrote:
-> > > [cc: ebiederman]
-[...]
-> > > 4. This is currently not overlayfs (stacked fs) nor nfsd
-> > > friendly. Those modules do not call the path based vfs APIs, but
-> > > they do have the mnt stored internally.
+> > [splitting topics for ease of threading]
+> > On Tue, 2019-12-03 at 08:55 +0200, Amir Goldstein wrote:
+> > > On Tue, Dec 3, 2019 at 7:12 AM James Bottomley
+> > > <James.Bottomley@hansenpartnership.com> wrote:
+> > > > 
+> > > > On Tue, 2019-12-03 at 06:51 +0200, Amir Goldstein wrote:
+> > > > > [cc: ebiederman]
 > > 
-> > OK, so I've got to confess that I've only tested it with my
-> > container use case, which doesn't involve overlay or nfs.  However,
-> > as long as we thread path down to the API that nfds and overlayfs
-> > use, it should easily be made compatible with them ... do we have
-> > any documentation of what API this is?
-> 
-> No proper doc AFAIK, but please take a look at:
-> https://lore.kernel.org/linux-fsdevel/20191025112917.22518-2-mszeredi
-> @redhat.com/
-> It is part of a series to make overlayfs an FS_USERNS_MOUNT.
-> 
-> The simplest case goes typically something like this:
-> rmdir -> do_rmdir -(change_userns_creds)-> vfs_rmdir ->
->     ovl_rmdir -(ovl_override_creds)-> vfs_rmdir -> ext4_rmdir
-
-Yes, I figured it would mostly be the vfs_ functions.
-
-> So if you shift mounted the overlayfs mount, you won't end up
-> using shifted creds in ext4 operations.
-> And if you shift mounted ext4 *before* creating the overlay, then
-> still, overlay doesn't go through do_rmdir, so your method won't
-> work either.
-
-So I think the upper use case (shift above overlay) is fairly easily
-solvable: it involves making ovl_override_creds shift aware, so that
-when it does the override it keeps the shift.  This might involve
-stashing the overlay creds where the shift ones are in the task
-structure so cred_is_shifted() still works.
-
-The lower use case is more problematic because that would involve
-changing most of the vfs_ API.  I think we can take a phased approach:
-
-   1. Get agreement for the approach using the unstacked case (current
-      patch effectively)
-   2. Make the upper case work because it's the low hanging fruit; I can
-      start looking at this (although I'll have to figure out how to get
-      overlayfs working first).
-   3. Investigate the lower case if there's an actual use.
-
-> Similar situation with nfsd, although I have no idea if there are
-> plans to make nfsd userns aware.
-
-It's a similar upper and lower issue, although upper just involves
-playing nicely with the name remapping.
-
-> > > I suppose you do want to be able to mount overlays and export nfs
-> > > out of those shifted mounts, as they are merely the foundation
-> > > for unprivileged container storage stack. right?
+> > [...]
+> > > > > 2. Needs serious vetting by Eric (cc'ed)
+> > > > > 3. A lot of people have been asking me for filtering of
+> > > > > "dirent" fsnotify events (i.e. create/delete) by path, which
+> > > > > is not available in those vfs functions, so if the concept of
+> > > > > current-mnt flies, fsnotify is going to want to use it as
+> > > > > well.
+> > > > 
+> > > > Just a caveat: current->mnt is used in this patch simply as a
+> > > > tag, which means it doesn't need to be refcounted.  I think I
+> > > > can prove that it is absolutely valid if the cred is shifted
+> > > > because the reference is held by the code that shifted the
+> > > > cred, but it's definitely not valid except for a tag comparison
+> > > > outside of that.  Thus, if it is useful for fsnotify, more
+> > > > thought will have to be given to refcounting it.
+> > > > 
+> > > 
+> > > Yes. Is there anything preventing us from taking refcount on
+> > > current->mnt?
 > > 
-> > If the plan of doing this as a bind mount holds, then certainly
-> > because any underlying filesystem has to work with it.
+> > We could, but what would it usefully mean?  It would just be the
+> > last mnt that had its credentials shifted.  I think stashing a
+> > refcounted mnt in the task structure is reasonably easy:  The creds
+> > are refcounted, so you simply follow all the task mnt_cred logic I
+> > added for releasing the ref in the correct places, so if you want
+> > to do that, I can simply rename this tag to something less generic
+> > ... unless you have some idea about using the last shift mnt?
 > > 
 > 
-> I am talking above, not under.
+> Nevermind. Didn't want to derail the thread.
 
-Hopefully I addressed that above.  I think above is easier and should
-be the first target, but to make this works completely eventually needs
-the under case as well.
+Don't worry, that's why I separated the issues.
 
-> You shift mount an ext4 fs and hand it over to container fake root
-> (or mark it and let fake root shit mount).
-> The container fake root should be able to (after overlayfs unpriv
-> changes) create an overlay from inside container.
-> IOW, try to mount an overlay over your shifted fs and see how it
-> behaves.
-> 
-> > > For overlayfs, you should at least look at ovl_override_creds()
-> > > for incorporating shift mount logic - or more likely at the
-> > > creation of ofs->creator_cred.
-> > 
-> > Well, we had this discussion when I proposed shiftfs as a
-> > superblock based stackable filesytem, I think: the way the shift
-> > needs to use creds is fundamentally different from the way
-> > overlayfs uses them.  The ovl_override_creds is overriding with the
-> > creator's creds but the shifting bind mound needs to backshift
-> > through the user namespace currently in effect.  Since uid shifts
-> > can stack, we can make them work together, but they are
-> > fundamentally different things.
-> > 
-> 
-> Right.
-> Please take a look at the override_cred code in ovl_create_or_link().
-> This code has some fsuid dance that you need to check for shift
-> friendliness.
+> I am still not sure what the semantics of generic current->mnt should
+> be.
 
-Certainly, I've added it to my todo list.
+OK, so that's easy: it's not designed in the current patch set ever to
+be used as a mnt.  It's simply a tag to tell you if the cached shifted
+credentials in mnt_cred are valid for reuse.  To the only use I put it
+to is in change_userns_cred() where we look at the task cached
+mnt+mnt_cred and if mnt matches the mnt change_user_ns_cred was called
+for we know that if mnt_cred is not NULL then it's usable as the pre-
+prepared credentials.
 
-> The entire security model of overlayfs needs to be reexamined in the
-> face of shift mount, but as I wrote, I don't think its going to be
-> too hard to make ovl_override_creds() shift mount aware.
-> Overlayfs mimics vfs behavior in many cases.
+> operations like copy_file_range() with two path arguments can
+> get confusing and handling nesting (e.g. overlayfs can be confusing
+> as well).
 
-Agreed.
-
-> Unless you shift mount both overlayfs and underlying (say) ext4, then
-> you still have only one mnt_cred to cache in any given call stack.
-
-Heh well the double shift case will be the stress test of getting 2.
-and 3. working right.
+So I think the concept of using the task struct to carry information
+you don't want to thread all the way up and down the stack, like how
+I've done for knowledge of the shift being in effect, is potentially a
+useful one.  It is a bit of a hack though to work around the fact that
+our API is missing stuff.
 
 James
 
