@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7C7311245F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2019 09:19:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5BEA112461
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2019 09:19:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbfLDITi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Dec 2019 03:19:38 -0500
+        id S1727351AbfLDITk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Dec 2019 03:19:40 -0500
 Received: from esa5.hgst.iphmx.com ([216.71.153.144]:32758 "EHLO
         esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727326AbfLDITf (ORCPT
+        with ESMTP id S1727219AbfLDITh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Dec 2019 03:19:35 -0500
+        Wed, 4 Dec 2019 03:19:37 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1575447575; x=1606983575;
+  t=1575447577; x=1606983577;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=wWVf0lcmjygoveqYvU8ay6sHk4wiR0WqOto3mwXnybY=;
-  b=gljjA7dVOv74sBvLC+T1MRbW+zKqel3i/bwNXa59eCgs06RsEOiubbgk
-   UzrlDVMe71EQ/tckYQA205E4Xa5O+6Uxq3Pb6tl0bz4jCnzoO2Qj1lJS7
-   Pp7rEANZXBOsu+WVtQjOsIXl/MtmQAagkFtUFtL/bj92IOPyNCg+ACJ7z
-   RsVH/1SfMZcXyZFxt/f4TI61ifLr6kyaMC2jtnibtDQtJddy1w9YpFtaV
-   7F+a8cR2fMjOeYiWfN3gqAhilnE6x4oEjfdGHKuIB/1buHOmJgrw+6Et6
-   DyJVan7ES1EWb2aH7OXoZfOxGnyWsL6DOq3zBOBCkiRZX3AvkYVjC2Yig
+  bh=Jxw4CEGwoy8t1QezrDvEjaSMaFQakiEMAHs/uxO0A6s=;
+  b=GgFUR8SItMEzeEkgVcUiAaS5aiZsQBxgf/uetWHPjhC/BRutm97aDQKp
+   pVidrzoPKrYP9o7TW0mdPLssLCI35NQx4zjH49oJQmbskVY2ZeDtbjP7u
+   /d1oND6sc/A3YJydklXajgcsdIbpdKfrDAoJ1qXBCk3Yd2R5NitCM0+O4
+   GZrQx8tZBr2AiRcOzRlYrIByIxfaErwW+Sk7VX8zfNOD8W1awZjVDe1zS
+   oNhc9MK//XxCRW3kHS28OoKEabLFdo1BI2UtxMBuU99w1e/+8suhYcAXW
+   AV/Ey5IjR5ds1NQnJzPJXHIvEGz37mg7/NPYbQVXMjEi/miG8GiEt/MSj
    A==;
-IronPort-SDR: WWucve8mRjCpO0j13mjqY+4YL0ebsFzOgVxc7OIW5lVpfz/Ucfpmcchu1Pnq2TRWbQl/G69rch
- SGInYeElQ26bYVKyc2oiTK65gav5wyl1Ax2MZtX6AZ11FJxx6ADVTyy9Bgk625jGNhHb4HU1YN
- dbmLQscFEUzoZy/xwTBv8a2O9L8FwQ4V/W0u1K3Y+uJh/kOT2vzXYZE4XBbKfhyusbO/4kB0d6
- 1vhSSZuO//wNOy0x+3uw5YajO5UJ3ZZg8jI+NexBHLDPgS55UsnWw2jh2sYn5qzX0mXcOWXdrT
- n/k=
+IronPort-SDR: fyaSEeTcVk48QFnsMZqjO1Qk7Wy05TTWzCRmDtV5FuO7OPm+xRHoqmHJl0cIRWFG190wytrA00
+ 7zToSkOLaHLI7zQmAWNMZkDqw/0zQIWgDn6upPxyKFg8U6798gTBJKKDIC496tL8B6uPwHcuP6
+ wkgzduGC07p/UftAeBz38Uw50dDP+Xs6K7ZXsqylfD/ZRDCOGtDgKa6T9NY9qIBKtgJfCGHPXP
+ ubuIOjj6R4Iwv5IZWz4yrorHNurdPtoZllO6DdXV+ZK1Q7hrZYNTyTbq/jizRoA2r9rII504z1
+ m9Q=
 X-IronPort-AV: E=Sophos;i="5.69,276,1571673600"; 
-   d="scan'208";a="125355044"
+   d="scan'208";a="125355047"
 Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 04 Dec 2019 16:19:35 +0800
-IronPort-SDR: Vss65OUv2CM64D4zQu6tkVs5Oj7qWcpfrPhRo6ReDblC9gwI4c38gQP+AIB2CrFMAuuqWi7KBu
- KbKOVL2k0XkQ/4r9YWvWUA80RTeuQgMCd34ZWEtCPRVI00Jh93Sgu6bSRaPLqiaG1uKaj6r5fL
- sjl9M0Bc6Ps8IV4vpTbAG56Ms71urEsLQ2Sir0IHlCAo92aDyazAM61L2P2JWBKe1joqnY1qZU
- muqQZPFZ5vneNHPfH/93M3kUAHOkNnPCE9xPmgSWfzZdEkjEduXxvlwxoQg2ahPOKETJwvsSd/
- f55+WfwYC+ezdJsHB5thmsCT
+  by ob1.hgst.iphmx.com with ESMTP; 04 Dec 2019 16:19:37 +0800
+IronPort-SDR: aze5q2GJWXlUO8x8HrPFDpVSsH3kW/Dw8ZE0pDBe0gGfdYsx8UrMJaS2sf7RHvu26nYcso5msX
+ AFylg1WquFe7Mq5rMDnZ86MJNzWdO20me1j54iP7Ksyt/uMYWAx/AZjTT4jNL5zGsSEsQbh1ag
+ x1OsTx41qX7aTKP/VwWJz3FZ01vtFZj8ALlrZUqx7QAuXp//Sxos/9Ao0zeXWJVqYVxGBMOHbW
+ pCmhDAS72tqYuLzSRaDwjieB3GGLvf486hr5qILxdFkAfJQnsDgnKqtOkJnVPmOXms3tgLuqEG
+ Vu7VmlIgKv5PPQ51rOkyudYY
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2019 00:14:00 -0800
-IronPort-SDR: ZL5KajSgX7aCIrTA0Jj6luvtF/ZgsEX+3xTFLBB91aWQKJr5BwIBGcu4/U29ziKvKIBvt8Otoi
- 1KfO444CNVtdvizlT4Jv6P8v4Bpj4dkcImNptmu00rVuSu7DMBVflTxA9H3mkmXUj1K9J4xGZx
- q+f4VK8MRaVFfZRYouN81ia8vIK6vblT9KwaFzevOwfn8hjeeEvkoKL3DVj8gdtpYXMbso7Bv0
- IrXAuiNq5iJiITaz1BVTRTWEsfPcSygH05BYeKwjYtUTwMzKzRtev6JK+uSGtAqGQg+EG1NewG
- zq0=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2019 00:14:02 -0800
+IronPort-SDR: 9O3kZpe57YeEC7ciHDWOz4yHRhJUjwjU6Vz3bwgWbl8qUZdtNwoB6gZS8VuJUpjQNAzHefedKF
+ oLMQLcPhmgs+XLzaHAtaeS0nL41P6h7BnPv6V4nhOw31NJ6RUY0oIduqW0y7hb0A+B07l5JwQM
+ irBXoFB7F6uF7NbOiz1pjszP6hdglltyO+ZzjSYUtfQBQCeT20uzQjFNT7X0gLKjDynHQLR/5W
+ E38VQqYOyRj5uUcEHvTBYTHRsYkSPQ44T5wpRv9OOG3LoRYdei4nrGgLNixcJDZjYvu3ujqTUK
+ +uU=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com (HELO naota.fujisawa.hgst.com) ([10.149.53.115])
-  by uls-op-cesaip02.wdc.com with ESMTP; 04 Dec 2019 00:19:32 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 04 Dec 2019 00:19:34 -0800
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>
 Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
@@ -58,9 +58,9 @@ Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         Hannes Reinecke <hare@suse.com>,
         Anand Jain <anand.jain@oracle.com>,
         linux-fsdevel@vger.kernel.org, Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH v5 06/28] btrfs: disallow NODATACOW in HMZONED mode
-Date:   Wed,  4 Dec 2019 17:17:13 +0900
-Message-Id: <20191204081735.852438-7-naohiro.aota@wdc.com>
+Subject: [PATCH v5 07/28] btrfs: disable fallocate in HMZONED mode
+Date:   Wed,  4 Dec 2019 17:17:14 +0900
+Message-Id: <20191204081735.852438-8-naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204081735.852438-1-naohiro.aota@wdc.com>
 References: <20191204081735.852438-1-naohiro.aota@wdc.com>
@@ -71,46 +71,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-NODATACOW implies overwriting the file data on a device, which is
-impossible in sequential required zones. Disable NODATACOW globally with
-mount option and per-file NODATACOW attribute by masking FS_NOCOW_FL.
+fallocate() is implemented by reserving actual extent instead of
+reservations. This can result in exposing the sequential write constraint
+of host-managed zoned block devices to the application, which would break
+the POSIX semantic for the fallocated file.  To avoid this, report
+fallocate() as not supported when in HMZONED mode for now.
+
+In the future, we may be able to implement "in-memory" fallocate() in
+HMZONED mode by utilizing space_info->bytes_may_use or so.
 
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- fs/btrfs/hmzoned.c | 6 ++++++
- fs/btrfs/ioctl.c   | 3 +++
- 2 files changed, 9 insertions(+)
+ fs/btrfs/file.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/fs/btrfs/hmzoned.c b/fs/btrfs/hmzoned.c
-index 1c015ed050fc..e890d2ab8cd9 100644
---- a/fs/btrfs/hmzoned.c
-+++ b/fs/btrfs/hmzoned.c
-@@ -269,5 +269,11 @@ int btrfs_check_mountopts_hmzoned(struct btrfs_fs_info *info)
- 		return -EINVAL;
- 	}
+diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+index 0cb43b682789..22373d00428b 100644
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@ -3170,6 +3170,10 @@ static long btrfs_fallocate(struct file *file, int mode,
+ 	alloc_end = round_up(offset + len, blocksize);
+ 	cur_offset = alloc_start;
  
-+	if (btrfs_test_opt(info, NODATACOW)) {
-+		btrfs_err(info,
-+		  "cannot enable nodatacow with HMZONED mode");
-+		return -EINVAL;
-+	}
-+
- 	return 0;
- }
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index a1ee0b775e65..a67421eb8bd5 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -94,6 +94,9 @@ static int btrfs_clone(struct inode *src, struct inode *inode,
- static unsigned int btrfs_mask_fsflags_for_type(struct inode *inode,
- 		unsigned int flags)
- {
++	/* Do not allow fallocate in HMZONED mode */
 +	if (btrfs_fs_incompat(btrfs_sb(inode->i_sb), HMZONED))
-+		flags &= ~FS_NOCOW_FL;
++		return -EOPNOTSUPP;
 +
- 	if (S_ISDIR(inode->i_mode))
- 		return flags;
- 	else if (S_ISREG(inode->i_mode))
+ 	/* Make sure we aren't being give some crap mode */
+ 	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |
+ 		     FALLOC_FL_ZERO_RANGE))
 -- 
 2.24.0
 
