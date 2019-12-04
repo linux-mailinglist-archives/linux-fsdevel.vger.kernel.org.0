@@ -2,201 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 208DB112C47
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2019 14:06:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30159112CE6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2019 14:50:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbfLDNGh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Dec 2019 08:06:37 -0500
-Received: from smtpoutz25.laposte.net ([194.117.213.100]:51690 "EHLO
-        smtp.laposte.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727469AbfLDNGf (ORCPT
+        id S1727961AbfLDNux (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Dec 2019 08:50:53 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:22849 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727792AbfLDNuw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Dec 2019 08:06:35 -0500
-Received: from smtp.laposte.net (localhost [127.0.0.1])
-        by lpn-prd-vrout013 (Postfix) with ESMTP id CC3311056AC
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Dec 2019 14:06:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=laposte.net; s=mail0;
-        t=1575464792; bh=QoIoJNvQPoGhf1mEusSBQCFVb/hmuGDTkK983LBNhUA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=lvQ4pddU1kKG4GcS5QRjKnOt4JQoePeYau4Dg10EA4FYRVyIQjS1TFboFnjvvFn/9
-         Wf8Rq05lZJvUG5Bk5TI8eDBwKQUGb5KHFLZqGNkf5RA0hL02+Fd7IIbuZaDTvWFaA6
-         5cXhHrykq9rFclrlnA1EInDM0Zax1czJ+Tpwvg6pu4b3L1AdiWKollLlOejNd39cxb
-         xaWL/QpDuW8xq/W9+V5nFVIblTwq9wR/S/6ek8z2SCpCIiebspz0uKXrtVTgnSH1oB
-         lM+p4g7bgaWbhC2B0lgKcrsl0qIUPtc7nj86WyTdILCB0Wkj4jhvlGzbOc1CIXmB/y
-         50FjG7txzpilw==
-Received: from smtp.laposte.net (localhost [127.0.0.1])
-        by lpn-prd-vrout013 (Postfix) with ESMTP id 55782106A62
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Dec 2019 14:06:31 +0100 (CET)
-Received: from lpn-prd-vrin003 (lpn-prd-vrin003.prosodie [10.128.63.4])
-        by lpn-prd-vrout013 (Postfix) with ESMTP id BEC09106A58
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Dec 2019 14:06:30 +0100 (CET)
-Received: from lpn-prd-vrin003 (localhost [127.0.0.1])
-        by lpn-prd-vrin003 (Postfix) with ESMTP id B01704A725C
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Dec 2019 14:06:30 +0100 (CET)
-Received: from [192.168.1.18] (lfbn-mar-1-801-152.w92-150.abo.wanadoo.fr [92.150.127.152])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 4 Dec 2019 08:50:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575467452;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=VA9lOoBJgqCxzPUvXrp+l1oPS8XjH4P1e6jO6rnjjg8=;
+        b=OJ7sCRzpAFHmkmjvScZK+ZWJJayWKCrEtho6ALh87721wwgjnz93ZSucLusj5PU/zu65xb
+        EUCUbCg4gGZNkTGXbtaive6QysHfLVQSN2jy9eARPF37aozuoW5+jy9CyxCjHRnaGehoq/
+        UN/SeTipLbR6nVPB0fX20jIj4n9stdY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-353-sTXKKfdVOFaPo2t4eAi-uw-1; Wed, 04 Dec 2019 08:50:49 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by lpn-prd-vrin003 (Postfix) with ESMTPSA id 4C5A04A7228;
-        Wed,  4 Dec 2019 14:06:29 +0100 (CET)
-Subject: Re: [PATCH] fs: introduce is_dot_dotdot helper for cleanup
-To:     Tiezhu Yang <yangtiezhu@loongson.cn>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        linux-fsdevel@vger.kernel.org, ecryptfs@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-References: <1575281413-6753-1-git-send-email-yangtiezhu@loongson.cn>
- <20191202200302.GN20752@bombadil.infradead.org>
- <357ad021-a58c-ad46-42bd-d5012126276f@loongson.cn>
-From:   Jean-Louis Biasini <jl.biasini@laposte.net>
-X-Pep-Version: 2.0
-Message-ID: <12554a8e-2899-f03f-ec3d-d4cf35c4dd71@laposte.net>
-Date:   Wed, 4 Dec 2019 14:06:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2144D91206;
+        Wed,  4 Dec 2019 13:50:47 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-23.pek2.redhat.com [10.72.8.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C826E19C68;
+        Wed,  4 Dec 2019 13:50:32 +0000 (UTC)
+Date:   Wed, 4 Dec 2019 21:50:14 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Phil Auld <pauld@redhat.com>, Dave Chinner <david@fromorbit.com>,
+        Hillf Danton <hdanton@sina.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-fs <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rong Chen <rong.a.chen@intel.com>, Tejun Heo <tj@kernel.org>
+Subject: Re: single aio thread is migrated crazily by scheduler
+Message-ID: <20191204135014.GA21449@ming.t460p>
+References: <20191115010824.GC4847@ming.t460p>
+ <20191115045634.GN4614@dread.disaster.area>
+ <20191115070843.GA24246@ming.t460p>
+ <20191128094003.752-1-hdanton@sina.com>
+ <CAKfTPtA23ErKGCEJVmg6vk-QoufkiUM3NbXd31mZmKnuwbTkFw@mail.gmail.com>
+ <20191202024625.GD24512@ming.t460p>
+ <20191202040256.GE2695@dread.disaster.area>
+ <CAKfTPtD8Q97qJ_+hdCXQRt=gy7k96XrhnFmGYP1G88YSFW0vNA@mail.gmail.com>
+ <20191202212210.GA32767@lorien.usersys.redhat.com>
+ <CAKfTPtC7uycC3b2ngOFUqOh9-Fcz7h-151aaYJbLJFXrNq-gkw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <357ad021-a58c-ad46-42bd-d5012126276f@loongson.cn>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAKfTPtC7uycC3b2ngOFUqOh9-Fcz7h-151aaYJbLJFXrNq-gkw@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: sTXKKfdVOFaPo2t4eAi-uw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-X-VR-FullState: 0
-X-VR-Score: -100
-X-VR-Cause-1: gggruggvucftvghtrhhoucdtuddrgedufedrudejledggeejucetufdoteggodetrfdotffvucfrrhho
-X-VR-Cause-2: fhhilhgvmecunfetrffquffvgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhht
-X-VR-Cause-3: shculddquddttddmnecujfgurhepuffvfhfhkffffgggjggtgfesthhqredttdefjeenucfhrhhomhep
-X-VR-Cause-4: lfgvrghnqdfnohhuihhsuceuihgrshhinhhiuceojhhlrdgsihgrshhinhhisehlrghpohhsthgvrdhn
-X-VR-Cause-5: vghtqeenucfkphepledvrdduhedtrdduvdejrdduhedvnecurfgrrhgrmhepmhhouggvpehsmhhtphho
-X-VR-Cause-6: uhhtpdhinhgvthepledvrdduhedtrdduvdejrdduhedvpdhhvghloheplgduledvrdduieekrddurddu
-X-VR-Cause-7: kegnpdhmrghilhhfrhhomhepjhhlrdgsihgrshhinhhisehlrghpohhsthgvrdhnvghtpdhrtghpthht
-X-VR-Cause-8: oheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhi
-X-VR-Cause-9: nhhugidqfhdvfhhsqdguvghvvghlsehlihhsthhsrdhsohhurhgtvghfohhrghgvrdhnvghtpdhrtghp
-X-VR-Cause-10: thhtoheplhhinhhugidqfhhstghrhihpthesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
-X-VR-Cause-11: pegvtghrhihpthhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhf
-X-VR-Cause-12: shguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthihhhhitghkshestggr
-X-VR-Cause-13: nhhonhhitggrlhdrtghomhdprhgtphhtthhopegvsghighhgvghrsheskhgvrhhnvghlrdhorhhgpdhr
-X-VR-Cause-14: tghpthhtohephihutghhrghotdeshhhurgifvghirdgtohhmpdhrtghpthhtohepjhgrvghgvghukhes
-X-VR-Cause-15: khgvrhhnvghlrdhorhhgpdhrtghpthhtohepthihthhsohesmhhithdrvgguuhdprhgtphhtthhopehv
-X-VR-Cause-16: ihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepfihilhhlhiesihhnfhhr
-X-VR-Cause-17: rgguvggrugdrohhrghdprhgtphhtthhopeihrghnghhtihgviihhuheslhhoohhnghhsohhnrdgtnhen
-X-VR-Cause-18: ucevlhhushhtvghrufhiiigvpedt
-X-VR-AvState: No
-X-VR-State: 0
-X-VR-State: 0
+Content-Disposition: inline
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Please UNSUBSCRIBE ME from this list of tell how to!!!
+On Tue, Dec 03, 2019 at 10:45:38AM +0100, Vincent Guittot wrote:
+> On Mon, 2 Dec 2019 at 22:22, Phil Auld <pauld@redhat.com> wrote:
+> >
+> > Hi Vincent,
+> >
+> > On Mon, Dec 02, 2019 at 02:45:42PM +0100 Vincent Guittot wrote:
+> > > On Mon, 2 Dec 2019 at 05:02, Dave Chinner <david@fromorbit.com> wrote=
+:
+> >
+> > ...
+> >
+> > > > So, we can fiddle with workqueues, but it doesn't address the
+> > > > underlying issue that the scheduler appears to be migrating
+> > > > non-bound tasks off a busy CPU too easily....
+> > >
+> > > The root cause of the problem is that the sched_wakeup_granularity_ns
+> > > is in the same range or higher than load balance period. As Peter
+> > > explained, This make the kworker waiting for the CPU for several load
+> > > period and a transient unbalanced state becomes a stable one that the
+> > > scheduler to fix. With default value, the scheduler doesn't try to
+> > > migrate any task.
+> >
+> > There are actually two issues here.   With the high wakeup granularity
+> > we get the user task actively migrated. This causes the significant
+> > performance hit Ming was showing. With the fast wakeup_granularity
+> > (or smaller IOs - 512 instead of 4k) we get, instead, the user task
+> > migrated at wakeup to a new CPU for every IO completion.
+>=20
+> Ok, I haven't noticed that this one was a problem too. Do we have perf
+> regression ?
 
-Le 03/12/2019 =C3=A0 03:07, Tiezhu Yang a =C3=A9crit=C2=A0:
-> On 12/03/2019 04:03 AM, Matthew Wilcox wrote:
->> On Mon, Dec 02, 2019 at 06:10:13PM +0800, Tiezhu Yang wrote:
->>> There exists many similar and duplicate codes to check "." and "..",
->>> so introduce is_dot_dotdot helper to make the code more clean.
->> The idea is good.=C2=A0 The implementation is, I'm afraid, badly chose=
-n.
->> Did you benchmark this change at all?=C2=A0 In general, you should pre=
-fer the
->> core kernel implementation to that of some less-interesting filesystem=
-s.
->> I measured the performance with the attached test program on my laptop=
+Follows the test result on one server(Dell, R630: Haswell-E):
 
->> (Core-i7 Kaby Lake):
->>
->> qstr . time_1 0.020531 time_2 0.005786
->> qstr .. time_1 0.017892 time_2 0.008798
->> qstr a time_1 0.017633 time_2 0.003634
->> qstr matthew time_1 0.011820 time_2 0.003605
->> qstr .a time_1 0.017909 time_2 0.008710
->> qstr , time_1 0.017631 time_2 0.003619
->>
->> The results are quite stable:
->>
->> qstr . time_1 0.021137 time_2 0.005780
->> qstr .. time_1 0.017964 time_2 0.008675
->> qstr a time_1 0.017899 time_2 0.003654
->> qstr matthew time_1 0.011821 time_2 0.003620
->> qstr .a time_1 0.017889 time_2 0.008662
->> qstr , time_1 0.017764 time_2 0.003613
->>
->> Feel free to suggest some different strings we could use for testing.
->> These seemed like interesting strings to test with.=C2=A0 It's always
->> possible
->> I've messed up something with this benchmark that causes it to not
->> accurately represent the performance of each algorithm, so please chec=
-k
->> that too.
->
-> [Sorry to resend this email because the mail list server
-> was denied due to it is not plain text.]
->
-> Hi Matthew,
->
-> Thanks for your reply and suggestion. I measured the
-> performance with the test program, the following
-> implementation is better for various of test cases:
->
-> bool is_dot_dotdot(const struct qstr *str)
-> {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (unlikely(str->name[0] =3D=
-=3D '.')) {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 if (str->len < 2 || (str->len =3D=3D 2 && str->name[1]=
- =3D=3D
-> '.'))
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return=
- true;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return false;
-> }
->
-> I will send a v2 patch used with this implementation.
->
-> Thanks,
->
-> Tiezhu Yang
->
->>
->>> +bool is_dot_dotdot(const struct qstr *str)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0 if (str->len =3D=3D 1 && str->name[0] =3D=3D '.')=
+kernel.sched_wakeup_granularity_ns =3D 4000000
+kernel.sched_min_granularity_ns =3D 3000000
 
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return true;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 if (str->len =3D=3D 2 && str->name[0] =3D=3D '.' =
-&& str->name[1] =3D=3D '.')
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return true;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 return false;
->>> +}
->>> +EXPORT_SYMBOL(is_dot_dotdot);
->>> diff --git a/fs/namei.c b/fs/namei.c
->>> index 2dda552..7730a3b 100644
->>> --- a/fs/namei.c
->>> +++ b/fs/namei.c
->>> @@ -2458,10 +2458,8 @@ static int lookup_one_len_common(const char
->>> *name, struct dentry *base,
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!len)
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EACCES=
-;
->>> =C2=A0 -=C2=A0=C2=A0=C2=A0 if (unlikely(name[0] =3D=3D '.')) {
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (len < 2 || (len =3D=3D=
- 2 && name[1] =3D=3D '.'))
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 r=
-eturn -EACCES;
->>> -=C2=A0=C2=A0=C2=A0 }
->>> +=C2=A0=C2=A0=C2=A0 if (unlikely(is_dot_dotdot(this)))
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EACCES;
->>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 while (len--) {
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int c=
- =3D *(const unsigned char *)name++;
->
+---------------------------------------
+test              =09=09        | IOPS
+---------------------------------------
+./xfs_complete 512      =09    | 7.8K=20
+---------------------------------------
+taskset -c 8 ./xfs_complete 512 | 9.8K=20
+---------------------------------------
+
+Thanks,
+Ming
 
