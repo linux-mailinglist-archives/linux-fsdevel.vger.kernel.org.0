@@ -2,146 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EC07112D65
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2019 15:25:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB28F112DAD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2019 15:43:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727912AbfLDOZC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Dec 2019 09:25:02 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44182 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727828AbfLDOZC (ORCPT
+        id S1728089AbfLDOnO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Dec 2019 09:43:14 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:51344 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728029AbfLDOnO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Dec 2019 09:25:02 -0500
-Received: by mail-wr1-f67.google.com with SMTP id q10so8774591wrm.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Dec 2019 06:25:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dCNInubYDqlO66XRYe9hy1rNnkQmFtQqKTbaoNinUSM=;
-        b=Jk0OaY9M/rXWxlouQPDgbsvnok6FQUbEafumGHLiT9nbTWvK3exykqs7u01BcZyzJG
-         qn1yCbwPlNHeTAeI0f9NMZBhkaMNuSQ42K+nqNR76UdBQ9R+zKSrGlvTsr35bR0O5CT1
-         SUtNTCKh7jxskGOgdYd0NaYHE6eMLxaQAUBdTtyA2Mwpb4BJVUuiYa6bqtbFeQolZeKm
-         biqP+CPmzzIxx9ZkJs1zxObIsrHhdy49lSRbIkvUDrA9TqwUI1YEeMfM20BUdKNgusR/
-         1oz/iYGiCOSGuHTj01fKGlZLukF8INIvKFcn0PjUYvkIeMMMnLPJg7aoBmRsPKk5RurI
-         jEVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dCNInubYDqlO66XRYe9hy1rNnkQmFtQqKTbaoNinUSM=;
-        b=ucb6s2k25zn84EesjyK/Gw+0vO+saBYdPqEnz+iSyqGnZPKFOIVcA+iKPcT/Ooqynm
-         JGOQVZM4ug0+uNJrzbjwwYM3Kn5Yclg4k5/zO9UaipUPxPZ7yxbx2RMR3ptBTe37lEw8
-         yY/ZnoVI4ItUqSY2zbffuNM8rJ28GzBZxh9hSbHhJb5ol6Qayp1OJfon5qM0JI2FGjoA
-         0QY1mcPSgmVQUdeLsPSK50CNDvnZ1VG8ixmStM4H7bnwbuEe305GjPx2nOe2d6PwVSk/
-         2fNFQiPMKecJNkYc5soKOR/HRr3Q2Ae5elGvNggrUlgog+lyzPKkSeHNm3jIgl5U0A+F
-         82Iw==
-X-Gm-Message-State: APjAAAXS3aIfxNkuyK1NXHnjbQjmbWLDqKhAFrvh3g2a81kWT/Bh+WIR
-        jYgv4LloFQ4rtBvHzPKGbt2Y3eECNXky9Julm1s=
-X-Google-Smtp-Source: APXvYqwU223ebSWrYZG2E7uTcpjodM6s2VwLj9s5DtEO2xNjHI6UF0pgW0PvIN2GsHlRVlapZQqNHKtUdnyI3vOEhNU=
-X-Received: by 2002:a5d:5091:: with SMTP id a17mr4265512wrt.362.1575469499998;
- Wed, 04 Dec 2019 06:24:59 -0800 (PST)
+        Wed, 4 Dec 2019 09:43:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575470593;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=g3VYZu2Msuo/GrqTGe5D8EVEkLes+Ylvr+P670WnJo0=;
+        b=DBOhUV7Ye1ODezRCtpMBZdxHd/vC/chLRPaY5FCiu1kMzdxME1h888c8UR/toN/lIQgRZe
+        GNR/zGpFLH5fhqikzKLrd50pGEDs/QAKW3Y6XiIdBTfq41iYJEY7H4rqQrINZNEDlqZ6ko
+        9n39X+RihZh93NgwxLoqCyiD00fPaho=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-61-JNulPZWVPeum3MOUKv5umw-1; Wed, 04 Dec 2019 09:43:09 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CB77818543A6;
+        Wed,  4 Dec 2019 14:43:07 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 869F65D6AE;
+        Wed,  4 Dec 2019 14:43:07 +0000 (UTC)
+Received: from zmail17.collab.prod.int.phx2.redhat.com (zmail17.collab.prod.int.phx2.redhat.com [10.5.83.19])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id E20315BC09;
+        Wed,  4 Dec 2019 14:43:04 +0000 (UTC)
+Date:   Wed, 4 Dec 2019 09:43:04 -0500 (EST)
+From:   Jan Stancek <jstancek@redhat.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        darrick wong <darrick.wong@oracle.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        Memory Management <mm-qe@redhat.com>,
+        LTP Mailing List <ltp@lists.linux.it>,
+        Linux Stable maillist <stable@vger.kernel.org>,
+        CKI Project <cki-project@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Message-ID: <385099805.15030947.1575470584839.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20191203190925.GA5150@infradead.org>
+References: <cki.6C6A189643.3T2ZUWEMOI@redhat.com> <1738119916.14437244.1575151003345.JavaMail.zimbra@redhat.com> <8736e3ffen.fsf@mpe.ellerman.id.au> <1420623640.14527843.1575289859701.JavaMail.zimbra@redhat.com> <1766807082.14812757.1575377439007.JavaMail.zimbra@redhat.com> <20191203190925.GA5150@infradead.org>
+Subject: Re: [bug] userspace hitting sporadic SIGBUS on xfs (Power9,
+ ppc64le), v4.19 and later
 MIME-Version: 1.0
-References: <CADKPpc2RuncyN+ZONkwBqtW7iBb5ep_3yQN7PKe7ASn8DpNvBw@mail.gmail.com>
- <CAOQ4uxiKqEq9ts4fEq_husQJpus29afVBMq8P1tkeQT-58RBFg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxiKqEq9ts4fEq_husQJpus29afVBMq8P1tkeQT-58RBFg@mail.gmail.com>
-From:   Mo Re Ra <more7.rev@gmail.com>
-Date:   Wed, 4 Dec 2019 17:54:48 +0330
-Message-ID: <CADKPpc33UGcuRB9p64QoF8g88emqNQB=Z03f+OnK4MiCoeVZpg@mail.gmail.com>
-Subject: Re: File monitor problem
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Originating-IP: [10.43.17.163, 10.4.195.3]
+Thread-Topic: userspace hitting sporadic SIGBUS on xfs (Power9, ppc64le), v4.19 and later
+Thread-Index: bZFnIYc4/9CmmxXsANYOsGnjcI2iPQ==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: JNulPZWVPeum3MOUKv5umw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 4, 2019 at 4:23 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Wed, Dec 4, 2019 at 12:03 PM Mo Re Ra <more7.rev@gmail.com> wrote:
-> >
-> > Hi,
-> >
-> > I don`t know if this is the correct place to express my issue or not.
-> > I have a big problem. For my project, a Directory Monitor, I`ve
-> > researched about dnotify, inotify and fanotify.
-> > dnotify is the worst choice.
-> > inotify is a good choice but has a problem. It does not work
-> > recursively. When you implement this feature by inotify, you would
-> > miss immediately events after subdir creation.
-> > fanotify is the last choice. It has a big change since Kernel 5.1. But
-> > It does not meet my requirement.
-> >
-> > I need to monitor a directory with CREATE, DELETE, MOVE_TO, MOVE_FROM
-> > and CLOSE_WRITE events would be happened in its subdirectories.
-> > Filename of the events happened on that (without any miss) is
-> > mandatory for me.
-> >
-> > I`ve searched and found a contribution from @amiril73 which
-> > unfortunately has not been merged. Here is the link:
-> > https://github.com/amir73il/fsnotify-utils/issues/1
-> >
-> > I`d really appreciate it If you could resolve this issue.
-> >
->
-> Hi Mohammad,
->
-> Thanks for taking an interest in fanotify.
->
-> Can you please elaborate about why filename in events are mandatory
-> for your application.
->
-> Could your application use the FID in FAN_DELETE_SELF and
-> FAN_MOVE_SELF events to act on file deletion/rename instead of filename
-> information in FAN_DELETE/FAN_MOVED_xxx events?
->
-> Will it help if you could get a FAN_CREATE_SELF event with FID information
-> of created file?
->
-> Note that it is NOT guarantied that your application will be able to resolve
-> those FID to file path, for example if file was already deleted and no open
-> handles for this file exist or if file has a hardlink, you may resolve the path
-> of that hardlink instead.
->
-> Jan,
->
-> I remember we discussed the optional FAN_REPORT_FILENAME [1] and
-> you had some reservations, but I am not sure how strong they were.
-> Please refresh my memory.
->
-> Thanks,
-> Amir.
->
-> [1] https://github.com/amir73il/linux/commit/d3e2fec74f6814cecb91148e6b9984a56132590f
 
+----- Original Message -----
+> Please try the patch below:
 
+I ran reproducer for 18 hours on 2 systems were it previously reproduced,
+there were no crashes / SIGBUS.
 
-Hi Amir,
-Thanks for your attention.
-
-Fanotify project had a big change since Kernel 5.1 but did not meet
-some primiry needs.
-For example in my application, I`m watching on a specific directory to
-sync it (through a socket connection and considering some policies)
-with a directory in a remote system which a user working on that. Some
-subdirectoires may contain two milions of files or more. I need these
-two directoires be synced completely as soon as possible without any
-missed notification.
-So, I need a syscall with complete set of flags to help to watch on a
-directory and all of its subdirectories recuresively without any
-missed notification.
-
-Unfortuantely, in current version of Fanotify, the notification just
-expresses a change has been occured in a directory but dot not
-specifiy which file! I could not iterate over millions of file to
-determine which file was that. That would not be helpful.
-
-Inevitably, xxx_SELF would not help me to meets all I need. Just to
-clarify, I dont mean xxx_SELF flags are useless. I mean Fanotify is a
-good project but the current version of that is not a project which
-meets some basic needs.
-
-Thanks,
-Mohammad Reza.
