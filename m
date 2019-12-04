@@ -2,329 +2,197 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB93011240D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2019 09:01:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67B94112441
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2019 09:16:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727212AbfLDIA4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Dec 2019 03:00:56 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:35016 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726632AbfLDIA4 (ORCPT
+        id S1726632AbfLDIQr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Dec 2019 03:16:47 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45505 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbfLDIQr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Dec 2019 03:00:56 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0Tjuk.6v_1575446447;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0Tjuk.6v_1575446447)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 04 Dec 2019 16:00:48 +0800
-Subject: [PATCH v4 2/2] sched/numa: documentation for per-cgroup numa
- statistics
-From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>
-References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
- <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
- <040def80-9c38-4bcc-e4a8-8a0d10f131ed@linux.alibaba.com>
- <25cf7ef5-e37e-7578-eea7-29ad0b76c4ea@linux.alibaba.com>
-Message-ID: <e6f1aa2f-37ac-d9bc-09a5-29229559b1a6@linux.alibaba.com>
-Date:   Wed, 4 Dec 2019 16:00:47 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.0
+        Wed, 4 Dec 2019 03:16:47 -0500
+Received: by mail-wr1-f66.google.com with SMTP id j42so7308166wrj.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Dec 2019 00:16:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=javigon-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=A3EjttU8t1DCaxtv3QmwTcUqJUdcBQEbi7gg5HzyUUg=;
+        b=XC4SD8Nm/CJsVX2cNdH7LMWWN1jdVbSSfwd5CoVNQMApFZ+METGkcdcOx2Hm/HnLn7
+         p5o53EPcTISnscB7YQ3Y9dglaKVNaQnve9q4h2ZwxJQR/MdFfdC7o6AjnJqXsi6eElZb
+         ejtUwfloOEdNVnXzKDxOgjYzLHhO7l8WMX0SUBahb/mhtCnl7eci/+AVJn47kzjbCiU1
+         0fQJ7xnwFY8h0qKjFkKbjGbtsPtZdZVX/M6S6QuBjuls6n7ouePAkdN4MP43579p06dk
+         9gEW0OmWqbL+XeR8HcAhI4UJJo3BdbQW3STwibFTMTinesHQFa0m1amtrRRmaOOo2Cs5
+         LJgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=A3EjttU8t1DCaxtv3QmwTcUqJUdcBQEbi7gg5HzyUUg=;
+        b=VX3NRu7mmc5jV0n7+Fe+qwuK5j9hx8dAKftrqTbcY+XzzJmE4D/HfdcIMkYPvZRtYW
+         GEuaSwg9qZLuW212ccU9Ux40sxFhGyrOEKwtlpP0Nr7c85TJr7bA67LAL5op6/oBb8XH
+         cwVna65hyhpxrMsnx7D84fTaMNAjR2HVP5djCxBaW2tHIx5PArBSKoRMQjrQC1/gmz7R
+         IiGzJK1bTYQbHTt2FEfpcNybrTxdOpQkqmX5G3hEeMObakN1IY00xT0R11sAxZmax8EB
+         /k5Ts4xKe1LbaZyMsxY8BdIQhJjl0thD1hkVEdCtOldSxDGCT5vKM8ibex/z9P1f8Bfy
+         qo2Q==
+X-Gm-Message-State: APjAAAXP2y+PXo/jNiP4V8K/v+6U+QEZSdTHKBiVP0dxHJK+UMgQLCZj
+        yB4xUSAilkmdBXB0jDGOMRM/Yw==
+X-Google-Smtp-Source: APXvYqxhYn0nwnicejVfpeVuMHpPYxIZfRC6Yv6j4V8Gy/5U1lyQHKa9KaXdhFUr/j++Rc1R50CEyg==
+X-Received: by 2002:adf:dd46:: with SMTP id u6mr2599078wrm.13.1575447404312;
+        Wed, 04 Dec 2019 00:16:44 -0800 (PST)
+Received: from localhost ([194.62.217.57])
+        by smtp.gmail.com with ESMTPSA id g21sm8286034wrb.48.2019.12.04.00.16.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2019 00:16:43 -0800 (PST)
+Date:   Wed, 4 Dec 2019 09:16:42 +0100
+From:   Javier Gonzalez <javier@javigon.com>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     Damien Le Moal <damien.lemoal@wdc.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        linux-fsdevel@vger.kernel.org,
+        Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+Subject: Re: [PATCH v2] f2fs: Fix direct IO handling
+Message-ID: <20191204081642.gnd55byogedrhfoz@MacBook-Pro.gnusmas>
+References: <20191126075719.1046485-1-damien.lemoal@wdc.com>
+ <20191126234428.GB20652@jaegeuk-macbookpro.roam.corp.google.com>
+ <20191203173308.GA41093@jaegeuk-macbookpro.roam.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <25cf7ef5-e37e-7578-eea7-29ad0b76c4ea@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191203173308.GA41093@jaegeuk-macbookpro.roam.corp.google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add the description for 'numa_locality', also a new doc to explain
-the details on how to deal with the per-cgroup numa statistics.
+On 03.12.2019 09:33, Jaegeuk Kim wrote:
+>Thank you for checking the patch.
+>I found some regressions in xfstests, so want to follow the Damien's one
+>like below.
+>
+>Thanks,
+>
+>===
+>From 9df6f09e3a09ed804aba4b56ff7cd9524c002e69 Mon Sep 17 00:00:00 2001
+>From: Jaegeuk Kim <jaegeuk@kernel.org>
+>Date: Tue, 26 Nov 2019 15:01:42 -0800
+>Subject: [PATCH] f2fs: preallocate DIO blocks when forcing buffered_io
+>
+>The previous preallocation and DIO decision like below.
+>
+>                         allow_outplace_dio              !allow_outplace_dio
+>f2fs_force_buffered_io   (*) No_Prealloc / Buffered_IO   Prealloc / Buffered_IO
+>!f2fs_force_buffered_io  No_Prealloc / DIO               Prealloc / DIO
+>
+>But, Javier reported Case (*) where zoned device bypassed preallocation but
+>fell back to buffered writes in f2fs_direct_IO(), resulting in stale data
+>being read.
+>
+>In order to fix the issue, actually we need to preallocate blocks whenever
+>we fall back to buffered IO like this. No change is made in the other cases.
+>
+>                         allow_outplace_dio              !allow_outplace_dio
+>f2fs_force_buffered_io   (*) Prealloc / Buffered_IO      Prealloc / Buffered_IO
+>!f2fs_force_buffered_io  No_Prealloc / DIO               Prealloc / DIO
+>
+>Reported-and-tested-by: Javier Gonzalez <javier@javigon.com>
+>Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+>Tested-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+>Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>---
+> fs/f2fs/data.c | 13 -------------
+> fs/f2fs/file.c | 43 +++++++++++++++++++++++++++++++++----------
+> 2 files changed, 33 insertions(+), 23 deletions(-)
+>
+>diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>index a034cd0ce021..fc40a72f7827 100644
+>--- a/fs/f2fs/data.c
+>+++ b/fs/f2fs/data.c
+>@@ -1180,19 +1180,6 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
+> 	int err = 0;
+> 	bool direct_io = iocb->ki_flags & IOCB_DIRECT;
+>
+>-	/* convert inline data for Direct I/O*/
+>-	if (direct_io) {
+>-		err = f2fs_convert_inline_inode(inode);
+>-		if (err)
+>-			return err;
+>-	}
+>-
+>-	if (direct_io && allow_outplace_dio(inode, iocb, from))
+>-		return 0;
+>-
+>-	if (is_inode_flag_set(inode, FI_NO_PREALLOC))
+>-		return 0;
+>-
+> 	map.m_lblk = F2FS_BLK_ALIGN(iocb->ki_pos);
+> 	map.m_len = F2FS_BYTES_TO_BLK(iocb->ki_pos + iov_iter_count(from));
+> 	if (map.m_len > map.m_lblk)
+>diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>index c0560d62dbee..0e1b12a4a4d6 100644
+>--- a/fs/f2fs/file.c
+>+++ b/fs/f2fs/file.c
+>@@ -3386,18 +3386,41 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> 				ret = -EAGAIN;
+> 				goto out;
+> 			}
+>-		} else {
+>-			preallocated = true;
+>-			target_size = iocb->ki_pos + iov_iter_count(from);
+>+			goto write;
+>+		}
+>
+>-			err = f2fs_preallocate_blocks(iocb, from);
+>-			if (err) {
+>-				clear_inode_flag(inode, FI_NO_PREALLOC);
+>-				inode_unlock(inode);
+>-				ret = err;
+>-				goto out;
+>-			}
+>+		if (is_inode_flag_set(inode, FI_NO_PREALLOC))
+>+			goto write;
+>+
+>+		if (iocb->ki_flags & IOCB_DIRECT) {
+>+			/*
+>+			 * Convert inline data for Direct I/O before entering
+>+			 * f2fs_direct_IO().
+>+			 */
+>+			err = f2fs_convert_inline_inode(inode);
+>+			if (err)
+>+				goto out_err;
+>+			/*
+>+			 * If force_buffere_io() is true, we have to allocate
+>+			 * blocks all the time, since f2fs_direct_IO will fall
+>+			 * back to buffered IO.
+>+			 */
+>+			if (!f2fs_force_buffered_io(inode, iocb, from) &&
+>+					allow_outplace_dio(inode, iocb, from))
+>+				goto write;
+>+		}
+>+		preallocated = true;
+>+		target_size = iocb->ki_pos + iov_iter_count(from);
+>+
+>+		err = f2fs_preallocate_blocks(iocb, from);
+>+		if (err) {
+>+out_err:
+>+			clear_inode_flag(inode, FI_NO_PREALLOC);
+>+			inode_unlock(inode);
+>+			ret = err;
+>+			goto out;
+> 		}
+>+write:
+> 		ret = __generic_file_write_iter(iocb, from);
+> 		clear_inode_flag(inode, FI_NO_PREALLOC);
+>
+>-- 
+>2.19.0.605.g01d371f741-goog
+>
+>
 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Michal Koutný <mkoutny@suse.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Iurii Zaikin <yzaikin@google.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
----
- Documentation/admin-guide/cg-numa-stat.rst      | 178 ++++++++++++++++++++++++
- Documentation/admin-guide/index.rst             |   1 +
- Documentation/admin-guide/kernel-parameters.txt |   4 +
- Documentation/admin-guide/sysctl/kernel.rst     |   9 ++
- init/Kconfig                                    |   6 +-
- 5 files changed, 196 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/admin-guide/cg-numa-stat.rst
+Looks good to me. It also fixes the problem we see in our end.
 
-diff --git a/Documentation/admin-guide/cg-numa-stat.rst b/Documentation/admin-guide/cg-numa-stat.rst
-new file mode 100644
-index 000000000000..5d1f623451d5
---- /dev/null
-+++ b/Documentation/admin-guide/cg-numa-stat.rst
-@@ -0,0 +1,178 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+===============================
-+Per-cgroup NUMA statistics
-+===============================
-+
-+Background
-+----------
-+
-+On NUMA platforms, remote memory accessing always has a performance penalty.
-+Although we have NUMA balancing working hard to maximize the access locality,
-+there are still situations it can't help.
-+
-+This could happen in modern production environment. When a large number of
-+cgroups are used to classify and control resources, this creates a complex
-+configuration for memory policy, CPUs and NUMA nodes. In such cases NUMA
-+balancing could end up with the wrong memory policy or exhausted local NUMA
-+node, which would lead to low percentage of local page accesses.
-+
-+We need to detect such cases, figure out which workloads from which cgroup
-+have introduced the issues, then we get chance to do adjustment to avoid
-+performance degradation.
-+
-+However, there are no hardware counters for per-task local/remote accessing
-+info, we don't know how many remote page accesses have occurred for a
-+particular task.
-+
-+NUMA Locality
-+-------------
-+
-+Fortunately, we have NUMA Balancing which scans task's mapping and triggers
-+page fault periodically, giving us the opportunity to record per-task page
-+accessing info, when the CPU fall into PF is from the same node of pages, we
-+consider task as doing local page accessing, otherwise the remote page
-+accessing, we call these two counter the locality info.
-+
-+On each tick, we acquire the locality info of current task on that CPU, update
-+the increments into it's cgroup, becoming the group locality info.
-+
-+By "echo 1 > /proc/sys/kernel/numa_locality" at runtime or adding boot parameter
-+'numa_locality', we will enable the accounting of per-cgroup NUMA locality info,
-+the 'cpu.numa_stat' entry of CPU cgroup will show statistics::
-+
-+  page_access local=NR_LOCAL_PAGE_ACCESS remote=NR_REMOTE_PAGE_ACCESS
-+
-+We define 'NUMA locality' as::
-+
-+  NR_LOCAL_PAGE_ACCESS * 100 / (NR_LOCAL_PAGE_ACCESS + NR_REMOTE_PAGE_ACCESS)
-+
-+This per-cgroup percentage number help to represent the NUMA Balancing behavior.
-+
-+Note that the accounting is hierarchical, which means the NUMA locality info for
-+a given group represent not only the workload of this group, but also the
-+workloads of all its descendants.
-+
-+For example the 'cpu.numa_stat' show::
-+
-+  page_access local=129909383 remote=18265810
-+
-+The NUMA locality calculated as::
-+
-+  129909383 * 100 / (129909383 + 18265810) = 87.67
-+
-+Thus we know the workload of this group and its descendants have totally done
-+129909383 times of local page accessing and 18265810 times of remotes, locality
-+is 87.67% which imply most of the memory access are local.
-+
-+NUMA Consumption
-+----------------
-+
-+There are also other cgroup entry help us to estimate NUMA efficiency, which is
-+'cpuacct.usage_percpu' and 'memory.numa_stat'.
-+
-+By reading 'cpuacct.usage_percpu' we will get per-cpu runtime (in nanoseconds)
-+info (in hierarchy) as::
-+
-+  CPU_0_RUNTIME CPU_1_RUNTIME CPU_2_RUNTIME ... CPU_X_RUNTIME
-+
-+Combined with the info from::
-+
-+  cat /sys/devices/system/node/nodeX/cpulist
-+
-+We would be able to accumulate the runtime of CPUs into NUMA nodes, to get the
-+per-cgroup node runtime info.
-+
-+By reading 'memory.numa_stat' we will get per-cgroup node memory consumption
-+info as::
-+
-+  total=TOTAL_MEM N0=MEM_ON_NODE0 N1=MEM_ON_NODE1 ... NX=MEM_ON_NODEX
-+
-+Together we call these the per-cgroup NUMA consumption info, tell us how many
-+resources a particular workload has consumed, on a particular NUMA node.
-+
-+Monitoring
-+----------
-+
-+By monitoring the increments of locality info, we can easily know whether NUMA
-+Balancing is working well for a particular workload.
-+
-+For example we take a 5 seconds sample period, then on each sampling we have::
-+
-+  local_diff = last_nr_local_page_access - nr_local_page_access
-+  remote_diff = last_nr_remote_page_access - nr_remote_page_access
-+
-+and we get the locality in this period as::
-+
-+  locality = local_diff * 100 / (local_diff + remote_diff)
-+
-+We can plot a line for locality, when the line close to 100% things are good,
-+when getting close to 0% something is wrong, we can pick a proper watermark to
-+trigger warning message.
-+
-+You may want to drop the data if the local/remote_diff is too small, which
-+implies there are not many available pages for NUMA Balancing to scan, ignoring
-+would be fine since most likely the workload is insensitive to NUMA, or the
-+memory topology is already good enough.
-+
-+Monitoring root group helps you control the overall situation, while you may
-+also want to monitor all the leaf groups which contain the workloads, this
-+helps to catch the mouse.
-+
-+Try to put your workload into also the cpuacct & memory cgroup, when NUMA
-+Balancing is disabled or locality becomes too small, we may want to monitoring
-+the per-node runtime & memory info to see if the node consumption meet the
-+requirements.
-+
-+For NUMA node X on each sampling we have::
-+
-+  runtime_X_diff = runtime_X - last_runtime_X
-+  runtime_all_diff = runtime_all - last_runtime_all
-+
-+  runtime_percent_X = runtime_X_diff * 100 / runtime_all_diff
-+  memory_percent_X = memory_X * 100 / memory_all
-+
-+These two percentages are usually matched on each node, workload should execute
-+mostly on the node that contains most of its memory, but it's not guaranteed.
-+
-+The workload may only access a small part of its memory, in such cases although
-+the majority of memory are remotely, locality could still be good.
-+
-+Thus to tell if things are fine or not depends on the understanding of system
-+resource deployment, however, if you find node X got 100% memory percent but 0%
-+runtime percent, definitely something is wrong.
-+
-+Troubleshooting
-+---------------
-+
-+After identifying which workload introduced the bad locality, check:
-+
-+1). Is the workload bound to a particular NUMA node?
-+2). Has any NUMA node run out of resources?
-+
-+There are several ways to bind task's memory with a NUMA node, the strict way
-+like the MPOL_BIND memory policy or 'cpuset.mems' will limit the memory
-+node where to allocate pages. In this situation, admin should make sure the
-+task is allowed to run on the CPUs of that NUMA node, and make sure there are
-+available CPU resource there.
-+
-+There are also ways to bind task's CPU with a NUMA node, like 'cpuset.cpus' or
-+sched_setaffinity() syscall. In this situation, NUMA Balancing help to migrate
-+pages into that node, admin should make sure there are available memory there.
-+
-+Admin could try to rebind or unbind the NUMA node to erase the damage, make a
-+change then observe the statistics to see if things get better until the
-+situation is acceptable.
-+
-+Highlights
-+----------
-+
-+For some tasks, NUMA Balancing may found no necessary to scan pages, and
-+locality could always be 0 or small number, don't pay attention to them
-+since they most likely insensitive to NUMA.
-+
-+There is no accounting until the option is turned on, so enable it in advance
-+if you want to have the whole history.
-+
-+We have per-task migfailed counter to tell how many page migration has been
-+failed for a particular task, you will find it in /proc/PID/sched entry.
-diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
-index 4405b7485312..c75a3fdfcd94 100644
---- a/Documentation/admin-guide/index.rst
-+++ b/Documentation/admin-guide/index.rst
-@@ -112,6 +112,7 @@ configure specific aspects of kernel behavior to your liking.
-    video-output
-    wimax/index
-    xfs
-+   cg-numa-stat
-
- .. only::  subproject and html
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 0945611b3877..9d9e57d19af3 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3227,6 +3227,10 @@
- 	numa_balancing=	[KNL,X86] Enable or disable automatic NUMA balancing.
- 			Allowed values are enable and disable
-
-+	numa_locality	[KNL] Enable per-cgroup numa locality info.
-+			Useful to debug NUMA efficiency problems when there are
-+			lots of per-cgroup workloads.
-+
- 	numa_zonelist_order= [KNL, BOOT] Select zonelist order for NUMA.
- 			'node', 'default' can be specified
- 			This can be set from sysctl after boot.
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index 7e203b3ed331..efa995e757fd 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -572,6 +572,15 @@ rate for each task.
- numa_balancing_scan_size_mb is how many megabytes worth of pages are
- scanned for a given scan.
-
-+numa_locality:
-+=============
-+
-+Enables/disables per-cgroup NUMA locality info.
-+
-+0: disabled (default).
-+1: enabled.
-+
-+Check Documentation/admin-guide/cg-numa-stat.rst for details.
-
- osrelease, ostype & version:
- ============================
-diff --git a/init/Kconfig b/init/Kconfig
-index fb7182a0d017..3538fdd73387 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -818,13 +818,15 @@ config NUMA_BALANCING_DEFAULT_ENABLED
- 	  machine.
-
- config CGROUP_NUMA_LOCALITY
--	bool "The per-cgroup NUMA Locality"
-+	bool "per-cgroup NUMA Locality"
- 	default n
- 	depends on CGROUP_SCHED && NUMA_BALANCING
- 	help
--	  This option enable the collection of per-cgroup NUMA locality info,
-+	  This option enables the collection of per-cgroup NUMA locality info,
- 	  to tell whether NUMA Balancing is working well for a particular
- 	  workload, also imply the NUMA efficiency.
-+	  See
-+		-  Documentation/admin-guide/cg-numa-stat.rst
-
- menuconfig CGROUPS
- 	bool "Control Group support"
--- 
-2.14.4.44.g2045bb6
-
+Reviewed-by: Javier González <javier@javigon.com>
