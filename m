@@ -2,99 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A16E01126A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2019 10:11:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 722141128C6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2019 11:02:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726679AbfLDJLE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Dec 2019 04:11:04 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43193 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725922AbfLDJLE (ORCPT
+        id S1727268AbfLDKCp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Dec 2019 05:02:45 -0500
+Received: from mail-wr1-f44.google.com ([209.85.221.44]:45600 "EHLO
+        mail-wr1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726899AbfLDKCp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Dec 2019 04:11:04 -0500
-Received: by mail-wr1-f68.google.com with SMTP id d16so2939739wre.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Dec 2019 01:11:02 -0800 (PST)
+        Wed, 4 Dec 2019 05:02:45 -0500
+Received: by mail-wr1-f44.google.com with SMTP id j42so7714228wrj.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Dec 2019 02:02:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=Sdir8t22Whp6d5zfU/aglTF8nH6hZfnd2WBrWb4Hzmk=;
-        b=iQ3NLwjAkMqPVUWrDPgMWFEJlCQWOIiJQX1XjeKSOseCyF0pFdXM3San8C5vT5vlCL
-         k/oVy8qj//oSFJ4vePk0dOmR0tQ5BCxIkmUlP4YdFbdIBw/YRC7EbLWd85QmuqB9B1k7
-         Ywg4c4Q1ZCXfV4I1wKUHfQ1r8WW7T9bwMYqUA=
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=21jkG+rJD5VlwzL/Z11ofpmFV1k7kp42+v4oB+7OCRQ=;
+        b=iJc9JB86jODDi4ujcZo3jJ9NUyupZL8q+5ERLV5hvhdlBMwihDFGQ/DAf9MDPh6lWk
+         DwEvcSOSDYs3vUG/zqdNJroC6xI8Kwd35ranYxpKvVGDusyiLAEQ8osdNtJCWxmh2SIW
+         xVEySAzLm/5zQbRZUa3k49jSL0TCXjSbyS+1ygZ40ajliPx8ZB52l6ge9G69aW/oFbRQ
+         c7Gk85O9E0WO4shIBsNezABKRQ7C3rQZQiqVH6V1QPcUWkruZSk9apsMVSftdpkRuvXh
+         /8s8+ypZ2iIqbRAzUXlheWRD9iS9am9jN+RyTL+8yscnLBCuILYzD97cLnhZnJyaYbu8
+         3y6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=Sdir8t22Whp6d5zfU/aglTF8nH6hZfnd2WBrWb4Hzmk=;
-        b=OZPycA/b8GuM89XoXLkWqb4G9ROAw0aL87CSYHSymBJuD+bXgFCAYj69R0CtvxDP0H
-         V8QKs0wk5bv/tWE5ihDMnNwgc/QNxD3d2+fuAC2FyQGOyw3vwJyyNANXZF2nrjH7maU+
-         2MItJIbwh4mdrg3ItmDwWO7BMcEm9hHEfMcmrH2vLxVkt+/VBjwV9OVI7taNhkT/n13B
-         OdPB4j5MTUIQ3T4K7hy2KWVZPMXdFvnytW6sABUxFd0DODMVX3aWnjqunxvkPq3+R+nn
-         L8JkMDl1a29RdKxsFFDa456MxmxB0Z1+Z/JpZGcKCvYPkdUb+aC3WbGb6JG6nrj7LbW6
-         j/dw==
-X-Gm-Message-State: APjAAAUPIr1SNdr0PsmZ9yZa4e5m+30vqh6pMbpbeHLKrSSRZlwlQqNE
-        TrpLQkYiCC2SY4xGdLFjlbWWjg==
-X-Google-Smtp-Source: APXvYqzkytORTQVPCACG5wYyyNFLEHO0L1v4wuq/QMOmPny/ytkdK4OTVqMTey4+mYHt68oxFWHylA==
-X-Received: by 2002:adf:ef10:: with SMTP id e16mr2630023wro.336.1575450662345;
-        Wed, 04 Dec 2019 01:11:02 -0800 (PST)
-Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id t13sm6193517wmt.23.2019.12.04.01.11.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 01:11:01 -0800 (PST)
-Date:   Wed, 4 Dec 2019 10:10:59 +0100
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] fuse update for 5.5
-Message-ID: <20191204091059.GB16668@miu.piliscsaba.redhat.com>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=21jkG+rJD5VlwzL/Z11ofpmFV1k7kp42+v4oB+7OCRQ=;
+        b=VUFXlM8HiPZyxnyQMWzrnC0EvB2QRSfcPmKHdIHSBAL2S3EIzRgpSVePuPCjI0hGcr
+         AmtgjE5BQcZirBa4FHYOW+w8pYrNHZnDaReqKfOcNlScNKbv+DUBTjN3NkKn331XbPkz
+         PyYwGprOX/+LmWe925zjcVAXwxPiM+N9SVDgBF5JAUk2tNkoRVKRGMvaiMbT3EfMxtt1
+         JkPpEXYF4ZIjJUqcTVfADouz7H/89sNQ7XEwokozW0bA4r3hBP2Mzlqr1cOVrV+ZGZkP
+         BRuHUjwQFrTzBHezzaPjKIMhghy340Hss1sW/qkme+8PgpJHqp+2GgeXTSlaKTLvgrk1
+         k3tg==
+X-Gm-Message-State: APjAAAX6SrAYlHPXMZrwg0HreZsodpRS1NYsZjxqSgHJet14JK0qVQVZ
+        uDbIOt6oNgIMRl3rPGWY+b8ut4BQx5nI9VGEj0Jd853nFnU=
+X-Google-Smtp-Source: APXvYqwApFkr3eJdIihedDn0tn3myJQOFR/au9Rtf0RHY9/o9vYeDLh2zvdKNAoTFwcm3SpYn5WGprYkYXdk1uht72g=
+X-Received: by 2002:a5d:4a91:: with SMTP id o17mr3257231wrq.232.1575453762734;
+ Wed, 04 Dec 2019 02:02:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
+From:   Mo Re Ra <more7.rev@gmail.com>
+Date:   Wed, 4 Dec 2019 13:32:29 +0330
+Message-ID: <CADKPpc2RuncyN+ZONkwBqtW7iBb5ep_3yQN7PKe7ASn8DpNvBw@mail.gmail.com>
+Subject: File monitor problem
+To:     linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+Hi,
 
-Please pull from:
+I don`t know if this is the correct place to express my issue or not.
+I have a big problem. For my project, a Directory Monitor, I`ve
+researched about dnotify, inotify and fanotify.
+dnotify is the worst choice.
+inotify is a good choice but has a problem. It does not work
+recursively. When you implement this feature by inotify, you would
+miss immediately events after subdir creation.
+fanotify is the last choice. It has a big change since Kernel 5.1. But
+It does not meet my requirement.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-update-5.5
+I need to monitor a directory with CREATE, DELETE, MOVE_TO, MOVE_FROM
+and CLOSE_WRITE events would be happened in its subdirectories.
+Filename of the events happened on that (without any miss) is
+mandatory for me.
 
- - Fix a regression introduced in the last release.
+I`ve searched and found a contribution from @amiril73 which
+unfortunately has not been merged. Here is the link:
+https://github.com/amir73il/fsnotify-utils/issues/1
 
- - Fix a number of issues with validating data coming from userspace.
+I`d really appreciate it If you could resolve this issue.
 
- - Some cleanups in virtiofs.
-
-Thanks,
-Miklos
-
----
-Krzysztof Kozlowski (1):
-      fuse: fix Kconfig indentation
-
-Miklos Szeredi (4):
-      fuse: verify attributes
-      fuse: verify write return
-      fuse: verify nlink
-      fuse: fix leak of fuse_io_priv
-
-Vivek Goyal (3):
-      virtiofs: Use a common function to send forget
-      virtiofs: Do not send forget request "struct list_head" element
-      virtiofs: Use completions while waiting for queue to be drained
-
-YueHaibing (1):
-      virtiofs: Fix old-style declaration
-
----
- fs/fuse/Kconfig     |   4 +-
- fs/fuse/dir.c       |  25 +++++--
- fs/fuse/file.c      |   6 +-
- fs/fuse/fuse_i.h    |   2 +
- fs/fuse/readdir.c   |   2 +-
- fs/fuse/virtio_fs.c | 210 ++++++++++++++++++++++++++--------------------------
- 6 files changed, 134 insertions(+), 115 deletions(-)
+Regards,
+Mohammad Reza
