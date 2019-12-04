@@ -2,116 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BF451120A5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2019 01:32:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BBE9112104
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2019 02:27:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726162AbfLDAcO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Dec 2019 19:32:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37848 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726008AbfLDAcO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Dec 2019 19:32:14 -0500
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F59820674;
-        Wed,  4 Dec 2019 00:32:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575419533;
-        bh=8ZaeCwEq+6xIABYU+SGqp6hX6Y6XpUzqAIOiEL+4ptk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=H+JHr/MY13+OR7Xg3FnTUgq77Cu2JRb/F5u+aykghFc6qGYlML4b6ddbV54qHYV0C
-         HkJpYWB7n8o3CzDTRpPQ6YK/SIfmqLJ7ehkznxzeKGCk0Je1hCzegtpse65co4wjGM
-         dAdXmhvWd1VFRWMfustTw3Kz4aCxFW4LVjSG3khk=
-Date:   Tue, 3 Dec 2019 16:32:11 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     Gao Xiang <gaoxiang25@huawei.com>,
-        Daniel Rosenberg <drosen@google.com>,
-        Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fscrypt@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH 4/8] vfs: Fold casefolding into vfs
-Message-ID: <20191204003211.GE727@sol.localdomain>
-References: <20191203051049.44573-1-drosen@google.com>
- <20191203051049.44573-5-drosen@google.com>
- <20191203074154.GA216261@architecture4>
- <85wobdb3hp.fsf@collabora.com>
- <20191203203414.GA727@sol.localdomain>
- <85zhg96r7l.fsf@collabora.com>
+        id S1726131AbfLDB1w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Dec 2019 20:27:52 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7193 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726060AbfLDB1w (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Dec 2019 20:27:52 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 056399E0601D957A6116;
+        Wed,  4 Dec 2019 09:27:47 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 4 Dec 2019
+ 09:27:44 +0800
+Subject: Re: [PATCH v2] f2fs: Fix direct IO handling
+To:     Jaegeuk Kim <jaegeuk@kernel.org>,
+        Damien Le Moal <damien.lemoal@wdc.com>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        Javier Gonzalez <javier@javigon.com>,
+        Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+References: <20191126075719.1046485-1-damien.lemoal@wdc.com>
+ <20191126234428.GB20652@jaegeuk-macbookpro.roam.corp.google.com>
+ <20191203173308.GA41093@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <4eb6db72-8667-7306-e989-36b5d79289d0@huawei.com>
+Date:   Wed, 4 Dec 2019 09:27:43 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <85zhg96r7l.fsf@collabora.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191203173308.GA41093@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 03, 2019 at 04:21:02PM -0500, Gabriel Krisman Bertazi wrote:
-> Eric Biggers <ebiggers@kernel.org> writes:
+On 2019/12/4 1:33, Jaegeuk Kim wrote:
+> Thank you for checking the patch.
+> I found some regressions in xfstests, so want to follow the Damien's one
+> like below.
 > 
-> > On Tue, Dec 03, 2019 at 02:42:10PM -0500, Gabriel Krisman Bertazi wrote:
-> >> Gao Xiang <gaoxiang25@huawei.com> writes:
+> Thanks,
 > 
-> >> I think Daniel's approach of moving this into VFS is the simplest way to
-> >> actually solve the issue, instead of extending and duplicating a lot of
-> >> functionality into filesystem hooks to support the possible mixes of
-> >> case-insensitive, overlayfs and fscrypt.
-> >> 
-> >
-> > I think we can actually get everything we want using dentry_operations only,
-> > since the filesystem can set ->d_op during ->lookup() (like what is done for
-> > encrypted filenames now) rather than at dentry allocation time.  And fs/crypto/
-> > can export fscrypt_d_revalidate() rather than setting ->d_op itself.
+> ===
+>>From 9df6f09e3a09ed804aba4b56ff7cd9524c002e69 Mon Sep 17 00:00:00 2001
+> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> Date: Tue, 26 Nov 2019 15:01:42 -0800
+> Subject: [PATCH] f2fs: preallocate DIO blocks when forcing buffered_io
 > 
-> Problem is, differently from fscrypt, case-insensitive uses the d_hash()
-> hook and for a lookup, we actually use
-> dentry->d_parent->d_ops->d_hash().  Which works well, until you are flipping the
-> casefold flag.  Then the dentry already exists and you need to modify
-> the d_ops on the fly, which I couldn't find precedent anywhere.  I tried
-> invalidating the dentry whenever we flip the flag, but then if it has
-> negative dentries as children,I wasn't able to reliably invalidate it,
-> and that's when I reached the limit of my knowledge in VFS.  In
-> particular, in every attempt I made to implement it like this, I was
-> able to race and do a case-insensitive lookup on a directory that was
-> just made case sensitive.
+> The previous preallocation and DIO decision like below.
 > 
-> I'm not saying there isn't a way.  But it is a bit harder than this
-> proposal. I tried it already and still didn't manage to make it work.
-> Maybe someone who better understands vfs.
+>                          allow_outplace_dio              !allow_outplace_dio
+> f2fs_force_buffered_io   (*) No_Prealloc / Buffered_IO   Prealloc / Buffered_IO
+> !f2fs_force_buffered_io  No_Prealloc / DIO               Prealloc / DIO
+> 
+> But, Javier reported Case (*) where zoned device bypassed preallocation but
+> fell back to buffered writes in f2fs_direct_IO(), resulting in stale data
+> being read.
+> 
+> In order to fix the issue, actually we need to preallocate blocks whenever
+> we fall back to buffered IO like this. No change is made in the other cases.
+> 
+>                          allow_outplace_dio              !allow_outplace_dio
+> f2fs_force_buffered_io   (*) Prealloc / Buffered_IO      Prealloc / Buffered_IO
+> !f2fs_force_buffered_io  No_Prealloc / DIO               Prealloc / DIO
+> 
+> Reported-and-tested-by: Javier Gonzalez <javier@javigon.com>
+> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+> Tested-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Yes you're right, I forgot that for ->d_hash() and ->d_compare() it's actually
-the parent's directory dentry_operations that are used.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-> 
-> > It's definitely ugly to have to handle the 3 cases of encrypt, casefold, and
-> > encrypt+casefold separately -- and this will need to be duplicated for each
-> > filesystem.  But we do have to weigh that against adding additional complexity
-> > and overhead to the VFS for everyone.  If we do go with the VFS changes, please
-> > try to make them as simple and unobtrusive as possible.
-> 
-> Well, it is just not case-insensitive+fscrypt. Also overlayfs
-> there. Probably more.  So we have much more cases.  I understand the VFS
-> changes need to be very well thought, but when I worked on this it
-> started to look a more correct solution than using the hooks.
-
-Well the point of my proof-of-concept patch having separate ext4_ci_dentry_ops,
-ext4_encrypted_dentry_ops, and ext4_encrypted_ci_dentry_ops is supposed to be
-for overlayfs support -- since overlayfs requires that some operations are not
-present.  If we didn't need overlayfs support, we could just use a single
-ext4_dentry_ops for all dentries instead.
-
-I think we could still support fscrypt, casefold, fscrypt+casefold, and
-fscrypt+overlayfs with dentry_operations only.  It's casefold+overlayfs that's
-the biggest problem, due to the possibility of the casefold flag being set on a
-directory later as you pointed out.
-
-- Eric
+Thanks,
