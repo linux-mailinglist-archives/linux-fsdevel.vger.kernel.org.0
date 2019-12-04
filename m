@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8B291124D3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2019 09:27:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96EEF1124D5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2019 09:27:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727365AbfLDI1n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Dec 2019 03:27:43 -0500
+        id S1727385AbfLDI1p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Dec 2019 03:27:45 -0500
 Received: from esa2.hgst.iphmx.com ([68.232.143.124]:1552 "EHLO
         esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727340AbfLDI1m (ORCPT
+        with ESMTP id S1726599AbfLDI1o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Dec 2019 03:27:42 -0500
+        Wed, 4 Dec 2019 03:27:44 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1575448063; x=1606984063;
+  t=1575448066; x=1606984066;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=BQC5SDziotAtQ5ZdGIn/PmyZQkwRARnH7DzOfW/K3pg=;
-  b=L2DQ43c+Bymef3SluMOVCs19Q8KZK+PxAak/xrIlfn9fQHf7ZdBTp6JO
-   T1wRipfUyeLWQTx3w73unqt5R+m6ZAUvOBJG+Ol9Jai/bKaXrHIOVFKBt
-   P9WsyCNxMuYWETQhx+BOFLrT+bS59vyLz+3VwMMgEMtZ/INJvxlZowyZf
-   VFXpy/WWg1gqoovV3Vfl5nTKSeLiJ57NVh0EkWKZrJnEOwLxuwepSVN+N
-   EOjWo7y7xUwCLRzuFOHoFvUdb4QJoWSaHv/Bno8b4h08TWRj6JtJdMhY0
-   y51c/BOM1ukrJp9rnVNg4V4U7izwAUhuKJdxwJ9+UeHlfV29ryNBZSeBg
+  bh=G4NpQ2JyYnw5D/LgV6JIxZP9vvkUA4GtujvP4ktMxWo=;
+  b=Pn5LAFgKZZHCMEcheOWe4KwU7E6FD0O4+0O93Z6iYGYfd+kPXzqtJxJk
+   as2OXq8jY+tv5GeUcVHbythhn6KpR0Y3J9jI9qv1GYS5Um+aX9fHjQZGJ
+   +E2hNVoalMOKhhW1knJfXu1j6PCOSW63ppP1VBSlv95N+aLDM27Kko3i5
+   y2CSlI18cUEnryZV2GKUNbq/DB9XwtqKbF5MZBMWAuN98bq3oJjc7EG5g
+   wSII4mSPApusWwlhqfbDx9ApEZN9ZzX+F4vb+zpClqDEsqyqemfgXJR3h
+   elbHeqApv5jzsjOqmVBOFTEZGUxQoR9QGB+AVO6cqDUIMzSDql5SWyV9A
    w==;
-IronPort-SDR: QIyUaZrhnimBVfn6HrJUWEZJT3i1QVOs0hnKAfFuyQNz9EI7NpOwMK9dzseE8Y8jXRKK42WF/R
- r0QfJK3ZnNrdgb9SNG0jhGl1I9rOozRKOokNqJ3HfdLeiqqyQ6aIhaH1xhov5fXs104KXKxPg+
- PBFLNOhxy/T5EhnLh1f4Y2NC7AKWK/LNntcn4eYn98OzrfzwWd+jUx4blvCHnIEpgm5601tMQh
- vc+TvKlwBqDZhnEo8mL5QHDJ7O3XB5du/uSKTJGsws91JV2YrmP/D5kjpZhsNMT55xlSfC/PeI
- Loc=
+IronPort-SDR: LwZp0I7m1Uzk74Pmqr45pkeoa+V4quP//SwIakFrYR1c2EfFoQlyFvZCqeSxWdaECLI/OijoY/
+ 5MSfj1el3y+S9SWr/NrWxMiFJvKwjUoiWoj++v/HGjnXAcURjMqgZdBhA+xtrcWezEVVVBJ4ju
+ jWUgjLYsGSH/zFb6fQionConr3GVDbwmfO7q3yJYmOGaajTXjxcXkJPm40sZxAEJ4SxVPzOX6u
+ avjGz89hZHf8hdV+c1auTsnswVd2uFSX8on2028vjCHWxwKzKPVrvEU3QRreUuwEeEhJP7iEiV
+ dHY=
 X-IronPort-AV: E=Sophos;i="5.69,276,1571673600"; 
-   d="scan'208";a="226031743"
+   d="scan'208";a="226031745"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 04 Dec 2019 16:27:42 +0800
-IronPort-SDR: FVTXXrG6r8I04PlV0c3eayg4vBVBtYmxsTKtxFfV18l1B8L856PBjgUYQAnAhmW6iQwUePNNNW
- /EY7YScYF4lU/NlAv65/2BxwA2enY9DIC8dOm4PQArYVXkQvCC9O4ODwfjcAhy9xFBnRrELrt1
- BVoYLJ89BxL6i4Ipmt1umkS5s6zOnut5aN/e0FKu0++vNUqMS8aLu42l0yKCYzRvCxn7m76rML
- y7o4/Hgb0wOtTmqegyrU+UpuoCyLruLubsut0GanPIoqk/pjPe3zcUlJudM5Gtgu0OfKEqk4d6
- 2ilEsB2QXskse0EWSudjRpC4
+  by ob1.hgst.iphmx.com with ESMTP; 04 Dec 2019 16:27:46 +0800
+IronPort-SDR: bA9O/UAHB9YEaUXHhh8FuJTzgxtnQwv7sKvdT32e74Cl6G5yCeKYb+y41qTpqWiPR/iyJYqG5Z
+ CxEuTzUY769GqE+3BDkmmX9k6p60plPw1eopjJtffyIPnzFG8Br/oPYVhQZIf4tsC126LXMjCN
+ KHYezjgVrWzIXD6UZT/+75OXAqECcTLnT8wktkq0vuGBp87pkFrkqa/EdD22H4p5tx8JKhNSh5
+ DFt82zm86Jzs5vnlEGfIvDktJy7d+CpmKaJcMRn0PUU0V/VxF8rKPkPfISDC83Udk4+lQ2soeX
+ 9I1uObbE9dhpvXNndGMjxhB4
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2019 00:22:28 -0800
-IronPort-SDR: EvCtgiJKUZ1cMJrXrOsWN4lwHB45zGSWoofJMRq/oGxiC474aRa6vFBYK82Qj2e4v8nGjQVAvM
- Bt7bO/wXYZOojxTwJ/WDyYzNdSvjILz6iqQXPNtDvf005pnLGYm7alV1ypC+So1OmLonqKrylS
- 6ApJ0UeimMl3mfrxKhg+2GhkZjX+OF+FlNDVCn4EZD+6bQ+wmc85SyQc9Of+nE0RL7hKnMI9SF
- B4VGW7EvdRPP6HiqCpBVVY665hC+kWsQ/anAvGCaKN9U29RB8TDbWIuCFRoKaSGbnJXgrc8A6S
- Ikg=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2019 00:22:31 -0800
+IronPort-SDR: q9vZ9QIF3fcyKL17H7ImZOzp/G5J8ItwSmbBGj6Baq2cp2idWCPr7RlB5GdHzt7wkjzhXl7mtn
+ k4qBEdKsMqxY5DScXpOswZiToafwRiFQXF00HclbNNJD2C+ajC/v92Aau316U/HrLdOr61LJht
+ SOxIhbXTBfY1wQzkV2AXsq7jcG/eiMGK/C0RpxvO8Qmm92o6EP/NqVxF4UgtpYYGwofQakcKNT
+ 2JhwNv//URK5wVtrAI37PrjRtDKt8UdaYAJpm/Tq/7hJFtNxgmI/8UY2SXOUKBFlDBmVgK2XsJ
+ gc0=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com (HELO naota.fujisawa.hgst.com) ([10.149.53.115])
-  by uls-op-cesaip01.wdc.com with ESMTP; 04 Dec 2019 00:27:40 -0800
+  by uls-op-cesaip01.wdc.com with ESMTP; 04 Dec 2019 00:27:42 -0800
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>
 Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
@@ -58,9 +58,9 @@ Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         Hannes Reinecke <hare@suse.com>,
         Anand Jain <anand.jain@oracle.com>,
         linux-fsdevel@vger.kernel.org, Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH v5 06/15] btrfs-progs: load and check zone information
-Date:   Wed,  4 Dec 2019 17:25:04 +0900
-Message-Id: <20191204082513.857320-7-naohiro.aota@wdc.com>
+Subject: [PATCH v5 07/15] btrfs-progs: support discarding zoned device
+Date:   Wed,  4 Dec 2019 17:25:05 +0900
+Message-Id: <20191204082513.857320-8-naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204082513.857320-1-naohiro.aota@wdc.com>
 References: <20191204082513.857320-1-naohiro.aota@wdc.com>
@@ -71,174 +71,182 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch checks if a device added to btrfs is a zoned block device. If it
-is, load zones information and the zone size for the device.
+All zones of zoned block devices should be reset before writing. Support
+this by introducing PREP_DEVICE_HMZONED.
 
-For a btrfs volume composed of multiple zoned block devices, all devices
-must have the same zone size.
+This commit export discard_blocks() and use it from
+btrfs_discard_all_zones().
 
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- common/device-scan.c | 15 +++++++++++++++
- common/hmzoned.h     |  2 ++
- volumes.c            | 31 +++++++++++++++++++++++++++++++
- volumes.h            |  4 ++++
- 4 files changed, 52 insertions(+)
+ common/device-utils.c | 32 ++++++++++++++++++++++++++++++--
+ common/device-utils.h |  2 ++
+ common/hmzoned.c      | 29 +++++++++++++++++++++++++++++
+ common/hmzoned.h      |  6 ++++++
+ 4 files changed, 67 insertions(+), 2 deletions(-)
 
-diff --git a/common/device-scan.c b/common/device-scan.c
-index 48dbd9e19715..548e1322bb70 100644
---- a/common/device-scan.c
-+++ b/common/device-scan.c
+diff --git a/common/device-utils.c b/common/device-utils.c
+index 7fa9386f4677..2689f157aeea 100644
+--- a/common/device-utils.c
++++ b/common/device-utils.c
 @@ -29,6 +29,7 @@
- #include "kernel-lib/overflow.h"
- #include "common/path-utils.h"
- #include "common/device-scan.h"
-+#include "common/hmzoned.h"
+ #include "common/internal.h"
  #include "common/messages.h"
  #include "common/utils.h"
- #include "common-defs.h"
-@@ -137,6 +138,19 @@ int btrfs_add_to_fsid(struct btrfs_trans_handle *trans,
- 		goto out;
++#include "common/hmzoned.h"
+ 
+ #ifndef BLKDISCARD
+ #define BLKDISCARD	_IO(0x12,119)
+@@ -49,7 +50,7 @@ static int discard_range(int fd, u64 start, u64 len)
+ /*
+  * Discard blocks in the given range in 1G chunks, the process is interruptible
+  */
+-static int discard_blocks(int fd, u64 start, u64 len)
++int discard_blocks(int fd, u64 start, u64 len)
+ {
+ 	while (len > 0) {
+ 		/* 1G granularity */
+@@ -155,6 +156,7 @@ out:
+ int btrfs_prepare_device(int fd, const char *file, u64 *block_count_ret,
+ 		u64 max_block_count, unsigned opflags)
+ {
++	struct btrfs_zoned_device_info *zinfo = NULL;
+ 	u64 block_count;
+ 	struct stat st;
+ 	int i, ret;
+@@ -173,7 +175,30 @@ int btrfs_prepare_device(int fd, const char *file, u64 *block_count_ret,
+ 	if (max_block_count)
+ 		block_count = min(block_count, max_block_count);
+ 
+-	if (opflags & PREP_DEVICE_DISCARD) {
++	ret = btrfs_get_zone_info(fd, file, opflags & PREP_DEVICE_HMZONED,
++				  &zinfo);
++	if (ret < 0)
++		return 1;
++
++	if (opflags & PREP_DEVICE_HMZONED) {
++		if (!zinfo) {
++			error("unable to load zone information of %s", file);
++			return 1;
++		}
++		if (opflags & PREP_DEVICE_VERBOSE)
++			printf("Resetting device zones %s (%u zones) ...\n",
++			       file, zinfo->nr_zones);
++		/*
++		 * We cannot ignore zone discard (reset) errors for a zoned
++		 * block device as this could result in the inability to
++		 * write to non-empty sequential zones of the device.
++		 */
++		if (btrfs_discard_all_zones(fd, zinfo)) {
++			error("failed to reset device '%s' zones", file);
++			kfree(zinfo);
++			return 1;
++		}
++	} else if (opflags & PREP_DEVICE_DISCARD) {
+ 		/*
+ 		 * We intentionally ignore errors from the discard ioctl.  It
+ 		 * is not necessary for the mkfs functionality but just an
+@@ -198,6 +223,7 @@ int btrfs_prepare_device(int fd, const char *file, u64 *block_count_ret,
+ 	if (ret < 0) {
+ 		errno = -ret;
+ 		error("failed to zero device '%s': %m", file);
++		kfree(zinfo);
+ 		return 1;
  	}
  
-+	ret = btrfs_get_zone_info(fd, path, fs_info->fs_devices->hmzoned,
-+				  &device->zone_info);
-+	if (ret)
-+		goto out;
-+	if (fs_info->fs_devices->hmzoned) {
-+		if (device->zone_info->zone_size !=
-+		    fs_info->fs_devices->zone_size) {
-+			error("Device zone size differ");
-+			ret = -EINVAL;
-+			goto out;
+@@ -207,6 +233,8 @@ int btrfs_prepare_device(int fd, const char *file, u64 *block_count_ret,
+ 		return 1;
+ 	}
+ 
++	kfree(zinfo);
++
+ 	*block_count_ret = block_count;
+ 	return 0;
+ }
+diff --git a/common/device-utils.h b/common/device-utils.h
+index d1799323d002..885a46937e0d 100644
+--- a/common/device-utils.h
++++ b/common/device-utils.h
+@@ -23,7 +23,9 @@
+ #define	PREP_DEVICE_ZERO_END	(1U << 0)
+ #define	PREP_DEVICE_DISCARD	(1U << 1)
+ #define	PREP_DEVICE_VERBOSE	(1U << 2)
++#define	PREP_DEVICE_HMZONED	(1U << 3)
+ 
++int discard_blocks(int fd, u64 start, u64 len);
+ u64 get_partition_size(const char *dev);
+ u64 disk_size(const char *path);
+ u64 btrfs_device_size(int fd, struct stat *st);
+diff --git a/common/hmzoned.c b/common/hmzoned.c
+index e11e56210709..5803b2c17a2b 100644
+--- a/common/hmzoned.c
++++ b/common/hmzoned.c
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include <sys/ioctl.h>
++#include <unistd.h>
+ 
+ #include "common/utils.h"
+ #include "common/device-utils.h"
+@@ -151,6 +152,34 @@ static int report_zones(int fd, const char *file, u64 block_count,
+ 	return 0;
+ }
+ 
++/*
++ * Discard blocks in the zones of a zoned block device. Process this
++ * with zone size granularity so that blocks in conventional zones are
++ * discarded using discard_range and blocks in sequential zones are
++ * discarded though a zone reset.
++ */
++int btrfs_discard_all_zones(int fd, struct btrfs_zoned_device_info *zinfo)
++{
++	unsigned int i;
++
++	ASSERT(zinfo);
++
++	/* Zone size granularity */
++	for (i = 0; i < zinfo->nr_zones; i++) {
++		if (zinfo->zones[i].type == BLK_ZONE_TYPE_CONVENTIONAL) {
++			discard_blocks(fd, zinfo->zones[i].start << 9,
++				       zinfo->zone_size);
++		} else if (zinfo->zones[i].cond != BLK_ZONE_COND_EMPTY) {
++			struct blk_zone_range range = {
++				zinfo->zones[i].start,
++				zinfo->zone_size >> 9 };
++			if (ioctl(fd, BLKRESETZONE, &range) < 0)
++				return errno;
 +		}
 +	}
++	return fsync(fd);
++}
 +
- 	disk_super = (struct btrfs_super_block *)buf;
- 	dev_item = &disk_super->dev_item;
+ #endif
  
-@@ -197,6 +211,7 @@ int btrfs_add_to_fsid(struct btrfs_trans_handle *trans,
- 	return 0;
- 
- out:
-+	free(device->zone_info);
- 	free(device);
- 	free(buf);
- 	return ret;
+ int btrfs_get_zone_info(int fd, const char *file, bool hmzoned,
 diff --git a/common/hmzoned.h b/common/hmzoned.h
-index 098952061bfb..d229b946e5ed 100644
+index d229b946e5ed..631780537a77 100644
 --- a/common/hmzoned.h
 +++ b/common/hmzoned.h
-@@ -18,6 +18,8 @@
- #ifndef __BTRFS_HMZONED_H__
- #define __BTRFS_HMZONED_H__
+@@ -54,12 +54,18 @@ int btrfs_get_zone_info(int fd, const char *file, bool hmzoned,
  
-+#include <stdbool.h>
-+
  #ifdef BTRFS_ZONED
- #include <linux/blkzoned.h>
+ bool zone_is_sequential(struct btrfs_zoned_device_info *zinfo, u64 bytenr);
++int btrfs_discard_all_zones(int fd, struct btrfs_zoned_device_info *zinfo);
  #else
-diff --git a/volumes.c b/volumes.c
-index 8bfffa5586eb..d92052e19330 100644
---- a/volumes.c
-+++ b/volumes.c
-@@ -27,6 +27,7 @@
- #include "transaction.h"
- #include "print-tree.h"
- #include "volumes.h"
-+#include "common/hmzoned.h"
- #include "common/utils.h"
- #include "kernel-lib/raid56.h"
+ static inline bool zone_is_sequential(struct btrfs_zoned_device_info *zinfo,
+ 				      u64 bytenr)
+ {
+ 	return true;
+ }
++static inline int btrfs_discard_all_zones(int fd,
++					  struct btrfs_zoned_device_info *zinfo)
++{
++	return -EOPNOTSUPP;
++}
+ #endif /* BTRFS_ZONED */
  
-@@ -214,6 +215,8 @@ static int device_list_add(const char *path,
- 	u64 found_transid = btrfs_super_generation(disk_super);
- 	bool metadata_uuid = (btrfs_super_incompat_flags(disk_super) &
- 		BTRFS_FEATURE_INCOMPAT_METADATA_UUID);
-+	bool hmzoned = btrfs_super_incompat_flags(disk_super) &
-+		BTRFS_FEATURE_INCOMPAT_HMZONED;
- 
- 	if (metadata_uuid)
- 		fs_devices = find_fsid(disk_super->fsid,
-@@ -238,8 +241,18 @@ static int device_list_add(const char *path,
- 		fs_devices->latest_devid = devid;
- 		fs_devices->latest_trans = found_transid;
- 		fs_devices->lowest_devid = (u64)-1;
-+		fs_devices->hmzoned = hmzoned;
- 		device = NULL;
- 	} else {
-+		if (fs_devices->hmzoned != hmzoned) {
-+			if (hmzoned)
-+				error(
-+			"Cannot add HMZONED device to non-HMZONED file system");
-+			else
-+				error(
-+			"Cannot add non-HMZONED device to HMZONED file system");
-+			return -EINVAL;
-+		}
- 		device = find_device(fs_devices, devid,
- 				       disk_super->dev_item.uuid);
- 	}
-@@ -335,6 +348,7 @@ again:
- 		/* free the memory */
- 		free(device->name);
- 		free(device->label);
-+		free(device->zone_info);
- 		free(device);
- 	}
- 
-@@ -373,6 +387,8 @@ int btrfs_open_devices(struct btrfs_fs_devices *fs_devices, int flags)
- 	struct btrfs_device *device;
- 	int ret;
- 
-+	fs_devices->zone_size = 0;
-+
- 	list_for_each_entry(device, &fs_devices->devices, dev_list) {
- 		if (!device->name) {
- 			printk("no name for device %llu, skip it now\n", device->devid);
-@@ -396,6 +412,21 @@ int btrfs_open_devices(struct btrfs_fs_devices *fs_devices, int flags)
- 		device->fd = fd;
- 		if (flags & O_RDWR)
- 			device->writeable = 1;
-+
-+		ret = btrfs_get_zone_info(fd, device->name, fs_devices->hmzoned,
-+					  &device->zone_info);
-+		if (ret != 0)
-+			goto fail;
-+		if (!device->zone_info)
-+			continue;
-+		if (!fs_devices->zone_size) {
-+			fs_devices->zone_size = device->zone_info->zone_size;
-+		} else if (device->zone_info->zone_size !=
-+			   fs_devices->zone_size) {
-+			error("Device zone size differ");
-+			ret = -EINVAL;
-+			goto fail;
-+		}
- 	}
- 	return 0;
- fail:
-diff --git a/volumes.h b/volumes.h
-index 41574f21dd23..d52dbcba0410 100644
---- a/volumes.h
-+++ b/volumes.h
-@@ -28,6 +28,7 @@ struct btrfs_device {
- 	struct list_head dev_list;
- 	struct btrfs_root *dev_root;
- 	struct btrfs_fs_devices *fs_devices;
-+	struct btrfs_zoned_device_info *zone_info;
- 
- 	u64 total_ios;
- 
-@@ -87,6 +88,9 @@ struct btrfs_fs_devices {
- 
- 	int seeding;
- 	struct btrfs_fs_devices *seed;
-+
-+	u64 zone_size;
-+	bool hmzoned;
- };
- 
- struct btrfs_bio_stripe {
+ #endif /* __BTRFS_HMZONED_H__ */
 -- 
 2.24.0
 
