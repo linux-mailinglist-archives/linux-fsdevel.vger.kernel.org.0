@@ -2,119 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30159112CE6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2019 14:50:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EC07112D65
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Dec 2019 15:25:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727961AbfLDNux (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Dec 2019 08:50:53 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:22849 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727792AbfLDNuw (ORCPT
+        id S1727912AbfLDOZC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Dec 2019 09:25:02 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44182 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727828AbfLDOZC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Dec 2019 08:50:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575467452;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=VA9lOoBJgqCxzPUvXrp+l1oPS8XjH4P1e6jO6rnjjg8=;
-        b=OJ7sCRzpAFHmkmjvScZK+ZWJJayWKCrEtho6ALh87721wwgjnz93ZSucLusj5PU/zu65xb
-        EUCUbCg4gGZNkTGXbtaive6QysHfLVQSN2jy9eARPF37aozuoW5+jy9CyxCjHRnaGehoq/
-        UN/SeTipLbR6nVPB0fX20jIj4n9stdY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-353-sTXKKfdVOFaPo2t4eAi-uw-1; Wed, 04 Dec 2019 08:50:49 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2144D91206;
-        Wed,  4 Dec 2019 13:50:47 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-23.pek2.redhat.com [10.72.8.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C826E19C68;
-        Wed,  4 Dec 2019 13:50:32 +0000 (UTC)
-Date:   Wed, 4 Dec 2019 21:50:14 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Phil Auld <pauld@redhat.com>, Dave Chinner <david@fromorbit.com>,
-        Hillf Danton <hdanton@sina.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-fs <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rong Chen <rong.a.chen@intel.com>, Tejun Heo <tj@kernel.org>
-Subject: Re: single aio thread is migrated crazily by scheduler
-Message-ID: <20191204135014.GA21449@ming.t460p>
-References: <20191115010824.GC4847@ming.t460p>
- <20191115045634.GN4614@dread.disaster.area>
- <20191115070843.GA24246@ming.t460p>
- <20191128094003.752-1-hdanton@sina.com>
- <CAKfTPtA23ErKGCEJVmg6vk-QoufkiUM3NbXd31mZmKnuwbTkFw@mail.gmail.com>
- <20191202024625.GD24512@ming.t460p>
- <20191202040256.GE2695@dread.disaster.area>
- <CAKfTPtD8Q97qJ_+hdCXQRt=gy7k96XrhnFmGYP1G88YSFW0vNA@mail.gmail.com>
- <20191202212210.GA32767@lorien.usersys.redhat.com>
- <CAKfTPtC7uycC3b2ngOFUqOh9-Fcz7h-151aaYJbLJFXrNq-gkw@mail.gmail.com>
+        Wed, 4 Dec 2019 09:25:02 -0500
+Received: by mail-wr1-f67.google.com with SMTP id q10so8774591wrm.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Dec 2019 06:25:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dCNInubYDqlO66XRYe9hy1rNnkQmFtQqKTbaoNinUSM=;
+        b=Jk0OaY9M/rXWxlouQPDgbsvnok6FQUbEafumGHLiT9nbTWvK3exykqs7u01BcZyzJG
+         qn1yCbwPlNHeTAeI0f9NMZBhkaMNuSQ42K+nqNR76UdBQ9R+zKSrGlvTsr35bR0O5CT1
+         SUtNTCKh7jxskGOgdYd0NaYHE6eMLxaQAUBdTtyA2Mwpb4BJVUuiYa6bqtbFeQolZeKm
+         biqP+CPmzzIxx9ZkJs1zxObIsrHhdy49lSRbIkvUDrA9TqwUI1YEeMfM20BUdKNgusR/
+         1oz/iYGiCOSGuHTj01fKGlZLukF8INIvKFcn0PjUYvkIeMMMnLPJg7aoBmRsPKk5RurI
+         jEVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dCNInubYDqlO66XRYe9hy1rNnkQmFtQqKTbaoNinUSM=;
+        b=ucb6s2k25zn84EesjyK/Gw+0vO+saBYdPqEnz+iSyqGnZPKFOIVcA+iKPcT/Ooqynm
+         JGOQVZM4ug0+uNJrzbjwwYM3Kn5Yclg4k5/zO9UaipUPxPZ7yxbx2RMR3ptBTe37lEw8
+         yY/ZnoVI4ItUqSY2zbffuNM8rJ28GzBZxh9hSbHhJb5ol6Qayp1OJfon5qM0JI2FGjoA
+         0QY1mcPSgmVQUdeLsPSK50CNDvnZ1VG8ixmStM4H7bnwbuEe305GjPx2nOe2d6PwVSk/
+         2fNFQiPMKecJNkYc5soKOR/HRr3Q2Ae5elGvNggrUlgog+lyzPKkSeHNm3jIgl5U0A+F
+         82Iw==
+X-Gm-Message-State: APjAAAXS3aIfxNkuyK1NXHnjbQjmbWLDqKhAFrvh3g2a81kWT/Bh+WIR
+        jYgv4LloFQ4rtBvHzPKGbt2Y3eECNXky9Julm1s=
+X-Google-Smtp-Source: APXvYqwU223ebSWrYZG2E7uTcpjodM6s2VwLj9s5DtEO2xNjHI6UF0pgW0PvIN2GsHlRVlapZQqNHKtUdnyI3vOEhNU=
+X-Received: by 2002:a5d:5091:: with SMTP id a17mr4265512wrt.362.1575469499998;
+ Wed, 04 Dec 2019 06:24:59 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtC7uycC3b2ngOFUqOh9-Fcz7h-151aaYJbLJFXrNq-gkw@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: sTXKKfdVOFaPo2t4eAi-uw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+References: <CADKPpc2RuncyN+ZONkwBqtW7iBb5ep_3yQN7PKe7ASn8DpNvBw@mail.gmail.com>
+ <CAOQ4uxiKqEq9ts4fEq_husQJpus29afVBMq8P1tkeQT-58RBFg@mail.gmail.com>
+In-Reply-To: <CAOQ4uxiKqEq9ts4fEq_husQJpus29afVBMq8P1tkeQT-58RBFg@mail.gmail.com>
+From:   Mo Re Ra <more7.rev@gmail.com>
+Date:   Wed, 4 Dec 2019 17:54:48 +0330
+Message-ID: <CADKPpc33UGcuRB9p64QoF8g88emqNQB=Z03f+OnK4MiCoeVZpg@mail.gmail.com>
+Subject: Re: File monitor problem
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 03, 2019 at 10:45:38AM +0100, Vincent Guittot wrote:
-> On Mon, 2 Dec 2019 at 22:22, Phil Auld <pauld@redhat.com> wrote:
+On Wed, Dec 4, 2019 at 4:23 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> On Wed, Dec 4, 2019 at 12:03 PM Mo Re Ra <more7.rev@gmail.com> wrote:
 > >
-> > Hi Vincent,
+> > Hi,
 > >
-> > On Mon, Dec 02, 2019 at 02:45:42PM +0100 Vincent Guittot wrote:
-> > > On Mon, 2 Dec 2019 at 05:02, Dave Chinner <david@fromorbit.com> wrote=
-:
+> > I don`t know if this is the correct place to express my issue or not.
+> > I have a big problem. For my project, a Directory Monitor, I`ve
+> > researched about dnotify, inotify and fanotify.
+> > dnotify is the worst choice.
+> > inotify is a good choice but has a problem. It does not work
+> > recursively. When you implement this feature by inotify, you would
+> > miss immediately events after subdir creation.
+> > fanotify is the last choice. It has a big change since Kernel 5.1. But
+> > It does not meet my requirement.
 > >
-> > ...
+> > I need to monitor a directory with CREATE, DELETE, MOVE_TO, MOVE_FROM
+> > and CLOSE_WRITE events would be happened in its subdirectories.
+> > Filename of the events happened on that (without any miss) is
+> > mandatory for me.
 > >
-> > > > So, we can fiddle with workqueues, but it doesn't address the
-> > > > underlying issue that the scheduler appears to be migrating
-> > > > non-bound tasks off a busy CPU too easily....
-> > >
-> > > The root cause of the problem is that the sched_wakeup_granularity_ns
-> > > is in the same range or higher than load balance period. As Peter
-> > > explained, This make the kworker waiting for the CPU for several load
-> > > period and a transient unbalanced state becomes a stable one that the
-> > > scheduler to fix. With default value, the scheduler doesn't try to
-> > > migrate any task.
+> > I`ve searched and found a contribution from @amiril73 which
+> > unfortunately has not been merged. Here is the link:
+> > https://github.com/amir73il/fsnotify-utils/issues/1
 > >
-> > There are actually two issues here.   With the high wakeup granularity
-> > we get the user task actively migrated. This causes the significant
-> > performance hit Ming was showing. With the fast wakeup_granularity
-> > (or smaller IOs - 512 instead of 4k) we get, instead, the user task
-> > migrated at wakeup to a new CPU for every IO completion.
->=20
-> Ok, I haven't noticed that this one was a problem too. Do we have perf
-> regression ?
+> > I`d really appreciate it If you could resolve this issue.
+> >
+>
+> Hi Mohammad,
+>
+> Thanks for taking an interest in fanotify.
+>
+> Can you please elaborate about why filename in events are mandatory
+> for your application.
+>
+> Could your application use the FID in FAN_DELETE_SELF and
+> FAN_MOVE_SELF events to act on file deletion/rename instead of filename
+> information in FAN_DELETE/FAN_MOVED_xxx events?
+>
+> Will it help if you could get a FAN_CREATE_SELF event with FID information
+> of created file?
+>
+> Note that it is NOT guarantied that your application will be able to resolve
+> those FID to file path, for example if file was already deleted and no open
+> handles for this file exist or if file has a hardlink, you may resolve the path
+> of that hardlink instead.
+>
+> Jan,
+>
+> I remember we discussed the optional FAN_REPORT_FILENAME [1] and
+> you had some reservations, but I am not sure how strong they were.
+> Please refresh my memory.
+>
+> Thanks,
+> Amir.
+>
+> [1] https://github.com/amir73il/linux/commit/d3e2fec74f6814cecb91148e6b9984a56132590f
 
-Follows the test result on one server(Dell, R630: Haswell-E):
 
-kernel.sched_wakeup_granularity_ns =3D 4000000
-kernel.sched_min_granularity_ns =3D 3000000
 
----------------------------------------
-test              =09=09        | IOPS
----------------------------------------
-./xfs_complete 512      =09    | 7.8K=20
----------------------------------------
-taskset -c 8 ./xfs_complete 512 | 9.8K=20
----------------------------------------
+Hi Amir,
+Thanks for your attention.
+
+Fanotify project had a big change since Kernel 5.1 but did not meet
+some primiry needs.
+For example in my application, I`m watching on a specific directory to
+sync it (through a socket connection and considering some policies)
+with a directory in a remote system which a user working on that. Some
+subdirectoires may contain two milions of files or more. I need these
+two directoires be synced completely as soon as possible without any
+missed notification.
+So, I need a syscall with complete set of flags to help to watch on a
+directory and all of its subdirectories recuresively without any
+missed notification.
+
+Unfortuantely, in current version of Fanotify, the notification just
+expresses a change has been occured in a directory but dot not
+specifiy which file! I could not iterate over millions of file to
+determine which file was that. That would not be helpful.
+
+Inevitably, xxx_SELF would not help me to meets all I need. Just to
+clarify, I dont mean xxx_SELF flags are useless. I mean Fanotify is a
+good project but the current version of that is not a project which
+meets some basic needs.
 
 Thanks,
-Ming
-
+Mohammad Reza.
