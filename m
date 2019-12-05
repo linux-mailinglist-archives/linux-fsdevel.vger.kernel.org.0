@@ -2,95 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80A6C114572
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 18:13:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 409791145A6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 18:18:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730033AbfLERNG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Dec 2019 12:13:06 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38441 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729497AbfLERNE (ORCPT
+        id S1729711AbfLERSP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Dec 2019 12:18:15 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:46878 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729396AbfLERSP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Dec 2019 12:13:04 -0500
-Received: by mail-lj1-f196.google.com with SMTP id k8so4464194ljh.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Dec 2019 09:13:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zYNLY1IlQbFxutIFweWCQvjwN9b0IsGYV2okK9HrfFg=;
-        b=Q0FUaDCgejnj2j913m9DkZ5BcPyxfvWCsvBxLXqstFY2bocRU9mYGGdVT6TyixAaF9
-         S2hdwaxlIrLjm/VudylZUBLif/OSS4AVyaDGMpzqZdSB/9DnkfX4SEUoI9oj/pbE/ewR
-         2kNMP8DNxG23lhz/9/1l0TfZQjJpzTexlyrHc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zYNLY1IlQbFxutIFweWCQvjwN9b0IsGYV2okK9HrfFg=;
-        b=s4m5qHikTdz9LYcwQKSoBXHsm1+7SMYrxsq0bbUnHkTjsOiEH5ZlctMJyLDI6i/xl+
-         crASLOeSJe2VB7uzkZXsrGMaePjTwRKzjegB0H05EHqt3y6AkBq+3Cnj7pfJRvG27YPW
-         wrHdK6cB/GGBhlCFglxhKzXoDCrR304wpwusmkzPIiEm15oNOSx4gnYn2XNXa9kmr+CB
-         Elv2i0ErfhUZHjI3/hjz3sejvHYZ3sBYoNcYZiHozV6GuMSa1mdWyHB9Czh5W9Tl3LQl
-         vnWAVmAUuAxlLWF/PCDh9+Vmkfdm1G7PjVvuJ7+eHPxWocA4pPL/3VRDWfn+8ASQ4KYx
-         GHkQ==
-X-Gm-Message-State: APjAAAXCdgq6MEXsybtMqIa74fA6riUo+yKIuw/DlORDlhtyM3TEW48c
-        OA3PSAGOYMYx3YsZ2iKVAJKSuzEK4bg=
-X-Google-Smtp-Source: APXvYqzFVflnn/4DVJFq/fs4MePi/L5Z6g/zUOwZjAp1c+qwrkBHWCF3miPtY0T+qrYEXlFDb7bjnw==
-X-Received: by 2002:a05:651c:c4:: with SMTP id 4mr3003230ljr.131.1575565981465;
-        Thu, 05 Dec 2019 09:13:01 -0800 (PST)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id y11sm6116273lfc.27.2019.12.05.09.12.59
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2019 09:12:59 -0800 (PST)
-Received: by mail-lf1-f51.google.com with SMTP id y19so3050102lfl.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Dec 2019 09:12:59 -0800 (PST)
-X-Received: by 2002:a19:4351:: with SMTP id m17mr6095833lfj.61.1575565978909;
- Thu, 05 Dec 2019 09:12:58 -0800 (PST)
-MIME-Version: 1.0
-References: <31452.1574721589@warthog.procyon.org.uk> <20191205125826.GK2734@twin.jikos.cz>
- <1593.1575554217@warthog.procyon.org.uk>
-In-Reply-To: <1593.1575554217@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 5 Dec 2019 09:12:42 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgwwJ+ZEtycujFdNmpS8TjwCYyT+oHfV7d-GekyaX91xg@mail.gmail.com>
-Message-ID: <CAHk-=wgwwJ+ZEtycujFdNmpS8TjwCYyT+oHfV7d-GekyaX91xg@mail.gmail.com>
-Subject: Re: [GIT PULL] pipe: Notification queue preparation
-To:     David Howells <dhowells@redhat.com>
-Cc:     David Sterba <dsterba@suse.cz>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
+        Thu, 5 Dec 2019 12:18:15 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB5HE4rJ185659;
+        Thu, 5 Dec 2019 17:17:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
+ bh=We7FFT52e+w7qubvoBOunnMVUcWvtvuprqhEIBuZLec=;
+ b=VbSE0YH8tIG/EdO2b90mllIJATGNjYUh04GRZITvjzmd3FV+oGJh8MPVQOw+9y/gPl5i
+ /upJBTN9ji/iU2y2a8RvvIM1JzkaROnnmObMGg5MJ8LcRFonO8Dq3eX/Rh58IoFhuEZf
+ 29kjtdjqv8SG8IC9QmVMxEzsity0fTdI/RAh8EbJiuS7SfhINTQVYe2NEdqDf0C+VNX7
+ F1IQq4ZkX1dnGpli3P0EuokogRYNb0eBDYkBhB/GPXByv1RbJWbIlMpd/9fVZKJrgJjf
+ tOiNkcIOg+O6rqjspKH8asAGe4M+5Xmd/ErM4nkGsbB3zUTUqA6AfDHOcKjLYOjKny53 IA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2wkgcqpjhy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 05 Dec 2019 17:17:33 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB5HECvo131642;
+        Thu, 5 Dec 2019 17:15:32 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2wpp8j7hef-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 05 Dec 2019 17:15:32 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xB5HFRg9023362;
+        Thu, 5 Dec 2019 17:15:29 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 05 Dec 2019 09:15:27 -0800
+Date:   Thu, 5 Dec 2019 09:15:25 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     xfs <linux-xfs@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Jan Kara <jack@suse.cz>, mbobrowski@mbobrowski.org,
+        riteshh@linux.ibm.com
+Subject: [ANNOUNCE] xfs-linux: iomap-5.5-merge updated to c275779ff2dd
+Message-ID: <20191205171525.GA13249@magnolia>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9462 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=984
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912050145
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9462 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912050145
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 5, 2019 at 5:57 AM David Howells <dhowells@redhat.com> wrote:
->
-> David Sterba <dsterba@suse.cz> wrote:
->
-> > [<0>] pipe_write+0x1be/0x4b0
->
-> Can you get me a line number of that?  Assuming you've built with -g, load
-> vmlinux into gdb and do "i li pipe_write+0x1be".
+Hi folks,
 
-If the kernel is built with debug info (which you need for the gdb
-command anyway), it's much better to just use
+The iomap-5.5-merge branch of the xfs-linux repository at:
 
-   ./scripts/decode_stacktrace.sh
+	git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
 
-which gives all the information for the whole backtrace.
+has just been updated.
 
-It would be interesting to hear if somebody else is waiting on the
-read side too.
+Patches often get missed, so please check if your outstanding patches
+were in this update. If they have not been in this update, please
+resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
+the next update.
 
-             Linus
+The new head of the iomap-5.5-merge branch is commit:
+
+c275779ff2dd iomap: stop using ioend after it's been freed in iomap_finish_ioend()
+
+New Commits:
+
+Christoph Hellwig (1):
+      [1cea335d1db1] iomap: fix sub-page uptodate handling
+
+Zorro Lang (1):
+      [c275779ff2dd] iomap: stop using ioend after it's been freed in iomap_finish_ioend()
+
+
+Code Diffstat:
+
+ fs/iomap/buffered-io.c | 40 ++++++++++++++++++++++++++++------------
+ 1 file changed, 28 insertions(+), 12 deletions(-)
