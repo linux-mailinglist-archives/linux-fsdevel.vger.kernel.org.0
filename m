@@ -2,96 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1524114627
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 18:44:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FDF6114646
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 18:51:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730227AbfLERop (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Dec 2019 12:44:45 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37482 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729396AbfLERop (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Dec 2019 12:44:45 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 82358AEAC;
-        Thu,  5 Dec 2019 17:44:43 +0000 (UTC)
-Date:   Thu, 5 Dec 2019 11:44:41 -0600
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     Johannes Thumshirn <jthumshirn@suse.de>
-Cc:     Christoph Hellwig <hch@infradead.org>, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, darrick.wong@oracle.com,
-        fdmanana@kernel.org, nborisov@suse.com, dsterba@suse.cz
-Subject: Re: [PATCH 4/8] btrfs: Switch to iomap_dio_rw() for dio
-Message-ID: <20191205174441.ech4nh4jxpfijule@fiona>
-References: <20191205155630.28817-1-rgoldwyn@suse.de>
- <20191205155630.28817-5-rgoldwyn@suse.de>
- <20191205171815.GA19670@Johanness-MacBook-Pro.local>
- <20191205171959.GA8586@infradead.org>
- <20191205173242.GB19670@Johanness-MacBook-Pro.local>
+        id S1730189AbfLERvO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Dec 2019 12:51:14 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:39471 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729711AbfLERvO (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Dec 2019 12:51:14 -0500
+Received: by mail-wm1-f68.google.com with SMTP id s14so4628372wmh.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Dec 2019 09:51:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oCM4XV1Q03JY+XBq9T6ZfcKWAdi4Qy0y0BTDkhuSdK8=;
+        b=rUUZO+tlZzLRden5dfFouYXg0QIWLwv/o1dpU4E0jB2dbxHG5mjyFTXL2bQqj2kFWP
+         XJXVjII9dl3AYnHEFsIXWs0vdFia0VA2nUjpXuvtMA3I251xQS1dLJ6GAV49tIiReCgP
+         dxgBD6gnC/4CpalBbHQ2l6dpt9UIv6EUbyQsIoxi1+Xvsh+ytXP1a8N7Cxc23wqKv3O+
+         +qkNziS4kURfQFcfde43OIjvMkIUdkQLxLhYiRD0qiKg6y5lalJ0cEPGCVWmlLJVlXq6
+         mn4xvP3e122eBXBFMSKCmlGLvxArTJoJdRRfj/mzMDwJUkL8k8LWzNcUs2pGG5nE4MVT
+         39Qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oCM4XV1Q03JY+XBq9T6ZfcKWAdi4Qy0y0BTDkhuSdK8=;
+        b=ZTuJWdhFnWcjnD2uygfowApxvroXRhLXh0BMxu9WIJvXhXdXs0RXWSkOifd6LL4Id8
+         Ua3+BoF0jqwVfonUOxPJJ8rQtJUql2N3Sze/pZuZgTVuP6gLCC3E4aSTPWDdou+i+yku
+         +6/AQnzlsQU8C+1MUfIe0O1nHBmn2hU16nDZeUwidJqOT4eORSg2bZcH9XwKcTMbzxSH
+         rnziRqrKLraxI6tD2qGCTAw7L13joskOzh6d8dXW1o9hjuHy/HQokzM4XcLMy9NS++g+
+         3iB6rPWgxTzgoZLbsr5FUqI62dgm2QHFTb/oWm7lSqr2ZZ6uzl3JX1Wku5lZBA2EVZ55
+         O68w==
+X-Gm-Message-State: APjAAAWs75XaMpf1yCAzeB6gOD0zFSsRrHEOYKXGsfzYs+kqYUCZbMIh
+        Cb/ot8w93RL8ktwT/TwUeSsMxlc2WsBeereUckvwXA==
+X-Google-Smtp-Source: APXvYqzM+6BtOmXiHeieEzyKgkgjghFIiNlwlmqqI+bMdHx555C+saCk7bgi/8U0cUpJ14tc1MoLDJlILEKaQj/N6Ww=
+X-Received: by 2002:a1c:5419:: with SMTP id i25mr6584531wmb.150.1575568271878;
+ Thu, 05 Dec 2019 09:51:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191205173242.GB19670@Johanness-MacBook-Pro.local>
-User-Agent: NeoMutt/20180716
+References: <20191204234522.42855-1-brendanhiggins@google.com>
+In-Reply-To: <20191204234522.42855-1-brendanhiggins@google.com>
+From:   David Gow <davidgow@google.com>
+Date:   Thu, 5 Dec 2019 09:50:59 -0800
+Message-ID: <CABVgOSn7tTYuMZ8ArA3fRWp4aeKAcKJ3qNL+SgtFt5fkBLnc-A@mail.gmail.com>
+Subject: Re: [PATCH v1] staging: exfat: fix multiple definition error of `rename_file'
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     valdis.kletnieks@vt.edu, linux-fsdevel@vger.kernel.org,
+        devel@driverdev.osuosl.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 18:32 05/12, Johannes Thumshirn wrote:
-> On Thu, Dec 05, 2019 at 09:19:59AM -0800, Christoph Hellwig wrote:
-> > I actually much prefer exporting generic_file_buffered_read and will
-> > gladly switch other callers not needing the messy direct I/O handling
-> > in generic_file_read_iter over to generic_file_buffered_read once this
-> > series is merged.
-> 
-> I think you misunderstood me here, I meant the code to be:
-> 
-> static ssize_t btrfs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
-> {
-> 	ssize_t ret = 0;
-> 
-> 	if (iocb->ki_flags & IOCB_DIRECT) {
-> 		struct inode *inode = file_inode(iocb->ki_filp);
-> 
-> 		inode_lock_shared(inode);
-> 		ret = btrfs_direct_IO(iocb, to);
-> 		inode_unlock_shared(inode);
-> 		if (ret < 0)
-> 			return ret;
-> 		}
-> 	}
-> 
-> 	return generic_file_read_iter(icob, to);
-> }
-> 
-> This way an iocb that is no dio will end in generic_file_read_iter():
-> 
-> generic_file_read_iter(iocb, to)
-> {
-> 	size_t count = iov_iter_count(iter);
->         ssize_t retval = 0;
-> 
->         if (!count)
->                 goto out; /* skip atime */
-> 
-> 	if (iocb->ki_flags & IOCB_DIRECT) {
-> 		skipped as flag is not set
-> 	}
-> 
-> 	retval = generic_file_buffered_read(iocb, iter, retval);
-> out:
-> 	return retval;
-> }
-> 
-> Meaning we do not need to export generic_file_buffered_read() and still can
-> skip the generic DIO madness.
-> 
-> Makes sense?
+On Wed, Dec 4, 2019 at 3:46 PM Brendan Higgins
+<brendanhiggins@google.com> wrote:
+>
+> `rename_file' was exported but not properly namespaced causing a
+> multiple definition error because `rename_file' is already defined in
+> fs/hostfs/hostfs_user.c:
+>
+> ld: drivers/staging/exfat/exfat_core.o: in function `rename_file':
+> drivers/staging/exfat/exfat_core.c:2327: multiple definition of
+> `rename_file'; fs/hostfs/hostfs_user.o:fs/hostfs/hostfs_user.c:350:
+> first defined here
+> make: *** [Makefile:1077: vmlinux] Error 1
+>
+> This error can be reproduced on ARCH=um by selecting:
+>
+> CONFIG_EXFAT_FS=y
+> CONFIG_HOSTFS=y
+>
+> Add a namespace prefix exfat_* to fix this error.
+>
+> Reported-by: Brendan Higgins <brendanhiggins@google.com>
+> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> Cc: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-For btrfs, DIO and buffered I/O is not mutually exclusive, since we fall
-back to buffered I/O in case of incomplete Direct I/O. In this case,
-the control will not skip IOCB_DIRECT branch.
+Tested-by: David Gow <davidgow@google.com>
+Reviewed-by: David Gow <davidgow@google.com>
 
--- 
-Goldwyn
+This works for me: I was able to reproduce the compile error without
+this patch, and successfully compile a UML kernel and mount an exfat
+fs after applying it.
+
+> ---
+>  drivers/staging/exfat/exfat.h       | 4 ++--
+>  drivers/staging/exfat/exfat_core.c  | 4 ++--
+>  drivers/staging/exfat/exfat_super.c | 4 ++--
+>  3 files changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
+> index 2aac1e000977e..51c665a924b76 100644
+> --- a/drivers/staging/exfat/exfat.h
+> +++ b/drivers/staging/exfat/exfat.h
+> @@ -805,8 +805,8 @@ s32 create_dir(struct inode *inode, struct chain_t *p_dir,
+>  s32 create_file(struct inode *inode, struct chain_t *p_dir,
+>                 struct uni_name_t *p_uniname, u8 mode, struct file_id_t *fid);
+>  void remove_file(struct inode *inode, struct chain_t *p_dir, s32 entry);
+> -s32 rename_file(struct inode *inode, struct chain_t *p_dir, s32 old_entry,
+> -               struct uni_name_t *p_uniname, struct file_id_t *fid);
+> +s32 exfat_rename_file(struct inode *inode, struct chain_t *p_dir, s32 old_entry,
+> +                     struct uni_name_t *p_uniname, struct file_id_t *fid);
+>  s32 move_file(struct inode *inode, struct chain_t *p_olddir, s32 oldentry,
+>               struct chain_t *p_newdir, struct uni_name_t *p_uniname,
+>               struct file_id_t *fid);
+
+It seems a bit ugly to add the exfat_ prefix to just rename_file,
+rather than all of the above functions (e.g., create_dir, remove_file,
+etc). It doesn't look like any of the others are causing any issues
+though (while, for example, there is another remove_file in
+drivers/infiniband/hw/qib/qib_fs.c, it's static, so shouldn't be a
+problem).
+
+
+-- David
