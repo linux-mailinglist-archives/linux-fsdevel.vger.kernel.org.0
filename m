@@ -2,61 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 176661145B7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 18:20:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAC621145C4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 18:21:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730016AbfLERUA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Dec 2019 12:20:00 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:42260 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729396AbfLERUA (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Dec 2019 12:20:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=SyaZI99UxJjfPHeFN17yigrBhnbsXIzAC9SQrlLdaEo=; b=mZ6u5b9GQBZozKwLa5GIFuzse
-        /bt9btoqtXjTQLMPVXN41h0436sVLjO0zeXVt2tIMlOo1X87OloErE1lcSJ2MzYWdqnflaDmlq/zd
-        PRUhLRd+uvf+Ajh1/IjZROVVFdUSeUcurBpA79TKvME98BWXI709wSa0hHGP6l+6SILFpzpCkDIUv
-        PA3hZAKuH0sERY93PnxgAd5MSe2flI09592PW+c0kHZGQ9kvg94HeisRQSBaCQaJKrUb9tDZvpMdR
-        lz4xZtvu3/ke2llDp++Gwn1FfuBuU9OiX+LZ4gGuqS6aWrpOKMVwGJsN2ZR0iwRAnvlUYiuZ+HW2l
-        xUR6DMCIw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1icunH-0002If-V0; Thu, 05 Dec 2019 17:19:59 +0000
-Date:   Thu, 5 Dec 2019 09:19:59 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Johannes Thumshirn <jthumshirn@suse.de>
-Cc:     Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, hch@infradead.org,
-        darrick.wong@oracle.com, fdmanana@kernel.org, nborisov@suse.com,
-        dsterba@suse.cz, Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 4/8] btrfs: Switch to iomap_dio_rw() for dio
-Message-ID: <20191205171959.GA8586@infradead.org>
-References: <20191205155630.28817-1-rgoldwyn@suse.de>
- <20191205155630.28817-5-rgoldwyn@suse.de>
- <20191205171815.GA19670@Johanness-MacBook-Pro.local>
+        id S1730043AbfLERVg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Dec 2019 12:21:36 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55218 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726028AbfLERVg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Dec 2019 12:21:36 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A0BB8B31B;
+        Thu,  5 Dec 2019 17:21:33 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 0D3F8DA733; Thu,  5 Dec 2019 18:21:27 +0100 (CET)
+Date:   Thu, 5 Dec 2019 18:21:27 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     David Howells <dhowells@redhat.com>
+Cc:     torvalds@linux-foundation.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] pipe: Notification queue preparation
+Message-ID: <20191205172127.GW2734@suse.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, David Howells <dhowells@redhat.com>,
+        torvalds@linux-foundation.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>, keyrings@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191205125826.GK2734@twin.jikos.cz>
+ <31452.1574721589@warthog.procyon.org.uk>
+ <1593.1575554217@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191205171815.GA19670@Johanness-MacBook-Pro.local>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <1593.1575554217@warthog.procyon.org.uk>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 05, 2019 at 06:18:15PM +0100, Johannes Thumshirn wrote:
-> > +
-> > +	return generic_file_buffered_read(iocb, to, ret);
+On Thu, Dec 05, 2019 at 01:56:57PM +0000, David Howells wrote:
+> David Sterba <dsterba@suse.cz> wrote:
 > 
-> This could as well call generic_file_read_iter() and would thus make patch 1
-> of this series obsolete. I think this is cleaner.
+> > [<0>] pipe_write+0x1be/0x4b0
+> 
+> Can you get me a line number of that?  Assuming you've built with -g, load
+> vmlinux into gdb and do "i li pipe_write+0x1be".
 
-I actually much prefer exporting generic_file_buffered_read and will
-gladly switch other callers not needing the messy direct I/O handling
-in generic_file_read_iter over to generic_file_buffered_read once this
-series is merged.
+I built it with -g (DEBUG_INFO) but there's no output for the command (gdb 8.2):
+
+(gdb) i li pipe_write+0x1be
+Function "pipe_write+0x1be" not defined.
+
+But the address can tell something:
+
+(gdb) l *(pipe_write+0x1be)
+0xffffffff81390b8e is in pipe_write (fs/pipe.c:509).
+warning: Source file is more recent than executable.
+504                             kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
+505                             do_wakeup = 0;
+506                     }
+507                     pipe->waiting_writers++;
+508                     pipe_wait(pipe);
+509                     pipe->waiting_writers--;
+510             }
+511     out:
+512             __pipe_unlock(pipe);
+513             if (do_wakeup) {
+
+I rerun the test again (with a different address where it's stuck), there's
+nothing better I can get from the debug info, it always points to pipe_wait,
+disassembly points to:
+
+   0xffffffff81390b71 <+417>:   jne    0xffffffff81390c23 <pipe_write+595>
+   0xffffffff81390b77 <+423>:   test   %ecx,%ecx
+   0xffffffff81390b79 <+425>:   jne    0xffffffff81390b95 <pipe_write+453>
+   0xffffffff81390b7b <+427>:   addl   $0x1,0x110(%rbx)
+   0xffffffff81390b82 <+434>:   mov    %rbx,%rdi
+   0xffffffff81390b85 <+437>:   callq  0xffffffff813908c0 <pipe_wait>
+   0xffffffff81390b8a <+442>:   subl   $0x1,0x110(%rbx)
+
+(pipe_write+0x1ba == 0xffffffff81390b8a)
