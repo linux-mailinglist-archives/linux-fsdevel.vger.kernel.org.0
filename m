@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BE10114433
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 16:56:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0782E114434
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 16:56:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729906AbfLEP4v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Dec 2019 10:56:51 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35590 "EHLO mx1.suse.de"
+        id S1729913AbfLEP4x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Dec 2019 10:56:53 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35620 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729855AbfLEP4u (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Dec 2019 10:56:50 -0500
+        id S1729896AbfLEP4w (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Dec 2019 10:56:52 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 17D27B133;
-        Thu,  5 Dec 2019 15:56:48 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 2CE10AD98;
+        Thu,  5 Dec 2019 15:56:50 +0000 (UTC)
 From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
 To:     linux-btrfs@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, hch@infradead.org,
         darrick.wong@oracle.com, fdmanana@kernel.org, nborisov@suse.com,
         dsterba@suse.cz, jthumshirn@suse.de,
         Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: [PATCH 6/8] btrfs: Wait for extent bits to release page
-Date:   Thu,  5 Dec 2019 09:56:28 -0600
-Message-Id: <20191205155630.28817-7-rgoldwyn@suse.de>
+Subject: [PATCH 7/8] btrfs: Remove btrfs_dio_data
+Date:   Thu,  5 Dec 2019 09:56:29 -0600
+Message-Id: <20191205155630.28817-8-rgoldwyn@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20191205155630.28817-1-rgoldwyn@suse.de>
 References: <20191205155630.28817-1-rgoldwyn@suse.de>
@@ -34,113 +34,185 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-While trying to release a page, the extent containing the page may be locked
-which would stop the page from being released. Wait for the
-extent lock to be cleared, if blocking is allowed and then clear
-the bits.
+Since, we are using iomap, we don't get multiple calls for get_blocks(),
+and there is no incomplete ordered extents. So, remove btrfs_dio_data
+and all its manipulations. The bonus is we don't abuse
+current->journal_info anymore.
 
-While we are at it, clean the code of try_release_extent_state() to make
-it simpler.
+This reverts f28a49287817 ("Btrfs: fix leaking of ordered extents after
+direct IO write error")
 
 Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
 ---
- fs/btrfs/extent_io.c | 37 ++++++++++++++++---------------------
- fs/btrfs/extent_io.h |  2 +-
- fs/btrfs/inode.c     |  4 ++--
- 3 files changed, 19 insertions(+), 24 deletions(-)
+ fs/btrfs/inode.c | 76 +++-----------------------------------------------------
+ 1 file changed, 3 insertions(+), 73 deletions(-)
 
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index cceaf05aada2..153f78be973f 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -4362,33 +4362,28 @@ int extent_invalidatepage(struct extent_io_tree *tree,
-  * are locked or under IO and drops the related state bits if it is safe
-  * to drop the page.
-  */
--static int try_release_extent_state(struct extent_io_tree *tree,
-+static bool try_release_extent_state(struct extent_io_tree *tree,
- 				    struct page *page, gfp_t mask)
- {
- 	u64 start = page_offset(page);
- 	u64 end = start + PAGE_SIZE - 1;
--	int ret = 1;
- 
- 	if (test_range_bit(tree, start, end, EXTENT_LOCKED, 0, NULL)) {
--		ret = 0;
--	} else {
--		/*
--		 * at this point we can safely clear everything except the
--		 * locked bit and the nodatasum bit
--		 */
--		ret = __clear_extent_bit(tree, start, end,
--				 ~(EXTENT_LOCKED | EXTENT_NODATASUM),
--				 0, 0, NULL, mask, NULL);
--
--		/* if clear_extent_bit failed for enomem reasons,
--		 * we can't allow the release to continue.
--		 */
--		if (ret < 0)
--			ret = 0;
--		else
--			ret = 1;
-+		if (!gfpflags_allow_blocking(mask))
-+			return false;
-+		wait_extent_bit(tree, start, end, EXTENT_LOCKED);
- 	}
--	return ret;
-+	/*
-+	 * At this point we can safely clear everything except the locked and
-+	 * nodatasum bits. If clear_extent_bit failed due to -ENOMEM,
-+	 * don't allow release.
-+	 */
-+	if (__clear_extent_bit(tree, start, end,
-+				~(EXTENT_LOCKED | EXTENT_NODATASUM), 0, 0,
-+				NULL, mask, NULL) < 0)
-+		return false;
-+
-+	return true;
- }
- 
- /*
-@@ -4396,7 +4391,7 @@ static int try_release_extent_state(struct extent_io_tree *tree,
-  * in the range corresponding to the page, both state records and extent
-  * map records are removed
-  */
--int try_release_extent_mapping(struct page *page, gfp_t mask)
-+bool try_release_extent_mapping(struct page *page, gfp_t mask)
- {
- 	struct extent_map *em;
- 	u64 start = page_offset(page);
-diff --git a/fs/btrfs/extent_io.h b/fs/btrfs/extent_io.h
-index cf3424d58fec..0735cadb5e55 100644
---- a/fs/btrfs/extent_io.h
-+++ b/fs/btrfs/extent_io.h
-@@ -263,7 +263,7 @@ void extent_io_tree_init(struct btrfs_fs_info *fs_info,
- 			 struct extent_io_tree *tree, unsigned int owner,
- 			 void *private_data);
- void extent_io_tree_release(struct extent_io_tree *tree);
--int try_release_extent_mapping(struct page *page, gfp_t mask);
-+bool try_release_extent_mapping(struct page *page, gfp_t mask);
- int try_release_extent_buffer(struct page *page);
- int lock_extent_bits(struct extent_io_tree *tree, u64 start, u64 end,
- 		     struct extent_state **cached);
 diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index b4a297407672..f619b5f6a095 100644
+index f619b5f6a095..fedbbcf108cf 100644
 --- a/fs/btrfs/inode.c
 +++ b/fs/btrfs/inode.c
-@@ -8787,8 +8787,8 @@ btrfs_readpages(struct file *file, struct address_space *mapping,
+@@ -56,13 +56,6 @@ struct btrfs_iget_args {
+ 	struct btrfs_root *root;
+ };
  
- static int __btrfs_releasepage(struct page *page, gfp_t gfp_flags)
+-struct btrfs_dio_data {
+-	u64 reserve;
+-	u64 unsubmitted_oe_range_start;
+-	u64 unsubmitted_oe_range_end;
+-	int overwrite;
+-};
+-
+ static const struct inode_operations btrfs_dir_inode_operations;
+ static const struct inode_operations btrfs_symlink_inode_operations;
+ static const struct inode_operations btrfs_dir_ro_inode_operations;
+@@ -7622,7 +7615,6 @@ static struct extent_map *create_io_em(struct inode *inode, u64 start, u64 len,
+ 
+ static int btrfs_get_blocks_direct_write(struct extent_map **map,
+ 					 struct inode *inode,
+-					 struct btrfs_dio_data *dio_data,
+ 					 u64 start, u64 len)
  {
--	int ret = try_release_extent_mapping(page, gfp_flags);
--	if (ret == 1) {
-+	bool ret = try_release_extent_mapping(page, gfp_flags);
-+	if (ret) {
- 		ClearPagePrivate(page);
- 		set_page_private(page, 0);
- 		put_page(page);
+ 	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
+@@ -7696,13 +7688,9 @@ static int btrfs_get_blocks_direct_write(struct extent_map **map,
+ 	 * Need to update the i_size under the extent lock so buffered
+ 	 * readers will get the updated i_size when we unlock.
+ 	 */
+-	if (!dio_data->overwrite && start + len > i_size_read(inode))
++	if (start + len > i_size_read(inode))
+ 		i_size_write(inode, start + len);
+ 
+-	WARN_ON(dio_data->reserve < len);
+-	dio_data->reserve -= len;
+-	dio_data->unsubmitted_oe_range_end = start + len;
+-	current->journal_info = dio_data;
+ out:
+ 	return ret;
+ }
+@@ -7714,7 +7702,6 @@ static int btrfs_dio_iomap_begin(struct inode *inode, loff_t start,
+ 	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
+ 	struct extent_map *em;
+ 	struct extent_state *cached_state = NULL;
+-	struct btrfs_dio_data *dio_data = NULL;
+ 	u64 lockstart, lockend;
+ 	bool write = !!(flags & IOMAP_WRITE);
+ 	int ret = 0;
+@@ -7738,16 +7725,6 @@ static int btrfs_dio_iomap_begin(struct inode *inode, loff_t start,
+ 		ret = filemap_fdatawrite_range(inode->i_mapping, start,
+ 					 start + length - 1);
+ 
+-	if (current->journal_info) {
+-		/*
+-		 * Need to pull our outstanding extents and set journal_info to NULL so
+-		 * that anything that needs to check if there's a transaction doesn't get
+-		 * confused.
+-		 */
+-		dio_data = current->journal_info;
+-		current->journal_info = NULL;
+-	}
+-
+ 	/*
+ 	 * If this errors out it's because we couldn't invalidate pagecache for
+ 	 * this range and we need to fallback to buffered.
+@@ -7788,7 +7765,7 @@ static int btrfs_dio_iomap_begin(struct inode *inode, loff_t start,
+ 	len = min(len, em->len - (start - em->start));
+ 	if (write) {
+ 		ret = btrfs_get_blocks_direct_write(&em, inode,
+-						    dio_data, start, len);
++						    start, len);
+ 		if (ret < 0)
+ 			goto unlock_err;
+ 		unlock_extents = true;
+@@ -7840,8 +7817,6 @@ static int btrfs_dio_iomap_begin(struct inode *inode, loff_t start,
+ 	unlock_extent_cached(&BTRFS_I(inode)->io_tree, lockstart, lockend,
+ 			     &cached_state);
+ err:
+-	if (dio_data)
+-		current->journal_info = dio_data;
+ 	return ret;
+ }
+ 
+@@ -8531,21 +8506,6 @@ static blk_qc_t btrfs_submit_direct(struct bio *dio_bio, struct file *file,
+ 		dip->subio_endio = btrfs_subio_endio_read;
+ 	}
+ 
+-	/*
+-	 * Reset the range for unsubmitted ordered extents (to a 0 length range)
+-	 * even if we fail to submit a bio, because in such case we do the
+-	 * corresponding error handling below and it must not be done a second
+-	 * time by btrfs_direct_IO().
+-	 */
+-	if (write) {
+-		struct btrfs_dio_data *dio_data = current->journal_info;
+-
+-		dio_data->unsubmitted_oe_range_end = dip->logical_offset +
+-			dip->bytes;
+-		dio_data->unsubmitted_oe_range_start =
+-			dio_data->unsubmitted_oe_range_end;
+-	}
+-
+ 	ret = btrfs_submit_direct_hook(dip);
+ 	if (!ret)
+ 		return BLK_QC_T_NONE;
+@@ -8648,7 +8608,6 @@ ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 	struct file *file = iocb->ki_filp;
+ 	struct inode *inode = file->f_mapping->host;
+ 	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
+-	struct btrfs_dio_data dio_data = { 0 };
+ 	struct extent_changeset *data_reserved = NULL;
+ 	loff_t offset = iocb->ki_pos;
+ 	size_t count = 0;
+@@ -8666,7 +8625,6 @@ ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 		 * not unlock the i_mutex at this case.
+ 		 */
+ 		if (offset + count <= inode->i_size) {
+-			dio_data.overwrite = 1;
+ 			inode_unlock(inode);
+ 			relock = true;
+ 		} else if (iocb->ki_flags & IOCB_NOWAIT) {
+@@ -8678,16 +8636,6 @@ ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 		if (ret)
+ 			goto out;
+ 
+-		/*
+-		 * We need to know how many extents we reserved so that we can
+-		 * do the accounting properly if we go over the number we
+-		 * originally calculated.  Abuse current->journal_info for this.
+-		 */
+-		dio_data.reserve = round_up(count,
+-					    fs_info->sectorsize);
+-		dio_data.unsubmitted_oe_range_start = (u64)offset;
+-		dio_data.unsubmitted_oe_range_end = (u64)offset;
+-		current->journal_info = &dio_data;
+ 		down_read(&BTRFS_I(inode)->dio_sem);
+ 	}
+ 
+@@ -8696,25 +8644,7 @@ ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 
+ 	if (iov_iter_rw(iter) == WRITE) {
+ 		up_read(&BTRFS_I(inode)->dio_sem);
+-		current->journal_info = NULL;
+-		if (ret < 0 && ret != -EIOCBQUEUED) {
+-			if (dio_data.reserve)
+-				btrfs_delalloc_release_space(inode, data_reserved,
+-					offset, dio_data.reserve, true);
+-			/*
+-			 * On error we might have left some ordered extents
+-			 * without submitting corresponding bios for them, so
+-			 * cleanup them up to avoid other tasks getting them
+-			 * and waiting for them to complete forever.
+-			 */
+-			if (dio_data.unsubmitted_oe_range_start <
+-			    dio_data.unsubmitted_oe_range_end)
+-				__endio_write_update_ordered(inode,
+-					dio_data.unsubmitted_oe_range_start,
+-					dio_data.unsubmitted_oe_range_end -
+-					dio_data.unsubmitted_oe_range_start,
+-					false);
+-		} else if (ret >= 0 && (size_t)ret < count)
++		if (ret >= 0 && (size_t)ret < count)
+ 			btrfs_delalloc_release_space(inode, data_reserved,
+ 					offset, count - (size_t)ret, true);
+ 		btrfs_delalloc_release_extents(BTRFS_I(inode), count);
 -- 
 2.16.4
 
