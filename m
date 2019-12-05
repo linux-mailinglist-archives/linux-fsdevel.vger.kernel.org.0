@@ -2,84 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3928113D94
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 10:09:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D531113E79
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 10:46:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728991AbfLEJJF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Dec 2019 04:09:05 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:48377 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726096AbfLEJJE (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Dec 2019 04:09:04 -0500
-Received: from mail-lj1-f173.google.com ([209.85.208.173]) by
- mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1M7rxE-1ihlDI3fAQ-0053U2; Thu, 05 Dec 2019 10:09:02 +0100
-Received: by mail-lj1-f173.google.com with SMTP id z17so2589970ljk.13;
-        Thu, 05 Dec 2019 01:09:02 -0800 (PST)
-X-Gm-Message-State: APjAAAUU85VoQs/sar3CT2JhJxvP0uRgSFCcOtI8W3k8Us1mKpqiVgY6
-        pyE+KqHWE0XCHeyRUVucsjraGlciDtQkwuO3D6M=
-X-Google-Smtp-Source: APXvYqzGtpjRsvYhOdU68NUmIa/e9X8ki0UG0IcpbOcGgiqHGISxjpl72wMrhjllkh458C2mDVVxXqnz0zpKrVD54oA=
-X-Received: by 2002:a2e:9095:: with SMTP id l21mr4627561ljg.175.1575536942283;
- Thu, 05 Dec 2019 01:09:02 -0800 (PST)
+        id S1729095AbfLEJqa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Dec 2019 04:46:30 -0500
+Received: from mail.phunq.net ([66.183.183.73]:48442 "EHLO phunq.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728604AbfLEJqa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Dec 2019 04:46:30 -0500
+Received: from [172.16.1.14]
+        by phunq.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+        (Exim 4.92.3)
+        (envelope-from <daniel@phunq.net>)
+        id 1icniN-0002Yo-Lt; Thu, 05 Dec 2019 01:46:27 -0800
+Subject: Re: [RFC] Thing 1: Shardmap fox Ext4
+To:     Vyacheslav Dubeyko <slava@dubeyko.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+References: <176a1773-f5ea-e686-ec7b-5f0a46c6f731@phunq.net>
+ <20191127142508.GB5143@mit.edu>
+ <6b6242d9-f88b-824d-afe9-d42382a93b34@phunq.net>
+ <9ed62cfea37bfebfb76e378d482bd521c7403c1f.camel@dubeyko.com>
+From:   Daniel Phillips <daniel@phunq.net>
+Message-ID: <c61706fb-3534-72b9-c4ae-0f0972bc566b@phunq.net>
+Date:   Thu, 5 Dec 2019 01:46:27 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <000000000000cacc7e0592c42ce3@google.com> <20190928031510.GD1079@sol.localdomain>
- <20191205052220.GC1158@sol.localdomain>
-In-Reply-To: <20191205052220.GC1158@sol.localdomain>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 5 Dec 2019 10:08:45 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a3XLzm+zGmADUR3VYi4NziY-Aox7a8QG6VcGYQcAJiGnQ@mail.gmail.com>
-Message-ID: <CAK8P3a3XLzm+zGmADUR3VYi4NziY-Aox7a8QG6VcGYQcAJiGnQ@mail.gmail.com>
-Subject: Re: KASAN: slab-out-of-bounds Read in bpf_prog_create
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        syzbot <syzbot+eb853b51b10f1befa0b7@syzkaller.appspotmail.com>,
-        Alexei Starovoitov <ast@kernel.org>, bpf@vger.kernel.org,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Miller <davem@davemloft.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-ppp@vger.kernel.org, Networking <netdev@vger.kernel.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Song Liu <songliubraving@fb.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Yonghong Song <yhs@fb.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:TzSxX4hlV2bd52db674bnSiDd8ctBfgwNLqaetjuvInLKrenlCT
- D4h4hDB4gG2gJVJJ+yy2ml9B2/1nira/9D1eM4/jrjeZ2sdGdDjz6yOY/4uN1K1C+aRlDbf
- vHtdwa1LK46uMDePcxsT637DYwPZTO6sEDsu8n89QOucDlQfk+qQcURAdOSlbq16WGFYn/A
- N0TBS+0Oc/YbHY3dGPosA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:MC/cWPxqk0k=:He1YZdt6C57pvAnrGferk4
- mfHZzHZ/KWMebipyXU+AX/0i9bgbUn3ClClHx5mPNdpwy6p1hvmZFklB4nBIX2HLqdHKAPyhR
- LOWXtUNw3lu/BPxnZFdFLLaEAA5kxno+8k/yYj7b4kTZbmXEJ1szaw65ZrQHCpBD8eZQQLMLV
- ER947nzwrYAKQYUdFQjwJMKdtJb/A+uDRdr90eFk4G6QGaTzjK6uJ3Al4jEiXjWSJvDkJtPkK
- KobB4YnLofpExfMrlzAT94gI1GauAG90RpALlbH4swXLE7CfYoHWq4ALPMi6PFPfizkvAI3d8
- 5k3fkHOHPzKpWjnBa2Q0/dADZwc3XL5m0f7K9ONOWpQwWw0n0Xl1k5msPkv3iuTRGLz2ztQpf
- IcgB96lodbBxewG4aBDQv1lW1Ce3V68XNFsTXlwiqsgrkPB85CGvajMnpAo2b/3tAmKlqf9RB
- QaBJSvJW44tp+8Z3Rn615juYGYbCUuxYHOs5tWVITAY1jp3o4Z2VUJmOc+Gb2Wxw2Izu2pVxQ
- LXhMFu2NYPg3byIkSnLpDxOGZM7Z/xBsaeX2DzZGkwO7Vpc9PglCkBnG6pJPlPBtQhGeIwcvH
- 18BqZPBiop73RCTjVDoRYWwfMmA5PrCVQjUYR7aA57p8jzMTpaq0lFaREQ5eRp6nT7v5wJDbS
- sf6V+7ChUZSEaUDardG/mO3xI+eCCl5yAaQh4YAlFYTdiPP7ln7yfedsgru416bMCRXbNRuoA
- Whsug/fVF0jUGrEhTmAjz07wbvPVIPDxvlQefB064noTDUngiy2Wx2sGjDlUvGpaRK369mSSI
- MGVtVNrBVFEEc/hJJHDDJmkcUNbyPIP79ehuppQWSmiNSkMTewb38hnwsQ5GOLcUh67giTrdN
- gBSc336Lhfqg5pytNFtA==
+In-Reply-To: <9ed62cfea37bfebfb76e378d482bd521c7403c1f.camel@dubeyko.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 5, 2019 at 6:22 AM Eric Biggers <ebiggers@kernel.org> wrote:
+On 2019-12-04 7:55 a.m., Vyacheslav Dubeyko wrote:
+>> That is it for media format. Very simple, is it not? My next post
+>> will explain the Shardmap directory block format, with a focus on
+>> deficiencies of the traditional Ext2 format that were addressed.
+> 
+> I've tried to take a look into the source code. And it was not easy
+> try. :)
 
-> >
->
-> Why did you ignore this and merge the buggy commit to mainline anyway?
-> I even told you how to fix it...
+Let's see what we can do about that, starting with removing the duopack
+(media index entry) and tripack (cache index entry) templates. Now that
+the design has settled down we don't need that level of generality so
+much any more. The replacements are mostly C-style now and by the time
+the Tux3 kernel port is done, will be officially C.
 
-I'm sorry about this, I completely missed the email about it originally.
+So far I only described the media format, implemented in define_layout(),
+which I hope is self explanatory. You should be able to tie it back to
+this diagram pretty easily.
 
-      Arnd
+   https://github.com/danielbot/Shardmap/wiki/Shardmap-media-format
+
+> I expected to have the bird-fly understanding from shardmap.h
+> file. My expectation was to find the initial set of structure
+> declarations with the good comments.
+
+Our wiki is slowly getting populated with design documentation. Most of
+what you see in shardmap.h is concerned with the Shardmap cache form,
+where all the action happens. I have not said much about that yet, but
+there is a post on the way. The main structures are struct shard (a
+self contained hash table) and struct keymap (a key value store
+populated with shards). Those are obvious I think, please correct me
+if I am wrong. A more tricky one is struct tier, which implements our
+incremental hash table expansion. You might expect that to be a bit
+subtle, and it is.
+
+Before getting into those details, there is an upcoming post about
+the record block format, which is pretty non-abstract and, I think,
+easy enough to understand from the API declaration in shardmap.h and
+the code in recops.c.
+
+There is a diagram here:
+
+   https://github.com/danielbot/Shardmap/wiki/Shardmap-record-block-format
+
+but the post this belongs to is not quite ready to go out yet. That one
+will be an interlude before for the cache form discussion, which is
+where the magic happens, things like rehash and reshard and add_tier,
+and the way the hash code gets chopped up as it runs through the access
+stack.
+
+Here is a diagram of the cache structures, very simple:
+
+   https://github.com/danielbot/Shardmap/wiki/Shardmap-cache-format
+
+And here is a diagram of the Shardmap three level hashing scheme,
+which ties everything together:
+
+   https://github.com/danielbot/Shardmap/wiki/Shardmap-hashing-scheme
+
+This needs explanation. It is something new that you won't find in any
+textbook, this is the big reveal right here.
+
+> But, frankly speaking, it's very
+> complicated path for the concept understanding. Even from C++ point of
+> view, the class declarations look very complicated if there are mixing
+> of fields with methods declarations.
+
+In each class, fields are declared first, then methods. In the kernel
+port of course we will not have classes, and the function names will be
+longer as usual.
+
+> So, I believe it makes sense to declare the necessary set of structures
+> in the file's beginning with the good comments. Even it will be good to
+> split the structure declarations and methods in different files. I
+> believe it will ease the way to understand the concept. Otherwise, it
+> will be tough to review such code.
+
+Declaring structures and functions in the same file is totally normal
+for kernel code, you don't really want these in separate files unless
+they break out naturally that way.
+
+This code is dense, there is a lot going on in not very many lines. So
+we need lots of lines of documentation to make up for that, which has
+not been a priority until now, so please bear with me. And please do
+not hesitate to ask specific questions - the answers may well end up in
+the wiki.
+
+Regards,
+
+Daniel
