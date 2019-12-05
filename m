@@ -2,87 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CA17113B60
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 06:40:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4F19113B6B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 06:45:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725963AbfLEFk0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Dec 2019 00:40:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37972 "EHLO mail.kernel.org"
+        id S1726171AbfLEFpQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Dec 2019 00:45:16 -0500
+Received: from helcar.hmeau.com ([216.24.177.18]:57774 "EHLO deadmen.hmeau.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725905AbfLEFk0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Dec 2019 00:40:26 -0500
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF37B2077B;
-        Thu,  5 Dec 2019 05:40:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575524425;
-        bh=NujaaeWvZ0P2hcz5OsZ39CpYtXidgPweiJoxl73fyUM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XvB2tL6v7Ee4BS0XKsYXEh42CTHxh6hs9naKPosuKhU2wdpCq4dPvKHnZ1joXt171
-         CrCFCfFB5pt8A5NX0VynS3Dpmt1dUxOdKhf6UBMCQKkhGpGevL/jXr2MslgtXxZJpN
-         RqLYxkEui9/aPKDp40CAAZFUB6WXS4uzriDFF0gA=
-Date:   Wed, 4 Dec 2019 21:40:23 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     dhowells@redhat.com
-Cc:     amit@kernel.org, arnd@arndb.de,
-        syzbot <syzbot+d37abaade33a934f16f2@syzkaller.appspotmail.com>,
-        gregkh@linuxfoundation.org, jannh@google.com,
+        id S1726043AbfLEFpQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Dec 2019 00:45:16 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1icjwr-0007sG-8q; Thu, 05 Dec 2019 13:45:09 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1icjwn-0003y8-TT; Thu, 05 Dec 2019 13:45:05 +0800
+Date:   Thu, 5 Dec 2019 13:45:05 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     syzbot <syzbot+c2f1558d49e25cc36e5e@syzkaller.appspotmail.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        miklos@szeredi.hu, rostedt@goodmis.org,
         syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        virtualization@lists.linux-foundation.org, willy@infradead.org
-Subject: Re: kernel BUG at fs/pipe.c:LINE!
-Message-ID: <20191205054023.GA772@sol.localdomain>
-References: <000000000000a376820598b2eb97@google.com>
+        "David S. Miller" <davem@davemloft.net>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: [PATCH] crypto: af_alg - Use bh_lock_sock in sk_destruct
+Message-ID: <20191205054505.wulhkajz64lwwffc@gondor.apana.org.au>
+References: <0000000000003e5aa90598ed7415@google.com>
+ <f7009e8d-a488-c6df-6875-e872265efec0@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <000000000000a376820598b2eb97@google.com>
+In-Reply-To: <f7009e8d-a488-c6df-6875-e872265efec0@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David,
+On Wed, Dec 04, 2019 at 08:59:11PM -0800, Eric Dumazet wrote:
+>
+> crypto layer (hash_sock_destruct()) is called from rcu callback (this in BH context) but tries to grab a socket lock.
+> 
+> A socket lock can schedule, which is illegal in BH context.
 
-On Sun, Dec 01, 2019 at 10:45:08PM -0800, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    b94ae8ad Merge tag 'seccomp-v5.5-rc1' of git://git.kernel...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1387ab12e00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=ff560c3de405258c
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d37abaade33a934f16f2
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12945c41e00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=161e202ee00000
-> 
-> The bug was bisected to:
-> 
-> commit 8cefc107ca54c8b06438b7dc9cc08bc0a11d5b98
-> Author: David Howells <dhowells@redhat.com>
-> Date:   Fri Nov 15 13:30:32 2019 +0000
-> 
->     pipe: Use head and tail pointers for the ring, not cursor and length
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=118cce96e00000
-> final crash:    https://syzkaller.appspot.com/x/report.txt?x=138cce96e00000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=158cce96e00000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+d37abaade33a934f16f2@syzkaller.appspotmail.com
-> Fixes: 8cefc107ca54 ("pipe: Use head and tail pointers for the ring, not
-> cursor and length")
-> 
-> ------------[ cut here ]------------
-> kernel BUG at fs/pipe.c:582!
+Fair enough.  Although I was rather intrigued as to how the RCU call
+occured in the first place.  After some digging my theory is that
+this is due to a SO_ATTACH_REUSEPORT_CBPF or SO_ATTACH_REUSEPORT_EBPF
+setsockopt on the crypto socket.
 
-This same BUG_ON() crashed my system during normal use, no syzkaller involved at
-all, on mainline 937d6eefc7.  Can you please take a look?  This syzbot report
-has a reproducer so that might be the easiest place to start.
+What are these filters even suppposed to do on an af_alg socket?
 
-- Eric
+Anyhow, this is a bug that could have been triggered even without
+this, but it would have been almost impossible to do it through
+syzbot as you need to have an outstanding async skcipher/aead request
+that is freed in BH context.
+
+---8<---
+As af_alg_release_parent may be called from BH context (most notably
+due to an async request that only completes after socket closure,
+or as reported here because of an RCU-delayed sk_destruct call), we
+must use bh_lock_sock instead of lock_sock.
+
+Reported-by: syzbot+c2f1558d49e25cc36e5e@syzkaller.appspotmail.com
+Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
+Fixes: c840ac6af3f8 ("crypto: af_alg - Disallow bind/setkey/...")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+
+diff --git a/crypto/af_alg.c b/crypto/af_alg.c
+index 0dceaabc6321..3d8e53010cda 100644
+--- a/crypto/af_alg.c
++++ b/crypto/af_alg.c
+@@ -134,11 +134,13 @@ void af_alg_release_parent(struct sock *sk)
+ 	sk = ask->parent;
+ 	ask = alg_sk(sk);
+ 
+-	lock_sock(sk);
++	local_bh_disable();
++	bh_lock_sock(sk);
+ 	ask->nokey_refcnt -= nokey;
+ 	if (!last)
+ 		last = !--ask->refcnt;
+-	release_sock(sk);
++	bh_unlock_sock(sk);
++	local_bh_enable();
+ 
+ 	if (last)
+ 		sock_put(sk);
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
