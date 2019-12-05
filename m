@@ -2,125 +2,236 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C0AF113934
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 02:19:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F0A31139DF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 03:27:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728238AbfLEBSI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Dec 2019 20:18:08 -0500
-Received: from mga03.intel.com ([134.134.136.65]:2377 "EHLO mga03.intel.com"
+        id S1728490AbfLEC1Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Dec 2019 21:27:24 -0500
+Received: from mail.phunq.net ([66.183.183.73]:47780 "EHLO phunq.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727146AbfLEBSI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Dec 2019 20:18:08 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2019 17:18:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,279,1571727600"; 
-   d="scan'208";a="208989540"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 04 Dec 2019 17:18:03 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1icfmJ-0009QL-P1; Thu, 05 Dec 2019 09:17:59 +0800
-Date:   Thu, 5 Dec 2019 09:17:15 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Daniel Rosenberg <drosen@google.com>
-Cc:     kbuild-all@lists.01.org, Theodore Ts'o <tytso@mit.edu>,
-        linux-ext4@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel-team@android.com, Daniel Rosenberg <drosen@google.com>
-Subject: Re: [PATCH 5/8] f2fs: Handle casefolding with Encryption
-Message-ID: <201912050955.3f2DMo5g%lkp@intel.com>
-References: <20191203051049.44573-6-drosen@google.com>
+        id S1728393AbfLEC1Y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Dec 2019 21:27:24 -0500
+Received: from [172.16.1.14]
+        by phunq.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+        (Exim 4.92.3)
+        (envelope-from <daniel@phunq.net>)
+        id 1icgrR-0000dq-Qv; Wed, 04 Dec 2019 18:27:21 -0800
+Subject: Re: [RFC] Thing 1: Shardmap for Ext4
+To:     Andreas Dilger <adilger@dilger.ca>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+References: <176a1773-f5ea-e686-ec7b-5f0a46c6f731@phunq.net>
+ <20191127142508.GB5143@mit.edu>
+ <c3636a43-6ae9-25d4-9483-34770b6929d0@phunq.net>
+ <20191128022817.GE22921@mit.edu>
+ <3b5f28e5-2b88-47bb-1b32-5c2fed989f0b@phunq.net>
+ <20191130175046.GA6655@mit.edu>
+ <76ddbdba-55ba-3426-2e29-0fa17db9b6d8@phunq.net>
+ <23F33101-065E-445A-AE5C-D05E35E2B78B@dilger.ca>
+ <f385445b-4941-cc48-e05d-51480a01f4aa@phunq.net>
+ <13F44A87-CAAE-4090-B26C-73EC2AF56765@dilger.ca>
+From:   Daniel Phillips <daniel@phunq.net>
+Message-ID: <f6c4b7e1-a891-fd84-9e59-9f25267e01e2@phunq.net>
+Date:   Wed, 4 Dec 2019 18:27:21 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191203051049.44573-6-drosen@google.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <13F44A87-CAAE-4090-B26C-73EC2AF56765@dilger.ca>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Daniel,
+(finally noticed the gross error in the subject line)
 
-Thank you for the patch! Perhaps something to improve:
+On 2019-12-04 4:36 p.m., Andreas Dilger wrote:
+> On Dec 4, 2019, at 2:44 PM, Daniel Phillips <daniel@phunq.net> wrote:
+>>
+>> On 2019-12-04 10:31 a.m., Andreas Dilger wrote:
+>>> One important use case that we have for Lustre that is not yet in the
+>>> upstream ext4[*] is the ability to do parallel directory operations.
+>>> This means we can create, lookup, and/or unlink entries in the same
+>>> directory concurrently, to increase parallelism for large directories.
+>>
+>> This is a requirement for an upcoming transactional version of user space
+>> Shardmap. In the database world they call it "row locking". I am working
+>> on a hash based scheme with single record granularity that maps onto the
+>> existing shard buckets, which should be nice and efficient, maybe a bit
+>> tricky with respect to rehash but looks not too bad.
+>>
+>> Per-shard rw locks are a simpler alternative, but might get a bit fiddly
+>> if you need to lock multiple entries in the same directory at the same
+>> time, which is required for mv is it not?
+> 
+> We currently have a "big filesystem lock" (BFL) for rename(), as rename
+> is not an operation many people care about the performance.  We've
+> discussed a number of times to optimize this for the common cases of
+> rename a regular file within a single directory and rename a regular
+> file between directories, but no plans at all to optimize rename of
+> directories between parents.
+> 
+>>> This is implemented by progressively locking the htree root and index
+>>> blocks (typically read-only), then leaf blocks (read-only for lookup,
+>>> read-write for insert/delete).  This provides improved parallelism
+>>> as the directory grows in size.
+>>
+>> This will be much easier and more efficient with Shardmap because there
+>> are only three levels: top level shard array; shard hash bucket; record
+>> block. Locking applies only to cache, so no need to worry about possible
+>> upper tier during incremental "reshard".
+>>
+>> I think Shardmap will also split more cleanly across metadata nodes than
+>> HTree.
+> 
+> We don't really split "htree" across metadata nodes, that is handled by
+> Lustre at a higher level than the underlying filesystem.  Hash filename
+> with per-directory hash type, modulo number of directory shards to find
+> index within that directory, then map index to a directory shard on a
+> particular server.  The backing filesystem directories are normal from
+> the POV of the local filesystem.
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on next-20191202 next-20191204]
-[cannot apply to ext4/dev f2fs/dev-test v5.4 v5.4-rc8 v5.4-rc7 v5.4]
-[if your patch is applied to the wrong git tree, please drop us a note to help
-improve the system. BTW, we also suggest to use '--base' option to specify the
-base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+OK, Lustre's higher level seems to somewhat resemble Shardmap, though
+your extensibility scheme must be quite different. It does lend weight
+to the proposition that hash sharding is the technique of choice at high
+scale.
 
-url:    https://github.com/0day-ci/linux/commits/Daniel-Rosenberg/Support-for-Casefolding-and-Encryption/20191203-131410
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 76bb8b05960c3d1668e6bee7624ed886cbd135ba
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.1-91-g817270f-dirty
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+>>> Will there be some similar ability in Shardmap to have parallel ops?
+>>
+>> This work is already in progress for user space Shardmap. If there is
+>> also a kernel use case then we can just go forward assuming that this
+>> work or some variation of it applies to both.
+>>
+>> We need VFS changes to exploit parallel dirops in general, I think,
+>> confirmed by your comment below. Seems like a good bit of work for
+>> somebody. I bet the benchmarks will show well, suitable grist for a
+>> master's thesis I would think.
+>>
+>> Fine-grained directory locking may have a small enough footprint in
+>> the Shardmap kernel port that there is no strong argument for getting
+>> rid of it, just because VFS doesn't support it yet. Really, this has
+>> the smell of a VFS flaw (interested in Al's comments...)
+> 
+> I think that the VFS could get 95% of the benefit for 10% of the effort
+> would be by allowing only rename of regular files within a directory
+> with only a per-directory mutex.  The only workload that I know which
+> does a lot of rename is rsync, or parallel versions of it, that create
+> temporary files during data transfer, then rename the file over the
+> target atomically after the data is sync'd to disk.
 
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
+MTA is another rename-heavy workload, and I seem to recall, KDE config
+update. I agree that parallel cross directory rename locking would be
+basically nuts.
 
+>>> Also, does Shardmap have the ability to shrink as entries are removed?
+>>
+>> No shrink so far. What would you suggest? Keeping in mind that POSIX+NFS
+>> semantics mean that we cannot in general defrag on the fly. I planned to
+>> just hole_punch blocks that happen to become completely empty.
+>>
+>> This aspect has so far not gotten attention because, historically, we
+>> just never shrink a directory except via fsck/tools. What would you
+>> like to see here? Maybe an ioctl to invoke directory defrag? A mode
+>> bit to indicate we don't care about persistent telldir cookies?
+> 
+> There are a few patches floating around to shrink ext4 directories which
+> I'd like to see landed at some point.  The current code is sub-optimal,
+> in that it only tries to shrink "easy" blocks from the end of directory,
+> but hopefully there can be more aggressive shrinking in later patches.
 
-sparse warnings: (new ones prefixed by >>)
+I intend to add some easy ones like that to Shardmap, in particular so
+deleting every entry leaves the directory with a single block containing
+just the header.
 
->> fs/f2fs/dir.c:205:13: sparse: sparse: incorrect type in assignment (different base types) @@    expected int len @@    got restricted __le16 [usertyint len @@
->> fs/f2fs/dir.c:205:13: sparse:    expected int len
-   fs/f2fs/dir.c:205:13: sparse:    got restricted __le16 [usertype] name_len
---
->> fs/f2fs/hash.c:90:27: sparse: sparse: incorrect type in assignment (different base types) @@    expected restricted __le32 [usertype] f2fs_hash @@    got __le32 [usertype] f2fs_hash @@
->> fs/f2fs/hash.c:90:27: sparse:    expected restricted __le32 [usertype] f2fs_hash
->> fs/f2fs/hash.c:90:27: sparse:    got unsigned long long
-   fs/f2fs/hash.c:133:24: sparse: sparse: incorrect type in return expression (different base types) @@    expected restricted __le32 @@    got e32 @@
-   fs/f2fs/hash.c:133:24: sparse:    expected restricted __le32
-   fs/f2fs/hash.c:133:24: sparse:    got int
-   fs/f2fs/hash.c:141:11: sparse: sparse: incorrect type in assignment (different base types) @@    expected int r @@    got restricted __int r @@
-   fs/f2fs/hash.c:141:11: sparse:    expected int r
-   fs/f2fs/hash.c:141:11: sparse:    got restricted __le32
-   fs/f2fs/hash.c:144:16: sparse: sparse: incorrect type in return expression (different base types) @@    expected restricted __le32 @@    got le32 @@
-   fs/f2fs/hash.c:144:16: sparse:    expected restricted __le32
-   fs/f2fs/hash.c:144:16: sparse:    got int r
+BTW, in Tux3 we plan to add a special Shardmap inode attribute to hold
+the header information, so that an empty directory will have zero blocks
+instead of one. I am still fussing about this detail, because it seems
+a bit odd to not have at least the record block count present in the
+dir file itself. Maybe the inode attr should just hold the tuning
+parameters and the file header can hold the essential geometry details,
+like record block count and logical index position.
 
-vim +205 fs/f2fs/dir.c
+>> How about automatic defrag that only runs when directory open count is
+>> zero, plus a flag to disable?
+> 
+> As long as the shrinking doesn't break POSIX readdir ordering semantics.
+> I'm obviously not savvy on the Shardmap details, but I'd think that the
+> shards need to be garbage collected/packed periodically since they are
+> log structured (write at end, tombstones for unlinks), so that would be
+> an opportunity to shrink the shards?
 
-   199	
-   200		if (de->hash_code != namehash)
-   201			return false;
-   202	
-   203	#ifdef CONFIG_UNICODE
-   204		name = d->filename[bit_pos];
- > 205		len = de->name_len;
-   206	
-   207		if (sb->s_encoding && needs_casefold(parent)) {
-   208			if (cf_str->name) {
-   209				struct qstr cf = {.name = cf_str->name,
-   210						  .len = cf_str->len};
-   211				return !f2fs_ci_compare(parent, &cf, name, len, true);
-   212			}
-   213			return !f2fs_ci_compare(parent, fname->usr_fname, name, len,
-   214						false);
-   215		}
-   216	#endif
-   217		if (fscrypt_match_name(fname, d->filename[bit_pos],
-   218					le16_to_cpu(de->name_len)))
-   219			return true;
-   220		return false;
-   221	}
-   222	
+Shardmap already does that. Every time a new tier is added, all shards
+are incrementally compacted. Any shard that fills up because is compacted
+instead of forcing a new index level.
 
----
-0-DAY kernel test infrastructure                 Open Source Technology Center
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
+Shards are not currently compacted if they have tombstones but still have
+room for more entries. We could add some more logic there, so that shards
+are automatically compacted according to heuristics based on the ratio of
+tombstones to shard size. Mass delete creates a lot of tombstones however,
+and we probably do not want to spend resources compacting under this load,
+except when shards actually fill up. Such logic could be tricky to tune
+for all loads.
+
+We are always able to compact the index without affecting POSIX semantics,
+so a lot of flexibility exists in what can be done there. However, if
+there are sparse blocks near the top of the directory, we can't do much
+about them without breaking POSIX.
+
+We will hole_punch any completely empty record blocks, which should help
+avoid wasting media space for very sparse directories. But we could still
+end up with ten bytes in use per directory block, giving a fragmentation
+ratio of 400 to one. For this, maybe we better provide the user with a
+way to indicate that compaction should be done irrespective of POSIX
+considerations, or at least slightly relaxing them.
+
+>>> [*] we've tried to submit the pdirops patch a couple of times, but the
+>>> main blocker is that the VFS has a single directory mutex and couldn't
+>>> use the added functionality without significant VFS changes.
+>>
+>> How significant would it be, really nasty or just somewhat nasty? I bet
+>> the resulting efficiencies would show up in some general use cases.
+> 
+> As stated above, I think the common case could be implemented relatively
+> easily (rename within a directory), then maybe rename files across
+> directories, and maybe never rename subdirectories across directories.
+
+It seems parallel directory ops are now in play, according to Ted. Will
+you refresh your patch?
+
+>>> Patch at https://git.whamcloud.com/?p=fs/lustre-release.git;f=ldiskfs/kernel_patches/patches/rhel8/ext4-pdirop.patch;hb=HEAD
+>>
+>> This URL gives me git://git.whamcloud.com/fs/lustre-release.git/summary,
+>> am I missing something?
+> 
+> Just walk down the tree for the "f=ldiskfs/..." pathname...
+
+Got it. Not sure what the issue was before, this time the patch pops up
+as expected.
+
+BTW, Ted, Microsoft seems to have implemented a nefarious scheme to
+bounce your direct emails so you have no choice but to read them from
+the internet:
+
+==========
+A message that you sent could not be delivered to one or more of its
+recipients. This is a permanent error. The following address(es) failed:
+
+  <you>@mit.edu
+    host mit-edu.mail.protection.outlook.com [104.47.41.36]
+    SMTP error from remote mail server after RCPT TO:<tytso@mit.edu>:
+    550 5.7.606 Access denied, banned sending IP [66.183.183.73]. To request removal from this list please visit https://sender.office.com/ and follow the directions. For more information please go to  http://go.microsoft.com/fwlink/?LinkID=526655 (AS16012609)
+==========
+
+And of course requesting removal as suggested fails with some sort of "we
+suck and had some kind of internal bug so please just keep trying so we
+can waste more of your time" message. Malice or incompetence? We need to
+know. And MIT+Outlook? I'm shocked. Shocked, I tell you.
+
+Regards,
+
+Daniel
