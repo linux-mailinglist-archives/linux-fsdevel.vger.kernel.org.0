@@ -2,89 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F5F41145F7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 18:32:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF9501145FE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 18:33:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729802AbfLERcq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Dec 2019 12:32:46 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60740 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729396AbfLERcp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Dec 2019 12:32:45 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 24B47AF59;
-        Thu,  5 Dec 2019 17:32:44 +0000 (UTC)
-Date:   Thu, 5 Dec 2019 18:32:42 +0100
-From:   Johannes Thumshirn <jthumshirn@suse.de>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, darrick.wong@oracle.com,
-        fdmanana@kernel.org, nborisov@suse.com, dsterba@suse.cz,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 4/8] btrfs: Switch to iomap_dio_rw() for dio
-Message-ID: <20191205173242.GB19670@Johanness-MacBook-Pro.local>
-References: <20191205155630.28817-1-rgoldwyn@suse.de>
- <20191205155630.28817-5-rgoldwyn@suse.de>
- <20191205171815.GA19670@Johanness-MacBook-Pro.local>
- <20191205171959.GA8586@infradead.org>
+        id S1730142AbfLERdZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Dec 2019 12:33:25 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40716 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730033AbfLERdZ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Dec 2019 12:33:25 -0500
+Received: by mail-lf1-f66.google.com with SMTP id y5so3116310lfy.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Dec 2019 09:33:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=/eKd/FDqrplPYUuvbR0AiU2l8M+m4LPxDGweCaRKq6w=;
+        b=M56np70zVr1VfiJPsuEXyT4OG9+Mgq+nZRonIdlMO0qNjSITB1EVwHnE+jM9THnBNz
+         3vX00ZNLigUAoH1Qop/bcwkoEis8chlXpTrSREoavAISt/m/5l5mLyPd23rMwP17l/QA
+         7M9TY3swoS1z9u0iCZT3it6ySOEzIm2iiZPAY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=/eKd/FDqrplPYUuvbR0AiU2l8M+m4LPxDGweCaRKq6w=;
+        b=V8HB6gigaOZWu7BP02qpK8OgT5CRprIyiAmCPvtdtbjbUjB2nHfIaSgVm5nKKv4Ivc
+         JgKro5VCfFJs0MA5uGY4xE3mIInpVRDQ1gHDJw2BIgzig3Ec2cl7VPWCbylYnPnCWt08
+         PZimMKilyhfB8mEMlIpcWlXLZys7AGOA2MNC+bsLkFmDoEUdr88Rj+TMVQwCYZKtlK/Y
+         Tzx9eTb9HUcoadleG4YWMgLGOVGhph6G983JtOFu6xXqJlKgSuK4FoSgyf8hdeh/Wuyk
+         i1yc7WxCD2CWxeu48xa9MVykHZtdQp/+SlVZ3FPwEG3qNiHLCa4sLqxGQ0+gfzVjOphu
+         MGqg==
+X-Gm-Message-State: APjAAAWdt/R0ofRiX91Gg3hF8F1Orogqahg5aYYrkcNTNEY+2vbVkdT4
+        t3VHeFYK7ngc6QFtF1GQqCEp1CjDs2o=
+X-Google-Smtp-Source: APXvYqwpzJaqSSJJQy7WL9gkcz9LhgpGiqwXUoaNC6nlXhCcDQLSZpliO4oyaWbGTJ4Mg/OnN89kCw==
+X-Received: by 2002:a19:dc14:: with SMTP id t20mr5898082lfg.47.1575567202120;
+        Thu, 05 Dec 2019 09:33:22 -0800 (PST)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
+        by smtp.gmail.com with ESMTPSA id m24sm5232922lfl.34.2019.12.05.09.33.20
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2019 09:33:21 -0800 (PST)
+Received: by mail-lf1-f45.google.com with SMTP id m30so3103190lfp.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Dec 2019 09:33:20 -0800 (PST)
+X-Received: by 2002:ac2:430e:: with SMTP id l14mr2520386lfh.79.1575567200366;
+ Thu, 05 Dec 2019 09:33:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191205171959.GA8586@infradead.org>
+References: <20191205125826.GK2734@twin.jikos.cz> <31452.1574721589@warthog.procyon.org.uk>
+ <1593.1575554217@warthog.procyon.org.uk> <20191205172127.GW2734@suse.cz>
+In-Reply-To: <20191205172127.GW2734@suse.cz>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 5 Dec 2019 09:33:04 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whw+R5GVQdpV6J_5afQ=76vtBPzBPRj6-zG1tnhT32Pag@mail.gmail.com>
+Message-ID: <CAHk-=whw+R5GVQdpV6J_5afQ=76vtBPzBPRj6-zG1tnhT32Pag@mail.gmail.com>
+Subject: Re: [GIT PULL] pipe: Notification queue preparation
+To:     David Sterba <dsterba@suse.cz>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 05, 2019 at 09:19:59AM -0800, Christoph Hellwig wrote:
-> I actually much prefer exporting generic_file_buffered_read and will
-> gladly switch other callers not needing the messy direct I/O handling
-> in generic_file_read_iter over to generic_file_buffered_read once this
-> series is merged.
+On Thu, Dec 5, 2019 at 9:22 AM David Sterba <dsterba@suse.cz> wrote:
+>
+> I rerun the test again (with a different address where it's stuck), there's
+> nothing better I can get from the debug info, it always points to pipe_wait,
+> disassembly points to.
 
-I think you misunderstood me here, I meant the code to be:
+Hah. I see another bug.
 
-static ssize_t btrfs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
-{
-	ssize_t ret = 0;
+"pipe_wait()" depends on the fact that all events that wake it up
+happen with the pipe lock held.
 
-	if (iocb->ki_flags & IOCB_DIRECT) {
-		struct inode *inode = file_inode(iocb->ki_filp);
+But we do some of the "do_wakeup()" handling outside the pipe lock now
+on the reader side
 
-		inode_lock_shared(inode);
-		ret = btrfs_direct_IO(iocb, to);
-		inode_unlock_shared(inode);
-		if (ret < 0)
-			return ret;
-		}
-	}
+        __pipe_unlock(pipe);
 
-	return generic_file_read_iter(icob, to);
-}
+        /* Signal writers asynchronously that there is more room. */
+        if (do_wakeup) {
+                wake_up_interruptible_poll(&pipe->wait, EPOLLOUT | EPOLLWRNORM);
+                kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
+        }
 
-This way an iocb that is no dio will end in generic_file_read_iter():
+However, that isn't new to this series _either_, so I don't think
+that's it. It does wake up things inside the lock _too_ if it ended up
+emptying a whole buffer.
 
-generic_file_read_iter(iocb, to)
-{
-	size_t count = iov_iter_count(iter);
-        ssize_t retval = 0;
+So it could be triggered by timing and behavior changes, but I doubt
+this pipe_wait() thing is it either. The fact that it bisects to the
+thing that changes things to use head/tail pointers makes me think
+there's some other incorrect update or comparison somewhere.
 
-        if (!count)
-                goto out; /* skip atime */
+That said, "pipe_wait()" is an abomination. It should use a proper
+wait condition and use wait_event(), but the code predates all of
+that. I suspect pipe_wait() goes back to the dark ages with the BKL
+and no actual races between kernel code.
 
-	if (iocb->ki_flags & IOCB_DIRECT) {
-		skipped as flag is not set
-	}
-
-	retval = generic_file_buffered_read(iocb, iter, retval);
-out:
-	return retval;
-}
-
-Meaning we do not need to export generic_file_buffered_read() and still can
-skip the generic DIO madness.
-
-Makes sense?
-
-	Johannes
+               Linus
