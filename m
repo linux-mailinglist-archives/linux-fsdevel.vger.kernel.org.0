@@ -2,84 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECD4A1143CB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 16:39:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECC2E1143CC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 16:40:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729047AbfLEPjz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Dec 2019 10:39:55 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:45406 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726028AbfLEPjy (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Dec 2019 10:39:54 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB5FbfXD095911;
-        Thu, 5 Dec 2019 15:39:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=I9kmCuQ1AnhnmmiS+Ch9NTbdcya3JWLVHzv7+tUWclM=;
- b=RBJKuIcv+TVtWTBxx0SSXH+qVQCQ/gDyk5/iJlvih9brEScCIeBEqTP/9N+OMp/cFHfJ
- nlPvx03jQTizqkxab3lFPAcY8nqR6mB63Gzacwdm0e158aV8gbrzJHxaZoj9FgbMr1sf
- H82tm2K0fzXZBBhCbEF3ahkjPl+TOLraQfNWDwR4JSY4kmwmWS6dhK7k++LjDyiw6xrN
- NZsLMBoUnt/b9EdsRmB3z7acvEIN1NPFD8GJTDkX4dyOjg2doHckKi/v5PtcWGHfklJT
- RdCWof6II0UlNUE0+7YC+wNzCBJPohD+5NexTVF5hNV5MuKZDBr23As32k7prv02+IYZ Tw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2wkgcqnx8s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 05 Dec 2019 15:39:47 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB5Faq1d147819;
-        Thu, 5 Dec 2019 15:39:47 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 2wptpvcvhd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 05 Dec 2019 15:39:47 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xB5FdjH9028372;
-        Thu, 5 Dec 2019 15:39:46 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 05 Dec 2019 07:39:45 -0800
-Date:   Thu, 5 Dec 2019 07:39:44 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Zorro Lang <zlang@redhat.com>, linux-xfs@vger.kernel.org,
+        id S1729187AbfLEPkC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Dec 2019 10:40:02 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53628 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726028AbfLEPkB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Dec 2019 10:40:01 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5BB51AFAE;
+        Thu,  5 Dec 2019 15:39:59 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id D79DADA733; Thu,  5 Dec 2019 16:39:53 +0100 (CET)
+Date:   Thu, 5 Dec 2019 16:39:53 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Naohiro Aota <naohiro.aota@wdc.com>
+Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Hannes Reinecke <hare@suse.com>,
+        Anand Jain <anand.jain@oracle.com>,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] iomap: stop using ioend after it's been freed in
- iomap_finish_ioend()
-Message-ID: <20191205153944.GB13260@magnolia>
-References: <20191205065132.21604-1-zlang@redhat.com>
- <20191205075235.GA21619@infradead.org>
+Subject: Re: [PATCH v5 05/28] btrfs: disallow space_cache in HMZONED mode
+Message-ID: <20191205153953.GV2734@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Naohiro Aota <naohiro.aota@wdc.com>,
+        linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Hannes Reinecke <hare@suse.com>, Anand Jain <anand.jain@oracle.com>,
+        linux-fsdevel@vger.kernel.org
+References: <20191204081735.852438-1-naohiro.aota@wdc.com>
+ <20191204081735.852438-6-naohiro.aota@wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191205075235.GA21619@infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9462 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=837
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1912050132
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9462 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=920 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1912050132
+In-Reply-To: <20191204081735.852438-6-naohiro.aota@wdc.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 04, 2019 at 11:52:35PM -0800, Christoph Hellwig wrote:
-> The code changes looks good, although we usually don't do that
-> style of comment.  Otherwise looksgood:
+On Wed, Dec 04, 2019 at 05:17:12PM +0900, Naohiro Aota wrote:
+> As updates to the space cache are in-place, the space cache cannot be
+> located over sequential zones and there is no guarantees that the device
+> will have enough conventional zones to store this cache. Resolve this
+> problem by disabling completely the space cache.  This does not introduces
+> any problems with sequential block groups: all the free space is located
+> after the allocation pointer and no free space before the pointer. There is
+> no need to have such cache.
+> 
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> ---
+>  fs/btrfs/hmzoned.c | 18 ++++++++++++++++++
+>  fs/btrfs/hmzoned.h |  5 +++++
+>  fs/btrfs/super.c   | 10 ++++++++--
+>  3 files changed, 31 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/btrfs/hmzoned.c b/fs/btrfs/hmzoned.c
+> index b74581133a72..1c015ed050fc 100644
+> --- a/fs/btrfs/hmzoned.c
+> +++ b/fs/btrfs/hmzoned.c
+> @@ -253,3 +253,21 @@ int btrfs_check_hmzoned_mode(struct btrfs_fs_info *fs_info)
+>  out:
+>  	return ret;
+>  }
+> +
+> +int btrfs_check_mountopts_hmzoned(struct btrfs_fs_info *info)
+> +{
+> +	if (!btrfs_fs_incompat(info, HMZONED))
+> +		return 0;
+> +
+> +	/*
+> +	 * SPACE CACHE writing is not CoWed. Disable that to avoid
+> +	 * write errors in sequential zones.
 
-I specifically requested it to avoid future maintainer fail. :)
+Please format comments to 80 columns
 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> +	 */
+> +	if (btrfs_test_opt(info, SPACE_CACHE)) {
+> +		btrfs_err(info,
+> +		  "cannot enable disk space caching with HMZONED mode");
 
-Thanks for the reviews!
+"space cache v1 not supported in HMZONED mode, use v2 (free-space-tree)"
 
---D
+> +		return -EINVAL;
+
+>  static inline bool btrfs_dev_is_sequential(struct btrfs_device *device, u64 pos)
+> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+> index 616f5abec267..d411574298f4 100644
+> --- a/fs/btrfs/super.c
+> +++ b/fs/btrfs/super.c
+> @@ -442,8 +442,12 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
+>  	cache_gen = btrfs_super_cache_generation(info->super_copy);
+>  	if (btrfs_fs_compat_ro(info, FREE_SPACE_TREE))
+>  		btrfs_set_opt(info->mount_opt, FREE_SPACE_TREE);
+> -	else if (cache_gen)
+> -		btrfs_set_opt(info->mount_opt, SPACE_CACHE);
+> +	else if (cache_gen) {
+> +		if (btrfs_fs_incompat(info, HMZONED))
+> +			WARN_ON(1);
+
+So this is supposed to catch invalid combination, hmzoned-compatible
+options are verified at the beginning. 'cache_gen' can be potentially
+non-zero (fuzzed image, accidental random overwrite from last time), so
+I think a message should be printed. If it's possible to continue, eg.
+completely ignoring the existing space cache that's more user friendly
+than a plain unexplained WARN_ON.
