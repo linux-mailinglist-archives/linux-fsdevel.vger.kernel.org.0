@@ -2,109 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BAEE114997
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 23:59:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45373114A10
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2019 00:58:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726020AbfLEW7a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Dec 2019 17:59:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38788 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725926AbfLEW7a (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Dec 2019 17:59:30 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1FBA5AD55;
-        Thu,  5 Dec 2019 22:59:28 +0000 (UTC)
-Subject: Re: [PATCH 4/8] btrfs: Switch to iomap_dio_rw() for dio
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-btrfs@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, hch@infradead.org,
-        darrick.wong@oracle.com, fdmanana@kernel.org, dsterba@suse.cz,
-        jthumshirn@suse.de, Goldwyn Rodrigues <rgoldwyn@suse.com>
-References: <20191205155630.28817-1-rgoldwyn@suse.de>
- <20191205155630.28817-5-rgoldwyn@suse.de>
-From:   Nikolay Borisov <nborisov@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <97fe5c49-2d19-e0ce-e9bd-3c1f0d05e34e@suse.com>
-Date:   Fri, 6 Dec 2019 00:59:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726261AbfLEX6w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Dec 2019 18:58:52 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41957 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725988AbfLEX6u (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Dec 2019 18:58:50 -0500
+Received: by mail-lj1-f193.google.com with SMTP id h23so5609075ljc.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Dec 2019 15:58:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YOmvCcAfxENDt59JmszfSJIXz70mzbpvyp0lp8vems0=;
+        b=Ekqfj+O7irTIS0InDutPgmPnBQgrHSMkEmzAiT7Q5ixN8sawn5JY5nEfE6Oii4Oz21
+         eg8kbdw3ISdBN9bt9ycolPwJGycujLH+hx+x0SsfOArbXB3ywkfyL8hmA/Q4oD21fDZW
+         LbmSPC6Jzcv6AttAaWv0ZEvqDReE3MinNrjeI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YOmvCcAfxENDt59JmszfSJIXz70mzbpvyp0lp8vems0=;
+        b=p5SyLLlu3Aq/gbPAyRlkm5C0IetE9/Y+5sA8QABxWEu3c/DB+4uSl6Fd99IdlihBRx
+         TWaUuxgcBGZd0C4CGozYmBgQ9XhWkxWz//9IsQ3/8Fn97FsmdrzfX9ht+OBgbPFHgBYT
+         rt0li/M+vOhIr2mav5PZMHYZm6ATUtrGYo0etYtAPYqQfTO8eI8nE3gfq1v6h3OBHPGr
+         9IJs1dEwdTg8BU+wi//Din0+Vzk/gHgvhdW6dXEE8qNRhwoh6tYJL+vyIm0KYQfUHqPc
+         TqBqJZfn/1rEol9QRYa5y5HhJrVS19LQ3KXKshG6hpWgXqcvzmUELWYGrDzfv3UJbpmM
+         g3Yw==
+X-Gm-Message-State: APjAAAXGeIt/RpfdKg99OT7Xel/7cR2ZNKCETj2m6gDAh0eovMuKUzhj
+        rWGFFz1YT8YkcPI0Uc2Oa/bvu4yPHlw=
+X-Google-Smtp-Source: APXvYqzlah0wf/Zm355n1RuPn9DZqgExrcpM4vnfK8kEM2yHjExdHLFilWMeVb4TjJVEFqFOnPtOpw==
+X-Received: by 2002:a2e:9008:: with SMTP id h8mr7207325ljg.217.1575590327945;
+        Thu, 05 Dec 2019 15:58:47 -0800 (PST)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id k22sm5544824lfm.48.2019.12.05.15.58.46
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2019 15:58:47 -0800 (PST)
+Received: by mail-lj1-f181.google.com with SMTP id j6so5650722lja.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Dec 2019 15:58:46 -0800 (PST)
+X-Received: by 2002:a05:651c:239:: with SMTP id z25mr4684297ljn.48.1575590326630;
+ Thu, 05 Dec 2019 15:58:46 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191205155630.28817-5-rgoldwyn@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <157558502272.10278.8718685637610645781.stgit@warthog.procyon.org.uk>
+ <157558503716.10278.17734879104574600890.stgit@warthog.procyon.org.uk>
+In-Reply-To: <157558503716.10278.17734879104574600890.stgit@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 5 Dec 2019 15:58:30 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiy87EzKRXRa3VkgesGndrR02pizpX_TEzP+cPPJytpWg@mail.gmail.com>
+Message-ID: <CAHk-=wiy87EzKRXRa3VkgesGndrR02pizpX_TEzP+cPPJytpWg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pipe: Fix missing mask update after pipe_wait() [ver #2]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Dec 5, 2019 at 2:30 PM David Howells <dhowells@redhat.com> wrote:
+>
+> -               struct pipe_buffer *buf = &pipe->bufs[(head - 1) & mask];
+> +               struct pipe_buffer *buf =
+> +                       &pipe->bufs[(head - 1) & (pipe->ring_size - 1)];
 
+I changed the two occurrences of this to use a local temporary "mask"
+variable, to avoid the long lines.
 
-On 5.12.19 г. 17:56 ч., Goldwyn Rodrigues wrote:
-> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> 
-> Switch from __blockdev_direct_IO() to iomap_dio_rw().
-> Rename btrfs_get_blocks_direct() to btrfs_dio_iomap_begin() and use it
-> as iomap_begin() for iomap direct I/O functions. This function
-> allocates and locks all the blocks required for the I/O.
-> btrfs_submit_direct() is used as the submit_io() hook for direct I/O
-> ops.
-> 
-> Since we need direct I/O reads to go through iomap_dio_rw(), we change
-> file_operations.read_iter() to a btrfs_file_read_iter() which calls
-> btrfs_direct_IO() for direct reads and falls back to
-> generic_file_buffered_read() for incomplete reads and buffered reads.
-> 
-> We don't need address_space.direct_IO() anymore so set it to noop.
-> Similarly, we don't need flags used in __blockdev_direct_IO(). iomap is
-> capable of direct I/O reads from a hole, so we don't need to return
-> -ENOENT.
+It's no longer _caching_ the value, but it makes the code more legible.
 
-IMO it will be good to document in the changelog the lock context of the
-current scheme. E.g. it's done with inode lock held shared meaning it
-allows other DIO reads but not writes/truncates. (This is different than
-what we had up until now).
-
-<nit>
+              Linus
