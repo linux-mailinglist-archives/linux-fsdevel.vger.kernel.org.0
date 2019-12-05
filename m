@@ -2,26 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 089DB114991
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 23:57:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BAEE114997
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 23:59:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726183AbfLEW5s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Dec 2019 17:57:48 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38644 "EHLO mx1.suse.de"
+        id S1726020AbfLEW7a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Dec 2019 17:59:30 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38788 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725959AbfLEW5r (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Dec 2019 17:57:47 -0500
+        id S1725926AbfLEW7a (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Dec 2019 17:59:30 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6357DAD5C;
-        Thu,  5 Dec 2019 22:57:45 +0000 (UTC)
-Subject: Re: [PATCH 8/8] btrfs: remove BTRFS_INODE_READDIO_NEED_LOCK
+        by mx1.suse.de (Postfix) with ESMTP id 1FBA5AD55;
+        Thu,  5 Dec 2019 22:59:28 +0000 (UTC)
+Subject: Re: [PATCH 4/8] btrfs: Switch to iomap_dio_rw() for dio
 To:     Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-btrfs@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, hch@infradead.org,
         darrick.wong@oracle.com, fdmanana@kernel.org, dsterba@suse.cz,
         jthumshirn@suse.de, Goldwyn Rodrigues <rgoldwyn@suse.com>
 References: <20191205155630.28817-1-rgoldwyn@suse.de>
- <20191205155630.28817-9-rgoldwyn@suse.de>
+ <20191205155630.28817-5-rgoldwyn@suse.de>
 From:   Nikolay Borisov <nborisov@suse.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
@@ -66,12 +66,12 @@ Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
  TCiLsRHFfMHFY6/lq/c0ZdOsGjgpIK0G0z6et9YU6MaPuKwNY4kBdjPNBwHreucrQVUdqRRm
  RcxmGC6ohvpqVGfhT48ZPZKZEWM+tZky0mO7bhZYxMXyVjBn4EoNTsXy1et9Y1dU3HVJ8fod
  5UqrNrzIQFbdeM0/JqSLrtlTcXKJ7cYFa9ZM2AP7UIN9n1UWxq+OPY9YMOewVfYtL8M=
-Message-ID: <6a7e76a4-699a-08a7-79ef-4da7c62e2ff9@suse.com>
-Date:   Fri, 6 Dec 2019 00:57:43 +0200
+Message-ID: <97fe5c49-2d19-e0ce-e9bd-3c1f0d05e34e@suse.com>
+Date:   Fri, 6 Dec 2019 00:59:26 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191205155630.28817-9-rgoldwyn@suse.de>
+In-Reply-To: <20191205155630.28817-5-rgoldwyn@suse.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -85,77 +85,26 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On 5.12.19 г. 17:56 ч., Goldwyn Rodrigues wrote:
 > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
 > 
-> Since we now perform direct reads using i_rwsem, we can remove this
-> inode flag used to co-ordinate unlocked reads.
+> Switch from __blockdev_direct_IO() to iomap_dio_rw().
+> Rename btrfs_get_blocks_direct() to btrfs_dio_iomap_begin() and use it
+> as iomap_begin() for iomap direct I/O functions. This function
+> allocates and locks all the blocks required for the I/O.
+> btrfs_submit_direct() is used as the submit_io() hook for direct I/O
+> ops.
 > 
-> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-
-Truncate call chain is
-
-do_truncate <-- calls inode_lock
-  notify_change
-   ->setattr/btrfs_setattr
-     btrfs_setsize
-
-So :
-
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-
-> ---
->  fs/btrfs/btrfs_inode.h | 18 ------------------
->  fs/btrfs/inode.c       |  5 -----
->  2 files changed, 23 deletions(-)
+> Since we need direct I/O reads to go through iomap_dio_rw(), we change
+> file_operations.read_iter() to a btrfs_file_read_iter() which calls
+> btrfs_direct_IO() for direct reads and falls back to
+> generic_file_buffered_read() for incomplete reads and buffered reads.
 > 
-> diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
-> index f853835c409c..31c327666a61 100644
-> --- a/fs/btrfs/btrfs_inode.h
-> +++ b/fs/btrfs/btrfs_inode.h
-> @@ -27,7 +27,6 @@ enum {
->  	BTRFS_INODE_NEEDS_FULL_SYNC,
->  	BTRFS_INODE_COPY_EVERYTHING,
->  	BTRFS_INODE_IN_DELALLOC_LIST,
-> -	BTRFS_INODE_READDIO_NEED_LOCK,
->  	BTRFS_INODE_HAS_PROPS,
->  	BTRFS_INODE_SNAPSHOT_FLUSH,
->  };
-> @@ -320,23 +319,6 @@ struct btrfs_dio_private {
->  			blk_status_t);
->  };
->  
-> -/*
-> - * Disable DIO read nolock optimization, so new dio readers will be forced
-> - * to grab i_mutex. It is used to avoid the endless truncate due to
-> - * nonlocked dio read.
-> - */
-> -static inline void btrfs_inode_block_unlocked_dio(struct btrfs_inode *inode)
-> -{
-> -	set_bit(BTRFS_INODE_READDIO_NEED_LOCK, &inode->runtime_flags);
-> -	smp_mb();
-> -}
-> -
-> -static inline void btrfs_inode_resume_unlocked_dio(struct btrfs_inode *inode)
-> -{
-> -	smp_mb__before_atomic();
-> -	clear_bit(BTRFS_INODE_READDIO_NEED_LOCK, &inode->runtime_flags);
-> -}
-> -
->  /* Array of bytes with variable length, hexadecimal format 0x1234 */
->  #define CSUM_FMT				"0x%*phN"
->  #define CSUM_FMT_VALUE(size, bytes)		size, bytes
-> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index fedbbcf108cf..71ba4b5503f0 100644
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@ -5238,11 +5238,6 @@ static int btrfs_setsize(struct inode *inode, struct iattr *attr)
->  
->  		truncate_setsize(inode, newsize);
->  
-> -		/* Disable nonlocked read DIO to avoid the endless truncate */
-> -		btrfs_inode_block_unlocked_dio(BTRFS_I(inode));
-> -		inode_dio_wait(inode);
-> -		btrfs_inode_resume_unlocked_dio(BTRFS_I(inode));
-> -
->  		ret = btrfs_truncate(inode, newsize == oldsize);
->  		if (ret && inode->i_nlink) {
->  			int err;
-> 
+> We don't need address_space.direct_IO() anymore so set it to noop.
+> Similarly, we don't need flags used in __blockdev_direct_IO(). iomap is
+> capable of direct I/O reads from a hole, so we don't need to return
+> -ENOENT.
+
+IMO it will be good to document in the changelog the lock context of the
+current scheme. E.g. it's done with inode lock held shared meaning it
+allows other DIO reads but not writes/truncates. (This is different than
+what we had up until now).
+
+<nit>
