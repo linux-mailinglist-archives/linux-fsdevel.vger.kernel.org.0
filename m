@@ -2,85 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D51AD114620
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 18:42:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1524114627
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 18:44:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729931AbfLERmZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Dec 2019 12:42:25 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43380 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729598AbfLERmZ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Dec 2019 12:42:25 -0500
-Received: by mail-lj1-f193.google.com with SMTP id a13so4534597ljm.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Dec 2019 09:42:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pbUJTjP9F3GwOz1HFUh2s3Qmcb6CiYFw+YJqleMOHnU=;
-        b=At+uWZuKrLZ9S7SyRUatFCEd1Mv2OAsl5w3v+FMN3slvSqWktBXK4CWewfKJV7jSv0
-         jpx4YsZEPIQAb72cz8O870cYWisRieSJNwsV8ZKkMw0312Czo8jJrbF9lgpKcnqShANR
-         4t99ocyvjH84jbC8Y0/H3HnaS1ee2Sr9m+fHU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pbUJTjP9F3GwOz1HFUh2s3Qmcb6CiYFw+YJqleMOHnU=;
-        b=BJ3coXh1NckK2xr796NDB3XTn7/lvQumuclr/qwcXlBVgM09UvrXQw97lnQ6O2cLmj
-         Cww5q1SFmFoRTm1XTO78Cj61POezwGtUObEf6IyWpChi9sZb2NPcpabLD9QCN6UoZYvy
-         SiXP4nXB11f14V2J+NuV58ESfrZRYjXMPWAtCbcgxP50p+o0pCMLZ6SSa85im8IcD1w/
-         mZALbiQ89hvJTecbgc5xNlPEhib4qhHdu1PsCXimnCEOixSdIQWr1FU0HcXIUlAiqjb9
-         r9BhHYl2mcYOXwFpjgsUSmdrEMUoBm+07NaayPSkn+4wXY49F/WnDQ8XXriUHdWHPzdX
-         l2Iw==
-X-Gm-Message-State: APjAAAVVUuTreCNPrw7ek7QxL4iHFhlDt5ItbZqBESm/ANxQ7qGfOiW6
-        hTNrc6wIpXrbz+7UJpzqpHWhJZJgLGU=
-X-Google-Smtp-Source: APXvYqz0A78PirT8YQfSz8Gu6+v5YtYebksgB2Vub27h7URNFLlFIv4fKHqcMhV3aJ9ahwhJbKbgkA==
-X-Received: by 2002:a05:651c:32a:: with SMTP id b10mr6363103ljp.132.1575567743416;
-        Thu, 05 Dec 2019 09:42:23 -0800 (PST)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id j18sm5317621lfh.6.2019.12.05.09.42.22
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2019 09:42:22 -0800 (PST)
-Received: by mail-lf1-f53.google.com with SMTP id b15so3146008lfc.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Dec 2019 09:42:22 -0800 (PST)
-X-Received: by 2002:ac2:4946:: with SMTP id o6mr5923371lfi.170.1575567742310;
- Thu, 05 Dec 2019 09:42:22 -0800 (PST)
+        id S1730227AbfLERop (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Dec 2019 12:44:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37482 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729396AbfLERop (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Dec 2019 12:44:45 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 82358AEAC;
+        Thu,  5 Dec 2019 17:44:43 +0000 (UTC)
+Date:   Thu, 5 Dec 2019 11:44:41 -0600
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
+To:     Johannes Thumshirn <jthumshirn@suse.de>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, darrick.wong@oracle.com,
+        fdmanana@kernel.org, nborisov@suse.com, dsterba@suse.cz
+Subject: Re: [PATCH 4/8] btrfs: Switch to iomap_dio_rw() for dio
+Message-ID: <20191205174441.ech4nh4jxpfijule@fiona>
+References: <20191205155630.28817-1-rgoldwyn@suse.de>
+ <20191205155630.28817-5-rgoldwyn@suse.de>
+ <20191205171815.GA19670@Johanness-MacBook-Pro.local>
+ <20191205171959.GA8586@infradead.org>
+ <20191205173242.GB19670@Johanness-MacBook-Pro.local>
 MIME-Version: 1.0
-References: <157556649610.20869.8537079649495343567.stgit@warthog.procyon.org.uk>
- <157556650320.20869.10314267987837887098.stgit@warthog.procyon.org.uk>
-In-Reply-To: <157556650320.20869.10314267987837887098.stgit@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 5 Dec 2019 09:42:06 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgBLUeMUwfWGfqeihz4K=QhXxEgskOo6aUfTmLa=XMvzQ@mail.gmail.com>
-Message-ID: <CAHk-=wgBLUeMUwfWGfqeihz4K=QhXxEgskOo6aUfTmLa=XMvzQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] pipe: Remove assertion from pipe_poll()
-To:     David Howells <dhowells@redhat.com>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191205173242.GB19670@Johanness-MacBook-Pro.local>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 5, 2019 at 9:21 AM David Howells <dhowells@redhat.com> wrote:
->
-> An assertion check was added to pipe_poll() to make sure that the ring
-> occupancy isn't seen to overflow the ring size.  However, since no locks
-> are held when the three values are read, it is possible for F_SETPIPE_SZ to
-> intervene and muck up the calculation, thereby causing the oops.
->
-> Fix this by simply removing the assertion and accepting that the
-> calculation might be approximate.
+On 18:32 05/12, Johannes Thumshirn wrote:
+> On Thu, Dec 05, 2019 at 09:19:59AM -0800, Christoph Hellwig wrote:
+> > I actually much prefer exporting generic_file_buffered_read and will
+> > gladly switch other callers not needing the messy direct I/O handling
+> > in generic_file_read_iter over to generic_file_buffered_read once this
+> > series is merged.
+> 
+> I think you misunderstood me here, I meant the code to be:
+> 
+> static ssize_t btrfs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> {
+> 	ssize_t ret = 0;
+> 
+> 	if (iocb->ki_flags & IOCB_DIRECT) {
+> 		struct inode *inode = file_inode(iocb->ki_filp);
+> 
+> 		inode_lock_shared(inode);
+> 		ret = btrfs_direct_IO(iocb, to);
+> 		inode_unlock_shared(inode);
+> 		if (ret < 0)
+> 			return ret;
+> 		}
+> 	}
+> 
+> 	return generic_file_read_iter(icob, to);
+> }
+> 
+> This way an iocb that is no dio will end in generic_file_read_iter():
+> 
+> generic_file_read_iter(iocb, to)
+> {
+> 	size_t count = iov_iter_count(iter);
+>         ssize_t retval = 0;
+> 
+>         if (!count)
+>                 goto out; /* skip atime */
+> 
+> 	if (iocb->ki_flags & IOCB_DIRECT) {
+> 		skipped as flag is not set
+> 	}
+> 
+> 	retval = generic_file_buffered_read(iocb, iter, retval);
+> out:
+> 	return retval;
+> }
+> 
+> Meaning we do not need to export generic_file_buffered_read() and still can
+> skip the generic DIO madness.
+> 
+> Makes sense?
 
-This is not what the patch actually does.
+For btrfs, DIO and buffered I/O is not mutually exclusive, since we fall
+back to buffered I/O in case of incomplete Direct I/O. In this case,
+the control will not skip IOCB_DIRECT branch.
 
-The patch you sent only adds the wakeup when the pipe size changes.
-
-Please re-generate both patches and re-send.
-
-              Linus
+-- 
+Goldwyn
