@@ -2,73 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D14D1144E0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 17:34:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80A6C114572
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 18:13:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729850AbfLEQeF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Dec 2019 11:34:05 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:33611 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729406AbfLEQeE (ORCPT
+        id S1730033AbfLERNG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Dec 2019 12:13:06 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38441 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729497AbfLERNE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Dec 2019 11:34:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575563643;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qxYFzUuTTdheWGBhhn3zwDRBiNCvQHjX+pYVvWctuZk=;
-        b=XUtVhPujoCWCgmS4s6sLmeFgfaWvNS6S3661vl509+NEoo/f/trdn3Bn9EQQLFNfpW//ER
-        rR6F+uBWvnQZAqtEOc75JdoQzFdyML8VYAbRHX1Bch42m6Jncg2Utga6O4yEZD91d7+mQW
-        UJ1LU6pxFqgwWXZOMv0SHH2iMEwaKVM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-94-PYFfFydZOzOTHH3KkbAciA-1; Thu, 05 Dec 2019 11:34:00 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D5B85183B736;
-        Thu,  5 Dec 2019 16:33:58 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 809039F41;
-        Thu,  5 Dec 2019 16:33:57 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20191205074539.GB3237@sol.localdomain>
-References: <20191205074539.GB3237@sol.localdomain> <000000000000a6324b0598b2eb59@google.com> <000000000000d6c9870598bdf090@google.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk,
-        syzbot <syzbot+838eb0878ffd51f27c41@syzkaller.appspotmail.com>
-Subject: Re: KASAN: slab-out-of-bounds Write in pipe_write
+        Thu, 5 Dec 2019 12:13:04 -0500
+Received: by mail-lj1-f196.google.com with SMTP id k8so4464194ljh.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Dec 2019 09:13:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zYNLY1IlQbFxutIFweWCQvjwN9b0IsGYV2okK9HrfFg=;
+        b=Q0FUaDCgejnj2j913m9DkZ5BcPyxfvWCsvBxLXqstFY2bocRU9mYGGdVT6TyixAaF9
+         S2hdwaxlIrLjm/VudylZUBLif/OSS4AVyaDGMpzqZdSB/9DnkfX4SEUoI9oj/pbE/ewR
+         2kNMP8DNxG23lhz/9/1l0TfZQjJpzTexlyrHc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zYNLY1IlQbFxutIFweWCQvjwN9b0IsGYV2okK9HrfFg=;
+        b=s4m5qHikTdz9LYcwQKSoBXHsm1+7SMYrxsq0bbUnHkTjsOiEH5ZlctMJyLDI6i/xl+
+         crASLOeSJe2VB7uzkZXsrGMaePjTwRKzjegB0H05EHqt3y6AkBq+3Cnj7pfJRvG27YPW
+         wrHdK6cB/GGBhlCFglxhKzXoDCrR304wpwusmkzPIiEm15oNOSx4gnYn2XNXa9kmr+CB
+         Elv2i0ErfhUZHjI3/hjz3sejvHYZ3sBYoNcYZiHozV6GuMSa1mdWyHB9Czh5W9Tl3LQl
+         vnWAVmAUuAxlLWF/PCDh9+Vmkfdm1G7PjVvuJ7+eHPxWocA4pPL/3VRDWfn+8ASQ4KYx
+         GHkQ==
+X-Gm-Message-State: APjAAAXCdgq6MEXsybtMqIa74fA6riUo+yKIuw/DlORDlhtyM3TEW48c
+        OA3PSAGOYMYx3YsZ2iKVAJKSuzEK4bg=
+X-Google-Smtp-Source: APXvYqzFVflnn/4DVJFq/fs4MePi/L5Z6g/zUOwZjAp1c+qwrkBHWCF3miPtY0T+qrYEXlFDb7bjnw==
+X-Received: by 2002:a05:651c:c4:: with SMTP id 4mr3003230ljr.131.1575565981465;
+        Thu, 05 Dec 2019 09:13:01 -0800 (PST)
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
+        by smtp.gmail.com with ESMTPSA id y11sm6116273lfc.27.2019.12.05.09.12.59
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2019 09:12:59 -0800 (PST)
+Received: by mail-lf1-f51.google.com with SMTP id y19so3050102lfl.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Dec 2019 09:12:59 -0800 (PST)
+X-Received: by 2002:a19:4351:: with SMTP id m17mr6095833lfj.61.1575565978909;
+ Thu, 05 Dec 2019 09:12:58 -0800 (PST)
 MIME-Version: 1.0
-Content-ID: <29473.1575563636.1@warthog.procyon.org.uk>
-Date:   Thu, 05 Dec 2019 16:33:56 +0000
-Message-ID: <29474.1575563636@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: PYFfFydZOzOTHH3KkbAciA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+References: <31452.1574721589@warthog.procyon.org.uk> <20191205125826.GK2734@twin.jikos.cz>
+ <1593.1575554217@warthog.procyon.org.uk>
+In-Reply-To: <1593.1575554217@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 5 Dec 2019 09:12:42 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgwwJ+ZEtycujFdNmpS8TjwCYyT+oHfV7d-GekyaX91xg@mail.gmail.com>
+Message-ID: <CAHk-=wgwwJ+ZEtycujFdNmpS8TjwCYyT+oHfV7d-GekyaX91xg@mail.gmail.com>
+Subject: Re: [GIT PULL] pipe: Notification queue preparation
+To:     David Howells <dhowells@redhat.com>
+Cc:     David Sterba <dsterba@suse.cz>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Eric Biggers <ebiggers@kernel.org> wrote:
+On Thu, Dec 5, 2019 at 5:57 AM David Howells <dhowells@redhat.com> wrote:
+>
+> David Sterba <dsterba@suse.cz> wrote:
+>
+> > [<0>] pipe_write+0x1be/0x4b0
+>
+> Can you get me a line number of that?  Assuming you've built with -g, load
+> vmlinux into gdb and do "i li pipe_write+0x1be".
 
-> It looks like the 'mask' variable in pipe_write() is not being updated af=
-ter
-> the pipe mutex was dropped in pipe_wait(), to take into account the pipe
-> size possibly having been changed in the mean time.
+If the kernel is built with debug info (which you need for the gdb
+command anyway), it's much better to just use
 
-There's that, but not only that.  Weirdness ensues if the ring size is 1 -
-this may have to do with the mask then being 0.
+   ./scripts/decode_stacktrace.sh
 
-David
+which gives all the information for the whole backtrace.
 
+It would be interesting to hear if somebody else is waiting on the
+read side too.
+
+             Linus
