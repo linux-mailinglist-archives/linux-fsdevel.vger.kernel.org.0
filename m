@@ -2,135 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12C991146ED
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 19:31:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E99E114763
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Dec 2019 19:58:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729913AbfLESbO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Dec 2019 13:31:14 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44741 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729290AbfLESbO (ORCPT
+        id S1729824AbfLES60 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Dec 2019 13:58:26 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:34031 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729426AbfLES60 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Dec 2019 13:31:14 -0500
-Received: by mail-pf1-f196.google.com with SMTP id d199so1991179pfd.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Dec 2019 10:31:12 -0800 (PST)
+        Thu, 5 Dec 2019 13:58:26 -0500
+Received: by mail-pl1-f193.google.com with SMTP id h13so1626570plr.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Dec 2019 10:58:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HI4uYxR0J9DMTnkRmLhO8esoltr/E7e+IU0bpfvbumQ=;
-        b=nyVc4+A6dtfKp5EmT95300EFmgP7gQevt7DIkRtreep8yQoK/jQBq0+L1A8HZcKZ78
-         QRG4IEHOi5aWaS9lsMHV3GbAXZvJY9MLXnMEU2+6QavOQp2OWJtwa0Pptfl/0G0nbPkw
-         A5dUqhKJX//j7CfYxhguSqmpkWUuFJAlgYvl2k1OPeRVuccYRDkHm0XCLbug23jNOZYQ
-         kpWBQ8JOOQJhPXc1gquKDxEtatESK9i0Vp0slDyquhiYpOXg3sgBWReeMYPFhzJliLh4
-         H8zfIHq/o+wPO7DaGs5h/6XozND/CQUe62mautLmZCoa0sUQddpX0fFXfl5n+jLXrjsl
-         UIeg==
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=m3VZo8UZwHMiRuNQQUqY7rgJ8zqY6lqXNVV5STmF31Y=;
+        b=bE0k3fD+BPwpoluxSJNreDDUDkIK4Kf/E4qPIONcXx08wciHl90LnkTPpVpma+8Q/M
+         dmnJwnodZr1C5fMMVU/xc7BuvFsf9oJeAg1X+jNWvVf5H3rM3oyp+r08i9pecoMo9qJJ
+         qwvY8Oa8WDtCHCCe8khYEs9E3xstecgJ9M0IF6gA127MLkgcZCGN47eq67KSU5aFbDMY
+         JsTz6vG3cieY/U2K++uCXx7RS8ZEnGwdjYyxyg2Zeb8mk708flRMGJcylgmtlnNTH31S
+         TXBwUJVxSHWIi8TeTJPO+h7IG3GOBDd7QYi1jnf05HttmSpVmRcvzq7rEXV25s3TOKck
+         IciQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HI4uYxR0J9DMTnkRmLhO8esoltr/E7e+IU0bpfvbumQ=;
-        b=sHy1UkTcQcRTnzfXgtuHQ0XC4jVBfQCJ77LCtHZh8Kh0aBBa3x1KRow7QasEj2DYdU
-         zuZeqxYEyMA9Zk0BgARfUfyXKV0VFdXIKEvbwSUeECdy929wJrLwjyviym/EbhBrP8l5
-         +XddgfU3LGWJvJb0Wy2+vy3JDbHyAtWd20oBKxzXk7q5Bj1Tl3DPwHGH3qRbvpWUz8k1
-         E7n9sM9b74gQOCwiHpLfryv2xjdkvw1Ctkl01Cu/1Yg+5tJ3x/uScbWQw4jWxNtiPqs8
-         MRnugj8XVHVqtqRNKAXYS6TxTHNofYJrWrQcH58j6CH1ph7iHP2hvJV9k8/LKtWL5fJd
-         zWjQ==
-X-Gm-Message-State: APjAAAUUWOBtxQFiCrLv7oerynkudZVqFTKOgeX7KiWW7/5H1aU3XmfZ
-        5nsU17RZ+IjJG8UjUg6WFvGWWfjjGwjLUCSr9CwP4w==
-X-Google-Smtp-Source: APXvYqwT7ShzxGreCEuYPGEZxiVNpcROPBYQcRibsPumhz7L933fr9ODqh2A0iIKt0qHZJKolpaaSUV3b12srJ+FST0=
-X-Received: by 2002:aa7:961b:: with SMTP id q27mr10426991pfg.23.1575570671690;
- Thu, 05 Dec 2019 10:31:11 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=m3VZo8UZwHMiRuNQQUqY7rgJ8zqY6lqXNVV5STmF31Y=;
+        b=dvlYWvwFW+TkOg0AAn6m1hTHdOhw5BCYbdLw5uqRK6Sf5DAs33M+pIvv6246PhU4Ld
+         ltXTUj1nsMxr3feEtv+YnWnMpIG0283HIIFn2jcuDghj3NvKTtcyxyqwec35Me7/vZVi
+         W0CfriA/0RdhitOkd6inGr2d4ngXfTz6R6N1w10jFNJOmCcWhHmUyqV4oTzUIxPX+YwU
+         +tb6ongf8bf6yLMp+1sulQw60TC69I2Ivn4/oYKcE7Q2FO0sQRHZL2JUfHEqyLMPaWNe
+         F+KdRXiTpzQPr0k8qQQPXnksfVCbWr7zVEtukkCO67nKL591fICoKyrT3FxusvsRY/RS
+         GRPA==
+X-Gm-Message-State: APjAAAVQZh8A9N6Q3pJ2LP3gJb7/Q1SLpncKh8idsbmReL6LZN0Efzz4
+        xDERceS9OIEvkYNLyFo9Bng8pwulehqR7w==
+X-Google-Smtp-Source: APXvYqx4U8KW8xYiE4vgm2m26+SHXAdrlEokkTP+G731PEQDyP5ZUjTnwZY5L4PH4pUKyh5IIHVbjA==
+X-Received: by 2002:a17:90a:b318:: with SMTP id d24mr9095554pjr.142.1575572305046;
+        Thu, 05 Dec 2019 10:58:25 -0800 (PST)
+Received: from vader ([2620:10d:c090:200::3:cb2])
+        by smtp.gmail.com with ESMTPSA id 9sm13462408pfx.177.2019.12.05.10.58.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2019 10:58:24 -0800 (PST)
+Date:   Thu, 5 Dec 2019 10:58:23 -0800
+From:   Omar Sandoval <osandov@osandov.com>
+To:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Dave Chinner <david@fromorbit.com>, Jann Horn <jannh@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [RFC PATCH v3 00/12] fs: interface for directly reading/writing
+ compressed data
+Message-ID: <20191205185823.GB18377@vader>
+References: <cover.1574273658.git.osandov@fb.com>
+ <4d5bf2e4c2a22a6c195c79e0ae09a4475f1f9bdc.1574274173.git.osandov@fb.com>
+ <cover.1574273658.git.osandov@fb.com>
 MIME-Version: 1.0
-References: <20191204234522.42855-1-brendanhiggins@google.com> <CABVgOSn7tTYuMZ8ArA3fRWp4aeKAcKJ3qNL+SgtFt5fkBLnc-A@mail.gmail.com>
-In-Reply-To: <CABVgOSn7tTYuMZ8ArA3fRWp4aeKAcKJ3qNL+SgtFt5fkBLnc-A@mail.gmail.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Thu, 5 Dec 2019 10:31:00 -0800
-Message-ID: <CAFd5g446ippuyNN5ej0hEiz1Rv9hqpke55pE0en15U=gG3zX0A@mail.gmail.com>
-Subject: Re: [PATCH v1] staging: exfat: fix multiple definition error of `rename_file'
-To:     David Gow <davidgow@google.com>
-Cc:     valdis.kletnieks@vt.edu,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        devel@driverdev.osuosl.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1574273658.git.osandov@fb.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 5, 2019 at 9:51 AM David Gow <davidgow@google.com> wrote:
->
-> On Wed, Dec 4, 2019 at 3:46 PM Brendan Higgins
-> <brendanhiggins@google.com> wrote:
-> >
-> > `rename_file' was exported but not properly namespaced causing a
-> > multiple definition error because `rename_file' is already defined in
-> > fs/hostfs/hostfs_user.c:
-> >
-> > ld: drivers/staging/exfat/exfat_core.o: in function `rename_file':
-> > drivers/staging/exfat/exfat_core.c:2327: multiple definition of
-> > `rename_file'; fs/hostfs/hostfs_user.o:fs/hostfs/hostfs_user.c:350:
-> > first defined here
-> > make: *** [Makefile:1077: vmlinux] Error 1
-> >
-> > This error can be reproduced on ARCH=um by selecting:
-> >
-> > CONFIG_EXFAT_FS=y
-> > CONFIG_HOSTFS=y
-> >
-> > Add a namespace prefix exfat_* to fix this error.
-> >
-> > Reported-by: Brendan Higgins <brendanhiggins@google.com>
-> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> > Cc: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->
-> Tested-by: David Gow <davidgow@google.com>
-> Reviewed-by: David Gow <davidgow@google.com>
->
-> This works for me: I was able to reproduce the compile error without
-> this patch, and successfully compile a UML kernel and mount an exfat
-> fs after applying it.
->
-> > ---
-> >  drivers/staging/exfat/exfat.h       | 4 ++--
-> >  drivers/staging/exfat/exfat_core.c  | 4 ++--
-> >  drivers/staging/exfat/exfat_super.c | 4 ++--
-> >  3 files changed, 6 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
-> > index 2aac1e000977e..51c665a924b76 100644
-> > --- a/drivers/staging/exfat/exfat.h
-> > +++ b/drivers/staging/exfat/exfat.h
-> > @@ -805,8 +805,8 @@ s32 create_dir(struct inode *inode, struct chain_t *p_dir,
-> >  s32 create_file(struct inode *inode, struct chain_t *p_dir,
-> >                 struct uni_name_t *p_uniname, u8 mode, struct file_id_t *fid);
-> >  void remove_file(struct inode *inode, struct chain_t *p_dir, s32 entry);
-> > -s32 rename_file(struct inode *inode, struct chain_t *p_dir, s32 old_entry,
-> > -               struct uni_name_t *p_uniname, struct file_id_t *fid);
-> > +s32 exfat_rename_file(struct inode *inode, struct chain_t *p_dir, s32 old_entry,
-> > +                     struct uni_name_t *p_uniname, struct file_id_t *fid);
-> >  s32 move_file(struct inode *inode, struct chain_t *p_olddir, s32 oldentry,
-> >               struct chain_t *p_newdir, struct uni_name_t *p_uniname,
-> >               struct file_id_t *fid);
->
-> It seems a bit ugly to add the exfat_ prefix to just rename_file,
-> rather than all of the above functions (e.g., create_dir, remove_file,
-> etc). It doesn't look like any of the others are causing any issues
-> though (while, for example, there is another remove_file in
-> drivers/infiniband/hw/qib/qib_fs.c, it's static, so shouldn't be a
-> problem).
+On Wed, Nov 20, 2019 at 10:24:20AM -0800, Omar Sandoval wrote:
+> From: Omar Sandoval <osandov@fb.com>
+> 
+> Hello,
+> 
+> This series adds an API for reading compressed data on a filesystem
+> without decompressing it as well as support for writing compressed data
+> directly to the filesystem. As with the previous submissions, I've
+> included a man page patch describing the API, and test cases and example
+> programs are available [1].
+> 
+> This version reworks the VFS interface to be backward and forward
+> compatible and support for writing inline and bookend extents to the
+> Btrfs implementation.
+> 
+> Patches 1-3 add the VFS support. Patches 4-7 are Btrfs cleanups
+> necessary for the encoded I/O support that can go in independently of
+> this series. Patches 8-10 are Btrfs prep patches. Patch 11 adds Btrfs
+> encoded read support and patch 12 adds Btrfs encoded write support.
+> 
+> A few TODOs remain:
+> 
+> - Once we've settled on the interface, I'll add RWF_ENCODED support to
+>   fsstress and friends and send up the xfstests patches in [1].
+> - btrfs_encoded_read() still doesn't implement repair.
+> 
+> Changes from v2 [2]:
+> 
+> - Rebase on v5.4-rc8
+> - Add patch 1 introducing copy_struct_from_iter() as suggested by Aleksa
+> - Rename O_ENCODED to O_ALLOW_ENCODED as suggested by Amir
+> - Add arch-specific definitions of O_ALLOW_ENCODED for alpha, parisc,
+>   and sparc
+> - Rework the VFS interface to be backward and forward compatible
+> - Document the VFS interface as requested by Dave
+> - Use __aligned_u64 for struct encoded_iov as noted by Aleksa
+> - Fix len/unencoded_len mixup in mm/filemap.c as noted by Nikolay
+> - Add support for writing inline and bookend extents to Btrfs
+> - Use ENOBUFS for "buffers not big enough for encoded extent" case and
+>   E2BIG for "encoded_iov has unsupported fields" case
+> 
+> Please share any comments on the API or implementation. Thanks!
+> 
+> 1: https://github.com/osandov/xfstests/tree/rwf-encoded
+> 2: https://lore.kernel.org/linux-btrfs/cover.1571164762.git.osandov@fb.com/
+> 
+> Omar Sandoval (12):
+>   iov_iter: add copy_struct_from_iter()
+>   fs: add O_ALLOW_ENCODED open flag
+>   fs: add RWF_ENCODED for reading/writing compressed data
+>   btrfs: get rid of trivial __btrfs_lookup_bio_sums() wrappers
+>   btrfs: don't advance offset for compressed bios in
+>     btrfs_csum_one_bio()
+>   btrfs: remove dead snapshot-aware defrag code
+>   btrfs: make btrfs_ordered_extent naming consistent with
+>     btrfs_file_extent_item
+>   btrfs: add ram_bytes and offset to btrfs_ordered_extent
+>   btrfs: support different disk extent size for delalloc
+>   btrfs: optionally extend i_size in cow_file_range_inline()
+>   btrfs: implement RWF_ENCODED reads
+>   btrfs: implement RWF_ENCODED writes
+> 
+>  Documentation/filesystems/encoded_io.rst |   79 +
+>  Documentation/filesystems/index.rst      |    1 +
+>  arch/alpha/include/uapi/asm/fcntl.h      |    1 +
+>  arch/parisc/include/uapi/asm/fcntl.h     |    1 +
+>  arch/sparc/include/uapi/asm/fcntl.h      |    1 +
+>  fs/btrfs/compression.c                   |   15 +-
+>  fs/btrfs/compression.h                   |    5 +-
+>  fs/btrfs/ctree.h                         |   13 +-
+>  fs/btrfs/delalloc-space.c                |   38 +-
+>  fs/btrfs/delalloc-space.h                |    4 +-
+>  fs/btrfs/file-item.c                     |   54 +-
+>  fs/btrfs/file.c                          |   61 +-
+>  fs/btrfs/inode.c                         | 2463 +++++++++++-----------
+>  fs/btrfs/ordered-data.c                  |  106 +-
+>  fs/btrfs/ordered-data.h                  |   28 +-
+>  fs/btrfs/relocation.c                    |    9 +-
+>  fs/fcntl.c                               |   10 +-
+>  fs/namei.c                               |    4 +
+>  include/linux/fcntl.h                    |    2 +-
+>  include/linux/fs.h                       |   16 +
+>  include/linux/uio.h                      |    2 +
+>  include/trace/events/btrfs.h             |    6 +-
+>  include/uapi/asm-generic/fcntl.h         |    4 +
+>  include/uapi/linux/fs.h                  |   33 +-
+>  lib/iov_iter.c                           |   82 +
+>  mm/filemap.c                             |  165 +-
+>  26 files changed, 1807 insertions(+), 1396 deletions(-)
+>  create mode 100644 Documentation/filesystems/encoded_io.rst
 
-Agreed; however, given that this is a fix, I didn't want to overreach
-in the scope of this change since I want to make sure it gets accepted
-in 5.5 and it probably won't make it in the merge window. I also
-figured that, since this is in staging, this might be one of the
-things that needs to happen before being promoted out of staging.
-
-Nevertheless, I don't mind going through and adding the namespace
-prefix to the other non-static functions if that's what Valdis and
-Greg want.
-
-Thanks!
+Ping. Al, would you mind taking a look at the generic bits/interface?
