@@ -2,25 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CF7911555C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2019 17:32:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E9031155AC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2019 17:45:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726312AbfLFQb7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Dec 2019 11:31:59 -0500
-Received: from sandeen.net ([63.231.237.45]:58762 "EHLO sandeen.net"
+        id S1726325AbfLFQpE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Dec 2019 11:45:04 -0500
+Received: from sandeen.net ([63.231.237.45]:59332 "EHLO sandeen.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726258AbfLFQb7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Dec 2019 11:31:59 -0500
+        id S1726312AbfLFQpE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 6 Dec 2019 11:45:04 -0500
 Received: from Liberator-6.local (liberator [10.0.0.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id 7B95B7BDD;
-        Fri,  6 Dec 2019 10:30:08 -0600 (CST)
+        by sandeen.net (Postfix) with ESMTPSA id 44EC111718;
+        Fri,  6 Dec 2019 10:43:13 -0600 (CST)
+Subject: [PATCH V3] fs_parser: remove fs_parameter_description name field
+From:   Eric Sandeen <sandeen@sandeen.net>
 To:     fsdevel <linux-fsdevel@vger.kernel.org>
 Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
         David Howells <dhowells@redhat.com>
-From:   Eric Sandeen <sandeen@sandeen.net>
-Subject: [PATCH V2] fs_parser: remove fs_parameter_description name field
+References: <22be7526-d9da-5309-22a8-3405ed1c0842@sandeen.net>
 Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
  mQINBE6x99QBEADMR+yNFBc1Y5avoUhzI/sdR9ANwznsNpiCtZlaO4pIWvqQJCjBzp96cpCs
  nQZV32nqJBYnDpBDITBqTa/EF+IrHx8gKq8TaSBLHUq2ju2gJJLfBoL7V3807PQcI18YzkF+
@@ -63,11 +64,12 @@ Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
  Pk6ah10C4+R1Jc7dyUsKksMfvvhRX1hTIXhth85H16706bneTayZBhlZ/hK18uqTX+s0onG/
  m1F3vYvdlE4p2ts1mmixMF7KajN9/E5RQtiSArvKTbfsB6Two4MthIuLuf+M0mI4gPl9SPlf
  fWCYVPhaU9o83y1KFbD/+lh1pjP7bEu/YudBvz7F2Myjh4/9GUAijrCTNeDTDAgvIJDjXuLX pA==
-Message-ID: <22be7526-d9da-5309-22a8-3405ed1c0842@sandeen.net>
-Date:   Fri, 6 Dec 2019 10:31:57 -0600
+Message-ID: <4d173398-09a6-fefa-cb91-b1333ead1aca@sandeen.net>
+Date:   Fri, 6 Dec 2019 10:45:01 -0600
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
  Gecko/20100101 Thunderbird/68.2.2
 MIME-Version: 1.0
+In-Reply-To: <22be7526-d9da-5309-22a8-3405ed1c0842@sandeen.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -88,6 +90,7 @@ Acked-by: David Howells <dhowells@redhat.com>
 ---
 
 V2: add more recently converted filesystems and fix kernel docs
+V3: *sigh* add name back to afs fs_type, no idea how I botched that
 
 (This also fixes ffs_fs_fs_parameters which mistakenly named itself
 "kAFS" - which shows why redundant copies of information is a bad
@@ -199,14 +202,6 @@ diff --git a/fs/afs/super.c b/fs/afs/super.c
 index 488641b..8edbd87 100644
 --- a/fs/afs/super.c
 +++ b/fs/afs/super.c
-@@ -42,7 +42,6 @@
- 
- struct file_system_type afs_fs_type = {
- 	.owner			= THIS_MODULE,
--	.name			= "afs",
- 	.init_fs_context	= afs_init_fs_context,
- 	.parameters		= &afs_fs_parameters,
- 	.kill_sb		= afs_kill_super,
 @@ -90,7 +89,6 @@ enum afs_param {
  };
  
