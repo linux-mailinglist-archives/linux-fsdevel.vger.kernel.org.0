@@ -2,81 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE1481158A9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2019 22:35:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72FDA1158D5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2019 22:53:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726464AbfLFVe7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Dec 2019 16:34:59 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:37488 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726375AbfLFVe7 (ORCPT
+        id S1726395AbfLFVx3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Dec 2019 16:53:29 -0500
+Received: from freki.datenkhaos.de ([81.7.17.101]:59500 "EHLO
+        freki.datenkhaos.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726353AbfLFVx3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Dec 2019 16:34:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575668097;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=QqbyZYGZnYQCIEjuJv4K9a69RNYGOwglIe0OXAFPCN8=;
-        b=ISeeQhl8lxakJPPyDOyg05PkH6kvnFlGgTU/eWR+mg/1VUt7LNaT+kt/orHhjcKBg00jeA
-        lxaAtNTTIIV8qk/fhppL13JOU4pU2szLaGSyisL6rs46j3Szn1mEXFrcajy3cgdn37EmTl
-        EJsbNLAiPeTgnfSM3hSm62kgqTDdk9c=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-330-t5RaSMnLND-Ukq0Qcfnapw-1; Fri, 06 Dec 2019 16:34:54 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Fri, 6 Dec 2019 16:53:29 -0500
+X-Greylist: delayed 350 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Dec 2019 16:53:27 EST
+Received: from localhost (localhost [127.0.0.1])
+        by freki.datenkhaos.de (Postfix) with ESMTP id 0EEA01E3A722;
+        Fri,  6 Dec 2019 22:47:36 +0100 (CET)
+Received: from freki.datenkhaos.de ([127.0.0.1])
+        by localhost (freki.datenkhaos.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 3vv8b2g8ZfmA; Fri,  6 Dec 2019 22:47:30 +0100 (CET)
+Received: from latitude (x4db74696.dyn.telefonica.de [77.183.70.150])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1840C183B701;
-        Fri,  6 Dec 2019 21:34:53 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0645360BF4;
-        Fri,  6 Dec 2019 21:34:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] pipe: Fix iteration end check in fuse_dev_splice_write()
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     miklos@szeredi.hu, dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 06 Dec 2019 21:34:51 +0000
-Message-ID: <157566809107.17007.16619855857308884231.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        by freki.datenkhaos.de (Postfix) with ESMTPSA;
+        Fri,  6 Dec 2019 22:47:30 +0100 (CET)
+Date:   Fri, 6 Dec 2019 22:47:25 +0100
+From:   Johannes Hirte <johannes.hirte@datenkhaos.de>
+To:     David Howells <dhowells@redhat.com>
+Cc:     torvalds@linux-foundation.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring,
+ not cursor and length [ver #2]
+Message-ID: <20191206214725.GA2108@latitude>
+References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
+ <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: t5RaSMnLND-Ukq0Qcfnapw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fix the iteration end check in fuse_dev_splice_write().  The iterator
-position can only be compared with == or != since wrappage may be involved.
+On 2019 Okt 23, David Howells wrote:
+> Convert pipes to use head and tail pointers for the buffer ring rather than
+> pointer and length as the latter requires two atomic ops to update (or a
+> combined op) whereas the former only requires one.
 
-Fixes: 8cefc107ca54 ("pipe: Use head and tail pointers for the ring, not cursor and length")
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+This change breaks firefox on my system. I've noticed that some pages
+doesn't load correctly anymore (e.g. facebook, spiegel.de). The pages
+start loading and than stop. Looks like firefox is waiting for some
+dynamic loading content. I've bisected to this commit, but can't revert
+because of conflicts.
 
- fs/fuse/dev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index d4e6691d2d92..8e02d76fe104 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1965,7 +1965,7 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
- 
- 	nbuf = 0;
- 	rem = 0;
--	for (idx = tail; idx < head && rem < len; idx++)
-+	for (idx = tail; idx != head && rem < len; idx++)
- 		rem += pipe->bufs[idx & mask].len;
- 
- 	ret = -EINVAL;
+-- 
+Regards,
+  Johannes Hirte
 
