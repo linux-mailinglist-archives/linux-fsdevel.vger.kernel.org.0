@@ -2,157 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A504511535C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2019 15:40:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C1851153E7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2019 16:09:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726516AbfLFOkA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Dec 2019 09:40:00 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:28389 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726509AbfLFOj5 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Dec 2019 09:39:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575643196;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=s6MwTaVIzd8C+aMGsohjXU9Q65/lFnu2IUuINQNlcCc=;
-        b=IbwiCgcXGr6je5U5s+P+5Ps1fAP1N49w+5STF3w1OqCjqxRCoQ7oUwb2W7YO/ziRazFtO9
-        XLwdlxfk7SmVLgtfPlu82KjA4GDQn3fzkNkxAZAn/JsD1ceH2CAZ0vsjRzu5iLNlET8ufy
-        vyfFzKKgvlIZ1safLmRYT2OqmyqFn+M=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-221-MJ4ROBaJNlKAmT4D_ET7hA-1; Fri, 06 Dec 2019 09:39:53 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 251A6107ACCA;
-        Fri,  6 Dec 2019 14:39:51 +0000 (UTC)
-Received: from coeurl.usersys.redhat.com (ovpn-123-90.rdu2.redhat.com [10.10.123.90])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7FA0719C7F;
-        Fri,  6 Dec 2019 14:39:48 +0000 (UTC)
-Received: by coeurl.usersys.redhat.com (Postfix, from userid 1000)
-        id 00C86209A8; Fri,  6 Dec 2019 09:39:47 -0500 (EST)
-Date:   Fri, 6 Dec 2019 09:39:47 -0500
-From:   Scott Mayhew <smayhew@redhat.com>
-To:     anna.schumaker@netapp.com, trond.myklebust@hammerspace.com
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 00/27] nfs: Mount API conversion
-Message-ID: <20191206143947.GV4276@coeurl.usersys.redhat.com>
-References: <20191120152750.6880-1-smayhew@redhat.com>
+        id S1726259AbfLFPJM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Dec 2019 10:09:12 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53830 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726222AbfLFPJM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 6 Dec 2019 10:09:12 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 14F36AC82;
+        Fri,  6 Dec 2019 15:09:10 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 446EBDA783; Fri,  6 Dec 2019 16:09:04 +0100 (CET)
+Date:   Fri, 6 Dec 2019 16:09:03 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc:     linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        hch@infradead.org, darrick.wong@oracle.com, fdmanana@kernel.org,
+        nborisov@suse.com, dsterba@suse.cz, jthumshirn@suse.de
+Subject: Re: [PATCH 0/8 v3] btrfs direct-io using iomap
+Message-ID: <20191206150903.GC2734@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        hch@infradead.org, darrick.wong@oracle.com, fdmanana@kernel.org,
+        nborisov@suse.com, jthumshirn@suse.de
+References: <20191205155630.28817-1-rgoldwyn@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <20191120152750.6880-1-smayhew@redhat.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: MJ4ROBaJNlKAmT4D_ET7hA-1
-X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
+In-Reply-To: <20191205155630.28817-1-rgoldwyn@suse.de>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Anna, Trond,
+On Thu, Dec 05, 2019 at 09:56:22AM -0600, Goldwyn Rodrigues wrote:
+> This is an effort to use iomap for direct I/O in btrfs. This would
+> change the call from __blockdev_direct_io() to iomap_dio_rw().
+> 
+> The main objective is to lose the buffer head and use bio defined by
+> iomap code, and hopefully to use more of generic-FS codebase.
+> 
+> These patches are based on xfs/iomap-for-next, though I tested it
+> against the patches on xfs/iomap-for-next on top of v5.4.1 (there are no
+> changes to existing patches). The tree is available at
+> https://github.com/goldwynr/linux/tree/btrfs-iomap-dio
 
-Have you had a chance to look at these?  Do you have any comments?  I do
-have a small fix to make to nfs4_validate_fspath() for an issue that Dan
-Carpenter reported, but I was waiting to see if there was anything else.
+The iomap-for-next seems to be all merged to master, so I'd like to add
+the btrfs part to for-next early so we can have the full dev cycle to
+test.
 
--Scott
+Fstests got stuck at generic/095, in llseek on the inode mutex. In version
+5.4.1 it's inode_lock while in master it's inode_lock_shared and only used for
+SEEK_DATA/HOLE.
 
-On Wed, 20 Nov 2019, Scott Mayhew wrote:
+I've also tested the rebased patchset on current master but due to the hangs
+caused by pipe changes when send is done it only gets to test btrfs/016 (way
+before the generic/095 starts).
 
-> Hi Trond, Anna,
->=20
-> Here's a set of patches that converts NFS to use the mount API.  Note tha=
-t
-> there are a lot of preliminary patches, some from David and some from Al.
-> The final patch (the one that does the actual conversion) from the David'=
-s
-> initial posting has been split into 5 separate patches, and the entire se=
-t
-> has been rebased on top of 5.4-rc8.
->=20
-> Changes since v4:
-> - further split the original "NFS: Add fs_context support" patch (new
->   patch is about 25% smaller than the v4 patch)
-> - fixed NFSv4 referral mounts (broken in the original patch)
-> - fixed leak of nfs_fattr when fs_context is freed
-> Changes since v3:
-> - changed license and copyright text in fs/nfs/fs_context.c
-> Changes since v2:
-> - fixed the conversion of the nconnect=3D option
-> - added '#if IS_ENABLED(CONFIG_NFS_V4)' around nfs4_parse_monolithic()
->   to avoid unused-function warning when compiling with v4 disabled
-> Chagnes since v1:
-> - split up patch 23 into 4 separate patches
->=20
-> -Scott
->=20
-> Al Viro (15):
->   saner calling conventions for nfs_fs_mount_common()
->   nfs: stash server into struct nfs_mount_info
->   nfs: lift setting mount_info from nfs4_remote{,_referral}_mount
->   nfs: fold nfs4_remote_fs_type and nfs4_remote_referral_fs_type
->   nfs: don't bother setting/restoring export_path around
->     do_nfs_root_mount()
->   nfs4: fold nfs_do_root_mount/nfs_follow_remote_path
->   nfs: lift setting mount_info from nfs_xdev_mount()
->   nfs: stash nfs_subversion reference into nfs_mount_info
->   nfs: don't bother passing nfs_subversion to ->try_mount() and
->     nfs_fs_mount_common()
->   nfs: merge xdev and remote file_system_type
->   nfs: unexport nfs_fs_mount_common()
->   nfs: don't pass nfs_subversion to ->create_server()
->   nfs: get rid of mount_info ->fill_super()
->   nfs_clone_sb_security(): simplify the check for server bogosity
->   nfs: get rid of ->set_security()
->=20
-> David Howells (8):
->   NFS: Move mount parameterisation bits into their own file
->   NFS: Constify mount argument match tables
->   NFS: Rename struct nfs_parsed_mount_data to struct nfs_fs_context
->   NFS: Split nfs_parse_mount_options()
->   NFS: Deindent nfs_fs_context_parse_option()
->   NFS: Add a small buffer in nfs_fs_context to avoid string dup
->   NFS: Do some tidying of the parsing code
->   NFS: Add fs_context support.
->=20
-> Scott Mayhew (4):
->   NFS: rename nfs_fs_context pointer arg in a few functions
->   NFS: Convert mount option parsing to use functionality from
->     fs_parser.h
->   NFS: Additional refactoring for fs_context conversion
->   NFS: Attach supplementary error information to fs_context.
->=20
->  fs/nfs/Makefile         |    2 +-
->  fs/nfs/client.c         |   80 +-
->  fs/nfs/fs_context.c     | 1424 +++++++++++++++++++++++++
->  fs/nfs/fscache.c        |    2 +-
->  fs/nfs/getroot.c        |   73 +-
->  fs/nfs/internal.h       |  132 +--
->  fs/nfs/namespace.c      |  144 ++-
->  fs/nfs/nfs3_fs.h        |    2 +-
->  fs/nfs/nfs3client.c     |    6 +-
->  fs/nfs/nfs3proc.c       |    2 +-
->  fs/nfs/nfs4_fs.h        |    9 +-
->  fs/nfs/nfs4client.c     |   99 +-
->  fs/nfs/nfs4namespace.c  |  291 ++---
->  fs/nfs/nfs4proc.c       |    2 +-
->  fs/nfs/nfs4super.c      |  257 ++---
->  fs/nfs/proc.c           |    2 +-
->  fs/nfs/super.c          | 2219 +++++----------------------------------
->  include/linux/nfs_xdr.h |    9 +-
->  18 files changed, 2283 insertions(+), 2472 deletions(-)
->  create mode 100644 fs/nfs/fs_context.c
->=20
-> --=20
-> 2.17.2
->=20
+generic/095             [21:12:03][ 9153.094902] run fstests generic/095 at 2019-12-05 21:12:03
+[ 9153.355112] BTRFS info (device vda): using free space tree
+[ 9153.357522] BTRFS info (device vda): has skinny extents
+[ 9155.598524] BTRFS: device fsid 8f274c73-27d6-4a7c-96ad-4ae41fcd6916 devid 1 transid 5 /dev/vdb
+[ 9155.626220] BTRFS info (device vdb): enabling free space tree
+[ 9155.628257] BTRFS info (device vdb): using free space tree
+[ 9155.630290] BTRFS info (device vdb): has skinny extents
+[ 9155.632191] BTRFS info (device vdb): flagging fs with big metadata feature
+[ 9155.640732] BTRFS info (device vdb): creating free space tree
+[ 9155.643781] BTRFS info (device vdb): setting compat-ro feature flag for FREE_SPACE_TREE (0x1)
+[ 9155.648664] BTRFS info (device vdb): setting compat-ro feature flag for FREE_SPACE_TREE_VALID (0x2)
+[ 9155.652542] BTRFS info (device vdb): checking UUID tree
+[ 9819.465520] INFO: task fio:19671 blocked for more than 491 seconds.
+[ 9819.470928]       Tainted: G             L    5.4.1-default+ #889
+[ 9819.475441] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[ 9819.480987] fio             D14632 19671  19669 0x00004000
+[ 9819.483182] Call Trace:
+[ 9819.484360]  ? __schedule+0x2d4/0x8f0
+[ 9819.485779]  schedule+0x49/0xd0
+[ 9819.487050]  rwsem_down_write_slowpath+0x3f6/0x7d0
+[ 9819.488777]  ? down_write+0xa9/0x130
+[ 9819.490203]  down_write+0xa9/0x130
+[ 9819.491571]  btrfs_file_llseek+0x45/0x2b0 [btrfs]
+[ 9819.493074]  ksys_lseek+0x63/0xb0
+[ 9819.494153]  do_syscall_64+0x50/0x1f0
+[ 9819.495122]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[ 9819.496328] RIP: 0033:0x7f6bce8c0627
+[ 9819.503273] RSP: 002b:00007fffa3fdaab8 EFLAGS: 00000206 ORIG_RAX: 0000000000000008
+[ 9819.505802] RAX: ffffffffffffffda RBX: 00007f6ba393f000 RCX: 00007f6bce8c0627
+[ 9819.508045] RDX: 0000000000000000 RSI: 0000000000007800 RDI: 0000000000000003
+[ 9819.510048] RBP: 00007f6ba393f000 R08: 0000000000000400 R09: 0000000000000000
+[ 9819.512061] R10: fffffffffffffa85 R11: 0000000000000206 R12: 0000000000000000
+[ 9819.514211] R13: 0000000000000400 R14: 00007f6ba393f000 R15: 000055fc96807b40
+[ 9819.516181] INFO: task fio:19672 blocked for more than 491 seconds.
+[ 9819.517970]       Tainted: G             L    5.4.1-default+ #889
+[ 9819.519650] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[ 9819.522142] fio             D14712 19672  19669 0x00000000
+[ 9819.523696] Call Trace:
+[ 9819.524651]  ? __schedule+0x2d4/0x8f0
+[ 9819.525871]  schedule+0x49/0xd0
+[ 9819.527003]  rwsem_down_write_slowpath+0x3f6/0x7d0
+[ 9819.528480]  ? down_write+0xa9/0x130
+[ 9819.529705]  down_write+0xa9/0x130
+[ 9819.530889]  btrfs_file_llseek+0x45/0x2b0 [btrfs]
+[ 9819.532304]  ksys_lseek+0x63/0xb0
+[ 9819.533482]  do_syscall_64+0x50/0x1f0
+[ 9819.534721]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[ 9819.536567] RIP: 0033:0x7f6bce8c0627
+[ 9819.544424] RSP: 002b:00007fffa3fdaab8 EFLAGS: 00000206 ORIG_RAX: 0000000000000008
+[ 9819.547483] RAX: ffffffffffffffda RBX: 00007f6ba3958080 RCX: 00007f6bce8c0627
+[ 9819.549937] RDX: 0000000000000000 RSI: 0000000000020800 RDI: 0000000000000003
+[ 9819.552152] RBP: 00007f6ba3958080 R08: 0000000000000400 R09: 0000000000000000
+[ 9819.554479] R10: fffffffffffffa85 R11: 0000000000000206 R12: 0000000000000000
+[ 9819.556515] R13: 0000000000000400 R14: 00007f6ba3958080 R15: 000055fc96807b40
+[ 9819.558536] INFO: task fio:19673 blocked for more than 491 seconds.
+[ 9819.560332]       Tainted: G             L    5.4.1-default+ #889
+[ 9819.562062] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[ 9819.564494] fio             D13480 19673  19669 0x00000000
+[ 9819.566075] Call Trace:
+[ 9819.567037]  ? __schedule+0x2d4/0x8f0
+[ 9819.568325]  schedule+0x49/0xd0
+[ 9819.569438]  rwsem_down_write_slowpath+0x3f6/0x7d0
+[ 9819.570906]  ? down_write+0xa9/0x130
+[ 9819.572072]  down_write+0xa9/0x130
+[ 9819.573255]  btrfs_file_llseek+0x45/0x2b0 [btrfs]
+[ 9819.574685]  ? vfs_read+0x14e/0x180
+[ 9819.575871]  ksys_lseek+0x63/0xb0
+[ 9819.577066]  do_syscall_64+0x50/0x1f0
+[ 9819.578286]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[ 9819.579758] RIP: 0033:0x7f6bce8c0627
 
