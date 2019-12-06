@@ -2,26 +2,24 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E9031155AC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2019 17:45:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D3ED1155CD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2019 17:53:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726325AbfLFQpE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Dec 2019 11:45:04 -0500
-Received: from sandeen.net ([63.231.237.45]:59332 "EHLO sandeen.net"
+        id S1726298AbfLFQxD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Dec 2019 11:53:03 -0500
+Received: from sandeen.net ([63.231.237.45]:59720 "EHLO sandeen.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726312AbfLFQpE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Dec 2019 11:45:04 -0500
+        id S1726271AbfLFQxD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 6 Dec 2019 11:53:03 -0500
 Received: from Liberator-6.local (liberator [10.0.0.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id 44EC111718;
-        Fri,  6 Dec 2019 10:43:13 -0600 (CST)
-Subject: [PATCH V3] fs_parser: remove fs_parameter_description name field
-From:   Eric Sandeen <sandeen@sandeen.net>
+        by sandeen.net (Postfix) with ESMTPSA id 7B6857BDD;
+        Fri,  6 Dec 2019 10:51:13 -0600 (CST)
 To:     fsdevel <linux-fsdevel@vger.kernel.org>
-Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
-        David Howells <dhowells@redhat.com>
-References: <22be7526-d9da-5309-22a8-3405ed1c0842@sandeen.net>
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>, Jan Kara <jack@suse.cz>
+From:   Eric Sandeen <sandeen@sandeen.net>
+Subject: [PATCH 0/2 V3] avoid softlockups in various s_inodes iterators
 Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
  mQINBE6x99QBEADMR+yNFBc1Y5avoUhzI/sdR9ANwznsNpiCtZlaO4pIWvqQJCjBzp96cpCs
  nQZV32nqJBYnDpBDITBqTa/EF+IrHx8gKq8TaSBLHUq2ju2gJJLfBoL7V3807PQcI18YzkF+
@@ -64,12 +62,11 @@ Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
  Pk6ah10C4+R1Jc7dyUsKksMfvvhRX1hTIXhth85H16706bneTayZBhlZ/hK18uqTX+s0onG/
  m1F3vYvdlE4p2ts1mmixMF7KajN9/E5RQtiSArvKTbfsB6Two4MthIuLuf+M0mI4gPl9SPlf
  fWCYVPhaU9o83y1KFbD/+lh1pjP7bEu/YudBvz7F2Myjh4/9GUAijrCTNeDTDAgvIJDjXuLX pA==
-Message-ID: <4d173398-09a6-fefa-cb91-b1333ead1aca@sandeen.net>
-Date:   Fri, 6 Dec 2019 10:45:01 -0600
+Message-ID: <22a70790-7b17-92c6-e9a7-e937ef996c15@sandeen.net>
+Date:   Fri, 6 Dec 2019 10:53:02 -0600
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
  Gecko/20100101 Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <22be7526-d9da-5309-22a8-3405ed1c0842@sandeen.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -78,425 +75,11 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There doesn't seem to be a strong reason to have a copy of the
-filesystem name string in the fs_parameter_description structure;
-it's easy enough to get the name from the fs_type, and using it
-instead ensures consistency across messages (for example,
-vfs_parse_fs_param() already uses fc->fs_type->name for the error
-messages, because it doesn't have the fs_parameter_description).
+2 patches to make sure we either schedule in an s_inodes walking
+loop, or do our best to limit the size of the walk, to avoid soft
+lockups when many inodes are on the list.
 
-Signed-off-by: Eric Sandeen <sandeen@redhat.com>
-Acked-by: David Howells <dhowells@redhat.com>
----
+V3 is just ... resending.
 
-V2: add more recently converted filesystems and fix kernel docs
-V3: *sigh* add name back to afs fs_type, no idea how I botched that
-
-(This also fixes ffs_fs_fs_parameters which mistakenly named itself
-"kAFS" - which shows why redundant copies of information is a bad
-plan.)
-
-diff --git a/Documentation/filesystems/mount_api.txt b/Documentation/filesystems/mount_api.txt
-index 00ff0cf..7e09dc3 100644
---- a/Documentation/filesystems/mount_api.txt
-+++ b/Documentation/filesystems/mount_api.txt
-@@ -519,7 +519,6 @@ Parameters are described using structures defined in linux/fs_parser.h.
- There's a core description struct that links everything together:
- 
- 	struct fs_parameter_description {
--		const char	name[16];
- 		const struct fs_parameter_spec *specs;
- 		const struct fs_parameter_enum *enums;
- 	};
-@@ -535,19 +534,13 @@ For example:
- 	};
- 
- 	static const struct fs_parameter_description afs_fs_parameters = {
--		.name		= "kAFS",
- 		.specs		= afs_param_specs,
- 		.enums		= afs_param_enums,
- 	};
- 
- The members are as follows:
- 
-- (1) const char name[16];
--
--     The name to be used in error messages generated by the parse helper
--     functions.
--
-- (2) const struct fs_parameter_specification *specs;
-+ (1) const struct fs_parameter_specification *specs;
- 
-      Table of parameter specifications, terminated with a null entry, where the
-      entries are of type:
-@@ -626,7 +619,7 @@ The members are as follows:
-      of arguments to specify the type and the flags for anything that doesn't
-      match one of the above macros.
- 
-- (6) const struct fs_parameter_enum *enums;
-+ (2) const struct fs_parameter_enum *enums;
- 
-      Table of enum value names to integer mappings, terminated with a null
-      entry.  This is of type:
-diff --git a/arch/powerpc/platforms/cell/spufs/inode.c b/arch/powerpc/platforms/cell/spufs/inode.c
-index 9b1586b..36ce5d0 100644
---- a/arch/powerpc/platforms/cell/spufs/inode.c
-+++ b/arch/powerpc/platforms/cell/spufs/inode.c
-@@ -592,7 +592,6 @@ enum {
- };
- 
- static const struct fs_parameter_description spufs_fs_parameters = {
--	.name		= "spufs",
- 	.specs		= spufs_param_specs,
- };
- 
-diff --git a/arch/s390/hypfs/inode.c b/arch/s390/hypfs/inode.c
-index 70139d0..b3a6d13 100644
---- a/arch/s390/hypfs/inode.c
-+++ b/arch/s390/hypfs/inode.c
-@@ -216,7 +216,6 @@ static int hypfs_release(struct inode *inode, struct file *filp)
- };
- 
- static const struct fs_parameter_description hypfs_fs_parameters = {
--	.name		= "hypfs",
- 	.specs		= hypfs_param_specs,
- };
- 
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index 2e3b06d..f145594 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -2045,7 +2045,6 @@ enum rdt_param {
- };
- 
- static const struct fs_parameter_description rdt_fs_parameters = {
--	.name		= "rdt",
- 	.specs		= rdt_param_specs,
- };
- 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 2b18456..b33f147 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -864,7 +864,6 @@ enum {
- };
- 
- static const struct fs_parameter_description rbd_parameters = {
--	.name		= "rbd",
- 	.specs		= rbd_param_specs,
- };
- 
-diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
-index ce1d023..14ef94f 100644
---- a/drivers/usb/gadget/function/f_fs.c
-+++ b/drivers/usb/gadget/function/f_fs.c
-@@ -1497,7 +1497,6 @@ enum {
- };
- 
- static const struct fs_parameter_description ffs_fs_fs_parameters = {
--	.name		= "kAFS",
- 	.specs		= ffs_fs_param_specs,
- };
- 
-diff --git a/fs/afs/super.c b/fs/afs/super.c
-index 488641b..8edbd87 100644
---- a/fs/afs/super.c
-+++ b/fs/afs/super.c
-@@ -90,7 +89,6 @@ enum afs_param {
- };
- 
- static const struct fs_parameter_description afs_fs_parameters = {
--	.name		= "kAFS",
- 	.specs		= afs_param_specs,
- 	.enums		= afs_param_enums,
- };
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index 9c9a7c6..c164256 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -199,7 +199,6 @@ enum ceph_recover_session_mode {
- };
- 
- static const struct fs_parameter_description ceph_mount_parameters = {
--	.name           = "ceph",
- 	.specs          = ceph_mount_param_specs,
- 	.enums		= ceph_mount_param_enums,
- };
-diff --git a/fs/filesystems.c b/fs/filesystems.c
-index 9135646..77bf5f9 100644
---- a/fs/filesystems.c
-+++ b/fs/filesystems.c
-@@ -74,7 +74,8 @@ int register_filesystem(struct file_system_type * fs)
- 	int res = 0;
- 	struct file_system_type ** p;
- 
--	if (fs->parameters && !fs_validate_description(fs->parameters))
-+	if (fs->parameters &&
-+	    !fs_validate_description(fs->name, fs->parameters))
- 		return -EINVAL;
- 
- 	BUG_ON(strchr(fs->name, '.'));
-diff --git a/fs/fs_parser.c b/fs/fs_parser.c
-index d1930ad..866c71b 100644
---- a/fs/fs_parser.c
-+++ b/fs/fs_parser.c
-@@ -111,7 +111,7 @@ int fs_parse(struct fs_context *fc,
- 
- 	if (p->flags & fs_param_deprecated)
- 		warnf(fc, "%s: Deprecated parameter '%s'",
--		      desc->name, param->key);
-+		      fc->fs_type->name, param->key);
- 
- 	if (result->negated)
- 		goto okay;
-@@ -147,7 +147,7 @@ int fs_parse(struct fs_context *fc,
- 		if (param->type != fs_value_is_flag &&
- 		    (param->type != fs_value_is_string || result->has_value))
- 			return invalf(fc, "%s: Unexpected value for '%s'",
--				      desc->name, param->key);
-+				      fc->fs_type->name, param->key);
- 		result->boolean = true;
- 		goto okay;
- 
-@@ -237,7 +237,8 @@ int fs_parse(struct fs_context *fc,
- 	return p->opt;
- 
- bad_value:
--	return invalf(fc, "%s: Bad value for '%s'", desc->name, param->key);
-+	return invalf(fc, "%s: Bad value for '%s'",
-+		      fc->fs_type->name, param->key);
- unknown_parameter:
- 	return -ENOPARAM;
- }
-@@ -357,22 +358,16 @@ bool validate_constant_table(const struct constant_table *tbl, size_t tbl_size,
-  * fs_validate_description - Validate a parameter description
-  * @desc: The parameter description to validate.
-  */
--bool fs_validate_description(const struct fs_parameter_description *desc)
-+bool fs_validate_description(const char *name,
-+	const struct fs_parameter_description *desc)
- {
- 	const struct fs_parameter_spec *param, *p2;
- 	const struct fs_parameter_enum *e;
--	const char *name = desc->name;
- 	unsigned int nr_params = 0;
- 	bool good = true, enums = false;
- 
- 	pr_notice("*** VALIDATE %s ***\n", name);
- 
--	if (!name[0]) {
--		pr_err("VALIDATE Parser: No name\n");
--		name = "Unknown";
--		good = false;
--	}
--
- 	if (desc->specs) {
- 		for (param = desc->specs; param->name; param++) {
- 			enum fs_parameter_type t = param->type;
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 16aec32..5a01daa 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -463,7 +463,6 @@ enum {
- };
- 
- static const struct fs_parameter_description fuse_fs_parameters = {
--	.name		= "fuse",
- 	.specs		= fuse_param_specs,
- };
- 
-diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
-index e8b7b0c..d406729 100644
---- a/fs/gfs2/ops_fstype.c
-+++ b/fs/gfs2/ops_fstype.c
-@@ -1328,7 +1328,6 @@ enum opt_errors {
- };
- 
- static const struct fs_parameter_description gfs2_fs_parameters = {
--	.name = "gfs2",
- 	.specs = gfs2_param_specs,
- 	.enums = gfs2_param_enums,
- };
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index d5c2a31..2ac0143 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -85,7 +85,6 @@ enum hugetlb_param {
- };
- 
- static const struct fs_parameter_description hugetlb_fs_parameters = {
--	.name		= "hugetlbfs",
- 	.specs		= hugetlb_param_specs,
- };
- 
-diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
-index 0e6406c..55d44aa 100644
---- a/fs/jffs2/super.c
-+++ b/fs/jffs2/super.c
-@@ -185,7 +185,6 @@ enum {
- };
- 
- const struct fs_parameter_description jffs2_fs_parameters = {
--	.name		= "jffs2",
- 	.specs		= jffs2_param_specs,
- 	.enums		= jffs2_param_enums,
- };
-diff --git a/fs/proc/root.c b/fs/proc/root.c
-index 0b7c8df..c447654 100644
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -48,7 +48,6 @@ enum proc_param {
- };
- 
- static const struct fs_parameter_description proc_fs_parameters = {
--	.name		= "proc",
- 	.specs		= proc_param_specs,
- };
- 
-diff --git a/fs/ramfs/inode.c b/fs/ramfs/inode.c
-index d82636e..bb7ab56 100644
---- a/fs/ramfs/inode.c
-+++ b/fs/ramfs/inode.c
-@@ -187,7 +187,6 @@ enum ramfs_param {
- };
- 
- const struct fs_parameter_description ramfs_fs_parameters = {
--	.name		= "ramfs",
- 	.specs		= ramfs_param_specs,
- };
- 
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index d9ae27d..ee23a2b 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -107,7 +107,6 @@ enum {
- };
- 
- static const struct fs_parameter_description xfs_fs_parameters = {
--	.name		= "xfs",
- 	.specs		= xfs_param_specs,
- };
- 
-diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
-index dee140d..090a2ed 100644
---- a/include/linux/fs_parser.h
-+++ b/include/linux/fs_parser.h
-@@ -62,7 +62,6 @@ struct fs_parameter_enum {
- };
- 
- struct fs_parameter_description {
--	const char	name[16];		/* Name for logging purposes */
- 	const struct fs_parameter_spec *specs;	/* List of param specifications */
- 	const struct fs_parameter_enum *enums;	/* Enum values */
- };
-@@ -97,12 +96,14 @@ extern int __lookup_constant(const struct constant_table tbl[], size_t tbl_size,
- #ifdef CONFIG_VALIDATE_FS_PARSER
- extern bool validate_constant_table(const struct constant_table *tbl, size_t tbl_size,
- 				    int low, int high, int special);
--extern bool fs_validate_description(const struct fs_parameter_description *desc);
-+extern bool fs_validate_description(const char *name,
-+				    const struct fs_parameter_description *desc);
- #else
- static inline bool validate_constant_table(const struct constant_table *tbl, size_t tbl_size,
- 					   int low, int high, int special)
- { return true; }
--static inline bool fs_validate_description(const struct fs_parameter_description *desc)
-+static inline bool fs_validate_description(const char *name,
-+					   const struct fs_parameter_description *desc)
- { return true; }
- #endif
- 
-diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
-index ecf42be..9608aa4 100644
---- a/kernel/bpf/inode.c
-+++ b/kernel/bpf/inode.c
-@@ -593,7 +593,6 @@ enum {
- };
- 
- static const struct fs_parameter_description bpf_fs_parameters = {
--	.name		= "bpf",
- 	.specs		= bpf_param_specs,
- };
- 
-diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
-index 09f3a41..e711a43 100644
---- a/kernel/cgroup/cgroup-v1.c
-+++ b/kernel/cgroup/cgroup-v1.c
-@@ -900,7 +900,6 @@ enum cgroup1_param {
- };
- 
- const struct fs_parameter_description cgroup1_fs_parameters = {
--	.name		= "cgroup1",
- 	.specs		= cgroup1_param_specs,
- };
- 
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 735af8f..d86d441 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -1823,7 +1823,6 @@ enum cgroup2_param {
- };
- 
- static const struct fs_parameter_description cgroup2_fs_parameters = {
--	.name		= "cgroup2",
- 	.specs		= cgroup2_param_specs,
- };
- 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 165fa63..b6dc807 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -3401,7 +3401,6 @@ enum shmem_param {
- };
- 
- const struct fs_parameter_description shmem_fs_parameters = {
--	.name		= "tmpfs",
- 	.specs		= shmem_param_specs,
- 	.enums		= shmem_param_enums,
- };
-diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
-index a9d6c97..895a563 100644
---- a/net/ceph/ceph_common.c
-+++ b/net/ceph/ceph_common.c
-@@ -291,7 +291,6 @@ enum {
- };
- 
- static const struct fs_parameter_description ceph_parameters = {
--        .name           = "libceph",
-         .specs          = ceph_param_specs,
- };
- 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 116b4d6..54f3463 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2818,7 +2818,6 @@ static int selinux_fs_context_dup(struct fs_context *fc,
- };
- 
- static const struct fs_parameter_description selinux_fs_parameters = {
--	.name		= "SELinux",
- 	.specs		= selinux_param_specs,
- };
- 
-@@ -7145,7 +7144,7 @@ static __init int selinux_init(void)
- 	else
- 		pr_debug("SELinux:  Starting in permissive mode\n");
- 
--	fs_validate_description(&selinux_fs_parameters);
-+	fs_validate_description("selinux", &selinux_fs_parameters);
- 
- 	return 0;
- }
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index ecea41c..646c0b4 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -689,7 +689,6 @@ static int smack_fs_context_dup(struct fs_context *fc,
- };
- 
- static const struct fs_parameter_description smack_fs_parameters = {
--	.name		= "smack",
- 	.specs		= smack_param_specs,
- };
- 
-
+Thanks,
+-Eric
