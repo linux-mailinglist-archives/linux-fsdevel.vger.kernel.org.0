@@ -2,82 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8DAD1158DB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2019 22:55:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36ACF11591E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2019 23:15:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726423AbfLFVz1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Dec 2019 16:55:27 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:42184 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726353AbfLFVz0 (ORCPT
+        id S1726479AbfLFWPG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Dec 2019 17:15:06 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45632 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726461AbfLFWPF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Dec 2019 16:55:26 -0500
-Received: by mail-oi1-f196.google.com with SMTP id j22so1144874oij.9;
-        Fri, 06 Dec 2019 13:55:26 -0800 (PST)
+        Fri, 6 Dec 2019 17:15:05 -0500
+Received: by mail-lf1-f65.google.com with SMTP id 203so6357902lfa.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Dec 2019 14:15:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=DdZJXBa8X+lOuFt5ge19ma+4D6+K1PG13a0GvX5ZzLg=;
-        b=FUaoWLJKKkJSpa77IOgo3V4OXs4n1IdaHOpT0iuEPOG+ICjrwXYQEpsY3kXH2mIiTm
-         0eqcGtygIhhMF8U1aplQElxlZChSQouNJQ9VBFvJduKRtb3qXS0CBQZnuvqh5pRPLdCg
-         MGjGRsfub7WkrlOeDTt8jJ/KxHToQVxPi2siaZpfdS/G8X5EQohcTSTMMJqWUIDnjpW9
-         ZlNh3Cblu7JBCJlI0dq3MvuupOJq6D0lmQ8cJ6Gt+wcVtwHOAdgVW3cnbap/yWLhdN3y
-         H/bKMpVltEFMmu/RHCKJE7BW5467r0YLwbT7Y+TGoJ1vb2vdeVNgllIApVRXNc5e16MW
-         DC3w==
+        bh=r0XBsU0Zwa7k+dx/SYcO/cC8TsFqFe7ap7E70c7vInU=;
+        b=bTZdKzPiqpVSRlIEKZEGDMlBYxFAfG1XtbiNaTYxkA8G285Eux5gFHDmaTnJC4iPE5
+         o8N7+YD5Z1tWk70yIvruVU0BeSE3YsKa/iMNxQrsM+BsOw2M95U/kwIKkGhLzao/qQKm
+         h/+JfuStPH6oZCReJIpg2utxtMnd/SwjidQvA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=DdZJXBa8X+lOuFt5ge19ma+4D6+K1PG13a0GvX5ZzLg=;
-        b=qJFobJHsyHdK/WXs+WOG4ixxG0u9iKMD30g29kyK7r67oThxMF0oCFygvEwFrqU2Iz
-         4UV7J2GMz01gUxT/rSpEMY7BGxIFi7P2Q0+i7tzPfaDBbFesrEnLID6Ec7NbhS4HlOx5
-         XDf3nimlXqZpB5aLacQuNwwkLLnOJALxZy+nUvpXuEAb85VIb2vKwd0qwiqCmPBZ2DQc
-         HhUBhodmOr5Fepam7S80Xa30IzWVFjEBpr//BzkZCB0s7IIJymV2vfg57hujsnkRndHq
-         xYyOI30Yk8bSih8gp+xiZnrK04gitCQZqErDmoEAQZdXPXPFUXpwsjziErgmXzATFDhC
-         EtXg==
-X-Gm-Message-State: APjAAAVtZ3z94Lq8Mkwt69v6LwvTcDpjJK47Cf+YeMQo/d8HOWNO90ar
-        lhxjhWIaXA5V6HziBqLtI28Rg/V66Atw/JUKLtI=
-X-Google-Smtp-Source: APXvYqzTZhKmcHIyaf7FmMdY6ofez0cdgtOTpkpMQT2fDMHMgm54dEMCiodxPiF/Wumie+M5Z+ZVkjqd/P69V8xs5HA=
-X-Received: by 2002:a05:6808:98b:: with SMTP id a11mr14712513oic.62.1575669325938;
- Fri, 06 Dec 2019 13:55:25 -0800 (PST)
+        bh=r0XBsU0Zwa7k+dx/SYcO/cC8TsFqFe7ap7E70c7vInU=;
+        b=kGAWKkzgZDRBl566SrVy9LLlEVKukidw7Zo5VVa9PSgeKIXIzFh2keSh3EyHLtn1OX
+         7V3slDp+waXy2F0rTizy5YsnzrP+VcWYvhX0T55s1yh/+7+1+RoCRP+k/8jR9Qz5Sy5B
+         8ppXfAedOVqwyWS39nvCOeeDr5KRqAqlJ+YgQr2qhfm7QMS9YVZY23idoq5OvjWUyCup
+         6ewmmTqQTJCt/fRVcYG348rTQCPHfE/hqrY4fmvTJ9uR5c6v8iPyivzgTZt+tYwZw17M
+         AOleLj2swkN+CRjFOaB4/pHp1eX1+fjNsOTGVrMvBiD4I+0dbI1gzZryp9u+kXOjSN5P
+         W9Aw==
+X-Gm-Message-State: APjAAAVrJJJtSaAHbcaeDKMJqsY9Oi8IImXMr532nQ8j+TOpC6IxbB0M
+        eFuL5+fj1kD5DkXvr2V5tvIL3mrvcvA=
+X-Google-Smtp-Source: APXvYqxLo1fi5jl4AOcTXZbOc66JiRQC3YXvHRAYko3F1vq9PRUS76KunJuqATTIK1SbgZcAdkra+g==
+X-Received: by 2002:ac2:5498:: with SMTP id t24mr5260354lfk.84.1575670502700;
+        Fri, 06 Dec 2019 14:15:02 -0800 (PST)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id z9sm7194244ljm.40.2019.12.06.14.15.01
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Dec 2019 14:15:01 -0800 (PST)
+Received: by mail-lf1-f52.google.com with SMTP id 9so6382056lfq.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Dec 2019 14:15:01 -0800 (PST)
+X-Received: by 2002:ac2:555c:: with SMTP id l28mr9167196lfk.52.1575670500889;
+ Fri, 06 Dec 2019 14:15:00 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a8a:87:0:0:0:0:0 with HTTP; Fri, 6 Dec 2019 13:55:25 -0800 (PST)
-In-Reply-To: <81423.1575627938@turing-police>
-References: <20191125000326.24561-1-namjae.jeon@samsung.com>
- <CGME20191125000628epcas1p28c532d9b7f184945c40e019ce9ef0dd0@epcas1p2.samsung.com>
- <20191125000326.24561-3-namjae.jeon@samsung.com> <81423.1575627938@turing-police>
-From:   Namjae Jeon <linkinjeon@gmail.com>
-Date:   Sat, 7 Dec 2019 06:55:25 +0900
-Message-ID: <CAKYAXd9yW2j+MqExyxJmN2-bTKMarwebrBKefBZgfj+HF+bpbg@mail.gmail.com>
-Subject: Re: [PATCH v5 02/13] exfat: add super block operations
-To:     =?UTF-8?Q?Valdis_Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>
-Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        gregkh@linuxfoundation.org, hch@lst.de, Markus.Elfring@web.de,
-        sj1557.seo@samsung.com, dwagner@suse.de, nborisov@suse.com
+References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
+ <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk> <20191206214725.GA2108@latitude>
+In-Reply-To: <20191206214725.GA2108@latitude>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 6 Dec 2019 14:14:45 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wga0MPEH5hsesi4Cy+fgaaKENMYpbg2kK8UA0qE3iupgw@mail.gmail.com>
+Message-ID: <CAHk-=wga0MPEH5hsesi4Cy+fgaaKENMYpbg2kK8UA0qE3iupgw@mail.gmail.com>
+Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring,
+ not cursor and length [ver #2]
+To:     Johannes Hirte <johannes.hirte@datenkhaos.de>
+Cc:     David Howells <dhowells@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->> +{
->> +	struct exfat_sb_info *sbi = sb->s_fs_info;
->> +	struct exfat_mount_options *opts = &sbi->options;
->> +	struct inode *root_inode;
->> +	int err;
->> +
->> +	if (opts->allow_utime == -1)
->> +		opts->allow_utime = ~opts->fs_dmask & 0022;
+On Fri, Dec 6, 2019 at 1:47 PM Johannes Hirte
+<johannes.hirte@datenkhaos.de> wrote:
 >
-> This throws a warning when building with W=1:
->
->   CC [M]  fs/exfat/super.o
-> fs/exfat/super.c: In function 'exfat_fill_super':
-> fs/exfat/super.c:552:24: warning: comparison is always false due to limited
-> range of data type [-Wtype-limits]
->   552 |  if (opts->allow_utime == -1)
->       |                        ^~
-Okay, I will fix it on next version.
-Thanks for review!
+> This change breaks firefox on my system. I've noticed that some pages
+> doesn't load correctly anymore (e.g. facebook, spiegel.de). The pages
+> start loading and than stop. Looks like firefox is waiting for some
+> dynamic loading content. I've bisected to this commit, but can't revert
+> because of conflicts.
+
+Can you check the current git tree, and see if we've fixed it for you.
+There are several fixes there, one being the (currently) topmost
+commit 76f6777c9cc0 ("pipe: Fix iteration end check in
+fuse_dev_splice_write()").
+
+I _just_ pushed out that one, so check that you get it - it sometimes
+takes a couple of minutes for the public-facing git servers to mirror
+out. I doubt that's the one that would fix firefox, but still..
+
+               Linus
