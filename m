@@ -2,97 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25CE91157E0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2019 20:44:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F887115801
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2019 20:55:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726332AbfLFToG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Dec 2019 14:44:06 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:36904 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726328AbfLFToG (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Dec 2019 14:44:06 -0500
-Received: by mail-ua1-f65.google.com with SMTP id f9so2997918ual.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Dec 2019 11:44:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=AXjdd1ziV9Br3LYY5TJqLYvVgqNaefSAPWdW46UBnho=;
-        b=cpaoaPhlZgEFkU7NDeqMh5akHc6Ir32RqJUyAA0zG0yu882dRcQsTYvRR+XGBd69SD
-         DeIxVGbTLNVTSDdI6zRz6tryFLFYJ6ahMbHAsUBRNulKr53t5+W1U+LoAmwGb+MQpa9/
-         GHSAaBJ7dT5JZuFlKze9Nxr0XIgI06iwl+LzXJakOIXU5T73rKyzTfgd1zGpUNch8scm
-         Ixt+DW/jdjPX7oRfgVZLCof94mRmAVxT07By2iuUMEsBbaCDqe1icm4py3JFQ6FSsykO
-         Z5myv7ONSg7VA4V0IdFqOpI3EJgFOPPkqwdKU7nrYOEClMbzJpBVuhVz1D+JKDUC0Vcx
-         kq/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=AXjdd1ziV9Br3LYY5TJqLYvVgqNaefSAPWdW46UBnho=;
-        b=rkhyHpRN+L/AMT87Q2lQRXgKVx39qH87WuXu34vi227Afq7VqZnG80jNFqJYoSbnGN
-         XinWgkwowzFcos98D6r4u3++MWC9UmowNCH+5qWD97EQ02mxsu8eiQ1NYamJa60HsRJA
-         O6Kfl4Xjk8YQuU876QTGGi4Yirwtp6auFBtwUT3ZmqU9Lkef5oMXL64owXB6BJD/QMHM
-         9Xm2sc0/Vy2N+yRW7+Hvnti4Q0zDrLQ37GOlA59eDVIniI9daKx/qCGdNepojsv70jOl
-         wMKhu1jsy/TO7bwtg7qx3ITSu6lBE1nLmoWvvpkwk4G27QOsiPLhCIxSISm+s0C/XBEh
-         Gfog==
-X-Gm-Message-State: APjAAAWzmgngCkCf+0Dl2oaRwYoJYdo7XtZEaBPYgWV5VV+9MsxkvDH5
-        mvUFNOPuybQqMo/8jsxC0oAKCbIB9/ysKPdyOR9mQg==
-X-Google-Smtp-Source: APXvYqzH0rT5LHkKYfVahANiUyuD9qsXyiHLt95Sj1B7mk+DAjYbTrws7HeqjRXykH2/qkUJXmMOcVD3ozS75sIGwaQ=
-X-Received: by 2002:ab0:6448:: with SMTP id j8mr12919705uap.19.1575661444568;
- Fri, 06 Dec 2019 11:44:04 -0800 (PST)
+        id S1726377AbfLFTy5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Dec 2019 14:54:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60982 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726325AbfLFTy5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 6 Dec 2019 14:54:57 -0500
+Received: from localhost (c-67-169-218-210.hsd1.or.comcast.net [67.169.218.210])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FE602464E;
+        Fri,  6 Dec 2019 19:54:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575662096;
+        bh=AB1Ig2/Xqpn71+VubvnuzWhRAX5d8Nz/rud1mSkjboQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=RNeNrKqHvlyfUcLZig+rXyh5vu3eJXPlpR9GcFOhAWnamqUZaToyUQ8lLxyuGNT1V
+         oC1gDNR/bWMbM/xEdpzZ1z3sYkZbMa9hYyHt1VpBdCVodP1vI6s9xz2m2G9oDRqMVN
+         +N9488mSj9IkVwjOVlrx+sikPnKW+z3gAWUulRAY=
+Date:   Fri, 6 Dec 2019 11:54:56 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        david@fromorbit.com, linux-kernel@vger.kernel.org,
+        sandeen@sandeen.net, hch@lst.de, agruenba@redhat.com,
+        rpeterso@redhat.com, cluster-devel@redhat.com,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>
+Subject: [GIT PULL] iomap: fixes for 5.5
+Message-ID: <20191206195456.GB9464@magnolia>
 MIME-Version: 1.0
-From:   Mike Marshall <hubcap@omnibond.com>
-Date:   Fri, 6 Dec 2019 14:43:53 -0500
-Message-ID: <CAOg9mSS6daFQWvxUeFpGzC6U9D5ddH-iazskoOgGLML781p5xg@mail.gmail.com>
-Subject: [GIT PULL] orangefs: posix open
-To:     Linus Torvalds <linus971@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Mike Marshall <hubcap@omnibond.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following changes since commit a99d8080aaf358d5d23581244e5da23b35e340b9:
+Hi Linus,
 
-  Linux 5.4-rc6 (2019-11-03 14:07:26 -0800)
+Please pull these iomap bug fixes for 5.5-rc1, which fix a race
+condition and a use-after-free error.
+
+The branch has survived overnight xfstests runs and merges cleanly with
+this morning's master.  Please let me know if anything strange happens.
+
+--D
+
+The following changes since commit 88cfd30e188fcf6fd8304586c936a6f22fb665e5:
+
+  iomap: remove unneeded variable in iomap_dio_rw() (2019-11-26 09:28:47 -0800)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git
-tags/for-linus-5.5-ofs1
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/iomap-5.5-merge-14
 
-for you to fetch changes up to f9bbb68233aa5bd5ef238bd3532fddf92fa1b53c:
+for you to fetch changes up to c275779ff2dd51c96eaae04fac5d766421d6c596:
 
-  orangefs: posix open permission checking... (2019-12-04 08:52:55 -0500)
-
-----------------------------------------------------------------
-orangefs: posix open permission checking...
-
-Orangefs has no open, and orangefs checks file permissions
-on each file access. Posix requires that file permissions
-be checked on open and nowhere else. Orangefs-through-the-kernel
-needs to seem posix compliant.
-
-The VFS opens files, even if the filesystem provides no
-method. We can see if a file was successfully opened for
-read and or for write by looking at file->f_mode.
-
-When writes are flowing from the page cache, file is no
-longer available. We can trust the VFS to have checked
-file->f_mode before writing to the page cache.
-
-The mode of a file might change between when it is opened
-and IO commences, or it might be created with an arbitrary mode.
-
-We'll make sure we don't hit EACCES during the IO stage by
-using UID 0.
+  iomap: stop using ioend after it's been freed in iomap_finish_ioend() (2019-12-05 07:41:16 -0800)
 
 ----------------------------------------------------------------
-Mike Marshall (1):
-      orangefs: posix open permission checking...
+Fixes for 5.5-rc1:
+- Fix a UAF when reporting writeback errors
+- Fix a race condition when handling page uptodate on a blocksize <
+  pagesize file that is also fragmented
 
- fs/orangefs/file.c            | 39 +++++++++++++++++++++++++++++++++++++--
- fs/orangefs/inode.c           |  8 ++++----
- fs/orangefs/orangefs-kernel.h |  3 ++-
- 3 files changed, 43 insertions(+), 7 deletions(-)
+----------------------------------------------------------------
+Christoph Hellwig (1):
+      iomap: fix sub-page uptodate handling
+
+Zorro Lang (1):
+      iomap: stop using ioend after it's been freed in iomap_finish_ioend()
+
+ fs/iomap/buffered-io.c | 40 ++++++++++++++++++++++++++++------------
+ 1 file changed, 28 insertions(+), 12 deletions(-)
