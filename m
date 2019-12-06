@@ -2,120 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B44D4115008
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2019 12:48:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A1561151A1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2019 14:56:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726325AbfLFLsB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Dec 2019 06:48:01 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:38716 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbfLFLsB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Dec 2019 06:48:01 -0500
-Received: by mail-lf1-f68.google.com with SMTP id r14so5045903lfm.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Dec 2019 03:47:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Hhh6mle6wsMeItwQwyNxvjvSqox2y1Yqv8ZKxxJv+Iw=;
-        b=RMGuSUqj06dSTepAFuR1WkL9q19jLPZAoArLujv15uwTBIOtBi6sx8NTTykK9n2FOY
-         Zd6tT/GI5bj2rEMXqOm/sKug7mIXpF0zstb4O2nDCNQgHC0WRLK4gH6wXb8zAHkL++rb
-         oAGMaUCeXfvHbgH2hcAzGmI2+SPQ6uApwIdjUpAc+0tHE0YYzqlTC116wid7SWsQOfsa
-         Amy+9pCh4nXp8NwawglEBVLaAWz6u4wCFk6zV9TjQG+WGAkHCuxkdAne0jJ5dU16JLTS
-         SCc3vG+PBBoYk6AGIlTaBZZ4LXEL/bePW9RyD83peDaIvg5aMgv70iFqN//ghEdN3aj1
-         vwAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Hhh6mle6wsMeItwQwyNxvjvSqox2y1Yqv8ZKxxJv+Iw=;
-        b=lRghIWIkhlFFmEJu0QSh2TPfTzVrKFjn55QcIG+fN1acS6FXKvKYOHL6g48Tls+epR
-         xMHwB/yrOBeWODZUrD/mQYkWgrc0k0EekUW9Q31BVxADmXiZmMGWraZKOeUfUiWcyRiA
-         nJizlV5a+GK1nzwDtPw/ZZjYpupK/y7MlzPkeJUei8Ih3tASLQfcNZwYbYHECCGRRdfB
-         CgkmZentWebOl6NvEd8nSeUutWjPsl7I9sqBUEPWGBMCXTa4lO667QMJypsC9/jW+2rU
-         yE0Fr/N3ruL2BKCLnigFZf8bFCHr4UNTQ4Tp4Ru4VoRm6NMNTRPs88z13GOimQTXo36W
-         3h/Q==
-X-Gm-Message-State: APjAAAUPH7FEIi+unD7To2p2pG9yR1UWg2WcosbVEe+5d6kovQGr18Jb
-        j2p0uNozSWXxyFFx5qXXNxN/1g==
-X-Google-Smtp-Source: APXvYqwdyDdSV6H7InUMwrXsqETxr8BCo0cBubMkB4YL/A4l5qsksa/lNvUo3xTXRHSnLwl0uBVEgg==
-X-Received: by 2002:ac2:52a5:: with SMTP id r5mr7905464lfm.19.1575632878888;
-        Fri, 06 Dec 2019 03:47:58 -0800 (PST)
-Received: from msk1wst115n.omp.ru (mail.omprussia.ru. [5.134.221.218])
-        by smtp.gmail.com with ESMTPSA id z7sm5084034lfa.81.2019.12.06.03.47.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 06 Dec 2019 03:47:58 -0800 (PST)
-Message-ID: <37c9494c40998d23d0d68afaa5a7f942a23e8986.camel@dubeyko.com>
-Subject: Re: [RFC] Thing 1: Shardmap fox Ext4
-From:   Vyacheslav Dubeyko <slava@dubeyko.com>
-To:     Daniel Phillips <daniel@phunq.net>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Date:   Fri, 06 Dec 2019 14:47:57 +0300
-In-Reply-To: <c61706fb-3534-72b9-c4ae-0f0972bc566b@phunq.net>
-References: <176a1773-f5ea-e686-ec7b-5f0a46c6f731@phunq.net>
-         <20191127142508.GB5143@mit.edu>
-         <6b6242d9-f88b-824d-afe9-d42382a93b34@phunq.net>
-         <9ed62cfea37bfebfb76e378d482bd521c7403c1f.camel@dubeyko.com>
-         <c61706fb-3534-72b9-c4ae-0f0972bc566b@phunq.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726598AbfLFN4M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Dec 2019 08:56:12 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42268 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726475AbfLFN4M (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 6 Dec 2019 08:56:12 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C886FAB87;
+        Fri,  6 Dec 2019 13:56:10 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 23E53DA7AA; Fri,  6 Dec 2019 14:56:05 +0100 (CET)
+Date:   Fri, 6 Dec 2019 14:56:04 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     David Howells <dhowells@redhat.com>
+Cc:     torvalds@linux-foundation.org, ebiggers@kernel.org,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
+Message-ID: <20191206135604.GB2734@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, David Howells <dhowells@redhat.com>,
+        torvalds@linux-foundation.org, ebiggers@kernel.org,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <157558502272.10278.8718685637610645781.stgit@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <157558502272.10278.8718685637610645781.stgit@warthog.procyon.org.uk>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2019-12-05 at 01:46 -0800, Daniel Phillips wrote:
-> On 2019-12-04 7:55 a.m., Vyacheslav Dubeyko wrote:
-> > > 
+On Thu, Dec 05, 2019 at 10:30:22PM +0000, David Howells wrote:
+> David Howells (2):
+>       pipe: Remove assertion from pipe_poll()
+>       pipe: Fix missing mask update after pipe_wait()
 
-<snipped and reoredered>
+For reference, I've retested current master (b0d4beaa5a4b7d), that
+incldes the 2 pipe fixes, the test still hangs.
 
-> And here is a diagram of the Shardmap three level hashing scheme,
-> which ties everything together:
-> 
->    https://github.com/danielbot/Shardmap/wiki/Shardmap-hashing-scheme
-> 
-> This needs explanation. It is something new that you won't find in
-> any
-> textbook, this is the big reveal right here.
-> 
+The stack now points to pipe_wait but otherwise seems to be the same:
 
-This diagram is pretty good and provides the high-level view of the
-whole scheme. But, maybe, it makes sense to show the granularity of
-hash code. It looks like the low hash is the hash of a name. Am I
-correct? But how the mid- and high- parts of the hash code are defined?
-It looks like that cached shard stores LBAs of record entry blocks are
-associated with the low hash values. But what does it mean that shard
-is cached?
+[<0>] pipe_wait+0x72/0xc0
+[<0>] pipe_write+0x217/0x4b0
+[<0>] new_sync_write+0x11e/0x1c0
+[<0>] vfs_write+0xc1/0x1d0
+[<0>] kernel_write+0x2c/0x40
+[<0>] send_cmd+0x78/0xf0 [btrfs]
+[<0>] send_extent_data+0x4af/0x52a [btrfs]
+[<0>] process_extent+0xe5d/0xeb4 [btrfs]
+[<0>] changed_cb+0xcf5/0xd2f [btrfs]
+[<0>] send_subvol+0x8af/0xc0d [btrfs]
+[<0>] btrfs_ioctl_send+0xe2b/0xef0 [btrfs]
+[<0>] _btrfs_ioctl_send+0x80/0x110 [btrfs]
+[<0>] btrfs_ioctl+0x14b8/0x3120 [btrfs]
+[<0>] do_vfs_ioctl+0xa1/0x750
+[<0>] ksys_ioctl+0x70/0x80
+[<0>] __x64_sys_ioctl+0x16/0x20
+[<0>] do_syscall_64+0x56/0x240
+[<0>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Here is a diagram of the cache structures, very simple:
-> 
->    https://github.com/danielbot/Shardmap/wiki/Shardmap-cache-format
-> 
-
-This diagram is not easy to relate with the previous one. So, shard
-table and shard array are the same entities or not? Or do you mean that
-shard table is storeed on the volume but shard array is constructed in
-memory?
-
->There is a diagram here:
-> 
->    
-> 
-https://github.com/danielbot/Shardmap/wiki/Shardmap-record-block-format
-
-I am slightly confused here. Does header be located at the bottom of
-the record block? My understanding is that records grow from top of the
-block down to the header direction. Am I correct? Why header is not
-located at the top of the block with entry dictionary? Any special
-purpose here?
-
-Thanks,
-Viacheslav Dubeyko.
-
-
+(gdb) l *(pipe_wait+0x72)
+0x622 is in pipe_wait (fs/pipe.c:120).
+115              * is considered a noninteractive wait:
+116              */
+117             prepare_to_wait(&pipe->wait, &wait, TASK_INTERRUPTIBLE);
+118             pipe_unlock(pipe);
+119             schedule();
+120             finish_wait(&pipe->wait, &wait);
+121             pipe_lock(pipe);
+122     }
+123
+124     static void anon_pipe_buf_release(struct pipe_inode_info *pipe,
