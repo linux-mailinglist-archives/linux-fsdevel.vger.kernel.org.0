@@ -2,95 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B195114A8E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2019 02:38:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8149114ACC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2019 03:10:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726067AbfLFBiW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Dec 2019 20:38:22 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:52660 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725959AbfLFBiV (ORCPT
+        id S1726160AbfLFCKI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Dec 2019 21:10:08 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:45500 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726065AbfLFCKH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Dec 2019 20:38:21 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1id2ZX-00028J-6s; Fri, 06 Dec 2019 01:38:19 +0000
-Date:   Fri, 6 Dec 2019 01:38:19 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Ritesh Harjani <riteshh@linux.ibm.com>
-Subject: [git pull] vfs.git d_inode/d_flags barriers
-Message-ID: <20191206013819.GL4203@ZenIV.linux.org.uk>
+        Thu, 5 Dec 2019 21:10:07 -0500
+Received: from dread.disaster.area (pa49-179-150-192.pa.nsw.optusnet.com.au [49.179.150.192])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 4B22F7EA9DE;
+        Fri,  6 Dec 2019 13:09:54 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1id345-0007fT-Ps; Fri, 06 Dec 2019 13:09:53 +1100
+Date:   Fri, 6 Dec 2019 13:09:53 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc:     Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Chris Down <chris@chrisdown.name>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Tejun Heo <tj@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Konstantin Khorenko <khorenko@virtuozzo.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        linux-nfs@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] mm: fix hanging shrinker management on long
+ do_shrink_slab
+Message-ID: <20191206020953.GS2695@dread.disaster.area>
+References: <20191129214541.3110-1-ptikhomirov@virtuozzo.com>
+ <4e2d959a-0b0e-30aa-59b4-8e37728e9793@virtuozzo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <4e2d959a-0b0e-30aa-59b4-8e37728e9793@virtuozzo.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=ZXpxJgW8/q3NVgupyyvOCQ==:117 a=ZXpxJgW8/q3NVgupyyvOCQ==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=pxVhFHJ0LMsA:10
+        a=7-415B0cAAAA:8 a=qrpnvERzZt7yDo6Pn0wA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-	More fallout from tree-wide audit for ->d_inode/->d_flags barriers
-use.  Basically, the problem is that negative pinned dentries require
-careful treatment - unless ->d_lock is locked or parent is held at least
-shared, another thread can make them positive right under us.
+[please cc me on future shrinker infrastructure modifications]
 
-	Most of the uses turned out to be safe - the main surprises as
-far as filesystems are concerned were
-	* race in dget_parent() fastpath, that might end up with the
-caller observing the returned dentry _negative_, due to insufficient
-barriers.  It is positive in memory, but we could end up seeing
-the wrong value of ->d_inode in CPU cache.  Fixed.
-	* manual checks that result of lookup_one_len_unlocked() is
-positive (and rejection of negatives).  Again, insufficient barriers
-(we might end up with inconsistent observed values of ->d_inode and
-->d_flags).  Fixed by switching to a new primitive that does the
-checks itself and returns ERR_PTR(-ENOENT) instead of a negative
-dentry.  That way we get rid of boilerplate converting negatives
-into ERR_PTR(-ENOENT) in the callers and have a single place to
-deal with the barrier-related mess - inside fs/namei.c rather than
-in every caller out there.
+On Mon, Dec 02, 2019 at 07:36:03PM +0300, Andrey Ryabinin wrote:
+> 
+> On 11/30/19 12:45 AM, Pavel Tikhomirov wrote:
+> > We have a problem that shrinker_rwsem can be held for a long time for
+> > read in shrink_slab, at the same time any process which is trying to
+> > manage shrinkers hangs.
+> > 
+> > The shrinker_rwsem is taken in shrink_slab while traversing shrinker_list.
+> > It tries to shrink something on nfs (hard) but nfs server is dead at
+> > these moment already and rpc will never succeed. Generally any shrinker
+> > can take significant time to do_shrink_slab, so it's a bad idea to hold
+> > the list lock here.
 
-	The guts of pathname resolution *do* need to be careful -
-the race found by Ritesh is real, as well as several similar
-races.  Fortunately, it turns out that we can take care of that
-with fairly local changes in there.
+registering/unregistering a shrinker is not a performance critical
+task. If a shrinker is blocking for a long time, then we need to
+work to fix the shrinker implementation because blocking is a much
+bigger problem than just register/unregister.
 
-	The tree-wide audit had not been fun, and I hate the idea of
-repeating it.  I think the right approach would be to annotate the
-places where we are _not_ guaranteed ->d_inode/->d_flags stability
-and have sparse catch regressions.  But I'm still not sure what would
-be the least invasive way of doing that and it's clearly the next
-cycle fodder.
+> > The idea of the patch is to inc a refcount to the chosen shrinker so it
+> > won't disappear and release shrinker_rwsem while we are in
+> > do_shrink_slab, after that we will reacquire shrinker_rwsem, dec
+> > the refcount and continue the traversal.
 
-The following changes since commit 3e5aeec0e267d4422a4e740ce723549a3098a4d1:
+This is going to cause a *lot* of traffic on the shrinker rwsem.
+It's already a pretty hot lock on large machines under memory
+pressure (think thousands of tasks all doing direct reclaim across
+hundreds of CPUs), and so changing them to cycle the rwsem on every
+shrinker that will only make this worse. Esepcially when we consider
+that there may be hundreds to thousands of registered shrinker
+instances on large machines.
 
-  cramfs: fix usage on non-MTD device (2019-11-23 21:44:49 -0500)
+As an example of how frequent cycling of a global lock in shrinker
+instances causes issues, we used to take references to superblock
+shrinker count invocations to guarantee existence. This was found to
+be a scalability limitation when lots of near-empty superblocks were
+present in a system (see commit d23da150a37c ("fs/superblock: avoid
+locking counting inodes and dentries before reclaiming them")).
 
-are available in the git repository at:
+This alleviated the problem for a while, but soon we had problems
+with just taking a reference to the superblock in the callbacks that
+did actual work. Hence we changed it to just take a per-superblock
+rwsem to get rid of the global sb_lock spinlock in this path. See
+commit eb6ef3df4faa ("trylock_super(): replacement for
+grab_super_passive()". Now we don't have a scalability problem.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes
+IOWs, we already know that cycling a global rwsem on every
+individual shrinker invocation is going to cause noticable
+scalability problems. Hence I don't think that this sort of "cycle
+the global rwsem faster to reduce [un]register latency" solution is
+going to fly because of the runtime performance regressions it will
+introduce....
 
-for you to fetch changes up to 2fa6b1e01a9b1a54769c394f06cd72c3d12a2d48:
+> I don't think this patch solves the problem, it only fixes one minor symptom of it.
+> The actual problem here the reclaim hang in the nfs.
 
-  fs/namei.c: fix missing barriers when checking positivity (2019-11-15 13:49:04 -0500)
+The nfs client is waiting on the NFS server to respond. It may
+actually be that the server has hung, not the client...
 
-----------------------------------------------------------------
-Al Viro (4):
-      fs/namei.c: pull positivity check into follow_managed()
-      new helper: lookup_positive_unlocked()
-      fix dget_parent() fastpath race
-      fs/namei.c: fix missing barriers when checking positivity
+> It means that any process, including kswapd, may go into nfs inode reclaim and stuck there.
 
- fs/cifs/cifsfs.c       |  7 +------
- fs/dcache.c            |  6 ++++--
- fs/debugfs/inode.c     |  6 +-----
- fs/kernfs/mount.c      |  2 +-
- fs/namei.c             | 56 ++++++++++++++++++++++++++++----------------------
- fs/nfsd/nfs3xdr.c      |  4 +---
- fs/nfsd/nfs4xdr.c      | 11 +---------
- fs/overlayfs/namei.c   | 24 ++++++++--------------
- fs/quota/dquot.c       |  7 +------
- include/linux/dcache.h |  5 +++++
- include/linux/namei.h  |  1 +
- 11 files changed, 56 insertions(+), 73 deletions(-)
+*nod*
+
+> I think this should be handled on nfs/vfs level by making  inode eviction during reclaim more asynchronous.
+
+That's what we are trying to do with similar blocking based issues
+in XFS inode reclaim. It's not simple, though, because these days
+memory reclaim is like a bowl full of spaghetti covered with a
+delicious sauce of non-obvious heuristics and broken
+functionality....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
