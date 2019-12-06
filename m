@@ -2,77 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD9E3114B03
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2019 03:43:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EF08114B83
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2019 04:54:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726395AbfLFCnj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Dec 2019 21:43:39 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:44537 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726198AbfLFCni (ORCPT
+        id S1726243AbfLFDyR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Dec 2019 22:54:17 -0500
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:43768 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726198AbfLFDyR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Dec 2019 21:43:38 -0500
-Received: by mail-il1-f195.google.com with SMTP id z12so4899603iln.11;
-        Thu, 05 Dec 2019 18:43:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TwnBRTdDP35mDXJCuQNvxNiSYSSqXwSGYAdihSOqw+M=;
-        b=gCLNHz0qL4ivBuWruGSb8Xtxv2Z1379625iOP5mM4vBOY4sCCvuXZ+vvF2UJDRi+yn
-         QxHqtTvfoxkT5y8pzoTHiaWJiRIYMXDvjiGbgLBglM11TaQUOZZqHr0wmr2iUNkiNwk4
-         tJJ0BexyBfvQ3IWJl7duudecacL2B0mi2xk1VyYCJkv2SplICq+a5qha8bXgkE8ysj6u
-         xWP4t6uuzlfTJRrHemZx3MJpRhfgbal9n9D8BQylY9kElVBfPwxTLsbZYmpNvcAzGUsT
-         W4+96ljzNYUyPztXTqM6/v/gBgXt9tBYfiSIZcg69cxet1DimIaX4LTs/h7kGaKmf/V1
-         F/WQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TwnBRTdDP35mDXJCuQNvxNiSYSSqXwSGYAdihSOqw+M=;
-        b=WiUjVf3iXLtM3dJGhm7YugRwY9TS37yUy4FnEJX4eUyXNJmDk4QYG6/o99rPDfj5hY
-         PfjNoDXZ2Cl/lA6uzOhPoUvbYWo3bcB06345h6Z2IJlTXnZVpcIBMv8AFlRNRHOPwGAC
-         e24WvI1rcyiBROi6QrKTHvQfzA9VB9ncrf96TjDoxxvZGyO99KAKLoTPsV1xkcmxZhzj
-         Z4KLPADSizQ9JIpuWm9SpVz8HP5CE6jGm/FJroBJxq0m3twYWp6jB3x2Znwq4WVHwy3d
-         V0rkjbsCCg82YSqQsOKzllncE6mKMlp0pboMUx4gtXKMvDJ8TGMZKZLHSuyT6FUcIwcG
-         zhZA==
-X-Gm-Message-State: APjAAAVWWE921Tt+1f185ydrvPJ43r3x33JZfncuTmbKd55+mbfaBj9B
-        4bugeIeViten3aoDQGyvaz1me8mu2XKnHglFfO8=
-X-Google-Smtp-Source: APXvYqzRyd3cAihQ+Rt6RtZIFeU6QgRGdFGDxYndwn7fjlACobL26vsFf06MfqJiSaF7mTavf4q0Snt02U+m1Zo1HH4=
-X-Received: by 2002:a92:7f0a:: with SMTP id a10mr12071154ild.110.1575600217860;
- Thu, 05 Dec 2019 18:43:37 -0800 (PST)
+        Thu, 5 Dec 2019 22:54:17 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=jiufei.xue@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Tk5aP4X_1575604447;
+Received: from ali-186590e05fa3.local(mailfrom:jiufei.xue@linux.alibaba.com fp:SMTPD_---0Tk5aP4X_1575604447)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 06 Dec 2019 11:54:07 +0800
+Subject: Re: [PATCH V2 0/2] ovl: implement async IO routines
+To:     miklos@szeredi.hu, amir73il@gmail.com
+Cc:     linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <1574243126-59283-1-git-send-email-jiufei.xue@linux.alibaba.com>
+ <052a9b10-1cca-35d0-622a-d597421b3ecf@linux.alibaba.com>
+From:   Jiufei Xue <jiufei.xue@linux.alibaba.com>
+Message-ID: <7ff1ed40-ef1c-32e6-a539-1f10aa46dd42@linux.alibaba.com>
+Date:   Fri, 6 Dec 2019 11:54:07 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <20191203051945.9440-1-deepa.kernel@gmail.com>
-In-Reply-To: <20191203051945.9440-1-deepa.kernel@gmail.com>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Thu, 5 Dec 2019 18:43:26 -0800
-Message-ID: <CABeXuvpkYQbsvGTuktEAR8ptr478peet3EH=RD0v+nK5o2Wmjg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] Delete timespec64_trunc()
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Jeff Layton <jlayton@kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        Steve French <stfrench@microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <052a9b10-1cca-35d0-622a-d597421b3ecf@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 2, 2019 at 9:20 PM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
-> This series aims at deleting timespec64_trunc().
-> There is a new api: timestamp_truncate() that is the
-> replacement api. The api additionally does a limits
-> check on the filesystem timestamps.
+ping again.
 
-Al/Andrew, can one of you help merge these patches?
+From my test, the patchset can improve the performance significantly.
 
-Thanks,
--Deepa
+The following data are tested on INTEL P4510 NVMe using fio with iodepth
+128 and blocksize 4k.
+
+----------------------------------------------------------------
+                      |       RANDREAD     |     RANDWRITE     |
+----------------------------------------------------------------
+w/ async IO routines  |        377MB/s     |      405MB/s      |
+----------------------------------------------------------------
+w/o async IO routines |        32.0MB/s	   |      62.3MB/s     |
+----------------------------------------------------------------
+
+Regards,
+Jiufei
+
+On 2019/11/26 上午10:00, Jiufei Xue wrote:
+> Hi miklos,
+> 
+> Could you please kindly review this patch and give some advice?
+> 
+> Thanks,
+> Jiufei
+> 
+> On 2019/11/20 下午5:45, Jiufei Xue wrote:
+>> ovl stacks regular file operations now. However it doesn't implement
+>> async IO routines and will convert async IOs to sync IOs which is not
+>> expected.
+>>
+>> This patchset implements overlayfs async IO routines.
+>>
+>> Jiufei Xue (2)
+>> vfs: add vfs_iocb_iter_[read|write] helper functions
+>> ovl: implement async IO routines
+>>
+>>  fs/overlayfs/file.c      |  116 +++++++++++++++++++++++++++++++++++++++++------
+>>  fs/overlayfs/overlayfs.h |    2
+>>  fs/overlayfs/super.c     |   12 ++++
+>>  fs/read_write.c          |   58 +++++++++++++++++++++++
+>>  include/linux/fs.h       |   16 ++++++
+>>  5 files changed, 188 insertions(+), 16 deletions(-)
+>>
+> 
