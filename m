@@ -2,79 +2,222 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC64B114DB1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2019 09:35:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2664114DBB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2019 09:46:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726455AbfLFIfe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Dec 2019 03:35:34 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:40466 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725866AbfLFIfe (ORCPT
+        id S1726353AbfLFIqa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Dec 2019 03:46:30 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:35402 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725966AbfLFIqa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Dec 2019 03:35:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575621333;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=iPZy+V17MKteQvTO9+cmdtR7EFzYQSfyCwkrYE6HtDQ=;
-        b=PdWnXlEFOFUAt/R5raSUUtqmvKxnWVhCrVKNU9T1OqupthqsQHEl8Jfr8UmyeePQGLz5Pt
-        Qw3Y7A1btz7sAIx5NttksFs0sL4xxDjfCF+xJesIAsEQcYl9LcFD30zE8pZl2DTVnPz/Dd
-        /od+8PrUidaUPf24rUutBcpWetnfHyU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-150-23rVRtNFMvyLMhb_N0T65g-1; Fri, 06 Dec 2019 03:35:30 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DE4EE107ACC9;
-        Fri,  6 Dec 2019 08:35:28 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C479B5C1C3;
-        Fri,  6 Dec 2019 08:35:27 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20191121160725.GA19291@infradead.org>
-References: <20191121160725.GA19291@infradead.org> <20191121081923.GA19366@infradead.org> <157432403818.17624.9300948341879954830.stgit@warthog.procyon.org.uk> <30992.1574327471@warthog.procyon.org.uk>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     dhowells@redhat.com, sfrench@samba.org, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] cifs: Don't use iov_iter::type directly
+        Fri, 6 Dec 2019 03:46:30 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R831e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0Tk6pqQa_1575621983;
+Received: from JosephdeMacBook-Pro.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0Tk6pqQa_1575621983)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 06 Dec 2019 16:46:23 +0800
+Subject: Re: [PATCHv4 0/3] Fix inode_lock sequence to scale performance of DIO
+ mixed R/W workload
+To:     Ritesh Harjani <riteshh@linux.ibm.com>, jack@suse.cz,
+        tytso@mit.edu, linux-ext4@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, mbobrowski@mbobrowski.org
+References: <20191205064624.13419-1-riteshh@linux.ibm.com>
+From:   Joseph Qi <joseph.qi@linux.alibaba.com>
+Message-ID: <97fe59fa-0161-c035-40d0-3a9770ab426c@linux.alibaba.com>
+Date:   Fri, 6 Dec 2019 16:46:22 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:60.0)
+ Gecko/20100101 Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-ID: <26835.1575621327.1@warthog.procyon.org.uk>
-Date:   Fri, 06 Dec 2019 08:35:27 +0000
-Message-ID: <26836.1575621327@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-MC-Unique: 23rVRtNFMvyLMhb_N0T65g-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191205064624.13419-1-riteshh@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christoph Hellwig <hch@infradead.org> wrote:
+Tested with the following case:
 
-> > However, all the code that is doing direct accesses using '&' has to
-> > change to make that work - so I've converted it all to using accessors =
-so
-> > that I only have to change the header file, except that the patch to do
-> > that crossed with a cifs patch that added more direct accesses, IIRC.
->=20
-> But I still don't really see the point of the wrappers.  Maybe they are
-> ok as a migration strategy, but in that case this patch mostly makes
-> sense as part of the series only.
+fio -name=parallel_dio_reads_test -filename=/mnt/nvme0n1/testfile \
+-direct=1 -iodepth=1 -thread -rw=randrw -ioengine=psync -bs=$bs \
+-size=20G -numjobs=8 -runtime=600 -group_reporting
 
-Can we at least push this patch?  All the other users have been converted t=
-o
-use the wrappers upstream, just not these because the patch adding them
-crossed with the wrapper patch.  Then everything is consistent (unless more
-unwrapped users got added in the merge window).
+The performance result is the same as reverting parallel dio reads[1]
+or even slightly better in both bandwidth and latency, which is as
+expected.
 
-David
+So, Tested-by: Joseph Qi <joseph.qi@linux.alibaba.com>
 
+[1]: https://lore.kernel.org/linux-ext4/1566871552-60946-4-git-send-email-joseph.qi@linux.alibaba.com/
+
+On 19/12/5 14:46, Ritesh Harjani wrote:
+> Changes from RFCv3 => PATCHv4
+> 1. Dropped patch-2 which introduced ext4_ilock/iunlock API based on discussion.
+> Now the lock/unlock decision is open coded in ext4_dio_write_iter() &
+> ext4_dio_write_checks().
+> 
+> 2. Addressed review comments from Jan on last 2 patches.
+> 
+> Please note that apart from all the conditions mentioned in patch-3 there is
+> still an existing race. It is between ext4_page_mkwrite & DIO read in parallel.
+> This is discussed in detail at [7].
+> Since that race exist even before this patch series and is not caused
+> due to this patch series, I plan to address that after these patches are merged.
+> It is to ensure proper testing/review and to not club too many things in one go.
+> 
+> These patches are tested again with "xfstests -g auto". There were no new
+> failures except the known one.
+> 
+> 
+> Background (copied from previous with some edits)
+> =================================================
+> 
+> These are ilock patches which helps improve the current inode lock scalabiliy
+> problem in ext4 DIO mixed read/write workload case. The problem was first
+> reported by Joseph [1]. This should help improve mixed read/write workload
+> cases for databases which use directIO.
+> 
+> These patches are based upon upstream discussion with Jan Kara & Joseph [2].
+> 
+> The problem really is that in case of DIO overwrites, we start with
+> a exclusive lock and then downgrade it later to shared lock. This causes a
+> scalability problem in case of mixed DIO read/write workload case. 
+> i.e. if we have any ongoing DIO reads and then comes a DIO writes,
+> (since writes starts with excl. inode lock) then it has to wait until the
+> shared lock is released (which only happens when DIO read is completed). 
+> Same is true for vice versa as well.
+> The same can be easily observed with perf-tools trace analysis [3].
+> 
+> This patch series (Patch-3) helps fix that situation even without
+> dioread_nolock mount opt. This is inline with the discussions with Jan [4].
+> More details about this are mentioned in commit msg of patch 2 & 3.
+> 
+> These patches are based on the top of Ted's ext4 master tree.
+> 
+> Patch description
+> =================
+> Patch-1: Fixes ext4_dax_read/write inode locking sequence for IOCB_NOWAIT
+> 
+> Patch-2: Starts with shared inode lock in case of DIO instead of exclusive inode
+> lock. This patchset helps fix the reported scalablity problem. But this fixes it
+> only for dioread_nolock mount option.
+> 
+> Patch-3: In this we get away with dioread_nolock mount option condition
+> to check for shared locking. This patch commit msg describe in
+> detail about why we don't need excl. lock even without dioread_nolock.
+> 
+> Git tree
+> ========
+> https://github.com/riteshharjani/linux/tree/ext4-ilock-PATCHv4
+> 
+> Testing
+> =======
+> Completed xfstests -g auto with default mkfs & mount opts.
+> No new failures except the known one without these patches.
+> 
+> 
+> Performance results
+> ===================
+> Collected some performance numbers for DIO sync mixed random read/write
+> workload w.r.t number of threads (ext4) to check for scalability.
+> The performance historgram shown below is the percentage change in
+> performance by using this ilock patchset as compared to vanilla kernel.
+> 
+> 
+> FIO command:
+> fio -name=DIO-mixed-randrw -filename=./testfile -direct=1 -iodepth=1 -thread \
+> -rw=randrw -ioengine=psync -bs=$bs -size=10G -numjobs=$thread \
+> -group_reporting=1 -runtime=120
+> 
+> Used fioperf tool [5] for collecting this performance scores.
+> 
+> Below shows the performance benefit hist with this ilock patchset in (%)
+> w.r.t vanilla kernel for mixed randrw workload (for 4K block size).
+> Notice, the percentage benefit increases with increasing number of
+> threads. So this patchset help achieve good scalability in the mentioned
+> workload. Also this gives upto ~140% perf improvement in 24 threads mixed randrw
+> workload with 4K burst size.
+> The performance difference can be even higher with high speed storage
+> devices, since bw speeds without the patch seems to flatten due to lock
+> contention problem in case of multiple threads.
+> [Absolute perf delta can be seen at [6]]
+> 
+> 
+> 		Performance benefit (%) data randrw (read)-4K
+> 		    (default mount options)
+>   160 +-+------+-------+--------+--------+-------+--------+-------+------+-+
+>       |        +       +        +        +       +        +       +        |
+>   140 +-+ 							   **    +-+
+>       |                                                    **      **      |
+>   120 +-+                                         **       **      **    +-+
+>       |                                           **       **      **      |
+>   100 +-+                                **       **       **      **    +-+
+>       |                                  **       **       **      **      |
+>    80 +-+                                **       **       **      **    +-+
+>       |                                  **       **       **      **      |
+>       |                          **      **       **       **      **      |
+>    60 +-+                        **      **       **       **      **    +-+
+>       |                          **      **       **       **      **      |
+>    40 +-+                        **      **       **       **      **    +-+
+>       |                 **       **      **       **       **      **      |
+>    20 +-+               **       **      **       **       **      **    +-+
+>       |                 **       **      **       **       **      **      |
+>     0 +-+       **      **       **      **       **       **      **    +-+
+>       |        +       +        +        +       +        +       +        |
+>   -20 +-+------+-------+--------+--------+-------+--------+-------+------+-+
+>                1       2        4        8      12       16      24
+> 	       		Threads
+> 
+> 
+> 		Performance benefit (%) data randrw (write)-4K
+> 		     (default mount options)
+>   160 +-+------+-------+--------+--------+-------+--------+-------+------+-+
+>       |        +       +        +        +       +        +       +        |
+>   140 +-+ 							   **    +-+
+>       |                                                    **      **      |
+>   120 +-+                                         **       **      **    +-+
+>       |                                           **       **      **      |
+>   100 +-+                                **       **       **      **    +-+
+>       |                                  **       **       **      **      |
+>    80 +-+                                **       **       **      **    +-+
+>       |                                  **       **       **      **      |
+>       |                          **      **       **       **      **      |
+>    60 +-+                        **      **       **       **      **    +-+
+>       |                          **      **       **       **      **      |
+>    40 +-+                        **      **       **       **      **    +-+
+>       |                 **       **      **       **       **      **      |
+>    20 +-+               **       **      **       **       **      **    +-+
+>       |                 **       **      **       **       **      **      |
+>     0 +-+       **      **       **      **       **       **      **    +-+
+>       |        +       +        +        +       +        +       +        |
+>   -20 +-+------+-------+--------+--------+-------+--------+-------+------+-+
+>                1       2        4        8      12       16      24
+> 			Threads
+> 
+> Previous version
+> ================
+> v3: https://www.spinics.net/lists/linux-ext4/msg68649.html
+> v2: https://www.spinics.net/lists/kernel/msg3262531.html
+> v1: https://patchwork.ozlabs.org/cover/1163286/
+> 
+> References
+> ==========
+> [1]: https://lore.kernel.org/linux-ext4/1566871552-60946-4-git-send-email-joseph.qi@linux.alibaba.com/
+> [2]: https://lore.kernel.org/linux-ext4/20190910215720.GA7561@quack2.suse.cz/
+> [3]: https://raw.githubusercontent.com/riteshharjani/LinuxStudy/master/ext4/perf.report
+> [4]: https://patchwork.ozlabs.org/cover/1163286/
+> [5]: https://github.com/riteshharjani/fioperf
+> [6]: https://raw.githubusercontent.com/riteshharjani/LinuxStudy/master/ext4/diff_ilock_v3_default_dio_randrw_4K.txt
+> [7]: https://www.spinics.net/lists/linux-ext4/msg68659.html
+> 
+> -ritesh
+> 
+> Ritesh Harjani (3):
+>   ext4: fix ext4_dax_read/write inode locking sequence for IOCB_NOWAIT
+>   ext4: Start with shared i_rwsem in case of DIO instead of exclusive
+>   ext4: Move to shared i_rwsem even without dioread_nolock mount opt
+> 
+>  fs/ext4/file.c | 196 ++++++++++++++++++++++++++++++++++++-------------
+>  1 file changed, 144 insertions(+), 52 deletions(-)
+> 
