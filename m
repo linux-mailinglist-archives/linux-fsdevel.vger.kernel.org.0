@@ -2,91 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51283114AE6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2019 03:28:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD9E3114B03
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Dec 2019 03:43:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726150AbfLFC2x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Dec 2019 21:28:53 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:53196 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726073AbfLFC2x (ORCPT
+        id S1726395AbfLFCnj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Dec 2019 21:43:39 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:44537 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726198AbfLFCni (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Dec 2019 21:28:53 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1id3MR-0003pE-7y; Fri, 06 Dec 2019 02:28:51 +0000
-Date:   Fri, 6 Dec 2019 02:28:51 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Ritesh Harjani <riteshh@linux.ibm.com>
-Subject: Re: [git pull] vfs.git d_inode/d_flags barriers
-Message-ID: <20191206022851.GM4203@ZenIV.linux.org.uk>
-References: <20191206013819.GL4203@ZenIV.linux.org.uk>
- <CAHk-=wgPd1dYZjywZqPYZP-7dD2ihwviYfYLY3i+K=OLk2ZozQ@mail.gmail.com>
+        Thu, 5 Dec 2019 21:43:38 -0500
+Received: by mail-il1-f195.google.com with SMTP id z12so4899603iln.11;
+        Thu, 05 Dec 2019 18:43:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TwnBRTdDP35mDXJCuQNvxNiSYSSqXwSGYAdihSOqw+M=;
+        b=gCLNHz0qL4ivBuWruGSb8Xtxv2Z1379625iOP5mM4vBOY4sCCvuXZ+vvF2UJDRi+yn
+         QxHqtTvfoxkT5y8pzoTHiaWJiRIYMXDvjiGbgLBglM11TaQUOZZqHr0wmr2iUNkiNwk4
+         tJJ0BexyBfvQ3IWJl7duudecacL2B0mi2xk1VyYCJkv2SplICq+a5qha8bXgkE8ysj6u
+         xWP4t6uuzlfTJRrHemZx3MJpRhfgbal9n9D8BQylY9kElVBfPwxTLsbZYmpNvcAzGUsT
+         W4+96ljzNYUyPztXTqM6/v/gBgXt9tBYfiSIZcg69cxet1DimIaX4LTs/h7kGaKmf/V1
+         F/WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TwnBRTdDP35mDXJCuQNvxNiSYSSqXwSGYAdihSOqw+M=;
+        b=WiUjVf3iXLtM3dJGhm7YugRwY9TS37yUy4FnEJX4eUyXNJmDk4QYG6/o99rPDfj5hY
+         PfjNoDXZ2Cl/lA6uzOhPoUvbYWo3bcB06345h6Z2IJlTXnZVpcIBMv8AFlRNRHOPwGAC
+         e24WvI1rcyiBROi6QrKTHvQfzA9VB9ncrf96TjDoxxvZGyO99KAKLoTPsV1xkcmxZhzj
+         Z4KLPADSizQ9JIpuWm9SpVz8HP5CE6jGm/FJroBJxq0m3twYWp6jB3x2Znwq4WVHwy3d
+         V0rkjbsCCg82YSqQsOKzllncE6mKMlp0pboMUx4gtXKMvDJ8TGMZKZLHSuyT6FUcIwcG
+         zhZA==
+X-Gm-Message-State: APjAAAVWWE921Tt+1f185ydrvPJ43r3x33JZfncuTmbKd55+mbfaBj9B
+        4bugeIeViten3aoDQGyvaz1me8mu2XKnHglFfO8=
+X-Google-Smtp-Source: APXvYqzRyd3cAihQ+Rt6RtZIFeU6QgRGdFGDxYndwn7fjlACobL26vsFf06MfqJiSaF7mTavf4q0Snt02U+m1Zo1HH4=
+X-Received: by 2002:a92:7f0a:: with SMTP id a10mr12071154ild.110.1575600217860;
+ Thu, 05 Dec 2019 18:43:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHk-=wgPd1dYZjywZqPYZP-7dD2ihwviYfYLY3i+K=OLk2ZozQ@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20191203051945.9440-1-deepa.kernel@gmail.com>
+In-Reply-To: <20191203051945.9440-1-deepa.kernel@gmail.com>
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+Date:   Thu, 5 Dec 2019 18:43:26 -0800
+Message-ID: <CABeXuvpkYQbsvGTuktEAR8ptr478peet3EH=RD0v+nK5o2Wmjg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] Delete timespec64_trunc()
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Jeff Layton <jlayton@kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        Steve French <stfrench@microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 05, 2019 at 06:15:54PM -0800, Linus Torvalds wrote:
-> On Thu, Dec 5, 2019 at 5:38 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes
-> 
-> I'm not pulling this.
-> 
-> Commit 6c2d4798a8d1 ("new helper: lookup_positive_unlocked()") results
-> in a new - and valid - compiler warning:
-> 
->   fs/quota/dquot.c: In function ‘dquot_quota_on_mount’:
->   fs/quota/dquot.c:2499:1: warning: label ‘out’ defined but not used
-> [-Wunused-label]
->    2499 | out:
->         | ^~~
-> 
-> and I don't want to see new warnings in my tree.
-> 
-> I wish linux-next would complain about warnings (assuming this had
-> been there), because they aren't ok.
+On Mon, Dec 2, 2019 at 9:20 PM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+> This series aims at deleting timespec64_trunc().
+> There is a new api: timestamp_truncate() that is the
+> replacement api. The api additionally does a limits
+> check on the filesystem timestamps.
 
-Fixed...  Could you pull #fixes1 instead?  diff is literally removal of one
-line; updated shortlog/diffstat follows:
+Al/Andrew, can one of you help merge these patches?
 
-The following changes since commit 3e5aeec0e267d4422a4e740ce723549a3098a4d1:
-
-  cramfs: fix usage on non-MTD device (2019-11-23 21:44:49 -0500)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes1
-
-for you to fetch changes up to 7fcd59b64a7b69718cc851865a1578138b481541:
-
-  fs/namei.c: fix missing barriers when checking positivity (2019-12-05 21:04:35 -0500)
-
-----------------------------------------------------------------
-Al Viro (4):
-      fs/namei.c: pull positivity check into follow_managed()
-      new helper: lookup_positive_unlocked()
-      fix dget_parent() fastpath race
-      fs/namei.c: fix missing barriers when checking positivity
-
- fs/cifs/cifsfs.c       |  7 +------
- fs/dcache.c            |  6 ++++--
- fs/debugfs/inode.c     |  6 +-----
- fs/kernfs/mount.c      |  2 +-
- fs/namei.c             | 56 ++++++++++++++++++++++++++++----------------------
- fs/nfsd/nfs3xdr.c      |  4 +---
- fs/nfsd/nfs4xdr.c      | 11 +---------
- fs/overlayfs/namei.c   | 24 ++++++++--------------
- fs/quota/dquot.c       |  8 +-------
- include/linux/dcache.h |  5 +++++
- include/linux/namei.h  |  1 +
- 11 files changed, 56 insertions(+), 74 deletions(-)
+Thanks,
+-Deepa
