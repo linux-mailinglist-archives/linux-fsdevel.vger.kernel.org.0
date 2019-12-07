@@ -2,95 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26EC4115E35
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Dec 2019 20:33:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DFD3115ED5
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Dec 2019 22:50:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726635AbfLGTd4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 7 Dec 2019 14:33:56 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:37330 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726489AbfLGTd4 (ORCPT
+        id S1726415AbfLGVuH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 7 Dec 2019 16:50:07 -0500
+Received: from 195-159-176-226.customer.powertech.no ([195.159.176.226]:40956
+        "EHLO blaine.gmane.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726378AbfLGVuH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 7 Dec 2019 14:33:56 -0500
-Received: by mail-lf1-f67.google.com with SMTP id b15so7753798lfc.4;
-        Sat, 07 Dec 2019 11:33:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=ZqeyKQuSHI4BOC48li9FJR/nDDNru9OxRd5ZcNFeOSo=;
-        b=bcGFvZVGymPohW7Kz+0lmJh5NBMXwP13fhSiC2PMvT+x8BDSta9z4Gh62xDH0vMCNi
-         b5EeQfy1P6DUlYctjiKYMxkWRI9S7M58N8Aw6EfsEjIm/a2mnKj/lfWJPOjSLKw227Bk
-         y9uWb64wcTjjFlLGQHbHDbfzTzZr/e9TTkCIBixbHJOjP2aJlEvv1c7oW/50JE4tXaN8
-         uwO9KgTarTW/LOoZblr9YEdjIzSjbzcKWFO2VqPf3F58L9c89A0EzMCCv5HlRQpX2YPq
-         e5uEOITyeOHCtrgXAtgdaVRy7xouTdMeRd3iRQM2DxtyX6Ey+4G9SeRX3Sex7/epjxre
-         nnKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=ZqeyKQuSHI4BOC48li9FJR/nDDNru9OxRd5ZcNFeOSo=;
-        b=mba/ZGlRTmQelMq4jfhJWh40VJxF1xuJ4+zEUQ9sqsHmbTO93easVjpput5xVYHUiF
-         VBNSwxzdlBVCbF5jPPENE9T3PNdIi/IxiFNApzvqNvhws9z2TbyB3TsRG6bKGcB9Zzvd
-         hRngaAVMdOjsfbkFfBaQPCanJiR694J+e0v82EhRQ8F1XtrCb6O0w0sffXxjOUoQ2afZ
-         WRMWwXdpuqeTv3c7WmQTVp0OBGR4h/0QZWptSgFzCMUzCCztghFbKvSlxA5jHjaxMh8D
-         E+mcf22rtRUgVNNgCYF+nlX6WTlxgd0KjTbHjsRw3oKWb8lIMbpkzfdroKqs8xk8KjD5
-         B7dg==
-X-Gm-Message-State: APjAAAWb8/cRv3s0va1czutKTE8K6iEhY1cdwvXIGpBwEXt9rUV0vQx9
-        D9rqUMemFO8VK3B2mKpZbiSe801+UtRnWDItt8MSVhS2
-X-Google-Smtp-Source: APXvYqz3Rv5lELnvMvYi9DJu3Ziq1/sgCxXk7sid2BZsdSs6O5IYnCn8sS4VOkosJsIOT9yMeYwn0gdm4efpu+NsnJM=
-X-Received: by 2002:ac2:4199:: with SMTP id z25mr11276098lfh.102.1575747234015;
- Sat, 07 Dec 2019 11:33:54 -0800 (PST)
-MIME-Version: 1.0
-References: <157566809107.17007.16619855857308884231.stgit@warthog.procyon.org.uk>
- <CAJTyqKNuv+5x7zUTT_O56h7cGOVSEergF+QDXGHCpxXygVG_CA@mail.gmail.com> <CAHk-=wiamjvQAw1y2ymstHbato_XtrkBeWYf1xbi1=94Zft2NA@mail.gmail.com>
-In-Reply-To: <CAHk-=wiamjvQAw1y2ymstHbato_XtrkBeWYf1xbi1=94Zft2NA@mail.gmail.com>
-Reply-To: mceier@gmail.com
-From:   Mariusz Ceier <mceier@gmail.com>
-Date:   Sat, 7 Dec 2019 19:33:42 +0000
-Message-ID: <CAJTyqKO9FX+0TDWL8goY1O5hDsrgXbt1TTuABjcZW_Oi33vVrg@mail.gmail.com>
-Subject: Re: [PATCH] pipe: Fix iteration end check in fuse_dev_splice_write()
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 7 Dec 2019 16:50:07 -0500
+Received: from list by blaine.gmane.org with local (Exim 4.89)
+        (envelope-from <lnx-linux-fsdevel@m.gmane.org>)
+        id 1idhxi-000wS2-SV
+        for linux-fsdevel@vger.kernel.org; Sat, 07 Dec 2019 22:50:02 +0100
+X-Injected-Via-Gmane: http://gmane.org/
+To:     linux-fsdevel@vger.kernel.org
+From:   Akemi Yagi <toracat@elrepo.org>
+Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
+Date:   Sat, 7 Dec 2019 13:31:13 -0800
+Message-ID: <qsh5n2$3pu9$1@blaine.gmane.org>
+References: <157558502272.10278.8718685637610645781.stgit@warthog.procyon.org.uk>
+ <20191206135604.GB2734@twin.jikos.cz>
+ <CAHk-=wj42ROD+dj1Nix=X7Raa9YjLfXykFczy0BkMqAXsFeLVA@mail.gmail.com>
+ <CAHk-=wga+oXMeMjftCKGT=BA=B2Ucfwx18C5eV-DcPwOAJ18Fg@mail.gmail.com>
+ <CAHk-=wj9pprDUeoJd5EeN-2x7+GXdSsm44mSv1y9f5e7MrTZ2A@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
+In-Reply-To: <CAHk-=wj9pprDUeoJd5EeN-2x7+GXdSsm44mSv1y9f5e7MrTZ2A@mail.gmail.com>
+Content-Language: en-US
+Cc:     linux-kernel@vger.kernel.org
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I can't reproduce it with ad910e36da4ca3a1bd436989f632d062dda0c921,
-seems it fixes the issue.
+On 12/6/19 10:59 AM, Linus Torvalds wrote:
+> Hmm. I think I just saw this same bug with a plain kernel compile.
+> 
+> My "make -j32" suddenly came to a crawl, and seems to be entirely
+> single-threaded.
+> 
+> And that's almost certainly because the way 'make' handles load
+> distribution is with a network of pipes that has a token passed to the
+> sub-makes.
+> 
+> So there's most definitely something wrong with the new pipe rework.
+> Well, I can't _guarantee_ the pipes are the cause of this, but it does
+> smell like it.
+> 
+>                Linus
+> 
 
-Best regards,
-Mariusz Ceier
+We encountered what seems to be the same problem when building a kernel
+under RHEL 8.
 
-On Sat, 7 Dec 2019 at 18:56, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Sat, Dec 7, 2019 at 10:30 AM Mariusz Ceier <mceier@gmail.com> wrote:
-> >
-> > I believe it's still not complete fix for 8cefc107ca54. Loading videos
-> > (or streams) on youtube, twitch in firefox (71 or nightly) on kernel
-> > eea2d5da29e396b6cc1fb35e36bcbf5f57731015 still results in page
-> > rendering getting stuck (switching between tabs shows spinner instead
-> > of page content).
->
-> Ok, so youtube (unlike facebook), I can test in firefox. Although it's
-> 70, not 71 or nightly. And it doesn't seem to fail for me.
->
-> Of course, maybe the reason it doesn't fail for me is that I have a
-> patch in my tree that may be the fix. It's a very small race in
-> select()/poll(), and it's small enough that I wonder if it's really
-> the fix for this, but hey, it might be.
->
-> It also might be that your version of firefox is different, or just
-> that you're hitting something else that I'm just not hitting.
->
-> But I committed my patch and pushed it out, so that you could see if
-> that fixes it for you.
->
->                 Linus
+As it turned out, this was due to a bug in make (make-4.2.1-9.el8) and
+a patch is available. Details are found in this Red Hat bugzilla report:
+
+https://bugzilla.redhat.com/show_bug.cgi?id=1774790
+
+Akemi
+
