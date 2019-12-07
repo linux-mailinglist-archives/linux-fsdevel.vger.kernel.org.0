@@ -2,95 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48FA7115A79
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Dec 2019 02:04:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6632D115AB1
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Dec 2019 03:09:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726464AbfLGBEC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Dec 2019 20:04:02 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:38516 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726427AbfLGBEB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Dec 2019 20:04:01 -0500
-Received: by mail-lj1-f194.google.com with SMTP id k8so9550014ljh.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Dec 2019 17:04:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xp39wpo5AR+pbRP/tZoeRSZICS3SHzWRMfhJEvbxIGA=;
-        b=F9QgFlzOLVDvV/NH9kO5C38Tw6X+Hr1zV9nvDrPtaW9IdmdHU1TNQTmWgtmr08QLWs
-         m/LzPoUZk/NRRXSGyCni67pyjPAjI1csctIc4AcmS9vEoOX/8bco5LDaWzkI+5Pvvxsm
-         tA5h/kF2wpsxbPSmFh84K3eYpHR4dbqT6qkZM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xp39wpo5AR+pbRP/tZoeRSZICS3SHzWRMfhJEvbxIGA=;
-        b=stDIQn3r4pjpOED4l8eiO610ZW2p4kV408ppJf2bZzRgtWZFbMCO43xcIpNCIyBaqd
-         9fnP6oFUE1rFEXcml6c6JWqlB5bmUEHUJFoObSxdjA8Gei4vwn7Siu0Wo7Vy6rZxbx/D
-         S9htfv0PnP//VYd9sU/+y52DmLnZpz3XoRECy0bnV0G1WvunYgz0y+JwTSTdrUsGj28q
-         DMABBlX8JOcLLyXgcvS6GG0rYXB6QD/fALum7N5w4eywA3u8hvJ625IaY86NUrDGFbCg
-         Enps9mjUCfU1bpxuyWPSgCEXuxReTcO6YqNbBV8+TxTiCp8GfeYW8MvKoeYMHRu90/px
-         TTzw==
-X-Gm-Message-State: APjAAAXgVpdM8FPne9tCcSZHmDJoYAu4FyjZcwduerRGqulfFT/wQ5ll
-        4sBnuuIsXExSnhCWj00o/lmU0/rHSMA=
-X-Google-Smtp-Source: APXvYqyulLCCZdVTUEaURWrvfBaAQ9emntcYDbhNHLKQ/bl/dhWwaUs9ObPAa9JJRwstzd6Bm1Jlaw==
-X-Received: by 2002:a2e:b556:: with SMTP id a22mr833728ljn.209.1575680639325;
-        Fri, 06 Dec 2019 17:03:59 -0800 (PST)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id w19sm7194177lfl.55.2019.12.06.17.03.56
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2019 17:03:57 -0800 (PST)
-Received: by mail-lf1-f41.google.com with SMTP id y19so6572051lfl.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Dec 2019 17:03:56 -0800 (PST)
-X-Received: by 2002:ac2:555c:: with SMTP id l28mr9400181lfk.52.1575680636244;
- Fri, 06 Dec 2019 17:03:56 -0800 (PST)
-MIME-Version: 1.0
-References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
- <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
- <20191206214725.GA2108@latitude> <CAHk-=wga0MPEH5hsesi4Cy+fgaaKENMYpbg2kK8UA0qE3iupgw@mail.gmail.com>
- <20191207000015.GA1757@latitude>
-In-Reply-To: <20191207000015.GA1757@latitude>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 6 Dec 2019 17:03:40 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjEa5oNcQ9+9fai1Awqktf+hzz_HZmChi8HZJWcL62+Cw@mail.gmail.com>
-Message-ID: <CAHk-=wjEa5oNcQ9+9fai1Awqktf+hzz_HZmChi8HZJWcL62+Cw@mail.gmail.com>
-Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring,
- not cursor and length [ver #2]
-To:     Johannes Hirte <johannes.hirte@datenkhaos.de>
-Cc:     David Howells <dhowells@redhat.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
+        id S1726386AbfLGCJL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Dec 2019 21:09:11 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:34301 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726371AbfLGCJK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 6 Dec 2019 21:09:10 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47VCYr5Y8nz9sPf;
+        Sat,  7 Dec 2019 13:09:04 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1575684548;
+        bh=+0JuL1NBfWAFLxpfqXjZlVNiiaAfVa1OIU9nnVKfIlI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=BMWz+6gx76bqNPDPz02K5XR+5faW+YPQ3DLWF9ujw6KxW79+/NCm0qoxgHQ+h0UHr
+         AvUKS2mmwZzb9pG6QCuhpJ6+zmeu8YMcxZA1xFXoqm8M12tKN0ALOdPir1usEwpTT3
+         lCwWrP4n85MK7pv2ZuMd0g4HnLmogxnn/1me4HOpDXNK/dogk74jTKWuayd0kLekhN
+         5GTPNrnmuyQ+Xj6/Mm+ii01tMu1Y5qBL2cc6+dejP9Y1lAtvUsdOn5LrvWZUweL0f5
+         F8YCrK6pEc8B5bLNK7lgOIUnOO0VzjbLYTOnPD+HhankuzY9M4bQFm9L4YaGcGywgW
+         sXFhuWWBgn2SQ==
+Date:   Sat, 7 Dec 2019 13:08:59 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Ritesh Harjani <riteshh@linux.ibm.com>
+Subject: Re: [git pull] vfs.git d_inode/d_flags barriers
+Message-ID: <20191207130859.4850b07f@canb.auug.org.au>
+In-Reply-To: <CAHk-=wgPd1dYZjywZqPYZP-7dD2ihwviYfYLY3i+K=OLk2ZozQ@mail.gmail.com>
+References: <20191206013819.GL4203@ZenIV.linux.org.uk>
+        <CAHk-=wgPd1dYZjywZqPYZP-7dD2ihwviYfYLY3i+K=OLk2ZozQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/z9xpQ9CcDuBmTZl9CI/9mPS";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 6, 2019 at 4:00 PM Johannes Hirte
-<johannes.hirte@datenkhaos.de> wrote:
+--Sig_/z9xpQ9CcDuBmTZl9CI/9mPS
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+Hi Linus,
+
+On Thu, 5 Dec 2019 18:15:54 -0800 Linus Torvalds <torvalds@linux-foundation=
+.org> wrote:
 >
-> Tested with 5.4.0-11505-g347f56fb3890 and still the same wrong behavior.
+> On Thu, Dec 5, 2019 at 5:38 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes =20
+>=20
+> I'm not pulling this.
+>=20
+> Commit 6c2d4798a8d1 ("new helper: lookup_positive_unlocked()") results
+> in a new - and valid - compiler warning:
+>=20
+>   fs/quota/dquot.c: In function =E2=80=98dquot_quota_on_mount=E2=80=99:
+>   fs/quota/dquot.c:2499:1: warning: label =E2=80=98out=E2=80=99 defined b=
+ut not used
+> [-Wunused-label]
+>    2499 | out:
+>         | ^~~
+>=20
+> and I don't want to see new warnings in my tree.
+>=20
+> I wish linux-next would complain about warnings (assuming this had
+> been there), because they aren't ok.
 
-Ok, we'll continue looking.
+I did ... https://lore.kernel.org/lkml/20191203093203.2f88400d@canb.auug.or=
+g.au/
 
-That said, your version string is strange.
+--=20
+Cheers,
+Stephen Rothwell
 
-Commit 347f56fb3890 should be  "v5.4.0-13174-g347f56fb3890", the fact
-that you have "11505" confuses me.
+--Sig_/z9xpQ9CcDuBmTZl9CI/9mPS
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-The hash is what matters, but I wonder what is going on that you have
-the commit count in that version string so wrong.
+-----BEGIN PGP SIGNATURE-----
 
-                   Linus
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3rCbsACgkQAVBC80lX
+0Gxl8QgAmVlRrQXReAvUik1AyrMX3/qS2x3hAZKBlw8K7YfbjHiWd+PbDSpHRSRV
+qNnXUgvBGvnGgDyTEaN8LWt/c2UNaWtYK+VSn9e52vw1EdmBmTC8PjQUy5EJEiLZ
+19IjKm7YBkKZuDKzvueqVXB+BE4vhzp7fX7GaWsnyssbFN3wXUNzwPbxoqwHjM5l
+H07y3PAr/ar79ZTAatj79Sm9QPLj7qv2Fzi/OXmoPZNlTtWaCgfshODH79kw1sRx
+LV08iPfA0gqyb6PsioGBcF7P8jtyEIDUcNAx2ZAiEX047o0Ng0uGXVHoZAKCq4WM
+f+2Ais4A5FLl4X66abSuzSr0H9CU4A==
+=rzpu
+-----END PGP SIGNATURE-----
+
+--Sig_/z9xpQ9CcDuBmTZl9CI/9mPS--
