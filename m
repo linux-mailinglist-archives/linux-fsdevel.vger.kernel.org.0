@@ -2,133 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D242115A5F
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Dec 2019 01:46:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48FA7115A79
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Dec 2019 02:04:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726414AbfLGAqI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Dec 2019 19:46:08 -0500
-Received: from mail.phunq.net ([66.183.183.73]:52232 "EHLO phunq.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726388AbfLGAqI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Dec 2019 19:46:08 -0500
-Received: from [172.16.1.14]
-        by phunq.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
-        (Exim 4.92.3)
-        (envelope-from <daniel@phunq.net>)
-        id 1idOEX-0006U5-SC; Fri, 06 Dec 2019 16:46:05 -0800
-Subject: Re: [RFC] Thing 1: Shardmap for Ext4
-To:     Vyacheslav Dubeyko <slava@dubeyko.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-References: <176a1773-f5ea-e686-ec7b-5f0a46c6f731@phunq.net>
- <20191127142508.GB5143@mit.edu>
- <6b6242d9-f88b-824d-afe9-d42382a93b34@phunq.net>
- <9ed62cfea37bfebfb76e378d482bd521c7403c1f.camel@dubeyko.com>
- <c61706fb-3534-72b9-c4ae-0f0972bc566b@phunq.net>
- <37c9494c40998d23d0d68afaa5a7f942a23e8986.camel@dubeyko.com>
-From:   Daniel Phillips <daniel@phunq.net>
-Message-ID: <a05837a0-a352-fc8d-5c9c-28d8065961fd@phunq.net>
-Date:   Fri, 6 Dec 2019 16:46:05 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726464AbfLGBEC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Dec 2019 20:04:02 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:38516 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726427AbfLGBEB (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 6 Dec 2019 20:04:01 -0500
+Received: by mail-lj1-f194.google.com with SMTP id k8so9550014ljh.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Dec 2019 17:04:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xp39wpo5AR+pbRP/tZoeRSZICS3SHzWRMfhJEvbxIGA=;
+        b=F9QgFlzOLVDvV/NH9kO5C38Tw6X+Hr1zV9nvDrPtaW9IdmdHU1TNQTmWgtmr08QLWs
+         m/LzPoUZk/NRRXSGyCni67pyjPAjI1csctIc4AcmS9vEoOX/8bco5LDaWzkI+5Pvvxsm
+         tA5h/kF2wpsxbPSmFh84K3eYpHR4dbqT6qkZM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xp39wpo5AR+pbRP/tZoeRSZICS3SHzWRMfhJEvbxIGA=;
+        b=stDIQn3r4pjpOED4l8eiO610ZW2p4kV408ppJf2bZzRgtWZFbMCO43xcIpNCIyBaqd
+         9fnP6oFUE1rFEXcml6c6JWqlB5bmUEHUJFoObSxdjA8Gei4vwn7Siu0Wo7Vy6rZxbx/D
+         S9htfv0PnP//VYd9sU/+y52DmLnZpz3XoRECy0bnV0G1WvunYgz0y+JwTSTdrUsGj28q
+         DMABBlX8JOcLLyXgcvS6GG0rYXB6QD/fALum7N5w4eywA3u8hvJ625IaY86NUrDGFbCg
+         Enps9mjUCfU1bpxuyWPSgCEXuxReTcO6YqNbBV8+TxTiCp8GfeYW8MvKoeYMHRu90/px
+         TTzw==
+X-Gm-Message-State: APjAAAXgVpdM8FPne9tCcSZHmDJoYAu4FyjZcwduerRGqulfFT/wQ5ll
+        4sBnuuIsXExSnhCWj00o/lmU0/rHSMA=
+X-Google-Smtp-Source: APXvYqyulLCCZdVTUEaURWrvfBaAQ9emntcYDbhNHLKQ/bl/dhWwaUs9ObPAa9JJRwstzd6Bm1Jlaw==
+X-Received: by 2002:a2e:b556:: with SMTP id a22mr833728ljn.209.1575680639325;
+        Fri, 06 Dec 2019 17:03:59 -0800 (PST)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
+        by smtp.gmail.com with ESMTPSA id w19sm7194177lfl.55.2019.12.06.17.03.56
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Dec 2019 17:03:57 -0800 (PST)
+Received: by mail-lf1-f41.google.com with SMTP id y19so6572051lfl.9
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Dec 2019 17:03:56 -0800 (PST)
+X-Received: by 2002:ac2:555c:: with SMTP id l28mr9400181lfk.52.1575680636244;
+ Fri, 06 Dec 2019 17:03:56 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <37c9494c40998d23d0d68afaa5a7f942a23e8986.camel@dubeyko.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
+ <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
+ <20191206214725.GA2108@latitude> <CAHk-=wga0MPEH5hsesi4Cy+fgaaKENMYpbg2kK8UA0qE3iupgw@mail.gmail.com>
+ <20191207000015.GA1757@latitude>
+In-Reply-To: <20191207000015.GA1757@latitude>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 6 Dec 2019 17:03:40 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjEa5oNcQ9+9fai1Awqktf+hzz_HZmChi8HZJWcL62+Cw@mail.gmail.com>
+Message-ID: <CAHk-=wjEa5oNcQ9+9fai1Awqktf+hzz_HZmChi8HZJWcL62+Cw@mail.gmail.com>
+Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring,
+ not cursor and length [ver #2]
+To:     Johannes Hirte <johannes.hirte@datenkhaos.de>
+Cc:     David Howells <dhowells@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019-12-06 3:47 a.m., Vyacheslav Dubeyko wrote:
-> On Thu, 2019-12-05 at 01:46 -0800, Daniel Phillips wrote:
->> On 2019-12-04 7:55 a.m., Vyacheslav Dubeyko wrote:
->>>>
-> 
-> <snipped and reoredered>
-> 
->> And here is a diagram of the Shardmap three level hashing scheme,
->> which ties everything together:
->>
->>     https://github.com/danielbot/Shardmap/wiki/Shardmap-hashing-scheme
->>
->> This needs explanation. It is something new that you won't find in
->> any
->> textbook, this is the big reveal right here.
->>
-> 
-> This diagram is pretty good and provides the high-level view of the
-> whole scheme. But, maybe, it makes sense to show the granularity of
-> hash code. It looks like the low hash is the hash of a name. Am I
-> correct?
+On Fri, Dec 6, 2019 at 4:00 PM Johannes Hirte
+<johannes.hirte@datenkhaos.de> wrote:
+>
+> Tested with 5.4.0-11505-g347f56fb3890 and still the same wrong behavior.
 
-Not quite. A 64 bit hash code is computed per name, then divided up into
-three parts as shown in the diagram. Each part of the hash addresses a
-different level of the Shardmap index hierarchy: high bits address the
-top level shard array, giving a pointer to a shard; middle bits address
-a hash bucket within that shard; low bits are used to resolve collisions
-within the hash bucket (and collisions still may occur even when the low
-bits are considered, forcing a record block access and full string
-compare.
+Ok, we'll continue looking.
 
-> But how the mid- and high- parts of the hash code are defined?
+That said, your version string is strange.
 
-Given the above description, does the diagram make sense? If so I will
-add this description to the wiki.
+Commit 347f56fb3890 should be  "v5.4.0-13174-g347f56fb3890", the fact
+that you have "11505" confuses me.
 
-> It looks like that cached shard stores LBAs of record entry blocks are
-> associated with the low hash values.
+The hash is what matters, but I wonder what is going on that you have
+the commit count in that version string so wrong.
 
-Rather, associated with the entire hash value.
-
-> But what does it mean that shard is cached?
-
-This is the cache form of the shard, meaning that the unordered hash/lba
-index pairs (duopack) were read in from media and loaded into this cache
-object (or newly created by recent directory operations.)
-
-> Here is a diagram of the cache structures, very simple:
->>
->>     https://github.com/danielbot/Shardmap/wiki/Shardmap-cache-format
-> 
-> This diagram is not easy to relate with the previous one. So, shard
-> table and shard array are the same entities or not?
-
-They are, and I have updated the hashing scheme diagram to refer to both
-as "array". I will similarly update the code, which currently calls the
-shard array field "map".
-
-> Or do you mean that
-> shard table is storeed on the volume but shard array is constructed in
-> memory?
-
-Sorry about that, it should be clear now. On the volume, a simple
-unordered collection of hash:lba pairs is stored per shard, which is
-reorganized into shard cache form (a hash table object) at demand-load
-time.
-
->> There is a diagram here:
->>
-> https://github.com/danielbot/Shardmap/wiki/Shardmap-record-block-format
-> 
-> I am slightly confused here. Does header be located at the bottom of
-> the record block?
-
-The header (just 32 bytes at the moment, possibly to be expanded to 48
-or 64) is stored at the top of the zeroth record entry block, which is
-therefore a little smaller than any other record entry block.
-
-> My understanding is that records grow from top of the
-> block down to the header direction. Am I correct? Why header is not
-> located at the top of the block with entry dictionary? Any special
-> purpose here?
-
-That should be clear now. I will add the above descriptive text to the
-wiki.
-
-Regards,
-
-Daniel
+                   Linus
