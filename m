@@ -2,148 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D297115DBC
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Dec 2019 18:18:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7583A115DFB
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Dec 2019 19:30:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbfLGRSd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 7 Dec 2019 12:18:33 -0500
-Received: from fieldses.org ([173.255.197.46]:55114 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726420AbfLGRSc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 7 Dec 2019 12:18:32 -0500
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 0A7DC1C95; Sat,  7 Dec 2019 12:18:32 -0500 (EST)
-Date:   Sat, 7 Dec 2019 12:18:32 -0500
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [GIT PULL] nfsd change for 5.5
-Message-ID: <20191207171832.GB24017@fieldses.org>
-References: <20191207171402.GA24017@fieldses.org>
+        id S1726552AbfLGSaE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 7 Dec 2019 13:30:04 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:38347 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726414AbfLGSaD (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 7 Dec 2019 13:30:03 -0500
+Received: by mail-lj1-f193.google.com with SMTP id k8so11133345ljh.5;
+        Sat, 07 Dec 2019 10:30:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=P7fIBBJlmA/AwChRfE7OrSku3z8NNsbPGKswxqW3gW0=;
+        b=L5Xe5p5q2h17yXfTZD0ky9rrDssmCJh4tnXwqLdqoZx49PeGZjHJ5QFcPIkWANC7ci
+         pETzza3hVBu2E+tf3IRrKC3ZhYTSHQLBF35jJxmYUvxdQyQOZk26CsBdjRFOVpbD5I/v
+         47v1LN7QJE9cGm/81ZKpAqph0gNbAZBxTIMTU7/xx8XGwObKfWsSAU9q0UAHP757a50n
+         AFTMc2nUDerytNn2veDpaA7RlTEk/mesWfnA0fwT2wWgslAGFFg5qZEfZ75z6fzByLpf
+         PNQnrnOqQ5qg06e79udv9/rbTnC3+zWtT2fb+eYZv+vk2PTzmslbkUU4+pSYyvOcRq7g
+         hFOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=P7fIBBJlmA/AwChRfE7OrSku3z8NNsbPGKswxqW3gW0=;
+        b=Gyc9BZl3RrPWb6JSpoMBneWPDRxKO4unYVspSdrT7o8n4PGgSZjIDKxZPj3xazsOe0
+         qXNQJ9RsIVescDUK1+JcAsbdwCtEBbVjgyV3neOlUuAvvT4kSZQChkbrNijKdkLBnRG5
+         tZ72Wq78sBRmChnnXznIqtng55Ug7zwiK81acPpeacwRHlaY51FrW812f2IwXW8nDcqU
+         N1I/vEMgTqZSQJ9cIgPfDLouvvV30ebrFZ4dL7pAsakzoHv6NbG4XNTVKs1Te9atpXd8
+         JpfWh4esZ6wKkgPpjTmJ5dnKXSHGEHKuuR6HlwfUIx/Stg1Ayi258ddDPIgV8pP47Lib
+         hvTg==
+X-Gm-Message-State: APjAAAWgPPDi50G+YUm+OuOz1vOJRUwFvOnkjv/ISJWwI6FW1RxJq0AW
+        aKDdRfzCD2t+xt//+6ukK/Sv7m8Zz68W0jGUr2U=
+X-Google-Smtp-Source: APXvYqzC8K56M+GHqLyG+tyDOMaaaZ3Fcfd7AdOQqbFMA3np2o48RwXIDJZkUs73UZq9UPdhGXMoHRIIV09pvykFI0I=
+X-Received: by 2002:a2e:9041:: with SMTP id n1mr12331450ljg.133.1575743400834;
+ Sat, 07 Dec 2019 10:30:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191207171402.GA24017@fieldses.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <157566809107.17007.16619855857308884231.stgit@warthog.procyon.org.uk>
+In-Reply-To: <157566809107.17007.16619855857308884231.stgit@warthog.procyon.org.uk>
+Reply-To: mceier@gmail.com
+From:   Mariusz Ceier <mceier@gmail.com>
+Date:   Sat, 7 Dec 2019 18:29:49 +0000
+Message-ID: <CAJTyqKNuv+5x7zUTT_O56h7cGOVSEergF+QDXGHCpxXygVG_CA@mail.gmail.com>
+Subject: Re: [PATCH] pipe: Fix iteration end check in fuse_dev_splice_write()
+To:     David Howells <dhowells@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>, miklos@szeredi.hu,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Dec 07, 2019 at 12:14:02PM -0500, bfields wrote:
-> Please pull
-> 
->   git://linux-nfs.org/~bfields/linux.git tags/nfsd-5.5
-> 
-> for nfsd changes for 5.5.
-> 
-> This is a relatively quiet cycle for nfsd, mainly various bugfixes.
-> 
-> Possibly most interesting is Trond's fixes for some callback races that
-> were due to my incomplete understanding of rpc client shutdown.
-> Unfortunately at the last minute I've started noticing a new
-> intermittent failure to send callbacks.  As the logic seems basically
-> correct, I'm leaving Trond's patches in for now, and hope to find a fix
-> in the next week so I don't have to revert those patches.
+I believe it's still not complete fix for 8cefc107ca54. Loading videos
+(or streams) on youtube, twitch in firefox (71 or nightly) on kernel
+eea2d5da29e396b6cc1fb35e36bcbf5f57731015 still results in page
+rendering getting stuck (switching between tabs shows spinner instead
+of page content).
 
-Oh, also, not included: server-to-server copy offload.  I think it's
-more or less ready, but due to some miscommunication (at least partly my
-fault), I didn't get them in my nfsd-next branch till this week.  And
-the client side (which it builds on) isn't merged yet last I checked.
-So, it seemed more prudent to back them out and wait till next time.
+Today I spent whole day bisecting that issue, here's the log:
 
---b.
+# bad: [3f1266ec704d3efcfc8179c71bed9a75963b6344] Merge tag
+'gfs2-for-5.5' of
+git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2
+# good: [219d54332a09e8d8741c1e1982f5eae56099de85] Linux 5.4
+git bisect start '3f1266ec704d' 'v5.4'
+# good: [0dd09bc02c1bad55e92306ca83b38b3cf48b9f40] Merge tag
+'staging-5.5-rc1' of
+git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging
+git bisect good 0dd09bc02c1bad55e92306ca83b38b3cf48b9f40
+# bad: [d004701d1cc5a036b1f2dec34dd5973064c72eab] Merge branch
+'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid
+git bisect bad d004701d1cc5a036b1f2dec34dd5973064c72eab
+# good: [904ce198dd7bcf6eaa1735e9c0b06959351d4126] Merge tag
+'drm/tegra/for-5.5-rc1' of git://anongit.freedesktop.org/tegra/linux
+into drm-next
+git bisect good 904ce198dd7bcf6eaa1735e9c0b06959351d4126
+# good: [8f45533e9db917147066b24903a0d03a5adb50e1] Merge tag
+'f2fs-for-5.5' of
+git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs
+git bisect good 8f45533e9db917147066b24903a0d03a5adb50e1
+# bad: [ceb307474506f888e8f16dab183405ff01dffa08] Merge tag
+'y2038-cleanups-5.5' of
+git://git.kernel.org:/pub/scm/linux/kernel/git/arnd/playground
+git bisect bad ceb307474506f888e8f16dab183405ff01dffa08
+# good: [2807273f5e88ed086d7d5d838fdee71e11e5085f] powerpc/fixmap: fix
+crash with HIGHMEM
+git bisect good 2807273f5e88ed086d7d5d838fdee71e11e5085f
+# bad: [9dd0013824fc29e618db7a5b0bac5545285b946a] Merge tag
+'for-linus' of git://git.armlinux.org.uk/~rmk/linux-arm
+git bisect bad 9dd0013824fc29e618db7a5b0bac5545285b946a
+# good: [e2d73c302b6b0a8379a679120590073b813d5e7f] Merge tag
+'erofs-for-5.5-rc1' of
+git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs
+git bisect good e2d73c302b6b0a8379a679120590073b813d5e7f
+# good: [32ef9553635ab1236c33951a8bd9b5af1c3b1646] Merge tag
+'fsnotify_for_v5.5-rc1' of
+git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs
+git bisect good 32ef9553635ab1236c33951a8bd9b5af1c3b1646
+# good: [790756c7e0229dedc83bf058ac69633045b1000e] ARM: 8933/1:
+replace Sun/Solaris style flag on section directive
+git bisect good 790756c7e0229dedc83bf058ac69633045b1000e
+# bad: [cefa80ced57a29179313da7ab3cbb26afb040b6f] pipe: Increase the
+writer-wakeup threshold to reduce context-switch count
+git bisect bad cefa80ced57a29179313da7ab3cbb26afb040b6f
+# bad: [6718b6f855a0b4962d54bd625be2718cb820cec6] pipe: Allow pipes to
+have kernel-reserved slots
+git bisect bad 6718b6f855a0b4962d54bd625be2718cb820cec6
+# good: [ce4dd4429b3c7e4506870796f3b8b06d707d2928] Remove the
+nr_exclusive argument from __wake_up_sync_key()
+git bisect good ce4dd4429b3c7e4506870796f3b8b06d707d2928
+# bad: [8cefc107ca54c8b06438b7dc9cc08bc0a11d5b98] pipe: Use head and
+tail pointers for the ring, not cursor and length
+git bisect bad 8cefc107ca54c8b06438b7dc9cc08bc0a11d5b98
+# good: [f94df9890e98f2090c6a8d70c795134863b70201] Add
+wake_up_interruptible_sync_poll_locked()
+git bisect good f94df9890e98f2090c6a8d70c795134863b70201
+# first bad commit: [8cefc107ca54c8b06438b7dc9cc08bc0a11d5b98] pipe:
+Use head and tail pointers for the ring, not cursor and length
 
-> 
-> --b.
-> 
-> Al Viro (1):
->       race in exportfs_decode_fh()
-> 
-> Andy Shevchenko (1):
->       nfsd: remove private bin2hex implementation
-> 
-> Christoph Hellwig (2):
->       sunrpc: remove __KERNEL__ ifdefs
->       lockd: remove __KERNEL__ ifdefs
-> 
-> Chuck Lever (4):
->       svcrdma: Improve DMA mapping trace points
->       SUNRPC: Trace gssproxy upcall results
->       SUNRPC: Fix svcauth_gss_proxy_init()
->       SUNRPC: Fix backchannel latency metrics
-> 
-> J. Bruce Fields (4):
->       nfsd: "\%s" should be "%s"
->       nfsd: mark cb path down on unknown errors
->       nfsd: document callback_wq serialization of callback code
->       nfsd: restore NFSv3 ACL support
-> 
-> Mao Wenan (1):
->       nfsd: Drop LIST_HEAD where the variable it declares is never used.
-> 
-> NeilBrown (1):
->       nfsd: check for EBUSY from vfs_rmdir/vfs_unink.
-> 
-> Olga Kornievskaia (1):
->       NFSD fixing possible null pointer derefering in copy offload
-> 
-> Patrick Steinhardt (1):
->       nfsd: depend on CRYPTO_MD5 for legacy client tracking
-> 
-> Pavel Tikhomirov (1):
->       sunrpc: fix crash when cache_head become valid before update
-> 
-> Scott Mayhew (3):
->       nfsd4: fix up replay_matches_cache()
->       nfsd: Fix cld_net->cn_tfm initialization
->       nfsd: v4 support requires CRYPTO_SHA256
-> 
-> Trond Myklebust (3):
->       nfsd: minor 4.1 callback cleanup
->       nfsd: Fix races between nfsd4_cb_release() and nfsd4_shutdown_callback()
->       nfsd: Ensure CLONE persists data and metadata changes to the target file
-> 
-> YueHaibing (1):
->       nfsd: remove set but not used variable 'len'
-> 
->  fs/exportfs/expfs.c                        |  31 +++++----
->  fs/nfsd/Kconfig                            |   3 +-
->  fs/nfsd/filecache.c                        |   2 -
->  fs/nfsd/nfs4callback.c                     | 104 +++++++++++++++++++++++------
->  fs/nfsd/nfs4proc.c                         |   6 +-
->  fs/nfsd/nfs4recover.c                      |  23 +++----
->  fs/nfsd/nfs4state.c                        |  19 ++++--
->  fs/nfsd/nfs4xdr.c                          |   2 -
->  fs/nfsd/nfsd.h                             |   3 +-
->  fs/nfsd/nfssvc.c                           |   3 +-
->  fs/nfsd/state.h                            |   1 +
->  fs/nfsd/vfs.c                              |  20 +++++-
->  fs/nfsd/vfs.h                              |   2 +-
->  include/linux/lockd/debug.h                |   4 --
->  include/linux/lockd/lockd.h                |   4 --
->  include/linux/sunrpc/auth.h                |   3 -
->  include/linux/sunrpc/auth_gss.h            |   2 -
->  include/linux/sunrpc/clnt.h                |   3 -
->  include/linux/sunrpc/gss_api.h             |   2 -
->  include/linux/sunrpc/gss_err.h             |   3 -
->  include/linux/sunrpc/msg_prot.h            |   3 -
->  include/linux/sunrpc/rpc_pipe_fs.h         |   3 -
->  include/linux/sunrpc/svcauth.h             |   4 --
->  include/linux/sunrpc/svcauth_gss.h         |   2 -
->  include/linux/sunrpc/xdr.h                 |   3 -
->  include/linux/sunrpc/xprt.h                |   4 --
->  include/linux/sunrpc/xprtsock.h            |   4 --
->  include/trace/events/rpcgss.h              |  45 +++++++++++++
->  include/trace/events/rpcrdma.h             |  30 +++++++--
->  include/trace/events/sunrpc.h              |  55 +++++++++++++++
->  net/sunrpc/auth_gss/gss_mech_switch.c      |   4 +-
->  net/sunrpc/auth_gss/svcauth_gss.c          |  92 ++++++++++++++++++-------
->  net/sunrpc/cache.c                         |   6 --
->  net/sunrpc/svc.c                           |   2 +
->  net/sunrpc/svcauth.c                       |   2 +
->  net/sunrpc/xprtrdma/svc_rdma_backchannel.c |   1 +
->  net/sunrpc/xprtrdma/svc_rdma_sendto.c      |   8 ++-
->  net/sunrpc/xprtsock.c                      |   3 +-
->  38 files changed, 362 insertions(+), 149 deletions(-)
+
+Then I tried master (eea2d5da29e396b6cc1fb35e36bcbf5f57731015) since I
+noticed there were some commits allegedly fixing
+8cefc107ca54c8b06438b7dc9cc08bc0a11d5b98, but I was still able to
+reproduce it.
+
+My test looked like this:
+1. Run firefox (nightly but also I verified in 71 not built by me)
+2. Open youtube, click on random video
+3. Wait about minute and see if firefox is still responsive, if it's
+not, git bisect bad and try another kernel version
+4. Open 1 or 2 more tabs (youtube, gmail, twitch, reddit etc.) and
+wait a bit more - usually it triggered the issue
+5. After about 5 minutes of playing youtube and opening/closing tabs I
+ran git bisect good
+
+Hope this helps pinpoint the issue.
+
+Best regards,
+Mariusz Ceier
+
+
+On Fri, 6 Dec 2019 at 21:37, David Howells <dhowells@redhat.com> wrote:
+>
+> Fix the iteration end check in fuse_dev_splice_write().  The iterator
+> position can only be compared with == or != since wrappage may be involved.
+>
+> Fixes: 8cefc107ca54 ("pipe: Use head and tail pointers for the ring, not cursor and length")
+> Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> ---
+>
+>  fs/fuse/dev.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index d4e6691d2d92..8e02d76fe104 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -1965,7 +1965,7 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
+>
+>         nbuf = 0;
+>         rem = 0;
+> -       for (idx = tail; idx < head && rem < len; idx++)
+> +       for (idx = tail; idx != head && rem < len; idx++)
+>                 rem += pipe->bufs[idx & mask].len;
+>
+>         ret = -EINVAL;
+>
