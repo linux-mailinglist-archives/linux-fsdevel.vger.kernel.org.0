@@ -2,102 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6632D115AB1
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Dec 2019 03:09:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C477115ADE
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Dec 2019 04:47:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726386AbfLGCJL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Dec 2019 21:09:11 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:34301 "EHLO ozlabs.org"
+        id S1726414AbfLGDr0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Dec 2019 22:47:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726371AbfLGCJK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Dec 2019 21:09:10 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1726371AbfLGDr0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 6 Dec 2019 22:47:26 -0500
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47VCYr5Y8nz9sPf;
-        Sat,  7 Dec 2019 13:09:04 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1575684548;
-        bh=+0JuL1NBfWAFLxpfqXjZlVNiiaAfVa1OIU9nnVKfIlI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=BMWz+6gx76bqNPDPz02K5XR+5faW+YPQ3DLWF9ujw6KxW79+/NCm0qoxgHQ+h0UHr
-         AvUKS2mmwZzb9pG6QCuhpJ6+zmeu8YMcxZA1xFXoqm8M12tKN0ALOdPir1usEwpTT3
-         lCwWrP4n85MK7pv2ZuMd0g4HnLmogxnn/1me4HOpDXNK/dogk74jTKWuayd0kLekhN
-         5GTPNrnmuyQ+Xj6/Mm+ii01tMu1Y5qBL2cc6+dejP9Y1lAtvUsdOn5LrvWZUweL0f5
-         F8YCrK6pEc8B5bLNK7lgOIUnOO0VzjbLYTOnPD+HhankuzY9M4bQFm9L4YaGcGywgW
-         sXFhuWWBgn2SQ==
-Date:   Sat, 7 Dec 2019 13:08:59 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Ritesh Harjani <riteshh@linux.ibm.com>
-Subject: Re: [git pull] vfs.git d_inode/d_flags barriers
-Message-ID: <20191207130859.4850b07f@canb.auug.org.au>
-In-Reply-To: <CAHk-=wgPd1dYZjywZqPYZP-7dD2ihwviYfYLY3i+K=OLk2ZozQ@mail.gmail.com>
-References: <20191206013819.GL4203@ZenIV.linux.org.uk>
-        <CAHk-=wgPd1dYZjywZqPYZP-7dD2ihwviYfYLY3i+K=OLk2ZozQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/z9xpQ9CcDuBmTZl9CI/9mPS";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        by mail.kernel.org (Postfix) with ESMTPSA id 4DCA820637;
+        Sat,  7 Dec 2019 03:47:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575690444;
+        bh=50Udh4adKV8I9YKDKPNTiQTkFH0xxlkJSgD7ELObhwQ=;
+        h=Date:From:To:Subject:In-Reply-To:From;
+        b=I36LUghQAY0MVvRC2SKNUFCGcJPJPAHaQpvMxY4kjdoDtJJ8440wDCdFoH2Ev/Wwr
+         y+aAFl7LnYI8Yp2vez6zM2qnZEDv3MlgGFghjVTBB0+IXdJyadeJ9az3do51QEoh/r
+         qBB2mXts+VeC1E/olfLdoPN5VGizqQZqVtJS0SWI=
+Date:   Fri, 06 Dec 2019 19:47:23 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
+Subject:  mmotm 2019-12-06-19-46 uploaded
+Message-ID: <20191207034723.OPvz2A9wZ%akpm@linux-foundation.org>
+In-Reply-To: <20191206170123.cb3ad1f76af2b48505fabb33@linux-foundation.org>
+User-Agent: s-nail v14.8.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/z9xpQ9CcDuBmTZl9CI/9mPS
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+The mm-of-the-moment snapshot 2019-12-06-19-46 has been uploaded to
 
-Hi Linus,
+   http://www.ozlabs.org/~akpm/mmotm/
 
-On Thu, 5 Dec 2019 18:15:54 -0800 Linus Torvalds <torvalds@linux-foundation=
-.org> wrote:
->
-> On Thu, Dec 5, 2019 at 5:38 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes =20
->=20
-> I'm not pulling this.
->=20
-> Commit 6c2d4798a8d1 ("new helper: lookup_positive_unlocked()") results
-> in a new - and valid - compiler warning:
->=20
->   fs/quota/dquot.c: In function =E2=80=98dquot_quota_on_mount=E2=80=99:
->   fs/quota/dquot.c:2499:1: warning: label =E2=80=98out=E2=80=99 defined b=
-ut not used
-> [-Wunused-label]
->    2499 | out:
->         | ^~~
->=20
-> and I don't want to see new warnings in my tree.
->=20
-> I wish linux-next would complain about warnings (assuming this had
-> been there), because they aren't ok.
+mmotm-readme.txt says
 
-I did ... https://lore.kernel.org/lkml/20191203093203.2f88400d@canb.auug.or=
-g.au/
+README for mm-of-the-moment:
 
---=20
-Cheers,
-Stephen Rothwell
+http://www.ozlabs.org/~akpm/mmotm/
 
---Sig_/z9xpQ9CcDuBmTZl9CI/9mPS
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
 
------BEGIN PGP SIGNATURE-----
+You will need quilt to apply these patches to the latest Linus release (5.x
+or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3rCbsACgkQAVBC80lX
-0Gxl8QgAmVlRrQXReAvUik1AyrMX3/qS2x3hAZKBlw8K7YfbjHiWd+PbDSpHRSRV
-qNnXUgvBGvnGgDyTEaN8LWt/c2UNaWtYK+VSn9e52vw1EdmBmTC8PjQUy5EJEiLZ
-19IjKm7YBkKZuDKzvueqVXB+BE4vhzp7fX7GaWsnyssbFN3wXUNzwPbxoqwHjM5l
-H07y3PAr/ar79ZTAatj79Sm9QPLj7qv2Fzi/OXmoPZNlTtWaCgfshODH79kw1sRx
-LV08iPfA0gqyb6PsioGBcF7P8jtyEIDUcNAx2ZAiEX047o0Ng0uGXVHoZAKCq4WM
-f+2Ais4A5FLl4X66abSuzSr0H9CU4A==
-=rzpu
------END PGP SIGNATURE-----
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
 
---Sig_/z9xpQ9CcDuBmTZl9CI/9mPS--
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
+
+
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
+
+	https://github.com/hnaz/linux-mm
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is also available at
+
+	https://github.com/hnaz/linux-mm
+
+
+
+This mmotm tree contains the following patches against 5.4:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+* hacking-group-sysrq-kgdb-ubsan-into-generic-kernel-debugging-instruments.patch
+* hacking-create-submenu-for-arch-special-debugging-options.patch
+* hacking-group-kernel-data-structures-debugging-together.patch
+* hacking-move-kernel-testing-and-coverage-options-to-same-submenu.patch
+* hacking-move-oops-into-lockups-and-hangs.patch
+* hacking-move-sched_stack_end_check-after-debug_stack_usage.patch
+* hacking-create-a-submenu-for-scheduler-debugging-options.patch
+* hacking-move-debug_bugverbose-to-printk-and-dmesg-options.patch
+* hacking-move-debug_fs-to-generic-kernel-debugging-instruments.patch
+* lib-fix-kconfig-indentation.patch
+* kasan-fix-crashes-on-access-to-memory-mapped-by-vm_map_ram.patch
+* kasan-fix-crashes-on-access-to-memory-mapped-by-vm_map_ram-v2.patch
+* mm-add-apply_to_existing_pages-helper.patch
+* mm-add-apply_to_existing_pages-helper-fix.patch
+* mm-add-apply_to_existing_pages-helper-fix-fix.patch
+* kasan-use-apply_to_existing_pages-for-releasing-vmalloc-shadow.patch
+* kasan-use-apply_to_existing_pages-for-releasing-vmalloc-shadow-fix.patch
+* kasan-dont-assume-percpu-shadow-allocations-will-succeed.patch
+* mm-vmscan-protect-shrinker-idr-replace-with-config_memcg.patch
+* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
+* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
+* mm-zsmallocc-fix-the-migrated-zspage-statistics.patch
+* mm-thp-tweak-reclaim-compaction-effort-of-local-only-and-all-node-allocations.patch
+* x86-mm-split-vmalloc_sync_all.patch
+* kcov-fix-struct-layout-for-kcov_remote_arg.patch
+* memcg-account-security-cred-as-well-to-kmemcg.patch
+* mm-move_pages-return-valid-node-id-in-status-if-the-page-is-already-on-the-target-node.patch
+* ramfs-support-o_tmpfile.patch
+  mm.patch
+* mm-avoid-slub-allocation-while-holding-list_lock.patch
+* mm-vmscan-expose-cgroup_ino-for-memcg-reclaim-tracepoints.patch
+* mm-pgmap-use-correct-alignment-when-looking-at-first-pfn-from-a-region.patch
+* mm-mmap-fix-the-adjusted-length-error.patch
+* mm-memmap_init-update-variable-name-in-memmap_init_zone.patch
+* mm-memory_hotplug-shrink-zones-when-offlining-memory.patch
+* mm-memory_hotplug-poison-memmap-in-remove_pfn_range_from_zone.patch
+* mm-memory_hotplug-we-always-have-a-zone-in-find_smallestbiggest_section_pfn.patch
+* mm-memory_hotplug-dont-check-for-all-holes-in-shrink_zone_span.patch
+* mm-memory_hotplug-drop-local-variables-in-shrink_zone_span.patch
+* mm-memory_hotplug-cleanup-__remove_pages.patch
+* mm-oom-avoid-printk-iteration-under-rcu.patch
+* mm-oom-avoid-printk-iteration-under-rcu-fix.patch
+* info-task-hung-in-generic_file_write_iter.patch
+* info-task-hung-in-generic_file_write-fix.patch
+* kernel-hung_taskc-monitor-killed-tasks.patch
+* string-add-stracpy-and-stracpy_pad-mechanisms.patch
+* documentation-checkpatch-prefer-stracpy-strscpy-over-strcpy-strlcpy-strncpy.patch
+* aio-simplify-read_events.patch
+* smp_mb__beforeafter_atomic-update-documentation.patch
+* ipc-mqueuec-remove-duplicated-code.patch
+* ipc-mqueuec-update-document-memory-barriers.patch
+* ipc-msgc-update-and-document-memory-barriers.patch
+* ipc-semc-document-and-update-memory-barriers.patch
+* ipc-consolidate-all-xxxctl_down-functions.patch
+  linux-next.patch
+  linux-next-git-rejects.patch
+* drivers-block-null_blk_mainc-fix-layout.patch
+* drivers-block-null_blk_mainc-fix-uninitialized-var-warnings.patch
+* pinctrl-fix-pxa2xxc-build-warnings.patch
+* drivers-tty-serial-sh-scic-suppress-warning.patch
+* fix-read-buffer-overflow-in-delta-ipc.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  workaround-for-a-pci-restoring-bug.patch
