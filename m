@@ -2,172 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1543B115DAA
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Dec 2019 18:02:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28764115DB2
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Dec 2019 18:14:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726469AbfLGRBx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 7 Dec 2019 12:01:53 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:46046 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726414AbfLGRBx (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 7 Dec 2019 12:01:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bhWCxXMSfUj2ikhu1QBLL9cZAf8fThN+0iWJPHVoqOw=; b=PA58yHXUCtzHkqiNs9B4pQP2x
-        8ddAlPAqnaekr1PY0g9cvLgDNOxFAaxQdNGu1VQRplfg1H68qCvcr7f+9qCgTdJwHxpHD7b4gUlGK
-        htWr+EJBIzgC4xmZ/d5sRLQmKIHjVt4ZHrxF9KbKfnNPGPuxG8AKz0KEFHtZkSAikaGuTdc2x+lRZ
-        yb+9oIdHEMD+VhptLFmCxpRqKfGe0vJhKz2U+7ORYt1XGef86GT24fyx2Z7mOofe8imRELf4+Gg0F
-        hXbQCsmzdjYCeV2WXdUPuvzccADJEuQDanIv54+2RmHUtcQaaAnwXbbq8hD9EH5+UMXNKxqCcEwLW
-        te5w8PZ5A==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iddSd-0001L7-MK; Sat, 07 Dec 2019 17:01:39 +0000
-Date:   Sat, 7 Dec 2019 09:01:39 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linmiaohe <linmiaohe@huawei.com>
-Cc:     Davide Libenzi <davidel@xmailserver.org>, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: eventfd: fix obsolete comment
-Message-ID: <20191207170139.GA32169@bombadil.infradead.org>
-References: <1575704733-11573-1-git-send-email-linmiaohe@huawei.com>
+        id S1726578AbfLGROC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 7 Dec 2019 12:14:02 -0500
+Received: from fieldses.org ([173.255.197.46]:55108 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726455AbfLGROC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 7 Dec 2019 12:14:02 -0500
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 3C8001510; Sat,  7 Dec 2019 12:14:02 -0500 (EST)
+Date:   Sat, 7 Dec 2019 12:14:02 -0500
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] nfsd change for 5.5
+Message-ID: <20191207171402.GA24017@fieldses.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1575704733-11573-1-git-send-email-linmiaohe@huawei.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+User-Agent: Mutt/1.5.21 (2010-09-15)
+From:   bfields@fieldses.org (J. Bruce Fields)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Dec 07, 2019 at 03:45:33PM +0800, linmiaohe wrote:
-> From: Miaohe Lin <linmiaohe@huawei.com>
-> 
-> since commit 36a7411724b1 ("eventfd_ctx_fdget(): use fdget() instead of
-> fget()"), this comment become outdated and looks confusing. Fix it with
-> the correct function name.
-> 
-> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-> ---
->  fs/eventfd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/eventfd.c b/fs/eventfd.c
-> index 8aa0ea8c55e8..0b8466b12932 100644
-> --- a/fs/eventfd.c
-> +++ b/fs/eventfd.c
-> @@ -352,7 +352,7 @@ EXPORT_SYMBOL_GPL(eventfd_fget);
->   * Returns a pointer to the internal eventfd context, otherwise the error
->   * pointers returned by the following functions:
->   *
-> - * eventfd_fget
-> + * fdget
+Please pull
 
-But this is wrong.  The error pointer is returned from eventfd_ctx_fileget(),
-not from fdget.
+  git://linux-nfs.org/~bfields/linux.git tags/nfsd-5.5
 
-Looking at the three callers of eventfd_ctx_fileget(), I think it would
-make sense to do this:
+for nfsd changes for 5.5.
 
-diff --git a/drivers/vfio/virqfd.c b/drivers/vfio/virqfd.c
-index 997cb5d0a657..c35b614e3770 100644
---- a/drivers/vfio/virqfd.c
-+++ b/drivers/vfio/virqfd.c
-@@ -126,11 +126,6 @@ int vfio_virqfd_enable(void *opaque,
- 	INIT_WORK(&virqfd->inject, virqfd_inject);
- 
- 	irqfd = fdget(fd);
--	if (!irqfd.file) {
--		ret = -EBADF;
--		goto err_fd;
--	}
--
- 	ctx = eventfd_ctx_fileget(irqfd.file);
- 	if (IS_ERR(ctx)) {
- 		ret = PTR_ERR(ctx);
-diff --git a/fs/eventfd.c b/fs/eventfd.c
-index 8aa0ea8c55e8..d389ffd1dc07 100644
---- a/fs/eventfd.c
-+++ b/fs/eventfd.c
-@@ -349,17 +349,13 @@ EXPORT_SYMBOL_GPL(eventfd_fget);
-  * eventfd_ctx_fdget - Acquires a reference to the internal eventfd context.
-  * @fd: [in] Eventfd file descriptor.
-  *
-- * Returns a pointer to the internal eventfd context, otherwise the error
-- * pointers returned by the following functions:
-- *
-- * eventfd_fget
-+ * Returns a pointer to the internal eventfd context, or an error pointer;
-+ * see eventfd_ctx_fileget().
-  */
- struct eventfd_ctx *eventfd_ctx_fdget(int fd)
- {
- 	struct eventfd_ctx *ctx;
- 	struct fd f = fdget(fd);
--	if (!f.file)
--		return ERR_PTR(-EBADF);
- 	ctx = eventfd_ctx_fileget(f.file);
- 	fdput(f);
- 	return ctx;
-@@ -368,17 +364,18 @@ EXPORT_SYMBOL_GPL(eventfd_ctx_fdget);
- 
- /**
-  * eventfd_ctx_fileget - Acquires a reference to the internal eventfd context.
-- * @file: [in] Eventfd file pointer.
-- *
-- * Returns a pointer to the internal eventfd context, otherwise the error
-- * pointer:
-+ * @file: Eventfd file pointer.
-  *
-- * -EINVAL   : The @fd file descriptor is not an eventfd file.
-+ * Return: A pointer to the internal eventfd context, or an error pointer:
-+ * * -EBADF  - The @file is NULL.
-+ * * -EINVAL - The @file is not an eventfd file.
-  */
- struct eventfd_ctx *eventfd_ctx_fileget(struct file *file)
- {
- 	struct eventfd_ctx *ctx;
- 
-+	if (!file)
-+		return ERR_PTR(-EBADF);
- 	if (file->f_op != &eventfd_fops)
- 		return ERR_PTR(-EINVAL);
- 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 01f3f8b665e9..74b45bc439d8 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -4676,11 +4676,6 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
- 	INIT_WORK(&event->remove, memcg_event_remove);
- 
- 	efile = fdget(efd);
--	if (!efile.file) {
--		ret = -EBADF;
--		goto out_kfree;
--	}
--
- 	event->eventfd = eventfd_ctx_fileget(efile.file);
- 	if (IS_ERR(event->eventfd)) {
- 		ret = PTR_ERR(event->eventfd);
-diff --git a/virt/kvm/eventfd.c b/virt/kvm/eventfd.c
-index 67b6fc153e9c..814b99c33d44 100644
---- a/virt/kvm/eventfd.c
-+++ b/virt/kvm/eventfd.c
-@@ -306,11 +306,6 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
- 	seqcount_init(&irqfd->irq_entry_sc);
- 
- 	f = fdget(args->fd);
--	if (!f.file) {
--		ret = -EBADF;
--		goto out;
--	}
--
- 	eventfd = eventfd_ctx_fileget(f.file);
- 	if (IS_ERR(eventfd)) {
- 		ret = PTR_ERR(eventfd);
+This is a relatively quiet cycle for nfsd, mainly various bugfixes.
 
-(not even compile tested)
+Possibly most interesting is Trond's fixes for some callback races that
+were due to my incomplete understanding of rpc client shutdown.
+Unfortunately at the last minute I've started noticing a new
+intermittent failure to send callbacks.  As the logic seems basically
+correct, I'm leaving Trond's patches in for now, and hope to find a fix
+in the next week so I don't have to revert those patches.
+
+--b.
+
+Al Viro (1):
+      race in exportfs_decode_fh()
+
+Andy Shevchenko (1):
+      nfsd: remove private bin2hex implementation
+
+Christoph Hellwig (2):
+      sunrpc: remove __KERNEL__ ifdefs
+      lockd: remove __KERNEL__ ifdefs
+
+Chuck Lever (4):
+      svcrdma: Improve DMA mapping trace points
+      SUNRPC: Trace gssproxy upcall results
+      SUNRPC: Fix svcauth_gss_proxy_init()
+      SUNRPC: Fix backchannel latency metrics
+
+J. Bruce Fields (4):
+      nfsd: "\%s" should be "%s"
+      nfsd: mark cb path down on unknown errors
+      nfsd: document callback_wq serialization of callback code
+      nfsd: restore NFSv3 ACL support
+
+Mao Wenan (1):
+      nfsd: Drop LIST_HEAD where the variable it declares is never used.
+
+NeilBrown (1):
+      nfsd: check for EBUSY from vfs_rmdir/vfs_unink.
+
+Olga Kornievskaia (1):
+      NFSD fixing possible null pointer derefering in copy offload
+
+Patrick Steinhardt (1):
+      nfsd: depend on CRYPTO_MD5 for legacy client tracking
+
+Pavel Tikhomirov (1):
+      sunrpc: fix crash when cache_head become valid before update
+
+Scott Mayhew (3):
+      nfsd4: fix up replay_matches_cache()
+      nfsd: Fix cld_net->cn_tfm initialization
+      nfsd: v4 support requires CRYPTO_SHA256
+
+Trond Myklebust (3):
+      nfsd: minor 4.1 callback cleanup
+      nfsd: Fix races between nfsd4_cb_release() and nfsd4_shutdown_callback()
+      nfsd: Ensure CLONE persists data and metadata changes to the target file
+
+YueHaibing (1):
+      nfsd: remove set but not used variable 'len'
+
+ fs/exportfs/expfs.c                        |  31 +++++----
+ fs/nfsd/Kconfig                            |   3 +-
+ fs/nfsd/filecache.c                        |   2 -
+ fs/nfsd/nfs4callback.c                     | 104 +++++++++++++++++++++++------
+ fs/nfsd/nfs4proc.c                         |   6 +-
+ fs/nfsd/nfs4recover.c                      |  23 +++----
+ fs/nfsd/nfs4state.c                        |  19 ++++--
+ fs/nfsd/nfs4xdr.c                          |   2 -
+ fs/nfsd/nfsd.h                             |   3 +-
+ fs/nfsd/nfssvc.c                           |   3 +-
+ fs/nfsd/state.h                            |   1 +
+ fs/nfsd/vfs.c                              |  20 +++++-
+ fs/nfsd/vfs.h                              |   2 +-
+ include/linux/lockd/debug.h                |   4 --
+ include/linux/lockd/lockd.h                |   4 --
+ include/linux/sunrpc/auth.h                |   3 -
+ include/linux/sunrpc/auth_gss.h            |   2 -
+ include/linux/sunrpc/clnt.h                |   3 -
+ include/linux/sunrpc/gss_api.h             |   2 -
+ include/linux/sunrpc/gss_err.h             |   3 -
+ include/linux/sunrpc/msg_prot.h            |   3 -
+ include/linux/sunrpc/rpc_pipe_fs.h         |   3 -
+ include/linux/sunrpc/svcauth.h             |   4 --
+ include/linux/sunrpc/svcauth_gss.h         |   2 -
+ include/linux/sunrpc/xdr.h                 |   3 -
+ include/linux/sunrpc/xprt.h                |   4 --
+ include/linux/sunrpc/xprtsock.h            |   4 --
+ include/trace/events/rpcgss.h              |  45 +++++++++++++
+ include/trace/events/rpcrdma.h             |  30 +++++++--
+ include/trace/events/sunrpc.h              |  55 +++++++++++++++
+ net/sunrpc/auth_gss/gss_mech_switch.c      |   4 +-
+ net/sunrpc/auth_gss/svcauth_gss.c          |  92 ++++++++++++++++++-------
+ net/sunrpc/cache.c                         |   6 --
+ net/sunrpc/svc.c                           |   2 +
+ net/sunrpc/svcauth.c                       |   2 +
+ net/sunrpc/xprtrdma/svc_rdma_backchannel.c |   1 +
+ net/sunrpc/xprtrdma/svc_rdma_sendto.c      |   8 ++-
+ net/sunrpc/xprtsock.c                      |   3 +-
+ 38 files changed, 362 insertions(+), 149 deletions(-)
