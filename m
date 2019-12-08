@@ -2,169 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAAB9116286
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Dec 2019 15:58:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E402116341
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Dec 2019 18:56:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726491AbfLHO6i convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Sun, 8 Dec 2019 09:58:38 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:36707 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726017AbfLHO6h (ORCPT
+        id S1726508AbfLHR4N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Dec 2019 12:56:13 -0500
+Received: from freki.datenkhaos.de ([81.7.17.101]:39002 "EHLO
+        freki.datenkhaos.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726474AbfLHR4M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 Dec 2019 09:58:37 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1idy11-0000R6-Ab; Sun, 08 Dec 2019 15:58:31 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E91311C2884;
-        Sun,  8 Dec 2019 15:58:30 +0100 (CET)
-Date:   Sun, 08 Dec 2019 14:58:30 -0000
-From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/urgent] sched/rt, fs: Use CONFIG_PREEMPTION
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sun, 8 Dec 2019 12:56:12 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by freki.datenkhaos.de (Postfix) with ESMTP id 096E11E4F289;
+        Sun,  8 Dec 2019 18:56:10 +0100 (CET)
+Received: from freki.datenkhaos.de ([127.0.0.1])
+        by localhost (freki.datenkhaos.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id fETea11isuRw; Sun,  8 Dec 2019 18:56:07 +0100 (CET)
+Received: from latitude (x590cb2df.dyn.telefonica.de [89.12.178.223])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by freki.datenkhaos.de (Postfix) with ESMTPSA;
+        Sun,  8 Dec 2019 18:56:07 +0100 (CET)
+Date:   Sun, 8 Dec 2019 18:56:02 +0100
+From:   Johannes Hirte <johannes.hirte@datenkhaos.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        linux-fsdevel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191015191821.11479-24-bigeasy@linutronix.de>
-References: <20191015191821.11479-24-bigeasy@linutronix.de>
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring,
+ not cursor and length [ver #2]
+Message-ID: <20191208175602.GA1844@latitude>
+References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
+ <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
+ <20191206214725.GA2108@latitude>
+ <CAHk-=wga0MPEH5hsesi4Cy+fgaaKENMYpbg2kK8UA0qE3iupgw@mail.gmail.com>
+ <20191207000015.GA1757@latitude>
+ <CAHk-=wjEa5oNcQ9+9fai1Awqktf+hzz_HZmChi8HZJWcL62+Cw@mail.gmail.com>
 MIME-Version: 1.0
-Message-ID: <157581711082.21853.1069083977574720664.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjEa5oNcQ9+9fai1Awqktf+hzz_HZmChi8HZJWcL62+Cw@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following commit has been merged into the sched/urgent branch of tip:
+On 2019 Dez 06, Linus Torvalds wrote:
+> On Fri, Dec 6, 2019 at 4:00 PM Johannes Hirte
+> <johannes.hirte@datenkhaos.de> wrote:
+> >
+> > Tested with 5.4.0-11505-g347f56fb3890 and still the same wrong behavior.
+> 
+> Ok, we'll continue looking.
+> 
+> That said, your version string is strange.
+> 
+> Commit 347f56fb3890 should be  "v5.4.0-13174-g347f56fb3890", the fact
+> that you have "11505" confuses me.
+> 
+> The hash is what matters, but I wonder what is going on that you have
+> the commit count in that version string so wrong.
+> 
+>                    Linus
 
-Commit-ID:     2496396fcb44404ead24b578c583d5286886e857
-Gitweb:        https://git.kernel.org/tip/2496396fcb44404ead24b578c583d5286886e857
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Tue, 15 Oct 2019 21:18:10 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Sun, 08 Dec 2019 14:37:36 +01:00
+Yes, something got messed up here. After last pull, git describe says:
 
-sched/rt, fs: Use CONFIG_PREEMPTION
+drm-next-2019-12-06-11662-g9455d25f4e3b
 
-CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by CONFIG_PREEMPT_RT.
-Both PREEMPT and PREEMPT_RT require the same functionality which today
-depends on CONFIG_PREEMPT.
+whereas with a fresh cloned repo I get:
 
-Switch the i_size() and part_nr_sects_…() code over to use
-CONFIG_PREEMPTION. Update the comment for fsstack_copy_inode_size() also
-to refer to CONFIG_PREEMPTION.
+v5.4-13331-g9455d25f4e3b
 
-[bigeasy: +PREEMPT comments]
+I assume the later is right. With this version the bug seems to be
+fixed, regardless of the commit count. Tested with different websites
+and firefox works as expected again.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org
-Link: https://lore.kernel.org/r/20191015191821.11479-24-bigeasy@linutronix.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- fs/stack.c            | 6 +++---
- include/linux/fs.h    | 4 ++--
- include/linux/genhd.h | 6 +++---
- 3 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/fs/stack.c b/fs/stack.c
-index 4ef2c05..c983092 100644
---- a/fs/stack.c
-+++ b/fs/stack.c
-@@ -23,7 +23,7 @@ void fsstack_copy_inode_size(struct inode *dst, struct inode *src)
- 
- 	/*
- 	 * But on 32-bit, we ought to make an effort to keep the two halves of
--	 * i_blocks in sync despite SMP or PREEMPT - though stat's
-+	 * i_blocks in sync despite SMP or PREEMPTION - though stat's
- 	 * generic_fillattr() doesn't bother, and we won't be applying quotas
- 	 * (where i_blocks does become important) at the upper level.
- 	 *
-@@ -38,14 +38,14 @@ void fsstack_copy_inode_size(struct inode *dst, struct inode *src)
- 		spin_unlock(&src->i_lock);
- 
- 	/*
--	 * If CONFIG_SMP or CONFIG_PREEMPT on 32-bit, it's vital for
-+	 * If CONFIG_SMP or CONFIG_PREEMPTION on 32-bit, it's vital for
- 	 * fsstack_copy_inode_size() to hold some lock around
- 	 * i_size_write(), otherwise i_size_read() may spin forever (see
- 	 * include/linux/fs.h).  We don't necessarily hold i_mutex when this
- 	 * is called, so take i_lock for that case.
- 	 *
- 	 * And if on 32-bit, continue our effort to keep the two halves of
--	 * i_blocks in sync despite SMP or PREEMPT: use i_lock  for that case
-+	 * i_blocks in sync despite SMP or PREEMPTION: use i_lock for that case
- 	 * too, and do both at once by combining the tests.
- 	 *
- 	 * There is none of this locking overhead in the 64-bit case.
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 98e0349..dddfcbb 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -855,7 +855,7 @@ static inline loff_t i_size_read(const struct inode *inode)
- 		i_size = inode->i_size;
- 	} while (read_seqcount_retry(&inode->i_size_seqcount, seq));
- 	return i_size;
--#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPT)
-+#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPTION)
- 	loff_t i_size;
- 
- 	preempt_disable();
-@@ -880,7 +880,7 @@ static inline void i_size_write(struct inode *inode, loff_t i_size)
- 	inode->i_size = i_size;
- 	write_seqcount_end(&inode->i_size_seqcount);
- 	preempt_enable();
--#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPT)
-+#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPTION)
- 	preempt_disable();
- 	inode->i_size = i_size;
- 	preempt_enable();
-diff --git a/include/linux/genhd.h b/include/linux/genhd.h
-index 8bb6302..a927829 100644
---- a/include/linux/genhd.h
-+++ b/include/linux/genhd.h
-@@ -718,7 +718,7 @@ static inline void hd_free_part(struct hd_struct *part)
-  * accessor function.
-  *
-  * Code written along the lines of i_size_read() and i_size_write().
-- * CONFIG_PREEMPT case optimizes the case of UP kernel with preemption
-+ * CONFIG_PREEMPTION case optimizes the case of UP kernel with preemption
-  * on.
-  */
- static inline sector_t part_nr_sects_read(struct hd_struct *part)
-@@ -731,7 +731,7 @@ static inline sector_t part_nr_sects_read(struct hd_struct *part)
- 		nr_sects = part->nr_sects;
- 	} while (read_seqcount_retry(&part->nr_sects_seq, seq));
- 	return nr_sects;
--#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPT)
-+#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPTION)
- 	sector_t nr_sects;
- 
- 	preempt_disable();
-@@ -754,7 +754,7 @@ static inline void part_nr_sects_write(struct hd_struct *part, sector_t size)
- 	write_seqcount_begin(&part->nr_sects_seq);
- 	part->nr_sects = size;
- 	write_seqcount_end(&part->nr_sects_seq);
--#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPT)
-+#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPTION)
- 	preempt_disable();
- 	part->nr_sects = size;
- 	preempt_enable();
+-- 
+Regards,
+  Johannes Hirte
+
