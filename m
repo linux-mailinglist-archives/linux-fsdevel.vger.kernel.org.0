@@ -2,31 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E402116341
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Dec 2019 18:56:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1A67116363
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Dec 2019 19:18:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbfLHR4N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Dec 2019 12:56:13 -0500
-Received: from freki.datenkhaos.de ([81.7.17.101]:39002 "EHLO
-        freki.datenkhaos.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726474AbfLHR4M (ORCPT
+        id S1726475AbfLHSSN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Dec 2019 13:18:13 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40212 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726220AbfLHSSN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 Dec 2019 12:56:12 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by freki.datenkhaos.de (Postfix) with ESMTP id 096E11E4F289;
-        Sun,  8 Dec 2019 18:56:10 +0100 (CET)
-Received: from freki.datenkhaos.de ([127.0.0.1])
-        by localhost (freki.datenkhaos.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id fETea11isuRw; Sun,  8 Dec 2019 18:56:07 +0100 (CET)
-Received: from latitude (x590cb2df.dyn.telefonica.de [89.12.178.223])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by freki.datenkhaos.de (Postfix) with ESMTPSA;
-        Sun,  8 Dec 2019 18:56:07 +0100 (CET)
-Date:   Sun, 8 Dec 2019 18:56:02 +0100
-From:   Johannes Hirte <johannes.hirte@datenkhaos.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+        Sun, 8 Dec 2019 13:18:13 -0500
+Received: by mail-lj1-f195.google.com with SMTP id s22so13049625ljs.7
+        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Dec 2019 10:18:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4bP+MLqv2/4jxjq5G8WI3V8blQrwy5vvH8NjA0Oq9xU=;
+        b=H0B9voLfv9AYLRDixmAeg/5DRF8QLotazZN/4owvkzDMXfPsktWaen4Q3k9MedABQL
+         0pB2E+DsxZ88pf8Iftm8Zpi/eUzhjTeP2HrbKUH1z9La6YaZoUY5Mc7J6SV7VX3rGun9
+         NOn+0S2wMJe3ABAu0HEETzU4Av3UFzbmNvuFQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4bP+MLqv2/4jxjq5G8WI3V8blQrwy5vvH8NjA0Oq9xU=;
+        b=dSe0Wnu5yBYRwkdzxODzg/U99sWF2K+DqQ6yuEYXewX5QUJNz2hpvXmcmfPm6JantP
+         NZOS7AOKlqDxkNBQjUpq75eiw33Ks2A3uMeBHhnqT6NFzW9S4O6hIT8zEQPmJB6ZF9sA
+         aeUebaSaPzmT7TpiCowRfw/UH3sSkbk6xTh02WuXAAOloOTpWo63QF4sGKM/CgGasK2Q
+         +jT4OO45QUH9xK2lsGew+QpdFkPb73JeloXuj9evSoq4037Kjd+wTPWx3oiIerYEHsZB
+         L/MXYIjX98a4eZAMyfgK5bWZ0nAWrGZhk/ijZFnN8iuamAwUulxV6hT5w67nN6gNh/a2
+         bfXQ==
+X-Gm-Message-State: APjAAAXExA6sM77KxdViRE13KJ+9HiqHP9wuNHEB3ps6/jl36vl9VrYf
+        Gxm4Kqrs+jpySYvs3eddD1JNh/YPShE=
+X-Google-Smtp-Source: APXvYqw7GoGUIIhJhbP+fLhafu1CdctjAVgULNn4JlvqdOSR7oap0CpNrnr0P4oznko95JoZ2o27jA==
+X-Received: by 2002:a2e:b52a:: with SMTP id z10mr14121914ljm.178.1575829091211;
+        Sun, 08 Dec 2019 10:18:11 -0800 (PST)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id v2sm9845287ljv.70.2019.12.08.10.18.10
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 08 Dec 2019 10:18:10 -0800 (PST)
+Received: by mail-lf1-f46.google.com with SMTP id 9so8919203lfq.10
+        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Dec 2019 10:18:10 -0800 (PST)
+X-Received: by 2002:ac2:465e:: with SMTP id s30mr10244080lfo.134.1575828667708;
+ Sun, 08 Dec 2019 10:11:07 -0800 (PST)
+MIME-Version: 1.0
+References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
+ <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
+ <20191206214725.GA2108@latitude> <CAHk-=wga0MPEH5hsesi4Cy+fgaaKENMYpbg2kK8UA0qE3iupgw@mail.gmail.com>
+ <20191207000015.GA1757@latitude> <CAHk-=wjEa5oNcQ9+9fai1Awqktf+hzz_HZmChi8HZJWcL62+Cw@mail.gmail.com>
+ <20191208175602.GA1844@latitude>
+In-Reply-To: <20191208175602.GA1844@latitude>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 8 Dec 2019 10:10:51 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgh9zUy9nbiCgGjtrgw1V9Vk=01Ncju-0iib5Jn-V1arw@mail.gmail.com>
+Message-ID: <CAHk-=wgh9zUy9nbiCgGjtrgw1V9Vk=01Ncju-0iib5Jn-V1arw@mail.gmail.com>
+Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring,
+ not cursor and length [ver #2]
+To:     Johannes Hirte <johannes.hirte@datenkhaos.de>
 Cc:     David Howells <dhowells@redhat.com>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -39,56 +73,29 @@ Cc:     David Howells <dhowells@redhat.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux API <linux-api@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring,
- not cursor and length [ver #2]
-Message-ID: <20191208175602.GA1844@latitude>
-References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
- <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
- <20191206214725.GA2108@latitude>
- <CAHk-=wga0MPEH5hsesi4Cy+fgaaKENMYpbg2kK8UA0qE3iupgw@mail.gmail.com>
- <20191207000015.GA1757@latitude>
- <CAHk-=wjEa5oNcQ9+9fai1Awqktf+hzz_HZmChi8HZJWcL62+Cw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjEa5oNcQ9+9fai1Awqktf+hzz_HZmChi8HZJWcL62+Cw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019 Dez 06, Linus Torvalds wrote:
-> On Fri, Dec 6, 2019 at 4:00 PM Johannes Hirte
-> <johannes.hirte@datenkhaos.de> wrote:
-> >
-> > Tested with 5.4.0-11505-g347f56fb3890 and still the same wrong behavior.
-> 
-> Ok, we'll continue looking.
-> 
-> That said, your version string is strange.
-> 
-> Commit 347f56fb3890 should be  "v5.4.0-13174-g347f56fb3890", the fact
-> that you have "11505" confuses me.
-> 
-> The hash is what matters, but I wonder what is going on that you have
-> the commit count in that version string so wrong.
-> 
->                    Linus
+On Sun, Dec 8, 2019 at 9:56 AM Johannes Hirte
+<johannes.hirte@datenkhaos.de> wrote:
+>
+> whereas with a fresh cloned repo I get:
+>
+> v5.4-13331-g9455d25f4e3b
+>
+> I assume the later is right. With this version the bug seems to be
+> fixed, regardless of the commit count. Tested with different websites
+> and firefox works as expected again.
 
-Yes, something got messed up here. After last pull, git describe says:
+Ok, good. It was almost certainly the select/poll race fix - Mariusz
+Ceier reported a problem with youtube hanging, and confirmed that the
+poll/select fix seems to have cleared that one up. I suspect that your
+hang on fb and spiegel.de were the same thing.
 
-drm-next-2019-12-06-11662-g9455d25f4e3b
+So I think the pipe code is stable again with current -git. Thanks for
+reporting and testing,
 
-whereas with a fresh cloned repo I get:
-
-v5.4-13331-g9455d25f4e3b
-
-I assume the later is right. With this version the bug seems to be
-fixed, regardless of the commit count. Tested with different websites
-and firefox works as expected again.
-
-
--- 
-Regards,
-  Johannes Hirte
-
+             Linus
