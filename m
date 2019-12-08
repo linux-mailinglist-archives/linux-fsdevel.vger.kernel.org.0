@@ -2,106 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 742841163B7
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Dec 2019 21:30:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A11DA1163E3
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Dec 2019 22:40:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726596AbfLHUag (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Dec 2019 15:30:36 -0500
-Received: from sandeen.net ([63.231.237.45]:36308 "EHLO sandeen.net"
+        id S1726879AbfLHVkF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Dec 2019 16:40:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726551AbfLHUaf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 Dec 2019 15:30:35 -0500
-Received: from [10.0.0.4] (erlite [10.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id 15E034A0;
-        Sun,  8 Dec 2019 14:30:34 -0600 (CST)
-Subject: Re: [bug] userspace hitting sporadic SIGBUS on xfs (Power9, ppc64le),
- v4.19 and later
-To:     dftxbs3e <dftxbs3e@free.fr>, Jan Stancek <jstancek@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        hch@infradead.org, darrick.wong@oracle.com,
-        linuxppc-dev@lists.ozlabs.org,
-        Memory Management <mm-qe@redhat.com>,
-        LTP Mailing List <ltp@lists.linux.it>,
-        CKI Project <cki-project@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-References: <9c0af967-4916-4e8b-e77f-087515793d77@free.fr>
- <e9a171cc-6827-5c43-092a-9dcd8a997b5a@free.fr>
-From:   Eric Sandeen <sandeen@sandeen.net>
-Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
- 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 pA==
-Message-ID: <f874ea14-becc-9c4b-2f2f-351573e6a751@sandeen.net>
-Date:   Sun, 8 Dec 2019 14:30:33 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.3.0
-MIME-Version: 1.0
-In-Reply-To: <e9a171cc-6827-5c43-092a-9dcd8a997b5a@free.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726684AbfLHVkF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 8 Dec 2019 16:40:05 -0500
+Subject: Re: [git pull] several misc cleanups
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575841204;
+        bh=umapMgjzFdifXMaub73Vzko1vYJdt/80TYCnK1+df0w=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=xGPk4361ikXCGYvI0MnVsoZiMNe2ew3EJ8w9FG5QMUk4cV69o+0UAOoM0tk2j1IzR
+         jTX58moygxC9JvRzlHWG2WDa/Es2B7pnhDngesBZnm2RENe1ZWqWMLxaaT/guTeOvu
+         vGyrhI9NUzdGRCSh/HqFpuMm8JwHVqdcmfHI5n/o=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20191208044556.GR4203@ZenIV.linux.org.uk>
+References: <20191208044556.GR4203@ZenIV.linux.org.uk>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20191208044556.GR4203@ZenIV.linux.org.uk>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.misc
+X-PR-Tracked-Commit-Id: 5c8b0dfc6f4a5e6c707827d0172fc1572e689094
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 5bf9a06a5f7ca525621f4117257a49dc5a2786da
+Message-Id: <157584120461.22418.2135503611127593336.pr-tracker-bot@kernel.org>
+Date:   Sun, 08 Dec 2019 21:40:04 +0000
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+The pull request you sent on Sun, 8 Dec 2019 04:45:56 +0000:
 
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.misc
 
-On 12/6/19 6:09 PM, dftxbs3e wrote:
-> Hello!
-> 
-> I am very happy that someone has found this issue.
-> 
-> I have been suffering from rather random SIGBUS errors in similar
-> conditions described by the author.
-> 
-> I don't have much troubleshooting information to provide, however, I hit
-> the issue regularly so I could investigate during that.
-> 
-> How do you debug such an issue? I tried a debugger etc. but besides
-> crashing with SIGBUS, I couldnt get any other meaningful information.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/5bf9a06a5f7ca525621f4117257a49dc5a2786da
 
-You may want to test the patch Christoph sent on the original thread for
-this issue.
+Thank you!
 
--Eric
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
