@@ -2,164 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 955BD1160B8
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Dec 2019 06:34:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE14F1160C9
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Dec 2019 06:45:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725815AbfLHFeT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Dec 2019 00:34:19 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:58056 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725554AbfLHFeT (ORCPT
+        id S1725832AbfLHFpK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Dec 2019 00:45:10 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:42762 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725787AbfLHFpK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 Dec 2019 00:34:19 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1idpCY-0002jN-19; Sun, 08 Dec 2019 05:33:54 +0000
-Date:   Sun, 8 Dec 2019 05:33:50 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v18] fs: Add VirtualBox guest shared folder (vboxsf)
- support
-Message-ID: <20191208053350.GS4203@ZenIV.linux.org.uk>
-References: <20191125140839.4956-1-hdegoede@redhat.com>
- <20191125140839.4956-2-hdegoede@redhat.com>
+        Sun, 8 Dec 2019 00:45:10 -0500
+Received: by mail-io1-f71.google.com with SMTP id e7so6749405iog.9
+        for <linux-fsdevel@vger.kernel.org>; Sat, 07 Dec 2019 21:45:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=MTe2qzn3l3HhjLyhnGZbKSX1tp0E1VU2WlXpFjF8hAI=;
+        b=mudBBaQ81nQmZDVoMxJh8OgeXJ3SqtmEiW+Ootpx+wtilh6AIGu9ebo0B4dMjpM1YW
+         UOraZf9fB/tl88J6+V3LxE1w8tzn18XIJxZQ2YwXyMECo/EQzyOfVnfPC7Y5z+HQnksi
+         EEv7NjFFGUzS4J0rfrkkdCcQ5bJn1B8nUtFKxYqrM647mYvw4BozXbPmql50t5mrLF4a
+         SOdaDoRRCb4z2wxEb9UlkC4ifH0QTrQFvgbfeboqHEBFXNXj1d7JMs2EVYRBbF/O/qH+
+         K3Hql+c6WQMlN4U6hVz0go2Yo1FOJLXDWVc2tOhSBeV2mbNtlGHp2G16GDcWbuiHyDRS
+         Kkww==
+X-Gm-Message-State: APjAAAXjFOr2Xzp1tcOXBLkFatkbURaLdfpNrMrLdMQmc341f9ryUGY5
+        tACfV1RjBZG650Jjji4RTGgVhMw3hRMcS6w1XVllG/4A7Gos
+X-Google-Smtp-Source: APXvYqxW47nvOh4dAUBDxjFaJuQSozp3vnJuHfQxbvXfs4l3Wt7CDKsCLcfmZfhyO0rgYJT2Fu+2v+hMe6MLmn1D/aZkB1jHYeL+
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191125140839.4956-2-hdegoede@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Received: by 2002:a5d:9eda:: with SMTP id a26mr17559388ioe.238.1575783909020;
+ Sat, 07 Dec 2019 21:45:09 -0800 (PST)
+Date:   Sat, 07 Dec 2019 21:45:09 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000023dba505992ac8aa@google.com>
+Subject: memory leak in fasync_helper
+From:   syzbot <syzbot+4b1fe8105f8044a26162@syzkaller.appspotmail.com>
+To:     bfields@fieldses.org, jlayton@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 25, 2019 at 03:08:39PM +0100, Hans de Goede wrote:
+Hello,
 
-> +	list_for_each_entry(b, &sf_d->info_list, head) {
-> +try_next_entry:
-> +		if (ctx->pos >= cur + b->entries) {
-> +			cur += b->entries;
-> +			continue;
-> +		}
-> +
-> +		/*
-> +		 * Note the vboxsf_dir_info objects we are iterating over here
-> +		 * are variable sized, so the info pointer may end up being
-> +		 * unaligned. This is how we get the data from the host.
-> +		 * Since vboxsf is only supported on x86 machines this is not
-> +		 * a problem.
-> +		 */
-> +		for (i = 0, info = b->buf; i < ctx->pos - cur; i++) {
-> +			size = offsetof(struct shfl_dirinfo, name.string) +
-> +			       info->name.size;
-> +			info = (struct shfl_dirinfo *)((uintptr_t)info + size);
+syzbot found the following crash on:
 
-Yecchhh...
-	1) end = &info->name.string[info->name.size];
-	   info = (struct shfl_dirinfo *)end;
-please.  Compiler can and will optimize it just fine.
-	2) what guarantees the lack of overruns here?
+HEAD commit:    bf929479 Merge branch 'for-linus' of git://git.kernel.org/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=123e91e2e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=874c75a332209d41
+dashboard link: https://syzkaller.appspot.com/bug?extid=4b1fe8105f8044a26162
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=120faee2e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=178a0ef6e00000
 
-> +{
-> +	bool keep_iterating;
-> +
-> +	for (keep_iterating = true; keep_iterating; ctx->pos += 1)
-> +		keep_iterating = vboxsf_dir_emit(dir, ctx);
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+4b1fe8105f8044a26162@syzkaller.appspotmail.com
 
-Are you sure you want to bump ctx->pos when vboxsf_dir_emit() returns false?
+BUG: memory leak
+unreferenced object 0xffff88812a4082a0 (size 48):
+   comm "syz-executor670", pid 6989, jiffies 4294952355 (age 19.520s)
+   hex dump (first 32 bytes):
+     00 00 00 00 00 00 00 00 01 46 00 00 03 00 00 00  .........F......
+     00 00 00 00 00 00 00 00 00 6b 05 1f 81 88 ff ff  .........k......
+   backtrace:
+     [<000000002a74b343>] kmemleak_alloc_recursive  
+include/linux/kmemleak.h:43 [inline]
+     [<000000002a74b343>] slab_post_alloc_hook mm/slab.h:586 [inline]
+     [<000000002a74b343>] slab_alloc mm/slab.c:3319 [inline]
+     [<000000002a74b343>] kmem_cache_alloc+0x13f/0x2c0 mm/slab.c:3483
+     [<00000000fa370506>] fasync_alloc fs/fcntl.c:895 [inline]
+     [<00000000fa370506>] fasync_add_entry fs/fcntl.c:953 [inline]
+     [<00000000fa370506>] fasync_helper+0x37/0xa9 fs/fcntl.c:982
+     [<000000006c3eaaf1>] sock_fasync+0x4d/0xa0 net/socket.c:1293
+     [<0000000098076f55>] ioctl_fioasync fs/ioctl.c:550 [inline]
+     [<0000000098076f55>] do_vfs_ioctl+0x409/0x810 fs/ioctl.c:655
+     [<00000000df24d2b9>] ksys_ioctl+0x86/0xb0 fs/ioctl.c:713
+     [<000000003fec9c80>] __do_sys_ioctl fs/ioctl.c:720 [inline]
+     [<000000003fec9c80>] __se_sys_ioctl fs/ioctl.c:718 [inline]
+     [<000000003fec9c80>] __x64_sys_ioctl+0x1e/0x30 fs/ioctl.c:718
+     [<000000002bebbfe6>] do_syscall_64+0x73/0x1f0  
+arch/x86/entry/common.c:290
+     [<00000000722d8431>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-> +static int vboxsf_dir_create(struct inode *parent, struct dentry *dentry,
-> +			     umode_t mode, int is_dir)
-> +{
-> +	struct vboxsf_inode *sf_parent_i = VBOXSF_I(parent);
-> +	struct vboxsf_sbi *sbi = VBOXSF_SBI(parent->i_sb);
-> +	struct shfl_createparms params = {};
-> +	int err;
-> +
-> +	params.handle = SHFL_HANDLE_NIL;
-> +	params.create_flags = SHFL_CF_ACT_CREATE_IF_NEW |
-> +			      SHFL_CF_ACT_FAIL_IF_EXISTS |
-> +			      SHFL_CF_ACCESS_READWRITE |
-> +			      (is_dir ? SHFL_CF_DIRECTORY : 0);
-> +	params.info.attr.mode = (mode & 0777) |
-> +				(is_dir ? SHFL_TYPE_DIRECTORY : SHFL_TYPE_FILE);
-> +	params.info.attr.additional = SHFLFSOBJATTRADD_NOTHING;
-> +
-> +	err = vboxsf_create_at_dentry(dentry, &params);
+BUG: memory leak
+unreferenced object 0xffff888128cdf240 (size 48):
+   comm "syz-executor670", pid 6990, jiffies 4294952942 (age 13.650s)
+   hex dump (first 32 bytes):
+     00 00 00 00 00 00 00 00 01 46 00 00 03 00 00 00  .........F......
+     00 00 00 00 00 00 00 00 00 d8 02 19 81 88 ff ff  ................
+   backtrace:
+     [<000000002a74b343>] kmemleak_alloc_recursive  
+include/linux/kmemleak.h:43 [inline]
+     [<000000002a74b343>] slab_post_alloc_hook mm/slab.h:586 [inline]
+     [<000000002a74b343>] slab_alloc mm/slab.c:3319 [inline]
+     [<000000002a74b343>] kmem_cache_alloc+0x13f/0x2c0 mm/slab.c:3483
+     [<00000000fa370506>] fasync_alloc fs/fcntl.c:895 [inline]
+     [<00000000fa370506>] fasync_add_entry fs/fcntl.c:953 [inline]
+     [<00000000fa370506>] fasync_helper+0x37/0xa9 fs/fcntl.c:982
+     [<000000006c3eaaf1>] sock_fasync+0x4d/0xa0 net/socket.c:1293
+     [<0000000098076f55>] ioctl_fioasync fs/ioctl.c:550 [inline]
+     [<0000000098076f55>] do_vfs_ioctl+0x409/0x810 fs/ioctl.c:655
+     [<00000000df24d2b9>] ksys_ioctl+0x86/0xb0 fs/ioctl.c:713
+     [<000000003fec9c80>] __do_sys_ioctl fs/ioctl.c:720 [inline]
+     [<000000003fec9c80>] __se_sys_ioctl fs/ioctl.c:718 [inline]
+     [<000000003fec9c80>] __x64_sys_ioctl+0x1e/0x30 fs/ioctl.c:718
+     [<000000002bebbfe6>] do_syscall_64+0x73/0x1f0  
+arch/x86/entry/common.c:290
+     [<00000000722d8431>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-That's... interesting.  What should happen if you race with rename of
-grandparent?  Note that *parent* is locked here; no deeper ancestors
-are.
+BUG: memory leak
+unreferenced object 0xffff888128cdff60 (size 48):
+   comm "syz-executor670", pid 6991, jiffies 4294953529 (age 7.780s)
+   hex dump (first 32 bytes):
+     00 00 00 00 00 00 00 00 01 46 00 00 03 00 00 00  .........F......
+     00 00 00 00 00 00 00 00 00 63 05 1f 81 88 ff ff  .........c......
+   backtrace:
+     [<000000002a74b343>] kmemleak_alloc_recursive  
+include/linux/kmemleak.h:43 [inline]
+     [<000000002a74b343>] slab_post_alloc_hook mm/slab.h:586 [inline]
+     [<000000002a74b343>] slab_alloc mm/slab.c:3319 [inline]
+     [<000000002a74b343>] kmem_cache_alloc+0x13f/0x2c0 mm/slab.c:3483
+     [<00000000fa370506>] fasync_alloc fs/fcntl.c:895 [inline]
+     [<00000000fa370506>] fasync_add_entry fs/fcntl.c:953 [inline]
+     [<00000000fa370506>] fasync_helper+0x37/0xa9 fs/fcntl.c:982
+     [<000000006c3eaaf1>] sock_fasync+0x4d/0xa0 net/socket.c:1293
+     [<0000000098076f55>] ioctl_fioasync fs/ioctl.c:550 [inline]
+     [<0000000098076f55>] do_vfs_ioctl+0x409/0x810 fs/ioctl.c:655
+     [<00000000df24d2b9>] ksys_ioctl+0x86/0xb0 fs/ioctl.c:713
+     [<000000003fec9c80>] __do_sys_ioctl fs/ioctl.c:720 [inline]
+     [<000000003fec9c80>] __se_sys_ioctl fs/ioctl.c:718 [inline]
+     [<000000003fec9c80>] __x64_sys_ioctl+0x1e/0x30 fs/ioctl.c:718
+     [<000000002bebbfe6>] do_syscall_64+0x73/0x1f0  
+arch/x86/entry/common.c:290
+     [<00000000722d8431>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-The same goes for removals.
 
-> +static const char *vboxsf_get_link(struct dentry *dentry, struct inode *inode,
-> +				   struct delayed_call *done)
-> +{
-> +	struct vboxsf_sbi *sbi = VBOXSF_SBI(inode->i_sb);
-> +	struct shfl_string *path;
-> +	char *link;
-> +	int err;
-> +
-> +	if (!dentry)
-> +		return ERR_PTR(-ECHILD);
-> +
-> +	path = vboxsf_path_from_dentry(sbi, dentry);
-> +	if (IS_ERR(path))
-> +		return (char *)path;
 
-ERR_CAST(path)
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> +	/** No additional information is available / requested. */
-> +	SHFLFSOBJATTRADD_NOTHING = 1,
-
-<unprintable>
-Well, unpronounceable, actually...
-
-> +	switch (opt) {
-> +	case opt_nls:
-> +		if (fc->purpose != FS_CONTEXT_FOR_MOUNT) {
-> +			vbg_err("vboxsf: Cannot reconfigure nls option\n");
-> +			return -EINVAL;
-> +		}
-> +		ctx->nls_name = param->string;
-> +		param->string = NULL;
-
-Umm...  What happens if you are given several such?  A leak?
-
-> +{
-> +	int err;
-> +
-> +	err = vboxsf_setup();
-> +	if (err)
-> +		return err;
-> +
-> +	return vfs_get_super(fc, vfs_get_independent_super, vboxsf_fill_super);
-
-	return get_tree_nodev(fc, vboxsf_fill_super);
-please,
-
-> +static int vboxsf_reconfigure(struct fs_context *fc)
-> +{
-> +	struct vboxsf_sbi *sbi = VBOXSF_SBI(fc->root->d_sb);
-> +	struct vboxsf_fs_context *ctx = fc->fs_private;
-> +	struct inode *iroot;
-> +
-> +	iroot = ilookup(fc->root->d_sb, 0);
-> +	if (!iroot)
-> +		return -ENOENT;
-
-Huh?  If that's supposed to be root directory inode, what's wrong
-with ->d_sb->s_root->d_inode?
-
-> +	path = dentry_path_raw(dentry, buf, PATH_MAX);
-> +	if (IS_ERR(path)) {
-> +		__putname(buf);
-> +		return (struct shfl_string *)path;
-
-ERR_CAST(path)...
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
