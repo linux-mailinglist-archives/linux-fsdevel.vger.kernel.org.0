@@ -2,134 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B43031170DE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 16:52:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DE371170E6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 16:54:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726495AbfLIPw5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Dec 2019 10:52:57 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:25796 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726080AbfLIPw4 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Dec 2019 10:52:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575906775;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=KWsZtrZZRUqMfa4RKABURKvActJftASGEyBf7iOz0lA=;
-        b=ZFrK6PmyXaxJi/Nw//r1NfmssL5w5X2AgMCZp+vKSHK2qIJseVX55Vf4ItdXYqphRzUPAC
-        WpKaacCCVOTjvg5p8dsIHLttNP8STMicaLfbg8OffHNuAGZo1iwQc+kU2/FNmOtsZ1P7NL
-        hzQNfoSlyRcfCYXg/tYuxPPhNu8Y3v0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-173-FG0lZR-ONcK4G9mKrZ2U7Q-1; Mon, 09 Dec 2019 10:52:52 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726674AbfLIPyH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Dec 2019 10:54:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47000 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726080AbfLIPyH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 9 Dec 2019 10:54:07 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B67121852E30;
-        Mon,  9 Dec 2019 15:52:49 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (ovpn-204-235.brq.redhat.com [10.40.204.235])
-        by smtp.corp.redhat.com (Postfix) with SMTP id A375D5D6B7;
-        Mon,  9 Dec 2019 15:52:46 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Mon,  9 Dec 2019 16:52:49 +0100 (CET)
-Date:   Mon, 9 Dec 2019 16:52:45 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tycho@tycho.ws, jannh@google.com,
-        cyphar@cyphar.com, christian.brauner@ubuntu.com,
-        luto@amacapital.net, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v2 1/4] vfs, fdtable: Add get_task_file helper
-Message-ID: <20191209155242.GC5388@redhat.com>
-References: <20191209070609.GA32438@ircssh-2.c.rugged-nimbus-611.internal>
+        by mail.kernel.org (Postfix) with ESMTPSA id 900B82073D;
+        Mon,  9 Dec 2019 15:54:04 +0000 (UTC)
+Date:   Mon, 9 Dec 2019 10:54:03 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v4 01/22] bootconfig: Add Extra Boot Config support
+Message-ID: <20191209105403.788f492a@gandalf.local.home>
+In-Reply-To: <20191209145009.502ece2e58ffab5e31430a0e@kernel.org>
+References: <157528159833.22451.14878731055438721716.stgit@devnote2>
+        <157528160980.22451.2034344493364709160.stgit@devnote2>
+        <02b132dd-6f50-cf1d-6cc1-ff6bbbcf79cd@infradead.org>
+        <20191209145009.502ece2e58ffab5e31430a0e@kernel.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20191209070609.GA32438@ircssh-2.c.rugged-nimbus-611.internal>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-MC-Unique: FG0lZR-ONcK4G9mKrZ2U7Q-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/09, Sargun Dhillon wrote:
+On Mon, 9 Dec 2019 14:50:09 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
+
+> Hi Randy,
+> 
+> Thank you for your review!
+> 
+> On Sun, 8 Dec 2019 11:34:32 -0800
+> Randy Dunlap <rdunlap@infradead.org> wrote:
+> 
+> > Hi,
+> > 
+> > On 12/2/19 2:13 AM, Masami Hiramatsu wrote:  
+> > > diff --git a/init/Kconfig b/init/Kconfig
+> > > index 67a602ee17f1..13bb3eac804c 100644
+> > > --- a/init/Kconfig
+> > > +++ b/init/Kconfig
+> > > @@ -1235,6 +1235,17 @@ source "usr/Kconfig"
+> > >  
+> > >  endif
+> > >  
+> > > +config BOOT_CONFIG
+> > > +	bool "Boot config support"
+> > > +	select LIBXBC
+> > > +	default y  
+> > 
+> > questionable "default y".
+> > That needs lots of justification.  
+> 
+> OK, I can make it 'n' by default.
+> 
+> I thought that was OK because most of the memories for the
+> bootconfig support were released after initialization.
+> If user doesn't pass the bootconfig, only the code for
+> /proc/bootconfig remains on runtime memory.
+
+As 'n' is usually the default, I will argue this should be 'y'!
+
+This is not some new fancy feature, or device that Linus
+complains about "my X is important!". I will say this X *is* important!
+This will (I hope) become standard in all kernel configs. One could even
+argue that there shouldn't even be a config for this at all (forced
+'y'). This would hurt more not to have than to have. I would hate to
+try to load special options only to find out that the kernel was
+compiled with default configs and this wasn't enabled.
+
+This is extended boot config support that can be useful for most
+developers. The only ones that should say 'n' are those that are
+working to get a "tiny" kernel at boot up. As Masami said, the memory
+is freed after init, thus this should not be an issue for 99.9% of
+kernel users.
+
+-- Steve
+
+
+> 
+> > > +	help
+> > > +	 Extra boot config allows system admin to pass a config file as
+> > > +	 complemental extension of kernel cmdline when boot.  
+> > 
+> > 	                                          when booting.  
 >
-> +struct file *get_task_file(struct task_struct *task, unsigned int fd)
-> +{
-> +=09struct file *file =3D NULL;
-> +
-> +=09task_lock(task);
-> +=09rcu_read_lock();
-> +
-> +=09if (task->files) {
-> +=09=09file =3D fcheck_files(task->files, fd);
-> +=09=09if (file && !get_file_rcu(file))
-> +=09=09=09file =3D NULL;
-> +=09}
-
-On second thought this is not exactly right, get_file_rcu() can fail if
-get_task_file() races with dup2(), in this case we need to do fcheck_files(=
-)
-again. And this is what __fget() already does, so may be the patch below
-makes more sense?
-
-I will leave this to other reviewers, but suddenly I recall that I have
-already sent the patch which adds a similar helper a while ago.
-
-See https://lore.kernel.org/lkml/20180915160423.GA31461@redhat.com/
-
-In short, get_files_struct() should be avoided because it can race with
-exec() and break POSIX locks which use ->fl_owner =3D files_struct.
-
-Oleg.
-
---- x/fs/file.c
-+++ x/fs/file.c
-@@ -706,9 +706,9 @@ void do_close_on_exec(struct files_struc
- =09spin_unlock(&files->file_lock);
- }
-=20
--static struct file *__fget(unsigned int fd, fmode_t mask, unsigned int ref=
-s)
-+static struct file *__fget_files(struct files_struct *files, unsigned int =
-fd,
-+=09=09=09=09=09fmode_t mask, unsigned int refs)
- {
--=09struct files_struct *files =3D current->files;
- =09struct file *file;
-=20
- =09rcu_read_lock();
-@@ -729,6 +729,23 @@ loop:
- =09return file;
- }
-=20
-+struct file *fget_task(struct task_struct *task, unsigned int fd)
-+{
-+=09struct file *file;
-+
-+=09task_lock(task);
-+=09if (task->files)
-+=09=09file =3D __fget_files(task->files, fd, 0, 1);
-+=09task_unlock(task);
-+
-+=09return file;
-+}
-+
-+static struct file *__fget(unsigned int fd, fmode_t mask, unsigned int ref=
-s)
-+{
-+=09return __fget_files(current->files, fd, mask, refs);
-+}
-+
- struct file *fget_many(unsigned int fd, unsigned int refs)
- {
- =09return __fget(fd, FMODE_PATH, refs);
-
