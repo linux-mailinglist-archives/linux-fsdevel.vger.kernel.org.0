@@ -2,139 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8AE5116F76
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 15:47:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88BDF116F8D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 15:50:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727572AbfLIOrB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Dec 2019 09:47:01 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:48050 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727307AbfLIOrB (ORCPT
+        id S1726541AbfLIOuT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Dec 2019 09:50:19 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:59324 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726522AbfLIOuR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Dec 2019 09:47:01 -0500
+        Mon, 9 Dec 2019 09:50:17 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575902820;
+        s=mimecast20190719; t=1575903016;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=CM25+hyAaztYLzFeE0wSz+qlYJ2FDBVMOHfW8aWsNVQ=;
-        b=cWZEH3yxoQtG1azQmlf5dMyiVRsqvdhauk9qzMPIUxWIJ80OSdoGqZ1YRm0CpYM6sCHuil
-        jG1EaDacwZdMjQdUvhV0pZ3XTx6edN0Rk4pJ59YyJ/oyPPYmu0vkpmYj9XhXTTNnmLOpr9
-        HeVC+jfLM4XdNrzyrNjPk70zFOj9Ha0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-345-Zw69kApWMU6Gv-6k_TxtlQ-1; Mon, 09 Dec 2019 09:46:59 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ADFC7801E53;
-        Mon,  9 Dec 2019 14:46:57 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 33C48100EBAC;
-        Mon,  9 Dec 2019 14:46:56 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     lsf-pc@lists.linux-foundation.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>
-cc:     dhowells@redhat.com, jlayton@redhat.com,
-        linux-fsdevel@vger.kernel.org
-Subject: [LSF/MM/BPF TOPIC] How to make disconnected operation work?
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=zmXv5r+jYXphY7BscO2smGv5aBXrs+fMMrRQn1IS66s=;
+        b=TjxSg61EfD3gLj53JH44aLGAXVwUZczH8Pa6DL81zINORypwv4Fd9D3u3CCsqA8Oiijw8+
+        nsVWpehN14Lb7dLKHsmP0aVFcYI6TiTHlXO2wqj3HX1exW1xdjd4riTiZjEk0SOqsKW/EQ
+        ytNPKQtFJS+HF51cuDaTKrdmJD8CeAQ=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-59-8AOHaACzNHykRZiTyBwvQg-1; Mon, 09 Dec 2019 09:49:10 -0500
+Received: by mail-wm1-f72.google.com with SMTP id p5so3062377wmc.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Dec 2019 06:49:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to;
+        bh=LTG1mZGmZ9hcbwqZAQIUO+xcTEzvZOPY6N77kDf6jfs=;
+        b=enRbGko1uH3o7FgwpkXG7C4xqhimedvr6CuuA7s/G1B0LCYQE+l54/MPkQr7CRngHN
+         Eg+R6Dt2g8TcrB79UnoatttHSWnYKy1Agbyb9RE0RGHfX73RA1A43nuZTypW9sgy6mZz
+         /5mNlkLXWuK/JnoLgMnSW5alaA3PTHSXAv3qiSVrkWi4d8HcPkVEH5KjnHu/Msm1pXXz
+         qcK6VPGfkKgRTknZmAIBvom/y6oJXZohy3xb9doGd4llOa9pNPGMd+AX3Jlh7EL2jNWh
+         lkGJRDfrXZjhfRec7EJA21fSlAe8/02VvFLcQM33dp7i19G2zn3c34MJKN7SeN4ALtrf
+         5DqQ==
+X-Gm-Message-State: APjAAAU63MI/FIK9wIsf0un2hI2xjdP3hirOvSoBJSkxaFt9L/rLs4Ip
+        GByT4/yZRnDgSI4kxXPk0V0zD2bUO/f2YFxYc9kBSjFT2YOnH9KVMA0LIDQ/yA9X6JzAgPCiZWm
+        A9AmvWjtWRE8rbVlzZLjuIDuE2Q==
+X-Received: by 2002:adf:f108:: with SMTP id r8mr2640092wro.390.1575902948959;
+        Mon, 09 Dec 2019 06:49:08 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzeyuo2wJ8z5YlI5WtkiEPJHJQh87qKQlY3/8QtSaJHx1DoZzLAqxIrGtET/Y+H06nEwDhd7A==
+X-Received: by 2002:adf:f108:: with SMTP id r8mr2640058wro.390.1575902948744;
+        Mon, 09 Dec 2019 06:49:08 -0800 (PST)
+Received: from orion (ip-89-103-126-188.net.upcbroadband.cz. [89.103.126.188])
+        by smtp.gmail.com with ESMTPSA id k4sm14506803wmk.26.2019.12.09.06.49.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2019 06:49:08 -0800 (PST)
+Date:   Mon, 9 Dec 2019 15:49:06 +0100
+From:   Carlos Maiolino <cmaiolino@redhat.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH] xfs: fix Sphinx documentation warning
+Message-ID: <20191209144906.u3hllhe5ekkqsvva@orion>
+Mail-Followup-To: Randy Dunlap <rdunlap@infradead.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+References: <bd3c7d7e-2859-06b0-a209-7d19f7c2e79f@infradead.org>
 MIME-Version: 1.0
-Content-ID: <14195.1575902815.1@warthog.procyon.org.uk>
-Date:   Mon, 09 Dec 2019 14:46:55 +0000
-Message-ID: <14196.1575902815@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: Zw69kApWMU6Gv-6k_TxtlQ-1
+In-Reply-To: <bd3c7d7e-2859-06b0-a209-7d19f7c2e79f@infradead.org>
+X-MC-Unique: 8AOHaACzNHykRZiTyBwvQg-1
 X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I've been rewriting fscache and cachefiles to massively simplify it and mak=
-e
-use of the kiocb interface to do direct-I/O to/from the netfs's pages which
-didn't exist when I first did this.
+On Sun, Dec 08, 2019 at 08:14:36PM -0800, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
+>=20
+> Fix Sphinx documentation format warning by not indenting so much.
+>=20
+> Documentation/admin-guide/xfs.rst:257: WARNING: Block quote ends without =
+a blank line; unexpected unindent.
+>=20
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Darrick J. Wong <darrick.wong@oracle.com>
+> Cc: linux-xfs@vger.kernel.org
+> ---
+>  Documentation/admin-guide/xfs.rst |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-=09https://lore.kernel.org/lkml/24942.1573667720@warthog.procyon.org.uk/
-=09https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/lo=
-g/?h=3Dfscache-iter
+Looks good, you can add:
 
-I'm getting towards the point where it's working and able to do basic cachi=
-ng
-once again.  So now I've been thinking about what it'd take to support
-disconnected operation.  Here's a list of things that I think need to be
-considered or dealt with:
+Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
 
- (1) Making sure the working set is present in the cache.
+>=20
+> --- linux-next-20191209.orig/Documentation/admin-guide/xfs.rst
+> +++ linux-next-20191209/Documentation/admin-guide/xfs.rst
+> @@ -253,7 +253,7 @@ The following sysctls are available for
+>  =09pool.
+> =20
+>    fs.xfs.speculative_prealloc_lifetime
+> -=09=09(Units: seconds   Min: 1  Default: 300  Max: 86400)
+> +=09(Units: seconds   Min: 1  Default: 300  Max: 86400)
+>  =09The interval at which the background scanning for inodes
+>  =09with unused speculative preallocation runs. The scan
+>  =09removes unused preallocation from clean inodes and releases
+>=20
 
-     - Userspace (find/cat/tar)
-     - Splice netfs -> cache
-     - Metadata storage (e.g. directories)
-     - Permissions caching
-
- (2) Making sure the working set doesn't get culled.
-
-     - Pinning API (cachectl() syscall?)
-     - Allow culling to be disabled entirely on a cache
-     - Per-fs/per-dir config
-
- (3) Switching into/out of disconnected mode.
-
-     - Manual, automatic
-     - On what granularity?
-       - Entirety of fs (eg. all nfs)
-       - By logical unit (server, volume, cell, share)
-
- (4) Local changes in disconnected mode.
-
-     - Journal
-     - File identifier allocation
-     - statx flag to indicate provisional nature of info
-     - New error codes
-=09- EDISCONNECTED - Op not available in disconnected mode
-=09- EDISCONDATA - Data not available in disconnected mode
-=09- EDISCONPERM - Permission cannot be checked in disconnected mode
-=09- EDISCONFULL - Disconnected mode cache full
-     - SIGIO support?
-
- (5) Reconnection.
-
-     - Proactive or JIT synchronisation
-       - Authentication
-     - Conflict detection and resolution
-=09 - ECONFLICTED - Disconnected mode resolution failed
-     - Journal replay
-     - Directory 'diffing' to find remote deletions
-     - Symlink and other non-regular file comparison
-
- (6) Conflict resolution.
-
-     - Automatic where possible
-       - Just create/remove new non-regular files if possible
-       - How to handle permission differences?
-     - How to let userspace access conflicts?
-       - Move local copy to 'lost+found'-like directory
-       =09 - Might not have been completely downloaded
-       - New open() flags?
-       =09 - O_SERVER_VARIANT, O_CLIENT_VARIANT, O_RESOLVED_VARIANT
-       - fcntl() to switch variants?
-
- (7) GUI integration.
-
-     - Entering/exiting disconnected mode notification/switches.
-     - Resolution required notification.
-     - Cache getting full notification.
-
-Can anyone think of any more considerations?  What do you think of the
-proposed error codes and open flags?  Is that the best way to do this?
-
-David
+--=20
+Carlos
 
