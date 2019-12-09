@@ -2,126 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DBB2116692
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 06:50:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2EDC1166F4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 07:32:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbfLIFuS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Dec 2019 00:50:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49418 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726132AbfLIFuR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Dec 2019 00:50:17 -0500
-Received: from devnote2 (unknown [180.22.253.92])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 900B7206D3;
-        Mon,  9 Dec 2019 05:50:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575870616;
-        bh=R0dRoRAY4AWuXuEgdxQagG5YTnurfWd7YsIc+RAjjm4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hJ2OFgv607/k4OkLsAE8Hq05LS5VDWUVqa5DhA5j1JUbAu4R7M0wYkGxUdcH/YpiU
-         LCH2U9ImHSBbq93kGzXoDymA4vyJZ8wtlj7t5EH4d9UjyVNtgrMt7hSxcL980liOrn
-         V0ltYqG+b31v/MYVS8YCkKqFr7yVOwKCwhwDHtuo=
-Date:   Mon, 9 Dec 2019 14:50:09 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v4 01/22] bootconfig: Add Extra Boot Config support
-Message-Id: <20191209145009.502ece2e58ffab5e31430a0e@kernel.org>
-In-Reply-To: <02b132dd-6f50-cf1d-6cc1-ff6bbbcf79cd@infradead.org>
-References: <157528159833.22451.14878731055438721716.stgit@devnote2>
-        <157528160980.22451.2034344493364709160.stgit@devnote2>
-        <02b132dd-6f50-cf1d-6cc1-ff6bbbcf79cd@infradead.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1727117AbfLIGcJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Dec 2019 01:32:09 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:55456 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726623AbfLIGcJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 9 Dec 2019 01:32:09 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 14B709B79E07160C53B3;
+        Mon,  9 Dec 2019 14:32:06 +0800 (CST)
+Received: from [127.0.0.1] (10.74.221.148) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Mon, 9 Dec 2019
+ 14:31:56 +0800
+Subject: Re: mmotm 2019-12-06-19-46 uploaded
+To:     Andrew Morton <akpm@linux-foundation.org>, <broonie@kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-next@vger.kernel.org>,
+        <mhocko@suse.cz>, <mm-commits@vger.kernel.org>,
+        <sfr@canb.auug.org.au>, jinyuqi <jinyuqi@huawei.com>
+References: <20191207034723.OPvz2A9wZ%akpm@linux-foundation.org>
+From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
+Message-ID: <c0691301-fa72-b9fe-5cb8-815275f84555@hisilicon.com>
+Date:   Mon, 9 Dec 2019 14:31:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.1
+MIME-Version: 1.0
+In-Reply-To: <20191207034723.OPvz2A9wZ%akpm@linux-foundation.org>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.74.221.148]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Randy,
+Hi Andrew,
 
-Thank you for your review!
+About this patch,
+https://lore.kernel.org/lkml/1573091048-10595-1-git-send-email-zhangshaokun@hisilicon.com/
 
-On Sun, 8 Dec 2019 11:34:32 -0800
-Randy Dunlap <rdunlap@infradead.org> wrote:
+It is not in linux-next or your trees now, has it been dropped?
 
-> Hi,
+Thanks,
+Shaokun
+
+On 2019/12/7 11:47, Andrew Morton wrote:
+> The mm-of-the-moment snapshot 2019-12-06-19-46 has been uploaded to
 > 
-> On 12/2/19 2:13 AM, Masami Hiramatsu wrote:
-> > diff --git a/init/Kconfig b/init/Kconfig
-> > index 67a602ee17f1..13bb3eac804c 100644
-> > --- a/init/Kconfig
-> > +++ b/init/Kconfig
-> > @@ -1235,6 +1235,17 @@ source "usr/Kconfig"
-> >  
-> >  endif
-> >  
-> > +config BOOT_CONFIG
-> > +	bool "Boot config support"
-> > +	select LIBXBC
-> > +	default y
+>    http://www.ozlabs.org/~akpm/mmotm/
 > 
-> questionable "default y".
-> That needs lots of justification.
-
-OK, I can make it 'n' by default.
-
-I thought that was OK because most of the memories for the
-bootconfig support were released after initialization.
-If user doesn't pass the bootconfig, only the code for
-/proc/bootconfig remains on runtime memory.
-
-> > +	help
-> > +	 Extra boot config allows system admin to pass a config file as
-> > +	 complemental extension of kernel cmdline when boot.
+> mmotm-readme.txt says
 > 
-> 	                                          when booting.
-
-OK.
-
+> README for mm-of-the-moment:
 > 
-> > +	 The boot config file is usually attached at the end of initramfs.
+> http://www.ozlabs.org/~akpm/mmotm/
 > 
-> The 3 help text lines above should be indented with one tab + 2 spaces,
-> like the "If" line below.
-
-Ah, thanks for pointing it out!
-I'll fix that.
-
-Thank you,
-
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
 > 
-> > +
-> > +	  If unsure, say Y.
-> > +
-> >  choice
-> >  	prompt "Compiler optimization level"
-> >  	default CC_OPTIMIZE_FOR_PERFORMANCE
+> You will need quilt to apply these patches to the latest Linus release (5.x
+> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> http://ozlabs.org/~akpm/mmotm/series
+> 
+> The file broken-out.tar.gz contains two datestamp files: .DATE and
+> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> followed by the base kernel version against which this patch series is to
+> be applied.
+> 
+> This tree is partially included in linux-next.  To see which patches are
+> included in linux-next, consult the `series' file.  Only the patches
+> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+> linux-next.
 > 
 > 
-> -- 
-> ~Randy
+> A full copy of the full kernel tree with the linux-next and mmotm patches
+> already applied is available through git within an hour of the mmotm
+> release.  Individual mmotm releases are tagged.  The master branch always
+> points to the latest release, so it's constantly rebasing.
+> 
+> 	https://github.com/hnaz/linux-mm
+> 
+> The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+> contains daily snapshots of the -mm tree.  It is updated more frequently
+> than mmotm, and is untested.
+> 
+> A git copy of this tree is also available at
+> 
+> 	https://github.com/hnaz/linux-mm
+> 
+> 
+> 
+> This mmotm tree contains the following patches against 5.4:
+> (patches marked "*" will be included in linux-next)
+> 
+>   origin.patch
+> * hacking-group-sysrq-kgdb-ubsan-into-generic-kernel-debugging-instruments.patch
+> * hacking-create-submenu-for-arch-special-debugging-options.patch
+> * hacking-group-kernel-data-structures-debugging-together.patch
+> * hacking-move-kernel-testing-and-coverage-options-to-same-submenu.patch
+> * hacking-move-oops-into-lockups-and-hangs.patch
+> * hacking-move-sched_stack_end_check-after-debug_stack_usage.patch
+> * hacking-create-a-submenu-for-scheduler-debugging-options.patch
+> * hacking-move-debug_bugverbose-to-printk-and-dmesg-options.patch
+> * hacking-move-debug_fs-to-generic-kernel-debugging-instruments.patch
+> * lib-fix-kconfig-indentation.patch
+> * kasan-fix-crashes-on-access-to-memory-mapped-by-vm_map_ram.patch
+> * kasan-fix-crashes-on-access-to-memory-mapped-by-vm_map_ram-v2.patch
+> * mm-add-apply_to_existing_pages-helper.patch
+> * mm-add-apply_to_existing_pages-helper-fix.patch
+> * mm-add-apply_to_existing_pages-helper-fix-fix.patch
+> * kasan-use-apply_to_existing_pages-for-releasing-vmalloc-shadow.patch
+> * kasan-use-apply_to_existing_pages-for-releasing-vmalloc-shadow-fix.patch
+> * kasan-dont-assume-percpu-shadow-allocations-will-succeed.patch
+> * mm-vmscan-protect-shrinker-idr-replace-with-config_memcg.patch
+> * proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
+> * proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
+> * mm-zsmallocc-fix-the-migrated-zspage-statistics.patch
+> * mm-thp-tweak-reclaim-compaction-effort-of-local-only-and-all-node-allocations.patch
+> * x86-mm-split-vmalloc_sync_all.patch
+> * kcov-fix-struct-layout-for-kcov_remote_arg.patch
+> * memcg-account-security-cred-as-well-to-kmemcg.patch
+> * mm-move_pages-return-valid-node-id-in-status-if-the-page-is-already-on-the-target-node.patch
+> * ramfs-support-o_tmpfile.patch
+>   mm.patch
+> * mm-avoid-slub-allocation-while-holding-list_lock.patch
+> * mm-vmscan-expose-cgroup_ino-for-memcg-reclaim-tracepoints.patch
+> * mm-pgmap-use-correct-alignment-when-looking-at-first-pfn-from-a-region.patch
+> * mm-mmap-fix-the-adjusted-length-error.patch
+> * mm-memmap_init-update-variable-name-in-memmap_init_zone.patch
+> * mm-memory_hotplug-shrink-zones-when-offlining-memory.patch
+> * mm-memory_hotplug-poison-memmap-in-remove_pfn_range_from_zone.patch
+> * mm-memory_hotplug-we-always-have-a-zone-in-find_smallestbiggest_section_pfn.patch
+> * mm-memory_hotplug-dont-check-for-all-holes-in-shrink_zone_span.patch
+> * mm-memory_hotplug-drop-local-variables-in-shrink_zone_span.patch
+> * mm-memory_hotplug-cleanup-__remove_pages.patch
+> * mm-oom-avoid-printk-iteration-under-rcu.patch
+> * mm-oom-avoid-printk-iteration-under-rcu-fix.patch
+> * info-task-hung-in-generic_file_write_iter.patch
+> * info-task-hung-in-generic_file_write-fix.patch
+> * kernel-hung_taskc-monitor-killed-tasks.patch
+> * string-add-stracpy-and-stracpy_pad-mechanisms.patch
+> * documentation-checkpatch-prefer-stracpy-strscpy-over-strcpy-strlcpy-strncpy.patch
+> * aio-simplify-read_events.patch
+> * smp_mb__beforeafter_atomic-update-documentation.patch
+> * ipc-mqueuec-remove-duplicated-code.patch
+> * ipc-mqueuec-update-document-memory-barriers.patch
+> * ipc-msgc-update-and-document-memory-barriers.patch
+> * ipc-semc-document-and-update-memory-barriers.patch
+> * ipc-consolidate-all-xxxctl_down-functions.patch
+>   linux-next.patch
+>   linux-next-git-rejects.patch
+> * drivers-block-null_blk_mainc-fix-layout.patch
+> * drivers-block-null_blk_mainc-fix-uninitialized-var-warnings.patch
+> * pinctrl-fix-pxa2xxc-build-warnings.patch
+> * drivers-tty-serial-sh-scic-suppress-warning.patch
+> * fix-read-buffer-overflow-in-delta-ipc.patch
+>   make-sure-nobodys-leaking-resources.patch
+>   releasing-resources-with-children.patch
+>   mutex-subsystem-synchro-test-module.patch
+>   kernel-forkc-export-kernel_thread-to-modules.patch
+>   workaround-for-a-pci-restoring-bug.patch
+> 
+> .
 > 
 
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
