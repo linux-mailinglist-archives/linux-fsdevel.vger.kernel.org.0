@@ -2,183 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A65C117B48
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 00:14:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E99F117B53
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 00:17:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbfLIXO3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Dec 2019 18:14:29 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:23923 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726362AbfLIXO2 (ORCPT
+        id S1727048AbfLIXRw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Dec 2019 18:17:52 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:35499 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726592AbfLIXRw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Dec 2019 18:14:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575933267;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=khr9GokeYu7WS9DKs6jhiFXoGTLBzguBa3kePJRn0ZU=;
-        b=N+f/U9vwykyhnY1XjBYotSidXu2lHwPdkRydBlF5gYfjzSVh8QEP7/DX4Bl1NxrJ3rvkGW
-        qXM4xls1AKm+xdrM+68PkyKbOrJR3t3cJvVAeTkJErEpUWGq9447gWrG0cae8T8QkUpyBY
-        RHUKb+e29AquWQgYmWyBL2JIt3UaRJM=
-Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com
- [209.85.219.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-4-G98FIOMrNHe_pl7sUnY0WA-1; Mon, 09 Dec 2019 18:14:20 -0500
-Received: by mail-yb1-f200.google.com with SMTP id 132so5355468ybd.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Dec 2019 15:14:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=khr9GokeYu7WS9DKs6jhiFXoGTLBzguBa3kePJRn0ZU=;
-        b=d7JIZPgivUdhVldHWJJmyb4tP1G+g3SmfqSyNOA7r9V9zduMDGvisF69aCJlSjnQAp
-         dR/4xoXhjhBlvvOeOBTpVC6kS9l7Xzrr9oS47rDzqcHMvjU4Rd3d+XKQ47oajclh5QM4
-         GW8CA7FEsUBm+csp7a2IuW55eDBEpVS9+XEEsR8tbeap/cqOYB2HNOmBq2ahsT/snWoo
-         RMOWTrEz/6Bp3sRPE4QYGrSNYG8VuGwZ+91za5AldwiUYSlqQV1QIQAtOMgsu/st0TJK
-         tFXP0d45162k2wR+qnwWwzMx+9RCVfuGF56EM0pc9/1lXs4WBvEqNJ1mTMrIAOeT21aH
-         0SgA==
-X-Gm-Message-State: APjAAAWfMtnxyzSqWA9V5iQd6mqys64A0GviNblsW0NNiwuF6Jipfs4k
-        zJPtSuT8JI0f7jxR+Z73b2zsJ9rFjTcGHjbFvFXr4K6lvd+IX2SdiOJjCK5RlLV9b5QHhxCavd+
-        mn9O7HFIHlbN4QZJQepy+5Mhp9A==
-X-Received: by 2002:a25:6385:: with SMTP id x127mr22238930ybb.468.1575933259550;
-        Mon, 09 Dec 2019 15:14:19 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwx1MtePmlt4BWVadoKds9t7CKvxMAc8qY2aR/QgTPSjT1bNf/ITjoMXPSEVhuWOzqN35EMig==
-X-Received: by 2002:a25:6385:: with SMTP id x127mr22238910ybb.468.1575933259068;
-        Mon, 09 Dec 2019 15:14:19 -0800 (PST)
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
-        by smtp.gmail.com with ESMTPSA id w74sm628955yww.106.2019.12.09.15.14.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2019 15:14:18 -0800 (PST)
-Message-ID: <8d872ab39c590dbfc6f02230dddb8740630f1444.camel@redhat.com>
-Subject: Re: [LSF/MM/BPF TOPIC] How to make disconnected operation work?
-From:   Jeff Layton <jlayton@redhat.com>
-To:     David Howells <dhowells@redhat.com>,
-        lsf-pc@lists.linux-foundation.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>
-Cc:     linux-fsdevel@vger.kernel.org
-Date:   Mon, 09 Dec 2019 18:14:07 -0500
-In-Reply-To: <14196.1575902815@warthog.procyon.org.uk>
-References: <14196.1575902815@warthog.procyon.org.uk>
-User-Agent: Evolution 3.34.2 (3.34.2-1.fc31)
+        Mon, 9 Dec 2019 18:17:52 -0500
+Received: from dread.disaster.area (pa49-195-139-249.pa.nsw.optusnet.com.au [49.195.139.249])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 9FDC93A1740;
+        Tue, 10 Dec 2019 10:17:46 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1ieSHf-000609-Or; Tue, 10 Dec 2019 10:17:43 +1100
+Date:   Tue, 10 Dec 2019 10:17:43 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Phil Auld <pauld@redhat.com>, Ming Lei <ming.lei@redhat.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: single aio thread is migrated crazily by scheduler
+Message-ID: <20191209231743.GA19256@dread.disaster.area>
+References: <20191115010824.GC4847@ming.t460p>
+ <20191115045634.GN4614@dread.disaster.area>
+ <20191115070843.GA24246@ming.t460p>
+ <20191115234005.GO4614@dread.disaster.area>
+ <20191118092121.GV4131@hirez.programming.kicks-ass.net>
+ <20191118204054.GV4614@dread.disaster.area>
+ <20191120191636.GI4097@hirez.programming.kicks-ass.net>
+ <20191120220313.GC18056@pauld.bos.csb>
+ <20191121132937.GW4114@hirez.programming.kicks-ass.net>
+ <20191209165122.GA27229@linux.vnet.ibm.com>
 MIME-Version: 1.0
-X-MC-Unique: G98FIOMrNHe_pl7sUnY0WA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191209165122.GA27229@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
+        a=KoypXv6BqLCQNZUs2nCMWg==:117 a=KoypXv6BqLCQNZUs2nCMWg==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=pxVhFHJ0LMsA:10
+        a=7-415B0cAAAA:8 a=-oRCy8-_WFT2JPw6eY8A:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2019-12-09 at 14:46 +0000, David Howells wrote:
-> I've been rewriting fscache and cachefiles to massively simplify it and make
-> use of the kiocb interface to do direct-I/O to/from the netfs's pages which
-> didn't exist when I first did this.
-> 
-> 	https://lore.kernel.org/lkml/24942.1573667720@warthog.procyon.org.uk/
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-iter
-> 
-> I'm getting towards the point where it's working and able to do basic caching
-> once again.  So now I've been thinking about what it'd take to support
-> disconnected operation.  Here's a list of things that I think need to be
-> considered or dealt with:
-> 
+On Mon, Dec 09, 2019 at 10:21:22PM +0530, Srikar Dronamraju wrote:
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 44123b4d14e8..efd740aafa17 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -2664,7 +2664,12 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+>   */
+>  int wake_up_process(struct task_struct *p)
+>  {
+> -	return try_to_wake_up(p, TASK_NORMAL, 0);
+> +	int wake_flags = 0;
+> +
+> +	if (is_per_cpu_kthread(p))
+> +		wake_flags = WF_KTHREAD;
+> +
+> +	return try_to_wake_up(p, TASK_NORMAL, WF_KTHREAD);
 
-I'm quite interested in this too. I see that you've already given a lot
-of thought to potential interfaces here. I think we'll end up having to
-add a fair number of new interfaces to make something like this work.
+This is buggy. It always sets WF_KTHREAD, even for non-kernel
+processes. I think you meant:
 
->  (1) Making sure the working set is present in the cache.
-> 
->      - Userspace (find/cat/tar)
->      - Splice netfs -> cache
->      - Metadata storage (e.g. directories)
->      - Permissions caching
-> 
->  (2) Making sure the working set doesn't get culled.
-> 
->      - Pinning API (cachectl() syscall?)
->      - Allow culling to be disabled entirely on a cache
->      - Per-fs/per-dir config
-> 
->  (3) Switching into/out of disconnected mode.
-> 
->      - Manual, automatic
->      - On what granularity?
->        - Entirety of fs (eg. all nfs)
->        - By logical unit (server, volume, cell, share)
->
->  (4) Local changes in disconnected mode.
-> 
->      - Journal
->      - File identifier allocation
+	return try_to_wake_up(p, TASK_NORMAL, wake_flags);
 
-Yep, necessary if you want to allow disconnected creates. By coincidence
-I'm working an (experimental) patchset now to add async create support
-to kcephfs, and part of that involves delegating out ranges of inode
-numbers. I may have some experience to report with it by the time LSF
-rolls around.
+I suspect this bug invalidates the test results presented, too...
 
->      - statx flag to indicate provisional nature of info
->      - New error codes
-> 	- EDISCONNECTED - Op not available in disconnected mode
-> 	- EDISCONDATA - Data not available in disconnected mode
-> 	- EDISCONPERM - Permission cannot be checked in disconnected mode
-> 	- EDISCONFULL - Disconnected mode cache full
->      - SIGIO support?
-> 
->  (5) Reconnection.
-> 
->      - Proactive or JIT synchronisation
->        - Authentication
->      - Conflict detection and resolution
-> 	 - ECONFLICTED - Disconnected mode resolution failed
-
-ECONFLICTED sort of implies that reconnection will be manual. If it
-happens automagically in the background you'll have no way to report
-such errors.
-
-Also, you'll need some mechanism to know what inodes are conflicted.
-This is the real difficult part of this problem, IMO.
-
-
->      - Journal replay
->      - Directory 'diffing' to find remote deletions
->      - Symlink and other non-regular file comparison
-> 
->  (6) Conflict resolution.
-> 
->      - Automatic where possible
->        - Just create/remove new non-regular files if possible
->        - How to handle permission differences?
->      - How to let userspace access conflicts?
->        - Move local copy to 'lost+found'-like directory
->        	 - Might not have been completely downloaded
->        - New open() flags?
->        	 - O_SERVER_VARIANT, O_CLIENT_VARIANT, O_RESOLVED_VARIANT
->        - fcntl() to switch variants?
-> 
-
-Again, conflict resolution is the difficult part. Maybe the right
-solution is to look at snapshotting-style interfaces -- i.e., handle a
-disconnected mount sort of like you would a writable snapshot. Do any
-(local) fs' currently offer writable snapshots, btw?
-
->  (7) GUI integration.
-> 
->      - Entering/exiting disconnected mode notification/switches.
->      - Resolution required notification.
->      - Cache getting full notification.
-> 
-> Can anyone think of any more considerations?  What do you think of the
-> proposed error codes and open flags?  Is that the best way to do this?
-> 
-> David
-> 
-
+-Dave.
 -- 
-Jeff Layton <jlayton@redhat.com>
-
+Dave Chinner
+david@fromorbit.com
