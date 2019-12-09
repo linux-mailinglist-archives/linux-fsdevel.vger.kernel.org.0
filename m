@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9EC9116751
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 08:04:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCD4D116757
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 08:06:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbfLIHEx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Dec 2019 02:04:53 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:42691 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726170AbfLIHEx (ORCPT
+        id S1727127AbfLIHGP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Dec 2019 02:06:15 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:39171 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726477AbfLIHGP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Dec 2019 02:04:53 -0500
-Received: by mail-io1-f68.google.com with SMTP id f82so13590410ioa.9
-        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Dec 2019 23:04:52 -0800 (PST)
+        Mon, 9 Dec 2019 02:06:15 -0500
+Received: by mail-il1-f196.google.com with SMTP id a7so11801225ild.6
+        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Dec 2019 23:06:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sargun.me; s=google;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :user-agent;
-        bh=8VrpkdgQrnMuSOUeurvVW4z5wWNDdr+43CeOmu+R6D8=;
-        b=HSu8OsTo4/VtQt5rmELSu4Joyw16NEM5RVv/RNBtEfBSy/DpLzQ+ESzqWonDFjw5ry
-         iuBBg7SqksIqsJ2MJ9s0w3T8lk5KE7eh/5C7XChjfLivhhGUdegPB8z+1csZwHzyiiYy
-         ultBTBS3b3I4zQa2RRZ7jnW+qaQKJdD6sBwQ8=
+        bh=8Hi0NAqaq4yKaz2cZXCzyXUQt+Qgg5vxTIhLWeRkvII=;
+        b=XlxvMoil8iFkye99hWCb3hagvwkUuuTyC5CcVqEfiGimGwgOT5I2XfhVXg5JvBoO3M
+         BTX5Ty6OR6ldJ8hLR6bTFqOExX+whlZdxpH6ewqzXig+QMhRL3F6eAB1f4vwf+BTfaFP
+         dDAi2d7HGAKK0pOOsdA+XGCWfiBcw5+GzGPYA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:user-agent;
-        bh=8VrpkdgQrnMuSOUeurvVW4z5wWNDdr+43CeOmu+R6D8=;
-        b=OLxkdpiJQbyG3fwBfytJRGQQWPbu9lft1VvihsJPr6IUCf4G993RUkNvrZ50Z1ytND
-         mDzA6MnPTlhPF7hnHYcRC4VbfRzFXjbeP80szcVMDm9UtZllMh5G9MFWb4siSiHqWGLz
-         1Rdt0HkW4haiXbbWHM9mLzOD+RWFiVge3zme6gKzsriqvh6GMtw8CBUBylW3TcbXtDgg
-         xo/fgy3+acnAdjn4gNQjmPGq57AdsosYmPGtSUjHs+OEKnCG512n4CbUi6L0H3C4wmZo
-         hzz8uEBfKXsb7oPx9yoIT8rxWb+FFnPg8pHEM9KBCcPUs91VjFTaC2CBrB77tAC/5TAx
-         mgHQ==
-X-Gm-Message-State: APjAAAWcRUsqA50lwghxbub5gYgobVEixBcGFKD4/tDy7Ji5OKZ8fRmH
-        qeOSnxDhFyQkvgCsaeycM0bG8A==
-X-Google-Smtp-Source: APXvYqwsZDjYTujGClfn7hASFQzQ3ywZgbD8A/L942G+ugOls0cc0a4XwERFsQxcrrOTYvGtbyueng==
-X-Received: by 2002:a6b:7316:: with SMTP id e22mr20331932ioh.205.1575875092332;
-        Sun, 08 Dec 2019 23:04:52 -0800 (PST)
+        bh=8Hi0NAqaq4yKaz2cZXCzyXUQt+Qgg5vxTIhLWeRkvII=;
+        b=Atf9zql9KLihmZAUZ71alloGD5TCLFaEGe1UdPv6WNXXMn1Hoa/WK68yS2MmbG++Ew
+         ZSPIC/LqUZ5hOoMtOyERfiFyx6nMm+JefmGQmxnkiBcauNWM4ZlsXHofKb14lyVsbPRQ
+         /+EPb/rz4W32b1SFOUCkGdi8HQs6rZHG71SGADhv5pREgEOWrXcclSM3hXzsQPpSD0Z0
+         Casso9wfpBWE3+ehge8ujBuhqniZOhsIk64NT0H/aGPcs2eExRKj2EJBL1mRhpVnw0Nc
+         jq3zokLwEQjxKG0d/YAXfhuCVdifqI9CFLlvUBHjHS8ZtzGDsIVe/QP8w6DLW4CK9Dya
+         6uRg==
+X-Gm-Message-State: APjAAAXsIQjErnW337E0qWG60XQuPWeZ0rzmgOcyYcSPNVULYLSlQpmm
+        vH4JllYmkmGdiotqRboKL1UlkQ==
+X-Google-Smtp-Source: APXvYqyOqXX1bhUMR582tDO+WsTTun/QGCfWJIczZ0NFlZLLlmYhs1rETYjTNDkO85Yx7I6fCcmqhQ==
+X-Received: by 2002:a92:b00f:: with SMTP id x15mr25026596ilh.248.1575875174527;
+        Sun, 08 Dec 2019 23:06:14 -0800 (PST)
 Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
-        by smtp.gmail.com with ESMTPSA id f76sm6543960ild.82.2019.12.08.23.04.51
+        by smtp.gmail.com with ESMTPSA id v10sm163147iot.12.2019.12.08.23.06.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 08 Dec 2019 23:04:51 -0800 (PST)
-Date:   Mon, 9 Dec 2019 07:04:50 +0000
+        Sun, 08 Dec 2019 23:06:13 -0800 (PST)
+Date:   Mon, 9 Dec 2019 07:06:12 +0000
 From:   Sargun Dhillon <sargun@sargun.me>
 To:     linux-kernel@vger.kernel.org,
         containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
@@ -50,8 +50,8 @@ To:     linux-kernel@vger.kernel.org,
 Cc:     tycho@tycho.ws, jannh@google.com, cyphar@cyphar.com,
         christian.brauner@ubuntu.com, oleg@redhat.com, luto@amacapital.net,
         viro@zeniv.linux.org.uk
-Subject: [PATCH v2 0/4] Add ptrace get_fd request
-Message-ID: <20191209070446.GA32336@ircssh-2.c.rugged-nimbus-611.internal>
+Subject: [PATCH v2 1/4] vfs, fdtable: Add get_task_file helper
+Message-ID: <20191209070609.GA32438@ircssh-2.c.rugged-nimbus-611.internal>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -61,52 +61,65 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patchest introduces a mechanism to capture file descriptors from other
-processes via ptrace. Although this can be achieved using SCM_RIGHTS, and
-parasitic code injection, this offers a slightly more straightforward
-mechainsm. It also does not mutate the tracee in any way, nor does it
-require that the tracee is stopped, as to avoid causing issues with
-attaching debuggers or runtimes that expect syscalls to be preemptible, or
-return within a specific amount of time.
+This introduces a function which can be used to fetch a file, given an
+arbitrary task. As long as the user holds a reference (refcnt) to the
+task_struct it is safe to call, and will either return NULL on failure,
+or a pointer to the file, with a refcnt.
 
-It has an options mechanism that's only usable to set CLOEXEC on the fd,
-but I'm thinking that it could be extended to other aspects. For example,
-for sockets, one could want to scrub the cgroup information.
+Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+---
+ fs/file.c               | 19 +++++++++++++++++++
+ include/linux/fdtable.h | 10 ++++++++++
+ 2 files changed, 29 insertions(+)
 
-In the future, the API may not require ptrace attachment, or seizing, but
-right now it does as a matter of safety.
-
-Changes since the RFC v1:
-
- * Introduce a new helper to fs/file.c to fetch a file descriptor from
-   any process. It largely uses the code suggested by Oleg, with a few
-   changes to fix locking
- * It uses an extensible options struct to supply the FD, and option.
- * I added a sample, using the code from the user-ptrace sample
-
-Sargun Dhillon (4):
-  vfs, fdtable: Add get_task_file helper
-  ptrace: add PTRACE_GETFD request to fetch file descriptors from
-    tracees
-  samples: split generalized user-trap code into helper file
-  samples: Add example of using PTRACE_GETFD in conjunction with user
-    trap
-
- fs/file.c                          |  19 +++
- include/linux/fdtable.h            |  10 ++
- include/uapi/linux/ptrace.h        |  15 +++
- kernel/ptrace.c                    |  35 +++++-
- samples/seccomp/.gitignore         |   1 +
- samples/seccomp/Makefile           |  15 ++-
- samples/seccomp/user-trap-helper.c |  84 +++++++++++++
- samples/seccomp/user-trap-helper.h |  13 ++
- samples/seccomp/user-trap-ptrace.c | 193 +++++++++++++++++++++++++++++
- samples/seccomp/user-trap.c        |  85 +------------
- 10 files changed, 382 insertions(+), 88 deletions(-)
- create mode 100644 samples/seccomp/user-trap-helper.c
- create mode 100644 samples/seccomp/user-trap-helper.h
- create mode 100644 samples/seccomp/user-trap-ptrace.c
-
+diff --git a/fs/file.c b/fs/file.c
+index 3da91a112bab..98601a503a0f 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -1015,3 +1015,22 @@ int iterate_fd(struct files_struct *files, unsigned n,
+ 	return res;
+ }
+ EXPORT_SYMBOL(iterate_fd);
++
++struct file *get_task_file(struct task_struct *task, unsigned int fd)
++{
++	struct file *file = NULL;
++
++	task_lock(task);
++	rcu_read_lock();
++
++	if (task->files) {
++		file = fcheck_files(task->files, fd);
++		if (file && !get_file_rcu(file))
++			file = NULL;
++	}
++
++	rcu_read_unlock();
++	task_unlock(task);
++
++	return file;
++}
+diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
+index f07c55ea0c22..eacb1a56df44 100644
+--- a/include/linux/fdtable.h
++++ b/include/linux/fdtable.h
+@@ -115,6 +115,16 @@ int iterate_fd(struct files_struct *, unsigned,
+ 		int (*)(const void *, struct file *, unsigned),
+ 		const void *);
+ 
++/*
++ * get_task_file - get a reference to a file from another task
++ * @task: the task to get the file descriptor from
++ * @fd: the file descriptor number to fetch
++ *
++ * returns NULL on failure, or pointer to the file on success, with a reference
++ * It requires that the task is pinned prior to calling it.
++ */
++struct file *get_task_file(struct task_struct *task, unsigned int fd);
++
+ extern int __alloc_fd(struct files_struct *files,
+ 		      unsigned start, unsigned end, unsigned flags);
+ extern void __fd_install(struct files_struct *files,
 -- 
 2.20.1
 
