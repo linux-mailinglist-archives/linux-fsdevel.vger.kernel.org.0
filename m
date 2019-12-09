@@ -2,224 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E1E91169A4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 10:39:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3C69116A41
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 10:54:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727615AbfLIJjt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Dec 2019 04:39:49 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:39672 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727352AbfLIJjt (ORCPT
+        id S1727349AbfLIJyB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Dec 2019 04:54:01 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:34729 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725994AbfLIJyB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Dec 2019 04:39:49 -0500
-Received: from [79.140.120.104] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1ieFW6-000194-Ab; Mon, 09 Dec 2019 09:39:46 +0000
-Date:   Mon, 9 Dec 2019 10:39:45 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tycho@tycho.ws, jannh@google.com,
-        cyphar@cyphar.com, oleg@redhat.com, luto@amacapital.net,
-        viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v2 2/4] ptrace: add PTRACE_GETFD request to fetch file
- descriptors from tracees
-Message-ID: <20191209093944.g6lgt2cqkec7eaym@wittgenstein>
-References: <20191209070621.GA32450@ircssh-2.c.rugged-nimbus-611.internal>
+        Mon, 9 Dec 2019 04:54:01 -0500
+Received: by mail-lf1-f67.google.com with SMTP id l18so10200701lfc.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Dec 2019 01:53:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SrN+istqMjTsOK45GjMp/wgqCgFHWcl6iEK6o+bDYyM=;
+        b=FYhpnVQxjhJIIqGoA+uTyUBGndUjSdhRjhXD+hmCdSzrzcpK+TmYWixigujmqBc29g
+         cQw4LhNbscwXEXbw3rcU3LO+yNZN4dWwwT14yLzwBt9UGVsjKQbYKzNpmVOFq7TREiV0
+         tqL0VFCdHZ7v3c0GfjYLk46UAROJtl3WhUQa0/HUPL0P9aGB82cOgEJhIJuPNXgtlTgv
+         XChrtF2KrAZb9Z8WH9sR7PodmzJ/MB6tRnFFCYP7241+kzzZXN0qeNTcontRvE52wIaE
+         rVJuNBmIDPVwSZFdkYk198+xipgQqNpucAQrUMGlkaE0GDJ7z7nae9MUvq4veoX7s7YH
+         UZXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SrN+istqMjTsOK45GjMp/wgqCgFHWcl6iEK6o+bDYyM=;
+        b=B6mgcOfnY74QdQd8VIt/gisott/8R2Y/F5BKRgzE42kvFhrq3r2DrifRPXOHZiSGUY
+         ufuBGbuw3dRDNa4Rxi2l6YyOM6BTKFAlcca+qiYNNEtPRN0kp7jq8uJ8St2u/wA2zM4t
+         nNgz2lhoRsEAiS2n5avNwd0r52QV17hk/6nFsNDhyBREJUpeio49UANScmQIXBK8dcDV
+         TqgyqmTo9waIWM3tNs2r6qJtTrreuJ3A9afh3FgXO3jfpXeQxkQFI47NS8NcxaL7R518
+         P7rqX3xCehTavxUEzUlWj6JlK3YLqMilu0JndrTAhIEwDD5NXixQnOeAHdsEUvEOFzbz
+         Wotw==
+X-Gm-Message-State: APjAAAUxJnWvlddsEK0uvBq8TxiWd1108paNb+J94o0YZdnpinBCPvFZ
+        zmkAHR3WDPHbdfjK4c4STPnuyntZs2q6bukNEATWw7QSAx8=
+X-Google-Smtp-Source: APXvYqwfvOkeVUH5fg2kwnMXipvPVRUV+ZauWZg2WGQOLmGb4ZjQarFMEQy8e9EIVX91PBR/vHMnpU9Wsyptxc0KP8Y=
+X-Received: by 2002:ac2:43a7:: with SMTP id t7mr13538590lfl.125.1575885238439;
+ Mon, 09 Dec 2019 01:53:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191209070621.GA32450@ircssh-2.c.rugged-nimbus-611.internal>
-User-Agent: NeoMutt/20180716
+References: <157558502272.10278.8718685637610645781.stgit@warthog.procyon.org.uk>
+ <20191206135604.GB2734@twin.jikos.cz> <CAHk-=wiN_pWbcRaw5L-J2EFUyCn49Due0McwETKwmFFPp88K8Q@mail.gmail.com>
+ <CAHk-=wjvO1V912ya=1rdXwrm1OBTi6GqnqryH_E8OR69cZuVOg@mail.gmail.com>
+ <CAHk-=wizsHmCwUAyQKdU7hBPXHYQn-fOtJKBqMs-79br2pWxeQ@mail.gmail.com> <CAHk-=wjeG0q1vgzu4iJhW5juPkTsjTYmiqiMUYAebWW+0bam6w@mail.gmail.com>
+In-Reply-To: <CAHk-=wjeG0q1vgzu4iJhW5juPkTsjTYmiqiMUYAebWW+0bam6w@mail.gmail.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Mon, 9 Dec 2019 10:53:46 +0100
+Message-ID: <CAKfTPtDBtPuvK0NzYC0VZgEhh31drCDN=o+3Hd3fUwoffQg0fw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Sterba <dsterba@suse.cz>,
+        David Howells <dhowells@redhat.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 09, 2019 at 07:06:24AM +0000, Sargun Dhillon wrote:
-> PTRACE_GETFD is a generic ptrace API that allows the tracer to
-> get file descriptors from the tracee.
-> 
-> One reason to use this is to allow sandboxers to take actions on file
-> descriptors on the behalf of a tracee. For example, this can be
-> combined with seccomp-bpf's user notification to ptrace on-demand and
-> capture an fd without requiring the tracer to always be attached to
-> the process. The tracer can then take a privileged action on behalf
-> of the tracee, like binding a socket to a privileged port.
-> 
-> It works whether or not the tracee is stopped. The only prior requirement
-> is that the tracer is attached to the process via PTRACE_ATTACH or
-> PTRACE_SEIZE. Stopping the process breaks certain runtimes that expect
-> to be able to preempt syscalls (quickly). In addition, it is meant to be
-> used in an on-demand fashion to avoid breaking debuggers.
-> 
-> The ptrace call takes a pointer to ptrace_getfd_args in data, and the
-> size of the structure in addr. There is an options field, which can
-> be used to state whether the fd should be opened with CLOEXEC, or not.
-> This options field may be extended in the future to include the ability
-> to clear cgroup information about the file descriptor at a later point.
-> If the structure is from a newer kernel, and includes members which
-> make it larger than the structure that's known to this kernel version,
-> E2BIG will be returned.
-> 
-> The requirement that the tracer has attached to the tracee prior to the
-> capture of the file descriptor may be lifted at a later point.
-> 
-> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-> ---
->  include/uapi/linux/ptrace.h | 15 +++++++++++++++
->  kernel/ptrace.c             | 35 +++++++++++++++++++++++++++++++++--
->  2 files changed, 48 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/uapi/linux/ptrace.h b/include/uapi/linux/ptrace.h
-> index a71b6e3b03eb..c84655bcc453 100644
-> --- a/include/uapi/linux/ptrace.h
-> +++ b/include/uapi/linux/ptrace.h
-> @@ -101,6 +101,21 @@ struct ptrace_syscall_info {
->  	};
->  };
->  
-> +/*
-> + * This gets a file descriptor from a process. It requires that the process
-> + * has either been attached to. It does not require that the process is
-> + * stopped.
-> + */
-> +#define PTRACE_GETFD	0x420f
-> +
-> +/* options to pass in to ptrace_getfd_args */
-> +#define PTRACE_GETFD_O_CLOEXEC	(1 << 0)	/* open the fd with cloexec */
+On Sat, 7 Dec 2019 at 23:48, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Fri, Dec 6, 2019 at 7:50 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > The "make goes slow" problem bisects down to b667b8673443 ("pipe:
+> > Advance tail pointer inside of wait spinlock in pipe_read()").
+>
+> I'm not entirely sure that ends up being 100% true. It did bisect to
+> that, but the behavior wasn't entirely stable. There definitely is
+> some nasty timing trigger.
+>
+> But I did finally figure out what seems to have been going on with at
+> least the biggest part of the build performance regression. It's seems
+> to be a nasty interaction with the scheduler and the GNU make
+> jobserver, and in particular the pipe wakeups really _really_ do seem
+> to want to be synchronous both for the readers and the writers.
+>
+> When a writer wakes up a reader, we want the reader to react quickly
+> and vice versa. The most obvious case was for the GNU make jobserver,
+> where sub-makes would do a single-byte write to the jobserver pipe,
+> and we want to wake up the reader *immediatly*, because the reader is
+> actually a lot more important than the writer. The reader is what gets
+> the next job going, the writer just got done with the last one.
+>
+> And when a reader empties a full pipe, it's because the writer is
+> generating data, and you want to just get the writer going again asap.
+>
+> Anyway, I've spent way too much time looking at this and wondering
+> about odd performance patterns. It seems to be mostly back up to
+> normal.
+>
+> I say "mostly", because I still see times of "not as many concurrent
+> compiles going as I'd expect". It might be a kbuild problem, it might
+> be an issue with GNU make (I've seen problems with the make jobserver
+> wanting many more tokens than expected before and the kernel makefiles
+> - it migth be about deep subdirectories etc), and it might be some
+> remaining pipe issue. But my allmodconfig builds aren't _enormously_
+> slower than they used to be.
+>
+> But there's definitely some unhappy interaction with the jobserver. I
+> have 16 threads (8 cores with HT), and I generally use "make -j32" to
+> keep them busy because the jobserver isn't great. The pipe rework made
+> even that 2x slop not work all that well. Something held on to tokens
+> too long, and there was definitely some interaction with the pipe
+> wakeup code. Using "-j64" hid the problem, but it was a problem.
+>
+> It might be the new scheduler balancing changes that are interacting
+> with the pipe thing. I'm adding PeterZ, Ingo and Vincent to the cc,
+> because I hadn't realized just how important the sync wakeup seems to
+> be for pipe performance even at a big level.
 
-Hey Sargun,
+Which version of make should I use to reproduce the problem ?
+My setup is not the same and my make is a bit old but I haven't been
+able to reproduce the problem described above on my arm64 octa cores
+system and v5.5-rc1.
+All cores are busy with -j16. And even -j8 keeps the cores almost always busy
 
-Thanks for the patch!
-
-Why not simply accept O_CLOEXEC as flag? If that's not possible for some
-reason I'd say
-
-#define PTRACE_GETFD_O_CLOEXEC	O_CLOEXEC	/* open the fd with cloexec */
-
-is the right thing to do. This is fairly common:
-
-include/uapi/linux/timerfd.h:#define TFD_CLOEXEC O_CLOEXEC
-include/uapi/drm/drm.h:#define DRM_CLOEXEC O_CLOEXEC
-include/linux/userfaultfd_k.h:#define UFFD_CLOEXEC O_CLOEXEC
-include/linux/eventfd.h:#define EFD_CLOEXEC O_CLOEXEC
-include/uapi/linux/eventpoll.h:#define EPOLL_CLOEXEC O_CLOEXEC
-include/uapi/linux/inotify.h:/* For O_CLOEXEC and O_NONBLOCK */
-include/uapi/linux/inotify.h:#define IN_CLOEXEC O_CLOEXEC
-include/uapi/linux/mount.h:#define OPEN_TREE_CLOEXEC    O_CLOEXEC       /* Close the file on execve() */
-
-You can also add a compile-time assert to ptrace like we did for
-fs/namespace.c's OPEN_TREE_CLOEXEC:
-	BUILD_BUG_ON(OPEN_TREE_CLOEXEC != O_CLOEXEC);
-
-And I'd remove the  _O if you go with a separate flag, i.e.:
-
-#define PTRACE_GETFD_CLOEXEC	O_CLOEXEC	/* open the fd with cloexec */
-
-> +
-> +struct ptrace_getfd_args {
-> +	__u32 fd;	/* the tracee's file descriptor to get */
-> +	__u32 options;
-
-Nit and I'm not set on it at all but "flags" might just be better.
-
-> +} __attribute__((packed));
-
-What's the benefit in using __attribute__((packed)) here? Seems to me that:
-
-+struct ptrace_getfd_args {
-+	__u32 fd;	/* the tracee's file descriptor to get */
-+	__u32 options;
-+};
-
-would just work fine.
-
-> +
->  /*
->   * These values are stored in task->ptrace_message
->   * by tracehook_report_syscall_* to describe the current syscall-stop.
-> diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-> index cb9ddcc08119..8f619dceac6f 100644
-> --- a/kernel/ptrace.c
-> +++ b/kernel/ptrace.c
-> @@ -31,6 +31,7 @@
->  #include <linux/cn_proc.h>
->  #include <linux/compat.h>
->  #include <linux/sched/signal.h>
-> +#include <linux/fdtable.h>
->  
->  #include <asm/syscall.h>	/* for syscall_get_* */
->  
-> @@ -994,6 +995,33 @@ ptrace_get_syscall_info(struct task_struct *child, unsigned long user_size,
->  }
->  #endif /* CONFIG_HAVE_ARCH_TRACEHOOK */
->  
-> +static int ptrace_getfd(struct task_struct *child, unsigned long user_size,
-> +			void __user *datavp)
-> +{
-> +	struct ptrace_getfd_args args;
-> +	unsigned int fd_flags = 0;
-> +	struct file *file;
-> +	int ret;
-> +
-> +	ret = copy_struct_from_user(&args, sizeof(args), datavp, user_size);
-> +	if (ret)
-> +		goto out;
-
-Why is this goto out and not just return ret?
-
-> +	if ((args.options & ~(PTRACE_GETFD_O_CLOEXEC)) != 0)
-> +		return -EINVAL;
-> +	if (args.options & PTRACE_GETFD_O_CLOEXEC)
-> +		fd_flags &= O_CLOEXEC;
-> +	file = get_task_file(child, args.fd);
-> +	if (!file)
-> +		return -EBADF;
-> +	ret = get_unused_fd_flags(fd_flags);
-
-Why isn't that whole thing just:
-
-ret = get_unused_fd_flags(fd_flags & {PTRACE_GETFD_}O_CLOEXEC);
-
-> +	if (ret >= 0)
-> +		fd_install(ret, file);
-> +	else
-> +		fput(file);
-> +out:
-> +	return ret;
-> +}
-
-So sm like:
-
-static int ptrace_getfd(struct task_struct *child, unsigned long user_size,
-			void __user *datavp)
-{
-	struct ptrace_getfd_args args;
-	unsigned int fd_flags = 0;
-	struct file *file;
-	int ret;
-
-	ret = copy_struct_from_user(&args, sizeof(args), datavp, user_size);
-	if (ret)
-		return ret;
-
-	if ((args.options & ~(PTRACE_GETFD_O_CLOEXEC)) != 0)
-		return -EINVAL;
-
-	file = get_task_file(child, args.fd);
-	if (!file)
-		return -EBADF;
-
-	/* PTRACE_GETFD_CLOEXEC == O_CLOEXEC */
-	ret = get_unused_fd_flags(fd_flags & PTRACE_GETFD_O_CLOEXEC);
-	if (ret >= 0)
-		fd_install(ret, file);
-	else
-		fput(file);
-
-	return ret;
-}
+>
+> I've pushed out my pipe changes. I really didn't want to do that kind
+> of stuff at the end of the merge window, but I spent a lot more time
+> than I wanted looking at this code, because I was getting to the point
+> where the alternative was to just revert it all.
+>
+> DavidH, give these a look:
+>
+>   85190d15f4ea pipe: don't use 'pipe_wait() for basic pipe IO
+>   a28c8b9db8a1 pipe: remove 'waiting_writers' merging logic
+>   f467a6a66419 pipe: fix and clarify pipe read wakeup logic
+>   1b6b26ae7053 pipe: fix and clarify pipe write wakeup logic
+>   ad910e36da4c pipe: fix poll/select race introduced by the pipe rework
+>
+> the top two of which are purely "I'm fed up looking at this code, this
+> needs to go" kind of changes.
+>
+> In particular, that last change is because I think the GNU jobserver
+> problem is partly a thundering herd issue: when a job token becomes
+> free (ie somebody does a one-byte write to an empty jobserver pipe),
+> it wakes up *everybody* who is waiting for a token. One of them will
+> get it, and the others will go to sleep again. And then it repeats all
+> over. I didn't fix it, but it _could_ be fixed with exclusive waits
+> for readers/writers, but that means more smarts than pipe_wait() can
+> do. And because the jobserver isn't great at keeping everybody happy,
+> I'm using a much bigger "make -jX" value than the number of CPU's I
+> have, which makes the herd bigger. And I suspect none of this helps
+> the scheduler pick the _right_ process to run, which just makes
+> scheduling an even bigger problem.
+>
+>             Linus
