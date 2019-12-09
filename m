@@ -2,190 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B76E116E36
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 14:55:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D5EA116E66
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 15:00:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727438AbfLINzA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Dec 2019 08:55:00 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:37406 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727437AbfLINy7 (ORCPT
+        id S1727268AbfLIOA3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Dec 2019 09:00:29 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:35013 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726687AbfLIOA3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Dec 2019 08:54:59 -0500
-Received: by mail-lf1-f65.google.com with SMTP id b15so10768080lfc.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Dec 2019 05:54:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=K9uxu4I2aG27MOoTnJ8z/Gc+bXBbv38WzXCQqN80oRQ=;
-        b=YkEHz6Ht9tPJPmOUHoU1jZ9pqGBJnZLL6YkH2ZXKTWeUN5djftfx7q4EUyauaSE0js
-         ul8jZy3tcrF2hiAAlS54kqrmBNSR8AI+KGv8HD8Hcy0uUtbAfqLNVlyF0IqbDcGK/FZj
-         vTUfe+l4K5NNBSZGW2q5Eejwu8W2FWeDR3dsbOUXfRN32C/+75fzyHuz6mvbAmh9++Gb
-         n81I+WhhHF9ohQSY6Fep42R1YXNblyLur+TZrRyNdJfCaus0x6xT14fQ7JtzOtzdlMOI
-         mSDkvp/L/rimtXMS/1u6cr6HAPpYZHpt3BxgCADIwnuXaPcbAutZBrRUNWlzyibKMWWr
-         RIXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=K9uxu4I2aG27MOoTnJ8z/Gc+bXBbv38WzXCQqN80oRQ=;
-        b=s0WWBcNweV+HpqB7JqUm70IpgnfM2+eC/UX0Zjs6chvsXijsqpiwmfC8XA7O8LKwIK
-         a7CpgJoUZY8bRavL2+MW6IOI0u8Tb8lF0npMspVYTfLFPvUKOTFxo3RRjdgMbftRAIq3
-         Dl/hT9I+bqHi/C+t85S8tvfRUDDv4VqpOozfHIvxLI3arTE9r3u/DYLOSirA6rjgHLuG
-         UMqbk+3F8Zb6AkssT31Movzir33riIvKr+s2p6csfIFWefnxSKvvceJMx2misP7cJOBZ
-         6pmnMJiIBcPCJOQEUpW7F05wDTm8n9HrN+eF0WQ6AxudXjIfXvqkx8c2zD9j+dsECb6T
-         hbBA==
-X-Gm-Message-State: APjAAAUiybk3xjdyjkA3mrg5sldnI+QHB38RlI/ysYujX67tYILCs949
-        tB9kDzhkk7QWL1yTXCUTEM4FSn9dP2vG/g==
-X-Google-Smtp-Source: APXvYqyafX3xzx4CbMOmCIMs7WsCtkpSQE/VomreImTKVIoBq8dgDzEwxngSRlk+slj1m35P34FCyA==
-X-Received: by 2002:ac2:41c8:: with SMTP id d8mr11906075lfi.65.1575899696807;
-        Mon, 09 Dec 2019 05:54:56 -0800 (PST)
-Received: from msk1wst115n.omp.ru (mail.omprussia.ru. [5.134.221.218])
-        by smtp.gmail.com with ESMTPSA id m15sm11463355ljg.4.2019.12.09.05.54.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 09 Dec 2019 05:54:56 -0800 (PST)
-Message-ID: <59711cf492815c5bba93d641398011ea2341f635.camel@dubeyko.com>
-Subject: Re: [PATCH 01/41] fs/adfs: inode: update timestamps to centisecond
- precision
-From:   Vyacheslav Dubeyko <slava@dubeyko.com>
-To:     Russell King <rmk+kernel@armlinux.org.uk>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org
-Date:   Mon, 09 Dec 2019 16:54:55 +0300
-In-Reply-To: <E1ieGtm-0004ZY-DD@rmk-PC.armlinux.org.uk>
-References: <20191209110731.GD25745@shell.armlinux.org.uk>
-         <E1ieGtm-0004ZY-DD@rmk-PC.armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 9 Dec 2019 09:00:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575900027;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=VQdYChUYPRwBtiwoaKfcOJXruVCbc28umUKlhLFhzOc=;
+        b=DFGBNiwZL4BPRYZNvUmi2oWpg++36S5vZ6hG7o01gcgjmPz3cxCfx40Oxyzephvo1unVGx
+        MINWvVJmEYzDG6u141YzNxfOaDknweu1TZpo+9kOtr4J/KHWVZocBaU1dHyi+6mN05AasN
+        sCIXSTaR8WVNUOgasovWm7oyCgvMVZE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-123-FziZ82VkOq-scynChaHufQ-1; Mon, 09 Dec 2019 09:00:22 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 741EC96BF1;
+        Mon,  9 Dec 2019 14:00:21 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 809D45DA2C;
+        Mon,  9 Dec 2019 14:00:20 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     lsf-pc@lists.linux-foundation.org
+cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [LSF/MM/BPF TOPIC] How to make fscache/cachefiles read shaping play nicely with the VM?
+MIME-Version: 1.0
+Content-ID: <9607.1575900019.1@warthog.procyon.org.uk>
+Date:   Mon, 09 Dec 2019 14:00:19 +0000
+Message-ID: <9608.1575900019@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: FziZ82VkOq-scynChaHufQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2019-12-09 at 11:08 +0000, Russell King wrote:
-> Despite ADFS timestamps having centi-second granularity, and Linux
-> gaining fine-grained timestamp support in v2.5.48, fs/adfs was never
-> updated.
-> 
-> Update fs/adfs to centi-second support, and ensure that the inode
-> ctime
-> always reflects what is written in underlying media.
-> 
-> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-> ---
->  fs/adfs/inode.c | 40 ++++++++++++++++++++--------------------
->  fs/adfs/super.c |  2 ++
->  2 files changed, 22 insertions(+), 20 deletions(-)
-> 
-> diff --git a/fs/adfs/inode.c b/fs/adfs/inode.c
-> index 124de75413a5..18a1d478669b 100644
-> --- a/fs/adfs/inode.c
-> +++ b/fs/adfs/inode.c
-> @@ -158,6 +158,8 @@ adfs_mode2atts(struct super_block *sb, struct
-> inode *inode)
->  	return attr;
->  }
->  
-> +static const s64 nsec_unix_epoch_diff_risc_os_epoch =
-> 2208988800000000000LL;
-> +
->  /*
->   * Convert an ADFS time to Unix time.  ADFS has a 40-bit centi-
-> second time
->   * referenced to 1 Jan 1900 (til 2248) so we need to discard
-> 2208988800 seconds
-> @@ -170,8 +172,6 @@ adfs_adfs2unix_time(struct timespec64 *tv, struct
-> inode *inode)
->  	/* 01 Jan 1970 00:00:00 (Unix epoch) as nanoseconds since
->  	 * 01 Jan 1900 00:00:00 (RISC OS epoch)
->  	 */
-> -	static const s64 nsec_unix_epoch_diff_risc_os_epoch =
-> -							220898880000000
-> 0000LL;
->  	s64 nsec;
->  
->  	if (!adfs_inode_is_stamped(inode))
-> @@ -204,24 +204,23 @@ adfs_adfs2unix_time(struct timespec64 *tv,
-> struct inode *inode)
->  	return;
->  }
->  
-> -/*
-> - * Convert an Unix time to ADFS time.  We only do this if the entry
-> has a
-> - * time/date stamp already.
-> - */
-> -static void
-> -adfs_unix2adfs_time(struct inode *inode, unsigned int secs)
-> +/* Convert an Unix time to ADFS time for an entry that is already
-> stamped. */
-> +static void adfs_unix2adfs_time(struct inode *inode,
-> +				const struct timespec64 *ts)
->  {
-> -	unsigned int high, low;
-> +	s64 cs, nsec = timespec64_to_ns(ts);
->  
-> -	if (adfs_inode_is_stamped(inode)) {
-> -		/* convert 32-bit seconds to 40-bit centi-seconds */
-> -		low  = (secs & 255) * 100;
-> -		high = (secs / 256) * 100 + (low >> 8) + 0x336e996a;
-> +	/* convert from Unix to RISC OS epoch */
-> +	nsec += nsec_unix_epoch_diff_risc_os_epoch;
->  
-> -		ADFS_I(inode)->loadaddr = (high >> 24) |
-> -				(ADFS_I(inode)->loadaddr & ~0xff);
-> -		ADFS_I(inode)->execaddr = (low & 255) | (high << 8);
-> -	}
-> +	/* convert from nanoseconds to centiseconds */
-> +	cs = div_s64(nsec, 10000000);
-> +
-> +	cs = clamp_t(s64, cs, 0, 0xffffffffff);
-> +
-> +	ADFS_I(inode)->loadaddr &= ~0xff;
-> +	ADFS_I(inode)->loadaddr |= (cs >> 32) & 0xff;
-> +	ADFS_I(inode)->execaddr = cs;
->  }
->  
->  /*
-> @@ -315,10 +314,11 @@ adfs_notify_change(struct dentry *dentry,
-> struct iattr *attr)
->  	if (ia_valid & ATTR_SIZE)
->  		truncate_setsize(inode, attr->ia_size);
->  
-> -	if (ia_valid & ATTR_MTIME) {
-> -		inode->i_mtime = attr->ia_mtime;
-> -		adfs_unix2adfs_time(inode, attr->ia_mtime.tv_sec);
-> +	if (ia_valid & ATTR_MTIME && adfs_inode_is_stamped(inode)) {
-> +		adfs_unix2adfs_time(inode, &attr->ia_mtime);
-> +		adfs_adfs2unix_time(&inode->i_mtime, inode);
->  	}
-> +
->  	/*
->  	 * FIXME: should we make these == to i_mtime since we don't
->  	 * have the ability to represent them in our filesystem?
-> diff --git a/fs/adfs/super.c b/fs/adfs/super.c
-> index 65b04ebb51c3..e0eea9adb4e6 100644
-> --- a/fs/adfs/super.c
-> +++ b/fs/adfs/super.c
-> @@ -391,7 +391,9 @@ static int adfs_fill_super(struct super_block
-> *sb, void *data, int silent)
->  	asb = kzalloc(sizeof(*asb), GFP_KERNEL);
->  	if (!asb)
->  		return -ENOMEM;
-> +
->  	sb->s_fs_info = asb;
-> +	sb->s_time_gran = 10000000;
+Hi,
 
-I believe it's not easy to follow what this granularity means. Maybe,
-it makes sense to introduce some constant and to add some comment?
+I've been rewriting fscache and cachefiles to massively simplify it and mak=
+e
+use of the kiocb interface to do direct-I/O to/from the netfs's pages which
+didn't exist when I first did this.  Instead it has been attempting to moni=
+tor
+the page bit waitqueues to see when the backing filesystem's pages become u=
+p
+to date.
 
-Thanks,
-Viacheslav Dubeyko.
+=09https://lore.kernel.org/lkml/24942.1573667720@warthog.procyon.org.uk/
+=09https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/lo=
+g/?h=3Dfscache-iter
 
->  
->  	/* set default options */
->  	asb->s_uid = GLOBAL_ROOT_UID;
+To make it more efficient, following other network filesystems implementati=
+ons
+outside of the Linux kernel, I'm attempting to move to requiring reads and
+writes to the cache in much bigger granules (fixed at 256KiB initially), wh=
+ich
+means that I can represent the presence of a granule of that much data with=
+ a
+single bit.
+
+So far, I've done this for ->readpages(), ->readpage() and ->write_begin() =
+by
+taking the requested page or pages and expanding/contracting the set of pag=
+es
+as necessary so that the first (or only) actually requested page is in ther=
+e
+and both ends of the sequence are appropriate aligned.
+
+This, however, is at odds with the VM and *its* idea of how to do things -
+particularly for ->readpages().  The logic of my fscache_read_helper()[*] i=
+s
+applied after the VM's readahead logic, and the two don't necessarily see e=
+ye
+to eye at present.
+
+[*] This is in the patch named "fscache: Add read helper" in the
+    above-mentioned git tree and "afs: Use new fscache I/O API" which has
+    examples of using it.
+
+There are some things that need to be taken into consideration:
+
+ (1) I might want to make the granule size variable both by file and over t=
+he
+     length of a file.  So for a file that's, say, <=3D512MiB in size, I mi=
+ght
+     want 1 bit per 256KiB granule, but over 512MiB I might want to switch =
+to
+     1 bit per 1MiB granule.  Or for files that large, just use 1MiB granul=
+es
+     all the way through.
+
+ (2) The granule size might also need vary by cache.
+
+ (3) Some files I want to treat as monolithic.  The file is either all ther=
+e
+     or none of it is.  Examples might be non-regular files such as symlink=
+s
+     or directories.
+
+ (4) These parameters might be tunable by the admin.
+
+So how best to make the VM deal with this?  Is it better to integrate such
+logic into the VM or leave it on top?
+
+David
 
