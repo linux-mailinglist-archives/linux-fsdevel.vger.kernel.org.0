@@ -2,91 +2,239 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A112116BDB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 12:09:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC97A116BEF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 12:10:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbfLILJQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Dec 2019 06:09:16 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:60028 "EHLO
+        id S1727691AbfLILJW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Dec 2019 06:09:22 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:60040 "EHLO
         pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727589AbfLILJQ (ORCPT
+        with ESMTP id S1727589AbfLILJW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Dec 2019 06:09:16 -0500
+        Mon, 9 Dec 2019 06:09:22 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=armlinux.org.uk; s=pandora-2019; h=Date:Sender:Message-Id:Content-Type:
         Content-Transfer-Encoding:MIME-Version:Subject:Cc:To:From:References:
         In-Reply-To:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=p+wFX8QWQjxAfYcBJJUfwXYFWwf/JimsE63z6Ke748Y=; b=jkpE7Yl4WVIhy4epcudH0wRr2K
-        JaN8U0Qcq/LqmTuHDE1e5nEwcDFFOJvRBz9L0pP/ICp++tIZeks8y2NVfbe6bIGXGFffi6zJ+fqjw
-        Lyn1FWpVzAHuFGjm2QNJasISIJpMaNGbI8v86BjJNTdxaQxv/4VxYZoeufMIoJfrY8KPyBFJIcvxk
-        fXk74eawONWvPuWo7f+4nsSIc2R/xS/9x/Am65pu/84ZgcjFJA9vAciW6KQiAht/esb+wXIg57Zye
-        y0ba9uwPrcpE2vnsGy0uY70q01+HIXkefxUZUk0OKrgEeDEhE5kXzfXJD+CEs4Owhzw1WujjhF4Ws
-        N4O+GCFg==;
-Received: from e0022681537dd.dyn.armlinux.org.uk ([fd8f:7570:feb6:1:222:68ff:fe15:37dd]:54058 helo=rmk-PC.armlinux.org.uk)
+        bh=SYFQioMwaI1M1QW9q40glc6RwXzosr2pEFnvgZot8HM=; b=YLboJOF2LjCx1pXsvp98xdc2U3
+        QvA+OxpOd/7a2ngiutujwiw6rZDuTunlZWlJelO9qYF6uXyGOQsdjdTMD0ZVyuRZ/M0z0Q0euzi+U
+        aND4bjhzrU88s/NrElsEBtu6SCj2zc4R8TACP6AJ3wiFXsNTwvh4awq9AqLmbI0tveNA+dpPYNGmd
+        PY1lMklQdJcieAvQAkwnQ0WPFH2iIe9mw/kddRF2mpr76BfNmXlnlvTh7pLbWLk0RjcQOFeLUaOZW
+        akMmD5lxpfGWA4SYSj7BPqUdB14ISmosVbHUYqo5SHw1INL9g0ZJbBsGI9Utk8wLjZ0a1xo2pzfFt
+        N26Kyn+g==;
+Received: from e0022681537dd.dyn.armlinux.org.uk ([2002:4e20:1eda:1:222:68ff:fe15:37dd]:49818 helo=rmk-PC.armlinux.org.uk)
         by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.90_1)
         (envelope-from <rmk@armlinux.org.uk>)
-        id 1ieGuY-0002Te-IA; Mon, 09 Dec 2019 11:09:06 +0000
+        id 1ieGue-0002Tn-3d; Mon, 09 Dec 2019 11:09:12 +0000
 Received: from rmk by rmk-PC.armlinux.org.uk with local (Exim 4.92)
         (envelope-from <rmk@armlinux.org.uk>)
-        id 1ieGuW-0004ah-SO; Mon, 09 Dec 2019 11:09:04 +0000
+        id 1ieGuc-0004ap-06; Mon, 09 Dec 2019 11:09:10 +0000
 In-Reply-To: <20191209110731.GD25745@shell.armlinux.org.uk>
 References: <20191209110731.GD25745@shell.armlinux.org.uk>
 From:   Russell King <rmk+kernel@armlinux.org.uk>
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH 10/41] fs/adfs: map: fix map scanning
+Subject: [PATCH 11/41] fs/adfs: dir: rename bh_fplus to bhs
 MIME-Version: 1.0
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <E1ieGuW-0004ah-SO@rmk-PC.armlinux.org.uk>
-Date:   Mon, 09 Dec 2019 11:09:04 +0000
+Message-Id: <E1ieGuc-0004ap-06@rmk-PC.armlinux.org.uk>
+Date:   Mon, 09 Dec 2019 11:09:10 +0000
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When scanning the map for a fragment id, we need to keep track of the
-free space links, so we don't inadvertently believe that the freespace
-link is a valid fragment id.
+Rename bh_fplus to bhs in preparation to make some of the directory
+handling code sharable between implementations.
 
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 ---
- fs/adfs/map.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ fs/adfs/adfs.h      |  4 +---
+ fs/adfs/dir_fplus.c | 54 ++++++++++++++++++++++-----------------------
+ 2 files changed, 28 insertions(+), 30 deletions(-)
 
-diff --git a/fs/adfs/map.c b/fs/adfs/map.c
-index 82e1bf101fe6..a81de80c45c1 100644
---- a/fs/adfs/map.c
-+++ b/fs/adfs/map.c
-@@ -72,9 +72,12 @@ static int lookup_zone(const struct adfs_discmap *dm, const unsigned int idlen,
- 	const u32 idmask = (1 << idlen) - 1;
- 	unsigned char *map = dm->dm_bh->b_data;
- 	unsigned int start = dm->dm_startbit;
--	unsigned int fragend;
-+	unsigned int freelink, fragend;
- 	u32 frag;
+diff --git a/fs/adfs/adfs.h b/fs/adfs/adfs.h
+index 6497da8a2c8a..956ac0bd53e1 100644
+--- a/fs/adfs/adfs.h
++++ b/fs/adfs/adfs.h
+@@ -93,9 +93,7 @@ struct adfs_dir {
  
-+	frag = GET_FRAG_ID(map, 8, idmask & 0x7fff);
-+	freelink = frag ? 8 + frag : 0;
-+
- 	do {
- 		frag = GET_FRAG_ID(map, start, idmask);
+ 	int			nr_buffers;
+ 	struct buffer_head	*bh[4];
+-
+-	/* big directories need allocated buffers */
+-	struct buffer_head	**bh_fplus;
++	struct buffer_head	**bhs;
  
-@@ -82,7 +85,9 @@ static int lookup_zone(const struct adfs_discmap *dm, const unsigned int idlen,
- 		if (fragend >= endbit)
- 			goto error;
+ 	unsigned int		pos;
+ 	__u32			parent_id;
+diff --git a/fs/adfs/dir_fplus.c b/fs/adfs/dir_fplus.c
+index d56924c11b17..5f5420c9b943 100644
+--- a/fs/adfs/dir_fplus.c
++++ b/fs/adfs/dir_fplus.c
+@@ -20,7 +20,7 @@ adfs_fplus_read(struct super_block *sb, unsigned int id, unsigned int sz, struct
+ 	dir->nr_buffers = 0;
  
--		if (frag == frag_id) {
-+		if (start == freelink) {
-+			freelink += frag & 0x7fff;
-+		} else if (frag == frag_id) {
- 			unsigned int length = fragend + 1 - start;
+ 	/* start off using fixed bh set - only alloc for big dirs */
+-	dir->bh_fplus = &dir->bh[0];
++	dir->bhs = &dir->bh[0];
  
- 			if (*offset < length)
+ 	block = __adfs_block_map(sb, id, 0);
+ 	if (!block) {
+@@ -28,12 +28,12 @@ adfs_fplus_read(struct super_block *sb, unsigned int id, unsigned int sz, struct
+ 		goto out;
+ 	}
+ 
+-	dir->bh_fplus[0] = sb_bread(sb, block);
+-	if (!dir->bh_fplus[0])
++	dir->bhs[0] = sb_bread(sb, block);
++	if (!dir->bhs[0])
+ 		goto out;
+ 	dir->nr_buffers += 1;
+ 
+-	h = (struct adfs_bigdirheader *)dir->bh_fplus[0]->b_data;
++	h = (struct adfs_bigdirheader *)dir->bhs[0]->b_data;
+ 	size = le32_to_cpu(h->bigdirsize);
+ 	if (size != sz) {
+ 		adfs_msg(sb, KERN_WARNING,
+@@ -51,19 +51,19 @@ adfs_fplus_read(struct super_block *sb, unsigned int id, unsigned int sz, struct
+ 	size >>= sb->s_blocksize_bits;
+ 	if (size > ARRAY_SIZE(dir->bh)) {
+ 		/* this directory is too big for fixed bh set, must allocate */
+-		struct buffer_head **bh_fplus =
++		struct buffer_head **bhs =
+ 			kcalloc(size, sizeof(struct buffer_head *),
+ 				GFP_KERNEL);
+-		if (!bh_fplus) {
++		if (!bhs) {
+ 			adfs_msg(sb, KERN_ERR,
+ 				 "not enough memory for dir object %X (%d blocks)",
+ 				 id, size);
+ 			ret = -ENOMEM;
+ 			goto out;
+ 		}
+-		dir->bh_fplus = bh_fplus;
++		dir->bhs = bhs;
+ 		/* copy over the pointer to the block that we've already read */
+-		dir->bh_fplus[0] = dir->bh[0];
++		dir->bhs[0] = dir->bh[0];
+ 	}
+ 
+ 	for (blk = 1; blk < size; blk++) {
+@@ -73,8 +73,8 @@ adfs_fplus_read(struct super_block *sb, unsigned int id, unsigned int sz, struct
+ 			goto out;
+ 		}
+ 
+-		dir->bh_fplus[blk] = sb_bread(sb, block);
+-		if (!dir->bh_fplus[blk]) {
++		dir->bhs[blk] = sb_bread(sb, block);
++		if (!dir->bhs[blk]) {
+ 			adfs_error(sb,	"dir object %x failed read for offset %d, mapped block %lX",
+ 				   id, blk, block);
+ 			goto out;
+@@ -84,7 +84,7 @@ adfs_fplus_read(struct super_block *sb, unsigned int id, unsigned int sz, struct
+ 	}
+ 
+ 	t = (struct adfs_bigdirtail *)
+-		(dir->bh_fplus[size - 1]->b_data + (sb->s_blocksize - 8));
++		(dir->bhs[size - 1]->b_data + (sb->s_blocksize - 8));
+ 
+ 	if (t->bigdirendname != cpu_to_le32(BIGDIRENDNAME) ||
+ 	    t->bigdirendmasseq != h->startmasseq ||
+@@ -98,14 +98,14 @@ adfs_fplus_read(struct super_block *sb, unsigned int id, unsigned int sz, struct
+ 	return 0;
+ 
+ out:
+-	if (dir->bh_fplus) {
++	if (dir->bhs) {
+ 		for (i = 0; i < dir->nr_buffers; i++)
+-			brelse(dir->bh_fplus[i]);
++			brelse(dir->bhs[i]);
+ 
+-		if (&dir->bh[0] != dir->bh_fplus)
+-			kfree(dir->bh_fplus);
++		if (&dir->bh[0] != dir->bhs)
++			kfree(dir->bhs);
+ 
+-		dir->bh_fplus = NULL;
++		dir->bhs = NULL;
+ 	}
+ 
+ 	dir->nr_buffers = 0;
+@@ -117,7 +117,7 @@ static int
+ adfs_fplus_setpos(struct adfs_dir *dir, unsigned int fpos)
+ {
+ 	struct adfs_bigdirheader *h =
+-		(struct adfs_bigdirheader *) dir->bh_fplus[0]->b_data;
++		(struct adfs_bigdirheader *) dir->bhs[0]->b_data;
+ 	int ret = -ENOENT;
+ 
+ 	if (fpos <= le32_to_cpu(h->bigdirentries)) {
+@@ -140,18 +140,18 @@ dir_memcpy(struct adfs_dir *dir, unsigned int offset, void *to, int len)
+ 	partial = sb->s_blocksize - offset;
+ 
+ 	if (partial >= len)
+-		memcpy(to, dir->bh_fplus[buffer]->b_data + offset, len);
++		memcpy(to, dir->bhs[buffer]->b_data + offset, len);
+ 	else {
+ 		char *c = (char *)to;
+ 
+ 		remainder = len - partial;
+ 
+ 		memcpy(c,
+-			dir->bh_fplus[buffer]->b_data + offset,
++			dir->bhs[buffer]->b_data + offset,
+ 			partial);
+ 
+ 		memcpy(c + partial,
+-			dir->bh_fplus[buffer + 1]->b_data,
++			dir->bhs[buffer + 1]->b_data,
+ 			remainder);
+ 	}
+ }
+@@ -160,7 +160,7 @@ static int
+ adfs_fplus_getnext(struct adfs_dir *dir, struct object_info *obj)
+ {
+ 	struct adfs_bigdirheader *h =
+-		(struct adfs_bigdirheader *) dir->bh_fplus[0]->b_data;
++		(struct adfs_bigdirheader *) dir->bhs[0]->b_data;
+ 	struct adfs_bigdirentry bde;
+ 	unsigned int offset;
+ 	int ret = -ENOENT;
+@@ -202,7 +202,7 @@ adfs_fplus_sync(struct adfs_dir *dir)
+ 	int i;
+ 
+ 	for (i = dir->nr_buffers - 1; i >= 0; i--) {
+-		struct buffer_head *bh = dir->bh_fplus[i];
++		struct buffer_head *bh = dir->bhs[i];
+ 		sync_dirty_buffer(bh);
+ 		if (buffer_req(bh) && !buffer_uptodate(bh))
+ 			err = -EIO;
+@@ -216,14 +216,14 @@ adfs_fplus_free(struct adfs_dir *dir)
+ {
+ 	int i;
+ 
+-	if (dir->bh_fplus) {
++	if (dir->bhs) {
+ 		for (i = 0; i < dir->nr_buffers; i++)
+-			brelse(dir->bh_fplus[i]);
++			brelse(dir->bhs[i]);
+ 
+-		if (&dir->bh[0] != dir->bh_fplus)
+-			kfree(dir->bh_fplus);
++		if (&dir->bh[0] != dir->bhs)
++			kfree(dir->bhs);
+ 
+-		dir->bh_fplus = NULL;
++		dir->bhs = NULL;
+ 	}
+ 
+ 	dir->nr_buffers = 0;
 -- 
 2.20.1
 
