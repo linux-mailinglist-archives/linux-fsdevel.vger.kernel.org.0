@@ -2,166 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5186117322
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 18:49:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2511E117340
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 18:57:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726598AbfLIRsy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Dec 2019 12:48:54 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:50354 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726605AbfLIRsx (ORCPT
+        id S1726365AbfLIR5T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Dec 2019 12:57:19 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:32976 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbfLIR5S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Dec 2019 12:48:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575913732;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Lt4hpqX7ZVZhkeNrxUdXUCr9dF2T52+7cfTs1UM8LG0=;
-        b=D8aOJ6tMYPYsYf6y0AsNxhdcQPlQ0ScfIf5oaMrVQcokXwuIipG2jD45iKaAKFv044r2Hx
-        ixLwcQm7/Akr2rjAbVw2XVwUaWR5ZO3zGHNv+MFcZpIaqHnseaOwHKVUzP4sccn5r2irKs
-        m8fVUyN2ncmuImF17wZeTVUieoOjleo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-127-WurNm-wkPmmW_qXyqjEgnA-1; Mon, 09 Dec 2019 12:48:49 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 08BAB107ACC9;
-        Mon,  9 Dec 2019 17:48:48 +0000 (UTC)
-Received: from t460s.redhat.com (ovpn-116-214.ams2.redhat.com [10.36.116.214])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DD7121001B03;
-        Mon,  9 Dec 2019 17:48:45 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v1 2/3] fs/proc/page.c: allow inspection of last section and fix end detection
-Date:   Mon,  9 Dec 2019 18:48:35 +0100
-Message-Id: <20191209174836.11063-3-david@redhat.com>
-In-Reply-To: <20191209174836.11063-1-david@redhat.com>
-References: <20191209174836.11063-1-david@redhat.com>
+        Mon, 9 Dec 2019 12:57:18 -0500
+Received: by mail-yb1-f193.google.com with SMTP id o63so6480785ybc.0;
+        Mon, 09 Dec 2019 09:57:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qei/AYQXNst4gEgpnVYA7NFVSVcsDop3iCvV2R7BSTI=;
+        b=P1IBwsVG1cGn0KRwtBdlP3FE3DN2EeipMvaoqqKHAet50Iw67U1scaq6LSIRaWKvP+
+         ygNvJNgjxAt/ShEVFQR8sw6h2ndKba+pN0ImbQAIJ6c7oGl8zcC3HUbr+MGczk20QGSc
+         Te8aYt+Q8vnExT6yJn3VqclBTk0jwOcFANGgX6zs3y3O/WuXOe6ecy3E73uv0m6jw9yZ
+         eYY7HOS5UF7+ZtTfMUo2uWSiYouXuX3bT8jJ5w7EWkcMyRauTr3ZNVwmlAtl58VY56Un
+         MxfxyrQU1CCaGofz24MkVyO73u04Sk/hjpWM5/2U6KW+ZgW7DPP45m6jZwbeqgL1zvzx
+         fhgQ==
+X-Gm-Message-State: APjAAAX/NN+9+p1X7c8PSZnpyyanv50BZNL5PJnc3KeOeozWIrK2gstV
+        NpGjCwJpMmf8poC2h2/+MUW36fHMJVgsJnz3HOE=
+X-Google-Smtp-Source: APXvYqz4DjmgUMCLAs/3U0LVrQER9vKVWUuTTZiInvynh57cPM6y1wIzI/89XHRRaXx6krX4w4Mo8IH1dWtwVlg6oGE=
+X-Received: by 2002:a25:5f4d:: with SMTP id h13mr21799718ybm.390.1575914237631;
+ Mon, 09 Dec 2019 09:57:17 -0800 (PST)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: WurNm-wkPmmW_qXyqjEgnA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+References: <157558502272.10278.8718685637610645781.stgit@warthog.procyon.org.uk>
+ <20191206135604.GB2734@twin.jikos.cz> <CAHk-=wiN_pWbcRaw5L-J2EFUyCn49Due0McwETKwmFFPp88K8Q@mail.gmail.com>
+ <CAHk-=wjvO1V912ya=1rdXwrm1OBTi6GqnqryH_E8OR69cZuVOg@mail.gmail.com>
+ <CAHk-=wizsHmCwUAyQKdU7hBPXHYQn-fOtJKBqMs-79br2pWxeQ@mail.gmail.com>
+ <CAHk-=wjeG0q1vgzu4iJhW5juPkTsjTYmiqiMUYAebWW+0bam6w@mail.gmail.com>
+ <CAKfTPtDBtPuvK0NzYC0VZgEhh31drCDN=o+3Hd3fUwoffQg0fw@mail.gmail.com> <CAHk-=wicgTacrHUJmSBbW9MYAdMPdrXzULPNqQ3G7+HkLeNf1Q@mail.gmail.com>
+In-Reply-To: <CAHk-=wicgTacrHUJmSBbW9MYAdMPdrXzULPNqQ3G7+HkLeNf1Q@mail.gmail.com>
+From:   Akemi Yagi <toracat@elrepo.org>
+Date:   Mon, 9 Dec 2019 09:57:06 -0800
+Message-ID: <CABA31DqGSycoE2hxk92NZ8qb47DqTR0+UGMQN_or1zpoGCg9fw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        DJ Delorie <dj@redhat.com>, David Sterba <dsterba@suse.cz>,
+        David Howells <dhowells@redhat.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If max_pfn does not fall onto a section boundary, it is possible to inspect
-PFNs up to max_pfn, and PFNs above max_pfn, however, max_pfn itself can't
-be inspected. We can have a valid (and online) memmap at and above max_pfn
-if max_pfn is not aligned to a section boundary. The whole early section
-has a memmap and is marked online. Being able to inspect the state of these
-PFNs is valuable for debugging, especially because max_pfn can change on
-memory hotplug and expose these memmaps.
+On Mon, Dec 9, 2019 at 9:49 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> [ Added DJ to the participants, since he seems to be the Fedora make
+> maintainer - DJ, any chance that this absolutely horrid 'make' buf can
+> be fixed in older versions too, not just rawhide? The bugfix is two
+> and a half years old by now, and the bug looks real and very serious ]
+(snip)
+> But sadly, there's no way I can push that fair pipe wakeup thing as
+> long as this horribly buggy version of make is widespread.
+>
+>                  Linus
 
-Also, querying page flags via "./page-types -r -a 0x144001,"
-(tools/vm/page-types.c) inside a x86-64 guest with 4160MB under QEMU
-results in an (almost) endless loop in user space, because the end is
-not detected properly when starting after max_pfn.
+In addition to the Fedora make-4.2.1-4.fc27 (1) mentioned by Linus,
+RHEL 8 make-4.2.1-9.el8 (2) is affected. The patch applied to Fedora
+make (3) has been confirmed to fix the issue in RHEL's make.
 
-Instead, let's allow to inspect all pages in the highest section and
-return 0 directly if we try to access pages above that section.
+Those are the only real-world examples I know of. I have no idea how
+widespread this thing is...
 
-While at it, check the count before adjusting it, to avoid masking user
-errors.
+Akemi
 
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- fs/proc/page.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
-
-diff --git a/fs/proc/page.c b/fs/proc/page.c
-index e40dbfe1168e..da01d3d9999a 100644
---- a/fs/proc/page.c
-+++ b/fs/proc/page.c
-@@ -29,6 +29,7 @@
- static ssize_t kpagecount_read(struct file *file, char __user *buf,
- =09=09=09     size_t count, loff_t *ppos)
- {
-+=09const unsigned long max_dump_pfn =3D round_up(max_pfn, PAGES_PER_SECTIO=
-N);
- =09u64 __user *out =3D (u64 __user *)buf;
- =09struct page *ppage;
- =09unsigned long src =3D *ppos;
-@@ -37,9 +38,11 @@ static ssize_t kpagecount_read(struct file *file, char _=
-_user *buf,
- =09u64 pcount;
-=20
- =09pfn =3D src / KPMSIZE;
--=09count =3D min_t(size_t, count, (max_pfn * KPMSIZE) - src);
- =09if (src & KPMMASK || count & KPMMASK)
- =09=09return -EINVAL;
-+=09if (src >=3D max_dump_pfn * KPMSIZE)
-+=09=09return 0;
-+=09count =3D min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
-=20
- =09while (count > 0) {
- =09=09/*
-@@ -208,6 +211,7 @@ u64 stable_page_flags(struct page *page)
- static ssize_t kpageflags_read(struct file *file, char __user *buf,
- =09=09=09     size_t count, loff_t *ppos)
- {
-+=09const unsigned long max_dump_pfn =3D round_up(max_pfn, PAGES_PER_SECTIO=
-N);
- =09u64 __user *out =3D (u64 __user *)buf;
- =09struct page *ppage;
- =09unsigned long src =3D *ppos;
-@@ -215,9 +219,11 @@ static ssize_t kpageflags_read(struct file *file, char=
- __user *buf,
- =09ssize_t ret =3D 0;
-=20
- =09pfn =3D src / KPMSIZE;
--=09count =3D min_t(unsigned long, count, (max_pfn * KPMSIZE) - src);
- =09if (src & KPMMASK || count & KPMMASK)
- =09=09return -EINVAL;
-+=09if (src >=3D max_dump_pfn * KPMSIZE)
-+=09=09return 0;
-+=09count =3D min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
-=20
- =09while (count > 0) {
- =09=09/*
-@@ -253,6 +259,7 @@ static const struct file_operations proc_kpageflags_ope=
-rations =3D {
- static ssize_t kpagecgroup_read(struct file *file, char __user *buf,
- =09=09=09=09size_t count, loff_t *ppos)
- {
-+=09const unsigned long max_dump_pfn =3D round_up(max_pfn, PAGES_PER_SECTIO=
-N);
- =09u64 __user *out =3D (u64 __user *)buf;
- =09struct page *ppage;
- =09unsigned long src =3D *ppos;
-@@ -261,9 +268,11 @@ static ssize_t kpagecgroup_read(struct file *file, cha=
-r __user *buf,
- =09u64 ino;
-=20
- =09pfn =3D src / KPMSIZE;
--=09count =3D min_t(unsigned long, count, (max_pfn * KPMSIZE) - src);
- =09if (src & KPMMASK || count & KPMMASK)
- =09=09return -EINVAL;
-+=09if (src >=3D max_dump_pfn * KPMSIZE)
-+=09=09return 0;
-+=09count =3D min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
-=20
- =09while (count > 0) {
- =09=09/*
---=20
-2.21.0
-
+(1) https://bugzilla.redhat.com/show_bug.cgi?id=1556839
+(2) https://bugzilla.redhat.com/show_bug.cgi?id=1774790
+(3) https://git.savannah.gnu.org/cgit/make.git/commit/?id=b552b05251980f693c729e251f93f5225b400714
