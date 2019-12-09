@@ -2,279 +2,219 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03AD2116AE7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 11:23:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03D9F116B90
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 11:56:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727196AbfLIKXs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Dec 2019 05:23:48 -0500
-Received: from smtp.h3c.com ([60.191.123.50]:38232 "EHLO h3cspam02-ex.h3c.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726279AbfLIKXr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Dec 2019 05:23:47 -0500
-X-Greylist: delayed 2742 seconds by postgrey-1.27 at vger.kernel.org; Mon, 09 Dec 2019 05:23:46 EST
-Received: from h3cspam02-ex.h3c.com (localhost [127.0.0.2] (may be forged))
-        by h3cspam02-ex.h3c.com with ESMTP id xB99c3rW043368
-        for <linux-fsdevel@vger.kernel.org>; Mon, 9 Dec 2019 17:38:03 +0800 (GMT-8)
-        (envelope-from li.kai4@h3c.com)
-Received: from DAG2EX06-IDC.srv.huawei-3com.com ([10.8.0.69])
-        by h3cspam02-ex.h3c.com with ESMTPS id xB99b9Tc041296
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 9 Dec 2019 17:37:09 +0800 (GMT-8)
-        (envelope-from li.kai4@h3c.com)
-Received: from DAG2EX07-IDC.srv.huawei-3com.com (10.8.0.70) by
- DAG2EX06-IDC.srv.huawei-3com.com (10.8.0.69) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 9 Dec 2019 17:37:12 +0800
-Received: from DAG2EX07-IDC.srv.huawei-3com.com ([::1]) by
- DAG2EX07-IDC.srv.huawei-3com.com ([fe80::c439:37f7:8e24:31c4%9]) with mapi id
- 15.01.1713.004; Mon, 9 Dec 2019 17:37:12 +0800
-From:   Likai <li.kai4@h3c.com>
-To:     Changwei Ge <chge@linux.alibaba.com>,
-        "mark@fasheh.com" <mark@fasheh.com>,
-        "jlbec@evilplan.org" <jlbec@evilplan.org>,
-        "joseph.qi@linux.alibaba.com" <joseph.qi@linux.alibaba.com>
-CC:     "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>
-Subject: RE: [PATCH]ocfs2: flush journal to update log tail info after journal
- recovery when mount
-Thread-Topic: [PATCH]ocfs2: flush journal to update log tail info after
- journal recovery when mount
-Thread-Index: AdWuc7Bf54NA+07YS7Wjk3+uDLJZhQ==
-Date:   Mon, 9 Dec 2019 09:37:12 +0000
-Message-ID: <c8c15565f56c4ae19c74d59aa866fcb8@h3c.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.125.108.72]
-x-sender-location: DAG2
-Content-Type: multipart/mixed;
-        boundary="_002_c8c15565f56c4ae19c74d59aa866fcb8h3ccom_"
+        id S1727202AbfLIK4T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Dec 2019 05:56:19 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:46444 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726477AbfLIK4T (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 9 Dec 2019 05:56:19 -0500
+Received: by mail-ed1-f68.google.com with SMTP id m8so12236601edi.13
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Dec 2019 02:56:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sargun.me; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mHKMufWvY5eAKbkb+0diiYTKS0sDzXUNzkurR6gVDP4=;
+        b=aLm5E/Yxb7RY4JHfv7D3m98UJpUq3pip3jCtUOdlCIQgbW0Xi7Ze8RF0V+oo8i09Mf
+         0kCiFQ0zVuIOhFsbDD6o4VSM0LpxGxNiCSsQWDFUFLIYvCi4hWa0i392B48SCQNnOg+V
+         EeyGTxO/9wUhJ2wBmEgCtTppuKiNA8VgVrTD8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mHKMufWvY5eAKbkb+0diiYTKS0sDzXUNzkurR6gVDP4=;
+        b=n4ZJLu7bLbctb1Qv4PmMoZtAwmpulGO6HrY76tu4GURAebI3D9steDNJGxLy6RxfOs
+         8yFPRe9HTrZxDWTVb6mrX2NTB0Il8lqRG7aqr26yf5AVPauDRb1iJl/CCekOG6WNpWgA
+         SxX6DfmTZ9iE1sepc1Z4ctXj6/vWff2cz4DbKsQPOqvwHKadJL5BfxFLFyZreFYLDhqL
+         IBY3x7h2yWx+TnfZKT1+auO8kDfHN/bkbdp5El+akJluGvu/17EYQxhQKx5O2KjOqiul
+         Q/KKLpNaVaNiXirBo0A5uHdpdGoaRqn+ziYN+5IEU3vSJIdKFVfgbi0V/BEb98PjMmce
+         IpiA==
+X-Gm-Message-State: APjAAAWb5jNi6Men2pKH+Eh6W6LI8VPBpUK4dM7ZOl/7wETNUiF+ftPS
+        nXg/OVEw8E6HUkxT6jiDUqAc/ldIB6UX7dGUlTzDKg==
+X-Google-Smtp-Source: APXvYqwSdXcunMMadjOGmGaKyoo3V5GkFwyQEM1uxe20T8+vKT63bX1KLQoVBY5gwATVW0OULppj3w1PJhjYjcq4ooA=
+X-Received: by 2002:a17:906:4943:: with SMTP id f3mr2524643ejt.122.1575888976218;
+ Mon, 09 Dec 2019 02:56:16 -0800 (PST)
 MIME-Version: 1.0
-X-DNSRBL: 
-X-MAIL: h3cspam02-ex.h3c.com xB99b9Tc041296
+References: <20191209070621.GA32450@ircssh-2.c.rugged-nimbus-611.internal> <20191209093944.g6lgt2cqkec7eaym@wittgenstein>
+In-Reply-To: <20191209093944.g6lgt2cqkec7eaym@wittgenstein>
+From:   Sargun Dhillon <sargun@sargun.me>
+Date:   Mon, 9 Dec 2019 02:55:40 -0800
+Message-ID: <CAMp4zn8_CxB6C=4Myw7DrmWg5w3Qm+FwYVTQLnbCEBJXL4UKzg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] ptrace: add PTRACE_GETFD request to fetch file
+ descriptors from tracees
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Tycho Andersen <tycho@tycho.ws>,
+        Jann Horn <jannh@google.com>, cyphar@cyphar.com,
+        oleg@redhat.com, Andy Lutomirski <luto@amacapital.net>,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---_002_c8c15565f56c4ae19c74d59aa866fcb8h3ccom_
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+On Mon, Dec 9, 2019 at 1:39 AM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+>
+> Hey Sargun,
+>
+> Thanks for the patch!
+Thanks for your review.
 
-SGksIGNoYW5nd2VpLCB0aGFua3MgZm9yIHlvdXIgcmV2aWV3LiBNeSBhbm5vdGF0aW9uIG1heWJl
-IG5vdCBjbGVhciwgc29ycnkgZm9yIHRoYXQuDQp0aGUgYXR0YWNoZWQgZmlsZSBpcyB0aGUgdmVy
-c2lvbiB0d28uDQoNClRoYW5rcy4NCg0KDQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJv
-bTogQ2hhbmd3ZWkgR2UgW21haWx0bzpjaGdlQGxpbnV4LmFsaWJhYmEuY29tXQ0KU2VudDogRnJp
-ZGF5LCBEZWNlbWJlciAwNiwgMjAxOSA1OjQxIFBNDQpUbzogbGlrYWkgKENsb3VkKSA8bGkua2Fp
-NEBoM2MuY29tPjsgbWFya0BmYXNoZWguY29tOyBqbGJlY0BldmlscGxhbi5vcmc7IGpvc2VwaC5x
-aUBsaW51eC5hbGliYWJhLmNvbQ0KQ2M6IG9jZnMyLWRldmVsQG9zcy5vcmFjbGUuY29tOyBsaW51
-eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZzsgSmFuIEthcmEgPGphY2tAc3VzZS5jej4NClN1Ympl
-Y3Q6IFJlOiBbUEFUQ0hdb2NmczI6IGZsdXNoIGpvdXJuYWwgdG8gdXBkYXRlIGxvZyB0YWlsIGlu
-Zm8gYWZ0ZXIgam91cm5hbCByZWNvdmVyeSB3aGVuIG1vdW50DQoNCkhpLA0KDQoNCkkgYW0gdHJ5
-aW5nIHRvIHVuZGVyc3RhbmQgdGhlIHByb2JsZW0uDQpKdXN0IGEgZmV3IHF1aWNrIHF1ZXN0aW9u
-cyBpbmxpbmUuDQoNCg0KDQpPbiAyMDE5LzEyLzUgMTE6MTggQU0sIExpa2FpIHdyb3RlOg0KPiBI
-aSwgIEkgbWVldCBhIG5ldyBwcm9ibGVtIHRoYXQgZmlsZSBtYXkgYmUgbG9zdCBhbHRob3VndGgg
-aXQgaXMNCj4gcmVjb3JkZWQgaW4gdGhlIGpiZDIgam91cm5hbA0KPg0KPiB3aXRoIG9jZnMyIGZp
-bGUgc3lzdGVtIGluIG9uZSBub2RlIHNjZW5lLiBDYW4geW91IGdpdmUgc29tZQ0KPiBzdWdnZXN0
-aW9ucyBmb3IgdGhpcyBwcm9ibGVtDQo+DQo+IGFuZCBtb2RpZmljYXRpb24gcGF0Y2g/DQo+DQo+
-IFRlc3QgbWV0aG9kOg0KPg0KPiAxLiB0b3VjaCBzb21lIGZpbGVzIGFmdGVyIG1vdW50DQo+DQo+
-IDIuIGVtZXJnZW5jeSByZXN0YXJ0DQo+DQo+IDMuIG1vdW50IGFnYWluLCB0aGVuIGxvZyB0YWls
-IHdpbGwgbm90IGJlIHVwZGF0ZWQNCj4NCj4gNC4gdG91Y2ggYSBuZXcgZmlsZSBhbmQgY29uZmly
-bSB0aGF0IGl0IGlzIHJlY29yZGVkIGluIHRoZSBqb3VybmFsDQo+IGFyZWENCj4NCj4gNS5lbWVy
-Z2VuY3kgcmVzdGFydCBhZ2Fpbg0KPg0KPiA2LiB0aGUgbmV3IGxvZyB3aWxsIG5vdCBiZSByZXBs
-YXllZCBiZWNhc3VzZSBpdHMgc2VxIGFuZCBibGtudW0gYXJlDQo+IG5vdCBjb25zaXN0ZW50IHdp
-dGggam91cm5hbCBzdXBlciBibG9jayBhbHRob3VnaCBpdCBpcyBhbiB1bmJyb2tlbiBjb21taXQu
-DQoNCldoYXQgZG8geW91IG1lYW4gYnkgdGhlIGNvbnNpc3RlbmN5IGJldHdlZW4gamJkMiBibG9j
-a3MgYW5kIGpiZDIgc3VwZXIgYmxvY2s/DQoNCkRpZCB5b3UgZXZlciBjYWxsIGZzeW5jKDIpIHRv
-IHRlc3QgdGFyZ2V0IGZpbGU/IElmIG5vdCwgcG9zaXggZG9lc24ndCBndWFyYW50ZWUgdGhlIG5l
-d2x5IGNyZWF0ZWQgZmlsZSBzaG91bGQgYmUgcHJlc2VudCBhZnRlciBhIGNyYXNoLiBJbiBvdGhl
-ciB3b3JkcywgaXQncyBhIG5vcm1hbCBjYXNlLg0KDQpQZXJoYXBzLCBJIG1pc3Mgc29tZXRoaW5n
-LCBiZXR0ZXIgeW91IGNhbiBnaXZlIGEgZnVydGhlciBlbGFib3JhdGlvbi4NCklmIHdlIGNhbiBl
-bnN1cmUgdGhpcyBwYXRjaCBoZWxwcywgd2UgY2FuIG1ha2UgdGhpcyBwcm9ncmVzcyA6LSkNCg0K
-Pg0KPiBBZnRlciBhbmFsaXppbmcgdGhlIGNvZGVzLCBpdHMgY2F1c2UgaXMgYXMgZm9sbG93Og0K
-Pg0KPiBKb3VybmFsLT5qX2ZsYWdzIHdpbGwgYmUgc2V0IEpCRDJfQUJPUlQgaW4gam91cm5hbF9p
-bml0X2NvbW1vbiBmaXJzdC4NCj4NCj4gaWYgdGhpcyBmbGFnIGlzIG5vdCBjbGVhcmVkIGJlZm9y
-ZSBqb3VybmFsX3Jlc2V0IGluIGpvdXJuYWwgcmVjb3ZlcnkNCj4NCj4gc2NlbmUsIHN1cGVyIGxv
-ZyB0YWlsIGNhbm5vdCBiZSB1cGRhdGVkLCB0aGVuIHRoZSBuZXcgY29tbWl0IHRyYW5zIGluDQo+
-DQo+IHRoZSBqb3VybmFsIG1heSBub3QgYmUgcmVwbGF5ZWQgYmVjYXVzZSBuZXcgY29tbWl0cyBy
-ZWNvdmVyIG9sZCB0cmFucw0KPg0KPiBhcmVhLg0KPg0KPiBUaGlzIGV4Y2VwdGlvbiBoYXBwZW5z
-IHdoZW4gdGhpcyBsdW4gaXMgdXNlZCBieSBvbmx5IG9uZSBub2RlLiBJZiBpdA0KPg0KPiBpcyB1
-c2VkIGJ5IG11bHRpLW5vZGVzLCBvdGhlciBub2RlIHdpbGwgcmVwbGF5IGl0cyBqb3VybmFsIGFu
-ZCBpdHMNCj4NCj4gbG9nIHRhaWwgaW5mbyB3aWxsIGJlIHVwZGF0ZWQgYWZ0ZXIgcmVjb3Zlcnku
-DQo+DQo+IFRvIGZpeCB0aGlzIHByb2JsZW0sIHVzZSBqYmQyX2pvdXJuYWxfZmx1c2ggdG8gdXBk
-YXRlIGxvZyB0YWlsIGFzDQo+DQo+IG9jZnMyX3JlcGxheV9qb3VybmFsIGhhcyBkb25lLg0KPg0K
-PiBsb2dkdW1wOg0KPg0KPiBCbG9jayAwOiBKb3VybmFsIFN1cGVyYmxvY2sNCj4NCj4gU2VxOiAw
-ICAgVHlwZTogNCAoSkJEMl9TVVBFUkJMT0NLX1YyKQ0KPg0KPiBCbG9ja3NpemU6IDQwOTYgICBU
-b3RhbCBCbG9ja3M6IDMyNzY4ICAgRmlyc3QgQmxvY2s6IDENCj4NCj4gRmlyc3QgQ29tbWl0IElE
-OiAxMyAgIFN0YXJ0IExvZyBCbGtudW06IDENCj4NCj4gRXJyb3I6IDANCj4NCj4gRmVhdHVyZSBD
-b21wYXQ6IDANCj4NCj4gRmVhdHVyZSBJbmNvbXBhdDogMiBibG9jazY0DQo+DQo+IEZlYXR1cmUg
-Uk8gY29tcGF0OiAwDQo+DQo+IEpvdXJuYWwgVVVJRDogNEVEMzgyMkM1NDI5NDQ2N0E0RjhFODdE
-MkJBNEJDMzYNCj4NCj4gRlMgU2hhcmUgQ250OiAxICAgRHluYW1pYyBTdXBlcmJsayBCbGtudW06
-IDANCj4NCj4gUGVyIFR4biBCbG9jayBMaW1pdCAgICBKb3VybmFsOiAwICAgIERhdGE6IDANCj4N
-Cj4gQmxvY2sgMTogSm91cm5hbCBDb21taXQgQmxvY2sNCj4NCj4gU2VxOiAxNCAgIFR5cGU6IDIg
-KEpCRDJfQ09NTUlUX0JMT0NLKQ0KPg0KPiBCbG9jayAyOiBKb3VybmFsIERlc2NyaXB0b3INCj4N
-Cj4gU2VxOiAxNSAgIFR5cGU6IDEgKEpCRDJfREVTQ1JJUFRPUl9CTE9DSykNCj4NCj4gTm8uIEJs
-b2NrbnVtICAgICAgICBGbGFncw0KPg0KPiAwLiA1ODcgICAgICAgICAgICAgbm9uZQ0KPg0KPiBV
-VUlEOiAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMA0KPg0KPiAxLiA4MjU3NzkyICAg
-ICAgICAgSkJEMl9GTEFHX1NBTUVfVVVJRA0KPg0KPiAyLiA2MTkgICAgICAgICAgICAgSkJEMl9G
-TEFHX1NBTUVfVVVJRA0KPg0KPiAzLiAyNDc3Mjg2NCAgICAgICAgSkJEMl9GTEFHX1NBTUVfVVVJ
-RA0KPg0KPiA0LiA4MjU3ODAyICAgICAgICAgSkJEMl9GTEFHX1NBTUVfVVVJRA0KPg0KPiA1LiA1
-MTMgICAgICAgICAgICAgSkJEMl9GTEFHX1NBTUVfVVVJRCBKQkQyX0ZMQUdfTEFTVF9UQUcNCj4N
-Cj4gLi4uDQo+DQo+IEJsb2NrIDc6IElub2RlDQo+DQo+IElub2RlOiA4MjU3ODAyICAgTW9kZTog
-MDY0MCAgIEdlbmVyYXRpb246IDU3MTU3NjQxICgweDM2ODI4MDkpDQo+DQo+IEZTIEdlbmVyYXRp
-b246IDI4Mzk3NzMxMTAgKDB4YTk0MzdmYjYpDQo+DQo+IENSQzMyOiAwMDAwMDAwMCAgIEVDQzog
-MDAwMA0KPg0KPiBUeXBlOiBSZWd1bGFyICAgQXR0cjogMHgwICAgRmxhZ3M6IFZhbGlkDQo+DQo+
-IER5bmFtaWMgRmVhdHVyZXM6ICgweDEpIElubGluZURhdGENCj4NCj4gVXNlcjogMCAocm9vdCkg
-ICBHcm91cDogMCAocm9vdCkgICBTaXplOiA3DQo+DQo+IExpbmtzOiAxICAgQ2x1c3RlcnM6IDAN
-Cj4NCj4gY3RpbWU6IDB4NWRlNWQ4NzAgMHgxMTEwNGM2MSAtLSBUdWUgRGVjICAzIDExOjM3OjIw
-LjI4NjI4MDgwMSAyMDE5DQo+DQo+IGF0aW1lOiAweDVkZTVkODcwIDB4MTEzMTgxYTEgLS0gVHVl
-IERlYyAgMyAxMTozNzoyMC4yODg0NTcxMjEgMjAxOQ0KPg0KPiBtdGltZTogMHg1ZGU1ZDg3MCAw
-eDExMTA0YzYxIC0tIFR1ZSBEZWMgIDMgMTE6Mzc6MjAuMjg2MjgwODAxIDIwMTkNCj4NCj4gZHRp
-bWU6IDB4MCAtLSBUaHUgSmFuICAxIDA4OjAwOjAwIDE5NzANCj4NCj4gLi4uDQo+DQo+IEJsb2Nr
-IDk6IEpvdXJuYWwgQ29tbWl0IEJsb2NrDQo+DQo+IFNlcTogMTUgICBUeXBlOiAyIChKQkQyX0NP
-TU1JVF9CTE9DSykNCj4NCj4gc3lzbG9nOg0KPg0KPiBEZWMgIDMgMTE6NDE6MDUgY3Zrbm9kZTAy
-IGtlcm5lbDogWyAyMjY1LjY0ODYyMl0gb2NmczI6IEZpbGUgc3lzdGVtIG9uDQo+IGRldmljZSAo
-MjUyLDEpIHdhcyBub3QgdW5tb3VudGVkIGNsZWFubHksIHJlY292ZXJpbmcgaXQuDQo+DQo+IERl
-YyAgMyAxMTo0MTowNSBjdmtub2RlMDIga2VybmVsOiBbIDIyNjUuNjQ5Njk1XQ0KPiBmcy9qYmQy
-L3JlY292ZXJ5LmM6KGRvX29uZV9wYXNzLCA0NDkpOiBTdGFydGluZyByZWNvdmVyeSBwYXNzIDAN
-Cj4NCj4gRGVjICAzIDExOjQxOjA1IGN2a25vZGUwMiBrZXJuZWw6IFsgMjI2NS42NTA0MDddDQo+
-IGZzL2piZDIvcmVjb3ZlcnkuYzooZG9fb25lX3Bhc3MsIDQ0OSk6IFN0YXJ0aW5nIHJlY292ZXJ5
-IHBhc3MgMQ0KPg0KPiBEZWMgIDMgMTE6NDE6MDUgY3Zrbm9kZTAyIGtlcm5lbDogWyAyMjY1LjY1
-MDQwOV0NCj4gZnMvamJkMi9yZWNvdmVyeS5jOihkb19vbmVfcGFzcywgNDQ5KTogU3RhcnRpbmcg
-cmVjb3ZlcnkgcGFzcyAyDQo+DQo+IERlYyAgMyAxMTo0MTowNSBjdmtub2RlMDIga2VybmVsOiBb
-IDIyNjUuNjUwNDEwXQ0KPiBmcy9qYmQyL3JlY292ZXJ5LmM6KGpiZDJfam91cm5hbF9yZWNvdmVy
-LCAyNzgpOiBKQkQyOiByZWNvdmVyeSwgZXhpdA0KPiBzdGF0dXMgMCwgcmVjb3ZlcmVkIHRyYW5z
-YWN0aW9ucyAxMyB0byAxMw0KPg0KPiBTZXEgMTUgaXMgYW4gdW5icm9rZW4gY29tbWl0LCBidXQg
-aXQgY2Fubm90IGJlIHJlcGxheWVkLCBpbm9kZSA4MjU3ODAyDQoNCg0KSSB0aGluayBhbGwgdGhl
-IGV2ZXIgY29tbWl0dGVkIHRyYW5zYWN0aW9ucyBhcmUga2VwdCBpbiB0aGUgam91cm5hbCBhcmVh
-IHVudGlsIGl0J3Mgb3ZlcndyaXR0ZW4uDQoNCj4NCj4gaXMgYSBuZXcgZmlsZSBhbmQgaXQgd2ls
-bCBiZSBsb3N0LiBBZnRlciB0ZXN0LCBpdCBpcyBvayBub3cuDQo+DQo+IFNpZ25lZC1vZmYtYnk6
-IEthaSBMaSA8bGkua2FpNEBoM2MuY29tPg0KPg0KPiAtLS0NCj4NCj4gZnMvb2NmczIvam91cm5h
-bC5jIHwgOCArKysrKysrKw0KPg0KPiAxIGZpbGUgY2hhbmdlZCwgOCBpbnNlcnRpb25zKCspDQo+
-DQo+IGRpZmYgLS1naXQgYS9mcy9vY2ZzMi9qb3VybmFsLmMgYi9mcy9vY2ZzMi9qb3VybmFsLmMN
-Cj4NCj4gaW5kZXggMWFmZTU3ZjQyNWEwLi5iOGI5ZDI2ZmE3MzEgMTAwNjQ0DQo+DQo+IC0tLSBh
-L2ZzL29jZnMyL2pvdXJuYWwuYw0KPg0KPiArKysgYi9mcy9vY2ZzMi9qb3VybmFsLmMNCj4NCj4g
-QEAgLTEwNjYsNiArMTA2NiwxNCBAQCBpbnQgb2NmczJfam91cm5hbF9sb2FkKHN0cnVjdCBvY2Zz
-Ml9qb3VybmFsDQo+ICpqb3VybmFsLCBpbnQgbG9jYWwsIGludCByZXBsYXllZCkNCj4NCj4gICAg
-ICAgICAgb2NmczJfY2xlYXJfam91cm5hbF9lcnJvcihvc2ItPnNiLCBqb3VybmFsLT5qX2pvdXJu
-YWwsDQo+IG9zYi0+c2xvdF9udW0pOw0KPg0KPiArICAgICAgIGlmIChyZXBsYXllZCkgew0KPg0K
-PiArICAgICAgICAgICAgICAgIC8qIHdpcGUgdGhlIGpvdXJuYWwgKi8NCj4NCj4gKyAgICAgICAg
-ICAgICAgICBqYmQyX2pvdXJuYWxfbG9ja191cGRhdGVzKGpvdXJuYWwtPmpfam91cm5hbCk7DQo+
-DQo+ICsgICAgICAgICAgICAgICAgc3RhdHVzID0gamJkMl9qb3VybmFsX2ZsdXNoKGpvdXJuYWwt
-Pmpfam91cm5hbCk7DQo+DQo+ICsgICAgICAgICAgICAgICAgamJkMl9qb3VybmFsX3VubG9ja191
-cGRhdGVzKGpvdXJuYWwtPmpfam91cm5hbCk7DQoNCkFzIG5vdyBpdCdzIHVuZGVyIG1vdW50aW5n
-IHByb2dyZXNzLCBJIGRvbid0IGZpZ3VyZSBvdXQgaG93IGNhbiB3ZSBnZXQgcnVubmluZyBqYmQy
-IHRyYW5zYWN0aW9ucz8gSWYgbm8gKnJ1bm5pbmcqIHRyYW5zYWN0aW9ucyBhcm91bmQsIGRvZXMN
-CmpiZDJfam91cm5hbF9mbHVzaCgpIHJlYWxseSBoYXZlIGVmZmVjdCB0byBqYmQyPw0KDQotQ2hh
-bmd3ZWkNCg0KPg0KPiArICAgICAgICAgICAgICAgIG1sb2coTUxfTk9USUNFLCAiam91cm5hbCBy
-ZWNvdmVyeSBjb21wbGV0ZSwNCj4gK3N0YXR1cz0lZCIsDQo+IHN0YXR1cyk7DQo+DQo+ICsgICAg
-ICAgfQ0KPg0KPiArDQo+DQo+ICAgICAgICAgc3RhdHVzID0gb2NmczJfam91cm5hbF90b2dnbGVf
-ZGlydHkob3NiLCAxLCByZXBsYXllZCk7DQo+DQo+ICAgICAgICAgaWYgKHN0YXR1cyA8IDApIHsN
-Cj4NCj4gICAgICAgICAgICAgICAgICBtbG9nX2Vycm5vKHN0YXR1cyk7DQo+DQotLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tDQrmnKzpgq7ku7blj4rlhbbpmYTku7blkKvmnInmlrDljY7kuInpm4blm6LnmoTk
-v53lr4bkv6Hmga/vvIzku4XpmZDkuo7lj5HpgIHnu5nkuIrpnaLlnLDlnYDkuK3liJflh7oNCuea
-hOS4quS6uuaIlue+pOe7hOOAguemgeatouS7u+S9leWFtuS7luS6uuS7peS7u+S9leW9ouW8j+S9
-v+eUqO+8iOWMheaLrOS9huS4jemZkOS6juWFqOmDqOaIlumDqOWIhuWcsOazhOmcsuOAgeWkjeWI
-tuOAgQ0K5oiW5pWj5Y+R77yJ5pys6YKu5Lu25Lit55qE5L+h5oGv44CC5aaC5p6c5oKo6ZSZ5pS2
-5LqG5pys6YKu5Lu277yM6K+35oKo56uL5Y2z55S16K+d5oiW6YKu5Lu26YCa55+l5Y+R5Lu25Lq6
-5bm25Yig6Zmk5pysDQrpgq7ku7bvvIENClRoaXMgZS1tYWlsIGFuZCBpdHMgYXR0YWNobWVudHMg
-Y29udGFpbiBjb25maWRlbnRpYWwgaW5mb3JtYXRpb24gZnJvbSBOZXcgSDNDLCB3aGljaCBpcw0K
-aW50ZW5kZWQgb25seSBmb3IgdGhlIHBlcnNvbiBvciBlbnRpdHkgd2hvc2UgYWRkcmVzcyBpcyBs
-aXN0ZWQgYWJvdmUuIEFueSB1c2Ugb2YgdGhlDQppbmZvcm1hdGlvbiBjb250YWluZWQgaGVyZWlu
-IGluIGFueSB3YXkgKGluY2x1ZGluZywgYnV0IG5vdCBsaW1pdGVkIHRvLCB0b3RhbCBvciBwYXJ0
-aWFsDQpkaXNjbG9zdXJlLCByZXByb2R1Y3Rpb24sIG9yIGRpc3NlbWluYXRpb24pIGJ5IHBlcnNv
-bnMgb3RoZXIgdGhhbiB0aGUgaW50ZW5kZWQNCnJlY2lwaWVudChzKSBpcyBwcm9oaWJpdGVkLiBJ
-ZiB5b3UgcmVjZWl2ZSB0aGlzIGUtbWFpbCBpbiBlcnJvciwgcGxlYXNlIG5vdGlmeSB0aGUgc2Vu
-ZGVyDQpieSBwaG9uZSBvciBlbWFpbCBpbW1lZGlhdGVseSBhbmQgZGVsZXRlIGl0IQ0K
+>
+> Why not simply accept O_CLOEXEC as flag? If that's not possible for some
+> reason I'd say
+>
+I did this initially. My plan is to use this options field for other
+(future) things as well, like
+clearing (cgroup) metadata on sockets (assuming we figure out a safe
+way to do it).
+If we use O_CLOEXEC, it takes up an arbitrary bit which is different
+on different
+platforms, and working around that seems messy
 
---_002_c8c15565f56c4ae19c74d59aa866fcb8h3ccom_
-Content-Type: application/octet-stream;
-	name="0001-ocfs2-call-journal-flush-to-mark-journal-as-empty-af.patch"
-Content-Description: 0001-ocfs2-call-journal-flush-to-mark-journal-as-empty-af.patch
-Content-Disposition: attachment;
-	filename="0001-ocfs2-call-journal-flush-to-mark-journal-as-empty-af.patch";
-	size=4266; creation-date="Mon, 09 Dec 2019 08:47:25 GMT";
-	modification-date="Mon, 09 Dec 2019 09:15:34 GMT"
-Content-Transfer-Encoding: base64
+Another way around this would be to have two members. One member which
+is something
+like fdflags, that just takes the fd flags, like O_CLOEXEC, and then
+later on, we can add
+an options member to enable these future use cases.
 
-RnJvbSBjZDQ0MjZlZTBjYWEyMTBiZGE5MjdiMmQ4NDRjMTlmZjg3NGJiY2UyIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBLYWkgTGkgPGxpLmthaTRAaDNjLmNvbT4KRGF0ZTogVHVlLCAz
-IERlYyAyMDE5IDE2OjA0OjUzICswODAwClN1YmplY3Q6IFtQQVRDSF0gb2NmczI6IGNhbGwgam91
-cm5hbCBmbHVzaCB0byBtYXJrIGpvdXJuYWwgYXMgZW1wdHkgYWZ0ZXIKIGpvdXJuYWwgcmVjb3Zl
-cnkgd2hlbiBtb3VudAoKSWYgam91cm5hbCBpcyBkaXJ0eSB3aGVuIG1vdW50LCBpdCB3aWxsIGJl
-IHJlcGxheWVkIGJ1dCBqYmQyIHNiCmxvZyB0YWlsIGNhbm5vdCBiZSB1cGRhdGVkIHRvIG1hcmsg
-YSBuZXcgc3RhcnQgYmVjYXVzZQpqb3VybmFsLT5qX2ZsYWcgaGFzIGFscmVhZHkgYmVlbiBzZXQg
-d2l0aCBKQkQyX0FCT1JUIGZpcnN0CmluIGpvdXJuYWxfaW5pdF9jb21tb24uIFdoZW4gYSBuZXcg
-dHJhbnNhY3Rpb24gaXMgY29tbWl0dGVkLCBpdAp3aWxsIGJlIHJlY29yZWQgaW4gYmxvY2sgMSBm
-aXJzdChqb3VybmFsLT5qX3RhaWwgaXMgc2V0IHRvIDEgaW4Kam91cm5hbF9yZXNldCkuCgpJZiBl
-bWVyZ2VuY3kgcmVzdGFydCBoYXBwZW5zIGFnYWluIGJlZm9yZSBqb3VybmFsIHN1cGVyIGJsb2Nr
-IGlzCnVwZGF0ZWQgdW5mb3J0dW5hdGVseSwgdGhlIG5ldyByZWNvcmRlZCB0cmFucyB3aWxsIG5v
-dCBiZSByZXBsYXllZAppbiB0aGUgbmV4dCBtb3VudC4KClRoaXMgZXhjZXB0aW9uIGhhcHBlbnMg
-d2hlbiB0aGlzIGx1biBpcyB1c2VkIGJ5IG9ubHkgb25lIG5vZGUuIElmIGl0CmlzIHVzZWQgYnkg
-bXVsdGktbm9kZXMsIG90aGVyIG5vZGUgd2lsbCByZXBsYXkgaXRzIGpvdXJuYWwgYW5kIGl0cwpq
-b3VybmFsIHNiIGJsb2NrIHdpbGwgYmUgdXBkYXRlZCBhZnRlciByZWNvdmVyeS4KClRvIGZpeCB0
-aGlzIHByb2JsZW0sIHVzZSBqYmQyX2pvdXJuYWxfZmx1c2ggdG8gbWFyayBqb3VybmFsIGFzIGVt
-cHR5IGFzCm9jZnMyX3JlcGxheV9qb3VybmFsIGhhcyBkb25lLgoKVGhlIGZvbGxvd2luZyBqYmQy
-IGpvdXJuYWwgY2FuIGJlIGdlbmVyYXRlZCBieSB0b3VjaGluZyBhIG5ldyBmaWxlIGFmdGVyCmpv
-dXJuYWwgaXMgcmVwbGF5ZWQsIGFuZCBzZXEgMTUgaXMgdGhlIGZpcnN0IHZhbGlkIGNvbW1pdCwg
-YnV0IGZpcnN0IHNlcQppcyAxMyBpbiBqb3VybmFsIHN1cGVyIGJsb2NrLgpsb2dkdW1wOgpCbG9j
-ayAwOiBKb3VybmFsIFN1cGVyYmxvY2sKU2VxOiAwICAgVHlwZTogNCAoSkJEMl9TVVBFUkJMT0NL
-X1YyKQpCbG9ja3NpemU6IDQwOTYgICBUb3RhbCBCbG9ja3M6IDMyNzY4ICAgRmlyc3QgQmxvY2s6
-IDEKRmlyc3QgQ29tbWl0IElEOiAxMyAgIFN0YXJ0IExvZyBCbGtudW06IDEKRXJyb3I6IDAKRmVh
-dHVyZSBDb21wYXQ6IDAKRmVhdHVyZSBJbmNvbXBhdDogMiBibG9jazY0CkZlYXR1cmUgUk8gY29t
-cGF0OiAwCkpvdXJuYWwgVVVJRDogNEVEMzgyMkM1NDI5NDQ2N0E0RjhFODdEMkJBNEJDMzYKRlMg
-U2hhcmUgQ250OiAxICAgRHluYW1pYyBTdXBlcmJsayBCbGtudW06IDAKUGVyIFR4biBCbG9jayBM
-aW1pdCAgICBKb3VybmFsOiAwICAgIERhdGE6IDAKCkJsb2NrIDE6IEpvdXJuYWwgQ29tbWl0IEJs
-b2NrClNlcTogMTQgICBUeXBlOiAyIChKQkQyX0NPTU1JVF9CTE9DSykKCkJsb2NrIDI6IEpvdXJu
-YWwgRGVzY3JpcHRvcgpTZXE6IDE1ICAgVHlwZTogMSAoSkJEMl9ERVNDUklQVE9SX0JMT0NLKQpO
-by4gQmxvY2tudW0gICAgICAgIEZsYWdzCiAwLiA1ODcgICAgICAgICAgICAgbm9uZQpVVUlEOiAw
-MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMAogMS4gODI1Nzc5MiAgICAgICAgIEpCRDJf
-RkxBR19TQU1FX1VVSUQKIDIuIDYxOSAgICAgICAgICAgICBKQkQyX0ZMQUdfU0FNRV9VVUlECiAz
-LiAyNDc3Mjg2NCAgICAgICAgSkJEMl9GTEFHX1NBTUVfVVVJRAogNC4gODI1NzgwMiAgICAgICAg
-IEpCRDJfRkxBR19TQU1FX1VVSUQKIDUuIDUxMyAgICAgICAgICAgICBKQkQyX0ZMQUdfU0FNRV9V
-VUlEIEpCRDJfRkxBR19MQVNUX1RBRwouLi4KQmxvY2sgNzogSW5vZGUKSW5vZGU6IDgyNTc4MDIg
-ICBNb2RlOiAwNjQwICAgR2VuZXJhdGlvbjogNTcxNTc2NDEgKDB4MzY4MjgwOSkKRlMgR2VuZXJh
-dGlvbjogMjgzOTc3MzExMCAoMHhhOTQzN2ZiNikKQ1JDMzI6IDAwMDAwMDAwICAgRUNDOiAwMDAw
-ClR5cGU6IFJlZ3VsYXIgICBBdHRyOiAweDAgICBGbGFnczogVmFsaWQKRHluYW1pYyBGZWF0dXJl
-czogKDB4MSkgSW5saW5lRGF0YQpVc2VyOiAwIChyb290KSAgIEdyb3VwOiAwIChyb290KSAgIFNp
-emU6IDcKTGlua3M6IDEgICBDbHVzdGVyczogMApjdGltZTogMHg1ZGU1ZDg3MCAweDExMTA0YzYx
-IC0tIFR1ZSBEZWMgIDMgMTE6Mzc6MjAuMjg2MjgwODAxIDIwMTkKYXRpbWU6IDB4NWRlNWQ4NzAg
-MHgxMTMxODFhMSAtLSBUdWUgRGVjICAzIDExOjM3OjIwLjI4ODQ1NzEyMSAyMDE5Cm10aW1lOiAw
-eDVkZTVkODcwIDB4MTExMDRjNjEgLS0gVHVlIERlYyAgMyAxMTozNzoyMC4yODYyODA4MDEgMjAx
-OQpkdGltZTogMHgwIC0tIFRodSBKYW4gIDEgMDg6MDA6MDAgMTk3MAouLi4KQmxvY2sgOTogSm91
-cm5hbCBDb21taXQgQmxvY2sKU2VxOiAxNSAgIFR5cGU6IDIgKEpCRDJfQ09NTUlUX0JMT0NLKQoK
-VGhlIGZvbGxvd2luZyBpcyBqb3VyYW5sIHJlY292ZXJ5IGxvZyB3aGVuIHJlY292ZXJpbmcgdGhl
-IHVwcGVyIGpiZDIKam91cm5hbCB3aGVuIG1vdW50IGFnYWluLgpzeXNsb2c6ClsgMjI2NS42NDg2
-MjJdIG9jZnMyOiBGaWxlIHN5c3RlbSBvbiBkZXZpY2UgKDI1MiwxKSB3YXMgbm90IHVubW91bnRl
-ZCBjbGVhbmx5LCByZWNvdmVyaW5nIGl0LgpbIDIyNjUuNjQ5Njk1XSBmcy9qYmQyL3JlY292ZXJ5
-LmM6KGRvX29uZV9wYXNzLCA0NDkpOiBTdGFydGluZyByZWNvdmVyeSBwYXNzIDAKWyAyMjY1LjY1
-MDQwN10gZnMvamJkMi9yZWNvdmVyeS5jOihkb19vbmVfcGFzcywgNDQ5KTogU3RhcnRpbmcgcmVj
-b3ZlcnkgcGFzcyAxClsgMjI2NS42NTA0MDldIGZzL2piZDIvcmVjb3ZlcnkuYzooZG9fb25lX3Bh
-c3MsIDQ0OSk6IFN0YXJ0aW5nIHJlY292ZXJ5IHBhc3MgMgpbIDIyNjUuNjUwNDEwXSBmcy9qYmQy
-L3JlY292ZXJ5LmM6KGpiZDJfam91cm5hbF9yZWNvdmVyLCAyNzgpOiBKQkQyOiByZWNvdmVyeSwg
-ZXhpdCBzdGF0dXMgMCwgcmVjb3ZlcmVkIHRyYW5zYWN0aW9ucyAxMyB0byAxMwoKRHVlIHRvIGZp
-cnN0IGNvbW1pdCBzZXEgMTMgcmVjb3JkZWQgaW4gam91cm5hbCBzdXBlciBpcyBub3QgY29uc2lz
-dGVudAp3aXRoIHRoZSB2YWx1ZSByZWNvcmRlZCBpbiBibG9jayAxKHNlcSBpcyAxNCksIGpvdXJu
-YWwgcmVjb3Zlcnkgd2lsbCBiZQp0ZXJtaW5hdGVkIGJlZm9yZSBzZXEgMTUgZXZlbiB0aG91Z2gg
-aXQgaXMgYW4gdW5icm9rZW4gY29tbWl0LCBpbm9kZQo4MjU3ODAyIGlzIGEgbmV3IGZpbGUgYW5k
-IGl0IHdpbGwgYmUgbG9zdC4KClNpZ25lZC1vZmYtYnk6IEthaSBMaSA8bGkua2FpNEBoM2MuY29t
-PgotLS0KIGZzL29jZnMyL2pvdXJuYWwuYyB8IDggKysrKysrKysKIDEgZmlsZSBjaGFuZ2VkLCA4
-IGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9mcy9vY2ZzMi9qb3VybmFsLmMgYi9mcy9vY2Zz
-Mi9qb3VybmFsLmMKaW5kZXggMWFmZTU3ZjQyNWEwLi5iOGI5ZDI2ZmE3MzEgMTAwNjQ0Ci0tLSBh
-L2ZzL29jZnMyL2pvdXJuYWwuYworKysgYi9mcy9vY2ZzMi9qb3VybmFsLmMKQEAgLTEwNjYsNiAr
-MTA2NiwxNCBAQCBpbnQgb2NmczJfam91cm5hbF9sb2FkKHN0cnVjdCBvY2ZzMl9qb3VybmFsICpq
-b3VybmFsLCBpbnQgbG9jYWwsIGludCByZXBsYXllZCkKIAogCW9jZnMyX2NsZWFyX2pvdXJuYWxf
-ZXJyb3Iob3NiLT5zYiwgam91cm5hbC0+al9qb3VybmFsLCBvc2ItPnNsb3RfbnVtKTsKIAorCWlm
-IChyZXBsYXllZCkgeworCQkvKiB3aXBlIHRoZSBqb3VybmFsICovCisJCWpiZDJfam91cm5hbF9s
-b2NrX3VwZGF0ZXMoam91cm5hbC0+al9qb3VybmFsKTsKKwkJc3RhdHVzID0gamJkMl9qb3VybmFs
-X2ZsdXNoKGpvdXJuYWwtPmpfam91cm5hbCk7CisJCWpiZDJfam91cm5hbF91bmxvY2tfdXBkYXRl
-cyhqb3VybmFsLT5qX2pvdXJuYWwpOworCQltbG9nKE1MX05PVElDRSwgImpvdXJuYWwgcmVjb3Zl
-cnkgY29tcGxldGUsIHN0YXR1cz0lZCIsIHN0YXR1cyk7CisJfQorCiAJc3RhdHVzID0gb2NmczJf
-am91cm5hbF90b2dnbGVfZGlydHkob3NiLCAxLCByZXBsYXllZCk7CiAJaWYgKHN0YXR1cyA8IDAp
-IHsKIAkJbWxvZ19lcnJubyhzdGF0dXMpOwotLSAKMi4xMi4xLndpbmRvd3MuMQoK
+What do you think?
+> #define PTRACE_GETFD_O_CLOEXEC  O_CLOEXEC       /* open the fd with cloexec */
+>
+> is the right thing to do. This is fairly common:
+>
+> include/uapi/linux/timerfd.h:#define TFD_CLOEXEC O_CLOEXEC
+> include/uapi/drm/drm.h:#define DRM_CLOEXEC O_CLOEXEC
+> include/linux/userfaultfd_k.h:#define UFFD_CLOEXEC O_CLOEXEC
+> include/linux/eventfd.h:#define EFD_CLOEXEC O_CLOEXEC
+> include/uapi/linux/eventpoll.h:#define EPOLL_CLOEXEC O_CLOEXEC
+> include/uapi/linux/inotify.h:/* For O_CLOEXEC and O_NONBLOCK */
+> include/uapi/linux/inotify.h:#define IN_CLOEXEC O_CLOEXEC
+> include/uapi/linux/mount.h:#define OPEN_TREE_CLOEXEC    O_CLOEXEC       /* Close the file on execve() */
+>
+> You can also add a compile-time assert to ptrace like we did for
+> fs/namespace.c's OPEN_TREE_CLOEXEC:
+>         BUILD_BUG_ON(OPEN_TREE_CLOEXEC != O_CLOEXEC);
+>
+> And I'd remove the  _O if you go with a separate flag, i.e.:
+>
+> #define PTRACE_GETFD_CLOEXEC    O_CLOEXEC       /* open the fd with cloexec */
+>
+> > +
+> > +struct ptrace_getfd_args {
+> > +     __u32 fd;       /* the tracee's file descriptor to get */
+> > +     __u32 options;
+>
+> Nit and I'm not set on it at all but "flags" might just be better.
+>
+> > +} __attribute__((packed));
+>
+> What's the benefit in using __attribute__((packed)) here? Seems to me that:
+>
+1) Are we always to assume that the compiler will give us 4-byte
+alignment (paranoia)
+2) If we're to add new non-4-byte aligned members later on, is it
+kosher to add packed
+later on?
 
---_002_c8c15565f56c4ae19c74d59aa866fcb8h3ccom_--
+> +struct ptrace_getfd_args {
+> +       __u32 fd;       /* the tracee's file descriptor to get */
+> +       __u32 options;
+> +};
+>
+> would just work fine.
+>
+> > +
+> >  /*
+> >   * These values are stored in task->ptrace_message
+> >   * by tracehook_report_syscall_* to describe the current syscall-stop.
+> > diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+> > index cb9ddcc08119..8f619dceac6f 100644
+> > --- a/kernel/ptrace.c
+> > +++ b/kernel/ptrace.c
+> > @@ -31,6 +31,7 @@
+> >  #include <linux/cn_proc.h>
+> >  #include <linux/compat.h>
+> >  #include <linux/sched/signal.h>
+> > +#include <linux/fdtable.h>
+> >
+> >  #include <asm/syscall.h>     /* for syscall_get_* */
+> >
+> > @@ -994,6 +995,33 @@ ptrace_get_syscall_info(struct task_struct *child, unsigned long user_size,
+> >  }
+> >  #endif /* CONFIG_HAVE_ARCH_TRACEHOOK */
+> >
+> > +static int ptrace_getfd(struct task_struct *child, unsigned long user_size,
+> > +                     void __user *datavp)
+> > +{
+> > +     struct ptrace_getfd_args args;
+> > +     unsigned int fd_flags = 0;
+> > +     struct file *file;
+> > +     int ret;
+> > +
+> > +     ret = copy_struct_from_user(&args, sizeof(args), datavp, user_size);
+> > +     if (ret)
+> > +             goto out;
+>
+> Why is this goto out and not just return ret?
+>
+> > +     if ((args.options & ~(PTRACE_GETFD_O_CLOEXEC)) != 0)
+> > +             return -EINVAL;
+> > +     if (args.options & PTRACE_GETFD_O_CLOEXEC)
+> > +             fd_flags &= O_CLOEXEC;
+> > +     file = get_task_file(child, args.fd);
+> > +     if (!file)
+> > +             return -EBADF;
+> > +     ret = get_unused_fd_flags(fd_flags);
+>
+> Why isn't that whole thing just:
+>
+> ret = get_unused_fd_flags(fd_flags & {PTRACE_GETFD_}O_CLOEXEC);
+>
+> > +     if (ret >= 0)
+> > +             fd_install(ret, file);
+> > +     else
+> > +             fput(file);
+> > +out:
+> > +     return ret;
+> > +}
+>
+> So sm like:
+>
+> static int ptrace_getfd(struct task_struct *child, unsigned long user_size,
+>                         void __user *datavp)
+> {
+>         struct ptrace_getfd_args args;
+>         unsigned int fd_flags = 0;
+>         struct file *file;
+>         int ret;
+>
+>         ret = copy_struct_from_user(&args, sizeof(args), datavp, user_size);
+>         if (ret)
+>                 return ret;
+>
+>         if ((args.options & ~(PTRACE_GETFD_O_CLOEXEC)) != 0)
+>                 return -EINVAL;
+>
+>         file = get_task_file(child, args.fd);
+>         if (!file)
+>                 return -EBADF;
+>
+>         /* PTRACE_GETFD_CLOEXEC == O_CLOEXEC */
+>         ret = get_unused_fd_flags(fd_flags & PTRACE_GETFD_O_CLOEXEC);
+Wouldn't this always be 0, since fd_flags is always 0?
+>         if (ret >= 0)
+>                 fd_install(ret, file);
+>         else
+>                 fput(file);
+>
+>         return ret;
+> }
