@@ -2,91 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81E9D116F06
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 15:34:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6E79116F2D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 15:40:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbfLIOeI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Dec 2019 09:34:08 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:33660 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727038AbfLIOeI (ORCPT
+        id S1727640AbfLIOkH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Dec 2019 09:40:07 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:34844 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727359AbfLIOkH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Dec 2019 09:34:08 -0500
-Received: by mail-lj1-f193.google.com with SMTP id 21so15934710ljr.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Dec 2019 06:34:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=AoNQf5ZMoCElTqidsuopSf1YvkHAPV4/P6EB7Uneuvg=;
-        b=astmu+VzoufKgfnh2KlgyOKlv8EQzwyGVqN0FUxogpSLoBvLsfzybSHAWBIzxPUc87
-         ebLIifRVfXjoq+BJqfnstDRV6TqLqrCyNDCBeFWW9B1N4NuSSm0UC/8Ff0Tc8HhsVK1F
-         5p06xrYejxV0WhGG2gT/8q3uiayRX0GhvsbHMzpO0KnUStsAaitNYKcU+BBQQnubyF6k
-         qL7gYVk2rIFpNwUDGj8/W4HoyVz8bD8tzpUgI0Qq66iDt3Y/FS9dLG+nnWj86aVLr3AA
-         08sk0iWQNSjtvYmNIbES9Y0TcToWAOVa68JEuD9X1xgXaQ4qZT7LHYjrJ5l3wOGrx/3N
-         +blQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=AoNQf5ZMoCElTqidsuopSf1YvkHAPV4/P6EB7Uneuvg=;
-        b=HmKkINbaAfiNRKc5Xxv97Vcc3LFHjxAHFHwZ285JUGkFT6bcheTTFdt2Y3BH9Js8Ls
-         US1exFuZpTxeRH2GZ86X9+dmK4SW4TLkMD2ZYi484w2YghKIu2EokHy4tLNgZG9/RGQM
-         NJtm2h5OY7DrFW8G+pzJERdwQ4rYkedzVDvIA/ByGDCXN8Ss7XfsmuFFj2dEp6cYFnY7
-         PX/4QiJDSe3+GgWhuSlp/ZFp/ARffG16D4CAh2zs6TNKb4gqy5AHz9qRAfWbob4EZv6h
-         u7pQamVId4NjOtCe1TuF9MHqjWob1mTJdup4qbwONaBFBuaj4FwbXhd7MHZmv/f40T4c
-         VA8A==
-X-Gm-Message-State: APjAAAWTPAc3T7uwck45NyRuFJsZA5+Ck1tCF2ZIrnjvkUSxHlPbEEOn
-        LSDJG5/yg/rwK9NMRMpmKMtIbjT4zCFT0r6l
-X-Google-Smtp-Source: APXvYqyUOwif3e2lN9GiZs8y0rrGcMI5dg1fFlH1INrpUiLDPNw7V1JPpBLwnm559j9p3bNwXBllSQ==
-X-Received: by 2002:a2e:3609:: with SMTP id d9mr10237389lja.188.1575902046437;
-        Mon, 09 Dec 2019 06:34:06 -0800 (PST)
-Received: from msk1wst115n.omp.ru (mail.omprussia.ru. [5.134.221.218])
-        by smtp.gmail.com with ESMTPSA id v24sm23611ljc.18.2019.12.09.06.34.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 09 Dec 2019 06:34:05 -0800 (PST)
-Message-ID: <e45222ab3f6292c013c93126078396f4b212d904.camel@dubeyko.com>
+        Mon, 9 Dec 2019 09:40:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=W4l5Cx8ZgsHs4yQOqjrJ4kn71geW9TvbjjZNSVfp8CA=; b=wxOsyl1JWkRE9N0mzgCZ2/mrF
+        5cS5xHs/y3El+0j2Veuwg3LhQR1pmC7Xp1R/A3wMXHn8SF+2b8oB0GZc2lCnXX+Ywr8sTj/VKQjfp
+        3NDIgrRguHrYlo/dtjpu/sqzvboBLq77emOLXt1hTnqY3S08CZCmBav7olhja3X51H49v/9bJJ5Z0
+        nlw7F0dw9ztfb7goUtnEaHUeoic0JvTDnUYmRD2Gdwk2NT/Fse1JjvheHYudeOGgrj12g8nY9BDiY
+        1ZlkSwLcws8wqfpM2xFJC4HtLmg0W47zQkHeJ4IcFhRc+oBjH+TDVwUpk4ZDkQdA9NV0XlOKhpBr7
+        iIuqhZZwg==;
+Received: from shell.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:46508)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1ieKCf-0003ce-L3; Mon, 09 Dec 2019 14:40:01 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1ieKCe-0003ja-2F; Mon, 09 Dec 2019 14:40:00 +0000
+Date:   Mon, 9 Dec 2019 14:40:00 +0000
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Vyacheslav Dubeyko <slava@dubeyko.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH 01/41] fs/adfs: inode: update timestamps to centisecond
  precision
-From:   Vyacheslav Dubeyko <slava@dubeyko.com>
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Date:   Mon, 09 Dec 2019 17:34:05 +0300
-In-Reply-To: <20191209140357.GJ25745@shell.armlinux.org.uk>
+Message-ID: <20191209143959.GL25745@shell.armlinux.org.uk>
 References: <20191209110731.GD25745@shell.armlinux.org.uk>
-         <E1ieGtm-0004ZY-DD@rmk-PC.armlinux.org.uk>
-         <59711cf492815c5bba93d641398011ea2341f635.camel@dubeyko.com>
-         <20191209140357.GJ25745@shell.armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+ <E1ieGtm-0004ZY-DD@rmk-PC.armlinux.org.uk>
+ <59711cf492815c5bba93d641398011ea2341f635.camel@dubeyko.com>
+ <20191209140357.GJ25745@shell.armlinux.org.uk>
+ <e45222ab3f6292c013c93126078396f4b212d904.camel@dubeyko.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e45222ab3f6292c013c93126078396f4b212d904.camel@dubeyko.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2019-12-09 at 14:03 +0000, Russell King - ARM Linux admin
-wrote:
+On Mon, Dec 09, 2019 at 05:34:05PM +0300, Vyacheslav Dubeyko wrote:
+> On Mon, 2019-12-09 at 14:03 +0000, Russell King - ARM Linux admin
+> wrote:
+> > > > 
+> > On Mon, Dec 09, 2019 at 04:54:55PM +0300, Vyacheslav Dubeyko wrote:
+> > > On Mon, 2019-12-09 at 11:08 +0000, Russell King wrote:
+> 
+> <snipped>
+> 
+> > > >  	sb->s_fs_info = asb;
+> > > > +	sb->s_time_gran = 10000000;
 > > > 
-> On Mon, Dec 09, 2019 at 04:54:55PM +0300, Vyacheslav Dubeyko wrote:
-> > On Mon, 2019-12-09 at 11:08 +0000, Russell King wrote:
-
-<snipped>
-
-> > >  	sb->s_fs_info = asb;
-> > > +	sb->s_time_gran = 10000000;
+> > > I believe it's not easy to follow what this granularity means.
+> > > Maybe,
+> > > it makes sense to introduce some constant and to add some comment?
 > > 
-> > I believe it's not easy to follow what this granularity means.
-> > Maybe,
-> > it makes sense to introduce some constant and to add some comment?
+> > Or simply name it "s_time_gran_ns" so the units are in the name.
+> > 
 > 
-> Or simply name it "s_time_gran_ns" so the units are in the name.
-> 
+> Sounds good. :) But why namely 10000000?
 
-Sounds good. :) But why namely 10000000?
+I don't know what you mean.
 
-Thanks,
-Viacheslav Dubeyko.
+If you're asking, why "10000000", isn't it obvious if you read the
+commit message?  adfs has "centi-second" granularity. s_time_gran
+is in nanoseconds. There are 10000000 nanoseconds in a centisecond.
 
+What do you expect?
 
+#define ADFS_TIME_GRAN 10000000
+
+	sb->s_time_gran = ADFS_TIME_GRAN;
+
+?
+
+How does that help - it just stupidly and needlessly obfuscates the
+code.
+
+The whole "use definitions for constants" is idiotic when a constant
+is only used in one place - when it means you have to search through
+more source code to find it's single definition. Sorry, I'm not
+doing that and make readability *worse*.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
