@@ -2,47 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2511E117340
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 18:57:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D1971173F1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 19:19:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726365AbfLIR5T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Dec 2019 12:57:19 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:32976 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726230AbfLIR5S (ORCPT
+        id S1726598AbfLISTR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Dec 2019 13:19:17 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39639 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726342AbfLISTR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Dec 2019 12:57:18 -0500
-Received: by mail-yb1-f193.google.com with SMTP id o63so6480785ybc.0;
-        Mon, 09 Dec 2019 09:57:18 -0800 (PST)
+        Mon, 9 Dec 2019 13:19:17 -0500
+Received: by mail-lj1-f195.google.com with SMTP id e10so16750870ljj.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Dec 2019 10:19:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mZMqRZp9+bilXh0HGL9oR0MxLWgnBMeIphYWvOmpL9Q=;
+        b=Yz+/sjhUXKZEs+qhSFKklhR8o2h6HC5lgJKoaBnwRJo1Isv/EBY7iJV3WCU91qirAQ
+         rRDf37sKOK/pgKTHy0SWhM3EOI126l1pcn5N4S1fNR+CVqdFzl9hLpVim3R+/okkvArl
+         qPaSO1elURSaIoUN1kgalqzaKSAFOCIOmIgKw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qei/AYQXNst4gEgpnVYA7NFVSVcsDop3iCvV2R7BSTI=;
-        b=P1IBwsVG1cGn0KRwtBdlP3FE3DN2EeipMvaoqqKHAet50Iw67U1scaq6LSIRaWKvP+
-         ygNvJNgjxAt/ShEVFQR8sw6h2ndKba+pN0ImbQAIJ6c7oGl8zcC3HUbr+MGczk20QGSc
-         Te8aYt+Q8vnExT6yJn3VqclBTk0jwOcFANGgX6zs3y3O/WuXOe6ecy3E73uv0m6jw9yZ
-         eYY7HOS5UF7+ZtTfMUo2uWSiYouXuX3bT8jJ5w7EWkcMyRauTr3ZNVwmlAtl58VY56Un
-         MxfxyrQU1CCaGofz24MkVyO73u04Sk/hjpWM5/2U6KW+ZgW7DPP45m6jZwbeqgL1zvzx
-         fhgQ==
-X-Gm-Message-State: APjAAAX/NN+9+p1X7c8PSZnpyyanv50BZNL5PJnc3KeOeozWIrK2gstV
-        NpGjCwJpMmf8poC2h2/+MUW36fHMJVgsJnz3HOE=
-X-Google-Smtp-Source: APXvYqz4DjmgUMCLAs/3U0LVrQER9vKVWUuTTZiInvynh57cPM6y1wIzI/89XHRRaXx6krX4w4Mo8IH1dWtwVlg6oGE=
-X-Received: by 2002:a25:5f4d:: with SMTP id h13mr21799718ybm.390.1575914237631;
- Mon, 09 Dec 2019 09:57:17 -0800 (PST)
+        bh=mZMqRZp9+bilXh0HGL9oR0MxLWgnBMeIphYWvOmpL9Q=;
+        b=kFqxlW7z5bJDs1bu04gAP35XWYjfhnDMUO5KgeVYF9BT95aixTZDkr/j97nKTc0NlQ
+         v3vVQRc8/A+yor2eBVgr7lKoKF/O9r1HlKWGgdghhV4uz9B4n1CKbgZKHpV0Rf4B8ixn
+         umNEV/RlmbHKAvdp/FyZL3BCxycgfHGU9DwJ+CNnjL7JKXt6wOIpPCwHyGcVQUUWnIkM
+         4Bgo5DQLHqer14hGnzVwuJ696LKlL2UwPEFLd/TB2opslHTn8C321O7xwrYEMTiAhrAT
+         oV9+/HJzuV9GZ4T9d1zDNJmhoyTseZIRr0SMCMchLV866kdm3xpXrEH5MElDweomZNg5
+         Mwng==
+X-Gm-Message-State: APjAAAUCMWjGUq8jEFuXWYa+7QMx08qSAXt/rK1GdX4AEyddfLxRJbGX
+        lhOq2AlaTx3JqjdvGqedjPKBO/RMSTc=
+X-Google-Smtp-Source: APXvYqy9NToThP+E3HyucnrFU7yA1EZAWCrWHaCbXLh5qMPlxU/TQzLCSHbGYlLLJO3eNTOa413cSg==
+X-Received: by 2002:a2e:7005:: with SMTP id l5mr17976933ljc.230.1575915554744;
+        Mon, 09 Dec 2019 10:19:14 -0800 (PST)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id p15sm87562lfo.88.2019.12.09.10.19.13
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2019 10:19:13 -0800 (PST)
+Received: by mail-lj1-f171.google.com with SMTP id m6so16786620ljc.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Dec 2019 10:19:13 -0800 (PST)
+X-Received: by 2002:a2e:9ad8:: with SMTP id p24mr15150725ljj.148.1575915553079;
+ Mon, 09 Dec 2019 10:19:13 -0800 (PST)
 MIME-Version: 1.0
 References: <157558502272.10278.8718685637610645781.stgit@warthog.procyon.org.uk>
  <20191206135604.GB2734@twin.jikos.cz> <CAHk-=wiN_pWbcRaw5L-J2EFUyCn49Due0McwETKwmFFPp88K8Q@mail.gmail.com>
  <CAHk-=wjvO1V912ya=1rdXwrm1OBTi6GqnqryH_E8OR69cZuVOg@mail.gmail.com>
  <CAHk-=wizsHmCwUAyQKdU7hBPXHYQn-fOtJKBqMs-79br2pWxeQ@mail.gmail.com>
  <CAHk-=wjeG0q1vgzu4iJhW5juPkTsjTYmiqiMUYAebWW+0bam6w@mail.gmail.com>
- <CAKfTPtDBtPuvK0NzYC0VZgEhh31drCDN=o+3Hd3fUwoffQg0fw@mail.gmail.com> <CAHk-=wicgTacrHUJmSBbW9MYAdMPdrXzULPNqQ3G7+HkLeNf1Q@mail.gmail.com>
-In-Reply-To: <CAHk-=wicgTacrHUJmSBbW9MYAdMPdrXzULPNqQ3G7+HkLeNf1Q@mail.gmail.com>
-From:   Akemi Yagi <toracat@elrepo.org>
-Date:   Mon, 9 Dec 2019 09:57:06 -0800
-Message-ID: <CABA31DqGSycoE2hxk92NZ8qb47DqTR0+UGMQN_or1zpoGCg9fw@mail.gmail.com>
+ <CAKfTPtDBtPuvK0NzYC0VZgEhh31drCDN=o+3Hd3fUwoffQg0fw@mail.gmail.com>
+ <CAHk-=wicgTacrHUJmSBbW9MYAdMPdrXzULPNqQ3G7+HkLeNf1Q@mail.gmail.com> <CABA31DqGSycoE2hxk92NZ8qb47DqTR0+UGMQN_or1zpoGCg9fw@mail.gmail.com>
+In-Reply-To: <CABA31DqGSycoE2hxk92NZ8qb47DqTR0+UGMQN_or1zpoGCg9fw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 9 Dec 2019 10:18:57 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjnXUUbYikSFba5QqvJoFnO8c_ykXrw9Zz2Lt4SeyeZUQ@mail.gmail.com>
+Message-ID: <CAHk-=wjnXUUbYikSFba5QqvJoFnO8c_ykXrw9Zz2Lt4SeyeZUQ@mail.gmail.com>
 Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+To:     Akemi Yagi <toracat@elrepo.org>
 Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
         DJ Delorie <dj@redhat.com>, David Sterba <dsterba@suse.cz>,
         David Howells <dhowells@redhat.com>,
@@ -58,28 +77,21 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 9, 2019 at 9:49 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Mon, Dec 9, 2019 at 9:57 AM Akemi Yagi <toracat@elrepo.org> wrote:
 >
-> [ Added DJ to the participants, since he seems to be the Fedora make
-> maintainer - DJ, any chance that this absolutely horrid 'make' buf can
-> be fixed in older versions too, not just rawhide? The bugfix is two
-> and a half years old by now, and the bug looks real and very serious ]
-(snip)
-> But sadly, there's no way I can push that fair pipe wakeup thing as
-> long as this horribly buggy version of make is widespread.
+> In addition to the Fedora make-4.2.1-4.fc27 (1) mentioned by Linus,
+> RHEL 8 make-4.2.1-9.el8 (2) is affected. The patch applied to Fedora
+> make (3) has been confirmed to fix the issue in RHEL's make.
 >
->                  Linus
+> Those are the only real-world examples I know of. I have no idea how
+> widespread this thing is...
 
-In addition to the Fedora make-4.2.1-4.fc27 (1) mentioned by Linus,
-RHEL 8 make-4.2.1-9.el8 (2) is affected. The patch applied to Fedora
-make (3) has been confirmed to fix the issue in RHEL's make.
+Looks like opensuse and ubuntu are also on 4.2.1 according to
 
-Those are the only real-world examples I know of. I have no idea how
-widespread this thing is...
+   https://software.opensuse.org/package/make
+   https://packages.ubuntu.com/cosmic/make
 
-Akemi
+so apparently the bug is almost universal with the big three sharing
+this buggy version.
 
-(1) https://bugzilla.redhat.com/show_bug.cgi?id=1556839
-(2) https://bugzilla.redhat.com/show_bug.cgi?id=1774790
-(3) https://git.savannah.gnu.org/cgit/make.git/commit/?id=b552b05251980f693c729e251f93f5225b400714
+               Linus
