@@ -2,171 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2EDC1166F4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 07:32:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21484116719
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 07:55:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727117AbfLIGcJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Dec 2019 01:32:09 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:55456 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726623AbfLIGcJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Dec 2019 01:32:09 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 14B709B79E07160C53B3;
-        Mon,  9 Dec 2019 14:32:06 +0800 (CST)
-Received: from [127.0.0.1] (10.74.221.148) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Mon, 9 Dec 2019
- 14:31:56 +0800
-Subject: Re: mmotm 2019-12-06-19-46 uploaded
-To:     Andrew Morton <akpm@linux-foundation.org>, <broonie@kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>, <linux-next@vger.kernel.org>,
-        <mhocko@suse.cz>, <mm-commits@vger.kernel.org>,
-        <sfr@canb.auug.org.au>, jinyuqi <jinyuqi@huawei.com>
-References: <20191207034723.OPvz2A9wZ%akpm@linux-foundation.org>
-From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
-Message-ID: <c0691301-fa72-b9fe-5cb8-815275f84555@hisilicon.com>
-Date:   Mon, 9 Dec 2019 14:31:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.1
-MIME-Version: 1.0
-In-Reply-To: <20191207034723.OPvz2A9wZ%akpm@linux-foundation.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.74.221.148]
+        id S1726170AbfLIGzD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Dec 2019 01:55:03 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:19575 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbfLIGzC (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 9 Dec 2019 01:55:02 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191209065459epoutp043b5d869f399a29b218390c20f965b76b~eoYHyT_Py2007020070epoutp04U
+        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Dec 2019 06:54:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191209065459epoutp043b5d869f399a29b218390c20f965b76b~eoYHyT_Py2007020070epoutp04U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1575874499;
+        bh=A0WbscGLp/FBqHZYKkFQAzolQTINH8FBFgyBhh91qlo=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=O3rxMzPtTuuFWhNmIbBPdSpwnqBLdDPCoMgC+BikRKm2hFNwx/ZdJ+yM9Rw3DTzEC
+         UZ/gTwsT+U8Ft3J/yT9iNocvnVtTmovA/zoBb6qUyZNWL3aKjqB/bchxH3m8cmUlqC
+         S/xHhLeRW+NbzFRtDqUVZaEKv+Diq/r25HbxSFNY=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20191209065458epcas1p4576f756fac74480897c2897f1ca95fbe~eoYHTlt2D1133711337epcas1p4P;
+        Mon,  9 Dec 2019 06:54:58 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.162]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 47WYpn46S6zMqYkk; Mon,  9 Dec
+        2019 06:54:57 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        05.87.48019.1CFEDED5; Mon,  9 Dec 2019 15:54:57 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20191209065457epcas1p3130d80fd65c9a1c1af5f67dadc49e913~eoYGCzw6D0815208152epcas1p3x;
+        Mon,  9 Dec 2019 06:54:57 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191209065457epsmtrp27680ec5738aabd55502fffbc7eb92b47~eoYGB523D2761927619epsmtrp2L;
+        Mon,  9 Dec 2019 06:54:57 +0000 (GMT)
+X-AuditID: b6c32a38-23fff7000001bb93-82-5dedefc1b5bf
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        C7.E9.06569.1CFEDED5; Mon,  9 Dec 2019 15:54:57 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.88.103.87]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191209065457epsmtip1c49566f731f8c7eddc23004dd559f6bb~eoYF3slhX1943719437epsmtip1Q;
+        Mon,  9 Dec 2019 06:54:57 +0000 (GMT)
+From:   Namjae Jeon <namjae.jeon@samsung.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
+        sj1557.seo@samsung.com, Namjae Jeon <namjae.jeon@samsung.com>
+Subject: [PATCH v6 00/13] add the latest exfat driver
+Date:   Mon,  9 Dec 2019 01:51:35 -0500
+Message-Id: <20191209065149.2230-1-namjae.jeon@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFKsWRmVeSWpSXmKPExsWy7bCmru7B929jDU7tVrBoXryezWLl6qNM
+        Fnv2nmSxuLxrDpvFj+n1Flv+HWG1uPT+A4sDu8f+uWvYPXbfbGDz6NuyitHj8yY5j0Pb37AF
+        sEbl2GSkJqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYAXaGk
+        UJaYUwoUCkgsLlbSt7Mpyi8tSVXIyC8usVVKLUjJKTA0KNArTswtLs1L10vOz7UyNDAwMgWq
+        TMjJWLw1t+CpfMWJ3//ZGhj/SnQxcnJICJhIfLq/iLGLkYtDSGAHo8TFL/eYIZxPjBInzxxn
+        hXC+MUrMWXGXDablw5VbLBCJvYwSO/7uY4Vr+bdnL1AVBwebgLbEny2iIA0iAvYSm2cfAGtg
+        FmhhlFhw+gczSEJYwFRiy6q57CA2i4CqxIOz+9lBenkFrCWOtcZCLJOXWL3hANhJEgIdbBJd
+        3x9AXeEisXLlMUYIW1ji1fEt7BC2lMTndxA3SAhUS3zczwwR7mCUePHdFsI2lri5fgMrSAmz
+        gKbE+l36EGFFiZ2/54JNZBbgk3j3tYcVYgqvREebEESJqkTfpcNMELa0RFf7B6ilHhJHL14A
+        axUSiJX4Nq2VfQKj7CyEBQsYGVcxiqUWFOempxYbFpggR9EmRnC60rLYwbjnnM8hRgEORiUe
+        XgWrt7FCrIllxZW5hxglOJiVRHiXTHwVK8SbklhZlVqUH19UmpNafIjRFBh0E5mlRJPzgak0
+        ryTe0NTI2NjYwsTM3MzUWEmcl+PHxVghgfTEktTs1NSC1CKYPiYOTqkGxuBWGe7jL8x3yWtO
+        YvFjWDr39sHERyvyJku+KZxxsTy9ZckU/cZ8PotaV3kfabmEr1fDy7dG5a+0Y9C6eFPb847t
+        fPZvlZtvtEQ96TjK4JlxdGXQde7LSoo1U/cetjnPsqpNyffQr3mBGauVwz2Cd6+K51UreuT9
+        5sas38l37m0xDOj7GOk3R4mlOCPRUIu5qDgRAEiSR7htAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgluLIzCtJLcpLzFFi42LZdlhJTvfg+7exBpNuc1g0L17PZrFy9VEm
+        iz17T7JYXN41h83ix/R6iy3/jrBaXHr/gcWB3WP/3DXsHrtvNrB59G1ZxejxeZOcx6Htb9gC
+        WKO4bFJSczLLUov07RK4MhZvzS14Kl9x4vd/tgbGvxJdjJwcEgImEh+u3GLpYuTiEBLYzSix
+        ccE5FoiEtMSxE2eYuxg5gGxhicOHiyFqPjBK7Gi7wgQSZxPQlvizRRSkXETAUaJ312GwOcwC
+        XYwSj5q+MYMkhAVMJbasmssOYrMIqEo8OLufHaSXV8Ba4lhrLMQqeYnVGw4wT2DkWcDIsIpR
+        MrWgODc9t9iwwCgvtVyvODG3uDQvXS85P3cTIzh8tLR2MJ44EX+IUYCDUYmHV8HqbawQa2JZ
+        cWXuIUYJDmYlEd4lE1/FCvGmJFZWpRblxxeV5qQWH2KU5mBREueVzz8WKSSQnliSmp2aWpBa
+        BJNl4uCUamCMfLNW/Xa6nLjTz/NJkRPL/rmfUNml/yXH0Ivj7aZ40b8rcvjDo8qFw/buvPv2
+        /pEpEhMmXZvw6+xy1djJsQEKl88o9C9t1Lr6+7iRtFzdhk03L6WeNF8s/vzM3P7bGl6GK95a
+        f1ryLOPf8jtL+aTeHct49jnr5YMDM7jaNyqvmX/XPjvqpYD9ISWW4oxEQy3mouJEAEOHs1Ab
+        AgAA
+X-CMS-MailID: 20191209065457epcas1p3130d80fd65c9a1c1af5f67dadc49e913
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
 X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20191209065457epcas1p3130d80fd65c9a1c1af5f67dadc49e913
+References: <CGME20191209065457epcas1p3130d80fd65c9a1c1af5f67dadc49e913@epcas1p3.samsung.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Andrew,
+This adds the latest Samsung exfat driver to fs/exfat. This is an
+implementation of the Microsoft exFAT specification. Previous versions
+of this shipped with millions of Android phones, and a random previous
+snaphot has been merged in drivers/staging/.
 
-About this patch,
-https://lore.kernel.org/lkml/1573091048-10595-1-git-send-email-zhangshaokun@hisilicon.com/
+Compared to the sdfat driver shipped on the phones the following changes
+have been made:
 
-It is not in linux-next or your trees now, has it been dropped?
+ - the support for vfat has been removed as that is already supported
+   by fs/fat
+ - driver has been renamed to exfat
+ - the code has been refactored and clean up to fully integrate into
+   the upstream Linux version and follow the Linux coding style
+ - metadata operations like create, lookup and readdir have been further
+   optimized
+ - various major and minor bugs have been fixed
 
-Thanks,
-Shaokun
+We plan to treat this version as the future upstream for the code base
+once merged, and all new features and bug fixes will go upstream first.
 
-On 2019/12/7 11:47, Andrew Morton wrote:
-> The mm-of-the-moment snapshot 2019-12-06-19-46 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
-> 
-> You will need quilt to apply these patches to the latest Linus release (5.x
-> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> http://ozlabs.org/~akpm/mmotm/series
-> 
-> The file broken-out.tar.gz contains two datestamp files: .DATE and
-> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-> followed by the base kernel version against which this patch series is to
-> be applied.
-> 
-> This tree is partially included in linux-next.  To see which patches are
-> included in linux-next, consult the `series' file.  Only the patches
-> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-> linux-next.
-> 
-> 
-> A full copy of the full kernel tree with the linux-next and mmotm patches
-> already applied is available through git within an hour of the mmotm
-> release.  Individual mmotm releases are tagged.  The master branch always
-> points to the latest release, so it's constantly rebasing.
-> 
-> 	https://github.com/hnaz/linux-mm
-> 
-> The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-> contains daily snapshots of the -mm tree.  It is updated more frequently
-> than mmotm, and is untested.
-> 
-> A git copy of this tree is also available at
-> 
-> 	https://github.com/hnaz/linux-mm
-> 
-> 
-> 
-> This mmotm tree contains the following patches against 5.4:
-> (patches marked "*" will be included in linux-next)
-> 
->   origin.patch
-> * hacking-group-sysrq-kgdb-ubsan-into-generic-kernel-debugging-instruments.patch
-> * hacking-create-submenu-for-arch-special-debugging-options.patch
-> * hacking-group-kernel-data-structures-debugging-together.patch
-> * hacking-move-kernel-testing-and-coverage-options-to-same-submenu.patch
-> * hacking-move-oops-into-lockups-and-hangs.patch
-> * hacking-move-sched_stack_end_check-after-debug_stack_usage.patch
-> * hacking-create-a-submenu-for-scheduler-debugging-options.patch
-> * hacking-move-debug_bugverbose-to-printk-and-dmesg-options.patch
-> * hacking-move-debug_fs-to-generic-kernel-debugging-instruments.patch
-> * lib-fix-kconfig-indentation.patch
-> * kasan-fix-crashes-on-access-to-memory-mapped-by-vm_map_ram.patch
-> * kasan-fix-crashes-on-access-to-memory-mapped-by-vm_map_ram-v2.patch
-> * mm-add-apply_to_existing_pages-helper.patch
-> * mm-add-apply_to_existing_pages-helper-fix.patch
-> * mm-add-apply_to_existing_pages-helper-fix-fix.patch
-> * kasan-use-apply_to_existing_pages-for-releasing-vmalloc-shadow.patch
-> * kasan-use-apply_to_existing_pages-for-releasing-vmalloc-shadow-fix.patch
-> * kasan-dont-assume-percpu-shadow-allocations-will-succeed.patch
-> * mm-vmscan-protect-shrinker-idr-replace-with-config_memcg.patch
-> * proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
-> * proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
-> * mm-zsmallocc-fix-the-migrated-zspage-statistics.patch
-> * mm-thp-tweak-reclaim-compaction-effort-of-local-only-and-all-node-allocations.patch
-> * x86-mm-split-vmalloc_sync_all.patch
-> * kcov-fix-struct-layout-for-kcov_remote_arg.patch
-> * memcg-account-security-cred-as-well-to-kmemcg.patch
-> * mm-move_pages-return-valid-node-id-in-status-if-the-page-is-already-on-the-target-node.patch
-> * ramfs-support-o_tmpfile.patch
->   mm.patch
-> * mm-avoid-slub-allocation-while-holding-list_lock.patch
-> * mm-vmscan-expose-cgroup_ino-for-memcg-reclaim-tracepoints.patch
-> * mm-pgmap-use-correct-alignment-when-looking-at-first-pfn-from-a-region.patch
-> * mm-mmap-fix-the-adjusted-length-error.patch
-> * mm-memmap_init-update-variable-name-in-memmap_init_zone.patch
-> * mm-memory_hotplug-shrink-zones-when-offlining-memory.patch
-> * mm-memory_hotplug-poison-memmap-in-remove_pfn_range_from_zone.patch
-> * mm-memory_hotplug-we-always-have-a-zone-in-find_smallestbiggest_section_pfn.patch
-> * mm-memory_hotplug-dont-check-for-all-holes-in-shrink_zone_span.patch
-> * mm-memory_hotplug-drop-local-variables-in-shrink_zone_span.patch
-> * mm-memory_hotplug-cleanup-__remove_pages.patch
-> * mm-oom-avoid-printk-iteration-under-rcu.patch
-> * mm-oom-avoid-printk-iteration-under-rcu-fix.patch
-> * info-task-hung-in-generic_file_write_iter.patch
-> * info-task-hung-in-generic_file_write-fix.patch
-> * kernel-hung_taskc-monitor-killed-tasks.patch
-> * string-add-stracpy-and-stracpy_pad-mechanisms.patch
-> * documentation-checkpatch-prefer-stracpy-strscpy-over-strcpy-strlcpy-strncpy.patch
-> * aio-simplify-read_events.patch
-> * smp_mb__beforeafter_atomic-update-documentation.patch
-> * ipc-mqueuec-remove-duplicated-code.patch
-> * ipc-mqueuec-update-document-memory-barriers.patch
-> * ipc-msgc-update-and-document-memory-barriers.patch
-> * ipc-semc-document-and-update-memory-barriers.patch
-> * ipc-consolidate-all-xxxctl_down-functions.patch
->   linux-next.patch
->   linux-next-git-rejects.patch
-> * drivers-block-null_blk_mainc-fix-layout.patch
-> * drivers-block-null_blk_mainc-fix-uninitialized-var-warnings.patch
-> * pinctrl-fix-pxa2xxc-build-warnings.patch
-> * drivers-tty-serial-sh-scic-suppress-warning.patch
-> * fix-read-buffer-overflow-in-delta-ipc.patch
->   make-sure-nobodys-leaking-resources.patch
->   releasing-resources-with-children.patch
->   mutex-subsystem-synchro-test-module.patch
->   kernel-forkc-export-kernel_thread-to-modules.patch
->   workaround-for-a-pci-restoring-bug.patch
-> 
-> .
-> 
+v6:
+ - Fix always false comparison due to limited range of allow_utime's data
+   type.
+ - Move bh into loop in exfat_find_dir_entry().
+ - Move entry_uniname and unichar variables into
+   an if "entry_type == TYPE_EXTEND" branch.
+
+v5:
+ - Remove a blank line between the message and the error code in
+   exfat_load_upcase_table.
+ - Move brelse to the end of the while loop and rename release_bh label
+   to free_table in exfat_load_upcase_table.
+ - Move an error code assignment after a failed function call.
+ - Rename labels and directly return instead of goto.
+ - Improve the exception handling in exfat_get_dentry_set().
+ - Remove ->d_time leftover.
+ - fix boolreturn.cocci warnings.
+
+v4:
+ - Declare ALLOC_FAT_CHAIN and ALLOC_NO_FAT_CHAIN macros.
+ - Rename labels with proper name.
+ - Remove blank lines.
+ - Remove pointer check for bh.
+ - Move ep into loop in exfat_load_bitmap().
+ - Replace READ/WRITE_ONCE() with test_and_clear_bit() and set_bit().
+ - Change exfat_allow_set_time return type with bool.
+
+v3:
+ - fix wrong sbi->s_dirt set.
+
+v2:
+ - Check the bitmap count up to the total clusters.
+ - Rename goto labels in several places.
+ - Change time mode type with enumeration.
+ - Directly return error instead of goto at first error check.
+ - Combine seq_printf calls into a single one.
+
+Namjae Jeon (13):
+  exfat: add in-memory and on-disk structures and headers
+  exfat: add super block operations
+  exfat: add inode operations
+  exfat: add directory operations
+  exfat: add file operations
+  exfat: add exfat entry operations
+  exfat: add bitmap operations
+  exfat: add exfat cache
+  exfat: add misc operations
+  exfat: add nls operations
+  exfat: add Kconfig and Makefile
+  exfat: add exfat in fs/Kconfig and fs/Makefile
+  MAINTAINERS: add exfat filesystem
+
+ MAINTAINERS          |    7 +
+ fs/Kconfig           |    3 +-
+ fs/Makefile          |    1 +
+ fs/exfat/Kconfig     |   21 +
+ fs/exfat/Makefile    |    8 +
+ fs/exfat/balloc.c    |  272 ++++++++
+ fs/exfat/cache.c     |  325 ++++++++++
+ fs/exfat/dir.c       | 1310 +++++++++++++++++++++++++++++++++++++
+ fs/exfat/exfat_fs.h  |  538 ++++++++++++++++
+ fs/exfat/exfat_raw.h |  191 ++++++
+ fs/exfat/fatent.c    |  472 ++++++++++++++
+ fs/exfat/file.c      |  343 ++++++++++
+ fs/exfat/inode.c     |  693 ++++++++++++++++++++
+ fs/exfat/misc.c      |  240 +++++++
+ fs/exfat/namei.c     | 1459 ++++++++++++++++++++++++++++++++++++++++++
+ fs/exfat/nls.c       |  808 +++++++++++++++++++++++
+ fs/exfat/super.c     |  738 +++++++++++++++++++++
+ 17 files changed, 7428 insertions(+), 1 deletion(-)
+ create mode 100644 fs/exfat/Kconfig
+ create mode 100644 fs/exfat/Makefile
+ create mode 100644 fs/exfat/balloc.c
+ create mode 100644 fs/exfat/cache.c
+ create mode 100644 fs/exfat/dir.c
+ create mode 100644 fs/exfat/exfat_fs.h
+ create mode 100644 fs/exfat/exfat_raw.h
+ create mode 100644 fs/exfat/fatent.c
+ create mode 100644 fs/exfat/file.c
+ create mode 100644 fs/exfat/inode.c
+ create mode 100644 fs/exfat/misc.c
+ create mode 100644 fs/exfat/namei.c
+ create mode 100644 fs/exfat/nls.c
+ create mode 100644 fs/exfat/super.c
+
+-- 
+2.17.1
 
