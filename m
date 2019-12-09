@@ -2,176 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B56E116BD7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 12:09:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C69B9116BD9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Dec 2019 12:09:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727659AbfLILJC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Dec 2019 06:09:02 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:60012 "EHLO
+        id S1727664AbfLILJL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Dec 2019 06:09:11 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:60022 "EHLO
         pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727589AbfLILJB (ORCPT
+        with ESMTP id S1727589AbfLILJL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Dec 2019 06:09:01 -0500
+        Mon, 9 Dec 2019 06:09:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=armlinux.org.uk; s=pandora-2019; h=Date:Sender:Message-Id:Content-Type:
         Content-Transfer-Encoding:MIME-Version:Subject:Cc:To:From:References:
         In-Reply-To:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=O8t+RI4lc5YSko84lAz/rN4UzLZr16U0eoEAtW32nV8=; b=G5+I/OElPM3q2uIP0wjH30RcmK
-        90j+ixr2atxw/v79Ga+Aj2J7ZEhZ5gi9Y7JYRDlBGtOy5ZGSz9H6uLAJhsmoDrNsf05ZnJsxJBSnp
-        134N5vqx+k/KsCsD0o+xAyvI5P1xKBqRTobGmGDHUu0+qAxrPjEiF8x4czJa0naW1uRySunIa/EBz
-        2F2ZWEjGbddLHoYoQPse/Qmc9nTZnYXzpDUxEd+SdJOoBQeaPM9kUDfq7fBLgFgb/sHTDpMlDYVSd
-        cpjQrDUkCy64BkpweKGy2/CXjWQct6N6CptVfnocry5XoGoSIwGOT7dza0np5MdKxuoyVqXTeXLkL
-        3WsWhntg==;
-Received: from e0022681537dd.dyn.armlinux.org.uk ([2002:4e20:1eda:1:222:68ff:fe15:37dd]:49810 helo=rmk-PC.armlinux.org.uk)
+        bh=hgsNh+fT7XazGhKfwbZ3imrhLLFK1tQZkw4s+6a+f8w=; b=p1ijQT2IStC/0e0XEWtiCRyeJ0
+        0yE2IOmfJw+zqRaqMwoIfin/cked7lsVs7q+oGtW28hy2eT7eCaN2XB/wp5Zrjliq5m7LilrHVC6D
+        lKT1rtZIhcmg4frBHs4Qbcd1NViXO6DvLbTVBmzNd5GU90tilgE3TkUIt/GEOhID+7puDLwrZ1j1P
+        PemTgAMbC+09YrEzPCJBAwaf8emLpMKkREZy+qnj6gT66feROUfsLxGeKRiStdD8vCc67oBmWxsF3
+        gIWTFCQsHnpEKRcuUbqicnPqrL9nTWc4QYfLP1btdRsf9CYaSdK8QY3TNbmEvvCAbBJDV3yu+lY+D
+        NNkrrCZA==;
+Received: from e0022681537dd.dyn.armlinux.org.uk ([fd8f:7570:feb6:1:222:68ff:fe15:37dd]:54056 helo=rmk-PC.armlinux.org.uk)
         by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.90_1)
         (envelope-from <rmk@armlinux.org.uk>)
-        id 1ieGuO-0002TI-05; Mon, 09 Dec 2019 11:08:56 +0000
+        id 1ieGuT-0002TT-Pk; Mon, 09 Dec 2019 11:09:01 +0000
 Received: from rmk by rmk-PC.armlinux.org.uk with local (Exim 4.92)
         (envelope-from <rmk@armlinux.org.uk>)
-        id 1ieGuM-0004aS-Jz; Mon, 09 Dec 2019 11:08:54 +0000
+        id 1ieGuR-0004aa-OF; Mon, 09 Dec 2019 11:08:59 +0000
 In-Reply-To: <20191209110731.GD25745@shell.armlinux.org.uk>
 References: <20191209110731.GD25745@shell.armlinux.org.uk>
 From:   Russell King <rmk+kernel@armlinux.org.uk>
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH 08/41] fs/adfs: map: use find_next_bit_le() rather than open
- coding it
+Subject: [PATCH 09/41] fs/adfs: map: move map-specific sb initialisation to
+ map.c
 MIME-Version: 1.0
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <E1ieGuM-0004aS-Jz@rmk-PC.armlinux.org.uk>
-Date:   Mon, 09 Dec 2019 11:08:54 +0000
+Message-Id: <E1ieGuR-0004aa-OF@rmk-PC.armlinux.org.uk>
+Date:   Mon, 09 Dec 2019 11:08:59 +0000
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use find_next_bit_le() to find the end of a fragment in the map rather
-than open-coding this functionality.
+Move map specific superblock initialisation to map.c, rather than
+having it spread into super.c.
 
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 ---
- fs/adfs/map.c | 76 ++++++++++++++-------------------------------------
- 1 file changed, 21 insertions(+), 55 deletions(-)
+ fs/adfs/map.c   | 13 +++++++++----
+ fs/adfs/super.c |  7 +------
+ 2 files changed, 10 insertions(+), 10 deletions(-)
 
 diff --git a/fs/adfs/map.c b/fs/adfs/map.c
-index 55bd7c20158c..9be0b47da19c 100644
+index 9be0b47da19c..82e1bf101fe6 100644
 --- a/fs/adfs/map.c
 +++ b/fs/adfs/map.c
-@@ -72,50 +72,32 @@ static int lookup_zone(const struct adfs_discmap *dm, const unsigned int idlen,
- 	const u32 idmask = (1 << idlen) - 1;
- 	unsigned char *map = dm->dm_bh->b_data;
- 	unsigned int start = dm->dm_startbit;
--	unsigned int mapptr;
-+	unsigned int fragend;
- 	u32 frag;
+@@ -355,14 +355,19 @@ struct adfs_discmap *adfs_read_map(struct super_block *sb, struct adfs_discrecor
+ 	unsigned int map_addr, zone_size, nzones;
+ 	int ret;
  
- 	do {
- 		frag = GET_FRAG_ID(map, start, idmask);
--		mapptr = start + idlen;
--
--		/*
--		 * find end of fragment
--		 */
--		{
--			__le32 *_map = (__le32 *)map;
--			u32 v = le32_to_cpu(_map[mapptr >> 5]) >> (mapptr & 31);
--			while (v == 0) {
--				mapptr = (mapptr & ~31) + 32;
--				if (mapptr >= endbit)
--					goto error;
--				v = le32_to_cpu(_map[mapptr >> 5]);
--			}
--
--			mapptr += 1 + ffz(~v);
+-	nzones    = asb->s_map_size;
++	nzones    = dr->nzones | dr->nzones_high << 8;
+ 	zone_size = (8 << dr->log2secsize) - le16_to_cpu(dr->zone_spare);
+-	map_addr  = (nzones >> 1) * zone_size -
+-		     ((nzones > 1) ? ADFS_DR_SIZE_BITS : 0);
+-	map_addr  = signed_asl(map_addr, asb->s_map2blk);
+ 
++	asb->s_idlen = dr->idlen;
++	asb->s_map_size = nzones;
++	asb->s_map2blk = dr->log2bpmb - dr->log2secsize;
++	asb->s_log2sharesize = dr->log2sharesize;
+ 	asb->s_ids_per_zone = zone_size / (asb->s_idlen + 1);
+ 
++	map_addr = (nzones >> 1) * zone_size -
++		     ((nzones > 1) ? ADFS_DR_SIZE_BITS : 0);
++	map_addr = signed_asl(map_addr, asb->s_map2blk);
 +
-+		fragend = find_next_bit_le(map, endbit, start + idlen);
-+		if (fragend >= endbit)
-+			goto error;
-+
-+		if (frag == frag_id) {
-+			unsigned int length = fragend + 1 - start;
-+
-+			if (*offset < length)
-+				return start + *offset;
-+			*offset -= length;
- 		}
+ 	dm = kmalloc_array(nzones, sizeof(*dm), GFP_KERNEL);
+ 	if (dm == NULL) {
+ 		adfs_error(sb, "not enough memory");
+diff --git a/fs/adfs/super.c b/fs/adfs/super.c
+index cef16028e9f2..b2455e9ab923 100644
+--- a/fs/adfs/super.c
++++ b/fs/adfs/super.c
+@@ -289,6 +289,7 @@ static int adfs_fill_super(struct super_block *sb, void *data, int silent)
+ 		return -ENOMEM;
  
--		if (frag == frag_id)
--			goto found;
--again:
--		start = mapptr;
--	} while (mapptr < endbit);
-+		start = fragend + 1;
-+	} while (start < endbit);
- 	return -1;
+ 	sb->s_fs_info = asb;
++	sb->s_magic = ADFS_SUPER_MAGIC;
+ 	sb->s_time_gran = 10000000;
  
- error:
- 	printk(KERN_ERR "adfs: oversized fragment 0x%x at 0x%x-0x%x\n",
--		frag, start, mapptr);
-+		frag, start, fragend);
- 	return -1;
+ 	/* set default options */
+@@ -356,12 +357,6 @@ static int adfs_fill_super(struct super_block *sb, void *data, int silent)
+ 	 * blocksize on this device should now be set to the ADFS log2secsize
+ 	 */
+ 
+-	sb->s_magic		= ADFS_SUPER_MAGIC;
+-	asb->s_idlen		= dr->idlen;
+-	asb->s_map_size		= dr->nzones | (dr->nzones_high << 8);
+-	asb->s_map2blk		= dr->log2bpmb - dr->log2secsize;
+-	asb->s_log2sharesize	= dr->log2sharesize;
 -
--found:
--	{
--		int length = mapptr - start;
--		if (*offset >= length) {
--			*offset -= length;
--			goto again;
--		}
--	}
--	return start + *offset;
- }
- 
- /*
-@@ -132,7 +114,7 @@ scan_free_map(struct adfs_sb_info *asb, struct adfs_discmap *dm)
- 	const unsigned int frag_idlen = idlen <= 15 ? idlen : 15;
- 	const u32 idmask = (1 << frag_idlen) - 1;
- 	unsigned char *map = dm->dm_bh->b_data;
--	unsigned int start = 8, mapptr;
-+	unsigned int start = 8, fragend;
- 	u32 frag;
- 	unsigned long total = 0;
- 
-@@ -151,29 +133,13 @@ scan_free_map(struct adfs_sb_info *asb, struct adfs_discmap *dm)
- 	do {
- 		start += frag;
- 
--		/*
--		 * get fragment id
--		 */
- 		frag = GET_FRAG_ID(map, start, idmask);
--		mapptr = start + idlen;
--
--		/*
--		 * find end of fragment
--		 */
--		{
--			__le32 *_map = (__le32 *)map;
--			u32 v = le32_to_cpu(_map[mapptr >> 5]) >> (mapptr & 31);
--			while (v == 0) {
--				mapptr = (mapptr & ~31) + 32;
--				if (mapptr >= endbit)
--					goto error;
--				v = le32_to_cpu(_map[mapptr >> 5]);
--			}
--
--			mapptr += 1 + ffz(~v);
--		}
- 
--		total += mapptr - start;
-+		fragend = find_next_bit_le(map, endbit, start + idlen);
-+		if (fragend >= endbit)
-+			goto error;
-+
-+		total += fragend + 1 - start;
- 	} while (frag >= idlen + 1);
- 
- 	if (frag != 0)
+ 	asb->s_map = adfs_read_map(sb, dr);
+ 	if (IS_ERR(asb->s_map)) {
+ 		ret =  PTR_ERR(asb->s_map);
 -- 
 2.20.1
 
