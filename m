@@ -2,153 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8F11118D51
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 17:13:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A481118D7F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 17:24:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbfLJQNB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Dec 2019 11:13:01 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35200 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727178AbfLJQNB (ORCPT
+        id S1727178AbfLJQY6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Dec 2019 11:24:58 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:44676 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727506AbfLJQY5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Dec 2019 11:13:01 -0500
-Received: by mail-pg1-f193.google.com with SMTP id l24so9121933pgk.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2019 08:13:01 -0800 (PST)
+        Tue, 10 Dec 2019 11:24:57 -0500
+Received: by mail-il1-f195.google.com with SMTP id z12so16622416iln.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2019 08:24:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+qAGrVPkwcfzkD6je4iq3abncA5LmG/XuqOXQo6A/Mg=;
-        b=RNTbEK22BV3je2hAto+ezD7RbB5bkRqQWIb9wbGPxJJTusTfbyJIGyqp1voN0S2udA
-         Y7ZPjxoxj1WBYqFmMvz88mwo0B326gOt7gK1gihkt075nHPXp5X1IdXSWWqxqRKzeGid
-         vZSLo/7dhpfGOPDUl7Y5tEFpUo9LrA7gXrJvR0ZM50AtEiKB5z2XU1q3g4H7JFL4ngMa
-         nAiTmKQrC3a454nAt9y3Z+bopeTDBeGScOkNIZrKGuwwVtTURvAji3tJzhPEKhM/pLN5
-         MF3Fv7DOSnydQq8v+g8VvzNz1mJMWbdoqPDlPninYdb3x0lHPzCDag+HSupQN9kW82E7
-         9gNw==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NL2wx8OhT9nqgeYI97q9VsOTFKCtkP5TFUuqwTv6H6w=;
+        b=LTyUtTOiDdot1XqLMl7i53d11nkIkpHsXZo5aA5qNQorELxc9mAR1aNsmM5j49z653
+         ZyfAKvcNIpn1QLWUtIJWJTWvGsFYz9Vi7ZUKgfVki4us09AZkRrdPaTzyk+l0Uj0IHku
+         5NvFFAaXeBYP9Woq9eCHZMJZ4s5Cj2UOgxNzWtlOuK0mCUUofkS0QaxBBB7CP6G4it0P
+         PDteFrR7FCMx+hQ7BOW+4f8mEsHSJj4kVM+sH7x/xHqjdFzZ2Z9t9y/1ym7bs7xZxScO
+         pKMMgV2UsdiOS5yIu8odu9AUzU7WGUIu0q30XMeOp7GP8DzAeoXj+2WJA49O3UI/WEgi
+         aihQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+qAGrVPkwcfzkD6je4iq3abncA5LmG/XuqOXQo6A/Mg=;
-        b=qP5tHummq+r1tYSZKCNXobcW5hz2ViE8n90Y6fjwtS1XR+QCeJbC3o81nveTXuFKwS
-         witLwB6h83ZPGMSkkeaj7Ep+Ab1ibxAxSpUEv0rHLzIunMpLoFR17bFCXM4yELIUipLB
-         iy0cF/ac2gHX1LQv6PsDSTrOel6Rz8DcSBQcdo4PDhmy+MqGEonPjpCZTMnmFvcIYhpl
-         kSPpd27AvOjtnn42tDrhllv6F7Oj35wKDKMp/uLrigoJdWOxIGdlPPzsVKk4yV9/g7QZ
-         Ata+6c2OgRZQkD7p/C9b6YKpfgEtrVi8IqGtxhZ3TLymNJdlcbn3nmsvyadci8N7cM6U
-         hDOw==
-X-Gm-Message-State: APjAAAXLLHx6HQ2xGP+tberR5Us2ysYbo7quTRlgnXQTSZe18TN/cf0d
-        csuOkdL3C8lEHaBrm1SHu24LdQ==
-X-Google-Smtp-Source: APXvYqxlzJqBOhyfz1pog5+dbkAoW01mq5oD7ixwzFd2oWr20Cl/+N0OPZ9o7DxykanrYPXRRcLXuw==
-X-Received: by 2002:aa7:8d03:: with SMTP id j3mr37397821pfe.162.1575994380668;
-        Tue, 10 Dec 2019 08:13:00 -0800 (PST)
-Received: from cisco ([2601:282:902:b340:b1ae:d960:d4d7:eda9])
-        by smtp.gmail.com with ESMTPSA id z10sm4036146pfa.184.2019.12.10.08.12.58
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NL2wx8OhT9nqgeYI97q9VsOTFKCtkP5TFUuqwTv6H6w=;
+        b=ImpZguRWmSRpgAE3tXEgocnx6dJC1dyebtje8ulAGqoZ3ezgU6S/Z7O52T6hfpKoe5
+         l6UQ9C8MwFlM7YdXJzvK9ij4f55AdIy95TAB4VESBCPqIaUausyb88/uPtiVQVScI7fm
+         Ruk1ioqPnVhIxJawkCKmyfK6m9nqS0IszDz/zNYdddvSuOjfffThRLeumZuMJ+2Wqb78
+         FhWA6rvrGvR4/4a0AjTX6I2ar5rTbKAWl8QbFxAmLtsE6H6sitBTIAI75pfO2Om2f77m
+         gocr7LyqmXv7elpvTf9Si567NNSZIHrxKy2PLV0NSfkZQTYVAvrAXgsQV/omNlgTPyKA
+         3zIg==
+X-Gm-Message-State: APjAAAWorbo2n/uphecKF5rJqVgaSnSkW8XTZtS253uMkkKRqMX/phKS
+        Ol90c10Z/4+y4Tk+plgL9i36+KVrVeuNpw==
+X-Google-Smtp-Source: APXvYqzFCnW3bCJ9SgM7zc9uOwPn6XurQF380D0hDP/vO67nas52IiaHd40QcaYT8aulE0gULhfCqw==
+X-Received: by 2002:a92:d7c1:: with SMTP id g1mr35930204ilq.192.1575995096800;
+        Tue, 10 Dec 2019 08:24:56 -0800 (PST)
+Received: from x1.thefacebook.com ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id y11sm791174iol.23.2019.12.10.08.24.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 08:12:59 -0800 (PST)
-Date:   Tue, 10 Dec 2019 09:13:00 -0700
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>,
-        cyphar@cyphar.com, Andy Lutomirski <luto@amacapital.net>,
-        viro@zeniv.linux.org.uk, Jed Davis <jld@mozilla.com>,
-        Gian-Carlo Pascutto <gpascutto@mozilla.com>,
-        Emilio Cobos =?iso-8859-1?Q?=C1lvarez?= <ealvarez@mozilla.com>,
-        Florian Weimer <fweimer@redhat.com>
-Subject: Re: [PATCH v2 4/4] samples: Add example of using PTRACE_GETFD in
- conjunction with user trap
-Message-ID: <20191210161300.GE22803@cisco>
-References: <20191209070646.GA32477@ircssh-2.c.rugged-nimbus-611.internal>
- <20191209192959.GB10721@redhat.com>
- <BE3E056F-0147-4A00-8FF7-6CC9DE02A30C@ubuntu.com>
- <20191209204635.GC10721@redhat.com>
- <20191210111051.j5opodgjalqigx6q@wittgenstein>
- <CAMp4zn84YQHz62x-nxZFBgMEW9AiMt75q_rO83uaGg=YtyKV-w@mail.gmail.com>
+        Tue, 10 Dec 2019 08:24:56 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org
+Subject: [PATCHSET 0/5] Support for RWF_UNCACHED
+Date:   Tue, 10 Dec 2019 09:24:49 -0700
+Message-Id: <20191210162454.8608-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMp4zn84YQHz62x-nxZFBgMEW9AiMt75q_rO83uaGg=YtyKV-w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 08:07:45AM -0800, Sargun Dhillon wrote:
-> On Tue, Dec 10, 2019 at 3:10 AM Christian Brauner
-> <christian.brauner@ubuntu.com> wrote:
-> >
-> > [I'm expanding the Cc to a few Firefox and glibc people since we've been
-> >  been talking about replacing SECCOMP_RET_TRAP with
-> >  SECCOMP_RET_USER_NOTIF for a bit now because the useage of
-> >  SECCOMP_RET_TRAP in the broker blocks desirable core glibc changes.
-> >  Even if just for their lurking pleasure. :)]
-> >
-> > On Mon, Dec 09, 2019 at 09:46:35PM +0100, Oleg Nesterov wrote:
-> > > On 12/09, Christian Brauner wrote
-> > >
-> > > I agree, and I won't really argue...
-> > >
-> > > but the changelog in 2/4 says
-> > >
-> > >       The requirement that the tracer has attached to the tracee prior to the
-> > >       capture of the file descriptor may be lifted at a later point.
-> > >
-> > > so may be we should do this right now?
-> >
-> > I think so, yes. This doesn't strike me as premature optimization but
-> > rather as a core design questions.
-> >
-> > >
-> > > plus this part
-> > >
-> > >       @@ -1265,7 +1295,8 @@ SYSCALL_DEFINE4(ptrace, long, request, long, pid, unsigned long, addr,
-> > >               }
-> > >
-> > >               ret = ptrace_check_attach(child, request == PTRACE_KILL ||
-> > >       -                                 request == PTRACE_INTERRUPT);
-> > >       +                                 request == PTRACE_INTERRUPT ||
-> > >       +                                 request == PTRACE_GETFD);
-> > >
-> > > actually means "we do not need ptrace, but we do not know where else we
-> > > can add this fd_install(get_task_file()).
-> >
-> > Right, I totally get your point and I'm not a fan of this being in
-> > ptrace() either.
-> >
-> > The way I see is is that the main use-case for this feature is the
-> > seccomp notifier and I can see this being useful. So the right place to
-> > plumb this into might just be seccomp and specifically on to of the
-> > notifier.
-> > If we don't care about getting and setting fds at random points of
-> > execution it might make sense to add new options to the notify ioctl():
-> >
-> > #define SECCOMP_IOCTL_NOTIF_GET_FD      SECCOMP_IOWR(3, <sensible struct>)
-> > #define SECCOMP_IOCTL_NOTIF_SET_FD      SECCOMP_IOWR(4, <sensible struct>)
-> >
-> > which would let you get and set fds while the supervisee is blocked.
-> >
-> > Christian
-> Doesn't SECCOMP_IOCTL_NOTIF_GET_FD have some ambiguity to it?
-> Specifically, because
-> multiple processes can have the same notifier attached to them?
+Recently someone asked me how io_uring buffered IO compares to mmaped
+IO in terms of performance. So I ran some tests with buffered IO, and
+found the experience to be somewhat painful. The test case is pretty
+basic, random reads over a dataset that's 10x the size of RAM.
+Performance starts out fine, and then the page cache fills up and we
+hit a throughput cliff. CPU usage of the IO threads go up, and we have
+kswapd spending 100% of a core trying to keep up. Seeing that, I was
+reminded of the many complaints I here about buffered IO, and the fact
+that most of the folks complaining will ultimately bite the bullet and
+move to O_DIRECT to just get the kernel out of the way.
 
-The id member corresponds to a particular syscall from a particular
-pid, which makes it unique.
+But I don't think it needs to be like that. Switching to O_DIRECT isn't
+always easily doable. The buffers have different life times, size and
+alignment constraints, etc. On top of that, mixing buffered and O_DIRECT
+can be painful.
 
-> If we
-> choose to go down the
-> route of introducing an ioctl (which I'm not at all opposed to), I
-> would rather do it on pidfd. We
-> can then plumb seccomp notifier to send pidfd instead of raw pid. In
-> the mean time, folks
-> can just open up /proc/${PID}, and do the check cookie dance.
+Seems to me that we have an opportunity to provide something that sits
+somewhere in between buffered and O_DIRECT, and this is where
+RWF_UNCACHED enters the picture. If this flag is set on IO, we get the
+following behavior:
 
-This might be more generally useful, the problem is synchronization, I
-guess.
+- If the data is in cache, it remains in cache and the copy (in or out)
+  is served to/from that.
 
-Tycho
+- If the data is NOT in cache, we add it while performing the IO. When
+  the IO is done, we remove it again.
+
+With this, I can do 100% smooth buffered reads or writes without pushing
+the kernel to the state where kswapd is sweating bullets. In fact it
+doesn't even register.
+
+Comments appreciated! Patches are against current git (ish), and can
+also be found here:
+
+https://git.kernel.dk/cgit/linux-block/log/?h=buffered-uncached
+
+ fs/ceph/file.c          |   2 +-
+ fs/dax.c                |   2 +-
+ fs/ext4/file.c          |   2 +-
+ fs/iomap/apply.c        |   2 +-
+ fs/iomap/buffered-io.c  |  75 +++++++++++++++++------
+ fs/iomap/direct-io.c    |   3 +-
+ fs/iomap/fiemap.c       |   5 +-
+ fs/iomap/seek.c         |   6 +-
+ fs/iomap/swapfile.c     |   2 +-
+ fs/nfs/file.c           |   2 +-
+ include/linux/fs.h      |   9 ++-
+ include/linux/iomap.h   |   6 +-
+ include/uapi/linux/fs.h |   5 +-
+ mm/filemap.c            | 132 ++++++++++++++++++++++++++++++++++++----
+ 14 files changed, 208 insertions(+), 45 deletions(-)
+
+-- 
+Jens Axboe
+
+
