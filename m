@@ -2,74 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2B62119059
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 20:10:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91286119075
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 20:19:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727666AbfLJTKX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Dec 2019 14:10:23 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:44976 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727647AbfLJTKX (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Dec 2019 14:10:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=a35QQIVRZAfUwW6/AE1+O5h1J9PVr+kiDXT0hU/xuAk=; b=u5Y4Sp2rJd5Pz1+Bj6lrdl5xF
-        PQ06SchtmJ7RQjs3rGJMHTxj9dXHoD/8ZRpyGq4dGZgtyY5TueTqrttP69kNFYkpWKPINZpfYufrY
-        YZ8f/h7dRzikcn1LFfFXkmn7zUWjbkAs0HhNRJmV2zDndEmqItPhGAEwAXoZm/6+wwTFHTEBHLKiG
-        97wqZtBKAhLKnXngCYvueNY6Nv6WFBa07xKvXoNyfstlzJCbD5Ejgmxdf7IQWayLj8jzgmBW7/6tN
-        MdTBGGWBZwgViaJgaZFJc3+PSN45AWuZs7q3WmyCn9yrr9dtxWSNYjLBw0qerEDjx4Iu8LeIUg6iZ
-        9uc8hrtQg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iektm-0002Sn-3z; Tue, 10 Dec 2019 19:10:18 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2C1F3980D21; Tue, 10 Dec 2019 20:10:09 +0100 (CET)
-Date:   Tue, 10 Dec 2019 20:10:09 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-afs@lists.infradead.org, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] rxrpc: Mutexes are unusable from softirq context, so use
- rwsem instead
-Message-ID: <20191210191009.GA11457@worktop.programming.kicks-ass.net>
-References: <157599917879.6327.69195741890962065.stgit@warthog.procyon.org.uk>
+        id S1726595AbfLJTTQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Dec 2019 14:19:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53092 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726018AbfLJTTP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Dec 2019 14:19:15 -0500
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D42E02077B;
+        Tue, 10 Dec 2019 19:19:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576005555;
+        bh=v/zlr/k417wcCWHHCL31Rqwau5okPBjp1POLwjKxDYE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FzLzsGotMfuCA9yyO2/HDt1XmRzGg33023JGprHtkq/N9sJZBqyk9HAiW9R+lNtbo
+         1PiVZLTd3dVYranyQaIjPmw22oV4+WshIGF1KQEkAGGNhxiA3fMh/CcB3TF3aBpFQF
+         8HlA6I9QpUq/ALD7kyWxTil4u7/f5YRZKDjgzUro=
+Date:   Tue, 10 Dec 2019 11:19:13 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        linux-fsdevel@vger.kernel.org, ecryptfs@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] fs: introduce is_dot_or_dotdot helper for cleanup
+Message-ID: <20191210191912.GA99557@gmail.com>
+References: <1575979801-32569-1-git-send-email-yangtiezhu@loongson.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <157599917879.6327.69195741890962065.stgit@warthog.procyon.org.uk>
+In-Reply-To: <1575979801-32569-1-git-send-email-yangtiezhu@loongson.cn>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 05:32:58PM +0000, David Howells wrote:
-> rxrpc_call::user_mutex is of type struct mutex, but it's required to start
-> off locked on an incoming call as it is being set up in softirq context to
-> prevent sendmsg and recvmsg interfering with it until it is ready.  It is
-> then unlocked in rxrpc_input_packet() to make the call live.
-> 
-> Unfortunately, commit a0855d24fc22d49cdc25664fb224caee16998683
-> ("locking/mutex: Complain upon mutex API misuse in IRQ contexts") causes
-> big warnings to be splashed in dmesg for each a new call that comes in from
-> the server.
-> 
-> It *seems* like it should be okay, since the accept path trylocks the mutex
-> when no one else can see it and drops the mutex before it leaves softirq
-> context.
-> 
-> Fix this by switching to using an rw_semaphore instead as that is permitted
-> to be used in softirq context.
+On Tue, Dec 10, 2019 at 08:10:01PM +0800, Tiezhu Yang wrote:
+> diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+> index 3da3707..ef7eba8 100644
+> --- a/fs/crypto/fname.c
+> +++ b/fs/crypto/fname.c
+> @@ -11,21 +11,11 @@
+>   * This has not yet undergone a rigorous security audit.
+>   */
+>  
+> +#include <linux/namei.h>
+>  #include <linux/scatterlist.h>
+>  #include <crypto/skcipher.h>
+>  #include "fscrypt_private.h"
+>  
+> -static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
+> -{
+> -	if (str->len == 1 && str->name[0] == '.')
+> -		return true;
+> -
+> -	if (str->len == 2 && str->name[0] == '.' && str->name[1] == '.')
+> -		return true;
+> -
+> -	return false;
+> -}
+> -
+>  /**
+>   * fname_encrypt() - encrypt a filename
+>   *
+> @@ -255,7 +245,7 @@ int fscrypt_fname_disk_to_usr(struct inode *inode,
+>  	const struct qstr qname = FSTR_TO_QSTR(iname);
+>  	struct fscrypt_digested_name digested_name;
+>  
+> -	if (fscrypt_is_dot_dotdot(&qname)) {
+> +	if (is_dot_or_dotdot(qname.name, qname.len)) {
 
-This really has the very same problem. It just avoids the WARN. We do PI
-boosting for rwsem write side identical to what we do for mutexes.
+There's no need for the 'qname' variable anymore.  Can you please remove it and
+do:
 
-I would rather we revert David's patch for now and more carefully
-consider what to do about this.
+	if (is_dot_or_dotdot(iname->name, iname->len)) {
 
+> diff --git a/include/linux/namei.h b/include/linux/namei.h
+> index 7fe7b87..aba114a 100644
+> --- a/include/linux/namei.h
+> +++ b/include/linux/namei.h
+> @@ -92,4 +92,14 @@ retry_estale(const long error, const unsigned int flags)
+>  	return error == -ESTALE && !(flags & LOOKUP_REVAL);
+>  }
+>  
+> +static inline bool is_dot_or_dotdot(const unsigned char *name, size_t len)
+> +{
+> +	if (unlikely(name[0] == '.')) {
+> +		if (len < 2 || (len == 2 && name[1] == '.'))
+> +			return true;
+> +	}
+> +
+> +	return false;
+> +}
+
+This doesn't handle the len=0 case.  Did you check that none of the users pass
+in zero-length names?  It looks like fscrypt_fname_disk_to_usr() can, if the
+directory entry on-disk has a zero-length name.  Currently it will return
+-EUCLEAN in that case, but with this patch it may think it's the name ".".
+
+So I think there needs to either be a len >= 1 check added, *or* you need to
+make an argument for why it's okay to not care about the empty name case.
+
+- Eric
