@@ -2,89 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BF50119695
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 22:28:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4738119BFA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 23:13:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728692AbfLJV14 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Dec 2019 16:27:56 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:32854 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728835AbfLJV1w (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:27:52 -0500
-Received: by mail-io1-f67.google.com with SMTP id s25so5715100iob.0;
-        Tue, 10 Dec 2019 13:27:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=H5mECpigsi5IoO0Gd/OMlOo5Xgi22xFbljTixm/LvJ8=;
-        b=bbTprTIGy7WRDm/au9WDFJRyIht5M9SgTqsn/gyE+mocmzykvQab24Jh8AiBQhy9mO
-         4h3/EYBeRJK+WS6KuJeUlj3PWkTwabcs2eJ0s8p6MtRiKeOKjs0DNAeEqH7loPWkP+4s
-         zx8ka4wdOgAz/CrkdyCeRczY5tY1nRr+UqVb/LSdYthWiDHaD91NMzpfUfxkwzX27r7I
-         g5k4TjWDvgt1R2nqF98iS3n4NdjTuEdHRAyaz4aBcx48in4266/zivrqfuVsYLvO9tlc
-         OxWeHL2Ng8MMBld4JW+/gAWmupONWBbZS8/ItfF6Y4FL4/nErkmf4tFGHroQNdGx9P4i
-         LLRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=H5mECpigsi5IoO0Gd/OMlOo5Xgi22xFbljTixm/LvJ8=;
-        b=G8MR6BmIVFjxchlQEAKbDKpMN8OBNRlk0QinptwOFqaxmoHlc+CgPDT7gJD4fO1Csw
-         do+czHV0/y2LltnRJP3CTEBagTe3AmbcK8fckm33mlBZGn7ZKGhB+xNYLYju499vCvem
-         1G4nJnjxa/EXJ0kltpAw3Il944svZT7CfwDJgHiW4YWzBMonC/kM3zjEsdO2AWx4YqbF
-         MeabCqe3iE4NsPp22kMIN9DzYq7NCXsE7e3931UjqgaUUmj/oojtleGqZ5dRDvkGGGMe
-         ZBuKowVtkAq4fG6E94Se41mC6gNIL2fqzoLDvvqEJefthJeLpcdvvUbguOpWC1WhDsQ8
-         vPoA==
-X-Gm-Message-State: APjAAAVL2EoiEIiVovVqBRF3fqr2T1V0hb1TQIFWKRHZd/NAp1RX3a3h
-        HQkzGgBX/Gg11WhpJ/6wa/z3sOgE2XSYXTW9+KU=
-X-Google-Smtp-Source: APXvYqxxlVGO15l7eYtfNXjfLTjwFKDhTrtm/h/TOVV/jLIopcfB40ClbnrIG3zGec04yiaa6oSt6D9GMyznieRnHDU=
-X-Received: by 2002:a02:a915:: with SMTP id n21mr28189604jam.117.1576013271029;
- Tue, 10 Dec 2019 13:27:51 -0800 (PST)
-MIME-Version: 1.0
-References: <20191210102916.842-1-agruenba@redhat.com> <20191210203252.GA99875@magnolia>
- <CAHpGcMJMgttnXu48wHnP-WqdPkuXBaFd+COKV9XiRP6VrtRUVg@mail.gmail.com> <20191210212552.GC99875@magnolia>
-In-Reply-To: <20191210212552.GC99875@magnolia>
-From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
-Date:   Tue, 10 Dec 2019 22:27:40 +0100
-Message-ID: <CAHpGcMJxoekJvZqW3=9B7Jfpo43N1XzayY0TQc7eWLjHVwvQXg@mail.gmail.com>
-Subject: Re: [PATCH] iomap: Export iomap_page_create and iomap_set_range_uptodate
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        cluster-devel <cluster-devel@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S1730140AbfLJWMs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Dec 2019 17:12:48 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60742 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729369AbfLJWMr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Dec 2019 17:12:47 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 903DCAD2B;
+        Tue, 10 Dec 2019 22:12:45 +0000 (UTC)
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     peterz@infradead.org
+Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, tglx@linutronix.de, will@kernel.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: [PATCH] Revert "locking/mutex: Complain upon mutex API misuse in IRQ contexts"
+Date:   Tue, 10 Dec 2019 14:05:23 -0800
+Message-Id: <20191210220523.28540-1-dave@stgolabs.net>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20191210193011.GA11802@worktop.programming.kicks-ass.net>
+References: <20191210193011.GA11802@worktop.programming.kicks-ass.net>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Am Di., 10. Dez. 2019 um 22:25 Uhr schrieb Darrick J. Wong
-<darrick.wong@oracle.com>:
-> On Tue, Dec 10, 2019 at 09:39:31PM +0100, Andreas Gr=C3=BCnbacher wrote:
-> > Am Di., 10. Dez. 2019 um 21:33 Uhr schrieb Darrick J. Wong
-> > <darrick.wong@oracle.com>:
-> > > On Tue, Dec 10, 2019 at 11:29:16AM +0100, Andreas Gruenbacher wrote:
-> > > > These two functions are needed by filesystems for converting inline
-> > > > ("stuffed") inodes into non-inline inodes.
-> > > >
-> > > > Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-> > >
-> > > Looks fine to me... this is a 5.6 change, correct?
-> >
-> > Yes, so there's still plenty of time to get things in place until
-> > then. I'd like to hear from Christoph if he has any objections. In any
-> > case, this patch isn't going to break anything.
->
-> By the way, the other symbols in fs/iomap/ are all EXPORT_SYMBOL_GPL.
-> Does gfs2/RH/anyone have a particular requirement for EXPORT_SYMBOL, or
-> could we make the new exports _GPL to match the rest?
+This ended up causing some noise in places such as rxrpc running in softirq.
 
-I don't mind EXPORT_SYMBOL_GPL.
+The warning is misleading in this case as the mutex trylock and unlock
+operations are done within the same context; and therefore we need not
+worry about the PI-boosting issues that comes along with no single-owner
+lock guarantees.
 
-Thanks,
-Andreas
+While we don't want to support this in mutexes, there is no way out of
+this yet; so lets get rid of the WARNs for now, as it is only fair to
+code that has historically relied on non-preemptible softirq guarantees.
+In addition, changing the lock type is also unviable: exclusive rwsems
+have the same issue (just not the WARN_ON) and counting semaphores
+would introduce a performance hit as mutexes are a lot more optimized.
+
+This reverts commit 5d4ebaa87329ef226e74e52c80ac1c62e4948987.
+
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+---
+ kernel/locking/mutex.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
+index 54cc5f9286e9..5352ce50a97e 100644
+--- a/kernel/locking/mutex.c
++++ b/kernel/locking/mutex.c
+@@ -733,9 +733,6 @@ static noinline void __sched __mutex_unlock_slowpath(struct mutex *lock, unsigne
+  */
+ void __sched mutex_unlock(struct mutex *lock)
+ {
+-#ifdef CONFIG_DEBUG_MUTEXES
+-	WARN_ON(in_interrupt());
+-#endif
+ #ifndef CONFIG_DEBUG_LOCK_ALLOC
+ 	if (__mutex_unlock_fast(lock))
+ 		return;
+@@ -1416,7 +1413,6 @@ int __sched mutex_trylock(struct mutex *lock)
+ 
+ #ifdef CONFIG_DEBUG_MUTEXES
+ 	DEBUG_LOCKS_WARN_ON(lock->magic != lock);
+-	WARN_ON(in_interrupt());
+ #endif
+ 
+ 	locked = __mutex_trylock(lock);
+-- 
+2.16.4
+
