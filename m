@@ -2,181 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49C87118E47
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 17:55:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FD45118E73
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 18:02:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727607AbfLJQzm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Dec 2019 11:55:42 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35246 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727541AbfLJQzl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Dec 2019 11:55:41 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2D617ADC8;
-        Tue, 10 Dec 2019 16:55:39 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id CFCB61E0B23; Tue, 10 Dec 2019 17:55:38 +0100 (CET)
-Date:   Tue, 10 Dec 2019 17:55:38 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Mo Re Ra <more7.rev@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: File monitor problem
-Message-ID: <20191210165538.GK1551@quack2.suse.cz>
-References: <CADKPpc2RuncyN+ZONkwBqtW7iBb5ep_3yQN7PKe7ASn8DpNvBw@mail.gmail.com>
- <CAOQ4uxiKqEq9ts4fEq_husQJpus29afVBMq8P1tkeQT-58RBFg@mail.gmail.com>
- <CADKPpc33UGcuRB9p64QoF8g88emqNQB=Z03f+OnK4MiCoeVZpg@mail.gmail.com>
- <20191204173455.GJ8206@quack2.suse.cz>
- <CADKPpc2EU6ijG=2bs6t8tXr32pB1ufBJCjEirPyoHdMtMr83hw@mail.gmail.com>
+        id S1727550AbfLJRCW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Dec 2019 12:02:22 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44388 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727494AbfLJRCW (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Dec 2019 12:02:22 -0500
+Received: by mail-pl1-f196.google.com with SMTP id bh2so102964plb.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2019 09:02:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=rRqPLE4dXnF4n2+9+iyu9OEiIv3PDL4Q8KoD2x2W6Gk=;
+        b=zphgx8SE0ecZBftbR1vGSNvgVTJ+UjBN6JyiXOeU4wVBNAWrP0m3GLK2dU0i2R7uOv
+         Pj0Oki2wCvjCoA/DFnJKkERIZqI4Z4mmudNnH6LdOZZqSblGL9eBdTRSXxpAnmnFjnjW
+         r0O4e5y1OnxroqqTs2NAwnObYlrAlCINpmBb4DcCY1hQyvd6Ldz6PxFAOfkFktW86DDf
+         TtohfMDX7XOtvt8Q8f4yXJUGDT8EPbRtAEDtCoAt/LkftPIQ7RyE9zTPuB7OwVqWt2KE
+         CrfpZ/jPduPdklP9julfsqkFbMq5c+47BIo3FDCXFWaAc0vY6AlBj21swzrhnepuYjDN
+         Ydgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rRqPLE4dXnF4n2+9+iyu9OEiIv3PDL4Q8KoD2x2W6Gk=;
+        b=dJ7Bi3bXJqaZ9yv9mdwchrayiagl0AbVIvVPpuJ1msYzOKSuyHOmgS46ckMzbY7DWZ
+         4rvY8B4UL1Gcu16ufBFbnZlM8uMa5hYxqm5GkQr3hhtpWIfSUo8QUpnZ2kES3Db5TZNp
+         QiLRdj4231GYjfIPXkgwH4t6mcQZSyLoQQYtejqMUv9E3cAozwelkOiNe83vS9D6vQmw
+         uW8W1KzYSA3UQfHr+Ok6mGP0Yw4nujb399ddwf1yZGdGy2TAPbi0BhLXWqYQ0JSi0v87
+         wQou8woDcZsX8+kcp/4eCuG+n1brhMdQy7MmZOR2SPxAekKd2Xr7Jc2tkUCYqc5vfEby
+         G0jg==
+X-Gm-Message-State: APjAAAUfwfMWYQU2UqPww6/j77khYQJjvogUea4xSJKj0lQ8kQg3jJg0
+        WJiZIaw+LqUyAZTis/5FDjpyWg==
+X-Google-Smtp-Source: APXvYqyd0yR6JXRmVjr21noLl8IiI3HSB25yPpBjQvYCieXOg4m2hODG+fIOIbjIJGZGkXWU0Riafw==
+X-Received: by 2002:a17:902:bc8b:: with SMTP id bb11mr24150424plb.52.1575997341297;
+        Tue, 10 Dec 2019 09:02:21 -0800 (PST)
+Received: from ?IPv6:2620:10d:c081:1131::1365? ([2620:10d:c090:180::b7af])
+        by smtp.gmail.com with ESMTPSA id c19sm4487904pfc.144.2019.12.10.09.02.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2019 09:02:20 -0800 (PST)
+Subject: Re: [PATCH 3/5] mm: make buffered writes work with RWF_UNCACHED
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org
+References: <20191210162454.8608-1-axboe@kernel.dk>
+ <20191210162454.8608-4-axboe@kernel.dk>
+ <20191210165532.GJ32169@bombadil.infradead.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <721d8d7e-9e24-bded-a3c0-fa5bf433e129@kernel.dk>
+Date:   Tue, 10 Dec 2019 10:02:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADKPpc2EU6ijG=2bs6t8tXr32pB1ufBJCjEirPyoHdMtMr83hw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191210165532.GJ32169@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Mohammad!
-
-On Sat 07-12-19 16:06:41, Mo Re Ra wrote:
-> On Wed, Dec 4, 2019 at 9:04 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > Hello Mohammad,
-> >
-> > On Wed 04-12-19 17:54:48, Mo Re Ra wrote:
-> > > On Wed, Dec 4, 2019 at 4:23 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> > > > On Wed, Dec 4, 2019 at 12:03 PM Mo Re Ra <more7.rev@gmail.com> wrote:
-> > > > > I don`t know if this is the correct place to express my issue or not.
-> > > > > I have a big problem. For my project, a Directory Monitor, I`ve
-> > > > > researched about dnotify, inotify and fanotify.
-> > > > > dnotify is the worst choice.
-> > > > > inotify is a good choice but has a problem. It does not work
-> > > > > recursively. When you implement this feature by inotify, you would
-> > > > > miss immediately events after subdir creation.
-> > > > > fanotify is the last choice. It has a big change since Kernel 5.1. But
-> > > > > It does not meet my requirement.
-> > > > >
-> > > > > I need to monitor a directory with CREATE, DELETE, MOVE_TO, MOVE_FROM
-> > > > > and CLOSE_WRITE events would be happened in its subdirectories.
-> > > > > Filename of the events happened on that (without any miss) is
-> > > > > mandatory for me.
-> > > > >
-> > > > > I`ve searched and found a contribution from @amiril73 which
-> > > > > unfortunately has not been merged. Here is the link:
-> > > > > https://github.com/amir73il/fsnotify-utils/issues/1
-> > > > >
-> > > > > I`d really appreciate it If you could resolve this issue.
-> > > > >
-> > > >
-> > > > Hi Mohammad,
-> > > >
-> > > > Thanks for taking an interest in fanotify.
-> > > >
-> > > > Can you please elaborate about why filename in events are mandatory
-> > > > for your application.
-> > > >
-> > > > Could your application use the FID in FAN_DELETE_SELF and
-> > > > FAN_MOVE_SELF events to act on file deletion/rename instead of filename
-> > > > information in FAN_DELETE/FAN_MOVED_xxx events?
-> > > >
-> > > > Will it help if you could get a FAN_CREATE_SELF event with FID information
-> > > > of created file?
-> > > >
-> > > > Note that it is NOT guarantied that your application will be able to resolve
-> > > > those FID to file path, for example if file was already deleted and no open
-> > > > handles for this file exist or if file has a hardlink, you may resolve the path
-> > > > of that hardlink instead.
-> > > >
-> > > > Jan,
-> > > >
-> > > > I remember we discussed the optional FAN_REPORT_FILENAME [1] and
-> > > > you had some reservations, but I am not sure how strong they were.
-> > > > Please refresh my memory.
-> > > >
-> > > > Thanks,
-> > > > Amir.
-> > > >
-> > > > [1] https://github.com/amir73il/linux/commit/d3e2fec74f6814cecb91148e6b9984a56132590f
-> > >
-> >
-> > > Fanotify project had a big change since Kernel 5.1 but did not meet
-> > > some primiry needs.
-> > > For example in my application, I`m watching on a specific directory to
-> > > sync it (through a socket connection and considering some policies)
-> > > with a directory in a remote system which a user working on that. Some
-> > > subdirectoires may contain two milions of files or more. I need these
-> > > two directoires be synced completely as soon as possible without any
-> > > missed notification.
-> > > So, I need a syscall with complete set of flags to help to watch on a
-> > > directory and all of its subdirectories recuresively without any
-> > > missed notification.
-> > >
-> > > Unfortuantely, in current version of Fanotify, the notification just
-> > > expresses a change has been occured in a directory but dot not
-> > > specifiy which file! I could not iterate over millions of file to
-> > > determine which file was that. That would not be helpful.
-> >
-> > The problem is there's no better reliable way. For example even if fanotify
-> > event provided a name as in the Amir's commit you reference, this name is
-> > not very useful. Because by the time your application gets to processing
-> > that fanotify event, the file under that name need not exist anymore, or
-> > there may be a different file under that name already. That is my main
-> > objection to providing file names with fanotify events - they are not
-> > reliable but they are reliable enough that application developers will use
-> > them as a reliable thing which then leads to hard to debug bugs. Also
-> > fanotify was never designed to guarantee event ordering so it is impossible
-> > to reconstruct exact state of a directory in userspace just by knowing some
-> > past directory state and then "replaying" changes as reported by fanotify.
-> >
-> > I could imagine fanotify events would provide FID information of the target
-> > file e.g. on create so you could then use that with open_by_handle() to
-> > open the file and get reliable access to file data (provided the file still
-> > exists). However there still remains the problem that you don't know the
-> > file name and the problem that directory changes while you are looking...
-> >
-> > So changing fanotify to suit your usecase requires more than a small tweak.
-> >
-> > For what you want, it seems e.g. btrfs send-receive functionality will
-> > provide what you need but then that's bound to a particular filesystem.
-> >
-> >                                                                 Honza
-> > --
-> > Jan Kara <jack@suse.com>
-> > SUSE Labs, CR
+On 12/10/19 9:55 AM, Matthew Wilcox wrote:
+> On Tue, Dec 10, 2019 at 09:24:52AM -0700, Jens Axboe wrote:
+>> +/*
+>> + * Start writeback on the pages in pgs[], and then try and remove those pages
+>> + * from the page cached. Used with RWF_UNCACHED.
+>> + */
+>> +void write_drop_cached_pages(struct page **pgs, struct address_space *mapping,
+>> +			     unsigned *nr)
 > 
-> I understand your concerns about reliablity. But I think functionality
-> and reliablity are two different things in this case. We`d better
-> entrust the reliability to the user.
-> Consider a user just want monitor all of filesystem changes but does
-> not intend to do anything according the received notifications.
-> I think we do not make decision for users by restricting them and
-> ignoring their necessary demands. We shuold introduce the best
-> available tools with all of concerns about them (which are
-> documented). So, we would put the user in charge of organizing his
-> projects. The user may care or not according his demands.
+> It would seem more natural to use a pagevec instead of pgs/nr.
 
-I disgree. This is not how API design works in the Linux kernel. First, you
-have to have a good and sound use case for the functionality (and I
-understand and acknowledge your need to monitor a large directory and
-reliably synchronize changes to another place) and then we try to implement
-API that would fulfil the needs of the usecase. For you, extending fanotify
-with file names will *not* fulfil the needs of your use case. The mechanism
-will be as racy as with inotify, just with somewhat smaller set of races.
-I'm not willing to introduce another file change notification API to the
-kernel that works with 99% reliability. We've been through that with
-inotify and it just adds maintenance burden and shifts the problem couple
-years down the road before people start hitting the races with the new API.
+I did look into that, but they are intertwined with LRU etc. I
+deliberately avoided the LRU on the read side, as it adds noticeable
+overhead and gains us nothing since the pages will be dropped agian.
 
-And we don't add new APIs to the kernel just because someone could find
-some use for them. Because APIs in the kernel are really costly in terms of
-maintenance. Once you introduce userspace facing API, you have to maintain
-it basically forever which constrains future development and adds needs for
-compatibility layers etc.
+>> +{
+>> +	loff_t start, end;
+>> +	int i;
+>> +
+>> +	end = 0;
+>> +	start = LLONG_MAX;
+>> +	for (i = 0; i < *nr; i++) {
+>> +		struct page *page = pgs[i];
+>> +		loff_t off;
+>> +
+>> +		off = (loff_t) page_to_index(page) << PAGE_SHIFT;
+> 
+> Isn't that page_offset()?
 
-								Honza
+I guess it is! I'll make that change.
+
+>> +	__filemap_fdatawrite_range(mapping, start, end, WB_SYNC_NONE);
+>> +
+>> +	for (i = 0; i < *nr; i++) {
+>> +		struct page *page = pgs[i];
+>> +
+>> +		lock_page(page);
+>> +		if (page->mapping == mapping) {
+> 
+> So you're protecting against the page being freed and reallocated to a
+> different file, but not against the page being freed and reallocated
+> to a location in the same file which is outside (start, end)?
+
+I guess so, we can add that too, probably just check if the index is
+still the same. More of a behavioral thing, shouldn't be any
+correctness issues there.
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Jens Axboe
+
