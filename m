@@ -2,163 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 526521194EA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 22:19:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADD7E119504
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 22:19:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728826AbfLJVQt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Dec 2019 16:16:49 -0500
-Received: from mail-bn7nam10on2069.outbound.protection.outlook.com ([40.107.92.69]:6100
-        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726968AbfLJVQn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:16:43 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RTFUFelECr8EC7z0hCDchkGIen8uRrpehu4YnxHFFY//WQYie8pjPTYeaxCQES3yFE4ki/X9g88qEPozkBgwB0i96MkgCb+ZE5jaz3tcs+e0iewcalAfM5x7ZSQFIC2gnm03rHlaiuPeCa0rLc6YY0fPdOI9JmYd3ohsNsLBDi1T16weBMZ2Q7wQ9CWZ2D+2yLWYautgZGNTJFjRGaG30kekgdriKeZpnxOt+IxCnwnAz+B46ELxJt098OBbWN1r/S/EeUBn5u1JNw0Qn4aQy16X+/etcfEYvSz+/Vacld0Y0gtBwlkVIvEQF3r2vsE3iiaUBDDNtbkphnqDOx7K1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OSoZuO4USlWzYQnwjNGnAvTCmHXnPGXZpROPM+hPd8o=;
- b=AsjtpOMUrVmmXmotkVSLiIQuzM5ovv61bWNmMNi8R1mlmwwa/g5I6IZFE1MEHxVSu+pCvqoJqJLgKCw1veoERw/CCXS9yTghH4JhB0pCrvkuyis9ivofROrfVfR76P7BFV4ezt0iq6BoKPUy7OfB6abWasgRCdyfvnO+emHUCQfwtxUMNeJYn3BHdQxAvg+0ej2teklyXVG51is2Lo7u9IIBzuabsgru+J7HeHgCPFrnQxL5wdALoYtGNxImitp9DhhTXf6OLwLbJBuCJd6COt4it80HYlM2MBL6oIkwV63SiJ4/Pqh6oL3b3DjG5BNVnkg3UagOh8qMfUoBosUjYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=netapp.com; dmarc=pass action=none header.from=netapp.com;
- dkim=pass header.d=netapp.com; arc=none
+        id S1729215AbfLJVR5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Dec 2019 16:17:57 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39698 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727528AbfLJVR4 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Dec 2019 16:17:56 -0500
+Received: by mail-pf1-f194.google.com with SMTP id 2so452301pfx.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2019 13:17:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=netapp.onmicrosoft.com; s=selector1-netapp-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OSoZuO4USlWzYQnwjNGnAvTCmHXnPGXZpROPM+hPd8o=;
- b=s99Dir0VoKQEUEVk5sQ8eAiZ/LgoBAtpglcUD7Lu1p/sQL90s5goO/e15ArswxcshcENOYyIv8Lr3nmjG6VYuTkz/K98SidVbv3theKgBUeoVCUeKJAhpSii0vtc30N0UZAUpMoYW+698OZc895da3VsKLDQOeiicDqT4pxU15w=
-Received: from BL0PR06MB4370.namprd06.prod.outlook.com (10.167.241.142) by
- BL0PR06MB4433.namprd06.prod.outlook.com (10.167.181.215) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2516.17; Tue, 10 Dec 2019 21:16:40 +0000
-Received: from BL0PR06MB4370.namprd06.prod.outlook.com
- ([fe80::dd54:50fb:1e98:46a1]) by BL0PR06MB4370.namprd06.prod.outlook.com
- ([fe80::dd54:50fb:1e98:46a1%6]) with mapi id 15.20.2516.018; Tue, 10 Dec 2019
- 21:16:40 +0000
-From:   "Schumaker, Anna" <Anna.Schumaker@netapp.com>
-To:     "smayhew@redhat.com" <smayhew@redhat.com>,
-        "trond.myklebust@hammerspace.com" <trond.myklebust@hammerspace.com>
-CC:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dhowells@redhat.com" <dhowells@redhat.com>
-Subject: Re: [PATCH v6 00/27] nfs: Mount API conversion
-Thread-Topic: [PATCH v6 00/27] nfs: Mount API conversion
-Thread-Index: AQHVr1W8XcbfpDFp1UOihmUxoyYAoqez34uA
-Date:   Tue, 10 Dec 2019 21:16:39 +0000
-Message-ID: <498258bf630d4c2667920f21341a2a6e82a3788d.camel@netapp.com>
-References: <20191210123115.1655-1-smayhew@redhat.com>
-In-Reply-To: <20191210123115.1655-1-smayhew@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.34.2 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Anna.Schumaker@netapp.com; 
-x-originating-ip: [68.42.68.242]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 255d2858-8314-4687-815d-08d77db63fb1
-x-ms-traffictypediagnostic: BL0PR06MB4433:
-x-microsoft-antispam-prvs: <BL0PR06MB443308E25869E84A29EEBF88F85B0@BL0PR06MB4433.namprd06.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 02475B2A01
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(396003)(39860400002)(346002)(136003)(366004)(51914003)(199004)(189003)(2616005)(26005)(2906002)(478600001)(110136005)(4326008)(54906003)(36756003)(186003)(6512007)(316002)(66556008)(8936002)(64756008)(66446008)(71200400001)(6486002)(5660300002)(76116006)(91956017)(66946007)(6506007)(4001150100001)(81156014)(81166006)(86362001)(66476007)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:BL0PR06MB4433;H:BL0PR06MB4370.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: netapp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: //MsNualPkBZhWykcBg3jQKrfU2sRe6gkerQvddm+d8CkpZvEXhtPMIC0/OlZOtV4NddfykJENsHUo+QfXCKDCdsG12eHT0oVuThSLtnEKo3G7uZA2mIZa4bjcFwrJ5rvPe2BF9l8DF6MyoBQHGSij4jTq1wXksgJ2HXsTmeTXHN6TmPn0vHJJqcswcuvsFJUgZSoKPo7n0v3hUNFIIL4lzM2JRSzlKJn9hRN/xDvkeHiJjJ8afdWldaFxuTZnNs1Dgz+nI7+KwomYMf4ULgubOGrm8MFGFFsxxXoVXlUqWc8eB8kkSoV6iZAWOlPwOn9bTYlmuGpdccBo5TqZqh0OeKWor9V3+DZTDBuZc/kl8Ii0PWdyPtxxEBR8chzBglKNknGDSep3J2eMc96JGD4VI/nEcfNmrXgVP3M44U0WPICRtg3cveMfFwWdh+tGUlAu9sux4lP9GyXm7W1Aj9xYB4LXrYy1yAj/QMPqP3rLST1UPHcOyseJ4Gr5TMdesz
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <CA34966C5CA71D4BA37D8349CF7DA761@namprd06.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: netapp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 255d2858-8314-4687-815d-08d77db63fb1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2019 21:16:39.8804
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4b0911a0-929b-4715-944b-c03745165b3a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 0deS/3gAQQKmREhyfC7Hs2i/gIJeUTZbm0ciBej5i/NAqYiLTIE1oH7mUdb7c6hxxKKGcEUqCKP3WAhpuiuHqQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR06MB4433
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=SNHRjxlt4NMKZWGs5+fLhbXaGfPvIrXQizFGAzAlZ+g=;
+        b=SbHMXvI6+O3O60qAIY03nJll+pzu0rLlcfldiVHU+TJmVERy6lmDacoZZ+CT3xsKsw
+         HStRhiisMFhtxJCkZYwGoziZ0ai/0JodxRUrkIyJ9qFldkKFqGWikjH4Y9zlAuDEjIyO
+         u472vXyXms+aqiluLwiPA2aSZx/dGElfT5PvRDxxpmFc4I1lTYoG5YEhjvYzreIBUASi
+         +LAHfgUjEcdNTg0kV4g1Q+w/lAiG60Q6nkToXU5s1fNXv7IU7HhdkhudY92TdDzQVvaZ
+         d/VvLj6VDAHeTw89pDgiXnq+OOaMfiKo0ZfBm6A36wTdDMMml980lQziexL/B6b/tfws
+         wmuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=SNHRjxlt4NMKZWGs5+fLhbXaGfPvIrXQizFGAzAlZ+g=;
+        b=KBMRvO5QnX6Go2YmG78rmyLmVqFBObxlk0U9FST12CHlhaj5qoowezpG6SFiHw1gPg
+         dzKzZvwis5Vuidvsr5QkcO/+JQrJr0cnFeqNyaCQKhCejdSTA7meFMQw+rC+3KuARAU+
+         psX5VVoAaTJIa2KrHw99o2jAaI2/TLd+JSlaLazc+agSGwueWpLDJkx4RagStW29/XJE
+         LlbD7dosHsGHlEs7pk6S2Kf7nYIoFT6VURR4SwklKH26vT4gPRHolyeMfOxQ8cHRYKAU
+         4EKUa/iYhfhsfyUlO7pw9BMbnVq1Q3RewLPsCcbBmpUy128fLxxAf4IXqDfOLVbnO26V
+         4AnA==
+X-Gm-Message-State: APjAAAVGfHIcAEgZ7Bn5BmgtSIUDo0AuwuLGLN1k/pyVnLX5tNgIzmu8
+        X43mOlunNd2wuRAePGJkn1w2IQ==
+X-Google-Smtp-Source: APXvYqwVD6DdvohGonltgCv42mx7mDiWfAb88x0SbR41yv/ZcwuoadPn0ddG2IuNMH0SYYnWCQ8skQ==
+X-Received: by 2002:aa7:8155:: with SMTP id d21mr35927217pfn.26.1576012675170;
+        Tue, 10 Dec 2019 13:17:55 -0800 (PST)
+Received: from cabot-wlan.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
+        by smtp.gmail.com with ESMTPSA id q11sm4600684pff.111.2019.12.10.13.17.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Dec 2019 13:17:54 -0800 (PST)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <7727519C-01BE-43E8-A1BD-579CF6BD26B2@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_60556B62-F3B5-4602-887C-70C079591153";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCHSET 0/5] Support for RWF_UNCACHED
+Date:   Tue, 10 Dec 2019 14:17:51 -0700
+In-Reply-To: <20191210162454.8608-1-axboe@kernel.dk>
+Cc:     linux-mm <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>
+References: <20191210162454.8608-1-axboe@kernel.dk>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-SGkgU2NvdHQsDQoNCk9uIFR1ZSwgMjAxOS0xMi0xMCBhdCAwNzozMCAtMDUwMCwgU2NvdHQgTWF5
-aGV3IHdyb3RlOg0KPiBIaSBBbm5hLCBUcm9uZCwNCj4gDQo+IEhlcmUncyBhIHNldCBvZiBwYXRj
-aGVzIHRoYXQgY29udmVydHMgTkZTIHRvIHVzZSB0aGUgbW91bnQgQVBJLiAgTm90ZSB0aGF0DQo+
-IHRoZXJlIGFyZSBhIGxvdCBvZiBwcmVsaW1pbmFyeSBwYXRjaGVzLCBzb21lIGZyb20gRGF2aWQg
-YW5kIHNvbWUgZnJvbSBBbC4NCj4gVGhlIGZpbmFsIHBhdGNoICh0aGUgb25lIHRoYXQgZG9lcyB0
-aGUgYWN0dWFsIGNvbnZlcnNpb24pIGZyb20gdGhlIERhdmlkJ3MNCj4gaW5pdGlhbCBwb3N0aW5n
-IGhhcyBiZWVuIHNwbGl0IGludG8gNSBzZXBhcmF0ZSBwYXRjaGVzLCBhbmQgdGhlIGVudGlyZSBz
-ZXQNCj4gaGFzIGJlZW4gcmViYXNlZCBvbiB0b3Agb2YgdjUuNS1yYzEuDQoNClRoYW5rcyBmb3Ig
-dGhlIHVwZGF0ZWQgcGF0Y2hlcyEgRXZlcnl0aGluZyBsb29rcyBva2F5IHRvIG1lLCBidXQgSSd2
-ZSBvbmx5DQp0ZXN0ZWQgd2l0aCB0aGUgbGVnYWN5IG1vdW50IGNvbW1hbmQuIEknbSBjdXJpb3Vz
-IGlmIHlvdSd2ZSB0ZXN0ZWQgaXQgdXNpbmcgdGhlDQpuZXcgc3lzdGVtPw0KDQpUaGFua3MsDQpB
-bm5hDQoNCj4gDQo+IENoYW5nZXMgc2luY2UgdjU6DQo+IC0gZml4ZWQgcG9zc2libGUgZGVyZWZl
-bmNlIG9mIGVycm9yIHBvaW50ZXIgaW4gbmZzNF92YWxpZGF0ZV9mc3BhdGgoKQ0KPiAgIHJlcG9y
-dGVkIGJ5IERhbiBDYXJwZW50ZXINCj4gLSByZWJhc2VkIG9uIHRvcCBvZiB2NS41LXJjMQ0KPiBD
-aGFuZ2VzIHNpbmNlIHY0Og0KPiAtIGZ1cnRoZXIgc3BsaXQgdGhlIG9yaWdpbmFsICJORlM6IEFk
-ZCBmc19jb250ZXh0IHN1cHBvcnQiIHBhdGNoIChuZXcNCj4gICBwYXRjaCBpcyBhYm91dCAyNSUg
-c21hbGxlciB0aGFuIHRoZSB2NCBwYXRjaCkNCj4gLSBmaXhlZCBORlN2NCByZWZlcnJhbCBtb3Vu
-dHMgKGJyb2tlbiBpbiB0aGUgb3JpZ2luYWwgcGF0Y2gpDQo+IC0gZml4ZWQgbGVhayBvZiBuZnNf
-ZmF0dHIgd2hlbiBmc19jb250ZXh0IGlzIGZyZWVkDQo+IENoYW5nZXMgc2luY2UgdjM6DQo+IC0g
-Y2hhbmdlZCBsaWNlbnNlIGFuZCBjb3B5cmlnaHQgdGV4dCBpbiBmcy9uZnMvZnNfY29udGV4dC5j
-DQo+IENoYW5nZXMgc2luY2UgdjI6DQo+IC0gZml4ZWQgdGhlIGNvbnZlcnNpb24gb2YgdGhlIG5j
-b25uZWN0PSBvcHRpb24NCj4gLSBhZGRlZCAnI2lmIElTX0VOQUJMRUQoQ09ORklHX05GU19WNCkn
-IGFyb3VuZCBuZnM0X3BhcnNlX21vbm9saXRoaWMoKQ0KPiAgIHRvIGF2b2lkIHVudXNlZC1mdW5j
-dGlvbiB3YXJuaW5nIHdoZW4gY29tcGlsaW5nIHdpdGggdjQgZGlzYWJsZWQNCj4gQ2hhZ25lcyBz
-aW5jZSB2MToNCj4gLSBzcGxpdCB1cCBwYXRjaCAyMyBpbnRvIDQgc2VwYXJhdGUgcGF0Y2hlcw0K
-PiANCj4gLVNjb3R0DQo+IA0KPiBBbCBWaXJvICgxNSk6DQo+ICAgc2FuZXIgY2FsbGluZyBjb252
-ZW50aW9ucyBmb3IgbmZzX2ZzX21vdW50X2NvbW1vbigpDQo+ICAgbmZzOiBzdGFzaCBzZXJ2ZXIg
-aW50byBzdHJ1Y3QgbmZzX21vdW50X2luZm8NCj4gICBuZnM6IGxpZnQgc2V0dGluZyBtb3VudF9p
-bmZvIGZyb20gbmZzNF9yZW1vdGV7LF9yZWZlcnJhbH1fbW91bnQNCj4gICBuZnM6IGZvbGQgbmZz
-NF9yZW1vdGVfZnNfdHlwZSBhbmQgbmZzNF9yZW1vdGVfcmVmZXJyYWxfZnNfdHlwZQ0KPiAgIG5m
-czogZG9uJ3QgYm90aGVyIHNldHRpbmcvcmVzdG9yaW5nIGV4cG9ydF9wYXRoIGFyb3VuZA0KPiAg
-ICAgZG9fbmZzX3Jvb3RfbW91bnQoKQ0KPiAgIG5mczQ6IGZvbGQgbmZzX2RvX3Jvb3RfbW91bnQv
-bmZzX2ZvbGxvd19yZW1vdGVfcGF0aA0KPiAgIG5mczogbGlmdCBzZXR0aW5nIG1vdW50X2luZm8g
-ZnJvbSBuZnNfeGRldl9tb3VudCgpDQo+ICAgbmZzOiBzdGFzaCBuZnNfc3VidmVyc2lvbiByZWZl
-cmVuY2UgaW50byBuZnNfbW91bnRfaW5mbw0KPiAgIG5mczogZG9uJ3QgYm90aGVyIHBhc3Npbmcg
-bmZzX3N1YnZlcnNpb24gdG8gLT50cnlfbW91bnQoKSBhbmQNCj4gICAgIG5mc19mc19tb3VudF9j
-b21tb24oKQ0KPiAgIG5mczogbWVyZ2UgeGRldiBhbmQgcmVtb3RlIGZpbGVfc3lzdGVtX3R5cGUN
-Cj4gICBuZnM6IHVuZXhwb3J0IG5mc19mc19tb3VudF9jb21tb24oKQ0KPiAgIG5mczogZG9uJ3Qg
-cGFzcyBuZnNfc3VidmVyc2lvbiB0byAtPmNyZWF0ZV9zZXJ2ZXIoKQ0KPiAgIG5mczogZ2V0IHJp
-ZCBvZiBtb3VudF9pbmZvIC0+ZmlsbF9zdXBlcigpDQo+ICAgbmZzX2Nsb25lX3NiX3NlY3VyaXR5
-KCk6IHNpbXBsaWZ5IHRoZSBjaGVjayBmb3Igc2VydmVyIGJvZ29zaXR5DQo+ICAgbmZzOiBnZXQg
-cmlkIG9mIC0+c2V0X3NlY3VyaXR5KCkNCj4gDQo+IERhdmlkIEhvd2VsbHMgKDgpOg0KPiAgIE5G
-UzogTW92ZSBtb3VudCBwYXJhbWV0ZXJpc2F0aW9uIGJpdHMgaW50byB0aGVpciBvd24gZmlsZQ0K
-PiAgIE5GUzogQ29uc3RpZnkgbW91bnQgYXJndW1lbnQgbWF0Y2ggdGFibGVzDQo+ICAgTkZTOiBS
-ZW5hbWUgc3RydWN0IG5mc19wYXJzZWRfbW91bnRfZGF0YSB0byBzdHJ1Y3QgbmZzX2ZzX2NvbnRl
-eHQNCj4gICBORlM6IFNwbGl0IG5mc19wYXJzZV9tb3VudF9vcHRpb25zKCkNCj4gICBORlM6IERl
-aW5kZW50IG5mc19mc19jb250ZXh0X3BhcnNlX29wdGlvbigpDQo+ICAgTkZTOiBBZGQgYSBzbWFs
-bCBidWZmZXIgaW4gbmZzX2ZzX2NvbnRleHQgdG8gYXZvaWQgc3RyaW5nIGR1cA0KPiAgIE5GUzog
-RG8gc29tZSB0aWR5aW5nIG9mIHRoZSBwYXJzaW5nIGNvZGUNCj4gICBORlM6IEFkZCBmc19jb250
-ZXh0IHN1cHBvcnQuDQo+IA0KPiBTY290dCBNYXloZXcgKDQpOg0KPiAgIE5GUzogcmVuYW1lIG5m
-c19mc19jb250ZXh0IHBvaW50ZXIgYXJnIGluIGEgZmV3IGZ1bmN0aW9ucw0KPiAgIE5GUzogQ29u
-dmVydCBtb3VudCBvcHRpb24gcGFyc2luZyB0byB1c2UgZnVuY3Rpb25hbGl0eSBmcm9tDQo+ICAg
-ICBmc19wYXJzZXIuaA0KPiAgIE5GUzogQWRkaXRpb25hbCByZWZhY3RvcmluZyBmb3IgZnNfY29u
-dGV4dCBjb252ZXJzaW9uDQo+ICAgTkZTOiBBdHRhY2ggc3VwcGxlbWVudGFyeSBlcnJvciBpbmZv
-cm1hdGlvbiB0byBmc19jb250ZXh0Lg0KPiANCj4gIGZzL25mcy9NYWtlZmlsZSAgICAgICAgIHwg
-ICAgMiArLQ0KPiAgZnMvbmZzL2NsaWVudC5jICAgICAgICAgfCAgIDgwICstDQo+ICBmcy9uZnMv
-ZnNfY29udGV4dC5jICAgICB8IDE0MjQgKysrKysrKysrKysrKysrKysrKysrKysrKw0KPiAgZnMv
-bmZzL2ZzY2FjaGUuYyAgICAgICAgfCAgICAyICstDQo+ICBmcy9uZnMvZ2V0cm9vdC5jICAgICAg
-ICB8ICAgNzMgKy0NCj4gIGZzL25mcy9pbnRlcm5hbC5oICAgICAgIHwgIDEzMiArLS0NCj4gIGZz
-L25mcy9uYW1lc3BhY2UuYyAgICAgIHwgIDE0NiArKy0NCj4gIGZzL25mcy9uZnMzX2ZzLmggICAg
-ICAgIHwgICAgMiArLQ0KPiAgZnMvbmZzL25mczNjbGllbnQuYyAgICAgfCAgICA2ICstDQo+ICBm
-cy9uZnMvbmZzM3Byb2MuYyAgICAgICB8ICAgIDIgKy0NCj4gIGZzL25mcy9uZnM0X2ZzLmggICAg
-ICAgIHwgICAgOSArLQ0KPiAgZnMvbmZzL25mczRjbGllbnQuYyAgICAgfCAgIDk5ICstDQo+ICBm
-cy9uZnMvbmZzNGZpbGUuYyAgICAgICB8ICAgIDEgKw0KPiAgZnMvbmZzL25mczRuYW1lc3BhY2Uu
-YyAgfCAgMjkyICsrKy0tLQ0KPiAgZnMvbmZzL25mczRwcm9jLmMgICAgICAgfCAgICAyICstDQo+
-ICBmcy9uZnMvbmZzNHN1cGVyLmMgICAgICB8ICAyNTcgKystLS0NCj4gIGZzL25mcy9wcm9jLmMg
-ICAgICAgICAgIHwgICAgMiArLQ0KPiAgZnMvbmZzL3N1cGVyLmMgICAgICAgICAgfCAyMjE3ICsr
-KysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiAgaW5jbHVkZS9saW51eC9u
-ZnNfeGRyLmggfCAgICA5ICstDQo+ICAxOSBmaWxlcyBjaGFuZ2VkLCAyMjg3IGluc2VydGlvbnMo
-KyksIDI0NzAgZGVsZXRpb25zKC0pDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZnMvbmZzL2ZzX2Nv
-bnRleHQuYw0KPiANCg==
+
+--Apple-Mail=_60556B62-F3B5-4602-887C-70C079591153
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset=us-ascii
+
+On Dec 10, 2019, at 9:24 AM, Jens Axboe <axboe@kernel.dk> wrote:
+> 
+> Recently someone asked me how io_uring buffered IO compares to mmaped
+> IO in terms of performance. So I ran some tests with buffered IO, and
+> found the experience to be somewhat painful. The test case is pretty
+> basic, random reads over a dataset that's 10x the size of RAM.
+> Performance starts out fine, and then the page cache fills up and we
+> hit a throughput cliff. CPU usage of the IO threads go up, and we have
+> kswapd spending 100% of a core trying to keep up. Seeing that, I was
+> reminded of the many complaints I here about buffered IO, and the fact
+> that most of the folks complaining will ultimately bite the bullet and
+> move to O_DIRECT to just get the kernel out of the way.
+> 
+> But I don't think it needs to be like that. Switching to O_DIRECT isn't
+> always easily doable. The buffers have different life times, size and
+> alignment constraints, etc. On top of that, mixing buffered and O_DIRECT
+> can be painful.
+> 
+> Seems to me that we have an opportunity to provide something that sits
+> somewhere in between buffered and O_DIRECT, and this is where
+> RWF_UNCACHED enters the picture. If this flag is set on IO, we get the
+> following behavior:
+> 
+> - If the data is in cache, it remains in cache and the copy (in or out)
+>  is served to/from that.
+> 
+> - If the data is NOT in cache, we add it while performing the IO. When
+>  the IO is done, we remove it again.
+> 
+> With this, I can do 100% smooth buffered reads or writes without pushing
+> the kernel to the state where kswapd is sweating bullets. In fact it
+> doesn't even register.
+> 
+> Comments appreciated!
+
+I think this is a definite win for e.g. NVMe/Optane devices where the
+underlying storage is fast enough to avoid the need for page cache.
+
+In our testing of Lustre on NVMe, it was faster to avoid the page cache
+entirely - just inserting and removing the pages from cache took a
+considerable amount of CPU for workloads where we knew it was not
+beneficial (e.g. IO that was large enough that the storage was as fast
+as the network).
+
+This also makes it easier to keep other data in cache (e.g. filesystem
+metadata, small IOs, etc.).
+
+Cheers, Andreas
+
+> Patches are against current git (ish), and can also be found here:
+> 
+> https://git.kernel.dk/cgit/linux-block/log/?h=buffered-uncached
+> 
+> fs/ceph/file.c          |   2 +-
+> fs/dax.c                |   2 +-
+> fs/ext4/file.c          |   2 +-
+> fs/iomap/apply.c        |   2 +-
+> fs/iomap/buffered-io.c  |  75 +++++++++++++++++------
+> fs/iomap/direct-io.c    |   3 +-
+> fs/iomap/fiemap.c       |   5 +-
+> fs/iomap/seek.c         |   6 +-
+> fs/iomap/swapfile.c     |   2 +-
+> fs/nfs/file.c           |   2 +-
+> include/linux/fs.h      |   9 ++-
+> include/linux/iomap.h   |   6 +-
+> include/uapi/linux/fs.h |   5 +-
+> mm/filemap.c            | 132 ++++++++++++++++++++++++++++++++++++----
+> 14 files changed, 208 insertions(+), 45 deletions(-)
+> 
+> --
+> Jens Axboe
+> 
+> 
+
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_60556B62-F3B5-4602-887C-70C079591153
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl3wC38ACgkQcqXauRfM
+H+DFpw/8DTmZaC298o4r8tHrjy8XfinKmh3XbASTP0bVqA/8hWkFLgn578wJbsUw
+4DWdENTkc0seeIRCmSfNGhNvyrNVGwUjs8z3li9z+kXYZXNEZZ7ww22ES0OWecrm
+7vuFNXCTfnxIEkjco358QXEr2jDTPeJIp45mqmzVRBkNu5ulfyjrm/fIMrwN+L6R
+s4Et7MVxaPddc+IK13B0tQKDSAMW3xVlMQYd+2Q1OL5wfU7Vuz8dEPs+SYTUXaXZ
+lOwP7Q5T6TWbwDQBBuLRuhvItPrnEfTUQhSPjDh0sbrq1c6oLEkm6ulm5L30XbtP
+AqCmEnFOvY3gMl+opqlOsq1cuMX9OF65dFLJmZxKhrEMaieDj9FlSuyVKq8dLc/9
+Qe3m7deyc+nJIRGTzGlciKrPLVhMo0U4+dKo+Hum9K6Pe5++c6aZsO0hy8oIiF87
+80LWJGb9kYZ1fVXUglYQtw2Bnumj5jGtdxct5t1V3f9XdEW3e4YcmH9R7PYd/8ZW
+GaYdn9Uc67fuQGMJ0UdFK9TIwCsqy1LFCWYn5w/yYdamLH2xY6KFCDjXVwFJSnJe
+E2KnzRCy7Qj61CbXnEFNz7U9TOEr18J0ZPWbcTWYpSXnUWxYXZR0wYFtsrGUmVKN
+SRZ0an+rdqmCkwBRtKlV9tU7TSgQCD7P3O2zGp6h0R+WUMBS9wE=
+=oG6P
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_60556B62-F3B5-4602-887C-70C079591153--
