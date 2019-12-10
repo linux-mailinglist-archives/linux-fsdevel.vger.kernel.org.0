@@ -2,352 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28189118F10
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 18:33:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 099D3118F28
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 18:40:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727654AbfLJRdI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Dec 2019 12:33:08 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:25661 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727625AbfLJRdH (ORCPT
+        id S1727566AbfLJRkB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Dec 2019 12:40:01 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:34295 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727495AbfLJRkA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Dec 2019 12:33:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575999186;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=Mc+1ZWYckmEINCQCi8L572ppP+X1bue4gLkgV0ncgKQ=;
-        b=KWC1d+e70wGoxXlXfNUXioX9ZAhNzXI/fcPmsZBMjoP9NOJH7ueC5TcpjqabA905tCnDnE
-        4dkIqZVXegudtoiDJiXjg5VsLbncimhJfDyq5l0chwqfzaeA+i7DbXxgtVTJ0G/muNwpSr
-        ruJ/SjmrJUwgZeM5+jgXd9tCiEJHTj8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-119-XlJrKLk6NwqwirH8g0hjEQ-1; Tue, 10 Dec 2019 12:33:02 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 197EC1005512;
-        Tue, 10 Dec 2019 17:33:01 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9A5821001B09;
-        Tue, 10 Dec 2019 17:32:59 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] rxrpc: Mutexes are unusable from softirq context,
- so use rwsem instead
-From:   David Howells <dhowells@redhat.com>
-To:     linux-afs@lists.infradead.org
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 10 Dec 2019 17:32:58 +0000
-Message-ID: <157599917879.6327.69195741890962065.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Tue, 10 Dec 2019 12:40:00 -0500
+Received: by mail-lf1-f68.google.com with SMTP id l18so14428526lfc.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2019 09:39:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=snXL3elBaJqUNnrwVMIQkoX2BmfJlCnkqeekmLy0jJI=;
+        b=OhxH2R6Nr1ZTcmvFCJY4c42Wn+5iOTjxo201wAntKVyS+2zt9hCNsDqSOWhbVWmxQ6
+         U4hf3Qf1NBY2kCFTQYJBLj+p0aj0dRmcpAQcHsx7GI/58+pcMdfjSx9IppPGmLYMx3Oq
+         n1Ki3WOVdVWhlVz0yApcldThYREPXTHwKeMa8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=snXL3elBaJqUNnrwVMIQkoX2BmfJlCnkqeekmLy0jJI=;
+        b=BPt5gLbDz7+S4fKrtFtpwwjr82aO7EqGZUUwI07MTBKGZTGQr1eVbBrxZM7Cv01fod
+         pLOPw47puHUkP89LM0VT44kVmqZMNqA7UgIPDykZQyp+aurPX12jtC5S1SVOVkKsCx1Z
+         YkRzKUgxSp9073sNdnSyjKzhpIA6D0HF5VrmUFvDQizTYGjtE1ZU2YdWZe+pa3RuoW6s
+         giz40cKmU7/cPjM1ZyUieO0xeql1WUQrsttZS/Ra9aGcXXDQx2gOcPnIgymspeM0ttSe
+         NNRoDLdOJEQC0DWsPLghI6+pALDWbh55n3gMbzODckdk+r12WjyZe8OYqA22WGmi4bxX
+         d/4Q==
+X-Gm-Message-State: APjAAAVsuzWKdlOvaqqTIJtq0FbslNHYIOgVVltSTgtFK1ftX4c2kvlt
+        ANYNLJB4zGZSXcve7l+SYaSoCfU0AAs=
+X-Google-Smtp-Source: APXvYqyl5WC9qQSvRJpcR3wwA+xLW5lYF8UXpVNjrAuEKd8rCQ/qjbBL2YTlW428HtQWZQ4QEmJjMA==
+X-Received: by 2002:a19:40d8:: with SMTP id n207mr19788443lfa.4.1575999596864;
+        Tue, 10 Dec 2019 09:39:56 -0800 (PST)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id i2sm1957420lfl.20.2019.12.10.09.39.55
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Dec 2019 09:39:55 -0800 (PST)
+Received: by mail-lf1-f54.google.com with SMTP id y1so3090515lfb.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2019 09:39:55 -0800 (PST)
+X-Received: by 2002:ac2:50cc:: with SMTP id h12mr19498327lfm.29.1575999594895;
+ Tue, 10 Dec 2019 09:39:54 -0800 (PST)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: XlJrKLk6NwqwirH8g0hjEQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <157558502272.10278.8718685637610645781.stgit@warthog.procyon.org.uk>
+ <20191206135604.GB2734@twin.jikos.cz> <CAHk-=wiN_pWbcRaw5L-J2EFUyCn49Due0McwETKwmFFPp88K8Q@mail.gmail.com>
+ <CAHk-=wjvO1V912ya=1rdXwrm1OBTi6GqnqryH_E8OR69cZuVOg@mail.gmail.com>
+ <CAHk-=wizsHmCwUAyQKdU7hBPXHYQn-fOtJKBqMs-79br2pWxeQ@mail.gmail.com>
+ <CAHk-=wjeG0q1vgzu4iJhW5juPkTsjTYmiqiMUYAebWW+0bam6w@mail.gmail.com>
+ <CAKfTPtDBtPuvK0NzYC0VZgEhh31drCDN=o+3Hd3fUwoffQg0fw@mail.gmail.com>
+ <CAHk-=wicgTacrHUJmSBbW9MYAdMPdrXzULPNqQ3G7+HkLeNf1Q@mail.gmail.com> <CAKfTPtASrwDcHUDqHgHP=8brALFv7ncmQuqLvihg4tQsxNUqkw@mail.gmail.com>
+In-Reply-To: <CAKfTPtASrwDcHUDqHgHP=8brALFv7ncmQuqLvihg4tQsxNUqkw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 10 Dec 2019 09:39:38 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgkxNmK1pGfDaA5PqsPYpZO9tL-a4R4mpY-UhSX4f-RFg@mail.gmail.com>
+Message-ID: <CAHk-=wgkxNmK1pGfDaA5PqsPYpZO9tL-a4R4mpY-UhSX4f-RFg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     DJ Delorie <dj@redhat.com>, David Sterba <dsterba@suse.cz>,
+        David Howells <dhowells@redhat.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-rxrpc_call::user_mutex is of type struct mutex, but it's required to start
-off locked on an incoming call as it is being set up in softirq context to
-prevent sendmsg and recvmsg interfering with it until it is ready.  It is
-then unlocked in rxrpc_input_packet() to make the call live.
+On Tue, Dec 10, 2019 at 6:38 AM Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
+>
+> On Mon, 9 Dec 2019 at 18:48, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > Before that commit the buggy jobserver code basically does
+> >
+> >  (1) use pselect() to wait for readable and see child deaths atomically
+> >  (2) use blocking read to get the token
+> >
+> > and while (1) is atomic, if the child death happens between the two,
+> > it goes into the blocking read and has SIGCHLD blocked, so it will try
+> > to read the token from the token pipe, but it will never react to the
+> > child death - and the child death is what is going to _release_ a
+> > token.
+> >
+> > So what seems to happen is that when the right timing triggers, you
+>
+> That can explain why I can't see the problem on my platform
 
-Unfortunately, commit a0855d24fc22d49cdc25664fb224caee16998683
-("locking/mutex: Complain upon mutex API misuse in IRQ contexts") causes
-big warnings to be splashed in dmesg for each a new call that comes in from
-the server.
+Note that the above is kind of simplified.
 
-It *seems* like it should be okay, since the accept path trylocks the mutex
-when no one else can see it and drops the mutex before it leaves softirq
-context.
+It actually needs a bit more to trigger..
 
-Fix this by switching to using an rw_semaphore instead as that is permitted
-to be used in softirq context.
+To lose _one_ token, you need to have a sub-make basically hit this race:
 
-Fixes: 540b1c48c37a ("rxrpc: Fix deadlock between call creation and sendmsg/recvmsg")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Peter Zijlstra <peterz@infradead.org>
-cc: Ingo Molnar <mingo@redhat.com>
-cc: Will Deacon <will@kernel.org>
----
+ - the pselect() needs to say that the pipe is readable, so there is
+at least one token
 
- net/rxrpc/af_rxrpc.c    |   10 +++++-----
- net/rxrpc/ar-internal.h |    2 +-
- net/rxrpc/call_accept.c |    4 ++--
- net/rxrpc/call_object.c |    6 +++---
- net/rxrpc/input.c       |    2 +-
- net/rxrpc/recvmsg.c     |   14 +++++++-------
- net/rxrpc/sendmsg.c     |   16 ++++++++--------
- 7 files changed, 27 insertions(+), 27 deletions(-)
+ - another sub-make comes along and steals the very last token
 
-diff --git a/net/rxrpc/af_rxrpc.c b/net/rxrpc/af_rxrpc.c
-index d72ddb67bb74..17e55e12376c 100644
---- a/net/rxrpc/af_rxrpc.c
-+++ b/net/rxrpc/af_rxrpc.c
-@@ -322,7 +322,7 @@ struct rxrpc_call *rxrpc_kernel_begin_call(struct socket *sock,
- 	/* The socket has been unlocked. */
- 	if (!IS_ERR(call)) {
- 		call->notify_rx = notify_rx;
--		mutex_unlock(&call->user_mutex);
-+		up_write(&call->user_mutex);
- 	}
- 
- 	rxrpc_put_peer(cp.peer);
-@@ -351,7 +351,7 @@ void rxrpc_kernel_end_call(struct socket *sock, struct rxrpc_call *call)
- {
- 	_enter("%d{%d}", call->debug_id, atomic_read(&call->usage));
- 
--	mutex_lock(&call->user_mutex);
-+	down_write(&call->user_mutex);
- 	rxrpc_release_call(rxrpc_sk(sock->sk), call);
- 
- 	/* Make sure we're not going to call back into a kernel service */
-@@ -361,7 +361,7 @@ void rxrpc_kernel_end_call(struct socket *sock, struct rxrpc_call *call)
- 		spin_unlock_bh(&call->notify_lock);
- 	}
- 
--	mutex_unlock(&call->user_mutex);
-+	up_write(&call->user_mutex);
- 	rxrpc_put_call(call, rxrpc_call_put_kernel);
- }
- EXPORT_SYMBOL(rxrpc_kernel_end_call);
-@@ -456,14 +456,14 @@ void rxrpc_kernel_set_max_life(struct socket *sock, struct rxrpc_call *call,
- {
- 	unsigned long now;
- 
--	mutex_lock(&call->user_mutex);
-+	down_write(&call->user_mutex);
- 
- 	now = jiffies;
- 	hard_timeout += now;
- 	WRITE_ONCE(call->expect_term_by, hard_timeout);
- 	rxrpc_reduce_call_timer(call, hard_timeout, now, rxrpc_timer_set_for_hard);
- 
--	mutex_unlock(&call->user_mutex);
-+	up_write(&call->user_mutex);
- }
- EXPORT_SYMBOL(rxrpc_kernel_set_max_life);
- 
-diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
-index 7c7d10f2e0c1..1701f2406463 100644
---- a/net/rxrpc/ar-internal.h
-+++ b/net/rxrpc/ar-internal.h
-@@ -557,7 +557,7 @@ struct rxrpc_call {
- 	struct rxrpc_sock __rcu	*socket;	/* socket responsible */
- 	struct rxrpc_net	*rxnet;		/* Network namespace to which call belongs */
- 	const struct rxrpc_security *security;	/* applied security module */
--	struct mutex		user_mutex;	/* User access mutex */
-+	struct rw_semaphore	user_mutex;	/* User access mutex */
- 	unsigned long		ack_at;		/* When deferred ACK needs to happen */
- 	unsigned long		ack_lost_at;	/* When ACK is figured as lost */
- 	unsigned long		resend_at;	/* When next resend needs to happen */
-diff --git a/net/rxrpc/call_accept.c b/net/rxrpc/call_accept.c
-index 135bf5cd8dd5..fb9a751e3c35 100644
---- a/net/rxrpc/call_accept.c
-+++ b/net/rxrpc/call_accept.c
-@@ -378,7 +378,7 @@ struct rxrpc_call *rxrpc_new_incoming_call(struct rxrpc_local *local,
- 	 * event and userspace is prevented from doing so until the state is
- 	 * appropriate.
- 	 */
--	if (!mutex_trylock(&call->user_mutex))
-+	if (!down_write_trylock(&call->user_mutex))
- 		BUG();
- 
- 	/* Make the call live. */
-@@ -493,7 +493,7 @@ struct rxrpc_call *rxrpc_accept_call(struct rxrpc_sock *rx,
- 	 * We are, however, still holding the socket lock, so other accepts
- 	 * must wait for us and no one can add the user ID behind our backs.
- 	 */
--	if (mutex_lock_interruptible(&call->user_mutex) < 0) {
-+	if (down_write_killable(&call->user_mutex) < 0) {
- 		release_sock(&rx->sk);
- 		kleave(" = -ERESTARTSYS");
- 		return ERR_PTR(-ERESTARTSYS);
-diff --git a/net/rxrpc/call_object.c b/net/rxrpc/call_object.c
-index a31c18c09894..7a5d48b23fce 100644
---- a/net/rxrpc/call_object.c
-+++ b/net/rxrpc/call_object.c
-@@ -115,7 +115,7 @@ struct rxrpc_call *rxrpc_alloc_call(struct rxrpc_sock *rx, gfp_t gfp,
- 	if (!call->rxtx_annotations)
- 		goto nomem_2;
- 
--	mutex_init(&call->user_mutex);
-+	init_rwsem(&call->user_mutex);
- 
- 	/* Prevent lockdep reporting a deadlock false positive between the afs
- 	 * filesystem and sys_sendmsg() via the mmap sem.
-@@ -247,7 +247,7 @@ struct rxrpc_call *rxrpc_new_client_call(struct rxrpc_sock *rx,
- 	/* We need to protect a partially set up call against the user as we
- 	 * will be acting outside the socket lock.
- 	 */
--	mutex_lock(&call->user_mutex);
-+	down_write(&call->user_mutex);
- 
- 	/* Publish the call, even though it is incompletely set up as yet */
- 	write_lock(&rx->call_lock);
-@@ -317,7 +317,7 @@ struct rxrpc_call *rxrpc_new_client_call(struct rxrpc_sock *rx,
- 	trace_rxrpc_call(call->debug_id, rxrpc_call_error,
- 			 atomic_read(&call->usage), here, ERR_PTR(ret));
- 	rxrpc_release_call(rx, call);
--	mutex_unlock(&call->user_mutex);
-+	up_write(&call->user_mutex);
- 	rxrpc_put_call(call, rxrpc_call_put);
- 	_leave(" = %d", ret);
- 	return ERR_PTR(ret);
-diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
-index 157be1ff8697..6955ad66433b 100644
---- a/net/rxrpc/input.c
-+++ b/net/rxrpc/input.c
-@@ -1397,7 +1397,7 @@ int rxrpc_input_packet(struct sock *udp_sk, struct sk_buff *skb)
- 		if (!call)
- 			goto reject_packet;
- 		rxrpc_send_ping(call, skb);
--		mutex_unlock(&call->user_mutex);
-+		up_write(&call->user_mutex);
- 	}
- 
- 	/* Process a call packet; this either discards or passes on the ref
-diff --git a/net/rxrpc/recvmsg.c b/net/rxrpc/recvmsg.c
-index 8578c39ec839..e6bf52fb0ad8 100644
---- a/net/rxrpc/recvmsg.c
-+++ b/net/rxrpc/recvmsg.c
-@@ -511,12 +511,12 @@ int rxrpc_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
- 	/* We're going to drop the socket lock, so we need to lock the call
- 	 * against interference by sendmsg.
- 	 */
--	if (!mutex_trylock(&call->user_mutex)) {
-+	if (!down_write_trylock(&call->user_mutex)) {
- 		ret = -EWOULDBLOCK;
- 		if (flags & MSG_DONTWAIT)
- 			goto error_requeue_call;
- 		ret = -ERESTARTSYS;
--		if (mutex_lock_interruptible(&call->user_mutex) < 0)
-+		if (down_write_killable(&call->user_mutex) < 0)
- 			goto error_requeue_call;
- 	}
- 
-@@ -591,7 +591,7 @@ int rxrpc_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
- 	ret = copied;
- 
- error_unlock_call:
--	mutex_unlock(&call->user_mutex);
-+	up_write(&call->user_mutex);
- 	rxrpc_put_call(call, rxrpc_call_put);
- 	trace_rxrpc_recvmsg(call, rxrpc_recvmsg_return, 0, 0, 0, ret);
- 	return ret;
-@@ -651,7 +651,7 @@ int rxrpc_kernel_recv_data(struct socket *sock, struct rxrpc_call *call,
- 
- 	ASSERTCMP(call->state, !=, RXRPC_CALL_SERVER_ACCEPTING);
- 
--	mutex_lock(&call->user_mutex);
-+	down_write(&call->user_mutex);
- 
- 	switch (READ_ONCE(call->state)) {
- 	case RXRPC_CALL_CLIENT_RECV_REPLY:
-@@ -704,7 +704,7 @@ int rxrpc_kernel_recv_data(struct socket *sock, struct rxrpc_call *call,
- 
- 	if (_service)
- 		*_service = call->service_id;
--	mutex_unlock(&call->user_mutex);
-+	up_write(&call->user_mutex);
- 	_leave(" = %d [%zu,%d]", ret, iov_iter_count(iter), *_abort);
- 	return ret;
- 
-@@ -744,7 +744,7 @@ bool rxrpc_kernel_get_reply_time(struct socket *sock, struct rxrpc_call *call,
- 	rxrpc_seq_t hard_ack, top, seq;
- 	bool success = false;
- 
--	mutex_lock(&call->user_mutex);
-+	down_write(&call->user_mutex);
- 
- 	if (READ_ONCE(call->state) != RXRPC_CALL_CLIENT_RECV_REPLY)
- 		goto out;
-@@ -766,7 +766,7 @@ bool rxrpc_kernel_get_reply_time(struct socket *sock, struct rxrpc_call *call,
- 	success = true;
- 
- out:
--	mutex_unlock(&call->user_mutex);
-+	up_write(&call->user_mutex);
- 	return success;
- }
- EXPORT_SYMBOL(rxrpc_kernel_get_reply_time);
-diff --git a/net/rxrpc/sendmsg.c b/net/rxrpc/sendmsg.c
-index 813fd6888142..d3a4749a2f8a 100644
---- a/net/rxrpc/sendmsg.c
-+++ b/net/rxrpc/sendmsg.c
-@@ -38,9 +38,9 @@ static int rxrpc_wait_for_tx_window_intr(struct rxrpc_sock *rx,
- 			return sock_intr_errno(*timeo);
- 
- 		trace_rxrpc_transmit(call, rxrpc_transmit_wait);
--		mutex_unlock(&call->user_mutex);
-+		up_write(&call->user_mutex);
- 		*timeo = schedule_timeout(*timeo);
--		if (mutex_lock_interruptible(&call->user_mutex) < 0)
-+		if (down_write_killable(&call->user_mutex) < 0)
- 			return sock_intr_errno(*timeo);
- 	}
- }
-@@ -668,7 +668,7 @@ int rxrpc_do_sendmsg(struct rxrpc_sock *rx, struct msghdr *msg, size_t len)
- 			break;
- 		}
- 
--		ret = mutex_lock_interruptible(&call->user_mutex);
-+		ret = down_write_killable_nested(&call->user_mutex, 1);
- 		release_sock(&rx->sk);
- 		if (ret < 0) {
- 			ret = -ERESTARTSYS;
-@@ -737,7 +737,7 @@ int rxrpc_do_sendmsg(struct rxrpc_sock *rx, struct msghdr *msg, size_t len)
- 	}
- 
- out_put_unlock:
--	mutex_unlock(&call->user_mutex);
-+	up_write(&call->user_mutex);
- error_put:
- 	rxrpc_put_call(call, rxrpc_call_put);
- 	_leave(" = %d", ret);
-@@ -772,7 +772,7 @@ int rxrpc_kernel_send_data(struct socket *sock, struct rxrpc_call *call,
- 	ASSERTCMP(msg->msg_name, ==, NULL);
- 	ASSERTCMP(msg->msg_control, ==, NULL);
- 
--	mutex_lock(&call->user_mutex);
-+	down_write(&call->user_mutex);
- 
- 	_debug("CALL %d USR %lx ST %d on CONN %p",
- 	       call->debug_id, call->user_call_ID, call->state, call->conn);
-@@ -796,7 +796,7 @@ int rxrpc_kernel_send_data(struct socket *sock, struct rxrpc_call *call,
- 		break;
- 	}
- 
--	mutex_unlock(&call->user_mutex);
-+	up_write(&call->user_mutex);
- 	_leave(" = %d", ret);
- 	return ret;
- }
-@@ -820,13 +820,13 @@ bool rxrpc_kernel_abort_call(struct socket *sock, struct rxrpc_call *call,
- 
- 	_enter("{%d},%d,%d,%s", call->debug_id, abort_code, error, why);
- 
--	mutex_lock(&call->user_mutex);
-+	down_write(&call->user_mutex);
- 
- 	aborted = rxrpc_abort_call(why, call, 0, abort_code, error);
- 	if (aborted)
- 		rxrpc_send_abort_packet(call);
- 
--	mutex_unlock(&call->user_mutex);
-+	up_write(&call->user_mutex);
- 	return aborted;
- }
- EXPORT_SYMBOL(rxrpc_kernel_abort_call);
+ - but because pselect returned "readable" (no SIGCHLD yet), the
+read() starts and now blocks because all the jobserver tokens are gone
+again due to the other sub-make stealing the last one.
 
+ - before a new token comes in, the child exits, and now because the
+sub-make is blocking for reads (and because the jobserver blocks
+SIGCHILD in general outside of the pselect), it doesn't react, so it
+won't release the token that the child holds.
+
+but notice how any _other_ sub-make then releasing a token will get
+things going again, so the _common_situation is that the jobserver bug
+only causes a slight  dip in concurrency.
+
+Hitting it _once_ is trivial.
+
+Losing several tokens at once is also not that hard: you don't need to
+hit the race many times, it's enough to hit the exact same race just
+once - just with several sub-makes at the same time.
+
+And that "lose several tokens at once" isn't as unlikely as you'd
+think: they are all doing the same thing, and they all saw the free
+token with "pselect()", they all did a "read()". And since it's common
+for the tokens to be gone, the common case is that _one_ of the
+waiting sub-makes got the read, and the N other sub-makes did not, and
+went into the blocking read(). And they all had children that were
+about to finish, and finished before the next token got available.
+
+So losing quite a few tokens is easy.
+
+This has actually gone on for a long time, and I just never debugged
+it. My solution has been "I have 16 threads (8 core with HT), but I'll
+use -j32, and it is all good".
+
+I bet you can see it too - the buggy jobserver just means that the
+load isn't as high as you'd expect. Just run 'top' while the make is
+going.
+
+With the _fixed_ jobserver, if I do "make -j32", I will actually see a
+load that is over 32 (I do nothing but kernel compiles and occasional
+reboots during the merge window, so I have the kernel in my cache, so
+there's no IO, I have a fast SSD so writeback doesn't cause any delays
+either etc etc, and I have my browser and a few other things going).
+
+With the buggy one, even before the pipe rework, I would see a load
+that tended to fluctuate around 16.
+
+Because due to the bug you have a few locked-up tokens at times, so
+instead of getting a load of 32 when you use "make -j32", you get a
+load of maybe 20. Or maybe less.
+
+The pipe re-work made it much easier to trigger the "almost all the
+tokens are gone" for some reason. And the "fair readers()" patch I
+have seems to make it _really_ easy to trigger the case where
+absolutely all the tokens were gone and it goes into a single-thread
+mode. I'm not sure I really ever saw the 1-second timeout trigger, but
+it was slow.
+
+But it _is_ dependent on timing, so somebody else with a different
+load - or a different machine - might not see it to nearly the same
+degree.
+
+I bet you see the load value difference, though, even if you don't
+necessarily see enough idle CPU time to see much of a difference in
+compile times. After all, once you have all CPU's busy, it doesn't
+matter if you have a load of 16 or a load of 32 - the higher load
+won't make the compile go any faster.
+
+             Linus
