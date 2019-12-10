@@ -2,115 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB5C3118506
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 11:28:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65F39118519
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 11:29:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727249AbfLJK2Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Dec 2019 05:28:24 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58544 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726574AbfLJK2Y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Dec 2019 05:28:24 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 769B2B280;
-        Tue, 10 Dec 2019 10:28:20 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id E89EB1E0B23; Tue, 10 Dec 2019 11:28:18 +0100 (CET)
-Date:   Tue, 10 Dec 2019 11:28:18 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Leon Romanovsky <leonro@mellanox.com>
-Subject: Re: [PATCH v8 08/26] mm/gup: allow FOLL_FORCE for
- get_user_pages_fast()
-Message-ID: <20191210102818.GF1551@quack2.suse.cz>
-References: <20191209225344.99740-1-jhubbard@nvidia.com>
- <20191209225344.99740-9-jhubbard@nvidia.com>
+        id S1727406AbfLJK31 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Dec 2019 05:29:27 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:23212 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727502AbfLJK31 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Dec 2019 05:29:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575973765;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=jMWFdNn7fGRj5bb8TeBaOUbpmWFLdAqVHKxYwniQW98=;
+        b=V3T2OjrQWePLI/8TwX3p8kUTFGhMMJDu1zjI10oYGPPohkA97ecXvkZIi6cpJxnX0PgoSz
+        YzK/JeVunGQdnER/6dp05ZCNvauNBN9RvrxSBR0Kwh/aCs6R+bLrfL0uH30gGU/kcbtuph
+        GDEcwcAKRV4NV/TSFsmXmW6mKW7yfjg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-308-xB3QapzcOfqmzqUbwfKu9g-1; Tue, 10 Dec 2019 05:29:22 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AC637183B72B;
+        Tue, 10 Dec 2019 10:29:21 +0000 (UTC)
+Received: from max.com (ovpn-205-78.brq.redhat.com [10.40.205.78])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E385160568;
+        Tue, 10 Dec 2019 10:29:17 +0000 (UTC)
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, cluster-devel@redhat.com
+Subject: [PATCH] iomap: Export iomap_page_create and iomap_set_range_uptodate
+Date:   Tue, 10 Dec 2019 11:29:16 +0100
+Message-Id: <20191210102916.842-1-agruenba@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191209225344.99740-9-jhubbard@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-MC-Unique: xB3QapzcOfqmzqUbwfKu9g-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 09-12-19 14:53:26, John Hubbard wrote:
-> Commit 817be129e6f2 ("mm: validate get_user_pages_fast flags") allowed
-> only FOLL_WRITE and FOLL_LONGTERM to be passed to get_user_pages_fast().
-> This, combined with the fact that get_user_pages_fast() falls back to
-> "slow gup", which *does* accept FOLL_FORCE, leads to an odd situation:
-> if you need FOLL_FORCE, you cannot call get_user_pages_fast().
-> 
-> There does not appear to be any reason for filtering out FOLL_FORCE.
-> There is nothing in the _fast() implementation that requires that we
-> avoid writing to the pages. So it appears to have been an oversight.
-> 
-> Fix by allowing FOLL_FORCE to be set for get_user_pages_fast().
-> 
-> Fixes: 817be129e6f2 ("mm: validate get_user_pages_fast flags")
-> Cc: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+These two functions are needed by filesystems for converting inline
+("stuffed") inodes into non-inline inodes.
 
-Looks good to me. You can add:
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+---
+ fs/iomap/buffered-io.c | 6 ++++--
+ include/linux/iomap.h  | 5 +++++
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 828444e14d09..e8f6d7ba4e3c 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -41,7 +41,7 @@ static inline struct iomap_page *to_iomap_page(struct pag=
+e *page)
+=20
+ static struct bio_set iomap_ioend_bioset;
+=20
+-static struct iomap_page *
++struct iomap_page *
+ iomap_page_create(struct inode *inode, struct page *page)
+ {
+ =09struct iomap_page *iop =3D to_iomap_page(page);
+@@ -64,6 +64,7 @@ iomap_page_create(struct inode *inode, struct page *page)
+ =09SetPagePrivate(page);
+ =09return iop;
+ }
++EXPORT_SYMBOL(iomap_page_create);
+=20
+ static void
+ iomap_page_release(struct page *page)
+@@ -164,7 +165,7 @@ iomap_iop_set_range_uptodate(struct page *page, unsigne=
+d off, unsigned len)
+ =09spin_unlock_irqrestore(&iop->uptodate_lock, flags);
+ }
+=20
+-static void
++void
+ iomap_set_range_uptodate(struct page *page, unsigned off, unsigned len)
+ {
+ =09if (PageError(page))
+@@ -175,6 +176,7 @@ iomap_set_range_uptodate(struct page *page, unsigned of=
+f, unsigned len)
+ =09else
+ =09=09SetPageUptodate(page);
+ }
++EXPORT_SYMBOL(iomap_set_range_uptodate);
+=20
+ static void
+ iomap_read_finish(struct iomap_page *iop, struct page *page)
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 8b09463dae0d..b00f9bc396b1 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -13,6 +13,7 @@
+ struct address_space;
+ struct fiemap_extent_info;
+ struct inode;
++struct iomap_page;
+ struct iomap_writepage_ctx;
+ struct iov_iter;
+ struct kiocb;
+@@ -152,6 +153,10 @@ loff_t iomap_apply(struct inode *inode, loff_t pos, lo=
+ff_t length,
+ =09=09unsigned flags, const struct iomap_ops *ops, void *data,
+ =09=09iomap_actor_t actor);
+=20
++struct iomap_page *iomap_page_create(struct inode *inode, struct page *pag=
+e);
++void iomap_set_range_uptodate(struct page *page, unsigned off, unsigned le=
+n);
++
++
+ ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *fro=
+m,
+ =09=09const struct iomap_ops *ops);
+ int iomap_readpage(struct page *page, const struct iomap_ops *ops);
+--=20
+2.20.1
 
-								Honza
-
-> ---
->  mm/gup.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/gup.c b/mm/gup.c
-> index c0c56888e7cc..958ab0757389 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -2414,7 +2414,8 @@ int get_user_pages_fast(unsigned long start, int nr_pages,
->  	unsigned long addr, len, end;
->  	int nr = 0, ret = 0;
->  
-> -	if (WARN_ON_ONCE(gup_flags & ~(FOLL_WRITE | FOLL_LONGTERM)))
-> +	if (WARN_ON_ONCE(gup_flags & ~(FOLL_WRITE | FOLL_LONGTERM |
-> +				       FOLL_FORCE)))
->  		return -EINVAL;
->  
->  	start = untagged_addr(start) & PAGE_MASK;
-> -- 
-> 2.24.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
