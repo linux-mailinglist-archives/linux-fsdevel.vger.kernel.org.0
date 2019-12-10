@@ -2,263 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D77511925A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 21:43:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18F29119270
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 21:50:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbfLJUnS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Dec 2019 15:43:18 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39501 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726958AbfLJUnS (ORCPT
+        id S1726879AbfLJUuC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Dec 2019 15:50:02 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:42277 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726417AbfLJUuB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Dec 2019 15:43:18 -0500
-Received: by mail-pl1-f196.google.com with SMTP id o9so329924plk.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2019 12:43:17 -0800 (PST)
+        Tue, 10 Dec 2019 15:50:01 -0500
+Received: by mail-yw1-f66.google.com with SMTP id w11so7856242ywj.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2019 12:50:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=D0YILHXRbJs8J7xsozfnM9NWRJjXyg0wWjg7zLtIn80=;
-        b=Zt5cRttRdXTuNVRLaNW0GjwGe5xHR8pnhuh3//XlXzBx2Yao7Cov2+gkE21/h+3h+1
-         WuZdvNjk4cyOjKY+Nv/wXMUPD6MqoHPpjb1M8M+hamqvqfa8qP5HjmGfPwpbS6JmfAVC
-         bDImSEbNsxnur/ua4DNRDLlSSmqvi7f1BSO/whT6Qn32GIfxBGre9moCBjtjgWCpQVyF
-         elvvWumccRmLUs75y2VUuFGhfYSivHqtAhtnSOGVzYw0kJLYvj0GRLlN/KyezNv2/3ds
-         ebpVhAEowfUe9ry6gChE683ESa8i58Buk5lPBkFmpQbTSgQug/w9b6/DsCgwe36iOGD3
-         nOOA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ttORR/hku84+ocdcb8LP7T5MA+wBluhwAjwe/+PVW2c=;
+        b=QlHaQAmfMhcVztkMqGdJoElVmhWdJ/HXs0gGoStZfTeahSlSh4DCumQ+rfJpeVQVxq
+         8r7weFQEqxCg8rSAGS6gvObOoMn3tJ5Nivk/PvXfgQ5KGVANpfK8/FfmvYpEweZ2wd7/
+         BcJ7e/crUw35/smFvkbpmJmZkT5Vpbzk7x/BLV492YtcbLz7PXnwT111sci5PyrEI2Cr
+         pDrKxclUyrqTwLQ3MTvAqgOoClnCYkO1Brn2mThut+CnCzI/VRv6BlyeVNklvyGUAwz/
+         Ln5y9oU1GnTgWmKFQYF0djTn4Zu8JIR8He+u04U/F6N8/NWUuyCzazhxGWPoxBSguMiZ
+         Pppg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=D0YILHXRbJs8J7xsozfnM9NWRJjXyg0wWjg7zLtIn80=;
-        b=DrltpoerhMIDJ//wPLVFmS6OZASWsK3wAe/xoeDNXNftXlmuH5q0UVoAjHxvOAr5io
-         DUSZ/6w6jbpzCzO8WzRRb+ItLypn/rWxMWge/rkOqNYM6ZUwB0T8RF3AD/j+5p9/FoQ6
-         hHgTW8TKzsEhviMvu+ruVlz5HwE+Mr2E8Fl7//2RQ0IwZNsqZhqebfooHdCcY/b7r6jc
-         Bul/XJs6Ssqv0U0rM9ErWBSnAkhakntVZtZqJz0rX4LGYMTrBcGpCGtitwJKpbxFd4yB
-         uL9qeyy51VzSpb+Oqnr/ONiMhvs+tt6hFYof2zYv+q/bOr115DiOvOWZ6q2PVCyHkQw2
-         1fXg==
-X-Gm-Message-State: APjAAAVy1QWaW3QXOG6Y649kY6Xb6BuoYjWieyKnrL3ljc5zRWdy713K
-        xjUrgXkDa3dv5IGtUzC+QQM8VnMvjvb7qg==
-X-Google-Smtp-Source: APXvYqyz4BWMiFzYaNYGlsgVbEiw1vf/lVaKsSU/fOlFo52QB6QY5giJhs5CEYFJjumARZ6Uym7YcA==
-X-Received: by 2002:a17:90b:3c9:: with SMTP id go9mr7531541pjb.7.1576010596956;
-        Tue, 10 Dec 2019 12:43:16 -0800 (PST)
-Received: from x1.thefacebook.com ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id o15sm4387829pgf.2.2019.12.10.12.43.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 12:43:16 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org
-Cc:     willy@infradead.org, clm@fb.com, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5/5] iomap: support RWF_UNCACHED for buffered writes
-Date:   Tue, 10 Dec 2019 13:43:04 -0700
-Message-Id: <20191210204304.12266-6-axboe@kernel.dk>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191210204304.12266-1-axboe@kernel.dk>
-References: <20191210204304.12266-1-axboe@kernel.dk>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ttORR/hku84+ocdcb8LP7T5MA+wBluhwAjwe/+PVW2c=;
+        b=e5ZDKxf3njD81jXqFhsj8TT8Hj2MDFdJzo1PlEiPHtWAhJUD9QPyJUZ9+g/gi++gXk
+         3i7TBK+B3NmSKvOd+TPr0kXW2Me20PP7HuK18RB10jGDsrOZHhSRIidaLlBSGZ1GKBC8
+         KYK15BzJormIctUCziTyXNXIQ0KSRsprYRxcxETu1GlZ5vPX0Bm4wwLbIfDZJaY/YCAa
+         xuCCO6UHf9/q5U815ZmeVWahwzYM+uL/RYXoSdUSCCR+dKgmp/b4PugKhT3fwGn0nhxh
+         +j4A2x8de6fRLHvZpHB1qBy8BRs5Ws1qZ2TobgOHK+bZCjIU2O//+TZFW0sRhmfkzRTj
+         aiCg==
+X-Gm-Message-State: APjAAAVKiJS9MANF76+Xk0jomila/mSFRtYBEZ+t7yXWm3KZOTBjwOyH
+        NRQaYNott2jlq1IIbksQxdZrzYE2HfzGulIguiPTQuiM
+X-Google-Smtp-Source: APXvYqzGbdPbrp9lHD6vbLHYy9z84SuB9pnO7EqDE2KHAD3ZKjZokTIMpSR0uWtXawl9v/U5KJiGne1exuv8Mkwu1VY=
+X-Received: by 2002:a81:598b:: with SMTP id n133mr17348086ywb.379.1576011000244;
+ Tue, 10 Dec 2019 12:50:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CADKPpc2RuncyN+ZONkwBqtW7iBb5ep_3yQN7PKe7ASn8DpNvBw@mail.gmail.com>
+ <CAOQ4uxiKqEq9ts4fEq_husQJpus29afVBMq8P1tkeQT-58RBFg@mail.gmail.com>
+ <CADKPpc33UGcuRB9p64QoF8g88emqNQB=Z03f+OnK4MiCoeVZpg@mail.gmail.com>
+ <20191204173455.GJ8206@quack2.suse.cz> <CADKPpc2EU6ijG=2bs6t8tXr32pB1ufBJCjEirPyoHdMtMr83hw@mail.gmail.com>
+ <20191210165538.GK1551@quack2.suse.cz>
+In-Reply-To: <20191210165538.GK1551@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 10 Dec 2019 22:49:49 +0200
+Message-ID: <CAOQ4uximwdf37JdVVfHuM_bxk=X7pz21hnT3thk01oDs_npfhw@mail.gmail.com>
+Subject: Re: File monitor problem
+To:     Jan Kara <jack@suse.cz>
+Cc:     Mo Re Ra <more7.rev@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Wez Furlong <wez@fb.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds support for RWF_UNCACHED for file systems using iomap to
-perform buffered writes. We use the generic infrastructure for this,
-by tracking pages we created and calling write_drop_cached_pages()
-to issue writeback and prune those pages.
+[cc: Watchman maintainer]
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/iomap/buffered-io.c | 72 +++++++++++++++++++++++++++++++++++-------
- include/linux/iomap.h  |  1 +
- 2 files changed, 62 insertions(+), 11 deletions(-)
+> > > I could imagine fanotify events would provide FID information of the target
+> > > file e.g. on create so you could then use that with open_by_handle() to
+> > > open the file and get reliable access to file data (provided the file still
+> > > exists). However there still remains the problem that you don't know the
+> > > file name and the problem that directory changes while you are looking...
+> > >
+> > > So changing fanotify to suit your usecase requires more than a small tweak.
+> > >
+> > > For what you want, it seems e.g. btrfs send-receive functionality will
+> > > provide what you need but then that's bound to a particular filesystem.
+> > >
+> > >                                                                 Honza
+> > > --
+> > > Jan Kara <jack@suse.com>
+> > > SUSE Labs, CR
+> >
+> > I understand your concerns about reliablity. But I think functionality
+> > and reliablity are two different things in this case. We`d better
+> > entrust the reliability to the user.
+> > Consider a user just want monitor all of filesystem changes but does
+> > not intend to do anything according the received notifications.
+> > I think we do not make decision for users by restricting them and
+> > ignoring their necessary demands. We shuold introduce the best
+> > available tools with all of concerns about them (which are
+> > documented). So, we would put the user in charge of organizing his
+> > projects. The user may care or not according his demands.
+>
+> I disgree. This is not how API design works in the Linux kernel. First, you
+> have to have a good and sound use case for the functionality (and I
+> understand and acknowledge your need to monitor a large directory and
+> reliably synchronize changes to another place) and then we try to implement
+> API that would fulfil the needs of the usecase.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 9b5b770ca4c7..3a18a6af8cb3 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -17,6 +17,7 @@
- #include <linux/bio.h>
- #include <linux/sched/signal.h>
- #include <linux/migrate.h>
-+#include <linux/pagevec.h>
- #include "trace.h"
- 
- #include "../internal.h"
-@@ -566,6 +567,7 @@ EXPORT_SYMBOL_GPL(iomap_migrate_page);
- 
- enum {
- 	IOMAP_WRITE_F_UNSHARE		= (1 << 0),
-+	IOMAP_WRITE_F_UNCACHED		= (1 << 1),
- };
- 
- static void
-@@ -643,6 +645,7 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
- 		struct page **pagep, struct iomap *iomap, struct iomap *srcmap)
- {
- 	const struct iomap_page_ops *page_ops = iomap->page_ops;
-+	unsigned aop_flags;
- 	struct page *page;
- 	int status = 0;
- 
-@@ -659,8 +662,11 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
- 			return status;
- 	}
- 
-+	aop_flags = AOP_FLAG_NOFS;
-+	if (flags & IOMAP_UNCACHED)
-+		aop_flags |= AOP_FLAG_UNCACHED;
- 	page = grab_cache_page_write_begin(inode->i_mapping, pos >> PAGE_SHIFT,
--			AOP_FLAG_NOFS);
-+						aop_flags);
- 	if (!page) {
- 		status = -ENOMEM;
- 		goto out_no_page;
-@@ -670,9 +676,14 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
- 		iomap_read_inline_data(inode, page, srcmap);
- 	else if (iomap->flags & IOMAP_F_BUFFER_HEAD)
- 		status = __block_write_begin_int(page, pos, len, NULL, srcmap);
--	else
--		status = __iomap_write_begin(inode, pos, len, flags, page,
-+	else {
-+		unsigned wb_flags = 0;
-+
-+		if (flags & IOMAP_UNCACHED)
-+			wb_flags = IOMAP_WRITE_F_UNCACHED;
-+		status = __iomap_write_begin(inode, pos, len, wb_flags, page,
- 				srcmap);
-+	}
- 
- 	if (unlikely(status))
- 		goto out_unlock;
-@@ -796,19 +807,27 @@ iomap_write_end(struct inode *inode, loff_t pos, unsigned len, unsigned copied,
- 	return ret;
- }
- 
-+#define GPW_PAGE_BATCH		16
-+
- static loff_t
- iomap_write_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
- 		unsigned flags, struct iomap *iomap, struct iomap *srcmap)
- {
-+	struct address_space *mapping = inode->i_mapping;
- 	struct iov_iter *i = data;
-+	struct pagevec pvec;
- 	long status = 0;
- 	ssize_t written = 0;
- 
-+	pagevec_init(&pvec);
-+
- 	do {
- 		struct page *page;
- 		unsigned long offset;	/* Offset into pagecache page */
- 		unsigned long bytes;	/* Bytes to write to page */
- 		size_t copied;		/* Bytes copied from user */
-+		bool drop_page = false;	/* drop page after IO */
-+		unsigned lflags = flags;
- 
- 		offset = offset_in_page(pos);
- 		bytes = min_t(unsigned long, PAGE_SIZE - offset,
-@@ -832,10 +851,17 @@ iomap_write_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
- 			break;
- 		}
- 
--		status = iomap_write_begin(inode, pos, bytes, 0, &page, iomap,
--				srcmap);
--		if (unlikely(status))
-+retry:
-+		status = iomap_write_begin(inode, pos, bytes, lflags, &page,
-+						iomap, srcmap);
-+		if (unlikely(status)) {
-+			if (status == -ENOMEM && (lflags & IOMAP_UNCACHED)) {
-+				drop_page = true;
-+				lflags &= ~IOMAP_UNCACHED;
-+				goto retry;
-+			}
- 			break;
-+		}
- 
- 		if (mapping_writably_mapped(inode->i_mapping))
- 			flush_dcache_page(page);
-@@ -844,10 +870,16 @@ iomap_write_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
- 
- 		flush_dcache_page(page);
- 
-+		if (drop_page)
-+			get_page(page);
-+
- 		status = iomap_write_end(inode, pos, bytes, copied, page, iomap,
- 				srcmap);
--		if (unlikely(status < 0))
-+		if (unlikely(status < 0)) {
-+			if (drop_page)
-+				put_page(page);
- 			break;
-+		}
- 		copied = status;
- 
- 		cond_resched();
-@@ -864,15 +896,29 @@ iomap_write_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
- 			 */
- 			bytes = min_t(unsigned long, PAGE_SIZE - offset,
- 						iov_iter_single_seg_count(i));
-+			if (drop_page)
-+				put_page(page);
- 			goto again;
- 		}
-+
-+		if (drop_page &&
-+		    ((pos >> PAGE_SHIFT) != ((pos + copied) >> PAGE_SHIFT))) {
-+			if (!pagevec_add(&pvec, page))
-+				write_drop_cached_pages(&pvec, mapping);
-+		} else {
-+			if (drop_page)
-+				put_page(page);
-+			balance_dirty_pages_ratelimited(inode->i_mapping);
-+		}
-+
- 		pos += copied;
- 		written += copied;
- 		length -= copied;
--
--		balance_dirty_pages_ratelimited(inode->i_mapping);
- 	} while (iov_iter_count(i) && length);
- 
-+	if (pagevec_count(&pvec))
-+		write_drop_cached_pages(&pvec, mapping);
-+
- 	return written ? written : status;
- }
- 
-@@ -882,10 +928,14 @@ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *iter,
- {
- 	struct inode *inode = iocb->ki_filp->f_mapping->host;
- 	loff_t pos = iocb->ki_pos, ret = 0, written = 0;
-+	unsigned flags = IOMAP_WRITE;
-+
-+	if (iocb->ki_flags & IOCB_UNCACHED)
-+		flags |= IOMAP_UNCACHED;
- 
- 	while (iov_iter_count(iter)) {
--		ret = iomap_apply(inode, pos, iov_iter_count(iter),
--				IOMAP_WRITE, ops, iter, iomap_write_actor);
-+		ret = iomap_apply(inode, pos, iov_iter_count(iter), flags,
-+					ops, iter, iomap_write_actor);
- 		if (ret <= 0)
- 			break;
- 		pos += ret;
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 61fcaa3904d4..833dd43507ac 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -121,6 +121,7 @@ struct iomap_page_ops {
- #define IOMAP_FAULT		(1 << 3) /* mapping for page fault */
- #define IOMAP_DIRECT		(1 << 4) /* direct I/O */
- #define IOMAP_NOWAIT		(1 << 5) /* do not block */
-+#define IOMAP_UNCACHED		(1 << 6)
- 
- struct iomap_ops {
- 	/*
--- 
-2.24.0
+For the record, although I am the author of filename patches and represent
+users that use them, I myself am not fully convinced that we need to
+extend the API much further. For the past few months, I have been trying
+to convert our in-house filesystem monitor to work without filename in events.
+I haven't yet been able to prove (for performance of all interesting workloads)
+that more information in events is not needed, but haven't been able to prove
+that it is not needed either. CREATE_SELF events are needed for functionality.
 
+I have also been looking at other filesystem monitor implementations to
+see if they could be converted to fanotify without any extra information
+in events. I mostly focused on Watchman, which looks like the most
+promising open source filesystem monitor implementation around.
+It was hard for me to figure out myself if Watchman can benefit from
+new fanotify API and what it is missing from the new API.
+
+I have already implemented unprivileged fanotify (this was posted
+first even before FAN_REPORT_FID), but looking for a way to demo
+its usefulness - how it can avoid races compared to inotify.
+
+One way I am considering to tackle the missing information is to
+provide  unprivileged access to open_by_handle_at(2) -
+Currently, this syscall requires CAP_DAC_READ_SEARCH, because
+it can open files without having search access to ancestor directories.
+
+My idea is that if process has no CAP_DAC_READ_SEARCH, then
+mountfd argument will be assumed to be the direct parent of the file.
+Search access will be verified on mountfd and then a restrictive
+acceptable() callback will make sure that only dentry whose parent
+is mountfd is decoded. Alternatively a new syscall could be used.
+
+A special variant of exportfs_decode_fh() would be used that take
+the parent as argument instead of getting parent from
+s_export_op->fh_to_parent() or s_export_op->get_parent().
+
+The end result would be that events could report parent fid and child fid.
+If monitor application is watching a single directory or has a map of watched
+directories (like inotifywatch does), then child could be found by handle -
+as long as the file is still inside the watched directory. If there is a single
+hardlink in the directory, the child name would be non ambiguous.
+
+Child fid with FAN_DELETE/FAN_MOVE_FROM would only be useful
+if monitor application keeps a map of the files in every watched directory
+(I believe Watchman does anyway).
+
+Jan, does that sound like something that would address your concerns?
+
+Does that sound like and API that would provide an added value to users?
+
+Am I missing anything?
+
+Thanks,
+Amir.
