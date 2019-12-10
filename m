@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F910119250
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 21:43:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1025119253
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 21:43:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726708AbfLJUnK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Dec 2019 15:43:10 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37888 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726366AbfLJUnK (ORCPT
+        id S1726816AbfLJUnM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Dec 2019 15:43:12 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45653 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726619AbfLJUnM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Dec 2019 15:43:10 -0500
-Received: by mail-pf1-f196.google.com with SMTP id x185so413896pfc.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2019 12:43:10 -0800 (PST)
+        Tue, 10 Dec 2019 15:43:12 -0500
+Received: by mail-pf1-f193.google.com with SMTP id 2so396992pfg.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2019 12:43:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=g934jRFitGK2n249ARajPKYt/UpPdfJOZffggpxpM9A=;
-        b=VC4R6EkXXjbtQxDiwSsKD2cJRnJF2ODuAL3j8ivGaSeswr6nBQpNBzBjn+q/Vcpeil
-         ycZ+Ao2nHQq7myQuMGD4fppkVnNgT+lLMObOnSHXDraX/2V7KQWkp73TSXf1iEqwkpvh
-         kxQ8tBtG4h00b0Cq5hSe/+zR7dUYXOklLtS4yzNx4n754+9LRSDtzwF0BM5zDwGWJlI4
-         LCO18i09Xt9xIgLpbQJlOKGBukiM2Ye2CGcaYQrV5tIalX34nIHITLjJAnryr2uiaQnQ
-         H1JJKa0QJQNhA30TOcOpwFn6uj1aSiDWyQ1shW2UC8FJjuPu8Dy3GnqYQgccuq7auwLV
-         eXZQ==
+        bh=2SQjS8rVUv97zNNTlgrJhbpMsmZd4fG/GoKGJP3eAKE=;
+        b=t2EO6d99lKmXKYbF+NcjG6pdHmpetEgBemcsUMAZpxUWm7dMEgHzErpLj84RMbVrrl
+         q/YULpcGkowi/C3ioWRByVsTfGmmHPQjvwfgulTU89mv06fY2WB4W/a7mCZSg22V+bfe
+         ff9gBdeA4CJCzWrBqh5lBnY3AsmwPzhMv6uvSs85/FBK89HWrICDl4rlw4IU8xL2vrJY
+         3HxZehgc5WnbXKJ44rXgtVFgz9AOZaGIQj8XsTmYx/tE+nlE4Hax7kpyxN92mqEDaEFD
+         dm8pbha9xoq38chqU+5CbXVZf2Q7+Pae2g6uhL3cc5lt4m6JcvNnPyfzmATr07Z3ipvJ
+         Pisg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=g934jRFitGK2n249ARajPKYt/UpPdfJOZffggpxpM9A=;
-        b=E3OpbeFqxvhaUiRyFWyQMCv7biYWoK/Oz0Mt/vt2Y3x1ufgQswWd22x8/tUYIspvyO
-         05n8GbTWDwZOjSmoQzdKPaZQcPmN3Y+bFRWqqO8GrHSxlqEakuumJYY0gxMT/ZSCVFgB
-         i0hc71EeiT6ZjIUZ7UuhYX7cNVOM5rl0SrCQmrQ2+ILjLLeg8yTWmtOCb5rr+kvrCwql
-         nX4DAmVKoH4R0PxPlbHqqj8EChVRZgTxxqhuhR560Q/buVpbNnyN1++7VZLTW5Aao8yE
-         p03HHzMblpCuISnzbOLcwAjsyuwDE3Dc6+HrS74GRxTVSeZAz0ttUmxZdXfoVUPJfLQJ
-         P5cQ==
-X-Gm-Message-State: APjAAAWRqiqG3A43+dszBTkEWNRBZsbtZhp8UefRk/ALWlY6DcMsKmk7
-        8RN2sDE1PiTndm15NPpBuQmhhQ==
-X-Google-Smtp-Source: APXvYqyE5WoFA/cmJn1vJRX9pzPgXF2eR410xgWfmk3FD8JEs9EuTw5uMmkjPyn17EKlZwqDrRxS2A==
-X-Received: by 2002:a62:788a:: with SMTP id t132mr29104312pfc.134.1576010589664;
-        Tue, 10 Dec 2019 12:43:09 -0800 (PST)
+        bh=2SQjS8rVUv97zNNTlgrJhbpMsmZd4fG/GoKGJP3eAKE=;
+        b=NCubpY7Gv1+ZrwuJ1L/eXE4L0zJPbP4nGgqNNT8tb/zqxojjnx+a8jKXMQ28O+yH/6
+         Wt6IeYRtUG7g12bfOpuXLMThZQAwZZw/Rkp5ViUMCacecMDeTERXo6pq1dCnyJtlgn1M
+         76trn4kZwbOdjkNHW5URJvlAgW10u381AEMpcPCjpGdIohTRuTYKA+jndAwlrdzb9TSW
+         /ObZixhzroIgo5Uz7COXa6B+Fl0BC2HzEfrAoduVG8Nznk3e7+z2j+iVs/zjVQYieKuV
+         3uHMruBJwGrpFGt5UaqLrkb7iSrFXpQfcIp+ft7zLHIKxQOEkR3D6e24KbTFeMzpHH32
+         vBCw==
+X-Gm-Message-State: APjAAAWe2F0MUn6u9twO9bU6/V4RzdxA1VAEJXBKwc+ds3Av5N4Q6lio
+        VR0LgeE6vpCGAF8WXehl5Itj/g==
+X-Google-Smtp-Source: APXvYqzTgRoxT1fLICFSUMNjgAjkqur+0BZoxOJy8VbolZ0fnYC6tjjgUPCKXQO6qx3bnEMAKKrG3Q==
+X-Received: by 2002:a63:4f54:: with SMTP id p20mr7421pgl.246.1576010591369;
+        Tue, 10 Dec 2019 12:43:11 -0800 (PST)
 Received: from x1.thefacebook.com ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id o15sm4387829pgf.2.2019.12.10.12.43.08
+        by smtp.gmail.com with ESMTPSA id o15sm4387829pgf.2.2019.12.10.12.43.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 12:43:08 -0800 (PST)
+        Tue, 10 Dec 2019 12:43:10 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-block@vger.kernel.org
 Cc:     willy@infradead.org, clm@fb.com, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/5] fs: add read support for RWF_UNCACHED
-Date:   Tue, 10 Dec 2019 13:43:00 -0700
-Message-Id: <20191210204304.12266-2-axboe@kernel.dk>
+Subject: [PATCH 2/5] mm: make generic_perform_write() take a struct kiocb
+Date:   Tue, 10 Dec 2019 13:43:01 -0700
+Message-Id: <20191210204304.12266-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191210204304.12266-1-axboe@kernel.dk>
 References: <20191210204304.12266-1-axboe@kernel.dk>
@@ -62,149 +62,107 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If RWF_UNCACHED is set for io_uring (or preadv2(2)), we'll drop the
-cache for buffered reads if we are the ones instantiating it. If the
-data is already cached, we leave it cached.
+Right now all callers pass in iocb->ki_pos, just pass in the iocb. This
+is in preparation for using the iocb flags in generic_perform_write().
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/linux/fs.h      |  3 +++
- include/uapi/linux/fs.h |  5 ++++-
- mm/filemap.c            | 46 ++++++++++++++++++++++++++++++++++++-----
- 3 files changed, 48 insertions(+), 6 deletions(-)
+ fs/ceph/file.c     | 2 +-
+ fs/ext4/file.c     | 2 +-
+ fs/nfs/file.c      | 2 +-
+ include/linux/fs.h | 3 ++-
+ mm/filemap.c       | 8 +++++---
+ 5 files changed, 10 insertions(+), 7 deletions(-)
 
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 11929d2bb594..096c009f188f 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -1538,7 +1538,7 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		 * are pending vmtruncate. So write and vmtruncate
+ 		 * can not run at the same time
+ 		 */
+-		written = generic_perform_write(file, from, pos);
++		written = generic_perform_write(file, from, iocb);
+ 		if (likely(written >= 0))
+ 			iocb->ki_pos = pos + written;
+ 		ceph_end_io_write(inode);
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index 6a7293a5cda2..9ffb857765d5 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -249,7 +249,7 @@ static ssize_t ext4_buffered_write_iter(struct kiocb *iocb,
+ 		goto out;
+ 
+ 	current->backing_dev_info = inode_to_bdi(inode);
+-	ret = generic_perform_write(iocb->ki_filp, from, iocb->ki_pos);
++	ret = generic_perform_write(iocb->ki_filp, from, iocb);
+ 	current->backing_dev_info = NULL;
+ 
+ out:
+diff --git a/fs/nfs/file.c b/fs/nfs/file.c
+index 8eb731d9be3e..d8f51a702a4e 100644
+--- a/fs/nfs/file.c
++++ b/fs/nfs/file.c
+@@ -624,7 +624,7 @@ ssize_t nfs_file_write(struct kiocb *iocb, struct iov_iter *from)
+ 	result = generic_write_checks(iocb, from);
+ 	if (result > 0) {
+ 		current->backing_dev_info = inode_to_bdi(inode);
+-		result = generic_perform_write(file, from, iocb->ki_pos);
++		result = generic_perform_write(file, from, iocb);
+ 		current->backing_dev_info = NULL;
+ 	}
+ 	nfs_end_io_write(inode);
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 98e0349adb52..092ea2a4319b 100644
+index 092ea2a4319b..bf58db1bc032 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -314,6 +314,7 @@ enum rw_hint {
- #define IOCB_SYNC		(1 << 5)
- #define IOCB_WRITE		(1 << 6)
- #define IOCB_NOWAIT		(1 << 7)
-+#define IOCB_UNCACHED		(1 << 8)
+@@ -3103,7 +3103,8 @@ extern ssize_t generic_file_read_iter(struct kiocb *, struct iov_iter *);
+ extern ssize_t __generic_file_write_iter(struct kiocb *, struct iov_iter *);
+ extern ssize_t generic_file_write_iter(struct kiocb *, struct iov_iter *);
+ extern ssize_t generic_file_direct_write(struct kiocb *, struct iov_iter *);
+-extern ssize_t generic_perform_write(struct file *, struct iov_iter *, loff_t);
++extern ssize_t generic_perform_write(struct file *, struct iov_iter *,
++				     struct kiocb *);
  
- struct kiocb {
- 	struct file		*ki_filp;
-@@ -3418,6 +3419,8 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
- 		ki->ki_flags |= (IOCB_DSYNC | IOCB_SYNC);
- 	if (flags & RWF_APPEND)
- 		ki->ki_flags |= IOCB_APPEND;
-+	if (flags & RWF_UNCACHED)
-+		ki->ki_flags |= IOCB_UNCACHED;
- 	return 0;
- }
- 
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index 379a612f8f1d..357ebb0e0c5d 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -299,8 +299,11 @@ typedef int __bitwise __kernel_rwf_t;
- /* per-IO O_APPEND */
- #define RWF_APPEND	((__force __kernel_rwf_t)0x00000010)
- 
-+/* drop cache after reading or writing data */
-+#define RWF_UNCACHED	((__force __kernel_rwf_t)0x00000040)
-+
- /* mask of flags supported by the kernel */
- #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
--			 RWF_APPEND)
-+			 RWF_APPEND | RWF_UNCACHED)
- 
- #endif /* _UAPI_LINUX_FS_H */
+ ssize_t vfs_iter_read(struct file *file, struct iov_iter *iter, loff_t *ppos,
+ 		rwf_t flags);
 diff --git a/mm/filemap.c b/mm/filemap.c
-index bf6aa30be58d..ed23a11b3e34 100644
+index ed23a11b3e34..fe37bd2b2630 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -933,8 +933,8 @@ int add_to_page_cache_locked(struct page *page, struct address_space *mapping,
- }
- EXPORT_SYMBOL(add_to_page_cache_locked);
+@@ -3302,10 +3302,11 @@ struct page *grab_cache_page_write_begin(struct address_space *mapping,
+ EXPORT_SYMBOL(grab_cache_page_write_begin);
  
--int add_to_page_cache_lru(struct page *page, struct address_space *mapping,
--				pgoff_t offset, gfp_t gfp_mask)
-+static int __add_to_page_cache(struct page *page, struct address_space *mapping,
-+			       pgoff_t offset, gfp_t gfp_mask, bool lru)
+ ssize_t generic_perform_write(struct file *file,
+-				struct iov_iter *i, loff_t pos)
++				struct iov_iter *i, struct kiocb *iocb)
  {
- 	void *shadow = NULL;
- 	int ret;
-@@ -956,9 +956,17 @@ int add_to_page_cache_lru(struct page *page, struct address_space *mapping,
- 		WARN_ON_ONCE(PageActive(page));
- 		if (!(gfp_mask & __GFP_WRITE) && shadow)
- 			workingset_refault(page, shadow);
--		lru_cache_add(page);
-+		if (lru)
-+			lru_cache_add(page);
- 	}
- 	return ret;
-+
-+}
-+
-+int add_to_page_cache_lru(struct page *page, struct address_space *mapping,
-+				pgoff_t offset, gfp_t gfp_mask)
-+{
-+	return __add_to_page_cache(page, mapping, offset, gfp_mask, true);
- }
- EXPORT_SYMBOL_GPL(add_to_page_cache_lru);
- 
-@@ -2032,6 +2040,7 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 	offset = *ppos & ~PAGE_MASK;
- 
- 	for (;;) {
-+		bool drop_page = false;
- 		struct page *page;
- 		pgoff_t end_index;
- 		loff_t isize;
-@@ -2048,6 +2057,9 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 		if (!page) {
- 			if (iocb->ki_flags & IOCB_NOWAIT)
- 				goto would_block;
-+			/* UNCACHED implies no read-ahead */
-+			if (iocb->ki_flags & IOCB_UNCACHED)
-+				goto no_cached_page;
- 			page_cache_sync_readahead(mapping,
- 					ra, filp,
- 					index, last_index - index);
-@@ -2147,6 +2159,26 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 		offset &= ~PAGE_MASK;
- 		prev_offset = offset;
- 
-+		/*
-+		 * If we're dropping this page due to drop-behind, then
-+		 * lock it first. Ignore errors here, we can just leave it
-+		 * in the page cache. Note that we didn't add this page to
-+		 * the LRU when we added it to the page cache. So if we
-+		 * fail removing it, or lock it, add to the LRU.
-+		 */
-+		if (drop_page) {
-+			bool addlru = true;
-+
-+			if (!lock_page_killable(page)) {
-+				if (page->mapping == mapping)
-+					addlru = !remove_mapping(mapping, page);
-+				else
-+					addlru = false;
-+				unlock_page(page);
-+			}
-+			if (addlru)
-+				lru_cache_add(page);
-+		}
- 		put_page(page);
- 		written += ret;
- 		if (!iov_iter_count(iter))
-@@ -2234,8 +2266,12 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 			error = -ENOMEM;
+ 	struct address_space *mapping = file->f_mapping;
+ 	const struct address_space_operations *a_ops = mapping->a_ops;
++	loff_t pos = iocb->ki_pos;
+ 	long status = 0;
+ 	ssize_t written = 0;
+ 	unsigned int flags = 0;
+@@ -3439,7 +3440,8 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		if (written < 0 || !iov_iter_count(from) || IS_DAX(inode))
  			goto out;
+ 
+-		status = generic_perform_write(file, from, pos = iocb->ki_pos);
++		pos = iocb->ki_pos;
++		status = generic_perform_write(file, from, iocb);
+ 		/*
+ 		 * If generic_perform_write() returned a synchronous error
+ 		 * then we want to return the number of bytes which were
+@@ -3471,7 +3473,7 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 			 */
  		}
--		error = add_to_page_cache_lru(page, mapping, index,
--				mapping_gfp_constraint(mapping, GFP_KERNEL));
-+		if (iocb->ki_flags & IOCB_UNCACHED)
-+			drop_page = true;
-+
-+		error = __add_to_page_cache(page, mapping, index,
-+				mapping_gfp_constraint(mapping, GFP_KERNEL),
-+				!drop_page);
- 		if (error) {
- 			put_page(page);
- 			if (error == -EEXIST) {
+ 	} else {
+-		written = generic_perform_write(file, from, iocb->ki_pos);
++		written = generic_perform_write(file, from, iocb);
+ 		if (likely(written > 0))
+ 			iocb->ki_pos += written;
+ 	}
 -- 
 2.24.0
 
