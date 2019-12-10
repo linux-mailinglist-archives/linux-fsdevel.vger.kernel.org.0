@@ -2,78 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 970A8119EFC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 00:02:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1ACE119F01
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 00:02:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbfLJXCJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Dec 2019 18:02:09 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49588 "EHLO mx1.suse.de"
+        id S1727209AbfLJXCN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Dec 2019 18:02:13 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49604 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726801AbfLJXCJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Dec 2019 18:02:09 -0500
+        id S1726988AbfLJXCL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Dec 2019 18:02:11 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4DF05AD69;
-        Tue, 10 Dec 2019 23:02:08 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 23D4EAD76;
+        Tue, 10 Dec 2019 23:02:09 +0000 (UTC)
 From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
 To:     linux-btrfs@vger.kernel.org
 Cc:     hch@infradead.org, darrick.wong@oracle.com, fdmanana@kernel.org,
         nborisov@suse.com, dsterba@suse.cz, jthumshirn@suse.de,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH 0/8 v4] btrfs direct-io using iomap
-Date:   Tue, 10 Dec 2019 17:01:47 -0600
-Message-Id: <20191210230155.22688-1-rgoldwyn@suse.de>
+        linux-fsdevel@vger.kernel.org,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: [PATCH 1/8] fs: Export generic_file_buffered_read()
+Date:   Tue, 10 Dec 2019 17:01:48 -0600
+Message-Id: <20191210230155.22688-2-rgoldwyn@suse.de>
 X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20191210230155.22688-1-rgoldwyn@suse.de>
+References: <20191210230155.22688-1-rgoldwyn@suse.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is an effort to use iomap for direct I/O in btrfs. This would
-change the call from __blockdev_direct_io() to iomap_dio_rw().
+From: Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-The main objective is to lose the buffer head and use bio defined by
-iomap code, and hopefully to use more of generic-FS codebase.
+Export generic_file_buffered_read() to be used to
+supplement incomplete direct reads.
 
-These patches are based and tested on v5.5-rc1. I have tested it against
-xfstests/btrfs.
+While we are at it, correct the comments and variable names.
 
-The tree is available at
-https://github.com/goldwynr/linux/tree/btrfs-iomap-dio
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+---
+ include/linux/fs.h |  2 ++
+ mm/filemap.c       | 13 +++++++------
+ 2 files changed, 9 insertions(+), 6 deletions(-)
 
-
-Changes since v1
-- Incorporated back the efficiency change for inode locking
-- Review comments about coding style and git comments
-- Merge related patches into one
-- Direct read to go through btrfs_direct_IO()
-- Removal of no longer used function dio_end_io()
-
-Changes since v2
-- aligning iomap offset/length to the position/length of I/O
-- Removed btrfs_dio_data
-- Removed BTRFS_INODE_READDIO_NEED_LOCK
-- Re-incorporating write efficiency changes caused lockdep_assert() in
-  iomap to be triggered, remove that code.
-
-Changes since v3
-- Fixed freeze on generic/095. Use iomap_end() to account for
-  failed/incomplete dio instead of btrfs_dio_data
-
---
-Goldwyn
-
- fs/btrfs/btrfs_inode.h |   18 ---
- fs/btrfs/ctree.h       |    1
- fs/btrfs/extent_io.c   |   37 ++----
- fs/btrfs/extent_io.h   |    2
- fs/btrfs/file.c        |   21 +++
- fs/btrfs/inode.c       |  282 ++++++++++++++++++-------------------------------
- fs/direct-io.c         |   19 ---
- fs/iomap/direct-io.c   |   16 +-
- include/linux/fs.h     |    4
- include/linux/iomap.h  |    2
- mm/filemap.c           |   13 +-
- 11 files changed, 162 insertions(+), 253 deletions(-)
-
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 98e0349adb52..3883adaa0e01 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3098,6 +3098,8 @@ extern int generic_file_rw_checks(struct file *file_in, struct file *file_out);
+ extern int generic_copy_file_checks(struct file *file_in, loff_t pos_in,
+ 				    struct file *file_out, loff_t pos_out,
+ 				    size_t *count, unsigned int flags);
++extern ssize_t generic_file_buffered_read(struct kiocb *iocb,
++		struct iov_iter *to, ssize_t already_read);
+ extern ssize_t generic_file_read_iter(struct kiocb *, struct iov_iter *);
+ extern ssize_t __generic_file_write_iter(struct kiocb *, struct iov_iter *);
+ extern ssize_t generic_file_write_iter(struct kiocb *, struct iov_iter *);
+diff --git a/mm/filemap.c b/mm/filemap.c
+index bf6aa30be58d..dc2c7e3472a0 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1994,7 +1994,7 @@ static void shrink_readahead_size_eio(struct file *filp,
+  * generic_file_buffered_read - generic file read routine
+  * @iocb:	the iocb to read
+  * @iter:	data destination
+- * @written:	already copied
++ * @copied:	already copied
+  *
+  * This is a generic file read routine, and uses the
+  * mapping->a_ops->readpage() function for the actual low-level stuff.
+@@ -2003,11 +2003,11 @@ static void shrink_readahead_size_eio(struct file *filp,
+  * of the logic when it comes to error handling etc.
+  *
+  * Return:
+- * * total number of bytes copied, including those the were already @written
++ * * total number of bytes copied, including those that were @copied
+  * * negative error code if nothing was copied
+  */
+-static ssize_t generic_file_buffered_read(struct kiocb *iocb,
+-		struct iov_iter *iter, ssize_t written)
++ssize_t generic_file_buffered_read(struct kiocb *iocb,
++		struct iov_iter *iter, ssize_t copied)
+ {
+ 	struct file *filp = iocb->ki_filp;
+ 	struct address_space *mapping = filp->f_mapping;
+@@ -2148,7 +2148,7 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
+ 		prev_offset = offset;
+ 
+ 		put_page(page);
+-		written += ret;
++		copied += ret;
+ 		if (!iov_iter_count(iter))
+ 			goto out;
+ 		if (ret < nr) {
+@@ -2256,8 +2256,9 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
+ 
+ 	*ppos = ((loff_t)index << PAGE_SHIFT) + offset;
+ 	file_accessed(filp);
+-	return written ? written : error;
++	return copied ? copied : error;
+ }
++EXPORT_SYMBOL_GPL(generic_file_buffered_read);
+ 
+ /**
+  * generic_file_read_iter - generic filesystem read routine
+-- 
+2.16.4
 
