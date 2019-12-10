@@ -2,134 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B71D91184D5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 11:19:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB5C3118506
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 11:28:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727159AbfLJKTv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Dec 2019 05:19:51 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:59088 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727032AbfLJKTu (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Dec 2019 05:19:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575973189;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=Y/w2qhmNAwfkY23Bzoz2XeeZ7eRtN89B7DbfBPq1VRk=;
-        b=gJLm7tpOmnYUWnK+phaCS+ZilSNAeqL6pAT1Z6ZOf9ZuIgNjHMkrWIz14Y2L5FEKqly+6+
-        fM1NsAC9RcTc2LVIePffYg67KRi+XHjfrZZjK4MI+WZzFIHTofQk3JwmLxW2lBIlt6Ads1
-        UGzs6f7x0dHTGH6g88rShpXH+Ev6DC8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-280-MdVMg5dBOOa6bR0IITRhKA-1; Tue, 10 Dec 2019 05:19:48 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 60407800EC0;
-        Tue, 10 Dec 2019 10:19:45 +0000 (UTC)
-Received: from max.com (ovpn-205-78.brq.redhat.com [10.40.205.78])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6A0CA5D6D4;
-        Tue, 10 Dec 2019 10:19:41 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        cluster-devel <cluster-devel@redhat.com>
-Subject: Re: [PATCH 15/15] gfs2: use iomap for buffered I/O in ordered and writeback mode
-Date:   Tue, 10 Dec 2019 11:19:38 +0100
-Message-Id: <20191210101938.495-1-agruenba@redhat.com>
+        id S1727249AbfLJK2Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Dec 2019 05:28:24 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58544 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726574AbfLJK2Y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Dec 2019 05:28:24 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 769B2B280;
+        Tue, 10 Dec 2019 10:28:20 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id E89EB1E0B23; Tue, 10 Dec 2019 11:28:18 +0100 (CET)
+Date:   Tue, 10 Dec 2019 11:28:18 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Leon Romanovsky <leonro@mellanox.com>
+Subject: Re: [PATCH v8 08/26] mm/gup: allow FOLL_FORCE for
+ get_user_pages_fast()
+Message-ID: <20191210102818.GF1551@quack2.suse.cz>
+References: <20191209225344.99740-1-jhubbard@nvidia.com>
+ <20191209225344.99740-9-jhubbard@nvidia.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-MC-Unique: MdVMg5dBOOa6bR0IITRhKA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191209225344.99740-9-jhubbard@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Christoph,
+On Mon 09-12-19 14:53:26, John Hubbard wrote:
+> Commit 817be129e6f2 ("mm: validate get_user_pages_fast flags") allowed
+> only FOLL_WRITE and FOLL_LONGTERM to be passed to get_user_pages_fast().
+> This, combined with the fact that get_user_pages_fast() falls back to
+> "slow gup", which *does* accept FOLL_FORCE, leads to an odd situation:
+> if you need FOLL_FORCE, you cannot call get_user_pages_fast().
+> 
+> There does not appear to be any reason for filtering out FOLL_FORCE.
+> There is nothing in the _fast() implementation that requires that we
+> avoid writing to the pages. So it appears to have been an oversight.
+> 
+> Fix by allowing FOLL_FORCE to be set for get_user_pages_fast().
+> 
+> Fixes: 817be129e6f2 ("mm: validate get_user_pages_fast flags")
+> Cc: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 
-On Mon, Sep 30, 2019 at 10:49 PM Andreas Gruenbacher <agruenba@redhat.com> =
-wrote:
-> On Tue, Aug 6, 2019 at 7:30 AM Christoph Hellwig <hch@lst.de> wrote:
-> > On Mon, Aug 05, 2019 at 02:27:21PM +0200, Andreas Gruenbacher wrote:
-> here are the changes we currently need on top of what you've posted on
-> July 1.  [...]
+Looks good to me. You can add:
 
-again, thank you for this patch.  After fixing some related bugs around thi=
-s
-change, it seems I've finally got this to work properly.  Below are the min=
-or
-changes I needed to make on top of your version.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-This requires functions iomap_page_create and iomap_set_range_uptodate to b=
-e
-exported; i'll post a patch for that sepatately.
+								Honza
 
-The result can be found here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git for-next.=
-iomap
-
-Thanks,
-Andreas
-
----
- fs/gfs2/bmap.c | 6 ++++--
- fs/gfs2/file.c | 2 ++
- 2 files changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
-index 168ac5147dd0..fcd2043fc466 100644
---- a/fs/gfs2/bmap.c
-+++ b/fs/gfs2/bmap.c
-@@ -75,13 +75,12 @@ static int gfs2_unstuffer_page(struct gfs2_inode *ip, s=
-truct buffer_head *dibh,
- =09=09memcpy(kaddr, dibh->b_data + sizeof(struct gfs2_dinode), dsize);
- =09=09memset(kaddr + dsize, 0, PAGE_SIZE - dsize);
- =09=09kunmap(page);
--
--=09=09SetPageUptodate(page);
- =09}
-=20
- =09if (gfs2_is_jdata(ip)) {
- =09=09struct buffer_head *bh;
-=20
-+=09=09SetPageUptodate(page);
- =09=09if (!page_has_buffers(page))
- =09=09=09create_empty_buffers(page, BIT(inode->i_blkbits),
- =09=09=09=09=09     BIT(BH_Uptodate));
-@@ -93,6 +92,9 @@ static int gfs2_unstuffer_page(struct gfs2_inode *ip, str=
-uct buffer_head *dibh,
- =09=09set_buffer_uptodate(bh);
- =09=09gfs2_trans_add_data(ip->i_gl, bh);
- =09} else {
-+=09=09iomap_page_create(inode, page);
-+=09=09iomap_set_range_uptodate(page, 0, i_blocksize(inode));
-+=09=09set_page_dirty(page);
- =09=09gfs2_ordered_add_inode(ip);
- =09}
-=20
-diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-index 9d58295ccf7a..9af352ebc904 100644
---- a/fs/gfs2/file.c
-+++ b/fs/gfs2/file.c
-@@ -555,6 +555,8 @@ static vm_fault_t gfs2_page_mkwrite(struct vm_fault *vm=
-f)
- out_uninit:
- =09gfs2_holder_uninit(&gh);
- =09if (ret =3D=3D 0) {
-+=09=09if (!gfs2_is_jdata(ip))
-+=09=09=09iomap_page_create(inode, page);
- =09=09set_page_dirty(page);
- =09=09wait_for_stable_page(page);
- =09}
---=20
-2.20.1
-
+> ---
+>  mm/gup.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/gup.c b/mm/gup.c
+> index c0c56888e7cc..958ab0757389 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -2414,7 +2414,8 @@ int get_user_pages_fast(unsigned long start, int nr_pages,
+>  	unsigned long addr, len, end;
+>  	int nr = 0, ret = 0;
+>  
+> -	if (WARN_ON_ONCE(gup_flags & ~(FOLL_WRITE | FOLL_LONGTERM)))
+> +	if (WARN_ON_ONCE(gup_flags & ~(FOLL_WRITE | FOLL_LONGTERM |
+> +				       FOLL_FORCE)))
+>  		return -EINVAL;
+>  
+>  	start = untagged_addr(start) & PAGE_MASK;
+> -- 
+> 2.24.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
