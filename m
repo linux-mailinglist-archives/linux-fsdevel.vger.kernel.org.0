@@ -2,72 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFE98117E01
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 03:58:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9908117E25
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 04:27:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726631AbfLJC60 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Dec 2019 21:58:26 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:59723 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726602AbfLJC60 (ORCPT
+        id S1726646AbfLJD1Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Dec 2019 22:27:24 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48226 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726623AbfLJD1Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Dec 2019 21:58:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575946705;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:  in-reply-to:in-reply-to;
-        bh=y1+ILk6NlZH8+BA8bgtcvaDsBfBSSFplpwqpPup+kUk=;
-        b=N63AOfqBS2upbxsiYfD7NU5HIUmDqGe5Yi3ZKUCoq1TqdOAo8uvcV4Qz9iL6XwBjTwqQUb
-        BcB2kwJ8LdRKaG6ynLIBxdmOtIRFbqJYjkLqycpRn2xkFXNPe5m/oKCmygtEqyTtRmBvb4
-        rf03Td56IQZJijN/K4KaXpHvdNbYS6A=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-148-XG8t8oC4PDWzKGC0WYll-w-1; Mon, 09 Dec 2019 21:58:21 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 08227800D4C;
-        Tue, 10 Dec 2019 02:58:20 +0000 (UTC)
-Received: from greed.delorie.com (ovpn-116-25.phx2.redhat.com [10.3.116.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1A81960BE0;
-        Tue, 10 Dec 2019 02:58:19 +0000 (UTC)
-Received: from greed.delorie.com.redhat.com (localhost [127.0.0.1])
-        by greed.delorie.com (8.14.7/8.14.7) with ESMTP id xBA2wF55008043;
-        Mon, 9 Dec 2019 21:58:16 -0500
-From:   DJ Delorie <dj@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     vincent.guittot@linaro.org, dsterba@suse.cz, dhowells@redhat.com,
-        ebiggers@kernel.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, mingo@kernel.org
-Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
-In-Reply-To: <CAHk-=wicgTacrHUJmSBbW9MYAdMPdrXzULPNqQ3G7+HkLeNf1Q@mail.gmail.com> (message from Linus Torvalds on Mon, 9 Dec 2019 09:48:27 -0800)
-Date:   Mon, 09 Dec 2019 21:58:15 -0500
-Message-ID: <xnsglsubso.fsf@greed.delorie.com>
+        Mon, 9 Dec 2019 22:27:24 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBA3RCr5083382
+        for <linux-fsdevel@vger.kernel.org>; Mon, 9 Dec 2019 22:27:23 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2wrt5968v3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Dec 2019 22:27:23 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Tue, 10 Dec 2019 03:27:21 -0000
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 10 Dec 2019 03:27:16 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBA3RFfO44630442
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Dec 2019 03:27:15 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7358552051;
+        Tue, 10 Dec 2019 03:27:15 +0000 (GMT)
+Received: from linux.vnet.ibm.com (unknown [9.126.150.29])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with SMTP id BACC15204E;
+        Tue, 10 Dec 2019 03:27:12 +0000 (GMT)
+Date:   Tue, 10 Dec 2019 08:57:12 +0530
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Phil Auld <pauld@redhat.com>, Ming Lei <ming.lei@redhat.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: single aio thread is migrated crazily by scheduler
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <20191115045634.GN4614@dread.disaster.area>
+ <20191115070843.GA24246@ming.t460p>
+ <20191115234005.GO4614@dread.disaster.area>
+ <20191118092121.GV4131@hirez.programming.kicks-ass.net>
+ <20191118204054.GV4614@dread.disaster.area>
+ <20191120191636.GI4097@hirez.programming.kicks-ass.net>
+ <20191120220313.GC18056@pauld.bos.csb>
+ <20191121132937.GW4114@hirez.programming.kicks-ass.net>
+ <20191209165122.GA27229@linux.vnet.ibm.com>
+ <20191209231743.GA19256@dread.disaster.area>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: XG8t8oC4PDWzKGC0WYll-w-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20191209231743.GA19256@dread.disaster.area>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+x-cbid: 19121003-4275-0000-0000-0000038D7597
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19121003-4276-0000-0000-000038A124D9
+Message-Id: <20191210032712.GE27253@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-09_05:2019-12-09,2019-12-09 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ bulkscore=0 lowpriorityscore=0 clxscore=1015 priorityscore=1501
+ adultscore=0 spamscore=0 impostorscore=0 mlxlogscore=964 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912100030
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
-> [ Added DJ to the participants, since he seems to be the Fedora make
-> maintainer - DJ, any chance that this absolutely horrid 'make' buf can
-> be fixed in older versions too, not just rawhide? The bugfix is two
-> and a half years old by now, and the bug looks real and very serious ]
+* Dave Chinner <david@fromorbit.com> [2019-12-10 10:17:43]:
 
-I've got builds ready for F30 and F31 but my local testing shows no
-difference in kernel build times with/without.  I was hoping someone
-would test the rawhide build[*] and say "yup, that fixes it" in case
-some other even older patch is also needed.
+> On Mon, Dec 09, 2019 at 10:21:22PM +0530, Srikar Dronamraju wrote:
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index 44123b4d14e8..efd740aafa17 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -2664,7 +2664,12 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+> >   */
+> >  int wake_up_process(struct task_struct *p)
+> >  {
+> > -	return try_to_wake_up(p, TASK_NORMAL, 0);
+> > +	int wake_flags = 0;
+> > +
+> > +	if (is_per_cpu_kthread(p))
+> > +		wake_flags = WF_KTHREAD;
+> > +
+> > +	return try_to_wake_up(p, TASK_NORMAL, WF_KTHREAD);
+> 
+> This is buggy. It always sets WF_KTHREAD, even for non-kernel
+> processes. I think you meant:
+> 
+> 	return try_to_wake_up(p, TASK_NORMAL, wake_flags);
 
-F29 just went EOL so I can't fix that one.
+Yes, I meant the above. Thanks for catching.
+Will test with this and repost.
 
-[*] https://koji.fedoraproject.org/koji/buildinfo?buildID=3D1420394
+> 
+> I suspect this bug invalidates the test results presented, too...
+> 
+> -Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
+
+-- 
+Thanks and Regards
+Srikar Dronamraju
 
