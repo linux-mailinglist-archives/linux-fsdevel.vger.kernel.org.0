@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9550119F05
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 00:02:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B467119F0A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 00:02:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727386AbfLJXCU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Dec 2019 18:02:20 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49690 "EHLO mx1.suse.de"
+        id S1727448AbfLJXCZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Dec 2019 18:02:25 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49754 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726801AbfLJXCU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Dec 2019 18:02:20 -0500
+        id S1726801AbfLJXCX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Dec 2019 18:02:23 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 64CEBAD69;
-        Tue, 10 Dec 2019 23:02:18 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 7AAECAE2D;
+        Tue, 10 Dec 2019 23:02:20 +0000 (UTC)
 From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
 To:     linux-btrfs@vger.kernel.org
 Cc:     hch@infradead.org, darrick.wong@oracle.com, fdmanana@kernel.org,
         nborisov@suse.com, dsterba@suse.cz, jthumshirn@suse.de,
         linux-fsdevel@vger.kernel.org,
         Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: [PATCH 5/8] fs: Remove dio_end_io()
-Date:   Tue, 10 Dec 2019 17:01:52 -0600
-Message-Id: <20191210230155.22688-6-rgoldwyn@suse.de>
+Subject: [PATCH 6/8] btrfs: Wait for extent bits to release page
+Date:   Tue, 10 Dec 2019 17:01:53 -0600
+Message-Id: <20191210230155.22688-7-rgoldwyn@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20191210230155.22688-1-rgoldwyn@suse.de>
 References: <20191210230155.22688-1-rgoldwyn@suse.de>
@@ -34,60 +34,113 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-Since we removed the last user of dio_end_io(), remove the helper
-function dio_end_io().
+While trying to release a page, the extent containing the page may be locked
+which would stop the page from being released. Wait for the
+extent lock to be cleared, if blocking is allowed and then clear
+the bits.
 
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+While we are at it, clean the code of try_release_extent_state() to make
+it simpler.
+
 Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
 ---
- fs/direct-io.c     | 19 -------------------
- include/linux/fs.h |  2 --
- 2 files changed, 21 deletions(-)
+ fs/btrfs/extent_io.c | 37 ++++++++++++++++---------------------
+ fs/btrfs/extent_io.h |  2 +-
+ fs/btrfs/inode.c     |  4 ++--
+ 3 files changed, 19 insertions(+), 24 deletions(-)
 
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index 0ec4f270139f..fb19a77bec22 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -384,25 +384,6 @@ static void dio_bio_end_io(struct bio *bio)
- 	spin_unlock_irqrestore(&dio->bio_lock, flags);
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index eb8bd0258360..193785981183 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -4360,33 +4360,28 @@ int extent_invalidatepage(struct extent_io_tree *tree,
+  * are locked or under IO and drops the related state bits if it is safe
+  * to drop the page.
+  */
+-static int try_release_extent_state(struct extent_io_tree *tree,
++static bool try_release_extent_state(struct extent_io_tree *tree,
+ 				    struct page *page, gfp_t mask)
+ {
+ 	u64 start = page_offset(page);
+ 	u64 end = start + PAGE_SIZE - 1;
+-	int ret = 1;
+ 
+ 	if (test_range_bit(tree, start, end, EXTENT_LOCKED, 0, NULL)) {
+-		ret = 0;
+-	} else {
+-		/*
+-		 * at this point we can safely clear everything except the
+-		 * locked bit and the nodatasum bit
+-		 */
+-		ret = __clear_extent_bit(tree, start, end,
+-				 ~(EXTENT_LOCKED | EXTENT_NODATASUM),
+-				 0, 0, NULL, mask, NULL);
+-
+-		/* if clear_extent_bit failed for enomem reasons,
+-		 * we can't allow the release to continue.
+-		 */
+-		if (ret < 0)
+-			ret = 0;
+-		else
+-			ret = 1;
++		if (!gfpflags_allow_blocking(mask))
++			return false;
++		wait_extent_bit(tree, start, end, EXTENT_LOCKED);
+ 	}
+-	return ret;
++	/*
++	 * At this point we can safely clear everything except the locked and
++	 * nodatasum bits. If clear_extent_bit failed due to -ENOMEM,
++	 * don't allow release.
++	 */
++	if (__clear_extent_bit(tree, start, end,
++				~(EXTENT_LOCKED | EXTENT_NODATASUM), 0, 0,
++				NULL, mask, NULL) < 0)
++		return false;
++
++	return true;
  }
  
--/**
-- * dio_end_io - handle the end io action for the given bio
-- * @bio: The direct io bio thats being completed
-- *
-- * This is meant to be called by any filesystem that uses their own dio_submit_t
-- * so that the DIO specific endio actions are dealt with after the filesystem
-- * has done it's completion work.
-- */
--void dio_end_io(struct bio *bio)
--{
--	struct dio *dio = bio->bi_private;
--
--	if (dio->is_async)
--		dio_bio_end_aio(bio);
--	else
--		dio_bio_end_io(bio);
--}
--EXPORT_SYMBOL_GPL(dio_end_io);
--
- static inline void
- dio_bio_alloc(struct dio *dio, struct dio_submit *sdio,
- 	      struct block_device *bdev,
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 3883adaa0e01..d708422f77e0 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3157,8 +3157,6 @@ enum {
- 	DIO_SKIP_HOLES	= 0x02,
- };
+ /*
+@@ -4394,7 +4389,7 @@ static int try_release_extent_state(struct extent_io_tree *tree,
+  * in the range corresponding to the page, both state records and extent
+  * map records are removed
+  */
+-int try_release_extent_mapping(struct page *page, gfp_t mask)
++bool try_release_extent_mapping(struct page *page, gfp_t mask)
+ {
+ 	struct extent_map *em;
+ 	u64 start = page_offset(page);
+diff --git a/fs/btrfs/extent_io.h b/fs/btrfs/extent_io.h
+index a8551a1f56e2..89cc0cf8a7fd 100644
+--- a/fs/btrfs/extent_io.h
++++ b/fs/btrfs/extent_io.h
+@@ -188,7 +188,7 @@ typedef struct extent_map *(get_extent_t)(struct btrfs_inode *inode,
+ 					  u64 start, u64 len,
+ 					  int create);
  
--void dio_end_io(struct bio *bio);
--
- ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 			     struct block_device *bdev, struct iov_iter *iter,
- 			     get_block_t get_block,
+-int try_release_extent_mapping(struct page *page, gfp_t mask);
++bool try_release_extent_mapping(struct page *page, gfp_t mask);
+ int try_release_extent_buffer(struct page *page);
+ 
+ int extent_read_full_page(struct extent_io_tree *tree, struct page *page,
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 86730f2f2bf6..88f2a7229459 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -8811,8 +8811,8 @@ btrfs_readpages(struct file *file, struct address_space *mapping,
+ 
+ static int __btrfs_releasepage(struct page *page, gfp_t gfp_flags)
+ {
+-	int ret = try_release_extent_mapping(page, gfp_flags);
+-	if (ret == 1) {
++	bool ret = try_release_extent_mapping(page, gfp_flags);
++	if (ret) {
+ 		ClearPagePrivate(page);
+ 		set_page_private(page, 0);
+ 		put_page(page);
 -- 
 2.16.4
 
