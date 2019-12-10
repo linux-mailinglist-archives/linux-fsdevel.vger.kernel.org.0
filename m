@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6394D118D84
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 17:25:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C58E118D86
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 17:25:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727573AbfLJQZC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Dec 2019 11:25:02 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:33568 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727550AbfLJQZC (ORCPT
+        id S1727594AbfLJQZE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Dec 2019 11:25:04 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:46625 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727574AbfLJQZD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Dec 2019 11:25:02 -0500
-Received: by mail-io1-f66.google.com with SMTP id s25so4724935iob.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2019 08:25:01 -0800 (PST)
+        Tue, 10 Dec 2019 11:25:03 -0500
+Received: by mail-io1-f67.google.com with SMTP id t26so7991224ioi.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2019 08:25:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=o/x6NjL9O5h2Ux7aJEFNccuj0M9CNUr2pjvWBBusJd4=;
-        b=Zpixa69lHW83t2ZbBBOHojQxENx5w2X0sKlji5l+ZpBo6tA/3fj9yn2HfnjrlJQ6Ob
-         U8FY3MOCg7q0XHIPvND9EpFk53qsIhRbPB/9HbD1ilihLRNcBtOuwWUXkIqNVoGnuzdD
-         5XOtCxdmCCmO2Arsi/KYjMVTyNg6egphSQmKqqQfmQkq1VyVM8Gj0Xtm9JJX4Led8WKe
-         zmbD/SLsl+MyHYWuaQHEb1/hAAYeSbscwPIu0vVxe909vlonZb4pS3Y0AjqklnvTPNnZ
-         6/Cw7617YWeJqBJwlZJAG0ivRv7q+hmVouVZ8mhUmu2zs+i9PsKCc/s41pHKmnnSHHi9
-         5YdQ==
+        bh=s8zjCrJz5ZRdYBpdQDfhxTslxtlYCGJ1G+7YBvhVfgI=;
+        b=wJMPU5744v6WvxtshLB2YhVTVwEzJUYSVo8Cs1mYZznhz6iXZhCKqfpBrOA7c9NQ/p
+         ZB/rQ/F3tjUQFEKcp0V16keNshFiXhLgvA3BDicpYTn/L60SrB6ppALuRvhkK7il127i
+         GR6GHDlijob8PxzMMJZ6rvs1Gm+EVatZz5hx7EO4+t+7HQe4QGvfugxHPIITaTI7POhe
+         N1+MTHKKXblvBtAXucSwX2tMZ/6Z1M1r3pv4iZwnDBXiFZWOweOGvk0R6e+YhMj+xMb/
+         ZQB1v8sAO98ubvrrs3ymc3bRjUK1ZdI1b1w87JOW2iT76e5SLhr2CzRf6hz123ily0Zv
+         kp4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=o/x6NjL9O5h2Ux7aJEFNccuj0M9CNUr2pjvWBBusJd4=;
-        b=SANzaqwDlcK1BvwGsV8jFHUA/TugxkTLJIRPivgIda54CYp1vxwsOpB3RvQglVYGCN
-         TRZlH7bfJJgjWEBqvrSQMZDSz+8YuhAcXSw5ObHLanJIHCw8jMedV4zNjUlL3RAPlZhz
-         jeXU6Gu+p+IfCVuNB9WSvv1h4mJfSTaofbsPoLn/KbkUdUlBn2cEJclC9QwMiVlVTXr7
-         L2FCBlvnVwfC23m+nMEuW5ALNAo16aHzF0j3W5Bj8aUN62uLoSAfuCppmovJj0zGL7cc
-         wX3VeFC3etC/LwJFZVuZPOrXuPUJoIQti9WuzZoTWApo1EK3zC8soE3kVNAvzeDr+GGQ
-         08vw==
-X-Gm-Message-State: APjAAAW2KRMrEVyzH5+tebKkIbGHj/Ob2WcqhCaGiayNtDXh5Q98Ew9u
-        YmOk4RVlmcSrCj9ZDAP0JyvFAA==
-X-Google-Smtp-Source: APXvYqxxtEmqFA3byjJGnmrQmrrH3TRgfkvrkxj17L5ofRuCP+Z2MTkeccUYnzTdzqEGwVD/DbWwww==
-X-Received: by 2002:a02:c6d5:: with SMTP id r21mr32752498jan.129.1575995101208;
-        Tue, 10 Dec 2019 08:25:01 -0800 (PST)
+        bh=s8zjCrJz5ZRdYBpdQDfhxTslxtlYCGJ1G+7YBvhVfgI=;
+        b=I8hyD8qdb4cgihdxXz3vTBf3P2/QS2hliVHm2Q1NZ5Yawk2GoJVHhDg+5HNTpsSlF6
+         hCOnyUDaoA9wEtJ5or9JxTaFSUh9FchObTAPt7g3ofgO7hljqRbvP+/HtLhE3rf5ZWdR
+         xVq0igdB1SpI28XO4uNkBbgLjKE12Mpmg63LG0zAMG9RQzpPwgwECz30zEm7rQ2YG8S5
+         cSx/0q2yc+4+KnvVJxum1c4Gx/sLA1wG2ZfubOUrDqLDcs+vTE6Bc2MRa2/KhilP6aHx
+         8DpzV6U2Bne8QcxWCP41SJKg2JFz5tWCPpJbQA5knJGiwKg3AwLmle2+uEejvRbXRI23
+         WEhQ==
+X-Gm-Message-State: APjAAAW90OUTXHG0LyNX4uWTv/FVxBcs8PqKc+ASrBaC108qDAUyeHPS
+        QiGcTLuxd/zyIvMSz4QqGQZu5g==
+X-Google-Smtp-Source: APXvYqwbuFT7R6Wu2bsFXx+xszUEd+tIs1J+ms6VwaNAPr1muQEEAbdJXNtKxn1ir2hTG4mTArM/4A==
+X-Received: by 2002:a5e:8c14:: with SMTP id n20mr1670705ioj.161.1575995102464;
+        Tue, 10 Dec 2019 08:25:02 -0800 (PST)
 Received: from x1.thefacebook.com ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id y11sm791174iol.23.2019.12.10.08.24.59
+        by smtp.gmail.com with ESMTPSA id y11sm791174iol.23.2019.12.10.08.25.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 08:25:00 -0800 (PST)
+        Tue, 10 Dec 2019 08:25:01 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-block@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/5] mm: make buffered writes work with RWF_UNCACHED
-Date:   Tue, 10 Dec 2019 09:24:52 -0700
-Message-Id: <20191210162454.8608-4-axboe@kernel.dk>
+Subject: [PATCH 4/5] iomap: pass in the write_begin/write_end flags to iomap_actor
+Date:   Tue, 10 Dec 2019 09:24:53 -0700
+Message-Id: <20191210162454.8608-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191210162454.8608-1-axboe@kernel.dk>
 References: <20191210162454.8608-1-axboe@kernel.dk>
@@ -62,179 +62,216 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If RWF_UNCACHED is set for io_uring (or pwritev2(2)), we'll drop the
-cache instantiated for buffered writes. If new pages aren't
-instantiated, we leave them alone. This provides similar semantics to
-reads with RWF_UNCACHED set.
+This is in preparation for passing in a flag to the iomap_actor, which
+currently doesn't support that.
+
+No functional changes in this patch.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/linux/fs.h |  3 ++
- mm/filemap.c       | 78 +++++++++++++++++++++++++++++++++++++++++++---
- 2 files changed, 76 insertions(+), 5 deletions(-)
+ fs/dax.c               |  2 +-
+ fs/iomap/apply.c       |  2 +-
+ fs/iomap/buffered-io.c | 17 ++++++++++-------
+ fs/iomap/direct-io.c   |  3 ++-
+ fs/iomap/fiemap.c      |  5 +++--
+ fs/iomap/seek.c        |  6 ++++--
+ fs/iomap/swapfile.c    |  2 +-
+ include/linux/iomap.h  |  5 +++--
+ 8 files changed, 25 insertions(+), 17 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index bf58db1bc032..bcf486c132a8 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -285,6 +285,7 @@ enum positive_aop_returns {
- #define AOP_FLAG_NOFS			0x0002 /* used by filesystem to direct
- 						* helper code (eg buffer layer)
- 						* to clear GFP_FS from alloc */
-+#define AOP_FLAG_UNCACHED		0x0004
+diff --git a/fs/dax.c b/fs/dax.c
+index 1f1f0201cad1..30a20b994140 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -1091,7 +1091,7 @@ EXPORT_SYMBOL_GPL(__dax_zero_page_range);
  
- /*
-  * oh the beauties of C type declarations.
-@@ -3105,6 +3106,8 @@ extern ssize_t generic_file_write_iter(struct kiocb *, struct iov_iter *);
- extern ssize_t generic_file_direct_write(struct kiocb *, struct iov_iter *);
- extern ssize_t generic_perform_write(struct file *, struct iov_iter *,
- 				     struct kiocb *);
-+extern void write_drop_cached_pages(struct page **,
-+				    struct address_space *mapping, unsigned *);
- 
- ssize_t vfs_iter_read(struct file *file, struct iov_iter *iter, loff_t *ppos,
- 		rwf_t flags);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index fe37bd2b2630..d6171bf705f9 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -3287,10 +3287,12 @@ struct page *grab_cache_page_write_begin(struct address_space *mapping,
- 					pgoff_t index, unsigned flags)
+ static loff_t
+ dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+-		struct iomap *iomap, struct iomap *srcmap)
++		unsigned flags, struct iomap *iomap, struct iomap *srcmap)
  {
- 	struct page *page;
--	int fgp_flags = FGP_LOCK|FGP_WRITE|FGP_CREAT;
-+	int fgp_flags = FGP_LOCK|FGP_WRITE;
+ 	struct block_device *bdev = iomap->bdev;
+ 	struct dax_device *dax_dev = iomap->dax_dev;
+diff --git a/fs/iomap/apply.c b/fs/iomap/apply.c
+index 76925b40b5fd..562536da8a13 100644
+--- a/fs/iomap/apply.c
++++ b/fs/iomap/apply.c
+@@ -77,7 +77,7 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
+ 	 * iomap into the actors so that they don't need to have special
+ 	 * handling for the two cases.
+ 	 */
+-	written = actor(inode, pos, length, data, &iomap,
++	written = actor(inode, pos, length, data, flags, &iomap,
+ 			srcmap.type != IOMAP_HOLE ? &srcmap : &iomap);
  
- 	if (flags & AOP_FLAG_NOFS)
- 		fgp_flags |= FGP_NOFS;
-+	if (!(flags & AOP_FLAG_UNCACHED))
-+		fgp_flags |= FGP_CREAT;
+ 	/*
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 828444e14d09..9b5b770ca4c7 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -249,7 +249,7 @@ static inline bool iomap_block_needs_zeroing(struct inode *inode,
  
- 	page = pagecache_get_page(mapping, index, fgp_flags,
- 			mapping_gfp_mask(mapping));
-@@ -3301,21 +3303,67 @@ struct page *grab_cache_page_write_begin(struct address_space *mapping,
- }
- EXPORT_SYMBOL(grab_cache_page_write_begin);
- 
-+/*
-+ * Start writeback on the pages in pgs[], and then try and remove those pages
-+ * from the page cached. Used with RWF_UNCACHED.
-+ */
-+void write_drop_cached_pages(struct page **pgs, struct address_space *mapping,
-+			     unsigned *nr)
-+{
-+	loff_t start, end;
-+	int i;
-+
-+	end = 0;
-+	start = LLONG_MAX;
-+	for (i = 0; i < *nr; i++) {
-+		struct page *page = pgs[i];
-+		loff_t off;
-+
-+		off = (loff_t) page_to_index(page) << PAGE_SHIFT;
-+		if (off < start)
-+			start = off;
-+		if (off > end)
-+			end = off;
-+		get_page(page);
-+	}
-+
-+	__filemap_fdatawrite_range(mapping, start, end, WB_SYNC_NONE);
-+
-+	for (i = 0; i < *nr; i++) {
-+		struct page *page = pgs[i];
-+
-+		lock_page(page);
-+		if (page->mapping == mapping) {
-+			wait_on_page_writeback(page);
-+			if (!page_has_private(page) ||
-+			    try_to_release_page(page, 0))
-+				remove_mapping(mapping, page);
-+		}
-+		unlock_page(page);
-+	}
-+	*nr = 0;
-+}
-+EXPORT_SYMBOL_GPL(write_drop_cached_pages);
-+
-+#define GPW_PAGE_BATCH		16
-+
- ssize_t generic_perform_write(struct file *file,
- 				struct iov_iter *i, struct kiocb *iocb)
+ static loff_t
+ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+-		struct iomap *iomap, struct iomap *srcmap)
++		unsigned flags, struct iomap *iomap, struct iomap *srcmap)
  {
- 	struct address_space *mapping = file->f_mapping;
- 	const struct address_space_operations *a_ops = mapping->a_ops;
-+	struct page *drop_pages[GPW_PAGE_BATCH];
- 	loff_t pos = iocb->ki_pos;
+ 	struct iomap_readpage_ctx *ctx = data;
+ 	struct page *page = ctx->cur_page;
+@@ -397,7 +397,8 @@ iomap_next_page(struct inode *inode, struct list_head *pages, loff_t pos,
+ 
+ static loff_t
+ iomap_readpages_actor(struct inode *inode, loff_t pos, loff_t length,
+-		void *data, struct iomap *iomap, struct iomap *srcmap)
++		void *data, unsigned flags, struct iomap *iomap,
++		struct iomap *srcmap)
+ {
+ 	struct iomap_readpage_ctx *ctx = data;
+ 	loff_t done, ret;
+@@ -417,7 +418,7 @@ iomap_readpages_actor(struct inode *inode, loff_t pos, loff_t length,
+ 			ctx->cur_page_in_bio = false;
+ 		}
+ 		ret = iomap_readpage_actor(inode, pos + done, length - done,
+-				ctx, iomap, srcmap);
++				ctx, 0, iomap, srcmap);
+ 	}
+ 
+ 	return done;
+@@ -797,7 +798,7 @@ iomap_write_end(struct inode *inode, loff_t pos, unsigned len, unsigned copied,
+ 
+ static loff_t
+ iomap_write_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+-		struct iomap *iomap, struct iomap *srcmap)
++		unsigned flags, struct iomap *iomap, struct iomap *srcmap)
+ {
+ 	struct iov_iter *i = data;
+ 	long status = 0;
+@@ -897,7 +898,7 @@ EXPORT_SYMBOL_GPL(iomap_file_buffered_write);
+ 
+ static loff_t
+ iomap_unshare_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+-		struct iomap *iomap, struct iomap *srcmap)
++		unsigned flags, struct iomap *iomap, struct iomap *srcmap)
+ {
  	long status = 0;
  	ssize_t written = 0;
--	unsigned int flags = 0;
-+	unsigned int flags = 0, drop_nr = 0;
+@@ -983,7 +984,8 @@ static int iomap_dax_zero(loff_t pos, unsigned offset, unsigned bytes,
  
- 	do {
- 		struct page *page;
- 		unsigned long offset;	/* Offset into pagecache page */
- 		unsigned long bytes;	/* Bytes to write to page */
- 		size_t copied;		/* Bytes copied from user */
-+		bool drop_page = false;	/* drop page after IO */
- 		void *fsdata;
+ static loff_t
+ iomap_zero_range_actor(struct inode *inode, loff_t pos, loff_t count,
+-		void *data, struct iomap *iomap, struct iomap *srcmap)
++		void *data, unsigned flags, struct iomap *iomap,
++		struct iomap *srcmap)
+ {
+ 	bool *did_zero = data;
+ 	loff_t written = 0;
+@@ -1053,7 +1055,8 @@ EXPORT_SYMBOL_GPL(iomap_truncate_page);
  
- 		offset = (pos & (PAGE_SIZE - 1));
-@@ -3323,6 +3371,9 @@ ssize_t generic_perform_write(struct file *file,
- 						iov_iter_count(i));
+ static loff_t
+ iomap_page_mkwrite_actor(struct inode *inode, loff_t pos, loff_t length,
+-		void *data, struct iomap *iomap, struct iomap *srcmap)
++		void *data, unsigned flags, struct iomap *iomap,
++		struct iomap *srcmap)
+ {
+ 	struct page *page = data;
+ 	int ret;
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 23837926c0c5..2525997b09aa 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -365,7 +365,8 @@ iomap_dio_inline_actor(struct inode *inode, loff_t pos, loff_t length,
  
- again:
-+		if (iocb->ki_flags & IOCB_UNCACHED)
-+			flags |= AOP_FLAG_UNCACHED;
-+
- 		/*
- 		 * Bring in the user page that we will copy from _first_.
- 		 * Otherwise there's a nasty deadlock on copying from the
-@@ -3343,10 +3394,17 @@ ssize_t generic_perform_write(struct file *file,
- 			break;
- 		}
+ static loff_t
+ iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
+-		void *data, struct iomap *iomap, struct iomap *srcmap)
++		void *data, unsigned flags, struct iomap *iomap,
++		struct iomap *srcmap)
+ {
+ 	struct iomap_dio *dio = data;
  
-+retry:
- 		status = a_ops->write_begin(file, mapping, pos, bytes, flags,
- 						&page, &fsdata);
--		if (unlikely(status < 0))
-+		if (unlikely(status < 0)) {
-+			if (status == -ENOMEM && (flags & AOP_FLAG_UNCACHED)) {
-+				drop_page = true;
-+				flags &= ~AOP_FLAG_UNCACHED;
-+				goto retry;
-+			}
- 			break;
-+		}
+diff --git a/fs/iomap/fiemap.c b/fs/iomap/fiemap.c
+index bccf305ea9ce..04de960259d0 100644
+--- a/fs/iomap/fiemap.c
++++ b/fs/iomap/fiemap.c
+@@ -44,7 +44,7 @@ static int iomap_to_fiemap(struct fiemap_extent_info *fi,
  
- 		if (mapping_writably_mapped(mapping))
- 			flush_dcache_page(page);
-@@ -3376,12 +3434,22 @@ ssize_t generic_perform_write(struct file *file,
- 						iov_iter_single_seg_count(i));
- 			goto again;
- 		}
-+		if (drop_page &&
-+		    ((pos >> PAGE_SHIFT) != ((pos + copied) >> PAGE_SHIFT))) {
-+			drop_pages[drop_nr] = page;
-+			if (++drop_nr == GPW_PAGE_BATCH)
-+				write_drop_cached_pages(drop_pages, mapping,
-+								&drop_nr);
-+		} else
-+			balance_dirty_pages_ratelimited(mapping);
-+
- 		pos += copied;
- 		written += copied;
--
--		balance_dirty_pages_ratelimited(mapping);
- 	} while (iov_iter_count(i));
+ static loff_t
+ iomap_fiemap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+-		struct iomap *iomap, struct iomap *srcmap)
++		unsigned flags, struct iomap *iomap, struct iomap *srcmap)
+ {
+ 	struct fiemap_ctx *ctx = data;
+ 	loff_t ret = length;
+@@ -111,7 +111,8 @@ EXPORT_SYMBOL_GPL(iomap_fiemap);
  
-+	if (drop_nr)
-+		write_drop_cached_pages(drop_pages, mapping, &drop_nr);
-+
- 	return written ? written : status;
- }
- EXPORT_SYMBOL(generic_perform_write);
+ static loff_t
+ iomap_bmap_actor(struct inode *inode, loff_t pos, loff_t length,
+-		void *data, struct iomap *iomap, struct iomap *srcmap)
++		void *data, unsigned flags, struct iomap *iomap,
++		struct iomap *srcmap)
+ {
+ 	sector_t *bno = data, addr;
+ 
+diff --git a/fs/iomap/seek.c b/fs/iomap/seek.c
+index 89f61d93c0bc..a5cbf04e8cb3 100644
+--- a/fs/iomap/seek.c
++++ b/fs/iomap/seek.c
+@@ -119,7 +119,8 @@ page_cache_seek_hole_data(struct inode *inode, loff_t offset, loff_t length,
+ 
+ static loff_t
+ iomap_seek_hole_actor(struct inode *inode, loff_t offset, loff_t length,
+-		      void *data, struct iomap *iomap, struct iomap *srcmap)
++		      void *data, unsigned flags, struct iomap *iomap,
++		      struct iomap *srcmap)
+ {
+ 	switch (iomap->type) {
+ 	case IOMAP_UNWRITTEN:
+@@ -165,7 +166,8 @@ EXPORT_SYMBOL_GPL(iomap_seek_hole);
+ 
+ static loff_t
+ iomap_seek_data_actor(struct inode *inode, loff_t offset, loff_t length,
+-		      void *data, struct iomap *iomap, struct iomap *srcmap)
++		      void *data, unsigned flags, struct iomap *iomap,
++		      struct iomap *srcmap)
+ {
+ 	switch (iomap->type) {
+ 	case IOMAP_HOLE:
+diff --git a/fs/iomap/swapfile.c b/fs/iomap/swapfile.c
+index a648dbf6991e..774bfc3e59e1 100644
+--- a/fs/iomap/swapfile.c
++++ b/fs/iomap/swapfile.c
+@@ -76,7 +76,7 @@ static int iomap_swapfile_add_extent(struct iomap_swapfile_info *isi)
+  * distinction between written and unwritten extents.
+  */
+ static loff_t iomap_swapfile_activate_actor(struct inode *inode, loff_t pos,
+-		loff_t count, void *data, struct iomap *iomap,
++		loff_t count, void *data, unsigned flags, struct iomap *iomap,
+ 		struct iomap *srcmap)
+ {
+ 	struct iomap_swapfile_info *isi = data;
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 8b09463dae0d..61fcaa3904d4 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -113,7 +113,7 @@ struct iomap_page_ops {
+ };
+ 
+ /*
+- * Flags for iomap_begin / iomap_end.  No flag implies a read.
++ * Flags for iomap_begin / iomap_end / factor.  No flag implies a read.
+  */
+ #define IOMAP_WRITE		(1 << 0) /* writing, must allocate blocks */
+ #define IOMAP_ZERO		(1 << 1) /* zeroing operation, may skip holes */
+@@ -146,7 +146,8 @@ struct iomap_ops {
+  * Main iomap iterator function.
+  */
+ typedef loff_t (*iomap_actor_t)(struct inode *inode, loff_t pos, loff_t len,
+-		void *data, struct iomap *iomap, struct iomap *srcmap);
++		void *data, unsigned flags, struct iomap *iomap,
++		struct iomap *srcmap);
+ 
+ loff_t iomap_apply(struct inode *inode, loff_t pos, loff_t length,
+ 		unsigned flags, const struct iomap_ops *ops, void *data,
 -- 
 2.24.0
 
