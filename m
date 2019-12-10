@@ -2,127 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C18F41185BB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 12:02:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAF031185DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 12:11:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727177AbfLJLCY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Dec 2019 06:02:24 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44379 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726915AbfLJLCX (ORCPT
+        id S1727231AbfLJLK7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Dec 2019 06:10:59 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:54474 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727178AbfLJLK6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Dec 2019 06:02:23 -0500
-Received: by mail-lj1-f196.google.com with SMTP id c19so19292675lji.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2019 03:02:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=avT8djgaVLUaP/1BXJuTZBwRdJwwah+0AF+tp3FQZPs=;
-        b=Mf3xlkOSDEXkKBh/xlW95jq/ctKWC6+5W25pp6TESvMuNfvypSGAfYHsVnbPTF1cYg
-         RR0YLlmQ0tYBn9eVo9B5cXn5iQtVmIH73aTUt7+x6qyrXUIoBdS4hBRmUK0eZkDmLkAb
-         EGIAlfTwNBPpLzuweZ8Ri86B/UxW1T1ZRDG8hmX5tHJ5Y5Aildo02kJCV0NHR6AdkbLh
-         NBmHSZGnygxVFb9Yn3M+Ft/tELQKD1dHnNiv4mWLZc6mZCvBM+Tsyr0Wp7Sd2MG1aAHj
-         Tq/GviXZQEHaPzhya05BIy0b3HF1EnJFgiDF4nG2cr+QZRR8UVHE0LLUBd9LPIqUTqH1
-         6QoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=avT8djgaVLUaP/1BXJuTZBwRdJwwah+0AF+tp3FQZPs=;
-        b=ljYIFTwn2YQAjOKiWpDmt/GMVA24pnh1OgTLqV0e41ir9T5oNfy9LxD/W5LtoB57pb
-         iRVZR08tInmoQBM3Z2oizdXaZ9z4TT2v5BEEASTN02WOpJoey+IY8LduqpNTTmYYgnzt
-         gnqItFTaZ/2YOUqYpfOhItNHJ9Iem+2WEdpanQVnHApBUFJyzmqkfgzCB/99WY/IM/LR
-         YnNIcLYA0aFyTQkkpgC4GMU4tGvUG+OFyu0gUJKpT3mpgTf9K6Q59DITp9949doAQsaq
-         /xC4+2VxLhV/VOMUMHEDwozKZ8Bs5XWdhksKvhhOznZNA3WMl7jr7Fg9EboWhSw4MwN0
-         MKAQ==
-X-Gm-Message-State: APjAAAWaNXiowaKGxOOhahw5XFGte4l8Kkvz1lBo7udTHIMy0FOoQaQg
-        W32Mc77xQNMKuJFj6LoVNNEO8tcXVO9S13AgHll+ztK22zU=
-X-Google-Smtp-Source: APXvYqzdKySfdTeUTqDZf48QC6nKJjVrzelXQbA5XcMaY5YcawhwrWRM8Td38VBdqI6RgEEmwUiYHkXJsa2/pme7HDg=
-X-Received: by 2002:a2e:9a04:: with SMTP id o4mr21104651lji.214.1575975741445;
- Tue, 10 Dec 2019 03:02:21 -0800 (PST)
+        Tue, 10 Dec 2019 06:10:58 -0500
+Received: from [79.140.114.95] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1iedPp-0005d2-Be; Tue, 10 Dec 2019 11:10:53 +0000
+Date:   Tue, 10 Dec 2019 12:10:52 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Sargun Dhillon <sargun@sargun.me>, linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, tycho@tycho.ws, jannh@google.com,
+        cyphar@cyphar.com, luto@amacapital.net, viro@zeniv.linux.org.uk,
+        Jed Davis <jld@mozilla.com>,
+        Gian-Carlo Pascutto <gpascutto@mozilla.com>,
+        Emilio Cobos =?utf-8?Q?=C3=81lvarez?= <ealvarez@mozilla.com>,
+        Florian Weimer <fweimer@redhat.com>
+Subject: Re: [PATCH v2 4/4] samples: Add example of using PTRACE_GETFD in
+ conjunction with user trap
+Message-ID: <20191210111051.j5opodgjalqigx6q@wittgenstein>
+References: <20191209070646.GA32477@ircssh-2.c.rugged-nimbus-611.internal>
+ <20191209192959.GB10721@redhat.com>
+ <BE3E056F-0147-4A00-8FF7-6CC9DE02A30C@ubuntu.com>
+ <20191209204635.GC10721@redhat.com>
 MIME-Version: 1.0
-References: <20191115234005.GO4614@dread.disaster.area> <20191118092121.GV4131@hirez.programming.kicks-ass.net>
- <20191118204054.GV4614@dread.disaster.area> <20191120191636.GI4097@hirez.programming.kicks-ass.net>
- <20191120220313.GC18056@pauld.bos.csb> <20191121132937.GW4114@hirez.programming.kicks-ass.net>
- <20191209165122.GA27229@linux.vnet.ibm.com> <20191209231743.GA19256@dread.disaster.area>
- <20191210054330.GF27253@linux.vnet.ibm.com> <CAKfTPtCBxV+az30n8E9fRv_HweN_QPJn_ni961OsKp5xUWUD2A@mail.gmail.com>
- <20191210101116.GA9139@linux.vnet.ibm.com>
-In-Reply-To: <20191210101116.GA9139@linux.vnet.ibm.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Tue, 10 Dec 2019 12:02:09 +0100
-Message-ID: <CAKfTPtD1by06eQ=vJhh9SvfegRanSSwQrKPageLGo0OODu9bjg@mail.gmail.com>
-Subject: Re: [PATCH v2] sched/core: Preempt current task in favour of bound kthread
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Phil Auld <pauld@redhat.com>, Ming Lei <ming.lei@redhat.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-fs <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191209204635.GC10721@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 10 Dec 2019 at 11:11, Srikar Dronamraju
-<srikar@linux.vnet.ibm.com> wrote:
->
-> * Vincent Guittot <vincent.guittot@linaro.org> [2019-12-10 10:43:46]:
->
-> > On Tue, 10 Dec 2019 at 06:43, Srikar Dronamraju
-> > <srikar@linux.vnet.ibm.com> wrote:
-> > >
-> > > This is more prone to happen if the current running task is CPU
-> > > intensive and the sched_wake_up_granularity is set to larger value.
-> > > When the sched_wake_up_granularity was relatively small, it was observed
-> > > that the bound thread would complete before the load balancer would have
-> > > chosen to move the cache hot task to a different CPU.
-> > >
-> > > To deal with this situation, the current running task would yield to a
-> > > per CPU bound kthread, provided kthread is not CPU intensive.
-> > >
-> > > /pboffline/hwcct_prg_old/lib/fsperf -t overwrite --noclean -f 5g -b 4k /pboffline
-> > >
-> > > (With sched_wake_up_granularity set to 15ms)
-> >
-> > So you increase sched_wake_up_granularity to a high level to ensure
-> > that current is no preempted by waking thread but then you add a way
-> > to finally preempt it which is somewhat weird IMO
-> >
->
-> Yes, setting to a smaller value will help mitigate/solve the problem.
-> There may be folks out who have traditionally set a high wake_up_granularity
-> (and have seen better performance with it), who may miss out that when using
-> blk-mq, such settings will cause more harm. And they may continue to see
-> some performance regressions when they move to a lower wake_up_granularity.
->
-> > Have you tried to increase the priority of workqueue thread  (decrease
-> > nice priority) ? This is the right way to reduce the impact of the
-> > sched_wake_up_granularity on the wakeup of your specific kthread.
-> > Because what you want at the end is keeping a low wakeup granularity
-> > for these io workqueues
-> >
->
-> Yes, people can tune the priority of workqueue threads and infact it may be
-> easier to set wake_up_granularity to a lower value. However the point is how
-> do we make everyone aware that they are running into a performance issue
-> with a higher wakeup_granularity?
+[I'm expanding the Cc to a few Firefox and glibc people since we've been
+ been talking about replacing SECCOMP_RET_TRAP with
+ SECCOMP_RET_USER_NOTIF for a bit now because the useage of
+ SECCOMP_RET_TRAP in the broker blocks desirable core glibc changes.
+ Even if just for their lurking pleasure. :)]
 
-I did the test on my local setup to change the nice priority of io
-workqueue and the active migrations are removed even with high
-wakeup_granularity because IO workqueue can still preempt normal task
-but let other workqueue behave normally.
+On Mon, Dec 09, 2019 at 09:46:35PM +0100, Oleg Nesterov wrote:
+> On 12/09, Christian Brauner wrote:
+> >
+> > >We can
+> > >add PTRACE_DETACH_ASYNC, but this makes me think that PTRACE_GETFD has
+> > >nothing
+> > >to do with ptrace.
+> > >
+> > >May be a new syscall which does ptrace_may_access() + get_task_file()
+> > >will make
+> > >more sense?
+> > >
+> > >Oleg.
+> > 
+> > Once more since this annoying app uses html by default...
+> > 
+> > But we can already do this right now and this is just an improvement.
+> > That's a bit rich for a new syscall imho...
+> 
+> I agree, and I won't really argue...
+> 
+> but the changelog in 2/4 says
+> 
+> 	The requirement that the tracer has attached to the tracee prior to the
+> 	capture of the file descriptor may be lifted at a later point.
+> 
+> so may be we should do this right now?
 
->
-> --
-> Thanks and Regards
-> Srikar Dronamraju
->
+I think so, yes. This doesn't strike me as premature optimization but
+rather as a core design questions.
+
+> 
+> plus this part
+> 
+> 	@@ -1265,7 +1295,8 @@ SYSCALL_DEFINE4(ptrace, long, request, long, pid, unsigned long, addr,
+> 		}
+> 	 
+> 		ret = ptrace_check_attach(child, request == PTRACE_KILL ||
+> 	-				  request == PTRACE_INTERRUPT);
+> 	+				  request == PTRACE_INTERRUPT ||
+> 	+				  request == PTRACE_GETFD);
+> 
+> actually means "we do not need ptrace, but we do not know where else we
+> can add this fd_install(get_task_file()).
+
+Right, I totally get your point and I'm not a fan of this being in
+ptrace() either.
+
+The way I see is is that the main use-case for this feature is the
+seccomp notifier and I can see this being useful. So the right place to
+plumb this into might just be seccomp and specifically on to of the
+notifier.
+If we don't care about getting and setting fds at random points of
+execution it might make sense to add new options to the notify ioctl():
+
+#define SECCOMP_IOCTL_NOTIF_GET_FD	SECCOMP_IOWR(3, <sensible struct>)
+#define SECCOMP_IOCTL_NOTIF_SET_FD	SECCOMP_IOWR(4, <sensible struct>)
+
+which would let you get and set fds while the supervisee is blocked.
+
+Christian
