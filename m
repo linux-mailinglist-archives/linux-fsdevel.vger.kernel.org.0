@@ -2,117 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1CAE117DA5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 03:22:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFE98117E01
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 03:58:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbfLJCWD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Dec 2019 21:22:03 -0500
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:50650 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726598AbfLJCWD (ORCPT
+        id S1726631AbfLJC60 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Dec 2019 21:58:26 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:59723 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726602AbfLJC60 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Dec 2019 21:22:03 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0TkUheNY_1575944515;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TkUheNY_1575944515)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 10 Dec 2019 10:21:58 +0800
-Subject: Re: [PATCH v5 0/2] sched/numa: introduce numa locality
-From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
+        Mon, 9 Dec 2019 21:58:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575946705;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:  in-reply-to:in-reply-to;
+        bh=y1+ILk6NlZH8+BA8bgtcvaDsBfBSSFplpwqpPup+kUk=;
+        b=N63AOfqBS2upbxsiYfD7NU5HIUmDqGe5Yi3ZKUCoq1TqdOAo8uvcV4Qz9iL6XwBjTwqQUb
+        BcB2kwJ8LdRKaG6ynLIBxdmOtIRFbqJYjkLqycpRn2xkFXNPe5m/oKCmygtEqyTtRmBvb4
+        rf03Td56IQZJijN/K4KaXpHvdNbYS6A=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-148-XG8t8oC4PDWzKGC0WYll-w-1; Mon, 09 Dec 2019 21:58:21 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 08227800D4C;
+        Tue, 10 Dec 2019 02:58:20 +0000 (UTC)
+Received: from greed.delorie.com (ovpn-116-25.phx2.redhat.com [10.3.116.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1A81960BE0;
+        Tue, 10 Dec 2019 02:58:19 +0000 (UTC)
+Received: from greed.delorie.com.redhat.com (localhost [127.0.0.1])
+        by greed.delorie.com (8.14.7/8.14.7) with ESMTP id xBA2wF55008043;
+        Mon, 9 Dec 2019 21:58:16 -0500
+From:   DJ Delorie <dj@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     vincent.guittot@linaro.org, dsterba@suse.cz, dhowells@redhat.com,
+        ebiggers@kernel.org, viro@zeniv.linux.org.uk,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>
-References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
- <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
- <040def80-9c38-4bcc-e4a8-8a0d10f131ed@linux.alibaba.com>
- <25cf7ef5-e37e-7578-eea7-29ad0b76c4ea@linux.alibaba.com>
- <443641e7-f968-0954-5ff6-3b7e7fed0e83@linux.alibaba.com>
-Message-ID: <96342524-142e-c616-1e7e-ce05dfd9ca09@linux.alibaba.com>
-Date:   Tue, 10 Dec 2019 10:19:58 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.0
+        peterz@infradead.org, mingo@kernel.org
+Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
+In-Reply-To: <CAHk-=wicgTacrHUJmSBbW9MYAdMPdrXzULPNqQ3G7+HkLeNf1Q@mail.gmail.com> (message from Linus Torvalds on Mon, 9 Dec 2019 09:48:27 -0800)
+Date:   Mon, 09 Dec 2019 21:58:15 -0500
+Message-ID: <xnsglsubso.fsf@greed.delorie.com>
 MIME-Version: 1.0
-In-Reply-To: <443641e7-f968-0954-5ff6-3b7e7fed0e83@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-MC-Unique: XG8t8oC4PDWzKGC0WYll-w-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Peter, Ingo
+Linus Torvalds <torvalds@linux-foundation.org> writes:
+> [ Added DJ to the participants, since he seems to be the Fedora make
+> maintainer - DJ, any chance that this absolutely horrid 'make' buf can
+> be fixed in older versions too, not just rawhide? The bugfix is two
+> and a half years old by now, and the bug looks real and very serious ]
 
-We have reformed the implementation for several times, now it's very
-simple and easy to use, there are also a document to guide admin on
-how to use not only the NUMA locality, but also other per-cgroup NUMA
-statistics, we hope this could make things easier for other NUMA users.
+I've got builds ready for F30 and F31 but my local testing shows no
+difference in kernel build times with/without.  I was hoping someone
+would test the rawhide build[*] and say "yup, that fixes it" in case
+some other even older patch is also needed.
 
-As now there are no more comments, would you please take a look at this
-patch set, see if it's good enough to be picked?
+F29 just went EOL so I can't fix that one.
 
-Regards,
-Michael Wang
+[*] https://koji.fedoraproject.org/koji/buildinfo?buildID=3D1420394
 
-
-On 2019/12/5 下午2:53, 王贇 wrote:
-> Since v4:
->   * improved documentation
-> Since v3:
->   * fix comments and improved documentation
-> Since v2:
->   * simplified the locality concept & implementation
-> Since v1:
->   * improved documentation
-> 
-> Modern production environment could use hundreds of cgroup to control
-> the resources for different workloads, along with the complicated
-> resource binding.
-> 
-> On NUMA platforms where we have multiple nodes, things become even more
-> complicated, we hope there are more local memory access to improve the
-> performance, and NUMA Balancing keep working hard to achieve that,
-> however, wrong memory policy or node binding could easily waste the
-> effort, result a lot of remote page accessing.
-> 
-> We need to notice such problems, then we got chance to fix it before
-> there are too much damages, however, there are no good monitoring
-> approach yet to help catch the mouse who introduced the remote access.
-> 
-> This patch set is trying to fill in the missing pieces， by introduce
-> the per-cgroup NUMA locality info, with this new statistics, we could
-> achieve the daily monitoring on NUMA efficiency, to give warning when
-> things going too wrong.
-> 
-> Please check the second patch for more details.
-> 
-> Michael Wang (2):
->   sched/numa: introduce per-cgroup NUMA locality info
->   sched/numa: documentation for per-cgroup numa statistics
-> 
->  Documentation/admin-guide/cg-numa-stat.rst      | 178 ++++++++++++++++++++++++
->  Documentation/admin-guide/index.rst             |   1 +
->  Documentation/admin-guide/kernel-parameters.txt |   4 +
->  Documentation/admin-guide/sysctl/kernel.rst     |   9 ++
->  include/linux/sched.h                           |  15 ++
->  include/linux/sched/sysctl.h                    |   6 +
->  init/Kconfig                                    |  11 ++
->  kernel/sched/core.c                             |  75 ++++++++++
->  kernel/sched/fair.c                             |  62 +++++++++
->  kernel/sched/sched.h                            |  12 ++
->  kernel/sysctl.c                                 |  11 ++
->  11 files changed, 384 insertions(+)
->  create mode 100644 Documentation/admin-guide/cg-numa-stat.rst
-> 
