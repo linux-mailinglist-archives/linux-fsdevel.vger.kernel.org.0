@@ -2,224 +2,352 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6FC0118EE4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 18:23:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28189118F10
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Dec 2019 18:33:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727836AbfLJRXV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Dec 2019 12:23:21 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56474 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727562AbfLJRXV (ORCPT
+        id S1727654AbfLJRdI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Dec 2019 12:33:08 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:25661 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727625AbfLJRdH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Dec 2019 12:23:21 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBAHMGKo006951
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2019 12:23:19 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wtf82hddr-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Dec 2019 12:23:19 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Tue, 10 Dec 2019 17:23:17 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 10 Dec 2019 17:23:11 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBAHNAdG43778142
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Dec 2019 17:23:10 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B0676A405F;
-        Tue, 10 Dec 2019 17:23:10 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 098C6A405B;
-        Tue, 10 Dec 2019 17:23:08 +0000 (GMT)
-Received: from linux.vnet.ibm.com (unknown [9.126.150.29])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Tue, 10 Dec 2019 17:23:07 +0000 (GMT)
-Date:   Tue, 10 Dec 2019 22:53:07 +0530
-From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To:     Dave Chinner <david@fromorbit.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Phil Auld <pauld@redhat.com>, Ming Lei <ming.lei@redhat.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH v3] sched/core: Preempt current task in favour of bound
- kthread
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-References: <20191115070843.GA24246@ming.t460p>
- <20191115234005.GO4614@dread.disaster.area>
- <20191118092121.GV4131@hirez.programming.kicks-ass.net>
- <20191118204054.GV4614@dread.disaster.area>
- <20191120191636.GI4097@hirez.programming.kicks-ass.net>
- <20191120220313.GC18056@pauld.bos.csb>
- <20191121132937.GW4114@hirez.programming.kicks-ass.net>
- <20191209165122.GA27229@linux.vnet.ibm.com>
- <20191209231743.GA19256@dread.disaster.area>
- <20191210054330.GF27253@linux.vnet.ibm.com>
+        Tue, 10 Dec 2019 12:33:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575999186;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Mc+1ZWYckmEINCQCi8L572ppP+X1bue4gLkgV0ncgKQ=;
+        b=KWC1d+e70wGoxXlXfNUXioX9ZAhNzXI/fcPmsZBMjoP9NOJH7ueC5TcpjqabA905tCnDnE
+        4dkIqZVXegudtoiDJiXjg5VsLbncimhJfDyq5l0chwqfzaeA+i7DbXxgtVTJ0G/muNwpSr
+        ruJ/SjmrJUwgZeM5+jgXd9tCiEJHTj8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-119-XlJrKLk6NwqwirH8g0hjEQ-1; Tue, 10 Dec 2019 12:33:02 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 197EC1005512;
+        Tue, 10 Dec 2019 17:33:01 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9A5821001B09;
+        Tue, 10 Dec 2019 17:32:59 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] rxrpc: Mutexes are unusable from softirq context,
+ so use rwsem instead
+From:   David Howells <dhowells@redhat.com>
+To:     linux-afs@lists.infradead.org
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 10 Dec 2019 17:32:58 +0000
+Message-ID: <157599917879.6327.69195741890962065.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20191210054330.GF27253@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-TM-AS-GCONF: 00
-x-cbid: 19121017-0012-0000-0000-000003739155
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19121017-0013-0000-0000-000021AF64F3
-Message-Id: <20191210172307.GD9139@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-10_05:2019-12-10,2019-12-10 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- spamscore=0 priorityscore=1501 suspectscore=2 mlxscore=0 adultscore=0
- clxscore=1015 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912100149
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-MC-Unique: XlJrKLk6NwqwirH8g0hjEQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A running task can wake-up a per CPU bound kthread on the same CPU.
-If the current running task doesn't yield the CPU before the next load
-balance operation, the scheduler would detect load imbalance and try to
-balance the load. However this load balance would fail as the waiting
-task is CPU bound, while the running task cannot be moved by the regular
-load balancer. Finally the active load balancer would kick in and move
-the task to a different CPU/Core. Moving the task to a different
-CPU/core can lead to loss in cache affinity leading to poor performance.
+rxrpc_call::user_mutex is of type struct mutex, but it's required to start
+off locked on an incoming call as it is being set up in softirq context to
+prevent sendmsg and recvmsg interfering with it until it is ready.  It is
+then unlocked in rxrpc_input_packet() to make the call live.
 
-This is more prone to happen if the current running task is CPU
-intensive and the sched_wake_up_granularity is set to larger value.
-When the sched_wake_up_granularity was relatively small, it was observed
-that the bound thread would complete before the load balancer would have
-chosen to move the cache hot task to a different CPU.
+Unfortunately, commit a0855d24fc22d49cdc25664fb224caee16998683
+("locking/mutex: Complain upon mutex API misuse in IRQ contexts") causes
+big warnings to be splashed in dmesg for each a new call that comes in from
+the server.
 
-To deal with this situation, the current running task would yield to a
-per CPU bound kthread, provided kthread is not CPU intensive.
+It *seems* like it should be okay, since the accept path trylocks the mutex
+when no one else can see it and drops the mutex before it leaves softirq
+context.
 
-/pboffline/hwcct_prg_old/lib/fsperf -t overwrite --noclean -f 5g -b 4k /pboffline
+Fix this by switching to using an rw_semaphore instead as that is permitted
+to be used in softirq context.
 
-(With sched_wake_up_granularity set to 15ms)
-
-Performance counter stats for 'system wide' (5 runs):
-event					    v5.4 				v5.4 + patch(v3)
-probe:active_load_balance_cpu_stop       1,919  ( +-  2.89% )                     4  ( +- 20.48% )
-sched:sched_waking                     441,535  ( +-  0.17% )               914,630  ( +-  0.18% )
-sched:sched_wakeup                     441,533  ( +-  0.17% )               914,630  ( +-  0.18% )
-sched:sched_wakeup_new                   2,436  ( +-  8.08% )                   545  ( +-  4.02% )
-sched:sched_switch                     797,007  ( +-  0.26% )             1,490,261  ( +-  0.10% )
-sched:sched_migrate_task                20,998  ( +-  1.04% )                 2,492  ( +- 11.56% )
-sched:sched_process_free                 2,436  ( +-  7.90% )                   526  ( +-  3.65% )
-sched:sched_process_exit                 2,451  ( +-  7.85% )                   546  ( +-  4.06% )
-sched:sched_wait_task                        7  ( +- 21.20% )                     1  ( +- 40.82% )
-sched:sched_process_wait                 3,951  ( +-  9.14% )                   854  ( +-  5.33% )
-sched:sched_process_fork                 2,435  ( +-  8.09% )                   545  ( +-  3.96% )
-sched:sched_process_exec                 1,023  ( +- 12.21% )                   205  ( +-  5.13% )
-sched:sched_wake_idle_without_ipi      187,794  ( +-  1.14% )               353,579  ( +-  0.42% )
-
-Elasped time in seconds          289.43 +- 1.42 ( +-  0.49% )      72.7318 +- 0.0545 ( +-  0.07% )
-
-Throughput results
-
-v5.4
-Trigger time:................... 0.842679 s   (Throughput:     6075.86 MB/s)
-Asynchronous submit time:.......   1.0184 s   (Throughput:     5027.49 MB/s)
-Synchronous submit time:........        0 s   (Throughput:           0 MB/s)
-I/O time:.......................   263.17 s   (Throughput:      19.455 MB/s)
-Ratio trigger time to I/O time:.0.00320202
-
-v5.4 + patch(v3)
-Trigger time:................... 0.852413 s   (Throughput:     6006.47 MB/s)
-Asynchronous submit time:....... 0.773043 s   (Throughput:     6623.17 MB/s)
-Synchronous submit time:........        0 s   (Throughput:           0 MB/s)
-I/O time:.......................   44.341 s   (Throughput:     115.468 MB/s)
-Ratio trigger time to I/O time:. 0.019224
-
-(With sched_wake_up_granularity set to 4ms)
-
-Performance counter stats for 'system wide' (5 runs):
-event					      v5.4 				    v5.4 + patch(v3)
-probe:active_load_balance_cpu_stop               6  ( +-  6.03% )                      5  ( +- 15.04% )
-sched:sched_waking                         899,880  ( +-  0.38% )                912,625  ( +-  0.41% )
-sched:sched_wakeup                         899,878  ( +-  0.38% )                912,624  ( +-  0.41% )
-sched:sched_wakeup_new                         622  ( +- 11.95% )                    550  ( +-  3.85% )
-sched:sched_switch                       1,458,214  ( +-  0.40% )              1,489,032  ( +-  0.41% )
-sched:sched_migrate_task                     3,120  ( +- 10.00% )                  2,524  ( +-  5.54% )
-sched:sched_process_free                       608  ( +- 12.18% )                    528  ( +-  3.89% )
-sched:sched_process_exit                       623  ( +- 11.91% )                    550  ( +-  3.79% )
-sched:sched_wait_task                            1  ( +- 31.18% )                      1  ( +- 66.67% )
-sched:sched_process_wait                       998  ( +- 13.22% )                    867  ( +-  4.41% )
-sched:sched_process_fork                       622  ( +- 11.95% )                    550  ( +-  3.88% )
-sched:sched_process_exec                       242  ( +- 13.81% )                    208  ( +-  4.57% )
-sched:sched_wake_idle_without_ipi          349,165  ( +-  0.35% )                352,443  ( +-  0.21% )
-
-Elasped time in seconds           72.8560 +- 0.0768 ( +-  0.11% )        72.5523 +- 0.0725 ( +-  0.10% )
-
-Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Fixes: 540b1c48c37a ("rxrpc: Fix deadlock between call creation and sendmsg/recvmsg")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Peter Zijlstra <peterz@infradead.org>
+cc: Ingo Molnar <mingo@redhat.com>
+cc: Will Deacon <will@kernel.org>
 ---
-Changelog:
-v1 : http://lore.kernel.org/lkml/20191209165122.GA27229@linux.vnet.ibm.com
-v2 : http://lore.kernel.org/lkml/20191210054330.GF27253@linux.vnet.ibm.com
-v1->v2: Pass the the right params to try_to_wake_up as correctly pointed out
-by Dave Chinner
-v2->v3: Suggestions from Peter Zijlstra including using vtime over
-context switch and detect per-cpu-kthread in try_to_wake_up
 
- kernel/sched/core.c  | 3 +++
- kernel/sched/fair.c  | 2 +-
- kernel/sched/sched.h | 3 ++-
- 3 files changed, 6 insertions(+), 2 deletions(-)
+ net/rxrpc/af_rxrpc.c    |   10 +++++-----
+ net/rxrpc/ar-internal.h |    2 +-
+ net/rxrpc/call_accept.c |    4 ++--
+ net/rxrpc/call_object.c |    6 +++---
+ net/rxrpc/input.c       |    2 +-
+ net/rxrpc/recvmsg.c     |   14 +++++++-------
+ net/rxrpc/sendmsg.c     |   16 ++++++++--------
+ 7 files changed, 27 insertions(+), 27 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 44123b4d14e8..03e77e159c27 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2542,6 +2542,9 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
- 		goto out;
+diff --git a/net/rxrpc/af_rxrpc.c b/net/rxrpc/af_rxrpc.c
+index d72ddb67bb74..17e55e12376c 100644
+--- a/net/rxrpc/af_rxrpc.c
++++ b/net/rxrpc/af_rxrpc.c
+@@ -322,7 +322,7 @@ struct rxrpc_call *rxrpc_kernel_begin_call(struct socket *sock,
+ 	/* The socket has been unlocked. */
+ 	if (!IS_ERR(call)) {
+ 		call->notify_rx = notify_rx;
+-		mutex_unlock(&call->user_mutex);
++		up_write(&call->user_mutex);
  	}
  
-+	if (is_per_cpu_kthread(p))
-+		wake_flags |= WF_KTHREAD;
-+
- 	/*
- 	 * If we are going to wake up a thread waiting for CONDITION we
- 	 * need to ensure that CONDITION=1 done by the caller can not be
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 69a81a5709ff..8fe40f83804d 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6716,7 +6716,7 @@ static void check_preempt_wakeup(struct rq *rq, struct task_struct *p, int wake_
- 	find_matching_se(&se, &pse);
- 	update_curr(cfs_rq_of(se));
- 	BUG_ON(!pse);
--	if (wakeup_preempt_entity(se, pse) == 1) {
-+	if (wakeup_preempt_entity(se, pse) >= !(wake_flags & WF_KTHREAD)) {
- 		/*
- 		 * Bias pick_next to pick the sched entity that is
- 		 * triggering this preemption.
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index c8870c5bd7df..fcd1ed5af9a3 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1643,7 +1643,8 @@ static inline int task_on_rq_migrating(struct task_struct *p)
-  */
- #define WF_SYNC			0x01		/* Waker goes to sleep after wakeup */
- #define WF_FORK			0x02		/* Child wakeup after fork */
--#define WF_MIGRATED		0x4		/* Internal use, task got migrated */
-+#define WF_MIGRATED		0x04		/* Internal use, task got migrated */
-+#define WF_KTHREAD		0x08		/* Per CPU Kthread */
+ 	rxrpc_put_peer(cp.peer);
+@@ -351,7 +351,7 @@ void rxrpc_kernel_end_call(struct socket *sock, struct rxrpc_call *call)
+ {
+ 	_enter("%d{%d}", call->debug_id, atomic_read(&call->usage));
  
- /*
-  * To aid in avoiding the subversion of "niceness" due to uneven distribution
--- 
-2.18.1
+-	mutex_lock(&call->user_mutex);
++	down_write(&call->user_mutex);
+ 	rxrpc_release_call(rxrpc_sk(sock->sk), call);
+ 
+ 	/* Make sure we're not going to call back into a kernel service */
+@@ -361,7 +361,7 @@ void rxrpc_kernel_end_call(struct socket *sock, struct rxrpc_call *call)
+ 		spin_unlock_bh(&call->notify_lock);
+ 	}
+ 
+-	mutex_unlock(&call->user_mutex);
++	up_write(&call->user_mutex);
+ 	rxrpc_put_call(call, rxrpc_call_put_kernel);
+ }
+ EXPORT_SYMBOL(rxrpc_kernel_end_call);
+@@ -456,14 +456,14 @@ void rxrpc_kernel_set_max_life(struct socket *sock, struct rxrpc_call *call,
+ {
+ 	unsigned long now;
+ 
+-	mutex_lock(&call->user_mutex);
++	down_write(&call->user_mutex);
+ 
+ 	now = jiffies;
+ 	hard_timeout += now;
+ 	WRITE_ONCE(call->expect_term_by, hard_timeout);
+ 	rxrpc_reduce_call_timer(call, hard_timeout, now, rxrpc_timer_set_for_hard);
+ 
+-	mutex_unlock(&call->user_mutex);
++	up_write(&call->user_mutex);
+ }
+ EXPORT_SYMBOL(rxrpc_kernel_set_max_life);
+ 
+diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
+index 7c7d10f2e0c1..1701f2406463 100644
+--- a/net/rxrpc/ar-internal.h
++++ b/net/rxrpc/ar-internal.h
+@@ -557,7 +557,7 @@ struct rxrpc_call {
+ 	struct rxrpc_sock __rcu	*socket;	/* socket responsible */
+ 	struct rxrpc_net	*rxnet;		/* Network namespace to which call belongs */
+ 	const struct rxrpc_security *security;	/* applied security module */
+-	struct mutex		user_mutex;	/* User access mutex */
++	struct rw_semaphore	user_mutex;	/* User access mutex */
+ 	unsigned long		ack_at;		/* When deferred ACK needs to happen */
+ 	unsigned long		ack_lost_at;	/* When ACK is figured as lost */
+ 	unsigned long		resend_at;	/* When next resend needs to happen */
+diff --git a/net/rxrpc/call_accept.c b/net/rxrpc/call_accept.c
+index 135bf5cd8dd5..fb9a751e3c35 100644
+--- a/net/rxrpc/call_accept.c
++++ b/net/rxrpc/call_accept.c
+@@ -378,7 +378,7 @@ struct rxrpc_call *rxrpc_new_incoming_call(struct rxrpc_local *local,
+ 	 * event and userspace is prevented from doing so until the state is
+ 	 * appropriate.
+ 	 */
+-	if (!mutex_trylock(&call->user_mutex))
++	if (!down_write_trylock(&call->user_mutex))
+ 		BUG();
+ 
+ 	/* Make the call live. */
+@@ -493,7 +493,7 @@ struct rxrpc_call *rxrpc_accept_call(struct rxrpc_sock *rx,
+ 	 * We are, however, still holding the socket lock, so other accepts
+ 	 * must wait for us and no one can add the user ID behind our backs.
+ 	 */
+-	if (mutex_lock_interruptible(&call->user_mutex) < 0) {
++	if (down_write_killable(&call->user_mutex) < 0) {
+ 		release_sock(&rx->sk);
+ 		kleave(" = -ERESTARTSYS");
+ 		return ERR_PTR(-ERESTARTSYS);
+diff --git a/net/rxrpc/call_object.c b/net/rxrpc/call_object.c
+index a31c18c09894..7a5d48b23fce 100644
+--- a/net/rxrpc/call_object.c
++++ b/net/rxrpc/call_object.c
+@@ -115,7 +115,7 @@ struct rxrpc_call *rxrpc_alloc_call(struct rxrpc_sock *rx, gfp_t gfp,
+ 	if (!call->rxtx_annotations)
+ 		goto nomem_2;
+ 
+-	mutex_init(&call->user_mutex);
++	init_rwsem(&call->user_mutex);
+ 
+ 	/* Prevent lockdep reporting a deadlock false positive between the afs
+ 	 * filesystem and sys_sendmsg() via the mmap sem.
+@@ -247,7 +247,7 @@ struct rxrpc_call *rxrpc_new_client_call(struct rxrpc_sock *rx,
+ 	/* We need to protect a partially set up call against the user as we
+ 	 * will be acting outside the socket lock.
+ 	 */
+-	mutex_lock(&call->user_mutex);
++	down_write(&call->user_mutex);
+ 
+ 	/* Publish the call, even though it is incompletely set up as yet */
+ 	write_lock(&rx->call_lock);
+@@ -317,7 +317,7 @@ struct rxrpc_call *rxrpc_new_client_call(struct rxrpc_sock *rx,
+ 	trace_rxrpc_call(call->debug_id, rxrpc_call_error,
+ 			 atomic_read(&call->usage), here, ERR_PTR(ret));
+ 	rxrpc_release_call(rx, call);
+-	mutex_unlock(&call->user_mutex);
++	up_write(&call->user_mutex);
+ 	rxrpc_put_call(call, rxrpc_call_put);
+ 	_leave(" = %d", ret);
+ 	return ERR_PTR(ret);
+diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
+index 157be1ff8697..6955ad66433b 100644
+--- a/net/rxrpc/input.c
++++ b/net/rxrpc/input.c
+@@ -1397,7 +1397,7 @@ int rxrpc_input_packet(struct sock *udp_sk, struct sk_buff *skb)
+ 		if (!call)
+ 			goto reject_packet;
+ 		rxrpc_send_ping(call, skb);
+-		mutex_unlock(&call->user_mutex);
++		up_write(&call->user_mutex);
+ 	}
+ 
+ 	/* Process a call packet; this either discards or passes on the ref
+diff --git a/net/rxrpc/recvmsg.c b/net/rxrpc/recvmsg.c
+index 8578c39ec839..e6bf52fb0ad8 100644
+--- a/net/rxrpc/recvmsg.c
++++ b/net/rxrpc/recvmsg.c
+@@ -511,12 +511,12 @@ int rxrpc_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
+ 	/* We're going to drop the socket lock, so we need to lock the call
+ 	 * against interference by sendmsg.
+ 	 */
+-	if (!mutex_trylock(&call->user_mutex)) {
++	if (!down_write_trylock(&call->user_mutex)) {
+ 		ret = -EWOULDBLOCK;
+ 		if (flags & MSG_DONTWAIT)
+ 			goto error_requeue_call;
+ 		ret = -ERESTARTSYS;
+-		if (mutex_lock_interruptible(&call->user_mutex) < 0)
++		if (down_write_killable(&call->user_mutex) < 0)
+ 			goto error_requeue_call;
+ 	}
+ 
+@@ -591,7 +591,7 @@ int rxrpc_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
+ 	ret = copied;
+ 
+ error_unlock_call:
+-	mutex_unlock(&call->user_mutex);
++	up_write(&call->user_mutex);
+ 	rxrpc_put_call(call, rxrpc_call_put);
+ 	trace_rxrpc_recvmsg(call, rxrpc_recvmsg_return, 0, 0, 0, ret);
+ 	return ret;
+@@ -651,7 +651,7 @@ int rxrpc_kernel_recv_data(struct socket *sock, struct rxrpc_call *call,
+ 
+ 	ASSERTCMP(call->state, !=, RXRPC_CALL_SERVER_ACCEPTING);
+ 
+-	mutex_lock(&call->user_mutex);
++	down_write(&call->user_mutex);
+ 
+ 	switch (READ_ONCE(call->state)) {
+ 	case RXRPC_CALL_CLIENT_RECV_REPLY:
+@@ -704,7 +704,7 @@ int rxrpc_kernel_recv_data(struct socket *sock, struct rxrpc_call *call,
+ 
+ 	if (_service)
+ 		*_service = call->service_id;
+-	mutex_unlock(&call->user_mutex);
++	up_write(&call->user_mutex);
+ 	_leave(" = %d [%zu,%d]", ret, iov_iter_count(iter), *_abort);
+ 	return ret;
+ 
+@@ -744,7 +744,7 @@ bool rxrpc_kernel_get_reply_time(struct socket *sock, struct rxrpc_call *call,
+ 	rxrpc_seq_t hard_ack, top, seq;
+ 	bool success = false;
+ 
+-	mutex_lock(&call->user_mutex);
++	down_write(&call->user_mutex);
+ 
+ 	if (READ_ONCE(call->state) != RXRPC_CALL_CLIENT_RECV_REPLY)
+ 		goto out;
+@@ -766,7 +766,7 @@ bool rxrpc_kernel_get_reply_time(struct socket *sock, struct rxrpc_call *call,
+ 	success = true;
+ 
+ out:
+-	mutex_unlock(&call->user_mutex);
++	up_write(&call->user_mutex);
+ 	return success;
+ }
+ EXPORT_SYMBOL(rxrpc_kernel_get_reply_time);
+diff --git a/net/rxrpc/sendmsg.c b/net/rxrpc/sendmsg.c
+index 813fd6888142..d3a4749a2f8a 100644
+--- a/net/rxrpc/sendmsg.c
++++ b/net/rxrpc/sendmsg.c
+@@ -38,9 +38,9 @@ static int rxrpc_wait_for_tx_window_intr(struct rxrpc_sock *rx,
+ 			return sock_intr_errno(*timeo);
+ 
+ 		trace_rxrpc_transmit(call, rxrpc_transmit_wait);
+-		mutex_unlock(&call->user_mutex);
++		up_write(&call->user_mutex);
+ 		*timeo = schedule_timeout(*timeo);
+-		if (mutex_lock_interruptible(&call->user_mutex) < 0)
++		if (down_write_killable(&call->user_mutex) < 0)
+ 			return sock_intr_errno(*timeo);
+ 	}
+ }
+@@ -668,7 +668,7 @@ int rxrpc_do_sendmsg(struct rxrpc_sock *rx, struct msghdr *msg, size_t len)
+ 			break;
+ 		}
+ 
+-		ret = mutex_lock_interruptible(&call->user_mutex);
++		ret = down_write_killable_nested(&call->user_mutex, 1);
+ 		release_sock(&rx->sk);
+ 		if (ret < 0) {
+ 			ret = -ERESTARTSYS;
+@@ -737,7 +737,7 @@ int rxrpc_do_sendmsg(struct rxrpc_sock *rx, struct msghdr *msg, size_t len)
+ 	}
+ 
+ out_put_unlock:
+-	mutex_unlock(&call->user_mutex);
++	up_write(&call->user_mutex);
+ error_put:
+ 	rxrpc_put_call(call, rxrpc_call_put);
+ 	_leave(" = %d", ret);
+@@ -772,7 +772,7 @@ int rxrpc_kernel_send_data(struct socket *sock, struct rxrpc_call *call,
+ 	ASSERTCMP(msg->msg_name, ==, NULL);
+ 	ASSERTCMP(msg->msg_control, ==, NULL);
+ 
+-	mutex_lock(&call->user_mutex);
++	down_write(&call->user_mutex);
+ 
+ 	_debug("CALL %d USR %lx ST %d on CONN %p",
+ 	       call->debug_id, call->user_call_ID, call->state, call->conn);
+@@ -796,7 +796,7 @@ int rxrpc_kernel_send_data(struct socket *sock, struct rxrpc_call *call,
+ 		break;
+ 	}
+ 
+-	mutex_unlock(&call->user_mutex);
++	up_write(&call->user_mutex);
+ 	_leave(" = %d", ret);
+ 	return ret;
+ }
+@@ -820,13 +820,13 @@ bool rxrpc_kernel_abort_call(struct socket *sock, struct rxrpc_call *call,
+ 
+ 	_enter("{%d},%d,%d,%s", call->debug_id, abort_code, error, why);
+ 
+-	mutex_lock(&call->user_mutex);
++	down_write(&call->user_mutex);
+ 
+ 	aborted = rxrpc_abort_call(why, call, 0, abort_code, error);
+ 	if (aborted)
+ 		rxrpc_send_abort_packet(call);
+ 
+-	mutex_unlock(&call->user_mutex);
++	up_write(&call->user_mutex);
+ 	return aborted;
+ }
+ EXPORT_SYMBOL(rxrpc_kernel_abort_call);
 
