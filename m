@@ -2,64 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B59E511B9EA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 18:19:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BAD211B9F2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 18:20:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730794AbfLKRTb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Dec 2019 12:19:31 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:47352 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730318AbfLKRTb (ORCPT
+        id S1730758AbfLKRUM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Dec 2019 12:20:12 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:37129 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730256AbfLKRUM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Dec 2019 12:19:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=4J1/yyuW0sNFMU7Tk1XR5eA0O0XmmxHDThV9Nk2vS4w=; b=KNiLzZ+zcRizZMcYKB+qUzvj9
-        upGmxAtf1ZzuI8xsrW9scHBlL5obgREKcLChcXDP7sYkF9zTA/B3Njsr310I0KOtUkAwo05H0A3qQ
-        Jd0glkUxavowLKxezSEDPelvmfYEK8qcQ1C+z4VhfMNFc/wIopiTTW9S5xPDghr7PY9u/es4onZvZ
-        kznr4CwqND97O2wGkTBqYyZTgiKjBjdKG/+YIqtoW5szoMeVgud61SuN5VKJwEh6UtRYfYYxtPjCM
-        Xhptv0KTh0/dZp1/jUvmOqky5NRPTONHg3QTt/PdZRNQqmRReogjis47QtRZif3KikUHP8l8uvzRt
-        L6SIxDRLg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1if5e4-0004tT-O2; Wed, 11 Dec 2019 17:19:28 +0000
-Date:   Wed, 11 Dec 2019 09:19:28 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, clm@fb.com,
-        torvalds@linux-foundation.org, david@fromorbit.com
-Subject: Re: [PATCH 5/5] iomap: support RWF_UNCACHED for buffered writes
-Message-ID: <20191211171928.GN32169@bombadil.infradead.org>
-References: <20191211152943.2933-1-axboe@kernel.dk>
- <20191211152943.2933-6-axboe@kernel.dk>
+        Wed, 11 Dec 2019 12:20:12 -0500
+Received: by mail-lf1-f67.google.com with SMTP id b15so17310776lfc.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 09:20:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nLrgzTUFBpKEKDqVCWUZZ1/wbtzXH039tj4vagWGMGg=;
+        b=Nc8xSo/JfaYDi4Oz/DWIpDtDq6loKj0f0sSoSmwqGnkRytexbEyNqycOYwbfzKVi0J
+         cSGVsT5W9MpTwY+UdZRBw3LsrkeoYgYwl0ZhxQ2o4YErz3CWWBXmZqc7NNPMVhSI8nRf
+         vh7vqyXDlMy5+GQPAGclDZumV++kQ990r6WdQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nLrgzTUFBpKEKDqVCWUZZ1/wbtzXH039tj4vagWGMGg=;
+        b=jjxEgX4/os76g1c+jTUGtvjd3P/jbh9pHR/FznSDvyFnKbLsR0BiVTOjfit/FkEraW
+         6I6+ubbUW3CP6mBXS6ue0mArnnHr9EaV5tqdXprzMEp7AgXTsZocUnUbxskR/S5YtKFT
+         69hKbdY02C0kxSdjPECngtCN1972GNge43TToju4zj6/JFLX0OzUYx2wOL4C1Sm0BL3s
+         GfRf9HoKwg7csHoTnIXQbWZe46j2HlzY+bvkKIfAcdUhrBrDDP+aanhnsdYxNt1ZOVYj
+         UloEMKO6CfZ+WJArOh6WY8vaEZ4n1nfhSI8VJi7e2JrpfW5xG7MIWWxSMndQinO8xr7w
+         rkMg==
+X-Gm-Message-State: APjAAAVODMs2udumIzV2sT5hrCjdxQcjxjQJfZ1R4P2sySvk306IX+lT
+        Z1Qvh4tdkHHve0Krcs2ad+2ZON76eyw=
+X-Google-Smtp-Source: APXvYqxyvlk20iBtwPmJftLH0CX7v0a6437+r7GFjkc9h9RJIhOXADAQz9O/PZ7FzYwftqvoaVs+Bg==
+X-Received: by 2002:ac2:455c:: with SMTP id j28mr3065472lfm.184.1576084809626;
+        Wed, 11 Dec 2019 09:20:09 -0800 (PST)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id r26sm1512022lfm.82.2019.12.11.09.20.08
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2019 09:20:08 -0800 (PST)
+Received: by mail-lf1-f48.google.com with SMTP id m30so17282860lfp.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 09:20:08 -0800 (PST)
+X-Received: by 2002:ac2:4946:: with SMTP id o6mr2995836lfi.170.1576084808314;
+ Wed, 11 Dec 2019 09:20:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191211152943.2933-6-axboe@kernel.dk>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20191211152943.2933-1-axboe@kernel.dk> <20191211152943.2933-5-axboe@kernel.dk>
+In-Reply-To: <20191211152943.2933-5-axboe@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 11 Dec 2019 09:19:52 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wj07S-Ee4z6_L=7B=RvL96zZ6mXOTJqiUdyhji6503_yQ@mail.gmail.com>
+Message-ID: <CAHk-=wj07S-Ee4z6_L=7B=RvL96zZ6mXOTJqiUdyhji6503_yQ@mail.gmail.com>
+Subject: Re: [PATCH 4/5] iomap: pass in the write_begin/write_end flags to iomap_actor
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
+        Dave Chinner <david@fromorbit.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 08:29:43AM -0700, Jens Axboe wrote:
-> @@ -670,9 +675,14 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
->  		iomap_read_inline_data(inode, page, srcmap);
->  	else if (iomap->flags & IOMAP_F_BUFFER_HEAD)
->  		status = __block_write_begin_int(page, pos, len, NULL, srcmap);
-> -	else
-> -		status = __iomap_write_begin(inode, pos, len, flags, page,
-> +	else {
-> +		unsigned wb_flags = 0;
-> +
-> +		if (flags & IOMAP_UNCACHED)
-> +			wb_flags = IOMAP_WRITE_F_UNCACHED;
-> +		status = __iomap_write_begin(inode, pos, len, wb_flags, page,
->  				srcmap);
+On Wed, Dec 11, 2019 at 7:29 AM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> This is in preparation for passing in a flag to the iomap_actor, which
+> currently doesn't support that.
 
-I think if you do an uncached write to a currently shared extent, you
-just lost the IOMAP_WRITE_F_UNSHARE flag?
+This really looks like we should use a struct for passing the arguments, no?
+
+Now on 64-bit, you the iomap_actor() has seven arguments, which
+already means that it's passing some of them on the stack on most
+architectures.
+
+On 32-bit, it's even worse, because two of the arguments are "loff_t",
+which means that they are 2 words each, so you have 9 words of
+arguments. I don't know a single architecture that does register
+passing for things like that.
+
+If you were to change the calling convention _first_ to do a "struct
+iomap_actor" or whatever, then adding the "flags" field would be a
+trivial addition.
+
+               Linus
