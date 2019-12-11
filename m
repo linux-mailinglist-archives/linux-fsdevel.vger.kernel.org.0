@@ -2,126 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1395A11BCB2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 20:15:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE70311BCC5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 20:19:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbfLKTPR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Dec 2019 14:15:17 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40875 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726312AbfLKTPQ (ORCPT
+        id S1726828AbfLKTTJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Dec 2019 14:19:09 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:58470 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726312AbfLKTTI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Dec 2019 14:15:16 -0500
-Received: by mail-lj1-f195.google.com with SMTP id s22so25332089ljs.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 11:15:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VOD7R27AsduJWVvdOr2UIanUZawLN4t/gENPDoXyCKs=;
-        b=VdTfqGW9GvpFK5GEtZfMWoXvDM0CVFcRYBxvTgJD7+rU2yW/orFNa/DB6iVh91TX0t
-         aDxZ9K5e9xBP74CjsXLZ6j+btdY5WwxvIgcQ3P7lR8WRNwUHrI70uAyCgm82AEi4TdHY
-         GbH2oENsGX414IFAn8/pU1MmiER9PTwnReX7M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VOD7R27AsduJWVvdOr2UIanUZawLN4t/gENPDoXyCKs=;
-        b=Vt5i+LQ2z7uxq3P2ssu3ldihD/n4DDcfesYjDJbCqnwrt/aQ6LuN9V+Ak/pHc3+5xi
-         jWE6I2YT0D5so7Cn8VZn9harm+mNqoWjW4+VLv3ygElJnqxznvlSihrtLxoMldhebvdl
-         J+MHcGmCfgLmsXIcpQLIzuJm7CQkYg09NWDyWnUBXZ7ufoOZzZho5UkqPwsZrXVV3H5b
-         eIxE/ig72LCnoQSSrQ9TW2VvOfZjoZoZDTEFq6I1AIVNniNDCAFhPv6M3aKwu1kAJLzd
-         m6YzvLuXF8D1hoE87NJ/kGiIbPRVfqCokIhYxwIvnrdAfn7zQiOTY1khjjdpSSU0WYx6
-         AIbw==
-X-Gm-Message-State: APjAAAW9PCzhrxtgujFS/JeUG3jBqiYMgv7UhUAzuq9MnQ5tSw+IW9VH
-        R9HnOhZ3wirjKDcmss+hNUqystcc/4Y=
-X-Google-Smtp-Source: APXvYqwYiv7CjkLW3p1ElpA7JBcK6vehGVr4Ttbmj6VVLSuC8TlZHl/Up7ZhSnQE+WBsePgLKW8txw==
-X-Received: by 2002:a2e:98c4:: with SMTP id s4mr3349787ljj.102.1576091714260;
-        Wed, 11 Dec 2019 11:15:14 -0800 (PST)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id s22sm1681273ljm.41.2019.12.11.11.15.13
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2019 11:15:13 -0800 (PST)
-Received: by mail-lj1-f169.google.com with SMTP id e28so25299294ljo.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 11:15:13 -0800 (PST)
-X-Received: by 2002:a2e:9041:: with SMTP id n1mr3339710ljg.133.1576091712754;
- Wed, 11 Dec 2019 11:15:12 -0800 (PST)
+        Wed, 11 Dec 2019 14:19:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576091947;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+        bh=BlDJNCA6ZoBIkrCGwvA4FngOXsmK80m4cZkfxwhQPmc=;
+        b=Ayy0NxfTk6MdHEasQzu4eEwUSwynLhsHHUQbTLzj0HkZR+ldz7Bd94F1IEy/UiPCw821ma
+        3tmU+Dqg6gE5K07XfPglAxcDlQ/2YYU3K0vRSNagKRJF4PktXBbSWF4SN1NOcAwrXlnVpj
+        8NE5DhOvWJBU+ROoYDwtsKkRjyrqTyE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-118-gjyUqDkpPduaAA03JW3ayA-1; Wed, 11 Dec 2019 14:19:05 -0500
+X-MC-Unique: gjyUqDkpPduaAA03JW3ayA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2637C1005516;
+        Wed, 11 Dec 2019 19:19:03 +0000 (UTC)
+Received: from [10.36.116.75] (ovpn-116-75.ams2.redhat.com [10.36.116.75])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9B5795DA70;
+        Wed, 11 Dec 2019 19:18:56 +0000 (UTC)
+Subject: Re: [PATCH V2 1/3] dcache: add a new enum type for
+ 'dentry_d_lock_class'
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        "yukuai (C)" <yukuai3@huawei.com>, gregkh@linuxfoundation.org,
+        rafael@kernel.org, rostedt@goodmis.org, oleg@redhat.com,
+        mchehab+samsung@kernel.org, corbet@lwn.net, tytso@mit.edu,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, zhengbin13@huawei.com,
+        yi.zhang@huawei.com, chenxiang66@hisilicon.com, xiexiuqi@huawei.com
+References: <20191130020225.20239-1-yukuai3@huawei.com>
+ <20191130020225.20239-2-yukuai3@huawei.com>
+ <20191130034339.GI20752@bombadil.infradead.org>
+ <e2e7c9f1-7152-1d74-c434-c2c4d57d0422@huawei.com>
+ <20191130193615.GJ20752@bombadil.infradead.org>
+ <20191208191142.GU4203@ZenIV.linux.org.uk>
+ <c8a66d9d-63b6-58db-23b5-148122d606ca@redhat.com>
+ <20191211184630.GD4203@ZenIV.linux.org.uk>
+From:   David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Red Hat GmbH
+Message-ID: <fdefd516-c469-7874-31cf-bc60596e777c@redhat.com>
+Date:   Wed, 11 Dec 2019 20:18:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-References: <20191211152943.2933-1-axboe@kernel.dk> <CAHk-=wjz3LE1kznro1dozhk9i9Dr4pCnkj7Fuccn2xdWeGHawQ@mail.gmail.com>
- <d0adcde2-3106-4fea-c047-4d17111bab70@kernel.dk>
-In-Reply-To: <d0adcde2-3106-4fea-c047-4d17111bab70@kernel.dk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 11 Dec 2019 11:14:56 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wh_YwvNNikQ9yh7oqG5hyJE9tw+bXFft-mOQJ0n_v+a7g@mail.gmail.com>
-Message-ID: <CAHk-=wh_YwvNNikQ9yh7oqG5hyJE9tw+bXFft-mOQJ0n_v+a7g@mail.gmail.com>
-Subject: Re: [PATCHSET v3 0/5] Support for RWF_UNCACHED
-To:     Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
-        Dave Chinner <david@fromorbit.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191211184630.GD4203@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[ Adding Johannes Weiner to the cc, I think he's looked at the working
-set and the inactive/active LRU lists the most ]
+On 11.12.19 19:46, Al Viro wrote:
+> On Wed, Dec 11, 2019 at 04:55:56PM +0100, David Hildenbrand wrote:
+> 
+> [snip]
+> 
+>> The patch in linux-next
+>>
+>> commit 653f0d05be0948e7610bb786e6570bb6c48a4e75 (HEAD, refs/bisect/bad)
+> 
+> ... is no longer there.  commit a3d1e7eb5abe3aa1095bc75d1a6760d3809bd672
+> is; could you check if it fixes your reproducer?
+> 
 
-On Wed, Dec 11, 2019 at 9:56 AM Jens Axboe <axboe@kernel.dk> wrote:
->
-> > In fact, that you say that just a pure random read case causes lots of
-> > kswapd activity makes me think that maybe we've screwed up page
-> > activation in general, and never noticed (because if you have enough
-> > memory, you don't really see it that often)? So this might not be an
-> > io_ring issue, but an issue in general.
->
-> This is very much not an io_uring issue, you can see exactly the same
-> kind of behavior with normal buffered reads or mmap'ed IO. I do wonder
-> if streamed reads are as bad in terms of making kswapd go crazy, I
-> forget if I tested that explicitly as well.
+desktop: ~/git/linux memory_holes $ git fetch next
+desktop: ~/git/linux memory_holes $ git show
+a3d1e7eb5abe3aa1095bc75d1a6760d3809bd672
+fatal: bad object a3d1e7eb5abe3aa1095bc75d1a6760d3809bd672
 
-We definitely used to have people test things like "read the same
-much-bigger-than-memory file over and over", and it wasn't supposed to
-be all _that_ painful, because the pages never activated, and they got
-moved out of the cache quickly and didn't disturb other activities
-(other than the constant IO, of course, which can be a big deal in
-itself).
+I'll go hunt for that commit :) ... guess it will show up in -next soon.
 
-But maybe that was just the streaming case. With read-around and
-random accesses, maybe we end up activating too much (and maybe we
-always did).
+-- 
+Thanks,
 
-But I wouldn't be surprised if we've lost that as people went from
-having 16-32MB to having that many GB instead - simply because a lot
-of loads are basically entirely cached, and the few things that are
-not tend to be explicitly uncached (ie O_DIRECT etc).
+David / dhildenb
 
-I think the workingset changes actually were maybe kind of related to
-this - the inactive list can become too small to ever give people time
-to do a good job of picking the _right_ thing to activate.
-
-So this might either be the reverse situation - maybe we let the
-inactive list grow too large, and then even a big random load will
-activate pages that really shouldn't be activated? Or it might be
-related to the workingset issue in that we've activated pages too
-eagerly and not ever moved things back to the inactive list (which
-then in some situations causes the inactive list to be very small).
-
-Who knows. But this is definitely an area that I suspect hasn't gotten
-all that much attention simply because memory has become much more
-plentiful, and a lot of regular loads basically have enough memory
-that almost all IO is cached anyway, and the old "you needed to be
-more clever about balancing swap/inactive/active even under normal
-loads" thing may have gone away a bit.
-
-These days, even if you do somewhat badly in that balancing act, a lot
-of loads probably won't notice that much. Either there is still so
-much memory for caching that the added IO isn't really ever dominant,
-or you had such a big load to begin with that it was long since
-rewritten to use O_DIRECT.
-
-            Linus
