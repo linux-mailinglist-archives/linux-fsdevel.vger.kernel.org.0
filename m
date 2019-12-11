@@ -2,124 +2,215 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F019611A3BB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 06:22:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69A5711A45A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 07:16:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbfLKFWE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Dec 2019 00:22:04 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:41205 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726357AbfLKFWE (ORCPT
+        id S1727795AbfLKGQg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Dec 2019 01:16:36 -0500
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:14901 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726687AbfLKGQf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Dec 2019 00:22:04 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191211052201epoutp04574b7d3528b47885c5b705f2c6c493a5~fOZiOvI3m0685706857epoutp04Z
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 05:22:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191211052201epoutp04574b7d3528b47885c5b705f2c6c493a5~fOZiOvI3m0685706857epoutp04Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1576041722;
-        bh=LAZLvvExbGhSMU9CrBL0f+mi5y5whc4oHHjen45alVc=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=VvD10Ez08bDstL5o8GQsLpKs1Y5SZggBF/DH2RswmHJT/XP0GP53HIBamG5IpTO7Y
-         8DjumygVrmUmC6FP+zDKexgtbvwb//B8/AN1WtXExgfdzi/9zStusKapU3Jj9ofbBj
-         uw4pHeo1C4fUSW7wVz2Zjlk3w1wK9DUu62nBA2kI=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20191211052201epcas1p317994dd818153d76e46d1c4c42e130a3~fOZh21Cf01020910209epcas1p3h;
-        Wed, 11 Dec 2019 05:22:01 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.164]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 47Xlfc6DYvzMqYm0; Wed, 11 Dec
-        2019 05:22:00 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C0.08.57028.8FC70FD5; Wed, 11 Dec 2019 14:22:00 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20191211052200epcas1p1e26270f59e2aed6fe62544ceaa295573~fOZg1W34U1953819538epcas1p1M;
-        Wed, 11 Dec 2019 05:22:00 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191211052200epsmtrp152d99171da85fc14cb0d219f677c5b49~fOZg0vG4v1977619776epsmtrp1d;
-        Wed, 11 Dec 2019 05:22:00 +0000 (GMT)
-X-AuditID: b6c32a35-50bff7000001dec4-c7-5df07cf87882
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        33.F8.10238.8FC70FD5; Wed, 11 Dec 2019 14:22:00 +0900 (KST)
-Received: from DONAMJAEJEO06 (unknown [10.88.104.63]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191211052200epsmtip2c06cd5e704b61d73ced08bcb3fafd5d0~fOZgoM_i70186301863epsmtip2N;
-        Wed, 11 Dec 2019 05:22:00 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'Vyacheslav Dubeyko'" <slava@dubeyko.com>
-Cc:     <gregkh@linuxfoundation.org>, <valdis.kletnieks@vt.edu>,
-        <hch@lst.de>, <sj1557.seo@samsung.com>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-In-Reply-To: <288f07e3573e1dd242a892a6aeef211cda68bc61.camel@dubeyko.com>
-Subject: RE: [PATCH v6 03/13] exfat: add inode operations
-Date:   Wed, 11 Dec 2019 14:22:00 +0900
-Message-ID: <005201d5afe2$ea285880$be790980$@samsung.com>
+        Wed, 11 Dec 2019 01:16:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1576044995; x=1607580995;
+  h=from:to:cc:subject:date:message-id:
+   content-transfer-encoding:mime-version;
+  bh=wKrKs4Fth6/z7XFVwrltfSTgFcadUHn/ome+7YOJHIc=;
+  b=BOnJpTYyYZjUFUd5oFSkmE/2htVbayySEIdrzb1bGuB3BQJk+dlxqJU0
+   5P2/bADSTZ9/0Oz4dKp/cFLqo34dbemlJxWETaYD8+jkAh5COXbxobC0x
+   rm4g60Rh1eyekjXiOcM0kzQSl9wR0vaFKRCYABc6ZOoSW9pgO4hOItWLC
+   UdUM9EmYl3+Fzig9Rtw+1iG/Vnm7TDaz00iDmX/i/PWjPR3PCHBBhParB
+   rYuHzNPRfI+P7/LoBhak3xnn/2npTxwCxhOw+2GLlg2sMxG1B+lLD13Bm
+   wji8iU8vHQCZ3+eN+1ea2l56D1qCTRUVe+pxx2lj4QeTeO599QKjP2W05
+   w==;
+IronPort-SDR: TRk11DTviKUKVUeYCXqNc6aCA0MqYZpXyPv6AZpK4I5MVyxnVQtTfkDHcpiHfwpw8uI7ZnpIru
+ zHExT22uBdfR/c5uiJkkdXxDjW8eHqEWO1IeGrigeYgBNORDKAi+gEaSNqjW9EX7ESzNi2J2CG
+ Pahtc2zTe2PslwOwk0PCEVOSkKpSAWmUfqAt+LeiS8PAylOIZtxGDezw53cRhp7fd0rHdrkLoS
+ 9LP4f8tbS+FB7vtIeTMk6t2P7ffQ+3BHYvsmFcNXjJQ4NMtrAhw6sggEdODdnFexC0E5HAkivq
+ H34=
+X-IronPort-AV: E=Sophos;i="5.69,301,1571673600"; 
+   d="scan'208";a="232612405"
+Received: from mail-bn8nam12lp2176.outbound.protection.outlook.com (HELO NAM12-BN8-obe.outbound.protection.outlook.com) ([104.47.55.176])
+  by ob1.hgst.iphmx.com with ESMTP; 11 Dec 2019 14:16:32 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iH076ko/hl+QLTg85syzEVpe6oxJmZqyVgxcVGQ//ncz6X1dEqHloWt7n45OhQs03Q3FEgy1Pe8LUhGlXcO8bq9cU7PzS1k8jBdB2pYLQl9/yy0eXLqKMf8AB2tWwt29dQxWAmH+JrOuSpQ+viN/JCrGO4olBawmB/q55LOLEuLsm/oBQn/b60XIAIkyZmdu3JRIPu9Ri8TXq961isq6oVUlchC7WFmVESWz2fJwB1FYZ29XgCtd0ShwgFJFAx6p3Xsjs1qr4gqvL+E9F6YIQ6V1osacZWRqL7dvj4pCoiQje6pEPGJIAbG62R24YFQtQSYizU9tCptcTsy2BRYpxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5oAeDD/L0QXcCKoeafAvIYqBW/ibXXcwGxdJT2kQA98=;
+ b=MC1WUYCxJB2hjAEmkE08/qmjBqM0nQ389gvWGFcL1bNvw8MWifnPaJnvvP1cHlRE2+t6bMZl+LuHNWgMIl1m+BCUUT5F7q6ujKYAL6Uh7Zlzu+5LN6dnh426ki3fyFO7XIdVA9ID4eHrWFQsKw+pXdgMiNhKa1ZN7x4Vl6C+22z0WD7uTzylXqeRLcE8GgQ2JK+1bLp5rmDUZFj1ntGOSkn5kgWe8VATpEY/FIFM3cpfxmtdmC/5yO01DTjRo9ZRyI7mGdR39iGQghPF9LtiMdc1UprtGamoe3tc6DZ+lUmTK8cIvuwY4+Aw01H3xj85lqjL/rOVF9pbGRnZ1oZ4gg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5oAeDD/L0QXcCKoeafAvIYqBW/ibXXcwGxdJT2kQA98=;
+ b=dB6BCVZEXvycpOlR3LQ6hsqVwa04jwKFKmWdFVQjyXxMSL/86cIT4I/MTe0eST8i9zevZF9uMCDJ0nOpdacU84W7EP6woa963v5CbpFuJUwg5FjOsTIJDJaoNhHFCpsH6ImmFJymC4uCF2ehY2swn5d+cmo3KsSTkt+ZsXxRWhU=
+Received: from BYAPR04MB5749.namprd04.prod.outlook.com (20.179.57.21) by
+ BYAPR04MB6232.namprd04.prod.outlook.com (20.178.232.207) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2538.15; Wed, 11 Dec 2019 06:16:29 +0000
+Received: from BYAPR04MB5749.namprd04.prod.outlook.com
+ ([fe80::c3e:e0b4:872:e851]) by BYAPR04MB5749.namprd04.prod.outlook.com
+ ([fe80::c3e:e0b4:872:e851%7]) with mapi id 15.20.2516.018; Wed, 11 Dec 2019
+ 06:16:29 +0000
+From:   Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
+To:     "lsf-pc@lists.linux-foundation.org" 
+        <lsf-pc@lists.linux-foundation.org>
+CC:     "axboe@kernel.dk" <axboe@kernel.dk>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Hannes Reinecke <hare@suse.de>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Omar Sandoval <osandov@fb.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Keith Busch <kbusch@kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Ming Lei <ming.lei@redhat.com>,
+        Matias Bjorling <Matias.Bjorling@wdc.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-btrace@vger.kernel.org" <linux-btrace@vger.kernel.org>
+Subject: [LSF/MM/BFP ATTEND] [LSF/MM/BFP TOPIC] Storage: add blktrace
+ extension support
+Thread-Topic: [LSF/MM/BFP ATTEND] [LSF/MM/BFP TOPIC] Storage: add blktrace
+ extension support
+Thread-Index: AQHVr+qGZa1SvOsf40W81LFPPtqF+Q==
+Date:   Wed, 11 Dec 2019 06:16:29 +0000
+Message-ID: <BYAPR04MB5749B4DC50C43EE845A04612865A0@BYAPR04MB5749.namprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Chaitanya.Kulkarni@wdc.com; 
+x-originating-ip: [199.255.45.62]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 8b4ea572-9091-42b9-709e-08d77e01a944
+x-ms-traffictypediagnostic: BYAPR04MB6232:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BYAPR04MB6232E5FDAC18FAED4AA2FE58865A0@BYAPR04MB6232.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 024847EE92
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(39860400002)(366004)(376002)(346002)(396003)(199004)(189003)(78114003)(71200400001)(186003)(26005)(52536014)(5660300002)(7696005)(6506007)(4326008)(966005)(86362001)(316002)(478600001)(2906002)(54906003)(81166006)(9686003)(8936002)(8676002)(81156014)(7416002)(6916009)(66946007)(64756008)(66446008)(66476007)(33656002)(76116006)(55016002)(66556008)(21314003);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB6232;H:BYAPR04MB5749.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: jitJ1K7ITxNBu9+GmPVPzwWBsyV9o8I1dykswJhMK7/YOziHaJL5RDIX8hZx9ZDKAPtwvPOUWJXET4KcWIl+n9Vzajj9yYqEe6jr5FyyiVFyirP+D5vtq2jaGFmNiz/B1NoQpl1XBwI0K8hruTDrIwtbTd8k6BHyz0QjHkJYT3Mz5EkftVfBj9Yvw+1y5sC+3UbIF1kZ5P54BNSqxDiQViEL6iOzL0BwRRalt8b8k3Vx7M8itLCPdlZA1wIUn6OoTmVdjszBYDuxLUv/Tlbd8YDDrtXPQh81eJnZIiM9M6hue9dnljE/QL2aYNrLCuZ7NP1LHe1ss7qC48nz+s82ZzSpvCnvDgMtBOTtTI1mMNoiAC2kRiTyIv6VY0hIu6lDcTSbuDx5fdq8EoD4HfwOAS5OyfB0yhFkY/KrwTdMfymtxdxxdFD5e9OYpDKIKbKzLZFE6bH3pahWlOJuIXvWdqOWtC4ioHKA2j8miimVpIDCYF8RLlVh6PcmmwFRTP09VJw9MadIbVPeq6oU2wVFGEcNeNMxqS7GhZ8L1Nr3+gFfJt8cLtviwYxMo0DYDfYG
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 14.0
-Thread-Index: AQJ4BHLZ9o05RvmzeddUXNtWjOPDsAKi8sUOAoVHeEQBkFJCUaY597lg
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFJsWRmVeSWpSXmKPExsWy7bCmru6Pmg+xBjN/GVk0L17PZrFy9VEm
-        iz17T7JYXN41h81iy78jrBaftsxmsrj0/gOLA7vHwfVvWDz2z13D7rH7ZgObR9+WVYwenzfJ
-        eRza/oYtgC0qxyYjNTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DX
-        LTMH6BYlhbLEnFKgUEBicbGSvp1NUX5pSapCRn5xia1SakFKToGhQYFecWJucWleul5yfq6V
-        oYGBkSlQZUJOxr790gUnmCq+t01ibWBsZOpi5OSQEDCR2L72IXsXIxeHkMAORonfy88wQzif
-        GCUmPDjPCuF8Y5RYebOPGaZl8bfHjBCJvYwSC59fgGp5xShxZE0XK0gVm4CuxL8/+9lAbBEB
-        PYkTG86DFTELrGCUePJ+Mth2TgFPiYbOmewgtrCApcSa2xvBmlkEVCVm7D0Gto4XKD5/8yo2
-        CFtQ4uTMJywgNrOAvMT2t3OgTlKQ2HH2NSPEMjeJxl2tjBA1IhKzO9vAFksIfGeT6OlcwgbR
-        4CJx9d9FqGZhiVfHt7BD2FISL/vbgGwOILta4uN+qJIORokX320hbGOJm+s3sIKUMAtoSqzf
-        pQ8RVpTY+Xsu1Fo+iXdfe1ghpvBKdLQJQZSoSvRdOgwNd2mJrvYP7BMYlWYheWwWksdmIXlg
-        FsKyBYwsqxjFUguKc9NTiw0LDJEjexMjOJ1qme5gnHLO5xCjAAejEg/vgu3vY4VYE8uKK3MP
-        MUpwMCuJ8B5vexcrxJuSWFmVWpQfX1Sak1p8iNEUGO4TmaVEk/OBqT6vJN7Q1MjY2NjCxMzc
-        zNRYSZyX48fFWCGB9MSS1OzU1ILUIpg+Jg5OqQZGWbmVugzC1nt/+U02ZdB9uqe+ssiB/dNn
-        K6fcLWz6nAvu6txymzVf6PxWu2+8U8q497lYvbgSf3mRzpN9d9a9/rm4+c3tKQYrtkuHTBLc
-        cajStpVNuTDmkOuj5/su2L5fmHkzLW9NX/zWE9e63wa4pSxl3u7bPflM4t7krtnhK6YfrrzP
-        8i+7VYmlOCPRUIu5qDgRAKT6diO9AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCIsWRmVeSWpSXmKPExsWy7bCSvO6Pmg+xButfSlg0L17PZrFy9VEm
-        iz17T7JYXN41h81iy78jrBaftsxmsrj0/gOLA7vHwfVvWDz2z13D7rH7ZgObR9+WVYwenzfJ
-        eRza/oYtgC2KyyYlNSezLLVI3y6BK2PffumCE0wV39smsTYwNjJ1MXJySAiYSCz+9pixi5GL
-        Q0hgN6NE78KdrBAJaYljJ84wdzFyANnCEocPF4OEhQReMEqcnFwGYrMJ6Er8+7OfDcQWEdCT
-        OLHhPDPIHGaBdYwSy+/vYYMY+otRom3uDrBtnAKeEg2dM9lBbGEBS4k1tzeCLWMRUJWYsfcY
-        M4jNCxSfv3kVG4QtKHFy5hMWEJtZQFui92ErI4QtL7H97RxmiEMVJHacfc0IcYWbROMumBoR
-        idmdbcwTGIVnIRk1C8moWUhGzULSsoCRZRWjZGpBcW56brFhgWFearlecWJucWleul5yfu4m
-        RnBcaWnuYLy8JP4QowAHoxIP74Lt72OFWBPLiitzDzFKcDArifAeb3sXK8SbklhZlVqUH19U
-        mpNafIhRmoNFSZz3ad6xSCGB9MSS1OzU1ILUIpgsEwenVAOj2M2lzMGccpu1lupfdpOqVEg8
-        aGp/pJzp7MMrN6Y1hATay7ie2uv6y4vz4brc1z2B8zJ+ZPAfmtPUKrL01LWqr1ELd+8z/zPD
-        JWVjy+XjqoaWG7fu9nrqb+nu7p7Wcbd8qYrMm2Vqz3/dPmSQ+XP99Ai3+0y+GhKNxVeaV04I
-        cOKb69OzK26GEktxRqKhFnNRcSIAsDIYYKcCAAA=
-X-CMS-MailID: 20191211052200epcas1p1e26270f59e2aed6fe62544ceaa295573
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191209065459epcas1p3349caea59da1b9b458a73923d724ca35
-References: <20191209065149.2230-1-namjae.jeon@samsung.com>
-        <CGME20191209065459epcas1p3349caea59da1b9b458a73923d724ca35@epcas1p3.samsung.com>
-        <20191209065149.2230-4-namjae.jeon@samsung.com>
-        <288f07e3573e1dd242a892a6aeef211cda68bc61.camel@dubeyko.com>
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b4ea572-9091-42b9-709e-08d77e01a944
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2019 06:16:29.4347
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 7Mtgm4EzbLIE2WEMlfCWpKPYXQLWrPYboSw3VXb/hBNtdz8NGvcuoSlGXoD21MslNdCfrk/Y1NUtNaQvzSJ5OMx1dq1mL+VI7JWGTkJ/xjg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB6232
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-> > +	ep2->stream_valid_size = cpu_to_le64(on_disk_size);
-> > +	ep2->stream_size = ep2->stream_valid_size;
-> > +
-> > +	ret = exfat_update_dir_chksum_with_entry_set(sb, es, sync);
-> > +	kfree(es);
-> 
-> The exfat_get_dentry_set() allocates the es by kmalloc? Am I correct?
-Yes.
-> 
-> 
-> > +	return ret;
-> > +}
-> > +
-
+Hi,=0A=
+=0A=
+* Background:-=0A=
+-----------------------------------------------------------------------=0A=
+=0A=
+Linux Kernel Block layer now supports new Zone Management operations=0A=
+(REQ_OP_ZONE_[OPEN/CLOSE/FINISH] [1]).=0A=
+=0A=
+These operations are added mainly to support NVMe Zoned Namespces=0A=
+(ZNS) [2]. We are adding support for ZNS in Linux Kernel Block layer,=0A=
+user-space tools (sys-utils/nvme-cli), NVMe driver, File Systems,=0A=
+Device-mapper in order to support these devices in the field.=0A=
+=0A=
+Over the years Linux kernel block layer tracing infrastructure=0A=
+has proven to be not only extremely useful but essential for:-=0A=
+=0A=
+1. Debugging the problems in the development of kernel block drivers.=0A=
+2. Solving the issues at the customer sites.=0A=
+3. Speeding up the development for the file system developers.=0A=
+4. Finding the device-related issues on the fly without modifying=0A=
+    the kernel.=0A=
+5. Building white box test-cases around the complex areas in the=0A=
+    linux-block layer.=0A=
+=0A=
+* Problem with block layer tracing infrastructure:-=0A=
+-----------------------------------------------------------------------=0A=
+=0A=
+If blktrace is such a great tool why we need this session for ?=0A=
+=0A=
+Existing blktrace infrastructure lacks the number of free bits that are=0A=
+available to track the new trace category. With the addition of new=0A=
+REQ_OP_ZONE_XXX we need more bits to expand the blktrace so that we can=0A=
+track more number of requests.=0A=
+=0A=
+* Current state of the work:-=0A=
+-----------------------------------------------------------------------=0A=
+=0A=
+RFC implementations [3] has been posted with the addition of new IOCTLs=0A=
+which is far from the production so that it can provide a basis to get=0A=
+the discussion started.=0A=
+=0A=
+This RFC implementation provides:-=0A=
+1. Extended bits to track new trace categories.=0A=
+2. Support for tracing per trace priorities.=0A=
+3. Support for priority mask.=0A=
+4. New IOCTLs so that user-space tools can setup the extensions.=0A=
+5. Ability to track the integrity fields.=0A=
+6. blktrace and blkparse implementation which supports the above=0A=
+    mentioned features.=0A=
+=0A=
+Bart and Martin has suggested changes which I've incorporated in the RFC =
+=0A=
+revisions.=0A=
+=0A=
+* What we will discuss in the proposed session ?=0A=
+-----------------------------------------------------------------------=0A=
+=0A=
+I'd like to propose a session for Storage track to go over the following=0A=
+discussion points:-=0A=
+=0A=
+1. What is the right approach to move this work forward?=0A=
+2. What are the other information bits we need to add which will help=0A=
+    kernel community to speed up the development and improve tracing?=0A=
+3. What are the other tracepoints we need to add in the block layer=0A=
+    to improve the tracing?=0A=
+4. What are device driver callbacks tracing we can add in the block=0A=
+    layer?=0A=
+5. Since polling is becoming popular what are the new tracepoints=0A=
+    we need to improve debugging ?=0A=
+ =0A=
+=0A=
+* Required Participants:-=0A=
+-----------------------------------------------------------------------=0A=
+=0A=
+I'd like to invite block layer, device drivers and file system=0A=
+developers to:-=0A=
+=0A=
+1. Share their opinion on the topic.=0A=
+2. Share their experience and any other issues with blktrace=0A=
+    infrastructure.=0A=
+3. Uncover additional details that are missing from this proposal.=0A=
+=0A=
+Regards,=0A=
+Chaitanya=0A=
+=0A=
+References :-=0A=
+=0A=
+[1] https://www.spinics.net/lists/linux-block/msg46043.html=0A=
+[2] https://nvmexpress.org/new-nvmetm-specification-defines-zoned-=0A=
+namespaces-zns-as-go-to-industry-technology/=0A=
+[3] https://www.spinics.net/lists/linux-btrace/msg01106.html=0A=
+     https://www.spinics.net/lists/linux-btrace/msg01002.html=0A=
+     https://www.spinics.net/lists/linux-btrace/msg01042.html=0A=
+     https://www.spinics.net/lists/linux-btrace/msg00880.html=0A=
