@@ -2,242 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8747611A147
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 03:20:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AC7911A18A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 03:42:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727606AbfLKCUi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Dec 2019 21:20:38 -0500
-Received: from mail.loongson.cn ([114.242.206.163]:59050 "EHLO loongson.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727302AbfLKCUh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Dec 2019 21:20:37 -0500
-Received: from linux.localdomain (unknown [123.138.236.242])
-        by mail.loongson.cn (Coremail) with SMTP id AQAAf9DxrxdqUvBdi2oJAA--.59S2;
-        Wed, 11 Dec 2019 10:20:26 +0800 (CST)
-From:   Tiezhu Yang <yangtiezhu@loongson.cn>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Tyler Hicks <tyhicks@canonical.com>
-Cc:     linux-fsdevel@vger.kernel.org, ecryptfs@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5] fs: introduce is_dot_or_dotdot helper for cleanup
-Date:   Wed, 11 Dec 2019 10:20:01 +0800
-Message-Id: <1576030801-8609-1-git-send-email-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.1.0
-X-CM-TRANSID: AQAAf9DxrxdqUvBdi2oJAA--.59S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxtF18ZF4rZrW5Jw1ftrW3GFg_yoW7Zr4UpF
-        sxJF97trs7GryY9r95tr1fCr1Yv3s7Wr17GrZxGa4vy34aqrn5XrWIvry09wn3JFWDX3Z0
-        ga98G34rCFy5JFJanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUPEb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
-        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-        A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xII
-        jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4
-        vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28I
-        cVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx
-        0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwAC
-        I402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUAVWUtwCY02Avz4vE14v_Gr1l42
-        xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1l
-        x2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14
-        v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IY
-        x2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I
-        8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73
-        UjIFyTuYvjxUgwSlUUUUU
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+        id S1727749AbfLKCmJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Dec 2019 21:42:09 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:54503 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726619AbfLKCmJ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Dec 2019 21:42:09 -0500
+Received: from callcc.thunk.org (guestnat-104-132-34-105.corp.google.com [104.132.34.105] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xBB2fb0M007024
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 10 Dec 2019 21:41:38 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 9BA5D421A48; Tue, 10 Dec 2019 21:41:37 -0500 (EST)
+Date:   Tue, 10 Dec 2019 21:41:37 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Andrea Vai <andrea.vai@unipv.it>,
+        "Schmid, Carsten" <Carsten_Schmid@mentor.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Jens Axboe <axboe@kernel.dk>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        USB list <linux-usb@vger.kernel.org>,
+        SCSI development list <linux-scsi@vger.kernel.org>,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Omar Sandoval <osandov@fb.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Hans Holmberg <Hans.Holmberg@wdc.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: AW: Slow I/O on USB media after commit
+ f664a3cc17b7d0a2bc3b3ab96181e1029b0ec0e6
+Message-ID: <20191211024137.GB61323@mit.edu>
+References: <cb6e84781c4542229a3f31572cef19ab@SVR-IES-MBX-03.mgc.mentorg.com>
+ <c1358b840b3a4971aa35a25d8495c2c8953403ea.camel@unipv.it>
+ <20191128091712.GD15549@ming.t460p>
+ <f82fd5129e3dcacae703a689be60b20a7fedadf6.camel@unipv.it>
+ <20191129005734.GB1829@ming.t460p>
+ <20191129023555.GA8620@ming.t460p>
+ <320b315b9c87543d4fb919ecbdf841596c8fbcea.camel@unipv.it>
+ <20191203022337.GE25002@ming.t460p>
+ <8196b014b1a4d91169bf3b0d68905109aeaf2191.camel@unipv.it>
+ <20191210080550.GA5699@ming.t460p>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191210080550.GA5699@ming.t460p>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There exists many similar and duplicate codes to check "." and "..",
-so introduce is_dot_or_dotdot helper to make the code more clean.
+On Tue, Dec 10, 2019 at 04:05:50PM +0800, Ming Lei wrote:
+> > > The path[2] is expected behaviour. Not sure path [1] is correct,
+> > > given
+> > > ext4_release_file() is supposed to be called when this inode is
+> > > released. That means the file is closed 4358 times during 1GB file
+> > > copying to usb storage.
+> > > 
+> > > [1] insert requests when returning to user mode from syscall
+> > > 
+> > >   b'blk_mq_sched_request_inserted'
+> > >   b'blk_mq_sched_request_inserted'
+> > >   b'dd_insert_requests'
+> > >   b'blk_mq_sched_insert_requests'
+> > >   b'blk_mq_flush_plug_list'
+> > >   b'blk_flush_plug_list'
+> > >   b'io_schedule_prepare'
+> > >   b'io_schedule'
+> > >   b'rq_qos_wait'
+> > >   b'wbt_wait'
+> > >   b'__rq_qos_throttle'
+> > >   b'blk_mq_make_request'
+> > >   b'generic_make_request'
+> > >   b'submit_bio'
+> > >   b'ext4_io_submit'
+> > >   b'ext4_writepages'
+> > >   b'do_writepages'
+> > >   b'__filemap_fdatawrite_range'
+> > >   b'ext4_release_file'
+> > >   b'__fput'
+> > >   b'task_work_run'
+> > >   b'exit_to_usermode_loop'
+> > >   b'do_syscall_64'
+> > >   b'entry_SYSCALL_64_after_hwframe'
+> > >     4358
 
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
+I'm guessing that your workload is repeatedly truncating a file (or
+calling open with O_TRUNC) and then writing data to it.  When you do
+this, then when the file is closed, we assume that since you were
+replacing the previous contents of a file with new contents, that you
+would be unhappy if the file contents was replaced by a zero length
+file after a crash.  That's because ten years, ago there were a *huge*
+number of crappy applications that would replace a file by reading it
+into memory, truncating it, and then write out the new contents of the
+file.  This could be a high score file for a game, or a KDE or GNOME
+state file, etc.
 
-v5:
-  - remove "qname" variable in fscrypt_fname_disk_to_usr()
-  - modify "len < 2" to "len == 1" in is_dot_or_dotdot()
+So if someone does open, truncate, write, close, we still immediately
+writing out the data on the close, assuming that the programmer really
+wanted open, truncate, write, fsync, close, but was too careless to
+actually do the right thing.
 
-v4:
-  - rename is_dot_dotdot() to is_dot_or_dotdot()
+Some workaround[1] like this is done by all of the major file systems,
+and was fallout the agreement from the "O_PONIES"[2] controversy.
+This was discussed and agreed to at the 2009 LSF/MM workshop.  (See
+the "rename, fsync, and ponies" section.)
 
-v3:
-  - use "name" and "len" as arguments instead of qstr
-  - move is_dot_dotdot() to include/linux/namei.h
+[1] https://bugs.launchpad.net/ubuntu/+source/linux/+bug/317781/comments/45
+[2] https://blahg.josefsipek.net/?p=364
+[3] https://lwn.net/Articles/327601/
 
-v2:
-  - use the better performance implementation of is_dot_dotdot
-  - make it static inline and move it to include/linux/fs.h
+So if you're seeing a call to filemap_fdatawrite_range as the result
+of a fput, that's why.
 
- fs/crypto/fname.c     | 17 +++--------------
- fs/ecryptfs/crypto.c  | 12 +-----------
- fs/f2fs/f2fs.h        | 11 -----------
- fs/f2fs/hash.c        |  3 ++-
- fs/namei.c            |  6 ++----
- include/linux/namei.h | 10 ++++++++++
- 6 files changed, 18 insertions(+), 41 deletions(-)
+In any case, this behavior has been around for a decade, and it
+appears to be incidental to your performance difficulties with your
+USB thumbdrive and block-mq.
 
-diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-index 3da3707..bb41f5d 100644
---- a/fs/crypto/fname.c
-+++ b/fs/crypto/fname.c
-@@ -11,21 +11,11 @@
-  * This has not yet undergone a rigorous security audit.
-  */
- 
-+#include <linux/namei.h>
- #include <linux/scatterlist.h>
- #include <crypto/skcipher.h>
- #include "fscrypt_private.h"
- 
--static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
--{
--	if (str->len == 1 && str->name[0] == '.')
--		return true;
--
--	if (str->len == 2 && str->name[0] == '.' && str->name[1] == '.')
--		return true;
--
--	return false;
--}
--
- /**
-  * fname_encrypt() - encrypt a filename
-  *
-@@ -252,10 +242,9 @@ int fscrypt_fname_disk_to_usr(struct inode *inode,
- 			const struct fscrypt_str *iname,
- 			struct fscrypt_str *oname)
- {
--	const struct qstr qname = FSTR_TO_QSTR(iname);
- 	struct fscrypt_digested_name digested_name;
- 
--	if (fscrypt_is_dot_dotdot(&qname)) {
-+	if (is_dot_or_dotdot(iname->name, iname->len)) {
- 		oname->name[0] = '.';
- 		oname->name[iname->len - 1] = '.';
- 		oname->len = iname->len;
-@@ -323,7 +312,7 @@ int fscrypt_setup_filename(struct inode *dir, const struct qstr *iname,
- 	memset(fname, 0, sizeof(struct fscrypt_name));
- 	fname->usr_fname = iname;
- 
--	if (!IS_ENCRYPTED(dir) || fscrypt_is_dot_dotdot(iname)) {
-+	if (!IS_ENCRYPTED(dir) || is_dot_or_dotdot(iname->name, iname->len)) {
- 		fname->disk_name.name = (unsigned char *)iname->name;
- 		fname->disk_name.len = iname->len;
- 		return 0;
-diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
-index f91db24..c3bcbf0 100644
---- a/fs/ecryptfs/crypto.c
-+++ b/fs/ecryptfs/crypto.c
-@@ -1991,16 +1991,6 @@ int ecryptfs_encrypt_and_encode_filename(
- 	return rc;
- }
- 
--static bool is_dot_dotdot(const char *name, size_t name_size)
--{
--	if (name_size == 1 && name[0] == '.')
--		return true;
--	else if (name_size == 2 && name[0] == '.' && name[1] == '.')
--		return true;
--
--	return false;
--}
--
- /**
-  * ecryptfs_decode_and_decrypt_filename - converts the encoded cipher text name to decoded plaintext
-  * @plaintext_name: The plaintext name
-@@ -2027,7 +2017,7 @@ int ecryptfs_decode_and_decrypt_filename(char **plaintext_name,
- 
- 	if ((mount_crypt_stat->flags & ECRYPTFS_GLOBAL_ENCRYPT_FILENAMES) &&
- 	    !(mount_crypt_stat->flags & ECRYPTFS_ENCRYPTED_VIEW_ENABLED)) {
--		if (is_dot_dotdot(name, name_size)) {
-+		if (is_dot_or_dotdot(name, name_size)) {
- 			rc = ecryptfs_copy_filename(plaintext_name,
- 						    plaintext_name_size,
- 						    name, name_size);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 5a888a0..3d5e684 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2767,17 +2767,6 @@ static inline bool f2fs_cp_error(struct f2fs_sb_info *sbi)
- 	return is_set_ckpt_flags(sbi, CP_ERROR_FLAG);
- }
- 
--static inline bool is_dot_dotdot(const struct qstr *str)
--{
--	if (str->len == 1 && str->name[0] == '.')
--		return true;
--
--	if (str->len == 2 && str->name[0] == '.' && str->name[1] == '.')
--		return true;
--
--	return false;
--}
--
- static inline bool f2fs_may_extent_tree(struct inode *inode)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-diff --git a/fs/f2fs/hash.c b/fs/f2fs/hash.c
-index 5bc4dcd..ef155c2 100644
---- a/fs/f2fs/hash.c
-+++ b/fs/f2fs/hash.c
-@@ -15,6 +15,7 @@
- #include <linux/cryptohash.h>
- #include <linux/pagemap.h>
- #include <linux/unicode.h>
-+#include <linux/namei.h>
- 
- #include "f2fs.h"
- 
-@@ -82,7 +83,7 @@ static f2fs_hash_t __f2fs_dentry_hash(const struct qstr *name_info,
- 	if (fname && !fname->disk_name.name)
- 		return cpu_to_le32(fname->hash);
- 
--	if (is_dot_dotdot(name_info))
-+	if (is_dot_or_dotdot(name, len))
- 		return 0;
- 
- 	/* Initialize the default seed for the hash checksum functions */
-diff --git a/fs/namei.c b/fs/namei.c
-index d6c91d1..f3a4439 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2451,10 +2451,8 @@ static int lookup_one_len_common(const char *name, struct dentry *base,
- 	if (!len)
- 		return -EACCES;
- 
--	if (unlikely(name[0] == '.')) {
--		if (len < 2 || (len == 2 && name[1] == '.'))
--			return -EACCES;
--	}
-+	if (is_dot_or_dotdot(name, len))
-+		return -EACCES;
- 
- 	while (len--) {
- 		unsigned int c = *(const unsigned char *)name++;
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index 7fe7b87..0fd9315 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -92,4 +92,14 @@ retry_estale(const long error, const unsigned int flags)
- 	return error == -ESTALE && !(flags & LOOKUP_REVAL);
- }
- 
-+static inline bool is_dot_or_dotdot(const unsigned char *name, size_t len)
-+{
-+	if (unlikely(name[0] == '.')) {
-+		if (len == 1 || (len == 2 && name[1] == '.'))
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
- #endif /* _LINUX_NAMEI_H */
--- 
-2.1.0
-
+						- Ted
