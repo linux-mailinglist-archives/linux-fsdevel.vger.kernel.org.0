@@ -2,161 +2,510 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CFCE11A62D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 09:47:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4EB711A65D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 09:58:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727253AbfLKIrj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Dec 2019 03:47:39 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39998 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725973AbfLKIri (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Dec 2019 03:47:38 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5C9CCAD2D;
-        Wed, 11 Dec 2019 08:47:36 +0000 (UTC)
-Subject: Re: [PATCH 8/8] btrfs: remove BTRFS_INODE_READDIO_NEED_LOCK
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-btrfs@vger.kernel.org
-Cc:     hch@infradead.org, darrick.wong@oracle.com, fdmanana@kernel.org,
-        dsterba@suse.cz, jthumshirn@suse.de, linux-fsdevel@vger.kernel.org,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-References: <20191210230155.22688-1-rgoldwyn@suse.de>
- <20191210230155.22688-9-rgoldwyn@suse.de>
-From:   Nikolay Borisov <nborisov@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <49aeb440-698d-d837-2493-525afc515ebb@suse.com>
-Date:   Wed, 11 Dec 2019 10:47:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728377AbfLKI60 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Dec 2019 03:58:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52190 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725973AbfLKI60 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Dec 2019 03:58:26 -0500
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57852222C4;
+        Wed, 11 Dec 2019 08:58:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576054704;
+        bh=0rbgHWvS2HIrLIE6rZl3tRBxM1Zp2TTrNwlYBkj41KQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Qcdv7yAER1yK32jowsbXzm3G6Z7PiE/oP9nQdDCxaItaMMx7Lh5bRWdlTx5Alw6Ah
+         PBv3TKDFJSji5wxhTN1AH8j9BvbimNx0V6QpCmLMFqCAFPXo7jL4c1tqoItM0j2PLu
+         nyRIflpB9bpXryR6TSndLLDd3D3YnWn8R2a5aR7M=
+Received: by mail-vs1-f48.google.com with SMTP id b79so10125811vsd.9;
+        Wed, 11 Dec 2019 00:58:24 -0800 (PST)
+X-Gm-Message-State: APjAAAVZ4tMZHQfI7EB8uT/aKw7Eqg04MA3KqDJJT/ivU6SIp/vfbhx5
+        5fhDQ/DEZ0NZM1EKFMg+Kh3hhLGf/LhU/HoKegg=
+X-Google-Smtp-Source: APXvYqxMS7L6Tzmo35LZl/YgVprkm394VLChgdFeKiiFMbADf+EfE+zZPaT3bSJHaBARqMvHbJQcnd5wyYh6WDo9yK0=
+X-Received: by 2002:a67:b641:: with SMTP id e1mr1586272vsm.14.1576054703175;
+ Wed, 11 Dec 2019 00:58:23 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191210230155.22688-9-rgoldwyn@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20191210230155.22688-1-rgoldwyn@suse.de> <20191210230155.22688-5-rgoldwyn@suse.de>
+In-Reply-To: <20191210230155.22688-5-rgoldwyn@suse.de>
+From:   Filipe Manana <fdmanana@kernel.org>
+Date:   Wed, 11 Dec 2019 08:58:12 +0000
+X-Gmail-Original-Message-ID: <CAL3q7H7t_r23ydKQ3mf_5axYbfqo1Etdqja9tqz_UeHsFisCew@mail.gmail.com>
+Message-ID: <CAL3q7H7t_r23ydKQ3mf_5axYbfqo1Etdqja9tqz_UeHsFisCew@mail.gmail.com>
+Subject: Re: [PATCH 4/8] btrfs: Switch to iomap_dio_rw() for dio
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc:     linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Nikolay Borisov <nborisov@suse.com>, dsterba@suse.cz,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 11.12.19 г. 1:01 ч., Goldwyn Rodrigues wrote:
+On Tue, Dec 10, 2019 at 11:02 PM Goldwyn Rodrigues <rgoldwyn@suse.de> wrote:
+>
 > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> 
-> Since we now perform direct reads using i_rwsem, we can remove this
-> inode flag used to co-ordinate unlocked reads.
-> 
-> The truncate call chain gets the i_rwsem which may conflict with direct
-
-nit: Truncating taking i_rwsem means it's correctly synchronized with
-concurrent DIO reads. So it's protected, just the wording needs to be
-tweaked.
-
-> reads:
-> do_truncate <-- calls inode_lock
->   notify_change
->    ->setattr/btrfs_setattr
->      btrfs_setsize
-> 
+>
+> Switch from __blockdev_direct_IO() to iomap_dio_rw().
+> Rename btrfs_get_blocks_direct() to btrfs_dio_iomap_begin() and use it
+> as iomap_begin() for iomap direct I/O functions. This function
+> allocates and locks all the blocks required for the I/O.
+> btrfs_submit_direct() is used as the submit_io() hook for direct I/O
+> ops.
+>
+> Since we need direct I/O reads to go through iomap_dio_rw(), we change
+> file_operations.read_iter() to a btrfs_file_read_iter() which calls
+> btrfs_direct_IO() for direct reads and falls back to
+> generic_file_buffered_read() for incomplete reads and buffered reads.
+>
+> We don't need address_space.direct_IO() anymore so set it to noop.
+> Similarly, we don't need flags used in __blockdev_direct_IO(). iomap is
+> capable of direct I/O reads from a hole, so we don't need to return
+> -ENOENT.
+>
+> BTRFS direct I/O is now done under i_rwsem, shared in case of
+> reads and exclusive in case of writes. This guards against simultaneous
+> truncates.
+>
 > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> Reviewed-by: Nikolay Borisov <nborisov@suse.com>
 > ---
->  fs/btrfs/btrfs_inode.h | 18 ------------------
->  fs/btrfs/inode.c       |  5 -----
->  2 files changed, 23 deletions(-)
-> 
-> diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
-> index 4e12a477d32e..cd8f378ed8e7 100644
-> --- a/fs/btrfs/btrfs_inode.h
-> +++ b/fs/btrfs/btrfs_inode.h
-> @@ -27,7 +27,6 @@ enum {
->  	BTRFS_INODE_NEEDS_FULL_SYNC,
->  	BTRFS_INODE_COPY_EVERYTHING,
->  	BTRFS_INODE_IN_DELALLOC_LIST,
-> -	BTRFS_INODE_READDIO_NEED_LOCK,
->  	BTRFS_INODE_HAS_PROPS,
->  	BTRFS_INODE_SNAPSHOT_FLUSH,
->  };
-> @@ -317,23 +316,6 @@ struct btrfs_dio_private {
->  			blk_status_t);
->  };
->  
-> -/*
-> - * Disable DIO read nolock optimization, so new dio readers will be forced
-> - * to grab i_mutex. It is used to avoid the endless truncate due to
-> - * nonlocked dio read.
-> - */
-> -static inline void btrfs_inode_block_unlocked_dio(struct btrfs_inode *inode)
-> -{
-> -	set_bit(BTRFS_INODE_READDIO_NEED_LOCK, &inode->runtime_flags);
-> -	smp_mb();
-> -}
-> -
-> -static inline void btrfs_inode_resume_unlocked_dio(struct btrfs_inode *inode)
-> -{
-> -	smp_mb__before_atomic();
-> -	clear_bit(BTRFS_INODE_READDIO_NEED_LOCK, &inode->runtime_flags);
-> -}
-> -
->  /* Array of bytes with variable length, hexadecimal format 0x1234 */
->  #define CSUM_FMT				"0x%*phN"
->  #define CSUM_FMT_VALUE(size, bytes)		size, bytes
+>  fs/btrfs/ctree.h |   1 +
+>  fs/btrfs/file.c  |  21 ++++++-
+>  fs/btrfs/inode.c | 184 ++++++++++++++++++++++++++-----------------------------
+>  3 files changed, 107 insertions(+), 99 deletions(-)
+>
+> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+> index b2e8fd8a8e59..113dcd1a11cd 100644
+> --- a/fs/btrfs/ctree.h
+> +++ b/fs/btrfs/ctree.h
+> @@ -2904,6 +2904,7 @@ int btrfs_writepage_cow_fixup(struct page *page, u64 start, u64 end);
+>  void btrfs_writepage_endio_finish_ordered(struct page *page, u64 start,
+>                                           u64 end, int uptodate);
+>  extern const struct dentry_operations btrfs_dentry_operations;
+> +ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter);
+>
+>  /* ioctl.c */
+>  long btrfs_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+> diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+> index 0cb43b682789..7010dd7beccc 100644
+> --- a/fs/btrfs/file.c
+> +++ b/fs/btrfs/file.c
+> @@ -1832,7 +1832,7 @@ static ssize_t __btrfs_direct_write(struct kiocb *iocb, struct iov_iter *from)
+>         loff_t endbyte;
+>         int err;
+>
+> -       written = generic_file_direct_write(iocb, from);
+> +       written = btrfs_direct_IO(iocb, from);
+>
+>         if (written < 0 || !iov_iter_count(from))
+>                 return written;
+> @@ -3444,9 +3444,26 @@ static int btrfs_file_open(struct inode *inode, struct file *filp)
+>         return generic_file_open(inode, filp);
+>  }
+>
+> +static ssize_t btrfs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> +{
+> +       ssize_t ret = 0;
+> +
+> +       if (iocb->ki_flags & IOCB_DIRECT) {
+> +               struct inode *inode = file_inode(iocb->ki_filp);
+> +
+> +               inode_lock_shared(inode);
+> +               ret = btrfs_direct_IO(iocb, to);
+> +               inode_unlock_shared(inode);
+> +               if (ret < 0)
+> +                       return ret;
+> +       }
+> +
+> +       return generic_file_buffered_read(iocb, to, ret);
+> +}
+> +
+>  const struct file_operations btrfs_file_operations = {
+>         .llseek         = btrfs_file_llseek,
+> -       .read_iter      = generic_file_read_iter,
+> +       .read_iter      = btrfs_file_read_iter,
+>         .splice_read    = generic_file_splice_read,
+>         .write_iter     = btrfs_file_write_iter,
+>         .mmap           = btrfs_file_mmap,
 > diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index ce53f2889673..4c76a6d5e6a4 100644
+> index 56032c518b26..86730f2f2bf6 100644
 > --- a/fs/btrfs/inode.c
 > +++ b/fs/btrfs/inode.c
-> @@ -5273,11 +5273,6 @@ static int btrfs_setsize(struct inode *inode, struct iattr *attr)
->  
->  		truncate_setsize(inode, newsize);
->  
-> -		/* Disable nonlocked read DIO to avoid the endless truncate */
-> -		btrfs_inode_block_unlocked_dio(BTRFS_I(inode));
-> -		inode_dio_wait(inode);
-> -		btrfs_inode_resume_unlocked_dio(BTRFS_I(inode));
+> @@ -29,6 +29,7 @@
+>  #include <linux/iversion.h>
+>  #include <linux/swap.h>
+>  #include <linux/sched/mm.h>
+> +#include <linux/iomap.h>
+>  #include <asm/unaligned.h>
+>  #include "misc.h"
+>  #include "ctree.h"
+> @@ -7510,7 +7511,7 @@ noinline int can_nocow_extent(struct inode *inode, u64 offset, u64 *len,
+>  }
+>
+>  static int lock_extent_direct(struct inode *inode, u64 lockstart, u64 lockend,
+> -                             struct extent_state **cached_state, int writing)
+> +                             struct extent_state **cached_state, bool writing)
+>  {
+>         struct btrfs_ordered_extent *ordered;
+>         int ret = 0;
+> @@ -7648,30 +7649,7 @@ static struct extent_map *create_io_em(struct inode *inode, u64 start, u64 len,
+>  }
+>
+>
+> -static int btrfs_get_blocks_direct_read(struct extent_map *em,
+> -                                       struct buffer_head *bh_result,
+> -                                       struct inode *inode,
+> -                                       u64 start, u64 len)
+> -{
+> -       struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
 > -
->  		ret = btrfs_truncate(inode, newsize == oldsize);
->  		if (ret && inode->i_nlink) {
->  			int err;
-> 
+> -       if (em->block_start == EXTENT_MAP_HOLE ||
+> -                       test_bit(EXTENT_FLAG_PREALLOC, &em->flags))
+> -               return -ENOENT;
+> -
+> -       len = min(len, em->len - (start - em->start));
+> -
+> -       bh_result->b_blocknr = (em->block_start + (start - em->start)) >>
+> -               inode->i_blkbits;
+> -       bh_result->b_size = len;
+> -       bh_result->b_bdev = fs_info->fs_devices->latest_bdev;
+> -       set_buffer_mapped(bh_result);
+> -
+> -       return 0;
+> -}
+> -
+>  static int btrfs_get_blocks_direct_write(struct extent_map **map,
+> -                                        struct buffer_head *bh_result,
+>                                          struct inode *inode,
+>                                          struct btrfs_dio_data *dio_data,
+>                                          u64 start, u64 len)
+> @@ -7733,7 +7711,6 @@ static int btrfs_get_blocks_direct_write(struct extent_map **map,
+>         }
+>
+>         /* this will cow the extent */
+> -       len = bh_result->b_size;
+>         free_extent_map(em);
+>         *map = em = btrfs_new_extent_direct(inode, start, len);
+>         if (IS_ERR(em)) {
+> @@ -7744,15 +7721,6 @@ static int btrfs_get_blocks_direct_write(struct extent_map **map,
+>         len = min(len, em->len - (start - em->start));
+>
+>  skip_cow:
+> -       bh_result->b_blocknr = (em->block_start + (start - em->start)) >>
+> -               inode->i_blkbits;
+> -       bh_result->b_size = len;
+> -       bh_result->b_bdev = fs_info->fs_devices->latest_bdev;
+> -       set_buffer_mapped(bh_result);
+> -
+> -       if (!test_bit(EXTENT_FLAG_PREALLOC, &em->flags))
+> -               set_buffer_new(bh_result);
+> -
+>         /*
+>          * Need to update the i_size under the extent lock so buffered
+>          * readers will get the updated i_size when we unlock.
+> @@ -7768,24 +7736,37 @@ static int btrfs_get_blocks_direct_write(struct extent_map **map,
+>         return ret;
+>  }
+>
+> -static int btrfs_get_blocks_direct(struct inode *inode, sector_t iblock,
+> -                                  struct buffer_head *bh_result, int create)
+> +static int btrfs_dio_iomap_begin(struct inode *inode, loff_t start,
+> +               loff_t length, unsigned flags, struct iomap *iomap,
+> +               struct iomap *srcmap)
+>  {
+>         struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
+>         struct extent_map *em;
+>         struct extent_state *cached_state = NULL;
+>         struct btrfs_dio_data *dio_data = NULL;
+> -       u64 start = iblock << inode->i_blkbits;
+>         u64 lockstart, lockend;
+> -       u64 len = bh_result->b_size;
+> +       bool write = !!(flags & IOMAP_WRITE);
+>         int ret = 0;
+> +       u64 len = length;
+> +       bool unlock_extents = false;
+>
+> -       if (!create)
+> +       if (!write)
+>                 len = min_t(u64, len, fs_info->sectorsize);
+>
+>         lockstart = start;
+>         lockend = start + len - 1;
+>
+> +       /*
+> +        * The generic stuff only does filemap_write_and_wait_range, which
+> +        * isn't enough if we've written compressed pages to this area, so
+> +        * we need to flush the dirty pages again to make absolutely sure
+> +        * that any outstanding dirty pages are on disk.
+> +        */
+> +       if (test_bit(BTRFS_INODE_HAS_ASYNC_EXTENT,
+> +                    &BTRFS_I(inode)->runtime_flags))
+> +               ret = filemap_fdatawrite_range(inode->i_mapping, start,
+> +                                        start + length - 1);
+> +
+>         if (current->journal_info) {
+>                 /*
+>                  * Need to pull our outstanding extents and set journal_info to NULL so
+> @@ -7801,7 +7782,7 @@ static int btrfs_get_blocks_direct(struct inode *inode, sector_t iblock,
+>          * this range and we need to fallback to buffered.
+>          */
+>         if (lock_extent_direct(inode, lockstart, lockend, &cached_state,
+> -                              create)) {
+> +                              write)) {
+>                 ret = -ENOTBLK;
+>                 goto err;
+>         }
+> @@ -7833,36 +7814,53 @@ static int btrfs_get_blocks_direct(struct inode *inode, sector_t iblock,
+>                 goto unlock_err;
+>         }
+>
+> -       if (create) {
+> -               ret = btrfs_get_blocks_direct_write(&em, bh_result, inode,
+> +       len = min(len, em->len - (start - em->start));
+> +       if (write) {
+> +               ret = btrfs_get_blocks_direct_write(&em, inode,
+>                                                     dio_data, start, len);
+>                 if (ret < 0)
+>                         goto unlock_err;
+> -
+> -               unlock_extent_cached(&BTRFS_I(inode)->io_tree, lockstart,
+> -                                    lockend, &cached_state);
+> +               unlock_extents = true;
+> +               /* Recalc len in case the new em is smaller than requested */
+> +               len = min(len, em->len - (start - em->start));
+> +       } else if (em->block_start == EXTENT_MAP_HOLE ||
+> +                       test_bit(EXTENT_FLAG_PREALLOC, &em->flags)) {
+> +               /* Unlock in case of direct reading from a hole */
+> +               unlock_extents = true;
+>         } else {
+> -               ret = btrfs_get_blocks_direct_read(em, bh_result, inode,
+> -                                                  start, len);
+> -               /* Can be negative only if we read from a hole */
+> -               if (ret < 0) {
+> -                       ret = 0;
+> -                       free_extent_map(em);
+> -                       goto unlock_err;
+> -               }
+>                 /*
+>                  * We need to unlock only the end area that we aren't using.
+>                  * The rest is going to be unlocked by the endio routine.
+>                  */
+> -               lockstart = start + bh_result->b_size;
+> -               if (lockstart < lockend) {
+> -                       unlock_extent_cached(&BTRFS_I(inode)->io_tree,
+> -                                            lockstart, lockend, &cached_state);
+> -               } else {
+> -                       free_extent_state(cached_state);
+> -               }
+> +               lockstart = start + len;
+> +               if (lockstart < lockend)
+> +                       unlock_extents = true;
+>         }
+>
+> +       if (unlock_extents)
+> +               unlock_extent_cached(&BTRFS_I(inode)->io_tree,
+> +                               lockstart, lockend, &cached_state);
+> +       else
+> +               free_extent_state(cached_state);
+> +
+> +       /*
+> +        * Translate extent map information to iomap
+> +        * We trim the extents (and move the addr) even though
+> +        * iomap code does that, since we have locked only the parts
+> +        * we are performing I/O in.
+> +        */
+> +       if ((em->block_start == EXTENT_MAP_HOLE) ||
+> +           (test_bit(EXTENT_FLAG_PREALLOC, &em->flags) && !write)) {
+> +               iomap->addr = IOMAP_NULL_ADDR;
+> +               iomap->type = IOMAP_HOLE;
+> +       } else {
+> +               iomap->addr = em->block_start + (start - em->start);
+> +               iomap->type = IOMAP_MAPPED;
+> +       }
+> +       iomap->offset = start;
+> +       iomap->bdev = fs_info->fs_devices->latest_bdev;
+> +       iomap->length = len;
+> +
+>         free_extent_map(em);
+>
+>         return 0;
+> @@ -8230,9 +8228,8 @@ static void btrfs_endio_direct_read(struct bio *bio)
+>         kfree(dip);
+>
+>         dio_bio->bi_status = err;
+> -       dio_end_io(dio_bio);
+> +       bio_endio(dio_bio);
+>         btrfs_io_bio_free_csum(io_bio);
+> -       bio_put(bio);
+>  }
+>
+>  static void __endio_write_update_ordered(struct inode *inode,
+> @@ -8289,8 +8286,7 @@ static void btrfs_endio_direct_write(struct bio *bio)
+>         kfree(dip);
+>
+>         dio_bio->bi_status = bio->bi_status;
+> -       dio_end_io(dio_bio);
+> -       bio_put(bio);
+> +       bio_endio(dio_bio);
+>  }
+>
+>  static blk_status_t btrfs_submit_bio_start_direct_io(void *private_data,
+> @@ -8522,9 +8518,10 @@ static int btrfs_submit_direct_hook(struct btrfs_dio_private *dip)
+>         return 0;
+>  }
+>
+> -static void btrfs_submit_direct(struct bio *dio_bio, struct inode *inode,
+> +static blk_qc_t btrfs_submit_direct(struct bio *dio_bio, struct file *file,
+>                                 loff_t file_offset)
+>  {
+> +       struct inode *inode = file_inode(file);
+>         struct btrfs_dio_private *dip = NULL;
+>         struct bio *bio = NULL;
+>         struct btrfs_io_bio *io_bio;
+> @@ -8575,7 +8572,7 @@ static void btrfs_submit_direct(struct bio *dio_bio, struct inode *inode,
+>
+>         ret = btrfs_submit_direct_hook(dip);
+>         if (!ret)
+> -               return;
+> +               return BLK_QC_T_NONE;
+>
+>         btrfs_io_bio_free_csum(io_bio);
+>
+> @@ -8594,7 +8591,7 @@ static void btrfs_submit_direct(struct bio *dio_bio, struct inode *inode,
+>                 /*
+>                  * The end io callbacks free our dip, do the final put on bio
+>                  * and all the cleanup and final put for dio_bio (through
+> -                * dio_end_io()).
+> +                * end_io()).
+>                  */
+>                 dip = NULL;
+>                 bio = NULL;
+> @@ -8613,11 +8610,12 @@ static void btrfs_submit_direct(struct bio *dio_bio, struct inode *inode,
+>                  * Releases and cleans up our dio_bio, no need to bio_put()
+>                  * nor bio_endio()/bio_io_error() against dio_bio.
+>                  */
+> -               dio_end_io(dio_bio);
+> +               bio_endio(dio_bio);
+
+Same as before, the comment is now stale. It mentions no need to call
+bio_endio(), yet the change makes it call bio_endio().
+
+thanks
+
+>         }
+>         if (bio)
+>                 bio_put(bio);
+>         kfree(dip);
+> +       return BLK_QC_T_NONE;
+>  }
+>
+>  static ssize_t check_direct_IO(struct btrfs_fs_info *fs_info,
+> @@ -8653,7 +8651,23 @@ static ssize_t check_direct_IO(struct btrfs_fs_info *fs_info,
+>         return retval;
+>  }
+>
+> -static ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+> +static const struct iomap_ops btrfs_dio_iomap_ops = {
+> +       .iomap_begin            = btrfs_dio_iomap_begin,
+> +};
+> +
+> +static const struct iomap_dio_ops btrfs_dops = {
+> +       .submit_io              = btrfs_submit_direct,
+> +};
+> +
+> +
+> +/*
+> + * btrfs_direct_IO - perform direct I/O
+> + * inode->i_rwsem must be locked before calling this function, shared or exclusive.
+> + * @iocb - kernel iocb
+> + * @iter - iter to/from data is copied
+> + */
+> +
+> +ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+>  {
+>         struct file *file = iocb->ki_filp;
+>         struct inode *inode = file->f_mapping->host;
+> @@ -8662,28 +8676,13 @@ static ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+>         struct extent_changeset *data_reserved = NULL;
+>         loff_t offset = iocb->ki_pos;
+>         size_t count = 0;
+> -       int flags = 0;
+> -       bool wakeup = true;
+>         bool relock = false;
+>         ssize_t ret;
+>
+>         if (check_direct_IO(fs_info, iter, offset))
+>                 return 0;
+>
+> -       inode_dio_begin(inode);
+> -
+> -       /*
+> -        * The generic stuff only does filemap_write_and_wait_range, which
+> -        * isn't enough if we've written compressed pages to this area, so
+> -        * we need to flush the dirty pages again to make absolutely sure
+> -        * that any outstanding dirty pages are on disk.
+> -        */
+>         count = iov_iter_count(iter);
+> -       if (test_bit(BTRFS_INODE_HAS_ASYNC_EXTENT,
+> -                    &BTRFS_I(inode)->runtime_flags))
+> -               filemap_fdatawrite_range(inode->i_mapping, offset,
+> -                                        offset + count - 1);
+> -
+>         if (iov_iter_rw(iter) == WRITE) {
+>                 /*
+>                  * If the write DIO is beyond the EOF, we need update
+> @@ -8714,17 +8713,11 @@ static ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+>                 dio_data.unsubmitted_oe_range_end = (u64)offset;
+>                 current->journal_info = &dio_data;
+>                 down_read(&BTRFS_I(inode)->dio_sem);
+> -       } else if (test_bit(BTRFS_INODE_READDIO_NEED_LOCK,
+> -                                    &BTRFS_I(inode)->runtime_flags)) {
+> -               inode_dio_end(inode);
+> -               flags = DIO_LOCKING | DIO_SKIP_HOLES;
+> -               wakeup = false;
+>         }
+>
+> -       ret = __blockdev_direct_IO(iocb, inode,
+> -                                  fs_info->fs_devices->latest_bdev,
+> -                                  iter, btrfs_get_blocks_direct, NULL,
+> -                                  btrfs_submit_direct, flags);
+> +       ret = iomap_dio_rw(iocb, iter, &btrfs_dio_iomap_ops, &btrfs_dops,
+> +                       is_sync_kiocb(iocb));
+> +
+>         if (iov_iter_rw(iter) == WRITE) {
+>                 up_read(&BTRFS_I(inode)->dio_sem);
+>                 current->journal_info = NULL;
+> @@ -8751,11 +8744,8 @@ static ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+>                 btrfs_delalloc_release_extents(BTRFS_I(inode), count);
+>         }
+>  out:
+> -       if (wakeup)
+> -               inode_dio_end(inode);
+>         if (relock)
+>                 inode_lock(inode);
+> -
+>         extent_changeset_free(data_reserved);
+>         return ret;
+>  }
+> @@ -11045,7 +11035,7 @@ static const struct address_space_operations btrfs_aops = {
+>         .writepage      = btrfs_writepage,
+>         .writepages     = btrfs_writepages,
+>         .readpages      = btrfs_readpages,
+> -       .direct_IO      = btrfs_direct_IO,
+> +       .direct_IO      = noop_direct_IO,
+>         .invalidatepage = btrfs_invalidatepage,
+>         .releasepage    = btrfs_releasepage,
+>         .set_page_dirty = btrfs_set_page_dirty,
+> --
+> 2.16.4
+>
