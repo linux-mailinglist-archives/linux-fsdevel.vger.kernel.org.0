@@ -2,206 +2,215 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4862411A932
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 11:44:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13FF011A9DE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 12:28:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728961AbfLKKoF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Dec 2019 05:44:05 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60886 "EHLO mx1.suse.de"
+        id S1728696AbfLKL2P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Dec 2019 06:28:15 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60980 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728030AbfLKKoF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Dec 2019 05:44:05 -0500
+        id S1727469AbfLKL2O (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Dec 2019 06:28:14 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 01F7CAC7D;
-        Wed, 11 Dec 2019 10:43:59 +0000 (UTC)
-Subject: Re: [PATCH 4/8] btrfs: Switch to iomap_dio_rw() for dio
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-btrfs@vger.kernel.org
-Cc:     hch@infradead.org, darrick.wong@oracle.com, fdmanana@kernel.org,
-        dsterba@suse.cz, jthumshirn@suse.de, linux-fsdevel@vger.kernel.org,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-References: <20191210230155.22688-1-rgoldwyn@suse.de>
- <20191210230155.22688-5-rgoldwyn@suse.de>
-From:   Nikolay Borisov <nborisov@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <e87534f5-22e9-f70e-172e-56e9056b25a6@suse.com>
-Date:   Wed, 11 Dec 2019 12:43:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        by mx1.suse.de (Postfix) with ESMTP id 4E902AD0E;
+        Wed, 11 Dec 2019 11:28:10 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 63C461E0B23; Wed, 11 Dec 2019 12:28:07 +0100 (CET)
+Date:   Wed, 11 Dec 2019 12:28:07 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH v9 23/25] mm/gup: track FOLL_PIN pages
+Message-ID: <20191211112807.GN1551@quack2.suse.cz>
+References: <20191211025318.457113-1-jhubbard@nvidia.com>
+ <20191211025318.457113-24-jhubbard@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20191210230155.22688-5-rgoldwyn@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191211025318.457113-24-jhubbard@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue 10-12-19 18:53:16, John Hubbard wrote:
+> Add tracking of pages that were pinned via FOLL_PIN.
+> 
+> As mentioned in the FOLL_PIN documentation, callers who effectively set
+> FOLL_PIN are required to ultimately free such pages via unpin_user_page().
+> The effect is similar to FOLL_GET, and may be thought of as "FOLL_GET
+> for DIO and/or RDMA use".
+> 
+> Pages that have been pinned via FOLL_PIN are identifiable via a
+> new function call:
+> 
+>    bool page_dma_pinned(struct page *page);
+> 
+> What to do in response to encountering such a page, is left to later
+> patchsets. There is discussion about this in [1], [2], and [3].
+> 
+> This also changes a BUG_ON(), to a WARN_ON(), in follow_page_mask().
+> 
+> [1] Some slow progress on get_user_pages() (Apr 2, 2019):
+>     https://lwn.net/Articles/784574/
+> [2] DMA and get_user_pages() (LPC: Dec 12, 2018):
+>     https://lwn.net/Articles/774411/
+> [3] The trouble with get_user_pages() (Apr 30, 2018):
+>     https://lwn.net/Articles/753027/
 
+The patch looks mostly good to me now. Just a few smaller comments below.
 
-On 11.12.19 Ð³. 1:01 Ñ‡., Goldwyn Rodrigues wrote:
-> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> 
-> Switch from __blockdev_direct_IO() to iomap_dio_rw().
-> Rename btrfs_get_blocks_direct() to btrfs_dio_iomap_begin() and use it
-> as iomap_begin() for iomap direct I/O functions. This function
-> allocates and locks all the blocks required for the I/O.
-> btrfs_submit_direct() is used as the submit_io() hook for direct I/O
-> ops.
-> 
-> Since we need direct I/O reads to go through iomap_dio_rw(), we change
-> file_operations.read_iter() to a btrfs_file_read_iter() which calls
-> btrfs_direct_IO() for direct reads and falls back to
-> generic_file_buffered_read() for incomplete reads and buffered reads.
-> 
-> We don't need address_space.direct_IO() anymore so set it to noop.
-> Similarly, we don't need flags used in __blockdev_direct_IO(). iomap is
-> capable of direct I/O reads from a hole, so we don't need to return
-> -ENOENT.
-> 
-> BTRFS direct I/O is now done under i_rwsem, shared in case of
-> reads and exclusive in case of writes. This guards against simultaneous
-> truncates.
-> 
-> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> ---
->  fs/btrfs/ctree.h |   1 +
->  fs/btrfs/file.c  |  21 ++++++-
->  fs/btrfs/inode.c | 184 ++++++++++++++++++++++++++-----------------------------
->  3 files changed, 107 insertions(+), 99 deletions(-)
-> 
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Suggested-by: Jérôme Glisse <jglisse@redhat.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
 
-<snip>
+I think you inherited here the Reviewed-by tags from the "add flags" patch
+you've merged into this one but that's not really fair since this patch
+does much more... In particular I didn't give my Reviewed-by tag for this
+patch yet.
 
-> +
 > +/*
-> + * btrfs_direct_IO - perform direct I/O
-> + * inode->i_rwsem must be locked before calling this function, shared or exclusive.
-
-Instead of having this as a comment which cannot easily be checked
-automatically I'd rather it gets codified via lockdep_assert_held. I
-believe this is in line with Dave's comment comment on patch 3.
-
-> + * @iocb - kernel iocb
-> + * @iter - iter to/from data is copied
+> + * try_grab_compound_head() - attempt to elevate a page's refcount, by a
+> + * flags-dependent amount.
+> + *
+> + * This has a default assumption of "use FOLL_GET behavior, if FOLL_PIN is not
+> + * set".
+> + *
+> + * "grab" names in this file mean, "look at flags to decide whether to use
+> + * FOLL_PIN or FOLL_GET behavior, when incrementing the page's refcount.
 > + */
+> +static __maybe_unused struct page *try_grab_compound_head(struct page *page,
+> +							  int refs,
+> +							  unsigned int flags)
+> +{
+> +	if (flags & FOLL_PIN)
+> +		return try_pin_compound_head(page, refs);
 > +
-> +ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->  {
->  	struct file *file = iocb->ki_filp;
->  	struct inode *inode = file->f_mapping->host;
-> @@ -8662,28 +8676,13 @@ static ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->  	struct extent_changeset *data_reserved = NULL;
->  	loff_t offset = iocb->ki_pos;
->  	size_t count = 0;
-> -	int flags = 0;
-> -	bool wakeup = true;
->  	bool relock = false;
->  	ssize_t ret;
->  
->  	if (check_direct_IO(fs_info, iter, offset))
->  		return 0;
->  
-> -	inode_dio_begin(inode);
-> -
-> -	/*
-> -	 * The generic stuff only does filemap_write_and_wait_range, which
-> -	 * isn't enough if we've written compressed pages to this area, so
-> -	 * we need to flush the dirty pages again to make absolutely sure
-> -	 * that any outstanding dirty pages are on disk.
-> -	 */
->  	count = iov_iter_count(iter);
-> -	if (test_bit(BTRFS_INODE_HAS_ASYNC_EXTENT,
-> -		     &BTRFS_I(inode)->runtime_flags))
-> -		filemap_fdatawrite_range(inode->i_mapping, offset,
-> -					 offset + count - 1);
-> -
->  	if (iov_iter_rw(iter) == WRITE) {
->  		/*
->  		 * If the write DIO is beyond the EOF, we need update
-> @@ -8714,17 +8713,11 @@ static ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->  		dio_data.unsubmitted_oe_range_end = (u64)offset;
->  		current->journal_info = &dio_data;
->  		down_read(&BTRFS_I(inode)->dio_sem);
-> -	} else if (test_bit(BTRFS_INODE_READDIO_NEED_LOCK,
-> -				     &BTRFS_I(inode)->runtime_flags)) {
-> -		inode_dio_end(inode);
-> -		flags = DIO_LOCKING | DIO_SKIP_HOLES;
-> -		wakeup = false;
->  	}
->  
-> -	ret = __blockdev_direct_IO(iocb, inode,
-> -				   fs_info->fs_devices->latest_bdev,
-> -				   iter, btrfs_get_blocks_direct, NULL,
-> -				   btrfs_submit_direct, flags);
-> +	ret = iomap_dio_rw(iocb, iter, &btrfs_dio_iomap_ops, &btrfs_dops,
-> +			is_sync_kiocb(iocb));
+> +	return try_get_compound_head(page, refs);
+> +}
+
+I somewhat wonder about the asymmetry of try_grab_compound_head() vs
+try_grab_page() in the treatment of 'flags'. How costly would it be to make
+them symmetric (i.e., either set FOLL_GET for try_grab_compound_head()
+callers or make sure one of FOLL_GET, FOLL_PIN is set for try_grab_page())?
+
+Because this difference looks like a subtle catch in the long run...
+
 > +
->  	if (iov_iter_rw(iter) == WRITE) {
->  		up_read(&BTRFS_I(inode)->dio_sem);
->  		current->journal_info = NULL;
-> @@ -8751,11 +8744,8 @@ static ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->  		btrfs_delalloc_release_extents(BTRFS_I(inode), count);
->  	}
->  out:
-> -	if (wakeup)
-> -		inode_dio_end(inode);
->  	if (relock)
->  		inode_lock(inode);
-> -
->  	extent_changeset_free(data_reserved);
->  	return ret;
->  }
-> @@ -11045,7 +11035,7 @@ static const struct address_space_operations btrfs_aops = {
->  	.writepage	= btrfs_writepage,
->  	.writepages	= btrfs_writepages,
->  	.readpages	= btrfs_readpages,
-> -	.direct_IO	= btrfs_direct_IO,
-> +	.direct_IO	= noop_direct_IO,
->  	.invalidatepage = btrfs_invalidatepage,
->  	.releasepage	= btrfs_releasepage,
->  	.set_page_dirty	= btrfs_set_page_dirty,
-> 
+> +/**
+> + * try_grab_page() - elevate a page's refcount by a flag-dependent amount
+> + *
+> + * This might not do anything at all, depending on the flags argument.
+> + *
+> + * "grab" names in this file mean, "look at flags to decide whether to use
+> + * FOLL_PIN or FOLL_GET behavior, when incrementing the page's refcount.
+> + *
+> + * @page:	pointer to page to be grabbed
+> + * @flags:	gup flags: these are the FOLL_* flag values.
+> + *
+> + * Either FOLL_PIN or FOLL_GET (or neither) may be set, but not both at the same
+> + * time. (That's true throughout the get_user_pages*() and pin_user_pages*()
+> + * APIs.) Cases:
+> + *
+> + *	FOLL_GET: page's refcount will be incremented by 1.
+> + *      FOLL_PIN: page's refcount will be incremented by GUP_PIN_COUNTING_BIAS.
+> + *
+> + * Return: true for success, or if no action was required (if neither FOLL_PIN
+> + * nor FOLL_GET was set, nothing is done). False for failure: FOLL_GET or
+> + * FOLL_PIN was set, but the page could not be grabbed.
+> + */
+> +bool __must_check try_grab_page(struct page *page, unsigned int flags)
+> +{
+> +	if (flags & FOLL_GET)
+> +		return try_get_page(page);
+> +	else if (flags & FOLL_PIN) {
+> +		page = compound_head(page);
+> +		WARN_ON_ONCE(flags & FOLL_GET);
+> +
+> +		if (WARN_ON_ONCE(page_ref_zero_or_close_to_bias_overflow(page)))
+> +			return false;
+> +
+> +		page_ref_add(page, GUP_PIN_COUNTING_BIAS);
+> +		__update_proc_vmstat(page, NR_FOLL_PIN_REQUESTED, 1);
+> +	}
+> +
+> +	return true;
+> +}
+
+...
+
+> @@ -1522,8 +1536,8 @@ struct page *follow_trans_huge_pmd(struct vm_area_struct *vma,
+>  skip_mlock:
+>  	page += (addr & ~HPAGE_PMD_MASK) >> PAGE_SHIFT;
+>  	VM_BUG_ON_PAGE(!PageCompound(page) && !is_zone_device_page(page), page);
+> -	if (flags & FOLL_GET)
+> -		get_page(page);
+> +	if (!try_grab_page(page, flags))
+> +		page = ERR_PTR(-EFAULT);
+
+I think you need to also move the try_grab_page() earlier in the function.
+At this point the page may be marked as mlocked and you'd need to undo that
+in case try_grab_page() fails.
+
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index ac65bb5e38ac..0aab6fe0072f 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -4356,7 +4356,13 @@ long follow_hugetlb_page(struct mm_struct *mm, struct vm_area_struct *vma,
+>  same_page:
+>  		if (pages) {
+>  			pages[i] = mem_map_offset(page, pfn_offset);
+> -			get_page(pages[i]);
+> +			if (!try_grab_page(pages[i], flags)) {
+> +				spin_unlock(ptl);
+> +				remainder = 0;
+> +				err = -ENOMEM;
+> +				WARN_ON_ONCE(1);
+> +				break;
+> +			}
+>  		}
+
+This function does a refcount overflow check early so that it doesn't have
+to do try_get_page() here. So that check can be now removed when you do
+try_grab_page() here anyway since that early check seems to be just a tiny
+optimization AFAICT.
+
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
