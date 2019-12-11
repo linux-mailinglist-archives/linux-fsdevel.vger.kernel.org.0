@@ -2,65 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0939511BE21
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 21:43:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A9CE11BEA7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 21:55:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726592AbfLKUnw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Dec 2019 15:43:52 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:47718 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726141AbfLKUnw (ORCPT
+        id S1726718AbfLKUzl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Dec 2019 15:55:41 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:54597 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726313AbfLKUzk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Dec 2019 15:43:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=6vrmgfi+4nbdOkVEhxkfkbfonRvSVMuVgBeRSgTCURI=; b=NcEGA0EkSkv9urc5oY45erA5Z
-        kXMIkX3ZMDeFK8SWl9RakM896GU6zgqje8VCLvgL5UJGrzzEr41Qo1pjfNiqQsyziQ2Dk9hJ+5lE+
-        QIgQkDtzXTe7pXcKDDRyhb07+79di9ZGqv/adl8bpbOrU+YrVDloSW8xdbTdhm9i4dG2m6IW83Ba6
-        ybYDR4rrxzAkdx6chLYkVLYLqCqdwW309zN3WiWY+N09/Nfa6s7vSYsVbU6bZc9YhRoUtYp/CC3AX
-        eSgWkApm5FVsSIPQrdYEd61PvbDxXpHygQNjynxLQpBIBGpG4m/uvjY0LDDx5eAH9h1WgzKXKfQ3N
-        xfRTG8YiA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1if8pp-0005Dn-Py; Wed, 11 Dec 2019 20:43:49 +0000
-Date:   Wed, 11 Dec 2019 12:43:49 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>,
+        Wed, 11 Dec 2019 15:55:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576097739;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=YERAg9zwlW99Y5d6Zau5OzoqnwXAmUQo/8T8E4AEHCw=;
+        b=LsPpftn2wPN/Df4S6UsrGFPvdlEA3FbtdBcZABqzufvQaX+zc4TjwP8PBbGMgrqV2CD6Cy
+        iIn2BPo8lHer3h16lJ7zcKq5SfGcMWqIE5xXyDxGQJpOHM2cRnJYTo0pvemccyB4nwTVKb
+        jhN3RyAe0PlYoa/akq/XMKBChUZquU8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-235-uuDI_FbZPDqgFNLXyzO4HA-1; Wed, 11 Dec 2019 15:55:36 -0500
+X-MC-Unique: uuDI_FbZPDqgFNLXyzO4HA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3FBF6800D41;
+        Wed, 11 Dec 2019 20:55:34 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 637DF5D6A3;
+        Wed, 11 Dec 2019 20:55:32 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wjeG0q1vgzu4iJhW5juPkTsjTYmiqiMUYAebWW+0bam6w@mail.gmail.com>
+References: <CAHk-=wjeG0q1vgzu4iJhW5juPkTsjTYmiqiMUYAebWW+0bam6w@mail.gmail.com> <157558502272.10278.8718685637610645781.stgit@warthog.procyon.org.uk> <20191206135604.GB2734@twin.jikos.cz> <CAHk-=wiN_pWbcRaw5L-J2EFUyCn49Due0McwETKwmFFPp88K8Q@mail.gmail.com> <CAHk-=wjvO1V912ya=1rdXwrm1OBTi6GqnqryH_E8OR69cZuVOg@mail.gmail.com> <CAHk-=wizsHmCwUAyQKdU7hBPXHYQn-fOtJKBqMs-79br2pWxeQ@mail.gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, David Sterba <dsterba@suse.cz>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Chris Mason <clm@fb.com>, Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCHSET v3 0/5] Support for RWF_UNCACHED
-Message-ID: <20191211204349.GO32169@bombadil.infradead.org>
-References: <20191211152943.2933-1-axboe@kernel.dk>
- <CAHk-=wjz3LE1kznro1dozhk9i9Dr4pCnkj7Fuccn2xdWeGHawQ@mail.gmail.com>
- <d0adcde2-3106-4fea-c047-4d17111bab70@kernel.dk>
- <e43a2700-8625-e136-dc9d-d0d2da5d96ac@kernel.dk>
- <CAHk-=wje8i3DVcO=fMC4tzKTS5+eHv0anrVZa_JENQt08T=qCQ@mail.gmail.com>
- <0d4e3954-c467-30a7-5a8e-7c4180275533@kernel.dk>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0d4e3954-c467-30a7-5a8e-7c4180275533@kernel.dk>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <9416.1576097731.1@warthog.procyon.org.uk>
+Date:   Wed, 11 Dec 2019 20:55:31 +0000
+Message-ID: <9417.1576097731@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 01:08:32PM -0700, Jens Axboe wrote:
-> > The fact that you see that xas_create() so prominently would imply
-> > perhaps add_to_swap_cache(), which certainly implies that the page
-> > shrinking isn't hitting the file pages...
-> 
-> That's presumably misleading, as it's just lookups. But yes,
-> confusing...
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-While xas_create() could be called directly, it's more often called
-through xas_store() ... which would be called if we're storing a shadow
-entry to replace a page, which this workload would presumably be doing.
+> DavidH, give these a look:
+> 
+>   85190d15f4ea pipe: don't use 'pipe_wait() for basic pipe IO
+>   a28c8b9db8a1 pipe: remove 'waiting_writers' merging logic
+>   f467a6a66419 pipe: fix and clarify pipe read wakeup logic
+>   1b6b26ae7053 pipe: fix and clarify pipe write wakeup logic
+>   ad910e36da4c pipe: fix poll/select race introduced by the pipe rework
+> 
+> the top two of which are purely "I'm fed up looking at this code, this
+> needs to go" kind of changes.
+
+They look reasonable.
+
+Is it worth reverting:
+
+	commit f94df9890e98f2090c6a8d70c795134863b70201
+	Add wake_up_interruptible_sync_poll_locked()
+
+since you changed the code that was calling that new function and so it's no
+longer called?
+
+David
+
