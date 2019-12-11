@@ -2,186 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F78911BF23
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 22:25:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F31A011BF4E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 22:34:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbfLKVZg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Dec 2019 16:25:36 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:1456 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726313AbfLKVZg (ORCPT
+        id S1726925AbfLKVdo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Dec 2019 16:33:44 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:25258 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726368AbfLKVdm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Dec 2019 16:25:36 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5df15eb80000>; Wed, 11 Dec 2019 13:25:12 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 11 Dec 2019 13:25:34 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 11 Dec 2019 13:25:34 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 11 Dec
- 2019 21:25:34 +0000
-Subject: Re: [PATCH v9 10/25] mm/gup: introduce pin_user_pages*() and FOLL_PIN
-To:     Jonathan Corbet <corbet@lwn.net>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>
-References: <20191211025318.457113-1-jhubbard@nvidia.com>
- <20191211025318.457113-11-jhubbard@nvidia.com>
- <20191211135737.581add2f@lwn.net>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <c8930e77-9c99-2d3d-743d-9d58176ea690@nvidia.com>
-Date:   Wed, 11 Dec 2019 13:25:33 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Wed, 11 Dec 2019 16:33:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576100021;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=i5d46fUGGAKBhC38Qbq/dcwLvKrKUIyOiABQ6Phgrc0=;
+        b=SAPu84hSjR+N48caBUeKb6IxNvBAtp10otjfPxY5JsdnvX4XXAg7u5HzajIaLidbhgFiY6
+        kmCh7mxHxcipkXnz398PEwg/Bz4zGJd/fyoaWIvqfpCM1vSsyjCac2VyVhKlj9E7urE4+P
+        Loi9B4rrUFVcEunxhsbTL5I3u0xVAYs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-373-zLR0Bm1pOh6ncTz7hQoSpg-1; Wed, 11 Dec 2019 16:33:37 -0500
+X-MC-Unique: zLR0Bm1pOh6ncTz7hQoSpg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6EF7F85EE72;
+        Wed, 11 Dec 2019 21:33:34 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-21.pek2.redhat.com [10.72.8.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C249088E6;
+        Wed, 11 Dec 2019 21:33:21 +0000 (UTC)
+Date:   Thu, 12 Dec 2019 05:33:16 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     Andrea Vai <andrea.vai@unipv.it>,
+        "Schmid, Carsten" <Carsten_Schmid@mentor.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Jens Axboe <axboe@kernel.dk>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        USB list <linux-usb@vger.kernel.org>,
+        SCSI development list <linux-scsi@vger.kernel.org>,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Omar Sandoval <osandov@fb.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Hans Holmberg <Hans.Holmberg@wdc.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: AW: Slow I/O on USB media after commit
+ f664a3cc17b7d0a2bc3b3ab96181e1029b0ec0e6
+Message-ID: <20191211213316.GA14983@ming.t460p>
+References: <f82fd5129e3dcacae703a689be60b20a7fedadf6.camel@unipv.it>
+ <20191129005734.GB1829@ming.t460p>
+ <20191129023555.GA8620@ming.t460p>
+ <320b315b9c87543d4fb919ecbdf841596c8fbcea.camel@unipv.it>
+ <20191203022337.GE25002@ming.t460p>
+ <8196b014b1a4d91169bf3b0d68905109aeaf2191.camel@unipv.it>
+ <20191210080550.GA5699@ming.t460p>
+ <20191211024137.GB61323@mit.edu>
+ <20191211040058.GC6864@ming.t460p>
+ <20191211160745.GA129186@mit.edu>
 MIME-Version: 1.0
-In-Reply-To: <20191211135737.581add2f@lwn.net>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1576099513; bh=h8WoxBOtUL7d4aBHwikvS71dFoLle6Q1qJcgfYlGzoI=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=n8ng2gW+8yccOTJ0sb0qKZBSBkMzrO2w+mX1jwAwhVYYv3FE21MXjsfMjjhApcnib
-         wo8d+ZRlDZwi9+66AYkoZtFFMIJupZ7au9saOmm/kNh3KbsRApo1SSaYZzqpFUg9dv
-         APDY2cvczFMX0P05ANDG9Wpe8w2DHHN7/JdQsO1AuudRaAw4keF3jV1uyq3uA82xUI
-         ieCnDqXdxIHT69mdMVDE/JA7qgs+lLHW/JROAhLDlkZchTV8THtwKre9xUIr3vtdDd
-         8O/vqZHRFo4GrCktOUJaI0JiNxox7/Ns2xEUIaiCnKWdDSbo4DOz0JmZdD1qJCvncm
-         kDdssHEUgirjg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191211160745.GA129186@mit.edu>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/11/19 12:57 PM, Jonathan Corbet wrote:
-> On Tue, 10 Dec 2019 18:53:03 -0800
-> John Hubbard <jhubbard@nvidia.com> wrote:
+On Wed, Dec 11, 2019 at 11:07:45AM -0500, Theodore Y. Ts'o wrote:
+> On Wed, Dec 11, 2019 at 12:00:58PM +0800, Ming Lei wrote:
+> > I didn't reproduce the issue in my test environment, and follows
+> > Andrea's test commands[1]:
+> > 
+> >   mount UUID=$uuid /mnt/pendrive 2>&1 |tee -a $logfile
+> >   SECONDS=0
+> >   cp $testfile /mnt/pendrive 2>&1 |tee -a $logfile
+> >   umount /mnt/pendrive 2>&1 |tee -a $logfile
+> > 
+> > The 'cp' command supposes to open/close the file just once, however
+> > ext4_release_file() & write pages is observed to run for 4358 times
+> > when executing the above 'cp' test.
 > 
->> Introduce pin_user_pages*() variations of get_user_pages*() calls,
->> and also pin_longterm_pages*() variations.
+> Why are we sure the ext4_release_file() / _fput() is coming from the
+> cp command, as opposed to something else that might be running on the
+> system under test?  _fput() is called by the kernel when the last
+
+Please see the log:
+
+https://lore.kernel.org/linux-scsi/3af3666920e7d46f8f0c6d88612f143ffabc743c.camel@unipv.it/2-log_ming.zip
+
+Which is collected by:
+
+#!/bin/sh
+MAJ=$1
+MIN=$2
+MAJ=$(( $MAJ << 20 ))
+DEV=$(( $MAJ | $MIN ))
+
+/usr/share/bcc/tools/trace -t -C \
+    't:block:block_rq_issue (args->dev == '$DEV') "%s %d %d", args->rwbs, args->sector, args->nr_sector' \
+    't:block:block_rq_insert (args->dev == '$DEV') "%s %d %d", args->rwbs, args->sector, args->nr_sector'
+
+$MAJ:$MIN points to the USB storage disk.
+
+From the above IO trace, there are two write paths, one is from cp,
+another is from writeback wq.
+
+The stackcount trace[1] is consistent with the IO trace log since it
+only shows two IO paths, that is why I concluded that the write done via
+ext4_release_file() is from 'cp'.
+
+[1] https://lore.kernel.org/linux-scsi/320b315b9c87543d4fb919ecbdf841596c8fbcea.camel@unipv.it/2-log_ming_20191129_150609.zip
+
+> reference to a struct file is released.  (Specifically, if you have a
+> fd which is dup'ed, it's only when the last fd corresponding to the
+> struct file is closed, and the struct file is about to be released,
+> does the file system's f_ops->release function get called.)
 > 
-> Just a couple of nits on the documentation patch
-> 
->> +++ b/Documentation/core-api/pin_user_pages.rst
->> @@ -0,0 +1,232 @@
->> +.. SPDX-License-Identifier: GPL-2.0
->> +
->> +====================================================
->> +pin_user_pages() and related calls
->> +====================================================
->> +
->> +.. contents:: :local:
->> +
->> +Overview
->> +========
->> +
->> +This document describes the following functions: ::
->> +
->> + pin_user_pages
->> + pin_user_pages_fast
->> + pin_user_pages_remote
-> 
-> You could just say "the following functions::" and get the result you're
-> after with a slightly less alien plain-text reading experience.
+> So the first question I'd ask is whether there is anything else going
+> on the system, and whether the writes are happening to the USB thumb
+> drive, or to some other storage device.  And if there is something
+> else which is writing to the pendrive, maybe that's why no one else
+> has been able to reproduce the OP's complaint....
 
-I see. That works nicely: same result with fewer :'s. 
+OK, we can ask Andrea to confirm that via the following trace, which
+will add pid/comm info in the stack trace:
 
-> 
-> Of course, you could also just say "This document describes
-> pin_user_pages(), pin_user_pages_fast(), and pin_user_pages_remote()." But
-> that's a matter of personal taste, I guess.  Using the function() notation
-> will cause the docs system to automatically link to the kerneldoc info,
-> though.  
+/usr/share/bcc/tools/stackcount  blk_mq_sched_request_inserted
 
-OK. I did try the single-sentence approach just now, but to me the one-per-line
-seems to make both the text and the generated HTML slightly easier to look at. 
-Of course, like you say, different people will have different preferences. So 
-in the end I've combined the tips, like this:
+Andrew, could you collect the above log again when running new/bad
+kernel for confirming if the write done by ext4_release_file() is from
+the 'cp' process?
 
-+Overview
-+========
-+
-+This document describes the following functions::
-+
-+ pin_user_pages()
-+ pin_user_pages_fast()
-+ pin_user_pages_remote()
-
-
-> 
->> +Basic description of FOLL_PIN
->> +=============================
->> +
->> +FOLL_PIN and FOLL_LONGTERM are flags that can be passed to the get_user_pages*()
->> +("gup") family of functions. FOLL_PIN has significant interactions and
->> +interdependencies with FOLL_LONGTERM, so both are covered here.
->> +
->> +FOLL_PIN is internal to gup, meaning that it should not appear at the gup call
->> +sites. This allows the associated wrapper functions  (pin_user_pages*() and
->> +others) to set the correct combination of these flags, and to check for problems
->> +as well.
->> +
->> +FOLL_LONGTERM, on the other hand, *is* allowed to be set at the gup call sites.
->> +This is in order to avoid creating a large number of wrapper functions to cover
->> +all combinations of get*(), pin*(), FOLL_LONGTERM, and more. Also, the
->> +pin_user_pages*() APIs are clearly distinct from the get_user_pages*() APIs, so
->> +that's a natural dividing line, and a good point to make separate wrapper calls.
->> +In other words, use pin_user_pages*() for DMA-pinned pages, and
->> +get_user_pages*() for other cases. There are four cases described later on in
->> +this document, to further clarify that concept.
->> +
->> +FOLL_PIN and FOLL_GET are mutually exclusive for a given gup call. However,
->> +multiple threads and call sites are free to pin the same struct pages, via both
->> +FOLL_PIN and FOLL_GET. It's just the call site that needs to choose one or the
->> +other, not the struct page(s).
->> +
->> +The FOLL_PIN implementation is nearly the same as FOLL_GET, except that FOLL_PIN
->> +uses a different reference counting technique.
->> +
->> +FOLL_PIN is a prerequisite to FOLL_LONGTGERM. Another way of saying that is,
-> 
-> FOLL_LONGTERM typoed there.
-> 
-
-Good catch. Fixed.
-
-thanks,
--- 
-John Hubbard
-NVIDIA
-
+Thanks,
+Ming
 
