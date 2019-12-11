@@ -2,128 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE0D811C043
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 00:05:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7663111C0AE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 00:41:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726824AbfLKXFU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Dec 2019 18:05:20 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:38921 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726313AbfLKXFP (ORCPT
+        id S1726673AbfLKXl4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Dec 2019 18:41:56 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42633 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726404AbfLKXl4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Dec 2019 18:05:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576105513;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=sx72Zu8R4y3Ns6A0Elwe6ONN3kNLN0tIVRBIzDH4IQA=;
-        b=f33R7rTHeMiaCbaN9YlBB5UWejMrxj+dBl1/h/LVzEmy2u4zDoApnHvl4PvjtZYIt1GEjM
-        VtlsIIxUpCdDVTnn3SswSw++bBGFc80RffHVgNWCpz0+MW+guQd2JOvoRp6skJ07wA6gb8
-        MSdeCkutOBsA+dJ4hUDF4DiESqQcnUo=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-371-kO1UI92uPDOJth-mGjb5NA-1; Wed, 11 Dec 2019 18:05:12 -0500
-X-MC-Unique: kO1UI92uPDOJth-mGjb5NA-1
-Received: by mail-wr1-f71.google.com with SMTP id c6so216051wrm.18
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 15:05:12 -0800 (PST)
+        Wed, 11 Dec 2019 18:41:56 -0500
+Received: by mail-pf1-f196.google.com with SMTP id 4so89488pfz.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 15:41:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=kpNlzVcv7JN7E6YhjIPCUm4BYR7x79EcBxfrlw22S00=;
+        b=lNMQ0l96BGpM2u4/wCZBoSrFB93g3IOanTEQQ+kdic7G16RGwofrZTW8qUp1QNENny
+         T1Eb/+YV7QhwyPRj9GARsbeTzqugStumohKT6y0N2LcAsgp11lKJYqym6sJkQoYWcML7
+         tv6Tk038FmRqpyXdZbMU1yMUeYzTbL+KVUXE3j9+u5tYvO14L9z7nNlWu7bUQ50bxPfh
+         X+12YPIyy3eQjnNp9WFgw5NnextOhh69DfsoZEJbYUYw9qT4jmF2nAKnOliEKnQjAPc6
+         0f/gEoMuhK3OcD1hyPTntiz+91l7s6taPogaoXlu5MaMRGRPWbjPtG7F4qOLOQld1YYJ
+         v+Ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=sx72Zu8R4y3Ns6A0Elwe6ONN3kNLN0tIVRBIzDH4IQA=;
-        b=WUmzvFlw+anr+mdpiiR7vh26U2sgKdkaaHcfhk0STZtPTsmc52Igr+/1jN1IQFBpCU
-         UFe5MfwS4fnJaSPVcAqbgi0JAHtGPsPCONU7jQn+1BJNnOUh83vkdbs073tRTF4P3XJL
-         0fe30CBQSoV7+rbAGZINAy9xH0xMGRfAGizfVoHWVmu4zJLU/CincxIBTeI4RUYcr2fk
-         QJsTxstQQRObMqz28JN3fMOcjYyKPfOJPStro8QGX54CfWjyF3mWDM1BEpn+l6a/b+BN
-         q8YNJ1PlNRSciOFJ+OYe6n2bqBTtQQmz2P9gikf4Q/fM4V4jDYKbThxGovqYSoF1LJMl
-         bnmA==
-X-Gm-Message-State: APjAAAUzodppOztVdi/g1BSNEWOK0prWSaV2t2O19z8sh6X7APAv+UBk
-        NDdVzsJ5Yx8yQTTWHPZDtBnSOexAofoZqywjgiEJoMkQPggnu5euLHiaRbmnPi1Fi5l9XV+aFoz
-        K1tO6wqI37KsXkfCw1njMtkrIGA==
-X-Received: by 2002:a1c:4008:: with SMTP id n8mr2404655wma.121.1576105511592;
-        Wed, 11 Dec 2019 15:05:11 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxpe9p8ejWiVLiuArWlu3PcE1o950G4BmpoXFY8faxUGRQT/Ci+xtr4RXgpMlISlS8MvrxukA==
-X-Received: by 2002:a1c:4008:: with SMTP id n8mr2404621wma.121.1576105511390;
-        Wed, 11 Dec 2019 15:05:11 -0800 (PST)
-Received: from redhat.com (bzq-79-181-48-215.red.bezeqint.net. [79.181.48.215])
-        by smtp.gmail.com with ESMTPSA id g18sm3736144wmh.48.2019.12.11.15.05.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2019 15:05:10 -0800 (PST)
-Date:   Wed, 11 Dec 2019 18:05:07 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jason Wang <jasowang@redhat.com>,
-        Doug Gilbert <dgilbert@interlog.com>,
-        Kai =?iso-8859-1?Q?M=E4kisara?= <Kai.Makisara@kolumbus.fi>,
-        linux-kernel@vger.kernel.org, y2038@lists.linaro.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Hannes Reinecke <hare@suse.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        John Garry <john.garry@huawei.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 15/24] compat_ioctl: scsi: move ioctl handling into
- drivers
-Message-ID: <20191211180155-mutt-send-email-mst@kernel.org>
-References: <20191211204306.1207817-1-arnd@arndb.de>
- <20191211204306.1207817-16-arnd@arndb.de>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=kpNlzVcv7JN7E6YhjIPCUm4BYR7x79EcBxfrlw22S00=;
+        b=bKnxfGdPnhOg2d9FWamRBdDazw4lBHllgTy62OCk2OCzAaxnLQIgUnFEMMaebsnApO
+         AQaEcbj5TouLg8jLvJQMVTQOgABUugFqjBb+JRhoD1evhkajghay8KsIPeHVpPfU7OvK
+         NTgVLE0Oj+MttQTRkU5aW0eSVPp/romwPpxS+DcKwylHONmT+GyMPN9bg9rcESJFhg5f
+         Tw+dKS9IOdE1HWRt9xMoBOvjIvHhGSicA0ze5r/P+gLla4BJ9tovp1RBUE0BgPy8Lz3C
+         LfumYStac6GqNAz4OmksU9gowqC7X5YphYdQEAanPBdrofHMiuKtUSlPG+cdmGX5cy8o
+         2a1w==
+X-Gm-Message-State: APjAAAUNCImLa2s71BnH/Z3QEYl4eXGnqlDogju7V9EawtIMhoSjFLfJ
+        4cHukn9+BqUvjoybHoR4XdS/cQ==
+X-Google-Smtp-Source: APXvYqwGOwKUwd/HWjO/NJjda16cvXL4uvMFEOj+dWRqjsE0z2VrBX/uK93JoRyDrVWFrEuUz+X4rg==
+X-Received: by 2002:aa7:801a:: with SMTP id j26mr6656838pfi.50.1576107715544;
+        Wed, 11 Dec 2019 15:41:55 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id s27sm4414042pfd.88.2019.12.11.15.41.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2019 15:41:54 -0800 (PST)
+Subject: Re: [PATCHSET v3 0/5] Support for RWF_UNCACHED
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+References: <20191211152943.2933-1-axboe@kernel.dk>
+ <CAHk-=wjz3LE1kznro1dozhk9i9Dr4pCnkj7Fuccn2xdWeGHawQ@mail.gmail.com>
+ <d0adcde2-3106-4fea-c047-4d17111bab70@kernel.dk>
+ <e43a2700-8625-e136-dc9d-d0d2da5d96ac@kernel.dk>
+ <CAHk-=wje8i3DVcO=fMC4tzKTS5+eHv0anrVZa_JENQt08T=qCQ@mail.gmail.com>
+ <0d4e3954-c467-30a7-5a8e-7c4180275533@kernel.dk>
+ <CAHk-=whk4bcVPvtAv5OmHiW5z6AXgCLFhO4YrXD7o0XC+K-aHw@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <fef996ca-a4ed-9633-1f79-91292a984a20@kernel.dk>
+Date:   Wed, 11 Dec 2019 16:41:52 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191211204306.1207817-16-arnd@arndb.de>
+In-Reply-To: <CAHk-=whk4bcVPvtAv5OmHiW5z6AXgCLFhO4YrXD7o0XC+K-aHw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 09:42:49PM +0100, Arnd Bergmann wrote:
-> Each driver calling scsi_ioctl() gets an equivalent compat_ioctl()
-> handler that implements the same commands by calling scsi_compat_ioctl().
+On 12/11/19 1:18 PM, Linus Torvalds wrote:
+> On Wed, Dec 11, 2019 at 12:08 PM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> $ cat /proc/meminfo | grep -i active
+>> Active:           134136 kB
+>> Inactive:       28683916 kB
+>> Active(anon):      97064 kB
+>> Inactive(anon):        4 kB
+>> Active(file):      37072 kB
+>> Inactive(file): 28683912 kB
 > 
-> The scsi_cmd_ioctl() and scsi_cmd_blk_ioctl() functions are compatible
-> at this point, so any driver that calls those can do so for both native
-> and compat mode, with the argument passed through compat_ptr().
+> Yeah, that should not put pressure on some swap activity. We have 28
+> GB of basically free inactive file data, and the VM is doing something
+> very very bad if it then doesn't just quickly free it with no real
+> drama.
 > 
-> With this, we can remove the entries from fs/compat_ioctl.c.  The new
-> code is larger, but should be easier to maintain and keep updated with
-> newly added commands.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/block/virtio_blk.c |   3 +
->  drivers/scsi/ch.c          |   9 ++-
->  drivers/scsi/sd.c          |  50 ++++++--------
->  drivers/scsi/sg.c          |  44 ++++++++-----
->  drivers/scsi/sr.c          |  57 ++++++++++++++--
->  drivers/scsi/st.c          |  51 ++++++++------
->  fs/compat_ioctl.c          | 132 +------------------------------------
->  7 files changed, 142 insertions(+), 204 deletions(-)
-> 
-> diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
-> index 7ffd719d89de..fbbf18ac1d5d 100644
-> --- a/drivers/block/virtio_blk.c
-> +++ b/drivers/block/virtio_blk.c
-> @@ -405,6 +405,9 @@ static int virtblk_getgeo(struct block_device *bd, struct hd_geometry *geo)
->  
->  static const struct block_device_operations virtblk_fops = {
->  	.ioctl  = virtblk_ioctl,
-> +#ifdef CONFIG_COMPAT
-> +	.compat_ioctl = blkdev_compat_ptr_ioctl,
-> +#endif
->  	.owner  = THIS_MODULE,
->  	.getgeo = virtblk_getgeo,
->  };
+> In fact, I don't think it should even trigger kswapd at all, it should
+> all be direct reclaim. Of course, some of the mm people hate that with
+> a passion, but this does look like a prime example of why it should
+> just be done.
 
-Hmm - is virtio blk lumped in with scsi things intentionally?
+For giggles, I ran just a single thread on the file set. We're only
+doing about 100K IOPS at that point, yet when the page cache fills,
+kswapd still eats 10% cpu. That seems like a lot for something that
+slow.
+
+> MM people - mind giving this a look?  Jens, if you have that NOACCESS
+> flag in a git tree too and a trivial way to recreate your load, that
+> would be good for people to be able to just try things out.
+
+I've pushed the NOACCESS thing to my buffered-uncached branch as well,
+and fio has a 'noaccess' branch that enables it for pvsync2 (which is
+preadv2/pwritev2) and the io_uring engine.
+
+Here's what I did to reproduce:
+
+- Boot the box with 32G of memory.
+- On a fast device, create 10x RAM size of files. I used 32 files, each
+  10G. Mine are in /data, and they are named file[1-32].
+- Run a buffered read workload on those files.
+
+For pvsync2, something ala:
+
+$ cat job.fio
+[test]
+ioengine=pvsync2
+#uncached=1
+#noaccess=1
+iodepth=4
+bs=4k
+group_reporting=1
+rw=randread
+norandommap
+buffered=1
+directory=/data
+filename=file1:file2:file3:file4:file5:file6:file7:file8:file9:file10:file11:file12:file13:file14:file15:file16:file17:file18:file19:file20:file21:file22:file23:file24:file25:file26:file27:file28:file29:file30:file31:file32
+
+If you want to use more than one thread, add:
+
+numjobs=4
+
+for 4 threads. Uncomment the 'uncached=1' and/or 'noaccess=1' to enable
+either RWF_UNCACHED or RWF_NOACCESS.
 
 -- 
-MST
+Jens Axboe
 
