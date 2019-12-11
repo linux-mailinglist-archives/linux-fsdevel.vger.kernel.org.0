@@ -2,69 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C28DA119FFB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 01:28:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2257A11A037
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 01:49:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726968AbfLKA2V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Dec 2019 19:28:21 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:54936 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726598AbfLKA2V (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Dec 2019 19:28:21 -0500
-Received: from dread.disaster.area (pa49-195-139-249.pa.nsw.optusnet.com.au [49.195.139.249])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 459837EA491;
-        Wed, 11 Dec 2019 11:28:19 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1ieprT-0006Z1-IC; Wed, 11 Dec 2019 11:28:15 +1100
-Date:   Wed, 11 Dec 2019 11:28:15 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org
-Subject: Re: [PATCH 3/5] mm: make buffered writes work with RWF_UNCACHED
-Message-ID: <20191211002815.GD19213@dread.disaster.area>
-References: <20191210162454.8608-1-axboe@kernel.dk>
- <20191210162454.8608-4-axboe@kernel.dk>
- <20191211002349.GC19213@dread.disaster.area>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191211002349.GC19213@dread.disaster.area>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
-        a=KoypXv6BqLCQNZUs2nCMWg==:117 a=KoypXv6BqLCQNZUs2nCMWg==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=pxVhFHJ0LMsA:10
-        a=7-415B0cAAAA:8 a=YySyZI0ml3ss4FvGJbkA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+        id S1726623AbfLKAtd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Dec 2019 19:49:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34076 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbfLKAtc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Dec 2019 19:49:32 -0500
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2ACEC206D5;
+        Wed, 11 Dec 2019 00:49:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576025371;
+        bh=mS7zyk9RzK8MLQp+5nvdMy6P3ysyYQCDC3Bah6kmlfs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=UvC0RIny6iqVEumpqrPw6rq1+xZGMHezDVxIFrfIHyEiEEKaKQc5hGaYaeoZSLVqv
+         OiKjZB9JvOrs5D8lM5PO+WX7OQOLW/u0awaO48QIwAJPLeFa0zJF2HELO5AISWbm2x
+         nMOoibFNiErcex5Kfzt1sOkhZk08/M0uQclzXbn4=
+Date:   Tue, 10 Dec 2019 16:49:29 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?ISO-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?ISO-8859-1?Q?J=E9r?= =?ISO-8859-1?Q?=F4me?= Glisse 
+        <jglisse@redhat.com>, Magnus Karlsson <magnus.karlsson@intel.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        "Paul Mackerras" <paulus@samba.org>, Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 20/26] powerpc: book3s64: convert to pin_user_pages()
+ and put_user_page()
+Message-Id: <20191210164929.b3f54fe95c3fc4b6c756e65e@linux-foundation.org>
+In-Reply-To: <61e0c3a5-992e-4571-e22d-d63286ce10ec@nvidia.com>
+References: <20191209225344.99740-1-jhubbard@nvidia.com>
+        <20191209225344.99740-21-jhubbard@nvidia.com>
+        <08f5d716-8b31-b016-4994-19fbe829dc28@nvidia.com>
+        <61e0c3a5-992e-4571-e22d-d63286ce10ec@nvidia.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 11:23:49AM +1100, Dave Chinner wrote:
-> On Tue, Dec 10, 2019 at 09:24:52AM -0700, Jens Axboe wrote:
-> > If RWF_UNCACHED is set for io_uring (or pwritev2(2)), we'll drop the
-> > cache instantiated for buffered writes. If new pages aren't
-> > instantiated, we leave them alone. This provides similar semantics to
-> > reads with RWF_UNCACHED set.
+On Mon, 9 Dec 2019 21:53:00 -0800 John Hubbard <jhubbard@nvidia.com> wrote:
+
+> > Correction: this is somehow missing the fixes that resulted from Jan Kara's review (he
+> > noted that we can't take a page lock in this context). I must have picked up the
+> > wrong version of it, when I rebased for -rc1.
+> > 
 > 
-> So what about filesystems that don't use generic_perform_write()?
-> i.e. Anything that uses the iomap infrastructure (i.e.
-> iomap_file_buffered_write()) instead of generic_file_write_iter())
-> will currently ignore RWF_UNCACHED. That's XFS and gfs2 right now,
-> but there are likely to be more in the near future as more
-> filesystems are ported to the iomap infrastructure.
+> Andrew, given that the series is now in -mm, what's the preferred way for me to fix this?
+> Send a v9 version of the whole series? Or something else?
 
-Hmmm - I'm missing part of this patchset, and I see a second version
-has been posted that has iomap stuff in it. I'll go look at that
-now...
+I think a full resend is warranted at this time - it's only been in
+there a day and there seem to be quite a number of changes to be made.
 
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
