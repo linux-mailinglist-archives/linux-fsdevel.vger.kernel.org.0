@@ -2,168 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20CC411A2E4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 04:14:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9332711A342
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 05:00:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727300AbfLKDOf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Dec 2019 22:14:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51676 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727059AbfLKDOe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Dec 2019 22:14:34 -0500
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C9142073B;
-        Wed, 11 Dec 2019 03:14:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576034073;
-        bh=pmvlsOu0diBAURZbR9jd8MzTlOmfxQW87R1HHSYaVTk=;
-        h=Date:From:To:Subject:In-Reply-To:From;
-        b=FnXCT3qL8jnGyeyjc7GY5eGaLUyEaa92VeU2r7NJyBWBEGbhnOXoRw5MgNtfak1el
-         AnWq3zY0AzMVAp7J2JotqYh5O1N5/C7w+zp4qZNqs6O+X/5XxJTbR9ox9TXr0uKku6
-         dKiatHS+geNjCfRilRQEm0Ob1YdusUQZdxGVdBfs=
-Date:   Tue, 10 Dec 2019 19:14:32 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-Subject:  mmotm 2019-12-10-19-14 uploaded
-Message-ID: <20191211031432.iyKVQ6m9n%akpm@linux-foundation.org>
-In-Reply-To: <20191206170123.cb3ad1f76af2b48505fabb33@linux-foundation.org>
-User-Agent: s-nail v14.8.16
+        id S1726897AbfLKEA2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Dec 2019 23:00:28 -0500
+Received: from mail.loongson.cn ([114.242.206.163]:47994 "EHLO loongson.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726642AbfLKEA2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Dec 2019 23:00:28 -0500
+Received: from [10.130.0.36] (unknown [123.138.236.242])
+        by mail.loongson.cn (Coremail) with SMTP id AQAAf9DxDxe3afBd0nEJAA--.6S3;
+        Wed, 11 Dec 2019 12:00:08 +0800 (CST)
+Subject: Re: [PATCH v5] fs: introduce is_dot_or_dotdot helper for cleanup
+To:     Eric Biggers <ebiggers@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
+References: <1576030801-8609-1-git-send-email-yangtiezhu@loongson.cn>
+ <20191211024858.GB732@sol.localdomain>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        linux-fsdevel@vger.kernel.org, ecryptfs@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+From:   Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <febbd7eb-5e53-6e7c-582d-5b224e441e37@loongson.cn>
+Date:   Wed, 11 Dec 2019 11:59:40 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
+MIME-Version: 1.0
+In-Reply-To: <20191211024858.GB732@sol.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: AQAAf9DxDxe3afBd0nEJAA--.6S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Aw4rXryxJFW5WFyDWF4DArb_yoW8Zr1UpF
+        y5CFZYyF1IgFyUZF4vyw4fZF4Yvrs3XFyjy347K3s8AF1aqFnaqrW5Kr1093Z3JrZ5ZF1S
+        gay3WFyYk398AaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvEb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+        A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
+        jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwV
+        C2z280aVCY1x0267AKxVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+        F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+        4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xK
+        xwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+        1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+        b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+        vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI
+        42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
+        evJa73UjIFyTuYvjxU2rcTDUUUU
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The mm-of-the-moment snapshot 2019-12-10-19-14 has been uploaded to
+On 12/11/2019 10:48 AM, Eric Biggers wrote:
+> On Wed, Dec 11, 2019 at 10:20:01AM +0800, Tiezhu Yang wrote:
+>> diff --git a/include/linux/namei.h b/include/linux/namei.h
+>> index 7fe7b87..0fd9315 100644
+>> --- a/include/linux/namei.h
+>> +++ b/include/linux/namei.h
+>> @@ -92,4 +92,14 @@ retry_estale(const long error, const unsigned int flags)
+>>   	return error == -ESTALE && !(flags & LOOKUP_REVAL);
+>>   }
+>>   
+>> +static inline bool is_dot_or_dotdot(const unsigned char *name, size_t len)
+>> +{
+>> +	if (unlikely(name[0] == '.')) {
+>> +		if (len == 1 || (len == 2 && name[1] == '.'))
+>> +			return true;
+>> +	}
+>> +
+>> +	return false;
+>> +}
+>> +
+>>   #endif /* _LINUX_NAMEI_H */
+> I had suggested adding a len >= 1 check to handle the empty name case correctly.
+> What I had in mind was
+>
+> static inline bool is_dot_or_dotdot(const unsigned char *name, size_t len)
+> {
+> 	if (len >= 1 && unlikely(name[0] == '.')) {
+> 		if (len < 2 || (len == 2 && name[1] == '.'))
+> 			return true;
+> 	}
+>
+> 	return false;
+> }
+>
+> As is, you're proposing that it always dereference the first byte even when
+> len=0, which seems like a bad idea for a shared helper function.  Did you check
+> whether it's okay for all the existing callers?  fscrypt_fname_disk_to_usr() is
+> called from 6 places, did you check all of them?
+>
+> How about keeping the existing optimized code for the hot path in fs/namei.c
+> (i.e. not using the helper function), while having the helper function do the
+> extra check to handle len=0 correctly?
 
-   http://www.ozlabs.org/~akpm/mmotm/
+Hi Eric,
 
-mmotm-readme.txt says
+Thank you for reminding me.  How about using the following helper for
+all callers?
 
-README for mm-of-the-moment:
+static inline bool is_dot_or_dotdot(const unsigned char *name, size_t len)
+{
+         if (len == 1 && name[0] == '.')
+                 return true;
 
-http://www.ozlabs.org/~akpm/mmotm/
+         if (len == 2 && name[0] == '.' && name[1] == '.')
+                 return true;
 
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
+         return false;
+}
 
-You will need quilt to apply these patches to the latest Linus release (5.x
-or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
+Hi Matthew,
 
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
+How do you think? I think the performance influence is very small
+due to is_dot_or_dotdot() is a such short static inline function.
 
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
+Thanks,
 
+Tiezhu Yang
 
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
+>
+> - Eric
 
-	https://github.com/hnaz/linux-mm
-
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is also available at
-
-	https://github.com/hnaz/linux-mm
-
-
-
-This mmotm tree contains the following patches against 5.5-rc1:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-* kasan-fix-crashes-on-access-to-memory-mapped-by-vm_map_ram.patch
-* kasan-fix-crashes-on-access-to-memory-mapped-by-vm_map_ram-v2.patch
-* mm-add-apply_to_existing_pages-helper.patch
-* mm-add-apply_to_existing_pages-helper-fix.patch
-* mm-add-apply_to_existing_pages-helper-fix-fix.patch
-* kasan-use-apply_to_existing_pages-for-releasing-vmalloc-shadow.patch
-* kasan-use-apply_to_existing_pages-for-releasing-vmalloc-shadow-fix.patch
-* kasan-dont-assume-percpu-shadow-allocations-will-succeed.patch
-* mm-vmscan-protect-shrinker-idr-replace-with-config_memcg.patch
-* lib-kconfigdebug-fix-some-messed-up-configurations.patch
-* lib-kconfigdebug-fix-some-messed-up-configurations-checkpatch-fixes.patch
-* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
-* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
-* mm-zsmallocc-fix-the-migrated-zspage-statistics.patch
-* mm-thp-tweak-reclaim-compaction-effort-of-local-only-and-all-node-allocations.patch
-* x86-mm-split-vmalloc_sync_all.patch
-* kcov-fix-struct-layout-for-kcov_remote_arg.patch
-* memcg-account-security-cred-as-well-to-kmemcg.patch
-* mm-move_pages-return-valid-node-id-in-status-if-the-page-is-already-on-the-target-node.patch
-* fs-direct-ioc-include-fs-internalh-for-missing-prototype.patch
-* fs-nsfsc-include-headers-for-missing-declarations.patch
-* fs-namespacec-make-to_mnt_ns-static.patch
-* hexagon-define-ioremap_uc.patch
-* hexagon-parenthesize-registers-in-asm-predicates.patch
-* hexagon-work-around-compiler-crash.patch
-* fs-fix-posix_aclc-kernel-doc-warnings.patch
-* init-kconfig-enable-o3-for-all-arches.patch
-* ramfs-support-o_tmpfile.patch
-  mm.patch
-* mm-avoid-slub-allocation-while-holding-list_lock.patch
-* mm-cleanup-some-useless-code.patch
-* mm-vmscan-expose-cgroup_ino-for-memcg-reclaim-tracepoints.patch
-* mm-pgmap-use-correct-alignment-when-looking-at-first-pfn-from-a-region.patch
-* mm-mmap-fix-the-adjusted-length-error.patch
-* mm-memmap_init-update-variable-name-in-memmap_init_zone.patch
-* mm-memory_hotplug-shrink-zones-when-offlining-memory.patch
-* mm-memory_hotplug-poison-memmap-in-remove_pfn_range_from_zone.patch
-* mm-memory_hotplug-we-always-have-a-zone-in-find_smallestbiggest_section_pfn.patch
-* mm-memory_hotplug-dont-check-for-all-holes-in-shrink_zone_span.patch
-* mm-memory_hotplug-drop-local-variables-in-shrink_zone_span.patch
-* mm-memory_hotplug-cleanup-__remove_pages.patch
-* mm-early_remap-use-%pa-to-print-resource_size_t-variables.patch
-* mm-oom-avoid-printk-iteration-under-rcu.patch
-* mm-oom-avoid-printk-iteration-under-rcu-fix.patch
-* mm-clean-up-obsolete-check-on-space-in-page-flags.patch
-* info-task-hung-in-generic_file_write_iter.patch
-* info-task-hung-in-generic_file_write-fix.patch
-* kernel-hung_taskc-monitor-killed-tasks.patch
-* lib-zlib-add-s390-hardware-support-for-kernel-zlib_deflate.patch
-* s390-boot-rename-heap_size-due-to-name-collision.patch
-* lib-zlib-add-s390-hardware-support-for-kernel-zlib_inflate.patch
-* s390-boot-add-dfltcc=-kernel-command-line-parameter.patch
-* lib-zlib-add-zlib_deflate_dfltcc_enabled-function.patch
-* btrfs-use-larger-zlib-buffer-for-s390-hardware-compression.patch
-* string-add-stracpy-and-stracpy_pad-mechanisms.patch
-* documentation-checkpatch-prefer-stracpy-strscpy-over-strcpy-strlcpy-strncpy.patch
-* elf-smaller-code-generation-around-auxv-vector-fill.patch
-* elf-fix-start_code-calculation.patch
-* elf-dont-copy-elf-header-around.patch
-* execve-warn-if-process-starts-with-executable-stack.patch
-* io-mapping-use-phys_pfn-macro-in-io_mapping_map_atomic_wc.patch
-* aio-simplify-read_events.patch
-* smp_mb__beforeafter_atomic-update-documentation.patch
-* ipc-mqueuec-remove-duplicated-code.patch
-* ipc-mqueuec-update-document-memory-barriers.patch
-* ipc-msgc-update-and-document-memory-barriers.patch
-* ipc-semc-document-and-update-memory-barriers.patch
-* ipc-consolidate-all-xxxctl_down-functions.patch
-  linux-next.patch
-  linux-next-build-fix.patch
-* drivers-block-null_blk_mainc-fix-layout.patch
-* drivers-block-null_blk_mainc-fix-uninitialized-var-warnings.patch
-* pinctrl-fix-pxa2xxc-build-warnings.patch
-* drivers-tty-serial-sh-scic-suppress-warning.patch
-* fix-read-buffer-overflow-in-delta-ipc.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  workaround-for-a-pci-restoring-bug.patch
