@@ -2,180 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1FE111AB3B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 13:48:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C27C211ABF8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 14:21:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728128AbfLKMsJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Dec 2019 07:48:09 -0500
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:48027 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727402AbfLKMsJ (ORCPT
+        id S1729315AbfLKNVd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Dec 2019 08:21:33 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:46934 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729144AbfLKNVd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Dec 2019 07:48:09 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=chge@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0Tkd-TqM_1576068468;
-Received: from IT-C02YD3Q7JG5H.local(mailfrom:chge@linux.alibaba.com fp:SMTPD_---0Tkd-TqM_1576068468)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 11 Dec 2019 20:47:48 +0800
-Subject: Re: [PATCH] ocfs2: call journal flush to mark journal as empty after
- journal recovery when mount
-To:     Kai Li <li.kai4@h3c.com>, mark@fasheh.com, jlbec@evilplan.org,
-        joseph.qi@linux.alibaba.com
-Cc:     ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20191211100338.510-1-li.kai4@h3c.com>
-From:   Changwei Ge <chge@linux.alibaba.com>
-Message-ID: <d4bb15d0-55fa-2a8e-a975-4c65eed3bae3@linux.alibaba.com>
-Date:   Wed, 11 Dec 2019 20:47:48 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.1
+        Wed, 11 Dec 2019 08:21:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576070492;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Fx/pdQPsQcpjbET1DdPNYibdtHFsVp/bssCr0g+dk5w=;
+        b=QHZ9kX0t4P/OAZ7P21BQgJbGaIWMgkghnmScTvIR5N5MyHDD1XgvPFEGCxjn1b5sF/jzge
+        pRap9dxCe6m4fJJGSXWxcE5QYA/i0kSrY/kr/qn+qLXg5Q6MnKNbeMJubJ9xj659GbCKBv
+        zbfpUe4fQLlLy4drDsH+CXdOycZHuCE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-343-K-VgDL2YOb6pEnqau5oD8Q-1; Wed, 11 Dec 2019 08:21:29 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D643C1005516;
+        Wed, 11 Dec 2019 13:21:27 +0000 (UTC)
+Received: from coeurl.usersys.redhat.com (ovpn-123-90.rdu2.redhat.com [10.10.123.90])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8E4BD643E4;
+        Wed, 11 Dec 2019 13:21:27 +0000 (UTC)
+Received: by coeurl.usersys.redhat.com (Postfix, from userid 1000)
+        id 04E5F20AE5; Wed, 11 Dec 2019 08:21:27 -0500 (EST)
+Date:   Wed, 11 Dec 2019 08:21:26 -0500
+From:   Scott Mayhew <smayhew@redhat.com>
+To:     "Schumaker, Anna" <Anna.Schumaker@netapp.com>
+Cc:     "trond.myklebust@hammerspace.com" <trond.myklebust@hammerspace.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dhowells@redhat.com" <dhowells@redhat.com>
+Subject: Re: [PATCH v6 00/27] nfs: Mount API conversion
+Message-ID: <20191211132126.GX4276@coeurl.usersys.redhat.com>
+References: <20191210123115.1655-1-smayhew@redhat.com>
+ <498258bf630d4c2667920f21341a2a6e82a3788d.camel@netapp.com>
 MIME-Version: 1.0
-In-Reply-To: <20191211100338.510-1-li.kai4@h3c.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <498258bf630d4c2667920f21341a2a6e82a3788d.camel@netapp.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: K-VgDL2YOb6pEnqau5oD8Q-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Kai,
+On Tue, 10 Dec 2019, Schumaker, Anna wrote:
 
-Now the problem is more clear to me.
+> Hi Scott,
+>=20
+> On Tue, 2019-12-10 at 07:30 -0500, Scott Mayhew wrote:
+> > Hi Anna, Trond,
+> >=20
+> > Here's a set of patches that converts NFS to use the mount API.  Note t=
+hat
+> > there are a lot of preliminary patches, some from David and some from A=
+l.
+> > The final patch (the one that does the actual conversion) from the Davi=
+d's
+> > initial posting has been split into 5 separate patches, and the entire =
+set
+> > has been rebased on top of v5.5-rc1.
+>=20
+> Thanks for the updated patches! Everything looks okay to me, but I've onl=
+y
+> tested with the legacy mount command. I'm curious if you've tested it usi=
+ng the
+> new system?
 
-Just a few comments inline.
+My testing was also with the legacy mount command.  I can work on
+testing with the new syscalls now.
 
-On 12/11/19 6:03 PM, Kai Li wrote:
-> If journal is dirty when mount, it will be replayed but jbd2 sb
-> log tail cannot be updated to mark a new start because
-> journal->j_flag has already been set with JBD2_ABORT first
-> in journal_init_common. When a new transaction is committed, it
-> will be recored in block 1 first(journal->j_tail is set to 1 in
-> journal_reset).
-> 
-> If emergency restart happens again before journal super block is
-> updated unfortunately, the new recorded trans will not be replayed
-> in the next mount.
+-Scott
 
-So this issue happens before the first committing log iteration  comes 
-(running in jbd2 kernel thread), right?
-This leads jbd2 losing the chance to update *on-disk* journal super 
-block but the dynamic status of journal is still remaining in memory.
+>=20
+> Thanks,
+> Anna
+>=20
+> >=20
+> > Changes since v5:
+> > - fixed possible derefence of error pointer in nfs4_validate_fspath()
+> >   reported by Dan Carpenter
+> > - rebased on top of v5.5-rc1
+> > Changes since v4:
+> > - further split the original "NFS: Add fs_context support" patch (new
+> >   patch is about 25% smaller than the v4 patch)
+> > - fixed NFSv4 referral mounts (broken in the original patch)
+> > - fixed leak of nfs_fattr when fs_context is freed
+> > Changes since v3:
+> > - changed license and copyright text in fs/nfs/fs_context.c
+> > Changes since v2:
+> > - fixed the conversion of the nconnect=3D option
+> > - added '#if IS_ENABLED(CONFIG_NFS_V4)' around nfs4_parse_monolithic()
+> >   to avoid unused-function warning when compiling with v4 disabled
+> > Chagnes since v1:
+> > - split up patch 23 into 4 separate patches
+> >=20
+> > -Scott
+> >=20
+> > Al Viro (15):
+> >   saner calling conventions for nfs_fs_mount_common()
+> >   nfs: stash server into struct nfs_mount_info
+> >   nfs: lift setting mount_info from nfs4_remote{,_referral}_mount
+> >   nfs: fold nfs4_remote_fs_type and nfs4_remote_referral_fs_type
+> >   nfs: don't bother setting/restoring export_path around
+> >     do_nfs_root_mount()
+> >   nfs4: fold nfs_do_root_mount/nfs_follow_remote_path
+> >   nfs: lift setting mount_info from nfs_xdev_mount()
+> >   nfs: stash nfs_subversion reference into nfs_mount_info
+> >   nfs: don't bother passing nfs_subversion to ->try_mount() and
+> >     nfs_fs_mount_common()
+> >   nfs: merge xdev and remote file_system_type
+> >   nfs: unexport nfs_fs_mount_common()
+> >   nfs: don't pass nfs_subversion to ->create_server()
+> >   nfs: get rid of mount_info ->fill_super()
+> >   nfs_clone_sb_security(): simplify the check for server bogosity
+> >   nfs: get rid of ->set_security()
+> >=20
+> > David Howells (8):
+> >   NFS: Move mount parameterisation bits into their own file
+> >   NFS: Constify mount argument match tables
+> >   NFS: Rename struct nfs_parsed_mount_data to struct nfs_fs_context
+> >   NFS: Split nfs_parse_mount_options()
+> >   NFS: Deindent nfs_fs_context_parse_option()
+> >   NFS: Add a small buffer in nfs_fs_context to avoid string dup
+> >   NFS: Do some tidying of the parsing code
+> >   NFS: Add fs_context support.
+> >=20
+> > Scott Mayhew (4):
+> >   NFS: rename nfs_fs_context pointer arg in a few functions
+> >   NFS: Convert mount option parsing to use functionality from
+> >     fs_parser.h
+> >   NFS: Additional refactoring for fs_context conversion
+> >   NFS: Attach supplementary error information to fs_context.
+> >=20
+> >  fs/nfs/Makefile         |    2 +-
+> >  fs/nfs/client.c         |   80 +-
+> >  fs/nfs/fs_context.c     | 1424 +++++++++++++++++++++++++
+> >  fs/nfs/fscache.c        |    2 +-
+> >  fs/nfs/getroot.c        |   73 +-
+> >  fs/nfs/internal.h       |  132 +--
+> >  fs/nfs/namespace.c      |  146 ++-
+> >  fs/nfs/nfs3_fs.h        |    2 +-
+> >  fs/nfs/nfs3client.c     |    6 +-
+> >  fs/nfs/nfs3proc.c       |    2 +-
+> >  fs/nfs/nfs4_fs.h        |    9 +-
+> >  fs/nfs/nfs4client.c     |   99 +-
+> >  fs/nfs/nfs4file.c       |    1 +
+> >  fs/nfs/nfs4namespace.c  |  292 +++---
+> >  fs/nfs/nfs4proc.c       |    2 +-
+> >  fs/nfs/nfs4super.c      |  257 ++---
+> >  fs/nfs/proc.c           |    2 +-
+> >  fs/nfs/super.c          | 2217 +++++----------------------------------
+> >  include/linux/nfs_xdr.h |    9 +-
+> >  19 files changed, 2287 insertions(+), 2470 deletions(-)
+> >  create mode 100644 fs/nfs/fs_context.c
+> >=20
 
-Yes, I agree. We should update on-disk journal super block after journal 
-recovery since that procedure doesn't involve journal status in memory 
-which is just reset to the very beginning(tail and head pointing to the 
-first block) of journal region.
-
-Moreover, during journal recovery running by peer nodes, ocfs2 already 
-does that like what this patch does.
-
-ocfs2_recover_node() -> ocfs2_replay_journal().
-
-Very good job to catch such an exception. :-)
-
-
-> 
-> This exception happens when this lun is used by only one node. If it
-> is used by multi-nodes, other node will replay its journal and its
-> journal sb block will be updated after recovery.
-> 
-> To fix this problem, use jbd2_journal_flush to mark journal as empty as
-> ocfs2_replay_journal has done.
-> 
-> The following jbd2 journal can be generated by touching a new file after
-> journal is replayed, and seq 15 is the first valid commit, but first seq
-> is 13 in journal super block.
-> logdump:
-> Block 0: Journal Superblock
-> Seq: 0   Type: 4 (JBD2_SUPERBLOCK_V2)
-> Blocksize: 4096   Total Blocks: 32768   First Block: 1
-> First Commit ID: 13   Start Log Blknum: 1
-> Error: 0
-> Feature Compat: 0
-> Feature Incompat: 2 block64
-> Feature RO compat: 0
-> Journal UUID: 4ED3822C54294467A4F8E87D2BA4BC36
-> FS Share Cnt: 1   Dynamic Superblk Blknum: 0
-> Per Txn Block Limit    Journal: 0    Data: 0
-> 
-> Block 1: Journal Commit Block
-> Seq: 14   Type: 2 (JBD2_COMMIT_BLOCK)
-> 
-> Block 2: Journal Descriptor
-> Seq: 15   Type: 1 (JBD2_DESCRIPTOR_BLOCK)
-> No. Blocknum        Flags
->   0. 587             none
-> UUID: 00000000000000000000000000000000
->   1. 8257792         JBD2_FLAG_SAME_UUID
->   2. 619             JBD2_FLAG_SAME_UUID
->   3. 24772864        JBD2_FLAG_SAME_UUID
->   4. 8257802         JBD2_FLAG_SAME_UUID
->   5. 513             JBD2_FLAG_SAME_UUID JBD2_FLAG_LAST_TAG
-> ...
-> Block 7: Inode
-> Inode: 8257802   Mode: 0640   Generation: 57157641 (0x3682809)
-> FS Generation: 2839773110 (0xa9437fb6)
-> CRC32: 00000000   ECC: 0000
-> Type: Regular   Attr: 0x0   Flags: Valid
-> Dynamic Features: (0x1) InlineData
-> User: 0 (root)   Group: 0 (root)   Size: 7
-> Links: 1   Clusters: 0
-> ctime: 0x5de5d870 0x11104c61 -- Tue Dec  3 11:37:20.286280801 2019
-> atime: 0x5de5d870 0x113181a1 -- Tue Dec  3 11:37:20.288457121 2019
-> mtime: 0x5de5d870 0x11104c61 -- Tue Dec  3 11:37:20.286280801 2019
-> dtime: 0x0 -- Thu Jan  1 08:00:00 1970
-> ...
-> Block 9: Journal Commit Block
-> Seq: 15   Type: 2 (JBD2_COMMIT_BLOCK)
-> 
-> The following is jouranl recovery log when recovering the upper jbd2
-> journal when mount again.
-> syslog:
-> [ 2265.648622] ocfs2: File system on device (252,1) was not unmounted cleanly, recovering it.
-> [ 2265.649695] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 0
-> [ 2265.650407] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 1
-> [ 2265.650409] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 2
-> [ 2265.650410] fs/jbd2/recovery.c:(jbd2_journal_recover, 278): JBD2: recovery, exit status 0, recovered transactions 13 to 13
-> 
-> Due to first commit seq 13 recorded in journal super is not consistent
-> with the value recorded in block 1(seq is 14), journal recovery will be
-> terminated before seq 15 even though it is an unbroken commit, inode
-> 8257802 is a new file and it will be lost.
-> 
-> Signed-off-by: Kai Li <li.kai4@h3c.com>
-> ---
->   fs/ocfs2/journal.c | 8 ++++++++
->   1 file changed, 8 insertions(+)
-> 
-> diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
-> index 1afe57f425a0..b8b9d26fa731 100644
-> --- a/fs/ocfs2/journal.c
-> +++ b/fs/ocfs2/journal.c
-> @@ -1066,6 +1066,14 @@ int ocfs2_journal_load(struct ocfs2_journal *journal, int local, int replayed)
->   
->   	ocfs2_clear_journal_error(osb->sb, journal->j_journal, osb->slot_num);
->   
-> +	if (replayed) {
-> +		/* wipe the journal */
-> +		jbd2_journal_lock_updates(journal->j_journal);
-> +		status = jbd2_journal_flush(journal->j_journal);
-> +		jbd2_journal_unlock_updates(journal->j_journal);
-> +		mlog(ML_NOTICE, "journal recovery complete, status=%d", status);
-
-Is the above mlog line necessary?
-Can we just log a warning only jbd2_journal_flush() fails and let the 
-mount continue? IMO, the mlog line can't help much.
-
-Otherwise, this patch looks good to me.
-
-
-Thanks,
-Changwei
-
-
-> +	}
-> +
->   	status = ocfs2_journal_toggle_dirty(osb, 1, replayed);
->   	if (status < 0) {
->   		mlog_errno(status);
-> 
