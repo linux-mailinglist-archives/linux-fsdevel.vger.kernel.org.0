@@ -2,101 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06E4B11AE04
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 15:42:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F2B911AE13
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 15:44:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730065AbfLKOl1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Dec 2019 09:41:27 -0500
-Received: from sonic316-54.consmr.mail.gq1.yahoo.com ([98.137.69.30]:39696
-        "EHLO sonic316-54.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729973AbfLKOlZ (ORCPT
+        id S1729897AbfLKOoo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Dec 2019 09:44:44 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36983 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729689AbfLKOoo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Dec 2019 09:41:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1576075283; bh=8NXnEgzl9Hn8ih6NVxBSO6w7sunPtWemBcwEu/MIQmY=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=fsjcTIV9H5UBmlvgJKstt4aT/VgsSf7yCPzptrD0iuurqBijQPf9SpJnVFK30s2Ycx6WiiJ5vWb5xaNBaudYrK5FVORUy9y1N6Lq4pbRgfipFlGZLv6/tinLBRT9cWbuOkykanIr1jciUbo0mLN5d3UnwaJH6qCatvgK3tFU7AEnUxbBXXFBKdCLSGYVK6KAEJbeQPjSDOKv9Bb3ieEF/UcWl9axO8JI8thuE5nKudgH5053ddxAM2nDZvmSdNqK0B2hE24QgdCm8yASCFVItBXYHNvoPk8ssysD75q/fd6xZm10G0UVccXuCqvnk1TCLDHhSg3msuFeLNd5TBz2tw==
-X-YMail-OSG: 7tLwCK8VM1kVE8ixC98XdwHbsJrsuowK0Ze0yHbgVvZa6ezhc58f6EXGiUYOjUo
- AvgARQgxWpqLV1OAf3D2fl_5DMhgK5Ev.ttEquU_oV7eCokz3DaqY_Qu0WCyuDhhoe.VlXjSIVbm
- 5Y.5F2zhwxrWQo4nSq.f8HjwY_c7hRA_OOQ6ywzIT2B34zsJV6Ny9_d_KT_8ehqqkOkTnpdHxzeG
- GhGH8.QNcUaeNNP5J9yLC.nY1Ym1QvatVSdIhcqSA0cH7GLgnEFJ5I1lpKFoUlwJZxW5rpJxnOf0
- Upd9ZV1x5J4_Z7qOWQmE2QxMeQ3btI30By5jXTN61_bO5aQylvOx_Zs04VOX8Y89ZJ2It0hCO0S9
- n6iJlfoV7.owVYOlxTY1f69F9W91EVTG0r8jqAFjS7InWJzhffiRfuEjAoS5X1l2vVTXMY7gA3w.
- 96SADI16lGU1I44jwY8D1XSZl6Jcy5i4gbpQg5kqhIoVfYVYo5pKgvfaLAE.kap5lEj.QvPy8buq
- YrN5hJzFd.IHzCnLMyldBirgqcHDFFgxut1v_Yub8z1eTN1U6jqqNOxSSSiqq2_3WD3.373SyRMA
- Wt5.ik0DP_r90uwwT5kxRyaJfDYRW1Oc8PDtrHWb61hTLUQHtd4RfNSJck9nIpiiMOJJJxSUTNOg
- GPoBIBZ1TlrZoLsYo.Ga_cuvHij58M9LD7yHcl48t_vfQUV6lHKXsjvlUJdl_WVsDDwJzSGILYPm
- sYxKRG4sJBSmxioh1u6VlKMRU4Qa5Y6nVx.9i51cjRtrDeD3a673qQVRb2i7OVtHbFgmsU84B_Vd
- 7yqO3rtnmsGO45TPuMMTOrdQNBVQB.H62evznpNyGJgpr5btZicu4VYFtWFySdrSPrQ2sZmBFPPX
- txqmSEGEm8GyzRCsSMWyvset0sc50Kc3SOTFcsAwtlinDM55dJjAd3Sht3mAF49ttU27GypPpFUP
- 6SzBMznAm6FS6EUxwy4PlXc1HPvF6HkXiffyCsthLUMy0WHG48OYxXeAgl2H1G.d5tqyYbwsNn7W
- FjS9MKf12dXY8FzTo32qAK_0Ng8M9GXVUdvsdb0I7pECxp5aCvEsVbt7FItG4HMBS8ztJPYZ54bE
- p2uwf.B1hmfnt87hZfIkVw3r4m8OXYszcbUqsHX3WhM.BrghCdqycqzRu8O8jJu2fsuSdFx_hWV6
- MMhCq72YiZxrk5xuN7XJeo.18JqmD0l66geIQWB38WxgtbOTN1xfgchBgzW.Bh_QC5Bqlgs.OBQr
- Ia_BVgCLitKrmkzLIiz9p4trv8BhmG2JQ7291iwAdXwRoFB5MgE4ohNYRsGpcSDDE8hgmWkQJqvB
- 6_qUOovThV5EDGgwha5sBn8uY9VkIK.irycx0ed_u0gv7ilE_lZPAm9v8iexz5HMXgN4B3vwhHSW
- E
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.gq1.yahoo.com with HTTP; Wed, 11 Dec 2019 14:41:23 +0000
-Received: by smtp417.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 36f5534268c63ff9379ab7e119e12b1f;
-          Wed, 11 Dec 2019 14:41:18 +0000 (UTC)
-Date:   Wed, 11 Dec 2019 22:41:00 +0800
-From:   Gao Xiang <hsiangkao@aol.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Gao Xiang <gaoxiang25@huawei.com>,
-        Tiezhu Yang <yangtiezhu@loongson.cn>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        linux-fsdevel@vger.kernel.org, ecryptfs@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: Re: [PATCH v5] fs: introduce is_dot_or_dotdot helper for cleanup
-Message-ID: <20191211144055.GA6951@hsiangkao-HP-ZHAN-66-Pro-G1>
-References: <1576030801-8609-1-git-send-email-yangtiezhu@loongson.cn>
- <20191211024858.GB732@sol.localdomain>
- <febbd7eb-5e53-6e7c-582d-5b224e441e37@loongson.cn>
- <20191211044723.GC4203@ZenIV.linux.org.uk>
- <4a90aaa9-18c8-f0a7-19e4-1c5bd5915a28@loongson.cn>
- <20191211071711.GA231266@architecture4>
- <20191211134014.GM32169@bombadil.infradead.org>
+        Wed, 11 Dec 2019 09:44:44 -0500
+Received: by mail-pg1-f195.google.com with SMTP id q127so10883342pga.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 06:44:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0noKfCU616o5aJg1NtSncjkK+qcITrk9Wzz3Uuhs+4A=;
+        b=XQlVEpu/5+hm1CXz95btym65Dq4nyajQDRv9dxux95XhbEsue/bHnBHeL7fH1ggIN0
+         yHhblwjtfodSxqRf+9w4vJ98Oui2Qk8caPMSUNE6nd2bG83aoP9lW6wIacsAnOxoI/YU
+         xEK3mLb1pjWY52mLA3PWZD1dNKQ7Gt6PuyTbm48bEEGzp7f37nh6NSFJlAQzsGOYhJ37
+         P+mkfsTWErCgUjg5btdw4P9ZLcWLSvPxwaxQZ/sYeHJNReSlNHRoC/Nh2HbkfTHLkHuV
+         XVoxE+HtD928lUf8hnfA8/3Q9n4R8teZ1tL05NmcpYDNtYBLCJXXF64f3t6+e34y0Co3
+         rPQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0noKfCU616o5aJg1NtSncjkK+qcITrk9Wzz3Uuhs+4A=;
+        b=aDxzwq3MjxNYbVNgZPpOvtW6+P2D0hPxP0NLJ75FrRddJedyC20KMZ5JYIfKUuQFOg
+         w1X8Q13jo2AGVMQ3OIvuz0p4alr1+7KtfAozS2l4auSyDngaLqTEfdqI6Ouv6tzQ95So
+         DCebZB2B5Jf8NYH5RehZW75+bN4Y4UnoryWbPxEc8ylN8CwA0jmrpEyffP1sXxxhpCNL
+         xzEVwg2emb+F1f4nrSZn03zJ04ysJc65sEKEusGyKxSbYKpd0s3D4ilA29a3NBiAbNkj
+         XNkTi6gxi7PHB9RMci/ZxVzsAmOwmLusqy4PqqwuFP8Uhysq3OpoXdp1kFB3XPun24xy
+         6TXw==
+X-Gm-Message-State: APjAAAUbvaB6UiuI78KpJ2wS/UW7tOvKvB9jCjYrqEqewrSWfWF84b22
+        f1Rfaduw4jKl2LEfqXwu/17lRg==
+X-Google-Smtp-Source: APXvYqwdI1SIycFevQzMpygeUnbYBln4nwDPnIzv35OREB+DT8S/L0C/8VDiyungiINcfSF7M6Q/hw==
+X-Received: by 2002:a63:c12:: with SMTP id b18mr4486272pgl.156.1576075483289;
+        Wed, 11 Dec 2019 06:44:43 -0800 (PST)
+Received: from ?IPv6:2620:10d:c081:1130::1014? ([2620:10d:c090:180::50da])
+        by smtp.gmail.com with ESMTPSA id o23sm3397588pgj.90.2019.12.11.06.44.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2019 06:44:42 -0800 (PST)
+Subject: Re: [PATCH 5/5] iomap: support RWF_UNCACHED for buffered writes
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, willy@infradead.org, clm@fb.com
+References: <20191210204304.12266-1-axboe@kernel.dk>
+ <20191210204304.12266-6-axboe@kernel.dk>
+ <20191211011415.GE19213@dread.disaster.area>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <5d69ac99-b97d-283a-213c-7bbd62c3fc15@kernel.dk>
+Date:   Wed, 11 Dec 2019 07:44:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191211134014.GM32169@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Mailer: WebService/1.1.14728 hermes Apache-HttpAsyncClient/4.1.4 (Java/1.8.0_181)
+In-Reply-To: <20191211011415.GE19213@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Matthew,
-
-On Wed, Dec 11, 2019 at 05:40:14AM -0800, Matthew Wilcox wrote:
-> On Wed, Dec 11, 2019 at 03:17:11PM +0800, Gao Xiang wrote:
-> > > static inline bool is_dot_or_dotdot(const unsigned char *name, size_t len)
-> > > {
-> > >         if (len >= 1 && unlikely(name[0] == '.')) {
-> > 
-> > 
-> > And I suggest drop "unlikely" here since files start with prefix
-> > '.' (plus specical ".", "..") are not as uncommon as you expected...
+On 12/10/19 6:14 PM, Dave Chinner wrote:
+>> @@ -864,15 +896,29 @@ iomap_write_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>>  			 */
+>>  			bytes = min_t(unsigned long, PAGE_SIZE - offset,
+>>  						iov_iter_single_seg_count(i));
+>> +			if (drop_page)
+>> +				put_page(page);
+>>  			goto again;
+>>  		}
+>> +
+>> +		if (drop_page &&
+>> +		    ((pos >> PAGE_SHIFT) != ((pos + copied) >> PAGE_SHIFT))) {
+>> +			if (!pagevec_add(&pvec, page))
+>> +				write_drop_cached_pages(&pvec, mapping);
+>> +		} else {
+>> +			if (drop_page)
+>> +				put_page(page);
+>> +			balance_dirty_pages_ratelimited(inode->i_mapping);
+>> +		}
 > 
-> They absolutely are uncommon.  Even if you just consider
-> /home/willy/kernel/linux/.git/config, only one of those six path elements
-> starts with a '.'.
+> This looks like it's a problem: this is going to write the
+> data, which can cause the extent mapping of the file to change
+> beyond the range that was written (e.g. due to speculative delayed
+> allocation) and so the iomap we have already cached to direct write
+> behaviour may now be stale.
+> 
+> IOWs, to be safe we need to terminate the write loop at this point,
+> return to iomap_apply() and remap the range we are writing into so
+> that we don't end up using a stale iomap. That kinda defeats the
+> purpose of iomap - we are trying to do a single extent mapping per
+> IO instead of per-page, and this pulls it back to an iomap per 16
+> pages for large user IOs. And it has the issues with breaking
+> delayed allocation optimisations, too.
+> 
+> Hence, IMO, this is the wrong layer in iomap to be dealing with
+> writeback and cache residency for uncached IO. We should be caching
+> residency/invalidation at a per-IO level, not a per-page level.
+> 
+> Sure, have the write actor return a flag (e.g. in the iomap) to say
+> that it encountered cached pages so that we can decide whether or
+> not to invalidate the entire range we just wrote in iomap_apply, but
+> doing it between mappings in iomap_apply means that the writeback is
+> done once per user IO, and cache invalidation only occurs if no
+> cached pages were encountered during that IO. i.e. add this to
+> iomap_apply() after ops->iomap_end() has been called:
+> 
+> 
+> 	if (flags & RWF_UNCACHED) {
+> 		ret = filemap_write_and_wait_range(mapping, start, end);
+> 		if (ret)
+> 			goto out;
+> 
+> 		if (!drop_cache)
+> 			goto out;
+> 
+> 		/*
+> 		 * Try to invalidate cache pages for the range we
+> 		 * just wrote. We don't care if invalidation fails
+> 		 * as the write has still worked and leaving clean
+> 		 * uptodate pages * in the page cache isn't a
+> 		 * corruption vector for uncached IO.
+> 		 */
+> 		invalidate_inode_pages2_range(mapping,
+> 				start >> PAGE_SHIFT, end >> PAGE_SHIFT);
+> 	}
+> out:
+> 	return written ? written : ret;
+> }
 
-Okay, I think it depends on userdata and access patterns.
-I admit I have no statistics on all those callers.
+I really like this, and some variant of that solution can also be
+applied to the non-iomap case. It'll make for a cleaner implementation
+as well.
 
-Just considering introducing an inline helper for cleanup, except for
-lookup_one_len_common() (since it's on an error path), others were all
-without unlikely() before.
+Once we do it per-write we'll have solved the performance and iomap
+weirdness, but it does mean that we need to make a decision on when to
+invalidate. For the per-page case it's clear - if the page is already
+there, leave it. If not, (attempt to) kill it. For the full write range,
+what if just one page was not there? Do we invalidate then? What if one
+page was there?
 
-Ignore my words if it seems unreasonable or unlikely() is an improvement
-in this patch and sorry for annoying.
+I'm going to move forward with the notion that if we had to allocate any
+page in the range, we invalidate the range. Only ranges that were fully
+cached already will remain in the cache. I think those semantics make
+the most sense.
 
-Thanks,
-Gao Xiang
+> Note that this doesn't solve the write error return issue. i.e.
+> if filemap_write_and_wait_range() fails, should that error be
+> returned or ignored?
+
+I think we should handle this exactly like we do the O_DIRECT case on
+buffered IO write-and-wait.
+
+> And that leads to my next question: what data integrity guarantees
+> does RWF_UNCACHED give? What if the underlying device has a volatile
+> write cache or we dirtied metadata during block allocation? i.e.  to
+> a user, "UNCACHED" kinda implies that the write has ended up on
+> stable storage because they are saying "do not cache this data". To
+> me, none of this implementation guarantees data integrity, and users
+> would still need O_DSYNC or fsync() with RWF_UNCACHED IO. That seems
+> sane to me (same as direct io requirements) but whatever is decided
+> here, it will need to be spelled out clearly in the man page so that 
+> users don't get it wrong.
+
+Fully agree, this isn't about data integrity guarantees. You will still
+need the appropriate sync magic to make it safe. This is exactly like
+O_DIRECT, and I think we should retain those exact same semantics for
+the RWF_UNCACHED case.
+
+Thanks for taking a look at this! I'll respin (and re-test) with the
+write side changed.
+
+-- 
+Jens Axboe
 
