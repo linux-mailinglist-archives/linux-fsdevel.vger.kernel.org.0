@@ -2,109 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 532FA11B7B8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 17:10:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E692D11B784
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 17:09:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731046AbfLKPMF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Dec 2019 10:12:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32964 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731039AbfLKPMF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:12:05 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18F20208C3;
-        Wed, 11 Dec 2019 15:12:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077124;
-        bh=za5x0gKKJydKjxfapHivmpXqDyIB5gTeC2ysaPAS+RU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=koMbm9jlBsbDUD5X7KyhEW1r61E6Suj67FNuxIlsW/zREujZJyxNJtSP+K9obMpan
-         1d+BPnsmd34S/WLo+TP1IRAC6JB8KnX9EjOzsKPoTIpFGUXiDS/BtwInJGVWNaGLhI
-         70FDkgqs5L3hB41g6p0AnBy2bDD4EypqcxLUh2TU=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        syzbot+3c01db6025f26530cf8d@syzkaller.appspotmail.com,
-        =?UTF-8?q?Andreas=20Gr=C3=BCnbacher?= 
-        <andreas.gruenbacher@gmail.com>, Sasha Levin <sashal@kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 013/134] splice: only read in as much information as there is pipe buffer space
-Date:   Wed, 11 Dec 2019 10:09:49 -0500
-Message-Id: <20191211151150.19073-13-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191211151150.19073-1-sashal@kernel.org>
-References: <20191211151150.19073-1-sashal@kernel.org>
+        id S2388883AbfLKQIO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Dec 2019 11:08:14 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:54485 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731122AbfLKQIN (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Dec 2019 11:08:13 -0500
+Received: from callcc.thunk.org (guestnat-104-132-34-105.corp.google.com [104.132.34.105] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xBBG7jbj026860
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 11 Dec 2019 11:07:46 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id A4C13421A48; Wed, 11 Dec 2019 11:07:45 -0500 (EST)
+Date:   Wed, 11 Dec 2019 11:07:45 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Andrea Vai <andrea.vai@unipv.it>,
+        "Schmid, Carsten" <Carsten_Schmid@mentor.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Jens Axboe <axboe@kernel.dk>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        USB list <linux-usb@vger.kernel.org>,
+        SCSI development list <linux-scsi@vger.kernel.org>,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Omar Sandoval <osandov@fb.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Hans Holmberg <Hans.Holmberg@wdc.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: AW: Slow I/O on USB media after commit
+ f664a3cc17b7d0a2bc3b3ab96181e1029b0ec0e6
+Message-ID: <20191211160745.GA129186@mit.edu>
+References: <20191128091712.GD15549@ming.t460p>
+ <f82fd5129e3dcacae703a689be60b20a7fedadf6.camel@unipv.it>
+ <20191129005734.GB1829@ming.t460p>
+ <20191129023555.GA8620@ming.t460p>
+ <320b315b9c87543d4fb919ecbdf841596c8fbcea.camel@unipv.it>
+ <20191203022337.GE25002@ming.t460p>
+ <8196b014b1a4d91169bf3b0d68905109aeaf2191.camel@unipv.it>
+ <20191210080550.GA5699@ming.t460p>
+ <20191211024137.GB61323@mit.edu>
+ <20191211040058.GC6864@ming.t460p>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191211040058.GC6864@ming.t460p>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
+On Wed, Dec 11, 2019 at 12:00:58PM +0800, Ming Lei wrote:
+> I didn't reproduce the issue in my test environment, and follows
+> Andrea's test commands[1]:
+> 
+>   mount UUID=$uuid /mnt/pendrive 2>&1 |tee -a $logfile
+>   SECONDS=0
+>   cp $testfile /mnt/pendrive 2>&1 |tee -a $logfile
+>   umount /mnt/pendrive 2>&1 |tee -a $logfile
+> 
+> The 'cp' command supposes to open/close the file just once, however
+> ext4_release_file() & write pages is observed to run for 4358 times
+> when executing the above 'cp' test.
 
-[ Upstream commit 3253d9d093376d62b4a56e609f15d2ec5085ac73 ]
+Why are we sure the ext4_release_file() / _fput() is coming from the
+cp command, as opposed to something else that might be running on the
+system under test?  _fput() is called by the kernel when the last
+reference to a struct file is released.  (Specifically, if you have a
+fd which is dup'ed, it's only when the last fd corresponding to the
+struct file is closed, and the struct file is about to be released,
+does the file system's f_ops->release function get called.)
 
-Andreas Grünbacher reports that on the two filesystems that support
-iomap directio, it's possible for splice() to return -EAGAIN (instead of
-a short splice) if the pipe being written to has less space available in
-its pipe buffers than the length supplied by the calling process.
+So the first question I'd ask is whether there is anything else going
+on the system, and whether the writes are happening to the USB thumb
+drive, or to some other storage device.  And if there is something
+else which is writing to the pendrive, maybe that's why no one else
+has been able to reproduce the OP's complaint....
 
-Months ago we fixed splice_direct_to_actor to clamp the length of the
-read request to the size of the splice pipe.  Do the same to do_splice.
-
-Fixes: 17614445576b6 ("splice: don't read more than available pipe space")
-Reported-by: syzbot+3c01db6025f26530cf8d@syzkaller.appspotmail.com
-Reported-by: Andreas Grünbacher <andreas.gruenbacher@gmail.com>
-Reviewed-by: Andreas Grünbacher <andreas.gruenbacher@gmail.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/splice.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
-
-diff --git a/fs/splice.c b/fs/splice.c
-index 98412721f0562..e509239d7e06a 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -945,12 +945,13 @@ ssize_t splice_direct_to_actor(struct file *in, struct splice_desc *sd,
- 	WARN_ON_ONCE(pipe->nrbufs != 0);
- 
- 	while (len) {
-+		unsigned int pipe_pages;
- 		size_t read_len;
- 		loff_t pos = sd->pos, prev_pos = pos;
- 
- 		/* Don't try to read more the pipe has space for. */
--		read_len = min_t(size_t, len,
--				 (pipe->buffers - pipe->nrbufs) << PAGE_SHIFT);
-+		pipe_pages = pipe->buffers - pipe->nrbufs;
-+		read_len = min(len, (size_t)pipe_pages << PAGE_SHIFT);
- 		ret = do_splice_to(in, &pos, pipe, read_len, flags);
- 		if (unlikely(ret <= 0))
- 			goto out_release;
-@@ -1180,8 +1181,15 @@ static long do_splice(struct file *in, loff_t __user *off_in,
- 
- 		pipe_lock(opipe);
- 		ret = wait_for_space(opipe, flags);
--		if (!ret)
-+		if (!ret) {
-+			unsigned int pipe_pages;
-+
-+			/* Don't try to read more the pipe has space for. */
-+			pipe_pages = opipe->buffers - opipe->nrbufs;
-+			len = min(len, (size_t)pipe_pages << PAGE_SHIFT);
-+
- 			ret = do_splice_to(in, &offset, opipe, len, flags);
-+		}
- 		pipe_unlock(opipe);
- 		if (ret > 0)
- 			wakeup_pipe_readers(opipe);
--- 
-2.20.1
-
+    	      	 	    	     - Ted
