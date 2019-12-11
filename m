@@ -2,132 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AC7911A18A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 03:42:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A68A811A19B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 03:49:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbfLKCmJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Dec 2019 21:42:09 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:54503 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726619AbfLKCmJ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Dec 2019 21:42:09 -0500
-Received: from callcc.thunk.org (guestnat-104-132-34-105.corp.google.com [104.132.34.105] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xBB2fb0M007024
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 10 Dec 2019 21:41:38 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 9BA5D421A48; Tue, 10 Dec 2019 21:41:37 -0500 (EST)
-Date:   Tue, 10 Dec 2019 21:41:37 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Andrea Vai <andrea.vai@unipv.it>,
-        "Schmid, Carsten" <Carsten_Schmid@mentor.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Jens Axboe <axboe@kernel.dk>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        USB list <linux-usb@vger.kernel.org>,
-        SCSI development list <linux-scsi@vger.kernel.org>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Omar Sandoval <osandov@fb.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Hans Holmberg <Hans.Holmberg@wdc.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: AW: Slow I/O on USB media after commit
- f664a3cc17b7d0a2bc3b3ab96181e1029b0ec0e6
-Message-ID: <20191211024137.GB61323@mit.edu>
-References: <cb6e84781c4542229a3f31572cef19ab@SVR-IES-MBX-03.mgc.mentorg.com>
- <c1358b840b3a4971aa35a25d8495c2c8953403ea.camel@unipv.it>
- <20191128091712.GD15549@ming.t460p>
- <f82fd5129e3dcacae703a689be60b20a7fedadf6.camel@unipv.it>
- <20191129005734.GB1829@ming.t460p>
- <20191129023555.GA8620@ming.t460p>
- <320b315b9c87543d4fb919ecbdf841596c8fbcea.camel@unipv.it>
- <20191203022337.GE25002@ming.t460p>
- <8196b014b1a4d91169bf3b0d68905109aeaf2191.camel@unipv.it>
- <20191210080550.GA5699@ming.t460p>
+        id S1727565AbfLKCtB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Dec 2019 21:49:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34736 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726619AbfLKCtA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Dec 2019 21:49:00 -0500
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0DF7205ED;
+        Wed, 11 Dec 2019 02:48:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576032540;
+        bh=yqkl8TN0O59NwfZP2OD2c0ghY0r4F9Diq35NeQInRfE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=N6Mbhyj+zaSmcMmFEcvuAbn1RXZr+9mfbi1gq5t+KWhaDMkXHPd4QmJPAy6aAUcrj
+         2rSpBj0soqrTUIN01JzV7gVd2iu0r43RuzzHf62jss0Iw3umpotijYsugx3sPQ+ltC
+         4KFA6yIXyUlcDslwsYyBzYXbhBt4f/wF3+Zd9F6U=
+Date:   Tue, 10 Dec 2019 18:48:58 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        linux-fsdevel@vger.kernel.org, ecryptfs@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] fs: introduce is_dot_or_dotdot helper for cleanup
+Message-ID: <20191211024858.GB732@sol.localdomain>
+References: <1576030801-8609-1-git-send-email-yangtiezhu@loongson.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191210080550.GA5699@ming.t460p>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <1576030801-8609-1-git-send-email-yangtiezhu@loongson.cn>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 04:05:50PM +0800, Ming Lei wrote:
-> > > The path[2] is expected behaviour. Not sure path [1] is correct,
-> > > given
-> > > ext4_release_file() is supposed to be called when this inode is
-> > > released. That means the file is closed 4358 times during 1GB file
-> > > copying to usb storage.
-> > > 
-> > > [1] insert requests when returning to user mode from syscall
-> > > 
-> > >   b'blk_mq_sched_request_inserted'
-> > >   b'blk_mq_sched_request_inserted'
-> > >   b'dd_insert_requests'
-> > >   b'blk_mq_sched_insert_requests'
-> > >   b'blk_mq_flush_plug_list'
-> > >   b'blk_flush_plug_list'
-> > >   b'io_schedule_prepare'
-> > >   b'io_schedule'
-> > >   b'rq_qos_wait'
-> > >   b'wbt_wait'
-> > >   b'__rq_qos_throttle'
-> > >   b'blk_mq_make_request'
-> > >   b'generic_make_request'
-> > >   b'submit_bio'
-> > >   b'ext4_io_submit'
-> > >   b'ext4_writepages'
-> > >   b'do_writepages'
-> > >   b'__filemap_fdatawrite_range'
-> > >   b'ext4_release_file'
-> > >   b'__fput'
-> > >   b'task_work_run'
-> > >   b'exit_to_usermode_loop'
-> > >   b'do_syscall_64'
-> > >   b'entry_SYSCALL_64_after_hwframe'
-> > >     4358
+On Wed, Dec 11, 2019 at 10:20:01AM +0800, Tiezhu Yang wrote:
+> diff --git a/include/linux/namei.h b/include/linux/namei.h
+> index 7fe7b87..0fd9315 100644
+> --- a/include/linux/namei.h
+> +++ b/include/linux/namei.h
+> @@ -92,4 +92,14 @@ retry_estale(const long error, const unsigned int flags)
+>  	return error == -ESTALE && !(flags & LOOKUP_REVAL);
+>  }
+>  
+> +static inline bool is_dot_or_dotdot(const unsigned char *name, size_t len)
+> +{
+> +	if (unlikely(name[0] == '.')) {
+> +		if (len == 1 || (len == 2 && name[1] == '.'))
+> +			return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+>  #endif /* _LINUX_NAMEI_H */
 
-I'm guessing that your workload is repeatedly truncating a file (or
-calling open with O_TRUNC) and then writing data to it.  When you do
-this, then when the file is closed, we assume that since you were
-replacing the previous contents of a file with new contents, that you
-would be unhappy if the file contents was replaced by a zero length
-file after a crash.  That's because ten years, ago there were a *huge*
-number of crappy applications that would replace a file by reading it
-into memory, truncating it, and then write out the new contents of the
-file.  This could be a high score file for a game, or a KDE or GNOME
-state file, etc.
+I had suggested adding a len >= 1 check to handle the empty name case correctly.
+What I had in mind was
 
-So if someone does open, truncate, write, close, we still immediately
-writing out the data on the close, assuming that the programmer really
-wanted open, truncate, write, fsync, close, but was too careless to
-actually do the right thing.
+static inline bool is_dot_or_dotdot(const unsigned char *name, size_t len)
+{
+	if (len >= 1 && unlikely(name[0] == '.')) {
+		if (len < 2 || (len == 2 && name[1] == '.'))
+			return true;
+	}
 
-Some workaround[1] like this is done by all of the major file systems,
-and was fallout the agreement from the "O_PONIES"[2] controversy.
-This was discussed and agreed to at the 2009 LSF/MM workshop.  (See
-the "rename, fsync, and ponies" section.)
+	return false;
+}
 
-[1] https://bugs.launchpad.net/ubuntu/+source/linux/+bug/317781/comments/45
-[2] https://blahg.josefsipek.net/?p=364
-[3] https://lwn.net/Articles/327601/
+As is, you're proposing that it always dereference the first byte even when
+len=0, which seems like a bad idea for a shared helper function.  Did you check
+whether it's okay for all the existing callers?  fscrypt_fname_disk_to_usr() is
+called from 6 places, did you check all of them?
 
-So if you're seeing a call to filemap_fdatawrite_range as the result
-of a fput, that's why.
+How about keeping the existing optimized code for the hot path in fs/namei.c
+(i.e. not using the helper function), while having the helper function do the
+extra check to handle len=0 correctly?
 
-In any case, this behavior has been around for a decade, and it
-appears to be incidental to your performance difficulties with your
-USB thumbdrive and block-mq.
-
-						- Ted
+- Eric
