@@ -2,112 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C596111A4E8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 08:12:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CFCE11A62D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 09:47:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbfLKHMI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Dec 2019 02:12:08 -0500
-Received: from szxga08-in.huawei.com ([45.249.212.255]:42522 "EHLO huawei.com"
+        id S1727253AbfLKIrj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Dec 2019 03:47:39 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39998 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726487AbfLKHMI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Dec 2019 02:12:08 -0500
-Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.56])
-        by Forcepoint Email with ESMTP id 4ACD0B87F982C67764B5;
-        Wed, 11 Dec 2019 15:12:02 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM403-HUB.china.huawei.com (10.3.20.211) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Wed, 11 Dec 2019 15:12:01 +0800
-Received: from architecture4 (10.160.196.180) by
- dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Wed, 11 Dec 2019 15:12:01 +0800
-Date:   Wed, 11 Dec 2019 15:17:11 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Tiezhu Yang <yangtiezhu@loongson.cn>
-CC:     Al Viro <viro@zeniv.linux.org.uk>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        <linux-fsdevel@vger.kernel.org>, <ecryptfs@vger.kernel.org>,
-        <linux-fscrypt@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: Re: [PATCH v5] fs: introduce is_dot_or_dotdot helper for cleanup
-Message-ID: <20191211071711.GA231266@architecture4>
-References: <1576030801-8609-1-git-send-email-yangtiezhu@loongson.cn>
- <20191211024858.GB732@sol.localdomain>
- <febbd7eb-5e53-6e7c-582d-5b224e441e37@loongson.cn>
- <20191211044723.GC4203@ZenIV.linux.org.uk>
- <4a90aaa9-18c8-f0a7-19e4-1c5bd5915a28@loongson.cn>
+        id S1725973AbfLKIri (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Dec 2019 03:47:38 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5C9CCAD2D;
+        Wed, 11 Dec 2019 08:47:36 +0000 (UTC)
+Subject: Re: [PATCH 8/8] btrfs: remove BTRFS_INODE_READDIO_NEED_LOCK
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-btrfs@vger.kernel.org
+Cc:     hch@infradead.org, darrick.wong@oracle.com, fdmanana@kernel.org,
+        dsterba@suse.cz, jthumshirn@suse.de, linux-fsdevel@vger.kernel.org,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>
+References: <20191210230155.22688-1-rgoldwyn@suse.de>
+ <20191210230155.22688-9-rgoldwyn@suse.de>
+From:   Nikolay Borisov <nborisov@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <49aeb440-698d-d837-2493-525afc515ebb@suse.com>
+Date:   Wed, 11 Dec 2019 10:47:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <4a90aaa9-18c8-f0a7-19e4-1c5bd5915a28@loongson.cn>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.160.196.180]
-X-ClientProxiedBy: dggeme715-chm.china.huawei.com (10.1.199.111) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
+In-Reply-To: <20191210230155.22688-9-rgoldwyn@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 02:38:34PM +0800, Tiezhu Yang wrote:
-> On 12/11/2019 12:47 PM, Al Viro wrote:
-> > On Wed, Dec 11, 2019 at 11:59:40AM +0800, Tiezhu Yang wrote:
-> > 
-> > > static inline bool is_dot_or_dotdot(const unsigned char *name, size_t len)
-> > > {
-> > >          if (len == 1 && name[0] == '.')
-> > >                  return true;
-> > > 
-> > >          if (len == 2 && name[0] == '.' && name[1] == '.')
-> > >                  return true;
-> > > 
-> > >          return false;
-> > > }
-> > > 
-> > > Hi Matthew,
-> > > 
-> > > How do you think? I think the performance influence is very small
-> > > due to is_dot_or_dotdot() is a such short static inline function.
-> > It's a very short inline function called on a very hot codepath.
-> > Often.
-> > 
-> > I mean it - it's done literally for every pathname component of
-> > every pathname passed to a syscall.
-> 
-> OK. I understand. Let us do not use the helper function in fs/namei.c,
-> just use the following implementation for other callers:
-> 
-> static inline bool is_dot_or_dotdot(const unsigned char *name, size_t len)
-> {
->         if (len >= 1 && unlikely(name[0] == '.')) {
 
 
-And I suggest drop "unlikely" here since files start with prefix
-'.' (plus specical ".", "..") are not as uncommon as you expected...
-
-
-Thanks,
-Gao Xiang
-
-
->                 if (len < 2 || (len == 2 && name[1] == '.'))
->                         return true;
->         }
+On 11.12.19 г. 1:01 ч., Goldwyn Rodrigues wrote:
+> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
 > 
->         return false;
-> }
+> Since we now perform direct reads using i_rwsem, we can remove this
+> inode flag used to co-ordinate unlocked reads.
 > 
-> Special thanks for Matthew, Darrick, Al and Eric.
-> If you have any more suggestion, please let me know.
+> The truncate call chain gets the i_rwsem which may conflict with direct
+
+nit: Truncating taking i_rwsem means it's correctly synchronized with
+concurrent DIO reads. So it's protected, just the wording needs to be
+tweaked.
+
+> reads:
+> do_truncate <-- calls inode_lock
+>   notify_change
+>    ->setattr/btrfs_setattr
+>      btrfs_setsize
 > 
-> Thanks,
+> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+> ---
+>  fs/btrfs/btrfs_inode.h | 18 ------------------
+>  fs/btrfs/inode.c       |  5 -----
+>  2 files changed, 23 deletions(-)
 > 
-> Tiezhu Yang
+> diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
+> index 4e12a477d32e..cd8f378ed8e7 100644
+> --- a/fs/btrfs/btrfs_inode.h
+> +++ b/fs/btrfs/btrfs_inode.h
+> @@ -27,7 +27,6 @@ enum {
+>  	BTRFS_INODE_NEEDS_FULL_SYNC,
+>  	BTRFS_INODE_COPY_EVERYTHING,
+>  	BTRFS_INODE_IN_DELALLOC_LIST,
+> -	BTRFS_INODE_READDIO_NEED_LOCK,
+>  	BTRFS_INODE_HAS_PROPS,
+>  	BTRFS_INODE_SNAPSHOT_FLUSH,
+>  };
+> @@ -317,23 +316,6 @@ struct btrfs_dio_private {
+>  			blk_status_t);
+>  };
+>  
+> -/*
+> - * Disable DIO read nolock optimization, so new dio readers will be forced
+> - * to grab i_mutex. It is used to avoid the endless truncate due to
+> - * nonlocked dio read.
+> - */
+> -static inline void btrfs_inode_block_unlocked_dio(struct btrfs_inode *inode)
+> -{
+> -	set_bit(BTRFS_INODE_READDIO_NEED_LOCK, &inode->runtime_flags);
+> -	smp_mb();
+> -}
+> -
+> -static inline void btrfs_inode_resume_unlocked_dio(struct btrfs_inode *inode)
+> -{
+> -	smp_mb__before_atomic();
+> -	clear_bit(BTRFS_INODE_READDIO_NEED_LOCK, &inode->runtime_flags);
+> -}
+> -
+>  /* Array of bytes with variable length, hexadecimal format 0x1234 */
+>  #define CSUM_FMT				"0x%*phN"
+>  #define CSUM_FMT_VALUE(size, bytes)		size, bytes
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index ce53f2889673..4c76a6d5e6a4 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -5273,11 +5273,6 @@ static int btrfs_setsize(struct inode *inode, struct iattr *attr)
+>  
+>  		truncate_setsize(inode, newsize);
+>  
+> -		/* Disable nonlocked read DIO to avoid the endless truncate */
+> -		btrfs_inode_block_unlocked_dio(BTRFS_I(inode));
+> -		inode_dio_wait(inode);
+> -		btrfs_inode_resume_unlocked_dio(BTRFS_I(inode));
+> -
+>  		ret = btrfs_truncate(inode, newsize == oldsize);
+>  		if (ret && inode->i_nlink) {
+>  			int err;
 > 
