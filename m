@@ -2,84 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2257A11A037
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 01:49:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2518D11A04A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 01:56:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726623AbfLKAtd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Dec 2019 19:49:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34076 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725999AbfLKAtc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Dec 2019 19:49:32 -0500
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2ACEC206D5;
-        Wed, 11 Dec 2019 00:49:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576025371;
-        bh=mS7zyk9RzK8MLQp+5nvdMy6P3ysyYQCDC3Bah6kmlfs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=UvC0RIny6iqVEumpqrPw6rq1+xZGMHezDVxIFrfIHyEiEEKaKQc5hGaYaeoZSLVqv
-         OiKjZB9JvOrs5D8lM5PO+WX7OQOLW/u0awaO48QIwAJPLeFa0zJF2HELO5AISWbm2x
-         nMOoibFNiErcex5Kfzt1sOkhZk08/M0uQclzXbn4=
-Date:   Tue, 10 Dec 2019 16:49:29 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?ISO-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?ISO-8859-1?Q?J=E9r?= =?ISO-8859-1?Q?=F4me?= Glisse 
-        <jglisse@redhat.com>, Magnus Karlsson <magnus.karlsson@intel.com>,
-        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        "Paul Mackerras" <paulus@samba.org>, Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 20/26] powerpc: book3s64: convert to pin_user_pages()
- and put_user_page()
-Message-Id: <20191210164929.b3f54fe95c3fc4b6c756e65e@linux-foundation.org>
-In-Reply-To: <61e0c3a5-992e-4571-e22d-d63286ce10ec@nvidia.com>
-References: <20191209225344.99740-1-jhubbard@nvidia.com>
-        <20191209225344.99740-21-jhubbard@nvidia.com>
-        <08f5d716-8b31-b016-4994-19fbe829dc28@nvidia.com>
-        <61e0c3a5-992e-4571-e22d-d63286ce10ec@nvidia.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1726739AbfLKA4y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Dec 2019 19:56:54 -0500
+Received: from mail.loongson.cn ([114.242.206.163]:42742 "EHLO loongson.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726417AbfLKA4y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Dec 2019 19:56:54 -0500
+Received: from [10.130.0.36] (unknown [123.138.236.242])
+        by mail.loongson.cn (Coremail) with SMTP id AQAAf9Dxj9PAPvBdJ2MJAA--.34S3;
+        Wed, 11 Dec 2019 08:56:41 +0800 (CST)
+Subject: Re: [PATCH v4] fs: introduce is_dot_or_dotdot helper for cleanup
+To:     Eric Biggers <ebiggers@kernel.org>
+References: <1575979801-32569-1-git-send-email-yangtiezhu@loongson.cn>
+ <20191210191912.GA99557@gmail.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        linux-fsdevel@vger.kernel.org, ecryptfs@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+From:   Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <98a07d66-8479-f780-89ce-13a6d2c85efd@loongson.cn>
+Date:   Wed, 11 Dec 2019 08:56:32 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
+MIME-Version: 1.0
+In-Reply-To: <20191210191912.GA99557@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: AQAAf9Dxj9PAPvBdJ2MJAA--.34S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxAw1UZFy3Zw1kWr4UAryDGFg_yoW5GrWDpF
+        Z8JFyvyF4xGryUur1Ivr1fAF1Fv393Wr15Cr9xKa4UArnIqr1vqayfCw4Y93Z3XFWrWw4F
+        gan8JFy5C345JFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvEb7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+        A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
+        jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I
+        8E87Iv6xkF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+        F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+        4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xK
+        xwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+        1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+        b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+        vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI
+        42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
+        evJa73UjIFyTuYvjxU2JKsUUUUU
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 9 Dec 2019 21:53:00 -0800 John Hubbard <jhubbard@nvidia.com> wrote:
+On 12/11/2019 03:19 AM, Eric Biggers wrote:
+> On Tue, Dec 10, 2019 at 08:10:01PM +0800, Tiezhu Yang wrote:
+>> diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+>> index 3da3707..ef7eba8 100644
+>> --- a/fs/crypto/fname.c
+>> +++ b/fs/crypto/fname.c
+>> @@ -11,21 +11,11 @@
+>>    * This has not yet undergone a rigorous security audit.
+>>    */
+>>   
+>> +#include <linux/namei.h>
+>>   #include <linux/scatterlist.h>
+>>   #include <crypto/skcipher.h>
+>>   #include "fscrypt_private.h"
+>>   
+>> -static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
+>> -{
+>> -	if (str->len == 1 && str->name[0] == '.')
+>> -		return true;
+>> -
+>> -	if (str->len == 2 && str->name[0] == '.' && str->name[1] == '.')
+>> -		return true;
+>> -
+>> -	return false;
+>> -}
+>> -
+>>   /**
+>>    * fname_encrypt() - encrypt a filename
+>>    *
+>> @@ -255,7 +245,7 @@ int fscrypt_fname_disk_to_usr(struct inode *inode,
+>>   	const struct qstr qname = FSTR_TO_QSTR(iname);
+>>   	struct fscrypt_digested_name digested_name;
+>>   
+>> -	if (fscrypt_is_dot_dotdot(&qname)) {
+>> +	if (is_dot_or_dotdot(qname.name, qname.len)) {
+> There's no need for the 'qname' variable anymore.  Can you please remove it and
+> do:
+>
+> 	if (is_dot_or_dotdot(iname->name, iname->len)) {
 
-> > Correction: this is somehow missing the fixes that resulted from Jan Kara's review (he
-> > noted that we can't take a page lock in this context). I must have picked up the
-> > wrong version of it, when I rebased for -rc1.
-> > 
-> 
-> Andrew, given that the series is now in -mm, what's the preferred way for me to fix this?
-> Send a v9 version of the whole series? Or something else?
+Hi Eric,
 
-I think a full resend is warranted at this time - it's only been in
-there a day and there seem to be quite a number of changes to be made.
+Thanks for your review, I will do it in the v5 patch.
+
+>
+>> diff --git a/include/linux/namei.h b/include/linux/namei.h
+>> index 7fe7b87..aba114a 100644
+>> --- a/include/linux/namei.h
+>> +++ b/include/linux/namei.h
+>> @@ -92,4 +92,14 @@ retry_estale(const long error, const unsigned int flags)
+>>   	return error == -ESTALE && !(flags & LOOKUP_REVAL);
+>>   }
+>>   
+>> +static inline bool is_dot_or_dotdot(const unsigned char *name, size_t len)
+>> +{
+>> +	if (unlikely(name[0] == '.')) {
+>> +		if (len < 2 || (len == 2 && name[1] == '.'))
+>> +			return true;
+>> +	}
+>> +
+>> +	return false;
+>> +}
+> This doesn't handle the len=0 case.  Did you check that none of the users pass
+> in zero-length names?  It looks like fscrypt_fname_disk_to_usr() can, if the
+> directory entry on-disk has a zero-length name.  Currently it will return
+> -EUCLEAN in that case, but with this patch it may think it's the name ".".
+>
+> So I think there needs to either be a len >= 1 check added, *or* you need to
+> make an argument for why it's okay to not care about the empty name case.
+
+Anyway, let me modify the if condition "len < 2" to "len == 1".
+
+static inline bool is_dot_or_dotdot(const unsigned char *name, size_t len)
+{
+         if (unlikely(name[0] == '.')) {
+                 if (len == 1 || (len == 2 && name[1] == '.'))
+                         return true;
+         }
+
+         return false;
+}
+
+I will send v5 patch as soon as possible.
+
+Thanks,
+
+Tiezhu Yang
+
+>
+> - Eric
 
