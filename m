@@ -2,135 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B464F11B140
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 16:30:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44CC011B13D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 16:30:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387675AbfLKP3w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Dec 2019 10:29:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36596 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387925AbfLKP3g (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:29:36 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 555142465B;
-        Wed, 11 Dec 2019 15:29:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576078175;
-        bh=IpzqZ8U2q1cIKIIYL06rQOFBJOT+/SNNiKO5NCgdzgY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0OQ8oQtfkok95UgRMhau9VaKNBP/bUd6S0W0nDNulOuBk0UScPC00KoHk3/bH/WBZ
-         GqyGBftl3p/+vSuyq6Uhp4kgQqRPHA7k4wjb+dF24v0qBNjZkOOpEXdaje1+CH1oSB
-         hWRkUG9wk0hn5FWx05w0LNJ1ygPf8XemjYdMqBfA=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mike Rapoport <rppt@linux.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Daniel Colascione <dancol@google.com>,
-        Jann Horn <jannh@google.com>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Nick Kralevich <nnk@google.com>,
-        Nosh Minwalla <nosh@google.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Tim Murray <timmurray@google.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 58/58] userfaultfd: require CAP_SYS_PTRACE for UFFD_FEATURE_EVENT_FORK
-Date:   Wed, 11 Dec 2019 10:28:31 -0500
-Message-Id: <20191211152831.23507-58-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191211152831.23507-1-sashal@kernel.org>
-References: <20191211152831.23507-1-sashal@kernel.org>
+        id S2387641AbfLKP3t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Dec 2019 10:29:49 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:34317 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732839AbfLKP3s (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:29:48 -0500
+Received: by mail-pj1-f65.google.com with SMTP id j11so7943228pjs.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 07:29:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LqLfKfxDfr9ThyOm7S1FFMSYyKBD7N45F7A7qNmdNr0=;
+        b=rTSGHl4r+r2nUquOl4X1P6mjxf6DJJue9R2uF6r06BuX5SNKubnOS2GOE0GcvYJEWV
+         JPLfl77WzwgBSKgnRw5NQnJRZ4WKMfFCfksjoFx+sxGxEIJM/SLOsqXG7GDbqLKNPkE2
+         Rpq3U2T1f536DIOijDyiAEoq2P9aYyUzxEVUuDUubXkqimuNg5FWRpuFi+LREg+l6L93
+         5tu3Rrf3PM7hw58oztC6y7V9hNHCH+neTIGcy/VO3c8iJzC8eapKDKSKw/cmywg9CZ8E
+         Z91T9XPei0hvJmqCd7qG++n92W004XeJCM9BdTQ+ijDuuQODyO7tNWRzJUv/49PN/nDB
+         gYpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LqLfKfxDfr9ThyOm7S1FFMSYyKBD7N45F7A7qNmdNr0=;
+        b=XFelYZdTICeSXZ1ypYoyVOVLYe6J00P8N1FEpjUHgPHCDh/Q9QUeqcvrPv4EPk9xdB
+         9eOYoBqku6DrclSV/ly+YpW2UNJBI7INnAjUxL/+tM9u+YBDjSA0e43onsM+ibfTtgz4
+         JwaTmvgMPTkDMexB1I968MRxLqsPVrTN6VYkpqadYo/EtSGu0QgX4duhnAagiZs9BqWM
+         5WPYyEGgxX2cs0Yg24SUlisvIUMPmQf53PnLf2I4QsOTS52GxJghdVCyu2HheYdzzKZY
+         BUUHmKrt6s1MmlJ0XmiDnttzxHo4HPXfH9qWRuX5IkespaKgS8+FhxiKxZ7NfBeG4oVD
+         LUMg==
+X-Gm-Message-State: APjAAAXfGmjJuGvMklBeakc0AUAW3ZhYYLalyDPLDR1xnWf1bWyIoIRs
+        qMK7tnzgGkchOYXH+XaUCoLbHv9I37c=
+X-Google-Smtp-Source: APXvYqx1nknDUWAcCtnWR4lgVgOM29qBVuBTOdNVDNynssnsLxodyXf0nZ5cI9x5HuC2fXenMSA+ug==
+X-Received: by 2002:a17:902:848e:: with SMTP id c14mr4032994plo.36.1576078187819;
+        Wed, 11 Dec 2019 07:29:47 -0800 (PST)
+Received: from x1.thefacebook.com ([2620:10d:c090:180::50da])
+        by smtp.gmail.com with ESMTPSA id n26sm3661882pgd.46.2019.12.11.07.29.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2019 07:29:46 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org
+Cc:     willy@infradead.org, clm@fb.com, torvalds@linux-foundation.org,
+        david@fromorbit.com
+Subject: [PATCHSET v3 0/5] Support for RWF_UNCACHED
+Date:   Wed, 11 Dec 2019 08:29:38 -0700
+Message-Id: <20191211152943.2933-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Mike Rapoport <rppt@linux.ibm.com>
+Recently someone asked me how io_uring buffered IO compares to mmaped
+IO in terms of performance. So I ran some tests with buffered IO, and
+found the experience to be somewhat painful. The test case is pretty
+basic, random reads over a dataset that's 10x the size of RAM.
+Performance starts out fine, and then the page cache fills up and we
+hit a throughput cliff. CPU usage of the IO threads go up, and we have
+kswapd spending 100% of a core trying to keep up. Seeing that, I was
+reminded of the many complaints I here about buffered IO, and the fact
+that most of the folks complaining will ultimately bite the bullet and
+move to O_DIRECT to just get the kernel out of the way.
 
-[ Upstream commit 3c1c24d91ffd536de0a64688a9df7f49e58fadbc ]
+But I don't think it needs to be like that. Switching to O_DIRECT isn't
+always easily doable. The buffers have different life times, size and
+alignment constraints, etc. On top of that, mixing buffered and O_DIRECT
+can be painful.
 
-A while ago Andy noticed
-(http://lkml.kernel.org/r/CALCETrWY+5ynDct7eU_nDUqx=okQvjm=Y5wJvA4ahBja=CQXGw@mail.gmail.com)
-that UFFD_FEATURE_EVENT_FORK used by an unprivileged user may have
-security implications.
+Seems to me that we have an opportunity to provide something that sits
+somewhere in between buffered and O_DIRECT, and this is where
+RWF_UNCACHED enters the picture. If this flag is set on IO, we get the
+following behavior:
 
-As the first step of the solution the following patch limits the availably
-of UFFD_FEATURE_EVENT_FORK only for those having CAP_SYS_PTRACE.
+- If the data is in cache, it remains in cache and the copy (in or out)
+  is served to/from that.
 
-The usage of CAP_SYS_PTRACE ensures compatibility with CRIU.
+- If the data is NOT in cache, we add it while performing the IO. When
+  the IO is done, we remove it again.
 
-Yet, if there are other users of non-cooperative userfaultfd that run
-without CAP_SYS_PTRACE, they would be broken :(
+With this, I can do 100% smooth buffered reads or writes without pushing
+the kernel to the state where kswapd is sweating bullets. In fact it
+doesn't even register.
 
-Current implementation of UFFD_FEATURE_EVENT_FORK modifies the file
-descriptor table from the read() implementation of uffd, which may have
-security implications for unprivileged use of the userfaultfd.
+Comments appreciated! This should work on any standard file system,
+using either the generic helpers or iomap. I have tested ext4 and xfs
+for the right read/write behavior, but no further validation has been
+done yet. Patches are against current git, and can also be found here:
 
-Limit availability of UFFD_FEATURE_EVENT_FORK only for callers that have
-CAP_SYS_PTRACE.
+https://git.kernel.dk/cgit/linux-block/log/?h=buffered-uncached
 
-Link: http://lkml.kernel.org/r/1572967777-8812-2-git-send-email-rppt@linux.ibm.com
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Daniel Colascione <dancol@google.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Lokesh Gidra <lokeshgidra@google.com>
-Cc: Nick Kralevich <nnk@google.com>
-Cc: Nosh Minwalla <nosh@google.com>
-Cc: Pavel Emelyanov <ovzxemul@gmail.com>
-Cc: Tim Murray <timmurray@google.com>
-Cc: Aleksa Sarai <cyphar@cyphar.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/userfaultfd.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+ fs/ceph/file.c          |  2 +-
+ fs/dax.c                |  2 +-
+ fs/ext4/file.c          |  2 +-
+ fs/iomap/apply.c        | 26 ++++++++++-
+ fs/iomap/buffered-io.c  | 54 ++++++++++++++++-------
+ fs/iomap/direct-io.c    |  3 +-
+ fs/iomap/fiemap.c       |  5 ++-
+ fs/iomap/seek.c         |  6 ++-
+ fs/iomap/swapfile.c     |  2 +-
+ fs/nfs/file.c           |  2 +-
+ include/linux/fs.h      |  7 ++-
+ include/linux/iomap.h   | 10 ++++-
+ include/uapi/linux/fs.h |  5 ++-
+ mm/filemap.c            | 95 ++++++++++++++++++++++++++++++++++++-----
+ 14 files changed, 181 insertions(+), 40 deletions(-)
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index a609d480606da..e2b2196fd9428 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -1807,13 +1807,12 @@ static int userfaultfd_api(struct userfaultfd_ctx *ctx,
- 	if (copy_from_user(&uffdio_api, buf, sizeof(uffdio_api)))
- 		goto out;
- 	features = uffdio_api.features;
--	if (uffdio_api.api != UFFD_API || (features & ~UFFD_API_FEATURES)) {
--		memset(&uffdio_api, 0, sizeof(uffdio_api));
--		if (copy_to_user(buf, &uffdio_api, sizeof(uffdio_api)))
--			goto out;
--		ret = -EINVAL;
--		goto out;
--	}
-+	ret = -EINVAL;
-+	if (uffdio_api.api != UFFD_API || (features & ~UFFD_API_FEATURES))
-+		goto err_out;
-+	ret = -EPERM;
-+	if ((features & UFFD_FEATURE_EVENT_FORK) && !capable(CAP_SYS_PTRACE))
-+		goto err_out;
- 	/* report all available features and ioctls to userland */
- 	uffdio_api.features = UFFD_API_FEATURES;
- 	uffdio_api.ioctls = UFFD_API_IOCTLS;
-@@ -1826,6 +1825,11 @@ static int userfaultfd_api(struct userfaultfd_ctx *ctx,
- 	ret = 0;
- out:
- 	return ret;
-+err_out:
-+	memset(&uffdio_api, 0, sizeof(uffdio_api));
-+	if (copy_to_user(buf, &uffdio_api, sizeof(uffdio_api)))
-+		ret = -EFAULT;
-+	goto out;
- }
- 
- static long userfaultfd_ioctl(struct file *file, unsigned cmd,
+Changes since v2:
+- Rework the write side according to Chinners suggestions. Much cleaner
+  this way. It does mean that we invalidate the full write region if just
+  ONE page (or more) had to be created, where before it was more granular.
+  I don't think that's a concern, and on the plus side, we now no longer
+  have to chunk invalidations into 15/16 pages at the time.
+- Cleanups
+
+Changes since v1:
+- Switch to pagevecs for write_drop_cached_pages()
+- Use page_offset() instead of manual shift
+- Ensure we hold a reference on the page between calling ->write_end()
+  and checking the mapping on the locked page
+- Fix XFS multi-page streamed writes, we'd drop the UNCACHED flag after
+  the first page
+
 -- 
-2.20.1
+Jens Axboe
+
 
