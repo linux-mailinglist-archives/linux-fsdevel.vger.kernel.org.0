@@ -2,125 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 834DF11AC9F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 14:58:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB23111ADCE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 15:40:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729228AbfLKN64 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Dec 2019 08:58:56 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:41773 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727554AbfLKN64 (ORCPT
+        id S1730118AbfLKOj1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Dec 2019 09:39:27 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33267 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729686AbfLKOjZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Dec 2019 08:58:56 -0500
-Received: by mail-yw1-f68.google.com with SMTP id l22so8950040ywc.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 05:58:55 -0800 (PST)
+        Wed, 11 Dec 2019 09:39:25 -0500
+Received: by mail-pg1-f196.google.com with SMTP id 6so10881491pgk.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 06:39:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=r2Fl2ODxdeg5fMEhbblJuZIVaZdxfvgpVmuNYieGtAI=;
-        b=F4HW/mYp+O+FtnTn7Sd360WhNNp8iv4Enw/GWAY63yjDSnz9Rdl2vewf83N5zmEP0Q
-         q/WhCByNP+w4mZ43HoqqFn+A1VuN3mffTTDJR3tOHDXrWgxSxi25eHYfTxgA2wUvq53J
-         SB7YI4aiAoIMORXIPkekfJJd3B2gP/35/6uBlUSbcCNdE4FjplJtpfOVFrmNRb/RNVq3
-         1yRN56AWlMwg+C568CtzVy+vkCZuyiOAl0tHMeYq/IPKLmD21k3LzQfvDcVZ5ZU2ZWZJ
-         DbYtSLuqiMwKJK2bFmNUBL/Bv/5XiVuHVbAfAu8TfUl53MfigN1X2QUnNivTUMhIYG0M
-         iPVw==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=JIZ0Z2kz72zIQNA6G4bYzFn40yhbQ+MQB3rkdPMRBVA=;
+        b=ItJvVAGSLpP2Qi+JlwGHdyO1sjXtP2FS1mtHFHhX0wx1Yd51DPvWT7RxgPM5kfmFl2
+         z5h+0QPmcrpRx8D481hiFimlEXuB5e3/Q6Mh5auXLERPFLAXVjjcMTLPfVAJyc4iOcMu
+         NAkddftDmeAyKALkUXIbLZnXkhOA/BzyOz2aSS6ZWODXr2fObOUeB9Pxrul75Zw5LO3o
+         fmvHxpomY5OKDtxH7sLGXx4OFI2EsHcqHnjaG5I9VQpCzMCU0anGQuibyLwlqOFDNEqY
+         NIoPj5cAsWz3bed/Ph/aApEzac2HTpk/om2JSCJPmteYqBbDC4EpQIDy1A4FoTYmNhxv
+         iVig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=r2Fl2ODxdeg5fMEhbblJuZIVaZdxfvgpVmuNYieGtAI=;
-        b=Y7qMMrvMJYHHRtEBIrFanctBWSQPmPvSwaAssPqrH0vf/mZ2pkl73zzl2gg5E+9t7d
-         kOEvhAf5e9TDkZt5EhdK/vamTD3wNarBqEKeXaYQD81ndrCEt04JipI6Geo7H85P3HOO
-         u9llHwey6f3ztfjCatiRX3/F/MZLLyVBVT/Qy6QVTq91X3xt3E6uNqbG4ek5WcJLbS4i
-         DC9rQhkp+2Q1ubJSbYCJBWBS5LrgLaJRCesl9r4Ut28WJ6b136ODRbWpeZ1Tokkm0RdF
-         g1m334vmel0osh1gjTPiFq2dR2OnUunIdY0o9QXZh0ABFC4USL96ZACvQ/2vkUUB+EQK
-         cbvw==
-X-Gm-Message-State: APjAAAV9zPmAuZ3Fe9qybW7n9UO8c4kL1mkaO1zvs7792aAWA8bXCutw
-        Nuu1Klyl0h1JLwORyLRupO47CtET1ONINJP292M=
-X-Google-Smtp-Source: APXvYqwXbkQzQue66vFqHsGAqwn9HvuL+IX+5pdYJvSd+RaOqeV5Zf1npCZrYnwiyC0zRU4U7xriaeCBwusTecQ1ANw=
-X-Received: by 2002:a81:4686:: with SMTP id t128mr2343708ywa.183.1576072735349;
- Wed, 11 Dec 2019 05:58:55 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JIZ0Z2kz72zIQNA6G4bYzFn40yhbQ+MQB3rkdPMRBVA=;
+        b=fOVmqT8lnbVMLbzCcTsSXHoAQVoPHBwFGqPAK47JdrvE8wLgV/25SyQxsJJn8A7B/v
+         Rd5SQjJr2zyJaIQhCFa6Q00339sVorqVXSWlm8ML6cgKEajCAXXC2IQ5KLfZVuM1qaIe
+         EfAmSbjTL4MvMG5G2ojXHqbRHr5gyYuch63ehzf2r5cX53ZaKsMyptcPMbekdi1TFfOT
+         rW/ztasWJRpedn5mQOLMok/wCMxwfhIwKVzkhyoACCe6J8GKrG65uq7FxmtOL7/IRpmh
+         r3ckzBYhgaCuTJr+9WlgwyrmpQ/kx51RkDOZ320sTEzXYPYFadj+cgF0Ra9LUI6n1ar6
+         7reg==
+X-Gm-Message-State: APjAAAUeNKxDMirzD/zRx17xXZvFcSk6d/GWsQpopwPDradxm+5G04fD
+        oZcdLyH7URnOGRklXynTOC17tA==
+X-Google-Smtp-Source: APXvYqyGeiGi1rdrfdXNO/icOwO5gEDSo2Gr7BxhF5G7xiGB1lEMbNYINxHWG76c4XmZgIber6/vfA==
+X-Received: by 2002:a63:ce4b:: with SMTP id r11mr4616880pgi.419.1576075164601;
+        Wed, 11 Dec 2019 06:39:24 -0800 (PST)
+Received: from ?IPv6:2620:10d:c081:1130::1014? ([2620:10d:c090:180::50da])
+        by smtp.gmail.com with ESMTPSA id x197sm3578266pfc.1.2019.12.11.06.39.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2019 06:39:23 -0800 (PST)
+Subject: Re: [PATCH 3/5] mm: make buffered writes work with RWF_UNCACHED
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org
+References: <20191210162454.8608-1-axboe@kernel.dk>
+ <20191210162454.8608-4-axboe@kernel.dk>
+ <20191211002349.GC19213@dread.disaster.area>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <bc595f20-fe12-8b9d-a7d5-53ac4ce6e108@kernel.dk>
+Date:   Wed, 11 Dec 2019 07:39:22 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-References: <CADKPpc2RuncyN+ZONkwBqtW7iBb5ep_3yQN7PKe7ASn8DpNvBw@mail.gmail.com>
- <CAOQ4uxiKqEq9ts4fEq_husQJpus29afVBMq8P1tkeQT-58RBFg@mail.gmail.com>
- <CADKPpc33UGcuRB9p64QoF8g88emqNQB=Z03f+OnK4MiCoeVZpg@mail.gmail.com>
- <20191204173455.GJ8206@quack2.suse.cz> <CAOQ4uxjda6iQ1D0QEVB18TcrttVpd7uac++WX0xAyLvxz0x7Ew@mail.gmail.com>
- <20191204190206.GA8331@bombadil.infradead.org> <CAOQ4uxiZWKCUKcpBt-bHOcnHoFAq+nghWmf94rJu=3CTc5VhRA@mail.gmail.com>
- <20191211100604.GL1551@quack2.suse.cz>
-In-Reply-To: <20191211100604.GL1551@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 11 Dec 2019 15:58:44 +0200
-Message-ID: <CAOQ4uxij13z0AazCm7AzrXOSz_eYBSFhs0mo6eZFW=57wOtwew@mail.gmail.com>
-Subject: Re: File monitor problem
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Mo Re Ra <more7.rev@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Wez Furlong <wez@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191211002349.GC19213@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 12:06 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 04-12-19 22:27:31, Amir Goldstein wrote:
-[...]
-> > The way to frame this correctly IMO is that fsnotify events let application
-> > know that "something has changed", without any ordering guaranty
-> > beyond "sometime before the event was read".
-> >
-> > So far, that "something" can be a file (by fd), an inode (by fid),
-> > more specifically a directory inode (by fid) where in an entry has
-> > changed.
-> >
-> > Adding filename info extends that concept to "something has changed
-> > in the namespace at" (by parent fid+name).
-> > All it means is that application should pay attention to that part of
-> > the namespace and perform a lookup to find out what has changed.
-> >
-> > Maybe the way to mitigate wrong assumptions about ordering and
-> > existence of the filename in the namespace is to omit the event type
-> > for "filename events", for example: { FAN_CHANGE, pfid, name }.
->
-> So this event would effectively mean: In directory pfid, some filename
-> event has happened with name "name" - i.e. "name" was created (could mean
-> also mkdir), deleted, moved. Am I right?
+On 12/10/19 5:23 PM, Dave Chinner wrote:
+> On Tue, Dec 10, 2019 at 09:24:52AM -0700, Jens Axboe wrote:
+>> If RWF_UNCACHED is set for io_uring (or pwritev2(2)), we'll drop the
+>> cache instantiated for buffered writes. If new pages aren't
+>> instantiated, we leave them alone. This provides similar semantics to
+>> reads with RWF_UNCACHED set.
+> 
+> So what about filesystems that don't use generic_perform_write()?
+> i.e. Anything that uses the iomap infrastructure (i.e.
+> iomap_file_buffered_write()) instead of generic_file_write_iter())
+> will currently ignore RWF_UNCACHED. That's XFS and gfs2 right now,
+> but there are likely to be more in the near future as more
+> filesystems are ported to the iomap infrastructure.
 
-Exactly.
+I'll skip this one as you found it.
 
-> And the application would then
-> open_by_handle(2) + open_at(2) + fstat(2) the object pointed to by
+> I'd also really like to see extensive fsx and fstress testing of
+> this new IO mode before it is committed - this is going to exercise page
+> cache coherency across different operations in new and unique
+> ways. that means we need patches to fstests to detect and use this
+> functionality when available, and new tests that explicitly exercise
+> combinations of buffered, mmap, dio and uncached for a range of
+> different IO size and alignments (e.g. mixing sector sized uncached
+> IO with page sized buffered/mmap/dio and vice versa).
+> 
+> We are not going to have a repeat of the copy_file_range() data
+> corruption fuckups because no testing was done and no test
+> infrastructure was written before the new API was committed.
 
-open_by_handle(2) + fstatat(2) to be exact.
+Oh I totally agree, and there's no push from my end on this. I just
+think it's a cool feature and could be very useful, but it obviously
+needs a healthy dose of testing and test cases written. I'll be doing
+that as well.
 
-> (pfid, name) pair and copy whatever it finds to the other end (or delete on
-> the other end in case of ENOENT)?
+>> +void write_drop_cached_pages(struct page **pgs, struct address_space *mapping,
+>> +			     unsigned *nr)
+>> +{
+>> +	loff_t start, end;
+>> +	int i;
+>> +
+>> +	end = 0;
+>> +	start = LLONG_MAX;
+>> +	for (i = 0; i < *nr; i++) {
+>> +		struct page *page = pgs[i];
+>> +		loff_t off;
+>> +
+>> +		off = (loff_t) page_to_index(page) << PAGE_SHIFT;
+>> +		if (off < start)
+>> +			start = off;
+>> +		if (off > end)
+>> +			end = off;
+>> +		get_page(page);
+>> +	}
+>> +
+>> +	__filemap_fdatawrite_range(mapping, start, end, WB_SYNC_NONE);
+>> +
+>> +	for (i = 0; i < *nr; i++) {
+>> +		struct page *page = pgs[i];
+>> +
+>> +		lock_page(page);
+>> +		if (page->mapping == mapping) {
+>> +			wait_on_page_writeback(page);
+>> +			if (!page_has_private(page) ||
+>> +			    try_to_release_page(page, 0))
+>> +				remove_mapping(mapping, page);
+>> +		}
+>> +		unlock_page(page);
+>> +	}
+>> +	*nr = 0;
+>> +}
+>> +EXPORT_SYMBOL_GPL(write_drop_cached_pages);
+>> +
+>> +#define GPW_PAGE_BATCH		16
+> 
+> In terms of performance, file fragmentation and premature filesystem
+> aging, this is also going to suck *really badly* for filesystems
+> that use delayed allocation because it is going to force conversion
+> of delayed allocation extents during the write() call. IOWs,
+> it adds all the overheads of doing delayed allocation, but it reaps
+> none of the benefits because it doesn't allow large contiguous
+> extents to build up in memory before physical allocation occurs.
+> i.e. there is no "delayed" in this allocation....
+> 
+> So it might work fine on a pristine, empty filesystem where it is
+> easy to find contiguous free space accross multiple allocations, but
+> it's going to suck after a few months of production usage has
+> fragmented all the free space into tiny pieces...
 
-Basically, yes.
-Although a modern sync tool may also keep some local map of
-remote name -> local fid, to detect a local rename and try to perform a
-remote rename.
+I totally agree on this one, and I'm not a huge fan of it. But
+considering your suggestion in the other email, I think we just need to
+move this up a notch and do it per-write instead. If we can pass back
+information about the state of the page cache for the range we care
+about, then there's no reason to do it per-page for the write case.
+Reads are still best done that way, and we can avoid the LRU overhead by
+doing it that way.
 
->
-> After some thought, yes, I think this is difficult to misuse (or infer some
-> false guarantees out of it). As far as I was thinking it also seems good
-> enough to implement more efficient syncing of directories.
+-- 
+Jens Axboe
 
-Great, so I will work on the patches.
-
-> Mohammad, would
-> this kind of event be enough for your needs? Frankly, I'd like to see a
-> sample program (say dir-tree-sync) that uses this event before merging the
-> kernel change so that we can verify that indeed this event is usable for
-> practical purposes in a race-free way...
->
-
-I will prepare demo code for the new API based on inotifywatch.
-Mohammad, if you like you could use the demo code to present a sync tool.
-I am hoping to be able to integrate the new API with Watchman as a demo.
-
-Thanks,
-Amir.
