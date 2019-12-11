@@ -2,135 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7B7911A050
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 02:00:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C7AA11A05F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 02:14:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbfLKBA4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Dec 2019 20:00:56 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:37590 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726362AbfLKBA4 (ORCPT
+        id S1726522AbfLKBOU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Dec 2019 20:14:20 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:43833 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726364AbfLKBOU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Dec 2019 20:00:56 -0500
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20191211010053epoutp02f25786dbeb90c7af47330ec8e6ea095b~fK1hWgeSG2237522375epoutp02X
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 01:00:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20191211010053epoutp02f25786dbeb90c7af47330ec8e6ea095b~fK1hWgeSG2237522375epoutp02X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1576026053;
-        bh=CC498m850tFquLPcTmQ5XpqjyiunPoHhTcbaYQMlE7s=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=Nwfe1Cuz8R0HwlE1QpCLbaaC0gLj5zo8XU3LJXV2zdsglzbsnThZWI2/v9yPfz60w
-         0zr3oji0oJSoTM+lQp/2CfBuHleUb4UZZG9fVRpj9kut/xSOxfyv+AUK5SsDiHaThN
-         /95t3NieBgzZVKYpcnOQf0MTnxq6ln3/KpwHxSE8=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191211010052epcas1p1b768c4a9f1512fa3bc62959899d51e1f~fK1g_aIgC0668406684epcas1p1t;
-        Wed, 11 Dec 2019 01:00:52 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.166]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 47XdsH3D9JzMqYkj; Wed, 11 Dec
-        2019 01:00:51 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A6.39.57028.3CF30FD5; Wed, 11 Dec 2019 10:00:51 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20191211010050epcas1p1ea5ea7a401edb561a02854199611433b~fK1fbV6AB0665906659epcas1p10;
-        Wed, 11 Dec 2019 01:00:50 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191211010050epsmtrp1b20b5bb2e8420c0563e1b686240146aa~fK1fal4D33087630876epsmtrp1K;
-        Wed, 11 Dec 2019 01:00:50 +0000 (GMT)
-X-AuditID: b6c32a35-4f3ff7000001dec4-3e-5df03fc3cf12
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        87.62.10238.2CF30FD5; Wed, 11 Dec 2019 10:00:50 +0900 (KST)
-Received: from DONAMJAEJEO06 (unknown [10.88.104.63]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191211010050epsmtip1557b59908bbfd8fb32580c3775c31ab9~fK1fOHKr41680016800epsmtip1n;
-        Wed, 11 Dec 2019 01:00:50 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'Vyacheslav Dubeyko'" <slava@dubeyko.com>
-Cc:     <gregkh@linuxfoundation.org>, <valdis.kletnieks@vt.edu>,
-        <hch@lst.de>, <sj1557.seo@samsung.com>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-In-Reply-To: <e234c599ec452ed81fb703c69adf60c1e57062dd.camel@dubeyko.com>
-Subject: RE: [PATCH v6 05/13] exfat: add file operations
-Date:   Wed, 11 Dec 2019 10:00:50 +0900
-Message-ID: <002a01d5afbe$6e64e250$4b2ea6f0$@samsung.com>
+        Tue, 10 Dec 2019 20:14:20 -0500
+Received: from dread.disaster.area (pa49-195-139-249.pa.nsw.optusnet.com.au [49.195.139.249])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 6BDCB3A17C3;
+        Wed, 11 Dec 2019 12:14:16 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1ieqZz-0006ks-OJ; Wed, 11 Dec 2019 12:14:15 +1100
+Date:   Wed, 11 Dec 2019 12:14:15 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, willy@infradead.org, clm@fb.com
+Subject: Re: [PATCH 5/5] iomap: support RWF_UNCACHED for buffered writes
+Message-ID: <20191211011415.GE19213@dread.disaster.area>
+References: <20191210204304.12266-1-axboe@kernel.dk>
+ <20191210204304.12266-6-axboe@kernel.dk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 14.0
-Thread-Index: AQJ4BHLZ9o05RvmzeddUXNtWjOPDsAGOqq8IAu+ci5ICERQsxqY69XBw
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHeXfOzo7S6jRXPhjIOtEHtdnmduwU2lVk0QWpPlmyDu6wSbu1
-        s0laxMhayzIb3UjLrMhKA0Usb4mk3Sw0r5GR4AeDNFG7WlTa5rHy2+953///ubzvQ2KK20QU
-        mWV38y47Z6WJcPx+a4xa3bpuIkPT1Q5s3o1Kgr1T8VjCPmhqw9mehssEWzP1SMp+qimWsN3j
-        E/h6meFh5ShuaL5yV2Zo7PcShtM15cjwuTra0FI7SqQR6dYkC8+ZeJeKt2c6TFl2czK9Zadx
-        k5FJ1GjV2tXsKlpl52x8Mp2yNU2dmmUN9kKrsjmrJ3iUxgkCvXJtksvhcfMqi0NwJ9O802R1
-        ajXOeIGzCR67OT7TYVuj1WgSmKByr9VSNnlV4jwqOzBWGkBeVCfNR2EkUHoIPB/G81E4qaDq
-        EDwvvCAVg08Iznf+mA2+IfD1dv2zXAhUyMSLJgSDtW8kYjCCoON6/YyKoNQw9auZCLGSiodn
-        VS+xkAijbiMYGj8bdJBkGLUZjh0xhzCCYuHo9PqQHKeWQ19B9YxVTq2Gzp57mMgLoe3SEB5i
-        jIqDsmsfMLEhFdS1f0ChNEoqFV6/2i5KlFB8wjdTFahJAjpKOglRnwJVI02zHAEjT2tkIkfB
-        cKFPFsoD1EH42Dyb3o/g/WSyyDror6yShiQYFQOVDSvF46VQ//MKEsvOh7Gvp6RiFjn4fQpR
-        shxOd7dKRF4C+ccnZGcQXTRnrqI5cxXNGaDof7FShJejxbxTsJl5QevUzv3qajSzpbFMHTrX
-        sbUFUSSi58lLa8czFFIuW8ixtSAgMVopf+oby1DITVxOLu9yGF0eKy+0ICb47AEsalGmI7jz
-        drdRyyTodDpWn7gqkdHRkXLye1eGgjJzbn4fzzt511+fhAyL8iJv/dXfyvCuBaoVU2WWtwPT
-        /oZdA3c0228p/SUb9hTsNxIR75I8kdz8hLxhRnUJz9/cA+lff5n46B2Fx158SUG7N0pPbhvq
-        LdzmL2VTk655dExaOn3xjbfv8IuPzurRxuNPojOXpj/sZwY9jcVxAX35zbbIXIP+0I+8Ev2y
-        6YJsGhcsnDYWcwncH0at/ty7AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMIsWRmVeSWpSXmKPExsWy7bCSnO4h+w+xBmuuG1o0L17PZrFy9VEm
-        iz17T7JYXN41h81iy78jrBaftsxmsrj0/gOLA7vHwfVvWDz2z13D7rH7ZgObR9+WVYwenzfJ
-        eRza/oYtgC2KyyYlNSezLLVI3y6BK+P4myPsBZ/YKhYs/cfSwLiMtYuRk0NCwERi2sTV7F2M
-        XBxCArsZJc7cmcgOkZCWOHbiDHMXIweQLSxx+HAxRM0LRom1pxeB1bAJ6Er8+7OfDcQWEdCT
-        OLHhPDNIEbPAOkaJ5ff3sEF0/GKUODHrM9gkTgFPidamdBBTWMBCouW/A0gvi4CqxNXeTWBz
-        eAUsJS5c3soMYQtKnJz5hAXEZhbQluh92MoIYy9b+JoZ4k4FiR1nXzOCjBQRcJO4cc0PokRE
-        YnZnG/MERuFZSCbNQjJpFpJJs5C0LGBkWcUomVpQnJueW2xYYJiXWq5XnJhbXJqXrpecn7uJ
-        ERxVWpo7GC8viT/EKMDBqMTDu2D7+1gh1sSy4srcQ4wSHMxKIrzH297FCvGmJFZWpRblxxeV
-        5qQWH2KU5mBREud9mncsUkggPbEkNTs1tSC1CCbLxMEp1cAYJzCrVKNr3RW1Ryfr5y9saL3s
-        o5t9s/KEwv/O95yrnrLumN0iw6rj6v+k6476+ilzF12/2Vn/IEg71P9GmTbH/IiXHAzZZjcd
-        lrI52X5JrH9uNY8lbLLljgSd9besKzT2CFafKJpzvUIssuuD8pe4TyrCB2vZq3f335r56pue
-        yiLGVV/uBM9VYinOSDTUYi4qTgQA9vEQMqYCAAA=
-X-CMS-MailID: 20191211010050epcas1p1ea5ea7a401edb561a02854199611433b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191209065500epcas1p3da26ef7963bbba978ed614bc19b2ea07
-References: <20191209065149.2230-1-namjae.jeon@samsung.com>
-        <CGME20191209065500epcas1p3da26ef7963bbba978ed614bc19b2ea07@epcas1p3.samsung.com>
-        <20191209065149.2230-6-namjae.jeon@samsung.com>
-        <e234c599ec452ed81fb703c69adf60c1e57062dd.camel@dubeyko.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191210204304.12266-6-axboe@kernel.dk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
+        a=KoypXv6BqLCQNZUs2nCMWg==:117 a=KoypXv6BqLCQNZUs2nCMWg==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=pxVhFHJ0LMsA:10
+        a=7-415B0cAAAA:8 a=jrjSQ4xLuvOdQEvsSiwA:9 a=1EYIUCybxSlyurgE:21
+        a=lqDuZKyFASzqTwhE:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Dec 10, 2019 at 01:43:04PM -0700, Jens Axboe wrote:
+> This adds support for RWF_UNCACHED for file systems using iomap to
+> perform buffered writes. We use the generic infrastructure for this,
+> by tracking pages we created and calling write_drop_cached_pages()
+> to issue writeback and prune those pages.
+> 
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+.....
+>  static loff_t
+>  iomap_write_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  		unsigned flags, struct iomap *iomap, struct iomap *srcmap)
+>  {
+> +	struct address_space *mapping = inode->i_mapping;
+>  	struct iov_iter *i = data;
+> +	struct pagevec pvec;
+>  	long status = 0;
+>  	ssize_t written = 0;
+>  
+> +	pagevec_init(&pvec);
+> +
 
-> > +	/* Of the r and x bits, all (subject to umask) must be
-> > present.*/
-> > +	if ((perm & 0555) =21=3D (i_mode & 0555))
-I modified it due to warnning alarm from checkpatch.pl.
-Other octal permissions are same reason.
-WARNING: Symbolic permissions 'S_IRUGO =7C S_IXUGO' are not preferred. Cons=
-ider using octal permissions '0555'.
-+       if ((perm & (S_IRUGO =7C S_IXUGO)) =21=3D (i_mode & (S_IRUGO =7C S_=
-IXUGO)))
+Ok, so the actor is called after we've already mapped and allocated
+an extent of arbitrary length. It may be a delalloc extent, it might
+be unwritten, it could be a COW mapping, etc.
 
-> > +	/* update the directory entry */
-> > +	if (=21evict) =7B
-> > +		es =3D exfat_get_dentry_set(sb, &(ei->dir), ei->entry,
-> > +				ES_ALL_ENTRIES, &ep);
-> > +		if (=21es)
-> > +			return -EIO;
-> > +		ep2 =3D ep + 1;
->=20
-> The ep2 could point out on the garbage here. Maybe, it makes sense to
-> add some check here?
-Could you please elaborate more? How could ep2 be the garbage?
-I want you to check exfat_get_dentry_set().
+>  	do {
+>  		struct page *page;
+>  		unsigned long offset;	/* Offset into pagecache page */
+>  		unsigned long bytes;	/* Bytes to write to page */
+>  		size_t copied;		/* Bytes copied from user */
+> +		bool drop_page = false;	/* drop page after IO */
+> +		unsigned lflags = flags;
+>  
+>  		offset = offset_in_page(pos);
+>  		bytes = min_t(unsigned long, PAGE_SIZE - offset,
+> @@ -832,10 +851,17 @@ iomap_write_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  			break;
+>  		}
+>  
+> -		status = iomap_write_begin(inode, pos, bytes, 0, &page, iomap,
+> -				srcmap);
+> -		if (unlikely(status))
+> +retry:
+> +		status = iomap_write_begin(inode, pos, bytes, lflags, &page,
+> +						iomap, srcmap);
+> +		if (unlikely(status)) {
+> +			if (status == -ENOMEM && (lflags & IOMAP_UNCACHED)) {
+> +				drop_page = true;
+> +				lflags &= ~IOMAP_UNCACHED;
+> +				goto retry;
+> +			}
+>  			break;
+> +		}
+>  
+>  		if (mapping_writably_mapped(inode->i_mapping))
+>  			flush_dcache_page(page);
+> @@ -844,10 +870,16 @@ iomap_write_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  
+>  		flush_dcache_page(page);
+>  
+> +		if (drop_page)
+> +			get_page(page);
+> +
+>  		status = iomap_write_end(inode, pos, bytes, copied, page, iomap,
+>  				srcmap);
+> -		if (unlikely(status < 0))
+> +		if (unlikely(status < 0)) {
+> +			if (drop_page)
+> +				put_page(page);
+>  			break;
+> +		}
+>  		copied = status;
+>  
+>  		cond_resched();
+> @@ -864,15 +896,29 @@ iomap_write_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  			 */
+>  			bytes = min_t(unsigned long, PAGE_SIZE - offset,
+>  						iov_iter_single_seg_count(i));
+> +			if (drop_page)
+> +				put_page(page);
+>  			goto again;
+>  		}
+> +
+> +		if (drop_page &&
+> +		    ((pos >> PAGE_SHIFT) != ((pos + copied) >> PAGE_SHIFT))) {
+> +			if (!pagevec_add(&pvec, page))
+> +				write_drop_cached_pages(&pvec, mapping);
+> +		} else {
+> +			if (drop_page)
+> +				put_page(page);
+> +			balance_dirty_pages_ratelimited(inode->i_mapping);
+> +		}
 
-Thanks for your review=21
+This looks like it's a problem: this is going to write the
+data, which can cause the extent mapping of the file to change
+beyond the range that was written (e.g. due to speculative delayed
+allocation) and so the iomap we have already cached to direct write
+behaviour may now be stale.
 
+IOWs, to be safe we need to terminate the write loop at this point,
+return to iomap_apply() and remap the range we are writing into so
+that we don't end up using a stale iomap. That kinda defeats the
+purpose of iomap - we are trying to do a single extent mapping per
+IO instead of per-page, and this pulls it back to an iomap per 16
+pages for large user IOs. And it has the issues with breaking
+delayed allocation optimisations, too.
+
+Hence, IMO, this is the wrong layer in iomap to be dealing with
+writeback and cache residency for uncached IO. We should be caching
+residency/invalidation at a per-IO level, not a per-page level.
+
+Sure, have the write actor return a flag (e.g. in the iomap) to say
+that it encountered cached pages so that we can decide whether or
+not to invalidate the entire range we just wrote in iomap_apply, but
+doing it between mappings in iomap_apply means that the writeback is
+done once per user IO, and cache invalidation only occurs if no
+cached pages were encountered during that IO. i.e. add this to
+iomap_apply() after ops->iomap_end() has been called:
+
+
+	if (flags & RWF_UNCACHED) {
+		ret = filemap_write_and_wait_range(mapping, start, end);
+		if (ret)
+			goto out;
+
+		if (!drop_cache)
+			goto out;
+
+		/*
+		 * Try to invalidate cache pages for the range we
+		 * just wrote. We don't care if invalidation fails
+		 * as the write has still worked and leaving clean
+		 * uptodate pages * in the page cache isn't a
+		 * corruption vector for uncached IO.
+		 */
+		invalidate_inode_pages2_range(mapping,
+				start >> PAGE_SHIFT, end >> PAGE_SHIFT);
+	}
+out:
+	return written ? written : ret;
+}
+
+Note that this doesn't solve the write error return issue. i.e.
+if filemap_write_and_wait_range() fails, should that error be
+returned or ignored?
+
+And that leads to my next question: what data integrity guarantees
+does RWF_UNCACHED give? What if the underlying device has a volatile
+write cache or we dirtied metadata during block allocation? i.e.  to
+a user, "UNCACHED" kinda implies that the write has ended up on
+stable storage because they are saying "do not cache this data". To
+me, none of this implementation guarantees data integrity, and users
+would still need O_DSYNC or fsync() with RWF_UNCACHED IO. That seems
+sane to me (same as direct io requirements) but whatever is decided
+here, it will need to be spelled out clearly in the man page so that 
+users don't get it wrong.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
