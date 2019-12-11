@@ -2,40 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE70311BCC5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 20:19:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 796A311BCE3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 20:27:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726828AbfLKTTJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Dec 2019 14:19:09 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:58470 "EHLO
+        id S1727494AbfLKT1j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Dec 2019 14:27:39 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:25963 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726312AbfLKTTI (ORCPT
+        by vger.kernel.org with ESMTP id S1726986AbfLKT1j (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Dec 2019 14:19:08 -0500
+        Wed, 11 Dec 2019 14:27:39 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576091947;
+        s=mimecast20190719; t=1576092457;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=BlDJNCA6ZoBIkrCGwvA4FngOXsmK80m4cZkfxwhQPmc=;
-        b=Ayy0NxfTk6MdHEasQzu4eEwUSwynLhsHHUQbTLzj0HkZR+ldz7Bd94F1IEy/UiPCw821ma
-        3tmU+Dqg6gE5K07XfPglAxcDlQ/2YYU3K0vRSNagKRJF4PktXBbSWF4SN1NOcAwrXlnVpj
-        8NE5DhOvWJBU+ROoYDwtsKkRjyrqTyE=
+        bh=XNQw4Y2kapgDmnu+g3AZai6iWwGe85veYjXrJTQwlTI=;
+        b=GvtQh8mNpltHP3TXW6PYcGPaMHFxKLu8xKdz4OXeKRaOxpYpysaa8mnMbDSQz+Nxk9pN9J
+        2eJ9GDwV3YNLAWiwC7WIouKnRgB/cAJY5ssTfpc3AnZRgZ1ANnjqmj1b2cIrsSeotN1zh9
+        EZClzUdviVW1aeue9q7oN9Vn7dyV5O4=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-118-gjyUqDkpPduaAA03JW3ayA-1; Wed, 11 Dec 2019 14:19:05 -0500
-X-MC-Unique: gjyUqDkpPduaAA03JW3ayA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+ us-mta-402-3YyjY2YlNUeqATZ2pRD2_Q-1; Wed, 11 Dec 2019 14:27:34 -0500
+X-MC-Unique: 3YyjY2YlNUeqATZ2pRD2_Q-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2637C1005516;
-        Wed, 11 Dec 2019 19:19:03 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DF46B80258A;
+        Wed, 11 Dec 2019 19:27:31 +0000 (UTC)
 Received: from [10.36.116.75] (ovpn-116-75.ams2.redhat.com [10.36.116.75])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9B5795DA70;
-        Wed, 11 Dec 2019 19:18:56 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 064776293B;
+        Wed, 11 Dec 2019 19:27:25 +0000 (UTC)
 Subject: Re: [PATCH V2 1/3] dcache: add a new enum type for
  'dentry_d_lock_class'
+From:   David Hildenbrand <david@redhat.com>
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     Matthew Wilcox <willy@infradead.org>,
         "yukuai (C)" <yukuai3@huawei.com>, gregkh@linuxfoundation.org,
@@ -52,7 +53,7 @@ References: <20191130020225.20239-1-yukuai3@huawei.com>
  <20191208191142.GU4203@ZenIV.linux.org.uk>
  <c8a66d9d-63b6-58db-23b5-148122d606ca@redhat.com>
  <20191211184630.GD4203@ZenIV.linux.org.uk>
-From:   David Hildenbrand <david@redhat.com>
+ <fdefd516-c469-7874-31cf-bc60596e777c@redhat.com>
 Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
  mQINBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
  dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
@@ -97,42 +98,50 @@ Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
  njnuI31KBiLUks+paRkHQlFcgS2N3gkRBzH7xSZ+t7Re3jvXdXEzKBbQ+dC3lpJB0wPnyMcX
  FOTT3aZT7IgePkt5iC/BKBk3hqKteTnJFeVIT7EC+a6YUFg=
 Organization: Red Hat GmbH
-Message-ID: <fdefd516-c469-7874-31cf-bc60596e777c@redhat.com>
-Date:   Wed, 11 Dec 2019 20:18:55 +0100
+Message-ID: <739889bb-60c6-e528-c4d5-21acafa30987@redhat.com>
+Date:   Wed, 11 Dec 2019 20:27:25 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20191211184630.GD4203@ZenIV.linux.org.uk>
+In-Reply-To: <fdefd516-c469-7874-31cf-bc60596e777c@redhat.com>
 Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11.12.19 19:46, Al Viro wrote:
-> On Wed, Dec 11, 2019 at 04:55:56PM +0100, David Hildenbrand wrote:
-> 
-> [snip]
-> 
->> The patch in linux-next
+On 11.12.19 20:18, David Hildenbrand wrote:
+> On 11.12.19 19:46, Al Viro wrote:
+>> On Wed, Dec 11, 2019 at 04:55:56PM +0100, David Hildenbrand wrote:
 >>
->> commit 653f0d05be0948e7610bb786e6570bb6c48a4e75 (HEAD, refs/bisect/bad)
-> 
-> ... is no longer there.  commit a3d1e7eb5abe3aa1095bc75d1a6760d3809bd672
-> is; could you check if it fixes your reproducer?
-> 
+>> [snip]
+>>
+>>> The patch in linux-next
+>>>
+>>> commit 653f0d05be0948e7610bb786e6570bb6c48a4e75 (HEAD, refs/bisect/ba=
+d)
+>>
+>> ... is no longer there.  commit a3d1e7eb5abe3aa1095bc75d1a6760d3809bd6=
+72
+>> is; could you check if it fixes your reproducer?
+>>
+>=20
+> desktop: ~/git/linux memory_holes $ git fetch next
+> desktop: ~/git/linux memory_holes $ git show
+> a3d1e7eb5abe3aa1095bc75d1a6760d3809bd672
+> fatal: bad object a3d1e7eb5abe3aa1095bc75d1a6760d3809bd672
+>=20
+> I'll go hunt for that commit :) ... guess it will show up in -next soon=
+.
+>=20
 
-desktop: ~/git/linux memory_holes $ git fetch next
-desktop: ~/git/linux memory_holes $ git show
-a3d1e7eb5abe3aa1095bc75d1a6760d3809bd672
-fatal: bad object a3d1e7eb5abe3aa1095bc75d1a6760d3809bd672
+Found it on vfs.git - seems to do its job in my setup (booting Fedora 31
+with custom kernel in QEMU).
 
-I'll go hunt for that commit :) ... guess it will show up in -next soon.
-
--- 
+--=20
 Thanks,
 
 David / dhildenb
