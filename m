@@ -2,92 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E692D11B784
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 17:09:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D26711B8D3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Dec 2019 17:32:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388883AbfLKQIO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Dec 2019 11:08:14 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:54485 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731122AbfLKQIN (ORCPT
+        id S1730130AbfLKQbM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Dec 2019 11:31:12 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:52254 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729522AbfLKQbM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Dec 2019 11:08:13 -0500
-Received: from callcc.thunk.org (guestnat-104-132-34-105.corp.google.com [104.132.34.105] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xBBG7jbj026860
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 11 Dec 2019 11:07:46 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id A4C13421A48; Wed, 11 Dec 2019 11:07:45 -0500 (EST)
-Date:   Wed, 11 Dec 2019 11:07:45 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Andrea Vai <andrea.vai@unipv.it>,
-        "Schmid, Carsten" <Carsten_Schmid@mentor.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Jens Axboe <axboe@kernel.dk>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        USB list <linux-usb@vger.kernel.org>,
-        SCSI development list <linux-scsi@vger.kernel.org>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Omar Sandoval <osandov@fb.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Hans Holmberg <Hans.Holmberg@wdc.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: AW: Slow I/O on USB media after commit
- f664a3cc17b7d0a2bc3b3ab96181e1029b0ec0e6
-Message-ID: <20191211160745.GA129186@mit.edu>
-References: <20191128091712.GD15549@ming.t460p>
- <f82fd5129e3dcacae703a689be60b20a7fedadf6.camel@unipv.it>
- <20191129005734.GB1829@ming.t460p>
- <20191129023555.GA8620@ming.t460p>
- <320b315b9c87543d4fb919ecbdf841596c8fbcea.camel@unipv.it>
- <20191203022337.GE25002@ming.t460p>
- <8196b014b1a4d91169bf3b0d68905109aeaf2191.camel@unipv.it>
- <20191210080550.GA5699@ming.t460p>
- <20191211024137.GB61323@mit.edu>
- <20191211040058.GC6864@ming.t460p>
+        Wed, 11 Dec 2019 11:31:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
+        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=7HvcTjE6EdC7yltRqiqqah/kodynClz3aRQRp8aRgEY=; b=NXPY98qGOhJENLSsyhO72Is0Y
+        u65NujtGA75NJD/hJUO8HPitfwjN78pkQZCl6rXf3hC2VZkJabei+vzL4kYuiGPC7reyOc/oSYBT5
+        Y3MeSG5+WuLGhQuBadXDWuXDJ0rY0O/Z6apD8vcXu+vkA7aZnzAOct1SzaEzhHJeNk2zOR11nFi3Y
+        iBteCHssgklWW7Iw+7jF306zMWZPxJGHFk2N1XQbmrJO1jkT9Yw1vp29D9zHMTAVcLIKuVhgRRBES
+        qJ9ujl/+gJtFN3bb0qpO9EOn1+vvVQuamvZ5i/ioT58HbniCfTNa8zYWIxq/PNag8W2YtTtvf1iPn
+        37ERdQIRQ==;
+Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1if4tJ-0002Ac-BO; Wed, 11 Dec 2019 16:31:09 +0000
+Subject: Re: mmotm 2019-12-10-19-14 uploaded (objtool: func() falls through)
+To:     Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <20191211031432.iyKVQ6m9n%akpm@linux-foundation.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <07777464-b9d8-ff1d-41d9-f62cc44f09f3@infradead.org>
+Date:   Wed, 11 Dec 2019 08:31:08 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191211040058.GC6864@ming.t460p>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191211031432.iyKVQ6m9n%akpm@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 12:00:58PM +0800, Ming Lei wrote:
-> I didn't reproduce the issue in my test environment, and follows
-> Andrea's test commands[1]:
+On 12/10/19 7:14 PM, Andrew Morton wrote:
+> The mm-of-the-moment snapshot 2019-12-10-19-14 has been uploaded to
 > 
->   mount UUID=$uuid /mnt/pendrive 2>&1 |tee -a $logfile
->   SECONDS=0
->   cp $testfile /mnt/pendrive 2>&1 |tee -a $logfile
->   umount /mnt/pendrive 2>&1 |tee -a $logfile
+>    http://www.ozlabs.org/~akpm/mmotm/
 > 
-> The 'cp' command supposes to open/close the file just once, however
-> ext4_release_file() & write pages is observed to run for 4358 times
-> when executing the above 'cp' test.
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+> 
+> You will need quilt to apply these patches to the latest Linus release (5.x
+> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> http://ozlabs.org/~akpm/mmotm/series
+> 
+> The file broken-out.tar.gz contains two datestamp files: .DATE and
+> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> followed by the base kernel version against which this patch series is to
+> be applied.
 
-Why are we sure the ext4_release_file() / _fput() is coming from the
-cp command, as opposed to something else that might be running on the
-system under test?  _fput() is called by the kernel when the last
-reference to a struct file is released.  (Specifically, if you have a
-fd which is dup'ed, it's only when the last fd corresponding to the
-struct file is closed, and the struct file is about to be released,
-does the file system's f_ops->release function get called.)
+on x86_64:
 
-So the first question I'd ask is whether there is anything else going
-on the system, and whether the writes are happening to the USB thumb
-drive, or to some other storage device.  And if there is something
-else which is writing to the pendrive, maybe that's why no one else
-has been able to reproduce the OP's complaint....
+drivers/hwmon/f71882fg.o: warning: objtool: f71882fg_update_device() falls through to next function show_pwm_auto_point_temp_hyst()
+drivers/ide/ide-probe.o: warning: objtool: hwif_register_devices() falls through to next function hwif_release_dev()
+drivers/ide/ide-probe.o: warning: objtool: ide_host_remove() falls through to next function ide_disable_port()
 
-    	      	 	    	     - Ted
+
+-- 
+~Randy
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
