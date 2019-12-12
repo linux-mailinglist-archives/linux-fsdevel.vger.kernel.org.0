@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3C2D11C225
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 02:29:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 183A811C227
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 02:30:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbfLLB3w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Dec 2019 20:29:52 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38987 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727391AbfLLB3v (ORCPT
+        id S1727411AbfLLBa4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Dec 2019 20:30:56 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43603 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727351AbfLLBaz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Dec 2019 20:29:51 -0500
-Received: by mail-pg1-f193.google.com with SMTP id b137so260958pga.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 17:29:51 -0800 (PST)
+        Wed, 11 Dec 2019 20:30:55 -0500
+Received: by mail-pf1-f194.google.com with SMTP id h14so210182pfe.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 17:30:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=DhyX9yKmk3Bjq16+cH6CFIH0oBue170bHYeXiMOQ8dA=;
-        b=tBcfwgxJPBhRRcAGhCQgQbyfTfpQsyiGY9DGe/XHH2/qbpQARxKq7yWjGdvqo1IllS
-         dEWH4g1714qg29h4GEZigEfbqrKvxMzRE9LNVpEFK2NyrdjbNtkxs6UWbtUszECnOQ0D
-         VEoKTKtnfhk/vEZGeDpWMdwNOGh8La+bbktv7kvota82pgoXLzk3sL28vntZlDhqgkLX
-         +EyfDp8OYP1xKcWrZTib+Ng+VSUqbKeEhhTBmOwpw+Ojk7X5nKqyrRMXwloZOmKkzPiZ
-         +9yGgbU006bu6ndm0cPeWABAqJMpqOiOI+vxaISk+h/Wium9aaoWX5gz51q7TBIt5Pl3
-         er3Q==
+        bh=IJPEtyzhZidGS2TDF5UHDm6IlR5MghzdNBnmbPSNEo4=;
+        b=S/7cyjie54XBy/hArCv6T4A7Bor9inO/ZNcOMf6/OTQe+W/dVAOqvxDFMVsL2TPJ1M
+         BxUwDY2olMgNOND1g42vdqbyHt2rQOu4MGlAQ1rkNaadzL2uaQpoGw+JqTKAE1fKXmUl
+         xjPW507Y+GgufzxHyTA7FzzGfiH0yTDGpe0F+wqIBT/ViUNbyvyXjhKn3AT3dAzlvnZX
+         GlVBEPAbfWbpEo8fUQioDdBob4Bsx16jhup9qtnto0Ge3Un65iQN4lMxgoAFPfviMPYN
+         DC68f9XuVS3ADsICBn7gGgO+PG4BXwwzpOs+Miz7n4GrZHJu9ChoiwpWmW6KWddXgem4
+         zFVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=DhyX9yKmk3Bjq16+cH6CFIH0oBue170bHYeXiMOQ8dA=;
-        b=J4IMAnGBfAiTrtQ96Nqb/TQ3eqEzHt536PMngLsY7yg4WLi5gsyHy8bFe1y+5zABnG
-         +/N6IlIIHSo5jHkjCMePsz2cPR1CZhI8o+WvqZYtNMTOMh8Epo7/41ym448S5O40Abif
-         2HiLy2HNR11ewwQp00KBF0mzSVMev/9sDoRSYpQ8i0F2N1pUUeKAj/Xk/rcLJJdHi1nP
-         /81CMn919Q9qUFSzF+FjmPqgOt+LV1Zf6OFlV83cEeECgDHjv1+0Bd67wMV+E7zCo0mV
-         GjjcfKmveK3yL45xb3g2YNlcg5XD3uyQq8bxhMUS92PLZJRYMGXLj5ngjyVAzhGG9SS2
-         TaEg==
-X-Gm-Message-State: APjAAAXSnUDqWEpQSsIN9JWfxNhi+aj9KONfePCI16CBFnYcs5Edxaof
-        BsxKGuT9QykFfOaVjPP08HszYQ==
-X-Google-Smtp-Source: APXvYqwIZT80qb6KK6M7DWfi9Y0s3aK7ho5OWU9hmanRrqTeBJgLbXHTk13enGqUZ5WC+TJcO9HU0Q==
-X-Received: by 2002:a63:fd0a:: with SMTP id d10mr7322984pgh.197.1576114191223;
-        Wed, 11 Dec 2019 17:29:51 -0800 (PST)
+        bh=IJPEtyzhZidGS2TDF5UHDm6IlR5MghzdNBnmbPSNEo4=;
+        b=YWpsbTbk/EE6whdFR4Oq7j1Gvbq0W3SPEmcIfIregFCD6ouOcbuwVD5iCYFnDkEihv
+         4I5YdVNJYGDrKX8N3syAfrjzAvXSpAvtppSvsmJUNPorHi2D58oWM5Q9Iga3CnlI1bkA
+         hHqrDhAw7Vx5rBBIFBcISbYorkI7GuYEWF+g9qw1ClvJ7kC85tIHRkGrz7xAej5gEjRK
+         IVW0+WNlwTLAGLnE3LIksNABQidCowhCXn2EZXDvr3OH7CaNnZzWFxFYrF0zZh8B61sT
+         zJBNfLei/34mht8S8Egva8uWQlNS0jAziuECCBvkGnAZn8HyeYxCy5zk95qwTnhJP4D+
+         ZC2g==
+X-Gm-Message-State: APjAAAUDAmcreuENC0Uu7V3b/bwkqLxm9SDWy9eYKwe2d6zcCZ/BYp97
+        jRUvolCXf63MmlD2Ut3rCUl2hQ==
+X-Google-Smtp-Source: APXvYqzksgTVuqBLGRiL2fpMnw1dJBEdBT87utGfQubHJUD1xblSlpC07LEp4C+G/oheM+P4WOiuWA==
+X-Received: by 2002:a62:243:: with SMTP id 64mr7284697pfc.49.1576114255171;
+        Wed, 11 Dec 2019 17:30:55 -0800 (PST)
 Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id z14sm2580858pfg.57.2019.12.11.17.29.48
+        by smtp.gmail.com with ESMTPSA id k3sm4131707pgc.3.2019.12.11.17.30.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2019 17:29:50 -0800 (PST)
+        Wed, 11 Dec 2019 17:30:54 -0800 (PST)
 Subject: Re: [PATCHSET v3 0/5] Support for RWF_UNCACHED
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Linux-MM <linux-mm@kvack.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         linux-block <linux-block@vger.kernel.org>,
         Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
+        Dave Chinner <david@fromorbit.com>
 References: <20191211152943.2933-1-axboe@kernel.dk>
  <CAHk-=wjz3LE1kznro1dozhk9i9Dr4pCnkj7Fuccn2xdWeGHawQ@mail.gmail.com>
  <d0adcde2-3106-4fea-c047-4d17111bab70@kernel.dk>
@@ -61,17 +61,14 @@ References: <20191211152943.2933-1-axboe@kernel.dk>
  <CAHk-=wje8i3DVcO=fMC4tzKTS5+eHv0anrVZa_JENQt08T=qCQ@mail.gmail.com>
  <0d4e3954-c467-30a7-5a8e-7c4180275533@kernel.dk>
  <CAHk-=whk4bcVPvtAv5OmHiW5z6AXgCLFhO4YrXD7o0XC+K-aHw@mail.gmail.com>
- <fef996ca-a4ed-9633-1f79-91292a984a20@kernel.dk>
- <CAHk-=wg=hHUFg3i0vDmKEg8HFbEKquAsoC8CJoZpP-8_A1jZDA@mail.gmail.com>
- <1c93194a-ed91-c3aa-deb5-a3394805defb@kernel.dk>
- <CAHk-=wj0pXsngjWKw5p3oTvwkNnT2DyoZWqPB+-wBY+BGTQ96w@mail.gmail.com>
+ <20191211210401.GA158617@cmpxchg.org>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d8a8ea42-7f76-926c-ae9a-d49b11578153@kernel.dk>
-Date:   Wed, 11 Dec 2019 18:29:46 -0700
+Message-ID: <052a73a4-353a-05fc-8c21-41efbe234ece@kernel.dk>
+Date:   Wed, 11 Dec 2019 18:30:52 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wj0pXsngjWKw5p3oTvwkNnT2DyoZWqPB+-wBY+BGTQ96w@mail.gmail.com>
+In-Reply-To: <20191211210401.GA158617@cmpxchg.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -80,48 +77,42 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/11/19 6:22 PM, Linus Torvalds wrote:
-> On Wed, Dec 11, 2019 at 5:11 PM Jens Axboe <axboe@kernel.dk> wrote:
+On 12/11/19 2:04 PM, Johannes Weiner wrote:
+> On Wed, Dec 11, 2019 at 12:18:38PM -0800, Linus Torvalds wrote:
+>> On Wed, Dec 11, 2019 at 12:08 PM Jens Axboe <axboe@kernel.dk> wrote:
+>>>
+>>> $ cat /proc/meminfo | grep -i active
+>>> Active:           134136 kB
+>>> Inactive:       28683916 kB
+>>> Active(anon):      97064 kB
+>>> Inactive(anon):        4 kB
+>>> Active(file):      37072 kB
+>>> Inactive(file): 28683912 kB
 >>
->> 15K is likely too slow to really show an issue, I'm afraid. The 970
->> is no slouch, but your crypt setup will likely hamper it a lot. You
->> don't have a non-encrypted partition on it?
+>> Yeah, that should not put pressure on some swap activity. We have 28
+>> GB of basically free inactive file data, and the VM is doing something
+>> very very bad if it then doesn't just quickly free it with no real
+>> drama.
 > 
-> No. I normally don't need all that much disk, so I've never upgraded
-> my ssd from the 512G size.
+> I was looking at this with Jens offline last week. One thing to note
+> is the rate of IO that Jens is working with: combined with the low
+> cache hit rate, it was pushing upwards of half a million pages through
+> the page cache each second.
 > 
-> Which means that it's actually half full or so, and I never felt like
-> "I should keep an unencrypted partition for IO testing", since I don't
-> generally _do_ any IO testing.
+> There isn't anything obvious sticking out in the kswapd profile: it's
+> dominated by cache tree deletions (or rather replacing pages with
+> shadow entries, hence the misleading xas_store()), tree lock
+> contention, etc. - all work that a direct reclaimer would have to do
+> as well, with one exceptions: RWC_UNCACHED doesn't need to go through
+> the LRU list, and 8-9% of kswapd cycles alone are going into
+> physically getting pages off the list. (And I suspect part of that is
+> also contention over the LRU lock as kswapd gets overwhelmed and
+> direct reclaim kicks in).
 > 
-> I can get my load up with "numjobs=8" and get my iops up to the 100k
-> range, though.
-> 
-> But kswapd doesn't much seem to care, the CPU percentage actually does
-> _down_ to 0.39% when I try that. Probably simply because now my CPU's
-> are busy, so they are running at 4.7Ghz instead of the 800Mhz "mostly
-> idle" state ...
-> 
-> I guess I should be happy. It does mean that the situation you see
-> isn't exactly the normal case. I understand why you want to do the
-> non-cached case, but the case I think it the worrisome one is the
-> regular buffered one, so that's what I'm testing (not even trying the
-> noaccess patches).
-> 
-> So from your report I went "uhhuh, that sounds like a bug". And it
-> appears that it largely isn't - you're seeing it because of pushing
-> the IO subsystem by another order of magnitude (and then I agree that
-> "under those kinds of IO loads, caching just won't help")
+> Jens, how much throughput difference does kswapd vs RWC_UNCACHED make?
 
-I'd very much argue that it IS a bug, maybe just doesn't show on your
-system. My test box is a pretty standard 2 socket system, 24 cores / 48
-threads, 2 nodes. The last numbers I sent were 100K IOPS, so nothing
-crazy, and granted that's only 10% kswapd cpu time, but that still seems
-very high for those kinds of rates. I'm surprised you see essentially no
-kswapd time for the same data rate.
-
-We'll keep poking here, I know Johannes is spending some time looking
-into the reclaim side.
+It's not huge, like 5-10%. The CPU usage is the most noticable,
+particularly at the higher IO rates.
 
 -- 
 Jens Axboe
