@@ -2,339 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98B9B11D74D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 20:42:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6813C11D79C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 21:02:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730633AbfLLTml (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Dec 2019 14:42:41 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57976 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730284AbfLLTmk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Dec 2019 14:42:40 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5457BB226;
-        Thu, 12 Dec 2019 19:42:37 +0000 (UTC)
-Date:   Thu, 12 Dec 2019 13:42:34 -0600
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        darrick.wong@oracle.com, fdmanana@kernel.org, dsterba@suse.cz,
-        jthumshirn@suse.de, nborisov@suse.com
-Subject: Re: [PATCH 3/8] btrfs: Switch to iomap_dio_rw() for dio
-Message-ID: <20191212194234.jbdfe5u4bflb4cgu@fiona>
-References: <20191212003043.31093-1-rgoldwyn@suse.de>
- <20191212003043.31093-4-rgoldwyn@suse.de>
- <20191212094940.GC15977@infradead.org>
+        id S1730756AbfLLUCC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Dec 2019 15:02:02 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:57941 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730284AbfLLUCC (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 12 Dec 2019 15:02:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576180920;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=hb8TmGk+a9HjoYdlVzo58zXnc/ROW/PTOkZPr16nz2Q=;
+        b=IaavmPRt9zNg8iW4gvdsBXazkxV31bY8w4kWt4F8RAwDzahv/MaMYNybAzUihp+S709/7c
+        CjKnS3e3gjvK8D0shsT7V4wS+DuUcR7JLja4AQD7koqgR6S8wG4fhPU0+unFyCs9L/9idh
+        vLl8HfASEWU6rZ42Hhuml+T1x+JHR2s=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-218-GvloIGRDNkSGG3P1G2piyQ-1; Thu, 12 Dec 2019 15:01:59 -0500
+X-MC-Unique: GvloIGRDNkSGG3P1G2piyQ-1
+Received: by mail-qt1-f197.google.com with SMTP id l4so172985qte.18
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2019 12:01:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=hb8TmGk+a9HjoYdlVzo58zXnc/ROW/PTOkZPr16nz2Q=;
+        b=M0R1PXF/7Qt3NfNA8dvVDQBwaqMm/qToob9dYddPN6peyhBy4qqiubRz10ycV7C0l0
+         82KTRDImfbj2wBmdqFi/vk2uBOibC5y38TH7ARUly12vzk2ZqcJE5fDQXaoxtaJeGExI
+         KG6jQsbXfbv+tYqFwql8RDxZoskpMwf933iixoyqe8Wu8FMJ9qrul57yuuKuUTUS5uz8
+         kTbF++q+AB+I6PyCdoiKBdI2TEkVag6sB8dnfoR5HQJ4jbCrxFM9wIJBAE9SZ12i0D5l
+         3V9syVbp4UJTrDXPw0kK5GvboaX/i78XnEW9AmLeVpxvXUYS4zHT2Ai1YQE2X5Vjoh6T
+         eDPw==
+X-Gm-Message-State: APjAAAUPwe662OcMDWBGopDBES5UjgkDWOSTss8aDiKMq/dqE/EvW776
+        LUB/eFpLvZVXO2qMdafE2D/10naF9+EwvEMN+tfPUBRahqkM7WEW/MKwJY9eiXxUgb/2ArXsZGT
+        i4LMHMKje6K1pmkogTls0Jrx38Q==
+X-Received: by 2002:a37:65c8:: with SMTP id z191mr10018888qkb.176.1576180918814;
+        Thu, 12 Dec 2019 12:01:58 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwAvAkoCbeKTQnT+w3TgLyOTd0Fj7dn/2e/2ltCsdsrrquGwZiDl6tub5yxZG3D4TI1/gPcZg==
+X-Received: by 2002:a37:65c8:: with SMTP id z191mr10018819qkb.176.1576180918172;
+        Thu, 12 Dec 2019 12:01:58 -0800 (PST)
+Received: from [192.168.1.157] (pool-96-235-39-235.pitbpa.fios.verizon.net. [96.235.39.235])
+        by smtp.gmail.com with ESMTPSA id f19sm2075294qkk.69.2019.12.12.12.01.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2019 12:01:57 -0800 (PST)
+Subject: Re: [PATCH] vfs: Don't reject unknown parameters
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Jeremi Piotrowski <jeremi.piotrowski@gmail.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20191212145042.12694-1-labbott@redhat.com>
+ <CAOi1vP9E2yLeFptg7o99usEi=x3kf=NnHYdURXPhX4vTXKCTCQ@mail.gmail.com>
+ <fbe90a0b-cf24-8c0c-48eb-6183852dfbf1@redhat.com>
+ <CAHk-=wh7Wuk9QCP6oH5Qc1a89_X6H1CHRK_OyB4NLmX7nRYJeA@mail.gmail.com>
+From:   Laura Abbott <labbott@redhat.com>
+Message-ID: <cf4c9634-1503-d182-cb12-810fb969bc96@redhat.com>
+Date:   Thu, 12 Dec 2019 15:01:56 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191212094940.GC15977@infradead.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAHk-=wh7Wuk9QCP6oH5Qc1a89_X6H1CHRK_OyB4NLmX7nRYJeA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On  1:49 12/12, Christoph Hellwig wrote:
-> On Wed, Dec 11, 2019 at 06:30:38PM -0600, Goldwyn Rodrigues wrote:
-> > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> > 
-> > Switch from __blockdev_direct_IO() to iomap_dio_rw().
-> > Rename btrfs_get_blocks_direct() to btrfs_dio_iomap_begin() and use it
-> > as iomap_begin() for iomap direct I/O functions. This function
-> > allocates and locks all the blocks required for the I/O.
-> > btrfs_submit_direct() is used as the submit_io() hook for direct I/O
-> > ops.
-> > 
-> > Since we need direct I/O reads to go through iomap_dio_rw(), we change
-> > file_operations.read_iter() to a btrfs_file_read_iter() which calls
-> > btrfs_direct_IO() for direct reads and falls back to
-> > generic_file_buffered_read() for incomplete reads and buffered reads.
-> > 
-> > We don't need address_space.direct_IO() anymore so set it to noop.
-> > Similarly, we don't need flags used in __blockdev_direct_IO(). iomap is
-> > capable of direct I/O reads from a hole, so we don't need to return
-> > -ENOENT.
-> > 
-> > BTRFS direct I/O is now done under i_rwsem, shared in case of
-> > reads and exclusive in case of writes. This guards against simultaneous
-> > truncates.
-> > 
-> > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> > ---
-> >  fs/btrfs/ctree.h |   1 +
-> >  fs/btrfs/file.c  |  21 +++++-
-> >  fs/btrfs/inode.c | 190 ++++++++++++++++++++++++++-----------------------------
-> >  3 files changed, 109 insertions(+), 103 deletions(-)
-> > 
-> > diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-> > index b2e8fd8a8e59..113dcd1a11cd 100644
-> > --- a/fs/btrfs/ctree.h
-> > +++ b/fs/btrfs/ctree.h
-> > @@ -2904,6 +2904,7 @@ int btrfs_writepage_cow_fixup(struct page *page, u64 start, u64 end);
-> >  void btrfs_writepage_endio_finish_ordered(struct page *page, u64 start,
-> >  					  u64 end, int uptodate);
-> >  extern const struct dentry_operations btrfs_dentry_operations;
-> > +ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter);
-> >  
-> >  /* ioctl.c */
-> >  long btrfs_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
-> > diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-> > index 0cb43b682789..7010dd7beccc 100644
-> > --- a/fs/btrfs/file.c
-> > +++ b/fs/btrfs/file.c
-> > @@ -1832,7 +1832,7 @@ static ssize_t __btrfs_direct_write(struct kiocb *iocb, struct iov_iter *from)
-> >  	loff_t endbyte;
-> >  	int err;
-> >  
-> > -	written = generic_file_direct_write(iocb, from);
-> > +	written = btrfs_direct_IO(iocb, from);
-> >  
-> >  	if (written < 0 || !iov_iter_count(from))
-> >  		return written;
-> > @@ -3444,9 +3444,26 @@ static int btrfs_file_open(struct inode *inode, struct file *filp)
-> >  	return generic_file_open(inode, filp);
-> >  }
-> >  
-> > +static ssize_t btrfs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
-> > +{
-> > +	ssize_t ret = 0;
-> > +
-> > +	if (iocb->ki_flags & IOCB_DIRECT) {
-> > +		struct inode *inode = file_inode(iocb->ki_filp);
-> > +
-> > +		inode_lock_shared(inode);
-> > +		ret = btrfs_direct_IO(iocb, to);
-> > +		inode_unlock_shared(inode);
-> > +		if (ret < 0)
-> > +			return ret;
-> > +	}
-> > +
-> > +	return generic_file_buffered_read(iocb, to, ret);
-> > +}
-> > +
-> >  const struct file_operations btrfs_file_operations = {
-> >  	.llseek		= btrfs_file_llseek,
-> > -	.read_iter      = generic_file_read_iter,
-> > +	.read_iter      = btrfs_file_read_iter,
-> >  	.splice_read	= generic_file_splice_read,
-> >  	.write_iter	= btrfs_file_write_iter,
-> >  	.mmap		= btrfs_file_mmap,
-> > diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> > index 56032c518b26..91b830022146 100644
-> > --- a/fs/btrfs/inode.c
-> > +++ b/fs/btrfs/inode.c
-> > @@ -29,6 +29,7 @@
-> >  #include <linux/iversion.h>
-> >  #include <linux/swap.h>
-> >  #include <linux/sched/mm.h>
-> > +#include <linux/iomap.h>
-> >  #include <asm/unaligned.h>
-> >  #include "misc.h"
-> >  #include "ctree.h"
-> > @@ -7510,7 +7511,7 @@ noinline int can_nocow_extent(struct inode *inode, u64 offset, u64 *len,
-> >  }
-> >  
-> >  static int lock_extent_direct(struct inode *inode, u64 lockstart, u64 lockend,
-> > -			      struct extent_state **cached_state, int writing)
-> > +			      struct extent_state **cached_state, bool writing)
-> >  {
-> >  	struct btrfs_ordered_extent *ordered;
-> >  	int ret = 0;
-> > @@ -7648,30 +7649,7 @@ static struct extent_map *create_io_em(struct inode *inode, u64 start, u64 len,
-> >  }
-> >  
-> >  
-> > -static int btrfs_get_blocks_direct_read(struct extent_map *em,
-> > -					struct buffer_head *bh_result,
-> > -					struct inode *inode,
-> > -					u64 start, u64 len)
-> > -{
-> > -	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
-> > -
-> > -	if (em->block_start == EXTENT_MAP_HOLE ||
-> > -			test_bit(EXTENT_FLAG_PREALLOC, &em->flags))
-> > -		return -ENOENT;
-> > -
-> > -	len = min(len, em->len - (start - em->start));
-> > -
-> > -	bh_result->b_blocknr = (em->block_start + (start - em->start)) >>
-> > -		inode->i_blkbits;
-> > -	bh_result->b_size = len;
-> > -	bh_result->b_bdev = fs_info->fs_devices->latest_bdev;
-> > -	set_buffer_mapped(bh_result);
-> > -
-> > -	return 0;
-> > -}
-> > -
-> >  static int btrfs_get_blocks_direct_write(struct extent_map **map,
-> > -					 struct buffer_head *bh_result,
-> >  					 struct inode *inode,
-> >  					 struct btrfs_dio_data *dio_data,
-> >  					 u64 start, u64 len)
-> > @@ -7733,7 +7711,6 @@ static int btrfs_get_blocks_direct_write(struct extent_map **map,
-> >  	}
-> >  
-> >  	/* this will cow the extent */
-> > -	len = bh_result->b_size;
-> >  	free_extent_map(em);
-> >  	*map = em = btrfs_new_extent_direct(inode, start, len);
-> >  	if (IS_ERR(em)) {
-> > @@ -7744,15 +7721,6 @@ static int btrfs_get_blocks_direct_write(struct extent_map **map,
-> >  	len = min(len, em->len - (start - em->start));
-> >  
-> >  skip_cow:
-> > -	bh_result->b_blocknr = (em->block_start + (start - em->start)) >>
-> > -		inode->i_blkbits;
-> > -	bh_result->b_size = len;
-> > -	bh_result->b_bdev = fs_info->fs_devices->latest_bdev;
-> > -	set_buffer_mapped(bh_result);
-> > -
-> > -	if (!test_bit(EXTENT_FLAG_PREALLOC, &em->flags))
-> > -		set_buffer_new(bh_result);
-> > -
-> >  	/*
-> >  	 * Need to update the i_size under the extent lock so buffered
-> >  	 * readers will get the updated i_size when we unlock.
-> > @@ -7768,24 +7736,37 @@ static int btrfs_get_blocks_direct_write(struct extent_map **map,
-> >  	return ret;
-> >  }
-> >  
-> > -static int btrfs_get_blocks_direct(struct inode *inode, sector_t iblock,
-> > -				   struct buffer_head *bh_result, int create)
-> > +static int btrfs_dio_iomap_begin(struct inode *inode, loff_t start,
-> > +		loff_t length, unsigned flags, struct iomap *iomap,
-> > +		struct iomap *srcmap)
-> >  {
-> >  	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
-> >  	struct extent_map *em;
-> >  	struct extent_state *cached_state = NULL;
-> >  	struct btrfs_dio_data *dio_data = NULL;
-> > -	u64 start = iblock << inode->i_blkbits;
-> >  	u64 lockstart, lockend;
-> > -	u64 len = bh_result->b_size;
-> > +	bool write = !!(flags & IOMAP_WRITE);
-> >  	int ret = 0;
-> > +	u64 len = length;
-> > +	bool unlock_extents = false;
-> >  
-> > -	if (!create)
-> > +	if (!write)
-> >  		len = min_t(u64, len, fs_info->sectorsize);
-> >  
-> >  	lockstart = start;
-> >  	lockend = start + len - 1;
-> >  
-> > +	/*
-> > +	 * The generic stuff only does filemap_write_and_wait_range, which
-> > +	 * isn't enough if we've written compressed pages to this area, so
-> > +	 * we need to flush the dirty pages again to make absolutely sure
-> > +	 * that any outstanding dirty pages are on disk.
-> > +	 */
-> > +	if (test_bit(BTRFS_INODE_HAS_ASYNC_EXTENT,
-> > +		     &BTRFS_I(inode)->runtime_flags))
-> > +		ret = filemap_fdatawrite_range(inode->i_mapping, start,
-> > +					 start + length - 1);
-> > +
-> >  	if (current->journal_info) {
-> >  		/*
-> >  		 * Need to pull our outstanding extents and set journal_info to NULL so
-> > @@ -7801,7 +7782,7 @@ static int btrfs_get_blocks_direct(struct inode *inode, sector_t iblock,
-> >  	 * this range and we need to fallback to buffered.
-> >  	 */
-> >  	if (lock_extent_direct(inode, lockstart, lockend, &cached_state,
-> > -			       create)) {
-> > +			       write)) {
-> >  		ret = -ENOTBLK;
-> >  		goto err;
-> >  	}
-> > @@ -7833,35 +7814,52 @@ static int btrfs_get_blocks_direct(struct inode *inode, sector_t iblock,
-> >  		goto unlock_err;
-> >  	}
-> >  
-> > -	if (create) {
-> > -		ret = btrfs_get_blocks_direct_write(&em, bh_result, inode,
-> > +	len = min(len, em->len - (start - em->start));
-> > +	if (write) {
-> > +		ret = btrfs_get_blocks_direct_write(&em, inode,
-> >  						    dio_data, start, len);
-> >  		if (ret < 0)
-> >  			goto unlock_err;
-> > -
-> > -		unlock_extent_cached(&BTRFS_I(inode)->io_tree, lockstart,
-> > -				     lockend, &cached_state);
-> > +		unlock_extents = true;
-> > +		/* Recalc len in case the new em is smaller than requested */
-> > +		len = min(len, em->len - (start - em->start));
-> > +	} else if (em->block_start == EXTENT_MAP_HOLE ||
-> > +			test_bit(EXTENT_FLAG_PREALLOC, &em->flags)) {
-> > +		/* Unlock in case of direct reading from a hole */
-> > +		unlock_extents = true;
-> >  	} else {
-> > -		ret = btrfs_get_blocks_direct_read(em, bh_result, inode,
-> > -						   start, len);
-> > -		/* Can be negative only if we read from a hole */
-> > -		if (ret < 0) {
-> > -			ret = 0;
-> > -			free_extent_map(em);
-> > -			goto unlock_err;
-> > -		}
-> >  		/*
-> >  		 * We need to unlock only the end area that we aren't using.
-> >  		 * The rest is going to be unlocked by the endio routine.
-> >  		 */
-> > -		lockstart = start + bh_result->b_size;
-> > -		if (lockstart < lockend) {
-> > -			unlock_extent_cached(&BTRFS_I(inode)->io_tree,
-> > -					     lockstart, lockend, &cached_state);
-> > -		} else {
-> > -			free_extent_state(cached_state);
-> > -		}
-> > +		lockstart = start + len;
-> > +		if (lockstart < lockend)
-> > +			unlock_extents = true;
-> > +	}
-> > +
-> > +	if (unlock_extents)
-> > +		unlock_extent_cached(&BTRFS_I(inode)->io_tree,
-> > +				lockstart, lockend, &cached_state);
-> > +	else
-> > +		free_extent_state(cached_state);
-> > +
-> > +	/*
-> > +	 * Translate extent map information to iomap
-> > +	 * We trim the extents (and move the addr) even though
-> > +	 * iomap code does that, since we have locked only the parts
-> > +	 * we are performing I/O in.
-> > +	 */
-> > +	if ((em->block_start == EXTENT_MAP_HOLE) ||
-> > +	    (test_bit(EXTENT_FLAG_PREALLOC, &em->flags) && !write)) {
-> > +		iomap->addr = IOMAP_NULL_ADDR;
-> > +		iomap->type = IOMAP_HOLE;
-> > +	} else {
-> > +		iomap->addr = em->block_start + (start - em->start);
-> > +		iomap->type = IOMAP_MAPPED;
-> >  	}
-> > +	iomap->offset = start;
-> > +	iomap->bdev = fs_info->fs_devices->latest_bdev;
-> > +	iomap->length = len;
-> >  
-> >  	free_extent_map(em);
-> >  
-> > @@ -8230,9 +8228,8 @@ static void btrfs_endio_direct_read(struct bio *bio)
-> >  	kfree(dip);
-> >  
-> >  	dio_bio->bi_status = err;
-> > -	dio_end_io(dio_bio);
-> > +	bio_endio(dio_bio);
-> >  	btrfs_io_bio_free_csum(io_bio);
-> > -	bio_put(bio);
+On 12/12/19 12:56 PM, Linus Torvalds wrote:
+> On Thu, Dec 12, 2019 at 9:47 AM Laura Abbott <labbott@redhat.com> wrote:
+>>
+>> Good point, I think I missed how that code flow worked for printing
+>> out the error. I debated putting in a dummy parse_param but I
+>> figured that squashfs wouldn't be the only fs that didn't take
+>> arguments (it's in the minority but certainly not the only one).
 > 
-> I'm not a btrfs export, but doesn't this introduce a use after free
-> as bio_endio also frees io_bio?
+> I think printing out the error part is actually fine - it would act as
+> a warning for invalid parameters like this.
+> 
+> So I think a dummy parse_param that prints out a warning is likely the
+> right thing to do.
+> 
+> Something like the attached, perhaps? Totally untested.
+> 
+>                 Linus
+> 
 
-You're right. btrfs_io_bio_free_csum() must be called before bio_endio().
+That doesn't quite work. We can't just unconditionally return success
+because we rely on -ENOPARAM being returned to parse the source option
+back in vfs_parse_fs_param. I think ramfs may also be broken for the
+same reason right now as well from reading the code. We also rely on the
+fallback source parsing for file systems that do have ->parse_param.
 
--- 
-Goldwyn
+We could do all this in squashfs but given other file systems that don't
+have args will also hit this we could just make it generic. The following
+works for me (under commenting and poor name choices notwithstanding)
+
+diff --git a/fs/fs_parser.c b/fs/fs_parser.c
+index d1930adce68d..5e45e36d51e7 100644
+--- a/fs/fs_parser.c
++++ b/fs/fs_parser.c
+@@ -302,6 +302,50 @@ int fs_lookup_param(struct fs_context *fc,
+  }
+  EXPORT_SYMBOL(fs_lookup_param);
+  
++enum {
++        NO_OPT_SOURCE,
++};
++
++static const struct fs_parameter_spec no_opt_fs_param_specs[] = {
++        fsparam_string  ("source",              NO_OPT_SOURCE),
++        {}
++};
++
++const struct fs_parameter_description no_opt_fs_parameters = {
++        .name           = "no_opt_fs",
++        .specs          = no_opt_fs_param_specs,
++};
++
++int fs_no_opt_parse_param(struct fs_context *fc, struct fs_parameter *param)
++{
++        struct fs_parse_result result;
++        int opt;
++
++        opt = fs_parse(fc, &no_opt_fs_parameters, param, &result);
++        if (opt < 0) {
++                /* Just log an error for backwards compatibility */
++                errorf(fc, "%s: Unknown parameter '%s'",
++                      fc->fs_type->name, param->key);
++                return 0;
++        }
++
++        switch (opt) {
++        case NO_OPT_SOURCE:
++                if (param->type != fs_value_is_string)
++                        return invalf(fc, "%s: Non-string source",
++					fc->fs_type->name);
++                if (fc->source)
++                        return invalf(fc, "%s: Multiple sources specified",
++					fc->fs_type->name);
++                fc->source = param->string;
++                param->string = NULL;
++                break;
++        }
++
++        return 0;
++}
++EXPORT_SYMBOL(fs_no_opt_parse_param);
++
+  #ifdef CONFIG_VALIDATE_FS_PARSER
+  /**
+   * validate_constant_table - Validate a constant table
+diff --git a/fs/squashfs/super.c b/fs/squashfs/super.c
+index 0cc4ceec0562..07a9b38f7bf5 100644
+--- a/fs/squashfs/super.c
++++ b/fs/squashfs/super.c
+@@ -18,6 +18,7 @@
+  
+  #include <linux/fs.h>
+  #include <linux/fs_context.h>
++#include <linux/fs_parser.h>
+  #include <linux/vfs.h>
+  #include <linux/slab.h>
+  #include <linux/mutex.h>
+@@ -358,6 +359,7 @@ static int squashfs_reconfigure(struct fs_context *fc)
+  static const struct fs_context_operations squashfs_context_ops = {
+  	.get_tree	= squashfs_get_tree,
+  	.reconfigure	= squashfs_reconfigure,
++	.parse_param	= fs_no_opt_parse_param,
+  };
+  
+  static int squashfs_init_fs_context(struct fs_context *fc)
+diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
+index dee140db6240..f67b2afcc491 100644
+--- a/include/linux/fs_parser.h
++++ b/include/linux/fs_parser.h
+@@ -106,6 +106,8 @@ static inline bool fs_validate_description(const struct fs_parameter_description
+  { return true; }
+  #endif
+  
++extern int fs_no_opt_parse_param(struct fs_context *fc, struct fs_parameter *param);
++
+  /*
+   * Parameter type, name, index and flags element constructors.  Use as:
+   *
+
