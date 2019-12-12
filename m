@@ -2,141 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E37F11CB18
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 11:38:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDEA011CB2B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 11:43:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728728AbfLLKih (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Dec 2019 05:38:37 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47018 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728573AbfLLKih (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Dec 2019 05:38:37 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 10D22AF27;
-        Thu, 12 Dec 2019 10:38:35 +0000 (UTC)
-Subject: Re: [PATCH 3/8] btrfs: Switch to iomap_dio_rw() for dio
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, darrick.wong@oracle.com,
-        fdmanana@kernel.org, dsterba@suse.cz, nborisov@suse.com,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-References: <20191212003043.31093-1-rgoldwyn@suse.de>
- <20191212003043.31093-4-rgoldwyn@suse.de>
- <20191212094940.GC15977@infradead.org>
- <3f945449-bdd8-e9d7-5db9-5a565b8fc2af@suse.de>
- <20191212095752.GA31597@infradead.org>
-From:   Johannes Thumshirn <jthumshirn@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
- xsFNBFTTwPEBEADOadCyru0ZmVLaBn620Lq6WhXUlVhtvZF5r1JrbYaBROp8ZpiaOc9YpkN3
- rXTgBx+UoDGtnz9DZnIa9fwxkcby63igMPFJEYpwt9adN6bA1DiKKBqbaV5ZbDXR1tRrSvCl
- 2V4IgvgVuO0ZJEt7gakOQlqjQaOvIzDnMIi/abKLSSzYAThsOUf6qBEn2G46r886Mk8MwkJN
- hilcQ7F5UsKfcVVGrTBoim6j69Ve6EztSXOXjFgsoBw4pEhWuBQCkDWPzxkkQof1WfkLAVJ2
- X9McVokrRXeuu3mmB+ltamYcZ/DtvBRy8K6ViAgGyNRWmLTNWdJj19Qgw9Ef+Q9O5rwfbPZy
- SHS2PVE9dEaciS+EJkFQ3/TBRMP1bGeNbZUgrMwWOvt37yguvrCOglbHW+a8/G+L7vz0hasm
- OpvD9+kyTOHjqkknVJL69BOJeCIVUtSjT9EXaAOkqw3EyNJzzhdaMXcOPwvTXNkd8rQZIHft
- SPg47zMp2SJtVdYrA6YgLv7OMMhXhNkUsvhU0HZWUhcXZnj+F9NmDnuccarez9FmLijRUNgL
- 6iU+oypB/jaBkO6XLLwo2tf7CYmBYMmvXpygyL8/wt+SIciNiM34Yc+WIx4xv5nDVzG1n09b
- +iXDTYoWH82Dq1xBSVm0gxlNQRUGMmsX1dCbCS2wmWbEJJDEeQARAQABzSdKb2hhbm5lcyBU
- aHVtc2hpcm4gPGp0aHVtc2hpcm5Ac3VzZS5kZT7CwYAEEwEIACoCGwMFCwkIBwIGFQgJCgsC
- BBYCAwECHgECF4AFCQo9ta8FAlohZmoCGQEACgkQA5OWnS12CFATLQ//ajhNDVJLK9bjjiOH
- 53B0+hCrRBj5jQiT8I60+4w+hssvRHWkgsujF+V51jcmX3NOXeSyLC1Gk43A9vCz5gXnqyqG
- tOlYm26bihzG02eAoWr/glHBQyy7RYcd97SuRSv77WzuXT3mCnM15TKiqXYNzRCK7u5nx4eu
- szAU+AoXAC/y1gtuDMvANBEuHWE4LNQLkTwJshU1vwoNcTSl+JuQWe89GB8eeeMnHuY92T6A
- ActzHN14R1SRD/51N9sebAxGVZntXzSVKyMID6eGdNegWrz4q55H56ZrOMQ6IIaa7KSz3QSj
- 3E8VIY4FawfjCSOuA2joemnXH1a1cJtuqbDPZrO2TUZlNGrO2TRi9e2nIzouShc5EdwmL6qt
- WG5nbGajkm1wCNb6t4v9ueYMPkHsr6xJorFZHlu7PKqB6YY3hRC8dMcCDSLkOPWf+iZrqtpE
- odFBlnYNfmAXp+1ynhUvaeH6eSOqCN3jvQbITUo8mMQsdVgVeJwRdeAOFhP7fsxNugii721U
- acNVDPpEz4QyxfZtfu9QGI405j9MXF/CPrHlNLD5ZM5k9NxnmIdCM9i1ii4nmWvmz9JdVJ+8
- 6LkxauROr2apgTXxMnJ3Desp+IRWaFvTVhbwfxmwC5F3Kr0ouhr5Kt8jkQeD/vuqYuxOAyDI
- egjo3Y7OGqct+5nybmbOwU0EVNPA8QEQAN/79cFVNpC+8rmudnXGbob9sk0J99qnwM2tw33v
- uvQjEGAJTVCOHrewDbHmqZ5V1X1LI9cMlLUNMR3W0+L04+MH8s/JxshFST+hOaijGc81AN2P
- NrAQD7IKpA78Q2F3I6gpbMzyMy0DxmoKF73IAMQIknrhzn37DgM+x4jQgkvhFMqnnZ/xIQ9d
- QEBKDtfxH78QPosDqCzsN9HRArC75TiKTKOxC12ZRNFZfEPnmqJ260oImtmoD/L8QiBsdA4m
- Mdkmo6Pq6iAhbGQ5phmhUVuj+7O8rTpGRXySMLZ44BimM8yHWTaiLWxCehHgfUWRNLwFbrd+
- nYJYHoqyFGueZFBNxY4bS2rIEDg+nSKiAwJv3DUJDDd/QJpikB5HIjg/5kcSm7laqfbr1pmC
- ZbR2JCTp4FTABVLxt7pJP40SuLx5He63aA/VyxoInLcZPBNvVfq/3v3fkoILphi77ZfTvKrl
- RkDdH6PkFOFpnrctdTWbIFAYfU96VvySFAOOg5fsCeLv9/zD4dQEGsvva/qKZXkH/l2LeVp3
- xEXoFsUZtajPZgyRBxer0nVWRyeVwUQnLG8kjEOcZzX27GUpughi8w42p4oMD+96tr3BKTAr
- guRHJnU1M1xwRPbw5UsNXEOgYsFc8cdto0X7hQ2Ugc07CRSDvyH50IKXf2++znOTXFDhABEB
- AAHCwV8EGAECAAkFAlTTwPECGwwACgkQA5OWnS12CFAdRg//ZGV0voLRjjgX9ODzaz6LP+IP
- /ebGLXe3I+QXz8DaTkG45evOu6B2J53IM8t1xEug0OnfnTo1z0AFg5vU53L24LAdpi12CarV
- Da53WvHzG4BzCVGOGrAvJnMvUXf0/aEm0Sen2Mvf5kvOwsr9UTHJ8N/ucEKSXAXf+KZLYJbL
- NL4LbOFP+ywxtjV+SgLpDgRotM43yCRbONUXEML64SJ2ST+uNzvilhEQT/mlDP7cY259QDk7
- 1K6B+/ACE3Dn7X0/kp8a+ZoNjUJZkQQY4JyMOkITD6+CJ1YsxhX+/few9k5uVrwK/Cw+Vmae
- A85gYfFn+OlLFO/6RGjMAKOsdtPFMltNOZoT+YjgAcW6Q9qGgtVYKcVOxusL8C3v8PAYf7Ul
- Su7c+/Ayr3YV9Sp8PH4X4jK/zk3+DDY1/ASE94c95DW1lpOcyx3n1TwQbwp6TzPMRe1IkkYe
- 0lYj9ZgKaZ8hEmzuhg6FKXk9Dah+H73LdV57M4OFN8Xwb7v+oEG23vdsb2KBVG5K6Tv7Hb2N
- sfHWRdU3quYIistrNWWeGmfTlhVLgDhEmAsKZFH05QsAv3pQv7dH/JD+Tbn6sSnNAVrATff1
- AD3dXmt+5d3qYuUxam1UFGufGzV7jqG5QNStp0yvLP0xroB8y0CnnX2FY6bAVCU+CqKu+n1B
- LGlgwABHRtLCwe0EGAEIACAWIQTsOJyrwsTyXYYA0NADk5adLXYIUAUCWsTXAwIbAgCBCRAD
- k5adLXYIUHYgBBkWCAAdFiEEx1U9vxg1xAeUwus20p7yIq+KHe4FAlrE1wMACgkQ0p7yIq+K
- He6RfAEA+frSSvrHiuatNqvgYAJcraYhp1GQJrWSWMmi2eFcGskBAJyLp47etEn3xhJBLVVh
- 2y2K4Nobb6ZgxA4Svfnkf7AAdicQALiaOKDwKD3tgf90ypEoummYzAxv8MxyPXZ7ylRnkheA
- eQDxuoc/YwMA4qyxhzf6K4tD/aT12XJd95gk+YAL6flGkJD8rA3jsEucPmo5eko4Ms2rOEdG
- jKsZetkdPKGBd2qVxxyZgzUkgRXduvyux04b9erEpJmoIXs/lE0IRbL9A9rJ6ASjFPGpXYrb
- 73pb6Dtkdpvv+hoe4cKeae4dS0AnDc7LWSW3Ub0n61uk/rqpTmKuesmTZeB2GHzLN5GAXfNj
- ELHAeSVfFLPRFrjF5jjKJkpiyq98+oUnvTtDIPMTg05wSN2JtwKnoQ0TAIHWhiF6coGeEfY8
- ikdVLSZDEjW54Td5aIXWCRTBWa6Zqz/G6oESF+Lchu/lDv5+nuN04KZRAwCpXLS++/givJWo
- M9FMnQSvt4N95dVQE3kDsasl960ct8OzxaxuevW0OV/jQEd9gH50RaFif412DTrsuaPsBz6O
- l2t2TyTuHm7wVUY2J3gJYgG723/PUGW4LaoqNrYQUr/rqo6NXw6c+EglRpm1BdpkwPwAng63
- W5VOQMdnozD2RsDM5GfA4aEFi5m00tE+8XPICCtkduyWw+Z+zIqYk2v+zraPLs9Gs0X2C7X0
- yvqY9voUoJjG6skkOToGZbqtMX9K4GOv9JAxVs075QRXL3brHtHONDt6udYobzz+
-Message-ID: <035b1e2d-09bd-0cd9-3e32-ad47194f7812@suse.de>
-Date:   Thu, 12 Dec 2019 11:38:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728802AbfLLKm4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Dec 2019 05:42:56 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:45068 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728631AbfLLKm4 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 12 Dec 2019 05:42:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=G8moV6U9IyfN6eSPjxNYgUZFe+n4Kjcckdv5yKxVadk=; b=N1S01205tkf6X1x18eDtvPVFH
+        jwgTUXcx0TJNgKI0sf1tt98Wt6WoslV3f5x5Ft9yw2IkHA9d6fyI5K5uMmubG0BNuGDJCo7rw1FuW
+        X7VlrNSrgOKvaWHirz5lSv4BAm03ua/UCYEUfNoptanCEFkelZI4XiFoPwSaNNOMq2FPnhmfcqqX3
+        2oT48kwmlMWrSsnw5VAOyXkkqP/j8nmnSotpg9W2e/xY45aJDScDMwZQTSH9yXHmhJsSAVH801TgX
+        lQmHD1RUvEYLnqaNwG4/bbGmUF6dS+p0F6akYbSqfcm6mG+KIoTdm2HhgFF63ox7X4PCxNSkRkrrr
+        MfwO79fQg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ifLvo-00057S-Rx; Thu, 12 Dec 2019 10:42:52 +0000
+Date:   Thu, 12 Dec 2019 02:42:52 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        cluster-devel <cluster-devel@redhat.com>
+Subject: Re: [PATCH 15/15] gfs2: use iomap for buffered I/O in ordered and
+ writeback mode
+Message-ID: <20191212104252.GA3956@infradead.org>
+References: <20191210101938.495-1-agruenba@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20191212095752.GA31597@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191210101938.495-1-agruenba@redhat.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/12/2019 10:57, Christoph Hellwig wrote:
-> On Thu, Dec 12, 2019 at 10:56:48AM +0100, Johannes Thumshirn wrote:
->> On 12/12/2019 10:49, Christoph Hellwig wrote:
->>>> @@ -8230,9 +8228,8 @@ static void btrfs_endio_direct_read(struct bio *bio)
->>>>  	kfree(dip);
->>>>  
->>>>  	dio_bio->bi_status = err;
->>>> -	dio_end_io(dio_bio);
->>>> +	bio_endio(dio_bio);
->>>>  	btrfs_io_bio_free_csum(io_bio);
->>>> -	bio_put(bio);
->>>
->>> I'm not a btrfs export, but doesn't this introduce a use after free
->>> as bio_endio also frees io_bio?
->>
->> No that's ok, as the bio_endio() frees the dio_bio, while
->> btrfs_io_bio_free_csum() frees the csum of the io_bio (which is a struct
->> btrfs_io_bio).
-> 
-> So who frees the io_bio and its embedded bio?
-> 
+On Tue, Dec 10, 2019 at 11:19:38AM +0100, Andreas Gruenbacher wrote:
+> @@ -75,13 +75,12 @@ static int gfs2_unstuffer_page(struct gfs2_inode *ip, struct buffer_head *dibh,
+>  		memcpy(kaddr, dibh->b_data + sizeof(struct gfs2_dinode), dsize);
+>  		memset(kaddr + dsize, 0, PAGE_SIZE - dsize);
+>  		kunmap(page);
+> -
+> -		SetPageUptodate(page);
+>  	}
+>  
+>  	if (gfs2_is_jdata(ip)) {
+>  		struct buffer_head *bh;
+>  
+> +		SetPageUptodate(page);
+>  		if (!page_has_buffers(page))
+>  			create_empty_buffers(page, BIT(inode->i_blkbits),
+>  					     BIT(BH_Uptodate));
+> @@ -93,6 +92,9 @@ static int gfs2_unstuffer_page(struct gfs2_inode *ip, struct buffer_head *dibh,
+>  		set_buffer_uptodate(bh);
+>  		gfs2_trans_add_data(ip->i_gl, bh);
+>  	} else {
+> +		iomap_page_create(inode, page);
+> +		iomap_set_range_uptodate(page, 0, i_blocksize(inode));
+> +		set_page_dirty(page);
+>  		gfs2_ordered_add_inode(ip);
+>  	}
 
-In the old code this was handled by the now removed bio_put(). But I
-admit I'm confused now.
+Can you create a helper that copies the data from a passed in kernel
+pointer, length pair into the page, then marks it uptodate and dirty,
+please?
 
-The bio embedded in io_bio is a btrfs_bio_clone() of dio_bio() (from
-btrfs_submit_direct()).
+> @@ -555,6 +555,8 @@ static vm_fault_t gfs2_page_mkwrite(struct vm_fault *vmf)
+>  out_uninit:
+>  	gfs2_holder_uninit(&gh);
+>  	if (ret == 0) {
+> +		if (!gfs2_is_jdata(ip))
+> +			iomap_page_create(inode, page);
 
-So we're now freeing the dio_bio a.k.a the original one in bio_endio()
-but the clone seems to be leaking.
+What is this one for?  The iomap_page is supposed to use lazy
+allocation, that is we only allocate it once it is used.  What code
+expects the structure but doesn't see it without this hunk?  I
+guess it is iomap_writepage_map, which should probably just switch
+to call iomap_page_create.
 
-What am I missing?
-
--- 
-Johannes Thumshirn                            SUSE Labs Filesystems
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5
-90409 Nürnberg
-Germany
-(HRB 36809, AG Nürnberg)
-Geschäftsführer: Felix Imendörffer
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+That being said is there any way we can get gfs2 to use
+iomap_page_mkwrite for the !jdata case?
