@@ -2,140 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A864911D473
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 18:48:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60BD311D490
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 18:52:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730276AbfLLRrz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Dec 2019 12:47:55 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:25533 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730200AbfLLRry (ORCPT
+        id S1730189AbfLLRwD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Dec 2019 12:52:03 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:38706 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729883AbfLLRwD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Dec 2019 12:47:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576172873;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ASYuMc+fUDlTjfvYIhv1Vh2nVmLhsT9gDD/FqNpAF6k=;
-        b=F9ubnpyFd+mWeo376TIKZcL4BtiKFF3O4Qs1BqDhWSV1QvCC/+trycWjxZodMMd9m+jlpT
-        wE4mkBPUTrDN4vWdIm0Le7fSAFJSRc6jsoQRdxYDQwdcD6RjxxNRPpm0bZWDW3LgceessS
-        +iUoujU1kUcPAui2CDD4ESgOQ3xDx7A=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-427-_xvQwTkPMcimFcWS1fFEvQ-1; Thu, 12 Dec 2019 12:47:50 -0500
-X-MC-Unique: _xvQwTkPMcimFcWS1fFEvQ-1
-Received: by mail-qt1-f200.google.com with SMTP id o24so1871692qtr.17
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2019 09:47:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ASYuMc+fUDlTjfvYIhv1Vh2nVmLhsT9gDD/FqNpAF6k=;
-        b=HJSeybldjgYaRyqvhqfcz8HhwYABZad5YFVIYde8ZIeKKozLMwUbl4NTG8UJLxpJZU
-         6Nn/Zv0Yqe7NMVn0o1dQTKxvcetnfqj0X/jLT7bfHhxCfPTuKLeSkKqHYAkSQINQWOI9
-         EfQ++Co2z+DNvxbo1kMhuNL1MuKiy1FF+6vKLSY+7GMvLU9BY9CA7p/w1gCB5lwf4qMb
-         L8x6MH79M335yvlr77F1+xuTiErpP3RVys7Of1XSPi6Ly3niuvUu7g6Tk3eDgWqCOUiv
-         5mRGq8JvrO6MBbNnh6gXZBuyEv9SFNKWzuFudrX1aK1Svtb1UWouZDYcV+O2Fmv7XkjF
-         CW/g==
-X-Gm-Message-State: APjAAAVtjCmTNg8j7XBJelzX4boSjD1Fgn+4o+2s4YMMgM9Bb4Hr0BVw
-        taktHjVY4jUYkqZ2v4Snckzoc8Qpi80fJ4V3O0QelhODML8qcJQVIY80voiasHAK2VuHla79DKS
-        jtNEEM/VBm/kUDPf0/Ku662s1DA==
-X-Received: by 2002:ac8:5486:: with SMTP id h6mr8682557qtq.17.1576172869662;
-        Thu, 12 Dec 2019 09:47:49 -0800 (PST)
-X-Google-Smtp-Source: APXvYqy8cQXG4sfd4W+2HawtZfnusNe6YR3joXEoDhOEQpoYF8BGdk4GpmShFtI5vjEysZpsSySulw==
-X-Received: by 2002:ac8:5486:: with SMTP id h6mr8682540qtq.17.1576172869382;
-        Thu, 12 Dec 2019 09:47:49 -0800 (PST)
-Received: from [192.168.1.157] (pool-96-235-39-235.pitbpa.fios.verizon.net. [96.235.39.235])
-        by smtp.gmail.com with ESMTPSA id n129sm371776qkf.64.2019.12.12.09.47.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2019 09:47:48 -0800 (PST)
-Subject: Re: [PATCH] vfs: Don't reject unknown parameters
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Jeremi Piotrowski <jeremi.piotrowski@gmail.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20191212145042.12694-1-labbott@redhat.com>
- <CAOi1vP9E2yLeFptg7o99usEi=x3kf=NnHYdURXPhX4vTXKCTCQ@mail.gmail.com>
-From:   Laura Abbott <labbott@redhat.com>
-Message-ID: <fbe90a0b-cf24-8c0c-48eb-6183852dfbf1@redhat.com>
-Date:   Thu, 12 Dec 2019 12:47:47 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Thu, 12 Dec 2019 12:52:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ebjGbUUBq076s+Mp3U9ksksWu9YyYBwzUBSi8NM1nMs=; b=YbHlXUaPfUc62DVEt9s6QYS97
+        D6HzG6bU0DVL0TnEK9iubvvjS9BRz0++O4EvnCvI36FrhWS32kAYin30JPYRDU6kCqw0XTqbKJYDn
+        EASdGOuLZrj+NmJv6Zhlxbj5n5BzXvLsYjXk6OwFnxn/HUjnRF6Xrs6+RKqlkoptqfP640h6kmCMJ
+        7cXbhdNEOOA8iXVCMFYXCXHBkAWHJHPrR8n0Rl9aQOX46jfuy0tyPuY2gDv028QARp/AsMws4NBz9
+        5KpfHlah9rWoRkpCR1WeT3JM23mLZvhOv7bks0oYe0h06vwPPw+LyHWcPK/OiUIymZkd/GY3hLRIQ
+        d5/7+FDRQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ifSd6-0007Xl-U3; Thu, 12 Dec 2019 17:52:00 +0000
+Date:   Thu, 12 Dec 2019 09:52:00 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Chris Mason <clm@fb.com>, Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [PATCHSET v3 0/5] Support for RWF_UNCACHED
+Message-ID: <20191212175200.GS32169@bombadil.infradead.org>
+References: <0d4e3954-c467-30a7-5a8e-7c4180275533@kernel.dk>
+ <CAHk-=whk4bcVPvtAv5OmHiW5z6AXgCLFhO4YrXD7o0XC+K-aHw@mail.gmail.com>
+ <fef996ca-a4ed-9633-1f79-91292a984a20@kernel.dk>
+ <CAHk-=wg=hHUFg3i0vDmKEg8HFbEKquAsoC8CJoZpP-8_A1jZDA@mail.gmail.com>
+ <1c93194a-ed91-c3aa-deb5-a3394805defb@kernel.dk>
+ <CAHk-=wj0pXsngjWKw5p3oTvwkNnT2DyoZWqPB+-wBY+BGTQ96w@mail.gmail.com>
+ <d8a8ea42-7f76-926c-ae9a-d49b11578153@kernel.dk>
+ <CAHk-=whtf0-f5wCcSAj=oTK2TEaesF43UdHnPyvgE9X1EuwvBw@mail.gmail.com>
+ <20191212015612.GP32169@bombadil.infradead.org>
+ <CAHk-=wjr1G0xXDs7R=2ZAB=YSs-WLk4GsVwLafw+96XVwo7jyg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAOi1vP9E2yLeFptg7o99usEi=x3kf=NnHYdURXPhX4vTXKCTCQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjr1G0xXDs7R=2ZAB=YSs-WLk4GsVwLafw+96XVwo7jyg@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/12/19 12:13 PM, Ilya Dryomov wrote:
-> On Thu, Dec 12, 2019 at 3:51 PM Laura Abbott <labbott@redhat.com> wrote:
->>
->> The new mount API currently rejects unknown parameters if the
->> filesystem doesn't have doesn't take any arguments. This is
->> unfortunately a regression from the old API which silently
->> ignores extra arguments. This is easly seen with the squashfs
->> conversion (5a2be1288b51 ("vfs: Convert squashfs to use the new
->> mount API")) which now fails to mount with extra options. Just
->> get rid of the error.
->>
->> Fixes: 3e1aeb00e6d1 ("vfs: Implement a filesystem superblock
->> creation/configuration context")
->> Link: https://lore.kernel.org/lkml/20191130181548.GA28459@gentoo-tp.home/
->> Reported-by: Jeremi Piotrowski <jeremi.piotrowski@gmail.com>
->> Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1781863
->> Signed-off-by: Laura Abbott <labbott@redhat.com>
->> ---
->>   fs/fs_context.c | 3 +--
->>   1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/fs/fs_context.c b/fs/fs_context.c
->> index 138b5b4d621d..7ec20b1f8a53 100644
->> --- a/fs/fs_context.c
->> +++ b/fs/fs_context.c
->> @@ -160,8 +160,7 @@ int vfs_parse_fs_param(struct fs_context *fc, struct fs_parameter *param)
->>                  return 0;
->>          }
->>
->> -       return invalf(fc, "%s: Unknown parameter '%s'",
->> -                     fc->fs_type->name, param->key);
->> +       return 0;
->>   }
->>   EXPORT_SYMBOL(vfs_parse_fs_param);
+On Wed, Dec 11, 2019 at 06:47:25PM -0800, Linus Torvalds wrote:
+> On Wed, Dec 11, 2019 at 5:56 PM Matthew Wilcox <willy@infradead.org> wrote:
+> > It _should_ be the same order of complexity.  Since there's already
+> > a page in the page cache, xas_create() just walks its way down to the
+> > right node calling xas_descend() and then xas_store() does the equivalent
+> > of __radix_tree_replace().  I don't see a bug that would make it more
+> > expensive than the old code ... a 10GB file is going to have four levels
+> > of radix tree node, so it shouldn't even spend that long looking for
+> > the right node.
 > 
-> Hi Laura,
+> The profile seems to say that 85% of the cost of xas_create() is two
+> instructions:
 > 
-> I'm pretty sure this is a regression for all other filesystems
-> that used to check for unknown tokens and return an error from their
-> ->mount/fill_super/etc methods before the conversion.
+> # lib/xarray.c:143:     return (index >> node->shift) & XA_CHUNK_MASK;
+>         movzbl  (%rsi), %ecx    # MEM[(unsigned char *)node_13],
+> MEM[(unsigned char *)node_13]
+> ...
+> # ./include/linux/xarray.h:1145:        return
+> rcu_dereference_check(node->slots[offset],
+> # ./include/linux/compiler.h:199:       __READ_ONCE_SIZE;
+>         movq    (%rax), %rax    # MEM[(volatile __u64 *)_80], <retval>
 > 
-> All filesystems that provide ->parse_param expect that ENOPARAM is
-> turned into an error with an error message.  I think we are going to
-> need something a bit more involved in vfs_parse_fs_param(), or just
-> a dummy ->parse_param for squashfs that would always return 0.
+> where that first load is "node->shift", and the second load seems to
+> be just the node dereference.
 > 
-> Thanks,
-> 
->                  Ilya
-> 
+> I think both of them are basically just xas_descend(), but it's a bit
+> hard to read the several levels of inlining.
 
-Good point, I think I missed how that code flow worked for printing
-out the error. I debated putting in a dummy parse_param but I
-figured that squashfs wouldn't be the only fs that didn't take
-arguments (it's in the minority but certainly not the only one).
-I'll see about reworking the flow unless Al/David want to
-see the dummy parse_param or give a patch.
+Yep, that's basically the two cache misses you get for each level of
+the tree.  I'd expect the node->shift to be slightly more costly because
+sometimes the node->slots[offset] is going to be in the same cacheline
+or the next cacheline after node->shift.
 
-Thanks,
-Laura
+> I suspect the real issue is that going through kswapd means we've lost
+> almost all locality, and with the random walking the LRU list is
+> basically entirely unordered so you don't get any advantage of the
+> xarray having (otherwise) possibly good cache patterns.
+> 
+> So we're just missing in the caches all the time, making it expensive.
 
+I have some bad ideas for improving it.
+
+1. We could semi-sort the pages on the LRU list.  If we know we're going
+to remove a bunch of pages, we could take a batch of them off the list,
+sort them and remove them in-order.  This probably wouldn't be terribly
+effective.
+
+2. We could change struct page to point to the xa_node that holds them.
+Looking up the page mapping would be page->xa_node->array and then
+offsetof(i_pages) to get the mapping.
+
+3. Once the maple tree is ready, a 10GB file can actually be held more
+efficiently in a maple tree than in the radix tree.  Because each level
+of the tree is 128 bytes and (Intel) CPUs fetch a pair of cachelines,
+there's only one cache miss per level of the tree.  So despite the tree
+being deeper, there are fewer cache misses.  With an average of 6 pointers
+per level of the tree, terminating in a dense node, we'd see:
+
+: 6 * 6 * 6 * 6 * 6 * 6 * 6 * 15
+: 4199040
+(a 10GB file contains 2621440 4kB pages)
+
+which is still eight cache misses, so to see an improvement, we'd need to
+implement another planned improvement, which is allocating a large, dense
+leaf node of 4kB.  That would reduce the height of the tree by 2:
+
+: 6 * 6 * 6 * 6 * 6 * 500
+: 3888000
+
+4. For consecutive accesses, I'm working on allocating larger pages
+(16kB, 64kB, 256kB, ...).  That will help by reducing the number of
+deletions from the page cache by a factor of 4/16/64/...
