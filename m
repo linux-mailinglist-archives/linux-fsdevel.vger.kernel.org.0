@@ -2,69 +2,211 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2863311C327
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 03:21:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A5B611C345
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 03:28:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727705AbfLLCV4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Dec 2019 21:21:56 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:44754 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727655AbfLLCV4 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Dec 2019 21:21:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=57zdz9mrxIVUHQOhknZrQgy/UswdkJ3VTH/h3Vnf6SM=; b=RYU3VrjXW23DkSlr3BV5xCMqx
-        0vg+jGF2kmZXc1b1pLgXeNc1QmxxzDCj96BAPefUN9G/8umS/psViUr0MEpsL0GhOjuS9PS6TQ/FM
-        ifi3z7+Otr7DN9wwvZOsgwBtmJoFMjSQnKHChpWJzSdd19gi8k7hstqF/LlkpVX79gJ+Emr01SAXX
-        8ThYyCPRiAqO8stqZyeVsxeXDKDVKForQpdoLzCooi+29uXYJqer7/BKQKF7CDhiUKRCg1VRiSxRu
-        JWSktsAvb0Kit9Zd60BPbShI9OeTPecvBBd6mgoVD7HwTimV46K3PzNDJt0SdM/NNNFOxOjU3vzPS
-        zZS9sbsWA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ifE71-0004PK-6N; Thu, 12 Dec 2019 02:21:55 +0000
-Date:   Wed, 11 Dec 2019 18:21:55 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Chris Mason <clm@fb.com>, Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCHSET v3 0/5] Support for RWF_UNCACHED
-Message-ID: <20191212022155.GQ32169@bombadil.infradead.org>
-References: <20191211152943.2933-1-axboe@kernel.dk>
- <CAHk-=wjz3LE1kznro1dozhk9i9Dr4pCnkj7Fuccn2xdWeGHawQ@mail.gmail.com>
- <d0adcde2-3106-4fea-c047-4d17111bab70@kernel.dk>
- <e43a2700-8625-e136-dc9d-d0d2da5d96ac@kernel.dk>
- <CAHk-=wje8i3DVcO=fMC4tzKTS5+eHv0anrVZa_JENQt08T=qCQ@mail.gmail.com>
- <0d4e3954-c467-30a7-5a8e-7c4180275533@kernel.dk>
- <CAHk-=whk4bcVPvtAv5OmHiW5z6AXgCLFhO4YrXD7o0XC+K-aHw@mail.gmail.com>
- <fef996ca-a4ed-9633-1f79-91292a984a20@kernel.dk>
- <e7fc6b37-8106-4fe2-479c-05c3f2b1c1f1@kernel.dk>
- <00a5c8b7-215a-7615-156d-d8f3dbb1cd3a@kernel.dk>
+        id S1727734AbfLLC2h convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Dec 2019 21:28:37 -0500
+Received: from smtp.h3c.com ([60.191.123.50]:4948 "EHLO h3cspam02-ex.h3c.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727664AbfLLC2g (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Dec 2019 21:28:36 -0500
+Received: from DAG2EX01-BASE.srv.huawei-3com.com ([10.8.0.64])
+        by h3cspam02-ex.h3c.com with ESMTPS id xBC2Rslq008144
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 12 Dec 2019 10:27:54 +0800 (GMT-8)
+        (envelope-from li.kai4@h3c.com)
+Received: from DAG2EX07-IDC.srv.huawei-3com.com (10.8.0.70) by
+ DAG2EX01-BASE.srv.huawei-3com.com (10.8.0.64) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 12 Dec 2019 10:27:55 +0800
+Received: from DAG2EX07-IDC.srv.huawei-3com.com ([::1]) by
+ DAG2EX07-IDC.srv.huawei-3com.com ([fe80::c439:37f7:8e24:31c4%9]) with mapi id
+ 15.01.1713.004; Thu, 12 Dec 2019 10:27:55 +0800
+From:   Likai <li.kai4@h3c.com>
+To:     Changwei Ge <chge@linux.alibaba.com>,
+        "mark@fasheh.com" <mark@fasheh.com>,
+        "jlbec@evilplan.org" <jlbec@evilplan.org>,
+        "joseph.qi@linux.alibaba.com" <joseph.qi@linux.alibaba.com>
+CC:     "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ocfs2: call journal flush to mark journal as empty after
+ journal recovery when mount
+Thread-Topic: [PATCH] ocfs2: call journal flush to mark journal as empty after
+ journal recovery when mount
+Thread-Index: AQHVsApQjv9leuKFH0CaG26YADPZnQ==
+Date:   Thu, 12 Dec 2019 02:27:55 +0000
+Message-ID: <4f5b0bc5e63c4a7b963b54b488589785@h3c.com>
+References: <20191211100338.510-1-li.kai4@h3c.com>
+ <d4bb15d0-55fa-2a8e-a975-4c65eed3bae3@linux.alibaba.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.125.108.72]
+x-sender-location: DAG2
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00a5c8b7-215a-7615-156d-d8f3dbb1cd3a@kernel.dk>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-DNSRBL: 
+X-MAIL: h3cspam02-ex.h3c.com xBC2Rslq008144
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 07:03:40PM -0700, Jens Axboe wrote:
-> Tested and cleaned a bit, and added truncate protection through
-> inode_dio_begin()/inode_dio_end().
-> 
-> https://git.kernel.dk/cgit/linux-block/commit/?h=buffered-uncached&id=6dac80bc340dabdcbfb4230b9331e52510acca87
-> 
-> This is much faster than the previous page cache dance, and I _think_
-> we're ok as long as we block truncate and hole punching.
+Hi Changwei，
 
-What about races between UNCACHED and regular buffered IO?  Seems like
-we might end up sending overlapping writes to the device?
+thanks for your comments， I will modify the log info inline.
+
+thanks
+
+On 2019/12/11 20:48, Changwei Ge wrote:
+> Hi Kai,
+>
+> Now the problem is more clear to me.
+>
+> Just a few comments inline.
+>
+> On 12/11/19 6:03 PM, Kai Li wrote:
+>> If journal is dirty when mount, it will be replayed but jbd2 sb
+>> log tail cannot be updated to mark a new start because
+>> journal->j_flag has already been set with JBD2_ABORT first
+>> in journal_init_common. When a new transaction is committed, it
+>> will be recored in block 1 first(journal->j_tail is set to 1 in
+>> journal_reset).
+>>
+>> If emergency restart happens again before journal super block is
+>> updated unfortunately, the new recorded trans will not be replayed
+>> in the next mount.
+> So this issue happens before the first committing log iteration  comes 
+> (running in jbd2 kernel thread), right?
+> This leads jbd2 losing the chance to update *on-disk* journal super 
+> block but the dynamic status of journal is still remaining in memory.
+>
+> Yes, I agree. We should update on-disk journal super block after journal 
+> recovery since that procedure doesn't involve journal status in memory 
+> which is just reset to the very beginning(tail and head pointing to the 
+> first block) of journal region.
+>
+> Moreover, during journal recovery running by peer nodes, ocfs2 already 
+> does that like what this patch does.
+>
+> ocfs2_recover_node() -> ocfs2_replay_journal().
+>
+> Very good job to catch such an exception. :-)
+>
+>
+>> This exception happens when this lun is used by only one node. If it
+>> is used by multi-nodes, other node will replay its journal and its
+>> journal sb block will be updated after recovery.
+>>
+>> To fix this problem, use jbd2_journal_flush to mark journal as empty as
+>> ocfs2_replay_journal has done.
+>>
+>> The following jbd2 journal can be generated by touching a new file after
+>> journal is replayed, and seq 15 is the first valid commit, but first seq
+>> is 13 in journal super block.
+>> logdump:
+>> Block 0: Journal Superblock
+>> Seq: 0   Type: 4 (JBD2_SUPERBLOCK_V2)
+>> Blocksize: 4096   Total Blocks: 32768   First Block: 1
+>> First Commit ID: 13   Start Log Blknum: 1
+>> Error: 0
+>> Feature Compat: 0
+>> Feature Incompat: 2 block64
+>> Feature RO compat: 0
+>> Journal UUID: 4ED3822C54294467A4F8E87D2BA4BC36
+>> FS Share Cnt: 1   Dynamic Superblk Blknum: 0
+>> Per Txn Block Limit    Journal: 0    Data: 0
+>>
+>> Block 1: Journal Commit Block
+>> Seq: 14   Type: 2 (JBD2_COMMIT_BLOCK)
+>>
+>> Block 2: Journal Descriptor
+>> Seq: 15   Type: 1 (JBD2_DESCRIPTOR_BLOCK)
+>> No. Blocknum        Flags
+>>   0. 587             none
+>> UUID: 00000000000000000000000000000000
+>>   1. 8257792         JBD2_FLAG_SAME_UUID
+>>   2. 619             JBD2_FLAG_SAME_UUID
+>>   3. 24772864        JBD2_FLAG_SAME_UUID
+>>   4. 8257802         JBD2_FLAG_SAME_UUID
+>>   5. 513             JBD2_FLAG_SAME_UUID JBD2_FLAG_LAST_TAG
+>> ...
+>> Block 7: Inode
+>> Inode: 8257802   Mode: 0640   Generation: 57157641 (0x3682809)
+>> FS Generation: 2839773110 (0xa9437fb6)
+>> CRC32: 00000000   ECC: 0000
+>> Type: Regular   Attr: 0x0   Flags: Valid
+>> Dynamic Features: (0x1) InlineData
+>> User: 0 (root)   Group: 0 (root)   Size: 7
+>> Links: 1   Clusters: 0
+>> ctime: 0x5de5d870 0x11104c61 -- Tue Dec  3 11:37:20.286280801 2019
+>> atime: 0x5de5d870 0x113181a1 -- Tue Dec  3 11:37:20.288457121 2019
+>> mtime: 0x5de5d870 0x11104c61 -- Tue Dec  3 11:37:20.286280801 2019
+>> dtime: 0x0 -- Thu Jan  1 08:00:00 1970
+>> ...
+>> Block 9: Journal Commit Block
+>> Seq: 15   Type: 2 (JBD2_COMMIT_BLOCK)
+>>
+>> The following is jouranl recovery log when recovering the upper jbd2
+>> journal when mount again.
+>> syslog:
+>> [ 2265.648622] ocfs2: File system on device (252,1) was not unmounted cleanly, recovering it.
+>> [ 2265.649695] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 0
+>> [ 2265.650407] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 1
+>> [ 2265.650409] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 2
+>> [ 2265.650410] fs/jbd2/recovery.c:(jbd2_journal_recover, 278): JBD2: recovery, exit status 0, recovered transactions 13 to 13
+>>
+>> Due to first commit seq 13 recorded in journal super is not consistent
+>> with the value recorded in block 1(seq is 14), journal recovery will be
+>> terminated before seq 15 even though it is an unbroken commit, inode
+>> 8257802 is a new file and it will be lost.
+>>
+>> Signed-off-by: Kai Li <li.kai4@h3c.com>
+>> ---
+>>   fs/ocfs2/journal.c | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
+>>
+>> diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
+>> index 1afe57f425a0..b8b9d26fa731 100644
+>> --- a/fs/ocfs2/journal.c
+>> +++ b/fs/ocfs2/journal.c
+>> @@ -1066,6 +1066,14 @@ int ocfs2_journal_load(struct ocfs2_journal *journal, int local, int replayed)
+>>   
+>>   	ocfs2_clear_journal_error(osb->sb, journal->j_journal, osb->slot_num);
+>>   
+>> +	if (replayed) {
+>> +		/* wipe the journal */
+mlog( ML_NOTICE, "journal recovery complete" );
+Its reason is that if journal is dirty we will print a notice "File
+system on device (*) was not unmounted cleanly, recovering it" before,
+here it is done.
+>> +		jbd2_journal_lock_updates(journal->j_journal);
+>> +		status = jbd2_journal_flush(journal->j_journal);
+>> +		jbd2_journal_unlock_updates(journal->j_journal);
+if (status < 0)
+    mlog_errno(status);
+if it fails, it may cause file lost in future.
+>> +		mlog(ML_NOTICE, "journal recovery complete, status=%d", status);
+> Is the above mlog line necessary?
+> Can we just log a warning only jbd2_journal_flush() fails and let the 
+> mount continue? IMO, the mlog line can't help much.
+>
+> Otherwise, this patch looks good to me.
+>
+>
+> Thanks,
+> Changwei
+>
+>
+>> +	}
+>> +
+>>   	status = ocfs2_journal_toggle_dirty(osb, 1, replayed);
+>>   	if (status < 0) {
+>>   		mlog_errno(status);
+>>
+
