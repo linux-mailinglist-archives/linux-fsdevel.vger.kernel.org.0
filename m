@@ -2,130 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2534311D960
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 23:32:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 364DF11D96A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 23:34:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730809AbfLLWcX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Dec 2019 17:32:23 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:22351 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730818AbfLLWcW (ORCPT
+        id S1731060AbfLLWeI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Dec 2019 17:34:08 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:38431 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730936AbfLLWeI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Dec 2019 17:32:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576189941;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jcJp5d02ffhslABjm0JRL5WxPWI1YxxsBS3tQ0tjUug=;
-        b=XDtYfaI74YB1jl9e6Ye8GjQN4x86M+iUMiKEw0sG9mkgX/UDJIEMfeb6VZcJunMMW6T0tl
-        gQGfop+00QPxlxipicXXiaFiEDcjgjuhWkcTXJIpyDWkhAa51Vq7NJ1kPtZbPNuWmoI2ev
-        HxQAL7iCm17MxW+3+tU+zE0RIakzeSI=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-12-rBN1aHMvOB2tmHDTyDe_qA-1; Thu, 12 Dec 2019 17:32:18 -0500
-X-MC-Unique: rBN1aHMvOB2tmHDTyDe_qA-1
-Received: by mail-qt1-f198.google.com with SMTP id g22so481467qtr.23
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2019 14:32:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jcJp5d02ffhslABjm0JRL5WxPWI1YxxsBS3tQ0tjUug=;
-        b=l8urA8WttYys6dPECfB/J1+hQQHxAdgLMHeI7dkFaAeCdTYNkNQVFLoPTOX4dVYwDl
-         IafjkX3tF+EIOAxuPP1SB2Rz/Ox4gamP6JgS9s28zSg7s+CaKjtrhIsOHEGRbgwayUrC
-         zu7JR+AxO8dQdL0+mf/OCAjE7hn6mMHun0Lptcx+ucOGwV3cZG8qaBLAVzTNlYwsUWBb
-         kUrfslJKbDlw+PmxsLrl9ItRhaLNI7+DMjd1rtRqAkS//MEDB10tABSDfysMnLwxSw+d
-         DnDF4qxnKU56mk8a157zaCJeVBzPNRY2J3jpF2Lqj06s3xy6c5RqBZui6zcLFpj4oGUY
-         PJpw==
-X-Gm-Message-State: APjAAAXk4S0VLXwHlBSzgDQguVhkwTtDecw6cIMFkoGp3fOeZwusGE5M
-        kVqqOTwh9jWyITur7zaMim9GEFxrbeQt04ZX3ZdpzxLHJ9MR71iuTmZkuq9t0ixzJUNJ4uyohaX
-        /6snH2GhKYJ+zG1/cQPZPYFaEBg==
-X-Received: by 2002:a0c:acc2:: with SMTP id n2mr10517801qvc.225.1576189937880;
-        Thu, 12 Dec 2019 14:32:17 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxPTmOy4ajO0DxlZVi3iwrbQ6XXtLuFR20j6ai74yyPPLB1q/GpEEJj/ZsbDHyyFh1kYXNvbA==
-X-Received: by 2002:a0c:acc2:: with SMTP id n2mr10517773qvc.225.1576189937490;
-        Thu, 12 Dec 2019 14:32:17 -0800 (PST)
-Received: from [192.168.1.157] (pool-96-235-39-235.pitbpa.fios.verizon.net. [96.235.39.235])
-        by smtp.gmail.com with ESMTPSA id a24sm2155877qkl.82.2019.12.12.14.32.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2019 14:32:16 -0800 (PST)
-Subject: Re: [PATCH] vfs: Handle file systems without ->parse_params better
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     David Howells <dhowells@redhat.com>,
-        Jeremi Piotrowski <jeremi.piotrowski@gmail.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        linux-kernel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>
-References: <20191212213604.19525-1-labbott@redhat.com>
- <20191212214724.GL4203@ZenIV.linux.org.uk>
-From:   Laura Abbott <labbott@redhat.com>
-Message-ID: <27e4379a-baae-4dbb-1fcf-c4a92fcde341@redhat.com>
-Date:   Thu, 12 Dec 2019 17:32:15 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Thu, 12 Dec 2019 17:34:08 -0500
+Received: from dread.disaster.area (pa49-195-139-249.pa.nsw.optusnet.com.au [49.195.139.249])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 9EEB38208B0;
+        Fri, 13 Dec 2019 09:34:04 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1ifX23-00061Q-20; Fri, 13 Dec 2019 09:34:03 +1100
+Date:   Fri, 13 Dec 2019 09:34:03 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, willy@infradead.org, clm@fb.com,
+        torvalds@linux-foundation.org
+Subject: Re: [PATCH 5/5] iomap: support RWF_UNCACHED for buffered writes
+Message-ID: <20191212223403.GH19213@dread.disaster.area>
+References: <20191211152943.2933-1-axboe@kernel.dk>
+ <20191211152943.2933-6-axboe@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <20191212214724.GL4203@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191211152943.2933-6-axboe@kernel.dk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
+        a=KoypXv6BqLCQNZUs2nCMWg==:117 a=KoypXv6BqLCQNZUs2nCMWg==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=pxVhFHJ0LMsA:10
+        a=7-415B0cAAAA:8 a=ikgJNTgf4fhs6WZrna0A:9 a=RKUrkyyTLFFZf7Ed:21
+        a=Xuacn0olY5J5TEqm:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/12/19 4:47 PM, Al Viro wrote:
-> On Thu, Dec 12, 2019 at 04:36:04PM -0500, Laura Abbott wrote:
->> @@ -141,14 +191,19 @@ int vfs_parse_fs_param(struct fs_context *fc, struct fs_parameter *param)
->>   		 */
->>   		return ret;
->>   
->> -	if (fc->ops->parse_param) {
->> -		ret = fc->ops->parse_param(fc, param);
->> -		if (ret != -ENOPARAM)
->> -			return ret;
->> -	}
->> +	parse_param = fc->ops->parse_param;
->> +	if (!parse_param)
->> +		parse_param = fs_generic_parse_param;
->> +
->> +	ret = parse_param(fc, param);
->> +	if (ret != -ENOPARAM)
->> +		return ret;
->>   
->> -	/* If the filesystem doesn't take any arguments, give it the
->> -	 * default handling of source.
->> +	/*
->> +	 * File systems may have a ->parse_param function but rely on
->> +	 * the top level to parse the source function. File systems
->> +	 * may have their own source parsing though so this needs
->> +	 * to come after the call to parse_param above.
->>   	 */
->>   	if (strcmp(param->key, "source") == 0) {
->>   		if (param->type != fs_value_is_string)
->> -- 
->> 2.21.0
+On Wed, Dec 11, 2019 at 08:29:43AM -0700, Jens Axboe wrote:
+> This adds support for RWF_UNCACHED for file systems using iomap to
+> perform buffered writes. We use the generic infrastructure for this,
+> by tracking pages we created and calling write_drop_cached_pages()
+> to issue writeback and prune those pages.
 > 
-> No.  Please, get rid of the boilerplate.  About 80% of that thing
-> is an absolutely pointless dance around "but we need that to call
-> fs_parse()".  We do *NOT* need to call fs_parse() here.  We do
-> not need a struct fs_parameter_description instance.  We do not
-> need struct fs_parameter_spec instances.  We do not need a magical
-> global constant.  And I'm not entirely convinced that we need
-> to make fs_generic_parse_param() default - filesystems that
-> want this behaviour can easily ask for it.  A sane default is
-> to reject any bogus options.
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  fs/iomap/apply.c       | 24 ++++++++++++++++++++++++
+>  fs/iomap/buffered-io.c | 37 +++++++++++++++++++++++++++++--------
+>  include/linux/iomap.h  |  5 +++++
+>  3 files changed, 58 insertions(+), 8 deletions(-)
 > 
+> diff --git a/fs/iomap/apply.c b/fs/iomap/apply.c
+> index 562536da8a13..966826ad4bb9 100644
+> --- a/fs/iomap/apply.c
+> +++ b/fs/iomap/apply.c
+> @@ -90,5 +90,29 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
+>  				     flags, &iomap);
+>  	}
+>  
+> +	if (written && (flags & IOMAP_UNCACHED)) {
+> +		struct address_space *mapping = inode->i_mapping;
+> +
+> +		end = pos + written;
+> +		ret = filemap_write_and_wait_range(mapping, pos, end);
+> +		if (ret)
+> +			goto out;
+> +
+> +		/*
+> +		 * No pages were created for this range, we're done
+> +		 */
+> +		if (!(iomap.flags & IOMAP_F_PAGE_CREATE))
+> +			goto out;
+> +
+> +		/*
+> +		 * Try to invalidate cache pages for the range we just wrote.
+> +		 * We don't care if invalidation fails as the write has still
+> +		 * worked and leaving clean uptodate pages in the page cache
+> +		 * isn't a corruption vector for uncached IO.
+> +		 */
+> +		invalidate_inode_pages2_range(mapping,
+> +				pos >> PAGE_SHIFT, end >> PAGE_SHIFT);
+> +	}
+> +out:
+>  	return written ? written : ret;
+>  }
 
-Well the existing behavior was to silently ignore options by
-default so this was an attempt to preserve that behavior for
-everything rather than keep hitting user visible bugs. I'd
-rather not have to deal this this for each file system.
+Just a thought on further optimisation for this for XFS.
+IOMAP_UNCACHED is being passed into the filesystem ->iomap_begin
+methods by iomap_apply().  Hence the filesystems know that it is
+an uncached IO that is being done, and we can tailor allocation
+strategies to suit the fact that the data is going to be written
+immediately.
 
-> I would call it ignore_unknowns_parse_param(), while we are at it.
-> 
+In this case, XFS needs to treat it the same way it treats direct
+IO. That is, we do immediate unwritten extent allocation rather than
+delayed allocation. This will reduce the allocation overhead and
+will optimise for immediate IO locality rather than optimise for
+delayed allocation.
 
+This should just be a relatively simple change to
+xfs_file_iomap_begin() along the lines of:
 
+-	if ((flags & (IOMAP_WRITE | IOMAP_ZERO)) && !(flags & IOMAP_DIRECT) &&
+-			!IS_DAX(inode) && !xfs_get_extsz_hint(ip)) {
++	if ((flags & (IOMAP_WRITE | IOMAP_ZERO)) &&
++	    !(flags & (IOMAP_DIRECT | IOMAP_UNCACHED)) &&
++	    !IS_DAX(inode) && !xfs_get_extsz_hint(ip)) {
+		/* Reserve delalloc blocks for regular writeback. */
+		return xfs_file_iomap_begin_delay(inode, offset, length, flags,
+				iomap);
+	}
+
+so that it avoids delayed allocation for uncached IO...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
