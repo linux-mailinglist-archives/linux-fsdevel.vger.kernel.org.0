@@ -2,121 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58D4B11C8F7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 10:18:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC09911C9CA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 10:46:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728303AbfLLJSD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Dec 2019 04:18:03 -0500
-Received: from mout.kundenserver.de ([212.227.126.133]:41161 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728198AbfLLJSD (ORCPT
+        id S1728480AbfLLJqF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Dec 2019 04:46:05 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:50128 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726382AbfLLJqF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Dec 2019 04:18:03 -0500
-Received: from mail-qk1-f177.google.com ([209.85.222.177]) by
- mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MYvoW-1iAeaH2EHg-00UtcV; Thu, 12 Dec 2019 10:18:01 +0100
-Received: by mail-qk1-f177.google.com with SMTP id k6so1027076qki.5;
-        Thu, 12 Dec 2019 01:18:01 -0800 (PST)
-X-Gm-Message-State: APjAAAU0UtilEnUCQTaJYmBUXTRahod+qULvJwS1XeKjKQFtJ0CwesBs
-        e4tLZV27XkGr9zodnIP0oANEw+fK0owckrsCN/g=
-X-Google-Smtp-Source: APXvYqxQ00UNQvIg4lRrwqZ6prCq1ld+K+cVy4gCbiI7WVM1uWsZJdRSTMNOdaexs+HkrBjFyzUyLfqiJWBof8X+Tg8=
-X-Received: by 2002:a37:5b45:: with SMTP id p66mr7106225qkb.394.1576142280134;
- Thu, 12 Dec 2019 01:18:00 -0800 (PST)
+        Thu, 12 Dec 2019 04:46:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=ZzD6Bq+3Ve/TwFgg9V6264/dt
+        4ckQ3ZYeZ8WaKMzGHHp4XObq0LBf1O+tioay65kol4LVpkuQ2jT0lfEp+CXDFc700fcDkcdIGjF/s
+        lKDVHcxVc40Xvyjjq/EpCP3FqauJPZG3nGXMlpMC7m991Xe80P0OR0Wc5k49/YIgcPSuvyQp9e3Ru
+        sI4jCt9w2X75FOTmtVzHmL7b6HXf3Tiua3OO4P8YZPa9PAmi5Dvf895I93hZYv2TzmyqYzUWhio+G
+        vxvy7q6VAk9lhSyt35NAmFtG2o6HahkZUhBznqBEOZcNXh3+RRjFieFE43e08/gkbeJBvFnwG5A/4
+        vxw+MNbbw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ifL2q-0004Aq-SZ; Thu, 12 Dec 2019 09:46:04 +0000
+Date:   Thu, 12 Dec 2019 01:46:04 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc:     linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        hch@infradead.org, darrick.wong@oracle.com, fdmanana@kernel.org,
+        dsterba@suse.cz, jthumshirn@suse.de, nborisov@suse.com,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: Re: [PATCH 1/8] fs: Export generic_file_buffered_read()
+Message-ID: <20191212094604.GA15977@infradead.org>
+References: <20191212003043.31093-1-rgoldwyn@suse.de>
+ <20191212003043.31093-2-rgoldwyn@suse.de>
 MIME-Version: 1.0
-References: <20191211204306.1207817-1-arnd@arndb.de> <20191211204306.1207817-16-arnd@arndb.de>
- <20191211180155-mutt-send-email-mst@kernel.org> <858768fb-5f79-8259-eb6a-a26f18fb0e04@redhat.com>
-In-Reply-To: <858768fb-5f79-8259-eb6a-a26f18fb0e04@redhat.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 12 Dec 2019 10:17:44 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a2hxD9aaabf2sK3ozqVdr2pbDS10W+Z6oT4idk=AitwVQ@mail.gmail.com>
-Message-ID: <CAK8P3a2hxD9aaabf2sK3ozqVdr2pbDS10W+Z6oT4idk=AitwVQ@mail.gmail.com>
-Subject: Re: [PATCH 15/24] compat_ioctl: scsi: move ioctl handling into drivers
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jason Wang <jasowang@redhat.com>,
-        Doug Gilbert <dgilbert@interlog.com>,
-        =?UTF-8?Q?Kai_M=C3=A4kisara?= <Kai.Makisara@kolumbus.fi>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Hannes Reinecke <hare@suse.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        John Garry <john.garry@huawei.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:etAzTzAXTBuE1n7+RgDQ+4qewvW2SmRgdxlCZwQKwACTZ0dz46t
- uvymLy48UI4w/Ne1YF85QhRqNe+A38yuaXH2ehQFJF/qMb55lDdn2eD2rQDSGqwpT5tYr4j
- Vbk74ffHDk5L7vaPzcr3wT5bAsdHAo6DPQnCjQZSsKQMJprIh4+ZgGANy9m2XC3TfzY1ZhP
- MkpvfSl1bPLcfpV8NO4aw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:yoo1EQsxf+0=:9LgzVd8CwF7yxMCHZSmNWu
- WnBvulPLYwgf38Zp4K0uCs1cYV5iPCSXtFGTmjOgRQ9JifXQ+32SrQYJHyWlkOmKhW/sqAORB
- 4GMTFDK2+VswTTv53x9LjylGqrdlr3Mr9ull+Xkh9EH+eyAa2oggDcenwKfGuhqAz0EX0sbYI
- 3l6g61e5RpsTD7+35HNH4Ic4Ceh9IV+GxyStxizrOeYYieb9+b68SyoRjdB9rPmvMzFw8JMgS
- no7x7+u0z9/EzualpgN5UZjVtZwogbxmeWqZIcuVFy3Wue2/fj9x5887PtsWC2HFKiVUbCm34
- /1zPQlQtL0ipLgp1UkozTy0kQp4UoPgcmFuW7rmliP0oxcvRPzG+oYp/Gk5Nt3nBiETuO6SXK
- 9B1lzKXf/Fee8nbmoMdUIl8YC7VkPeV53+oiWVEm8SWGJrF3QDiDLkBCUKKpS3tmAQGIz16Jk
- e5ZRYy5Vjpb0nUQcJrt/DCZoW0H7Hp8tK1gJLuYDdvSnHYDvjQhkpR1coIDk6ATkmyBiQzsAL
- bLOhOVYS6vG5Bc4y/dcDHnCk0sQET77QG56/ZZecBvsMQWoOJVDpvioIr1wOTRmnFb9b4BNa4
- TYstnQmBCTV94YmDRffcDU565z087vhJs2CIvttvMWhB1dS8sdp3UDdXdTOTzL6MkjNJni2fL
- UMwe/9x5lm8Fkr5Uv8PEv/zN85zC0WCE7/wXDEYMBIpCguBtVoqBGbstw8xJJuWq9Bz9gDx6q
- r3Zjes2Gh/vZMTUoZiSGa2GuQk0+q/16wU8eyFD9oaWfVOnjFE37C3BAqEduZt6eFSO6Gte9p
- kWkVq7AYrX6JA9IWhQYFXe2VuXwBBEt0wiVFkqOA16shup+GNRN0qFlL9e+qhfScuIe9VUS6A
- 0pH7F4DrlVid+mTCKSNA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191212003043.31093-2-rgoldwyn@suse.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 1:28 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
-> On 12/12/19 00:05, Michael S. Tsirkin wrote:
-> >> @@ -405,6 +405,9 @@ static int virtblk_getgeo(struct block_device *bd, struct hd_geometry *geo)
-> >>
-> >>  static const struct block_device_operations virtblk_fops = {
-> >>      .ioctl  = virtblk_ioctl,
-> >> +#ifdef CONFIG_COMPAT
-> >> +    .compat_ioctl = blkdev_compat_ptr_ioctl,
-> >> +#endif
-> >>      .owner  = THIS_MODULE,
-> >>      .getgeo = virtblk_getgeo,
-> >>  };
-> > Hmm - is virtio blk lumped in with scsi things intentionally?
->
-> I think it's because the only ioctl for virtio-blk is SG_IO.  It makes
-> sense to lump it in with scsi, but I wouldn't mind getting rid of
-> CONFIG_VIRTIO_BLK_SCSI altogether.
+Looks good,
 
-It currently calls scsi_cmd_blk_ioctl(), which implements a bunch of ioctl
-commands, including some that are unrelated to SG_IO:
-
-                case SG_GET_VERSION_NUM:
-                case SCSI_IOCTL_GET_IDLUN:
-                case SCSI_IOCTL_GET_BUS_NUMBER:
-                case SG_SET_TIMEOUT:
-                case SG_GET_TIMEOUT:
-                case SG_GET_RESERVED_SIZE:
-                case SG_SET_RESERVED_SIZE:
-                case SG_EMULATED_HOST:
-                case SG_IO: {
-                case CDROM_SEND_PACKET:
-                case SCSI_IOCTL_SEND_COMMAND:
-                case CDROMCLOSETRAY:
-                case CDROMEJECT:
-
-My patch changes all callers of this function, and the idea is
-to preserve the existing behavior through my series, so I think
-it makes sense to keep my patch as is.
-
-I would assume that calling scsi_cmd_blk_ioctl() is harmless
-here, but if you want to remove it or limit the set of supported
-commands, that should be independent of my change.
-
-       Arnd
+Reviewed-by: Christoph Hellwig <hch@lst.de>
