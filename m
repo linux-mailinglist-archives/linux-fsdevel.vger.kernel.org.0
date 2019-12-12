@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6185111D68F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 20:01:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4654711D691
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 20:01:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730621AbfLLTBl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Dec 2019 14:01:41 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:36965 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730261AbfLLTBl (ORCPT
+        id S1730625AbfLLTBm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Dec 2019 14:01:42 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:40510 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730261AbfLLTBm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Dec 2019 14:01:41 -0500
-Received: by mail-il1-f195.google.com with SMTP id t9so2954771iln.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2019 11:01:40 -0800 (PST)
+        Thu, 12 Dec 2019 14:01:42 -0500
+Received: by mail-il1-f193.google.com with SMTP id b15so2941111ila.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2019 11:01:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=fbpmMkO7cF3l0nX3uMERV011BvImxrSyna50D9UZcqY=;
-        b=rE2OUvxuQQR9e+OCoGeKlkc1cUF+15y3F4LLwx3WdT9h9LKQx9Didy7wYh+VA3fSF7
-         +kBrzd+B6vQBJ0BrZhLXL5rA1NJtQb1kW55UJegziee7iRIJmTwOZof3aRylNyXxDQE/
-         9NInFTkvbNMXc/kGMTruW1JYbiZlao4XdqjBv44yo0w9Nsoz+b8GvVSzNGWSO9pZ9KCi
-         eryZPEPld3a91/bVkFB8/ZmFKbm8VB5H3+AlH/E+v/ywydEuAbDKyIcI5rxTFnd2AsLe
-         EJQOubuj/XMvejkd3wuiuhsBsbnsxPEwo2TeWY//2ctQl8ezMe9JqMTrm393hK/J0Xhy
-         ihVw==
+        bh=o3zF2IoLkG99aJLG3KAoCKldE2uwFDYuWKBNVHHKeAg=;
+        b=haFgiW36qK83MkfbXn59ksnSEeEsdMHyWL9vgaQPI/2M7BzIcgSEL5tmvJUk3CVyL9
+         gaIUjsxIuvc2Scx+pXvX18Vol2DgeB6lck/Md1S9G8ORheTieuSd5A3FA09ZBu9H7LwU
+         y8V5EwFbsXEx36zibedzoA5a9jooRrvi1Vufw6Bd6hsBuKZPJZHp7Qw3uMUUMmhZ5WTD
+         jijcETsNbJTE6e2rQ/pBA1N0y4a+Prc5V7u02l8GVhZMpObLBF+CWkI4cN+2hZd+ZVU7
+         v0wh3XrdAMhdaZNFvhnzz8UZY6e+m1OGDnOo39MZvia9Cgm5RurFCcDKsOl4s4SvRxAt
+         X6Qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=fbpmMkO7cF3l0nX3uMERV011BvImxrSyna50D9UZcqY=;
-        b=LszUqR7+2Q0H+XFdDt80r3hpR7qX5dzsQR/w99iSP2sRbdfMG8Hd7rn/Tp8xzMz0qY
-         4fDYzsroc3egeibZeuZuG6agWOs3fHwfi8lhnaAgXRw4Elm+pFerxtAphXKaqfpl5aMu
-         bLpY7BHlWs32fIwXziGMEbPDxsb6VxGDGDFnP2HDxT4/85izuHBzIelsY56QzILyiNiT
-         S/n5dC0xfh6BdQUAVwlwUZrl0HLo8gHPD0fe9KemNHWIgyFdsvpGiWUm+LKa3dur4EoP
-         EWYRrBdqGr+9np5UOHao/lOMNNveG3+BJI99uRg1WuPisQiwZy8G3PXNG6wSjhaBLT1X
-         6N0A==
-X-Gm-Message-State: APjAAAX18PUdzn0Cfoo9OBkEEhWAvYfl3aWzV3KHocz1YI1ylQw3YbdN
-        a4ugAFZ+xbK8Byd4BgZRo4aOfA==
-X-Google-Smtp-Source: APXvYqyITTmNy4tNYMAf6rKh/QJj2zfjnSElNIDEYONualw6iMY3maR+LVOkyIy1eJVakzqREBT76g==
-X-Received: by 2002:a92:b657:: with SMTP id s84mr8881028ili.253.1576177300212;
-        Thu, 12 Dec 2019 11:01:40 -0800 (PST)
+        bh=o3zF2IoLkG99aJLG3KAoCKldE2uwFDYuWKBNVHHKeAg=;
+        b=UqGVyJdTNjY1skLsBycuioFW1qAwppYqQ6k1ezVltOl5QvvgRRTs2l05KiuhSiYRNL
+         mW9dItLlDeheBqMkRWxi8TQo06ecR2cdocQ4TkMn61j/vaa7M08A0wjT44ifbCcMBBm4
+         nb6W8/Wa9Zp2Imvi3364VIeVRcw/KCSuHFNtAc0UI978A26+9hT+pcGdi7QBJuokH4Pb
+         stpJ7xiVvtPJa5eCCwNxIGJ7Yo4BYH7z/+5BH43cm/SkUQ9NUH4GgADszRzbhAXCEgdw
+         Wtz8RvTQPCtCy9eUJRxGDhOkN3iJKQ/xdZ6OTmHKH6HpFU0PNrt6/HwMCnHalR01k/1N
+         gRVg==
+X-Gm-Message-State: APjAAAVFHZbKioeXaEN4+X2wZ3XW4yIGA5m1NO8GrGSEJtJcgU5F8fu1
+        HBWAmhcWGY6ga7o82Nc9GwO2HA==
+X-Google-Smtp-Source: APXvYqy4Ha1ZPT0wkuEbZwzKrQRha4JXZvcnVJOgvUSyZMjxrG63y4ujfU5A0qzhnHglt6gsLEgwZw==
+X-Received: by 2002:a92:4781:: with SMTP id e1mr9348975ilk.147.1576177301694;
+        Thu, 12 Dec 2019 11:01:41 -0800 (PST)
 Received: from x1.thefacebook.com ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id i22sm1957745ill.40.2019.12.12.11.01.38
+        by smtp.gmail.com with ESMTPSA id i22sm1957745ill.40.2019.12.12.11.01.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2019 11:01:39 -0800 (PST)
+        Thu, 12 Dec 2019 11:01:41 -0800 (PST)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-block@vger.kernel.org
 Cc:     willy@infradead.org, clm@fb.com, torvalds@linux-foundation.org,
         david@fromorbit.com, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 2/5] mm: make generic_perform_write() take a struct kiocb
-Date:   Thu, 12 Dec 2019 12:01:30 -0700
-Message-Id: <20191212190133.18473-3-axboe@kernel.dk>
+Subject: [PATCH 3/5] mm: make buffered writes work with RWF_UNCACHED
+Date:   Thu, 12 Dec 2019 12:01:31 -0700
+Message-Id: <20191212190133.18473-4-axboe@kernel.dk>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191212190133.18473-1-axboe@kernel.dk>
 References: <20191212190133.18473-1-axboe@kernel.dk>
@@ -63,107 +63,108 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Right now all callers pass in iocb->ki_pos, just pass in the iocb. This
-is in preparation for using the iocb flags in generic_perform_write().
+If RWF_UNCACHED is set for io_uring (or pwritev2(2)), we'll drop the
+cache instantiated for buffered writes. If new pages aren't
+instantiated, we leave them alone. This provides similar semantics to
+reads with RWF_UNCACHED set.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/ceph/file.c     | 2 +-
- fs/ext4/file.c     | 2 +-
- fs/nfs/file.c      | 2 +-
- include/linux/fs.h | 3 ++-
- mm/filemap.c       | 8 +++++---
- 5 files changed, 10 insertions(+), 7 deletions(-)
+ include/linux/fs.h |  1 +
+ mm/filemap.c       | 41 +++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 40 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 11929d2bb594..096c009f188f 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -1538,7 +1538,7 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		 * are pending vmtruncate. So write and vmtruncate
- 		 * can not run at the same time
- 		 */
--		written = generic_perform_write(file, from, pos);
-+		written = generic_perform_write(file, from, iocb);
- 		if (likely(written >= 0))
- 			iocb->ki_pos = pos + written;
- 		ceph_end_io_write(inode);
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index 6a7293a5cda2..9ffb857765d5 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -249,7 +249,7 @@ static ssize_t ext4_buffered_write_iter(struct kiocb *iocb,
- 		goto out;
- 
- 	current->backing_dev_info = inode_to_bdi(inode);
--	ret = generic_perform_write(iocb->ki_filp, from, iocb->ki_pos);
-+	ret = generic_perform_write(iocb->ki_filp, from, iocb);
- 	current->backing_dev_info = NULL;
- 
- out:
-diff --git a/fs/nfs/file.c b/fs/nfs/file.c
-index 8eb731d9be3e..d8f51a702a4e 100644
---- a/fs/nfs/file.c
-+++ b/fs/nfs/file.c
-@@ -624,7 +624,7 @@ ssize_t nfs_file_write(struct kiocb *iocb, struct iov_iter *from)
- 	result = generic_write_checks(iocb, from);
- 	if (result > 0) {
- 		current->backing_dev_info = inode_to_bdi(inode);
--		result = generic_perform_write(file, from, iocb->ki_pos);
-+		result = generic_perform_write(file, from, iocb);
- 		current->backing_dev_info = NULL;
- 	}
- 	nfs_end_io_write(inode);
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 092ea2a4319b..bf58db1bc032 100644
+index bf58db1bc032..5ea5fc167524 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -3103,7 +3103,8 @@ extern ssize_t generic_file_read_iter(struct kiocb *, struct iov_iter *);
- extern ssize_t __generic_file_write_iter(struct kiocb *, struct iov_iter *);
- extern ssize_t generic_file_write_iter(struct kiocb *, struct iov_iter *);
- extern ssize_t generic_file_direct_write(struct kiocb *, struct iov_iter *);
--extern ssize_t generic_perform_write(struct file *, struct iov_iter *, loff_t);
-+extern ssize_t generic_perform_write(struct file *, struct iov_iter *,
-+				     struct kiocb *);
+@@ -285,6 +285,7 @@ enum positive_aop_returns {
+ #define AOP_FLAG_NOFS			0x0002 /* used by filesystem to direct
+ 						* helper code (eg buffer layer)
+ 						* to clear GFP_FS from alloc */
++#define AOP_FLAG_UNCACHED		0x0004
  
- ssize_t vfs_iter_read(struct file *file, struct iov_iter *iter, loff_t *ppos,
- 		rwf_t flags);
+ /*
+  * oh the beauties of C type declarations.
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 5d299d69b185..00b8e87fb9cf 100644
+index 00b8e87fb9cf..fbcd4537979d 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -3292,10 +3292,11 @@ struct page *grab_cache_page_write_begin(struct address_space *mapping,
- EXPORT_SYMBOL(grab_cache_page_write_begin);
- 
- ssize_t generic_perform_write(struct file *file,
--				struct iov_iter *i, loff_t pos)
-+				struct iov_iter *i, struct kiocb *iocb)
+@@ -3277,10 +3277,12 @@ struct page *grab_cache_page_write_begin(struct address_space *mapping,
+ 					pgoff_t index, unsigned flags)
  {
- 	struct address_space *mapping = file->f_mapping;
- 	const struct address_space_operations *a_ops = mapping->a_ops;
-+	loff_t pos = iocb->ki_pos;
- 	long status = 0;
+ 	struct page *page;
+-	int fgp_flags = FGP_LOCK|FGP_WRITE|FGP_CREAT;
++	int fgp_flags = FGP_LOCK|FGP_WRITE;
+ 
+ 	if (flags & AOP_FLAG_NOFS)
+ 		fgp_flags |= FGP_NOFS;
++	if (!(flags & AOP_FLAG_UNCACHED))
++		fgp_flags |= FGP_CREAT;
+ 
+ 	page = pagecache_get_page(mapping, index, fgp_flags,
+ 			mapping_gfp_mask(mapping));
+@@ -3301,6 +3303,9 @@ ssize_t generic_perform_write(struct file *file,
  	ssize_t written = 0;
  	unsigned int flags = 0;
-@@ -3429,7 +3430,8 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		if (written < 0 || !iov_iter_count(from) || IS_DAX(inode))
- 			goto out;
  
--		status = generic_perform_write(file, from, pos = iocb->ki_pos);
-+		pos = iocb->ki_pos;
-+		status = generic_perform_write(file, from, iocb);
- 		/*
- 		 * If generic_perform_write() returned a synchronous error
- 		 * then we want to return the number of bytes which were
-@@ -3461,7 +3463,7 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 			 */
++	if (iocb->ki_flags & IOCB_UNCACHED)
++		flags |= AOP_FLAG_UNCACHED;
++
+ 	do {
+ 		struct page *page;
+ 		unsigned long offset;	/* Offset into pagecache page */
+@@ -3333,10 +3338,16 @@ ssize_t generic_perform_write(struct file *file,
+ 			break;
  		}
- 	} else {
--		written = generic_perform_write(file, from, iocb->ki_pos);
-+		written = generic_perform_write(file, from, iocb);
- 		if (likely(written > 0))
- 			iocb->ki_pos += written;
- 	}
+ 
++retry:
+ 		status = a_ops->write_begin(file, mapping, pos, bytes, flags,
+ 						&page, &fsdata);
+-		if (unlikely(status < 0))
++		if (unlikely(status < 0)) {
++			if (status == -ENOMEM && (flags & AOP_FLAG_UNCACHED)) {
++				flags &= ~AOP_FLAG_UNCACHED;
++				goto retry;
++			}
+ 			break;
++		}
+ 
+ 		if (mapping_writably_mapped(mapping))
+ 			flush_dcache_page(page);
+@@ -3372,6 +3383,32 @@ ssize_t generic_perform_write(struct file *file,
+ 		balance_dirty_pages_ratelimited(mapping);
+ 	} while (iov_iter_count(i));
+ 
++	if (written && (iocb->ki_flags & IOCB_UNCACHED)) {
++		loff_t end;
++
++		pos = iocb->ki_pos;
++		end = pos + written;
++
++		status = filemap_write_and_wait_range(mapping, pos, end);
++		if (status)
++			goto out;
++
++		/*
++		 * No pages were created for this range, we're done
++		 */
++		if (flags & AOP_FLAG_UNCACHED)
++			 goto out;
++
++		/*
++		 * Try to invalidate cache pages for the range we just wrote.
++		 * We don't care if invalidation fails as the write has still
++		 * worked and leaving clean uptodate pages in the page cache
++		 * isn't a corruption vector for uncached IO.
++		 */
++		 invalidate_inode_pages2_range(mapping,
++					pos >> PAGE_SHIFT, end >> PAGE_SHIFT);
++	}
++out:
+ 	return written ? written : status;
+ }
+ EXPORT_SYMBOL(generic_perform_write);
 -- 
 2.24.1
 
