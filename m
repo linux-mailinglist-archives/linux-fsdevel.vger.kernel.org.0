@@ -2,103 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2B0D11C170
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 01:32:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 140E811C1E7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 02:09:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbfLLAbJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Dec 2019 19:31:09 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42316 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727359AbfLLAbI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Dec 2019 19:31:08 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CFF9DACF2;
-        Thu, 12 Dec 2019 00:31:06 +0000 (UTC)
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     linux-btrfs@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, hch@infradead.org,
-        darrick.wong@oracle.com, fdmanana@kernel.org, dsterba@suse.cz,
-        jthumshirn@suse.de, nborisov@suse.com,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: [PATCH 8/8] btrfs: remove BTRFS_INODE_READDIO_NEED_LOCK
-Date:   Wed, 11 Dec 2019 18:30:43 -0600
-Message-Id: <20191212003043.31093-9-rgoldwyn@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20191212003043.31093-1-rgoldwyn@suse.de>
-References: <20191212003043.31093-1-rgoldwyn@suse.de>
+        id S1727461AbfLLBJQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Dec 2019 20:09:16 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46700 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726791AbfLLBJP (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Dec 2019 20:09:15 -0500
+Received: by mail-lf1-f65.google.com with SMTP id f15so298946lfl.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 17:09:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XSsy1oK6dlgjeYC31DOAb3aczfIQDJbif+gCxstOAL4=;
+        b=W0o5DFnebCMTaJ6AV7omtLbXbKiiCh8i9FH/yFc2h2qbvsuqylgRcBksJ+bXJasJuy
+         mRautiQaOn3pAv13zA8lsp9sl3W+5w5u3qrODNrmLA3c6R8XTAvXGSldhsFP8XDeHm69
+         SVC414oav1bFwT9QRTew9YkNXqTSPHaerPO3M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XSsy1oK6dlgjeYC31DOAb3aczfIQDJbif+gCxstOAL4=;
+        b=q4bWbljTDZfg0Mx1XmERs0SKtADO5ACZJlAC7xCV7fwWAaqH56Ewly5rVA3U6SMTJ+
+         tR3Bn8TQO+6HrRlpWhSk/u7xELCmHTn4bbInfW6CUvctMZiubvIc2Ata8RZdcdyPgVlM
+         LNOye68GFrjOM8bdb/NmyucoBg5Q3Ird9QaaP24NuXsMErpIoGoHknMPuZURpKA74hPW
+         7ngNoouU0BiUmFFc3bgTPOsi885p/7RNDAdheaucmhXeocQO2NbfvaWk13lr4ZCSMfef
+         nYm0PdoFu5EzpQIEI4rwUc3SokVYy/v0jDKNa2H1nKPOLTjTpl72I+H1G9LyGQ8+SQrS
+         oQxw==
+X-Gm-Message-State: APjAAAU4itVnGmxtJv0i2o57Dzjx+Shlch1DbUnUs0l2IgoZkflL7jxI
+        5A2n7DD/01856ua6XhA5CiPi9h6EGAs=
+X-Google-Smtp-Source: APXvYqzgLEK+3Sj7vCg46HEvmqjHswyJQH8JlMxdmkC0UOs+Y3oIj0Dr/3vSZWV+NgNxqn/IKkEn5Q==
+X-Received: by 2002:a19:dc14:: with SMTP id t20mr4060891lfg.47.1576112951139;
+        Wed, 11 Dec 2019 17:09:11 -0800 (PST)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id d9sm1990179lja.73.2019.12.11.17.09.09
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2019 17:09:10 -0800 (PST)
+Received: by mail-lf1-f42.google.com with SMTP id f15so298889lfl.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 17:09:09 -0800 (PST)
+X-Received: by 2002:a19:4351:: with SMTP id m17mr4171510lfj.61.1576112949682;
+ Wed, 11 Dec 2019 17:09:09 -0800 (PST)
+MIME-Version: 1.0
+References: <20191211152943.2933-1-axboe@kernel.dk> <CAHk-=wjz3LE1kznro1dozhk9i9Dr4pCnkj7Fuccn2xdWeGHawQ@mail.gmail.com>
+ <d0adcde2-3106-4fea-c047-4d17111bab70@kernel.dk> <e43a2700-8625-e136-dc9d-d0d2da5d96ac@kernel.dk>
+ <CAHk-=wje8i3DVcO=fMC4tzKTS5+eHv0anrVZa_JENQt08T=qCQ@mail.gmail.com>
+ <0d4e3954-c467-30a7-5a8e-7c4180275533@kernel.dk> <CAHk-=whk4bcVPvtAv5OmHiW5z6AXgCLFhO4YrXD7o0XC+K-aHw@mail.gmail.com>
+ <fef996ca-a4ed-9633-1f79-91292a984a20@kernel.dk>
+In-Reply-To: <fef996ca-a4ed-9633-1f79-91292a984a20@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 11 Dec 2019 17:08:53 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wg=hHUFg3i0vDmKEg8HFbEKquAsoC8CJoZpP-8_A1jZDA@mail.gmail.com>
+Message-ID: <CAHk-=wg=hHUFg3i0vDmKEg8HFbEKquAsoC8CJoZpP-8_A1jZDA@mail.gmail.com>
+Subject: Re: [PATCHSET v3 0/5] Support for RWF_UNCACHED
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+On Wed, Dec 11, 2019 at 3:41 PM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> Here's what I did to reproduce:
 
-Since we now perform direct reads using i_rwsem, we can remove this
-inode flag used to co-ordinate unlocked reads.
+Gaah. I have a fairly fast ssd (but it's "consumer fast" - Samsung 970
+Pro - I'm assuming yours is a different class), but I encrypt my disk,
+so I only get about 15k iops and I see kcyrptd in my profiles, not
+kswapd.
 
-The truncate call takes i_rwsem. This means it is correctly synchronized
-with concurrent direct reads.
+I didn't even try to worry about RWF_UNCACHED or RWF_NOACCESS, since I
+wanted to see the problem. But I think that with my setup, I can't
+really see it just due to my IO being slow ;(
 
-Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
----
- fs/btrfs/btrfs_inode.h | 18 ------------------
- fs/btrfs/inode.c       |  5 -----
- 2 files changed, 23 deletions(-)
+I do see xas_create and kswapd0, but it's 0.42%. I'm assuming it's the
+very first signs of this problem, but it's certainly not all that
+noticeable.
 
-diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
-index 4e12a477d32e..cd8f378ed8e7 100644
---- a/fs/btrfs/btrfs_inode.h
-+++ b/fs/btrfs/btrfs_inode.h
-@@ -27,7 +27,6 @@ enum {
- 	BTRFS_INODE_NEEDS_FULL_SYNC,
- 	BTRFS_INODE_COPY_EVERYTHING,
- 	BTRFS_INODE_IN_DELALLOC_LIST,
--	BTRFS_INODE_READDIO_NEED_LOCK,
- 	BTRFS_INODE_HAS_PROPS,
- 	BTRFS_INODE_SNAPSHOT_FLUSH,
- };
-@@ -317,23 +316,6 @@ struct btrfs_dio_private {
- 			blk_status_t);
- };
- 
--/*
-- * Disable DIO read nolock optimization, so new dio readers will be forced
-- * to grab i_mutex. It is used to avoid the endless truncate due to
-- * nonlocked dio read.
-- */
--static inline void btrfs_inode_block_unlocked_dio(struct btrfs_inode *inode)
--{
--	set_bit(BTRFS_INODE_READDIO_NEED_LOCK, &inode->runtime_flags);
--	smp_mb();
--}
--
--static inline void btrfs_inode_resume_unlocked_dio(struct btrfs_inode *inode)
--{
--	smp_mb__before_atomic();
--	clear_bit(BTRFS_INODE_READDIO_NEED_LOCK, &inode->runtime_flags);
--}
--
- /* Array of bytes with variable length, hexadecimal format 0x1234 */
- #define CSUM_FMT				"0x%*phN"
- #define CSUM_FMT_VALUE(size, bytes)		size, bytes
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index c5c809ab84cf..501e2a8f5b93 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -5273,11 +5273,6 @@ static int btrfs_setsize(struct inode *inode, struct iattr *attr)
- 
- 		truncate_setsize(inode, newsize);
- 
--		/* Disable nonlocked read DIO to avoid the endless truncate */
--		btrfs_inode_block_unlocked_dio(BTRFS_I(inode));
--		inode_dio_wait(inode);
--		btrfs_inode_resume_unlocked_dio(BTRFS_I(inode));
--
- 		ret = btrfs_truncate(inode, newsize == oldsize);
- 		if (ret && inode->i_nlink) {
- 			int err;
--- 
-2.16.4
-
+               Linus
