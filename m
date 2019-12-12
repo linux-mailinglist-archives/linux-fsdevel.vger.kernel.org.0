@@ -2,96 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64BED11C222
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 02:29:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3C2D11C225
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 02:29:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727391AbfLLB3B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Dec 2019 20:29:01 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36343 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727224AbfLLB3B (ORCPT
+        id S1727473AbfLLB3w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Dec 2019 20:29:52 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38987 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727391AbfLLB3v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Dec 2019 20:29:01 -0500
-Received: by mail-lj1-f193.google.com with SMTP id r19so336421ljg.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 17:28:59 -0800 (PST)
+        Wed, 11 Dec 2019 20:29:51 -0500
+Received: by mail-pg1-f193.google.com with SMTP id b137so260958pga.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 17:29:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ngCvhdELOgIQ69MigGwbslj0BoCyrEIfDMRe9lAU84c=;
-        b=cwlWLXDtChisQx3BOxoqKRoI8l2aIzApJkZH0knnGXeRBkYyrjatj3Iqvq+pEYo8vz
-         YB1Q6eIQ7M8Kp9xDL8IMabELBNs7kQEMnQVpm9+RvgFUWRjKay6CY/YEtmqENuN8NEJe
-         SpgsA+0oAnSTBgoiasPVoSFTQm5OXTTIsNyTo=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=DhyX9yKmk3Bjq16+cH6CFIH0oBue170bHYeXiMOQ8dA=;
+        b=tBcfwgxJPBhRRcAGhCQgQbyfTfpQsyiGY9DGe/XHH2/qbpQARxKq7yWjGdvqo1IllS
+         dEWH4g1714qg29h4GEZigEfbqrKvxMzRE9LNVpEFK2NyrdjbNtkxs6UWbtUszECnOQ0D
+         VEoKTKtnfhk/vEZGeDpWMdwNOGh8La+bbktv7kvota82pgoXLzk3sL28vntZlDhqgkLX
+         +EyfDp8OYP1xKcWrZTib+Ng+VSUqbKeEhhTBmOwpw+Ojk7X5nKqyrRMXwloZOmKkzPiZ
+         +9yGgbU006bu6ndm0cPeWABAqJMpqOiOI+vxaISk+h/Wium9aaoWX5gz51q7TBIt5Pl3
+         er3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ngCvhdELOgIQ69MigGwbslj0BoCyrEIfDMRe9lAU84c=;
-        b=RHD+YVJTdLH3emfD8vbl6j7kzzAmhvVuoTI7Cc1r+hJNpM9GkQ8/nvvK4F36Xtule4
-         t4VG+NN0HCiKVcwbPf6FLbB+bCtkz0VHVObiZm3KraKw1UyNkZDReqpfJUGDwbF3qo3s
-         Tss/nOAdPbHAcENouEUBobqfoq9sZYT68E78XUANif255rxtNe4oZNqPu0B38QiUQOzu
-         7tgkwgvseBjZgG7Euo56u+8FCp30qCkixWntP89bwQOjFI7QCwZed7nSHg3rQvm0ZHQj
-         YuWOu1OzljxoQHj4FvcPxOqhUJ/8oTtSd5wjQqg2TObfybtq744fuKdLjX8GvzdsCOmc
-         mTXA==
-X-Gm-Message-State: APjAAAWHw+HAhdyTzcD/Sh5IQsi9/572dZqXWLVBiOkPVpzTWGEfnnfz
-        CnUqOLBzKMRXYHAB9nxpqO9+8Ytw+6A=
-X-Google-Smtp-Source: APXvYqzji42fffO6NWOk11H+fJCu2f8o6PXhKhXRhQ58QcFhJyVmTRmuPmLReNjEEnNOFwk4koa3oA==
-X-Received: by 2002:a2e:86c4:: with SMTP id n4mr4048286ljj.97.1576114138204;
-        Wed, 11 Dec 2019 17:28:58 -0800 (PST)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id u7sm2008615lfn.31.2019.12.11.17.28.56
-        for <linux-fsdevel@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=DhyX9yKmk3Bjq16+cH6CFIH0oBue170bHYeXiMOQ8dA=;
+        b=J4IMAnGBfAiTrtQ96Nqb/TQ3eqEzHt536PMngLsY7yg4WLi5gsyHy8bFe1y+5zABnG
+         +/N6IlIIHSo5jHkjCMePsz2cPR1CZhI8o+WvqZYtNMTOMh8Epo7/41ym448S5O40Abif
+         2HiLy2HNR11ewwQp00KBF0mzSVMev/9sDoRSYpQ8i0F2N1pUUeKAj/Xk/rcLJJdHi1nP
+         /81CMn919Q9qUFSzF+FjmPqgOt+LV1Zf6OFlV83cEeECgDHjv1+0Bd67wMV+E7zCo0mV
+         GjjcfKmveK3yL45xb3g2YNlcg5XD3uyQq8bxhMUS92PLZJRYMGXLj5ngjyVAzhGG9SS2
+         TaEg==
+X-Gm-Message-State: APjAAAXSnUDqWEpQSsIN9JWfxNhi+aj9KONfePCI16CBFnYcs5Edxaof
+        BsxKGuT9QykFfOaVjPP08HszYQ==
+X-Google-Smtp-Source: APXvYqwIZT80qb6KK6M7DWfi9Y0s3aK7ho5OWU9hmanRrqTeBJgLbXHTk13enGqUZ5WC+TJcO9HU0Q==
+X-Received: by 2002:a63:fd0a:: with SMTP id d10mr7322984pgh.197.1576114191223;
+        Wed, 11 Dec 2019 17:29:51 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id z14sm2580858pfg.57.2019.12.11.17.29.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2019 17:28:57 -0800 (PST)
-Received: by mail-lj1-f174.google.com with SMTP id e10so323131ljj.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 17:28:56 -0800 (PST)
-X-Received: by 2002:a05:651c:239:: with SMTP id z25mr4218712ljn.48.1576114136551;
- Wed, 11 Dec 2019 17:28:56 -0800 (PST)
-MIME-Version: 1.0
-References: <157558502272.10278.8718685637610645781.stgit@warthog.procyon.org.uk>
- <20191206135604.GB2734@twin.jikos.cz> <CAHk-=wiN_pWbcRaw5L-J2EFUyCn49Due0McwETKwmFFPp88K8Q@mail.gmail.com>
- <CAHk-=wjvO1V912ya=1rdXwrm1OBTi6GqnqryH_E8OR69cZuVOg@mail.gmail.com>
- <CAHk-=wizsHmCwUAyQKdU7hBPXHYQn-fOtJKBqMs-79br2pWxeQ@mail.gmail.com>
- <CAHk-=wjeG0q1vgzu4iJhW5juPkTsjTYmiqiMUYAebWW+0bam6w@mail.gmail.com> <9417.1576097731@warthog.procyon.org.uk>
-In-Reply-To: <9417.1576097731@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 11 Dec 2019 17:28:40 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgVpV-O4zeO+xOMcOUyKZi+1kg+6Kmi-P7SUx-ydZm5Og@mail.gmail.com>
-Message-ID: <CAHk-=wgVpV-O4zeO+xOMcOUyKZi+1kg+6Kmi-P7SUx-ydZm5Og@mail.gmail.com>
-Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
-To:     David Howells <dhowells@redhat.com>
-Cc:     David Sterba <dsterba@suse.cz>, Eric Biggers <ebiggers@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        Wed, 11 Dec 2019 17:29:50 -0800 (PST)
+Subject: Re: [PATCHSET v3 0/5] Support for RWF_UNCACHED
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux-MM <linux-mm@kvack.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-block <linux-block@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+References: <20191211152943.2933-1-axboe@kernel.dk>
+ <CAHk-=wjz3LE1kznro1dozhk9i9Dr4pCnkj7Fuccn2xdWeGHawQ@mail.gmail.com>
+ <d0adcde2-3106-4fea-c047-4d17111bab70@kernel.dk>
+ <e43a2700-8625-e136-dc9d-d0d2da5d96ac@kernel.dk>
+ <CAHk-=wje8i3DVcO=fMC4tzKTS5+eHv0anrVZa_JENQt08T=qCQ@mail.gmail.com>
+ <0d4e3954-c467-30a7-5a8e-7c4180275533@kernel.dk>
+ <CAHk-=whk4bcVPvtAv5OmHiW5z6AXgCLFhO4YrXD7o0XC+K-aHw@mail.gmail.com>
+ <fef996ca-a4ed-9633-1f79-91292a984a20@kernel.dk>
+ <CAHk-=wg=hHUFg3i0vDmKEg8HFbEKquAsoC8CJoZpP-8_A1jZDA@mail.gmail.com>
+ <1c93194a-ed91-c3aa-deb5-a3394805defb@kernel.dk>
+ <CAHk-=wj0pXsngjWKw5p3oTvwkNnT2DyoZWqPB+-wBY+BGTQ96w@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <d8a8ea42-7f76-926c-ae9a-d49b11578153@kernel.dk>
+Date:   Wed, 11 Dec 2019 18:29:46 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
+MIME-Version: 1.0
+In-Reply-To: <CAHk-=wj0pXsngjWKw5p3oTvwkNnT2DyoZWqPB+-wBY+BGTQ96w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 12:55 PM David Howells <dhowells@redhat.com> wrote:
->
-> Is it worth reverting:
->
->         commit f94df9890e98f2090c6a8d70c795134863b70201
->         Add wake_up_interruptible_sync_poll_locked()
->
-> since you changed the code that was calling that new function and so it's no
-> longer called?
+On 12/11/19 6:22 PM, Linus Torvalds wrote:
+> On Wed, Dec 11, 2019 at 5:11 PM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> 15K is likely too slow to really show an issue, I'm afraid. The 970
+>> is no slouch, but your crypt setup will likely hamper it a lot. You
+>> don't have a non-encrypted partition on it?
+> 
+> No. I normally don't need all that much disk, so I've never upgraded
+> my ssd from the 512G size.
+> 
+> Which means that it's actually half full or so, and I never felt like
+> "I should keep an unencrypted partition for IO testing", since I don't
+> generally _do_ any IO testing.
+> 
+> I can get my load up with "numjobs=8" and get my iops up to the 100k
+> range, though.
+> 
+> But kswapd doesn't much seem to care, the CPU percentage actually does
+> _down_ to 0.39% when I try that. Probably simply because now my CPU's
+> are busy, so they are running at 4.7Ghz instead of the 800Mhz "mostly
+> idle" state ...
+> 
+> I guess I should be happy. It does mean that the situation you see
+> isn't exactly the normal case. I understand why you want to do the
+> non-cached case, but the case I think it the worrisome one is the
+> regular buffered one, so that's what I'm testing (not even trying the
+> noaccess patches).
+> 
+> So from your report I went "uhhuh, that sounds like a bug". And it
+> appears that it largely isn't - you're seeing it because of pushing
+> the IO subsystem by another order of magnitude (and then I agree that
+> "under those kinds of IO loads, caching just won't help")
 
-You are sure you won't want that for the notification queue cases? I
-guess they'll never want to "sync" part..
+I'd very much argue that it IS a bug, maybe just doesn't show on your
+system. My test box is a pretty standard 2 socket system, 24 cores / 48
+threads, 2 nodes. The last numbers I sent were 100K IOPS, so nothing
+crazy, and granted that's only 10% kswapd cpu time, but that still seems
+very high for those kinds of rates. I'm surprised you see essentially no
+kswapd time for the same data rate.
 
-Looking at the regular pipe read/write code, maybe we'll want to try
-it again - do the wakeup while we already have the spinlock, rather
-than later. But I have this suspicion that that might just then push
-things into mutex contention, so who knows..
+We'll keep poking here, I know Johannes is spending some time looking
+into the reclaim side.
 
-Regardless, it's not going to happen for 5.5, so I guess we could
-revert it and if we ever end up trying it again we can resurrect it.
+-- 
+Jens Axboe
 
-              Linus
