@@ -2,118 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 183A811C227
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 02:30:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 270A611C269
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 02:42:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727411AbfLLBa4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Dec 2019 20:30:56 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43603 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727351AbfLLBaz (ORCPT
+        id S1727498AbfLLBlh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Dec 2019 20:41:37 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35795 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727473AbfLLBlh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Dec 2019 20:30:55 -0500
-Received: by mail-pf1-f194.google.com with SMTP id h14so210182pfe.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 17:30:55 -0800 (PST)
+        Wed, 11 Dec 2019 20:41:37 -0500
+Received: by mail-lj1-f196.google.com with SMTP id j6so366191lja.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 17:41:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IJPEtyzhZidGS2TDF5UHDm6IlR5MghzdNBnmbPSNEo4=;
-        b=S/7cyjie54XBy/hArCv6T4A7Bor9inO/ZNcOMf6/OTQe+W/dVAOqvxDFMVsL2TPJ1M
-         BxUwDY2olMgNOND1g42vdqbyHt2rQOu4MGlAQ1rkNaadzL2uaQpoGw+JqTKAE1fKXmUl
-         xjPW507Y+GgufzxHyTA7FzzGfiH0yTDGpe0F+wqIBT/ViUNbyvyXjhKn3AT3dAzlvnZX
-         GlVBEPAbfWbpEo8fUQioDdBob4Bsx16jhup9qtnto0Ge3Un65iQN4lMxgoAFPfviMPYN
-         DC68f9XuVS3ADsICBn7gGgO+PG4BXwwzpOs+Miz7n4GrZHJu9ChoiwpWmW6KWddXgem4
-         zFVg==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qkGwL2n2COMGi/65rr06OKZlwq6a94CxCGW0s5lEfc0=;
+        b=KgSvodEa7eLrcqdNK9kKIImqn5jEmRctWpRgCEnbVU+jw3hmZb5+262OnTWzIHVrKB
+         4bckfwrJrGys15oOES9fMPyMF2VG1oJxHymVlnVo7XzOorvhCUqVrbg00X+UKrC2vXFo
+         SG8r+gelbxFlvgfg2uzQmA5lr/M+IXcQCtoKA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IJPEtyzhZidGS2TDF5UHDm6IlR5MghzdNBnmbPSNEo4=;
-        b=YWpsbTbk/EE6whdFR4Oq7j1Gvbq0W3SPEmcIfIregFCD6ouOcbuwVD5iCYFnDkEihv
-         4I5YdVNJYGDrKX8N3syAfrjzAvXSpAvtppSvsmJUNPorHi2D58oWM5Q9Iga3CnlI1bkA
-         hHqrDhAw7Vx5rBBIFBcISbYorkI7GuYEWF+g9qw1ClvJ7kC85tIHRkGrz7xAej5gEjRK
-         IVW0+WNlwTLAGLnE3LIksNABQidCowhCXn2EZXDvr3OH7CaNnZzWFxFYrF0zZh8B61sT
-         zJBNfLei/34mht8S8Egva8uWQlNS0jAziuECCBvkGnAZn8HyeYxCy5zk95qwTnhJP4D+
-         ZC2g==
-X-Gm-Message-State: APjAAAUDAmcreuENC0Uu7V3b/bwkqLxm9SDWy9eYKwe2d6zcCZ/BYp97
-        jRUvolCXf63MmlD2Ut3rCUl2hQ==
-X-Google-Smtp-Source: APXvYqzksgTVuqBLGRiL2fpMnw1dJBEdBT87utGfQubHJUD1xblSlpC07LEp4C+G/oheM+P4WOiuWA==
-X-Received: by 2002:a62:243:: with SMTP id 64mr7284697pfc.49.1576114255171;
-        Wed, 11 Dec 2019 17:30:55 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id k3sm4131707pgc.3.2019.12.11.17.30.53
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qkGwL2n2COMGi/65rr06OKZlwq6a94CxCGW0s5lEfc0=;
+        b=XFguFzrJA1tVmhCOPNquaqGkTLRwsHJntS3eVLWRkO/jJjhFa9jUYJmywAyu+Zt1LF
+         Lt/vgAqtN0vqr1LjuGvFR0YeXGWFfOfeMY46v0xF9kN/cRGOR1AFgb6niDG1Si6aprYE
+         2laFTjMboRhiJpON4FOkEdXKV46wTHBRcFPyz6pTYb1tO5fDl5gpb//g2YtQpc1neQ1C
+         YvrsXZBgxkf18MOZjH6xNU4w5PqU7oGZUi+CzdcghE4GRX5exH8pSEj9IFMMAcFaAsTm
+         9rvmzUx8h+Kn+LOEmsUvAXrQi7NJeVrNfWTomDCwb4a9meTO4CplzPpATDIVoUBQu+BZ
+         yL9w==
+X-Gm-Message-State: APjAAAWmEzXU3yIkVcxQmCrydqrQANepmB5G12wrpI+1Fszz73cZk9Bz
+        60g6MjN6g6XLTUL4xwklLpbTeI7C2ts=
+X-Google-Smtp-Source: APXvYqxmMLK4yAwkRyHUj4z4etuKrDZSU3z5U28h9xpORmb+jMBe9DcG+qLXDSD6rBFWan4E9erWow==
+X-Received: by 2002:a05:651c:1032:: with SMTP id w18mr4214785ljm.61.1576114894147;
+        Wed, 11 Dec 2019 17:41:34 -0800 (PST)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id v26sm2062983lfq.73.2019.12.11.17.41.32
+        for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2019 17:30:54 -0800 (PST)
+        Wed, 11 Dec 2019 17:41:33 -0800 (PST)
+Received: by mail-lj1-f169.google.com with SMTP id m6so370582ljc.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 17:41:32 -0800 (PST)
+X-Received: by 2002:a2e:9ad8:: with SMTP id p24mr4229397ljj.148.1576114892571;
+ Wed, 11 Dec 2019 17:41:32 -0800 (PST)
+MIME-Version: 1.0
+References: <20191211152943.2933-1-axboe@kernel.dk> <CAHk-=wjz3LE1kznro1dozhk9i9Dr4pCnkj7Fuccn2xdWeGHawQ@mail.gmail.com>
+ <d0adcde2-3106-4fea-c047-4d17111bab70@kernel.dk> <e43a2700-8625-e136-dc9d-d0d2da5d96ac@kernel.dk>
+ <CAHk-=wje8i3DVcO=fMC4tzKTS5+eHv0anrVZa_JENQt08T=qCQ@mail.gmail.com>
+ <0d4e3954-c467-30a7-5a8e-7c4180275533@kernel.dk> <CAHk-=whk4bcVPvtAv5OmHiW5z6AXgCLFhO4YrXD7o0XC+K-aHw@mail.gmail.com>
+ <fef996ca-a4ed-9633-1f79-91292a984a20@kernel.dk> <CAHk-=wg=hHUFg3i0vDmKEg8HFbEKquAsoC8CJoZpP-8_A1jZDA@mail.gmail.com>
+ <1c93194a-ed91-c3aa-deb5-a3394805defb@kernel.dk> <CAHk-=wj0pXsngjWKw5p3oTvwkNnT2DyoZWqPB+-wBY+BGTQ96w@mail.gmail.com>
+ <d8a8ea42-7f76-926c-ae9a-d49b11578153@kernel.dk>
+In-Reply-To: <d8a8ea42-7f76-926c-ae9a-d49b11578153@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 11 Dec 2019 17:41:16 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whtf0-f5wCcSAj=oTK2TEaesF43UdHnPyvgE9X1EuwvBw@mail.gmail.com>
+Message-ID: <CAHk-=whtf0-f5wCcSAj=oTK2TEaesF43UdHnPyvgE9X1EuwvBw@mail.gmail.com>
 Subject: Re: [PATCHSET v3 0/5] Support for RWF_UNCACHED
-To:     Johannes Weiner <hannes@cmpxchg.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
+To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Linux-MM <linux-mm@kvack.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         linux-block <linux-block@vger.kernel.org>,
         Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
-        Dave Chinner <david@fromorbit.com>
-References: <20191211152943.2933-1-axboe@kernel.dk>
- <CAHk-=wjz3LE1kznro1dozhk9i9Dr4pCnkj7Fuccn2xdWeGHawQ@mail.gmail.com>
- <d0adcde2-3106-4fea-c047-4d17111bab70@kernel.dk>
- <e43a2700-8625-e136-dc9d-d0d2da5d96ac@kernel.dk>
- <CAHk-=wje8i3DVcO=fMC4tzKTS5+eHv0anrVZa_JENQt08T=qCQ@mail.gmail.com>
- <0d4e3954-c467-30a7-5a8e-7c4180275533@kernel.dk>
- <CAHk-=whk4bcVPvtAv5OmHiW5z6AXgCLFhO4YrXD7o0XC+K-aHw@mail.gmail.com>
- <20191211210401.GA158617@cmpxchg.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <052a73a4-353a-05fc-8c21-41efbe234ece@kernel.dk>
-Date:   Wed, 11 Dec 2019 18:30:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <20191211210401.GA158617@cmpxchg.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/11/19 2:04 PM, Johannes Weiner wrote:
-> On Wed, Dec 11, 2019 at 12:18:38PM -0800, Linus Torvalds wrote:
->> On Wed, Dec 11, 2019 at 12:08 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>
->>> $ cat /proc/meminfo | grep -i active
->>> Active:           134136 kB
->>> Inactive:       28683916 kB
->>> Active(anon):      97064 kB
->>> Inactive(anon):        4 kB
->>> Active(file):      37072 kB
->>> Inactive(file): 28683912 kB
->>
->> Yeah, that should not put pressure on some swap activity. We have 28
->> GB of basically free inactive file data, and the VM is doing something
->> very very bad if it then doesn't just quickly free it with no real
->> drama.
-> 
-> I was looking at this with Jens offline last week. One thing to note
-> is the rate of IO that Jens is working with: combined with the low
-> cache hit rate, it was pushing upwards of half a million pages through
-> the page cache each second.
-> 
-> There isn't anything obvious sticking out in the kswapd profile: it's
-> dominated by cache tree deletions (or rather replacing pages with
-> shadow entries, hence the misleading xas_store()), tree lock
-> contention, etc. - all work that a direct reclaimer would have to do
-> as well, with one exceptions: RWC_UNCACHED doesn't need to go through
-> the LRU list, and 8-9% of kswapd cycles alone are going into
-> physically getting pages off the list. (And I suspect part of that is
-> also contention over the LRU lock as kswapd gets overwhelmed and
-> direct reclaim kicks in).
-> 
-> Jens, how much throughput difference does kswapd vs RWC_UNCACHED make?
+On Wed, Dec 11, 2019 at 5:29 PM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> I'd very much argue that it IS a bug, maybe just doesn't show on your
+> system.
 
-It's not huge, like 5-10%. The CPU usage is the most noticable,
-particularly at the higher IO rates.
+Oh, I agree. But I also understand why people hadn't noticed, and I
+don't think it's all that critical - because if you do 1M iops cached,
+you're doing something really really strange.
 
--- 
-Jens Axboe
+I too can see xas_create using 30% CPU time, but that's when I do a
+perf record on just kswapd - and when I actually look at it on a
+system level, it looks nowhere near that bad.
 
+So I think people should look at this. Part of it might be for Willy:
+does that xas_create() need to be that expensive? I hate how "perf"
+callchains work, but it does look like it is probably
+page_cache_delete -> xas_store -> xas_create that is the bulk of the
+cost there.
+
+Replacing the real page with the shadow entry shouldn't be that big of
+a deal, I would really hope.
+
+Willy, that used to be a __radix_tree_lookup -> __radix_tree_replace
+thing, is there perhaps some simple optmization that could be done on
+the XArray case here?
+
+                Linus
