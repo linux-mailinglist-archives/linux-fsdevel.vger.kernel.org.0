@@ -2,166 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8502911D9A2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 23:41:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47E6811D9A6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 23:46:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731042AbfLLWlt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Dec 2019 17:41:49 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:41451 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730707AbfLLWlt (ORCPT
+        id S1730886AbfLLWqP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Dec 2019 17:46:15 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:55030 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730707AbfLLWqO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Dec 2019 17:41:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576190508;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=QTqrX0C+eShgCocrnLwj0jnrcRKihR9p/00TbrrS4kU=;
-        b=Fy0hejp6s+FLh1fmcp5H0ZZeDwls8FBAMfn0WOoVCGmA7KzQqU683/hS5gpwKKbxgB6yIr
-        KWJ+d27DNJ2SSWz7R+623OaXrAQ2WgRGrpCrgoSXAILWiuCwoOi91lx+f6AtsTE00JWBzy
-        U1VhPrydaYSpcuiB2n6RkOG/nsslx0s=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-173-pX8kMRUdN8OHIeMK_MJuEw-1; Thu, 12 Dec 2019 17:41:45 -0500
-X-MC-Unique: pX8kMRUdN8OHIeMK_MJuEw-1
-Received: by mail-qt1-f197.google.com with SMTP id u9so527051qte.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2019 14:41:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QTqrX0C+eShgCocrnLwj0jnrcRKihR9p/00TbrrS4kU=;
-        b=iH8xriNnYB4CZpq4c6StoUm/xF+RHqBD/EM9ek+nrapRuStla8mW4A8U9SMQD+GsUo
-         aHdFL6NsGy0bAzIJHmRq4hY8j9LESO8+FSFLe5nQ/F/gKFRwXivBWHvRfj/a/KCmaevj
-         SOaY1zYOD+euQ+3m8P+A5Y201jHTVd5CXt/TJpwLJqNYaFh7i7VhV92gc77pymJop/dd
-         Fr7fCEUYnh2E38UnyINPsLjCXf1ioWmCN8pXAeNkiwy5uFS/7eciEp7KKnVvXiV91/ue
-         DN2Wv/MQJ7W0fy7MhydXK/fYeuZF8lhP5p2H0XSKihtxi4APgzc2P7GQcf3OF5X/VzqA
-         eAGA==
-X-Gm-Message-State: APjAAAV9+ngiyW1tl0o7IeokCQ15pl898+YRCE2i/96JOC0uuy5j1rx2
-        ZZ7/WyOernXtKP2+quqGbfMfBKXU21OecMTiGnc4Nn+BjkyQQgQnPJYoe7Cdn/dGr5KjZYE2uE9
-        YeeIWLtjL6GwfW59Ff2eiV14ZoQ==
-X-Received: by 2002:a05:6214:178f:: with SMTP id ct15mr10290832qvb.95.1576190505100;
-        Thu, 12 Dec 2019 14:41:45 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxpps50O7sKKAKfqI0+8dAwkmzesR9yvNp5EYD0edwbGeb3d8hizM1fjMLPbyhetx7gE/j4rQ==
-X-Received: by 2002:a05:6214:178f:: with SMTP id ct15mr10290820qvb.95.1576190504832;
-        Thu, 12 Dec 2019 14:41:44 -0800 (PST)
-Received: from labbott-redhat.redhat.com (pool-96-235-39-235.pitbpa.fios.verizon.net. [96.235.39.235])
-        by smtp.gmail.com with ESMTPSA id h32sm2734997qth.2.2019.12.12.14.41.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2019 14:41:44 -0800 (PST)
-From:   Laura Abbott <labbott@redhat.com>
-To:     Al Viro <viro@ZenIV.linux.org.uk>,
-        David Howells <dhowells@redhat.com>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        Jeremi Piotrowski <jeremi.piotrowski@gmail.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        linux-kernel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>
-Subject: [PATCHv2] vfs: Handle file systems without ->parse_params better
-Date:   Thu, 12 Dec 2019 17:41:39 -0500
-Message-Id: <20191212224139.15970-1-labbott@redhat.com>
-X-Mailer: git-send-email 2.21.0
+        Thu, 12 Dec 2019 17:46:14 -0500
+Received: from dread.disaster.area (pa49-195-139-249.pa.nsw.optusnet.com.au [49.195.139.249])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 9A3BC3A3756;
+        Fri, 13 Dec 2019 09:46:09 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1ifXDl-000626-3W; Fri, 13 Dec 2019 09:46:09 +1100
+Date:   Fri, 13 Dec 2019 09:46:09 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, darrick.wong@oracle.com,
+        fdmanana@kernel.org, dsterba@suse.cz, jthumshirn@suse.de,
+        nborisov@suse.com, Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: Re: [PATCH 4/8] iomap: Move lockdep_assert_held() to iomap_dio_rw()
+ calls
+Message-ID: <20191212224609.GI19213@dread.disaster.area>
+References: <20191212003043.31093-1-rgoldwyn@suse.de>
+ <20191212003043.31093-5-rgoldwyn@suse.de>
+ <20191212095044.GD15977@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191212095044.GD15977@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=KoypXv6BqLCQNZUs2nCMWg==:117 a=KoypXv6BqLCQNZUs2nCMWg==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=pxVhFHJ0LMsA:10
+        a=iox4zFpeAAAA:8 a=7-415B0cAAAA:8 a=0qbdD3YL78Zpoe-PC_wA:9
+        a=CjuIK1q_8ugA:10 a=WzC6qhA0u3u7Ye7llzcV:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Dec 12, 2019 at 01:50:44AM -0800, Christoph Hellwig wrote:
+> On Wed, Dec 11, 2019 at 06:30:39PM -0600, Goldwyn Rodrigues wrote:
+> > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > 
+> > Filesystems such as btrfs can perform direct I/O without holding the
+> > inode->i_rwsem in some of the cases like writing within i_size.
+> 
+> How is that safe?  
+> 
+> > +	lockdep_assert_held(&file_inode(file)->i_rwsem);
+> 
+> Having the asserts in the callers is pointless.  The assert is inside
+> the iomap helper to ensure the expected calling conventions, as the
+> code is written under the assumption that we have i_rwsem.
 
-The new mount API relies on file systems to provide a ->parse_params
-function to handle parsing of arguments. If a file system doesn't
-have a ->parse_param function, it falls back to parsing the source
-option and rejecting all other options. This is a change in behavior
-for some file systems which would just quietly ignore extra options
-and mount successfully. This was noticed by users as squashfs failing
-to mount with extra options after the conversion to the new mount
-API.
+It's written under the assumption that the caller has already
+performed the appropriate locking they require for serialisation
+against other operations on that inode.
 
-File systems with a ->parse_params function rely on the top level
-to parse the "source" param so we can't easily move that around. To
-get around this, introduce a default parsing functions for file
-systems that take no arguments. This parses only the "source" option
-and only logs an error for other arguments. Update the comment
-to reflect this expected behavior for "source" parsing as well.
+The fact that the filesystems up to this point all used the i_rwsem
+is largely irrelevant, and filesystems don't have to use the i_rwsem
+to serialise their IO. e.g. go back a handful of years and this
+would have needed to take into account an XFS specific rwsem, not
+the VFS inode mutex...
 
-Fixes: 3e1aeb00e6d1 ("vfs: Implement a filesystem superblock
-creation/configuration context")
-Link: https://lore.kernel.org/lkml/20191130181548.GA28459@gentoo-tp.home/
-Reported-by: Jeremi Piotrowski <jeremi.piotrowski@gmail.com>
-Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1781863
-Signed-off-by: Laura Abbott <labbott@redhat.com>
----
-v2: Dropped most the boiler plate for parsing and just compared
-against "source". Renamed to ignore_unknown_parse_param.
----
- fs/fs_context.c | 36 +++++++++++++++++++++++++++++-------
- 1 file changed, 29 insertions(+), 7 deletions(-)
+Indeed, the IO range locking patches I have for XFS get rid of this
+lockdep assert in iomap because we no longer use the i_rwsem for IO
+serialisation in XFS - we go back to using an internal XFS construct
+for IO serialisation and don't use the i_rwsem at all.
 
-diff --git a/fs/fs_context.c b/fs/fs_context.c
-index 138b5b4d621d..086ade29b811 100644
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -107,6 +107,22 @@ static int vfs_parse_sb_flag(struct fs_context *fc, const char *key)
- 	return -ENOPARAM;
- }
- 
-+/**
-+ * ignore_unknowns_parse_param - ->parse_param function for a file system that
-+ * takes no arguments
-+ * @fc: The filesystem context
-+ * @param: The parameter.
-+ */
-+static int ignore_unknown_parse_param(struct fs_context *fc, struct fs_parameter *param)
-+{
-+
-+	if (strcmp(param->key, "source") == 0)
-+		return -ENOPARAM;
-+	/* Just log an error for backwards compatibility */
-+	errorf(fc, "%s: Unknown parameter '%s'", fc->fs_type->name, param->key);
-+	return 0;
-+}
-+
- /**
-  * vfs_parse_fs_param - Add a single parameter to a superblock config
-  * @fc: The filesystem context to modify
-@@ -126,6 +142,7 @@ static int vfs_parse_sb_flag(struct fs_context *fc, const char *key)
- int vfs_parse_fs_param(struct fs_context *fc, struct fs_parameter *param)
- {
- 	int ret;
-+	int (*parse_param)(struct fs_context *, struct fs_parameter *);
- 
- 	if (!param->key)
- 		return invalf(fc, "Unnamed parameter\n");
-@@ -141,14 +158,19 @@ int vfs_parse_fs_param(struct fs_context *fc, struct fs_parameter *param)
- 		 */
- 		return ret;
- 
--	if (fc->ops->parse_param) {
--		ret = fc->ops->parse_param(fc, param);
--		if (ret != -ENOPARAM)
--			return ret;
--	}
-+	parse_param = fc->ops->parse_param;
-+	if (!parse_param)
-+		parse_param = ignore_unknown_parse_param;
-+
-+	ret = parse_param(fc, param);
-+	if (ret != -ENOPARAM)
-+		return ret;
- 
--	/* If the filesystem doesn't take any arguments, give it the
--	 * default handling of source.
-+	/*
-+	 * File systems may have a ->parse_param function but rely on
-+	 * the top level to parse the source function. File systems
-+	 * may have their own source parsing though so this needs
-+	 * to come after the call to parse_param above.
- 	 */
- 	if (strcmp(param->key, "source") == 0) {
- 		if (param->type != fs_value_is_string)
+Cheers,
+
+Dave.
 -- 
-2.21.0
-
+Dave Chinner
+david@fromorbit.com
