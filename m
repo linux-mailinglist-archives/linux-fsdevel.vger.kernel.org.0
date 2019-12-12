@@ -2,108 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D50411D7A3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 21:05:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50CCA11D834
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 21:58:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730728AbfLLUFL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Dec 2019 15:05:11 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50392 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730703AbfLLUFL (ORCPT
+        id S1730902AbfLLU6V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Dec 2019 15:58:21 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36859 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730852AbfLLU6V (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Dec 2019 15:05:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Zr1kxExAzyfv2B4BiRd28MJfhNLW3Gxwvv8ht0OdwRo=; b=fLZHIs5DHnBZQwMmcxGuIJVS6
-        pF6dZGsH7jYzDpvFADjhy/O/Fnn3m/giBJSDfCIVfQE1QVd5YL5lUxQ84KqcQwQcJLLDlJCerkLMO
-        7IsojluasionpqAgRezxVRPmSqiwPbynaDZN/59BRf6bSnv38rQ0P19bGfpcks82ipnl4VMZ2XkFa
-        YE0Cxr/Fb816OCCVPrQ59Dka0iOBUFfF9+HyUjtlf6gT9KpVcckdmJKhALsWYBrZjTL/E5sl+iexN
-        iC7N4Oy+xxrwF+1KgGIZytkW6khV6QnfapUyBJs1M77/ZYkjzJOMEEnYAqVwJZWDDWNlgAhJumi9t
-        T2gtw0fRw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ifUhw-0008ND-7k; Thu, 12 Dec 2019 20:05:08 +0000
-Date:   Thu, 12 Dec 2019 12:05:08 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Chris Mason <clm@fb.com>, Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCHSET v3 0/5] Support for RWF_UNCACHED
-Message-ID: <20191212200508.GU32169@bombadil.infradead.org>
-References: <fef996ca-a4ed-9633-1f79-91292a984a20@kernel.dk>
- <CAHk-=wg=hHUFg3i0vDmKEg8HFbEKquAsoC8CJoZpP-8_A1jZDA@mail.gmail.com>
- <1c93194a-ed91-c3aa-deb5-a3394805defb@kernel.dk>
- <CAHk-=wj0pXsngjWKw5p3oTvwkNnT2DyoZWqPB+-wBY+BGTQ96w@mail.gmail.com>
- <d8a8ea42-7f76-926c-ae9a-d49b11578153@kernel.dk>
- <CAHk-=whtf0-f5wCcSAj=oTK2TEaesF43UdHnPyvgE9X1EuwvBw@mail.gmail.com>
- <20191212015612.GP32169@bombadil.infradead.org>
- <CAHk-=wjr1G0xXDs7R=2ZAB=YSs-WLk4GsVwLafw+96XVwo7jyg@mail.gmail.com>
- <20191212175200.GS32169@bombadil.infradead.org>
- <CAHk-=wh4J91wMrEU12DP1r+rLiThQ6wDBb+UOzOuMDkusxtdhw@mail.gmail.com>
+        Thu, 12 Dec 2019 15:58:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576184300;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xFBksdHVlqSH2UyhAzKrEfmaK2aji1YTG0bwajfDZLs=;
+        b=DqN9lB24EhqUvYcjtHsukTTHIaqRiE7PrVMXWrL9vRcyBdGPM/ZeDT+YceQV0Uj3lyHbOe
+        ylLJDvZho8Yv0vwyWdR3bftdW75Vlnr/HAKh8cVsebiD2fIPeWeb7b+331/V/0Jq9ZmxlJ
+        UNngXEkX2G/V0EBMSJLXveDwIAdra44=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-286-b45Qw4c8MFKlLP0zkn1p-w-1; Thu, 12 Dec 2019 15:58:16 -0500
+X-MC-Unique: b45Qw4c8MFKlLP0zkn1p-w-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D9159DB78;
+        Thu, 12 Dec 2019 20:58:14 +0000 (UTC)
+Received: from treble (ovpn-123-178.rdu2.redhat.com [10.10.123.178])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 785E95C548;
+        Thu, 12 Dec 2019 20:58:13 +0000 (UTC)
+Date:   Thu, 12 Dec 2019 14:58:11 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: mmotm 2019-12-10-19-14 uploaded (objtool: func() falls through)
+Message-ID: <20191212205811.4vrrb4hou3tbiada@treble>
+References: <20191211031432.iyKVQ6m9n%akpm@linux-foundation.org>
+ <07777464-b9d8-ff1d-41d9-f62cc44f09f3@infradead.org>
+ <20191212184859.zjj2ycfkvpcns5bk@treble>
+ <042c6cd7-c983-03f1-6a79-5642549f57c4@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wh4J91wMrEU12DP1r+rLiThQ6wDBb+UOzOuMDkusxtdhw@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <042c6cd7-c983-03f1-6a79-5642549f57c4@infradead.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 10:29:02AM -0800, Linus Torvalds wrote:
-> On Thu, Dec 12, 2019 at 9:52 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > 1. We could semi-sort the pages on the LRU list.  If we know we're going
-> > to remove a bunch of pages, we could take a batch of them off the list,
-> > sort them and remove them in-order.  This probably wouldn't be terribly
-> > effective.
+On Thu, Dec 12, 2019 at 12:21:17PM -0800, Randy Dunlap wrote:
+> On 12/12/19 10:48 AM, Josh Poimboeuf wrote:
+> > On Wed, Dec 11, 2019 at 08:31:08AM -0800, Randy Dunlap wrote:
+> >> On 12/10/19 7:14 PM, Andrew Morton wrote:
+> >>> The mm-of-the-moment snapshot 2019-12-10-19-14 has been uploaded to
+> >>>
+> >>>    http://www.ozlabs.org/~akpm/mmotm/
+> >>>
+> >>> mmotm-readme.txt says
+> >>>
+> >>> README for mm-of-the-moment:
+> >>>
+> >>> http://www.ozlabs.org/~akpm/mmotm/
+> >>>
+> >>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> >>> more than once a week.
+> >>>
+> >>> You will need quilt to apply these patches to the latest Linus release (5.x
+> >>> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> >>> http://ozlabs.org/~akpm/mmotm/series
+> >>>
+> >>> The file broken-out.tar.gz contains two datestamp files: .DATE and
+> >>> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> >>> followed by the base kernel version against which this patch series is to
+> >>> be applied.
+> >>
+> >> on x86_64:
+> >>
+> >> drivers/hwmon/f71882fg.o: warning: objtool: f71882fg_update_device() falls through to next function show_pwm_auto_point_temp_hyst()
+> >> drivers/ide/ide-probe.o: warning: objtool: hwif_register_devices() falls through to next function hwif_release_dev()
+> >> drivers/ide/ide-probe.o: warning: objtool: ide_host_remove() falls through to next function ide_disable_port()
+> > 
+> > Randy, can you share the .o files?
 > 
-> I don't think the sorting is relevant.
-> 
-> Once you batch things, you already would get most of the locality
-> advantage in the cache if it exists (and the batch isn't insanely
-> large so that one batch already causes cache overflows).
-> 
-> The problem - I suspect - is that we don't batch at all. Or rather,
-> the "batching" does exist at a high level, but it's so high that
-> there's just tons of stuff going on between single pages. It is at the
-> shrink_page_list() level, which is pretty high up and basically does
-> one page at a time with locking and a lot of tests for each page, and
-> then we do "__remove_mapping()" (which does some more work) one at a
-> time before we actually get to __delete_from_page_cache().
-> 
-> So it's "batched", but it's in a huge loop, and even at that huge loop
-> level the batch size is fairly small. We limit it to SWAP_CLUSTER_MAX,
-> which is just 32.
-> 
-> Thinking about it, that SWAP_CLUSTER_MAX may make sense in some other
-> circumstances, but not necessarily in the "shrink clean inactive
-> pages" thing. I wonder if we could just batch clean pages a _lot_ more
-> aggressively. Yes, our batching loop is still very big and it might
-> not help at an L1 level, but it might help in the L2, at least.
-> 
-> In kswapd, when we have 28 GB of pages on the inactive list, a batch
-> of 32 pages at a time is pretty small ;)
+> Sure. They are attached.
 
-Yeah, that's pretty poor.  I just read through it, and even if pages are
-in order on the page list, they're not going to batch nicely.  It'd be
-nice to accumulate them and call delete_from_page_cache_batch(), but we
-need to put shadow entries in to replace them, so we'd need a variant
-of that which took two pagevecs.
+These look like compiler bugs to me... execution is falling off the edge
+of the functions for no apparent reason.  Could potentially be triggered
+by the '#define if' trace code.
 
-> > 2. We could change struct page to point to the xa_node that holds them.
-> > Looking up the page mapping would be page->xa_node->array and then
-> > offsetof(i_pages) to get the mapping.
-> 
-> I don't think we have space in 'struct page', and I'm pretty sure we
-> don't want to grow it. That's one of the more common data structures
-> in the kernel.
+-- 
+Josh
 
-Oh, I wasn't clear.  I meant replace page->mapping with page->xa_node.
-We could still get from page to mapping, but it would be an extra
-dereference.  I did say it was a _bad_ idea.
