@@ -2,199 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6813C11D79C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 21:02:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D50411D7A3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 21:05:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730756AbfLLUCC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Dec 2019 15:02:02 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:57941 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730284AbfLLUCC (ORCPT
+        id S1730728AbfLLUFL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Dec 2019 15:05:11 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:50392 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730703AbfLLUFL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Dec 2019 15:02:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576180920;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=hb8TmGk+a9HjoYdlVzo58zXnc/ROW/PTOkZPr16nz2Q=;
-        b=IaavmPRt9zNg8iW4gvdsBXazkxV31bY8w4kWt4F8RAwDzahv/MaMYNybAzUihp+S709/7c
-        CjKnS3e3gjvK8D0shsT7V4wS+DuUcR7JLja4AQD7koqgR6S8wG4fhPU0+unFyCs9L/9idh
-        vLl8HfASEWU6rZ42Hhuml+T1x+JHR2s=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-218-GvloIGRDNkSGG3P1G2piyQ-1; Thu, 12 Dec 2019 15:01:59 -0500
-X-MC-Unique: GvloIGRDNkSGG3P1G2piyQ-1
-Received: by mail-qt1-f197.google.com with SMTP id l4so172985qte.18
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2019 12:01:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=hb8TmGk+a9HjoYdlVzo58zXnc/ROW/PTOkZPr16nz2Q=;
-        b=M0R1PXF/7Qt3NfNA8dvVDQBwaqMm/qToob9dYddPN6peyhBy4qqiubRz10ycV7C0l0
-         82KTRDImfbj2wBmdqFi/vk2uBOibC5y38TH7ARUly12vzk2ZqcJE5fDQXaoxtaJeGExI
-         KG6jQsbXfbv+tYqFwql8RDxZoskpMwf933iixoyqe8Wu8FMJ9qrul57yuuKuUTUS5uz8
-         kTbF++q+AB+I6PyCdoiKBdI2TEkVag6sB8dnfoR5HQJ4jbCrxFM9wIJBAE9SZ12i0D5l
-         3V9syVbp4UJTrDXPw0kK5GvboaX/i78XnEW9AmLeVpxvXUYS4zHT2Ai1YQE2X5Vjoh6T
-         eDPw==
-X-Gm-Message-State: APjAAAUPwe662OcMDWBGopDBES5UjgkDWOSTss8aDiKMq/dqE/EvW776
-        LUB/eFpLvZVXO2qMdafE2D/10naF9+EwvEMN+tfPUBRahqkM7WEW/MKwJY9eiXxUgb/2ArXsZGT
-        i4LMHMKje6K1pmkogTls0Jrx38Q==
-X-Received: by 2002:a37:65c8:: with SMTP id z191mr10018888qkb.176.1576180918814;
-        Thu, 12 Dec 2019 12:01:58 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwAvAkoCbeKTQnT+w3TgLyOTd0Fj7dn/2e/2ltCsdsrrquGwZiDl6tub5yxZG3D4TI1/gPcZg==
-X-Received: by 2002:a37:65c8:: with SMTP id z191mr10018819qkb.176.1576180918172;
-        Thu, 12 Dec 2019 12:01:58 -0800 (PST)
-Received: from [192.168.1.157] (pool-96-235-39-235.pitbpa.fios.verizon.net. [96.235.39.235])
-        by smtp.gmail.com with ESMTPSA id f19sm2075294qkk.69.2019.12.12.12.01.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2019 12:01:57 -0800 (PST)
-Subject: Re: [PATCH] vfs: Don't reject unknown parameters
+        Thu, 12 Dec 2019 15:05:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Zr1kxExAzyfv2B4BiRd28MJfhNLW3Gxwvv8ht0OdwRo=; b=fLZHIs5DHnBZQwMmcxGuIJVS6
+        pF6dZGsH7jYzDpvFADjhy/O/Fnn3m/giBJSDfCIVfQE1QVd5YL5lUxQ84KqcQwQcJLLDlJCerkLMO
+        7IsojluasionpqAgRezxVRPmSqiwPbynaDZN/59BRf6bSnv38rQ0P19bGfpcks82ipnl4VMZ2XkFa
+        YE0Cxr/Fb816OCCVPrQ59Dka0iOBUFfF9+HyUjtlf6gT9KpVcckdmJKhALsWYBrZjTL/E5sl+iexN
+        iC7N4Oy+xxrwF+1KgGIZytkW6khV6QnfapUyBJs1M77/ZYkjzJOMEEnYAqVwJZWDDWNlgAhJumi9t
+        T2gtw0fRw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ifUhw-0008ND-7k; Thu, 12 Dec 2019 20:05:08 +0000
+Date:   Thu, 12 Dec 2019 12:05:08 -0800
+From:   Matthew Wilcox <willy@infradead.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Jeremi Piotrowski <jeremi.piotrowski@gmail.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20191212145042.12694-1-labbott@redhat.com>
- <CAOi1vP9E2yLeFptg7o99usEi=x3kf=NnHYdURXPhX4vTXKCTCQ@mail.gmail.com>
- <fbe90a0b-cf24-8c0c-48eb-6183852dfbf1@redhat.com>
- <CAHk-=wh7Wuk9QCP6oH5Qc1a89_X6H1CHRK_OyB4NLmX7nRYJeA@mail.gmail.com>
-From:   Laura Abbott <labbott@redhat.com>
-Message-ID: <cf4c9634-1503-d182-cb12-810fb969bc96@redhat.com>
-Date:   Thu, 12 Dec 2019 15:01:56 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+Cc:     Jens Axboe <axboe@kernel.dk>, Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Chris Mason <clm@fb.com>, Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [PATCHSET v3 0/5] Support for RWF_UNCACHED
+Message-ID: <20191212200508.GU32169@bombadil.infradead.org>
+References: <fef996ca-a4ed-9633-1f79-91292a984a20@kernel.dk>
+ <CAHk-=wg=hHUFg3i0vDmKEg8HFbEKquAsoC8CJoZpP-8_A1jZDA@mail.gmail.com>
+ <1c93194a-ed91-c3aa-deb5-a3394805defb@kernel.dk>
+ <CAHk-=wj0pXsngjWKw5p3oTvwkNnT2DyoZWqPB+-wBY+BGTQ96w@mail.gmail.com>
+ <d8a8ea42-7f76-926c-ae9a-d49b11578153@kernel.dk>
+ <CAHk-=whtf0-f5wCcSAj=oTK2TEaesF43UdHnPyvgE9X1EuwvBw@mail.gmail.com>
+ <20191212015612.GP32169@bombadil.infradead.org>
+ <CAHk-=wjr1G0xXDs7R=2ZAB=YSs-WLk4GsVwLafw+96XVwo7jyg@mail.gmail.com>
+ <20191212175200.GS32169@bombadil.infradead.org>
+ <CAHk-=wh4J91wMrEU12DP1r+rLiThQ6wDBb+UOzOuMDkusxtdhw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wh7Wuk9QCP6oH5Qc1a89_X6H1CHRK_OyB4NLmX7nRYJeA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wh4J91wMrEU12DP1r+rLiThQ6wDBb+UOzOuMDkusxtdhw@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/12/19 12:56 PM, Linus Torvalds wrote:
-> On Thu, Dec 12, 2019 at 9:47 AM Laura Abbott <labbott@redhat.com> wrote:
->>
->> Good point, I think I missed how that code flow worked for printing
->> out the error. I debated putting in a dummy parse_param but I
->> figured that squashfs wouldn't be the only fs that didn't take
->> arguments (it's in the minority but certainly not the only one).
+On Thu, Dec 12, 2019 at 10:29:02AM -0800, Linus Torvalds wrote:
+> On Thu, Dec 12, 2019 at 9:52 AM Matthew Wilcox <willy@infradead.org> wrote:
+> > 1. We could semi-sort the pages on the LRU list.  If we know we're going
+> > to remove a bunch of pages, we could take a batch of them off the list,
+> > sort them and remove them in-order.  This probably wouldn't be terribly
+> > effective.
 > 
-> I think printing out the error part is actually fine - it would act as
-> a warning for invalid parameters like this.
+> I don't think the sorting is relevant.
 > 
-> So I think a dummy parse_param that prints out a warning is likely the
-> right thing to do.
+> Once you batch things, you already would get most of the locality
+> advantage in the cache if it exists (and the batch isn't insanely
+> large so that one batch already causes cache overflows).
 > 
-> Something like the attached, perhaps? Totally untested.
+> The problem - I suspect - is that we don't batch at all. Or rather,
+> the "batching" does exist at a high level, but it's so high that
+> there's just tons of stuff going on between single pages. It is at the
+> shrink_page_list() level, which is pretty high up and basically does
+> one page at a time with locking and a lot of tests for each page, and
+> then we do "__remove_mapping()" (which does some more work) one at a
+> time before we actually get to __delete_from_page_cache().
 > 
->                 Linus
+> So it's "batched", but it's in a huge loop, and even at that huge loop
+> level the batch size is fairly small. We limit it to SWAP_CLUSTER_MAX,
+> which is just 32.
 > 
+> Thinking about it, that SWAP_CLUSTER_MAX may make sense in some other
+> circumstances, but not necessarily in the "shrink clean inactive
+> pages" thing. I wonder if we could just batch clean pages a _lot_ more
+> aggressively. Yes, our batching loop is still very big and it might
+> not help at an L1 level, but it might help in the L2, at least.
+> 
+> In kswapd, when we have 28 GB of pages on the inactive list, a batch
+> of 32 pages at a time is pretty small ;)
 
-That doesn't quite work. We can't just unconditionally return success
-because we rely on -ENOPARAM being returned to parse the source option
-back in vfs_parse_fs_param. I think ramfs may also be broken for the
-same reason right now as well from reading the code. We also rely on the
-fallback source parsing for file systems that do have ->parse_param.
+Yeah, that's pretty poor.  I just read through it, and even if pages are
+in order on the page list, they're not going to batch nicely.  It'd be
+nice to accumulate them and call delete_from_page_cache_batch(), but we
+need to put shadow entries in to replace them, so we'd need a variant
+of that which took two pagevecs.
 
-We could do all this in squashfs but given other file systems that don't
-have args will also hit this we could just make it generic. The following
-works for me (under commenting and poor name choices notwithstanding)
+> > 2. We could change struct page to point to the xa_node that holds them.
+> > Looking up the page mapping would be page->xa_node->array and then
+> > offsetof(i_pages) to get the mapping.
+> 
+> I don't think we have space in 'struct page', and I'm pretty sure we
+> don't want to grow it. That's one of the more common data structures
+> in the kernel.
 
-diff --git a/fs/fs_parser.c b/fs/fs_parser.c
-index d1930adce68d..5e45e36d51e7 100644
---- a/fs/fs_parser.c
-+++ b/fs/fs_parser.c
-@@ -302,6 +302,50 @@ int fs_lookup_param(struct fs_context *fc,
-  }
-  EXPORT_SYMBOL(fs_lookup_param);
-  
-+enum {
-+        NO_OPT_SOURCE,
-+};
-+
-+static const struct fs_parameter_spec no_opt_fs_param_specs[] = {
-+        fsparam_string  ("source",              NO_OPT_SOURCE),
-+        {}
-+};
-+
-+const struct fs_parameter_description no_opt_fs_parameters = {
-+        .name           = "no_opt_fs",
-+        .specs          = no_opt_fs_param_specs,
-+};
-+
-+int fs_no_opt_parse_param(struct fs_context *fc, struct fs_parameter *param)
-+{
-+        struct fs_parse_result result;
-+        int opt;
-+
-+        opt = fs_parse(fc, &no_opt_fs_parameters, param, &result);
-+        if (opt < 0) {
-+                /* Just log an error for backwards compatibility */
-+                errorf(fc, "%s: Unknown parameter '%s'",
-+                      fc->fs_type->name, param->key);
-+                return 0;
-+        }
-+
-+        switch (opt) {
-+        case NO_OPT_SOURCE:
-+                if (param->type != fs_value_is_string)
-+                        return invalf(fc, "%s: Non-string source",
-+					fc->fs_type->name);
-+                if (fc->source)
-+                        return invalf(fc, "%s: Multiple sources specified",
-+					fc->fs_type->name);
-+                fc->source = param->string;
-+                param->string = NULL;
-+                break;
-+        }
-+
-+        return 0;
-+}
-+EXPORT_SYMBOL(fs_no_opt_parse_param);
-+
-  #ifdef CONFIG_VALIDATE_FS_PARSER
-  /**
-   * validate_constant_table - Validate a constant table
-diff --git a/fs/squashfs/super.c b/fs/squashfs/super.c
-index 0cc4ceec0562..07a9b38f7bf5 100644
---- a/fs/squashfs/super.c
-+++ b/fs/squashfs/super.c
-@@ -18,6 +18,7 @@
-  
-  #include <linux/fs.h>
-  #include <linux/fs_context.h>
-+#include <linux/fs_parser.h>
-  #include <linux/vfs.h>
-  #include <linux/slab.h>
-  #include <linux/mutex.h>
-@@ -358,6 +359,7 @@ static int squashfs_reconfigure(struct fs_context *fc)
-  static const struct fs_context_operations squashfs_context_ops = {
-  	.get_tree	= squashfs_get_tree,
-  	.reconfigure	= squashfs_reconfigure,
-+	.parse_param	= fs_no_opt_parse_param,
-  };
-  
-  static int squashfs_init_fs_context(struct fs_context *fc)
-diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
-index dee140db6240..f67b2afcc491 100644
---- a/include/linux/fs_parser.h
-+++ b/include/linux/fs_parser.h
-@@ -106,6 +106,8 @@ static inline bool fs_validate_description(const struct fs_parameter_description
-  { return true; }
-  #endif
-  
-+extern int fs_no_opt_parse_param(struct fs_context *fc, struct fs_parameter *param);
-+
-  /*
-   * Parameter type, name, index and flags element constructors.  Use as:
-   *
-
+Oh, I wasn't clear.  I meant replace page->mapping with page->xa_node.
+We could still get from page to mapping, but it would be an extra
+dereference.  I did say it was a _bad_ idea.
