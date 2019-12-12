@@ -2,227 +2,301 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A994A11C6AE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 08:52:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C8CE11C81E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 09:24:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728147AbfLLHvj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Dec 2019 02:51:39 -0500
-Received: from mail.loongson.cn ([114.242.206.163]:35664 "EHLO loongson.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728095AbfLLHvj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Dec 2019 02:51:39 -0500
-Received: from linux.localdomain (unknown [123.138.236.242])
-        by mail.loongson.cn (Coremail) with SMTP id AQAAf9DxT9N48fFduPEJAA--.13S2;
-        Thu, 12 Dec 2019 15:51:20 +0800 (CST)
-From:   Tiezhu Yang <yangtiezhu@loongson.cn>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Tyler Hicks <tyhicks@canonical.com>
-Cc:     linux-fsdevel@vger.kernel.org, ecryptfs@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v6] fs: introduce is_dot_or_dotdot helper for cleanup
-Date:   Thu, 12 Dec 2019 15:51:04 +0800
-Message-Id: <1576137064-31249-1-git-send-email-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.1.0
-X-CM-TRANSID: AQAAf9DxT9N48fFduPEJAA--.13S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxKF1xJF45AFWDZF4DJr17Awb_yoW7Wr1kpF
-        sxAF97Jrs7Gry5urn5tr1fCr1Yv3s7Wr17GrZ7Ga4vk342qrn5XrWIyry09wn5JFWDX3Z0
-        ga98G34rCFy5tFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUvlb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
-        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-        A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
-        jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I
-        8E87Iv6xkF7I0E14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-        0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Gr0_Cr
-        1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY
-        04v7MxkIecxEwVAFwVW8CwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
-        C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
-        wI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
-        v20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvE
-        x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
-        DU0xZFpf9x07boo7NUUUUU=
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+        id S1728481AbfLLIYC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Dec 2019 03:24:02 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:3743 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728277AbfLLITU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 12 Dec 2019 03:19:20 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5df1f8000000>; Thu, 12 Dec 2019 00:19:12 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 12 Dec 2019 00:19:19 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 12 Dec 2019 00:19:19 -0800
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 12 Dec
+ 2019 08:19:18 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Thu, 12 Dec 2019 08:19:18 +0000
+Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5df1f8060001>; Thu, 12 Dec 2019 00:19:18 -0800
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH v10 00/25] mm/gup: track dma-pinned pages: FOLL_PIN
+Date:   Thu, 12 Dec 2019 00:18:52 -0800
+Message-ID: <20191212081917.1264184-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.24.0
+MIME-Version: 1.0
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1576138752; bh=bbdNKbiq94zgFtAlPv1Fpk31g13QpEp24wIKMs3yr3M=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:X-NVConfidentiality:Content-Type:
+         Content-Transfer-Encoding;
+        b=Y1R8hx3FJWSb27HdAzsGJjJpdnlEtl1cb0ueAaiH6SOlIouZsspbxG7ArktDIqiEr
+         Br0EA4SeZmk76k65lxU0XhwiWOtj39vrLCz4Tk7KvbtAtjD6iKS78EbI/P/aRk0Wcr
+         F/505JbjvlrSy16GkzIZZcghWqjJ1ItMfatoTwmulgZq0atyZONIj/xXnwzzMugmHa
+         nsQ7SqaBF65k9d2TO2nv5PlfSBembIzQD/Bzvsz3gcdWMjcDVLL9MYa1oWREYAh+tm
+         o5bm2AGo8Vr2PApUjLjMUQKW9TrOf/kOuUrWp+S2/FsL5AGIsQqr1L26fBA8N9ByKF
+         lJHt+dnOK5rEw==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There exists many similar and duplicate codes to check "." and "..",
-so introduce is_dot_or_dotdot helper to make the code more clean.
+Hi,
 
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
+This implements an API naming change (put_user_page*() -->
+unpin_user_page*()), and also implements tracking of FOLL_PIN pages. It
+extends that tracking to a few select subsystems. More subsystems will
+be added in follow up work.
 
-v6:
-  - do not use the helper function in fs/namei.c
-  - add extra check "len >= 1" in is_dot_or_dotdot()
+Christoph Hellwig, a point of interest:
 
-v5:
-  - remove "qname" variable in fscrypt_fname_disk_to_usr()
-  - modify "len < 2" to "len == 1" in is_dot_or_dotdot()
+a) I've moved the bulk of the code out of the inline functions, as
+   requested, for the devmap changes (patch 4: "mm: devmap: refactor
+   1-based refcounting for ZONE_DEVICE pages").
 
-v4:
-  - rename is_dot_dotdot() to is_dot_or_dotdot()
+Changes since v9: Fixes resulting from Jan Kara's and Jonathan Corbet's
+reviews:
 
-v3:
-  - use "name" and "len" as arguments instead of qstr
-  - move is_dot_dotdot() to include/linux/namei.h
+* Removed reviewed-by tags from the "mm/gup: track FOLL_PIN pages" (those
+  were improperly inherited from the much smaller refactoring patch that
+  was merged into it).
 
-v2:
-  - use the better performance implementation of is_dot_dotdot
-  - make it static inline and move it to include/linux/fs.h
+* Made try_grab_compound_head() and try_grab_page() behavior similar in
+  their behavior with flags, in order to avoid "gotchas" later.
 
- fs/crypto/fname.c     | 17 +++--------------
- fs/ecryptfs/crypto.c  | 12 +-----------
- fs/f2fs/f2fs.h        | 11 -----------
- fs/f2fs/hash.c        |  3 ++-
- include/linux/namei.h | 10 ++++++++++
- 5 files changed, 16 insertions(+), 37 deletions(-)
+* follow_trans_huge_pmd(): moved the try_grab_page() to earlier in the
+  routine, in order to avoid having to undo mlock_vma_page().
 
-diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-index 3da3707..bb41f5d 100644
---- a/fs/crypto/fname.c
-+++ b/fs/crypto/fname.c
-@@ -11,21 +11,11 @@
-  * This has not yet undergone a rigorous security audit.
-  */
- 
-+#include <linux/namei.h>
- #include <linux/scatterlist.h>
- #include <crypto/skcipher.h>
- #include "fscrypt_private.h"
- 
--static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
--{
--	if (str->len == 1 && str->name[0] == '.')
--		return true;
--
--	if (str->len == 2 && str->name[0] == '.' && str->name[1] == '.')
--		return true;
--
--	return false;
--}
--
- /**
-  * fname_encrypt() - encrypt a filename
-  *
-@@ -252,10 +242,9 @@ int fscrypt_fname_disk_to_usr(struct inode *inode,
- 			const struct fscrypt_str *iname,
- 			struct fscrypt_str *oname)
- {
--	const struct qstr qname = FSTR_TO_QSTR(iname);
- 	struct fscrypt_digested_name digested_name;
- 
--	if (fscrypt_is_dot_dotdot(&qname)) {
-+	if (is_dot_or_dotdot(iname->name, iname->len)) {
- 		oname->name[0] = '.';
- 		oname->name[iname->len - 1] = '.';
- 		oname->len = iname->len;
-@@ -323,7 +312,7 @@ int fscrypt_setup_filename(struct inode *dir, const struct qstr *iname,
- 	memset(fname, 0, sizeof(struct fscrypt_name));
- 	fname->usr_fname = iname;
- 
--	if (!IS_ENCRYPTED(dir) || fscrypt_is_dot_dotdot(iname)) {
-+	if (!IS_ENCRYPTED(dir) || is_dot_or_dotdot(iname->name, iname->len)) {
- 		fname->disk_name.name = (unsigned char *)iname->name;
- 		fname->disk_name.len = iname->len;
- 		return 0;
-diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
-index f91db24..c3bcbf0 100644
---- a/fs/ecryptfs/crypto.c
-+++ b/fs/ecryptfs/crypto.c
-@@ -1991,16 +1991,6 @@ int ecryptfs_encrypt_and_encode_filename(
- 	return rc;
- }
- 
--static bool is_dot_dotdot(const char *name, size_t name_size)
--{
--	if (name_size == 1 && name[0] == '.')
--		return true;
--	else if (name_size == 2 && name[0] == '.' && name[1] == '.')
--		return true;
--
--	return false;
--}
--
- /**
-  * ecryptfs_decode_and_decrypt_filename - converts the encoded cipher text name to decoded plaintext
-  * @plaintext_name: The plaintext name
-@@ -2027,7 +2017,7 @@ int ecryptfs_decode_and_decrypt_filename(char **plaintext_name,
- 
- 	if ((mount_crypt_stat->flags & ECRYPTFS_GLOBAL_ENCRYPT_FILENAMES) &&
- 	    !(mount_crypt_stat->flags & ECRYPTFS_ENCRYPTED_VIEW_ENABLED)) {
--		if (is_dot_dotdot(name, name_size)) {
-+		if (is_dot_or_dotdot(name, name_size)) {
- 			rc = ecryptfs_copy_filename(plaintext_name,
- 						    plaintext_name_size,
- 						    name, name_size);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 5a888a0..3d5e684 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2767,17 +2767,6 @@ static inline bool f2fs_cp_error(struct f2fs_sb_info *sbi)
- 	return is_set_ckpt_flags(sbi, CP_ERROR_FLAG);
- }
- 
--static inline bool is_dot_dotdot(const struct qstr *str)
--{
--	if (str->len == 1 && str->name[0] == '.')
--		return true;
--
--	if (str->len == 2 && str->name[0] == '.' && str->name[1] == '.')
--		return true;
--
--	return false;
--}
--
- static inline bool f2fs_may_extent_tree(struct inode *inode)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-diff --git a/fs/f2fs/hash.c b/fs/f2fs/hash.c
-index 5bc4dcd..ef155c2 100644
---- a/fs/f2fs/hash.c
-+++ b/fs/f2fs/hash.c
-@@ -15,6 +15,7 @@
- #include <linux/cryptohash.h>
- #include <linux/pagemap.h>
- #include <linux/unicode.h>
-+#include <linux/namei.h>
- 
- #include "f2fs.h"
- 
-@@ -82,7 +83,7 @@ static f2fs_hash_t __f2fs_dentry_hash(const struct qstr *name_info,
- 	if (fname && !fname->disk_name.name)
- 		return cpu_to_le32(fname->hash);
- 
--	if (is_dot_dotdot(name_info))
-+	if (is_dot_or_dotdot(name, len))
- 		return 0;
- 
- 	/* Initialize the default seed for the hash checksum functions */
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index 7fe7b87..8b69d0f 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -92,4 +92,14 @@ retry_estale(const long error, const unsigned int flags)
- 	return error == -ESTALE && !(flags & LOOKUP_REVAL);
- }
- 
-+static inline bool is_dot_or_dotdot(const unsigned char *name, size_t len)
-+{
-+	if (len >= 1 && unlikely(name[0] == '.')) {
-+		if (len == 1 || (len == 2 && name[1] == '.'))
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
- #endif /* _LINUX_NAMEI_H */
--- 
-2.1.0
+* follow_hugetlb_page(): removed a refcount overflow check that is now
+  extraneous (and weaker than what try_grab_page() provides a few lines
+  further down).
+
+* Fixed up two Documentation flaws, pointed out by Jonathan Corbet's
+  review.
+
+Changes since v8:
+
+* Merged the "mm/gup: pass flags arg to __gup_device_* functions" patch
+  into the "mm/gup: track FOLL_PIN pages" patch, as requested by
+  Christoph and Jan.
+
+* Changed void grab_page() to bool try_grab_page(), and handled errors
+  at the call sites. (From Jan's review comments.) try_grab_page()
+  attempts to avoid page refcount overflows, even when counting up with
+  GUP_PIN_COUNTING_BIAS increments.
+
+* Fixed a bug that I'd introduced, when changing a BUG() to a WARN().
+
+* Added Jan's reviewed-by tag to the " mm/gup: allow FOLL_FORCE for
+  get_user_pages_fast()" patch.
+
+* Documentation: pin_user_pages.rst: fixed an incorrect gup_benchmark
+  invocation, left over from the pin_longterm days, spotted while preparing
+  this version.
+
+* Rebased onto today's linux.git (-rc1), and re-tested.
+
+Changes since v7:
+
+* Rebased onto Linux 5.5-rc1
+
+* Reworked the grab_page() and try_grab_compound_head(), for API
+  consistency and less diffs (thanks to Jan Kara's reviews).
+
+* Added Leon Romanovsky's reviewed-by tags for two of the IB-related
+  patches.
+
+* patch 4 refactoring changes, as mentioned above.
+
+There is a git repo and branch, for convenience:
+
+    git@github.com:johnhubbard/linux.git pin_user_pages_tracking_v8
+
+For the remaining list of "changes since version N", those are all in
+v7, which is here:
+
+  https://lore.kernel.org/r/20191121071354.456618-1-jhubbard@nvidia.com
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Overview:
+
+This is a prerequisite to solving the problem of proper interactions
+between file-backed pages, and [R]DMA activities, as discussed in [1],
+[2], [3], and in a remarkable number of email threads since about
+2017. :)
+
+A new internal gup flag, FOLL_PIN is introduced, and thoroughly
+documented in the last patch's Documentation/vm/pin_user_pages.rst.
+
+I believe that this will provide a good starting point for doing the
+layout lease work that Ira Weiny has been working on. That's because
+these new wrapper functions provide a clean, constrained, systematically
+named set of functionality that, again, is required in order to even
+know if a page is "dma-pinned".
+
+In contrast to earlier approaches, the page tracking can be
+incrementally applied to the kernel call sites that, until now, have
+been simply calling get_user_pages() ("gup"). In other words, opt-in by
+changing from this:
+
+    get_user_pages() (sets FOLL_GET)
+    put_page()
+
+to this:
+    pin_user_pages() (sets FOLL_PIN)
+    unpin_user_page()
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Testing:
+
+* I've done some overall kernel testing (LTP, and a few other goodies),
+  and some directed testing to exercise some of the changes. And as you
+  can see, gup_benchmark is enhanced to exercise this. Basically, I've
+  been able to runtime test the core get_user_pages() and
+  pin_user_pages() and related routines, but not so much on several of
+  the call sites--but those are generally just a couple of lines
+  changed, each.
+
+  Not much of the kernel is actually using this, which on one hand
+  reduces risk quite a lot. But on the other hand, testing coverage
+  is low. So I'd love it if, in particular, the Infiniband and PowerPC
+  folks could do a smoke test of this series for me.
+
+  Runtime testing for the call sites so far is pretty light:
+
+    * io_uring: Some directed tests from liburing exercise this, and
+                they pass.
+    * process_vm_access.c: A small directed test passes.
+    * gup_benchmark: the enhanced version hits the new gup.c code, and
+                     passes.
+    * infiniband: ran "ib_write_bw", which exercises the umem.c changes,
+                  but not the other changes.
+    * VFIO: compiles (I'm vowing to set up a run time test soon, but it's
+                      not ready just yet)
+    * powerpc: it compiles...
+    * drm/via: compiles...
+    * goldfish: compiles...
+    * net/xdp: compiles...
+    * media/v4l2: compiles...
+
+[1] Some slow progress on get_user_pages() (Apr 2, 2019): https://lwn.net/A=
+rticles/784574/
+[2] DMA and get_user_pages() (LPC: Dec 12, 2018): https://lwn.net/Articles/=
+774411/
+[3] The trouble with get_user_pages() (Apr 30, 2018): https://lwn.net/Artic=
+les/753027/
+
+Dan Williams (1):
+  mm: Cleanup __put_devmap_managed_page() vs ->page_free()
+
+John Hubbard (24):
+  mm/gup: factor out duplicate code from four routines
+  mm/gup: move try_get_compound_head() to top, fix minor issues
+  mm: devmap: refactor 1-based refcounting for ZONE_DEVICE pages
+  goldish_pipe: rename local pin_user_pages() routine
+  mm: fix get_user_pages_remote()'s handling of FOLL_LONGTERM
+  vfio: fix FOLL_LONGTERM use, simplify get_user_pages_remote() call
+  mm/gup: allow FOLL_FORCE for get_user_pages_fast()
+  IB/umem: use get_user_pages_fast() to pin DMA pages
+  mm/gup: introduce pin_user_pages*() and FOLL_PIN
+  goldish_pipe: convert to pin_user_pages() and put_user_page()
+  IB/{core,hw,umem}: set FOLL_PIN via pin_user_pages*(), fix up ODP
+  mm/process_vm_access: set FOLL_PIN via pin_user_pages_remote()
+  drm/via: set FOLL_PIN via pin_user_pages_fast()
+  fs/io_uring: set FOLL_PIN via pin_user_pages()
+  net/xdp: set FOLL_PIN via pin_user_pages()
+  media/v4l2-core: set pages dirty upon releasing DMA buffers
+  media/v4l2-core: pin_user_pages (FOLL_PIN) and put_user_page()
+    conversion
+  vfio, mm: pin_user_pages (FOLL_PIN) and put_user_page() conversion
+  powerpc: book3s64: convert to pin_user_pages() and put_user_page()
+  mm/gup_benchmark: use proper FOLL_WRITE flags instead of hard-coding
+    "1"
+  mm, tree-wide: rename put_user_page*() to unpin_user_page*()
+  mm/gup: track FOLL_PIN pages
+  mm/gup_benchmark: support pin_user_pages() and related calls
+  selftests/vm: run_vmtests: invoke gup_benchmark with basic FOLL_PIN
+    coverage
+
+ Documentation/core-api/index.rst            |   1 +
+ Documentation/core-api/pin_user_pages.rst   | 232 ++++++++
+ arch/powerpc/mm/book3s64/iommu_api.c        |  10 +-
+ drivers/gpu/drm/via/via_dmablit.c           |   6 +-
+ drivers/infiniband/core/umem.c              |  19 +-
+ drivers/infiniband/core/umem_odp.c          |  13 +-
+ drivers/infiniband/hw/hfi1/user_pages.c     |   4 +-
+ drivers/infiniband/hw/mthca/mthca_memfree.c |   8 +-
+ drivers/infiniband/hw/qib/qib_user_pages.c  |   4 +-
+ drivers/infiniband/hw/qib/qib_user_sdma.c   |   8 +-
+ drivers/infiniband/hw/usnic/usnic_uiom.c    |   4 +-
+ drivers/infiniband/sw/siw/siw_mem.c         |   4 +-
+ drivers/media/v4l2-core/videobuf-dma-sg.c   |   8 +-
+ drivers/nvdimm/pmem.c                       |   6 -
+ drivers/platform/goldfish/goldfish_pipe.c   |  35 +-
+ drivers/vfio/vfio_iommu_type1.c             |  35 +-
+ fs/io_uring.c                               |   6 +-
+ include/linux/mm.h                          | 149 ++++-
+ include/linux/mmzone.h                      |   2 +
+ include/linux/page_ref.h                    |  10 +
+ mm/gup.c                                    | 626 +++++++++++++++-----
+ mm/gup_benchmark.c                          |  74 ++-
+ mm/huge_memory.c                            |  45 +-
+ mm/hugetlb.c                                |  38 +-
+ mm/memremap.c                               |  76 ++-
+ mm/process_vm_access.c                      |  28 +-
+ mm/swap.c                                   |  24 +
+ mm/vmstat.c                                 |   2 +
+ net/xdp/xdp_umem.c                          |   4 +-
+ tools/testing/selftests/vm/gup_benchmark.c  |  21 +-
+ tools/testing/selftests/vm/run_vmtests      |  22 +
+ 31 files changed, 1147 insertions(+), 377 deletions(-)
+ create mode 100644 Documentation/core-api/pin_user_pages.rst
+
+--
+2.24.0
 
