@@ -2,127 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 364DF11D96A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 23:34:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8502911D9A2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 23:41:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731060AbfLLWeI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Dec 2019 17:34:08 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:38431 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730936AbfLLWeI (ORCPT
+        id S1731042AbfLLWlt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Dec 2019 17:41:49 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:41451 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730707AbfLLWlt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Dec 2019 17:34:08 -0500
-Received: from dread.disaster.area (pa49-195-139-249.pa.nsw.optusnet.com.au [49.195.139.249])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 9EEB38208B0;
-        Fri, 13 Dec 2019 09:34:04 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1ifX23-00061Q-20; Fri, 13 Dec 2019 09:34:03 +1100
-Date:   Fri, 13 Dec 2019 09:34:03 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, willy@infradead.org, clm@fb.com,
-        torvalds@linux-foundation.org
-Subject: Re: [PATCH 5/5] iomap: support RWF_UNCACHED for buffered writes
-Message-ID: <20191212223403.GH19213@dread.disaster.area>
-References: <20191211152943.2933-1-axboe@kernel.dk>
- <20191211152943.2933-6-axboe@kernel.dk>
+        Thu, 12 Dec 2019 17:41:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576190508;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=QTqrX0C+eShgCocrnLwj0jnrcRKihR9p/00TbrrS4kU=;
+        b=Fy0hejp6s+FLh1fmcp5H0ZZeDwls8FBAMfn0WOoVCGmA7KzQqU683/hS5gpwKKbxgB6yIr
+        KWJ+d27DNJ2SSWz7R+623OaXrAQ2WgRGrpCrgoSXAILWiuCwoOi91lx+f6AtsTE00JWBzy
+        U1VhPrydaYSpcuiB2n6RkOG/nsslx0s=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-173-pX8kMRUdN8OHIeMK_MJuEw-1; Thu, 12 Dec 2019 17:41:45 -0500
+X-MC-Unique: pX8kMRUdN8OHIeMK_MJuEw-1
+Received: by mail-qt1-f197.google.com with SMTP id u9so527051qte.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2019 14:41:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QTqrX0C+eShgCocrnLwj0jnrcRKihR9p/00TbrrS4kU=;
+        b=iH8xriNnYB4CZpq4c6StoUm/xF+RHqBD/EM9ek+nrapRuStla8mW4A8U9SMQD+GsUo
+         aHdFL6NsGy0bAzIJHmRq4hY8j9LESO8+FSFLe5nQ/F/gKFRwXivBWHvRfj/a/KCmaevj
+         SOaY1zYOD+euQ+3m8P+A5Y201jHTVd5CXt/TJpwLJqNYaFh7i7VhV92gc77pymJop/dd
+         Fr7fCEUYnh2E38UnyINPsLjCXf1ioWmCN8pXAeNkiwy5uFS/7eciEp7KKnVvXiV91/ue
+         DN2Wv/MQJ7W0fy7MhydXK/fYeuZF8lhP5p2H0XSKihtxi4APgzc2P7GQcf3OF5X/VzqA
+         eAGA==
+X-Gm-Message-State: APjAAAV9+ngiyW1tl0o7IeokCQ15pl898+YRCE2i/96JOC0uuy5j1rx2
+        ZZ7/WyOernXtKP2+quqGbfMfBKXU21OecMTiGnc4Nn+BjkyQQgQnPJYoe7Cdn/dGr5KjZYE2uE9
+        YeeIWLtjL6GwfW59Ff2eiV14ZoQ==
+X-Received: by 2002:a05:6214:178f:: with SMTP id ct15mr10290832qvb.95.1576190505100;
+        Thu, 12 Dec 2019 14:41:45 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxpps50O7sKKAKfqI0+8dAwkmzesR9yvNp5EYD0edwbGeb3d8hizM1fjMLPbyhetx7gE/j4rQ==
+X-Received: by 2002:a05:6214:178f:: with SMTP id ct15mr10290820qvb.95.1576190504832;
+        Thu, 12 Dec 2019 14:41:44 -0800 (PST)
+Received: from labbott-redhat.redhat.com (pool-96-235-39-235.pitbpa.fios.verizon.net. [96.235.39.235])
+        by smtp.gmail.com with ESMTPSA id h32sm2734997qth.2.2019.12.12.14.41.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2019 14:41:44 -0800 (PST)
+From:   Laura Abbott <labbott@redhat.com>
+To:     Al Viro <viro@ZenIV.linux.org.uk>,
+        David Howells <dhowells@redhat.com>
+Cc:     Laura Abbott <labbott@redhat.com>,
+        Jeremi Piotrowski <jeremi.piotrowski@gmail.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        linux-kernel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>
+Subject: [PATCHv2] vfs: Handle file systems without ->parse_params better
+Date:   Thu, 12 Dec 2019 17:41:39 -0500
+Message-Id: <20191212224139.15970-1-labbott@redhat.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191211152943.2933-6-axboe@kernel.dk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
-        a=KoypXv6BqLCQNZUs2nCMWg==:117 a=KoypXv6BqLCQNZUs2nCMWg==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=pxVhFHJ0LMsA:10
-        a=7-415B0cAAAA:8 a=ikgJNTgf4fhs6WZrna0A:9 a=RKUrkyyTLFFZf7Ed:21
-        a=Xuacn0olY5J5TEqm:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 08:29:43AM -0700, Jens Axboe wrote:
-> This adds support for RWF_UNCACHED for file systems using iomap to
-> perform buffered writes. We use the generic infrastructure for this,
-> by tracking pages we created and calling write_drop_cached_pages()
-> to issue writeback and prune those pages.
-> 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->  fs/iomap/apply.c       | 24 ++++++++++++++++++++++++
->  fs/iomap/buffered-io.c | 37 +++++++++++++++++++++++++++++--------
->  include/linux/iomap.h  |  5 +++++
->  3 files changed, 58 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/iomap/apply.c b/fs/iomap/apply.c
-> index 562536da8a13..966826ad4bb9 100644
-> --- a/fs/iomap/apply.c
-> +++ b/fs/iomap/apply.c
-> @@ -90,5 +90,29 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
->  				     flags, &iomap);
->  	}
->  
-> +	if (written && (flags & IOMAP_UNCACHED)) {
-> +		struct address_space *mapping = inode->i_mapping;
-> +
-> +		end = pos + written;
-> +		ret = filemap_write_and_wait_range(mapping, pos, end);
-> +		if (ret)
-> +			goto out;
-> +
-> +		/*
-> +		 * No pages were created for this range, we're done
-> +		 */
-> +		if (!(iomap.flags & IOMAP_F_PAGE_CREATE))
-> +			goto out;
-> +
-> +		/*
-> +		 * Try to invalidate cache pages for the range we just wrote.
-> +		 * We don't care if invalidation fails as the write has still
-> +		 * worked and leaving clean uptodate pages in the page cache
-> +		 * isn't a corruption vector for uncached IO.
-> +		 */
-> +		invalidate_inode_pages2_range(mapping,
-> +				pos >> PAGE_SHIFT, end >> PAGE_SHIFT);
-> +	}
-> +out:
->  	return written ? written : ret;
->  }
 
-Just a thought on further optimisation for this for XFS.
-IOMAP_UNCACHED is being passed into the filesystem ->iomap_begin
-methods by iomap_apply().  Hence the filesystems know that it is
-an uncached IO that is being done, and we can tailor allocation
-strategies to suit the fact that the data is going to be written
-immediately.
+The new mount API relies on file systems to provide a ->parse_params
+function to handle parsing of arguments. If a file system doesn't
+have a ->parse_param function, it falls back to parsing the source
+option and rejecting all other options. This is a change in behavior
+for some file systems which would just quietly ignore extra options
+and mount successfully. This was noticed by users as squashfs failing
+to mount with extra options after the conversion to the new mount
+API.
 
-In this case, XFS needs to treat it the same way it treats direct
-IO. That is, we do immediate unwritten extent allocation rather than
-delayed allocation. This will reduce the allocation overhead and
-will optimise for immediate IO locality rather than optimise for
-delayed allocation.
+File systems with a ->parse_params function rely on the top level
+to parse the "source" param so we can't easily move that around. To
+get around this, introduce a default parsing functions for file
+systems that take no arguments. This parses only the "source" option
+and only logs an error for other arguments. Update the comment
+to reflect this expected behavior for "source" parsing as well.
 
-This should just be a relatively simple change to
-xfs_file_iomap_begin() along the lines of:
+Fixes: 3e1aeb00e6d1 ("vfs: Implement a filesystem superblock
+creation/configuration context")
+Link: https://lore.kernel.org/lkml/20191130181548.GA28459@gentoo-tp.home/
+Reported-by: Jeremi Piotrowski <jeremi.piotrowski@gmail.com>
+Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1781863
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+---
+v2: Dropped most the boiler plate for parsing and just compared
+against "source". Renamed to ignore_unknown_parse_param.
+---
+ fs/fs_context.c | 36 +++++++++++++++++++++++++++++-------
+ 1 file changed, 29 insertions(+), 7 deletions(-)
 
--	if ((flags & (IOMAP_WRITE | IOMAP_ZERO)) && !(flags & IOMAP_DIRECT) &&
--			!IS_DAX(inode) && !xfs_get_extsz_hint(ip)) {
-+	if ((flags & (IOMAP_WRITE | IOMAP_ZERO)) &&
-+	    !(flags & (IOMAP_DIRECT | IOMAP_UNCACHED)) &&
-+	    !IS_DAX(inode) && !xfs_get_extsz_hint(ip)) {
-		/* Reserve delalloc blocks for regular writeback. */
-		return xfs_file_iomap_begin_delay(inode, offset, length, flags,
-				iomap);
-	}
-
-so that it avoids delayed allocation for uncached IO...
-
-Cheers,
-
-Dave.
+diff --git a/fs/fs_context.c b/fs/fs_context.c
+index 138b5b4d621d..086ade29b811 100644
+--- a/fs/fs_context.c
++++ b/fs/fs_context.c
+@@ -107,6 +107,22 @@ static int vfs_parse_sb_flag(struct fs_context *fc, const char *key)
+ 	return -ENOPARAM;
+ }
+ 
++/**
++ * ignore_unknowns_parse_param - ->parse_param function for a file system that
++ * takes no arguments
++ * @fc: The filesystem context
++ * @param: The parameter.
++ */
++static int ignore_unknown_parse_param(struct fs_context *fc, struct fs_parameter *param)
++{
++
++	if (strcmp(param->key, "source") == 0)
++		return -ENOPARAM;
++	/* Just log an error for backwards compatibility */
++	errorf(fc, "%s: Unknown parameter '%s'", fc->fs_type->name, param->key);
++	return 0;
++}
++
+ /**
+  * vfs_parse_fs_param - Add a single parameter to a superblock config
+  * @fc: The filesystem context to modify
+@@ -126,6 +142,7 @@ static int vfs_parse_sb_flag(struct fs_context *fc, const char *key)
+ int vfs_parse_fs_param(struct fs_context *fc, struct fs_parameter *param)
+ {
+ 	int ret;
++	int (*parse_param)(struct fs_context *, struct fs_parameter *);
+ 
+ 	if (!param->key)
+ 		return invalf(fc, "Unnamed parameter\n");
+@@ -141,14 +158,19 @@ int vfs_parse_fs_param(struct fs_context *fc, struct fs_parameter *param)
+ 		 */
+ 		return ret;
+ 
+-	if (fc->ops->parse_param) {
+-		ret = fc->ops->parse_param(fc, param);
+-		if (ret != -ENOPARAM)
+-			return ret;
+-	}
++	parse_param = fc->ops->parse_param;
++	if (!parse_param)
++		parse_param = ignore_unknown_parse_param;
++
++	ret = parse_param(fc, param);
++	if (ret != -ENOPARAM)
++		return ret;
+ 
+-	/* If the filesystem doesn't take any arguments, give it the
+-	 * default handling of source.
++	/*
++	 * File systems may have a ->parse_param function but rely on
++	 * the top level to parse the source function. File systems
++	 * may have their own source parsing though so this needs
++	 * to come after the call to parse_param above.
+ 	 */
+ 	if (strcmp(param->key, "source") == 0) {
+ 		if (param->type != fs_value_is_string)
 -- 
-Dave Chinner
-david@fromorbit.com
+2.21.0
+
