@@ -2,69 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A547011D5B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 19:34:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1A2B11D5E6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 19:38:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730474AbfLLSes (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Dec 2019 13:34:48 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:52350 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730455AbfLLSer (ORCPT
+        id S1730467AbfLLSiU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Dec 2019 13:38:20 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:21723 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730427AbfLLSiU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Dec 2019 13:34:47 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ifTIR-0001bO-9B; Thu, 12 Dec 2019 18:34:43 +0000
-Date:   Thu, 12 Dec 2019 18:34:43 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     syzbot <syzbot+31043da7725b6ec210f1@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: Re: BUG: corrupted list in __dentry_kill (2)
-Message-ID: <20191212183443.GH4203@ZenIV.linux.org.uk>
-References: <000000000000b6b03205997b71cf@google.com>
- <20191212061206.GE4203@ZenIV.linux.org.uk>
- <CACT4Y+YJuV8EGSx8K_5Qd0f+fUz8MHb1awyJ78Jf8zrNmKokrA@mail.gmail.com>
- <20191212133844.GG4203@ZenIV.linux.org.uk>
- <CACT4Y+ZQ6C07TcuAHwc-T+Lb2ZkigkqW32d=TF054RuPwUFimw@mail.gmail.com>
+        Thu, 12 Dec 2019 13:38:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1576175900; x=1607711900;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Yzq8zYld7NGqoSLiavkVyh+2krjFk621+a8Vx86muSs=;
+  b=lk6Af0r5QHNPnZywdik5aVsJ5U402Z60vT/4ZDvMsnSsw3CvOLpHJxzu
+   K686/z07AH7xvJamJH/zlRFF/rJIcHVEaNKO3MTSAtrSvIFzRyVaxO/xe
+   TC+8iqYnkYeE6oyOBHsxe+EhpHTpueBXrCvznyNI87D7+ykSa7iKVeAks
+   OhbLb5jcnBS5Du2OplJevFlD3s9iOTmnBRUX0pd6yjv4Zs61S4c3nLnAA
+   YtDur1Fcq+91GOvm2Dcfoq82cRvteyC/KAkxiysXvI5/++Hkn27/FyypA
+   ZrcjXDcUdS36aO6BEhMcmzMgjuor58GsDzpTWKz4XJjcoFWJyEURq61uz
+   A==;
+IronPort-SDR: b1+aXZ0u+ZtqMHzrn0UtVKKE4WBEFJIXMOpotz+lXEQ7bCS7aiUDbf+4AUTGd0lk6fouvBgVbS
+ XR7rrxL4yNF9ORM5H6hFSgywrfJ1zQnhVOIuj70h90ahXa4ZWWNdxlfilSW/MZv7bhgfesA7Ls
+ pWi1Pf6Nk700v3vcP1eY5ogedFtyhhCWIVsep9+sSJy+6qw/xcnzEE+QI8tNSbpya5U4hceeeZ
+ RqnL0WxQOr+/KxNXJs6HUkSmxSlPAdh8sYmaDPEzXmF/760+XWkEZFARbqiHquJ/6BsJBMpjUx
+ sGw=
+X-IronPort-AV: E=Sophos;i="5.69,306,1571673600"; 
+   d="scan'208";a="129654454"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 13 Dec 2019 02:38:19 +0800
+IronPort-SDR: h7N+v+recdJeZQ+8I9uh2pthv01QyUGCqOzB+zAKHySt+TYWGYTCZjttLbnxnoNF5Y+TRBUAvS
+ NIplnhOhg/77XBSKxkLZcmPkG39x8uUCSEYs1Z5d9DcVvuvoCrtTgntEdyWVZ3qZvTMvPehNEr
+ Qdydgebxd2jt1VCmudxkulkKK0up/evQt8QAZSABo8K153IfqgSh1+/7qXr7/EYS2sCHR0+3s7
+ h9YwuiiQFxZH8i6h8BN56U8M25Sco4oUOoKutKHqcUSwQd4o9wCmlbLYMBj9/z/hSRaZfvFJf6
+ Z+nnqP4Gfus4rQdDptKnYKjx
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2019 10:32:52 -0800
+IronPort-SDR: TPgPTPQlHtvgIqj7eK2+O+Gg7txK7Lf/sg7RxKrMHrZnCyjUL7PaTX1kLoGO2r1Jv9yXoOoYIw
+ 53KvuTynalDHC4MQPD5z75DqS42pwnELCFtSTSVdf/P1awUo+DD9ZJu+dRYckR2oW0dAYWWt3n
+ 0inWPL5vYCtjpSsTl1cuNlY0UEGzL5L2MiUmhH8CJg7z+SXOB1cYcHReT3Ew0utcM8wsMKdTzl
+ UOnCm0V712HkojiW0BUmeEvqIMHn+NGB2lNDfRFrePjpFJFNbrARDxwiTcI3jJwueYYQIO+vVR
+ ef8=
+WDCIronportException: Internal
+Received: from washi.fujisawa.hgst.com ([10.149.53.254])
+  by uls-op-cesaip02.wdc.com with ESMTP; 12 Dec 2019 10:38:17 -0800
+From:   Damien Le Moal <damien.lemoal@wdc.com>
+To:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Johannes Thumshirn <jth@kernel.org>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Hannes Reinecke <hare@suse.de>
+Subject: [PATCH 0/2] New zonefs file system
+Date:   Fri, 13 Dec 2019 03:38:14 +0900
+Message-Id: <20191212183816.102402-1-damien.lemoal@wdc.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+ZQ6C07TcuAHwc-T+Lb2ZkigkqW32d=TF054RuPwUFimw@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 04:57:14PM +0100, Dmitry Vyukov wrote:
+zonefs is a very simple file system exposing each zone of a zoned block
+device as a file. Unlike a regular file system with zoned block device
+support (e.g. f2fs or the on-going btrfs effort), zonefs does not hide
+the sequential write constraint of zoned block devices to the user.
+Files representing sequential write zones of the device must be written
+sequentially starting from the end of the file (append only writes).
 
-> > Speaking of bisect hazards, I'd recommend to check how your bisect
-> > went - the bug is definitely local to this commit and I really
-> > wonder what had caused the bisect to go wrong in this particular
-> > case.
-> 
-> I did not get the relation of folding to bisection. Or you mean these
-> are just separate things?
+zonefs is not a POSIX compliant file system. It's goal is to simplify
+the implementation of zoned block devices support in applications by
+replacing raw block device file accesses with a richer file based API,
+avoiding relying on direct block device file ioctls which may
+be more obscure to developers. One example of this approach is the
+implementation of LSM (log-structured merge) tree structures (such as
+used in RocksDB and LevelDB) on zoned block devices by allowing SSTables
+to be stored in a zone file similarly to a regular file system rather
+than as a range of sectors of a zoned device. The introduction of the
+higher level construct "one file is one zone" can help reducing the
+amount of changes needed in the application while at the same time
+allowing the use of zoned block devices with various programming
+languages other than C.
 
-Suppose instead of folding the fix in I would've done a followup commit
-just with the fix.  And left the branch in that form, eventually getting
-it pulled into mainline.  From that point on, *ANY* bisect stepping into
-the first commit would've been thrown off.  For ever and ever, since
-once it's in mainline, it really won't go away.
+zonefs IO management implementation uses the new iomap generic code.
 
-That's what folding avoids - accumulation of scar tissue, if you will.
-Sure, there's enough cases when bug is found too late - it's already
-in mainline or pulled into net-next or some other branch with similar
-"no rebase, no reorder" policy.  But if you look at the patchsets posted
-on the lists and watch them from iteration to iteration, you'll see
-a _lot_ of fix-folding.  IME (both by my own practice and by watching
-the patchsets posted by others) it outnumbers the cases when fix can't
-be folded by quite a factor.  I wouldn't be surprised if it was an
-order of magnitude...
+Damien Le Moal (2):
+  fs: New zonefs file system
+  zonefs: Add documentation
 
-Strict "never fold fixes" policy would've accelerated the accumulation
-of bisect hazards in the mainline.  And while useful bisect may be a lost
-cause for CI bots, it isn't that for intelligent developers.  Anything
-that makes it more painful is not going to be welcome.
+ Documentation/filesystems/zonefs.txt |  150 ++++
+ MAINTAINERS                          |   10 +
+ fs/Kconfig                           |    1 +
+ fs/Makefile                          |    1 +
+ fs/zonefs/Kconfig                    |    9 +
+ fs/zonefs/Makefile                   |    4 +
+ fs/zonefs/super.c                    | 1158 ++++++++++++++++++++++++++
+ fs/zonefs/zonefs.h                   |  169 ++++
+ include/uapi/linux/magic.h           |    1 +
+ 9 files changed, 1503 insertions(+)
+ create mode 100644 Documentation/filesystems/zonefs.txt
+ create mode 100644 fs/zonefs/Kconfig
+ create mode 100644 fs/zonefs/Makefile
+ create mode 100644 fs/zonefs/super.c
+ create mode 100644 fs/zonefs/zonefs.h
+
+-- 
+2.23.0
+
