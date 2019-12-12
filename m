@@ -2,228 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D591F11D8A8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 22:36:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3591B11D8BC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 22:45:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731142AbfLLVgO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Dec 2019 16:36:14 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:54506 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731134AbfLLVgO (ORCPT
+        id S1730827AbfLLVpu convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Dec 2019 16:45:50 -0500
+Received: from luna.lichtvoll.de ([194.150.191.11]:39973 "EHLO
+        mail.lichtvoll.de" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730713AbfLLVpu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Dec 2019 16:36:14 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ifW81-0000rX-8D; Thu, 12 Dec 2019 21:36:09 +0000
-Date:   Thu, 12 Dec 2019 21:36:09 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Laura Abbott <labbott@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jeremi Piotrowski <jeremi.piotrowski@gmail.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] vfs: Don't reject unknown parameters
-Message-ID: <20191212213609.GK4203@ZenIV.linux.org.uk>
-References: <20191212145042.12694-1-labbott@redhat.com>
- <CAOi1vP9E2yLeFptg7o99usEi=x3kf=NnHYdURXPhX4vTXKCTCQ@mail.gmail.com>
- <fbe90a0b-cf24-8c0c-48eb-6183852dfbf1@redhat.com>
- <CAHk-=wh7Wuk9QCP6oH5Qc1a89_X6H1CHRK_OyB4NLmX7nRYJeA@mail.gmail.com>
- <cf4c9634-1503-d182-cb12-810fb969bc96@redhat.com>
+        Thu, 12 Dec 2019 16:45:50 -0500
+Received: from 127.0.0.1 (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.lichtvoll.de (Postfix) with ESMTPSA id 66EBA99BE3;
+        Thu, 12 Dec 2019 22:45:48 +0100 (CET)
+From:   Martin Steigerwald <martin@lichtvoll.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, willy@infradead.org, clm@fb.com,
+        torvalds@linux-foundation.org, david@fromorbit.com
+Subject: Re: [PATCHSET v3 0/5] Support for RWF_UNCACHED
+Date:   Thu, 12 Dec 2019 22:45:47 +0100
+Message-ID: <2091494.0NDvsO6yje@merkaba>
+In-Reply-To: <7bf74660-874e-6fd7-7a41-f908ccab694e@kernel.dk>
+References: <20191211152943.2933-1-axboe@kernel.dk> <63049728.ylUViGSH3C@merkaba> <7bf74660-874e-6fd7-7a41-f908ccab694e@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cf4c9634-1503-d182-cb12-810fb969bc96@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
+Authentication-Results: mail.lichtvoll.de;
+        auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 03:01:56PM -0500, Laura Abbott wrote:
+Jens Axboe - 12.12.19, 16:16:31 CET:
+> On 12/12/19 3:44 AM, Martin Steigerwald wrote:
+> > Jens Axboe - 11.12.19, 16:29:38 CET:
+> >> Recently someone asked me how io_uring buffered IO compares to
+> >> mmaped
+> >> IO in terms of performance. So I ran some tests with buffered IO,
+> >> and
+> >> found the experience to be somewhat painful. The test case is
+> >> pretty
+> >> basic, random reads over a dataset that's 10x the size of RAM.
+> >> Performance starts out fine, and then the page cache fills up and
+> >> we
+> >> hit a throughput cliff. CPU usage of the IO threads go up, and we
+> >> have kswapd spending 100% of a core trying to keep up. Seeing
+> >> that, I was reminded of the many complaints I here about buffered
+> >> IO, and the fact that most of the folks complaining will
+> >> ultimately bite the bullet and move to O_DIRECT to just get the
+> >> kernel out of the way.
+> >> 
+> >> But I don't think it needs to be like that. Switching to O_DIRECT
+> >> isn't always easily doable. The buffers have different life times,
+> >> size and alignment constraints, etc. On top of that, mixing
+> >> buffered
+> >> and O_DIRECT can be painful.
+> >> 
+> >> Seems to me that we have an opportunity to provide something that
+> >> sits somewhere in between buffered and O_DIRECT, and this is where
+> >> RWF_UNCACHED enters the picture. If this flag is set on IO, we get
+> >> the following behavior:
+> >> 
+> >> - If the data is in cache, it remains in cache and the copy (in or
+> >> out) is served to/from that.
+> >> 
+> >> - If the data is NOT in cache, we add it while performing the IO.
+> >> When the IO is done, we remove it again.
+> >> 
+> >> With this, I can do 100% smooth buffered reads or writes without
+> >> pushing the kernel to the state where kswapd is sweating bullets.
+> >> In
+> >> fact it doesn't even register.
+> > 
+> > A question from a user or Linux Performance trainer perspective:
+> > 
+> > How does this compare with posix_fadvise() with POSIX_FADV_DONTNEED
+> > that for example the nocache¹ command is using? Excerpt from
+> > manpage> 
+> > posix_fadvice(2):
+> >        POSIX_FADV_DONTNEED
+> >        
+> >               The specified data will not be accessed  in  the  near
+> >               future.
+> >               
+> >               POSIX_FADV_DONTNEED  attempts to free cached pages as‐
+> >               sociated with the specified region.  This  is  useful,
+> >               for  example,  while streaming large files.  A program
+> >               may periodically request the  kernel  to  free  cached
+> >               data  that  has already been used, so that more useful
+> >               cached pages are not discarded instead.
+> > 
+> > [1] packaged in Debian as nocache or available
+> > herehttps://github.com/ Feh/nocache
+> > 
+> > In any way, would be nice to have some option in rsync… I still did
+> > not change my backup script to call rsync via nocache.
+> 
+> I don't know the nocache tool, but I'm guessing it just does the
+> writes (or reads) and then uses FADV_DONTNEED to drop behind those
+> pages? That's fine for slower use cases, it won't work very well for
+> fast IO. The write side currently works pretty much like that
+> internally, whereas the read side doesn't use the page cache at all.
 
-> +static const struct fs_parameter_spec no_opt_fs_param_specs[] = {
-> +        fsparam_string  ("source",              NO_OPT_SOURCE),
-> +        {}
-> +};
-> +
-> +const struct fs_parameter_description no_opt_fs_parameters = {
-> +        .name           = "no_opt_fs",
-> +        .specs          = no_opt_fs_param_specs,
-> +};
-> +
-> +int fs_no_opt_parse_param(struct fs_context *fc, struct fs_parameter *param)
-> +{
-> +        struct fs_parse_result result;
-> +        int opt;
-> +
-> +        opt = fs_parse(fc, &no_opt_fs_parameters, param, &result);
-> +        if (opt < 0) {
-> +                /* Just log an error for backwards compatibility */
-> +                errorf(fc, "%s: Unknown parameter '%s'",
-> +                      fc->fs_type->name, param->key);
-> +                return 0;
-> +        }
-> +
-> +        switch (opt) {
-> +        case NO_OPT_SOURCE:
-> +                if (param->type != fs_value_is_string)
-> +                        return invalf(fc, "%s: Non-string source",
-> +					fc->fs_type->name);
-> +                if (fc->source)
-> +                        return invalf(fc, "%s: Multiple sources specified",
-> +					fc->fs_type->name);
-> +                fc->source = param->string;
-> +                param->string = NULL;
-> +                break;
-> +        }
-> +
-> +        return 0;
-> +}
-> +EXPORT_SYMBOL(fs_no_opt_parse_param);
+Yes, it does that. And yeah I saw you changed the read site to bypass 
+the cache entirely.
 
-Yecchhhh...   Could you explain why do you want to bother with fs_parse()
-here?  Seriously, look at it.
-{
-        const struct fs_parameter_spec *p;
-        const struct fs_parameter_enum *e;
-        int ret = -ENOPARAM, b;
+Also as I understand it this is for asynchronous using io uring 
+primarily?
 
-        result->has_value = !!param->string;
-        result->negated = false;
-        result->uint_64 = 0;
-
-        p = fs_lookup_key(desc, param->key);
-OK, that's
-	if (strcmp(param->key, "source") == 0)
-		p = no_opt_fs_param_specs;
-	else
-		p = NULL;
-	
-        if (!p) {
-not "source"
-                /* If we didn't find something that looks like "noxxx", see if
-                 * "xxx" takes the "no"-form negative - but only if there
-                 * wasn't an value.
-                 */
-                if (result->has_value)
-                        goto unknown_parameter;
-if param->string is non-NULL - piss off
-
-                if (param->key[0] != 'n' || param->key[1] != 'o' || !param->key[2])
-                        goto unknown_parameter;
-if not "no"<something> - ditto
-
-                p = fs_lookup_key(desc, param->key + 2);
-                if (!p)
-                        goto unknown_parameter;
-if not "nosource" - ditto
-                if (!(p->flags & fs_param_neg_with_no))
-                        goto unknown_parameter;
-... and since ->flags doesn't have that bit, the same for "nosource" anyway.
-                result->boolean = false;
-                result->negated = true;
-won't get here
-        }
-
-OK, so the above is simply 'piss off unless param->key is "source"'.  And
-p is no_opt_fs_param_specs.
-
-        if (p->flags & fs_param_deprecated)
-nope
-                warnf(fc, "%s: Deprecated parameter '%s'",
-                      desc->name, param->key);
-
-        if (result->negated)
-                goto okay;
-nope - set to false, never changed
-        /* Certain parameter types only take a string and convert it. */
-        switch (p->type) {
-that'd be fs_param_is_string
-...
-        case fs_param_is_string:
-                if (param->type != fs_value_is_string)
-                        goto bad_value;
-                if (!result->has_value) {
-if param->string is NULL...
-                        if (p->flags & fs_param_v_optional)
-nope
-                                goto okay;
-                        goto bad_value;
-                }
-                /* Fall through */
-        default:
-                break;
-        }
-
-        /* Try to turn the type we were given into the type desired by the
-         * parameter and give an error if we can't.
-         */
-        switch (p->type) {
-again, fs_param_is_string
-...
-        case fs_param_is_string:
-                goto okay;
-...
-okay:
-        return p->opt;
-bad_value:
-        return invalf(fc, "%s: Bad value for '%s'", desc->name, param->key);
-unknown_parameter:
-        return -ENOPARAM;
+-- 
+Martin
 
 
-In other words, that thing is equivalent to
-	if (strcmp(param->key, "source")) {
-		errorf(fc, "%s: Unknown parameter '%s'",
-			fc->fs_type->name, param->key);
-		return 0;
-	}
-	if (param->type != fs_value_is_string || !param->value) {
-		invalf(fc, "%s: Bad value for '%s'", fc->fs_type->name, param->key);
-		errorf(fc, "%s: Unknown parameter '%s'",
-			fc->fs_type->name, param->key);
-		return 0; // almost certainly not what you intended for that case
-	}
-	if (fc->source)
-		return invalf(fc, "%s: Multiple sources specified", fc->fs_type->name);
-	fc->source = param->string;
-	param->string = NULL;
-	return 0;
-
-And that - without the boilerplate from hell.  But if you look at the caller of
-that method, you'll see this:
-        if (fc->ops->parse_param) {
-                ret = fc->ops->parse_param(fc, param);
-                if (ret != -ENOPARAM)
-                        return ret;
-        }
-
-        /* If the filesystem doesn't take any arguments, give it the
-         * default handling of source.
-         */
-        if (strcmp(param->key, "source") == 0) {
-                if (param->type != fs_value_is_string)
-                        return invalf(fc, "VFS: Non-string source");
-                if (fc->source)
-                        return invalf(fc, "VFS: Multiple sources");
-                fc->source = param->string;
-                param->string = NULL;
-                return 0;
-        }
-
-        return invalf(fc, "%s: Unknown parameter '%s'",
-                      fc->fs_type->name, param->key);
-} 
-
-So you could bloody well just leave recognition (and handling) of "source"
-to the caller, leaving you with just this:
-
-	if (strcmp(param->key, "source") == 0)
-		return -ENOPARAM;
-	/* Just log an error for backwards compatibility */
-	errorf(fc, "%s: Unknown parameter '%s'", fc->fs_type->name, param->key);
-	return 0;
-
-and that's it.
