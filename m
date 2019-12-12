@@ -2,86 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57F4B11CC53
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 12:35:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8749F11CDE7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 14:13:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729031AbfLLLfC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Dec 2019 06:35:02 -0500
-Received: from mail-il1-f197.google.com ([209.85.166.197]:35231 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729020AbfLLLfB (ORCPT
+        id S1729345AbfLLNNG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Dec 2019 08:13:06 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:39838 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728996AbfLLNNG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Dec 2019 06:35:01 -0500
-Received: by mail-il1-f197.google.com with SMTP id t15so1398993ilh.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2019 03:35:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=zFl6E7DmT67W68XqVzR2aCsqjcFpWexNUq+6/CXmVUk=;
-        b=gQw0XUiSlu6zbaONVulDs/qlJD71EvsLCqhZkmgRLPnKaHJYh0b14x/MD5FDhdbXYV
-         UEbssSD4WWW2DwtEdwT4M1kecyxUNDTrVdHnyYsdwjNBvC8sqnwYebiDSnXa24zzG+2U
-         s6iH42hejTFXLsLEhEbvjDgFrwBqlSeR6FMtThWT2UkvWUF74W9cwPH3IPe+h4KSAdOA
-         60afP+jvE+5k5zNpbwos5TDcRSL4bYGmg88f5u5hbfjC3oJpdyC/IMH0/91JDEKg7R5e
-         H/XdYXvdfxuwF1X3evHfqo3M1FVQ0Tg4iyZQWi2lVikQhYa7uOX2PtYP9cP4httjqEGY
-         HuGQ==
-X-Gm-Message-State: APjAAAV3u9pDkWuZcrZ0gR7mK2sBUvIbAyM3FbLTSvUp453oyV7nAyeA
-        rCMSOm0wCD43DRCK6epB63Z/HiYpOWq6Gb5JfxrQ6mkvDK9U
-X-Google-Smtp-Source: APXvYqx7tAF42179GqyQGzxmn7mnoZxL7LgtxR3PNlsI/lOpd2FmYULEa+vakNib69tHnoQvSF7+iHISpB+uiby7hAsvBYRTiqDc
+        Thu, 12 Dec 2019 08:13:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Mi/YeA+WCgrkkaP3IUCQ5eXMERR2u2J8/KyXlUMxhsE=; b=S2gx1qRERPnBJWKB6odU0gfHJ
+        Io+0i7BKBcpoqwishvDmCIx3U83XeZEDzTtyk6o/vY4WNhGGpgMr33r5Xkz8KxPkZmbYkbtLZJdf6
+        2H6hG7zJ8uGDO1IquD+xfTW59+narXHB94w5Wz2UVpIVt2sYSUk9jQl/b4nolTM+jgLeg0EKj3f6y
+        DcPRlxcpeHAajXYpMtSHKKGRmWMf/vZIDRXY6u5NL14xRMK3JA0gTQvQeEAWDq1GlXYbTTJJUxmp7
+        cB3HVp7jTpLleY90VXPi2wTeWEZf5xARINmVaSAPeUXFONfryGgbC+Db61Pu2vV404tywa77Hws7M
+        h9/plfWpQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ifOGw-0000yE-7k; Thu, 12 Dec 2019 13:12:50 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C9107300F29;
+        Thu, 12 Dec 2019 14:11:26 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1D801203BF6F0; Thu, 12 Dec 2019 14:12:47 +0100 (CET)
+Date:   Thu, 12 Dec 2019 14:12:47 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Phil Auld <pauld@redhat.com>, Ming Lei <ming.lei@redhat.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-fs <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v4] sched/core: Preempt current task in favour of bound
+ kthread
+Message-ID: <20191212131247.GY2827@hirez.programming.kicks-ass.net>
+References: <20191209165122.GA27229@linux.vnet.ibm.com>
+ <20191209231743.GA19256@dread.disaster.area>
+ <20191210054330.GF27253@linux.vnet.ibm.com>
+ <20191210172307.GD9139@linux.vnet.ibm.com>
+ <20191211173829.GB21797@linux.vnet.ibm.com>
+ <20191211224617.GE19256@dread.disaster.area>
+ <20191212101031.GV2827@hirez.programming.kicks-ass.net>
+ <20191212101424.GH2871@hirez.programming.kicks-ass.net>
+ <20191212102327.GI2871@hirez.programming.kicks-ass.net>
+ <CAKfTPtCUm5vuvNiWszJ5tWHxmcZ2v_KexOxnBHLUkBcqC-P3fw@mail.gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a92:3b19:: with SMTP id i25mr7844146ila.85.1576150500982;
- Thu, 12 Dec 2019 03:35:00 -0800 (PST)
-Date:   Thu, 12 Dec 2019 03:35:00 -0800
-In-Reply-To: <000000000000b6b03205997b71cf@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b949ee0599802274@google.com>
-Subject: Re: BUG: corrupted list in __dentry_kill (2)
-From:   syzbot <syzbot+31043da7725b6ec210f1@syzkaller.appspotmail.com>
-To:     a@unstable.cc, alex.aring@gmail.com, allison@lohutok.net,
-        andrew@lunn.ch, andy@greyhouse.net, ap420073@gmail.com,
-        ast@domdv.de, ast@kernel.org, b.a.t.m.a.n@lists.open-mesh.org,
-        bpf@vger.kernel.org, bridge@lists.linux-foundation.org,
-        cleech@redhat.com, daniel@iogearbox.net, davem@davemloft.net,
-        dsa@cumulusnetworks.com, dsahern@gmail.com, dvyukov@google.com,
-        f.fainelli@gmail.com, fw@strlen.de, gregkh@linuxfoundation.org,
-        haiyangz@microsoft.com, hawk@kernel.org, hdanton@sina.com,
-        idosch@mellanox.com, info@metux.net, j.vosburgh@gmail.com, j@w1.fi,
-        jakub.kicinski@netronome.com, jhs@mojatatu.com, jiri@mellanox.com,
-        jiri@resnulli.us, johan.hedberg@gmail.com, johannes.berg@intel.com,
-        john.fastabend@gmail.com, john.hurley@netronome.com,
-        jwi@linux.ibm.com, kafai@fb.com, kstewart@linuxfoundation.org,
-        kvalo@codeaurora.org, kys@microsoft.com,
-        linux-bluetooth@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-hams@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-ppp@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linux-wpan@vger.kernel.org,
-        liuhangbin@gmail.com, marcel@holtmann.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtCUm5vuvNiWszJ5tWHxmcZ2v_KexOxnBHLUkBcqC-P3fw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this bug to:
+On Thu, Dec 12, 2019 at 12:20:01PM +0100, Vincent Guittot wrote:
+> On Thu, 12 Dec 2019 at 11:23, Peter Zijlstra <peterz@infradead.org> wrote:
 
-commit ab92d68fc22f9afab480153bd82a20f6e2533769
-Author: Taehee Yoo <ap420073@gmail.com>
-Date:   Mon Oct 21 18:47:51 2019 +0000
+> > Just for giggles, that'd look something like:
+> >
+> >         while (!entity_is_task(se) {
+> >                 cfs_rq = group_cfs_rq(se);
+> >                 se = pick_next_entity(cfs_rq, cfs_rq->curr);
+> >         }
+> >         p = task_of(se);
+> >
+> >         if (is_per_cpu_kthread(p))
+> >                 ideal_runtime /= 2;
+> >
+> > the core-scheduling patch set includes the right primitive for this I
+> > think, pick_task_fair().
+> 
+> why not only updating wan_gran() which is the only function which uses
+> sysctl_sched_wakeup_granularity ?
 
-     net: core: add generic lockdep keys
+I don't see how, it works on se, which need not be a task.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12d37cb6e00000
-start commit:   938f49c8 Add linux-next specific files for 20191211
-git tree:       linux-next
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=11d37cb6e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=16d37cb6e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=96834c884ba7bb81
-dashboard link: https://syzkaller.appspot.com/bug?extid=31043da7725b6ec210f1
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12dc83dae00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16ac8396e00000
+> For per cpu kthread, we could set the gran to sched_min_granularity
+> instead of scaling it with thread's priority so per cpu kthread can
+> still preempt current ask even if sysctl_sched_wakeup_granularity is
+> large
 
-Reported-by: syzbot+31043da7725b6ec210f1@syzkaller.appspotmail.com
-Fixes: ab92d68fc22f ("net: core: add generic lockdep keys")
+Also, we're not poking at wakeup preemption anymore. That, as explained
+by Dave, is not the right thing to do. What we want instead is to make
+tick preemption a little more agressive.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+And tick based preemption currently purely looks at the leftmost entity
+for each runqueue we find while iterating current. IE, it might never
+even see the task we tagged with next.
+
+Also, did I say I hates cgroups :-)
