@@ -2,95 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDEA011CB2B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 11:43:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F80811CB6A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 11:55:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728802AbfLLKm4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Dec 2019 05:42:56 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:45068 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728631AbfLLKm4 (ORCPT
+        id S1728851AbfLLKzR convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Dec 2019 05:55:17 -0500
+Received: from luna.lichtvoll.de ([194.150.191.11]:55953 "EHLO
+        mail.lichtvoll.de" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728802AbfLLKzR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Dec 2019 05:42:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=G8moV6U9IyfN6eSPjxNYgUZFe+n4Kjcckdv5yKxVadk=; b=N1S01205tkf6X1x18eDtvPVFH
-        jwgTUXcx0TJNgKI0sf1tt98Wt6WoslV3f5x5Ft9yw2IkHA9d6fyI5K5uMmubG0BNuGDJCo7rw1FuW
-        X7VlrNSrgOKvaWHirz5lSv4BAm03ua/UCYEUfNoptanCEFkelZI4XiFoPwSaNNOMq2FPnhmfcqqX3
-        2oT48kwmlMWrSsnw5VAOyXkkqP/j8nmnSotpg9W2e/xY45aJDScDMwZQTSH9yXHmhJsSAVH801TgX
-        lQmHD1RUvEYLnqaNwG4/bbGmUF6dS+p0F6akYbSqfcm6mG+KIoTdm2HhgFF63ox7X4PCxNSkRkrrr
-        MfwO79fQg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ifLvo-00057S-Rx; Thu, 12 Dec 2019 10:42:52 +0000
-Date:   Thu, 12 Dec 2019 02:42:52 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        cluster-devel <cluster-devel@redhat.com>
-Subject: Re: [PATCH 15/15] gfs2: use iomap for buffered I/O in ordered and
- writeback mode
-Message-ID: <20191212104252.GA3956@infradead.org>
-References: <20191210101938.495-1-agruenba@redhat.com>
+        Thu, 12 Dec 2019 05:55:17 -0500
+X-Greylist: delayed 604 seconds by postgrey-1.27 at vger.kernel.org; Thu, 12 Dec 2019 05:55:16 EST
+Received: from 127.0.0.1 (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.lichtvoll.de (Postfix) with ESMTPSA id 1A8D699848;
+        Thu, 12 Dec 2019 11:45:07 +0100 (CET)
+From:   Martin Steigerwald <martin@lichtvoll.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, willy@infradead.org, clm@fb.com,
+        torvalds@linux-foundation.org, david@fromorbit.com
+Subject: Re: [PATCHSET v3 0/5] Support for RWF_UNCACHED
+Date:   Thu, 12 Dec 2019 11:44:59 +0100
+Message-ID: <63049728.ylUViGSH3C@merkaba>
+In-Reply-To: <20191211152943.2933-1-axboe@kernel.dk>
+References: <20191211152943.2933-1-axboe@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191210101938.495-1-agruenba@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
+Authentication-Results: mail.lichtvoll.de;
+        auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 11:19:38AM +0100, Andreas Gruenbacher wrote:
-> @@ -75,13 +75,12 @@ static int gfs2_unstuffer_page(struct gfs2_inode *ip, struct buffer_head *dibh,
->  		memcpy(kaddr, dibh->b_data + sizeof(struct gfs2_dinode), dsize);
->  		memset(kaddr + dsize, 0, PAGE_SIZE - dsize);
->  		kunmap(page);
-> -
-> -		SetPageUptodate(page);
->  	}
->  
->  	if (gfs2_is_jdata(ip)) {
->  		struct buffer_head *bh;
->  
-> +		SetPageUptodate(page);
->  		if (!page_has_buffers(page))
->  			create_empty_buffers(page, BIT(inode->i_blkbits),
->  					     BIT(BH_Uptodate));
-> @@ -93,6 +92,9 @@ static int gfs2_unstuffer_page(struct gfs2_inode *ip, struct buffer_head *dibh,
->  		set_buffer_uptodate(bh);
->  		gfs2_trans_add_data(ip->i_gl, bh);
->  	} else {
-> +		iomap_page_create(inode, page);
-> +		iomap_set_range_uptodate(page, 0, i_blocksize(inode));
-> +		set_page_dirty(page);
->  		gfs2_ordered_add_inode(ip);
->  	}
+Hi Jens.
 
-Can you create a helper that copies the data from a passed in kernel
-pointer, length pair into the page, then marks it uptodate and dirty,
-please?
+Jens Axboe - 11.12.19, 16:29:38 CET:
+> Recently someone asked me how io_uring buffered IO compares to mmaped
+> IO in terms of performance. So I ran some tests with buffered IO, and
+> found the experience to be somewhat painful. The test case is pretty
+> basic, random reads over a dataset that's 10x the size of RAM.
+> Performance starts out fine, and then the page cache fills up and we
+> hit a throughput cliff. CPU usage of the IO threads go up, and we have
+> kswapd spending 100% of a core trying to keep up. Seeing that, I was
+> reminded of the many complaints I here about buffered IO, and the
+> fact that most of the folks complaining will ultimately bite the
+> bullet and move to O_DIRECT to just get the kernel out of the way.
+> 
+> But I don't think it needs to be like that. Switching to O_DIRECT
+> isn't always easily doable. The buffers have different life times,
+> size and alignment constraints, etc. On top of that, mixing buffered
+> and O_DIRECT can be painful.
+> 
+> Seems to me that we have an opportunity to provide something that sits
+> somewhere in between buffered and O_DIRECT, and this is where
+> RWF_UNCACHED enters the picture. If this flag is set on IO, we get
+> the following behavior:
+> 
+> - If the data is in cache, it remains in cache and the copy (in or
+> out) is served to/from that.
+> 
+> - If the data is NOT in cache, we add it while performing the IO. When
+> the IO is done, we remove it again.
+> 
+> With this, I can do 100% smooth buffered reads or writes without
+> pushing the kernel to the state where kswapd is sweating bullets. In
+> fact it doesn't even register.
 
-> @@ -555,6 +555,8 @@ static vm_fault_t gfs2_page_mkwrite(struct vm_fault *vmf)
->  out_uninit:
->  	gfs2_holder_uninit(&gh);
->  	if (ret == 0) {
-> +		if (!gfs2_is_jdata(ip))
-> +			iomap_page_create(inode, page);
+A question from a user or Linux Performance trainer perspective:
 
-What is this one for?  The iomap_page is supposed to use lazy
-allocation, that is we only allocate it once it is used.  What code
-expects the structure but doesn't see it without this hunk?  I
-guess it is iomap_writepage_map, which should probably just switch
-to call iomap_page_create.
+How does this compare with posix_fadvise() with POSIX_FADV_DONTNEED that 
+for example the nocache¹ command is using? Excerpt from manpage 
+posix_fadvice(2):
 
-That being said is there any way we can get gfs2 to use
-iomap_page_mkwrite for the !jdata case?
+       POSIX_FADV_DONTNEED
+              The specified data will not be accessed  in  the  near
+              future.
+
+              POSIX_FADV_DONTNEED  attempts to free cached pages as‐
+              sociated with the specified region.  This  is  useful,
+              for  example,  while streaming large files.  A program
+              may periodically request the  kernel  to  free  cached
+              data  that  has already been used, so that more useful
+              cached pages are not discarded instead.
+
+[1] packaged in Debian as nocache or available herehttps://github.com/
+Feh/nocache
+
+In any way, would be nice to have some option in rsync… I still did not 
+change my backup script to call rsync via nocache.
+
+Thanks,
+Martin
+
+> Comments appreciated! This should work on any standard file system,
+> using either the generic helpers or iomap. I have tested ext4 and xfs
+> for the right read/write behavior, but no further validation has been
+> done yet. Patches are against current git, and can also be found here:
+> 
+> https://git.kernel.dk/cgit/linux-block/log/?h=buffered-uncached
+> 
+>  fs/ceph/file.c          |  2 +-
+>  fs/dax.c                |  2 +-
+>  fs/ext4/file.c          |  2 +-
+>  fs/iomap/apply.c        | 26 ++++++++++-
+>  fs/iomap/buffered-io.c  | 54 ++++++++++++++++-------
+>  fs/iomap/direct-io.c    |  3 +-
+>  fs/iomap/fiemap.c       |  5 ++-
+>  fs/iomap/seek.c         |  6 ++-
+>  fs/iomap/swapfile.c     |  2 +-
+>  fs/nfs/file.c           |  2 +-
+>  include/linux/fs.h      |  7 ++-
+>  include/linux/iomap.h   | 10 ++++-
+>  include/uapi/linux/fs.h |  5 ++-
+>  mm/filemap.c            | 95
+> ++++++++++++++++++++++++++++++++++++----- 14 files changed, 181
+> insertions(+), 40 deletions(-)
+> 
+> Changes since v2:
+> - Rework the write side according to Chinners suggestions. Much
+> cleaner this way. It does mean that we invalidate the full write
+> region if just ONE page (or more) had to be created, where before it
+> was more granular. I don't think that's a concern, and on the plus
+> side, we now no longer have to chunk invalidations into 15/16 pages
+> at the time.
+> - Cleanups
+> 
+> Changes since v1:
+> - Switch to pagevecs for write_drop_cached_pages()
+> - Use page_offset() instead of manual shift
+> - Ensure we hold a reference on the page between calling ->write_end()
+> and checking the mapping on the locked page
+> - Fix XFS multi-page streamed writes, we'd drop the UNCACHED flag
+> after the first page
+
+
+-- 
+Martin
+
+
