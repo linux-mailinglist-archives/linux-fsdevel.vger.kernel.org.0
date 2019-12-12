@@ -2,28 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC94811CB4D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 11:50:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B278611CB49
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 11:50:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728838AbfLLKuZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Dec 2019 05:50:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57138 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728722AbfLLKuW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S1728812AbfLLKuW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Thu, 12 Dec 2019 05:50:22 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57140 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728733AbfLLKuV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 12 Dec 2019 05:50:21 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2325DAD29;
+        by mx1.suse.de (Postfix) with ESMTP id 2BB16B187;
         Thu, 12 Dec 2019 10:50:20 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 04D7A1E0B8A; Thu, 12 Dec 2019 11:50:20 +0100 (CET)
+        id 085B71E0CAD; Thu, 12 Dec 2019 11:50:20 +0100 (CET)
 From:   Jan Kara <jack@suse.cz>
 To:     reiserfs-devel@vger.kernel.org
-Cc:     <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
-        stable@vger.kernel.org
-Subject: [PATCH 1/2] reiserfs: Fix memory leak of journal device string
-Date:   Thu, 12 Dec 2019 11:50:17 +0100
-Message-Id: <20191212105018.910-2-jack@suse.cz>
+Cc:     <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>
+Subject: [PATCH 2/2] reiserfs: Fix spurious unlock in reiserfs_fill_super() error handling
+Date:   Thu, 12 Dec 2019 11:50:18 +0100
+Message-Id: <20191212105018.910-3-jack@suse.cz>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20191212105018.910-1-jack@suse.cz>
 References: <20191212105018.910-1-jack@suse.cz>
@@ -32,38 +31,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When a filesystem is mounted with jdev mount option, we store the
-journal device name in an allocated string in superblock. However we
-fail to ever free that string. Fix it.
+When we fail to allocate string for journal device name we jump to
+'error' label which tries to unlock reiserfs write lock which is not
+held. Jump to 'error_unlocked' instead.
 
-Reported-by: syzbot+1c6756baf4b16b94d2a6@syzkaller.appspotmail.com
-Fixes: c3aa077648e1 ("reiserfs: Properly display mount options in /proc/mounts")
-CC: stable@vger.kernel.org
+Fixes: f32485be8397 ("reiserfs: delay reiserfs lock until journal initialization")
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/reiserfs/super.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/reiserfs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index 3244037b1286..d127af64283e 100644
+index d127af64283e..a6bce5b1fb1d 100644
 --- a/fs/reiserfs/super.c
 +++ b/fs/reiserfs/super.c
-@@ -629,6 +629,7 @@ static void reiserfs_put_super(struct super_block *s)
- 	reiserfs_write_unlock(s);
- 	mutex_destroy(&REISERFS_SB(s)->lock);
- 	destroy_workqueue(REISERFS_SB(s)->commit_wq);
-+	kfree(REISERFS_SB(s)->s_jdev);
- 	kfree(s->s_fs_info);
- 	s->s_fs_info = NULL;
- }
-@@ -2240,6 +2241,7 @@ static int reiserfs_fill_super(struct super_block *s, void *data, int silent)
- 			kfree(qf_names[j]);
+@@ -1948,7 +1948,7 @@ static int reiserfs_fill_super(struct super_block *s, void *data, int silent)
+ 		if (!sbi->s_jdev) {
+ 			SWARN(silent, s, "", "Cannot allocate memory for "
+ 				"journal device name");
+-			goto error;
++			goto error_unlocked;
+ 		}
  	}
- #endif
-+	kfree(sbi->s_jdev);
- 	kfree(sbi);
- 
- 	s->s_fs_info = NULL;
+ #ifdef CONFIG_QUOTA
 -- 
 2.16.4
 
