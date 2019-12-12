@@ -2,107 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89CA811C216
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 02:23:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64BED11C222
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 02:29:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727360AbfLLBXJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Dec 2019 20:23:09 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42835 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727297AbfLLBXJ (ORCPT
+        id S1727391AbfLLB3B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Dec 2019 20:29:01 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36343 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727224AbfLLB3B (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Dec 2019 20:23:09 -0500
-Received: by mail-lj1-f194.google.com with SMTP id e28so298712ljo.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 17:23:08 -0800 (PST)
+        Wed, 11 Dec 2019 20:29:01 -0500
+Received: by mail-lj1-f193.google.com with SMTP id r19so336421ljg.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 17:28:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ZFejtvBe0docBJOjFHxtgIhfiR8IhEXMLIpQaHwz1hE=;
-        b=Qc2vMRGn05C6BWhmeoZIaRoNsVj0SkjLXAbn9Gpo6T5N/+z6+RFmlpRLW5yvsYKNPg
-         yDJ+wvL8TsHB0O6Oyi4tDJl0UJhonvrjzcws9HiezXHgSae108P3Sjj8l/gZO1nX23dW
-         37s2bsGbyB3ZRoTk2x40dKoxY7GG6o7PWDKGs=
+        bh=ngCvhdELOgIQ69MigGwbslj0BoCyrEIfDMRe9lAU84c=;
+        b=cwlWLXDtChisQx3BOxoqKRoI8l2aIzApJkZH0knnGXeRBkYyrjatj3Iqvq+pEYo8vz
+         YB1Q6eIQ7M8Kp9xDL8IMabELBNs7kQEMnQVpm9+RvgFUWRjKay6CY/YEtmqENuN8NEJe
+         SpgsA+0oAnSTBgoiasPVoSFTQm5OXTTIsNyTo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ZFejtvBe0docBJOjFHxtgIhfiR8IhEXMLIpQaHwz1hE=;
-        b=Ia6V9erJ+N7afSSZ7sEgMfjIY3nC5okbuxFETPpowCndma3VUfMSGd8Pto6vIuVt0+
-         oH7X4cf1+vKhPsd031xgneItPPczYkwzdE3K85sgnSJHmk8gOlhXSzhitW3nIyHiS+4p
-         XXCBbtb7IE/HQQm+gfclvlk4dotVUBpRHiKoTd25J0+nCFVzhRtu0k0Eypzkql4XgfM3
-         hl0ZDdVdNvAxgCuQbqWqtFUto9sqiNA56zL/wn3+9dRzJTMTPX2uZ9N36sOjWfeOW2V8
-         Ras6CFVWKi2XD9AI+g8se26EcmLuZgYjBaocdJCUWYXBsl0OsaBdtM6zvjUt8JYifRq0
-         K9IQ==
-X-Gm-Message-State: APjAAAU4mHZCbvxZusz2ZiAS09WV0xEYgiXGNiOqp/Txz9w91Aa7Qc+R
-        zMSFgTFl6FHFBZJlsCd1tztGSyd3bnE=
-X-Google-Smtp-Source: APXvYqy2Rq0PK5phvSTK6oyQeUDILmP/FoBnhgyiRbwLq1xtzzhvkm+9DE478427g1id75GYYFIwpQ==
-X-Received: by 2002:a2e:9694:: with SMTP id q20mr4074051lji.248.1576113787115;
-        Wed, 11 Dec 2019 17:23:07 -0800 (PST)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id c9sm1994667ljd.28.2019.12.11.17.23.06
+        bh=ngCvhdELOgIQ69MigGwbslj0BoCyrEIfDMRe9lAU84c=;
+        b=RHD+YVJTdLH3emfD8vbl6j7kzzAmhvVuoTI7Cc1r+hJNpM9GkQ8/nvvK4F36Xtule4
+         t4VG+NN0HCiKVcwbPf6FLbB+bCtkz0VHVObiZm3KraKw1UyNkZDReqpfJUGDwbF3qo3s
+         Tss/nOAdPbHAcENouEUBobqfoq9sZYT68E78XUANif255rxtNe4oZNqPu0B38QiUQOzu
+         7tgkwgvseBjZgG7Euo56u+8FCp30qCkixWntP89bwQOjFI7QCwZed7nSHg3rQvm0ZHQj
+         YuWOu1OzljxoQHj4FvcPxOqhUJ/8oTtSd5wjQqg2TObfybtq744fuKdLjX8GvzdsCOmc
+         mTXA==
+X-Gm-Message-State: APjAAAWHw+HAhdyTzcD/Sh5IQsi9/572dZqXWLVBiOkPVpzTWGEfnnfz
+        CnUqOLBzKMRXYHAB9nxpqO9+8Ytw+6A=
+X-Google-Smtp-Source: APXvYqzji42fffO6NWOk11H+fJCu2f8o6PXhKhXRhQ58QcFhJyVmTRmuPmLReNjEEnNOFwk4koa3oA==
+X-Received: by 2002:a2e:86c4:: with SMTP id n4mr4048286ljj.97.1576114138204;
+        Wed, 11 Dec 2019 17:28:58 -0800 (PST)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id u7sm2008615lfn.31.2019.12.11.17.28.56
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2019 17:23:06 -0800 (PST)
-Received: by mail-lf1-f52.google.com with SMTP id i23so342790lfo.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 17:23:06 -0800 (PST)
-X-Received: by 2002:a05:6512:1dd:: with SMTP id f29mr4158153lfp.106.1576113785777;
- Wed, 11 Dec 2019 17:23:05 -0800 (PST)
+        Wed, 11 Dec 2019 17:28:57 -0800 (PST)
+Received: by mail-lj1-f174.google.com with SMTP id e10so323131ljj.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Dec 2019 17:28:56 -0800 (PST)
+X-Received: by 2002:a05:651c:239:: with SMTP id z25mr4218712ljn.48.1576114136551;
+ Wed, 11 Dec 2019 17:28:56 -0800 (PST)
 MIME-Version: 1.0
-References: <20191211152943.2933-1-axboe@kernel.dk> <CAHk-=wjz3LE1kznro1dozhk9i9Dr4pCnkj7Fuccn2xdWeGHawQ@mail.gmail.com>
- <d0adcde2-3106-4fea-c047-4d17111bab70@kernel.dk> <e43a2700-8625-e136-dc9d-d0d2da5d96ac@kernel.dk>
- <CAHk-=wje8i3DVcO=fMC4tzKTS5+eHv0anrVZa_JENQt08T=qCQ@mail.gmail.com>
- <0d4e3954-c467-30a7-5a8e-7c4180275533@kernel.dk> <CAHk-=whk4bcVPvtAv5OmHiW5z6AXgCLFhO4YrXD7o0XC+K-aHw@mail.gmail.com>
- <fef996ca-a4ed-9633-1f79-91292a984a20@kernel.dk> <CAHk-=wg=hHUFg3i0vDmKEg8HFbEKquAsoC8CJoZpP-8_A1jZDA@mail.gmail.com>
- <1c93194a-ed91-c3aa-deb5-a3394805defb@kernel.dk>
-In-Reply-To: <1c93194a-ed91-c3aa-deb5-a3394805defb@kernel.dk>
+References: <157558502272.10278.8718685637610645781.stgit@warthog.procyon.org.uk>
+ <20191206135604.GB2734@twin.jikos.cz> <CAHk-=wiN_pWbcRaw5L-J2EFUyCn49Due0McwETKwmFFPp88K8Q@mail.gmail.com>
+ <CAHk-=wjvO1V912ya=1rdXwrm1OBTi6GqnqryH_E8OR69cZuVOg@mail.gmail.com>
+ <CAHk-=wizsHmCwUAyQKdU7hBPXHYQn-fOtJKBqMs-79br2pWxeQ@mail.gmail.com>
+ <CAHk-=wjeG0q1vgzu4iJhW5juPkTsjTYmiqiMUYAebWW+0bam6w@mail.gmail.com> <9417.1576097731@warthog.procyon.org.uk>
+In-Reply-To: <9417.1576097731@warthog.procyon.org.uk>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 11 Dec 2019 17:22:49 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wj0pXsngjWKw5p3oTvwkNnT2DyoZWqPB+-wBY+BGTQ96w@mail.gmail.com>
-Message-ID: <CAHk-=wj0pXsngjWKw5p3oTvwkNnT2DyoZWqPB+-wBY+BGTQ96w@mail.gmail.com>
-Subject: Re: [PATCHSET v3 0/5] Support for RWF_UNCACHED
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linux-MM <linux-mm@kvack.org>,
+Date:   Wed, 11 Dec 2019 17:28:40 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgVpV-O4zeO+xOMcOUyKZi+1kg+6Kmi-P7SUx-ydZm5Og@mail.gmail.com>
+Message-ID: <CAHk-=wgVpV-O4zeO+xOMcOUyKZi+1kg+6Kmi-P7SUx-ydZm5Og@mail.gmail.com>
+Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
+To:     David Howells <dhowells@redhat.com>
+Cc:     David Sterba <dsterba@suse.cz>, Eric Biggers <ebiggers@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 5:11 PM Jens Axboe <axboe@kernel.dk> wrote:
+On Wed, Dec 11, 2019 at 12:55 PM David Howells <dhowells@redhat.com> wrote:
 >
-> 15K is likely too slow to really show an issue, I'm afraid. The 970
-> is no slouch, but your crypt setup will likely hamper it a lot. You
-> don't have a non-encrypted partition on it?
+> Is it worth reverting:
+>
+>         commit f94df9890e98f2090c6a8d70c795134863b70201
+>         Add wake_up_interruptible_sync_poll_locked()
+>
+> since you changed the code that was calling that new function and so it's no
+> longer called?
 
-No. I normally don't need all that much disk, so I've never upgraded
-my ssd from the 512G size.
+You are sure you won't want that for the notification queue cases? I
+guess they'll never want to "sync" part..
 
-Which means that it's actually half full or so, and I never felt like
-"I should keep an unencrypted partition for IO testing", since I don't
-generally _do_ any IO testing.
+Looking at the regular pipe read/write code, maybe we'll want to try
+it again - do the wakeup while we already have the spinlock, rather
+than later. But I have this suspicion that that might just then push
+things into mutex contention, so who knows..
 
-I can get my load up with "numjobs=8" and get my iops up to the 100k
-range, though.
+Regardless, it's not going to happen for 5.5, so I guess we could
+revert it and if we ever end up trying it again we can resurrect it.
 
-But kswapd doesn't much seem to care, the CPU percentage actually does
-_down_ to 0.39% when I try that. Probably simply because now my CPU's
-are busy, so they are running at 4.7Ghz instead of the 800Mhz "mostly
-idle" state ...
-
-I guess I should be happy. It does mean that the situation you see
-isn't exactly the normal case. I understand why you want to do the
-non-cached case, but the case I think it the worrisome one is the
-regular buffered one, so that's what I'm testing (not even trying the
-noaccess patches).
-
-So from your report I went "uhhuh, that sounds like a bug". And it
-appears that it largely isn't - you're seeing it because of pushing
-the IO subsystem by another order of magnitude (and then I agree that
-"under those kinds of IO loads, caching just won't help")
-
-                   Linus
+              Linus
