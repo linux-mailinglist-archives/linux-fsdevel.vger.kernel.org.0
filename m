@@ -2,106 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4C6311D03A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 15:50:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B30B711D083
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Dec 2019 16:07:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728945AbfLLOuw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Dec 2019 09:50:52 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:56579 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728869AbfLLOuv (ORCPT
+        id S1728929AbfLLPHv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Dec 2019 10:07:51 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:5874 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728810AbfLLPHu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Dec 2019 09:50:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576162249;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=7XQ0BIDQs1rSkgFn546VmoxkIOFu9sf2QvSDRqt2+UU=;
-        b=B/33Gkx3n2PBSDIjZPCJsE19bDgw9ucxec46c4+sFrmS7PthnFgnwOU5Hbw2wXd1yz04J9
-        uP5zZINtnje/cm1TpuWeJEET5Hk+QxPNWpOYAZhO5uD19fNLMuXNAehuLj9Dvq8IB1UeK+
-        pHEmF0gUd24arpyoXjnv2Wnhw8ir0D4=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-327-jnbYDJ_JOBu_QjAMMKd8Pg-1; Thu, 12 Dec 2019 09:50:46 -0500
-X-MC-Unique: jnbYDJ_JOBu_QjAMMKd8Pg-1
-Received: by mail-qk1-f199.google.com with SMTP id 143so1519107qkg.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2019 06:50:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7XQ0BIDQs1rSkgFn546VmoxkIOFu9sf2QvSDRqt2+UU=;
-        b=eIwJX/1k89Zx5OSbwJoUaDsnq7V9bDf/h7J2NOzTYfngfWeIfzCXjvtrP2+thOFWwZ
-         LmOIAJXflRoeR77qoJ3c2dx64AoWoRy6+g7m1YjIhVAwL113Rbe+PmjPfUNzkvrfgVr/
-         HOo8OkXLRSWJpAG2nzCifYirl4Kt/v6KzAydq55aAQal98ABmeobmljderVwjuj3uQ8k
-         3X8YVg58ZO1H+n3aS/4XqMEDGplMbTpDiW4kDN8YeX2j7h34A4TfKEFnCs786e5eXqaU
-         4pkeA+jlJH2BE8Zt3cegIepAWJ/9MwWzQcBJKYXIE8PLWK1qB4hTsiSQU4jfMuyAGgKP
-         a5iQ==
-X-Gm-Message-State: APjAAAUze+JvJd6XqXw7mwBAxryUfo6KIirBtur/W/+y+jcsRF9MWyND
-        KgipvTMx6z0i5G9LaTV9MWsMSQi+xiirnSIuwOQ0Bo0+uPPJjRO3EcOSY914XGcogLe5XlVC3JP
-        07BKM8z7VUjNP0PTcFEDXvb4Tmg==
-X-Received: by 2002:ac8:7417:: with SMTP id p23mr7598792qtq.313.1576162246356;
-        Thu, 12 Dec 2019 06:50:46 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxOQuw5KzIzEEpY1tkirep65v+/e3rmTOxoGFv8KpZEJqgnBlMHg1taBK8FFNx2bZg0I/q0jg==
-X-Received: by 2002:ac8:7417:: with SMTP id p23mr7598772qtq.313.1576162246140;
-        Thu, 12 Dec 2019 06:50:46 -0800 (PST)
-Received: from labbott-redhat.redhat.com (pool-96-235-39-235.pitbpa.fios.verizon.net. [96.235.39.235])
-        by smtp.gmail.com with ESMTPSA id 201sm1823298qkf.10.2019.12.12.06.50.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2019 06:50:45 -0800 (PST)
-From:   Laura Abbott <labbott@redhat.com>
-To:     Al Viro <viro@ZenIV.linux.org.uk>,
-        David Howells <dhowells@redhat.com>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        Jeremi Piotrowski <jeremi.piotrowski@gmail.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] vfs: Don't reject unknown parameters
-Date:   Thu, 12 Dec 2019 09:50:42 -0500
-Message-Id: <20191212145042.12694-1-labbott@redhat.com>
-X-Mailer: git-send-email 2.21.0
+        Thu, 12 Dec 2019 10:07:50 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBCF7Lvj061294
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2019 10:07:49 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2wu4t7a7aa-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2019 10:07:48 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Thu, 12 Dec 2019 15:07:46 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 12 Dec 2019 15:07:41 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBCF7eX939977108
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Dec 2019 15:07:40 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BB5C04C040;
+        Thu, 12 Dec 2019 15:07:40 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2D51B4C044;
+        Thu, 12 Dec 2019 15:07:38 +0000 (GMT)
+Received: from linux.vnet.ibm.com (unknown [9.126.150.29])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Thu, 12 Dec 2019 15:07:38 +0000 (GMT)
+Date:   Thu, 12 Dec 2019 20:37:37 +0530
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Dave Chinner <david@fromorbit.com>, Phil Auld <pauld@redhat.com>,
+        Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jeff Moyer <jmoyer@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH v4] sched/core: Preempt current task in favour of bound
+ kthread
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <20191120191636.GI4097@hirez.programming.kicks-ass.net>
+ <20191120220313.GC18056@pauld.bos.csb>
+ <20191121132937.GW4114@hirez.programming.kicks-ass.net>
+ <20191209165122.GA27229@linux.vnet.ibm.com>
+ <20191209231743.GA19256@dread.disaster.area>
+ <20191210054330.GF27253@linux.vnet.ibm.com>
+ <20191210172307.GD9139@linux.vnet.ibm.com>
+ <20191211173829.GB21797@linux.vnet.ibm.com>
+ <20191211224617.GE19256@dread.disaster.area>
+ <20191212101031.GV2827@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20191212101031.GV2827@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+x-cbid: 19121215-0028-0000-0000-000003C7E3ED
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19121215-0029-0000-0000-0000248B1DE8
+Message-Id: <20191212150737.GC21797@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-12_03:2019-12-12,2019-12-12 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 impostorscore=0 spamscore=0 clxscore=1015 suspectscore=0
+ mlxscore=0 mlxlogscore=999 malwarescore=0 adultscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912120117
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The new mount API currently rejects unknown parameters if the
-filesystem doesn't have doesn't take any arguments. This is
-unfortunately a regression from the old API which silently
-ignores extra arguments. This is easly seen with the squashfs
-conversion (5a2be1288b51 ("vfs: Convert squashfs to use the new
-mount API")) which now fails to mount with extra options. Just
-get rid of the error.
+* Peter Zijlstra <peterz@infradead.org> [2019-12-12 11:10:31]:
 
-Fixes: 3e1aeb00e6d1 ("vfs: Implement a filesystem superblock
-creation/configuration context")
-Link: https://lore.kernel.org/lkml/20191130181548.GA28459@gentoo-tp.home/
-Reported-by: Jeremi Piotrowski <jeremi.piotrowski@gmail.com>
-Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1781863
-Signed-off-by: Laura Abbott <labbott@redhat.com>
----
- fs/fs_context.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> +static struct sched_entity *
+> +__pick_next_entity(struct cfs_rq *cfs_rq, struct sched_entity *curr);
 
-diff --git a/fs/fs_context.c b/fs/fs_context.c
-index 138b5b4d621d..7ec20b1f8a53 100644
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -160,8 +160,7 @@ int vfs_parse_fs_param(struct fs_context *fc, struct fs_parameter *param)
- 		return 0;
- 	}
- 
--	return invalf(fc, "%s: Unknown parameter '%s'",
--		      fc->fs_type->name, param->key);
-+	return 0;
- }
- EXPORT_SYMBOL(vfs_parse_fs_param);
- 
+I think we already have __pick_next_entity in kernel/sched/fair.c
+
+static struct sched_entity *__pick_next_entity(struct sched_entity *se)
+{
+        struct rb_node *next = rb_next(&se->run_node);
+
+        if (!next)
+                return NULL;
+
+        return rb_entry(next, struct sched_entity, run_node);
+}
+
+I checked in v5.5-rc1, v5.4 and tip/master too. Let me know if you were
+referring to a different version of code.
+
+So I modified the only place its called to the newer
+__pick_next_entity(cfs_rq, curr); 
+
+But wanted to verify if that's what you had in mind.
+
+
 -- 
-2.21.0
+Thanks and Regards
+Srikar Dronamraju
 
