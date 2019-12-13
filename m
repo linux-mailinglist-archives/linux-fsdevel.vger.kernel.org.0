@@ -2,264 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2159311EC35
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2019 21:54:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 253E211ED0C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2019 22:41:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726866AbfLMUyh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Dec 2019 15:54:37 -0500
-Received: from mout.kundenserver.de ([212.227.126.135]:45667 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbfLMUyh (ORCPT
+        id S1726386AbfLMVkF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Dec 2019 16:40:05 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:20191 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726090AbfLMVkF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Dec 2019 15:54:37 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M27Bp-1ihmpU2pLt-002XGN; Fri, 13 Dec 2019 21:54:33 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        =?UTF-8?q?Ernesto=20A=2E=20Fern=C3=A1ndez?= 
-        <ernesto.mnd.fernandez@gmail.com>,
-        Vyacheslav Dubeyko <slava@dubeyko.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 11/24] hfs/hfsplus: use 64-bit inode timestamps
-Date:   Fri, 13 Dec 2019 21:53:39 +0100
-Message-Id: <20191213205417.3871055-2-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20191213204936.3643476-1-arnd@arndb.de>
-References: <20191213204936.3643476-1-arnd@arndb.de>
+        Fri, 13 Dec 2019 16:40:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576273204;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=WgOXIag/oVgErX13K0wlqJ230VPf+71NlCt27NFhOC8=;
+        b=fa5MdWSE+yr0QbII1ZjOkAwPlUZ0EiOxvOB0mlcU7x7do3fn1CmSkRh4xlmVtvh4Nqf+h/
+        FBcVLfFdsl6cL8wyDU36s6nM1lTqm/BKZRm5oPrDNm3xVuZHfdKg93l2QWmdzErnr9h9fM
+        EbwJ7dojO7FJZ7u1twsb6IkLv9Smjck=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-293-j09TGu7gOzS_Le1gjjpMpA-1; Fri, 13 Dec 2019 16:40:01 -0500
+X-MC-Unique: j09TGu7gOzS_Le1gjjpMpA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 68993593A4;
+        Fri, 13 Dec 2019 21:39:59 +0000 (UTC)
+Received: from coeurl.usersys.redhat.com (ovpn-123-90.rdu2.redhat.com [10.10.123.90])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DB63C5D9CA;
+        Fri, 13 Dec 2019 21:39:58 +0000 (UTC)
+Received: by coeurl.usersys.redhat.com (Postfix, from userid 1000)
+        id 6505E20694; Fri, 13 Dec 2019 16:39:58 -0500 (EST)
+Date:   Fri, 13 Dec 2019 16:39:58 -0500
+From:   Scott Mayhew <smayhew@redhat.com>
+To:     "Schumaker, Anna" <Anna.Schumaker@netapp.com>
+Cc:     "trond.myklebust@hammerspace.com" <trond.myklebust@hammerspace.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dhowells@redhat.com" <dhowells@redhat.com>
+Subject: Re: [PATCH v6 00/27] nfs: Mount API conversion
+Message-ID: <20191213213958.GY4276@coeurl.usersys.redhat.com>
+References: <20191210123115.1655-1-smayhew@redhat.com>
+ <498258bf630d4c2667920f21341a2a6e82a3788d.camel@netapp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:XqMpj8o6u9NYzuj3rgf12in7GXdK8b+g+ASj7vaIy/neEOyN42J
- 4kT//QrdC+R3EDPxtHVZ/GkJhWttxJWqahEX0zv64cj5oVuoYETGHG7oAHIYvpX2QosSvct
- ddBHO8D9+gADwoHY/gMwsp+K8ZyU+RCb5H3wQhtrjjk1NJBofRa8YMkMBg5jQdZsGihO7o+
- PHBn9nB5gcuj9pJPu9ANQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:lQyG22QQ74k=:ppxLRXs2HfG+wch52J7SEk
- D7vKzuAX84XA4nvpIl9pgCmZ/WszjP/JKenJt8zkWiyaqhv9g7S8o3UtrHQzMDFBy+FvMxkzD
- 1wQTppPANHKEygSveUEB7C4GyKYJKKyXZrxaaHY2aZxA9/tZ0owbANhc55kdmOET37BB4kah6
- krpCRoJYNau0FCEfNb9EMZ6LtUDsXWyW10Rb8/qr2YsO1TqKYHpnnRfE3Gpj6g4TS2iEjvudY
- uDEaQ+1N/yAsEiwlO/PFXB0zetAbmlY9wJqBvgP+IemkMrQlb1HZ2WBHDfhqQsMEYfezENF9j
- hc3pOObQTJJvnti1eoNs2+/n/VwjaYkdfN9I06QkJu9BTcPoFrG58Ka4oQtFOUc6Wo323Ri5R
- yvg6aUqXB6LhXW2WJ4r88lOMb9CwbA2XbkzFaQaSv1xboMfCSLX9Rt9i534Pw0H74mbv+Lxvv
- pEa7B2vboRbQ+K/m6xDeladD96+1JAFq5cZ1sk9uG+nYoJEgrGswD/+hHAojvDtHPAS67rsUv
- XijjSC6/OQ7QIHXBeW/eMkTJTq1+bcBIESvd4fAUezzzh6sdk1ophSDRoGikTQPpc1mQMb9MT
- Ay4/4V8tBUo6zjEJiWIdNi4EGi+sfGLcHjJebbJQbTTHMmmfc3crLXKDeQuk/+G7apM5uT0XV
- 7XUE3l3cJiIvAuuKeiKg+a+/bf1BtZb/cmkW5xT1GIVcABv1q/4QuAnTBntK0x2XPKo2RPXc/
- rP0+BId4mwx7RiH78nufQOhFHQ+HHiCM1cK2QTtN0yQ68mR/saRKx5y66QzBn+SeflQUuJJZY
- vB7SJHkcCtt7VQgtTCoyaAY+0i5ENre+M8lNhgOGwyl0oTwAUvTIkeWtYF8vIgX+ctKktIqdW
- PgeweHdDkgOgDmvJtp1g==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <498258bf630d4c2667920f21341a2a6e82a3788d.camel@netapp.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The interpretation of on-disk timestamps in HFS and HFS+ differs
-between 32-bit and 64-bit kernels at the moment. Use 64-bit timestamps
-consistently so apply the current 64-bit behavior everyhere.
+On Tue, 10 Dec 2019, Schumaker, Anna wrote:
 
-According to the official documentation for HFS+ [1], inode timestamps
-are supposed to cover the time range from 1904 to 2040 as originally
-used in classic MacOS.
+> Hi Scott,
+> 
+> On Tue, 2019-12-10 at 07:30 -0500, Scott Mayhew wrote:
+> > Hi Anna, Trond,
+> > 
+> > Here's a set of patches that converts NFS to use the mount API.  Note that
+> > there are a lot of preliminary patches, some from David and some from Al.
+> > The final patch (the one that does the actual conversion) from the David's
+> > initial posting has been split into 5 separate patches, and the entire set
+> > has been rebased on top of v5.5-rc1.
+> 
+> Thanks for the updated patches! Everything looks okay to me, but I've only
+> tested with the legacy mount command. I'm curious if you've tested it using the
+> new system?
 
-The traditional Linux usage is to convert the timestamps into an unsigned
-32-bit number based on the Unix epoch and from there to a time_t. On
-32-bit systems, that wraps the time from 2038 to 1902, so the last
-two years of the valid time range become garbled. On 64-bit systems,
-all times before 1970 get turned into timestamps between 2038 and 2106,
-which is more convenient but also different from the documented behavior.
+I've hacked up mount.nfs for testing the new syscalls (for mounting... I
+haven't quite figured out remounting yet) here:
+https://github.com/scottmayhew/nfs-utils/tree/fscontext
 
-Looking at the Darwin sources [2], it seems that MacOS is inconsistent in
-yet another way: all timestamps are wrapped around to a 32-bit unsigned
-number when written to the disk, but when read back, all numeric values
-lower than 2082844800U are assumed to be invalid, so we cannot represent
-the times before 1970 or the times after 2040.
+It seems to be working okay, with one exception.  If I mount the same
+NFS export with the same mount options multiple times, then I get
+multiple mounts:
 
-While all implementations seem to agree on the interpretation of values
-between 1970 and 2038, they often differ on the exact range they support
-when reading back values outside of the common range:
+[root@fedora30 ~]# mount.nfs nfs:/export /mnt/t
+[root@fedora30 ~]# mount.nfs nfs:/export /mnt/t
+[root@fedora30 ~]# grep /mnt/t /proc/mounts
+nfs:/export /mnt/t nfs rw,seclabel,relatime,vers=4.2,rsize=1048576,wsize=1048576,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=krb5,clientaddr=192.168.122.239,local_lock=none,addr=192.168.122.3 0 0
+nfs:/export /mnt/t nfs rw,seclabel,relatime,vers=4.2,rsize=1048576,wsize=1048576,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=krb5,clientaddr=192.168.122.239,local_lock=none,addr=192.168.122.3 0 0
 
-MacOS (traditional):		1904-2040
-Apple Documentation:		1904-2040
-MacOS X source comments:	1970-2040
-MacOS X source code:		1970-2038
-32-bit Linux:			1902-2038
-64-bit Linux:			1970-2106
-hfsfuse:			1970-2040
-hfsutils (32 bit, old libc)	1902-2038
-hfsutils (32 bit, new libc)	1970-2106
-hfsutils (64 bit)		1904-2040
-hfsplus-utils			1904-2040
-hfsexplorer			1904-2040
-7-zip				1904-2040
+That doesn't happen with the mount() syscall:
 
-Out of the above, the range from 1970 to 2106 seems to be the most useful,
-as it allows using HFS and HFS+ beyond year 2038, and this matches the
-behavior that most users would see today on Linux, as few people run
-32-bit kernels any more.
+[root@fedora30 ~]# mount.nfs.old nfs:/export /mnt/t
+[root@fedora30 ~]# mount.nfs.old nfs:/export /mnt/t
+[root@fedora30 ~]# grep /mnt/t /proc/mounts
+nfs:/export /mnt/t nfs rw,seclabel,relatime,vers=4.2,rsize=1048576,wsize=1048576,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=krb5,clientaddr=192.168.122.239,local_lock=none,addr=192.168.122.3 0 0
 
-Link: [1] https://developer.apple.com/library/archive/technotes/tn/tn1150.html
-Link: [2] https://opensource.apple.com/source/hfs/hfs-407.30.1/core/MacOSStubs.c.auto.html
-Link: https://lore.kernel.org/lkml/20180711224625.airwna6gzyatoowe@eaf/
-Suggested-by: "Ernesto A. Fernández" <ernesto.mnd.fernandez@gmail.com>
-Reviewed-by: Vyacheslav Dubeyko <slava@dubeyko.com>
-Reviewed-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v3: revert back to 1970-2106 time range
-    fix bugs found in review
-    merge both patches into one
-    drop cc:stable tag
-v2: treat pre-1970 dates as invalid following MacOS X behavior,
-    reword and expand changelog text
----
- fs/hfs/hfs_fs.h         | 28 ++++++++++++++++++++++------
- fs/hfs/inode.c          |  4 ++--
- fs/hfsplus/hfsplus_fs.h | 28 +++++++++++++++++++++++-----
- fs/hfsplus/inode.c      | 12 ++++++------
- 4 files changed, 53 insertions(+), 19 deletions(-)
+-Scott
 
-diff --git a/fs/hfs/hfs_fs.h b/fs/hfs/hfs_fs.h
-index 6d0783e2e276..f71c384064c8 100644
---- a/fs/hfs/hfs_fs.h
-+++ b/fs/hfs/hfs_fs.h
-@@ -242,19 +242,35 @@ extern void hfs_mark_mdb_dirty(struct super_block *sb);
- /*
-  * There are two time systems.  Both are based on seconds since
-  * a particular time/date.
-- *	Unix:	unsigned lil-endian since 00:00 GMT, Jan. 1, 1970
-+ *	Unix:	signed little-endian since 00:00 GMT, Jan. 1, 1970
-  *	mac:	unsigned big-endian since 00:00 GMT, Jan. 1, 1904
-  *
-+ * HFS implementations are highly inconsistent, this one matches the
-+ * traditional behavior of 64-bit Linux, giving the most useful
-+ * time range between 1970 and 2106, by treating any on-disk timestamp
-+ * under HFS_UTC_OFFSET (Jan 1 1970) as a time between 2040 and 2106.
-  */
--#define __hfs_u_to_mtime(sec)	cpu_to_be32(sec + 2082844800U - sys_tz.tz_minuteswest * 60)
--#define __hfs_m_to_utime(sec)	(be32_to_cpu(sec) - 2082844800U  + sys_tz.tz_minuteswest * 60)
-+#define HFS_UTC_OFFSET 2082844800U
- 
-+static inline time64_t __hfs_m_to_utime(__be32 mt)
-+{
-+	time64_t ut = (u32)(be32_to_cpu(mt) - HFS_UTC_OFFSET);
-+
-+	return ut + sys_tz.tz_minuteswest * 60;
-+}
-+
-+static inline __be32 __hfs_u_to_mtime(time64_t ut)
-+{
-+	ut -= sys_tz.tz_minuteswest * 60;
-+
-+	return cpu_to_be32(lower_32_bits(ut) + HFS_UTC_OFFSET);
-+}
- #define HFS_I(inode)	(container_of(inode, struct hfs_inode_info, vfs_inode))
- #define HFS_SB(sb)	((struct hfs_sb_info *)(sb)->s_fs_info)
- 
--#define hfs_m_to_utime(time)	(struct timespec){ .tv_sec = __hfs_m_to_utime(time) }
--#define hfs_u_to_mtime(time)	__hfs_u_to_mtime((time).tv_sec)
--#define hfs_mtime()		__hfs_u_to_mtime(get_seconds())
-+#define hfs_m_to_utime(time)   (struct timespec64){ .tv_sec = __hfs_m_to_utime(time) }
-+#define hfs_u_to_mtime(time)   __hfs_u_to_mtime((time).tv_sec)
-+#define hfs_mtime()		__hfs_u_to_mtime(ktime_get_real_seconds())
- 
- static inline const char *hfs_mdb_name(struct super_block *sb)
- {
-diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
-index da243c84e93b..2f224b98ee94 100644
---- a/fs/hfs/inode.c
-+++ b/fs/hfs/inode.c
-@@ -351,7 +351,7 @@ static int hfs_read_inode(struct inode *inode, void *data)
- 		inode->i_mode &= ~hsb->s_file_umask;
- 		inode->i_mode |= S_IFREG;
- 		inode->i_ctime = inode->i_atime = inode->i_mtime =
--				timespec_to_timespec64(hfs_m_to_utime(rec->file.MdDat));
-+				hfs_m_to_utime(rec->file.MdDat);
- 		inode->i_op = &hfs_file_inode_operations;
- 		inode->i_fop = &hfs_file_operations;
- 		inode->i_mapping->a_ops = &hfs_aops;
-@@ -362,7 +362,7 @@ static int hfs_read_inode(struct inode *inode, void *data)
- 		HFS_I(inode)->fs_blocks = 0;
- 		inode->i_mode = S_IFDIR | (S_IRWXUGO & ~hsb->s_dir_umask);
- 		inode->i_ctime = inode->i_atime = inode->i_mtime =
--				timespec_to_timespec64(hfs_m_to_utime(rec->dir.MdDat));
-+				hfs_m_to_utime(rec->dir.MdDat);
- 		inode->i_op = &hfs_dir_inode_operations;
- 		inode->i_fop = &hfs_dir_operations;
- 		break;
-diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
-index b8471bf05def..3b03fff68543 100644
---- a/fs/hfsplus/hfsplus_fs.h
-+++ b/fs/hfsplus/hfsplus_fs.h
-@@ -533,13 +533,31 @@ int hfsplus_submit_bio(struct super_block *sb, sector_t sector, void *buf,
- 		       void **data, int op, int op_flags);
- int hfsplus_read_wrapper(struct super_block *sb);
- 
--/* time macros */
--#define __hfsp_mt2ut(t)		(be32_to_cpu(t) - 2082844800U)
--#define __hfsp_ut2mt(t)		(cpu_to_be32(t + 2082844800U))
-+/*
-+ * time helpers: convert between 1904-base and 1970-base timestamps
-+ *
-+ * HFS+ implementations are highly inconsistent, this one matches the
-+ * traditional behavior of 64-bit Linux, giving the most useful
-+ * time range between 1970 and 2106, by treating any on-disk timestamp
-+ * under HFSPLUS_UTC_OFFSET (Jan 1 1970) as a time between 2040 and 2106.
-+ */
-+#define HFSPLUS_UTC_OFFSET 2082844800U
-+
-+static inline time64_t __hfsp_mt2ut(__be32 mt)
-+{
-+	time64_t ut = (u32)(be32_to_cpu(mt) - HFSPLUS_UTC_OFFSET);
-+
-+	return ut;
-+}
-+
-+static inline __be32 __hfsp_ut2mt(time64_t ut)
-+{
-+	return cpu_to_be32(lower_32_bits(ut) + HFSPLUS_UTC_OFFSET);
-+}
- 
- /* compatibility */
--#define hfsp_mt2ut(t)		(struct timespec){ .tv_sec = __hfsp_mt2ut(t) }
-+#define hfsp_mt2ut(t)		(struct timespec64){ .tv_sec = __hfsp_mt2ut(t) }
- #define hfsp_ut2mt(t)		__hfsp_ut2mt((t).tv_sec)
--#define hfsp_now2mt()		__hfsp_ut2mt(get_seconds())
-+#define hfsp_now2mt()		__hfsp_ut2mt(ktime_get_real_seconds())
- 
- #endif
-diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
-index d131c8ea7eb6..94bd83b36644 100644
---- a/fs/hfsplus/inode.c
-+++ b/fs/hfsplus/inode.c
-@@ -504,9 +504,9 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
- 		hfsplus_get_perms(inode, &folder->permissions, 1);
- 		set_nlink(inode, 1);
- 		inode->i_size = 2 + be32_to_cpu(folder->valence);
--		inode->i_atime = timespec_to_timespec64(hfsp_mt2ut(folder->access_date));
--		inode->i_mtime = timespec_to_timespec64(hfsp_mt2ut(folder->content_mod_date));
--		inode->i_ctime = timespec_to_timespec64(hfsp_mt2ut(folder->attribute_mod_date));
-+		inode->i_atime = hfsp_mt2ut(folder->access_date);
-+		inode->i_mtime = hfsp_mt2ut(folder->content_mod_date);
-+		inode->i_ctime = hfsp_mt2ut(folder->attribute_mod_date);
- 		HFSPLUS_I(inode)->create_date = folder->create_date;
- 		HFSPLUS_I(inode)->fs_blocks = 0;
- 		if (folder->flags & cpu_to_be16(HFSPLUS_HAS_FOLDER_COUNT)) {
-@@ -542,9 +542,9 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
- 			init_special_inode(inode, inode->i_mode,
- 					   be32_to_cpu(file->permissions.dev));
- 		}
--		inode->i_atime = timespec_to_timespec64(hfsp_mt2ut(file->access_date));
--		inode->i_mtime = timespec_to_timespec64(hfsp_mt2ut(file->content_mod_date));
--		inode->i_ctime = timespec_to_timespec64(hfsp_mt2ut(file->attribute_mod_date));
-+		inode->i_atime = hfsp_mt2ut(file->access_date);
-+		inode->i_mtime = hfsp_mt2ut(file->content_mod_date);
-+		inode->i_ctime = hfsp_mt2ut(file->attribute_mod_date);
- 		HFSPLUS_I(inode)->create_date = file->create_date;
- 	} else {
- 		pr_err("bad catalog entry used to create inode\n");
--- 
-2.20.0
+> 
+> Thanks,
+> Anna
+> 
+> > 
+> > Changes since v5:
+> > - fixed possible derefence of error pointer in nfs4_validate_fspath()
+> >   reported by Dan Carpenter
+> > - rebased on top of v5.5-rc1
+> > Changes since v4:
+> > - further split the original "NFS: Add fs_context support" patch (new
+> >   patch is about 25% smaller than the v4 patch)
+> > - fixed NFSv4 referral mounts (broken in the original patch)
+> > - fixed leak of nfs_fattr when fs_context is freed
+> > Changes since v3:
+> > - changed license and copyright text in fs/nfs/fs_context.c
+> > Changes since v2:
+> > - fixed the conversion of the nconnect= option
+> > - added '#if IS_ENABLED(CONFIG_NFS_V4)' around nfs4_parse_monolithic()
+> >   to avoid unused-function warning when compiling with v4 disabled
+> > Chagnes since v1:
+> > - split up patch 23 into 4 separate patches
+> > 
+> > -Scott
+> > 
+> > Al Viro (15):
+> >   saner calling conventions for nfs_fs_mount_common()
+> >   nfs: stash server into struct nfs_mount_info
+> >   nfs: lift setting mount_info from nfs4_remote{,_referral}_mount
+> >   nfs: fold nfs4_remote_fs_type and nfs4_remote_referral_fs_type
+> >   nfs: don't bother setting/restoring export_path around
+> >     do_nfs_root_mount()
+> >   nfs4: fold nfs_do_root_mount/nfs_follow_remote_path
+> >   nfs: lift setting mount_info from nfs_xdev_mount()
+> >   nfs: stash nfs_subversion reference into nfs_mount_info
+> >   nfs: don't bother passing nfs_subversion to ->try_mount() and
+> >     nfs_fs_mount_common()
+> >   nfs: merge xdev and remote file_system_type
+> >   nfs: unexport nfs_fs_mount_common()
+> >   nfs: don't pass nfs_subversion to ->create_server()
+> >   nfs: get rid of mount_info ->fill_super()
+> >   nfs_clone_sb_security(): simplify the check for server bogosity
+> >   nfs: get rid of ->set_security()
+> > 
+> > David Howells (8):
+> >   NFS: Move mount parameterisation bits into their own file
+> >   NFS: Constify mount argument match tables
+> >   NFS: Rename struct nfs_parsed_mount_data to struct nfs_fs_context
+> >   NFS: Split nfs_parse_mount_options()
+> >   NFS: Deindent nfs_fs_context_parse_option()
+> >   NFS: Add a small buffer in nfs_fs_context to avoid string dup
+> >   NFS: Do some tidying of the parsing code
+> >   NFS: Add fs_context support.
+> > 
+> > Scott Mayhew (4):
+> >   NFS: rename nfs_fs_context pointer arg in a few functions
+> >   NFS: Convert mount option parsing to use functionality from
+> >     fs_parser.h
+> >   NFS: Additional refactoring for fs_context conversion
+> >   NFS: Attach supplementary error information to fs_context.
+> > 
+> >  fs/nfs/Makefile         |    2 +-
+> >  fs/nfs/client.c         |   80 +-
+> >  fs/nfs/fs_context.c     | 1424 +++++++++++++++++++++++++
+> >  fs/nfs/fscache.c        |    2 +-
+> >  fs/nfs/getroot.c        |   73 +-
+> >  fs/nfs/internal.h       |  132 +--
+> >  fs/nfs/namespace.c      |  146 ++-
+> >  fs/nfs/nfs3_fs.h        |    2 +-
+> >  fs/nfs/nfs3client.c     |    6 +-
+> >  fs/nfs/nfs3proc.c       |    2 +-
+> >  fs/nfs/nfs4_fs.h        |    9 +-
+> >  fs/nfs/nfs4client.c     |   99 +-
+> >  fs/nfs/nfs4file.c       |    1 +
+> >  fs/nfs/nfs4namespace.c  |  292 +++---
+> >  fs/nfs/nfs4proc.c       |    2 +-
+> >  fs/nfs/nfs4super.c      |  257 ++---
+> >  fs/nfs/proc.c           |    2 +-
+> >  fs/nfs/super.c          | 2217 +++++----------------------------------
+> >  include/linux/nfs_xdr.h |    9 +-
+> >  19 files changed, 2287 insertions(+), 2470 deletions(-)
+> >  create mode 100644 fs/nfs/fs_context.c
+> > 
 
