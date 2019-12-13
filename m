@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA49F11E87F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2019 17:42:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7E3111E8CA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2019 17:55:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728348AbfLMQjB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Dec 2019 11:39:01 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:43747 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728032AbfLMQjB (ORCPT
+        id S1728433AbfLMQwL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Dec 2019 11:52:11 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:45182 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728420AbfLMQwL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Dec 2019 11:39:01 -0500
-Received: by mail-qk1-f195.google.com with SMTP id t129so48821qke.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2019 08:39:00 -0800 (PST)
+        Fri, 13 Dec 2019 11:52:11 -0500
+Received: by mail-qt1-f193.google.com with SMTP id l12so1774283qtq.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2019 08:52:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Ovf2/AW/iO7NUyaVB6lPFEO6arUdBg/KB8kt2aGi42o=;
-        b=YviHxWUzGPf5SYTTnOo5VAQSiB8G38VGO7O3iRAlU9rN7CbbDcczV3hW58OG/Tlyua
-         jgbzR11eJz+63EoGGanVsAlagba/2hRgR0gqXtm8wu0jcW3LSfHY9QC8hGhpFlJV+uah
-         2ATrZbHgHwWNifDR1PSvQxXz/5ulVp116E2fFsMvDPAUGb6dByZD/blvsi/fmVyPox3L
-         k2dlcwchQmpURo4y69SQfWsYurT0lDHXlMAQfRN9bbfIIZirpr5OR8ZEFICYsRiUE7nB
-         /RqI2eRvxlFUY/BJWE/hgXKsITdrk45H0JsX/SK4VCxgZvbk9UMV0xtq7/zrJvgZwxPx
-         7B6w==
+        bh=Z2qlFHtYeOdEzkWmV7+orI2qPuU1XWKXbXVOxhpcueM=;
+        b=idgcZAgHeZgVWTjECPvBp0b0qBPYz1hSSnHlN+3h6+r8GzUo+veIziFe8nnfw/G6gu
+         0aOcstCQKbwXOnJ9JlaBrjViP8b7nttNapLE0JWqUu2W/uTj3JZfY0faqZb/TFUO2s5R
+         47glWXklNLojnxw1ba6dGGShA8srjcYPL+hTxTMwA9dprqEdFs/b+LsXSm/uGlHjZu+K
+         QZvQoKPIMgqKqHsMLGgfV3h4sRWSpypYvQ8OXXEsCcilM7ply9UAE5LCV2Ijc9NBuFLi
+         2uGk5BhCX5ftGHOcqDmke0fUSpIDkEBm5hEHCTCV2cYWw8MqPTzcUCsOqZuUeN5yUEQ0
+         WJ8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Ovf2/AW/iO7NUyaVB6lPFEO6arUdBg/KB8kt2aGi42o=;
-        b=nfBWuTJZojxTzdgxTWvFNTGwUPQ3LiqzQTSl7ageCbkavGTbvu/nr5h3OoDeIyCp/y
-         b0WGTLWEXq4dhcE0nPTyyaAzGTGw+dwJZccwXZkres/jnH76PJBVIYjuR0wC+BbsRXmQ
-         cJb4315CnhGutfceBwbEInQsTl+Go+e65yYvpIy2meqzF855xWnyhMdQ64U22DNSd/iQ
-         y3BOCWYtzFqLlc5hvdNQGO8kzZyNfpSC4pWDdQCBzV+0MaMowxK4Vz9Sinc73FYuwiVd
-         ay6zU805qr9StJvDx2PAxCCrcTGZWlr3hLgYDFK/e9m/ZKwJ2eow12v/EaKB52pFFHmJ
-         k5BQ==
-X-Gm-Message-State: APjAAAVVFXfEMrEZ91oX1TFKN2To7c6swLlA5w2gZDyArPRzYQhlfCE5
-        +DgJdg1I/cmXa/Tni7qrLsiAEqHYaC0Gaw==
-X-Google-Smtp-Source: APXvYqy3ekLJx1gY0jKZptuwAqmQTzSiMllIqo5i/eTDWckSI6Vc8YWP1TDnwrY6cS4SHV8eKrLdBA==
-X-Received: by 2002:a37:6685:: with SMTP id a127mr14941462qkc.167.1576255139792;
-        Fri, 13 Dec 2019 08:38:59 -0800 (PST)
+        bh=Z2qlFHtYeOdEzkWmV7+orI2qPuU1XWKXbXVOxhpcueM=;
+        b=hM4mhiAuyxXKusy+g/IMB4irjtHG52ObHCf9oWCLy/Ig7ctRifnqb9TQekJhquV6tv
+         KNfiDsy1gUhJG9J88PY+Itikp917ZOu1WxQQ/Fu8MWR4oB/gqTY7HlHCth7Og+YehNWg
+         n7cBcUmbxk05uch+EPB7Rz8vEb0wdJoi/LOXb1wPE5LIqzyHMf0+TCT9lNEdDw39guR7
+         GwtG/6spr+zTkIKk4zgAalAEQl3S8GvrefBPbaCFdnF6ZU4NacGQwQ+g1EgCl55626bi
+         XzdP7fJU4FZ3kUCVFsCIhbjKjzEyss2F+tzPCr6JjuSq4tl4Mmrzmks7xdROCwEX2qwI
+         iGtg==
+X-Gm-Message-State: APjAAAU/pjFufYBeZgmWTlaDhHrzTjvir+Tq04C7mTqz2ZPaa+Lv+7TO
+        +eZpNevWgkBLLjCWX+BlZ2oCKXw7fIG+yg==
+X-Google-Smtp-Source: APXvYqwmzqeBbRja+jYcNRQC0ics2KUk9Fxj1EFb+yDlJnPafAwvOj6E28yfS5SbNL9p6NxyZHIPTw==
+X-Received: by 2002:aed:2103:: with SMTP id 3mr13149411qtc.132.1576255930345;
+        Fri, 13 Dec 2019 08:52:10 -0800 (PST)
 Received: from ?IPv6:2620:10d:c0a8:1102:ce0:3629:8daa:1271? ([2620:10d:c091:480::4e65])
-        by smtp.gmail.com with ESMTPSA id g81sm2989046qkb.70.2019.12.13.08.38.58
+        by smtp.gmail.com with ESMTPSA id 200sm3007783qkh.84.2019.12.13.08.52.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2019 08:38:59 -0800 (PST)
-Subject: Re: [PATCH v6 08/28] btrfs: implement log-structured superblock for
- HMZONED mode
+        Fri, 13 Dec 2019 08:52:09 -0800 (PST)
+Subject: Re: [PATCH v6 09/28] btrfs: align device extent allocation to zone
+ boundary
 To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
         David Sterba <dsterba@suse.com>
 Cc:     Chris Mason <clm@fb.com>, Nikolay Borisov <nborisov@suse.com>,
@@ -57,14 +57,14 @@ Cc:     Chris Mason <clm@fb.com>, Nikolay Borisov <nborisov@suse.com>,
         Anand Jain <anand.jain@oracle.com>,
         linux-fsdevel@vger.kernel.org
 References: <20191213040915.3502922-1-naohiro.aota@wdc.com>
- <20191213040915.3502922-9-naohiro.aota@wdc.com>
+ <20191213040915.3502922-10-naohiro.aota@wdc.com>
 From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <e5bdec6e-a38e-7789-922f-5998b4401d02@toxicpanda.com>
-Date:   Fri, 13 Dec 2019 11:38:57 -0500
+Message-ID: <9e8dcbe8-71e7-0f07-738d-eb2802357444@toxicpanda.com>
+Date:   Fri, 13 Dec 2019 11:52:08 -0500
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
  Gecko/20100101 Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20191213040915.3502922-9-naohiro.aota@wdc.com>
+In-Reply-To: <20191213040915.3502922-10-naohiro.aota@wdc.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -74,40 +74,19 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 12/12/19 11:08 PM, Naohiro Aota wrote:
-> Superblock (and its copies) is the only data structure in btrfs which has a
-> fixed location on a device. Since we cannot overwrite in a sequential write
-> required zone, we cannot place superblock in the zone. One easy solution is
-> limiting superblock and copies to be placed only in conventional zones.
-> However, this method has two downsides: one is reduced number of superblock
-> copies. The location of the second copy of superblock is 256GB, which is in
-> a sequential write required zone on typical devices in the market today.
-> So, the number of superblock and copies is limited to be two.  Second
-> downside is that we cannot support devices which have no conventional zones
-> at all.
+> In HMZONED mode, align the device extents to zone boundaries so that a zone
+> reset affects only the device extent and does not change the state of
+> blocks in the neighbor device extents. Also, check that a region allocation
+> is always over empty zones and it is not over any locations of super block
+> zones.
 > 
-> To solve these two problems, we employ superblock log writing. It uses two
-> zones as a circular buffer to write updated superblocks. Once the first
-> zone is filled up, start writing into the second buffer and reset the first
-> one. We can determine the postion of the latest superblock by reading write
-> pointer information from a device.
+> This patch also add a verification in verify_one_dev_extent() to check if
+> the device extent is align to zone boundary.
 > 
-> The following zones are reserved as the circular buffer on HMZONED btrfs.
-> 
-> - The primary superblock: zones 0 and 1
-> - The first copy: zones 16 and 17
-> - The second copy: zones 1024 or zone at 256GB which is minimum, and next
->    to it
-> 
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 
-So the series of events for writing is
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
--> get wp
--> write super block
--> advance wp
-   -> if wp == end of the zone, reset the wp
-
-now assume we crash here.  We'll go to mount the fs and the zone will look like 
-it's empty because we reset the wp, and we'll be unable to mount the fs.  Am I 
-missing something here?  Thanks,
+Thanks,
 
 Josef
