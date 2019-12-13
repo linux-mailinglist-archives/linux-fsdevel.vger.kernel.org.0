@@ -2,103 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36CCC11EB66
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2019 20:59:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 236C311EB6B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2019 21:01:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728999AbfLMT6P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Dec 2019 14:58:15 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59056 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728988AbfLMT6O (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Dec 2019 14:58:14 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AF0F6B2BF;
-        Fri, 13 Dec 2019 19:58:12 +0000 (UTC)
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     linux-btrfs@vger.kernel.org
-Cc:     hch@infradead.org, darrick.wong@oracle.com, fdmanana@kernel.org,
-        nborisov@suse.com, dsterba@suse.cz, jthumshirn@suse.de,
+        id S1729005AbfLMT7o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Dec 2019 14:59:44 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:44550 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728696AbfLMT7o (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 13 Dec 2019 14:59:44 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 7C98D8EE1E0;
+        Fri, 13 Dec 2019 11:59:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1576267182;
+        bh=vWQDrFNBRvPHrpYiw15uNPAvoQF6Hmi1ReSpXrsHKmM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=R6Jl2cP46Dt/doNyUbZYQ0nMg6/WS+m3P2m2g1ghU1uvp1CQ5tFU1cWBjIajdBixd
+         IeI8SbzWuq9nbNKI3yJve1NI+7qDuVFkgXglwPteylYSZMYsnR0tDmov2M+bteyeqQ
+         0Do3quDEJ1Y3ttBnncgH+Z8ZjJV/jMAYaunBO6pg=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 3QzNzn626Lyl; Fri, 13 Dec 2019 11:59:40 -0800 (PST)
+Received: from [172.20.40.112] (unknown [206.121.240.150])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id B4A078EE0E0;
+        Fri, 13 Dec 2019 11:59:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1576267179;
+        bh=vWQDrFNBRvPHrpYiw15uNPAvoQF6Hmi1ReSpXrsHKmM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=L+2p7IcjaMeH3psLlUT8aYowCyyHNXyuebIK2ohBWvuDyYaKTV6vGoxrmqJAqpsgD
+         uN1cvwl9T1yjmIpTv2lDq2SvWVHJRsCXg6myuI4FdhK4M1y53nK6AmWYIu36J+aUgu
+         bUEEkyIemlotbxEI6H3Bm7jynqcOVYWJYg9dCEp8=
+Message-ID: <1576267177.4060.4.camel@HansenPartnership.com>
+Subject: Re: [PATCH v7 1/1] ns: add binfmt_misc to the user namespace
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Henning Schild <henning.schild@siemens.com>,
+        Laurent Vivier <laurent@vivier.eu>
+Cc:     linux-kernel@vger.kernel.org, Dmitry Safonov <dima@arista.com>,
         linux-fsdevel@vger.kernel.org,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: [PATCH 8/8] btrfs: remove BTRFS_INODE_READDIO_NEED_LOCK
-Date:   Fri, 13 Dec 2019 13:57:50 -0600
-Message-Id: <20191213195750.32184-9-rgoldwyn@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20191213195750.32184-1-rgoldwyn@suse.de>
-References: <20191213195750.32184-1-rgoldwyn@suse.de>
+        Eric Biederman <ebiederm@xmission.com>,
+        linux-api@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
+        =?ISO-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
+        Greg Kurz <groug@kaod.org>, Jann Horn <jannh@google.com>,
+        containers@lists.linux-foundation.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jan Kiszka <jan.kiszka@siemens.com>
+Date:   Fri, 13 Dec 2019 14:59:37 -0500
+In-Reply-To: <20191213185110.06b52cf4@md1za8fc.ad001.siemens.net>
+References: <20191107140304.8426-1-laurent@vivier.eu>
+         <20191107140304.8426-2-laurent@vivier.eu>
+         <7cb245ed-f738-7991-a09b-b27152274b9f@vivier.eu>
+         <20191213185110.06b52cf4@md1za8fc.ad001.siemens.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+On Fri, 2019-12-13 at 18:51 +0100, Henning Schild wrote:
+> Hi all,
+> 
+> that is a very useful contribution, which will hopefully be
+> considered.
 
-Since we now perform direct reads using i_rwsem, we can remove this
-inode flag used to co-ordinate unlocked reads.
+I'm technically the maintainer on the you touched it last you own it
+basis, so if Christian's concerns get addressed I'll shepherd it
+upstream.
 
-The truncate call takes i_rwsem. This means it is correctly synchronized
-with concurrent direct reads.
-
-Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: Johannes Thumshirn <jth@kernel.org>
----
- fs/btrfs/btrfs_inode.h | 18 ------------------
- fs/btrfs/inode.c       |  3 ---
- 2 files changed, 21 deletions(-)
-
-diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
-index 4e12a477d32e..cd8f378ed8e7 100644
---- a/fs/btrfs/btrfs_inode.h
-+++ b/fs/btrfs/btrfs_inode.h
-@@ -27,7 +27,6 @@ enum {
- 	BTRFS_INODE_NEEDS_FULL_SYNC,
- 	BTRFS_INODE_COPY_EVERYTHING,
- 	BTRFS_INODE_IN_DELALLOC_LIST,
--	BTRFS_INODE_READDIO_NEED_LOCK,
- 	BTRFS_INODE_HAS_PROPS,
- 	BTRFS_INODE_SNAPSHOT_FLUSH,
- };
-@@ -317,23 +316,6 @@ struct btrfs_dio_private {
- 			blk_status_t);
- };
- 
--/*
-- * Disable DIO read nolock optimization, so new dio readers will be forced
-- * to grab i_mutex. It is used to avoid the endless truncate due to
-- * nonlocked dio read.
-- */
--static inline void btrfs_inode_block_unlocked_dio(struct btrfs_inode *inode)
--{
--	set_bit(BTRFS_INODE_READDIO_NEED_LOCK, &inode->runtime_flags);
--	smp_mb();
--}
--
--static inline void btrfs_inode_resume_unlocked_dio(struct btrfs_inode *inode)
--{
--	smp_mb__before_atomic();
--	clear_bit(BTRFS_INODE_READDIO_NEED_LOCK, &inode->runtime_flags);
--}
--
- /* Array of bytes with variable length, hexadecimal format 0x1234 */
- #define CSUM_FMT				"0x%*phN"
- #define CSUM_FMT_VALUE(size, bytes)		size, bytes
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 07220194ffb8..68adb7958ef4 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -5273,10 +5273,7 @@ static int btrfs_setsize(struct inode *inode, struct iattr *attr)
- 
- 		truncate_setsize(inode, newsize);
- 
--		/* Disable nonlocked read DIO to avoid the endless truncate */
--		btrfs_inode_block_unlocked_dio(BTRFS_I(inode));
- 		inode_dio_wait(inode);
--		btrfs_inode_resume_unlocked_dio(BTRFS_I(inode));
- 
- 		ret = btrfs_truncate(inode, newsize == oldsize);
- 		if (ret && inode->i_nlink) {
--- 
-2.16.4
+James
 
