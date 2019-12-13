@@ -2,206 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A34311DAC6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2019 01:10:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CAEC11DB4D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2019 01:53:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731953AbfLMAKF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Dec 2019 19:10:05 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:36801 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731946AbfLMAKF (ORCPT
+        id S1727119AbfLMAxb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Dec 2019 19:53:31 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38295 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726631AbfLMAxb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Dec 2019 19:10:05 -0500
-Received: by mail-pj1-f66.google.com with SMTP id n96so349795pjc.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2019 16:10:04 -0800 (PST)
+        Thu, 12 Dec 2019 19:53:31 -0500
+Received: by mail-pg1-f193.google.com with SMTP id a33so631985pgm.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Dec 2019 16:53:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=S6k/XsfzhDn6KXF2YNucRafsHSbYJhqsQlalXy2nyck=;
-        b=K+xG7jANOc30B1qy0sA9C/z0h4E5ePwM5GFfoIGPnu9nl+/4mBgnMANkmOqnPZbJox
-         tqm5qlXHxYwvClPuUmaAqbcZ+usjxQebBR2aTkGRmviET9XCPZBOxgyQSAJXxEcjgSI4
-         f6hb2uXboXB40Ciaw4PmzGqWfoAcvEdsjEBqZ9Bvlm1bdSaZe5UTS1c/VRxn58Buff9+
-         kUefb2N/l+pMhFH11NpwkVTc9X/EP/+uHwgweGAi8fHIOtp9ItYdSoxISQNLaQRXEiDL
-         PtLmhOnfhpBsk6SG1wOCliWp8gFThFKKkSE5Oylcf4fGLM7Ybgy7VSwkMRjUqlho6Hr2
-         54Rg==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jKD62V/GgSWLb/kYT03Quqy/I04kGB1tDPvuCoyNQ4U=;
+        b=R5fOLKwIY0Jwy7hR3DO4eSa2mIRXstoLVyzhLU5rsecsPdsKTBYJshh+IeqAbDCb+t
+         t9Ur5P6L1x3A6fZssuOJUHgbPAdyhX4mRmPLwV1k6vKRqBttDJzOOfgDX8tH5zrF+jR9
+         Q8bBwl2EiX3ZVMYMZ6mug7OzBqJ07XMdM+/KYDQrs5N7Cq7+XT8KDvst5WodMFKZdxn4
+         3qIiuG25k1J/GxPNLBaNVXRYH0UiPVCFB1iADLptsXFJsQdw6hbO8x4t1N4VsrDS2VmD
+         ykAdtCfUfwZ9YHJJ6wWnHMbSySIqHX7af7QDY0y1KBl/7nFakBB9Q6nE77YSN5+xzfQ9
+         8KvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=S6k/XsfzhDn6KXF2YNucRafsHSbYJhqsQlalXy2nyck=;
-        b=c+KT9TIEfQvBbpktNO/Puv7osxxDRYNgLzwG66LeOdtkJNsG8P/ucmWVDBMoptZPsS
-         zGZUi50WADKFFrnU5b+gzZSHQPVpWJAGrh3FgeaypFS8ZM60FMlT/ekXiRyY2kSnx/i1
-         abU55YL9KU1FCK3DaSGS7PTcG135bzEUGa6t2YZiBM15wpB3Sd0KDomd0mNQVFcqyUgn
-         zw6Pet9AB9Y4rQeUTLSjsvIWHJOvIwx56FHZGV4T+05qZ5JXNUdXxqGBAhKKnsjHji9E
-         fWwrsvJxeUNQfycexyBwqmGJF9GmuBu1EV9QieEUEPv6NecRHK8/epfOcc+nbX815R9V
-         NANQ==
-X-Gm-Message-State: APjAAAVnYk/LCYKbzvprJnWxIUqFtUPkfTt55csTux2IeTuFWxMTdH0C
-        LahYP4cfXhaUMZqCJy9Faml4fw==
-X-Google-Smtp-Source: APXvYqxuqRpAz7tC5HM3+JXEiYaZ3fe2a3UXXUDB8NRiz+qOZzLZ1p3vGqYYh80eng3ApFiB+cBJiA==
-X-Received: by 2002:a17:902:9889:: with SMTP id s9mr3882460plp.135.1576195803960;
-        Thu, 12 Dec 2019 16:10:03 -0800 (PST)
-Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id j38sm8317647pgj.27.2019.12.12.16.10.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2019 16:10:03 -0800 (PST)
-From:   Dmitry Safonov <dima@arista.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
-        Dmitry Safonov <dima@arista.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Vasiliy Khoruzhick <vasilykh@arista.com>,
-        linux-serial@vger.kernel.org, Iurii Zaikin <yzaikin@google.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH 57/58] sysctl/sysrq: Remove __sysrq_enabled copy
-Date:   Fri, 13 Dec 2019 00:06:56 +0000
-Message-Id: <20191213000657.931618-58-dima@arista.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191213000657.931618-1-dima@arista.com>
-References: <20191213000657.931618-1-dima@arista.com>
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jKD62V/GgSWLb/kYT03Quqy/I04kGB1tDPvuCoyNQ4U=;
+        b=LpuGl39YxscTt3Zopon6gZxWYkkqn62hsBJSXiodfCaaqcKGSNnhPwhG3lz3FLpm3b
+         N01208+u2xYn//cKENSsW14CyqNaLruzZlfZQ2XaMYR5Bh5GYuCgh0Xasqv1fOCgpzSb
+         BYwZ/ELg0x+YopFqAb9uxlEg7EVXHGDyZzbuFuskhbWydbTlc4DtQwqo4jADryQ6rD71
+         qVwapKLewoENvf+FK/oK1lG8W7HZNRSNyKxuwLhznhlaqtSgzrG9+03kD36Mfpl/HO0N
+         q2aE69vbIsMHfNnAvuLyrP1DAZptHTYFTvfSi4MI39asPhvsTDkerveNLk8UUGr79MGU
+         CA4Q==
+X-Gm-Message-State: APjAAAWaREZkjk2sZgZmOuo+2yX5qd3frvlLjF251R9E28jodVZzjPQQ
+        ugIFWCRE/K1Wq6LLUrkgG/cWSo+0o/NYVg==
+X-Google-Smtp-Source: APXvYqxa+YwBZGZdJElOigly+nL4Tl5DxfNpTHH5XEfdndh0Gv3F7DIF6bZAvNMsrBviXox+SlJAGw==
+X-Received: by 2002:a63:3104:: with SMTP id x4mr13644888pgx.369.1576198410168;
+        Thu, 12 Dec 2019 16:53:30 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id m15sm8140291pgi.91.2019.12.12.16.53.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2019 16:53:29 -0800 (PST)
+Subject: Re: [PATCHSET v4 0/5] Support for RWF_UNCACHED
+From:   Jens Axboe <axboe@kernel.dk>
+To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org
+Cc:     willy@infradead.org, clm@fb.com, torvalds@linux-foundation.org,
+        david@fromorbit.com
+References: <20191212190133.18473-1-axboe@kernel.dk>
+Message-ID: <1724f1c7-d404-9ce7-48ab-0d5f6f5dece5@kernel.dk>
+Date:   Thu, 12 Dec 2019 17:53:27 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191212190133.18473-1-axboe@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Many embedded boards have a disconnected TTL level serial which can
-generate some garbage that can lead to spurious false sysrq detects.
+On 12/12/19 12:01 PM, Jens Axboe wrote:
+> Recently someone asked me how io_uring buffered IO compares to mmaped
+> IO in terms of performance. So I ran some tests with buffered IO, and
+> found the experience to be somewhat painful. The test case is pretty
+> basic, random reads over a dataset that's 10x the size of RAM.
+> Performance starts out fine, and then the page cache fills up and we
+> hit a throughput cliff. CPU usage of the IO threads go up, and we have
+> kswapd spending 100% of a core trying to keep up. Seeing that, I was
+> reminded of the many complaints I here about buffered IO, and the fact
+> that most of the folks complaining will ultimately bite the bullet and
+> move to O_DIRECT to just get the kernel out of the way.
+> 
+> But I don't think it needs to be like that. Switching to O_DIRECT isn't
+> always easily doable. The buffers have different life times, size and
+> alignment constraints, etc. On top of that, mixing buffered and O_DIRECT
+> can be painful.
+> 
+> Seems to me that we have an opportunity to provide something that sits
+> somewhere in between buffered and O_DIRECT, and this is where
+> RWF_UNCACHED enters the picture. If this flag is set on IO, we get the
+> following behavior:
+> 
+> - If the data is in cache, it remains in cache and the copy (in or out)
+>   is served to/from that. This is true for both reads and writes.
+> 
+> - For writes, if the data is NOT in cache, we add it while performing the
+>   IO. When the IO is done, we remove it again.
+> 
+> - For reads, if the data is NOT in the cache, we allocate a private page
+>   and use that for IO. When the IO is done, we free this page. The page
+>   never sees the page cache.
+> 
+> With this, I can do 100% smooth buffered reads or writes without pushing
+> the kernel to the state where kswapd is sweating bullets. In fact it
+> doesn't even register.
+> 
+> Comments appreciated! This should work on any standard file system,
+> using either the generic helpers or iomap. I have tested ext4 and xfs
+> for the right read/write behavior, but no further validation has been
+> done yet. This version contains the bigger prep patch of switching
+> iomap_apply() and actors to struct iomap_data, and I hope I didn't
+> mess that up too badly. I'll try and exercise it all, I've done XFS
+> mounts and reads+writes and it seems happy from that POV at least.
+> 
+> The core of the changes are actually really small, the majority of
+> the diff is just prep work to get there.
+> 
+> Patches are against current git, and can also be found here:
+> 
+> https://git.kernel.dk/cgit/linux-block/log/?h=buffered-uncached
+> 
+>  fs/ceph/file.c          |   2 +-
+>  fs/dax.c                |  25 +++--
+>  fs/ext4/file.c          |   2 +-
+>  fs/iomap/apply.c        |  50 ++++++---
+>  fs/iomap/buffered-io.c  | 225 +++++++++++++++++++++++++---------------
+>  fs/iomap/direct-io.c    |  57 +++++-----
+>  fs/iomap/fiemap.c       |  48 +++++----
+>  fs/iomap/seek.c         |  64 +++++++-----
+>  fs/iomap/swapfile.c     |  27 ++---
+>  fs/nfs/file.c           |   2 +-
+>  include/linux/fs.h      |   7 +-
+>  include/linux/iomap.h   |  20 +++-
+>  include/uapi/linux/fs.h |   5 +-
+>  mm/filemap.c            |  89 +++++++++++++---
+>  14 files changed, 416 insertions(+), 207 deletions(-)
+> 
+> Changes since v3:
+> - Add iomap_actor_data to cut down on arguments
+> - Fix bad flag drop in iomap_write_begin()
+> - Remove unused IOMAP_WRITE_F_UNCACHED flag
+> - Don't use the page cache at all for reads
 
-Currently, sysrq can be either completely disabled for serial console
-or always disabled (with CONFIG_MAGIC_SYSRQ_SERIAL), since
-commit 732dbf3a6104 ("serial: do not accept sysrq characters via serial port")
+Had the silly lru error in v4, and also an XFS flags error. I'm not
+going to re-post already due to this, but please use:
 
-At Arista, we have such boards that can generate BREAK and random
-garbage. While disabling sysrq for serial console would solve
-the problem with spurious false sysrq triggers, it's also desirable
-to have a way to enable sysrq back.
+https://git.kernel.dk/cgit/linux-block/log/?h=buffered-uncached
 
-Having the way to enable sysrq was beneficial to debug lockups with
-a manual investigation in field and on the other side preventing false
-sysrq detections.
+if you're going to test this. You can pull it at:
 
-As a preparation to add sysrq_toggle_support() call into uart,
-remove a private copy of sysrq_enabled from sysctl - it should reflect
-the actual status of sysrq.
+git://git.kernel.dk/linux-block buffered-uncached
 
-Furthermore, the private copy isn't correct already in case
-sysrq_always_enabled is true. So, remove __sysrq_enabled and use a
-getter-helper for sysrq enabled status.
+Those are the only two changes since v4. I'll throw a v5 out there a bit
+later.
 
-Cc: Iurii Zaikin <yzaikin@google.com>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Dmitry Safonov <dima@arista.com>
----
- drivers/tty/sysrq.c   |  7 +++++++
- include/linux/sysrq.h |  1 +
- kernel/sysctl.c       | 41 ++++++++++++++++++++++-------------------
- 3 files changed, 30 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
-index 1d4f317a0e42..c21067765091 100644
---- a/drivers/tty/sysrq.c
-+++ b/drivers/tty/sysrq.c
-@@ -73,6 +73,13 @@ static bool sysrq_on_mask(int mask)
- 	       (sysrq_enabled & mask);
- }
- 
-+int sysrq_get_mask(void)
-+{
-+	if (sysrq_always_enabled)
-+		return 1;
-+	return sysrq_enabled;
-+}
-+
- static int __init sysrq_always_enabled_setup(char *str)
- {
- 	sysrq_always_enabled = true;
-diff --git a/include/linux/sysrq.h b/include/linux/sysrq.h
-index 8c71874e8485..4a0b351fa2d3 100644
---- a/include/linux/sysrq.h
-+++ b/include/linux/sysrq.h
-@@ -50,6 +50,7 @@ int unregister_sysrq_key(int key, struct sysrq_key_op *op);
- struct sysrq_key_op *__sysrq_get_key_op(int key);
- 
- int sysrq_toggle_support(int enable_mask);
-+int sysrq_get_mask(void);
- 
- #else
- 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 70665934d53e..66cebf6041b4 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -229,25 +229,8 @@ static int proc_dopipe_max_size(struct ctl_table *table, int write,
- 		void __user *buffer, size_t *lenp, loff_t *ppos);
- 
- #ifdef CONFIG_MAGIC_SYSRQ
--/* Note: sysrq code uses its own private copy */
--static int __sysrq_enabled = CONFIG_MAGIC_SYSRQ_DEFAULT_ENABLE;
--
- static int sysrq_sysctl_handler(struct ctl_table *table, int write,
--				void __user *buffer, size_t *lenp,
--				loff_t *ppos)
--{
--	int error;
--
--	error = proc_dointvec(table, write, buffer, lenp, ppos);
--	if (error)
--		return error;
--
--	if (write)
--		sysrq_toggle_support(__sysrq_enabled);
--
--	return 0;
--}
--
-+			void __user *buffer, size_t *lenp, loff_t *ppos);
- #endif
- 
- static struct ctl_table kern_table[];
-@@ -747,7 +730,7 @@ static struct ctl_table kern_table[] = {
- #ifdef CONFIG_MAGIC_SYSRQ
- 	{
- 		.procname	= "sysrq",
--		.data		= &__sysrq_enabled,
-+		.data		= NULL,
- 		.maxlen		= sizeof (int),
- 		.mode		= 0644,
- 		.proc_handler	= sysrq_sysctl_handler,
-@@ -2844,6 +2827,26 @@ static int proc_dostring_coredump(struct ctl_table *table, int write,
- }
- #endif
- 
-+#ifdef CONFIG_MAGIC_SYSRQ
-+static int sysrq_sysctl_handler(struct ctl_table *table, int write,
-+				void __user *buffer, size_t *lenp, loff_t *ppos)
-+{
-+	int tmp, ret;
-+
-+	tmp = sysrq_get_mask();
-+
-+	ret = __do_proc_dointvec(&tmp, table, write, buffer,
-+			       lenp, ppos, NULL, NULL);
-+	if (ret || !write)
-+		return ret;
-+
-+	if (write)
-+		sysrq_toggle_support(tmp);
-+
-+	return 0;
-+}
-+#endif
-+
- static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int write,
- 				     void __user *buffer,
- 				     size_t *lenp, loff_t *ppos,
 -- 
-2.24.0
+Jens Axboe
 
