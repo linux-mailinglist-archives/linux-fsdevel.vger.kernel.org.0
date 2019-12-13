@@ -2,105 +2,261 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6703A11E6A6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2019 16:35:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B54411E7F5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2019 17:19:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727936AbfLMPf5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Dec 2019 10:35:57 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:39054 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727831AbfLMPf5 (ORCPT
+        id S1728143AbfLMQS5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Dec 2019 11:18:57 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:44015 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728133AbfLMQS5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Dec 2019 10:35:57 -0500
-Received: from callcc.thunk.org (guestnat-104-132-34-105.corp.google.com [104.132.34.105] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xBDFZlgP023296
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 13 Dec 2019 10:35:48 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 59E6C420E60; Fri, 13 Dec 2019 10:35:47 -0500 (EST)
-Date:   Fri, 13 Dec 2019 10:35:47 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     lsf-pc@lists.linux-foundation.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] automating file system benchmarks
-Message-ID: <20191213153547.GA273569@mit.edu>
-References: <20191213014742.GA250928@mit.edu>
- <CAOQ4uxhxx4EdaAsSPOztbx+0gfhixSi4fhBrhtDji1Dn4hgrow@mail.gmail.com>
+        Fri, 13 Dec 2019 11:18:57 -0500
+Received: by mail-qk1-f193.google.com with SMTP id t129so2113535qke.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2019 08:18:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=p+ElOkwYuZmhuEggAYqFWeqRcKURvbMbcbDB8ADBw9E=;
+        b=q6BW2zJ5NaOI/L9MQ4C/pxsZUKCb6HgQKWitgRFUdOinrERr9wEOw98ktZOUHb/ob4
+         2RfKgX8QPwH/edKbdIXGcCFHSgGOs6ILDmU+p3zZ76E+SKEdaQ/GD1uVd4ii3QcBayqV
+         ejxtDwdBat4ViXlb758oBJ86NwhEMjTp8Ub4qHgKg4r+QdFyGm1FSO8Z/ywI9s3sQ3yE
+         mIjio+8xzwIWc1yyWLOqXp95eJ5qsQHkNHt4iRebhZWKpmzV4sLFuKB9Leyts3IA162F
+         bW43sm0YpNoZSBQgzbaIfxu8CQAp2STZLm0Kh03fd1pS3Js9T92oMxUTUSKuWtC6oUcg
+         b22A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=p+ElOkwYuZmhuEggAYqFWeqRcKURvbMbcbDB8ADBw9E=;
+        b=puDjA4RausSJbT+RKL1Lk3bvXyhYWs0aMZRr8G0wvEFZnXkdapdoOe2BJawKQnVA6q
+         Ff3+EO+6fqiuiL26ob+MWqysOGSsz4BCS6iUI5CZ185t5Ecv77KxXA8jRUlJ2sUHA60m
+         Fj8i/hROY8y/A3DG3m3f9UO1tEqePWHjPKSdRAPpGFueBgjKzYZ0sQeCoK1KNOXQjHR7
+         cjVY+mNDTMccf/T0D2lwJaEWn+Mrqzupw0ccaw/j17RQxsCHnPrXHdpGRcT2j4Pe5XIh
+         9zgP1WsIOOVe0vGd/WHRR/4uoybzACAxnPq2/yidL4Ydj0tR0lQtQHHYjrywE9oIYFNF
+         s+Dg==
+X-Gm-Message-State: APjAAAW9u/hdsLYogl4q9vwlSb4KB5eIjWXoxeCl52rfd8QpeDwChJn7
+        8NUU6xNQERVpa1btA8ncYjKYOrHUenvtTA==
+X-Google-Smtp-Source: APXvYqzblLdAg3Ari9GYwdZQr6vkb9XotV55rB2jNuuV9r5FO01Q2Bph9sGltPhx27cVAKAJY6XHgQ==
+X-Received: by 2002:a37:e404:: with SMTP id y4mr14254163qkf.356.1576253935503;
+        Fri, 13 Dec 2019 08:18:55 -0800 (PST)
+Received: from ?IPv6:2620:10d:c0a8:1102:ce0:3629:8daa:1271? ([2620:10d:c091:480::4e65])
+        by smtp.gmail.com with ESMTPSA id z8sm3647407qth.16.2019.12.13.08.18.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2019 08:18:54 -0800 (PST)
+Subject: Re: [PATCH v6 02/28] btrfs: Get zone information of zoned block
+ devices
+To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
+        David Sterba <dsterba@suse.com>
+Cc:     Chris Mason <clm@fb.com>, Nikolay Borisov <nborisov@suse.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Hannes Reinecke <hare@suse.com>,
+        Anand Jain <anand.jain@oracle.com>,
+        linux-fsdevel@vger.kernel.org
+References: <20191213040915.3502922-1-naohiro.aota@wdc.com>
+ <20191213040915.3502922-3-naohiro.aota@wdc.com>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <d4cccf98-a01a-8d2f-40fe-e2f356a037a0@toxicpanda.com>
+Date:   Fri, 13 Dec 2019 11:18:53 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
+ Gecko/20100101 Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhxx4EdaAsSPOztbx+0gfhixSi4fhBrhtDji1Dn4hgrow@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191213040915.3502922-3-naohiro.aota@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 07:12:03AM +0200, Amir Goldstein wrote:
+On 12/12/19 11:08 PM, Naohiro Aota wrote:
+> If a zoned block device is found, get its zone information (number of zones
+> and zone size) using the new helper function btrfs_get_dev_zone_info().  To
+> avoid costly run-time zone report commands to test the device zones type
+> during block allocation, attach the seq_zones bitmap to the device
+> structure to indicate if a zone is sequential or accept random writes. Also
+> it attaches the empty_zones bitmap to indicate if a zone is empty or not.
 > 
-> Very nice :)
-> You should post an [ANNOUNCE] every now and then.
-> I rarely check upstream of xfstests-bld, because it just-works ;-)
+> This patch also introduces the helper function btrfs_dev_is_sequential() to
+> test if the zone storing a block is a sequential write required zone and
+> btrfs_dev_is_empty_zone() to test if the zone is a empty zone.
+> 
+> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> ---
+>   fs/btrfs/Makefile  |   1 +
+>   fs/btrfs/hmzoned.c | 168 +++++++++++++++++++++++++++++++++++++++++++++
+>   fs/btrfs/hmzoned.h |  92 +++++++++++++++++++++++++
+>   fs/btrfs/volumes.c |  18 ++++-
+>   fs/btrfs/volumes.h |   4 ++
+>   5 files changed, 281 insertions(+), 2 deletions(-)
+>   create mode 100644 fs/btrfs/hmzoned.c
+>   create mode 100644 fs/btrfs/hmzoned.h
+> 
+> diff --git a/fs/btrfs/Makefile b/fs/btrfs/Makefile
+> index 82200dbca5ac..64aaeed397a4 100644
+> --- a/fs/btrfs/Makefile
+> +++ b/fs/btrfs/Makefile
+> @@ -16,6 +16,7 @@ btrfs-y += super.o ctree.o extent-tree.o print-tree.o root-tree.o dir-item.o \
+>   btrfs-$(CONFIG_BTRFS_FS_POSIX_ACL) += acl.o
+>   btrfs-$(CONFIG_BTRFS_FS_CHECK_INTEGRITY) += check-integrity.o
+>   btrfs-$(CONFIG_BTRFS_FS_REF_VERIFY) += ref-verify.o
+> +btrfs-$(CONFIG_BLK_DEV_ZONED) += hmzoned.o
+>   
+>   btrfs-$(CONFIG_BTRFS_FS_RUN_SANITY_TESTS) += tests/free-space-tests.o \
+>   	tests/extent-buffer-tests.o tests/btrfs-tests.o \
+> diff --git a/fs/btrfs/hmzoned.c b/fs/btrfs/hmzoned.c
+> new file mode 100644
+> index 000000000000..6a13763d2916
+> --- /dev/null
+> +++ b/fs/btrfs/hmzoned.c
+> @@ -0,0 +1,168 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2019 Western Digital Corporation or its affiliates.
+> + * Authors:
+> + *	Naohiro Aota	<naohiro.aota@wdc.com>
+> + *	Damien Le Moal	<damien.lemoal@wdc.com>
+> + */
+> +
+> +#include <linux/slab.h>
+> +#include <linux/blkdev.h>
+> +#include "ctree.h"
+> +#include "volumes.h"
+> +#include "hmzoned.h"
+> +#include "rcu-string.h"
+> +
+> +/* Maximum number of zones to report per blkdev_report_zones() call */
+> +#define BTRFS_REPORT_NR_ZONES   4096
+> +
+> +static int btrfs_get_dev_zones(struct btrfs_device *device, u64 pos,
+> +			       struct blk_zone *zones, unsigned int *nr_zones)
+> +{
+> +	int ret;
+> +
+> +	ret = blkdev_report_zones(device->bdev, pos >> SECTOR_SHIFT, zones,
+> +				  nr_zones);
+> +	if (ret != 0) {
+> +		btrfs_err_in_rcu(device->fs_info,
+> +				 "get zone at %llu on %s failed %d", pos,
+> +				 rcu_str_deref(device->name), ret);
+> +		return ret;
+> +	}
+> +	if (!*nr_zones)
+> +		return -EIO;
+> +
+> +	return 0;
+> +}
+> +
+> +int btrfs_get_dev_zone_info(struct btrfs_device *device)
+> +{
+> +	struct btrfs_zoned_device_info *zone_info = NULL;
+> +	struct block_device *bdev = device->bdev;
+> +	sector_t nr_sectors = bdev->bd_part->nr_sects;
+> +	sector_t sector = 0;
+> +	struct blk_zone *zones = NULL;
+> +	unsigned int i, nreported = 0, nr_zones;
+> +	unsigned int zone_sectors;
+> +	int ret;
+> +	char devstr[sizeof(device->fs_info->sb->s_id) +
+> +		    sizeof(" (device )") - 1];
+> +
+> +	if (!bdev_is_zoned(bdev))
+> +		return 0;
+> +
+> +	zone_info = kzalloc(sizeof(*zone_info), GFP_KERNEL);
+> +	if (!zone_info)
+> +		return -ENOMEM;
+> +
+> +	zone_sectors = bdev_zone_sectors(bdev);
+> +	ASSERT(is_power_of_2(zone_sectors));
+> +	zone_info->zone_size = (u64)zone_sectors << SECTOR_SHIFT;
+> +	zone_info->zone_size_shift = ilog2(zone_info->zone_size);
+> +	zone_info->nr_zones = nr_sectors >> ilog2(bdev_zone_sectors(bdev));
+> +	if (!IS_ALIGNED(nr_sectors, zone_sectors))
+> +		zone_info->nr_zones++;
+> +
+> +	zone_info->seq_zones = bitmap_zalloc(zone_info->nr_zones, GFP_KERNEL);
+> +	if (!zone_info->seq_zones) {
+> +		ret = -ENOMEM;
+> +		goto free_zone_info;
+> +	}
+> +
+> +	zone_info->empty_zones = bitmap_zalloc(zone_info->nr_zones, GFP_KERNEL);
+> +	if (!zone_info->empty_zones) {
+> +		ret = -ENOMEM;
+> +		goto free_seq_zones;
+> +	}
+> +
+> +	zones = kcalloc(BTRFS_REPORT_NR_ZONES,
+> +			sizeof(struct blk_zone), GFP_KERNEL);
+> +	if (!zones) {
+> +		ret = -ENOMEM;
+> +		goto free_empty_zones;
+> +	}
+> +
+> +	/* Get zones type */
+> +	while (sector < nr_sectors) {
+> +		nr_zones = BTRFS_REPORT_NR_ZONES;
+> +		ret = btrfs_get_dev_zones(device, sector << SECTOR_SHIFT, zones,
+> +					  &nr_zones);
+> +		if (ret)
+> +			goto free_zones;
+> +
+> +		for (i = 0; i < nr_zones; i++) {
+> +			if (zones[i].type == BLK_ZONE_TYPE_SEQWRITE_REQ)
+> +				set_bit(nreported, zone_info->seq_zones);
+> +			if (zones[i].cond == BLK_ZONE_COND_EMPTY)
+> +				set_bit(nreported, zone_info->empty_zones);
+> +			nreported++;
+> +		}
+> +		sector = zones[nr_zones - 1].start + zones[nr_zones - 1].len;
+> +	}
+> +
+> +	if (nreported != zone_info->nr_zones) {
+> +		btrfs_err_in_rcu(device->fs_info,
+> +				 "inconsistent number of zones on %s (%u / %u)",
+> +				 rcu_str_deref(device->name), nreported,
+> +				 zone_info->nr_zones);
+> +		ret = -EIO;
+> +		goto free_zones;
+> +	}
+> +
+> +	kfree(zones);
+> +
+> +	device->zone_info = zone_info;
+> +
+> +	devstr[0] = 0;
+> +	if (device->fs_info)
+> +		snprintf(devstr, sizeof(devstr), " (device %s)",
+> +			 device->fs_info->sb->s_id);
+> +
+> +	rcu_read_lock();
+> +	pr_info(
+> +"BTRFS info%s: host-%s zoned block device %s, %u zones of %llu sectors",
+> +		devstr,
+> +		bdev_zoned_model(bdev) == BLK_ZONED_HM ? "managed" : "aware",
+> +		rcu_str_deref(device->name), zone_info->nr_zones,
+> +		zone_info->zone_size >> SECTOR_SHIFT);
+> +	rcu_read_unlock();
+> +
+> +	return 0;
+> +
+> +free_zones:
+> +	kfree(zones);
+> +free_empty_zones:
+> +	bitmap_free(zone_info->empty_zones);
+> +free_seq_zones:
+> +	bitmap_free(zone_info->seq_zones);
+> +free_zone_info:
 
-Right now, the PTS support in gce-xfstests is very manual.  Right now
-the VM is launched via "gce-xfstests pts", then you have to log into
-the VM, "gce-xfstests ssh pts" after a few minutes, then run
-"phoronix-test-suite pts/disk", answer a few questions, and then
-afterwards run "pts-save --results" and then kill off the pts VM.
+bitmap_free is just a kfree which handles NULL pointers properly, so you only 
+need one goto here for cleaning up the zone_info.  Once that's fixed you can add
 
-I want to get it to the point where "gce-xfstests pts" is sufficient,
-where the benchmarks are run and the VM is automatically shut down
-afterwards.  Also still to be done is to add support for kvm-xfstests.
-That'll hopefully be done in the next month or so, as I have some free
-time.
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-> I suppose you have access to a dedicated metal in the cloud for running
-> your performance regression tests? Or at least a dedicated metal per execution.
-
-I'm not currently using a dedicated VM currently.  I've been primarily
-using a 1TB PD-SSD as the storage medium and a n1-standard-16 as the
-VM type.  That's been fairly reliable.
-
-Using GCE Local SSD is a little tricky because there is more than one
-underlying hardware, and that can result in differing results across
-different VM's.  What you *can* do is to just use the same VM, and
-then kexec into different kernels each time.  This can be done
-manually, by copying in a different kernel into /root/bzImage, and
-then running /root/do_kexec, and then running the next benchmark.
-Eventually my plan to support this with a  command like
-
-gce-xfstests --kernel gs://$B/bzImage-4.19,gs://bz/$B/bzImage-5.3 \
-	--local-ssd pts
-
-The reason why Local SSD is interesting is that GCE's Persistent Disk
-has a very different performance profile than HDD's or SSD's --- it
-acts much more like a battery-backed enterprise storage array, in that
-CACHE FLUSH's are super fast, as are random writes.  GCE Local SSD
-acts like, well, a real high performance SSD, and it's good to
-benchmark both.
-
-> I have not looked into GCE, so don't know how easy it is and how expensive
-> to use GCE this way.
-
-A benchmark run does take longer than "gce-xfstests -g auto", since
-you generally use a larger VM and a larger amount of storage.  A 1T
-PD-SSD plus a n1-standard-16 VM is about a dollar an hour, and it's
-3-4 hours to run the pts/disk benchmark suite.  So call it $3-4 for a
-single performance test run.
-
-> Is there any chance of Google donating this sort of resource for a performance
-> regression test bot?
-
-We're not at the point where we could run gce-xfstests (either for
-functional or performance testing) as a bot.  There's still some
-development work that needs to happen before that could be a reality.
-For now, if there was a development team that wanted to use
-gce-xfstests for performance and benchmarking, I'm happy to put them
-in contact with the folks at Google which support open source
-projects.
-
-   	     		       	   		   - Ted
+Josef
