@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF09511DCF2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2019 05:12:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E64DB11DCF4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2019 05:12:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732012AbfLMELY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Dec 2019 23:11:24 -0500
+        id S1732023AbfLMEL0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Dec 2019 23:11:26 -0500
 Received: from esa6.hgst.iphmx.com ([216.71.154.45]:11924 "EHLO
         esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731476AbfLMELX (ORCPT
+        with ESMTP id S1731476AbfLMEL0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Dec 2019 23:11:23 -0500
+        Thu, 12 Dec 2019 23:11:26 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1576210284; x=1607746284;
+  t=1576210286; x=1607746286;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Gv9q0DDDj86eEUSslQJev/ik3Quaqy64bmbJlpcYfcY=;
-  b=W85iN9wOurXKPLWnqgHJpAEfy5HZBpRyM3q4uUCw8zQxWbOHQI2cSdPZ
-   hdBsyBYoffQTrNL4AdrAK1TGIZmVMv72NKVeOkOD25ifv8k3tKiCG50Jg
-   KTI3APCOhRLBb8OCGDAxDYkogtsl+ozPQ0Nzj4GSLqdeSLpWvLV5mBYPC
-   xxFIiz62Vi+TdvFBxA0JNA1dnY2KCz7Z4QpZAS9zi9XAbftdQZrocorzC
-   BiVyix1seb3sQXe5KJZqnfm8gfCtlS/CdjavpWlziyZOycrkktKP8mWaV
-   eqQcq0JoaN7+6Xg5i1fP6RkWPy0NTS/pCDQEpwSfX8VQfnulftWv6FhuQ
-   w==;
-IronPort-SDR: 6KCi3Ex+KJvxLAQSA65i0IbhLPslAAYIr9Is1C8vr6aRQRwkmiHHuOIUnQzbETkrjP+ZZKKcxz
- SwrCaFy9RS8hLcPTydiI2rGLx8ywCOiYiBNOYzdtfNuvpLH0nTNpv/CN1+ApkwKctbARXjFuvx
- mqLpitQlHsyywdY4Vk7KT/cpJ/eZXBM3y6HAn0q15dz31f5yt/OYaJa+BryoazPoOowc5pq5ig
- 618uLIUaZCj8h6ilHKBbSnsOEeWWdau2zNH9o2R9WscLBMFgrTEyiiWbfn2sfGxbNn0IUkma9A
- DdI=
+  bh=/2PWrPqXZ5ElzQ0/FlPHhCO4f/Wes9FOqdwgVS4EW44=;
+  b=Tk0XlOaApDIWQ3/envySfeZgCYXcgUaqseklmcfVIIRm4nXivoX697gS
+   6LsKmem8k0ljRUeA4e03wRRnejZVAsujcCxWPrpoOnnrAUVXWDUHI+Yma
+   66SoRq1TK+FyuomT+IBChskFmSvzbptbnRzLzib54zI7xTBHevWsv6zq/
+   yvwFxwKxn9ynKtk4ZYbzCk28p8D3nGXirxMEi+FIXOFmWu7DqN7TbKMxA
+   Nl2luQK9pizI0rrcG11VwgGOPSxts+QUOjBEXm3Ut22OCK7UA6sZ+1l/N
+   4bRWT9Sc9nyl/aTUJoUuYw0pc1d75/RjpC5FnHrXqsjnm18PlaBj+bdSf
+   A==;
+IronPort-SDR: LEmtYSUTuGfjwT4CeCPaX6KYNUcWK36xDpmf3BJF/03YX4FmAiFARa700NdB67YnhqGtse+tuG
+ sYKDDmbWLislVBd76g06EQOGQj77Jffj3hGAAwCK96uBL+F3Q387KkWRXClXXlIkc9Y7MEUMOQ
+ IVTsu4wRavr/d1+xCiAlhzvA3hZUMMfS8fyj4DzpSg3t0UFqcxJhd1vd24PZjwKe3a4KhfTM3Z
+ Z43aKPc8TXcO9vIPFHX83dDe1cFZiIBuFLsqavo4isjHJAhzyVKxJ3INWDh8d5TpL4TCQtM+G/
+ bzM=
 X-IronPort-AV: E=Sophos;i="5.69,308,1571673600"; 
-   d="scan'208";a="126860153"
+   d="scan'208";a="126860156"
 Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 13 Dec 2019 12:11:24 +0800
-IronPort-SDR: yfjbylusxPpA9bhf7wDYEYuLAlrJ3wmWO0T6zX+WRuVpRt5hDWdNyT75CLPq+P63VVm9HRUlI9
- 0I/Fvl27aFmQZdPlm+B8XQq+2USfi3TVU4LCXhPDKfUBagWEFq7iGwaXMSmp+bp7iiSM4uOomI
- FexhGwrmLFpnFtIQrSyRWRAW15GmXfK6Ozge0X54/2uOnm228V2Kz+BBih+pQYhOmesHbznbFe
- goM8PnmJlCDQQ8S4jW+oCp4mSWlItYisC9ecrsLiENmHAgbYXV+A8xhTrkHrDZYCNh+XVJhIGu
- DppREmfVP++Zv6Q9Y5AyG03i
+  by ob1.hgst.iphmx.com with ESMTP; 13 Dec 2019 12:11:26 +0800
+IronPort-SDR: azbN2mXajNgyUKFUf8OKuykrqVp+4OINkF8yXq6wbJiU4pdgNnC6+w3SluyclZyo5YeSkYp573
+ 3fCqqCREimV/TGAceufMGU2Aw3kwYJb1fozqgs8x+di3HcILp5isoeT2KJUEWD4FjhysP044N/
+ fIjN5go3T6w0Xhd6Gh/P45jQ85x1kNT8i40ra3Wt+NNeVZTRirvCfIi1Btd5+jXheUSA5dCIS7
+ nGP7TqbyMEIwzx9D8Z5iTu92PxKX5rqml1Cc9UHPC8cRNQCHM7AS63izRFlACwTWV6PX8V15e1
+ zKgYlYCkRJv/1uowp1CBPJvO
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2019 20:05:55 -0800
-IronPort-SDR: nR7bSYGrpYzRhq/dvqqmE/2hol6O0UXdk9VUWBOAhZl07KqzF79lYJ1Gb+ydmFiYNVpGS8kmvC
- ox16BOvvtqfP6t30uJTRuk+Q7Qdi1ZZoui25OOoDrAt4jE1Uf8k+cYex0UoQ7n3o0r2llBML6V
- /OwF6nAM27isDBX/CNHk8zbjJhqg1/vnFgz9p5PcmWSaPr+DLlyCjetWVqppi6RUDQbk4Er1Z+
- v/ZTn4v9zc5+MpVeGX+oqFmLXfrDj0G9hZl34QH5M9gZ7hVZJTnEgAinG+pUA1jcCaPdk/qKrt
- ov4=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2019 20:05:57 -0800
+IronPort-SDR: yzjb0wUSg21yiNVfUv1x7XeN9J5TwKTOkTcyD89bP3JXaTjMw3iEUy1pLeG7Yd0Eos5ohusgcY
+ CWW8c2DXHWJb3mdkZy92VtXBDHVD/I/CruMtBCHJFbeX2EvphkHRGVLA04ibUAXVLsmEF/DwpM
+ Va1iH4TV+baminVTPOCrACaO60M9hMyXFildviFs7dub9d/Ny9ahrjPQ6OUecQG0MddO0Azem5
+ qADcXUgE7hIQ57pdIC5XDG/fqrQuzLrIpOINThxMvgnMQFy3aKHd5MJJYX9UATy2FDq/XjZiOD
+ ZcM=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com (HELO naota.fujisawa.hgst.com) ([10.149.53.115])
-  by uls-op-cesaip02.wdc.com with ESMTP; 12 Dec 2019 20:11:21 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 12 Dec 2019 20:11:24 -0800
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>
 Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
@@ -58,9 +58,9 @@ Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         Hannes Reinecke <hare@suse.com>,
         Anand Jain <anand.jain@oracle.com>,
         linux-fsdevel@vger.kernel.org, Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH v6 20/28] btrfs: avoid async checksum on HMZONED mode
-Date:   Fri, 13 Dec 2019 13:09:07 +0900
-Message-Id: <20191213040915.3502922-21-naohiro.aota@wdc.com>
+Subject: [PATCH v6 21/28] btrfs: disallow mixed-bg in HMZONED mode
+Date:   Fri, 13 Dec 2019 13:09:08 +0900
+Message-Id: <20191213040915.3502922-22-naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191213040915.3502922-1-naohiro.aota@wdc.com>
 References: <20191213040915.3502922-1-naohiro.aota@wdc.com>
@@ -71,75 +71,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In HMZONED, btrfs use per-Block Group zone_io_lock to serialize the data
-write IOs or use per-FS hmzoned_meta_io_lock to serialize the metadata
-write IOs.
+Placing both data and metadata in a block group is impossible in HMZONED
+mode. For data, we can allocate a space for it and write it immediately
+after the allocation. For metadata, however, we cannot do so, because the
+logical addresses are recorded in other metadata buffers to build up the
+trees. As a result, a data buffer can be placed after a metadata buffer,
+which is not written yet. Writing out the data buffer will break the
+sequential write rule.
 
-Even with these serialization, write bios sent from
-{btree,btrfs}_write_cache_pages can be reordered by async checksum workers
-as these workers are per CPU and not per zone.
-
-To preserve write BIO ordering, we can disable async checksum on HMZONED.
-This does not result in lower performance with HDDs as a single CPU core is
-fast enough to do checksum for a single zone write stream with the maximum
-possible bandwidth of the device. If multiple zones are being written
-simultaneously, HDD seek overhead lowers the achievable maximum bandwidth,
-resulting again in a per zone checksum serialization not affecting
-performance.
+This commit check and disallow MIXED_BG with HMZONED mode.
 
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- fs/btrfs/disk-io.c | 2 ++
- fs/btrfs/inode.c   | 9 ++++++---
- 2 files changed, 8 insertions(+), 3 deletions(-)
+ fs/btrfs/hmzoned.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 4abadd9317d1..c3d8fc10d11d 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -882,6 +882,8 @@ static blk_status_t btree_submit_bio_start(void *private_data, struct bio *bio,
- static int check_async_write(struct btrfs_fs_info *fs_info,
- 			     struct btrfs_inode *bi)
- {
-+	if (btrfs_fs_incompat(fs_info, HMZONED))
-+		return 0;
- 	if (atomic_read(&bi->sync_writers))
- 		return 0;
- 	if (test_bit(BTRFS_FS_CSUM_IMPL_FAST, &fs_info->flags))
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index e7fc217be095..bd3384200fc9 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -2166,7 +2166,8 @@ static blk_status_t btrfs_submit_bio_hook(struct inode *inode, struct bio *bio,
- 	enum btrfs_wq_endio_type metadata = BTRFS_WQ_ENDIO_DATA;
- 	blk_status_t ret = 0;
- 	int skip_sum;
--	int async = !atomic_read(&BTRFS_I(inode)->sync_writers);
-+	int async = !atomic_read(&BTRFS_I(inode)->sync_writers) &&
-+		!btrfs_fs_incompat(fs_info, HMZONED);
- 
- 	skip_sum = BTRFS_I(inode)->flags & BTRFS_INODE_NODATASUM;
- 
-@@ -8457,7 +8458,8 @@ static inline blk_status_t btrfs_submit_dio_bio(struct bio *bio,
- 
- 	/* Check btrfs_submit_bio_hook() for rules about async submit. */
- 	if (async_submit)
--		async_submit = !atomic_read(&BTRFS_I(inode)->sync_writers);
-+		async_submit = !atomic_read(&BTRFS_I(inode)->sync_writers) &&
-+			!btrfs_fs_incompat(fs_info, HMZONED);
- 
- 	if (!write) {
- 		ret = btrfs_bio_wq_end_io(fs_info, bio, BTRFS_WQ_ENDIO_DATA);
-@@ -8522,7 +8524,8 @@ static int btrfs_submit_direct_hook(struct btrfs_dio_private *dip)
+diff --git a/fs/btrfs/hmzoned.c b/fs/btrfs/hmzoned.c
+index 1aa4c9d1032e..c779232bb003 100644
+--- a/fs/btrfs/hmzoned.c
++++ b/fs/btrfs/hmzoned.c
+@@ -306,6 +306,13 @@ int btrfs_check_hmzoned_mode(struct btrfs_fs_info *fs_info)
+ 		goto out;
  	}
  
- 	/* async crcs make it difficult to collect full stripe writes. */
--	if (btrfs_data_alloc_profile(fs_info) & BTRFS_BLOCK_GROUP_RAID56_MASK)
-+	if (btrfs_data_alloc_profile(fs_info) & BTRFS_BLOCK_GROUP_RAID56_MASK ||
-+	    btrfs_fs_incompat(fs_info, HMZONED))
- 		async_submit = 0;
- 	else
- 		async_submit = 1;
++	if (btrfs_fs_incompat(fs_info, MIXED_GROUPS)) {
++		btrfs_err(fs_info,
++			  "HMZONED mode is not allowed for mixed block groups");
++		ret = -EINVAL;
++		goto out;
++	}
++
+ 	fs_info->zone_size = zone_size;
+ 
+ 	btrfs_info(fs_info, "HMZONED mode enabled, zone size %llu B",
 -- 
 2.24.0
 
