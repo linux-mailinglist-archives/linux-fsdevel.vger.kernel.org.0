@@ -2,129 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5ECF11DE06
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2019 06:54:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 395B811E054
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2019 10:10:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732214AbfLMFyN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Dec 2019 00:54:13 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:56528 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732135AbfLMFxs (ORCPT
+        id S1726345AbfLMJKi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Dec 2019 04:10:38 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:33478 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725946AbfLMJKi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Dec 2019 00:53:48 -0500
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191213055347epoutp0402f44a6f3f165e31a3f6eb9aba856534~f2H1AQRI91153911539epoutp04Q
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2019 05:53:47 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191213055347epoutp0402f44a6f3f165e31a3f6eb9aba856534~f2H1AQRI91153911539epoutp04Q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1576216427;
-        bh=UUoUAxVUeGrd9/f+ZckaJUxyKKqatbYoOYEmtYBTzpM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IK1vWp/3YnFJagt3J1SaBEFZoJ/zErxi9Kfav+dRaTmSWaFxLQ74BJsHcb+292Jem
-         rw2otUadPuWpaGcnjbOzJjMgrxMASRtRbDXLOcQdNYEvT30Wfdjmc+qLMZLXDPeKyc
-         NAa892dyYPS8VDpF4qOVXpB8EnxwZwrq9EYlVMvM=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20191213055346epcas1p47bab349ea9bb7a977767bac55ad71608~f2H0aCfRe0641506415epcas1p4l;
-        Fri, 13 Dec 2019 05:53:46 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.162]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 47Z0GK5jdxzMqYkm; Fri, 13 Dec
-        2019 05:53:45 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        3A.00.48019.96723FD5; Fri, 13 Dec 2019 14:53:45 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20191213055345epcas1p10a858f9ceb26f217e00183669947e500~f2HzZVMHJ0207402074epcas1p16;
-        Fri, 13 Dec 2019 05:53:45 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191213055345epsmtrp208bdf9b7ae4a1ae58673551318c6de99~f2HzYqiXh0142801428epsmtrp2E;
-        Fri, 13 Dec 2019 05:53:45 +0000 (GMT)
-X-AuditID: b6c32a38-257ff7000001bb93-c3-5df327690a6f
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        CB.92.06569.96723FD5; Fri, 13 Dec 2019 14:53:45 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.88.103.87]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191213055345epsmtip250e8fabe94f851aeef61b31144a0b3ff~f2HzP73Al1079710797epsmtip2M;
-        Fri, 13 Dec 2019 05:53:45 +0000 (GMT)
-From:   Namjae Jeon <namjae.jeon@samsung.com>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com, Namjae Jeon <namjae.jeon@samsung.com>
-Subject: [PATCH v7 13/13] MAINTAINERS: add exfat filesystem
-Date:   Fri, 13 Dec 2019 00:50:28 -0500
-Message-Id: <20191213055028.5574-14-namjae.jeon@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191213055028.5574-1-namjae.jeon@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOKsWRmVeSWpSXmKPExsWy7bCmrm6m+udYg9/PtS2aF69ns1i5+iiT
-        xZ69J1ksLu+aw2bxY3q9xZZ/R1gtLr3/wOLA7rF/7hp2j903G9g8+rasYvT4vEnO49D2N2wB
-        rFE5NhmpiSmpRQqpecn5KZl56bZK3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlAVygp
-        lCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJVSC1JyCgwNCvSKE3OLS/PS9ZLzc60MDQyMTIEq
-        E3IyTvWuYCv4xlrx+8AU9gbGBtYuRk4OCQETiS/LHzB1MXJxCAnsYJR4+3YvC0hCSOATo8T+
-        k4EQ9jdGiXVndWAaFt46ygjRsJdR4uqzVcwQDlDDxI8Pgbo5ONgEtCX+bBEFaRARsJfYPPsA
-        C0gNs0ALo8SC0z+YQRLCAtYSV/c9BdvGIqAqsfr3NDCbV8BG4t+FPywQ2+QlVm84AFbPCRSf
-        N/kDO8ggCYE5bBKnW39CFblI7D3WAvWPsMSr41vYIWwpic/v9rKBHCQhUC3xcT8zRLiDUeLF
-        d1sI21ji5voNrCAlzAKaEut36UOEFSV2/p7LCGIzC/BJvPvawwoxhVeio00IokRVou/SYSYI
-        W1qiq/0D1FIPiVuzp7JCgqSfUWL52VUsExjlZiFsWMDIuIpRLLWgODc9tdiwwAQ5vjYxghOZ
-        lsUOxj3nfA4xCnAwKvHwMqR8ihViTSwrrsw9xCjBwawkwmtfAxTiTUmsrEotyo8vKs1JLT7E
-        aAoMyInMUqLJ+cAkm1cSb2hqZGxsbGFiZm5maqwkzsvx42KskEB6YklqdmpqQWoRTB8TB6dU
-        A6Ni9NZCrw/PxUNrCvO/rn7yjvtK9P6l9wqDKrJ+Fvs6WyueeWo8acbDj9tutz2ydORaEv3Q
-        tNtUw+SWWsPu2i7tWPFwTnbHq54lN4xZf/MEPTpVbnvgR6nVnLPFJlcFpE3nqy+Muu/2o7um
-        +okAW/GcQ8wMZ54tn29pPEFNp0BpeZzJ7FP9KkosxRmJhlrMRcWJADls5YB6AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrELMWRmVeSWpSXmKPExsWy7bCSvG6m+udYgx/LhSyaF69ns1i5+iiT
-        xZ69J1ksLu+aw2bxY3q9xZZ/R1gtLr3/wOLA7rF/7hp2j903G9g8+rasYvT4vEnO49D2N2wB
-        rFFcNimpOZllqUX6dglcGad6V7AVfGOt+H1gCnsDYwNrFyMnh4SAicTCW0cZuxi5OIQEdjNK
-        nJm9mxkiIS1x7MQZIJsDyBaWOHy4GKLmA6PEp/f/2UHibALaEn+2iIKUiwg4SvTuOswCUsMs
-        0MUo8ajpG9gcYQFriav7nrKA2CwCqhKrf08Ds3kFbCT+XfjDArFLXmL1hgNg9ZxA8XmTP7CD
-        2EJAvXffvmKbwMi3gJFhFaNkakFxbnpusWGBUV5quV5xYm5xaV66XnJ+7iZGcMhpae1gPHEi
-        /hCjAAejEg/visRPsUKsiWXFlbmHGCU4mJVEeO1rgEK8KYmVValF+fFFpTmpxYcYpTlYlMR5
-        5fOPRQoJpCeWpGanphakFsFkmTg4pRoYp54KStKaqlTBPf06y64KhdqjR6//2Bm1JJ7FZZHF
-        sR31fkf2bApsPzJt76kTPZbz51uKGVzlWWB2xrFIvuxkyObUT3khav+cP67svLq7eObfLTuS
-        pm1ctfzvrtsle+NF7SQy+EvNlWMmvSo72X/29YlzSYdF3eZOfZRqW96k4sy5eOlVSYOXF5VY
-        ijMSDbWYi4oTAdkRkio1AgAA
-X-CMS-MailID: 20191213055345epcas1p10a858f9ceb26f217e00183669947e500
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191213055345epcas1p10a858f9ceb26f217e00183669947e500
-References: <20191213055028.5574-1-namjae.jeon@samsung.com>
-        <CGME20191213055345epcas1p10a858f9ceb26f217e00183669947e500@epcas1p1.samsung.com>
+        Fri, 13 Dec 2019 04:10:38 -0500
+Received: by mail-qk1-f196.google.com with SMTP id d71so1523963qkc.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2019 01:10:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IRrlF5i6RzeEP3R8jYIvjzfeXuLk/3e9WVAuPgf3JD4=;
+        b=m2P/fTdPZDE36Gl1QUxcld1M9ENmXLASB/UHiDi/p1jULoWLSQEpWj8kgr962N0jZb
+         YxLy6VOit02AXdcfCHYv4EhefIbArcRDF78qV6X7NuV7cv6n6rf6pn/TCh9WAqixMoRK
+         CLxHsMVVkrg6oa1Db0e5SlEe0Q3m1xRHrX9rpKoFktKeVLaPIXcd8AoijuthOkg4KqEd
+         4TNez3GN9cJhh1QaGcKSWh22yEppCUQZ/sCQEYS2gdb/YNY78zh9KNUJ07KVDgPVrSfy
+         i+miyT3wOlEfo6z3m3Tnt1gbqmbyrvgHDD3zykbHQ1Eig4nP7TNv4KJqeSL0yhmxoF1r
+         oNCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IRrlF5i6RzeEP3R8jYIvjzfeXuLk/3e9WVAuPgf3JD4=;
+        b=h70ElrvJ4Lb+czeYU+kqJQWL3qmIfPHoEr7wVzpyQjXprrooEFtyQR/yBLajhLiIda
+         rFZ4yauPPUG3ZeQ2vJIPZJeOOjZhQDywwKPU3kG6Xj2dBmovQaV/CF4GQeXI64H64mQW
+         F5y+spFAFhkGxnY4Ggt0EXpur9xuQTbfOBnkQ0YlN+kRju4BGhTWIFvvrxWKsVDb54wR
+         pnKO2kKVGn7KY8kWXMoGd9EE+y8chV5pz7QRqI3Yns4j2JgVBiV4Wrfw7z5fv1bvu5bj
+         4Wg+Rfvap5jQPpW/UO78hvBZiOZUAndKlmwd0id3RguV1L56lKbEXZfzIwEcx03tiwzT
+         f+EQ==
+X-Gm-Message-State: APjAAAXqD47JMu17/u8bCZ5ivbD0h767pNSK80K2j6GHtdiAELUbHSyy
+        TMginof6BwuUFyjRBn/uhZPMMImgfYJvQ2cVk/Y9ig==
+X-Google-Smtp-Source: APXvYqyV30Kw+lK3xmCJOnsR4jDPKsnw36yVIx2tuAmpLnwb+nvNvQD6S+pkIJd6+XrkgxslVm9LjJsyHkumifUSt4o=
+X-Received: by 2002:a05:620a:1136:: with SMTP id p22mr11527564qkk.8.1576228237173;
+ Fri, 13 Dec 2019 01:10:37 -0800 (PST)
+MIME-Version: 1.0
+References: <000000000000b6b03205997b71cf@google.com> <20191212061206.GE4203@ZenIV.linux.org.uk>
+ <CACT4Y+YJuV8EGSx8K_5Qd0f+fUz8MHb1awyJ78Jf8zrNmKokrA@mail.gmail.com>
+ <20191212133844.GG4203@ZenIV.linux.org.uk> <CACT4Y+ZQ6C07TcuAHwc-T+Lb2ZkigkqW32d=TF054RuPwUFimw@mail.gmail.com>
+ <20191212183443.GH4203@ZenIV.linux.org.uk>
+In-Reply-To: <20191212183443.GH4203@ZenIV.linux.org.uk>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 13 Dec 2019 10:10:25 +0100
+Message-ID: <CACT4Y+b7hZuNuc4sRnhFkpCw+xQg2hzX1WuD__rejigxzBpXBg@mail.gmail.com>
+Subject: Re: BUG: corrupted list in __dentry_kill (2)
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     syzbot <syzbot+31043da7725b6ec210f1@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add myself and Sungjong Seo as exfat maintainer.
+On Thu, Dec 12, 2019 at 7:34 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Thu, Dec 12, 2019 at 04:57:14PM +0100, Dmitry Vyukov wrote:
+>
+> > > Speaking of bisect hazards, I'd recommend to check how your bisect
+> > > went - the bug is definitely local to this commit and I really
+> > > wonder what had caused the bisect to go wrong in this particular
+> > > case.
+> >
+> > I did not get the relation of folding to bisection. Or you mean these
+> > are just separate things?
+>
+> Suppose instead of folding the fix in I would've done a followup commit
+> just with the fix.  And left the branch in that form, eventually getting
+> it pulled into mainline.  From that point on, *ANY* bisect stepping into
+> the first commit would've been thrown off.  For ever and ever, since
+> once it's in mainline, it really won't go away.
+>
+> That's what folding avoids - accumulation of scar tissue, if you will.
+> Sure, there's enough cases when bug is found too late - it's already
+> in mainline or pulled into net-next or some other branch with similar
+> "no rebase, no reorder" policy.  But if you look at the patchsets posted
+> on the lists and watch them from iteration to iteration, you'll see
+> a _lot_ of fix-folding.  IME (both by my own practice and by watching
+> the patchsets posted by others) it outnumbers the cases when fix can't
+> be folded by quite a factor.  I wouldn't be surprised if it was an
+> order of magnitude...
+>
+> Strict "never fold fixes" policy would've accelerated the accumulation
+> of bisect hazards in the mainline.  And while useful bisect may be a lost
+> cause for CI bots, it isn't that for intelligent developers.  Anything
+> that makes it more painful is not going to be welcome.
 
-Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d10d73276fed..672ed71d01f7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6216,6 +6216,13 @@ F:	include/trace/events/mdio.h
- F:	include/uapi/linux/mdio.h
- F:	include/uapi/linux/mii.h
- 
-+EXFAT FILE SYSTEM
-+M:	Namjae Jeon <namjae.jeon@samsung.com>
-+M:	Sungjong Seo <sj1557.seo@samsung.com>
-+L:	linux-fsdevel@vger.kernel.org
-+S:	Maintained
-+F:	fs/exfat/
-+
- EXFAT FILE SYSTEM
- M:	Valdis Kletnieks <valdis.kletnieks@vt.edu>
- L:	linux-fsdevel@vger.kernel.org
--- 
-2.17.1
-
+Ah, I see. Yes, folding will help future bisections. In fact, an
+unfolded bug somewhere in kernel history is exactly what caused wrong
+result on bisection for this bug.
+Just in case, I did not propose to not do folding here (or anywhere
+else as far as I remember). Handling of folded fixes is documented in
+syzbot docs:
+https://goo.gl/tpsmEJ#rebuilt-treesamended-patches
