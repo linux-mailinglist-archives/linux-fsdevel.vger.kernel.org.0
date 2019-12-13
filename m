@@ -2,54 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C42F911E0CA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2019 10:32:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0C3611E0D3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2019 10:33:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725945AbfLMJcX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Dec 2019 04:32:23 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:44580 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbfLMJcX (ORCPT
+        id S1725928AbfLMJdg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Dec 2019 04:33:36 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:39856 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725799AbfLMJdg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Dec 2019 04:32:23 -0500
-Received: by mail-il1-f195.google.com with SMTP id z12so1501935iln.11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2019 01:32:22 -0800 (PST)
+        Fri, 13 Dec 2019 04:33:36 -0500
+Received: by mail-il1-f196.google.com with SMTP id n1so1533166ilm.6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2019 01:33:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=0AvYNOmUjKN/K+J3RM99cmU5kMLTjbZGmK2+xRiCOzg=;
-        b=YagDYrhYrYXr3l4jNE5K7/WsNmVDTeJfxcSm4lKJK02m+uamqWcyFPqx1/hkY2WVuM
-         sDuCXw2jmfYOENTetcw9QMo8dL1gJcvHOuatQNXBCFnImyDu37L2h7ohdL2V3sWxEtNV
-         B+tlsigYjEHiaPWEisKxcoV45O4oAmuXS8yEU=
+        bh=jKwPmAEnoo7ceOKcimyUtM1fEq6aSPFGrEZp99ZAMNc=;
+        b=Av9Qcfa203vxJVZMAOroGZwQqWopbwZzmAEIECN99fuboTWQ2d4mIQ1YYmttZXXf/M
+         +aL6wcyUzlp3jHQObWauaaJmK2xR+DDDkLEZEAGFrrd+pp8Tn10Xa0uncb5Xoqe/NpPJ
+         h/YUu9zAdIqAujUQ7U+YhF3h3KYBMVJO2RkMQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=0AvYNOmUjKN/K+J3RM99cmU5kMLTjbZGmK2+xRiCOzg=;
-        b=tVhWVHN33kTYpJmVWICG8zI2N8e5JpXX5rOWHGwiA1PfCxJkajOXEucRZzxjs0P1qS
-         LMtA1YpBXbRNk9Lfbsf0++3dDLlctY5m1QzPgfZjLKflCqFW2V/jhxKYFZeQ7JxMewLu
-         C+MB55LYFS4nzbsm30LwBdS0mSSr4s+0u0ezJx1OQwkO8ZCUeZZ54bzxcUpPj+ZzNk6i
-         Rj0fHDp1b7NOxAwcA5JKUg3bXSWr3RqfcWW/rizb7KclDcK+OaPsYeW86D8pmVtbuplG
-         hTWkTRHWmXXT51nKkX/ItYCvCXEBAkX7hoNtaiiAciKVEip1ky3P922Rkq/cftfndkOT
-         yZig==
-X-Gm-Message-State: APjAAAW6Bajf+RxzRz+WWJsjCBM3J8bQjHe4Gjpm9SvrcjpQMIg723qy
-        J/T3eiSm/LRudGBfvMJylmhdHJ4Ax0xTpUcXUVZOcQ==
-X-Google-Smtp-Source: APXvYqz5r6FTCM7lmivj0cg4Vt/roP0xFlvA9sgR88XsGNa7YqItqaDF/MzMdMiiUnUoQev5VbKciP4sJ7pS7oO7x4A=
-X-Received: by 2002:a92:8395:: with SMTP id p21mr12047027ilk.285.1576229542313;
- Fri, 13 Dec 2019 01:32:22 -0800 (PST)
+        bh=jKwPmAEnoo7ceOKcimyUtM1fEq6aSPFGrEZp99ZAMNc=;
+        b=dWY7I/kE1q8Z8LZtCKfqWIZpPs+wcOwCQzBCljXZBxpR76sBUWuWvOIS3YkVu6O7PZ
+         jQDwluwomydr6EodJNFjiRkaKORYi2SunthDeAYuc5eajfwVKbqvaPDuKbRZUPxJqKLn
+         SdtLCMZMpkPGnVv4o6ilUP7/D/t3G52/193YJG+54RHH/yO4atWUB4hB5PUGOohl7/gT
+         6knSLnWsdm/0TEjUxHntmGgOhB17ld3xegsH3J3iYoaIpvKEgyKda247Fs0A0dJrvXzq
+         jtf+QcUextL7ErIZeTZ8cmx8dzBU2j44bwjwyCatfIkUaj2B/RDJQDDLiFeeNF2EAaM5
+         jocg==
+X-Gm-Message-State: APjAAAV9+iROnTWuzQaGsn5HJMfmss2ZLS4Y6gbj/AVNWvtgHY8Dw+3x
+        4eufGiGozmIUb/vWMWK/S87urljKbvsWpsynXJNcwg==
+X-Google-Smtp-Source: APXvYqzvqX96U6h3JX6SIdquB4Fv65kxJu6AYqKfuw0agBc2Ijd2vJHtdD6rz9zRU+NGOB6OutCxqVwr2W2/d8DAD2s=
+X-Received: by 2002:a92:507:: with SMTP id q7mr11489383ile.63.1576229615847;
+ Fri, 13 Dec 2019 01:33:35 -0800 (PST)
 MIME-Version: 1.0
-References: <20191128155940.17530-1-mszeredi@redhat.com> <20191128155940.17530-2-mszeredi@redhat.com>
-In-Reply-To: <20191128155940.17530-2-mszeredi@redhat.com>
+References: <20191128155940.17530-1-mszeredi@redhat.com>
+In-Reply-To: <20191128155940.17530-1-mszeredi@redhat.com>
 From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 13 Dec 2019 10:32:11 +0100
-Message-ID: <CAJfpegun6_cX_6udQNrZSPD+Loum8RDTiwh3k6=NgUFbsm=YLw@mail.gmail.com>
-Subject: Re: [PATCH 01/12] aio: fix async fsync creds
+Date:   Fri, 13 Dec 2019 10:33:25 +0100
+Message-ID: <CAJfpegt9iotxfRH68=8xiWkbyT1E9ZJh1W2hZ8VshNJ83=H82A@mail.gmail.com>
+Subject: Re: [PATCH 00/12] various vfs patches
 To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-        Avi Kivity <avi@scylladb.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        stable <stable@vger.kernel.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
@@ -58,76 +55,57 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Hi Al,
 
-Could you please review/apply this patch?
+Could you please review/apply these patches?
 
 Thanks,
 Miklos
 
 On Thu, Nov 28, 2019 at 4:59 PM Miklos Szeredi <mszeredi@redhat.com> wrote:
 >
-> Avi Kivity reports that on fuse filesystems running in a user namespace
-> asyncronous fsync fails with EOVERFLOW.
+> Hi Al,
 >
-> The reason is that f_ops->fsync() is called with the creds of the kthread
-> performing aio work instead of the creds of the process originally
-> submitting IOCB_CMD_FSYNC.
+> This is a dump of my current vfs patch queue, all have been posted in one
+> form or another.
 >
-> Fuse sends the creds of the caller in the request header and it needs to
-> translate the uid and gid into the server's user namespace.  Since the
-> kthread is running in init_user_ns, the translation will fail and the
-> operation returns an error.
+> Also available as a git branch:
 >
-> It can be argued that fsync doesn't actually need any creds, but just
-> zeroing out those fields in the header (as with requests that currently
-> don't take creds) is a backward compatibility risk.
+>   git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git#for-viro
 >
-> Instead of working around this issue in fuse, solve the core of the problem
-> by calling the filesystem with the proper creds.
+> Please apply.
 >
-> Reported-by: Avi Kivity <avi@scylladb.com>
-> Tested-by: Giuseppe Scrivano <gscrivan@redhat.com>
-> Fixes: c9582eb0ff7d ("fuse: Fail all requests with invalid uids or gids")
-> Cc: stable@vger.kernel.org  # 4.18+
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> Thanks,
+> Miklos
 > ---
->  fs/aio.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
 >
-> diff --git a/fs/aio.c b/fs/aio.c
-> index 0d9a559d488c..37828773e2fe 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -176,6 +176,7 @@ struct fsync_iocb {
->         struct file             *file;
->         struct work_struct      work;
->         bool                    datasync;
-> +       struct cred             *creds;
->  };
+> Miklos Szeredi (12):
+>   aio: fix async fsync creds
+>   fs_parse: fix fs_param_v_optional handling
+>   vfs: verify param type in vfs_parse_sb_flag()
+>   uapi: deprecate STATX_ALL
+>   statx: don't clear STATX_ATIME on SB_RDONLY
+>   utimensat: AT_EMPTY_PATH support
+>   f*xattr: allow O_PATH descriptors
+>   vfs: allow unprivileged whiteout creation
+>   fs_parser: "string" with missing value is a "flag"
+>   vfs: don't parse forbidden flags
+>   vfs: don't parse "posixacl" option
+>   vfs: don't parse "silent" option
 >
->  struct poll_iocb {
-> @@ -1589,8 +1590,11 @@ static int aio_write(struct kiocb *req, const struct iocb *iocb,
->  static void aio_fsync_work(struct work_struct *work)
->  {
->         struct aio_kiocb *iocb = container_of(work, struct aio_kiocb, fsync.work);
-> +       const struct cred *old_cred = override_creds(iocb->fsync.creds);
+>  fs/aio.c                        |  8 ++++
+>  fs/char_dev.c                   |  3 ++
+>  fs/fs_context.c                 | 72 ++++++++++++---------------------
+>  fs/fs_parser.c                  | 19 ++++-----
+>  fs/namei.c                      | 17 ++------
+>  fs/stat.c                       |  4 +-
+>  fs/utimes.c                     |  6 ++-
+>  fs/xattr.c                      |  8 ++--
+>  include/linux/device_cgroup.h   |  3 ++
+>  include/linux/fs_parser.h       |  1 -
+>  include/uapi/linux/stat.h       | 11 ++++-
+>  samples/vfs/test-statx.c        |  2 +-
+>  tools/include/uapi/linux/stat.h | 11 ++++-
+>  13 files changed, 82 insertions(+), 83 deletions(-)
 >
->         iocb->ki_res.res = vfs_fsync(iocb->fsync.file, iocb->fsync.datasync);
-> +       revert_creds(old_cred);
-> +       put_cred(iocb->fsync.creds);
->         iocb_put(iocb);
->  }
->
-> @@ -1604,6 +1608,10 @@ static int aio_fsync(struct fsync_iocb *req, const struct iocb *iocb,
->         if (unlikely(!req->file->f_op->fsync))
->                 return -EINVAL;
->
-> +       req->creds = prepare_creds();
-> +       if (!req->creds)
-> +               return -ENOMEM;
-> +
->         req->datasync = datasync;
->         INIT_WORK(&req->work, aio_fsync_work);
->         schedule_work(&req->work);
 > --
 > 2.21.0
 >
