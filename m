@@ -2,130 +2,222 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 591B211EC05
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2019 21:47:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F25E11EC22
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2019 21:53:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726016AbfLMUrj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Dec 2019 15:47:39 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:40881 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbfLMUrj (ORCPT
+        id S1726750AbfLMUvv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Dec 2019 15:51:51 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:52823 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725747AbfLMUvv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Dec 2019 15:47:39 -0500
-Received: by mail-io1-f67.google.com with SMTP id x1so992219iop.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Dec 2019 12:47:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6sB8y2iaNHCxNWX2heldJxu0UPqZdo++w30Yr9hAFf8=;
-        b=ZHnQ8l1+CLl9GeJBhbz+xV21W7J0kQjB5/9uQjhe/OvyD8lBuZ1CNOzFMfo2nOB2Bc
-         VEXVZA8Y+KHPRJyKE1r68eqEw1x322Src1DB5H2EAnwkNCrz9m1XsgviniW9jWnlEGoX
-         j1nIwVrTqt4XaIMNZRjr4Rukbd4I01XB/19uSWfvvyJqk7f1KAi5EzGXMMmw5mr86eAn
-         4GDaEjfj8+Lh23ArwqQ4XscnpU9uVyiYywAjJ6sVDNIhegAkvzf29fhYkxsPP/Ss7xGE
-         GbBCKhgyY0RPAr4z9OWbvPS+6fIVg+OE7CTBMCunyTWegGnwnChoK2r1G5we5/H/8UZ5
-         pdXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6sB8y2iaNHCxNWX2heldJxu0UPqZdo++w30Yr9hAFf8=;
-        b=liCtga3230HEw6K8jBuWfPWpkEmFJRtduBmCJa2MQrkjiyiNzP74+lfheSx/6LInCy
-         95lGehWBJTk5NkO2kOJhUOdKxzMWt7hwn3vCAdHSXBnV6hdnPA3kVb/RMzWDsBgQFaaU
-         CJfXIfErjFhaCI0tn9sm5Hs3RGJnLe0xtVMCikQ1ZBfzZ9zpXv3aoFAVX49/u1X9/HtY
-         6SROuuvWBYUQJAYf+kqorPUbBm8phD9sIBKGDaUzz/UiCAvTHvAP+KPZEAzG/HpNgV+F
-         8ATuPXlbIg8rsKs4VnmZjZRdjnTb7iV/2wX8fm28QbSGKxih1aCjVlAeLZemESOwThgU
-         5X0A==
-X-Gm-Message-State: APjAAAWF5EALFDzjqPtoDYtPjT7MGFiZy7SOwHtYO4UADPpfz84sWkJW
-        z0t2uXQwT66gmjok3X4TjnJE1w==
-X-Google-Smtp-Source: APXvYqxtZDedWPUq8ULNgcbZ/UKPCJ/p44H78xxlx+Vcyu3li8+yxy6GUJEv149yD89bTP48e+HSkw==
-X-Received: by 2002:a02:3e83:: with SMTP id s125mr1335024jas.104.1576270057981;
-        Fri, 13 Dec 2019 12:47:37 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id n3sm3093281ilm.74.2019.12.13.12.47.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2019 12:47:37 -0800 (PST)
-Subject: Re: [PATCH 4/5] iomap: add struct iomap_data
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, willy@infradead.org, clm@fb.com,
-        torvalds@linux-foundation.org, david@fromorbit.com
-References: <20191212190133.18473-1-axboe@kernel.dk>
- <20191212190133.18473-5-axboe@kernel.dk> <20191213203242.GB99868@magnolia>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <90f26792-3751-c755-c0b9-a85b816e5340@kernel.dk>
-Date:   Fri, 13 Dec 2019 13:47:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Fri, 13 Dec 2019 15:51:51 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MvbO4-1hpQC52QtS-00scVY; Fri, 13 Dec 2019 21:50:19 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, jdike@addtoit.com, richard@nod.at,
+        jcmvbkbc@gmail.com, stefanr@s5r6.in-berlin.de,
+        l.stach@pengutronix.de, linux+etnaviv@armlinux.org.uk,
+        christian.gmeiner@gmail.com, airlied@linux.ie, daniel@ffwll.ch,
+        robdclark@gmail.com, sean@poorly.run, valdis.kletnieks@vt.edu,
+        gregkh@linuxfoundation.org, ccaulfie@redhat.com,
+        teigland@redhat.com, hirofumi@mail.parknet.co.jp, jack@suse.com,
+        davem@davemloft.net, fw@strlen.de, viro@zeniv.linux.org.uk,
+        rfontana@redhat.com, tglx@linutronix.de,
+        linux-um@lists.infradead.org,
+        linux1394-devel@lists.sourceforge.net,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        devel@driverdev.osuosl.org, cluster-devel@redhat.com,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
+        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
+        darrick.wong@oracle.com, sparclinux@vger.kernel.org
+Subject: [PATCH v2 00/24] drivers, fs: y2038 updates
+Date:   Fri, 13 Dec 2019 21:49:09 +0100
+Message-Id: <20191213204936.3643476-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-In-Reply-To: <20191213203242.GB99868@magnolia>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:uP+kiANpOGJCAXUng4IDyXrHx7+oq5wNuUSCR2Raiw5aTIDdJGg
+ 5j4AA9RZwtRFpSlQJZR8HotU54Xfp+erI4gckXGaucpRhzYx4dcdDnO9RE7chr7C+S6QsS1
+ hz8jSvfht0kOIuwI+U39is0hUz6MZ6pZnETpaFRYUgmMegCz9cluYoQw5GzMKND6Vlt+MoP
+ vuRLets3Xp1M/VHl6bYkg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:kP6IKflIR3w=:FkB32fEkAgwus2sZyvbWHj
+ gR1XadNmIQfTKvjDx+NHX537KVRwu9adI8C1WG7Uvu2xqdyhi6NbGnzLLS3erKQVoi1q2bcZJ
+ fRUG1d36ibEvFjwqysbPbwC5u4DHiftBkUdZ02IxQaCgRmMake1padTMioHJ5VK44dQCw0Wgi
+ l9FfLjhcz0ZpYw+KmnFwnCxdaEQ4rrmqMmI9qQZLKGibtvLox0uwJBt2f1iziiy+EV55optWx
+ eHVAl6FcsIhDR1hGIagPTt0pygd3l5tg/E0N5N3r8mcI/qaniqvi6KMSXngpuISEjztZUFIKj
+ E4vl7qLyA/xxvBi57YzPutpomt5K21wonhWSM7aFqvVNnIjTmvlIhulMkCwyDac28R/Z4Dp0g
+ KMewi00ymEE1euw319FGcrDlXrYDszeK+FvG14u8GD9wvnlwoLF7R9G2nx97kdApqLxfkXQly
+ B+hANhQzcIaPqD3Mj4IbgJQGI17ypNCagD8+FwqTZDb0OBqInzQnwij7FBHUOWFHF3Qs/EI7o
+ 1nrINilaeyXksJoTUhiuzSirhvGWBkbMzW5k02tP0uTz7sxrCz/FxXHDE522PcCDuQTBlyv+I
+ QJ9z1iVT5Xg/jxkC7PWxkiiqjSgCEiTCIb6V84/lzwlgwaR4VDO+WH8ZX/gzqVNe9o9vQ3KSE
+ 8vilfRFPAZi1Or+AvWmTgxeRFkLvobJdMhGGlGJUFAh0XHUkVTF0t8WkeZWhW85ocAbJ5g94z
+ t07OthlwQEZNuwc5Z06FKMmP8bFmSpWpMf3TMpq6QCKO+gB6xZa0zdZgyTvgHlhAZckFpPNzt
+ SLryaKF3jS+MB5IeJX7dR8/nMWgS5LTwsezZchNIkyBiQLIxvP9ZVqFsGf6QbesMAbCjQWssu
+ Ok7QMsSa208ewWk2bxEw==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/13/19 1:32 PM, Darrick J. Wong wrote:
-> On Thu, Dec 12, 2019 at 12:01:32PM -0700, Jens Axboe wrote:
->> We pass a lot of arguments to iomap_apply(), and subsequently to the
->> actors that it calls. In preparation for adding one more argument,
->> switch them to using a struct iomap_data instead. The actor gets a const
->> version of that, they are not supposed to change anything in it.
->>
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> 
-> Looks good, only a couple of questions...
+These are updates to devidce drivers and file systems that for some
+reason or another were not included in the kernel in the previous
+y2038 series.
 
-Thanks!
+I've gone through all users of time_t again to make sure the
+kernel is in a long-term maintainable state.
 
->>  fs/dax.c               |  25 +++--
->>  fs/iomap/apply.c       |  26 +++---
->>  fs/iomap/buffered-io.c | 202 +++++++++++++++++++++++++----------------
->>  fs/iomap/direct-io.c   |  57 +++++++-----
->>  fs/iomap/fiemap.c      |  48 ++++++----
->>  fs/iomap/seek.c        |  64 ++++++++-----
->>  fs/iomap/swapfile.c    |  27 +++---
->>  include/linux/iomap.h  |  15 ++-
->>  8 files changed, 278 insertions(+), 186 deletions(-)
->>
->> diff --git a/fs/dax.c b/fs/dax.c
->> index 1f1f0201cad1..d1c32dbbdf24 100644
->> --- a/fs/dax.c
->> +++ b/fs/dax.c
->> @@ -1090,13 +1090,16 @@ int __dax_zero_page_range(struct block_device *bdev,
->>  EXPORT_SYMBOL_GPL(__dax_zero_page_range);
->>  
->>  static loff_t
->> -dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
->> -		struct iomap *iomap, struct iomap *srcmap)
->> +dax_iomap_actor(const struct iomap_data *data, struct iomap *iomap,
-> 
-> I wonder, is 'struct iomap_ctx' a better name for the context structure?
+Posting these as a series for better organization, but each change
+here is applicable standalone.
 
-Yeah I think you are right, does seem like a better fit. I'll rename it
-for the next version.
+Please merge, review, ack/nack etc as you see fit. I will
+add these to my y2038 branch [1] for linux-next, but can keep
+rebasing for feedback and to remove any patches that get
+picked up by a maintainer.
 
->> @@ -43,17 +44,18 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
->>  	 * expose transient stale data. If the reserve fails, we can safely
->>  	 * back out at this point as there is nothing to undo.
->>  	 */
->> -	ret = ops->iomap_begin(inode, pos, length, flags, &iomap, &srcmap);
->> +	ret = ops->iomap_begin(data->inode, data->pos, data->len, data->flags,
->> +				&iomap, &srcmap);
-> 
-> ...and second, what do people think about about passing "const struct
-> iomap_ctx *ctx" to iomap_begin and iomap_end to reduce the argument
-> counts there too?
-> 
-> (That's definitely a separate patch though, and I might just do that on
-> my own if nobody beats me to it...)
+Changes since v1 [2]:
 
-To be honest, I just did what I needed, but I do think it's worth
-pursuing in general. The argument clutter is real.
+- Add Acks I received
+- Rebase to v5.5-rc1, droping patches that got merged already
+- Add NFS, XFS and the final three patches from another series
+- Rewrite etnaviv patches
+
+      Arnd
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git/log/?h=y2038
+[2] https://lore.kernel.org/lkml/20191108213257.3097633-1-arnd@arndb.de/
+
+Arnd Bergmann (24):
+  Input: input_event: fix struct padding on sparc64
+  fat: use prandom_u32() for i_generation
+  dlm: use SO_SNDTIMEO_NEW instead of SO_SNDTIMEO_OLD
+  xtensa: ISS: avoid struct timeval
+  um: ubd: use 64-bit time_t where possible
+  acct: stop using get_seconds()
+  tsacct: add 64-bit btime field
+  packet: clarify timestamp overflow
+  quota: avoid time_t in v1_disk_dqblk definition
+  hostfs: pass 64-bit timestamps to/from user space
+  hfs/hfsplus: use 64-bit inode timestamps
+  drm/msm: avoid using 'timespec'
+  drm/etnaviv: reject timeouts with tv_nsec >= NSEC_PER_SEC
+  drm/etnaviv: avoid deprecated timespec
+  sunrpc: convert to time64_t for expiry
+  nfs: use time64_t internally
+  nfs: fix timstamp debug prints
+  nfs: fscache: use timespec64 in inode auxdata
+  xfs: rename compat_time_t to old_time32_t
+  xfs: disallow broken ioctls without compat-32-bit-time
+  xfs: quota: move to time64_t interfaces
+  y2038: remove obsolete jiffies conversion functions
+  y2038: rename itimerval to __kernel_old_itimerval
+  y2038: sparc: remove use of struct timex
+
+ arch/sparc/kernel/sys_sparc_64.c              | 29 +++++-----
+ arch/um/drivers/cow.h                         |  2 +-
+ arch/um/drivers/cow_user.c                    |  7 ++-
+ arch/um/drivers/ubd_kern.c                    | 10 ++--
+ arch/um/include/shared/os.h                   |  2 +-
+ arch/um/os-Linux/file.c                       |  2 +-
+ .../platforms/iss/include/platform/simcall.h  |  4 +-
+ drivers/gpu/drm/etnaviv/etnaviv_drv.c         | 20 ++++---
+ drivers/gpu/drm/etnaviv/etnaviv_drv.h         | 11 ++--
+ drivers/gpu/drm/etnaviv/etnaviv_gem.c         |  4 +-
+ drivers/gpu/drm/etnaviv/etnaviv_gem.h         |  2 +-
+ drivers/gpu/drm/etnaviv/etnaviv_gpu.c         |  5 +-
+ drivers/gpu/drm/etnaviv/etnaviv_gpu.h         |  5 +-
+ drivers/gpu/drm/msm/msm_drv.h                 |  3 +-
+ drivers/input/evdev.c                         | 14 ++---
+ drivers/input/misc/uinput.c                   | 14 +++--
+ fs/dlm/lowcomms.c                             |  6 +-
+ fs/fat/inode.c                                |  3 +-
+ fs/hfs/hfs_fs.h                               | 28 +++++++--
+ fs/hfs/inode.c                                |  4 +-
+ fs/hfsplus/hfsplus_fs.h                       | 28 +++++++--
+ fs/hfsplus/inode.c                            | 12 ++--
+ fs/hostfs/hostfs.h                            | 22 ++++---
+ fs/hostfs/hostfs_kern.c                       | 15 +++--
+ fs/nfs/fscache-index.c                        |  6 +-
+ fs/nfs/fscache.c                              | 18 ++++--
+ fs/nfs/fscache.h                              |  8 ++-
+ fs/nfs/nfs4xdr.c                              | 10 ++--
+ fs/quota/quotaio_v1.h                         |  6 +-
+ fs/xfs/xfs_dquot.c                            |  6 +-
+ fs/xfs/xfs_ioctl.c                            | 26 +++++++++
+ fs/xfs/xfs_ioctl32.c                          |  2 +-
+ fs/xfs/xfs_ioctl32.h                          |  2 +-
+ fs/xfs/xfs_qm.h                               |  6 +-
+ fs/xfs/xfs_quotaops.c                         |  6 +-
+ fs/xfs/xfs_trans_dquot.c                      |  8 ++-
+ include/linux/jiffies.h                       | 20 -------
+ include/linux/sunrpc/cache.h                  | 42 ++++++++------
+ include/linux/sunrpc/gss_api.h                |  4 +-
+ include/linux/sunrpc/gss_krb5.h               |  2 +-
+ include/linux/syscalls.h                      |  9 ++-
+ include/uapi/linux/acct.h                     |  2 +
+ include/uapi/linux/input.h                    |  1 +
+ include/uapi/linux/taskstats.h                |  6 +-
+ include/uapi/linux/time_types.h               |  5 ++
+ include/uapi/linux/timex.h                    |  2 +
+ kernel/acct.c                                 |  4 +-
+ kernel/time/itimer.c                          | 18 +++---
+ kernel/time/time.c                            | 58 ++-----------------
+ kernel/tsacct.c                               |  9 ++-
+ net/packet/af_packet.c                        | 27 +++++----
+ net/sunrpc/auth_gss/gss_krb5_mech.c           | 12 +++-
+ net/sunrpc/auth_gss/gss_krb5_seal.c           |  8 +--
+ net/sunrpc/auth_gss/gss_krb5_unseal.c         |  6 +-
+ net/sunrpc/auth_gss/gss_krb5_wrap.c           | 16 ++---
+ net/sunrpc/auth_gss/gss_mech_switch.c         |  2 +-
+ net/sunrpc/auth_gss/svcauth_gss.c             |  6 +-
+ net/sunrpc/cache.c                            | 16 ++---
+ net/sunrpc/svcauth_unix.c                     | 10 ++--
+ 59 files changed, 351 insertions(+), 290 deletions(-)
 
 -- 
-Jens Axboe
+2.20.0
 
+Cc: jdike@addtoit.com
+Cc: richard@nod.at
+Cc: jcmvbkbc@gmail.com
+Cc: stefanr@s5r6.in-berlin.de
+Cc: l.stach@pengutronix.de
+Cc: linux+etnaviv@armlinux.org.uk
+Cc: christian.gmeiner@gmail.com
+Cc: airlied@linux.ie
+Cc: daniel@ffwll.ch
+Cc: robdclark@gmail.com
+Cc: sean@poorly.run
+Cc: valdis.kletnieks@vt.edu
+Cc: gregkh@linuxfoundation.org
+Cc: ccaulfie@redhat.com
+Cc: teigland@redhat.com
+Cc: hirofumi@mail.parknet.co.jp
+Cc: jack@suse.com
+Cc: davem@davemloft.net
+Cc: fw@strlen.de
+Cc: viro@zeniv.linux.org.uk
+Cc: rfontana@redhat.com
+Cc: tglx@linutronix.de
+Cc: linux-um@lists.infradead.org
+Cc: linux1394-devel@lists.sourceforge.net
+Cc: etnaviv@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-arm-msm@vger.kernel.org
+Cc: freedreno@lists.freedesktop.org
+Cc: devel@driverdev.osuosl.org
+Cc: cluster-devel@redhat.com
+Cc: linux-fsdevel@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: trond.myklebust@hammerspace.com
+Cc: anna.schumaker@netapp.com
+Cc: linux-nfs@vger.kernel.org
+Cc: linux-xfs@vger.kernel.org
+Cc: darrick.wong@oracle.com
+Cc: sparclinux@vger.kernel.org
