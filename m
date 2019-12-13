@@ -2,321 +2,245 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3497D11DBD9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2019 02:50:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1649B11DC14
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Dec 2019 03:27:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731693AbfLMBu1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Dec 2019 20:50:27 -0500
-Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:33692 "EHLO
-        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731529AbfLMBu1 (ORCPT
+        id S1731488AbfLMC11 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Dec 2019 21:27:27 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:52990 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731330AbfLMC11 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Dec 2019 20:50:27 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0Tkka5UH_1576201821;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0Tkka5UH_1576201821)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 13 Dec 2019 09:50:23 +0800
-Subject: [PATCH v6 2/2] sched/numa: documentation for per-cgroup numa
-From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>
-References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
- <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
- <040def80-9c38-4bcc-e4a8-8a0d10f131ed@linux.alibaba.com>
- <25cf7ef5-e37e-7578-eea7-29ad0b76c4ea@linux.alibaba.com>
- <443641e7-f968-0954-5ff6-3b7e7fed0e83@linux.alibaba.com>
- <d2c4cace-623a-9317-c957-807e3875aa4a@linux.alibaba.com>
-Message-ID: <cf51744e-1c3b-a9d2-6ea2-995ee7863559@linux.alibaba.com>
-Date:   Fri, 13 Dec 2019 09:48:15 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.0
+        Thu, 12 Dec 2019 21:27:27 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBD2OgHp016387;
+        Fri, 13 Dec 2019 02:27:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ message-id : date : from : to : cc : subject : references : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=ezI5Hm7Ylq9q8YZeLlKlEfbheDOvaElbiAJvafzEp7M=;
+ b=Gh17UR+FmwF8t4a6ekezcTj2culQSvyApGdRNxqZp76Ihkv2QnisG8mSmuIT8RqNce1Z
+ +u7VU0/K0to4IWLFyWaMK+fT34ttYsxJnh5A8z3uFwS/hKjSZ8zCtCYx+DHhIQ+qHWTN
+ 3x5/otkJSbMIfjxfH9kpVzXDhlMUhBupwI3/jLsUp2BhXMkvg3TzOtEWrt1yRc/jyFGN
+ ovvbQThUjTYu8Q7A/QyQkaUxt8ciJXEiAE687ieLsQniLpj5SnyDdk9XRk/xSGE5w6AC
+ NU/YrPGwGVgO76xNTxoDL8jew6xSQ71fGUPbFq6PCTV1DgHJEFZRkVG/JlqDxgeX6jw1 6w== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2wr41qphsj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 13 Dec 2019 02:26:59 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBD2OTrk188698;
+        Fri, 13 Dec 2019 02:26:59 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2wumsabp0q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 13 Dec 2019 02:26:58 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xBD2Qr4Y001936;
+        Fri, 13 Dec 2019 02:26:53 GMT
+Received: from localhost (/10.145.178.64) by default (Oracle Beehive Gateway
+ v4.0) with ESMTP ; Thu, 12 Dec 2019 18:26:35 -0800
+USER-AGENT: Mutt/1.9.4 (2018-02-28)
 MIME-Version: 1.0
-In-Reply-To: <d2c4cace-623a-9317-c957-807e3875aa4a@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Message-ID: <20191213022634.GA99868@magnolia>
+Date:   Thu, 12 Dec 2019 18:26:34 -0800 (PST)
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, willy@infradead.org, clm@fb.com,
+        torvalds@linux-foundation.org, david@fromorbit.com
+Subject: Re: [PATCH 5/5] iomap: support RWF_UNCACHED for buffered writes
+References: <20191212190133.18473-1-axboe@kernel.dk>
+ <20191212190133.18473-6-axboe@kernel.dk>
+In-Reply-To: <20191212190133.18473-6-axboe@kernel.dk>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9469 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912130019
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9469 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912130019
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add the description for 'numa_locality', also a new doc to explain
-the details on how to deal with the per-cgroup numa statistics.
+On Thu, Dec 12, 2019 at 12:01:33PM -0700, Jens Axboe wrote:
+> This adds support for RWF_UNCACHED for file systems using iomap to
+> perform buffered writes. We use the generic infrastructure for this,
+> by tracking pages we created and calling write_drop_cached_pages()
+> to issue writeback and prune those pages.
+> 
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  fs/iomap/apply.c       | 24 ++++++++++++++++++++++++
+>  fs/iomap/buffered-io.c | 23 +++++++++++++++++++----
+>  include/linux/iomap.h  |  5 +++++
+>  3 files changed, 48 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/iomap/apply.c b/fs/iomap/apply.c
+> index e76148db03b8..11b6812f7b37 100644
+> --- a/fs/iomap/apply.c
+> +++ b/fs/iomap/apply.c
+> @@ -92,5 +92,29 @@ iomap_apply(struct iomap_data *data, const struct iomap_ops *ops,
+>  				     data->flags, &iomap);
+>  	}
+>  
+> +	if (written && (data->flags & IOMAP_UNCACHED)) {
 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Michal Koutný <mkoutny@suse.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Iurii Zaikin <yzaikin@google.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
----
- Documentation/admin-guide/cg-numa-stat.rst      | 178 ++++++++++++++++++++++++
- Documentation/admin-guide/index.rst             |   1 +
- Documentation/admin-guide/kernel-parameters.txt |   4 +
- Documentation/admin-guide/sysctl/kernel.rst     |   9 ++
- init/Kconfig                                    |   2 +
- 5 files changed, 194 insertions(+)
- create mode 100644 Documentation/admin-guide/cg-numa-stat.rst
+Hmmm... why is a chunk of buffered write(?) code landing in the iomap
+apply function?
 
-diff --git a/Documentation/admin-guide/cg-numa-stat.rst b/Documentation/admin-guide/cg-numa-stat.rst
-new file mode 100644
-index 000000000000..30ebe5d6404f
---- /dev/null
-+++ b/Documentation/admin-guide/cg-numa-stat.rst
-@@ -0,0 +1,178 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+===============================
-+Per-cgroup NUMA statistics
-+===============================
-+
-+Background
-+----------
-+
-+On NUMA platforms, remote memory accessing always has a performance penalty.
-+Although we have NUMA balancing working hard to maximize the access locality,
-+there are still situations it can't help.
-+
-+This could happen in modern production environment. When a large number of
-+cgroups are used to classify and control resources, this creates a complex
-+configuration for memory policy, CPUs and NUMA nodes. In such cases NUMA
-+balancing could end up with the wrong memory policy or exhausted local NUMA
-+node, which would lead to low percentage of local page accesses.
-+
-+We need to detect such cases, figure out which workloads from which cgroup
-+have introduced the issues, then we get chance to do adjustment to avoid
-+performance degradation.
-+
-+However, there are no hardware counters for per-task local/remote accessing
-+info, we don't know how many remote page accesses have occurred for a
-+particular task.
-+
-+NUMA Locality
-+-------------
-+
-+Fortunately, we have NUMA Balancing which scans task's mapping and triggers
-+page fault periodically, giving us the opportunity to record per-task page
-+accessing info, when the CPU fall into PF is from the same node of pages, we
-+consider task as doing local page accessing, otherwise the remote page
-+accessing, we call these two counter the locality info.
-+
-+On each tick, we acquire the locality info of current task on that CPU, update
-+the increments into its cgroup, becoming the group locality info.
-+
-+By "echo 1 > /proc/sys/kernel/numa_locality" at runtime or adding boot parameter
-+'numa_locality', we will enable the accounting of per-cgroup NUMA locality info,
-+the 'cpu.numa_stat' entry of CPU cgroup will show statistics::
-+
-+  page_access local=NR_LOCAL_PAGE_ACCESS remote=NR_REMOTE_PAGE_ACCESS
-+
-+We define 'NUMA locality' as::
-+
-+  NR_LOCAL_PAGE_ACCESS * 100 / (NR_LOCAL_PAGE_ACCESS + NR_REMOTE_PAGE_ACCESS)
-+
-+This per-cgroup percentage number helps to represent the NUMA Balancing behavior.
-+
-+Note that the accounting is hierarchical, which means the NUMA locality info for
-+a given group represent not only the workload of this group, but also the
-+workloads of all its descendants.
-+
-+For example the 'cpu.numa_stat' shows::
-+
-+  page_access local=129909383 remote=18265810
-+
-+The NUMA locality calculated as::
-+
-+  129909383 * 100 / (129909383 + 18265810) = 87.67
-+
-+Thus we know the workload of this group and its descendants have totally done
-+129909383 times of local page accessing and 18265810 times of remotes, locality
-+is 87.67% which imply most of the memory access are local.
-+
-+NUMA Consumption
-+----------------
-+
-+There are also other cgroup entry help us to estimate NUMA efficiency, which is
-+'cpuacct.usage_percpu' and 'memory.numa_stat'.
-+
-+By reading 'cpuacct.usage_percpu' we will get per-cpu runtime (in nanoseconds)
-+info (in hierarchy) as::
-+
-+  CPU_0_RUNTIME CPU_1_RUNTIME CPU_2_RUNTIME ... CPU_X_RUNTIME
-+
-+Combined with the info from::
-+
-+  cat /sys/devices/system/node/nodeX/cpulist
-+
-+We would be able to accumulate the runtime of CPUs into NUMA nodes, to get the
-+per-cgroup node runtime info.
-+
-+By reading 'memory.numa_stat' we will get per-cgroup node memory consumption
-+info as::
-+
-+  total=TOTAL_MEM N0=MEM_ON_NODE0 N1=MEM_ON_NODE1 ... NX=MEM_ON_NODEX
-+
-+Together we call these the per-cgroup NUMA consumption info, tell us how many
-+resources a particular workload has consumed, on a particular NUMA node.
-+
-+Monitoring
-+----------
-+
-+By monitoring the increments of locality info, we can easily know whether NUMA
-+Balancing is working well for a particular workload.
-+
-+For example we take a 5 seconds sample period, then on each sampling we have::
-+
-+  local_diff = last_nr_local_page_access - nr_local_page_access
-+  remote_diff = last_nr_remote_page_access - nr_remote_page_access
-+
-+and we get the locality in this period as::
-+
-+  locality = local_diff * 100 / (local_diff + remote_diff)
-+
-+We can plot a line for locality, when the line close to 100% things are good,
-+when getting close to 0% something is wrong, we can pick a proper watermark to
-+trigger warning message.
-+
-+You may want to drop the data if the local/remote_diff is too small, which
-+implies there are not many available pages for NUMA Balancing to scan, ignoring
-+would be fine since most likely the workload is insensitive to NUMA, or the
-+memory topology is already good enough.
-+
-+Monitoring root group helps you control the overall situation, while you may
-+also want to monitor all the leaf groups which contain the workloads, this
-+helps to catch the mouse.
-+
-+Try to put your workload into also the cpuacct & memory cgroup, when NUMA
-+Balancing is disabled or locality becomes too small, we may want to monitor
-+the per-node runtime & memory info to see if the node consumption meet the
-+requirements.
-+
-+For NUMA node X on each sampling we have::
-+
-+  runtime_X_diff = runtime_X - last_runtime_X
-+  runtime_all_diff = runtime_all - last_runtime_all
-+
-+  runtime_percent_X = runtime_X_diff * 100 / runtime_all_diff
-+  memory_percent_X = memory_X * 100 / memory_all
-+
-+These two percentages are usually matched on each node, workload should execute
-+mostly on the node that contains most of its memory, but it's not guaranteed.
-+
-+The workload may only access a small part of its memory, in such cases although
-+the majority of memory are remotely, locality could still be good.
-+
-+Thus to tell if things are fine or not depends on the understanding of system
-+resource deployment, however, if you find node X got 100% memory percent but 0%
-+runtime percent, definitely something is wrong.
-+
-+Troubleshooting
-+---------------
-+
-+After identifying which workload introduced the bad locality, check:
-+
-+1). Is the workload bound to a particular NUMA node?
-+2). Has any NUMA node run out of resources?
-+
-+There are several ways to bind task's memory with a NUMA node, the strict way
-+like the MPOL_BIND memory policy or 'cpuset.mems' will limit the memory
-+node where to allocate pages. In this situation, admin should make sure the
-+task is allowed to run on the CPUs of that NUMA node, and make sure there are
-+available CPU resource there.
-+
-+There are also ways to bind task's CPU with a NUMA node, like 'cpuset.cpus' or
-+sched_setaffinity() syscall. In this situation, NUMA Balancing help to migrate
-+pages into that node, admin should make sure there are available memory there.
-+
-+Admin could try to rebind or unbind the NUMA node to erase the damage, make a
-+change then observe the statistics to see if things get better until the
-+situation is acceptable.
-+
-+Highlights
-+----------
-+
-+For some tasks, NUMA Balancing may be found to be unnecessary to scan pages,
-+and locality could always be 0 or small number, don't pay attention to them
-+since they most likely insensitive to NUMA.
-+
-+There is no accounting until the option is turned on, so enable it in advance
-+if you want to have the whole history.
-+
-+We have per-task migfailed counter to tell how many page migration has been
-+failed for a particular task, you will find it in /proc/PID/sched entry.
-diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
-index 4405b7485312..c75a3fdfcd94 100644
---- a/Documentation/admin-guide/index.rst
-+++ b/Documentation/admin-guide/index.rst
-@@ -112,6 +112,7 @@ configure specific aspects of kernel behavior to your liking.
-    video-output
-    wimax/index
-    xfs
-+   cg-numa-stat
+The #define for IOMAP_UNCACHED doesn't have a comment, so I don't know
+what this is supposed to mean.  Judging from the one place it gets set
+in the buffered write function I gather that this is how you implement
+the "write through page cache and immediately unmap the page if it
+wasn't there before" behavior?
 
- .. only::  subproject and html
+So based on that, I think you want ...
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 0945611b3877..9d9e57d19af3 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3227,6 +3227,10 @@
- 	numa_balancing=	[KNL,X86] Enable or disable automatic NUMA balancing.
- 			Allowed values are enable and disable
+if IOMAP_WRITE && _UNCACHED && !_DIRECT && written > 0:
+	flush and invalidate
 
-+	numa_locality	[KNL] Enable per-cgroup numa locality info.
-+			Useful to debug NUMA efficiency problems when there are
-+			lots of per-cgroup workloads.
-+
- 	numa_zonelist_order= [KNL, BOOT] Select zonelist order for NUMA.
- 			'node', 'default' can be specified
- 			This can be set from sysctl after boot.
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index 7e203b3ed331..efa995e757fd 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -572,6 +572,15 @@ rate for each task.
- numa_balancing_scan_size_mb is how many megabytes worth of pages are
- scanned for a given scan.
+Since direct writes are never going to create page cache, right?
 
-+numa_locality:
-+=============
-+
-+Enables/disables per-cgroup NUMA locality info.
-+
-+0: disabled (default).
-+1: enabled.
-+
-+Check Documentation/admin-guide/cg-numa-stat.rst for details.
+And in that case, why not put this at the end of iomap_write_actor?
 
- osrelease, ostype & version:
- ============================
-diff --git a/init/Kconfig b/init/Kconfig
-index c614ba6bdcc2..3538fdd73387 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -825,6 +825,8 @@ config CGROUP_NUMA_LOCALITY
- 	  This option enables the collection of per-cgroup NUMA locality info,
- 	  to tell whether NUMA Balancing is working well for a particular
- 	  workload, also imply the NUMA efficiency.
-+	  See
-+		-  Documentation/admin-guide/cg-numa-stat.rst
+(Sorry if this came up in the earlier discussions, I've been busy this
+week and still have a long way to go for catching up...)
 
- menuconfig CGROUPS
- 	bool "Control Group support"
--- 
-2.14.4.44.g2045bb6
+> +		struct address_space *mapping = data->inode->i_mapping;
+> +
+> +		end = data->pos + written;
+> +		ret = filemap_write_and_wait_range(mapping, data->pos, end);
+> +		if (ret)
+> +			goto out;
+> +
+> +		/*
+> +		 * No pages were created for this range, we're done
+> +		 */
+> +		if (!(iomap.flags & IOMAP_F_PAGE_CREATE))
+> +			goto out;
+> +
+> +		/*
+> +		 * Try to invalidate cache pages for the range we just wrote.
+> +		 * We don't care if invalidation fails as the write has still
+> +		 * worked and leaving clean uptodate pages in the page cache
+> +		 * isn't a corruption vector for uncached IO.
+> +		 */
+> +		invalidate_inode_pages2_range(mapping,
+> +				data->pos >> PAGE_SHIFT, end >> PAGE_SHIFT);
+> +	}
+> +out:
+>  	return written ? written : ret;
+>  }
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 0a1a195ed1cc..df9d6002858e 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -659,6 +659,7 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+>  		struct page **pagep, struct iomap *iomap, struct iomap *srcmap)
+>  {
+>  	const struct iomap_page_ops *page_ops = iomap->page_ops;
+> +	unsigned aop_flags;
+>  	struct page *page;
+>  	int status = 0;
+>  
+> @@ -675,8 +676,11 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+>  			return status;
+>  	}
+>  
+> +	aop_flags = AOP_FLAG_NOFS;
+> +	if (flags & IOMAP_UNCACHED)
+> +		aop_flags |= AOP_FLAG_UNCACHED;
+>  	page = grab_cache_page_write_begin(inode->i_mapping, pos >> PAGE_SHIFT,
+> -			AOP_FLAG_NOFS);
+> +						aop_flags);
+>  	if (!page) {
+>  		status = -ENOMEM;
+>  		goto out_no_page;
+> @@ -818,6 +822,7 @@ iomap_write_actor(const struct iomap_data *data, struct iomap *iomap,
+>  {
+>  	struct inode *inode = data->inode;
+>  	struct iov_iter *i = data->priv;
+> +	unsigned flags = data->flags;
+>  	loff_t length = data->len;
+>  	loff_t pos = data->pos;
+>  	long status = 0;
+> @@ -851,10 +856,17 @@ iomap_write_actor(const struct iomap_data *data, struct iomap *iomap,
+>  			break;
+>  		}
+>  
+> -		status = iomap_write_begin(inode, pos, bytes, 0, &page, iomap,
+> -				srcmap);
+> -		if (unlikely(status))
+> +retry:
+> +		status = iomap_write_begin(inode, pos, bytes, flags,
+> +						&page, iomap, srcmap);
+> +		if (unlikely(status)) {
+> +			if (status == -ENOMEM && (flags & IOMAP_UNCACHED)) {
+> +				iomap->flags |= IOMAP_F_PAGE_CREATE;
+> +				flags &= ~IOMAP_UNCACHED;
+> +				goto retry;
+> +			}
+>  			break;
+> +		}
+>  
+>  		if (mapping_writably_mapped(inode->i_mapping))
+>  			flush_dcache_page(page);
+> @@ -907,6 +919,9 @@ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *iter,
+>  	};
+>  	loff_t ret = 0, written = 0;
+>  
+> +	if (iocb->ki_flags & IOCB_UNCACHED)
+> +		data.flags |= IOMAP_UNCACHED;
+> +
+>  	while (iov_iter_count(iter)) {
+>  		data.len = iov_iter_count(iter);
+>  		ret = iomap_apply(&data, ops, iomap_write_actor);
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 30f40145a9e9..30bb248e1d0d 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -48,12 +48,16 @@ struct vm_fault;
+>   *
+>   * IOMAP_F_BUFFER_HEAD indicates that the file system requires the use of
+>   * buffer heads for this mapping.
+> + *
+> + * IOMAP_F_PAGE_CREATE indicates that pages had to be allocated to satisfy
+> + * this operation.
+>   */
+>  #define IOMAP_F_NEW		0x01
+>  #define IOMAP_F_DIRTY		0x02
+>  #define IOMAP_F_SHARED		0x04
+>  #define IOMAP_F_MERGED		0x08
+>  #define IOMAP_F_BUFFER_HEAD	0x10
+> +#define IOMAP_F_PAGE_CREATE	0x20
 
+I think these new flags need an update to the _STRINGS arrays in
+fs/iomap/trace.h.
+>  
+>  /*
+>   * Flags set by the core iomap code during operations:
+> @@ -121,6 +125,7 @@ struct iomap_page_ops {
+>  #define IOMAP_FAULT		(1 << 3) /* mapping for page fault */
+>  #define IOMAP_DIRECT		(1 << 4) /* direct I/O */
+>  #define IOMAP_NOWAIT		(1 << 5) /* do not block */
+> +#define IOMAP_UNCACHED		(1 << 6)
+
+No comment?
+
+--D
+
+>  
+>  struct iomap_ops {
+>  	/*
+> -- 
+> 2.24.1
+> 
