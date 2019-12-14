@@ -2,141 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8278A11EEFA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Dec 2019 01:04:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6360C11EF38
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Dec 2019 01:32:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726638AbfLNABL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Dec 2019 19:01:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57176 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725747AbfLNABK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Dec 2019 19:01:10 -0500
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9D852253D;
-        Sat, 14 Dec 2019 00:01:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576281669;
-        bh=fiwkE+WR44drUBdQZzKt9uUx9+pgPBFXL1PTAdIGWmI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=rfS7lmo4sKdsU8/9O6Cdg83KzGwAvi74SCgclriejgHs616kAxKeHTgH/xGstAzCV
-         98KkrRpVNNdi9kRRPDHgQMtACFTuXMeBU4Ia3GGkgwPKBq/bQROiiZL09x01pIVAvo
-         8bJ/+v2g2jLxEPaBwarTE+QKyUZjkx3+9NNrkz34=
-Date:   Fri, 13 Dec 2019 16:01:09 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, willy@infradead.org, clm@fb.com
-Subject: Re: [PATCH 3/5] mm: make buffered writes work with RWF_UNCACHED
-Message-Id: <20191213160109.6c680b680e34891a2db387a9@linux-foundation.org>
-In-Reply-To: <20191210204304.12266-4-axboe@kernel.dk>
-References: <20191210204304.12266-1-axboe@kernel.dk>
-        <20191210204304.12266-4-axboe@kernel.dk>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726757AbfLNAbf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Dec 2019 19:31:35 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:34718 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726590AbfLNAbf (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 13 Dec 2019 19:31:35 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBE0T3bH056076;
+        Sat, 14 Dec 2019 00:31:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=2+aushzn/gdzakkI2/WSXNHpsaRfP/OYJl7Mtl74URg=;
+ b=sFUxnbKkhrBjQJ345yQDqcZLe1LCEjxv6S9vj9YB5TF6GqTUxxLf8ddEG5OQ7eBEKt3c
+ 96+yFbabbDQck7I5vBHQ9YhJO4Z+CT/gyuB3ob3u/6hxUG0sha/3YRcRTlRH+JmoER0A
+ WTdWKO/Tgn6Y4lYK1ciWANZu9q+ytPr9YSy0uLbX+xwSQqdx/CQ5bnSy/tZv/bef0kHs
+ IuDu8NviKHcMixKG5it7D9nMkrjoG3Y6/kxJhqt2nWMLyIrd2Wzy8BX7vFH5TqxLEiup
+ HR3BDQRbMlr2+ZB/8AEunRrLmHDORBcAI2am6alN43Y/byg8OQiduy8en3NAaxex1TS/ /w== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2wrw4nrs31-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 14 Dec 2019 00:31:11 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBE0Sqi9060329;
+        Sat, 14 Dec 2019 00:31:10 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2wvdtvjqxs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 14 Dec 2019 00:31:10 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xBE0V7Bs031068;
+        Sat, 14 Dec 2019 00:31:07 GMT
+Received: from localhost (/10.145.178.64)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 13 Dec 2019 16:31:06 -0800
+Date:   Fri, 13 Dec 2019 16:31:05 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc:     linux-btrfs@vger.kernel.org, hch@infradead.org,
+        fdmanana@kernel.org, nborisov@suse.com, dsterba@suse.cz,
+        jthumshirn@suse.de, linux-fsdevel@vger.kernel.org,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: Re: [PATCH 2/8] iomap: add a filesystem hook for direct I/O bio
+ submission
+Message-ID: <20191214003105.GA99860@magnolia>
+References: <20191213195750.32184-1-rgoldwyn@suse.de>
+ <20191213195750.32184-3-rgoldwyn@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191213195750.32184-3-rgoldwyn@suse.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9470 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912140001
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9470 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912140001
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 10 Dec 2019 13:43:02 -0700 Jens Axboe <axboe@kernel.dk> wrote:
-
-> If RWF_UNCACHED is set for io_uring (or pwritev2(2)), we'll drop the
-> cache instantiated for buffered writes. If new pages aren't
-> instantiated, we leave them alone. This provides similar semantics to
-> reads with RWF_UNCACHED set.
+On Fri, Dec 13, 2019 at 01:57:44PM -0600, Goldwyn Rodrigues wrote:
+> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
 > 
+> This helps filesystems to perform tasks on the bio while submitting for
+> I/O. This could be post-write operations such as data CRC or data
+> replication for fs-handled RAID.
+> 
+> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+> Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-Wouid be nice to see a description of the proposed userspace API(s)
-for exploiting this feature.
+Looks ok,
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -285,6 +285,7 @@ enum positive_aop_returns {
->  #define AOP_FLAG_NOFS			0x0002 /* used by filesystem to direct
->  						* helper code (eg buffer layer)
->  						* to clear GFP_FS from alloc */
-> +#define AOP_FLAG_UNCACHED		0x0004
+--D
+
+> ---
+>  fs/iomap/direct-io.c  | 14 +++++++++-----
+>  include/linux/iomap.h |  2 ++
+>  2 files changed, 11 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 23837926c0c5..1a3bf3bd86fb 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -59,7 +59,7 @@ int iomap_dio_iopoll(struct kiocb *kiocb, bool spin)
+>  EXPORT_SYMBOL_GPL(iomap_dio_iopoll);
 >  
->  /*
->   * oh the beauties of C type declarations.
-> @@ -3106,6 +3107,10 @@ extern ssize_t generic_file_direct_write(struct kiocb *, struct iov_iter *);
->  extern ssize_t generic_perform_write(struct file *, struct iov_iter *,
->  				     struct kiocb *);
->  
-> +struct pagevec;
-> +extern void write_drop_cached_pages(struct pagevec *pvec,
-> +				struct address_space *mapping);
-> +
->  ssize_t vfs_iter_read(struct file *file, struct iov_iter *iter, loff_t *ppos,
->  		rwf_t flags);
->  ssize_t vfs_iter_write(struct file *file, struct iov_iter *iter, loff_t *ppos,
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index fe37bd2b2630..2e36129ebe38 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -3287,10 +3287,12 @@ struct page *grab_cache_page_write_begin(struct address_space *mapping,
->  					pgoff_t index, unsigned flags)
+>  static void iomap_dio_submit_bio(struct iomap_dio *dio, struct iomap *iomap,
+> -		struct bio *bio)
+> +		struct bio *bio, loff_t pos)
 >  {
->  	struct page *page;
-> -	int fgp_flags = FGP_LOCK|FGP_WRITE|FGP_CREAT;
-> +	int fgp_flags = FGP_LOCK|FGP_WRITE;
+>  	atomic_inc(&dio->ref);
 >  
->  	if (flags & AOP_FLAG_NOFS)
->  		fgp_flags |= FGP_NOFS;
-> +	if (!(flags & AOP_FLAG_UNCACHED))
-> +		fgp_flags |= FGP_CREAT;
+> @@ -67,7 +67,11 @@ static void iomap_dio_submit_bio(struct iomap_dio *dio, struct iomap *iomap,
+>  		bio_set_polled(bio, dio->iocb);
 >  
->  	page = pagecache_get_page(mapping, index, fgp_flags,
->  			mapping_gfp_mask(mapping));
-> @@ -3301,21 +3303,65 @@ struct page *grab_cache_page_write_begin(struct address_space *mapping,
+>  	dio->submit.last_queue = bdev_get_queue(iomap->bdev);
+> -	dio->submit.cookie = submit_bio(bio);
+> +	if (dio->dops && dio->dops->submit_io)
+> +		dio->submit.cookie = dio->dops->submit_io(bio,
+> +				dio->iocb->ki_filp, pos);
+> +	else
+> +		dio->submit.cookie = submit_bio(bio);
 >  }
->  EXPORT_SYMBOL(grab_cache_page_write_begin);
 >  
-> +/*
-> + * Start writeback on the pages in pgs[], and then try and remove those pages
-> + * from the page cached. Used with RWF_UNCACHED.
-> + */
-> +void write_drop_cached_pages(struct pagevec *pvec,
-> +			     struct address_space *mapping)
-> +{
-> +	loff_t start, end;
-> +	int i;
-> +
-> +	end = 0;
-> +	start = LLONG_MAX;
-> +	for (i = 0; i < pagevec_count(pvec); i++) {
-> +		loff_t off = page_offset(pvec->pages[i]);
-> +		if (off < start)
-> +			start = off;
-> +		if (off > end)
-> +			end = off;
-> +	}
-> +
-> +	__filemap_fdatawrite_range(mapping, start, end, WB_SYNC_NONE);
-> +
-> +	for (i = 0; i < pagevec_count(pvec); i++) {
-> +		struct page *page = pvec->pages[i];
-> +
-> +		lock_page(page);
-> +		if (page->mapping == mapping) {
-> +			wait_on_page_writeback(page);
-> +			if (!page_has_private(page) ||
-> +			    try_to_release_page(page, 0))
-> +				remove_mapping(mapping, page);
-> +		}
-> +		unlock_page(page);
-> +	}
-
-This is kinda invalidate_inode_pages2_range(), only much less so?  Why
-doesn't this code need to do all the things which
-invalidate_inode_pages2_range() does?  What happens if these pages are
-mmapped, faulted in?  Not faulted in?
-
-
-> +	pagevec_release(pvec);
-> +}
-
+>  static ssize_t iomap_dio_complete(struct iomap_dio *dio)
+> @@ -191,7 +195,7 @@ iomap_dio_zero(struct iomap_dio *dio, struct iomap *iomap, loff_t pos,
+>  	get_page(page);
+>  	__bio_add_page(bio, page, len, 0);
+>  	bio_set_op_attrs(bio, REQ_OP_WRITE, flags);
+> -	iomap_dio_submit_bio(dio, iomap, bio);
+> +	iomap_dio_submit_bio(dio, iomap, bio, pos);
+>  }
+>  
+>  static loff_t
+> @@ -299,11 +303,11 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+>  		}
+>  
+>  		dio->size += n;
+> -		pos += n;
+>  		copied += n;
+>  
+>  		nr_pages = iov_iter_npages(dio->submit.iter, BIO_MAX_PAGES);
+> -		iomap_dio_submit_bio(dio, iomap, bio);
+> +		iomap_dio_submit_bio(dio, iomap, bio, pos);
+> +		pos += n;
+>  	} while (nr_pages);
+>  
+>  	/*
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 8b09463dae0d..2b093a23ef1c 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -252,6 +252,8 @@ int iomap_writepages(struct address_space *mapping,
+>  struct iomap_dio_ops {
+>  	int (*end_io)(struct kiocb *iocb, ssize_t size, int error,
+>  		      unsigned flags);
+> +	blk_qc_t (*submit_io)(struct bio *bio, struct file *file,
+> +			  loff_t file_offset);
+>  };
+>  
+>  ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+> -- 
+> 2.16.4
+> 
