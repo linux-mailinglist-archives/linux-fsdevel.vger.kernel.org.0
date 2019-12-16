@@ -2,137 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0044112030E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2019 11:58:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2862112059D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2019 13:30:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727550AbfLPK6L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Dec 2019 05:58:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35672 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727403AbfLPK6L (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Dec 2019 05:58:11 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CC33AACA7;
-        Mon, 16 Dec 2019 10:58:07 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 803C11E0B2E; Mon, 16 Dec 2019 11:58:07 +0100 (CET)
-Date:   Mon, 16 Dec 2019 11:58:07 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     syzbot <syzbot+bea68382bae9490e7dd6@syzkaller.appspotmail.com>,
-        darrick.wong@oracle.com, hch@infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        linux-ext4@vger.kernel.org, David Howells <dhowells@redhat.com>
-Subject: Re: KASAN: use-after-free Read in iov_iter_alignment
-Message-ID: <20191216105807.GB23120@quack2.suse.cz>
-References: <000000000000ad9f910598bbb867@google.com>
- <20191202211037.GF2695@dread.disaster.area>
- <20191216104836.GA23120@quack2.suse.cz>
+        id S1727512AbfLPM2l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Dec 2019 07:28:41 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:39489 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727241AbfLPM2l (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Dec 2019 07:28:41 -0500
+Received: by mail-il1-f196.google.com with SMTP id x5so2306188ila.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2019 04:28:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yA9N5FQVJYEeL+u0+bDKbIT1ODRp3J/S00fH7mGzMNM=;
+        b=kkxCn4Z7k2oM/eJzTh3iGnB5DR7rCnlSAJ1u38oyW1uGoyF/g1FRq+EWj64SVgeVOL
+         2YgXJK7CQGpdJO3oSPN9f3+iz97RclGdS7Yl8NXeKeu/5zsMmd2mwgRIjp29XhUNbhqQ
+         C5lpQUjSyjQu5Y45OwvzeU426K3mNN0k8xexNx6u1hFln8t6QbDP1S9JeQP7OWgkmZ94
+         DbZ4A1bz54pBNGjWAOztbCUiyIvRYThdTm3LyFzmu4YRjMQsty5onw5LPCNfPksUEyWk
+         ngatZj+OQxepVZvCxnZjoWk3mdTYa5D3ZpsUHLz+pcqgcQtDI4gr7enJotLdlEZnk6rq
+         OEfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yA9N5FQVJYEeL+u0+bDKbIT1ODRp3J/S00fH7mGzMNM=;
+        b=RojZTzdGyZUHftcQ8jmDv9/mJyiN1QqMvGFjvhi0DAlwZSsEtixHMPsKsbjfeG1930
+         YZbpWdbATcDXdf30MpZ73vmbxXP+sfLzTuly+A+MqgSKB7uaSoDj9njHA9WDT+5/nixe
+         qj0m5RC4D3nIu4C+zqs/8t6lkUe5T5hBgnWlfdGip5FMxP9Ks1yzRZUlGShpZ/GVlqrH
+         dn8vLIjC8hSbx0dilI08/dubWUzgNcw6ChQugQfSMg+7JCXNu6H3ldfL19EcEuV/8xP/
+         Er8cgG9QVFkNFRP+kR/wVwKdFHm+me171Pje9TFf3xypaTntznoWzWfBuD06Pyw2jpz5
+         u/IQ==
+X-Gm-Message-State: APjAAAUUD7OwKebhiqJ2JSXb1o5WhpvhUPWxFI+QE6Us8ApndiIxi3z7
+        o9xuSC+AHGxRRCpsTK+ne1vvOLzJQ/l6h169kwQ=
+X-Google-Smtp-Source: APXvYqw2AjwgqslfFW8eWW7ik3IUThpMPg8pAqfYGz67y40D8uWAyddPZW42hLZJ2/XXDEReU+j9aGSH5vgBYRDohoY=
+X-Received: by 2002:a92:81cb:: with SMTP id q72mr11889936ilk.275.1576499320404;
+ Mon, 16 Dec 2019 04:28:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="y0ulUmNC+osPPQO6"
-Content-Disposition: inline
-In-Reply-To: <20191216104836.GA23120@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <2759fc54-9576-aaa0-926a-cad9d09d388c@cea.fr>
+In-Reply-To: <2759fc54-9576-aaa0-926a-cad9d09d388c@cea.fr>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 16 Dec 2019 14:28:29 +0200
+Message-ID: <CAOQ4uxh6pMeNGXDCU2c1v9yRnCjbyr50mFF4y1FphjFM8+yYKQ@mail.gmail.com>
+Subject: Re: open_by_handle_at: mount_fd opened with O_PATH
+To:     quentin.bouget@cea.fr
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        MARTINET Dominique 606316 <dominique.martinet@cea.fr>,
+        Andreas Dilger <adilger@whamcloud.com>,
+        NeilBrown <neilb@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Dec 16, 2019 at 11:39 AM <quentin.bouget@cea.fr> wrote:
+>
+> Hello,
+>
+> I recently noticed that the syscall open_by_handle_at() automatically
+> fails if
+> its first argument is a file descriptor opened with O_PATH. I looked at
+> the code
+> and saw no reason this could not be allowed. Attached to this mail are a
+> a reproducer and the patch I came up with.
+>
+> I am not quite familiar with the kernel's way of processing patches. Any
+> pointer
+> or advice on this matter is very welcome.
+>
 
---y0ulUmNC+osPPQO6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+See similar patch by Miklos to do the same for f*xattr() syscalls that
+looks simpler:
+https://lore.kernel.org/linux-fsdevel/20191128155940.17530-8-mszeredi@redhat.com/
 
-On Mon 16-12-19 11:48:36, Jan Kara wrote:
-> On Tue 03-12-19 08:10:37, Dave Chinner wrote:
-> > [cc linux-ext4@vger.kernel.org - this is reported from the new ext4
-> > dio->iomap code]
-> > 
-> > On Mon, Dec 02, 2019 at 09:15:08AM -0800, syzbot wrote:
-> > > Hello,
-> > > 
-> > > syzbot found the following crash on:
-> > > 
-> > > HEAD commit:    b94ae8ad Merge tag 'seccomp-v5.5-rc1' of git://git.kernel...
-> > > git tree:       upstream
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=135a8d7ae00000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=c2e464ae414aee8c
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=bea68382bae9490e7dd6
-> > > compiler:       clang version 9.0.0 (/home/glider/llvm/clang
-> > > 80fee25776c2fb61e74c1ecb1a523375c2500b69)
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1135cb36e00000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14e90abce00000
-> > > 
-> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > > Reported-by: syzbot+bea68382bae9490e7dd6@syzkaller.appspotmail.com
-> > > 
-...
+Al, any objections to making this change?
 
-> > Looks like buffered read IO on a loopback device on an ext4 image
-> > file, and something is being tripped over in the new ext4 direct IO
-> > path.  Might be an iomap issue, might be an ext4 issue, but it looks
-> > like the buffered read bio completion is running while the iov is
-> > still being submitted...
-> 
-> Looking a bit more into this, I'm pretty sure this is caused by commit
-> 8cefc107ca54c "pipe: Use head and tail pointers for the ring, not cursor
-> and length". The pipe dereference it has added to iov_iter_alignment() is
-> just bogus for all iter types except for pipes. I'll send a fix.
-
-For reference the fix I've sent is attached.
-
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
-
---y0ulUmNC+osPPQO6
-Content-Type: text/x-patch; charset=us-ascii
-Content-Disposition: attachment; filename="0001-pipe-Fix-bogus-dereference-in-iov_iter_alignment.patch"
-
-From bc27e20fdd29b97b45015e1443128b4d3ff9455e Mon Sep 17 00:00:00 2001
-From: Jan Kara <jack@suse.cz>
-Date: Mon, 16 Dec 2019 11:44:14 +0100
-Subject: [PATCH] pipe: Fix bogus dereference in iov_iter_alignment()
-
-We cannot look at 'i->pipe' unless we know the iter is a pipe. Move the
-ring_size load to a branch in iov_iter_alignment() where we've already
-checked the iter is a pipe to avoid bogus dereference.
-
-Reported-by: syzbot+bea68382bae9490e7dd6@syzkaller.appspotmail.com
-Fixes: 8cefc107ca54 ("pipe: Use head and tail pointers for the ring, not cursor and length")
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- lib/iov_iter.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
- Al, David, not sure who's going to merge this so sending to both :).
-
-								Honza
-
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index fb29c02c6a3c..51595bf3af85 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -1222,11 +1222,12 @@ EXPORT_SYMBOL(iov_iter_discard);
- 
- unsigned long iov_iter_alignment(const struct iov_iter *i)
- {
--	unsigned int p_mask = i->pipe->ring_size - 1;
- 	unsigned long res = 0;
- 	size_t size = i->count;
- 
- 	if (unlikely(iov_iter_is_pipe(i))) {
-+		unsigned int p_mask = i->pipe->ring_size - 1;
-+
- 		if (size && i->iov_offset && allocated(&i->pipe->bufs[i->head & p_mask]))
- 			return size | i->iov_offset;
- 		return size;
--- 
-2.16.4
-
-
---y0ulUmNC+osPPQO6--
+Thanks,
+Amir.
