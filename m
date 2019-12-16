@@ -2,35 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FEEB121631
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2019 19:27:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10524121637
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2019 19:27:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731458AbfLPS1c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Dec 2019 13:27:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46528 "EHLO mail.kernel.org"
+        id S1731600AbfLPS1l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Dec 2019 13:27:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727628AbfLPS1b (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:27:31 -0500
+        id S1731057AbfLPS1l (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:27:41 -0500
 Received: from debian5.Home (bl8-197-74.dsl.telepac.pt [85.241.197.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BB2020674;
-        Mon, 16 Dec 2019 18:27:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 759B720674;
+        Mon, 16 Dec 2019 18:27:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520851;
-        bh=b7Zp+m/Ds/ef6McCgYGXwFpr6eOhigKmMCfpL2V5pcU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=jo2ByGw83eCwSN9pPuEYe9csRAGVRIV0Dl4pLna2CCBBMcXaF0gkHChJKXSFAMJDk
-         Ds1OfC4E1Tkngf25ebedwFUZHvuBMuUzs92CpDodtVPXsmY09d2LA/0lRZYHbH4J8b
-         dsW42sN6kAfJErOvaEcrlJ5ydgLQbmsZiBlKKuko=
+        s=default; t=1576520860;
+        bh=HVseHPcnE1SswtFAF5XcNNtHAkobnesKHgy8huKCLSg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=DUYdc5xzAeUOdN2tAJQfXza6yXftaKMDJ1oDsxKigYRdbRN0+1i7lBFvu2g5Ljb2t
+         8vl/jblTnpi/0R0JTq5qy2gU1vw3kYQYRuMfon5iG8P8OxPSn2rXlmCex6zd8NfavT
+         ACRgNqo/XCdjR8QEfJcE7Tgrp12E+qJvJEC7Hh4c=
 From:   fdmanana@kernel.org
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org,
         darrick.wong@oracle.com, Filipe Manana <fdmanana@suse.com>
-Subject: [PATCH 0/2] Allow deduplication of the eof block when it is safe to do so
-Date:   Mon, 16 Dec 2019 18:26:54 +0000
-Message-Id: <20191216182656.15624-1-fdmanana@kernel.org>
+Subject: [PATCH 1/2] fs: allow deduplication of eof block into the end of the destination file
+Date:   Mon, 16 Dec 2019 18:26:55 +0000
+Message-Id: <20191216182656.15624-2-fdmanana@kernel.org>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20191216182656.15624-1-fdmanana@kernel.org>
+References: <20191216182656.15624-1-fdmanana@kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -38,37 +40,61 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Filipe Manana <fdmanana@suse.com>
 
-Hi,
+We always round down, to a multiple of the filesystem's block size, the
+length to deduplicate at generic_remap_check_len().  However this is only
+needed if an attempt to deduplicate the last block into the middle of the
+destination file is requested, since that leads into a corruption if the
+length of the source file is not block size aligned.  When an attempt to
+deduplicate the last block into the end of the destination file is
+requested, we should allow it because it is safe to do it - there's no
+stale data exposure and we are prepared to compare the data ranges for
+a length not aligned to the block (or page) size - in fact we even do
+the data compare before adjusting the deduplication length.
 
-This short series allows deduplication of the last block of a file when
-the eof is not aligned to the sector size, as long as the range's end
-offset matches the eof of the destination file.
+After btrfs was updated to use the generic helpers from VFS (by commit
+34a28e3d77535e ("Btrfs: use generic_remap_file_range_prep() for cloning
+and deduplication")) we started to have user reports of deduplication
+not reflinking the last block anymore, and whence users getting lower
+deduplication scores.  The main use case is deduplication of entire
+files that have a size not aligned to the block size of the filesystem.
 
-This is a safe case unlike the case where we attempt to clone the block in
-the middle of a file (which results in a corruption I found last year and
-affected both btrfs and xfs).
+We already allow cloning the last block to the end (and beyond) of the
+destination file, so allow for deduplication as well.
 
-This is motivated by btrfs users reporting lower deduplication scores
-starting with kernel 5.0, which was the kernel release where btrfs was
-changed to use the generic VFS helper generic_remap_file_range_prep().
-Users observed that the last block was no longer deduplicated when a
-file's size is not block size aligned.  For btrfs this is specially
-important because references are kept per extent and not per block, so
-not having the last block deduplicated means the entire extent is kept
-allocated, making the deduplication not effective and often pointless in
-many cases.
+Link: https://lore.kernel.org/linux-btrfs/2019-1576167349.500456@svIo.N5dq.dFFD/
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+---
+ fs/read_write.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-Thanks.
-
-Filipe Manana (2):
-  fs: allow deduplication of eof block into the end of the destination
-    file
-  Btrfs: make deduplication with range including the last block work
-
- fs/btrfs/ioctl.c |  3 ++-
- fs/read_write.c  | 10 ++++------
- 2 files changed, 6 insertions(+), 7 deletions(-)
-
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 5bbf587f5bc1..7458fccc59e1 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -1777,10 +1777,9 @@ static int remap_verify_area(struct file *file, loff_t pos, loff_t len,
+  * else.  Assume that the offsets have already been checked for block
+  * alignment.
+  *
+- * For deduplication we always scale down to the previous block because we
+- * can't meaningfully compare post-EOF contents.
+- *
+- * For clone we only link a partial EOF block above the destination file's EOF.
++ * For clone we only link a partial EOF block above or at the destination file's
++ * EOF.  For deduplication we accept a partial EOF block only if it ends at the
++ * destination file's EOF (can not link it into the middle of a file).
+  *
+  * Shorten the request if possible.
+  */
+@@ -1796,8 +1795,7 @@ static int generic_remap_check_len(struct inode *inode_in,
+ 	if ((*len & blkmask) == 0)
+ 		return 0;
+ 
+-	if ((remap_flags & REMAP_FILE_DEDUP) ||
+-	    pos_out + *len < i_size_read(inode_out))
++	if (pos_out + *len < i_size_read(inode_out))
+ 		new_len &= ~blkmask;
+ 
+ 	if (new_len == *len)
 -- 
 2.11.0
 
