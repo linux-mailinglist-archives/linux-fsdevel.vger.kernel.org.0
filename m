@@ -2,159 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA61C11FD81
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2019 05:17:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B312F11FF8F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2019 09:24:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbfLPERy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 15 Dec 2019 23:17:54 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:48742 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726437AbfLPERx (ORCPT
+        id S1726798AbfLPITK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Dec 2019 03:19:10 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:53031 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726712AbfLPITJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 15 Dec 2019 23:17:53 -0500
-Received: from dread.disaster.area (pa49-195-139-249.pa.nsw.optusnet.com.au [49.195.139.249])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id D6D053A1320;
-        Mon, 16 Dec 2019 15:17:49 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1ighpM-0007Vm-NT; Mon, 16 Dec 2019 15:17:48 +1100
-Date:   Mon, 16 Dec 2019 15:17:48 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, willy@infradead.org, clm@fb.com,
-        torvalds@linux-foundation.org
-Subject: Re: [PATCH 5/5] iomap: support RWF_UNCACHED for buffered writes
-Message-ID: <20191216041748.GL19213@dread.disaster.area>
-References: <20191211152943.2933-1-axboe@kernel.dk>
- <20191211152943.2933-6-axboe@kernel.dk>
- <20191212223403.GH19213@dread.disaster.area>
- <df334467-9c1a-2f03-654f-58b002ea5ae4@kernel.dk>
- <39af5a4d-7539-5746-ac3e-e2d6bd2209e3@kernel.dk>
+        Mon, 16 Dec 2019 03:19:09 -0500
+Received: from [192.168.1.155] ([77.2.44.177]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MdwRi-1i63OV2Z8Q-00b1UM; Mon, 16 Dec 2019 09:18:53 +0100
+Subject: Re: [PATCH 0/2] New zonefs file system
+To:     Damien Le Moal <damien.lemoal@wdc.com>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Johannes Thumshirn <jth@kernel.org>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Hannes Reinecke <hare@suse.de>
+References: <20191212183816.102402-1-damien.lemoal@wdc.com>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Message-ID: <29fb138e-e9e5-5905-5422-4454c956e685@metux.net>
+Date:   Mon, 16 Dec 2019 09:18:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <39af5a4d-7539-5746-ac3e-e2d6bd2209e3@kernel.dk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
-        a=KoypXv6BqLCQNZUs2nCMWg==:117 a=KoypXv6BqLCQNZUs2nCMWg==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=pxVhFHJ0LMsA:10
-        a=7-415B0cAAAA:8 a=ttecOIznnv4Bib-PtgkA:9 a=MxdZBAM7kpbZ0xAP:21
-        a=ww7lA5-8tPDbahhq:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20191212183816.102402-1-damien.lemoal@wdc.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: tl
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:tidq86cq2DrC1PaZAL2dKYJ8Xq6L/BNZALT0S0rGhHF9IHdklv6
+ QxOC+tG0GGdRnDgug5OwTkqgahcCry64UVr6OT9eFfI6P66f3GmZDaaPWbn89dKmnyWUOZo
+ /y1fU3Bs8t5MhU6qhWGVdM0SmkuMuM7SMXDWgweXBm5gBUDxo+G9oOt3Z/bTP4FyQfN2Z40
+ ThdV/1wLYtycKHyr6Yr7A==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:muUEbKg+/lA=:DVZVDvOZRrXWYtgG8RfWi0
+ s7YWyjYaVPCML/RwUaWXCy2SMQ9xiKk3oMoPaBbicEfDKJrU/pKNESYnsUDyGwHBEcjhfTVKs
+ kL8um95dhaYin3gncmQkwOfu14gWZpDX9ywW7KQ/V/SgfaAjnDa5OMhyKeV/VmdKlo/lfCN8I
+ awC+pqryEm6balHN8hIYQY9N6B9+ul140bY3K2cidO6X1KRg/rZ4B57KKzkCV+7q+AMO4ZC4x
+ 5yrjDt6tNrGzmYtSbVBVGoVXO4jejCSCYbc7AIW/baoKeZu5yhUUc0mnAN4BdlprXciIihKKm
+ Xt6UoD89rDKLDkqK599Zu9MoWXPU2nOjmKrIy3oqJjjrOUYuq/IlMLWzxutXjyF74NC9C0UPs
+ D/aejmBaDmFv0/LsWg1yp/shoVu6+vrXiB+fEUtIGdU1l0j7iH3rlpOEq/Xdaiz7NIWRAUCbj
+ 2fbEpHE5RG0jkZjf9It7FmFsCDeHXVAq0pd5k/5eypylShLvhZWiJPlncNnUQ6PO6fP2kEs6r
+ 1j04zgnnhi4yuwEGHcalIK5uOG5CQOvVivcCUsFL32D0hUiWGFJmPIrnbgRkq6S5NyNNU/aPs
+ QNRE2fdfewU2vXVs42RRprDcrmTFx61CbdouTE9xKwIIV6Ryxfwt/OfU04IupvlO84MGOSwcH
+ FZpGeva+pmKZxPCwN+gfcElxW5aK/g1DNikdMn/6paO/9zdHfxZbkhIF42bbo9AvMvAq0wN01
+ Ju6PHROyJZb9Z5aw2GYSr1ApqURGZhUhdI83O+7duTs10Lh6zuAf8PZttKzrSufws/BtqnPoF
+ 3Wf2uwNJnijgHUNIPnHENjQXqGutxJXNGJ6ypfjB9JBT0I1xnbkR1b+CvRS5SmfYV/ybkk7/0
+ TSkZiM6jyyD5oR09dR/A==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 05:57:57PM -0700, Jens Axboe wrote:
-> On 12/12/19 5:54 PM, Jens Axboe wrote:
-> > On 12/12/19 3:34 PM, Dave Chinner wrote:
-> >> On Wed, Dec 11, 2019 at 08:29:43AM -0700, Jens Axboe wrote:
-> >>> This adds support for RWF_UNCACHED for file systems using iomap to
-> >>> perform buffered writes. We use the generic infrastructure for this,
-> >>> by tracking pages we created and calling write_drop_cached_pages()
-> >>> to issue writeback and prune those pages.
-> >>>
-> >>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> >>> ---
-> >>>  fs/iomap/apply.c       | 24 ++++++++++++++++++++++++
-> >>>  fs/iomap/buffered-io.c | 37 +++++++++++++++++++++++++++++--------
-> >>>  include/linux/iomap.h  |  5 +++++
-> >>>  3 files changed, 58 insertions(+), 8 deletions(-)
-> >>>
-> >>> diff --git a/fs/iomap/apply.c b/fs/iomap/apply.c
-> >>> index 562536da8a13..966826ad4bb9 100644
-> >>> --- a/fs/iomap/apply.c
-> >>> +++ b/fs/iomap/apply.c
-> >>> @@ -90,5 +90,29 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
-> >>>  				     flags, &iomap);
-> >>>  	}
-> >>>  
-> >>> +	if (written && (flags & IOMAP_UNCACHED)) {
-> >>> +		struct address_space *mapping = inode->i_mapping;
-> >>> +
-> >>> +		end = pos + written;
-> >>> +		ret = filemap_write_and_wait_range(mapping, pos, end);
-> >>> +		if (ret)
-> >>> +			goto out;
-> >>> +
-> >>> +		/*
-> >>> +		 * No pages were created for this range, we're done
-> >>> +		 */
-> >>> +		if (!(iomap.flags & IOMAP_F_PAGE_CREATE))
-> >>> +			goto out;
-> >>> +
-> >>> +		/*
-> >>> +		 * Try to invalidate cache pages for the range we just wrote.
-> >>> +		 * We don't care if invalidation fails as the write has still
-> >>> +		 * worked and leaving clean uptodate pages in the page cache
-> >>> +		 * isn't a corruption vector for uncached IO.
-> >>> +		 */
-> >>> +		invalidate_inode_pages2_range(mapping,
-> >>> +				pos >> PAGE_SHIFT, end >> PAGE_SHIFT);
-> >>> +	}
-> >>> +out:
-> >>>  	return written ? written : ret;
-> >>>  }
-> >>
-> >> Just a thought on further optimisation for this for XFS.
-> >> IOMAP_UNCACHED is being passed into the filesystem ->iomap_begin
-> >> methods by iomap_apply().  Hence the filesystems know that it is
-> >> an uncached IO that is being done, and we can tailor allocation
-> >> strategies to suit the fact that the data is going to be written
-> >> immediately.
-> >>
-> >> In this case, XFS needs to treat it the same way it treats direct
-> >> IO. That is, we do immediate unwritten extent allocation rather than
-> >> delayed allocation. This will reduce the allocation overhead and
-> >> will optimise for immediate IO locality rather than optimise for
-> >> delayed allocation.
-> >>
-> >> This should just be a relatively simple change to
-> >> xfs_file_iomap_begin() along the lines of:
-> >>
-> >> -	if ((flags & (IOMAP_WRITE | IOMAP_ZERO)) && !(flags & IOMAP_DIRECT) &&
-> >> -			!IS_DAX(inode) && !xfs_get_extsz_hint(ip)) {
-> >> +	if ((flags & (IOMAP_WRITE | IOMAP_ZERO)) &&
-> >> +	    !(flags & (IOMAP_DIRECT | IOMAP_UNCACHED)) &&
-> >> +	    !IS_DAX(inode) && !xfs_get_extsz_hint(ip)) {
-> >> 		/* Reserve delalloc blocks for regular writeback. */
-> >> 		return xfs_file_iomap_begin_delay(inode, offset, length, flags,
-> >> 				iomap);
-> >> 	}
-> >>
-> >> so that it avoids delayed allocation for uncached IO...
-> > 
-> > That's very handy! Thanks, I'll add that to the next version. Just out
-> > of curiosity, would you prefer this as a separate patch, or just bundle
-> > it with the iomap buffered RWF_UNCACHED patch? I'm assuming the latter,
-> > and I'll just mention it in the changelog.
-> 
-> OK, since it's in XFS, it'd be a separate patch.
+On 12.12.19 19:38, Damien Le Moal wrote:
 
-*nod*
+Hi,
 
-> The code you quote seems
-> to be something out-of-tree?
+> zonefs is a very simple file system exposing each zone of a zoned block
+> device as a file. Unlike a regular file system with zoned block device
+> support (e.g. f2fs or the on-going btrfs effort), zonefs does not hide
+> the sequential write constraint of zoned block devices to the user.
 
-Ah, I quoted the code in the 5.4 release branch, not the 5.5-rc1
-tree. I'd forgotten that the xfs_file_iomap_begin() got massively
-refactored in the 5.5 merge and I hadn't updated my cscope trees. SO
-I'm guessing you want to go looking for the
-xfs_buffered_write_iomap_begin() and add another case to this
-initial branch:
+Just curious: what's the exact definition of "zoned" here ?
+Something like partitions ?
 
-        /* we can't use delayed allocations when using extent size hints */
-        if (xfs_get_extsz_hint(ip))
-                return xfs_direct_write_iomap_begin(inode, offset, count,
-                                flags, iomap, srcmap);
+Can these files then also serve as block devices for other filesystems ?
+Just a funny idea: could we handle partitions by a file system ?
 
-To make the buffered write IO go down the direct IO allocation path...
+Even more funny idea: give file systems block device ops, so they can
+be directly used as such (w/o explicitly using loopdev) ;-)
 
-Cheers,
+> Files representing sequential write zones of the device must be written
+> sequentially starting from the end of the file (append only writes).
 
-Dave.
+So, these files can only be accessed like a tape ?
+
+Assuming you're working ontop of standard block devices anyways (instead
+of tape-like media ;-)) - why introducing such a limitation ?
+
+> zonefs is not a POSIX compliant file system. It's goal is to simplify
+> the implementation of zoned block devices support in applications by
+> replacing raw block device file accesses with a richer file based API,
+> avoiding relying on direct block device file ioctls which may
+> be more obscure to developers. 
+
+ioctls ?
+
+Last time I checked, block devices could be easily accessed via plain
+file ops (read, write, seek, ...). You can basically treat them just
+like big files of fixed size.
+
+> One example of this approach is the
+> implementation of LSM (log-structured merge) tree structures (such as
+> used in RocksDB and LevelDB)
+
+The same LevelDB as used eg. in Chrome browser, which destroys itself
+every time a little temporary problem (eg. disk full) occours ?
+If that's the usecase I'd rather use an simple in-memory table instead
+and and enough swap, as leveldb isn't reliable enough for persistent
+data anyways :p
+
+> on zoned block devices by allowing SSTables
+> to be stored in a zone file similarly to a regular file system rather
+> than as a range of sectors of a zoned device. The introduction of the
+> higher level construct "one file is one zone" can help reducing the
+> amount of changes needed in the application while at the same time
+> allowing the use of zoned block devices with various programming
+> languages other than C.
+
+Why not just simply use files on a suited filesystem (w/ low block io
+overhead) or LVM volumes ?
+
+
+--mtx
+
 -- 
-Dave Chinner
-david@fromorbit.com
+Dringender Hinweis: aufgrund existenzieller Bedrohung durch "Emotet"
+sollten Sie *niemals* MS-Office-Dokumente via E-Mail annehmen/öffenen,
+selbst wenn diese von vermeintlich vertrauenswürdigen Absendern zu
+stammen scheinen. Andernfalls droht Totalschaden.
+---
+Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
+werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
+GPG/PGP-Schlüssel zu.
+---
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
