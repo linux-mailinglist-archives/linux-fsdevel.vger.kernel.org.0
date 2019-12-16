@@ -2,39 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 541CF121ED0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 00:13:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15FAD121EF5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 00:30:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbfLPXNV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Dec 2019 18:13:21 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:34276 "EHLO
+        id S1726776AbfLPX2s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Dec 2019 18:28:48 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:34428 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726487AbfLPXNV (ORCPT
+        with ESMTP id S1726487AbfLPX2s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Dec 2019 18:13:21 -0500
+        Mon, 16 Dec 2019 18:28:48 -0500
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1igzYD-0008DV-3R; Mon, 16 Dec 2019 23:13:17 +0000
-Date:   Mon, 16 Dec 2019 23:13:17 +0000
+        id 1igznB-00006O-VX; Mon, 16 Dec 2019 23:28:46 +0000
+Date:   Mon, 16 Dec 2019 23:28:45 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 00/12] various vfs patches
-Message-ID: <20191216231317.GO4203@ZenIV.linux.org.uk>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, Andrew Price <anprice@redhat.com>,
+        David Howells <dhowells@redhat.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 02/12] fs_parse: fix fs_param_v_optional handling
+Message-ID: <20191216232845.GP4203@ZenIV.linux.org.uk>
 References: <20191128155940.17530-1-mszeredi@redhat.com>
- <CAJfpegt9iotxfRH68=8xiWkbyT1E9ZJh1W2hZ8VshNJ83=H82A@mail.gmail.com>
+ <20191128155940.17530-3-mszeredi@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJfpegt9iotxfRH68=8xiWkbyT1E9ZJh1W2hZ8VshNJ83=H82A@mail.gmail.com>
+In-Reply-To: <20191128155940.17530-3-mszeredi@redhat.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 10:33:25AM +0100, Miklos Szeredi wrote:
-> Hi Al,
-> 
-> Could you please review/apply these patches?
+On Thu, Nov 28, 2019 at 04:59:30PM +0100, Miklos Szeredi wrote:
+> String options always have parameters, hence the check for optional
+> parameter will never trigger.
 
-Looking through those right now...
+What do you mean, always have parameters?  Granted, for fsconfig(2) it's
+(currently) true, but I see at least two other pathways that do not impose
+such requirement - vfs_parse_fs_string() and rbd_parse_options().
+
+You seem to deal with the former later in the patchset, but I don't see
+anything for the latter...
