@@ -2,151 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FE2312078F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2019 14:48:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5880120797
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2019 14:50:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728009AbfLPNsb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Dec 2019 08:48:31 -0500
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.71]:55638 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727579AbfLPNsa (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Dec 2019 08:48:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ts.fujitsu.com;
-        s=200619tsfj; t=1576504107; i=@ts.fujitsu.com;
-        bh=WAoiOLVLnfRZHjvIM34WJoYjoSRik6RjAJThWwiCBpk=;
-        h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:
-         Content-Transfer-Encoding:Content-Type;
-        b=jrCab8U7Sy0MExL0pvFBhIDrmnNm/SzwDfIQCGbMVfPfeMid4sALcf+JkHebFzCjg
-         FVF3zVZkgDRSiDC1lUTAA3uD2WnIdAbI8CgZtw40yR3aEJ9AKRbq9M/skSnWEtfwmc
-         dwMJIqA2ytR+EGhhO50Bk1/WdpjKYBarDd988fAYOCp5R/+seO4whf+iMiBfxfkhaR
-         eVD1aSnj+rt55KMAs41zttgXIOkZ2L1C0W8uDEUnO/fH4YlKi/dIs/JN8rhY4iBC/K
-         PhTklxPamdJicn/Xsaa5XnQSDkDv25Tu86/PIe7RdGc7ujggNzoAmp1J0IMqyLxVEO
-         sXbDDT6eh02jg==
-Received: from [46.226.52.199] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-7.bemta.az-b.eu-west-1.aws.symcld.net id 79/B1-22075-B2B87FD5; Mon, 16 Dec 2019 13:48:27 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMIsWRWlGSWpSXmKPExsViZ8MRqqvW/T3
-  W4O5kbYs9e0+yWFzeNYfNYlLnMTYHZo+WzdEenzfJBTBFsWbmJeVXJLBmTO9fwFLwUK7i2OUF
-  rA2MtyW7GLk4hATmMEosu3GBEcKZzyhx9fYZpi5GTg42AQOJXa8OMXcxcnCICChKXH7vBBJmF
-  nCUWDvjFwtIWFjARWLXjyyQMIuAqsSVRTeYQWxeAUOJTU+XsULYghInZz5hgWiVl+i43MgKYe
-  tILNj9iW0CI/csJGWzkJTNQlK2gJF5FaNFUlFmekZJbmJmjq6hgYGuoaGRrqGlORCb6SVW6Sb
-  ppZbqlqcWl+ga6iWWF+sVV+Ym56To5aWWbGIEhldKwdEjOxjffX2rd4hRkoNJSZQ35Oa3WCG+
-  pPyUyozE4oz4otKc1OJDjDIcHEoSvGvav8cKCRalpqdWpGXmAEMdJi3BwaMkwhvTCZTmLS5Iz
-  C3OTIdInWLU5Vj1f94iZiGWvPy8VClxXs4uoCIBkKKM0jy4EbC4u8QoKyXMy8jAwCDEU5BalJ
-  tZgir/ilGcg1FJmLcIZBVPZl4J3KZXQEcwAR1h5PcN5IiSRISUVAOTQTHXDB7GsPyYHYWf7Py
-  Xb2Dtjqy7crJC7NCc/P1pO4rDthXM5fXI56rbqKcl9lrhRQvXh6Ky/62N3658r5suech/po+K
-  1yfbMzLVTHPn5z+z3P+XezWL/fy/+ZWhn/onLt4o1L/YYO3dNEOjL4dXffm+0+xKas96xWc8f
-  Unn5CerObY03buW0GwasvbIM8Yd7gd2aiU2pn+a1bIok9txQQHr9m2qvvFf1fLzp7KxlGS/vP
-  Fv4hMzveidDFIHlfczLprIuqpjxdOQqc98//36oRHta6oj7DZfz6CJY+/LqTmFEep2b9b+va9
-  xYrFOzd3bX5ML71bP/BJ7sbfkzWVHu81arzoiHt1k/fCsudxAiaU4I9FQi7moOBEAyksHKDYD
-  AAA=
-X-Env-Sender: dietmar.hahn@ts.fujitsu.com
-X-Msg-Ref: server-5.tower-287.messagelabs.com!1576504102!563365!1
-X-Originating-IP: [62.60.8.85]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.44.22; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 31400 invoked from network); 16 Dec 2019 13:48:22 -0000
-Received: from unknown (HELO mailhost4.uk.fujitsu.com) (62.60.8.85)
-  by server-5.tower-287.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 16 Dec 2019 13:48:22 -0000
-Received: from sanpedro.mch.fsc.net ([172.17.20.6])
-        by mailhost4.uk.fujitsu.com (8.14.5/8.14.5) with SMTP id xBGDmGSC018441;
-        Mon, 16 Dec 2019 13:48:16 GMT
-Received: from amur.mch.fsc.net (unknown [10.172.102.15])
-        by sanpedro.mch.fsc.net (Postfix) with ESMTP id D9A7A9D00C7C;
-        Mon, 16 Dec 2019 14:48:07 +0100 (CET)
-From:   Dietmar Hahn <dietmar.hahn@ts.fujitsu.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@ftp.linux.org.uk>
-Subject: [PATCH] Fix a panic when core_pattern is set to "| prog..."
-Date:   Mon, 16 Dec 2019 14:48:07 +0100
-Message-ID: <2996767.y7E8ffpIOs@amur.mch.fsc.net>
+        id S1727948AbfLPNum (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Dec 2019 08:50:42 -0500
+Received: from mout.web.de ([212.227.17.12]:36127 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727941AbfLPNum (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Dec 2019 08:50:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1576504226;
+        bh=zJ+cWF7nwDFTUgO2uMhfKRvssVyaJetGmZThvQAErVU=;
+        h=X-UI-Sender-Class:Cc:References:Subject:From:To:Date:In-Reply-To;
+        b=Db76xbzdOunLhR0vEg1r1yxyZT58+T+iSBTMhJ2pDW3xyeRKRYqemA/Q8L1OHaeGZ
+         4g3XiHz7BA4PBQ3pRS3O3gP6xGfS8MPpXejJ91S07BCOUg856k3Kuf0i8U+hNQspcX
+         caVw2apGKLi/w866i3t5xBtZqHRV7AtAJIPW6Xgo=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.3] ([78.48.181.202]) by smtp.web.de (mrweb103
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0LsyRS-1hirHc2nXu-012Z2A; Mon, 16
+ Dec 2019 14:50:26 +0100
+Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>
+References: <20191213055028.5574-2-namjae.jeon@samsung.com>
+Subject: Re: [PATCH v7 01/13] exfat: add in-memory and on-disk structures and
+ headers
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-fsdevel@vger.kernel.org
+Message-ID: <088a50ad-dc67-4ff6-624d-a1ac2008b420@web.de>
+Date:   Mon, 16 Dec 2019 14:50:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20191213055028.5574-2-namjae.jeon@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:SrekASl3RDsBlAvfraP2ftN01mJ/kTlsHVmUM77Yq6t78iaUhuN
+ 8cky66fW3NgRi5JCO9z37SvnWaSILuZs0f6vQrZYRv87JcD84TktnmK3eNnAvwOnSj1f/DU
+ J3CUnZx2pfE0DNRstX/E5CVkOqGEIkP0ruStDDVC1aBjmSQFYShYYCIHt/0XyP6DI+XB6wU
+ /lqt7Yvdw8Yadte9O6pfg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:2I+dSRb1Ew0=:RBvvt49EwCkrBBPWxJE5+L
+ 6W5IC2A0M5fukw6bE0fGlVQrnPHPkAwX6q19clvPjxbpf3q8t3bI7fHhOKDkY0CE/jjUZmwKO
+ VqGJB8tEKrz134DbJBc002sKhV7L1S2zicfcCOcqs9BVnr/S1tRGJUOSLM58f5dYDzmmI62IL
+ oVCdsfI/mGNwoT9G88aTzwuEEJn+fjVvqKPlVSloH/MqJjKAhi/SLO+x05QKv08Erj8ReDaM+
+ k7je2wJ2NhdvjEHvD58BKPlAp+jp379Bg3Ca0pZeulHPEjvwKqbeEiqF+CPgEmahFqHv+d5TI
+ a8CKxqsrpRBW6OhWsRZrEVTrATJI+yWEEcogkFlkth4ne7n84MK65jOi1aQ4CGZwVD/w8zrBP
+ 3lJtXrdNxnVdbAocX1s+qw/PSUp0LW8u9BiGOQhukUHosg2V+tPT71c2xOguUGFFjO5JgOM75
+ 2tCU1P7lHq5Pd0NAVDTjxMxFBG1ShXlV48bM8MhPXu+hJGL0vDKfCM/QrrSURNrINJqW/n+Tz
+ B2hltMelZJODjW2jb7Z7ux/Mx/7k8YPp3+L6r/4o9CrOq6q3ZXDAN3XDKTRrBEJCrhm4V/1bT
+ RvSxFRN/UKBFuL/drCnZWA4q3OSVwBn3wfMw5501x3pSFGkXIZVqmVOd/pA3V2t3Rc9NvehBl
+ sPUx4W7nWFblI++/kxcTfjBSX0sINdQLq0axCvgRjci5ItFtaMr2wpyYkNi+vcvd3Hh8ibZ7m
+ AqBkRiTnLTC+Sj/K3VVVUtrI6XBL8fYai710JMq5WrDoEIztHEylzd0fYlNKmdQVVcVlVMll3
+ jvO66X2wC3eAlY2e/njy4+2zX0VbiDaVt9wLpFywffEDhJyVN+9zAjHdo6kp4BOxZmgudgKli
+ VYxfb0QFETRCFiA/0qcU9FrOkOCpMSy+dSnyl1jpJRgz3NlY84PwwlDQg49DCP1zoEfvDiqJ9
+ 5kmuM3P3A0aT1WgSx3jHo6qnBgKHCM5JMFYNzim0oZIZeKixqdUKDCZ83zcgsw5kI72gS+gXY
+ Q5iv5/2CX1LXO1kdPUzhwtKHO2ETG94lGPifojRP3rBcjfqdDRoPL285pL7S/Yh9mQINn/hj5
+ 2Lmnab8EwB/c061DfOoIqc0I1jqHgYS6WJpmVpmFo62eKPjjMYZYsV48iIDPltvchnpnC8mZD
+ sMygdi5rXs2jeE6TCJ/4x4PtUCS85Tfel6GXzQLNk50Sbt64StUEV7diFtgpI9zQKWS1B851W
+ YvRlByIR5wsVizcCH/7/epP//L0ugkIyemNQifFe8Fy0nIc2Q7yUsnCnW8/c=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+=E2=80=A6
+> +++ b/fs/exfat/exfat_fs.h
+=E2=80=A6
+> +/* fatent.c */
+=E2=80=A6
+> +int exfat_count_dir_entries(struct super_block *sb, struct exfat_chain =
+*p_dir);
 
-if the /proc/sys/kernel/core_pattern is set with a space between '|' and the
-program and later a core file should be written the kernel panics.
-This happens because in format_corename() the first part of cn.corename
-is set to '\0' and later call_usermodehelper_exec() exits because of an
-empty command path but with return 0. But no pipe is created and thus
-cprm.file == NULL.
-This leads in file_start_write() to the panic because of dereferencing
-file_inode(file)->i_mode.
+I have taken another look also at this function declaration.
 
-Thanks,
-Dietmar.
+1. Can any of these function parameters be marked as =E2=80=9Cconst=E2=80=
+=9D?
 
-[  432.431005] BUG: kernel NULL pointer dereference, address: 0000000000000020
-[  432.431006] #PF: supervisor read access in kernel mode
-[  432.431006] #PF: error_code(0x0000) - not-present page
-[  432.431007] PGD 102ad73067 P4D 102ad73067 PUD 105b898067 PMD 0 
-[  432.431010] Oops: 0000 [#1] SMP NOPTI
-[  432.431012] CPU: 0 PID: 20114 Comm: a Kdump: loaded Tainted: G            E     5.5.0-rc2-10.g62d06a0-default+ #15
-[  432.431013] Hardware name: FUJITSU SE SERVER SU310 M1/D3753-C1, BIOS V5.0.0.14 R1.12.0 for D3753-C1x                    07/22/2019
-[  432.431020] RIP: 0010:do_coredump+0x7b8/0x1128
-[  432.431021] Code: 00 48 8b bd 18 ff ff ff 48 85 ff 74 05 e8 60 04 fa ff 65 48 8b 04 25 c0 ab 01 00 48 8b 00 48 8b 4d a0 a8 04 0f 85 16 01 00 00 <48> 8b 51 20 0f b7 02 66 25 00 f0 66 3d 00 80 75 13 48 8b 7a 28 be
-[  432.431022] RSP: 0018:ffffab39081dfcc0 EFLAGS: 00010246
-[  432.431023] RAX: 0000000000004008 RBX: ffff8e77df3e6e80 RCX: 0000000000000000
-[  432.431024] RDX: 0000000000000000 RSI: ffffab39081dfc90 RDI: 0000000000000000
-[  432.431024] RBP: ffffab39081dfdf8 R08: 0000000000000000 R09: ffffab39081dfc18
-[  432.431025] R10: ffff8e6fd9020000 R11: 0000000000000000 R12: ffff8e6fb16eb080
-[  432.431026] R13: 0000000000000000 R14: ffffffff8f878400 R15: ffffffff8ff21860
-[  432.431027] FS:  00007f8ad3468700(0000) GS:ffff8e6fdfe00000(0000) knlGS:0000000000000000
-[  432.431027] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  432.431028] CR2: 0000000000000020 CR3: 000000105ef26002 CR4: 00000000007606f0
-[  432.431028] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  432.431029] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  432.431029] PKRU: 55555554
-[  432.431030] Call Trace:
-[  432.431040]  get_signal+0x13c/0x860
-[  432.431046]  ? __switch_to_asm+0x34/0x70
-[  432.431047]  ? __switch_to_asm+0x40/0x70
-[  432.431048]  ? __switch_to_asm+0x34/0x70
-[  432.431055]  do_signal+0x36/0x630
-[  432.431065]  ? finish_task_switch+0x7c/0x2a0
-[  433.237753]  exit_to_usermode_loop+0x95/0x130
-[  433.237755]  prepare_exit_to_usermode+0xa7/0xf0
-[  433.237758]  ret_from_intr+0x2a/0x3a
-[  433.237761] RIP: 0033:0x7f8ad2f05381
-[  433.237763] Code: 4c 8b 85 28 fb ff ff 44 29 e8 48 98 49 39 c1 0f 87 a2 f7 ff ff 44 03 ad 20 fb ff ff e9 02 ec ff ff 31 c0 48 83 c9 ff 4c 89 d7 <f2> ae c7 85 28 fb ff ff 00 00 00 00 48 89 ce 48 f7 d6 4c 8d 4e ff
-[  433.237763] RSP: 002b:00007fff72daa6a0 EFLAGS: 00010286
-[  433.237764] RAX: 0000000000000000 RBX: 00007f8ad325b2a0 RCX: ffffffffffffffff
-[  433.237765] RDX: 0000000000000010 RSI: 00007fff72daabf8 RDI: 0000000000000001
-[  433.237765] RBP: 00007fff72daac30 R08: 00000000004005fa R09: 0000000000000073
-[  433.237766] R10: 0000000000000001 R11: 0000000000000000 R12: 00000000004005f4
-[  433.237766] R13: 0000000000000006 R14: 0000000000000000 R15: 00007fff72daac48
+2. Which source file should provide the corresponding implementation?
+   (I did not find it in the update step =E2=80=9C[PATCH v7 06/13] exfat: =
+add exfat
+   entry operations=E2=80=9D so far.)
 
-
-Signed-off-by: Dietmar Hahn <dietmar.hahn@ts.fujitsu.com>
-
----
- fs/coredump.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/coredump.c b/fs/coredump.c
-index b1ea7dfbd149..106c1c5f542a 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -628,7 +628,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 		char **helper_argv;
- 		struct subprocess_info *sub_info;
- 
--		if (ispipe < 0) {
-+		if (ispipe < 0 || !*cn.corename) {
- 			printk(KERN_WARNING "format_corename failed\n");
- 			printk(KERN_WARNING "Aborting core\n");
- 			goto fail_unlock;
--- 
-2.16.4
-
-
-
-
+Regards,
+Markus
