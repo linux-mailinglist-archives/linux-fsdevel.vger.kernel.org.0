@@ -2,75 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 835FC1219E4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2019 20:27:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 613B8121A1A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2019 20:40:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbfLPT1f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Dec 2019 14:27:35 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:33842 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726510AbfLPT1f (ORCPT
+        id S1726664AbfLPTi4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Dec 2019 14:38:56 -0500
+Received: from mail-qv1-f67.google.com ([209.85.219.67]:32785 "EHLO
+        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726426AbfLPTi4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Dec 2019 14:27:35 -0500
-Received: by mail-oi1-f194.google.com with SMTP id l136so4257300oig.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2019 11:27:34 -0800 (PST)
+        Mon, 16 Dec 2019 14:38:56 -0500
+Received: by mail-qv1-f67.google.com with SMTP id z3so3231947qvn.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2019 11:38:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0+G9OIzIPCPm1JV6NSLldblOL7vU1hFAd0fconVteSc=;
-        b=Ys4Khj8K29YV1vXqYHp0UjjI6Gv7ahLPIwc+IlMeeZLi1fWv3Sh9JSkGHDijyOBZjO
-         YZUZ+DVFHUuhj+Hc84OxOpzTQRnFynExXZDiYaKrs/YiS90XD3NPBycZU6npjD7se0eh
-         hC1KJGCsZKT6kkkUZgxzUircHYgX6tyznjrS4lfJJlRSUPYS5x4JSjz45AVaB+LmQE6X
-         1Bs17tlGfIWNgWm7DG5teWJoKRgezhAv7I5Oi+aK0wDzmZdA2GAknSpF1vkD7oTTg09+
-         UFb1rHyaw+4Nwx+4uKIyp2sGChbx6Io2YnWAEqNIei/8qgrw2c/YJL82+rXxK1Kdykr3
-         zghw==
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition;
+        bh=LCB0hNRG4v+p9dpfKdy3ZBAOPMoNY6/T21WrOre9gfo=;
+        b=dno9akdodZ4J7VJAYPHs9URzsfsXYZcGZjePs599AnQpd0bCpdpRHrNrdlNm7fEy2S
+         3NFUpRyEe6uxdfVkwn4bUBBBRhQoz+Fq9CuvB+2gS39RhfajsAXEilNgGfMCezBMonO9
+         HdLiMebWMfDzKkC9hU5wMHpYs9lwg/q7F4gv2JW1ThT+rDmxNDnl+2Qb76kzAZdWz01A
+         FFRd3XjxGyPQpAMQuR7I+iYLpk+aIdkyEB8zjTGk/RYGDa9A5YH0ETDagPSHG3WlQJJe
+         ZwzQCcv2gql57CoBPfH2gByGbxj7nuWYQEF5guzK6z2x/7GA1Vx+fS5LvEz2+4nrfq19
+         f8Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0+G9OIzIPCPm1JV6NSLldblOL7vU1hFAd0fconVteSc=;
-        b=HDJReOISs8kB+Or1h51GyMJr76rOBNOwu5t5GQg74iIV5twuTRSG6Tlrcc01rNOE8y
-         afY7O4JBcJZw84qCXRopzxHovOpqEE6XIecNrO/oNN/9KGHkJqjC6vlzh2Njn+xay6ok
-         OcEIcUemD4PNpFudMRrvEL2cocpu5AUbEvasHimPJTweNFKyiIKtyPAICVMKKY0Lz3SF
-         cO0YUkxgUMQUzuFzzV8Mq0mzHYmNe4oeVnDDlX7zyEicXNXftDhM6EOVTvqpYlt5rs9s
-         1XavStypMqDyjnTr8RIU2QHQnLKVU9ptVb5m3mqlvDOfqZbV54njFZJgOXjbJvqxOoj6
-         uNkA==
-X-Gm-Message-State: APjAAAUOOBEgaDixkZJqT8LNe4jorWJyQN3geik0f1kBiYKVqsGr8afU
-        NxiZJVkDY37855UfHv9oI56dXHuTI0XubCqZsz60nA==
-X-Google-Smtp-Source: APXvYqyRXHFfszrlmxa4RfBXv+BHx2XxRPac+Y2KuI9sOac77h1orp76XujK/GZ738T6cirXBzNlqEzsJtjD2qgUuzU=
-X-Received: by 2002:aca:bb08:: with SMTP id l8mr373285oif.47.1576524454243;
- Mon, 16 Dec 2019 11:27:34 -0800 (PST)
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition;
+        bh=LCB0hNRG4v+p9dpfKdy3ZBAOPMoNY6/T21WrOre9gfo=;
+        b=qqbiDpDuzXPgLpgILh42OiG6JGRHboAhrWvOlJkpEhd5e7YzA8/CalCgBJA+HUg/jW
+         WZICR5IbmUwMUcCdb5PI8mFSie5iDrMwssCvLkI+fLGujSybEumj8oXdADyuLO5shB/s
+         2/BGcs3322w9lWpfwsUmnUyva3PsHWV/zYzzboNlzI9WkSmIlDLPDE4uBAUVTSfG6rbO
+         rkvMOhTjEwERySGkvPsBjOElat1eKtqo6DCVTQ0DybOvLHCMoZbyvGYoiShMPbiq/kM2
+         MQVpVulOE77nlo9JXrGbrqCWgvKsoXZGFgWFgpHFVjADUgH5Yi9R0ka/pb/t2VcLLw7K
+         Gydg==
+X-Gm-Message-State: APjAAAXtdBpiuEPyivSFp2hohnsiS34WIoryPA4QIyb9jNQ1CKglNTPt
+        ZNCnEt9+1ZD0JqCDmTgO3pDZA3A=
+X-Google-Smtp-Source: APXvYqyJ/p/IWWXm03RuNnjgugFO1XI3/EoRwUQWGpve9A92gUazKS5zx1KdzSq5mgNc/bgqxUutOw==
+X-Received: by 2002:a0c:d223:: with SMTP id m32mr1060230qvh.36.1576525135083;
+        Mon, 16 Dec 2019 11:38:55 -0800 (PST)
+Received: from kmo-pixel ([65.183.151.50])
+        by smtp.gmail.com with ESMTPSA id k184sm6259427qke.2.2019.12.16.11.38.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2019 11:38:54 -0800 (PST)
+Date:   Mon, 16 Dec 2019 14:38:52 -0500
+From:   Kent Overstreet <kent.overstreet@gmail.com>
+To:     lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org
+Subject: [LSF/MM/BPF TOPIC] Bcachefs update
+Message-ID: <20191216193852.GA8664@kmo-pixel>
 MIME-Version: 1.0
-References: <20191213183632.19441-1-axboe@kernel.dk> <20191213183632.19441-7-axboe@kernel.dk>
-In-Reply-To: <20191213183632.19441-7-axboe@kernel.dk>
-From:   Jann Horn <jannh@google.com>
-Date:   Mon, 16 Dec 2019 20:27:07 +0100
-Message-ID: <CAG48ez26wpE_K_KGsE8jfjGp3uPc_ioYhTuLv0gSmcVPPxRA3Q@mail.gmail.com>
-Subject: Re: [PATCH 06/10] fs: move filp_close() outside of __close_fd_get_file()
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 7:36 PM Jens Axboe <axboe@kernel.dk> wrote:
-> Just one caller of this, and just use filp_close() there manually.
-> This is important to allow async close/removal of the fd.
-[...]
-> index 3da91a112bab..a250d291c71b 100644
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -662,7 +662,7 @@ int __close_fd_get_file(unsigned int fd, struct file **res)
->         spin_unlock(&files->file_lock);
->         get_file(file);
->         *res = file;
-> -       return filp_close(file, files);
-> +       return 0;
+Hi all, I'd like to poke my head up and let everyone know where bcachefs is at,
+and talk about finally upstreaming it.
 
-Above this function is a comment saying "variant of __close_fd that
-gets a ref on the file for later fput"; that should probably be
-changed to point out that you also still need to filp_close().
+Last LSF (two years ago), bcachefs was coming along quite nicely and was quite
+usable but there was still some core work unfinished (primarily persistent alloc
+info; we still had to walk all metadata at mount time). Additionally, there some
+unresolved discussions around locking for pagecache consistency.
+
+The core features one would expect from a posix filesystem are now done, and
+then some. Reflink was finished recently, and I'm now starting to work towards
+snapshots.
+
+If there's interest I may talk a bit about the plan for snapshots in bcachefs.
+
+The short version is: all metadata in bcachefs are keys in various btrees
+(extents/inodes/dirents/xattrs btrees) indexed by inode:offset; for snapshots we
+extent the key so that the low bits are a snapshot id, i.e.
+inode:offset:snapshot. Snapshots form a tree where the root has id U32_MAX and
+children always have smaller IDs than their parent, so to read from a given
+snapshot we do a lookup as normal, including the snapshot ID of the snapshot we
+want, and then filter out keys from unrelated (non ancestor) snapshots.
+
+This will give us excellent overall performance when there are many snapshots
+that each have only a small number of overwrites; when we end up in a situation
+where a given part of the keyspace has many keys from unrelated snapshots we'll
+want to arrange metadata differently.
+
+This scheme does get considerably trickier when you add extents; that's what
+I've been focusing on recently.
+
+Pagecache consistency:
+
+I recently got rid of my pagecache add lock; that added locking to core paths in
+filemap.c and some found my locking scheme to be distastefull (and I never liked
+it enough to argue). I've recently switched to something closer to XFS's locking
+scheme (top of the IO paths); however, I do still need one patch to the
+get_user_pages() path to avoid deadlock via recursive page fault - patch is
+below:
+
+(This would probably be better done as a new argument to get_user_pages(); I
+didn't do it that way initially because the patch would have been _much_
+bigger.)
+
+Yee haw.
+
+commit 20ebb1f34cc9a532a675a43b5bd48d1705477816
+Author: Kent Overstreet <kent.overstreet@gmail.com>
+Date:   Wed Oct 16 15:03:50 2019 -0400
+
+    mm: Add a mechanism to disable faults for a specific mapping
+    
+    This will be used to prevent a nasty cache coherency issue for O_DIRECT
+    writes; O_DIRECT writes need to shoot down the range of the page cache
+    corresponding to the part of the file being written to - but, if the
+    file is mapped in, userspace can pass in an address in that mapping to
+    pwrite(), causing those pages to be faulted back into the page cache
+    in get_user_pages().
+    
+    Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index ebfa046b2d..3b4d9689ef 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -740,6 +740,7 @@ struct task_struct {
+ 
+ 	struct mm_struct		*mm;
+ 	struct mm_struct		*active_mm;
++	struct address_space		*faults_disabled_mapping;
+ 
+ 	/* Per-thread vma caching: */
+ 	struct vmacache			vmacache;
+diff --git a/init/init_task.c b/init/init_task.c
+index ee3d9d29b8..706abd9547 100644
+--- a/init/init_task.c
++++ b/init/init_task.c
+@@ -77,6 +77,7 @@ struct task_struct init_task
+ 	.nr_cpus_allowed= NR_CPUS,
+ 	.mm		= NULL,
+ 	.active_mm	= &init_mm,
++	.faults_disabled_mapping = NULL,
+ 	.restart_block	= {
+ 		.fn = do_no_restart_syscall,
+ 	},
+diff --git a/mm/gup.c b/mm/gup.c
+index 98f13ab37b..9cc1479201 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -849,6 +849,13 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 		}
+ 		cond_resched();
+ 
++		if (current->faults_disabled_mapping &&
++		    vma->vm_file &&
++		    vma->vm_file->f_mapping == current->faults_disabled_mapping) {
++			ret = -EFAULT;
++			goto out;
++		}
++
+ 		page = follow_page_mask(vma, start, foll_flags, &ctx);
+ 		if (!page) {
+ 			ret = faultin_page(tsk, vma, start, &foll_flags,
