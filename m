@@ -2,453 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32C53120092
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2019 10:13:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC5611200AB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2019 10:18:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726937AbfLPJND (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Dec 2019 04:13:03 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:54907 "EHLO
+        id S1727071AbfLPJN6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Dec 2019 04:13:58 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:37769 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726141AbfLPJNC (ORCPT
+        with ESMTP id S1726942AbfLPJN6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Dec 2019 04:13:02 -0500
-Received: from localhost.localdomain ([78.238.229.36]) by
- mrelayeu.kundenserver.de (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1MLyvH-1iOq2F3fRh-00Htow; Mon, 16 Dec 2019 10:12:27 +0100
-From:   Laurent Vivier <laurent@vivier.eu>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kurz <groug@kaod.org>, Jann Horn <jannh@google.com>,
-        Andrei Vagin <avagin@gmail.com>, linux-api@vger.kernel.org,
-        Dmitry Safonov <dima@arista.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Biederman <ebiederm@xmission.com>,
+        Mon, 16 Dec 2019 04:13:58 -0500
+Received: from [192.168.100.1] ([78.238.229.36]) by mrelayeu.kundenserver.de
+ (mreue109 [213.165.67.119]) with ESMTPSA (Nemesis) id
+ 1MA7Su-1iZecs0hdC-00BdHz; Mon, 16 Dec 2019 10:13:28 +0100
+Subject: Re: [PATCH v7 1/1] ns: add binfmt_misc to the user namespace
+To:     mtk.manpages@gmail.com
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
         Henning Schild <henning.schild@siemens.com>,
-        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
-        Laurent Vivier <laurent@vivier.eu>
-Subject: [PATCH v8 1/1] ns: add binfmt_misc to the user namespace
-Date:   Mon, 16 Dec 2019 10:12:20 +0100
-Message-Id: <20191216091220.465626-2-laurent@vivier.eu>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191216091220.465626-1-laurent@vivier.eu>
-References: <20191216091220.465626-1-laurent@vivier.eu>
+        lkml <linux-kernel@vger.kernel.org>,
+        Dmitry Safonov <dima@arista.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>,
+        Greg Kurz <groug@kaod.org>, Jann Horn <jannh@google.com>,
+        Containers <containers@lists.linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jan Kiszka <jan.kiszka@siemens.com>
+References: <20191107140304.8426-1-laurent@vivier.eu>
+ <20191107140304.8426-2-laurent@vivier.eu>
+ <7cb245ed-f738-7991-a09b-b27152274b9f@vivier.eu>
+ <20191213185110.06b52cf4@md1za8fc.ad001.siemens.net>
+ <1576267177.4060.4.camel@HansenPartnership.com>
+ <3205e74b-71f1-14f4-b784-d878b3ef697f@vivier.eu>
+ <CAKgNAkiaKJZMA0pzvwDa75CxfULTL1LmOZDzhW0Y5TmL7nBGZw@mail.gmail.com>
+From:   Laurent Vivier <laurent@vivier.eu>
+Autocrypt: addr=laurent@vivier.eu; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <dbd19cb9-9172-d89d-f796-05a23213ca69@vivier.eu>
+Date:   Mon, 16 Dec 2019 10:13:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
+In-Reply-To: <CAKgNAkiaKJZMA0pzvwDa75CxfULTL1LmOZDzhW0Y5TmL7nBGZw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: fr
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:hewuwVyy8hcGKsqEp+D3h5wMeyHgo7xEgW+pHRNM/I9KR4VQOcE
- Y37d/lH2EP+WwQTRflhzsmJOG5Mc6J+6+8OG2tV4Pve3EU9by5YDNlB9wgZ4iva/oA4TfcY
- uGqRkXujXpjQ3MFLSSm4jOnkxo2+vkalW+a7TBJKYylExB9S8iNsoYFnTfoYwD/vg5iks6f
- jG6CinwRDV3FgASuDh5TA==
+X-Provags-ID: V03:K1:JF7Lzr1vsKqPzH1SsoAnWaCSGZUs5IgOJ9JG4v5PDzWo2yl7HY4
+ 85lF/dqHHKK5J2Nym/TCuVgkf6dFBODzMRk/QQAbnMkoGNHBGFC71ttmfDrjxHBtnWDze+w
+ 6KtWT/nKQGrcs1aS6no07MsHzaztSYW4NDCZmRm3RJCmm3azQSxQDnbzXWP1QaeOw9VflIe
+ O54+hzIBmsA+zMFw9EnOQ==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:T9OortZUziE=:sO7FxqDtZ+9362MEQ1YSuP
- sSXyCjRfid4BzMuIMUYx5vm+1fRqoDs5HWKCrkrKQ3E8ONlLOINL018haoau1xpM/MoMv9IX0
- 4ZjKusaUcc1dCp6qadDEXY1YLEqRtslxqdsBQ6cXFC4q6EKRiorfVg0EBiCsYJedHpg82tJJo
- wcQ7jZQ8pW41fv+7SwP0pW/WTJG97b/mMKltXXLPOtvKUBSlGCuxVbFnn+jcOIAGaUXc7WzPH
- e47qF8vG6QTQUKM8S5RZYyPt6fkXSLKf8KLJSb+4yuwkazoIUOX52lFLxyS7hDnUO1jpb/5gH
- 6Yy3lFKx2MxI0yqJ8RW15pC2x11SYWpMmyXYr5RyKv/3F4mxrjmBXefoYTQ8NNg4LQ5CT+ke6
- Ioy+WYX0FUUCLUMZdvWn8/QnyByelO8ybuyxDVa/3+RN0nl6iViB0BF6x0EJHZYyPkhpJt4qO
- zKrE1BUptu014/k5z776eepBisSYb04woyifA1pVGSYvdj6psrEO2i9CgqTGvDH2xHDXPiAsH
- z888fO1j8GcN6xINgKv4DN+4MSD/O/wbfEGQu9AWBgzGB1PihA9T7lVFwlsdAD1m3LUKcnS+f
- Qck81aQsoxObGAMsPX5BdasQcyAJA6dJsYIXDbZKI0INtV++LBfjk+u0OGezRDJJOdaj1IkQ7
- 6cFzqdj/wS60mYo1txSn3YI+VEdiOzI24roKftvQJSq5rej4kU3SN6jlv3PhfdZxP3X/ZKwBO
- 8R1H3SQuOonOCrMO4h4cRGxqS+lsS//2uP8cXlcz9I+NamVcvOfFQAhRVT+GblFjeXxLcp9X7
- tT0OQIxFc+s9WlxlCIndEAh1URYwKDvQ1GaA3W0wP3wBI4Hda0ltdTtWh8TCfsmJWZgSQ7iPI
- vTCig8g+Kf2dXc5j82+Q==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:5sVftxCw9qM=:2kh7xWHcpiQGwOqXjDAYIH
+ ll0Avwf/z41TIvLG9pe4n89gtmcJUDZZELLYKgSCb8u42Q+Jxn7ZXuALF/3sBAf8pzYbIU2Qz
+ xsHe4v5lQ8m550sKNdO/DyLnYJ1bC/e6OC3kYdzkIGe1Z3FSrE91H4D3Fqepe9YFO/cgWqEV0
+ c9g4lahzN150UF8+TknVKGmg6pEMT1hGRIswFshfwabcG4o6/zaJKZPSkKQ5F0UTKG6FQBRo+
+ 5lIy2ygbnwNkUqllYp8jpv/zS7rzrYxVMidTEUHQ2CsRVByCyMMy6ENXHuo3srKRrkKYoVeXy
+ M+HML7F0Lxs60O7OW06N548d2JQYmGDAMeZFq5Em18DIHGTxAjF+/5QBq9fy/i4X8OiW9m9mP
+ waHAalD8CV9DoSAfv5vx4f5OeaeV1nWJiqMnHG7cs4uFYcXtcqMbxA8RogU0s3mFYqlDGLfzH
+ vOK/0uq/t+P0qSiYm2ASZLlg8XifeY66UU8d+WH3pELnceYtfbAcodpzgUmEgxrS7tUizBDeQ
+ GLih22bT3/cfXyJy2WG2Jg1FdTppZSjYQbhEM2wuYKhlrjR4ae4JmQz4N/uXeTjWIv1eb7WvK
+ +fwXN08C/e5ngfkbqwTmGCR4XUQQTdV21Ctkz2S6V2F33yCHQYbF3dXe9Tpz6rCd7Fq0JB2O2
+ RwUtxgZn2Nf/7DRRYby7E1XD2dNwmShzk99FUomD08lvKO3/D3Lo4UtMUbZJuyFjJKcCvqua6
+ gC0RZDHAf1ruI22HFR091ZgRPcrEyyitvTf1XqQhlbMXW9rEks6hIS1aeuI4bGcn3WSi/6H96
+ QTj4qCItWwfMu0FV6b535ySOLZY916mT/38D4RyDXkmmFMoU27CBdsghYKvgd82qSiK5NmEQV
+ RdxFxs16gLfYBlXgeJEQ==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch allows to have a different binfmt_misc configuration
-for each new user namespace. By default, the binfmt_misc configuration
-is the one of the previous level, but if the binfmt_misc filesystem is
-mounted in the new namespace a new empty binfmt instance is created and
-used in this namespace.
+Le 14/12/2019 à 13:32, Michael Kerrisk (man-pages) a écrit :
+> Hello Laurent,
+> 
+> On Sat, 14 Dec 2019 at 12:35, Laurent Vivier <laurent@vivier.eu> wrote:
+>>
+>> Le 13/12/2019 à 20:59, James Bottomley a écrit :
+>>> On Fri, 2019-12-13 at 18:51 +0100, Henning Schild wrote:
+>>>> Hi all,
+>>>>
+>>>> that is a very useful contribution, which will hopefully be
+>>>> considered.
+>>>
+>>> I'm technically the maintainer on the you touched it last you own it
+>>> basis, so if Christian's concerns get addressed I'll shepherd it
+>>> upstream.
+>>
+>> Thank you.
+>>
+>> I update this in the next days and re-send the patch.
+> 
+> Would you also be so kind as to craft a patch for the
+> user_namespaces(7) manual page describing the changes (sent to me,
+> linux-man@vger.kernel.org, and the other parties already in CC)?
+> 
+> If you do not have the time to familiarize yourself with groff/man
+> markup, a patch that uses plain text is fine; I can handle the
+> formatting.
 
-For instance, using "unshare" we can start a chroot of another
-architecture and configure the binfmt_misc interpreter without being root
-to run the binaries in this chroot.
+I will send a patch for the user_namespaces(7) manual.
 
-Signed-off-by: Laurent Vivier <laurent@vivier.eu>
-Acked-by: Andrei Vagin <avagin@gmail.com>
-Tested-by: Henning Schild <henning.schild@siemens.com>
----
- fs/binfmt_misc.c               | 115 +++++++++++++++++++++++++--------
- include/linux/user_namespace.h |  15 +++++
- kernel/user.c                  |  14 ++++
- kernel/user_namespace.c        |   3 +
- 4 files changed, 119 insertions(+), 28 deletions(-)
-
-diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-index cdb45829354d..17fa1f56ca2e 100644
---- a/fs/binfmt_misc.c
-+++ b/fs/binfmt_misc.c
-@@ -40,9 +40,6 @@ enum {
- 	VERBOSE_STATUS = 1 /* make it zero to save 400 bytes kernel memory */
- };
- 
--static LIST_HEAD(entries);
--static int enabled = 1;
--
- enum {Enabled, Magic};
- #define MISC_FMT_PRESERVE_ARGV0 (1 << 31)
- #define MISC_FMT_OPEN_BINARY (1 << 30)
-@@ -62,10 +59,7 @@ typedef struct {
- 	struct file *interp_file;
- } Node;
- 
--static DEFINE_RWLOCK(entries_lock);
- static struct file_system_type bm_fs_type;
--static struct vfsmount *bm_mnt;
--static int entry_count;
- 
- /*
-  * Max length of the register string.  Determined by:
-@@ -82,18 +76,37 @@ static int entry_count;
-  */
- #define MAX_REGISTER_LENGTH 1920
- 
-+static struct binfmt_namespace *binfmt_ns(struct user_namespace *ns)
-+{
-+	struct binfmt_namespace *b_ns;
-+
-+	while (ns) {
-+		b_ns = READ_ONCE(ns->binfmt_ns);
-+		if (b_ns)
-+			return b_ns;
-+		ns = ns->parent;
-+	}
-+	/* as the first user namespace is initialized with
-+	 * &init_binfmt_ns we should never come here
-+	 * but we try to stay safe by logging a warning
-+	 * and returning a sane value
-+	 */
-+	WARN_ON_ONCE(1);
-+	return &init_binfmt_ns;
-+}
-+
- /*
-  * Check if we support the binfmt
-  * if we do, return the node, else NULL
-  * locking is done in load_misc_binary
-  */
--static Node *check_file(struct linux_binprm *bprm)
-+static Node *check_file(struct binfmt_namespace *ns, struct linux_binprm *bprm)
- {
- 	char *p = strrchr(bprm->interp, '.');
- 	struct list_head *l;
- 
- 	/* Walk all the registered handlers. */
--	list_for_each(l, &entries) {
-+	list_for_each(l, &ns->entries) {
- 		Node *e = list_entry(l, Node, list);
- 		char *s;
- 		int j;
-@@ -135,17 +148,18 @@ static int load_misc_binary(struct linux_binprm *bprm)
- 	struct file *interp_file = NULL;
- 	int retval;
- 	int fd_binary = -1;
-+	struct binfmt_namespace *ns = binfmt_ns(current_user_ns());
- 
- 	retval = -ENOEXEC;
--	if (!enabled)
-+	if (!ns->enabled)
- 		return retval;
- 
- 	/* to keep locking time low, we copy the interpreter string */
--	read_lock(&entries_lock);
--	fmt = check_file(bprm);
-+	read_lock(&ns->entries_lock);
-+	fmt = check_file(ns, bprm);
- 	if (fmt)
- 		dget(fmt->dentry);
--	read_unlock(&entries_lock);
-+	read_unlock(&ns->entries_lock);
- 	if (!fmt)
- 		return retval;
- 
-@@ -611,19 +625,19 @@ static void bm_evict_inode(struct inode *inode)
- 	kfree(e);
- }
- 
--static void kill_node(Node *e)
-+static void kill_node(struct binfmt_namespace *ns, Node *e)
- {
- 	struct dentry *dentry;
- 
--	write_lock(&entries_lock);
-+	write_lock(&ns->entries_lock);
- 	list_del_init(&e->list);
--	write_unlock(&entries_lock);
-+	write_unlock(&ns->entries_lock);
- 
- 	dentry = e->dentry;
- 	drop_nlink(d_inode(dentry));
- 	d_drop(dentry);
- 	dput(dentry);
--	simple_release_fs(&bm_mnt, &entry_count);
-+	simple_release_fs(&ns->bm_mnt, &ns->entry_count);
- }
- 
- /* /<entry> */
-@@ -653,6 +667,9 @@ static ssize_t bm_entry_write(struct file *file, const char __user *buffer,
- 	struct dentry *root;
- 	Node *e = file_inode(file)->i_private;
- 	int res = parse_command(buffer, count);
-+	struct binfmt_namespace *ns;
-+
-+	ns = binfmt_ns(file_dentry(file)->d_sb->s_user_ns);
- 
- 	switch (res) {
- 	case 1:
-@@ -669,7 +686,7 @@ static ssize_t bm_entry_write(struct file *file, const char __user *buffer,
- 		inode_lock(d_inode(root));
- 
- 		if (!list_empty(&e->list))
--			kill_node(e);
-+			kill_node(ns, e);
- 
- 		inode_unlock(d_inode(root));
- 		break;
-@@ -695,6 +712,7 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
- 	struct inode *inode;
- 	struct super_block *sb = file_inode(file)->i_sb;
- 	struct dentry *root = sb->s_root, *dentry;
-+	struct binfmt_namespace *ns;
- 	int err = 0;
- 
- 	e = create_entry(buffer, count);
-@@ -718,7 +736,9 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
- 	if (!inode)
- 		goto out2;
- 
--	err = simple_pin_fs(&bm_fs_type, &bm_mnt, &entry_count);
-+	ns = binfmt_ns(file_dentry(file)->d_sb->s_user_ns);
-+	err = simple_pin_fs(&bm_fs_type, &ns->bm_mnt,
-+			    &ns->entry_count);
- 	if (err) {
- 		iput(inode);
- 		inode = NULL;
-@@ -727,12 +747,16 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
- 
- 	if (e->flags & MISC_FMT_OPEN_FILE) {
- 		struct file *f;
-+		const struct cred *old_cred;
- 
-+		old_cred = override_creds(file->f_cred);
- 		f = open_exec(e->interpreter);
-+		revert_creds(old_cred);
- 		if (IS_ERR(f)) {
- 			err = PTR_ERR(f);
- 			pr_notice("register: failed to install interpreter file %s\n", e->interpreter);
--			simple_release_fs(&bm_mnt, &entry_count);
-+			simple_release_fs(&ns->bm_mnt,
-+					  &ns->entry_count);
- 			iput(inode);
- 			inode = NULL;
- 			goto out2;
-@@ -745,9 +769,9 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
- 	inode->i_fop = &bm_entry_operations;
- 
- 	d_instantiate(dentry, inode);
--	write_lock(&entries_lock);
--	list_add(&e->list, &entries);
--	write_unlock(&entries_lock);
-+	write_lock(&ns->entries_lock);
-+	list_add(&e->list, &ns->entries);
-+	write_unlock(&ns->entries_lock);
- 
- 	err = 0;
- out2:
-@@ -772,7 +796,9 @@ static const struct file_operations bm_register_operations = {
- static ssize_t
- bm_status_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
- {
--	char *s = enabled ? "enabled\n" : "disabled\n";
-+	struct binfmt_namespace *ns =
-+				binfmt_ns(file_dentry(file)->d_sb->s_user_ns);
-+	char *s = ns->enabled ? "enabled\n" : "disabled\n";
- 
- 	return simple_read_from_buffer(buf, nbytes, ppos, s, strlen(s));
- }
-@@ -780,25 +806,28 @@ bm_status_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
- static ssize_t bm_status_write(struct file *file, const char __user *buffer,
- 		size_t count, loff_t *ppos)
- {
-+	struct binfmt_namespace *ns;
- 	int res = parse_command(buffer, count);
- 	struct dentry *root;
- 
-+	ns = binfmt_ns(file_dentry(file)->d_sb->s_user_ns);
- 	switch (res) {
- 	case 1:
- 		/* Disable all handlers. */
--		enabled = 0;
-+		ns->enabled = 0;
- 		break;
- 	case 2:
- 		/* Enable all handlers. */
--		enabled = 1;
-+		ns->enabled = 1;
- 		break;
- 	case 3:
- 		/* Delete all handlers. */
- 		root = file_inode(file)->i_sb->s_root;
- 		inode_lock(d_inode(root));
- 
--		while (!list_empty(&entries))
--			kill_node(list_first_entry(&entries, Node, list));
-+		while (!list_empty(&ns->entries))
-+			kill_node(ns, list_first_entry(&ns->entries,
-+						       Node, list));
- 
- 		inode_unlock(d_inode(root));
- 		break;
-@@ -825,24 +854,53 @@ static const struct super_operations s_ops = {
- static int bm_fill_super(struct super_block *sb, struct fs_context *fc)
- {
- 	int err;
-+	struct user_namespace *ns = sb->s_user_ns;
- 	static const struct tree_descr bm_files[] = {
- 		[2] = {"status", &bm_status_operations, S_IWUSR|S_IRUGO},
- 		[3] = {"register", &bm_register_operations, S_IWUSR},
- 		/* last one */ {""}
- 	};
- 
-+	/* create a new binfmt namespace
-+	 * if we are not in the first user namespace
-+	 * but the binfmt namespace is the first one
-+	 */
-+	if (READ_ONCE(ns->binfmt_ns) == NULL) {
-+		struct binfmt_namespace *new_ns;
-+
-+		new_ns = kmalloc(sizeof(struct binfmt_namespace),
-+				 GFP_KERNEL);
-+		if (new_ns == NULL)
-+			return -ENOMEM;
-+		INIT_LIST_HEAD(&new_ns->entries);
-+		new_ns->enabled = 1;
-+		rwlock_init(&new_ns->entries_lock);
-+		new_ns->bm_mnt = NULL;
-+		new_ns->entry_count = 0;
-+		/* ensure new_ns is completely initialized before sharing it */
-+		smp_wmb();
-+		WRITE_ONCE(ns->binfmt_ns, new_ns);
-+	}
-+
- 	err = simple_fill_super(sb, BINFMTFS_MAGIC, bm_files);
- 	if (!err)
- 		sb->s_op = &s_ops;
- 	return err;
- }
- 
-+static void bm_free(struct fs_context *fc)
-+{
-+	if (fc->s_fs_info)
-+		put_user_ns(fc->s_fs_info);
-+}
-+
- static int bm_get_tree(struct fs_context *fc)
- {
--	return get_tree_single(fc, bm_fill_super);
-+	return get_tree_keyed(fc, bm_fill_super, get_user_ns(fc->user_ns));
- }
- 
- static const struct fs_context_operations bm_context_ops = {
-+	.free		= bm_free,
- 	.get_tree	= bm_get_tree,
- };
- 
-@@ -861,6 +919,7 @@ static struct file_system_type bm_fs_type = {
- 	.owner		= THIS_MODULE,
- 	.name		= "binfmt_misc",
- 	.init_fs_context = bm_init_fs_context,
-+	.fs_flags	= FS_USERNS_MOUNT,
- 	.kill_sb	= kill_litter_super,
- };
- MODULE_ALIAS_FS("binfmt_misc");
-diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
-index fb9f4f799554..16e6f3a97a01 100644
---- a/include/linux/user_namespace.h
-+++ b/include/linux/user_namespace.h
-@@ -52,6 +52,18 @@ enum ucount_type {
- 	UCOUNT_COUNTS,
- };
- 
-+#if IS_ENABLED(CONFIG_BINFMT_MISC)
-+struct binfmt_namespace {
-+	struct list_head entries;
-+	rwlock_t entries_lock;
-+	int enabled;
-+	struct vfsmount *bm_mnt;
-+	int entry_count;
-+} __randomize_layout;
-+
-+extern struct binfmt_namespace init_binfmt_ns;
-+#endif
-+
- struct user_namespace {
- 	struct uid_gid_map	uid_map;
- 	struct uid_gid_map	gid_map;
-@@ -86,6 +98,9 @@ struct user_namespace {
- #endif
- 	struct ucounts		*ucounts;
- 	int ucount_max[UCOUNT_COUNTS];
-+#if IS_ENABLED(CONFIG_BINFMT_MISC)
-+	struct binfmt_namespace *binfmt_ns;
-+#endif
- } __randomize_layout;
- 
- struct ucounts {
-diff --git a/kernel/user.c b/kernel/user.c
-index 5235d7f49982..092b2b4d47a6 100644
---- a/kernel/user.c
-+++ b/kernel/user.c
-@@ -20,6 +20,17 @@
- #include <linux/user_namespace.h>
- #include <linux/proc_ns.h>
- 
-+#if IS_ENABLED(CONFIG_BINFMT_MISC)
-+struct binfmt_namespace init_binfmt_ns = {
-+	.entries = LIST_HEAD_INIT(init_binfmt_ns.entries),
-+	.enabled = 1,
-+	.entries_lock = __RW_LOCK_UNLOCKED(init_binfmt_ns.entries_lock),
-+	.bm_mnt = NULL,
-+	.entry_count = 0,
-+};
-+EXPORT_SYMBOL_GPL(init_binfmt_ns);
-+#endif
-+
- /*
-  * userns count is 1 for root user, 1 for init_uts_ns,
-  * and 1 for... ?
-@@ -67,6 +78,9 @@ struct user_namespace init_user_ns = {
- 	.keyring_name_list = LIST_HEAD_INIT(init_user_ns.keyring_name_list),
- 	.keyring_sem = __RWSEM_INITIALIZER(init_user_ns.keyring_sem),
- #endif
-+#if IS_ENABLED(CONFIG_BINFMT_MISC)
-+	.binfmt_ns = &init_binfmt_ns,
-+#endif
- };
- EXPORT_SYMBOL_GPL(init_user_ns);
- 
-diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-index 8eadadc478f9..f42c32269e20 100644
---- a/kernel/user_namespace.c
-+++ b/kernel/user_namespace.c
-@@ -191,6 +191,9 @@ static void free_user_ns(struct work_struct *work)
- 			kfree(ns->projid_map.forward);
- 			kfree(ns->projid_map.reverse);
- 		}
-+#if IS_ENABLED(CONFIG_BINFMT_MISC)
-+		kfree(ns->binfmt_ns);
-+#endif
- 		retire_userns_sysctls(ns);
- 		key_free_user_ns(ns);
- 		ns_free_inum(&ns->ns);
--- 
-2.23.0
+Thanks,
+Laurent
 
