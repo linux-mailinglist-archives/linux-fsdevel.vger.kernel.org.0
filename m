@@ -2,131 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFADA11FFFE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2019 09:38:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AE0612014C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2019 10:39:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726968AbfLPIio (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Dec 2019 03:38:44 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37642 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726772AbfLPIio (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Dec 2019 03:38:44 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AB298AE34;
-        Mon, 16 Dec 2019 08:38:41 +0000 (UTC)
-Subject: Re: [PATCH 2/2] zonefs: Add documentation
-To:     Damien Le Moal <damien.lemoal@wdc.com>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Johannes Thumshirn <jth@kernel.org>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>
-References: <20191212183816.102402-1-damien.lemoal@wdc.com>
- <20191212183816.102402-3-damien.lemoal@wdc.com>
-From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <8fe28905-aae5-bfb4-d6ac-f09d7244059e@suse.de>
-Date:   Mon, 16 Dec 2019 09:38:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1727053AbfLPJiZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Dec 2019 04:38:25 -0500
+Received: from cirse-smtp-out.extra.cea.fr ([132.167.192.148]:46154 "EHLO
+        cirse-smtp-out.extra.cea.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726959AbfLPJiZ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Dec 2019 04:38:25 -0500
+X-Greylist: delayed 2717 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Dec 2019 04:38:24 EST
+Received: from pisaure.intra.cea.fr (pisaure.intra.cea.fr [132.166.88.21])
+        by cirse-sys.extra.cea.fr (8.14.7/8.14.7/CEAnet-Internet-out-4.0) with ESMTP id xBG8r5tM023379
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2019 09:53:05 +0100
+Received: from pisaure.intra.cea.fr (localhost [127.0.0.1])
+        by localhost (Postfix) with SMTP id 9AB83201BB3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2019 09:53:05 +0100 (CET)
+Received: from muguet2-smtp-out.intra.cea.fr (muguet2-smtp-out.intra.cea.fr [132.166.192.13])
+        by pisaure.intra.cea.fr (Postfix) with ESMTP id 8D8E1200C12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2019 09:53:05 +0100 (CET)
+Received: from zia.cdc.esteban.ctsi (out.dam.intra.cea.fr [132.165.76.10])
+        by muguet2-sys.intra.cea.fr (8.14.7/8.14.7/CEAnet-Internet-out-4.0) with SMTP id xBG8r5IH001227
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2019 09:53:05 +0100
+Received: (qmail 14640 invoked from network); 16 Dec 2019 08:53:05 -0000
+From:   <quentin.bouget@cea.fr>
+Subject: open_by_handle_at: mount_fd opened with O_PATH
+To:     <linux-fsdevel@vger.kernel.org>
+CC:     MARTINET Dominique 606316 <dominique.martinet@cea.fr>,
+        Andreas Dilger <adilger@whamcloud.com>,
+        NeilBrown <neilb@suse.com>
+Message-ID: <2759fc54-9576-aaa0-926a-cad9d09d388c@cea.fr>
+Date:   Mon, 16 Dec 2019 09:53:04 +0100
 MIME-Version: 1.0
-In-Reply-To: <20191212183816.102402-3-damien.lemoal@wdc.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: multipart/mixed;
+        boundary="------------583348C193F558D5BC17F853"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/12/19 7:38 PM, Damien Le Moal wrote:
-> Add the new file Documentation/filesystems/zonefs.txt to document zonefs
-> principles and user-space tool usage.
-> 
-> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-> ---
->   Documentation/filesystems/zonefs.txt | 150 +++++++++++++++++++++++++++
->   MAINTAINERS                          |   1 +
->   2 files changed, 151 insertions(+)
->   create mode 100644 Documentation/filesystems/zonefs.txt
-> 
-> diff --git a/Documentation/filesystems/zonefs.txt b/Documentation/filesystems/zonefs.txt
-> new file mode 100644
-> index 000000000000..e5d798f4087d
-> --- /dev/null
-> +++ b/Documentation/filesystems/zonefs.txt
-> @@ -0,0 +1,150 @@
-> +ZoneFS - Zone filesystem for Zoned block devices
-> +
-> +Overview
-> +========
-> +
-> +zonefs is a very simple file system exposing each zone of a zoned block device
-> +as a file. Unlike a regular file system with zoned block device support (e.g.
-> +f2fs), zonefs does not hide the sequential write constraint of zoned block
-> +devices to the user. Files representing sequential write zones of the device
-> +must be written sequentially starting from the end of the file (append only
-> +writes).
-> +
-> +As such, zonefs is in essence closer to a raw block device access interface
-> +than to a full featured POSIX file system. The goal of zonefs is to simplify
-> +the implementation of zoned block devices support in applications by replacing
-> +raw block device file accesses with a richer file API, avoiding relying on
-> +direct block device file ioctls which may be more obscure to developers. One
-> +example of this approach is the implementation of LSM (log-structured merge)
-> +tree structures (such as used in RocksDB and LevelDB) on zoned block devices by
-> +allowing SSTables to be stored in a zone file similarly to a regular file system
-> +rather than as a range of sectors of the entire disk. The introduction of the
-> +higher level construct "one file is one zone" can help reducing the amount of
-> +changes needed in the application as well as introducing support for different
-> +application programming languages.
-> +
-> +zonefs on-disk metadata is reduced to a super block which persistently stores a
-> +magic number and optional features flags and values. On mount, zonefs uses
-> +blkdev_report_zones() to obtain the device zone configuration and populates
-> +the mount point with a static file tree solely based on this information.
-> +E.g. file sizes come from the device zone type and write pointer offset managed
-> +by the device itself.
-> +
-> +The zone files created on mount have the following characteristics.
-> +1) Files representing zones of the same type are grouped together
-> +   under the same sub-directory:
-> +  * For conventional zones, the sub-directory "cnv" is used.
-> +  * For sequential write zones, the sub-directory "seq" is used.
-> +  These two directories are the only directories that exist in zonefs. Users
-> +  cannot create other directories and cannot rename nor delete the "cnv" and
-> +  "seq" sub-directories.
-> +2) The name of zone files is the number of the file within the zone type
-> +   sub-directory, in order of increasing zone start sector.
-> +3) The size of conventional zone files is fixed to the device zone size.
-> +   Conventional zone files cannot be truncated.
-> +4) The size of sequential zone files represent the file's zone write pointer
-> +   position relative to the zone start sector. Truncating these files is
-> +   allowed only down to 0, in wich case, the zone is reset to rewind the file
-> +   zone write pointer position to the start of the zone, or up to the zone size,
-> +   in which case the file's zone is transitioned to the FULL state (finish zone
-> +   operation).
-> +5) All read and write operations to files are not allowed beyond the file zone
-> +   size. Any access exceeding the zone size is failed with the -EFBIG error.
-> +6) Creating, deleting, renaming or modifying any attribute of files and
-> +   sub-directories is not allowed.
-> +
-> +Several optional features of zonefs can be enabled at format time.
-> +* Conventional zone aggregation: ranges of contiguous conventional zones can be
-> +  agregated into a single larger file instead of the default one file per zone.
-> +* File ownership: The owner UID and GID of zone files is by default 0 (root)
-> +  but can be changed to any valid UID/GID.
-> +* File access permissions: the default 640 access permissions can be changed.
-> +
+--------------583348C193F558D5BC17F853
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Please mention the 'direct writes only to sequential zones' restriction.
+Hello,
+
+I recently noticed that the syscall open_by_handle_at() automatically 
+fails if
+its first argument is a file descriptor opened with O_PATH. I looked at 
+the code
+and saw no reason this could not be allowed. Attached to this mail are a
+a reproducer and the patch I came up with.
+
+I am not quite familiar with the kernel's way of processing patches. Any 
+pointer
+or advice on this matter is very welcome.
 
 Cheers,
+Quentin Bouget
 
-Hannes
+
+--------------583348C193F558D5BC17F853
+Content-Type: text/x-csrc; name="reproducer.c"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="reproducer.c"
+
+#define _GNU_SOURCE
+#include <errno.h>
+#include <error.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int
+main()
+{
+    struct file_handle *fhandle;
+    const char *pathname = "/";
+    int mount_fd;
+    int mountid;
+    int fd;
+
+    fhandle = malloc(sizeof(*fhandle) + 128);
+    if (fhandle == NULL)
+        error(EXIT_FAILURE, errno, "malloc");
+    fhandle->handle_bytes = 128;
+
+    fd = open(pathname, O_RDONLY | O_PATH | O_NOFOLLOW);
+    if (fd < 0)
+        error(EXIT_FAILURE, errno, "open");
+
+    if (name_to_handle_at(fd, "", fhandle, &mountid, AT_EMPTY_PATH))
+        error(EXIT_FAILURE, errno, "name_to_handle_at");
+
+    mount_fd = fd;
+    fd = open_by_handle_at(mount_fd, fhandle, O_RDONLY | O_PATH | O_NOFOLLOW);
+    if (fd < 0)
+        error(EXIT_FAILURE, errno, "open_by_handle_at");
+
+    if (close(fd))
+        error(EXIT_FAILURE, errno, "close");
+
+    if (close(mount_fd))
+        error(EXIT_FAILURE, errno, "close");
+
+    free(fhandle);
+
+    return EXIT_SUCCESS;
+}
+
+--------------583348C193F558D5BC17F853
+Content-Type: text/x-patch;
+	name="0001-vfs-let-open_by_handle_at-use-mount_fd-opened-with-O.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename*0="0001-vfs-let-open_by_handle_at-use-mount_fd-opened-with-O.pa";
+	filename*1="tch"
+
+From e3717e276444c5711335d398c29beedaf61bac82 Mon Sep 17 00:00:00 2001
+From: Quentin Bouget <quentin.bouget@cea.fr>
+Date: Thu, 24 Oct 2019 16:54:54 +0200
+Subject: [PATCH] vfs: let open_by_handle_at() use mount_fd opened with O_PATH
+
+The first argument of open_by_handle_at() is `mount_fd':
+
+> a file descriptor for any object (file, directory, etc.) in the
+> mounted filesystem with respect to which `handle' should be
+> interpreted.
+
+This patch allows for this file descriptor to be opened with O_PATH.
+
+Signed-off-by: Quentin Bouget <quentin.bouget@cea.fr>
+---
+ fs/fhandle.c | 35 +++++++++++++++++++++++------------
+ 1 file changed, 23 insertions(+), 12 deletions(-)
+
+diff --git a/fs/fhandle.c b/fs/fhandle.c
+index 01263ffbc..8b67f1b9e 100644
+--- a/fs/fhandle.c
++++ b/fs/fhandle.c
+@@ -112,22 +112,33 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
+ 	return err;
+ }
+ 
++static struct vfsmount *get_vfsmount_from_cwd(void)
++{
++	struct fs_struct *fs = current->fs;
++	struct vfsmount *mnt;
++
++	spin_lock(&fs->lock);
++	mnt = mntget(fs->pwd.mnt);
++	spin_unlock(&fs->lock);
++
++	return mnt;
++}
++
+ static struct vfsmount *get_vfsmount_from_fd(int fd)
+ {
+ 	struct vfsmount *mnt;
++	struct path path;
++	int err;
+ 
+-	if (fd == AT_FDCWD) {
+-		struct fs_struct *fs = current->fs;
+-		spin_lock(&fs->lock);
+-		mnt = mntget(fs->pwd.mnt);
+-		spin_unlock(&fs->lock);
+-	} else {
+-		struct fd f = fdget(fd);
+-		if (!f.file)
+-			return ERR_PTR(-EBADF);
+-		mnt = mntget(f.file->f_path.mnt);
+-		fdput(f);
+-	}
++	if (fd == AT_FDCWD)
++		return get_vfsmount_from_cwd();
++
++	err = filename_lookup(fd, getname_kernel(""), LOOKUP_EMPTY, &path, NULL);
++	if (err)
++		return ERR_PTR(err);
++
++	mnt = mntget(path.mnt);
++	path_put(&path);
+ 	return mnt;
+ }
+ 
 -- 
-Dr. Hannes Reinecke            Teamlead Storage & Networking
-hare@suse.de                               +49 911 74053 688
-SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
+2.18.1
+
+
+--------------583348C193F558D5BC17F853--
