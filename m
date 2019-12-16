@@ -2,117 +2,219 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DAC2121E01
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2019 23:30:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B1B3121E20
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2019 23:34:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727936AbfLPWaL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Dec 2019 17:30:11 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:11883 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727749AbfLPWZo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Dec 2019 17:25:44 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5df8044a0001>; Mon, 16 Dec 2019 14:25:14 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 16 Dec 2019 14:25:41 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 16 Dec 2019 14:25:41 -0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 16 Dec
- 2019 22:25:40 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 16 Dec 2019 22:25:41 +0000
-Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5df804640008>; Mon, 16 Dec 2019 14:25:40 -0800
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v11 16/25] net/xdp: set FOLL_PIN via pin_user_pages()
-Date:   Mon, 16 Dec 2019 14:25:28 -0800
-Message-ID: <20191216222537.491123-17-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216222537.491123-1-jhubbard@nvidia.com>
-References: <20191216222537.491123-1-jhubbard@nvidia.com>
+        id S1727608AbfLPWeY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Dec 2019 17:34:24 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60992 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726900AbfLPWeX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Dec 2019 17:34:23 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 55D07AD14;
+        Mon, 16 Dec 2019 22:34:21 +0000 (UTC)
+From:   NeilBrown <neilb@suse.de>
+To:     quentin.bouget@cea.fr, linux-fsdevel@vger.kernel.org
+Date:   Tue, 17 Dec 2019 09:34:14 +1100
+Cc:     MARTINET Dominique 606316 <dominique.martinet@cea.fr>,
+        Andreas Dilger <adilger@whamcloud.com>,
+        NeilBrown <neilb@suse.com>
+Subject: Re: open_by_handle_at: mount_fd opened with O_PATH
+In-Reply-To: <2759fc54-9576-aaa0-926a-cad9d09d388c@cea.fr>
+References: <2759fc54-9576-aaa0-926a-cad9d09d388c@cea.fr>
+Message-ID: <87d0cnhpcp.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1576535114; bh=ZT0qQeDGzOfjOR8r+Vh655vAE0xyyVSAGHaZ2J8yjZ0=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
-         Content-Type:Content-Transfer-Encoding;
-        b=EqnrC3DEqb3cJgugHP1h+j2CVEZj/84D4gjjsdfyJ89yUT1T1GNBMIRnuAymMVCWe
-         pj84oOb8MBCD7YHcaxud4XLUdd/w1ZN+AGdUCbxqJXuVDtbRdZ5ewpA61YdGsXCo6E
-         3H6s3+/tcbn404Vl84lcW/36kl+THdO7f6H2pTALQmZX5v3e4XhpNDIeciJVa5HY2t
-         bPSBgJ7s/XjhVnlk6/nYMdW9G9Zj0U1s550Od1xfKFjsN+KDkp7Prs9D9dSA7cw506
-         xHyi4SZr+M3m61aCz6GzUHK4tMVcbbSMurqXdBQlnI8jsulD1hb6WNnjkpmf6ts+h7
-         Ma2l5Pq1oNnNA==
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Convert net/xdp to use the new pin_longterm_pages() call, which sets
-FOLL_PIN. Setting FOLL_PIN is now required for code that requires
-tracking of pinned pages.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-In partial anticipation of this work, the net/xdp code was already
-calling put_user_page() instead of put_page(). Therefore, in order to
-convert from the get_user_pages()/put_page() model, to the
-pin_user_pages()/put_user_page() model, the only change required
-here is to change get_user_pages() to pin_user_pages().
+On Mon, Dec 16 2019, quentin.bouget@cea.fr wrote:
 
-Acked-by: Bj=C3=B6rn T=C3=B6pel <bjorn.topel@intel.com>
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- net/xdp/xdp_umem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/xdp/xdp_umem.c b/net/xdp/xdp_umem.c
-index 3049af269fbf..d071003b5e76 100644
---- a/net/xdp/xdp_umem.c
-+++ b/net/xdp/xdp_umem.c
-@@ -291,7 +291,7 @@ static int xdp_umem_pin_pages(struct xdp_umem *umem)
- 		return -ENOMEM;
+> Hello,
+>
+> I recently noticed that the syscall open_by_handle_at() automatically=20
+> fails if
+> its first argument is a file descriptor opened with O_PATH. I looked at=20
+> the code
+> and saw no reason this could not be allowed. Attached to this mail are a
+> a reproducer and the patch I came up with.
+>
+> I am not quite familiar with the kernel's way of processing patches. Any=
 =20
- 	down_read(&current->mm->mmap_sem);
--	npgs =3D get_user_pages(umem->address, umem->npgs,
-+	npgs =3D pin_user_pages(umem->address, umem->npgs,
- 			      gup_flags | FOLL_LONGTERM, &umem->pgs[0], NULL);
- 	up_read(&current->mm->mmap_sem);
-=20
---=20
-2.24.1
+> pointer
+> or advice on this matter is very welcome.
 
+It is probably worth reading through Documentation/process/,
+particularly
+   5.Posting.rst
+We generally like the email to be the commit.  If you have comments to
+make that really don't need to get included in the git commit, they can
+go after the "---" after the Signed-off-by.
+
+Also including a reproducer is great, but inline is generally preferred
+to attachments as long as it isn't too big.
+
+When making API changes (which this fix does), it is best to Cc
+linux-api@vger.kernel.org.
+
+You might also like to submit a separate patch to linux man-pages
+to update the open(2) man page to include open_by_handle_at
+in the list of "operations [that] can be performed on the resulting file de=
+scriptor"
+in the section about O_PATH, but just cc:ing linux-api might be enough,
+depending on how busy Michael is.
+
+Thanks,
+NeilBrown
+
+>
+> Cheers,
+> Quentin Bouget
+>
+> #define _GNU_SOURCE
+> #include <errno.h>
+> #include <error.h>
+> #include <fcntl.h>
+> #include <stdlib.h>
+> #include <unistd.h>
+>
+> int
+> main()
+> {
+>     struct file_handle *fhandle;
+>     const char *pathname =3D "/";
+>     int mount_fd;
+>     int mountid;
+>     int fd;
+>
+>     fhandle =3D malloc(sizeof(*fhandle) + 128);
+>     if (fhandle =3D=3D NULL)
+>         error(EXIT_FAILURE, errno, "malloc");
+>     fhandle->handle_bytes =3D 128;
+>
+>     fd =3D open(pathname, O_RDONLY | O_PATH | O_NOFOLLOW);
+>     if (fd < 0)
+>         error(EXIT_FAILURE, errno, "open");
+>
+>     if (name_to_handle_at(fd, "", fhandle, &mountid, AT_EMPTY_PATH))
+>         error(EXIT_FAILURE, errno, "name_to_handle_at");
+>
+>     mount_fd =3D fd;
+>     fd =3D open_by_handle_at(mount_fd, fhandle, O_RDONLY | O_PATH | O_NOF=
+OLLOW);
+>     if (fd < 0)
+>         error(EXIT_FAILURE, errno, "open_by_handle_at");
+>
+>     if (close(fd))
+>         error(EXIT_FAILURE, errno, "close");
+>
+>     if (close(mount_fd))
+>         error(EXIT_FAILURE, errno, "close");
+>
+>     free(fhandle);
+>
+>     return EXIT_SUCCESS;
+> }
+> From e3717e276444c5711335d398c29beedaf61bac82 Mon Sep 17 00:00:00 2001
+> From: Quentin Bouget <quentin.bouget@cea.fr>
+> Date: Thu, 24 Oct 2019 16:54:54 +0200
+> Subject: [PATCH] vfs: let open_by_handle_at() use mount_fd opened with O_=
+PATH
+>
+> The first argument of open_by_handle_at() is `mount_fd':
+>
+>> a file descriptor for any object (file, directory, etc.) in the
+>> mounted filesystem with respect to which `handle' should be
+>> interpreted.
+>
+> This patch allows for this file descriptor to be opened with O_PATH.
+>
+> Signed-off-by: Quentin Bouget <quentin.bouget@cea.fr>
+> ---
+>  fs/fhandle.c | 35 +++++++++++++++++++++++------------
+>  1 file changed, 23 insertions(+), 12 deletions(-)
+>
+> diff --git a/fs/fhandle.c b/fs/fhandle.c
+> index 01263ffbc..8b67f1b9e 100644
+> --- a/fs/fhandle.c
+> +++ b/fs/fhandle.c
+> @@ -112,22 +112,33 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const =
+char __user *, name,
+>  	return err;
+>  }
+>=20=20
+> +static struct vfsmount *get_vfsmount_from_cwd(void)
+> +{
+> +	struct fs_struct *fs =3D current->fs;
+> +	struct vfsmount *mnt;
+> +
+> +	spin_lock(&fs->lock);
+> +	mnt =3D mntget(fs->pwd.mnt);
+> +	spin_unlock(&fs->lock);
+> +
+> +	return mnt;
+> +}
+> +
+>  static struct vfsmount *get_vfsmount_from_fd(int fd)
+>  {
+>  	struct vfsmount *mnt;
+> +	struct path path;
+> +	int err;
+>=20=20
+> -	if (fd =3D=3D AT_FDCWD) {
+> -		struct fs_struct *fs =3D current->fs;
+> -		spin_lock(&fs->lock);
+> -		mnt =3D mntget(fs->pwd.mnt);
+> -		spin_unlock(&fs->lock);
+> -	} else {
+> -		struct fd f =3D fdget(fd);
+> -		if (!f.file)
+> -			return ERR_PTR(-EBADF);
+> -		mnt =3D mntget(f.file->f_path.mnt);
+> -		fdput(f);
+> -	}
+> +	if (fd =3D=3D AT_FDCWD)
+> +		return get_vfsmount_from_cwd();
+> +
+> +	err =3D filename_lookup(fd, getname_kernel(""), LOOKUP_EMPTY, &path, NU=
+LL);
+> +	if (err)
+> +		return ERR_PTR(err);
+> +
+> +	mnt =3D mntget(path.mnt);
+> +	path_put(&path);
+>  	return mnt;
+>  }
+>=20=20
+> --=20
+> 2.18.1
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAl34BmYACgkQOeye3VZi
+gblYUg/9HebtisUvv845mD3YohDE2XHyZnMLUH65RvexQwDGVipt3R71JksJMvsF
+rNN2IDeEw6ratiHUbnIPitwJvvVa5rOKrZZioCz09vaPe0L42aJVi/TQvGrI827z
+Z1iipgTHVkd7T8kGqjlT+cy0HVAtO+YlMwwJuIlGl1X5dxdCvwGoTUJjpIB67ooq
+YV1RNlfvWJ5S0lNPnQbVlkuAGeo+ZRWQkmZG5eJmrA6oP2UQhRG3/e9ZtduCnoXp
+UEm03MPTNVVIfQdmf2aKZyx5Lgtjhidy1EBzhyzvVdiHnxX7RymYMfB5tuSjD3Nv
+XuRgrIuwHe4gBF50VKE2XcG6IeFWzewb9kHuir74lB4CxAvKnJ0vokmfwQc7VxfI
+1dH3mn/48aS48qb2qaYyYpS71ikKBQxMhdrhyMMbjLQNUwGy5VRqE9yGmPD/WczY
+d33w7QjCFmp8YDdr1Npzvpgj1tRSt98hYDCHHCITktR1NoO71T3tj9O59nOAH9T4
+j7vi2OIX0HMur4qg9gvW4IMtfFXKpiqN6xUEIa7k1p4b8zOaW9EeNsMgT2qNJzVK
+n7yckcjfBU3T30D6vUDCvfzNYkLZBp7wBZn/cu/1xavb/d3Ja9arTPck30DSrHyh
+5nBV97HSKXfakmWrowQsy51PgfrlQC64Nkh/uzn9hXlPj+Wsqyo=
+=vcRk
+-----END PGP SIGNATURE-----
+--=-=-=--
