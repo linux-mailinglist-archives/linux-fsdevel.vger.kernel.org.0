@@ -2,219 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B1B3121E20
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2019 23:34:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC70D121E9D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2019 23:55:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727608AbfLPWeY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Dec 2019 17:34:24 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60992 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726900AbfLPWeX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Dec 2019 17:34:23 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 55D07AD14;
-        Mon, 16 Dec 2019 22:34:21 +0000 (UTC)
-From:   NeilBrown <neilb@suse.de>
-To:     quentin.bouget@cea.fr, linux-fsdevel@vger.kernel.org
-Date:   Tue, 17 Dec 2019 09:34:14 +1100
-Cc:     MARTINET Dominique 606316 <dominique.martinet@cea.fr>,
-        Andreas Dilger <adilger@whamcloud.com>,
-        NeilBrown <neilb@suse.com>
-Subject: Re: open_by_handle_at: mount_fd opened with O_PATH
-In-Reply-To: <2759fc54-9576-aaa0-926a-cad9d09d388c@cea.fr>
-References: <2759fc54-9576-aaa0-926a-cad9d09d388c@cea.fr>
-Message-ID: <87d0cnhpcp.fsf@notabene.neil.brown.name>
+        id S1727613AbfLPWyX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Dec 2019 17:54:23 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:35635 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726856AbfLPWyX (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Dec 2019 17:54:23 -0500
+Received: by mail-ot1-f66.google.com with SMTP id f71so1556665otf.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2019 14:54:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=qerC5f2g4K0CLRKMpy8gs8tB4kD6Nc3TAFdz4gfy1tA=;
+        b=GoxdipU08WF/hBd/Xo7+BpPL0vsDh2D8cNoBypL2vwB05UhmXAk/4yO0/Cfmviu7Fm
+         e+tn3V8sDthIue1ID5iFWdq0c7YsYNYnzxneAx7E8sbHUuoMC3hYHjn7rJNk/HXpPkiT
+         Tl6xu6eGuOqoacPBQGU2zeYAo3Y7MNWILBzhjKDGtuX4aOowIkPekwsh3axn6EEa8j8h
+         B+0UyxOPIREj4iNTNRbCq34GeuuAaq8unoQLjjaTnqpfshPg8hVYkYz5Nm0FceXjTLSy
+         WLsQCmdCSQHlWhWMatM3iXAK9SdZM9Ezh+uOsNoTjZtJRYRyM63RETGl0lxISSWbC+oT
+         czYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=qerC5f2g4K0CLRKMpy8gs8tB4kD6Nc3TAFdz4gfy1tA=;
+        b=Z5O4aUbEhpkLApiWMCptcQvRXCmAX/HGf65mWwdr1aYeopWjcnJPVoKAOt00O/ReuN
+         mWHO20lbyYXOnboEkI1nFqA5pEDb3fRo0tap/Ky0d40ogVCMJB8B1lIYnn3eidtxt+ol
+         GyBu15lz5FRYu6dPNVMr+rzGGdwqazHhISUhAkO2CltmBLf/g9XRvU5dJozkQ5P/JRH/
+         PTZXcWK+4kDYv7C6MyANThvRfM4HKTH+HKNW0/62Ho564B1fp/djdiAYElBgLwTNhi4V
+         HP3eYMIZEZ+WUOihUmIsDvyAfKOCtZKtNQWioy2qXrXnQUyAA4FUwD/n/neWRfyVpDUb
+         2fnw==
+X-Gm-Message-State: APjAAAXwSZggfLQnJUVZkcuyJbyyxD8UWzzohA3m2mkQvldyEvrrHOfO
+        z2tVML6otWQSAklcOF8DA6WbQZ69r1au+3lAOEkBWQ==
+X-Google-Smtp-Source: APXvYqy1hECV7GCgPWmRWV7xZsNCBrwr6cCGgSjrqmtTSzsSQSSks+h7nRXhxJEWrL5nsuAz8LmXa13t5JLWnazcDPY=
+X-Received: by 2002:a05:6830:1d6e:: with SMTP id l14mr579460oti.32.1576536861535;
+ Mon, 16 Dec 2019 14:54:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+References: <20191216091220.465626-1-laurent@vivier.eu> <20191216091220.465626-2-laurent@vivier.eu>
+ <CAG48ez2xNCRmuzpNqYW5R+XMKzW8YiemsPUPgk42KSkSZXmvLg@mail.gmail.com> <15d270a6-2264-adc5-3f56-fdb8b67ad267@vivier.eu>
+In-Reply-To: <15d270a6-2264-adc5-3f56-fdb8b67ad267@vivier.eu>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 16 Dec 2019 23:53:54 +0100
+Message-ID: <CAG48ez2YE33KiuhnHa=cq_DymqWLAv9CyeD3BOrjsStKfb_dBQ@mail.gmail.com>
+Subject: Re: [PATCH v8 1/1] ns: add binfmt_misc to the user namespace
+To:     Laurent Vivier <laurent@vivier.eu>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        Greg Kurz <groug@kaod.org>, Andrei Vagin <avagin@gmail.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Dmitry Safonov <dima@arista.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Henning Schild <henning.schild@siemens.com>,
+        =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Mon, Dec 16, 2019 at 9:05 PM Laurent Vivier <laurent@vivier.eu> wrote:
+> Le 16/12/2019 =C3=A0 20:08, Jann Horn a =C3=A9crit :
+> > On Mon, Dec 16, 2019 at 10:12 AM Laurent Vivier <laurent@vivier.eu> wro=
+te:
+> >> This patch allows to have a different binfmt_misc configuration
+> >> for each new user namespace. By default, the binfmt_misc configuration
+> >> is the one of the previous level, but if the binfmt_misc filesystem is
+> >> mounted in the new namespace a new empty binfmt instance is created an=
+d
+> >> used in this namespace.
+> >>
+> >> For instance, using "unshare" we can start a chroot of another
+> >> architecture and configure the binfmt_misc interpreter without being r=
+oot
+> >> to run the binaries in this chroot.
+> >
+> > How do you ensure that when userspace is no longer using the user
+> > namespace and mount namespace, the entries and the binfmt_misc
+> > superblock are deleted? As far as I can tell from looking at the code,
+> > at the moment, if I create a user namespace+mount namespace, mount
+> > binfmt_misc in there, register a file format and then let all
+> > processes inside the namespaces exit, the binfmt_misc mount will be
+> > kept alive by the simple_pin_fs() stuff, and the binfmt_misc entries
+> > will also stay in memory.
+> >
+> > [...]
+>
+> Do you have any idea how I can fix this issue?
 
-On Mon, Dec 16 2019, quentin.bouget@cea.fr wrote:
+I think the easiest way (keeping in mind that we want to avoid having
+to fiddle around with reference loops, where e.g. interpreter
+executable files opened by binfmt_misc have references back to the
+user namespace through ->f_cred) would be to add a new patch in front
+of this one that changes the semantics such that when binfmt_misc is
+unmounted, all the existing format registrations are deleted. That's
+probably also nicer from the perspective of inspectability. It could
+in theory break stuff, but I think that's probably somewhat unlikely.
+Still, it'd be an API change, and therefore you should CC linux-api@
+on such a change.
 
-> Hello,
+> >> @@ -718,7 +736,9 @@ static ssize_t bm_register_write(struct file *file=
+, const char __user *buffer,
+> >>         if (!inode)
+> >>                 goto out2;
+> >>
+> >> -       err =3D simple_pin_fs(&bm_fs_type, &bm_mnt, &entry_count);
+> >> +       ns =3D binfmt_ns(file_dentry(file)->d_sb->s_user_ns);
+> >> +       err =3D simple_pin_fs(&bm_fs_type, &ns->bm_mnt,
+> >> +                           &ns->entry_count);
+> >
+> > When you call simple_pin_fs() here, the user namespace of `current`
+> > and the user namespace of the superblock are not necessarily related.
+> > So simple_pin_fs() may end up taking a reference on the mountpoint for
+> > a user namespace that has nothing to do with the namespace for which
+> > an entry is being created.
 >
-> I recently noticed that the syscall open_by_handle_at() automatically=20
-> fails if
-> its first argument is a file descriptor opened with O_PATH. I looked at=20
-> the code
-> and saw no reason this could not be allowed. Attached to this mail are a
-> a reproducer and the patch I came up with.
->
-> I am not quite familiar with the kernel's way of processing patches. Any=
-=20
-> pointer
-> or advice on this matter is very welcome.
+> Do you have any idea how I can fix this issue?
 
-It is probably worth reading through Documentation/process/,
-particularly
-   5.Posting.rst
-We generally like the email to be the commit.  If you have comments to
-make that really don't need to get included in the git commit, they can
-go after the "---" after the Signed-off-by.
+If you fix the memory leak the way I suggested, this wouldn't be a
+problem anymore either.
 
-Also including a reproducer is great, but inline is generally preferred
-to attachments as long as it isn't too big.
+> >> +static void bm_free(struct fs_context *fc)
+> >> +{
+> >> +       if (fc->s_fs_info)
+> >> +               put_user_ns(fc->s_fs_info);
+> >> +}
+> >
+> > Silly question: Why the "if"? Can you ever reach this with fc->s_fs_inf=
+o=3D=3DNULL?
+>
+> So I understand the if is unnecessary and I will remove it.
 
-When making API changes (which this fix does), it is best to Cc
-linux-api@vger.kernel.org.
+Your code was actually exactly right, I didn't understand how
+fc->s_fs_info works.
 
-You might also like to submit a separate patch to linux man-pages
-to update the open(2) man page to include open_by_handle_at
-in the list of "operations [that] can be performed on the resulting file de=
-scriptor"
-in the section about O_PATH, but just cc:ing linux-api might be enough,
-depending on how busy Michael is.
+> >>  static int bm_get_tree(struct fs_context *fc)
+> >>  {
+> >> -       return get_tree_single(fc, bm_fill_super);
+> >> +       return get_tree_keyed(fc, bm_fill_super, get_user_ns(fc->user_=
+ns));
+> >
+> > get_user_ns() increments the refcount of the namespace, but in the
+> > case where a binfmt_misc mount already exists, that refcount is never
+> > dropped, right? That would be a security bug, since an attacker could
+> > overflow the refcount of the user namespace and then trigger a UAF.
+> > (And the refcount hardening won't catch it because user namespaces
+> > still use raw atomics instead of refcount_t.)
+>
+> Do you have any idea how I can fix this issue?
 
-Thanks,
-NeilBrown
+Ah, this was actually fine. I missed that get_tree_keyed() stashes
+that pointer in fc->s_fs_info.
 
+> >> +#if IS_ENABLED(CONFIG_BINFMT_MISC)
+> >
+> > Nit: Isn't this kind of check normally written as "#ifdef"?
+> >
 >
-> Cheers,
-> Quentin Bouget
->
-> #define _GNU_SOURCE
-> #include <errno.h>
-> #include <error.h>
-> #include <fcntl.h>
-> #include <stdlib.h>
-> #include <unistd.h>
->
-> int
-> main()
-> {
->     struct file_handle *fhandle;
->     const char *pathname =3D "/";
->     int mount_fd;
->     int mountid;
->     int fd;
->
->     fhandle =3D malloc(sizeof(*fhandle) + 128);
->     if (fhandle =3D=3D NULL)
->         error(EXIT_FAILURE, errno, "malloc");
->     fhandle->handle_bytes =3D 128;
->
->     fd =3D open(pathname, O_RDONLY | O_PATH | O_NOFOLLOW);
->     if (fd < 0)
->         error(EXIT_FAILURE, errno, "open");
->
->     if (name_to_handle_at(fd, "", fhandle, &mountid, AT_EMPTY_PATH))
->         error(EXIT_FAILURE, errno, "name_to_handle_at");
->
->     mount_fd =3D fd;
->     fd =3D open_by_handle_at(mount_fd, fhandle, O_RDONLY | O_PATH | O_NOF=
-OLLOW);
->     if (fd < 0)
->         error(EXIT_FAILURE, errno, "open_by_handle_at");
->
->     if (close(fd))
->         error(EXIT_FAILURE, errno, "close");
->
->     if (close(mount_fd))
->         error(EXIT_FAILURE, errno, "close");
->
->     free(fhandle);
->
->     return EXIT_SUCCESS;
-> }
-> From e3717e276444c5711335d398c29beedaf61bac82 Mon Sep 17 00:00:00 2001
-> From: Quentin Bouget <quentin.bouget@cea.fr>
-> Date: Thu, 24 Oct 2019 16:54:54 +0200
-> Subject: [PATCH] vfs: let open_by_handle_at() use mount_fd opened with O_=
-PATH
->
-> The first argument of open_by_handle_at() is `mount_fd':
->
->> a file descriptor for any object (file, directory, etc.) in the
->> mounted filesystem with respect to which `handle' should be
->> interpreted.
->
-> This patch allows for this file descriptor to be opened with O_PATH.
->
-> Signed-off-by: Quentin Bouget <quentin.bouget@cea.fr>
-> ---
->  fs/fhandle.c | 35 +++++++++++++++++++++++------------
->  1 file changed, 23 insertions(+), 12 deletions(-)
->
-> diff --git a/fs/fhandle.c b/fs/fhandle.c
-> index 01263ffbc..8b67f1b9e 100644
-> --- a/fs/fhandle.c
-> +++ b/fs/fhandle.c
-> @@ -112,22 +112,33 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const =
-char __user *, name,
->  	return err;
->  }
->=20=20
-> +static struct vfsmount *get_vfsmount_from_cwd(void)
-> +{
-> +	struct fs_struct *fs =3D current->fs;
-> +	struct vfsmount *mnt;
-> +
-> +	spin_lock(&fs->lock);
-> +	mnt =3D mntget(fs->pwd.mnt);
-> +	spin_unlock(&fs->lock);
-> +
-> +	return mnt;
-> +}
-> +
->  static struct vfsmount *get_vfsmount_from_fd(int fd)
->  {
->  	struct vfsmount *mnt;
-> +	struct path path;
-> +	int err;
->=20=20
-> -	if (fd =3D=3D AT_FDCWD) {
-> -		struct fs_struct *fs =3D current->fs;
-> -		spin_lock(&fs->lock);
-> -		mnt =3D mntget(fs->pwd.mnt);
-> -		spin_unlock(&fs->lock);
-> -	} else {
-> -		struct fd f =3D fdget(fd);
-> -		if (!f.file)
-> -			return ERR_PTR(-EBADF);
-> -		mnt =3D mntget(f.file->f_path.mnt);
-> -		fdput(f);
-> -	}
-> +	if (fd =3D=3D AT_FDCWD)
-> +		return get_vfsmount_from_cwd();
-> +
-> +	err =3D filename_lookup(fd, getname_kernel(""), LOOKUP_EMPTY, &path, NU=
-LL);
-> +	if (err)
-> +		return ERR_PTR(err);
-> +
-> +	mnt =3D mntget(path.mnt);
-> +	path_put(&path);
->  	return mnt;
->  }
->=20=20
-> --=20
-> 2.18.1
+> What is the difference?
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAl34BmYACgkQOeye3VZi
-gblYUg/9HebtisUvv845mD3YohDE2XHyZnMLUH65RvexQwDGVipt3R71JksJMvsF
-rNN2IDeEw6ratiHUbnIPitwJvvVa5rOKrZZioCz09vaPe0L42aJVi/TQvGrI827z
-Z1iipgTHVkd7T8kGqjlT+cy0HVAtO+YlMwwJuIlGl1X5dxdCvwGoTUJjpIB67ooq
-YV1RNlfvWJ5S0lNPnQbVlkuAGeo+ZRWQkmZG5eJmrA6oP2UQhRG3/e9ZtduCnoXp
-UEm03MPTNVVIfQdmf2aKZyx5Lgtjhidy1EBzhyzvVdiHnxX7RymYMfB5tuSjD3Nv
-XuRgrIuwHe4gBF50VKE2XcG6IeFWzewb9kHuir74lB4CxAvKnJ0vokmfwQc7VxfI
-1dH3mn/48aS48qb2qaYyYpS71ikKBQxMhdrhyMMbjLQNUwGy5VRqE9yGmPD/WczY
-d33w7QjCFmp8YDdr1Npzvpgj1tRSt98hYDCHHCITktR1NoO71T3tj9O59nOAH9T4
-j7vi2OIX0HMur4qg9gvW4IMtfFXKpiqN6xUEIa7k1p4b8zOaW9EeNsMgT2qNJzVK
-n7yckcjfBU3T30D6vUDCvfzNYkLZBp7wBZn/cu/1xavb/d3Ja9arTPck30DSrHyh
-5nBV97HSKXfakmWrowQsy51PgfrlQC64Nkh/uzn9hXlPj+Wsqyo=
-=vcRk
------END PGP SIGNATURE-----
---=-=-=--
+As explained in Documentation/process/coding-style.rst and the
+relevant header, IS_ENABLED() is for inline use in C expressions.
