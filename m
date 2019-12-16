@@ -2,439 +2,237 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB002120861
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2019 15:17:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 308E112092B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2019 16:01:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728059AbfLPOQb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Dec 2019 09:16:31 -0500
-Received: from faui03.informatik.uni-erlangen.de ([131.188.30.103]:40322 "EHLO
-        faui03.informatik.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728012AbfLPOQb (ORCPT
+        id S1728167AbfLPPBE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Dec 2019 10:01:04 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:43015 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728008AbfLPPBE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Dec 2019 09:16:31 -0500
-Received: from faui04i.informatik.uni-erlangen.de (faui04i.informatik.uni-erlangen.de [131.188.30.139])
-        by faui03.informatik.uni-erlangen.de (Postfix) with ESMTP id 86B53241656;
-        Mon, 16 Dec 2019 15:16:27 +0100 (CET)
-Received: by faui04i.informatik.uni-erlangen.de (Postfix, from userid 66565)
-        id 79EF1C808D6; Mon, 16 Dec 2019 15:16:27 +0100 (CET)
-From:   Julian Preis <julian.preis@fau.de>
-Cc:     valdis.kletnieks@vt.edu, gregkh@linuxfoundation.org,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, Julian Preis <julian.preis@fau.de>,
-        Johannes Weidner <johannes.weidner@fau.de>
-Subject: [PATCH v2] drivers/staging/exfat/exfat_super.c: Clean up ffsCamelCase function names
-Date:   Mon, 16 Dec 2019 15:16:23 +0100
-Message-Id: <20191216141623.22379-1-julian.preis@fau.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <y>
-References: <y>
+        Mon, 16 Dec 2019 10:01:04 -0500
+Received: by mail-il1-f194.google.com with SMTP id v69so4475442ili.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2019 07:01:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4o3so5JTuNuX4Qlqx9BRrgALmzUQEkKTE9s7WJkJ1ck=;
+        b=t3iDlkohm9u1kOxjm+5XvP+ghBqkDwRZ5Etn34QK1PE+G1nCkCKRXplBvMQPL41YBh
+         HrjAjG2wE0onAgxXRDTzgRyklVYxPjsHuyIMooXO+BYGE3xtDaeLEAgb3wfSko45F3MH
+         N2CZqasTfLA0uAO5SoKPXnS2GOushoSvdO7/AfjOoYrL8Nf6cBY6sA5OSpWIpI9uDvYB
+         aE/6BP4TgKdZcfCtKyutBrQ7C8glLwZnP3EnEm6cOREqrpHmKCeSU9MEccFP9N7jr8+p
+         kwHo0/Dv+hj8YjOP2FZXX08C9+RlsK15paitzNiwoEus2S/hxGYdWG5zY22h6zNRyQW4
+         pvWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4o3so5JTuNuX4Qlqx9BRrgALmzUQEkKTE9s7WJkJ1ck=;
+        b=aSjalpNPnAinVPPaJ/u2LN2lZAB+/Fh3fertXNXtkUpxg8kjvA/ZYrHxZDiunWd26W
+         mecbeDdXFlU5+V6Fcv5QG7L0h+DCOKC1JUkLhPg4RceVktJp1gbk1vgv1oBvOiYdt+Nw
+         XuN/e4S0wh2Ik0cT4I5p2D553O7uZSW+oP3vvOr2BEO8FucNCQknHhbm/TzVcC8ehJ/X
+         FH/xegMR+WNXcFfeGoJeCOsNFlIONU4OvbcRIjfMn97neJisKkXuy+2lHyQdBNQKouWZ
+         Qw+7KjHVoPjIlqqtMNqWkl/462wxb8X2EVk8UYszdiCoV9IVVb/sGkvtjb1NzqWmGETK
+         WhAA==
+X-Gm-Message-State: APjAAAWOKvIiVolhR3bcQTdCSlZpTC35bJE34ZuBhA6hbyGrh8vyg1iE
+        KLdQe6PlfUmAf1yN5nzNl5N6xyZ852H5ajAy+tuhbXus
+X-Google-Smtp-Source: APXvYqx0vSuTGcdV7thRtTVu/XTzcgvMy+SzUrWdY+xQRQTMgYYroRTCCYDhb+94KU25N2betPUdcxqD1woQ00Y1Cm4=
+X-Received: by 2002:a92:5c8a:: with SMTP id d10mr13238429ilg.137.1576508462463;
+ Mon, 16 Dec 2019 07:01:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+References: <CADKPpc2RuncyN+ZONkwBqtW7iBb5ep_3yQN7PKe7ASn8DpNvBw@mail.gmail.com>
+ <CAOQ4uxiKqEq9ts4fEq_husQJpus29afVBMq8P1tkeQT-58RBFg@mail.gmail.com>
+ <CADKPpc33UGcuRB9p64QoF8g88emqNQB=Z03f+OnK4MiCoeVZpg@mail.gmail.com>
+ <20191204173455.GJ8206@quack2.suse.cz> <CAOQ4uxjda6iQ1D0QEVB18TcrttVpd7uac++WX0xAyLvxz0x7Ew@mail.gmail.com>
+ <20191204190206.GA8331@bombadil.infradead.org> <CAOQ4uxiZWKCUKcpBt-bHOcnHoFAq+nghWmf94rJu=3CTc5VhRA@mail.gmail.com>
+ <20191211100604.GL1551@quack2.suse.cz> <CAOQ4uxij13z0AazCm7AzrXOSz_eYBSFhs0mo6eZFW=57wOtwew@mail.gmail.com>
+In-Reply-To: <CAOQ4uxij13z0AazCm7AzrXOSz_eYBSFhs0mo6eZFW=57wOtwew@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 16 Dec 2019 17:00:50 +0200
+Message-ID: <CAOQ4uxiKzom5uBNbBpZTNCT0XLOrcHmOwYy=3-V-Qcex1mhszw@mail.gmail.com>
+Subject: Re: File monitor problem
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Mo Re Ra <more7.rev@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Wez Furlong <wez@fb.com>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-api@vger.linux.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Rename every instance of <ffsCamelCaseExample> to <ffs_camel_case_example>
-in file exfat_super.c. Fix resulting overlong lines.
+[cc: linux-api]
 
-Co-developed-by: Johannes Weidner <johannes.weidner@fau.de>
-Signed-off-by: Johannes Weidner <johannes.weidner@fau.de>
-Signed-off-by: Julian Preis <julian.preis@fau.de>
----
-Changes in v2:
-- Add email recipients according to get_maintainer.pl
-- Add patch versions
-- Use in-reply-to
+On Wed, Dec 11, 2019 at 3:58 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> On Wed, Dec 11, 2019 at 12:06 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Wed 04-12-19 22:27:31, Amir Goldstein wrote:
+> [...]
+> > > The way to frame this correctly IMO is that fsnotify events let application
+> > > know that "something has changed", without any ordering guaranty
+> > > beyond "sometime before the event was read".
+> > >
+> > > So far, that "something" can be a file (by fd), an inode (by fid),
+> > > more specifically a directory inode (by fid) where in an entry has
+> > > changed.
+> > >
+> > > Adding filename info extends that concept to "something has changed
+> > > in the namespace at" (by parent fid+name).
+> > > All it means is that application should pay attention to that part of
+> > > the namespace and perform a lookup to find out what has changed.
+> > >
+> > > Maybe the way to mitigate wrong assumptions about ordering and
+> > > existence of the filename in the namespace is to omit the event type
+> > > for "filename events", for example: { FAN_CHANGE, pfid, name }.
+> >
+> > So this event would effectively mean: In directory pfid, some filename
+> > event has happened with name "name" - i.e. "name" was created (could mean
+> > also mkdir), deleted, moved. Am I right?
+>
+> Exactly.
+>
+> > And the application would then
+> > open_by_handle(2) + open_at(2) + fstat(2) the object pointed to by
+>
+> open_by_handle(2) + fstatat(2) to be exact.
+>
+> > (pfid, name) pair and copy whatever it finds to the other end (or delete on
+> > the other end in case of ENOENT)?
+>
+> Basically, yes.
+> Although a modern sync tool may also keep some local map of
+> remote name -> local fid, to detect a local rename and try to perform a
+> remote rename.
+>
+> >
+> > After some thought, yes, I think this is difficult to misuse (or infer some
+> > false guarantees out of it). As far as I was thinking it also seems good
+> > enough to implement more efficient syncing of directories.
+>
+> Great, so I will work on the patches.
+>
 
- drivers/staging/exfat/exfat_super.c | 99 +++++++++++++++--------------
- 1 file changed, 51 insertions(+), 48 deletions(-)
+Hi Jan,
 
-diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
-index 6e481908c59f..14ff3fce70fb 100644
---- a/drivers/staging/exfat/exfat_super.c
-+++ b/drivers/staging/exfat/exfat_super.c
-@@ -343,7 +343,7 @@ static inline void exfat_save_attr(struct inode *inode, u32 attr)
- 		EXFAT_I(inode)->fid.attr = attr & (ATTR_RWMASK | ATTR_READONLY);
- }
- 
--static int ffsMountVol(struct super_block *sb)
-+static int ffs_mount_vol(struct super_block *sb)
- {
- 	int i, ret;
- 	struct pbr_sector_t *p_pbr;
-@@ -439,7 +439,7 @@ static int ffsMountVol(struct super_block *sb)
- 	return ret;
- }
- 
--static int ffsUmountVol(struct super_block *sb)
-+static int ffs_umount_vol(struct super_block *sb)
- {
- 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
- 	int err = 0;
-@@ -479,7 +479,7 @@ static int ffsUmountVol(struct super_block *sb)
- 	return err;
- }
- 
--static int ffsGetVolInfo(struct super_block *sb, struct vol_info_t *info)
-+static int ffs_get_vol_info(struct super_block *sb, struct vol_info_t *info)
- {
- 	int err = 0;
- 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
-@@ -509,7 +509,7 @@ static int ffsGetVolInfo(struct super_block *sb, struct vol_info_t *info)
- 	return err;
- }
- 
--static int ffsSyncVol(struct super_block *sb, bool do_sync)
-+static int ffs_sync_vol(struct super_block *sb, bool do_sync)
- {
- 	int err = 0;
- 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
-@@ -534,7 +534,8 @@ static int ffsSyncVol(struct super_block *sb, bool do_sync)
- /*  File Operation Functions                                            */
- /*----------------------------------------------------------------------*/
- 
--static int ffsLookupFile(struct inode *inode, char *path, struct file_id_t *fid)
-+static int ffs_lookup_file(struct inode *inode, char *path,
-+			   struct file_id_t *fid)
- {
- 	int ret, dentry, num_entries;
- 	struct chain_t dir;
-@@ -621,8 +622,8 @@ static int ffsLookupFile(struct inode *inode, char *path, struct file_id_t *fid)
- 	return ret;
- }
- 
--static int ffsCreateFile(struct inode *inode, char *path, u8 mode,
--			 struct file_id_t *fid)
-+static int ffs_create_file(struct inode *inode, char *path, u8 mode,
-+			   struct file_id_t *fid)
- {
- 	struct chain_t dir;
- 	struct uni_name_t uni_name;
-@@ -662,8 +663,8 @@ static int ffsCreateFile(struct inode *inode, char *path, u8 mode,
- 	return ret;
- }
- 
--static int ffsReadFile(struct inode *inode, struct file_id_t *fid, void *buffer,
--		       u64 count, u64 *rcount)
-+static int ffs_read_file(struct inode *inode, struct file_id_t *fid,
-+			 void *buffer, u64 count, u64 *rcount)
- {
- 	s32 offset, sec_offset, clu_offset;
- 	u32 clu;
-@@ -788,8 +789,8 @@ static int ffsReadFile(struct inode *inode, struct file_id_t *fid, void *buffer,
- 	return ret;
- }
- 
--static int ffsWriteFile(struct inode *inode, struct file_id_t *fid,
--			void *buffer, u64 count, u64 *wcount)
-+static int ffs_write_file(struct inode *inode, struct file_id_t *fid,
-+			  void *buffer, u64 count, u64 *wcount)
- {
- 	bool modified = false;
- 	s32 offset, sec_offset, clu_offset;
-@@ -1031,7 +1032,7 @@ static int ffsWriteFile(struct inode *inode, struct file_id_t *fid,
- 	return ret;
- }
- 
--static int ffsTruncateFile(struct inode *inode, u64 old_size, u64 new_size)
-+static int ffs_truncate_file(struct inode *inode, u64 old_size, u64 new_size)
- {
- 	s32 num_clusters;
- 	u32 last_clu = CLUSTER_32(0);
-@@ -1167,8 +1168,9 @@ static void update_parent_info(struct file_id_t *fid,
- 	}
- }
- 
--static int ffsMoveFile(struct inode *old_parent_inode, struct file_id_t *fid,
--		       struct inode *new_parent_inode, struct dentry *new_dentry)
-+static int ffs_move_file(struct inode *old_parent_inode, struct file_id_t *fid,
-+			 struct inode *new_parent_inode,
-+			 struct dentry *new_dentry)
- {
- 	s32 ret;
- 	s32 dentry;
-@@ -1296,7 +1298,7 @@ static int ffsMoveFile(struct inode *old_parent_inode, struct file_id_t *fid,
- 	return ret;
- }
- 
--static int ffsRemoveFile(struct inode *inode, struct file_id_t *fid)
-+static int ffs_remove_file(struct inode *inode, struct file_id_t *fid)
- {
- 	s32 dentry;
- 	int ret = 0;
-@@ -1360,7 +1362,7 @@ static int ffsRemoveFile(struct inode *inode, struct file_id_t *fid)
- 
- #if 0
- /* Not currently wired up */
--static int ffsSetAttr(struct inode *inode, u32 attr)
-+static int ffs_set_attr(struct inode *inode, u32 attr)
- {
- 	u32 type;
- 	int ret = 0;
-@@ -1435,7 +1437,7 @@ static int ffsSetAttr(struct inode *inode, u32 attr)
- }
- #endif
- 
--static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
-+static int ffs_read_stat(struct inode *inode, struct dir_entry_t *info)
- {
- 	s32 count;
- 	int ret = 0;
-@@ -1565,7 +1567,7 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
- 	return ret;
- }
- 
--static int ffsWriteStat(struct inode *inode, struct dir_entry_t *info)
-+static int ffs_write_stat(struct inode *inode, struct dir_entry_t *info)
- {
- 	int ret = 0;
- 	struct timestamp_t tm;
-@@ -1638,7 +1640,7 @@ static int ffsWriteStat(struct inode *inode, struct dir_entry_t *info)
- 	return ret;
- }
- 
--static int ffsMapCluster(struct inode *inode, s32 clu_offset, u32 *clu)
-+static int ffs_map_cluster(struct inode *inode, s32 clu_offset, u32 *clu)
- {
- 	s32 num_clusters, num_alloced;
- 	bool modified = false;
-@@ -1778,7 +1780,8 @@ static int ffsMapCluster(struct inode *inode, s32 clu_offset, u32 *clu)
- /*  Directory Operation Functions                                       */
- /*----------------------------------------------------------------------*/
- 
--static int ffsCreateDir(struct inode *inode, char *path, struct file_id_t *fid)
-+static int ffs_create_dir(struct inode *inode, char *path,
-+			  struct file_id_t *fid)
- {
- 	int ret = 0;
- 	struct chain_t dir;
-@@ -1818,7 +1821,7 @@ static int ffsCreateDir(struct inode *inode, char *path, struct file_id_t *fid)
- 	return ret;
- }
- 
--static int ffsReadDir(struct inode *inode, struct dir_entry_t *dir_entry)
-+static int ffs_read_dir(struct inode *inode, struct dir_entry_t *dir_entry)
- {
- 	int i, dentry, clu_offset;
- 	int ret = 0;
-@@ -2005,7 +2008,7 @@ static int ffsReadDir(struct inode *inode, struct dir_entry_t *dir_entry)
- 	return ret;
- }
- 
--static int ffsRemoveDir(struct inode *inode, struct file_id_t *fid)
-+static int ffs_remove_dir(struct inode *inode, struct file_id_t *fid)
- {
- 	s32 dentry;
- 	int ret = 0;
-@@ -2114,7 +2117,7 @@ static int exfat_readdir(struct file *filp, struct dir_context *ctx)
- 	EXFAT_I(inode)->fid.size = i_size_read(inode);
- 	EXFAT_I(inode)->fid.rwoffset = cpos >> DENTRY_SIZE_BITS;
- 
--	err = ffsReadDir(inode, &de);
-+	err = ffs_read_dir(inode, &de);
- 	if (err) {
- 		/* at least we tried to read a sector
- 		 * move cpos to next sector position (should be aligned)
-@@ -2235,7 +2238,7 @@ static int exfat_create(struct inode *dir, struct dentry *dentry, umode_t mode,
- 
- 	pr_debug("%s entered\n", __func__);
- 
--	err = ffsCreateFile(dir, (u8 *)dentry->d_name.name, FM_REGULAR, &fid);
-+	err = ffs_create_file(dir, (u8 *)dentry->d_name.name, FM_REGULAR, &fid);
- 	if (err)
- 		goto out;
- 
-@@ -2282,7 +2285,7 @@ static int exfat_find(struct inode *dir, struct qstr *qname,
- 	if (qname->len == 0)
- 		return -ENOENT;
- 
--	err = ffsLookupFile(dir, (u8 *)qname->name, fid);
-+	err = ffs_lookup_file(dir, (u8 *)qname->name, fid);
- 	if (err)
- 		return -ENOENT;
- 
-@@ -2332,8 +2335,8 @@ static struct dentry *exfat_lookup(struct inode *dir, struct dentry *dentry,
- 			err = -ENOMEM;
- 			goto error;
- 		}
--		ffsReadFile(dir, &fid, EXFAT_I(inode)->target,
--			    i_size_read(inode), &ret);
-+		ffs_read_file(dir, &fid, EXFAT_I(inode)->target,
-+			      i_size_read(inode), &ret);
- 		*(EXFAT_I(inode)->target + i_size_read(inode)) = '\0';
- 	}
- 
-@@ -2402,7 +2405,7 @@ static int exfat_unlink(struct inode *dir, struct dentry *dentry)
- 
- 	EXFAT_I(inode)->fid.size = i_size_read(inode);
- 
--	err = ffsRemoveFile(dir, &(EXFAT_I(inode)->fid));
-+	err = ffs_remove_file(dir, &(EXFAT_I(inode)->fid));
- 	if (err)
- 		goto out;
- 
-@@ -2444,15 +2447,15 @@ static int exfat_symlink(struct inode *dir, struct dentry *dentry,
- 
- 	pr_debug("%s entered\n", __func__);
- 
--	err = ffsCreateFile(dir, (u8 *)dentry->d_name.name, FM_SYMLINK, &fid);
-+	err = ffs_create_file(dir, (u8 *)dentry->d_name.name, FM_SYMLINK, &fid);
- 	if (err)
- 		goto out;
- 
- 
--	err = ffsWriteFile(dir, &fid, (char *)target, len, &ret);
-+	err = ffs_write_file(dir, &fid, (char *)target, len, &ret);
- 
- 	if (err) {
--		ffsRemoveFile(dir, &fid);
-+		ffs_remove_file(dir, &fid);
- 		goto out;
- 	}
- 
-@@ -2508,7 +2511,7 @@ static int exfat_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
- 
- 	pr_debug("%s entered\n", __func__);
- 
--	err = ffsCreateDir(dir, (u8 *)dentry->d_name.name, &fid);
-+	err = ffs_create_dir(dir, (u8 *)dentry->d_name.name, &fid);
- 	if (err)
- 		goto out;
- 
-@@ -2559,7 +2562,7 @@ static int exfat_rmdir(struct inode *dir, struct dentry *dentry)
- 
- 	EXFAT_I(inode)->fid.size = i_size_read(inode);
- 
--	err = ffsRemoveDir(dir, &(EXFAT_I(inode)->fid));
-+	err = ffs_remove_dir(dir, &(EXFAT_I(inode)->fid));
- 	if (err)
- 		goto out;
- 
-@@ -2608,8 +2611,8 @@ static int exfat_rename(struct inode *old_dir, struct dentry *old_dentry,
- 
- 	EXFAT_I(old_inode)->fid.size = i_size_read(old_inode);
- 
--	err = ffsMoveFile(old_dir, &(EXFAT_I(old_inode)->fid), new_dir,
--			  new_dentry);
-+	err = ffs_move_file(old_dir, &(EXFAT_I(old_inode)->fid), new_dir,
-+			    new_dentry);
- 	if (err)
- 		goto out;
- 
-@@ -2766,7 +2769,7 @@ static void exfat_truncate(struct inode *inode, loff_t old_size)
- 	if (EXFAT_I(inode)->fid.start_clu == 0)
- 		goto out;
- 
--	err = ffsTruncateFile(inode, old_size, i_size_read(inode));
-+	err = ffs_truncate_file(inode, old_size, i_size_read(inode));
- 	if (err)
- 		goto out;
- 
-@@ -2902,7 +2905,7 @@ static int exfat_file_release(struct inode *inode, struct file *filp)
- 	struct super_block *sb = inode->i_sb;
- 
- 	EXFAT_I(inode)->fid.size = i_size_read(inode);
--	ffsSyncVol(sb, false);
-+	ffs_sync_vol(sb, false);
- 	return 0;
- }
- 
-@@ -2957,7 +2960,7 @@ static int exfat_bmap(struct inode *inode, sector_t sector, sector_t *phys,
- 
- 	EXFAT_I(inode)->fid.size = i_size_read(inode);
- 
--	err = ffsMapCluster(inode, clu_offset, &cluster);
-+	err = ffs_map_cluster(inode, clu_offset, &cluster);
- 
- 	if (!err && (cluster != CLUSTER_32(~0))) {
- 		*phys = START_SECTOR(cluster) + sec_offset;
-@@ -3150,7 +3153,7 @@ static int exfat_fill_inode(struct inode *inode, struct file_id_t *fid)
- 
- 	memcpy(&(EXFAT_I(inode)->fid), fid, sizeof(struct file_id_t));
- 
--	ffsReadStat(inode, &info);
-+	ffs_read_stat(inode, &info);
- 
- 	EXFAT_I(inode)->i_pos = 0;
- 	EXFAT_I(inode)->target = NULL;
-@@ -3266,7 +3269,7 @@ static int exfat_write_inode(struct inode *inode, struct writeback_control *wbc)
- 	exfat_time_unix2fat(&inode->i_ctime, &info.CreateTimestamp);
- 	exfat_time_unix2fat(&inode->i_atime, &info.AccessTimestamp);
- 
--	ffsWriteStat(inode, &info);
-+	ffs_write_stat(inode, &info);
- 
- 	return 0;
- }
-@@ -3304,7 +3307,7 @@ static void exfat_put_super(struct super_block *sb)
- 	if (__is_sb_dirty(sb))
- 		exfat_write_super(sb);
- 
--	ffsUmountVol(sb);
-+	ffs_umount_vol(sb);
- 
- 	sb->s_fs_info = NULL;
- 	exfat_free_super(sbi);
-@@ -3317,7 +3320,7 @@ static void exfat_write_super(struct super_block *sb)
- 	__set_sb_clean(sb);
- 
- 	if (!sb_rdonly(sb))
--		ffsSyncVol(sb, true);
-+		ffs_sync_vol(sb, true);
- 
- 	__unlock_super(sb);
- }
-@@ -3329,7 +3332,7 @@ static int exfat_sync_fs(struct super_block *sb, int wait)
- 	if (__is_sb_dirty(sb)) {
- 		__lock_super(sb);
- 		__set_sb_clean(sb);
--		err = ffsSyncVol(sb, true);
-+		err = ffs_sync_vol(sb, true);
- 		__unlock_super(sb);
- 	}
- 
-@@ -3344,7 +3347,7 @@ static int exfat_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	struct vol_info_t info;
- 
- 	if (p_fs->used_clusters == UINT_MAX) {
--		if (ffsGetVolInfo(sb, &info) == -EIO)
-+		if (ffs_get_vol_info(sb, &info) == -EIO)
- 			return -EIO;
- 
- 	} else {
-@@ -3646,7 +3649,7 @@ static int exfat_read_root(struct inode *inode)
- 
- 	EXFAT_I(inode)->target = NULL;
- 
--	ffsReadStat(inode, &info);
-+	ffs_read_stat(inode, &info);
- 
- 	inode->i_uid = sbi->options.fs_uid;
- 	inode->i_gid = sbi->options.fs_gid;
-@@ -3713,10 +3716,10 @@ static int exfat_fill_super(struct super_block *sb, void *data, int silent)
- 	sb_min_blocksize(sb, 512);
- 	sb->s_maxbytes = 0x7fffffffffffffffLL;    /* maximum file size */
- 
--	ret = ffsMountVol(sb);
-+	ret = ffs_mount_vol(sb);
- 	if (ret) {
- 		if (!silent)
--			pr_err("[EXFAT] ffsMountVol failed\n");
-+			pr_err("[EXFAT] ffs_mount_vol failed\n");
- 
- 		goto out_fail;
- 	}
-@@ -3756,7 +3759,7 @@ static int exfat_fill_super(struct super_block *sb, void *data, int silent)
- 	return 0;
- 
- out_fail2:
--	ffsUmountVol(sb);
-+	ffs_umount_vol(sb);
- out_fail:
- 	if (root_inode)
- 		iput(root_inode);
--- 
-2.20.1
+I have something working.
 
+Patches:
+https://github.com/amir73il/linux/commits/fanotify_name
+
+Simple test:
+https://github.com/amir73il/ltp/commits/fanotify_name
+
+I will post the patches after I have a working demo, but in the mean while here
+is the gist of the API from the commit log in case you or anyone has comments
+on the API.
+
+Note that in the new event flavor, event mask is given as input
+(e.g. FAN_CREATE) to filter the type of reported events, but
+the event types are hidden when event is reported.
+
+Besides the dirent event types, events "on child" (i.e. MODIFY) can also be
+reported with name to a directory watcher.
+
+For now, "on child" events cannot be requested for filesystem/mount
+watch, but I think we should consider this possibility so I added
+a check to return EINVAL if this combination is attempted.
+
+Let me know what you think.
+
+Thanks,
+Amir.
+
+commit 91e0af27ac329f279167e74761fb5303ebbc1c08
+Author: Amir Goldstein <amir73il@gmail.com>
+Date:   Mon Dec 16 08:39:21 2019 +0200
+
+    fanotify: report name info with FAN_REPORT_FID_NAME
+
+    With init flags FAN_REPORT_FID_NAME, report events with name in variable
+    length fanotify_event_info record similar to how fid's are reported.
+    When events are reported with name, the reported fid identifies the
+    directory and the name follows the fid. The info record type for this
+    event info is FAN_EVENT_INFO_TYPE_FID_NAME.
+
+    There are several ways that an application can use this information:
+
+    1. When watching a single directory, the name is always relative to
+    the watched directory, so application need to fstatat(2) the name
+    relative to the watched directory.
+
+    2. When watching a set of directories, the application could keep a map
+    of dirfd for all watched directories and hash the map by fid obtained
+    with name_to_handle_at(2).  When getting a name event, the fid in the
+    event info could be used to lookup the base dirfd in the map and then
+    call fstatat(2) with that dirfd.
+
+    3. When watching a filesystem (FAN_MARK_FILESYSTEM) or a large set of
+    directories, the application could use open_by_handle_at(2) with the fid
+    in event info to obtain dirfd for the directory where event happened and
+    call fstatat(2) with this dirfd.
+
+    The last option scales better for a large number of watched directories.
+    The first two options may be available in the future also for non
+    privileged fanotify watchers, because open_by_handle_at(2) requires
+    the CAP_DAC_READ_SEARCH capability.
+
+    Legacy inotify events are reported with name and event mask (e.g. "foo",
+    FAN_CREATE | FAN_ONDIR).  That can lead users to the conclusion that
+    there is *currently* an entry "foo" that is a sub-directory, when in fact
+    "foo" may be negative or non-dir by the time user gets the event.
+
+    To make it clear that the current state of the named entry is unknown,
+    the new fanotify event intentionally hides this information and reports
+    only the flag FAN_WITH_NAME in event mask.  This should make it harder
+    for users to make wrong assumptions and write buggy applications.
+
+    We reserve the combination of FAN_EVENT_ON_CHILD on a filesystem/mount
+    mark and FAN_REPORT_NAME group for future use, so for now this
+    combination is invalid.
+
+    Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+
+commit 76a509dbc06fd58ec6636484f87896044cd99022
+Author: Amir Goldstein <amir73il@gmail.com>
+Date:   Fri Dec 13 11:58:02 2019 +0200
+
+    fanotify: implement basic FAN_REPORT_FID_NAME logic
+
+    Dirent events will be reported in one of two flavors depending on
+    fanotify init flags:
+
+    1. Dir fid info + mask that includes the specific event types and
+       optional FAN_ONDIR flag.
+    2. Dir fid info + name + mask that includes only FAN_WITH_NAME flag.
+
+    To request the second event flavor, user will need to set the
+    FAN_REPORT_FID_NAME flags in fanotify_init().
+
+    The first flavor is already supported since kernel v5.1 and is
+    intended to be used for watching directories in "batch mode" - user
+    is notified when directory is changed and re-scans the directory
+    content in response.  This event flavor is stored more compactly in
+    event queue, so it is optimal for workloads with frequent directory
+    changes (e.g. many files created/deleted).
+
+    The second event flavor is intended to be used for watching large
+    directories, where the cost of re-scan of the directory on every change
+    is considered too high.  The watcher getting the event with the directory
+    fid and entry name is expected to call fstatat(2) to query the content of
+    the entry after the change.
+
+    Events "on child" will behave similarly to dirent events, with a small
+    difference - the first event flavor without name reports the child fid.
+    The second flavor with name info reports the parent fid, because the
+    name is relative to the parent directory.
+
+    At the moment, event name info reporting is not implemented, so the
+    FAN_REPORT_NAME flag is not yet valid as input to fanotify_init().
+
+    Signed-off-by: Amir Goldstein <amir73il@gmail.com>
