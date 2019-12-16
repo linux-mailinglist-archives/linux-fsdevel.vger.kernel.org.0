@@ -2,85 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2862112059D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2019 13:30:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AFA41205FF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Dec 2019 13:42:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727512AbfLPM2l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Dec 2019 07:28:41 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:39489 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727241AbfLPM2l (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Dec 2019 07:28:41 -0500
-Received: by mail-il1-f196.google.com with SMTP id x5so2306188ila.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2019 04:28:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yA9N5FQVJYEeL+u0+bDKbIT1ODRp3J/S00fH7mGzMNM=;
-        b=kkxCn4Z7k2oM/eJzTh3iGnB5DR7rCnlSAJ1u38oyW1uGoyF/g1FRq+EWj64SVgeVOL
-         2YgXJK7CQGpdJO3oSPN9f3+iz97RclGdS7Yl8NXeKeu/5zsMmd2mwgRIjp29XhUNbhqQ
-         C5lpQUjSyjQu5Y45OwvzeU426K3mNN0k8xexNx6u1hFln8t6QbDP1S9JeQP7OWgkmZ94
-         DbZ4A1bz54pBNGjWAOztbCUiyIvRYThdTm3LyFzmu4YRjMQsty5onw5LPCNfPksUEyWk
-         ngatZj+OQxepVZvCxnZjoWk3mdTYa5D3ZpsUHLz+pcqgcQtDI4gr7enJotLdlEZnk6rq
-         OEfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yA9N5FQVJYEeL+u0+bDKbIT1ODRp3J/S00fH7mGzMNM=;
-        b=RojZTzdGyZUHftcQ8jmDv9/mJyiN1QqMvGFjvhi0DAlwZSsEtixHMPsKsbjfeG1930
-         YZbpWdbATcDXdf30MpZ73vmbxXP+sfLzTuly+A+MqgSKB7uaSoDj9njHA9WDT+5/nixe
-         qj0m5RC4D3nIu4C+zqs/8t6lkUe5T5hBgnWlfdGip5FMxP9Ks1yzRZUlGShpZ/GVlqrH
-         dn8vLIjC8hSbx0dilI08/dubWUzgNcw6ChQugQfSMg+7JCXNu6H3ldfL19EcEuV/8xP/
-         Er8cgG9QVFkNFRP+kR/wVwKdFHm+me171Pje9TFf3xypaTntznoWzWfBuD06Pyw2jpz5
-         u/IQ==
-X-Gm-Message-State: APjAAAUUD7OwKebhiqJ2JSXb1o5WhpvhUPWxFI+QE6Us8ApndiIxi3z7
-        o9xuSC+AHGxRRCpsTK+ne1vvOLzJQ/l6h169kwQ=
-X-Google-Smtp-Source: APXvYqw2AjwgqslfFW8eWW7ik3IUThpMPg8pAqfYGz67y40D8uWAyddPZW42hLZJ2/XXDEReU+j9aGSH5vgBYRDohoY=
-X-Received: by 2002:a92:81cb:: with SMTP id q72mr11889936ilk.275.1576499320404;
- Mon, 16 Dec 2019 04:28:40 -0800 (PST)
+        id S1727599AbfLPMmB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Dec 2019 07:42:01 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60066 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727512AbfLPMmB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Dec 2019 07:42:01 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5C273AF59;
+        Mon, 16 Dec 2019 12:41:59 +0000 (UTC)
+Date:   Mon, 16 Dec 2019 06:41:55 -0600
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
+To:     Nikolay Borisov <nborisov@suse.com>
+Cc:     linux-btrfs@vger.kernel.org, hch@infradead.org,
+        darrick.wong@oracle.com, fdmanana@kernel.org, dsterba@suse.cz,
+        jthumshirn@suse.de, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/8 v6] btrfs direct-io using iomap
+Message-ID: <20191216124155.htq6dhtvrqdrfc3s@fiona>
+References: <20191213195750.32184-1-rgoldwyn@suse.de>
+ <0cfcbf67-8bca-8d55-6d7e-b79e5e5f66c0@suse.com>
 MIME-Version: 1.0
-References: <2759fc54-9576-aaa0-926a-cad9d09d388c@cea.fr>
-In-Reply-To: <2759fc54-9576-aaa0-926a-cad9d09d388c@cea.fr>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 16 Dec 2019 14:28:29 +0200
-Message-ID: <CAOQ4uxh6pMeNGXDCU2c1v9yRnCjbyr50mFF4y1FphjFM8+yYKQ@mail.gmail.com>
-Subject: Re: open_by_handle_at: mount_fd opened with O_PATH
-To:     quentin.bouget@cea.fr
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        MARTINET Dominique 606316 <dominique.martinet@cea.fr>,
-        Andreas Dilger <adilger@whamcloud.com>,
-        NeilBrown <neilb@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0cfcbf67-8bca-8d55-6d7e-b79e5e5f66c0@suse.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 11:39 AM <quentin.bouget@cea.fr> wrote:
->
-> Hello,
->
-> I recently noticed that the syscall open_by_handle_at() automatically
-> fails if
-> its first argument is a file descriptor opened with O_PATH. I looked at
-> the code
-> and saw no reason this could not be allowed. Attached to this mail are a
-> a reproducer and the patch I came up with.
->
-> I am not quite familiar with the kernel's way of processing patches. Any
-> pointer
-> or advice on this matter is very welcome.
->
+On  2:01 16/12, Nikolay Borisov wrote:
+> 
+> 
+> On 13.12.19 г. 21:57 ч., Goldwyn Rodrigues wrote:
+> > This is an effort to use iomap for direct I/O in btrfs. This would
+> > change the call from __blockdev_direct_io() to iomap_dio_rw().
+> > 
+> > The main objective is to lose the buffer head and use bio defined by
+> > iomap code, and hopefully to use more of generic-FS codebase.
+> > 
+> > These patches are based and tested on v5.5-rc1. I have tested it against
+> > xfstests/btrfs.
+> > 
+> > The tree is available at
+> > https://github.com/goldwynr/linux/tree/btrfs-iomap-dio
+> > 
+> > Changes since v1
+> > - Incorporated back the efficiency change for inode locking
+> > - Review comments about coding style and git comments
+> > - Merge related patches into one
+> > - Direct read to go through btrfs_direct_IO()
+> > - Removal of no longer used function dio_end_io()
+> > 
+> > Changes since v2
+> > - aligning iomap offset/length to the position/length of I/O
+> > - Removed btrfs_dio_data
+> > - Removed BTRFS_INODE_READDIO_NEED_LOCK
+> > - Re-incorporating write efficiency changes caused lockdep_assert() in
+> >   iomap to be triggered, remove that code.
+> > 
+> > Changes since v3
+> > - Fixed freeze on generic/095. Use iomap_end() to account for
+> >   failed/incomplete dio instead of btrfs_dio_data
+> > 
+> > Changes since v4
+> > - moved lockdep_assert_held() to functions calling iomap_dio_rw()
+> >   This may be called immidiately after calling inode lock and
+> >   may feel not required, but it seems important.
+> > - Removed comments which are no longer required
+> > - Changed commit comments to make them more appropriate
+> > 
+> > Changes since v5
+> > - restore inode_dio_wait() in truncate
+> 
+> I'm confused about this - you no longer call inode_dio_begin after patch
+> 4/8 so inode_dio_wait which is left intact in truncate can never trigger
+> a wait really. Exclusion is provided by the fact that btrfs_direct_IO is
+> called with rwsem held shared and truncate holds it exclusive? So what
+> necessitated restoring inode_dio_wait?
 
-See similar patch by Miklos to do the same for f*xattr() syscalls that
-looks simpler:
-https://lore.kernel.org/linux-fsdevel/20191128155940.17530-8-mszeredi@redhat.com/
+The optimization of the write path of direct I/O. The rwsem is
+released if write is within i_size. This is also the reason we
+removed lockdep_assert_held().
 
-Al, any objections to making this change?
+Reference: 38851cc19adb ("Btrfs: implement unlocked dio write")
 
-Thanks,
-Amir.
+This was inspired by ext4. However, ext4 after it's switch to
+iomap_dio_rw() does not employ this optimization.
+
+> 
+> 
+> Another point, I don't see whether you have explicitly addressed
+> concerns raised in:
+> 
+> https://lore.kernel.org/linux-btrfs/20191212003043.31093-1-rgoldwyn@suse.de/T/#me7f96506e5a1d921d05b76d01ecf6ea1ebcea594
+
+I did address it by releasing csums (referring io_bio) before calling
+bio_endio().
+
+
+-- 
+Goldwyn
