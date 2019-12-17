@@ -2,93 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B97A122FD1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 16:11:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CF33122FEA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 16:16:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727587AbfLQPLT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Dec 2019 10:11:19 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36465 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727241AbfLQPLS (ORCPT
+        id S1727492AbfLQPQo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Dec 2019 10:16:44 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40408 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726487AbfLQPQn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Dec 2019 10:11:18 -0500
-Received: by mail-pl1-f195.google.com with SMTP id d15so6239437pll.3;
-        Tue, 17 Dec 2019 07:11:18 -0800 (PST)
+        Tue, 17 Dec 2019 10:16:43 -0500
+Received: by mail-ed1-f67.google.com with SMTP id b8so5687213edx.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2019 07:16:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=aFantIhWi/fHJq2cr+Zbx6RZiqepAGB6P0r03ViBSsA=;
-        b=QYJDZjza4evSS+x1Jb5cMJ3wbCTfcsYUKvfvznRoIgd8u+cAB3f1FHmgKHBqGccifv
-         +hKsPzcBU+bQqytO2u0gvTtuT0Sq+PxFJ6fj3EwiBfQEN1Go7jVFTSkFJNX0zmeV2pLc
-         +IGcG66ao0ZcAZ7qA/Z0QYrPbgyfyfXCwOj+xnGlM3qD8eLFIAffik0xOL/QrNWWY8Kc
-         1q1Nmx7ZhN2DBdmGfpvcPxhtW5fS3vy/+TTNOTq99n015kp8dPLbArir2wbacyiJ5mFv
-         AYUmkn7iXb/JcIZypbB9kLU5+GgYc1BrbUx4Kf2i7advrCV54BZfKmyO5j6O1UF7vsvi
-         5mhg==
+        d=cloud.ionos.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=oo5dfyG2tT7KW4ai4U1JQW/HcOx4QSEZ7es4QC1dN3g=;
+        b=DFmKYPmrl6MB4C7iv+/j5aC++xi8uesL8p+EHf946Mv0lrHFbnoJm0rt87ipWFc0Oe
+         EK2fjpziGKLUba8QLnazMixZtW4C5C3AjHdBgzIxie3xCwrslADJt04ixPkurTG4kLhn
+         GCSn15OISqRrLlZLMOMudMLsDflQjrSxxa6ifPL0Scx4l7gJNTlBLYy9Il0Opbz4w32P
+         2YRzbAWfPeQ74ZDQuJsqxLp8Sy1DP+vlWYotS+SKcHkymfuQ5JY+JxNOIqoVDobZbA0N
+         0u2FhjywTJLamXhzMajSssHTv0Ya2lfvg4SbVQX1M+8wKmm1kUtW3tejNc4TMSR+TFKO
+         61qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=aFantIhWi/fHJq2cr+Zbx6RZiqepAGB6P0r03ViBSsA=;
-        b=ZyvuYzWgDUKvXyJLVVYlHd/YXSqtuDp9WJVX+9wAtW4aj4sYCYaaeiihh0CvXsI6CY
-         +dfEXOyc6V8U+4mFc6W6U7Ke+VGWn4Cc4QvjnesZrfo8T+BGCDuyXG9PTsJEbRwF/bqD
-         eQKQ2CwqjiUMr+tCXjQfhE8c8JNHpD6Ks/rqY6FnT2CzSoZ514X2nRtGNWtAlT03sJkJ
-         UO7aDyZct526RXuEF8iJsZ2kFM1n3LzPKg22uU//WjqZd8jbi7TCAeTHJxipieHgpIDf
-         +537npA4QmVxM8gxhy6gUAqtZ8eipTuu3IY43gJ4DJJR18D5VSi3257hLmcHgVusBf/s
-         MA6Q==
-X-Gm-Message-State: APjAAAV0+ANZB+fMkX92aFB26dLdj47bYcka1cJO7MVLF9egmIZlxX8v
-        QqNWorK4fGVD2FS3aAuEBpE=
-X-Google-Smtp-Source: APXvYqwtYKpcn252vIXVA4HxmqgaVwlB9/YwzBUU2SU/SIyHMiI2r3UDySrZNyEa2AryZHkv2By44Q==
-X-Received: by 2002:a17:902:6a8a:: with SMTP id n10mr23659556plk.9.1576595478158;
-        Tue, 17 Dec 2019 07:11:18 -0800 (PST)
-Received: from localhost ([43.224.245.179])
-        by smtp.gmail.com with ESMTPSA id m3sm26507128pgp.32.2019.12.17.07.11.16
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Tue, 17 Dec 2019 07:11:17 -0800 (PST)
-From:   qiwuchen55@gmail.com
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        chenqiwu <chenqiwu@xiaomi.com>
-Subject: [RESEND PATCH] fput: Use unbound workqueue for scheduling delayed fput works
-Date:   Tue, 17 Dec 2019 23:11:12 +0800
-Message-Id: <1576595472-27341-1-git-send-email-qiwuchen55@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=oo5dfyG2tT7KW4ai4U1JQW/HcOx4QSEZ7es4QC1dN3g=;
+        b=gPF9lwER56ZPeYFIkqZV9+0VIaCXDHMpdBuRjjz9WWd3EWZd0VfXn0JxtHm10zQ1+G
+         vYsZozZ3EJm5qRKtKO5UkqDPL45MjR/S9NOXec0UkrnMrTUZFB51IrkNcAWGsrD8bW5G
+         OLBUNNSWYexF3qd2Sz3TEZQbEM72r4zWNswDdGQmxjxn/T/sK2BaHW2h//Cpn8Mqmf2E
+         1e1QQJKZKkK3gE7+vmInOl5qwenJpu9yldnh4abl5Pmr04qooZGRDehTQFQU6xrRdfIf
+         N+VOr2gY93bh8hrBr9HRyjMdLHbpD2qA3g+fQPb/CJ7KidGjWbnb1JENM0UyMouGedmo
+         x2xA==
+X-Gm-Message-State: APjAAAW69HvGzEZ5TeUtLnPrq9l6Bm8365yhhsrLTMcr5hJ76G2ox6Wh
+        bejt10/LtqG0jtapSjOobe6MXg==
+X-Google-Smtp-Source: APXvYqyNK5O/+F8eW07W9dexy3Sw+pAdXZu8yDWlHgzxnV7z2k3f6kSU9ASk5K09eEz5bfXZ0BqPug==
+X-Received: by 2002:a50:b066:: with SMTP id i93mr5808711edd.251.1576595802144;
+        Tue, 17 Dec 2019 07:16:42 -0800 (PST)
+Received: from ?IPv6:2a02:247f:ffff:2540:f83b:3dd6:f8d3:a846? ([2001:1438:4010:2540:f83b:3dd6:f8d3:a846])
+        by smtp.gmail.com with ESMTPSA id u34sm4316edc.83.2019.12.17.07.16.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Dec 2019 07:16:41 -0800 (PST)
+Subject: Re: [PATCH 1/6] fs: add read support for RWF_UNCACHED
+To:     Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+Cc:     willy@infradead.org, clm@fb.com, torvalds@linux-foundation.org,
+        david@fromorbit.com
+References: <20191217143948.26380-1-axboe@kernel.dk>
+ <20191217143948.26380-2-axboe@kernel.dk>
+From:   Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
+Message-ID: <1d0bf482-8786-00b7-310d-4de38607786d@cloud.ionos.com>
+Date:   Tue, 17 Dec 2019 16:16:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20191217143948.26380-2-axboe@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: chenqiwu <chenqiwu@xiaomi.com>
 
-There is a potential starvation that the number of delayed fput works
-increase rapidly if task exit storm or fs unmount issue happens.
+On 12/17/19 3:39 PM, Jens Axboe wrote:
+> If RWF_UNCACHED is set for io_uring (or preadv2(2)), we'll use private
+> pages for the buffered reads. These pages will never be inserted into
+> the page cache, and they are simply droped when we have done the copy at
+> the end of IO.
+>
+> If pages in the read range are already in the page cache, then use those
+> for just copying the data instead of starting IO on private pages.
+>
+> A previous solution used the page cache even for non-cached ranges, but
+> the cost of doing so was too high. Removing nodes at the end is
+> expensive, even with LRU bypass. On top of that, repeatedly
+> instantiating new xarray nodes is very costly, as it needs to memset 576
+> bytes of data, and freeing said nodes involve an RCU call per node as
+> well. All that adds up, making uncached somewhat slower than O_DIRECT.
+>
+> With the current*solition*, we're basically at O_DIRECT levels of
 
-Since the delayed fput works are expected to be executed as soon as
-possible. The commonly accepted wisdom that the measurements of scheduling
-works via the unbound workqueue show lowered worst-case latency responses
-of up to 5x over bound workqueue.
+Maybe it is 'solution' here.
 
-Work items queued to an unbound wq are not bound to any specific CPU, not
-concurrency managed. All queued works are executed immediately as long as
-max_active limit is not reached and resources are available.
-
-Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
----
- fs/file_table.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/file_table.c b/fs/file_table.c
-index 30d55c9..472ad92 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -348,7 +348,8 @@ void fput_many(struct file *file, unsigned int refs)
- 		}
- 
- 		if (llist_add(&file->f_u.fu_llist, &delayed_fput_list))
--			schedule_delayed_work(&delayed_fput_work, 1);
-+			queue_delayed_work(system_unbound_wq,
-+					&delayed_fput_work, 1);
- 	}
- }
- 
--- 
-1.9.1
-
+Thanks,
+Guoqing
