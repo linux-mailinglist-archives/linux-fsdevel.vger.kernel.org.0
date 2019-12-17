@@ -2,114 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0975122875
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 11:14:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5043D1229AA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 12:19:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727462AbfLQKOw convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Dec 2019 05:14:52 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:35722 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727262AbfLQKOw (ORCPT
+        id S1727255AbfLQLTb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Dec 2019 06:19:31 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:54240 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726487AbfLQLTb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Dec 2019 05:14:52 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-154-AvZdXMAZPQGpt4vWLobGDQ-1; Tue, 17 Dec 2019 10:14:49 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Tue, 17 Dec 2019 10:14:48 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Tue, 17 Dec 2019 10:14:48 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Aleksa Sarai' <asarai@suse.de>
-CC:     'Aleksa Sarai' <cyphar@cyphar.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Jeff Layton" <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        "Shuah Khan" <shuah@kernel.org>,
-        "dev@opencontainers.org" <dev@opencontainers.org>,
-        "containers@lists.linux-foundation.org" 
-        <containers@lists.linux-foundation.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
-Subject: RE: [PATCH] openat2: switch to __attribute__((packed)) for open_how
-Thread-Topic: [PATCH] openat2: switch to __attribute__((packed)) for open_how
-Thread-Index: AQHVs0QYCtoODE3sD0awPNQRMi+YuKe8+0pQgADpsgCAADgwUA==
-Date:   Tue, 17 Dec 2019 10:14:48 +0000
-Message-ID: <6630d0573b5b40da8efc58fc20ac445e@AcuMS.aculab.com>
-References: <20191213222351.14071-1-cyphar@cyphar.com>
- <a328b91d-fd8f-4f27-b3c2-91a9c45f18c0@rasmusvillemoes.dk>
- <20191215123443.jmfnrtgbscdwfohc@yavin.dot.cyphar.com>
- <b26ef210ec5b42009cf09b1015065768@AcuMS.aculab.com>
- <20191217064650.cd4bfb5d2koe6j7h@yavin.dot.cyphar.com>
-In-Reply-To: <20191217064650.cd4bfb5d2koe6j7h@yavin.dot.cyphar.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Tue, 17 Dec 2019 06:19:31 -0500
+Received: from [79.140.115.158] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1ihAsy-0002PF-5x; Tue, 17 Dec 2019 11:19:28 +0000
+Date:   Tue, 17 Dec 2019 12:19:27 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Sargun Dhillon <sargun@sargun.me>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, gpascutto@mozilla.com,
+        ealvarez@mozilla.com, Florian Weimer <fweimer@redhat.com>,
+        jld@mozilla.com
+Subject: Re: [PATCH v3 2/4] pid: Add PIDFD_IOCTL_GETFD to fetch file
+ descriptors from processes
+Message-ID: <20191217111926.bgt7jih2noli3cnu@wittgenstein>
+References: <20191217010001.GA14461@ircssh-2.c.rugged-nimbus-611.internal>
+ <20191217015001.sp6mrhuiqrivkq3u@wittgenstein>
+ <CAMp4zn8fzeiJVSn6EtRi6UAGh6AL3QWu=PZxw+=TAYJORjn_Sw@mail.gmail.com>
+ <CAK8P3a3G-W8s0G2-XKuDw9dRmupZSyiF6FRRAnvDt9=kMMzS8w@mail.gmail.com>
 MIME-Version: 1.0
-X-MC-Unique: AvZdXMAZPQGpt4vWLobGDQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a3G-W8s0G2-XKuDw9dRmupZSyiF6FRRAnvDt9=kMMzS8w@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From Aleksa Sarai
-> Sent: 17 December 2019 06:47
-...
-> > Just use u64 for all the fields.
+On Tue, Dec 17, 2019 at 09:54:40AM +0100, Arnd Bergmann wrote:
+> On Tue, Dec 17, 2019 at 3:50 AM Sargun Dhillon <sargun@sargun.me> wrote:
+> > On Mon, Dec 16, 2019 at 5:50 PM Christian Brauner <christian.brauner@ubuntu.com> wrote:
+> Finally, there is the question whether this should be an ioctl
+> operation at all, or
+> if it would better be done as a proper syscall. Functionally the two
+> are the same
+> here, but doing such a fundamental operation as an ioctl doesn't feel
+> quite right
+> to me. As a system call, this could be something like
 > 
-> That is an option (and is the one that clone3 went with), but it's a bit
-> awkward because umode_t is a u16 -- and it would be a waste of 6 bytes
-> to store it as a u64. Arguably it could be extended but I personally
-> find that to be very unlikely (and lots of other syscalls would need be
-> updated).
-
-6 bytes on interface structure will make almost no difference.
-There is no reason to save more than 16 bits anywhere else.
-You could error values with high bits set.
-
-> I'm just going to move the padding to the end and change the error for
-> non-zero padding to -E2BIG.
-
-The padding had to be after the u16 field.
-
-> > Use 'flags' bits to indicate whether the additional fields should be looked at.
-> > Error if a 'flags' bit requires a value that isn't passed in the structure.
-> >
-> > Then you can add an extra field and old source code recompiled with the
-> > new headers will still work - because the 'junk' value isn't looked at.
+> int pidfd_get_fd(int pidfd, int their_fd, int flags);
 > 
-> This problem is already handled entirely by copy_struct_from_user().
-> 
-> It is true that for some new fields it will be necessary to add a new
-> flag (such as passing fds -- where 0 is a valid value) but for most new
-> fields (especially pointer or flag fields) it will not be necessary
-> because the 0 value is equivalent to the old behaviour. It also allows
-> us to entirely avoid accepting junk from userspace.
+> along the lines of dup3().
 
-Only if userspace is guaranteed to memset the entire structure
-before making the call - rather than just fill in all the fields it knows about.
-If it doesn't use memset() then recompiling old code with new headers
-will pass garbage to the kernel.
-copy_struct_from_user() cannot solve that problem.
-You'll never be able to guarantee that all code actually clears the
-entire structure - so at some point extending it will break recompilations
-of old code - annoying.
+Thanks for taking a look, Arnd!
 
-	David
+Yeah, Oleg hinted at this in the first version as well. I originally
+disagreed but we can sure also do this as a separate syscall.
+What we should keep in mind is that people already brought up adding new
+fds to a task. Which is not a problem just something to remember as it
+might potentially mean another syscall.
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+Christian
