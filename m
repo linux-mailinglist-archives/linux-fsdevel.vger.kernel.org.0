@@ -2,200 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9D651234DC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 19:31:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0876F123530
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 19:46:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727940AbfLQSbp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Dec 2019 13:31:45 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:48912 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727005AbfLQSbp (ORCPT
+        id S1727726AbfLQSqE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Dec 2019 13:46:04 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:50012 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727434AbfLQSqD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Dec 2019 13:31:45 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ihHdH-0002ou-80; Tue, 17 Dec 2019 18:31:43 +0000
-Date:   Tue, 17 Dec 2019 18:31:43 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH 09/12] fs_parser: "string" with missing value is a "flag"
-Message-ID: <20191217183143.GC4203@ZenIV.linux.org.uk>
-References: <20191128155940.17530-1-mszeredi@redhat.com>
- <20191128155940.17530-10-mszeredi@redhat.com>
- <20191217173259.GA4203@ZenIV.linux.org.uk>
+        Tue, 17 Dec 2019 13:46:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576608362;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=H79yMoU9qnqTpnGyCiPFGRjbb3Bng6e8cO8SsBozoBg=;
+        b=ORRPrdl6DhPSA4NWthxOX9hqd67oUTeq04ShPrqiiczr/aR6U8RZdEoMY5tktaci82KeG0
+        QsVVpAt2BFt84VUN9zD5pMKsfs4i4Vm4HkQixk89i1OOfIWUR0B1lmQ6O9UVdrJOurEuzy
+        qH2x6nog61zs0/ONewcwucFpoW16Jbs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-48-SVmOSpCgMTGqhS9dZj20XA-1; Tue, 17 Dec 2019 13:46:00 -0500
+X-MC-Unique: SVmOSpCgMTGqhS9dZj20XA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3F0B81800D42;
+        Tue, 17 Dec 2019 18:45:57 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-28.phx2.redhat.com [10.3.112.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 27F125C1C3;
+        Tue, 17 Dec 2019 18:45:43 +0000 (UTC)
+Date:   Tue, 17 Dec 2019 13:45:41 -0500
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Neil Horman <nhorman@tuxdriver.com>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        Dan Walsh <dwalsh@redhat.com>, mpatel@redhat.com
+Subject: Re: [PATCH ghak90 V7 06/21] audit: contid limit of 32k imposed to
+ avoid DoS
+Message-ID: <20191217184541.tagssqt4zujbanf6@madcap2.tricolour.ca>
+References: <cover.1568834524.git.rgb@redhat.com>
+ <230e91cd3e50a3d8015daac135c24c4c58cf0a21.1568834524.git.rgb@redhat.com>
+ <20190927125142.GA25764@hmswarspite.think-freely.org>
+ <CAHC9VhRbSUCB0OZorC4+y+5uJDR5uMXdRn2LOTYGu2gcFJSrcA@mail.gmail.com>
+ <20191024212335.y4ou7g4tsxnotvnk@madcap2.tricolour.ca>
+ <CAHC9VhTrKVQNvTPoX5xdx-TUX_ukpMv2tNFFqLa2Njs17GuQMg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191217173259.GA4203@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <CAHC9VhTrKVQNvTPoX5xdx-TUX_ukpMv2tNFFqLa2Njs17GuQMg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 05:32:59PM +0000, Al Viro wrote:
-
-> No.  This is simply wrong - as it is, there's no difference between
-> "foo" and "foo=".  Passing NULL in the latter case is wrong, but
-> this is not a good fix.
+On 2019-11-08 12:49, Paul Moore wrote:
+> On Thu, Oct 24, 2019 at 5:23 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > On 2019-10-10 20:38, Paul Moore wrote:
+> > > On Fri, Sep 27, 2019 at 8:52 AM Neil Horman <nhorman@tuxdriver.com> wrote:
+> > > > On Wed, Sep 18, 2019 at 09:22:23PM -0400, Richard Guy Briggs wrote:
+> > > > > Set an arbitrary limit on the number of audit container identifiers to
+> > > > > limit abuse.
+> > > > >
+> > > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > > > ---
+> > > > >  kernel/audit.c | 8 ++++++++
+> > > > >  kernel/audit.h | 4 ++++
+> > > > >  2 files changed, 12 insertions(+)
+> > > > >
+> > > > > diff --git a/kernel/audit.c b/kernel/audit.c
+> > > > > index 53d13d638c63..329916534dd2 100644
+> > > > > --- a/kernel/audit.c
+> > > > > +++ b/kernel/audit.c
+> > >
+> > > ...
+> > >
+> > > > > @@ -2465,6 +2472,7 @@ int audit_set_contid(struct task_struct *task, u64 contid)
+> > > > >                               newcont->owner = current;
+> > > > >                               refcount_set(&newcont->refcount, 1);
+> > > > >                               list_add_rcu(&newcont->list, &audit_contid_hash[h]);
+> > > > > +                             audit_contid_count++;
+> > > > >                       } else {
+> > > > >                               rc = -ENOMEM;
+> > > > >                               goto conterror;
+> > > > > diff --git a/kernel/audit.h b/kernel/audit.h
+> > > > > index 162de8366b32..543f1334ba47 100644
+> > > > > --- a/kernel/audit.h
+> > > > > +++ b/kernel/audit.h
+> > > > > @@ -219,6 +219,10 @@ static inline int audit_hash_contid(u64 contid)
+> > > > >       return (contid & (AUDIT_CONTID_BUCKETS-1));
+> > > > >  }
+> > > > >
+> > > > > +extern int audit_contid_count;
+> > > > > +
+> > > > > +#define AUDIT_CONTID_COUNT   1 << 16
+> > > > > +
+> > > >
+> > > > Just to ask the question, since it wasn't clear in the changelog, what
+> > > > abuse are you avoiding here?  Ostensibly you should be able to create as
+> > > > many container ids as you have space for, and the simple creation of
+> > > > container ids doesn't seem like the resource strain I would be concerned
+> > > > about here, given that an orchestrator can still create as many
+> > > > containers as the system will otherwise allow, which will consume
+> > > > significantly more ram/disk/etc.
+> > >
+> > > I've got a similar question.  Up to this point in the patchset, there
+> > > is a potential issue of hash bucket chain lengths and traversing them
+> > > with a spinlock held, but it seems like we shouldn't be putting an
+> > > arbitrary limit on audit container IDs unless we have a good reason
+> > > for it.  If for some reason we do want to enforce a limit, it should
+> > > probably be a tunable value like a sysctl, or similar.
+> >
+> > Can you separate and clarify the concerns here?
 > 
-> This
->         if (v_size > 0) {
->                 param.string = kmemdup_nul(value, v_size, GFP_KERNEL);
->                 if (!param.string)
->                         return -ENOMEM;
->         }
-> should really be
-> 	if (value) {
->                 param.string = kmemdup_nul(value, v_size, GFP_KERNEL);
->                 if (!param.string)
->                         return -ENOMEM;
->         }
-> and your chunk should be conditional upon value, not v_size.  The
-> same problem exists for rbd.c
+> "Why are you doing this?" is about as simple as I can pose the question.
 
-How about this (completely untested):
+It was more of a concern for total system resources, primarily memory,
+but this is self-limiting and an arbitrary concern.
 
-Pass consistent param->type to fs_parse()
+The other limit of depth of nesting has different concerns that arise
+depending on how reporting is done.
 
-As it is, vfs_parse_fs_string() makes "foo" and "foo=" indistinguishable;
-both get fs_value_is_string for ->type and NULL for ->string.  To make
-it even more unpleasant, that combination is impossible to produce with
-fsconfig().
+> > I plan to move this patch to the end of the patchset and make it
+> > optional, possibly adding a tuning mechanism.  Like the migration from
+> > /proc to netlink for loginuid/sessionid/contid/capcontid, this was Eric
+> > Biederman's concern and suggested mitigation.
+> 
+> Okay, let's just drop it.  I *really* don't like this approach of
+> tossing questionable stuff at the end of the patchset; I get why you
+> are doing it, but I think we really need to focus on keeping this
+> changeset small.  If the number of ACIDs (heh) become unwieldy the
+> right solution is to improve the algorithms/structures, if we can't do
+> that for some reason, *then* we can fall back to a limiting knob in a
+> latter release.
 
-Much saner rules would be
-	"foo"		=> fs_value_is_flag, NULL
-	"foo="		=> fs_value_is_string, ""
-	"foo=bar"	=> fs_value_is_string, "bar"
-All cases are distinguishable, all results are expressable by fsconfig(),
-->has_value checks are much simpler that way (to the point of the field
-being useless) and quite a few regressions go away (gfs2 has no business
-accepting -o nodebug=, for example).
+Ok, I've dropped it.  There are mitigations in place for large numbers
+of contids and it can be limited later without breaking anything.
 
-Partially based upon patches from Miklos.
+> > As for the first issue of the bucket chain length traversal while
+> > holding the list spin-lock, would you prefer to use the rcu lock to
+> > traverse the list and then only hold the spin-lock when modifying the
+> > list, and possibly even make the spin-lock more fine-grained per list?
+> 
+> Until we have a better idea of how this is going to be used, I think
+> it's okay for now.  It's also internal to the kernel so we can change
+> it at any time.  My comments about the locking/structs was only to try
+> and think of some reason why one might want to limit the number of
+> ACIDs since neither you or Eric provided any reasoning that I could
+> see.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 2b184563cd32..9fc686be81ca 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -6433,7 +6433,7 @@ static int rbd_parse_options(char *options, struct rbd_parse_opts_ctx *pctx)
- 		if (*key) {
- 			struct fs_parameter param = {
- 				.key	= key,
--				.type	= fs_value_is_string,
-+				.type	= fs_value_is_flag,
- 			};
- 			char *value = strchr(key, '=');
- 			size_t v_len = 0;
-@@ -6443,14 +6443,11 @@ static int rbd_parse_options(char *options, struct rbd_parse_opts_ctx *pctx)
- 					continue;
- 				*value++ = 0;
- 				v_len = strlen(value);
--			}
--
--
--			if (v_len > 0) {
- 				param.string = kmemdup_nul(value, v_len,
- 							   GFP_KERNEL);
- 				if (!param.string)
- 					return -ENOMEM;
-+				param.type = fs_value_is_string;
- 			}
- 			param.size = v_len;
- 
-diff --git a/fs/fs_context.c b/fs/fs_context.c
-index 138b5b4d621d..9097421cbba5 100644
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -175,14 +175,15 @@ int vfs_parse_fs_string(struct fs_context *fc, const char *key,
- 
- 	struct fs_parameter param = {
- 		.key	= key,
--		.type	= fs_value_is_string,
-+		.type	= fs_value_is_flag,
- 		.size	= v_size,
- 	};
- 
--	if (v_size > 0) {
-+	if (value) {
- 		param.string = kmemdup_nul(value, v_size, GFP_KERNEL);
- 		if (!param.string)
- 			return -ENOMEM;
-+		param.type = fs_value_is_string;
- 	}
- 
- 	ret = vfs_parse_fs_param(fc, &param);
-diff --git a/fs/fs_parser.c b/fs/fs_parser.c
-index d1930adce68d..65842cd2e320 100644
---- a/fs/fs_parser.c
-+++ b/fs/fs_parser.c
-@@ -85,7 +85,6 @@ int fs_parse(struct fs_context *fc,
- 	const struct fs_parameter_enum *e;
- 	int ret = -ENOPARAM, b;
- 
--	result->has_value = !!param->string;
- 	result->negated = false;
- 	result->uint_64 = 0;
- 
-@@ -95,7 +94,7 @@ int fs_parse(struct fs_context *fc,
- 		 * "xxx" takes the "no"-form negative - but only if there
- 		 * wasn't an value.
- 		 */
--		if (result->has_value)
-+		if (param->type != fs_value_is_flag)
- 			goto unknown_parameter;
- 		if (param->key[0] != 'n' || param->key[1] != 'o' || !param->key[2])
- 			goto unknown_parameter;
-@@ -127,14 +126,13 @@ int fs_parse(struct fs_context *fc,
- 	case fs_param_is_u64:
- 	case fs_param_is_enum:
- 	case fs_param_is_string:
--		if (param->type != fs_value_is_string)
--			goto bad_value;
--		if (!result->has_value) {
-+		if (param->type == fs_value_is_string)
-+			break;
-+		if (param->type == fs_value_is_flag) {
- 			if (p->flags & fs_param_v_optional)
- 				goto okay;
--			goto bad_value;
- 		}
--		/* Fall through */
-+		goto bad_value;
- 	default:
- 		break;
- 	}
-@@ -144,8 +142,7 @@ int fs_parse(struct fs_context *fc,
- 	 */
- 	switch (p->type) {
- 	case fs_param_is_flag:
--		if (param->type != fs_value_is_flag &&
--		    (param->type != fs_value_is_string || result->has_value))
-+		if (param->type != fs_value_is_flag)
- 			return invalf(fc, "%s: Unexpected value for '%s'",
- 				      desc->name, param->key);
- 		result->boolean = true;
-@@ -206,9 +203,6 @@ int fs_parse(struct fs_context *fc,
- 	case fs_param_is_fd: {
- 		switch (param->type) {
- 		case fs_value_is_string:
--			if (!result->has_value)
--				goto bad_value;
--
- 			ret = kstrtouint(param->string, 0, &result->uint_32);
- 			break;
- 		case fs_value_is_file:
-diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
-index dee140db6240..45323203128b 100644
---- a/include/linux/fs_parser.h
-+++ b/include/linux/fs_parser.h
-@@ -72,7 +72,6 @@ struct fs_parameter_description {
-  */
- struct fs_parse_result {
- 	bool			negated;	/* T if param was "noxxx" */
--	bool			has_value;	/* T if value supplied to param */
- 	union {
- 		bool		boolean;	/* For spec_bool */
- 		int		int_32;		/* For spec_s32/spec_enum */
+I've switched to using an rcu read lock on the list traversal and
+spin-lock on list update.
+
+> paul moore
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
+
