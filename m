@@ -2,100 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2481C122327
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 05:31:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1AF51224D9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 07:40:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727799AbfLQE3F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Dec 2019 23:29:05 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:40405 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726526AbfLQE3F (ORCPT
+        id S1726987AbfLQGkd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Dec 2019 01:40:33 -0500
+Received: from mout-p-101.mailbox.org ([80.241.56.151]:53806 "EHLO
+        mout-p-101.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726875AbfLQGkc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Dec 2019 23:29:05 -0500
-Received: by mail-io1-f67.google.com with SMTP id x1so399727iop.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2019 20:29:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=io9LsV6YTgxAJjSDHvqRcOZBqjMA6kYZPrCLJGTyJS4=;
-        b=NtO5xZNVcY6umIUBuUrtrwZ7E7uW6FS+x6OiCfBgWxrlADa5CDy9WH5TAzDLH95uqe
-         zWoNj5Z1m3zI9MJChGK4PYKovV21tl5C7tV5cWAvRamjE+SOGkUfS472F2R+cyLTvNTr
-         0bY48G1a4BpTQ86hTqT/SvS0lMpeGUmDgNhVs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=io9LsV6YTgxAJjSDHvqRcOZBqjMA6kYZPrCLJGTyJS4=;
-        b=ZJ6PrxkWQFHkTaNDh3poQPOb9yCEo0wtQUBCQ1cAkNCFX/DRaPmkiyhB1B8fkkPUEE
-         XUAegDOx9lAx7B+aVEwfiWcHgfXafYi30XkKjRJuvy8AT/1n6BfH+R2QwtnLpSUTcOVk
-         Mvh/+Rp8GnGbppkCu9ENAIkol5Nm4OZYrYcMVkRrrLei7NFHUdf90bFSNKJFLP3yBvpN
-         jtHa0PnbQ4pyMBzbRefweDJJayWZ7SbhQ5GVQyG4f039M6EMYVS2F5jgI96QgqYlzYDa
-         o6CL63d7TS1F9e3b2/VGFysllRXou4Lz3OiHU4h2pNRuGNQkDgnzwXaAn10pTDyYLzSP
-         qFFA==
-X-Gm-Message-State: APjAAAWwQgMq0MvOG1JSI9WTZc+XMm1ltZFrhnRp9OGtALS0J6BVU3TR
-        U2s0Xz8ByrcmN+4tUbXUBIWCLMNbD2m8IcG5/Vttpg==
-X-Google-Smtp-Source: APXvYqzMC0ONHI22FH8i/STQo52i8L5AfzX+22O2Iw+hzIiL3yqVVXgeFLJ0hLBh4XeNlg9rCJr9y92M9nrb2KwvCbA=
-X-Received: by 2002:a6b:6f07:: with SMTP id k7mr2253754ioc.174.1576556944752;
- Mon, 16 Dec 2019 20:29:04 -0800 (PST)
+        Tue, 17 Dec 2019 01:40:32 -0500
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 47cT6M2DP7zKmbN;
+        Tue, 17 Dec 2019 07:40:27 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id AVgNK5XsT0lw; Tue, 17 Dec 2019 07:40:19 +0100 (CET)
+Date:   Tue, 17 Dec 2019 17:39:50 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Florian Weimer <fweimer@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-ia64@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-api@vger.kernel.org,
+        Jiri Olsa <jolsa@redhat.com>, linux-arch@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        David Drysdale <drysdale@google.com>,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, linuxppc-dev@lists.ozlabs.org,
+        dev@opencontainers.org, Andy Lutomirski <luto@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        libc-alpha@sourceware.org, linux-parisc@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, netdev@vger.kernel.org,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        linux-alpha@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        bpf@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org
+Subject: Re: [PATCH v18 11/13] open: introduce openat2(2) syscall
+Message-ID: <20191217063950.5oqwwqz5p3bu7t2x@yavin.dot.cyphar.com>
+References: <20191206141338.23338-1-cyphar@cyphar.com>
+ <20191206141338.23338-12-cyphar@cyphar.com>
+ <20191216192158.B9F19832924A@oldenburg2.str.redhat.com>
 MIME-Version: 1.0
-References: <20191128155940.17530-1-mszeredi@redhat.com> <20191128155940.17530-13-mszeredi@redhat.com>
- <20191217033721.GS4203@ZenIV.linux.org.uk> <CAJfpegtnyjm_qbfMo0neAvqdMymTPHxT2NZX70XnK_rD5xtKYw@mail.gmail.com>
- <CAJfpegt=QugsQWW7NXGiOpYVSjMVfZRLhJLyq8KTsE47H_tRZg@mail.gmail.com>
- <20191217041945.GW4203@ZenIV.linux.org.uk> <CAJfpegtnYdR39N-iZ5DCnwOEjkpJZ058NDT8iNQNUvDFSO6WOA@mail.gmail.com>
-In-Reply-To: <CAJfpegtnYdR39N-iZ5DCnwOEjkpJZ058NDT8iNQNUvDFSO6WOA@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 17 Dec 2019 05:28:53 +0100
-Message-ID: <CAJfpegveE5-rh0XHqNFK_QpL_aJLazPFDXCqD0LmFuQac1yGEw@mail.gmail.com>
-Subject: Re: [PATCH 12/12] vfs: don't parse "silent" option
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="vzwczu2ztdefrrfu"
+Content-Disposition: inline
+In-Reply-To: <20191216192158.B9F19832924A@oldenburg2.str.redhat.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 5:23 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Tue, Dec 17, 2019 at 5:19 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > On Tue, Dec 17, 2019 at 05:16:58AM +0100, Miklos Szeredi wrote:
-> > > On Tue, Dec 17, 2019 at 5:12 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > > >
-> > > > On Tue, Dec 17, 2019 at 4:37 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > > > >
-> > > > > On Thu, Nov 28, 2019 at 04:59:40PM +0100, Miklos Szeredi wrote:
-> > > > > > While this is a standard option as documented in mount(8), it is ignored by
-> > > > > > most filesystems.  So reject, unless filesystem explicitly wants to handle
-> > > > > > it.
-> > > > > >
-> > > > > > The exception is unconverted filesystems, where it is unknown if the
-> > > > > > filesystem handles this or not.
-> > > > > >
-> > > > > > Any implementation, such as mount(8), that needs to parse this option
-> > > > > > without failing can simply ignore the return value from fsconfig().
-> > > > >
-> > > > > Unless I'm missing something, that will mean that having it in /etc/fstab
-> > > > > for a converted filesystem (xfs, for example) will fail when booting
-> > > > > new kernel with existing /sbin/mount.  Doesn't sound like a good idea...
-> > > >
-> > > > Nope, the mount(2) case is not changed (see second hunk).
-> > >
-> > > Wrong, this has nothing to do with mount(2).  The second hunk is about
-> > > unconverted filesystems...
-> > >
-> > > When a filesystem that really needs to handle "silent" is converted,
-> > > it can handle that option itself.
-> >
-> > You know, I had a specific reason to mention XFS...
->
-> Will fix.  My bad, I did check filesystems at the time of writing the
-> patch, but not when resending...
 
-And BTW this is still not breakage of mount(2) since that code path is
-unaffected.  Would need to think  how much the "silent" option makes
-sense on the new interface for individual cases specifically.
+--vzwczu2ztdefrrfu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Miklos
+On 2019-12-16, Florian Weimer <fweimer@redhat.com> wrote:
+> > diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+> > index 1d338357df8a..58c3a0e543c6 100644
+> > --- a/include/uapi/linux/fcntl.h
+> > +++ b/include/uapi/linux/fcntl.h
+> > @@ -93,5 +93,40 @@
+> > =20
+> >  #define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
+> > =20
+> > +/*
+> > + * Arguments for how openat2(2) should open the target path. If @resol=
+ve is
+> > + * zero, then openat2(2) operates very similarly to openat(2).
+> > + *
+> > + * However, unlike openat(2), unknown bits in @flags result in -EINVAL=
+ rather
+> > + * than being silently ignored. @mode must be zero unless one of {O_CR=
+EAT,
+> > + * O_TMPFILE} are set.
+> > + *
+> > + * @flags: O_* flags.
+> > + * @mode: O_CREAT/O_TMPFILE file mode.
+> > + * @resolve: RESOLVE_* flags.
+> > + */
+> > +struct open_how {
+> > +	__aligned_u64 flags;
+> > +	__u16 mode;
+> > +	__u16 __padding[3]; /* must be zeroed */
+> > +	__aligned_u64 resolve;
+> > +};
+> > +
+> > +#define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
+> > +#define OPEN_HOW_SIZE_LATEST	OPEN_HOW_SIZE_VER0
+> > +
+> > +/* how->resolve flags for openat2(2). */
+> > +#define RESOLVE_NO_XDEV		0x01 /* Block mount-point crossings
+> > +					(includes bind-mounts). */
+> > +#define RESOLVE_NO_MAGICLINKS	0x02 /* Block traversal through procfs-s=
+tyle
+> > +					"magic-links". */
+> > +#define RESOLVE_NO_SYMLINKS	0x04 /* Block traversal through all symlin=
+ks
+> > +					(implies OEXT_NO_MAGICLINKS) */
+> > +#define RESOLVE_BENEATH		0x08 /* Block "lexical" trickery like
+> > +					"..", symlinks, and absolute
+> > +					paths which escape the dirfd. */
+> > +#define RESOLVE_IN_ROOT		0x10 /* Make all jumps to "/" and ".."
+> > +					be scoped inside the dirfd
+> > +					(similar to chroot(2)). */
+> > =20
+> >  #endif /* _UAPI_LINUX_FCNTL_H */
+>=20
+> Would it be possible to move these to a new UAPI header?
+>=20
+> In glibc, we currently do not #include <linux/fcntl.h>.  We need some of
+> the AT_* constants in POSIX mode, and the header is not necessarily
+> namespace-clean.  If there was a separate header for openat2 support, we
+> could use that easily, and we would only have to maintain the baseline
+> definitions (which never change).
+
+Sure, (assuming nobody objects) I can move it to "linux/openat2.h".
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--vzwczu2ztdefrrfu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXfh4MQAKCRCdlLljIbnQ
+EvJ/AP9e+RbEhnKlfXeue8RftgpgyUu8To5+ZOcmuoKfUFVefgEAmch0tDU0glq6
+a0g2iw25N8tzxhAIzQpE/p2HRuzcPgo=
+=p/bo
+-----END PGP SIGNATURE-----
+
+--vzwczu2ztdefrrfu--
