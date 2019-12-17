@@ -2,19 +2,19 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9268A1239B8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 23:21:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDCE612397D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 23:19:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726290AbfLQWRf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Dec 2019 17:17:35 -0500
-Received: from mout.kundenserver.de ([212.227.17.13]:43261 "EHLO
+        id S1727086AbfLQWSr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Dec 2019 17:18:47 -0500
+Received: from mout.kundenserver.de ([212.227.17.24]:47933 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725886AbfLQWRf (ORCPT
+        with ESMTP id S1726641AbfLQWRo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Dec 2019 17:17:35 -0500
+        Tue, 17 Dec 2019 17:17:44 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1Ma1sQ-1iDauk3LgC-00W0Di; Tue, 17 Dec 2019 23:17:22 +0100
+ 1MJV5K-1iNTtD2mu8-00JtoE; Tue, 17 Dec 2019 23:17:23 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Jens Axboe <axboe@kernel.dk>,
         "James E.J. Bottomley" <jejb@linux.ibm.com>,
@@ -24,66 +24,64 @@ Cc:     linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
         Christoph Hellwig <hch@lst.de>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>,
         linux-doc@vger.kernel.org, corbet@lwn.net, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v2 01/27] pktcdvd: fix regression on 64-bit architectures
-Date:   Tue, 17 Dec 2019 23:16:42 +0100
-Message-Id: <20191217221708.3730997-2-arnd@arndb.de>
+        linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        stable@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>
+Subject: [PATCH v2 02/27] compat_ioctl: block: handle BLKREPORTZONE/BLKRESETZONE
+Date:   Tue, 17 Dec 2019 23:16:43 +0100
+Message-Id: <20191217221708.3730997-3-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191217221708.3730997-1-arnd@arndb.de>
 References: <20191217221708.3730997-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:QMSOPeED49s201CoV/Q/8aHXf5yX2aoiUQkXnT4FSnobAR1P+ZS
- AjHcXURC1TcBRJslcM0go+hX9iCUkxwOPBvAe3WaNg3lqMqQFjSIfMlrLToOT1N/tCw6hO2
- zOwEghWIgnPEe89YRhjL6pmHZYOlIxHRc6VqAA5VLAnaxIqc9epmlzoZE2W28a+I11/E1T8
- eN7v7rzsLAL52VPep87VA==
+X-Provags-ID: V03:K1:g9ac37aU2A7D6GQqud2omy5i2QGTVE1qppkCL5XwIDeUd8bobTc
+ MveRQyw3+9pR5kUrwwKPYkI72gAZcTFNOFPrXHHjoLZDSE//MQTS40wwyPjouH26AbGYVAe
+ jAM7wjF2oIGdwXn7+yQnLwHO5GyBuoGAp+pfHTjpdbXQt7rRjN5nKS181kK7PLyXD7q+Jnk
+ 7vH6FPtRoMkX/848Z91BA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:q3r9egq/gLI=:eaRnFNzwV13WGZeABhyoCa
- kG6pSxM3N1jBbw3ItFcU5G6gCoLl6A20jd6nWRhp35jlLNyqBxWhRYZ8QIRjtnoL5Qk8vjNQm
- hDtQSpTngcgQO89psiQHtXxIsxlggGZOlPf2yawlOrfLb/SvakZpuY7BQCrV0WRG0LTyw4gvy
- afJx3VGKecnLAuvMQaV22cGRGlyz9pZfPQG0ygZVSYZV1FiyYh5ZQSX+mer5k6mfvHmkUn+3T
- YzHfUa+OyIC/Mamfdnu/bjuJG52WXGYFay1onrbGSNYms13077RIudBaIaWiHWBIh+3LJAIHS
- pKIe4/iNUYIIiYdcFx/p/jkg0JYMmWMKOB++MhNCdcsCKvcboEVQyzF2580ni2QV9L79sfSpp
- f3M4Cg7b9wWO9696JpTfpFoSCF7L6Ojt2W5tFp+nAn4i7ZHtyNgKpE2PxoI9zyMdm8/88wo5o
- Ir0gAKQcWJCyrIh461fpNETWT9UdaCZPt5J/vI3O9R4hzGIzm9nS4z55DqcTBmqWc8KQxS+5u
- xpUha18j3X3Tvf/Ckcq0vJ7SnSm4QOI1m9Hk7Roul2tz5+HL9bXEaJ6O4aBACvZiBAK0NQfO2
- 55iUqzA2Do9ZUxr07cSZOMz6j2VB80hXlCcQKu0g8HWsp73LJmFQ5VlD7Vm3DZ9R1M+w72zX2
- bhQFI10kiVC9sGNSOIemMXU5lYjvDynxia/KafBznmGNhDIkQ5P8QyElg37HCZVjQuxzmKiw9
- 5U/sNmQG2oheV7assA7oI62z+vjrg2xZC6KBoiGsoM1iB4lNjM9ql5Y7ZR9Ulz5ZtDhCqMlxd
- ihoE9fwLKdX3XySzRDbM3JoPdOb04RmsNAiVkkeIasEjWfw6dgd8mdLqt5JWldxd3/cM/tc61
- af5LnUUHqowZxtUs87eg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:zG7SE8/0MZM=:KEUrtjVSBoJBU02gLbM6J4
+ 2EagqdafkKPJhjR/Tm0F8ZE1uyWfOhPXtbj8Wi3q3Gozys9rJExO2wo4fo8ZxCs7OxZ1eEZ9J
+ QepdDyiAeclC3QZ/nS2SRQc5KfTpwTH81BOMbRk1pkWO7VBTU+1d7i6HOwYh33TmvPTPsizvs
+ MMVgM2K0tstvZ4ElOoVo5v3o6ev5YpWZCxE8GktYvG0zounkN5I5TObuXVKKerlR6AbILeRZx
+ /SvdM3xC+vzZR3/4WQiVK0BrlEnAgJ7KBwyX6MdtdE4Vvmg6kHUwBOlViwl2zJ9VpG5T9tSMQ
+ ptvWX8OIXgyH32USJldmEISgyLbpyc/eJEzcidHTWP+AeRnZSScA89uCQDZfTfMSjLQK8+D+C
+ OKwhn/bEDCgSv9BBWyaqngtW8TdY26Ab7veXc4nSFkq/LFamorGan0OT77JgAGrbr8TCrZYhS
+ tUPJGutM0iBHjyEkanop9hfxbHlXtYyhsW7onbWfmOTufD/d82/k+BcJLxijM9GtV7irNjQ6R
+ S4AUe9RBV7iJypejiG7xbrn9Ga6alfisodAiti+85iaJubN0gAVQHFirx85oCSZF7amaWoB7G
+ +mTlrAJIOEZZTJxvrpGatRoArgx5Vy27kBC02ny5s8R1qTsSnFQTQfWvl7PfefpvaeIA/i2a0
+ D6wN5emM0HXJ04BR4P6Rb5hAuUZQbl+72JxXEEg/LLU1GzBkmKmYP3yBes+k1IjkANfSkmKPz
+ SIUNKFKLEMW9a18wGjAEUepv0t21kQ/C1T3JHWUNJ7MndLZoLXEmGzXwk3ZSVBITBQpZm5KOn
+ JLehDsF+wQUW2hMIYQHtMPit53Y2etN3OEtSGjEUcmNbtag1dXyqMvACIelUubtCVGwnnnsOa
+ exU8Q+G3QGndB70dx2Xw==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The support for the compat ioctl did not actually do what it was
-supposed to do because of a typo, instead it broke native support for
-CDROM_LAST_WRITTEN and CDROM_SEND_PACKET on all architectures with
-CONFIG_COMPAT enabled.
+These were added to blkdev_ioctl() but not blkdev_compat_ioctl,
+so add them now.
 
-Fixes: 1b114b0817cc ("pktcdvd: add compat_ioctl handler")
+Cc: <stable@vger.kernel.org> # v4.10+
+Fixes: 3ed05a987e0f ("blk-zoned: implement ioctls")
+Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-----
-Please apply for v5.5, I just noticed the regression while
-rebasing some of the patches I created on top.
 ---
- drivers/block/pktcdvd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ block/compat_ioctl.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-index ee67bf929fac..861fc65a1b75 100644
---- a/drivers/block/pktcdvd.c
-+++ b/drivers/block/pktcdvd.c
-@@ -2707,7 +2707,7 @@ static const struct block_device_operations pktcdvd_ops = {
- 	.release =		pkt_close,
- 	.ioctl =		pkt_ioctl,
- #ifdef CONFIG_COMPAT
--	.ioctl =		pkt_compat_ioctl,
-+	.compat_ioctl =		pkt_compat_ioctl,
- #endif
- 	.check_events =		pkt_check_events,
- };
+diff --git a/block/compat_ioctl.c b/block/compat_ioctl.c
+index 6ca015f92766..830f91e05fe3 100644
+--- a/block/compat_ioctl.c
++++ b/block/compat_ioctl.c
+@@ -354,6 +354,8 @@ long compat_blkdev_ioctl(struct file *file, unsigned cmd, unsigned long arg)
+ 	 * but we call blkdev_ioctl, which gets the lock for us
+ 	 */
+ 	case BLKRRPART:
++	case BLKREPORTZONE:
++	case BLKRESETZONE:
+ 		return blkdev_ioctl(bdev, mode, cmd,
+ 				(unsigned long)compat_ptr(arg));
+ 	case BLKBSZSET_32:
 -- 
 2.20.0
 
