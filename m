@@ -2,113 +2,271 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4274B12215A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 02:18:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACBA61221B1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 02:51:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726582AbfLQBSP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Dec 2019 20:18:15 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:35724 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725805AbfLQBSP (ORCPT
+        id S1726368AbfLQBuH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Dec 2019 20:50:07 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:39685 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726133AbfLQBuH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Dec 2019 20:18:15 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ih1V7-0002xv-1e; Tue, 17 Dec 2019 01:18:13 +0000
-Date:   Tue, 17 Dec 2019 01:18:13 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, Andrew Price <anprice@redhat.com>,
-        David Howells <dhowells@redhat.com>, stable@vger.kernel.org
-Subject: Re: [PATCH 02/12] fs_parse: fix fs_param_v_optional handling
-Message-ID: <20191217011813.GQ4203@ZenIV.linux.org.uk>
-References: <20191128155940.17530-1-mszeredi@redhat.com>
- <20191128155940.17530-3-mszeredi@redhat.com>
- <20191216232845.GP4203@ZenIV.linux.org.uk>
+        Mon, 16 Dec 2019 20:50:07 -0500
+Received: from [213.220.153.21] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1ih1zv-0002DT-F6; Tue, 17 Dec 2019 01:50:03 +0000
+Date:   Tue, 17 Dec 2019 02:50:02 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Sargun Dhillon <sargun@sargun.me>
+Cc:     linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, tycho@tycho.ws, jannh@google.com,
+        cyphar@cyphar.com, oleg@redhat.com, luto@amacapital.net,
+        viro@zeniv.linux.org.uk, gpascutto@mozilla.com,
+        ealvarez@mozilla.com, fweimer@redhat.com, jld@mozilla.com,
+        arnd@arndb.de
+Subject: Re: [PATCH v3 2/4] pid: Add PIDFD_IOCTL_GETFD to fetch file
+ descriptors from processes
+Message-ID: <20191217015001.sp6mrhuiqrivkq3u@wittgenstein>
+References: <20191217010001.GA14461@ircssh-2.c.rugged-nimbus-611.internal>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191216232845.GP4203@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191217010001.GA14461@ircssh-2.c.rugged-nimbus-611.internal>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 11:28:45PM +0000, Al Viro wrote:
-> On Thu, Nov 28, 2019 at 04:59:30PM +0100, Miklos Szeredi wrote:
-> > String options always have parameters, hence the check for optional
-> > parameter will never trigger.
-> 
-> What do you mean, always have parameters?  Granted, for fsconfig(2) it's
-> (currently) true, but I see at least two other pathways that do not impose
-> such requirement - vfs_parse_fs_string() and rbd_parse_options().
-> 
-> You seem to deal with the former later in the patchset, but I don't see
-> anything for the latter...
+[Cc Arnd since he fiddled with ioctl()s quite a bit recently.]
 
-FWIW, I strongly dislike fs_param_v_optional.  I mean, look at the
-gfs2 usecase:
-	quota			->uint_64 = 0		->negated = false
-	quota=off		->uint_32 = 1		->negated = false
-	quota=account		->uint_32 = 2		->negated = false
-	quota=on		->uint_32 = 3		->negated = false
-	noquota			->boolean = false	->negated = true
-with gfs2 postprocessing for that thing being
-                if (result.negated)
-                        args->ar_quota = GFS2_QUOTA_OFF;
-                else if (result.int_32 > 0)
-                        args->ar_quota = opt_quota_values[result.int_32];
-                else   
-                        args->ar_quota = GFS2_QUOTA_ON;
-                break;
-and that relies upon having enum opt_quota members associated with
-off/account/on starting from 1.  I mean, WTF?  What we really want is
-	quota		GFS2_QUOTA_ON
-	quota=on	GFS2_QUOTA_ON
-	quota=account	GFS2_QUOTA_ACCOUNT
-	quota=off	GFS2_QUOTA_OFF
-	noquota		GFS2_QUOTA_OFF
+On Tue, Dec 17, 2019 at 01:00:04AM +0000, Sargun Dhillon wrote:
+> This adds an ioctl which allows file descriptors to be extracted
+> from processes based on their pidfd.
+> 
+> One reason to use this is to allow sandboxers to take actions on file
+> descriptors on the behalf of another process. For example, this can be
+> combined with seccomp-bpf's user notification to do on-demand fd
+> extraction and take privileged actions. For example, it can be used
+> to bind a socket to a privileged port. This is similar to ptrace, and
+> using ptrace parasitic code injection to extract a file descriptor from a
+> process, but without breaking debuggers, or paying the ptrace overhead
+> cost.
+> 
+> You must have the ability to ptrace the process in order to extract any
+> file descriptors from it. ptrace can already be used to extract file
+> descriptors based on parasitic code injections, so the permissions
+> model is aligned.
+> 
+> The ioctl takes a pointer to pidfd_getfd_args. pidfd_getfd_args contains
+> a size, which allows for gradual evolution of the API. There is an options
+> field, which can be used to state whether the fd should be opened with
+> CLOEXEC, or not. An additional options field may be added in the future
+> to include the ability to clear cgroup information about the file
+> descriptor at a later point. If the structure is from a newer kernel, and
+> includes members which make it larger than the structure that's known to
+> this kernel version, E2BIG will be returned.
+> 
+> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+> ---
+>  Documentation/ioctl/ioctl-number.rst |  1 +
+>  include/linux/pid.h                  |  1 +
+>  include/uapi/linux/pid.h             | 26 ++++++++++
+>  kernel/fork.c                        | 72 ++++++++++++++++++++++++++++
+>  4 files changed, 100 insertions(+)
+>  create mode 100644 include/uapi/linux/pid.h
+> 
+> diff --git a/Documentation/ioctl/ioctl-number.rst b/Documentation/ioctl/ioctl-number.rst
+> index bef79cd4c6b4..be2efb93acd1 100644
+> --- a/Documentation/ioctl/ioctl-number.rst
+> +++ b/Documentation/ioctl/ioctl-number.rst
+> @@ -272,6 +272,7 @@ Code  Seq#    Include File                                           Comments
+>                                                                       <mailto:tim@cyberelk.net>
+>  'p'   A1-A5  linux/pps.h                                             LinuxPPS
+>                                                                       <mailto:giometti@linux.it>
+> +'p'   B0-CF  uapi/linux/pid.h
+>  'q'   00-1F  linux/serio.h
+>  'q'   80-FF  linux/telephony.h                                       Internet PhoneJACK, Internet LineJACK
+>               linux/ixjuser.h                                         <http://web.archive.org/web/%2A/http://www.quicknet.net>
+> diff --git a/include/linux/pid.h b/include/linux/pid.h
+> index 9645b1194c98..65f1a73040c9 100644
+> --- a/include/linux/pid.h
+> +++ b/include/linux/pid.h
+> @@ -5,6 +5,7 @@
+>  #include <linux/rculist.h>
+>  #include <linux/wait.h>
+>  #include <linux/refcount.h>
+> +#include <uapi/linux/pid.h>
 
-I certainly agree that flag/NULL string is ugly; do we even want to keep
-fs_value_is_flag?  It's internal-only, so we can bloody well turn it
-into fs_value_is_string and ->string is NULL...  And sure, ->has_value
-is redundant - if nothing else, it would make a lot more sense as
-static inline bool param_has_value(const struct fs_parameter *param)
-{
-	return !!param->string;
+That should be pidfd.h and the resulting new file be placed under the
+pidfd entry in maintainers:
++F:     include/uapi/linux/pidfd.h
+
+>  
+>  enum pid_type
+>  {
+> diff --git a/include/uapi/linux/pid.h b/include/uapi/linux/pid.h
+> new file mode 100644
+> index 000000000000..4ec02ed8b39a
+> --- /dev/null
+> +++ b/include/uapi/linux/pid.h
+> @@ -0,0 +1,26 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +#ifndef _UAPI_LINUX_PID_H
+> +#define _UAPI_LINUX_PID_H
+> +
+> +#include <linux/types.h>
+> +#include <linux/ioctl.h>
+> +
+> +/* options to pass in to pidfd_getfd_args flags */
+> +#define PIDFD_GETFD_CLOEXEC (1 << 0)	/* open the fd with cloexec */
+
+Please, make them cloexec by default unless there's a very good reason
+not to.
+
+> +
+> +struct pidfd_getfd_args {
+> +	__u32 size;		/* sizeof(pidfd_getfd_args) */
+> +	__u32 fd;       /* the tracee's file descriptor to get */
+> +	__u32 flags;
+> +};
+
+I think you want to either want to pad this
+
++struct pidfd_getfd_args {
++	__u32 size;		/* sizeof(pidfd_getfd_args) */
++	__u32 fd;       /* the tracee's file descriptor to get */
++	__u32 flags;
+	__u32 reserved;
++};
+
+or use __aligned_u64 everywhere which I'd personally prefer instead of
+this manual padding everywhere.
+
+> +
+> +#define PIDFD_IOC_MAGIC			'p'
+> +#define PIDFD_IO(nr)			_IO(PIDFD_IOC_MAGIC, nr)
+> +#define PIDFD_IOR(nr, type)		_IOR(PIDFD_IOC_MAGIC, nr, type)
+> +#define PIDFD_IOW(nr, type)		_IOW(PIDFD_IOC_MAGIC, nr, type)
+> +#define PIDFD_IOWR(nr, type)		_IOWR(PIDFD_IOC_MAGIC, nr, type)
+> +
+> +#define PIDFD_IOCTL_GETFD		PIDFD_IOWR(0xb0, \
+> +						struct pidfd_getfd_args)
+> +
+> +#endif /* _UAPI_LINUX_PID_H */
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index 6cabc124378c..d9971e664e82 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -1726,9 +1726,81 @@ static __poll_t pidfd_poll(struct file *file, struct poll_table_struct *pts)
+>  	return poll_flags;
+>  }
+>  
+> +static long pidfd_getfd(struct pid *pid, struct pidfd_getfd_args __user *buf)
+> +{
+> +	struct pidfd_getfd_args args;
+> +	unsigned int fd_flags = 0;
+> +	struct task_struct *task;
+> +	struct file *file;
+> +	u32 user_size;
+> +	int ret, fd;
+> +
+> +	ret = get_user(user_size, &buf->size);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = copy_struct_from_user(&args, sizeof(args), buf, user_size);
+> +	if (ret)
+> +		return ret;
+> +	if ((args.flags & ~(PIDFD_GETFD_CLOEXEC)) != 0)
+> +		return -EINVAL;
+
+Nit: It's more common - especially in this file - to do
+
+if (args.flags & ~PIDFD_GETFD_CLOEXEC)
+	return -EINVAL;
+
+> +	if (args.flags & PIDFD_GETFD_CLOEXEC)
+> +		fd_flags |= O_CLOEXEC;
+> +
+> +	task = get_pid_task(pid, PIDTYPE_PID);
+> +	if (!task)
+> +		return -ESRCH;
+
+\n
+
+> +	ret = -EPERM;
+> +	if (!ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS))
+> +		goto out;
+
+\n
+
+Please don't pre-set errors unless they are used by multiple exit paths.
+if (!ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS)) {
+	ret = -EPERM;
+	goto out;
 }
-But I really wonder if we should keep breeding kludges.  Look at the
-use cases, including the yet-to-be-merged ones.
-	1) GFS2: see above
-	2) ceph: fsc/nofsc/fsc=...
-	3) ext4: init_itable/noinit_itable/init_itable=<number>
-	4) nfs: fsc/nofsc/fsc=...
 
-All of that is trivially handled by splitting the opt=... and opt
-cases.  We have two such in the tree and two more in posted patchsets.
-Plus one more that ext4 patchset breaks, AFAICS (barrier).  Out of
-several hundreds.  Everything else either requires = in all cases
-or rejects it in all cases.
+> +	ret = -EBADF;
+> +	file = fget_task(task, args.fd);
+> +	if (!file)
+> +		goto out;
 
-So how about a flag for "takes no arguments", set automatically by
-fsparam_flag()/fsparam_flag_no(), with fs_lookup_key() taking an
-extra "comes with argument" flag and filtering according to it?
-Rules:
-	foo		=> "foo", true
-	foo=		=> "foo", false
-	foo=bar		=> "foo", false
-And to hell with the "optional" flag; for gfs2 we'd end up with
-	fsparam_flag_no("quota", Opt_quota_flag),			// quota|noquota
-	fsparam_flag_enum("quota", Opt_quota, gfs2_param_quota),	// quota={on|account|off}
-Postprocessing won't be any harder, really - we could bloody well do
-	case Opt_quota_flag:
-		result.int_32 = result.negated ? GFS2_QUOTA_OFF : GFS2_QUOTA_ON;
-		/* fallthru */
-	case Opt_quota:
-		args->ar_quota = result.int_32;
-                break;
-with gfs2_param_quota having the right values in it, instead of
-that intermediate enum.
+Same.
 
-All ->has_value checks go away that way, AFAICS.  With minimal
-impact on yet-to-be-merged series...
+> +
+> +	fd = get_unused_fd_flags(fd_flags);
+> +	if (fd < 0) {
+> +		ret = fd;
+> +		goto out_put_file;
+> +	}
+
+\n
+
+> +	/*
+> +	 * security_file_receive must come last since it may have side effects
+> +	 * and cannot be reversed.
+> +	 */
+> +	ret = security_file_receive(file);
+> +	if (ret)
+> +		goto out_put_fd;
+> +
+> +	fd_install(fd, file);
+> +	put_task_struct(task);
+> +	return fd;
+> +
+> +out_put_fd:
+> +	put_unused_fd(fd);
+> +out_put_file:
+> +	fput(file);
+> +out:
+> +	put_task_struct(task);
+> +	return ret;
+> +}
+> +
+> +static long pidfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+> +{
+> +	struct pid *pid = file->private_data;
+> +	void __user *buf = (void __user *)arg;
+> +
+> +	switch (cmd) {
+> +	case PIDFD_IOCTL_GETFD:
+> +		return pidfd_getfd(pid, buf);
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+>  const struct file_operations pidfd_fops = {
+>  	.release = pidfd_release,
+>  	.poll = pidfd_poll,
+> +	.unlocked_ioctl = pidfd_ioctl,
+>  #ifdef CONFIG_PROC_FS
+>  	.show_fdinfo = pidfd_show_fdinfo,
+>  #endif
+> -- 
+> 2.20.1
+> 
