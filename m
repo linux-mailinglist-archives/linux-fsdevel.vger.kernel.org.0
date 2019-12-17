@@ -2,117 +2,243 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F279121F2E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 01:04:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 262C4121F31
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 01:07:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbfLQADC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Dec 2019 19:03:02 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:10502 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726454AbfLQADC (ORCPT
+        id S1727225AbfLQAF3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Dec 2019 19:05:29 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:23210 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726655AbfLQAF2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Dec 2019 19:03:02 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20191217000258epoutp03bef0698f4ae67b7c58da2c611a930413~g-6q38Jtq2140321403epoutp03D
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2019 00:02:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20191217000258epoutp03bef0698f4ae67b7c58da2c611a930413~g-6q38Jtq2140321403epoutp03D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1576540978;
-        bh=ciQbpU1wunt+IIv+D/PXz4k6+WkURdQNkPVZxzGbpOI=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=QMGwfqu9kCk9sKA6SqHB4sFpyFMcGRU3054IyOG6K70zI7z/Ven+av1NruNMuLmfw
-         NOEmia3uCzr9hWAF/zklSidZMdw6ShOHbywFut1RbU6Jc/P+O5Yqu+j9tJ7wYMSaBu
-         Zy7AzYky1NifMYbENrEQ9EQqbCP3WSOFHG8oxOXA=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20191217000257epcas1p35fe0c177852e302bca3c42d30ddfc98e~g-6qe0hof3031030310epcas1p3M;
-        Tue, 17 Dec 2019 00:02:57 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.161]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 47cJHh6WnzzMqYkc; Tue, 17 Dec
-        2019 00:02:56 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        CA.FD.57028.D2B18FD5; Tue, 17 Dec 2019 09:02:53 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20191217000253epcas1p4d2962765c6b1f3cba1648e7bf414f034~g-6mD0A6B2424724247epcas1p4D;
-        Tue, 17 Dec 2019 00:02:53 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191217000253epsmtrp2df7d895f11db90df1595e53aa23ffcb2~g-6mDIXxr2255822558epsmtrp2W;
-        Tue, 17 Dec 2019 00:02:53 +0000 (GMT)
-X-AuditID: b6c32a35-4f3ff7000001dec4-5f-5df81b2da7be
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        2E.AF.10238.C2B18FD5; Tue, 17 Dec 2019 09:02:52 +0900 (KST)
-Received: from DONAMJAEJEO06 (unknown [10.88.104.63]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191217000252epsmtip1c210904c1390d89e2f37ef1d13f932b4~g-6lzv4BX0178801788epsmtip1O;
-        Tue, 17 Dec 2019 00:02:52 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'Markus Elfring'" <Markus.Elfring@web.de>
-Cc:     <linux-kernel@vger.kernel.org>, "'Christoph Hellwig'" <hch@lst.de>,
-        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
-        "'Sungjong Seo'" <sj1557.seo@samsung.com>,
-        =?UTF-8?Q?'Valdis_Kl=C4=93tnieks'?= <valdis.kletnieks@vt.edu>,
-        <linux-fsdevel@vger.kernel.org>
-In-Reply-To: <088a50ad-dc67-4ff6-624d-a1ac2008b420@web.de>
-Subject: RE: [PATCH v7 01/13] exfat: add in-memory and on-disk structures
- and headers
-Date:   Tue, 17 Dec 2019 09:02:53 +0900
-Message-ID: <002401d5b46d$543f7ee0$fcbe7ca0$@samsung.com>
-MIME-Version: 1.0
+        Mon, 16 Dec 2019 19:05:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1576541150; x=1608077150;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=2PmHSI0Nprcs/ZKv5fFso4JHklq2EPCpdFTkVjFNelE=;
+  b=AE2AF/XLO5Pe5q+S/FZEPNX+WFzKkofu2Sq9UO/DarHHOzbuKqB5PfiZ
+   CJpbyAXMSEKaYQbixspgwt3lFR0mCZhwgoohB8gxnPh4W5ysmmTLdqf4c
+   I8SJSgcY1PyaBB+0E/93G0T90Ws8KPo5s7ZLu66zfzzQFZE0MUBzxmchF
+   LTjFqwqGImD1LDOfC2wpYMG4drlqRwp4df+h5til2WQRfc3McoNkVOa/y
+   JsBr8GtRqg04x6xjwAG8Prx/k0kQwCQ0iNIQt5sk8G2A5QzGL7MfMROsm
+   ahZgEaf6sRwJQALTCNBvfTaOfRHN8ubkbesVCUP53mNApYnNzCB8blAUh
+   w==;
+IronPort-SDR: iR4V63Q0GnxHSqfoOF77tJ5ti16YnuTPdFhLfc4xgTpl3GMyyKErkI3psyCjEyHgle/+E7Q3zQ
+ 9S1vlciQMM1AgxndTBy27+ISpuxwtaLaKlbgjoe/VTTe2w1jb+gL4n0ERU0nuM25AyrO/5DGcr
+ +NBZqqhL+8+rCzp2ufN07PYzqsALemTsWlIhrLNAr9oaCxxuIXOrooxNTv4aHvZC0GZczEN497
+ 0rUdIKCapIwCT1cQr/cY5tHuu4J8wPywSdeeZToJPVs3G6JSEBAVbcD2uuvpZ3lAMJW7ohk7iJ
+ MH0=
+X-IronPort-AV: E=Sophos;i="5.69,323,1571673600"; 
+   d="scan'208";a="227064706"
+Received: from mail-cys01nam02lp2058.outbound.protection.outlook.com (HELO NAM02-CY1-obe.outbound.protection.outlook.com) ([104.47.37.58])
+  by ob1.hgst.iphmx.com with ESMTP; 17 Dec 2019 08:05:48 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GwO/fcas1nmM45GCpRYdDPyWyPgtiiEP1eaHiTNmdS2RWKjm/Y/gr6IxfMU8YRoY80NYqbdAMHnLz6jaAEqrOtIJURum0hpVVkVafKPzqv9l8KvBfsdcuPZMdJYrZZS3TG6sfpR0gOmWG3hk/b1IpBpzOpJz6COtWneLWfMsaD+OvwV6oozSLkScoHhDgp37s2AfeQ6XptAprKuTCol60pr4vHC+VWnnxE4oXkZUBVEF/NHob3jlQbAstqmNg5q/5vN1yxfLOYJ+sXpAZwNphwJ/XXKuUnEtzcZYSOEQ79Ui590qxzNZxhko8AmDp305OucMBH00ACBoVIDUepkqnQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2PmHSI0Nprcs/ZKv5fFso4JHklq2EPCpdFTkVjFNelE=;
+ b=Hndtlk8xEbxRQbouWPt2BlZ0qGWqmvYzdGvmTXVvyf3lMxp4GQVQNe0Bu3eR9tU00cSxIf7tBZuOKd5jSoznN76+iOabOeg+Qrd4c34pADgcBzMR87DiHi2hXNkU/v5zJaafSjUgXxYh4iDzmh15ROYEpXoIkoELnOhyQp8NSWko8YzVhl1QnC3ZoNAbeGREtixv6HAgRE5K26Ese6x+s/nIoFoZc7Q0JWpUN5hYoO/ivx5ziHtzL3jl6WV2TgRnUWMUj6ipdM91iU0CngRE27Ck4Kx4HuE+rYAW9XLaEAqGUtKOUI6fQbaA2kMp9bMqXvinPjzXyOsoEl9ILiQFFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2PmHSI0Nprcs/ZKv5fFso4JHklq2EPCpdFTkVjFNelE=;
+ b=UbnXaDFZBOOF1ZtTnhglfMqTdZCmoddOW34otouzcfDoJthERb425O9MZ0mfNHoCuJXZMsgzHzkSvYiKQjVaxZXlgeZRqDSq572OA8/ZizkzWlYI0HLdOiuwobGoHKbxGEW+tpK5Q8SLTHT5U6F6wjyq2+O491n36aHW254PCrQ=
+Received: from BYAPR04MB5816.namprd04.prod.outlook.com (20.179.59.16) by
+ BYAPR04MB4454.namprd04.prod.outlook.com (52.135.239.91) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2538.20; Tue, 17 Dec 2019 00:05:25 +0000
+Received: from BYAPR04MB5816.namprd04.prod.outlook.com
+ ([fe80::cd8e:d1de:e661:a61]) by BYAPR04MB5816.namprd04.prod.outlook.com
+ ([fe80::cd8e:d1de:e661:a61%5]) with mapi id 15.20.2538.019; Tue, 17 Dec 2019
+ 00:05:25 +0000
+From:   Damien Le Moal <Damien.LeMoal@wdc.com>
+To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+CC:     Johannes Thumshirn <jth@kernel.org>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Hannes Reinecke <hare@suse.de>
+Subject: Re: [PATCH 0/2] New zonefs file system
+Thread-Topic: [PATCH 0/2] New zonefs file system
+Thread-Index: AQHVsRth1IpCuMwSZ02s8MNISyP74A==
+Date:   Tue, 17 Dec 2019 00:05:25 +0000
+Message-ID: <BYAPR04MB58166C2F8C7DAFE4686F2DECE7500@BYAPR04MB5816.namprd04.prod.outlook.com>
+References: <20191212183816.102402-1-damien.lemoal@wdc.com>
+ <29fb138e-e9e5-5905-5422-4454c956e685@metux.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Damien.LeMoal@wdc.com; 
+x-originating-ip: [199.255.47.7]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: a7543cd5-7aa4-4c65-3b5b-08d78284d176
+x-ms-traffictypediagnostic: BYAPR04MB4454:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BYAPR04MB4454507662377A82322E2A63E7500@BYAPR04MB4454.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 02543CD7CD
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39860400002)(136003)(376002)(346002)(396003)(366004)(199004)(189003)(71200400001)(9686003)(52536014)(33656002)(5660300002)(66574012)(55016002)(6506007)(53546011)(7696005)(66556008)(91956017)(66446008)(64756008)(66476007)(76116006)(66946007)(86362001)(26005)(54906003)(8936002)(81166006)(2906002)(8676002)(4326008)(81156014)(110136005)(186003)(478600001)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB4454;H:BYAPR04MB5816.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: DY0JKQI50cezyM0kNboM7DdIdhprh9b4e6ON2wc0YZbafpSrKP1Cjk5nHb6jCEfcvJThlcXn3UBfo5kWMe30RzxTgJc/k1sR3opOC8Gu/HB31OvPaDzd+SdoCzWkjXv95VihOiCUBvyC5uRChJs2FzF5lRTLLywBECaeDycR6oTahHSLHiauMLaEwxZlfSno0pr1YtgdkzCuPy1uh1n7z1c9UTUxFvEAF8NoyyIFBZFlpLfgk7zZe+lfaX+PrqmeB8mSdbqr+tJ5msoORJj+sDScbb8DnLsx6K1rFDz5OJzf9OzdNEQmEXjmtPGe14Bx/kZ9/rOfybJ5M5BaTLJ9v2oZUvM731U87dqTj8jOdhePWKuxXxalZm5tBi85/A2DKjGoKHbRGrHEeufSh2HQ88+mxsoXTgCEGbqdc5x017/2LQ7nKJoLI3LDAtFscnPM
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 14.0
-Content-Language: ko
-Thread-Index: AQFm2LC/h6nQOwj4JCuWUtKX9oQxIwE+vU/YAbPr/rCog5NBAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTcRTH+XkfXqXFbVqeVtS6EmIy3Zyzq7SIihhYYARFgtlFL5u1l7tT
-        sv5IknyM0YuoXNoDK9Ie2pRcK1luWUgvKii0oLeZlppSGoV1513kf5/z5XvO75zzOxQmbyIV
-        VLHVyTusnJkhY/HroWS1SrVgMl/92pfAVja2kGzTpe4o9lZnD84+89eT7B/PJ4Jtn7pDsE9H
-        RvFV0YZAw+Vow83eCtJwoL0ZGca9iwzBji+k4WX/dTyXzDOvMPFcEe9Q8tZCW1Gx1ahncjYV
-        rCnQZao1Kk0Wu5xRWjkLr2fWrs9VrSs2i70wyjLOXCpKuZwgMGkrVzhspU5eabIJTj3D24vM
-        do3anipwFqHUakwttFmyNWp1uk50bjebAkebkL0O2zXuTqxAE1EuFEMBnQEdNWOEC8VSctqH
-        oDbYgEnBGIL7zQO4FPwQg1O30b+Un3+qIimdCNrujkRcgwg+93QTYRdJq2Dqd4AMczydCke+
-        hKZ1jHZHwdnnc8IcQ2eDf3/ltB5Hb4GDtd14mHF6KVwcqMfCLKOzwHt+HyHxHOip+4BLdVLg
-        wtkhTOpICb6HQ0jS4+FkbRUmvbsaTn/tmp4H6BESej++I6WEtTDceYqQOA4G77VHS6yA8eFO
-        0UOJvAe+BSL1axAMTOgl1kJvSysRtmB0MrT40yR5Cdz41RBpYTYMf3cTUhUZ1FTJJctSOPA0
-        FFn7AnBVj0YfQoxnxmCeGYN5Zgzj+f/YGYQ3o3m8XbAYeUFj18z8ay+aPtNlOh86+mh9ENEU
-        YmbJ7GUT+XKCKxPKLUEEFMbEy3xKUZIVceW7eYetwFFq5oUg0ol7P4wp5hbaxKO3Ogs0unSt
-        VstmZC7P1GmZBBk1+SRfThs5J7+T5+28419eFBWjqECLk0OZW/cmBfsfPPfwL4yNjqv+yo4u
-        16231WbSpG8LTaV4FSUH09YtQYHtrVRGdk1G3VfXlTeJJfMHsrrPBfL6Gj9uSHz32P844XDJ
-        +/RXoznHh8ovldRXb762IxDTn/xowjPW92uE2rjtStJg0rycCxfdR45tTV14KC/O9MR9YtLL
-        4IKJ0yzDHAL3F0EwwhO8AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGIsWRmVeSWpSXmKPExsWy7bCSnK6O9I9Yg0tXrC2aF69ns1i5+iiT
-        xZ69J1ksLu+aw2bxf9ZzVost/46wWlx6/4HFgd1j/9w17B67bzawefRtWcXo8XmTnMeh7W/Y
-        PG4/28YSwBbFZZOSmpNZllqkb5fAlbFhyh+Wgk1MFW0/XrI3ML5l7GLk5JAQMJH4+b+NtYuR
-        i0NIYDejxIkNq5ggEtISx06cYe5i5ACyhSUOHy6GqHnBKNG2eyELSA2bgK7Evz/72UBsEQE9
-        iUlvDoMNYhaYwCSxaVInM9zUlmdT2UGqOAWsJHa1NrOC2MICoRIrDj8C62YRUJVY8WIOM4jN
-        K2ApsWlpEyuELShxcuYTsG3MAtoSvQ9bGWHsZQtfM0NcqiCx4+xrqLiIxOzONmaIi5wk5r89
-        yDyBUXgWklGzkIyahWTULCTtCxhZVjFKphYU56bnFhsWGOallusVJ+YWl+al6yXn525iBMeW
-        luYOxstL4g8xCnAwKvHwSpR8jxViTSwrrsw9xCjBwawkwrtDASjEm5JYWZValB9fVJqTWnyI
-        UZqDRUmc92nesUghgfTEktTs1NSC1CKYLBMHp1QDo9As2d0MswwN8jnuXpszPfEXz12tFSay
-        sxhNy6ICopbWb5RVv65lqRtxt339+SbNrgXZCbwPr5yff8CfbRa70aNTmpUFditOTHtSuj3m
-        zE6efycfZfFJPZk5LS3bTz95SUzgU/M5R6bmf7dOfV58YML2UwZHTDU3uRVrKU51cLtT2u52
-        Iu35JiWW4oxEQy3mouJEAGp270ypAgAA
-X-CMS-MailID: 20191217000253epcas1p4d2962765c6b1f3cba1648e7bf414f034
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191216135033epcas5p3f2ec096506b1a48535ce0796fef23b9e
-References: <20191213055028.5574-2-namjae.jeon@samsung.com>
-        <CGME20191216135033epcas5p3f2ec096506b1a48535ce0796fef23b9e@epcas5p3.samsung.com>
-        <088a50ad-dc67-4ff6-624d-a1ac2008b420@web.de>
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a7543cd5-7aa4-4c65-3b5b-08d78284d176
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Dec 2019 00:05:25.6155
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 15IF1SYqBRCMepeNWA9wuCV4uFXU/XPLiD00oRhPmiBJNs4YXltb+JC64Piobxg2D1B0AD5BFtl8Q0AvBG1BMA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4454
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> 2. Which source file should provide the corresponding implementation?
->    (I did not find it in the update step =E2=80=9C=5BPATCH=20v7=2006/13=
-=5D=20exfat:=20add=20exfat=0D=0A>=20=20=20=20entry=20operations=E2=80=9D=20=
-so=20far.)=0D=0AGood=20catch,=20I=20will=20move=20it=20on=20next=20version.=
-=0D=0A=0D=0AThanks=20for=20your=20review=21=0D=0A>=20=0D=0A>=20Regards,=0D=
-=0A>=20Markus=0D=0A=0D=0A
+On 2019/12/16 17:19, Enrico Weigelt, metux IT consult wrote:=0A=
+> On 12.12.19 19:38, Damien Le Moal wrote:=0A=
+> =0A=
+> Hi,=0A=
+> =0A=
+>> zonefs is a very simple file system exposing each zone of a zoned block=
+=0A=
+>> device as a file. Unlike a regular file system with zoned block device=
+=0A=
+>> support (e.g. f2fs or the on-going btrfs effort), zonefs does not hide=
+=0A=
+>> the sequential write constraint of zoned block devices to the user.=0A=
+> =0A=
+> Just curious: what's the exact definition of "zoned" here ?=0A=
+> Something like partitions ?=0A=
+=0A=
+As Carlos commented already, a zoned block device is Linux abstraction=0A=
+used to handle SMR HDDs (Shingled Magnetic Recording). These disks=0A=
+expose an LBA range that is divided into zones that can only be written=0A=
+sequentially for host-managed models. Other models such as host-aware or=0A=
+drive-managed allow random writes to all zones at the cost of potential=0A=
+serious performance degradation due to disk internal garbage collection=0A=
+of zones (similarly to an SSD handling of erase blocks).=0A=
+=0A=
+While today zoned block devices exist on the market only in the form of=0A=
+SMR disks, NVMe SSDs will also soon be available with the completion of=0A=
+the Zoned Namespace specifications.=0A=
+=0A=
+Zoning of block devices has several advantages: higher capacities for=0A=
+HDDs and more predictable and lower IO latencies for SSDs (almost no=0A=
+internal GC/weir leveling needed). But taking full advantage of these=0A=
+devices require software changes on the host due to the sequential write=0A=
+constraint imposed by the devices interface.=0A=
+=0A=
+> Can these files then also serve as block devices for other filesystems ?=
+=0A=
+> Just a funny idea: could we handle partitions by a file system ?=0A=
+> =0A=
+> Even more funny idea: give file systems block device ops, so they can=0A=
+> be directly used as such (w/o explicitly using loopdev) ;-)=0A=
+=0A=
+This is outside the scope of this thread, so let's not start a=0A=
+discussion about this here. Start a new thread !=0A=
+=0A=
+>> Files representing sequential write zones of the device must be written=
+=0A=
+>> sequentially starting from the end of the file (append only writes).=0A=
+> =0A=
+> So, these files can only be accessed like a tape ?=0A=
+=0A=
+Writes must be sequential within a zone but reads can be random to any=0A=
+writen LBA.=0A=
+=0A=
+> Assuming you're working ontop of standard block devices anyways (instead=
+=0A=
+> of tape-like media ;-)) - why introducing such a limitation ?=0A=
+=0A=
+See above: the limitation is physical, by the device, so that different=0A=
+improvements can be achieved depending on the storage medium being used=0A=
+(increased capacity, lower latencies, lower over provisioning, etc)=0A=
+=0A=
+> =0A=
+>> zonefs is not a POSIX compliant file system. It's goal is to simplify=0A=
+>> the implementation of zoned block devices support in applications by=0A=
+>> replacing raw block device file accesses with a richer file based API,=
+=0A=
+>> avoiding relying on direct block device file ioctls which may=0A=
+>> be more obscure to developers. =0A=
+> =0A=
+> ioctls ?=0A=
+> =0A=
+> Last time I checked, block devices could be easily accessed via plain=0A=
+> file ops (read, write, seek, ...). You can basically treat them just=0A=
+> like big files of fixed size.=0A=
+=0A=
+I was not clear, my apologies. I am refering here to the zoned block=0A=
+device related ioctls defined in include/uapi/linux/blkzoned.h. These=0A=
+ioctls allow an application to manage the device zones (obtain zone=0A=
+information, erase zones, etc). These ioctls trigger issuing zone=0A=
+related commands to the device. These commands are defined by the ZBC=0A=
+and ZAC standards for SCSI and ATA, and NVMe Zoned Namespace in the very=0A=
+near future.=0A=
+=0A=
+>> One example of this approach is the=0A=
+>> implementation of LSM (log-structured merge) tree structures (such as=0A=
+>> used in RocksDB and LevelDB)=0A=
+> =0A=
+> The same LevelDB as used eg. in Chrome browser, which destroys itself=0A=
+> every time a little temporary problem (eg. disk full) occours ?=0A=
+> If that's the usecase I'd rather use an simple in-memory table instead=0A=
+> and and enough swap, as leveldb isn't reliable enough for persistent=0A=
+> data anyways :p=0A=
+=0A=
+The intent of my comment was not to advocate for or discuss the merits=0A=
+of any particular KV implementation. I was only pointing out that zonefs=0A=
+does not come in a void and that we do have use cases for it and did the=0A=
+work on some user space software to validate it. Leveldb and RocksDB are=0A=
+the 2 LSM-tree based KV stores we worked on as they are very popular and=0A=
+widely used.=0A=
+=0A=
+>> on zoned block devices by allowing SSTables=0A=
+>> to be stored in a zone file similarly to a regular file system rather=0A=
+>> than as a range of sectors of a zoned device. The introduction of the=0A=
+>> higher level construct "one file is one zone" can help reducing the=0A=
+>> amount of changes needed in the application while at the same time=0A=
+>> allowing the use of zoned block devices with various programming=0A=
+>> languages other than C.=0A=
+> =0A=
+> Why not just simply use files on a suited filesystem (w/ low block io=0A=
+> overhead) or LVM volumes ?=0A=
+=0A=
+Using a file system compliant with zoned block device constraint such as=0A=
+f2fs or btrfs (on-going work) is certainly a valid approach. However,=0A=
+this may not be the most optimal one if the application being used as a=0A=
+mostly sequential write behavior. LSM-tree based KV stores fall into=0A=
+this category: SSTables are large (several MB) and always written=0A=
+sequentially. There are not random writes, which facilitates supporting=0A=
+directly zoned block devices without the need for a file system which=0A=
+would add a GC background process and degrade performance. As mentioned=0A=
+in the cover letter, zonefs goal is to facilitate the implementation of=0A=
+this support compared toa pure raw block device use.=0A=
+=0A=
+> =0A=
+> =0A=
+> --mtx=0A=
+> =0A=
+=0A=
+=0A=
+-- =0A=
+Damien Le Moal=0A=
+Western Digital Research=0A=
