@@ -2,103 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91E24122C5C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 13:56:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B8EF122C7D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 14:05:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727621AbfLQM4j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Dec 2019 07:56:39 -0500
-Received: from mail3.bemta25.messagelabs.com ([195.245.230.88]:59851 "EHLO
-        mail3.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726141AbfLQM4j (ORCPT
+        id S1726623AbfLQNFt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Dec 2019 08:05:49 -0500
+Received: from mout.kundenserver.de ([212.227.126.134]:42211 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbfLQNFt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Dec 2019 07:56:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ts.fujitsu.com;
-        s=200619tsfj; t=1576587396; i=@ts.fujitsu.com;
-        bh=fpkvNtzpSQbdWK6I0VIWWEXa6W4Wxi8aXY9BJ5Mg5Q0=;
-        h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-         MIME-Version:Content-Transfer-Encoding:Content-Type;
-        b=RdeM+gcVOTFvbn2ck8Nmca1G7PZ5vVFdGPIDvyrKHtvuppCa7jicgMjLOClcOVg0N
-         Rx2jTXpWS+Q1LeARetPUzvIWIjdn3TIvGeyEWKQAo9H1kDai8mVW98Vg8EEoi7eFkD
-         2E8vlW6dKIYGkJ2KGYAIPnkpzwsK5z0gCECJjpq6TiE58EXxIR7JwGosAsDWJvY/kn
-         baUhkqXs7uUi0pjYm3kXI/fZBPgxudDw1dBc9c7gPjYqF7bFv5cYmbk+ZWz42Gu+vz
-         Zc1hEryQEvwR7Zg0zkX2oHkDV9+hrXpDp/tXNg9oa/3xuSnJAEepVokVXGNlirkMjf
-         RRAlZQ4zPw/+Q==
-Received: from [46.226.52.197] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-8.bemta.az-b.eu-west-1.aws.symcld.net id FF/4B-22072-380D8FD5; Tue, 17 Dec 2019 12:56:35 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBIsWRWlGSWpSXmKPExsViZ8MRqtt84Ue
-  swZULChbHJ1ha7Nl7ksXi8q45bBaTOo+xObB4tGyO9ph3MtDj8ya5AOYo1sy8pPyKBNaM0zP1
-  C16wV3TemMXSwLiSrYuRi0NIYA6jxJkTf1kgnHmMEquOXmDtYuTkYBMwkNj16hAziC0ioCzx5
-  MB6MJtZIENi74XnTCC2sICHxOa9bxlBbBYBVYlrW96AxXkFDCVOrTwGVs8poCvx+OY+dhBbSC
-  BIYsrzxYwQNYISJ2c+YYGYKS/RcbmRFcLWkViw+xPbBEbeWUjKZiEpm4WkbAEj8ypGi6SizPS
-  MktzEzBxdQwMDXUNDI11DSzNdIwMjvcQq3SS91FLd8tTiEl1DvcTyYr3iytzknBS9vNSSTYzA
-  AE0pOHJqB+Ohr2/1DjFKcjApifK+3fkjVogvKT+lMiOxOCO+qDQntfgQowwHh5IE779zQDnBo
-  tT01Iq0zBxgtMCkJTh4lER4Oc8DpXmLCxJzizPTIVKnGBWlxHlngfQJgCQySvPg2mAReolRVk
-  qYl5GBgUGIpyC1KDezBFX+FaM4B6OSMK8TyBSezLwSuOmvgBYzAS028vsGsrgkESEl1cAU83r
-  CNDHW5HrPp8Lcp60OT2SNN3TaNOW5peC9LVzr918N/JRRqucWdmXJEXlrkeqdyuvfd/32cHnj
-  +C/++4e8mERx5d09T4smf193+ibDrpxrmf8SQ9zM99u/0fyzpHPTpA7r4wobL59jFSqZb3zWN
-  PjKl53lbJEZ4Zesml6UfOer1LobFP73weNVRdYP/143Pi9autHWUjzh9rtZ9lGcBxsnnJ6921
-  BnCb/O7eimr3d2Z9r+MWnfte79Fe8lxxRT7rNNvPTBennWvtjm27nnZTUXcU5dM9lCdE/c3hq
-  Vz1z5Nb6tMz9JmGtct5qp2KBXG62geVb++szaMwce/qyYq3boyYP27WoWwisf2vWdUGIpzkg0
-  1GIuKk4EAF2F0T1LAwAA
-X-Env-Sender: dietmar.hahn@ts.fujitsu.com
-X-Msg-Ref: server-2.tower-285.messagelabs.com!1576587395!675162!1
-X-Originating-IP: [62.60.8.85]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.44.22; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 24937 invoked from network); 17 Dec 2019 12:56:35 -0000
-Received: from unknown (HELO mailhost4.uk.fujitsu.com) (62.60.8.85)
-  by server-2.tower-285.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 17 Dec 2019 12:56:35 -0000
-Received: from sanpedro.mch.fsc.net ([172.17.20.6])
-        by mailhost4.uk.fujitsu.com (8.14.5/8.14.5) with SMTP id xBHCuYMe013636;
-        Tue, 17 Dec 2019 12:56:34 GMT
-Received: from amur.mch.fsc.net (unknown [10.172.102.15])
-        by sanpedro.mch.fsc.net (Postfix) with ESMTP id 1B9F5AB1D3A;
-        Tue, 17 Dec 2019 13:56:26 +0100 (CET)
-From:   Dietmar Hahn <dietmar.hahn@ts.fujitsu.com>
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Al Viro <viro@ftp.linux.org.uk>
-Subject: Re: [PATCH] Fix a panic when core_pattern is set to "| prog..."
-Date:   Tue, 17 Dec 2019 13:56:25 +0100
-Message-ID: <7309912.xQAL2Br30t@amur.mch.fsc.net>
-In-Reply-To: <87r214unfw.fsf@linux.intel.com>
-References: <2996767.y7E8ffpIOs@amur.mch.fsc.net> <87r214unfw.fsf@linux.intel.com>
+        Tue, 17 Dec 2019 08:05:49 -0500
+Received: from [192.168.1.155] ([95.114.21.161]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1N4eOd-1hjMRu0z83-011hdK; Tue, 17 Dec 2019 14:05:41 +0100
+Subject: Re: [PATCH 0/2] New zonefs file system
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Carlos Maiolino <cmaiolino@redhat.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
+References: <20191212183816.102402-1-damien.lemoal@wdc.com>
+ <29fb138e-e9e5-5905-5422-4454c956e685@metux.net>
+ <20191216093557.2vackj7qakk2jngd@orion>
+ <20191216094241.til4qae4ihzi7ors@orion.redhat.com>
+ <BYAPR04MB5816894E05A9334C122E785DE7500@BYAPR04MB5816.namprd04.prod.outlook.com>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Message-ID: <3565a0e7-b9ba-4f32-9f4b-3387f0a379a1@metux.net>
+Date:   Tue, 17 Dec 2019 14:05:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <BYAPR04MB5816894E05A9334C122E785DE7500@BYAPR04MB5816.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: tl
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:+ABngioGkIBLDL6fLn8WCq3MvTH87+LP+0U3o+yGUKK5bO3Vh62
+ 6tUB8Z8zlSuT6yjUhIPhfiv8XDi56UUazaAhK8DbChs6tgAIngH/dRvFQxadl6vvfrs99Q+
+ FtuHBf6sHVRw5F8IKs2EJm5KvVcrd+HeeX3rz0dbIhSDDXtmAi2x+kzFPqPLkzYdrXxS19V
+ hNOqtfCJhjSaDRPyBF5QQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Cbpw+reR0po=:oCZ4QpXWXVdJvR4emq05Ya
+ +ENqKlNd7LhKXVzBvmgQwGndst/nG18+d/PEQDo1BcT6BPUvox03LjweuBMpkv/7mNHQvIyX1
+ 6iwoNnMyh73Hcbx80xLVAlRPJME6DEBPg1Tcp/e83Z6maz3Jh92Ker9BnhU95lLG33kF+OUTl
+ 1CnnmmviB4RL893JfY1ma1/7Zk3E/c4a7fIsv4vSAle1UAYLy+Q7SR3vp9rDCQxF6hAAmKMS1
+ 4/R+QkEZu2qcAiLkOi6WOzP3dhADw9CDtQxwvFtFpk+ogIEOtMm3hCJYk3s9RzuotXwrs3qnN
+ nHZ+v2F0xjgKzCr0PlqYwb207wE8If7u9IYmypQaQ9R4g0CkTJSvj8cOstLCvziKstQiuIg+o
+ Rev8SMdkYWum9olIL3VSsfviI6xncGPKApOJuQguBnHBiV3u/+6Jj1CdQsoutIcfNPrHzl/6H
+ KjhvorICqOgX2AcOugkuHPksupygpD7V5IwK91DTVQdCDn8otPwDyIFzZH47xQaEL3ZerHD0h
+ brSi7PVWjSONlrbXt6Ou0NckhJvh7z8LWHJgf9AUMKgaKe7cz7ZhjPgcJiZCx2ZfhEG40IGQz
+ UZ36BoUjzFVr7bh3/8wq9MO6r3D7+ef3veP0pQP/aIrnq92mJ1WnsDN/g44S4JroUPUFkIyxm
+ IZWsZQ+31sx2ESSKGiVj1iBkVPa6FpatOFWhtMRgDVo881XUuXTO+ePLzO8ibM3XFmnbuUdbf
+ p+R6J3cNpmG6hYrO4e0NRVyffnFC7RKGwEu6zzBvyM5Qhv8qq5b75hTrYhDn6QuNzZ5+0ADlB
+ X2bnpqwqdQre4XUWmjPoKIzwr6bkwo/gj6lNfn8zVSSDv1gTLcfQYTvwwZjE8ArscMNHQRrpP
+ vSDzSgJU3TOtRWpu1/Fg==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Am Montag, 16. Dezember 2019, 19:37:07 CET schrieb Andi Kleen:
-> Dietmar Hahn <dietmar.hahn@ts.fujitsu.com> writes:
-> 
-> > Hi,
-> >
-> > if the /proc/sys/kernel/core_pattern is set with a space between '|' and the
-> > program and later a core file should be written the kernel panics.
-> > This happens because in format_corename() the first part of cn.corename
-> > is set to '\0' and later call_usermodehelper_exec() exits because of an
-> > empty command path but with return 0. But no pipe is created and thus
-> > cprm.file == NULL.
-> > This leads in file_start_write() to the panic because of dereferencing
-> > file_inode(file)->i_mode.
-> 
-> It would seem better to just skip the spaces and DTRT?
+On 17.12.19 01:26, Damien Le Moal wrote:
 
-This would be the normal case but the mistake happened accidently. And I was
-really surprised to see the system panic after the segfault of a user program.
-And it took a little bit time to find the cause ...
+Hi,
 
-Dietmar.
- 
-> Of course doing the error check properly is a good idea anyways.
-> 
-> -Andi
+> On the SSD front, NVMe Zoned Namespace standard is still a draft and
+> being worked on be the NVMe committee and no devices are available on
+> the market yet.
+
+anybody here who can tell why this could be useful ?
+
+Can erase blocks made be so enourmously huge and is there really a huge
+gain in doing so, which makes any practical difference ?
+
+Oh, BTW, since the write semantics seem so similar, why not treating
+them similar to raw flashes ?
 
 
+--mtx
 
-
+-- 
+---
+Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
+werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
+GPG/PGP-Schlüssel zu.
+---
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
