@@ -2,166 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0BBB1224FA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 07:47:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B39A12256A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 08:28:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbfLQGrJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Dec 2019 01:47:09 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53408 "EHLO mx2.suse.de"
+        id S1727174AbfLQH2i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Dec 2019 02:28:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40812 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726704AbfLQGrI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Dec 2019 01:47:08 -0500
+        id S1726411AbfLQH2h (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 17 Dec 2019 02:28:37 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 39B42AC53;
-        Tue, 17 Dec 2019 06:47:05 +0000 (UTC)
-Date:   Tue, 17 Dec 2019 17:46:50 +1100
-From:   Aleksa Sarai <asarai@suse.de>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     'Aleksa Sarai' <cyphar@cyphar.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Shuah Khan <shuah@kernel.org>,
-        "dev@opencontainers.org" <dev@opencontainers.org>,
-        "containers@lists.linux-foundation.org" 
-        <containers@lists.linux-foundation.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        by mx2.suse.de (Postfix) with ESMTP id D8EAEAC0C;
+        Tue, 17 Dec 2019 07:28:34 +0000 (UTC)
+Subject: Re: [PATCH 1/2] fs: New zonefs file system
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH] openat2: switch to __attribute__((packed)) for open_how
-Message-ID: <20191217064650.cd4bfb5d2koe6j7h@yavin.dot.cyphar.com>
-References: <20191213222351.14071-1-cyphar@cyphar.com>
- <a328b91d-fd8f-4f27-b3c2-91a9c45f18c0@rasmusvillemoes.dk>
- <20191215123443.jmfnrtgbscdwfohc@yavin.dot.cyphar.com>
- <b26ef210ec5b42009cf09b1015065768@AcuMS.aculab.com>
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Johannes Thumshirn <jth@kernel.org>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>
+References: <20191212183816.102402-1-damien.lemoal@wdc.com>
+ <20191212183816.102402-2-damien.lemoal@wdc.com>
+ <c7f17b54-8f90-3dd3-98f7-cf540d70333d@suse.de>
+ <BYAPR04MB5816D17D0A14D5651E37F700E7500@BYAPR04MB5816.namprd04.prod.outlook.com>
+From:   Hannes Reinecke <hare@suse.de>
+Message-ID: <32e3418b-727e-3018-1b8a-0530608fb34d@suse.de>
+Date:   Tue, 17 Dec 2019 08:28:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pxbkdztdbvo4kssd"
-Content-Disposition: inline
-In-Reply-To: <b26ef210ec5b42009cf09b1015065768@AcuMS.aculab.com>
+In-Reply-To: <BYAPR04MB5816D17D0A14D5651E37F700E7500@BYAPR04MB5816.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 12/17/19 1:20 AM, Damien Le Moal wrote:
+> On 2019/12/16 17:36, Hannes Reinecke wrote:
+> [...]
+>>> +static int zonefs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>>> +			      unsigned int flags, struct iomap *iomap,
+>>> +			      struct iomap *srcmap)
+>>> +{
+>>> +	struct zonefs_sb_info *sbi = ZONEFS_SB(inode->i_sb);
+>>> +	struct zonefs_inode_info *zi = ZONEFS_I(inode);
+>>> +	loff_t max_isize = zi->i_max_size;
+>>> +	loff_t isize;
+>>> +
+>>> +	/*
+>>> +	 * For sequential zones, enforce direct IO writes. This is already
+>>> +	 * checked when writes are issued, so warn about this here if we
+>>> +	 * get buffered write to a sequential file inode.
+>>> +	 */
+>>> +	if (WARN_ON_ONCE(zi->i_ztype == ZONEFS_ZTYPE_SEQ &&
+>>> +			 (flags & IOMAP_WRITE) && !(flags & IOMAP_DIRECT)))
+>>> +		return -EIO;
+>>> +
+>>> +	/*
+>>> +	 * For all zones, all blocks are always mapped. For sequential zones,
+>>> +	 * all blocks after the write pointer (inode size) are always unwritten.
+>>> +	 */
+>>> +	mutex_lock(&zi->i_truncate_mutex);
+>>> +	isize = i_size_read(inode);
+>>> +	if (offset >= isize) {
+>>> +		length = min(length, max_isize - offset);
+>>> +		if (zi->i_ztype == ZONEFS_ZTYPE_CNV)
+>>> +			iomap->type = IOMAP_MAPPED;
+>>> +		else
+>>> +			iomap->type = IOMAP_UNWRITTEN;
+>>> +	} else {
+>>> +		length = min(length, isize - offset);
+>>> +		iomap->type = IOMAP_MAPPED;
+>>> +	}
+>>> +	mutex_unlock(&zi->i_truncate_mutex);
+>>> +
+>>> +	iomap->offset = offset & (~sbi->s_blocksize_mask);
+>>> +	iomap->length = ((offset + length + sbi->s_blocksize_mask) &
+>>> +			 (~sbi->s_blocksize_mask)) - iomap->offset;
+>>> +	iomap->bdev = inode->i_sb->s_bdev;
+>>> +	iomap->addr = (zi->i_zsector << SECTOR_SHIFT) + iomap->offset;
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static const struct iomap_ops zonefs_iomap_ops = {
+>>> +	.iomap_begin	= zonefs_iomap_begin,
+>>> +};
+>>> +
+>> This probably shows my complete ignorance, but what is the effect on
+>> enforcing the direct I/O writes on the pagecache?
+>> IE what happens for buffered reads? Will the pages be invalidated when a
+>> write has been issued?
+> 
+> Yes, a direct write issued to a file range that has cached pages result
+> in these pages to be invalidated. But note that in the case of zonefs,
+> this can happen only in the case of conventional zones. For sequential
+> zones, this does not happen: reads can be buffered and cache pages but
+> only for pages below the write pointer. And writes can only be issued at
+> the write pointer. So there is never any possible overlap between
+> buffered reads and direct writes.
+> 
+Oh, indeed, you are correct. That's indeed easy then.
 
---pxbkdztdbvo4kssd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>> Or do we simply rely on upper layers to ensure no concurrent buffered
+>> and direct I/O is being made?
+> 
+> Nope. VFS, or the file system specific implementation, takes care of
+> that. See generic_file_direct_write() and its call to
+> invalidate_inode_pages2_range().
+> 
+Of course.
+One could even say: not applicable, as it won't happen.
 
-On 2019-12-16, David Laight <David.Laight@ACULAB.COM> wrote:
-> From:  Aleksa Sarai
-> > Sent: 15 December 2019 12:35
-> > On 2019-12-14, Rasmus Villemoes <linux@rasmusvillemoes.dk> wrote:
-> > > On 13/12/2019 23.23, Aleksa Sarai wrote:
-> > > > The design of the original open_how struct layout was such that it
-> > > > ensured that there would be no un-labelled (and thus potentially
-> > > > non-zero) padding to avoid issues with struct expansion, as well as
-> > > > providing a uniform representation on all architectures (to avoid
-> > > > complications with OPEN_HOW_SIZE versioning).
-> > > >
-> > > > However, there were a few other desirable features which were not
-> > > > fulfilled by the previous struct layout:
-> > > >
-> > > >  * Adding new features (other than new flags) should always result =
-in
-> > > >    the struct getting larger. However, by including a padding field=
-, it
-> > > >    was possible for new fields to be added without expanding the
-> > > >    structure. This would somewhat complicate version-number based
-> > > >    checking of feature support.
-> > > >
-> > > >  * A non-zero bit in __padding yielded -EINVAL when it should argua=
-bly
-> > > >    have been -E2BIG (because the padding bits are effectively
-> > > >    yet-to-be-used fields). However, the semantics are not entirely =
-clear
-> > > >    because userspace may expect -E2BIG to only signify that the
-> > > >    structure is too big. It's much simpler to just provide the guar=
-antee
-> > > >    that new fields will always result in a struct size increase, and
-> > > >    -E2BIG indicates you're using a field that's too recent for an o=
-lder
-> > > >    kernel.
-> > >
-> > > And when the first extension adds another u64 field, that padding has=
- to
-> > > be added back in and checked for being 0, at which point the padding =
-is
-> > > again yet-to-be-used fields.
-> >=20
-> > Maybe I'm missing something, but what is the issue with
-> >=20
-> >   struct open_how {
-> >     u64 flags;
-> >     u64 resolve;
-> >     u16 mode;
-> > 	u64 next_extension;
-> >   } __attribute__((packed));
->=20
-> Compile anything that accesses it for (say) sparc and look at the object =
-code.
-> You really, really, REALLY, don't want to EVER use 'packed'.
+Cheers,
 
-Right, so it's related to the "garbage code" problem. As mentioned
-above, I wasn't aware it was as bad as folks in this thread have
-mentioned.
-
-> Just use u64 for all the fields.
-
-That is an option (and is the one that clone3 went with), but it's a bit
-awkward because umode_t is a u16 -- and it would be a waste of 6 bytes
-to store it as a u64. Arguably it could be extended but I personally
-find that to be very unlikely (and lots of other syscalls would need be
-updated).
-
-I'm just going to move the padding to the end and change the error for
-non-zero padding to -E2BIG.
-
-> Use 'flags' bits to indicate whether the additional fields should be look=
-ed at.
-> Error if a 'flags' bit requires a value that isn't passed in the structur=
-e.
->=20
-> Then you can add an extra field and old source code recompiled with the
-> new headers will still work - because the 'junk' value isn't looked at.
-
-This problem is already handled entirely by copy_struct_from_user().
-
-It is true that for some new fields it will be necessary to add a new
-flag (such as passing fds -- where 0 is a valid value) but for most new
-fields (especially pointer or flag fields) it will not be necessary
-because the 0 value is equivalent to the old behaviour. It also allows
-us to entirely avoid accepting junk from userspace.
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---pxbkdztdbvo4kssd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAl34edcACgkQnhiqJn3b
-jbTUrQ/9EWPnCZlGMHHPgxyUQUwaE4kajhGnTsBLapKhdtsAfzkyJNqUPdSnipqB
-oAAFeriC/RGN9ktSBHM60IBnwk3nv70W3SNm8/GUVaXGmWHrkBFkuhujOSn22awm
-3jSxRKt+89I6NKoFBJPkxe9WQv6DecF8B9GWCn2sru2e/r105OHTe28EnPFqzBpQ
-XZ/f7D7729GVAIITr5H6NQfvM8P/Sf/ne1gzDxf6cFTrF734aGNF+AhpTgSA2uxz
-DVw1oQ6+HAcMdL6AixtdZgsN9Bm2nV9C4ndOEenV3rN6mG1Kn5ecz2RInuqKmmj9
-/9ETSRo9ZZpl6WGpbfDMRB+/6vsSXAwHv06LO2YXEIeoHnPN7Y8/0deB4KNBoQ3S
-jDzVHOKU2MToxsAkBPvyZ6UsKXJWLOT4QeiyOQeoExwzzu6K61pxtcHaXnKebheF
-2hCF6h0NaAtBCcO3/MrN5PEkZliY+KcpM5BCsefzfM3cAEuqSEx1LqShw0G+3dV2
-sGKHM0cfunvVas/8yawfs4qfEALCJR5Tnb2Kfveo/xd1qfT4+K54gPjkQqFvrkph
-pV7c6P2lyJrNFraB5uDb5UYFWXrxTXgZ3ZUpDoI7MfLSEGCTT2nL9n7IXuoEfX4W
-jj7ipubi5ZdNDgXiSACHJHYzwIVJBPHiNq4mzoQjNKNb8kj1VTQ=
-=sK1O
------END PGP SIGNATURE-----
-
---pxbkdztdbvo4kssd--
+Hannes
+-- 
+Dr. Hannes Reinecke            Teamlead Storage & Networking
+hare@suse.de                               +49 911 74053 688
+SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
