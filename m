@@ -2,19 +2,19 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E657123983
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 23:19:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95B7112396B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 23:18:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbfLQWTB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Dec 2019 17:19:01 -0500
-Received: from mout.kundenserver.de ([212.227.17.13]:42327 "EHLO
+        id S1726768AbfLQWRx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Dec 2019 17:17:53 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:52901 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726638AbfLQWRn (ORCPT
+        with ESMTP id S1726744AbfLQWRt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Dec 2019 17:17:43 -0500
+        Tue, 17 Dec 2019 17:17:49 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MPGNn-1iJtNk0HCn-00PeZf; Tue, 17 Dec 2019 23:17:29 +0100
+ 1N63JO-1hbEp725Si-016S2I; Tue, 17 Dec 2019 23:17:29 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Jens Axboe <axboe@kernel.dk>,
         "James E.J. Bottomley" <jejb@linux.ibm.com>,
@@ -25,110 +25,121 @@ Cc:     linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
         Ben Hutchings <ben.hutchings@codethink.co.uk>,
         linux-doc@vger.kernel.org, corbet@lwn.net, viro@zeniv.linux.org.uk,
         linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v2 13/27] compat_ioctl: cdrom: handle CDROM_LAST_WRITTEN
-Date:   Tue, 17 Dec 2019 23:16:54 +0100
-Message-Id: <20191217221708.3730997-14-arnd@arndb.de>
+Subject: [PATCH v2 14/27] compat_ioctl: block: handle cdrom compat ioctl in non-cdrom drivers
+Date:   Tue, 17 Dec 2019 23:16:55 +0100
+Message-Id: <20191217221708.3730997-15-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191217221708.3730997-1-arnd@arndb.de>
 References: <20191217221708.3730997-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:wpOzJeFufAHUVew0tCAOYce8zMXOPidyJEDHZ6pQ5GaUKg8+CDX
- h7MBzbcLPVMio9kfQoSfOTfY3vxyKEJ51kkTL2W9m6KoiixxPeES/rPHhLYMS3HLccXegsv
- k2H3sqymCqH2WEdNBVYO+Pa/7nVD5p4xIpTPyQbpKaEF5BnOtpu5V76Hk5QKEhX0c57O6+9
- iqqUYAqmFhuT18BCsoAUg==
+X-Provags-ID: V03:K1:fgECgP85UcsuJjsyAuZL7QHYXHYBEzujC6oqv+TYTA3UFXDQ0+O
+ zy7BYkmbtD/vp8Tk1y4FGXR086ig4FhOi/Rl5dEFBP99TTQ2jhWlrdT8lSSnQknngX1KAB6
+ I+ogzZX67PGokZ5zfes54eIzqMGogav4wpegt34I+hdR5RPVE6BuP6DYZmUdBpq20dc60rb
+ ROIQeamCDbWQqLST38hUw==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:CIB+4OQSR64=:WBhyckcX/5l7eAeTjvEoM/
- w4upkT4JvAY0/CRT9+NICNrKfxWQgzFpdAAXj+N/219xyoUp3i3ArASxNj5M5wRYKgkvQZQxH
- CxE3wmmlICtVcCt38Iyj0fCz219veSow7XvDStghM7YdHK3Dyc6tvlWWXjGrbbVRnSjwPfDRg
- eVtYANDyKpGQXAf9W7W90lMaNv5QMnxNMgyq39t/ISQtLXqABgziP8W2h45E7twP5VBot7roC
- GL1ML1O03UlrCwfpOAkcgAdPWAHJZqUm3sBBK5njNHfVE35o5IBtcTuXdtKRnOvtk0yQoGDSJ
- VvyZRKQAB0hgxPqN29PkxvMSJi7nxkkeU4eEQ5e5E0s4OkSUgjPjtxtDSBpGBgdgb26I7jH2L
- WThg17UcmwvgV1keBdbZ4b/FITTwdodVlLprRQoVJYBHU+DHryNHvKqiVjmu2hjYvq+APMZRQ
- 8CqFFoQLK9j+/z4XOJvkjTBW3oFG5EyvDNVM6yeAWb/gJ/Q/cK4dMzs8/h2w38PPOyVOH+8CJ
- GIOD1toGYO9NJ1N9oFYeeglO/lAFX7OvezRPohzgPi2aoCJB6ApyXKb4gonN+8Fv4HMFm0YAn
- arCC0GtPppbxPq3gxhB8lsLrZSS2AFE+ix/mk7W8HSVu6ItzoancGQHxY/wKZjbbETFZm5fPJ
- /14Hk/KHBiHbbD+jpVUF0Y+Gf1ti/u7yMF0lQGlVccJE3OH+qD4WefTxzFl5aPUrsX15aFR1w
- Cc0R5lYy8WI3de9J8he5JIBk4eYo4gSYrrHC7sS4ng7SAXuIfuf+vpYVaZYyqumJzv7yGEiiG
- i+9Lx5d/5ai3pOwDpQnQJJ3YqYcqWsPmuRATJOiCUiObGVXUhY5YSaDw3y0R2ptIuC1ixKtTh
- QEy6XnI1qqp/ZZw4o4iQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:GRelAd88hdg=:yDxJVmxWHvbBFPkEJEmEgE
+ UEJvUfrBcsIZdJ7qfTVCrg1uiVg3njJLZUgTJpKad1/0+ryRGw9lVt3Avgsqio22idIXMjSYk
+ 6zrTwH4axXV4Cl4ve64rU2hWTWiT/olx8jg/SSUSaetzy5RDNf/kR3vv022nW2OozkTrsv2Yv
+ /G/tPFFJ/YBFl9BrRb2jp6K9D5f4ATmf4sld1YkHKSUtY7tHEgC8mVhtoCF92EsLDURoV9VJt
+ rOPjvPYp8I/ZUFiMUOMMlGNUHa6F8+6UvVkrSO1TmPLafk/QSAS4uGvK2jtG4/xE3SPeFk35b
+ FnNQX3FjImzSW8jI1uRA1naRTwsNWeQZWOqgRYbqlziCqvUX/O2q4xWgWF/hso+qX6SFlpKTE
+ gKrZcHUKfFqK//ND+xPaACsxvQ+CNeJ3eLsDDN9dtEZiwd2nVTJ7q695ln4CGsdnBo5b+2fWO
+ qDoIgtssB7L/qaqDin3lV+OxwZKxJCo2TwB8Y8JllsSvRYDjFFCJ1PJbY6hN4DeFWZdoGXHXC
+ dpbdNgG70Q12STFtj0ptYcToUP5JrcHW4zGjaNIEUb9flTkhKGrWUEyYVRgDMFRiJ78qeeGG7
+ U6OJUSgaYGm37yvkzz1stO8fLt5rQwHkF6HtPm9npdUb53zFh6omU7pXKYtof7ZZi8bTLU06Z
+ EhsMwxi3rstYhU6Jfqyz+YGUlUQIC7EA4tUEB0JowiIEFBwKZH9DDJwFAVchSJ3iJ6bfjciKR
+ 8xWRaCtwhXmQAAbQZiw/69ztEa+l7vwzQQxnVaXo73+DcvjaO2Vr+EYUvfvkw1aQRAZ6QF5bW
+ Tah+sUwg3WYC/0ow8O3EuxAAp19fzZTzbD3gcbp3e2aKDjGK+jphXGvhxn0A7CwGsUys4OFtb
+ zAVZkqDVqwzXkJ9H41qQ==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is the only ioctl command that does not have a proper
-compat handler. Making the normal implementation do the
-right thing is actually very simply, so just do that by
-using an in_compat_syscall() check to avoid the special
-case in the pkcdvd driver.
+Various block drivers implement the CDROMMULTISESSION,
+CDROM_GET_CAPABILITY, and CDROMEJECT ioctl commands, relying on the
+block layer to handle compat_ioctl mode for them.
+
+Move this into the drivers directly as a preparation for simplifying
+the block layer later.
+
+When only integer arguments or no arguments are passed, the
+same handler can be used for .ioctl and .compat_ioctl, and
+when only pointer arguments are passed, the newly added
+blkdev_compat_ptr_ioctl can be used.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/block/pktcdvd.c | 24 +-----------------------
- drivers/cdrom/cdrom.c   |  7 ++++---
- 2 files changed, 5 insertions(+), 26 deletions(-)
+ drivers/block/floppy.c       | 3 +++
+ drivers/block/paride/pd.c    | 1 +
+ drivers/block/paride/pf.c    | 1 +
+ drivers/block/sunvdc.c       | 1 +
+ drivers/block/xen-blkfront.c | 1 +
+ 5 files changed, 7 insertions(+)
 
-diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-index ab4d3be4b646..5f970a7d32c0 100644
---- a/drivers/block/pktcdvd.c
-+++ b/drivers/block/pktcdvd.c
-@@ -2663,26 +2663,6 @@ static int pkt_ioctl(struct block_device *bdev, fmode_t mode, unsigned int cmd,
- 	return ret;
- }
- 
--#ifdef CONFIG_COMPAT
--static int pkt_compat_ioctl(struct block_device *bdev, fmode_t mode, unsigned int cmd, unsigned long arg)
--{
--	switch (cmd) {
--	/* compatible */
--	case CDROMEJECT:
--	case CDROMMULTISESSION:
--	case CDROMREADTOCENTRY:
--	case CDROM_SEND_PACKET: /* compat mode handled in scsi_cmd_ioctl */
--	case SCSI_IOCTL_SEND_COMMAND:
--		return pkt_ioctl(bdev, mode, cmd, (unsigned long)compat_ptr(arg));
--
--	/* FIXME: no handler so far */
--	default:
--	case CDROM_LAST_WRITTEN:
--		return -ENOIOCTLCMD;
--	}
--}
--#endif
--
- static unsigned int pkt_check_events(struct gendisk *disk,
- 				     unsigned int clearing)
+diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
+index 485865fd0412..cd3612e4e2e1 100644
+--- a/drivers/block/floppy.c
++++ b/drivers/block/floppy.c
+@@ -3879,6 +3879,9 @@ static int fd_compat_ioctl(struct block_device *bdev, fmode_t mode, unsigned int
  {
-@@ -2704,9 +2684,7 @@ static const struct block_device_operations pktcdvd_ops = {
- 	.open =			pkt_open,
- 	.release =		pkt_close,
- 	.ioctl =		pkt_ioctl,
--#ifdef CONFIG_COMPAT
--	.compat_ioctl =		pkt_compat_ioctl,
--#endif
-+	.compat_ioctl =		blkdev_compat_ptr_ioctl,
- 	.check_events =		pkt_check_events,
+ 	int drive = (long)bdev->bd_disk->private_data;
+ 	switch (cmd) {
++	case CDROMEJECT: /* CD-ROM eject */
++	case 0x6470:	 /* SunOS floppy eject */
++
+ 	case FDMSGON:
+ 	case FDMSGOFF:
+ 	case FDSETEMSGTRESH:
+diff --git a/drivers/block/paride/pd.c b/drivers/block/paride/pd.c
+index 6f9ad3fc716f..c0967507d085 100644
+--- a/drivers/block/paride/pd.c
++++ b/drivers/block/paride/pd.c
+@@ -874,6 +874,7 @@ static const struct block_device_operations pd_fops = {
+ 	.open		= pd_open,
+ 	.release	= pd_release,
+ 	.ioctl		= pd_ioctl,
++	.compat_ioctl	= pd_ioctl,
+ 	.getgeo		= pd_getgeo,
+ 	.check_events	= pd_check_events,
+ 	.revalidate_disk= pd_revalidate
+diff --git a/drivers/block/paride/pf.c b/drivers/block/paride/pf.c
+index 6b7d4cab3687..bb09f21ce21a 100644
+--- a/drivers/block/paride/pf.c
++++ b/drivers/block/paride/pf.c
+@@ -276,6 +276,7 @@ static const struct block_device_operations pf_fops = {
+ 	.open		= pf_open,
+ 	.release	= pf_release,
+ 	.ioctl		= pf_ioctl,
++	.compat_ioctl	= pf_ioctl,
+ 	.getgeo		= pf_getgeo,
+ 	.check_events	= pf_check_events,
+ };
+diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
+index 571612e233fe..39aeebc6837d 100644
+--- a/drivers/block/sunvdc.c
++++ b/drivers/block/sunvdc.c
+@@ -171,6 +171,7 @@ static const struct block_device_operations vdc_fops = {
+ 	.owner		= THIS_MODULE,
+ 	.getgeo		= vdc_getgeo,
+ 	.ioctl		= vdc_ioctl,
++	.compat_ioctl	= blkdev_compat_ptr_ioctl,
  };
  
-diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
-index 48095025e588..faca0f346fff 100644
---- a/drivers/cdrom/cdrom.c
-+++ b/drivers/cdrom/cdrom.c
-@@ -3293,9 +3293,10 @@ static noinline int mmc_ioctl_cdrom_last_written(struct cdrom_device_info *cdi,
- 	ret = cdrom_get_last_written(cdi, &last);
- 	if (ret)
- 		return ret;
--	if (copy_to_user((long __user *)arg, &last, sizeof(last)))
--		return -EFAULT;
--	return 0;
-+	if (in_compat_syscall())
-+		return put_user(last, (__s32 __user *)arg);
-+
-+	return put_user(last, (long __user *)arg);
- }
+ static void vdc_blk_queue_start(struct vdc_port *port)
+diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
+index a74d03913822..23c86350a5ab 100644
+--- a/drivers/block/xen-blkfront.c
++++ b/drivers/block/xen-blkfront.c
+@@ -2632,6 +2632,7 @@ static const struct block_device_operations xlvbd_block_fops =
+ 	.release = blkif_release,
+ 	.getgeo = blkif_getgeo,
+ 	.ioctl = blkif_ioctl,
++	.compat_ioctl = blkdev_compat_ptr_ioctl,
+ };
  
- static int mmc_ioctl(struct cdrom_device_info *cdi, unsigned int cmd,
+ 
 -- 
 2.20.0
 
