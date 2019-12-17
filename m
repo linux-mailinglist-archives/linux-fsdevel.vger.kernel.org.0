@@ -2,171 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32D8412271F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 09:55:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0975122875
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 11:14:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbfLQIzB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Dec 2019 03:55:01 -0500
-Received: from mout.kundenserver.de ([212.227.126.135]:49117 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725893AbfLQIzA (ORCPT
+        id S1727462AbfLQKOw convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Dec 2019 05:14:52 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:35722 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727262AbfLQKOw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Dec 2019 03:55:00 -0500
-Received: from mail-qk1-f171.google.com ([209.85.222.171]) by
- mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MXop2-1iBKX82BI4-00YBbm; Tue, 17 Dec 2019 09:54:58 +0100
-Received: by mail-qk1-f171.google.com with SMTP id x129so174943qke.8;
-        Tue, 17 Dec 2019 00:54:58 -0800 (PST)
-X-Gm-Message-State: APjAAAXNG2+9NUH4Fcy7Or18esGaQdcU/0HUKwazUmvLn9WIJropDTPy
-        znb/Iw88weMWhDetMx/fRco63HDyaVmLehppnTA=
-X-Google-Smtp-Source: APXvYqzKiLsbZVrfvGk9+cg1ubafjtbflqD9p/VamlqKp16D5EdmeX1UgRWAb1NnN5heyvsziKaivNRpaH1iYITOlvM=
-X-Received: by 2002:a37:2f02:: with SMTP id v2mr3750201qkh.3.1576572897205;
- Tue, 17 Dec 2019 00:54:57 -0800 (PST)
+        Tue, 17 Dec 2019 05:14:52 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-154-AvZdXMAZPQGpt4vWLobGDQ-1; Tue, 17 Dec 2019 10:14:49 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Tue, 17 Dec 2019 10:14:48 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 17 Dec 2019 10:14:48 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Aleksa Sarai' <asarai@suse.de>
+CC:     'Aleksa Sarai' <cyphar@cyphar.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Jeff Layton" <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        "Shuah Khan" <shuah@kernel.org>,
+        "dev@opencontainers.org" <dev@opencontainers.org>,
+        "containers@lists.linux-foundation.org" 
+        <containers@lists.linux-foundation.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
+Subject: RE: [PATCH] openat2: switch to __attribute__((packed)) for open_how
+Thread-Topic: [PATCH] openat2: switch to __attribute__((packed)) for open_how
+Thread-Index: AQHVs0QYCtoODE3sD0awPNQRMi+YuKe8+0pQgADpsgCAADgwUA==
+Date:   Tue, 17 Dec 2019 10:14:48 +0000
+Message-ID: <6630d0573b5b40da8efc58fc20ac445e@AcuMS.aculab.com>
+References: <20191213222351.14071-1-cyphar@cyphar.com>
+ <a328b91d-fd8f-4f27-b3c2-91a9c45f18c0@rasmusvillemoes.dk>
+ <20191215123443.jmfnrtgbscdwfohc@yavin.dot.cyphar.com>
+ <b26ef210ec5b42009cf09b1015065768@AcuMS.aculab.com>
+ <20191217064650.cd4bfb5d2koe6j7h@yavin.dot.cyphar.com>
+In-Reply-To: <20191217064650.cd4bfb5d2koe6j7h@yavin.dot.cyphar.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-References: <20191217010001.GA14461@ircssh-2.c.rugged-nimbus-611.internal>
- <20191217015001.sp6mrhuiqrivkq3u@wittgenstein> <CAMp4zn8fzeiJVSn6EtRi6UAGh6AL3QWu=PZxw+=TAYJORjn_Sw@mail.gmail.com>
-In-Reply-To: <CAMp4zn8fzeiJVSn6EtRi6UAGh6AL3QWu=PZxw+=TAYJORjn_Sw@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 17 Dec 2019 09:54:40 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a3G-W8s0G2-XKuDw9dRmupZSyiF6FRRAnvDt9=kMMzS8w@mail.gmail.com>
-Message-ID: <CAK8P3a3G-W8s0G2-XKuDw9dRmupZSyiF6FRRAnvDt9=kMMzS8w@mail.gmail.com>
-Subject: Re: [PATCH v3 2/4] pid: Add PIDFD_IOCTL_GETFD to fetch file
- descriptors from processes
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, gpascutto@mozilla.com,
-        ealvarez@mozilla.com, Florian Weimer <fweimer@redhat.com>,
-        jld@mozilla.com
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:HRAACjC5zp8lxNpo/BksdLlwiLLHqEgHh0jsn+k4S+2Eh5Uv53p
- C9bFh5wXL+Ju5zWDstGOtRlYMtrjwfZ8garW/jHChtuDow7fI3r16tRRGedKQpUV3L18ETu
- yI1dmiiZG89YnQ/Uh+YEoa6qfcpPzo5agoss9tX7MfCVL13uPPYcSa0HevOPwcq5CO2DeV+
- rvBWzQVDBrRIzj8OofEEA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ewGeybDoAh4=:QfLyBhyd5Jll7i1z3Q7vNn
- 1kgevxEMDqrLzxfQVkK9qVir47KyAfs1CrUroOSId9jmjVWLXxIR417SaAm9fCsrUDNkshAhl
- JCZicW9jpmJ3wUnMCnvWGavQYEK9pFw/FLcKckTHs9Hz7SfzKkRT5oEUP55T6ucuenLlLgds7
- xJvOgc1Wf5MryhB0Hq3+1cOZHgZ/wwkSU9L3SpvoLYABbzHNn7pvMYkJkb7K9TJdT21krgD4Y
- 4YFZAI0veXXh1COcA/JwwHg9SpoXBr+Yk7PldiIiBOyya6NooxZn56uywBuXQ6ksU/I+wsgs1
- mXHGQ/J9oqSook9Fg2c7xDeSja55fq6mE/On0sj5Xb3MhoRbtLPUkuupUrqBhewpgxdA/zOFr
- rTGYOniuUQI5kd8T2WyoOTaFuQS/Afe3mOjQiVDqmS7cO6qgZiFUygRFq17sHHiNmRaDxmBSD
- MZ/VOMCKA/+xjvZrJBjvT4DOWPjBQl1cdMIwBVAJQf0R4OaF/xcHR3BAO1qDH3txyVLLcVuaI
- 2li9HRDNuK/pMBIAfUvb3L0bAEFbSzc0Zhtb4ZpJDhBspN/wR+lC2iuUIwQzL9LJ//9unnxYt
- sABx7gtMdv0SIU4KKQOkIp56VK3TtLCp9/HnH0TAT1eQ6kPn1JH7ByaUwCjwec1ryzvHReOBh
- n97qVTTU5W8sKOoEBgTQqGiQ4FISnzK+ltko21PTuCwrzjTfT91EwGSlVDT+8rUA/HZCYymid
- 2d2sgCkAeALEf4JQHena2ky5zu/87i2wNp1NVICd8drY72i6S4D6JnhFp5MYM84fGjfOzUDEF
- HBM8RGxK0atTnFC1BPpEgvRmKOjfFlQSyvojNuFxv29a6cF044YHkdodF7e49TgFCyu6Q9mpk
- B2dCO8sC42gON0AMrVGg==
+X-MC-Unique: AvZdXMAZPQGpt4vWLobGDQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 3:50 AM Sargun Dhillon <sargun@sargun.me> wrote:
-> On Mon, Dec 16, 2019 at 5:50 PM Christian Brauner <christian.brauner@ubuntu.com> wrote:
-> > > +
-> > > +#include <linux/types.h>
-> > > +#include <linux/ioctl.h>
-> > > +
-> > > +/* options to pass in to pidfd_getfd_args flags */
-> > > +#define PIDFD_GETFD_CLOEXEC (1 << 0) /* open the fd with cloexec */
+From Aleksa Sarai
+> Sent: 17 December 2019 06:47
+...
+> > Just use u64 for all the fields.
+> 
+> That is an option (and is the one that clone3 went with), but it's a bit
+> awkward because umode_t is a u16 -- and it would be a waste of 6 bytes
+> to store it as a u64. Arguably it could be extended but I personally
+> find that to be very unlikely (and lots of other syscalls would need be
+> updated).
+
+6 bytes on interface structure will make almost no difference.
+There is no reason to save more than 16 bits anywhere else.
+You could error values with high bits set.
+
+> I'm just going to move the padding to the end and change the error for
+> non-zero padding to -E2BIG.
+
+The padding had to be after the u16 field.
+
+> > Use 'flags' bits to indicate whether the additional fields should be looked at.
+> > Error if a 'flags' bit requires a value that isn't passed in the structure.
 > >
-> > Please, make them cloexec by default unless there's a very good reason
-> > not to.
-> >
-> For now then, should I have flags, and just say "reserved for future usage",
-> or would you prefer that I drop flags entirely?
+> > Then you can add an extra field and old source code recompiled with the
+> > new headers will still work - because the 'junk' value isn't looked at.
+> 
+> This problem is already handled entirely by copy_struct_from_user().
+> 
+> It is true that for some new fields it will be necessary to add a new
+> flag (such as passing fds -- where 0 is a valid value) but for most new
+> fields (especially pointer or flag fields) it will not be necessary
+> because the 0 value is equivalent to the old behaviour. It also allows
+> us to entirely avoid accepting junk from userspace.
 
-There is no need for adding reserved fields in an ioctl, just add a new ioctl
-number if you need it later.
+Only if userspace is guaranteed to memset the entire structure
+before making the call - rather than just fill in all the fields it knows about.
+If it doesn't use memset() then recompiling old code with new headers
+will pass garbage to the kernel.
+copy_struct_from_user() cannot solve that problem.
+You'll never be able to guarantee that all code actually clears the
+entire structure - so at some point extending it will break recompilations
+of old code - annoying.
 
-> > > +
-> > > +struct pidfd_getfd_args {
-> > > +     __u32 size;             /* sizeof(pidfd_getfd_args) */
-> > > +     __u32 fd;       /* the tracee's file descriptor to get */
-> > > +     __u32 flags;
-> > > +};
-> >
-> > I think you want to either want to pad this
-> >
-> > +struct pidfd_getfd_args {
-> > +       __u32 size;             /* sizeof(pidfd_getfd_args) */
-> > +       __u32 fd;       /* the tracee's file descriptor to get */
-> > +       __u32 flags;
-> >         __u32 reserved;
-> > +};
-> >
-> > or use __aligned_u64 everywhere which I'd personally prefer instead of
-> > this manual padding everywhere.
+	David
 
-No, don't make ioctl structures extensible. If there is no 64-bit member
-in it, 32-bit alignment is sufficient.
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
-Also, having implicit padding is dangerous because it makes it easier to
-leave it uninitialized, leaking kernel stack information on the copy_to_user().
-
-Please drop the '__u32 size' argument, too: the size is fixed by definition
-(through the _IOWR macro) and if you need to extend it you get a new
-command anyway.
-
-> Wouldn't __attribute__((packed)) achieve a similar thing of making sure
-> the struct is a constant size across all compilers?
->
-> I'll go with __aligned_u64 instead of packed, if you don't want to use packed.
-
-__attribute__((packed)) is worse because it forces compilers to use byte
-access on architectures that have no fast unaligned 32-bit load/store.
-Basically you should never put __packed on a structure, but instead add
-it to members that need to be unaligned within a sturct for compatibility
-reasons.
-
-> > > +
-> > > +#define PIDFD_IOC_MAGIC                      'p'
-> > > +#define PIDFD_IO(nr)                 _IO(PIDFD_IOC_MAGIC, nr)
-> > > +#define PIDFD_IOR(nr, type)          _IOR(PIDFD_IOC_MAGIC, nr, type)
-> > > +#define PIDFD_IOW(nr, type)          _IOW(PIDFD_IOC_MAGIC, nr, type)
-> > > +#define PIDFD_IOWR(nr, type)         _IOWR(PIDFD_IOC_MAGIC, nr, type)
-
-Drop these macros, they just make it harder to grep or script around the use
-of _IOWR/_IOR/_IOW
-
-> > > +#define PIDFD_IOCTL_GETFD            PIDFD_IOWR(0xb0, \
-> > > +                                             struct pidfd_getfd_args)
-
-Without the size and flag members, this can become the simpler
-
-#define PIDFD_IOCTL_GETFD  _IOWR('p', 0xb0, __u32)
-
-> > > +
-> > >  const struct file_operations pidfd_fops = {
-> > >       .release = pidfd_release,
-> > >       .poll = pidfd_poll,
-> > > +     .unlocked_ioctl = pidfd_ioctl,
-
-This needs
-
-+    .compat_ioctl = compat_ptr_ioctl,
-
-To work on compat tasks.
-
-Finally, there is the question whether this should be an ioctl
-operation at all, or
-if it would better be done as a proper syscall. Functionally the two
-are the same
-here, but doing such a fundamental operation as an ioctl doesn't feel
-quite right
-to me. As a system call, this could be something like
-
-int pidfd_get_fd(int pidfd, int their_fd, int flags);
-
-along the lines of dup3().
-
-        Arnd
