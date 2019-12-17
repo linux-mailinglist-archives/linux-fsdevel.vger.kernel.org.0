@@ -2,130 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F1F11235DA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 20:40:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51E5C1235DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 20:41:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728099AbfLQTkB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Dec 2019 14:40:01 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43458 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727431AbfLQTkA (ORCPT
+        id S1727869AbfLQTlH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Dec 2019 14:41:07 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:42941 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727621AbfLQTlG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Dec 2019 14:40:00 -0500
-Received: by mail-lj1-f196.google.com with SMTP id a13so12279283ljm.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2019 11:39:59 -0800 (PST)
+        Tue, 17 Dec 2019 14:41:06 -0500
+Received: by mail-qk1-f196.google.com with SMTP id z14so9268817qkg.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2019 11:41:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qFRWpBT/yna7msZCz1h2wfxEJHa/dpTRSDTuMPZJuko=;
-        b=aMhd1gYr/CaA40gJd+Y5v2iKz3PpftHLH7meUakQxXR667vcpSEeG+f7RRgZ9EScB8
-         QPC5XzSuBsPm691KBjptv6ye07x5hIgbc7KafGV8ZlGArW6KOkIPnZeOx0iU0AevTOka
-         8z9zZfU3hjnoqjS219RuVLiUlb7YJo5q+60u4=
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=OXcOcA9d+MHJWB5VMSs6SxDFCnOQjcTdSoeRtxoyNNw=;
+        b=C8DmYru3/62U1CvUclv4lmLvDRbbcZUvS7tWSkcnAXnEiMu7JmCfTZjW9hJZgmNlQt
+         nh1akoYc4QIblNvVNECkWVwvm0fFgJMH2f22v3qdzdilrb7Jnhwq8WWVCfmLSQ/nRqWm
+         AZTXPBywnUu124Z7UcBYawMwh8P7uDdsR+aF15ELyJnE/lgcX/Iw9Yq9ai4qCyGpvQel
+         nAh4+npgJ4yMH242dgMhsxvlIO7Kh9sgYtSZ9umgHmurT3BO4C08Y1ECbS6xFuPetNlY
+         ZzJTjyS3o/d/Ny1VZSVSPvhNdGZRsGYxaT6a3Nxzyf4URTS17loaFezYwgG6wT7f4Iv9
+         e1lQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qFRWpBT/yna7msZCz1h2wfxEJHa/dpTRSDTuMPZJuko=;
-        b=XSH9XaE5gzifYjmexeTvyw1MUm7UGz0dzOVcXiSG2HpUMEzEvI3WdzBn7wvVw3rR0u
-         KEkM2uxsxn88AUzzpDsKtslHeR90jlvGDgo+pYxUKaZpWCmPS2k2YaYVscp+jYAqvQvM
-         CXNkLpEkdt2BTuvc0s8HkW/+4fZiSFKX1K9cpUk9UES9rT1L/xHUkOrNJxYGeFfyo9eI
-         oFp/KL1/+DyyxihydZz/P8GQGjmojtv8tmg+NG0K/NpWtxECzZit6kS1Vcr+Zpxs1RlP
-         WEAiQW9gP/8jX18aqAV8EsGaC99+DRyynBUJLwyWCbhRjcT1Gc63UcanhuLIrU3fbARm
-         cR3A==
-X-Gm-Message-State: APjAAAVlEbymun9tjaemsFKew9iqARCcuRDVetcCCz+tmacB9AqiGknq
-        Hu3Xg2+5+5OvlefiNKFyC2aYoDT+BXc=
-X-Google-Smtp-Source: APXvYqwlDNJ/hqyz4r56O/Y/KpMNBqgyPB+W+j7LQ0ucLiYuJvn0AespLmbI5EpaC0IKXH9vSaVUIg==
-X-Received: by 2002:a2e:7f08:: with SMTP id a8mr4329705ljd.164.1576611598120;
-        Tue, 17 Dec 2019 11:39:58 -0800 (PST)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
-        by smtp.gmail.com with ESMTPSA id s13sm392385lje.35.2019.12.17.11.39.57
-        for <linux-fsdevel@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OXcOcA9d+MHJWB5VMSs6SxDFCnOQjcTdSoeRtxoyNNw=;
+        b=n6A8w3ilY51wC3ccA0BolSj6Ckutz+HXUay3MgilwD7dryEAqg9uqRSxwmVguHWKJV
+         M4c/MIpMJRDht63xwP+XBL3nl9K3Ek6lr6mB4UDeWkF62yPsjbWBaD3gQadmwi3T5oHr
+         szn8aeUMu0ZLJ+GzC5z1egwICzWcLMU3ynJf79d6iHXx69QuQz5qu4BnxTzjCPVew+mb
+         GS6MN75uMb3LtNmC3jOJqF335fPp22qwjLRCL9pzutKwO27M5dpJqHD15yTons0IiZoq
+         UPLP2FcVZkt8vLknaKDyXJofPutgvtRBDIV63I1FgbEAbaCCU7E+qkJlhePc0rOx+CcE
+         1kOA==
+X-Gm-Message-State: APjAAAX6gQk7DI5wH+je3qPVidXhcVs8iphO5e3G8/NcehjXqrIRgfGk
+        g5ePTQF6EcyMOnLgebpNWyhy8HWpV/nhZA==
+X-Google-Smtp-Source: APXvYqz2lTzYdUxfG8Eh0IcBHWntYr8J1vmidj2ohxpEsm4OsH1KyLnfzf03uAMW+DNMEvB5uSB0SA==
+X-Received: by 2002:a05:620a:634:: with SMTP id 20mr6838264qkv.269.1576611665267;
+        Tue, 17 Dec 2019 11:41:05 -0800 (PST)
+Received: from ?IPv6:2620:10d:c0a8:1102:ce0:3629:8daa:1271? ([2620:10d:c091:480::4217])
+        by smtp.gmail.com with ESMTPSA id a19sm7362317qka.75.2019.12.17.11.41.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2019 11:39:57 -0800 (PST)
-Received: by mail-lj1-f175.google.com with SMTP id m6so12311784ljc.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2019 11:39:57 -0800 (PST)
-X-Received: by 2002:a2e:9ad8:: with SMTP id p24mr4517160ljj.148.1576611596942;
- Tue, 17 Dec 2019 11:39:56 -0800 (PST)
+        Tue, 17 Dec 2019 11:41:04 -0800 (PST)
+Subject: Re: [PATCH v6 14/28] btrfs: redirty released extent buffers in
+ HMZONED mode
+To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
+        David Sterba <dsterba@suse.com>
+Cc:     Chris Mason <clm@fb.com>, Nikolay Borisov <nborisov@suse.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Hannes Reinecke <hare@suse.com>,
+        Anand Jain <anand.jain@oracle.com>,
+        linux-fsdevel@vger.kernel.org
+References: <20191213040915.3502922-1-naohiro.aota@wdc.com>
+ <20191213040915.3502922-15-naohiro.aota@wdc.com>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <ef8e982c-7946-1025-d919-fd7ee3dfd8d6@toxicpanda.com>
+Date:   Tue, 17 Dec 2019 14:41:03 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
+ Gecko/20100101 Thunderbird/68.3.0
 MIME-Version: 1.0
-References: <20191217143948.26380-1-axboe@kernel.dk> <20191217143948.26380-5-axboe@kernel.dk>
-In-Reply-To: <20191217143948.26380-5-axboe@kernel.dk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 17 Dec 2019 11:39:41 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgcPAfOSigMf0xwaGfVjw413XN3UPATwYWHrss+QuivhQ@mail.gmail.com>
-Message-ID: <CAHk-=wgcPAfOSigMf0xwaGfVjw413XN3UPATwYWHrss+QuivhQ@mail.gmail.com>
-Subject: Re: [PATCH 4/6] iomap: add struct iomap_ctx
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
-        Dave Chinner <david@fromorbit.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191213040915.3502922-15-naohiro.aota@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 6:40 AM Jens Axboe <axboe@kernel.dk> wrote:
->
-> We pass a lot of arguments to iomap_apply(), and subsequently to the
-> actors that it calls. In preparation for adding one more argument,
-> switch them to using a struct iomap_ctx instead. The actor gets a const
-> version of that, they are not supposed to change anything in it.
+On 12/12/19 11:09 PM, Naohiro Aota wrote:
+> Tree manipulating operations like merging nodes often release
+> once-allocated tree nodes. Btrfs cleans such nodes so that pages in the
+> node are not uselessly written out. On HMZONED drives, however, such
+> optimization blocks the following IOs as the cancellation of the write out
+> of the freed blocks breaks the sequential write sequence expected by the
+> device.
+> 
+> This patch introduces a list of clean and unwritten extent buffers that
+> have been released in a transaction. Btrfs redirty the buffer so that
+> btree_write_cache_pages() can send proper bios to the devices.
+> 
+> Besides it clears the entire content of the extent buffer not to confuse
+> raw block scanners e.g. btrfsck. By clearing the content,
+> csum_dirty_buffer() complains about bytenr mismatch, so avoid the checking
+> and checksum using newly introduced buffer flag EXTENT_BUFFER_NO_CHECK.
+> 
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 
-Looks generally like what I expected, but when looking at the patch I
-notice that the type of 'len' is crazy and wrong.
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-It was wrong before too, though:
+Thanks,
 
-> -dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
-
-'loff_t length' is not right.
-
-> +       loff_t pos = data->pos;
-> +       loff_t length = pos + data->len;
-
-And WTH is that? "pos + data->len" is not "length", that's end. And this:
-
->         loff_t end = pos + length, done = 0;
-
-What? Now 'end' is 'pos+length', which is 'pos+pos+data->len'.
-
-WHAA?
-
-> @@ -1197,22 +1200,26 @@ dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
->  {
-> +       loff_t ret = 0, done = 0;
-
-More insanity. "ret" shouldn't be loff_t.
-
-dax_iomap_rw() returns a ssize_t.
-
-> +       loff_t count = data->len;
-
-More of this crazy things.
-
->  iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
-
-This was wrong before.
-
-> +struct iomap_ctx {
-> +       struct inode    *inode;
-> +       loff_t          pos;
-> +       loff_t          len;
-> +       void            *priv;
-> +       unsigned        flags;
-> +};
-
-Please make 'len' be 'size_t' or something.
-
-If you're on a 32-bit architecture, you shouldn't be writing more than
-4GB in a go anyway.
-
-Is there some reason for this horrible case of "let's allow 64-bit sizes?"
-
-Because even if there is, it shouldn't be "loff_t". That's an
-_offset_. Not a length.
-
-            Linus
+Josef
