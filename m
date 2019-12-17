@@ -2,77 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68329123399
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 18:33:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 078F01233D6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 18:46:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727642AbfLQRdB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Dec 2019 12:33:01 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:47978 "EHLO
+        id S1726967AbfLQRq5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Dec 2019 12:46:57 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:48172 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbfLQRdB (ORCPT
+        with ESMTP id S1726874AbfLQRq5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Dec 2019 12:33:01 -0500
+        Tue, 17 Dec 2019 12:46:57 -0500
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ihGiR-00015M-Mf; Tue, 17 Dec 2019 17:32:59 +0000
-Date:   Tue, 17 Dec 2019 17:32:59 +0000
+        id 1ihGvs-0001VN-Ue; Tue, 17 Dec 2019 17:46:53 +0000
+Date:   Tue, 17 Dec 2019 17:46:52 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 09/12] fs_parser: "string" with missing value is a "flag"
-Message-ID: <20191217173259.GA4203@ZenIV.linux.org.uk>
-References: <20191128155940.17530-1-mszeredi@redhat.com>
- <20191128155940.17530-10-mszeredi@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Laura Abbott <labbott@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jeremi Piotrowski <jeremi.piotrowski@gmail.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] vfs: Don't reject unknown parameters
+Message-ID: <20191217174652.GB4203@ZenIV.linux.org.uk>
+References: <20191212145042.12694-1-labbott@redhat.com>
+ <CAOi1vP9E2yLeFptg7o99usEi=x3kf=NnHYdURXPhX4vTXKCTCQ@mail.gmail.com>
+ <fbe90a0b-cf24-8c0c-48eb-6183852dfbf1@redhat.com>
+ <CAHk-=wh7Wuk9QCP6oH5Qc1a89_X6H1CHRK_OyB4NLmX7nRYJeA@mail.gmail.com>
+ <cf4c9634-1503-d182-cb12-810fb969bc96@redhat.com>
+ <20191212213609.GK4203@ZenIV.linux.org.uk>
+ <CAJfpegv_zY6w6=pOL0x=sjuQmGae0ymOafZXjyAdNEHj+EKyNA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191128155940.17530-10-mszeredi@redhat.com>
+In-Reply-To: <CAJfpegv_zY6w6=pOL0x=sjuQmGae0ymOafZXjyAdNEHj+EKyNA@mail.gmail.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 28, 2019 at 04:59:37PM +0100, Miklos Szeredi wrote:
-> There's no such thing as a NULL string value, the fsconfig(2) syscall
-> rejects that outright.
-> 
-> So get rid of that concept from the implementation.
-> 
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> ---
->  fs/fs_context.c           | 2 +-
->  fs/fs_parser.c            | 9 ++-------
->  include/linux/fs_parser.h | 1 -
->  3 files changed, 3 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/fs_context.c b/fs/fs_context.c
-> index 66fd7d753e91..7c4216156950 100644
-> --- a/fs/fs_context.c
-> +++ b/fs/fs_context.c
-> @@ -174,7 +174,7 @@ int vfs_parse_fs_string(struct fs_context *fc, const char *key,
->  
->  	struct fs_parameter param = {
->  		.key	= key,
-> -		.type	= fs_value_is_string,
-> +		.type	= v_size ? fs_value_is_string : fs_value_is_flag,
->  		.size	= v_size,
->  	};
+On Fri, Dec 13, 2019 at 10:15:03AM +0100, Miklos Szeredi wrote:
 
-No.  This is simply wrong - as it is, there's no difference between
-"foo" and "foo=".  Passing NULL in the latter case is wrong, but
-this is not a good fix.
+> Just need a flag in fc indicating if this option comes from the old interface:
+> 
+>          if (strcmp(param->key, "source") == 0)
+>                  return -ENOPARAM;
+>          /* Just log an error for backwards compatibility */
+>          errorf(fc, "%s: Unknown parameter '%s'", fc->fs_type->name,
+> param->key);
+>          return fc->legacy ? 0 : -ENOPARAM;
 
-This
-        if (v_size > 0) {
-                param.string = kmemdup_nul(value, v_size, GFP_KERNEL);
-                if (!param.string)
-                        return -ENOMEM;
-        }
-should really be
-	if (value) {
-                param.string = kmemdup_nul(value, v_size, GFP_KERNEL);
-                if (!param.string)
-                        return -ENOMEM;
-        }
-and your chunk should be conditional upon value, not v_size.  The
-same problem exists for rbd.c
+	What the hell for?  Just have a separate ->parse_param() instance
+for "promiscuous fs, will accept bullshit options" and have such filesystems
+use it explicitly.  With default being not that, but rejecting unknowns.
