@@ -2,94 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB146122EFA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 15:40:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B97A122FD1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 16:11:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728690AbfLQOj6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Dec 2019 09:39:58 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:36689 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728608AbfLQOj5 (ORCPT
+        id S1727587AbfLQPLT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Dec 2019 10:11:19 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36465 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727241AbfLQPLS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Dec 2019 09:39:57 -0500
-Received: by mail-io1-f65.google.com with SMTP id r13so993965ioa.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2019 06:39:57 -0800 (PST)
+        Tue, 17 Dec 2019 10:11:18 -0500
+Received: by mail-pl1-f195.google.com with SMTP id d15so6239437pll.3;
+        Tue, 17 Dec 2019 07:11:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=hSvlHPa+iglQscNJSf7xQ/5HwRTlC6yUkzeNdFCcqV8=;
-        b=1w7hkIWzvLtMu/dLZZMcZIijlZyfYWT25XG5COOJJfc8oH+ykaNVmhW+kyy47uEmxT
-         44BfhsIy0PIQPcGGVhchbkR3/gV/mUaau6NjOzs4QWM9ffCFMNcxvMItscKe+DnZ8qPF
-         Po3NAj4x4dgXGv6qHecBmhualhrDq1w6EvAdBXsygv8MWFEzZ7R9YWkEgVggpMNvni6n
-         n37RGtE7bIULBdKOjo8NKGU+SO0IhHzTxOZvEEt83L9ftLfxh3r/Lej6KO9UMyH6X+iN
-         W11mqMTLUelQXj54y55ExU0ini0NqxR9dbme6TbUTRm5QE3/urjzZE6sDy95hbxBcJ6x
-         ntdg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=aFantIhWi/fHJq2cr+Zbx6RZiqepAGB6P0r03ViBSsA=;
+        b=QYJDZjza4evSS+x1Jb5cMJ3wbCTfcsYUKvfvznRoIgd8u+cAB3f1FHmgKHBqGccifv
+         +hKsPzcBU+bQqytO2u0gvTtuT0Sq+PxFJ6fj3EwiBfQEN1Go7jVFTSkFJNX0zmeV2pLc
+         +IGcG66ao0ZcAZ7qA/Z0QYrPbgyfyfXCwOj+xnGlM3qD8eLFIAffik0xOL/QrNWWY8Kc
+         1q1Nmx7ZhN2DBdmGfpvcPxhtW5fS3vy/+TTNOTq99n015kp8dPLbArir2wbacyiJ5mFv
+         AYUmkn7iXb/JcIZypbB9kLU5+GgYc1BrbUx4Kf2i7advrCV54BZfKmyO5j6O1UF7vsvi
+         5mhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=hSvlHPa+iglQscNJSf7xQ/5HwRTlC6yUkzeNdFCcqV8=;
-        b=pj6d+/OecgbANBN++1MhPx9me1xXLtppcfVxK8BbrvnpmLvPsyBGvHfA8IeV/o/O8B
-         q8PY61zd8rqQ1ruIXFb8cXSj6Ziib/hts2FlwlUXsPs/bSJcDyPhUSMUrS7PgO2MbJIq
-         06Sg++Lw68y8MYOg4TCK0t5kSILpIrXz6ELZLTaSRS782PwOWm38rY98pIzho4aHsKAo
-         WV0TAQbYLs0LP5OQ1zWrV2LET+MWbObVI/Wk4ZhInMgUVQpbnTbdax2warzP3dzdxiuK
-         UJ/TMJeZk5o82oPfmWZuGeUC0mW0BZu+D4dhm03cId/y+k6nqNWPneVPTho0x4lYY94H
-         KUug==
-X-Gm-Message-State: APjAAAXZ1t1m0dkHEYyNo6SGib63SvQP0QCBwfUOfrKR61uXU/Z//aCz
-        KUOZPNFPXNYI0Tho1+xZ77m20g==
-X-Google-Smtp-Source: APXvYqyLgOsF8+OSoa6LuQKDnmSyMVA3kpVF98IU1cYOBzMtc4vb4+N38upf1F2528sIApqSicZCyw==
-X-Received: by 2002:a6b:680d:: with SMTP id d13mr3796828ioc.188.1576593596972;
-        Tue, 17 Dec 2019 06:39:56 -0800 (PST)
-Received: from x1.thefacebook.com ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id w21sm5285255ioc.34.2019.12.17.06.39.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2019 06:39:56 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org
-Cc:     willy@infradead.org, clm@fb.com, torvalds@linux-foundation.org,
-        david@fromorbit.com, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 6/6] xfs: don't do delayed allocations for uncached buffered writes
-Date:   Tue, 17 Dec 2019 07:39:48 -0700
-Message-Id: <20191217143948.26380-7-axboe@kernel.dk>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191217143948.26380-1-axboe@kernel.dk>
-References: <20191217143948.26380-1-axboe@kernel.dk>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=aFantIhWi/fHJq2cr+Zbx6RZiqepAGB6P0r03ViBSsA=;
+        b=ZyvuYzWgDUKvXyJLVVYlHd/YXSqtuDp9WJVX+9wAtW4aj4sYCYaaeiihh0CvXsI6CY
+         +dfEXOyc6V8U+4mFc6W6U7Ke+VGWn4Cc4QvjnesZrfo8T+BGCDuyXG9PTsJEbRwF/bqD
+         eQKQ2CwqjiUMr+tCXjQfhE8c8JNHpD6Ks/rqY6FnT2CzSoZ514X2nRtGNWtAlT03sJkJ
+         UO7aDyZct526RXuEF8iJsZ2kFM1n3LzPKg22uU//WjqZd8jbi7TCAeTHJxipieHgpIDf
+         +537npA4QmVxM8gxhy6gUAqtZ8eipTuu3IY43gJ4DJJR18D5VSi3257hLmcHgVusBf/s
+         MA6Q==
+X-Gm-Message-State: APjAAAV0+ANZB+fMkX92aFB26dLdj47bYcka1cJO7MVLF9egmIZlxX8v
+        QqNWorK4fGVD2FS3aAuEBpE=
+X-Google-Smtp-Source: APXvYqwtYKpcn252vIXVA4HxmqgaVwlB9/YwzBUU2SU/SIyHMiI2r3UDySrZNyEa2AryZHkv2By44Q==
+X-Received: by 2002:a17:902:6a8a:: with SMTP id n10mr23659556plk.9.1576595478158;
+        Tue, 17 Dec 2019 07:11:18 -0800 (PST)
+Received: from localhost ([43.224.245.179])
+        by smtp.gmail.com with ESMTPSA id m3sm26507128pgp.32.2019.12.17.07.11.16
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Tue, 17 Dec 2019 07:11:17 -0800 (PST)
+From:   qiwuchen55@gmail.com
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        chenqiwu <chenqiwu@xiaomi.com>
+Subject: [RESEND PATCH] fput: Use unbound workqueue for scheduling delayed fput works
+Date:   Tue, 17 Dec 2019 23:11:12 +0800
+Message-Id: <1576595472-27341-1-git-send-email-qiwuchen55@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This data is going to be written immediately, so don't bother trying
-to do delayed allocation for it.
+From: chenqiwu <chenqiwu@xiaomi.com>
 
-Suggested-by: Dave Chinner <david@fromorbit.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+There is a potential starvation that the number of delayed fput works
+increase rapidly if task exit storm or fs unmount issue happens.
+
+Since the delayed fput works are expected to be executed as soon as
+possible. The commonly accepted wisdom that the measurements of scheduling
+works via the unbound workqueue show lowered worst-case latency responses
+of up to 5x over bound workqueue.
+
+Work items queued to an unbound wq are not bound to any specific CPU, not
+concurrency managed. All queued works are executed immediately as long as
+max_active limit is not reached and resources are available.
+
+Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
 ---
- fs/xfs/xfs_iomap.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ fs/file_table.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index 28e2d1f37267..d0cd4a05d59f 100644
---- a/fs/xfs/xfs_iomap.c
-+++ b/fs/xfs/xfs_iomap.c
-@@ -847,8 +847,11 @@ xfs_buffered_write_iomap_begin(
- 	int			allocfork = XFS_DATA_FORK;
- 	int			error = 0;
+diff --git a/fs/file_table.c b/fs/file_table.c
+index 30d55c9..472ad92 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -348,7 +348,8 @@ void fput_many(struct file *file, unsigned int refs)
+ 		}
  
--	/* we can't use delayed allocations when using extent size hints */
--	if (xfs_get_extsz_hint(ip))
-+	/*
-+	 * Don't do delayed allocations when using extent size hints, or
-+	 * if we were asked to do uncached buffered writes.
-+	 */
-+	if (xfs_get_extsz_hint(ip) || (flags & IOMAP_UNCACHED))
- 		return xfs_direct_write_iomap_begin(inode, offset, count,
- 				flags, iomap, srcmap);
+ 		if (llist_add(&file->f_u.fu_llist, &delayed_fput_list))
+-			schedule_delayed_work(&delayed_fput_work, 1);
++			queue_delayed_work(system_unbound_wq,
++					&delayed_fput_work, 1);
+ 	}
+ }
  
 -- 
-2.24.1
+1.9.1
 
