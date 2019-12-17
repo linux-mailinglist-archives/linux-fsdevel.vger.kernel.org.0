@@ -2,108 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA82C12265B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 09:12:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32D8412271F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 09:55:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726623AbfLQIMo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Dec 2019 03:12:44 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:30008 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726524AbfLQIMo (ORCPT
+        id S1726754AbfLQIzB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Dec 2019 03:55:01 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:49117 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725893AbfLQIzA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Dec 2019 03:12:44 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBH87KfL041256
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2019 03:12:42 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wvw5c2wyb-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2019 03:12:42 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
-        Tue, 17 Dec 2019 08:12:39 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 17 Dec 2019 08:12:36 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBH8CZG155705752
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Dec 2019 08:12:35 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2B3DD4C059;
-        Tue, 17 Dec 2019 08:12:35 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A81214C040;
-        Tue, 17 Dec 2019 08:12:33 +0000 (GMT)
-Received: from [9.199.158.112] (unknown [9.199.158.112])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 17 Dec 2019 08:12:33 +0000 (GMT)
-Subject: Re: [PATCH 0/1] Use inode_lock/unlock class of provided APIs in
- filesystems
-To:     willy@infradead.org, linux-fsdevel@vger.kernel.org,
-        jlayton@kernel.org, viro@zeniv.linux.org.uk
-Cc:     ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, devel@lists.orangefs.org,
-        linux-unionfs@vger.kernel.org
-References: <20191205103902.23618-1-riteshh@linux.ibm.com>
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Date:   Tue, 17 Dec 2019 13:42:29 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Tue, 17 Dec 2019 03:55:00 -0500
+Received: from mail-qk1-f171.google.com ([209.85.222.171]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MXop2-1iBKX82BI4-00YBbm; Tue, 17 Dec 2019 09:54:58 +0100
+Received: by mail-qk1-f171.google.com with SMTP id x129so174943qke.8;
+        Tue, 17 Dec 2019 00:54:58 -0800 (PST)
+X-Gm-Message-State: APjAAAXNG2+9NUH4Fcy7Or18esGaQdcU/0HUKwazUmvLn9WIJropDTPy
+        znb/Iw88weMWhDetMx/fRco63HDyaVmLehppnTA=
+X-Google-Smtp-Source: APXvYqzKiLsbZVrfvGk9+cg1ubafjtbflqD9p/VamlqKp16D5EdmeX1UgRWAb1NnN5heyvsziKaivNRpaH1iYITOlvM=
+X-Received: by 2002:a37:2f02:: with SMTP id v2mr3750201qkh.3.1576572897205;
+ Tue, 17 Dec 2019 00:54:57 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191205103902.23618-1-riteshh@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19121708-0020-0000-0000-000003990467
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19121708-0021-0000-0000-000021F01F27
-Message-Id: <20191217081233.A81214C040@d06av22.portsmouth.uk.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-17_01:2019-12-16,2019-12-16 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- mlxlogscore=757 mlxscore=0 bulkscore=0 adultscore=0 malwarescore=0
- lowpriorityscore=0 priorityscore=1501 impostorscore=0 spamscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912170071
+References: <20191217010001.GA14461@ircssh-2.c.rugged-nimbus-611.internal>
+ <20191217015001.sp6mrhuiqrivkq3u@wittgenstein> <CAMp4zn8fzeiJVSn6EtRi6UAGh6AL3QWu=PZxw+=TAYJORjn_Sw@mail.gmail.com>
+In-Reply-To: <CAMp4zn8fzeiJVSn6EtRi6UAGh6AL3QWu=PZxw+=TAYJORjn_Sw@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 17 Dec 2019 09:54:40 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a3G-W8s0G2-XKuDw9dRmupZSyiF6FRRAnvDt9=kMMzS8w@mail.gmail.com>
+Message-ID: <CAK8P3a3G-W8s0G2-XKuDw9dRmupZSyiF6FRRAnvDt9=kMMzS8w@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] pid: Add PIDFD_IOCTL_GETFD to fetch file
+ descriptors from processes
+To:     Sargun Dhillon <sargun@sargun.me>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, gpascutto@mozilla.com,
+        ealvarez@mozilla.com, Florian Weimer <fweimer@redhat.com>,
+        jld@mozilla.com
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:HRAACjC5zp8lxNpo/BksdLlwiLLHqEgHh0jsn+k4S+2Eh5Uv53p
+ C9bFh5wXL+Ju5zWDstGOtRlYMtrjwfZ8garW/jHChtuDow7fI3r16tRRGedKQpUV3L18ETu
+ yI1dmiiZG89YnQ/Uh+YEoa6qfcpPzo5agoss9tX7MfCVL13uPPYcSa0HevOPwcq5CO2DeV+
+ rvBWzQVDBrRIzj8OofEEA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:ewGeybDoAh4=:QfLyBhyd5Jll7i1z3Q7vNn
+ 1kgevxEMDqrLzxfQVkK9qVir47KyAfs1CrUroOSId9jmjVWLXxIR417SaAm9fCsrUDNkshAhl
+ JCZicW9jpmJ3wUnMCnvWGavQYEK9pFw/FLcKckTHs9Hz7SfzKkRT5oEUP55T6ucuenLlLgds7
+ xJvOgc1Wf5MryhB0Hq3+1cOZHgZ/wwkSU9L3SpvoLYABbzHNn7pvMYkJkb7K9TJdT21krgD4Y
+ 4YFZAI0veXXh1COcA/JwwHg9SpoXBr+Yk7PldiIiBOyya6NooxZn56uywBuXQ6ksU/I+wsgs1
+ mXHGQ/J9oqSook9Fg2c7xDeSja55fq6mE/On0sj5Xb3MhoRbtLPUkuupUrqBhewpgxdA/zOFr
+ rTGYOniuUQI5kd8T2WyoOTaFuQS/Afe3mOjQiVDqmS7cO6qgZiFUygRFq17sHHiNmRaDxmBSD
+ MZ/VOMCKA/+xjvZrJBjvT4DOWPjBQl1cdMIwBVAJQf0R4OaF/xcHR3BAO1qDH3txyVLLcVuaI
+ 2li9HRDNuK/pMBIAfUvb3L0bAEFbSzc0Zhtb4ZpJDhBspN/wR+lC2iuUIwQzL9LJ//9unnxYt
+ sABx7gtMdv0SIU4KKQOkIp56VK3TtLCp9/HnH0TAT1eQ6kPn1JH7ByaUwCjwec1ryzvHReOBh
+ n97qVTTU5W8sKOoEBgTQqGiQ4FISnzK+ltko21PTuCwrzjTfT91EwGSlVDT+8rUA/HZCYymid
+ 2d2sgCkAeALEf4JQHena2ky5zu/87i2wNp1NVICd8drY72i6S4D6JnhFp5MYM84fGjfOzUDEF
+ HBM8RGxK0atTnFC1BPpEgvRmKOjfFlQSyvojNuFxv29a6cF044YHkdodF7e49TgFCyu6Q9mpk
+ B2dCO8sC42gON0AMrVGg==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Al, do you think this can be picked up via your tree?
-Please let me know if anything needed from my end on this.
+On Tue, Dec 17, 2019 at 3:50 AM Sargun Dhillon <sargun@sargun.me> wrote:
+> On Mon, Dec 16, 2019 at 5:50 PM Christian Brauner <christian.brauner@ubuntu.com> wrote:
+> > > +
+> > > +#include <linux/types.h>
+> > > +#include <linux/ioctl.h>
+> > > +
+> > > +/* options to pass in to pidfd_getfd_args flags */
+> > > +#define PIDFD_GETFD_CLOEXEC (1 << 0) /* open the fd with cloexec */
+> >
+> > Please, make them cloexec by default unless there's a very good reason
+> > not to.
+> >
+> For now then, should I have flags, and just say "reserved for future usage",
+> or would you prefer that I drop flags entirely?
 
--ritesh
+There is no need for adding reserved fields in an ioctl, just add a new ioctl
+number if you need it later.
 
-On 12/5/19 4:09 PM, Ritesh Harjani wrote:
-> Matthew Wilcox in [1] suggested that it will be a good idea
-> to define some missing API instead of directly using i_rwsem in
-> filesystems drivers for lock/unlock/downgrade purposes.
-> 
-> This patch does that work. No functionality change in this patch.
-> 
-> After this there are only lockdep class of APIs at certain places
-> in filesystems which are directly using i_rwsem and second is XFS,
-> but it seems to be anyway defining it's own xfs_ilock/iunlock set
-> of APIs and 'iolock' naming convention for this lock.
-> 
-> [1]: https://www.spinics.net/lists/linux-ext4/msg68689.html
-> 
-> Ritesh Harjani (1):
->    fs: Use inode_lock/unlock class of provided APIs in filesystems
-> 
->   fs/btrfs/delayed-inode.c |  2 +-
->   fs/btrfs/ioctl.c         |  4 ++--
->   fs/ceph/io.c             | 24 ++++++++++++------------
->   fs/nfs/io.c              | 24 ++++++++++++------------
->   fs/orangefs/file.c       |  4 ++--
->   fs/overlayfs/readdir.c   |  2 +-
->   fs/readdir.c             |  4 ++--
->   include/linux/fs.h       | 21 +++++++++++++++++++++
->   8 files changed, 53 insertions(+), 32 deletions(-)
-> 
+> > > +
+> > > +struct pidfd_getfd_args {
+> > > +     __u32 size;             /* sizeof(pidfd_getfd_args) */
+> > > +     __u32 fd;       /* the tracee's file descriptor to get */
+> > > +     __u32 flags;
+> > > +};
+> >
+> > I think you want to either want to pad this
+> >
+> > +struct pidfd_getfd_args {
+> > +       __u32 size;             /* sizeof(pidfd_getfd_args) */
+> > +       __u32 fd;       /* the tracee's file descriptor to get */
+> > +       __u32 flags;
+> >         __u32 reserved;
+> > +};
+> >
+> > or use __aligned_u64 everywhere which I'd personally prefer instead of
+> > this manual padding everywhere.
 
+No, don't make ioctl structures extensible. If there is no 64-bit member
+in it, 32-bit alignment is sufficient.
+
+Also, having implicit padding is dangerous because it makes it easier to
+leave it uninitialized, leaking kernel stack information on the copy_to_user().
+
+Please drop the '__u32 size' argument, too: the size is fixed by definition
+(through the _IOWR macro) and if you need to extend it you get a new
+command anyway.
+
+> Wouldn't __attribute__((packed)) achieve a similar thing of making sure
+> the struct is a constant size across all compilers?
+>
+> I'll go with __aligned_u64 instead of packed, if you don't want to use packed.
+
+__attribute__((packed)) is worse because it forces compilers to use byte
+access on architectures that have no fast unaligned 32-bit load/store.
+Basically you should never put __packed on a structure, but instead add
+it to members that need to be unaligned within a sturct for compatibility
+reasons.
+
+> > > +
+> > > +#define PIDFD_IOC_MAGIC                      'p'
+> > > +#define PIDFD_IO(nr)                 _IO(PIDFD_IOC_MAGIC, nr)
+> > > +#define PIDFD_IOR(nr, type)          _IOR(PIDFD_IOC_MAGIC, nr, type)
+> > > +#define PIDFD_IOW(nr, type)          _IOW(PIDFD_IOC_MAGIC, nr, type)
+> > > +#define PIDFD_IOWR(nr, type)         _IOWR(PIDFD_IOC_MAGIC, nr, type)
+
+Drop these macros, they just make it harder to grep or script around the use
+of _IOWR/_IOR/_IOW
+
+> > > +#define PIDFD_IOCTL_GETFD            PIDFD_IOWR(0xb0, \
+> > > +                                             struct pidfd_getfd_args)
+
+Without the size and flag members, this can become the simpler
+
+#define PIDFD_IOCTL_GETFD  _IOWR('p', 0xb0, __u32)
+
+> > > +
+> > >  const struct file_operations pidfd_fops = {
+> > >       .release = pidfd_release,
+> > >       .poll = pidfd_poll,
+> > > +     .unlocked_ioctl = pidfd_ioctl,
+
+This needs
+
++    .compat_ioctl = compat_ptr_ioctl,
+
+To work on compat tasks.
+
+Finally, there is the question whether this should be an ioctl
+operation at all, or
+if it would better be done as a proper syscall. Functionally the two
+are the same
+here, but doing such a fundamental operation as an ioctl doesn't feel
+quite right
+to me. As a system call, this could be something like
+
+int pidfd_get_fd(int pidfd, int their_fd, int flags);
+
+along the lines of dup3().
+
+        Arnd
