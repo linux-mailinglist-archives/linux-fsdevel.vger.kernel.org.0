@@ -2,122 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F321A122151
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 02:13:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4274B12215A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 02:18:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726263AbfLQBNq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Dec 2019 20:13:46 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:46893 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726320AbfLQBNp (ORCPT
+        id S1726582AbfLQBSP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Dec 2019 20:18:15 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:35724 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725805AbfLQBSP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Dec 2019 20:13:45 -0500
-Received: by mail-oi1-f196.google.com with SMTP id p67so71460oib.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Dec 2019 17:13:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/Gz2pfk83gxmeYwRdsPahvEeJS5pQqN1WazyBRjRhto=;
-        b=ooZ3b25fI6kv5zyAhlRDYLL/Lta9UAjZJ2ZmjTaK4c2cUxFG5tRCt1GwUsnecOXmv0
-         weNx0eHo2pfbzX+sN+l0tdj+Gffk6olg8jEEbD85Xl+1bcjK5TfC53gAAwPsCsaiMrRH
-         4gC81AJVwIC2mJ8OVvtCxGrHnkVYDtxCJ37jx7j/r20D7EDiPk/13HcbQ+qzy38PBqRU
-         sRqekF9HlX9Cy/9n6tMkJG4WxLFRJbS8oB2aqP9XC7RRgr/bYa3pfWeeAQb89HMWWjfX
-         2ynQM6mRUlp9KVgvKaemyppKH/DDpbmDShwj5VLx6/DFE2gSjOODWaXZjWbAmh6P3z/v
-         6swQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/Gz2pfk83gxmeYwRdsPahvEeJS5pQqN1WazyBRjRhto=;
-        b=qlpDD+HrifexBadOwYIGhrXUuh376fuZyZNng2NF33vDgIS4M0Ivd4Vl5F24njUrzg
-         laxwihQf7y3RErxoVl8oMJ/fdNbHFbaEEcoFBAcDJhJ8KEmK9KTT4qppcXeorJIXhDrh
-         YBA9ys2oFYCPFjK9eQw3H2UElyPnbC5yThQmC5geUkzXJl70HgM8k2xcWYmkakZ/Zmd5
-         bXD+mqfnn349DnTOimZd3/jG9y/vqGoenX5aFZaNTBpmjmVReUJhe/blaGj+F4Xs2pl+
-         gMOdDvAcHnZYiCrHDuMnqdsERxiYUsSrjZqRX3pq3KWUr5n/xfu6WkkwNCpi/Zhnd6y7
-         abqA==
-X-Gm-Message-State: APjAAAUCE0wKhyUuVwu/8i0wiMTeHYpbIE1KeTGLG+O9DlbUgyiICC4n
-        45SH/kR5s+55LZk/VvrXu6pjRW2QFvLb+yQt31YgFg==
-X-Google-Smtp-Source: APXvYqw1K714n5uzrU/DqhE5hq4qTxDhMwll3wid7OcY1dyfJe66ZxpOeksE7ntSDlrUdkMp2vopw7scMlouv0aIqxo=
-X-Received: by 2002:aca:c7cb:: with SMTP id x194mr1051074oif.157.1576545224611;
- Mon, 16 Dec 2019 17:13:44 -0800 (PST)
+        Mon, 16 Dec 2019 20:18:15 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ih1V7-0002xv-1e; Tue, 17 Dec 2019 01:18:13 +0000
+Date:   Tue, 17 Dec 2019 01:18:13 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, Andrew Price <anprice@redhat.com>,
+        David Howells <dhowells@redhat.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 02/12] fs_parse: fix fs_param_v_optional handling
+Message-ID: <20191217011813.GQ4203@ZenIV.linux.org.uk>
+References: <20191128155940.17530-1-mszeredi@redhat.com>
+ <20191128155940.17530-3-mszeredi@redhat.com>
+ <20191216232845.GP4203@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-References: <20191217010001.GA14461@ircssh-2.c.rugged-nimbus-611.internal>
-In-Reply-To: <20191217010001.GA14461@ircssh-2.c.rugged-nimbus-611.internal>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 17 Dec 2019 02:13:16 +0100
-Message-ID: <CAG48ez0ooeZfdBf+u9uE3mzo2yc7f1D5EHZ09Jz5T8VVh6AWYw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/4] pid: Add PIDFD_IOCTL_GETFD to fetch file
- descriptors from processes
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, gpascutto@mozilla.com,
-        ealvarez@mozilla.com, Florian Weimer <fweimer@redhat.com>,
-        jld@mozilla.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191216232845.GP4203@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 2:00 AM Sargun Dhillon <sargun@sargun.me> wrote:
-> This adds an ioctl which allows file descriptors to be extracted
-> from processes based on their pidfd.
-[...]
-> You must have the ability to ptrace the process in order to extract any
-> file descriptors from it. ptrace can already be used to extract file
-> descriptors based on parasitic code injections, so the permissions
-> model is aligned.
-[...]
-> +       task = get_pid_task(pid, PIDTYPE_PID);
-> +       if (!task)
-> +               return -ESRCH;
-> +       ret = -EPERM;
+On Mon, Dec 16, 2019 at 11:28:45PM +0000, Al Viro wrote:
+> On Thu, Nov 28, 2019 at 04:59:30PM +0100, Miklos Szeredi wrote:
+> > String options always have parameters, hence the check for optional
+> > parameter will never trigger.
+> 
+> What do you mean, always have parameters?  Granted, for fsconfig(2) it's
+> (currently) true, but I see at least two other pathways that do not impose
+> such requirement - vfs_parse_fs_string() and rbd_parse_options().
+> 
+> You seem to deal with the former later in the patchset, but I don't see
+> anything for the latter...
 
-Please add something like
+FWIW, I strongly dislike fs_param_v_optional.  I mean, look at the
+gfs2 usecase:
+	quota			->uint_64 = 0		->negated = false
+	quota=off		->uint_32 = 1		->negated = false
+	quota=account		->uint_32 = 2		->negated = false
+	quota=on		->uint_32 = 3		->negated = false
+	noquota			->boolean = false	->negated = true
+with gfs2 postprocessing for that thing being
+                if (result.negated)
+                        args->ar_quota = GFS2_QUOTA_OFF;
+                else if (result.int_32 > 0)
+                        args->ar_quota = opt_quota_values[result.int_32];
+                else   
+                        args->ar_quota = GFS2_QUOTA_ON;
+                break;
+and that relies upon having enum opt_quota members associated with
+off/account/on starting from 1.  I mean, WTF?  What we really want is
+	quota		GFS2_QUOTA_ON
+	quota=on	GFS2_QUOTA_ON
+	quota=account	GFS2_QUOTA_ACCOUNT
+	quota=off	GFS2_QUOTA_OFF
+	noquota		GFS2_QUOTA_OFF
 
-if (mutex_lock_killable(&task->signal->cred_guard_mutex))
-  goto out;
+I certainly agree that flag/NULL string is ugly; do we even want to keep
+fs_value_is_flag?  It's internal-only, so we can bloody well turn it
+into fs_value_is_string and ->string is NULL...  And sure, ->has_value
+is redundant - if nothing else, it would make a lot more sense as
+static inline bool param_has_value(const struct fs_parameter *param)
+{
+	return !!param->string;
+}
+But I really wonder if we should keep breeding kludges.  Look at the
+use cases, including the yet-to-be-merged ones.
+	1) GFS2: see above
+	2) ceph: fsc/nofsc/fsc=...
+	3) ext4: init_itable/noinit_itable/init_itable=<number>
+	4) nfs: fsc/nofsc/fsc=...
 
-here, and drop the mutex after fget_task().
+All of that is trivially handled by splitting the opt=... and opt
+cases.  We have two such in the tree and two more in posted patchsets.
+Plus one more that ext4 patchset breaks, AFAICS (barrier).  Out of
+several hundreds.  Everything else either requires = in all cases
+or rejects it in all cases.
 
-> +       if (!ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS))
-> +               goto out;
-> +       ret = -EBADF;
-> +       file = fget_task(task, args.fd);
-> +       if (!file)
-> +               goto out;
-> +
-> +       fd = get_unused_fd_flags(fd_flags);
-> +       if (fd < 0) {
-> +               ret = fd;
-> +               goto out_put_file;
-> +       }
-> +       /*
-> +        * security_file_receive must come last since it may have side effects
-> +        * and cannot be reversed.
-> +        */
-> +       ret = security_file_receive(file);
-> +       if (ret)
-> +               goto out_put_fd;
-> +
-> +       fd_install(fd, file);
-> +       put_task_struct(task);
-> +       return fd;
-> +
-> +out_put_fd:
-> +       put_unused_fd(fd);
-> +out_put_file:
-> +       fput(file);
-> +out:
-> +       put_task_struct(task);
-> +       return ret;
-> +}
+So how about a flag for "takes no arguments", set automatically by
+fsparam_flag()/fsparam_flag_no(), with fs_lookup_key() taking an
+extra "comes with argument" flag and filtering according to it?
+Rules:
+	foo		=> "foo", true
+	foo=		=> "foo", false
+	foo=bar		=> "foo", false
+And to hell with the "optional" flag; for gfs2 we'd end up with
+	fsparam_flag_no("quota", Opt_quota_flag),			// quota|noquota
+	fsparam_flag_enum("quota", Opt_quota, gfs2_param_quota),	// quota={on|account|off}
+Postprocessing won't be any harder, really - we could bloody well do
+	case Opt_quota_flag:
+		result.int_32 = result.negated ? GFS2_QUOTA_OFF : GFS2_QUOTA_ON;
+		/* fallthru */
+	case Opt_quota:
+		args->ar_quota = result.int_32;
+                break;
+with gfs2_param_quota having the right values in it, instead of
+that intermediate enum.
+
+All ->has_value checks go away that way, AFAICS.  With minimal
+impact on yet-to-be-merged series...
