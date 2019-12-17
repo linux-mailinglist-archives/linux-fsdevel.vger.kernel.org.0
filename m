@@ -2,97 +2,200 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 173F912346D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 19:08:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9D651234DC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 19:31:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728062AbfLQSIq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Dec 2019 13:08:46 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:45278 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727865AbfLQSIq (ORCPT
+        id S1727940AbfLQSbp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Dec 2019 13:31:45 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:48912 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727005AbfLQSbp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Dec 2019 13:08:46 -0500
-Received: by mail-io1-f66.google.com with SMTP id i11so8937762ioi.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2019 10:08:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZIJyvkgniYTRbfVXcX1GxMAL0QR6Z8+gBwpFH9B/c4o=;
-        b=XlMSk7A88wGRbKPmBiK+0N9lxDaruaINHiTIT+XEKts5pKGzy9dnHPdZZo2HouzJj2
-         UezX+XPJHeZ+F5CfDjtpJ5XdSDJtZ+koIOi7Sd+bzyL9Qgqr54KjVIz1Gz+5DB8dDNcj
-         qxT42ZDVS8ut17EXMMS23SKbC0c62AVtHHDsQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZIJyvkgniYTRbfVXcX1GxMAL0QR6Z8+gBwpFH9B/c4o=;
-        b=pZ3f7AcO8IEc9sNeaI6MnaAio55hN1YLogsNwbIw93j+g++k98l3cosgdRbG5/21Ji
-         2dNgH5mnqu2Fl69Ve7a31XadZfFcy+c09/1YMoc/AKjN/EMHeI22a9leJiK6Pjf/aJg+
-         eF/ffCRlA6WPf49KROhahLF7fPz4lMxD7CHK1SIba2m/34gqeY76DZalNvQmHzocgBQd
-         C0VjhxEQZqqGR8CeWD5+TK/WHXkBMjHLW9eb3GMSGLU3jaYDFMwbdQSrUNC/kQMw6XZU
-         CSLjAoJ4rBG9JDymOCzkBpWcaNHoGkUo6FgZo02BTR6zh0P3v1Mlyolvqcc2BPwP3QQE
-         4BLw==
-X-Gm-Message-State: APjAAAUfqlk6rvZSIKqobzlCqLYt+E8J/3/73vN5HScKQeaUZN7e1iAY
-        PT3HnQh2OJv5mVxzLs+DYCgtYASPxz9x+ymrNGo0wA==
-X-Google-Smtp-Source: APXvYqxRQov73i2S2wI8koP3gXNvUCrtrWmcjpiZqNtU+6+fSqNO+yoiT72worXPzEwwctA/CUwaC06tsekviuWP3Kc=
-X-Received: by 2002:a6b:6f07:: with SMTP id k7mr4799644ioc.174.1576606125798;
- Tue, 17 Dec 2019 10:08:45 -0800 (PST)
+        Tue, 17 Dec 2019 13:31:45 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ihHdH-0002ou-80; Tue, 17 Dec 2019 18:31:43 +0000
+Date:   Tue, 17 Dec 2019 18:31:43 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH 09/12] fs_parser: "string" with missing value is a "flag"
+Message-ID: <20191217183143.GC4203@ZenIV.linux.org.uk>
+References: <20191128155940.17530-1-mszeredi@redhat.com>
+ <20191128155940.17530-10-mszeredi@redhat.com>
+ <20191217173259.GA4203@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-References: <20191212145042.12694-1-labbott@redhat.com> <CAOi1vP9E2yLeFptg7o99usEi=x3kf=NnHYdURXPhX4vTXKCTCQ@mail.gmail.com>
- <fbe90a0b-cf24-8c0c-48eb-6183852dfbf1@redhat.com> <CAHk-=wh7Wuk9QCP6oH5Qc1a89_X6H1CHRK_OyB4NLmX7nRYJeA@mail.gmail.com>
- <cf4c9634-1503-d182-cb12-810fb969bc96@redhat.com> <20191212213609.GK4203@ZenIV.linux.org.uk>
- <CAJfpegv_zY6w6=pOL0x=sjuQmGae0ymOafZXjyAdNEHj+EKyNA@mail.gmail.com> <32253.1576604947@warthog.procyon.org.uk>
-In-Reply-To: <32253.1576604947@warthog.procyon.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 17 Dec 2019 19:08:34 +0100
-Message-ID: <CAJfpeguwy+dyPmad8RE5JmUce8ecze8Kccj--YgXaEHThxeT4g@mail.gmail.com>
-Subject: Re: [PATCH] vfs: Don't reject unknown parameters
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Laura Abbott <labbott@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeremi Piotrowski <jeremi.piotrowski@gmail.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191217173259.GA4203@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 6:49 PM David Howells <dhowells@redhat.com> wrote:
->
-> Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> > > So you could bloody well just leave recognition (and handling) of "source"
-> > > to the caller, leaving you with just this:
-> > >
-> > >         if (strcmp(param->key, "source") == 0)
-> > >                 return -ENOPARAM;
-> > >         /* Just log an error for backwards compatibility */
-> > >         errorf(fc, "%s: Unknown parameter '%s'", fc->fs_type->name, param->key);
-> > >         return 0;
-> >
-> > Which is fine for the old mount(2) interface.
-> >
-> > But we have a brand new API as well; do we really need to carry these
-> > backward compatibility issues forward?  I mean checking if a
-> > param/flag is supported or not *is* useful and lacking that check is
-> > the source of numerous headaches in legacy interfaces (just take the
-> > open(2) example and the introduction of O_TMPFILE).
->
-> The problem with what you're suggesting is that you can't then make
-> /sbin/mount to use the new syscalls because that would change userspace
-> behaviour - unless you either teach /sbin/mount which filesystems discard
-> which errors from unrecognised options or pass a flag to the kernel to shift
-> into or out of 'strict' mode.
+On Tue, Dec 17, 2019 at 05:32:59PM +0000, Al Viro wrote:
 
-The latter has minor cost, so we can add it easily.  Long term I think
-it makes sense to move this mess up to userspace, and hence let
-util-linux deal with it.
+> No.  This is simply wrong - as it is, there's no difference between
+> "foo" and "foo=".  Passing NULL in the latter case is wrong, but
+> this is not a good fix.
+> 
+> This
+>         if (v_size > 0) {
+>                 param.string = kmemdup_nul(value, v_size, GFP_KERNEL);
+>                 if (!param.string)
+>                         return -ENOMEM;
+>         }
+> should really be
+> 	if (value) {
+>                 param.string = kmemdup_nul(value, v_size, GFP_KERNEL);
+>                 if (!param.string)
+>                         return -ENOMEM;
+>         }
+> and your chunk should be conditional upon value, not v_size.  The
+> same problem exists for rbd.c
 
-Thanks,
-Miklos
+How about this (completely untested):
+
+Pass consistent param->type to fs_parse()
+
+As it is, vfs_parse_fs_string() makes "foo" and "foo=" indistinguishable;
+both get fs_value_is_string for ->type and NULL for ->string.  To make
+it even more unpleasant, that combination is impossible to produce with
+fsconfig().
+
+Much saner rules would be
+	"foo"		=> fs_value_is_flag, NULL
+	"foo="		=> fs_value_is_string, ""
+	"foo=bar"	=> fs_value_is_string, "bar"
+All cases are distinguishable, all results are expressable by fsconfig(),
+->has_value checks are much simpler that way (to the point of the field
+being useless) and quite a few regressions go away (gfs2 has no business
+accepting -o nodebug=, for example).
+
+Partially based upon patches from Miklos.
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 2b184563cd32..9fc686be81ca 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -6433,7 +6433,7 @@ static int rbd_parse_options(char *options, struct rbd_parse_opts_ctx *pctx)
+ 		if (*key) {
+ 			struct fs_parameter param = {
+ 				.key	= key,
+-				.type	= fs_value_is_string,
++				.type	= fs_value_is_flag,
+ 			};
+ 			char *value = strchr(key, '=');
+ 			size_t v_len = 0;
+@@ -6443,14 +6443,11 @@ static int rbd_parse_options(char *options, struct rbd_parse_opts_ctx *pctx)
+ 					continue;
+ 				*value++ = 0;
+ 				v_len = strlen(value);
+-			}
+-
+-
+-			if (v_len > 0) {
+ 				param.string = kmemdup_nul(value, v_len,
+ 							   GFP_KERNEL);
+ 				if (!param.string)
+ 					return -ENOMEM;
++				param.type = fs_value_is_string;
+ 			}
+ 			param.size = v_len;
+ 
+diff --git a/fs/fs_context.c b/fs/fs_context.c
+index 138b5b4d621d..9097421cbba5 100644
+--- a/fs/fs_context.c
++++ b/fs/fs_context.c
+@@ -175,14 +175,15 @@ int vfs_parse_fs_string(struct fs_context *fc, const char *key,
+ 
+ 	struct fs_parameter param = {
+ 		.key	= key,
+-		.type	= fs_value_is_string,
++		.type	= fs_value_is_flag,
+ 		.size	= v_size,
+ 	};
+ 
+-	if (v_size > 0) {
++	if (value) {
+ 		param.string = kmemdup_nul(value, v_size, GFP_KERNEL);
+ 		if (!param.string)
+ 			return -ENOMEM;
++		param.type = fs_value_is_string;
+ 	}
+ 
+ 	ret = vfs_parse_fs_param(fc, &param);
+diff --git a/fs/fs_parser.c b/fs/fs_parser.c
+index d1930adce68d..65842cd2e320 100644
+--- a/fs/fs_parser.c
++++ b/fs/fs_parser.c
+@@ -85,7 +85,6 @@ int fs_parse(struct fs_context *fc,
+ 	const struct fs_parameter_enum *e;
+ 	int ret = -ENOPARAM, b;
+ 
+-	result->has_value = !!param->string;
+ 	result->negated = false;
+ 	result->uint_64 = 0;
+ 
+@@ -95,7 +94,7 @@ int fs_parse(struct fs_context *fc,
+ 		 * "xxx" takes the "no"-form negative - but only if there
+ 		 * wasn't an value.
+ 		 */
+-		if (result->has_value)
++		if (param->type != fs_value_is_flag)
+ 			goto unknown_parameter;
+ 		if (param->key[0] != 'n' || param->key[1] != 'o' || !param->key[2])
+ 			goto unknown_parameter;
+@@ -127,14 +126,13 @@ int fs_parse(struct fs_context *fc,
+ 	case fs_param_is_u64:
+ 	case fs_param_is_enum:
+ 	case fs_param_is_string:
+-		if (param->type != fs_value_is_string)
+-			goto bad_value;
+-		if (!result->has_value) {
++		if (param->type == fs_value_is_string)
++			break;
++		if (param->type == fs_value_is_flag) {
+ 			if (p->flags & fs_param_v_optional)
+ 				goto okay;
+-			goto bad_value;
+ 		}
+-		/* Fall through */
++		goto bad_value;
+ 	default:
+ 		break;
+ 	}
+@@ -144,8 +142,7 @@ int fs_parse(struct fs_context *fc,
+ 	 */
+ 	switch (p->type) {
+ 	case fs_param_is_flag:
+-		if (param->type != fs_value_is_flag &&
+-		    (param->type != fs_value_is_string || result->has_value))
++		if (param->type != fs_value_is_flag)
+ 			return invalf(fc, "%s: Unexpected value for '%s'",
+ 				      desc->name, param->key);
+ 		result->boolean = true;
+@@ -206,9 +203,6 @@ int fs_parse(struct fs_context *fc,
+ 	case fs_param_is_fd: {
+ 		switch (param->type) {
+ 		case fs_value_is_string:
+-			if (!result->has_value)
+-				goto bad_value;
+-
+ 			ret = kstrtouint(param->string, 0, &result->uint_32);
+ 			break;
+ 		case fs_value_is_file:
+diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
+index dee140db6240..45323203128b 100644
+--- a/include/linux/fs_parser.h
++++ b/include/linux/fs_parser.h
+@@ -72,7 +72,6 @@ struct fs_parameter_description {
+  */
+ struct fs_parse_result {
+ 	bool			negated;	/* T if param was "noxxx" */
+-	bool			has_value;	/* T if value supplied to param */
+ 	union {
+ 		bool		boolean;	/* For spec_bool */
+ 		int		int_32;		/* For spec_s32/spec_enum */
