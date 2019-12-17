@@ -2,148 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1AF51224D9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 07:40:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0BBB1224FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 07:47:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbfLQGkd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Dec 2019 01:40:33 -0500
-Received: from mout-p-101.mailbox.org ([80.241.56.151]:53806 "EHLO
-        mout-p-101.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726875AbfLQGkc (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Dec 2019 01:40:32 -0500
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 47cT6M2DP7zKmbN;
-        Tue, 17 Dec 2019 07:40:27 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
-        with ESMTP id AVgNK5XsT0lw; Tue, 17 Dec 2019 07:40:19 +0100 (CET)
-Date:   Tue, 17 Dec 2019 17:39:50 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        id S1726943AbfLQGrJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Dec 2019 01:47:09 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53408 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726704AbfLQGrI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 17 Dec 2019 01:47:08 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 39B42AC53;
+        Tue, 17 Dec 2019 06:47:05 +0000 (UTC)
+Date:   Tue, 17 Dec 2019 17:46:50 +1100
+From:   Aleksa Sarai <asarai@suse.de>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     'Aleksa Sarai' <cyphar@cyphar.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Jeff Layton <jlayton@kernel.org>,
         "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
         Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-ia64@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-api@vger.kernel.org,
-        Jiri Olsa <jolsa@redhat.com>, linux-arch@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        David Drysdale <drysdale@google.com>,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, linuxppc-dev@lists.ozlabs.org,
-        dev@opencontainers.org, Andy Lutomirski <luto@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        libc-alpha@sourceware.org, linux-parisc@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, netdev@vger.kernel.org,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        linux-alpha@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        bpf@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        containers@lists.linux-foundation.org
-Subject: Re: [PATCH v18 11/13] open: introduce openat2(2) syscall
-Message-ID: <20191217063950.5oqwwqz5p3bu7t2x@yavin.dot.cyphar.com>
-References: <20191206141338.23338-1-cyphar@cyphar.com>
- <20191206141338.23338-12-cyphar@cyphar.com>
- <20191216192158.B9F19832924A@oldenburg2.str.redhat.com>
+        "dev@opencontainers.org" <dev@opencontainers.org>,
+        "containers@lists.linux-foundation.org" 
+        <containers@lists.linux-foundation.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH] openat2: switch to __attribute__((packed)) for open_how
+Message-ID: <20191217064650.cd4bfb5d2koe6j7h@yavin.dot.cyphar.com>
+References: <20191213222351.14071-1-cyphar@cyphar.com>
+ <a328b91d-fd8f-4f27-b3c2-91a9c45f18c0@rasmusvillemoes.dk>
+ <20191215123443.jmfnrtgbscdwfohc@yavin.dot.cyphar.com>
+ <b26ef210ec5b42009cf09b1015065768@AcuMS.aculab.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vzwczu2ztdefrrfu"
+        protocol="application/pgp-signature"; boundary="pxbkdztdbvo4kssd"
 Content-Disposition: inline
-In-Reply-To: <20191216192158.B9F19832924A@oldenburg2.str.redhat.com>
+In-Reply-To: <b26ef210ec5b42009cf09b1015065768@AcuMS.aculab.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---vzwczu2ztdefrrfu
+--pxbkdztdbvo4kssd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On 2019-12-16, Florian Weimer <fweimer@redhat.com> wrote:
-> > diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> > index 1d338357df8a..58c3a0e543c6 100644
-> > --- a/include/uapi/linux/fcntl.h
-> > +++ b/include/uapi/linux/fcntl.h
-> > @@ -93,5 +93,40 @@
-> > =20
-> >  #define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
-> > =20
-> > +/*
-> > + * Arguments for how openat2(2) should open the target path. If @resol=
-ve is
-> > + * zero, then openat2(2) operates very similarly to openat(2).
-> > + *
-> > + * However, unlike openat(2), unknown bits in @flags result in -EINVAL=
- rather
-> > + * than being silently ignored. @mode must be zero unless one of {O_CR=
-EAT,
-> > + * O_TMPFILE} are set.
-> > + *
-> > + * @flags: O_* flags.
-> > + * @mode: O_CREAT/O_TMPFILE file mode.
-> > + * @resolve: RESOLVE_* flags.
-> > + */
-> > +struct open_how {
-> > +	__aligned_u64 flags;
-> > +	__u16 mode;
-> > +	__u16 __padding[3]; /* must be zeroed */
-> > +	__aligned_u64 resolve;
-> > +};
-> > +
-> > +#define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
-> > +#define OPEN_HOW_SIZE_LATEST	OPEN_HOW_SIZE_VER0
-> > +
-> > +/* how->resolve flags for openat2(2). */
-> > +#define RESOLVE_NO_XDEV		0x01 /* Block mount-point crossings
-> > +					(includes bind-mounts). */
-> > +#define RESOLVE_NO_MAGICLINKS	0x02 /* Block traversal through procfs-s=
-tyle
-> > +					"magic-links". */
-> > +#define RESOLVE_NO_SYMLINKS	0x04 /* Block traversal through all symlin=
-ks
-> > +					(implies OEXT_NO_MAGICLINKS) */
-> > +#define RESOLVE_BENEATH		0x08 /* Block "lexical" trickery like
-> > +					"..", symlinks, and absolute
-> > +					paths which escape the dirfd. */
-> > +#define RESOLVE_IN_ROOT		0x10 /* Make all jumps to "/" and ".."
-> > +					be scoped inside the dirfd
-> > +					(similar to chroot(2)). */
-> > =20
-> >  #endif /* _UAPI_LINUX_FCNTL_H */
+On 2019-12-16, David Laight <David.Laight@ACULAB.COM> wrote:
+> From:  Aleksa Sarai
+> > Sent: 15 December 2019 12:35
+> > On 2019-12-14, Rasmus Villemoes <linux@rasmusvillemoes.dk> wrote:
+> > > On 13/12/2019 23.23, Aleksa Sarai wrote:
+> > > > The design of the original open_how struct layout was such that it
+> > > > ensured that there would be no un-labelled (and thus potentially
+> > > > non-zero) padding to avoid issues with struct expansion, as well as
+> > > > providing a uniform representation on all architectures (to avoid
+> > > > complications with OPEN_HOW_SIZE versioning).
+> > > >
+> > > > However, there were a few other desirable features which were not
+> > > > fulfilled by the previous struct layout:
+> > > >
+> > > >  * Adding new features (other than new flags) should always result =
+in
+> > > >    the struct getting larger. However, by including a padding field=
+, it
+> > > >    was possible for new fields to be added without expanding the
+> > > >    structure. This would somewhat complicate version-number based
+> > > >    checking of feature support.
+> > > >
+> > > >  * A non-zero bit in __padding yielded -EINVAL when it should argua=
+bly
+> > > >    have been -E2BIG (because the padding bits are effectively
+> > > >    yet-to-be-used fields). However, the semantics are not entirely =
+clear
+> > > >    because userspace may expect -E2BIG to only signify that the
+> > > >    structure is too big. It's much simpler to just provide the guar=
+antee
+> > > >    that new fields will always result in a struct size increase, and
+> > > >    -E2BIG indicates you're using a field that's too recent for an o=
+lder
+> > > >    kernel.
+> > >
+> > > And when the first extension adds another u64 field, that padding has=
+ to
+> > > be added back in and checked for being 0, at which point the padding =
+is
+> > > again yet-to-be-used fields.
+> >=20
+> > Maybe I'm missing something, but what is the issue with
+> >=20
+> >   struct open_how {
+> >     u64 flags;
+> >     u64 resolve;
+> >     u16 mode;
+> > 	u64 next_extension;
+> >   } __attribute__((packed));
 >=20
-> Would it be possible to move these to a new UAPI header?
->=20
-> In glibc, we currently do not #include <linux/fcntl.h>.  We need some of
-> the AT_* constants in POSIX mode, and the header is not necessarily
-> namespace-clean.  If there was a separate header for openat2 support, we
-> could use that easily, and we would only have to maintain the baseline
-> definitions (which never change).
+> Compile anything that accesses it for (say) sparc and look at the object =
+code.
+> You really, really, REALLY, don't want to EVER use 'packed'.
 
-Sure, (assuming nobody objects) I can move it to "linux/openat2.h".
+Right, so it's related to the "garbage code" problem. As mentioned
+above, I wasn't aware it was as bad as folks in this thread have
+mentioned.
+
+> Just use u64 for all the fields.
+
+That is an option (and is the one that clone3 went with), but it's a bit
+awkward because umode_t is a u16 -- and it would be a waste of 6 bytes
+to store it as a u64. Arguably it could be extended but I personally
+find that to be very unlikely (and lots of other syscalls would need be
+updated).
+
+I'm just going to move the padding to the end and change the error for
+non-zero padding to -E2BIG.
+
+> Use 'flags' bits to indicate whether the additional fields should be look=
+ed at.
+> Error if a 'flags' bit requires a value that isn't passed in the structur=
+e.
+>=20
+> Then you can add an extra field and old source code recompiled with the
+> new headers will still work - because the 'junk' value isn't looked at.
+
+This problem is already handled entirely by copy_struct_from_user().
+
+It is true that for some new fields it will be necessary to add a new
+flag (such as passing fds -- where 0 is a valid value) but for most new
+fields (especially pointer or flag fields) it will not be necessary
+because the 0 value is equivalent to the old behaviour. It also allows
+us to entirely avoid accepting junk from userspace.
 
 --=20
 Aleksa Sarai
@@ -151,15 +144,24 @@ Senior Software Engineer (Containers)
 SUSE Linux GmbH
 <https://www.cyphar.com/>
 
---vzwczu2ztdefrrfu
+--pxbkdztdbvo4kssd
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXfh4MQAKCRCdlLljIbnQ
-EvJ/AP9e+RbEhnKlfXeue8RftgpgyUu8To5+ZOcmuoKfUFVefgEAmch0tDU0glq6
-a0g2iw25N8tzxhAIzQpE/p2HRuzcPgo=
-=p/bo
+iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAl34edcACgkQnhiqJn3b
+jbTUrQ/9EWPnCZlGMHHPgxyUQUwaE4kajhGnTsBLapKhdtsAfzkyJNqUPdSnipqB
+oAAFeriC/RGN9ktSBHM60IBnwk3nv70W3SNm8/GUVaXGmWHrkBFkuhujOSn22awm
+3jSxRKt+89I6NKoFBJPkxe9WQv6DecF8B9GWCn2sru2e/r105OHTe28EnPFqzBpQ
+XZ/f7D7729GVAIITr5H6NQfvM8P/Sf/ne1gzDxf6cFTrF734aGNF+AhpTgSA2uxz
+DVw1oQ6+HAcMdL6AixtdZgsN9Bm2nV9C4ndOEenV3rN6mG1Kn5ecz2RInuqKmmj9
+/9ETSRo9ZZpl6WGpbfDMRB+/6vsSXAwHv06LO2YXEIeoHnPN7Y8/0deB4KNBoQ3S
+jDzVHOKU2MToxsAkBPvyZ6UsKXJWLOT4QeiyOQeoExwzzu6K61pxtcHaXnKebheF
+2hCF6h0NaAtBCcO3/MrN5PEkZliY+KcpM5BCsefzfM3cAEuqSEx1LqShw0G+3dV2
+sGKHM0cfunvVas/8yawfs4qfEALCJR5Tnb2Kfveo/xd1qfT4+K54gPjkQqFvrkph
+pV7c6P2lyJrNFraB5uDb5UYFWXrxTXgZ3ZUpDoI7MfLSEGCTT2nL9n7IXuoEfX4W
+jj7ipubi5ZdNDgXiSACHJHYzwIVJBPHiNq4mzoQjNKNb8kj1VTQ=
+=sK1O
 -----END PGP SIGNATURE-----
 
---vzwczu2ztdefrrfu--
+--pxbkdztdbvo4kssd--
