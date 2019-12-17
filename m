@@ -2,88 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FEDD122C97
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 14:11:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04517122C8F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 14:11:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728060AbfLQNLg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Dec 2019 08:11:36 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:45603 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726962AbfLQNLg (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Dec 2019 08:11:36 -0500
-Received: from [192.168.1.155] ([95.114.21.161]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1McpW6-1i8PmK0D1G-00a12l; Tue, 17 Dec 2019 14:11:22 +0100
-Subject: Re: [PATCH v7 01/13] exfat: add in-memory and on-disk structures and
- headers
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        'Markus Elfring' <Markus.Elfring@web.de>
-Cc:     linux-kernel@vger.kernel.org, 'Christoph Hellwig' <hch@lst.de>,
-        'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>,
-        'Sungjong Seo' <sj1557.seo@samsung.com>,
-        =?UTF-8?Q?=27Valdis_Kl=c4=93tnieks=27?= <valdis.kletnieks@vt.edu>,
-        linux-fsdevel@vger.kernel.org
-References: <20191213055028.5574-2-namjae.jeon@samsung.com>
- <CGME20191216135033epcas5p3f2ec096506b1a48535ce0796fef23b9e@epcas5p3.samsung.com>
- <088a50ad-dc67-4ff6-624d-a1ac2008b420@web.de>
- <002401d5b46d$543f7ee0$fcbe7ca0$@samsung.com>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Message-ID: <c6698d0c-d909-c9dc-5608-0b986d63a471@metux.net>
-Date:   Tue, 17 Dec 2019 14:10:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727924AbfLQNLN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Dec 2019 08:11:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55950 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726962AbfLQNLN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 17 Dec 2019 08:11:13 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9AFF1206EC;
+        Tue, 17 Dec 2019 13:11:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576588272;
+        bh=MBjhnS4pbGtJIVA4XIZ8dGLZ/kCHMLFVY+vctn19J/k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ma/PKp+Vfm2PyeHEsYGuY1nqOudhrAl7uYIQB4yTW+5YYl5f4K9vx1fV8QLaZLPar
+         KdKdPkWO9oSyN6/hHAeCXKtSST79v/fQWciXfvSxCNoIDyv8kplTnyjYLrC3Q7rP84
+         902BnAAkGdjFR2uFx3UflxAyEG8J6h4/F967jNZ4=
+Date:   Tue, 17 Dec 2019 14:11:09 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Julian Preis <julian.preis@fau.de>
+Cc:     devel@driverdev.osuosl.org, valdis.kletnieks@vt.edu,
+        Johannes Weidner <johannes.weidner@fau.de>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] drivers/staging/exfat: Fix spelling mistakes
+Message-ID: <20191217131109.GA3244372@kroah.com>
+References: <y>
+ <20191216141200.8414-1-julian.preis@fau.de>
 MIME-Version: 1.0
-In-Reply-To: <002401d5b46d$543f7ee0$fcbe7ca0$@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: tl
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:mh372I7jZZSLHn3TFj2C4vjsq8xUP2bJNTgyJkEC5Ux0+Q+dvGX
- xduxo7XdAI059eJX9/44Yq1irmLdP5UBBY+ObsaLvHjYn95DPmiz+YTuxxHDBmv6SCQv55G
- U4uujJDDY6ac+c4b+1mjOokJtGGEX++sEOpJyzMJPrbHHZqDKy48brfkVNi21uuE8m906G5
- omOFg0/1HD//Avp3Jp33w==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:yv7qDD8T/Ss=:C85R98w7NY3LaLz4fH72+J
- CO+BMGRbLbJDjY5Qga2WpvOMLY6UgQ4UYeqy33ixeCYRvRjnIaOdbHwDFoJOdJm5Pdm2VsFn3
- zWh3DNIIRqL7Xxj4sINX4W3BBKXUvdlwx10/jJVucKdSA0sJtckKA46mw8xu/AlR04f1htgyG
- 7hlQv8gg3AIfxTg1RFVJwG9DjF7ZumWA2eIEXg7v6Jc1qYT7XgsDhTuxkl37gtPpMbUgm5vLc
- 9QyVbWaIEg6j+WA1asbMiRM/0o2yif70shJk2UUl4nwAlRqsgZToERDMJS6rSeNLJfhnE/vnx
- ISWWxLubVufrIw9SL5ve5Ap6DkikkqAcI1yP+gYHyLvTIZPhmjZ0SI7r9xUYwTE5Bs2zxvDoW
- GJhhG+QskV7GFVX1Gw/McK66cWz6+SLrnHgoIdSKpw6zXl/IXurqUxPdaEQK28Fd2vmT7ZP6O
- PNok5eT2CzxlZFGvlBzl1QByynWUMve0PVV3SYx0cZomauHCotpfRizVrLyQvgLsSRiCU09ay
- M9r/VFccNmwmc4hgwwZUYqLAlcWYk+aXbFw4EaPGKqLoqeMVi40neS8AJVWVd9UgU1rVI+dP3
- mpMnPWJ+Uu/cbOQ7e5N/TrTctlcgDWT1CGnlBHlnakHAtEVEUrPSvOX+47HX0T310S6HgP2gp
- jouZliDWWxccY4D4zrktZshUO/bZaEkEJeS0Po9biAY4C7k1Rr/94iyPwTMW8Tq9BtWiNFchW
- L2ZD+2uO4Q9OOnsh7pyaOQvN1pEgqQNUr8jJJ88+tOUzfYNi6J3wF5+ejcjL6yV5txECnYAW8
- cqlKSewU9wHqvFFBbH8AR52mTyd7ss4xyJjq5CLtmnLgNCLteSP1RNGrI/mh4OGemypiI/W1u
- 0sNQoSx5ojcEPZs5MYBg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191216141200.8414-1-julian.preis@fau.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 17.12.19 01:02, Namjae Jeon wrote:
->> 2. Which source file should provide the corresponding implementation?
->>    (I did not find it in the update step “[PATCH v7 06/13] exfat: add exfat
->>    entry operations” so far.)
-> Good catch, I will move it on next version.
+On Mon, Dec 16, 2019 at 03:12:00PM +0100, Julian Preis wrote:
+> Fix spelling mistakes in exfat_core.c and exfat_super.c.
+> 
+> Co-developed-by: Johannes Weidner <johannes.weidner@fau.de>
+> Signed-off-by: Johannes Weidner <johannes.weidner@fau.de>
+> Signed-off-by: Julian Preis <julian.preis@fau.de>
+> ---
+> Changes in v2:
+> - Add email recipients according to get_maintainer.pl
+> - Add patch versions
+> - Use in-reply-to
+> 
+>  drivers/staging/exfat/exfat_core.c  |  6 +++---
+>  drivers/staging/exfat/exfat_super.c | 10 +++++-----
+>  2 files changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/staging/exfat/exfat_core.c b/drivers/staging/exfat/exfat_core.c
+> index d2d3447083c7..2c688cf91eac 100644
+> --- a/drivers/staging/exfat/exfat_core.c
+> +++ b/drivers/staging/exfat/exfat_core.c
+> @@ -1156,7 +1156,7 @@ static s32 __write_partial_entries_in_entry_set(struct super_block *sb,
+>  	num_entries = count;
+>  
+>  	while (num_entries) {
+> -		/* white per sector base */
+> +		/* write per sector base */
+>  		remaining_byte_in_sector = (1 << p_bd->sector_size_bits) - off;
+>  		copy_entries = min_t(s32,
+>  				     remaining_byte_in_sector >> DENTRY_SIZE_BITS,
+> @@ -1392,7 +1392,7 @@ struct entry_set_cache_t *get_entry_set_in_dir(struct super_block *sb,
+>  	while (num_entries) {
+>  		/*
+>  		 * instead of copying whole sector, we will check every entry.
+> -		 * this will provide minimum stablity and consistency.
+> +		 * this will provide minimum stability and consistency.
+>  		 */
+>  		entry_type = p_fs->fs_func->get_entry_type(ep);
+>  
+> @@ -1683,7 +1683,7 @@ static s32 extract_uni_name_from_name_entry(struct name_dentry_t *ep, u16 *unina
+>  }
+>  
+>  /* return values of exfat_find_dir_entry()
+> - * >= 0 : return dir entiry position with the name in dir
+> + * >= 0 : return dir entry position with the name in dir
+>   * -1 : (root dir, ".") it is the root dir itself
+>   * -2 : entry with the name does not exist
+>   */
+> diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
+> index 6e481908c59f..02548335ec82 100644
+> --- a/drivers/staging/exfat/exfat_super.c
+> +++ b/drivers/staging/exfat/exfat_super.c
+> @@ -984,7 +984,7 @@ static int ffsWriteFile(struct inode *inode, struct file_id_t *fid,
+>  
+>  	brelse(tmp_bh);
+>  
+> -	/* (3) update the direcoty entry */
+> +	/* (3) update the directory entry */
+>  	es = get_entry_set_in_dir(sb, &fid->dir, fid->entry,
+>  				  ES_ALL_ENTRIES, &ep);
+>  	if (!es)
+> @@ -1481,7 +1481,7 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
+>  
+>  			count = count_dos_name_entries(sb, &dir, TYPE_DIR);
+>  			if (count < 0) {
+> -				ret = count; /* propogate error upward */
+> +				ret = count; /* propagate error upward */
+>  				goto out;
+>  			}
+>  			info->NumSubdirs = count;
+> @@ -1548,7 +1548,7 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
+>  
+>  		count = count_dos_name_entries(sb, &dir, TYPE_DIR);
+>  		if (count < 0) {
+> -			ret = count; /* propogate error upward */
+> +			ret = count; /* propagate error upward */
+>  			goto out;
+>  		}
+>  		info->NumSubdirs += count;
+> @@ -3689,7 +3689,7 @@ static int exfat_fill_super(struct super_block *sb, void *data, int silent)
+>  
+>  	/*
+>  	 * GFP_KERNEL is ok here, because while we do hold the
+> -	 * supeblock lock, memory pressure can't call back into
+> +	 * superblock lock, memory pressure can't call back into
+>  	 * the filesystem, since we're only just about to mount
+>  	 * it and have no inodes etc active!
+>  	 */
+> -- 
+> 2.20.1
 
-By the way: do you think the driver is already stable enough for
-production use ? Are there any limitations we have to consider ?
+This patch does not apply to 5.5-rc2 at all.  Always work against the
+latest linux-next release in order to not duplicate work that others
+have done and give us a chance to apply patches to our development
+trees.
 
-I just have a client, who wants to use it in a semi-embedded (telemetry)
-device, for recording to an external USB drive.
+thanks,
 
-
---mtx
-
-
--- 
----
-Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
-werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
-GPG/PGP-Schlüssel zu.
----
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+greg k-h
