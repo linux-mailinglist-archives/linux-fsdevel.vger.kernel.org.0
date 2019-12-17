@@ -2,104 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5A1912357E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 20:19:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E9F5123599
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 20:25:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbfLQTTR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Dec 2019 14:19:17 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:47005 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726723AbfLQTTR (ORCPT
+        id S1727642AbfLQTZo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Dec 2019 14:25:44 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:30660 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727655AbfLQTZn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Dec 2019 14:19:17 -0500
-Received: by mail-qt1-f196.google.com with SMTP id 38so9582469qtb.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2019 11:19:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ODmK9wo9VaNV4g8hEuC0K1L+W5TivQmVB3AbYOv+BI8=;
-        b=z1CfHuj6B986ZD1ZGs0Q8OzQROds2VhFzGyYI3bcEV+9YHG1ygRN654/emI0AC2SHY
-         XYtrCvM4xLHHU/eX+yxHMfruEmTBkYdz9oXHl3D+t2IWVTr1G36GToMZU+Oe/MPmp8+p
-         +OeSGEBjgP66QCgMeMTHsS9pbBMz4cjIQYI2rPXGS9TQuubv6L1yv88i/1+TsyX5YBwa
-         clK57Q3Xhvdul1HZUFeWdF02QDb7zrtNuD8lJkiDrQIPeyWKqzbk4siXnpl03BQU4x8M
-         QeFXvYYkGOBKcgoMoxENWfFc204EFp1a9Hz4MxtgdkOtItM+SYlMyIHpKymVDJGuJXBd
-         yypQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ODmK9wo9VaNV4g8hEuC0K1L+W5TivQmVB3AbYOv+BI8=;
-        b=MdienvnwXCHls4THYkYGsM9xCpmgn/Znv4lfF4pwo9gYTQZnEKJMR8gcGvsRBazsfV
-         v8sNjfliDezecqLkWv1m1RXFwNERyWWtJ+zBqcDd5fY8W5QZPBIWxULwpjqcXJhrNbRp
-         jzCrIGQndLMIIrCEm9tYWcUw+ule/nLsX1wEeQgrBsAzJvKZen7qQ7Wtj8k+5ddtq+kP
-         j+H98uQshS/JARFpy9z3a8Ih3CLi07PQL8oe1frwTauUfuDMaQIkSLw8K1X5HpghYRhx
-         KCGj+wOwyO4nMuVhYyjCBDhGPxPCfBfn7kNqqHu2waDKfToAea1yaWysLhvfFgWMHM+V
-         ALJQ==
-X-Gm-Message-State: APjAAAXfGXjEWhclfA1w24bAFvX6COdRHtadpE9gVpTe2LTlA36r3P4w
-        6hR5rWWAouEIs/QW2CKDgsfusHmGjf7gyA==
-X-Google-Smtp-Source: APXvYqySbjoifYUQPBeJTdNUUbDi/Y0gvFQjT0LDOemy+yTrBVB4moo6B8U+B9SBb7I3KRo0M15sBA==
-X-Received: by 2002:ac8:5448:: with SMTP id d8mr5816750qtq.205.1576610355524;
-        Tue, 17 Dec 2019 11:19:15 -0800 (PST)
-Received: from ?IPv6:2620:10d:c0a8:1102:ce0:3629:8daa:1271? ([2620:10d:c091:480::4217])
-        by smtp.gmail.com with ESMTPSA id c20sm8713347qtc.13.2019.12.17.11.19.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2019 11:19:14 -0800 (PST)
-Subject: Re: [PATCH v6 10/28] btrfs: do sequential extent allocation in
- HMZONED mode
-To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
-        David Sterba <dsterba@suse.com>
-Cc:     Chris Mason <clm@fb.com>, Nikolay Borisov <nborisov@suse.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Hannes Reinecke <hare@suse.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        linux-fsdevel@vger.kernel.org
-References: <20191213040915.3502922-1-naohiro.aota@wdc.com>
- <20191213040915.3502922-11-naohiro.aota@wdc.com>
-From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <8fb85e67-d1ed-b31a-a6b7-25c52e48626b@toxicpanda.com>
-Date:   Tue, 17 Dec 2019 14:19:13 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
- Gecko/20100101 Thunderbird/68.3.0
+        Tue, 17 Dec 2019 14:25:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576610741;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=y/GSH9L+lqwwKL7tpQxfKMi8HXTb6wPETmNgD2aapTI=;
+        b=Yj4w6UN1z1X1lmSkcpQR60ZpawGS4sfw79OAgTnO72Xe3x7I8vq2sX9evfib0l8OaOy2qN
+        Bx+Za35xRd4RL7OhYvT/FiqmiLlD//qolutRmvtp3c2sa9RQcYt5tOLsrXH7NeED/bjF7r
+        1r543snuSVuVavvBS6eKPV8VlCM5LSY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-303-lXYPbbDPM76NbYRny-Qz6A-1; Tue, 17 Dec 2019 14:25:40 -0500
+X-MC-Unique: lXYPbbDPM76NbYRny-Qz6A-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 03576107ACC7;
+        Tue, 17 Dec 2019 19:25:38 +0000 (UTC)
+Received: from x2.localnet (ovpn-116-249.phx2.redhat.com [10.3.116.249])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8B983610E1;
+        Tue, 17 Dec 2019 19:25:29 +0000 (UTC)
+From:   Steve Grubb <sgrubb@redhat.com>
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        omosnace@redhat.com, dhowells@redhat.com, simo@redhat.com,
+        Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        Dan Walsh <dwalsh@redhat.com>, mpatel@redhat.com
+Subject: Re: [PATCH ghak90 V7 06/21] audit: contid limit of 32k imposed to avoid DoS
+Date:   Tue, 17 Dec 2019 14:25:29 -0500
+Message-ID: <2318345.msVmMTmnKu@x2>
+Organization: Red Hat
+In-Reply-To: <20191217184541.tagssqt4zujbanf6@madcap2.tricolour.ca>
+References: <cover.1568834524.git.rgb@redhat.com> <CAHC9VhTrKVQNvTPoX5xdx-TUX_ukpMv2tNFFqLa2Njs17GuQMg@mail.gmail.com> <20191217184541.tagssqt4zujbanf6@madcap2.tricolour.ca>
 MIME-Version: 1.0
-In-Reply-To: <20191213040915.3502922-11-naohiro.aota@wdc.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/12/19 11:08 PM, Naohiro Aota wrote:
-> On HMZONED drives, writes must always be sequential and directed at a block
-> group zone write pointer position. Thus, block allocation in a block group
-> must also be done sequentially using an allocation pointer equal to the
-> block group zone write pointer plus the number of blocks allocated but not
-> yet written.
+On Tuesday, December 17, 2019 1:45:41 PM EST Richard Guy Briggs wrote:
+> On 2019-11-08 12:49, Paul Moore wrote:
+> > On Thu, Oct 24, 2019 at 5:23 PM Richard Guy Briggs <rgb@redhat.com> 
+wrote:
+> > > On 2019-10-10 20:38, Paul Moore wrote:
+> > > > On Fri, Sep 27, 2019 at 8:52 AM Neil Horman <nhorman@tuxdriver.com> 
+wrote:
+> > > > > On Wed, Sep 18, 2019 at 09:22:23PM -0400, Richard Guy Briggs wrote:
+> > > > > > Set an arbitrary limit on the number of audit container
+> > > > > > identifiers to
+> > > > > > limit abuse.
+> > > > > > 
+> > > > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > > > > ---
+> > > > > > kernel/audit.c | 8 ++++++++
+> > > > > > kernel/audit.h | 4 ++++
+> > > > > > 2 files changed, 12 insertions(+)
+> > > > > > 
+> > > > > > diff --git a/kernel/audit.c b/kernel/audit.c
+> > > > > > index 53d13d638c63..329916534dd2 100644
+> > > > > > --- a/kernel/audit.c
+> > > > > > +++ b/kernel/audit.c
+> > > > 
+> > > > ...
+> > > > 
+> > > > > > @@ -2465,6 +2472,7 @@ int audit_set_contid(struct task_struct
+> > > > > > *task, u64 contid) newcont->owner = current;
+> > > > > > refcount_set(&newcont->refcount, 1);
+> > > > > > list_add_rcu(&newcont->list, &audit_contid_hash[h]);
+> > > > > > +                             audit_contid_count++;
+> > > > > > } else {
+> > > > > > rc = -ENOMEM;
+> > > > > > goto conterror;
+> > > > > > diff --git a/kernel/audit.h b/kernel/audit.h
+> > > > > > index 162de8366b32..543f1334ba47 100644
+> > > > > > --- a/kernel/audit.h
+> > > > > > +++ b/kernel/audit.h
+> > > > > > @@ -219,6 +219,10 @@ static inline int audit_hash_contid(u64
+> > > > > > contid)
+> > > > > > return (contid & (AUDIT_CONTID_BUCKETS-1));
+> > > > > > }
+> > > > > > 
+> > > > > > +extern int audit_contid_count;
+> > > > > > +
+> > > > > > +#define AUDIT_CONTID_COUNT   1 << 16
+> > > > > > +
+> > > > > 
+> > > > > Just to ask the question, since it wasn't clear in the changelog,
+> > > > > what
+> > > > > abuse are you avoiding here?  Ostensibly you should be able to
+> > > > > create as
+> > > > > many container ids as you have space for, and the simple creation
+> > > > > of
+> > > > > container ids doesn't seem like the resource strain I would be
+> > > > > concerned
+> > > > > about here, given that an orchestrator can still create as many
+> > > > > containers as the system will otherwise allow, which will consume
+> > > > > significantly more ram/disk/etc.
+> > > > 
+> > > > I've got a similar question.  Up to this point in the patchset, there
+> > > > is a potential issue of hash bucket chain lengths and traversing them
+> > > > with a spinlock held, but it seems like we shouldn't be putting an
+> > > > arbitrary limit on audit container IDs unless we have a good reason
+> > > > for it.  If for some reason we do want to enforce a limit, it should
+> > > > probably be a tunable value like a sysctl, or similar.
+> > > 
+> > > Can you separate and clarify the concerns here?
+> > 
+> > "Why are you doing this?" is about as simple as I can pose the question.
 > 
-> Sequential allocation function find_free_extent_zoned() bypass the checks
-> in find_free_extent() and increase the reserved byte counter by itself. It
-> is impossible to revert once allocated region in the sequential allocation,
-> since it might race with other allocations and leave an allocation hole,
-> which breaks the sequential write rule.
+> It was more of a concern for total system resources, primarily memory,
+> but this is self-limiting and an arbitrary concern.
 > 
-> Furthermore, this commit introduce two new variable to struct
-> btrfs_block_group. "wp_broken" indicate that write pointer is broken (e.g.
-> not synced on a RAID1 block group) and mark that block group read only.
-> "zone_unusable" keeps track of the size of once allocated then freed region
-> in a block group. Such region is never usable until resetting underlying
-> zones.
-> 
-> This commit also introduce "bytes_zone_unusable" to track such unusable
-> bytes in a space_info. Pinned bytes are always reclaimed to
-> "bytes_zone_unusable". They are not usable until resetting them first.
-> 
+> The other limit of depth of nesting has different concerns that arise
+> depending on how reporting is done.
 
-Please separate this out into it's own patch, these things are a bear as it is 
-to review, it doesn't help that I need to keep track of two different things per 
-patch.  Thanks,
+Well, there is a limit on the audit record size. So, whatever is being sent 
+in the record plus the size of the timestamp deducted from 
+MAX_AUDIT_MESSAGE_LENGTH (8970) is the limit. That can be divided by however 
+many ID's fit in that space and you have the real limit.
 
-Josef
+-Steve
+
+-Steve
+
+
+
