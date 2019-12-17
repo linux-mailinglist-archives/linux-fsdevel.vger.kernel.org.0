@@ -2,86 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42A1D1235C5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 20:34:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F1F11235DA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Dec 2019 20:40:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727987AbfLQTdw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Dec 2019 14:33:52 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:36801 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727965AbfLQTdu (ORCPT
+        id S1728099AbfLQTkB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Dec 2019 14:40:01 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:43458 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727431AbfLQTkA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Dec 2019 14:33:50 -0500
-Received: by mail-qk1-f196.google.com with SMTP id a203so8252114qkc.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2019 11:33:49 -0800 (PST)
+        Tue, 17 Dec 2019 14:40:00 -0500
+Received: by mail-lj1-f196.google.com with SMTP id a13so12279283ljm.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2019 11:39:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=EK16g3nUco063ej0O/BC/spw4fg99/8/32wGo+b7saE=;
-        b=TQ3hjYhjrGEDedL07c2Z63vTbFqVSYFU5QxaPf5fcid3ygZuk3lDoskGq6AeeCDWTi
-         Sq7DP2CmsE/ewCmT84ItW1bIHPretCak9Ph4YFt3CWJrkCBhPsI/A28F0s2IIErU9Fgc
-         gRfkyNA1otoRju3bnzwY76firCHpbTVVdBx54XPNH0y5lKJf8RoaCSs9RxrfM39HUpYB
-         PvS8uJfF93NlfYABPHRhMcxxt1EOTHFZmWG9XLB2JnG1fqxCpHnvs5MRGivUfxJJUiTM
-         mc5qj2mYjNlUU2znQ4QOoQ5wCt8KzbMkfF4TWoaDA0hJpSKEW1Nri9G2JidUXl3zS8tM
-         FNgQ==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qFRWpBT/yna7msZCz1h2wfxEJHa/dpTRSDTuMPZJuko=;
+        b=aMhd1gYr/CaA40gJd+Y5v2iKz3PpftHLH7meUakQxXR667vcpSEeG+f7RRgZ9EScB8
+         QPC5XzSuBsPm691KBjptv6ye07x5hIgbc7KafGV8ZlGArW6KOkIPnZeOx0iU0AevTOka
+         8z9zZfU3hjnoqjS219RuVLiUlb7YJo5q+60u4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=EK16g3nUco063ej0O/BC/spw4fg99/8/32wGo+b7saE=;
-        b=E3KXmP48C9smndpBZcNx5BYNyOqtqa8wT23BqNQ68cJBTi79rStDRzIQ/KxeYsoo0k
-         QvhW1+W3eXd8uJxlH6KTq5q0THFts64RxGB/7ACZR1hQz70I99ABr+GTjt6O+NsGldU8
-         J4b+G+ZLnYKjZNYMKbZCsHS+buQ+qCabd3CCZUaHE4GWu79oB5+WlPWmlsX3++nV3U/j
-         Yrjd2UoYUc9Z2ARg23nV9oKoigPwHclo5YXWFEZc4jywXFl9Kgyy4Tg2AXbo0AzLw22l
-         RSKlFFv5X2zbL902RqLFDgi7yplvs7R7StlJUaWLdKd4S840PrioCebA8uVagzWLMKhd
-         ZINA==
-X-Gm-Message-State: APjAAAXYUPUUgjvTyGSEjey9E9E9/EQFO4b8YB7mnx8OrYWDqxxMZeM0
-        MdMG4AFmqYie/zuP5bE4DGZkFv1wI3XdGA==
-X-Google-Smtp-Source: APXvYqzgqQC6OfWmPeZu3mxEl5IgaCYiEYPOjpb9WJ9RNANKj1L42lA+xpK6lYwQc4s92XOQdNasuw==
-X-Received: by 2002:a37:354:: with SMTP id 81mr3057845qkd.276.1576611228868;
-        Tue, 17 Dec 2019 11:33:48 -0800 (PST)
-Received: from ?IPv6:2620:10d:c0a8:1102:ce0:3629:8daa:1271? ([2620:10d:c091:480::4217])
-        by smtp.gmail.com with ESMTPSA id i5sm1065924qtv.80.2019.12.17.11.33.47
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qFRWpBT/yna7msZCz1h2wfxEJHa/dpTRSDTuMPZJuko=;
+        b=XSH9XaE5gzifYjmexeTvyw1MUm7UGz0dzOVcXiSG2HpUMEzEvI3WdzBn7wvVw3rR0u
+         KEkM2uxsxn88AUzzpDsKtslHeR90jlvGDgo+pYxUKaZpWCmPS2k2YaYVscp+jYAqvQvM
+         CXNkLpEkdt2BTuvc0s8HkW/+4fZiSFKX1K9cpUk9UES9rT1L/xHUkOrNJxYGeFfyo9eI
+         oFp/KL1/+DyyxihydZz/P8GQGjmojtv8tmg+NG0K/NpWtxECzZit6kS1Vcr+Zpxs1RlP
+         WEAiQW9gP/8jX18aqAV8EsGaC99+DRyynBUJLwyWCbhRjcT1Gc63UcanhuLIrU3fbARm
+         cR3A==
+X-Gm-Message-State: APjAAAVlEbymun9tjaemsFKew9iqARCcuRDVetcCCz+tmacB9AqiGknq
+        Hu3Xg2+5+5OvlefiNKFyC2aYoDT+BXc=
+X-Google-Smtp-Source: APXvYqwlDNJ/hqyz4r56O/Y/KpMNBqgyPB+W+j7LQ0ucLiYuJvn0AespLmbI5EpaC0IKXH9vSaVUIg==
+X-Received: by 2002:a2e:7f08:: with SMTP id a8mr4329705ljd.164.1576611598120;
+        Tue, 17 Dec 2019 11:39:58 -0800 (PST)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id s13sm392385lje.35.2019.12.17.11.39.57
+        for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2019 11:33:48 -0800 (PST)
-Subject: Re: [PATCH v6 13/28] btrfs: reset zones of unused block groups
-To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
-        David Sterba <dsterba@suse.com>
-Cc:     Chris Mason <clm@fb.com>, Nikolay Borisov <nborisov@suse.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Hannes Reinecke <hare@suse.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        linux-fsdevel@vger.kernel.org
-References: <20191213040915.3502922-1-naohiro.aota@wdc.com>
- <20191213040915.3502922-14-naohiro.aota@wdc.com>
-From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <75f4144f-6e2b-ea11-f4cd-a749e16d2696@toxicpanda.com>
-Date:   Tue, 17 Dec 2019 14:33:47 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
- Gecko/20100101 Thunderbird/68.3.0
+        Tue, 17 Dec 2019 11:39:57 -0800 (PST)
+Received: by mail-lj1-f175.google.com with SMTP id m6so12311784ljc.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2019 11:39:57 -0800 (PST)
+X-Received: by 2002:a2e:9ad8:: with SMTP id p24mr4517160ljj.148.1576611596942;
+ Tue, 17 Dec 2019 11:39:56 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191213040915.3502922-14-naohiro.aota@wdc.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191217143948.26380-1-axboe@kernel.dk> <20191217143948.26380-5-axboe@kernel.dk>
+In-Reply-To: <20191217143948.26380-5-axboe@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 17 Dec 2019 11:39:41 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgcPAfOSigMf0xwaGfVjw413XN3UPATwYWHrss+QuivhQ@mail.gmail.com>
+Message-ID: <CAHk-=wgcPAfOSigMf0xwaGfVjw413XN3UPATwYWHrss+QuivhQ@mail.gmail.com>
+Subject: Re: [PATCH 4/6] iomap: add struct iomap_ctx
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
+        Dave Chinner <david@fromorbit.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/12/19 11:09 PM, Naohiro Aota wrote:
-> For an HMZONED volume, a block group maps to a zone of the device. For
-> deleted unused block groups, the zone of the block group can be reset to
-> rewind the zone write pointer at the start of the zone.
-> 
-> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+On Tue, Dec 17, 2019 at 6:40 AM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> We pass a lot of arguments to iomap_apply(), and subsequently to the
+> actors that it calls. In preparation for adding one more argument,
+> switch them to using a struct iomap_ctx instead. The actor gets a const
+> version of that, they are not supposed to change anything in it.
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Looks generally like what I expected, but when looking at the patch I
+notice that the type of 'len' is crazy and wrong.
 
-But Dennis's async discard stuff is going in, so you may need to rebase onto 
-that and see how that affects this patch.  Thanks,
+It was wrong before too, though:
 
-Josef
+> -dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+
+'loff_t length' is not right.
+
+> +       loff_t pos = data->pos;
+> +       loff_t length = pos + data->len;
+
+And WTH is that? "pos + data->len" is not "length", that's end. And this:
+
+>         loff_t end = pos + length, done = 0;
+
+What? Now 'end' is 'pos+length', which is 'pos+pos+data->len'.
+
+WHAA?
+
+> @@ -1197,22 +1200,26 @@ dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  {
+> +       loff_t ret = 0, done = 0;
+
+More insanity. "ret" shouldn't be loff_t.
+
+dax_iomap_rw() returns a ssize_t.
+
+> +       loff_t count = data->len;
+
+More of this crazy things.
+
+>  iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
+
+This was wrong before.
+
+> +struct iomap_ctx {
+> +       struct inode    *inode;
+> +       loff_t          pos;
+> +       loff_t          len;
+> +       void            *priv;
+> +       unsigned        flags;
+> +};
+
+Please make 'len' be 'size_t' or something.
+
+If you're on a 32-bit architecture, you shouldn't be writing more than
+4GB in a go anyway.
+
+Is there some reason for this horrible case of "let's allow 64-bit sizes?"
+
+Because even if there is, it shouldn't be "loff_t". That's an
+_offset_. Not a length.
+
+            Linus
