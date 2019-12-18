@@ -2,147 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07678123F55
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 07:00:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8B6C123FED
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 08:01:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725882AbfLRGAh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Dec 2019 01:00:37 -0500
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:32327 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725797AbfLRGAh (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Dec 2019 01:00:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1576648836; x=1608184836;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fSOC8DItLFC2k9tNIUo01mC1E+iJ6rdd7oR/An7kxGo=;
-  b=Os/TrqohqktW1id67FUHS3VioMxrhACM0VSFirWvvTT1e3Pa9xBe20To
-   uUT6v9ReR9bjRS3/X5MB2TArRO4PwJc7GFQQXU879qYYNJGilDprQq7/H
-   eKiF+yIVWKNLBt7JbtQ+apgRQa0CbLdijrUalB5fBEejxeYIVgtMxXIEL
-   H0r1bJa+Xqvh7ReYXbwpzzYQIhSCF+Ae+McyEUjbX9gm0rZ4ajvMExk2v
-   ZoQnxsK5ZyugNW7uhMaeY4JtC0GnEYT+X4BY/Iyhumhw1QgJY2GuZ+4JO
-   qJSs2eP0/drJegSc69sZVcws2s+6Juw9ig/7TZQSLJuAx5BYjS5ksAUz7
-   g==;
-IronPort-SDR: xDYB64wK9rr2XgQ+Oi+CrjuAV8KS9+uL8+kSzvz5qtOUX7T/4VK0Op3QP6YC0TijlHd6Fmwn/8
- aQDysYiru0JaqcMV8yr0KSo/RGB3SeWOe9cu/0VuEdpGbqj6Fwg29t8PpRt28qj3hM35wPwY25
- QKE08XUkHGmDd0YO9qaaaN+BjLLqrw6epyqaZsQzMKOEj76SmOvsMGqmImRA5jkZb1Q5bGBH9F
- ANfBwqsnDdXTOq7lbFdKZk2Q18rs0Ufos4oK9yCIe5jfBEedVh13MyH+tqLpkbsyY8Ttz2UI77
- wyA=
-X-IronPort-AV: E=Sophos;i="5.69,328,1571673600"; 
-   d="scan'208";a="126383091"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 18 Dec 2019 14:00:36 +0800
-IronPort-SDR: U/g4g3pcurrRCBMJ1cQ6iBnGwqxFPcMIqBmeMM1/MyytWOe5tj4hF6ifhar7hUyi0f6eEtEiTK
- sNJDj7mX+51yFeFKgdFo/8j0hDb9KBVCtoE9PdIt3finipb7Qn2u58JHDoZcfP3QxtZCCey1SU
- DtiGWIj1jHzxlHzo1I7/+t7Ovlrhxrk/mfw4y4I9ypRGlc30eCV6N/jYsDVW7VvfUDZcGuiBC7
- X7MPjR1fCz/FW8XnJhLMGgM0MrGK3DKNKUvtzaxFwtGrfU9LFjpqiAcJn3rjERhjZNutbahgqJ
- A4+FEKsDigS+RIqwbZSZvEAB
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 21:54:59 -0800
-IronPort-SDR: 7mrb9L1dQ23lJTAu2FJulnZL64qPqq2QEYxeVcawIXoIGSQrtjnJEuJWD3K0sn7aPV60trVh5i
- Cre24t9gx14azt7RqRhBxNPuc3MEP5CZU1yCGzdZ0NeNPW8cICrKyA21gTESCto1qBHEWqSYrU
- sqs8zlAMWwArVVLg1HP78nb9oeXnZ08ZgC5lEip5HMMd6zwZt/l9ICIlIMoKikG3q0KbcWvMaz
- FMFUWp30YLhl3giBxgtblv+9yYcVzUG/A01cQ42quILjcXdTA8OutiMHZgvYsTvQ4Z1sTXJdyM
- ZA8=
-WDCIronportException: Internal
-Received: from naota.dhcp.fujisawa.hgst.com ([10.149.53.115])
-  by uls-op-cesaip01.wdc.com with SMTP; 17 Dec 2019 22:00:34 -0800
-Received: (nullmailer pid 877601 invoked by uid 1000);
-        Wed, 18 Dec 2019 06:00:33 -0000
-Date:   Wed, 18 Dec 2019 15:00:33 +0900
-From:   Naohiro Aota <naohiro.aota@wdc.com>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        Chris Mason <clm@fb.com>, Nikolay Borisov <nborisov@suse.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Hannes Reinecke <hare@suse.com>,
-        Anand Jain <anand.jain@oracle.com>,
+        id S1726652AbfLRHAu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Dec 2019 02:00:50 -0500
+Received: from mout.web.de ([212.227.15.4]:50847 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725881AbfLRHAu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Dec 2019 02:00:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1576652429;
+        bh=HEVqlBMuHVQwjhLQA1qIaNrb256F6p8krZdbgoetx54=;
+        h=X-UI-Sender-Class:Subject:From:To:Cc:References:Date:In-Reply-To;
+        b=A+lt93RUoLNxaWM7AkIkUL4MiZkHPcUiIbEvea7xOffBoDlKqkDvLbY9CdCLloZHo
+         46QkwDGN7GB58aXU8Z3AxNFZgljcRpO/kJVLNeOdfM0XAUZIVF3kOqLlnJ1gHKs7lf
+         WWYbi3o+U3Qrl2eKXOsXPNg5SIPdU4g+ZenMRxgg=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.3] ([93.131.36.204]) by smtp.web.de (mrweb001
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MT8sw-1iIgPa3cvO-00S5W6; Wed, 18
+ Dec 2019 08:00:29 +0100
+Subject: Re: [v5 10/13] exfat: add nls operations
+From:   Markus Elfring <Markus.Elfring@web.de>
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 23/28] btrfs: support dev-replace in HMZONED mode
-Message-ID: <20191218060033.ubfidtuhvzdbkk3o@naota.dhcp.fujisawa.hgst.com>
-References: <20191213040915.3502922-1-naohiro.aota@wdc.com>
- <20191213040915.3502922-24-naohiro.aota@wdc.com>
- <2157b1bb-a64b-eed3-0451-09a8480d0db2@toxicpanda.com>
+Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Daniel Wagner <dwagner@suse.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        linkinjeon@gmail.com
+References: <20191125000326.24561-1-namjae.jeon@samsung.com>
+ <CGME20191125000633epcas1p1bce48f6e0fdd552fe74dbdb7976d5182@epcas1p1.samsung.com>
+ <20191125000326.24561-11-namjae.jeon@samsung.com>
+ <147eac54-5846-ffe1-4b6b-ebf611d1252b@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <db6a467c-2fe8-9cf4-8447-1b7cbfd222a0@web.de>
+Date:   Wed, 18 Dec 2019 08:00:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <2157b1bb-a64b-eed3-0451-09a8480d0db2@toxicpanda.com>
+In-Reply-To: <147eac54-5846-ffe1-4b6b-ebf611d1252b@web.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:7lCiLfWBCrd+QEOxHEQ8qqirKCsCth+iCZ89RrYVGBQVKOzYPt2
+ /43DSMGStcVwEoevrv16tVP6IiLLgjzFYBYNh6djNQw/zCF3VwXIKO/jdhkwDBVkCxNrHiV
+ efcYIJTPAgQhstd4yiBM/ZweL1u+UEN2t5znoydfZy7fTMDx2y67xGyLaB+xxVhYZVmmVc5
+ Odo69TDR/BIdTMMkCV2UA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:G8px9mSQLuk=:1xHuOAYeOZjnbSktpJebpF
+ BS7ogWHJvVJnxkEzAGA0tPqJw4AYAhnvfv5U8eDDmlNwA7LxL0Fc85pi3xXdu1eLo0jMI+cCI
+ KZhzULQG4R2VtqTnR62AxF/JWjbLdVhO3H1mXDAa6V9UquTg6HF8zap9fQOjjGxYuRMg7iDBV
+ GNVF1YfEv5DmoyTNjByamgT/MIUZXCtk2vild0YK5xNeldnSWPGUZ2p2C5uS6c6vuF/fu37Dw
+ IN1zoc7/LdgzxbPKnAUXuhBqMrVmwfcxi69QCVUc2rRg3Le9g/EgYTonRQ+95/uuJL2jvXU9+
+ 3uAasT3JqYmaWveQlZiErCnkI3GqywDNfBR8EP2SHLLrRB6M7LIQJ9MxS4tu1y7E5/aoOBeld
+ 7Pj6ElSsmlYY/r6+T0EzBfmDB76nH0cnUZsgw2j9SmAsjxRq9RNrhlQazGFmg1Mcm5LWioF6y
+ /0eLp+86lt6/fsbFeTYwKqkuD8dENyX5S9Nh9SH8ugUKRp5tDvcDHYF2xLUvjjkRbHJx6taZk
+ wRxB5J70oCpftXer8eh6FRRLKYfeVj6KfU5IMfOpgknn0YTDh8jSACY6CeDtZRjc6zzYOW9vD
+ ik54vX60AVbguUq0JuL/z2XJHirtD/ZCBiLmk61wmEXzudlY/tHKoSeqXvwq8khRFAlWcgD08
+ PfTLHPVepvsxwTblOLUBW1J11bHR6KO2pY1nMvfnfdk2vbNtpHNC0qCsJhYfUlx6Xl28E3thY
+ hfWz//Konk1YkJNuGUVN03k4tK4qre17NbV1rg5RpalyxBaEg8tvARnmeqz95yiS98ItK0uJu
+ lL+G7AZClfC1pr2rAvWurjrV7U1fk8yJnDFmtH6TRzfIEdYpRG2+0D0xQxMZ3FHqmb0t8O7gM
+ FKnOpdDwJrW3WAu0Ok4I8EcLu9dXoo1q4M/Hidj8Zig7Nehtx6dpO8SjEZIpldXOcB8W8VIAb
+ tgxNVUW5ormCsO4REyr8PwUaLZE0VDPyvKFhYOYXRqEm5aIHn2aJZ6ln6eD6gxkqJiHiM8UNS
+ RvUK2hjU3OgARZEqvMUPPSPIh1jnluKEOIaa0Tlu+Oklh7D8dueTNiKA9WOG64ub76QpKYtxc
+ 6u1t+90CeCKTO1dGc0yOxeylvjY6MiqNZK/3JrwV4SczntBlHo+/VYSBzxAe4/91zOuAGl+O+
+ 1PmPZPiA9NzzhXcdlKqg1ZOnyaeoXkId/t8l4f1khLQv6weVSxWBGQ+42Qk6RXtyCCHkHy+r6
+ 9ZHFbAaLJPLFjncAI5iR9Hl48qnrH+Oz+zZLMLHuS/2C5veP1cFCGzeK1FD8=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 04:05:25PM -0500, Josef Bacik wrote:
->On 12/12/19 11:09 PM, Naohiro Aota wrote:
->>We have two type of I/Os during the device-replace process. One is a I/O to
->>"copy" (by the scrub functions) all the device extents on the source device
->>to the destination device.  The other one is a I/O to "clone" (by
->>handle_ops_on_dev_replace()) new incoming write I/Os from users to the
->>source device into the target device.
->>
->>Cloning incoming I/Os can break the sequential write rule in the target
->>device. When write is mapped in the middle of a block group, that I/O is
->>directed in the middle of a zone of target device, which breaks the
->>sequential write rule.
->>
->>However, the cloning function cannot be simply disabled since incoming I/Os
->>targeting already copied device extents must be cloned so that the I/O is
->>executed on the target device.
->>
->>We cannot use dev_replace->cursor_{left,right} to determine whether bio is
->>going to not yet copied region.  Since we have time gap between finishing
->>btrfs_scrub_dev() and rewriting the mapping tree in
->>btrfs_dev_replace_finishing(), we can have newly allocated device extent
->>which is never cloned nor copied.
->>
->>So the point is to copy only already existing device extents. This patch
->>introduces mark_block_group_to_copy() to mark existing block group as a
->>target of copying. Then, handle_ops_on_dev_replace() and dev-replace can
->>check the flag to do their job.
->>
->>Device-replace process in HMZONED mode must copy or clone all the extents
->>in the source device exctly once.  So, we need to use to ensure allocations
->>started just before the dev-replace process to have their corresponding
->>extent information in the B-trees. finish_extent_writes_for_hmzoned()
->>implements that functionality, which basically is the removed code in the
->>commit 042528f8d840 ("Btrfs: fix block group remaining RO forever after
->>error during device replace").
->>
->>This patch also handles empty region between used extents. Since
->>dev-replace is smart to copy only used extents on source device, we have to
->>fill the gap to honor the sequential write rule in the target device.
->>
->>Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> * Can it be that a type other than =E2=80=9Cint=E2=80=9D would be more p=
+ortable
+>   for the desired data processing at these source code places?
 >
->Can you split up the copying part and the cloning part into different 
->patches, this is a bear to review.  Also I don't quite understand the 
->zeroout behavior. It _looks_ like for cloning you are doing a zeroout 
->for the gap between the last wp position and the current cloned bio, 
->which makes sense, but doesn't this gap exist because copying is 
->ongoing?  Can you copy into a zero'ed out position?  Or am I missing 
->something here?  Thanks,
->
->Josef
+> * How do you think about to use more meaningful identifiers for
+>   two of the shown literals?
 
-OK, I will split this in the next version. (but, it's mostly "copying"
-part)
+Would you like to clarify these software development concerns?
 
-Let me clarify first that I am using "copying" for copying existing
-extents to the new device and "cloning" for cloning a new incoming BIO
-to the new device.
-
-For zeroout, it is for "copying" which is done with the scrub code to
-copy existing extents on the source devie to the destination
-device. Since copying or scrub only scans for living extents, there
-can be a gap between two living extents. So, we need to fill a gap
-with zeroout to make the writing stream sequential.
-
-And "cloning" is only done for new block groups or already fully
-copied block groups. So there is no gaps for them because the
-allocator and the IO locks ensures the sequential allocation and
-submit.
-
-Thanks,
+Regards,
+Markus
