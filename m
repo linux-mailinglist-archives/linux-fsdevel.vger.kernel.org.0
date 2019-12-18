@@ -2,368 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E254F1247B0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 14:09:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CB051248B9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 14:51:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726916AbfLRNJy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Dec 2019 08:09:54 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:38329 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726912AbfLRNJx (ORCPT
+        id S1726955AbfLRNuy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Dec 2019 08:50:54 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:55418 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726913AbfLRNuy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Dec 2019 08:09:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576674592;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=g5Ox4SHhc2xo2sY+PCKlmfIwG02oA4188ugvQugMGko=;
-        b=YcdlH4pDb90tH1AU8byozWMg8zmiplQG8bqmvUWb1rjT4kLbsIN/pMOimhx0kkIqJ1/BGZ
-        gsAM67IymtKinjM5CaNfDbbFGRArDCRRaDZoqqHOtFMI6cn24d/MkwCgHZqln8UcN4iX8S
-        u9wZnhLIggIS4ATlmAznPf505Mct7P4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-34-RjePyPrbN4iiCFi_W_pbZA-1; Wed, 18 Dec 2019 08:09:51 -0500
-X-MC-Unique: RjePyPrbN4iiCFi_W_pbZA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DB92A10054E3;
-        Wed, 18 Dec 2019 13:09:46 +0000 (UTC)
-Received: from max.com (ovpn-204-101.brq.redhat.com [10.40.204.101])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E01D760C18;
-        Wed, 18 Dec 2019 13:09:37 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-        Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Richard Weinberger <richard@nod.at>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        Jan Kara <jack@suse.cz>
-Subject: [PATCH v3] fs: Fix page_mkwrite off-by-one errors
-Date:   Wed, 18 Dec 2019 14:09:35 +0100
-Message-Id: <20191218130935.32402-1-agruenba@redhat.com>
+        Wed, 18 Dec 2019 08:50:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=PiWeqrIt+S44LIMrxgiyyghsdY0UJX/1eQ83LvdJTak=; b=u8nG0qQAaWNMQ+y3KRcsyjiIK
+        DzQlYM5b9uejlBdB10+BLH4CACkrGs/Xs4HGnsOn0AegmhjXWuIegVBdKl4ZI5MNbKFwV08zE4Jxu
+        qWnNjSDIcAli84W4goCLHPfRc6CFYaWvL2vt52ZaSONl/b5uzmAYkB7V8tQIo9Lqcie4Z/P1+krLq
+        k73wWe4Vzlez6rKYcvLrOoJ6zde70Iw6q/pQaIokxzLsyxShbKy61Gzl/xtFERz/J00i/iFtBcwkg
+        1TLqG0TLLQI/58UC3U3c09ZddMevBkHDRQ0mOFIPTCH6jvJPyduG5y2RiHKUVuvqJaoIgLV1F/f5z
+        3dFgiz9QQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ihZj0-0004dV-DC; Wed, 18 Dec 2019 13:50:50 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C2D5430038D;
+        Wed, 18 Dec 2019 14:49:24 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D9A792B0D9745; Wed, 18 Dec 2019 14:50:47 +0100 (CET)
+Date:   Wed, 18 Dec 2019 14:50:47 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-afs@lists.infradead.org, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will@kernel.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] rxrpc: struct mutex cannot be used for
+ rxrpc_call::user_mutex
+Message-ID: <20191218135047.GS2844@hirez.programming.kicks-ass.net>
+References: <157659672074.19580.11641288666811539040.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <157659672074.19580.11641288666811539040.stgit@warthog.procyon.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Darrick,
+On Tue, Dec 17, 2019 at 03:32:00PM +0000, David Howells wrote:
+> Standard kernel mutexes cannot be used in any way from interrupt or softirq
+> context, so the user_mutex which manages access to a call cannot be a mutex
+> since on a new call the mutex must start off locked and be unlocked within
+> the softirq handler to prevent userspace interfering with a call we're
+> setting up.
+> 
+> Commit a0855d24fc22d49cdc25664fb224caee16998683 ("locking/mutex: Complain
+> upon mutex API misuse in IRQ contexts") causes big warnings to be splashed
+> in dmesg for each a new call that comes in from the server.
 
-can this fix go in via the xfs tree?
+FYI that patch has currently been reverted.
 
-Thanks,
-Andreas
+commit c571b72e2b845ca0519670cb7c4b5fe5f56498a5 (tip/locking/urgent, tip/locking-urgent-for-linus)
 
---
+> Whilst it *seems* like it should be okay, since the accept path
+> trylocks the mutex when no one else can see it and drops the mutex
+> before it leaves softirq context, unlocking the mutex causes scheduler
+> magic to happen.
 
-The check in block_page_mkwrite that is meant to determine whether an
-offset is within the inode size is off by one.  This bug has been copied
-into iomap_page_mkwrite and several filesystems (ubifs, ext4, f2fs,
-ceph).
+Not quite. The problem is that trylock still sets the owner task of the
+mutex, and a contending mutex_lock() could end up PI boosting that
+owner.
 
-Fix that by introducing a new page_mkwrite_check_truncate helper that
-checks for truncate and computes the bytes in the page up to EOF.  Use
-the helper in the above mentioned filesystems.
+The problem happens when that owner is the idle task, this can happen
+when the irq/softirq hits the idle task, in that case the contending
+mutex_lock() will try and PI boost the idle task, and that is a big
+no-no.
 
-In addition, use the new helper in btrfs as well.
+> Fix this by switching to using a locking bit and a waitqueue instead.
 
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-Acked-by: David Sterba <dsterba@suse.com> (btrfs part)
-Acked-by: Richard Weinberger <richard@nod.at> (ubifs part)
+So the problem with this approach is that it will create priority
+inversions between the sites that had mutex_lock().
+
+Suppose some FIFO-99 task does rxrpc_user_lock_call() and gets to block
+because some FIFO-1 task has it. Then an unrelated FIFO-50 task comes
+and preempts our FIFO-1 owner, now the FIFO-99 task has unbounded
+response time (classic priority inversion).
+
+This is what the PI magic is supposed to fix, it would boost the FIFO-1
+owner to FIFO-99 for the duration of the lock, which avoids the FIFO-50
+task from being elegible to run and ruin the day.
+
+Anyway, regarding your question on IRC, the lockdep bits look OK.
+
+But looking at this code, reminded me of our earlier discussion, where
+you said:
+
+  "I could actually mvoe the rxrpc_send_ping() and the mutex_unlock()
+  into rxrpc_new_incoming_call() which would make it clearer to see as
+  the lock and unlock would then be in the same function."
+
+Which I think still has merrit; it would make reading this code a whole
+lot easier.
+
+Back to the actual problem; how come the rxrpc_call thing can be
+accessed before it is 'complete'? Is there something we can possibly do
+there?
+
+The comment with the mutex_trylock() in rxrpc_new_incoming_call() has:
+
+	/* Lock the call to prevent rxrpc_kernel_send/recv_data() and
+	 * sendmsg()/recvmsg() inconveniently stealing the mutex once the
+	 * notification is generated.
+	 *
+	 * The BUG should never happen because the kernel should be well
+	 * behaved enough not to access the call before the first notification
+	 * event and userspace is prevented from doing so until the state is
+	 * appropriate.
+	 */
+
+Why do we have to send this notification so early? Is there anything
+else we can do avoid these other users from wanting to prod at our
+object for a little while? I'm still properly lost in this code.
+
+
 ---
- fs/btrfs/inode.c        | 15 ++++-----------
- fs/buffer.c             | 16 +++-------------
- fs/ceph/addr.c          |  2 +-
- fs/ext4/inode.c         | 14 ++++----------
- fs/f2fs/file.c          | 19 +++++++------------
- fs/iomap/buffered-io.c  | 18 +++++-------------
- fs/ubifs/file.c         |  3 +--
- include/linux/pagemap.h | 28 ++++++++++++++++++++++++++++
- 8 files changed, 53 insertions(+), 62 deletions(-)
-
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 56032c518b26..86c6fcd8139d 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -9016,13 +9016,11 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vm=
-f)
- 	ret =3D VM_FAULT_NOPAGE; /* make the VM retry the fault */
- again:
- 	lock_page(page);
--	size =3D i_size_read(inode);
-=20
--	if ((page->mapping !=3D inode->i_mapping) ||
--	    (page_start >=3D size)) {
--		/* page got truncated out from underneath us */
-+	ret2 =3D page_mkwrite_check_truncate(page, inode);
-+	if (ret2 < 0)
- 		goto out_unlock;
--	}
-+	zero_start =3D ret2;
- 	wait_on_page_writeback(page);
-=20
- 	lock_extent_bits(io_tree, page_start, page_end, &cached_state);
-@@ -9043,6 +9041,7 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
- 		goto again;
- 	}
-=20
-+	size =3D i_size_read(inode);
- 	if (page->index =3D=3D ((size - 1) >> PAGE_SHIFT)) {
- 		reserved_space =3D round_up(size - page_start,
- 					  fs_info->sectorsize);
-@@ -9075,12 +9074,6 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf=
-)
- 	}
- 	ret2 =3D 0;
-=20
--	/* page is wholly or partially inside EOF */
--	if (page_start + PAGE_SIZE > size)
--		zero_start =3D offset_in_page(size);
--	else
--		zero_start =3D PAGE_SIZE;
--
- 	if (zero_start !=3D PAGE_SIZE) {
- 		kaddr =3D kmap(page);
- 		memset(kaddr + zero_start, 0, PAGE_SIZE - zero_start);
-diff --git a/fs/buffer.c b/fs/buffer.c
-index d8c7242426bb..53aabde57ca7 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -2499,23 +2499,13 @@ int block_page_mkwrite(struct vm_area_struct *vma=
-, struct vm_fault *vmf,
- 	struct page *page =3D vmf->page;
- 	struct inode *inode =3D file_inode(vma->vm_file);
- 	unsigned long end;
--	loff_t size;
- 	int ret;
-=20
- 	lock_page(page);
--	size =3D i_size_read(inode);
--	if ((page->mapping !=3D inode->i_mapping) ||
--	    (page_offset(page) > size)) {
--		/* We overload EFAULT to mean page got truncated */
--		ret =3D -EFAULT;
-+	ret =3D page_mkwrite_check_truncate(page, inode);
-+	if (ret < 0)
- 		goto out_unlock;
--	}
--
--	/* page is wholly or partially inside EOF */
--	if (((page->index + 1) << PAGE_SHIFT) > size)
--		end =3D size & ~PAGE_MASK;
--	else
--		end =3D PAGE_SIZE;
-+	end =3D ret;
-=20
- 	ret =3D __block_write_begin(page, 0, end, get_block);
- 	if (!ret)
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 7ab616601141..ef958aa4adb4 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -1575,7 +1575,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault=
- *vmf)
- 	do {
- 		lock_page(page);
-=20
--		if ((off > size) || (page->mapping !=3D inode->i_mapping)) {
-+		if (page_mkwrite_check_truncate(page, inode) < 0) {
- 			unlock_page(page);
- 			ret =3D VM_FAULT_NOPAGE;
- 			break;
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 28f28de0c1b6..51ab1d2cac80 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5871,7 +5871,6 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
- {
- 	struct vm_area_struct *vma =3D vmf->vma;
- 	struct page *page =3D vmf->page;
--	loff_t size;
- 	unsigned long len;
- 	int err;
- 	vm_fault_t ret;
-@@ -5907,18 +5906,13 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf=
-)
- 	}
-=20
- 	lock_page(page);
--	size =3D i_size_read(inode);
--	/* Page got truncated from under us? */
--	if (page->mapping !=3D mapping || page_offset(page) > size) {
-+	err =3D page_mkwrite_check_truncate(page, inode);
-+	if (err < 0) {
- 		unlock_page(page);
--		ret =3D VM_FAULT_NOPAGE;
--		goto out;
-+		goto out_ret;
- 	}
-+	len =3D err;
-=20
--	if (page->index =3D=3D size >> PAGE_SHIFT)
--		len =3D size & ~PAGE_MASK;
--	else
--		len =3D PAGE_SIZE;
- 	/*
- 	 * Return if we have all the buffers mapped. This avoids the need to do
- 	 * journal_start/journal_stop which can block and take a long time
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 85af112e868d..0e77b2e6f873 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -51,7 +51,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault =
-*vmf)
- 	struct inode *inode =3D file_inode(vmf->vma->vm_file);
- 	struct f2fs_sb_info *sbi =3D F2FS_I_SB(inode);
- 	struct dnode_of_data dn =3D { .node_changed =3D false };
--	int err;
-+	int offset, err;
-=20
- 	if (unlikely(f2fs_cp_error(sbi))) {
- 		err =3D -EIO;
-@@ -70,13 +70,14 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_faul=
-t *vmf)
- 	file_update_time(vmf->vma->vm_file);
- 	down_read(&F2FS_I(inode)->i_mmap_sem);
- 	lock_page(page);
--	if (unlikely(page->mapping !=3D inode->i_mapping ||
--			page_offset(page) > i_size_read(inode) ||
--			!PageUptodate(page))) {
-+	err =3D -EFAULT;
-+	if (likely(PageUptodate(page)))
-+		err =3D page_mkwrite_check_truncate(page, inode);
-+	if (unlikely(err < 0)) {
- 		unlock_page(page);
--		err =3D -EFAULT;
- 		goto out_sem;
- 	}
-+	offset =3D err;
-=20
- 	/* block allocation */
- 	__do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO, true);
-@@ -101,14 +102,8 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fau=
-lt *vmf)
- 	if (PageMappedToDisk(page))
- 		goto out_sem;
-=20
--	/* page is wholly or partially inside EOF */
--	if (((loff_t)(page->index + 1) << PAGE_SHIFT) >
--						i_size_read(inode)) {
--		loff_t offset;
--
--		offset =3D i_size_read(inode) & ~PAGE_MASK;
-+	if (offset !=3D PAGE_SIZE)
- 		zero_user_segment(page, offset, PAGE_SIZE);
--	}
- 	set_page_dirty(page);
- 	if (!PageUptodate(page))
- 		SetPageUptodate(page);
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index d33c7bc5ee92..1aaf157fd6e9 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1062,24 +1062,16 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault *vm=
-f, const struct iomap_ops *ops)
- 	struct page *page =3D vmf->page;
- 	struct inode *inode =3D file_inode(vmf->vma->vm_file);
- 	unsigned long length;
--	loff_t offset, size;
-+	loff_t offset;
- 	ssize_t ret;
-=20
- 	lock_page(page);
--	size =3D i_size_read(inode);
--	offset =3D page_offset(page);
--	if (page->mapping !=3D inode->i_mapping || offset > size) {
--		/* We overload EFAULT to mean page got truncated */
--		ret =3D -EFAULT;
-+	ret =3D page_mkwrite_check_truncate(page, inode);
-+	if (ret < 0)
- 		goto out_unlock;
--	}
--
--	/* page is wholly or partially inside EOF */
--	if (offset > size - PAGE_SIZE)
--		length =3D offset_in_page(size);
--	else
--		length =3D PAGE_SIZE;
-+	length =3D ret;
-=20
-+	offset =3D page_offset(page);
- 	while (length > 0) {
- 		ret =3D iomap_apply(inode, offset, length,
- 				IOMAP_WRITE | IOMAP_FAULT, ops, page,
-diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
-index cd52585c8f4f..91f7a1f2db0d 100644
---- a/fs/ubifs/file.c
-+++ b/fs/ubifs/file.c
-@@ -1563,8 +1563,7 @@ static vm_fault_t ubifs_vm_page_mkwrite(struct vm_f=
-ault *vmf)
- 	}
-=20
- 	lock_page(page);
--	if (unlikely(page->mapping !=3D inode->i_mapping ||
--		     page_offset(page) > i_size_read(inode))) {
-+	if (unlikely(page_mkwrite_check_truncate(page, inode) < 0)) {
- 		/* Page got truncated out from underneath us */
- 		goto sigbus;
- 	}
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 37a4d9e32cd3..ccb14b6a16b5 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -636,4 +636,32 @@ static inline unsigned long dir_pages(struct inode *=
-inode)
- 			       PAGE_SHIFT;
+diff --git a/net/rxrpc/call_accept.c b/net/rxrpc/call_accept.c
+index 135bf5cd8dd5..3fec99cc2e4d 100644
+--- a/net/rxrpc/call_accept.c
++++ b/net/rxrpc/call_accept.c
+@@ -435,6 +435,10 @@ struct rxrpc_call *rxrpc_new_incoming_call(struct rxrpc_local *local,
+ 	_leave(" = %p{%d}", call, call->debug_id);
+ out:
+ 	spin_unlock(&rx->incoming_lock);
++	if (call) {
++		rxrpc_send_ping(call, skb);
++		mutex_unlock(&call->user_mutex);
++	}
+ 	return call;
  }
-=20
-+/**
-+ * page_mkwrite_check_truncate - check if page was truncated
-+ * @page: the page to check
-+ * @inode: the inode to check the page against
-+ *
-+ * Returns the number of bytes in the page up to EOF,
-+ * or -EFAULT if the page was truncated.
-+ */
-+static inline int page_mkwrite_check_truncate(struct page *page,
-+					      struct inode *inode)
-+{
-+	loff_t size =3D i_size_read(inode);
-+	pgoff_t index =3D size >> PAGE_SHIFT;
-+	int offset =3D offset_in_page(size);
-+
-+	if (page->mapping !=3D inode->i_mapping)
-+		return -EFAULT;
-+
-+	/* page is wholly inside EOF */
-+	if (page->index < index)
-+		return PAGE_SIZE;
-+	/* page is wholly past EOF */
-+	if (page->index > index || !offset)
-+		return -EFAULT;
-+	/* page is partially inside EOF */
-+	return offset;
-+}
-+
- #endif /* _LINUX_PAGEMAP_H */
---=20
-2.20.1
-
+ 
+diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
+index 157be1ff8697..665a0532a221 100644
+--- a/net/rxrpc/input.c
++++ b/net/rxrpc/input.c
+@@ -1396,8 +1396,6 @@ int rxrpc_input_packet(struct sock *udp_sk, struct sk_buff *skb)
+ 		call = rxrpc_new_incoming_call(local, rx, skb);
+ 		if (!call)
+ 			goto reject_packet;
+-		rxrpc_send_ping(call, skb);
+-		mutex_unlock(&call->user_mutex);
+ 	}
+ 
+ 	/* Process a call packet; this either discards or passes on the ref
