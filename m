@@ -2,143 +2,261 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9624912571D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 23:45:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA813125727
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 23:45:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbfLRWpJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Dec 2019 17:45:09 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:44056 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726463AbfLRWpJ (ORCPT
+        id S1726730AbfLRWpf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Dec 2019 17:45:35 -0500
+Received: from imap2.colo.codethink.co.uk ([78.40.148.184]:44768 "EHLO
+        imap2.colo.codethink.co.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726387AbfLRWpd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Dec 2019 17:45:09 -0500
-Received: by mail-lf1-f67.google.com with SMTP id v201so2856487lfa.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Dec 2019 14:45:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YrrQW+o6yoR9HJnH1mwKSC9v5iWno6eigHp0EBk4LR0=;
-        b=bdF7Zv0VTafIoorJswX48t2yxXJBYxcvjHgrT2SGIIMh8SxTaUWksloPDk4hj8pN+b
-         8Wy7ZGVYH0fWsHmH/IMJnBSfIeVts/sOmiy4I/nlOeq68AiZoaQ1Mqh2e43FlXq9gRLG
-         KshnO+IUvlyZD7e2bgfiCpZOkUn91XMsyCwRx9hGVqlfs3W1si7CDXXM3vtqSXuMWY78
-         Tae1sOhSYoNDJLrJgal+3cpj+/6xa05u+pWrMRgdVnIo9FZyRNB0aI0+sHon8/zGouR0
-         pqwpw4LUVoV4NK9FktzSrs+SeQWsHdxx0QqmCUwextJEn9FOXazhfjjyb53FWNWWcUXk
-         GNTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YrrQW+o6yoR9HJnH1mwKSC9v5iWno6eigHp0EBk4LR0=;
-        b=SxQ60pdNboe4eB8HNFV/F77bKFmOPOvBvpMNufJ5r3nwMJMOi5ttYaHJftYxovvHsA
-         VAhkwxpw2oL25BI0bijWjPDock40LpYp4Q62/fYQxlH+QqB/uFJNiItrWxf7gt0tgViO
-         6XFD8yoibIPxHAN1HoIViB1l2M5IJ+gT9MavKnE3pTCwbm1iJfS/q9bFoD5z07P2m+vC
-         UQWEWWNECudcpTRUUHA5OSNKeXcnXPycEk3G6Jp98m4sa7tGtxWoHHt6DPe0onmxyXcw
-         WMxj2Xyx+MdueTzX4gJ+CnrSkoycfjNog0F8ZoVSj/ZBY3GVA5zgSbmKj+jhs0Vkdhg7
-         ekQw==
-X-Gm-Message-State: APjAAAVAXKG7eqobNtMjN/Y5+65IvQmsecTpNhns8Iyq9Ek0inhLSkvK
-        u6+R1rFFzEVLYt6GaMVQk3b+AQ==
-X-Google-Smtp-Source: APXvYqwPbC3mnICecXB2mktdTfANDFTtD1oSKWMGw8lhRk6/u/eXjGq156/mWoszLGq/OpGErs59TQ==
-X-Received: by 2002:a19:6a06:: with SMTP id u6mr3341913lfu.187.1576709107276;
-        Wed, 18 Dec 2019 14:45:07 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id t6sm1792834ljj.62.2019.12.18.14.45.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 14:45:06 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 380451012E3; Thu, 19 Dec 2019 01:45:07 +0300 (+03)
-Date:   Thu, 19 Dec 2019 01:45:07 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
-Subject: Re: [PATCH v11 01/25] mm/gup: factor out duplicate code from four
- routines
-Message-ID: <20191218224507.nayxmx7vvsjvyzsc@box>
-References: <20191216222537.491123-1-jhubbard@nvidia.com>
- <20191216222537.491123-2-jhubbard@nvidia.com>
- <20191218155211.emcegdp5uqgorfwe@box>
- <5719efc4-e560-b3d9-8d1f-3ae289bed289@nvidia.com>
+        Wed, 18 Dec 2019 17:45:33 -0500
+Received: from [167.98.27.226] (helo=xylophone)
+        by imap2.colo.codethink.co.uk with esmtpsa  (Exim 4.92 #3 (Debian))
+        id 1ihi4I-0005B3-TV; Wed, 18 Dec 2019 22:45:23 +0000
+Message-ID: <53cd123fdcb893df36e0b3bf9dddbfe08f9c545e.camel@codethink.co.uk>
+Subject: Re: [PATCH v2 27/27] Documentation: document ioctl interfaces better
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+        y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, linux-doc@vger.kernel.org,
+        corbet@lwn.net, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org
+Date:   Wed, 18 Dec 2019 22:45:22 +0000
+In-Reply-To: <20191217221708.3730997-28-arnd@arndb.de>
+References: <20191217221708.3730997-1-arnd@arndb.de>
+         <20191217221708.3730997-28-arnd@arndb.de>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5719efc4-e560-b3d9-8d1f-3ae289bed289@nvidia.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 02:15:53PM -0800, John Hubbard wrote:
-> On 12/18/19 7:52 AM, Kirill A. Shutemov wrote:
-> > On Mon, Dec 16, 2019 at 02:25:13PM -0800, John Hubbard wrote:
-> > > +static void put_compound_head(struct page *page, int refs)
-> > > +{
-> > > +	/* Do a get_page() first, in case refs == page->_refcount */
-> > > +	get_page(page);
-> > > +	page_ref_sub(page, refs);
-> > > +	put_page(page);
-> > > +}
-> > 
-> > It's not terribly efficient. Maybe something like:
-> > 
-> > 	VM_BUG_ON_PAGE(page_ref_count(page) < ref, page);
-> > 	if (refs > 2)
-> > 		page_ref_sub(page, refs - 1);
-> > 	put_page(page);
-> > 
-> > ?
-> 
-> OK, but how about this instead? I don't see the need for a "2", as that
-> is a magic number that requires explanation. Whereas "1" is not a magic
-> number--here it means: either there are "many" (>1) refs, or not.
+On Tue, 2019-12-17 at 23:17 +0100, Arnd Bergmann wrote:
+[...]
+> --- /dev/null
+> +++ b/Documentation/core-api/ioctl.rst
+> @@ -0,0 +1,248 @@
+> +======================
+> +ioctl based interfaces
+> +======================
+> +
+> +ioctl() is the most common way for applications to interface
+> +with device drivers. It is flexible and easily extended by adding new
+> +commands and can be passed through character devices, block devices as
+> +well as sockets and other special file descriptors.
+> +
+> +However, it is also very easy to get ioctl command definitions wrong,
+> +and hard to fix them later without breaking existing applications,
+> +so this documentation tries to help developers get it right.
+> +
+> +Command number definitions
+> +==========================
+> +
+> +The command number, or request number, is the second argument passed to
+> +the ioctl system call. While this can be any 32-bit number that uniquely
+> +identifies an action for a particular driver, there are a number of
+> +conventions around defining them.
+> +
+> +``include/uapi/asm-generic/ioctl.h`` provides four macros for defining
+> +ioctl commands that follow modern conventions: ``_IO``, ``_IOR``,
+> +``_IOW``, and ``_IORW``. These should be used for all new commands,
 
-Yeah, it's my thinko. Sure, it has to be '1' (or >= 2, which is less readable).
+Typo: "_IORW" should be "_IOWR".
 
-> And the routine won't be called with refs less than about 32 (2MB huge
-> page, 64KB base page == 32 subpages) anyway.
+> +with the correct parameters:
+> +
+> +_IO/_IOR/_IOW/_IOWR
+> +   The macro name determines whether the argument is used for passing
+> +   data into kernel (_IOW), from the kernel (_IOR), both (_IOWR) or is
+> +   not a pointer (_IO). It is possible but not recommended to pass an
+> +   integer value instead of a pointer with _IO.
 
-It's hard to make predictions about future :P
+I feel the explanation of _IO here could be confusing.  I think what
+you meant to say was that it is possible, but not recommended, to pass
+integers directly (arg is integer) rather than indirectly (arg is
+pointer to integer).  I suggest the alternate wording:
 
-> 	VM_BUG_ON_PAGE(page_ref_count(page) < refs, page);
-> 	/*
-> 	 * Calling put_page() for each ref is unnecessarily slow. Only the last
-> 	 * ref needs a put_page().
-> 	 */
-> 	if (refs > 1)
-> 		page_ref_sub(page, refs - 1);
-> 	put_page(page);
+The macro name specifies how the argument will be used.  It may be a
+pointer to data to be passed into the kernel (_IOW), out of the kernel
+(_IOR), or both (_IOWR).  The argument may also be an integer value
+instead of a pointer (_IO), but this is not recommended.
 
-Looks good to me.
+> +type
+> +   An 8-bit number, often a character literal, specific to a subsystem
+> +   or driver, and listed in :doc:`../userspace-api/ioctl/ioctl-number`
+> +
+> +nr
+> +  An 8-bit number identifying the specific command, unique for a give
+> +  value of 'type'
+> +
+> +data_type
+> +  The name of the data type pointed to by the argument, the command number
+> +  encodes the ``sizeof(data_type)`` value in a 13-bit or 14-bit integer,
+> +  leading to a limit of 8191 bytes for the maximum size of the argument.
+> +  Note: do not pass sizeof(data_type) type into _IOR/IOW, as that will
+> +  lead to encoding sizeof(sizeof(data_type)), i.e. sizeof(size_t).
+
+You left out _IOWR here.  It might also be worth mentioning that _IO
+doesn't have this parameter.
+
+[...]
+> +Return code
+> +===========
+> +
+> +ioctl commands can return negative error codes as documented in errno(3),
+> +these get turned into errno values in user space.
+
+Use a semi-colon instead of a comma, or change "these" to "which".
+
+> On success, the return
+> +code should be zero. It is also possible but not recommended to return
+> +a positive 'long' value.
+> +
+> +When the ioctl callback is called with an unknown command number, the
+> +handler returns either -ENOTTY or -ENOIOCTLCMD, which also results in
+> +-ENOTTY being returned from the system call. Some subsystems return
+> +-ENOSYS or -EINVAL here for historic reasons, but this is wrong.
+> +
+> +Prior to Linux-5.5, compat_ioctl handlers were required to return
+
+Space instead of hyphen.
+
+> +-ENOIOCTLCMD in order to use the fallback conversion into native
+> +commands. As all subsystems are now responsible for handling compat
+> +mode themselves, this is no longer needed, but it may be important to
+> +consider when backporting bug fixes to older kernels.
+> +
+> +Timestamps
+> +==========
+> +
+> +Traditionally, timestamps and timeout values are passed as ``struct
+> +timespec`` or ``struct timeval``, but these are problematic because of
+> +incompatible definitions of these structures in user space after the
+> +move to 64-bit time_t.
+> +
+> +The __kernel_timespec type can be used instead to be embedded in other
+
+It's not a typedef, so ``struct __kernel_timespec``.
+
+[...]
+> +32-bit compat mode
+> +==================
+> +
+> +In order to support 32-bit user space running on a 64-bit machine, each
+> +subsystem or driver that implements an ioctl callback handler must also
+> +implement the corresponding compat_ioctl handler.
+> +
+> +As long as all the rules for data structures are followed, this is as
+> +easy as setting the .compat_ioctl pointer to a helper function such as
+> +compat_ptr_ioctl() or blkdev_compat_ptr_ioctl().
+> +
+> +compat_ptr()
+> +------------
+> +
+> +On the s/390 architecture, 31-bit user space has ambiguous representations
+
+IBM never used the name "S/390" for the 64-bit mainframe architecture,
+but they have rebranded it several times.  Rather than trying to follow
+what it's called this year, maybe just write "s390" to match what we
+usually call it?
+
+[...]
+> +Structure layout
+> +----------------
+> +
+> +Compatible data structures have the same layout on all architectures,
+> +avoiding all problematic members:
+> +
+> +* ``long`` and ``unsigned long`` are the size of a register, so
+> +  they can be either 32-bit or 64-bit wide and cannot be used in portable
+> +  data structures. Fixed-length replacements are ``__s32``, ``__u32``,
+> +  ``__s64`` and ``__u64``.
+> +
+> +* Pointers have the same problem, in addition to requiring the
+> +  use of compat_ptr(). The best workaround is to use ``__u64``
+> +  in place of pointers, which requires a cast to ``uintptr_t`` in user
+> +  space, and the use of u64_to_user_ptr() in the kernel to convert
+> +  it back into a user pointer.
+> +
+> +* On the x86-32 (i386) architecture, the alignment of 64-bit variables
+> +  is only 32-bit, but they are naturally aligned on most other
+> +  architectures including x86-64. This means a structure like::
+> +
+> +    struct foo {
+> +        __u32 a;
+> +        __u64 b;
+> +        __u32 c;
+> +    };
+> +
+> +  has four bytes of padding between a and b on x86-64, plus another four
+> +  bytes of padding at the end, but no padding on i386, and it needs a
+> +  compat_ioctl conversion handler to translate between the two formats.
+> +
+> +  To avoid this problem, all structures should have their members
+> +  naturally aligned, or explicit reserved fields added in place of the
+> +  implicit padding.
+
+This should explain how to check that - presumably by running pahole on
+some sensible architecture.
+
+> +* On ARM OABI user space, 16-bit member variables have 32-bit
+> +  alignment, making them incompatible with modern EABI kernels.
+
+I thought that OABI required structures as a whole to have alignment of
+4, not individual members?  Which obviously does affect small
+structures as members of other structures.
+
+[...]
+> +Information leaks
+> +=================
+> +
+> +Uninitialized data must not be copied back to user space, as this can
+> +cause an information leak, which can be used to defeat kernel address
+> +space layout randomization (KASLR), helping in an attack.
+> +
+> +As explained for the compat mode, it is best to not avoid any implicit
+
+Delete "not".
+
+> +padding in data structures, but if there is already padding in existing
+> +structures, the kernel driver must be careful to zero out the padding
+> +using memset() or similar before copying it to user space.
+
+This sentence is rather too long.  Also it can be read as suggesting
+that one should somehow identify and memset() the padding just before
+copying to user-space.  I suggest an alternate wording:
+
+For this reason (and for compat support) it is best to avoid any
+implicit padding in data structures.  Where there is implicit padding
+in an existing structure, kernel drivers must be careful to fully
+initialize an instance of the structure before copying it to user
+space.  This is usually done by calling memset() before assigning to
+individual members.
+
+[...]
+> +Alternatives to ioctl
+> +=====================
+[...]
+> +* A custom file system can provide extra flexibility with a simple
+> +  user interface but add a lot of complexity to the implementation.
+
+Typo: "add" should be "adds".
+
+Anyway, it's great to have documentation for this all in one place.
+
+Ben.
 
 -- 
- Kirill A. Shutemov
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
+
