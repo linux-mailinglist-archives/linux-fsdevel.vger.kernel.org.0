@@ -2,148 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0C80123D26
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 03:34:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46B19123DC9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 04:23:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726494AbfLRCeZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Dec 2019 21:34:25 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:43936 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726467AbfLRCeZ (ORCPT
+        id S1726539AbfLRDR1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Dec 2019 22:17:27 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:46177 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726387AbfLRDR1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Dec 2019 21:34:25 -0500
-Received: by mail-il1-f195.google.com with SMTP id v69so343714ili.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2019 18:34:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zQnxUgnPs5XIy6wqoYk0lFfMX967lDJfnU21RxvBckA=;
-        b=k186DmuaofohJF7sA2JaDqoAoEoV0LknoS1gvsgg5HlMX26R0W46/SzFpUIqDARcwR
-         00LGuKYdC/Ah2l3m0FR74FLbLClrUzr6U8RYQtkA/0LD6Dgn/egZaW+oTa+SHdQUfwJd
-         iL2ln/3IZ4wbuHmxIOKiQ5aXlfD9dijmb3wY/DigOIQqRHgyNcHP4qBM47VT/mOwquP7
-         VLtcQ7v8wwfy8rRzfBNcW+uzUuUkn4/vvU1u8UoPYxfIBTfDREXtbiOY9wTjFOnrvK+x
-         HqEOa3iBtKa1jUoL9Xdjh2kkCOg9BpjCmtq0cUSBLholVaawuOUpfkNm23f0VMqusdRt
-         zCPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zQnxUgnPs5XIy6wqoYk0lFfMX967lDJfnU21RxvBckA=;
-        b=lnXiP3cQHivcuuFGMI2w2Fia9ZeY4uaM1UsUwKjgBbLLEuVW/srH7nGebgs34K2vcw
-         +7YRP5cF0xLTywf4d79mmjuKZlowY/zh3NBrV8ZvgtrR51AzPpWNOFGqFUmwblWf5Mpe
-         o6yT3Vkt68x+enAWi8LjidLVsTu6i6oZeLfntiNKzHgqiuSXYJEmZNMoASuOKClhwz7T
-         TY0SetcQw0bUzjuXHh//3N8iHRYqKO2i8eP0kaBWM+YaczQSr/QT+TPJlOJ9jM+2vjp0
-         vzEekV9H5Kj7+re6efztJ3l7t4asrizR1UkqybCOQGREBf/JFxpOSEpbwvH/9JChgM77
-         f3xw==
-X-Gm-Message-State: APjAAAVM8tfebJaRqU7CtPlGONhrU+4tufBlwDdlCuGuBWgsFi/5flHh
-        kUCcNqJrgxD+SyTkhONmra2NvIxMM0TDsSvVYGo=
-X-Google-Smtp-Source: APXvYqwsvCYyaOnogcb9qTavCG/3wnUELhgd4jAyUzdx2KEuXdrobreXrAdzYkKZtBgU05a5vSqnzcxIuWQzb5m2PMc=
-X-Received: by 2002:a92:5c8a:: with SMTP id d10mr621616ilg.137.1576636464386;
- Tue, 17 Dec 2019 18:34:24 -0800 (PST)
+        Tue, 17 Dec 2019 22:17:27 -0500
+Received: from dread.disaster.area (pa49-195-139-249.pa.nsw.optusnet.com.au [49.195.139.249])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 6F8377E8F9C;
+        Wed, 18 Dec 2019 14:17:17 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1ihPps-0007DD-OZ; Wed, 18 Dec 2019 14:17:16 +1100
+Date:   Wed, 18 Dec 2019 14:17:16 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, willy@infradead.org, clm@fb.com,
+        torvalds@linux-foundation.org
+Subject: Re: [PATCH 1/6] fs: add read support for RWF_UNCACHED
+Message-ID: <20191218031716.GU19213@dread.disaster.area>
+References: <20191217143948.26380-1-axboe@kernel.dk>
+ <20191217143948.26380-2-axboe@kernel.dk>
 MIME-Version: 1.0
-References: <1576582159-5198-1-git-send-email-laoar.shao@gmail.com>
- <1576582159-5198-5-git-send-email-laoar.shao@gmail.com> <20191218022122.GT19213@dread.disaster.area>
-In-Reply-To: <20191218022122.GT19213@dread.disaster.area>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Wed, 18 Dec 2019 10:33:48 +0800
-Message-ID: <CALOAHbBQyWWn7XqhGZbhxbHUW-J+kVG2w1B8DB+HS61nCRYgRw@mail.gmail.com>
-Subject: Re: [PATCH 4/4] memcg, inode: protect page cache from freeing inode
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org,
-        Roman Gushchin <guro@fb.com>,
-        Chris Down <chris@chrisdown.name>,
-        Dave Chinner <dchinner@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191217143948.26380-2-axboe@kernel.dk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=KoypXv6BqLCQNZUs2nCMWg==:117 a=KoypXv6BqLCQNZUs2nCMWg==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=pxVhFHJ0LMsA:10
+        a=7-415B0cAAAA:8 a=sHR7OoHQe-bhMzIJJDcA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 10:21 AM Dave Chinner <david@fromorbit.com> wrote:
->
-> On Tue, Dec 17, 2019 at 06:29:19AM -0500, Yafang Shao wrote:
-> > On my server there're some running MEMCGs protected by memory.{min, low},
-> > but I found the usage of these MEMCGs abruptly became very small, which
-> > were far less than the protect limit. It confused me and finally I
-> > found that was because of inode stealing.
-> > Once an inode is freed, all its belonging page caches will be dropped as
-> > well, no matter how may page caches it has. So if we intend to protect the
-> > page caches in a memcg, we must protect their host (the inode) first.
-> > Otherwise the memcg protection can be easily bypassed with freeing inode,
-> > especially if there're big files in this memcg.
-> > The inherent mismatch between memcg and inode is a trouble. One inode can
-> > be shared by different MEMCGs, but it is a very rare case. If an inode is
-> > shared, its belonging page caches may be charged to different MEMCGs.
-> > Currently there's no perfect solution to fix this kind of issue, but the
-> > inode majority-writer ownership switching can help it more or less.
-> >
-> > Cc: Roman Gushchin <guro@fb.com>
-> > Cc: Chris Down <chris@chrisdown.name>
-> > Cc: Dave Chinner <dchinner@redhat.com>
-> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > ---
-> >  fs/inode.c                 |  9 +++++++++
-> >  include/linux/memcontrol.h | 15 +++++++++++++++
-> >  mm/memcontrol.c            | 46 ++++++++++++++++++++++++++++++++++++++++++++++
-> >  mm/vmscan.c                |  4 ++++
-> >  4 files changed, 74 insertions(+)
-> >
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index fef457a..b022447 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -734,6 +734,15 @@ static enum lru_status inode_lru_isolate(struct list_head *item,
-> >       if (!spin_trylock(&inode->i_lock))
-> >               return LRU_SKIP;
-> >
-> > +
-> > +     /* Page protection only works in reclaimer */
-> > +     if (inode->i_data.nrpages && current->reclaim_state) {
-> > +             if (mem_cgroup_inode_protected(inode)) {
-> > +                     spin_unlock(&inode->i_lock);
-> > +                     return LRU_ROTATE;
->
-> Urk, so after having plumbed the memcg all the way down to the
-> list_lru walk code so that we only walk inodes in that memcg, we now
-> have to do a lookup from the inode back to the owner memcg to
-> determine if we should reclaim it? IOWs, I think the layering here
-> is all wrong - if memcg info is needed in the shrinker, it should
-> come from the shrink_control->memcg pointer, not be looked up from
-> the object being isolated...
->
+On Tue, Dec 17, 2019 at 07:39:43AM -0700, Jens Axboe wrote:
+> If RWF_UNCACHED is set for io_uring (or preadv2(2)), we'll use private
+> pages for the buffered reads. These pages will never be inserted into
+> the page cache, and they are simply droped when we have done the copy at
+> the end of IO.
 
-Agree with you that the layering here is not good.
-I had tried to use shrink_control->memcg pointer as an argument or
-something else,  but I found that will change lots of code.
-I don't want to change too much code, so I implement it this way,
-although it looks a litte strange.
+Ok, so unlike the uncached write case, this /isn't/ coherent with
+the page cache. IOWs, it can race with other reads and page faults
+and mmap can change the data it has faulted into the page cache and
+write it back before the RWF_UNCACHED read completes, resulting
+in RWF_UNCACHED potential returning torn data.
 
-> i.e. this code should read something like this:
->
->         if (memcg && inode->i_data.nrpages &&
->             (!memcg_can_reclaim_inode(memcg, inode)) {
->                 spin_unlock(&inode->i_lock);
->                 return LRU_ROTATE;
->         }
->
-> This code does not need comments because it is obvious what it does,
-> and it provides a generic hook into inode reclaim for the memcg code
-> to decide whether the shrinker should reclaim the inode or not.
->
-> This is how the memcg code should interact with other shrinkers, too
-> (e.g. the dentry cache isolation function), so you need to look at
-> how to make the memcg visible to the lru walker isolation
-> functions....
->
+And it's not coherent with uncached writes, either, if the
+filesystem does not provide it's own serialisation between buffered
+reads and writes. i.e. simple/legacy filesystems just use the page
+lock to serialise buffered reads against buffered writes, while
+buffered writes are serialised against each other via the
+inode_lock() in generic_file_write_iter().
 
-Thanks for your suggestion.
-I will rethink it torwards this way.
+Further, the use of inode_dio_wait() for truncate serialisation is
+optional for filesystems - it's not a generic mechanism. Filesystems
+that only support buffered IO only use page locks to provide
+truncate serialisation and don't call inode_dio_wait() in their
+->setattr methods. Hence to serialise truncates against uncached
+reads in such filesystems the uncached read needs to be page cache
+coherent.
 
-Thanks
-Yafang
+As I said previously: I don't think this is a viable approach
+because it has page cache coherency issues that are just as bad, if
+not worse, than direct IO.
+
+> If pages in the read range are already in the page cache, then use those
+> for just copying the data instead of starting IO on private pages.
+> 
+> A previous solution used the page cache even for non-cached ranges, but
+> the cost of doing so was too high. Removing nodes at the end is
+> expensive, even with LRU bypass.
+
+If you want to bypass the page cache overhead all together, then
+use direct IO. We should not make the same mistakes as O_DIRECT
+for the same reasons (performance!). Instead, once we have the
+page cache coherent path working we should then work to optimise
+it with better page cache insert/remove primitives to lower the
+overhead.
+
+> On top of that, repeatedly
+> instantiating new xarray nodes is very costly, as it needs to memset 576
+> bytes of data, and freeing said nodes involve an RCU call per node as
+> well. All that adds up, making uncached somewhat slower than O_DIRECT.
+
+I think some of that has to do with implementation details and the
+fact you appear to be focussing on PAGE_SIZE IOs. This means you are
+instantiating and removing a single cached page at a time from the
+mapping tree, and that means we need to allocate and free an xarray
+node per IO.
+
+I would say this is a future Xarray optimisation target, not a
+reason for introducing a new incoherent IO API we'll have to support
+long after we've fixed the xarray inefficiency....
+
+> @@ -2048,6 +2057,13 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
+>  		if (!page) {
+>  			if (iocb->ki_flags & IOCB_NOWAIT)
+>  				goto would_block;
+> +			/* UNCACHED implies no read-ahead */
+> +			if (iocb->ki_flags & IOCB_UNCACHED) {
+> +				did_dio_begin = true;
+> +				/* block truncate for UNCACHED reads */
+> +				inode_dio_begin(inode);
+> +				goto no_cached_page;
+> +			}
+
+Ok, so for every page we don't find in the cache, we go issue IO.
+We also call inode_dio_begin() on every page we miss, but only call
+inode_dio_end() a single time. So we leak i_dio_count on every IO
+that needs to read more than a single page, which means we'll hang
+in the next call to inode_dio_wait()...
+
+>  no_cached_page:
+> @@ -2234,6 +2250,14 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
+>  			error = -ENOMEM;
+>  			goto out;
+>  		}
+> +		if (iocb->ki_flags & IOCB_UNCACHED) {
+> +			__SetPageLocked(page);
+> +			page->mapping = mapping;
+> +			page->index = index;
+> +			clear_mapping = true;
+> +			goto readpage;
+> +		}
+
+And we go through the ->readpage path, which means we a building and
+issuing a single bio per page we miss. THis is highly inefficient,
+and relies on bio merging to form large IOs in the block layer.
+Sure, you won't notice the impact if all you do is PAGE_SIZE read()
+calls, but if you are doing multi-megabyte IOs because you have
+spinning rust storage then it will make a big difference.
+
+IOWs, this does not take advantage of either the mpage_readpages or
+the iomap_readpages many-pages-to-a-bio read optimisations that the
+readahead path gives us, so there's more CPU and IO overhead from this
+RWF_UNCACHED path than there is from the normal readahead based
+buffered IO path.
+
+Oh, and if we have random pages in the cache, this
+single-page-at-atime approach that will break up large sequential
+IOs in smaller, non-sequential IOs that will be dispatched
+separately. It's much more CPU efficient to do a single large IO
+that pulls new data into the random page in middle of the range than
+it is to build, issue and complete two separate IOs. It's also much
+more friendly to spinning rust to do a single large IO than two
+small separated-by-a-few-sectors IOs...
+
+IMO, this looks like an implementation hyper-focussed on brute
+performance of PAGE_SIZE IOs and it compromises on coherency and
+efficiency to attain that performance. Quite frankly, if performance
+is so critical that you need to compromise the IO path in the way,
+then just use direct IO.
+
+Let's get a sane, clean, efficient page cache coherent read IO path
+in place for RWF_UNCACHED, then optimise it for performance. If it's
+done right, then the page cache/xarray insert/remove overhead should
+largely disappear in the noise.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
