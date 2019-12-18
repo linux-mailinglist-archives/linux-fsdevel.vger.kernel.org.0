@@ -2,144 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE580124A8E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 16:01:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42C42124B45
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 16:14:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726921AbfLRPBc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Dec 2019 10:01:32 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:41155 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726996AbfLRPBc (ORCPT
+        id S1727205AbfLRPOT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Dec 2019 10:14:19 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:38265 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727198AbfLRPNx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Dec 2019 10:01:32 -0500
-Received: by mail-qk1-f196.google.com with SMTP id x129so1771837qke.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Dec 2019 07:01:31 -0800 (PST)
+        Wed, 18 Dec 2019 10:13:53 -0500
+Received: by mail-il1-f195.google.com with SMTP id f5so1986504ilq.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Dec 2019 07:13:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dksQ3sa6x+MBXi5EvTI6N5sQp4eN9RCuqeUBSUeiFHI=;
-        b=QWd4WWXI10mJymRIsZ49KaESBWBDoT1eSgFAm3FN3AUlcJPTx0dDQ0nn96xIZdVGXj
-         9knLtiLdO4GPhWhG5Xl3J9/1N8c1YpYCojSmcjzcJhNS0eakk2HTvyw3roD6PqMaOi8E
-         0X9Lek+m7WC1gENUZrQwiHOKVXhIGiwZYvUx6sH5DHiKaJvllROZ5Y1KEWrydnGYMxKZ
-         nsmCFAOJd7gm3stvh1qtuWSkAobV1K2dA+8OUnvimyKi6KTmQFUHMIK3+MFyLSukQ/FD
-         bhqrstPnJimg+hCXDpxNbaAdaHefdo/a2vvkHkfoDne6K7Be45cePqZrFi8ngzb52HlL
-         Z5FA==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=R9l9mbjTMtC+3agOxuj88vgGSGUSi1shzIvbtHPQHDA=;
+        b=Q3vp2fJ40VWpq9rX2ikiWTUrhuiQJXzCeUu43e1oIIOk8rzGCPMljco+W3g3Sdt7mK
+         0zMp27lNXT81ott0dYeyE6wCdI4c1wfi5qCqRmoGIMvdtgle/6NMWI0GJrkD30CBojRq
+         hZbdgtbn9F/6uhvfSLkMdN7NhUpQoMVScRn9uDFKZJxofy0MWDF6kZw53YXeVt8sjWjA
+         Dd9TBzj4Ogplv/txGap2r0I252pQP7l7XSY4YOVhZ7qL539zlqhtO9W4mad505PIZ9Xp
+         yYy+XyL34oyC2pvEIWTDP8EMj+Gj6Cu0eHyc7GTPTD7Enq1rjLHU3JyAyX8LQzaLW/WP
+         +a+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dksQ3sa6x+MBXi5EvTI6N5sQp4eN9RCuqeUBSUeiFHI=;
-        b=h5beTLxOjGNVgVXlwOXpJqDXsKw0Fez61JKnfccqPnscas7eAbsbZc7IK9FLiMT/OA
-         dXJh2+KN0iJM8ErOi0dl6/owzIM89yTC0P8c98fHmhGBLQ2u07wQHvzu1PPiydaKWSvn
-         i7pO/iW3HJ+yu3Rt+JLHPvdhAuFd8E+exoHEqfOtaBEqRIPtuETumKMIiviSVoyKKBtQ
-         GrjIeK6+nwmmJOI5igcWw2ikjZA8jSAZLT2TWbFMCdZK24/NbTnxZgK9hNdGEjgxG+XQ
-         Va5bPqdOOK6eXkw7rel9+GFHTGJ1KYKoAkxMn/tgjhAQMUJCjZ1sN4STR0EJx/vHvc8h
-         heHg==
-X-Gm-Message-State: APjAAAV6xPzwsBPT8flI32gdV9cBcNxcoDsGsDUwfSnkjGKZ9lto7fb0
-        1RJsAIy5VrVz6KRcO7OSmho4VtT5HG6fnw==
-X-Google-Smtp-Source: APXvYqx/TzsrHeabP28pH0c9OJ4meVk6tjQeeCz0NUdpRuB6R0Q7+1s36AoSKdIGDVAWSJPIRQevKg==
-X-Received: by 2002:ae9:ed53:: with SMTP id c80mr2785219qkg.445.1576681291074;
-        Wed, 18 Dec 2019 07:01:31 -0800 (PST)
-Received: from [192.168.1.106] ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id o9sm732800qko.16.2019.12.18.07.01.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Dec 2019 07:01:30 -0800 (PST)
-Subject: Re: [PATCH v6 24/28] btrfs: enable relocation in HMZONED mode
-To:     Naohiro Aota <naohiro.aota@wdc.com>
-Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        Chris Mason <clm@fb.com>, Nikolay Borisov <nborisov@suse.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Hannes Reinecke <hare@suse.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        linux-fsdevel@vger.kernel.org
-References: <20191213040915.3502922-1-naohiro.aota@wdc.com>
- <20191213040915.3502922-25-naohiro.aota@wdc.com>
- <83984f9c-4f37-4a04-daea-8169959dc09d@toxicpanda.com>
- <20191218104920.ozsa3pawkvxs2gg5@naota.dhcp.fujisawa.hgst.com>
-From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <b538ea95-9493-88b7-de6e-fa94dca43665@toxicpanda.com>
-Date:   Wed, 18 Dec 2019 10:01:29 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
- Gecko/20100101 Thunderbird/68.3.1
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=R9l9mbjTMtC+3agOxuj88vgGSGUSi1shzIvbtHPQHDA=;
+        b=ASq7r6wBSlx93Z39bWMK9G7oIV1b5kHeQromL7GAHVc/yXiyJzHWX5mJ/2L5LnJu27
+         13RTX5HoNMjUrzpYZr01m200ltodJpB6cHnu5cYzyA52R0h1rXOqAd78y+7YFgsrQrLH
+         /62Icc1vfAaVmqnlT8xNrhmx5aXovlg9Q1Ct2emUUXvfQvq9ya6Z9UqRtOZAh0h7U1UW
+         VjsV36T1zzWL3M0DZqNrP4bsbDe25cBlPfqOWg/hQzMAcm/K3rK103mizScL7GAJAYGe
+         +pviYR2pqI/WvSYW/GB+zC8wNuugx+coXQJFSCLAfUWyFEx3/wpCdxBxOQ91B/vPlu53
+         /q4g==
+X-Gm-Message-State: APjAAAXI5eIJb0rqQSUjZe1uZlqDkYSRGZQVrwrUbsfz+tN9ojaNh9Xx
+        v3t/OndA9C+ONVLDoJx0IJNH3+p//wafikZCwA==
+X-Google-Smtp-Source: APXvYqzpDMY1kfzvQTGFYFDuSf5Wkv4RFsY3uCP+mpqq6wLn7kqjCTzLCYufYBbbmMCBsVo5PHwr9dpQEEDI7K8RY00=
+X-Received: by 2002:a92:cc90:: with SMTP id x16mr2363556ilo.269.1576682033220;
+ Wed, 18 Dec 2019 07:13:53 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191218104920.ozsa3pawkvxs2gg5@naota.dhcp.fujisawa.hgst.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a02:6603:0:0:0:0:0 with HTTP; Wed, 18 Dec 2019 07:13:52
+ -0800 (PST)
+Reply-To: dhl.expresscourier102156@outlook.fr
+From:   "MS. MARYANNA B. THOMASON" <info.zennitbankplcnigerian@gmail.com>
+Date:   Wed, 18 Dec 2019 16:13:52 +0100
+Message-ID: <CABHzvrnY8Lhdw4Y2q97jvAVrRpM9CVLFkw=Ved7y1GhGqHiAdw@mail.gmail.com>
+Subject: I WANT TO YOU TO TREAT THIS EMAIL VERY URGENT
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/18/19 5:49 AM, Naohiro Aota wrote:
-> On Tue, Dec 17, 2019 at 04:32:04PM -0500, Josef Bacik wrote:
->> On 12/12/19 11:09 PM, Naohiro Aota wrote:
->>> To serialize allocation and submit_bio, we introduced mutex around them. As
->>> a result, preallocation must be completely disabled to avoid a deadlock.
->>>
->>> Since current relocation process relies on preallocation to move file data
->>> extents, it must be handled in another way. In HMZONED mode, we just
->>> truncate the inode to the size that we wanted to pre-allocate. Then, we
->>> flush dirty pages on the file before finishing relocation process.
->>> run_delalloc_hmzoned() will handle all the allocation and submit IOs to
->>> the underlying layers.
->>>
->>> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
->>> ---
->>>  fs/btrfs/relocation.c | 39 +++++++++++++++++++++++++++++++++++++--
->>>  1 file changed, 37 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/fs/btrfs/relocation.c b/fs/btrfs/relocation.c
->>> index d897a8e5e430..2d17b7566df4 100644
->>> --- a/fs/btrfs/relocation.c
->>> +++ b/fs/btrfs/relocation.c
->>> @@ -3159,6 +3159,34 @@ int prealloc_file_extent_cluster(struct inode *inode,
->>>      if (ret)
->>>          goto out;
->>> +    /*
->>> +     * In HMZONED, we cannot preallocate the file region. Instead,
->>> +     * we dirty and fiemap_write the region.
->>> +     */
->>> +
->>> +    if (btrfs_fs_incompat(btrfs_sb(inode->i_sb), HMZONED)) {
->>> +        struct btrfs_root *root = BTRFS_I(inode)->root;
->>> +        struct btrfs_trans_handle *trans;
->>> +
->>> +        end = cluster->end - offset + 1;
->>> +        trans = btrfs_start_transaction(root, 1);
->>> +        if (IS_ERR(trans))
->>> +            return PTR_ERR(trans);
->>> +
->>> +        inode->i_ctime = current_time(inode);
->>> +        i_size_write(inode, end);
->>> +        btrfs_ordered_update_i_size(inode, end, NULL);
->>> +        ret = btrfs_update_inode(trans, root, inode);
->>> +        if (ret) {
->>> +            btrfs_abort_transaction(trans, ret);
->>> +            btrfs_end_transaction(trans);
->>> +            return ret;
->>> +        }
->>> +        ret = btrfs_end_transaction(trans);
->>> +
->>> +        goto out;
->>> +    }
->>> +
->>
->> Why are we arbitrarily extending the i_size here?  If we don't need prealloc 
->> we don't need to jack up the i_size either.
-> 
-> We need to extend i_size to read data from the relocating block
-> group. If not, btrfs_readpage() in relocate_file_extent_cluster()
-> always reads zero filled page because the read position is beyond the
-> file size.
+Attn Dear.
 
-Right but the finish_ordered_io stuff will do the btrfs_ordered_update_i_size() 
-once the IO is complete.  So all you really need is the i_size_write and the 
-btrfs_update_inode.  If this crashes you'll have an inode that has a i_size with 
-no extents up to i_size.  This is fine for NO_HOLES but not fine for !NO_HOLES. 
-Thanks,
+Urgent delivery Notification of your ATM MASTER CARD, Dhl-Benin is
+ready for delivery of your ATM Master card worth $15.800=E2=80=99000=E2=80=
+=9900, as
+approved this morning, Date, 18/12/2019. Through the Intruction from
+INTERNATIONAL MONETARY FUNDS, I.M.F official Directors.
 
-Josef
+REGISTRATION NO :EG58945
+PARCEL NUMBER: 140479
+Delivery Schuleded now,
+Finally all we required from you is your ATM Card Proccessing Delivery
+fees $19.00 only which you must send to this DHL service to enable us
+dispatch the parcel to your destination today.
+
+Here is our receiving payment details.
+You are advised to send it Via Money Gram Service.
+
+Receiver's Name--------Alan Ude
+Country-------Benin Republic.
+City/ Address--------Cotonou
+Test Question--------In God
+Answer-------We Trust
+Amount------------$US19.00 only
+Mtcn-------------
+Sender's Name-------
+
+Your delivery  ATM card worth $15.800=E2=80=99000=E2=80=9900,
+Is Due for delivery to your address today upon confirmation of
+required fee from you asap.
+
+Call us on this phone number for any inquiry. +229 62819378
+Awaiting your urgent response.
+
+MS. MARYANNA B. THOMASON, Shipment director, DHL Express
+Courier Company-Benin
