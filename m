@@ -2,134 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 329F8123C52
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 02:17:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A0E7123C62
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 02:25:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbfLRBRs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Dec 2019 20:17:48 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:43210 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726463AbfLRBRs (ORCPT
+        id S1726387AbfLRBZe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Dec 2019 20:25:34 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:51754 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726167AbfLRBZd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Dec 2019 20:17:48 -0500
-Received: by mail-il1-f195.google.com with SMTP id v69so214365ili.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Dec 2019 17:17:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oA/yf12U/Kxc1zDI4JzibNhsgFIEwCoLpFPoyClVoyc=;
-        b=V2GockHvWu/kJZOrb/Fjb++aDcjeKE9nF1tswj9bcP56aSDm1mWkF0Bb1o8cWasTMB
-         onk1Pi1FvBXa+vhd+b0Obx9GOTwPMp3xVPlF9+aeD/O/muLWemx0dYrrcskjt7fcz7ed
-         YJ3a3xm+t9W+PakO/2LygdAkHcJtGQ7fd4kPyFchZHO64KRO5RUjSpRp4nRuy42Q6MGg
-         vuq2f2bUqwEBet+aAJTxBMF38hSVlZfSYG6KSHFU607Xu0EK+OdCvN1A0bc9vnJbvaZQ
-         qkk9xGzcITv5dXkMmgkNlqCXAbcKGRPklfR70XYeUPtneoTWBkR8RTNfOKEdYXCyn3Ur
-         vLbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oA/yf12U/Kxc1zDI4JzibNhsgFIEwCoLpFPoyClVoyc=;
-        b=dE/watVvPCooQ1VVrl+1gEIqOdlUODnKyIcPVCZB3x3TFCNvLqWJYQbqRNQ6aMuhOT
-         9QAYpyPAUzaRmKdt0UKBtI82rIiF4qMdXv5HvMz7FyQH8FLjCsuPe9oDYizsgbRlNuwU
-         Fj43H2i2AFBQOxC3Py/0mzZk3HuGpnhuw6fUhq+WHB7fzsavZ7D14iFpIVmywB8btWvG
-         57GYmlsQeIC2Cv1xurTEEZGHt1fIxc6p+TnEyVJXgT2OghI5tcvRxSTLSrHKl6zbMWIz
-         4iz5mpKc/0M5hDbxpPLdWUPaxTibSkh0WMbaNxjHYaxgx8nooK86GXiKrKpGVnUVAxaf
-         qVjQ==
-X-Gm-Message-State: APjAAAXP9wUkbeQkWnWOXDJKWZ57mIgeq4V7amq3kOoqTLrCQKpUpOSV
-        LqlYg1RKmPM5QGywrEQkGLzNdIfHnW//qThe2yk=
-X-Google-Smtp-Source: APXvYqyNOT9j7j2T8jDNq965KC84cLs7ROS0VaTwM3kqpxYEC2cEax272aefDu09HlYAEi/5zKrQh2uydZFCZnTGRic=
-X-Received: by 2002:a92:5c8a:: with SMTP id d10mr342478ilg.137.1576631867378;
- Tue, 17 Dec 2019 17:17:47 -0800 (PST)
-MIME-Version: 1.0
-References: <1576582159-5198-1-git-send-email-laoar.shao@gmail.com>
- <20191217115603.GA10016@dhcp22.suse.cz> <CALOAHbBQ+XkQk6HN53O4e1=qfFiow2kvQO3ajDj=fwQEhcZ3uw@mail.gmail.com>
- <20191217165422.GA213613@cmpxchg.org>
-In-Reply-To: <20191217165422.GA213613@cmpxchg.org>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Wed, 18 Dec 2019 09:17:11 +0800
-Message-ID: <CALOAHbBqX6=Q6zymFR7T7bPqv62VTf8FM76W5JTkGSTf2e9tMA@mail.gmail.com>
-Subject: Re: [PATCH 0/4] memcg, inode: protect page cache from freeing inode
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Tue, 17 Dec 2019 20:25:33 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBI1JhJl017398;
+        Wed, 18 Dec 2019 01:25:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=CPrPTKGRWbte5d18j8OyziiV63P7dvuHEgE/Q71iwPA=;
+ b=OGVchsZMv9g7X7LtF9Ayc6TQeIzSwqUHV2M1v9QCjLQktykMPgCbuEff9XcFGhlcZpCX
+ MCy43T5fy/GKyMhvLbGS/1Fr3kmuh6XYWC+7liKOtWIisa/Dy/d5MUdefDhjx7Ikz3eW
+ YpqZaMm1TeG4DdXAnnwm1PDcLxxumA/3h3jjY+hJ+bgdItMf11SQ92Uz+llhN8z3WrU3
+ 1GvgkITmE1RLWWp3HvW17qfLExEItakRW+8zb0Rqb5lRULcloz7YEVjNihm0n6N2eiPH
+ AKF7a/m7vfZC7TSIPeGPISq6ReJbWlVS5nXXe1hC+7RMUr7e7HS3039exUEy9jizGNQo HQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2wvqpqacgw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Dec 2019 01:25:20 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBI1MtxK037321;
+        Wed, 18 Dec 2019 01:25:20 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2wxm74v2j2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Dec 2019 01:25:20 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xBI1PIQ4003591;
+        Wed, 18 Dec 2019 01:25:19 GMT
+Received: from localhost (/10.159.137.228)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 17 Dec 2019 17:25:17 -0800
+Date:   Tue, 17 Dec 2019 17:25:16 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
         Dave Chinner <david@fromorbit.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH 4/6] iomap: add struct iomap_ctx
+Message-ID: <20191218012516.GA12752@magnolia>
+References: <20191217143948.26380-1-axboe@kernel.dk>
+ <20191217143948.26380-5-axboe@kernel.dk>
+ <CAHk-=wgcPAfOSigMf0xwaGfVjw413XN3UPATwYWHrss+QuivhQ@mail.gmail.com>
+ <CAHk-=wgvROUnrEVADVR_zTHY8NmYo-_jVjV37O1MdDm2de+Lmw@mail.gmail.com>
+ <9941995e-19c5-507b-9339-b8d2cb568932@kernel.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9941995e-19c5-507b-9339-b8d2cb568932@kernel.dk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9474 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912180009
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9474 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912180009
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 12:54 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
->
-> CCing Dave
->
-> On Tue, Dec 17, 2019 at 08:19:08PM +0800, Yafang Shao wrote:
-> > On Tue, Dec 17, 2019 at 7:56 PM Michal Hocko <mhocko@kernel.org> wrote:
-> > > What do you mean by this exactly. Are those inodes reclaimed by the
-> > > regular memory reclaim or by other means? Because shrink_node does
-> > > exclude shrinking slab for protected memcgs.
-> >
-> > By the regular memory reclaim, kswapd, direct reclaimer or memcg reclaimer.
-> > IOW, the current->reclaim_state it set.
-> >
-> > Take an example for you.
-> >
-> > kswapd
-> >     balance_pgdat
-> >         shrink_node_memcgs
-> >             switch (mem_cgroup_protected)  <<<< memory.current= 1024M
-> > memory.min = 512M a file has 800M page caches
-> >                 case MEMCG_PROT_NONE:  <<<< hard limit is not reached.
-> >                       beak;
-> >             shrink_lruvec
-> >             shrink_slab <<< it may free the inode and the free all its
-> > page caches (800M)
->
-> This problem exists independent of cgroup protection.
->
-> The inode shrinker may take down an inode that's still holding a ton
-> of (potentially active) page cache pages when the inode hasn't been
-> referenced recently.
->
-> IMO we shouldn't be dropping data that the VM still considers hot
-> compared to other data, just because the inode object hasn't been used
-> as recently as other inode objects (e.g. drowned in a stream of
-> one-off inode accesses).
->
-> I've carried the below patch in my private tree for testing cache
-> aging decisions that the shrinker interfered with. (It would be nicer
-> if page cache pages could pin the inode of course, but reclaim cannot
-> easily participate in the inode refcounting scheme.)
->
-> Thoughts?
->
+On Tue, Dec 17, 2019 at 05:15:46PM -0700, Jens Axboe wrote:
+> On 12/17/19 1:26 PM, Linus Torvalds wrote:
+> > On Tue, Dec 17, 2019 at 11:39 AM Linus Torvalds
+> > <torvalds@linux-foundation.org> wrote:
+> >>
+> >> 'loff_t length' is not right.
+> > 
+> > Looking around, it does seem to get used that way. Too much, though.
+> > 
+> >>> +       loff_t pos = data->pos;
+> >>> +       loff_t length = pos + data->len;
+> >>
+> >> And WTH is that? "pos + data->len" is not "length", that's end. And this:
+> >>
+> >>>         loff_t end = pos + length, done = 0;
+> >>
+> >> What? Now 'end' is 'pos+length', which is 'pos+pos+data->len'.
+> > 
+> > But this is unrelated to the crazy types. That just can't bve right.
+> 
+> Yeah, I fixed that one up, that was my error.
+> 
+> >> Is there some reason for this horrible case of "let's allow 64-bit sizes?"
+> >>
+> >> Because even if there is, it shouldn't be "loff_t". That's an
+> >> _offset_. Not a length.
+> > 
+> > We do seem to have a lot of these across filesystems. And a lot of
+> > confusion. Most of the IO reoutines clearly take or return a size_t
+> > (returning ssize_t) as the IO size. And then you have the
+> > zeroing/truncation stuff that tends to take loff_t. Which still smells
+> > wrong, and s64 would look like a better case, but whatever.
+> > 
+> > The "iomap_zero_range() for truncate" case really does seem to need a
+> > 64-bit value, because people do the difference of two loff_t's for it.
+> > In fact, it almost looks like that function should take a "start ,
+> > end" pair, which would make loff_t be the _right_ thing.
 
-I have already though about this solution.
-But I found there is a similar revert by Dave - see 69056ee6a8a3
-("Revert "mm: don't reclaim inodes with many attached pages"").
-That's why I CCed Dave in patch-4.
-So I only fix it for memcg protection because that will not impact too much.
+Yeah.  "loff_t length" always struck me as a little odd, but until now I
+hadn't heard enough complaining about it to put any effort into fixing
+the iomap_apply code that (afaict) mostly worked ok.  But it shouldn't
+be a difficult change.
 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index fef457a42882..bfcaaaf6314f 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -753,7 +753,13 @@ static enum lru_status inode_lru_isolate(struct list_head *item,
->                 return LRU_ROTATE;
->         }
->
-> -       if (inode_has_buffers(inode) || inode->i_data.nrpages) {
-> +       /* Leave the pages to page reclaim */
-> +       if (inode->i_data.nrpages) {
-> +               spin_unlock(&inode->i_lock);
-> +               return LRU_ROTATE;
-> +       }
-> +
-> +       if (inode_has_buffers(inode)) {
->                 __iget(inode);
->                 spin_unlock(&inode->i_lock);
->                 spin_unlock(lru_lock);
+> > Because "length" really is just (a positive) size_t normally.
+
+However, I don't think it's a good idea to reduce the @length argument
+to size_t (and the iomap_apply return value to ssize_t) because they're
+32-bit values and doing that will force iomap to clamp lengths and
+return values to S32_MAX.  Instituting a ~2G max on read and write calls
+is fine because those operate directly on file data (== slow), but the
+vfs already clamps the length before the iov gets to iomap.
+
+For the other iomap users that care more about the mappings and less
+about the data in those mappings (seek hole, seek data, fiemap, swap) it
+doesn't make much sense.  If the filesystem can send back a 100GB extent
+map (e.g. holes in a sparse file, or we just have superstar allocation
+strategies), the fs should send that straight to the iomap actor
+function without having to cut that into 50x loop iterations.  Looking
+ahead to things like file mapping leases, a (formerly wealthy) client
+should be able to request a mmap lease on 100GB worth of pmem and get
+the whole lease if the fs can allocate 100G at once.
+
+I like the idea of making the length parameter and the return value
+int64_t instead of loff_t.  Is int64_t the preferred typedef or s64?  I
+forget.
+
+> Honestly, I'd much rather leave the loff_t -> size_t/ssize_t to
+> Darrick/Dave, it's really outside the scope of this patch, and I'd
+> prefer not to have to muck with it. They probably feel the same way!
+
+Don't forget Christoph.  Heh, we /did/ forget Christoph. :(
+Maybe they have better historical context since they invented this iomap
+mechanism for pnfs or something long before I came along.
+
+--D
+
+> -- 
+> Jens Axboe
+> 
