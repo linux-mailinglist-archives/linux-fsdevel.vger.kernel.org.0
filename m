@@ -2,101 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3489F123DD7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 04:24:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70323123E01
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 04:36:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726620AbfLRDX4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Dec 2019 22:23:56 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:39870 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726561AbfLRDX4 (ORCPT
+        id S1726510AbfLRDgI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Dec 2019 22:36:08 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:55176 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726492AbfLRDgI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Dec 2019 22:23:56 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 77so569600oty.6;
-        Tue, 17 Dec 2019 19:23:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZJSztDb6lmjtiPRyrZHre6U5L8vb56EP0EHTbsoCZLM=;
-        b=umPb6nIBc/8XzsMDpHLfJLDR1gkHY/9oi9DYqytuN3R9jLYK12hgZqsFiq0warXmpS
-         PfvfAtpmdEAV0BtyRj+KwzBQC94TjqEwN0fkoV6BWWhAg/6D4XaHOpYCXhlAANJlhKu+
-         jNpL+Txxrz2rDdRirq4nYV7h91SayAVtPkhqsUg+fp3K2JDRai0W43Myl5MSIRwPFbZI
-         7D8rO+gtU3rqVqk/65wensWNfmf09sB8rc4ikN4TMqjQ8NQOx9tW5pEqDIH47YCmBnsl
-         IuHEPrelWFXXAMopWu/p+hz/dVoHVr5J49xtXCRmsL9I70s3MOq+ti6M0R4h6/8zATa0
-         09IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZJSztDb6lmjtiPRyrZHre6U5L8vb56EP0EHTbsoCZLM=;
-        b=ZT7JQ/K8X1WenAEjuAJnhg8t+BMC3NegUMPbmyBWavVdqKxjiTeO643Yg9JK4cRhZz
-         D3uch2DGdqIpx//PwsrRAFyuj4h7zD9U/kHeRUEQXQH1Yv8l7WVkgUOG04yymVzVyVBZ
-         LudY52jOJS7vWUxrRPYNBXjK6sfkvUQA0NGQZIb+4ysWulgSyycc3I+/Vt7+PR+E4Bb4
-         8wafZHt4VozgqzQzThP9zpdHAvz7ELT7cYF6o+bBEJgmmFkioCsTr3OtJRkFFZl1FdcT
-         eU/C2BOxb4e5d3OG4EZ82HIRnme7V9OMwOFhuztn/mXGSllO1GYOnizNOoSPIcL/fqvi
-         5hyg==
-X-Gm-Message-State: APjAAAVEvXzI2RQxQVkWYxVYz2dVGyitpJ6LotabiklY3ey8JK/UGol2
-        ZLqw/J2IMHWtf9eXP0TBXS8=
-X-Google-Smtp-Source: APXvYqwVuU1HngrwuNmts8TRaP4tz4igqm7IJo96dSuIZ6iDrArt07ZS4EmzDIZYEUANsy0W9w6ETQ==
-X-Received: by 2002:a9d:6f82:: with SMTP id h2mr135306otq.69.1576639435270;
-        Tue, 17 Dec 2019 19:23:55 -0800 (PST)
-Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id l1sm353857oic.22.2019.12.17.19.23.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2019 19:23:54 -0800 (PST)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] vfs: Adjust indentation in remap_verify_area
-Date:   Tue, 17 Dec 2019 20:23:51 -0700
-Message-Id: <20191218032351.5920-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.24.1
+        Tue, 17 Dec 2019 22:36:08 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ihQ86-0001fo-Jn; Wed, 18 Dec 2019 03:36:06 +0000
+Date:   Wed, 18 Dec 2019 03:36:06 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Eric Sandeen <sandeen@sandeen.net>
+Cc:     fsdevel <linux-fsdevel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH V2] fs_parser: remove fs_parameter_description name field
+Message-ID: <20191218033606.GF4203@ZenIV.linux.org.uk>
+References: <22be7526-d9da-5309-22a8-3405ed1c0842@sandeen.net>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <22be7526-d9da-5309-22a8-3405ed1c0842@sandeen.net>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Clang warns:
+On Fri, Dec 06, 2019 at 10:31:57AM -0600, Eric Sandeen wrote:
+> There doesn't seem to be a strong reason to have a copy of the
+> filesystem name string in the fs_parameter_description structure;
+> it's easy enough to get the name from the fs_type, and using it
+> instead ensures consistency across messages (for example,
+> vfs_parse_fs_param() already uses fc->fs_type->name for the error
+> messages, because it doesn't have the fs_parameter_description).
 
-../fs/read_write.c:1760:3: warning: misleading indentation; statement is
-not part of the previous 'if' [-Wmisleading-indentation]
-         if (unlikely((loff_t) (pos + len) < 0))
-         ^
-../fs/read_write.c:1757:2: note: previous statement is here
-        if (unlikely(pos < 0 || len < 0))
-        ^
-1 warning generated.
+Arrgh...  That used to be fine.  Now we have this:
+static int rbd_parse_param(struct fs_parameter *param,
+                            struct rbd_parse_opts_ctx *pctx)
+{
+        struct rbd_options *opt = pctx->opts;
+        struct fs_parse_result result; 
+        int token, ret;
 
-This warning occurs because there is a space after the tab on this line.
-Remove it so that the indentation is consistent with the Linux kernel
-coding style and clang no longer warns.
+        ret = ceph_parse_param(param, pctx->copts, NULL);
+        if (ret != -ENOPARAM)
+                return ret;
 
-Fixes: 04b38d601239 ("vfs: pull btrfs clone API to vfs layer")
-Link: https://github.com/ClangBuiltLinux/linux/issues/828
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- fs/read_write.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+        token = fs_parse(NULL, rbd_parameters, param, &result);
+			 ^^^^
 
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 5bbf587f5bc1..c71e863163bd 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -1757,7 +1757,7 @@ static int remap_verify_area(struct file *file, loff_t pos, loff_t len,
- 	if (unlikely(pos < 0 || len < 0))
- 		return -EINVAL;
- 
--	 if (unlikely((loff_t) (pos + len) < 0))
-+	if (unlikely((loff_t) (pos + len) < 0))
- 		return -EINVAL;
- 
- 	if (unlikely(inode->i_flctx && mandatory_lock(inode))) {
--- 
-2.24.1
+	Cthulhu damn it...  And yes, that crap used to work.
+Frankly, I'm tempted to allocate fs_context in there (in
+rbd_parse_options(), or in rbd_add_parse_args()) - we've other
+oddities due to that...
 
+	Alternatively, we could provide __fs_parse() that
+would take name as a separate argument and accepted NULL fc,
+with fs_parse() being a wrapper for that.
+
+*grumble*
