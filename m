@@ -2,41 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8B6C123FED
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 08:01:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9F21124052
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 08:30:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbfLRHAu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Dec 2019 02:00:50 -0500
-Received: from mout.web.de ([212.227.15.4]:50847 "EHLO mout.web.de"
+        id S1726545AbfLRHab (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Dec 2019 02:30:31 -0500
+Received: from mout.web.de ([212.227.15.3]:42307 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725881AbfLRHAu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Dec 2019 02:00:50 -0500
+        id S1725797AbfLRHab (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Dec 2019 02:30:31 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1576652429;
-        bh=HEVqlBMuHVQwjhLQA1qIaNrb256F6p8krZdbgoetx54=;
-        h=X-UI-Sender-Class:Subject:From:To:Cc:References:Date:In-Reply-To;
-        b=A+lt93RUoLNxaWM7AkIkUL4MiZkHPcUiIbEvea7xOffBoDlKqkDvLbY9CdCLloZHo
-         46QkwDGN7GB58aXU8Z3AxNFZgljcRpO/kJVLNeOdfM0XAUZIVF3kOqLlnJ1gHKs7lf
-         WWYbi3o+U3Qrl2eKXOsXPNg5SIPdU4g+ZenMRxgg=
+        s=dbaedf251592; t=1576654217;
+        bh=Wql71J+0BokgVQwl76yYBuNMq5gEjNygtvAZ7X9bDBs=;
+        h=X-UI-Sender-Class:Cc:References:Subject:To:From:Date:In-Reply-To;
+        b=I++emGpV1DGTTp0t+qyHWDQ3Icg9xvM0gnueLPM18dkWXB9jZ9hc8fomdH1iYZ88Z
+         A3YtnKuspPvmPMumiMVfmhmXFDjtVPCRia5RBX7noK0IMOtplnVE0FopllV9JVUOfZ
+         iGSKFexSsDYgrIO6ZE69Zll6c06rW/kbzcJI0M58=
 X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.3] ([93.131.36.204]) by smtp.web.de (mrweb001
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0MT8sw-1iIgPa3cvO-00S5W6; Wed, 18
- Dec 2019 08:00:29 +0100
-Subject: Re: [v5 10/13] exfat: add nls operations
-From:   Markus Elfring <Markus.Elfring@web.de>
+Received: from [192.168.1.3] ([93.131.36.204]) by smtp.web.de (mrweb002
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MZDki-1iOiTk3yUm-00Ky2P; Wed, 18
+ Dec 2019 08:30:17 +0100
+Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>
+References: <20191213055028.5574-1-namjae.jeon@samsung.com>
+Subject: Re: [PATCH v7 00/13] add the latest exfat driver
 To:     Namjae Jeon <namjae.jeon@samsung.com>,
         linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Daniel Wagner <dwagner@suse.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        linkinjeon@gmail.com
-References: <20191125000326.24561-1-namjae.jeon@samsung.com>
- <CGME20191125000633epcas1p1bce48f6e0fdd552fe74dbdb7976d5182@epcas1p1.samsung.com>
- <20191125000326.24561-11-namjae.jeon@samsung.com>
- <147eac54-5846-ffe1-4b6b-ebf611d1252b@web.de>
+From:   Markus Elfring <Markus.Elfring@web.de>
 Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
  +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
@@ -80,52 +74,47 @@ Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
  x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
  pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <db6a467c-2fe8-9cf4-8447-1b7cbfd222a0@web.de>
-Date:   Wed, 18 Dec 2019 08:00:20 +0100
+Message-ID: <3fa1e62f-89ed-1fa7-8c56-9d1ad7d63ffa@web.de>
+Date:   Wed, 18 Dec 2019 08:30:15 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <147eac54-5846-ffe1-4b6b-ebf611d1252b@web.de>
+In-Reply-To: <20191213055028.5574-1-namjae.jeon@samsung.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:7lCiLfWBCrd+QEOxHEQ8qqirKCsCth+iCZ89RrYVGBQVKOzYPt2
- /43DSMGStcVwEoevrv16tVP6IiLLgjzFYBYNh6djNQw/zCF3VwXIKO/jdhkwDBVkCxNrHiV
- efcYIJTPAgQhstd4yiBM/ZweL1u+UEN2t5znoydfZy7fTMDx2y67xGyLaB+xxVhYZVmmVc5
- Odo69TDR/BIdTMMkCV2UA==
+X-Provags-ID: V03:K1:z44SlZerHFlBK6KRU9wM2+AilEfPQoj03L9MvbrP3giQ/SGUqm0
+ sTUPQVyHaH3cNMKxKyzP0BCSZjfLTJys9ryPUVoZWcCBLpn7bawZvJlduA4x2Iipnfk/kaR
+ W16rU2iyk5kpwF090ICgnhh74Ph/e7C9+NdLEpkLqt+gW+oWJigna7QTeUiEX3WVwZj+pma
+ 4ZvgP9NpWixOyYknXiQUw==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:G8px9mSQLuk=:1xHuOAYeOZjnbSktpJebpF
- BS7ogWHJvVJnxkEzAGA0tPqJw4AYAhnvfv5U8eDDmlNwA7LxL0Fc85pi3xXdu1eLo0jMI+cCI
- KZhzULQG4R2VtqTnR62AxF/JWjbLdVhO3H1mXDAa6V9UquTg6HF8zap9fQOjjGxYuRMg7iDBV
- GNVF1YfEv5DmoyTNjByamgT/MIUZXCtk2vild0YK5xNeldnSWPGUZ2p2C5uS6c6vuF/fu37Dw
- IN1zoc7/LdgzxbPKnAUXuhBqMrVmwfcxi69QCVUc2rRg3Le9g/EgYTonRQ+95/uuJL2jvXU9+
- 3uAasT3JqYmaWveQlZiErCnkI3GqywDNfBR8EP2SHLLrRB6M7LIQJ9MxS4tu1y7E5/aoOBeld
- 7Pj6ElSsmlYY/r6+T0EzBfmDB76nH0cnUZsgw2j9SmAsjxRq9RNrhlQazGFmg1Mcm5LWioF6y
- /0eLp+86lt6/fsbFeTYwKqkuD8dENyX5S9Nh9SH8ugUKRp5tDvcDHYF2xLUvjjkRbHJx6taZk
- wRxB5J70oCpftXer8eh6FRRLKYfeVj6KfU5IMfOpgknn0YTDh8jSACY6CeDtZRjc6zzYOW9vD
- ik54vX60AVbguUq0JuL/z2XJHirtD/ZCBiLmk61wmEXzudlY/tHKoSeqXvwq8khRFAlWcgD08
- PfTLHPVepvsxwTblOLUBW1J11bHR6KO2pY1nMvfnfdk2vbNtpHNC0qCsJhYfUlx6Xl28E3thY
- hfWz//Konk1YkJNuGUVN03k4tK4qre17NbV1rg5RpalyxBaEg8tvARnmeqz95yiS98ItK0uJu
- lL+G7AZClfC1pr2rAvWurjrV7U1fk8yJnDFmtH6TRzfIEdYpRG2+0D0xQxMZ3FHqmb0t8O7gM
- FKnOpdDwJrW3WAu0Ok4I8EcLu9dXoo1q4M/Hidj8Zig7Nehtx6dpO8SjEZIpldXOcB8W8VIAb
- tgxNVUW5ormCsO4REyr8PwUaLZE0VDPyvKFhYOYXRqEm5aIHn2aJZ6ln6eD6gxkqJiHiM8UNS
- RvUK2hjU3OgARZEqvMUPPSPIh1jnluKEOIaa0Tlu+Oklh7D8dueTNiKA9WOG64ub76QpKYtxc
- 6u1t+90CeCKTO1dGc0yOxeylvjY6MiqNZK/3JrwV4SczntBlHo+/VYSBzxAe4/91zOuAGl+O+
- 1PmPZPiA9NzzhXcdlKqg1ZOnyaeoXkId/t8l4f1khLQv6weVSxWBGQ+42Qk6RXtyCCHkHy+r6
- 9ZHFbAaLJPLFjncAI5iR9Hl48qnrH+Oz+zZLMLHuS/2C5veP1cFCGzeK1FD8=
+X-UI-Out-Filterresults: notjunk:1;V03:K0:GWG4t86FIX8=:9s1mJU5jdBwWJZmo6CunQE
+ GSXT3wfJYrOMpZyv2VKFQveVvqQ0snw6wO8rFEfBd1pQrk+3/baoTCB3t2fBJm/ev2ur/Hq8G
+ 3qyL4QGVwBHo9R/b/scChrndBfKZ6M5jtpuUFL8iougix2zHgPyWV1Nz4wMklteaXr//v3v8A
+ NsOm6Fu2qbZFeF+Egnot7m3WluvYRnUTwX9EtDJskKUxLuhkhEkM8qc8w0cNF6M2wsZ2UnPdL
+ A82r38p8xTEqqvP2VfxCrmaqrngO0MeKc61Ov7LgAo/Vm4CrOKIXOobGyxkML1hrqNUB3oZGT
+ 0vi35XPVNtiarMHRmjpMDtG9kMOk9CTlft1UkSxHgyY7IiUW4eOeku6dI7OKeeEAflIUZbjwu
+ DiQpEqA4bWj8qBeQ8YWkwpDg6KtglOztzE4JdzY5cmPnPKZrJWmQDa0rIrRNJDalvwmZ6UeLl
+ jDYiMHgiDiuZPOUWhivJdRFFIo4ZzK6drDQRMwNRnlveFhq7Lu9ofZh7qXNQ4hAVvzj68J1vh
+ eBG5YmVKPzyqw5aaDudlwo3P/JRDw0nBJbH7MaBamFsPDYf2RffqLIWL0lWO7yE6X+OCENgho
+ mKv7UA7qOcxPh9nREJUlmEKrwoIOSqkdE9cu/LnbdQ6AsaE/OJWqn9+MM6ZJr9dZZcHAkZj3d
+ 7F0vmWDK9NIVVwYT/CQSwyainXWTywbKQGurOlAuMNZSwJIcRuL4g5csUqn3q+HX3ZupDCpzL
+ ltALE2knLkAIggRB4xLD0mgfl8uEjCeF1MzFXojgyyBXYvE6PW68OFJucRJF/q/kTZ/YqA+5v
+ +Xmt7VUdl3BumoJ0vpS+m8ZTTrdYCEfQh7U+PiymrTHNYZeB6tLFh1HSINsW5QA1ZAQoCqHMk
+ LdLajTBp4D4fY+nU8BE/skPGdISI5Cg6Zl4r+CiXVppp0n6Se7nvoIEmcxqQNijWYrGDDKTrJ
+ 1adjav/tGprB7xqKR323PARv5DDOpWd1zeF42X/FPnIV3D/mJh7/tigHRgUSpEqF+4N6mqm2w
+ tgDfe2lS/6Q6Wfi6hJcaWQ5sD1QYg9nCkkrqvMfw3QkkqP3yTIWMoV5oDcSgOvqyuKryW10SS
+ 5CjCKytxKkwEpDqk/v/j3zYru6VmidMMCMeJ1Mq59LNyaS5jCSin0FPjBv1r1qk4omfvxqK02
+ 2DbcQ1k/uN3MCwOrcd0jJZiYS4xecKU/fnZW6eRvOGK6uds9aawH40TreoupYrAVzMJ9+lWk2
+ 7a0vVvQ9B9bDIjIz+5lVoonbwKinE3rNDLDbGH356Frz0j16WdgE0uYW+NW8=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> * Can it be that a type other than =E2=80=9Cint=E2=80=9D would be more p=
-ortable
->   for the desired data processing at these source code places?
->
-> * How do you think about to use more meaningful identifiers for
->   two of the shown literals?
+> We plan to treat this version as the future upstream for the code base
+> once merged, and all new features and bug fixes will go upstream first.
 
-Would you like to clarify these software development concerns?
+Would you like to offer and integrate any test cases?
 
 Regards,
 Markus
