@@ -2,112 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63E1A123CD8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 03:04:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96C79123D04
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 03:21:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726387AbfLRCEu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Dec 2019 21:04:50 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:60710 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725975AbfLRCEu (ORCPT
+        id S1726487AbfLRCVb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Dec 2019 21:21:31 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:59587 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726387AbfLRCVb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Dec 2019 21:04:50 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBI24AxS068405;
-        Wed, 18 Dec 2019 02:04:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=W6uOhfxvrCz6gD7zhZxzEetXxdEsZEHeUlquAcliP48=;
- b=kgCjK9HRj3trhzPQTkN/jEHbPwYkX1zatThw5m77tZinFPpZPTmSHkv8lPISpASDM23i
- qB2KuTiw/KnH979qbLim0aXyplE87o7xlVcScOvEDxbvKKmp5SOhpdVFRyzMNU9lQggm
- kzeMFv8Bhkph1RBEQKOjpdTbINcAnePRLGkayr74FodcOvcIteupRT/bX3Cnwe/bS3Es
- 4fDijsfrGCKEQDo8wqb21bO6jc+sJLQ3yjXwkthY8K2mEmUQR6Ej9MCqlDEEa4woni8T
- SrQ4XEl4pE7br4YyZ7Izw0za0JBRFiLcR2P2ctvp6G+ASZ+CpM8RbTV98GOS8nGzpT9U Dg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 2wvq5ujkmk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Dec 2019 02:04:37 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBI24V60135802;
-        Wed, 18 Dec 2019 02:04:36 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2wxm4wne2b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Dec 2019 02:04:36 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xBI24ZrY027165;
-        Wed, 18 Dec 2019 02:04:35 GMT
-Received: from localhost (/10.159.137.228)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 17 Dec 2019 18:04:35 -0800
-Date:   Tue, 17 Dec 2019 18:04:33 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc:     linux-btrfs@vger.kernel.org, hch@infradead.org,
-        fdmanana@kernel.org, nborisov@suse.com, dsterba@suse.cz,
-        jthumshirn@suse.de, linux-fsdevel@vger.kernel.org,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 3/8] iomap: Move lockdep_assert_held() to iomap_dio_rw()
- calls
-Message-ID: <20191218020433.GM12766@magnolia>
-References: <20191213195750.32184-1-rgoldwyn@suse.de>
- <20191213195750.32184-4-rgoldwyn@suse.de>
+        Tue, 17 Dec 2019 21:21:31 -0500
+Received: from dread.disaster.area (pa49-195-139-249.pa.nsw.optusnet.com.au [49.195.139.249])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 73DBB3A2971;
+        Wed, 18 Dec 2019 13:21:24 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1ihOxm-0006rs-AM; Wed, 18 Dec 2019 13:21:22 +1100
+Date:   Wed, 18 Dec 2019 13:21:22 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com,
+        akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Roman Gushchin <guro@fb.com>,
+        Chris Down <chris@chrisdown.name>,
+        Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH 4/4] memcg, inode: protect page cache from freeing inode
+Message-ID: <20191218022122.GT19213@dread.disaster.area>
+References: <1576582159-5198-1-git-send-email-laoar.shao@gmail.com>
+ <1576582159-5198-5-git-send-email-laoar.shao@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191213195750.32184-4-rgoldwyn@suse.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9474 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=982
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1912180015
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9474 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1912180015
+In-Reply-To: <1576582159-5198-5-git-send-email-laoar.shao@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
+        a=KoypXv6BqLCQNZUs2nCMWg==:117 a=KoypXv6BqLCQNZUs2nCMWg==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=pxVhFHJ0LMsA:10
+        a=FOH2dFAWAAAA:8 a=20KFwNOVAAAA:8 a=pGLkceISAAAA:8 a=7-415B0cAAAA:8
+        a=Kq0Fw4N6cfM2Gj6mMccA:9 a=CjuIK1q_8ugA:10 a=i3VuKzQdj-NEYjvDI-p3:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 01:57:45PM -0600, Goldwyn Rodrigues wrote:
-> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+On Tue, Dec 17, 2019 at 06:29:19AM -0500, Yafang Shao wrote:
+> On my server there're some running MEMCGs protected by memory.{min, low},
+> but I found the usage of these MEMCGs abruptly became very small, which
+> were far less than the protect limit. It confused me and finally I
+> found that was because of inode stealing.
+> Once an inode is freed, all its belonging page caches will be dropped as
+> well, no matter how may page caches it has. So if we intend to protect the
+> page caches in a memcg, we must protect their host (the inode) first.
+> Otherwise the memcg protection can be easily bypassed with freeing inode,
+> especially if there're big files in this memcg.
+> The inherent mismatch between memcg and inode is a trouble. One inode can
+> be shared by different MEMCGs, but it is a very rare case. If an inode is
+> shared, its belonging page caches may be charged to different MEMCGs.
+> Currently there's no perfect solution to fix this kind of issue, but the
+> inode majority-writer ownership switching can help it more or less.
 > 
-> Filesystems such as btrfs can perform direct I/O without holding the
-> inode->i_rwsem in some of the cases like writing within i_size.
-> So, remove the check for lockdep_assert_held() in iomap_dio_rw()
-> 
-> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-
-/me wishes there was a way for iomap to verify that the fs has indeed
-taken /some/ measure to ensure correct concurrent operations, but that's
-probably just asking for liar functions. :)
-
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-
---D
-
+> Cc: Roman Gushchin <guro@fb.com>
+> Cc: Chris Down <chris@chrisdown.name>
+> Cc: Dave Chinner <dchinner@redhat.com>
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 > ---
->  fs/iomap/direct-io.c | 2 --
->  1 file changed, 2 deletions(-)
+>  fs/inode.c                 |  9 +++++++++
+>  include/linux/memcontrol.h | 15 +++++++++++++++
+>  mm/memcontrol.c            | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+>  mm/vmscan.c                |  4 ++++
+>  4 files changed, 74 insertions(+)
 > 
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 1a3bf3bd86fb..41c1e7c20a1f 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -415,8 +415,6 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  	struct blk_plug plug;
->  	struct iomap_dio *dio;
+> diff --git a/fs/inode.c b/fs/inode.c
+> index fef457a..b022447 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -734,6 +734,15 @@ static enum lru_status inode_lru_isolate(struct list_head *item,
+>  	if (!spin_trylock(&inode->i_lock))
+>  		return LRU_SKIP;
 >  
-> -	lockdep_assert_held(&inode->i_rwsem);
-> -
->  	if (!count)
->  		return 0;
->  
-> -- 
-> 2.16.4
-> 
+> +
+> +	/* Page protection only works in reclaimer */
+> +	if (inode->i_data.nrpages && current->reclaim_state) {
+> +		if (mem_cgroup_inode_protected(inode)) {
+> +			spin_unlock(&inode->i_lock);
+> +			return LRU_ROTATE;
+
+Urk, so after having plumbed the memcg all the way down to the
+list_lru walk code so that we only walk inodes in that memcg, we now
+have to do a lookup from the inode back to the owner memcg to
+determine if we should reclaim it? IOWs, I think the layering here
+is all wrong - if memcg info is needed in the shrinker, it should
+come from the shrink_control->memcg pointer, not be looked up from
+the object being isolated...
+
+i.e. this code should read something like this:
+
+	if (memcg && inode->i_data.nrpages &&
+	    (!memcg_can_reclaim_inode(memcg, inode)) {
+		spin_unlock(&inode->i_lock);
+		return LRU_ROTATE;
+	}
+
+This code does not need comments because it is obvious what it does,
+and it provides a generic hook into inode reclaim for the memcg code
+to decide whether the shrinker should reclaim the inode or not.
+
+This is how the memcg code should interact with other shrinkers, too
+(e.g. the dentry cache isolation function), so you need to look at
+how to make the memcg visible to the lru walker isolation
+functions....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
