@@ -2,54 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16CD3124C67
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 17:04:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43141124CFE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 17:19:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727470AbfLRQEY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Dec 2019 11:04:24 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40823 "EHLO
+        id S1727184AbfLRQTL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Dec 2019 11:19:11 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36420 "EHLO
         mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727138AbfLRQEY (ORCPT
+        with ESMTP id S1727480AbfLRQTL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Dec 2019 11:04:24 -0500
-Received: by mail-lj1-f195.google.com with SMTP id u1so2737063ljk.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Dec 2019 08:04:21 -0800 (PST)
+        Wed, 18 Dec 2019 11:19:11 -0500
+Received: by mail-lj1-f195.google.com with SMTP id r19so2807908ljg.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Dec 2019 08:19:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=shutemov-name.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=lx2tYrxH76TzOflvrZdMYwmw6kPdiwBO2AoS02kSF8I=;
-        b=z5wPjhUP09OUtbjMjcfRXuIHIwQ6JsCqdqDQrpkHeR2FGTJKRgTZuRVpd8Ejot/uzW
-         WkIRJ1o23H1rHR8qrWtCj6uBitDImUrGPYpJ5mMWyp3EmJAhL7rYh6HpljzRDkNNAPx0
-         LUjYdc/PK8ZbQZUps8imW7pyun+gW90XpZ53fBcBIDiOV27gBLz+BEehaTKZC5uM8Oqa
-         ydjJOsIeBdrZtGFXR3Ff0Wal0p2P05zNibodcJL9uNUAN8pxDWcLGNcXSYNkE83Lm4vk
-         MRxOsdbgin+Oe/MgK9nfd0EbUF6BgvQFFgBekQTNtwPB0Nh3TqyAfgcwxiXCuXBEgxgt
-         8yAA==
+         :content-disposition:in-reply-to:user-agent;
+        bh=1DGAjM55vpYX9DGiWQ7jC+BuPBEROaJ1QWpfbgzGOAs=;
+        b=14CMCeLAINpm3ZV8MtR1RG8xV/J5WqHqe0M9oWFTC4pD19UGdVdMY13F8IIsMksm4W
+         kTSNndEmcYcPmybyvjsTv6xtEW7+tkkinAcC1MDXkXKoNmZ1SK85nBC+tIiOZGHxYiSE
+         ErROILC6IQXrJTMN8gfAw4y8jZgbQsFPr7JEAK4l0hFz0/VKc6BkApPPjq40gufHusUR
+         6UvR7LXBYwDS6pUFn7B3nlXBgDLzdcTNFffWkV/qNFz0/kIOhSYmssrziSjQPxEtyx0c
+         rJwD1MmUSyQUt9cbhZNcLHY8CW2D/VtVF58ATc7Qb2ieL8bMuLSSx8+04+/1y1quw4DP
+         qbvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=lx2tYrxH76TzOflvrZdMYwmw6kPdiwBO2AoS02kSF8I=;
-        b=GcZHrhWBU6gXmgu7B9+yhw+QVvRUAxIaNY9yqHdKz6C17McNcunFljvqOlt190xP4F
-         pUq84EqZ05DG5zGj2twIBVoRNp9gEi3EsezvrNkCGgs8p5Vfmw8AgFnEO4sCQwmTUx9p
-         FWkOGZm7H2PXIdC0orX/R23UL36FrIkmL0H+QHRnQ6HC3XwdfLbTsfiUo78FqZYCtcUy
-         yYP5biXFsUT91u5Zqf39NV4MpaY2oTvZgZbkYrBGRBGsISpGloPG00R1VUTreRby9epP
-         Y3nldsCPdmeoS6QBlkSu+593wG3OiIW5dj2v9sYteNbwPRncZ74TFswb9U/4OzoUXngm
-         6SVQ==
-X-Gm-Message-State: APjAAAVTnWGsZPS8dRtCKjFxvnltzZNSB4d+mWF95fbE+cTh66J/loNr
-        1U4lrelJ0EJPAYMP3cpnUncMoA==
-X-Google-Smtp-Source: APXvYqwF7pecGZBZMkXKVp15IXhXZo2PGYpkUgZNZl53wUwEdzClRBwVejnpDULy6WyyjOVSSgygvA==
-X-Received: by 2002:a2e:9284:: with SMTP id d4mr2361276ljh.226.1576685060830;
-        Wed, 18 Dec 2019 08:04:20 -0800 (PST)
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1DGAjM55vpYX9DGiWQ7jC+BuPBEROaJ1QWpfbgzGOAs=;
+        b=QlxxlheTErg1IqcwaKX1rXCStI+hoL0wbEttkjHIPa/j36h3FL6+xQ6aIgTFyqQTge
+         +14g5ZaQDmO1cudzKIVcaKEvZI9eyQSimEGqA1g+5Tt2Jj/nyEVgXecrgmcWHLzMi1N+
+         n2h4/SappCCSKqvGGe2KPr0ikogZVSKKIL/PRsfozP0pA4uzFovCaDhnRJKiMoGVjdKs
+         o9I3fum+1jh7BX1ynSpRkvOzPmOmhLFxCKljWBR4hQMQGh+10givW4Mwl5aN2Yvp1Q+o
+         AcL+pKPiXCtiUxrNLMAcLnaN8IsqRGpQdPtkkA7sOfXX2S5EbAjI5tULU9Dz7NaxrgS9
+         88FQ==
+X-Gm-Message-State: APjAAAUF3hHnRwx/drC+shlqaW/3LNl0GYMvyV/+N3RIcwTScqC+AOO8
+        HZuoGO3Na4QvFDedZSrv3IfurA==
+X-Google-Smtp-Source: APXvYqy8ptrsSDx1m4BazaV2cUqif19xWrwH+lZkkh3fZ2X5vIkCH+jyW+1oGFguRAmcQm5RYV3mLw==
+X-Received: by 2002:a2e:b4e7:: with SMTP id s7mr2195072ljm.58.1576685948274;
+        Wed, 18 Dec 2019 08:19:08 -0800 (PST)
 Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id j19sm1730231lfb.90.2019.12.18.08.04.19
+        by smtp.gmail.com with ESMTPSA id 2sm1412292ljq.38.2019.12.18.08.19.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 08:04:19 -0800 (PST)
+        Wed, 18 Dec 2019 08:19:07 -0800 (PST)
 Received: by box.localdomain (Postfix, from userid 1000)
-        id 5A04D1012CF; Wed, 18 Dec 2019 19:04:20 +0300 (+03)
-Date:   Wed, 18 Dec 2019 19:04:20 +0300
+        id E28BB1012CF; Wed, 18 Dec 2019 19:19:07 +0300 (+03)
+Date:   Wed, 18 Dec 2019 19:19:07 +0300
 From:   "Kirill A. Shutemov" <kirill@shutemov.name>
 To:     John Hubbard <jhubbard@nvidia.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -81,187 +79,110 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
         linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v11 04/25] mm: devmap: refactor 1-based refcounting for
- ZONE_DEVICE pages
-Message-ID: <20191218160420.gyt4c45e6zsnxqv6@box>
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: Re: [PATCH v11 06/25] mm: fix get_user_pages_remote()'s handling of
+ FOLL_LONGTERM
+Message-ID: <20191218161907.yczbijr3ngm7wwnj@box>
 References: <20191216222537.491123-1-jhubbard@nvidia.com>
- <20191216222537.491123-5-jhubbard@nvidia.com>
+ <20191216222537.491123-7-jhubbard@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191216222537.491123-5-jhubbard@nvidia.com>
+In-Reply-To: <20191216222537.491123-7-jhubbard@nvidia.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 02:25:16PM -0800, John Hubbard wrote:
-> An upcoming patch changes and complicates the refcounting and
-> especially the "put page" aspects of it. In order to keep
-> everything clean, refactor the devmap page release routines:
+On Mon, Dec 16, 2019 at 02:25:18PM -0800, John Hubbard wrote:
+> As it says in the updated comment in gup.c: current FOLL_LONGTERM
+> behavior is incompatible with FAULT_FLAG_ALLOW_RETRY because of the
+> FS DAX check requirement on vmas.
 > 
-> * Rename put_devmap_managed_page() to page_is_devmap_managed(),
->   and limit the functionality to "read only": return a bool,
->   with no side effects.
+> However, the corresponding restriction in get_user_pages_remote() was
+> slightly stricter than is actually required: it forbade all
+> FOLL_LONGTERM callers, but we can actually allow FOLL_LONGTERM callers
+> that do not set the "locked" arg.
 > 
-> * Add a new routine, put_devmap_managed_page(), to handle checking
->   what kind of page it is, and what kind of refcount handling it
->   requires.
+> Update the code and comments to loosen the restriction, allowing
+> FOLL_LONGTERM in some cases.
 > 
-> * Rename __put_devmap_managed_page() to free_devmap_managed_page(),
->   and limit the functionality to unconditionally freeing a devmap
->   page.
-
-What the reason to separate put_devmap_managed_page() from
-free_devmap_managed_page() if free_devmap_managed_page() has exacly one
-caller? Is it preparation for the next patches?
-
-> This is originally based on a separate patch by Ira Weiny, which
-> applied to an early version of the put_user_page() experiments.
-> Since then, Jérôme Glisse suggested the refactoring described above.
+> Also, copy the DAX check ("if a VMA is DAX, don't allow long term
+> pinning") from the VFIO call site, all the way into the internals
+> of get_user_pages_remote() and __gup_longterm_locked(). That is:
+> get_user_pages_remote() calls __gup_longterm_locked(), which in turn
+> calls check_dax_vmas(). This check will then be removed from the VFIO
+> call site in a subsequent patch.
 > 
-> Cc: Christoph Hellwig <hch@lst.de>
-> Suggested-by: Jérôme Glisse <jglisse@redhat.com>
-> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> Thanks to Jason Gunthorpe for pointing out a clean way to fix this,
+> and to Dan Williams for helping clarify the DAX refactoring.
+> 
+> Tested-by: Alex Williamson <alex.williamson@redhat.com>
+> Acked-by: Alex Williamson <alex.williamson@redhat.com>
+> Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
+> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Jerome Glisse <jglisse@redhat.com>
 > Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 > ---
->  include/linux/mm.h | 17 +++++++++++++----
->  mm/memremap.c      | 16 ++--------------
->  mm/swap.c          | 24 ++++++++++++++++++++++++
->  3 files changed, 39 insertions(+), 18 deletions(-)
+>  mm/gup.c | 27 ++++++++++++++++++++++-----
+>  1 file changed, 22 insertions(+), 5 deletions(-)
 > 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index c97ea3b694e6..77a4df06c8a7 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -952,9 +952,10 @@ static inline bool is_zone_device_page(const struct page *page)
->  #endif
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 3ecce297a47f..c0c56888e7cc 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -29,6 +29,13 @@ struct follow_page_context {
+>  	unsigned int page_mask;
+>  };
 >  
->  #ifdef CONFIG_DEV_PAGEMAP_OPS
-> -void __put_devmap_managed_page(struct page *page);
-> +void free_devmap_managed_page(struct page *page);
->  DECLARE_STATIC_KEY_FALSE(devmap_managed_key);
-> -static inline bool put_devmap_managed_page(struct page *page)
-> +
-> +static inline bool page_is_devmap_managed(struct page *page)
+> +static __always_inline long __gup_longterm_locked(struct task_struct *tsk,
+> +						  struct mm_struct *mm,
+> +						  unsigned long start,
+> +						  unsigned long nr_pages,
+> +						  struct page **pages,
+> +						  struct vm_area_struct **vmas,
+> +						  unsigned int flags);
+
+Any particular reason for the forward declaration? Maybe move
+get_user_pages_remote() down?
+
+>  /*
+>   * Return the compound head page with ref appropriately incremented,
+>   * or NULL if that failed.
+> @@ -1179,13 +1186,23 @@ long get_user_pages_remote(struct task_struct *tsk, struct mm_struct *mm,
+>  		struct vm_area_struct **vmas, int *locked)
 >  {
->  	if (!static_branch_unlikely(&devmap_managed_key))
->  		return false;
-> @@ -963,7 +964,6 @@ static inline bool put_devmap_managed_page(struct page *page)
->  	switch (page->pgmap->type) {
->  	case MEMORY_DEVICE_PRIVATE:
->  	case MEMORY_DEVICE_FS_DAX:
-> -		__put_devmap_managed_page(page);
->  		return true;
->  	default:
->  		break;
-> @@ -971,7 +971,14 @@ static inline bool put_devmap_managed_page(struct page *page)
->  	return false;
->  }
->  
-> +bool put_devmap_managed_page(struct page *page);
-> +
->  #else /* CONFIG_DEV_PAGEMAP_OPS */
-> +static inline bool page_is_devmap_managed(struct page *page)
-> +{
-> +	return false;
-> +}
-> +
->  static inline bool put_devmap_managed_page(struct page *page)
->  {
->  	return false;
-> @@ -1028,8 +1035,10 @@ static inline void put_page(struct page *page)
->  	 * need to inform the device driver through callback. See
->  	 * include/linux/memremap.h and HMM for details.
+>  	/*
+> -	 * FIXME: Current FOLL_LONGTERM behavior is incompatible with
+> +	 * Parts of FOLL_LONGTERM behavior are incompatible with
+>  	 * FAULT_FLAG_ALLOW_RETRY because of the FS DAX check requirement on
+> -	 * vmas.  As there are no users of this flag in this call we simply
+> -	 * disallow this option for now.
+> +	 * vmas. However, this only comes up if locked is set, and there are
+> +	 * callers that do request FOLL_LONGTERM, but do not set locked. So,
+> +	 * allow what we can.
 >  	 */
-> -	if (put_devmap_managed_page(page))
-> +	if (page_is_devmap_managed(page)) {
-> +		put_devmap_managed_page(page);
-
-put_devmap_managed_page() has yet another page_is_devmap_managed() check
-inside. It looks strange.
-
->  		return;
-> +	}
->  
->  	if (put_page_testzero(page))
->  		__put_page(page);
-> diff --git a/mm/memremap.c b/mm/memremap.c
-> index e899fa876a62..2ba773859031 100644
-> --- a/mm/memremap.c
-> +++ b/mm/memremap.c
-> @@ -411,20 +411,8 @@ struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
->  EXPORT_SYMBOL_GPL(get_dev_pagemap);
->  
->  #ifdef CONFIG_DEV_PAGEMAP_OPS
-> -void __put_devmap_managed_page(struct page *page)
-> +void free_devmap_managed_page(struct page *page)
->  {
-> -	int count = page_ref_dec_return(page);
-> -
-> -	/* still busy */
-> -	if (count > 1)
-> -		return;
-> -
-> -	/* only triggered by the dev_pagemap shutdown path */
-> -	if (count == 0) {
-> -		__put_page(page);
-> -		return;
-> -	}
-> -
->  	/* notify page idle for dax */
->  	if (!is_device_private_page(page)) {
->  		wake_up_var(&page->_refcount);
-> @@ -461,5 +449,5 @@ void __put_devmap_managed_page(struct page *page)
->  	page->mapping = NULL;
->  	page->pgmap->ops->page_free(page);
->  }
-> -EXPORT_SYMBOL(__put_devmap_managed_page);
-> +EXPORT_SYMBOL(free_devmap_managed_page);
->  #endif /* CONFIG_DEV_PAGEMAP_OPS */
-> diff --git a/mm/swap.c b/mm/swap.c
-> index 5341ae93861f..49f7c2eea0ba 100644
-> --- a/mm/swap.c
-> +++ b/mm/swap.c
-> @@ -1102,3 +1102,27 @@ void __init swap_setup(void)
->  	 * _really_ don't want to cluster much more
->  	 */
->  }
-> +
-> +#ifdef CONFIG_DEV_PAGEMAP_OPS
-> +bool put_devmap_managed_page(struct page *page)
-> +{
-> +	bool is_devmap = page_is_devmap_managed(page);
-> +
-> +	if (is_devmap) {
-
-Reversing the condition would save you an indentation level.
-
-> +		int count = page_ref_dec_return(page);
-> +
+> -	if (WARN_ON_ONCE(gup_flags & FOLL_LONGTERM))
+> -		return -EINVAL;
+> +	if (gup_flags & FOLL_LONGTERM) {
+> +		if (WARN_ON_ONCE(locked))
+> +			return -EINVAL;
 > +		/*
-> +		 * devmap page refcounts are 1-based, rather than 0-based: if
-> +		 * refcount is 1, then the page is free and the refcount is
-> +		 * stable because nobody holds a reference on the page.
+> +		 * This will check the vmas (even if our vmas arg is NULL)
+> +		 * and return -ENOTSUPP if DAX isn't allowed in this case:
 > +		 */
-> +		if (count == 1)
-> +			free_devmap_managed_page(page);
-> +		else if (!count)
-> +			__put_page(page);
+> +		return __gup_longterm_locked(tsk, mm, start, nr_pages, pages,
+> +					     vmas, gup_flags | FOLL_TOUCH |
+> +					     FOLL_REMOTE);
 > +	}
-> +
-> +	return is_devmap;
-> +}
-> +EXPORT_SYMBOL(put_devmap_managed_page);
-> +#endif
+>  
+>  	return __get_user_pages_locked(tsk, mm, start, nr_pages, pages, vmas,
+>  				       locked,
 > -- 
 > 2.24.1
-> 
 > 
 
 -- 
