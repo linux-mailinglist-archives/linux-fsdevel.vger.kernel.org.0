@@ -2,62 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A81BA12519A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 20:15:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C99C125167
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 20:10:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727367AbfLRTPG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Dec 2019 14:15:06 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33030 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727145AbfLRTPG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Dec 2019 14:15:06 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id C5471AC3E;
-        Wed, 18 Dec 2019 19:15:04 +0000 (UTC)
-Date:   Wed, 18 Dec 2019 11:08:33 -0800
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     David Howells <dhowells@redhat.com>, linux-afs@lists.infradead.org,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] rxrpc: struct mutex cannot be used for
- rxrpc_call::user_mutex
-Message-ID: <20191218190833.ufpxjrvin5jvp3m5@linux-p48b>
-References: <157659672074.19580.11641288666811539040.stgit@warthog.procyon.org.uk>
- <20191218135047.GS2844@hirez.programming.kicks-ass.net>
+        id S1727391AbfLRTKN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Dec 2019 14:10:13 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:33266 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726960AbfLRTKN (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Dec 2019 14:10:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=712IVLKSNni0jTo1/5v0Y+uyGFY5uc8OLjbiwsLBT0E=; b=f2IvZqZNVOEj1pJX6pSnGK2jO
+        0MFF18HSbsqJPEm1OAacBljBFhoIldtBTrPGnhEX8ErlbhTVUS+SiUhS3YOJE21PjRuzjk0dVtrvw
+        DjFP8AWS9j8fOiRr68S8TlQpHHfMdUM+l9Sr5EVilz0i9EHx1M63mdRYxbOFA1DMnGbm/ylVvk71b
+        Sl3LmUNjIapDhCPWFCJYZLlTg63CuhJmInT9ACvC4TTMlcIeTgmTNTm6WDh3QghPHFsM6Sde+aSyu
+        zFp/kqF4EgplWaN4BXIje0q93nZpXckZge3JSo2fHG/RmdXoy3aiqVmdKqZcNnfdv124BZ/HBMl0L
+        sWWz73NwQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ihei1-00089U-HS; Wed, 18 Dec 2019 19:10:09 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 0122A980E35; Wed, 18 Dec 2019 20:10:06 +0100 (CET)
+Date:   Wed, 18 Dec 2019 20:10:06 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-afs@lists.infradead.org, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will@kernel.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] rxrpc: Unlock new call in rxrpc_new_incoming_call()
+ rather than the caller
+Message-ID: <20191218191006.GF11457@worktop.programming.kicks-ass.net>
+References: <157669169065.21991.15207045893761573624.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191218135047.GS2844@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <157669169065.21991.15207045893761573624.stgit@warthog.procyon.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 18 Dec 2019, Peter Zijlstra wrote:
+On Wed, Dec 18, 2019 at 05:54:50PM +0000, David Howells wrote:
+> Move the unlock and the ping transmission for a new incoming call into
+> rxrpc_new_incoming_call() rather than doing it in the caller.  This makes
+> it clearer to see what's going on.
+> 
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Peter Zijlstra <peterz@infradead.org>
+> cc: Ingo Molnar <mingo@redhat.com>
+> cc: Will Deacon <will@kernel.org>
+> cc: Davidlohr Bueso <dave@stgolabs.net>
 
->On Tue, Dec 17, 2019 at 03:32:00PM +0000, David Howells wrote:
->> Standard kernel mutexes cannot be used in any way from interrupt or softirq
->> context, so the user_mutex which manages access to a call cannot be a mutex
->> since on a new call the mutex must start off locked and be unlocked within
->> the softirq handler to prevent userspace interfering with a call we're
->> setting up.
->>
->> Commit a0855d24fc22d49cdc25664fb224caee16998683 ("locking/mutex: Complain
->> upon mutex API misuse in IRQ contexts") causes big warnings to be splashed
->> in dmesg for each a new call that comes in from the server.
->
->FYI that patch has currently been reverted.
->
->commit c571b72e2b845ca0519670cb7c4b5fe5f56498a5 (tip/locking/urgent, tip/locking-urgent-for-linus)
+Thanks, that looks much nicer!
 
-Will we ever want to re-add this warning (along with writer rwsems) at some point?
-
-It seems that having it actually prompts things getting fixed, as opposed to
-just sitting there forever borken (at least in -rt).
-
-Thanks,
-Davidlohr
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
