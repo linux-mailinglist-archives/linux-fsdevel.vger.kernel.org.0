@@ -2,188 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43141124CFE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 17:19:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB85D124D07
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 17:21:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727184AbfLRQTL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Dec 2019 11:19:11 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36420 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727480AbfLRQTL (ORCPT
+        id S1727192AbfLRQVB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Dec 2019 11:21:01 -0500
+Received: from mail-il1-f197.google.com ([209.85.166.197]:40259 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726955AbfLRQVB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Dec 2019 11:19:11 -0500
-Received: by mail-lj1-f195.google.com with SMTP id r19so2807908ljg.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Dec 2019 08:19:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1DGAjM55vpYX9DGiWQ7jC+BuPBEROaJ1QWpfbgzGOAs=;
-        b=14CMCeLAINpm3ZV8MtR1RG8xV/J5WqHqe0M9oWFTC4pD19UGdVdMY13F8IIsMksm4W
-         kTSNndEmcYcPmybyvjsTv6xtEW7+tkkinAcC1MDXkXKoNmZ1SK85nBC+tIiOZGHxYiSE
-         ErROILC6IQXrJTMN8gfAw4y8jZgbQsFPr7JEAK4l0hFz0/VKc6BkApPPjq40gufHusUR
-         6UvR7LXBYwDS6pUFn7B3nlXBgDLzdcTNFffWkV/qNFz0/kIOhSYmssrziSjQPxEtyx0c
-         rJwD1MmUSyQUt9cbhZNcLHY8CW2D/VtVF58ATc7Qb2ieL8bMuLSSx8+04+/1y1quw4DP
-         qbvA==
+        Wed, 18 Dec 2019 11:21:01 -0500
+Received: by mail-il1-f197.google.com with SMTP id 138so1219132ilb.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Dec 2019 08:21:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1DGAjM55vpYX9DGiWQ7jC+BuPBEROaJ1QWpfbgzGOAs=;
-        b=QlxxlheTErg1IqcwaKX1rXCStI+hoL0wbEttkjHIPa/j36h3FL6+xQ6aIgTFyqQTge
-         +14g5ZaQDmO1cudzKIVcaKEvZI9eyQSimEGqA1g+5Tt2Jj/nyEVgXecrgmcWHLzMi1N+
-         n2h4/SappCCSKqvGGe2KPr0ikogZVSKKIL/PRsfozP0pA4uzFovCaDhnRJKiMoGVjdKs
-         o9I3fum+1jh7BX1ynSpRkvOzPmOmhLFxCKljWBR4hQMQGh+10givW4Mwl5aN2Yvp1Q+o
-         AcL+pKPiXCtiUxrNLMAcLnaN8IsqRGpQdPtkkA7sOfXX2S5EbAjI5tULU9Dz7NaxrgS9
-         88FQ==
-X-Gm-Message-State: APjAAAUF3hHnRwx/drC+shlqaW/3LNl0GYMvyV/+N3RIcwTScqC+AOO8
-        HZuoGO3Na4QvFDedZSrv3IfurA==
-X-Google-Smtp-Source: APXvYqy8ptrsSDx1m4BazaV2cUqif19xWrwH+lZkkh3fZ2X5vIkCH+jyW+1oGFguRAmcQm5RYV3mLw==
-X-Received: by 2002:a2e:b4e7:: with SMTP id s7mr2195072ljm.58.1576685948274;
-        Wed, 18 Dec 2019 08:19:08 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id 2sm1412292ljq.38.2019.12.18.08.19.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 08:19:07 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id E28BB1012CF; Wed, 18 Dec 2019 19:19:07 +0300 (+03)
-Date:   Wed, 18 Dec 2019 19:19:07 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: Re: [PATCH v11 06/25] mm: fix get_user_pages_remote()'s handling of
- FOLL_LONGTERM
-Message-ID: <20191218161907.yczbijr3ngm7wwnj@box>
-References: <20191216222537.491123-1-jhubbard@nvidia.com>
- <20191216222537.491123-7-jhubbard@nvidia.com>
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=IuaTqXhxelJhKDHw5O7rzxkzTsdD5izns8/dKhJuhOU=;
+        b=gc+D1k8IokXdLFmst4QiWZ6nFCnPcsKyuJapNOxNA4IuyRwOO7TZ6aRvvaD9mcC/y7
+         9fS4dCmh51ZVsWPJGYJjerVjmH8WYhvB/W+bzriJPA1o4XwO+L9j910PnYL+J282UWpv
+         3fQy5yCt7vvUEa4+oxUDc+ZqxF2nuGvVbshAqMEOXNidOi53gMj7flIYQa6aqQipPSgL
+         Fx+bO0JGPfmHwiYYPkF/VvEEcZ3Ss4v95809vdKj9DkwrBERewryaKbOg4OybZDKqST3
+         +BH3dUZ50s6E94I1m+wH15q25diuGA/SV3d6+xeAKQjLOaiW6OuWRAlwRzXqML4WotTr
+         F4Jw==
+X-Gm-Message-State: APjAAAVuRUk7o3o/kTGusN4mjHvszr+zEZ3GsiFJrNbL845z7EA38Mrr
+        H9tukxEcJn/aSfun3Uc1mEyupXDdLpvEsROSbkxel5HJM1Ha
+X-Google-Smtp-Source: APXvYqxlpQuOxZYicynxx6hVRSGFToWAMtcNMVHatrpxa6mopdSMqi85r6C8n0BH/LoOoq7aqqMM4kgR3L2zKnho69XDz0uvKC9k
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191216222537.491123-7-jhubbard@nvidia.com>
-User-Agent: NeoMutt/20180716
+X-Received: by 2002:a92:8dc3:: with SMTP id w64mr2462439ill.68.1576686061030;
+ Wed, 18 Dec 2019 08:21:01 -0800 (PST)
+Date:   Wed, 18 Dec 2019 08:21:01 -0800
+In-Reply-To: <0000000000002df264056a35b16b@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009716290599fcd496@google.com>
+Subject: Re: kernel BUG at fs/buffer.c:LINE!
+From:   syzbot <syzbot+cfed5b56649bddf80d6e@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, bvanassche@acm.org, jaegeuk@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 02:25:18PM -0800, John Hubbard wrote:
-> As it says in the updated comment in gup.c: current FOLL_LONGTERM
-> behavior is incompatible with FAULT_FLAG_ALLOW_RETRY because of the
-> FS DAX check requirement on vmas.
-> 
-> However, the corresponding restriction in get_user_pages_remote() was
-> slightly stricter than is actually required: it forbade all
-> FOLL_LONGTERM callers, but we can actually allow FOLL_LONGTERM callers
-> that do not set the "locked" arg.
-> 
-> Update the code and comments to loosen the restriction, allowing
-> FOLL_LONGTERM in some cases.
-> 
-> Also, copy the DAX check ("if a VMA is DAX, don't allow long term
-> pinning") from the VFIO call site, all the way into the internals
-> of get_user_pages_remote() and __gup_longterm_locked(). That is:
-> get_user_pages_remote() calls __gup_longterm_locked(), which in turn
-> calls check_dax_vmas(). This check will then be removed from the VFIO
-> call site in a subsequent patch.
-> 
-> Thanks to Jason Gunthorpe for pointing out a clean way to fix this,
-> and to Dan Williams for helping clarify the DAX refactoring.
-> 
-> Tested-by: Alex Williamson <alex.williamson@redhat.com>
-> Acked-by: Alex Williamson <alex.williamson@redhat.com>
-> Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-> Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Jerome Glisse <jglisse@redhat.com>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
->  mm/gup.c | 27 ++++++++++++++++++++++-----
->  1 file changed, 22 insertions(+), 5 deletions(-)
-> 
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 3ecce297a47f..c0c56888e7cc 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -29,6 +29,13 @@ struct follow_page_context {
->  	unsigned int page_mask;
->  };
->  
-> +static __always_inline long __gup_longterm_locked(struct task_struct *tsk,
-> +						  struct mm_struct *mm,
-> +						  unsigned long start,
-> +						  unsigned long nr_pages,
-> +						  struct page **pages,
-> +						  struct vm_area_struct **vmas,
-> +						  unsigned int flags);
+syzbot has bisected this bug to:
 
-Any particular reason for the forward declaration? Maybe move
-get_user_pages_remote() down?
+commit 5db470e229e22b7eda6e23b5566e532c96fb5bc3
+Author: Jaegeuk Kim <jaegeuk@kernel.org>
+Date:   Thu Jan 10 03:17:14 2019 +0000
 
->  /*
->   * Return the compound head page with ref appropriately incremented,
->   * or NULL if that failed.
-> @@ -1179,13 +1186,23 @@ long get_user_pages_remote(struct task_struct *tsk, struct mm_struct *mm,
->  		struct vm_area_struct **vmas, int *locked)
->  {
->  	/*
-> -	 * FIXME: Current FOLL_LONGTERM behavior is incompatible with
-> +	 * Parts of FOLL_LONGTERM behavior are incompatible with
->  	 * FAULT_FLAG_ALLOW_RETRY because of the FS DAX check requirement on
-> -	 * vmas.  As there are no users of this flag in this call we simply
-> -	 * disallow this option for now.
-> +	 * vmas. However, this only comes up if locked is set, and there are
-> +	 * callers that do request FOLL_LONGTERM, but do not set locked. So,
-> +	 * allow what we can.
->  	 */
-> -	if (WARN_ON_ONCE(gup_flags & FOLL_LONGTERM))
-> -		return -EINVAL;
-> +	if (gup_flags & FOLL_LONGTERM) {
-> +		if (WARN_ON_ONCE(locked))
-> +			return -EINVAL;
-> +		/*
-> +		 * This will check the vmas (even if our vmas arg is NULL)
-> +		 * and return -ENOTSUPP if DAX isn't allowed in this case:
-> +		 */
-> +		return __gup_longterm_locked(tsk, mm, start, nr_pages, pages,
-> +					     vmas, gup_flags | FOLL_TOUCH |
-> +					     FOLL_REMOTE);
-> +	}
->  
->  	return __get_user_pages_locked(tsk, mm, start, nr_pages, pages, vmas,
->  				       locked,
-> -- 
-> 2.24.1
-> 
+     loop: drop caches if offset or block_size are changed
 
--- 
- Kirill A. Shutemov
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13f3ca8ee00000
+start commit:   2187f215 Merge tag 'for-5.5-rc2-tag' of git://git.kernel.o..
+git tree:       upstream
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=100bca8ee00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17f3ca8ee00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dcf10bf83926432a
+dashboard link: https://syzkaller.appspot.com/bug?extid=cfed5b56649bddf80d6e
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1171ba8ee00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=107440aee00000
+
+Reported-by: syzbot+cfed5b56649bddf80d6e@syzkaller.appspotmail.com
+Fixes: 5db470e229e2 ("loop: drop caches if offset or block_size are  
+changed")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
