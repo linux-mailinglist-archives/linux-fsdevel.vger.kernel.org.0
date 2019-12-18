@@ -2,85 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BC3A1251AB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 20:16:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC9C01251BA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 20:22:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727380AbfLRTQV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Dec 2019 14:16:21 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:47600 "EHLO
+        id S1727505AbfLRTVw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Dec 2019 14:21:52 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48988 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727099AbfLRTQV (ORCPT
+        with ESMTP id S1727367AbfLRTVw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Dec 2019 14:16:21 -0500
+        Wed, 18 Dec 2019 14:21:52 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=HOc9f2rP1hnTczx9VP167UEkDBFIJUQPJwBvAEmplec=; b=KKs0xRh/g0/h+4hVPxkThIaxr
-        jqNcOLxCbOackiNJj3mu3/1D0PKUiIJUh/D8aWGTJGBj6vDll906I1Ay4/gm2h2lh8sU2jV1HDJbc
-        8c7iGfdpI6CqRJcmKCITX2YfnoKbtJTnpKQZWSpeXGA7NbzTy0DtyTMd83ondlC/46fNOjxxVY1Sa
-        6a7kgBeKxnCiJ6t+kG1/dYIONgdJBiCPmpSfCwTdZ52v5FLcZZkzb0bTD2qkHYd2WIoF6LsJqPWVF
-        G6M/RSxMeWlXtZ879x8lcRNaapwKaWsm3n30UCO/vpiUrMHMnAl1289yd/vZPmzTxR6alcgSOqdjU
-        NCeEU3ZeA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ihenq-0004dy-6L; Wed, 18 Dec 2019 19:16:10 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 174F6980E35; Wed, 18 Dec 2019 20:16:08 +0100 (CET)
-Date:   Wed, 18 Dec 2019 20:16:08 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-afs@lists.infradead.org, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will@kernel.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] rxrpc: Don't take call->user_mutex in
- rxrpc_new_incoming_call()
-Message-ID: <20191218191608.GG11457@worktop.programming.kicks-ass.net>
-References: <157669169065.21991.15207045893761573624.stgit@warthog.procyon.org.uk>
- <157669169826.21991.16708899415880562587.stgit@warthog.procyon.org.uk>
+         bh=WeW+VRLeMZJzYni3rjboMFgKf7w4L/Z6i8nVtxefrWQ=; b=igYrT7pkArJInRCn2HvudFpeQ
+        4/Y7nWsP/q4E6FIbmdEk9z42j0nBzQL58sT3RxKWiM+4Mfe8XfTHyujpdq2OPJ1DGDGUnTlH0/j+y
+        xaD21T5ZNtH5dEiFNAkmc6OeEvHN4w7ufKmttR9NCHAnejfMePx79c1FgWlzrmBoxP9cDjjixWuiN
+        T8sxYZjvema0JpzXyWcftkKu6eS3v6EMqpPg404NTsQvXNOQ++CzO3jeSDIp/4ATRSoec/iviYsAO
+        xKhTKKHM3ZvRS0sgTZxJFFDAo3TkYjVP7QIHFU1Ercgsr6Ydnj7/FIIBkei+hXzZWygrYTCvThFkj
+        T+/2P2+Rg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ihetE-0006ZI-A3; Wed, 18 Dec 2019 19:21:44 +0000
+Date:   Wed, 18 Dec 2019 11:21:44 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Richard Weinberger <richard@nod.at>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v3] fs: Fix page_mkwrite off-by-one errors
+Message-ID: <20191218192144.GF32169@bombadil.infradead.org>
+References: <20191218130935.32402-1-agruenba@redhat.com>
+ <20191218185216.GA7497@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <157669169826.21991.16708899415880562587.stgit@warthog.procyon.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191218185216.GA7497@magnolia>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 05:54:58PM +0000, David Howells wrote:
-> Standard kernel mutexes cannot be used in any way from interrupt or softirq
-> context, so the user_mutex which manages access to a call cannot be a mutex
-> since on a new call the mutex must start off locked and be unlocked within
-> the softirq handler to prevent userspace interfering with a call we're
-> setting up.
+On Wed, Dec 18, 2019 at 10:52:16AM -0800, Darrick J. Wong wrote:
+> > @@ -9016,13 +9016,11 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
+> >  	ret = VM_FAULT_NOPAGE; /* make the VM retry the fault */
+> >  again:
+> >  	lock_page(page);
+> > -	size = i_size_read(inode);
+> >  
+> > -	if ((page->mapping != inode->i_mapping) ||
+> > -	    (page_start >= size)) {
+> > -		/* page got truncated out from underneath us */
+> > +	ret2 = page_mkwrite_check_truncate(page, inode);
+> > +	if (ret2 < 0)
+> >  		goto out_unlock;
 > 
-> Commit a0855d24fc22d49cdc25664fb224caee16998683 ("locking/mutex: Complain
-> upon mutex API misuse in IRQ contexts") causes big warnings to be splashed
-> in dmesg for each a new call that comes in from the server.  Whilst it
-> *seems* like it should be okay, since the accept path uses trylock, there
-> are issues with PI boosting and marking the wrong task as the owner.
-> 
-> Fix this by not taking the mutex in the softirq path at all.  It's not
-> obvious that there should be any need for it as the state is set before the
-> first notification is generated for the new call.
-> 
-> There's also no particular reason why the link-assessing ping should be
-> triggered inside the mutex.  It's not actually transmitted there anyway,
-> but rather it has to be deferred to a workqueue.
-> 
-> Further, I don't think that there's any particular reason that the socket
-> notification needs to be done from within rx->incoming_lock, so the amount
-> of time that lock is held can be shortened too and the ping prepared before
-> the new call notification is sent.
-> 
+> ...here we try to return -EFAULT as vm_fault_t.  Notice how btrfs returns
+> VM_FAULT_* values directly and never calls block_page_mkwrite_return?  I
+> know dsterba acked this, but I cannot see how this is correct?
 
-Assuming this works, this is the best solution possible! Excellent work.
-
-(I was about to suggest something based on wait_var_event() inside each
-mutex_lock(), but this is _much_ nicer)
-
-Thanks!
+I think you misread it.  'ret2' is never returned; we'll end up returning
+VM_FAULT_NOPAGE here.  Arguably it should be SIGBUS or something, but
+I think retrying the fault will also end up giving a SIGBUS.
