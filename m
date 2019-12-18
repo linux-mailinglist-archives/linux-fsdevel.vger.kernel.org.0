@@ -2,51 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 289EA124A7D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 15:58:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE580124A8E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 16:01:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727174AbfLRO6L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Dec 2019 09:58:11 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:34736 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727138AbfLRO6L (ORCPT
+        id S1726921AbfLRPBc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Dec 2019 10:01:32 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:41155 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726996AbfLRPBc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Dec 2019 09:58:11 -0500
-Received: by mail-qt1-f195.google.com with SMTP id 5so2174049qtz.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Dec 2019 06:58:10 -0800 (PST)
+        Wed, 18 Dec 2019 10:01:32 -0500
+Received: by mail-qk1-f196.google.com with SMTP id x129so1771837qke.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Dec 2019 07:01:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7me7J7sKczgizgQK29nWZIo2pltkRAZWuA71/GjVg3I=;
-        b=cwN2S8P2SpCsdT7CE/EAu6UYqFCSpI7RM/GMkmR7x5qHJ/hnrNvhyJTs2/ZBWjhAIN
-         iRcW/PIt24w9aNqvSV0Rq/5AIK4HEsjz54EsYV6xEul3axz4XqTCkL2a/VZ5jZCA1XQ7
-         rRS/gMqAs+KJuMLKy2SUUZJxe1IBrFDgeSewKx9VptZOCaoi/q6sTPUU8RgdDf/OEKrd
-         75wOpbFeCaTn+kx2rxZ12r4gZAE/MASb0akziYhOJ26kGaSzY6EziO4T4TsY5IAFQaB9
-         gneyD8vzbeuQsSPe6PaR9Nk8UGUEl5hmno5cmEAEdf7jcp72kXlIXEyD9FAEZsvFbvJN
-         WCrA==
+        bh=dksQ3sa6x+MBXi5EvTI6N5sQp4eN9RCuqeUBSUeiFHI=;
+        b=QWd4WWXI10mJymRIsZ49KaESBWBDoT1eSgFAm3FN3AUlcJPTx0dDQ0nn96xIZdVGXj
+         9knLtiLdO4GPhWhG5Xl3J9/1N8c1YpYCojSmcjzcJhNS0eakk2HTvyw3roD6PqMaOi8E
+         0X9Lek+m7WC1gENUZrQwiHOKVXhIGiwZYvUx6sH5DHiKaJvllROZ5Y1KEWrydnGYMxKZ
+         nsmCFAOJd7gm3stvh1qtuWSkAobV1K2dA+8OUnvimyKi6KTmQFUHMIK3+MFyLSukQ/FD
+         bhqrstPnJimg+hCXDpxNbaAdaHefdo/a2vvkHkfoDne6K7Be45cePqZrFi8ngzb52HlL
+         Z5FA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=7me7J7sKczgizgQK29nWZIo2pltkRAZWuA71/GjVg3I=;
-        b=LuZibVga3H4P1/hev/gnFW39EEoMvEXw4EHRm3OxFwJE2RDLnAFjVHFq4e401l76rr
-         JMGdbyWiTx6f2+7OEpyc0Zv9LgQLUI1BErpSNv/8xGzEgVfUYxZd8gSy1SeLvQQkDzT0
-         X8MUPi6XI7Li9rjDx9DJBMK5CMbjFW+8sDtNTlfwp+nsIcUzfdmd1O3sYrUVyEwLkt7a
-         8nCBoKkKn8KEzD/jgGF+UvXyBOITGRF/YxydEoIfdqTbFcmsQdPRrhdJceAKGummRhPf
-         E6IS96QR91DDzaGjaJk6DCTiQzhNTxfRd71HsHG+mft3xXa+X5scX/6v05Z2Twi1vPnG
-         NVNw==
-X-Gm-Message-State: APjAAAWFXYQBJEN9XgdVxl90Jlnyk0ssecyATd9COmjPRBJg0y4NQ1KX
-        7cSb2JkqRRkKjnDoN7UEQ1MCEK83LEJ/9A==
-X-Google-Smtp-Source: APXvYqw/dc12PAr/N2b/xbYEM+sjKCZBK09ETWuxZeLQuKzzQeZSn0gA6i1V+EN2NuE2BPomKgdVnA==
-X-Received: by 2002:ac8:86b:: with SMTP id x40mr2539800qth.366.1576681089494;
-        Wed, 18 Dec 2019 06:58:09 -0800 (PST)
+        bh=dksQ3sa6x+MBXi5EvTI6N5sQp4eN9RCuqeUBSUeiFHI=;
+        b=h5beTLxOjGNVgVXlwOXpJqDXsKw0Fez61JKnfccqPnscas7eAbsbZc7IK9FLiMT/OA
+         dXJh2+KN0iJM8ErOi0dl6/owzIM89yTC0P8c98fHmhGBLQ2u07wQHvzu1PPiydaKWSvn
+         i7pO/iW3HJ+yu3Rt+JLHPvdhAuFd8E+exoHEqfOtaBEqRIPtuETumKMIiviSVoyKKBtQ
+         GrjIeK6+nwmmJOI5igcWw2ikjZA8jSAZLT2TWbFMCdZK24/NbTnxZgK9hNdGEjgxG+XQ
+         Va5bPqdOOK6eXkw7rel9+GFHTGJ1KYKoAkxMn/tgjhAQMUJCjZ1sN4STR0EJx/vHvc8h
+         heHg==
+X-Gm-Message-State: APjAAAV6xPzwsBPT8flI32gdV9cBcNxcoDsGsDUwfSnkjGKZ9lto7fb0
+        1RJsAIy5VrVz6KRcO7OSmho4VtT5HG6fnw==
+X-Google-Smtp-Source: APXvYqx/TzsrHeabP28pH0c9OJ4meVk6tjQeeCz0NUdpRuB6R0Q7+1s36AoSKdIGDVAWSJPIRQevKg==
+X-Received: by 2002:ae9:ed53:: with SMTP id c80mr2785219qkg.445.1576681291074;
+        Wed, 18 Dec 2019 07:01:31 -0800 (PST)
 Received: from [192.168.1.106] ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id s26sm718638qkj.24.2019.12.18.06.58.08
+        by smtp.gmail.com with ESMTPSA id o9sm732800qko.16.2019.12.18.07.01.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Dec 2019 06:58:08 -0800 (PST)
-Subject: Re: [PATCH v6 23/28] btrfs: support dev-replace in HMZONED mode
+        Wed, 18 Dec 2019 07:01:30 -0800 (PST)
+Subject: Re: [PATCH v6 24/28] btrfs: enable relocation in HMZONED mode
 To:     Naohiro Aota <naohiro.aota@wdc.com>
 Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
         Chris Mason <clm@fb.com>, Nikolay Borisov <nborisov@suse.com>,
@@ -56,16 +56,16 @@ Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
         Anand Jain <anand.jain@oracle.com>,
         linux-fsdevel@vger.kernel.org
 References: <20191213040915.3502922-1-naohiro.aota@wdc.com>
- <20191213040915.3502922-24-naohiro.aota@wdc.com>
- <2157b1bb-a64b-eed3-0451-09a8480d0db2@toxicpanda.com>
- <20191218060033.ubfidtuhvzdbkk3o@naota.dhcp.fujisawa.hgst.com>
+ <20191213040915.3502922-25-naohiro.aota@wdc.com>
+ <83984f9c-4f37-4a04-daea-8169959dc09d@toxicpanda.com>
+ <20191218104920.ozsa3pawkvxs2gg5@naota.dhcp.fujisawa.hgst.com>
 From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <d8514c65-08f8-ac50-959a-42e980aea3f4@toxicpanda.com>
-Date:   Wed, 18 Dec 2019 09:58:08 -0500
+Message-ID: <b538ea95-9493-88b7-de6e-fa94dca43665@toxicpanda.com>
+Date:   Wed, 18 Dec 2019 10:01:29 -0500
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
  Gecko/20100101 Thunderbird/68.3.1
 MIME-Version: 1.0
-In-Reply-To: <20191218060033.ubfidtuhvzdbkk3o@naota.dhcp.fujisawa.hgst.com>
+In-Reply-To: <20191218104920.ozsa3pawkvxs2gg5@naota.dhcp.fujisawa.hgst.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -74,78 +74,72 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/18/19 1:00 AM, Naohiro Aota wrote:
-> On Tue, Dec 17, 2019 at 04:05:25PM -0500, Josef Bacik wrote:
+On 12/18/19 5:49 AM, Naohiro Aota wrote:
+> On Tue, Dec 17, 2019 at 04:32:04PM -0500, Josef Bacik wrote:
 >> On 12/12/19 11:09 PM, Naohiro Aota wrote:
->>> We have two type of I/Os during the device-replace process. One is a I/O to
->>> "copy" (by the scrub functions) all the device extents on the source device
->>> to the destination device.  The other one is a I/O to "clone" (by
->>> handle_ops_on_dev_replace()) new incoming write I/Os from users to the
->>> source device into the target device.
+>>> To serialize allocation and submit_bio, we introduced mutex around them. As
+>>> a result, preallocation must be completely disabled to avoid a deadlock.
 >>>
->>> Cloning incoming I/Os can break the sequential write rule in the target
->>> device. When write is mapped in the middle of a block group, that I/O is
->>> directed in the middle of a zone of target device, which breaks the
->>> sequential write rule.
->>>
->>> However, the cloning function cannot be simply disabled since incoming I/Os
->>> targeting already copied device extents must be cloned so that the I/O is
->>> executed on the target device.
->>>
->>> We cannot use dev_replace->cursor_{left,right} to determine whether bio is
->>> going to not yet copied region.  Since we have time gap between finishing
->>> btrfs_scrub_dev() and rewriting the mapping tree in
->>> btrfs_dev_replace_finishing(), we can have newly allocated device extent
->>> which is never cloned nor copied.
->>>
->>> So the point is to copy only already existing device extents. This patch
->>> introduces mark_block_group_to_copy() to mark existing block group as a
->>> target of copying. Then, handle_ops_on_dev_replace() and dev-replace can
->>> check the flag to do their job.
->>>
->>> Device-replace process in HMZONED mode must copy or clone all the extents
->>> in the source device exctly once.  So, we need to use to ensure allocations
->>> started just before the dev-replace process to have their corresponding
->>> extent information in the B-trees. finish_extent_writes_for_hmzoned()
->>> implements that functionality, which basically is the removed code in the
->>> commit 042528f8d840 ("Btrfs: fix block group remaining RO forever after
->>> error during device replace").
->>>
->>> This patch also handles empty region between used extents. Since
->>> dev-replace is smart to copy only used extents on source device, we have to
->>> fill the gap to honor the sequential write rule in the target device.
+>>> Since current relocation process relies on preallocation to move file data
+>>> extents, it must be handled in another way. In HMZONED mode, we just
+>>> truncate the inode to the size that we wanted to pre-allocate. Then, we
+>>> flush dirty pages on the file before finishing relocation process.
+>>> run_delalloc_hmzoned() will handle all the allocation and submit IOs to
+>>> the underlying layers.
 >>>
 >>> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+>>> ---
+>>>  fs/btrfs/relocation.c | 39 +++++++++++++++++++++++++++++++++++++--
+>>>  1 file changed, 37 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/fs/btrfs/relocation.c b/fs/btrfs/relocation.c
+>>> index d897a8e5e430..2d17b7566df4 100644
+>>> --- a/fs/btrfs/relocation.c
+>>> +++ b/fs/btrfs/relocation.c
+>>> @@ -3159,6 +3159,34 @@ int prealloc_file_extent_cluster(struct inode *inode,
+>>>      if (ret)
+>>>          goto out;
+>>> +    /*
+>>> +     * In HMZONED, we cannot preallocate the file region. Instead,
+>>> +     * we dirty and fiemap_write the region.
+>>> +     */
+>>> +
+>>> +    if (btrfs_fs_incompat(btrfs_sb(inode->i_sb), HMZONED)) {
+>>> +        struct btrfs_root *root = BTRFS_I(inode)->root;
+>>> +        struct btrfs_trans_handle *trans;
+>>> +
+>>> +        end = cluster->end - offset + 1;
+>>> +        trans = btrfs_start_transaction(root, 1);
+>>> +        if (IS_ERR(trans))
+>>> +            return PTR_ERR(trans);
+>>> +
+>>> +        inode->i_ctime = current_time(inode);
+>>> +        i_size_write(inode, end);
+>>> +        btrfs_ordered_update_i_size(inode, end, NULL);
+>>> +        ret = btrfs_update_inode(trans, root, inode);
+>>> +        if (ret) {
+>>> +            btrfs_abort_transaction(trans, ret);
+>>> +            btrfs_end_transaction(trans);
+>>> +            return ret;
+>>> +        }
+>>> +        ret = btrfs_end_transaction(trans);
+>>> +
+>>> +        goto out;
+>>> +    }
+>>> +
 >>
->> Can you split up the copying part and the cloning part into different patches, 
->> this is a bear to review.  Also I don't quite understand the zeroout behavior. 
->> It _looks_ like for cloning you are doing a zeroout for the gap between the 
->> last wp position and the current cloned bio, which makes sense, but doesn't 
->> this gap exist because copying is ongoing?  Can you copy into a zero'ed out 
->> position?  Or am I missing something here?  Thanks,
->>
->> Josef
+>> Why are we arbitrarily extending the i_size here?  If we don't need prealloc 
+>> we don't need to jack up the i_size either.
 > 
-> OK, I will split this in the next version. (but, it's mostly "copying"
-> part)
-> 
-> Let me clarify first that I am using "copying" for copying existing
-> extents to the new device and "cloning" for cloning a new incoming BIO
-> to the new device.
-> 
-> For zeroout, it is for "copying" which is done with the scrub code to
-> copy existing extents on the source devie to the destination
-> device. Since copying or scrub only scans for living extents, there
-> can be a gap between two living extents. So, we need to fill a gap
-> with zeroout to make the writing stream sequential.
-> 
-> And "cloning" is only done for new block groups or already fully
-> copied block groups. So there is no gaps for them because the
-> allocator and the IO locks ensures the sequential allocation and
-> submit.
-> 
+> We need to extend i_size to read data from the relocating block
+> group. If not, btrfs_readpage() in relocate_file_extent_cluster()
+> always reads zero filled page because the read position is beyond the
+> file size.
 
-Got it, thanks.  It looked like the cloning part was using the zeroout behavior 
-which was what was confusing me.
+Right but the finish_ordered_io stuff will do the btrfs_ordered_update_i_size() 
+once the IO is complete.  So all you really need is the i_size_write and the 
+btrfs_update_inode.  If this crashes you'll have an inode that has a i_size with 
+no extents up to i_size.  This is fine for NO_HOLES but not fine for !NO_HOLES. 
+Thanks,
 
 Josef
