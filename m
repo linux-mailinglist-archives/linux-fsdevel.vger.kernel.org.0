@@ -2,60 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64778123CC4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 02:58:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DF9E123CD4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 03:02:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726492AbfLRB6A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Dec 2019 20:58:00 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:46130 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726382AbfLRB6A (ORCPT
+        id S1726561AbfLRCCx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Dec 2019 21:02:53 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:56678 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726167AbfLRCCw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Dec 2019 20:58:00 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBI1sKpQ039809;
-        Wed, 18 Dec 2019 01:57:50 GMT
+        Tue, 17 Dec 2019 21:02:52 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBI1sFMM041600;
+        Wed, 18 Dec 2019 02:02:37 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : references : mime-version : content-type :
  in-reply-to; s=corp-2019-08-05;
- bh=15neapn3hexipdYPtu5c6du1j7tBf71ljZTqTLp/yK0=;
- b=iJejrBuoxC49PzOrv7wgVmtR8pKVwk5BP4lVklbYqjswXAz39Nd8KtfMf+SzSRk7x+dr
- 0cAbrExT8Un1uODdNwoj0PuuHfTsRgPrnmVQcMv9Dus9S4eQrgOryU/vbg2JMwEOjSfI
- 1mhX/uAzxcfCWp3QADsGL4/Pl4EPWdEDXZ549iW1NcImKPM34YSHESNYYBL+2GAb4Xu9
- jR1H5dLad3KVgnDq6fAfKpdSqEKvmTH4s/Fkb//gVP4W4Z1YCVjV4B/PmboBq9wBgKXa
- r3zbHJxYG7DbmBQAcmEfNX0k2pTcuWFz+BMdmYeH0dpQCcY65GmSsRN2gMN2N5oTDJIV Pg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2wvrcrad1n-1
+ bh=v5oSqbOb/3e2GlryDHkB07ZgP+GuwmTlR7z5M6VAa84=;
+ b=jM03X+MsX8yxKKxoMCkhHbpDWCjrPdiaHsC4GYxLeHQr4/z5EomoZ66sbp68OE9hgGJD
+ +pHJD2yc3TlXkqggRzDQsA7kmItJILE3++xWa4Hxb//Dybobd544Q5OmDGngrNdB73VS
+ Y7dtg+mRqUFMwErXEgrHqAEWMRYhJ09kguqNRqPVvzSmheoKplwjjF4/OgvqT/uAWwWD
+ V/EK2Aip0yHy1le9wxZhVkfKAsB83aOLBjvhb4hL7CxAPYtFNKhZ76RzmQONQdNcf6rj
+ 0RzRnPrGARHT3xzDuKC/sQsFEvghi6a5JZKG1vBxG85Vq6eVCnzLhQcFA+VR4n53bwon vw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2wvqpqagjd-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Dec 2019 01:57:50 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBI1sAuJ061303;
-        Wed, 18 Dec 2019 01:57:50 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2wxm5p7r7h-1
+        Wed, 18 Dec 2019 02:02:37 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBI1sMl4105628;
+        Wed, 18 Dec 2019 02:02:37 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2wxm7513hm-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Dec 2019 01:57:49 +0000
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xBI1vl7a007227;
-        Wed, 18 Dec 2019 01:57:47 GMT
+        Wed, 18 Dec 2019 02:02:37 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xBI22Yrv024981;
+        Wed, 18 Dec 2019 02:02:35 GMT
 Received: from localhost (/10.159.137.228)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 17 Dec 2019 17:57:47 -0800
-Date:   Tue, 17 Dec 2019 17:57:46 -0800
+        with ESMTP ; Tue, 17 Dec 2019 18:02:34 -0800
+Date:   Tue, 17 Dec 2019 18:02:31 -0800
 From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Jens Axboe <axboe@kernel.dk>, '@magnolia
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, willy@infradead.org, clm@fb.com,
-        torvalds@linux-foundation.org, david@fromorbit.com
-Subject: Re: [PATCH 6/6] xfs: don't do delayed allocations for uncached
- buffered writes
-Message-ID: <20191218015746.GB12752@magnolia>
-References: <20191217143948.26380-1-axboe@kernel.dk>
- <20191217143948.26380-7-axboe@kernel.dk>
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc:     linux-btrfs@vger.kernel.org, hch@infradead.org,
+        fdmanana@kernel.org, nborisov@suse.com, dsterba@suse.cz,
+        jthumshirn@suse.de, linux-fsdevel@vger.kernel.org,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: Re: [PATCH 2/8] iomap: add a filesystem hook for direct I/O bio
+ submission
+Message-ID: <20191218020231.GL12766@magnolia>
+References: <20191213195750.32184-1-rgoldwyn@suse.de>
+ <20191213195750.32184-3-rgoldwyn@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191217143948.26380-7-axboe@kernel.dk>
+In-Reply-To: <20191213195750.32184-3-rgoldwyn@suse.de>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9474 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
@@ -64,7 +65,7 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 ma
  engine=8.0.1-1911140001 definitions=main-1912180014
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9474 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=-1004
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
  lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
  definitions=main-1912180014
@@ -73,41 +74,90 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 07:39:48AM -0700, Jens Axboe wrote:
-> This data is going to be written immediately, so don't bother trying
-> to do delayed allocation for it.
+On Fri, Dec 13, 2019 at 01:57:44PM -0600, Goldwyn Rodrigues wrote:
+> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
 > 
-> Suggested-by: Dave Chinner <david@fromorbit.com>
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> This helps filesystems to perform tasks on the bio while submitting for
+> I/O. This could be post-write operations such as data CRC or data
+> replication for fs-handled RAID.
+> 
+> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+> Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-Looks reasonable once all the previous patches go in,
-
+Seems fine to me,
 Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
 --D
 
 > ---
->  fs/xfs/xfs_iomap.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+>  fs/iomap/direct-io.c  | 14 +++++++++-----
+>  include/linux/iomap.h |  2 ++
+>  2 files changed, 11 insertions(+), 5 deletions(-)
 > 
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index 28e2d1f37267..d0cd4a05d59f 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -847,8 +847,11 @@ xfs_buffered_write_iomap_begin(
->  	int			allocfork = XFS_DATA_FORK;
->  	int			error = 0;
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 23837926c0c5..1a3bf3bd86fb 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -59,7 +59,7 @@ int iomap_dio_iopoll(struct kiocb *kiocb, bool spin)
+>  EXPORT_SYMBOL_GPL(iomap_dio_iopoll);
 >  
-> -	/* we can't use delayed allocations when using extent size hints */
-> -	if (xfs_get_extsz_hint(ip))
-> +	/*
-> +	 * Don't do delayed allocations when using extent size hints, or
-> +	 * if we were asked to do uncached buffered writes.
-> +	 */
-> +	if (xfs_get_extsz_hint(ip) || (flags & IOMAP_UNCACHED))
->  		return xfs_direct_write_iomap_begin(inode, offset, count,
->  				flags, iomap, srcmap);
+>  static void iomap_dio_submit_bio(struct iomap_dio *dio, struct iomap *iomap,
+> -		struct bio *bio)
+> +		struct bio *bio, loff_t pos)
+>  {
+>  	atomic_inc(&dio->ref);
 >  
+> @@ -67,7 +67,11 @@ static void iomap_dio_submit_bio(struct iomap_dio *dio, struct iomap *iomap,
+>  		bio_set_polled(bio, dio->iocb);
+>  
+>  	dio->submit.last_queue = bdev_get_queue(iomap->bdev);
+> -	dio->submit.cookie = submit_bio(bio);
+> +	if (dio->dops && dio->dops->submit_io)
+> +		dio->submit.cookie = dio->dops->submit_io(bio,
+> +				dio->iocb->ki_filp, pos);
+> +	else
+> +		dio->submit.cookie = submit_bio(bio);
+>  }
+>  
+>  static ssize_t iomap_dio_complete(struct iomap_dio *dio)
+> @@ -191,7 +195,7 @@ iomap_dio_zero(struct iomap_dio *dio, struct iomap *iomap, loff_t pos,
+>  	get_page(page);
+>  	__bio_add_page(bio, page, len, 0);
+>  	bio_set_op_attrs(bio, REQ_OP_WRITE, flags);
+> -	iomap_dio_submit_bio(dio, iomap, bio);
+> +	iomap_dio_submit_bio(dio, iomap, bio, pos);
+>  }
+>  
+>  static loff_t
+> @@ -299,11 +303,11 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+>  		}
+>  
+>  		dio->size += n;
+> -		pos += n;
+>  		copied += n;
+>  
+>  		nr_pages = iov_iter_npages(dio->submit.iter, BIO_MAX_PAGES);
+> -		iomap_dio_submit_bio(dio, iomap, bio);
+> +		iomap_dio_submit_bio(dio, iomap, bio, pos);
+> +		pos += n;
+>  	} while (nr_pages);
+>  
+>  	/*
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 8b09463dae0d..2b093a23ef1c 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -252,6 +252,8 @@ int iomap_writepages(struct address_space *mapping,
+>  struct iomap_dio_ops {
+>  	int (*end_io)(struct kiocb *iocb, ssize_t size, int error,
+>  		      unsigned flags);
+> +	blk_qc_t (*submit_io)(struct bio *bio, struct file *file,
+> +			  loff_t file_offset);
+>  };
+>  
+>  ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
 > -- 
-> 2.24.1
+> 2.16.4
 > 
