@@ -2,129 +2,449 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0E62124068
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 08:35:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 487B012408A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 08:48:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725955AbfLRHfW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Dec 2019 02:35:22 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:2362 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbfLRHfV (ORCPT
+        id S1726721AbfLRHr5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Dec 2019 02:47:57 -0500
+Received: from faui03.informatik.uni-erlangen.de ([131.188.30.103]:56906 "EHLO
+        faui03.informatik.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725799AbfLRHr5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Dec 2019 02:35:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1576654521; x=1608190521;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=35lr1IuUSoighFYbyYf9wy3qAzw3B517Y8C6MTrv72A=;
-  b=PgwrYWhzlEa4Cg5aw4D1kthSlotooZ8HFw2IMdfmLMwOhPC2V2eCajfq
-   13Oiie2REMPgXZ2l2LuG3PSXw9+/Qjs3UWaFuTxvQ2ysl1Dg4KUAg8ery
-   upPmg6CYoMIG4R3L/LX7BjwZxkTubmjWYVf1os/sg7kJEsCPVAExCDxHu
-   5pfWtuFaJdctl3SwulLj2J8N4PkIL3yMErRM2vXIM9PcddJrTrISygWT4
-   1bO87wXqoxZT9wX7/UoeXNCFyo+47hoc+JjcfAAJy4g9X8zr4JzsvKLR4
-   OcRmAc8rQLqp43kKGOLn1CfBd2MFvuj8Iz1PnIOdDU5hpSjHBY73bN4MI
-   Q==;
-IronPort-SDR: tI97PSMbZuZpx/kx02N2dS6ayoV804EF0HnWbFULVe+z7iprWpPtmvPH/Xr2J1aN5aguaY3xxs
- /tIzTK9RROeIIHHNwaT4VBXoiS32iyoaJHkJH70SZldjAqkTT97oCdNIByyd1cU2reOh4bOGv2
- b1ZgrUuhSmoUzLq58MNIGC/FkszCkWFJ4QCmijgkaOINtljbFB1PL+j56FGFWc6c1dh1CAjFiQ
- tvcaavCkCR5yGdEYTsfvZ8RxJ9jZ5krly10HeNWoP4+1Of3HvG08qO5U0F3ooaDVtOY9mY+K+a
- GXI=
-X-IronPort-AV: E=Sophos;i="5.69,328,1571673600"; 
-   d="scan'208";a="125608552"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 18 Dec 2019 15:35:20 +0800
-IronPort-SDR: pu+BCemSQPcBhFxDfgJd3IZLcmcRFunCsYETpeA39LhS3anHggGOW9cHG10NfcNyBYDpj+V9+Q
- lvSiFrKW7JwTtU5g16fruepzhdRA4vBcFivAWyzQpn3EgplEQf7SkxPBLzYMhRoT0o6pQXuZQc
- c0t1zHsyPcSMZpeoEGbsQq2dtz5YAUp9Lj3PpF7fsJdWOb6zMEezVXxtd2MZqDv2GJELz+LiCE
- 5fH9OkxSedZ/5R4CL1zo1rjqBjrlfc53XOwWR7TjcNO0dNoSSnI9zifNmRT/qNMqrRU9fbmUvJ
- 0RHhH4y12Gx0zXHcSd5yJ6Gy
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 23:29:44 -0800
-IronPort-SDR: u9LKptzO0Y8d+giAsBSMHWR69XPUIYgsoBozSab28xXQXzW+EB4LcM5YhId7TQOrAWCEUP88q4
- XO1MlVi3bCNIUKr5w0Ybg2Cwrcaijffbb9/0ilBSV1jadXetsOuOMhewqyicx2ojs0ExHDJsvk
- owpSHUjLJUbc8rohUj+nZyX1sUMTSOpVgnvL+oRDdKO41cZg02Ys3/5ZMfFQvnBO6eyjXWAual
- 5pqj03ghYHF7K1Kqmq/Qr6rO+IohDJai7ZyWR1SMigMIRweywt/nVZTzdta/Ipek66kZSFlYKn
- KXo=
-WDCIronportException: Internal
-Received: from naota.dhcp.fujisawa.hgst.com ([10.149.53.115])
-  by uls-op-cesaip02.wdc.com with SMTP; 17 Dec 2019 23:35:19 -0800
-Received: (nullmailer pid 964425 invoked by uid 1000);
-        Wed, 18 Dec 2019 07:35:18 -0000
-Date:   Wed, 18 Dec 2019 16:35:18 +0900
-From:   Naohiro Aota <naohiro.aota@wdc.com>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        Chris Mason <clm@fb.com>, Nikolay Borisov <nborisov@suse.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Hannes Reinecke <hare@suse.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 11/28] btrfs: make unmirroed BGs readonly only if we
- have at least one writable BG
-Message-ID: <20191218073518.zqtzfdgz7ctwlicn@naota.dhcp.fujisawa.hgst.com>
-References: <20191213040915.3502922-1-naohiro.aota@wdc.com>
- <20191213040915.3502922-12-naohiro.aota@wdc.com>
- <78769962-9094-3afc-f791-1b35030c67dc@toxicpanda.com>
+        Wed, 18 Dec 2019 02:47:57 -0500
+Received: from faui05d.informatik.uni-erlangen.de (faui05d.informatik.uni-erlangen.de [131.188.30.83])
+        by faui03.informatik.uni-erlangen.de (Postfix) with ESMTP id E6C86241702;
+        Wed, 18 Dec 2019 08:47:49 +0100 (CET)
+Received: by faui05d.informatik.uni-erlangen.de (Postfix, from userid 66565)
+        id D64AFC02BCD; Wed, 18 Dec 2019 08:47:49 +0100 (CET)
+From:   Julian Preis <julian.preis@fau.de>
+Cc:     =valdis.kletnieks@vt.edu, gregkh@linuxfoundation.org,
+        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, Julian Preis <julian.preis@fau.de>,
+        Johannes Weidner <johannes.weidner@fau.de>
+Subject: [PATCH v3] drivers/staging/exfat/exfat_super.c: Clean up ffsCamelCase function names
+Date:   Wed, 18 Dec 2019 08:47:22 +0100
+Message-Id: <20191218074722.3338-1-julian.preis@fau.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <y>
+References: <y>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <78769962-9094-3afc-f791-1b35030c67dc@toxicpanda.com>
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 02:25:37PM -0500, Josef Bacik wrote:
->On 12/12/19 11:08 PM, Naohiro Aota wrote:
->>If the btrfs volume has mirrored block groups, it unconditionally makes
->>un-mirrored block groups read only. When we have mirrored block groups, but
->>don't have writable block groups, this will drop all writable block groups.
->>So, check if we have at least one writable mirrored block group before
->>setting un-mirrored block groups read only.
->>
->>This change is necessary to handle e.g. xfstests btrfs/124 case.
->>
->>When we mount degraded RAID1 FS and write to it, and then re-mount with
->>full device, the write pointers of corresponding zones of written block
->>group differ. We mark such block group as "wp_broken" and make it read
->>only. In this situation, we only have read only RAID1 block groups because
->>of "wp_broken" and un-mirrored block groups are also marked read only,
->>because we have RAID1 block groups. As a result, all the block groups are
->>now read only, so that we cannot even start the rebalance to fix the
->>situation.
->
->I'm not sure I understand.  In degraded mode we're writing to just one 
->mirror of a RAID1 block group, correct?  And this messes up the WP for 
->the broken side, so it gets marked with wp_broken and thus RO.  How 
->does this patch help?  The block groups are still marked RAID1 right?  
->Or are new block groups allocated with SINGLE or RAID0?  I'm confused.  
->Thanks,
->
->Josef
+Rename every instance of <ffsCamelCaseExample> to <camel_case_example>
+in file exfat_super.c. Fix alignment.
 
-First of all, I found that some recent change (maybe commit
-112974d4067b ("btrfs: volumes: Remove ENOSPC-prone
-btrfs_can_relocate()")?) solved the issue, so we no longer need patch
-11 and 12. So, I will drop these two in the next version.
+Co-developed-by: Johannes Weidner <johannes.weidner@fau.de>
+Signed-off-by: Johannes Weidner <johannes.weidner@fau.de>
+Signed-off-by: Julian Preis <julian.preis@fau.de>
 
-So, I think you may already have no interest on the answer, but just
-for a note... The situation was like this:
+---
+Changes in v3:
+- Change renaming from <ffs_camel_case_example> to <camel_case_example>
 
-* before degrading
-   - All block groups are RAID1, working fine.
-  
-* degraded mount
-   - Block groups allocated before degrading are RAID1. Writes goes
-     into RAID1 block group and break the write pointer.
-   - Newly allocated block groups are SINGLE, since we only have one
-     available device.
+Changes in v2:
+- Add email recipients according to get_maintainer.pl
+- Add patch versions
+- Use in-reply-to
 
-* mount with the both drive again
-   - RAID1 block groups are markd RO because of broken write pointer
-   - SINGLE block groups are also marked RO because we have RAID1 block
-     groups
+ drivers/staging/exfat/exfat_super.c | 98 ++++++++++++++---------------
+ 1 file changed, 49 insertions(+), 49 deletions(-)
 
-and at this point, btrfs was somehow unable to allocate new block
-group or to start blancing.
+diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
+index 744344a2521c..e21c84a9b837 100644
+--- a/drivers/staging/exfat/exfat_super.c
++++ b/drivers/staging/exfat/exfat_super.c
+@@ -343,7 +343,7 @@ static inline void exfat_save_attr(struct inode *inode, u32 attr)
+ 		EXFAT_I(inode)->fid.attr = attr & (ATTR_RWMASK | ATTR_READONLY);
+ }
+ 
+-static int ffsMountVol(struct super_block *sb)
++static int mount_vol(struct super_block *sb)
+ {
+ 	int i, ret;
+ 	struct pbr_sector_t *p_pbr;
+@@ -439,7 +439,7 @@ static int ffsMountVol(struct super_block *sb)
+ 	return ret;
+ }
+ 
+-static int ffsUmountVol(struct super_block *sb)
++static int umount_vol(struct super_block *sb)
+ {
+ 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
+ 	int err = 0;
+@@ -479,7 +479,7 @@ static int ffsUmountVol(struct super_block *sb)
+ 	return err;
+ }
+ 
+-static int ffsGetVolInfo(struct super_block *sb, struct vol_info_t *info)
++static int get_vol_info(struct super_block *sb, struct vol_info_t *info)
+ {
+ 	int err = 0;
+ 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
+@@ -509,7 +509,7 @@ static int ffsGetVolInfo(struct super_block *sb, struct vol_info_t *info)
+ 	return err;
+ }
+ 
+-static int ffsSyncVol(struct super_block *sb, bool do_sync)
++static int sync_vol(struct super_block *sb, bool do_sync)
+ {
+ 	int err = 0;
+ 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
+@@ -534,7 +534,7 @@ static int ffsSyncVol(struct super_block *sb, bool do_sync)
+ /*  File Operation Functions                                            */
+ /*----------------------------------------------------------------------*/
+ 
+-static int ffsLookupFile(struct inode *inode, char *path, struct file_id_t *fid)
++static int lookup_file(struct inode *inode, char *path, struct file_id_t *fid)
+ {
+ 	int ret, dentry, num_entries;
+ 	struct chain_t dir;
+@@ -621,8 +621,8 @@ static int ffsLookupFile(struct inode *inode, char *path, struct file_id_t *fid)
+ 	return ret;
+ }
+ 
+-static int ffsCreateFile(struct inode *inode, char *path, u8 mode,
+-			 struct file_id_t *fid)
++static int create_file(struct inode *inode, char *path, u8 mode,
++		       struct file_id_t *fid)
+ {
+ 	struct chain_t dir;
+ 	struct uni_name_t uni_name;
+@@ -639,7 +639,7 @@ static int ffsCreateFile(struct inode *inode, char *path, u8 mode,
+ 
+ 	/* check the validity of directory name in the given pathname */
+ 	ret = resolve_path(inode, path, &dir, &uni_name);
+-	if (ret)
++	if (ret
+ 		goto out;
+ 
+ 	fs_set_vol_flags(sb, VOL_DIRTY);
+@@ -662,8 +662,8 @@ static int ffsCreateFile(struct inode *inode, char *path, u8 mode,
+ 	return ret;
+ }
+ 
+-static int ffsReadFile(struct inode *inode, struct file_id_t *fid, void *buffer,
+-		       u64 count, u64 *rcount)
++static int read_file(struct inode *inode, struct file_id_t *fid, void *buffer,
++		     u64 count, u64 *rcount)
+ {
+ 	s32 offset, sec_offset, clu_offset;
+ 	u32 clu;
+@@ -788,8 +788,8 @@ static int ffsReadFile(struct inode *inode, struct file_id_t *fid, void *buffer,
+ 	return ret;
+ }
+ 
+-static int ffsWriteFile(struct inode *inode, struct file_id_t *fid,
+-			void *buffer, u64 count, u64 *wcount)
++static int write_file(struct inode *inode, struct file_id_t *fid,
++		      void *buffer, u64 count, u64 *wcount)
+ {
+ 	bool modified = false;
+ 	s32 offset, sec_offset, clu_offset;
+@@ -1031,7 +1031,7 @@ static int ffsWriteFile(struct inode *inode, struct file_id_t *fid,
+ 	return ret;
+ }
+ 
+-static int ffsTruncateFile(struct inode *inode, u64 old_size, u64 new_size)
++static int truncate_file(struct inode *inode, u64 old_size, u64 new_size)
+ {
+ 	s32 num_clusters;
+ 	u32 last_clu = CLUSTER_32(0);
+@@ -1167,8 +1167,8 @@ static void update_parent_info(struct file_id_t *fid,
+ 	}
+ }
+ 
+-static int ffsMoveFile(struct inode *old_parent_inode, struct file_id_t *fid,
+-		       struct inode *new_parent_inode, struct dentry *new_dentry)
++static int move_file(struct inode *old_parent_inode, struct file_id_t *fid,
++		     struct inode *new_parent_inode, struct dentry *new_dentry)
+ {
+ 	s32 ret;
+ 	s32 dentry;
+@@ -1296,7 +1296,7 @@ static int ffsMoveFile(struct inode *old_parent_inode, struct file_id_t *fid,
+ 	return ret;
+ }
+ 
+-static int ffsRemoveFile(struct inode *inode, struct file_id_t *fid)
++static int remove_file(struct inode *inode, struct file_id_t *fid)
+ {
+ 	s32 dentry;
+ 	int ret = 0;
+@@ -1360,7 +1360,7 @@ static int ffsRemoveFile(struct inode *inode, struct file_id_t *fid)
+ 
+ #if 0
+ /* Not currently wired up */
+-static int ffsSetAttr(struct inode *inode, u32 attr)
++static int set_attr(struct inode *inode, u32 attr)
+ {
+ 	u32 type;
+ 	int ret = 0;
+@@ -1435,7 +1435,7 @@ static int ffsSetAttr(struct inode *inode, u32 attr)
+ }
+ #endif
+ 
+-static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
++static int read_stat(struct inode *inode, struct dir_entry_t *info)
+ {
+ 	s32 count;
+ 	int ret = 0;
+@@ -1565,7 +1565,7 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
+ 	return ret;
+ }
+ 
+-static int ffsWriteStat(struct inode *inode, struct dir_entry_t *info)
++static int write_stat(struct inode *inode, struct dir_entry_t *info)
+ {
+ 	int ret = 0;
+ 	struct timestamp_t tm;
+@@ -1638,7 +1638,7 @@ static int ffsWriteStat(struct inode *inode, struct dir_entry_t *info)
+ 	return ret;
+ }
+ 
+-static int ffsMapCluster(struct inode *inode, s32 clu_offset, u32 *clu)
++static int map_cluster(struct inode *inode, s32 clu_offset, u32 *clu)
+ {
+ 	s32 num_clusters, num_alloced;
+ 	bool modified = false;
+@@ -1778,7 +1778,7 @@ static int ffsMapCluster(struct inode *inode, s32 clu_offset, u32 *clu)
+ /*  Directory Operation Functions                                       */
+ /*----------------------------------------------------------------------*/
+ 
+-static int ffsCreateDir(struct inode *inode, char *path, struct file_id_t *fid)
++static int create_dir(struct inode *inode, char *path, struct file_id_t *fid)
+ {
+ 	int ret = 0;
+ 	struct chain_t dir;
+@@ -1818,7 +1818,7 @@ static int ffsCreateDir(struct inode *inode, char *path, struct file_id_t *fid)
+ 	return ret;
+ }
+ 
+-static int ffsReadDir(struct inode *inode, struct dir_entry_t *dir_entry)
++static int read_dir(struct inode *inode, struct dir_entry_t *dir_entry)
+ {
+ 	int i, dentry, clu_offset;
+ 	int ret = 0;
+@@ -2005,7 +2005,7 @@ static int ffsReadDir(struct inode *inode, struct dir_entry_t *dir_entry)
+ 	return ret;
+ }
+ 
+-static int ffsRemoveDir(struct inode *inode, struct file_id_t *fid)
++static int remove_dir(struct inode *inode, struct file_id_t *fid)
+ {
+ 	s32 dentry;
+ 	int ret = 0;
+@@ -2114,7 +2114,7 @@ static int exfat_readdir(struct file *filp, struct dir_context *ctx)
+ 	EXFAT_I(inode)->fid.size = i_size_read(inode);
+ 	EXFAT_I(inode)->fid.rwoffset = cpos >> DENTRY_SIZE_BITS;
+ 
+-	err = ffsReadDir(inode, &de);
++	err = read_dir(inode, &de);
+ 	if (err) {
+ 		/* at least we tried to read a sector
+ 		 * move cpos to next sector position (should be aligned)
+@@ -2235,7 +2235,7 @@ static int exfat_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+ 
+ 	pr_debug("%s entered\n", __func__);
+ 
+-	err = ffsCreateFile(dir, (u8 *)dentry->d_name.name, FM_REGULAR, &fid);
++	err = create_file(dir, (u8 *)dentry->d_name.name, FM_REGULAR, &fid);
+ 	if (err)
+ 		goto out;
+ 
+@@ -2282,7 +2282,7 @@ static int exfat_find(struct inode *dir, struct qstr *qname,
+ 	if (qname->len == 0)
+ 		return -ENOENT;
+ 
+-	err = ffsLookupFile(dir, (u8 *)qname->name, fid);
++	err = lookup_file(dir, (u8 *)qname->name, fid);
+ 	if (err)
+ 		return -ENOENT;
+ 
+@@ -2332,8 +2332,8 @@ static struct dentry *exfat_lookup(struct inode *dir, struct dentry *dentry,
+ 			err = -ENOMEM;
+ 			goto error;
+ 		}
+-		ffsReadFile(dir, &fid, EXFAT_I(inode)->target,
+-			    i_size_read(inode), &ret);
++		read_file(dir, &fid, EXFAT_I(inode)->target,
++			  i_size_read(inode), &ret);
+ 		*(EXFAT_I(inode)->target + i_size_read(inode)) = '\0';
+ 	}
+ 
+@@ -2402,7 +2402,7 @@ static int exfat_unlink(struct inode *dir, struct dentry *dentry)
+ 
+ 	EXFAT_I(inode)->fid.size = i_size_read(inode);
+ 
+-	err = ffsRemoveFile(dir, &(EXFAT_I(inode)->fid));
++	err = remove_file(dir, &(EXFAT_I(inode)->fid));
+ 	if (err)
+ 		goto out;
+ 
+@@ -2444,15 +2444,15 @@ static int exfat_symlink(struct inode *dir, struct dentry *dentry,
+ 
+ 	pr_debug("%s entered\n", __func__);
+ 
+-	err = ffsCreateFile(dir, (u8 *)dentry->d_name.name, FM_SYMLINK, &fid);
++	err = create_file(dir, (u8 *)dentry->d_name.name, FM_SYMLINK, &fid);
+ 	if (err)
+ 		goto out;
+ 
+ 
+-	err = ffsWriteFile(dir, &fid, (char *)target, len, &ret);
++	err = write_file(dir, &fid, (char *)target, len, &ret);
+ 
+ 	if (err) {
+-		ffsRemoveFile(dir, &fid);
++		remove_file(dir, &fid);
+ 		goto out;
+ 	}
+ 
+@@ -2508,7 +2508,7 @@ static int exfat_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 
+ 	pr_debug("%s entered\n", __func__);
+ 
+-	err = ffsCreateDir(dir, (u8 *)dentry->d_name.name, &fid);
++	err = create_dir(dir, (u8 *)dentry->d_name.name, &fid);
+ 	if (err)
+ 		goto out;
+ 
+@@ -2559,7 +2559,7 @@ static int exfat_rmdir(struct inode *dir, struct dentry *dentry)
+ 
+ 	EXFAT_I(inode)->fid.size = i_size_read(inode);
+ 
+-	err = ffsRemoveDir(dir, &(EXFAT_I(inode)->fid));
++	err = remove_dir(dir, &(EXFAT_I(inode)->fid));
+ 	if (err)
+ 		goto out;
+ 
+@@ -2608,8 +2608,8 @@ static int exfat_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 
+ 	EXFAT_I(old_inode)->fid.size = i_size_read(old_inode);
+ 
+-	err = ffsMoveFile(old_dir, &(EXFAT_I(old_inode)->fid), new_dir,
+-			  new_dentry);
++	err = move_file(old_dir, &(EXFAT_I(old_inode)->fid), new_dir,
++			new_dentry);
+ 	if (err)
+ 		goto out;
+ 
+@@ -2766,7 +2766,7 @@ static void exfat_truncate(struct inode *inode, loff_t old_size)
+ 	if (EXFAT_I(inode)->fid.start_clu == 0)
+ 		goto out;
+ 
+-	err = ffsTruncateFile(inode, old_size, i_size_read(inode));
++	err = truncate_file(inode, old_size, i_size_read(inode));
+ 	if (err)
+ 		goto out;
+ 
+@@ -2902,7 +2902,7 @@ static int exfat_file_release(struct inode *inode, struct file *filp)
+ 	struct super_block *sb = inode->i_sb;
+ 
+ 	EXFAT_I(inode)->fid.size = i_size_read(inode);
+-	ffsSyncVol(sb, false);
++	sync_vol(sb, false);
+ 	return 0;
+ }
+ 
+@@ -2957,7 +2957,7 @@ static int exfat_bmap(struct inode *inode, sector_t sector, sector_t *phys,
+ 
+ 	EXFAT_I(inode)->fid.size = i_size_read(inode);
+ 
+-	err = ffsMapCluster(inode, clu_offset, &cluster);
++	err = map_cluster(inode, clu_offset, &cluster);
+ 
+ 	if (!err && (cluster != CLUSTER_32(~0))) {
+ 		*phys = START_SECTOR(cluster) + sec_offset;
+@@ -3150,7 +3150,7 @@ static int exfat_fill_inode(struct inode *inode, struct file_id_t *fid)
+ 
+ 	memcpy(&(EXFAT_I(inode)->fid), fid, sizeof(struct file_id_t));
+ 
+-	ffsReadStat(inode, &info);
++	read_stat(inode, &info);
+ 
+ 	EXFAT_I(inode)->i_pos = 0;
+ 	EXFAT_I(inode)->target = NULL;
+@@ -3266,7 +3266,7 @@ static int exfat_write_inode(struct inode *inode, struct writeback_control *wbc)
+ 	exfat_time_unix2fat(&inode->i_ctime, &info.CreateTimestamp);
+ 	exfat_time_unix2fat(&inode->i_atime, &info.AccessTimestamp);
+ 
+-	ffsWriteStat(inode, &info);
++	write_stat(inode, &info);
+ 
+ 	return 0;
+ }
+@@ -3304,7 +3304,7 @@ static void exfat_put_super(struct super_block *sb)
+ 	if (__is_sb_dirty(sb))
+ 		exfat_write_super(sb);
+ 
+-	ffsUmountVol(sb);
++	umount_vol(sb);
+ 
+ 	sb->s_fs_info = NULL;
+ 	exfat_free_super(sbi);
+@@ -3317,7 +3317,7 @@ static void exfat_write_super(struct super_block *sb)
+ 	__set_sb_clean(sb);
+ 
+ 	if (!sb_rdonly(sb))
+-		ffsSyncVol(sb, true);
++		sync_vol(sb, true);
+ 
+ 	__unlock_super(sb);
+ }
+@@ -3329,7 +3329,7 @@ static int exfat_sync_fs(struct super_block *sb, int wait)
+ 	if (__is_sb_dirty(sb)) {
+ 		__lock_super(sb);
+ 		__set_sb_clean(sb);
+-		err = ffsSyncVol(sb, true);
++		err = sync_vol(sb, true);
+ 		__unlock_super(sb);
+ 	}
+ 
+@@ -3344,7 +3344,7 @@ static int exfat_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 	struct vol_info_t info;
+ 
+ 	if (p_fs->used_clusters == UINT_MAX) {
+-		if (ffsGetVolInfo(sb, &info) == -EIO)
++		if (get_vol_info(sb, &info) == -EIO)
+ 			return -EIO;
+ 
+ 	} else {
+@@ -3646,7 +3646,7 @@ static int exfat_read_root(struct inode *inode)
+ 
+ 	EXFAT_I(inode)->target = NULL;
+ 
+-	ffsReadStat(inode, &info);
++	read_stat(inode, &info);
+ 
+ 	inode->i_uid = sbi->options.fs_uid;
+ 	inode->i_gid = sbi->options.fs_gid;
+@@ -3713,10 +3713,10 @@ static int exfat_fill_super(struct super_block *sb, void *data, int silent)
+ 	sb_min_blocksize(sb, 512);
+ 	sb->s_maxbytes = 0x7fffffffffffffffLL;    /* maximum file size */
+ 
+-	ret = ffsMountVol(sb);
++	ret = mount_vol(sb);
+ 	if (ret) {
+ 		if (!silent)
+-			pr_err("[EXFAT] ffsMountVol failed\n");
++			pr_err("[EXFAT] mount_vol failed\n");
+ 
+ 		goto out_fail;
+ 	}
+@@ -3756,7 +3756,7 @@ static int exfat_fill_super(struct super_block *sb, void *data, int silent)
+ 	return 0;
+ 
+ out_fail2:
+-	ffsUmountVol(sb);
++	umount_vol(sb);
+ out_fail:
+ 	if (root_inode)
+ 		iput(root_inode);
+-- 
+2.20.1
+
