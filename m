@@ -2,143 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03A38124FDF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 18:55:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 580EC125076
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Dec 2019 19:20:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbfLRRzK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Dec 2019 12:55:10 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:48964 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727130AbfLRRzJ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Dec 2019 12:55:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576691708;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Jk7ns5MTns/445e01ST4cOo/+htaVN+sTnQQIw3LJPg=;
-        b=SLKqon3l141RNSAA0xqIC9yNCBQoZfBSKw6RBF3P0ssd3RrYYrgpz3qC/jxTBC0Ky3JeKX
-        aBQFzaXd/bKK9Qqlmzg8kWVzm0v/+fS9EAVSfsA64/psEchT7otkTB7o1GV/1N80XCCT7X
-        VtDoQj24TltcxsFi7oQswzxtOlmGe8c=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-410-eR5x0ZNEMt23AIjS31ooFg-1; Wed, 18 Dec 2019 12:55:02 -0500
-X-MC-Unique: eR5x0ZNEMt23AIjS31ooFg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727344AbfLRSU3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Dec 2019 13:20:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38336 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726939AbfLRSU3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Dec 2019 13:20:29 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AB6A4DB60;
-        Wed, 18 Dec 2019 17:55:00 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 06EF126DEE;
-        Wed, 18 Dec 2019 17:54:58 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 2/2] rxrpc: Don't take call->user_mutex in
- rxrpc_new_incoming_call()
-From:   David Howells <dhowells@redhat.com>
-To:     linux-afs@lists.infradead.org
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        Davidlohr Bueso <dave@stgolabs.net>, dhowells@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 18 Dec 2019 17:54:58 +0000
-Message-ID: <157669169826.21991.16708899415880562587.stgit@warthog.procyon.org.uk>
-In-Reply-To: <157669169065.21991.15207045893761573624.stgit@warthog.procyon.org.uk>
-References: <157669169065.21991.15207045893761573624.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        by mail.kernel.org (Postfix) with ESMTPSA id 48DD821D7D;
+        Wed, 18 Dec 2019 18:20:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576693228;
+        bh=r+Yhc2kGvqoCkOh2cwX+RFHO1GplnASB7rzCH+PXBKY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=v+14dStLOWlHFtGyqAuh62m2tf9bE5cAU/G+xt9brE51Id+NKRDy/A0BHvO97yYhF
+         XJFeyfuhv60cHnhwCQT3MQflw+TEdbhhxiyNYykUbxUByW3bYrqr2rfCXyFOhpau0v
+         AVkUKTw3kxCtPm08A18oObB6r1AsQa+F/9AH1xhU=
+Date:   Wed, 18 Dec 2019 19:20:26 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Will Deacon <will@kernel.org>
+Cc:     syzbot <syzbot+82defefbbd8527e1c2cb@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        hdanton@sina.com, akpm@linux-foundation.org
+Subject: Re: WARNING: refcount bug in cdev_get
+Message-ID: <20191218182026.GB882018@kroah.com>
+References: <000000000000bf410005909463ff@google.com>
+ <20191204115055.GA24783@willie-the-truck>
+ <20191204123148.GA3626092@kroah.com>
+ <20191210114444.GA17673@willie-the-truck>
+ <20191218170854.GC18440@willie-the-truck>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191218170854.GC18440@willie-the-truck>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Standard kernel mutexes cannot be used in any way from interrupt or softirq
-context, so the user_mutex which manages access to a call cannot be a mutex
-since on a new call the mutex must start off locked and be unlocked within
-the softirq handler to prevent userspace interfering with a call we're
-setting up.
+On Wed, Dec 18, 2019 at 05:08:55PM +0000, Will Deacon wrote:
+> Hi all,
+> 
+> On Tue, Dec 10, 2019 at 11:44:45AM +0000, Will Deacon wrote:
+> > On Wed, Dec 04, 2019 at 01:31:48PM +0100, Greg KH wrote:
+> > > But I thought we had a lock in play here, so why would changing this
+> > > actually fix anything?
+> > 
+> > I don't think the lock is always used. For example, look at chrdev_open(),
+> > which appears in the backtrace; the locked code is:
+> > 
+> > 	spin_lock(&cdev_lock);
+> > 	p = inode->i_cdev;
+> > 	if (!p) {
+> > 		struct kobject *kobj;
+> > 		int idx;
+> > 		spin_unlock(&cdev_lock);
+> > 		kobj = kobj_lookup(cdev_map, inode->i_rdev, &idx);
+> > 		if (!kobj)
+> > 			return -ENXIO;
+> > 		new = container_of(kobj, struct cdev, kobj);
+> > 		spin_lock(&cdev_lock);
+> > 		/* Check i_cdev again in case somebody beat us to it while
+> > 		   we dropped the lock. */
+> > 		p = inode->i_cdev;
+> > 		if (!p) {
+> > 			inode->i_cdev = p = new;
+> > 			list_add(&inode->i_devices, &p->list);
+> > 			new = NULL;
+> > 		} else if (!cdev_get(p))
+> > 			ret = -ENXIO;
+> > 	} else if (!cdev_get(p))
+> > 		ret = -ENXIO;
+> > 	spin_unlock(&cdev_lock);
+> > 	cdev_put(new);
+> > 
+> > So the idea is that multiple threads serialise on the 'cdev_lock' and then
+> > check 'inode->i_cdev' to figure out if the device has already been probed,
+> > taking a reference to it if it's available or probing it via kobj_lookup()
+> > otherwise. I think that's backwards with respect to things like cdev_put(),
+> > where the refcount is dropped *before* 'inode->i_cdev' is cleared to NULL.
+> > In which case, if a concurrent call to cdev_put() can drop the refcount
+> > to zero without 'cdev_lock' held, then you could get a use-after-free on
+> > this path thanks to a dangling pointer in 'inode->i_cdev'..
+> > 
+> > Looking slightly ahead in this same function, there are error paths which
+> > appear to do exactly that:
+> > 
+> > 	fops = fops_get(p->ops);
+> > 	if (!fops)
+> > 		goto out_cdev_put;
+> > 
+> > 	replace_fops(filp, fops);
+> > 	if (filp->f_op->open) {
+> > 		ret = filp->f_op->open(inode, filp);
+> > 		if (ret)
+> > 			goto out_cdev_put;
+> > 	}
+> > 
+> > 	return 0;
+> > 
+> >  out_cdev_put:
+> > 	cdev_put(p);
+> > 	return ret;
+> > 
+> > In which case the thread which installed 'inode->i_cdev' earlier on can
+> > now drop its refcount to zero without the lock held if, for example, the
+> > filp->f_op->open() call fails.
+> > 
+> > But note, this is purely based on code inspection -- the C reproducer from
+> > syzkaller doesn't work for me, so I've not been able to test any fixes either.
+> > It's also worth noting that cdev_put() is called from __fput(), but I think the
+> > reference counting on the file means we're ok there.
+> > 
+> > > This code hasn't changed in 15+ years, what suddenly changed that causes
+> > > problems here?
+> > 
+> > I suppose one thing to consider is that the refcount code is relatively new,
+> > so it could be that the actual use-after-free is extremely rare, but we're
+> > now seeing that it's at least potentially an issue.
+> > 
+> > Thoughts?
+> 
+> FWIW, I added some mdelay()s to make this race more likely, and I can now
+> trigger it reasonably reliably. See below.
+> 
+> Will
+> 
+> --->8
+> 
+> [   89.512353] ------------[ cut here ]------------
+> [   89.513350] refcount_t: addition on 0; use-after-free.
+> [   89.513977] WARNING: CPU: 2 PID: 6385 at lib/refcount.c:25 refcount_warn_saturate+0x6d/0xf0
+> [   89.514943] Modules linked in:
+> [   89.515307] CPU: 2 PID: 6385 Comm: repro Not tainted 5.5.0-rc2+ #22
+> [   89.516039] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
+> [   89.517047] RIP: 0010:refcount_warn_saturate+0x6d/0xf0
+> [   89.517647] Code: 05 55 9a 15 01 01 e8 9d aa c8 ff 0f 0b c3 80 3d 45 9a 15 01 00 75 ce 48 c7 c7 00 9c 62 b3 c6 08
+> [   89.519749] RSP: 0018:ffffb524c1b9bc70 EFLAGS: 00010282
+> [   89.520353] RAX: 0000000000000000 RBX: ffff9e9da1f71390 RCX: 0000000000000000
+> [   89.521184] RDX: ffff9e9dbbd27618 RSI: ffff9e9dbbd18798 RDI: ffff9e9dbbd18798
+> [   89.522020] RBP: 0000000000000000 R08: 000000000000095f R09: 0000000000000039
+> [   89.522854] R10: 0000000000000000 R11: ffffb524c1b9bb20 R12: ffff9e9da1e8c700
+> [   89.523689] R13: ffffffffb25ee8b0 R14: 0000000000000000 R15: ffff9e9da1e8c700
+> [   89.524512] FS:  00007f3b87d26700(0000) GS:ffff9e9dbbd00000(0000) knlGS:0000000000000000
+> [   89.525439] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   89.526105] CR2: 00007fc16909c000 CR3: 000000012df9c000 CR4: 00000000000006e0
+> [   89.526937] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [   89.527759] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [   89.528587] Call Trace:
+> [   89.528889]  kobject_get+0x5c/0x60
+> [   89.529290]  cdev_get+0x2b/0x60
+> [   89.529656]  chrdev_open+0x55/0x220
+> [   89.530060]  ? cdev_put.part.3+0x20/0x20
+> [   89.530515]  do_dentry_open+0x13a/0x390
+> [   89.530961]  path_openat+0x2c8/0x1470
+> [   89.531383]  do_filp_open+0x93/0x100
+> [   89.531797]  ? selinux_file_ioctl+0x17f/0x220
+> [   89.532297]  do_sys_open+0x186/0x220
+> [   89.532708]  do_syscall_64+0x48/0x150
+> [   89.533129]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> [   89.533704] RIP: 0033:0x7f3b87efcd0e
+> [   89.534115] Code: 89 54 24 08 e8 a3 f4 ff ff 8b 74 24 0c 48 8b 3c 24 41 89 c0 44 8b 54 24 08 b8 01 01 00 00 89 f4
+> [   89.536227] RSP: 002b:00007f3b87d259f0 EFLAGS: 00000293 ORIG_RAX: 0000000000000101
+> [   89.537085] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f3b87efcd0e
+> [   89.537891] RDX: 0000000000000000 RSI: 00007f3b87d25a80 RDI: 00000000ffffff9c
+> [   89.538693] RBP: 00007f3b87d25e90 R08: 0000000000000000 R09: 0000000000000000
+> [   89.539493] R10: 0000000000000000 R11: 0000000000000293 R12: 00007ffe188f504e
+> [   89.540291] R13: 00007ffe188f504f R14: 00007f3b87d26700 R15: 0000000000000000
+> [   89.541090] ---[ end trace 24f53ca58db8180a ]---
 
-Commit a0855d24fc22d49cdc25664fb224caee16998683 ("locking/mutex: Complain
-upon mutex API misuse in IRQ contexts") causes big warnings to be splashed
-in dmesg for each a new call that comes in from the server.  Whilst it
-*seems* like it should be okay, since the accept path uses trylock, there
-are issues with PI boosting and marking the wrong task as the owner.
+No hint as to _where_ you put the mdelay()?  :)
 
-Fix this by not taking the mutex in the softirq path at all.  It's not
-obvious that there should be any need for it as the state is set before the
-first notification is generated for the new call.
-
-There's also no particular reason why the link-assessing ping should be
-triggered inside the mutex.  It's not actually transmitted there anyway,
-but rather it has to be deferred to a workqueue.
-
-Further, I don't think that there's any particular reason that the socket
-notification needs to be done from within rx->incoming_lock, so the amount
-of time that lock is held can be shortened too and the ping prepared before
-the new call notification is sent.
-
-Fixes: 540b1c48c37a ("rxrpc: Fix deadlock between call creation and sendmsg/recvmsg")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Peter Zijlstra <peterz@infradead.org>
-cc: Ingo Molnar <mingo@redhat.com>
-cc: Will Deacon <will@kernel.org>
-cc: Davidlohr Bueso <dave@stgolabs.net>
----
-
- net/rxrpc/call_accept.c |   20 +++-----------------
- 1 file changed, 3 insertions(+), 17 deletions(-)
-
-diff --git a/net/rxrpc/call_accept.c b/net/rxrpc/call_accept.c
-index 3685b1732f65..44fa22b020ef 100644
---- a/net/rxrpc/call_accept.c
-+++ b/net/rxrpc/call_accept.c
-@@ -381,18 +381,6 @@ struct rxrpc_call *rxrpc_new_incoming_call(struct rxrpc_local *local,
- 	trace_rxrpc_receive(call, rxrpc_receive_incoming,
- 			    sp->hdr.serial, sp->hdr.seq);
- 
--	/* Lock the call to prevent rxrpc_kernel_send/recv_data() and
--	 * sendmsg()/recvmsg() inconveniently stealing the mutex once the
--	 * notification is generated.
--	 *
--	 * The BUG should never happen because the kernel should be well
--	 * behaved enough not to access the call before the first notification
--	 * event and userspace is prevented from doing so until the state is
--	 * appropriate.
--	 */
--	if (!mutex_trylock(&call->user_mutex))
--		BUG();
--
- 	/* Make the call live. */
- 	rxrpc_incoming_call(rx, call, skb);
- 	conn = call->conn;
-@@ -433,6 +421,9 @@ struct rxrpc_call *rxrpc_new_incoming_call(struct rxrpc_local *local,
- 		BUG();
- 	}
- 	spin_unlock(&conn->state_lock);
-+	spin_unlock(&rx->incoming_lock);
-+
-+	rxrpc_send_ping(call, skb);
- 
- 	if (call->state == RXRPC_CALL_SERVER_ACCEPTING)
- 		rxrpc_notify_socket(call);
-@@ -444,11 +435,6 @@ struct rxrpc_call *rxrpc_new_incoming_call(struct rxrpc_local *local,
- 	 */
- 	rxrpc_put_call(call, rxrpc_call_put);
- 
--	spin_unlock(&rx->incoming_lock);
--
--	rxrpc_send_ping(call, skb);
--	mutex_unlock(&call->user_mutex);
--
- 	_leave(" = %p{%d}", call, call->debug_id);
- 	return call;
- 
 
