@@ -2,311 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FC48125C03
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 08:33:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65817125C12
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 08:36:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726536AbfLSHdh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Dec 2019 02:33:37 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:44676 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726340AbfLSHdh (ORCPT
+        id S1726622AbfLSHg3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Dec 2019 02:36:29 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:4230 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726340AbfLSHg3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Dec 2019 02:33:37 -0500
-Received: by mail-io1-f65.google.com with SMTP id b10so4713763iof.11;
-        Wed, 18 Dec 2019 23:33:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=v+Cp7OaHuneaYqyo9qjKMi8RNAyBB5sCNo+lp4GhrLI=;
-        b=IJc5Cnh9ohRP/794soBFUpf21x+1jccIDc5b3SzHmTPkr6SgXS/bm47S72j0h5gCFY
-         fnqSLjvOa8zTLGfk5i7Fi3OH+v+Fh8ZYkQbd17JRcmjr2cyWqISjRMQmZfUK+PsKl9Ug
-         zKVJ/0fh+0hvUL2jSRW/9ra/KI7U/eBDQVFl2Ej5npbyqnRyDrnbS33hs4inZ3dq06Vn
-         bwIT8cxR5+u11PbLvH+1j2dACQ7i6OF5mpACWh5LoHnDoFnkydWUeCM0C5f3FEw6ZaVU
-         QvqdD00a4W1kbm7pBJnVoJaZxT6L12MUjHd56AH0C6Z/T+1sQL6B+h+a0cHmJRHpntWy
-         yrtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=v+Cp7OaHuneaYqyo9qjKMi8RNAyBB5sCNo+lp4GhrLI=;
-        b=j2Nk7blkpTEW3oD2UBAxXmP3MVvjPmieU3ngAKQqO7EoWyVB73RsvV/M9bEA8SCpLV
-         jtvTfC+IiZmF4NHBWwQzyIqU74i2o22B0ePNYBx87BnVE1iUDnjji1Kp2dVnCwNXYtB3
-         Rwb6ucsGT1ZuO6jPzdI8r+rqnOaZXMB60UlFbF+W058W+wJWOjUSxEzcU8yKqkTAW75A
-         opnaQ7QWvVnhJhL0ic8kGuc8rpxFNDrDkM/0NRR/mNpDV4/sbjNcbtwSQIT9kC3/YWXl
-         mmvjjErlcghkok1ajXzYqhE/lV7sfHjsJ6s/ZP1oMk+UNxfb5w9r/W0MRuRVDYPFPdVg
-         UToQ==
-X-Gm-Message-State: APjAAAUideyyiPJuqmmeMCS9UMXNfwpczgTMXFMNApyiPZONCpcezVdq
-        r9dvfYod7vJAsEKSQopoHlJqohatjQkiMgCxEbCbrk6M
-X-Google-Smtp-Source: APXvYqzt45Zj++vnp5WoIPPq28EvEw3suwMWEQzwt7LObleV8o63vGoTKDdpI0o6n9MOYLksli7ljg7C/keLjSw4loc=
-X-Received: by 2002:a02:8817:: with SMTP id r23mr6077382jai.120.1576740816454;
- Wed, 18 Dec 2019 23:33:36 -0800 (PST)
-MIME-Version: 1.0
-References: <CADKPpc2RuncyN+ZONkwBqtW7iBb5ep_3yQN7PKe7ASn8DpNvBw@mail.gmail.com>
- <CAOQ4uxiKqEq9ts4fEq_husQJpus29afVBMq8P1tkeQT-58RBFg@mail.gmail.com>
- <CADKPpc33UGcuRB9p64QoF8g88emqNQB=Z03f+OnK4MiCoeVZpg@mail.gmail.com>
- <20191204173455.GJ8206@quack2.suse.cz> <CAOQ4uxjda6iQ1D0QEVB18TcrttVpd7uac++WX0xAyLvxz0x7Ew@mail.gmail.com>
- <20191204190206.GA8331@bombadil.infradead.org> <CAOQ4uxiZWKCUKcpBt-bHOcnHoFAq+nghWmf94rJu=3CTc5VhRA@mail.gmail.com>
- <20191211100604.GL1551@quack2.suse.cz> <CAOQ4uxij13z0AazCm7AzrXOSz_eYBSFhs0mo6eZFW=57wOtwew@mail.gmail.com>
- <CAOQ4uxiKzom5uBNbBpZTNCT0XLOrcHmOwYy=3-V-Qcex1mhszw@mail.gmail.com>
-In-Reply-To: <CAOQ4uxiKzom5uBNbBpZTNCT0XLOrcHmOwYy=3-V-Qcex1mhszw@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 19 Dec 2019 09:33:24 +0200
-Message-ID: <CAOQ4uxgBcLPGxGVddjFsfWJvcNH4rT+GrN6-YhH8cz5K-q5z2g@mail.gmail.com>
-Subject: Re: File monitor problem
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Mo Re Ra <more7.rev@gmail.com>,
+        Thu, 19 Dec 2019 02:36:29 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dfb28710000>; Wed, 18 Dec 2019 23:36:17 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 18 Dec 2019 23:36:27 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 18 Dec 2019 23:36:27 -0800
+Received: from [10.2.165.11] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 19 Dec
+ 2019 07:36:25 +0000
+Subject: Re: [PATCH v11 04/25] mm: devmap: refactor 1-based refcounting for
+ ZONE_DEVICE pages
+To:     Dan Williams <dan.j.williams@intel.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, KVM list <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Wez Furlong <wez@fb.com>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        <linux-kselftest@vger.kernel.org>,
+        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+References: <20191216222537.491123-1-jhubbard@nvidia.com>
+ <20191216222537.491123-5-jhubbard@nvidia.com>
+ <CAPcyv4hQBMxYMurxG=Vwh0=FKWoT3z-Kf=dqES1-icRV5bLwKg@mail.gmail.com>
+ <d0a99e75-0175-0f31-f176-8c37c18a4108@nvidia.com>
+ <CAPcyv4j+Zgom17UZ-6Njkij1R0UQ=vUQdnaEZj9qDezEUJSZGg@mail.gmail.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <a9782048-0c6a-b906-2bd6-3800269f4b01@nvidia.com>
+Date:   Wed, 18 Dec 2019 23:33:36 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
+MIME-Version: 1.0
+In-Reply-To: <CAPcyv4j+Zgom17UZ-6Njkij1R0UQ=vUQdnaEZj9qDezEUJSZGg@mail.gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1576740978; bh=AwGIHszd33R/kLZlUt1Z4JwwlD2NSoQAiltNw2UIah0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=rn2yGjgwQ9+/2v2mcxWjrZFxdrk3/eEgjxRU1LJiuOVyjVOa62J0tvoTcmLOK6fXS
+         xTiiEKdaSrRaYvKoHJFISdC+5xDr9wuGKGy6eL+p8mnXTv3WmxTBQ5uSD1vNUHW7Zv
+         FL1u5zml1dT0aGOGbVIB8FGZRe/vZmwx0E0SfZqPp5XPLjqF6k+D7FwuHs+yKnEljh
+         6K2DgflrDdhvNm7j657NcorkWkt+15POYkE/QPPC6A7qk9vcVVLh/jftFFqBiaLSef
+         +CbFHF0Oi6KJR9YDOdsjceXX460BQcgisIE59hm4mMu6iV3pT5dz1gvUWjcugiRrZC
+         tT/WLbmWB9r/w==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 5:00 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> [cc: linux-api]
+On 12/18/19 10:52 PM, Dan Williams wrote:
+> On Wed, Dec 18, 2019 at 9:51 PM John Hubbard <jhubbard@nvidia.com> wrote:
+>>
+>> On 12/18/19 9:27 PM, Dan Williams wrote:
+>> ...
+>>>> @@ -461,5 +449,5 @@ void __put_devmap_managed_page(struct page *page)
+>>>>           page->mapping = NULL;
+>>>>           page->pgmap->ops->page_free(page);
+>>>>    }
+>>>> -EXPORT_SYMBOL(__put_devmap_managed_page);
+>>>> +EXPORT_SYMBOL(free_devmap_managed_page);
+>>>
+>>> This patch does not have a module consumer for
+>>> free_devmap_managed_page(), so the export should move to the patch
+>>> that needs the new export.
+>>
+>> Hi Dan,
+>>
+>> OK, I know that's a policy--although it seems quite pointless here given
+>> that this is definitely going to need an EXPORT.
+>>
+>> At the moment, the series doesn't use it in any module at all, so I'll just
+>> delete the EXPORT for now.
+>>
+>>>
+>>> Also the only reason that put_devmap_managed_page() is EXPORT_SYMBOL
+>>> instead of EXPORT_SYMBOL_GPL is that there was no practical way to
+>>> hide the devmap details from evey module in the kernel that did
+>>> put_page(). I would expect free_devmap_managed_page() to
+>>> EXPORT_SYMBOL_GPL if it is not inlined into an existing exported
+>>> static inline api.
+>>>
+>>
+>> Sure, I'll change it to EXPORT_SYMBOL_GPL when the time comes. We do have
+>> to be careful that we don't shut out normal put_page() types of callers,
+>> but...glancing through the current callers, that doesn't look to be a problem.
+>> Good. So it should be OK to do EXPORT_SYMBOL_GPL here.
+>>
+>> Are you *sure* you don't want to just pre-emptively EXPORT now, and save
+>> looking at it again?
+> 
+> I'm positive. There is enough history for "trust me the consumer is
+> coming" turning out not to be true to justify the hassle in my mind. I
+> do trust you, but things happen.
+> 
 
-CC for real this time.
-Leaving entire message for people that join late.
+OK, it's deleted locally. Thanks for looking at the patch. I'll post a v12 series
+that includes the change, once it looks like reviews are slowing down.
 
->
-> On Wed, Dec 11, 2019 at 3:58 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > On Wed, Dec 11, 2019 at 12:06 PM Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > On Wed 04-12-19 22:27:31, Amir Goldstein wrote:
-> > [...]
-> > > > The way to frame this correctly IMO is that fsnotify events let application
-> > > > know that "something has changed", without any ordering guaranty
-> > > > beyond "sometime before the event was read".
-> > > >
-> > > > So far, that "something" can be a file (by fd), an inode (by fid),
-> > > > more specifically a directory inode (by fid) where in an entry has
-> > > > changed.
-> > > >
-> > > > Adding filename info extends that concept to "something has changed
-> > > > in the namespace at" (by parent fid+name).
-> > > > All it means is that application should pay attention to that part of
-> > > > the namespace and perform a lookup to find out what has changed.
-> > > >
-> > > > Maybe the way to mitigate wrong assumptions about ordering and
-> > > > existence of the filename in the namespace is to omit the event type
-> > > > for "filename events", for example: { FAN_CHANGE, pfid, name }.
-> > >
-> > > So this event would effectively mean: In directory pfid, some filename
-> > > event has happened with name "name" - i.e. "name" was created (could mean
-> > > also mkdir), deleted, moved. Am I right?
-> >
-> > Exactly.
-> >
-> > > And the application would then
-> > > open_by_handle(2) + open_at(2) + fstat(2) the object pointed to by
-> >
-> > open_by_handle(2) + fstatat(2) to be exact.
-> >
-> > > (pfid, name) pair and copy whatever it finds to the other end (or delete on
-> > > the other end in case of ENOENT)?
-> >
-> > Basically, yes.
-> > Although a modern sync tool may also keep some local map of
-> > remote name -> local fid, to detect a local rename and try to perform a
-> > remote rename.
-> >
-> > >
-> > > After some thought, yes, I think this is difficult to misuse (or infer some
-> > > false guarantees out of it). As far as I was thinking it also seems good
-> > > enough to implement more efficient syncing of directories.
-> >
-> > Great, so I will work on the patches.
-> >
->
-> Hi Jan,
->
-> I have something working.
->
-> Patches:
-> https://github.com/amir73il/linux/commits/fanotify_name
->
-> Simple test:
-> https://github.com/amir73il/ltp/commits/fanotify_name
->
-> I will post the patches after I have a working demo, but in the mean while here
-> is the gist of the API from the commit log in case you or anyone has comments
-> on the API.
->
-> Note that in the new event flavor, event mask is given as input
-> (e.g. FAN_CREATE) to filter the type of reported events, but
-> the event types are hidden when event is reported.
->
-> Besides the dirent event types, events "on child" (i.e. MODIFY) can also be
-> reported with name to a directory watcher.
->
-> For now, "on child" events cannot be requested for filesystem/mount
-> watch, but I think we should consider this possibility so I added
-> a check to return EINVAL if this combination is attempted.
->
 
-Hi Jan,
-
-Thinking out loud again.
-
-Assuming the concept of FAN_REPORT_FID_NAME as described in the
-commit messages below is acceptable, the way to deal with dirent events
-is clear as well as the way to deal with events "on child" for a watched dir
-and those are what the branch fanotify_name implemented.
-
-I've spend the last few days trying to figure out the "best" way to handle the
-rest of the events. And by "best" I mean, least to explain in man page, while
-providing the needed functionality to users.
-
-This is what I got to so far. Patches are shaping up on branch
-fanotify_name-wip same branch name for ltp tests:
-
-For a group initialized with FAN_REPORT_FID_NAME:
-1. Events report mask with only FAN_WITH_NAME flag
-2. Reported name follows fid but may be empty in some cases
-3. Dirent events (create/delete/move) report a non-empty name
-4. Events "on child" on watched dir report a non-empty name
-5. Events "on self" (delete_self/move_self) report an empty name
-6. Events "possible on child" (open/access/modify/close/attrib) are
-    reported only in their "on child" flavor when set on a sb/mount mark
-7. The flag FAN_EVENT_ON_CHILD on a sb/mount mark is ignored
-    (as in current upstream kernel and man page), but the events are
-    reported with non-empty name and parent dir fid, same as in the
-    case where all directories under sb/mount have been marked
-    with FAN_EVENT_ON_CHILD (a.k.a slow recursive watch)
-
-There are some open questions regarding the fine details of items 5-7:
-- Should "self" events with empty name on dir be reported?
-- Should "self" events with empty name on non-dir be reported?
-- Should open/access/attrib on watched dir itself report an
-  event with empty name?
-- Should open/access/attrib on root sb/mount root dir report an
-  event with empty name?
-- Should open/access/modify/attrib on non-dir report an event
-  with empty name?
-
-For full disclosure, in the out-of-tree patches [1] we use in CTERA
-the answer to all the open questions above is:
-"Yes, but the filesystem monitor is only using the self events on dirs".
-
-The problem with this approach is that there is currently no way
-for users to request certain events ONLY_ONDIR. A typical filesystem
-monitor is only interested in self events on directories, but requesting
-self events will fill the queue with unneeded self events on files.
-
-Another valid answer to all these questions could be:
-"No, because user can already get those events by opening another
-group with FAN_REPORT_FID".
-
-The problem with this approach is that it is harder to document (?)
-and harder for users to use (?).
-
-Therefore, I am leaning toward this middle ground solution:
-
-8. If a non-empty name is reported, fid is identifying a directory
-9. Events on non-directory with empty name are not reported.
-    user may use another group with FAN_REPORT_FID to get
-    those events
-
-I could use some guidance here.
-
-Thanks,
-Amir.
-
-[1] https://github.com/amir73il/linux/commits/fanotify_filename
-
->
-> commit 91e0af27ac329f279167e74761fb5303ebbc1c08
-> Author: Amir Goldstein <amir73il@gmail.com>
-> Date:   Mon Dec 16 08:39:21 2019 +0200
->
->     fanotify: report name info with FAN_REPORT_FID_NAME
->
->     With init flags FAN_REPORT_FID_NAME, report events with name in variable
->     length fanotify_event_info record similar to how fid's are reported.
->     When events are reported with name, the reported fid identifies the
->     directory and the name follows the fid. The info record type for this
->     event info is FAN_EVENT_INFO_TYPE_FID_NAME.
->
->     There are several ways that an application can use this information:
->
->     1. When watching a single directory, the name is always relative to
->     the watched directory, so application need to fstatat(2) the name
->     relative to the watched directory.
->
->     2. When watching a set of directories, the application could keep a map
->     of dirfd for all watched directories and hash the map by fid obtained
->     with name_to_handle_at(2).  When getting a name event, the fid in the
->     event info could be used to lookup the base dirfd in the map and then
->     call fstatat(2) with that dirfd.
->
->     3. When watching a filesystem (FAN_MARK_FILESYSTEM) or a large set of
->     directories, the application could use open_by_handle_at(2) with the fid
->     in event info to obtain dirfd for the directory where event happened and
->     call fstatat(2) with this dirfd.
->
->     The last option scales better for a large number of watched directories.
->     The first two options may be available in the future also for non
->     privileged fanotify watchers, because open_by_handle_at(2) requires
->     the CAP_DAC_READ_SEARCH capability.
->
->     Legacy inotify events are reported with name and event mask (e.g. "foo",
->     FAN_CREATE | FAN_ONDIR).  That can lead users to the conclusion that
->     there is *currently* an entry "foo" that is a sub-directory, when in fact
->     "foo" may be negative or non-dir by the time user gets the event.
->
->     To make it clear that the current state of the named entry is unknown,
->     the new fanotify event intentionally hides this information and reports
->     only the flag FAN_WITH_NAME in event mask.  This should make it harder
->     for users to make wrong assumptions and write buggy applications.
->
->     We reserve the combination of FAN_EVENT_ON_CHILD on a filesystem/mount
->     mark and FAN_REPORT_NAME group for future use, so for now this
->     combination is invalid.
->
->     Signed-off-by: Amir Goldstein <amir73il@gmail.com>
->
-> commit 76a509dbc06fd58ec6636484f87896044cd99022
-> Author: Amir Goldstein <amir73il@gmail.com>
-> Date:   Fri Dec 13 11:58:02 2019 +0200
->
->     fanotify: implement basic FAN_REPORT_FID_NAME logic
->
->     Dirent events will be reported in one of two flavors depending on
->     fanotify init flags:
->
->     1. Dir fid info + mask that includes the specific event types and
->        optional FAN_ONDIR flag.
->     2. Dir fid info + name + mask that includes only FAN_WITH_NAME flag.
->
->     To request the second event flavor, user will need to set the
->     FAN_REPORT_FID_NAME flags in fanotify_init().
->
->     The first flavor is already supported since kernel v5.1 and is
->     intended to be used for watching directories in "batch mode" - user
->     is notified when directory is changed and re-scans the directory
->     content in response.  This event flavor is stored more compactly in
->     event queue, so it is optimal for workloads with frequent directory
->     changes (e.g. many files created/deleted).
->
->     The second event flavor is intended to be used for watching large
->     directories, where the cost of re-scan of the directory on every change
->     is considered too high.  The watcher getting the event with the directory
->     fid and entry name is expected to call fstatat(2) to query the content of
->     the entry after the change.
->
->     Events "on child" will behave similarly to dirent events, with a small
->     difference - the first event flavor without name reports the child fid.
->     The second flavor with name info reports the parent fid, because the
->     name is relative to the parent directory.
->
->     At the moment, event name info reporting is not implemented, so the
->     FAN_REPORT_NAME flag is not yet valid as input to fanotify_init().
->
->     Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+thanks,
+-- 
+John Hubbard
+NVIDIA
