@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50346126012
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 11:56:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37690126014
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 11:56:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbfLSK43 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Dec 2019 05:56:29 -0500
-Received: from mout-p-102.mailbox.org ([80.241.56.152]:12566 "EHLO
-        mout-p-102.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726633AbfLSK42 (ORCPT
+        id S1726793AbfLSK4g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Dec 2019 05:56:36 -0500
+Received: from mout-p-201.mailbox.org ([80.241.56.171]:53288 "EHLO
+        mout-p-201.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726633AbfLSK4g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Dec 2019 05:56:28 -0500
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
+        Thu, 19 Dec 2019 05:56:36 -0500
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 47dphn328FzKmjG;
-        Thu, 19 Dec 2019 11:56:25 +0100 (CET)
+        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 47dphx0fNmzQlBH;
+        Thu, 19 Dec 2019 11:56:33 +0100 (CET)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp1.mailbox.org ([80.241.60.240])
         by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
-        with ESMTP id dbhFV5RIeM2o; Thu, 19 Dec 2019 11:56:22 +0100 (CET)
+        with ESMTP id B7u5OQElizV3; Thu, 19 Dec 2019 11:56:29 +0100 (CET)
 From:   Aleksa Sarai <cyphar@cyphar.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Jeff Layton <jlayton@kernel.org>,
         "J. Bruce Fields" <bfields@fieldses.org>,
         Shuah Khan <shuah@kernel.org>
 Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Florian Weimer <fweimer@redhat.com>,
         David Laight <david.laight@aculab.com>,
+        Florian Weimer <fweimer@redhat.com>,
         Christian Brauner <christian.brauner@ubuntu.com>,
         dev@opencontainers.org, containers@lists.linux-foundation.org,
         libc-alpha@sourceware.org, linux-api@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-kselftest@vger.kernel.org
-Subject: [PATCH 1/2] uapi: split openat2(2) definitions from fcntl.h
-Date:   Thu, 19 Dec 2019 21:55:29 +1100
-Message-Id: <20191219105533.12508-2-cyphar@cyphar.com>
+Subject: [PATCH 2/2] openat2: drop open_how->__padding field
+Date:   Thu, 19 Dec 2019 21:55:30 +1100
+Message-Id: <20191219105533.12508-3-cyphar@cyphar.com>
 In-Reply-To: <20191219105533.12508-1-cyphar@cyphar.com>
 References: <20191219105533.12508-1-cyphar@cyphar.com>
 MIME-Version: 1.0
@@ -46,131 +46,134 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Florian mentioned that glibc doesn't use fcntl.h because it has some
-issues with namespace cleanliness, and that we should have a separate
-header for openat2(2) if possible.
+The purpose of explicit padding was to allow us to use the space in the
+future (C provides no guarantee about the value of padding bytes and
+thus userspace could've provided garbage).
 
-Suggested-by: Florian Weimer <fweimer@redhat.com>
+However, the downside of explicit padding is that any extension we wish
+to add should fit the space exactly (otherwise we may end up with a u16
+which will never be used). In addition, the correct error to return for
+non-zero padding is not clear (-EINVAL doesn't imply "you're using an
+extension field unsupported by this kernel", but -E2BIG seems a bit odd
+if the structure size isn't different).
+
+The simplest solution is to just match the design of clone3(2) -- use
+u64s for all fields. The extra few-bytes cost of extra fields is not
+significant (it's unlikely configuration structs will ever be extremely
+large) and it allows for more flag space if necessary.
+
+As openat2(2) is not yet in Linus's tree, we can iron out these minor
+warts before we commit to this as a stable ABI.
+
+Suggested-by: David Laight <david.laight@aculab.com>
 Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 ---
- MAINTAINERS                  |  1 +
- include/uapi/linux/fcntl.h   | 37 +-------------------------------
- include/uapi/linux/openat2.h | 41 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 43 insertions(+), 36 deletions(-)
- create mode 100644 include/uapi/linux/openat2.h
+ fs/open.c                                     |  2 --
+ include/uapi/linux/openat2.h                  |  3 +--
+ tools/testing/selftests/openat2/helpers.h     |  3 +--
+ .../testing/selftests/openat2/openat2_test.c  | 24 +++++++------------
+ 4 files changed, 10 insertions(+), 22 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index bd5847e802de..737ada377ac3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6397,6 +6397,7 @@ F:	fs/*
- F:	include/linux/fs.h
- F:	include/linux/fs_types.h
- F:	include/uapi/linux/fs.h
-+F:	include/uapi/linux/openat2.h
+diff --git a/fs/open.c b/fs/open.c
+index 50a46501bcc9..8cdb2b675867 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -993,8 +993,6 @@ static inline int build_open_flags(const struct open_how *how,
+ 		return -EINVAL;
+ 	if (how->resolve & ~VALID_RESOLVE_FLAGS)
+ 		return -EINVAL;
+-	if (memchr_inv(how->__padding, 0, sizeof(how->__padding)))
+-		return -EINVAL;
  
- FINTEK F75375S HARDWARE MONITOR AND FAN CONTROLLER DRIVER
- M:	Riku Voipio <riku.voipio@iki.fi>
-diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-index d886bdb585e4..ca88b7bce553 100644
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-@@ -3,6 +3,7 @@
- #define _UAPI_LINUX_FCNTL_H
- 
- #include <asm/fcntl.h>
-+#include <linux/openat2.h>
- 
- #define F_SETLEASE	(F_LINUX_SPECIFIC_BASE + 0)
- #define F_GETLEASE	(F_LINUX_SPECIFIC_BASE + 1)
-@@ -100,40 +101,4 @@
- 
- #define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
- 
--/*
-- * Arguments for how openat2(2) should open the target path. If @resolve is
-- * zero, then openat2(2) operates very similarly to openat(2).
-- *
-- * However, unlike openat(2), unknown bits in @flags result in -EINVAL rather
-- * than being silently ignored. @mode must be zero unless one of {O_CREAT,
-- * O_TMPFILE} are set.
-- *
-- * @flags: O_* flags.
-- * @mode: O_CREAT/O_TMPFILE file mode.
-- * @resolve: RESOLVE_* flags.
-- */
--struct open_how {
--	__aligned_u64 flags;
+ 	/* Deal with the mode. */
+ 	if (WILL_CREATE(flags)) {
+diff --git a/include/uapi/linux/openat2.h b/include/uapi/linux/openat2.h
+index 19ef775e8e5e..76fad4ada2d4 100644
+--- a/include/uapi/linux/openat2.h
++++ b/include/uapi/linux/openat2.h
+@@ -16,8 +16,7 @@
+  */
+ struct open_how {
+ 	__aligned_u64 flags;
 -	__u16 mode;
 -	__u16 __padding[3]; /* must be zeroed */
--	__aligned_u64 resolve;
--};
++	__aligned_u64 mode;
+ 	__aligned_u64 resolve;
+ };
+ 
+diff --git a/tools/testing/selftests/openat2/helpers.h b/tools/testing/selftests/openat2/helpers.h
+index 43ca5ceab6e3..d756775d0725 100644
+--- a/tools/testing/selftests/openat2/helpers.h
++++ b/tools/testing/selftests/openat2/helpers.h
+@@ -37,8 +37,7 @@
+  */
+ struct open_how {
+ 	__aligned_u64 flags;
+-	__u16 mode;
+-	__u16 __padding[3]; /* must be zeroed */
++	__aligned_u64 mode;
+ 	__aligned_u64 resolve;
+ };
+ 
+diff --git a/tools/testing/selftests/openat2/openat2_test.c b/tools/testing/selftests/openat2/openat2_test.c
+index 0b64fedc008b..b386367c606b 100644
+--- a/tools/testing/selftests/openat2/openat2_test.c
++++ b/tools/testing/selftests/openat2/openat2_test.c
+@@ -40,7 +40,7 @@ struct struct_test {
+ 	int err;
+ };
+ 
+-#define NUM_OPENAT2_STRUCT_TESTS 10
++#define NUM_OPENAT2_STRUCT_TESTS 7
+ #define NUM_OPENAT2_STRUCT_VARIATIONS 13
+ 
+ void test_openat2_struct(void)
+@@ -57,20 +57,6 @@ void test_openat2_struct(void)
+ 		  .arg.inner.flags = O_RDONLY,
+ 		  .size = sizeof(struct open_how_ext) },
+ 
+-		/* Normal struct with broken padding. */
+-		{ .name = "normal struct (non-zero padding[0])",
+-		  .arg.inner.flags = O_RDONLY,
+-		  .arg.inner.__padding = {0xa0, 0x00, 0x00},
+-		  .size = sizeof(struct open_how_ext), .err = -EINVAL },
+-		{ .name = "normal struct (non-zero padding[1])",
+-		  .arg.inner.flags = O_RDONLY,
+-		  .arg.inner.__padding = {0x00, 0x1a, 0x00},
+-		  .size = sizeof(struct open_how_ext), .err = -EINVAL },
+-		{ .name = "normal struct (non-zero padding[2])",
+-		  .arg.inner.flags = O_RDONLY,
+-		  .arg.inner.__padding = {0x00, 0x00, 0xef},
+-		  .size = sizeof(struct open_how_ext), .err = -EINVAL },
 -
--#define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
--#define OPEN_HOW_SIZE_LATEST	OPEN_HOW_SIZE_VER0
--
--/* how->resolve flags for openat2(2). */
--#define RESOLVE_NO_XDEV		0x01 /* Block mount-point crossings
--					(includes bind-mounts). */
--#define RESOLVE_NO_MAGICLINKS	0x02 /* Block traversal through procfs-style
--					"magic-links". */
--#define RESOLVE_NO_SYMLINKS	0x04 /* Block traversal through all symlinks
--					(implies OEXT_NO_MAGICLINKS) */
--#define RESOLVE_BENEATH		0x08 /* Block "lexical" trickery like
--					"..", symlinks, and absolute
--					paths which escape the dirfd. */
--#define RESOLVE_IN_ROOT		0x10 /* Make all jumps to "/" and ".."
--					be scoped inside the dirfd
--					(similar to chroot(2)). */
--
- #endif /* _UAPI_LINUX_FCNTL_H */
-diff --git a/include/uapi/linux/openat2.h b/include/uapi/linux/openat2.h
-new file mode 100644
-index 000000000000..19ef775e8e5e
---- /dev/null
-+++ b/include/uapi/linux/openat2.h
-@@ -0,0 +1,41 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+#ifndef _UAPI_LINUX_OPENAT2_H
-+#define _UAPI_LINUX_OPENAT2_H
-+
-+/*
-+ * Arguments for how openat2(2) should open the target path. If @resolve is
-+ * zero, then openat2(2) operates very similarly to openat(2).
-+ *
-+ * However, unlike openat(2), unknown bits in @flags result in -EINVAL rather
-+ * than being silently ignored. @mode must be zero unless one of {O_CREAT,
-+ * O_TMPFILE} are set.
-+ *
-+ * @flags: O_* flags.
-+ * @mode: O_CREAT/O_TMPFILE file mode.
-+ * @resolve: RESOLVE_* flags.
-+ */
-+struct open_how {
-+	__aligned_u64 flags;
-+	__u16 mode;
-+	__u16 __padding[3]; /* must be zeroed */
-+	__aligned_u64 resolve;
-+};
-+
-+#define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
-+#define OPEN_HOW_SIZE_LATEST	OPEN_HOW_SIZE_VER0
-+
-+/* how->resolve flags for openat2(2). */
-+#define RESOLVE_NO_XDEV		0x01 /* Block mount-point crossings
-+					(includes bind-mounts). */
-+#define RESOLVE_NO_MAGICLINKS	0x02 /* Block traversal through procfs-style
-+					"magic-links". */
-+#define RESOLVE_NO_SYMLINKS	0x04 /* Block traversal through all symlinks
-+					(implies OEXT_NO_MAGICLINKS) */
-+#define RESOLVE_BENEATH		0x08 /* Block "lexical" trickery like
-+					"..", symlinks, and absolute
-+					paths which escape the dirfd. */
-+#define RESOLVE_IN_ROOT		0x10 /* Make all jumps to "/" and ".."
-+					be scoped inside the dirfd
-+					(similar to chroot(2)). */
-+
-+#endif /* _UAPI_LINUX_OPENAT2_H */
+ 		/* TODO: Once expanded, check zero-padding. */
+ 
+ 		/* Smaller than version-0 struct. */
+@@ -169,7 +155,7 @@ struct flag_test {
+ 	int err;
+ };
+ 
+-#define NUM_OPENAT2_FLAG_TESTS 21
++#define NUM_OPENAT2_FLAG_TESTS 23
+ 
+ void test_openat2_flags(void)
+ {
+@@ -214,9 +200,15 @@ void test_openat2_flags(void)
+ 		{ .name = "invalid how.mode and O_CREAT",
+ 		  .how.flags = O_CREAT,
+ 		  .how.mode = 0xFFFF, .err = -EINVAL },
++		{ .name = "invalid (very large) how.mode and O_CREAT",
++		  .how.flags = O_CREAT,
++		  .how.mode = 0xC000000000000000ULL, .err = -EINVAL },
+ 		{ .name = "invalid how.mode and O_TMPFILE",
+ 		  .how.flags = O_TMPFILE | O_RDWR,
+ 		  .how.mode = 0x1337, .err = -EINVAL },
++		{ .name = "invalid (very large) how.mode and O_TMPFILE",
++		  .how.flags = O_TMPFILE | O_RDWR,
++		  .how.mode = 0x0000A00000000000ULL, .err = -EINVAL },
+ 
+ 		/* ->resolve must only contain RESOLVE_* flags. */
+ 		{ .name = "invalid how.resolve and O_RDONLY",
 -- 
 2.24.0
 
