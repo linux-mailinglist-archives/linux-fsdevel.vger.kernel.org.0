@@ -2,135 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 976C7125B9A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 07:52:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DB16125BA9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 07:55:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbfLSGwr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Dec 2019 01:52:47 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:46416 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726670AbfLSGwq (ORCPT
+        id S1726617AbfLSGzB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Dec 2019 01:55:01 -0500
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:45198 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726609AbfLSGzB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Dec 2019 01:52:46 -0500
-Received: by mail-ot1-f66.google.com with SMTP id c22so5852114otj.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Dec 2019 22:52:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dhLbadWhXkT8uLUvoIQHEOPXZo986OHkQZmNW5JELSg=;
-        b=SiBKFSWbGZ/DlTuqAeJWCQJfko4CpkONzPTdXHk5ITfn6wjNPKckEYMfWXVa2KjE/9
-         EnvKM5uCkbPNuMcmnnmOIL13PX8cysvho7VLWXbG/qQdn+K7/fzi8Ww4DNnz531U3iaT
-         ek1DixOnTmNKqPks25kBzv6fRlRYJb99R8rIhogy+n5/aKHmuRVk2bVwwFWgffjz3noA
-         ZerH0bwQzplUBLkBL/JrHxP9P4K0mBWvBTnlliMpof9I4Sttm4IJTOIKoWl16jE3wTmG
-         IAzt5ZvdYfPhwgyAVURwEUcOXBJqNdhdpF54lEQXTrtdeMxzkaBCmBvpJo6eizOwHL7A
-         6gAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dhLbadWhXkT8uLUvoIQHEOPXZo986OHkQZmNW5JELSg=;
-        b=P7w+M+ryMdV4R1vXd/0mHfruBSP9yG4zlL2iv5YIb9TRS1fMp0v6wdDXnm71fMgct2
-         9uIfl+WggBLckLjhpvDgLOwuWFINsBEM+kPJkdS+XNcTMWiEK/Hh5QiuXhs+GMKYWpJa
-         2Xs8UTgVBlxl+qBkCPWEVWMqaH+5WnQD4MsNM8GRBujKWbDjH9vfWGinhPsuFayxIl1L
-         7vlUiImw+oSo9jmjmddhLdDRu5mwUjA2Bk5i2uP/4Jpd1/Gk6sgmYkKAosCzZ3FvA/Wp
-         5c1qvgWhjvdc/Kgem+qOPqj6hKRUoHvskBHqnYBIfFXkRTuDjHqG5hH45xtJoiNMEuZx
-         SqRQ==
-X-Gm-Message-State: APjAAAUK4djZTAAnxEGMTCuF11q2JDqA2Y6mPOQILvjrL37jUFdD3pWF
-        9jbakbz/uIV22CBu0Pcw1+Qcpx120kfGxgdM/8ihEw==
-X-Google-Smtp-Source: APXvYqx2SQBCxtdPGsjOU3QNzNDjKuhpt1dAk9YJbVoUKqLIltD16iivCU1omckA5/EjvPPrP0sP5CVaNkhukyqv6+8=
-X-Received: by 2002:a9d:6f11:: with SMTP id n17mr7085591otq.126.1576738365531;
- Wed, 18 Dec 2019 22:52:45 -0800 (PST)
+        Thu, 19 Dec 2019 01:55:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1576738500; x=1608274500;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=L+ilHZYja3Uqxdg3nCQXwKyTdE3PSSxtheSKQrT27+8=;
+  b=doXKsLXUXdeOv2YontQZwTWsnedEfBYgV2NDxC/k3ZKFlNia3inVs5pV
+   RliLydKgBKad1muaQWCUrfbVdnsG+CcPMvP/WvpBJqckJlTzU+tv1lpsz
+   QsMJ8L0BrcFEgCsOPnOs9HQ2/VwqKpZ6C8C44IZEXFYk3dECiXnzMg4J3
+   cJOT04xaBoyr7xPBIdq9G/YGmL8khLUeU4l3S+jE5V8DhakaNHaBz2IJe
+   9fxvD062SGudB3R7W6GBsjTFy0ykjisRSii6PAd61d3IpjJ7ZxsV9gOOm
+   Q9G8fGp+/v6kOxiEeX3iv5y3JC1up4P2NYW/mKvfa+d09AML5BxRhrH4m
+   Q==;
+IronPort-SDR: cJcysuiOas5ZEWlPCr9ljWtWQNZ94wX0m8/1K2xOsy3wugh59lLGRosWj9Zd9Y9f/mWJ4iPtJR
+ sN0x9sUvbdBQV560zlf+DaaZ1qmWXaF6HQl9+Y6DNYhHO6h32QzeWjXrWKgwtiCRFgpUR5B4PU
+ 4uQjBUfbq1lN8o4b8gnsj3Z6Y8QpAWM3IYVaS2LU/CVgfAZRMoY108GogFRrN+Hl6qUZQkRd2B
+ IDpgx98Tyi8GXmmDnPxqol/XrdgQkHBwdAleG1HMlSVuX6SupJazMvhLH4GuYZ+9wzs0Lxhc51
+ NzM=
+X-IronPort-AV: E=Sophos;i="5.69,330,1571673600"; 
+   d="scan'208";a="127312665"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 19 Dec 2019 14:55:00 +0800
+IronPort-SDR: diTOML4Mg8aYTqVZ4ef28LUo5gzGXuxgVdvO1K/8AAlTW3T3NB0cVMdK4R+rqiT+r9Uhp85Lb0
+ T5IIowAv6QAebQyMx7UsaB5hBMrcUThVo15RveUpRJUuiKPSF7kzYK7aAKygDnKyQE+2rWc2hX
+ Er4eGEISWJdCcpJGpekREXuZoG9o+bn9AoLR8IHvRv990PAn27TeOBa74yGfl2IZ4yp07iHimK
+ rOKDY/4taBHDQCfVXK8qlpqcyKeUhEFhIbweN3+wew1imUHLlAADDeXeFqhv6xtpWPMgJGl1QM
+ FH04t0w+Q8LafxzsDw/mxT/W
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Dec 2019 22:49:00 -0800
+IronPort-SDR: Tk/Rr6/fI21CpFaZNHMbGcP56TOuiEtHBiiV+d2jhY/u5GJcxFjsOfldC91zssPm0f0Ap9ZUPU
+ JXAMYkvpJ+LqUk6AP9SwcvFu6ur90et/S72rbLSJ4CV+Kn8Q2C4hGiipZO6OzWipdLUrjTuH4x
+ VhFDEkQOwMShzwdUBJR/aUXbiyl0xl+e2LA7YzRRx0Hx7wTyqmqQEo1GNUnrYgu+Hf6ePz+Xv9
+ I7RtfNv13F/1usiPv7+ZVOnmj5eMhMqDpULc4dfWv7QLJi8J25LsAsGqzjiB7WhsGtQBn2QyjF
+ nTQ=
+WDCIronportException: Internal
+Received: from naota.dhcp.fujisawa.hgst.com ([10.149.53.115])
+  by uls-op-cesaip01.wdc.com with SMTP; 18 Dec 2019 22:54:58 -0800
+Received: (nullmailer pid 2722299 invoked by uid 1000);
+        Thu, 19 Dec 2019 06:54:57 -0000
+Date:   Thu, 19 Dec 2019 15:54:57 +0900
+From:   Naohiro Aota <naohiro.aota@wdc.com>
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        Chris Mason <clm@fb.com>, Nikolay Borisov <nborisov@suse.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Hannes Reinecke <hare@suse.com>,
+        Anand Jain <anand.jain@oracle.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v6 15/28] btrfs: serialize data allocation and submit IOs
+Message-ID: <20191219065457.rhd4wcycylii33c3@naota.dhcp.fujisawa.hgst.com>
+References: <20191213040915.3502922-1-naohiro.aota@wdc.com>
+ <20191213040915.3502922-16-naohiro.aota@wdc.com>
+ <b11ca55e-adb6-6aa7-4494-cffafedb487f@toxicpanda.com>
 MIME-Version: 1.0
-References: <20191216222537.491123-1-jhubbard@nvidia.com> <20191216222537.491123-5-jhubbard@nvidia.com>
- <CAPcyv4hQBMxYMurxG=Vwh0=FKWoT3z-Kf=dqES1-icRV5bLwKg@mail.gmail.com> <d0a99e75-0175-0f31-f176-8c37c18a4108@nvidia.com>
-In-Reply-To: <d0a99e75-0175-0f31-f176-8c37c18a4108@nvidia.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 18 Dec 2019 22:52:34 -0800
-Message-ID: <CAPcyv4j+Zgom17UZ-6Njkij1R0UQ=vUQdnaEZj9qDezEUJSZGg@mail.gmail.com>
-Subject: Re: [PATCH v11 04/25] mm: devmap: refactor 1-based refcounting for
- ZONE_DEVICE pages
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, KVM list <kvm@vger.kernel.org>,
-        linux-block@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <b11ca55e-adb6-6aa7-4494-cffafedb487f@toxicpanda.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 9:51 PM John Hubbard <jhubbard@nvidia.com> wrote:
+On Tue, Dec 17, 2019 at 02:49:44PM -0500, Josef Bacik wrote:
+>On 12/12/19 11:09 PM, Naohiro Aota wrote:
+>>To preserve sequential write pattern on the drives, we must serialize
+>>allocation and submit_bio. This commit add per-block group mutex
+>>"zone_io_lock" and find_free_extent_zoned() hold the lock. The lock is kept
+>>even after returning from find_free_extent(). It is released when submiting
+>>IOs corresponding to the allocation is completed.
+>>
+>>Implementing such behavior under __extent_writepage_io() is almost
+>>impossible because once pages are unlocked we are not sure when submiting
+>>IOs for an allocated region is finished or not. Instead, this commit add
+>>run_delalloc_hmzoned() to write out non-compressed data IOs at once using
+>>extent_write_locked_rage(). After the write, we can call
+>>btrfs_hmzoned_data_io_unlock() to unlock the block group for new
+>>allocation.
+>>
+>>Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 >
-> On 12/18/19 9:27 PM, Dan Williams wrote:
-> ...
-> >> @@ -461,5 +449,5 @@ void __put_devmap_managed_page(struct page *page)
-> >>          page->mapping = NULL;
-> >>          page->pgmap->ops->page_free(page);
-> >>   }
-> >> -EXPORT_SYMBOL(__put_devmap_managed_page);
-> >> +EXPORT_SYMBOL(free_devmap_managed_page);
-> >
-> > This patch does not have a module consumer for
-> > free_devmap_managed_page(), so the export should move to the patch
-> > that needs the new export.
->
-> Hi Dan,
->
-> OK, I know that's a policy--although it seems quite pointless here given
-> that this is definitely going to need an EXPORT.
->
-> At the moment, the series doesn't use it in any module at all, so I'll just
-> delete the EXPORT for now.
->
-> >
-> > Also the only reason that put_devmap_managed_page() is EXPORT_SYMBOL
-> > instead of EXPORT_SYMBOL_GPL is that there was no practical way to
-> > hide the devmap details from evey module in the kernel that did
-> > put_page(). I would expect free_devmap_managed_page() to
-> > EXPORT_SYMBOL_GPL if it is not inlined into an existing exported
-> > static inline api.
-> >
->
-> Sure, I'll change it to EXPORT_SYMBOL_GPL when the time comes. We do have
-> to be careful that we don't shut out normal put_page() types of callers,
-> but...glancing through the current callers, that doesn't look to be a problem.
-> Good. So it should be OK to do EXPORT_SYMBOL_GPL here.
->
-> Are you *sure* you don't want to just pre-emptively EXPORT now, and save
-> looking at it again?
+>Have you actually tested these patches with lock debugging on?  The 
+>submit_compressed_extents stuff is async, so the unlocker owner will 
+>not be the lock owner, and that'll make all sorts of things blow up.  
+>This is just straight up broken.
 
-I'm positive. There is enough history for "trust me the consumer is
-coming" turning out not to be true to justify the hassle in my mind. I
-do trust you, but things happen.
+Yes, I have ran xfstests on this patch series with lockdeps and
+KASAN. There was no problem with that.
+
+For non-compressed writes, both allocation and submit is done in
+run_delalloc_zoned(). Allocation is done in cow_file_range() and
+submit is done in extent_write_locked_range(), so both are in the same
+context, so both locking and unlocking are done by the same execution
+context.
+
+For compressed writes, again, allocation/lock is done under
+cow_file_range() and submit is done in extent_write_locked_range() and
+unlocked all in submit_compressed_extents() (this is called after
+compression), so they are all in the same context and the lock owner
+does the unlock.
+
+>I would really rather see a hmzoned block scheduler that just doesn't 
+>submit the bio's until they are aligned with the WP, that way this 
+>intellligence doesn't have to be dealt with at the file system layer.  
+>I get allocating in line with the WP, but this whole forcing us to 
+>allocate and submit the bio in lock step is just nuts, and broken in 
+>your subsequent patches.  This whole approach needs to be reworked.  
+>Thanks,
+>
+>Josef
+
+We tried this approach by modifying mq-deadline to wait if the first
+queued request is not aligned at the write pointer of a zone. However,
+running btrfs without the allocate+submit lock with this modified IO
+scheduler did not work well at all. With write intensive workloads, we
+observed that a very long wait time was very often necessary to get a
+fully sequential stream of requests starting at the write pointer of a
+zone. The wait time we observed was sometimes in larger than 60 seconds,
+at which point we gave up.
+
+While we did not extensively dig into the fundamental root cause,
+these potentially long wait times can come from a large number of
+reasons: page cache writeback behavior, kernel process scheduling,
+device IO congestion and writeback throttling, sync, transaction
+commit of btrfs, and cgroup use could make everything even worse. In
+the worst case scenario, a number of out-of-ordered requests could get
+stuck in the IO scheduler, preventing forward progress in the case of
+a memory reclaim writeback, causing the OOM killer to start happily
+killing application processes. Furthermore, IO error handling becomes
+a nightmare as the block layer scheduler would need to issue report
+zones commands to re-sync the zone wp in case of write error. And that
+is also in addition to having to track other zone commands that change
+a zone wp such as reset zone and finish zone.
+
+Considering all this, handling the sequential write constraint at the
+file system layer by ensuring that write BIOs are issued in the correct
+order starting from a zone WP is far simpler and removes dependencies on
+other features such as cgroup, congestion control and other throttling
+mechanisms. The IO scheduler can always dispatch to the device the
+requests it received without any waiting time, ensuring forward progress.
+
+The mq-deadline IO scheduler supports not only regular block devices but
+also zoned block devices and it is the default scheduler for them, and
+other schedulers that are not zone compliant cannot be selected (one
+cannot change to kyber nor bfq). This ensure that the default system
+behavior will be correct as long as the user (the FS) respects the
+sequential write rule.
+
+The previous approach I proposed using a btrfs request reordering stage
+was indeed very invasive, and similarly the block layer scheduler
+changes, could cause problems with cgroups etc. The new approach of this
+path using locking to have atomic allocate+bio issuing results in
+per-zone sequential write patterns, no matter what happens around it. It
+is less invasive and rely on the sequential allocation of blocks for the
+ordering of write IOs, so there is no explicit reordering, so no
+additional overhead. f2fs implementation uses a similar approach since
+kernel 4.10 and has proven to be very solid.
+
+In light of these arguments and explanation, do you still think the
+allocate zone locking approach is still not acceptable ?
