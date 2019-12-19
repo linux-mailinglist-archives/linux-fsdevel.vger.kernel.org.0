@@ -2,140 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E4C01260ED
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 12:36:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BD1E126167
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 12:59:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbfLSLga (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Dec 2019 06:36:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47452 "EHLO mx2.suse.de"
+        id S1726760AbfLSL7Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Dec 2019 06:59:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726656AbfLSLga (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Dec 2019 06:36:30 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 1E560ACA7;
-        Thu, 19 Dec 2019 11:36:28 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 3B5711E0B38; Thu, 19 Dec 2019 12:36:20 +0100 (CET)
-Date:   Thu, 19 Dec 2019 12:36:20 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, lsf-pc@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>
-Subject: Re: RFC: Page cache coherency in dio write path (was: [LSF/MM/BPF
- TOPIC] Bcachefs update)
-Message-ID: <20191219113620.GB24349@quack2.suse.cz>
-References: <20191216193852.GA8664@kmo-pixel>
- <20191218124052.GB19387@quack2.suse.cz>
- <20191218191114.GA1731524@moria.home.lan>
+        id S1726834AbfLSL7Q (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 19 Dec 2019 06:59:16 -0500
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 124FC222C2;
+        Thu, 19 Dec 2019 11:59:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576756754;
+        bh=sNA/zIIMyWs0gUjqN3eQcOoJpsDRPdHySKA92c6MGHM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DR7ofkYyDAUVfj3X63e71Ot1+Q7iX3+hjVknWIKnvbCwe0xdIUKnfaBPYXW9OoS2a
+         y7mKJVNEKFZg07XJ4v9llRE1gfN0VYyJxoyGQ5h+baeZVUx8NNOb8qHM8RdePpBvNG
+         0qiIvuqOyVT8zTMDHhFQ/3/NLJZHOOO2DaoeCCus=
+Date:   Thu, 19 Dec 2019 11:59:09 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     syzbot <syzbot+82defefbbd8527e1c2cb@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        hdanton@sina.com, akpm@linux-foundation.org
+Subject: Re: WARNING: refcount bug in cdev_get
+Message-ID: <20191219115909.GA32361@willie-the-truck>
+References: <000000000000bf410005909463ff@google.com>
+ <20191204115055.GA24783@willie-the-truck>
+ <20191204123148.GA3626092@kroah.com>
+ <20191210114444.GA17673@willie-the-truck>
+ <20191218170854.GC18440@willie-the-truck>
+ <20191218182026.GB882018@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191218191114.GA1731524@moria.home.lan>
+In-Reply-To: <20191218182026.GB882018@kroah.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 18-12-19 14:11:14, Kent Overstreet wrote:
-> On Wed, Dec 18, 2019 at 01:40:52PM +0100, Jan Kara wrote:
-> > On Mon 16-12-19 14:38:52, Kent Overstreet wrote:
-> > > Pagecache consistency:
+On Wed, Dec 18, 2019 at 07:20:26PM +0100, Greg KH wrote:
+> On Wed, Dec 18, 2019 at 05:08:55PM +0000, Will Deacon wrote:
+> > On Tue, Dec 10, 2019 at 11:44:45AM +0000, Will Deacon wrote:
+> > > On Wed, Dec 04, 2019 at 01:31:48PM +0100, Greg KH wrote:
+> > > > This code hasn't changed in 15+ years, what suddenly changed that causes
+> > > > problems here?
 > > > 
-> > > I recently got rid of my pagecache add lock; that added locking to core paths in
-> > > filemap.c and some found my locking scheme to be distastefull (and I never liked
-> > > it enough to argue). I've recently switched to something closer to XFS's locking
-> > > scheme (top of the IO paths); however, I do still need one patch to the
-> > > get_user_pages() path to avoid deadlock via recursive page fault - patch is
-> > > below:
+> > > I suppose one thing to consider is that the refcount code is relatively new,
+> > > so it could be that the actual use-after-free is extremely rare, but we're
+> > > now seeing that it's at least potentially an issue.
 > > > 
-> > > (This would probably be better done as a new argument to get_user_pages(); I
-> > > didn't do it that way initially because the patch would have been _much_
-> > > bigger.)
-> > > 
-> > > Yee haw.
-> > > 
-> > > commit 20ebb1f34cc9a532a675a43b5bd48d1705477816
-> > > Author: Kent Overstreet <kent.overstreet@gmail.com>
-> > > Date:   Wed Oct 16 15:03:50 2019 -0400
-> > > 
-> > >     mm: Add a mechanism to disable faults for a specific mapping
-> > >     
-> > >     This will be used to prevent a nasty cache coherency issue for O_DIRECT
-> > >     writes; O_DIRECT writes need to shoot down the range of the page cache
-> > >     corresponding to the part of the file being written to - but, if the
-> > >     file is mapped in, userspace can pass in an address in that mapping to
-> > >     pwrite(), causing those pages to be faulted back into the page cache
-> > >     in get_user_pages().
-> > >     
-> > >     Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+> > > Thoughts?
 > > 
-> > I'm not really sure about the exact nature of the deadlock since the
-> > changelog doesn't explain it but if you need to take some lockA in your
-> > page fault path and you already hold lockA in your DIO code, then this
-> > patch isn't going to cut it. Just think of a malicious scheme with two
-> > tasks one doing DIO from fileA (protected by lockA) to buffers mapped from
-> > fileB and the other process the other way around...
-> 
-> Ooh, yeah, good catch...
-> 
-> The lock in question is - for the purposes of this discussion, a RW lock (call
-> it map lock here): the fault handler and the buffered IO paths take it it read
-> mode, and the DIO path takes it in write mode to block new pages being added to
-> the page cache.
-> 
-> But get_user_pages() -> page fault invokes the fault handler, hence
-> deadlock. My patch was for avoiding this deadlock when the fault handler
-> tries locking the same inode's map lock, but as you note this is a more
-> general problem...
-> 
-> This is starting to smell like possibly what wound/wait mutexes were
-> invented for, a situation where we need deadlock avoidance because lock
-> ordering is under userspace control.
-> 
-> So for that we need some state describing what locks are held that we can
-> refer to when taking the next lock of this class - and since it's got to
-> be shared between the dio write path and then (via gup()) the fault
-> handler, that means it's pretty much going to have to hang off of task
-> struct. Then in the fault handler, when we go to take the map lock we:
->  - return -EFAULT if it's the same lock the dio write path took
->  - trylock; if that fails and lock ordering is wrong (pointer comparison of the
->    locks works here) then we have to do a dance that involves bailing out and
->    retrying from the top of the dio write path.
+> > FWIW, I added some mdelay()s to make this race more likely, and I can now
+> > trigger it reasonably reliably. See below.
+> > 
+> > --->8
+> > 
+> > [   89.512353] ------------[ cut here ]------------
+> > [   89.513350] refcount_t: addition on 0; use-after-free.
+> > [   89.513977] WARNING: CPU: 2 PID: 6385 at lib/refcount.c:25 refcount_warn_saturate+0x6d/0xf0
 
-Well, I don't think the problem is actually limited to your "map lock".
-Because by calling get_user_pages() from under "map lock" in DIO code, you
-create for example "map lock" (inode A) -> mmap_sem (process P) lock
-dependency. And when you do page fault, you create mmap_sem (process Q) ->
-"map lock" (inode B) lock dependency. It does not take that much effort to
-chain these in a way that will deadlock the system.
+[...]
 
-And the lock tracking that would be able to detect such locking cycles
-would IMHO be too expensive as it would have to cover multiple different
-rather hot locks and also be coordinated between multiple processes.
+> No hint as to _where_ you put the mdelay()?  :)
 
-> I dunno. On the plus side, if other filesystems don't want this I think
-> this can all be implemented in bcachefs code with only a pointer added to
-> task_struct to hang this lock state, but I would much rather either get
-> buy in from the other filesystem people and make this a general purpose
-> facility or not do it at all.
-> 
-> And I'm not sure if anyone else cares about the page cache consistency
-> issues inherent to dio writes as much as I do... so I'd like to hear from
-> other people on that.
+I threw it in the release function to maximise the period where the refcount
+is 0 but the inode 'i_cdev' pointer is non-NULL. I also hacked chrdev_open()
+so that the fops->open() call appears to fail most of the time (I guess
+syzkaller uses error injection to do something similar). Nasty hack below.
 
-I don't think other filesystems care much about DIO cache coherency. But
-OTOH I do agree that these page-fault vs DIO vs buffered IO page cache
-handling races are making life difficult even for other filesystems because
-it is not just about DIO cache coherency but in some nasty corner cases
-also about stale data exposure or filesystem corruption. And filesystems
-have to jump through the hoops to avoid them. So I think in general people
-are interested in somehow making the situation simpler - for example I
-think it would simplify life for Dave's range lock he is working on for
-XFS...
+I'll send a patch, given that I've managed to "reproduce" this.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Will
+
+--->8
+
+diff --git a/fs/char_dev.c b/fs/char_dev.c
+index 00dfe17871ac..e2e48fcd0435 100644
+--- a/fs/char_dev.c
++++ b/fs/char_dev.c
+@@ -375,7 +375,7 @@ static int chrdev_open(struct inode *inode, struct file *filp)
+ 	const struct file_operations *fops;
+ 	struct cdev *p;
+ 	struct cdev *new = NULL;
+-	int ret = 0;
++	int ret = 0, first = 0;
+ 
+ 	spin_lock(&cdev_lock);
+ 	p = inode->i_cdev;
+@@ -395,6 +395,7 @@ static int chrdev_open(struct inode *inode, struct file *filp)
+ 			inode->i_cdev = p = new;
+ 			list_add(&inode->i_devices, &p->list);
+ 			new = NULL;
++			first = 1;
+ 		} else if (!cdev_get(p))
+ 			ret = -ENXIO;
+ 	} else if (!cdev_get(p))
+@@ -411,6 +412,10 @@ static int chrdev_open(struct inode *inode, struct file *filp)
+ 
+ 	replace_fops(filp, fops);
+ 	if (filp->f_op->open) {
++		if (first && (get_cycles() & 0x3)) {
++			ret = -EINTR;
++			goto out_cdev_put;
++		}
+ 		ret = filp->f_op->open(inode, filp);
+ 		if (ret)
+ 			goto out_cdev_put;
+@@ -594,12 +599,14 @@ void cdev_del(struct cdev *p)
+ 	kobject_put(&p->kobj);
+ }
+ 
++#include <linux/delay.h>
+ 
+ static void cdev_default_release(struct kobject *kobj)
+ {
+ 	struct cdev *p = container_of(kobj, struct cdev, kobj);
+ 	struct kobject *parent = kobj->parent;
+ 
++	mdelay(50);
+ 	cdev_purge(p);
+ 	kobject_put(parent);
+ }
