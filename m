@@ -2,263 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D238B1258BF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 01:41:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 061B61258D5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 01:48:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbfLSAl0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Dec 2019 19:41:26 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:12803 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726463AbfLSAl0 (ORCPT
+        id S1726641AbfLSAs2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Dec 2019 19:48:28 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:36292 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726518AbfLSAs2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Dec 2019 19:41:26 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dfac6eb0000>; Wed, 18 Dec 2019 16:40:11 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 18 Dec 2019 16:40:40 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 18 Dec 2019 16:40:40 -0800
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 19 Dec
- 2019 00:40:40 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Thu, 19 Dec 2019 00:40:39 +0000
-Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5dfac7070000>; Wed, 18 Dec 2019 16:40:39 -0800
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v12] mm: devmap: refactor 1-based refcounting for ZONE_DEVICE pages
-Date:   Wed, 18 Dec 2019 16:40:37 -0800
-Message-ID: <20191219004037.1198078-1-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191218160420.gyt4c45e6zsnxqv6@box>
-References: <20191218160420.gyt4c45e6zsnxqv6@box>
+        Wed, 18 Dec 2019 19:48:28 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBJ0iMd9157571;
+        Thu, 19 Dec 2019 00:48:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=VjYqnKsbKLbGD7l5o8X0VpqMjq3yPMzJMi6BXtsxD14=;
+ b=kwma+DRoyxBskpnclqNLB0aDpF8HvXVbZH5jt+b/PdrMyJ+FBk7t8gL8mXeDEZ0u3IBo
+ y/C9i9XvRGsuPEl3K8HpoK9JzdIwSlIxpnpItdtDtCt4RqTRhlDwojFLly31r0a+Inoe
+ 8AuCKirdNfDtYUjcc5bSkigVGtjkuRlPX+DKwppFj9Cbe29e0+7aZqU0yNkoXD7mYeaF
+ 4MUnRb+s/oYwBx8RAZIBEuNqGvAXKOJeF7XJG2midn8083OJtmXiJe5ELYKRdYU/Jvh5
+ a5I502v6Sz/24k9eRkPuMCA7Nt4AVB+dQrbQqWHP1aTS2E6hMqprfyOpi+ieq94hY0qZ Ow== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2wvqpqgxbx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Dec 2019 00:48:02 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBJ0iOtp112735;
+        Thu, 19 Dec 2019 00:48:01 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2wyp08j1hj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Dec 2019 00:48:01 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xBJ0lxd5003393;
+        Thu, 19 Dec 2019 00:47:59 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 18 Dec 2019 16:47:59 -0800
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Satya Tangirala <satyat@google.com>,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Kim Boojin <boojin.kim@samsung.com>
+Subject: Re: [PATCH v6 2/9] block: Add encryption context to struct bio
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20191218145136.172774-1-satyat@google.com>
+        <20191218145136.172774-3-satyat@google.com>
+        <20191218212116.GA7476@magnolia> <yq1y2v9e37b.fsf@oracle.com>
+        <20191218222726.GC47399@gmail.com>
+Date:   Wed, 18 Dec 2019 19:47:56 -0500
+In-Reply-To: <20191218222726.GC47399@gmail.com> (Eric Biggers's message of
+        "Wed, 18 Dec 2019 14:27:26 -0800")
+Message-ID: <yq1fthhdttv.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1576716012; bh=meY7XSFZGFTm0ReBYolvDdqRBgCh/HSlArb5Zg3NFvk=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
-         Content-Type:Content-Transfer-Encoding;
-        b=qjIOKqdCUd7FwtXps/EX5rcy2jzX7ECH7d3gscZlvPWK+USZzY1q0dAG+H1A1e4bW
-         xIdpfAI5t4vavi9qpNMvGtiweIkR1awxL4TYXPZwaeONkFcFN1zXQbpW/68snevPNj
-         5QIP3HFe/KnwTQJ5t/CB3h4eLlluOox9FBIYdqA3HpeElohSY3KZjP+6dBkbINRhFa
-         ZYRgTzuq1d6+3U/JsKziS6j7uhAZMlje1/Nk/EI1s0RtNW9Xt5H7STM2pMGvX9z96O
-         6weRpZ4IdcHq5gWYu+R05VYD+Ro8D3XakiiYQK6azXLHolwxZWIhC6GYnIMG6nSLyM
-         S6aDYq/kU5kxg==
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9475 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912190005
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9475 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912190005
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-An upcoming patch changes and complicates the refcounting and
-especially the "put page" aspects of it. In order to keep
-everything clean, refactor the devmap page release routines:
 
-* Rename put_devmap_managed_page() to page_is_devmap_managed(),
-  and limit the functionality to "read only": return a bool,
-  with no side effects.
+Eric,
 
-* Add a new routine, put_devmap_managed_page(), to handle
-  decrementing the refcount for ZONE_DEVICE pages.
+> There's not really any such thing as "use the bio integrity plumbing".
+> blk-integrity just does blk-integrity; it's not a plumbing layer that
+> allows other features to be supported.  Well, in theory we could
+> refactor and rename all the hooks to "blk-extra" and make them
+> delegate to either blk-integrity or blk-crypto, but I think that would
+> be overkill.
 
-* Change callers (just release_pages() and put_page()) to check
-  page_is_devmap_managed() before calling the new
-  put_devmap_managed_page() routine. This is a performance
-  point: put_page() is a hot path, so we need to avoid non-
-  inline function calls where possible.
+I certainly don't expect your crypto stuff to plug in without any
+modification to what we currently have. I'm just observing that the
+existing plumbing is designed to have pluggable functions that let
+filesystems attach additional information to bios on writes and process
+additional attached information on reads. And the block layer already
+handles slicing and dicing these attachments as the I/O traverses the
+stack.
 
-* Rename __put_devmap_managed_page() to free_devmap_managed_page(),
-  and limit the functionality to unconditionally freeing a devmap
-  page.
+There's also other stuff that probably won't be directly applicable or
+interesting for your use case. It just seems like identifying actual
+commonalities and differences would be worthwhile.
 
-This is originally based on a separate patch by Ira Weiny, which
-applied to an early version of the put_user_page() experiments.
-Since then, J=C3=A9r=C3=B4me Glisse suggested the refactoring described abo=
-ve.
+Note that substantial changes to the integrity code would inevitably
+lead to a lot of pain and suffering for me. So from that perspective I
+am very happy if you leave it alone. From an architectural viewpoint,
+however, it seems that there are more similarities than differences
+between crypto and integrity. And we should avoid duplication where
+possible. That's all.
 
-Cc: Christoph Hellwig <hch@lst.de>
-Suggested-by: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- include/linux/mm.h | 18 +++++++++++++-----
- mm/memremap.c      | 16 ++--------------
- mm/swap.c          | 27 ++++++++++++++++++++++++++-
- 3 files changed, 41 insertions(+), 20 deletions(-)
+> What we could do, though, is say that at most one of blk-crypto and
+> blk-integrity can be used at once on a given bio, and put the
+> bi_integrity and bi_crypt_context pointers in union.  (That would
+> require allocating a REQ_INLINECRYPT bit so that we can tell what the
+> pointer points to.)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index c97ea3b694e6..87b54126e46d 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -952,9 +952,10 @@ static inline bool is_zone_device_page(const struct pa=
-ge *page)
- #endif
-=20
- #ifdef CONFIG_DEV_PAGEMAP_OPS
--void __put_devmap_managed_page(struct page *page);
-+void free_devmap_managed_page(struct page *page);
- DECLARE_STATIC_KEY_FALSE(devmap_managed_key);
--static inline bool put_devmap_managed_page(struct page *page)
-+
-+static inline bool page_is_devmap_managed(struct page *page)
- {
- 	if (!static_branch_unlikely(&devmap_managed_key))
- 		return false;
-@@ -963,7 +964,6 @@ static inline bool put_devmap_managed_page(struct page =
-*page)
- 	switch (page->pgmap->type) {
- 	case MEMORY_DEVICE_PRIVATE:
- 	case MEMORY_DEVICE_FS_DAX:
--		__put_devmap_managed_page(page);
- 		return true;
- 	default:
- 		break;
-@@ -971,11 +971,17 @@ static inline bool put_devmap_managed_page(struct pag=
-e *page)
- 	return false;
- }
-=20
-+void put_devmap_managed_page(struct page *page);
-+
- #else /* CONFIG_DEV_PAGEMAP_OPS */
--static inline bool put_devmap_managed_page(struct page *page)
-+static inline bool page_is_devmap_managed(struct page *page)
- {
- 	return false;
- }
-+
-+static inline void put_devmap_managed_page(struct page *page)
-+{
-+}
- #endif /* CONFIG_DEV_PAGEMAP_OPS */
-=20
- static inline bool is_device_private_page(const struct page *page)
-@@ -1028,8 +1034,10 @@ static inline void put_page(struct page *page)
- 	 * need to inform the device driver through callback. See
- 	 * include/linux/memremap.h and HMM for details.
- 	 */
--	if (put_devmap_managed_page(page))
-+	if (page_is_devmap_managed(page)) {
-+		put_devmap_managed_page(page);
- 		return;
-+	}
-=20
- 	if (put_page_testzero(page))
- 		__put_page(page);
-diff --git a/mm/memremap.c b/mm/memremap.c
-index e899fa876a62..2ba773859031 100644
---- a/mm/memremap.c
-+++ b/mm/memremap.c
-@@ -411,20 +411,8 @@ struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
- EXPORT_SYMBOL_GPL(get_dev_pagemap);
-=20
- #ifdef CONFIG_DEV_PAGEMAP_OPS
--void __put_devmap_managed_page(struct page *page)
-+void free_devmap_managed_page(struct page *page)
- {
--	int count =3D page_ref_dec_return(page);
--
--	/* still busy */
--	if (count > 1)
--		return;
--
--	/* only triggered by the dev_pagemap shutdown path */
--	if (count =3D=3D 0) {
--		__put_page(page);
--		return;
--	}
--
- 	/* notify page idle for dax */
- 	if (!is_device_private_page(page)) {
- 		wake_up_var(&page->_refcount);
-@@ -461,5 +449,5 @@ void __put_devmap_managed_page(struct page *page)
- 	page->mapping =3D NULL;
- 	page->pgmap->ops->page_free(page);
- }
--EXPORT_SYMBOL(__put_devmap_managed_page);
-+EXPORT_SYMBOL(free_devmap_managed_page);
- #endif /* CONFIG_DEV_PAGEMAP_OPS */
-diff --git a/mm/swap.c b/mm/swap.c
-index 5341ae93861f..cf39d24ada2a 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -813,8 +813,10 @@ void release_pages(struct page **pages, int nr)
- 			 * processing, and instead, expect a call to
- 			 * put_page_testzero().
- 			 */
--			if (put_devmap_managed_page(page))
-+			if (page_is_devmap_managed(page)) {
-+				put_devmap_managed_page(page);
- 				continue;
-+			}
- 		}
-=20
- 		page =3D compound_head(page);
-@@ -1102,3 +1104,26 @@ void __init swap_setup(void)
- 	 * _really_ don't want to cluster much more
- 	 */
- }
-+
-+#ifdef CONFIG_DEV_PAGEMAP_OPS
-+void put_devmap_managed_page(struct page *page)
-+{
-+	int count;
-+
-+	if (WARN_ON_ONCE(!page_is_devmap_managed(page)))
-+		return;
-+
-+	count =3D page_ref_dec_return(page);
-+
-+	/*
-+	 * devmap page refcounts are 1-based, rather than 0-based: if
-+	 * refcount is 1, then the page is free and the refcount is
-+	 * stable because nobody holds a reference on the page.
-+	 */
-+	if (count =3D=3D 1)
-+		free_devmap_managed_page(page);
-+	else if (!count)
-+		__put_page(page);
-+}
-+EXPORT_SYMBOL(put_devmap_managed_page);
-+#endif
---=20
-2.24.1
+Absolutely. That's why it's a union. Putting your stuff there is a
+prerequisite as far as I'm concerned. No need to grow the bio when the
+two features are unlikely to coexist. We can revisit that later should
+the need arise.
 
+-- 
+Martin K. Petersen	Oracle Linux Engineering
