@@ -2,178 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD88D126021
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 11:57:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32DEE126079
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 12:07:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbfLSK45 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Dec 2019 05:56:57 -0500
-Received: from mout-p-202.mailbox.org ([80.241.56.172]:29816 "EHLO
-        mout-p-202.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726702AbfLSK44 (ORCPT
+        id S1726734AbfLSLHZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Dec 2019 06:07:25 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:57810 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726695AbfLSLHZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Dec 2019 05:56:56 -0500
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        Thu, 19 Dec 2019 06:07:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576753644;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IrcMrSSa7UYXErd11JQFtfowjebCnHuL7Bzv7dIUqcc=;
+        b=KkfDrhY3kJJr6AjwPv7M3rWF7TGaGWfPbYbd1QQUYXOrUBnxqlzbKino2aPGWSZuFjrh0b
+        VT2kHLBcgu9o74JvUCdV8B2Pb6Mb1WZsce0OSY1f5vXFVdTurselVmOkgKOL2+FDBajWzG
+        xZ6BSvkvokFhRVI2Kq2RxvUfB8zmoiY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-123-uwfumKeEMN-nvu4639YtGA-1; Thu, 19 Dec 2019 06:07:21 -0500
+X-MC-Unique: uwfumKeEMN-nvu4639YtGA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 47dpjK606kzQlDH;
-        Thu, 19 Dec 2019 11:56:53 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
-        with ESMTP id jDfb45tiRTT2; Thu, 19 Dec 2019 11:56:52 +0100 (CET)
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A2B771883522;
+        Thu, 19 Dec 2019 11:07:18 +0000 (UTC)
+Received: from oldenburg2.str.redhat.com (dhcp-192-227.str.redhat.com [10.33.192.227])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 705C960BC7;
+        Thu, 19 Dec 2019 11:07:14 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Jeff Layton <jlayton@kernel.org>,
         "J. Bruce Fields" <bfields@fieldses.org>,
-        Shuah Khan <shuah@kernel.org>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Shuah Khan <shuah@kernel.org>,
         David Laight <david.laight@aculab.com>,
-        Florian Weimer <fweimer@redhat.com>,
         Christian Brauner <christian.brauner@ubuntu.com>,
         dev@opencontainers.org, containers@lists.linux-foundation.org,
         libc-alpha@sourceware.org, linux-api@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-kselftest@vger.kernel.org
-Subject: [PATCH 2/2] openat2: drop open_how->__padding field
-Date:   Thu, 19 Dec 2019 21:55:33 +1100
-Message-Id: <20191219105533.12508-6-cyphar@cyphar.com>
-In-Reply-To: <20191219105533.12508-1-cyphar@cyphar.com>
+Subject: Re: [PATCH 1/2] uapi: split openat2(2) definitions from fcntl.h
 References: <20191219105533.12508-1-cyphar@cyphar.com>
+        <20191219105533.12508-2-cyphar@cyphar.com>
+Date:   Thu, 19 Dec 2019 12:07:13 +0100
+In-Reply-To: <20191219105533.12508-2-cyphar@cyphar.com> (Aleksa Sarai's
+        message of "Thu, 19 Dec 2019 21:55:29 +1100")
+Message-ID: <87a77oy3oe.fsf@oldenburg2.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The purpose of explicit padding was to allow us to use the space in the
-future (C provides no guarantee about the value of padding bytes and
-thus userspace could've provided garbage).
+* Aleksa Sarai:
 
-However, the downside of explicit padding is that any extension we wish
-to add should fit the space exactly (otherwise we may end up with a u16
-which will never be used). In addition, the correct error to return for
-non-zero padding is not clear (-EINVAL doesn't imply "you're using an
-extension field unsupported by this kernel", but -E2BIG seems a bit odd
-if the structure size isn't different).
+> diff --git a/include/uapi/linux/openat2.h b/include/uapi/linux/openat2.h
+> new file mode 100644
+> index 000000000000..19ef775e8e5e
+> --- /dev/null
+> +++ b/include/uapi/linux/openat2.h
+> @@ -0,0 +1,41 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +#ifndef _UAPI_LINUX_OPENAT2_H
+> +#define _UAPI_LINUX_OPENAT2_H
 
-The simplest solution is to just match the design of clone3(2) -- use
-u64s for all fields. The extra few-bytes cost of extra fields is not
-significant (it's unlikely configuration structs will ever be extremely
-large) and it allows for more flag space if necessary.
+I think you should include the relevant header for __align_u64
+etc. here.
 
-As openat2(2) is not yet in Linus's tree, we can iron out these minor
-warts before we commit to this as a stable ABI.
+[=E2=80=A6]
+> + * Arguments for how openat2(2) should open the target path. If @resolve=
+ is
+> + * zero, then openat2(2) operates very similarly to openat(2).
+> + *
+> + * However, unlike openat(2), unknown bits in @flags result in -EINVAL r=
+ather
+> + * than being silently ignored. @mode must be zero unless one of {O_CREA=
+T,
+> + * O_TMPFILE} are set.
+> + *
+> + * @flags: O_* flags.
+> + * @mode: O_CREAT/O_TMPFILE file mode.
+> + * @resolve: RESOLVE_* flags.
+> + */
+> +struct open_how {
+> +	__aligned_u64 flags;
+> +	__u16 mode;
+> +	__u16 __padding[3]; /* must be zeroed */
+> +	__aligned_u64 resolve;
+> +};
+> +
+> +#define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
+> +#define OPEN_HOW_SIZE_LATEST	OPEN_HOW_SIZE_VER0
 
-Suggested-by: David Laight <david.laight@aculab.com>
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
----
- fs/open.c                                     |  2 --
- include/uapi/linux/openat2.h                  |  3 +--
- tools/testing/selftests/openat2/helpers.h     |  3 +--
- .../testing/selftests/openat2/openat2_test.c  | 24 +++++++------------
- 4 files changed, 10 insertions(+), 22 deletions(-)
+Are these really useful for the UAPI header?  Is there a situation where
+OPEN_HOW_SIZE_LATEST would be different from sizeof (struct open_how)?
 
-diff --git a/fs/open.c b/fs/open.c
-index 50a46501bcc9..8cdb2b675867 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -993,8 +993,6 @@ static inline int build_open_flags(const struct open_how *how,
- 		return -EINVAL;
- 	if (how->resolve & ~VALID_RESOLVE_FLAGS)
- 		return -EINVAL;
--	if (memchr_inv(how->__padding, 0, sizeof(how->__padding)))
--		return -EINVAL;
- 
- 	/* Deal with the mode. */
- 	if (WILL_CREATE(flags)) {
-diff --git a/include/uapi/linux/openat2.h b/include/uapi/linux/openat2.h
-index 19ef775e8e5e..76fad4ada2d4 100644
---- a/include/uapi/linux/openat2.h
-+++ b/include/uapi/linux/openat2.h
-@@ -16,8 +16,7 @@
-  */
- struct open_how {
- 	__aligned_u64 flags;
--	__u16 mode;
--	__u16 __padding[3]; /* must be zeroed */
-+	__aligned_u64 mode;
- 	__aligned_u64 resolve;
- };
- 
-diff --git a/tools/testing/selftests/openat2/helpers.h b/tools/testing/selftests/openat2/helpers.h
-index 43ca5ceab6e3..d756775d0725 100644
---- a/tools/testing/selftests/openat2/helpers.h
-+++ b/tools/testing/selftests/openat2/helpers.h
-@@ -37,8 +37,7 @@
-  */
- struct open_how {
- 	__aligned_u64 flags;
--	__u16 mode;
--	__u16 __padding[3]; /* must be zeroed */
-+	__aligned_u64 mode;
- 	__aligned_u64 resolve;
- };
- 
-diff --git a/tools/testing/selftests/openat2/openat2_test.c b/tools/testing/selftests/openat2/openat2_test.c
-index 0b64fedc008b..b386367c606b 100644
---- a/tools/testing/selftests/openat2/openat2_test.c
-+++ b/tools/testing/selftests/openat2/openat2_test.c
-@@ -40,7 +40,7 @@ struct struct_test {
- 	int err;
- };
- 
--#define NUM_OPENAT2_STRUCT_TESTS 10
-+#define NUM_OPENAT2_STRUCT_TESTS 7
- #define NUM_OPENAT2_STRUCT_VARIATIONS 13
- 
- void test_openat2_struct(void)
-@@ -57,20 +57,6 @@ void test_openat2_struct(void)
- 		  .arg.inner.flags = O_RDONLY,
- 		  .size = sizeof(struct open_how_ext) },
- 
--		/* Normal struct with broken padding. */
--		{ .name = "normal struct (non-zero padding[0])",
--		  .arg.inner.flags = O_RDONLY,
--		  .arg.inner.__padding = {0xa0, 0x00, 0x00},
--		  .size = sizeof(struct open_how_ext), .err = -EINVAL },
--		{ .name = "normal struct (non-zero padding[1])",
--		  .arg.inner.flags = O_RDONLY,
--		  .arg.inner.__padding = {0x00, 0x1a, 0x00},
--		  .size = sizeof(struct open_how_ext), .err = -EINVAL },
--		{ .name = "normal struct (non-zero padding[2])",
--		  .arg.inner.flags = O_RDONLY,
--		  .arg.inner.__padding = {0x00, 0x00, 0xef},
--		  .size = sizeof(struct open_how_ext), .err = -EINVAL },
--
- 		/* TODO: Once expanded, check zero-padding. */
- 
- 		/* Smaller than version-0 struct. */
-@@ -169,7 +155,7 @@ struct flag_test {
- 	int err;
- };
- 
--#define NUM_OPENAT2_FLAG_TESTS 21
-+#define NUM_OPENAT2_FLAG_TESTS 23
- 
- void test_openat2_flags(void)
- {
-@@ -214,9 +200,15 @@ void test_openat2_flags(void)
- 		{ .name = "invalid how.mode and O_CREAT",
- 		  .how.flags = O_CREAT,
- 		  .how.mode = 0xFFFF, .err = -EINVAL },
-+		{ .name = "invalid (very large) how.mode and O_CREAT",
-+		  .how.flags = O_CREAT,
-+		  .how.mode = 0xC000000000000000ULL, .err = -EINVAL },
- 		{ .name = "invalid how.mode and O_TMPFILE",
- 		  .how.flags = O_TMPFILE | O_RDWR,
- 		  .how.mode = 0x1337, .err = -EINVAL },
-+		{ .name = "invalid (very large) how.mode and O_TMPFILE",
-+		  .how.flags = O_TMPFILE | O_RDWR,
-+		  .how.mode = 0x0000A00000000000ULL, .err = -EINVAL },
- 
- 		/* ->resolve must only contain RESOLVE_* flags. */
- 		{ .name = "invalid how.resolve and O_RDONLY",
--- 
-2.24.0
+The header is not compatible with the assembler anyway, so the numeric
+constant does not seem useful.
+
+Thanks,
+Florian
 
