@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32F3F12601A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 11:56:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43528126020
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 11:57:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbfLSK4n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Dec 2019 05:56:43 -0500
-Received: from mout-p-101.mailbox.org ([80.241.56.151]:14278 "EHLO
-        mout-p-101.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726633AbfLSK4m (ORCPT
+        id S1726928AbfLSK4x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Dec 2019 05:56:53 -0500
+Received: from mout-p-202.mailbox.org ([80.241.56.172]:29784 "EHLO
+        mout-p-202.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726702AbfLSK4x (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Dec 2019 05:56:42 -0500
+        Thu, 19 Dec 2019 05:56:53 -0500
 Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 47dpj31MsQzKmf2;
-        Thu, 19 Dec 2019 11:56:39 +0100 (CET)
+        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 47dpjG2rbczQlDD;
+        Thu, 19 Dec 2019 11:56:50 +0100 (CET)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
-        with ESMTP id 5rWZwtGny0B0; Thu, 19 Dec 2019 11:56:37 +0100 (CET)
+        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
+        with ESMTP id 7vreqxoenpiV; Thu, 19 Dec 2019 11:56:45 +0100 (CET)
 From:   Aleksa Sarai <cyphar@cyphar.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Jeff Layton <jlayton@kernel.org>,
@@ -34,9 +34,9 @@ Cc:     Aleksa Sarai <cyphar@cyphar.com>,
         libc-alpha@sourceware.org, linux-api@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-kselftest@vger.kernel.org
-Subject: [PATCH 0/2] openat2: minor uapi cleanups
-Date:   Thu, 19 Dec 2019 21:55:31 +1100
-Message-Id: <20191219105533.12508-4-cyphar@cyphar.com>
+Subject: [PATCH 1/2] uapi: split openat2(2) definitions from fcntl.h
+Date:   Thu, 19 Dec 2019 21:55:32 +1100
+Message-Id: <20191219105533.12508-5-cyphar@cyphar.com>
 In-Reply-To: <20191219105533.12508-1-cyphar@cyphar.com>
 References: <20191219105533.12508-1-cyphar@cyphar.com>
 MIME-Version: 1.0
@@ -46,36 +46,131 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-While openat2(2) is still not yet in Linus's tree, we can take this
-opportunity to iron out some small warts that weren't noticed earlier:
+Florian mentioned that glibc doesn't use fcntl.h because it has some
+issues with namespace cleanliness, and that we should have a separate
+header for openat2(2) if possible.
 
-  * A fix was suggested by Florian Weimer, to separate the openat2
-    definitions so glibc can use the header directly. I've put the
-    maintainership under VFS but let me know if you'd prefer it belong
-    ot the fcntl folks.
-
-  * Having heterogenous field sizes in an extensible struct results in
-    "padding hole" problems when adding new fields (in addition the
-    correct error to use for non-zero padding isn't entirely clear ).
-    The simplest solution is to just copy clone(3)'s model -- always use
-    u64s. It will waste a little more space in the struct, but it
-    removes a possible future headache.
-
-Aleksa Sarai (2):
-  uapi: split openat2(2) definitions from fcntl.h
-  openat2: drop open_how->__padding field
-
- MAINTAINERS                                   |  1 +
- fs/open.c                                     |  2 -
- include/uapi/linux/fcntl.h                    | 37 +----------------
- include/uapi/linux/openat2.h                  | 40 +++++++++++++++++++
- tools/testing/selftests/openat2/helpers.h     |  3 +-
- .../testing/selftests/openat2/openat2_test.c  | 24 ++++-------
- 6 files changed, 51 insertions(+), 56 deletions(-)
+Suggested-by: Florian Weimer <fweimer@redhat.com>
+Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+---
+ MAINTAINERS                  |  1 +
+ include/uapi/linux/fcntl.h   | 37 +-------------------------------
+ include/uapi/linux/openat2.h | 41 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 43 insertions(+), 36 deletions(-)
  create mode 100644 include/uapi/linux/openat2.h
 
-
-base-commit: 912dfe068c43fa13c587b8d30e73d335c5ba7d44
+diff --git a/MAINTAINERS b/MAINTAINERS
+index bd5847e802de..737ada377ac3 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6397,6 +6397,7 @@ F:	fs/*
+ F:	include/linux/fs.h
+ F:	include/linux/fs_types.h
+ F:	include/uapi/linux/fs.h
++F:	include/uapi/linux/openat2.h
+ 
+ FINTEK F75375S HARDWARE MONITOR AND FAN CONTROLLER DRIVER
+ M:	Riku Voipio <riku.voipio@iki.fi>
+diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+index d886bdb585e4..ca88b7bce553 100644
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -3,6 +3,7 @@
+ #define _UAPI_LINUX_FCNTL_H
+ 
+ #include <asm/fcntl.h>
++#include <linux/openat2.h>
+ 
+ #define F_SETLEASE	(F_LINUX_SPECIFIC_BASE + 0)
+ #define F_GETLEASE	(F_LINUX_SPECIFIC_BASE + 1)
+@@ -100,40 +101,4 @@
+ 
+ #define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
+ 
+-/*
+- * Arguments for how openat2(2) should open the target path. If @resolve is
+- * zero, then openat2(2) operates very similarly to openat(2).
+- *
+- * However, unlike openat(2), unknown bits in @flags result in -EINVAL rather
+- * than being silently ignored. @mode must be zero unless one of {O_CREAT,
+- * O_TMPFILE} are set.
+- *
+- * @flags: O_* flags.
+- * @mode: O_CREAT/O_TMPFILE file mode.
+- * @resolve: RESOLVE_* flags.
+- */
+-struct open_how {
+-	__aligned_u64 flags;
+-	__u16 mode;
+-	__u16 __padding[3]; /* must be zeroed */
+-	__aligned_u64 resolve;
+-};
+-
+-#define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
+-#define OPEN_HOW_SIZE_LATEST	OPEN_HOW_SIZE_VER0
+-
+-/* how->resolve flags for openat2(2). */
+-#define RESOLVE_NO_XDEV		0x01 /* Block mount-point crossings
+-					(includes bind-mounts). */
+-#define RESOLVE_NO_MAGICLINKS	0x02 /* Block traversal through procfs-style
+-					"magic-links". */
+-#define RESOLVE_NO_SYMLINKS	0x04 /* Block traversal through all symlinks
+-					(implies OEXT_NO_MAGICLINKS) */
+-#define RESOLVE_BENEATH		0x08 /* Block "lexical" trickery like
+-					"..", symlinks, and absolute
+-					paths which escape the dirfd. */
+-#define RESOLVE_IN_ROOT		0x10 /* Make all jumps to "/" and ".."
+-					be scoped inside the dirfd
+-					(similar to chroot(2)). */
+-
+ #endif /* _UAPI_LINUX_FCNTL_H */
+diff --git a/include/uapi/linux/openat2.h b/include/uapi/linux/openat2.h
+new file mode 100644
+index 000000000000..19ef775e8e5e
+--- /dev/null
++++ b/include/uapi/linux/openat2.h
+@@ -0,0 +1,41 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef _UAPI_LINUX_OPENAT2_H
++#define _UAPI_LINUX_OPENAT2_H
++
++/*
++ * Arguments for how openat2(2) should open the target path. If @resolve is
++ * zero, then openat2(2) operates very similarly to openat(2).
++ *
++ * However, unlike openat(2), unknown bits in @flags result in -EINVAL rather
++ * than being silently ignored. @mode must be zero unless one of {O_CREAT,
++ * O_TMPFILE} are set.
++ *
++ * @flags: O_* flags.
++ * @mode: O_CREAT/O_TMPFILE file mode.
++ * @resolve: RESOLVE_* flags.
++ */
++struct open_how {
++	__aligned_u64 flags;
++	__u16 mode;
++	__u16 __padding[3]; /* must be zeroed */
++	__aligned_u64 resolve;
++};
++
++#define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
++#define OPEN_HOW_SIZE_LATEST	OPEN_HOW_SIZE_VER0
++
++/* how->resolve flags for openat2(2). */
++#define RESOLVE_NO_XDEV		0x01 /* Block mount-point crossings
++					(includes bind-mounts). */
++#define RESOLVE_NO_MAGICLINKS	0x02 /* Block traversal through procfs-style
++					"magic-links". */
++#define RESOLVE_NO_SYMLINKS	0x04 /* Block traversal through all symlinks
++					(implies OEXT_NO_MAGICLINKS) */
++#define RESOLVE_BENEATH		0x08 /* Block "lexical" trickery like
++					"..", symlinks, and absolute
++					paths which escape the dirfd. */
++#define RESOLVE_IN_ROOT		0x10 /* Make all jumps to "/" and ".."
++					be scoped inside the dirfd
++					(similar to chroot(2)). */
++
++#endif /* _UAPI_LINUX_OPENAT2_H */
 -- 
 2.24.0
 
