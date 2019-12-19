@@ -2,133 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27CAE12617A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 13:02:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 141171261B0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 13:07:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbfLSMCS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Dec 2019 07:02:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34856 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726668AbfLSMCS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Dec 2019 07:02:18 -0500
-Received: from localhost.localdomain (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82457222C2;
-        Thu, 19 Dec 2019 12:02:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576756937;
-        bh=4tSN8Ty0g9jbGMWwle8pw+lMUclGXrafZ3F/UVZPngM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=vFw2XExoEj0Ip/k2VkBkAdc26WWv6SqBqelcFAXwcnHAkDmFafozwzuP/k46Bl1yS
-         bDfIb2uoEW8VTWXutcdBjXnrqOl7jo1NrMZkskPGjFQ0BOufjeBvmtyN3ILermmoFP
-         y94WAjaVc9H1NkGRKGtat1m67EaWSNS9yNVrV6ws=
-From:   Will Deacon <will@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, kernel-team@android.com,
-        Will Deacon <will@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Hillf Danton <hdanton@sina.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        syzbot+82defefbbd8527e1c2cb@syzkaller.appspotmail.com
-Subject: [PATCH] chardev: Avoid potential use-after-free in 'chrdev_open()'
-Date:   Thu, 19 Dec 2019 12:02:03 +0000
-Message-Id: <20191219120203.32691-1-will@kernel.org>
-X-Mailer: git-send-email 2.20.1
+        id S1726867AbfLSMG4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Dec 2019 07:06:56 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:59145 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726712AbfLSMGz (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 19 Dec 2019 07:06:55 -0500
+Received: from mail-qt1-f175.google.com ([209.85.160.175]) by
+ mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1N7hrw-1hdPlH2kDa-014iUw; Thu, 19 Dec 2019 13:06:53 +0100
+Received: by mail-qt1-f175.google.com with SMTP id w47so4841476qtk.4;
+        Thu, 19 Dec 2019 04:06:53 -0800 (PST)
+X-Gm-Message-State: APjAAAXBpysAqOUpd6hdW7AkYF9anE8ixycq5E/EWty85GW+sE3rZNOY
+        s/JBA+Uin0p/9kV6COCGCBcXnf6gBe/GEzuE3qs=
+X-Google-Smtp-Source: APXvYqxGQKByw2kvN17TFz5IHkyanI0u18EN6ad0C5VbYexL/eZvygPOcm6Qo3HJ+QnsJhFv9L477EgsjzRCAopMqgw=
+X-Received: by 2002:ac8:768d:: with SMTP id g13mr6613343qtr.7.1576757212184;
+ Thu, 19 Dec 2019 04:06:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191217221708.3730997-1-arnd@arndb.de> <20191217221708.3730997-19-arnd@arndb.de>
+ <f9fd39116713f17e55091868326a419190220559.camel@codethink.co.uk>
+In-Reply-To: <f9fd39116713f17e55091868326a419190220559.camel@codethink.co.uk>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 19 Dec 2019 13:06:36 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a0oNYMoyLbpPqNaXSWV3j7dXhKZ5GLq1EEGA=ansVxvsA@mail.gmail.com>
+Message-ID: <CAK8P3a0oNYMoyLbpPqNaXSWV3j7dXhKZ5GLq1EEGA=ansVxvsA@mail.gmail.com>
+Subject: Re: [PATCH v2 18/27] compat_ioctl: scsi: move ioctl handling into drivers
+To:     Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:+fWi9PxG9cjEwLcZlRIq6OeQDH2hEZ4pw5hpJkGpVtEeWAlAivF
+ CbPr0NC3QuKQvm6kKLoHJbAxJuZKqLJyDWcHTQoJ16eaRPEQvoCC1bXU6pKK9i/0/7yUFrB
+ /TRpJyIWpD4oNYm1hCje7EqIkSxyFtmj5zAED48WVkQqJX39CCVvpG/jui6MqUa5Mk0gIYN
+ Y1uy1exUFBIIvcQMWzNMg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:fuV12pAVl+Q=:JNkmuxB1GGiZ2oSKG3N9l2
+ PecDtonxNza7r+VU1FQI2gXKy4eOwxT1z5eRg+T9pZaWPrLcxj72yCAuGMH1cPW0O7V/T8v39
+ RhsZ4b5yA9jSeKcdlSw6k/srmunKQmq/f56xFwH/QxTN7aJFcdvmLcx4bcEAFzlJU7pPf2903
+ aykxVDbdwsvWCfCTFojlHC7stwSemNAuIS+jfBxNDOrqZ1cmgPscmsCpIBMQtUZcyLbw2Ha65
+ dSLuuHOtD49UvgeLeLCwjisAhAphYMVSM/gYJAnRg1Qui6fMkCbjV0UMdKK3nndXzxZKALi0t
+ MlCjXoSbVqpLzEgwxeWcy/h7EmrR1pS93py40sGTq4RX77Cmap1qQkQK0cvADoH4lJjedY3C8
+ jzHG1cw44oFuy3/M4PoMuxiFS8WZPa6T5nCMPdhY2V1NrswNFN3HYGggMfpIE80WrDiC7GAxz
+ saPlqhJs6CzRCVELk1NIcGESwXBjGkFyoPBrrni/oVKUaQs8R55UIluhnywy6SdLw4+f0hdW8
+ 5O0u2sL/oyPoswBakGI9Ppr3A35o0XF3RMABoaJmvbaAHBvSblSt2KXUp64iAkDCkx35R9sp9
+ +atIRp86CaJDxiaULDJ9NWYEL9LSwD3Eumw/LqNzm4bJvOn2e2YsP2SUZa4D5rKxX3JVcHSqT
+ Kvlzg2O6KMb8B0r/Rqm4tZryip31E6BhzJyYos/0YHRhbioA6UbYwCbGHuVJfsCEpobZUz4QE
+ ddlEKJzsI6UvRYWxHfSkMi3kD//JzyuunBqE+/vfsvHy8YNxDMb/CxHmwAnprNII66M82Yngg
+ F5/ZjI7kY5rQCt2DR2G54kWOPp4LmWRDIt8v0U20UFpSMU2DolvDzNENy9atgl3rnn5wE/CJU
+ 5kC0Mp8mNra9q7mBhwew==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-'chrdev_open()' calls 'cdev_get()' to obtain a reference to the
-'struct cdev *' stashed in the 'i_cdev' field of the target inode
-structure. If the pointer is NULL, then it is initialised lazily by
-looking up the kobject in the 'cdev_map' and so the whole procedure is
-protected by the 'cdev_lock' spinlock to serialise initialisation of
-the shared pointer.
+On Wed, Dec 18, 2019 at 8:57 PM Ben Hutchings
+<ben.hutchings@codethink.co.uk> wrote:
+>
+> On Tue, 2019-12-17 at 23:16 +0100, Arnd Bergmann wrote:
+> > +
+> > +     /*
+> > +      * CDROM ioctls are handled in the block layer, but
+> > +      * do the scsi blk ioctls here.
+> > +      */
+> > +     ret = scsi_cmd_blk_ioctl(bdev, mode, cmd, argp);
+> > +     if (ret != -ENOTTY)
+> > +             return ret;
+>
+> This needs to be be "goto put;"
 
-Unfortunately, it is possible for the initialising thread to fail *after*
-installing the new pointer, for example if the subsequent '->open()' call
-on the file fails. In this case, 'cdev_put()' is called, the reference
-count on the kobject is dropped and, if nobody else has taken a reference,
-the release function is called which finally clears 'inode->i_cdev' from
-'cdev_purge()' before potentially freeing the object. The problem here
-is that a racing thread can happily take the 'cdev_lock' and see the
-non-NULL pointer in the inode, which can result in a refcount increment
-from zero and a warning:
+Fixed now, thanks!
 
-  |  ------------[ cut here ]------------
-  |  refcount_t: addition on 0; use-after-free.
-  |  WARNING: CPU: 2 PID: 6385 at lib/refcount.c:25 refcount_warn_saturate+0x6d/0xf0
-  |  Modules linked in:
-  |  CPU: 2 PID: 6385 Comm: repro Not tainted 5.5.0-rc2+ #22
-  |  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
-  |  RIP: 0010:refcount_warn_saturate+0x6d/0xf0
-  |  Code: 05 55 9a 15 01 01 e8 9d aa c8 ff 0f 0b c3 80 3d 45 9a 15 01 00 75 ce 48 c7 c7 00 9c 62 b3 c6 08
-  |  RSP: 0018:ffffb524c1b9bc70 EFLAGS: 00010282
-  |  RAX: 0000000000000000 RBX: ffff9e9da1f71390 RCX: 0000000000000000
-  |  RDX: ffff9e9dbbd27618 RSI: ffff9e9dbbd18798 RDI: ffff9e9dbbd18798
-  |  RBP: 0000000000000000 R08: 000000000000095f R09: 0000000000000039
-  |  R10: 0000000000000000 R11: ffffb524c1b9bb20 R12: ffff9e9da1e8c700
-  |  R13: ffffffffb25ee8b0 R14: 0000000000000000 R15: ffff9e9da1e8c700
-  |  FS:  00007f3b87d26700(0000) GS:ffff9e9dbbd00000(0000) knlGS:0000000000000000
-  |  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  |  CR2: 00007fc16909c000 CR3: 000000012df9c000 CR4: 00000000000006e0
-  |  DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-  |  DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-  |  Call Trace:
-  |   kobject_get+0x5c/0x60
-  |   cdev_get+0x2b/0x60
-  |   chrdev_open+0x55/0x220
-  |   ? cdev_put.part.3+0x20/0x20
-  |   do_dentry_open+0x13a/0x390
-  |   path_openat+0x2c8/0x1470
-  |   do_filp_open+0x93/0x100
-  |   ? selinux_file_ioctl+0x17f/0x220
-  |   do_sys_open+0x186/0x220
-  |   do_syscall_64+0x48/0x150
-  |   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-  |  RIP: 0033:0x7f3b87efcd0e
-  |  Code: 89 54 24 08 e8 a3 f4 ff ff 8b 74 24 0c 48 8b 3c 24 41 89 c0 44 8b 54 24 08 b8 01 01 00 00 89 f4
-  |  RSP: 002b:00007f3b87d259f0 EFLAGS: 00000293 ORIG_RAX: 0000000000000101
-  |  RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f3b87efcd0e
-  |  RDX: 0000000000000000 RSI: 00007f3b87d25a80 RDI: 00000000ffffff9c
-  |  RBP: 00007f3b87d25e90 R08: 0000000000000000 R09: 0000000000000000
-  |  R10: 0000000000000000 R11: 0000000000000293 R12: 00007ffe188f504e
-  |  R13: 00007ffe188f504f R14: 00007f3b87d26700 R15: 0000000000000000
-  |  ---[ end trace 24f53ca58db8180a ]---
-
-Since 'cdev_get()' can already fail to obtain a reference, simply move
-it over to use 'kobject_get_unless_zero()' instead of 'kobject_get()',
-which will cause the racing thread to return -ENXIO if the initialising
-thread fails unexpectedly.
-
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Hillf Danton <hdanton@sina.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Reported-by: syzbot+82defefbbd8527e1c2cb@syzkaller.appspotmail.com
-Signed-off-by: Will Deacon <will@kernel.org>
----
- fs/char_dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/char_dev.c b/fs/char_dev.c
-index 00dfe17871ac..c5e6eff5a381 100644
---- a/fs/char_dev.c
-+++ b/fs/char_dev.c
-@@ -352,7 +352,7 @@ static struct kobject *cdev_get(struct cdev *p)
- 
- 	if (owner && !try_module_get(owner))
- 		return NULL;
--	kobj = kobject_get(&p->kobj);
-+	kobj = kobject_get_unless_zero(&p->kobj);
- 	if (!kobj)
- 		module_put(owner);
- 	return kobj;
--- 
-2.24.1.735.g03f4e72817-goog
-
+       Arnd
