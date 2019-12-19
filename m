@@ -2,107 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7643E128843
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2019 09:43:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77A24128887
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2019 11:24:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726144AbfLUInR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 21 Dec 2019 03:43:17 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:44061 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725845AbfLUInR (ORCPT
+        id S1726144AbfLUKYj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 Dec 2019 05:24:39 -0500
+Received: from standard7.doveserver.com ([67.220.187.210]:43034 "EHLO
+        standard7.doveserver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725944AbfLUKYj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 21 Dec 2019 03:43:17 -0500
-Received: by mail-il1-f194.google.com with SMTP id z12so10016839iln.11;
-        Sat, 21 Dec 2019 00:43:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zOw1yXDHuAoD3Kc1PWQqOf8j8YrDutWX5kRyO7Mss4U=;
-        b=h2L5Hfmvy1e383vZXY/Uf95l/jjjw7B683GAwoSUYotqjNgmDAc2xOiOz9Fg5x1L+t
-         dF4kDHkoQH/8cBz9/I2Zk/J/zvL53i/sMpJDZ/7EQEw9UrcsgNx/dlVwHRLxcZAgExWG
-         wYNFyWL/aM1sBjKCLjG9nMybZbueHleyN9e2f7tboSWCX2OKLKtyOGRqxNlsY0N1iWBu
-         R0wtB3eomjuaKsX8uOxlc+CAdQ6HyRVYSrWGDlWYoRBqILJkJG/IojdWQqvqChLq/BCz
-         RKkGroylvhdoYNl7b3kqAKArBg3aoI0JMkTUnUziLXaCUF7bkvY8yly9wZGmKb8P7i1Y
-         MWwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zOw1yXDHuAoD3Kc1PWQqOf8j8YrDutWX5kRyO7Mss4U=;
-        b=sROY7dq1TQclU7ZyQjXqwSZJcWra45MDP6vm3Z076qMC9xXN2OVz0yH3JmoNcgfzfR
-         7/aEa5UC6I2DWcu6BjnEhhs5RbjYXz7AUGPkCOhqzFbP1KTkv3yO7kHVGRi62RV4AEXv
-         tw5ezeJUx+DqPzJTpqtkY9WS3gYNukrVeYLTtzRutFNrt28qV3iloDchu6DzdfMCGu0O
-         lKRAZ1xwnXXd6zF1mIL6adYguot3xUjMmXrLisTG5YawK/zlwQjCVK2iumiwEKc7j2Cs
-         y2RPUB2aGMKghcAImPuwfXDDrOE3r+pmybc02nTJBafa+lhsR11Sz/XWR/Lb5ih4B3Vx
-         bChA==
-X-Gm-Message-State: APjAAAVK4ojIRJsJ46fSjdIegwBy0pUI0uxqnanenckPRD99wET/bRJw
-        0FIYoUGBG5+gLPB4uM5q+ixrmhbBEkgJHiDc2gU=
-X-Google-Smtp-Source: APXvYqwd35DhfzZzrtc2is3XW8PsKNSv0oBL2VDDIHfgRt92VBWDck6ESuGSxoE3vMi76YY1g6Y5WYUB1BN1AC5tvwc=
-X-Received: by 2002:a92:d5c3:: with SMTP id d3mr15993083ilq.250.1576917796474;
- Sat, 21 Dec 2019 00:43:16 -0800 (PST)
+        Sat, 21 Dec 2019 05:24:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=joeblasc0.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Message-ID:Date:Subject:To:From:Reply-To:Sender:Cc:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=5nz6drlcwLkkcnrPddyhNVU4n5QUNNiisMSZ45MDcC0=; b=Q2b2llU9x+EZGQEnHlHmbceYDr
+        VFZE+MlX5kVwdm3LTw9LSvrzWU5fwYHpurd3C35TJmoZELcoYcVararbnpBRjBWlrGHGMF7mGQu8u
+        4pQx8KdWpBLz0yyZMcJdKNjCk+Ph04n+ThahEA0keBMSRyrQ1Pfdrq7rrNT+pVEOdXhvKdV1lbZi1
+        OKn7YBb7wSTgM7S9t26ro8k77b0gLIsnaMuPfHreXDTz27AE+BmWQBAjg0YzQHjzaAlhc74xiJzKy
+        +HN501YGhQvbU378aydIF0DB0wK8Pz8K24Md1NkrYUJDYV044jr7WspA/Dw83wwKXSTTkZZBkV9hZ
+        pfcnST2Q==;
+Received: from [172.107.168.105] (port=49466 helo=gmail.com)
+        by standard7.doveserver.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.92)
+        (envelope-from <info@gmail.com>)
+        id 1ihnqd-00DU6b-NN
+        for linux-fsdevel@vger.kernel.org; Thu, 19 Dec 2019 05:55:39 +0100
+Reply-To: songlile110@gmail.com
+From:   Mr Lili <info@gmail.com>
+To:     linux-fsdevel@vger.kernel.org
+Subject: hello
+Date:   18 Dec 2019 22:58:16 -0800
+Message-ID: <20191218225816.CE834EB0BDDD1BEB@gmail.com>
 MIME-Version: 1.0
-References: <20191220024936.GA380394@chrisdown.name> <20191220213052.GB7476@magnolia>
-In-Reply-To: <20191220213052.GB7476@magnolia>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sat, 21 Dec 2019 10:43:05 +0200
-Message-ID: <CAOQ4uxgoDHLnVb9=R2LpNqEFtjx=f5K8QXQnfiziBQ+jURLh=A@mail.gmail.com>
-Subject: Re: [PATCH] fs: inode: Reduce volatile inode wraparound risk when
- ino_t is 64 bit
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Chris Down <chris@chrisdown.name>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@fb.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - standard7.doveserver.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - gmail.com
+X-Get-Message-Sender-Via: standard7.doveserver.com: authenticated_id: 4thuser@joeblasc0.com
+X-Authenticated-Sender: standard7.doveserver.com: 4thuser@joeblasc0.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 11:33 PM Darrick J. Wong
-<darrick.wong@oracle.com> wrote:
->
-> On Fri, Dec 20, 2019 at 02:49:36AM +0000, Chris Down wrote:
-> > In Facebook production we are seeing heavy inode number wraparounds on
-> > tmpfs. On affected tiers, in excess of 10% of hosts show multiple files
-> > with different content and the same inode number, with some servers even
-> > having as many as 150 duplicated inode numbers with differing file
-> > content.
-> >
-> > This causes actual, tangible problems in production. For example, we
-> > have complaints from those working on remote caches that their
-> > application is reporting cache corruptions because it uses (device,
-> > inodenum) to establish the identity of a particular cache object, but
->
-> ...but you cannot delete the (dev, inum) tuple from the cache index when
-> you remove a cache object??
->
-> > because it's not unique any more, the application refuses to continue
-> > and reports cache corruption. Even worse, sometimes applications may not
-> > even detect the corruption but may continue anyway, causing phantom and
-> > hard to debug behaviour.
-> >
-> > In general, userspace applications expect that (device, inodenum) should
-> > be enough to be uniquely point to one inode, which seems fair enough.
->
-> Except that it's not.  (dev, inum, generation) uniquely points to an
-> instance of an inode from creation to the last unlink.
->
+Hello,
 
-Yes, but also:
-There should not exist two live inodes on the system with the same (dev, inum)
-The problem is that ino 1 may still be alive when wraparound happens
-and then two different inodes with ino 1 exist on same dev.
-
-Take the 'diff' utility for example, it will report that those files
-are identical
-if they have the same dev,ino,size,mtime. I suspect that 'mv' will not
-let you move one over the other, assuming they are hardlinks.
-generation is not even exposed to legacy application using stat(2).
-
-Thanks,
-Amir.
+My name is Mr.Song Lile (I work with a Bank as an account officer=20
+in the
+Treasury/Credit Control Unit) I want to solicit your attention to=20
+receive the money on my behalf.
+The purpose of my contacting you is because you live in outside=20
+Hong Kong.
+When you reply this message, I will send you the full details and=20
+more
+information about myself and the funds.
+Thank you.
+Kindest regards,
+Mr.Song Lile
+songlile110@gmail.com
