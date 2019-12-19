@@ -2,173 +2,311 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DB16125BA9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 07:55:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FC48125C03
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 08:33:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbfLSGzB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Dec 2019 01:55:01 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:45198 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbfLSGzB (ORCPT
+        id S1726536AbfLSHdh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Dec 2019 02:33:37 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:44676 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726340AbfLSHdh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Dec 2019 01:55:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1576738500; x=1608274500;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=L+ilHZYja3Uqxdg3nCQXwKyTdE3PSSxtheSKQrT27+8=;
-  b=doXKsLXUXdeOv2YontQZwTWsnedEfBYgV2NDxC/k3ZKFlNia3inVs5pV
-   RliLydKgBKad1muaQWCUrfbVdnsG+CcPMvP/WvpBJqckJlTzU+tv1lpsz
-   QsMJ8L0BrcFEgCsOPnOs9HQ2/VwqKpZ6C8C44IZEXFYk3dECiXnzMg4J3
-   cJOT04xaBoyr7xPBIdq9G/YGmL8khLUeU4l3S+jE5V8DhakaNHaBz2IJe
-   9fxvD062SGudB3R7W6GBsjTFy0ykjisRSii6PAd61d3IpjJ7ZxsV9gOOm
-   Q9G8fGp+/v6kOxiEeX3iv5y3JC1up4P2NYW/mKvfa+d09AML5BxRhrH4m
-   Q==;
-IronPort-SDR: cJcysuiOas5ZEWlPCr9ljWtWQNZ94wX0m8/1K2xOsy3wugh59lLGRosWj9Zd9Y9f/mWJ4iPtJR
- sN0x9sUvbdBQV560zlf+DaaZ1qmWXaF6HQl9+Y6DNYhHO6h32QzeWjXrWKgwtiCRFgpUR5B4PU
- 4uQjBUfbq1lN8o4b8gnsj3Z6Y8QpAWM3IYVaS2LU/CVgfAZRMoY108GogFRrN+Hl6qUZQkRd2B
- IDpgx98Tyi8GXmmDnPxqol/XrdgQkHBwdAleG1HMlSVuX6SupJazMvhLH4GuYZ+9wzs0Lxhc51
- NzM=
-X-IronPort-AV: E=Sophos;i="5.69,330,1571673600"; 
-   d="scan'208";a="127312665"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 19 Dec 2019 14:55:00 +0800
-IronPort-SDR: diTOML4Mg8aYTqVZ4ef28LUo5gzGXuxgVdvO1K/8AAlTW3T3NB0cVMdK4R+rqiT+r9Uhp85Lb0
- T5IIowAv6QAebQyMx7UsaB5hBMrcUThVo15RveUpRJUuiKPSF7kzYK7aAKygDnKyQE+2rWc2hX
- Er4eGEISWJdCcpJGpekREXuZoG9o+bn9AoLR8IHvRv990PAn27TeOBa74yGfl2IZ4yp07iHimK
- rOKDY/4taBHDQCfVXK8qlpqcyKeUhEFhIbweN3+wew1imUHLlAADDeXeFqhv6xtpWPMgJGl1QM
- FH04t0w+Q8LafxzsDw/mxT/W
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Dec 2019 22:49:00 -0800
-IronPort-SDR: Tk/Rr6/fI21CpFaZNHMbGcP56TOuiEtHBiiV+d2jhY/u5GJcxFjsOfldC91zssPm0f0Ap9ZUPU
- JXAMYkvpJ+LqUk6AP9SwcvFu6ur90et/S72rbLSJ4CV+Kn8Q2C4hGiipZO6OzWipdLUrjTuH4x
- VhFDEkQOwMShzwdUBJR/aUXbiyl0xl+e2LA7YzRRx0Hx7wTyqmqQEo1GNUnrYgu+Hf6ePz+Xv9
- I7RtfNv13F/1usiPv7+ZVOnmj5eMhMqDpULc4dfWv7QLJi8J25LsAsGqzjiB7WhsGtQBn2QyjF
- nTQ=
-WDCIronportException: Internal
-Received: from naota.dhcp.fujisawa.hgst.com ([10.149.53.115])
-  by uls-op-cesaip01.wdc.com with SMTP; 18 Dec 2019 22:54:58 -0800
-Received: (nullmailer pid 2722299 invoked by uid 1000);
-        Thu, 19 Dec 2019 06:54:57 -0000
-Date:   Thu, 19 Dec 2019 15:54:57 +0900
-From:   Naohiro Aota <naohiro.aota@wdc.com>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        Chris Mason <clm@fb.com>, Nikolay Borisov <nborisov@suse.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Hannes Reinecke <hare@suse.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 15/28] btrfs: serialize data allocation and submit IOs
-Message-ID: <20191219065457.rhd4wcycylii33c3@naota.dhcp.fujisawa.hgst.com>
-References: <20191213040915.3502922-1-naohiro.aota@wdc.com>
- <20191213040915.3502922-16-naohiro.aota@wdc.com>
- <b11ca55e-adb6-6aa7-4494-cffafedb487f@toxicpanda.com>
+        Thu, 19 Dec 2019 02:33:37 -0500
+Received: by mail-io1-f65.google.com with SMTP id b10so4713763iof.11;
+        Wed, 18 Dec 2019 23:33:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=v+Cp7OaHuneaYqyo9qjKMi8RNAyBB5sCNo+lp4GhrLI=;
+        b=IJc5Cnh9ohRP/794soBFUpf21x+1jccIDc5b3SzHmTPkr6SgXS/bm47S72j0h5gCFY
+         fnqSLjvOa8zTLGfk5i7Fi3OH+v+Fh8ZYkQbd17JRcmjr2cyWqISjRMQmZfUK+PsKl9Ug
+         zKVJ/0fh+0hvUL2jSRW/9ra/KI7U/eBDQVFl2Ej5npbyqnRyDrnbS33hs4inZ3dq06Vn
+         bwIT8cxR5+u11PbLvH+1j2dACQ7i6OF5mpACWh5LoHnDoFnkydWUeCM0C5f3FEw6ZaVU
+         QvqdD00a4W1kbm7pBJnVoJaZxT6L12MUjHd56AH0C6Z/T+1sQL6B+h+a0cHmJRHpntWy
+         yrtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=v+Cp7OaHuneaYqyo9qjKMi8RNAyBB5sCNo+lp4GhrLI=;
+        b=j2Nk7blkpTEW3oD2UBAxXmP3MVvjPmieU3ngAKQqO7EoWyVB73RsvV/M9bEA8SCpLV
+         jtvTfC+IiZmF4NHBWwQzyIqU74i2o22B0ePNYBx87BnVE1iUDnjji1Kp2dVnCwNXYtB3
+         Rwb6ucsGT1ZuO6jPzdI8r+rqnOaZXMB60UlFbF+W058W+wJWOjUSxEzcU8yKqkTAW75A
+         opnaQ7QWvVnhJhL0ic8kGuc8rpxFNDrDkM/0NRR/mNpDV4/sbjNcbtwSQIT9kC3/YWXl
+         mmvjjErlcghkok1ajXzYqhE/lV7sfHjsJ6s/ZP1oMk+UNxfb5w9r/W0MRuRVDYPFPdVg
+         UToQ==
+X-Gm-Message-State: APjAAAUideyyiPJuqmmeMCS9UMXNfwpczgTMXFMNApyiPZONCpcezVdq
+        r9dvfYod7vJAsEKSQopoHlJqohatjQkiMgCxEbCbrk6M
+X-Google-Smtp-Source: APXvYqzt45Zj++vnp5WoIPPq28EvEw3suwMWEQzwt7LObleV8o63vGoTKDdpI0o6n9MOYLksli7ljg7C/keLjSw4loc=
+X-Received: by 2002:a02:8817:: with SMTP id r23mr6077382jai.120.1576740816454;
+ Wed, 18 Dec 2019 23:33:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <b11ca55e-adb6-6aa7-4494-cffafedb487f@toxicpanda.com>
+References: <CADKPpc2RuncyN+ZONkwBqtW7iBb5ep_3yQN7PKe7ASn8DpNvBw@mail.gmail.com>
+ <CAOQ4uxiKqEq9ts4fEq_husQJpus29afVBMq8P1tkeQT-58RBFg@mail.gmail.com>
+ <CADKPpc33UGcuRB9p64QoF8g88emqNQB=Z03f+OnK4MiCoeVZpg@mail.gmail.com>
+ <20191204173455.GJ8206@quack2.suse.cz> <CAOQ4uxjda6iQ1D0QEVB18TcrttVpd7uac++WX0xAyLvxz0x7Ew@mail.gmail.com>
+ <20191204190206.GA8331@bombadil.infradead.org> <CAOQ4uxiZWKCUKcpBt-bHOcnHoFAq+nghWmf94rJu=3CTc5VhRA@mail.gmail.com>
+ <20191211100604.GL1551@quack2.suse.cz> <CAOQ4uxij13z0AazCm7AzrXOSz_eYBSFhs0mo6eZFW=57wOtwew@mail.gmail.com>
+ <CAOQ4uxiKzom5uBNbBpZTNCT0XLOrcHmOwYy=3-V-Qcex1mhszw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxiKzom5uBNbBpZTNCT0XLOrcHmOwYy=3-V-Qcex1mhszw@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 19 Dec 2019 09:33:24 +0200
+Message-ID: <CAOQ4uxgBcLPGxGVddjFsfWJvcNH4rT+GrN6-YhH8cz5K-q5z2g@mail.gmail.com>
+Subject: Re: File monitor problem
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Mo Re Ra <more7.rev@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Wez Furlong <wez@fb.com>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 02:49:44PM -0500, Josef Bacik wrote:
->On 12/12/19 11:09 PM, Naohiro Aota wrote:
->>To preserve sequential write pattern on the drives, we must serialize
->>allocation and submit_bio. This commit add per-block group mutex
->>"zone_io_lock" and find_free_extent_zoned() hold the lock. The lock is kept
->>even after returning from find_free_extent(). It is released when submiting
->>IOs corresponding to the allocation is completed.
->>
->>Implementing such behavior under __extent_writepage_io() is almost
->>impossible because once pages are unlocked we are not sure when submiting
->>IOs for an allocated region is finished or not. Instead, this commit add
->>run_delalloc_hmzoned() to write out non-compressed data IOs at once using
->>extent_write_locked_rage(). After the write, we can call
->>btrfs_hmzoned_data_io_unlock() to unlock the block group for new
->>allocation.
->>
->>Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+On Mon, Dec 16, 2019 at 5:00 PM Amir Goldstein <amir73il@gmail.com> wrote:
 >
->Have you actually tested these patches with lock debugging on?  The 
->submit_compressed_extents stuff is async, so the unlocker owner will 
->not be the lock owner, and that'll make all sorts of things blow up.  
->This is just straight up broken.
+> [cc: linux-api]
 
-Yes, I have ran xfstests on this patch series with lockdeps and
-KASAN. There was no problem with that.
+CC for real this time.
+Leaving entire message for people that join late.
 
-For non-compressed writes, both allocation and submit is done in
-run_delalloc_zoned(). Allocation is done in cow_file_range() and
-submit is done in extent_write_locked_range(), so both are in the same
-context, so both locking and unlocking are done by the same execution
-context.
-
-For compressed writes, again, allocation/lock is done under
-cow_file_range() and submit is done in extent_write_locked_range() and
-unlocked all in submit_compressed_extents() (this is called after
-compression), so they are all in the same context and the lock owner
-does the unlock.
-
->I would really rather see a hmzoned block scheduler that just doesn't 
->submit the bio's until they are aligned with the WP, that way this 
->intellligence doesn't have to be dealt with at the file system layer.  
->I get allocating in line with the WP, but this whole forcing us to 
->allocate and submit the bio in lock step is just nuts, and broken in 
->your subsequent patches.  This whole approach needs to be reworked.  
->Thanks,
 >
->Josef
+> On Wed, Dec 11, 2019 at 3:58 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > On Wed, Dec 11, 2019 at 12:06 PM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > On Wed 04-12-19 22:27:31, Amir Goldstein wrote:
+> > [...]
+> > > > The way to frame this correctly IMO is that fsnotify events let application
+> > > > know that "something has changed", without any ordering guaranty
+> > > > beyond "sometime before the event was read".
+> > > >
+> > > > So far, that "something" can be a file (by fd), an inode (by fid),
+> > > > more specifically a directory inode (by fid) where in an entry has
+> > > > changed.
+> > > >
+> > > > Adding filename info extends that concept to "something has changed
+> > > > in the namespace at" (by parent fid+name).
+> > > > All it means is that application should pay attention to that part of
+> > > > the namespace and perform a lookup to find out what has changed.
+> > > >
+> > > > Maybe the way to mitigate wrong assumptions about ordering and
+> > > > existence of the filename in the namespace is to omit the event type
+> > > > for "filename events", for example: { FAN_CHANGE, pfid, name }.
+> > >
+> > > So this event would effectively mean: In directory pfid, some filename
+> > > event has happened with name "name" - i.e. "name" was created (could mean
+> > > also mkdir), deleted, moved. Am I right?
+> >
+> > Exactly.
+> >
+> > > And the application would then
+> > > open_by_handle(2) + open_at(2) + fstat(2) the object pointed to by
+> >
+> > open_by_handle(2) + fstatat(2) to be exact.
+> >
+> > > (pfid, name) pair and copy whatever it finds to the other end (or delete on
+> > > the other end in case of ENOENT)?
+> >
+> > Basically, yes.
+> > Although a modern sync tool may also keep some local map of
+> > remote name -> local fid, to detect a local rename and try to perform a
+> > remote rename.
+> >
+> > >
+> > > After some thought, yes, I think this is difficult to misuse (or infer some
+> > > false guarantees out of it). As far as I was thinking it also seems good
+> > > enough to implement more efficient syncing of directories.
+> >
+> > Great, so I will work on the patches.
+> >
+>
+> Hi Jan,
+>
+> I have something working.
+>
+> Patches:
+> https://github.com/amir73il/linux/commits/fanotify_name
+>
+> Simple test:
+> https://github.com/amir73il/ltp/commits/fanotify_name
+>
+> I will post the patches after I have a working demo, but in the mean while here
+> is the gist of the API from the commit log in case you or anyone has comments
+> on the API.
+>
+> Note that in the new event flavor, event mask is given as input
+> (e.g. FAN_CREATE) to filter the type of reported events, but
+> the event types are hidden when event is reported.
+>
+> Besides the dirent event types, events "on child" (i.e. MODIFY) can also be
+> reported with name to a directory watcher.
+>
+> For now, "on child" events cannot be requested for filesystem/mount
+> watch, but I think we should consider this possibility so I added
+> a check to return EINVAL if this combination is attempted.
+>
 
-We tried this approach by modifying mq-deadline to wait if the first
-queued request is not aligned at the write pointer of a zone. However,
-running btrfs without the allocate+submit lock with this modified IO
-scheduler did not work well at all. With write intensive workloads, we
-observed that a very long wait time was very often necessary to get a
-fully sequential stream of requests starting at the write pointer of a
-zone. The wait time we observed was sometimes in larger than 60 seconds,
-at which point we gave up.
+Hi Jan,
 
-While we did not extensively dig into the fundamental root cause,
-these potentially long wait times can come from a large number of
-reasons: page cache writeback behavior, kernel process scheduling,
-device IO congestion and writeback throttling, sync, transaction
-commit of btrfs, and cgroup use could make everything even worse. In
-the worst case scenario, a number of out-of-ordered requests could get
-stuck in the IO scheduler, preventing forward progress in the case of
-a memory reclaim writeback, causing the OOM killer to start happily
-killing application processes. Furthermore, IO error handling becomes
-a nightmare as the block layer scheduler would need to issue report
-zones commands to re-sync the zone wp in case of write error. And that
-is also in addition to having to track other zone commands that change
-a zone wp such as reset zone and finish zone.
+Thinking out loud again.
 
-Considering all this, handling the sequential write constraint at the
-file system layer by ensuring that write BIOs are issued in the correct
-order starting from a zone WP is far simpler and removes dependencies on
-other features such as cgroup, congestion control and other throttling
-mechanisms. The IO scheduler can always dispatch to the device the
-requests it received without any waiting time, ensuring forward progress.
+Assuming the concept of FAN_REPORT_FID_NAME as described in the
+commit messages below is acceptable, the way to deal with dirent events
+is clear as well as the way to deal with events "on child" for a watched dir
+and those are what the branch fanotify_name implemented.
 
-The mq-deadline IO scheduler supports not only regular block devices but
-also zoned block devices and it is the default scheduler for them, and
-other schedulers that are not zone compliant cannot be selected (one
-cannot change to kyber nor bfq). This ensure that the default system
-behavior will be correct as long as the user (the FS) respects the
-sequential write rule.
+I've spend the last few days trying to figure out the "best" way to handle the
+rest of the events. And by "best" I mean, least to explain in man page, while
+providing the needed functionality to users.
 
-The previous approach I proposed using a btrfs request reordering stage
-was indeed very invasive, and similarly the block layer scheduler
-changes, could cause problems with cgroups etc. The new approach of this
-path using locking to have atomic allocate+bio issuing results in
-per-zone sequential write patterns, no matter what happens around it. It
-is less invasive and rely on the sequential allocation of blocks for the
-ordering of write IOs, so there is no explicit reordering, so no
-additional overhead. f2fs implementation uses a similar approach since
-kernel 4.10 and has proven to be very solid.
+This is what I got to so far. Patches are shaping up on branch
+fanotify_name-wip same branch name for ltp tests:
 
-In light of these arguments and explanation, do you still think the
-allocate zone locking approach is still not acceptable ?
+For a group initialized with FAN_REPORT_FID_NAME:
+1. Events report mask with only FAN_WITH_NAME flag
+2. Reported name follows fid but may be empty in some cases
+3. Dirent events (create/delete/move) report a non-empty name
+4. Events "on child" on watched dir report a non-empty name
+5. Events "on self" (delete_self/move_self) report an empty name
+6. Events "possible on child" (open/access/modify/close/attrib) are
+    reported only in their "on child" flavor when set on a sb/mount mark
+7. The flag FAN_EVENT_ON_CHILD on a sb/mount mark is ignored
+    (as in current upstream kernel and man page), but the events are
+    reported with non-empty name and parent dir fid, same as in the
+    case where all directories under sb/mount have been marked
+    with FAN_EVENT_ON_CHILD (a.k.a slow recursive watch)
+
+There are some open questions regarding the fine details of items 5-7:
+- Should "self" events with empty name on dir be reported?
+- Should "self" events with empty name on non-dir be reported?
+- Should open/access/attrib on watched dir itself report an
+  event with empty name?
+- Should open/access/attrib on root sb/mount root dir report an
+  event with empty name?
+- Should open/access/modify/attrib on non-dir report an event
+  with empty name?
+
+For full disclosure, in the out-of-tree patches [1] we use in CTERA
+the answer to all the open questions above is:
+"Yes, but the filesystem monitor is only using the self events on dirs".
+
+The problem with this approach is that there is currently no way
+for users to request certain events ONLY_ONDIR. A typical filesystem
+monitor is only interested in self events on directories, but requesting
+self events will fill the queue with unneeded self events on files.
+
+Another valid answer to all these questions could be:
+"No, because user can already get those events by opening another
+group with FAN_REPORT_FID".
+
+The problem with this approach is that it is harder to document (?)
+and harder for users to use (?).
+
+Therefore, I am leaning toward this middle ground solution:
+
+8. If a non-empty name is reported, fid is identifying a directory
+9. Events on non-directory with empty name are not reported.
+    user may use another group with FAN_REPORT_FID to get
+    those events
+
+I could use some guidance here.
+
+Thanks,
+Amir.
+
+[1] https://github.com/amir73il/linux/commits/fanotify_filename
+
+>
+> commit 91e0af27ac329f279167e74761fb5303ebbc1c08
+> Author: Amir Goldstein <amir73il@gmail.com>
+> Date:   Mon Dec 16 08:39:21 2019 +0200
+>
+>     fanotify: report name info with FAN_REPORT_FID_NAME
+>
+>     With init flags FAN_REPORT_FID_NAME, report events with name in variable
+>     length fanotify_event_info record similar to how fid's are reported.
+>     When events are reported with name, the reported fid identifies the
+>     directory and the name follows the fid. The info record type for this
+>     event info is FAN_EVENT_INFO_TYPE_FID_NAME.
+>
+>     There are several ways that an application can use this information:
+>
+>     1. When watching a single directory, the name is always relative to
+>     the watched directory, so application need to fstatat(2) the name
+>     relative to the watched directory.
+>
+>     2. When watching a set of directories, the application could keep a map
+>     of dirfd for all watched directories and hash the map by fid obtained
+>     with name_to_handle_at(2).  When getting a name event, the fid in the
+>     event info could be used to lookup the base dirfd in the map and then
+>     call fstatat(2) with that dirfd.
+>
+>     3. When watching a filesystem (FAN_MARK_FILESYSTEM) or a large set of
+>     directories, the application could use open_by_handle_at(2) with the fid
+>     in event info to obtain dirfd for the directory where event happened and
+>     call fstatat(2) with this dirfd.
+>
+>     The last option scales better for a large number of watched directories.
+>     The first two options may be available in the future also for non
+>     privileged fanotify watchers, because open_by_handle_at(2) requires
+>     the CAP_DAC_READ_SEARCH capability.
+>
+>     Legacy inotify events are reported with name and event mask (e.g. "foo",
+>     FAN_CREATE | FAN_ONDIR).  That can lead users to the conclusion that
+>     there is *currently* an entry "foo" that is a sub-directory, when in fact
+>     "foo" may be negative or non-dir by the time user gets the event.
+>
+>     To make it clear that the current state of the named entry is unknown,
+>     the new fanotify event intentionally hides this information and reports
+>     only the flag FAN_WITH_NAME in event mask.  This should make it harder
+>     for users to make wrong assumptions and write buggy applications.
+>
+>     We reserve the combination of FAN_EVENT_ON_CHILD on a filesystem/mount
+>     mark and FAN_REPORT_NAME group for future use, so for now this
+>     combination is invalid.
+>
+>     Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+>
+> commit 76a509dbc06fd58ec6636484f87896044cd99022
+> Author: Amir Goldstein <amir73il@gmail.com>
+> Date:   Fri Dec 13 11:58:02 2019 +0200
+>
+>     fanotify: implement basic FAN_REPORT_FID_NAME logic
+>
+>     Dirent events will be reported in one of two flavors depending on
+>     fanotify init flags:
+>
+>     1. Dir fid info + mask that includes the specific event types and
+>        optional FAN_ONDIR flag.
+>     2. Dir fid info + name + mask that includes only FAN_WITH_NAME flag.
+>
+>     To request the second event flavor, user will need to set the
+>     FAN_REPORT_FID_NAME flags in fanotify_init().
+>
+>     The first flavor is already supported since kernel v5.1 and is
+>     intended to be used for watching directories in "batch mode" - user
+>     is notified when directory is changed and re-scans the directory
+>     content in response.  This event flavor is stored more compactly in
+>     event queue, so it is optimal for workloads with frequent directory
+>     changes (e.g. many files created/deleted).
+>
+>     The second event flavor is intended to be used for watching large
+>     directories, where the cost of re-scan of the directory on every change
+>     is considered too high.  The watcher getting the event with the directory
+>     fid and entry name is expected to call fstatat(2) to query the content of
+>     the entry after the change.
+>
+>     Events "on child" will behave similarly to dirent events, with a small
+>     difference - the first event flavor without name reports the child fid.
+>     The second flavor with name info reports the parent fid, because the
+>     name is relative to the parent directory.
+>
+>     At the moment, event name info reporting is not implemented, so the
+>     FAN_REPORT_NAME flag is not yet valid as input to fanotify_init().
+>
+>     Signed-off-by: Amir Goldstein <amir73il@gmail.com>
