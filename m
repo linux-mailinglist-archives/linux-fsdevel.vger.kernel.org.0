@@ -2,110 +2,226 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DB0D125A63
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 06:00:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ABA3125ABF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 06:28:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726155AbfLSFAY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Dec 2019 00:00:24 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45142 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725987AbfLSFAY (ORCPT
+        id S1726909AbfLSF1z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Dec 2019 00:27:55 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:33483 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726905AbfLSF1z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Dec 2019 00:00:24 -0500
-Received: by mail-pg1-f194.google.com with SMTP id b9so2440654pgk.12;
-        Wed, 18 Dec 2019 21:00:24 -0800 (PST)
+        Thu, 19 Dec 2019 00:27:55 -0500
+Received: by mail-ot1-f66.google.com with SMTP id b18so5640232otp.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Dec 2019 21:27:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=YiNT2OwN1PC5xiClJXvmIxtU8FKdWcajydHQPOKowMQ=;
+        b=dqorifJ4f+v2Gylbu8oAiFDcKa1F8skIpz6V3IgWOqRB33n7U59EJyePbqvuTj6Vy4
+         uOPeG7Kob1GhJUtITzia2N5iO6b+FgQt0PfBLv1SShdXtnPTkzPXC4wv8NlfHewxSVCr
+         BWaS5xgO+C3htMgxe5c7ubvEmgYEe4TsZt+Zn5XRlxBQhxFahwlW/Mo0S+TgOXqQ/47k
+         mtfOMZwImte59GAX6ig1VEn2mK8lUBxmhPPLTpVmIFFbH4EVvah9nw+1Oh0aFp9cBJiW
+         sz8ohgGLCmoNne0NYqks6igeYI3pnrq7++p4oBryH4HFQcsawtXKY12nyEVckq37Q8q+
+         63BQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=g7u7M8qJMOVgBJaM2MBNP0fTnIjXWTjo4K/cUGZgSpY=;
-        b=NqYENaakp/NKOOIYSemTf45CUqxRvV3wMQKIvqvAETLEG2u/R5QZ8N29E/JpraFV6q
-         nWZLVatHEJPfcayh37qfmSxiu/Fq765hfHx0p/hG6tbTX+Ij//0pvf7qlqZZk3HTPSuz
-         eyge4Z1DnlI227pG0D1AFQ2RK3gnMKQDPX3lWvsSgzDD+gJyagRTALIqq3Cp8nCIStEo
-         CZpCJ+rgX66C4GxnnG/uhdd5thf1VOCVChMK1MbAcbdnnJ3pf0RgGN+0OIZzFU6wAI+r
-         LKF9nQW8U/EYAXHuv9vf44MOBKLv5R3LUIpD6WgUMsrHg1L2X6F+co9/sEu6tvJ0oabd
-         7j2Q==
-X-Gm-Message-State: APjAAAXF/OnZc3hY2ZlVLfDsou5y3Lo6sTio82oE9Xmop1K+qDwIq8NA
-        svPJ8JUJshbgCLZd33xzzkQ=
-X-Google-Smtp-Source: APXvYqzrchZp4IVjqJtkB+T3s1vmskPzQuKNoxzKqezHXHEJ0b+KslSmNNEJF62Swk4LR1ZMRP7c9w==
-X-Received: by 2002:a63:1a1c:: with SMTP id a28mr7364030pga.374.1576731623735;
-        Wed, 18 Dec 2019 21:00:23 -0800 (PST)
-Received: from ?IPv6:2601:647:4000:1108:5490:c75a:2158:20b3? ([2601:647:4000:1108:5490:c75a:2158:20b3])
-        by smtp.gmail.com with ESMTPSA id u20sm5030655pgf.29.2019.12.18.21.00.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Dec 2019 21:00:22 -0800 (PST)
-Subject: Re: kernel BUG at fs/buffer.c:LINE!
-To:     jaegeuk@kernel.org
-References: <0000000000009716290599fcd496@google.com>
-Cc:     axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-From:   Bart Van Assche <bvanassche@acm.org>
-Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
- mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
- LQOrCfRcK8e/sIs2Y2D3Lg/SL7qqbMehGEYcJptu6mKkywBfoYbtBkVoJ/jQsi2H0vBiiCOy
- fmxMHIPcYxaJdXxrOG2UO4B60Y/BzE6OrPDT44w4cZA9DH5xialliWU447Bts8TJNa3lZKS1
- AvW1ZklbvJfAJJAwzDih35LxU2fcWbmhPa7EO2DCv/LM1B10GBB/oQB5kvlq4aA2PSIWkqz4
- 3SI5kCPSsygD6wKnbRsvNn2mIACva6VHdm62A7xel5dJRfpQjXj2snd1F/YNoNc66UUTABEB
- AAG0JEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPokBOQQTAQIAIwUCVI67
- igIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFcPTXFzhAJ8QkH/1AdXblKL65M
- Y1Zk1bYKnkAb4a98LxCPm/pJBilvci6boefwlBDZ2NZuuYWYgyrehMB5H+q+Kq4P0IBbTqTa
- jTPAANn62A6jwJ0FnCn6YaM9TZQjM1F7LoDX3v+oAkaoXuq0dQ4hnxQNu792bi6QyVdZUvKc
- macVFVgfK9n04mL7RzjO3f+X4midKt/s+G+IPr4DGlrq+WH27eDbpUR3aYRk8EgbgGKvQFdD
- CEBFJi+5ZKOArmJVBSk21RHDpqyz6Vit3rjep7c1SN8s7NhVi9cjkKmMDM7KYhXkWc10lKx2
- RTkFI30rkDm4U+JpdAd2+tP3tjGf9AyGGinpzE2XY1K5AQ0EVI67igEIAKiSyd0nECrgz+H5
- PcFDGYQpGDMTl8MOPCKw/F3diXPuj2eql4xSbAdbUCJzk2ETif5s3twT2ER8cUTEVOaCEUY3
- eOiaFgQ+nGLx4BXqqGewikPJCe+UBjFnH1m2/IFn4T9jPZkV8xlkKmDUqMK5EV9n3eQLkn5g
- lco+FepTtmbkSCCjd91EfThVbNYpVQ5ZjdBCXN66CKyJDMJ85HVr5rmXG/nqriTh6cv1l1Js
- T7AFvvPjUPknS6d+BETMhTkbGzoyS+sywEsQAgA+BMCxBH4LvUmHYhpS+W6CiZ3ZMxjO8Hgc
- ++w1mLeRUvda3i4/U8wDT3SWuHcB3DWlcppECLkAEQEAAYkBHwQYAQIACQUCVI67igIbDAAK
- CRBxXD01xc4QCZ4dB/0QrnEasxjM0PGeXK5hcZMT9Eo998alUfn5XU0RQDYdwp6/kMEXMdmT
- oH0F0xB3SQ8WVSXA9rrc4EBvZruWQ+5/zjVrhhfUAx12CzL4oQ9Ro2k45daYaonKTANYG22y
- //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
- mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
- goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
-Message-ID: <31033055-c245-4eda-2814-3fd8b0d59cb9@acm.org>
-Date:   Wed, 18 Dec 2019 21:00:21 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=YiNT2OwN1PC5xiClJXvmIxtU8FKdWcajydHQPOKowMQ=;
+        b=WNZYXBT8bOQZ8WWlVb98zQsDm3suly9CBWbpmdbumGnvtLn4XyCIA1kT+M0gFaBMsg
+         6HHpdchbFGP4O8Fc4Jj9JLsk+rE0yLU3zSH1AcvLbq4TYnTO1T6fmHmeAYgxSrfDBHm6
+         WSK+GmvGj0dHAdBIsyQApKp2jkM9HtbXY/5adRzWiIwnfODeeZvb+JSRaNFq9IIPQuFF
+         IacYSM1QJME/nZ2bcPj38LJ9yFvxsLGdG7cJ8Cu9CtXSJdccNOqVIDHpAy1XTJ6ak4QM
+         PcGbdZKOXqlrQGwV5aY2qp37wmblNQGXJpdWOo8Hc94dVpQVTNla+UWhFict65EGDfC0
+         6hjg==
+X-Gm-Message-State: APjAAAW+keORpSj+vCy8O6fB3u+Aw+g44NozqFXgf5IGIhpHm1Q5Skxv
+        3ikUiId04bdIfQF9nLj08N3Lwn2J7DEZcODacNrfTQ==
+X-Google-Smtp-Source: APXvYqzIho60C4tgIgH4FPSEG3bP2Gra7VUCaG88r8S6eX3efYPsOK7esN+4WGhr8L+TiHfEgJwBcHps0ms7QGyGe6Y=
+X-Received: by 2002:a05:6830:1744:: with SMTP id 4mr6583360otz.71.1576733274234;
+ Wed, 18 Dec 2019 21:27:54 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <0000000000009716290599fcd496@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20191216222537.491123-1-jhubbard@nvidia.com> <20191216222537.491123-5-jhubbard@nvidia.com>
+In-Reply-To: <20191216222537.491123-5-jhubbard@nvidia.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 18 Dec 2019 21:27:43 -0800
+Message-ID: <CAPcyv4hQBMxYMurxG=Vwh0=FKWoT3z-Kf=dqES1-icRV5bLwKg@mail.gmail.com>
+Subject: Re: [PATCH v11 04/25] mm: devmap: refactor 1-based refcounting for
+ ZONE_DEVICE pages
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, KVM list <kvm@vger.kernel.org>,
+        linux-block@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019-12-18 08:21, syzbot wrote:
-> syzbot has bisected this bug to:
-> 
-> commit 5db470e229e22b7eda6e23b5566e532c96fb5bc3
-> Author: Jaegeuk Kim <jaegeuk@kernel.org>
-> Date:   Thu Jan 10 03:17:14 2019 +0000
-> 
->     loop: drop caches if offset or block_size are changed
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13f3ca8ee00000
-> start commit:   2187f215 Merge tag 'for-5.5-rc2-tag' of
-> git://git.kernel.o..
-> git tree:       upstream
-> final crash:    https://syzkaller.appspot.com/x/report.txt?x=100bca8ee00000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17f3ca8ee00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=dcf10bf83926432a
-> dashboard link:
-> https://syzkaller.appspot.com/bug?extid=cfed5b56649bddf80d6e
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1171ba8ee00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=107440aee00000
+On Mon, Dec 16, 2019 at 2:26 PM John Hubbard <jhubbard@nvidia.com> wrote:
+>
+> An upcoming patch changes and complicates the refcounting and
+> especially the "put page" aspects of it. In order to keep
+> everything clean, refactor the devmap page release routines:
+>
+> * Rename put_devmap_managed_page() to page_is_devmap_managed(),
+>   and limit the functionality to "read only": return a bool,
+>   with no side effects.
+>
+> * Add a new routine, put_devmap_managed_page(), to handle checking
+>   what kind of page it is, and what kind of refcount handling it
+>   requires.
+>
+> * Rename __put_devmap_managed_page() to free_devmap_managed_page(),
+>   and limit the functionality to unconditionally freeing a devmap
+>   page.
+>
+> This is originally based on a separate patch by Ira Weiny, which
+> applied to an early version of the put_user_page() experiments.
+> Since then, J=C3=A9r=C3=B4me Glisse suggested the refactoring described a=
+bove.
+>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Suggested-by: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+>  include/linux/mm.h | 17 +++++++++++++----
+>  mm/memremap.c      | 16 ++--------------
+>  mm/swap.c          | 24 ++++++++++++++++++++++++
+>  3 files changed, 39 insertions(+), 18 deletions(-)
+>
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index c97ea3b694e6..77a4df06c8a7 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -952,9 +952,10 @@ static inline bool is_zone_device_page(const struct =
+page *page)
+>  #endif
+>
+>  #ifdef CONFIG_DEV_PAGEMAP_OPS
+> -void __put_devmap_managed_page(struct page *page);
+> +void free_devmap_managed_page(struct page *page);
+>  DECLARE_STATIC_KEY_FALSE(devmap_managed_key);
+> -static inline bool put_devmap_managed_page(struct page *page)
+> +
+> +static inline bool page_is_devmap_managed(struct page *page)
+>  {
+>         if (!static_branch_unlikely(&devmap_managed_key))
+>                 return false;
+> @@ -963,7 +964,6 @@ static inline bool put_devmap_managed_page(struct pag=
+e *page)
+>         switch (page->pgmap->type) {
+>         case MEMORY_DEVICE_PRIVATE:
+>         case MEMORY_DEVICE_FS_DAX:
+> -               __put_devmap_managed_page(page);
+>                 return true;
+>         default:
+>                 break;
+> @@ -971,7 +971,14 @@ static inline bool put_devmap_managed_page(struct pa=
+ge *page)
+>         return false;
+>  }
+>
+> +bool put_devmap_managed_page(struct page *page);
+> +
+>  #else /* CONFIG_DEV_PAGEMAP_OPS */
+> +static inline bool page_is_devmap_managed(struct page *page)
+> +{
+> +       return false;
+> +}
+> +
+>  static inline bool put_devmap_managed_page(struct page *page)
+>  {
+>         return false;
+> @@ -1028,8 +1035,10 @@ static inline void put_page(struct page *page)
+>          * need to inform the device driver through callback. See
+>          * include/linux/memremap.h and HMM for details.
+>          */
+> -       if (put_devmap_managed_page(page))
+> +       if (page_is_devmap_managed(page)) {
+> +               put_devmap_managed_page(page);
+>                 return;
+> +       }
+>
+>         if (put_page_testzero(page))
+>                 __put_page(page);
+> diff --git a/mm/memremap.c b/mm/memremap.c
+> index e899fa876a62..2ba773859031 100644
+> --- a/mm/memremap.c
+> +++ b/mm/memremap.c
+> @@ -411,20 +411,8 @@ struct dev_pagemap *get_dev_pagemap(unsigned long pf=
+n,
+>  EXPORT_SYMBOL_GPL(get_dev_pagemap);
+>
+>  #ifdef CONFIG_DEV_PAGEMAP_OPS
+> -void __put_devmap_managed_page(struct page *page)
+> +void free_devmap_managed_page(struct page *page)
+>  {
+> -       int count =3D page_ref_dec_return(page);
+> -
+> -       /* still busy */
+> -       if (count > 1)
+> -               return;
+> -
+> -       /* only triggered by the dev_pagemap shutdown path */
+> -       if (count =3D=3D 0) {
+> -               __put_page(page);
+> -               return;
+> -       }
+> -
+>         /* notify page idle for dax */
+>         if (!is_device_private_page(page)) {
+>                 wake_up_var(&page->_refcount);
+> @@ -461,5 +449,5 @@ void __put_devmap_managed_page(struct page *page)
+>         page->mapping =3D NULL;
+>         page->pgmap->ops->page_free(page);
+>  }
+> -EXPORT_SYMBOL(__put_devmap_managed_page);
+> +EXPORT_SYMBOL(free_devmap_managed_page);
 
-Hi Jaegeuk,
+This patch does not have a module consumer for
+free_devmap_managed_page(), so the export should move to the patch
+that needs the new export.
 
-Since syzbot has identified a reproducer I think that it's easy to test
-whether your new patch fixes what syzbot discovered. Have you already
-had the chance to test this?
-
-Thanks,
-
-Bart.
+Also the only reason that put_devmap_managed_page() is EXPORT_SYMBOL
+instead of EXPORT_SYMBOL_GPL is that there was no practical way to
+hide the devmap details from evey module in the kernel that did
+put_page(). I would expect free_devmap_managed_page() to
+EXPORT_SYMBOL_GPL if it is not inlined into an existing exported
+static inline api.
