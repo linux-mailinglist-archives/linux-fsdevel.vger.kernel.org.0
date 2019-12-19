@@ -2,136 +2,230 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1909F125B04
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 06:52:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92DA1125AF0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 06:50:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726300AbfLSFwA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Dec 2019 00:52:00 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:8462 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725821AbfLSFv7 (ORCPT
+        id S1726622AbfLSFuV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Dec 2019 00:50:21 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:54237 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726338AbfLSFuV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Dec 2019 00:51:59 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dfb0fd60001>; Wed, 18 Dec 2019 21:51:18 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 18 Dec 2019 21:51:48 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 18 Dec 2019 21:51:48 -0800
-Received: from [10.2.165.11] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 19 Dec
- 2019 05:51:47 +0000
-Subject: Re: [PATCH v11 04/25] mm: devmap: refactor 1-based refcounting for
- ZONE_DEVICE pages
-To:     Dan Williams <dan.j.williams@intel.com>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, KVM list <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>,
-        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-References: <20191216222537.491123-1-jhubbard@nvidia.com>
- <20191216222537.491123-5-jhubbard@nvidia.com>
- <CAPcyv4hQBMxYMurxG=Vwh0=FKWoT3z-Kf=dqES1-icRV5bLwKg@mail.gmail.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <d0a99e75-0175-0f31-f176-8c37c18a4108@nvidia.com>
-Date:   Wed, 18 Dec 2019 21:48:57 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
-MIME-Version: 1.0
-In-Reply-To: <CAPcyv4hQBMxYMurxG=Vwh0=FKWoT3z-Kf=dqES1-icRV5bLwKg@mail.gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
+        Thu, 19 Dec 2019 00:50:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1576734622; x=1608270622;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=GSbrsWDTBXgHv3L5mAv4ZzvX+qsh5gMKdqmsq6Kw2gs=;
+  b=D8DXLk/exUy2cOv46NoOgm3NId9Onj5wDG+uWYSrGQ6odqKYGB2LUOr7
+   K4080cRuxxJJnMul6/vriJ6PStzjalLihQtLplKcTV/y6tlMsxKrvTqEy
+   oqJYGaopxnJQz96/7zleDY6OIJEIEzCARsHcobfmYrtFzho3YXHHIZovo
+   VANV9bI0nGKXwts+MhR3+0feaSCexIVhmityDhx9Sv/BxIp0rgUHOGL/H
+   CmHnKQMK/jeUxI+DgK58KMbf/Ekxn2reqAh6KSHK4UDSk4MeyIOxooTcu
+   2nvzp2nHFG+QChksq2LO8niUTwpb6Hi2QRZNEyb5rh2frAGkgnpTAA9vN
+   A==;
+IronPort-SDR: pl8jH+D7IjC8IEupgG3gTKHC/ULEzq1wb/aF+3Orm7DMhtzoNJeXpA9b5S1bwQiJvSPE9m0NE6
+ qTJxeS+y+rIepVt25BigOTYx1eybaRY5/ZkM3t8/pm4drai4kINQtJQcGv0HQhC0F0fLGbfnnk
+ oHxP1Uq19j9A0XXkQJe6QzSpgjiGH0Jfsx/+j1/HT30H7FkRdAZaIfyMoZz1fRXpeEWghneyhE
+ pklqpcAVNoir0y8fM07vDATa22i2BneVOSZ7KFs9/u6Z5cBwfdhIvyFYdMj/po7iiSOsQAfBkO
+ C/s=
+X-IronPort-AV: E=Sophos;i="5.69,330,1571673600"; 
+   d="scan'208";a="227287347"
+Received: from mail-bn7nam10lp2104.outbound.protection.outlook.com (HELO NAM10-BN7-obe.outbound.protection.outlook.com) ([104.47.70.104])
+  by ob1.hgst.iphmx.com with ESMTP; 19 Dec 2019 13:50:18 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=C7Gwy03+7HYqeulaUjJhPbMdmxSjxQGLF4ZZTIp4tWtaUG6061BZA7kC3uVc0rINxOawR/HXXy0Y55+7nrRG5ZOgo7WJDFn3CBK24qPX7EaUyN/i30RzaxwLL6UdILgI0Fa20TPItywLE/ZLc7oDu/xlWr3xkM8af2y0927zRFc4AKfAdtY5mYurkU4dSOBf3YhFiE8bHgiawj1H4Zph7pLXGMpsfQHRlxYDuaQqq371P5atkBJFLbAOz4TAs3BN7CVKXX2XaATwnS5rXRxEvV5PFcyyBdhGAXpQHBuBhvWIMSwFfrIo6BfsrJHHeSigrHG0k5HZieHq34jYn8/Znw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=au2TeOyuXzWOq3tHvcR/f6Kt/0KqUXEd2nKodGWrGOQ=;
+ b=JWvN8L+4b2b5S7BrrBE+ZD61mGqeKknHB/ck8sUxDmgDe8Egx1ZtJaMEqtQL03oUSzOocy5FWUxYlmoeWRTnndWAqVc4VF5yMMsf2RIMHGxQA4Z/ZffnfoWnV/WHQ41g2CcwQchEvdUZEZqnMhDMVEp978BUpX50bnwjPeFkItM1L6F7JHLhr/CqL+K5VJ7WhBjWsEjY+s3BiDDsjEyIxhY+OgTYHNRX5upkEEJSxkBzniZBgSL5QtuLy0gY02a7MK8pJWWkyVnGX7nR9kVgSGKb7PGa+bYRYcIfeXyXcXte4Zi/S4nIjHbWPM2PlJDdSp9QwatqQMZjwPdejRojTA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=au2TeOyuXzWOq3tHvcR/f6Kt/0KqUXEd2nKodGWrGOQ=;
+ b=bnnEHC3ecIk8rxI3H9QJYZIGI2Bq3CsbV7zEQ9C126r2g2vYH5i71v1Q523HlxXHxbbzIUIrpufwcCavlBANl+RgjsrhQbrp2zOKwLc4uVUcxhIApqWA1criVRhreDYpyKtVN5KQtb5MH3+yMqei7fzXbxhnwetTltlHPFHXcIk=
+Received: from BYAPR04MB5749.namprd04.prod.outlook.com (20.179.57.21) by
+ BYAPR04MB4232.namprd04.prod.outlook.com (20.176.250.157) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2538.19; Thu, 19 Dec 2019 05:50:17 +0000
+Received: from BYAPR04MB5749.namprd04.prod.outlook.com
+ ([fe80::a8ea:4ba9:cb57:e90f]) by BYAPR04MB5749.namprd04.prod.outlook.com
+ ([fe80::a8ea:4ba9:cb57:e90f%5]) with mapi id 15.20.2559.015; Thu, 19 Dec 2019
+ 05:50:17 +0000
+From:   Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
+To:     "lsf-pc@lists.linux-foundation.org" 
+        <lsf-pc@lists.linux-foundation.org>
+CC:     "axboe@kernel.dk" <axboe@kernel.dk>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Hannes Reinecke <hare@suse.de>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Omar Sandoval <osandov@fb.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Keith Busch <kbusch@kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Ming Lei <ming.lei@redhat.com>,
+        Matias Bjorling <Matias.Bjorling@wdc.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-btrace@vger.kernel.org" <linux-btrace@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>
+Subject: Re: [LSF/MM/BFP ATTEND] [LSF/MM/BFP TOPIC] Storage: add blktrace
+ extension support
+Thread-Topic: [LSF/MM/BFP ATTEND] [LSF/MM/BFP TOPIC] Storage: add blktrace
+ extension support
+Thread-Index: AQHVr+qGZa1SvOsf40W81LFPPtqF+Q==
+Date:   Thu, 19 Dec 2019 05:50:16 +0000
+Message-ID: <BYAPR04MB5749EDD9E5928E769413B38086520@BYAPR04MB5749.namprd04.prod.outlook.com>
+References: <BYAPR04MB5749B4DC50C43EE845A04612865A0@BYAPR04MB5749.namprd04.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1576734679; bh=sCXlmkq8dxoo2tHizwzufCVV/oUf7NWxJHJ14roWTmw=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=GK/0OEzMPk1mXpB/B4W5MjyKB4KjAD7QACyt/PluTqMpD63escvQAFpT8GgKashz/
-         zjYVekQ9+jMFWBNLeBd0fSneuL/0IcIp4C+grDhfKeP4gGgfiF1yVdsXHIqTikTNBn
-         TjGaizVxBY5MAKFT0ZuOTKaGbWetrkck9KS2raRunh97qgKrmKFpIg4PPwbiRz76za
-         exoRNucmh5b5u8c4Keiv+48zYJosbfMH0xFWea2gmmlHUZQmtMFnoE6IBRYKWSfpwI
-         AlXqgbv15vIdEK38umLQ7xsD0bruDuQcBNHLMX9Mt0huC0EASH9bq+0C+xF+Z7vdfg
-         E3ondtFacFVjg==
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Chaitanya.Kulkarni@wdc.com; 
+x-originating-ip: [199.255.45.62]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 01e547f0-d8db-49fe-b66c-08d784475340
+x-ms-traffictypediagnostic: BYAPR04MB4232:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BYAPR04MB4232FC16811E558C08DC976686520@BYAPR04MB4232.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 0256C18696
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(396003)(39860400002)(136003)(376002)(346002)(78114003)(189003)(199004)(66476007)(66556008)(8676002)(66446008)(54906003)(4326008)(53546011)(71200400001)(8936002)(9686003)(7416002)(76116006)(478600001)(64756008)(186003)(316002)(52536014)(26005)(5660300002)(33656002)(6916009)(55016002)(86362001)(7696005)(81166006)(81156014)(2906002)(66946007)(6506007)(966005)(21314003);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB4232;H:BYAPR04MB5749.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 3U/+slddiThf7MTVPaAj1qHkNMn7HrKngqwUfK7uY2PQcLvCxvA+u4i5+FX+snXBBHbZSnqcOZLlomtRjSPySuyEqvHmIC+CLplYU0EsgH7Cj+Zhhu8flzFNoiB3kHFVXv6i2MKJAg1uyhZS/FsZCVTpwk3slZ14YUZpT0smwHOXVbLrwFQEasIn9p46YejttIqOQUGoIzSWzOXBbgttZDy5iFo0vhPasWGFwR31pOJlpXjrp3jEJ3MkWZ3NuehI9NmyMnywG9b+FNvfPS4JnBNKasVAWZrn7K8EYVwHGxZ5XywISw362a+NA23OtvaGMv2LEVmBo0s9IjffF4YGFjz9Lc2aGJlSH3QHeHvE03qD+/PitxmjOLwgw+WA2oLdZLF/Merx0EhyzWZ8ewJjnqcLEra/1vxWyXf6/ZOU6v3DqRqIharuOud25SwSz2Eokfm9Gl6F37VIj5/7CjnNctL0CbFrfU3vGBORVYb/0hsK47pxTdtoznv5W8br1IJWGkw+bXEXf4bBVK2q339bS3SihRKjyDPvw/xcYO4aCFxwkulyNbojAG1lEf+g64yf
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 01e547f0-d8db-49fe-b66c-08d784475340
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Dec 2019 05:50:16.9489
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Btgr0pNs1NbnT8VTmGcUIAO7ay+JEmp8bo4mKNJufK3bl9s67FcTmLE2Dkic13v2SQo+OiK9XNME6S7dA+rUSCTN2PweK8dAS0uFzh/IJVc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4232
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/18/19 9:27 PM, Dan Williams wrote:
-...
->> @@ -461,5 +449,5 @@ void __put_devmap_managed_page(struct page *page)
->>          page->mapping = NULL;
->>          page->pgmap->ops->page_free(page);
->>   }
->> -EXPORT_SYMBOL(__put_devmap_managed_page);
->> +EXPORT_SYMBOL(free_devmap_managed_page);
-> 
-> This patch does not have a module consumer for
-> free_devmap_managed_page(), so the export should move to the patch
-> that needs the new export.
-
-Hi Dan,
-
-OK, I know that's a policy--although it seems quite pointless here given
-that this is definitely going to need an EXPORT.
-
-At the moment, the series doesn't use it in any module at all, so I'll just
-delete the EXPORT for now.
-
-> 
-> Also the only reason that put_devmap_managed_page() is EXPORT_SYMBOL
-> instead of EXPORT_SYMBOL_GPL is that there was no practical way to
-> hide the devmap details from evey module in the kernel that did
-> put_page(). I would expect free_devmap_managed_page() to
-> EXPORT_SYMBOL_GPL if it is not inlined into an existing exported
-> static inline api.
-> 
-
-Sure, I'll change it to EXPORT_SYMBOL_GPL when the time comes. We do have
-to be careful that we don't shut out normal put_page() types of callers,
-but...glancing through the current callers, that doesn't look to be a problem.
-Good. So it should be OK to do EXPORT_SYMBOL_GPL here.
-
-Are you *sure* you don't want to just pre-emptively EXPORT now, and save
-looking at it again?
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+Adding Damien to this thread.=0A=
+On 12/10/2019 10:17 PM, Chaitanya Kulkarni wrote:=0A=
+> Hi,=0A=
+>=0A=
+> * Background:-=0A=
+> -----------------------------------------------------------------------=
+=0A=
+>=0A=
+> Linux Kernel Block layer now supports new Zone Management operations=0A=
+> (REQ_OP_ZONE_[OPEN/CLOSE/FINISH] [1]).=0A=
+>=0A=
+> These operations are added mainly to support NVMe Zoned Namespces=0A=
+> (ZNS) [2]. We are adding support for ZNS in Linux Kernel Block layer,=0A=
+> user-space tools (sys-utils/nvme-cli), NVMe driver, File Systems,=0A=
+> Device-mapper in order to support these devices in the field.=0A=
+>=0A=
+> Over the years Linux kernel block layer tracing infrastructure=0A=
+> has proven to be not only extremely useful but essential for:-=0A=
+>=0A=
+> 1. Debugging the problems in the development of kernel block drivers.=0A=
+> 2. Solving the issues at the customer sites.=0A=
+> 3. Speeding up the development for the file system developers.=0A=
+> 4. Finding the device-related issues on the fly without modifying=0A=
+>      the kernel.=0A=
+> 5. Building white box test-cases around the complex areas in the=0A=
+>      linux-block layer.=0A=
+>=0A=
+> * Problem with block layer tracing infrastructure:-=0A=
+> -----------------------------------------------------------------------=
+=0A=
+>=0A=
+> If blktrace is such a great tool why we need this session for ?=0A=
+>=0A=
+> Existing blktrace infrastructure lacks the number of free bits that are=
+=0A=
+> available to track the new trace category. With the addition of new=0A=
+> REQ_OP_ZONE_XXX we need more bits to expand the blktrace so that we can=
+=0A=
+> track more number of requests.=0A=
+>=0A=
+> * Current state of the work:-=0A=
+> -----------------------------------------------------------------------=
+=0A=
+>=0A=
+> RFC implementations [3] has been posted with the addition of new IOCTLs=
+=0A=
+> which is far from the production so that it can provide a basis to get=0A=
+> the discussion started.=0A=
+>=0A=
+> This RFC implementation provides:-=0A=
+> 1. Extended bits to track new trace categories.=0A=
+> 2. Support for tracing per trace priorities.=0A=
+> 3. Support for priority mask.=0A=
+> 4. New IOCTLs so that user-space tools can setup the extensions.=0A=
+> 5. Ability to track the integrity fields.=0A=
+> 6. blktrace and blkparse implementation which supports the above=0A=
+>      mentioned features.=0A=
+>=0A=
+> Bart and Martin has suggested changes which I've incorporated in the RFC=
+=0A=
+> revisions.=0A=
+>=0A=
+> * What we will discuss in the proposed session ?=0A=
+> -----------------------------------------------------------------------=
+=0A=
+>=0A=
+> I'd like to propose a session for Storage track to go over the following=
+=0A=
+> discussion points:-=0A=
+>=0A=
+> 1. What is the right approach to move this work forward?=0A=
+> 2. What are the other information bits we need to add which will help=0A=
+>      kernel community to speed up the development and improve tracing?=0A=
+> 3. What are the other tracepoints we need to add in the block layer=0A=
+>      to improve the tracing?=0A=
+> 4. What are device driver callbacks tracing we can add in the block=0A=
+>      layer?=0A=
+> 5. Since polling is becoming popular what are the new tracepoints=0A=
+>      we need to improve debugging ?=0A=
+>=0A=
+>=0A=
+> * Required Participants:-=0A=
+> -----------------------------------------------------------------------=
+=0A=
+>=0A=
+> I'd like to invite block layer, device drivers and file system=0A=
+> developers to:-=0A=
+>=0A=
+> 1. Share their opinion on the topic.=0A=
+> 2. Share their experience and any other issues with blktrace=0A=
+>      infrastructure.=0A=
+> 3. Uncover additional details that are missing from this proposal.=0A=
+>=0A=
+> Regards,=0A=
+> Chaitanya=0A=
+>=0A=
+> References :-=0A=
+>=0A=
+> [1] https://www.spinics.net/lists/linux-block/msg46043.html=0A=
+> [2] https://nvmexpress.org/new-nvmetm-specification-defines-zoned-=0A=
+> namespaces-zns-as-go-to-industry-technology/=0A=
+> [3] https://www.spinics.net/lists/linux-btrace/msg01106.html=0A=
+>       https://www.spinics.net/lists/linux-btrace/msg01002.html=0A=
+>       https://www.spinics.net/lists/linux-btrace/msg01042.html=0A=
+>       https://www.spinics.net/lists/linux-btrace/msg00880.html=0A=
+>=0A=
+=0A=
