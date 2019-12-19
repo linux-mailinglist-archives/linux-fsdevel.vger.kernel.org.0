@@ -2,205 +2,214 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EC2E127119
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2019 00:01:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 780BD127179
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2019 00:29:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbfLSXBm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Dec 2019 18:01:42 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:15328 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726880AbfLSXBl (ORCPT
+        id S1726998AbfLSX3x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Dec 2019 18:29:53 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:57032 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726963AbfLSX3x (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Dec 2019 18:01:41 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dfc01460000>; Thu, 19 Dec 2019 15:01:26 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 19 Dec 2019 15:01:36 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 19 Dec 2019 15:01:36 -0800
-Received: from [10.2.165.11] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 19 Dec
- 2019 23:01:32 +0000
-Subject: Re: [PATCH v11 00/25] mm/gup: track dma-pinned pages: FOLL_PIN
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-CC:     Leon Romanovsky <leon@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Alex Williamson" <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Maor Gottlieb <maorg@mellanox.com>
-References: <20191216222537.491123-1-jhubbard@nvidia.com>
- <20191219132607.GA410823@unreal>
- <a4849322-8e17-119e-a664-80d9f95d850b@nvidia.com>
- <20191219210743.GN17227@ziepe.ca>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <f10b2a18-a109-d87d-f156-2e5941cbf4a0@nvidia.com>
-Date:   Thu, 19 Dec 2019 14:58:43 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Thu, 19 Dec 2019 18:29:53 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ii5Et-0004ur-MU; Thu, 19 Dec 2019 23:29:51 +0000
+Date:   Thu, 19 Dec 2019 23:29:51 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Eric Sandeen <sandeen@sandeen.net>
+Cc:     fsdevel <linux-fsdevel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH V2] fs_parser: remove fs_parameter_description name field
+Message-ID: <20191219232951.GL4203@ZenIV.linux.org.uk>
+References: <22be7526-d9da-5309-22a8-3405ed1c0842@sandeen.net>
+ <20191218033606.GF4203@ZenIV.linux.org.uk>
+ <c83d12e2-59a1-7f35-0544-150515db9434@sandeen.net>
+ <20191218040651.GH4203@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20191219210743.GN17227@ziepe.ca>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1576796486; bh=tiz2hjGylLUwQicEfM7bbVznNfOI7NYEds0c0vA1QMM=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=ax5pfVwRTOuRMGRTTENUug1V5pL/RA0R/ro68Ef6qbAC2dMIpaMVof5lAjrJh/YsQ
-         tzguzyOG/LzutEbtWDwyfHV9sKc8B+QE/oAsfQggRxnppIAZTNjdwjoShd1hqL3Scp
-         PwDEgdunQ5+3RZaDnDjRY1Ma0ZpDqQcVz1QAXQFHukq22+SRzGz1hOWdS1Kam2nyY2
-         CDT0AZ+Yyg+ZRHDTJHnr4JvmQTB2CGF09WlCJB69OrCNdaPzyZjzlP0CWvWnN5wMNt
-         lrxupzD+I8Xm9/TBpPiZ2SZw5etOEm+wZ4cFWC8o/KBZNRn3emLZ8rxxX3WRl4ZX7o
-         4lpXlR7HRSRdg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191218040651.GH4203@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/19/19 1:07 PM, Jason Gunthorpe wrote:
-...
->> 3. It would be nice if I could reproduce this. I have a two-node mlx5 Infiniband
->> test setup, but I have done only the tiniest bit of user space IB coding, so
->> if you have any test programs that aren't too hard to deal with that could
->> possibly hit this, or be tweaked to hit it, I'd be grateful. Keeping in mind
->> that I'm not an advanced IB programmer. At all. :)
+On Wed, Dec 18, 2019 at 04:06:51AM +0000, Al Viro wrote:
+> On Tue, Dec 17, 2019 at 09:43:44PM -0600, Eric Sandeen wrote:
+> > On 12/17/19 9:36 PM, Al Viro wrote:
+> > > On Fri, Dec 06, 2019 at 10:31:57AM -0600, Eric Sandeen wrote:
+> > >> There doesn't seem to be a strong reason to have a copy of the
+> > >> filesystem name string in the fs_parameter_description structure;
+> > >> it's easy enough to get the name from the fs_type, and using it
+> > >> instead ensures consistency across messages (for example,
+> > >> vfs_parse_fs_param() already uses fc->fs_type->name for the error
+> > >> messages, because it doesn't have the fs_parameter_description).
+> > > 
+> > > Arrgh...  That used to be fine.  Now we have this:
+> > > static int rbd_parse_param(struct fs_parameter *param,
+> > >                             struct rbd_parse_opts_ctx *pctx)
+> > > {
+> > >         struct rbd_options *opt = pctx->opts;
+> > >         struct fs_parse_result result; 
+> > >         int token, ret;
+> > > 
+> > >         ret = ceph_parse_param(param, pctx->copts, NULL);
+> > >         if (ret != -ENOPARAM)
+> > >                 return ret;
+> > > 
+> > >         token = fs_parse(NULL, rbd_parameters, param, &result);
+> > > 			 ^^^^
+> > > 
+> > > 	Cthulhu damn it...  And yes, that crap used to work.
+> > > Frankly, I'm tempted to allocate fs_context in there (in
+> > > rbd_parse_options(), or in rbd_add_parse_args()) - we've other
+> > > oddities due to that...
+> > > 
+> > > 	Alternatively, we could provide __fs_parse() that
+> > > would take name as a separate argument and accepted NULL fc,
+> > > with fs_parse() being a wrapper for that.
+> > > 
+> > > *grumble*
+> > 
+> > FYI be careful if you do munge this in, V2 inexplicably killed the name in
+> > the fs_type for afs.  V3 fixed that thinko or whatever it was.
 > 
-> Clone this:
+> I used v3, anyway...  The reason I'm rather unhappy about the
+> entire situation is that in the end of that series I have
+> fs_param_is_u32() et.al. being _functions_.  With switch in
+> fs_parse() gone.
 > 
-> https://github.com/linux-rdma/rdma-core.git
+> Typical instance looks like this:
 > 
-> Install all the required deps to build it (notably cython), see the README.md
+> int fs_param_is_enum(struct fs_context *fc, const struct fs_parameter_spec *p,
+>                      struct fs_parameter *param, struct fs_parse_result *result)
+> {
+>         const struct constant_table *c;
+>         if (param->type != fs_value_is_string)
+>                 return fs_param_bad_value(fc, param);
+>         c = __lookup_constant(p->data, param->string);
+>         if (!c)
+>                 return fs_param_bad_value(fc, param);
+>         result->uint_32 = c->value;
+>         return 0;
+> }
 > 
-> $ ./build.sh
-> $ build/bin/run_tests.py
+> and I would rather not breed the arguments here ;-/  I could take logging
+> into the fs_parse() itself (it's very similar in all current instances),
+> but... if we go for something like
 > 
-> If you get things that far I think Leon can get a reproduction for you
+> int fs_param_is_range(struct fs_context *fc, const struct fs_parameter_spec *p,
+>                      struct fs_parameter *param, struct fs_parse_result *result)
+> {
+> 	const struct {u32 from, to;} *range = p->data;
 > 
+>         if (param->type != fs_value_is_string ||
+> 	    kstrtouint(param->string, 0, &result->uint_32) < 0)
+>                 return fs_param_bad_value(fc, param);
+> 	
+> 	if (result->uint_32 < range->from || result->uint_32 > range->to)
+> 		return invalf(fc, "%s: Value for %s must be in [%u..%u]",
+> 				fc->fs_type->name, param->key, range->from,
+> 				range->to);
+>         return 0;
+> }
+> which is not all that unreasonable, the requirement of handling all
+> warnings in fs_parse() becomes unfeasible.  And the main reason for
+> conversion to method is the pressure to provide such custom types -
+> stuff like <number>{|K|M|G} for memory sizes, etc.
+> 
+> Shite...  We can, of course, pass the name to instances, but... *ugh*
 
-Cool, it's up and running (1 failure, 3 skipped, out of 67 tests).
+OK...  Some observations after looking through that stuff:
 
-This is a great test suite to have running, I'll add it to my scripts. Here's the
-full output in case the failure or skip cases are a problem:
+1) there is a legitimate need to use fs_parse() (or at least its underlying
+machinery) outside of anything mount-related.  One case already in mainline
+is ceph and rbd sharing parts of the syntax (libceph stuff).  There almost
+certainly will be more.
 
-$ sudo ./build/bin/run_tests.py --verbose
+2) fs_parse() is a bit of misnomer - it decides which option it is and
+does things like conversion of string to number, etc., but it does not
+manipulate the parser state.  Its _caller_ (->parse_param(), usually)
+does.
 
-test_create_ah (tests.test_addr.AHTest) ... ok
-test_create_ah_roce (tests.test_addr.AHTest) ... skipped "Can't run RoCE tests on IB link layer"
-test_destroy_ah (tests.test_addr.AHTest) ... ok
-test_create_comp_channel (tests.test_cq.CCTest) ... ok
-test_destroy_comp_channel (tests.test_cq.CCTest) ... ok
-test_create_cq_ex (tests.test_cq.CQEXTest) ... ok
-test_create_cq_ex_bad_flow (tests.test_cq.CQEXTest) ... ok
-test_destroy_cq_ex (tests.test_cq.CQEXTest) ... ok
-test_create_cq (tests.test_cq.CQTest) ... ok
-test_create_cq_bad_flow (tests.test_cq.CQTest) ... ok
-test_destroy_cq (tests.test_cq.CQTest) ... ok
-test_rc_traffic_cq_ex (tests.test_cqex.CqExTestCase) ... ok
-test_ud_traffic_cq_ex (tests.test_cqex.CqExTestCase) ... ok
-test_xrc_traffic_cq_ex (tests.test_cqex.CqExTestCase) ... ok
-test_create_dm (tests.test_device.DMTest) ... ok
-test_create_dm_bad_flow (tests.test_device.DMTest) ... ok
-test_destroy_dm (tests.test_device.DMTest) ... ok
-test_destroy_dm_bad_flow (tests.test_device.DMTest) ... ok
-test_dm_read (tests.test_device.DMTest) ... ok
-test_dm_write (tests.test_device.DMTest) ... ok
-test_dm_write_bad_flow (tests.test_device.DMTest) ... ok
-test_dev_list (tests.test_device.DeviceTest) ... ok
-test_open_dev (tests.test_device.DeviceTest) ... ok
-test_query_device (tests.test_device.DeviceTest) ... ok
-test_query_device_ex (tests.test_device.DeviceTest) ... ok
-test_query_gid (tests.test_device.DeviceTest) ... ok
-test_query_port (tests.test_device.DeviceTest) ... FAIL
-test_query_port_bad_flow (tests.test_device.DeviceTest) ... ok
-test_create_dm_mr (tests.test_mr.DMMRTest) ... ok
-test_destroy_dm_mr (tests.test_mr.DMMRTest) ... ok
-test_buffer (tests.test_mr.MRTest) ... ok
-test_dereg_mr (tests.test_mr.MRTest) ... ok
-test_dereg_mr_twice (tests.test_mr.MRTest) ... ok
-test_lkey (tests.test_mr.MRTest) ... ok
-test_read (tests.test_mr.MRTest) ... ok
-test_reg_mr (tests.test_mr.MRTest) ... ok
-test_reg_mr_bad_flags (tests.test_mr.MRTest) ... ok
-test_reg_mr_bad_flow (tests.test_mr.MRTest) ... ok
-test_rkey (tests.test_mr.MRTest) ... ok
-test_write (tests.test_mr.MRTest) ... ok
-test_dereg_mw_type1 (tests.test_mr.MWTest) ... ok
-test_dereg_mw_type2 (tests.test_mr.MWTest) ... ok
-test_reg_mw_type1 (tests.test_mr.MWTest) ... ok
-test_reg_mw_type2 (tests.test_mr.MWTest) ... ok
-test_reg_mw_wrong_type (tests.test_mr.MWTest) ... ok
-test_odp_rc_traffic (tests.test_odp.OdpTestCase) ... ok
-test_odp_ud_traffic (tests.test_odp.OdpTestCase) ... skipped 'ODP is not supported - ODP recv not supported'
-test_odp_xrc_traffic (tests.test_odp.OdpTestCase) ... ok
-test_default_allocators (tests.test_parent_domain.ParentDomainTestCase) ... ok
-test_mem_align_allocators (tests.test_parent_domain.ParentDomainTestCase) ... ok
-test_without_allocators (tests.test_parent_domain.ParentDomainTestCase) ... ok
-test_alloc_pd (tests.test_pd.PDTest) ... ok
-test_create_pd_none_ctx (tests.test_pd.PDTest) ... ok
-test_dealloc_pd (tests.test_pd.PDTest) ... ok
-test_destroy_pd_twice (tests.test_pd.PDTest) ... ok
-test_multiple_pd_creation (tests.test_pd.PDTest) ... ok
-test_create_qp_ex_no_attr (tests.test_qp.QPTest) ... ok
-test_create_qp_ex_no_attr_connected (tests.test_qp.QPTest) ... ok
-test_create_qp_ex_with_attr (tests.test_qp.QPTest) ... ok
-test_create_qp_ex_with_attr_connected (tests.test_qp.QPTest) ... ok
-test_create_qp_no_attr (tests.test_qp.QPTest) ... ok
-test_create_qp_no_attr_connected (tests.test_qp.QPTest) ... ok
-test_create_qp_with_attr (tests.test_qp.QPTest) ... ok
-test_create_qp_with_attr_connected (tests.test_qp.QPTest) ... ok
-test_modify_qp (tests.test_qp.QPTest) ... ok
-test_query_qp (tests.test_qp.QPTest) ... ok
-test_rdmacm_sync_traffic (tests.test_rdmacm.CMTestCase) ... skipped 'No devices with net interface'
+3) right now the only part of fs_context used by the damn thing is fc->log;
+Eric's patch adds fc->fs_type->name.  Note that it's used only for logging
+purposes.
 
-======================================================================
-FAIL: test_query_port (tests.test_device.DeviceTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-   File "/kernel_work/rdma-core/tests/test_device.py", line 129, in test_query_port
-     self.verify_port_attr(port_attr)
-   File "/kernel_work/rdma-core/tests/test_device.py", line 113, in verify_port_attr
-     assert 'Invalid' not in d.speed_to_str(attr.active_speed)
-AssertionError
+4) the primitives used for logging (invalf, errorf, warnf) are taking
+fs_context; however, the only part being used is fc->log.  NULL fs_context
+is treated as NULL fc_log, which means "log via printk".
 
-----------------------------------------------------------------------
-Ran 67 tests in 10.058s
+5) absolute majority of log messages are prefixed, usually by fs type
+name.  The few that are not probably ought to be - e.g. the things like
+arch/powerpc/platforms/cell/spufs/inode.c:629:                  return invalf(fc, "Unknown uid");
+would be better off with spufs: unknown uid.
 
-FAILED (failures=1, skipped=3)
+We could require _some_ fs_context to be supplied by all callers,
+mount-related or not.  However, considering the above, that looks rather
+unnatural, especially if we go ahead and allow fc->fs_type->name uses.
 
+Alternatively, we could pass fc_log + prefix; fs_parse() itself would
+remain as-is, becoming a wrapper for __fs_parse() that would take
+fs_log + string instead of fs_context.  Potentially unpleasant part
+that way: option recognition has no access to the data from previously
+processed options.  Another inconvenience is that we get an extra
+argument to pass into fs_param_is_...().
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+One note on logfc(): it tries to be smarter than it's worth being -
+in the reality it _never_ gets bare "%s" as format; there's always
+"w ", "e " or "i " in the beginning.  So this part
+        if (strcmp(fmt, "%s") == 0) {
+                p = va_arg(va, const char *);
+                goto unformatted_string;
+        }
+in there is pointless (at least in the current form).
+
+I wonder if we should do the following:
+	* structure with two members - pointer to fc_log and a string
+(prefix) embedded into fs_context, in place of ->log.
+	* __logfc() taking pointer to that struct, integer or
+character representing the "log level", then format and vararg part.
+	* warnf() being simply __logfc(&fc->log, 'w', fmt, ## __VA_ARGS__)
+	* __logfc() using "%c %s%s%pV",
+				loglevel,
+				prefix?prefix:"",
+				prefix ? ":" : "",
+				fmt, va
+for kvasprintf() (assuming that %pV *can* be used with it, of course)
+	* const char *set_log_prefix(pointer, string) replacing the
+prefix field of the struct and returning the original.  fs_context
+allocation would set it to fs_type->name.
+	* __fs_parse() would be taking a pointer to that field of
+fs_context instead of the entire thing; ditto for fs_param_is_...()
+	* rbd would create a local structure with "rbd" for prefix
+and NULL for log
+	* net/ceph would replace the prefix in the thing it has
+been given with "libceph" and revert back to original in the end
+
+The most worrying part in that is kvasprintf interplay with %pV -
+we might need to open-code it, since we need va_copy() not of that
+sucker's arguments, but of the va_list one level deeper.  But with
+that open-coding (and it's not all that scary, really -
+	va_list va;
+	va_list va_copy;
+
+	va_start(va, fmt);
+	va_copy(va_copy, va);
+	size = snprintf(NULL, 0, "%c %s%s%pV",
+			loglevel, prefix ? prefix : "",
+			prefix ? ":" : "", fmt, va_copy);
+	va_end(va_copy);
+	p = kmalloc(size + 1, GFP_KERNEL);
+	if (!p)
+		sod off
+	snprintf(p, size + 1, "%c %s%s%pV",
+		loglevel, prefix?prefix:"",
+		prefix ? ":" : "", fmt, va);
+	va_end(va);
+) it ought to be feasible, AFAICS...
+
+Comments?  Oh, and for "log to printk" case we can bloody well
+get rid of allocation and just do printk with the right
+loglevel and format modified in the obvious way...
