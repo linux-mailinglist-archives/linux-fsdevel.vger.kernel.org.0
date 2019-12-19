@@ -2,124 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0015712673F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 17:36:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42CDA12676F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 17:54:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726936AbfLSQgI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Dec 2019 11:36:08 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43546 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726836AbfLSQgI (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Dec 2019 11:36:08 -0500
-Received: by mail-lj1-f195.google.com with SMTP id a13so6922029ljm.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2019 08:36:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+0EPaeAm1h5et+pcE0Lw2TnBFxWaf1zou6EIoTCmP30=;
-        b=bZHWn0PsXhDbOK/Bql+EUdVYbHBqZFT+2Nbu2NKTbOPDpYJnxQ8/xUws763LXH9j3m
-         XvTn3+qa6G5xDrHkogar6bc8r1mWIiQFLSpH4PfDJaTYQjML3UPjF8ReFuAn4IPFe3wt
-         CsSw4N/hW8UkyP4cDs7xLRa2iwzcttIS4FCkc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+0EPaeAm1h5et+pcE0Lw2TnBFxWaf1zou6EIoTCmP30=;
-        b=BbzQo+gNiOcPOdS9J7k64shVYezfzzagldSNT7O7VQ5wz3pGS066Otx5V4VO6wAtbQ
-         BdI6CNJC2I56xkLXUfGPgoRiE657Yc8TjLSQeU3I0oUhW8KEhhaFJBrX/K1KKPbcn1zs
-         Fql6HBthshMKWXQFq4xXZJLbCnIKPRyywcx2e9a5E5vc75LOxekadTcRUcdRHiuh+WIm
-         gpI24RThMGCHxbWCTdy4bv+Xx5fb9zO2PRaw+ksRC1v71IxZNFC1NoDKIg+l5XvCS2w/
-         9k4Uk+U8XxLgI9hZgLXZyEx7zZa0bA7Vpnr12xP9pfgWJ2Lr5RHDbI3iBb0uN6muDiMh
-         Kyyw==
-X-Gm-Message-State: APjAAAV5qG5wPXv4QGHOQ2qlUb0hduddbPrKhcQnBmcUlFyl0KZF8ZaD
-        eBexs36XM9yCXuaN1RthHSVaLB5hGM0=
-X-Google-Smtp-Source: APXvYqzJEKMuRmCG1/nU9hxeA8maHojY8bcbshN0I1hEB6YvhyZw79G53EL0AQz9ZKffYnRYzluzgw==
-X-Received: by 2002:a2e:9cc:: with SMTP id 195mr5118804ljj.130.1576773365173;
-        Thu, 19 Dec 2019 08:36:05 -0800 (PST)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id y23sm3190117ljk.6.2019.12.19.08.36.03
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Dec 2019 08:36:04 -0800 (PST)
-Received: by mail-lj1-f171.google.com with SMTP id u1so6917219ljk.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2019 08:36:03 -0800 (PST)
-X-Received: by 2002:a2e:9ad1:: with SMTP id p17mr6832409ljj.26.1576773363095;
- Thu, 19 Dec 2019 08:36:03 -0800 (PST)
+        id S1726897AbfLSQx7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Dec 2019 11:53:59 -0500
+Received: from ms.lwn.net ([45.79.88.28]:37284 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726855AbfLSQx7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 19 Dec 2019 11:53:59 -0500
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id C8DD92E5;
+        Thu, 19 Dec 2019 16:53:57 +0000 (UTC)
+Date:   Thu, 19 Dec 2019 09:53:56 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+Cc:     miklos@szeredi.hu, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] Documentation: filesystems: convert fuse to RST
+Message-ID: <20191219095356.4a3ad965@lwn.net>
+In-Reply-To: <20191120192655.33709-1-dwlsalmeida@gmail.com>
+References: <20191120192655.33709-1-dwlsalmeida@gmail.com>
+Organization: LWN.net
 MIME-Version: 1.0
-References: <157558502272.10278.8718685637610645781.stgit@warthog.procyon.org.uk>
- <20191206135604.GB2734@twin.jikos.cz> <CAHk-=wiN_pWbcRaw5L-J2EFUyCn49Due0McwETKwmFFPp88K8Q@mail.gmail.com>
- <CAHk-=wjvO1V912ya=1rdXwrm1OBTi6GqnqryH_E8OR69cZuVOg@mail.gmail.com>
- <CAHk-=wizsHmCwUAyQKdU7hBPXHYQn-fOtJKBqMs-79br2pWxeQ@mail.gmail.com>
- <CAHk-=wjeG0q1vgzu4iJhW5juPkTsjTYmiqiMUYAebWW+0bam6w@mail.gmail.com>
- <b2ae78da-1c29-8ef7-d0bb-376c52af37c3@yandex-team.ru> <CAHk-=wgTisLQ9k-hsQeyrT5qBS0xuQPYsueFWNT3RxbkkVmbjw@mail.gmail.com>
- <20191219000013.GB13065@localhost> <20191219001446.GA49812@localhost>
- <CAHk-=wgMiTbRPp6Fx_A4YV+9xL7dc2j0Dj3NTFDPRfjsjLQTWw@mail.gmail.com> <935.1576742190@warthog.procyon.org.uk>
-In-Reply-To: <935.1576742190@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 19 Dec 2019 08:35:46 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiQdy80352u4d39QD58yQKaNfeEz+k3eRwZw5faEYFsgw@mail.gmail.com>
-Message-ID: <CAHk-=wiQdy80352u4d39QD58yQKaNfeEz+k3eRwZw5faEYFsgw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Josh Triplett <josh@joshtriplett.org>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Akemi Yagi <toracat@elrepo.org>, DJ Delorie <dj@redhat.com>,
-        David Sterba <dsterba@suse.cz>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 11:56 PM David Howells <dhowells@redhat.com> wrote:
->
-> I looked at splitting the waitqueue in to two, but it makes poll tricky.
+On Wed, 20 Nov 2019 16:26:55 -0300
+"Daniel W. S. Almeida" <dwlsalmeida@gmail.com> wrote:
 
-No, it's actually trivial for poll.
+> From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+> 
+> 
+> Converts fuse.txt to reStructuredText format, improving the presentation
+> without changing much of the underlying content.
+> 
+> Signed-off-by: Daniel W. S. Almeida <dwlsalmeida@gmail.com>
+> -----------------------------------------------------------
+> Changes in v2:
+> -Copied FUSE maintainer (Miklos Szeredi)
+> -Fixed the reference in the MAINTAINERS file
+> -Removed some of the excessive markup in fuse.rst
+> -Moved fuse.rst into admin-guide
+> -Updated index.rst
 
-The thing is, poll can happily just add two wait-queues to the
-poll_table. In my conversion, I just did
+So I have to confess that I've lost track of where we stand with this.
+Holidays and moving house will do that...apologies.  In any case, I have a
+couple of additional comments.
 
--       poll_wait(filp, &pipe->wait, wait);
-+       if (filp->f_mode & FMODE_READ)
-+               poll_wait(filp, &pipe->rd_wait, wait);
-+       if (filp->f_mode & FMODE_WRITE)
-+               poll_wait(filp, &pipe->wr_wait, wait);
+[...]
 
-which changes the unconditional "add one" to two conditional adds.
-They _could_ have been unconditional too, but why add unnecessary
-wakeups? So it only really does it twice on named pipes (if opened for
-reading and writing).
+> -There's a control filesystem for FUSE, which can be mounted by:
+> +There's a control filesystem for FUSE, which can be mounted by: ::
+>  
+>    mount -t fusectl none /sys/fs/fuse/connections
 
-It's _unusual_ to add two wait-queues for a single poll, but it's not
-wrong. The tty layer has always done it - exactly because it has
-separate wait queues for reading and writing. Some other drivers do
-too. Sometimes there's a separate wait queue for errors, sometimes
-there are multiple wait-queues because there are events from the
-"subsystem" and there are other events from the "device". I think
-sound does the latter, for example.
+Please just do "...can be mounted by::"; it will do what you want.
 
-And no, I don't particularly like the FMODE_READ/WRITE testing above -
-it would be better to pass in the polling mask and ask "are we waiting
-for polling for reading or writing?" instead of asking whether the
-file descriptor was opened for read or write, but hey, it is what it
-is.
+> -Mounting it under the '/sys/fs/fuse/connections' directory makes it
+> +Mounting it under the ``'/sys/fs/fuse/connections'`` directory makes it
 
-Sadly, "poll()" doesn't really get passed the bitmask of what is being
-waited on (it's there in the poll_tabvle "_key" field, but I don't
-want to have the pipe code look into those kinds of details.
+There's still a lot of extra markup, and this seems like *way* too many
+quotes... 
 
-So the named pipe case could be improved, but it's not like anybody
-really cares. Nobody uses named pipes any more (and few people ever
-did). So I didn't worry about it.
+> -INTERRUPT requests take precedence over other requests, so the
+> +*INTERRUPT* requests take precedence over other requests, so the
+>  userspace filesystem will receive queued INTERRUPTs before any others.
 
-            Linus
+Not sure you need to add that markup either, but beyond that...
+
+> -The userspace filesystem may ignore the INTERRUPT requests entirely,
+> -or may honor them by sending a reply to the _original_ request, with
+> -the error set to EINTR.
+> +The userspace filesystem may ignore the *INTERRUPT* requests entirely,
+> +or may honor them by sending a reply to the *original* request, with
+> +the error set to ``EINTR``.
+>  
+>  It is also possible that there's a race between processing the
+>  original request and its INTERRUPT request.  There are two possibilities:
+>  
+> -  1) The INTERRUPT request is processed before the original request is
+> +  #. The *INTERRUPT* request is processed before the original request is
+>       processed
+>  
+> -  2) The INTERRUPT request is processed after the original request has
+> +  #. The *INTERRUPT* request is processed after the original request has
+>       been answered
+>  
+>  If the filesystem cannot find the original request, it should wait for
+>  some timeout and/or a number of new requests to arrive, after which it
+> -should reply to the INTERRUPT request with an EAGAIN error.  In case
+> -1) the INTERRUPT request will be requeued.  In case 2) the INTERRUPT
+> +should reply to the INTERRUPT request with an ``EAGAIN`` error.  In case
+> +1) the ``INTERRUPT`` request will be requeued.  In case 2) the ``INTERRUPT``
+>  reply will be ignored.
+
+Here you are marking up the same term in a different way.  That can only
+create confusion, which is generally not the goal for the docs.
+
+Please make another pass and try to get the markup down to a minimum;
+remember that the plain-text reading experience matters too.
+
+Thanks,
+
+jon
