@@ -2,96 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F8881260B8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 12:20:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE0081260DA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 12:32:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726797AbfLSLUs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Dec 2019 06:20:48 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38725 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726652AbfLSLUs (ORCPT
+        id S1726709AbfLSLcA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Dec 2019 06:32:00 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:34675 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbfLSLcA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Dec 2019 06:20:48 -0500
-Received: by mail-ot1-f68.google.com with SMTP id d7so2438985otf.5;
-        Thu, 19 Dec 2019 03:20:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=q86lzAwYlZJOZFsQXI59MTkZWLAWnklcw1QSoLucOeY=;
-        b=T5FBaj0wqy+SDbVZd8ND4FLNPYoKNJ2rFQ5QDaeV7hhQUgVfavoJdwSHnu9XGmGojv
-         NpUUHHOHH/O3r6Cz7oQXQ54VfgX1WnY1FaDbi0bwZTyoAeXOKawFByhVnABBdrOb3W51
-         apyHLw57/kbptO/jqi83ZZ0ALrjiFitzem5MgMjmSb+8ysaIki4/icFmhXeWcnQ3+17f
-         BgXbB2mat7BsXAjQgcqS76HJwguKQHm3LQ04iCt2Rwg1eG6AO7i8aEMwtfsC2Mtdl/vu
-         TuF+lU+bBcYZ3UW3+5emiF3CukuX3wGj0AuboTIQsB1sqOmPkLOLQm704o/9p4uuJdMK
-         KXCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=q86lzAwYlZJOZFsQXI59MTkZWLAWnklcw1QSoLucOeY=;
-        b=H8ff3wmXd/W7CCqS9BvAu8Cq+9Fu6YemkWMrPzBRCJySFuIWXnSPs00ogW4gKamHSj
-         HyPCS7WFG/FOBAoChsX6B0KPZIBvc5Me3fnEPZ3xafcWedVY4gmfcbaSak9liA6Uk2NO
-         oKtVQi3Qr7N92A8wm6Pp60KRYjU99xubRjRq+hl27H1ibzxngrAYvNtf8t4tohI83u+g
-         n1AqgbC/KFdvJ00r9Fuy6zWoyLg7ttR0umZykPUcuBoI4hNyg/9oFlZxrFCV+4/b1e8E
-         l7+Eos4lNZ6zZQTKi+7aUj1Y8O1gbaYa7A7c76C3zmLXHmuZLZ9OzUjV2sPCJGAb/d/b
-         5W4A==
-X-Gm-Message-State: APjAAAXrFtIHOg7xG2hstQm9VdYyp/mMKtesXFmKM6qrE3l/wK0AFYg5
-        jlXTNORnaHlym5nmqJ13fQ0DKH1C4EyiBJN1Tlc=
-X-Google-Smtp-Source: APXvYqywsQSCFq193tXJowtm7MgAXzeCgVZaTneF+QFvWsd6/7L+2PrwC8RZGp9Sjc0hNFrAOo6xigDwW3Yu24jOjb8=
-X-Received: by 2002:a05:6830:145:: with SMTP id j5mr7883934otp.242.1576754447447;
- Thu, 19 Dec 2019 03:20:47 -0800 (PST)
+        Thu, 19 Dec 2019 06:32:00 -0500
+Received: from mail-qv1-f45.google.com ([209.85.219.45]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MK3BO-1iOZQe2HL4-00LTop; Thu, 19 Dec 2019 12:31:58 +0100
+Received: by mail-qv1-f45.google.com with SMTP id x1so2070576qvr.8;
+        Thu, 19 Dec 2019 03:31:58 -0800 (PST)
+X-Gm-Message-State: APjAAAXB5bwFEkVsoGBTjHpj+xzg5RPxUdiP5nla6zzs0fjuekGPlV9G
+        hai2CntJU9zh2fwtGQvG2nBWH+7UCkSxmNe6Gck=
+X-Google-Smtp-Source: APXvYqwq+q6D8rTIMB8KZItwAsS83uuBG4XEsHVi6nS5xeM4CNJDakxFmkQBf2UtMAyO+u9DeejJYNgUAsO8AvEmpn0=
+X-Received: by 2002:a0c:bd20:: with SMTP id m32mr7059944qvg.197.1576755117281;
+ Thu, 19 Dec 2019 03:31:57 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a8a:87:0:0:0:0:0 with HTTP; Thu, 19 Dec 2019 03:20:46 -0800 (PST)
-In-Reply-To: <c0d9eed8-4cb6-54a5-95a0-a18aec8b70ee@redhat.com>
-References: <20191213055028.5574-2-namjae.jeon@samsung.com>
- <CGME20191216135033epcas5p3f2ec096506b1a48535ce0796fef23b9e@epcas5p3.samsung.com>
- <088a50ad-dc67-4ff6-624d-a1ac2008b420@web.de> <002401d5b46d$543f7ee0$fcbe7ca0$@samsung.com>
- <c6698d0c-d909-c9dc-5608-0b986d63a471@metux.net> <000701d5b537$5b196f80$114c4e80$@samsung.com>
- <c0d9eed8-4cb6-54a5-95a0-a18aec8b70ee@redhat.com>
-From:   Namjae Jeon <linkinjeon@gmail.com>
-Date:   Thu, 19 Dec 2019 20:20:46 +0900
-Message-ID: <CAKYAXd84p=rB6kF5RvXs2QvxmRYX280Mio8sPbDgJKiE6Eqo9w@mail.gmail.com>
-Subject: Re: [PATCH v7 01/13] exfat: add in-memory and on-disk structures and headers
-To:     Maurizio Lombardi <mlombard@redhat.com>
-Cc:     =?UTF-8?B?7KCE64Ko7J6sL1MvVyBQbGF0Zm9ybSBMYWIoVkQpL1N0YWZmIEVuZ2luZWVyL+yCvOyEseyghA==?=
-         =?UTF-8?B?7J6Q?= <namjae.jeon@samsung.com>,
-        "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        =?UTF-8?Q?Valdis_Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        linux-fsdevel@vger.kernel.org
+References: <20191218235459.GA17271@ircssh-2.c.rugged-nimbus-611.internal>
+ <CAK8P3a2eT=bHkUamyp-P3Y2adNq1KBk7UknCYBY5_aR4zJmYaQ@mail.gmail.com> <20191219103525.yqb5f4pbd2dvztkb@wittgenstein>
+In-Reply-To: <20191219103525.yqb5f4pbd2dvztkb@wittgenstein>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 19 Dec 2019 12:31:41 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a1-hsnidMzQJghRGE-1voP4WHDoOLRZHe9P-UmTpea+Qg@mail.gmail.com>
+Message-ID: <CAK8P3a1-hsnidMzQJghRGE-1voP4WHDoOLRZHe9P-UmTpea+Qg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/5] pid: Add PIDFD_IOCTL_GETFD to fetch file
+ descriptors from processes
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, gpascutto@mozilla.com,
+        ealvarez@mozilla.com, jld@mozilla.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:8D0/OjmjTCtC8NYK8+U1DBLyqoIMcYVm1PArq4gO/MH79DtzZ2f
+ 8lA7RWNhBh2TTbnK8V9H52IEsDqwKhUO9CUtFT3Cu7upEswQKB1R6/WiVYFe5DKqrUAoJKo
+ F8FAMmMhTm0yAMr0RYnPlMi9qe+Pkakroh/wDwcdMwBv6828oSiT9LkwvMK2J34m+BU8ysL
+ cu3FCoePnDNANfBDHshHw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:WBP7hzHAu34=:Xs+OM7mXb052e96l6KaNgz
+ 25gweXJYia1SqK5F1/aDSmux6qaCtxiw11HSujr5oudtUlCSo6rVqjDXdubzZ/WgxA9eMq4Sl
+ NbWouEhaDbyzZ8xbMAL2MOi6HKPfUZ5BspkNMZbqQesVS90z/PqUw5oY8eY5IJASYaJHz3KMS
+ 2hnjXXKEgjjSaQ8qnyvjxkuZF7ZbxEgJawCB30moOhKoG1WB4Xj6UvM6nzQ5TPNnhcnP7w3UY
+ 2C+N7FsSfom3if7hArKwrI6KwkYWdQf6U7CJnYxkVcyGWnXQYJCOtjcGv+BZvvx6OHssXYB2E
+ PaLnO0ExGYwWeN1F+fTWB01l+lTZYrWNNoPpQ8Hi3atiYTdO5NlAtoZINkebPd7zbouuNA0L8
+ ohhDjO9yI0hn/MYDNgl873pEnTj+AAch4CVU1nXQndlkkyWTSJUdZ110YLpHBAYaTQm9E7Lo0
+ NZJDK2CxrQ1T+AF1S1hmkeEUt7gbpmgazcFSPU1HNEXoS2kOhYpMJCT5Nt2ldA7wCTfPvf1wM
+ Qt50EJEfSdwqxXNcMdf5Ws0fAnA8IZ4vImVOOkRZZJ2+4ciexgw4Skx9lTh9zxE1+vfh3Wise
+ k9JgahkzDw47+bwDtzZWGMVVGhtM/5kw9U1FNwlVS+KVigCh5u8LyAlmYlHqtNWWofzfNbY/o
+ XIlm4FGmxev6Dwtaz4KkevEbp1uBsLv8YBMCazOOVulnFuEoqZngmEHSMjfRbfJB/I0rbQu7o
+ KTIdXZ1D9ftkgQG2CSiyuASJp0toJ6Go/oIlaUiU2eDMWlKF0PEVpthCkmA997kSN/znRQw6C
+ yQbcpL+tP3aeG4UzPMiB/xchZuTlNaRd3dr9+HJ5hci0HKxLhECEuwhcIrybrg1dI+ZwwX218
+ dXE5VNfOpiXmkMVOoLhw==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2019-12-18 18:33 GMT+09:00, Maurizio Lombardi <mlombard@redhat.com>:
-> Hello,
->
-> Dne 18.12.2019 v 01:09 =EC=A0=84=EB=82=A8=EC=9E=AC/S/W Platform Lab(VD)/S=
-taff Engineer/=EC=82=BC=EC=84=B1=EC=A0=84=EC=9E=90
-> napsal(a):
->> Well, I think that there is currently no proper mkfs(format), fsck(repai=
-r)
->> tool for linux-exfat.
->> I am working on it and will announce it here as soon as possible.
->
-> Are you aware that on Debian and Fedora/RHEL distros a package named
-> exfat-utils is available?
-> It provides an mkfs and fsck implementation for exfat filesystems.
->
-> You can find the source code here: https://github.com/relan/exfat
-Yes, I know. They are part of fuse-exfat. I want to create an official tool
-for exfat in linux kernel.
-And fsck implementation in fuse-exfat is early development stage yet. In
-addition, This project seems to have stopped development.
+On Thu, Dec 19, 2019 at 11:35 AM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+> On Thu, Dec 19, 2019 at 09:03:09AM +0100, Arnd Bergmann wrote:
+> > On Thu, Dec 19, 2019 at 12:55 AM Sargun Dhillon <sargun@sargun.me> wrote:
 
-Thanks!
->
-> Maurizio
->
->
+> What does everyone else think? Arnd, still in favor of a syscall I take it.
+
+Yes, but I would not object the ioctl if others prefer that.
+
+      Arnd
