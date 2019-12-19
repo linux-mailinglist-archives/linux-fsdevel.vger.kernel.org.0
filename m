@@ -2,355 +2,315 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F64512584E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 01:15:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A02B12587F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Dec 2019 01:32:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726700AbfLSAO7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Dec 2019 19:14:59 -0500
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:48031 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbfLSAO6 (ORCPT
+        id S1726719AbfLSAcE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Dec 2019 19:32:04 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45454 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726696AbfLSAcE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Dec 2019 19:14:58 -0500
-X-Originating-IP: 50.39.173.182
-Received: from localhost (50-39-173-182.bvtn.or.frontiernet.net [50.39.173.182])
-        (Authenticated sender: josh@joshtriplett.org)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 2E9A5FF805;
-        Thu, 19 Dec 2019 00:14:48 +0000 (UTC)
-Date:   Wed, 18 Dec 2019 16:14:46 -0800
-From:   Josh Triplett <josh@joshtriplett.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Akemi Yagi <toracat@elrepo.org>, DJ Delorie <dj@redhat.com>,
-        David Sterba <dsterba@suse.cz>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
-Message-ID: <20191219001446.GA49812@localhost>
-References: <157558502272.10278.8718685637610645781.stgit@warthog.procyon.org.uk>
- <20191206135604.GB2734@twin.jikos.cz>
- <CAHk-=wiN_pWbcRaw5L-J2EFUyCn49Due0McwETKwmFFPp88K8Q@mail.gmail.com>
- <CAHk-=wjvO1V912ya=1rdXwrm1OBTi6GqnqryH_E8OR69cZuVOg@mail.gmail.com>
- <CAHk-=wizsHmCwUAyQKdU7hBPXHYQn-fOtJKBqMs-79br2pWxeQ@mail.gmail.com>
- <CAHk-=wjeG0q1vgzu4iJhW5juPkTsjTYmiqiMUYAebWW+0bam6w@mail.gmail.com>
- <b2ae78da-1c29-8ef7-d0bb-376c52af37c3@yandex-team.ru>
- <CAHk-=wgTisLQ9k-hsQeyrT5qBS0xuQPYsueFWNT3RxbkkVmbjw@mail.gmail.com>
- <20191219000013.GB13065@localhost>
+        Wed, 18 Dec 2019 19:32:04 -0500
+Received: by mail-pl1-f194.google.com with SMTP id b22so1714029pls.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Dec 2019 16:32:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xyBVEYkzY9GbJqdrcpd7/z5zSijkLJgqnvmaBURJfhE=;
+        b=KAQu8lWERy1KOc9Ud0UlTkJ2GAPgGMLJmfGGUv4bnrOUk4vJxXAC0AY1xNcvkISpeI
+         uIsQDjPd3msGpm/7zUGCPL0YtOjZavh2xy3umNez3OlvRajMUOAwhQh0B3yFgftoucAg
+         IyWelZPCQjQuZfk526krewBwae4ivldt7xFNjJx2T/ifoiJO0h/uglfGxHzSxWttw1nI
+         RfZ0qM9HF0NZAde13/wA1BG3bxkdzGfP7d/tzTl5WxNvhtuILSnJ8ZGQWRnapp6id0a9
+         wTouE5yi3zHXY4U97cSq9LaO0oO5YghMW9q9w+uC2nyjTwMS0vglF966saeN1kTeT5Fs
+         fyuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xyBVEYkzY9GbJqdrcpd7/z5zSijkLJgqnvmaBURJfhE=;
+        b=Z2x+HuF+Zwa5gn9KkGCkrsQGd+sqfP0M2ZXj1g+yTCdVEx/RZOTof3n6Cr1xEpkw1H
+         DIKZSOY+icOcfyf3r995B34O72nuyJiDAsxQXP/EMaeJ/cNzn5FJNjRS73fLMcrFiXKC
+         1ZfcZjvTKa3DcRPxPcZY+OO/reu9SRkrJSC/2RMnU8cpKewb63hIlEMYKr9I9jB+83Sj
+         njGx7XKQ7SyZGFUQH0WNSfoeE13NIZuMtLoQaDEuc93HXqeJgvrbEozVB7gTYidGyqTS
+         lJVPvXPo3ho+HehaXx9t+bDIsv+4I2CUNiuR/nzFhXqDvjksJnItjhjzfQQzBXCDz3Oh
+         zn+w==
+X-Gm-Message-State: APjAAAVeMmvx9IdyJcQLPplpsmTJFfulIfXVj28lM4+kmcg5xhaZM+yG
+        VoM07B8V3YquPqEzEIwAUR7W0w==
+X-Google-Smtp-Source: APXvYqzizqlaykbVmos6h8bpIEJ1Pw90IdGHpoC0aid9Ibyt71vL3V4ttZZfSQYuPn6uyDDX+71A4Q==
+X-Received: by 2002:a17:90a:8043:: with SMTP id e3mr6037146pjw.24.1576715522475;
+        Wed, 18 Dec 2019 16:32:02 -0800 (PST)
+Received: from google.com ([2620:15c:201:0:7f8c:9d6e:20b8:e324])
+        by smtp.gmail.com with ESMTPSA id z130sm4664074pgz.6.2019.12.18.16.32.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Dec 2019 16:32:02 -0800 (PST)
+Date:   Wed, 18 Dec 2019 16:31:57 -0800
+From:   Satya Tangirala <satyat@google.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Kim Boojin <boojin.kim@samsung.com>, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v6 9/9] ext4: add inline encryption support
+Message-ID: <20191219003157.GA178424@google.com>
+References: <20191218145136.172774-1-satyat@google.com>
+ <20191218145136.172774-10-satyat@google.com>
+ <20191219001240.GD47399@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="Dxnq1zWXvFF0Q93v"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191219000013.GB13065@localhost>
+In-Reply-To: <20191219001240.GD47399@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+I messed up while using git and managed to overwrite the author field in
+the patch - it should read "Eric Biggers <ebiggers@google.com>" instead.
+I'll fix that in the next patch version, sorry.
 
---Dxnq1zWXvFF0Q93v
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Wed, Dec 18, 2019 at 04:12:41PM -0800, Eric Biggers wrote:
 
-On Wed, Dec 18, 2019 at 04:03:18PM -0800, Josh Triplett wrote:
-> On Wed, Dec 18, 2019 at 02:51:27PM -0800, Linus Torvalds wrote:
-> > That's my latest version, but you'll have to tweak it a tiny bit
-> > because of d1c6a2aa02af ("pipe: simplify signal handling in
-> > pipe_read() and add comments") which I did after that patch.
+> [+Cc linux-ext4]
 > 
-> That's what I encountered, and I ended up manually fixing it up,
-> resulting in the attached patch. Does that look reasonable?
-
-Er, wrong file. That's the original patch; the attached patch is the
-right one.
-
---Dxnq1zWXvFF0Q93v
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment; filename="linux-pipe-fix.patch"
-
-diff --git a/fs/coredump.c b/fs/coredump.c
-index b1ea7dfbd149..f8296a82d01d 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -517,7 +517,7 @@ static void wait_for_dump_helpers(struct file *file)
- 	pipe_lock(pipe);
- 	pipe->readers++;
- 	pipe->writers--;
--	wake_up_interruptible_sync(&pipe->wait);
-+	wake_up_interruptible_sync(&pipe->rd_wait);
- 	kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- 	pipe_unlock(pipe);
- 
-@@ -525,7 +525,7 @@ static void wait_for_dump_helpers(struct file *file)
- 	 * We actually want wait_event_freezable() but then we need
- 	 * to clear TIF_SIGPENDING and improve dump_interrupted().
- 	 */
--	wait_event_interruptible(pipe->wait, pipe->readers == 1);
-+	wait_event_interruptible(pipe->rd_wait, pipe->readers == 1);
- 
- 	pipe_lock(pipe);
- 	pipe->readers--;
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 04d004ee2e8c..5ca6446ca2b1 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -108,16 +108,19 @@ void pipe_double_lock(struct pipe_inode_info *pipe1,
- /* Drop the inode semaphore and wait for a pipe event, atomically */
- void pipe_wait(struct pipe_inode_info *pipe)
- {
--	DEFINE_WAIT(wait);
-+	DEFINE_WAIT(rdwait);
-+	DEFINE_WAIT(wrwait);
- 
- 	/*
- 	 * Pipes are system-local resources, so sleeping on them
- 	 * is considered a noninteractive wait:
- 	 */
--	prepare_to_wait(&pipe->wait, &wait, TASK_INTERRUPTIBLE);
-+	prepare_to_wait(&pipe->rd_wait, &rdwait, TASK_INTERRUPTIBLE);
-+	prepare_to_wait(&pipe->wr_wait, &wrwait, TASK_INTERRUPTIBLE);
- 	pipe_unlock(pipe);
- 	schedule();
--	finish_wait(&pipe->wait, &wait);
-+	finish_wait(&pipe->rd_wait, &rdwait);
-+	finish_wait(&pipe->wr_wait, &wrwait);
- 	pipe_lock(pipe);
- }
- 
-@@ -286,7 +289,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 	size_t total_len = iov_iter_count(to);
- 	struct file *filp = iocb->ki_filp;
- 	struct pipe_inode_info *pipe = filp->private_data;
--	bool was_full;
-+	bool was_full, wake_next_reader = false;
- 	ssize_t ret;
- 
- 	/* Null read succeeds. */
-@@ -344,10 +347,10 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 
- 			if (!buf->len) {
- 				pipe_buf_release(pipe, buf);
--				spin_lock_irq(&pipe->wait.lock);
-+				spin_lock_irq(&pipe->rd_wait.lock);
- 				tail++;
- 				pipe->tail = tail;
--				spin_unlock_irq(&pipe->wait.lock);
-+				spin_unlock_irq(&pipe->rd_wait.lock);
- 			}
- 			total_len -= chars;
- 			if (!total_len)
-@@ -384,7 +387,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 		 * no data.
- 		 */
- 		if (unlikely(was_full)) {
--			wake_up_interruptible_sync_poll(&pipe->wait, EPOLLOUT | EPOLLWRNORM);
-+			wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
- 			kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
- 		}
- 
-@@ -394,18 +397,23 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 		 * since we've done any required wakeups and there's no need
- 		 * to mark anything accessed. And we've dropped the lock.
- 		 */
--		if (wait_event_interruptible(pipe->wait, pipe_readable(pipe)) < 0)
-+		if (wait_event_interruptible_exclusive(pipe->rd_wait, pipe_readable(pipe)) < 0)
- 			return -ERESTARTSYS;
- 
- 		__pipe_lock(pipe);
- 		was_full = pipe_full(pipe->head, pipe->tail, pipe->max_usage);
-+		wake_next_reader = true;
- 	}
-+	if (pipe_empty(pipe->head, pipe->tail))
-+		wake_next_reader = false;
- 	__pipe_unlock(pipe);
- 
- 	if (was_full) {
--		wake_up_interruptible_sync_poll(&pipe->wait, EPOLLOUT | EPOLLWRNORM);
-+		wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
- 		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
- 	}
-+	if (wake_next_reader)
-+		wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
- 	if (ret > 0)
- 		file_accessed(filp);
- 	return ret;
-@@ -437,6 +445,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 	size_t total_len = iov_iter_count(from);
- 	ssize_t chars;
- 	bool was_empty = false;
-+	bool wake_next_writer = false;
- 
- 	/* Null write succeeds. */
- 	if (unlikely(total_len == 0))
-@@ -515,16 +524,16 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 			 * it, either the reader will consume it or it'll still
- 			 * be there for the next write.
- 			 */
--			spin_lock_irq(&pipe->wait.lock);
-+			spin_lock_irq(&pipe->rd_wait.lock);
- 
- 			head = pipe->head;
- 			if (pipe_full(head, pipe->tail, pipe->max_usage)) {
--				spin_unlock_irq(&pipe->wait.lock);
-+				spin_unlock_irq(&pipe->rd_wait.lock);
- 				continue;
- 			}
- 
- 			pipe->head = head + 1;
--			spin_unlock_irq(&pipe->wait.lock);
-+			spin_unlock_irq(&pipe->rd_wait.lock);
- 
- 			/* Insert it into the buffer array */
- 			buf = &pipe->bufs[head & mask];
-@@ -576,14 +585,17 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 		 */
- 		__pipe_unlock(pipe);
- 		if (was_empty) {
--			wake_up_interruptible_sync_poll(&pipe->wait, EPOLLIN | EPOLLRDNORM);
-+			wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
- 			kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- 		}
--		wait_event_interruptible(pipe->wait, pipe_writable(pipe));
-+		wait_event_interruptible_exclusive(pipe->wr_wait, pipe_writable(pipe));
- 		__pipe_lock(pipe);
- 		was_empty = pipe_empty(head, pipe->tail);
-+		wake_next_writer = true;
- 	}
- out:
-+	if (pipe_full(pipe->head, pipe->tail, pipe->max_usage))
-+		wake_next_writer = false;
- 	__pipe_unlock(pipe);
- 
- 	/*
-@@ -596,9 +608,11 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 	 * wake up pending jobs
- 	 */
- 	if (was_empty) {
--		wake_up_interruptible_sync_poll(&pipe->wait, EPOLLIN | EPOLLRDNORM);
-+		wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
- 		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- 	}
-+	if (wake_next_writer)
-+		wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
- 	if (ret > 0 && sb_start_write_trylock(file_inode(filp)->i_sb)) {
- 		int err = file_update_time(filp);
- 		if (err)
-@@ -642,12 +656,15 @@ pipe_poll(struct file *filp, poll_table *wait)
- 	unsigned int head, tail;
- 
- 	/*
--	 * Reading only -- no need for acquiring the semaphore.
-+	 * Reading pipe state only -- no need for acquiring the semaphore.
- 	 *
- 	 * But because this is racy, the code has to add the
- 	 * entry to the poll table _first_ ..
- 	 */
--	poll_wait(filp, &pipe->wait, wait);
-+	if (filp->f_mode & FMODE_READ)
-+		poll_wait(filp, &pipe->rd_wait, wait);
-+	if (filp->f_mode & FMODE_WRITE)
-+		poll_wait(filp, &pipe->wr_wait, wait);
- 
- 	/*
- 	 * .. and only then can you do the racy tests. That way,
-@@ -706,7 +723,8 @@ pipe_release(struct inode *inode, struct file *file)
- 		pipe->writers--;
- 
- 	if (pipe->readers || pipe->writers) {
--		wake_up_interruptible_sync_poll(&pipe->wait, EPOLLIN | EPOLLOUT | EPOLLRDNORM | EPOLLWRNORM | EPOLLERR | EPOLLHUP);
-+		wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM | EPOLLERR | EPOLLHUP);
-+		wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM | EPOLLERR | EPOLLHUP);
- 		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- 		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
- 	}
-@@ -789,7 +807,8 @@ struct pipe_inode_info *alloc_pipe_info(void)
- 			     GFP_KERNEL_ACCOUNT);
- 
- 	if (pipe->bufs) {
--		init_waitqueue_head(&pipe->wait);
-+		init_waitqueue_head(&pipe->rd_wait);
-+		init_waitqueue_head(&pipe->wr_wait);
- 		pipe->r_counter = pipe->w_counter = 1;
- 		pipe->max_usage = pipe_bufs;
- 		pipe->ring_size = pipe_bufs;
-@@ -1007,7 +1026,8 @@ static int wait_for_partner(struct pipe_inode_info *pipe, unsigned int *cnt)
- 
- static void wake_up_partner(struct pipe_inode_info *pipe)
- {
--	wake_up_interruptible(&pipe->wait);
-+	wake_up_interruptible(&pipe->rd_wait);
-+	wake_up_interruptible(&pipe->wr_wait);
- }
- 
- static int fifo_open(struct inode *inode, struct file *filp)
-@@ -1118,13 +1138,13 @@ static int fifo_open(struct inode *inode, struct file *filp)
- 
- err_rd:
- 	if (!--pipe->readers)
--		wake_up_interruptible(&pipe->wait);
-+		wake_up_interruptible(&pipe->wr_wait);
- 	ret = -ERESTARTSYS;
- 	goto err;
- 
- err_wr:
- 	if (!--pipe->writers)
--		wake_up_interruptible(&pipe->wait);
-+		wake_up_interruptible(&pipe->rd_wait);
- 	ret = -ERESTARTSYS;
- 	goto err;
- 
-@@ -1251,7 +1271,8 @@ static long pipe_set_size(struct pipe_inode_info *pipe, unsigned long arg)
- 	pipe->max_usage = nr_slots;
- 	pipe->tail = tail;
- 	pipe->head = head;
--	wake_up_interruptible_all(&pipe->wait);
-+	wake_up_interruptible_all(&pipe->rd_wait);
-+	wake_up_interruptible_all(&pipe->wr_wait);
- 	return pipe->max_usage * PAGE_SIZE;
- 
- out_revert_acct:
-diff --git a/fs/splice.c b/fs/splice.c
-index 3009652a41c8..d671936d0aad 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -165,8 +165,8 @@ static const struct pipe_buf_operations user_page_pipe_buf_ops = {
- static void wakeup_pipe_readers(struct pipe_inode_info *pipe)
- {
- 	smp_mb();
--	if (waitqueue_active(&pipe->wait))
--		wake_up_interruptible(&pipe->wait);
-+	if (waitqueue_active(&pipe->rd_wait))
-+		wake_up_interruptible(&pipe->rd_wait);
- 	kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- }
- 
-@@ -462,8 +462,8 @@ static int pipe_to_sendpage(struct pipe_inode_info *pipe,
- static void wakeup_pipe_writers(struct pipe_inode_info *pipe)
- {
- 	smp_mb();
--	if (waitqueue_active(&pipe->wait))
--		wake_up_interruptible(&pipe->wait);
-+	if (waitqueue_active(&pipe->wr_wait))
-+		wake_up_interruptible(&pipe->wr_wait);
- 	kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
- }
- 
-diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-index dbcfa6892384..d5765039652a 100644
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -47,7 +47,7 @@ struct pipe_buffer {
-  **/
- struct pipe_inode_info {
- 	struct mutex mutex;
--	wait_queue_head_t wait;
-+	wait_queue_head_t rd_wait, wr_wait;
- 	unsigned int head;
- 	unsigned int tail;
- 	unsigned int max_usage;
-
---Dxnq1zWXvFF0Q93v--
+> On Wed, Dec 18, 2019 at 06:51:36AM -0800, Satya Tangirala wrote:
+> > Wire up ext4 to support inline encryption via the helper functions which
+> > fs/crypto/ now provides.  This includes:
+> > 
+> > - Adding a mount option 'inlinecrypt' which enables inline encryption
+> >   on encrypted files where it can be used.
+> > 
+> > - Setting the bio_crypt_ctx on bios that will be submitted to an
+> >   inline-encrypted file.
+> > 
+> >   Note: submit_bh_wbc() in fs/buffer.c also needed to be patched for
+> >   this part, since ext4 sometimes uses ll_rw_block() on file data.
+> > 
+> > - Not adding logically discontiguous data to bios that will be submitted
+> >   to an inline-encrypted file.
+> > 
+> > - Not doing filesystem-layer crypto on inline-encrypted files.
+> > 
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> > Signed-off-by: Satya Tangirala <satyat@google.com>
+> 
+> In the next version can you please add linux-ext4 to Cc for the series?
+> 
+Ok, I will.
+> > ---
+> >  fs/buffer.c        |  2 ++
+> >  fs/ext4/ext4.h     |  1 +
+> >  fs/ext4/inode.c    |  4 ++--
+> >  fs/ext4/page-io.c  |  6 ++++--
+> >  fs/ext4/readpage.c | 11 ++++++++---
+> >  fs/ext4/super.c    | 13 +++++++++++++
+> >  6 files changed, 30 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/fs/buffer.c b/fs/buffer.c
+> > index d8c7242426bb..3ad000db4a19 100644
+> > --- a/fs/buffer.c
+> > +++ b/fs/buffer.c
+> > @@ -3108,6 +3108,8 @@ static int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
+> >  	 */
+> >  	bio = bio_alloc(GFP_NOIO, 1);
+> >  
+> > +	fscrypt_set_bio_crypt_ctx_bh(bio, bh, GFP_NOIO);
+> > +
+> >  	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
+> >  	bio_set_dev(bio, bh->b_bdev);
+> >  	bio->bi_write_hint = write_hint;
+> 
+> In 5.5, there was some decryption code added to fs/buffer.c in order to support
+> ext4 encryption with blocksize < PAGE_SIZE:
+> 
+> static void end_buffer_async_read_io(struct buffer_head *bh, int uptodate)
+> {
+>         /* Decrypt if needed */
+>         if (uptodate && IS_ENABLED(CONFIG_FS_ENCRYPTION) &&
+>             IS_ENCRYPTED(bh->b_page->mapping->host) &&
+>             S_ISREG(bh->b_page->mapping->host->i_mode)) {
+> 	...
+> 
+> 
+> This needs to be updated to use fscrypt_inode_uses_fs_layer_crypto() instead, so
+> that the filesystem-layer decryption is not done when the file is already using
+> inline decryption.
+> 
+Will fix in the next version.
+> > diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> > index f8578caba40d..aeaa01724d7c 100644
+> > --- a/fs/ext4/ext4.h
+> > +++ b/fs/ext4/ext4.h
+> > @@ -1153,6 +1153,7 @@ struct ext4_inode_info {
+> >  #define EXT4_MOUNT_JOURNAL_CHECKSUM	0x800000 /* Journal checksums */
+> >  #define EXT4_MOUNT_JOURNAL_ASYNC_COMMIT	0x1000000 /* Journal Async Commit */
+> >  #define EXT4_MOUNT_WARN_ON_ERROR	0x2000000 /* Trigger WARN_ON on error */
+> > +#define EXT4_MOUNT_INLINECRYPT		0x4000000 /* Inline encryption support */
+> >  #define EXT4_MOUNT_DELALLOC		0x8000000 /* Delalloc support */
+> >  #define EXT4_MOUNT_DATA_ERR_ABORT	0x10000000 /* Abort on file data write */
+> >  #define EXT4_MOUNT_BLOCK_VALIDITY	0x20000000 /* Block validity checking */
+> > diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> > index 28f28de0c1b6..44d9651b8638 100644
+> > --- a/fs/ext4/inode.c
+> > +++ b/fs/ext4/inode.c
+> > @@ -1090,7 +1090,7 @@ static int ext4_block_write_begin(struct page *page, loff_t pos, unsigned len,
+> >  	}
+> >  	if (unlikely(err)) {
+> >  		page_zero_new_buffers(page, from, to);
+> > -	} else if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode)) {
+> > +	} else if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
+> >  		for (i = 0; i < nr_wait; i++) {
+> >  			int err2;
+> >  
+> > @@ -3698,7 +3698,7 @@ static int __ext4_block_zero_page_range(handle_t *handle,
+> >  		/* Uhhuh. Read error. Complain and punt. */
+> >  		if (!buffer_uptodate(bh))
+> >  			goto unlock;
+> > -		if (S_ISREG(inode->i_mode) && IS_ENCRYPTED(inode)) {
+> > +		if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
+> >  			/* We expect the key to be set. */
+> >  			BUG_ON(!fscrypt_has_encryption_key(inode));
+> >  			WARN_ON_ONCE(fscrypt_decrypt_pagecache_blocks(
+> > diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
+> > index 24aeedb8fc75..acde754cc5ca 100644
+> > --- a/fs/ext4/page-io.c
+> > +++ b/fs/ext4/page-io.c
+> > @@ -404,6 +404,7 @@ static void io_submit_init_bio(struct ext4_io_submit *io,
+> >  	 * __GFP_DIRECT_RECLAIM is set, see comments for bio_alloc_bioset().
+> >  	 */
+> >  	bio = bio_alloc(GFP_NOIO, BIO_MAX_PAGES);
+> > +	fscrypt_set_bio_crypt_ctx_bh(bio, bh, GFP_NOIO);
+> >  	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
+> >  	bio_set_dev(bio, bh->b_bdev);
+> >  	bio->bi_end_io = ext4_end_bio;
+> > @@ -420,7 +421,8 @@ static void io_submit_add_bh(struct ext4_io_submit *io,
+> >  {
+> >  	int ret;
+> >  
+> > -	if (io->io_bio && bh->b_blocknr != io->io_next_block) {
+> > +	if (io->io_bio && (bh->b_blocknr != io->io_next_block ||
+> > +			   !fscrypt_mergeable_bio_bh(io->io_bio, bh))) {
+> >  submit_and_retry:
+> >  		ext4_io_submit(io);
+> >  	}
+> > @@ -508,7 +510,7 @@ int ext4_bio_write_page(struct ext4_io_submit *io,
+> >  	 * (e.g. holes) to be unnecessarily encrypted, but this is rare and
+> >  	 * can't happen in the common case of blocksize == PAGE_SIZE.
+> >  	 */
+> > -	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode) && nr_to_submit) {
+> > +	if (fscrypt_inode_uses_fs_layer_crypto(inode) && nr_to_submit) {
+> >  		gfp_t gfp_flags = GFP_NOFS;
+> >  		unsigned int enc_bytes = round_up(len, i_blocksize(inode));
+> >  
+> > diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+> > index fef7755300c3..7844e27518b4 100644
+> > --- a/fs/ext4/readpage.c
+> > +++ b/fs/ext4/readpage.c
+> > @@ -183,7 +183,7 @@ static struct bio_post_read_ctx *get_bio_post_read_ctx(struct inode *inode,
+> >  	unsigned int post_read_steps = 0;
+> >  	struct bio_post_read_ctx *ctx = NULL;
+> >  
+> > -	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode))
+> > +	if (fscrypt_inode_uses_fs_layer_crypto(inode))
+> >  		post_read_steps |= 1 << STEP_DECRYPT;
+> >  
+> >  	if (ext4_need_verity(inode, first_idx))
+> > @@ -220,6 +220,7 @@ int ext4_mpage_readpages(struct address_space *mapping,
+> >  	const unsigned blkbits = inode->i_blkbits;
+> >  	const unsigned blocks_per_page = PAGE_SIZE >> blkbits;
+> >  	const unsigned blocksize = 1 << blkbits;
+> > +	sector_t next_block;
+> >  	sector_t block_in_file;
+> >  	sector_t last_block;
+> >  	sector_t last_block_in_file;
+> > @@ -252,7 +253,8 @@ int ext4_mpage_readpages(struct address_space *mapping,
+> >  		if (page_has_buffers(page))
+> >  			goto confused;
+> >  
+> > -		block_in_file = (sector_t)page->index << (PAGE_SHIFT - blkbits);
+> > +		block_in_file = next_block =
+> > +			(sector_t)page->index << (PAGE_SHIFT - blkbits);
+> >  		last_block = block_in_file + nr_pages * blocks_per_page;
+> >  		last_block_in_file = (ext4_readpage_limit(inode) +
+> >  				      blocksize - 1) >> blkbits;
+> > @@ -352,7 +354,8 @@ int ext4_mpage_readpages(struct address_space *mapping,
+> >  		 * This page will go to BIO.  Do we need to send this
+> >  		 * BIO off first?
+> >  		 */
+> > -		if (bio && (last_block_in_bio != blocks[0] - 1)) {
+> > +		if (bio && (last_block_in_bio != blocks[0] - 1 ||
+> > +			    !fscrypt_mergeable_bio(bio, inode, next_block))) {
+> >  		submit_and_realloc:
+> >  			submit_bio(bio);
+> >  			bio = NULL;
+> > @@ -366,6 +369,8 @@ int ext4_mpage_readpages(struct address_space *mapping,
+> >  			 */
+> >  			bio = bio_alloc(GFP_KERNEL,
+> >  				min_t(int, nr_pages, BIO_MAX_PAGES));
+> > +			fscrypt_set_bio_crypt_ctx(bio, inode, next_block,
+> > +						  GFP_KERNEL);
+> >  			ctx = get_bio_post_read_ctx(inode, bio, page->index);
+> >  			if (IS_ERR(ctx)) {
+> >  				bio_put(bio);
+> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> > index 1d82b56d9b11..0a6b60620942 100644
+> > --- a/fs/ext4/super.c
+> > +++ b/fs/ext4/super.c
+> > @@ -1357,6 +1357,11 @@ static void ext4_get_ino_and_lblk_bits(struct super_block *sb,
+> >  	*lblk_bits_ret = 8 * sizeof(ext4_lblk_t);
+> >  }
+> >  
+> > +static bool ext4_inline_crypt_enabled(struct super_block *sb)
+> > +{
+> > +	return test_opt(sb, INLINECRYPT);
+> > +}
+> > +
+> >  static const struct fscrypt_operations ext4_cryptops = {
+> >  	.key_prefix		= "ext4:",
+> >  	.get_context		= ext4_get_context,
+> > @@ -1366,6 +1371,7 @@ static const struct fscrypt_operations ext4_cryptops = {
+> >  	.max_namelen		= EXT4_NAME_LEN,
+> >  	.has_stable_inodes	= ext4_has_stable_inodes,
+> >  	.get_ino_and_lblk_bits	= ext4_get_ino_and_lblk_bits,
+> > +	.inline_crypt_enabled	= ext4_inline_crypt_enabled,
+> >  };
+> >  #endif
+> >  
+> > @@ -1460,6 +1466,7 @@ enum {
+> >  	Opt_journal_path, Opt_journal_checksum, Opt_journal_async_commit,
+> >  	Opt_abort, Opt_data_journal, Opt_data_ordered, Opt_data_writeback,
+> >  	Opt_data_err_abort, Opt_data_err_ignore, Opt_test_dummy_encryption,
+> > +	Opt_inlinecrypt,
+> >  	Opt_usrjquota, Opt_grpjquota, Opt_offusrjquota, Opt_offgrpjquota,
+> >  	Opt_jqfmt_vfsold, Opt_jqfmt_vfsv0, Opt_jqfmt_vfsv1, Opt_quota,
+> >  	Opt_noquota, Opt_barrier, Opt_nobarrier, Opt_err,
+> > @@ -1556,6 +1563,7 @@ static const match_table_t tokens = {
+> >  	{Opt_noinit_itable, "noinit_itable"},
+> >  	{Opt_max_dir_size_kb, "max_dir_size_kb=%u"},
+> >  	{Opt_test_dummy_encryption, "test_dummy_encryption"},
+> > +	{Opt_inlinecrypt, "inlinecrypt"},
+> >  	{Opt_nombcache, "nombcache"},
+> >  	{Opt_nombcache, "no_mbcache"},	/* for backward compatibility */
+> >  	{Opt_removed, "check=none"},	/* mount option from ext2/3 */
+> > @@ -1767,6 +1775,11 @@ static const struct mount_opts {
+> >  	{Opt_jqfmt_vfsv1, QFMT_VFS_V1, MOPT_QFMT},
+> >  	{Opt_max_dir_size_kb, 0, MOPT_GTE0},
+> >  	{Opt_test_dummy_encryption, 0, MOPT_GTE0},
+> > +#ifdef CONFIG_FS_ENCRYPTION_INLINE_CRYPT
+> > +	{Opt_inlinecrypt, EXT4_MOUNT_INLINECRYPT, MOPT_SET},
+> > +#else
+> > +	{Opt_inlinecrypt, EXT4_MOUNT_INLINECRYPT, MOPT_NOSUPPORT},
+> > +#endif
+> >  	{Opt_nombcache, EXT4_MOUNT_NO_MBCACHE, MOPT_SET},
+> >  	{Opt_err, 0, 0}
+> >  };
+> 
+> On v5 there was a discussion about using a flag like SB_INLINECRYPT to replace
+> the ->inline_crypt_enabled() function.  Was this considered?
+> 
+Right, I'll add this change to the next version too.
+> - Eric
