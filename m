@@ -2,233 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63474127D6B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2019 15:37:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 492251280DA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2019 17:46:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728258AbfLTOdu convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Dec 2019 09:33:50 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37455 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728267AbfLTOdr (ORCPT
+        id S1727362AbfLTQqg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Dec 2019 11:46:36 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:54284 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727181AbfLTQqg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Dec 2019 09:33:47 -0500
-Received: by mail-wm1-f65.google.com with SMTP id f129so9458213wmf.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2019 06:33:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=V6peUYVw+8q1XalOpqZ1ayFyqbTEFtfcEYX2FP9pROo=;
-        b=O2NUj8PkP1Y8E8uafuKkjKJU1mg3rYaqup/1w7D0ngdFssyHOWdqTV4iETzuLWdtr/
-         FAKTBxyYl1BmyD1INSagMCVxG4EE6ROWdpFbOWrhSIPDCxNj3yv7tEIPus58AaVrLlmR
-         h5AClIy8S5BdvtQ3SquFJzBPujwvqqyPILKDqzZkoGKIFaadsVyxPn/oh6S6qZnlBaki
-         ANG7ktkKkxGx04wIaC47eWJLky3GMwXpr7oUmn142HkfGeJo4wPAAMBCpBFC062Klf9T
-         KMVtThp/Yi3dgmwOv1meVhYkghGzK8V4/OHCRz6cCRdu5ijq5rXmK2ZbCxn34hmuvtp/
-         8uwA==
-X-Gm-Message-State: APjAAAWUStDNL4NkrddMlRx2UmfDb1inDeGA7VtQmyiHGuwQQC/4ExIo
-        C8kga4CYwUwiy7rdGA1YD459Og==
-X-Google-Smtp-Source: APXvYqxVS8YAU3RLQWiNFWWhq3mf++gLHMleVdt7qSTwX9NrqFbPr8TqBrxxQzLMRWsCwz0CaURhTQ==
-X-Received: by 2002:a7b:c851:: with SMTP id c17mr17423248wml.71.1576852426193;
-        Fri, 20 Dec 2019 06:33:46 -0800 (PST)
-Received: from [10.140.78.238] ([46.114.38.238])
-        by smtp.gmail.com with ESMTPSA id l15sm9907506wrv.39.2019.12.20.06.33.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Dec 2019 06:33:43 -0800 (PST)
-Date:   Fri, 20 Dec 2019 15:33:39 +0100
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20191220140328.20907-2-cyphar@cyphar.com>
-References: <20191220140328.20907-1-cyphar@cyphar.com> <20191220140328.20907-2-cyphar@cyphar.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH v2 1/2] openat2: drop open_how->__padding field
-To:     containers@lists.linux-foundation.org,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Fri, 20 Dec 2019 11:46:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=wBzPcwiacPh3r6JPPuX4OW3YmJm5b2HBjhLdhW1rrhw=; b=gfWcV0uibA4PFU/4rEbLjxkz5
+        MG8MgU55g11y3RIPF3OV3lH6YW6USCsaChSawFavqS03tMJMxbhzQNlUQ4LgBM9czPB2o1NXRqGzJ
+        xsH8yvHWtPIOTxC6G6W+Jmdt6A9gU8VEl9ZXqU2Zk7tOSIFqT2E6eZPwtwbKfL99uKVOivoX5YxWC
+        uWdNcE7sHIvr6yJ50gf/nC2wpbqxAQtaE2GWRlpCZVVwm5d1HL4yjArHFf0xmMzdldrHMNNn3Qjj1
+        OlTvms47JyJWNXCalo/YyzycxUlGS6VJ7DNLoSG6TsfGfZYvdXWJ/lThq4jLxjN3auQzvcE9ac5kf
+        dbwLX4f3w==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iiLQ8-0001ik-7Q; Fri, 20 Dec 2019 16:46:32 +0000
+Date:   Fri, 20 Dec 2019 08:46:32 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Chris Down <chris@chrisdown.name>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Shuah Khan <shuah@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-CC:     libc-alpha@sourceware.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dev@opencontainers.org,
-        David Laight <david.laight@aculab.com>,
-        linux-kselftest@vger.kernel.org, linux-fsdevel@vger.kernel.org
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-Message-ID: <88F5533A-9C91-41D1-A2E6-3622FCEEEDB1@ubuntu.com>
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@fb.com,
+        Hugh Dickins <hughd@google.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "zhengbin (A)" <zhengbin13@huawei.com>
+Subject: Re: [PATCH] fs: inode: Reduce volatile inode wraparound risk when
+ ino_t is 64 bit
+Message-ID: <20191220164632.GA26902@bombadil.infradead.org>
+References: <20191220024936.GA380394@chrisdown.name>
+ <CAOQ4uxjqSWcrA1reiyit9DRt+aq2tXBxLdPE31RrYw1yr=4hjg@mail.gmail.com>
+ <20191220121615.GB388018@chrisdown.name>
+ <CAOQ4uxgo_kAttnB4N1+om5gScYSDn3FXAr+_GUiqNy_79iiLXQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxgo_kAttnB4N1+om5gScYSDn3FXAr+_GUiqNy_79iiLXQ@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[Cc Arnd for struct layout sanity checking]
+On Fri, Dec 20, 2019 at 03:41:11PM +0200, Amir Goldstein wrote:
+> Suggestion:
+> 1. Extend the kmem_cache API to let the ctor() know if it is
+> initializing an object
+>     for the first time (new page) or recycling an object.
 
-On December 20, 2019 3:03:27 PM GMT+01:00, Aleksa Sarai <cyphar@cyphar.com> wrote:
->The purpose of explicit padding was to allow us to use the space in the
->future (C provides no guarantee about the value of padding bytes and
->thus userspace could've provided garbage).
->
->However, the downside of explicit padding is that any extension we wish
->to add should fit the space exactly (otherwise we may end up with a u16
->which will never be used). In addition, the correct error to return for
->non-zero padding is not clear (-EINVAL doesn't imply "you're using an
->extension field unsupported by this kernel", but -E2BIG seems a bit odd
->if the structure size isn't different).
->
->The simplest solution is to just match the design of clone3(2) -- use
->u64s for all fields. The extra few-bytes cost of extra fields is not
->significant (it's unlikely configuration structs will ever be extremely
->large) and it allows for more flag space if necessary. There is also no
->need to align the u64s because we will not permit any padding in the
->structure.
->
->As openat2(2) is not yet in Linus's tree, we can iron out these minor
->warts before we commit to this as a stable ABI.
->
->Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
->Suggested-by: David Laight <david.laight@aculab.com>
->Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
->---
-> fs/open.c                                     |  2 --
-> include/uapi/linux/fcntl.h                    | 17 +++++++------
-> tools/testing/selftests/openat2/helpers.h     |  7 +++---
-> .../testing/selftests/openat2/openat2_test.c  | 24 +++++++------------
-> 4 files changed, 19 insertions(+), 31 deletions(-)
->
->diff --git a/fs/open.c b/fs/open.c
->index 50a46501bcc9..8cdb2b675867 100644
->--- a/fs/open.c
->+++ b/fs/open.c
->@@ -993,8 +993,6 @@ static inline int build_open_flags(const struct
->open_how *how,
-> 		return -EINVAL;
-> 	if (how->resolve & ~VALID_RESOLVE_FLAGS)
-> 		return -EINVAL;
->-	if (memchr_inv(how->__padding, 0, sizeof(how->__padding)))
->-		return -EINVAL;
+Uh, what?  The ctor is _only_ called when new pages are allocated.
+Part of the contract with the slab user is that objects are returned to
+the slab in an initialised state.
+
+> 2. Let shmem_init_inode retain the value of i_ino of recycled shmem_inode_info
+>     objects
+> 3. i_ino is initialized with get_next_ino() only in case it it zero
 > 
-> 	/* Deal with the mode. */
-> 	if (WILL_CREATE(flags)) {
->diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
->index d886bdb585e4..5aaadfd79dd5 100644
->--- a/include/uapi/linux/fcntl.h
->+++ b/include/uapi/linux/fcntl.h
->@@ -101,22 +101,21 @@
-> #define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
-> 
-> /*
->- * Arguments for how openat2(2) should open the target path. If
->@resolve is
->- * zero, then openat2(2) operates very similarly to openat(2).
->+ * Arguments for how openat2(2) should open the target path. If only
->@flags and
->+ * @mode are non-zero, then openat2(2) operates very similarly to
->openat(2).
->  *
->- * However, unlike openat(2), unknown bits in @flags result in -EINVAL
->rather
->- * than being silently ignored. @mode must be zero unless one of
->{O_CREAT,
->- * O_TMPFILE} are set.
->+ * However, unlike openat(2), unknown or invalid bits in @flags result
->in
->+ * -EINVAL rather than being silently ignored. @mode must be zero
->unless one of
->+ *  {O_CREAT, O_TMPFILE} are set.
->  *
->  * @flags: O_* flags.
->  * @mode: O_CREAT/O_TMPFILE file mode.
->  * @resolve: RESOLVE_* flags.
->  */
-> struct open_how {
->-	__aligned_u64 flags;
->-	__u16 mode;
->-	__u16 __padding[3]; /* must be zeroed */
->-	__aligned_u64 resolve;
->+	__u64 flags;
->+	__u64 mode;
->+	__u64 resolve;
-> };
-> 
-> #define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
->diff --git a/tools/testing/selftests/openat2/helpers.h
->b/tools/testing/selftests/openat2/helpers.h
->index 43ca5ceab6e3..a6ea27344db2 100644
->--- a/tools/testing/selftests/openat2/helpers.h
->+++ b/tools/testing/selftests/openat2/helpers.h
->@@ -36,10 +36,9 @@
->  * @resolve: RESOLVE_* flags.
->  */
-> struct open_how {
->-	__aligned_u64 flags;
->-	__u16 mode;
->-	__u16 __padding[3]; /* must be zeroed */
->-	__aligned_u64 resolve;
->+	__u64 flags;
->+	__u64 mode;
->+	__u64 resolve;
-> };
-> 
-> #define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
->diff --git a/tools/testing/selftests/openat2/openat2_test.c
->b/tools/testing/selftests/openat2/openat2_test.c
->index 0b64fedc008b..b386367c606b 100644
->--- a/tools/testing/selftests/openat2/openat2_test.c
->+++ b/tools/testing/selftests/openat2/openat2_test.c
->@@ -40,7 +40,7 @@ struct struct_test {
-> 	int err;
-> };
-> 
->-#define NUM_OPENAT2_STRUCT_TESTS 10
->+#define NUM_OPENAT2_STRUCT_TESTS 7
-> #define NUM_OPENAT2_STRUCT_VARIATIONS 13
-> 
-> void test_openat2_struct(void)
->@@ -57,20 +57,6 @@ void test_openat2_struct(void)
-> 		  .arg.inner.flags = O_RDONLY,
-> 		  .size = sizeof(struct open_how_ext) },
-> 
->-		/* Normal struct with broken padding. */
->-		{ .name = "normal struct (non-zero padding[0])",
->-		  .arg.inner.flags = O_RDONLY,
->-		  .arg.inner.__padding = {0xa0, 0x00, 0x00},
->-		  .size = sizeof(struct open_how_ext), .err = -EINVAL },
->-		{ .name = "normal struct (non-zero padding[1])",
->-		  .arg.inner.flags = O_RDONLY,
->-		  .arg.inner.__padding = {0x00, 0x1a, 0x00},
->-		  .size = sizeof(struct open_how_ext), .err = -EINVAL },
->-		{ .name = "normal struct (non-zero padding[2])",
->-		  .arg.inner.flags = O_RDONLY,
->-		  .arg.inner.__padding = {0x00, 0x00, 0xef},
->-		  .size = sizeof(struct open_how_ext), .err = -EINVAL },
->-
-> 		/* TODO: Once expanded, check zero-padding. */
-> 
-> 		/* Smaller than version-0 struct. */
->@@ -169,7 +155,7 @@ struct flag_test {
-> 	int err;
-> };
-> 
->-#define NUM_OPENAT2_FLAG_TESTS 21
->+#define NUM_OPENAT2_FLAG_TESTS 23
-> 
-> void test_openat2_flags(void)
-> {
->@@ -214,9 +200,15 @@ void test_openat2_flags(void)
-> 		{ .name = "invalid how.mode and O_CREAT",
-> 		  .how.flags = O_CREAT,
-> 		  .how.mode = 0xFFFF, .err = -EINVAL },
->+		{ .name = "invalid (very large) how.mode and O_CREAT",
->+		  .how.flags = O_CREAT,
->+		  .how.mode = 0xC000000000000000ULL, .err = -EINVAL },
-> 		{ .name = "invalid how.mode and O_TMPFILE",
-> 		  .how.flags = O_TMPFILE | O_RDWR,
-> 		  .how.mode = 0x1337, .err = -EINVAL },
->+		{ .name = "invalid (very large) how.mode and O_TMPFILE",
->+		  .how.flags = O_TMPFILE | O_RDWR,
->+		  .how.mode = 0x0000A00000000000ULL, .err = -EINVAL },
-> 
-> 		/* ->resolve must only contain RESOLVE_* flags. */
-> 		{ .name = "invalid how.resolve and O_RDONLY",
+> Alternatively to 1., if simpler to implement and acceptable by slab developers:
+> 1.b. remove the assertion from cache_grow_begin()/new_slab_objects():
+>        WARN_ON_ONCE(s->ctor && (flags & __GFP_ZERO));
+>        and pass __GFP_ZERO in shmem_alloc_inode()
+
+WTF would that _mean_?  I want this object to contain zeroes and whatever
+the constructor sets it to.  WHich one wins?
 
