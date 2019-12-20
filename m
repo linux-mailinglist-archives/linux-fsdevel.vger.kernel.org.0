@@ -2,91 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E7511285B4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2019 00:51:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD8DF1285C5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2019 00:55:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbfLTXvK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Dec 2019 18:51:10 -0500
-Received: from mail-pl1-f175.google.com ([209.85.214.175]:39089 "EHLO
-        mail-pl1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbfLTXvJ (ORCPT
+        id S1726680AbfLTXzG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Dec 2019 18:55:06 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:10960 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726462AbfLTXzF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Dec 2019 18:51:09 -0500
-Received: by mail-pl1-f175.google.com with SMTP id g6so1818442plp.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2019 15:51:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NKQ9URZBMeV3OPseAAh2Xx7y2pXyxLatIKtNl8iLvXQ=;
-        b=ykJu8gvYo2ySI4MYq3KAx12I/84YrqF+Q/U5WMmy9QswF5KWC7Km1ht1FtGvNaAqEP
-         O5N9mcr7Ry87YOOCeMm9G9FT4U2Eg8KXvUxER0cexg2PiLXMO8kzbyibp6yHj99A0BwQ
-         azvWMwgMPEzz53V3OcaFGUZMscgQ49MExbyF4PTQYnrMpJNaDUSPsxshj/pv3lDgiSEa
-         V6iwl5I4A5vmr+Ob3uN9MzIuG2rz8qbK9VqN9mLJejdnI3ZW3+2VKhK3LRj+FC/uePhi
-         Swb8KNcr8jc974+Q3z6dOxdd6nhs7IAAlnnRfXigkKsfolnY0ljiBl0xJMN8YmjPXtYj
-         1Gjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NKQ9URZBMeV3OPseAAh2Xx7y2pXyxLatIKtNl8iLvXQ=;
-        b=aa9bUg7RxUbR6q1CqjGFBZ2uDV+oH9Gos3zIs6uDbGvZZqUqlZAmFlxkwvk5W922Go
-         6BT7Yh7fQ82wneGroDtoVjRRLHLaw0O0Dqf9B2fu7PerULV3bXHYGjyi/Xd5H0XZgbma
-         SQnx+CRbnGScKNgbC7q+RNl5LbnwCDt5SSwONEVJFUd6Q+memn2/wNQ2y/XMJlmuP8mc
-         Zj8BjLsOeZAo0yBvLiz6bsQelh5J8Y3GhezAJpIZd7/9tlHlpANa1PgAFv7QTkYHS1dC
-         CUfSvp9pyRPi2datxlIhfjAjeQWEGl9w/XG3SzjYfTEI3tv+mph+z/ls98AZ4pMhbap2
-         UEuQ==
-X-Gm-Message-State: APjAAAVHWk+SVIyzXdoUuK+PXceTXGBxgJbGDgXiLQgzGXSdMIg2rusz
-        IWxTPpx3W+XyuSPKDyB/HionLw==
-X-Google-Smtp-Source: APXvYqzmkZWiV7MicyHExsLOg3UvxPLhXwAkPmhB5mHQM5D5YzarwPE7bcTHy/sqhKiuGY4VEVe9RA==
-X-Received: by 2002:a17:902:76c9:: with SMTP id j9mr8890271plt.21.1576885852697;
-        Fri, 20 Dec 2019 15:50:52 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id w38sm13024578pgk.45.2019.12.20.15.50.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Dec 2019 15:50:52 -0800 (PST)
-Subject: Re: [PATCH][next] io_uring: fix missing error return when
- percpu_ref_init fails
-To:     Colin Ian King <colin.king@canonical.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191220233322.13599-1-colin.king@canonical.com>
- <398f514a-e2ce-8b4f-16cf-4edeec5fa1e7@kernel.dk>
- <cf270359-fd06-3175-d0ef-ec2adc628235@canonical.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <a1a36f72-50ff-9cce-bcde-6639f7ab6406@kernel.dk>
-Date:   Fri, 20 Dec 2019 16:50:50 -0700
+        Fri, 20 Dec 2019 18:55:05 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dfd5f350000>; Fri, 20 Dec 2019 15:54:29 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 20 Dec 2019 15:55:00 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 20 Dec 2019 15:55:00 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 20 Dec
+ 2019 23:54:55 +0000
+Subject: Re: [PATCH v11 00/25] mm/gup: track dma-pinned pages: FOLL_PIN
+To:     Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        "Paul Mackerras" <paulus@samba.org>, Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Maor Gottlieb <maorg@mellanox.com>
+References: <20191216222537.491123-1-jhubbard@nvidia.com>
+ <20191219132607.GA410823@unreal>
+ <a4849322-8e17-119e-a664-80d9f95d850b@nvidia.com>
+ <20191219210743.GN17227@ziepe.ca> <20191220182939.GA10944@unreal>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <1001a5fc-a71d-9c0f-1090-546c4913d8a2@nvidia.com>
+Date:   Fri, 20 Dec 2019 15:54:55 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <cf270359-fd06-3175-d0ef-ec2adc628235@canonical.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20191220182939.GA10944@unreal>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1576886069; bh=/03FljbsYciU5tHAkbKg2NU1vxam4rPGvNuyvBOvTmI=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=oRvXZWdofYZmMnKtHbC887r9WWAfrydUr/UibodWJ1qaNTyMPy3+W8R0NcaZhg7dS
+         971HGgJD6LwSffJ62pj2tIvxp3eHI8BXVOtdjk7S3sjdZSz9tGHLzm7ujCZVURuC8a
+         irEUmm/OhCMXyR+iqtnm6nCO/xQp89VT1WotayqMgxGp4mpoDDX+NNHJX4q0B3UwU3
+         +RvXPnLJz1mCrbJfx3TkKb0L+jPAoTDVjeRU4xrKmbuD30tHozBBlUpnyYWoaOHmat
+         YDkXozvEZrxOc0h7qKS+l5AK23MRif8N+YKUGoUxe7vXoCKoEk2wdk8r2SNOo6On86
+         EItNjAud0AHkw==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/20/19 4:49 PM, Colin Ian King wrote:
-> On 20/12/2019 23:48, Jens Axboe wrote:
->> On 12/20/19 4:33 PM, Colin King wrote:
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> Currently when the call to percpu_ref_init fails ctx->file_data is
->>> set to null and because there is a missing return statement the
->>> following statement dereferences this null pointer causing an oops.
->>> Fix this by adding the missing -ENOMEM return to avoid the oops.
+On 12/20/19 10:29 AM, Leon Romanovsky wrote:
+...
+>> $ ./build.sh
+>> $ build/bin/run_tests.py
 >>
->> Nice, thanks! I'm guessing I didn't have the necessary magic debug
->> options to allow failure injection for failing.
+>> If you get things that far I think Leon can get a reproduction for you
 > 
-> Fortunately we have Coverity to the rescue :-)
+> I'm not so optimistic about that.
+> 
 
-Indeed!
+OK, I'm going to proceed for now on the assumption that I've got an overflow
+problem that happens when huge pages are pinned. If I can get more information,
+great, otherwise it's probably enough.
 
+One thing: for your repro, if you know the huge page size, and the system
+page size for that case, that would really help. Also the number of pins per
+page, more or less, that you'd expect. Because Jason says that only 2M huge 
+pages are used...
+
+Because the other possibility is that the refcount really is going negative, 
+likely due to a mismatched pin/unpin somehow.
+
+If there's not an obvious repro case available, but you do have one (is it easy
+to repro, though?), then *if* you have the time, I could point you to a github
+branch that reduces GUP_PIN_COUNTING_BIAS by, say, 4x, by applying this:
+
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index bb44c4d2ada7..8526fd03b978 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1077,7 +1077,7 @@ static inline void put_page(struct page *page)
+  * get_user_pages and page_mkclean and other calls that race to set up page
+  * table entries.
+  */
+-#define GUP_PIN_COUNTING_BIAS (1U << 10)
++#define GUP_PIN_COUNTING_BIAS (1U << 8)
+ 
+ void unpin_user_page(struct page *page);
+ void unpin_user_pages_dirty_lock(struct page **pages, unsigned long npages,
+
+If that fails to repro, then we would be zeroing in on the root cause. 
+
+The branch is here (I just tested it and it seems healthy):
+
+git@github.com:johnhubbard/linux.git  pin_user_pages_tracking_v11_with_diags
+
+
+
+thanks,
 -- 
-Jens Axboe
-
+John Hubbard
+NVIDIA
