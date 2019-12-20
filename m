@@ -2,83 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD76512751F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2019 06:22:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43A7F127566
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2019 06:44:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726030AbfLTFWB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Dec 2019 00:22:01 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34690 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725775AbfLTFWB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Dec 2019 00:22:01 -0500
-Received: by mail-ed1-f68.google.com with SMTP id l8so7101007edw.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Dec 2019 21:22:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=c2KTmXeXeXMiud96l6nUg2edTQgCxfxouifxscVRf0g=;
-        b=WNGXalv6wGknAwomwUwaovAuPTvIQk7Xl9TqqlQvmj1rGqrkoFkmOPGli//9tqbPOv
-         bC0y5Bs/3eANQWEqTALhW5Dku73NB5ieBnYuYxc1jUL3Zr8Uqy/gnWwYBGWtxLUJLsqD
-         Tp7EfFzYyAQ8cd9J2+BJ9gPXs0uV9dWqQzzK8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=c2KTmXeXeXMiud96l6nUg2edTQgCxfxouifxscVRf0g=;
-        b=l6WIrhEsvj4tREDO9NYQUwGBTHnFErl3y4RQmSBDYo9bnCDWhsoNlTrgOj0uLDAYut
-         ZqhM8grQfVO7S86VWXuMYu3fgrGrjDT8ilpSQP+X2aglSojC0yYpGd3K6jC+M+e0uKXs
-         0+ZOmw4WQFcM0Cmx2o8gsRxJFkEBRLiZsBzl6Oj9tkIPaXaPiiELwMx+ItjzJpka3HJn
-         FWkfQ6t7xkxqSbrp5PZCOIv46H0FxtWVgDKfnl9gACkQTg+T25f9m/fPqYPvUojK8Hop
-         r+8Ho6F+QEyOhs4RLdwURN2lV8NxnANpE9fA89wjfi9O+6YnCOz8/yHRaoPKLHgb0Rd2
-         LDKQ==
-X-Gm-Message-State: APjAAAVfQng2I0MWGBa3tGK8fKBRvubWSUG8nHDxJi6HJTJNA3kdkux5
-        HNRxKYsUyAZMjxHjWcLvdn3RzAb4ISGECGwHXllQPQ==
-X-Google-Smtp-Source: APXvYqzEMj7wR7jQmLsuZlyg4/9OOkLUmtqWJIdzbQ1FdkEnv81xGqzaY4T0ckwcnUBu1qoHgE7EBOXhUrhFb4u6MaM=
-X-Received: by 2002:a17:906:4f93:: with SMTP id o19mr13905879eju.52.1576819319133;
- Thu, 19 Dec 2019 21:21:59 -0800 (PST)
+        id S1726002AbfLTFoq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Dec 2019 00:44:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42328 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725825AbfLTFop (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Dec 2019 00:44:45 -0500
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B84421D7D;
+        Fri, 20 Dec 2019 05:44:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576820684;
+        bh=crWqBTWcrWs9Yhos0lMvcsdeK71eAsUMhrzRN5VLDls=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=u6bqa5Kiip/6ahbVT5hOuKU19IdN56g9JWtYUfZRTIdrzvnzQyWxjrEXkPz44EwhT
+         Jw/r2SBBnmrvnIDAHniEUcNRDJ69m9srW0I5RVFhFCeFWhf/ohypkp+qEGNA49Irq+
+         AyDqbRmxX3j6GLIi/aUxl3jSe7NM5UP1WNAfMIjM=
+Date:   Thu, 19 Dec 2019 21:44:43 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Satya Tangirala <satyat@google.com>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Kim Boojin <boojin.kim@samsung.com>
+Subject: Re: [PATCH v6 6/9] scsi: ufs: Add inline encryption support to UFS
+Message-ID: <20191220054443.GF718@sol.localdomain>
+References: <20191218145136.172774-1-satyat@google.com>
+ <20191218145136.172774-7-satyat@google.com>
 MIME-Version: 1.0
-References: <20191218235459.GA17271@ircssh-2.c.rugged-nimbus-611.internal> <CALCETrUK-SHA=sOUrBscpf+Bpxxff2L3RpXEaAfRHNnHGxa-LQ@mail.gmail.com>
-In-Reply-To: <CALCETrUK-SHA=sOUrBscpf+Bpxxff2L3RpXEaAfRHNnHGxa-LQ@mail.gmail.com>
-From:   Sargun Dhillon <sargun@sargun.me>
-Date:   Thu, 19 Dec 2019 21:21:23 -0800
-Message-ID: <CAMp4zn9R3XoV=xLi9y0vn-DotUQGRFA8Cp14aYYvkVYEUuW48w@mail.gmail.com>
-Subject: Re: [PATCH v4 2/5] pid: Add PIDFD_IOCTL_GETFD to fetch file
- descriptors from processes
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Gian-Carlo Pascutto <gpascutto@mozilla.com>,
-        =?UTF-8?Q?Emilio_Cobos_=C3=81lvarez?= <ealvarez@mozilla.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Jed Davis <jld@mozilla.com>, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191218145136.172774-7-satyat@google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 19, 2019 at 5:43 PM Andy Lutomirski <luto@kernel.org> wrote:
->
->
-> I don't think this is MODE_READ.  By copying an fd from the task, you
-> can easily change its state.
-Would PTRACE_MODE_ATTACH_REALCREDS  work? I'm curious what
-kind of state change you can cause by borrowing an FD?
+On Wed, Dec 18, 2019 at 06:51:33AM -0800, Satya Tangirala wrote:
+> Wire up ufshcd.c with the UFS Crypto API, the block layer inline
+> encryption additions and the keyslot manager.
+> 
+> Signed-off-by: Satya Tangirala <satyat@google.com>
+> ---
+>  drivers/scsi/ufs/ufshcd-crypto.c | 30 ++++++++++++++++++
+>  drivers/scsi/ufs/ufshcd-crypto.h | 21 +++++++++++++
+>  drivers/scsi/ufs/ufshcd.c        | 54 +++++++++++++++++++++++++++++---
+>  drivers/scsi/ufs/ufshcd.h        |  8 +++++
+>  4 files changed, 108 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/scsi/ufs/ufshcd-crypto.c b/drivers/scsi/ufs/ufshcd-crypto.c
+> index b0aa072d9009..749c325686a7 100644
+> --- a/drivers/scsi/ufs/ufshcd-crypto.c
+> +++ b/drivers/scsi/ufs/ufshcd-crypto.c
+> @@ -352,6 +352,36 @@ void ufshcd_crypto_setup_rq_keyslot_manager(struct ufs_hba *hba,
+>  }
+>  EXPORT_SYMBOL_GPL(ufshcd_crypto_setup_rq_keyslot_manager);
+>  
+> +int ufshcd_prepare_lrbp_crypto(struct ufs_hba *hba,
+> +			       struct scsi_cmnd *cmd,
+> +			       struct ufshcd_lrb *lrbp)
+> +{
+> +	struct bio_crypt_ctx *bc;
+> +
+> +	if (!bio_crypt_should_process(cmd->request)) {
+> +		lrbp->crypto_enable = false;
+> +		return 0;
+> +	}
+> +	bc = cmd->request->bio->bi_crypt_context;
+> +
+> +	if (WARN_ON(!ufshcd_is_crypto_enabled(hba))) {
+> +		/*
+> +		 * Upper layer asked us to do inline encryption
+> +		 * but that isn't enabled, so we fail this request.
+> +		 */
+> +		return -EINVAL;
+> +	}
+> +	if (!ufshcd_keyslot_valid(hba, bc->bc_keyslot))
+> +		return -EINVAL;
+> +
+> +	lrbp->crypto_enable = true;
+> +	lrbp->crypto_key_slot = bc->bc_keyslot;
+> +	lrbp->data_unit_num = bc->bc_dun[0];
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(ufshcd_prepare_lrbp_crypto);
 
+The UFS driver only uses the first 64 bits of the DUN, but in this version of
+the patchset the DUN in the bio_crypt_ctx can be up to the real length of the
+algorithm's IV -- which for AES-256-XTS is 128 bits.  So if the user were to
+specify anything nonzero in bits 64-127, the crypto would be done incorrectly.
 
->
-> IMO it would be really nice if pidfd could act more like a capability
-> here and carry a ptrace mode, for example.  But I guess it doesn't
-> right now.
->
->
-> --Andy
+(This case isn't encountered with fscrypt.  But it's still an issue with the
+overall approach.)
+
+So there needs to be a way for drivers to declare the max_dun_size they support,
+and prevent them from being used with longer DUNs.
+
+- Eric
