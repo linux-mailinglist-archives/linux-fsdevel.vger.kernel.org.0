@@ -2,329 +2,227 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FB2612851B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2019 23:39:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61051128568
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2019 00:14:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbfLTWjf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Dec 2019 17:39:35 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:43064 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726129AbfLTWjf (ORCPT
+        id S1726587AbfLTXOL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Dec 2019 18:14:11 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:9006 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726470AbfLTXOL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Dec 2019 17:39:35 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBKMZ1Ol135640;
-        Fri, 20 Dec 2019 22:39:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=h9RK9FTjqMlqpqdnBqJxb0ddVo415u80RFj/Yc+od/M=;
- b=YVVAAC3MBXi7ETbKuHoLdOt4kk8welqsHwJhMAaj43plr9isskqCaN6TVGrvFaNDkurf
- Blgrqx2pM9btgZbuInvo+pqYqWS7VV3DIrYR72lhXN0kFtd7jMAPCa897SGuKICyX9+k
- 1ZELrt2+DoSPnsOodEBLk9bERBD0DHftL3ZsVf8Ypj/AjJqMhOvEhgjC/8ASzasQ0Est
- ut7DVtc+swEFzri5Jp+SMHLJYY9TzM1t0n4mB7QIr1VMKal53u/ForqHDysMIob6yOkw
- U4VwP9L5EoofqcYW0GQQoMefHXmdzqnEJW6LxPdpmNRO7HLmQk/8/biNA09pQlkFVg2B kw== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2x01knu97t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 20 Dec 2019 22:39:29 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBKMd4g7190692;
-        Fri, 20 Dec 2019 22:39:28 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2x0vc4ns5p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 20 Dec 2019 22:39:28 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xBKMdRiM005090;
-        Fri, 20 Dec 2019 22:39:27 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 20 Dec 2019 14:39:26 -0800
-Date:   Fri, 20 Dec 2019 14:39:25 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Damien Le Moal <damien.lemoal@wdc.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Johannes Thumshirn <jth@kernel.org>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Hannes Reinecke <hare@suse.de>
-Subject: Re: [PATCH v2 2/2] zonefs: Add documentation
-Message-ID: <20191220223925.GD7476@magnolia>
-References: <20191220065528.317947-1-damien.lemoal@wdc.com>
- <20191220065528.317947-3-damien.lemoal@wdc.com>
+        Fri, 20 Dec 2019 18:14:11 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dfd55980001>; Fri, 20 Dec 2019 15:13:29 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 20 Dec 2019 15:14:00 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 20 Dec 2019 15:14:00 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 20 Dec
+ 2019 23:13:58 +0000
+Subject: Re: [PATCH v11 00/25] mm/gup: track dma-pinned pages: FOLL_PIN
+To:     Leon Romanovsky <leon@kernel.org>
+CC:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Maor Gottlieb <maorg@mellanox.com>
+References: <20191216222537.491123-1-jhubbard@nvidia.com>
+ <20191219132607.GA410823@unreal>
+ <a4849322-8e17-119e-a664-80d9f95d850b@nvidia.com>
+ <20191219210743.GN17227@ziepe.ca>
+ <f10b2a18-a109-d87d-f156-2e5941cbf4a0@nvidia.com>
+ <20191220184821.GB10944@unreal>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <b70ac328-2dc0-efe3-05c2-3e040b662256@nvidia.com>
+Date:   Fri, 20 Dec 2019 15:13:57 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191220065528.317947-3-damien.lemoal@wdc.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9477 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1912200173
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9477 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1912200173
+In-Reply-To: <20191220184821.GB10944@unreal>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1576883609; bh=YyPKn1pTUo9maui0Cl8wPUC9pCaG4pozfEeSM/q2Xuw=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=BbpbjMRADbiieG0wZwg7/MNcvb0htkXoIVaUqVfL2cVFSq6P/VSfqRlwCWpnneJfD
+         xftzXoBcLiTWuqMXsQ7t6AWCT71WLO1xkGZrhrOn0tcyM5yAfm54j70C7fBwcgnofn
+         b/9H8aCfEVq0LawCERbdcQV3VCGhVN60vVxhAFwFbbDtIhnnLa+AeJbbNjJrpU3Dje
+         2yRq6wb9M/4s8MWJ9EJb7rqgBCMp3VCFwcIApBLsdFacXnYn6jAEGhJxMH7ZmKJPOr
+         2JhGFatda38gjZx3YL2suxRK7cjyk0lHKZiEYew9WUnhSKJKmAtAm3lHA3ArKec7HY
+         TMeZ1MUC9Bnkw==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 03:55:28PM +0900, Damien Le Moal wrote:
-> Add the new file Documentation/filesystems/zonefs.txt to document zonefs
-> principles and user-space tool usage.
+On 12/20/19 10:48 AM, Leon Romanovsky wrote:
+...
+>> test_query_qp (tests.test_qp.QPTest) ... ok
+>> test_rdmacm_sync_traffic (tests.test_rdmacm.CMTestCase) ... skipped 'No devices with net interface'
+>>
+>> ======================================================================
+>> FAIL: test_query_port (tests.test_device.DeviceTest)
+>> ----------------------------------------------------------------------
+>> Traceback (most recent call last):
+>>   File "/kernel_work/rdma-core/tests/test_device.py", line 129, in test_query_port
+>>     self.verify_port_attr(port_attr)
+>>   File "/kernel_work/rdma-core/tests/test_device.py", line 113, in verify_port_attr
+>>     assert 'Invalid' not in d.speed_to_str(attr.active_speed)
+>> AssertionError
 > 
-> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-
-Looks ok to me,
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-
---D
-
-> ---
->  Documentation/filesystems/zonefs.txt | 215 +++++++++++++++++++++++++++
->  MAINTAINERS                          |   1 +
->  2 files changed, 216 insertions(+)
->  create mode 100644 Documentation/filesystems/zonefs.txt
+> I'm very curious how did you get this assert "d.speed_to_str" covers all
+> known speeds according to the IBTA.
 > 
-> diff --git a/Documentation/filesystems/zonefs.txt b/Documentation/filesystems/zonefs.txt
-> new file mode 100644
-> index 000000000000..e88a4743bc64
-> --- /dev/null
-> +++ b/Documentation/filesystems/zonefs.txt
-> @@ -0,0 +1,215 @@
-> +ZoneFS - Zone filesystem for Zoned block devices
-> +
-> +Overview
-> +========
-> +
-> +zonefs is a very simple file system exposing each zone of a zoned block device
-> +as a file. Unlike a regular file system with zoned block device support (e.g.
-> +f2fs), zonefs does not hide the sequential write constraint of zoned block
-> +devices to the user. Files representing sequential write zones of the device
-> +must be written sequentially starting from the end of the file (append only
-> +writes).
-> +
-> +As such, zonefs is in essence closer to a raw block device access interface
-> +than to a full featured POSIX file system. The goal of zonefs is to simplify
-> +the implementation of zoned block devices support in applications by replacing
-> +raw block device file accesses with a richer file API, avoiding relying on
-> +direct block device file ioctls which may be more obscure to developers. One
-> +example of this approach is the implementation of LSM (log-structured merge)
-> +tree structures (such as used in RocksDB and LevelDB) on zoned block devices
-> +by allowing SSTables to be stored in a zone file similarly to a regular file
-> +system rather than as a range of sectors of the entire disk. The introduction
-> +of the higher level construct "one file is one zone" can help reducing the
-> +amount of changes needed in the application as well as introducing support for
-> +different application programming languages.
-> +
-> +zonefs on-disk metadata
-> +-----------------------
-> +
-> +zonefs on-disk metadata is reduced to an immutable super block which
-> +persistently stores a magic number and optional features flags and values. On
-> +mount, zonefs uses blkdev_report_zones() to obtain the device zone configuration
-> +and populates the mount point with a static file tree solely based on this
-> +information. File sizes come from the device zone type and write pointer
-> +position managed by the device itself.
-> +
-> +The super block is always writen on disk at sector 0. The first zone of the
-> +device storing the super block is never exposed as a zone file by zonefs. If the
-> +zone containing the super block is a sequential zone, the mkzonefs format tool
-> +always "finishes" the zone, that is, transition the zone to a full state to make
-> +it readonly, preventing any data write.
-> +
-> +Zone type sub-directories
-> +-------------------------
-> +
-> +Files representing zones of the same type are grouped together under the same
-> +sub-directory automatically created on mount.
-> +
-> +For conventional zones, the sub-directory "cnv" is used. This directory is
-> +however created only and only if the device has useable conventional zones. If
-> +the device only has a single conventional zone at sector 0, the zone will not
-> +be exposed as a file as it will be used to store zonefs super block. For such
-> +devices, the "cnv" sub-directory will not be created.
-> +
-> +For sequential write zones, the sub-directory "seq" is used.
-> +
-> +These two directories are the only directories that exist in zonefs. Users
-> +cannot create other directories and cannot rename nor delete the "cnv" and
-> +"seq" sub-directories.
-> +
-> +The size of the directories indicated by the st_size field of struct stat,
-> +obtained with the stat() or fstat() system calls, indicate the number of files
-> +existing under the directory.
-> +
-> +Zone files
-> +----------
-> +
-> +Zone files are named using the number of the zone they represent within the set
-> +of zones of a particular type. That is, both the "cnv" and "seq" directories
-> +contain files named "0", "1", "2", ... The file numbers also represent
-> +increasing zone start sector on the device.
-> +
-> +All read and write operations to zone files are not allowed beyond the file
-> +maximum size, that is, beyond the zone size. Any access exceeding the zone
-> +size is failed with the -EFBIG error.
-> +
-> +Creating, deleting, renaming or modifying any attribute of files and
-> +sub-directories is not allowed.
-> +
-> +The number of blocks of a file as reported by stat() and fstat() indicates the
-> +size of the file zone, or in other words, the maximum file size.
-> +
-> +Conventional zone files
-> +-----------------------
-> +
-> +The size of conventional zone files is fixed to the size of the zone they
-> +represent. Conventional zone files cannot be truncated.
-> +
-> +These files can be randomly read and written, using any form of IO operation:
-> +buffered IOs, direct IOs, memory mapped IOs (mmap) etc. There are no IO
-> +constraint for these files beyond the file size limit mentioned above.
-> +
-> +Sequential zone files
-> +---------------------
-> +
-> +The size of sequential zone files present in the "seq" sub-directory represent
-> +the file's zone write pointer position relative to the zone start sector.
-> +
-> +Sequential zone files can only be written sequentially, starting from the file
-> +end, that is, write operations can only be append writes. Zonefs makes no
-> +attempt at accepting random writes and will fail any write request that has a
-> +start offset not corresponding to the end of the last issued write.
-> +
-> +In order to give guarantees regarding write ordering, zonefs also prevents
-> +buffered writes and mmap writes for sequential files. Only direct IO writes are
-> +accepted. There are no restrictions on read operations nor on the type of IO
-> +used to request reads (buffered IOs, direct IOs and mmap reads are all
-> +accepted).
-> +
-> +Truncating sequential zone files is allowed only down to 0, in wich case, the
-> +zone is reset to rewind the file zone write pointer position to the start of
-> +the zone, or up to the zone size, in which case the file's zone is transitioned
-> +to the FULL state (finish zone operation).
-> +
-> +zonefs format options
-> +---------------------
-> +
-> +Several optional features of zonefs can be enabled at format time.
-> +* Conventional zone aggregation: ranges of contiguous conventional zones can be
-> +  agregated into a single larger file instead of the default one file per zone.
-> +* File ownership: The owner UID and GID of zone files is by default 0 (root)
-> +  but can be changed to any valid UID/GID.
-> +* File access permissions: the default 640 access permissions can be changed.
-> +
-> +User Space Tools
-> +----------------
-> +
-> +The mkzonefs tool is used to format zoned block devices for use with zonefs.
-> +This tool is available on Github at:
-> +
-> +git@github.com:damien-lemoal/zonefs-tools.git.
-> +
-> +zonefs-tools also includes a test suite which can be run against any zoned
-> +block device, including null_blk block device created with zoned mode.
-> +
-> +Examples
-> +--------
-> +
-> +The following formats a 15TB host-managed SMR HDD with 256 MB zones
-> +with the conventional zones aggregation feature enabled.
-> +
-> +# mkzonefs -o aggr_cnv /dev/sdX
-> +# mount -t zonefs /dev/sdX /mnt
-> +# ls -l /mnt/
-> +total 0
-> +dr-xr-xr-x 2 root root     1 Nov 25 13:23 cnv
-> +dr-xr-xr-x 2 root root 55356 Nov 25 13:23 seq
-> +
-> +The size of the zone files sub-directories indicate the number of files
-> +existing for each type of zones. In this example, there is only one
-> +conventional zone file (all conventional zones are agreggated under a single
-> +file).
-> +
-> +# ls -l /mnt/cnv
-> +total 137101312
-> +-rw-r----- 1 root root 140391743488 Nov 25 13:23 0
-> +
-> +This aggregated conventional zone file can be used as a regular file.
-> +
-> +# mkfs.ext4 /mnt/cnv/0
-> +# mount -o loop /mnt/cnv/0 /data
-> +
-> +The "seq" sub-directory grouping files for sequential write zones has in this
-> +example 55356 zones.
-> +
-> +# ls -lv /mnt/seq
-> +total 14511243264
-> +-rw-r----- 1 root root 0 Nov 25 13:23 0
-> +-rw-r----- 1 root root 0 Nov 25 13:23 1
-> +-rw-r----- 1 root root 0 Nov 25 13:23 2
-> +...
-> +-rw-r----- 1 root root 0 Nov 25 13:23 55354
-> +-rw-r----- 1 root root 0 Nov 25 13:23 55355
-> +
-> +For sequential write zone files, the file size changes as data is appended at
-> +the end of the file, similarly to any regular file system.
-> +
-> +# dd if=/dev/zero of=/mnt/seq/0 bs=4096 count=1 conv=notrunc oflag=direct
-> +1+0 records in
-> +1+0 records out
-> +4096 bytes (4.1 kB, 4.0 KiB) copied, 1.05112 s, 3.9 kB/s
-> +
-> +# ls -l /mnt/seq/0
-> +-rw-r----- 1 root root 4096 Nov 25 13:23 /mnt/sdh/seq/0
-> +
-> +The written file can be truncated to the zone size, prventing any further write
-> +operation.
-> +
-> +# truncate -s 268435456 /mnt/seq/0
-> +# ls -l /mnt/seq/0
-> +-rw-r----- 1 root root 268435456 Nov 25 13:49 /mnt/seq/0
-> +
-> +Truncation to 0 size allows freeing the file zone storage space and restart
-> +append-writes to the file.
-> +
-> +# truncate -s 0 /mnt/seq/0
-> +# ls -l /mnt/seq/0
-> +-rw-r----- 1 root root 0 Nov 25 13:49 /mnt/seq/0
-> +
-> +Since files are statically mapped to zones on the disk, the number of blocks of
-> +a file as reported by stat() and fstat() indicates the size of the file zone.
-> +
-> +# stat /mnt/seq/0
-> +  File: /mnt/seq/0
-> +  Size: 0         	Blocks: 524288     IO Block: 4096   regular empty file
-> +Device: 870h/2160d	Inode: 50431       Links: 1
-> +Access: (0640/-rw-r-----)  Uid: (    0/    root)   Gid: (    0/    root)
-> +Access: 2019-11-25 13:23:57.048971997 +0900
-> +Modify: 2019-11-25 13:52:25.553805765 +0900
-> +Change: 2019-11-25 13:52:25.553805765 +0900
-> + Birth: -
-> +
-> +The number of blocks of the file ("Blocks") in units of 512B blocks gives the
-> +maximum file size of 524288 * 512 B = 256 MB, corresponding to the device zone
-> +size in this example. Of note is that the "IO block" field always indicates the
-> +minimum IO size for writes and corresponds to the device physical sector size.
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8eb6f02a1efa..66f348fa90df 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -18292,6 +18292,7 @@ L:	linux-fsdevel@vger.kernel.org
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs.git
->  S:	Maintained
->  F:	fs/zonefs/
-> +F:	Documentation/filesystems/zonefs.txt
->  
->  ZPOOL COMPRESSED PAGE STORAGE API
->  M:	Dan Streetman <ddstreet@ieee.org>
-> -- 
-> 2.23.0
-> 
+
+Hi Leon,
+
+Short answer: I can make that one pass, with a small fix the the rdma-core test
+suite:
+
+commit a1b9fb0846e1b2356d7a16f4fbdd1960cf8dcbe5 (HEAD -> fix_speed_to_str)
+Author: John Hubbard <jhubbard@nvidia.com>
+Date:   Fri Dec 20 15:07:47 2019 -0800
+
+    device: fix speed_to_str(), to handle disabled links
+    
+    For disabled links, the raw speed token is 0. However,
+    speed_to_str() doesn't have that in the list. This leads
+    to an assertion when running tests (test_query_port) when
+    one link is down and other link(s) are up.
+    
+    Fix this by returning '(Disabled/down)' for the zero speed
+    case.
+
+diff --git a/pyverbs/device.pyx b/pyverbs/device.pyx
+index 33d133fd..f8b7826b 100755
+--- a/pyverbs/device.pyx
++++ b/pyverbs/device.pyx
+@@ -923,8 +923,8 @@ def width_to_str(width):
+ 
+ 
+ def speed_to_str(speed):
+-    l = {1: '2.5 Gbps', 2: '5.0 Gbps', 4: '5.0 Gbps', 8: '10.0 Gbps',
+-         16: '14.0 Gbps', 32: '25.0 Gbps', 64: '50.0 Gbps'}
++    l = {0: '(Disabled/down)', 1: '2.5 Gbps', 2: '5.0 Gbps', 4: '5.0 Gbps',
++         8: '10.0 Gbps', 16: '14.0 Gbps', 32: '25.0 Gbps', 64: '50.0 Gbps'}
+     try:
+         return '{s} ({n})'.format(s=l[speed], n=speed)
+     except KeyError:
+
+
+Longer answer:
+==============
+
+It looks like this test suite assumes that every link is connected! (Probably
+in most test systems, they are.) But in my setup, the ConnectX cards each have
+two slots, and I only have (and only need) one cable. So one link is up, and
+the other is disabled. 
+
+This leads to the other problem, which is that if a link is disabled, the
+test suite finds a "0" token for attr.active_speed. That token is not in the
+approved list, and so d.speed_to_str() asserts.
+
+With some diagnostics added, I can see it checking each link: one passes, and
+the other asserts:
+
+diff --git a/tests/test_device.py b/tests/test_device.py
+index 524e0e89..7b33d7db 100644
+--- a/tests/test_device.py
++++ b/tests/test_device.py
+@@ -110,6 +110,12 @@ class DeviceTest(unittest.TestCase):
+         assert 'Invalid' not in d.translate_mtu(attr.max_mtu)
+         assert 'Invalid' not in d.translate_mtu(attr.active_mtu)
+         assert 'Invalid' not in d.width_to_str(attr.active_width)
++        print("")
++        print('Diagnostics ===========================================')
++        print('phys_state:    ', d.phys_state_to_str(attr.phys_state))
++        print('active_width): ', d.width_to_str(attr.active_width))
++        print('active_speed:  ',   d.speed_to_str(attr.active_speed))
++        print('END of Diagnostics ====================================')
+         assert 'Invalid' not in d.speed_to_str(attr.active_speed)
+         assert 'Invalid' not in d.translate_link_layer(attr.link_layer)
+         assert attr.max_msg_sz > 0x1000
+
+         assert attr.max_msg_sz > 0x1000
+
+...and the test run from that is:
+
+# ./build/bin/run_tests.py --verbose tests.test_device.DeviceTest
+test_dev_list (tests.test_device.DeviceTest) ... ok
+test_open_dev (tests.test_device.DeviceTest) ... ok
+test_query_device (tests.test_device.DeviceTest) ... ok
+test_query_device_ex (tests.test_device.DeviceTest) ... ok
+test_query_gid (tests.test_device.DeviceTest) ... ok
+test_query_port (tests.test_device.DeviceTest) ... 
+Diagnostics ===========================================
+phys_state:     Link up (5)
+active_width):  4X (2)
+active_speed:   25.0 Gbps (32)
+END of Diagnostics ====================================
+
+Diagnostics ===========================================
+phys_state:     Disabled (3)
+active_width):  4X (2)
+active_speed:   Invalid speed
+END of Diagnostics ====================================
+FAIL
+test_query_port_bad_flow (tests.test_device.DeviceTest) ... ok
+
+======================================================================
+FAIL: test_query_port (tests.test_device.DeviceTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/kernel_work/rdma-core/tests/test_device.py", line 135, in test_query_port
+    self.verify_port_attr(port_attr)
+  File "/kernel_work/rdma-core/tests/test_device.py", line 119, in verify_port_attr
+    assert 'Invalid' not in d.speed_to_str(attr.active_speed)
+AssertionError
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.055s
+
+FAILED (failures=1)
+
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
+
