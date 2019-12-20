@@ -2,131 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E52D1283D5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2019 22:25:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF9D11283E5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2019 22:33:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727517AbfLTVZM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Dec 2019 16:25:12 -0500
-Received: from mail-il1-f199.google.com ([209.85.166.199]:53091 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727402AbfLTVZL (ORCPT
+        id S1727505AbfLTVdI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Dec 2019 16:33:08 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:46858 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727489AbfLTVdI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Dec 2019 16:25:11 -0500
-Received: by mail-il1-f199.google.com with SMTP id n9so7588068ilm.19
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2019 13:25:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=W3gsafMJQillzgO7L6f2ij3ENy4HZfZexVDohq89908=;
-        b=XsqWrHfXmDAZ9DZal5LpROiPUGN573qKBxqtd8DyBXpDywu/oDvwXejDz5xkggnwUf
-         lnJg7HduQrlnSD/d9nagMfMZmkoAP48E+ICu5woI23q9IoQvfFuLDhyzrYxQYo4ED1t3
-         M9Y68To8dn6mmHyE/tC3ewqyGJlQtoOV6HTNl8O30CbW86xhyWYmCU0YxAYELHbzKdFF
-         s3O+pQ5KMcoqH7A7hnj4yutbYCgvzgV/f9YzGd62QUkv3IuCOISpriYqvlTp6eKloxxN
-         /2ynxYWskO0GsKN3CB/Mpdpk+7xjgeSz+BJFHG/koN2VlnEFVyK9eGA+zqIHnnKvgA7c
-         6cKw==
-X-Gm-Message-State: APjAAAUzaGFu2lRst28rlq497arx4WQxmMnpj/1/oodkfe35RTcoa7mz
-        pwBgT58qb++x9w6f60RqmleamOJ2PtUznU5i12GTehjWLl2B
-X-Google-Smtp-Source: APXvYqwQu3SSaguPbzx8uFQ8GKkuZywzsHmSCe9GRFzk75/tVa72pZKGaEmtOCpP5Zf+msbzUUOGnfFenIvYivgTL4kRk+XC2rHT
+        Fri, 20 Dec 2019 16:33:08 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBKLOUxZ080420;
+        Fri, 20 Dec 2019 21:32:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=O5eLQJ2IQaAuC0h1sPo9EP7FE00qk/3elCIpmX0WCE0=;
+ b=M1U/ouxhaOiM+6v6EvH8oATdFdToWd9fT+1TCH0BLj6Aacno9p0DXI4sWhGUlkXlaoIr
+ gQsXv9GWGwRHXIL2q4CR3dRzUXxcj6vuxRx47UUDghgGxMQx15FMvFkpWC1eL2XUSEAt
+ rc9qkK6G3oNHh2YwwEa4gLEhNcdZmXCR8YtlMZkDwjRDsvjEmVt6q0Dvpl30tpQaMxgq
+ 9qz5dvVq5HW6KXJNwGfv9KBGlE7p1//ZDtSfXiUYktT87Qg6iE0RLbDK2kkkewLyBWTV
+ Uv0rlrf0QtDHVnC+l4efSZ797eQMpi7YWbsUWDRPQOJpoRK9XCBY87QJ0zaN4Ih8WHY0 UA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2x0ag18371-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Dec 2019 21:32:58 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBKLNmMw027475;
+        Fri, 20 Dec 2019 21:30:58 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2x0vc4kdfu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Dec 2019 21:30:58 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xBKLUss8021912;
+        Fri, 20 Dec 2019 21:30:54 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 20 Dec 2019 13:30:53 -0800
+Date:   Fri, 20 Dec 2019 13:30:52 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Chris Down <chris@chrisdown.name>
+Cc:     linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH] fs: inode: Reduce volatile inode wraparound risk when
+ ino_t is 64 bit
+Message-ID: <20191220213052.GB7476@magnolia>
+References: <20191220024936.GA380394@chrisdown.name>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:9aca:: with SMTP id x10mr11388888ion.80.1576877108885;
- Fri, 20 Dec 2019 13:25:08 -0800 (PST)
-Date:   Fri, 20 Dec 2019 13:25:08 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ee01f5059a294f5c@google.com>
-Subject: WARNING in percpu_ref_exit
-From:   syzbot <syzbot+2eea1ab51194c814cb70@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191220024936.GA380394@chrisdown.name>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9477 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912200164
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9477 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912200164
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Fri, Dec 20, 2019 at 02:49:36AM +0000, Chris Down wrote:
+> In Facebook production we are seeing heavy inode number wraparounds on
+> tmpfs. On affected tiers, in excess of 10% of hosts show multiple files
+> with different content and the same inode number, with some servers even
+> having as many as 150 duplicated inode numbers with differing file
+> content.
+> 
+> This causes actual, tangible problems in production. For example, we
+> have complaints from those working on remote caches that their
+> application is reporting cache corruptions because it uses (device,
+> inodenum) to establish the identity of a particular cache object, but
 
-syzbot found the following crash on:
+...but you cannot delete the (dev, inum) tuple from the cache index when
+you remove a cache object??
 
-HEAD commit:    7ddd09fc Add linux-next specific files for 20191220
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1457dcb9e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f183b01c3088afc6
-dashboard link: https://syzkaller.appspot.com/bug?extid=2eea1ab51194c814cb70
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=116182c1e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16d3c925e00000
+> because it's not unique any more, the application refuses to continue
+> and reports cache corruption. Even worse, sometimes applications may not
+> even detect the corruption but may continue anyway, causing phantom and
+> hard to debug behaviour.
+> 
+> In general, userspace applications expect that (device, inodenum) should
+> be enough to be uniquely point to one inode, which seems fair enough.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+2eea1ab51194c814cb70@syzkaller.appspotmail.com
+Except that it's not.  (dev, inum, generation) uniquely points to an
+instance of an inode from creation to the last unlink.
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 9727 at lib/percpu-refcount.c:111  
-percpu_ref_exit+0xab/0xd0 lib/percpu-refcount.c:111
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 1 PID: 9727 Comm: syz-executor571 Not tainted  
-5.5.0-rc2-next-20191220-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x197/0x210 lib/dump_stack.c:118
-  panic+0x2e3/0x75c kernel/panic.c:221
-  __warn.cold+0x2f/0x3e kernel/panic.c:582
-  report_bug+0x289/0x300 lib/bug.c:195
-  fixup_bug arch/x86/kernel/traps.c:174 [inline]
-  fixup_bug arch/x86/kernel/traps.c:169 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:267
-  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:286
-  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
-RIP: 0010:percpu_ref_exit+0xab/0xd0 lib/percpu-refcount.c:111
-Code: 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 75 1d 48 c7 43 08 03 00  
-00 00 e8 01 41 e5 fd 5b 41 5c 41 5d 5d c3 e8 f5 40 e5 fd <0f> 0b eb bf 4c  
-89 ef e8 29 2c 23 fe eb d9 e8 82 2b 23 fe eb a7 4c
-RSP: 0018:ffffc90003bf7968 EFLAGS: 00010293
-RAX: ffff8880a700e500 RBX: ffff8880990cde10 RCX: ffffffff83901432
-RDX: 0000000000000000 RSI: ffffffff8390149b RDI: ffff8880990cde28
-RBP: ffffc90003bf7980 R08: ffff8880a700e500 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000607f514357c0
-R13: ffff8880990cde18 R14: ffff8880973e3000 R15: ffff8880973e3228
-  io_sqe_files_unregister+0x7d/0x2f0 fs/io_uring.c:4623
-  io_ring_ctx_free fs/io_uring.c:5575 [inline]
-  io_ring_ctx_wait_and_kill+0x430/0x9a0 fs/io_uring.c:5644
-  io_uring_release+0x42/0x50 fs/io_uring.c:5652
-  __fput+0x2ff/0x890 fs/file_table.c:280
-  ____fput+0x16/0x20 fs/file_table.c:313
-  task_work_run+0x145/0x1c0 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x909/0x2f20 kernel/exit.c:797
-  do_group_exit+0x135/0x360 kernel/exit.c:895
-  get_signal+0x47c/0x24f0 kernel/signal.c:2734
-  do_signal+0x87/0x1700 arch/x86/kernel/signal.c:815
-  exit_to_usermode_loop+0x286/0x380 arch/x86/entry/common.c:160
-  prepare_exit_to_usermode arch/x86/entry/common.c:195 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:278 [inline]
-  do_syscall_64+0x676/0x790 arch/x86/entry/common.c:304
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4468f9
-Code: e8 0c e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 5b 07 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fb197749db8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 00000000006dbc48 RCX: 00000000004468f9
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00000000006dbc48
-RBP: 00000000006dbc40 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc4c
-R13: 00007ffc42ed8b0f R14: 00007fb19774a9c0 R15: 0000000000000001
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+--D
 
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+> This patch changes get_next_ino to use up to min(sizeof(ino_t), 8) bytes
+> to reduce the likelihood of wraparound. On architectures with 32-bit
+> ino_t the problem is, at least, not made any worse than it is right now.
+> 
+> I noted the concern in the comment above about 32-bit applications on a
+> 64-bit kernel with 32-bit wide ino_t in userspace, as documented by Jeff
+> in the commit message for 866b04fc, but these applications are going to
+> get EOVERFLOW on filesystems with non-volatile inode numbers anyway,
+> since those will likely be 64-bit. Concerns about that seem slimmer
+> compared to the disadvantages this presents for known, real users of
+> this functionality on platforms with a 64-bit ino_t.
+> 
+> Other approaches I've considered:
+> 
+> - Use an IDA. If this is a problem for users with 32-bit ino_t as well,
+>   this seems a feasible approach. For now this change is non-intrusive
+>   enough, though, and doesn't make the situation any worse for them than
+>   present at least.
+> - Look for other approaches in userspace. I think this is less
+>   feasible -- users do need to have a way to reliably determine inode
+>   identity, and the risk of wraparound with a 2^32-sized counter is
+>   pretty high, quite clearly manifesting in production for workloads
+>   which make heavy use of tmpfs.
+> 
+> Signed-off-by: Chris Down <chris@chrisdown.name>
+> Reported-by: Phyllipe Medeiros <phyllipe@fb.com>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Jeff Layton <jlayton@kernel.org>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Tejun Heo <tj@kernel.org>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: kernel-team@fb.com
+> ---
+>  fs/inode.c         | 29 ++++++++++++++++++-----------
+>  include/linux/fs.h |  2 +-
+>  2 files changed, 19 insertions(+), 12 deletions(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index aff2b5831168..8193c17e2d16 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -870,26 +870,33 @@ static struct inode *find_inode_fast(struct super_block *sb,
+>   * This does not significantly increase overflow rate because every CPU can
+>   * consume at most LAST_INO_BATCH-1 unused inode numbers. So there is
+>   * NR_CPUS*(LAST_INO_BATCH-1) wastage. At 4096 and 1024, this is ~0.1% of the
+> - * 2^32 range, and is a worst-case. Even a 50% wastage would only increase
+> - * overflow rate by 2x, which does not seem too significant.
+> + * 2^32 range (for 32-bit ino_t), and is a worst-case. Even a 50% wastage would
+> + * only increase overflow rate by 2x, which does not seem too significant. With
+> + * a 64-bit ino_t, overflow in general is fairly hard to achieve.
+>   *
+> - * On a 32bit, non LFS stat() call, glibc will generate an EOVERFLOW
+> - * error if st_ino won't fit in target struct field. Use 32bit counter
+> - * here to attempt to avoid that.
+> + * Care should be taken not to overflow when at all possible, since generally
+> + * userspace depends on (device, inodenum) being reliably unique.
+>   */
+>  #define LAST_INO_BATCH 1024
+> -static DEFINE_PER_CPU(unsigned int, last_ino);
+> +static DEFINE_PER_CPU(ino_t, last_ino);
+>  
+> -unsigned int get_next_ino(void)
+> +ino_t get_next_ino(void)
+>  {
+> -	unsigned int *p = &get_cpu_var(last_ino);
+> -	unsigned int res = *p;
+> +	ino_t *p = &get_cpu_var(last_ino);
+> +	ino_t res = *p;
+>  
+>  #ifdef CONFIG_SMP
+>  	if (unlikely((res & (LAST_INO_BATCH-1)) == 0)) {
+> -		static atomic_t shared_last_ino;
+> -		int next = atomic_add_return(LAST_INO_BATCH, &shared_last_ino);
+> +		static atomic64_t shared_last_ino;
+> +		u64 next = atomic64_add_return(LAST_INO_BATCH,
+> +					       &shared_last_ino);
+>  
+> +		/*
+> +		 * This might get truncated if ino_t is 32-bit, and so be more
+> +		 * susceptible to wrap around than on environments where ino_t
+> +		 * is 64-bit, but that's really no worse than always encoding
+> +		 * `res` as unsigned int.
+> +		 */
+>  		res = next - LAST_INO_BATCH;
+>  	}
+>  #endif
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 190c45039359..ca1a04334c9e 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3052,7 +3052,7 @@ static inline void lockdep_annotate_inode_mutex_key(struct inode *inode) { };
+>  #endif
+>  extern void unlock_new_inode(struct inode *);
+>  extern void discard_new_inode(struct inode *);
+> -extern unsigned int get_next_ino(void);
+> +extern ino_t get_next_ino(void);
+>  extern void evict_inodes(struct super_block *sb);
+>  
+>  extern void __iget(struct inode * inode);
+> -- 
+> 2.24.1
+> 
