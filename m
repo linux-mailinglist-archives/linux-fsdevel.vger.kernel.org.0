@@ -2,135 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C89BB1277F8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2019 10:22:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69D4E12782E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2019 10:32:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727233AbfLTJWC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Dec 2019 04:22:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46708 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727188AbfLTJWB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Dec 2019 04:22:01 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 98BD2AE00;
-        Fri, 20 Dec 2019 09:21:57 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 38E621E0B44; Fri, 20 Dec 2019 10:21:54 +0100 (CET)
-Date:   Fri, 20 Dec 2019 10:21:54 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
+        id S1727233AbfLTJci (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Dec 2019 04:32:38 -0500
+Received: from mout-p-102.mailbox.org ([80.241.56.152]:42762 "EHLO
+        mout-p-102.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727184AbfLTJci (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Dec 2019 04:32:38 -0500
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 47fNnc1bxbzKmVq;
+        Fri, 20 Dec 2019 10:32:36 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id MnOUozeEKW5C; Fri, 20 Dec 2019 10:32:29 +0100 (CET)
+Date:   Fri, 20 Dec 2019 20:31:53 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     Florian Weimer <fweimer@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
         Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        Maor Gottlieb <maorg@mellanox.com>
-Subject: Re: [PATCH v11 00/25] mm/gup: track dma-pinned pages: FOLL_PIN
-Message-ID: <20191220092154.GA10068@quack2.suse.cz>
-References: <20191216222537.491123-1-jhubbard@nvidia.com>
- <20191219132607.GA410823@unreal>
- <a4849322-8e17-119e-a664-80d9f95d850b@nvidia.com>
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        "dev@opencontainers.org" <dev@opencontainers.org>,
+        "containers@lists.linux-foundation.org" 
+        <containers@lists.linux-foundation.org>,
+        "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH 1/2] uapi: split openat2(2) definitions from fcntl.h
+Message-ID: <20191220093153.v7jpzvch3lohabll@yavin.dot.cyphar.com>
+References: <20191219105533.12508-1-cyphar@cyphar.com>
+ <20191219105533.12508-2-cyphar@cyphar.com>
+ <87a77oy3oe.fsf@oldenburg2.str.redhat.com>
+ <20191219134525.mgzmjbsp4wo5b2bw@yavin.dot.cyphar.com>
+ <845fc9e8b55e4868bb4d20655e674b50@AcuMS.aculab.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="givk24x5xczrcujw"
 Content-Disposition: inline
-In-Reply-To: <a4849322-8e17-119e-a664-80d9f95d850b@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <845fc9e8b55e4868bb4d20655e674b50@AcuMS.aculab.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 19-12-19 12:30:31, John Hubbard wrote:
-> On 12/19/19 5:26 AM, Leon Romanovsky wrote:
-> > On Mon, Dec 16, 2019 at 02:25:12PM -0800, John Hubbard wrote:
-> > > Hi,
-> > > 
-> > > This implements an API naming change (put_user_page*() -->
-> > > unpin_user_page*()), and also implements tracking of FOLL_PIN pages. It
-> > > extends that tracking to a few select subsystems. More subsystems will
-> > > be added in follow up work.
-> > 
-> > Hi John,
-> > 
-> > The patchset generates kernel panics in our IB testing. In our tests, we
-> > allocated single memory block and registered multiple MRs using the single
-> > block.
-> > 
-> > The possible bad flow is:
-> >   ib_umem_geti() ->
-> >    pin_user_pages_fast(FOLL_WRITE) ->
-> >     internal_get_user_pages_fast(FOLL_WRITE) ->
-> >      gup_pgd_range() ->
-> >       gup_huge_pd() ->
-> >        gup_hugepte() ->
-> >         try_grab_compound_head() ->
-> 
-> Hi Leon,
-> 
-> Thanks very much for the detailed report! So we're overflowing...
-> 
-> At first look, this seems likely to be hitting a weak point in the
-> GUP_PIN_COUNTING_BIAS-based design, one that I believed could be deferred
-> (there's a writeup in Documentation/core-api/pin_user_page.rst, lines
-> 99-121). Basically it's pretty easy to overflow the page->_refcount
-> with huge pages if the pages have a *lot* of subpages.
-> 
-> We can only do about 7 pins on 1GB huge pages that use 4KB subpages.
-> Do you have any idea how many pins (repeated pins on the same page, which
-> it sounds like you have) might be involved in your test case,
-> and the huge page and system page sizes? That would allow calculating
-> if we're likely overflowing for that reason.
-> 
-> So, ideas and next steps:
-> 
-> 1. Assuming that you *are* hitting this, I think I may have to fall back to
-> implementing the "deferred" part of this design, as part of this series, after
-> all. That means:
-> 
->   For the pin/unpin calls at least, stop treating all pages as if they are
->   a cluster of PAGE_SIZE pages; instead, retrieve a huge page as one page.
->   That's not how it works now, and the need to hand back a huge array of
->   subpages is part of the problem. This affects the callers too, so it's not
->   a super quick change to make. (I was really hoping not to have to do this
->   yet.)
 
-Does that mean that you would need to make all GUP users huge page aware?
-Otherwise I don't see how what you suggest would work... And I don't think
-making all GUP users huge page aware is realistic (effort-wise) or even
-wanted (maintenance overhead in all those places).
+--givk24x5xczrcujw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I believe there might be also a different solution for this: For
-transparent huge pages, we could find a space in 'struct page' of the
-second page in the huge page for proper pin counter and just account pins
-there so we'd have full width of 32-bits for it.
+On 2019-12-19, David Laight <David.Laight@ACULAB.COM> wrote:
+> From: Aleksa Sarai
+> > Sent: 19 December 2019 13:45
+> > On 2019-12-19, Florian Weimer <fweimer@redhat.com> wrote:
+> > > * Aleksa Sarai:
+> > >
+> > > > diff --git a/include/uapi/linux/openat2.h b/include/uapi/linux/open=
+at2.h
+> > > > new file mode 100644
+> > > > index 000000000000..19ef775e8e5e
+> > > > --- /dev/null
+> > > > +++ b/include/uapi/linux/openat2.h
+> > > > @@ -0,0 +1,41 @@
+> > > > +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> > > > +#ifndef _UAPI_LINUX_OPENAT2_H
+> > > > +#define _UAPI_LINUX_OPENAT2_H
+> > >
+> > > I think you should include the relevant header for __align_u64
+> > > etc. here.
+> >=20
+> > Right -- no idea why I forgot to include them.
+>=20
+> I'm guessing that is just 64bit aligned on 32bit archs like x86?
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Yeah,
+
+#define __aligned_u64 __u64 __attribute__((aligned(8)))
+
+> No need to enforce it provided the structure will have no padding on
+> archs where the 64bit fields are 64bit aligned. A plain __u64 should
+> be fine.
+
+Will this cause problems for x86-on-x86_64 emulation? Requiring an
+8-byte alignment for 'struct open_how' really isn't that undue of a
+burden IMHO. Then again, clone3 is a bit of an outlier since both
+perf_event_open and sched_setattr just use __u64s.
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--givk24x5xczrcujw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXfyVBQAKCRCdlLljIbnQ
+EgcoAP43nxgO07GF0RSIdFKrxwO6NwWnJQyl99/kNS5RfDZ1gAD/Z+JrHyahv8Zk
+oTZiuCZTYW9Ii4yfmIqL3r6lnU6qHgM=
+=NPkQ
+-----END PGP SIGNATURE-----
+
+--givk24x5xczrcujw--
