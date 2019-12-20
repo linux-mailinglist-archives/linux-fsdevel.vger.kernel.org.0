@@ -2,105 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16BA71277EB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2019 10:20:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C89BB1277F8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2019 10:22:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbfLTJUV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Dec 2019 04:20:21 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42036 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727177AbfLTJUV (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Dec 2019 04:20:21 -0500
-Received: by mail-lj1-f195.google.com with SMTP id e28so9265470ljo.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2019 01:20:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3v7dxzSJEJ1yWkClVjvOyMii5LUuWGWUSQjt8LKR3wA=;
-        b=cSPcVwWIVS1ArGZRrJfotRqRQooXD8MIeMchCt+DhIL0IxF/ZlKkI4jg1aAydkRK+r
-         OHjXxr/DIapkkt3MnnXJ4nI+FENizI+oMHKMKTYIP6Tj2MXeJ2VBNv7kdDYCxiDXfPxV
-         opo142e9QxQY7ddx+jsyPP3Szd1Sm9lS8QC5DAv+fy6YHfQo6YOVqLSyp+Pgby7SuVOq
-         2FwQcbJqu73W1/GOPIPvuJ6dlp2keMafuCu6nXbClec0IN2kt5HQS3pFfbBjUujMRXN+
-         3XLGcE8YGj0uBaeyPAKl14aNj4KdhovWo5mvhkCqPMGWB0fo1x5+n4NV3aFEM8aSAGyW
-         dqZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3v7dxzSJEJ1yWkClVjvOyMii5LUuWGWUSQjt8LKR3wA=;
-        b=aTOAOUanJlHK3WEu6G6VuuHXnAtJW7dRVDFznQwiN+k+LGy8J2SIsDLt4bxzIm+k8w
-         Y/0JbjdjPLssIf+mSX95h+bEtUCLgaM7bpksaxJNS9xNkiesjwFrAbs0xrRRy4mnrEP6
-         T4Rzy19uMryc9KXWU4fMBf3+b9aLfzZD4FmA3fLF00alfP+v1wpUfelmOhu9llUNWnht
-         5E2aew564d7F5eT0Dt7X0fwyPFXUoBe9iIDmVw4ReRP/p17h2/A5CvOwLKwvuX7KY75R
-         EJXTyTlh4OQaaHLw2R3eSfmygTN5yJ4rGyWtshvQGBNA9llKFr79a1rTNsELn1vLcbWS
-         qdzQ==
-X-Gm-Message-State: APjAAAWdEZ/byTVWQqXe7EZpI34tuu8NHDj8fFgk802OTbTD5oFzLGrm
-        ymMRmPD3H+9RXyXvMy2ZInxPTgUB15+kQYuUghjKjg==
-X-Google-Smtp-Source: APXvYqzkgitfd8EblC1qDia6uilzFpgb0yD6XfXD6tjTDy/iHZuEFJgr8hb+2pI9Ng9Y4SA3O6d1QgLiQ0AXG0L6h3o=
-X-Received: by 2002:a05:651c:8f:: with SMTP id 15mr9026170ljq.109.1576833618773;
- Fri, 20 Dec 2019 01:20:18 -0800 (PST)
-MIME-Version: 1.0
-References: <20191218235459.GA17271@ircssh-2.c.rugged-nimbus-611.internal> <CALCETrUK-SHA=sOUrBscpf+Bpxxff2L3RpXEaAfRHNnHGxa-LQ@mail.gmail.com>
-In-Reply-To: <CALCETrUK-SHA=sOUrBscpf+Bpxxff2L3RpXEaAfRHNnHGxa-LQ@mail.gmail.com>
-From:   Christian Brauner <christian@brauner.io>
-Date:   Fri, 20 Dec 2019 10:20:07 +0100
-Message-ID: <CAHrFyr6oWgeQGS9Yh4akorWyrfdYt6j6Y6v=v9=rDVgf5TbMQg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/5] pid: Add PIDFD_IOCTL_GETFD to fetch file
- descriptors from processes
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Sargun Dhillon <sargun@sargun.me>, ealvarez@mozilla.com,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        gpascutto@mozilla.com, Linux API <linux-api@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        jld@mozilla.com, LKML <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
+        id S1727233AbfLTJWC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Dec 2019 04:22:02 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46708 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727188AbfLTJWB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Dec 2019 04:22:01 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 98BD2AE00;
+        Fri, 20 Dec 2019 09:21:57 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 38E621E0B44; Fri, 20 Dec 2019 10:21:54 +0100 (CET)
+Date:   Fri, 20 Dec 2019 10:21:54 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Leon Romanovsky <leon@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        Maor Gottlieb <maorg@mellanox.com>
+Subject: Re: [PATCH v11 00/25] mm/gup: track dma-pinned pages: FOLL_PIN
+Message-ID: <20191220092154.GA10068@quack2.suse.cz>
+References: <20191216222537.491123-1-jhubbard@nvidia.com>
+ <20191219132607.GA410823@unreal>
+ <a4849322-8e17-119e-a664-80d9f95d850b@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a4849322-8e17-119e-a664-80d9f95d850b@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 2:43 AM Andy Lutomirski <luto@kernel.org> wrote:
->
-> On Wed, Dec 18, 2019 at 3:55 PM Sargun Dhillon <sargun@sargun.me> wrote:
-> >
-> > +
-> > +       if (!ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS)) {
-> > +               file = ERR_PTR(-EPERM);
-> > +               goto out;
-> > +       }
->
-> I don't think this is MODE_READ.  By copying an fd from the task, you
-> can easily change its state.
->
-> IMO it would be really nice if pidfd could act more like a capability
+On Thu 19-12-19 12:30:31, John Hubbard wrote:
+> On 12/19/19 5:26 AM, Leon Romanovsky wrote:
+> > On Mon, Dec 16, 2019 at 02:25:12PM -0800, John Hubbard wrote:
+> > > Hi,
+> > > 
+> > > This implements an API naming change (put_user_page*() -->
+> > > unpin_user_page*()), and also implements tracking of FOLL_PIN pages. It
+> > > extends that tracking to a few select subsystems. More subsystems will
+> > > be added in follow up work.
+> > 
+> > Hi John,
+> > 
+> > The patchset generates kernel panics in our IB testing. In our tests, we
+> > allocated single memory block and registered multiple MRs using the single
+> > block.
+> > 
+> > The possible bad flow is:
+> >   ib_umem_geti() ->
+> >    pin_user_pages_fast(FOLL_WRITE) ->
+> >     internal_get_user_pages_fast(FOLL_WRITE) ->
+> >      gup_pgd_range() ->
+> >       gup_huge_pd() ->
+> >        gup_hugepte() ->
+> >         try_grab_compound_head() ->
+> 
+> Hi Leon,
+> 
+> Thanks very much for the detailed report! So we're overflowing...
+> 
+> At first look, this seems likely to be hitting a weak point in the
+> GUP_PIN_COUNTING_BIAS-based design, one that I believed could be deferred
+> (there's a writeup in Documentation/core-api/pin_user_page.rst, lines
+> 99-121). Basically it's pretty easy to overflow the page->_refcount
+> with huge pages if the pages have a *lot* of subpages.
+> 
+> We can only do about 7 pins on 1GB huge pages that use 4KB subpages.
+> Do you have any idea how many pins (repeated pins on the same page, which
+> it sounds like you have) might be involved in your test case,
+> and the huge page and system page sizes? That would allow calculating
+> if we're likely overflowing for that reason.
+> 
+> So, ideas and next steps:
+> 
+> 1. Assuming that you *are* hitting this, I think I may have to fall back to
+> implementing the "deferred" part of this design, as part of this series, after
+> all. That means:
+> 
+>   For the pin/unpin calls at least, stop treating all pages as if they are
+>   a cluster of PAGE_SIZE pages; instead, retrieve a huge page as one page.
+>   That's not how it works now, and the need to hand back a huge array of
+>   subpages is part of the problem. This affects the callers too, so it's not
+>   a super quick change to make. (I was really hoping not to have to do this
+>   yet.)
 
-That's ultimately what I would like to get to.
+Does that mean that you would need to make all GUP users huge page aware?
+Otherwise I don't see how what you suggest would work... And I don't think
+making all GUP users huge page aware is realistic (effort-wise) or even
+wanted (maintenance overhead in all those places).
 
-> here and carry a ptrace mode, for example.  But I guess it doesn't
-> right now.
+I believe there might be also a different solution for this: For
+transparent huge pages, we could find a space in 'struct page' of the
+second page in the huge page for proper pin counter and just account pins
+there so we'd have full width of 32-bits for it.
 
-It doesn't right now for mainly two reasons.
-The way I think about it is that a pidfd gets a capability at process
-creation time. Before v5.3 we couldn't have done that because legacy
-clone() couldn't be extended anymore. Imho, this has changed with clone3().
-The other reason was that the basic properties a process can be created
-with right now do not lend itself to be turned into a capability. Even
-if they did
-suddenly treating them like such would prevent userspace from switching to
-clone3() because it would regress usecases they had.
-However, for new properties this is not a problem. I have some ideas around this
-(e.g. spawning private processes only reapable through pidfds and auto-cleanup
-if there's no pidfd anymore).
-From an implementation perspective clone3() could get a __aligned_u64 caps
-(naming up for debate since we don't want people to think this is equivalent
-to our current capabilities) field.
-Where at process creation time you could e.g. specify PIDFD_CAP_GET_FD and
-only then can you use that pidfd to get file descriptors from other processes.
-You still need ptrace_access() to get the actual fd of course.
-
-Christian
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
