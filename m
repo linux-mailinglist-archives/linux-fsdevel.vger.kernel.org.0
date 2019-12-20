@@ -2,133 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 043AC127438
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2019 04:52:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B9C2127489
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2019 05:23:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727177AbfLTDwk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Dec 2019 22:52:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39032 "EHLO mail.kernel.org"
+        id S1727169AbfLTEXj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Dec 2019 23:23:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726986AbfLTDwk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Dec 2019 22:52:40 -0500
+        id S1727128AbfLTEXi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 19 Dec 2019 23:23:38 -0500
 Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D677A24676;
-        Fri, 20 Dec 2019 03:52:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 172B0206EF;
+        Fri, 20 Dec 2019 04:23:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576813959;
-        bh=+1rZOJ+7YGgXyzuEyadBtswufhH8eKBcvvIK/5ZNDfc=;
+        s=default; t=1576815817;
+        bh=y/iK21hfpjuMVRFNNNAz1r8hb/bYZke2x5UNUn7S49A=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hNXd7r0dbNYQXrn4m6q2F7iH6ZyG9RfuebAAQBSWQBSZkNOwCcuv1lOFyrSDHGAdD
-         OLk1O9Ps/vEl1vGN0C0iEpW0X0bTi69Y57BOa2dWkpFgnufQ6YTgDxV2oS0vyoc5Me
-         g7p/eFJ5xJXx0MDG5zhAjZxC4vSSD6zVVSiSbuCI=
-Date:   Thu, 19 Dec 2019 19:52:37 -0800
+        b=qsRRSQurhykKFwcgdxe8QuKP66ppKwTHhcjCGLygC5WmSQBrpSueGPMbfDQNB2hVd
+         HjDai/DJL40x0ttXkFkzgyVQGQCsJwb/0GNNK1fODi0BWua113KVVMajG7tPZ37D9I
+         T3cSqLr/WjvQPy4ChCzIRkgUek8p8aH896fSKpC4=
+Date:   Thu, 19 Dec 2019 20:23:35 -0800
 From:   Eric Biggers <ebiggers@kernel.org>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Satya Tangirala <satyat@google.com>,
-        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+To:     Satya Tangirala <satyat@google.com>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
         linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net,
         Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
         Kuohong Wang <kuohong.wang@mediatek.com>,
         Kim Boojin <boojin.kim@samsung.com>
-Subject: Re: [PATCH v6 2/9] block: Add encryption context to struct bio
-Message-ID: <20191220035237.GB718@sol.localdomain>
+Subject: Re: [PATCH v6 8/9] f2fs: add inline encryption support
+Message-ID: <20191220042335.GC718@sol.localdomain>
 References: <20191218145136.172774-1-satyat@google.com>
- <20191218145136.172774-3-satyat@google.com>
- <20191218212116.GA7476@magnolia>
- <yq1y2v9e37b.fsf@oracle.com>
- <20191218222726.GC47399@gmail.com>
- <yq1fthhdttv.fsf@oracle.com>
+ <20191218145136.172774-9-satyat@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <yq1fthhdttv.fsf@oracle.com>
+In-Reply-To: <20191218145136.172774-9-satyat@google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 07:47:56PM -0500, Martin K. Petersen wrote:
+On Wed, Dec 18, 2019 at 06:51:35AM -0800, Satya Tangirala wrote:
+> Wire up f2fs to support inline encryption via the helper functions which
+> fs/crypto/ now provides.  This includes:
 > 
-> Eric,
+> - Adding a mount option 'inlinecrypt' which enables inline encryption
+>   on encrypted files where it can be used.
 > 
-> > There's not really any such thing as "use the bio integrity plumbing".
-> > blk-integrity just does blk-integrity; it's not a plumbing layer that
-> > allows other features to be supported.  Well, in theory we could
-> > refactor and rename all the hooks to "blk-extra" and make them
-> > delegate to either blk-integrity or blk-crypto, but I think that would
-> > be overkill.
+> - Setting the bio_crypt_ctx on bios that will be submitted to an
+>   inline-encrypted file.
 > 
-> I certainly don't expect your crypto stuff to plug in without any
-> modification to what we currently have. I'm just observing that the
-> existing plumbing is designed to have pluggable functions that let
-> filesystems attach additional information to bios on writes and process
-> additional attached information on reads. And the block layer already
-> handles slicing and dicing these attachments as the I/O traverses the
-> stack.
+> - Not adding logically discontiguous data to bios that will be submitted
+>   to an inline-encrypted file.
 > 
-> There's also other stuff that probably won't be directly applicable or
-> interesting for your use case. It just seems like identifying actual
-> commonalities and differences would be worthwhile.
+> - Not doing filesystem-layer crypto on inline-encrypted files.
 > 
-> Note that substantial changes to the integrity code would inevitably
-> lead to a lot of pain and suffering for me. So from that perspective I
-> am very happy if you leave it alone. From an architectural viewpoint,
-> however, it seems that there are more similarities than differences
-> between crypto and integrity. And we should avoid duplication where
-> possible. That's all.
-
-There are some similarities, like both being optional features that need extra
-per-bio information and hooks for bio merging, freeing, cloning, and advancing.
-
-However, the nature of the per-bio information is very different.  Most of the
-complexity in blk-integrity is around managing of a separate integrity
-scatterlist for each bio, alongside the regular data scatterlist.
-
-That's not something we need or want for inline encryption.  For each bio we
-just need a key, algorithm, data unit number, and data unit size.  Since the
-data unit number (IV) is automatically incremented for each sector and the
-encryption is length-preserving, there's no per-sector data.
-
-(Granted, from a crypto perspective ideally one would use authenticated
-encryption, which does require per-sector data.  However, no one seems
-interested in building hardware that supports it.  So for the forseeable future,
-only length-preserving encryption is in scope for this.)
-
-Also, blk-crypto actually transforms the data whereas blk-integrity does not.
-
-> > What we could do, though, is say that at most one of blk-crypto and
-> > blk-integrity can be used at once on a given bio, and put the
-> > bi_integrity and bi_crypt_context pointers in union.  (That would
-> > require allocating a REQ_INLINECRYPT bit so that we can tell what the
-> > pointer points to.)
+> Co-developed-by: Eric Biggers <ebiggers@google.com>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> Signed-off-by: Satya Tangirala <satyat@google.com>
+> ---
+>  fs/f2fs/data.c  | 65 +++++++++++++++++++++++++++++++++++++++++++------
+>  fs/f2fs/f2fs.h  |  3 +++
+>  fs/f2fs/super.c | 41 +++++++++++++++++++++++++++++++
+>  3 files changed, 101 insertions(+), 8 deletions(-)
 > 
-> Absolutely. That's why it's a union. Putting your stuff there is a
-> prerequisite as far as I'm concerned. No need to grow the bio when the
-> two features are unlikely to coexist. We can revisit that later should
-> the need arise.
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index a034cd0ce021..ad63aa30d0c7 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -308,6 +308,33 @@ static struct bio *__bio_alloc(struct f2fs_io_info *fio, int npages)
+>  	return bio;
+>  }
+>  
+> +static void f2fs_set_bio_crypt_ctx(struct bio *bio, const struct inode *inode,
+> +				  pgoff_t first_idx,
+> +				  const struct f2fs_io_info *fio,
+> +				  gfp_t gfp_mask)
+> +{
+> +	/*
+> +	 * The f2fs garbage collector sets ->encrypted_page when it wants to
+> +	 * read/write raw data without encryption.
+> +	 */
+> +	if (!fio || !fio->encrypted_page)
+> +		fscrypt_set_bio_crypt_ctx(bio, inode, first_idx, gfp_mask);
+> +}
+> +
+> +static bool f2fs_crypt_mergeable_bio(struct bio *bio, const struct inode *inode,
+> +				     pgoff_t next_idx,
+> +				     const struct f2fs_io_info *fio)
+> +{
+> +	/*
+> +	 * The f2fs garbage collector sets ->encrypted_page when it wants to
+> +	 * read/write raw data without encryption.
+> +	 */
+> +	if (fio && fio->encrypted_page)
+> +		return !bio_has_crypt_ctx(bio);
+> +
+> +	return fscrypt_mergeable_bio(bio, inode, next_idx);
+> +}
+> +
+>  static inline void __submit_bio(struct f2fs_sb_info *sbi,
+>  				struct bio *bio, enum page_type type)
+>  {
+> @@ -491,6 +518,9 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+>  	/* Allocate a new bio */
+>  	bio = __bio_alloc(fio, 1);
+>  
+> +	f2fs_set_bio_crypt_ctx(bio, fio->page->mapping->host,
+> +			       fio->page->index, fio, GFP_NOIO);
+> +
+>  	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
+>  		bio_put(bio);
+>  		return -EFAULT;
+> @@ -678,12 +708,18 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
+>  	trace_f2fs_submit_page_bio(page, fio);
+>  	f2fs_trace_ios(fio, 0);
+>  
+> -	if (bio && !page_is_mergeable(fio->sbi, bio, *fio->last_block,
+> -						fio->new_blkaddr))
+> +	if (bio && (!page_is_mergeable(fio->sbi, bio, *fio->last_block,
+> +				       fio->new_blkaddr) ||
+> +		    !f2fs_crypt_mergeable_bio(bio, fio->page->mapping->host,
+> +					      fio->page->index, fio))) {
+>  		f2fs_submit_merged_ipu_write(fio->sbi, &bio, NULL);
+> +}
 
-There are some ways the two features could be supported simultaneously without
-using more space, like making the pointer point to a linked list of tagged
-structs, or making the struct contain both a bio_crypt_ctx and
-bio_integrity_payload (or whichever combination is enabled in kconfig).
+Unnecessary (and wrongly formatted) braces here.
 
-But it would be painful and I don't think people need this for now.  So if
-people really aren't willing to accept the extra 8 bytes per bio even behind a
-kconfig option, my vote is we that we put bi_crypt_context in the union with
-bi_integrity, and add a flag REQ_INLINECRYPT (like REQ_INTEGRITY) that indicates
-that the bi_crypt_context member of the union is valid.
+>  alloc_new:
+>  	if (!bio) {
+>  		bio = __bio_alloc(fio, BIO_MAX_PAGES);
+> +		f2fs_set_bio_crypt_ctx(bio, fio->page->mapping->host,
+> +				       fio->page->index, fio,
+> +				       GFP_NOIO);
+>  		bio_set_op_attrs(bio, fio->op, fio->op_flags);
 
-We'd also need some error-handling to prevent the two features from actually
-being used together.  It looks like there are several cases to consider.  One of
-them is what happens if bio_crypt_set_ctx() is called when blk-integrity
-verification or generation is enabled for the disk.  I suppose it could either
-return an error, or we could make blk-crypto use the crypto API fallback
-provided that it was modified to make the decryption stop relying on
-->bi_crypt_context, which could be done by cloning the bio and using
-->bi_private instead.
+Nit: GFP_NOIO can be joined with the previous line.
+
+>  
+>  		add_bio_entry(fio->sbi, bio, page, fio->temp);
+> @@ -735,8 +771,11 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+>  
+>  	inc_page_count(sbi, WB_DATA_TYPE(bio_page));
+>  
+> -	if (io->bio && !io_is_mergeable(sbi, io->bio, io, fio,
+> -			io->last_block_in_bio, fio->new_blkaddr))
+> +	if (io->bio &&
+> +	    (!io_is_mergeable(sbi, io->bio, io, fio, io->last_block_in_bio,
+> +			      fio->new_blkaddr) ||
+> +	     !f2fs_crypt_mergeable_bio(io->bio, fio->page->mapping->host,
+> +				       fio->page->index, fio)))
+>  		__submit_merged_bio(io);
+>  alloc_new:
+>  	if (io->bio == NULL) {
+> @@ -748,6 +787,9 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+>  			goto skip;
+>  		}
+>  		io->bio = __bio_alloc(fio, BIO_MAX_PAGES);
+> +		f2fs_set_bio_crypt_ctx(io->bio, fio->page->mapping->host,
+> +				       fio->page->index, fio,
+> +				       GFP_NOIO);
+>  		io->fio = *fio;
+
+Likewise.
 
 - Eric
