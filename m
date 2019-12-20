@@ -2,206 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF9D11283E5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2019 22:33:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A70E1283E6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2019 22:35:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbfLTVdI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Dec 2019 16:33:08 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:46858 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727489AbfLTVdI (ORCPT
+        id S1727509AbfLTVfJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Dec 2019 16:35:09 -0500
+Received: from mail-il1-f199.google.com ([209.85.166.199]:43709 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727489AbfLTVfJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Dec 2019 16:33:08 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBKLOUxZ080420;
-        Fri, 20 Dec 2019 21:32:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=O5eLQJ2IQaAuC0h1sPo9EP7FE00qk/3elCIpmX0WCE0=;
- b=M1U/ouxhaOiM+6v6EvH8oATdFdToWd9fT+1TCH0BLj6Aacno9p0DXI4sWhGUlkXlaoIr
- gQsXv9GWGwRHXIL2q4CR3dRzUXxcj6vuxRx47UUDghgGxMQx15FMvFkpWC1eL2XUSEAt
- rc9qkK6G3oNHh2YwwEa4gLEhNcdZmXCR8YtlMZkDwjRDsvjEmVt6q0Dvpl30tpQaMxgq
- 9qz5dvVq5HW6KXJNwGfv9KBGlE7p1//ZDtSfXiUYktT87Qg6iE0RLbDK2kkkewLyBWTV
- Uv0rlrf0QtDHVnC+l4efSZ797eQMpi7YWbsUWDRPQOJpoRK9XCBY87QJ0zaN4Ih8WHY0 UA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2x0ag18371-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 20 Dec 2019 21:32:58 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBKLNmMw027475;
-        Fri, 20 Dec 2019 21:30:58 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2x0vc4kdfu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 20 Dec 2019 21:30:58 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xBKLUss8021912;
-        Fri, 20 Dec 2019 21:30:54 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 20 Dec 2019 13:30:53 -0800
-Date:   Fri, 20 Dec 2019 13:30:52 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Chris Down <chris@chrisdown.name>
-Cc:     linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH] fs: inode: Reduce volatile inode wraparound risk when
- ino_t is 64 bit
-Message-ID: <20191220213052.GB7476@magnolia>
-References: <20191220024936.GA380394@chrisdown.name>
+        Fri, 20 Dec 2019 16:35:09 -0500
+Received: by mail-il1-f199.google.com with SMTP id j17so8618744ilc.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2019 13:35:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=wfGBWjmItVt3DfW1Y+0jHm4muOZNGwKi+vppyTSZe+0=;
+        b=s8QdflMHT4HzGKfgMHb0KmGF76L7RBjcZK5mYbWo15ckKHVnQP6v6FsfaExbwn34pV
+         o43ctruBWE/LA3q6mjZuAh6ADrezVZxTMuzvWGGbfkk32QOaHXcoPmNl69w/DRyepr/8
+         13ioBbZaQZts+Cu0jHxVKPdJas2/g1HthmHtSpX38U4krS5NFfCh5JTDYJpZVA2chOLt
+         ZJhFS8+2d1vgW2/jRt6odgLuCISbua4ftmLtQxPJPpibkXuQmDpuetqaKFczu6M4NlXp
+         eixpRCArdzH87u07dOmJcaGz7lEecYMwW68F/LgXYwo4elA/2yV5us/RzuJ3MthpX7Fl
+         QTnA==
+X-Gm-Message-State: APjAAAXw+XO/mveu9jJU5/Gs6QNECit+T2OYd5QkRfM9xlgrEGS5r0cy
+        C9uOFh5SQwLBUAaJkNvdWt8enwrmBZFN2xm5TUB0RsbTU7Gx
+X-Google-Smtp-Source: APXvYqwRE1w1DzwCNNXFQEj41fP7B1Lt/3mZcXuVQbrwHAWWRMiFZAEp5+RullaASJ/qlzG2XKFghcJuW9p+PvFjJ2sgTis6ln+O
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191220024936.GA380394@chrisdown.name>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9477 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1912200164
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9477 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1912200164
+X-Received: by 2002:a6b:f913:: with SMTP id j19mr10899368iog.124.1576877708426;
+ Fri, 20 Dec 2019 13:35:08 -0800 (PST)
+Date:   Fri, 20 Dec 2019 13:35:08 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000aa4ede059a297356@google.com>
+Subject: KASAN: use-after-free Read in io_wq_flush
+From:   syzbot <syzbot+a2cf8365eb32fc6dbb5e@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 02:49:36AM +0000, Chris Down wrote:
-> In Facebook production we are seeing heavy inode number wraparounds on
-> tmpfs. On affected tiers, in excess of 10% of hosts show multiple files
-> with different content and the same inode number, with some servers even
-> having as many as 150 duplicated inode numbers with differing file
-> content.
-> 
-> This causes actual, tangible problems in production. For example, we
-> have complaints from those working on remote caches that their
-> application is reporting cache corruptions because it uses (device,
-> inodenum) to establish the identity of a particular cache object, but
+Hello,
 
-...but you cannot delete the (dev, inum) tuple from the cache index when
-you remove a cache object??
+syzbot found the following crash on:
 
-> because it's not unique any more, the application refuses to continue
-> and reports cache corruption. Even worse, sometimes applications may not
-> even detect the corruption but may continue anyway, causing phantom and
-> hard to debug behaviour.
-> 
-> In general, userspace applications expect that (device, inodenum) should
-> be enough to be uniquely point to one inode, which seems fair enough.
+HEAD commit:    7ddd09fc Add linux-next specific files for 20191220
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11a074c1e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f183b01c3088afc6
+dashboard link: https://syzkaller.appspot.com/bug?extid=a2cf8365eb32fc6dbb5e
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1190743ee00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12b97f1ee00000
 
-Except that it's not.  (dev, inum, generation) uniquely points to an
-instance of an inode from creation to the last unlink.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+a2cf8365eb32fc6dbb5e@syzkaller.appspotmail.com
 
---D
+==================================================================
+BUG: KASAN: use-after-free in io_wq_flush+0x1f7/0x210 fs/io-wq.c:1009
+Read of size 8 at addr ffff88809ea14b00 by task kworker/1:2/2797
 
-> This patch changes get_next_ino to use up to min(sizeof(ino_t), 8) bytes
-> to reduce the likelihood of wraparound. On architectures with 32-bit
-> ino_t the problem is, at least, not made any worse than it is right now.
-> 
-> I noted the concern in the comment above about 32-bit applications on a
-> 64-bit kernel with 32-bit wide ino_t in userspace, as documented by Jeff
-> in the commit message for 866b04fc, but these applications are going to
-> get EOVERFLOW on filesystems with non-volatile inode numbers anyway,
-> since those will likely be 64-bit. Concerns about that seem slimmer
-> compared to the disadvantages this presents for known, real users of
-> this functionality on platforms with a 64-bit ino_t.
-> 
-> Other approaches I've considered:
-> 
-> - Use an IDA. If this is a problem for users with 32-bit ino_t as well,
->   this seems a feasible approach. For now this change is non-intrusive
->   enough, though, and doesn't make the situation any worse for them than
->   present at least.
-> - Look for other approaches in userspace. I think this is less
->   feasible -- users do need to have a way to reliably determine inode
->   identity, and the risk of wraparound with a 2^32-sized counter is
->   pretty high, quite clearly manifesting in production for workloads
->   which make heavy use of tmpfs.
-> 
-> Signed-off-by: Chris Down <chris@chrisdown.name>
-> Reported-by: Phyllipe Medeiros <phyllipe@fb.com>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Jeff Layton <jlayton@kernel.org>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: kernel-team@fb.com
-> ---
->  fs/inode.c         | 29 ++++++++++++++++++-----------
->  include/linux/fs.h |  2 +-
->  2 files changed, 19 insertions(+), 12 deletions(-)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index aff2b5831168..8193c17e2d16 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -870,26 +870,33 @@ static struct inode *find_inode_fast(struct super_block *sb,
->   * This does not significantly increase overflow rate because every CPU can
->   * consume at most LAST_INO_BATCH-1 unused inode numbers. So there is
->   * NR_CPUS*(LAST_INO_BATCH-1) wastage. At 4096 and 1024, this is ~0.1% of the
-> - * 2^32 range, and is a worst-case. Even a 50% wastage would only increase
-> - * overflow rate by 2x, which does not seem too significant.
-> + * 2^32 range (for 32-bit ino_t), and is a worst-case. Even a 50% wastage would
-> + * only increase overflow rate by 2x, which does not seem too significant. With
-> + * a 64-bit ino_t, overflow in general is fairly hard to achieve.
->   *
-> - * On a 32bit, non LFS stat() call, glibc will generate an EOVERFLOW
-> - * error if st_ino won't fit in target struct field. Use 32bit counter
-> - * here to attempt to avoid that.
-> + * Care should be taken not to overflow when at all possible, since generally
-> + * userspace depends on (device, inodenum) being reliably unique.
->   */
->  #define LAST_INO_BATCH 1024
-> -static DEFINE_PER_CPU(unsigned int, last_ino);
-> +static DEFINE_PER_CPU(ino_t, last_ino);
->  
-> -unsigned int get_next_ino(void)
-> +ino_t get_next_ino(void)
->  {
-> -	unsigned int *p = &get_cpu_var(last_ino);
-> -	unsigned int res = *p;
-> +	ino_t *p = &get_cpu_var(last_ino);
-> +	ino_t res = *p;
->  
->  #ifdef CONFIG_SMP
->  	if (unlikely((res & (LAST_INO_BATCH-1)) == 0)) {
-> -		static atomic_t shared_last_ino;
-> -		int next = atomic_add_return(LAST_INO_BATCH, &shared_last_ino);
-> +		static atomic64_t shared_last_ino;
-> +		u64 next = atomic64_add_return(LAST_INO_BATCH,
-> +					       &shared_last_ino);
->  
-> +		/*
-> +		 * This might get truncated if ino_t is 32-bit, and so be more
-> +		 * susceptible to wrap around than on environments where ino_t
-> +		 * is 64-bit, but that's really no worse than always encoding
-> +		 * `res` as unsigned int.
-> +		 */
->  		res = next - LAST_INO_BATCH;
->  	}
->  #endif
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 190c45039359..ca1a04334c9e 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3052,7 +3052,7 @@ static inline void lockdep_annotate_inode_mutex_key(struct inode *inode) { };
->  #endif
->  extern void unlock_new_inode(struct inode *);
->  extern void discard_new_inode(struct inode *);
-> -extern unsigned int get_next_ino(void);
-> +extern ino_t get_next_ino(void);
->  extern void evict_inodes(struct super_block *sb);
->  
->  extern void __iget(struct inode * inode);
-> -- 
-> 2.24.1
-> 
+CPU: 1 PID: 2797 Comm: kworker/1:2 Not tainted  
+5.5.0-rc2-next-20191220-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events io_ring_file_ref_switch
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x197/0x210 lib/dump_stack.c:118
+  print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
+  __kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
+  kasan_report+0x12/0x20 mm/kasan/common.c:639
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
+  io_wq_flush+0x1f7/0x210 fs/io-wq.c:1009
+  io_destruct_skb+0x8e/0xc0 fs/io_uring.c:4668
+  skb_release_head_state+0xeb/0x260 net/core/skbuff.c:652
+  skb_release_all+0x16/0x60 net/core/skbuff.c:663
+  __kfree_skb net/core/skbuff.c:679 [inline]
+  kfree_skb net/core/skbuff.c:697 [inline]
+  kfree_skb+0x101/0x420 net/core/skbuff.c:691
+  io_ring_file_put fs/io_uring.c:4836 [inline]
+  io_ring_file_ref_switch+0x68a/0xac0 fs/io_uring.c:4881
+  process_one_work+0x9af/0x1740 kernel/workqueue.c:2264
+  worker_thread+0x98/0xe40 kernel/workqueue.c:2410
+  kthread+0x361/0x430 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+Allocated by task 9381:
+  save_stack+0x23/0x90 mm/kasan/common.c:72
+  set_track mm/kasan/common.c:80 [inline]
+  __kasan_kmalloc mm/kasan/common.c:513 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:486
+  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:527
+  kmem_cache_alloc_trace+0x158/0x790 mm/slab.c:3551
+  kmalloc include/linux/slab.h:555 [inline]
+  kzalloc include/linux/slab.h:669 [inline]
+  io_wq_create+0x52/0xa40 fs/io-wq.c:1024
+  io_sq_offload_start fs/io_uring.c:5244 [inline]
+  io_uring_create fs/io_uring.c:6002 [inline]
+  io_uring_setup+0xf4a/0x2080 fs/io_uring.c:6062
+  __do_sys_io_uring_setup fs/io_uring.c:6075 [inline]
+  __se_sys_io_uring_setup fs/io_uring.c:6072 [inline]
+  __x64_sys_io_uring_setup+0x54/0x80 fs/io_uring.c:6072
+  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 9381:
+  save_stack+0x23/0x90 mm/kasan/common.c:72
+  set_track mm/kasan/common.c:80 [inline]
+  kasan_set_free_info mm/kasan/common.c:335 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:474
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:483
+  __cache_free mm/slab.c:3426 [inline]
+  kfree+0x10a/0x2c0 mm/slab.c:3757
+  io_wq_destroy+0x2ce/0x3c0 fs/io-wq.c:1116
+  io_finish_async+0x128/0x1b0 fs/io_uring.c:4657
+  io_ring_ctx_free fs/io_uring.c:5569 [inline]
+  io_ring_ctx_wait_and_kill+0x330/0x9a0 fs/io_uring.c:5644
+  io_uring_release+0x42/0x50 fs/io_uring.c:5652
+  __fput+0x2ff/0x890 fs/file_table.c:280
+  ____fput+0x16/0x20 fs/file_table.c:313
+  task_work_run+0x145/0x1c0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+  exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:164
+  prepare_exit_to_usermode arch/x86/entry/common.c:195 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:278 [inline]
+  do_syscall_64+0x676/0x790 arch/x86/entry/common.c:304
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff88809ea14b00
+  which belongs to the cache kmalloc-192 of size 192
+The buggy address is located 0 bytes inside of
+  192-byte region [ffff88809ea14b00, ffff88809ea14bc0)
+The buggy address belongs to the page:
+page:ffffea00027a8500 refcount:1 mapcount:0 mapping:ffff8880aa400000  
+index:0x0
+raw: 00fffe0000000200 ffffea00027a8148 ffffea00027a8f08 ffff8880aa400000
+raw: 0000000000000000 ffff88809ea14000 0000000100000010 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff88809ea14a00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffff88809ea14a80: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+> ffff88809ea14b00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                    ^
+  ffff88809ea14b80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+  ffff88809ea14c00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
