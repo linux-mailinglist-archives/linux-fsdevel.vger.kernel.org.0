@@ -2,171 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B9C2127489
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2019 05:23:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DB9E1274BB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Dec 2019 05:35:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727169AbfLTEXj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Dec 2019 23:23:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45368 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727128AbfLTEXi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Dec 2019 23:23:38 -0500
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727169AbfLTEfa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Dec 2019 23:35:30 -0500
+Received: from mout-p-201.mailbox.org ([80.241.56.171]:18280 "EHLO
+        mout-p-201.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726986AbfLTEfa (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 19 Dec 2019 23:35:30 -0500
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 172B0206EF;
-        Fri, 20 Dec 2019 04:23:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576815817;
-        bh=y/iK21hfpjuMVRFNNNAz1r8hb/bYZke2x5UNUn7S49A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qsRRSQurhykKFwcgdxe8QuKP66ppKwTHhcjCGLygC5WmSQBrpSueGPMbfDQNB2hVd
-         HjDai/DJL40x0ttXkFkzgyVQGQCsJwb/0GNNK1fODi0BWua113KVVMajG7tPZ37D9I
-         T3cSqLr/WjvQPy4ChCzIRkgUek8p8aH896fSKpC4=
-Date:   Thu, 19 Dec 2019 20:23:35 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Satya Tangirala <satyat@google.com>
-Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Kim Boojin <boojin.kim@samsung.com>
-Subject: Re: [PATCH v6 8/9] f2fs: add inline encryption support
-Message-ID: <20191220042335.GC718@sol.localdomain>
-References: <20191218145136.172774-1-satyat@google.com>
- <20191218145136.172774-9-satyat@google.com>
+        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 47fGBk2v34zQjm6;
+        Fri, 20 Dec 2019 05:35:26 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id 5BE2jh93RM9y; Fri, 20 Dec 2019 05:35:22 +0100 (CET)
+Date:   Fri, 20 Dec 2019 15:35:10 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Sargun Dhillon <sargun@sargun.me>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Gian-Carlo Pascutto <gpascutto@mozilla.com>,
+        Emilio Cobos =?utf-8?Q?=C3=81lvarez?= <ealvarez@mozilla.com>,
+        Jed Davis <jld@mozilla.com>
+Subject: Re: [PATCH v4 2/5] pid: Add PIDFD_IOCTL_GETFD to fetch file
+ descriptors from processes
+Message-ID: <20191220043510.r5h6wvsp2p5glyjv@yavin.dot.cyphar.com>
+References: <20191218235459.GA17271@ircssh-2.c.rugged-nimbus-611.internal>
+ <CAK8P3a2eT=bHkUamyp-P3Y2adNq1KBk7UknCYBY5_aR4zJmYaQ@mail.gmail.com>
+ <20191219103525.yqb5f4pbd2dvztkb@wittgenstein>
+ <CAMp4zn_z-CCQYMpT=GjZeGVLobjHBCSbmfha1rtWdmptOQ8JtA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nmgp7ksjzcrpo6tt"
 Content-Disposition: inline
-In-Reply-To: <20191218145136.172774-9-satyat@google.com>
+In-Reply-To: <CAMp4zn_z-CCQYMpT=GjZeGVLobjHBCSbmfha1rtWdmptOQ8JtA@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 06:51:35AM -0800, Satya Tangirala wrote:
-> Wire up f2fs to support inline encryption via the helper functions which
-> fs/crypto/ now provides.  This includes:
-> 
-> - Adding a mount option 'inlinecrypt' which enables inline encryption
->   on encrypted files where it can be used.
-> 
-> - Setting the bio_crypt_ctx on bios that will be submitted to an
->   inline-encrypted file.
-> 
-> - Not adding logically discontiguous data to bios that will be submitted
->   to an inline-encrypted file.
-> 
-> - Not doing filesystem-layer crypto on inline-encrypted files.
-> 
-> Co-developed-by: Eric Biggers <ebiggers@google.com>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> Signed-off-by: Satya Tangirala <satyat@google.com>
-> ---
->  fs/f2fs/data.c  | 65 +++++++++++++++++++++++++++++++++++++++++++------
->  fs/f2fs/f2fs.h  |  3 +++
->  fs/f2fs/super.c | 41 +++++++++++++++++++++++++++++++
->  3 files changed, 101 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index a034cd0ce021..ad63aa30d0c7 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -308,6 +308,33 @@ static struct bio *__bio_alloc(struct f2fs_io_info *fio, int npages)
->  	return bio;
->  }
->  
-> +static void f2fs_set_bio_crypt_ctx(struct bio *bio, const struct inode *inode,
-> +				  pgoff_t first_idx,
-> +				  const struct f2fs_io_info *fio,
-> +				  gfp_t gfp_mask)
-> +{
-> +	/*
-> +	 * The f2fs garbage collector sets ->encrypted_page when it wants to
-> +	 * read/write raw data without encryption.
-> +	 */
-> +	if (!fio || !fio->encrypted_page)
-> +		fscrypt_set_bio_crypt_ctx(bio, inode, first_idx, gfp_mask);
-> +}
-> +
-> +static bool f2fs_crypt_mergeable_bio(struct bio *bio, const struct inode *inode,
-> +				     pgoff_t next_idx,
-> +				     const struct f2fs_io_info *fio)
-> +{
-> +	/*
-> +	 * The f2fs garbage collector sets ->encrypted_page when it wants to
-> +	 * read/write raw data without encryption.
-> +	 */
-> +	if (fio && fio->encrypted_page)
-> +		return !bio_has_crypt_ctx(bio);
-> +
-> +	return fscrypt_mergeable_bio(bio, inode, next_idx);
-> +}
-> +
->  static inline void __submit_bio(struct f2fs_sb_info *sbi,
->  				struct bio *bio, enum page_type type)
->  {
-> @@ -491,6 +518,9 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
->  	/* Allocate a new bio */
->  	bio = __bio_alloc(fio, 1);
->  
-> +	f2fs_set_bio_crypt_ctx(bio, fio->page->mapping->host,
-> +			       fio->page->index, fio, GFP_NOIO);
-> +
->  	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
->  		bio_put(bio);
->  		return -EFAULT;
-> @@ -678,12 +708,18 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
->  	trace_f2fs_submit_page_bio(page, fio);
->  	f2fs_trace_ios(fio, 0);
->  
-> -	if (bio && !page_is_mergeable(fio->sbi, bio, *fio->last_block,
-> -						fio->new_blkaddr))
-> +	if (bio && (!page_is_mergeable(fio->sbi, bio, *fio->last_block,
-> +				       fio->new_blkaddr) ||
-> +		    !f2fs_crypt_mergeable_bio(bio, fio->page->mapping->host,
-> +					      fio->page->index, fio))) {
->  		f2fs_submit_merged_ipu_write(fio->sbi, &bio, NULL);
-> +}
 
-Unnecessary (and wrongly formatted) braces here.
+--nmgp7ksjzcrpo6tt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->  alloc_new:
->  	if (!bio) {
->  		bio = __bio_alloc(fio, BIO_MAX_PAGES);
-> +		f2fs_set_bio_crypt_ctx(bio, fio->page->mapping->host,
-> +				       fio->page->index, fio,
-> +				       GFP_NOIO);
->  		bio_set_op_attrs(bio, fio->op, fio->op_flags);
+On 2019-12-19, Sargun Dhillon <sargun@sargun.me> wrote:
+> On Thu, Dec 19, 2019 at 2:35 AM Christian Brauner
+> <christian.brauner@ubuntu.com> wrote:
+> > I guess this is the remaining question we should settle, i.e. what do we
+> > prefer.
+> > I still think that adding a new syscall for this seems a bit rich. On
+> > the other hand it seems that a lot more people agree that using a
+> > dedicated syscall instead of an ioctl is the correct way; especially
+> > when it touches core kernel functionality. I mean that was one of the
+> > takeaways from the pidfd API ioctl-vs-syscall discussion.
+> >
+> > A syscall is nicer especially for core-kernel code like this.
+> > So I guess the only way to find out is to try the syscall approach and
+> > either get yelled and switch to an ioctl() or have it accepted.
+> >
+> > What does everyone else think? Arnd, still in favor of a syscall I take
+> > it. Oleg, you had suggested a syscall too, right? Florian, any
+> > thoughts/worries on/about this from the glibc side?
+> >
+> > Christian
+>=20
+> My feelings towards this are that syscalls might pose a problem if we
+> ever want to extend this API. Of course we can have a reserved
+> "flags" field, and populate it later, but what if we turn out to need
+> a proper struct? I already know we're going to want to add one
+> around cgroup metadata (net_cls), and likely we'll want to add
+> a "steal" flag as well. As Arnd mentioned earlier, this is trivial to
+> fix in a traditional ioctl environment, as ioctls are "cheap". How
+> do we feel about potentially adding a pidfd_getfd2? Or are we
+> confident that reserved flags will save us?
 
-Nit: GFP_NOIO can be joined with the previous line.
+If we end up making this a syscall, then we can re-use the
+copy_struct_from_user() API to make it both extensible and compatible in
+both directions. I wasn't aware that this was frowned upon for ioctls
+(sorry for the extra work) but there are several syscalls which use this
+model for extendability (clone3, openat2, sched_setattr,
+perf_events_open) so there shouldn't be any such complaints for a
+syscall which is extensible.
 
->  
->  		add_bio_entry(fio->sbi, bio, page, fio->temp);
-> @@ -735,8 +771,11 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
->  
->  	inc_page_count(sbi, WB_DATA_TYPE(bio_page));
->  
-> -	if (io->bio && !io_is_mergeable(sbi, io->bio, io, fio,
-> -			io->last_block_in_bio, fio->new_blkaddr))
-> +	if (io->bio &&
-> +	    (!io_is_mergeable(sbi, io->bio, io, fio, io->last_block_in_bio,
-> +			      fio->new_blkaddr) ||
-> +	     !f2fs_crypt_mergeable_bio(io->bio, fio->page->mapping->host,
-> +				       fio->page->index, fio)))
->  		__submit_merged_bio(io);
->  alloc_new:
->  	if (io->bio == NULL) {
-> @@ -748,6 +787,9 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
->  			goto skip;
->  		}
->  		io->bio = __bio_alloc(fio, BIO_MAX_PAGES);
-> +		f2fs_set_bio_crypt_ctx(io->bio, fio->page->mapping->host,
-> +				       fio->page->index, fio,
-> +				       GFP_NOIO);
->  		io->fio = *fio;
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
-Likewise.
+--nmgp7ksjzcrpo6tt
+Content-Type: application/pgp-signature; name="signature.asc"
 
-- Eric
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXfxPewAKCRCdlLljIbnQ
+ElNGAP0QzHxTfcWUIyKQwziyZ7SKPlC5ve6y0476CjvwfTG0mQD+JDR19gzaS69O
+MYDK8035BURwBnELBe2PceZHzjVhlAQ=
+=Kwh+
+-----END PGP SIGNATURE-----
+
+--nmgp7ksjzcrpo6tt--
