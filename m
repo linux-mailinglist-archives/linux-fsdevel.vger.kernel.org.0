@@ -2,126 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04141128946
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2019 14:54:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC9D912895A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2019 15:02:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726842AbfLUNxw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 21 Dec 2019 08:53:52 -0500
-Received: from mout.kundenserver.de ([212.227.126.134]:34285 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726339AbfLUNxv (ORCPT
+        id S1726994AbfLUOC2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 Dec 2019 09:02:28 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37729 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726867AbfLUOC2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 21 Dec 2019 08:53:51 -0500
-Received: from mail-qk1-f182.google.com ([209.85.222.182]) by
- mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MG90u-1iS9zd45cK-00GcBo; Sat, 21 Dec 2019 14:53:50 +0100
-Received: by mail-qk1-f182.google.com with SMTP id z14so8770952qkg.9;
-        Sat, 21 Dec 2019 05:53:49 -0800 (PST)
-X-Gm-Message-State: APjAAAWfxpQ8Ni+qs3L+IUdUwrTRHzu3mWhdoGW7koLU/Ww4oZjx4mXp
-        Pv4W022I6m7YZW8XzfEqOeJ5whABEWSq4ZbKby4=
-X-Google-Smtp-Source: APXvYqzdkKB4eWJLyIMGbY84AVCwTo394eD7uI1YKdpNDtFn1NdJbNSgdawpABz0czREJyOLKl+WVti5eWx7OSdPMjA=
-X-Received: by 2002:a37:a8d4:: with SMTP id r203mr18290266qke.394.1576936428655;
- Sat, 21 Dec 2019 05:53:48 -0800 (PST)
+        Sat, 21 Dec 2019 09:02:28 -0500
+Received: by mail-pf1-f193.google.com with SMTP id p14so6815828pfn.4
+        for <linux-fsdevel@vger.kernel.org>; Sat, 21 Dec 2019 06:02:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7Lc+T/FNxbn2ck1uy8M9pSQdxYkpPnlZqGKQGiC0A2o=;
+        b=Aq5/F4sIrm5dfV542L953T1FmPHcqItoJmm2EIFZGpVQG33isOI5UNIr8NvYlciJeC
+         gq2JHaLel1Y0yAeVNPLZjMAQp1i2b2I1rR2vEj2s2FRP3eOgrbIYWn8gA2SyUPMY0Jux
+         w5P1bE/0lz0d6I39Kf6HbzwG+07RVDQ7YiKVBEoDrzUrr9+KVxA4fDjI2zIkjF1zbzZu
+         7JjotrKEoNx0w0aRjWjHGU1uoSXdoT7gT81XVUHOCJuoZaLtg3sdM9oNqBWtMQjKl58k
+         e4QbswW2zTJKVJrMjyYm5K95L+z6v9I1sBWUQp6/0Sz5RlM+j47xaswFV2bJqMv/yp4V
+         Twaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7Lc+T/FNxbn2ck1uy8M9pSQdxYkpPnlZqGKQGiC0A2o=;
+        b=o27KUXGV5Hm7nmiGqBm9QZA5PYGO+1bp48h2PNRXroP8lwf6IDuTXFkCGDriZkbAnM
+         Mi4jHR9wI+K38M8dQRSjAeoyZAZi2PTJgSg9tHCuwZJwpthU6RVyVWx87f5ZnWo/UcHV
+         NkIVo2GZDckfF7lv5OU4IvrrP6v4vPh3ycxllITdAEC2urmOgoRQNoIbuA+54gMBbYMp
+         IAgnO5Eekh8QDqvvfVScchszX6nV2bsK+9rWrAMEDUNkhUPzW15z1TDM5wuWTp8sIrj4
+         JcoWH3baMrGBPAXbNaX1z3fMKuqGR+X2akhYHpV9XNwNJGfWeAJKnI6uXbY2gJ603SXn
+         iuvA==
+X-Gm-Message-State: APjAAAUHdiT3MzjZW6uuYw81ocZahzn5KlzW3JArHNEvvqbyzrVXEs9z
+        h9Q6AQNTqyvLs+v+ZIORUkhmKw==
+X-Google-Smtp-Source: APXvYqwNUe16DaQdazgidIHMcdaImKxGvQ4eoQK+A96GKZTFrbxfU7+5A9OnYW6DowHegnfgQpZ76g==
+X-Received: by 2002:a65:6842:: with SMTP id q2mr21438814pgt.345.1576936947397;
+        Sat, 21 Dec 2019 06:02:27 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id 65sm17954237pfu.140.2019.12.21.06.02.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 21 Dec 2019 06:02:26 -0800 (PST)
+Subject: Re: WARNING in percpu_ref_exit (2)
+To:     Hillf Danton <hdanton@sina.com>,
+        syzbot <syzbot+8c4a14856e657b43487c@syzkaller.appspotmail.com>
+Cc:     io-uring@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+References: <20191221134330.7376-1-hdanton@sina.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <94c867f3-7310-573f-9fbd-088d4a75d6a3@kernel.dk>
+Date:   Sat, 21 Dec 2019 07:02:25 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-References: <20191218235459.GA17271@ircssh-2.c.rugged-nimbus-611.internal>
- <CAK8P3a2eT=bHkUamyp-P3Y2adNq1KBk7UknCYBY5_aR4zJmYaQ@mail.gmail.com>
- <20191219103525.yqb5f4pbd2dvztkb@wittgenstein> <CAMp4zn_z-CCQYMpT=GjZeGVLobjHBCSbmfha1rtWdmptOQ8JtA@mail.gmail.com>
- <20191220043510.r5h6wvsp2p5glyjv@yavin.dot.cyphar.com>
-In-Reply-To: <20191220043510.r5h6wvsp2p5glyjv@yavin.dot.cyphar.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Sat, 21 Dec 2019 13:53:32 +0000
-X-Gmail-Original-Message-ID: <CAK8P3a0X4UBE_q0mykor9fOqa4qFJHfAE61bgH_8_1GG6ih__g@mail.gmail.com>
-Message-ID: <CAK8P3a0X4UBE_q0mykor9fOqa4qFJHfAE61bgH_8_1GG6ih__g@mail.gmail.com>
-Subject: Re: [PATCH v4 2/5] pid: Add PIDFD_IOCTL_GETFD to fetch file
- descriptors from processes
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Sargun Dhillon <sargun@sargun.me>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Gian-Carlo Pascutto <gpascutto@mozilla.com>,
-        =?UTF-8?Q?Emilio_Cobos_=C3=81lvarez?= <ealvarez@mozilla.com>,
-        Jed Davis <jld@mozilla.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:X8kFLzryBpbh2nWdfRj5h+/1qG5+N7nbLw/cmfzzvQLHYnAls2Q
- d7j2+cIsRkKagtxMjLivXjhrxEVnGAoKGTQKqUFq+G50mobe0iGvLffdmhj3hkybOAPghmm
- Lh2GF1BIKZwDw/wNGEpCIeRB0yFG17cFYrb6KsIF1ApGmVsU0uah6DG3mQyZsPj7D+9/RRw
- emKlBwYnVM0VP/4+pIV4g==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:WID3Qm7SKJs=:tBvWt3bGwwDfbxhLW4vA33
- 6H3b6vNIHT2JSKV2JaTOUZVnQTXz0Sm2DNJEQXilnfpIIJLTS6DP/zoKvwT8Z+fSS5qU+oM1l
- NFW3uEFBOzMHMZxR+xsP7WHbHx2Z28CjzNb/SJd2xwedBKKPTRb9hzr0YFFm37KH9g1fr0zLQ
- aKS7hv5D5K0c7ai97gV2DFlUO67GhyPe+j1Otwol2BzzhccOrKuE2X2NFx+26n2ywYVx4BCl1
- vTazP0iloGeb8yETb+TFgmjd1g+gV7ktLsCtCoM8l8VZjxC90Ey5FOJMst/FfCPDzjyYzRugn
- L/UXiFtsmzJrRNhU1806BcPm1S6N/Rasgp5OwE0EkMlssqiDqhae/G1dxWrnZTEC6yZrCgSdz
- vPqHi7QzeBisD7v5SesyiLKl9/Koz8LPawRj5fGF/U+mLQN70UvQ4egH6Z8ADfBsmW3GC1NSw
- eIL9kg07vbhhnm36XELhbsj3dwIgZOrFPUb12Zd71pUiLorfaBThwJN5S9rplMDHMx5aZ1pGW
- RI3irOewibSRX3ppsaTaBNFptfw1BdsING7XVreaY/9A0AH/cIef6cs9Qt3I+AT7qL30bEEt0
- G2mApF7h8r9rcg0YMIjF6VxDtU/CogUP8p8DeRVtShEd1ZSTAqPNEC8y07RYz2jPlmc35/vUf
- dc+shbuMXmQvU6MDNNMPVSpAke/+uRoZPTopjR9M3hSFlaRM6bLuqqIyeP+ieguqs+XyawgZY
- TACRR32lKW2WFAr0d0jiV4eNuMZcMH5m2UNnuYcXPZb7GCLftJ3m/btRD9kDj7OsXFzOrfLyC
- YbqTl4P0yib0iKqfF0+TXP+0B2FbxasRtU9gm/O2cXY12WmjFIV9gYSMmNefmdKUFaO9+d9rV
- 5hjjLXdrVkUG81St/LuQ==
+In-Reply-To: <20191221134330.7376-1-hdanton@sina.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 4:35 AM Aleksa Sarai <cyphar@cyphar.com> wrote:
->
-> On 2019-12-19, Sargun Dhillon <sargun@sargun.me> wrote:
-> > On Thu, Dec 19, 2019 at 2:35 AM Christian Brauner
-> > <christian.brauner@ubuntu.com> wrote:
-> > > I guess this is the remaining question we should settle, i.e. what do we
-> > > prefer.
-> > > I still think that adding a new syscall for this seems a bit rich. On
-> > > the other hand it seems that a lot more people agree that using a
-> > > dedicated syscall instead of an ioctl is the correct way; especially
-> > > when it touches core kernel functionality. I mean that was one of the
-> > > takeaways from the pidfd API ioctl-vs-syscall discussion.
-> > >
-> > > A syscall is nicer especially for core-kernel code like this.
-> > > So I guess the only way to find out is to try the syscall approach and
-> > > either get yelled and switch to an ioctl() or have it accepted.
-> > >
-> > > What does everyone else think? Arnd, still in favor of a syscall I take
-> > > it. Oleg, you had suggested a syscall too, right? Florian, any
-> > > thoughts/worries on/about this from the glibc side?
-> > >
-> > > Christian
-> >
-> > My feelings towards this are that syscalls might pose a problem if we
-> > ever want to extend this API. Of course we can have a reserved
-> > "flags" field, and populate it later, but what if we turn out to need
-> > a proper struct? I already know we're going to want to add one
-> > around cgroup metadata (net_cls), and likely we'll want to add
-> > a "steal" flag as well. As Arnd mentioned earlier, this is trivial to
-> > fix in a traditional ioctl environment, as ioctls are "cheap". How
-> > do we feel about potentially adding a pidfd_getfd2? Or are we
-> > confident that reserved flags will save us?
->
-> If we end up making this a syscall, then we can re-use the
-> copy_struct_from_user() API to make it both extensible and compatible in
-> both directions. I wasn't aware that this was frowned upon for ioctls
-> (sorry for the extra work) but there are several syscalls which use this
-> model for extendability (clone3, openat2, sched_setattr,
-> perf_events_open) so there shouldn't be any such complaints for a
-> syscall which is extensible.
+On 12/21/19 6:43 AM, Hillf Danton wrote:
+> 
+> On Sat, 21 Dec 2019 00:05:07 -0800
+>> Hello,
+>>
+>> syzbot found the following crash on:
+>>
+>> HEAD commit:    7ddd09fc Add linux-next specific files for 20191220
+>> git tree:       linux-next
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=12a18cc6e00000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=f183b01c3088afc6
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=8c4a14856e657b43487c
+>> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14b8f351e00000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14b51925e00000
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+8c4a14856e657b43487c@syzkaller.appspotmail.com
+>>
+>> ------------[ cut here ]------------
+>> WARNING: CPU: 1 PID: 11482 at lib/percpu-refcount.c:111  
+>> percpu_ref_exit+0xab/0xd0 lib/percpu-refcount.c:111
+>> Kernel panic - not syncing: panic_on_warn set ...
+>> CPU: 1 PID: 11482 Comm: syz-executor051 Not tainted  
+>> 5.5.0-rc2-next-20191220-syzkaller #0
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+>> Google 01/01/2011
+>> Call Trace:
+>>   __dump_stack lib/dump_stack.c:77 [inline]
+>>   dump_stack+0x197/0x210 lib/dump_stack.c:118
+>>   panic+0x2e3/0x75c kernel/panic.c:221
+>>   __warn.cold+0x2f/0x3e kernel/panic.c:582
+>>   report_bug+0x289/0x300 lib/bug.c:195
+>>   fixup_bug arch/x86/kernel/traps.c:174 [inline]
+>>   fixup_bug arch/x86/kernel/traps.c:169 [inline]
+>>   do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:267
+>>   do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:286
+>>   invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
+>> RIP: 0010:percpu_ref_exit+0xab/0xd0 lib/percpu-refcount.c:111
+>> Code: 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 75 1d 48 c7 43 08 03 00  
+>> 00 00 e8 01 41 e5 fd 5b 41 5c 41 5d 5d c3 e8 f5 40 e5 fd <0f> 0b eb bf 4c  
+>> 89 ef e8 29 2c 23 fe eb d9 e8 82 2b 23 fe eb a7 4c
+>> RSP: 0018:ffffc9000cb17968 EFLAGS: 00010293
+>> RAX: ffff8880a3390640 RBX: ffff8880a83a8010 RCX: ffffffff83901432
+>> RDX: 0000000000000000 RSI: ffffffff8390149b RDI: ffff8880a83a8028
+>> RBP: ffffc9000cb17980 R08: ffff8880a3390640 R09: 0000000000000000
+>> R10: 0000000000000000 R11: 0000000000000000 R12: 0000607f51435750
+>> R13: ffff8880a83a8018 R14: ffff888097b95000 R15: ffff888097b95228
+>>   io_sqe_files_unregister+0x7d/0x2f0 fs/io_uring.c:4623
+>>   io_ring_ctx_free fs/io_uring.c:5575 [inline]
+>>   io_ring_ctx_wait_and_kill+0x430/0x9a0 fs/io_uring.c:5644
+>>   io_uring_release+0x42/0x50 fs/io_uring.c:5652
+>>   __fput+0x2ff/0x890 fs/file_table.c:280
+>>   ____fput+0x16/0x20 fs/file_table.c:313
+>>   task_work_run+0x145/0x1c0 kernel/task_work.c:113
+>>   exit_task_work include/linux/task_work.h:22 [inline]
+>>   do_exit+0x909/0x2f20 kernel/exit.c:797
+>>   do_group_exit+0x135/0x360 kernel/exit.c:895
+>>   get_signal+0x47c/0x24f0 kernel/signal.c:2734
+>>   do_signal+0x87/0x1700 arch/x86/kernel/signal.c:815
+>>   exit_to_usermode_loop+0x286/0x380 arch/x86/entry/common.c:160
+>>   prepare_exit_to_usermode arch/x86/entry/common.c:195 [inline]
+>>   syscall_return_slowpath arch/x86/entry/common.c:278 [inline]
+>>   do_syscall_64+0x676/0x790 arch/x86/entry/common.c:304
+>>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 
+> Flush work before killing.
+> 
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -4618,10 +4618,10 @@ static int io_sqe_files_unregister(struc
+>  	if (!data)
+>  		return -ENXIO;
+>  
+> +	flush_work(&data->ref_work);
+>  	percpu_ref_kill_and_confirm(&data->refs, io_file_ref_kill);
+>  	wait_for_completion(&data->done);
+>  	percpu_ref_exit(&data->refs);
+> -	flush_work(&data->ref_work);
+>  
+>  	__io_sqe_files_unregister(ctx);
+>  	nr_tables = DIV_ROUND_UP(ctx->nr_user_files, IORING_MAX_FILES_TABLE);
 
-I would still not do it for syscalls, although for other reasons:
+Oh indeed, good catch! Thanks, I'll fold this in.
 
-- in an ioctl, it's better to come up with a new command code if you
-  have a larger structure
+-- 
+Jens Axboe
 
-- in a system call, it's best to pass all arguments as individual
-  registers, the only time we use indirect data structures is when there
-  are more than six arguments.
-
-       Arnd
