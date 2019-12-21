@@ -2,116 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3547F128665
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2019 02:46:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A077B1287F8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2019 08:45:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbfLUBqO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Dec 2019 20:46:14 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:44999 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726633AbfLUBqN (ORCPT
+        id S1725954AbfLUHpJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 Dec 2019 02:45:09 -0500
+Received: from mail-io1-f70.google.com ([209.85.166.70]:43774 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725845AbfLUHpJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Dec 2019 20:46:13 -0500
-Received: by mail-ed1-f68.google.com with SMTP id bx28so10274843edb.11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2019 17:46:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=e12Mnu5DiWBdZFxNKin4JTRmUKOLU+wR6ztAL37zhAQ=;
-        b=LTNBj34a/5X3efwYU6hSdfbjHgGkwrDz3BppIDQzVdomaBcPJYPjji/5CWcuX5eiuK
-         nRtByNprFnPdf5vqKaOTpOXOo0r1yi89jhIVZ5tvRlCRIqmSzPUAoDg7I7HGa239Azzh
-         yAiO/3eRLlEmi90xDuUgTzfU6okfFdGuZxqqs=
+        Sat, 21 Dec 2019 02:45:09 -0500
+Received: by mail-io1-f70.google.com with SMTP id b25so7688039ioh.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2019 23:45:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=e12Mnu5DiWBdZFxNKin4JTRmUKOLU+wR6ztAL37zhAQ=;
-        b=hHyHhUIHuVF9yM+JtJuNWq9faalzehC4WOeclLSRW0oqpSPtc2G2zxvUbgsoWZ7hmW
-         0rND/v0sWgUGElFNoNI8jLS0v99pi9twagdqeX6Wl5Rk4zSlICWslV/1A8nBpkpzOVdb
-         K0hMPRfEn9rd7+E4prIe9ZXFtbvPR8XxpTu0rooKQnbzSsBX2jl2rn1bX1XUI0b4JsdU
-         +wW2hKW0ayY89OF3E7yNh4Vy6ww58rnBIPWp3lud1v+hY88LgxTlRrKV610Lh4fdDDLA
-         3gfV2Leqvzhjwf6QhqW0g3eWYSvfq4Wu9dIHnnW/foGa8G7MKgK5bvGjBqaLmSGSwQfO
-         SMSg==
-X-Gm-Message-State: APjAAAVDm4N0ZYR3ULjVm2AistyyWpRI1KrejSwkPInYmdWh18ZQn0S3
-        UyGuuaPhAvO2dLl9jy4k6sk5x5iPTyI4WXBFDWKgIQ==
-X-Google-Smtp-Source: APXvYqxb8UQLCVS8ZHvwXwLPP+w/fQZABPHqVecdCzSZ6Hw7QsjoOp76JDhiyTTOimtqSFsSY7HEMzdgklJ+w9vCSHM=
-X-Received: by 2002:a50:cc08:: with SMTP id m8mr19431615edi.263.1576892770667;
- Fri, 20 Dec 2019 17:46:10 -0800 (PST)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=EyXAOQ96FZA4EZtJvsH4qKzXeMlCeEGpRUWOi5a4b80=;
+        b=X4TP1WQ2ICf2hr1qmGttpBKgiaGzkqYP8IlD5UmKlc0TPQOVNHoJfJ3fNmEOoRbprh
+         5WRq8XQQWxuXr0/UUCNeFboEcGFFzwDCaJs3z8xJgSftWNnslVttE1VpwtpxPf5tjcXZ
+         JIE1YbkFbABSD7Edg2X5LZL/aE4tuF98LLWrr810YQfQ+piAc0+caaNl+GxHGH/ZUCyh
+         yDgYVlxqubn7d6Rm8Tz+spkpTal9Z0l2sK5cp8viOJ+P1TssYj2OUNpF3pej1WErbnr2
+         Hs4u0fszEM41hjok3+lHFoXNa48IwQClP745JyZJP2rf1hupmSGDS+jUC0VYuVMXRiR/
+         eO4A==
+X-Gm-Message-State: APjAAAUQpFUlDJBJRgHWY9+lKQKtK601I+PRrZ5ldSqR0XBSNJDbzX/a
+        22tzA0kArtodqiFfIQeKODjFQiVNFFtbDJRhpx2bvNtreQLn
+X-Google-Smtp-Source: APXvYqw5o750qM75OAkZ2ZRp32ldpAIlFcUySWBJMF0kNLK6V9LjmT2H5Pku0ZhWlX6QASDLRYRf0Nq/PviQgDNuXOhd+pus6FCB
 MIME-Version: 1.0
-References: <20191220232810.GA20233@ircssh-2.c.rugged-nimbus-611.internal> <20191221002734.7rz6lcdrshrrlnqf@yavin.dot.cyphar.com>
-In-Reply-To: <20191221002734.7rz6lcdrshrrlnqf@yavin.dot.cyphar.com>
-From:   Sargun Dhillon <sargun@sargun.me>
-Date:   Fri, 20 Dec 2019 17:45:34 -0800
-Message-ID: <CAMp4zn9ivYPP1Sfu48EX897M4JAVXvK+NQB4NZ5=XPM_saJu+g@mail.gmail.com>
-Subject: Re: [PATCH v5 2/3] pid: Introduce pidfd_getfd syscall
-To:     Aleksa Sarai <asarai@suse.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        =?UTF-8?Q?Emilio_Cobos_=C3=81lvarez?= <ealvarez@mozilla.com>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Gian-Carlo Pascutto <gpascutto@mozilla.com>,
-        Jed Davis <jld@mozilla.com>, Oleg Nesterov <oleg@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a6b:6a0a:: with SMTP id x10mr8062119iog.48.1576914308376;
+ Fri, 20 Dec 2019 23:45:08 -0800 (PST)
+Date:   Fri, 20 Dec 2019 23:45:08 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000031376f059a31f9fb@google.com>
+Subject: WARNING: ODEBUG bug in io_sqe_files_unregister
+From:   syzbot <syzbot+6bf913476056cb0f8d13@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 4:27 PM Aleksa Sarai <asarai@suse.de> wrote:
->
-> On 2019-12-20, Sargun Dhillon <sargun@sargun.me> wrote:
-> > diff --git a/include/uapi/linux/pidfd.h b/include/uapi/linux/pidfd.h
-> > new file mode 100644
-> > index 000000000000..0a3fc922661d
-> > --- /dev/null
-> > +++ b/include/uapi/linux/pidfd.h
-> > @@ -0,0 +1,10 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> > +#ifndef _UAPI_LINUX_PIDFD_H
-> > +#define _UAPI_LINUX_PIDFD_H
-> > +
-> > +struct pidfd_getfd_options {};
->
-> Are empty structs well-defined in C (from memory, some compilers make
-> them non-zero in size)? Since we probably plan to add a flags field in
-> the future anyway, why not just have a __u64 flags which must be zeroed?
->
-It's allowed in GCC:
-https://gcc.gnu.org/onlinedocs/gcc-8.1.0/gcc/Empty-Structures.html
+Hello,
 
-I can add an __aligned_u64 flags for now, and just say something like
-"reserved". This will also solve the latter issue, and I'll just use
-copy_struct_from_user,
-as long as Christian is okay with having an unused (reserved) flag member.
+syzbot found the following crash on:
+
+HEAD commit:    7ddd09fc Add linux-next specific files for 20191220
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12340ac1e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f183b01c3088afc6
+dashboard link: https://syzkaller.appspot.com/bug?extid=6bf913476056cb0f8d13
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15653c3ee00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+6bf913476056cb0f8d13@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+ODEBUG: free active (active state 0) object type: work_struct hint:  
+io_ring_file_ref_switch+0x0/0xac0 fs/io_uring.c:5186
+WARNING: CPU: 0 PID: 11569 at lib/debugobjects.c:481  
+debug_print_object+0x168/0x250 lib/debugobjects.c:481
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 11569 Comm: syz-executor.1 Not tainted  
+5.5.0-rc2-next-20191220-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x197/0x210 lib/dump_stack.c:118
+  panic+0x2e3/0x75c kernel/panic.c:221
+  __warn.cold+0x2f/0x3e kernel/panic.c:582
+  report_bug+0x289/0x300 lib/bug.c:195
+  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+  fixup_bug arch/x86/kernel/traps.c:169 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:267
+  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:286
+  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
+RIP: 0010:debug_print_object+0x168/0x250 lib/debugobjects.c:481
+Code: dd c0 24 70 88 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 b5 00 00 00 48  
+8b 14 dd c0 24 70 88 48 c7 c7 20 1a 70 88 e8 67 6c b1 fd <0f> 0b 83 05 53  
+2d ed 06 01 48 83 c4 20 5b 41 5c 41 5d 41 5e 5d c3
+RSP: 0018:ffffc90001d57c30 EFLAGS: 00010082
+RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff815e9f66 RDI: fffff520003aaf78
+RBP: ffffc90001d57c70 R08: ffff88809eb081c0 R09: ffffed1015d045c9
+R10: ffffed1015d045c8 R11: ffff8880ae822e43 R12: 0000000000000001
+R13: ffffffff8997da40 R14: ffffffff814c75d0 R15: ffff888098ba3f50
+  __debug_check_no_obj_freed lib/debugobjects.c:963 [inline]
+  debug_check_no_obj_freed+0x2d4/0x43f lib/debugobjects.c:994
+  kfree+0xf8/0x2c0 mm/slab.c:3756
+  io_sqe_files_unregister+0x1fb/0x2f0 fs/io_uring.c:4631
+  io_ring_ctx_free fs/io_uring.c:5575 [inline]
+  io_ring_ctx_wait_and_kill+0x430/0x9a0 fs/io_uring.c:5644
+  io_uring_release+0x42/0x50 fs/io_uring.c:5652
+  __fput+0x2ff/0x890 fs/file_table.c:280
+  ____fput+0x16/0x20 fs/file_table.c:313
+  task_work_run+0x145/0x1c0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+  exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:164
+  prepare_exit_to_usermode arch/x86/entry/common.c:195 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:278 [inline]
+  do_syscall_64+0x676/0x790 arch/x86/entry/common.c:304
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4144b1
+Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 04 1b 00 00 c3 48  
+83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48  
+89 c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
+RSP: 002b:00007fffce1df2c0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+RAX: 0000000000000000 RBX: 0000000000000004 RCX: 00000000004144b1
+RDX: 0000001b2bc20000 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 0000000000000001 R08: ffffffffffffffff R09: ffffffffffffffff
+R10: 00007fffce1df3a0 R11: 0000000000000293 R12: 000000000075bf20
+R13: 0000000000017a4a R14: 00000000007605f8 R15: 000000000075bf2c
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
-> > +     f = fdget(pidfd);
-> > +     if (!f.file)
-> > +             return -EBADF;
-> > +
-> > +     pid = pidfd_pid(f.file);
-> > +     if (IS_ERR(pid)) {
-> > +             ret = PTR_ERR(pid);
-> > +             goto out;
-> > +     }
-> > +
-> > +     ret = pidfd_getfd(pid, fd);
-> > +
-> > +out:
-> > +     fdput(f);
-> > +     return ret;
-> > +}
-> > --
-> > 2.20.1
->
-> --
-> Aleksa Sarai
-> Senior Software Engineer (Containers)
-> SUSE Linux GmbH
-> <https://www.cyphar.com/>
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
