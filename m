@@ -2,134 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B46C128638
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2019 01:54:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3547F128665
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2019 02:46:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbfLUAyE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Dec 2019 19:54:04 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:13147 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726537AbfLUAyD (ORCPT
+        id S1726717AbfLUBqO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Dec 2019 20:46:14 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:44999 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726633AbfLUBqN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Dec 2019 19:54:03 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dfd6d050000>; Fri, 20 Dec 2019 16:53:25 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 20 Dec 2019 16:53:56 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 20 Dec 2019 16:53:56 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 21 Dec
- 2019 00:53:51 +0000
-Subject: Re: [PATCH v11 00/25] mm/gup: track dma-pinned pages: FOLL_PIN
-To:     Dan Williams <dan.j.williams@intel.com>
-CC:     Jan Kara <jack@suse.cz>, Leon Romanovsky <leon@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Alex Williamson" <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        "Mike Kravetz" <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        "Shuah Khan" <shuah@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
-        <bpf@vger.kernel.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, KVM list <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>,
-        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Netdev <netdev@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Maor Gottlieb <maorg@mellanox.com>
-References: <20191216222537.491123-1-jhubbard@nvidia.com>
- <20191219132607.GA410823@unreal>
- <a4849322-8e17-119e-a664-80d9f95d850b@nvidia.com>
- <20191220092154.GA10068@quack2.suse.cz>
- <CAPcyv4gYnXE-y_aGehazzF-Kej5ibSfqvE2hTnjKJD68bm8ANg@mail.gmail.com>
- <437f2bff-13ba-0ae9-2f3c-bc8eb82d20f0@nvidia.com>
- <CAPcyv4hMvTmb5X8gNtXnapJFR1qej1bKto2fvv9zUtebHMhvVw@mail.gmail.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <12a28917-f8c9-5092-2f01-92bb74714cae@nvidia.com>
-Date:   Fri, 20 Dec 2019 16:53:50 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Fri, 20 Dec 2019 20:46:13 -0500
+Received: by mail-ed1-f68.google.com with SMTP id bx28so10274843edb.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Dec 2019 17:46:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sargun.me; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=e12Mnu5DiWBdZFxNKin4JTRmUKOLU+wR6ztAL37zhAQ=;
+        b=LTNBj34a/5X3efwYU6hSdfbjHgGkwrDz3BppIDQzVdomaBcPJYPjji/5CWcuX5eiuK
+         nRtByNprFnPdf5vqKaOTpOXOo0r1yi89jhIVZ5tvRlCRIqmSzPUAoDg7I7HGa239Azzh
+         yAiO/3eRLlEmi90xDuUgTzfU6okfFdGuZxqqs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e12Mnu5DiWBdZFxNKin4JTRmUKOLU+wR6ztAL37zhAQ=;
+        b=hHyHhUIHuVF9yM+JtJuNWq9faalzehC4WOeclLSRW0oqpSPtc2G2zxvUbgsoWZ7hmW
+         0rND/v0sWgUGElFNoNI8jLS0v99pi9twagdqeX6Wl5Rk4zSlICWslV/1A8nBpkpzOVdb
+         K0hMPRfEn9rd7+E4prIe9ZXFtbvPR8XxpTu0rooKQnbzSsBX2jl2rn1bX1XUI0b4JsdU
+         +wW2hKW0ayY89OF3E7yNh4Vy6ww58rnBIPWp3lud1v+hY88LgxTlRrKV610Lh4fdDDLA
+         3gfV2Leqvzhjwf6QhqW0g3eWYSvfq4Wu9dIHnnW/foGa8G7MKgK5bvGjBqaLmSGSwQfO
+         SMSg==
+X-Gm-Message-State: APjAAAVDm4N0ZYR3ULjVm2AistyyWpRI1KrejSwkPInYmdWh18ZQn0S3
+        UyGuuaPhAvO2dLl9jy4k6sk5x5iPTyI4WXBFDWKgIQ==
+X-Google-Smtp-Source: APXvYqxb8UQLCVS8ZHvwXwLPP+w/fQZABPHqVecdCzSZ6Hw7QsjoOp76JDhiyTTOimtqSFsSY7HEMzdgklJ+w9vCSHM=
+X-Received: by 2002:a50:cc08:: with SMTP id m8mr19431615edi.263.1576892770667;
+ Fri, 20 Dec 2019 17:46:10 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4hMvTmb5X8gNtXnapJFR1qej1bKto2fvv9zUtebHMhvVw@mail.gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1576889605; bh=tpI8g3cGtI3RbtQKzNDwLh+jY1UnQFhrLmQoaZFESA8=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=gT92UnAPvjWo9Dyarc3BsQj2Nl0ZSZOB5xO5S1hvSTkAn6HQKFYCbmGMns41Asul4
-         eMkGBYUVekYb1GDqzt3tUGEwYX/qiLyAv9PBah19Qnk9kLrPhGqoza8LPYP20EKh8A
-         rpksQuLIxtU3WgPWODyJ4Q9+O1Y8CfsR7+NeFhDEz5kdhRtxtRV/c4gCIoz4Xh2tr4
-         dqYIG3iAXmQiFA+EerZ5Kzd0MzHGZsUPeYIr/zdgX84A5MWU+lGn2mDX6OuVhtBYkB
-         sM9JvXEn3c8apvXt6FAkZHRg4c2qB8/6lfd0asa7z5htLXf1pi4lQc9aIPZeePVDOP
-         YXljCFL0SkWSA==
+References: <20191220232810.GA20233@ircssh-2.c.rugged-nimbus-611.internal> <20191221002734.7rz6lcdrshrrlnqf@yavin.dot.cyphar.com>
+In-Reply-To: <20191221002734.7rz6lcdrshrrlnqf@yavin.dot.cyphar.com>
+From:   Sargun Dhillon <sargun@sargun.me>
+Date:   Fri, 20 Dec 2019 17:45:34 -0800
+Message-ID: <CAMp4zn9ivYPP1Sfu48EX897M4JAVXvK+NQB4NZ5=XPM_saJu+g@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] pid: Introduce pidfd_getfd syscall
+To:     Aleksa Sarai <asarai@suse.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        =?UTF-8?Q?Emilio_Cobos_=C3=81lvarez?= <ealvarez@mozilla.com>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        Gian-Carlo Pascutto <gpascutto@mozilla.com>,
+        Jed Davis <jld@mozilla.com>, Oleg Nesterov <oleg@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/20/19 4:51 PM, Dan Williams wrote:
-> On Fri, Dec 20, 2019 at 4:41 PM John Hubbard <jhubbard@nvidia.com> wrote:
->>
->> On 12/20/19 4:33 PM, Dan Williams wrote:
->> ...
->>>> I believe there might be also a different solution for this: For
->>>> transparent huge pages, we could find a space in 'struct page' of the
->>>> second page in the huge page for proper pin counter and just account pins
->>>> there so we'd have full width of 32-bits for it.
->>>
->>> That would require THP accounting for dax pages. It is something that
->>> was probably going to be needed, but this would seem to force the
->>> issue.
->>>
->>
->> Thanks for mentioning that, it wasn't obvious to me yet.
->>
->> How easy is it for mere mortals outside of Intel, to set up a DAX (nvdimm?)
->> test setup? I'd hate to go into this without having that coverage up
->> and running. It's been sketchy enough as it is. :)
-> 
-> You too can have the power of the gods for the low low price of a
-> kernel command line parameter, or a qemu setup.
-> 
-> Details here:
-> 
-> https://nvdimm.wiki.kernel.org/how_to_choose_the_correct_memmap_kernel_parameter_for_pmem_on_your_system
-> https://nvdimm.wiki.kernel.org/pmem_in_qemu
-> 
+On Fri, Dec 20, 2019 at 4:27 PM Aleksa Sarai <asarai@suse.de> wrote:
+>
+> On 2019-12-20, Sargun Dhillon <sargun@sargun.me> wrote:
+> > diff --git a/include/uapi/linux/pidfd.h b/include/uapi/linux/pidfd.h
+> > new file mode 100644
+> > index 000000000000..0a3fc922661d
+> > --- /dev/null
+> > +++ b/include/uapi/linux/pidfd.h
+> > @@ -0,0 +1,10 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> > +#ifndef _UAPI_LINUX_PIDFD_H
+> > +#define _UAPI_LINUX_PIDFD_H
+> > +
+> > +struct pidfd_getfd_options {};
+>
+> Are empty structs well-defined in C (from memory, some compilers make
+> them non-zero in size)? Since we probably plan to add a flags field in
+> the future anyway, why not just have a __u64 flags which must be zeroed?
+>
+It's allowed in GCC:
+https://gcc.gnu.org/onlinedocs/gcc-8.1.0/gcc/Empty-Structures.html
 
-Sweeeet! Now I can really cause some damage. :)
+I can add an __aligned_u64 flags for now, and just say something like
+"reserved". This will also solve the latter issue, and I'll just use
+copy_struct_from_user,
+as long as Christian is okay with having an unused (reserved) flag member.
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+
+> > +     f = fdget(pidfd);
+> > +     if (!f.file)
+> > +             return -EBADF;
+> > +
+> > +     pid = pidfd_pid(f.file);
+> > +     if (IS_ERR(pid)) {
+> > +             ret = PTR_ERR(pid);
+> > +             goto out;
+> > +     }
+> > +
+> > +     ret = pidfd_getfd(pid, fd);
+> > +
+> > +out:
+> > +     fdput(f);
+> > +     return ret;
+> > +}
+> > --
+> > 2.20.1
+>
+> --
+> Aleksa Sarai
+> Senior Software Engineer (Containers)
+> SUSE Linux GmbH
+> <https://www.cyphar.com/>
