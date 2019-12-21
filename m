@@ -2,71 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65B70128AAB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2019 18:49:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 447E8128AB4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2019 19:04:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbfLURtD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 21 Dec 2019 12:49:03 -0500
-Received: from mail-il1-f197.google.com ([209.85.166.197]:43914 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726107AbfLURtD (ORCPT
+        id S1726940AbfLUSEF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 Dec 2019 13:04:05 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:52242 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726107AbfLUSEE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 21 Dec 2019 12:49:03 -0500
-Received: by mail-il1-f197.google.com with SMTP id o13so671396ilf.10
-        for <linux-fsdevel@vger.kernel.org>; Sat, 21 Dec 2019 09:49:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=GshsWrdoEPyx2vd7d7UXajSCgogocC5OTxKPrWDtn2k=;
-        b=YRSnIYnFxd8mAfdoFfPfRw4E4k2fHpiBt7GupfsC+5l/Ip9WgjVtpEzkAI7aZN75JZ
-         p6PvgH4EJ+8cW8iZHYEdyYjue9T55QrQOz5pB08yo+JzpVVGrCAU47jXEZvV/AEfWlgb
-         xl1jw0ZAyT6cbqcHTlSnVs1BHCPTYA6hbUjkqf60FEWp+/VNcphcOGEVUx/13PK34dd1
-         Rf2pMWcIwbONu1pCDfHKDTOleNMR29BBLUA04yu6Mql3eDUvg1MeQ09Ptq99BOsWu/Dr
-         7mn5gy3e7fLCAIgqgAgtgJdNXMV7RWr32tkwnkRBGF4EMmi+gtU/KAhX4ipqX5WMEdo3
-         cu9A==
-X-Gm-Message-State: APjAAAU7iUdXFQmf2DNavVL5cN8sPYedKm1ZeiQGNC4tAEuWYdXDtdiV
-        ZyFg1yCsCBuL5bUQZuCvW9pWATSRxPj0a1qkDgQi+uGvURPd
-X-Google-Smtp-Source: APXvYqyCKPkUw/hvhEZzXqoyo1tTaKHhSZzOInzWI8gOHUFYW5HjZUeSJEoBRod5KvA94zqYvimn+I2NEHvJijo6waweNFndE35n
+        Sat, 21 Dec 2019 13:04:04 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBLHx7Wo045873;
+        Sat, 21 Dec 2019 18:03:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=HKC1R9SgkMvYJYTaHovH/yRQ9M5aM7mhEjHLD/l21FA=;
+ b=TV4oTEuftgRbFoxKCRk58EzCbtV05GHZYcHNauGQp4wWjbgCzdnfdunEVAXcGTx/1wta
+ 3Kno1UzhnUCdsvYVRCb77TW/M2G9Bx+WhsNcxPzm4Zd7S9vLgvVOUicvNijlVGX9SI7g
+ KyuWGg0moSJwGf4RGyhVoNQviXjtEzpzPcEaeWKItDlmIuUekoV0Y/aLuSb9jz6sW31I
+ YRvr7q0yIHyRH7gG2chHa3lQu5I1BiwFw+H+ChzPj6ysn5FbKixzWPqko5eMD9gnOTeg
+ Ay/abQZnhRguQPOPOZtdinLBg0AX5CUt23QvDxtUOXKSzP8wv+vwFb0AYZLI69W+LeP5 6w== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2x1c1qhe6k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 21 Dec 2019 18:03:44 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBLI3ePx122234;
+        Sat, 21 Dec 2019 18:03:43 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2x1ar3haee-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 21 Dec 2019 18:03:43 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xBLI2t0w023662;
+        Sat, 21 Dec 2019 18:02:55 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sat, 21 Dec 2019 10:02:55 -0800
+Date:   Sat, 21 Dec 2019 10:02:54 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-btrfs@vger.kernel.org,
+        fdmanana@kernel.org, nborisov@suse.com, dsterba@suse.cz,
+        jthumshirn@suse.de, linux-fsdevel@vger.kernel.org,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: Re: [PATCH 3/8] iomap: Move lockdep_assert_held() to iomap_dio_rw()
+ calls
+Message-ID: <20191221180254.GE7476@magnolia>
+References: <20191213195750.32184-1-rgoldwyn@suse.de>
+ <20191213195750.32184-4-rgoldwyn@suse.de>
+ <20191221134118.GA17355@infradead.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:d809:: with SMTP id y9mr18895833ilm.261.1576950541498;
- Sat, 21 Dec 2019 09:49:01 -0800 (PST)
-Date:   Sat, 21 Dec 2019 09:49:01 -0800
-In-Reply-To: <00000000000031376f059a31f9fb@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000dac3b1059a3a684b@google.com>
-Subject: Re: WARNING: ODEBUG bug in io_sqe_files_unregister
-From:   syzbot <syzbot+6bf913476056cb0f8d13@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191221134118.GA17355@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9478 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=634
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912210158
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9478 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=694 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912210158
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this bug to:
+On Sat, Dec 21, 2019 at 05:41:18AM -0800, Christoph Hellwig wrote:
+> On Fri, Dec 13, 2019 at 01:57:45PM -0600, Goldwyn Rodrigues wrote:
+> > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > 
+> > Filesystems such as btrfs can perform direct I/O without holding the
+> > inode->i_rwsem in some of the cases like writing within i_size.
+> > So, remove the check for lockdep_assert_held() in iomap_dio_rw()
+> 
+> As said last time: in the callers the assert is completely pointless,
+> as it is always very close to taking the lock.  This was just intended
+> to deal with callers not adhering to the iomap_dio_rw calling
+> conventins, and moving the assert to the calllers doesn't help with
+> that at all.
+> 
+> So if you think you need to remove it do just that and write a changelog
+> explaining the why much better.
 
-commit cbb537634780172137459dead490d668d437ef4d
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Mon Dec 9 18:22:50 2019 +0000
+Uh... that's exactly what this patch does, and the commit message says
+that btrfs doesn't need to hold i_rwsem to guarantee concurrency
+correctness.
 
-     io_uring: avoid ring quiesce for fixed file set unregister and update
+Hm, but maybe the commit message is simply too subtle here?  How about:
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10eadc56e00000
-start commit:   7ddd09fc Add linux-next specific files for 20191220
-git tree:       linux-next
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=12eadc56e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=14eadc56e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f183b01c3088afc6
-dashboard link: https://syzkaller.appspot.com/bug?extid=6bf913476056cb0f8d13
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15653c3ee00000
+"Filesystems do not necessarily need i_rwsem to ensure correct operation
+with multiple threads, so remove the i_rwsem assertion in iomap_dio_rw.
+For example, btrfs can perform directio within i_size without needing to
+hold i_rwsem."
 
-Reported-by: syzbot+6bf913476056cb0f8d13@syzkaller.appspotmail.com
-Fixes: cbb537634780 ("io_uring: avoid ring quiesce for fixed file set  
-unregister and update")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+--D
