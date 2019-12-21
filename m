@@ -2,72 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 447E8128AB4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2019 19:04:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CD5A128AB8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2019 19:05:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726940AbfLUSEF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 21 Dec 2019 13:04:05 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:52242 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726107AbfLUSEE (ORCPT
+        id S1727170AbfLUSFr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 Dec 2019 13:05:47 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:36316 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726107AbfLUSFq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 21 Dec 2019 13:04:04 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBLHx7Wo045873;
-        Sat, 21 Dec 2019 18:03:44 GMT
+        Sat, 21 Dec 2019 13:05:46 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBLHxZVS053757;
+        Sat, 21 Dec 2019 18:05:37 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : references : mime-version : content-type :
  in-reply-to; s=corp-2019-08-05;
- bh=HKC1R9SgkMvYJYTaHovH/yRQ9M5aM7mhEjHLD/l21FA=;
- b=TV4oTEuftgRbFoxKCRk58EzCbtV05GHZYcHNauGQp4wWjbgCzdnfdunEVAXcGTx/1wta
- 3Kno1UzhnUCdsvYVRCb77TW/M2G9Bx+WhsNcxPzm4Zd7S9vLgvVOUicvNijlVGX9SI7g
- KyuWGg0moSJwGf4RGyhVoNQviXjtEzpzPcEaeWKItDlmIuUekoV0Y/aLuSb9jz6sW31I
- YRvr7q0yIHyRH7gG2chHa3lQu5I1BiwFw+H+ChzPj6ysn5FbKixzWPqko5eMD9gnOTeg
- Ay/abQZnhRguQPOPOZtdinLBg0AX5CUt23QvDxtUOXKSzP8wv+vwFb0AYZLI69W+LeP5 6w== 
+ bh=bSsms4JZc7GSfb/7ZqlmxUOjxKulnt8yMY4oSOeBWms=;
+ b=Pa4Kbdhv5i5rwSyMOYPq225nL+ikXs3EOtDxKOKKyPAnfk5PS1wLaMEdx8BvzxMbfd6A
+ +PQR/IpOAqpjocdsmDKFeFZhEfc/20RQ18Jq0nyjYO+kbNZ2YNIB4a2hpWQwXiNfOjAL
+ tMKeRyU2rzwvn4SQCjrjBggVkmlPajY+32lcHCJ7LlYZ4dTxwQN2/agOjd4cvxvf5XTu
+ 0Vl8sVHasSCLpgqsvmTQJqgXCQbahYzz4gZGLBEDRH7Jr/6bbSCrl4caNXUnjztoNf+u
+ K/Y0FgFTHBnOszzs3lQhOPA7YoJmy8r9dyePRmIsMHjJLweAOb4BHvn0sG8trrGEXvGW hg== 
 Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2x1c1qhe6k-1
+        by aserp2120.oracle.com with ESMTP id 2x1bbphgb3-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 21 Dec 2019 18:03:44 +0000
+        Sat, 21 Dec 2019 18:05:37 +0000
 Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBLI3ePx122234;
-        Sat, 21 Dec 2019 18:03:43 GMT
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBLI3en2122288;
+        Sat, 21 Dec 2019 18:05:36 GMT
 Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2x1ar3haee-1
+        by userp3020.oracle.com with ESMTP id 2x1ar3hc3n-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 21 Dec 2019 18:03:43 +0000
+        Sat, 21 Dec 2019 18:05:36 +0000
 Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xBLI2t0w023662;
-        Sat, 21 Dec 2019 18:02:55 GMT
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xBLI5XPX024764;
+        Sat, 21 Dec 2019 18:05:33 GMT
 Received: from localhost (/67.169.218.210)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sat, 21 Dec 2019 10:02:55 -0800
-Date:   Sat, 21 Dec 2019 10:02:54 -0800
+        with ESMTP ; Sat, 21 Dec 2019 10:05:32 -0800
+Date:   Sat, 21 Dec 2019 10:05:30 -0800
 From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-btrfs@vger.kernel.org,
-        fdmanana@kernel.org, nborisov@suse.com, dsterba@suse.cz,
-        jthumshirn@suse.de, linux-fsdevel@vger.kernel.org,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 3/8] iomap: Move lockdep_assert_held() to iomap_dio_rw()
- calls
-Message-ID: <20191221180254.GE7476@magnolia>
-References: <20191213195750.32184-1-rgoldwyn@suse.de>
- <20191213195750.32184-4-rgoldwyn@suse.de>
- <20191221134118.GA17355@infradead.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Chris Down <chris@chrisdown.name>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@fb.com
+Subject: Re: [PATCH] fs: inode: Reduce volatile inode wraparound risk when
+ ino_t is 64 bit
+Message-ID: <20191221180530.GJ7497@magnolia>
+References: <20191220024936.GA380394@chrisdown.name>
+ <20191220213052.GB7476@magnolia>
+ <CAOQ4uxgoDHLnVb9=R2LpNqEFtjx=f5K8QXQnfiziBQ+jURLh=A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191221134118.GA17355@infradead.org>
+In-Reply-To: <CAOQ4uxgoDHLnVb9=R2LpNqEFtjx=f5K8QXQnfiziBQ+jURLh=A@mail.gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9478 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=634
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1911140001 definitions=main-1912210158
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9478 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
  suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=694 adultscore=0
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
  definitions=main-1912210158
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -75,32 +78,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Dec 21, 2019 at 05:41:18AM -0800, Christoph Hellwig wrote:
-> On Fri, Dec 13, 2019 at 01:57:45PM -0600, Goldwyn Rodrigues wrote:
-> > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> > 
-> > Filesystems such as btrfs can perform direct I/O without holding the
-> > inode->i_rwsem in some of the cases like writing within i_size.
-> > So, remove the check for lockdep_assert_held() in iomap_dio_rw()
+On Sat, Dec 21, 2019 at 10:43:05AM +0200, Amir Goldstein wrote:
+> On Fri, Dec 20, 2019 at 11:33 PM Darrick J. Wong
+> <darrick.wong@oracle.com> wrote:
+> >
+> > On Fri, Dec 20, 2019 at 02:49:36AM +0000, Chris Down wrote:
+> > > In Facebook production we are seeing heavy inode number wraparounds on
+> > > tmpfs. On affected tiers, in excess of 10% of hosts show multiple files
+> > > with different content and the same inode number, with some servers even
+> > > having as many as 150 duplicated inode numbers with differing file
+> > > content.
+> > >
+> > > This causes actual, tangible problems in production. For example, we
+> > > have complaints from those working on remote caches that their
+> > > application is reporting cache corruptions because it uses (device,
+> > > inodenum) to establish the identity of a particular cache object, but
+> >
+> > ...but you cannot delete the (dev, inum) tuple from the cache index when
+> > you remove a cache object??
+> >
+> > > because it's not unique any more, the application refuses to continue
+> > > and reports cache corruption. Even worse, sometimes applications may not
+> > > even detect the corruption but may continue anyway, causing phantom and
+> > > hard to debug behaviour.
+> > >
+> > > In general, userspace applications expect that (device, inodenum) should
+> > > be enough to be uniquely point to one inode, which seems fair enough.
+> >
+> > Except that it's not.  (dev, inum, generation) uniquely points to an
+> > instance of an inode from creation to the last unlink.
+> >
 > 
-> As said last time: in the callers the assert is completely pointless,
-> as it is always very close to taking the lock.  This was just intended
-> to deal with callers not adhering to the iomap_dio_rw calling
-> conventins, and moving the assert to the calllers doesn't help with
-> that at all.
-> 
-> So if you think you need to remove it do just that and write a changelog
-> explaining the why much better.
+> Yes, but also:
+> There should not exist two live inodes on the system with the same (dev, inum)
+> The problem is that ino 1 may still be alive when wraparound happens
+> and then two different inodes with ino 1 exist on same dev.
 
-Uh... that's exactly what this patch does, and the commit message says
-that btrfs doesn't need to hold i_rwsem to guarantee concurrency
-correctness.
+*OH* that's different then.  Most sane filesystems <cough>btrfs<cough>
+should never have the same inode numbers for different files.  Sorry for
+the noise, I misunderstood what the issue was. :)
 
-Hm, but maybe the commit message is simply too subtle here?  How about:
+> Take the 'diff' utility for example, it will report that those files
+> are identical
+> if they have the same dev,ino,size,mtime. I suspect that 'mv' will not
+> let you move one over the other, assuming they are hardlinks.
+> generation is not even exposed to legacy application using stat(2).
 
-"Filesystems do not necessarily need i_rwsem to ensure correct operation
-with multiple threads, so remove the i_rwsem assertion in iomap_dio_rw.
-For example, btrfs can perform directio within i_size without needing to
-hold i_rwsem."
+Yeah, I was surprised to see it's not even in statx. :/
 
 --D
+
+> Thanks,
+> Amir.
