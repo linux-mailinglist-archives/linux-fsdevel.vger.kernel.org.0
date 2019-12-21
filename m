@@ -2,209 +2,432 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F38EB128994
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2019 15:37:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30BF2128995
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Dec 2019 15:42:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727109AbfLUOhq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 21 Dec 2019 09:37:46 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:35797 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726715AbfLUOhq (ORCPT
+        id S1726889AbfLUOm1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 Dec 2019 09:42:27 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:35296 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726715AbfLUOm1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 21 Dec 2019 09:37:46 -0500
-Received: by mail-pj1-f66.google.com with SMTP id s7so5458433pjc.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 21 Dec 2019 06:37:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8RGBtvtHHzV2ZgorEAZr6sDT1wWVhAMNZuJXUzm1tOY=;
-        b=A26Z6P2pPXaprrDe/W1eYjHY2bnsdE5IhZcekXrNLLNzFqskCclrGgqVYguWy+WGlG
-         CtYeMxatmz1VfSd9BDGa3BS4+AO+rDEQDTDrbRUFruPEbk1gtHCYzCwBChcaQe7qVJfj
-         3DTJfK3Fm5reJWH6Uju4CKUpmDVVMEDLKSetIUx+4c+AOZBCMmxJNxQjc+t/PJ7257wZ
-         eWmAwnPWTm61iE+D2DwlM3xr1uF1FHGvrna7cuLvp37rX//WUyHRIJuqFHdIlRSHOnxz
-         awvRRE8Y936mdRNaOWN6lzuOEwHJgRF2yvr2VWiBf3FrC+8/4MJMatq4QQ/dwNEwF5uy
-         xrFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8RGBtvtHHzV2ZgorEAZr6sDT1wWVhAMNZuJXUzm1tOY=;
-        b=CELF1HmcRNmMk7cDMfMkv73qoexuFUSZmGdP6TWQHpSiTOfLBmV56K5BMh2pBRojVx
-         hlDghixLF82qz+oU5+Bm3ZT1OWqdX6J4SjptQTCDEm7k8E1GC/QO3EVMhbYpLtoHVTXk
-         Vw/7kQOr7D44QEfiSp8wve8PRqcf/gRPMbiPfR5qZpn25JpxFRdCxIpsSOAHoKlXBIGL
-         LhqYD5gN+K+HzbN8Mv8BpTRBblcWOTADkLpDWcVXZTt36Mz6OhD0Czcu2JgFAvTKyWRu
-         d8hjPgm7gQAanfHBw9RH3kSeinJ/le0IO92hura3pCMEVJiHE68sEp6hVg3Cqjx7jCWu
-         Ewsg==
-X-Gm-Message-State: APjAAAW7CsQfi7keX55IhsURSsaX6ud39048p7Ziaf0skfTtNKexmIcC
-        wUGcTonc6RiG+Eo265vhO5A3zQ==
-X-Google-Smtp-Source: APXvYqxahM9fGvd3bZ/I5SH8PVb4QRjhTSuRX59QEQlXXkrNFzVbeO5IgfKuWQAfjLy5x89rS8O31g==
-X-Received: by 2002:a17:902:fe8b:: with SMTP id x11mr12291987plm.83.1576939064297;
-        Sat, 21 Dec 2019 06:37:44 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id g18sm16495757pfi.80.2019.12.21.06.37.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 21 Dec 2019 06:37:43 -0800 (PST)
-Subject: Re: KASAN: use-after-free Read in io_wq_flush (2)
-To:     Hillf Danton <hdanton@sina.com>,
-        syzbot <syzbot+8e7705a7ae1bdce77c07@syzkaller.appspotmail.com>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-References: <20191221143036.1984-1-hdanton@sina.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <2a2e2299-310d-3e94-3c08-2d3b2c0c3751@kernel.dk>
-Date:   Sat, 21 Dec 2019 07:37:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Sat, 21 Dec 2019 09:42:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=uo1Jp8FXncNhPjFbCsmTvInmO2FpJumDYXZ4CzTH8ko=; b=JUNVhMefZrxe2RTKQf/eRJfkp
+        AuP1HB7i0imcRqHpT8MOJ65kIUOnc6s3kIpei3OFBmUoZwqGcUXrINN9OmcMZ+tj2hQWmygyYtxHP
+        cjOhzIMTIFEqqbXabzyam6dZwXU8fbGKsH43+WOusfkTXWFkT0mgehS48Hl1+RAFEHzA7uPGGMqq/
+        Oc3d52kwjCESR2sB2cdFhS6I/iGgLaSPKY5oOV9gbQ0OIJnD6IRYCg4w5h6Oj5AHuVOdZ9GbA/Nqn
+        8a3JN8vpZP0nyWPXFuxl1na3srAEs0gLA/KfwKj9L39Xe755NLmUxNk9sA9jPudL2te0+fBCdP9G/
+        5pH4nCCCA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iifxa-0001Dv-RK; Sat, 21 Dec 2019 14:42:26 +0000
+Date:   Sat, 21 Dec 2019 06:42:26 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc:     linux-btrfs@vger.kernel.org, hch@infradead.org,
+        darrick.wong@oracle.com, fdmanana@kernel.org, nborisov@suse.com,
+        dsterba@suse.cz, jthumshirn@suse.de, linux-fsdevel@vger.kernel.org,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: Re: [PATCH 4/8] btrfs: Switch to iomap_dio_rw() for dio
+Message-ID: <20191221144226.GA25804@infradead.org>
+References: <20191213195750.32184-1-rgoldwyn@suse.de>
+ <20191213195750.32184-5-rgoldwyn@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <20191221143036.1984-1-hdanton@sina.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="FCuugMFkClbJLl1L"
+Content-Disposition: inline
+In-Reply-To: <20191213195750.32184-5-rgoldwyn@suse.de>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/21/19 7:30 AM, Hillf Danton wrote:
-> 
-> On Fri, 20 Dec 2019 23:58:08 -0800
->> Hello,
->>
->> syzbot found the following crash on:
->>
->> HEAD commit:    7ddd09fc Add linux-next specific files for 20191220
->> git tree:       linux-next
->> console output: https://syzkaller.appspot.com/x/log.txt?x=12e1823ee00000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=f183b01c3088afc6
->> dashboard link: https://syzkaller.appspot.com/bug?extid=8e7705a7ae1bdce77c07
->> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->>
->> Unfortunately, I don't have any reproducer for this crash yet.
->>
->> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> Reported-by: syzbot+8e7705a7ae1bdce77c07@syzkaller.appspotmail.com
->>
->> ==================================================================
->> BUG: KASAN: use-after-free in io_wq_flush+0x1f7/0x210 fs/io-wq.c:1009
->> Read of size 8 at addr ffff8880a8453d00 by task kworker/0:1/12
->>
->> CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted  
->> 5.5.0-rc2-next-20191220-syzkaller #0
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
->> Google 01/01/2011
->> Workqueue: events io_ring_file_ref_switch
->> Call Trace:
->>   __dump_stack lib/dump_stack.c:77 [inline]
->>   dump_stack+0x197/0x210 lib/dump_stack.c:118
->>   print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
->>   __kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
->>   kasan_report+0x12/0x20 mm/kasan/common.c:639
->>   __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
->>   io_wq_flush+0x1f7/0x210 fs/io-wq.c:1009
->>   io_destruct_skb+0x8e/0xc0 fs/io_uring.c:4668
->>   skb_release_head_state+0xeb/0x260 net/core/skbuff.c:652
->>   skb_release_all+0x16/0x60 net/core/skbuff.c:663
->>   __kfree_skb net/core/skbuff.c:679 [inline]
->>   kfree_skb net/core/skbuff.c:697 [inline]
->>   kfree_skb+0x101/0x420 net/core/skbuff.c:691
->>   io_ring_file_put fs/io_uring.c:4836 [inline]
->>   io_ring_file_ref_switch+0x68a/0xac0 fs/io_uring.c:4881
->>   process_one_work+0x9af/0x1740 kernel/workqueue.c:2264
->>   worker_thread+0x98/0xe40 kernel/workqueue.c:2410
->>   kthread+0x361/0x430 kernel/kthread.c:255
->>   ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
->>
->> Allocated by task 9937:
->>   save_stack+0x23/0x90 mm/kasan/common.c:72
->>   set_track mm/kasan/common.c:80 [inline]
->>   __kasan_kmalloc mm/kasan/common.c:513 [inline]
->>   __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:486
->>   kasan_kmalloc+0x9/0x10 mm/kasan/common.c:527
->>   kmem_cache_alloc_trace+0x158/0x790 mm/slab.c:3551
->>   kmalloc include/linux/slab.h:555 [inline]
->>   kzalloc include/linux/slab.h:669 [inline]
->>   io_wq_create+0x52/0xa40 fs/io-wq.c:1024
->>   io_sq_offload_start fs/io_uring.c:5244 [inline]
->>   io_uring_create fs/io_uring.c:6002 [inline]
->>   io_uring_setup+0xf4a/0x2080 fs/io_uring.c:6062
->>   __do_sys_io_uring_setup fs/io_uring.c:6075 [inline]
->>   __se_sys_io_uring_setup fs/io_uring.c:6072 [inline]
->>   __x64_sys_io_uring_setup+0x54/0x80 fs/io_uring.c:6072
->>   do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
->>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>
->> Freed by task 9935:
->>   save_stack+0x23/0x90 mm/kasan/common.c:72
->>   set_track mm/kasan/common.c:80 [inline]
->>   kasan_set_free_info mm/kasan/common.c:335 [inline]
->>   __kasan_slab_free+0x102/0x150 mm/kasan/common.c:474
->>   kasan_slab_free+0xe/0x10 mm/kasan/common.c:483
->>   __cache_free mm/slab.c:3426 [inline]
->>   kfree+0x10a/0x2c0 mm/slab.c:3757
->>   io_wq_destroy+0x2ce/0x3c0 fs/io-wq.c:1116
->>   io_finish_async+0x128/0x1b0 fs/io_uring.c:4657
->>   io_ring_ctx_free fs/io_uring.c:5569 [inline]
->>   io_ring_ctx_wait_and_kill+0x330/0x9a0 fs/io_uring.c:5644
->>   io_uring_release+0x42/0x50 fs/io_uring.c:5652
->>   __fput+0x2ff/0x890 fs/file_table.c:280
->>   ____fput+0x16/0x20 fs/file_table.c:313
->>   task_work_run+0x145/0x1c0 kernel/task_work.c:113
->>   tracehook_notify_resume include/linux/tracehook.h:188 [inline]
->>   exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:164
->>   prepare_exit_to_usermode arch/x86/entry/common.c:195 [inline]
->>   syscall_return_slowpath arch/x86/entry/common.c:278 [inline]
->>   do_syscall_64+0x676/0x790 arch/x86/entry/common.c:304
->>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>
->> The buggy address belongs to the object at ffff8880a8453d00
->>   which belongs to the cache kmalloc-192 of size 192
->> The buggy address is located 0 bytes inside of
->>   192-byte region [ffff8880a8453d00, ffff8880a8453dc0)
->> The buggy address belongs to the page:
->> page:ffffea0002a114c0 refcount:1 mapcount:0 mapping:ffff8880aa400000  
->> index:0x0
->> raw: 00fffe0000000200 ffffea0002644808 ffffea0002482f08 ffff8880aa400000
->> raw: 0000000000000000 ffff8880a8453000 0000000100000010 0000000000000000
->> page dumped because: kasan: bad access detected
->>
->> Memory state around the buggy address:
->>   ffff8880a8453c00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->>   ffff8880a8453c80: 00 00 00 00 fc fc fc fc fc fc fc fc fc fc fc fc
->>> ffff8880a8453d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->>                     ^
->>   ffff8880a8453d80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
->>   ffff8880a8453e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->> ==================================================================
-> 
-> Erase ctx's io_wq before destroying.
-> 
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -4651,12 +4651,13 @@ static void io_sq_thread_stop(struct io_
->  
->  static void io_finish_async(struct io_ring_ctx *ctx)
->  {
-> +	struct io_wq *io_wq;
-> +
->  	io_sq_thread_stop(ctx);
->  
-> -	if (ctx->io_wq) {
-> -		io_wq_destroy(ctx->io_wq);
-> -		ctx->io_wq = NULL;
-> -	}
-> +	io_wq = xchg(&ctx->io_wq, NULL);
-> +	if (io_wq)
-> +		io_wq_destroy(io_wq);
->  }
->  
->  #if defined(CONFIG_UNIX)
 
-I actually think we can just kill the flush off the skb put path, it's
-not needed.
+--FCuugMFkClbJLl1L
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+So Ilooked into the "unlocked" direct I/O case, and I think the current
+code using dio_sem is really sketchy.  What btrfs really needs to do is
+take i_rwsem shared by default for direct writes, and only upgrade to
+the exclusive lock when needed, similar to xfs and the WIP ext4 code.
+
+While looking for that I also noticed two other things:
+
+ - check_direct_IO looks pretty bogus
+ - btrfs_direct_IO really should be split and folded into the two
+   callers
+
+Untested patches attached.  The first should probably go into a prep
+patch, and the second could be folded into this one.
+
+--FCuugMFkClbJLl1L
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0001-btrfs-remove-direct-I-O-aligment-checks.patch"
+
+From bc285e440a50140beb456f11e545a049bdf51ec1 Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch@lst.de>
+Date: Sat, 21 Dec 2019 15:17:26 +0100
+Subject: btrfs: remove direct I/O aligment checks
+
+The direct I/O code itself already checks for the proper sector
+size alignment, so remove the duplicate checks.  The remainder of
+check_direct_IO is not ony needed for reads and can be moved to
+file.c and outside of i_rwsem.
+
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/btrfs/file.c  | 34 +++++++++++++++++++++++++++-------
+ fs/btrfs/inode.c | 37 -------------------------------------
+ 2 files changed, 27 insertions(+), 44 deletions(-)
+
+diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+index a6d41d7bf362..0522f6d45a98 100644
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@ -3444,21 +3444,41 @@ static int btrfs_file_open(struct inode *inode, struct file *filp)
+ 	return generic_file_open(inode, filp);
+ }
+ 
+-static ssize_t btrfs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
++/*
++ * If there are duplicate iov_base's in this iovec, fall back to buffered I/O
++ * to avoid checksum errors.
++ */
++static bool btrfs_direct_read_ok(struct kiocb *iocb, struct iov_iter *iter)
+ {
+-	ssize_t ret = 0;
++	int seg, i;
+ 
+-	if (iocb->ki_flags & IOCB_DIRECT) {
++	if (!iter_is_iovec(iter))
++		return true;
++
++	for (seg = 0; seg < iter->nr_segs; seg++) {
++		for (i = seg + 1; i < iter->nr_segs; i++) {
++			if (iter->iov[seg].iov_base == iter->iov[i].iov_base)
++				return false;
++		}
++	}
++
++	return true;
++}
++
++
++static ssize_t btrfs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
++{
++	if ((iocb->ki_flags & IOCB_DIRECT) && btrfs_direct_read_ok(iocb, to)) {
+ 		struct inode *inode = file_inode(iocb->ki_filp);
++		ssize_t ret;
+ 
+ 		inode_lock_shared(inode);
+ 		ret = btrfs_direct_IO(iocb, to);
+ 		inode_unlock_shared(inode);
+-		if (ret < 0)
+-			return ret;
+-	}
+ 
+-	return generic_file_buffered_read(iocb, to, ret);
++		return ret;
++	}
++	return generic_file_buffered_read(iocb, to, 0);
+ }
+ 
+ const struct file_operations btrfs_file_operations = {
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 824f318cee5e..18d153a62655 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -8581,39 +8581,6 @@ static blk_qc_t btrfs_submit_direct(struct bio *dio_bio, struct file *file,
+ 	return BLK_QC_T_NONE;
+ }
+ 
+-static ssize_t check_direct_IO(struct btrfs_fs_info *fs_info,
+-			       const struct iov_iter *iter, loff_t offset)
+-{
+-	int seg;
+-	int i;
+-	unsigned int blocksize_mask = fs_info->sectorsize - 1;
+-	ssize_t retval = -EINVAL;
+-
+-	if (offset & blocksize_mask)
+-		goto out;
+-
+-	if (iov_iter_alignment(iter) & blocksize_mask)
+-		goto out;
+-
+-	/* If this is a write we don't need to check anymore */
+-	if (iov_iter_rw(iter) != READ || !iter_is_iovec(iter))
+-		return 0;
+-	/*
+-	 * Check to make sure we don't have duplicate iov_base's in this
+-	 * iovec, if so return EINVAL, otherwise we'll get csum errors
+-	 * when reading back.
+-	 */
+-	for (seg = 0; seg < iter->nr_segs; seg++) {
+-		for (i = seg + 1; i < iter->nr_segs; i++) {
+-			if (iter->iov[seg].iov_base == iter->iov[i].iov_base)
+-				goto out;
+-		}
+-	}
+-	retval = 0;
+-out:
+-	return retval;
+-}
+-
+ static const struct iomap_ops btrfs_dio_iomap_ops = {
+ 	.iomap_begin            = btrfs_dio_iomap_begin,
+ 	.iomap_end		= btrfs_dio_iomap_end,
+@@ -8635,7 +8602,6 @@ ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ {
+ 	struct file *file = iocb->ki_filp;
+ 	struct inode *inode = file->f_mapping->host;
+-	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
+ 	struct extent_changeset *data_reserved = NULL;
+ 	loff_t offset = iocb->ki_pos;
+ 	size_t count = 0;
+@@ -8644,9 +8610,6 @@ ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 
+ 	lockdep_assert_held(&inode->i_rwsem);
+ 
+-	if (check_direct_IO(fs_info, iter, offset))
+-		return 0;
+-
+ 	count = iov_iter_count(iter);
+ 	if (iov_iter_rw(iter) == WRITE) {
+ 		/*
 -- 
-Jens Axboe
+2.24.0
 
+
+--FCuugMFkClbJLl1L
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0002-btrfs-split-btrfs_direct_IO.patch"
+
+From 7194fa1986a48af46d2b01457865066cdbd14e35 Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch@lst.de>
+Date: Sat, 21 Dec 2019 15:23:41 +0100
+Subject: btrfs: split btrfs_direct_IO
+
+The read and write versions don't have anything in common except
+for the call to iomap_dio_rw.  So split this function, and merge
+each half into its only caller.
+
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/btrfs/ctree.h |  4 ++-
+ fs/btrfs/file.c  | 44 +++++++++++++++++++++++++----
+ fs/btrfs/inode.c | 72 ++++--------------------------------------------
+ 3 files changed, 48 insertions(+), 72 deletions(-)
+
+diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+index 8faa069b0a73..fccbbfebdf88 100644
+--- a/fs/btrfs/ctree.h
++++ b/fs/btrfs/ctree.h
+@@ -28,6 +28,7 @@
+ #include <linux/dynamic_debug.h>
+ #include <linux/refcount.h>
+ #include <linux/crc32c.h>
++#include <linux/iomap.h>
+ #include "extent-io-tree.h"
+ #include "extent_io.h"
+ #include "extent_map.h"
+@@ -2904,7 +2905,8 @@ int btrfs_writepage_cow_fixup(struct page *page, u64 start, u64 end);
+ void btrfs_writepage_endio_finish_ordered(struct page *page, u64 start,
+ 					  u64 end, int uptodate);
+ extern const struct dentry_operations btrfs_dentry_operations;
+-ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter);
++const struct iomap_ops btrfs_dio_iomap_ops;
++const struct iomap_dio_ops btrfs_dio_ops;
+ 
+ /* ioctl.c */
+ long btrfs_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+index 0522f6d45a98..ed0b2e015d8d 100644
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@ -1822,17 +1822,50 @@ static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
+ 	return num_written ? num_written : ret;
+ }
+ 
+-static ssize_t __btrfs_direct_write(struct kiocb *iocb, struct iov_iter *from)
++static ssize_t btrfs_direct_write(struct kiocb *iocb, struct iov_iter *from)
+ {
+ 	struct file *file = iocb->ki_filp;
+ 	struct inode *inode = file_inode(file);
+-	loff_t pos;
++	size_t count = iov_iter_count(from);
++	struct extent_changeset *data_reserved = NULL;
++	loff_t pos = iocb->ki_pos;
+ 	ssize_t written;
+ 	ssize_t written_buffered;
+ 	loff_t endbyte;
++	bool relock = false;
+ 	int err;
+ 
+-	written = btrfs_direct_IO(iocb, from);
++	/*
++	 * If the write DIO is beyond the EOF, we need update the isize, but
++	 * it is protected by i_mutex. So we can not unlock the i_mutex in
++	 * this case.
++	 */
++	if (pos + count <= inode->i_size) {
++		inode_unlock(inode);
++		relock = true;
++	} else {
++		if (iocb->ki_flags & IOCB_NOWAIT)
++			return -EAGAIN;
++	}
++
++	err = btrfs_delalloc_reserve_space(inode, &data_reserved, pos, count);
++	if (err) {
++		if (relock)
++			inode_lock(inode);
++		return err;
++	}
++
++	down_read(&BTRFS_I(inode)->dio_sem);
++	written = iomap_dio_rw(iocb, from, &btrfs_dio_iomap_ops, &btrfs_dio_ops,
++			is_sync_kiocb(iocb));
++	up_read(&BTRFS_I(inode)->dio_sem);
++	if (written >= 0 && (size_t)written < count)
++		btrfs_delalloc_release_space(inode, data_reserved,
++				pos, count - (size_t)written, true);
++	btrfs_delalloc_release_extents(BTRFS_I(inode), count);
++	if (relock)
++		inode_lock(inode);
++	extent_changeset_free(data_reserved);
+ 
+ 	if (written < 0 || !iov_iter_count(from))
+ 		return written;
+@@ -1975,7 +2008,7 @@ static ssize_t btrfs_file_write_iter(struct kiocb *iocb,
+ 		atomic_inc(&BTRFS_I(inode)->sync_writers);
+ 
+ 	if (iocb->ki_flags & IOCB_DIRECT) {
+-		num_written = __btrfs_direct_write(iocb, from);
++		num_written = btrfs_direct_write(iocb, from);
+ 	} else {
+ 		num_written = btrfs_buffered_write(iocb, from);
+ 		if (num_written > 0)
+@@ -3473,7 +3506,8 @@ static ssize_t btrfs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 		ssize_t ret;
+ 
+ 		inode_lock_shared(inode);
+-		ret = btrfs_direct_IO(iocb, to);
++		ret = iomap_dio_rw(iocb, to, &btrfs_dio_iomap_ops,
++				   &btrfs_dio_ops, is_sync_kiocb(iocb));
+ 		inode_unlock_shared(inode);
+ 
+ 		return ret;
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 18d153a62655..7b747270ec40 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -29,7 +29,6 @@
+ #include <linux/iversion.h>
+ #include <linux/swap.h>
+ #include <linux/sched/mm.h>
+-#include <linux/iomap.h>
+ #include <asm/unaligned.h>
+ #include "misc.h"
+ #include "ctree.h"
+@@ -7856,6 +7855,11 @@ static int btrfs_dio_iomap_end(struct inode *inode, loff_t pos, loff_t length,
+ 	return 0;
+ }
+ 
++const struct iomap_ops btrfs_dio_iomap_ops = {
++	.iomap_begin            = btrfs_dio_iomap_begin,
++	.iomap_end		= btrfs_dio_iomap_end,
++};
++
+ static inline blk_status_t submit_dio_repair_bio(struct inode *inode,
+ 						 struct bio *bio,
+ 						 int mirror_num)
+@@ -8581,74 +8585,10 @@ static blk_qc_t btrfs_submit_direct(struct bio *dio_bio, struct file *file,
+ 	return BLK_QC_T_NONE;
+ }
+ 
+-static const struct iomap_ops btrfs_dio_iomap_ops = {
+-	.iomap_begin            = btrfs_dio_iomap_begin,
+-	.iomap_end		= btrfs_dio_iomap_end,
+-};
+-
+-static const struct iomap_dio_ops btrfs_dops = {
++const struct iomap_dio_ops btrfs_dio_ops = {
+ 	.submit_io		= btrfs_submit_direct,
+ };
+ 
+-
+-/*
+- * btrfs_direct_IO - perform direct I/O
+- * inode->i_rwsem must be locked before calling this function, shared or exclusive.
+- * @iocb - kernel iocb
+- * @iter - iter to/from data is copied
+- */
+-
+-ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+-{
+-	struct file *file = iocb->ki_filp;
+-	struct inode *inode = file->f_mapping->host;
+-	struct extent_changeset *data_reserved = NULL;
+-	loff_t offset = iocb->ki_pos;
+-	size_t count = 0;
+-	bool relock = false;
+-	ssize_t ret;
+-
+-	lockdep_assert_held(&inode->i_rwsem);
+-
+-	count = iov_iter_count(iter);
+-	if (iov_iter_rw(iter) == WRITE) {
+-		/*
+-		 * If the write DIO is beyond the EOF, we need update
+-		 * the isize, but it is protected by i_mutex. So we can
+-		 * not unlock the i_mutex at this case.
+-		 */
+-		if (offset + count <= inode->i_size) {
+-			inode_unlock(inode);
+-			relock = true;
+-		} else if (iocb->ki_flags & IOCB_NOWAIT) {
+-			ret = -EAGAIN;
+-			goto out;
+-		}
+-		ret = btrfs_delalloc_reserve_space(inode, &data_reserved,
+-						   offset, count);
+-		if (ret)
+-			goto out;
+-
+-		down_read(&BTRFS_I(inode)->dio_sem);
+-	}
+-
+-	ret = iomap_dio_rw(iocb, iter, &btrfs_dio_iomap_ops, &btrfs_dops,
+-			is_sync_kiocb(iocb));
+-
+-	if (iov_iter_rw(iter) == WRITE) {
+-		up_read(&BTRFS_I(inode)->dio_sem);
+-		if (ret >= 0 && (size_t)ret < count)
+-			btrfs_delalloc_release_space(inode, data_reserved,
+-					offset, count - (size_t)ret, true);
+-		btrfs_delalloc_release_extents(BTRFS_I(inode), count);
+-	}
+-out:
+-	if (relock)
+-		inode_lock(inode);
+-	extent_changeset_free(data_reserved);
+-	return ret;
+-}
+-
+ #define BTRFS_FIEMAP_FLAGS	(FIEMAP_FLAG_SYNC)
+ 
+ static int btrfs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+-- 
+2.24.0
+
+
+--FCuugMFkClbJLl1L--
