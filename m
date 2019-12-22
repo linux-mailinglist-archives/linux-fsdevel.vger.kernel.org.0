@@ -2,109 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDEE5128EE2
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Dec 2019 17:32:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2C88128F2D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Dec 2019 18:51:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726291AbfLVQcT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 22 Dec 2019 11:32:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60852 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725919AbfLVQcT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 22 Dec 2019 11:32:19 -0500
-Received: from localhost (c-67-169-218-210.hsd1.or.comcast.net [67.169.218.210])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2394420684;
-        Sun, 22 Dec 2019 16:32:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577032339;
-        bh=5SW2T5Nijt/qrSRhZFyckkiMkH+dLeo4Zi67LBsr0f4=;
-        h=Date:From:To:Cc:Subject:From;
-        b=NJkL977ZRx9WCtyHT3E9czhX/VOPXFAu8NmnyX0V9FI04+SV0DIP0BMFa9o59lzxX
-         0UrJL72ytloM63TWWcx2NkymUCN25IVXBNjS89BhcykFJ8BB6MNh/lGliQSasX4dPD
-         Q7cU5gaMbFRNJgMZ+5hP5MP+85X3MrvB9J8wSlss=
-Date:   Sun, 22 Dec 2019 08:32:18 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de
-Subject: [GIT PULL] xfs: fixes for 5.5-rc3
-Message-ID: <20191222163218.GR7489@magnolia>
+        id S1726189AbfLVRvO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 22 Dec 2019 12:51:14 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:37382 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725919AbfLVRvO (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 22 Dec 2019 12:51:14 -0500
+Received: by mail-lj1-f193.google.com with SMTP id o13so4216105ljg.4
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Dec 2019 09:51:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9+DFRZm1mZCG8Q4iFUUSl87IJ9WC5zykHr6alPq0ZLo=;
+        b=CQ8K6tZmrYw+i7cLRAX6nHHWBuA0WZCjyD1+ygJortD1DDEXd5VUtlYicd8UB1mI62
+         u7NC/dlgoayz6shYBUr0GxxKdDUXPS9FLAP4nfrxjjyeNFGvs0cWJ/yiwbhnGE1BHFIo
+         ow2Mg7DSIY0wQAnnfuT4xNkYfh9ioXkz9mqrw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9+DFRZm1mZCG8Q4iFUUSl87IJ9WC5zykHr6alPq0ZLo=;
+        b=Kd8Dj/uKBVRgsXp4N5R/12kWlC9g5MaFGyC8JU93pVZMWLbAhkpe34c8PmAlvwxZJ8
+         ogqJQpJ2kRxbfhFzZj6/CiFahcLAn1lSl6yjh4D+YWsEBvJJdB+QfQ8C+S+smUpkNlWV
+         Lm5d0/qek3iJNgcyX9HKtn9DH53eHsTP82/UpLtWNJrznfHg/PG8+RecBwHAnePJ8o62
+         OTu7WJQvQVo4bx06tIYM3bUqxvOnDBso2Mp/MVe7wjigPjc1PeIk19zvjYBjKRhhpr7m
+         u8Ip6ZM2HwkdEifjyn6CfRQFDWFPoM9QHBgvqoMSwBSEjiI9sNNUQgav/pQREzRTKpWp
+         92gA==
+X-Gm-Message-State: APjAAAWB4ZHQgTmCvfRIheLH3AVuCf3TDZuehrQfZ4S9aLg5+psBCM4c
+        W0usc89FDzfFOrt3ASLuYxCtPvmvchQ=
+X-Google-Smtp-Source: APXvYqwH8xDaoGCITvwVMEnGHc0+aoi5NGyB4/ESusHpvF5JgssekH6vJm1an4DbS5/6K0pp2XVMjg==
+X-Received: by 2002:a2e:2c16:: with SMTP id s22mr15599799ljs.248.1577037071310;
+        Sun, 22 Dec 2019 09:51:11 -0800 (PST)
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
+        by smtp.gmail.com with ESMTPSA id w6sm6870162lfq.95.2019.12.22.09.51.10
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 22 Dec 2019 09:51:10 -0800 (PST)
+Received: by mail-lf1-f51.google.com with SMTP id 15so10980996lfr.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Dec 2019 09:51:10 -0800 (PST)
+X-Received: by 2002:ac2:50cc:: with SMTP id h12mr14384920lfm.29.1577037069868;
+ Sun, 22 Dec 2019 09:51:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <65b22cd4e8bb142c5b7b86bc33fb08de6f318089.1577017472.git.jstancek@redhat.com>
+In-Reply-To: <65b22cd4e8bb142c5b7b86bc33fb08de6f318089.1577017472.git.jstancek@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 22 Dec 2019 09:50:53 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiGB-Xt1CPbLQ3wY5KENq48Ws5WNwHz+aQp+gmZY+47EQ@mail.gmail.com>
+Message-ID: <CAHk-=wiGB-Xt1CPbLQ3wY5KENq48Ws5WNwHz+aQp+gmZY+47EQ@mail.gmail.com>
+Subject: Re: [PATCH] pipe: fix empty pipe check in pipe_write()
+To:     Jan Stancek <jstancek@redhat.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, rasibley@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Sun, Dec 22, 2019 at 4:35 AM Jan Stancek <jstancek@redhat.com> wrote:
+> Problem is that after pipe_write() reacquires pipe lock, it
+> re-checks for empty pipe with potentially stale 'head' and
+> doesn't wake up read side anymore. pipe->tail can advance
+> beyond 'head', because there are multiple writers.
 
-Please pull these bug fixes for 5.5-rc3, which fix a few bugs that could
-lead to corrupt files, fsck complaints, and filesystem crashes.
+Thank you. Patch is obviously correct, applied.
 
-The branch has survived a couple of days of xfstests runs and merges
-cleanly with this morning's master.  Please let me know if anything
-strange happens.
+I wonder how much that whole "cache head/tail/mask" really helps, and
+if we should strive to get rid of it entirely (and just make
+"pipe_emptuy()" and friends take a 'const struct pipe_inode_info *"
+argument).
 
---D
+Oh well.  I've apple your one-liner, but next time I might decide the
+cleverness and slight code generation advantage might not be worth it.
 
-The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+Hopefully there won't _be_ a next time, of course ;)
 
-  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.5-fixes-2
-
-for you to fetch changes up to 5084bf6b2006fcd46f1e44e3c51b687507b362e2:
-
-  xfs: Make the symbol 'xfs_rtalloc_log_count' static (2019-12-20 08:07:31 -0800)
-
-----------------------------------------------------------------
-Fixes for 5.5:
-- Minor documentation fixes
-- Fix a file corruption due to read racing with an insert range
-operation.
-- Fix log reservation overflows when allocating large rt extents
-- Fix a buffer log item flags check
-- Don't allow administrators to mount with sunit= options that will
-cause later xfs_repair complaints about the root directory being
-suspicious because the fs geometry appeared inconsistent
-- Fix a non-static helper that should have been static
-
-----------------------------------------------------------------
-Brian Foster (2):
-      xfs: stabilize insert range start boundary to avoid COW writeback race
-      xfs: use bitops interface for buf log item AIL flag check
-
-Chen Wandun (1):
-      xfs: Make the symbol 'xfs_rtalloc_log_count' static
-
-Darrick J. Wong (5):
-      xfs: fix log reservation overflows when allocating large rt extents
-      libxfs: resync with the userspace libxfs
-      xfs: refactor agfl length computation function
-      xfs: split the sunit parameter update into two parts
-      xfs: don't commit sunit/swidth updates to disk if that would cause repair failures
-
-Randy Dunlap (1):
-      xfs: fix Sphinx documentation warning
-
- Documentation/admin-guide/xfs.rst |   2 +-
- fs/xfs/libxfs/xfs_alloc.c         |  18 ++--
- fs/xfs/libxfs/xfs_bmap.c          |   5 +-
- fs/xfs/libxfs/xfs_dir2.c          |  21 +++++
- fs/xfs/libxfs/xfs_dir2_priv.h     |  29 ++-----
- fs/xfs/libxfs/xfs_dir2_sf.c       |   6 +-
- fs/xfs/libxfs/xfs_ialloc.c        |  64 +++++++++++++++
- fs/xfs/libxfs/xfs_ialloc.h        |   1 +
- fs/xfs/libxfs/xfs_trans_resv.c    |  96 +++++++++++++++++-----
- fs/xfs/xfs_bmap_util.c            |  12 +++
- fs/xfs/xfs_buf_item.c             |   2 +-
- fs/xfs/xfs_mount.c                | 168 ++++++++++++++++++++++++++------------
- fs/xfs/xfs_trace.h                |  21 +++++
- 13 files changed, 341 insertions(+), 104 deletions(-)
+             Linus
