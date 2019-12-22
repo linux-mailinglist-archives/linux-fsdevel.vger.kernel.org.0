@@ -2,103 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D745128CD5
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Dec 2019 06:29:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08215128DED
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Dec 2019 13:35:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726215AbfLVF3Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 22 Dec 2019 00:29:24 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:38096 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725308AbfLVF3Y (ORCPT
+        id S1726603AbfLVMfG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 22 Dec 2019 07:35:06 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:54211 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726189AbfLVMfG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 22 Dec 2019 00:29:24 -0500
-Received: by mail-ot1-f66.google.com with SMTP id d7so13221029otf.5;
-        Sat, 21 Dec 2019 21:29:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZkuKQsKverFFdadZsvM9+HOpPLDV24DoMiHwcyD+pjA=;
-        b=vO3AvY1Wy25ZYHDFrrr+VCcNh2SfEdYzq0Dv8f6jj3qpOcTsyFVfpV29OzOhXE9Xeb
-         2LQv6yIV1IeWF6jOKDEcFPLXeH2Rz9JeGw6k9ftcHb9gyyOuDzhk3JxUYGmdrJBCXm0y
-         MI6t5/SBa8UekMrEkYZPNUZAs+XUz0gIDcaoTsokFtorXH/vPERgNkCTu86DK/NOUxcq
-         F+e91xbiT3BrYF0bZoTPHkZb/A/eVmHrY7xMHQPZjyp32yPoK2pJt2Qrga49NV9XUj5f
-         4m9jr5RhzFlGNex2hWDW9PEK3GaRfukKT+lnTgzDAZzGDYWqHW4v3KWjFJHA0FNhMlOY
-         6RAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZkuKQsKverFFdadZsvM9+HOpPLDV24DoMiHwcyD+pjA=;
-        b=BNZDNrTRtRJMKgZ8Sdxo1akM6CFGxLY0Y6i13wXzsWZM2Ah8tuV5u7J5oZ+orRMA9T
-         j0qllI8p+9wxm8y55wFUdhqA3b2Pc5hE5BcrB7f4Bmx+kzsyjm7YJRezFfrNKgCm8kj2
-         O95zkO+kfvbCWQW7KR26oIIifBBgX4lAHh3A89ucjx1XvY9Am6FnSWn6qR+SgQVktV1u
-         yLWmlLv7JkEYf6VEDGBbQiAVq7Bq4v3PhfPPY5WnEk+8crPaKXx9pFCEocOu8MT2Bf02
-         /mfa0BnegAf5R38dg+cOoUXE282RjvikyBXcgNsga9s6AQwx9vdZd1Hg4Gbg9Q34VvaY
-         6f6g==
-X-Gm-Message-State: APjAAAVsZhSqZKQs3aSmEFcCUZ0mNfib7dab8LZbtx8Uapx5OvFTJtDI
-        NG6eP+DPZtK1/+UIQV+cZ7zRxRpL
-X-Google-Smtp-Source: APXvYqyj7IQPWsm9jvv6GHVdWS1aTMAFVZcxVcIMp4BPeMvRSvVlO3eflF3UejP7lGtM9ycZZoO61A==
-X-Received: by 2002:a9d:5786:: with SMTP id q6mr7758153oth.164.1576992563606;
-        Sat, 21 Dec 2019 21:29:23 -0800 (PST)
-Received: from ubuntu-m2-xlarge-x86 ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id e65sm5579838otb.62.2019.12.21.21.29.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 21 Dec 2019 21:29:22 -0800 (PST)
-Date:   Sat, 21 Dec 2019 22:29:21 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     David Sterba <dsterba@suse.com>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] fs: use UB-safe check for signed addition
- overflow in remap_verify_area
-Message-ID: <20191222052921.GA30288@ubuntu-m2-xlarge-x86>
-References: <20190808123942.19592-1-dsterba@suse.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190808123942.19592-1-dsterba@suse.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Sun, 22 Dec 2019 07:35:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1577018105;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=NK/+oH5PS+9JogKOeHE773KhmgeeUExyinl8Dzq73ME=;
+        b=Rp1ECCxESNHdMGPakoMhNM2EKlBshKYCwyH6BqJsGlOWHGT0MI2H/Zx95Q6J58LX196RmW
+        XHwwZLuXmwFMNeUe+EUJcU8+5EWVpEIi6+bbfbkkYu8+B8rp9ZQuJqQZqh/VUqs9weAu/C
+        lm6z9DhYzShVf2N0m6KSOyqts28jC5s=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-110-hfmQO_ZBMzm7W1Z2L0kHSA-1; Sun, 22 Dec 2019 07:35:00 -0500
+X-MC-Unique: hfmQO_ZBMzm7W1Z2L0kHSA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B6B88100550E;
+        Sun, 22 Dec 2019 12:34:59 +0000 (UTC)
+Received: from dustball.brq.redhat.com (unknown [10.43.17.163])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1B46663F8A;
+        Sun, 22 Dec 2019 12:34:57 +0000 (UTC)
+From:   Jan Stancek <jstancek@redhat.com>
+To:     torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        viro@zeniv.linux.org.uk, rasibley@redhat.com, jstancek@redhat.com
+Subject: [PATCH] pipe: fix empty pipe check in pipe_write()
+Date:   Sun, 22 Dec 2019 13:33:24 +0100
+Message-Id: <65b22cd4e8bb142c5b7b86bc33fb08de6f318089.1577017472.git.jstancek@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 02:39:42PM +0200, David Sterba wrote:
-> The following warning pops up with enabled UBSAN in tests fstests/generic/303:
-> 
->   [23127.529395] UBSAN: Undefined behaviour in fs/read_write.c:1725:7
->   [23127.529400] signed integer overflow:
->   [23127.529403] 4611686018427322368 + 9223372036854775807 cannot be represented in type 'long long int'
->   [23127.529412] CPU: 4 PID: 26180 Comm: xfs_io Not tainted 5.2.0-rc2-1.ge195904-vanilla+ #450
->   [23127.556999] Hardware name: empty empty/S3993, BIOS PAQEX0-3 02/24/2008
->   [23127.557001] Call Trace:
->   [23127.557060]  dump_stack+0x67/0x9b
->   [23127.557070]  ubsan_epilogue+0x9/0x40
->   [23127.573496]  handle_overflow+0xb3/0xc0
->   [23127.573514]  do_clone_file_range+0x28f/0x2a0
->   [23127.573547]  vfs_clone_file_range+0x35/0xb0
->   [23127.573564]  ioctl_file_clone+0x8d/0xc0
->   [23127.590144]  do_vfs_ioctl+0x300/0x700
->   [23127.590160]  ksys_ioctl+0x70/0x80
->   [23127.590203]  ? trace_hardirqs_off_thunk+0x1a/0x1c
->   [23127.590210]  __x64_sys_ioctl+0x16/0x20
->   [23127.590215]  do_syscall_64+0x5c/0x1d0
->   [23127.590224]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->   [23127.590231] RIP: 0033:0x7ff6d7250327
->   [23127.590241] RSP: 002b:00007ffe3a38f1d8 EFLAGS: 00000206 ORIG_RAX: 0000000000000010
->   [23127.590246] RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007ff6d7250327
->   [23127.590249] RDX: 00007ffe3a38f220 RSI: 000000004020940d RDI: 0000000000000003
->   [23127.590252] RBP: 0000000000000000 R08: 00007ffe3a3c80a0 R09: 00007ffe3a3c8080
->   [23127.590255] R10: 000000000fa99fa0 R11: 0000000000000206 R12: 0000000000000000
->   [23127.590260] R13: 0000000000000000 R14: 3fffffffffff0000 R15: 00007ff6d750a20c
-> 
-> As loff_t is a signed type, we should use the safe overflow checks
-> instead of relying on compiler implementation.
-> 
-> The bogus values are intentional and the test is supposed to verify the
-> boundary conditions.
-> 
-> Signed-off-by: David Sterba <dsterba@suse.com>
+LTP pipeio_1 test is hanging with v5.5-rc2-385-gb8e382a185eb,
+with read side observing empty pipe and sleeping and write
+side running out of space and then sleeping as well. In this
+scenario there are 5 writers and 1 reader.
 
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Problem is that after pipe_write() reacquires pipe lock, it
+re-checks for empty pipe with potentially stale 'head' and
+doesn't wake up read side anymore. pipe->tail can advance
+beyond 'head', because there are multiple writers.
+
+Use pipe->head for empty pipe check after reacquiring lock
+to observe current state.
+
+Testing: With patch, LTP pipeio_1 ran successfully in loop for 1 hour.
+         Without patch it hanged within a minute.
+
+Fixes: 1b6b26ae7053 ("pipe: fix and clarify pipe write wakeup logic")
+Reported-by: Rachel Sibley <rasibley@redhat.com>
+Signed-off-by: Jan Stancek <jstancek@redhat.com>
+---
+ fs/pipe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 04d004ee2e8c..57502c3c0fba 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -581,7 +581,7 @@ static inline bool pipe_writable(const struct pipe_inode_info *pipe)
+ 		}
+ 		wait_event_interruptible(pipe->wait, pipe_writable(pipe));
+ 		__pipe_lock(pipe);
+-		was_empty = pipe_empty(head, pipe->tail);
++		was_empty = pipe_empty(pipe->head, pipe->tail);
+ 	}
+ out:
+ 	__pipe_unlock(pipe);
+-- 
+1.8.3.1
+
