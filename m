@@ -2,508 +2,232 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12712128DF9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Dec 2019 13:48:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FDEF128E17
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Dec 2019 14:24:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725997AbfLVMsQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 22 Dec 2019 07:48:16 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:37079 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725932AbfLVMsQ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 22 Dec 2019 07:48:16 -0500
-Received: from [172.58.30.161] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1ij0eZ-0002E7-CH; Sun, 22 Dec 2019 12:48:12 +0000
-Date:   Sun, 22 Dec 2019 13:47:58 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tycho@tycho.ws, jannh@google.com,
-        cyphar@cyphar.com, oleg@redhat.com, luto@amacapital.net,
-        viro@zeniv.linux.org.uk, gpascutto@mozilla.com,
-        ealvarez@mozilla.com, fweimer@redhat.com, jld@mozilla.com,
-        arnd@arndb.de
-Subject: Re: [PATCH v5 2/3] pid: Introduce pidfd_getfd syscall
-Message-ID: <20191222124756.o2v2zofseypnqg3t@wittgenstein>
-References: <20191220232810.GA20233@ircssh-2.c.rugged-nimbus-611.internal>
+        id S1725922AbfLVNYD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 22 Dec 2019 08:24:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52072 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725791AbfLVNYC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 22 Dec 2019 08:24:02 -0500
+Received: from localhost (unknown [193.47.165.251])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EAF2F206D3;
+        Sun, 22 Dec 2019 13:23:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577021040;
+        bh=483rbuBN6u8s6eQHgpawXUOLSB7wNwqu6dfS1IVBUTQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HCcjH9yc8u/Vu1a+J6ffdhdH2EQVw5nD3NYhUbwC2GUSnm6xSh3uwn+/F9m4ilyzx
+         lTmfUsU/ZGfq6BBNKcYt9vWVR3mQLngV7t/V1RQWwq/9eKi8XawAM/+XuBwJ0m9BKE
+         mbbyx0jewMth0tRdvRaxLLJjjH32G6FGxmP5fBCg=
+Date:   Sun, 22 Dec 2019 15:23:57 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        Maor Gottlieb <maorg@mellanox.com>,
+        Ran Rozenstein <ranro@mellanox.com>
+Subject: Re: [PATCH v11 00/25] mm/gup: track dma-pinned pages: FOLL_PIN
+Message-ID: <20191222132357.GF13335@unreal>
+References: <20191216222537.491123-1-jhubbard@nvidia.com>
+ <20191219132607.GA410823@unreal>
+ <a4849322-8e17-119e-a664-80d9f95d850b@nvidia.com>
+ <20191219210743.GN17227@ziepe.ca>
+ <20191220182939.GA10944@unreal>
+ <1001a5fc-a71d-9c0f-1090-546c4913d8a2@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191220232810.GA20233@ircssh-2.c.rugged-nimbus-611.internal>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1001a5fc-a71d-9c0f-1090-546c4913d8a2@nvidia.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 11:28:13PM +0000, Sargun Dhillon wrote:
-> This syscall allows for the retrieval of file descriptors from other
-> processes, based on their pidfd. This is possible using ptrace, and
-> injection of parasitic code along with using SCM_RIGHTS to move
-> file descriptors between a tracee and a tracer. Unfortunately, ptrace
-> comes with a high cost of requiring the process to be stopped, and
-> breaks debuggers. This does not require stopping the process under
-> manipulation.
-> 
-> One reason to use this is to allow sandboxers to take actions on file
-> descriptors on the behalf of another process. For example, this can be
-> combined with seccomp-bpf's user notification to do on-demand fd
-> extraction and take privileged actions. For example, it can be used
-> to bind a socket to a privileged port.
-> 
-> /* prototype */
->   /*
->    * pidfd_getfd_options is an extensible struct which can have options
->    * added to it. If options is NULL, size, and it will be ignored be
->    * ignored, otherwise, size should be set to sizeof(*options). If
->    * option is newer than the current kernel version, E2BIG will be
->    * returned.
->    */
->   struct pidfd_getfd_options {};
->   long pidfd_getfd(int pidfd, int fd, unsigned int flags,
-> 		   struct pidfd_getfd_options *options, size_t size);
+On Fri, Dec 20, 2019 at 03:54:55PM -0800, John Hubbard wrote:
+> On 12/20/19 10:29 AM, Leon Romanovsky wrote:
+> ...
+> >> $ ./build.sh
+> >> $ build/bin/run_tests.py
+> >>
+> >> If you get things that far I think Leon can get a reproduction for you
+> >
+> > I'm not so optimistic about that.
+> >
+>
+> OK, I'm going to proceed for now on the assumption that I've got an overflow
+> problem that happens when huge pages are pinned. If I can get more information,
+> great, otherwise it's probably enough.
+>
+> One thing: for your repro, if you know the huge page size, and the system
+> page size for that case, that would really help. Also the number of pins per
+> page, more or less, that you'd expect. Because Jason says that only 2M huge
+> pages are used...
+>
+> Because the other possibility is that the refcount really is going negative,
+> likely due to a mismatched pin/unpin somehow.
+>
+> If there's not an obvious repro case available, but you do have one (is it easy
+> to repro, though?), then *if* you have the time, I could point you to a github
+> branch that reduces GUP_PIN_COUNTING_BIAS by, say, 4x, by applying this:
+>
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index bb44c4d2ada7..8526fd03b978 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1077,7 +1077,7 @@ static inline void put_page(struct page *page)
+>   * get_user_pages and page_mkclean and other calls that race to set up page
+>   * table entries.
+>   */
+> -#define GUP_PIN_COUNTING_BIAS (1U << 10)
+> +#define GUP_PIN_COUNTING_BIAS (1U << 8)
+>
+>  void unpin_user_page(struct page *page);
+>  void unpin_user_pages_dirty_lock(struct page **pages, unsigned long npages,
+>
+> If that fails to repro, then we would be zeroing in on the root cause.
+>
+> The branch is here (I just tested it and it seems healthy):
+>
+> git@github.com:johnhubbard/linux.git  pin_user_pages_tracking_v11_with_diags
 
-The prototype advertises a flags argument but the actual 
+Hi,
 
-+SYSCALL_DEFINE4(pidfd_getfd, int, pidfd, int, fd,
-+		struct pidfd_getfd_options __user *, options, size_t, usize)
+We tested the following branch and here comes results:
+[root@server consume_mtts]# (master) $ grep foll_pin /proc/vmstat
+nr_foll_pin_requested 0
+nr_foll_pin_returned 0
 
-does not have a flags argument...
+[root@serer consume_mtts]# (master) $ dmesg
+[  425.221459] ------------[ cut here ]------------
+[  425.225894] WARNING: CPU: 1 PID: 6738 at mm/gup.c:61 try_grab_compound_head+0x90/0xa0
+[  425.228021] Modules linked in: mlx5_ib mlx5_core mlxfw mlx4_ib mlx4_en ptp pps_core mlx4_core bonding ip6_gre ip6_tunnel tunnel6 ip_gre gre ip_tunnel rdma_rxe ip6_udp_tunnel udp_tunnel rdma_ucm ib_uverbs ib_ipoib ib_umad ib_srp scsi_transport_srp rpcrdma ib_iser libiscsi scsi_transport_iscsi rdma_cm iw_cm ib_cm ib_core [last unloaded: mlxfw]
+[  425.235266] CPU: 1 PID: 6738 Comm: consume_mtts Tainted: G           O      5.5.0-rc2+ #1
+[  425.237480] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+[  425.239738] RIP: 0010:try_grab_compound_head+0x90/0xa0
+[  425.241170] Code: 06 48 8d 4f 34 f0 0f b1 57 34 74 cd 85 c0 74 cf 8d 14 06 f0 0f b1 11 74 c0 eb f1 8d 14 06 f0 0f b1 11 74 b5 85 c0 75 f3 eb b5 <0f> 0b 31 c0 c3 90 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 41
+[  425.245739] RSP: 0018:ffffc900006878a8 EFLAGS: 00010082
+[  425.247124] RAX: 0000000080000001 RBX: 00007f780488a000 RCX: 0000000000000bb0
+[  425.248956] RDX: ffffea000e031087 RSI: 0000000000008a00 RDI: ffffea000dc58000
+[  425.250761] RBP: ffffea000e031080 R08: ffffc90000687974 R09: 000fffffffe00000
+[  425.252661] R10: 0000000000000000 R11: ffff888362560000 R12: 000000000000008a
+[  425.254487] R13: 80000003716000e7 R14: 00007f780488a000 R15: ffffc90000687974
+[  425.256309] FS:  00007f780d9d3740(0000) GS:ffff8883b1c80000(0000) knlGS:0000000000000000
+[  425.258401] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  425.259949] CR2: 0000000002334048 CR3: 000000039c68c001 CR4: 00000000001606a0
+[  425.261884] Call Trace:
+[  425.262735]  gup_pgd_range+0x517/0x5a0
+[  425.263819]  internal_get_user_pages_fast+0x210/0x250
+[  425.265193]  ib_umem_get+0x298/0x550 [ib_uverbs]
+[  425.266476]  mr_umem_get+0xc9/0x260 [mlx5_ib]
+[  425.267699]  mlx5_ib_reg_user_mr+0xcc/0x7e0 [mlx5_ib]
+[  425.269134]  ? xas_load+0x8/0x80
+[  425.270074]  ? xa_load+0x48/0x90
+[  425.271038]  ? lookup_get_idr_uobject.part.10+0x12/0x70 [ib_uverbs]
+[  425.272757]  ib_uverbs_reg_mr+0x127/0x280 [ib_uverbs]
+[  425.274120]  ib_uverbs_handler_UVERBS_METHOD_INVOKE_WRITE+0xc2/0xf0 [ib_uverbs]
+[  425.276058]  ib_uverbs_cmd_verbs.isra.6+0x5be/0xbe0 [ib_uverbs]
+[  425.277657]  ? uverbs_disassociate_api+0xd0/0xd0 [ib_uverbs]
+[  425.279155]  ? __alloc_pages_nodemask+0x148/0x2b0
+[  425.280445]  ib_uverbs_ioctl+0xc0/0x120 [ib_uverbs]
+[  425.281755]  do_vfs_ioctl+0x9d/0x650
+[  425.282766]  ksys_ioctl+0x70/0x80
+[  425.283745]  __x64_sys_ioctl+0x16/0x20
+[  425.284912]  do_syscall_64+0x42/0x130
+[  425.285973]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  425.287377] RIP: 0033:0x7f780d2df267
+[  425.288449] Code: b3 66 90 48 8b 05 19 3c 2c 00 64 c7 00 26 00 00 00 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d e9 3b 2c 00 f7 d8 64 89 01 48
+[  425.293073] RSP: 002b:00007ffce49a88a8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[  425.295034] RAX: ffffffffffffffda RBX: 00007ffce49a8938 RCX: 00007f780d2df267
+[  425.296895] RDX: 00007ffce49a8920 RSI: 00000000c0181b01 RDI: 0000000000000003
+[  425.298689] RBP: 00007ffce49a8900 R08: 0000000000000003 R09: 00007f780d9a1010
+[  425.300480] R10: 00000000ffffffff R11: 0000000000000246 R12: 00007f780d9a1150
+[  425.302290] R13: 00007ffce49a8900 R14: 00007ffce49a8ad8 R15: 00007f780468a000
+[  425.304113] ---[ end trace 1ecbefdb403190dd ]---
+[  425.305434] ------------[ cut here ]------------
+[  425.307147] WARNING: CPU: 1 PID: 6738 at mm/gup.c:150 try_grab_page+0x56/0x60
+[  425.309111] Modules linked in: mlx5_ib mlx5_core mlxfw mlx4_ib mlx4_en ptp pps_core mlx4_core bonding ip6_gre ip6_tunnel tunnel6 ip_gre gre ip_tunnel rdma_rxe ip6_udp_tunnel udp_tunnel rdma_ucm ib_uverbs ib_ipoib ib_umad ib_srp scsi_transport_srp rpcrdma ib_iser libiscsi scsi_transport_iscsi rdma_cm iw_cm ib_cm ib_core [last unloaded: mlxfw]
+[  425.316461] CPU: 1 PID: 6738 Comm: consume_mtts Tainted: G        W  O      5.5.0-rc2+ #1
+[  425.318582] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+[  425.320958] RIP: 0010:try_grab_page+0x56/0x60
+[  425.322167] Code: 7e 28 f0 81 47 34 00 01 00 00 c3 48 8b 47 08 48 8d 50 ff a8 01 48 0f 45 fa 8b 47 34 85 c0 7e 0f f0 ff 47 34 b8 01 00 00 00 c3 <0f> 0b 31 c0 c3 0f 0b 31 c0 c3 0f 1f 44 00 00 41 57 41 56 41 55 41
+[  425.326814] RSP: 0018:ffffc90000687830 EFLAGS: 00010282
+[  425.328226] RAX: 0000000000000001 RBX: ffffea000dc58000 RCX: ffffea000e031087
+[  425.330104] RDX: 0000000080000001 RSI: 0000000000040000 RDI: ffffea000dc58000
+[  425.331980] RBP: 00007f7804800000 R08: 000ffffffffff000 R09: 80000003716000e7
+[  425.333898] R10: ffff88834af80120 R11: ffff8883ac16f000 R12: ffff88834af80120
+[  425.335704] R13: ffff88837c0915c0 R14: 0000000000050201 R15: 00007f7804800000
+[  425.337638] FS:  00007f780d9d3740(0000) GS:ffff8883b1c80000(0000) knlGS:0000000000000000
+[  425.339734] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  425.341369] CR2: 0000000002334048 CR3: 000000039c68c001 CR4: 00000000001606a0
+[  425.343160] Call Trace:
+[  425.343967]  follow_trans_huge_pmd+0x16f/0x2e0
+[  425.345263]  follow_p4d_mask+0x51c/0x630
+[  425.346344]  __get_user_pages+0x1a1/0x6c0
+[  425.347463]  internal_get_user_pages_fast+0x17b/0x250
+[  425.348918]  ib_umem_get+0x298/0x550 [ib_uverbs]
+[  425.350174]  mr_umem_get+0xc9/0x260 [mlx5_ib]
+[  425.351383]  mlx5_ib_reg_user_mr+0xcc/0x7e0 [mlx5_ib]
+[  425.352849]  ? xas_load+0x8/0x80
+[  425.353776]  ? xa_load+0x48/0x90
+[  425.354730]  ? lookup_get_idr_uobject.part.10+0x12/0x70 [ib_uverbs]
+[  425.356410]  ib_uverbs_reg_mr+0x127/0x280 [ib_uverbs]
+[  425.357843]  ib_uverbs_handler_UVERBS_METHOD_INVOKE_WRITE+0xc2/0xf0 [ib_uverbs]
+[  425.359749]  ib_uverbs_cmd_verbs.isra.6+0x5be/0xbe0 [ib_uverbs]
+[  425.361405]  ? uverbs_disassociate_api+0xd0/0xd0 [ib_uverbs]
+[  425.362898]  ? __alloc_pages_nodemask+0x148/0x2b0
+[  425.364206]  ib_uverbs_ioctl+0xc0/0x120 [ib_uverbs]
+[  425.365564]  do_vfs_ioctl+0x9d/0x650
+[  425.366567]  ksys_ioctl+0x70/0x80
+[  425.367537]  __x64_sys_ioctl+0x16/0x20
+[  425.368698]  do_syscall_64+0x42/0x130
+[  425.369782]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  425.371117] RIP: 0033:0x7f780d2df267
+[  425.372159] Code: b3 66 90 48 8b 05 19 3c 2c 00 64 c7 00 26 00 00 00 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d e9 3b 2c 00 f7 d8 64 89 01 48
+[  425.376774] RSP: 002b:00007ffce49a88a8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[  425.378740] RAX: ffffffffffffffda RBX: 00007ffce49a8938 RCX: 00007f780d2df267
+[  425.380598] RDX: 00007ffce49a8920 RSI: 00000000c0181b01 RDI: 0000000000000003
+[  425.382411] RBP: 00007ffce49a8900 R08: 0000000000000003 R09: 00007f780d9a1010
+[  425.384312] R10: 00000000ffffffff R11: 0000000000000246 R12: 00007f780d9a1150
+[  425.386132] R13: 00007ffce49a8900 R14: 00007ffce49a8ad8 R15: 00007f780468a000
+[  425.387964] ---[ end trace 1ecbefdb403190de ]---
 
-I think having a flags argument makes a lot of sense.
+Thanks
 
-I'm not sure what to think about the struct. I agree with Aleksa that
-having an empty struct is not a great idea. From a design perspective it
-seems very out of place. If we do a struct at all putting at least a
-single reserved field in there might makes more sense.
-
-In general, I think we need to have a _concrete_ reason why putting a
-struct versioned by size as arguments for this syscall.
-That means we need to have at least a concrete example for a new feature
-for this syscall where a flag would not convey enough information.
-
-And I'm not sure that there is a good one... I guess one thing I can
-think of is that a caller might want dup-like semantics, i.e. a caller
-might want to say:
-
-pidfd_getfd(<pidfd>, <fd-to-get>, <fd-number-to-want>, <flags>, ...)
-
-such that after pidfd_getfd() returns <fd-to-get> corresponds to
-<fd-number-to-want> in the caller. But that can also be achieved via:
-int fd = pidfd_getfd(<pidfd>, <fd-to-get>, <flags>, ...)
-int final_fd = dup3(fd, <newfd>, O_CLOEXEC)
-
-> 
-> /* testing */
-> Ran self-test suite on x86_64
-
-+1
-
-> 
-> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-> ---
->  MAINTAINERS                                 |   1 +
->  arch/alpha/kernel/syscalls/syscall.tbl      |   1 +
->  arch/arm/tools/syscall.tbl                  |   1 +
->  arch/arm64/include/asm/unistd.h             |   2 +-
->  arch/arm64/include/asm/unistd32.h           |   2 +
->  arch/ia64/kernel/syscalls/syscall.tbl       |   1 +
->  arch/m68k/kernel/syscalls/syscall.tbl       |   1 +
->  arch/microblaze/kernel/syscalls/syscall.tbl |   1 +
->  arch/mips/kernel/syscalls/syscall_n32.tbl   |   1 +
->  arch/mips/kernel/syscalls/syscall_n64.tbl   |   1 +
->  arch/mips/kernel/syscalls/syscall_o32.tbl   |   1 +
->  arch/parisc/kernel/syscalls/syscall.tbl     |   1 +
->  arch/powerpc/kernel/syscalls/syscall.tbl    |   1 +
->  arch/s390/kernel/syscalls/syscall.tbl       |   1 +
->  arch/sh/kernel/syscalls/syscall.tbl         |   1 +
->  arch/sparc/kernel/syscalls/syscall.tbl      |   1 +
->  arch/x86/entry/syscalls/syscall_32.tbl      |   1 +
->  arch/x86/entry/syscalls/syscall_64.tbl      |   1 +
->  arch/xtensa/kernel/syscalls/syscall.tbl     |   1 +
->  include/linux/syscalls.h                    |   4 +
->  include/uapi/asm-generic/unistd.h           |   3 +-
->  include/uapi/linux/pidfd.h                  |  10 ++
->  kernel/pid.c                                | 115 ++++++++++++++++++++
->  23 files changed, 151 insertions(+), 2 deletions(-)
->  create mode 100644 include/uapi/linux/pidfd.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index cc0a4a8ae06a..bc370ff59dbf 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13014,6 +13014,7 @@ M:	Christian Brauner <christian@brauner.io>
->  L:	linux-kernel@vger.kernel.org
->  S:	Maintained
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git
-> +F:	include/uapi/linux/pidfd.h
->  F:	samples/pidfd/
->  F:	tools/testing/selftests/pidfd/
->  F:	tools/testing/selftests/clone3/
-> diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-> index 8e13b0b2928d..d1cac0d657b7 100644
-> --- a/arch/alpha/kernel/syscalls/syscall.tbl
-> +++ b/arch/alpha/kernel/syscalls/syscall.tbl
-> @@ -475,3 +475,4 @@
->  543	common	fspick				sys_fspick
->  544	common	pidfd_open			sys_pidfd_open
->  # 545 reserved for clone3
-> +548	common	pidfd_getfd			sys_pidfd
-> diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-> index 6da7dc4d79cc..ba045e2f3a60 100644
-> --- a/arch/arm/tools/syscall.tbl
-> +++ b/arch/arm/tools/syscall.tbl
-> @@ -449,3 +449,4 @@
->  433	common	fspick				sys_fspick
->  434	common	pidfd_open			sys_pidfd_open
->  435	common	clone3				sys_clone3
-> +438	common	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-> index 2629a68b8724..b722e47377a5 100644
-> --- a/arch/arm64/include/asm/unistd.h
-> +++ b/arch/arm64/include/asm/unistd.h
-> @@ -38,7 +38,7 @@
->  #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
->  #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
->  
-> -#define __NR_compat_syscalls		436
-> +#define __NR_compat_syscalls		439
->  #endif
->  
->  #define __ARCH_WANT_SYS_CLONE
-> diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-> index 94ab29cf4f00..a8da97a2de41 100644
-> --- a/arch/arm64/include/asm/unistd32.h
-> +++ b/arch/arm64/include/asm/unistd32.h
-> @@ -879,6 +879,8 @@ __SYSCALL(__NR_fspick, sys_fspick)
->  __SYSCALL(__NR_pidfd_open, sys_pidfd_open)
->  #define __NR_clone3 435
->  __SYSCALL(__NR_clone3, sys_clone3)
-> +#define __NR_pidfd_getfd 438
-> +__SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
->  
->  /*
->   * Please add new compat syscalls above this comment and update
-> diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
-> index 36d5faf4c86c..2b11adfc860c 100644
-> --- a/arch/ia64/kernel/syscalls/syscall.tbl
-> +++ b/arch/ia64/kernel/syscalls/syscall.tbl
-> @@ -356,3 +356,4 @@
->  433	common	fspick				sys_fspick
->  434	common	pidfd_open			sys_pidfd_open
->  # 435 reserved for clone3
-> +438	common	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-> index a88a285a0e5f..44e879e98459 100644
-> --- a/arch/m68k/kernel/syscalls/syscall.tbl
-> +++ b/arch/m68k/kernel/syscalls/syscall.tbl
-> @@ -435,3 +435,4 @@
->  433	common	fspick				sys_fspick
->  434	common	pidfd_open			sys_pidfd_open
->  # 435 reserved for clone3
-> +438	common	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-> index 09b0cd7dab0a..7afa00125cc4 100644
-> --- a/arch/microblaze/kernel/syscalls/syscall.tbl
-> +++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-> @@ -441,3 +441,4 @@
->  433	common	fspick				sys_fspick
->  434	common	pidfd_open			sys_pidfd_open
->  435	common	clone3				sys_clone3
-> +438	common	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-> index e7c5ab38e403..856d5ba34461 100644
-> --- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-> +++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-> @@ -374,3 +374,4 @@
->  433	n32	fspick				sys_fspick
->  434	n32	pidfd_open			sys_pidfd_open
->  435	n32	clone3				__sys_clone3
-> +438	n32	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
-> index 13cd66581f3b..2db6075352f3 100644
-> --- a/arch/mips/kernel/syscalls/syscall_n64.tbl
-> +++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
-> @@ -350,3 +350,4 @@
->  433	n64	fspick				sys_fspick
->  434	n64	pidfd_open			sys_pidfd_open
->  435	n64	clone3				__sys_clone3
-> +438	n64	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-> index 353539ea4140..e9f9d4a9b105 100644
-> --- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-> +++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-> @@ -423,3 +423,4 @@
->  433	o32	fspick				sys_fspick
->  434	o32	pidfd_open			sys_pidfd_open
->  435	o32	clone3				__sys_clone3
-> +438	o32	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-> index 285ff516150c..c58c7eb144ca 100644
-> --- a/arch/parisc/kernel/syscalls/syscall.tbl
-> +++ b/arch/parisc/kernel/syscalls/syscall.tbl
-> @@ -433,3 +433,4 @@
->  433	common	fspick				sys_fspick
->  434	common	pidfd_open			sys_pidfd_open
->  435	common	clone3				sys_clone3_wrapper
-> +438	common	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-> index 43f736ed47f2..707609bfe3ea 100644
-> --- a/arch/powerpc/kernel/syscalls/syscall.tbl
-> +++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-> @@ -517,3 +517,4 @@
->  433	common	fspick				sys_fspick
->  434	common	pidfd_open			sys_pidfd_open
->  435	nospu	clone3				ppc_clone3
-> +438	common	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-> index 3054e9c035a3..185cd624face 100644
-> --- a/arch/s390/kernel/syscalls/syscall.tbl
-> +++ b/arch/s390/kernel/syscalls/syscall.tbl
-> @@ -438,3 +438,4 @@
->  433  common	fspick			sys_fspick			sys_fspick
->  434  common	pidfd_open		sys_pidfd_open			sys_pidfd_open
->  435  common	clone3			sys_clone3			sys_clone3
-> +438  common	pidfd_getfd		sys_pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-> index b5ed26c4c005..88f90895aad8 100644
-> --- a/arch/sh/kernel/syscalls/syscall.tbl
-> +++ b/arch/sh/kernel/syscalls/syscall.tbl
-> @@ -438,3 +438,4 @@
->  433	common	fspick				sys_fspick
->  434	common	pidfd_open			sys_pidfd_open
->  # 435 reserved for clone3
-> +438	common	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-> index 8c8cc7537fb2..218df6a2326e 100644
-> --- a/arch/sparc/kernel/syscalls/syscall.tbl
-> +++ b/arch/sparc/kernel/syscalls/syscall.tbl
-> @@ -481,3 +481,4 @@
->  433	common	fspick				sys_fspick
->  434	common	pidfd_open			sys_pidfd_open
->  # 435 reserved for clone3
-> +438	common	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-> index 15908eb9b17e..9c3101b65e0f 100644
-> --- a/arch/x86/entry/syscalls/syscall_32.tbl
-> +++ b/arch/x86/entry/syscalls/syscall_32.tbl
-> @@ -440,3 +440,4 @@
->  433	i386	fspick			sys_fspick			__ia32_sys_fspick
->  434	i386	pidfd_open		sys_pidfd_open			__ia32_sys_pidfd_open
->  435	i386	clone3			sys_clone3			__ia32_sys_clone3
-> +438	i386	pidfd_getfd		sys_pidfd_getfd			__ia32_sys_pidfd_getfd
-> diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-> index c29976eca4a8..cef85db75a62 100644
-> --- a/arch/x86/entry/syscalls/syscall_64.tbl
-> +++ b/arch/x86/entry/syscalls/syscall_64.tbl
-> @@ -357,6 +357,7 @@
->  433	common	fspick			__x64_sys_fspick
->  434	common	pidfd_open		__x64_sys_pidfd_open
->  435	common	clone3			__x64_sys_clone3/ptregs
-> +438	common	pidfd_getfd		__x64_sys_pidfd_getfd
->  
->  #
->  # x32-specific system call numbers start at 512 to avoid cache impact
-> diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-> index 25f4de729a6d..ae15183def12 100644
-> --- a/arch/xtensa/kernel/syscalls/syscall.tbl
-> +++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-> @@ -406,3 +406,4 @@
->  433	common	fspick				sys_fspick
->  434	common	pidfd_open			sys_pidfd_open
->  435	common	clone3				sys_clone3
-> +438	common	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-> index 2960dedcfde8..62fe706329d1 100644
-> --- a/include/linux/syscalls.h
-> +++ b/include/linux/syscalls.h
-> @@ -69,6 +69,7 @@ struct rseq;
->  union bpf_attr;
->  struct io_uring_params;
->  struct clone_args;
-> +struct pidfd_getfd_options;
->  
->  #include <linux/types.h>
->  #include <linux/aio_abi.h>
-> @@ -1000,6 +1001,9 @@ asmlinkage long sys_fspick(int dfd, const char __user *path, unsigned int flags)
->  asmlinkage long sys_pidfd_send_signal(int pidfd, int sig,
->  				       siginfo_t __user *info,
->  				       unsigned int flags);
-> +asmlinkage long sys_pidfd_getfd(int pidfd, int fd,
-> +				struct pidfd_getfd_options __user *options,
-> +				size_t, usize);
->  
->  /*
->   * Architecture-specific system calls
-> diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-> index 1fc8faa6e973..f358488366f6 100644
-> --- a/include/uapi/asm-generic/unistd.h
-> +++ b/include/uapi/asm-generic/unistd.h
-> @@ -850,9 +850,10 @@ __SYSCALL(__NR_pidfd_open, sys_pidfd_open)
->  #define __NR_clone3 435
->  __SYSCALL(__NR_clone3, sys_clone3)
->  #endif
-> +#define __NR_pidfd_getfd 438
->  
->  #undef __NR_syscalls
-> -#define __NR_syscalls 436
-> +#define __NR_syscalls 439
->  
->  /*
->   * 32 bit systems traditionally used different
-> diff --git a/include/uapi/linux/pidfd.h b/include/uapi/linux/pidfd.h
-> new file mode 100644
-> index 000000000000..0a3fc922661d
-> --- /dev/null
-> +++ b/include/uapi/linux/pidfd.h
-> @@ -0,0 +1,10 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> +#ifndef _UAPI_LINUX_PIDFD_H
-> +#define _UAPI_LINUX_PIDFD_H
-> +
-> +struct pidfd_getfd_options {};
-> +
-> +#define PIDFD_GETFD_OPTIONS_SIZE_VER0	0
-> +#define PIDFD_GETFD_OPTIONS_SIZE_LATEST	PIDFD_GETFD_OPTIONS_SIZE_VER0
-> +
-> +#endif /* _UAPI_LINUX_PIDFD_H */
-> diff --git a/kernel/pid.c b/kernel/pid.c
-> index 2278e249141d..2a9cb4be383f 100644
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@ -42,6 +42,7 @@
->  #include <linux/sched/signal.h>
->  #include <linux/sched/task.h>
->  #include <linux/idr.h>
-> +#include <uapi/linux/pidfd.h>
->  
->  struct pid init_struct_pid = {
->  	.count		= REFCOUNT_INIT(1),
-> @@ -578,3 +579,117 @@ void __init pid_idr_init(void)
->  	init_pid_ns.pid_cachep = KMEM_CACHE(pid,
->  			SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT);
->  }
-> +
-> +static struct file *__pidfd_getfd_fget_task(struct task_struct *task, u32 fd)
-> +{
-> +	struct file *file;
-> +	int ret;
-> +
-> +	ret = mutex_lock_killable(&task->signal->cred_guard_mutex);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	if (!ptrace_may_access(task, PTRACE_MODE_ATTACH_REALCREDS)) {
-> +		file = ERR_PTR(-EPERM);
-> +		goto out;
-> +	}
-> +
-> +	file = fget_task(task, fd);
-> +	if (!file)
-> +		file = ERR_PTR(-EBADF);
-> +
-> +out:
-> +	mutex_unlock(&task->signal->cred_guard_mutex);
-> +	return file;
-> +}
-> +
-> +static long pidfd_getfd(struct pid *pid, u32 fd)
-> +{
-> +	struct task_struct *task;
-> +	struct file *file;
-> +	int ret, retfd;
-> +
-> +	task = get_pid_task(pid, PIDTYPE_PID);
-> +	if (!task)
-> +		return -ESRCH;
-> +
-> +	file = __pidfd_getfd_fget_task(task, fd);
-> +	put_task_struct(task);
-> +	if (IS_ERR(file))
-> +		return PTR_ERR(file);
-> +
-> +	retfd = get_unused_fd_flags(O_CLOEXEC);
-> +	if (retfd < 0) {
-> +		ret = retfd;
-> +		goto out;
-> +	}
-> +
-> +	/*
-> +	 * security_file_receive must come last since it may have side effects
-> +	 * and cannot be reversed.
-> +	 */
-> +	ret = security_file_receive(file);
-> +	if (ret)
-> +		goto out_put_fd;
-> +
-> +	fd_install(retfd, file);
-> +	return retfd;
-> +
-> +out_put_fd:
-> +	put_unused_fd(retfd);
-> +out:
-> +	fput(file);
-> +	return ret;
-> +}
-> +
-> +/**
-> + * sys_pidfd_getfd() - Get a file descriptor from another process
-> + *
-> + * @pidfd:	file descriptor of the process
-> + * @fd:		the file descriptor number to get
-> + * @options:	options on how to get the fd
-> + * @usize:	the size of options
-> + *
-> + * This syscall requires that the process has the ability to ptrace the
-> + * process represented by the pidfd. It will return a duplicated version
-> + * of the file descriptor on success. The process who which is having
-
-s/who which/which/
-
-> + * its file descriptor taken is otherwise unaffected. If options is NULL
-> + * it is ignored along with usize.
-> + *
-> + * Return: On success, a file descriptor with cloexec is returned.
-> + *         On error, a negative errno number will be returned.
-> + */
-> +SYSCALL_DEFINE4(pidfd_getfd, int, pidfd, int, fd,
-> +		struct pidfd_getfd_options __user *, options, size_t, usize)
-> +{
-> +	struct pid *pid;
-> +	struct fd f;
-> +	int ret;
-> +
-> +	BUILD_BUG_ON(sizeof(struct pidfd_getfd_options) != PIDFD_GETFD_OPTIONS_SIZE_LATEST);
-> +
-> +	/*
-> +	 * options is currently unused, verify it's unset or if it is set,
-> +	 * ensure that size is 0.
-> +	 *
-> +	 * In the future, this will need to adopt copy_struct_from_user.
-> +	 */
-> +	if (options && usize > PIDFD_GETFD_OPTIONS_SIZE_VER0)
-> +		return -E2BIG;
-> +
-> +	f = fdget(pidfd);
-> +	if (!f.file)
-> +		return -EBADF;
-> +
-> +	pid = pidfd_pid(f.file);
-> +	if (IS_ERR(pid)) {
-> +		ret = PTR_ERR(pid);
-> +		goto out;
-> +	}
-> +
-> +	ret = pidfd_getfd(pid, fd);
-> +
-> +out:
-> +	fdput(f);
-> +	return ret;
-> +}
-> -- 
-> 2.20.1
-> 
+>
+>
+>
+> thanks,
+> --
+> John Hubbard
+> NVIDIA
