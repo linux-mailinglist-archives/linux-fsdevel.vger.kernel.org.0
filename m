@@ -2,121 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36B73129AC0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2019 21:16:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F912129AE4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2019 21:46:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbfLWUQd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Dec 2019 15:16:33 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:35143 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726787AbfLWUQc (ORCPT
+        id S1727029AbfLWUp4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Dec 2019 15:45:56 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39176 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726884AbfLWUp4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Dec 2019 15:16:32 -0500
-Received: by mail-qk1-f195.google.com with SMTP id z76so14821751qka.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Dec 2019 12:16:32 -0800 (PST)
+        Mon, 23 Dec 2019 15:45:56 -0500
+Received: by mail-wr1-f67.google.com with SMTP id y11so17937488wrt.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Dec 2019 12:45:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=wgujtO+XiBAfCOHn4dl1SjFj2KY5tRPEwtGRpMgrEhM=;
-        b=cEzSe57sjQ5zFnIdKJcFFggiO8yI6y1zJcE+AxhIh4oDwrM+/A+Q/TjG0b4sNYREwp
-         cy4vWt+jdwWPC3Fvvqt9dD8+23/jUxpIJ47Ijg0hkSXKhUl8wvCJBDfQ4bqDFXcekf5g
-         2Dz2nNcn2iaCHPt/jZQRKDCF1usIpPDSNB3Q8CdbufMU1VLIpDCIEBgMt2yCVdAqqkBO
-         1c6qc/b5aerT9nUIljzc6WKArtlNB6TrgASJB/0o3BeQOQ5bf+mlnTQgKy4rFnO098nH
-         kDSSM8lO8a9GrSF8CZ+0RchnjQF35BE3jLB2RLLBTvF9llz4DX6rsTfQXdPN6KXaqocO
-         Oyzg==
+        d=chrisdown.name; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=RfB76wwaEX/78cbszFlEp1zzCnUTfDY/Sh7gy/S4Lbo=;
+        b=nIF/rtU2CboWVUUhYtDjyEwhh2pLvmBwpXRDenb7QB+hciZC4vK0N69+PUkjMN7aDK
+         RRlAU40oBB+K9zy7rIki+yoYkvykfYmfp98ExrjDAXen7Q4WBr44moYjTmVm13NhpzXp
+         KrmGxTN3IeAgaWFHuzcn/KNRF7a/w2CjQMWoQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=wgujtO+XiBAfCOHn4dl1SjFj2KY5tRPEwtGRpMgrEhM=;
-        b=QUm+ji24GUQAK3FQdKzOC7hgEVdZYyesz4JsFewNLB6/+pez3BPlBgV6sg2vCec4tj
-         z9KUoTqWnZsZgp9CpqdaANJ7Y/6r7MfmgYHtjgJ06EDvLkv6iz/ygCmUdHXE8Xr10c1o
-         mf3gY/gqYHiXf1OrR+1bWQIfaTKGpz7XXm7STfdNRTB5XjrQrMLaLtnmQ0JcBdw8MvUY
-         71/ZEUts0tjy7cTMIYgfMZLoc1hWHIGx+jNDM3Kibl4TQpblEwr8JHWhJZYRZJrSaj8y
-         BrNys7sBT+QEgRW6e/BS6BoSrSecWmg0eJla/Fq4q/wDEIEjmONKVMcr6+G32f7Ys4RW
-         BO2A==
-X-Gm-Message-State: APjAAAV7zLaeX5z0L85pOiazBDB+gHQcPJOdnAR/fNePsIx/jVmYVsDl
-        2toxW2tiLXdmAQBASTqTvDM6xAHzSLq+uzYdMrQ=
-X-Google-Smtp-Source: APXvYqwwHRlTH98oZG36Zcqne1jje5Eh4j7wXlvlTXaQMQeETGFlU3horyIImUQtonspbYzjOolVygEesuPBHi0Fmdc=
-X-Received: by 2002:a37:4905:: with SMTP id w5mr27676835qka.267.1577132191978;
- Mon, 23 Dec 2019 12:16:31 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=RfB76wwaEX/78cbszFlEp1zzCnUTfDY/Sh7gy/S4Lbo=;
+        b=dTR28piE1BYqpC2yos3YiZ21GhApADXQxlev7NRFcQe024adF6ykF50EubCFuAsgDU
+         Tw50AYk0x/hKzsBo0FrvuyC7MP9wj1m3COuFUarahierwv1pFj0Znt2ZjK8LXezv9nI6
+         Abq7D7JzvYWJX/pQLCY8flFmnhEs8+RatVb018uLA3wsd9qnl13DHk5CfJs+iKAeLWtF
+         BjYRajl/a6cmsOUh5BjNitUNqLqmvmzjbSA9uNTf7pwOzyfknr+WA/3VBdxbA9QU4kYU
+         YY/d1tZuckuNQqaZ5xi/rR3ZWmdeW2XpnljeId2Cce52eKFEcN9fZHa/quD0FKUK3oGc
+         779Q==
+X-Gm-Message-State: APjAAAVOTyDI7E3e7GGNsU4f1JxrdOUJZPx3/KfA7mmhH7ltlHcXMyq9
+        XYR9NEhliA6PlpOkt4X9W55/aQ==
+X-Google-Smtp-Source: APXvYqx0rT7XFoKtJISTWdjiz/59q0aYkCoY6+XhmuAF4uBKOfMLvzlxtpIE9vJ0+tKDjKe9Ordrow==
+X-Received: by 2002:adf:df03:: with SMTP id y3mr34226407wrl.260.1577133954181;
+        Mon, 23 Dec 2019 12:45:54 -0800 (PST)
+Received: from localhost ([2620:10d:c092:180::1:94bc])
+        by smtp.gmail.com with ESMTPSA id b10sm22304212wrt.90.2019.12.23.12.45.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Dec 2019 12:45:53 -0800 (PST)
+Date:   Mon, 23 Dec 2019 20:45:51 +0000
+From:   Chris Down <chris@chrisdown.name>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@fb.com,
+        Hugh Dickins <hughd@google.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "zhengbin (A)" <zhengbin13@huawei.com>,
+        Roman Gushchin <guro@fb.com>
+Subject: Re: [PATCH] fs: inode: Reduce volatile inode wraparound risk when
+ ino_t is 64 bit
+Message-ID: <20191223204551.GA272672@chrisdown.name>
+References: <20191220024936.GA380394@chrisdown.name>
+ <CAOQ4uxjqSWcrA1reiyit9DRt+aq2tXBxLdPE31RrYw1yr=4hjg@mail.gmail.com>
+ <20191220121615.GB388018@chrisdown.name>
+ <CAOQ4uxgo_kAttnB4N1+om5gScYSDn3FXAr+_GUiqNy_79iiLXQ@mail.gmail.com>
+ <20191220164632.GA26902@bombadil.infradead.org>
+ <CAOQ4uxhYY9Ep1ncpU+E3bWg4ZpR8pjvLJMA5vj+7frEJ2KTwsg@mail.gmail.com>
+ <20191220195025.GA9469@bombadil.infradead.org>
 MIME-Version: 1.0
-Received: by 2002:ac8:2285:0:0:0:0:0 with HTTP; Mon, 23 Dec 2019 12:16:31
- -0800 (PST)
-Reply-To: janvierlitse2019@gmail.com
-From:   Mr Janvier Litse <mrronanpectual@gmail.com>
-Date:   Mon, 23 Dec 2019 12:16:31 -0800
-Message-ID: <CAATtkqtxJQYVEOhhLdq0kKW-NL1CQ2=PcHPj6tFeeoJVTTTehg@mail.gmail.com>
-Subject: URGENT RESPOND FOR MORE DETAILS!
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20191220195025.GA9469@bombadil.infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Mr Janvier Litse.
-African Development Bank
-Burkina Faso (ADB)
-Ouagadougou - Burkina Faso.
+Matthew Wilcox writes:
+>On Fri, Dec 20, 2019 at 07:35:38PM +0200, Amir Goldstein wrote:
+>> On Fri, Dec 20, 2019 at 6:46 PM Matthew Wilcox <willy@infradead.org> wrote:
+>> >
+>> > On Fri, Dec 20, 2019 at 03:41:11PM +0200, Amir Goldstein wrote:
+>> > > Suggestion:
+>> > > 1. Extend the kmem_cache API to let the ctor() know if it is
+>> > > initializing an object
+>> > >     for the first time (new page) or recycling an object.
+>> >
+>> > Uh, what?  The ctor is _only_ called when new pages are allocated.
+>> > Part of the contract with the slab user is that objects are returned to
+>> > the slab in an initialised state.
+>>
+>> Right. I mixed up the ctor() with alloc_inode().
+>> So is there anything stopping us from reusing an existing non-zero
+>> value of  i_ino in shmem_get_inode()? for recycling shmem ino
+>> numbers?
+>
+>I think that would be an excellent solution to the problem!  At least,
+>I can't think of any problems with it.
 
-Dear friend, Good Day
+Thanks for the suggestions and feedback, Amir and Matthew :-)
 
-I am writing to seek your cooperation over this business, Please due
-welcome this letter.
+The slab i_ino recycling approach works somewhat, but is unfortunately neutered 
+quite a lot by the fact that slab recycling is per-memcg. That is, replacing 
+with recycle_or_get_next_ino(old_ino)[0] for shmfs and a few other trivial 
+callsites only leads to about 10% slab reuse, which doesn't really stem the 
+bleeding of 32-bit inums on an affected workload:
 
-I am Mr Janvier Litse.the director of the accounts & auditing dept .at
-the African Development Bank Ouagadougou-west Africa (A D B) With due
-respect, I have decided to contact you on a business transaction that
-will be beneficial to both of us.At the bank's lastaccounts/auditing
-evaluations, my staffs came across an old account which was being
-maintained by a foreign client who we learnt was among the deceased
-passengers of motor accident on November.. 2003, the deceased was
-unable to run this account since his death. The account has remained
-dormant without the knowledge of his family since it was put in a safe
-deposit account in the bank for future investment by the client.
+     # tail -5000 /sys/kernel/debug/tracing/trace | grep -o 'recycle_or_get_next_ino:.*' | sort | uniq -c
+         4454 recycle_or_get_next_ino: not recycled
+          546 recycle_or_get_next_ino: recycled
 
-Since his demise, even the members of his family haven't applied for
-claims over this fund and it has been in the safe deposit accountuntil
-I discovered that it cannot be claimed since our client is a foreign
-national and we are sure that he has no next of kin here to file
-claims over the money. As the director of the department, this
-discovery was brought to my office so as to decide what is to be done.
-I decided to seek ways through which to transfer this money out of the
-bank and out of the country too.
+Roman (who I've just added to cc) tells me that currently we only have 
+per-memcg slab reuse instead of global when using CONFIG_MEMCG. This 
+contributes fairly significantly here since there are multiple tasks across 
+multiple cgroups which are contributing to the get_next_ino() thrash.
 
-The total amount in the account is ten million five hundred thousand
-dollars (USD 10,500,000.00).with my positions as a staffs of the bank,
-I am handicapped because I cannot operate foreign accounts and cannot
-lay bonafide claim over this money.The client was a foreign national
-and you will only be asked to act as his next of kin and I will supply
-you with all the necessary information and bank data to assist you in
-being able to transfer this money to any bank of your choice where
-this money could be transferred into.
+I think this is a good start, but we need something of a different magnitude in 
+order to actually solve this problem with the current slab infrastructure. How 
+about something like the following?
 
-The total sum will be shared as follows: 50% for me, 50% for you and
-expenses incidental occur during the transfer will be  incured by both
-of us. The transfer is risk free on both sides hence you are going to
-follow my instruction till the fund transfer to your account.
+1. Add get_next_ino_full, which uses whatever the full width of ino_t is
+2. Use get_next_ino_full in tmpfs (et al.)
+3. Add a mount option to tmpfs (et al.), say `32bit-inums`, which people can 
+    pass if they want the 32-bit inode numbers back. This would still allow 
+    people who want to make this tradeoff to use xino.
+4. (If you like) Also add a CONFIG option to disable this at compile time.
 
-Since I work in this bank that is why you should be confident in the
-success of this transaction because you will be updated with
-information as at when desired I will wish you to keep this
-transaction secret and confidential as I am hoping to retire with my
-share of this money at the end of transaction which will be when this
-money is safety in your account. I will then come over to your country
-for sharing according to the previously agreed percentages. You might
-even have to advise me on possibilities of investment in your country
-or elsewhere of our choice. May God help you to help me to a restive
-retirement, Amen.
+I'd appreciate your thoughts on that approach or others you have ideas about. 
+Thanks! :-)
 
+0:
 
-Please for further information and enquires feel free to contact me
-back immediately for more explanation and better  understanding.please
-contact me through this alternative email address
-(janvierlitse2019@gmail.com)
+unsigned int recycle_or_get_next_ino(ino_t old_ino)
+{
+	/*
+	 * get_next_ino returns unsigned int. If this fires then i_ino must be
+	 * >32 bits and have been changed later, so the caller shouldn't be
+	 * recycling inode numbers
+	 */
+	WARN_ONCE(old_ino >> (sizeof(unsigned int) * 8),
+		  "Recyclable i_ino uses more bits than unsigned int: %llu",
+		  (u64)old_ino);
 
-I am waiting for your urgent response!!!
-Thanks and remain blessed
- Mr Janvier Litse.
-+226 54459253
+	if (old_ino) {
+		if (prandom_u32() % 100 == 0)
+			trace_printk("recycled\n");
+		return old_ino;
+	} else {
+		if (prandom_u32() % 100 == 0)
+			trace_printk("not recycled\n");
+		return get_next_ino();
+	}
+}
