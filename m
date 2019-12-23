@@ -2,94 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9462612926D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2019 08:47:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E99E5129332
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2019 09:41:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726096AbfLWHrF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Dec 2019 02:47:05 -0500
-Received: from smtp1-3.goneo.de ([85.220.129.32]:49335 "EHLO smtp1-3.goneo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725880AbfLWHrF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Dec 2019 02:47:05 -0500
-X-Greylist: delayed 568 seconds by postgrey-1.27 at vger.kernel.org; Mon, 23 Dec 2019 02:47:05 EST
-Received: from localhost (localhost [127.0.0.1])
-        by smtp1.goneo.de (Postfix) with ESMTP id 9A2B323F0D5;
-        Mon, 23 Dec 2019 08:37:35 +0100 (CET)
-X-Virus-Scanned: by goneo
-X-Spam-Flag: NO
-X-Spam-Score: -2.752
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.752 tagged_above=-999 tests=[ALL_TRUSTED=-1,
-        AWL=0.148, BAYES_00=-1.9] autolearn=ham
-Received: from smtp1.goneo.de ([127.0.0.1])
-        by localhost (smtp1.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Uz_X5WMlX-IY; Mon, 23 Dec 2019 08:37:34 +0100 (CET)
-Received: from [192.168.1.127] (dyndsl-085-016-047-111.ewe-ip-backbone.de [85.16.47.111])
-        by smtp1.goneo.de (Postfix) with ESMTPSA id 1D2C523F0C6;
-        Mon, 23 Dec 2019 08:37:34 +0100 (CET)
-Subject: Re: [PATCH v3] Documentation: filesystems: convert fuse to RST
-To:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>, corbet@lwn.net,
-        miklos@szeredi.hu
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-fsdevel@vger.kernel.org
-References: <20191223012248.606168-1-dwlsalmeida@gmail.com>
-From:   Markus Heiser <markus.heiser@darmarit.de>
-Message-ID: <91ded87c-ca70-bcf7-49fc-fa2988f4e36b@darmarit.de>
-Date:   Mon, 23 Dec 2019 08:37:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1725953AbfLWIlO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Dec 2019 03:41:14 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:41523 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfLWIlO (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 23 Dec 2019 03:41:14 -0500
+Received: by mail-ot1-f66.google.com with SMTP id r27so21194602otc.8;
+        Mon, 23 Dec 2019 00:41:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cDv9UaL4HKxCZwOpeNm1xbtf2cmQl4fg1wQxfmqaPlY=;
+        b=f2zAyaDXwgl4tc6L5OljcVFXROCwReDChWEOjREH3Ho857KqigiMUBkYVvSd9Tj21t
+         T6dDGuVTd4kwkAz9j8VTiyi9MdhvwvMV6WyJgMB8w/jXVz9q0SgmWbn3WaH7m1/x3BDV
+         QjUAnUJh+aL56YOlwDH6jE/T+OTqKsGzF5cbWnWN3s1gyBmhWOuoFK+6YNpwqCwj4p9u
+         en0NQGwgdDcdJy3WAiW4/UeYffsh96tljoF1cLZINldvnRPnD3fEwlQ0mzWYKHDh37wQ
+         bp3Gky2wuhiLt+mUrw1cxYleKMSomU8EstGezn5MiT5fQTNleS7xVoNF83vl/1scPhUa
+         4moQ==
+X-Gm-Message-State: APjAAAUTg841JTkrunoyV5cnT2VNz6KEm8sHHrGmN7htgWkekBzEtLAs
+        JXD/cOcWB1E4rM3nud9ZzJI81cSR6rABozRRZ5Dolbfo
+X-Google-Smtp-Source: APXvYqx2KCiv7cxuDdzBfA2c2NhXkW2xa7BGOvhzkGGauQ0VJ6aD6A5SkDirLFnjAg8AJrwmGlawMoHMEhNiYeHVBR4=
+X-Received: by 2002:a9d:dc1:: with SMTP id 59mr31479287ots.250.1577090473314;
+ Mon, 23 Dec 2019 00:41:13 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191223012248.606168-1-dwlsalmeida@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+References: <20191223040020.109570-1-yuchao0@huawei.com>
+In-Reply-To: <20191223040020.109570-1-yuchao0@huawei.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 23 Dec 2019 09:41:02 +0100
+Message-ID: <CAMuHMdUDMv_mMw_ZU4BtuRKX1OvMhjLWw2owTcAP-0D4j5XROw@mail.gmail.com>
+Subject: Re: [PATCH] f2fs: introduce DEFAULT_IO_TIMEOUT_JIFFIES
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chao Yu <chao@kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Daniel,
+Hi,
 
-just some nits ...
+CC linux-fsdevel
 
-Am 23.12.19 um 02:22 schrieb Daniel W. S. Almeida:
-> From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
-...
+On Mon, Dec 23, 2019 at 5:01 AM Chao Yu <yuchao0@huawei.com> wrote:
+> As Geert Uytterhoeven reported:
+>
+> for parameter HZ/50 in congestion_wait(BLK_RW_ASYNC, HZ/50);
+>
+> On some platforms, HZ can be less than 50, then unexpected 0 timeout
+> jiffies will be set in congestion_wait().
+>
+> This patch introduces a macro DEFAULT_IO_TIMEOUT_JIFFIES to limit
+> mininum value of timeout jiffies.
+>
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
 
-> diff --git a/Documentation/filesystems/fuse.txt b/Documentation/filesystems/fuse.rst
-> similarity index 79%
-> rename from Documentation/filesystems/fuse.txt
-> rename to Documentation/filesystems/fuse.rst
-> index 13af4a49e7db..1ca3aac04606 100644
-> --- a/Documentation/filesystems/fuse.txt
-> +++ b/Documentation/filesystems/fuse.rst
-> @@ -1,41 +1,39 @@
+Thanks for your patch!
 
-...
+> ---
+>  fs/f2fs/compress.c |  3 ++-
+>  fs/f2fs/data.c     |  5 +++--
+>  fs/f2fs/f2fs.h     |  2 ++
+>  fs/f2fs/gc.c       |  3 ++-
+>  fs/f2fs/inode.c    |  3 ++-
+>  fs/f2fs/node.c     |  3 ++-
+>  fs/f2fs/recovery.c |  6 ++++--
+>  fs/f2fs/segment.c  | 12 ++++++++----
+>  fs/f2fs/super.c    |  6 ++++--
+>  9 files changed, 29 insertions(+), 14 deletions(-)
+>
+> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+> index 1bc86a54ad71..ee4fe8e644aa 100644
+> --- a/fs/f2fs/compress.c
+> +++ b/fs/f2fs/compress.c
+> @@ -945,7 +945,8 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
+>                         } else if (ret == -EAGAIN) {
+>                                 ret = 0;
+>                                 cond_resched();
+> -                               congestion_wait(BLK_RW_ASYNC, HZ/50);
+> +                               congestion_wait(BLK_RW_ASYNC,
+> +                                       DEFAULT_IO_TIMEOUT_JIFFIES);
+>                                 lock_page(cc->rpages[i]);
+>                                 clear_page_dirty_for_io(cc->rpages[i]);
+>                                 goto retry_write;
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index f1f5c701228d..78b5c0b0287e 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -2320,7 +2320,8 @@ int f2fs_encrypt_one_page(struct f2fs_io_info *fio)
+>                 /* flush pending IOs and wait for a while in the ENOMEM case */
+>                 if (PTR_ERR(fio->encrypted_page) == -ENOMEM) {
+>                         f2fs_flush_merged_writes(fio->sbi);
+> -                       congestion_wait(BLK_RW_ASYNC, HZ/50);
+> +                       congestion_wait(BLK_RW_ASYNC,
+> +                                       DEFAULT_IO_TIMEOUT_JIFFIES);
+>                         gfp_flags |= __GFP_NOFAIL;
+>                         goto retry_encrypt;
+>                 }
+> @@ -2900,7 +2901,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+>                                         if (wbc->sync_mode == WB_SYNC_ALL) {
+>                                                 cond_resched();
+>                                                 congestion_wait(BLK_RW_ASYNC,
+> -                                                               HZ/50);
+> +                                                       DEFAULT_IO_TIMEOUT_JIFFIES);
+>                                                 goto retry_write;
+>                                         }
+>                                         goto next;
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 16edbf4e05e8..4bdc20a94185 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -559,6 +559,8 @@ enum {
+>
+>  #define DEFAULT_RETRY_IO_COUNT 8       /* maximum retry read IO count */
+>
+> +#define        DEFAULT_IO_TIMEOUT_JIFFIES      (max_t(long, HZ/50, 1))
+> +
+>  /* maximum retry quota flush count */
+>  #define DEFAULT_RETRY_QUOTA_FLUSH_COUNT                8
+>
 
->   Filesystem type
-> -~~~~~~~~~~~~~~~
-> +===============
->   
->   The filesystem type given to mount(2) can be one of the following:
->   
-> -'fuse'
-> +    **fuse**
->   
+Seeing other file systems (ext4, xfs) and even core MM code suffers from
+the same issue, perhaps it makes sense to move this into congestion_wait(),
+i.e. increase the timeout to 1 if it's zero in the latter function?
 
-drop empty line, use definition list[1] / you used definition list everywhere 
-except here.  I guess the follwowing matches better:
+Gr{oetje,eeting}s,
 
+                        Geert
 
-``fuse``
-   This is the usual way to mount a FUSE filesystem. ...
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-``fuseblk``
-   The filesystem is block device based. ..
-
-[1] 
-https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#definition-lists
-
--- Markus --
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
