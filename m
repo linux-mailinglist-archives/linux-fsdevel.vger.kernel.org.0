@@ -2,146 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E99E5129332
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2019 09:41:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 215A0129356
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Dec 2019 09:52:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725953AbfLWIlO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Dec 2019 03:41:14 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:41523 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbfLWIlO (ORCPT
+        id S1726097AbfLWIwu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Dec 2019 03:52:50 -0500
+Received: from mail-qt1-f176.google.com ([209.85.160.176]:36179 "EHLO
+        mail-qt1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726073AbfLWIwt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Dec 2019 03:41:14 -0500
-Received: by mail-ot1-f66.google.com with SMTP id r27so21194602otc.8;
-        Mon, 23 Dec 2019 00:41:13 -0800 (PST)
+        Mon, 23 Dec 2019 03:52:49 -0500
+Received: by mail-qt1-f176.google.com with SMTP id q20so14850085qtp.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Dec 2019 00:52:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=TgZ5wQeLpSI36DgbHghGRNlge7sN/PjDKlYtqGLPpjE=;
+        b=llHc5aACfmYmBh1HC6OzEaIUM0LWwqSs6lZi31qBvOiC8wdBuW4+1EZFG1YZgFpCXm
+         SpSsijXHOevazB+gx0L4AQXraqK/7EEEl5CHkhLJjSHwXc0BT89duDGm4C99siUD5N1V
+         nkzWy6uC9qFt3eJYKixjiNl6eNqw8yvmUHPvshFjqgjsY1lz75Iw3gBngeAKXamiJ0qV
+         bzsUHvGl+cArSW33As3OuBVcg94aiWK6+C+IGlFi2+bNDSaeA24N+lq8vAmSIOa+BjYz
+         I434PLXNP0iNSKrTKavBLqJ0/1RDcWF3+FGvLYUvv2d9B3loIUzi+7PGqGmjhQJtckso
+         14rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cDv9UaL4HKxCZwOpeNm1xbtf2cmQl4fg1wQxfmqaPlY=;
-        b=f2zAyaDXwgl4tc6L5OljcVFXROCwReDChWEOjREH3Ho857KqigiMUBkYVvSd9Tj21t
-         T6dDGuVTd4kwkAz9j8VTiyi9MdhvwvMV6WyJgMB8w/jXVz9q0SgmWbn3WaH7m1/x3BDV
-         QjUAnUJh+aL56YOlwDH6jE/T+OTqKsGzF5cbWnWN3s1gyBmhWOuoFK+6YNpwqCwj4p9u
-         en0NQGwgdDcdJy3WAiW4/UeYffsh96tljoF1cLZINldvnRPnD3fEwlQ0mzWYKHDh37wQ
-         bp3Gky2wuhiLt+mUrw1cxYleKMSomU8EstGezn5MiT5fQTNleS7xVoNF83vl/1scPhUa
-         4moQ==
-X-Gm-Message-State: APjAAAUTg841JTkrunoyV5cnT2VNz6KEm8sHHrGmN7htgWkekBzEtLAs
-        JXD/cOcWB1E4rM3nud9ZzJI81cSR6rABozRRZ5Dolbfo
-X-Google-Smtp-Source: APXvYqx2KCiv7cxuDdzBfA2c2NhXkW2xa7BGOvhzkGGauQ0VJ6aD6A5SkDirLFnjAg8AJrwmGlawMoHMEhNiYeHVBR4=
-X-Received: by 2002:a9d:dc1:: with SMTP id 59mr31479287ots.250.1577090473314;
- Mon, 23 Dec 2019 00:41:13 -0800 (PST)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=TgZ5wQeLpSI36DgbHghGRNlge7sN/PjDKlYtqGLPpjE=;
+        b=C6dElL29bp75DkV0EFK5MzatZ7wgj8PS7bGhLstYid+OaGXyxQglrUWSPa+FJ30Nbr
+         Fk8xR+d7D78C2jJ234xEKZnGrWGHiy7S/xu+BsiSY8arJZZkgwyxFfXXgBcia3ZTHTS+
+         8Tqf1Lod4vy/ZvkBCTjIzOifmyB5XA0ta68+e6hLgCWfMowqgLA7dH4CxwhqvlCOto52
+         F5SmNhH0B15QZ5YZ0zbf0T8yV/VMi3f4QO22QSgTLZlKjRlCMbImUZKHU+CjWdh5LxAQ
+         fXhP4rXF7+KDA8oG/mO9DjQlI2TV8X6fIVRPa+xwW0DlJxekWb0Wno54EGoUDw9ROWJU
+         Qg9Q==
+X-Gm-Message-State: APjAAAU9d6TmSovBGRuv/oF6fRanpRfTrFcWTQItBxkEpkzxGorXQSng
+        o/246IiysKC9nGdiSUEpEDUYmJuwyaC6Qh6r+0PlKhQaU5g=
+X-Google-Smtp-Source: APXvYqwyX8YBP9k0Ms8fSMbEQAj+AhDlMi3wWusHI8pSrG7RB4zxThL55AjozfAGs8XH9iPeXrfbpYIoS/JdT2w+pes=
+X-Received: by 2002:ac8:769a:: with SMTP id g26mr21923157qtr.259.1577091168592;
+ Mon, 23 Dec 2019 00:52:48 -0800 (PST)
 MIME-Version: 1.0
-References: <20191223040020.109570-1-yuchao0@huawei.com>
-In-Reply-To: <20191223040020.109570-1-yuchao0@huawei.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 23 Dec 2019 09:41:02 +0100
-Message-ID: <CAMuHMdUDMv_mMw_ZU4BtuRKX1OvMhjLWw2owTcAP-0D4j5XROw@mail.gmail.com>
-Subject: Re: [PATCH] f2fs: introduce DEFAULT_IO_TIMEOUT_JIFFIES
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chao Yu <chao@kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+From:   Liang Chen <liangchen.linux@gmail.com>
+Date:   Mon, 23 Dec 2019 16:52:37 +0800
+Message-ID: <CAKhg4tJwahZBXLtSB3fnk8n+Y9tXRehA_=1xkAJ6d3Gn1Hw5uQ@mail.gmail.com>
+Subject: possible infinite loop with buffer_head usage
+To:     linux-fsdevel@vger.kernel.org
+Cc:     viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+There exists an inconsistency in calculation of page cache index between
+__find_get_block_slow and grow_buffers.
 
-CC linux-fsdevel
+__bread(bdev, 64, 1024);
 
-On Mon, Dec 23, 2019 at 5:01 AM Chao Yu <yuchao0@huawei.com> wrote:
-> As Geert Uytterhoeven reported:
->
-> for parameter HZ/50 in congestion_wait(BLK_RW_ASYNC, HZ/50);
->
-> On some platforms, HZ can be less than 50, then unexpected 0 timeout
-> jiffies will be set in congestion_wait().
->
-> This patch introduces a macro DEFAULT_IO_TIMEOUT_JIFFIES to limit
-> mininum value of timeout jiffies.
->
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+With 4k page size and block size, above usage causes infinite loop in
+__getblk_slow. This is not to say it doesn't have issues with different page
+size or block size.
 
-Thanks for your patch!
+__find_get_block (in __find_get_block_slow) tries to find buffers associated
+with page indexed at "block >> (PAGE_SHIFT - bd_inode->i_blkbits);", i.e. index
+64.
 
-> ---
->  fs/f2fs/compress.c |  3 ++-
->  fs/f2fs/data.c     |  5 +++--
->  fs/f2fs/f2fs.h     |  2 ++
->  fs/f2fs/gc.c       |  3 ++-
->  fs/f2fs/inode.c    |  3 ++-
->  fs/f2fs/node.c     |  3 ++-
->  fs/f2fs/recovery.c |  6 ++++--
->  fs/f2fs/segment.c  | 12 ++++++++----
->  fs/f2fs/super.c    |  6 ++++--
->  9 files changed, 29 insertions(+), 14 deletions(-)
->
-> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-> index 1bc86a54ad71..ee4fe8e644aa 100644
-> --- a/fs/f2fs/compress.c
-> +++ b/fs/f2fs/compress.c
-> @@ -945,7 +945,8 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
->                         } else if (ret == -EAGAIN) {
->                                 ret = 0;
->                                 cond_resched();
-> -                               congestion_wait(BLK_RW_ASYNC, HZ/50);
-> +                               congestion_wait(BLK_RW_ASYNC,
-> +                                       DEFAULT_IO_TIMEOUT_JIFFIES);
->                                 lock_page(cc->rpages[i]);
->                                 clear_page_dirty_for_io(cc->rpages[i]);
->                                 goto retry_write;
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index f1f5c701228d..78b5c0b0287e 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -2320,7 +2320,8 @@ int f2fs_encrypt_one_page(struct f2fs_io_info *fio)
->                 /* flush pending IOs and wait for a while in the ENOMEM case */
->                 if (PTR_ERR(fio->encrypted_page) == -ENOMEM) {
->                         f2fs_flush_merged_writes(fio->sbi);
-> -                       congestion_wait(BLK_RW_ASYNC, HZ/50);
-> +                       congestion_wait(BLK_RW_ASYNC,
-> +                                       DEFAULT_IO_TIMEOUT_JIFFIES);
->                         gfp_flags |= __GFP_NOFAIL;
->                         goto retry_encrypt;
->                 }
-> @@ -2900,7 +2901,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->                                         if (wbc->sync_mode == WB_SYNC_ALL) {
->                                                 cond_resched();
->                                                 congestion_wait(BLK_RW_ASYNC,
-> -                                                               HZ/50);
-> +                                                       DEFAULT_IO_TIMEOUT_JIFFIES);
->                                                 goto retry_write;
->                                         }
->                                         goto next;
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 16edbf4e05e8..4bdc20a94185 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -559,6 +559,8 @@ enum {
->
->  #define DEFAULT_RETRY_IO_COUNT 8       /* maximum retry read IO count */
->
-> +#define        DEFAULT_IO_TIMEOUT_JIFFIES      (max_t(long, HZ/50, 1))
-> +
->  /* maximum retry quota flush count */
->  #define DEFAULT_RETRY_QUOTA_FLUSH_COUNT                8
->
+grow_buffers calculates the page index in a different way which gives 16 for the
+page index number, thus eventually associates the 4 newly created buffers (4K
+page equally divided into 4 buffers of 1024 bytes) with the page at index 16.
 
-Seeing other file systems (ext4, xfs) and even core MM code suffers from
-the same issue, perhaps it makes sense to move this into congestion_wait(),
-i.e. increase the timeout to 1 if it's zero in the latter function?
+So __find_get_block will never find the newly created buffer and stuck in the
+loop.
 
-Gr{oetje,eeting}s,
 
-                        Geert
+Using i_blkbits for the calculation in grow_buffers seems to work, but there are
+more concerns. For example, end_block and b_blocknr calculation in
+init_page_buffers assumes block size equals to buffer size, and a similar
+situation in submit_bh_wbc while calculating bi_sector. I made some minor
+changes to these places to use block size instead of b_size, which looks ok with
+a few simple test cases.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+I would really appreciate if someone could give more insight on the issue and
+potential impact on the changes of page cache index and b_blocknr calculation
+before I go ahead spent more time on it.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
+Thanks,
+Liang
