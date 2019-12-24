@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B962129EB4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Dec 2019 08:55:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0873129EB5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Dec 2019 08:55:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726102AbfLXHzU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Dec 2019 02:55:20 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:53536 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726043AbfLXHzU (ORCPT
+        id S1726140AbfLXHzY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Dec 2019 02:55:24 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33783 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726043AbfLXHzY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Dec 2019 02:55:20 -0500
-Received: by mail-pj1-f66.google.com with SMTP id n96so872003pjc.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Dec 2019 23:55:20 -0800 (PST)
+        Tue, 24 Dec 2019 02:55:24 -0500
+Received: by mail-pf1-f196.google.com with SMTP id z16so10413875pfk.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Dec 2019 23:55:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=fFfoleXjv3JSEmvkK0O9oMZGbyG7YMfuDochkkrQvOQ=;
-        b=Rya8+jtCyVchuEd4ioU+noODodMq+INQiLX/PL4jSKcYg5GvOf/SXNDOQHJtEgbW8y
-         xKL05hnbQGUtL3Acr7ahz8ME2eCZf7ZuMunCKvbRRAimebxigKbETepsyTSzWlQ9BgXB
-         3GWj0gLhRxLYw/JJUiPcpH5hRxy5+e+SEzVL3VAEoj1PGXL6tzT9xSp+STluqj8AzL/j
-         MOWHh7EVc9HXo7isZza9cfU/KNvur+BDPfzHuBNNWOckvpzIdobDCGncrm7kproAsgCm
-         nYd9QDN5QIDzAXYaZ6OccZH5PF/Aw9nhoe4DlLL++4qM2OcHdVA8Z5lRMeNFWbez74aW
-         24vg==
+        bh=jfKPUo9lIku1R2ahp2lE/JKldZJ7MZdv3GlFZ3kEMlk=;
+        b=Gaa4LRfGyOoT4mcvSupClLdax8k3FG9KAqjHzo4kjy2lKdgb3gPtZxcshF8/w3UAYw
+         oUzjAC2i6C/3lX3na16TLMtL1zEK2qnJaS8GpN4bxtVgQsXe3V+x0OZd8AVYwK52v+Jz
+         KVqPoe42Dawe3tmBAST+AdjrL773RmDLid0ehT9oSBdbO7+wpvEtckN5571GyeA9IQJH
+         ZR9zEaA4R9iTKVFon3OHlwHGbB6rsWF+8jRhYoGRmEYlYogg/tn+AdOKmkDf9w2AFnzr
+         LM+BExf+n/Ii13V1sA51PNpGoRjE5oXcLqrRjTznnP0eIqBQRVzLf1J1fov7ggl5tz0i
+         w6eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=fFfoleXjv3JSEmvkK0O9oMZGbyG7YMfuDochkkrQvOQ=;
-        b=Ck4z/RzBryQXGf8vgSwFVsJdWnEG2uKWI9yfoI1xMsql2C8raPWwYMDGrVINFLlBV2
-         +8Qpt2XRK19rKmIkU94e/Ae+HDkeLH/UTo8e3+eYbtE5bnJ00Xn5xVBftwB7tQOntuBX
-         /7KjfwXJ5NM4ogMrwxVFpF6UU42Ppw/+er5cQiG+uwuXCJVwRvIZv9TSsTmpsYajgNLE
-         vfF/j0nBLQrSLRKSlUYY4wppbdDOd3C/LFk7nlnEL+MZOTYiaGuPETb41/Z9m/P9fq2+
-         nL2+Rqrowqp/lJhajKT7NGvOmGR41OR/8uBrmNO4rCNcJbYWfVdk9CEkLGNv5SGc74ZO
-         K0Aw==
-X-Gm-Message-State: APjAAAWoMM2LoTbNHhcLALLzRln+kW2IkPzFHsucYL+W9C7oG2mLzdc2
-        8ZwQaFjJ+8FeMMF8WavSBVU=
-X-Google-Smtp-Source: APXvYqzwb5nZVKnI+8k0kQUlZltmzZl2BXhecd6/pm7gYC87WxNmmvp1PaWB32bCf3nsZxt4xB3f0Q==
-X-Received: by 2002:a17:90a:ead3:: with SMTP id ev19mr4262063pjb.80.1577174120029;
-        Mon, 23 Dec 2019 23:55:20 -0800 (PST)
+        bh=jfKPUo9lIku1R2ahp2lE/JKldZJ7MZdv3GlFZ3kEMlk=;
+        b=CBKwAhtJsxeYvKwloCGPs0ZFrr9QwCsulQD/p762eA1nfCxx12gWKd42xCNKu+eB4t
+         xLMrjSs4XJ2WxHSBBRjmwIjdpjvWuhVUVOHQrwHDHZjkDqkl7iikjQUiLYgjdi+AGG+i
+         JCBAvW+m5Lagp32TfAsaFRCsll/wkG9peL8kdmR3hIWJUxrt8Fv1u6oyQIsnfDCgDnPf
+         45s8Wj+2rH2p/Ff4rtT4wubpE95wUpsOK54Zbs87QRZMWmIeoLDpPIov3Mnoyq6SX8dX
+         vdOqQzjIR7UHpO2fxYMAgTG9wu4uV5izs446JVGckMX1rkVk9ScNOJFprb+PCUwDrYgD
+         grig==
+X-Gm-Message-State: APjAAAXwzg1RqTQIfbCZiXlliuWAHkM0luhloRmZ+O15evtyOiiKqv3C
+        tP0SWL4LK7x+APMf86NH7gYjgg7BcN4=
+X-Google-Smtp-Source: APXvYqx5yy+fa0xyry+JOfLiSMfzbupoakJJbuMOlC+zi6L36BrPLDVcL6DMDnAvbUxjPELtPhMdgg==
+X-Received: by 2002:a63:554c:: with SMTP id f12mr36614237pgm.23.1577174123459;
+        Mon, 23 Dec 2019 23:55:23 -0800 (PST)
 Received: from dev.localdomain ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id c2sm2004064pjq.27.2019.12.23.23.55.16
+        by smtp.gmail.com with ESMTPSA id c2sm2004064pjq.27.2019.12.23.23.55.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Dec 2019 23:55:19 -0800 (PST)
+        Mon, 23 Dec 2019 23:55:22 -0800 (PST)
 From:   Yafang Shao <laoar.shao@gmail.com>
 To:     hannes@cmpxchg.org, david@fromorbit.com, mhocko@kernel.org,
         vdavydov.dev@gmail.com, akpm@linux-foundation.org,
         viro@zeniv.linux.org.uk
 Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         Yafang Shao <laoar.shao@gmail.com>,
-        Roman Gushchin <guro@fb.com>
-Subject: [PATCH v2 2/5] mm, memcg: introduce MEMCG_PROT_SKIP for memcg zero usage case
-Date:   Tue, 24 Dec 2019 02:53:23 -0500
-Message-Id: <1577174006-13025-3-git-send-email-laoar.shao@gmail.com>
+        Chris Down <chris@chrisdown.name>
+Subject: [PATCH v2 3/5] mm, memcg: reset memcg's memory.{min, low} for reclaiming itself
+Date:   Tue, 24 Dec 2019 02:53:24 -0500
+Message-Id: <1577174006-13025-4-git-send-email-laoar.shao@gmail.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1577174006-13025-1-git-send-email-laoar.shao@gmail.com>
 References: <1577174006-13025-1-git-send-email-laoar.shao@gmail.com>
@@ -62,59 +62,58 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If the usage of a memcg is zero, we don't need to do useless work to scan
-it. That is a minor optimization.
+memory.{emin, elow} are set in mem_cgroup_protected(), and the values of
+them won't be changed until next recalculation in this function. After
+either or both of them are set, the next reclaimer to relcaim this memcg
+may be a different reclaimer, e.g. this memcg is also the root memcg of
+the new reclaimer, and then in mem_cgroup_protection() in get_scan_count()
+the old values of them will be used to calculate scan count, that is not
+proper. We should reset them to zero in this case.
 
-Cc: Roman Gushchin <guro@fb.com>
+Here's an example of this issue.
+
+    root_mem_cgroup
+         /
+        A   memory.max=1024M memory.min=512M memory.current=800M
+
+Once kswapd is waked up, it will try to scan all MEMCGs, including
+this A, and it will assign memory.emin of A with 512M.
+After that, A may reach its hard limit(memory.max), and then it will
+do memcg reclaim. Because A is the root of this reclaimer, so it will
+not calculate its memory.emin. So the memory.emin is the old value
+512M, and then this old value will be used in
+mem_cgroup_protection() in get_scan_count() to get the scan count.
+That is not proper.
+
+Cc: Chris Down <chris@chrisdown.name>
 Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 ---
- include/linux/memcontrol.h | 1 +
- mm/memcontrol.c            | 2 +-
- mm/vmscan.c                | 6 ++++++
- 3 files changed, 8 insertions(+), 1 deletion(-)
+ mm/memcontrol.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 612a457..1a315c7 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -54,6 +54,7 @@ enum mem_cgroup_protection {
- 	MEMCG_PROT_NONE,
- 	MEMCG_PROT_LOW,
- 	MEMCG_PROT_MIN,
-+	MEMCG_PROT_SKIP,	/* For zero usage case */
- };
- 
- struct mem_cgroup_reclaim_cookie {
 diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index c5b5f74..f35fcca 100644
+index f35fcca..2e78931 100644
 --- a/mm/memcontrol.c
 +++ b/mm/memcontrol.c
-@@ -6292,7 +6292,7 @@ enum mem_cgroup_protection mem_cgroup_protected(struct mem_cgroup *root,
+@@ -6287,8 +6287,17 @@ enum mem_cgroup_protection mem_cgroup_protected(struct mem_cgroup *root,
+ 
+ 	if (!root)
+ 		root = root_mem_cgroup;
+-	if (memcg == root)
++	if (memcg == root) {
++		/*
++		 * Reset memory.(emin, elow) for reclaiming the memcg
++		 * itself.
++		 */
++		if (memcg != root_mem_cgroup) {
++			memcg->memory.emin = 0;
++			memcg->memory.elow = 0;
++		}
+ 		return MEMCG_PROT_NONE;
++	}
  
  	usage = page_counter_read(&memcg->memory);
  	if (!usage)
--		return MEMCG_PROT_NONE;
-+		return MEMCG_PROT_SKIP;
- 
- 	emin = memcg->memory.min;
- 	elow = memcg->memory.low;
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 5a6445e..3c4c2da 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2677,6 +2677,12 @@ static void shrink_node_memcgs(pg_data_t *pgdat, struct scan_control *sc)
- 			 * thresholds (see get_scan_count).
- 			 */
- 			break;
-+		case MEMCG_PROT_SKIP:
-+			/*
-+			 * Skip scanning this memcg if the usage of it is
-+			 * zero.
-+			 */
-+			continue;
- 		}
- 
- 		reclaimed = sc->nr_reclaimed;
 -- 
 1.8.3.1
 
