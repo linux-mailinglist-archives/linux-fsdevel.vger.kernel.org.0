@@ -2,106 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46901129BD2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Dec 2019 00:28:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49400129C1B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Dec 2019 01:50:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726865AbfLWX20 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Dec 2019 18:28:26 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:43910 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726512AbfLWX20 (ORCPT
+        id S1726907AbfLXAu5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Dec 2019 19:50:57 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:50278 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726833AbfLXAu5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Dec 2019 18:28:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7mb7xON26qhtQf0NX74LRhG+XskmkDIeOVwCuzcqTuU=; b=SwxABb2svDsI5O720oYxWMvkK
-        Jv6NVmb5v9pHuwkquwbxRgz17ov3pqNofkr6IO12fnnAgwG1KpuRdcebUZuA1BhCkylulrOSOBBWj
-        q6C+Qx0DooZnBpkR4skSwGQN0qxNlNEL+erqFJ4tQrtkJqmduvrbMdgZLrYC7OlvT5LBnn6Bt6yah
-        VwlwAa/roitIuHhRdwunmqf0EUchCmqt9bOPy2u3ea7xLKHO38Lt8QLOJhEj0/PaC/KSx/GH5nPJ9
-        C3NirCLS/+B1UY6cAJzPSAEeBCnWL3mmi53Ipc773U4RggQuX53Bn9x/w1AwFlcxN6togTqSqK+4J
-        7LX6dwZlg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ijX7g-0007yc-Vu; Mon, 23 Dec 2019 23:28:24 +0000
-Date:   Mon, 23 Dec 2019 15:28:24 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Tony Asleson <tasleson@redhat.com>
-Cc:     linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC 1/9] lib/string: Add function to trim duplicate WS
-Message-ID: <20191223232824.GB31820@bombadil.infradead.org>
+        Mon, 23 Dec 2019 19:50:57 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 30DE58EE165;
+        Mon, 23 Dec 2019 16:50:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1577148656;
+        bh=EYcsiwyqcB54APO4XT20NoMkSMIzW7tiIQM9tWVMeXg=;
+        h=Subject:From:To:Date:In-Reply-To:References:From;
+        b=SdMPnP5YTvTB6PX1sMj5aXTac5YpQtseN+O7rz4UXjassfwBC4K/fxghdI493lR0D
+         TAZTBKAAZZWj4nQIGf3iUenpHTxWRHOEwwVixdZGIc2SJ72ssM6HLxMCAC7G1RWucA
+         ALCqHZLwqsISZ79T/jUe0hzZsHr0tMNdGgL7sYiQ=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Jnc2O5S202L1; Mon, 23 Dec 2019 16:50:56 -0800 (PST)
+Received: from jarvis.lan (unknown [50.35.76.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 840818EE092;
+        Mon, 23 Dec 2019 16:50:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1577148655;
+        bh=EYcsiwyqcB54APO4XT20NoMkSMIzW7tiIQM9tWVMeXg=;
+        h=Subject:From:To:Date:In-Reply-To:References:From;
+        b=O3DDhBBttOXBXmHsam+0cVcABRHTz6VA7vfqaCl9xe4VgcVhh5Y9HCZ9+T7R8zZqV
+         De6M1Dfekt+0ZMtiMtZ+jiTsmMGIAXZksgiG+W/bQJ6AaooduT6N3lsJZiO2+BsNqk
+         tkJqLRvDuGYMdiCDBtBEjgqcuLC4ayDkXNnhIZaw=
+Message-ID: <1577148654.29997.29.camel@HansenPartnership.com>
+Subject: Re: [RFC 0/9] Add persistent durable identifier to storage log
+ messages
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Tony Asleson <tasleson@redhat.com>, linux-scsi@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Date:   Mon, 23 Dec 2019 16:50:54 -0800
+In-Reply-To: <20191223225558.19242-1-tasleson@redhat.com>
 References: <20191223225558.19242-1-tasleson@redhat.com>
- <20191223225558.19242-2-tasleson@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191223225558.19242-2-tasleson@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 23, 2019 at 04:55:50PM -0600, Tony Asleson wrote:
-> +/**
-> + * Removes leading and trailing whitespace and removes duplicate
-> + * adjacent whitespace in a string, modifies string in place.
-> + * @s The %NUL-terminated string to have spaces removed
-> + * Returns the new length
-> + */
-
-This isn't good kernel-doc.  See Documentation/doc-guide/kernel-doc.rst
-Compile with W=1 to get the format checked.
-
-> +size_t strim_dupe(char *s)
-> +{
-> +	size_t ret = 0;
-> +	char *w = s;
-> +	char *p;
-> +
-> +	/*
-> +	 * This will remove all leading and duplicate adjacent, but leave
-> +	 * 1 space at the end if one or more are present.
-> +	 */
-> +	for (p = s; *p != '\0'; ++p) {
-> +		if (!isspace(*p) || (p != s && !isspace(*(p - 1)))) {
-> +			*w = *p;
-> +			++w;
-> +			ret += 1;
-> +		}
-> +	}
-
-I'd be tempted to do ...
-
-	size_t ret = 0;
-	char *w = s;
-	bool last_space = false;
-
-	do {
-		bool this_space = isspace(*s);
-
-		if (!this_space || !last_space) {
-			*w++ = *s;
-			ret++;
-		}
-		s++;
-		last_space = this_space;
-	} while (s[-1] != '\0');
-
-> +	/* Take off the last character if it's a space too */
-> +	if (ret && isspace(*(w - 1))) {
-> +		ret--;
-> +		*(w - 1) = '\0';
-> +	}
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL(strim_dupe);
-> +
->  #ifndef __HAVE_ARCH_STRLEN
->  /**
->   * strlen - Find the length of a string
-> -- 
-> 2.21.0
+On Mon, 2019-12-23 at 16:55 -0600, Tony Asleson wrote:
+> Today users have no easy way to correlate kernel log messages for
+> storage devices across reboots, device dynamic add/remove, or when
+> the device is physically or logically moved from from system to
+> system.  This is due to the existing log IDs which identify how the
+> device is attached and not a unique ID of what is
+> attached.  Additionally, even when the attachment hasn't changed,
+> it's not always obvious which messages belong to the device as the
+> different areas in the storage stack use different identifiers, eg.
+> (sda, sata1.00, sd 0:0:0:0).
 > 
+> This change addresses this by adding a unique ID to each log
+> message.  It couples the existing structured key/value logging
+> capability and VPD 0x83 device identification.
+
+I understand why, and using the best VPD identifier we have seems fine.
+ However, we're trying to dump printk in favour of dev_printk and its
+ilk, so resurrecting printk_emit instead of using dev_printk_emit looks
+a bit retrograde.  It does seem that ata_dev_printk should really be
+using dev_printk ... not sure about the block case.
+
+You also have a couple of items which could be shorter, but I'll reply
+to the individual patches.
+
+James
+
+
+
