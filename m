@@ -2,101 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D62A8129EB2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Dec 2019 08:55:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB533129EB3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Dec 2019 08:55:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726076AbfLXHzO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Dec 2019 02:55:14 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:39236 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbfLXHzN (ORCPT
+        id S1726047AbfLXHzR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Dec 2019 02:55:17 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:45756 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726043AbfLXHzR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Dec 2019 02:55:13 -0500
-Received: by mail-pj1-f68.google.com with SMTP id t101so886733pjb.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Dec 2019 23:55:13 -0800 (PST)
+        Tue, 24 Dec 2019 02:55:17 -0500
+Received: by mail-pl1-f193.google.com with SMTP id b22so8170439pls.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Dec 2019 23:55:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=2+v0d7iT3tOVdHEBeSInAbmod4y43u3/BCaAImk6sv8=;
-        b=b2EI3mhwKNVIOshHL94J215WbXmGgocrzV7SjSDvSMJLs1a7MNc6K5aWnHu849eHMU
-         ecnXUX91PezOVXaMgrkzX6QcsigrU9gn75ZWtPcADxWoGg/t4I2+cU2zkuvpFAA9ZsOD
-         m3krp9CHRQfhb7UBk1uaP5pysi1z0VyG35EFtKzwBVnujfzgLLKTWl3uJxDFhziHrYd2
-         i3/Ey2nHw4WcUdzHmPYXUvl7WP9posu0a1p5ZGOx/tmw4Vmp50Dj4G2pONucBeh4GLvh
-         3GT9XuTV89Ba8Xesk+bHQTEPB2skJp7Yl2usbmKR3ZSSGrAiMeaINAR3xk0QqXzrnTi9
-         7mzQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=V1NIvureCn33Tn3ECKZBbHdYOKZ0mZ/srBiMlz7CqOo=;
+        b=vaUVC/DHZHrYVeAmeVTVNycr7RSOOShtL0anFZVIrQTDBEW6y4NcDlgg06k3VdlMIU
+         y28LQYrFnfOe3w4bYy/fP5H1Wr9BNt3v9Udg4OxWCmBsiVVEzFOMYYSZwNNc4zFaL23D
+         X6x4xJJMalWRbUFVaHb4p9ulQUHFOe0aCozmWYUnrMKU8jAADiqGkKTc4KtipzY9oGNn
+         WCPkB/aRAcxCJixLDhLreuTSNJcahFoVfD3fVsUXqZleggWrFMalGnuRnenh2aMf6QcQ
+         GaL/cpTjS9exDf0ECPYMAoEynr5LzVDZyAReYOFPaBIraG7+bf4BvxP40Kmn00cAkuT8
+         qkHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=2+v0d7iT3tOVdHEBeSInAbmod4y43u3/BCaAImk6sv8=;
-        b=rfmEHVtUdxyqw9WP+Qm4yy2jS5f62xPc/+P29hvQ9/E/IhmlZfZd34m78/uHJpV/Sx
-         2X+bYytnebqdP4vv9ahNdxVFB4pGafY2LeXtWNtVeQ9T/fY2rP+hrZcWw3s1wyOlVYBW
-         e5IrcxEnC26x3LJiHvHeESPcLDHJcUVE01A8/avtoy/6tSkiD14dbmIg0C06Dkc6RgHX
-         xRd+LqRTV9zkwBbdYL6Ygev9jzFwBlqDnp7YYl9NLTLbgd7t3yIszB9EQa/EmVaH1bUF
-         wcllmk9c+quV/zhsJYCzUKKgKH2tMjL6VvRfRbH/my8p803Dy/qT0puHpbBvic5KcOI5
-         kxhA==
-X-Gm-Message-State: APjAAAUPpr4QJ7xKwNHvzXLGAUSx7d8L5AG+TOk70OrWaXkiQVmtTF6K
-        ee7oDdrksCTvn5CaOko3PTM=
-X-Google-Smtp-Source: APXvYqxam6oaRmmA0S2FpYpIaLPXtczqcatLHCZltwpvFqrqE8jDqQlqLvMHatuYfR3BaMkkRo7EWA==
-X-Received: by 2002:a17:902:bf47:: with SMTP id u7mr35584424pls.259.1577174113147;
-        Mon, 23 Dec 2019 23:55:13 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=V1NIvureCn33Tn3ECKZBbHdYOKZ0mZ/srBiMlz7CqOo=;
+        b=XH//M5TKoSuT5NCj9zrEzQLti7y0X8o/cO6+EtruGSIgrJO/KCoX1pIO13B0E2PEda
+         5ihEcn3Ca1Wfq+HS0em0N3adir+HEKEHQi3A2a9if39Vsf8XdXQd56x83DPB6S2Z4Eri
+         t7/OAn7oWlewJrlUIUDJyNL5AxFtI5ZGdR2j2bYesWf1E88ruq+9bG04wDQjJXoihU30
+         WhH0x3PWpGeUgkucD0YqIJyRUzBE6nP0gsj57ILJCF6Epu6fisKodGxjZjxcw574pW4i
+         7/gCdga8mUhAI0fsUQvFjWprAAGCUkZgD3C7Dqq294imCHzF2P1zwRpYUsxhsVo1H6hI
+         8viw==
+X-Gm-Message-State: APjAAAUSXHRLBbIManu+OaKUId3IX1W0pA8DRG5Idn9JadIjezv2wRmu
+        6TPHI56WupFsbB6g5BGa3zw=
+X-Google-Smtp-Source: APXvYqyT8qOnAq66pXq7Xp1RgbKisswZoZED+pR98Qm34GbQU76x3QyoL8MQF2ZduR4HUfbhrLxMpA==
+X-Received: by 2002:a17:90b:f06:: with SMTP id br6mr4174688pjb.125.1577174116520;
+        Mon, 23 Dec 2019 23:55:16 -0800 (PST)
 Received: from dev.localdomain ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id c2sm2004064pjq.27.2019.12.23.23.55.09
+        by smtp.gmail.com with ESMTPSA id c2sm2004064pjq.27.2019.12.23.23.55.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Dec 2019 23:55:12 -0800 (PST)
+        Mon, 23 Dec 2019 23:55:15 -0800 (PST)
 From:   Yafang Shao <laoar.shao@gmail.com>
 To:     hannes@cmpxchg.org, david@fromorbit.com, mhocko@kernel.org,
         vdavydov.dev@gmail.com, akpm@linux-foundation.org,
         viro@zeniv.linux.org.uk
 Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH v2 0/5] protect page cache from freeing inode
-Date:   Tue, 24 Dec 2019 02:53:21 -0500
-Message-Id: <1577174006-13025-1-git-send-email-laoar.shao@gmail.com>
+Subject: [PATCH v2 1/5] mm, memcg: reduce size of struct mem_cgroup by using bit field
+Date:   Tue, 24 Dec 2019 02:53:22 -0500
+Message-Id: <1577174006-13025-2-git-send-email-laoar.shao@gmail.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1577174006-13025-1-git-send-email-laoar.shao@gmail.com>
+References: <1577174006-13025-1-git-send-email-laoar.shao@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+There are some members in struct mem_group can be either 0(false) or
+1(true), so we can define them using bit field to reduce size. With this
+patch, the size of struct mem_cgroup can be reduced by 64 bytes in theory,
+but as there're some MEMCG_PADDING()s, the real number may be different,
+which is relate with the cacheline size. Anyway, this patch could reduce
+the size of struct mem_cgroup more or less.
 
-On my server there're some running MEMCGs protected by memory.{min, low},
-but I found the usage of these MEMCGs abruptly became very small, which
-were far less than the protect limit. It confused me and finally I
-found that was because of inode stealing.
-Once an inode is freed, all its belonging page caches will be dropped as
-well, no matter how may page caches it has. So if we intend to protect the
-page caches in a memcg, we must protect their host (the inode) first.
-Otherwise the memcg protection can be easily bypassed with freeing inode,
-especially if there're big files in this memcg.
-The inherent mismatch between memcg and inode is a trouble. One inode can
-be shared by different MEMCGs, but it is a very rare case. If an inode is
-shared, its belonging page caches may be charged to different MEMCGs.
-Currently there's no perfect solution to fix this kind of issue, but the
-inode majority-writer ownership switching can help it more or less.
+Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+---
+ include/linux/memcontrol.h | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
-This patchset contains five patches,
-Patches 1-3: Minor opmizations and also the preparation of Patch-5
-Patch 4: Preparation of Patch-5
-Patch 5: the real issue I want to fix
-
-- Changes against v1:
-Use the memcg passed from the shrink_control, instead of getting it from
-inode itself, suggested by Dave. That could make the laying better.
-
-Yafang Shao (5):
-  mm, memcg: reduce size of struct mem_cgroup by using bit field
-  mm, memcg: introduce MEMCG_PROT_SKIP for memcg zero usage case
-  mm, memcg: reset memcg's memory.{min, low} for reclaiming itself
-  mm: make memcg visible to lru walker isolation function
-  memcg, inode: protect page cache from freeing inode
-
- fs/inode.c                 | 25 ++++++++++++++--
- include/linux/memcontrol.h | 54 ++++++++++++++++++++++++++++-------
- mm/list_lru.c              | 22 +++++++-------
- mm/memcontrol.c            | 71 +++++++++++++++++++++++++++++++++++-----------
- mm/vmscan.c                | 11 +++++++
- 5 files changed, 144 insertions(+), 39 deletions(-)
-
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index a7a0a1a5..612a457 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -229,20 +229,26 @@ struct mem_cgroup {
+ 	/*
+ 	 * Should the accounting and control be hierarchical, per subtree?
+ 	 */
+-	bool use_hierarchy;
++	unsigned int use_hierarchy : 1;
+ 
+ 	/*
+ 	 * Should the OOM killer kill all belonging tasks, had it kill one?
+ 	 */
+-	bool oom_group;
++	unsigned int  oom_group : 1;
+ 
+ 	/* protected by memcg_oom_lock */
+-	bool		oom_lock;
+-	int		under_oom;
++	unsigned int oom_lock : 1;
+ 
+-	int	swappiness;
+ 	/* OOM-Killer disable */
+-	int		oom_kill_disable;
++	unsigned int oom_kill_disable : 1;
++
++	/* Legacy tcp memory accounting */
++	unsigned int tcpmem_active : 1;
++	unsigned int tcpmem_pressure : 1;
++
++	int under_oom;
++
++	int	swappiness;
+ 
+ 	/* memory.events and memory.events.local */
+ 	struct cgroup_file events_file;
+@@ -297,9 +303,6 @@ struct mem_cgroup {
+ 
+ 	unsigned long		socket_pressure;
+ 
+-	/* Legacy tcp memory accounting */
+-	bool			tcpmem_active;
+-	int			tcpmem_pressure;
+ 
+ #ifdef CONFIG_MEMCG_KMEM
+         /* Index in the kmem_cache->memcg_params.memcg_caches array */
 -- 
 1.8.3.1
 
