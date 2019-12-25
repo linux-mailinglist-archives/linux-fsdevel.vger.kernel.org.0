@@ -2,125 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A71B12A882
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Dec 2019 17:20:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40C0812A885
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Dec 2019 17:27:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726435AbfLYQTi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Dec 2019 11:19:38 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:56086 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726353AbfLYQTi (ORCPT
+        id S1726420AbfLYQ1c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Dec 2019 11:27:32 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:33554 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726397AbfLYQ1c (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Dec 2019 11:19:38 -0500
-Received: from p5b2a6d5f.dip0.t-ipconnect.de ([91.42.109.95] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1ik9Nm-0002F2-HI; Wed, 25 Dec 2019 16:19:34 +0000
-Date:   Wed, 25 Dec 2019 17:19:33 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tycho@tycho.ws, jannh@google.com,
-        cyphar@cyphar.com, oleg@redhat.com, luto@amacapital.net,
-        viro@zeniv.linux.org.uk, gpascutto@mozilla.com,
-        ealvarez@mozilla.com, fweimer@redhat.com, jld@mozilla.com,
-        arnd@arndb.de
-Subject: Re: [PATCH v6 1/3] vfs, fdtable: Add get_task_file helper
-Message-ID: <20191225161932.fhvbgrcco36mhvaw@wittgenstein>
-References: <20191223210852.GA25101@ircssh-2.c.rugged-nimbus-611.internal>
- <20191223212645.3qw7my4u4rjihxjf@wittgenstein>
+        Wed, 25 Dec 2019 11:27:32 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ik9VR-0008LK-GD; Wed, 25 Dec 2019 16:27:29 +0000
+Date:   Wed, 25 Dec 2019 16:27:29 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     "zhangyi (F)" <yi.zhang@huawei.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        miaoxie@huawei.com, zhangtianci1@huawei.com
+Subject: Re: [QUESTION] question about the errno of rename the parent dir to
+ a subdir of a specified directory
+Message-ID: <20191225162729.GP4203@ZenIV.linux.org.uk>
+References: <4c54c1f0-fe9a-6dea-1727-6898e8dd85ef@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191223212645.3qw7my4u4rjihxjf@wittgenstein>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <4c54c1f0-fe9a-6dea-1727-6898e8dd85ef@huawei.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 23, 2019 at 10:26:46PM +0100, Christian Brauner wrote:
-> On Mon, Dec 23, 2019 at 09:08:55PM +0000, Sargun Dhillon wrote:
-> > This introduces a function which can be used to fetch a file, given an
-> > arbitrary task. As long as the user holds a reference (refcnt) to the
-> > task_struct it is safe to call, and will either return NULL on failure,
-> > or a pointer to the file, with a refcnt.
-> > 
-> > Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-
-Could you please add:
-
-Suggested-by: Oleg Nesterov <oleg@redhat.com>
-
-and add a line like:
-
-"This is based on a patch sent by Oleg (cf. [1]) a while ago."
-
-[1]: Link: https://lore.kernel.org/r/20180915160423.GA31461@redhat.com
-
-apart from a few nits below:
-
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-
-> > ---
-> >  fs/file.c            | 22 ++++++++++++++++++++--
-> >  include/linux/file.h |  2 ++
-> >  2 files changed, 22 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/fs/file.c b/fs/file.c
-> > index 2f4fcf985079..0ceeb046f4f3 100644
-> > --- a/fs/file.c
-> > +++ b/fs/file.c
-> > @@ -706,9 +706,9 @@ void do_close_on_exec(struct files_struct *files)
-> >  	spin_unlock(&files->file_lock);
-> >  }
-> >  
-> > -static struct file *__fget(unsigned int fd, fmode_t mask, unsigned int refs)
-> > +static struct file *__fget_files(struct files_struct *files, unsigned int fd,
-> > +				 fmode_t mask, unsigned int refs)
-> >  {
-> > -	struct files_struct *files = current->files;
-> >  	struct file *file;
-> >  
-> >  	rcu_read_lock();
-> > @@ -729,6 +729,11 @@ static struct file *__fget(unsigned int fd, fmode_t mask, unsigned int refs)
-> >  	return file;
-> >  }
-> >  
-> > +static struct file *__fget(unsigned int fd, fmode_t mask, unsigned int refs)
-
-This can be:
-
-static inline struct file *__fget(...)
-
-> > +{
-> > +	return __fget_files(current->files, fd, mask, refs);
-> > +}
-> > +
-> >  struct file *fget_many(unsigned int fd, unsigned int refs)
-> >  {
-> >  	return __fget(fd, FMODE_PATH, refs);
-> > @@ -746,6 +751,19 @@ struct file *fget_raw(unsigned int fd)
-> >  }
-> >  EXPORT_SYMBOL(fget_raw);
-> >  
-> > +struct file *fget_task(struct task_struct *task, unsigned int fd)
-> > +{
-> > +	struct file *file = NULL;
-> > +
-> > +	task_lock(task);
-> > +	if (task->files)
-> > +		file = __fget_files(task->files, fd, 0, 1);
-> > +
-> > +	task_unlock(task);
+On Wed, Dec 25, 2019 at 09:16:09PM +0800, zhangyi (F) wrote:
+> Hi,
 > 
-> Nit: remove the \n:
+> If we rename the parent-dir to a sub-dir of a specified directory, the
+> rename() syscall return -EINVAL because lock_rename() in lock_rename()
+> checks the relations of the sorece and dest dirs. But if the 'parent'
+> dir is a mountpoint, the rename() syscall return -EXDEV instead because
+> it checks the parent dir's mountpoint of the sorece and dest dirs.
 > 
-> task_lock(task);
-> if (task->files)
-> 	file = __fget_files(task->files, fd, 0, 1);
-> task_unlock(task);
+> For example:
+> Case 1: rename() return -EINVAL
+> # mkdir -p parent/dir
+> # rename parent parent/dir/subdir parent
+> rename: parent: rename to parent/dir/subdir failed: Invalid argument
+
+That was rename("parent", "parent/dir/subdir") being told to sod off and
+not try to create loops.
+
+> Case 2: rename() return -EXDEV
+> # mkdir parent
+> # mount -t tmpfs test parent
+> # mkdir parent/dir
+> # rename parent parent/dir/subdir parent
+> rename: parent: rename to parent/dir/subdir failed: Invalid cross-device link
 > 
-> Christian
+> In case 2, although 'parent' directory is a mountpoint, it acted as a root
+> dir of the "test tmpfs", so it should belongs to the same mounted fs of
+> 'dir' directoty, so I think it shall return -EINVAL.
+> 
+> Is it a bug or just designed as this ?
+
+rename() operates on directory entries.  Pathnames can refer to files (including
+directories) or they can refer to directory entries (links).  rename() and other
+directory-modifying syscalls operate on the latter.  In the second test two
+error conditions apply: in addition to attempted loop creation, we are asked to
+move the link 'parent' from whatever it's in (your current directory) to 'subdir'
+in the directory parent/dir, the latter being on a different filesystem.
+
+It's not "take the file old pathname refers to, move it to new place"; that's
+particularly obvious when you consider
+
+echo foo >a	# create a file
+ln a b		# now 'a' and 'b' both refer to it
+mv a c		# or rename a c a, if you really want to touch util-linux rename(1)
+
+Desired result is, of course, 'a' disappearing, 'b' left as is and 'c' now refering
+to the same file.  If you did mv b c as the last step, 'a' would be left as is,
+'b' would disappear and 'c' added, refering to the same file.  But the only
+difference between mv a c and mv b c is the first argument of rename(2) and
+in both cases it resolves to the same file.  In other words, rename(2) can't
+operate on that level; to be of any use it has to interpret the pathnames
+as refering to directory entries.
+
+That, BTW, is the source of "the last component must not be . or .." - they
+do refer to directories just fine, but rename("dir1/.", "dir2/foo") is not just
+'make the directory refered to by "dir1/." show up as "dir2/foo"' - it's
+'rip the entry "." from the directory "dir1" and move it into directory "dir2"
+under the name "foo"'.
+
+So your second testcase is a genuine cross-filesystem move; you want a link
+to disappear from a directory on one filesystem and reappear in a directory
+on another.  It doesn't matter what's mounted on top of that - directory
+entry refers to the mountpoint, not the thing mounted on it.
+
+And in cases when more than one error condition applies, portable userland
+should be ready to cope with the operating system returning any of those.
+Different Unices might return different applicable errors.  In this particular
+case I would expect EXDEV to take precedence on the majority of implementations,
+but that's not guaranteed.  Note, BTW, that there might be other errors
+applicable here and it's a sufficiently dark corner to expect differences
+(e.g. there might be a blanket ban on renaming mountpoints in general,
+POSIX being quiet on that topic be damned).  
+
+That actually might be a good way to get into given Unix VFS - figuring out
+what happens in this implementation will tell you a lot about its pathname
+resolution, related kernel data structures and locking involved.  Might
+send you away screaming, though - rename(2) is usually the worst part
+as it is, and bringing the mountpoint crossing into the game is likely
+to expose all kinds of interesting corner cases.
