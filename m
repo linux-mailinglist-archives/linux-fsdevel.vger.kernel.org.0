@@ -2,455 +2,539 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BC4212A89F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Dec 2019 18:05:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F027F12A8A4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Dec 2019 18:22:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726420AbfLYRFW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Dec 2019 12:05:22 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:56524 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726353AbfLYRFW (ORCPT
+        id S1726410AbfLYRWh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Dec 2019 12:22:37 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34038 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726353AbfLYRWh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Dec 2019 12:05:22 -0500
-Received: from p5b2a6d5f.dip0.t-ipconnect.de ([91.42.109.95] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1ikA62-0004Fo-FX; Wed, 25 Dec 2019 17:05:18 +0000
-Date:   Wed, 25 Dec 2019 18:05:17 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tycho@tycho.ws, jannh@google.com,
-        cyphar@cyphar.com, oleg@redhat.com, luto@amacapital.net,
-        viro@zeniv.linux.org.uk, gpascutto@mozilla.com,
-        ealvarez@mozilla.com, fweimer@redhat.com, jld@mozilla.com,
-        arnd@arndb.de
-Subject: Re: [PATCH v6 2/3] pid: Introduce pidfd_getfd syscall
-Message-ID: <20191225170515.tf7ftf6vm6r4aoiu@wittgenstein>
-References: <20191223210905.GA25110@ircssh-2.c.rugged-nimbus-611.internal>
+        Wed, 25 Dec 2019 12:22:37 -0500
+Received: by mail-wr1-f65.google.com with SMTP id t2so22103018wrr.1;
+        Wed, 25 Dec 2019 09:22:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=PGclXK0rNWPyoLNFrluWY5FCbM6onLEFC4jrZ51qLRc=;
+        b=BJhwH069DOdQe/kz/fqwOatGrgl31VUn/isXKQq3kMhgDYNCmT2I/0gYHA4Z7qi4Ou
+         kCGsEl+W29pNiXjN/sVJrMKsxQlpQvF+heUd6WfTHG1l64tkWnGgs6jNhR0b/3rr3Nmy
+         sgbSa/q5DClALAHk1u0iOftxeiAM48K9NKVSBlxM8/cBLnW11enoF+9NMe96CrbX+l+4
+         WIL4wakQTJindQlxFW+qCamZzJeezAjh4ybImsMyz3ERTcQH64JW/YclWLJBqflP8lC5
+         w2yvrVdwtYriKflrY0IEI5IjKLxT69L5Tu2c8z+8eCtoBVZwyt3cswlxsi6Fv/T6a2yz
+         4Tbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=PGclXK0rNWPyoLNFrluWY5FCbM6onLEFC4jrZ51qLRc=;
+        b=NlBjRGqwuqqR8nKdmxJ7JDoGDLA3fdrUdlKppnbyZQ5r8wkrTC9qbPooDNGDk3Adtj
+         OqIfXzPX7LZmlllEspkB/wlS+2VC+R4rbcdeMrmgXLI/2h/rVxbvfxUidJgIxhJAO3no
+         +d8VHmOo51hgrNEYy9WBqEOf4wkge+7rxPTYRPesONtO5R1kfdohIrGpedm/n8vl3bgn
+         JUmgT0eBGb4a12v3Y/y7rx0xLLsWLLbAzNP9EfQ2IOEz8qNYpAg2Qbbvv3ce5RzN0Y9M
+         i7XRYVzg+uwJZe6JEBtbwVUGeZDdluFD1wpTfpCGYbJoTGEFhWkhdWS1WHVbFyeSrMrU
+         ikLA==
+X-Gm-Message-State: APjAAAU5z2zfdbEIP1vJD9ov70YazPlDMHXjJyoIMF6UXf3KsNcNW7QF
+        s81f17Qdti4Cgv+sHfPAi8exXho=
+X-Google-Smtp-Source: APXvYqy7t6nVyjvUril9T4yeZU09vRa8JX6sOlsizO1XSlUMcHGPEagoG5OTmB2fXT3zZk42Zj6Krg==
+X-Received: by 2002:adf:f3d1:: with SMTP id g17mr42217619wrp.378.1577294552882;
+        Wed, 25 Dec 2019 09:22:32 -0800 (PST)
+Received: from avx2 ([46.53.254.76])
+        by smtp.gmail.com with ESMTPSA id x132sm10345012wmg.0.2019.12.25.09.22.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Dec 2019 09:22:32 -0800 (PST)
+Date:   Wed, 25 Dec 2019 20:22:28 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH 1/2] proc: decouple proc from VFS with "struct proc_ops"
+Message-ID: <20191225172228.GA13378@avx2>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191223210905.GA25110@ircssh-2.c.rugged-nimbus-611.internal>
-User-Agent: NeoMutt/20180716
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 23, 2019 at 09:09:08PM +0000, Sargun Dhillon wrote:
-> This syscall allows for the retrieval of file descriptors from other
-> processes, based on their pidfd. This is possible using ptrace, and
-> injection of parasitic code along with using SCM_RIGHTS to move
-> file descriptors between a tracee and a tracer. Unfortunately, ptrace
-> comes with a high cost of requiring the process to be stopped, and
-> breaks debuggers. This does not require stopping the process under
-> manipulation.
-> 
-> One reason to use this is to allow sandboxers to take actions on file
-> descriptors on the behalf of another process. For example, this can be
-> combined with seccomp-bpf's user notification to do on-demand fd
-> extraction and take privileged actions. One such privileged action
-> can be to bind a socket to a privileged port.
-> 
-> This also adds the syscall to all architectures at the same time.
-> 
-> /* prototype */
->   /* flags is currently reserved and should be set to 0 */
->   long sys_pidfd_getfd(int pidfd, int fd, unsigned int flags);
-> 
-> /* testing */
-> Ran self-test suite on x86_64
-> 
-> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-> ---
->  arch/alpha/kernel/syscalls/syscall.tbl      |   1 +
->  arch/arm/tools/syscall.tbl                  |   1 +
->  arch/arm64/include/asm/unistd.h             |   2 +-
->  arch/arm64/include/asm/unistd32.h           |   2 +
->  arch/ia64/kernel/syscalls/syscall.tbl       |   1 +
->  arch/m68k/kernel/syscalls/syscall.tbl       |   1 +
->  arch/microblaze/kernel/syscalls/syscall.tbl |   1 +
->  arch/mips/kernel/syscalls/syscall_n32.tbl   |   1 +
->  arch/mips/kernel/syscalls/syscall_n64.tbl   |   1 +
->  arch/mips/kernel/syscalls/syscall_o32.tbl   |   1 +
->  arch/parisc/kernel/syscalls/syscall.tbl     |   1 +
->  arch/powerpc/kernel/syscalls/syscall.tbl    |   1 +
->  arch/s390/kernel/syscalls/syscall.tbl       |   1 +
->  arch/sh/kernel/syscalls/syscall.tbl         |   1 +
->  arch/sparc/kernel/syscalls/syscall.tbl      |   1 +
->  arch/x86/entry/syscalls/syscall_32.tbl      |   1 +
->  arch/x86/entry/syscalls/syscall_64.tbl      |   1 +
->  arch/xtensa/kernel/syscalls/syscall.tbl     |   1 +
->  include/linux/syscalls.h                    |   1 +
->  include/uapi/asm-generic/unistd.h           |   3 +-
->  kernel/pid.c                                | 106 ++++++++++++++++++++
->  21 files changed, 128 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-> index 8e13b0b2928d..d1cac0d657b7 100644
-> --- a/arch/alpha/kernel/syscalls/syscall.tbl
-> +++ b/arch/alpha/kernel/syscalls/syscall.tbl
-> @@ -475,3 +475,4 @@
->  543	common	fspick				sys_fspick
->  544	common	pidfd_open			sys_pidfd_open
->  # 545 reserved for clone3
-> +548	common	pidfd_getfd			sys_pidfd
-> diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-> index 6da7dc4d79cc..ba045e2f3a60 100644
-> --- a/arch/arm/tools/syscall.tbl
-> +++ b/arch/arm/tools/syscall.tbl
-> @@ -449,3 +449,4 @@
->  433	common	fspick				sys_fspick
->  434	common	pidfd_open			sys_pidfd_open
->  435	common	clone3				sys_clone3
-> +438	common	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-> index 2629a68b8724..b722e47377a5 100644
-> --- a/arch/arm64/include/asm/unistd.h
-> +++ b/arch/arm64/include/asm/unistd.h
-> @@ -38,7 +38,7 @@
->  #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
->  #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
->  
-> -#define __NR_compat_syscalls		436
-> +#define __NR_compat_syscalls		439
->  #endif
->  
->  #define __ARCH_WANT_SYS_CLONE
-> diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-> index 94ab29cf4f00..a8da97a2de41 100644
-> --- a/arch/arm64/include/asm/unistd32.h
-> +++ b/arch/arm64/include/asm/unistd32.h
-> @@ -879,6 +879,8 @@ __SYSCALL(__NR_fspick, sys_fspick)
->  __SYSCALL(__NR_pidfd_open, sys_pidfd_open)
->  #define __NR_clone3 435
->  __SYSCALL(__NR_clone3, sys_clone3)
-> +#define __NR_pidfd_getfd 438
-> +__SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
->  
->  /*
->   * Please add new compat syscalls above this comment and update
-> diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
-> index 36d5faf4c86c..2b11adfc860c 100644
-> --- a/arch/ia64/kernel/syscalls/syscall.tbl
-> +++ b/arch/ia64/kernel/syscalls/syscall.tbl
-> @@ -356,3 +356,4 @@
->  433	common	fspick				sys_fspick
->  434	common	pidfd_open			sys_pidfd_open
->  # 435 reserved for clone3
-> +438	common	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-> index a88a285a0e5f..44e879e98459 100644
-> --- a/arch/m68k/kernel/syscalls/syscall.tbl
-> +++ b/arch/m68k/kernel/syscalls/syscall.tbl
-> @@ -435,3 +435,4 @@
->  433	common	fspick				sys_fspick
->  434	common	pidfd_open			sys_pidfd_open
->  # 435 reserved for clone3
-> +438	common	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-> index 09b0cd7dab0a..7afa00125cc4 100644
-> --- a/arch/microblaze/kernel/syscalls/syscall.tbl
-> +++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-> @@ -441,3 +441,4 @@
->  433	common	fspick				sys_fspick
->  434	common	pidfd_open			sys_pidfd_open
->  435	common	clone3				sys_clone3
-> +438	common	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-> index e7c5ab38e403..856d5ba34461 100644
-> --- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-> +++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-> @@ -374,3 +374,4 @@
->  433	n32	fspick				sys_fspick
->  434	n32	pidfd_open			sys_pidfd_open
->  435	n32	clone3				__sys_clone3
-> +438	n32	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
-> index 13cd66581f3b..2db6075352f3 100644
-> --- a/arch/mips/kernel/syscalls/syscall_n64.tbl
-> +++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
-> @@ -350,3 +350,4 @@
->  433	n64	fspick				sys_fspick
->  434	n64	pidfd_open			sys_pidfd_open
->  435	n64	clone3				__sys_clone3
-> +438	n64	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-> index 353539ea4140..e9f9d4a9b105 100644
-> --- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-> +++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-> @@ -423,3 +423,4 @@
->  433	o32	fspick				sys_fspick
->  434	o32	pidfd_open			sys_pidfd_open
->  435	o32	clone3				__sys_clone3
-> +438	o32	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-> index 285ff516150c..c58c7eb144ca 100644
-> --- a/arch/parisc/kernel/syscalls/syscall.tbl
-> +++ b/arch/parisc/kernel/syscalls/syscall.tbl
-> @@ -433,3 +433,4 @@
->  433	common	fspick				sys_fspick
->  434	common	pidfd_open			sys_pidfd_open
->  435	common	clone3				sys_clone3_wrapper
-> +438	common	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-> index 43f736ed47f2..707609bfe3ea 100644
-> --- a/arch/powerpc/kernel/syscalls/syscall.tbl
-> +++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-> @@ -517,3 +517,4 @@
->  433	common	fspick				sys_fspick
->  434	common	pidfd_open			sys_pidfd_open
->  435	nospu	clone3				ppc_clone3
-> +438	common	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-> index 3054e9c035a3..185cd624face 100644
-> --- a/arch/s390/kernel/syscalls/syscall.tbl
-> +++ b/arch/s390/kernel/syscalls/syscall.tbl
-> @@ -438,3 +438,4 @@
->  433  common	fspick			sys_fspick			sys_fspick
->  434  common	pidfd_open		sys_pidfd_open			sys_pidfd_open
->  435  common	clone3			sys_clone3			sys_clone3
-> +438  common	pidfd_getfd		sys_pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-> index b5ed26c4c005..88f90895aad8 100644
-> --- a/arch/sh/kernel/syscalls/syscall.tbl
-> +++ b/arch/sh/kernel/syscalls/syscall.tbl
-> @@ -438,3 +438,4 @@
->  433	common	fspick				sys_fspick
->  434	common	pidfd_open			sys_pidfd_open
->  # 435 reserved for clone3
-> +438	common	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-> index 8c8cc7537fb2..218df6a2326e 100644
-> --- a/arch/sparc/kernel/syscalls/syscall.tbl
-> +++ b/arch/sparc/kernel/syscalls/syscall.tbl
-> @@ -481,3 +481,4 @@
->  433	common	fspick				sys_fspick
->  434	common	pidfd_open			sys_pidfd_open
->  # 435 reserved for clone3
-> +438	common	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-> index 15908eb9b17e..9c3101b65e0f 100644
-> --- a/arch/x86/entry/syscalls/syscall_32.tbl
-> +++ b/arch/x86/entry/syscalls/syscall_32.tbl
-> @@ -440,3 +440,4 @@
->  433	i386	fspick			sys_fspick			__ia32_sys_fspick
->  434	i386	pidfd_open		sys_pidfd_open			__ia32_sys_pidfd_open
->  435	i386	clone3			sys_clone3			__ia32_sys_clone3
-> +438	i386	pidfd_getfd		sys_pidfd_getfd			__ia32_sys_pidfd_getfd
-> diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-> index c29976eca4a8..cef85db75a62 100644
-> --- a/arch/x86/entry/syscalls/syscall_64.tbl
-> +++ b/arch/x86/entry/syscalls/syscall_64.tbl
-> @@ -357,6 +357,7 @@
->  433	common	fspick			__x64_sys_fspick
->  434	common	pidfd_open		__x64_sys_pidfd_open
->  435	common	clone3			__x64_sys_clone3/ptregs
-> +438	common	pidfd_getfd		__x64_sys_pidfd_getfd
->  
->  #
->  # x32-specific system call numbers start at 512 to avoid cache impact
-> diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-> index 25f4de729a6d..ae15183def12 100644
-> --- a/arch/xtensa/kernel/syscalls/syscall.tbl
-> +++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-> @@ -406,3 +406,4 @@
->  433	common	fspick				sys_fspick
->  434	common	pidfd_open			sys_pidfd_open
->  435	common	clone3				sys_clone3
-> +438	common	pidfd_getfd			sys_pidfd_getfd
-> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-> index 2960dedcfde8..5edbc31af51f 100644
-> --- a/include/linux/syscalls.h
-> +++ b/include/linux/syscalls.h
-> @@ -1000,6 +1000,7 @@ asmlinkage long sys_fspick(int dfd, const char __user *path, unsigned int flags)
->  asmlinkage long sys_pidfd_send_signal(int pidfd, int sig,
->  				       siginfo_t __user *info,
->  				       unsigned int flags);
-> +asmlinkage long sys_pidfd_getfd(int pidfd, int fd, unsigned int flags);
->  
->  /*
->   * Architecture-specific system calls
-> diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-> index 1fc8faa6e973..f358488366f6 100644
-> --- a/include/uapi/asm-generic/unistd.h
-> +++ b/include/uapi/asm-generic/unistd.h
-> @@ -850,9 +850,10 @@ __SYSCALL(__NR_pidfd_open, sys_pidfd_open)
->  #define __NR_clone3 435
->  __SYSCALL(__NR_clone3, sys_clone3)
->  #endif
-> +#define __NR_pidfd_getfd 438
+Currently core /proc code uses "struct file_operations" for custom
+hooks, however, VFS doesn't directly call them. Every time VFS expands
+file_operations hook set, /proc code bloats for no reason.
 
-This looks wrong. This should be:
+Introduce "struct proc_ops" which contains only those hooks which /proc
+allows to call into (open, release, read, write, ioctl, mmap, poll).
+It doesn't contain module pointer as well.
 
-#define __NR_pidfd_getfd 438
-__SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
+Save ~184 bytes per usage:
 
->  
->  #undef __NR_syscalls
-> -#define __NR_syscalls 436
-> +#define __NR_syscalls 439
->  
->  /*
->   * 32 bit systems traditionally used different
-> diff --git a/kernel/pid.c b/kernel/pid.c
-> index 2278e249141d..8f65468cd857 100644
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@ -578,3 +578,109 @@ void __init pid_idr_init(void)
->  	init_pid_ns.pid_cachep = KMEM_CACHE(pid,
->  			SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT);
->  }
-> +
-> +static struct file *__pidfd_getfd_fget_task(struct task_struct *task, u32 fd)
+	add/remove: 26/26 grow/shrink: 1/4 up/down: 1922/-6674 (-4752)
+	Function                                     old     new   delta
+	sysvipc_proc_ops                               -      72     +72
+				...
+	config_gz_proc_ops                             -      72     +72
+	proc_get_inode                               289     339     +50
+	proc_reg_get_unmapped_area                   110     107      -3
+	close_pdeo                                   227     224      -3
+	proc_reg_open                                289     284      -5
+	proc_create_data                              60      53      -7
+	rt_cpu_seq_fops                              256       -    -256
+				...
+	default_affinity_proc_fops                   256       -    -256
+	Total: Before=5430095, After=5425343, chg -0.09%
 
-Hm, you're using int fd in the actual syscall, the fget_task() helper
-uses an unsigned int and the new helpers you add here use u32. That's a
-lot of inconsistency. :)
-Looking through the syscalls we have
-"unsigned long fd",
-"unsigned int fd",
-"int fd"
-I suggest to either use "unsigned int fd" or "int fd". I don't
-particularly care which it is. glibc's wrappers usually expose all fds
-as ints to userspace so I'm not sure if there's any benefit for us in
-using unsigned int. So I guess "int fd" everywhere up until fget_task()
-is reasonable:
-  static struct file *__pidfd_getfd_fget_task(struct task_struct *task, int fd)
-  static long pidfd_getfd(struct pid *pid, int fd)
-  SYSCALL_DEFINE3(pidfd_getfd, int, pidfd, int, fd, unsigned int, flags)
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
-Also, please simply name this function __pidfd_fget()
+ fs/proc/generic.c       |   38 +++++++++++-------------
+ fs/proc/inode.c         |   76 ++++++++++++++++++++++++------------------------
+ fs/proc/internal.h      |    5 ++-
+ fs/proc/proc_net.c      |   32 ++++++++++----------
+ fs/proc/proc_sysctl.c   |    2 -
+ fs/proc/root.c          |    2 -
+ include/linux/proc_fs.h |   23 ++++++++++++--
+ 7 files changed, 98 insertions(+), 80 deletions(-)
 
-> +{
-> +	struct file *file;
-> +	int ret;
-> +
-> +	ret = mutex_lock_killable(&task->signal->cred_guard_mutex);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	if (!ptrace_may_access(task, PTRACE_MODE_ATTACH_REALCREDS)) {
-> +		file = ERR_PTR(-EPERM);
-> +		goto out;
-> +	}
-> +
-> +	file = fget_task(task, fd);
-> +	if (!file)
-> +		file = ERR_PTR(-EBADF);
-> +
-> +out:
-> +	mutex_unlock(&task->signal->cred_guard_mutex);
-> +	return file;
-> +}
-> +
-> +static long pidfd_getfd(struct pid *pid, u32 fd)
-
-You're returning a long here but are using "int" everywhere. Thus I'd
-make this:
-static int pidfd_getfd(struct pid *pid, int fd)
-which also makes it consistent with how it is used in the syscall itself.
-
-> +{
-> +	struct task_struct *task;
-> +	struct file *file;
-> +	int ret, retfd;
-> +
-> +	task = get_pid_task(pid, PIDTYPE_PID);
-> +	if (!task)
-> +		return -ESRCH;
-> +
-> +	file = __pidfd_getfd_fget_task(task, fd);
-> +	put_task_struct(task);
-> +	if (IS_ERR(file))
-> +		return PTR_ERR(file);
-> +
-> +	retfd = get_unused_fd_flags(O_CLOEXEC);
-
-+1
-
-> +	if (retfd < 0) {
-> +		ret = retfd;
-> +		goto out;
-> +	}
-> +
-> +	/*
-> +	 * security_file_receive must come last since it may have side effects
-> +	 * and cannot be reversed.
-> +	 */
-> +	ret = security_file_receive(file);
-> +	if (ret)
-> +		goto out_put_fd;
-> +
-> +	fd_install(retfd, file);
-> +	return retfd;
-> +
-> +out_put_fd:
-> +	put_unused_fd(retfd);
-> +out:
-> +	fput(file);
-> +	return ret;
-> +}
-> +
-> +/**
-> + * sys_pidfd_getfd() - Get a file descriptor from another process
-> + *
-> + * @pidfd:	the pidfd file descriptor of the process
-> + * @fd:		the file descriptor number to get
-> + * @flags:	flags on how to get the fd (reserved)
-> + *
-> + * This syscall gets a copy of a file descriptor from another process
-> + * based on their pidfd, and file descriptor number. It requires that
-> + * the calling process has the ability to ptrace the process represented
-> + * by the pidfd. The process which is having its file descriptor copied
-> + * is otherwise unaffected.
-> + *
-> + * Return: On success, a file descriptor with cloexec is returned.
-
-"On success, a cloexec file descriptor is returned." reads better, I
-think.
-
-> + *         On error, a negative errno number will be returned.
-> + */
-> +SYSCALL_DEFINE3(pidfd_getfd, int, pidfd, int, fd,
-> +		unsigned int, flags)
-> +{
-> +	struct pid *pid;
-> +	struct fd f;
-> +	int ret;
-> +
-> +	/* flags is currently unused - make sure it's unset */
-> +	if (flags)
-> +		return -EINVAL;
-> +
-> +	f = fdget(pidfd);
-> +	if (!f.file)
-> +		return -EBADF;
-> +
-> +	pid = pidfd_pid(f.file);
-> +	if (IS_ERR(pid)) {
-> +		ret = PTR_ERR(pid);
-> +		goto out;
-> +	}
-> +
-> +	ret = pidfd_getfd(pid, fd);
-> +
-> +out:
-> +	fdput(f);
-> +	return ret;
-
-This can be simplified to:
-
-	pid = pidfd_pid(f.file);
-	if (IS_ERR(pid))
-		ret = PTR_ERR(pid);
-	else
-		ret = pidfd_getfd(pid, fd);
-
-	fdput(f);
-	return ret;
-
-Christian
+--- a/fs/proc/generic.c
++++ b/fs/proc/generic.c
+@@ -473,7 +473,7 @@ struct proc_dir_entry *proc_mkdir_data(const char *name, umode_t mode,
+ 	ent = __proc_create(&parent, name, S_IFDIR | mode, 2);
+ 	if (ent) {
+ 		ent->data = data;
+-		ent->proc_fops = &proc_dir_operations;
++		ent->proc_dir_ops = &proc_dir_operations;
+ 		ent->proc_iops = &proc_dir_inode_operations;
+ 		ent = proc_register(parent, ent);
+ 	}
+@@ -503,7 +503,7 @@ struct proc_dir_entry *proc_create_mount_point(const char *name)
+ 	ent = __proc_create(&parent, name, mode, 2);
+ 	if (ent) {
+ 		ent->data = NULL;
+-		ent->proc_fops = NULL;
++		ent->proc_dir_ops = NULL;
+ 		ent->proc_iops = NULL;
+ 		ent = proc_register(parent, ent);
+ 	}
+@@ -533,25 +533,23 @@ struct proc_dir_entry *proc_create_reg(const char *name, umode_t mode,
+ 
+ struct proc_dir_entry *proc_create_data(const char *name, umode_t mode,
+ 		struct proc_dir_entry *parent,
+-		const struct file_operations *proc_fops, void *data)
++		const struct proc_ops *proc_ops, void *data)
+ {
+ 	struct proc_dir_entry *p;
+ 
+-	BUG_ON(proc_fops == NULL);
+-
+ 	p = proc_create_reg(name, mode, &parent, data);
+ 	if (!p)
+ 		return NULL;
+-	p->proc_fops = proc_fops;
++	p->proc_ops = proc_ops;
+ 	return proc_register(parent, p);
+ }
+ EXPORT_SYMBOL(proc_create_data);
+  
+ struct proc_dir_entry *proc_create(const char *name, umode_t mode,
+ 				   struct proc_dir_entry *parent,
+-				   const struct file_operations *proc_fops)
++				   const struct proc_ops *proc_ops)
+ {
+-	return proc_create_data(name, mode, parent, proc_fops, NULL);
++	return proc_create_data(name, mode, parent, proc_ops, NULL);
+ }
+ EXPORT_SYMBOL(proc_create);
+ 
+@@ -573,11 +571,11 @@ static int proc_seq_release(struct inode *inode, struct file *file)
+ 	return seq_release(inode, file);
+ }
+ 
+-static const struct file_operations proc_seq_fops = {
+-	.open		= proc_seq_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= proc_seq_release,
++static const struct proc_ops proc_seq_ops = {
++	.proc_open	= proc_seq_open,
++	.proc_read	= seq_read,
++	.proc_lseek	= seq_lseek,
++	.proc_release	= proc_seq_release,
+ };
+ 
+ struct proc_dir_entry *proc_create_seq_private(const char *name, umode_t mode,
+@@ -589,7 +587,7 @@ struct proc_dir_entry *proc_create_seq_private(const char *name, umode_t mode,
+ 	p = proc_create_reg(name, mode, &parent, data);
+ 	if (!p)
+ 		return NULL;
+-	p->proc_fops = &proc_seq_fops;
++	p->proc_ops = &proc_seq_ops;
+ 	p->seq_ops = ops;
+ 	p->state_size = state_size;
+ 	return proc_register(parent, p);
+@@ -603,11 +601,11 @@ static int proc_single_open(struct inode *inode, struct file *file)
+ 	return single_open(file, de->single_show, de->data);
+ }
+ 
+-static const struct file_operations proc_single_fops = {
+-	.open		= proc_single_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
++static const struct proc_ops proc_single_ops = {
++	.proc_open	= proc_single_open,
++	.proc_read	= seq_read,
++	.proc_lseek	= seq_lseek,
++	.proc_release	= single_release,
+ };
+ 
+ struct proc_dir_entry *proc_create_single_data(const char *name, umode_t mode,
+@@ -619,7 +617,7 @@ struct proc_dir_entry *proc_create_single_data(const char *name, umode_t mode,
+ 	p = proc_create_reg(name, mode, &parent, data);
+ 	if (!p)
+ 		return NULL;
+-	p->proc_fops = &proc_single_fops;
++	p->proc_ops = &proc_single_ops;
+ 	p->single_show = show;
+ 	return proc_register(parent, p);
+ }
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -163,7 +163,7 @@ static void close_pdeo(struct proc_dir_entry *pde, struct pde_opener *pdeo)
+ 		pdeo->closing = true;
+ 		spin_unlock(&pde->pde_unload_lock);
+ 		file = pdeo->file;
+-		pde->proc_fops->release(file_inode(file), file);
++		pde->proc_ops->proc_release(file_inode(file), file);
+ 		spin_lock(&pde->pde_unload_lock);
+ 		/* After ->release. */
+ 		list_del(&pdeo->lh);
+@@ -200,12 +200,12 @@ static loff_t proc_reg_llseek(struct file *file, loff_t offset, int whence)
+ 	struct proc_dir_entry *pde = PDE(file_inode(file));
+ 	loff_t rv = -EINVAL;
+ 	if (use_pde(pde)) {
+-		typeof_member(struct file_operations, llseek) llseek;
++		typeof_member(struct proc_ops, proc_lseek) lseek;
+ 
+-		llseek = pde->proc_fops->llseek;
+-		if (!llseek)
+-			llseek = default_llseek;
+-		rv = llseek(file, offset, whence);
++		lseek = pde->proc_ops->proc_lseek;
++		if (!lseek)
++			lseek = default_llseek;
++		rv = lseek(file, offset, whence);
+ 		unuse_pde(pde);
+ 	}
+ 	return rv;
+@@ -216,9 +216,9 @@ static ssize_t proc_reg_read(struct file *file, char __user *buf, size_t count,
+ 	struct proc_dir_entry *pde = PDE(file_inode(file));
+ 	ssize_t rv = -EIO;
+ 	if (use_pde(pde)) {
+-		typeof_member(struct file_operations, read) read;
++		typeof_member(struct proc_ops, proc_read) read;
+ 
+-		read = pde->proc_fops->read;
++		read = pde->proc_ops->proc_read;
+ 		if (read)
+ 			rv = read(file, buf, count, ppos);
+ 		unuse_pde(pde);
+@@ -231,9 +231,9 @@ static ssize_t proc_reg_write(struct file *file, const char __user *buf, size_t
+ 	struct proc_dir_entry *pde = PDE(file_inode(file));
+ 	ssize_t rv = -EIO;
+ 	if (use_pde(pde)) {
+-		typeof_member(struct file_operations, write) write;
++		typeof_member(struct proc_ops, proc_write) write;
+ 
+-		write = pde->proc_fops->write;
++		write = pde->proc_ops->proc_write;
+ 		if (write)
+ 			rv = write(file, buf, count, ppos);
+ 		unuse_pde(pde);
+@@ -246,9 +246,9 @@ static __poll_t proc_reg_poll(struct file *file, struct poll_table_struct *pts)
+ 	struct proc_dir_entry *pde = PDE(file_inode(file));
+ 	__poll_t rv = DEFAULT_POLLMASK;
+ 	if (use_pde(pde)) {
+-		typeof_member(struct file_operations, poll) poll;
++		typeof_member(struct proc_ops, proc_poll) poll;
+ 
+-		poll = pde->proc_fops->poll;
++		poll = pde->proc_ops->proc_poll;
+ 		if (poll)
+ 			rv = poll(file, pts);
+ 		unuse_pde(pde);
+@@ -261,9 +261,9 @@ static long proc_reg_unlocked_ioctl(struct file *file, unsigned int cmd, unsigne
+ 	struct proc_dir_entry *pde = PDE(file_inode(file));
+ 	long rv = -ENOTTY;
+ 	if (use_pde(pde)) {
+-		typeof_member(struct file_operations, unlocked_ioctl) ioctl;
++		typeof_member(struct proc_ops, proc_ioctl) ioctl;
+ 
+-		ioctl = pde->proc_fops->unlocked_ioctl;
++		ioctl = pde->proc_ops->proc_ioctl;
+ 		if (ioctl)
+ 			rv = ioctl(file, cmd, arg);
+ 		unuse_pde(pde);
+@@ -277,9 +277,9 @@ static long proc_reg_compat_ioctl(struct file *file, unsigned int cmd, unsigned
+ 	struct proc_dir_entry *pde = PDE(file_inode(file));
+ 	long rv = -ENOTTY;
+ 	if (use_pde(pde)) {
+-		typeof_member(struct file_operations, compat_ioctl) compat_ioctl;
++		typeof_member(struct proc_ops, proc_compat_ioctl) compat_ioctl;
+ 
+-		compat_ioctl = pde->proc_fops->compat_ioctl;
++		compat_ioctl = pde->proc_ops->proc_compat_ioctl;
+ 		if (compat_ioctl)
+ 			rv = compat_ioctl(file, cmd, arg);
+ 		unuse_pde(pde);
+@@ -293,9 +293,9 @@ static int proc_reg_mmap(struct file *file, struct vm_area_struct *vma)
+ 	struct proc_dir_entry *pde = PDE(file_inode(file));
+ 	int rv = -EIO;
+ 	if (use_pde(pde)) {
+-		typeof_member(struct file_operations, mmap) mmap;
++		typeof_member(struct proc_ops, proc_mmap) mmap;
+ 
+-		mmap = pde->proc_fops->mmap;
++		mmap = pde->proc_ops->proc_mmap;
+ 		if (mmap)
+ 			rv = mmap(file, vma);
+ 		unuse_pde(pde);
+@@ -312,9 +312,9 @@ proc_reg_get_unmapped_area(struct file *file, unsigned long orig_addr,
+ 	unsigned long rv = -EIO;
+ 
+ 	if (use_pde(pde)) {
+-		typeof_member(struct file_operations, get_unmapped_area) get_area;
++		typeof_member(struct proc_ops, proc_get_unmapped_area) get_area;
+ 
+-		get_area = pde->proc_fops->get_unmapped_area;
++		get_area = pde->proc_ops->proc_get_unmapped_area;
+ #ifdef CONFIG_MMU
+ 		if (!get_area)
+ 			get_area = current->mm->get_unmapped_area;
+@@ -333,8 +333,8 @@ static int proc_reg_open(struct inode *inode, struct file *file)
+ {
+ 	struct proc_dir_entry *pde = PDE(inode);
+ 	int rv = 0;
+-	typeof_member(struct file_operations, open) open;
+-	typeof_member(struct file_operations, release) release;
++	typeof_member(struct proc_ops, proc_open) open;
++	typeof_member(struct proc_ops, proc_release) release;
+ 	struct pde_opener *pdeo;
+ 
+ 	/*
+@@ -351,7 +351,7 @@ static int proc_reg_open(struct inode *inode, struct file *file)
+ 	if (!use_pde(pde))
+ 		return -ENOENT;
+ 
+-	release = pde->proc_fops->release;
++	release = pde->proc_ops->proc_release;
+ 	if (release) {
+ 		pdeo = kmem_cache_alloc(pde_opener_cache, GFP_KERNEL);
+ 		if (!pdeo) {
+@@ -360,7 +360,7 @@ static int proc_reg_open(struct inode *inode, struct file *file)
+ 		}
+ 	}
+ 
+-	open = pde->proc_fops->open;
++	open = pde->proc_ops->proc_open;
+ 	if (open)
+ 		rv = open(inode, file);
+ 
+@@ -468,21 +468,23 @@ struct inode *proc_get_inode(struct super_block *sb, struct proc_dir_entry *de)
+ 			inode->i_size = de->size;
+ 		if (de->nlink)
+ 			set_nlink(inode, de->nlink);
+-		WARN_ON(!de->proc_iops);
+-		inode->i_op = de->proc_iops;
+-		if (de->proc_fops) {
+-			if (S_ISREG(inode->i_mode)) {
++
++		if (S_ISREG(inode->i_mode)) {
++			inode->i_op = de->proc_iops;
++			inode->i_fop = &proc_reg_file_ops;
+ #ifdef CONFIG_COMPAT
+-				if (!de->proc_fops->compat_ioctl)
+-					inode->i_fop =
+-						&proc_reg_file_ops_no_compat;
+-				else
+-#endif
+-					inode->i_fop = &proc_reg_file_ops;
+-			} else {
+-				inode->i_fop = de->proc_fops;
++			if (!de->proc_ops->proc_compat_ioctl) {
++				inode->i_fop = &proc_reg_file_ops_no_compat;
+ 			}
+-		}
++#endif
++		} else if (S_ISDIR(inode->i_mode)) {
++			inode->i_op = de->proc_iops;
++			inode->i_fop = de->proc_dir_ops;
++		} else if (S_ISLNK(inode->i_mode)) {
++			inode->i_op = de->proc_iops;
++			inode->i_fop = NULL;
++		} else
++			BUG();
+ 	} else
+ 	       pde_put(de);
+ 	return inode;
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -39,7 +39,10 @@ struct proc_dir_entry {
+ 	spinlock_t pde_unload_lock;
+ 	struct completion *pde_unload_completion;
+ 	const struct inode_operations *proc_iops;
+-	const struct file_operations *proc_fops;
++	union {
++		const struct proc_ops *proc_ops;
++		const struct file_operations *proc_dir_ops;
++	};
+ 	const struct dentry_operations *proc_dops;
+ 	union {
+ 		const struct seq_operations *seq_ops;
+--- a/fs/proc/proc_net.c
++++ b/fs/proc/proc_net.c
+@@ -90,12 +90,12 @@ static int seq_release_net(struct inode *ino, struct file *f)
+ 	return 0;
+ }
+ 
+-static const struct file_operations proc_net_seq_fops = {
+-	.open		= seq_open_net,
+-	.read		= seq_read,
+-	.write		= proc_simple_write,
+-	.llseek		= seq_lseek,
+-	.release	= seq_release_net,
++static const struct proc_ops proc_net_seq_ops = {
++	.proc_open	= seq_open_net,
++	.proc_read	= seq_read,
++	.proc_write	= proc_simple_write,
++	.proc_lseek	= seq_lseek,
++	.proc_release	= seq_release_net,
+ };
+ 
+ struct proc_dir_entry *proc_create_net_data(const char *name, umode_t mode,
+@@ -108,7 +108,7 @@ struct proc_dir_entry *proc_create_net_data(const char *name, umode_t mode,
+ 	if (!p)
+ 		return NULL;
+ 	pde_force_lookup(p);
+-	p->proc_fops = &proc_net_seq_fops;
++	p->proc_ops = &proc_net_seq_ops;
+ 	p->seq_ops = ops;
+ 	p->state_size = state_size;
+ 	return proc_register(parent, p);
+@@ -152,7 +152,7 @@ struct proc_dir_entry *proc_create_net_data_write(const char *name, umode_t mode
+ 	if (!p)
+ 		return NULL;
+ 	pde_force_lookup(p);
+-	p->proc_fops = &proc_net_seq_fops;
++	p->proc_ops = &proc_net_seq_ops;
+ 	p->seq_ops = ops;
+ 	p->state_size = state_size;
+ 	p->write = write;
+@@ -183,12 +183,12 @@ static int single_release_net(struct inode *ino, struct file *f)
+ 	return single_release(ino, f);
+ }
+ 
+-static const struct file_operations proc_net_single_fops = {
+-	.open		= single_open_net,
+-	.read		= seq_read,
+-	.write		= proc_simple_write,
+-	.llseek		= seq_lseek,
+-	.release	= single_release_net,
++static const struct proc_ops proc_net_single_ops = {
++	.proc_open	= single_open_net,
++	.proc_read	= seq_read,
++	.proc_write	= proc_simple_write,
++	.proc_lseek	= seq_lseek,
++	.proc_release	= single_release_net,
+ };
+ 
+ struct proc_dir_entry *proc_create_net_single(const char *name, umode_t mode,
+@@ -201,7 +201,7 @@ struct proc_dir_entry *proc_create_net_single(const char *name, umode_t mode,
+ 	if (!p)
+ 		return NULL;
+ 	pde_force_lookup(p);
+-	p->proc_fops = &proc_net_single_fops;
++	p->proc_ops = &proc_net_single_ops;
+ 	p->single_show = show;
+ 	return proc_register(parent, p);
+ }
+@@ -244,7 +244,7 @@ struct proc_dir_entry *proc_create_net_single_write(const char *name, umode_t mo
+ 	if (!p)
+ 		return NULL;
+ 	pde_force_lookup(p);
+-	p->proc_fops = &proc_net_single_fops;
++	p->proc_ops = &proc_net_single_ops;
+ 	p->single_show = show;
+ 	p->write = write;
+ 	return proc_register(parent, p);
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -1720,7 +1720,7 @@ int __init proc_sys_init(void)
+ 
+ 	proc_sys_root = proc_mkdir("sys", NULL);
+ 	proc_sys_root->proc_iops = &proc_sys_dir_operations;
+-	proc_sys_root->proc_fops = &proc_sys_dir_file_operations;
++	proc_sys_root->proc_dir_ops = &proc_sys_dir_file_operations;
+ 	proc_sys_root->nlink = 0;
+ 
+ 	return sysctl_init();
+--- a/fs/proc/root.c
++++ b/fs/proc/root.c
+@@ -292,7 +292,7 @@ struct proc_dir_entry proc_root = {
+ 	.nlink		= 2, 
+ 	.refcnt		= REFCOUNT_INIT(1),
+ 	.proc_iops	= &proc_root_inode_operations, 
+-	.proc_fops	= &proc_root_operations,
++	.proc_dir_ops	= &proc_root_operations,
+ 	.parent		= &proc_root,
+ 	.subdir		= RB_ROOT,
+ 	.name		= "/proc",
+--- a/include/linux/proc_fs.h
++++ b/include/linux/proc_fs.h
+@@ -12,6 +12,21 @@ struct proc_dir_entry;
+ struct seq_file;
+ struct seq_operations;
+ 
++struct proc_ops {
++	int	(*proc_open)(struct inode *, struct file *);
++	ssize_t	(*proc_read)(struct file *, char __user *, size_t, loff_t *);
++	ssize_t	(*proc_write)(struct file *, const char __user *, size_t, loff_t *);
++	loff_t	(*proc_lseek)(struct file *, loff_t, int);
++	int	(*proc_release)(struct inode *, struct file *);
++	__poll_t (*proc_poll)(struct file *, struct poll_table_struct *);
++	long	(*proc_ioctl)(struct file *, unsigned int, unsigned long);
++#ifdef CONFIG_COMPAT
++	long	(*proc_compat_ioctl)(struct file *, unsigned int, unsigned long);
++#endif
++	int	(*proc_mmap)(struct file *, struct vm_area_struct *);
++	unsigned long (*proc_get_unmapped_area)(struct file *, unsigned long, unsigned long, unsigned long, unsigned long);
++};
++
+ #ifdef CONFIG_PROC_FS
+ 
+ typedef int (*proc_write_t)(struct file *, char *, size_t);
+@@ -43,10 +58,10 @@ struct proc_dir_entry *proc_create_single_data(const char *name, umode_t mode,
+  
+ extern struct proc_dir_entry *proc_create_data(const char *, umode_t,
+ 					       struct proc_dir_entry *,
+-					       const struct file_operations *,
++					       const struct proc_ops *,
+ 					       void *);
+ 
+-struct proc_dir_entry *proc_create(const char *name, umode_t mode, struct proc_dir_entry *parent, const struct file_operations *proc_fops);
++struct proc_dir_entry *proc_create(const char *name, umode_t mode, struct proc_dir_entry *parent, const struct proc_ops *proc_ops);
+ extern void proc_set_size(struct proc_dir_entry *, loff_t);
+ extern void proc_set_user(struct proc_dir_entry *, kuid_t, kgid_t);
+ extern void *PDE_DATA(const struct inode *);
+@@ -108,8 +123,8 @@ static inline struct proc_dir_entry *proc_mkdir_mode(const char *name,
+ #define proc_create_seq(name, mode, parent, ops) ({NULL;})
+ #define proc_create_single(name, mode, parent, show) ({NULL;})
+ #define proc_create_single_data(name, mode, parent, show, data) ({NULL;})
+-#define proc_create(name, mode, parent, proc_fops) ({NULL;})
+-#define proc_create_data(name, mode, parent, proc_fops, data) ({NULL;})
++#define proc_create(name, mode, parent, proc_ops) ({NULL;})
++#define proc_create_data(name, mode, parent, proc_ops, data) ({NULL;})
+ 
+ static inline void proc_set_size(struct proc_dir_entry *de, loff_t size) {}
+ static inline void proc_set_user(struct proc_dir_entry *de, kuid_t uid, kgid_t gid) {}
