@@ -2,439 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3782712AAC5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Dec 2019 08:15:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 685F712AAFF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Dec 2019 09:37:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726105AbfLZHPQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Dec 2019 02:15:16 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:37143 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725268AbfLZHPQ (ORCPT
+        id S1726501AbfLZIhf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Dec 2019 03:37:35 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:56621 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726378AbfLZIhf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Dec 2019 02:15:16 -0500
+        Thu, 26 Dec 2019 03:37:35 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1577344513;
+        s=mimecast20190719; t=1577349452;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=uRmFgKKYutYuqpaFq/3xfHgjWZEwAO21L0YkesH6JsI=;
-        b=B8Bk1uNnNQkSzjlS0owApwrSG2VvRcIZ384CDcGHMwSsClAFd42y0suB3tWE1B6y3Emqmz
-        HH4+ZICl4l8YpGn3XOevBY0/aUoYA03oLgBOVyGgr2kpL6IgbuKgsS/I9EKv8XyOM0pb6R
-        JYqAEnhWu6yanxSS7llWsyKbE+VwxUw=
+        bh=Jfbrd9Z7j74xAHhDaL9AjCoXjd1Y0h7EWv4zCc5ymZY=;
+        b=LscU9r5r20e2lgC5ZrHNzxP6tXv5Kga0z8DkKRVsBeNgov2w1PBc90wi1F8lx1R60qTyTQ
+        vI4wZ4+CiMB+SB/lMHcNPg7V+C2rXgH8RgvB27ma2k3H5toCBASvrtAU5O887uEQYx0ZSm
+        4nm3Qc00dQd6fKr9Z2WsVutnnOCgc9M=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-12-Ofmks13bPKiFQbkGX6wx6Q-1; Thu, 26 Dec 2019 02:15:00 -0500
-X-MC-Unique: Ofmks13bPKiFQbkGX6wx6Q-1
+ us-mta-264-tUAIxXGPPKKwhZCfc1EHbA-1; Thu, 26 Dec 2019 03:37:28 -0500
+X-MC-Unique: tUAIxXGPPKKwhZCfc1EHbA-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EEEE0911E8;
-        Thu, 26 Dec 2019 07:14:58 +0000 (UTC)
-Received: from localhost (dhcp-12-102.nay.redhat.com [10.66.12.102])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2701260BF3;
-        Thu, 26 Dec 2019 07:14:57 +0000 (UTC)
-Date:   Thu, 26 Dec 2019 15:23:38 +0800
-From:   Zorro Lang <zlang@redhat.com>
-To:     ltp@lists.linux.it
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: Re: [LTP] [PATCH v3] syscalls/newmount: new test case for new mount
- API
-Message-ID: <20191226072338.GH14328@dhcp-12-102.nay.redhat.com>
-Mail-Followup-To: ltp@lists.linux.it, linux-fsdevel@vger.kernel.org
-References: <20191209160227.16125-1-zlang@redhat.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2EA85477;
+        Thu, 26 Dec 2019 08:37:25 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-19.pek2.redhat.com [10.72.8.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6988360BEC;
+        Thu, 26 Dec 2019 08:37:10 +0000 (UTC)
+Date:   Thu, 26 Dec 2019 16:37:06 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     Andrea Vai <andrea.vai@unipv.it>,
+        "Schmid, Carsten" <Carsten_Schmid@mentor.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Jens Axboe <axboe@kernel.dk>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        USB list <linux-usb@vger.kernel.org>,
+        SCSI development list <linux-scsi@vger.kernel.org>,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Omar Sandoval <osandov@fb.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Hans Holmberg <Hans.Holmberg@wdc.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: AW: Slow I/O on USB media after commit
+ f664a3cc17b7d0a2bc3b3ab96181e1029b0ec0e6
+Message-ID: <20191226083706.GA17974@ming.t460p>
+References: <20191223130828.GA25948@ming.t460p>
+ <20191223162619.GA3282@mit.edu>
+ <4c85fd3f2ec58694cc1ff7ab5c88d6e11ab6efec.camel@unipv.it>
+ <20191223172257.GB3282@mit.edu>
+ <bb5d395fe47f033be0b8ed96cbebf8867d2416c4.camel@unipv.it>
+ <20191223195301.GC3282@mit.edu>
+ <20191224012707.GA13083@ming.t460p>
+ <20191225051722.GA119634@mit.edu>
+ <20191226022702.GA2901@ming.t460p>
+ <20191226033057.GA10794@mit.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191209160227.16125-1-zlang@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191226033057.GA10794@mit.edu>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 12:02:27AM +0800, Zorro Lang wrote:
-> Linux supports new mount syscalls from 5.2, so add new test cases
-> to cover these new API. This newmount01 case make sure new API -
-> fsopen(), fsconfig(), fsmount() and move_mount() can mount a
-> filesystem, then can be unmounted.
-> 
-> Signed-off-by: Zorro Lang <zlang@redhat.com>
-> ---
-> 
-> Hi,
-> 
-> V3 test passed on ext2/3/4 and xfs[1], on upstream mainline kernel. Thanks
-> all your review points:)
-> But I have a question, how to test other filesystems, likes nfs, cifs?
+On Wed, Dec 25, 2019 at 10:30:57PM -0500, Theodore Y. Ts'o wrote:
+> On Thu, Dec 26, 2019 at 10:27:02AM +0800, Ming Lei wrote:
+> > Maybe we need to be careful for HDD., since the request count in sche=
+duler
+> > queue is double of in-flight request count, and in theory NCQ should =
+only
+> > cover all in-flight 32 requests. I will find a sata HDD., and see if
+> > performance drop can be observed in the similar 'cp' test.
+>=20
+> Please try to measure it, but I'd be really surprised if it's
+> significant with with modern HDD's.
 
-Ping.
+Just find one machine with AHCI SATA, and run the following xfs
+overwrite test:
 
-It's been several weeks passed. Is there more review points?
+#!/bin/bash
+DIR=3D$1
+echo 3 > /proc/sys/vm/drop_caches
+fio --readwrite=3Dwrite --filesize=3D5g --overwrite=3D1 --filename=3D$DIR=
+/fiofile \
+        --runtime=3D60s --time_based --ioengine=3Dpsync --direct=3D0 --bs=
+=3D4k
+		--iodepth=3D128 --numjobs=3D2 --group_reporting=3D1 --name=3Doverwrite
 
-Thanks,
-Zorro
+FS is xfs, and disk is LVM over AHCI SATA with NCQ(depth 32), because the
+machine is picked up from RH beaker, and it is the only disk in the box.
 
-> 
-> Thanks,
-> Zorro
-> 
->  configure.ac                                  |   1 +
->  include/lapi/newmount.h                       |  95 +++++++++++++++
->  include/lapi/syscalls/aarch64.in              |   4 +
->  include/lapi/syscalls/powerpc64.in            |   4 +
->  include/lapi/syscalls/s390x.in                |   4 +
->  include/lapi/syscalls/x86_64.in               |   4 +
->  m4/ltp-newmount.m4                            |  10 ++
->  runtest/syscalls                              |   2 +
->  testcases/kernel/syscalls/newmount/.gitignore |   1 +
->  testcases/kernel/syscalls/newmount/Makefile   |   9 ++
->  .../kernel/syscalls/newmount/newmount01.c     | 114 ++++++++++++++++++
->  11 files changed, 248 insertions(+)
->  create mode 100644 include/lapi/newmount.h
->  create mode 100644 m4/ltp-newmount.m4
->  create mode 100644 testcases/kernel/syscalls/newmount/.gitignore
->  create mode 100644 testcases/kernel/syscalls/newmount/Makefile
->  create mode 100644 testcases/kernel/syscalls/newmount/newmount01.c
-> 
-> diff --git a/configure.ac b/configure.ac
-> index 50d14967d..28f840c51 100644
-> --- a/configure.ac
-> +++ b/configure.ac
-> @@ -229,6 +229,7 @@ LTP_CHECK_MADVISE
->  LTP_CHECK_MKDTEMP
->  LTP_CHECK_MMSGHDR
->  LTP_CHECK_MREMAP_FIXED
-> +LTP_CHECK_NEWMOUNT
->  LTP_CHECK_NOMMU_LINUX
->  LTP_CHECK_PERF_EVENT
->  LTP_CHECK_PRCTL_SUPPORT
-> diff --git a/include/lapi/newmount.h b/include/lapi/newmount.h
-> new file mode 100644
-> index 000000000..13f9fbb9c
-> --- /dev/null
-> +++ b/include/lapi/newmount.h
-> @@ -0,0 +1,95 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Copyright (C) 2019 Red Hat, Inc.  All rights reserved.
-> + * Author: Zorro Lang <zlang@redhat.com>
-> + */
-> +
-> +#ifndef NEWMOUNT_H__
-> +#define NEWMOUNT_H__
-> +
-> +#include <stdint.h>
-> +#include <unistd.h>
-> +#include "config.h"
-> +#include "lapi/syscalls.h"
-> +
-> +#if !defined(HAVE_FSOPEN)
-> +static inline int fsopen(const char *fs_name, unsigned int flags)
-> +{
-> +	return tst_syscall(__NR_fsopen, fs_name, flags);
-> +}
-> +
-> +/*
-> + * fsopen() flags.
-> + */
-> +#define FSOPEN_CLOEXEC		0x00000001
-> +#endif	/* HAVE_FSOPEN */
-> +
-> +#if !defined(HAVE_FSCONFIG)
-> +static inline int fsconfig(int fsfd, unsigned int cmd,
-> +                           const char *key, const void *val, int aux)
-> +{
-> +	return tst_syscall(__NR_fsconfig, fsfd, cmd, key, val, aux);
-> +}
-> +
-> +/*
-> + * The type of fsconfig() call made.
-> + */
-> +enum fsconfig_command {
-> +	FSCONFIG_SET_FLAG	= 0,    /* Set parameter, supplying no value */
-> +	FSCONFIG_SET_STRING	= 1,    /* Set parameter, supplying a string value */
-> +	FSCONFIG_SET_BINARY	= 2,    /* Set parameter, supplying a binary blob value */
-> +	FSCONFIG_SET_PATH	= 3,    /* Set parameter, supplying an object by path */
-> +	FSCONFIG_SET_PATH_EMPTY	= 4,    /* Set parameter, supplying an object by (empty) path */
-> +	FSCONFIG_SET_FD		= 5,    /* Set parameter, supplying an object by fd */
-> +	FSCONFIG_CMD_CREATE	= 6,    /* Invoke superblock creation */
-> +	FSCONFIG_CMD_RECONFIGURE = 7,   /* Invoke superblock reconfiguration */
-> +};
-> +#endif	/* HAVE_FSCONFIG */
-> +
-> +#if !defined(HAVE_FSMOUNT)
-> +static inline int fsmount(int fsfd, unsigned int flags, unsigned int ms_flags)
-> +{
-> +	return tst_syscall(__NR_fsmount, fsfd, flags, ms_flags);
-> +}
-> +
-> +/*
-> + * fsmount() flags.
-> + */
-> +#define FSMOUNT_CLOEXEC		0x00000001
-> +
-> +/*
-> + * Mount attributes.
-> + */
-> +#define MOUNT_ATTR_RDONLY	0x00000001 /* Mount read-only */
-> +#define MOUNT_ATTR_NOSUID	0x00000002 /* Ignore suid and sgid bits */
-> +#define MOUNT_ATTR_NODEV	0x00000004 /* Disallow access to device special files */
-> +#define MOUNT_ATTR_NOEXEC	0x00000008 /* Disallow program execution */
-> +#define MOUNT_ATTR__ATIME	0x00000070 /* Setting on how atime should be updated */
-> +#define MOUNT_ATTR_RELATIME	0x00000000 /* - Update atime relative to mtime/ctime. */
-> +#define MOUNT_ATTR_NOATIME	0x00000010 /* - Do not update access times. */
-> +#define MOUNT_ATTR_STRICTATIME	0x00000020 /* - Always perform atime updates */
-> +#define MOUNT_ATTR_NODIRATIME	0x00000080 /* Do not update directory access times */
-> +#endif	/* HAVE_FSMOUNT */
-> +
-> +#if !defined(HAVE_MOVE_MOUNT)
-> +static inline int move_mount(int from_dfd, const char *from_pathname,
-> +                             int to_dfd, const char *to_pathname,
-> +                             unsigned int flags)
-> +{
-> +	return tst_syscall(__NR_move_mount, from_dfd, from_pathname, to_dfd,
-> +	                   to_pathname, flags);
-> +}
-> +
-> +/*
-> + * move_mount() flags.
-> + */
-> +#define MOVE_MOUNT_F_SYMLINKS		0x00000001 /* Follow symlinks on from path */
-> +#define MOVE_MOUNT_F_AUTOMOUNTS		0x00000002 /* Follow automounts on from path */
-> +#define MOVE_MOUNT_F_EMPTY_PATH		0x00000004 /* Empty from path permitted */
-> +#define MOVE_MOUNT_T_SYMLINKS		0x00000010 /* Follow symlinks on to path */
-> +#define MOVE_MOUNT_T_AUTOMOUNTS		0x00000020 /* Follow automounts on to path */
-> +#define MOVE_MOUNT_T_EMPTY_PATH		0x00000040 /* Empty to path permitted */
-> +#define MOVE_MOUNT__MASK		0x00000077
-> +#endif	/* HAVE_MOVE_MOUNT */
-> +
-> +#endif /* NEWMOUNT_H__ */
-> diff --git a/include/lapi/syscalls/aarch64.in b/include/lapi/syscalls/aarch64.in
-> index 0e00641bc..5b9e1d9a4 100644
-> --- a/include/lapi/syscalls/aarch64.in
-> +++ b/include/lapi/syscalls/aarch64.in
-> @@ -270,4 +270,8 @@ pkey_mprotect 288
->  pkey_alloc 289
->  pkey_free 290
->  pidfd_send_signal 424
-> +move_mount 429
-> +fsopen 430
-> +fsconfig 431
-> +fsmount 432
->  _sysctl 1078
-> diff --git a/include/lapi/syscalls/powerpc64.in b/include/lapi/syscalls/powerpc64.in
-> index 660165d7a..3aaed64e0 100644
-> --- a/include/lapi/syscalls/powerpc64.in
-> +++ b/include/lapi/syscalls/powerpc64.in
-> @@ -359,3 +359,7 @@ pidfd_send_signal 424
->  pkey_mprotect 386
->  pkey_alloc 384
->  pkey_free 385
-> +move_mount 429
-> +fsopen 430
-> +fsconfig 431
-> +fsmount 432
-> diff --git a/include/lapi/syscalls/s390x.in b/include/lapi/syscalls/s390x.in
-> index 7d632d1dc..bd427555a 100644
-> --- a/include/lapi/syscalls/s390x.in
-> +++ b/include/lapi/syscalls/s390x.in
-> @@ -341,3 +341,7 @@ pkey_mprotect 384
->  pkey_alloc 385
->  pkey_free 386
->  pidfd_send_signal 424
-> +move_mount 429
-> +fsopen 430
-> +fsconfig 431
-> +fsmount 432
-> diff --git a/include/lapi/syscalls/x86_64.in b/include/lapi/syscalls/x86_64.in
-> index b1cbd4f2f..94f0b562e 100644
-> --- a/include/lapi/syscalls/x86_64.in
-> +++ b/include/lapi/syscalls/x86_64.in
-> @@ -320,3 +320,7 @@ pkey_alloc 330
->  pkey_free 331
->  statx 332
->  pidfd_send_signal 424
-> +move_mount 429
-> +fsopen 430
-> +fsconfig 431
-> +fsmount 432
-> diff --git a/m4/ltp-newmount.m4 b/m4/ltp-newmount.m4
-> new file mode 100644
-> index 000000000..e13a6f0b1
-> --- /dev/null
-> +++ b/m4/ltp-newmount.m4
-> @@ -0,0 +1,10 @@
-> +dnl SPDX-License-Identifier: GPL-2.0-or-later
-> +dnl Copyright (C) 2019 Red Hat, Inc. All Rights Reserved.
-> +
-> +AC_DEFUN([LTP_CHECK_NEWMOUNT],[
-> +AC_CHECK_FUNCS(fsopen,,)
-> +AC_CHECK_FUNCS(fsconfig,,)
-> +AC_CHECK_FUNCS(fsmount,,)
-> +AC_CHECK_FUNCS(move_mount,,)
-> +AC_CHECK_HEADER(sys/mount.h,,,)
-> +])
-> diff --git a/runtest/syscalls b/runtest/syscalls
-> index 15dbd9971..fac1c62d2 100644
-> --- a/runtest/syscalls
-> +++ b/runtest/syscalls
-> @@ -794,6 +794,8 @@ nanosleep01 nanosleep01
->  nanosleep02 nanosleep02
->  nanosleep04 nanosleep04
->  
-> +newmount01 newmount01
-> +
->  nftw01 nftw01
->  nftw6401 nftw6401
->  
-> diff --git a/testcases/kernel/syscalls/newmount/.gitignore b/testcases/kernel/syscalls/newmount/.gitignore
-> new file mode 100644
-> index 000000000..dc78edd5b
-> --- /dev/null
-> +++ b/testcases/kernel/syscalls/newmount/.gitignore
-> @@ -0,0 +1 @@
-> +/newmount01
-> diff --git a/testcases/kernel/syscalls/newmount/Makefile b/testcases/kernel/syscalls/newmount/Makefile
-> new file mode 100644
-> index 000000000..7d0920df6
-> --- /dev/null
-> +++ b/testcases/kernel/syscalls/newmount/Makefile
-> @@ -0,0 +1,9 @@
-> +# SPDX-License-Identifier: GPL-2.0-or-later
-> +#
-> +# Copyright (C) 2019 Red Hat, Inc.  All rights reserved.
-> +
-> +top_srcdir		?= ../../../..
-> +
-> +include $(top_srcdir)/include/mk/testcases.mk
-> +
-> +include $(top_srcdir)/include/mk/generic_leaf_target.mk
-> diff --git a/testcases/kernel/syscalls/newmount/newmount01.c b/testcases/kernel/syscalls/newmount/newmount01.c
-> new file mode 100644
-> index 000000000..464ecb699
-> --- /dev/null
-> +++ b/testcases/kernel/syscalls/newmount/newmount01.c
-> @@ -0,0 +1,114 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Copyright (C) 2019 Red Hat, Inc.  All rights reserved.
-> + * Author: Zorro Lang <zlang@redhat.com>
-> + *
-> + * Use new mount API (fsopen, fsconfig, fsmount, move_mount) to mount
-> + * a filesystem without any specified mount options.
-> + */
-> +
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <unistd.h>
-> +#include <errno.h>
-> +#include <sys/mount.h>
-> +
-> +#include "tst_test.h"
-> +#include "tst_safe_macros.h"
-> +#include "lapi/newmount.h"
-> +
-> +#define LINELENGTH 256
-> +#define MNTPOINT "newmount_point"
-> +static int sfd, mfd;
-> +static int is_mounted = 0;
-> +
-> +static int ismount(char *mntpoint)
-> +{
-> +	int ret = 0;
-> +	FILE *file;
-> +	char line[LINELENGTH];
-> +
-> +	file = fopen("/proc/mounts", "r");
-> +	if (file == NULL)
-> +		tst_brk(TFAIL | TTERRNO, "Open /proc/mounts failed");
-> +
-> +	while (fgets(line, LINELENGTH, file) != NULL) {
-> +		if (strstr(line, mntpoint) != NULL) {
-> +			ret = 1;
-> +			break;
-> +		}
-> +	}
-> +	fclose(file);
-> +	return ret;
-> +}
-> +
-> +static void cleanup(void)
-> +{
-> +	if (is_mounted) {
-> +		TEST(tst_umount(MNTPOINT));
-> +		if (TST_RET != 0)
-> +			tst_brk(TFAIL | TTERRNO, "umount failed in cleanup");
-> +	}
-> +}
-> +
-> +static void test_newmount(void)
-> +{
-> +	TEST(fsopen(tst_device->fs_type, FSOPEN_CLOEXEC));
-> +	if (TST_RET < 0) {
-> +		tst_brk(TFAIL | TTERRNO,
-> +		        "fsopen %s", tst_device->fs_type);
-> +	}
-> +	sfd = TST_RET;
-> +	tst_res(TPASS, "fsopen %s", tst_device->fs_type);
-> +
-> +	TEST(fsconfig(sfd, FSCONFIG_SET_STRING, "source", tst_device->dev, 0));
-> +	if (TST_RET < 0) {
-> +		tst_brk(TFAIL | TTERRNO,
-> +		        "fsconfig set source to %s", tst_device->dev);
-> +	}
-> +	tst_res(TPASS, "fsconfig set source to %s", tst_device->dev);
-> +
-> +
-> +	TEST(fsconfig(sfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
-> +	if (TST_RET < 0) {
-> +		tst_brk(TFAIL | TTERRNO,
-> +		        "fsconfig create superblock");
-> +	}
-> +	tst_res(TPASS, "fsconfig create superblock");
-> +
-> +	TEST(fsmount(sfd, FSMOUNT_CLOEXEC, 0));
-> +	if (TST_RET < 0) {
-> +		tst_brk(TFAIL | TTERRNO, "fsmount");
-> +	}
-> +	mfd = TST_RET;
-> +	tst_res(TPASS, "fsmount");
-> +	SAFE_CLOSE(sfd);
-> +
-> +	TEST(move_mount(mfd, "", AT_FDCWD, MNTPOINT, MOVE_MOUNT_F_EMPTY_PATH));
-> +	if (TST_RET < 0) {
-> +		tst_brk(TFAIL | TTERRNO, "move_mount attach to mount point");
-> +	}
-> +	is_mounted = 1;
-> +	tst_res(TPASS, "move_mount attach to mount point");
-> +	SAFE_CLOSE(mfd);
-> +
-> +	if (ismount(MNTPOINT)) {
-> +		tst_res(TPASS, "new mount works");
-> +		TEST(tst_umount(MNTPOINT));
-> +		if (TST_RET != 0)
-> +			tst_brk(TFAIL | TTERRNO, "umount failed");
-> +		is_mounted = 0;
-> +	} else {
-> +		tst_res(TFAIL, "new mount fails");
-> +	}
-> +}
-> +
-> +static struct tst_test test = {
-> +	.test_all	= test_newmount,
-> +	.cleanup	= cleanup,
-> +	.needs_root	= 1,
-> +	.mntpoint	= MNTPOINT,
-> +	.needs_device	= 1,
-> +	.format_device	= 1,
-> +	.all_filesystems = 1,
-> +};
-> -- 
-> 2.20.1
-> 
-> 
-> -- 
-> Mailing list info: https://lists.linux.it/listinfo/ltp
-> 
+#lsblk
+NAME                            MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+sda                               8:0    0 931.5G  0 disk=20
+=E2=94=9C=E2=94=80sda1                            8:1    0     1G  0 part=
+ /boot
+=E2=94=94=E2=94=80sda2                            8:2    0 930.5G  0 part=
+=20
+  =E2=94=9C=E2=94=80rhel_hpe--ml10gen9--01-root 253:0    0    50G  0 lvm =
+ /
+  =E2=94=9C=E2=94=80rhel_hpe--ml10gen9--01-swap 253:1    0   3.9G  0 lvm =
+ [SWAP]
+  =E2=94=94=E2=94=80rhel_hpe--ml10gen9--01-home 253:2    0 876.6G  0 lvm =
+ /home
+
+
+kernel: 3a7ea2c483a53fc("scsi: provide mq_ops->busy() hook") which is
+the previous commit of f664a3cc17b7 ("scsi: kill off the legacy IO path")=
+.
+
+            |scsi_mod.use_blk_mq=3DN |scsi_mod.use_blk_mq=3DY |
+-----------------------------------------------------------
+throughput: |244MB/s               |169MB/s               |
+-----------------------------------------------------------
+
+Similar result can be observed on v5.4 kernel(184MB/s) with same test
+steps.
+
+
+> That because they typically have
+> a queue depth of 16, and a max_sectors_kb of 32767 (e.g., just under
+> 32 MiB).  Sort seeks are typically 1-2 ms, with full stroke seeks
+> 8-10ms.  Typical sequential write speeds on a 7200 RPM drive is
+> 125-150 MiB/s.  So suppose every other request sent to the HDD is from
+> the other request stream.  The disk will chose the 8 requests from its
+> queue that are contiguous, and so it will be writing around 256 MiB,
+> which will take 2-3 seconds.  If it then needs to spend between 1 and
+> 10 ms seeking to another location of the disk, before it writes the
+> next 256 MiB, the worst case overhead of that seek is 10ms / 2s, or
+> 0.5%.  That may very well be within your measurements' error bars.
+
+Looks you assume that disk seeking just happens once when writing around
+256MB. This assumption may not be true, given all data can be in page
+cache before writing. So when two tasks are submitting IOs concurrently,
+IOs from each single task is sequential, and NCQ may order the current ba=
+tch
+submitted from the two streams. However disk seeking may still be needed
+for the next batch handled by NCQ.
+
+> And of course, note that in real life, we are very *often* writing to
+> multiple files in parallel, for example, during a "make -j16" while
+> building the kernel.  Writing a single large file is certainly
+> something people do (but even there people who are burning a 4G DVD
+> rip are often browsing the web while they are waiting for it to
+> complete, and the browser will be writing cache files, etc.).  So
+> whether or not this is something where we should be stressing over
+> this specific workload is going to be quite debateable.
+
+Thanks,=20
+Ming
 
