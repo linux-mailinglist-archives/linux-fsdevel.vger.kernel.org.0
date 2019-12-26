@@ -2,243 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B38A12AEE9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Dec 2019 22:25:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AEBC12AEF7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Dec 2019 22:36:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727102AbfLZVZS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Dec 2019 16:25:18 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:38073 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727008AbfLZVZL (ORCPT
+        id S1727011AbfLZVgb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Dec 2019 16:36:31 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:37354 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726105AbfLZVgb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Dec 2019 16:25:11 -0500
-Received: by mail-io1-f70.google.com with SMTP id f18so17387182iol.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Dec 2019 13:25:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=8ZrbSLJoE/0RZS4DLSJov6nnyIw6Iqi+6lQYHCGgk+I=;
-        b=CGki3aKMO5N6i+6g8vCa0/lkEPYwhVwytNevMJyGtjEY/M/2uLAg0XK1cn9mNxcMCn
-         GpMdq4C6mzjD9S21Q8djE6AHRYthoRmw5bs046S/c860Qb91ADsOG8Cg7NR74CcX5NGW
-         bql7r59UM/KmBH9dubjwf43mEGTWqs4zhJXh2JfwPWd/2nORH6wudjWIqsYZe+xO7omJ
-         63P97V4wFqH0TpsBqHqPXv8nd1WvDJpBA3aPCuuN3HY2hFOONJId3SvuC63Pyia50UPn
-         tZSq/kK8hnluUI9n/7DQ2F+PraMvFdYE3U6bKsTNeZDAQHGwDONJXS3JdLrr6fM0RYj2
-         9e1A==
-X-Gm-Message-State: APjAAAVV8nznxDiq2muc33Sd316IymMsng+DS7lxfLIaX99t4PHmppvd
-        bW65Y6QuZ/Q4V5K0669nuKq8mMOrN+0iJxx/KsFWeoB24ypu
-X-Google-Smtp-Source: APXvYqyYQRL2CwPJ4BdRi56Er8MM1ohTatZXS8ZSvgqHxdkV3rcOxgNs1yyX/QDmSe/R9P/6U4kOD+F4kSgBCESoLFuc4pICdqUR
+        Thu, 26 Dec 2019 16:36:31 -0500
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBQLTN09028500;
+        Thu, 26 Dec 2019 13:36:25 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=9yl0vZB6zXYsdXshurlVu4KnvgnCsluDrbU15igoniQ=;
+ b=ViGwB6LeT6yu8iDefABALIz1h/iRowjz8+9tyHJjoIjiTCayjy5h4xD0JGwcGphvC8ca
+ 6jxgxMrsHr3jeb3MxB/Om1dF9iy5wPeY888QwhZ1wPq7UH4kgDZWJB0vPwXc5wgRQjMn
+ CcOueIaHPpFY4Dr/DoD1cKBqb9bC6DYY5Jc= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2x4puyjmrd-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Thu, 26 Dec 2019 13:36:25 -0800
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.35.172) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 26 Dec 2019 13:36:24 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YfUZIJVB9yLn47MTTlsGClo4qPJZi2nkie1oqhYq0wA1GfvTEAsolGTr+r694IqM2phEuKTZZTttZuQluhfAlLL+19MZRpU6keKHPMYAttXSBYzI/PR3IGNkeUHihRGURijMw2xYmN0WbzSs65rfEGnkq2R1/grqFxIWQC6fPH10nswDJN6rcrmWC1FwM/8glLzY0rPzK9lzWC3WTpBC9V04TMvHasYudg5kMUi6Mf5mTX40POS0sd9JWE2Wh/g1kaZYa+dEOcvlgxRSLKiXx1Bmt/XtcnvzWGLnI2tMTl3oM8nH8590Qitj/T993+2w3rzS4HZpYZ+uu/Iy69UTPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9yl0vZB6zXYsdXshurlVu4KnvgnCsluDrbU15igoniQ=;
+ b=Nq5/Y/iDLlB12kGvABqgYjQmqK4r3y7FBJeLCCCuw/MqMnoUniBG1RU/3lulkRZns7wED8pJqymFx2DYFCAXzCaAUM+ja9mLUbA/v6UuEumv9YtFDUtp2J2BLMo3uivuvPvNg14sIJUDHYljb6IsEZqtpXaR5s9W2MEPdEMXZJC4Os9GwsNIFQKeSlL5TkSL1aXpfsDpaxJeaB1Gy0Qmh76ku0sDIIUYWfD2862R0hT3eDxHeZk83fRdPiJUXbUHj6ZkruDSAMH/QOgJ1hKAUNDL86Zyq7KWCGtPEIF2CbjS0SZvTcGO3rzk41cCFUOsjQXrMbKYBGEOxlML0WhBXA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9yl0vZB6zXYsdXshurlVu4KnvgnCsluDrbU15igoniQ=;
+ b=MYhfyWbo7ZNEaX1YgJ8Z2TLZhn49IhI8AjTgV9GQkEymfujCfYQLc7IiYp8O/+wkI+iV/QMOpRnfKLp5UHWb+VhfRgcdjuik3Zi1r7z70MOTMjI0/MBV0haXwIW3BS8Ah/ppfdt1S3MwRydTkiHXDQV24a/9xdcsUCqbBnG+hok=
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.155.147) by
+ BYAPR15MB2950.namprd15.prod.outlook.com (20.178.237.30) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2581.12; Thu, 26 Dec 2019 21:36:23 +0000
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::8cc8:bdb1:a9c7:7f60]) by BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::8cc8:bdb1:a9c7:7f60%3]) with mapi id 15.20.2581.007; Thu, 26 Dec 2019
+ 21:36:23 +0000
+Received: from tower.dhcp.thefacebook.com (2620:10d:c090:200::d272) by MWHPR11CA0018.namprd11.prod.outlook.com (2603:10b6:301:1::28) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2581.11 via Frontend Transport; Thu, 26 Dec 2019 21:36:22 +0000
+From:   Roman Gushchin <guro@fb.com>
+To:     Yafang Shao <laoar.shao@gmail.com>
+CC:     "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "vdavydov.dev@gmail.com" <vdavydov.dev@gmail.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/5] mm, memcg: introduce MEMCG_PROT_SKIP for memcg
+ zero usage case
+Thread-Topic: [PATCH v2 2/5] mm, memcg: introduce MEMCG_PROT_SKIP for memcg
+ zero usage case
+Thread-Index: AQHVui+ASibtRWJQmkOInCTxhAakFKfM9KWA
+Date:   Thu, 26 Dec 2019 21:36:23 +0000
+Message-ID: <20191226213619.GB22734@tower.dhcp.thefacebook.com>
+References: <1577174006-13025-1-git-send-email-laoar.shao@gmail.com>
+ <1577174006-13025-3-git-send-email-laoar.shao@gmail.com>
+In-Reply-To: <1577174006-13025-3-git-send-email-laoar.shao@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR11CA0018.namprd11.prod.outlook.com
+ (2603:10b6:301:1::28) To BYAPR15MB2631.namprd15.prod.outlook.com
+ (2603:10b6:a03:150::19)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:200::d272]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 9aa50378-7ebe-4d0f-8909-08d78a4ba72c
+x-ms-traffictypediagnostic: BYAPR15MB2950:
+x-microsoft-antispam-prvs: <BYAPR15MB295024CEEE025E8FE8B10AD9BE2B0@BYAPR15MB2950.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 02638D901B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(346002)(376002)(396003)(136003)(189003)(199004)(16526019)(71200400001)(186003)(478600001)(55016002)(9686003)(86362001)(6916009)(7696005)(52116002)(33656002)(4326008)(6506007)(2906002)(316002)(5660300002)(66476007)(66556008)(64756008)(66446008)(54906003)(66946007)(1076003)(8676002)(81166006)(81156014)(8936002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2950;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: WohfVM1NpD2E/Zap1fW68kb4xHT6bJ88KAbKowlzd9Hfo9k0SRmaZBBn0KVpAZjDZBtSEhJbE6YSqAPpONCEzMttXA+5EOdovIREvbJghpNw4pg62abmxiDvDDVo+wTift/1b+OkpFHfdq2AnsTuSc4UYAbzHeUPmu+LgqljQbiFmEQUqPf0zjiNUECNxg4Du/ASY7VwERrQUKTcn0vgK0U+3qkujps2hOW4Kxasg/udK33aTftBHAm00brfpSgOzUhmlaJM71tHSEJZZuNrpzBDlmv97zooW3cckjZA3EVq2vSxO9TKNcItSY2M+t+mfMTUPN1vBa2xIdw8Mexk8GJ6z4rNbIQyvBIOPM7utbfmYKVxFLjlpjYgFDbHScU+SkOJOiDXBFZQ7MXWPUgtnDMSMl4d4m2bPUX5W7Ts7U6PeHZVXBqDpVY/9Pxrf493
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <F9AD53F2A1917148AD84E6F5657AC7ED@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Received: by 2002:a5e:c014:: with SMTP id u20mr28827749iol.43.1577395508935;
- Thu, 26 Dec 2019 13:25:08 -0800 (PST)
-Date:   Thu, 26 Dec 2019 13:25:08 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fb27f1059aa202ea@google.com>
-Subject: possible deadlock in pipe_lock (3)
-From:   syzbot <syzbot+217d60b447573313b211@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9aa50378-7ebe-4d0f-8909-08d78a4ba72c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Dec 2019 21:36:23.1606
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zQ3C2PR1hB4SuVneypIYDQMxwbzSJ6YY1YMBqgdM68EOvTM2vsoPoB2PBs+JWcrg
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2950
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-26_05:2019-12-24,2019-12-26 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 phishscore=0
+ lowpriorityscore=0 suspectscore=0 impostorscore=0 malwarescore=0
+ priorityscore=1501 clxscore=1015 spamscore=0 bulkscore=0 adultscore=0
+ mlxlogscore=999 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912260191
+X-FB-Internal: deliver
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Tue, Dec 24, 2019 at 02:53:23AM -0500, Yafang Shao wrote:
+> If the usage of a memcg is zero, we don't need to do useless work to scan
+> it. That is a minor optimization.
 
-syzbot found the following crash on:
+The optimization isn't really related to the main idea of the patchset,
+so I'd prefer to treat it separately.
 
-HEAD commit:    46cf053e Linux 5.5-rc3
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=167281c1e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ed9d672709340e35
-dashboard link: https://syzkaller.appspot.com/bug?extid=217d60b447573313b211
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=116496c1e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10104649e00000
+>=20
+> Cc: Roman Gushchin <guro@fb.com>
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> ---
+>  include/linux/memcontrol.h | 1 +
+>  mm/memcontrol.c            | 2 +-
+>  mm/vmscan.c                | 6 ++++++
+>  3 files changed, 8 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 612a457..1a315c7 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -54,6 +54,7 @@ enum mem_cgroup_protection {
+>  	MEMCG_PROT_NONE,
+>  	MEMCG_PROT_LOW,
+>  	MEMCG_PROT_MIN,
+> +	MEMCG_PROT_SKIP,	/* For zero usage case */
+>  };
+> =20
+>  struct mem_cgroup_reclaim_cookie {
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index c5b5f74..f35fcca 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -6292,7 +6292,7 @@ enum mem_cgroup_protection mem_cgroup_protected(str=
+uct mem_cgroup *root,
+> =20
+>  	usage =3D page_counter_read(&memcg->memory);
+>  	if (!usage)
+> -		return MEMCG_PROT_NONE;
+> +		return MEMCG_PROT_SKIP;
 
-Bisection is inconclusive: the first bad commit could be any of:
+I'm concerned that it might lead to a regression with the scraping of
+last pages from a memcg. Charge is batched using percpu stocks, so the
+value of the page counter is approximate. Skipping the cgroup entirely
+we're losing all chances to reclaim these few pages.
 
-9211bfbf netfilter: add missing IS_ENABLED(CONFIG_BRIDGE_NETFILTER) checks  
-to header-file.
-47e640af netfilter: add missing IS_ENABLED(CONFIG_NF_TABLES) check to  
-header-file.
-a1b2f04e netfilter: add missing includes to a number of header-files.
-0abc8bf4 netfilter: add missing IS_ENABLED(CONFIG_NF_CONNTRACK) checks to  
-some header-files.
-bd96b4c7 netfilter: inline four headers files into another one.
-43dd16ef netfilter: nf_tables: store data in offload context registers
-78458e3e netfilter: add missing IS_ENABLED(CONFIG_NETFILTER) checks to some  
-header-files.
-20a9379d netfilter: remove "#ifdef __KERNEL__" guards from some headers.
-bd8699e9 netfilter: nft_bitwise: add offload support
-2a475c40 kbuild: remove all netfilter headers from header-test blacklist.
-7e59b3fe netfilter: remove unnecessary spaces
-1b90af29 ipvs: Improve robustness to the ipvs sysctl
-5785cf15 netfilter: nf_tables: add missing prototypes.
-0a30ba50 netfilter: nf_nat_proto: make tables static
-e84fb4b3 netfilter: conntrack: use shared sysctl constants
-10533343 netfilter: connlabels: prefer static lock initialiser
-8c0bb787 netfilter: synproxy: rename mss synproxy_options field
-c162610c Merge git://git.kernel.org/pub/scm/linux/kernel/git/pablo/nf-next
+Idk how serious the problem could be in the real life, and maybe it's OK
+to skip if the cgroup is online, but I'd triple check here.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=114c96c1e00000
+Also, because this optimization isn't really related to protection,
+why not check the page counter first, e.g.:
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+217d60b447573313b211@syzkaller.appspotmail.com
+	memcg =3D mem_cgroup_iter(root, NULL, NULL);
+ 	do {
+		unsigned long reclaimed;
+		unsigned long scanned;
 
-======================================================
-WARNING: possible circular locking dependency detected
-5.5.0-rc3-syzkaller #0 Not tainted
-------------------------------------------------------
-syz-executor691/10028 is trying to acquire lock:
-ffff88809643c460 (&pipe->mutex/1){+.+.}, at: pipe_lock_nested fs/pipe.c:65  
-[inline]
-ffff88809643c460 (&pipe->mutex/1){+.+.}, at: pipe_lock+0x65/0x80  
-fs/pipe.c:73
+		if (!page_counter_read(&memcg->memory))
+			continue;
 
-but task is already holding lock:
-ffff888099382428 (sb_writers#4){.+.+}, at: file_start_write  
-include/linux/fs.h:2885 [inline]
-ffff888099382428 (sb_writers#4){.+.+}, at: do_splice+0xf48/0x1680  
-fs/splice.c:1169
+		switch (mem_cgroup_protected(root, memcg)) {
+		case MEMCG_PROT_MIN:
+			/*
+			 * Hard protection.
+			 * If there is no reclaimable memory, OOM.
+			 */
+			continue;
+		case MEMCG_PROT_LOW:
 
-which lock already depends on the new lock.
+--
 
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (sb_writers#4){.+.+}:
-        percpu_down_read include/linux/percpu-rwsem.h:40 [inline]
-        __sb_start_write+0x241/0x460 fs/super.c:1674
-        file_start_write include/linux/fs.h:2885 [inline]
-        ovl_write_iter+0x91b/0xc20 fs/overlayfs/file.c:277
-        call_write_iter include/linux/fs.h:1902 [inline]
-        new_sync_write+0x4d3/0x770 fs/read_write.c:483
-        __vfs_write+0xe1/0x110 fs/read_write.c:496
-        __kernel_write+0x11b/0x3b0 fs/read_write.c:515
-        write_pipe_buf+0x15d/0x1f0 fs/splice.c:809
-        splice_from_pipe_feed fs/splice.c:512 [inline]
-        __splice_from_pipe+0x3ee/0x7c0 fs/splice.c:636
-        splice_from_pipe+0x108/0x170 fs/splice.c:671
-        default_file_splice_write+0x3c/0x90 fs/splice.c:821
-        do_splice_from fs/splice.c:863 [inline]
-        do_splice+0xba4/0x1680 fs/splice.c:1170
-        __do_sys_splice fs/splice.c:1447 [inline]
-        __se_sys_splice fs/splice.c:1427 [inline]
-        __x64_sys_splice+0x2c6/0x330 fs/splice.c:1427
-        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #1 (&ovl_i_mutex_key[depth]){+.+.}:
-        down_write+0x93/0x150 kernel/locking/rwsem.c:1534
-        inode_lock include/linux/fs.h:791 [inline]
-        ovl_write_iter+0x148/0xc20 fs/overlayfs/file.c:265
-        call_write_iter include/linux/fs.h:1902 [inline]
-        new_sync_write+0x4d3/0x770 fs/read_write.c:483
-        __vfs_write+0xe1/0x110 fs/read_write.c:496
-        __kernel_write+0x11b/0x3b0 fs/read_write.c:515
-        write_pipe_buf+0x15d/0x1f0 fs/splice.c:809
-        splice_from_pipe_feed fs/splice.c:512 [inline]
-        __splice_from_pipe+0x3ee/0x7c0 fs/splice.c:636
-        splice_from_pipe+0x108/0x170 fs/splice.c:671
-        default_file_splice_write+0x3c/0x90 fs/splice.c:821
-        do_splice_from fs/splice.c:863 [inline]
-        do_splice+0xba4/0x1680 fs/splice.c:1170
-        __do_sys_splice fs/splice.c:1447 [inline]
-        __se_sys_splice fs/splice.c:1427 [inline]
-        __x64_sys_splice+0x2c6/0x330 fs/splice.c:1427
-        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #0 (&pipe->mutex/1){+.+.}:
-        check_prev_add kernel/locking/lockdep.c:2476 [inline]
-        check_prevs_add kernel/locking/lockdep.c:2581 [inline]
-        validate_chain kernel/locking/lockdep.c:2971 [inline]
-        __lock_acquire+0x2596/0x4a00 kernel/locking/lockdep.c:3955
-        lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4485
-        __mutex_lock_common kernel/locking/mutex.c:956 [inline]
-        __mutex_lock+0x156/0x13c0 kernel/locking/mutex.c:1103
-        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1118
-        pipe_lock_nested fs/pipe.c:65 [inline]
-        pipe_lock+0x65/0x80 fs/pipe.c:73
-        iter_file_splice_write+0x18b/0xc10 fs/splice.c:709
-        do_splice_from fs/splice.c:863 [inline]
-        do_splice+0xba4/0x1680 fs/splice.c:1170
-        __do_sys_splice fs/splice.c:1447 [inline]
-        __se_sys_splice fs/splice.c:1427 [inline]
-        __x64_sys_splice+0x2c6/0x330 fs/splice.c:1427
-        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-other info that might help us debug this:
-
-Chain exists of:
-   &pipe->mutex/1 --> &ovl_i_mutex_key[depth] --> sb_writers#4
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(sb_writers#4);
-                                lock(&ovl_i_mutex_key[depth]);
-                                lock(sb_writers#4);
-   lock(&pipe->mutex/1);
-
-  *** DEADLOCK ***
-
-1 lock held by syz-executor691/10028:
-  #0: ffff888099382428 (sb_writers#4){.+.+}, at: file_start_write  
-include/linux/fs.h:2885 [inline]
-  #0: ffff888099382428 (sb_writers#4){.+.+}, at: do_splice+0xf48/0x1680  
-fs/splice.c:1169
-
-stack backtrace:
-CPU: 1 PID: 10028 Comm: syz-executor691 Not tainted 5.5.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x197/0x210 lib/dump_stack.c:118
-  print_circular_bug.isra.0.cold+0x163/0x172 kernel/locking/lockdep.c:1685
-  check_noncircular+0x32e/0x3e0 kernel/locking/lockdep.c:1809
-  check_prev_add kernel/locking/lockdep.c:2476 [inline]
-  check_prevs_add kernel/locking/lockdep.c:2581 [inline]
-  validate_chain kernel/locking/lockdep.c:2971 [inline]
-  __lock_acquire+0x2596/0x4a00 kernel/locking/lockdep.c:3955
-  lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4485
-  __mutex_lock_common kernel/locking/mutex.c:956 [inline]
-  __mutex_lock+0x156/0x13c0 kernel/locking/mutex.c:1103
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1118
-  pipe_lock_nested fs/pipe.c:65 [inline]
-  pipe_lock+0x65/0x80 fs/pipe.c:73
-  iter_file_splice_write+0x18b/0xc10 fs/splice.c:709
-  do_splice_from fs/splice.c:863 [inline]
-  do_splice+0xba4/0x1680 fs/splice.c:1170
-  __do_sys_splice fs/splice.c:1447 [inline]
-  __se_sys_splice fs/splice.c:1427 [inline]
-  __x64_sys_splice+0x2c6/0x330 fs/splice.c:1427
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x448059
-Code: e8 6c e7 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 db 07 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f6e364e9da8 EFLAGS: 00000246 ORIG_RAX: 0000000000000113
-RAX: ffffffffffffffda RBX: 00000000006ddc28 RCX: 0000000000448059
-RDX: 0000000000000004 RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 00000000006ddc20 R08: 0000000100000002 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006ddc2c
-R13: 00007ffdf34111cf R14: 00007f6e364ea9c0 R15: 00000000006ddc2c
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Thank you!
