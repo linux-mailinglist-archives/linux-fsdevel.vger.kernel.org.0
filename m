@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9551812ACCB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Dec 2019 15:06:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B82312ACCE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Dec 2019 15:06:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727217AbfLZOFp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Dec 2019 09:05:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51730 "EHLO mail.kernel.org"
+        id S1726839AbfLZOF5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Dec 2019 09:05:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726508AbfLZOFp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Dec 2019 09:05:45 -0500
+        id S1726453AbfLZOF5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 26 Dec 2019 09:05:57 -0500
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F3F362053B;
-        Thu, 26 Dec 2019 14:05:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12DF720828;
+        Thu, 26 Dec 2019 14:05:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577369144;
-        bh=84LZ0Pavzw/LaqoQPwuMgD8SBmAXJt1yeOafopoC60E=;
+        s=default; t=1577369156;
+        bh=yMBl8XxaxKdvGCY+1+Oua0hhZ/Go8NMOCgUYd9B9UNE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=erirKCUOKja/YK9rKP0C4d4IqPnnyyGPOM5RiPqsdxcJHc/sDtUreVRE51aZR7NWY
-         lcQfQCZZ/dGOghkOxm5C6JFDG5hIPwOjqah1EMe9XmDG8j4dSV7kNIVR2ueJQ6qLy5
-         ydcQl5q73ezlhWpIgxZa4Vt8JPyPivRn/ks6ERdo=
+        b=MpEHs14iMrx9XIgrnOUTokYdmLRpK9XlDm/Bk3V8RWnsnS8L4gH1DQmxEmgPoTIhJ
+         jqCaTvte6rqJZieGBCCPeuVwi7S2peHJRKMO2FxlBTxTUU3EDHnkmD4vpa5BlAMQAm
+         Ya9pgdAmedAXrqzrRTOmJznRo7rky4P6axKsScwk=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Steven Rostedt <rostedt@goodmis.org>,
         Frank Rowand <frowand.list@gmail.com>
@@ -41,9 +41,9 @@ Cc:     Ingo Molnar <mingo@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 09/22] Documentation: bootconfig: Add a doc for extended boot config
-Date:   Thu, 26 Dec 2019 23:05:37 +0900
-Message-Id: <157736913741.11126.15539645305980863138.stgit@devnote2>
+Subject: [PATCH v5 10/22] tracing: Apply soft-disabled and filter to tracepoints printk
+Date:   Thu, 26 Dec 2019 23:05:49 +0900
+Message-Id: <157736914939.11126.13682942838710986821.stgit@devnote2>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <157736902773.11126.2531161235817081873.stgit@devnote2>
 References: <157736902773.11126.2531161235817081873.stgit@devnote2>
@@ -56,229 +56,37 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a documentation for extended boot config under
-admin-guide, since it is including the syntax of boot config.
+Apply soft-disabled and the filter rule of the trace events to
+the printk output of tracepoints (a.k.a. tp_printk kernel parameter)
+as same as trace buffer output.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- Changes in v5:
-  - Fix to insert bootconfig to TOC list alphabetically.
-  - Add notes about avaliable characters in values.
-  - Fix to use correct quotes (``) for .rst.
- Changes in v4:
-  - Rename suppremental kernel command line to boot config.
-  - Update document according to the recent changes.
-  - Add How to load it on boot.
-  - Style bugfix.
----
  0 files changed
 
-diff --git a/Documentation/admin-guide/bootconfig.rst b/Documentation/admin-guide/bootconfig.rst
-new file mode 100644
-index 000000000000..6f31c775c25a
---- /dev/null
-+++ b/Documentation/admin-guide/bootconfig.rst
-@@ -0,0 +1,178 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+==================
-+Boot Configuration
-+==================
-+
-+:Author: Masami Hiramatsu <mhiramat@kernel.org>
-+
-+Overview
-+========
-+
-+The boot configuration is expanding current kernel cmdline to support
-+additional key-value data when boot the kernel in an efficient way.
-+This allows adoministrators to pass a structured-Key config file.
-+
-+Config File Syntax
-+==================
-+
-+The boot config syntax is a simple structured key-value. Each key consists
-+of dot-connected-words, and key and value are connected by "=". The value
-+has to be terminated by semi-colon (``;``) or newline (``\n``).
-+For array value, array entries are separated by comma (``,``).
-+
-+KEY[.WORD[...]] = VALUE[, VALUE2[...]][;]
-+
-+Each key word must contain only alphabets, numbers, dash (``-``) or underscore
-+(``_``). And each value only contains printable characters or spaces except
-+for delimiters such as semi-colon (``;``), new-line (``\n``), comma (``,``),
-+hash (``#``) and closing brace (``}``).
-+
-+If you want to use those delimiters in a value, you can use either double-
-+quotes (``"VALUE"``) or single-quotes (``'VALUE'``) to quote it. Note that
-+you can not escape these quotes.
-+
-+There can be a key which doesn't have value or has an empty value. Those keys
-+are used for checking the key exists or not (like a boolean).
-+
-+Key-Value Syntax
-+----------------
-+
-+The boot config file syntax allows user to merge partially same word keys
-+by brace. For example::
-+
-+ foo.bar.baz = value1
-+ foo.bar.qux.quux = value2
-+
-+These can be written also in::
-+
-+ foo.bar {
-+    baz = value1
-+    qux.quux = value2
-+ }
-+
-+Or more shorter, written as following::
-+
-+ foo.bar { baz = value1; qux.quux = value2 }
-+
-+In both styles, same key words are automatically merged when parsing it
-+at boot time. So you can append similar trees or key-values.
-+
-+Comments
-+--------
-+
-+The config syntax accepts shell-script style comments. The comments start
-+with hash ("#") until newline ("\n") will be ignored.
-+
-+::
-+
-+ # comment line
-+ foo = value # value is set to foo.
-+ bar = 1, # 1st element
-+       2, # 2nd element
-+       3  # 3rd element
-+
-+This is parsed as below::
-+
-+ foo = value
-+ bar = 1, 2, 3
-+
-+
-+/proc/bootconfig
-+================
-+
-+/proc/bootconfig is a user-space interface of the boot config.
-+Unlike /proc/cmdline, this file shows the key-value style list.
-+Each key-value pair is shown in each line with following style::
-+
-+ KEY[.WORDS...] = "[VALUE]"[,"VALUE2"...]
-+
-+
-+Boot Kernel With a Boot Config
-+==============================
-+
-+Since the boot configuration file is loaded with initrd, it will be added
-+to the end of the initrd (initramfs) image file. The Linux kernel decodes
-+the last part of the initrd image in memory to get the boot configuration
-+data.
-+Because of this "piggyback" method, there is no need to change or
-+update the boot loader and the kernel image itself.
-+
-+To do this operation, Linux kernel provides "bootconfig" command under
-+tools/bootconfig, which allows admin to apply or delete the config file
-+to/from initrd image. You can build it by follwoing command::
-+
-+ # make -C tools/bootconfig
-+
-+To add your boot config file to initrd image, run bootconfig as below
-+(Old data is removed automatically if exists)::
-+
-+ # tools/bootconfig/bootconfig -a your-config /boot/initrd.img-X.Y.Z
-+
-+To remove the config from the image, you can use -d option as below::
-+
-+ # tools/bootconfig/bootconfig -d /boot/initrd.img-X.Y.Z
-+
-+
-+C onfig File Limitation
-+======================
-+
-+Currently the maximum config size size is 32KB and the total key-words (not
-+key-value entries) must be under 1024 nodes.
-+Note: this is not the number of entries but nodes, an entry must consume
-+more than 2 nodes (a key-word and a value). So theoretically, it will be
-+up to 512 key-value pairs. If keys contains 3 words in average, it can
-+contain 256 key-value pairs. In most cases, the number of config items
-+will be under 100 entries and smaller than 8KB, so it would be enough.
-+If the node number exceeds 1024, parser returns an error even if the file
-+size is smaller than 32KB.
-+Anyway, since bootconfig command verifies it when appending a boot config
-+to initrd image, user can notice it before boot.
-+
-+
-+Bootconfig APIs
-+===============
-+
-+User can query or loop on key-value pairs, also it is possible to find
-+a root (prefix) key node and find key-values under that node.
-+
-+If you have a key string, you can query the value directly with the key
-+using xbc_find_value(). If you want to know what keys exist in the SKC
-+tree, you can use xbc_for_each_key_value() to iterate key-value pairs.
-+Note that you need to use xbc_array_for_each_value() for accessing
-+each arraies value, e.g.::
-+
-+ vnode = NULL;
-+ xbc_find_value("key.word", &vnode);
-+ if (vnode && xbc_node_is_array(vnode))
-+    xbc_array_for_each_value(vnode, value) {
-+      printk("%s ", value);
-+    }
-+
-+If you want to focus on keys which has a prefix string, you can use
-+xbc_find_node() to find a node which prefix key words, and iterate
-+keys under the prefix node with xbc_node_for_each_key_value().
-+
-+But the most typical usage is to get the named value under prefix
-+or get the named array under prefix as below::
-+
-+ root = xbc_find_node("key.prefix");
-+ value = xbc_node_find_value(root, "option", &vnode);
-+ ...
-+ xbc_node_for_each_array_value(root, "array-option", value, anode) {
-+    ...
-+ }
-+
-+This accesses a value of "key.prefix.option" and an array of
-+"key.prefix.array-option".
-+
-+Locking is not needed, since after initialized, the config becomes readonly.
-+All data and keys must be copied if you need to modify it.
-+
-+
-+Functions and structures
-+========================
-+
-+.. kernel-doc:: include/linux/bootconfig.h
-+.. kernel-doc:: lib/bootconfig.c
-+
-diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
-index 4405b7485312..9e0f1e3fd152 100644
---- a/Documentation/admin-guide/index.rst
-+++ b/Documentation/admin-guide/index.rst
-@@ -64,6 +64,7 @@ configure specific aspects of kernel behavior to your liking.
-    binderfs
-    binfmt-misc
-    blockdev/index
-+   bootconfig
-    braille-console
-    btmrvl
-    cgroup-v1/index
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9dc69bb6856f..03dda2d1c157 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15776,6 +15776,7 @@ F:	lib/bootconfig.c
- F:	fs/proc/bootconfig.c
- F:	include/linux/bootconfig.h
- F:	tools/bootconfig/*
-+F:	Documentation/admin-guide/bootconfig.rst
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index ddb7e7f5fe8d..43f0f255ad66 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -2610,6 +2610,7 @@ static DEFINE_MUTEX(tracepoint_printk_mutex);
+ static void output_printk(struct trace_event_buffer *fbuffer)
+ {
+ 	struct trace_event_call *event_call;
++	struct trace_event_file *file;
+ 	struct trace_event *event;
+ 	unsigned long flags;
+ 	struct trace_iterator *iter = tracepoint_print_iter;
+@@ -2623,6 +2624,12 @@ static void output_printk(struct trace_event_buffer *fbuffer)
+ 	    !event_call->event.funcs->trace)
+ 		return;
  
- SUN3/3X
- M:	Sam Creasey <sammy@sammy.net>
++	file = fbuffer->trace_file;
++	if (test_bit(EVENT_FILE_FL_SOFT_DISABLED_BIT, &file->flags) ||
++	    (unlikely(file->flags & EVENT_FILE_FL_FILTERED) &&
++	     !filter_match_preds(file->filter, fbuffer->entry)))
++		return;
++
+ 	event = &fbuffer->trace_file->event_call->event;
+ 
+ 	spin_lock_irqsave(&tracepoint_iter_lock, flags);
 
