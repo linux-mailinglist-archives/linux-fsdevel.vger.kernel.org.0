@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AEBC12AEF7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Dec 2019 22:36:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C47CF12AEFB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Dec 2019 22:46:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727011AbfLZVgb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Dec 2019 16:36:31 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:37354 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726105AbfLZVgb (ORCPT
+        id S1726442AbfLZVqH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Dec 2019 16:46:07 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:58124 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726105AbfLZVqG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Dec 2019 16:36:31 -0500
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBQLTN09028500;
-        Thu, 26 Dec 2019 13:36:25 -0800
+        Thu, 26 Dec 2019 16:46:06 -0500
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.16.0.42/8.16.0.42) with SMTP id xBQLRVaE001848;
+        Thu, 26 Dec 2019 13:45:59 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : references : in-reply-to : content-type : content-id
  : content-transfer-encoding : mime-version; s=facebook;
- bh=9yl0vZB6zXYsdXshurlVu4KnvgnCsluDrbU15igoniQ=;
- b=ViGwB6LeT6yu8iDefABALIz1h/iRowjz8+9tyHJjoIjiTCayjy5h4xD0JGwcGphvC8ca
- 6jxgxMrsHr3jeb3MxB/Om1dF9iy5wPeY888QwhZ1wPq7UH4kgDZWJB0vPwXc5wgRQjMn
- CcOueIaHPpFY4Dr/DoD1cKBqb9bC6DYY5Jc= 
+ bh=zS8a9nKL4i33iCJ63GUEBAywzbZYWl+7Q90BY8/CtPs=;
+ b=amCGGn4h8l3/dnw8TGU4aZ7f+Ph6z1Rdi9aeHcrUGsr6sjF/jCmSIPP0bzcYH4qSIX6n
+ V9h2zWs1PbEv5AfzePjL5Z04sGJOlPIbDdxwb1CuzCktDXaYKJmvSYiy0EEt0jdMasrR
+ hF8qLKA03heGNQ02Qy1CBCe115bsa3B7kiM= 
 Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2x4puyjmrd-2
+        by m0001303.ppops.net with ESMTP id 2x3mexg0de-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 26 Dec 2019 13:36:25 -0800
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.172) with Microsoft SMTP Server
+        Thu, 26 Dec 2019 13:45:58 -0800
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.36.101) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 26 Dec 2019 13:36:24 -0800
+ 15.1.1713.5; Thu, 26 Dec 2019 13:45:58 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YfUZIJVB9yLn47MTTlsGClo4qPJZi2nkie1oqhYq0wA1GfvTEAsolGTr+r694IqM2phEuKTZZTttZuQluhfAlLL+19MZRpU6keKHPMYAttXSBYzI/PR3IGNkeUHihRGURijMw2xYmN0WbzSs65rfEGnkq2R1/grqFxIWQC6fPH10nswDJN6rcrmWC1FwM/8glLzY0rPzK9lzWC3WTpBC9V04TMvHasYudg5kMUi6Mf5mTX40POS0sd9JWE2Wh/g1kaZYa+dEOcvlgxRSLKiXx1Bmt/XtcnvzWGLnI2tMTl3oM8nH8590Qitj/T993+2w3rzS4HZpYZ+uu/Iy69UTPA==
+ b=d5apCpSc41bRf+exyV0/w2UA6vNSGs2e0wobyMvTblJfHKmKf/+SXjQ/fUbLZvwMPa6qo8id3/f2AeQZzbXxVwH2BhzgAjg5YoiIYbSuUtq/FoD73MbDdXdtjHKvq9XSGI1AIyKPdxoh5pO6NiKOo31www5AGdWBKflJnD2CuHXiILlQrMQBAoy9W13tgW3l+6c0xAB0pcgpMImX58jN052N8sdilp4vUsjiePQDo8IBLKoiFV1cRrU4yDtmSNXVBrgt1gybatP0EJigNFm93wsw947sdC+G7gcCEa5pHib0M0N3qNNS3SK75T4bDyiNFUMgnD9/RgWeMEc0qv+Ptg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9yl0vZB6zXYsdXshurlVu4KnvgnCsluDrbU15igoniQ=;
- b=Nq5/Y/iDLlB12kGvABqgYjQmqK4r3y7FBJeLCCCuw/MqMnoUniBG1RU/3lulkRZns7wED8pJqymFx2DYFCAXzCaAUM+ja9mLUbA/v6UuEumv9YtFDUtp2J2BLMo3uivuvPvNg14sIJUDHYljb6IsEZqtpXaR5s9W2MEPdEMXZJC4Os9GwsNIFQKeSlL5TkSL1aXpfsDpaxJeaB1Gy0Qmh76ku0sDIIUYWfD2862R0hT3eDxHeZk83fRdPiJUXbUHj6ZkruDSAMH/QOgJ1hKAUNDL86Zyq7KWCGtPEIF2CbjS0SZvTcGO3rzk41cCFUOsjQXrMbKYBGEOxlML0WhBXA==
+ bh=zS8a9nKL4i33iCJ63GUEBAywzbZYWl+7Q90BY8/CtPs=;
+ b=C+Uv62PHjkFJKs8JlBA9IuEz1dvgfBo6JQV1lB07JKoxwMQ2U3r4QfjF84hS9NsPXL5/RwvyW2ePQgLgogxuBD6FZORWVH6ZSNKDF7wliSX2hiAgp7p3oDYPSnLiOliJAWlr8RPvAiXC+jTENOfIGhKiOmUvHAIv3toElhgev7LiIJGGwgWeD8TGJxGSMM9riDbzuUTbe4SuW8gKLMSsfcE32nwp63VjTNNKvJN1TUSY8MDtiSwIQEN2aoWZzHkIbCvDuuyDh+5x813AP4VRVHZHHDyb8jFGiHxwKkXaHU+KS5f1e88znRvLjF1wqJ5Ic7OZBYqsgOXdc50OrVvKWg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
  header.d=fb.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
  s=selector2-fb-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9yl0vZB6zXYsdXshurlVu4KnvgnCsluDrbU15igoniQ=;
- b=MYhfyWbo7ZNEaX1YgJ8Z2TLZhn49IhI8AjTgV9GQkEymfujCfYQLc7IiYp8O/+wkI+iV/QMOpRnfKLp5UHWb+VhfRgcdjuik3Zi1r7z70MOTMjI0/MBV0haXwIW3BS8Ah/ppfdt1S3MwRydTkiHXDQV24a/9xdcsUCqbBnG+hok=
+ bh=zS8a9nKL4i33iCJ63GUEBAywzbZYWl+7Q90BY8/CtPs=;
+ b=G3h3fct9pQ/BXC/ACWKEX5ZbqZ32K6OKw/9wV2cH4PaJmCUp9/aREzk+vxtotbInkbLBsS9iU9p2wDqDwey9TjKsGdErRev5wUvI4KFFd/rDDSkU4DFvCngXz/flpS9TpUNw5u+DKIEIt93pvZnAPEByqFl6E1FmiFNeIxn7n6A=
 Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.155.147) by
- BYAPR15MB2950.namprd15.prod.outlook.com (20.178.237.30) with Microsoft SMTP
+ BYAPR15MB2632.namprd15.prod.outlook.com (20.179.156.25) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2581.12; Thu, 26 Dec 2019 21:36:23 +0000
+ 15.20.2581.11; Thu, 26 Dec 2019 21:45:43 +0000
 Received: from BYAPR15MB2631.namprd15.prod.outlook.com
  ([fe80::8cc8:bdb1:a9c7:7f60]) by BYAPR15MB2631.namprd15.prod.outlook.com
  ([fe80::8cc8:bdb1:a9c7:7f60%3]) with mapi id 15.20.2581.007; Thu, 26 Dec 2019
- 21:36:23 +0000
-Received: from tower.dhcp.thefacebook.com (2620:10d:c090:200::d272) by MWHPR11CA0018.namprd11.prod.outlook.com (2603:10b6:301:1::28) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2581.11 via Frontend Transport; Thu, 26 Dec 2019 21:36:22 +0000
+ 21:45:43 +0000
+Received: from tower.dhcp.thefacebook.com (2620:10d:c090:200::d272) by MWHPR15CA0043.namprd15.prod.outlook.com (2603:10b6:300:ad::29) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2581.11 via Frontend Transport; Thu, 26 Dec 2019 21:45:42 +0000
 From:   Roman Gushchin <guro@fb.com>
 To:     Yafang Shao <laoar.shao@gmail.com>
 CC:     "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
@@ -63,133 +63,133 @@ CC:     "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
         "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
         "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
         "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/5] mm, memcg: introduce MEMCG_PROT_SKIP for memcg
- zero usage case
-Thread-Topic: [PATCH v2 2/5] mm, memcg: introduce MEMCG_PROT_SKIP for memcg
- zero usage case
-Thread-Index: AQHVui+ASibtRWJQmkOInCTxhAakFKfM9KWA
-Date:   Thu, 26 Dec 2019 21:36:23 +0000
-Message-ID: <20191226213619.GB22734@tower.dhcp.thefacebook.com>
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Chris Down <chris@chrisdown.name>
+Subject: Re: [PATCH v2 3/5] mm, memcg: reset memcg's memory.{min, low} for
+ reclaiming itself
+Thread-Topic: [PATCH v2 3/5] mm, memcg: reset memcg's memory.{min, low} for
+ reclaiming itself
+Thread-Index: AQHVui+JkxyXvqLwsUuIRVCDk0gPNKfM90GA
+Date:   Thu, 26 Dec 2019 21:45:43 +0000
+Message-ID: <20191226214539.GC22734@tower.dhcp.thefacebook.com>
 References: <1577174006-13025-1-git-send-email-laoar.shao@gmail.com>
- <1577174006-13025-3-git-send-email-laoar.shao@gmail.com>
-In-Reply-To: <1577174006-13025-3-git-send-email-laoar.shao@gmail.com>
+ <1577174006-13025-4-git-send-email-laoar.shao@gmail.com>
+In-Reply-To: <1577174006-13025-4-git-send-email-laoar.shao@gmail.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR11CA0018.namprd11.prod.outlook.com
- (2603:10b6:301:1::28) To BYAPR15MB2631.namprd15.prod.outlook.com
+x-clientproxiedby: MWHPR15CA0043.namprd15.prod.outlook.com
+ (2603:10b6:300:ad::29) To BYAPR15MB2631.namprd15.prod.outlook.com
  (2603:10b6:a03:150::19)
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [2620:10d:c090:200::d272]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 9aa50378-7ebe-4d0f-8909-08d78a4ba72c
-x-ms-traffictypediagnostic: BYAPR15MB2950:
-x-microsoft-antispam-prvs: <BYAPR15MB295024CEEE025E8FE8B10AD9BE2B0@BYAPR15MB2950.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-ms-office365-filtering-correlation-id: afadda9a-b56f-4733-9dad-08d78a4cf513
+x-ms-traffictypediagnostic: BYAPR15MB2632:
+x-microsoft-antispam-prvs: <BYAPR15MB263213CB28B1069CD97A8943BE2B0@BYAPR15MB2632.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
 x-forefront-prvs: 02638D901B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(346002)(376002)(396003)(136003)(189003)(199004)(16526019)(71200400001)(186003)(478600001)(55016002)(9686003)(86362001)(6916009)(7696005)(52116002)(33656002)(4326008)(6506007)(2906002)(316002)(5660300002)(66476007)(66556008)(64756008)(66446008)(54906003)(66946007)(1076003)(8676002)(81166006)(81156014)(8936002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2950;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(366004)(346002)(376002)(136003)(199004)(189003)(86362001)(8936002)(4326008)(7416002)(66946007)(66446008)(64756008)(54906003)(71200400001)(478600001)(316002)(81166006)(66556008)(66476007)(81156014)(8676002)(2906002)(186003)(55016002)(16526019)(9686003)(5660300002)(33656002)(1076003)(6506007)(7696005)(6916009)(52116002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2632;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: fb.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: WohfVM1NpD2E/Zap1fW68kb4xHT6bJ88KAbKowlzd9Hfo9k0SRmaZBBn0KVpAZjDZBtSEhJbE6YSqAPpONCEzMttXA+5EOdovIREvbJghpNw4pg62abmxiDvDDVo+wTift/1b+OkpFHfdq2AnsTuSc4UYAbzHeUPmu+LgqljQbiFmEQUqPf0zjiNUECNxg4Du/ASY7VwERrQUKTcn0vgK0U+3qkujps2hOW4Kxasg/udK33aTftBHAm00brfpSgOzUhmlaJM71tHSEJZZuNrpzBDlmv97zooW3cckjZA3EVq2vSxO9TKNcItSY2M+t+mfMTUPN1vBa2xIdw8Mexk8GJ6z4rNbIQyvBIOPM7utbfmYKVxFLjlpjYgFDbHScU+SkOJOiDXBFZQ7MXWPUgtnDMSMl4d4m2bPUX5W7Ts7U6PeHZVXBqDpVY/9Pxrf493
+x-microsoft-antispam-message-info: 8Ucbw57nVRRZ/3+nuNBqWTJIEa2iDS4oRcc4658LRrtOaZbt/vSbWfyfzSOXMWW1pLUGvLFxFa50P+N1OKvfr9e7WNI/phWmfsqhYSizhqCj6B+UtKD31BXbUrK3vZShAw2iZ7iQ03qg1kdTz4ZBkkxJZwPzY8a3Ipq3F0zW97QhAimBMY7kQ/kac0iVWwTz5AmXbZWmfguACvk8v/n0NMSmEOA/svsH+zaQ5nYWRiH0CizEGoWqM5JCgPJJKciP/+jIPHBPZALQnXgCtyzJvTEboxGdZoEXhjg1dsxpEtxhkSfWDz/1K/xMeoanT0bYdZNx6gXm54rjpNNIZ3jMLbxG0uFVPbhkb7xQWCgVaLIkIiIy3PzJLXqnoTnuHhW4x96Fu1yBbvwk9MThQIhhAAQouf5e8HjrsFr9JoF6TeZEmK64WwpmDGCOrfNa3WOh
 x-ms-exchange-transport-forked: True
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <F9AD53F2A1917148AD84E6F5657AC7ED@namprd15.prod.outlook.com>
+Content-ID: <2FAD88BCB709D042800CDA71ADD12D2B@namprd15.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9aa50378-7ebe-4d0f-8909-08d78a4ba72c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Dec 2019 21:36:23.1606
+X-MS-Exchange-CrossTenant-Network-Message-Id: afadda9a-b56f-4733-9dad-08d78a4cf513
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Dec 2019 21:45:43.2184
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zQ3C2PR1hB4SuVneypIYDQMxwbzSJ6YY1YMBqgdM68EOvTM2vsoPoB2PBs+JWcrg
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2950
+X-MS-Exchange-CrossTenant-userprincipalname: PM25cMbLKdCX/rGqpRyk09+KkIbHNyAlONxQTdqXU/MjWbyqGSrx/AY5Ymg1x51A
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2632
 X-OriginatorOrg: fb.com
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
  definitions=2019-12-26_05:2019-12-24,2019-12-26 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 phishscore=0
- lowpriorityscore=0 suspectscore=0 impostorscore=0 malwarescore=0
- priorityscore=1501 clxscore=1015 spamscore=0 bulkscore=0 adultscore=0
- mlxlogscore=999 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912260191
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 spamscore=0
+ malwarescore=0 priorityscore=1501 suspectscore=0 bulkscore=0
+ impostorscore=0 clxscore=1015 adultscore=0 phishscore=0 mlxlogscore=816
+ mlxscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-1910280000 definitions=main-1912260191
 X-FB-Internal: deliver
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 24, 2019 at 02:53:23AM -0500, Yafang Shao wrote:
-> If the usage of a memcg is zero, we don't need to do useless work to scan
-> it. That is a minor optimization.
+On Tue, Dec 24, 2019 at 02:53:24AM -0500, Yafang Shao wrote:
+> memory.{emin, elow} are set in mem_cgroup_protected(), and the values of
+> them won't be changed until next recalculation in this function. After
+> either or both of them are set, the next reclaimer to relcaim this memcg
+> may be a different reclaimer, e.g. this memcg is also the root memcg of
+> the new reclaimer, and then in mem_cgroup_protection() in get_scan_count(=
+)
+> the old values of them will be used to calculate scan count, that is not
+> proper. We should reset them to zero in this case.
+>=20
+> Here's an example of this issue.
+>=20
+>     root_mem_cgroup
+>          /
+>         A   memory.max=3D1024M memory.min=3D512M memory.current=3D800M
+>=20
+> Once kswapd is waked up, it will try to scan all MEMCGs, including
+> this A, and it will assign memory.emin of A with 512M.
+> After that, A may reach its hard limit(memory.max), and then it will
+> do memcg reclaim. Because A is the root of this reclaimer, so it will
+> not calculate its memory.emin. So the memory.emin is the old value
+> 512M, and then this old value will be used in
+> mem_cgroup_protection() in get_scan_count() to get the scan count.
+> That is not proper.
 
-The optimization isn't really related to the main idea of the patchset,
-so I'd prefer to treat it separately.
+Good catch!
+
+But it seems to be a bug introduced with the implementation of the proporti=
+onal
+reclaim. So I'd remove it from the patchset, add the "Fixes" tag and cc sta=
+ble@.
+Then it will have chances to be backported to stable trees.
+
+Thank you!
 
 >=20
-> Cc: Roman Gushchin <guro@fb.com>
+> Cc: Chris Down <chris@chrisdown.name>
 > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 > ---
->  include/linux/memcontrol.h | 1 +
->  mm/memcontrol.c            | 2 +-
->  mm/vmscan.c                | 6 ++++++
->  3 files changed, 8 insertions(+), 1 deletion(-)
+>  mm/memcontrol.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
 >=20
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 612a457..1a315c7 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -54,6 +54,7 @@ enum mem_cgroup_protection {
->  	MEMCG_PROT_NONE,
->  	MEMCG_PROT_LOW,
->  	MEMCG_PROT_MIN,
-> +	MEMCG_PROT_SKIP,	/* For zero usage case */
->  };
-> =20
->  struct mem_cgroup_reclaim_cookie {
 > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index c5b5f74..f35fcca 100644
+> index f35fcca..2e78931 100644
 > --- a/mm/memcontrol.c
 > +++ b/mm/memcontrol.c
-> @@ -6292,7 +6292,7 @@ enum mem_cgroup_protection mem_cgroup_protected(str=
-uct mem_cgroup *root,
+> @@ -6287,8 +6287,17 @@ enum mem_cgroup_protection mem_cgroup_protected(st=
+ruct mem_cgroup *root,
+> =20
+>  	if (!root)
+>  		root =3D root_mem_cgroup;
+> -	if (memcg =3D=3D root)
+> +	if (memcg =3D=3D root) {
+> +		/*
+> +		 * Reset memory.(emin, elow) for reclaiming the memcg
+> +		 * itself.
+> +		 */
+> +		if (memcg !=3D root_mem_cgroup) {
+> +			memcg->memory.emin =3D 0;
+> +			memcg->memory.elow =3D 0;
+> +		}
+>  		return MEMCG_PROT_NONE;
+> +	}
 > =20
 >  	usage =3D page_counter_read(&memcg->memory);
 >  	if (!usage)
-> -		return MEMCG_PROT_NONE;
-> +		return MEMCG_PROT_SKIP;
-
-I'm concerned that it might lead to a regression with the scraping of
-last pages from a memcg. Charge is batched using percpu stocks, so the
-value of the page counter is approximate. Skipping the cgroup entirely
-we're losing all chances to reclaim these few pages.
-
-Idk how serious the problem could be in the real life, and maybe it's OK
-to skip if the cgroup is online, but I'd triple check here.
-
-Also, because this optimization isn't really related to protection,
-why not check the page counter first, e.g.:
-
-	memcg =3D mem_cgroup_iter(root, NULL, NULL);
- 	do {
-		unsigned long reclaimed;
-		unsigned long scanned;
-
-		if (!page_counter_read(&memcg->memory))
-			continue;
-
-		switch (mem_cgroup_protected(root, memcg)) {
-		case MEMCG_PROT_MIN:
-			/*
-			 * Hard protection.
-			 * If there is no reclaimable memory, OOM.
-			 */
-			continue;
-		case MEMCG_PROT_LOW:
-
---
-
-Thank you!
+> --=20
+> 1.8.3.1
+>=20
+>=20
