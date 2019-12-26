@@ -2,315 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EC0412AD54
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Dec 2019 16:53:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC56812ADC2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Dec 2019 19:02:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726513AbfLZPxK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Dec 2019 10:53:10 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43197 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726475AbfLZPxK (ORCPT
+        id S1726586AbfLZSCe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Dec 2019 13:02:34 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:41186 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726480AbfLZSCd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Dec 2019 10:53:10 -0500
-Received: by mail-wr1-f67.google.com with SMTP id d16so23921113wre.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Dec 2019 07:53:07 -0800 (PST)
+        Thu, 26 Dec 2019 13:02:33 -0500
+Received: by mail-il1-f196.google.com with SMTP id f10so20675941ils.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Dec 2019 10:02:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chrisdown.name; s=google;
+        d=sargun.me; s=google;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :in-reply-to;
-        bh=pKFg0PmItMpCVbFAkwqJZFmZmqvgsWEqeGsOZki+hlw=;
-        b=vxJutbnifriiCkbeZz/32yudq9nbbsXrZrBbeZxXsjuNs5iQgUU11x7VJdNw+NrhDM
-         mV4PxUGn9C6L/ZZ8A6ivN1KSuSjE+aNyYkrmTHz/CJJ+tZUAKEL359r+UIc0y+Kg51xp
-         ojL+LqHg0C1nIPsuzs5wJl03nDaCW8gbB8Sbs=
+         :user-agent;
+        bh=ONw/OL8JM4aZSJthnLMZow64GW9EQFEy/ugd4rWw17I=;
+        b=fS/sLofaF5GDeJwaGiikpY1J3oGIbpB636hMkrOdwpxj4DA1W1Or+EdACFDbS9WupK
+         dgAcbe3m1M1NFUVP1i/apRh9S04msHnLXHKpcD8unFgvlT1DrziaZFMBJno25LO4bjsH
+         aYP6ibMlnCthZDCmIVYN/BE6YPb3qdCuOvhXI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:in-reply-to;
-        bh=pKFg0PmItMpCVbFAkwqJZFmZmqvgsWEqeGsOZki+hlw=;
-        b=M+j3SEohhE9+b/zuGAqt02GbomnarOvoghYxkRioT+xC/4NWQ6ob5kLMkhamG5nGyh
-         3fZkDBQvCUl5ay6s40BP7NV7Ww4syWmpKSkniLvPJlyVvEGHa3Cw+xvmM+w1sDr7elHa
-         DK+iC4B3Rhdgm7TEBRpQ9jx5tu0lOMMAaJI/c3l9omYeDj5+MC3N9UYYEDcgkEVQd/Vx
-         zR1m63tWYfB2kIhBIJO4QCyp3euefYKoOAzz3fxLW3QVjySeiPXQUu21wxJbcmV57ZO4
-         CcaUQQcB/jMbc6mdw2YDlySx0aokVwDcK61sDTzMslqzfGuKrwQ7ivpuEA+YwFUUVPFY
-         +S0w==
-X-Gm-Message-State: APjAAAWfT8FTJ89hsugZDkU0l9kwhiM2B6u81jq+vGU368p4tbu+DXbQ
-        qhS1znqrE/tCr8uGpjNRAhPN8gWWvqQ=
-X-Google-Smtp-Source: APXvYqyL6SqPdVD1FQJy72YAxKzU+Pt5kWVZpubaH50AKG1Nz4fwEHPdTJCCgUmJq843QZiV39D6nQ==
-X-Received: by 2002:adf:a746:: with SMTP id e6mr48284145wrd.329.1577375586367;
-        Thu, 26 Dec 2019 07:53:06 -0800 (PST)
-Received: from localhost ([85.255.234.78])
-        by smtp.gmail.com with ESMTPSA id k19sm8615388wmi.42.2019.12.26.07.53.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Dec 2019 07:53:05 -0800 (PST)
-Date:   Thu, 26 Dec 2019 15:53:04 +0000
-From:   Chris Down <chris@chrisdown.name>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com, "zhengbin (A)" <zhengbin13@huawei.com>
-Subject: [PATCH v2] fs: inode: Recycle inodenum from volatile inode slabs
-Message-ID: <20191226155304.GA422789@chrisdown.name>
+         :content-disposition:user-agent;
+        bh=ONw/OL8JM4aZSJthnLMZow64GW9EQFEy/ugd4rWw17I=;
+        b=ts4CNXwC/d9dfFOQC93DrIHaAXn1dGtc+HSIT+617qqxJ9ui1ymebrC5SZrsqQDOQN
+         Yg3sjCV7wzaxJGoWq/mWfufTTslmLlOxtECQmfQ1yCTwdkKI9v8rHxFQkYAIKkV7yHv/
+         kznaT7C8VnMH9qkD08ev4m3rOyCScN2LOef6QadOs51Ah6Xkscnb0qFYNlSflP5RvK0Y
+         685wbRQyXeS87/aGxjOo5M9QXCwnnPBgQSY/azpwn7O288UP+qjw1PJ3dEi0bbmH5OMm
+         EPJNUB2+CnKpa5TMHvOH7jW3EqEWZfZ7lbA2YYUSHj0215dpYUsuQbcMGghhnFPVHHwp
+         2cMw==
+X-Gm-Message-State: APjAAAU41xoWUzMGea9R8obNtz/Z1RBl2YM8Q6ajzFFM8jZsjo2hrbdF
+        N8eRvhRj4CHtjd9ckmEcRN1uYg==
+X-Google-Smtp-Source: APXvYqz+/WtdlSrA/8bsDAuNVYEG8mox8GoQRc4mAHzJ05cj8TnZxW+3gtSpINmFkqyhgbcmCaLuDA==
+X-Received: by 2002:a92:d151:: with SMTP id t17mr24010974ilg.175.1577383352464;
+        Thu, 26 Dec 2019 10:02:32 -0800 (PST)
+Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
+        by smtp.gmail.com with ESMTPSA id 75sm12426869ila.61.2019.12.26.10.02.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Dec 2019 10:02:31 -0800 (PST)
+Date:   Thu, 26 Dec 2019 18:02:30 +0000
+From:   Sargun Dhillon <sargun@sargun.me>
+To:     linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     tycho@tycho.ws, jannh@google.com, cyphar@cyphar.com,
+        christian.brauner@ubuntu.com, oleg@redhat.com, luto@amacapital.net,
+        viro@zeniv.linux.org.uk, gpascutto@mozilla.com,
+        ealvarez@mozilla.com, fweimer@redhat.com, jld@mozilla.com,
+        arnd@arndb.de
+Subject: [PATCH v7 0/3] Add pidfd_getfd syscall
+Message-ID: <20191226180227.GA29389@ircssh-2.c.rugged-nimbus-611.internal>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191226154808.GA418948@chrisdown.name>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In Facebook production we are seeing heavy i_ino wraparounds on tmpfs.
-On affected tiers, in excess of 10% of hosts show multiple files with
-different content and the same inode number, with some servers even
-having as many as 150 duplicated inode numbers with differing file
-content.
+This patchset introduces a mechanism (pidfd_getfd syscall) to get file
+descriptors from other processes via pidfd. Although this can be achieved
+using SCM_RIGHTS, and parasitic code injection, this offers a more
+straightforward mechanism, with less overhead and complexity. The process
+under manipulation's fd still remains valid, and unmodified by the
+copy operation.
 
-This causes actual, tangible problems in production. For example, we
-have complaints from those working on remote caches that their
-application is reporting cache corruptions because it uses (device,
-inodenum) to establish the identity of a particular cache object, but
-because it's not unique any more, the application refuses to continue
-and reports cache corruption. Even worse, sometimes applications may not
-even detect the corruption but may continue anyway, causing phantom and
-hard to debug behaviour.
+It introduces a flags field. The flags field is reserved a the moment,
+but the intent is to extend it with the following capabilities:
+ * Close the remote FD when copying it
+ * Drop the cgroup data if it's a fd pointing a socket when copying it
 
-In general, userspace applications expect that (device, inodenum) should
-be enough to be uniquely point to one inode, which seems fair enough.
-One might also need to check the generation, but in this case:
+The syscall numbers were chosen to be one greater than openat2.
 
-1. That's not currently exposed to userspace
-   (ioctl(...FS_IOC_GETVERSION...) returns ENOTTY);
-2. Even with generation, there shouldn't be two live inodes with the
-   same inode number on one device.
+Summary of history:
+This initially started as a ptrace command. It did not require the process
+to be stopped, and felt like kind of an awkward fit for ptrace. After that,
+it moved to an ioctl on the pidfd. Given functionality, it made sense to
+make it a syscall which did not require the process to be stopped.
 
-In order to fix this, we reuse inode numbers from recycled slabs where
-possible, allowing us to significantly reduce the risk of 32 bit
-wraparound.
+Previous versions:
+ V6: https://lore.kernel.org/lkml/20191223210823.GA25083@ircssh-2.c.rugged-nimbus-611.internal/
+ V5: https://lore.kernel.org/lkml/20191220232746.GA20215@ircssh-2.c.rugged-nimbus-611.internal/
+ V4: https://lore.kernel.org/lkml/20191218235310.GA17259@ircssh-2.c.rugged-nimbus-611.internal/
+ V3: https://lore.kernel.org/lkml/20191217005842.GA14379@ircssh-2.c.rugged-nimbus-611.internal/
+ V2: https://lore.kernel.org/lkml/20191209070446.GA32336@ircssh-2.c.rugged-nimbus-611.internal/
+ RFC V1: https://lore.kernel.org/lkml/20191205234450.GA26369@ircssh-2.c.rugged-nimbus-611.internal/
 
-There are probably some other potential users of this, like some FUSE
-internals, and {proc,sys,kern}fs style APIs, but doing a general opt-out
-codemod requires some thinking depending on the particular callsites and
-how far up the stack they are, we might end up recycling an i_ino value
-that actually does have some semantic meaning. As such, to start with
-this patch only opts in a few get_next_ino-heavy filesystems, and those
-which looked straightforward and without likelihood for corner cases:
+Changes since v6:
+ * Proper attribution of get_task_file helper
+ * Move all types for syscall to int to represent fd
 
-- bpffs
-- configfs
-- debugfs
-- efivarfs
-- hugetlbfs
-- ramfs
-- tmpfs
+Changes since v5:
+ * Drop pidfd_getfd_options struct and replace with a flags field
 
-Another alternative considered was to change get_next_ino to use and
-return ino_t with internal use of 64-bit atomics, but this has a couple
-of setbacks that might make it not possible to use in all scenarios:
+Changes since v4:
+ * Turn into a syscall
+ * Move to PTRACE_MODE_ATTACH_REALCREDS from PTRACE_MODE_READ_REALCREDS
+ * Remove the sample code. This will come in another patchset, as the
+   new self-tests cover all the functionality.
 
-1. This may break some 32-bit userspace applications on a 64-bit kernel
-   which cannot handle a 64-bit ino_t, see the comment above
-   get_next_ino;
-2. Some applications inside the kernel already make use of the ino_t
-   high bits. For example, overlayfs' xino feature uses these to merge
-   inode numbers and fsid indexes to form a new identifier.
+Changes since v3:
+ * Add self-test
+ * Move to ioctl passing fd directly, versus args struct
+ * Shuffle around include files
 
-One limitation to this approach is that slab recycling is currently only
-per-memcg. This means workloads which heavily exercise get_next_ino with
-the same memcg are most likely to benefit, rather than those with a wide
-range of cgroups thrashing it. Depending on the workload, I've seen from
-10%-50% recycle rate, which seems like a reasonable win with no
-significant increase in code complexity.
+Changes since v2:
+ * Move to ioctl on pidfd instead of ptrace function
+ * Add security check before moving file descriptor
 
-Signed-off-by: Chris Down <chris@chrisdown.name>
-Reported-by: Phyllipe Medeiros <phyllipe@fb.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Amir Goldstein <amir73il@gmail.com>
-Cc: Jeff Layton <jlayton@kernel.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: kernel-team@fb.com
----
- fs/configfs/inode.c  |  2 +-
- fs/debugfs/inode.c   |  2 +-
- fs/efivarfs/inode.c  |  2 +-
- fs/hugetlbfs/inode.c |  4 ++--
- fs/inode.c           | 30 ++++++++++++++++++++++++++++++
- fs/ramfs/inode.c     |  2 +-
- include/linux/fs.h   |  2 ++
- kernel/bpf/inode.c   |  2 +-
- mm/shmem.c           |  2 +-
- 9 files changed, 40 insertions(+), 8 deletions(-)
+Changes since the RFC v1:
+ * Introduce a new helper to fs/file.c to fetch a file descriptor from
+   any process. It largely uses the code suggested by Oleg, with a few
+   changes to fix locking
+ * It uses an extensible options struct to supply the FD, and option.
+ * I added a sample, using the code from the user-ptrace sample
 
-v2: accidentally left random.h included from testing. removed it.
+Sargun Dhillon (3):
+  vfs, fdtable: Add get_task_file helper
+  pid: Introduce pidfd_getfd syscall
+  test: Add test for pidfd getfd
 
-diff --git a/fs/configfs/inode.c b/fs/configfs/inode.c
-index fd0b5dd68f9e..c0157f9b3e33 100644
---- a/fs/configfs/inode.c
-+++ b/fs/configfs/inode.c
-@@ -114,7 +114,7 @@ struct inode *configfs_new_inode(umode_t mode, struct configfs_dirent *sd,
- {
- 	struct inode * inode = new_inode(s);
- 	if (inode) {
--		inode->i_ino = get_next_ino();
-+		inode->i_ino = recycle_or_get_next_ino(inode->i_ino);
- 		inode->i_mapping->a_ops = &configfs_aops;
- 		inode->i_op = &configfs_inode_operations;
- 
-diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-index bda942afc644..64af16104661 100644
---- a/fs/debugfs/inode.c
-+++ b/fs/debugfs/inode.c
-@@ -66,7 +66,7 @@ static struct inode *debugfs_get_inode(struct super_block *sb)
- {
- 	struct inode *inode = new_inode(sb);
- 	if (inode) {
--		inode->i_ino = get_next_ino();
-+		inode->i_ino = recycle_or_get_next_ino(inode->i_ino);
- 		inode->i_atime = inode->i_mtime =
- 			inode->i_ctime = current_time(inode);
- 	}
-diff --git a/fs/efivarfs/inode.c b/fs/efivarfs/inode.c
-index 96c0c86f3fff..ba2f3c6a4042 100644
---- a/fs/efivarfs/inode.c
-+++ b/fs/efivarfs/inode.c
-@@ -19,7 +19,7 @@ struct inode *efivarfs_get_inode(struct super_block *sb,
- 	struct inode *inode = new_inode(sb);
- 
- 	if (inode) {
--		inode->i_ino = get_next_ino();
-+		inode->i_ino = recycle_or_get_next_ino(inode->i_ino);
- 		inode->i_mode = mode;
- 		inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
- 		inode->i_flags = is_removable ? 0 : S_IMMUTABLE;
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index d5c2a3158610..a867035b6460 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -732,7 +732,7 @@ static struct inode *hugetlbfs_get_root(struct super_block *sb,
- 
- 	inode = new_inode(sb);
- 	if (inode) {
--		inode->i_ino = get_next_ino();
-+		inode->i_ino = recycle_or_get_next_ino(inode->i_ino);
- 		inode->i_mode = S_IFDIR | ctx->mode;
- 		inode->i_uid = ctx->uid;
- 		inode->i_gid = ctx->gid;
-@@ -775,7 +775,7 @@ static struct inode *hugetlbfs_get_inode(struct super_block *sb,
- 	if (inode) {
- 		struct hugetlbfs_inode_info *info = HUGETLBFS_I(inode);
- 
--		inode->i_ino = get_next_ino();
-+		inode->i_ino = recycle_or_get_next_ino(inode->i_ino);
- 		inode_init_owner(inode, dir, mode);
- 		lockdep_set_class(&inode->i_mapping->i_mmap_rwsem,
- 				&hugetlbfs_i_mmap_rwsem_key);
-diff --git a/fs/inode.c b/fs/inode.c
-index aff2b5831168..1bd864735158 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -880,6 +880,11 @@ static struct inode *find_inode_fast(struct super_block *sb,
- #define LAST_INO_BATCH 1024
- static DEFINE_PER_CPU(unsigned int, last_ino);
- 
-+/*
-+ * As get_next_ino returns a type with a small width (typically 32 bits),
-+ * consider calling recycle_or_get_next_ino instead if your callsite may be able
-+ * to reuse a recycled inode's i_ino to reduce the risk of inode wraparound.
-+ */
- unsigned int get_next_ino(void)
- {
- 	unsigned int *p = &get_cpu_var(last_ino);
-@@ -904,6 +909,31 @@ unsigned int get_next_ino(void)
- }
- EXPORT_SYMBOL(get_next_ino);
- 
-+/*
-+ * get_next_ino() returns an unsigned int, which can wrap around on workloads
-+ * havily making use of it.
-+ *
-+ * To reduce the risks, callsites can instead use recycle_or_get_next_ino to
-+ * only get a new inode number when the slab wasn't recycled. old_ino should be
-+ * i_ino from the (potentially) recycled slab.
-+ */
-+unsigned int recycle_or_get_next_ino(ino_t old_ino)
-+{
-+	/*
-+	 * get_next_ino returns unsigned int. If this fires then i_ino must be
-+	 * >32 bits and have been changed later, so the caller shouldn't be
-+	 * recycling inode numbers
-+	 */
-+	WARN_ONCE(old_ino > UINT_MAX,
-+		  "Recyclable i_ino not from get_next_ino: %llu", (u64)old_ino);
-+
-+	if (old_ino)
-+		return old_ino;
-+	else
-+		return get_next_ino();
-+}
-+EXPORT_SYMBOL(recycle_or_get_next_ino);
-+
- /**
-  *	new_inode_pseudo 	- obtain an inode
-  *	@sb: superblock
-diff --git a/fs/ramfs/inode.c b/fs/ramfs/inode.c
-index 35624ca2a2f9..e517202dd607 100644
---- a/fs/ramfs/inode.c
-+++ b/fs/ramfs/inode.c
-@@ -66,7 +66,7 @@ struct inode *ramfs_get_inode(struct super_block *sb,
- 	struct inode * inode = new_inode(sb);
- 
- 	if (inode) {
--		inode->i_ino = get_next_ino();
-+		inode->i_ino = recycle_or_get_next_ino(inode->i_ino);
- 		inode_init_owner(inode, dir, mode);
- 		inode->i_mapping->a_ops = &ramfs_aops;
- 		mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 190c45039359..d90be3ab5fc4 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3053,6 +3053,8 @@ static inline void lockdep_annotate_inode_mutex_key(struct inode *inode) { };
- extern void unlock_new_inode(struct inode *);
- extern void discard_new_inode(struct inode *);
- extern unsigned int get_next_ino(void);
-+extern unsigned int recycle_or_get_next_ino(ino_t old_ino);
-+
- extern void evict_inodes(struct super_block *sb);
- 
- extern void __iget(struct inode * inode);
-diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
-index ecf42bec38c0..a459a7da74d5 100644
---- a/kernel/bpf/inode.c
-+++ b/kernel/bpf/inode.c
-@@ -97,7 +97,7 @@ static struct inode *bpf_get_inode(struct super_block *sb,
- 	if (!inode)
- 		return ERR_PTR(-ENOSPC);
- 
--	inode->i_ino = get_next_ino();
-+	inode->i_ino = recycle_or_get_next_ino(inode->i_ino);
- 	inode->i_atime = current_time(inode);
- 	inode->i_mtime = inode->i_atime;
- 	inode->i_ctime = inode->i_atime;
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 165fa6332993..8c358d2c24d3 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2247,7 +2247,7 @@ static struct inode *shmem_get_inode(struct super_block *sb, const struct inode
- 
- 	inode = new_inode(sb);
- 	if (inode) {
--		inode->i_ino = get_next_ino();
-+		inode->i_ino = recycle_or_get_next_ino(inode->i_ino);
- 		inode_init_owner(inode, dir, mode);
- 		inode->i_blocks = 0;
- 		inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
+ arch/alpha/kernel/syscalls/syscall.tbl        |   1 +
+ arch/arm/tools/syscall.tbl                    |   1 +
+ arch/arm64/include/asm/unistd.h               |   2 +-
+ arch/arm64/include/asm/unistd32.h             |   2 +
+ arch/ia64/kernel/syscalls/syscall.tbl         |   1 +
+ arch/m68k/kernel/syscalls/syscall.tbl         |   1 +
+ arch/microblaze/kernel/syscalls/syscall.tbl   |   1 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl     |   1 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl     |   1 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl     |   1 +
+ arch/parisc/kernel/syscalls/syscall.tbl       |   1 +
+ arch/powerpc/kernel/syscalls/syscall.tbl      |   1 +
+ arch/s390/kernel/syscalls/syscall.tbl         |   1 +
+ arch/sh/kernel/syscalls/syscall.tbl           |   1 +
+ arch/sparc/kernel/syscalls/syscall.tbl        |   1 +
+ arch/x86/entry/syscalls/syscall_32.tbl        |   1 +
+ arch/x86/entry/syscalls/syscall_64.tbl        |   1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl       |   1 +
+ fs/file.c                                     |  21 +-
+ include/linux/file.h                          |   2 +
+ include/linux/syscalls.h                      |   1 +
+ include/uapi/asm-generic/unistd.h             |   4 +-
+ kernel/pid.c                                  | 103 +++++++
+ tools/testing/selftests/pidfd/.gitignore      |   1 +
+ tools/testing/selftests/pidfd/Makefile        |   2 +-
+ .../selftests/pidfd/pidfd_getfd_test.c        | 254 ++++++++++++++++++
+ 26 files changed, 403 insertions(+), 5 deletions(-)
+ create mode 100644 tools/testing/selftests/pidfd/pidfd_getfd_test.c
+
 -- 
-2.24.1
+2.20.1
 
