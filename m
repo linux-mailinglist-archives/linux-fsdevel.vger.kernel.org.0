@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FD0112ACE0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Dec 2019 15:07:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47FF712ACE2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Dec 2019 15:07:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbfLZOHL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Dec 2019 09:07:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52706 "EHLO mail.kernel.org"
+        id S1727215AbfLZOHW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Dec 2019 09:07:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726450AbfLZOHL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Dec 2019 09:07:11 -0500
+        id S1726450AbfLZOHW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 26 Dec 2019 09:07:22 -0500
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EE2A2053B;
-        Thu, 26 Dec 2019 14:07:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 750A7206CB;
+        Thu, 26 Dec 2019 14:07:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577369229;
-        bh=c2VbXS7A6GBRBIZsYBhBALket98Fg4sAbChfM8QNVas=;
+        s=default; t=1577369241;
+        bh=xsmf4WvSqJzcgTm0bmGmTXyRwyCOH5Qwny1WYE94p7Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XYZtl4a1JC4YGREdSK1yxHkl2kQrCmhs/7AqR8vwIBUNLSasO3iOg4Dn/IIlUdKqa
-         5x7pjOWGhpBDqcUtDyBqct6qnzU90kkPXFZKEpkeMXI2v2++WYuMSLxZ1wsMnDX/39
-         12UIL0Y8aQdzfMYClwAFbwFob6+XSg0NHp99hHz4=
+        b=0CBrAGq+AA6cEyXqhKxrS9GLwyduRnJ0flsCjNZaWa8yWFaAG1a6W1BEzJ6NVBhRY
+         4ggwCw2vdNTqJqszq7Ap9wR2WvbsqNTc2p6pNBTzMwVsI52mcRArD2L0M3TSrpC/K9
+         hLhMdnz60kD/fA7NTuSSnhWkCLQa58ALBR+Q6o9A=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Steven Rostedt <rostedt@goodmis.org>,
         Frank Rowand <frowand.list@gmail.com>
@@ -41,9 +41,9 @@ Cc:     Ingo Molnar <mingo@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 16/22] tracing/boot: Add per-event settings
-Date:   Thu, 26 Dec 2019 23:07:02 +0900
-Message-Id: <157736922261.11126.12531577742051849539.stgit@devnote2>
+Subject: [PATCH v5 17/22] tracing/boot Add kprobe event support
+Date:   Thu, 26 Dec 2019 23:07:15 +0900
+Message-Id: <157736923490.11126.3548816332349251267.stgit@devnote2>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <157736902773.11126.2531161235817081873.stgit@devnote2>
 References: <157736902773.11126.2531161235817081873.stgit@devnote2>
@@ -56,133 +56,107 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add per-event settings for boottime tracing. User can set filter,
-actions and enable on each event on boot. The event entries are
-under ftrace.event.GROUP.EVENT node (note that the option key
-includes event's group name and event name.) This supports below
-configs.
+Add kprobe event support on event node to boot-time tracing.
+If the group name of event is "kprobes", the boot-time tracing
+defines new probe event according to "probes" values.
 
- - ftrace.event.GROUP.EVENT.enable
-   Enables GROUP:EVENT tracing.
-
- - ftrace.event.GROUP.EVENT.filter = FILTER
-   Set FILTER rule to the GROUP:EVENT.
-
- - ftrace.event.GROUP.EVENT.actions = ACTION[, ACTION2...]
-   Set ACTIONs to the GROUP:EVENT.
+ - ftrace.event.kprobes.EVENT.probes = PROBE[, PROBE2...]
+   Defines new kprobe event based on PROBEs. It is able to define
+   multiple probes on one event, but those must have same type of
+   arguments.
 
 For example,
 
-  ftrace.event.sched.sched_process_exec {
-                filter = "pid < 128"
-		enable
-  }
+ ftrace.events.kprobes.myevent {
+	probes = "vfs_read $arg1 $arg2";
+	enable;
+ }
 
-this will enable tracing "sched:sched_process_exec" event
-with "pid < 128" filter.
+This will add kprobes:myevent on vfs_read with the 1st and the 2nd
+arguments.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
  0 files changed
 
 diff --git a/kernel/trace/trace_boot.c b/kernel/trace/trace_boot.c
-index 4b41310184df..37524031533e 100644
+index 37524031533e..a11dc60299fb 100644
 --- a/kernel/trace/trace_boot.c
 +++ b/kernel/trace/trace_boot.c
-@@ -56,6 +56,7 @@ trace_boot_set_ftrace_options(struct trace_array *tr, struct xbc_node *node)
- 
- #ifdef CONFIG_EVENT_TRACING
- extern int ftrace_set_clr_event(struct trace_array *tr, char *buf, int set);
-+extern int trigger_process_regex(struct trace_event_file *file, char *buff);
- 
- static void __init
- trace_boot_enable_events(struct trace_array *tr, struct xbc_node *node)
-@@ -74,8 +75,66 @@ trace_boot_enable_events(struct trace_array *tr, struct xbc_node *node)
- 			pr_err("Failed to enable event: %s\n", p);
+@@ -76,6 +76,48 @@ trace_boot_enable_events(struct trace_array *tr, struct xbc_node *node)
  	}
  }
+ 
++#ifdef CONFIG_KPROBE_EVENTS
++extern int trace_kprobe_run_command(const char *command);
 +
-+static void __init
-+trace_boot_init_one_event(struct trace_array *tr, struct xbc_node *gnode,
-+			  struct xbc_node *enode)
++static int __init
++trace_boot_add_kprobe_event(struct xbc_node *node, const char *event)
 +{
-+	struct trace_event_file *file;
 +	struct xbc_node *anode;
 +	char buf[MAX_BUF_LEN];
-+	const char *p, *group, *event;
++	const char *val;
++	char *p;
++	int len;
 +
-+	group = xbc_node_get_data(gnode);
-+	event = xbc_node_get_data(enode);
++	len = snprintf(buf, ARRAY_SIZE(buf) - 1, "p:kprobes/%s ", event);
++	if (len >= ARRAY_SIZE(buf)) {
++		pr_err("Event name is too long: %s\n", event);
++		return -E2BIG;
++	}
++	p = buf + len;
++	len = ARRAY_SIZE(buf) - len;
 +
-+	mutex_lock(&event_mutex);
-+	file = find_event_file(tr, group, event);
-+	if (!file) {
-+		pr_err("Failed to find event: %s:%s\n", group, event);
-+		goto out;
++	xbc_node_for_each_array_value(node, "probes", anode, val) {
++		if (strlcpy(p, val, len) >= len) {
++			pr_err("Probe definition is too long: %s\n", val);
++			return -E2BIG;
++		}
++		if (trace_kprobe_run_command(buf) < 0) {
++			pr_err("Failed to add probe: %s\n", buf);
++			return -EINVAL;
++		}
 +	}
 +
-+	p = xbc_node_find_value(enode, "filter", NULL);
-+	if (p && *p != '\0') {
-+		if (strlcpy(buf, p, ARRAY_SIZE(buf)) >= ARRAY_SIZE(buf))
-+			pr_err("filter string is too long: %s\n", p);
-+		else if (apply_event_filter(file, buf) < 0)
-+			pr_err("Failed to apply filter: %s\n", buf);
-+	}
-+
-+	xbc_node_for_each_array_value(enode, "actions", anode, p) {
-+		if (strlcpy(buf, p, ARRAY_SIZE(buf)) >= ARRAY_SIZE(buf))
-+			pr_err("action string is too long: %s\n", p);
-+		else if (trigger_process_regex(file, buf) < 0)
-+			pr_err("Failed to apply an action: %s\n", buf);
-+	}
-+
-+	if (xbc_node_find_value(enode, "enable", NULL)) {
-+		if (trace_event_enable_disable(file, 1, 0) < 0)
-+			pr_err("Failed to enable event node: %s:%s\n",
-+				group, event);
-+	}
-+out:
-+	mutex_unlock(&event_mutex);
++	return 0;
 +}
-+
-+static void __init
-+trace_boot_init_events(struct trace_array *tr, struct xbc_node *node)
++#else
++static inline int __init
++trace_boot_add_kprobe_event(struct xbc_node *node, const char *event)
 +{
-+	struct xbc_node *gnode, *enode;
-+
-+	node = xbc_node_find_child(node, "event");
-+	if (!node)
-+		return;
-+	/* per-event key starts with "event.GROUP.EVENT" */
-+	xbc_node_for_each_child(node, gnode)
-+		xbc_node_for_each_child(gnode, enode)
-+			trace_boot_init_one_event(tr, gnode, enode);
++	pr_err("Kprobe event is not supported.\n");
++	return -ENOTSUPP;
 +}
- #else
- #define trace_boot_enable_events(tr, node) do {} while (0)
-+#define trace_boot_init_events(tr, node) do {} while (0)
- #endif
- 
++#endif
++
  static void __init
-@@ -104,6 +163,7 @@ static int __init trace_boot_init(void)
- 		return 0;
+ trace_boot_init_one_event(struct trace_array *tr, struct xbc_node *gnode,
+ 			  struct xbc_node *enode)
+@@ -88,6 +130,10 @@ trace_boot_init_one_event(struct trace_array *tr, struct xbc_node *gnode,
+ 	group = xbc_node_get_data(gnode);
+ 	event = xbc_node_get_data(enode);
  
- 	trace_boot_set_ftrace_options(tr, trace_node);
-+	trace_boot_init_events(tr, trace_node);
- 	trace_boot_enable_events(tr, trace_node);
- 	trace_boot_enable_tracer(tr, trace_node);
- 
-diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
-index 2cd53ca21b51..d8ada4c6f3f7 100644
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -213,7 +213,7 @@ static int event_trigger_regex_open(struct inode *inode, struct file *file)
- 	return ret;
++	if (!strcmp(group, "kprobes"))
++		if (trace_boot_add_kprobe_event(enode, event) < 0)
++			return;
++
+ 	mutex_lock(&event_mutex);
+ 	file = find_event_file(tr, group, event);
+ 	if (!file) {
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index 5584405b899d..318a3579a928 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -902,6 +902,11 @@ static int create_or_delete_trace_kprobe(int argc, char **argv)
+ 	return ret == -ECANCELED ? -EINVAL : ret;
  }
  
--static int trigger_process_regex(struct trace_event_file *file, char *buff)
-+int trigger_process_regex(struct trace_event_file *file, char *buff)
++int trace_kprobe_run_command(const char *command)
++{
++	return trace_run_command(command, create_or_delete_trace_kprobe);
++}
++
+ static int trace_kprobe_release(struct dyn_event *ev)
  {
- 	char *command, *next = buff;
- 	struct event_command *p;
+ 	struct trace_kprobe *tk = to_trace_kprobe(ev);
 
