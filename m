@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B98112ACEE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Dec 2019 15:08:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3284B12ACF3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Dec 2019 15:08:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbfLZOH6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Dec 2019 09:07:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53304 "EHLO mail.kernel.org"
+        id S1727152AbfLZOIK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Dec 2019 09:08:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726741AbfLZOH6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Dec 2019 09:07:58 -0500
+        id S1726450AbfLZOIK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 26 Dec 2019 09:08:10 -0500
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E9DD206CB;
-        Thu, 26 Dec 2019 14:07:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A77C20828;
+        Thu, 26 Dec 2019 14:08:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577369277;
-        bh=Ig6vFUC7pui/bGqLpfRh0ZEwRcOp8m12bgaF3hXkFao=;
+        s=default; t=1577369289;
+        bh=1xpoICdE9MijyMNp/E/gGzsf+xSXLvJ4gF+ZA1Sb0Kk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BJcKsHqp7KqehxRRklGIP6LzoacfGiViiqHfN571GeDZBq8601OcrE1ty2ZrBDXhl
-         j3q4Mk9NSdoklg0gHy4YNIitpsbS8zjb8on8iBzeR9dxxvISC5GTZmmPqInl/KhrjI
-         tF5jfiI43W3uNLt9tSUmldAT3wtpSo/pdyj18nUo=
+        b=LmlC5nxPJuluBpyBqP4llQIFMZeHxfr2idKr5TA4g/UA3ZfTM9RP4D1v3b4CYXQH3
+         t3SkwJdHMZt+gF5ZzkAWGwdPN/n3yZUbm465pw9hefzDoT+sphY9H+2qDTHHxj8O5X
+         s6OS25CzTnAnhDIOWo94bySG54SbhtXgZzxNCfjY=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Steven Rostedt <rostedt@goodmis.org>,
         Frank Rowand <frowand.list@gmail.com>
@@ -41,9 +41,9 @@ Cc:     Ingo Molnar <mingo@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 20/22] tracing/boot: Add cpu_mask option support
-Date:   Thu, 26 Dec 2019 23:07:51 +0900
-Message-Id: <157736927104.11126.4469386216175738596.stgit@devnote2>
+Subject: [PATCH v5 21/22] tracing/boot: Add function tracer filter options
+Date:   Thu, 26 Dec 2019 23:08:03 +0900
+Message-Id: <157736928302.11126.8760178688093051786.stgit@devnote2>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <157736902773.11126.2531161235817081873.stgit@devnote2>
 References: <157736902773.11126.2531161235817081873.stgit@devnote2>
@@ -56,113 +56,72 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add ftrace.cpumask option support to boot-time tracing.
-This sets cpumask for each instance.
+Add below function-tracer filter options to boot-time tracing.
 
- - ftrace.[instance.INSTANCE.]cpumask = CPUMASK;
-   Set the trace cpumask. Note that the CPUMASK should be a string
-   which <tracefs>/tracing_cpumask can accepts.
+ - ftrace.[instance.INSTANCE.]ftrace.filters
+   This will take an array of tracing function filter rules
+
+ - ftrace.[instance.INSTANCE.]ftrace.notraces
+   This will take an array of NON-tracing function filter rules
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
  0 files changed
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index c2e1b33aec17..5791e6b5136f 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -4561,20 +4561,13 @@ tracing_cpumask_read(struct file *filp, char __user *ubuf,
- 	return count;
- }
- 
--static ssize_t
--tracing_cpumask_write(struct file *filp, const char __user *ubuf,
--		      size_t count, loff_t *ppos)
-+int tracing_set_cpumask(struct trace_array *tr,
-+			cpumask_var_t tracing_cpumask_new)
- {
--	struct trace_array *tr = file_inode(filp)->i_private;
--	cpumask_var_t tracing_cpumask_new;
--	int err, cpu;
--
--	if (!alloc_cpumask_var(&tracing_cpumask_new, GFP_KERNEL))
--		return -ENOMEM;
-+	int cpu;
- 
--	err = cpumask_parse_user(ubuf, count, tracing_cpumask_new);
--	if (err)
--		goto err_unlock;
-+	if (!tr)
-+		return -EINVAL;
- 
- 	local_irq_disable();
- 	arch_spin_lock(&tr->max_lock);
-@@ -4598,11 +4591,34 @@ tracing_cpumask_write(struct file *filp, const char __user *ubuf,
- 	local_irq_enable();
- 
- 	cpumask_copy(tr->tracing_cpumask, tracing_cpumask_new);
-+
-+	return 0;
-+}
-+
-+static ssize_t
-+tracing_cpumask_write(struct file *filp, const char __user *ubuf,
-+		      size_t count, loff_t *ppos)
-+{
-+	struct trace_array *tr = file_inode(filp)->i_private;
-+	cpumask_var_t tracing_cpumask_new;
-+	int err;
-+
-+	if (!alloc_cpumask_var(&tracing_cpumask_new, GFP_KERNEL))
-+		return -ENOMEM;
-+
-+	err = cpumask_parse_user(ubuf, count, tracing_cpumask_new);
-+	if (err)
-+		goto err_free;
-+
-+	err = tracing_set_cpumask(tr, tracing_cpumask_new);
-+	if (err)
-+		goto err_free;
-+
- 	free_cpumask_var(tracing_cpumask_new);
- 
- 	return count;
- 
--err_unlock:
-+err_free:
- 	free_cpumask_var(tracing_cpumask_new);
- 
- 	return err;
 diff --git a/kernel/trace/trace_boot.c b/kernel/trace/trace_boot.c
-index f5db30d25b0b..81d923c16a4d 100644
+index 81d923c16a4d..57274b9b3718 100644
 --- a/kernel/trace/trace_boot.c
 +++ b/kernel/trace/trace_boot.c
-@@ -18,6 +18,8 @@ extern int trace_set_options(struct trace_array *tr, char *option);
- extern int tracing_set_tracer(struct trace_array *tr, const char *buf);
- extern ssize_t tracing_resize_ring_buffer(struct trace_array *tr,
- 					  unsigned long size, int cpu_id);
-+extern int tracing_set_cpumask(struct trace_array *tr,
-+				cpumask_var_t tracing_cpumask_new);
+@@ -244,11 +244,51 @@ trace_boot_init_events(struct trace_array *tr, struct xbc_node *node)
+ #define trace_boot_init_events(tr, node) do {} while (0)
+ #endif
  
- static void __init
- trace_boot_set_instance_options(struct trace_array *tr, struct xbc_node *node)
-@@ -52,6 +54,18 @@ trace_boot_set_instance_options(struct trace_array *tr, struct xbc_node *node)
- 		if (tracing_resize_ring_buffer(tr, v, RING_BUFFER_ALL_CPUS) < 0)
- 			pr_err("Failed to resize trace buffer to %s\n", p);
- 	}
++#ifdef CONFIG_FUNCTION_TRACER
++extern bool ftrace_filter_param __initdata;
++extern int ftrace_set_filter(struct ftrace_ops *ops, unsigned char *buf,
++			     int len, int reset);
++extern int ftrace_set_notrace(struct ftrace_ops *ops, unsigned char *buf,
++			      int len, int reset);
++static void __init
++trace_boot_set_ftrace_filter(struct trace_array *tr, struct xbc_node *node)
++{
++	struct xbc_node *anode;
++	const char *p;
++	char *q;
 +
-+	p = xbc_node_find_value(node, "cpumask", NULL);
-+	if (p && *p != '\0') {
-+		cpumask_var_t new_mask;
-+
-+		if (alloc_cpumask_var(&new_mask, GFP_KERNEL)) {
-+			if (cpumask_parse(p, new_mask) < 0 ||
-+			    tracing_set_cpumask(tr, new_mask) < 0)
-+				pr_err("Failed to set new CPU mask %s\n", p);
-+			free_cpumask_var(new_mask);
-+		}
++	xbc_node_for_each_array_value(node, "ftrace.filters", anode, p) {
++		q = kstrdup(p, GFP_KERNEL);
++		if (!q)
++			return;
++		if (ftrace_set_filter(tr->ops, q, strlen(q), 0) < 0)
++			pr_err("Failed to add %s to ftrace filter\n", p);
++		else
++			ftrace_filter_param = true;
++		kfree(q);
 +	}
- }
++	xbc_node_for_each_array_value(node, "ftrace.notraces", anode, p) {
++		q = kstrdup(p, GFP_KERNEL);
++		if (!q)
++			return;
++		if (ftrace_set_notrace(tr->ops, q, strlen(q), 0) < 0)
++			pr_err("Failed to add %s to ftrace filter\n", p);
++		else
++			ftrace_filter_param = true;
++		kfree(q);
++	}
++}
++#else
++#define trace_boot_set_ftrace_filter(tr, node) do {} while (0)
++#endif
++
+ static void __init
+ trace_boot_enable_tracer(struct trace_array *tr, struct xbc_node *node)
+ {
+ 	const char *p;
  
- #ifdef CONFIG_EVENT_TRACING
++	trace_boot_set_ftrace_filter(tr, node);
++
+ 	p = xbc_node_find_value(node, "tracer", NULL);
+ 	if (p && *p != '\0') {
+ 		if (tracing_set_tracer(tr, p) < 0)
 
