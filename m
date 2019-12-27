@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 435E912B701
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Dec 2019 18:46:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2507512B925
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Dec 2019 19:03:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728382AbfL0Rqf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Dec 2019 12:46:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43714 "EHLO mail.kernel.org"
+        id S1728617AbfL0SDS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Dec 2019 13:03:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728697AbfL0RpM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Dec 2019 12:45:12 -0500
+        id S1727579AbfL0SDR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 27 Dec 2019 13:03:17 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BCC152464E;
-        Fri, 27 Dec 2019 17:45:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB06F20CC7;
+        Fri, 27 Dec 2019 18:03:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577468711;
-        bh=GmQF/U1jMdDYTC1dqGu6MsW8UyyQu7rKEZYoIr2GqGI=;
+        s=default; t=1577469796;
+        bh=ivUHB4h27mdn4KKhhMwQJrcR/rXC7Sp/ZHyZtHIzZso=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dIog5cuRFnWEZ8qd5RFalNdBo15iSpx8/AAdGsKnklUoQ4fdZ3Xx6VnniS5+wrImx
-         GKSHrCACxT1rfJPGvIkssu15XDPEF1DGnj6ycEenv/sOhfDzzesaNJ1cMbeMXU9CUF
-         H7RaaV0FnKiG+j3k5OODZ8pu1CLee/bH+GgmJ1k4=
+        b=Yaa8lsfIU/42vs3OZXjCqT/+w0eLO0TygrQYrxDbRBrnfh2TjsSYvS9euUs61JKf2
+         ZCvZ47XtnDNRshDQCZE3IbId9u65/5VHL7y9yYRcQPlSrXDfmhjVRxm5j8Qj1s8xBm
+         iStq/XdJ99iedlr2lVguMNl4m4KSQKryM9iyFMpM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Eric Sandeen <sandeen@redhat.com>, Jan Kara <jack@suse.cz>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 66/84] fs: avoid softlockups in s_inodes iterators
-Date:   Fri, 27 Dec 2019 12:43:34 -0500
-Message-Id: <20191227174352.6264-66-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 44/57] fs: avoid softlockups in s_inodes iterators
+Date:   Fri, 27 Dec 2019 13:02:09 -0500
+Message-Id: <20191227180222.7076-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191227174352.6264-1-sashal@kernel.org>
-References: <20191227174352.6264-1-sashal@kernel.org>
+In-Reply-To: <20191227180222.7076-1-sashal@kernel.org>
+References: <20191227180222.7076-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -91,10 +91,10 @@ index d31b6c72b476..dc1a1d5d825b 100644
  	}
  	spin_unlock(&sb->s_inode_list_lock);
 diff --git a/fs/inode.c b/fs/inode.c
-index 5c63693326bb..9c50521c9fe4 100644
+index 76f7535fe754..d2a700c5efce 100644
 --- a/fs/inode.c
 +++ b/fs/inode.c
-@@ -660,6 +660,7 @@ int invalidate_inodes(struct super_block *sb, bool kill_dirty)
+@@ -656,6 +656,7 @@ int invalidate_inodes(struct super_block *sb, bool kill_dirty)
  	struct inode *inode, *next;
  	LIST_HEAD(dispose);
  
@@ -102,7 +102,7 @@ index 5c63693326bb..9c50521c9fe4 100644
  	spin_lock(&sb->s_inode_list_lock);
  	list_for_each_entry_safe(inode, next, &sb->s_inodes, i_sb_list) {
  		spin_lock(&inode->i_lock);
-@@ -682,6 +683,12 @@ int invalidate_inodes(struct super_block *sb, bool kill_dirty)
+@@ -678,6 +679,12 @@ int invalidate_inodes(struct super_block *sb, bool kill_dirty)
  		inode_lru_list_del(inode);
  		spin_unlock(&inode->i_lock);
  		list_add(&inode->i_lru, &dispose);
@@ -116,7 +116,7 @@ index 5c63693326bb..9c50521c9fe4 100644
  	spin_unlock(&sb->s_inode_list_lock);
  
 diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index 170a733454f7..e8ee4263d7b2 100644
+index 506da82ff3f1..a308f7a7e577 100644
 --- a/fs/notify/fsnotify.c
 +++ b/fs/notify/fsnotify.c
 @@ -90,6 +90,7 @@ void fsnotify_unmount_inodes(struct super_block *sb)
@@ -128,10 +128,10 @@ index 170a733454f7..e8ee4263d7b2 100644
  	}
  	spin_unlock(&sb->s_inode_list_lock);
 diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index 59b00d8db22c..57eed66e2c2d 100644
+index 3254c90fd899..70098903b45d 100644
 --- a/fs/quota/dquot.c
 +++ b/fs/quota/dquot.c
-@@ -980,6 +980,7 @@ static int add_dquot_ref(struct super_block *sb, int type)
+@@ -976,6 +976,7 @@ static int add_dquot_ref(struct super_block *sb, int type)
  		 * later.
  		 */
  		old_inode = inode;
