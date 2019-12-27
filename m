@@ -2,125 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BC5812B07F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Dec 2019 03:16:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9DA412B090
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Dec 2019 03:23:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbfL0CQC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Dec 2019 21:16:02 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:43706 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726550AbfL0CQC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Dec 2019 21:16:02 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 4BF3FDAAD5393AE5A973;
-        Fri, 27 Dec 2019 10:16:00 +0800 (CST)
-Received: from [127.0.0.1] (10.184.213.217) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Fri, 27 Dec 2019
- 10:15:57 +0800
-Subject: Re: [PATCH] fs: inode: Recycle inodenum from volatile inode slabs
-To:     Amir Goldstein <amir73il@gmail.com>,
-        Chris Down <chris@chrisdown.name>
-CC:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>
-References: <20191226154808.GA418948@chrisdown.name>
- <CAOQ4uxj8NVwrCTswut+icF2t1-7gtW_cmyuGO7WUWdNZLHOBYA@mail.gmail.com>
-From:   "zhengbin (A)" <zhengbin13@huawei.com>
-Message-ID: <88698fed-528b-85b2-1d07-e00051d6db60@huawei.com>
-Date:   Fri, 27 Dec 2019 10:15:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S1726804AbfL0CXS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Dec 2019 21:23:18 -0500
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:34816 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726115AbfL0CXS (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 26 Dec 2019 21:23:18 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0Tm.XzN1_1577413365;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0Tm.XzN1_1577413365)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 27 Dec 2019 10:22:46 +0800
+Subject: Re: [PATCH v6 0/2] sched/numa: introduce numa locality
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>
+References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
+ <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
+ <040def80-9c38-4bcc-e4a8-8a0d10f131ed@linux.alibaba.com>
+ <25cf7ef5-e37e-7578-eea7-29ad0b76c4ea@linux.alibaba.com>
+ <443641e7-f968-0954-5ff6-3b7e7fed0e83@linux.alibaba.com>
+ <d2c4cace-623a-9317-c957-807e3875aa4a@linux.alibaba.com>
+Message-ID: <42800224-ed45-2e37-1960-0da29eb3bc38@linux.alibaba.com>
+Date:   Fri, 27 Dec 2019 10:22:45 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <CAOQ4uxj8NVwrCTswut+icF2t1-7gtW_cmyuGO7WUWdNZLHOBYA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <d2c4cace-623a-9317-c957-807e3875aa4a@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Originating-IP: [10.184.213.217]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi folks, is there any more comments?
 
-On 2019/12/27 2:04, Amir Goldstein wrote:
-> On Thu, Dec 26, 2019 at 5:48 PM Chris Down <chris@chrisdown.name> wrote:
->> In Facebook production we are seeing heavy i_ino wraparounds on tmpfs.
->> On affected tiers, in excess of 10% of hosts show multiple files with
->> different content and the same inode number, with some servers even
->> having as many as 150 duplicated inode numbers with differing file
->> content.
->>
->> This causes actual, tangible problems in production. For example, we
->> have complaints from those working on remote caches that their
->> application is reporting cache corruptions because it uses (device,
->> inodenum) to establish the identity of a particular cache object, but
->> because it's not unique any more, the application refuses to continue
->> and reports cache corruption. Even worse, sometimes applications may not
->> even detect the corruption but may continue anyway, causing phantom and
->> hard to debug behaviour.
->>
->> In general, userspace applications expect that (device, inodenum) should
->> be enough to be uniquely point to one inode, which seems fair enough.
->> One might also need to check the generation, but in this case:
->>
->> 1. That's not currently exposed to userspace
->>    (ioctl(...FS_IOC_GETVERSION...) returns ENOTTY);
->> 2. Even with generation, there shouldn't be two live inodes with the
->>    same inode number on one device.
->>
->> In order to fix this, we reuse inode numbers from recycled slabs where
->> possible, allowing us to significantly reduce the risk of 32 bit
->> wraparound.
->>
->> There are probably some other potential users of this, like some FUSE
->> internals, and {proc,sys,kern}fs style APIs, but doing a general opt-out
->> codemod requires some thinking depending on the particular callsites and
->> how far up the stack they are, we might end up recycling an i_ino value
->> that actually does have some semantic meaning. As such, to start with
->> this patch only opts in a few get_next_ino-heavy filesystems, and those
->> which looked straightforward and without likelihood for corner cases:
->>
->> - bpffs
->> - configfs
->> - debugfs
->> - efivarfs
->> - hugetlbfs
->> - ramfs
->> - tmpfs
->>
-> I'm confused about this list.
-> I suggested to convert tmpfs and hugetlbfs because they use a private
-> inode cache pool, therefore, you can know for sure that a recycled i_ino
-> was allocated by get_next_ino().
+Regards,
+Michael Wang
 
-How about tmpfs and hugetlbfs use their own get_next_ino? like
-
-static DEFINE_PER_CPU(unsigned int, tmpfs_last_ino),
-
-which can reduce the risk of 32 bit wraparound further.
-
->
-> If I am not mistaken, other fs above are using the common inode_cache
-> pool, so when you recycle i_ino from that pool you don't know where it
-> came from and cannot trust its uniqueness in the get_next_ino() domain.
-> Even if *all* filesystems that currently use common inode_cache use
-> get_next_ino() exclusively to allocate ino numbers, that could change
-> in the future.
->
-> I'd go even further to say that introducing a generic helper for this sort
-> of thing is asking for trouble. It is best to keep the recycle logic well within
-> the bounds of the specific filesystem driver, which is the owner of the
-> private inode cache and the responsible for allocating ino numbers in
-> this pool.
->
-> Thanks and happy holidays,
-> Amir.
->
-> .
->
-
+On 2019/12/13 上午9:43, 王贇 wrote:
+> Since v5:
+>   * fix compile failure when NUMA disabled
+> Since v4:
+>   * improved documentation
+> Since v3:
+>   * fix comments and improved documentation
+> Since v2:
+>   * simplified the locality concept & implementation
+> Since v1:
+>   * improved documentation
+> 
+> Modern production environment could use hundreds of cgroup to control
+> the resources for different workloads, along with the complicated
+> resource binding.
+> 
+> On NUMA platforms where we have multiple nodes, things become even more
+> complicated, we hope there are more local memory access to improve the
+> performance, and NUMA Balancing keep working hard to achieve that,
+> however, wrong memory policy or node binding could easily waste the
+> effort, result a lot of remote page accessing.
+> 
+> We need to notice such problems, then we got chance to fix it before
+> there are too much damages, however, there are no good monitoring
+> approach yet to help catch the mouse who introduced the remote access.
+> 
+> This patch set is trying to fill in the missing pieces， by introduce
+> the per-cgroup NUMA locality info, with this new statistics, we could
+> achieve the daily monitoring on NUMA efficiency, to give warning when
+> things going too wrong.
+> 
+> Please check the second patch for more details.
+> 
+> Michael Wang (2):
+>   sched/numa: introduce per-cgroup NUMA locality info
+>   sched/numa: documentation for per-cgroup numa statistics
+> 
+>  Documentation/admin-guide/cg-numa-stat.rst      | 178 ++++++++++++++++++++++++
+>  Documentation/admin-guide/index.rst             |   1 +
+>  Documentation/admin-guide/kernel-parameters.txt |   4 +
+>  Documentation/admin-guide/sysctl/kernel.rst     |   9 ++
+>  include/linux/sched.h                           |  15 ++
+>  include/linux/sched/sysctl.h                    |   6 +
+>  init/Kconfig                                    |  11 ++
+>  kernel/sched/core.c                             |  75 ++++++++++
+>  kernel/sched/fair.c                             |  62 +++++++++
+>  kernel/sched/sched.h                            |  12 ++
+>  kernel/sysctl.c                                 |  11 ++
+>  11 files changed, 384 insertions(+)
+>  create mode 100644 Documentation/admin-guide/cg-numa-stat.rst
+> 
