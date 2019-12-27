@@ -2,84 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38E9212B04E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Dec 2019 02:35:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BC5812B07F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Dec 2019 03:16:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbfL0Bff (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Dec 2019 20:35:35 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:35865 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726943AbfL0Bfa (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Dec 2019 20:35:30 -0500
-Received: by mail-ed1-f66.google.com with SMTP id j17so24087690edp.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Dec 2019 17:35:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=t2hkxx6EdZesk3LyhW8Bjdi5OF7N5XgZx/OPo6iWL4k=;
-        b=awumovmJVECZ0Nk/zD/7/Ex5YMktKw7NhFajPm4bgFTiF2ETfkapjS8VlX3uLqpIRv
-         6JofoXtruG/OJh5ZP2aFM8aE1WMGWcpoQpgjKTLp/hJjiPjkBlvWQnp7nh8qDj+Uuo+X
-         qMEtfHNJZv98S6kmQcWJMShyoywEiEEU28hTI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=t2hkxx6EdZesk3LyhW8Bjdi5OF7N5XgZx/OPo6iWL4k=;
-        b=BOz652FHO1XrHuoTO1q9PytmxOuJ7LcfdPa0HMcDd42AXzQZU443DHw9SMAOd13e1w
-         8p2P4OsFFRXrPv0lZx6Gj/vCkapOEe0hu52OcXjHJ92TNNvQIgYTb3dmcNqmyrdP/P3E
-         oQGadj5K11wiyYJLAHEH5ZuwFWu3dvgY2NWlF5kXIWFb8WVaRw9ehLM9/tEZbgOIvteg
-         D9aQgKgW2+lMxYa/oNC1Xhq8b0+RYCgwKey3pMU9RsHt5oa22UQhnPrF22aLF57wrEBx
-         H37Cxxuv9bvrf75Y/r3BSi6cVX/dbaFLp2FVdoKQUg+V4pVJqnkKW2KWrXkwNdOt8kkG
-         Xhdw==
-X-Gm-Message-State: APjAAAXaWaOIpPY4s5O7xbTjRE6bTIaGQo6vZGr30q04xx7vgkjyAibK
-        XClpEDpbE+XhUov12b1j1yEntVbyqCSZh1AFmk+R/g==
-X-Google-Smtp-Source: APXvYqziVcuWKxoTC5z2LyoMJWVCIQfGh0OJGrspzG1O5SgJ6+Lq/NGsxHbojw3SUweZkNqEh948ArUOFWHF6ZSqFe8=
-X-Received: by 2002:aa7:d714:: with SMTP id t20mr53554307edq.93.1577410526273;
- Thu, 26 Dec 2019 17:35:26 -0800 (PST)
-MIME-Version: 1.0
-References: <20191226180334.GA29409@ircssh-2.c.rugged-nimbus-611.internal> <201912270545.TQnRs9kG%lkp@intel.com>
-In-Reply-To: <201912270545.TQnRs9kG%lkp@intel.com>
-From:   Sargun Dhillon <sargun@sargun.me>
-Date:   Thu, 26 Dec 2019 20:35:00 -0500
-Message-ID: <CAMp4zn94deUbkXBrnX=Omw9-FmoZDANApqYUVsaV+VsXCX4Q-w@mail.gmail.com>
-Subject: Re: [PATCH v7 2/3] pid: Introduce pidfd_getfd syscall
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@lists.01.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
+        id S1727008AbfL0CQC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Dec 2019 21:16:02 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:43706 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726550AbfL0CQC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 26 Dec 2019 21:16:02 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 4BF3FDAAD5393AE5A973;
+        Fri, 27 Dec 2019 10:16:00 +0800 (CST)
+Received: from [127.0.0.1] (10.184.213.217) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Fri, 27 Dec 2019
+ 10:15:57 +0800
+Subject: Re: [PATCH] fs: inode: Recycle inodenum from volatile inode slabs
+To:     Amir Goldstein <amir73il@gmail.com>,
+        Chris Down <chris@chrisdown.name>
+CC:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Gian-Carlo Pascutto <gpascutto@mozilla.com>,
-        =?UTF-8?Q?Emilio_Cobos_=C3=81lvarez?= <ealvarez@mozilla.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Jed Davis <jld@mozilla.com>, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>
+References: <20191226154808.GA418948@chrisdown.name>
+ <CAOQ4uxj8NVwrCTswut+icF2t1-7gtW_cmyuGO7WUWdNZLHOBYA@mail.gmail.com>
+From:   "zhengbin (A)" <zhengbin13@huawei.com>
+Message-ID: <88698fed-528b-85b2-1d07-e00051d6db60@huawei.com>
+Date:   Fri, 27 Dec 2019 10:15:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <CAOQ4uxj8NVwrCTswut+icF2t1-7gtW_cmyuGO7WUWdNZLHOBYA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.184.213.217]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 26, 2019 at 5:20 PM kbuild test robot <lkp@intel.com> wrote:
->
-> Hi Sargun,
->
-> Thank you for the patch! Yet something to improve:
->
-> All errors (new ones prefixed by >>):
->
->    arch/alpha/kernel/systbls.o: In function `sys_call_table':
-> >> (.data+0x1120): undefined reference to `sys_pidfd'
-This is a small typo. I'll fix this in the next respin.
 
+On 2019/12/27 2:04, Amir Goldstein wrote:
+> On Thu, Dec 26, 2019 at 5:48 PM Chris Down <chris@chrisdown.name> wrote:
+>> In Facebook production we are seeing heavy i_ino wraparounds on tmpfs.
+>> On affected tiers, in excess of 10% of hosts show multiple files with
+>> different content and the same inode number, with some servers even
+>> having as many as 150 duplicated inode numbers with differing file
+>> content.
+>>
+>> This causes actual, tangible problems in production. For example, we
+>> have complaints from those working on remote caches that their
+>> application is reporting cache corruptions because it uses (device,
+>> inodenum) to establish the identity of a particular cache object, but
+>> because it's not unique any more, the application refuses to continue
+>> and reports cache corruption. Even worse, sometimes applications may not
+>> even detect the corruption but may continue anyway, causing phantom and
+>> hard to debug behaviour.
+>>
+>> In general, userspace applications expect that (device, inodenum) should
+>> be enough to be uniquely point to one inode, which seems fair enough.
+>> One might also need to check the generation, but in this case:
+>>
+>> 1. That's not currently exposed to userspace
+>>    (ioctl(...FS_IOC_GETVERSION...) returns ENOTTY);
+>> 2. Even with generation, there shouldn't be two live inodes with the
+>>    same inode number on one device.
+>>
+>> In order to fix this, we reuse inode numbers from recycled slabs where
+>> possible, allowing us to significantly reduce the risk of 32 bit
+>> wraparound.
+>>
+>> There are probably some other potential users of this, like some FUSE
+>> internals, and {proc,sys,kern}fs style APIs, but doing a general opt-out
+>> codemod requires some thinking depending on the particular callsites and
+>> how far up the stack they are, we might end up recycling an i_ino value
+>> that actually does have some semantic meaning. As such, to start with
+>> this patch only opts in a few get_next_ino-heavy filesystems, and those
+>> which looked straightforward and without likelihood for corner cases:
+>>
+>> - bpffs
+>> - configfs
+>> - debugfs
+>> - efivarfs
+>> - hugetlbfs
+>> - ramfs
+>> - tmpfs
+>>
+> I'm confused about this list.
+> I suggested to convert tmpfs and hugetlbfs because they use a private
+> inode cache pool, therefore, you can know for sure that a recycled i_ino
+> was allocated by get_next_ino().
+
+How about tmpfs and hugetlbfs use their own get_next_ino? like
+
+static DEFINE_PER_CPU(unsigned int, tmpfs_last_ino),
+
+which can reduce the risk of 32 bit wraparound further.
 
 >
-> ---
-> 0-DAY kernel test infrastructure                 Open Source Technology Center
-> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
+> If I am not mistaken, other fs above are using the common inode_cache
+> pool, so when you recycle i_ino from that pool you don't know where it
+> came from and cannot trust its uniqueness in the get_next_ino() domain.
+> Even if *all* filesystems that currently use common inode_cache use
+> get_next_ino() exclusively to allocate ino numbers, that could change
+> in the future.
+>
+> I'd go even further to say that introducing a generic helper for this sort
+> of thing is asking for trouble. It is best to keep the recycle logic well within
+> the bounds of the specific filesystem driver, which is the owner of the
+> private inode cache and the responsible for allocating ino numbers in
+> this pool.
+>
+> Thanks and happy holidays,
+> Amir.
+>
+> .
+>
+
