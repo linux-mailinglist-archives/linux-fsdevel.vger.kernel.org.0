@@ -2,200 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B96612B344
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Dec 2019 09:37:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A0EB12B440
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Dec 2019 12:37:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726156AbfL0Ihf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Dec 2019 03:37:35 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:37610 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725904AbfL0Ihf (ORCPT
+        id S1727126AbfL0LhC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Dec 2019 06:37:02 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35213 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727028AbfL0LhB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Dec 2019 03:37:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1577435853;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=KhGHXp6KtVTVG8Ck1KsmXrszeHaPtQlfWIiJzO6hloU=;
-        b=WBfVFi5H5vNnBXdilGSXF5nyrawxQv1gW1glbMBMmTwHh+sWBPWJMQlKbJvoADk+Gzw6/G
-        pnJADg0QvlLp5Haufa0ZSiTvRb/ptTbgm8tQukOp2SxfkPCyOWhBnzhlFXdxJ+pitTOfTP
-        r+K+18lOtq7P62UJNSflaoQoektJY9I=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-256-fOpdfMu8P2SbU30faky38w-1; Fri, 27 Dec 2019 03:37:32 -0500
-X-MC-Unique: fOpdfMu8P2SbU30faky38w-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5837E800D4C;
-        Fri, 27 Dec 2019 08:37:31 +0000 (UTC)
-Received: from localhost (ovpn-8-24.pek2.redhat.com [10.72.8.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C71EB5D9C5;
-        Fri, 27 Dec 2019 08:37:25 +0000 (UTC)
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        syzbot+2b9e54155c8c25d8d165@syzkaller.appspotmail.com
-Subject: [PATCH] block: add bio_truncate to fix guard_bio_eod
-Date:   Fri, 27 Dec 2019 16:36:58 +0800
-Message-Id: <20191227083658.23912-1-ming.lei@redhat.com>
+        Fri, 27 Dec 2019 06:37:01 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p17so8069092wmb.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Dec 2019 03:36:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chrisdown.name; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=vYLFB/uLWChvEa1SjgamsZ5n2OMiY1NO7RNKVGxv64I=;
+        b=wA9y8xWm9ulX0jcjr/Q4fMa+CIjLe1WNOnrKOG6FQ86CpFV+mqxMkBOftKML0d6v/J
+         rCxUMWOO2JA/WJCAQuwBzCkWnauR8fPiOuXQXFeuR40G4SNS0oPJPgZ1GxcPUloGPyoc
+         rTAqTUplNF/TJVhhOC3Qn9Zo61xTe4hukSBt4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=vYLFB/uLWChvEa1SjgamsZ5n2OMiY1NO7RNKVGxv64I=;
+        b=KPtWuHLgpfW4m429ZFQi5T+pto6lErnvP7aZ/lKweZXwqR6Z8SStJgz+ZGus0VmGp5
+         sWZvKssqV6c7xWiUyBsbgii76QQIT/YpCagoHK6LA/SR0gUoHhYS8UX2UFlxtY2wn0VZ
+         kH2DSmwLma4dJvxId2Wrnu/Qf7Xnjue2Ok0yY5khxu05IDl6O+1gC/+Eo2WdOkqccfwH
+         9S0OJNbhYlcDBBKgvqkMMLIHZKFSUh1jZf7dX6HXI4pcmvBCDHSnu0ftbdypFIbYzj2d
+         5i9HRKHOXrih8FGUSc8qp8MpvZe3Eg47B8O7d0YoTh779CSwVQPsID3DjZilCOIbmItT
+         IUuw==
+X-Gm-Message-State: APjAAAXOFrvZJWxrkibbGW48M59yNBksvTzL/+ePORaph2TvqQXJL9uV
+        chdi1pDyvv/qyW24xSiqni9o7Y+hLkQ=
+X-Google-Smtp-Source: APXvYqxdWbM0VFPfavkOQ7Syvg3XtT7I6sj7u2hO46ItzR9trEv+MnBpW96YfNZeXSYp+QJnuqLO4A==
+X-Received: by 2002:a1c:8095:: with SMTP id b143mr18803322wmd.7.1577446618889;
+        Fri, 27 Dec 2019 03:36:58 -0800 (PST)
+Received: from localhost (host-92-23-123-10.as13285.net. [92.23.123.10])
+        by smtp.gmail.com with ESMTPSA id v83sm11119135wmg.16.2019.12.27.03.36.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Dec 2019 03:36:58 -0800 (PST)
+Date:   Fri, 27 Dec 2019 11:36:56 +0000
+From:   Chris Down <chris@chrisdown.name>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@fb.com,
+        "zhengbin (A)" <zhengbin13@huawei.com>
+Subject: Re: [PATCH] fs: inode: Recycle inodenum from volatile inode slabs
+Message-ID: <20191227113656.GA442424@chrisdown.name>
+References: <20191226154808.GA418948@chrisdown.name>
+ <CAOQ4uxj8NVwrCTswut+icF2t1-7gtW_cmyuGO7WUWdNZLHOBYA@mail.gmail.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxj8NVwrCTswut+icF2t1-7gtW_cmyuGO7WUWdNZLHOBYA@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Some filesystem, such as vfat, may send bio which crosses device boundary=
-,
-and the worse thing is that the IO request starting within device boundar=
-ies
-can contain more than one segment past EOD.
+Amir Goldstein writes:
+>> - bpffs
+>> - configfs
+>> - debugfs
+>> - efivarfs
+>> - hugetlbfs
+>> - ramfs
+>> - tmpfs
+>>
+>
+>I'm confused about this list.
+>I suggested to convert tmpfs and hugetlbfs because they use a private
+>inode cache pool, therefore, you can know for sure that a recycled i_ino
+>was allocated by get_next_ino().
 
-Commit dce30ca9e3b6 ("fs: fix guard_bio_eod to check for real EOD errors"=
-)
-tries to fix this issue by returning -EIO for this situation. However,
-this way lets fs user code lose chance to handle -EIO, then sync_inodes_s=
-b()
-may hang forever.
+Oh, right. I mistakenly thought alloc_inode was somehow sb-specific and missed 
+that these don't have any super_operations->alloc_inode :-)
 
-Also the current truncating on last segment is dangerous by updating the
-last bvec, given the bvec table becomes not immutable, and fs bio users
-may lose to retrieve pages via bio_for_each_segment_all() in its .end_io
-callback.
+I'll reduce it just to those with this explicitly set.
 
-Fixes this issue by supporting multi-segment truncating. And the
-approach is simpler:
+>I'd go even further to say that introducing a generic helper for this sort
+>of thing is asking for trouble. It is best to keep the recycle logic well within
+>the bounds of the specific filesystem driver, which is the owner of the
+>private inode cache and the responsible for allocating ino numbers in
+>this pool.
 
-- just update bio size since block layer can make correct bvec with
-the updated bio size. Then bvec table becomes really immutable.
+Thanks, considering that alloc_inode isn't sb-dependent like I thought, that 
+definitely sounds reasonable. I'll do that and send v3 then.
 
-- zero all truncated segments for read bio
+Thanks,
 
-Cc: Carlos Maiolino <cmaiolino@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org
-Fixed-by: dce30ca9e3b6 ("fs: fix guard_bio_eod to check for real EOD erro=
-rs")
-Reported-by: syzbot+2b9e54155c8c25d8d165@syzkaller.appspotmail.com
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- block/bio.c         | 40 ++++++++++++++++++++++++++++++++++++++++
- fs/buffer.c         | 25 +------------------------
- include/linux/bio.h |  1 +
- 3 files changed, 42 insertions(+), 24 deletions(-)
-
-diff --git a/block/bio.c b/block/bio.c
-index a5d75f6bf4c7..a44d0b6e4d49 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -538,6 +538,46 @@ void zero_fill_bio_iter(struct bio *bio, struct bvec=
-_iter start)
- }
- EXPORT_SYMBOL(zero_fill_bio_iter);
-=20
-+void bio_truncate(struct bio *bio, unsigned new_size)
-+{
-+	struct bio_vec bv;
-+	struct bvec_iter iter;
-+	unsigned int done =3D 0;
-+	bool truncated =3D false;
-+
-+	if (new_size >=3D bio->bi_iter.bi_size)
-+		return;
-+
-+	if (bio_data_dir(bio) !=3D READ)
-+		goto exit;
-+
-+	bio_for_each_segment(bv, bio, iter) {
-+		if (done + bv.bv_len > new_size) {
-+			unsigned offset;
-+
-+			if (!truncated)
-+				offset =3D new_size - done;
-+			else
-+				offset =3D 0;
-+			zero_user(bv.bv_page, offset, bv.bv_len - offset);
-+			truncated =3D true;
-+		}
-+		done +=3D bv.bv_len;
-+	}
-+
-+ exit:
-+	/*
-+	 * Don't touch bvec table here and make it really immutable, since
-+	 * fs bio user has to retrieve all pages via bio_for_each_segment_all
-+	 * in its .end_bio() callback.
-+	 *
-+	 * It is enough to truncate bio by updating .bi_size since we can make
-+	 * correct bvec with the updated .bi_size for drivers.
-+	 */
-+	bio->bi_iter.bi_size =3D new_size;
-+}
-+EXPORT_SYMBOL(bio_truncate);
-+
- /**
-  * bio_put - release a reference to a bio
-  * @bio:   bio to release reference to
-diff --git a/fs/buffer.c b/fs/buffer.c
-index d8c7242426bb..e94a6619464c 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -3034,8 +3034,6 @@ static void end_bio_bh_io_sync(struct bio *bio)
- void guard_bio_eod(int op, struct bio *bio)
- {
- 	sector_t maxsector;
--	struct bio_vec *bvec =3D bio_last_bvec_all(bio);
--	unsigned truncated_bytes;
- 	struct hd_struct *part;
-=20
- 	rcu_read_lock();
-@@ -3061,28 +3059,7 @@ void guard_bio_eod(int op, struct bio *bio)
- 	if (likely((bio->bi_iter.bi_size >> 9) <=3D maxsector))
- 		return;
-=20
--	/* Uhhuh. We've got a bio that straddles the device size! */
--	truncated_bytes =3D bio->bi_iter.bi_size - (maxsector << 9);
--
--	/*
--	 * The bio contains more than one segment which spans EOD, just return
--	 * and let IO layer turn it into an EIO
--	 */
--	if (truncated_bytes > bvec->bv_len)
--		return;
--
--	/* Truncate the bio.. */
--	bio->bi_iter.bi_size -=3D truncated_bytes;
--	bvec->bv_len -=3D truncated_bytes;
--
--	/* ..and clear the end of the buffer for reads */
--	if (op =3D=3D REQ_OP_READ) {
--		struct bio_vec bv;
--
--		mp_bvec_last_segment(bvec, &bv);
--		zero_user(bv.bv_page, bv.bv_offset + bv.bv_len,
--				truncated_bytes);
--	}
-+	bio_truncate(bio, maxsector << 9);
- }
-=20
- static int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 3cdb84cdc488..853d92ceee64 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -470,6 +470,7 @@ extern struct bio *bio_copy_user_iov(struct request_q=
-ueue *,
- 				     gfp_t);
- extern int bio_uncopy_user(struct bio *);
- void zero_fill_bio_iter(struct bio *bio, struct bvec_iter iter);
-+void bio_truncate(struct bio *bio, unsigned new_size);
-=20
- static inline void zero_fill_bio(struct bio *bio)
- {
---=20
-2.20.1
-
+Chris 
