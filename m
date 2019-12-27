@@ -2,66 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3310112B5B2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Dec 2019 16:46:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50E1412B5B8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Dec 2019 16:54:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726538AbfL0PqB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Dec 2019 10:46:01 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36293 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726495AbfL0PqB (ORCPT
+        id S1726602AbfL0Pye (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Dec 2019 10:54:34 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:42095 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726365AbfL0Pyd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Dec 2019 10:46:01 -0500
-Received: by mail-pg1-f194.google.com with SMTP id k3so14617546pgc.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Dec 2019 07:46:00 -0800 (PST)
+        Fri, 27 Dec 2019 10:54:33 -0500
+Received: by mail-pf1-f195.google.com with SMTP id 4so14901475pfz.9
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Dec 2019 07:54:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IKKrQ/vjXnebip5AhX0hhEKW/mA6sdOEgqmJWf+TxdQ=;
-        b=BY9Ucb5Doa+7rQ4RDreO6AhPtEYdpqQ6Hfen8+DKzMAFKpbaGGRspXmXZAB5SoNoRo
-         seI5fgi7gHRAq0IzhrkW2C9QxfMEKQ6gEqmtVTFBrWOGpRihnicKKNhukK323OznfWQB
-         pR8riRZ3uMIVbC84any6jBv0nU9gn7WauurEBKowcGZo5VM0YopASMJSlf3aUNRNwcWA
-         kFE5cXxi19lNtS9X5uFBQz4cK+hicXmlIp36VlHxlvG2B/9+REmO62TiINQFPYL4isOU
-         PhgbOQD4OwYzJyqEL3ykBqalSaSCPA6vpgNA/98VCupTm12+865kEVmGdsp8X8tOSEXo
-         0fPw==
+        bh=5tmJ7pFrmFzYzeB9duDLlIXotQmxNCWC6b/fIBvaYCk=;
+        b=KzLzCJFpbtP/oJwyBNQ25kfgreR370en2dKVxMdyxJJXuCCMZoytDGHdkhZ/Q+iJjI
+         wfoN6ft8uMihOQ5SxXCF9ksuEolbVxqx7I/e8vIpvZ0EZoNiYPv07HV+JQt+I/hR1iBO
+         sE87usxT9O5hytFGqTUinsg/Zw4o8sfBEeodb9WdxDGD832+9j8OwMR3U6GFP2xx2XoA
+         6pMWeDt6AtMpijj5Zu11f0w2xSI62A6lc/hFTfohmZQ6YfcK7OgRt8GwwUQo4NtSynET
+         LrushROkNN+qYR3f3/xWEsh1uSPQJ3hn6CK8S69ExFwByMP1LzP5ljA8QFfWomcwkBxX
+         +UjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=IKKrQ/vjXnebip5AhX0hhEKW/mA6sdOEgqmJWf+TxdQ=;
-        b=WnLg4rjq7KKOOLpG5z6PVWJDcXECERFDWumpDMAON6HoVs70mgxR/0j1Ls7FLqBaLL
-         sYiJ0OX7zH77VCibhzmY7lxzEPQ2a0IuDK9V3ES6pigq60yOFzQ7Yjgou05MZbLgU/zV
-         /mCYj8qhLCzlPdt51yOVsxlzKNqReD8//TtXvuOmpLpHSvbqHMJrlK6wp4JokS8c01X7
-         4RsZ0QDlnavQkL2GfJ+XY6uX7iIQLv+KEtLe8O6LQt/di+KpejZIR/PaPNhjrfo2PGIp
-         0678KnPYS7QyxGPf+G1BKfI/gd9TLJAJV+YS65A2rGhTw5aWQfRHWWeve8pKFnX1yt+5
-         ZvOg==
-X-Gm-Message-State: APjAAAUf2C5QWpzGe0e/b7Ion10Hu0+K5/s7az3vG7PtA8R2B59SR0fY
-        46+QicWSU13G3wIBh4MJmtwc1ekl2cbdDg==
-X-Google-Smtp-Source: APXvYqx6DXo7mamf0R3ldMKFS9wLvdmZuIJWOpCCPMemvrwLBf0DOhoefAyz7pniugmrhPi4ZN2zZQ==
-X-Received: by 2002:a63:d543:: with SMTP id v3mr53830011pgi.285.1577461559803;
-        Fri, 27 Dec 2019 07:45:59 -0800 (PST)
+        bh=5tmJ7pFrmFzYzeB9duDLlIXotQmxNCWC6b/fIBvaYCk=;
+        b=CzoE0XdG7untVF/irJ8GcPju8Puvu6BiAvL7m/4tCr+IJpCQk455Hzboe8f00hcPWd
+         WW6ljQWd76a4vSLXRfG5L4vX6xm6SON0b+CpqVTpf4rI3LI2rq18Uui6HWKeTnt4Uf89
+         05a8T0vk0IEkCsQtbp3sSkWtvuts1NMYyjpPxguhW8syF/XV+wO5dZoriox0Rv+4I8/e
+         iOQnKSPOpVuzfnu13ageLGpf1J68zM0aU4/a8OJ1od6bfoaDDGjgbp28EjtM+bXad8Ar
+         o7yJ1+RTdDUZK6Cq6ZpprbR+jiUB/2J2a9zcVIhyWhagW4vKt31s7Jsv5fnMeuRTEvkK
+         WKvQ==
+X-Gm-Message-State: APjAAAU4N34dY8Yd8THchIXcR13DnrcVWMwMw5DnzHX7rXC6BHMQr3bs
+        XXqY3sAHggHo0IddUCJ0Tihv2A==
+X-Google-Smtp-Source: APXvYqwriT6+++f0WbF5wJkls137egx/03pjzMGgKvJ+IOmh+HZhBsWos/+tWFHwgwcLXbNkun89aw==
+X-Received: by 2002:a63:1210:: with SMTP id h16mr54486504pgl.171.1577462072890;
+        Fri, 27 Dec 2019 07:54:32 -0800 (PST)
 Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id b8sm42063068pfr.64.2019.12.27.07.45.58
+        by smtp.gmail.com with ESMTPSA id h26sm44211250pfr.9.2019.12.27.07.54.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Dec 2019 07:45:59 -0800 (PST)
-Subject: Re: [PATCH 03/10] fs: add namei support for doing a non-blocking path
- lookup
+        Fri, 27 Dec 2019 07:54:32 -0800 (PST)
+Subject: Re: [PATCH] block: add bio_truncate to fix guard_bio_eod
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     linux-block@vger.kernel.org,
+        Carlos Maiolino <cmaiolino@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        syzbot+2b9e54155c8c25d8d165@syzkaller.appspotmail.com
+References: <20191227083658.23912-1-ming.lei@redhat.com>
 From:   Jens Axboe <axboe@kernel.dk>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20191213183632.19441-1-axboe@kernel.dk>
- <20191213183632.19441-4-axboe@kernel.dk>
- <20191227004206.GT4203@ZenIV.linux.org.uk>
- <480c6bfb-a951-0f51-53ca-5ac63a38b1fc@kernel.dk>
- <a8d6bf32-bcdd-62e2-25b3-50351a3a5b14@kernel.dk>
-Message-ID: <fad1cc3c-b805-38a7-4a25-94b2abf24528@kernel.dk>
-Date:   Fri, 27 Dec 2019 08:45:57 -0700
+Message-ID: <c8e77b65-5653-39bc-3593-ec6a939d1ecb@kernel.dk>
+Date:   Fri, 27 Dec 2019 08:54:30 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <a8d6bf32-bcdd-62e2-25b3-50351a3a5b14@kernel.dk>
+In-Reply-To: <20191227083658.23912-1-ming.lei@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -70,138 +68,30 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/26/19 10:25 PM, Jens Axboe wrote:
-> On 12/26/19 10:05 PM, Jens Axboe wrote:
->> On 12/26/19 5:42 PM, Al Viro wrote:
->>> On Fri, Dec 13, 2019 at 11:36:25AM -0700, Jens Axboe wrote:
->>>> If the fast lookup fails, then return -EAGAIN to have the caller retry
->>>> the path lookup. This is in preparation for supporting non-blocking
->>>> open.
->>>
->>> NAK.  We are not littering fs/namei.c with incremental broken bits
->>> and pieces with uncertain eventual use.
->>
->> To be fair, the "eventual use" is just the next patch or two...
->>
->>> And it's broken - lookup_slow() is *NOT* the only place that can and
->>> does block.  For starters, ->d_revalidate() can very well block and
->>> it is called outside of lookup_slow().  So does ->d_automount().
->>> So does ->d_manage().
->>
->> Fair enough, so it's not complete. I'd love to get it there, though!
->>
->>> I'm rather sceptical about the usefulness of non-blocking open, to be
->>> honest, but in any case, one thing that is absolutely not going to
->>> happen is piecewise introduction of such stuff without a discussion
->>> of the entire design.
->>
->> It's a necessity for io_uring, otherwise _any_ open needs to happen
->> out-of-line. But I get your objection, I'd like to get this moving in a
->> productive way though.
->>
->> What do you want it to look like? I'd be totally fine with knowing if
->> the fs has ->d_revalidate(), and always doing those out-of-line.  If I
->> know the open will be slow, that's preferable. Ditto for ->d_automount()
->> and ->d_manage(), all of that looks like cases that would be fine to
->> punt. I honestly care mostly about the cached local case _not_ needing
->> out-of-line handling, that needs to happen inline.
->>
->> Still seems to me like the LOOKUP_NONBLOCK is the way to go, and just
->> have lookup_fast() -EAGAIN if we need to call any of the potentially
->> problematic dentry ops. Yes, they _may_ not block, but they could. I
->> don't think we need to propagate this information further.
+On 12/27/19 1:36 AM, Ming Lei wrote:
+> Some filesystem, such as vfat, may send bio which crosses device boundary,
+> and the worse thing is that the IO request starting within device boundaries
+> can contain more than one segment past EOD.
 > 
-> Incremental here - just check for potentially problematic dentry ops,
-> and have the open redone from a path where it doesn't matter.
+> Commit dce30ca9e3b6 ("fs: fix guard_bio_eod to check for real EOD errors")
+> tries to fix this issue by returning -EIO for this situation. However,
+> this way lets fs user code lose chance to handle -EIO, then sync_inodes_sb()
+> may hang forever.
+> 
+> Also the current truncating on last segment is dangerous by updating the
+> last bvec, given the bvec table becomes not immutable, and fs bio users
+> may lose to retrieve pages via bio_for_each_segment_all() in its .end_io
+> callback.
+> 
+> Fixes this issue by supporting multi-segment truncating. And the
+> approach is simpler:
+> 
+> - just update bio size since block layer can make correct bvec with
+> the updated bio size. Then bvec table becomes really immutable.
+> 
+> - zero all truncated segments for read bio
 
-Here's the (updated) full patch, with the bits cleaned up a bit. Would
-this be more agreeable to you?
-
-
-commit ac605d1d6ca445ba7e2990e0afe0e28ad831a663
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Fri Dec 13 11:09:26 2019 -0700
-
-    fs: add namei support for doing a non-blocking path lookup
-    
-    If the fast lookup fails, then return -EAGAIN to have the caller retry
-    the path lookup. Assume that a dentry having any of:
-    
-    ->d_revalidate()
-    ->d_automount()
-    ->d_manage()
-    
-    could block in those callbacks. Preemptively return -EAGAIN if any of
-    these are present.
-    
-    This is in preparation for supporting non-blocking open.
-    
-    Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
-diff --git a/fs/namei.c b/fs/namei.c
-index d6c91d1e88cb..2bfdb932f2f2 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -1549,6 +1549,17 @@ static struct dentry *__lookup_hash(const struct qstr *name,
- 	return dentry;
- }
- 
-+static inline bool lookup_could_block(struct dentry *dentry, unsigned int flags)
-+{
-+	const struct dentry_operations *ops = dentry->d_op;
-+
-+	if (!(flags & LOOKUP_NONBLOCK))
-+		return 0;
-+
-+	/* assume these dentry ops may block */
-+	return ops->d_revalidate || ops->d_automount || ops->d_manage;
-+}
-+
- static int lookup_fast(struct nameidata *nd,
- 		       struct path *path, struct inode **inode,
- 		       unsigned *seqp)
-@@ -1573,6 +1584,9 @@ static int lookup_fast(struct nameidata *nd,
- 			return 0;
- 		}
- 
-+		if (unlikely(lookup_could_block(dentry, nd->flags)))
-+			return -EAGAIN;
-+
- 		/*
- 		 * This sequence count validates that the inode matches
- 		 * the dentry name information from lookup.
-@@ -1615,7 +1629,10 @@ static int lookup_fast(struct nameidata *nd,
- 		dentry = __d_lookup(parent, &nd->last);
- 		if (unlikely(!dentry))
- 			return 0;
--		status = d_revalidate(dentry, nd->flags);
-+		if (unlikely(lookup_could_block(dentry, nd->flags)))
-+			status = -EAGAIN;
-+		else
-+			status = d_revalidate(dentry, nd->flags);
- 	}
- 	if (unlikely(status <= 0)) {
- 		if (!status)
-@@ -1799,6 +1816,8 @@ static int walk_component(struct nameidata *nd, int flags)
- 	if (unlikely(err <= 0)) {
- 		if (err < 0)
- 			return err;
-+		if (nd->flags & LOOKUP_NONBLOCK)
-+			return -EAGAIN;
- 		path.dentry = lookup_slow(&nd->last, nd->path.dentry,
- 					  nd->flags);
- 		if (IS_ERR(path.dentry))
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index 7fe7b87a3ded..935a1bf0caca 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -38,6 +38,7 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT, LAST_BIND};
- #define LOOKUP_JUMPED		0x1000
- #define LOOKUP_ROOT		0x2000
- #define LOOKUP_ROOT_GRABBED	0x0008
-+#define LOOKUP_NONBLOCK		0x10000	/* don't block for lookup */
- 
- extern int path_pts(struct path *path);
+This looks good to me, but we don't need the export of the symbol.
 
 -- 
 Jens Axboe
