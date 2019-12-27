@@ -2,31 +2,34 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63BCF12BACC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Dec 2019 20:48:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8719A12BB23
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Dec 2019 21:31:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726923AbfL0Tsk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Dec 2019 14:48:40 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:36540 "EHLO
+        id S1726982AbfL0Ubl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Dec 2019 15:31:41 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:41257 "EHLO
         outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726839AbfL0Tsk (ORCPT
+        with ESMTP id S1726527AbfL0Ubl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Dec 2019 14:48:40 -0500
+        Fri, 27 Dec 2019 15:31:41 -0500
 Received: from callcc.thunk.org (96-72-84-49-static.hfc.comcastbusiness.net [96.72.84.49] (may be forged))
         (authenticated bits=0)
         (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xBRJmWrs000588
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xBRKVY3S011575
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 27 Dec 2019 14:48:33 -0500
+        Fri, 27 Dec 2019 15:31:35 -0500
 Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 4972F420485; Fri, 27 Dec 2019 14:48:32 -0500 (EST)
+        id C9153420485; Fri, 27 Dec 2019 15:31:33 -0500 (EST)
 From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>
-Cc:     linux-mm@kvack.org, "Theodore Ts'o" <tytso@mit.edu>
+To:     Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
+        linux-mm@kvack.org
+Cc:     "Theodore Ts'o" <tytso@mit.edu>
 Subject: [PATCH] memcg: fix a crash in wb_workfn when a device disappears
-Date:   Fri, 27 Dec 2019 14:48:29 -0500
-Message-Id: <20191227194829.150110-1-tytso@mit.edu>
+Date:   Fri, 27 Dec 2019 15:31:17 -0500
+Message-Id: <20191227203117.152399-1-tytso@mit.edu>
 X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20191227194829.150110-1-tytso@mit.edu>
+References: <20191227194829.150110-1-tytso@mit.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -48,7 +51,7 @@ which prevents the bdi object from being released (and hence,
 unregistered).  So in theory, the bdi_unregister() *should* only get
 called once its refcount goes to zero (bdi_put will drop the refcount,
 and when it is zero, release_bdi gets called, which calls
-bdi_unregister.
+bdi_unregister).
 
 Unfortunately, del_gendisk() in block/gen_hd.c never got the memo
 about the Brave New memcg World, and calls bdi_unregister directly.
@@ -68,15 +71,16 @@ prevent them from dereferencing a NULL pointer and crashing the kernel
 if one is tracing with memcg's enabled, and an iSCSI device dies or a
 USB storage stick is pulled.
 
+Previous-Version-Link: https://lore.kernel.org/k/20191227194829.150110-1-tytso@mit.edu
 Google-Bug-Id: 145475544
 Tested: fs smoke test
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 ---
  fs/fs-writeback.c                |  2 +-
- include/linux/backing-dev.h      |  9 ++++++++
+ include/linux/backing-dev.h      | 10 +++++++++
  include/trace/events/writeback.h | 37 +++++++++++++++-----------------
  mm/backing-dev.c                 |  1 +
- 4 files changed, 28 insertions(+), 21 deletions(-)
+ 4 files changed, 29 insertions(+), 21 deletions(-)
 
 diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
 index 335607b8c5c0..76ac9c7d32ec 100644
@@ -92,10 +96,18 @@ index 335607b8c5c0..76ac9c7d32ec 100644
  
  	if (likely(!current_is_workqueue_rescuer() ||
 diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
-index 97967ce06de3..d968a50a0be5 100644
+index 97967ce06de3..f88197c1ffc2 100644
 --- a/include/linux/backing-dev.h
 +++ b/include/linux/backing-dev.h
-@@ -504,4 +504,13 @@ static inline int bdi_rw_congested(struct backing_dev_info *bdi)
+@@ -13,6 +13,7 @@
+ #include <linux/fs.h>
+ #include <linux/sched.h>
+ #include <linux/blkdev.h>
++#include <linux/device.h>
+ #include <linux/writeback.h>
+ #include <linux/blk-cgroup.h>
+ #include <linux/backing-dev-defs.h>
+@@ -504,4 +505,13 @@ static inline int bdi_rw_congested(struct backing_dev_info *bdi)
  				  (1 << WB_async_congested));
  }
  
