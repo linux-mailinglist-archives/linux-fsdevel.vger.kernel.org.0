@@ -2,119 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4378312B61A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Dec 2019 18:24:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 435E912B701
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Dec 2019 18:46:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbfL0RYU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Dec 2019 12:24:20 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:57837 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726495AbfL0RYU (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Dec 2019 12:24:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1577467458;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=6BagKGK8+pZSqwaMw/HELL5MlEA5rUbPb85VxpNXUsU=;
-        b=DcFOCXg7tvjzKXO/4xT6mJhMyKoVI+MphdTK4X0+Ffe7AAJJD44bK8KpByEhJnKzScEJBN
-        3f/5S+48ez2V410e1M8RUuwx0EDO0wHT2DzhfnkAv/oExGl4zZiW4Ge5uBFW4XGhCVk6jf
-        z+U8CZnKIRNbdMX87vBkA9b3O/lpDWA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-264-1y8vaMnpOPeT0R7BGJ8Y8A-1; Fri, 27 Dec 2019 12:24:14 -0500
-X-MC-Unique: 1y8vaMnpOPeT0R7BGJ8Y8A-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1728382AbfL0Rqf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Dec 2019 12:46:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43714 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728697AbfL0RpM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 27 Dec 2019 12:45:12 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 81F8A107ACC5;
-        Fri, 27 Dec 2019 17:24:13 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7712360BFB;
-        Fri, 27 Dec 2019 17:24:13 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 6A6B318089C8;
-        Fri, 27 Dec 2019 17:24:13 +0000 (UTC)
-Date:   Fri, 27 Dec 2019 12:24:13 -0500 (EST)
-From:   Vladis Dronov <vdronov@redhat.com>
-To:     Richard Cochran <richardcochran@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Al Viro <aviro@redhat.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Message-ID: <1031316500.2657655.1577467453350.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20191227150218.GA1435@localhost>
-References: <20191208195340.GX4203@ZenIV.linux.org.uk> <20191227022627.24476-1-vdronov@redhat.com> <20191227150218.GA1435@localhost>
-Subject: Re: [PATCH v2] ptp: fix the race between the release of ptp_clock
- and cdev
+        by mail.kernel.org (Postfix) with ESMTPSA id BCC152464E;
+        Fri, 27 Dec 2019 17:45:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577468711;
+        bh=GmQF/U1jMdDYTC1dqGu6MsW8UyyQu7rKEZYoIr2GqGI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=dIog5cuRFnWEZ8qd5RFalNdBo15iSpx8/AAdGsKnklUoQ4fdZ3Xx6VnniS5+wrImx
+         GKSHrCACxT1rfJPGvIkssu15XDPEF1DGnj6ycEenv/sOhfDzzesaNJ1cMbeMXU9CUF
+         H7RaaV0FnKiG+j3k5OODZ8pu1CLee/bH+GgmJ1k4=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Eric Sandeen <sandeen@redhat.com>, Jan Kara <jack@suse.cz>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 66/84] fs: avoid softlockups in s_inodes iterators
+Date:   Fri, 27 Dec 2019 12:43:34 -0500
+Message-Id: <20191227174352.6264-66-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191227174352.6264-1-sashal@kernel.org>
+References: <20191227174352.6264-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [194.228.13.70, 10.4.196.16, 10.5.100.50, 10.4.195.23]
-Thread-Topic: fix the race between the release of ptp_clock and cdev
-Thread-Index: irWUFwtSG/M8AhEHYaeQCeWyBgqSgA==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello, Richard,
+From: Eric Sandeen <sandeen@redhat.com>
 
-Thank you for the review!
+[ Upstream commit 04646aebd30b99f2cfa0182435a2ec252fcb16d0 ]
 
-> > + * @dev:   Pointer to the initialized device. Caller must provide
-> > + *         'release' filed
-> 
-> field
+Anything that walks all inodes on sb->s_inodes list without rescheduling
+risks softlockups.
 
-Indeed. *sigh* Nothing is ideal. Let's hope a maintainer could fix it if
-this is approved.
+Previous efforts were made in 2 functions, see:
 
-Best regards,
-Vladis Dronov | Red Hat, Inc. | The Core Kernel | Senior Software Engineer
+c27d82f fs/drop_caches.c: avoid softlockups in drop_pagecache_sb()
+ac05fbb inode: don't softlockup when evicting inodes
 
------ Original Message -----
-> From: "Richard Cochran" <richardcochran@gmail.com>
-> To: "Vladis Dronov" <vdronov@redhat.com>
-> Cc: linux-fsdevel@vger.kernel.org, "Alexander Viro" <viro@zeniv.linux.org.uk>, "Al Viro" <aviro@redhat.com>,
-> netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-> Sent: Friday, December 27, 2019 4:02:19 PM
-> Subject: Re: [PATCH v2] ptp: fix the race between the release of ptp_clock and cdev
-> 
-> On Fri, Dec 27, 2019 at 03:26:27AM +0100, Vladis Dronov wrote:
-> > Here cdev is embedded in posix_clock which is embedded in ptp_clock.
-> > The race happens because ptp_clock's lifetime is controlled by two
-> > refcounts: kref and cdev.kobj in posix_clock. This is wrong.
-> > 
-> > Make ptp_clock's sysfs device a parent of cdev with cdev_device_add()
-> > created especially for such cases. This way the parent device with its
-> > ptp_clock is not released until all references to the cdev are released.
-> > This adds a requirement that an initialized but not exposed struct
-> > device should be provided to posix_clock_register() by a caller instead
-> > of a simple dev_t.
-> > 
-> > This approach was adopted from the commit 72139dfa2464 ("watchdog: Fix
-> > the race between the release of watchdog_core_data and cdev"). See
-> > details of the implementation in the commit 233ed09d7fda ("chardev: add
-> > helper function to register char devs with a struct device").
-> 
-> Thanks for digging into this!
-> 
-> Acked-by: Richard Cochran <richardcochran@gmail.com>
-> 
-> >  /**
-> >   * posix_clock_register() - register a new clock
-> > - * @clk:   Pointer to the clock. Caller must provide 'ops' and 'release'
-> > - * @devid: Allocated device id
-> > + * @clk:   Pointer to the clock. Caller must provide 'ops' field
-> > + * @dev:   Pointer to the initialized device. Caller must provide
-> > + *         'release' filed
-> 
-> field
-> 
-> Thanks,
-> Richard
+but there hasn't been an audit of all walkers, so do that now.  This
+also consistently moves the cond_resched() calls to the bottom of each
+loop in cases where it already exists.
+
+One loop remains: remove_dquot_ref(), because I'm not quite sure how
+to deal with that one w/o taking the i_lock.
+
+Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/drop_caches.c     | 2 +-
+ fs/inode.c           | 7 +++++++
+ fs/notify/fsnotify.c | 1 +
+ fs/quota/dquot.c     | 1 +
+ 4 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/fs/drop_caches.c b/fs/drop_caches.c
+index d31b6c72b476..dc1a1d5d825b 100644
+--- a/fs/drop_caches.c
++++ b/fs/drop_caches.c
+@@ -35,11 +35,11 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
+ 		spin_unlock(&inode->i_lock);
+ 		spin_unlock(&sb->s_inode_list_lock);
+ 
+-		cond_resched();
+ 		invalidate_mapping_pages(inode->i_mapping, 0, -1);
+ 		iput(toput_inode);
+ 		toput_inode = inode;
+ 
++		cond_resched();
+ 		spin_lock(&sb->s_inode_list_lock);
+ 	}
+ 	spin_unlock(&sb->s_inode_list_lock);
+diff --git a/fs/inode.c b/fs/inode.c
+index 5c63693326bb..9c50521c9fe4 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -660,6 +660,7 @@ int invalidate_inodes(struct super_block *sb, bool kill_dirty)
+ 	struct inode *inode, *next;
+ 	LIST_HEAD(dispose);
+ 
++again:
+ 	spin_lock(&sb->s_inode_list_lock);
+ 	list_for_each_entry_safe(inode, next, &sb->s_inodes, i_sb_list) {
+ 		spin_lock(&inode->i_lock);
+@@ -682,6 +683,12 @@ int invalidate_inodes(struct super_block *sb, bool kill_dirty)
+ 		inode_lru_list_del(inode);
+ 		spin_unlock(&inode->i_lock);
+ 		list_add(&inode->i_lru, &dispose);
++		if (need_resched()) {
++			spin_unlock(&sb->s_inode_list_lock);
++			cond_resched();
++			dispose_list(&dispose);
++			goto again;
++		}
+ 	}
+ 	spin_unlock(&sb->s_inode_list_lock);
+ 
+diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+index 170a733454f7..e8ee4263d7b2 100644
+--- a/fs/notify/fsnotify.c
++++ b/fs/notify/fsnotify.c
+@@ -90,6 +90,7 @@ void fsnotify_unmount_inodes(struct super_block *sb)
+ 
+ 		iput_inode = inode;
+ 
++		cond_resched();
+ 		spin_lock(&sb->s_inode_list_lock);
+ 	}
+ 	spin_unlock(&sb->s_inode_list_lock);
+diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+index 59b00d8db22c..57eed66e2c2d 100644
+--- a/fs/quota/dquot.c
++++ b/fs/quota/dquot.c
+@@ -980,6 +980,7 @@ static int add_dquot_ref(struct super_block *sb, int type)
+ 		 * later.
+ 		 */
+ 		old_inode = inode;
++		cond_resched();
+ 		spin_lock(&sb->s_inode_list_lock);
+ 	}
+ 	spin_unlock(&sb->s_inode_list_lock);
+-- 
+2.20.1
 
