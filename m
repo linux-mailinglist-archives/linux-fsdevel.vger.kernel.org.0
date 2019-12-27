@@ -2,103 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2099212B5E7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Dec 2019 17:35:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4378312B61A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Dec 2019 18:24:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727011AbfL0Qfl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Dec 2019 11:35:41 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45179 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726927AbfL0Qfl (ORCPT
+        id S1726885AbfL0RYU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Dec 2019 12:24:20 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:57837 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726495AbfL0RYU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Dec 2019 11:35:41 -0500
-Received: by mail-wr1-f66.google.com with SMTP id j42so26473357wrj.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Dec 2019 08:35:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chrisdown.name; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=RnU1BOeYz8FVvhTms+Fkiiku/tuZbADz34Lq69l79qE=;
-        b=SX5pZwz8TMfcGPPnDlHnT2w9gUm067h+r/16EyGLvyTEMC8oJ+Q/uYar0ap5HDwOVN
-         JYAOLWKDBsplV4NoJc/o1YHVhK8S9iyKloAX9Gx1NzrHp3Mp8rAk1i2zBVqJR8FIfMvf
-         TUAlYiWSBdTyalDBaxwr45A6B7ddqa2vOwYOE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=RnU1BOeYz8FVvhTms+Fkiiku/tuZbADz34Lq69l79qE=;
-        b=UNBWyx7EbvZaXgiIIpOFq4zh95hdu6XFye6qjEOcm/yKQCC0qbA3IT1uw19dH1CNSH
-         Ug2CphfRrhj4bGwXfjGXR04vbNVX59IblUiLyFpXqzIOqj5dS3WLh5RRfibOVT306Hu8
-         zWjHYMOwhh4u8yyrN/vzjudjP+XGRu96VDoWf444EkHYwjPiGhR7W3laqXgKSCeW/d+I
-         Jw+eXH0hPGhcw1kRcP8e25WYhtMHFyiAVExmsIleh+uSx1EJzIPvkHpmSvcMvE5Nl0on
-         mEMUOliEHs3eaZKck95ZVlQha0ZH0sFIV3N+B4M7q9MNECGVmCr15WrEnpaoDMochYr6
-         smnw==
-X-Gm-Message-State: APjAAAWcGgInRfoKZe9fjCKVoXgFKFkE0TXpigiExW4Mew06OC5+lzm4
-        Kbcitv5njiOWAOwZ0aArqMs7Fw==
-X-Google-Smtp-Source: APXvYqyjTZ6Y+LXqY5QSKkmey6zjlTT8/AV5CRIi9VJhKb+g7wpNAR89YVyRDvradWFKecm0+OTQ1w==
-X-Received: by 2002:adf:a746:: with SMTP id e6mr54047037wrd.329.1577464539121;
-        Fri, 27 Dec 2019 08:35:39 -0800 (PST)
-Received: from localhost (host-92-23-123-10.as13285.net. [92.23.123.10])
-        by smtp.gmail.com with ESMTPSA id x10sm33506811wrv.60.2019.12.27.08.35.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Dec 2019 08:35:38 -0800 (PST)
-Date:   Fri, 27 Dec 2019 16:35:36 +0000
-From:   Chris Down <chris@chrisdown.name>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@fb.com
-Subject: Re: [PATCH 3/3] shmem: Add support for using full width of ino_t
-Message-ID: <20191227163536.GC442424@chrisdown.name>
-References: <cover.1577456898.git.chris@chrisdown.name>
- <533d188802d292fa9f7c9e66f26068000346d6c1.1577456898.git.chris@chrisdown.name>
- <CAOQ4uxhaMjn2Kusv6o6mJ36RhF7PAdmgW3kncgfov5uys=6VHw@mail.gmail.com>
+        Fri, 27 Dec 2019 12:24:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1577467458;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6BagKGK8+pZSqwaMw/HELL5MlEA5rUbPb85VxpNXUsU=;
+        b=DcFOCXg7tvjzKXO/4xT6mJhMyKoVI+MphdTK4X0+Ffe7AAJJD44bK8KpByEhJnKzScEJBN
+        3f/5S+48ez2V410e1M8RUuwx0EDO0wHT2DzhfnkAv/oExGl4zZiW4Ge5uBFW4XGhCVk6jf
+        z+U8CZnKIRNbdMX87vBkA9b3O/lpDWA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-264-1y8vaMnpOPeT0R7BGJ8Y8A-1; Fri, 27 Dec 2019 12:24:14 -0500
+X-MC-Unique: 1y8vaMnpOPeT0R7BGJ8Y8A-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 81F8A107ACC5;
+        Fri, 27 Dec 2019 17:24:13 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7712360BFB;
+        Fri, 27 Dec 2019 17:24:13 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 6A6B318089C8;
+        Fri, 27 Dec 2019 17:24:13 +0000 (UTC)
+Date:   Fri, 27 Dec 2019 12:24:13 -0500 (EST)
+From:   Vladis Dronov <vdronov@redhat.com>
+To:     Richard Cochran <richardcochran@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Al Viro <aviro@redhat.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Message-ID: <1031316500.2657655.1577467453350.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20191227150218.GA1435@localhost>
+References: <20191208195340.GX4203@ZenIV.linux.org.uk> <20191227022627.24476-1-vdronov@redhat.com> <20191227150218.GA1435@localhost>
+Subject: Re: [PATCH v2] ptp: fix the race between the release of ptp_clock
+ and cdev
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhaMjn2Kusv6o6mJ36RhF7PAdmgW3kncgfov5uys=6VHw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [194.228.13.70, 10.4.196.16, 10.5.100.50, 10.4.195.23]
+Thread-Topic: fix the race between the release of ptp_clock and cdev
+Thread-Index: irWUFwtSG/M8AhEHYaeQCeWyBgqSgA==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Amir Goldstein writes:
->On Fri, Dec 27, 2019 at 4:30 PM Chris Down <chris@chrisdown.name> wrote:
->>
->> The new inode64 option now uses get_next_ino_full, which always uses the
->> full width of ino_t (as opposed to get_next_ino, which always uses
->> unsigned int).
->>
->> Using inode64 makes inode number wraparound significantly less likely,
->> at the cost of making some features that rely on the underlying
->> filesystem not setting any of the highest 32 bits (eg. overlayfs' xino)
->> not usable.
->
->That's not an accurate statement. overlayfs xino just needs some high
->bits available. Therefore I never had any objection to having tmpfs use
->64bit ino values (from overlayfs perspective). My only objection is to
->use the same pool "irresponsibly" instead of per-sb pool for the heavy
->users.
+Hello, Richard,
 
-Per-sb get_next_ino is fine, but seems less important if inode64 is used. Or is 
-your point about people who would still be using inode32?
+Thank you for the review!
 
-I think things have become quite unclear in previous discussions, so I want to 
-make sure we're all on the same page here. Are you saying you would 
-theoretically ack the following series?
+> > + * @dev:   Pointer to the initialized device. Caller must provide
+> > + *         'release' filed
+> 
+> field
 
-1. Recycle volatile slabs in tmpfs/hugetlbfs
-2. Make get_next_ino per-sb
-3. Make get_next_ino_full (which is also per-sb)
-4. Add inode{32,64} to tmpfs
+Indeed. *sigh* Nothing is ideal. Let's hope a maintainer could fix it if
+this is approved.
 
-To keep this thread as high signal as possible, I'll avoid sending any other 
-patches until I hear back on that :-)
+Best regards,
+Vladis Dronov | Red Hat, Inc. | The Core Kernel | Senior Software Engineer
 
-Thanks again,
+----- Original Message -----
+> From: "Richard Cochran" <richardcochran@gmail.com>
+> To: "Vladis Dronov" <vdronov@redhat.com>
+> Cc: linux-fsdevel@vger.kernel.org, "Alexander Viro" <viro@zeniv.linux.org.uk>, "Al Viro" <aviro@redhat.com>,
+> netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+> Sent: Friday, December 27, 2019 4:02:19 PM
+> Subject: Re: [PATCH v2] ptp: fix the race between the release of ptp_clock and cdev
+> 
+> On Fri, Dec 27, 2019 at 03:26:27AM +0100, Vladis Dronov wrote:
+> > Here cdev is embedded in posix_clock which is embedded in ptp_clock.
+> > The race happens because ptp_clock's lifetime is controlled by two
+> > refcounts: kref and cdev.kobj in posix_clock. This is wrong.
+> > 
+> > Make ptp_clock's sysfs device a parent of cdev with cdev_device_add()
+> > created especially for such cases. This way the parent device with its
+> > ptp_clock is not released until all references to the cdev are released.
+> > This adds a requirement that an initialized but not exposed struct
+> > device should be provided to posix_clock_register() by a caller instead
+> > of a simple dev_t.
+> > 
+> > This approach was adopted from the commit 72139dfa2464 ("watchdog: Fix
+> > the race between the release of watchdog_core_data and cdev"). See
+> > details of the implementation in the commit 233ed09d7fda ("chardev: add
+> > helper function to register char devs with a struct device").
+> 
+> Thanks for digging into this!
+> 
+> Acked-by: Richard Cochran <richardcochran@gmail.com>
+> 
+> >  /**
+> >   * posix_clock_register() - register a new clock
+> > - * @clk:   Pointer to the clock. Caller must provide 'ops' and 'release'
+> > - * @devid: Allocated device id
+> > + * @clk:   Pointer to the clock. Caller must provide 'ops' field
+> > + * @dev:   Pointer to the initialized device. Caller must provide
+> > + *         'release' filed
+> 
+> field
+> 
+> Thanks,
+> Richard
 
-Chris
