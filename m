@@ -2,236 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A717412B0CA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Dec 2019 04:04:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8F4812B121
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Dec 2019 06:05:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbfL0DEL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Dec 2019 22:04:11 -0500
-Received: from mail-il1-f197.google.com ([209.85.166.197]:43040 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbfL0DEL (ORCPT
+        id S1725904AbfL0FFE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Dec 2019 00:05:04 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:43469 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbfL0FFE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Dec 2019 22:04:11 -0500
-Received: by mail-il1-f197.google.com with SMTP id o13so12324114ilf.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Dec 2019 19:04:09 -0800 (PST)
+        Fri, 27 Dec 2019 00:05:04 -0500
+Received: by mail-pf1-f195.google.com with SMTP id x6so13108756pfo.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Dec 2019 21:05:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ixH5wLpvspwAlmlrItQGB8OewSOlIrNFbX3ewy9ibIA=;
+        b=PToCvCD9t5UPFFYuqgUMxPK5etjop/oUvcCtxuAKhu/aN1gtW1sBsHZBJyQnbiDfDp
+         ck8h1kfJ87s3MPOchCSrqTBOGUZnO7YTzEokAkKqVIDBHPm7xqc+MQBA98Z17TypJq/K
+         93LjB5GdvX5FvI94pxd3IzJMT+KXMfm5eSHNrN+JbGo6ezLhKkHtSGUcaz7Mm2c9duez
+         3FnY6himTXIu/UDVxiaRt76FNVhdCNc+FNnV/6yk++3oDX08zWKjoQPxkiGqqiPdHkFV
+         dlZu8ITV0MZ0hZaWSWGOo+y6sucixGVhFNf/MGfaLLUCtxeG48woyrd4n3IbxfjHA+pq
+         j7Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=BKq6y82YK1MS2p1s3InIrZcquYQwYoYOimO0qr4WA+w=;
-        b=PNkil/1cX3rE2KF6i5Q72hME3ZBYa+PMVIIY2LnC01aXe8MKdkIlvqN+M30I4l+Oii
-         ga9FVqWmayJEXRRbX1Vst2dcQoWyx9G4UByhLFL947nLkoo5HtA5gQ8rcjUe4VcMjqpD
-         QcEzT/4k+hi8JghvNLi5/ijyGJVfCOfIyfx6yAd8z6Q2oXH8mVS7ggTI62C6bC91jAJd
-         IybXzl5cM4HnJCTtNKVV1+FT6rUygmZ0UUvptHOzc2B089HcEJJkqUHtoX6KH9O/U4UO
-         GmDs5X1S8OUQEToY8f+ld3mnoCUx7V/lB6jkuge/Sy3+Bw8AzD0o57r/lCB0UdOVQqS6
-         beYQ==
-X-Gm-Message-State: APjAAAW1HftNORoJ6tEaVzYdQOaDIofAfbWjXwqamboW7hAWKHXzBmyh
-        R4lg/Y1kQpeZuCco5mWiBwYF2mq/XRfqJzX0QKPJ+EFKUsTI
-X-Google-Smtp-Source: APXvYqwjIlQjFRZwvrBowI52Hjrhx0tMlPPBCvetL/bbs5YOQMU8V85wM+jOipl+hQuqlTyksnX01A72kqaMzQrldzx/nfyPemW/
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ixH5wLpvspwAlmlrItQGB8OewSOlIrNFbX3ewy9ibIA=;
+        b=pBWwl4brID+LIPybVjMBEEZ697OOFbRUAeIiaB2PLgXXhLm9CWkzHDbpd3FijTEJyM
+         xY3npMmZ8Mb0WSfj6EH5FUYnWebeT4pUSst+ApeRHs5Qve8m4V5PlRkxWjrjNsPPUb6Q
+         DxX3nhI8Fprhq0QA4zJ2kNErFxtKVIVGXOPi5wZXRb9Cniy1IVNcXs3dYia7eBky7DWV
+         V6QT16PFvpty2HhctwxkfTj4lIxjGuxtU2WI0KTCJYIXGFad5Uwx7LcNWd3vk3UgGQ1A
+         kdIKHw2O2zthgNbXFVtDF9U3GRvlrobw3C+ketRuD5DdxnWUlIFvVaVUDyhc2MuMt2D/
+         P2Ow==
+X-Gm-Message-State: APjAAAURHqYxns1G5/GUGquT+ZLklOYjCtwCsjnsxeo3C/BipK+y9eCT
+        zLtEVqUVesuh0HAOmvTQMPor6cc3AcNCAA==
+X-Google-Smtp-Source: APXvYqzBzbGzHwfGRJ2qNbG/NF8sjn6lJI0JPsNvXwN30mB5e1RW6yT4WW+XFYOEmY+RiA2qDfYQFA==
+X-Received: by 2002:a65:4d46:: with SMTP id j6mr53715874pgt.63.1577423102001;
+        Thu, 26 Dec 2019 21:05:02 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id b2sm12493519pjq.3.2019.12.26.21.05.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Dec 2019 21:05:01 -0800 (PST)
+Subject: Re: [PATCH 03/10] fs: add namei support for doing a non-blocking path
+ lookup
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20191213183632.19441-1-axboe@kernel.dk>
+ <20191213183632.19441-4-axboe@kernel.dk>
+ <20191227004206.GT4203@ZenIV.linux.org.uk>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <480c6bfb-a951-0f51-53ca-5ac63a38b1fc@kernel.dk>
+Date:   Thu, 26 Dec 2019 22:05:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-X-Received: by 2002:a6b:6e06:: with SMTP id d6mr31985444ioh.95.1577415849156;
- Thu, 26 Dec 2019 19:04:09 -0800 (PST)
-Date:   Thu, 26 Dec 2019 19:04:09 -0800
-In-Reply-To: <0000000000006233e4059aa1dfb6@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005a2979059aa6bf2c@google.com>
-Subject: Re: possible deadlock in do_io_accounting (3)
-From:   syzbot <syzbot+87a1b40b8fcdc9d40bd0@syzkaller.appspotmail.com>
-To:     adobriyan@gmail.com, akpm@linux-foundation.org,
-        casey@schaufler-ca.com, christian@brauner.io,
-        kent.overstreet@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mhocko@suse.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20191227004206.GT4203@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+On 12/26/19 5:42 PM, Al Viro wrote:
+> On Fri, Dec 13, 2019 at 11:36:25AM -0700, Jens Axboe wrote:
+>> If the fast lookup fails, then return -EAGAIN to have the caller retry
+>> the path lookup. This is in preparation for supporting non-blocking
+>> open.
+> 
+> NAK.  We are not littering fs/namei.c with incremental broken bits
+> and pieces with uncertain eventual use.
 
-HEAD commit:    46cf053e Linux 5.5-rc3
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13f30a3ee00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ed9d672709340e35
-dashboard link: https://syzkaller.appspot.com/bug?extid=87a1b40b8fcdc9d40bd0
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=176004aee00000
+To be fair, the "eventual use" is just the next patch or two...
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+87a1b40b8fcdc9d40bd0@syzkaller.appspotmail.com
+> And it's broken - lookup_slow() is *NOT* the only place that can and
+> does block.  For starters, ->d_revalidate() can very well block and
+> it is called outside of lookup_slow().  So does ->d_automount().
+> So does ->d_manage().
 
-======================================================
-WARNING: possible circular locking dependency detected
-5.5.0-rc3-syzkaller #0 Not tainted
-------------------------------------------------------
-syz-executor.4/9961 is trying to acquire lock:
-ffff888097e6bc50 (&sig->cred_guard_mutex){+.+.}, at:  
-do_io_accounting+0x1f4/0x820 fs/proc/base.c:2773
+Fair enough, so it's not complete. I'd love to get it there, though!
 
-but task is already holding lock:
-ffff88809402fd00 (&p->lock){+.+.}, at: seq_read+0x71/0x1170  
-fs/seq_file.c:161
+> I'm rather sceptical about the usefulness of non-blocking open, to be
+> honest, but in any case, one thing that is absolutely not going to
+> happen is piecewise introduction of such stuff without a discussion
+> of the entire design.
 
-which lock already depends on the new lock.
+It's a necessity for io_uring, otherwise _any_ open needs to happen
+out-of-line. But I get your objection, I'd like to get this moving in a
+productive way though.
 
+What do you want it to look like? I'd be totally fine with knowing if
+the fs has ->d_revalidate(), and always doing those out-of-line.  If I
+know the open will be slow, that's preferable. Ditto for ->d_automount()
+and ->d_manage(), all of that looks like cases that would be fine to
+punt. I honestly care mostly about the cached local case _not_ needing
+out-of-line handling, that needs to happen inline.
 
-the existing dependency chain (in reverse order) is:
+Still seems to me like the LOOKUP_NONBLOCK is the way to go, and just
+have lookup_fast() -EAGAIN if we need to call any of the potentially
+problematic dentry ops. Yes, they _may_ not block, but they could. I
+don't think we need to propagate this information further.
 
--> #3 (&p->lock){+.+.}:
-        __mutex_lock_common kernel/locking/mutex.c:956 [inline]
-        __mutex_lock+0x156/0x13c0 kernel/locking/mutex.c:1103
-        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1118
-        seq_read+0x71/0x1170 fs/seq_file.c:161
-        do_loop_readv_writev fs/read_write.c:714 [inline]
-        do_loop_readv_writev fs/read_write.c:701 [inline]
-        do_iter_read+0x4a4/0x660 fs/read_write.c:935
-        vfs_readv+0xf0/0x160 fs/read_write.c:997
-        kernel_readv fs/splice.c:365 [inline]
-        default_file_splice_read+0x4fb/0xa20 fs/splice.c:422
-        do_splice_to+0x127/0x180 fs/splice.c:892
-        splice_direct_to_actor+0x320/0xa30 fs/splice.c:971
-        do_splice_direct+0x1da/0x2a0 fs/splice.c:1080
-        do_sendfile+0x597/0xd00 fs/read_write.c:1464
-        __do_sys_sendfile64 fs/read_write.c:1525 [inline]
-        __se_sys_sendfile64 fs/read_write.c:1511 [inline]
-        __x64_sys_sendfile64+0x1dd/0x220 fs/read_write.c:1511
-        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #2 (sb_writers#4){.+.+}:
-        percpu_down_read include/linux/percpu-rwsem.h:40 [inline]
-        __sb_start_write+0x241/0x460 fs/super.c:1674
-        sb_start_write include/linux/fs.h:1650 [inline]
-        mnt_want_write+0x3f/0xc0 fs/namespace.c:354
-        ovl_want_write+0x76/0xa0 fs/overlayfs/util.c:21
-        ovl_create_object+0xb3/0x2c0 fs/overlayfs/dir.c:596
-        ovl_create+0x28/0x30 fs/overlayfs/dir.c:627
-        lookup_open+0x12d5/0x1a90 fs/namei.c:3241
-        do_last fs/namei.c:3331 [inline]
-        path_openat+0x14a2/0x4500 fs/namei.c:3537
-        do_filp_open+0x1a1/0x280 fs/namei.c:3567
-        do_sys_open+0x3fe/0x5d0 fs/open.c:1097
-        __do_sys_open fs/open.c:1115 [inline]
-        __se_sys_open fs/open.c:1110 [inline]
-        __x64_sys_open+0x7e/0xc0 fs/open.c:1110
-        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #1 (&ovl_i_mutex_dir_key[depth]){++++}:
-        down_read+0x95/0x430 kernel/locking/rwsem.c:1495
-        inode_lock_shared include/linux/fs.h:801 [inline]
-        do_last fs/namei.c:3330 [inline]
-        path_openat+0x1e37/0x4500 fs/namei.c:3537
-        do_filp_open+0x1a1/0x280 fs/namei.c:3567
-        do_open_execat+0x137/0x690 fs/exec.c:856
-        __do_execve_file.isra.0+0x1702/0x22b0 fs/exec.c:1761
-        do_execveat_common fs/exec.c:1867 [inline]
-        do_execve fs/exec.c:1884 [inline]
-        __do_sys_execve fs/exec.c:1960 [inline]
-        __se_sys_execve fs/exec.c:1955 [inline]
-        __x64_sys_execve+0x8f/0xc0 fs/exec.c:1955
-        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #0 (&sig->cred_guard_mutex){+.+.}:
-        check_prev_add kernel/locking/lockdep.c:2476 [inline]
-        check_prevs_add kernel/locking/lockdep.c:2581 [inline]
-        validate_chain kernel/locking/lockdep.c:2971 [inline]
-        __lock_acquire+0x2596/0x4a00 kernel/locking/lockdep.c:3955
-        lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4485
-        __mutex_lock_common kernel/locking/mutex.c:956 [inline]
-        __mutex_lock+0x156/0x13c0 kernel/locking/mutex.c:1103
-        mutex_lock_killable_nested+0x16/0x20 kernel/locking/mutex.c:1133
-        do_io_accounting+0x1f4/0x820 fs/proc/base.c:2773
-        proc_tgid_io_accounting+0x23/0x30 fs/proc/base.c:2822
-        proc_single_show+0xfd/0x1c0 fs/proc/base.c:756
-        seq_read+0x4ca/0x1170 fs/seq_file.c:229
-        do_loop_readv_writev fs/read_write.c:714 [inline]
-        do_loop_readv_writev fs/read_write.c:701 [inline]
-        do_iter_read+0x4a4/0x660 fs/read_write.c:935
-        vfs_readv+0xf0/0x160 fs/read_write.c:997
-        kernel_readv fs/splice.c:365 [inline]
-        default_file_splice_read+0x4fb/0xa20 fs/splice.c:422
-        do_splice_to+0x127/0x180 fs/splice.c:892
-        splice_direct_to_actor+0x320/0xa30 fs/splice.c:971
-        do_splice_direct+0x1da/0x2a0 fs/splice.c:1080
-        do_sendfile+0x597/0xd00 fs/read_write.c:1464
-        __do_sys_sendfile64 fs/read_write.c:1525 [inline]
-        __se_sys_sendfile64 fs/read_write.c:1511 [inline]
-        __x64_sys_sendfile64+0x1dd/0x220 fs/read_write.c:1511
-        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-other info that might help us debug this:
-
-Chain exists of:
-   &sig->cred_guard_mutex --> sb_writers#4 --> &p->lock
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(&p->lock);
-                                lock(sb_writers#4);
-                                lock(&p->lock);
-   lock(&sig->cred_guard_mutex);
-
-  *** DEADLOCK ***
-
-2 locks held by syz-executor.4/9961:
-  #0: ffff888098418428 (sb_writers#4){.+.+}, at: file_start_write  
-include/linux/fs.h:2885 [inline]
-  #0: ffff888098418428 (sb_writers#4){.+.+}, at: do_sendfile+0x9b9/0xd00  
-fs/read_write.c:1463
-  #1: ffff88809402fd00 (&p->lock){+.+.}, at: seq_read+0x71/0x1170  
-fs/seq_file.c:161
-
-stack backtrace:
-CPU: 1 PID: 9961 Comm: syz-executor.4 Not tainted 5.5.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x197/0x210 lib/dump_stack.c:118
-  print_circular_bug.isra.0.cold+0x163/0x172 kernel/locking/lockdep.c:1685
-  check_noncircular+0x32e/0x3e0 kernel/locking/lockdep.c:1809
-  check_prev_add kernel/locking/lockdep.c:2476 [inline]
-  check_prevs_add kernel/locking/lockdep.c:2581 [inline]
-  validate_chain kernel/locking/lockdep.c:2971 [inline]
-  __lock_acquire+0x2596/0x4a00 kernel/locking/lockdep.c:3955
-  lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4485
-  __mutex_lock_common kernel/locking/mutex.c:956 [inline]
-  __mutex_lock+0x156/0x13c0 kernel/locking/mutex.c:1103
-  mutex_lock_killable_nested+0x16/0x20 kernel/locking/mutex.c:1133
-  do_io_accounting+0x1f4/0x820 fs/proc/base.c:2773
-  proc_tgid_io_accounting+0x23/0x30 fs/proc/base.c:2822
-  proc_single_show+0xfd/0x1c0 fs/proc/base.c:756
-  seq_read+0x4ca/0x1170 fs/seq_file.c:229
-  do_loop_readv_writev fs/read_write.c:714 [inline]
-  do_loop_readv_writev fs/read_write.c:701 [inline]
-  do_iter_read+0x4a4/0x660 fs/read_write.c:935
-  vfs_readv+0xf0/0x160 fs/read_write.c:997
-  kernel_readv fs/splice.c:365 [inline]
-  default_file_splice_read+0x4fb/0xa20 fs/splice.c:422
-  do_splice_to+0x127/0x180 fs/splice.c:892
-  splice_direct_to_actor+0x320/0xa30 fs/splice.c:971
-  do_splice_direct+0x1da/0x2a0 fs/splice.c:1080
-  do_sendfile+0x597/0xd00 fs/read_write.c:1464
-  __do_sys_sendfile64 fs/read_write.c:1525 [inline]
-  __se_sys_sendfile64 fs/read_write.c:1511 [inline]
-  __x64_sys_sendfile64+0x1dd/0x220 fs/read_write.c:1511
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45a919
-Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f38e0f99c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 000000000045a919
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000006
-RBP: 000000000075c070 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000209 R11: 0000000000000246 R12: 00007f38e0f9a6d4
-R13: 00000000004c925e R14: 00000000004e0f88 R15: 00000000ffffffff
+-- 
+Jens Axboe
 
