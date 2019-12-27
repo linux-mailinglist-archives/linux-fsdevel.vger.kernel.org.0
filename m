@@ -2,113 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 378FE12B014
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Dec 2019 02:01:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3624412B016
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Dec 2019 02:04:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbfL0BAz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Dec 2019 20:00:55 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46787 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbfL0BAy (ORCPT
+        id S1726946AbfL0BEE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Dec 2019 20:04:04 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:43320 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726277AbfL0BEE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Dec 2019 20:00:54 -0500
-Received: by mail-pf1-f194.google.com with SMTP id n9so6096455pff.13;
-        Thu, 26 Dec 2019 17:00:54 -0800 (PST)
+        Thu, 26 Dec 2019 20:04:04 -0500
+Received: by mail-io1-f66.google.com with SMTP id n21so22972026ioo.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Dec 2019 17:04:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=44qeSbgK4fjxtx3Jl3gaoujj676TRWsAIPJoecKwxeA=;
-        b=Vn50N8j/tjWROXYPVqiazH69KDR9POr+3lErHzubQvZT+V5huf7MhhUleCplm9Lf0K
-         Ymry87zOQmn/Lzunqk2RR5XcdfCgaxFuXRd2HplsnNWWjfXuS+hUiX8VbRrQbH3eJwMR
-         LumeSiMzI40fOSID7NKsz30KTufqFWxUqZrjRqdYcRy3M8/r5wjkeUmJqDucJZkK1iXd
-         BUcE6kMsp78UqW+w89VyVP5n6UlZeo2v19BhO2mo647EO0DO7CMqS9sQy+aglAwHwyKr
-         jjpxDLhi8HPBh56sBy9jsm+eJnihGPaKrS6Jw1ydLXMXlwdGR1/xvNMT+UPF/GTs0D1M
-         EROg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Sm197CHJjHN6LEdkX01bTusjZhcWBh9t5ofpInbcGek=;
+        b=Li1O3yUJ/WcaGdAIwYXi16c4e/l8vbUkYPvw1M2FhtVw62AqlWsfQHJLMldXls9Jkd
+         f14Yj1PfgLvDtf4oo4Cf/ahir7zoZRJfAwiLbqIqfiUEMS2qof+x8PSBLLjE0SWRVV24
+         Ox6E0YZKXs26bMhGbHKOK/TuRzolfdGloR7mXPJPbT1s1WcDkQDghKl5R6J6AY89LoLb
+         KYHBzgUbLhSzGutsGyuc8PNLZMlcqZ6Qr1cTX+9J/1MlRcFHyN9Q5iWjIBeUfkUaMCFl
+         /DZZsYi1rWBj5r45c+Pmt+30c2wpXjdVpB8J2AGJz2Fex8krJNCqwnj26lD3MU1Wta3V
+         G/7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=44qeSbgK4fjxtx3Jl3gaoujj676TRWsAIPJoecKwxeA=;
-        b=PTRVxnOhkAMiZoaapPmAkn8ftKNS27TXkBG35vV+4Y86EB53EE+Bye/mV6KDFObedX
-         xUEXsXucnRMinE8eIRINBFyPP+eo6tBAZry+xaRfgLBz1EnaXa9v88gqP6zNRjxD7Cy2
-         3xeKdmqfOEPytxwKneFeQ4JSt8+FIxClQwx3uhIdvkAGE5jLAthol/NuvuxGP//un/LK
-         qU5rng/6z8vqBDvJPPzzNQh7uYSmZ4hRi9z8MmvsupT4YBlzbRPedjo1W4TWIpiKN4vY
-         sopILbs9kRWOjaNEniY2laR4Z6URa3b5ni7Rk/bK+PiCB5614Rpa9CpcJ/p84OogeA8B
-         PuNg==
-X-Gm-Message-State: APjAAAWs2xyhmzvdc0COCRXl079rG4lLUO0B1f6X24knlppPnS3RlX23
-        QQs2slFUlVW+eD1czNVwhfY=
-X-Google-Smtp-Source: APXvYqxA7fUPenla1wmNjprezXBoLMHCH166OsttVNrdQKg7iRnkv0Mnm7CF9SlsrPU4D+amEYGwXA==
-X-Received: by 2002:a62:f842:: with SMTP id c2mr52061691pfm.104.1577408453895;
-        Thu, 26 Dec 2019 17:00:53 -0800 (PST)
-Received: from localhost.localdomain ([2804:14d:72b1:8920:a2ce:f815:f14d:bfac])
-        by smtp.gmail.com with ESMTPSA id 65sm39640144pfu.140.2019.12.26.17.00.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Dec 2019 17:00:53 -0800 (PST)
-From:   "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
-X-Google-Original-From: Daniel W. S. Almeida
-To:     viro@zeniv.linux.org.uk
-Cc:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
-        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fs: seq_file.c: Fix warnings
-Date:   Thu, 26 Dec 2019 22:00:35 -0300
-Message-Id: <20191227010035.854913-3-dwlsalmeida@gmail.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191227010035.854913-1-dwlsalmeida@gmail.com>
-References: <20191227010035.854913-1-dwlsalmeida@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Sm197CHJjHN6LEdkX01bTusjZhcWBh9t5ofpInbcGek=;
+        b=S3/q4a1vtEVsRtMpF6tZl8WNVv0avhRM0cPrDtwOuA0ZZDhmhFmFV9brLdDvx71DcL
+         QzTKcQ1U9Sm9m646Tj0l/g6P8XKDyKycKzxuv6ujP0TnqyKhMWtAXk6eVDAkICNGRaEp
+         jlDWPbWMOQEk8/DHpv4hLoPQVCG+hKPZLQ8aruiz1FoSAff4ASZ75iFPJZamfHbuG36K
+         5zAB3u3+7ABdSdYGvEfVBVBM3TRrWnnVcUR9yAR2AmRwXNhijWXYLR8EbXQNKLQvKDsM
+         CQUQceULWmOUX5U6D3sGUKR6tkZcRfXwv0PJ3y7SOUwtjlb18yPY2dINIbWTscYM5iCn
+         y/7Q==
+X-Gm-Message-State: APjAAAWnITLrAZVftd0URk+64GETg9DvzDt42P6qdvj3UXcf4UBwBaYW
+        Nte/Bnk+6ccL9N08rYI8SmjbtUOJ2Sk9NfMFfUU=
+X-Google-Smtp-Source: APXvYqyTYz+FFa8wQ1NLm83a6cU06qGs79Dhp75qEi35sGCZAl4l9Sq0dk8QvvzZpl/XEGpM80GyOCJE8jlHgiBMqbk=
+X-Received: by 2002:a02:856a:: with SMTP id g97mr38412724jai.97.1577408643244;
+ Thu, 26 Dec 2019 17:04:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1577174006-13025-1-git-send-email-laoar.shao@gmail.com>
+ <1577174006-13025-2-git-send-email-laoar.shao@gmail.com> <20191226212320.GA22734@tower.dhcp.thefacebook.com>
+In-Reply-To: <20191226212320.GA22734@tower.dhcp.thefacebook.com>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Fri, 27 Dec 2019 09:03:27 +0800
+Message-ID: <CALOAHbCQ=9dpKBjfbWv8hyU_D4Xiv5oDHFE4Ofuv57a6boo+iA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] mm, memcg: reduce size of struct mem_cgroup by
+ using bit field
+To:     Roman Gushchin <guro@fb.com>
+Cc:     "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "vdavydov.dev@gmail.com" <vdavydov.dev@gmail.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+On Fri, Dec 27, 2019 at 5:23 AM Roman Gushchin <guro@fb.com> wrote:
+>
+> On Tue, Dec 24, 2019 at 02:53:22AM -0500, Yafang Shao wrote:
+> > There are some members in struct mem_group can be either 0(false) or
+> > 1(true), so we can define them using bit field to reduce size. With this
+> > patch, the size of struct mem_cgroup can be reduced by 64 bytes in theory,
+> > but as there're some MEMCG_PADDING()s, the real number may be different,
+> > which is relate with the cacheline size. Anyway, this patch could reduce
+> > the size of struct mem_cgroup more or less.
+>
+> It seems it's not really related to the rest of the patchset, isn't it?
+>
 
-Fix the following warnings:
+Right.
 
-fs/seq_file.c:40: WARNING: Inline strong start-string without end-string.
-fs/seq_file.c:40: WARNING: Inline strong start-string without end-string.
-fs/seq_file.c:40: WARNING: Inline strong start-string without end-string.
-fs/seq_file.c:40: WARNING: Inline strong start-string without end-string
+> Can you, please, post it separately?
+>
 
-By escaping the parenthesis in the affected line. Line breaks were added
-for clarity.
+Sure. Will post it separately.
 
-Signed-off-by: Daniel W. S. Almeida <dwlsalmeida@gmail.com>
----
- fs/seq_file.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+> Also, I'd move the tcp-related stuff up, so that all oom-related fields
+> would be together.
 
-diff --git a/fs/seq_file.c b/fs/seq_file.c
-index 1600034a929b..aad4354ceeb0 100644
---- a/fs/seq_file.c
-+++ b/fs/seq_file.c
-@@ -38,10 +38,18 @@ static void *seq_buf_alloc(unsigned long size)
-  *	@op: method table describing the sequence
-  *
-  *	seq_open() sets @file, associating it with a sequence described
-- *	by @op.  @op->start() sets the iterator up and returns the first
-- *	element of sequence. @op->stop() shuts it down.  @op->next()
-- *	returns the next element of sequence.  @op->show() prints element
-- *	into the buffer.  In case of error ->start() and ->next() return
-+ *	by @op.
-+ *
-+ *	@op->start\(\) sets the iterator up and returns the first
-+ *	element of sequence.
-+ *
-+ *	@op->stop\(\) shuts it down.
-+ *
-+ *	@op->next\(\) returns the next element of sequence.
-+ *
-+ *	@op->show\(\) prints element into the buffer.
-+ *
-+ *	In case of error ->start() and ->next() return
-  *	ERR_PTR(error).  In the end of sequence they return %NULL. ->show()
-  *	returns 0 in case of success and negative number in case of error.
-  *	Returning SEQ_SKIP means "discard this element and move on".
--- 
-2.24.1
+OK. Thanks for your comment.
 
+> Otherwise lgtm.
+>
+> Thanks!
+>
+> >
+> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > ---
+> >  include/linux/memcontrol.h | 21 ++++++++++++---------
+> >  1 file changed, 12 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> > index a7a0a1a5..612a457 100644
+> > --- a/include/linux/memcontrol.h
+> > +++ b/include/linux/memcontrol.h
+> > @@ -229,20 +229,26 @@ struct mem_cgroup {
+> >       /*
+> >        * Should the accounting and control be hierarchical, per subtree?
+> >        */
+> > -     bool use_hierarchy;
+> > +     unsigned int use_hierarchy : 1;
+> >
+> >       /*
+> >        * Should the OOM killer kill all belonging tasks, had it kill one?
+> >        */
+> > -     bool oom_group;
+> > +     unsigned int  oom_group : 1;
+> >
+> >       /* protected by memcg_oom_lock */
+> > -     bool            oom_lock;
+> > -     int             under_oom;
+> > +     unsigned int oom_lock : 1;
+> >
+> > -     int     swappiness;
+> >       /* OOM-Killer disable */
+> > -     int             oom_kill_disable;
+> > +     unsigned int oom_kill_disable : 1;
+> > +
+> > +     /* Legacy tcp memory accounting */
+> > +     unsigned int tcpmem_active : 1;
+> > +     unsigned int tcpmem_pressure : 1;
+> > +
+> > +     int under_oom;
+> > +
+> > +     int     swappiness;
+> >
+> >       /* memory.events and memory.events.local */
+> >       struct cgroup_file events_file;
+> > @@ -297,9 +303,6 @@ struct mem_cgroup {
+> >
+> >       unsigned long           socket_pressure;
+> >
+> > -     /* Legacy tcp memory accounting */
+> > -     bool                    tcpmem_active;
+> > -     int                     tcpmem_pressure;
+> >
+> >  #ifdef CONFIG_MEMCG_KMEM
+> >          /* Index in the kmem_cache->memcg_params.memcg_caches array */
+> > --
+> > 1.8.3.1
+> >
+> >
