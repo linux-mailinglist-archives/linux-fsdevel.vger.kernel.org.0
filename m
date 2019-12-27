@@ -2,135 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 103C312B49A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Dec 2019 13:48:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A629012B534
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Dec 2019 15:30:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726377AbfL0MsJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Dec 2019 07:48:09 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8632 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726562AbfL0MsJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Dec 2019 07:48:09 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 243DD999849C7532FF57;
-        Fri, 27 Dec 2019 20:48:06 +0800 (CST)
-Received: from [127.0.0.1] (10.173.220.179) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Fri, 27 Dec 2019
- 20:48:00 +0800
-Subject: Re: [QUESTION] question about the errno of rename the parent dir to a
- subdir of a specified directory
-To:     Al Viro <viro@zeniv.linux.org.uk>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "miaoxie (A)" <miaoxie@huawei.com>,
-        zhangtianci <zhangtianci1@huawei.com>
-References: <4c54c1f0-fe9a-6dea-1727-6898e8dd85ef@huawei.com>
- <20191225162729.GP4203@ZenIV.linux.org.uk>
-From:   "zhangyi (F)" <yi.zhang@huawei.com>
-Message-ID: <62e4c112-afc2-eb33-acc1-21c84aa528fa@huawei.com>
-Date:   Fri, 27 Dec 2019 20:47:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1726527AbfL0OaH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Dec 2019 09:30:07 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:50890 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726379AbfL0OaF (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 27 Dec 2019 09:30:05 -0500
+Received: by mail-wm1-f68.google.com with SMTP id a5so8192427wmb.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Dec 2019 06:30:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chrisdown.name; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=ZFCfc1E7yMgcAJciG6l7dUXwZ4x3kLHqDvF2Arxg6ok=;
+        b=w9o/nJsPLEOZSknlgauPuVKVe6LOkPke3OkKZ37AjiUGmp/AkEXZEuXrxMD7RQv+G8
+         2RHWwrAzu24af2Z8L0DQF+tHRJPMWogK9IMdrwjZBD1pjLyDP6m5oy4pHRMHPyA/qeR8
+         OEObU/setq5dk3ViZdzgaInvyTULCBnpdaz8s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=ZFCfc1E7yMgcAJciG6l7dUXwZ4x3kLHqDvF2Arxg6ok=;
+        b=ZoTjQSUQIgJZ8rZRZrp4YvxfGfeJd6QQyHHy9bqrhDyI6D8MXfrZjOwKQWi6rCEPPd
+         nEQEbzNDhmrmCJRuxMJiAi7uP278IUkdf9rXj6GUFGRAL7RfHXUYE6+SM60TWgV4WFd/
+         YnyGnh1qPX3vxsLwKM7I5NZ3UcDuUQbbEDol01gtX/LviMHfbNm/pDsbg1N/mnDFpLWa
+         kWHoo91XUG3PV4EeHrAOuYChSyw7FhELtf+8K8/Nak3hQ1EiyBKla4UVkebJwjt3NxJI
+         HOD/LX86MIZtGkT4PKHZqxsAE2QNAYO3msVQ6yXymo99I1MgiOMXDNjald2xTotTK3si
+         63/g==
+X-Gm-Message-State: APjAAAUUHiWDyuXAJkTumDP//4cnKQlpROE6KdrRO1QiZLY6QX8oIIjL
+        SPss+wR9CarRioR27VxVASoZm86BwjQ=
+X-Google-Smtp-Source: APXvYqxPbJElumJDEtj6YlLoG4Wb/u5ns4UMg0mSV00CIeRPUgm6IEtUZLuJZwso0srFCCR1nARitw==
+X-Received: by 2002:a7b:cf12:: with SMTP id l18mr20827094wmg.66.1577457003393;
+        Fri, 27 Dec 2019 06:30:03 -0800 (PST)
+Received: from localhost (host-92-23-123-10.as13285.net. [92.23.123.10])
+        by smtp.gmail.com with ESMTPSA id s8sm33745752wrt.57.2019.12.27.06.30.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Dec 2019 06:30:02 -0800 (PST)
+Date:   Fri, 27 Dec 2019 14:30:01 +0000
+From:   Chris Down <chris@chrisdown.name>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: [PATCH 0/3] fs: inode: shmem: Reduce risk of inum overflow
+Message-ID: <cover.1577456898.git.chris@chrisdown.name>
 MIME-Version: 1.0
-In-Reply-To: <20191225162729.GP4203@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.173.220.179]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+In Facebook production we are seeing heavy i_ino wraparounds on tmpfs.
+On affected tiers, in excess of 10% of hosts show multiple files with
+different content and the same inode number, with some servers even
+having as many as 150 duplicated inode numbers with differing file
+content.
 
-Thanks for your detailed explanation, I will also check the freeBSD.
+This causes actual, tangible problems in production. For example, we
+have complaints from those working on remote caches that their
+application is reporting cache corruptions because it uses (device,
+inodenum) to establish the identity of a particular cache object, but
+because it's not unique any more, the application refuses to continue
+and reports cache corruption. Even worse, sometimes applications may not
+even detect the corruption but may continue anyway, causing phantom and
+hard to debug behaviour.
 
-Thanks,
-Yi.
+In general, userspace applications expect that (device, inodenum) should
+be enough to be uniquely point to one inode, which seems fair enough.
+One might also need to check the generation, but in this case:
 
-On 2019/12/26 0:27, Al Viro wrote:
-> On Wed, Dec 25, 2019 at 09:16:09PM +0800, zhangyi (F) wrote:
->> Hi,
->>
->> If we rename the parent-dir to a sub-dir of a specified directory, the
->> rename() syscall return -EINVAL because lock_rename() in lock_rename()
->> checks the relations of the sorece and dest dirs. But if the 'parent'
->> dir is a mountpoint, the rename() syscall return -EXDEV instead because
->> it checks the parent dir's mountpoint of the sorece and dest dirs.
->>
->> For example:
->> Case 1: rename() return -EINVAL
->> # mkdir -p parent/dir
->> # rename parent parent/dir/subdir parent
->> rename: parent: rename to parent/dir/subdir failed: Invalid argument
-> 
-> That was rename("parent", "parent/dir/subdir") being told to sod off and
-> not try to create loops.
-> 
->> Case 2: rename() return -EXDEV
->> # mkdir parent
->> # mount -t tmpfs test parent
->> # mkdir parent/dir
->> # rename parent parent/dir/subdir parent
->> rename: parent: rename to parent/dir/subdir failed: Invalid cross-device link
->>
->> In case 2, although 'parent' directory is a mountpoint, it acted as a root
->> dir of the "test tmpfs", so it should belongs to the same mounted fs of
->> 'dir' directoty, so I think it shall return -EINVAL.
->>
->> Is it a bug or just designed as this ?
-> 
-> rename() operates on directory entries.  Pathnames can refer to files (including
-> directories) or they can refer to directory entries (links).  rename() and other
-> directory-modifying syscalls operate on the latter.  In the second test two
-> error conditions apply: in addition to attempted loop creation, we are asked to
-> move the link 'parent' from whatever it's in (your current directory) to 'subdir'
-> in the directory parent/dir, the latter being on a different filesystem.
-> 
-> It's not "take the file old pathname refers to, move it to new place"; that's
-> particularly obvious when you consider
-> 
-> echo foo >a	# create a file
-> ln a b		# now 'a' and 'b' both refer to it
-> mv a c		# or rename a c a, if you really want to touch util-linux rename(1)
-> 
-> Desired result is, of course, 'a' disappearing, 'b' left as is and 'c' now refering
-> to the same file.  If you did mv b c as the last step, 'a' would be left as is,
-> 'b' would disappear and 'c' added, refering to the same file.  But the only
-> difference between mv a c and mv b c is the first argument of rename(2) and
-> in both cases it resolves to the same file.  In other words, rename(2) can't
-> operate on that level; to be of any use it has to interpret the pathnames
-> as refering to directory entries.
-> 
-> That, BTW, is the source of "the last component must not be . or .." - they
-> do refer to directories just fine, but rename("dir1/.", "dir2/foo") is not just
-> 'make the directory refered to by "dir1/." show up as "dir2/foo"' - it's
-> 'rip the entry "." from the directory "dir1" and move it into directory "dir2"
-> under the name "foo"'.
-> 
-> So your second testcase is a genuine cross-filesystem move; you want a link
-> to disappear from a directory on one filesystem and reappear in a directory
-> on another.  It doesn't matter what's mounted on top of that - directory
-> entry refers to the mountpoint, not the thing mounted on it.
-> 
-> And in cases when more than one error condition applies, portable userland
-> should be ready to cope with the operating system returning any of those.
-> Different Unices might return different applicable errors.  In this particular
-> case I would expect EXDEV to take precedence on the majority of implementations,
-> but that's not guaranteed.  Note, BTW, that there might be other errors
-> applicable here and it's a sufficiently dark corner to expect differences
-> (e.g. there might be a blanket ban on renaming mountpoints in general,
-> POSIX being quiet on that topic be damned).  
-> 
-> That actually might be a good way to get into given Unix VFS - figuring out
-> what happens in this implementation will tell you a lot about its pathname
-> resolution, related kernel data structures and locking involved.  Might
-> send you away screaming, though - rename(2) is usually the worst part
-> as it is, and bringing the mountpoint crossing into the game is likely
-> to expose all kinds of interesting corner cases.
-> 
-> .
-> 
+1. That's not currently exposed to userspace
+   (ioctl(...FS_IOC_GETVERSION...) returns ENOTTY on tmpfs);
+2. Even with generation, there shouldn't be two live inodes with the
+   same inode number on one device.
+
+In order to mitigate this, we take a two-pronged approach:
+
+1. A mitigation that works both for 32- and 64-bit inodes: we reuse
+   inode numbers from recycled slabs where possible (ie. where the
+   filesystem uses their own private inode slabs instead of shared inode
+   slabs), allowing us to significantly reduce the risk of 32 bit
+   wraparound.
+2. A fix that works on machines with 64-bit ino_t only: we allow users
+   to mount tmpfs with a new inode64 option that uses the full width of
+   ino_t. Other filesystems can also use get_next_ino_full to get
+   similar behaviour as desired.
+
+Chris Down (3):
+  fs: inode: Recycle volatile inode numbers from private slabs
+  fs: inode: Add API to retrieve global next ino using full ino_t width
+  shmem: Add support for using full width of ino_t
+
+ fs/hugetlbfs/inode.c     |  4 +++-
+ fs/inode.c               | 44 +++++++++++++++++++++++++++++++++++++---
+ include/linux/fs.h       |  1 +
+ include/linux/shmem_fs.h |  1 +
+ mm/shmem.c               | 41 ++++++++++++++++++++++++++++++++++++-
+ 5 files changed, 86 insertions(+), 5 deletions(-)
+
+-- 
+2.24.1
 
