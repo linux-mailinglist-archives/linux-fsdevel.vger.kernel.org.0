@@ -2,203 +2,294 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3479512BBC3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2019 00:06:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E4FF12BC0E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2019 01:52:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726407AbfL0XGG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Dec 2019 18:06:06 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:45272 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726165AbfL0XGG (ORCPT
+        id S1725957AbfL1AwW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Dec 2019 19:52:22 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:37792 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725306AbfL1AwW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Dec 2019 18:06:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1577487964;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=pO67oKckAEnlLHwXcxVKmWpBJh2vxyXs0ypYmFGIJ/I=;
-        b=dVg5G6xxgYg8x7SEgaej8WofLfwJ6TBt60huHIAKNh81TlEh07+6/pYS8HL1C6etv3bgR/
-        DgvSnbRCdWRnhEKagFu0eFB7C7ekzabmDtsCSUmbrWLFmiaUCO0/MCXZ6BP9UMYnk10DgI
-        0089jkn6+B0bEjHgOg6qA7iMuoM7IF0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-328-JHnxqUpnOKeZoT7O3pPjoQ-1; Fri, 27 Dec 2019 18:06:03 -0500
-X-MC-Unique: JHnxqUpnOKeZoT7O3pPjoQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9A9B41005502;
-        Fri, 27 Dec 2019 23:06:02 +0000 (UTC)
-Received: from localhost (ovpn-8-17.pek2.redhat.com [10.72.8.17])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0E3BE5D9C5;
-        Fri, 27 Dec 2019 23:05:56 +0000 (UTC)
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        syzbot+2b9e54155c8c25d8d165@syzkaller.appspotmail.com
-Subject: [PATCH V2] block: add bio_truncate to fix guard_bio_eod
-Date:   Sat, 28 Dec 2019 07:05:48 +0800
-Message-Id: <20191227230548.20079-1-ming.lei@redhat.com>
+        Fri, 27 Dec 2019 19:52:22 -0500
+Received: from callcc.thunk.org (96-72-84-49-static.hfc.comcastbusiness.net [96.72.84.49] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xBS0qEUf003088
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 27 Dec 2019 19:52:15 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 8106C420485; Fri, 27 Dec 2019 19:52:14 -0500 (EST)
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
+        linux-mm@kvack.org
+Cc:     "Theodore Ts'o" <tytso@mit.edu>
+Subject: [PATCH -v2] memcg: fix a crash in wb_workfn when a device disappears
+Date:   Fri, 27 Dec 2019 19:52:11 -0500
+Message-Id: <20191228005211.163952-1-tytso@mit.edu>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20191227194829.150110-1-tytso@mit.edu>
+References: <20191227194829.150110-1-tytso@mit.edu>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Some filesystem, such as vfat, may send bio which crosses device boundary=
-,
-and the worse thing is that the IO request starting within device boundar=
-ies
-can contain more than one segment past EOD.
+Without memcg, there is a one-to-one mapping between the bdi and
+bdi_writeback structures.  In this world, things are fairly
+straightforward; the first thing bdi_unregister() does is to shutdown
+the bdi_writeback structure (or wb), and part of that writeback
+ensures that no other work queued against the wb, and that the wb is
+fully drained.
 
-Commit dce30ca9e3b6 ("fs: fix guard_bio_eod to check for real EOD errors"=
-)
-tries to fix this issue by returning -EIO for this situation. However,
-this way lets fs user code lose chance to handle -EIO, then sync_inodes_s=
-b()
-may hang for ever.
+With memcg, however, there is a one-to-many relationship between the
+bdi and bdi_writeback structures; that is, there are multiple wb
+objects which can all point to a single bdi.  There is a refcount
+which prevents the bdi object from being released (and hence,
+unregistered).  So in theory, the bdi_unregister() *should* only get
+called once its refcount goes to zero (bdi_put will drop the refcount,
+and when it is zero, release_bdi gets called, which calls
+bdi_unregister).
 
-Also the current truncating on last segment is dangerous by updating the
-last bvec, given bvec table becomes not immutable any more, and fs bio
-users may not retrieve the truncated pages via bio_for_each_segment_all()=
- in
-its .end_io callback.
+Unfortunately, del_gendisk() in block/gen_hd.c never got the memo
+about the Brave New memcg World, and calls bdi_unregister directly.
+It does this without informing the file system, or the memcg code, or
+anything else.  This causes the root wb associated with the bdi to be
+unregistered, but none of the memcg-specific wb's are shutdown.  So when
+one of these wb's are woken up to do delayed work, they try to
+dereference their wb->bdi->dev to fetch the device name, but
+unfortunately bdi->dev is now NULL, thanks to the bdi_unregister()
+called by del_gendisk().   As a result, *boom*.
 
-Fixes this issue by supporting multi-segment truncating. And the
-approach is simpler:
+Fortunately, it looks like the rest of the writeback path is perfectly
+happy with bdi->dev and bdi->owner being NULL, so the simplest fix is
+to create a bdi_dev_name() function which can handle bdi->dev being
+NULL.  This also allows us to bulletproof the writeback tracepoints to
+prevent them from dereferencing a NULL pointer and crashing the kernel
+if one is tracing with memcg's enabled, and an iSCSI device dies or a
+USB storage stick is pulled.
 
-- just update bio size since block layer can make correct bvec with
-the updated bio size. Then bvec table becomes really immutable.
-
-- zero all truncated segments for read bio
-
-Cc: Carlos Maiolino <cmaiolino@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org
-Fixed-by: dce30ca9e3b6 ("fs: fix guard_bio_eod to check for real EOD erro=
-rs")
-Reported-by: syzbot+2b9e54155c8c25d8d165@syzkaller.appspotmail.com
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Previous-Version-Link: https://lore.kernel.org/r/20191227194829.150110-1-tytso@mit.edu
+Google-Bug-Id: 145475544
+Tested: fs smoke test
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 ---
-V2:
-	- not export bio_truncate as suggested by Jens
 
- block/bio.c         | 39 +++++++++++++++++++++++++++++++++++++++
- fs/buffer.c         | 25 +------------------------
- include/linux/bio.h |  1 +
- 3 files changed, 41 insertions(+), 24 deletions(-)
+Notes:
+    v2: add #include for linux/device.h
 
-diff --git a/block/bio.c b/block/bio.c
-index a5d75f6bf4c7..006bcc52a77e 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -538,6 +538,45 @@ void zero_fill_bio_iter(struct bio *bio, struct bvec=
-_iter start)
+ fs/fs-writeback.c                |  2 +-
+ include/linux/backing-dev.h      | 10 +++++++++
+ include/trace/events/writeback.h | 37 +++++++++++++++-----------------
+ mm/backing-dev.c                 |  1 +
+ 4 files changed, 29 insertions(+), 21 deletions(-)
+
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 335607b8c5c0..76ac9c7d32ec 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -2063,7 +2063,7 @@ void wb_workfn(struct work_struct *work)
+ 						struct bdi_writeback, dwork);
+ 	long pages_written;
+ 
+-	set_worker_desc("flush-%s", dev_name(wb->bdi->dev));
++	set_worker_desc("flush-%s", bdi_dev_name(wb->bdi));
+ 	current->flags |= PF_SWAPWRITE;
+ 
+ 	if (likely(!current_is_workqueue_rescuer() ||
+diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
+index 97967ce06de3..f88197c1ffc2 100644
+--- a/include/linux/backing-dev.h
++++ b/include/linux/backing-dev.h
+@@ -13,6 +13,7 @@
+ #include <linux/fs.h>
+ #include <linux/sched.h>
+ #include <linux/blkdev.h>
++#include <linux/device.h>
+ #include <linux/writeback.h>
+ #include <linux/blk-cgroup.h>
+ #include <linux/backing-dev-defs.h>
+@@ -504,4 +505,13 @@ static inline int bdi_rw_congested(struct backing_dev_info *bdi)
+ 				  (1 << WB_async_congested));
  }
- EXPORT_SYMBOL(zero_fill_bio_iter);
-=20
-+void bio_truncate(struct bio *bio, unsigned new_size)
+ 
++extern const char *bdi_unknown_name;
++
++static inline const char *bdi_dev_name(struct backing_dev_info *bdi)
 +{
-+	struct bio_vec bv;
-+	struct bvec_iter iter;
-+	unsigned int done =3D 0;
-+	bool truncated =3D false;
-+
-+	if (new_size >=3D bio->bi_iter.bi_size)
-+		return;
-+
-+	if (bio_data_dir(bio) !=3D READ)
-+		goto exit;
-+
-+	bio_for_each_segment(bv, bio, iter) {
-+		if (done + bv.bv_len > new_size) {
-+			unsigned offset;
-+
-+			if (!truncated)
-+				offset =3D new_size - done;
-+			else
-+				offset =3D 0;
-+			zero_user(bv.bv_page, offset, bv.bv_len - offset);
-+			truncated =3D true;
-+		}
-+		done +=3D bv.bv_len;
-+	}
-+
-+ exit:
-+	/*
-+	 * Don't touch bvec table here and make it really immutable, since
-+	 * fs bio user has to retrieve all pages via bio_for_each_segment_all
-+	 * in its .end_bio() callback.
-+	 *
-+	 * It is enough to truncate bio by updating .bi_size since we can make
-+	 * correct bvec with the updated .bi_size for drivers.
-+	 */
-+	bio->bi_iter.bi_size =3D new_size;
++	if (!bdi || !bdi->dev)
++		return bdi_unknown_name;
++	return dev_name(bdi->dev);
 +}
 +
- /**
-  * bio_put - release a reference to a bio
-  * @bio:   bio to release reference to
-diff --git a/fs/buffer.c b/fs/buffer.c
-index d8c7242426bb..e94a6619464c 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -3034,8 +3034,6 @@ static void end_bio_bh_io_sync(struct bio *bio)
- void guard_bio_eod(int op, struct bio *bio)
- {
- 	sector_t maxsector;
--	struct bio_vec *bvec =3D bio_last_bvec_all(bio);
--	unsigned truncated_bytes;
- 	struct hd_struct *part;
-=20
- 	rcu_read_lock();
-@@ -3061,28 +3059,7 @@ void guard_bio_eod(int op, struct bio *bio)
- 	if (likely((bio->bi_iter.bi_size >> 9) <=3D maxsector))
- 		return;
-=20
--	/* Uhhuh. We've got a bio that straddles the device size! */
--	truncated_bytes =3D bio->bi_iter.bi_size - (maxsector << 9);
--
--	/*
--	 * The bio contains more than one segment which spans EOD, just return
--	 * and let IO layer turn it into an EIO
--	 */
--	if (truncated_bytes > bvec->bv_len)
--		return;
--
--	/* Truncate the bio.. */
--	bio->bi_iter.bi_size -=3D truncated_bytes;
--	bvec->bv_len -=3D truncated_bytes;
--
--	/* ..and clear the end of the buffer for reads */
--	if (op =3D=3D REQ_OP_READ) {
--		struct bio_vec bv;
--
--		mp_bvec_last_segment(bvec, &bv);
--		zero_user(bv.bv_page, bv.bv_offset + bv.bv_len,
--				truncated_bytes);
--	}
-+	bio_truncate(bio, maxsector << 9);
- }
-=20
- static int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 3cdb84cdc488..853d92ceee64 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -470,6 +470,7 @@ extern struct bio *bio_copy_user_iov(struct request_q=
-ueue *,
- 				     gfp_t);
- extern int bio_uncopy_user(struct bio *);
- void zero_fill_bio_iter(struct bio *bio, struct bvec_iter iter);
-+void bio_truncate(struct bio *bio, unsigned new_size);
-=20
- static inline void zero_fill_bio(struct bio *bio)
- {
---=20
-2.20.1
+ #endif	/* _LINUX_BACKING_DEV_H */
+diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
+index ef50be4e5e6c..d94def25e4dc 100644
+--- a/include/trace/events/writeback.h
++++ b/include/trace/events/writeback.h
+@@ -67,8 +67,8 @@ DECLARE_EVENT_CLASS(writeback_page_template,
+ 
+ 	TP_fast_assign(
+ 		strscpy_pad(__entry->name,
+-			    mapping ? dev_name(inode_to_bdi(mapping->host)->dev) : "(unknown)",
+-			    32);
++			    bdi_dev_name(mapping ? inode_to_bdi(mapping->host) :
++					 NULL), 32);
+ 		__entry->ino = mapping ? mapping->host->i_ino : 0;
+ 		__entry->index = page->index;
+ 	),
+@@ -111,8 +111,7 @@ DECLARE_EVENT_CLASS(writeback_dirty_inode_template,
+ 		struct backing_dev_info *bdi = inode_to_bdi(inode);
+ 
+ 		/* may be called for files on pseudo FSes w/ unregistered bdi */
+-		strscpy_pad(__entry->name,
+-			    bdi->dev ? dev_name(bdi->dev) : "(unknown)", 32);
++		strscpy_pad(__entry->name, bdi_dev_name(bdi), 32);
+ 		__entry->ino		= inode->i_ino;
+ 		__entry->state		= inode->i_state;
+ 		__entry->flags		= flags;
+@@ -193,7 +192,7 @@ TRACE_EVENT(inode_foreign_history,
+ 	),
+ 
+ 	TP_fast_assign(
+-		strncpy(__entry->name, dev_name(inode_to_bdi(inode)->dev), 32);
++		strncpy(__entry->name, bdi_dev_name(inode_to_bdi(inode)), 32);
+ 		__entry->ino		= inode->i_ino;
+ 		__entry->cgroup_ino	= __trace_wbc_assign_cgroup(wbc);
+ 		__entry->history	= history;
+@@ -222,7 +221,7 @@ TRACE_EVENT(inode_switch_wbs,
+ 	),
+ 
+ 	TP_fast_assign(
+-		strncpy(__entry->name,	dev_name(old_wb->bdi->dev), 32);
++		strncpy(__entry->name,	bdi_dev_name(old_wb->bdi), 32);
+ 		__entry->ino		= inode->i_ino;
+ 		__entry->old_cgroup_ino	= __trace_wb_assign_cgroup(old_wb);
+ 		__entry->new_cgroup_ino	= __trace_wb_assign_cgroup(new_wb);
+@@ -255,7 +254,7 @@ TRACE_EVENT(track_foreign_dirty,
+ 		struct address_space *mapping = page_mapping(page);
+ 		struct inode *inode = mapping ? mapping->host : NULL;
+ 
+-		strncpy(__entry->name,	dev_name(wb->bdi->dev), 32);
++		strncpy(__entry->name,	bdi_dev_name(wb->bdi), 32);
+ 		__entry->bdi_id		= wb->bdi->id;
+ 		__entry->ino		= inode ? inode->i_ino : 0;
+ 		__entry->memcg_id	= wb->memcg_css->id;
+@@ -288,7 +287,7 @@ TRACE_EVENT(flush_foreign,
+ 	),
+ 
+ 	TP_fast_assign(
+-		strncpy(__entry->name,	dev_name(wb->bdi->dev), 32);
++		strncpy(__entry->name,	bdi_dev_name(wb->bdi), 32);
+ 		__entry->cgroup_ino	= __trace_wb_assign_cgroup(wb);
+ 		__entry->frn_bdi_id	= frn_bdi_id;
+ 		__entry->frn_memcg_id	= frn_memcg_id;
+@@ -318,7 +317,7 @@ DECLARE_EVENT_CLASS(writeback_write_inode_template,
+ 
+ 	TP_fast_assign(
+ 		strscpy_pad(__entry->name,
+-			    dev_name(inode_to_bdi(inode)->dev), 32);
++			    bdi_dev_name(inode_to_bdi(inode)), 32);
+ 		__entry->ino		= inode->i_ino;
+ 		__entry->sync_mode	= wbc->sync_mode;
+ 		__entry->cgroup_ino	= __trace_wbc_assign_cgroup(wbc);
+@@ -361,9 +360,7 @@ DECLARE_EVENT_CLASS(writeback_work_class,
+ 		__field(ino_t, cgroup_ino)
+ 	),
+ 	TP_fast_assign(
+-		strscpy_pad(__entry->name,
+-			    wb->bdi->dev ? dev_name(wb->bdi->dev) :
+-			    "(unknown)", 32);
++		strscpy_pad(__entry->name, bdi_dev_name(wb->bdi), 32);
+ 		__entry->nr_pages = work->nr_pages;
+ 		__entry->sb_dev = work->sb ? work->sb->s_dev : 0;
+ 		__entry->sync_mode = work->sync_mode;
+@@ -416,7 +413,7 @@ DECLARE_EVENT_CLASS(writeback_class,
+ 		__field(ino_t, cgroup_ino)
+ 	),
+ 	TP_fast_assign(
+-		strscpy_pad(__entry->name, dev_name(wb->bdi->dev), 32);
++		strscpy_pad(__entry->name, bdi_dev_name(wb->bdi), 32);
+ 		__entry->cgroup_ino = __trace_wb_assign_cgroup(wb);
+ 	),
+ 	TP_printk("bdi %s: cgroup_ino=%lu",
+@@ -438,7 +435,7 @@ TRACE_EVENT(writeback_bdi_register,
+ 		__array(char, name, 32)
+ 	),
+ 	TP_fast_assign(
+-		strscpy_pad(__entry->name, dev_name(bdi->dev), 32);
++		strscpy_pad(__entry->name, bdi_dev_name(bdi), 32);
+ 	),
+ 	TP_printk("bdi %s",
+ 		__entry->name
+@@ -463,7 +460,7 @@ DECLARE_EVENT_CLASS(wbc_class,
+ 	),
+ 
+ 	TP_fast_assign(
+-		strscpy_pad(__entry->name, dev_name(bdi->dev), 32);
++		strscpy_pad(__entry->name, bdi_dev_name(bdi), 32);
+ 		__entry->nr_to_write	= wbc->nr_to_write;
+ 		__entry->pages_skipped	= wbc->pages_skipped;
+ 		__entry->sync_mode	= wbc->sync_mode;
+@@ -514,7 +511,7 @@ TRACE_EVENT(writeback_queue_io,
+ 	),
+ 	TP_fast_assign(
+ 		unsigned long *older_than_this = work->older_than_this;
+-		strscpy_pad(__entry->name, dev_name(wb->bdi->dev), 32);
++		strscpy_pad(__entry->name, bdi_dev_name(wb->bdi), 32);
+ 		__entry->older	= older_than_this ?  *older_than_this : 0;
+ 		__entry->age	= older_than_this ?
+ 				  (jiffies - *older_than_this) * 1000 / HZ : -1;
+@@ -600,7 +597,7 @@ TRACE_EVENT(bdi_dirty_ratelimit,
+ 	),
+ 
+ 	TP_fast_assign(
+-		strscpy_pad(__entry->bdi, dev_name(wb->bdi->dev), 32);
++		strscpy_pad(__entry->bdi, bdi_dev_name(wb->bdi), 32);
+ 		__entry->write_bw	= KBps(wb->write_bandwidth);
+ 		__entry->avg_write_bw	= KBps(wb->avg_write_bandwidth);
+ 		__entry->dirty_rate	= KBps(dirty_rate);
+@@ -665,7 +662,7 @@ TRACE_EVENT(balance_dirty_pages,
+ 
+ 	TP_fast_assign(
+ 		unsigned long freerun = (thresh + bg_thresh) / 2;
+-		strscpy_pad(__entry->bdi, dev_name(wb->bdi->dev), 32);
++		strscpy_pad(__entry->bdi, bdi_dev_name(wb->bdi), 32);
+ 
+ 		__entry->limit		= global_wb_domain.dirty_limit;
+ 		__entry->setpoint	= (global_wb_domain.dirty_limit +
+@@ -726,7 +723,7 @@ TRACE_EVENT(writeback_sb_inodes_requeue,
+ 
+ 	TP_fast_assign(
+ 		strscpy_pad(__entry->name,
+-			    dev_name(inode_to_bdi(inode)->dev), 32);
++			    bdi_dev_name(inode_to_bdi(inode)), 32);
+ 		__entry->ino		= inode->i_ino;
+ 		__entry->state		= inode->i_state;
+ 		__entry->dirtied_when	= inode->dirtied_when;
+@@ -800,7 +797,7 @@ DECLARE_EVENT_CLASS(writeback_single_inode_template,
+ 
+ 	TP_fast_assign(
+ 		strscpy_pad(__entry->name,
+-			    dev_name(inode_to_bdi(inode)->dev), 32);
++			    bdi_dev_name(inode_to_bdi(inode)), 32);
+ 		__entry->ino		= inode->i_ino;
+ 		__entry->state		= inode->i_state;
+ 		__entry->dirtied_when	= inode->dirtied_when;
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index c360f6a6c844..62f05f605fb5 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -21,6 +21,7 @@ struct backing_dev_info noop_backing_dev_info = {
+ EXPORT_SYMBOL_GPL(noop_backing_dev_info);
+ 
+ static struct class *bdi_class;
++const char *bdi_unknown_name = "(unknown)";
+ 
+ /*
+  * bdi_lock protects bdi_tree and updates to bdi_list. bdi_list has RCU
+-- 
+2.24.1
 
