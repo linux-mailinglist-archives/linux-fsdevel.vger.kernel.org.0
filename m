@@ -2,102 +2,211 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C65112BE13
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2019 17:53:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2C3612BE98
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2019 20:03:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726132AbfL1Qw6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 28 Dec 2019 11:52:58 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39491 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726088AbfL1Qw6 (ORCPT
+        id S1726388AbfL1TDu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 28 Dec 2019 14:03:50 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:34360 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726371AbfL1TDu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 28 Dec 2019 11:52:58 -0500
-Received: by mail-wr1-f68.google.com with SMTP id y11so28885379wrt.6
-        for <linux-fsdevel@vger.kernel.org>; Sat, 28 Dec 2019 08:52:57 -0800 (PST)
+        Sat, 28 Dec 2019 14:03:50 -0500
+Received: by mail-pj1-f68.google.com with SMTP id s94so3837743pjc.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 28 Dec 2019 11:03:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=jqn6gE8idEKrfaA7e/iYrZ+3i1hZnHomVo19iC7LczI=;
-        b=M6wS3dLdplsZ0H49Ev3qEiOcNCUao96Ei8qfl0p7ZTSsbFPcaAAHaSbRUfe5J4x/An
-         6ecFI+tH3lf3XtGfSdbIElsY3Qp/NjGM+gv/7YVdmCvx/rSHJipocAzByjFP9IT0iayI
-         hLKjiSLf4Xcw7dvr6GoaGHxGQSpVfJOTvGb4KakawR1uSysWInjlwW3dcPuPY2v8Bk9B
-         5zux0PvVnsueI1suUAyeD1HtdnVpai2ZZfqVyr/0ipV8ktMFcDDiMOTKl8SKDkpuezPo
-         udJaTmVE7Xt+vl8KDXkXZAYdNCihgb9Su2Tjn2hRqPImoVhZskshpWMD/mxUyWAgfmWK
-         txIQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YnTE28nFPK/b6DrhenDuQTIFSd5TBc5YE3RljWoSLL0=;
+        b=TqQuPuf9Mrwnh2n++O5TopI0C2Tt+bXQQt5UcCrfQjGcr6y7Itnqh2JIXoa8QbRRuJ
+         nw3it9MKGC7TKIPg6A0gHUUKERuIWrvVcJq0rXvtcqVMjROR9zDcr0DAs3x0zbocRLkl
+         fCRNA1siHT3cMYIY+Nah2c/hH905UTCA7Me03xgM9Fsg7r7on+nfRAZRq/ZxPreOkuNr
+         lhHV6fGSdxk0T6OVUpcuoOyI3tfK/TWqE5/JRsKU1gwM55WpIe2H+JTcpwPC9JFk+cAz
+         3z2lTUa3JFAUG0XLU8RpSRxmucPjrVueuHt8w6pVRq7RjwK1kqwLqnagaxwOtWfQTMw1
+         KSIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=jqn6gE8idEKrfaA7e/iYrZ+3i1hZnHomVo19iC7LczI=;
-        b=S1WNF1tj4x/4fbpsRC5q8m0VEbLR4VDIu7N9gfn2yoK8gfcq92nje4ER67lrgef6cp
-         YfvvTU4IPbhIewFg1k44UE9qrFh0JksArU7ZwUrgiASWSLsb8mXegtFafnEAuaMZZtxW
-         jDl9TXgOoCfytqo+dX8JLTPcP/24WVDbfpQvXvuvuZd0Z0xH8fxQlqZgyTWWlyodZuGw
-         jo6rmeq75+CQKDWs4rIsooU6/9huYUfcBv5K5J70cQ14sX9dWN3dZYu6Yl5ALRpaQPhO
-         k1HxGwjsF/tmGc/MuNMMHgnl/CQIlFGu0UvEv6hqxCSM1GQCf6OS9WvySzvYT6sUjcxe
-         4Asg==
-X-Gm-Message-State: APjAAAV2wozZH2Uk0dXa6XR/9QExHV22BeCZC4guxXjmj5OQdwC+dBSn
-        KnaIDy0f7r+S3JeSoS1nQ1m8+L3x
-X-Google-Smtp-Source: APXvYqzdW2ftCklHxf6Ib3bBrUZOHoEjmc3pKnUrKGwZVrrN+Cc8id+fGTEdPccGd9X8oMrbdRR7CA==
-X-Received: by 2002:a5d:5592:: with SMTP id i18mr53013364wrv.55.1577551976088;
-        Sat, 28 Dec 2019 08:52:56 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id g18sm14675555wmh.48.2019.12.28.08.52.54
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 28 Dec 2019 08:52:55 -0800 (PST)
-Date:   Sat, 28 Dec 2019 17:52:54 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     linux-fsdevel@vger.kernel.org
-Subject: [ANNOUNCE] udftools 2.2
-Message-ID: <20191228165254.rhgwcpwe6qljqrxq@pali>
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YnTE28nFPK/b6DrhenDuQTIFSd5TBc5YE3RljWoSLL0=;
+        b=Vv4ixToCkjSnqUrHkorl/7eTKeP4J6mY8kuStL0KsaqGipSoDops7ZbTljWctNCQHR
+         OXVpf9pH9zKKXTAxVlB46IbKGiCyqdl5La6zFb0Vejj513YjmV2Vzm47t1iZ9NVpMtgM
+         yx5S11xKdKwXUPTcvq2cl7GFgqnHDwRmlzhFZ5nj6jd8aLuSxv9dL89sD5XS22XTEaFp
+         GrLmWpP7OC7KW2hD3w4vFyY8BdpJPFCDSxbYFVAFTY5/M8VGW57wIvF7CoFUXmV5R7wf
+         x1qRBgAWil0kTZAnoLdDZdczZLIRQ1UmIHBfBOoIlhuzgBlrjSzAnqyrTnAcjGC1FnPA
+         liWg==
+X-Gm-Message-State: APjAAAXgKQuhaoe0YwIf0UqgWsHO9kY26MzQQQ+MQzZ98r5XG0cWlj7E
+        cao9/ovdx3KHvEvIhnBpwkqWjUY9KQylww==
+X-Google-Smtp-Source: APXvYqw2LsxaMmiSQyp+A+1NoNd8vSSHMg/24rGCCGAqOm4N0z7hb+ceBab8OZeM1kFbLSHYrTJWtw==
+X-Received: by 2002:a17:902:d217:: with SMTP id t23mr46169752ply.197.1577559829039;
+        Sat, 28 Dec 2019 11:03:49 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id c17sm39410105pfi.104.2019.12.28.11.03.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 28 Dec 2019 11:03:48 -0800 (PST)
+Subject: Re: [PATCH 03/10] fs: add namei support for doing a non-blocking path
+ lookup
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20191213183632.19441-1-axboe@kernel.dk>
+ <20191213183632.19441-4-axboe@kernel.dk>
+ <20191227004206.GT4203@ZenIV.linux.org.uk>
+ <480c6bfb-a951-0f51-53ca-5ac63a38b1fc@kernel.dk>
+ <a8d6bf32-bcdd-62e2-25b3-50351a3a5b14@kernel.dk>
+ <fad1cc3c-b805-38a7-4a25-94b2abf24528@kernel.dk>
+Message-ID: <aebe6e0c-19b0-2945-2dee-ae06ee404310@kernel.dk>
+Date:   Sat, 28 Dec 2019 12:03:46 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="v5r6jfljvqdccp6r"
-Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <fad1cc3c-b805-38a7-4a25-94b2abf24528@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 12/27/19 8:45 AM, Jens Axboe wrote:
+> On 12/26/19 10:25 PM, Jens Axboe wrote:
+>> On 12/26/19 10:05 PM, Jens Axboe wrote:
+>>> On 12/26/19 5:42 PM, Al Viro wrote:
+>>>> On Fri, Dec 13, 2019 at 11:36:25AM -0700, Jens Axboe wrote:
+>>>>> If the fast lookup fails, then return -EAGAIN to have the caller retry
+>>>>> the path lookup. This is in preparation for supporting non-blocking
+>>>>> open.
+>>>>
+>>>> NAK.  We are not littering fs/namei.c with incremental broken bits
+>>>> and pieces with uncertain eventual use.
+>>>
+>>> To be fair, the "eventual use" is just the next patch or two...
+>>>
+>>>> And it's broken - lookup_slow() is *NOT* the only place that can and
+>>>> does block.  For starters, ->d_revalidate() can very well block and
+>>>> it is called outside of lookup_slow().  So does ->d_automount().
+>>>> So does ->d_manage().
+>>>
+>>> Fair enough, so it's not complete. I'd love to get it there, though!
+>>>
+>>>> I'm rather sceptical about the usefulness of non-blocking open, to be
+>>>> honest, but in any case, one thing that is absolutely not going to
+>>>> happen is piecewise introduction of such stuff without a discussion
+>>>> of the entire design.
+>>>
+>>> It's a necessity for io_uring, otherwise _any_ open needs to happen
+>>> out-of-line. But I get your objection, I'd like to get this moving in a
+>>> productive way though.
+>>>
+>>> What do you want it to look like? I'd be totally fine with knowing if
+>>> the fs has ->d_revalidate(), and always doing those out-of-line.  If I
+>>> know the open will be slow, that's preferable. Ditto for ->d_automount()
+>>> and ->d_manage(), all of that looks like cases that would be fine to
+>>> punt. I honestly care mostly about the cached local case _not_ needing
+>>> out-of-line handling, that needs to happen inline.
+>>>
+>>> Still seems to me like the LOOKUP_NONBLOCK is the way to go, and just
+>>> have lookup_fast() -EAGAIN if we need to call any of the potentially
+>>> problematic dentry ops. Yes, they _may_ not block, but they could. I
+>>> don't think we need to propagate this information further.
+>>
+>> Incremental here - just check for potentially problematic dentry ops,
+>> and have the open redone from a path where it doesn't matter.
+> 
+> Here's the (updated) full patch, with the bits cleaned up a bit. Would
+> this be more agreeable to you?
 
---v5r6jfljvqdccp6r
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Needs a !ops check as well, tmpfs hits that:
 
-Hello! I would like to announce a new version of udftools 2.2.
 
-You can download it from release page:
-https://github.com/pali/udftools/releases/tag/2.2
+commit 8a4dbfbbcd675492cf9e8cbcb203386a1ce10916
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Fri Dec 13 11:09:26 2019 -0700
 
-The most visible change in this release is for udflabel tool which gain
-full support for UDF 2.50 and 2.60 filesystem revisions. So it can
-change filesystem label on existing UDF 2.50/2.60 filesystems.
+    fs: add namei support for doing a non-blocking path lookup
+    
+    If the fast lookup fails, then return -EAGAIN to have the caller retry
+    the path lookup. Assume that a dentry having any of:
+    
+    ->d_revalidate()
+    ->d_automount()
+    ->d_manage()
+    
+    could block in those callbacks. Preemptively return -EAGAIN if any of
+    these are present.
+    
+    This is in preparation for supporting non-blocking open.
+    
+    Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-Note that this release does not contain udffsck yet.
+diff --git a/fs/namei.c b/fs/namei.c
+index d6c91d1e88cb..42e71e5a69f1 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1549,6 +1549,17 @@ static struct dentry *__lookup_hash(const struct qstr *name,
+ 	return dentry;
+ }
+ 
++static inline bool lookup_could_block(struct dentry *dentry, unsigned int flags)
++{
++	const struct dentry_operations *ops = dentry->d_op;
++
++	if (!ops || !(flags & LOOKUP_NONBLOCK))
++		return 0;
++
++	/* assume these dentry ops may block */
++	return ops->d_revalidate || ops->d_automount || ops->d_manage;
++}
++
+ static int lookup_fast(struct nameidata *nd,
+ 		       struct path *path, struct inode **inode,
+ 		       unsigned *seqp)
+@@ -1573,6 +1584,9 @@ static int lookup_fast(struct nameidata *nd,
+ 			return 0;
+ 		}
+ 
++		if (unlikely(lookup_could_block(dentry, nd->flags)))
++			return -EAGAIN;
++
+ 		/*
+ 		 * This sequence count validates that the inode matches
+ 		 * the dentry name information from lookup.
+@@ -1615,7 +1629,10 @@ static int lookup_fast(struct nameidata *nd,
+ 		dentry = __d_lookup(parent, &nd->last);
+ 		if (unlikely(!dentry))
+ 			return 0;
+-		status = d_revalidate(dentry, nd->flags);
++		if (unlikely(lookup_could_block(dentry, nd->flags)))
++			status = -EAGAIN;
++		else
++			status = d_revalidate(dentry, nd->flags);
+ 	}
+ 	if (unlikely(status <= 0)) {
+ 		if (!status)
+@@ -1799,6 +1816,8 @@ static int walk_component(struct nameidata *nd, int flags)
+ 	if (unlikely(err <= 0)) {
+ 		if (err < 0)
+ 			return err;
++		if (nd->flags & LOOKUP_NONBLOCK)
++			return -EAGAIN;
+ 		path.dentry = lookup_slow(&nd->last, nd->path.dentry,
+ 					  nd->flags);
+ 		if (IS_ERR(path.dentry))
+diff --git a/include/linux/namei.h b/include/linux/namei.h
+index 7fe7b87a3ded..935a1bf0caca 100644
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -38,6 +38,7 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT, LAST_BIND};
+ #define LOOKUP_JUMPED		0x1000
+ #define LOOKUP_ROOT		0x2000
+ #define LOOKUP_ROOT_GRABBED	0x0008
++#define LOOKUP_NONBLOCK		0x10000	/* don't block for lookup */
+ 
+ extern int path_pts(struct path *path);
+ 
+-- 
+Jens Axboe
 
-For those who do not know, udftools project contains standard Linux
-userspace tools for UDF filesystem, like mkudffs (mkfs.udf), udfinfo,
-udflabel, cdrwtool and pktsetup. And UDF is a filesystem which is
-natively supported in R/W mode by Windows, Linux and MacOSX kernels.
-
-Project homepage with code hosting and bugtracker is at:
-https://github.com/pali/udftools
-
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
-
---v5r6jfljvqdccp6r
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXgeIYQAKCRCL8Mk9A+RD
-UtUqAJ0UOa58nm0xiHuZtVnCuLcvjpX3IgCgnpWAyKqiZkJ0t250CowY3TOhxYc=
-=p2V7
------END PGP SIGNATURE-----
-
---v5r6jfljvqdccp6r--
