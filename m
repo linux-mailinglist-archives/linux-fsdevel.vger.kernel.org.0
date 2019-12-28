@@ -2,294 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E4FF12BC0E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2019 01:52:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E998D12BC85
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2019 05:21:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725957AbfL1AwW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Dec 2019 19:52:22 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:37792 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725306AbfL1AwW (ORCPT
+        id S1726377AbfL1EVL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Dec 2019 23:21:11 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:40574 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726310AbfL1EVK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Dec 2019 19:52:22 -0500
-Received: from callcc.thunk.org (96-72-84-49-static.hfc.comcastbusiness.net [96.72.84.49] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xBS0qEUf003088
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 27 Dec 2019 19:52:15 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 8106C420485; Fri, 27 Dec 2019 19:52:14 -0500 (EST)
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
-        linux-mm@kvack.org
-Cc:     "Theodore Ts'o" <tytso@mit.edu>
-Subject: [PATCH -v2] memcg: fix a crash in wb_workfn when a device disappears
-Date:   Fri, 27 Dec 2019 19:52:11 -0500
-Message-Id: <20191228005211.163952-1-tytso@mit.edu>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191227194829.150110-1-tytso@mit.edu>
-References: <20191227194829.150110-1-tytso@mit.edu>
+        Fri, 27 Dec 2019 23:21:10 -0500
+Received: by mail-il1-f196.google.com with SMTP id c4so23809845ilo.7;
+        Fri, 27 Dec 2019 20:21:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/Y+1cix94haqo0ZsZpC+lfYx5UlPd+44CRyWPMgim+0=;
+        b=uvMc8L18MtYcpMksUMB7qhdt6ta+8pxxwRf4JRQ4MRrEtatg2hwCRYSyxP9ezg4zsn
+         xl0DF/XJh4iA6g3yDLdElfMLQ/nyonnvf34uP8qT7EpBUqlgFGEhEjbx2v6FLMnEHXRx
+         YconIRzpP6cIeAS6kLWmuLxIfuZ5udQlE500TIzlXt16SG+kILLlu6CyjurHhQkiK7jg
+         wEDG77Y6hZn13dVyQ+r8AnpEwQOteqoa3vbbn3jAgKCps5gjzE5ZQbxd2kRzRyTfV/sw
+         k12uysvvEko81MtPac+ojvQkcHguHz0jBRBDj6XOzbXZdfJ2JXmgUTOKVcLFN4FwjOfs
+         Y8Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/Y+1cix94haqo0ZsZpC+lfYx5UlPd+44CRyWPMgim+0=;
+        b=C2SRjX/TqxPv3oXaR9/vwII3bzhfULsbaT0OlnbCA8ah/YtRG8K0wEYk8U0k5Nxzl/
+         sgveLO1VWvTZYNYpzWmFWxwtcW+9kuwyMKa9v79gl+VF5fRt5Hh+v6AS8MheHCaJ6oEE
+         N5/g4ptAm0avpYBOJwDVl8Y3lxqbmZwinj4MZRpAz6mzpmAQaeyzB0SUM7O7UJ0zZebg
+         ZU5Jr8i2JGYlpoOtouTXQVVhQJ0htQ4olhfD6iNHjqYLK4hzd111ndQf+w5Fj9putQI9
+         uID2nqm6sF+UtXPXlr2Djlxn6moKg4DKqrhxni/+IKxe0YCYEIL2+Nj6CrJfyZ2Ipgt4
+         /F5Q==
+X-Gm-Message-State: APjAAAUrucoKMpa4s2qHyErjbht72vwQ92IL1HEUhm05d39lez+Mp7+q
+        b1pqe/MaOAgprebTYgRSdTyB8lNEufHzndH04qko4WlM
+X-Google-Smtp-Source: APXvYqyJ5lGmc9fwagJ2Q+v1MFvZ6h3lqArYA5dPe3QObYiTL3r4Sr7jSW2ovhBI1d06meQczKPjuOljWWRS0YGBD80=
+X-Received: by 2002:a92:5c8a:: with SMTP id d10mr50009161ilg.137.1577506870039;
+ Fri, 27 Dec 2019 20:21:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1577456898.git.chris@chrisdown.name> <533d188802d292fa9f7c9e66f26068000346d6c1.1577456898.git.chris@chrisdown.name>
+ <CAOQ4uxhaMjn2Kusv6o6mJ36RhF7PAdmgW3kncgfov5uys=6VHw@mail.gmail.com> <20191227163536.GC442424@chrisdown.name>
+In-Reply-To: <20191227163536.GC442424@chrisdown.name>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sat, 28 Dec 2019 06:20:58 +0200
+Message-ID: <CAOQ4uxjfqAtFL3N0-qJzO4OCuo0iExoO1-oG+41YrCF-4ch7NA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] shmem: Add support for using full width of ino_t
+To:     Chris Down <chris@chrisdown.name>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@fb.com,
+        Hugh Dickins <hughd@google.com>,
+        "zhengbin (A)" <zhengbin13@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Without memcg, there is a one-to-one mapping between the bdi and
-bdi_writeback structures.  In this world, things are fairly
-straightforward; the first thing bdi_unregister() does is to shutdown
-the bdi_writeback structure (or wb), and part of that writeback
-ensures that no other work queued against the wb, and that the wb is
-fully drained.
+On Fri, Dec 27, 2019 at 6:35 PM Chris Down <chris@chrisdown.name> wrote:
+>
+> Amir Goldstein writes:
+> >On Fri, Dec 27, 2019 at 4:30 PM Chris Down <chris@chrisdown.name> wrote:
+> >>
+> >> The new inode64 option now uses get_next_ino_full, which always uses the
+> >> full width of ino_t (as opposed to get_next_ino, which always uses
+> >> unsigned int).
+> >>
+> >> Using inode64 makes inode number wraparound significantly less likely,
+> >> at the cost of making some features that rely on the underlying
+> >> filesystem not setting any of the highest 32 bits (eg. overlayfs' xino)
+> >> not usable.
+> >
+> >That's not an accurate statement. overlayfs xino just needs some high
+> >bits available. Therefore I never had any objection to having tmpfs use
+> >64bit ino values (from overlayfs perspective). My only objection is to
+> >use the same pool "irresponsibly" instead of per-sb pool for the heavy
+> >users.
+>
+> Per-sb get_next_ino is fine, but seems less important if inode64 is used. Or is
+> your point about people who would still be using inode32?
+>
+> I think things have become quite unclear in previous discussions, so I want to
+> make sure we're all on the same page here. Are you saying you would
+> theoretically ack the following series?
+>
+> 1. Recycle volatile slabs in tmpfs/hugetlbfs
+> 2. Make get_next_ino per-sb
+> 3. Make get_next_ino_full (which is also per-sb)
+> 4. Add inode{32,64} to tmpfs
 
-With memcg, however, there is a one-to-many relationship between the
-bdi and bdi_writeback structures; that is, there are multiple wb
-objects which can all point to a single bdi.  There is a refcount
-which prevents the bdi object from being released (and hence,
-unregistered).  So in theory, the bdi_unregister() *should* only get
-called once its refcount goes to zero (bdi_put will drop the refcount,
-and when it is zero, release_bdi gets called, which calls
-bdi_unregister).
+Not what I meant. On the contrary:
+1. Recycle ino from slab is a nice idea, but it is not applicable
+    along with per-sb ino allocator, so you can't use it for tmpfs
+2. Leave get_next_ino() alone - it is used by things like pipe(2)
+    that you don't want to mess with
+3. Don't create another global ino allocator
+4. inode{32,64} option to tmpfs is the only thing you need
 
-Unfortunately, del_gendisk() in block/gen_hd.c never got the memo
-about the Brave New memcg World, and calls bdi_unregister directly.
-It does this without informing the file system, or the memcg code, or
-anything else.  This causes the root wb associated with the bdi to be
-unregistered, but none of the memcg-specific wb's are shutdown.  So when
-one of these wb's are woken up to do delayed work, they try to
-dereference their wb->bdi->dev to fetch the device name, but
-unfortunately bdi->dev is now NULL, thanks to the bdi_unregister()
-called by del_gendisk().   As a result, *boom*.
+We've made quite a big mess of a problem that is not really that big.
 
-Fortunately, it looks like the rest of the writeback path is perfectly
-happy with bdi->dev and bdi->owner being NULL, so the simplest fix is
-to create a bdi_dev_name() function which can handle bdi->dev being
-NULL.  This also allows us to bulletproof the writeback tracepoints to
-prevent them from dereferencing a NULL pointer and crashing the kernel
-if one is tracing with memcg's enabled, and an iSCSI device dies or a
-USB storage stick is pulled.
+In this thread on zhenbin's patch you have the simple solution that
+Google are using to your problem:
+https://patchwork.kernel.org/patch/11254001/#23014383
 
-Previous-Version-Link: https://lore.kernel.org/r/20191227194829.150110-1-tytso@mit.edu
-Google-Bug-Id: 145475544
-Tested: fs smoke test
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
----
+The only thing keeping this solution away from upstream according to
+tmpfs maintainer is the concern of breaking legacy 32bit apps.
 
-Notes:
-    v2: add #include for linux/device.h
+If you make the high ino bits exposed opt-in by mount and/or Kconfig
+option, then this concern would be mitigated and Google's private
+solution to tmpfs ino could go upstream.
 
- fs/fs-writeback.c                |  2 +-
- include/linux/backing-dev.h      | 10 +++++++++
- include/trace/events/writeback.h | 37 +++++++++++++++-----------------
- mm/backing-dev.c                 |  1 +
- 4 files changed, 29 insertions(+), 21 deletions(-)
+Hugh did not specify if sbinfo->next_ino is incremented under
+sbinfo->stat_lock or some other lock (maybe he can share a link to
+the actual patch?), but shmem_reserve_inode() already takes that
+lock anyway, so I don't see the need to any further micro optimizations.
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 335607b8c5c0..76ac9c7d32ec 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -2063,7 +2063,7 @@ void wb_workfn(struct work_struct *work)
- 						struct bdi_writeback, dwork);
- 	long pages_written;
- 
--	set_worker_desc("flush-%s", dev_name(wb->bdi->dev));
-+	set_worker_desc("flush-%s", bdi_dev_name(wb->bdi));
- 	current->flags |= PF_SWAPWRITE;
- 
- 	if (likely(!current_is_workqueue_rescuer() ||
-diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
-index 97967ce06de3..f88197c1ffc2 100644
---- a/include/linux/backing-dev.h
-+++ b/include/linux/backing-dev.h
-@@ -13,6 +13,7 @@
- #include <linux/fs.h>
- #include <linux/sched.h>
- #include <linux/blkdev.h>
-+#include <linux/device.h>
- #include <linux/writeback.h>
- #include <linux/blk-cgroup.h>
- #include <linux/backing-dev-defs.h>
-@@ -504,4 +505,13 @@ static inline int bdi_rw_congested(struct backing_dev_info *bdi)
- 				  (1 << WB_async_congested));
- }
- 
-+extern const char *bdi_unknown_name;
-+
-+static inline const char *bdi_dev_name(struct backing_dev_info *bdi)
-+{
-+	if (!bdi || !bdi->dev)
-+		return bdi_unknown_name;
-+	return dev_name(bdi->dev);
-+}
-+
- #endif	/* _LINUX_BACKING_DEV_H */
-diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
-index ef50be4e5e6c..d94def25e4dc 100644
---- a/include/trace/events/writeback.h
-+++ b/include/trace/events/writeback.h
-@@ -67,8 +67,8 @@ DECLARE_EVENT_CLASS(writeback_page_template,
- 
- 	TP_fast_assign(
- 		strscpy_pad(__entry->name,
--			    mapping ? dev_name(inode_to_bdi(mapping->host)->dev) : "(unknown)",
--			    32);
-+			    bdi_dev_name(mapping ? inode_to_bdi(mapping->host) :
-+					 NULL), 32);
- 		__entry->ino = mapping ? mapping->host->i_ino : 0;
- 		__entry->index = page->index;
- 	),
-@@ -111,8 +111,7 @@ DECLARE_EVENT_CLASS(writeback_dirty_inode_template,
- 		struct backing_dev_info *bdi = inode_to_bdi(inode);
- 
- 		/* may be called for files on pseudo FSes w/ unregistered bdi */
--		strscpy_pad(__entry->name,
--			    bdi->dev ? dev_name(bdi->dev) : "(unknown)", 32);
-+		strscpy_pad(__entry->name, bdi_dev_name(bdi), 32);
- 		__entry->ino		= inode->i_ino;
- 		__entry->state		= inode->i_state;
- 		__entry->flags		= flags;
-@@ -193,7 +192,7 @@ TRACE_EVENT(inode_foreign_history,
- 	),
- 
- 	TP_fast_assign(
--		strncpy(__entry->name, dev_name(inode_to_bdi(inode)->dev), 32);
-+		strncpy(__entry->name, bdi_dev_name(inode_to_bdi(inode)), 32);
- 		__entry->ino		= inode->i_ino;
- 		__entry->cgroup_ino	= __trace_wbc_assign_cgroup(wbc);
- 		__entry->history	= history;
-@@ -222,7 +221,7 @@ TRACE_EVENT(inode_switch_wbs,
- 	),
- 
- 	TP_fast_assign(
--		strncpy(__entry->name,	dev_name(old_wb->bdi->dev), 32);
-+		strncpy(__entry->name,	bdi_dev_name(old_wb->bdi), 32);
- 		__entry->ino		= inode->i_ino;
- 		__entry->old_cgroup_ino	= __trace_wb_assign_cgroup(old_wb);
- 		__entry->new_cgroup_ino	= __trace_wb_assign_cgroup(new_wb);
-@@ -255,7 +254,7 @@ TRACE_EVENT(track_foreign_dirty,
- 		struct address_space *mapping = page_mapping(page);
- 		struct inode *inode = mapping ? mapping->host : NULL;
- 
--		strncpy(__entry->name,	dev_name(wb->bdi->dev), 32);
-+		strncpy(__entry->name,	bdi_dev_name(wb->bdi), 32);
- 		__entry->bdi_id		= wb->bdi->id;
- 		__entry->ino		= inode ? inode->i_ino : 0;
- 		__entry->memcg_id	= wb->memcg_css->id;
-@@ -288,7 +287,7 @@ TRACE_EVENT(flush_foreign,
- 	),
- 
- 	TP_fast_assign(
--		strncpy(__entry->name,	dev_name(wb->bdi->dev), 32);
-+		strncpy(__entry->name,	bdi_dev_name(wb->bdi), 32);
- 		__entry->cgroup_ino	= __trace_wb_assign_cgroup(wb);
- 		__entry->frn_bdi_id	= frn_bdi_id;
- 		__entry->frn_memcg_id	= frn_memcg_id;
-@@ -318,7 +317,7 @@ DECLARE_EVENT_CLASS(writeback_write_inode_template,
- 
- 	TP_fast_assign(
- 		strscpy_pad(__entry->name,
--			    dev_name(inode_to_bdi(inode)->dev), 32);
-+			    bdi_dev_name(inode_to_bdi(inode)), 32);
- 		__entry->ino		= inode->i_ino;
- 		__entry->sync_mode	= wbc->sync_mode;
- 		__entry->cgroup_ino	= __trace_wbc_assign_cgroup(wbc);
-@@ -361,9 +360,7 @@ DECLARE_EVENT_CLASS(writeback_work_class,
- 		__field(ino_t, cgroup_ino)
- 	),
- 	TP_fast_assign(
--		strscpy_pad(__entry->name,
--			    wb->bdi->dev ? dev_name(wb->bdi->dev) :
--			    "(unknown)", 32);
-+		strscpy_pad(__entry->name, bdi_dev_name(wb->bdi), 32);
- 		__entry->nr_pages = work->nr_pages;
- 		__entry->sb_dev = work->sb ? work->sb->s_dev : 0;
- 		__entry->sync_mode = work->sync_mode;
-@@ -416,7 +413,7 @@ DECLARE_EVENT_CLASS(writeback_class,
- 		__field(ino_t, cgroup_ino)
- 	),
- 	TP_fast_assign(
--		strscpy_pad(__entry->name, dev_name(wb->bdi->dev), 32);
-+		strscpy_pad(__entry->name, bdi_dev_name(wb->bdi), 32);
- 		__entry->cgroup_ino = __trace_wb_assign_cgroup(wb);
- 	),
- 	TP_printk("bdi %s: cgroup_ino=%lu",
-@@ -438,7 +435,7 @@ TRACE_EVENT(writeback_bdi_register,
- 		__array(char, name, 32)
- 	),
- 	TP_fast_assign(
--		strscpy_pad(__entry->name, dev_name(bdi->dev), 32);
-+		strscpy_pad(__entry->name, bdi_dev_name(bdi), 32);
- 	),
- 	TP_printk("bdi %s",
- 		__entry->name
-@@ -463,7 +460,7 @@ DECLARE_EVENT_CLASS(wbc_class,
- 	),
- 
- 	TP_fast_assign(
--		strscpy_pad(__entry->name, dev_name(bdi->dev), 32);
-+		strscpy_pad(__entry->name, bdi_dev_name(bdi), 32);
- 		__entry->nr_to_write	= wbc->nr_to_write;
- 		__entry->pages_skipped	= wbc->pages_skipped;
- 		__entry->sync_mode	= wbc->sync_mode;
-@@ -514,7 +511,7 @@ TRACE_EVENT(writeback_queue_io,
- 	),
- 	TP_fast_assign(
- 		unsigned long *older_than_this = work->older_than_this;
--		strscpy_pad(__entry->name, dev_name(wb->bdi->dev), 32);
-+		strscpy_pad(__entry->name, bdi_dev_name(wb->bdi), 32);
- 		__entry->older	= older_than_this ?  *older_than_this : 0;
- 		__entry->age	= older_than_this ?
- 				  (jiffies - *older_than_this) * 1000 / HZ : -1;
-@@ -600,7 +597,7 @@ TRACE_EVENT(bdi_dirty_ratelimit,
- 	),
- 
- 	TP_fast_assign(
--		strscpy_pad(__entry->bdi, dev_name(wb->bdi->dev), 32);
-+		strscpy_pad(__entry->bdi, bdi_dev_name(wb->bdi), 32);
- 		__entry->write_bw	= KBps(wb->write_bandwidth);
- 		__entry->avg_write_bw	= KBps(wb->avg_write_bandwidth);
- 		__entry->dirty_rate	= KBps(dirty_rate);
-@@ -665,7 +662,7 @@ TRACE_EVENT(balance_dirty_pages,
- 
- 	TP_fast_assign(
- 		unsigned long freerun = (thresh + bg_thresh) / 2;
--		strscpy_pad(__entry->bdi, dev_name(wb->bdi->dev), 32);
-+		strscpy_pad(__entry->bdi, bdi_dev_name(wb->bdi), 32);
- 
- 		__entry->limit		= global_wb_domain.dirty_limit;
- 		__entry->setpoint	= (global_wb_domain.dirty_limit +
-@@ -726,7 +723,7 @@ TRACE_EVENT(writeback_sb_inodes_requeue,
- 
- 	TP_fast_assign(
- 		strscpy_pad(__entry->name,
--			    dev_name(inode_to_bdi(inode)->dev), 32);
-+			    bdi_dev_name(inode_to_bdi(inode)), 32);
- 		__entry->ino		= inode->i_ino;
- 		__entry->state		= inode->i_state;
- 		__entry->dirtied_when	= inode->dirtied_when;
-@@ -800,7 +797,7 @@ DECLARE_EVENT_CLASS(writeback_single_inode_template,
- 
- 	TP_fast_assign(
- 		strscpy_pad(__entry->name,
--			    dev_name(inode_to_bdi(inode)->dev), 32);
-+			    bdi_dev_name(inode_to_bdi(inode)), 32);
- 		__entry->ino		= inode->i_ino;
- 		__entry->state		= inode->i_state;
- 		__entry->dirtied_when	= inode->dirtied_when;
-diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-index c360f6a6c844..62f05f605fb5 100644
---- a/mm/backing-dev.c
-+++ b/mm/backing-dev.c
-@@ -21,6 +21,7 @@ struct backing_dev_info noop_backing_dev_info = {
- EXPORT_SYMBOL_GPL(noop_backing_dev_info);
- 
- static struct class *bdi_class;
-+const char *bdi_unknown_name = "(unknown)";
- 
- /*
-  * bdi_lock protects bdi_tree and updates to bdi_list. bdi_list has RCU
--- 
-2.24.1
+Chris, I hope the solution I am proposing is clear now and I hope I am
+not leading you by mistake into another trap...
 
+To be clear, solution should be dead simple and contained to tmpfs.
+If you like, you could clone exact same solution to hugetlbfs, but no
+new vfs helpers please.
+
+Thanks,
+Amir.
