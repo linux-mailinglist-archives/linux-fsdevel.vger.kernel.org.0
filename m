@@ -2,100 +2,216 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 003EE12BD3E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2019 11:10:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEA8112BD41
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2019 11:12:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726473AbfL1KKv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 28 Dec 2019 05:10:51 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:43232 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726248AbfL1KKv (ORCPT
+        id S1726538AbfL1KML (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 28 Dec 2019 05:12:11 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:39798 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726248AbfL1KMK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 28 Dec 2019 05:10:51 -0500
-Received: by mail-io1-f66.google.com with SMTP id n21so26102649ioo.10;
-        Sat, 28 Dec 2019 02:10:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AQVDLXoG3OJl9MAwKiT8ijRLZ0D7oeHNde77OTeL3hI=;
-        b=d1JDRRkm4o/yL3rudZbk/sKG3il48+EbO5waONXDUtS5VVAnR3GU2Uuh4CLkSFafo9
-         QnAH+j5RjNsEMeRx7SwBJCSuIj7sSjezZiijj7LeEio700PZbbB3MdRp8Th4zUQbtMVE
-         W36YTCKCOP724RY8S0s96zLUYWl1fIA2mDcSlp+VcjFbcV//DfCLTbfn5rkmeH5z/rtI
-         9tBMO/ILJ1gFAEltsoVdt8KGo/SN9XlAcqYj8fWtmLyUOqEFTG73vbXFJbxylk8g6Wa1
-         DPhn4/UrL7+VLYOwHAQJwnFaoHME/RAargFVIel/u7yC6WaXT/OuKpAT+wxANawGlSrh
-         Tkjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AQVDLXoG3OJl9MAwKiT8ijRLZ0D7oeHNde77OTeL3hI=;
-        b=e7UTRwljlczFoD3lAp+iNEZzKH5q4GdmwS6GZHHAj9+vY61COpLtlf8/HItEkOx6Ls
-         du2WH1HI1XcMwNc5kWy7AvBUXTLRBNf7nW1746JZ9ZxpIiGVEE1O5jk/O232ulXlpfkY
-         hZPpDIs6DzLyC6tw8kV6xSZ+nM9Tned7Vy6HlpeMmsFl6EVQZCuIoNlKpNvBvsl/OHoi
-         F/aodjIZ5p26GT4P2F35OjfgI9/ZUKq90+7l3hiDp3bnSueiPQJcFitIANjnqN5fikGW
-         TuOWnHUGQxIDUfAP+/juY0YfRKv4gwOF/6pLXA9QWz5sjWwcXK7Qwue8JsCKmBuaq4Ly
-         LwsA==
-X-Gm-Message-State: APjAAAW2fS16IzMwMlN8s2rqYBEydhfD3PTamd6MBnFKWiHZg3ICxBuf
-        rrRt0uGaUmH4ajg35dCb2JAlbJnpo5/N/SjWXh/t6Yql
-X-Google-Smtp-Source: APXvYqznZiIaPHTXON+mBcLVjwOIugad78cCGvRi/9LtbJdUfK8C5A/dqWe3meVMPXBjxkIEqyfYmjZ66ijUOEqFrkM=
-X-Received: by 2002:a6b:f214:: with SMTP id q20mr168001ioh.137.1577527850683;
- Sat, 28 Dec 2019 02:10:50 -0800 (PST)
+        Sat, 28 Dec 2019 05:12:10 -0500
+Received: from [172.58.30.175] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1il94o-00044A-Ic; Sat, 28 Dec 2019 10:12:07 +0000
+Date:   Sat, 28 Dec 2019 11:11:52 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Sargun Dhillon <sargun@sargun.me>
+Cc:     linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, tycho@tycho.ws, jannh@google.com,
+        cyphar@cyphar.com, oleg@redhat.com, luto@amacapital.net,
+        viro@zeniv.linux.org.uk, gpascutto@mozilla.com,
+        ealvarez@mozilla.com, fweimer@redhat.com, jld@mozilla.com,
+        arnd@arndb.de
+Subject: Re: [PATCH v7 2/3] pid: Introduce pidfd_getfd syscall
+Message-ID: <20191228100944.kh22bofbr5oe2kvk@wittgenstein>
+References: <20191226180334.GA29409@ircssh-2.c.rugged-nimbus-611.internal>
 MIME-Version: 1.0
-References: <1535374564-8257-1-git-send-email-amir73il@gmail.com>
- <1535374564-8257-7-git-send-email-amir73il@gmail.com> <BC68C02C-E6E5-4414-A1D2-D36D335738E2@dilger.ca>
-In-Reply-To: <BC68C02C-E6E5-4414-A1D2-D36D335738E2@dilger.ca>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sat, 28 Dec 2019 12:10:38 +0200
-Message-ID: <CAOQ4uxjuJ-6Tw3vw1qahjp2LrGPx=eZfZA9qk47=mWSamEiF+g@mail.gmail.com>
-Subject: Re: [PATCH v3 6/6] ovl: add ovl_fadvise()
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <david@fromorbit.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191226180334.GA29409@ircssh-2.c.rugged-nimbus-611.internal>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Dec 28, 2019 at 7:49 AM Andreas Dilger <adilger@dilger.ca> wrote:
->
-> On Aug 27, 2018, at 6:56 AM, Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > Implement stacked fadvise to fix syscalls readahead(2) and fadvise64(2)
-> > on an overlayfs file.
->
-> I was just looking into the existence of the "new" fadvise() method in
-> the VFS being able to communicate application hints directly to the
-> filesystem to see if it could be used to address the word size issue in
-> https://bugzilla.kernel.org/show_bug.cgi?id=205957 without adding a new
-> syscall, and came across this patch and the 4/6 patch that adds the
-> vfs_fadvise() function itself (copied below for clarity).
->
-> It seems to me that this implementation is broken?  Only vfs_fadvise()
-> is called from the fadvise64() syscall, and it will call f_op->fadvise()
-> if the filesystem provides this method.  Only overlayfs provides the
-> .fadvise method today.  However, it looks that ovl_fadvise() calls back
-> into vfs_fadvise() again, in a seemingly endless loop?
->
+On Thu, Dec 26, 2019 at 06:03:36PM +0000, Sargun Dhillon wrote:
+> This syscall allows for the retrieval of file descriptors from other
+> processes, based on their pidfd. This is possible using ptrace, and
+> injection of parasitic code to inject code which leverages SCM_RIGHTS
+> to move file descriptors between a tracee and a tracer. Unfortunately,
+> ptrace comes with a high cost of requiring the process to be stopped,
+> and breaks debuggers. This does not require stopping the process under
+> manipulation.
+> 
+> One reason to use this is to allow sandboxers to take actions on file
+> descriptors on the behalf of another process. For example, this can be
+> combined with seccomp-bpf's user notification to do on-demand fd
+> extraction and take privileged actions. One such privileged action
+> is binding a socket to a privileged port.
+> 
+> This also adds the syscall to all architectures at the same time.
+> 
+> /* prototype */
+>   /* flags is currently reserved and should be set to 0 */
+>   int sys_pidfd_getfd(int pidfd, int fd, unsigned int flags);
+> 
+> /* testing */
+> Ran self-test suite on x86_64
 
-You are confusing endless loop with recursion that has a stop condition.
-The entire concept of stacked filesystem is recursion back into vfs.
-This is essentially what most of the ovl file operations do, but they recurse
-on the "real.file", which is supposed to be on a filesystem with lower
-sb->s_stack_depth (FILESYSTEM_MAX_STACK_DEPTH is 2).
+Fyi, I'm likely going to rewrite/add parts of/to this once I apply.
 
-> It seems like generic_fadvise() should be EXPORT_SYMBOL() so that any
-> filesystem that implements its own .fadvise method can do its own thing,
-> and then call generic_fadvise() to handle the remaining MM-specific work.
->
-> Thoughts?
+A few comments below.
 
-Sure makes sense.
-Overlayfs just doesn't need to call the generic helper.
+> diff --git a/kernel/pid.c b/kernel/pid.c
+> index 2278e249141d..4a551f947869 100644
+> --- a/kernel/pid.c
+> +++ b/kernel/pid.c
+> @@ -578,3 +578,106 @@ void __init pid_idr_init(void)
+>  	init_pid_ns.pid_cachep = KMEM_CACHE(pid,
+>  			SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT);
+>  }
+> +
+> +static struct file *__pidfd_fget(struct task_struct *task, int fd)
+> +{
+> +	struct file *file;
+> +	int ret;
+> +
+> +	ret = mutex_lock_killable(&task->signal->cred_guard_mutex);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	if (!ptrace_may_access(task, PTRACE_MODE_ATTACH_REALCREDS)) {
+> +		file = ERR_PTR(-EPERM);
+> +		goto out;
+> +	}
+> +
+> +	file = fget_task(task, fd);
+> +	if (!file)
+> +		file = ERR_PTR(-EBADF);
+> +
+> +out:
+> +	mutex_unlock(&task->signal->cred_guard_mutex);
+> +	return file;
+> +}
 
-Thanks,
-Amir.
+Looking at this code now a bit closer, ptrace_may_access() and
+fget_task() both take task_lock(task) so this currently does:
+
+task_lock();
+/* check access */
+task_unlock();
+
+task_lock();
+/* get fd */
+task_unlock();
+
+which doesn't seem great.
+
+I would prefer if we could do:
+task_lock();
+/* check access */
+/* get fd */
+task_unlock();
+
+But ptrace_may_access() doesn't export an unlocked variant so _shrug_.
+
+But we can write this a little cleaner without the goto as:
+
+static struct file *__pidfd_fget(struct task_struct *task, int fd)
+{
+	struct file *file;
+	int ret;
+
+	ret = mutex_lock_killable(&task->signal->cred_guard_mutex);
+	if (ret)
+		return ERR_PTR(ret);
+
+	if (ptrace_may_access(task, PTRACE_MODE_ATTACH_REALCREDS))
+		file = fget_task(task, fd);
+	else
+		file = ERR_PTR(-EPERM);
+	mutex_unlock(&task->signal->cred_guard_mutex);
+
+	return file ?: ERR_PTR(-EBADF);
+}
+
+If you don't like the ?: just do:
+
+if (!file)
+	return ERR_PTR(-EBADF);
+
+return file;
+
+though I prefer the shorter ?: syntax which is perfect for shortcutting
+returns.
+
+> +
+> +static int pidfd_getfd(struct pid *pid, int fd)
+> +{
+> +	struct task_struct *task;
+> +	struct file *file;
+> +	int ret, retfd;
+> +
+> +	task = get_pid_task(pid, PIDTYPE_PID);
+> +	if (!task)
+> +		return -ESRCH;
+> +
+> +	file = __pidfd_fget(task, fd);
+> +	put_task_struct(task);
+> +	if (IS_ERR(file))
+> +		return PTR_ERR(file);
+> +
+> +	retfd = get_unused_fd_flags(O_CLOEXEC);
+> +	if (retfd < 0) {
+> +		ret = retfd;
+> +		goto out;
+> +	}
+> +
+> +	/*
+> +	 * security_file_receive must come last since it may have side effects
+> +	 * and cannot be reversed.
+> +	 */
+> +	ret = security_file_receive(file);
+
+So I don't understand the comment here. Can you explain what the side
+effects are?
+security_file_receive() is called in two places: net/core/scm.c and
+net/compat.c. In both places it is called _before_ get_unused_fd_flags()
+so I don't know what's special here that would prevent us from doing the
+same. If there's no actual reason, please rewrite this functions as:
+
+static int pidfd_getfd(struct pid *pid, int fd)
+{
+	int ret;
+	struct task_struct *task;
+	struct file *file;
+
+	task = get_pid_task(pid, PIDTYPE_PID);
+	if (!task)
+		return -ESRCH;
+
+	file = __pidfd_fget(task, fd);
+	put_task_struct(task);
+	if (IS_ERR(file))
+		return PTR_ERR(file);
+
+	ret = security_file_receive(file);
+	if (ret) {
+		fput(file);
+		return ret;
+	}
+
+	ret = get_unused_fd_flags(O_CLOEXEC);
+	if (ret < 0)
+		fput(file);
+	else
+		fd_install(ret, file);
+
+	return ret;
+}
