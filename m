@@ -2,133 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E998D12BC85
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2019 05:21:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9133A12BCC7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Dec 2019 06:49:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726377AbfL1EVL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Dec 2019 23:21:11 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:40574 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726310AbfL1EVK (ORCPT
+        id S1726220AbfL1Ft0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 28 Dec 2019 00:49:26 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33679 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbfL1FtZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Dec 2019 23:21:10 -0500
-Received: by mail-il1-f196.google.com with SMTP id c4so23809845ilo.7;
-        Fri, 27 Dec 2019 20:21:10 -0800 (PST)
+        Sat, 28 Dec 2019 00:49:25 -0500
+Received: by mail-pf1-f196.google.com with SMTP id z16so15723407pfk.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Dec 2019 21:49:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/Y+1cix94haqo0ZsZpC+lfYx5UlPd+44CRyWPMgim+0=;
-        b=uvMc8L18MtYcpMksUMB7qhdt6ta+8pxxwRf4JRQ4MRrEtatg2hwCRYSyxP9ezg4zsn
-         xl0DF/XJh4iA6g3yDLdElfMLQ/nyonnvf34uP8qT7EpBUqlgFGEhEjbx2v6FLMnEHXRx
-         YconIRzpP6cIeAS6kLWmuLxIfuZ5udQlE500TIzlXt16SG+kILLlu6CyjurHhQkiK7jg
-         wEDG77Y6hZn13dVyQ+r8AnpEwQOteqoa3vbbn3jAgKCps5gjzE5ZQbxd2kRzRyTfV/sw
-         k12uysvvEko81MtPac+ojvQkcHguHz0jBRBDj6XOzbXZdfJ2JXmgUTOKVcLFN4FwjOfs
-         Y8Kg==
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=OW/N/O+Dy1dEcIFwj8oUGTj0cKf/xbnol2l0eYV7G/Y=;
+        b=erkecG08q1OL4/JHlafwKiUKdCXnUxrsMnfiIYOPInDpp6ePleNSdyKv4y/lZLlAro
+         4bM26+e+Vu5LC0AMtFb89Bpn2BcZz5maVT2fiw0RmGBnN3CyIvv5ma6knHzcPuQmZLqQ
+         V2rn3H5xIcN6KBfG9Wuz8207SHoyTE9UZXdznyZ1p/kax/bEaqtm29aKndCOEKqvkgnP
+         gwcFYu5JrVpv6Jes0jKr5hh/DY0buQJtKwyhAF+nQaQ+u7qCdcB8skU/KX51EHRx56U5
+         s6oTkRYEcQupBbOxuVyRxr7S+7QIkR3z0hrtuhiYTHJH+4jR8ci4ehyQBlaQUxN/027m
+         sI/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/Y+1cix94haqo0ZsZpC+lfYx5UlPd+44CRyWPMgim+0=;
-        b=C2SRjX/TqxPv3oXaR9/vwII3bzhfULsbaT0OlnbCA8ah/YtRG8K0wEYk8U0k5Nxzl/
-         sgveLO1VWvTZYNYpzWmFWxwtcW+9kuwyMKa9v79gl+VF5fRt5Hh+v6AS8MheHCaJ6oEE
-         N5/g4ptAm0avpYBOJwDVl8Y3lxqbmZwinj4MZRpAz6mzpmAQaeyzB0SUM7O7UJ0zZebg
-         ZU5Jr8i2JGYlpoOtouTXQVVhQJ0htQ4olhfD6iNHjqYLK4hzd111ndQf+w5Fj9putQI9
-         uID2nqm6sF+UtXPXlr2Djlxn6moKg4DKqrhxni/+IKxe0YCYEIL2+Nj6CrJfyZ2Ipgt4
-         /F5Q==
-X-Gm-Message-State: APjAAAUrucoKMpa4s2qHyErjbht72vwQ92IL1HEUhm05d39lez+Mp7+q
-        b1pqe/MaOAgprebTYgRSdTyB8lNEufHzndH04qko4WlM
-X-Google-Smtp-Source: APXvYqyJ5lGmc9fwagJ2Q+v1MFvZ6h3lqArYA5dPe3QObYiTL3r4Sr7jSW2ovhBI1d06meQczKPjuOljWWRS0YGBD80=
-X-Received: by 2002:a92:5c8a:: with SMTP id d10mr50009161ilg.137.1577506870039;
- Fri, 27 Dec 2019 20:21:10 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1577456898.git.chris@chrisdown.name> <533d188802d292fa9f7c9e66f26068000346d6c1.1577456898.git.chris@chrisdown.name>
- <CAOQ4uxhaMjn2Kusv6o6mJ36RhF7PAdmgW3kncgfov5uys=6VHw@mail.gmail.com> <20191227163536.GC442424@chrisdown.name>
-In-Reply-To: <20191227163536.GC442424@chrisdown.name>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sat, 28 Dec 2019 06:20:58 +0200
-Message-ID: <CAOQ4uxjfqAtFL3N0-qJzO4OCuo0iExoO1-oG+41YrCF-4ch7NA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] shmem: Add support for using full width of ino_t
-To:     Chris Down <chris@chrisdown.name>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=OW/N/O+Dy1dEcIFwj8oUGTj0cKf/xbnol2l0eYV7G/Y=;
+        b=Lh+zb+uf7CyQkFN0eRCW65gjldoH/CdimWAXfKgUKVVx+EGAwBWTdcT4xbsA6M7l8x
+         6ssJbC++o1k5nTSnDNOba0aZFr8Ww1FueRPfAhOGyupOmUI17meculBajYdiM3Qi2jmu
+         R2PTSK51RjURcVKl8VQcJaPIdcCoLICfGWY5MiJf4/4+LJ4WabDsM5jCARwXvUXyvc2z
+         a1ZhYSrjjwd8tjrXj809eloXMDtGn+JDGlNNvbjbZmc8PnSwqIIIZJYrTJKCAsVwn0is
+         s2yxXSvwheqHBDlliEbXDMTh+ZFg4xAATpnXBiM4Wbcn2NmQGGKRQ7B6x7Oy74Pv5nkA
+         ZoVQ==
+X-Gm-Message-State: APjAAAUrBK/l/+a9nsaESJ+Q5MEY2rsrotcwXMeaamEGGICqE8bdRC/l
+        Oo6pJcYPXkd3isfrqNk3WUtW4sXrGeAohA==
+X-Google-Smtp-Source: APXvYqx2BxvdOqAQeoY8PLNrAdruZ2UpCatYQVm/HFQzUDvJyAwOS4jOKUTm9ptWLPJN3c7wkOHyEQ==
+X-Received: by 2002:a63:5a64:: with SMTP id k36mr60119987pgm.323.1577512165092;
+        Fri, 27 Dec 2019 21:49:25 -0800 (PST)
+Received: from cabot-wlan.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
+        by smtp.gmail.com with ESMTPSA id s15sm39437778pgq.4.2019.12.27.21.49.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 27 Dec 2019 21:49:24 -0800 (PST)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <BC68C02C-E6E5-4414-A1D2-D36D335738E2@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_421161AC-7AEB-4F46-B74F-685F54147CC1";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH v3 6/6] ovl: add ovl_fadvise()
+Date:   Fri, 27 Dec 2019 22:49:22 -0700
+In-Reply-To: <1535374564-8257-7-git-send-email-amir73il@gmail.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@fb.com,
-        Hugh Dickins <hughd@google.com>,
-        "zhengbin (A)" <zhengbin13@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+        Dave Chinner <david@fromorbit.com>,
+        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+To:     Amir Goldstein <amir73il@gmail.com>
+References: <1535374564-8257-1-git-send-email-amir73il@gmail.com>
+ <1535374564-8257-7-git-send-email-amir73il@gmail.com>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 27, 2019 at 6:35 PM Chris Down <chris@chrisdown.name> wrote:
->
-> Amir Goldstein writes:
-> >On Fri, Dec 27, 2019 at 4:30 PM Chris Down <chris@chrisdown.name> wrote:
-> >>
-> >> The new inode64 option now uses get_next_ino_full, which always uses the
-> >> full width of ino_t (as opposed to get_next_ino, which always uses
-> >> unsigned int).
-> >>
-> >> Using inode64 makes inode number wraparound significantly less likely,
-> >> at the cost of making some features that rely on the underlying
-> >> filesystem not setting any of the highest 32 bits (eg. overlayfs' xino)
-> >> not usable.
-> >
-> >That's not an accurate statement. overlayfs xino just needs some high
-> >bits available. Therefore I never had any objection to having tmpfs use
-> >64bit ino values (from overlayfs perspective). My only objection is to
-> >use the same pool "irresponsibly" instead of per-sb pool for the heavy
-> >users.
->
-> Per-sb get_next_ino is fine, but seems less important if inode64 is used. Or is
-> your point about people who would still be using inode32?
->
-> I think things have become quite unclear in previous discussions, so I want to
-> make sure we're all on the same page here. Are you saying you would
-> theoretically ack the following series?
->
-> 1. Recycle volatile slabs in tmpfs/hugetlbfs
-> 2. Make get_next_ino per-sb
-> 3. Make get_next_ino_full (which is also per-sb)
-> 4. Add inode{32,64} to tmpfs
 
-Not what I meant. On the contrary:
-1. Recycle ino from slab is a nice idea, but it is not applicable
-    along with per-sb ino allocator, so you can't use it for tmpfs
-2. Leave get_next_ino() alone - it is used by things like pipe(2)
-    that you don't want to mess with
-3. Don't create another global ino allocator
-4. inode{32,64} option to tmpfs is the only thing you need
+--Apple-Mail=_421161AC-7AEB-4F46-B74F-685F54147CC1
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset=us-ascii
 
-We've made quite a big mess of a problem that is not really that big.
+On Aug 27, 2018, at 6:56 AM, Amir Goldstein <amir73il@gmail.com> wrote:
+> 
+> Implement stacked fadvise to fix syscalls readahead(2) and fadvise64(2)
+> on an overlayfs file.
 
-In this thread on zhenbin's patch you have the simple solution that
-Google are using to your problem:
-https://patchwork.kernel.org/patch/11254001/#23014383
+I was just looking into the existence of the "new" fadvise() method in
+the VFS being able to communicate application hints directly to the
+filesystem to see if it could be used to address the word size issue in
+https://bugzilla.kernel.org/show_bug.cgi?id=205957 without adding a new
+syscall, and came across this patch and the 4/6 patch that adds the
+vfs_fadvise() function itself (copied below for clarity).
 
-The only thing keeping this solution away from upstream according to
-tmpfs maintainer is the concern of breaking legacy 32bit apps.
+It seems to me that this implementation is broken?  Only vfs_fadvise()
+is called from the fadvise64() syscall, and it will call f_op->fadvise()
+if the filesystem provides this method.  Only overlayfs provides the
+.fadvise method today.  However, it looks that ovl_fadvise() calls back
+into vfs_fadvise() again, in a seemingly endless loop?
 
-If you make the high ino bits exposed opt-in by mount and/or Kconfig
-option, then this concern would be mitigated and Google's private
-solution to tmpfs ino could go upstream.
+It seems like generic_fadvise() should be EXPORT_SYMBOL() so that any
+filesystem that implements its own .fadvise method can do its own thing,
+and then call generic_fadvise() to handle the remaining MM-specific work.
 
-Hugh did not specify if sbinfo->next_ino is incremented under
-sbinfo->stat_lock or some other lock (maybe he can share a link to
-the actual patch?), but shmem_reserve_inode() already takes that
-lock anyway, so I don't see the need to any further micro optimizations.
+Thoughts?
 
-Chris, I hope the solution I am proposing is clear now and I hope I am
-not leading you by mistake into another trap...
+> +int vfs_fadvise(struct file *file, loff_t offset, loff_t len, int advice)
+> +{
+> +	if (file->f_op->fadvise)
+> +		return file->f_op->fadvise(file, offset, len, advice);
+> +
+> +	return generic_fadvise(file, offset, len, advice);
+> +}
+> +EXPORT_SYMBOL(vfs_fadvise);
+> 
+> +int ovl_fadvise(struct file *file, loff_t offset, loff_t len, int advice)
+> +{
+> +	struct fd real;
+> +	int ret;
+> +
+> +	ret = ovl_real_fdget(file, &real);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* XXX: do we need mounter credentials? */
+> +	ret = vfs_fadvise(real.file, offset, len, advice);
+> +
+> +	fdput(real);
+> +
+> +	return ret;
+> +}
 
-To be clear, solution should be dead simple and contained to tmpfs.
-If you like, you could clone exact same solution to hugetlbfs, but no
-new vfs helpers please.
+Cheers, Andreas
 
-Thanks,
-Amir.
+
+
+
+
+
+--Apple-Mail=_421161AC-7AEB-4F46-B74F-685F54147CC1
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl4G7OIACgkQcqXauRfM
+H+CjVxAAhKXjX5m11b4E2eMFMuEYZ5wxLrAnFTwzy3gJBvWmL6OhiqlEPuL/TlDp
+9LAofpHJGYG1NV1cD7z+RsXoL6o7Qmek2WcebDreuW4SqWflXUa+WyVaQ2JO6Zed
+V4aq09Q9Sa3EDFF0BZDzUUvgbLbSnxQ/hrds0P8jeX3yE4d/+KArxFbzYY2sDFHb
+eo60Qj5gQGgW2K+brp9p+p+Ryt7SEUbEKnkwqcNZ3ulqy+pE9YJuKt7KSs+s/BJg
+IJysWpg3KY3ZV6g/Uewn0rtJDedHn1C55zHHyTC9wN6FDgC8fiCvsIAs48Srfp/p
+xHJJDUIVhlZj3fk9f9yE76X9m5H6jLMEOwH5x7m+mmlxuibc8oT+0GfgHrjF2CkW
+ES5/9E7zXLyxIacHEy68Jfa2nnNxxW5ExX7R37rJmvvT1khAfuEsurld209WU4ZU
+Jk7WHrryeCRVo+HUjWQvLDYDSAiCMmzHhWpmw7A9yOqGw6gzNeecI0lchZuQCFnD
+O79AeQRSJoxw5RvJ2zQY9P58tZwTrbhvYuaePX4vCKii2NycDKQaUOtrljGfZAT0
+hGyJQVo0cDupp5Wxcojl9Q3+9qcJHfEc5S5Ww5ipg9D0LmlknRaSBLMl8ezA0bq0
+G9uihpfQj2igPXtN/EjbVy6GJpOYeDBh/JMh36zC2SfoZi9Xm+k=
+=MTn5
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_421161AC-7AEB-4F46-B74F-685F54147CC1--
