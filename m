@@ -2,63 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67F3C12C290
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Dec 2019 14:40:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CB0012C296
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Dec 2019 14:55:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbfL2Nk3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 29 Dec 2019 08:40:29 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35628 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726160AbfL2Nk3 (ORCPT
+        id S1726388AbfL2Nzw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 29 Dec 2019 08:55:52 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41061 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726160AbfL2Nzw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 29 Dec 2019 08:40:29 -0500
-Received: by mail-wr1-f68.google.com with SMTP id g17so30489432wro.2;
-        Sun, 29 Dec 2019 05:40:27 -0800 (PST)
+        Sun, 29 Dec 2019 08:55:52 -0500
+Received: by mail-wr1-f65.google.com with SMTP id c9so30522907wrw.8;
+        Sun, 29 Dec 2019 05:55:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=ehUt6YUmkM/nA5AliofRzO8ZYUG51ztpo1WmqMNWyy8=;
-        b=h7ftxb3r5KXuKF0AI1wYbmGcwrpA/cR10DohrK9NaafhVoyKuWxGiPzQTwxYWLdss5
-         lTlSHEsexE/mGFxzdG9z/QL0CSnQFxFpyO7seWP91MZHyuD2or5oCXp6mJXz+6Z39eno
-         VGCQAq4EhxFcnpz0F6GpJ1jifWIseqj8npyYkqH+onHb0G5EZLeQH0M3at8kZlt27ZH7
-         Ju8vHK+9MrZCSiQ2x8n9EOMsUrww/b3lOv7Ekherm6Ymyt8B6t2c6LvDxnURANdPd/u7
-         S/hGnV23Uxp+g9Vb21YLUa1Id0LYBVwBBE2SiAs2kuUgz/YT3q13kV9yU+Z2pejr6IXT
-         E14Q==
+        bh=1hSPYl1k111Xaok7uIj/3w+cxaSyR5stkdCWePLF25w=;
+        b=dXrLmsnIT4g/mGqo+9r1wUgKqV6Y3q8rKRJr7g4MyCmbu22DZ7zdZ0/073Vr97Cuf2
+         2akgWgNHa7Ha/wZ5njFdJjtXvwCghuQUwlJKR+raooqP6A4ccqoJGgs8OjyLyCJuQBOz
+         LU2fhCUm+cDl3kyLxafokRspXlQg1OQd10Xarwt2ohEnHuMEsBSclt/2m2LTCxrRHqnl
+         6pgTqy4hTsc/zf1NbEcUjDIJzxKBIBzUt+XKoBXKaSbvz0xsrnffdCo2TEE+Sw31xZOo
+         1RsGnpzQAw0rirKrlYJP7XQLhcDhRg8phBwWf2mxp2Zf0F1xg2la+t7UE0t7Go0DsIel
+         avqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ehUt6YUmkM/nA5AliofRzO8ZYUG51ztpo1WmqMNWyy8=;
-        b=Ukw7ylyrdNN/EcacS2I8sf+anEjhacP4KGP6mcbdrOknlunqQEOUXr3MpAGyrSVJqJ
-         HeUl4MliiiiwSC8kWQovALHBwCyPIuUJLYGh40gzxmpilqKA0s19HNUGANso2E9KQdaB
-         sefAY5dRc5bY/p2rDuyvUPsD08Uwkt3iqA0EVPbc+jB2Vlc/MiodiTYPvejvQ3iSNMBP
-         wVqMUZIrmzVDb8hyje8EzYuGclS6j6SKS2kFW5D3BLn/KC76Zdis2J8OYVLmshV5LeVv
-         GgNHKn8+q3HCg0cy0A0cEnoKxPH6/eG+Pe5kut0lRwG8pmCQ2jboSKdE6wWzxAixDLuv
-         2+KA==
-X-Gm-Message-State: APjAAAV8Et18rCLm+3a4EffMAid1A0OeRI16DxwhEDMDCazt59C0aVGw
-        D8Kp8WQ6B1oyWpmJy48MXRE=
-X-Google-Smtp-Source: APXvYqw9aWN6l4wsQ2nvfgY2Sv+Do01GwMwYq5p+l6Iv2ApCS5M1YaVotZW2ODLZONPrbQ+jsB8I6Q==
-X-Received: by 2002:adf:f288:: with SMTP id k8mr64899732wro.301.1577626827311;
-        Sun, 29 Dec 2019 05:40:27 -0800 (PST)
+        bh=1hSPYl1k111Xaok7uIj/3w+cxaSyR5stkdCWePLF25w=;
+        b=UMhC/KStkVafpF7nUMR6MM/xFs1DxtmMt593DRanq+bZ+DQlEOx1gGRnpTeAagrRYQ
+         k71ZohAlNUghysIlnGAo7fsil7mBh/MNW5uPtK+XT3Ir1cUIN42mSU4q/n6MZTYNLg5A
+         wjn6vAJGEo51Y80EpJpeyL7/5LuRnmwm7eI1xvByU6zNDJcvNMwx0uut6vCuGpw8AZJB
+         kySKgsSmTvbUF6qb7SDMEe0+9oBDUpWy24U5n00G/+kSk/PV/K/WEl9VwoHtmC7UUV1Q
+         8mORTd1HGvGLVHG67nzgbO0Vcq7oKjysG4ZlP1ao8Yp0EAcNmb5N9620XQPSkObM1olF
+         TtoQ==
+X-Gm-Message-State: APjAAAV+DSYO11fvA4o8AsDOg0MQ4SwaaBh6y47YJRkznXMcWMdPXgXt
+        gIUYHZpxzPaQHspf13i7XMk=
+X-Google-Smtp-Source: APXvYqyMxBL496OayMHdzr27XoWRqBfUK5Y4K65MF+5zOmXC0AKL3CCmeTpWUVSrUE6SSwGrFlFU4A==
+X-Received: by 2002:adf:e40f:: with SMTP id g15mr64502398wrm.223.1577627750088;
+        Sun, 29 Dec 2019 05:55:50 -0800 (PST)
 Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id b10sm43285857wrt.90.2019.12.29.05.40.25
+        by smtp.gmail.com with ESMTPSA id l7sm41726597wrq.61.2019.12.29.05.55.48
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 29 Dec 2019 05:40:26 -0800 (PST)
-Date:   Sun, 29 Dec 2019 14:40:25 +0100
+        Sun, 29 Dec 2019 05:55:49 -0800 (PST)
+Date:   Sun, 29 Dec 2019 14:55:48 +0100
 From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
 To:     Namjae Jeon <namjae.jeon@samsung.com>
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
         sj1557.seo@samsung.com, linkinjeon@gmail.com
 Subject: Re: [PATCH v8 02/13] exfat: add super block operations
-Message-ID: <20191229134025.qb3mmqatsn5c4gao@pali>
+Message-ID: <20191229135548.qu3i3zglezlnndds@pali>
 References: <20191220062419.23516-1-namjae.jeon@samsung.com>
  <CGME20191220062733epcas1p31665a3ae968ab8c70d91a3cddf529e73@epcas1p3.samsung.com>
  <20191220062419.23516-3-namjae.jeon@samsung.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="7obuds6vfn3nabjb"
+        protocol="application/pgp-signature"; boundary="yvlybd3ehwpgg52a"
 Content-Disposition: inline
 In-Reply-To: <20191220062419.23516-3-namjae.jeon@samsung.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
@@ -68,7 +68,7 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---7obuds6vfn3nabjb
+--yvlybd3ehwpgg52a
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -91,53 +91,47 @@ On Friday 20 December 2019 01:24:08 Namjae Jeon wrote:
 
 =2E..
 
-> +enum {
-> +	Opt_uid,
-> +	Opt_gid,
-> +	Opt_umask,
-> +	Opt_dmask,
-> +	Opt_fmask,
-> +	Opt_allow_utime,
-> +	Opt_charset,
-> +	Opt_utf8,
-> +	Opt_case_sensitive,
-> +	Opt_tz,
-> +	Opt_errors,
-> +	Opt_discard,
-> +};
 > +
-> +static const struct fs_parameter_spec exfat_param_specs[] =3D {
-> +	fsparam_u32("uid",			Opt_uid),
-> +	fsparam_u32("gid",			Opt_gid),
-> +	fsparam_u32oct("umask",			Opt_umask),
-> +	fsparam_u32oct("dmask",			Opt_dmask),
-> +	fsparam_u32oct("fmask",			Opt_fmask),
-> +	fsparam_u32oct("allow_utime",		Opt_allow_utime),
-> +	fsparam_string("iocharset",		Opt_charset),
-> +	fsparam_flag("utf8",			Opt_utf8),
+> +	if (le16_to_cpu(p_bpb->bsx.vol_flags) & VOL_DIRTY) {
+> +		sbi->vol_flag |=3D VOL_DIRTY;
+> +		exfat_msg(sb, KERN_WARNING,
+> +			"Volume was not properly unmounted. Some data may be corrupt. Please =
+run fsck.");
 
-Hello! What is the purpose of having extra special "utf8" mount option?
-Is not one "iocharset=3Dutf8" option enough?
+Hello, do you have some pointers which fsck tool should user run in this
+case?
 
-> +	fsparam_flag("case_sensitive",		Opt_case_sensitive),
-> +	fsparam_string("tz",			Opt_tz),
-> +	fsparam_enum("errors",			Opt_errors),
-> +	fsparam_flag("discard",			Opt_discard),
-> +	{}
-> +};
+> +	}
+> +
+> +	ret =3D exfat_create_upcase_table(sb);
+> +	if (ret) {
+> +		exfat_msg(sb, KERN_ERR, "failed to load upcase table");
+> +		goto free_bh;
+> +	}
+> +
+> +	/* allocate-bitmap is only for exFAT */
+
+It looks like that this comment is relict from previous version which
+had also FAT32 code included...
+
+> +	ret =3D exfat_load_bitmap(sb);
+> +	if (ret) {
+> +		exfat_msg(sb, KERN_ERR, "failed to load alloc-bitmap");
+> +		goto free_upcase_table;
+> +	}
 
 --=20
 Pali Roh=C3=A1r
 pali.rohar@gmail.com
 
---7obuds6vfn3nabjb
+--yvlybd3ehwpgg52a
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXgisxgAKCRCL8Mk9A+RD
-UktUAKDDJ8TMLpk5SiyjSTFBxLJKQqceigCdEQWkzJ9WOXV0Hzn/Hx1wPl1r3go=
-=Lgqp
+iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXgiwYAAKCRCL8Mk9A+RD
+UqP9AJ9hposR+eZyv75rSTi6R9atwHUYwACgx/W0sMYtPI5nojzlFH8DgZetbGo=
+=jrkF
 -----END PGP SIGNATURE-----
 
---7obuds6vfn3nabjb--
+--yvlybd3ehwpgg52a--
