@@ -2,89 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03D6112DC35
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Dec 2019 23:54:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6605212DC3E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jan 2020 00:01:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727109AbfLaWyZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Dec 2019 17:54:25 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:42026 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727054AbfLaWyY (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Dec 2019 17:54:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1577832863;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=slmh9bW+4V4Ot0eIs6GceXv6tZVqhiaH5L3lUPXogb8=;
-        b=bSPsof3VSiUSFHQmxeZt0xAae4y6bViTyy5n0iQq8PnxKt9Ddv3qjo1JhySAc80hgGU+bo
-        n1ERcTuqe6kzNfc1gv8ffFFfxdAEnBGBstGRgHhOI7L3Skqhy0OVQxTeEYBDy8XxjivkZH
-        fbzealJX2YtZYmBhLcOMsFHVht+zBSw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-359-NwmcAXVlPQSfYh0kDQn1ZQ-1; Tue, 31 Dec 2019 17:54:22 -0500
-X-MC-Unique: NwmcAXVlPQSfYh0kDQn1ZQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727109AbfLaXBW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Dec 2019 18:01:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52892 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727031AbfLaXBW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 31 Dec 2019 18:01:22 -0500
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7AE21107ACC5;
-        Tue, 31 Dec 2019 22:54:20 +0000 (UTC)
-Received: from [127.0.0.1] (ovpn04.gateway.prod.ext.phx2.redhat.com [10.5.9.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8863960579;
-        Tue, 31 Dec 2019 22:54:19 +0000 (UTC)
-Subject: Re: FS_IOC_GETFSLABEL and FS_IOC_SETFSLABEL
-To:     =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>,
-        Andreas Dilger <adilger@dilger.ca>,
-        David Sterba <dsterba@suse.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191228143651.bjb4sjirn2q3xup4@pali>
-From:   Eric Sandeen <sandeen@redhat.com>
-Message-ID: <517472d1-c686-2f18-4e0b-000cda7e88c7@redhat.com>
-Date:   Tue, 31 Dec 2019 16:54:18 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.3.1
-MIME-Version: 1.0
-In-Reply-To: <20191228143651.bjb4sjirn2q3xup4@pali>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-Content-Transfer-Encoding: quoted-printable
+        by mail.kernel.org (Postfix) with ESMTPSA id C93F2206DA;
+        Tue, 31 Dec 2019 23:01:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577833282;
+        bh=5PSVQVMJwAZEcbk4g8uRnQsHkkdsZNVyarptzACKuaI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=rIjODME4v2nVQqa2B5i49LUuq7PS7JL4arbLZGIhTsshh3cmP84L3vHP14LEFahf6
+         Hg8xBAjly92r9eMsZXwgS9w+4DKtkc6UZD8NqbTlxV+RcCUWH01RQJbBPBjn7i8BEv
+         zwKpqsImGFaOjKX9IudBVIizpPCK0XqWTAlnwwMk=
+Date:   Tue, 31 Dec 2019 15:01:21 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH 2/2] proc: convert everything to "struct proc_ops"
+Message-Id: <20191231150121.5b09e34205444f6c65277b73@linux-foundation.org>
+In-Reply-To: <20191225172546.GB13378@avx2>
+References: <20191225172228.GA13378@avx2>
+        <20191225172546.GB13378@avx2>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/28/19 6:36 AM, Pali Roh=C3=A1r wrote:
-> Hello!
->=20
-> I see that you have introduced in commit 62750d0 two new IOCTLs for
-> filesyetems: FS_IOC_GETFSLABEL and FS_IOC_SETFSLABEL.
->=20
-> I would like to ask, are these two new ioctls mean to be generic way fo=
-r
-> userspace to get or set fs label independently of which filesystem is
-> used? Or are they only for btrfs?
+On Wed, 25 Dec 2019 20:25:46 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
 
-The reason it was lifted out of btrfs to the vfs is so that other filesys=
-tems
-can use the same interface.  However, it is up to each filesystem to impl=
-ement
-it (and to interpret what's been written to or read from disk.)
+> The most notable change is DEFINE_SHOW_ATTRIBUTE macro split in
+> seq_file.h.
+> 
+> Conversion rule is:
+> 
+> 	llseek		=> proc_lseek
+> 	unlocked_ioctl	=> proc_ioctl
+> 
+> 	xxx		=> proc_xxx
+> 
+> 	delete ".owner = THIS_MODULE" line
+> 
+> ...
+>
+>  drivers/staging/isdn/hysdn/hysdn_procconf.c           |   15 +-
+>  drivers/staging/isdn/hysdn/hysdn_proclog.c            |   17 +-
 
-> Because I was not able to find any documentation for it, what is format
-> of passed buffer... null-term string? fixed-length? and in which
-> encoding? utf-8? latin1? utf-16? or filesystem dependent?
-
-It simply copies the bits from the memory location you pass in, it knows
-nothing of encodings.
-
-For the most part it's up to the filesystem's own utilities to do any
-interpretation of the resulting bits on disk, null-terminating maximal-le=
-ngth
-label strings, etc.
-
--Eric
-
+These seem to have disappeared in linux-next.
