@@ -2,90 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F173E12D9C7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Dec 2019 16:25:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9593812DAD4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Dec 2019 19:10:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727134AbfLaPZK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Dec 2019 10:25:10 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:59332 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727122AbfLaPZJ (ORCPT
+        id S1727071AbfLaSKl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Dec 2019 13:10:41 -0500
+Received: from smtprelay0018.hostedemail.com ([216.40.44.18]:49861 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726720AbfLaSKl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Dec 2019 10:25:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1577805909;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=MmNBZkwBy1szGWacQmXBphuROcFRHJi+XYFCIYFXOoM=;
-        b=QMTZlpzg0aTpWFtU8FRuBnWTq27NklR55wTUTgqZxipQeITBoeXTM7T0cHpQP0Dq/eCBsw
-        mjDiuSVCHmCS3+sCik74L5IdG6tRl2XZJCFdBWeFSpBZaWNeCWbD6SvulxvYc6eipvRP5N
-        9lrPYghuUcIl7UO0uGtjNAz4BhhmuMw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-253-2Js2s053NvmFzobCKbM2CA-1; Tue, 31 Dec 2019 10:25:05 -0500
-X-MC-Unique: 2Js2s053NvmFzobCKbM2CA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 62D2D1800D4E;
-        Tue, 31 Dec 2019 15:25:04 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 57F7B5D9E1;
-        Tue, 31 Dec 2019 15:25:03 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 3/3] afs: Fix afs_lookup() to not clobber the version on a
- new dentry
-From:   David Howells <dhowells@redhat.com>
-To:     linux-afs@lists.infradead.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org, dhowells@redhat.com
-Date:   Tue, 31 Dec 2019 15:25:02 +0000
-Message-ID: <157780590246.25571.8995170375088979996.stgit@warthog.procyon.org.uk>
-In-Reply-To: <157780588822.25571.7926816048227538205.stgit@warthog.procyon.org.uk>
-References: <157780588822.25571.7926816048227538205.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Tue, 31 Dec 2019 13:10:41 -0500
+X-Greylist: delayed 494 seconds by postgrey-1.27 at vger.kernel.org; Tue, 31 Dec 2019 13:10:40 EST
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave03.hostedemail.com (Postfix) with ESMTP id 293EA1802CCDC
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Dec 2019 18:02:27 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 60D1718224D8D;
+        Tue, 31 Dec 2019 18:02:25 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:152:355:379:599:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2559:2562:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3870:3871:3872:4321:5007:6119:6120:7901:7903:10004:10400:10848:11026:11232:11473:11658:11914:12043:12296:12297:12438:12740:12895:13069:13311:13357:13894:14659:14721:14777:21080:21433:21451:21627:21810:21819:21990:30012:30022:30054:30056:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: song33_3208bae3f8801
+X-Filterd-Recvd-Size: 2662
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf02.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 31 Dec 2019 18:02:23 +0000 (UTC)
+Message-ID: <a6911ca13419af48d7170e4426cd23f22a2824f5.camel@perches.com>
+Subject: Re: [PATCH v8 10/13] exfat: add nls operations
+From:   Joe Perches <joe@perches.com>
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Valdis =?UTF-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        linkinjeon@gmail.com
+Date:   Tue, 31 Dec 2019 10:01:36 -0800
+In-Reply-To: <5b0febd5-642b-83f2-7d81-7a1cbb302e3c@web.de>
+References: <20191220062419.23516-11-namjae.jeon@samsung.com>
+         <5b0febd5-642b-83f2-7d81-7a1cbb302e3c@web.de>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fix afs_lookup() to not clobber the version set on a new dentry by
-afs_do_lookup() - especially as it's using the wrong version of the version
-(we need to use the one given to us by whatever op the dir contents
-correspond to rather than what's in the afs_vnode).
+On Tue, 2019-12-31 at 15:23 +0100, Markus Elfring wrote:
+> …
+> > +++ b/fs/exfat/nls.c
+> …
+> > +int exfat_nls_cmp_uniname(struct super_block *sb, unsigned short *a,
+> > +		unsigned short *b)
+> > +{
+> > +	int i;
+> > +
+> > +	for (i = 0; i < MAX_NAME_LENGTH; i++, a++, b++) {
+> > +		if (exfat_nls_upper(sb, *a) != exfat_nls_upper(sb, *b))
+> 
+> Can it matter to compare run time characteristics with the following
+> code variant?
+> 
+> +	for (i = 0; i < MAX_NAME_LENGTH; i++) {
+> +		if (exfat_nls_upper(sb, a[i]) != exfat_nls_upper(sb, b[i]))
 
-Fixes: 9dd0b82ef530 ("afs: Fix missing dentry data version updating")
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+Markus, try comparing the object code produced by the compiler first,
+it's likely identical.
 
- fs/afs/dir.c |    6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+If this is actually a performance sensitive path, it might improve
+runtime by having 2 code paths to avoid the testing of
+sbi->options.case_sensitive for each u16 value in the array.
 
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index 813db1708494..5c794f4b051a 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -952,12 +952,8 @@ static struct dentry *afs_lookup(struct inode *dir, struct dentry *dentry,
- 	afs_stat_v(dvnode, n_lookup);
- 	inode = afs_do_lookup(dir, dentry, key);
- 	key_put(key);
--	if (inode == ERR_PTR(-ENOENT)) {
-+	if (inode == ERR_PTR(-ENOENT))
- 		inode = afs_try_auto_mntpt(dentry, dir);
--	} else {
--		dentry->d_fsdata =
--			(void *)(unsigned long)dvnode->status.data_version;
--	}
- 
- 	if (!IS_ERR_OR_NULL(inode))
- 		fid = AFS_FS_I(inode)->fid;
+Something like: (uncompiled, untested, written in email client)
+
+static inline
+unsigned short exfat_sbi_upper(struct exfat_sb_info *sbi, unsigned short a)
+{
+	if (sbi->vol_utbl[a])
+		return sbi->vol_utbl[a];
+	return a;
+}
+
+int exfat_nls_cmp_uniname(struct super_block *sb,
+			  unsigned short *a,
+			  unsigned short *b)
+{
+	int i;
+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+
+	if (!sbi->options.case_sensitive) {
+		for (i = 0; i < MAX_NAME_LENGTH; i++, a++, b++) {
+			if (exfat_sbi_upper(sbi, *a) != exfat_sbi_upper(sbi, *b))
+				return 1;
+			if (*a == 0x0)
+				return 0;
+		}
+	} else {
+		for (i = 0; i < MAX_NAME_LENGTH; i++, a++, b++) {
+			if (*a != *b)
+				return 1;	
+			if (*a == 0x0)
+				return 0;
+		}
+	}
+
+	return 0;
+}
+
 
