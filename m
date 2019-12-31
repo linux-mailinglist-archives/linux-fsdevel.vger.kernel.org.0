@@ -2,34 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D520912D960
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Dec 2019 15:06:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98D3D12D975
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Dec 2019 15:24:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727071AbfLaOGQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Dec 2019 09:06:16 -0500
-Received: from mout.web.de ([212.227.17.12]:44799 "EHLO mout.web.de"
+        id S1726674AbfLaOYK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Dec 2019 09:24:10 -0500
+Received: from mout.web.de ([212.227.17.12]:44861 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726060AbfLaOGQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Dec 2019 09:06:16 -0500
+        id S1726229AbfLaOYK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 31 Dec 2019 09:24:10 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1577801160;
-        bh=hgmnvESjrr7UKhObL6AX/4Q1g8WZ0OymJawxhAj9BQY=;
+        s=dbaedf251592; t=1577802235;
+        bh=njW70Kvt6w+HPNlPF02qIWP2tFKDZNV6eGaoaDh4Uzs=;
         h=X-UI-Sender-Class:Cc:References:Subject:From:To:Date:In-Reply-To;
-        b=lUlLqYXPhOZpnZj8CPieuhEYPPCZOwa4eKb+r7gSgDjhwN1bgtFXuBS9nDO8+VG7S
-         p415zCX6/zykuUL+PT1ZTM6sn2Zgrt2ur31H+3rSbLIxlOfNLqQJEjPNlguIBGMfuU
-         7JVyUfrQrgLXKtRaKvc374UdKxhzUoBAeSpF/5V8=
+        b=rClWCZEfooJsOCeHFtsUogo1A29BELPlWj+X719iCy/bB35BxBO/w3umMGoQZb4Rr
+         61LQBF8QYLEspd8YWuPkte54KTXJii2FZpJ7mSlTt0/OFqYaDIJYtSUknzoT3/mCe/
+         rqgFaV6glvpkfuLsSd5yfI5FdxHHrr0mj9BRfNnk=
 X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
 Received: from [192.168.1.2] ([93.131.105.164]) by smtp.web.de (mrweb103
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0MSrgv-1jDTWn0qhh-00RpZv; Tue, 31
- Dec 2019 15:06:00 +0100
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0Lx7Ir-1jntOk1wL3-016eNL; Tue, 31
+ Dec 2019 15:23:55 +0100
 Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sungjong Seo <sj1557.seo@samsung.com>,
         =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
         linkinjeon@gmail.com
-References: <20191220062419.23516-2-namjae.jeon@samsung.com>
-Subject: Re: [PATCH v8 01/13] exfat: add in-memory and on-disk structures and
- headers
+References: <20191220062419.23516-11-namjae.jeon@samsung.com>
+Subject: Re: [PATCH v8 10/13] exfat: add nls operations
 From:   Markus Elfring <Markus.Elfring@web.de>
 Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
@@ -76,60 +75,60 @@ Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
 To:     Namjae Jeon <namjae.jeon@samsung.com>,
         linux-fsdevel@vger.kernel.org
-Message-ID: <527e28b8-7c66-7aff-c5be-6dfb368caec7@web.de>
-Date:   Tue, 31 Dec 2019 15:05:58 +0100
+Message-ID: <5b0febd5-642b-83f2-7d81-7a1cbb302e3c@web.de>
+Date:   Tue, 31 Dec 2019 15:23:53 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.1
 MIME-Version: 1.0
-In-Reply-To: <20191220062419.23516-2-namjae.jeon@samsung.com>
+In-Reply-To: <20191220062419.23516-11-namjae.jeon@samsung.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:QfvG9Q5Jccks3TgzeSXnO+btGki+kEs7h0p5A48LZaEoxb41c/A
- ho4CkQvW95Q23YvLbfkLBA4AuAP6jhYNx6737FIngLPwR2jU8GzXkG7K7Frm4CAfWBQfkSt
- MDAUPPwt2NCv3cGdv99pGwXuydmEy6A0/8sb73BPYmlxDHIX3REJKjHzOQPaRRtdvwA1+bk
- 0qd0AhcEP5ea8mTdHCGXg==
+X-Provags-ID: V03:K1:RPqLzP+zYG43xDh+ViQocUOWTIevtgfMrRQuxh+8eGCfX0xKREN
+ cPxffMC07AL319H9Zd8xsPGqEHVMV30kVGVrIeYXdtTfzs1ZDSXCmqoCqd4KB0xrJo7x63v
+ 3ER0+1Gv/TbyzXzYSbMHNEzHf+tTqrzCaYSA9XyQD72N+lnM0ADs3k6O26fqLTSiRLdgJTQ
+ rO/v3vxd7bo49zRx3s+TA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:s/H9pmRCsuM=:occWQ9FTMeFcnLI1vDffbe
- JB4+E3DPthr/7uou6tEG/tmcP791s+1qfUNq/VUtEAEXN0XeW3VButHxAQVEj/elXqpT0WkxI
- dUdaO/2byHJK3vO3DPpaDwOkLRtWBWAVZDBMzMm1VtJxaj6aiho2QMw3Ps1sIrOOPVaWmdcWd
- 4cZg5UC5ynLL1g0MItWWyRaa57ncNaFVBpfSVVkB/7o2C9AoXj5fq/C7gETd0wtPfLd2y3/cv
- RS73syj17N6ZngyKCOo6z1lsLl/RsgRc+zAkSvTIfNyHNcMnyfCA0M/B9G5v4Ixc6kw0w8ZUh
- DAsQ/0qtuNB7pniyZXtTLecGQ2z6E+FLBrt8gVVGZ79/PvLR01V8rdpgdcQnYJs6EyHqilbUg
- +Bw2UybsDYr5QKRC6/Aq4DOhFy8Aky5fioa/Db27fToZBkekp83u2WsW8BO9KBskTyI/KSBW+
- 4fqfX2ccEZuoZvcMHVuM3P0IzJuG2yCvEVKbsOohUgjt9CVgrBKBUPAr0YpiCzGIVJaELuK+P
- sD4ScyqU2ENBXvG4QEREJNgOM6Xz0aZJ6mpkZG/ov2s/c2QuboohaIcA6stPKz5FYrGBE8u3B
- 1BdckFy6XHeZVrNXeHDezJ2Iubf5Lh0cRI5Bawe5nb7KXC5iGcJ6mIb+g7psYK5GrL8C7WQzC
- htRUyMVn1kdVEpBAevHiB4YTdKTJyiUe7y7Lr5M4maezsfOpC8Vy4ZK+sc2fmxUraD6UnGtKR
- YGAA2awYqWLcC5BeQg/gAK6MZPS6gi81kYQU53OnYC8B0SrKiEtEvbjBOWqeJd6DY9caBgmof
- t0YKHr52ZxnDvHcdwFUUnrGOT5p3rdj/paOJnU0bRttx7OvEXk7mapaIBGnapdFqHRNo5nIzb
- zup7j/1JjlMTRa8N4CIuvpJAndfZCvEbYvz+JREI8HJ62ZheHVWRVkyxFjPcmhjmMvMpaALg6
- EdsbbzcE1sBGe4GB6sbsRKf1NrUeM2+YWANTmd5VFPnX+yTBmQP7CGMYjas8XiwKEWHAOUlth
- /cnlzvCXc+CrO/xTFskeDp5sAM4ZYTsPEWw/3bYsKOgXMdtLbYB58BshHNsiKytz6kRbr6J7i
- GG/vN6oV1F9Ne6V3uaSXMMPDS3VtIzPmm96u73s0B9h/Nhi5eVeYnT/SKqeaQtxs0/ZZfosXu
- 1RZhaDJkuAyxxaT6fl31NB/vdGb7EHx5PxyCAJwu6OC1fs3PgX88S8vRsEtPMDXkIeCArXhnZ
- V9vxVVrE2RKjq5KMpSX82Kk78oFxmL1C+ZfFQuqg9qQ8jSC11vzXFEPlRg30=
+X-UI-Out-Filterresults: notjunk:1;V03:K0:B2iCt72mcfw=:0gqFdzlfarZRBcKSTGIVPH
+ S8fXMbI8c/oKhfJCqvPG77+vOig7kTpTRMop9JWO6bu7X9pL48sp8IkkVnJH4K5aH57hK3lyR
+ cGEijjeKbs4ZEH1at4YavsoW5oLpTLML9e6MLJRbhdmdMsNs1VHK5ERclvdv1Fhe/Ic2ue751
+ bfvrvK7cv7O0SK/EvrcKBJQQVsvE9TU8kryX0OxfXbOiK2Mb35omX6S4GLwEvKQRKhCF8zcs0
+ UlLSqp+zjQHGhtcHhNT57+zdubdkN7+dz/CJJpiXSi7wdgTsKb51zWdqisWFo7ahcn9XfAC45
+ w0daxpyesvPV+YM+dVQzq30brtsBmfHVR6RIop78P+SUXIzHtGNBIuGXZ0D0SHhWxpvohJMNe
+ k0oEuuM+cdU0DzYYOgDc9Wgw//U6YNajBq/yi6TGJUPBitSpbiLy0BaMTZ8tDvgwmhsg40Lt1
+ Im4WXqCdB/iKwQyrQIrYNXvMPG4MTrMB72VgbTgJuXkBoQFzzcSaVh89LcMbjia8V3k6/Do/s
+ 4KOUSC/mOlXZGfaCz/rz+O/2imjUX5vd0fj5NZgE/MFozV5UDdYZz/LJZuorQYPku618MjojE
+ +++N4wQ1DTABsyUlMmKqX6q7B4D6SbJrBiDZspS1BLJNqqtimkkO7wlx5OXNcUzrrg2yy6Yar
+ +fU2okOvE6vOXdAYIP11EEmi+aIUvjOFAXuspS1VVvgKp71US7vigWocmtmeVJ/PRTSJ4j6Gs
+ 4gLSLc+ldJIKBi9n+d34YksEEE+PJcBgaPm5OLmvsLU+If9MJHRC5560kY6cCGw5J2Y9GfAMo
+ TyuoctLStimZFT74xiwgtfnHOj1xEFjoQi/X29XcLYIVLln5aMzWMkV9Gpv44U3C0bivK2kAt
+ f13xX1I4mHR6B5Cql+RkjejMGtmrk6rfvpl3APIhSAgUmqr6p/ynRh2pWZlbp6e/rXJ+euFms
+ 9NQhNMInn6f9WqhjRxkpGHkqbFz59EVS4GHQDZIT8fRGnSymyiSfjXU/Xb6lGe/pSNwK0BCQD
+ iSCzQbIU+Ew8F0tWmAqPzeymCRFSsyWHO33dnhLRAiU0q5CtW7NNpbd+oBlhFLFjwlqhAiq+0
+ 9Bbcx8hXdTnY3WH/dyxalFMjZJTduUI67lYoggwZ6VLI7UXCh7qEMMfIIUoAWHzrR+qrZwjMX
+ BBGD4sFme1Mg7Dl6NiUVoOfRCVDzqgL8clhVXxQbBaXSmL/GB20FzsrFI9dZZL/rl+roDtYhV
+ lBucA29XyX8TPoirlB52M0XFMD5kDreeVep7mGGSahxYQ5yR37WLg/1hN2So=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 =E2=80=A6
-> +++ b/fs/exfat/exfat_fs.h
-=E2=80=A6
-> +unsigned int exfat_get_entry_type(struct exfat_dentry *p_entry);
-=E2=80=A6
-> +int exfat_calc_num_entries(struct exfat_uni_name *p_uniname);
-=E2=80=A6
-> +int exfat_count_dir_entries(struct super_block *sb, struct exfat_chain =
-*p_dir);
+> +++ b/fs/exfat/nls.c
 =E2=80=A6
 > +int exfat_nls_cmp_uniname(struct super_block *sb, unsigned short *a,
-> +		unsigned short *b);
+> +		unsigned short *b)
+> +{
+> +	int i;
+> +
+> +	for (i =3D 0; i < MAX_NAME_LENGTH; i++, a++, b++) {
+> +		if (exfat_nls_upper(sb, *a) !=3D exfat_nls_upper(sb, *b))
 
+Can it matter to compare run time characteristics with the following
+code variant?
 
-I have taken another look also at these function declarations.
-Please improve the const-correctness here.
++	for (i =3D 0; i < MAX_NAME_LENGTH; i++) {
++		if (exfat_nls_upper(sb, a[i]) !=3D exfat_nls_upper(sb, b[i]))
 
 Regards,
 Markus
