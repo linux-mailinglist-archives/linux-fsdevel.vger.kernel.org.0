@@ -2,35 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB7AE12D8AB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Dec 2019 14:00:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEAF312D8F9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Dec 2019 14:25:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbfLaNAn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Dec 2019 08:00:43 -0500
-Received: from mout.web.de ([212.227.17.11]:48617 "EHLO mout.web.de"
+        id S1726709AbfLaNZ2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Dec 2019 08:25:28 -0500
+Received: from mout.web.de ([212.227.17.12]:42901 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726229AbfLaNAn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Dec 2019 08:00:43 -0500
+        id S1726229AbfLaNZ1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 31 Dec 2019 08:25:27 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1577797228;
-        bh=E2HgD9nBbFjio41NEe6vaMsromNwNlpF21WUg2UIpOk=;
-        h=X-UI-Sender-Class:To:Cc:References:Subject:From:Date:In-Reply-To;
-        b=k8le8wC+e9+ioEkmdyavFxO2vEvgUlD5UPoSp4Z6p9vqe6h7waTHTjfTZsupcbnKZ
-         s/myuKB6KhCVJN8/HRLEyzeJsnLBfHxj9TNbJkIvd5DWz4X2dnl1nMuphgYObcVgQx
-         /+EUZrtMv0sZKAgacXGtxcUqEbf9oG0JyBMF6wUY=
+        s=dbaedf251592; t=1577798712;
+        bh=470q3I825nYFxXPcP3MP9hzsbCX3q75kHxojLYycG3o=;
+        h=X-UI-Sender-Class:Cc:References:Subject:To:From:Date:In-Reply-To;
+        b=IKEbwOC+2WHnzi2KTszdTYJMCn91ixuTyj+w0Uu+2Wff+6Q117/rFXSuy55jYFFJX
+         OtutirVFP2lXZOwe5XIy6+awnHyrk1NFJPJhklx8zWQmlGjAKzKv43qCcJWsYKzfYc
+         5r9GD9TwByEsKcQ0MNkOKuRxYOYRnW727PJ80y0M=
 X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.131.105.164]) by smtp.web.de (mrweb102
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0Md4l4-1j3Fks0dqE-00IAuS; Tue, 31
- Dec 2019 14:00:28 +0100
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org
+Received: from [192.168.1.2] ([93.131.105.164]) by smtp.web.de (mrweb103
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0LlWCR-1jLtK31rBH-00bLwh; Tue, 31
+ Dec 2019 14:25:12 +0100
 Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sungjong Seo <sj1557.seo@samsung.com>,
         =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
         linkinjeon@gmail.com
-References: <20191220062419.23516-1-namjae.jeon@samsung.com>
-Subject: Re: [PATCH v8 00/13] add the latest exfat driver
+References: <20191220062419.23516-2-namjae.jeon@samsung.com>
+Subject: Re: [PATCH v8 01/13] exfat: add in-memory and on-disk structures and
+ headers
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-fsdevel@vger.kernel.org
 From:   Markus Elfring <Markus.Elfring@web.de>
 Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
@@ -75,48 +76,52 @@ Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
  x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
  pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <6adef0a3-8bb7-1ac4-0891-4d56edfa9df8@web.de>
-Date:   Tue, 31 Dec 2019 14:00:17 +0100
+Message-ID: <33715804-5d15-cd21-a885-3e892061161b@web.de>
+Date:   Tue, 31 Dec 2019 14:25:10 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.1
 MIME-Version: 1.0
-In-Reply-To: <20191220062419.23516-1-namjae.jeon@samsung.com>
+In-Reply-To: <20191220062419.23516-2-namjae.jeon@samsung.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Provags-ID: V03:K1:A2FRB0BAbHQIJIr7lMqGP2UIMxkyd7uK+JPSSyjzadAqqqjLcnz
- Td1/tsF2l3eb/GivrDYKzOploXl6pBk5jKnF1R7kBhZ5H3RQqs56TRS4+mfudSmrXLFk34W
- 1NRg0aZ9ACqmPCR/6Wih9S2qGHY8df9QUrUl1LYneq+jX7oGONpZdhvK54VZ+VimD8Dqk/0
- PITT1xgYhEQkNPVzgfvMQ==
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:6mynOxjQEKhVU+L7koUvJFS75Apb//Ce0dHCOW/QsGaLW14O41W
+ 1GOnvYs6C95jZB8uwNP5xyuMcQcTvJBIQ57qbAWg19kVCWRWNnptpOQh5JX/Vck/1eTlpIh
+ IfTqKLXfkYOvcYlualbA1ZAMxd+Q7yZ84iIxVNHcsIfVKTVRjyXtvZ9my4hbLDGaEbF3pEi
+ GMStfQ4PrffAWuHt3ZjAA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:LdhRFhqyDkQ=:v7udlbs+Tb0d+YBYrtK5C8
- Ar6KmLw085wR8bDSta7HKCWQpU4xCOrpWV8YohB8zxELQadXTOCWkOSbcxXQmo4I3Ulp9tzGY
- w2USdlXYBwWAvv+TPMs9QCVps4nTSTLFY4sEIUi7ZGSfNyjKEGNvE1wwmNZfGKVHlzo1s2tls
- OrlB1wtQJG0N3Vt0bx4FApkL2aMvnYfqUXwPdwbkXThzjTV0WkwMW0t4buuNhnfKXxVEmxMPP
- MSb8qn0xRg9cGgybeAcLLircHrB3tfQWYcV04uvNrE0iaLZ+Y6hOKokdQP+LZze2vaoMCqO+2
- NCSKbVy3Ro7XO3vwoS0Riv5ogt4RFbMC1EWFjYPnp34aAmn39ahb7c4nN/8dOyNPWmj2ZvkEg
- 34MlFZC0hEm6cne4/oCrfIvEe0uxp3327OKCGtoR6wzTCqdI3/GA+XLQR8pLVMsnEdhbFhmA0
- RS5aumIFsiIHJBW9rTHIKqTBkIEg/8bAYtKpjeBxkIZ7pBSf4K7IDNPOnc7OXMMRvD1vIdtB5
- k2HOZ8CO2LO8+JXU7r/a+RwGUhOioldKDsPbGll8m81Fqsu5azisXx3m2+xYqXUN1KFvK6eEy
- vIo3v693nCvjl/fkHMa+cM+wf7w+hZ0muk4IW/XdBbnfKF7WM2FQdnUd3DEfI/9vFuNePVNvl
- Sgek1/ey92C66Bj3QkdRaZDvCWYSgoB182NpWxyRPxzbpnYflBLfAUsaHL1TZJshNf/aMeu6z
- ik37Ruc+e+Y8ny96xoGg7m0rNxIJN7XyHEKeIZUBwP0PNdt2kmz2ym7mBB04HhYVhup2UBMWh
- f5ognVKgIfgzMZI1jwOivG3B1BHz+TE32XFa8wRrde52iDVVn90wlI+dmj68fLpna64SBR0OD
- w9OGjDOlr61SpUfstHPuWb1Oy02SnEY719e9JKHbqm1kXAbJlPHHpB/Tt1Grj0FM1Goe+X+zk
- /wulsh9FR9vskglRlUYpy29be1LY6cM5dfmig5Olv1/RD6HK6lIwvUiWKJGBB7Z2ZTTTnaQ4i
- IXwrKK8fSUrVOh49PL3wLxKhSCZ79pTJVKGRP9f3lov65hF9Yq0raIhsMcsz7kvqzAT/brHO/
- MXBoMdXv1ciCd8CbmGUAC0vqR3Jtedgvz95FEe0Viav2Zx6BPLrNJ/A46bz7B4odgidjOAOSs
- vA+iavcXj6nlxfDW4MS2+lVCtOTylTAgciqcGYdfV2MTPMMpsj64yZbJL711H2JfC82uBIBS7
- 73vCT24G5dMCL5mwzt0BaXzNLYQBEJ8dFvpvMn6vmtBw0Id/F+raM8MK9Cc4=
+X-UI-Out-Filterresults: notjunk:1;V03:K0:4pqTkmkJDr4=:6n8fQg5dHD4jgCgvEQC5ev
+ +k6RTwn/1NBuOXKFzrkRRJs0Z10AH1z5c4Llk/jEV0KsUI4Z6FIAJOsxaFq1X6BKykqvc0UhX
+ w+vLev1tMdgS87lbpOG8/YbwOMKxfIhoF7xbof/VpGHJmlwN6yVIknEhzyjH1OLxmI0kWj0OV
+ xDtXb2hLg2QF5QrLQQyvzLe/z60mHBoSqRrf98Thiqm8BvZqAU0yzDSDKAX0/3AiUSfK8YSaa
+ E72+YZ4VeImZoJb9ufLwGfHz1yVmILKOlJbppiHe2g5HoPx0XxXgozLNVsBqvn/BUX4WWijn7
+ Gz7J++GbUr1uNeV3r0rmnSRKftYPf8ABU+MQopwSg/lDHOZhhEEzKo39tZxuMIHneaj4dS+7r
+ gRXL1rULBLuDEAylH2zsWpEFmKlMaULSQw1fXZhq8Wx0s6J9zORl3Ght3+ah9Q1qVicIGsOlq
+ d0BkoFLbdFIUu2kwff2wS/hpt99YDCnSaO0LZlSZnMAr+oX/KIBQhfk05uAmbR+4onlUuuaku
+ lTnO0VwxNcRcZbpm/A7WbQoDAfeYRsNUA8kvMxCQBRn7f9oPTqrQPUCLENlY97KiD06exSea5
+ vGykAn/LYPzQtPlURa/baEiJEChPmPzSkT5zFh4UwMx8oPBJoM2tzksVKuRMwcSHDovR5Kuko
+ c1tvOcW5kWnFFp2FFC0BEsbUqru9h25W5qtztWTvNtuIbkhu+BkAzgBp1uz+KJVSAvVPDp8iH
+ v1htlHof8uB/l4kCgTToSTg6LGKku95pjGkzIxyiOoO08RjohsMcMLRU0SD3XuYIJyo31oHEA
+ ovFUoRklKZuK4UWe0vGVaaVssEruVU/Fok/hsI8WfjeRqzQV9jZcLNsGAA1ctZW0h53NeQzsh
+ KyMytWC/in831glPeZtTI7pOBUHjd+EE77Gcq2B8Iug2gGOBu07orpF8NYoqIURqoVBi0TIyD
+ oMWrQSJ4MH1UZBJM/4M2CUGt7COrem6SWEMBvvPB845SyOfard5s2Sshi0SdLhO85I+olkKqq
+ 8aKVbsr/wVYrFu1z8Wbn3zit53j7s9qUZ/nlYrBehbD4wnD43r0ctIDK6thVPEjc52fQG7nKu
+ 6SkH11T12pTZ/4LAN6CVMj4iKiNYJAD5/ogxnxM7+cVFHK/WMvqUth2jMcTErjeXLTOWbsb7W
+ e9HKnsFdGh0LSAj2iuwhIP27xuPG3axOOWgV/N/7X68mth1QlCQ2Aru6jtniip7UjdhxJQ4/H
+ mbERSM8rUoU5XwoK+1BuI2ZB1bQSRhyZpbE5ucMvTB27WWMoVQGKoXSbzIFI=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> We plan to treat this version as the future upstream for the code base
-> once merged, and all new features and bug fixes will go upstream first.
+=E2=80=A6
+> +++ b/fs/exfat/exfat_fs.h
+=E2=80=A6
+> +/* type values */
 
-Another constructive feedback would have been nice for this question:
-Would you like to offer and integrate any test cases?
+Will the conversion of the specification =E2=80=9C#define TYPE_=E2=80=A6=
+=E2=80=9D into enumerations
+get any further software development attention?
 
 Regards,
 Markus
