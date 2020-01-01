@@ -2,111 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7556D12DD78
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jan 2020 04:08:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29A0F12DE8F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jan 2020 11:53:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727145AbgAADIa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Dec 2019 22:08:30 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:42142 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727132AbgAADIa (ORCPT
+        id S1725924AbgAAKxA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Jan 2020 05:53:00 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58270 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725851AbgAAKxA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Dec 2019 22:08:30 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1imUMp-00079e-Tz; Wed, 01 Jan 2020 03:08:15 +0000
-Date:   Wed, 1 Jan 2020 03:08:15 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        stable@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Serge Hallyn <serge@hallyn.com>, dev@opencontainers.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 0/1] mount: universally disallow mounting over
- symlinks
-Message-ID: <20200101030815.GA17593@ZenIV.linux.org.uk>
-References: <20191230052036.8765-1-cyphar@cyphar.com>
- <20191230054413.GX4203@ZenIV.linux.org.uk>
- <20191230054913.c5avdjqbygtur2l7@yavin.dot.cyphar.com>
- <20191230072959.62kcojxpthhdwmfa@yavin.dot.cyphar.com>
- <20200101004324.GA11269@ZenIV.linux.org.uk>
- <20200101005446.GH4203@ZenIV.linux.org.uk>
+        Wed, 1 Jan 2020 05:53:00 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 001ApcJK025227
+        for <linux-fsdevel@vger.kernel.org>; Wed, 1 Jan 2020 05:52:59 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2x87mq3xkq-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Jan 2020 05:52:58 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
+        Wed, 1 Jan 2020 10:52:57 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 1 Jan 2020 10:52:53 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 001AqqXU48103666
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 1 Jan 2020 10:52:52 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 680755204F;
+        Wed,  1 Jan 2020 10:52:52 +0000 (GMT)
+Received: from dhcp-9-199-159-72.in.ibm.com (unknown [9.199.159.72])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 3A8C952054;
+        Wed,  1 Jan 2020 10:52:49 +0000 (GMT)
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+To:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+Cc:     willy@infradead.org, jlayton@kernel.org,
+        ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, devel@lists.orangefs.org,
+        linux-unionfs@vger.kernel.org, dsterba@suse.cz,
+        Ritesh Harjani <riteshh@linux.ibm.com>
+Subject: [RESEND PATCH 0/1] Use inode_lock/unlock class of provided APIs in filesystems
+Date:   Wed,  1 Jan 2020 16:22:47 +0530
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200101005446.GH4203@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20010110-0012-0000-0000-00000379A8D2
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20010110-0013-0000-0000-000021B5B68A
+Message-Id: <20200101105248.25304-1-riteshh@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2020-01-01_03:2019-12-30,2020-01-01 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
+ suspectscore=0 spamscore=0 impostorscore=0 priorityscore=1501
+ lowpriorityscore=0 adultscore=0 mlxscore=0 bulkscore=0 malwarescore=0
+ mlxlogscore=384 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-2001010101
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 01, 2020 at 12:54:46AM +0000, Al Viro wrote:
-> Note, BTW, that lookup_last() (aka walk_component()) does just
-> that - we only hit step_into() on LAST_NORM.  The same goes
-> for do_last().  mountpoint_last() not doing the same is _not_
-> intentional - it's definitely a bug.
-> 
-> Consider your testcase; link points to . here.  So the only
-> thing you could expect from trying to follow it would be
-> the directory 'link' lives in.  And you don't have it
-> when you reach the fscker via /proc/self/fd/3; what happens
-> instead is nd->path set to ./link (by nd_jump_link()) *AND*
-> step_into() called, pushing the same ./link onto stack.
-> It violates all kinds of assumptions made by fs/namei.c -
-> when pushing a symlink onto stack nd->path is expected to
-> contain the base directory for resolving it.
-> 
-> I'm fairly sure that this is the cause of at least some
-> of the insanity you've caught; there always could be
-> something else, of course, but this hole needs to be
-> closed in any case.
+Al, any comments?
+Resending this after adding Reviewed-by/Acked-by tags.
 
-... and with removal of now unused local variable, that's
 
-mountpoint_last(): fix the treatment of LAST_BIND
+From previous version:-
+Matthew Wilcox in [1] suggested that it will be a good idea
+to define some missing API instead of directly using i_rwsem in
+filesystems drivers for lock/unlock/downgrade purposes.
 
-step_into() should be attempted only in LAST_NORM
-case, when we have the parent directory (in nd->path).
-We get away with that for LAST_DOT and LOST_DOTDOT,
-since those can't be symlinks, making step_init() and
-equivalent of path_to_nameidata() - we do a bit of
-useless work, but that's it.  For LAST_BIND (i.e.
-the case when we'd just followed a procfs-style
-symlink) we really can't go there - result might
-be a symlink and we really can't attempt following
-it.
+This patch does that work. No functionality change in this patch.
 
-lookup_last() and do_last() do handle that properly;
-mountpoint_last() should do the same.
+After this there are only lockdep class of APIs at certain places
+in filesystems which are directly using i_rwsem and second is XFS,
+but it seems to be anyway defining it's own xfs_ilock/iunlock set
+of APIs and 'iolock' naming convention for this lock.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
-diff --git a/fs/namei.c b/fs/namei.c
-index d6c91d1e88cb..13f9f973722b 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2643,7 +2643,6 @@ EXPORT_SYMBOL(user_path_at_empty);
- static int
- mountpoint_last(struct nameidata *nd)
- {
--	int error = 0;
- 	struct dentry *dir = nd->path.dentry;
- 	struct path path;
- 
-@@ -2656,10 +2655,7 @@ mountpoint_last(struct nameidata *nd)
- 	nd->flags &= ~LOOKUP_PARENT;
- 
- 	if (unlikely(nd->last_type != LAST_NORM)) {
--		error = handle_dots(nd, nd->last_type);
--		if (error)
--			return error;
--		path.dentry = dget(nd->path.dentry);
-+		return handle_dots(nd, nd->last_type);
- 	} else {
- 		path.dentry = d_lookup(dir, &nd->last);
- 		if (!path.dentry) {
+[1]: https://www.spinics.net/lists/linux-ext4/msg68689.html
+
+Ritesh Harjani (1):
+  fs: Use inode_lock/unlock class of provided APIs in filesystems
+
+ fs/btrfs/delayed-inode.c |  2 +-
+ fs/btrfs/ioctl.c         |  4 ++--
+ fs/ceph/io.c             | 24 ++++++++++++------------
+ fs/nfs/io.c              | 24 ++++++++++++------------
+ fs/orangefs/file.c       |  4 ++--
+ fs/overlayfs/readdir.c   |  2 +-
+ fs/readdir.c             |  4 ++--
+ include/linux/fs.h       | 21 +++++++++++++++++++++
+ 8 files changed, 53 insertions(+), 32 deletions(-)
+
+-- 
+2.21.0
+
