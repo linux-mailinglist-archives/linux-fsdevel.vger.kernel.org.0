@@ -2,76 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0677912DC5C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jan 2020 00:56:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0BEE12DC6C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jan 2020 01:43:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727117AbfLaX4G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Dec 2019 18:56:06 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:35922 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727079AbfLaX4F (ORCPT
+        id S1727120AbgAAAnm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Dec 2019 19:43:42 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:40824 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726738AbgAAAnm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Dec 2019 18:56:05 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 19so39450254otz.3;
-        Tue, 31 Dec 2019 15:56:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=D5S8IPW/h1uoAlBQIQx6nANKjd+aLLZTTNCAji5s5CU=;
-        b=iZdv8SgqnRDXVuCHsAINVukwSVPIJd83mSCUrL5GOYSZNS3PrZ94is15np1cZBqKbU
-         3O3vVhlpzPR4fBLDymWckN/1La8zcYiiFINrqD7gIa+b9YarAbPMLUhxs7J9pla0KwT+
-         M9Dj/1R6PoMzIi4kogS5aSVQbLSoi/d/f8sanIDNWORF8nelFs349i/75aB2oQQediYl
-         BCFwXT8HGFZEIv16hz3JscbUvSFP1IFxUf3aKCgwzOQ5rKWrfpWi40JbjfYf/D/scLsh
-         4Ri54keRCQbO/EJH8aZgDTF2tlxk+I6IJ0cN27k6Ha4wkAUEOZkjpIlYsqAdVISUK4XF
-         W6yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=D5S8IPW/h1uoAlBQIQx6nANKjd+aLLZTTNCAji5s5CU=;
-        b=a8YMGjREg5Qc3oiLPAkJyQWV/sFW5r2IsPQVQqQLGo/9C93UWhX5TuLFzT2iZZ5p1W
-         fZd8AmPJLn/ixZd/C+zKPP9cgR4/yQLnwMTjLVv3wAgTJ65FuVfCphf/r7X7iWNz0Je5
-         Gz98dC1cDDzEjKE05FiKFP4EtQWGUW2vyTBqFGzrD6asBp6aBiaMK33bXncbcicmzbHA
-         LO/F/8oaBzQYVqH9ACzqIDzNEbSlr53p+ru44BKHfdfRboQqoxgZplbJYHTOZl0QkFlR
-         SgSEliL9eqS+dXyGmq3YZxm+tzyZDV8Of6knU5of+5qCmEeFOxRbfHEluPm/2ymt3eGm
-         uAng==
-X-Gm-Message-State: APjAAAUDarpqEUmqYXCfARZW1oDdsKG/AtGDzmKb0Zm7SwyyjTlhgfw5
-        Yjyzl28mnPOW7d92vnZzHC0XldU3QTYnViK7NonCEg==
-X-Google-Smtp-Source: APXvYqxufQPYr22hnbCvi8UElxCNbn/fQAEW4UO6BWA/q+GmQhZbBKWRMJd5d8R7F4JldW09VHtXmKDZvhyYKqffVO0=
-X-Received: by 2002:a9d:6196:: with SMTP id g22mr85931846otk.204.1577836564711;
- Tue, 31 Dec 2019 15:56:04 -0800 (PST)
+        Tue, 31 Dec 2019 19:43:42 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1imS6e-00048x-Vr; Wed, 01 Jan 2020 00:43:25 +0000
+Date:   Wed, 1 Jan 2020 00:43:24 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Serge Hallyn <serge@hallyn.com>, dev@opencontainers.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 0/1] mount: universally disallow mounting over
+ symlinks
+Message-ID: <20200101004324.GA11269@ZenIV.linux.org.uk>
+References: <20191230052036.8765-1-cyphar@cyphar.com>
+ <20191230054413.GX4203@ZenIV.linux.org.uk>
+ <20191230054913.c5avdjqbygtur2l7@yavin.dot.cyphar.com>
+ <20191230072959.62kcojxpthhdwmfa@yavin.dot.cyphar.com>
 MIME-Version: 1.0
-Received: by 2002:a8a:87:0:0:0:0:0 with HTTP; Tue, 31 Dec 2019 15:56:03 -0800 (PST)
-In-Reply-To: <20191231151415.GE6788@bombadil.infradead.org>
-References: <CGME20191220062731epcas1p475b8da9288b08c87e474a0c4e88ce219@epcas1p4.samsung.com>
- <20191220062419.23516-1-namjae.jeon@samsung.com> <20191231151415.GE6788@bombadil.infradead.org>
-From:   Namjae Jeon <linkinjeon@gmail.com>
-Date:   Wed, 1 Jan 2020 08:56:03 +0900
-Message-ID: <CAKYAXd9xJM6s-cPeRho5u3+A=B4qCG2FFcYKq++SrQGy4cMX9A@mail.gmail.com>
-Subject: Re: [PATCH v8 00/13] add the latest exfat driver
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191230072959.62kcojxpthhdwmfa@yavin.dot.cyphar.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2020-01-01 0:14 GMT+09:00, Matthew Wilcox <willy@infradead.org>:
-> On Fri, Dec 20, 2019 at 01:24:06AM -0500, Namjae Jeon wrote:
->> This adds the latest Samsung exfat driver to fs/exfat. This is an
->> implementation of the Microsoft exFAT specification. Previous versions
->> of this shipped with millions of Android phones, and a random previous
->> snaphot has been merged in drivers/staging/.
->
-> Can one run xfstests against this filesystem?
-Yes, We also use xfstests for exfat validation.
+On Mon, Dec 30, 2019 at 06:29:59PM +1100, Aleksa Sarai wrote:
+> On 2019-12-30, Aleksa Sarai <cyphar@cyphar.com> wrote:
+> > On 2019-12-30, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > > On Mon, Dec 30, 2019 at 04:20:35PM +1100, Aleksa Sarai wrote:
+> > > 
+> > > > A reasonably detailed explanation of the issues is provided in the patch
+> > > > itself, but the full traces produced by both the oopses and deadlocks is
+> > > > included below (it makes little sense to include them in the commit since we
+> > > > are disabling this feature, not directly fixing the bugs themselves).
+> > > > 
+> > > > I've posted this as an RFC on whether this feature should be allowed at
+> > > > all (and if anyone knows of legitimate uses for it), or if we should
+> > > > work on fixing these other kernel bugs that it exposes.
+> > > 
+> > > Umm...  Are all of those traces
+> > > 	a) reproducible on mainline and
+> > 
+> > This was on viro/for-next, I'll retry it on v5.5-rc4.
+> 
+> The NULL deref oops is reproducible on v5.5-rc4. Strangely it seems
+> harder to reproduce than on viro/for-next (I kept reproducing it there
+> by accident), but I'll double-check if that really is the case.
+> 
+> The simplest reproducer is (using the attached programs and .config):
+> 
+>   ln -s . link
+>   sudo ./umount_symlink link
 
-> Or does it require other tools, eg mkfs.exfat?
-Some testcases(scratch) will not run without mkfs.exfat. I am
-preparing exfat-tools included mkfs.exfat and fsck.exfat. Or may use
-mkfs in fuse-exfat(https://github.com/relan/exfat) for now...
+FWIW, the problem with that reproducer is that we *CAN'T* resolve that
+path.  Look: you have /proc/self/fd/3 resolve to ./link.  OK, you've
+asked to follow that.  Got ./link, which is a symlink, so we need to
+follow it further.  Relative to what, though?
+
+The meaning of symlink is dependent upon the directory you find it in.
+And we don't have any here.
+
+The bug is in mountpoint_last() - we have
+        if (unlikely(nd->last_type != LAST_NORM)) {
+                error = handle_dots(nd, nd->last_type);
+                if (error)
+                        return error;
+                path.dentry = dget(nd->path.dentry);
+        } else {
+                path.dentry = d_lookup(dir, &nd->last);
+                if (!path.dentry) {
+                        /*
+                         * No cached dentry. Mounted dentries are pinned in the
+                         * cache, so that means that this dentry is probably
+                         * a symlink or the path doesn't actually point
+                         * to a mounted dentry.
+                         */
+                        path.dentry = lookup_slow(&nd->last, dir,
+                                             nd->flags | LOOKUP_NO_REVAL);
+                        if (IS_ERR(path.dentry))
+                                return PTR_ERR(path.dentry);
+                }
+        }
+        if (d_flags_negative(smp_load_acquire(&path.dentry->d_flags))) {
+                dput(path.dentry);
+                return -ENOENT;
+        }
+        path.mnt = nd->path.mnt;
+        return step_into(nd, &path, 0, d_backing_inode(path.dentry), 0);
+in there, and that ends up with step_into() called in case of LAST_DOT/LAST_DOTDOT
+(where it's harmless) *AND* in case of LAST_BIND.  Where it very much isn't.
+
+I'm not sure if you have caught anything else, but we really, really should *NOT*
+consider the LAST_BIND as "maybe we should follow the result" material.  So
+at least the following is needed; could you check if anything else remains
+with that applied?
+
+diff --git a/fs/namei.c b/fs/namei.c
+index d6c91d1e88cb..d4fbbda8a7ff 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2656,10 +2656,7 @@ mountpoint_last(struct nameidata *nd)
+ 	nd->flags &= ~LOOKUP_PARENT;
+ 
+ 	if (unlikely(nd->last_type != LAST_NORM)) {
+-		error = handle_dots(nd, nd->last_type);
+-		if (error)
+-			return error;
+-		path.dentry = dget(nd->path.dentry);
++		return handle_dots(nd, nd->last_type);
+ 	} else {
+ 		path.dentry = d_lookup(dir, &nd->last);
+ 		if (!path.dentry) {
