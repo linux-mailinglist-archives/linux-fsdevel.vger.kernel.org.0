@@ -2,123 +2,232 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 767E112E734
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2020 15:20:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CEFA12E796
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2020 15:56:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728527AbgABOU3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Jan 2020 09:20:29 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42049 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728470AbgABOU3 (ORCPT
+        id S1728571AbgABO4e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Jan 2020 09:56:34 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:44851 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728544AbgABO4e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Jan 2020 09:20:29 -0500
-Received: by mail-wr1-f66.google.com with SMTP id q6so39299021wro.9;
-        Thu, 02 Jan 2020 06:20:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=jW0bEHzRFYYf6qnsWzVCE8D6jWZAjzMpoArK+oSeNAE=;
-        b=lAuzzY8WWZk6n7jKrodVmyR/4IP9c9zdS5GmgQzj0WGEdk9EMgggLAuONmx0GASO0O
-         3k2PvKwk4a82sYoq5qikmlGSw2T2BQL6A1wmOEpL3UMATrxK7EiVMpLI1FgvusxNhnXi
-         AEBiloOAJii9pgPvL4wFbYVMi6W8NbcReL7lr0jxlsKOBhrfv3K/8mNLNRtQUN6xWmEG
-         fSNweWo19xuJmolQqs+tqMo2AU7ZHMZS4oVWlIz3HutMcIPoFGUJo9X6lbr1a2AzEMrS
-         aI0DJkcO4/Df2Y0iVvwpXjGN+HHZBzi+I6MIFjeWQHWWPbRhwY68uSXSxk8yfvD2KD9D
-         e37A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=jW0bEHzRFYYf6qnsWzVCE8D6jWZAjzMpoArK+oSeNAE=;
-        b=bEh61r2b1UdiuhaZgJtMPp/FfZHmhxDx8YEhRKcCLGTDu4CNXeuhdrUUcwSuc4yL2s
-         6BTPstqFUHN2pe+EUhdMRCcMY6ZtI23za/Zp2NOOucDyah2XK6tbmgLw2ATUFyN+6LGi
-         7sUUZxb43eJHa4hm5SKHISJCh3woqeAq3H2OdPLbXLSPrMgHAw+j0EpqX5Om01kWEwxT
-         8cOzulemWJwPscHu46KJmyr5pITEn5IHRiaIAO9kyMzmS95odgoxxGiFR30xuNjE8xA/
-         YTUXb0RG0X/7EL7FHgyRyxRuGCiL+EqBEAUU+TnpVG5kdvci3yUXH7AvUfEzUYqRvKki
-         aFYw==
-X-Gm-Message-State: APjAAAUDxNTfOfmkB+tCwU5mGbLx2RDNHVDK5FEv7QAwNBw+M8xwYTpN
-        zunhM74XCVBVQoLyBOGC6RY=
-X-Google-Smtp-Source: APXvYqwKufscjQHQQQARenB2O2ju2sbn9cu4PZtEG1zdDgiOsECRa+DAaLSrvhhodS18IiCyk9zAnA==
-X-Received: by 2002:a5d:6886:: with SMTP id h6mr70012087wru.154.1577974827981;
-        Thu, 02 Jan 2020 06:20:27 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id i16sm8750799wmb.36.2020.01.02.06.20.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jan 2020 06:20:27 -0800 (PST)
-Date:   Thu, 2 Jan 2020 15:20:26 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Namjae Jeon <namjae.jeon@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com, linkinjeon@gmail.com
-Subject: Re: [PATCH v9 10/13] exfat: add nls operations
-Message-ID: <20200102142026.wb5glvnf5c7uweed@pali>
-References: <20200102082036.29643-1-namjae.jeon@samsung.com>
- <CGME20200102082407epcas1p4cf10cd3d0ca2903707ab01b1cc523a05@epcas1p4.samsung.com>
- <20200102082036.29643-11-namjae.jeon@samsung.com>
+        Thu, 2 Jan 2020 09:56:34 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MbAxU-1jKAn32tui-00bb23; Thu, 02 Jan 2020 15:56:17 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-scsi@vger.kernel.org,
+        linux-block@vger.kernel.org, y2038@lists.linaro.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux-doc@vger.kernel.org, corbet@lwn.net, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL v3 00/27] block, scsi: final compat_ioctl cleanup
+Date:   Thu,  2 Jan 2020 15:55:18 +0100
+Message-Id: <20200102145552.1853992-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200102082036.29643-11-namjae.jeon@samsung.com>
-User-Agent: NeoMutt/20180716
+X-Provags-ID: V03:K1:RN5FG3a22wHmkIpHaHUqEjmhCcVfp18qzdGmYwNx+0Xw7GzT0S1
+ EISjiyHJbbFeeht4Se7zxWIbgYjPD6ZDhYzt+lZK068EvNUTT9jMLxqwgtP3CTDdiLqgcaf
+ yZ6ubv8TY3XlF7JBIYoa6wRh7mkIkbgZ9sAeppsLeXu6UJFKWYJng9f/5/xPmxC49kk/qCD
+ uJJwopaugKkyIBribgcDA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:QYcPG+gLiC8=:lBVJ8B67jqqyuuBfc3KmUJ
+ Gv9xY2R6Cb7GsdXNu6UVZgo6sUNZIVbX+rouPy1AbAywl3d3VFLyq6L+qsrQbfIEHDolo7vbW
+ iVDKppmS5DLsyc/2fnCgaCJVkrkkKLSGfKFKELJjPJyiQKD4M+qdG+c0E4IUGUOMB1rth3d0L
+ q3xRktib3QE/+/Q22CxRIQMBQ7Ayy9BJzJpZfGSCeLg5ftwYmk615qoyeboEDWH9YuJonhhH4
+ 7McorCy3eBvWl023gYELN4FkMqwnHc1W43d3LzwQPRbQUwRrvPetZMtCut/EG9Q3xBgSPOgnb
+ XlG6d4A+09kpoglUJ+WfAjvEgcgUgrdHPx3h2BojApX4gu1yfkcY7mqJ73e/m5g39qQhF+1gh
+ FBG6Wbm3UVwrNDuisuJXY+n5tXrzNusbwhlD7AR03htWIO4C2M9MF3E8mU049SyQi3Yln3b4r
+ 16/NYydRuQ/1FYPlaU0mtg4xlLpNliS818PQyyG8JgwF2HfcUvO5/jLrRRTyJeaZmNsPE2h4j
+ wwSpGs+zdvZ1LbzcGWoyW1NRVmLaBChZOhF5ms8q3bDB23/6bolhvK3JDInA7wtmCTfBY1AJR
+ MQpdl+vCFYNEiXraUKFqpC83GjJGIq0X1jGoOCwWUUd1hLa2a/vOlzmhlHoLh3z3uX6oUm8K1
+ ZvAVOF2Mz9OniLBNejsZeAtI1qchsylAOMRioYf7YtVtBaCO7eWLqxfSlxpaeCDO5OvTWZMXx
+ AA73cpBZJuyV9aRN3Nlu+mruxPV34P5el7KA3heupbJdIp+dZdy2Qvz4ZBJDQthFQrC1CBbXc
+ 2oX7O6a1fmgqnjHn0L8kQTVcJHGdXOD/i4VPWc2eDbj7wJFKW7NgdUrLZiQqK7nqh6AETnWe0
+ AFqHkPMnGh+4Edaw3fZw==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thursday 02 January 2020 16:20:33 Namjae Jeon wrote:
-> This adds the implementation of nls operations for exfat.
-> 
-> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
-> ---
->  fs/exfat/nls.c | 809 +++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 809 insertions(+)
->  create mode 100644 fs/exfat/nls.c
-> 
-> diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
-> new file mode 100644
-> index 000000000000..af52328e28ff
-> --- /dev/null
-> +++ b/fs/exfat/nls.c
-> @@ -0,0 +1,809 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Copyright (C) 2012-2013 Samsung Electronics Co., Ltd.
-> + */
-> +
-> +#include <linux/string.h>
-> +#include <linux/nls.h>
-> +#include <linux/slab.h>
-> +#include <linux/buffer_head.h>
-> +#include <asm/unaligned.h>
-> +
-> +#include "exfat_raw.h"
-> +#include "exfat_fs.h"
-> +
-> +/* Upcase tabel macro */
-> +#define EXFAT_NUM_UPCASE	(2918)
-> +#define UTBL_COUNT		(0x10000)
-> +
-> +/*
-> + * Upcase table in compressed format (7.2.5.1 Recommended Up-case Table
-> + * in exfat specification, See: https://docs.microsoft.com/en-us/windows/
-> + * win32/fileio/exfat-specification).
+Hi Martin, James,
 
-Just a small suggestion: Do not wrap URLs as they are hard to copy-paste
-into web browser. Also my email client is not able to detect URL
-continue on next line...
+If this version seems ok to everyone, please pull into
+the scsi tree.
 
-> + */
-> +static const unsigned short uni_def_upcase[EXFAT_NUM_UPCASE] = {
-> +	0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007,
-> +	0x0008, 0x0009, 0x000a, 0x000b, 0x000c, 0x000d, 0x000e, 0x000f,
+The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
 
-...
+  Linux 5.5-rc4 (2019-12-08 14:57:55 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org:/pub/scm/linux/kernel/git/arnd/playground.git tags/block-ioctl-cleanup-5.6
+
+for you to fetch changes up to d1329555e914109846283e469b5077e7500ecfaf
+
+  Documentation: document ioctl interfaces better (2019-12-17 22:45:18 +0100)
+
+----------------------------------------------------------------
+block, scsi: final compat_ioctl cleanup
+
+This series concludes the work I did for linux-5.5 on the compat_ioctl()
+cleanup, killing off fs/compat_ioctl.c and block/compat_ioctl.c by moving
+everything into drivers.
+
+Overall this would be a reduction both in complexity and line count, but
+as I'm also adding documentation the overall number of lines increases
+in the end.
+
+My plan was originally to keep the SCSI and block parts separate.
+This did not work easily because of interdependencies: I cannot
+do the final SCSI cleanup in a good way without first addressing the
+CDROM ioctls, so this is one series that I hope could be merged through
+either the block or the scsi git trees, or possibly both if you can
+pull in the same branch.
+
+The series comes in these steps:
+
+1. clean up the sg v3 interface as suggested by Linus. I have
+   talked about this with Doug Gilbert as well, and he would
+   rebase his sg v4 patches on top of "compat: scsi: sg: fix v3
+   compat read/write interface"
+
+2. Actually moving handlers out of block/compat_ioctl.c and
+   block/scsi_ioctl.c into drivers, mixed in with cleanup
+   patches
+
+3. Document how to do this right. I keep getting asked about this,
+   and it helps to point to some documentation file.
+
+The branch is based on another one that fixes a couple of bugs found
+during the creation of this series.
+
+Changes since v2:
+- Rebase to v5.5-rc4, which contains the earlier bugfixes
+- Fix sr_block_compat_ioctl() error handling bug found by
+  Ben Hutchings
+- Fix idecd_locked_compat_ioctl() compat_ptr() bug
+- Don't try to handle HDIO_DRIVE_TASKFILE in drivers/ide
+- More documentation improvements
+
+Changes since v1:
+- move out the bugfixes into a branch for itself
+- clean up scsi sg driver further as suggested by Christoph Hellwig
+- avoid some ifdefs by moving compat_ptr() out of asm/compat.h
+- split out the blkdev_compat_ptr_ioctl function; bug spotted by
+  Ben Hutchings
+- Improve formatting of documentation
+
+[1] https://lore.kernel.org/linux-block/20191211204306.1207817-1-arnd@arndb.de/T/#m9f89df30565fc66abbded5d01f4db553b16f129f
+
+----------------------------------------------------------------
+
+Arnd Bergmann (22):
+  compat: ARM64: always include asm-generic/compat.h
+  compat: provide compat_ptr() on all architectures
+  compat: scsi: sg: fix v3 compat read/write interface
+  compat_ioctl: block: add blkdev_compat_ptr_ioctl
+  compat_ioctl: ubd, aoe: use blkdev_compat_ptr_ioctl
+  compat_ioctl: move CDROM_SEND_PACKET handling into scsi
+  compat_ioctl: move CDROMREADADIO to cdrom.c
+  compat_ioctl: cdrom: handle CDROM_LAST_WRITTEN
+  compat_ioctl: block: handle cdrom compat ioctl in non-cdrom drivers
+  compat_ioctl: add scsi_compat_ioctl
+  compat_ioctl: bsg: add handler
+  compat_ioctl: ide: floppy: add handler
+  compat_ioctl: scsi: move ioctl handling into drivers
+  compat_ioctl: move sys_compat_ioctl() to ioctl.c
+  compat_ioctl: simplify the implementation
+  compat_ioctl: move cdrom commands into cdrom.c
+  compat_ioctl: scsi: handle HDIO commands from drivers
+  compat_ioctl: move HDIO ioctl handling into drivers/ide
+  compat_ioctl: block: move blkdev_compat_ioctl() into ioctl.c
+  compat_ioctl: block: simplify compat_blkpg_ioctl()
+  compat_ioctl: simplify up block/ioctl.c
+  Documentation: document ioctl interfaces better
+
+ Documentation/core-api/index.rst       |   1 +
+ Documentation/core-api/ioctl.rst       | 253 +++++++++++++++
+ arch/arm64/include/asm/compat.h        |  22 +-
+ arch/mips/include/asm/compat.h         |  18 --
+ arch/parisc/include/asm/compat.h       |  17 -
+ arch/powerpc/include/asm/compat.h      |  17 -
+ arch/powerpc/oprofile/backtrace.c      |   2 +-
+ arch/s390/include/asm/compat.h         |   6 +-
+ arch/sparc/include/asm/compat.h        |  17 -
+ arch/um/drivers/ubd_kern.c             |   1 +
+ arch/x86/include/asm/compat.h          |  17 -
+ block/Makefile                         |   1 -
+ block/bsg.c                            |   1 +
+ block/compat_ioctl.c                   | 427 -------------------------
+ block/ioctl.c                          | 319 ++++++++++++++----
+ block/scsi_ioctl.c                     | 214 ++++++++-----
+ drivers/ata/libata-scsi.c              |   9 +
+ drivers/block/aoe/aoeblk.c             |   1 +
+ drivers/block/floppy.c                 |   3 +
+ drivers/block/paride/pcd.c             |   3 +
+ drivers/block/paride/pd.c              |   1 +
+ drivers/block/paride/pf.c              |   1 +
+ drivers/block/pktcdvd.c                |  26 +-
+ drivers/block/sunvdc.c                 |   1 +
+ drivers/block/virtio_blk.c             |   3 +
+ drivers/block/xen-blkfront.c           |   1 +
+ drivers/cdrom/cdrom.c                  |  35 +-
+ drivers/cdrom/gdrom.c                  |   3 +
+ drivers/ide/ide-cd.c                   |  38 +++
+ drivers/ide/ide-disk.c                 |   1 +
+ drivers/ide/ide-floppy.c               |   4 +
+ drivers/ide/ide-floppy.h               |   2 +
+ drivers/ide/ide-floppy_ioctl.c         |  35 ++
+ drivers/ide/ide-gd.c                   |  17 +
+ drivers/ide/ide-ioctls.c               |  47 ++-
+ drivers/ide/ide-tape.c                 |  11 +
+ drivers/scsi/aic94xx/aic94xx_init.c    |   3 +
+ drivers/scsi/ch.c                      |   9 +-
+ drivers/scsi/hisi_sas/hisi_sas_v1_hw.c |   3 +
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c |   3 +
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c |   3 +
+ drivers/scsi/ipr.c                     |   3 +
+ drivers/scsi/isci/init.c               |   3 +
+ drivers/scsi/mvsas/mv_init.c           |   3 +
+ drivers/scsi/pm8001/pm8001_init.c      |   3 +
+ drivers/scsi/scsi_ioctl.c              |  54 +++-
+ drivers/scsi/sd.c                      |  50 ++-
+ drivers/scsi/sg.c                      | 170 +++++-----
+ drivers/scsi/sr.c                      |  53 ++-
+ drivers/scsi/st.c                      |  51 +--
+ fs/Makefile                            |   2 +-
+ fs/compat_ioctl.c                      | 261 ---------------
+ fs/internal.h                          |   6 -
+ fs/ioctl.c                             | 131 ++++++--
+ include/linux/blkdev.h                 |   7 +
+ include/linux/compat.h                 |  18 ++
+ include/linux/falloc.h                 |   2 -
+ include/linux/fs.h                     |   4 -
+ include/linux/ide.h                    |   2 +
+ include/linux/libata.h                 |   6 +
+ include/scsi/scsi_ioctl.h              |   1 +
+ include/scsi/sg.h                      |  30 ++
+ 62 files changed, 1269 insertions(+), 1187 deletions(-)
+ create mode 100644 Documentation/core-api/ioctl.rst
+ delete mode 100644 block/compat_ioctl.c
+ delete mode 100644 fs/compat_ioctl.c
 
 -- 
-Pali Rohár
-pali.rohar@gmail.com
+2.20.0
+
+Cc: linux-scsi@vger.kernel.org
+Cc: linux-block@vger.kernel.org
+Cc: y2038@lists.linaro.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: linux-doc@vger.kernel.org
+Cc: corbet@lwn.net
+Cc: viro@zeniv.linux.org.uk
+Cc: linux-fsdevel@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>
