@@ -2,295 +2,235 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 061AC12EA11
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2020 19:50:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49F8F12EA49
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2020 20:21:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728260AbgABSuO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Jan 2020 13:50:14 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38691 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728074AbgABSuO (ORCPT
+        id S1728297AbgABTVK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Jan 2020 14:21:10 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:42922 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728129AbgABTVK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Jan 2020 13:50:14 -0500
-Received: by mail-wm1-f67.google.com with SMTP id u2so6532607wmc.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Jan 2020 10:50:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chrisdown.name; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=yl5OV5fbHfNJA4+tOMxuNGk7hMstVIfzQrRG5OR5bxI=;
-        b=FYhxxlhkNgDgEwYwnIBY8sjZ3q4ZiJMWiyJi++d1rDaethz1IUPoANKbMcMlpmaCQ2
-         mQoNl4ioAVbDWBLebHrjwGpOail23ndnkZfGJ0gelVFARNjsyV4AbTqjyr2CsaOGxuqR
-         AgoWMnKKQHPvi4srvjp4i6/kTMEUzzOGS0TcM=
+        Thu, 2 Jan 2020 14:21:10 -0500
+Received: by mail-io1-f71.google.com with SMTP id e7so25849264iog.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Jan 2020 11:21:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=yl5OV5fbHfNJA4+tOMxuNGk7hMstVIfzQrRG5OR5bxI=;
-        b=P/Vw5bhaWMUNIp7eKEK3vtgGzUfS2JIXCDc+p4G+hOYR/B+U9+ot5GZoTyhtmxv6ZE
-         oKYaKD6LLoSF3Y/Wur9BIvtMEN0u/gs1W+gnkRB32lcHZTYXTVFAtxcKs+XmjXnGjVNG
-         XE8/yHRLlLQYLpWNOifKIHO0VMy3kNNwMTclygWZzuaZNnNbIS2SdbTJZd5CINpqM924
-         ymhbwO3kqtUnMJddrbrsN+TdtiWBERCkx5bzjteEJFsITw4kTwG1OugwUAFuMM540M9N
-         BDgT92+h/gKEBpNuuXbvnhGCDeO2eqEBBwqPhGwkDIxI9/8hmZ/6cynHH3OsYXcWrr5d
-         oFOw==
-X-Gm-Message-State: APjAAAXu150k6hJwGthvwzSV/jXshGUZrKBF7AWZnCO0jBF6qAs9y17r
-        CcL7uwv+lmGt0nwNhYEnakV0etndzQjYgA==
-X-Google-Smtp-Source: APXvYqwqSZGBCly0j37dyHl+Xu5avt07LEQEFA5z1oqiLN42hc3kjy7Q/UPIxDuZVaOFqz3+HXPvmA==
-X-Received: by 2002:a7b:cf01:: with SMTP id l1mr14818639wmg.86.1577991011672;
-        Thu, 02 Jan 2020 10:50:11 -0800 (PST)
-Received: from localhost ([2620:10d:c092:200::1:3256])
-        by smtp.gmail.com with ESMTPSA id a16sm56717090wrt.37.2020.01.02.10.50.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jan 2020 10:50:11 -0800 (PST)
-Date:   Thu, 2 Jan 2020 18:50:10 +0000
-From:   Chris Down <chris@chrisdown.name>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: [PATCH v2 2/2] tmpfs: Support 64-bit inums per-sb
-Message-ID: <34a170550a77c77ad7b6fdca86847ae7fd35d761.1577990599.git.chris@chrisdown.name>
-References: <cover.1577990599.git.chris@chrisdown.name>
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=FRfPvVAcYNlxGYRGcqUKekQKbPa/NXPujZppts6t3J8=;
+        b=rzqMHwx5W7XJVcC9TNmCocPLohMqAAND+Yyrq3/ugPIAGLkp5DoANKxvy4PUnwmQss
+         kMbtywYt9dfW4skZOssbVCW/7aBqi1Ukqb+pH4xKsgCiM18wAzSJuMQcy2Y1Ms0v6fxZ
+         vR33nsHtZds8wM2fX3oGTBkJRQI9zRHw/g19YmwxIenPVZyPcgNWOXX2hb/SfTvknHDI
+         ycMjAPrSbm81HG5aKHxlAdgc0G8xPRMZtDay24NfK/tpssWeIvrePTrbCGwTm+E115WL
+         8bGP+RNP9pxWSphBQRc1bq4DZgkvPL4RAcYUE7T8GkK95yM9MnxsPrr70h6ap/y20z3u
+         agyw==
+X-Gm-Message-State: APjAAAUP1IZWljintVJwSr168j3vjofSffbE7BE4/tO9FPe5eqxvwTn9
+        odGE1F8tlSUc5iuRG0+2t56ad1UL6qy3s5RRvw6t/fer0wP7
+X-Google-Smtp-Source: APXvYqzdv5pj8G25vHrpUCrtXdvNgIqltG+j+sQzjfmP8ihm/W3n5NcIOqfcSVL1tFTJJe5LfFSYTj0aQAEFFyyqNY7yOilaZ1Nu
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1577990599.git.chris@chrisdown.name>
+X-Received: by 2002:a6b:b504:: with SMTP id e4mr13121926iof.222.1577992869205;
+ Thu, 02 Jan 2020 11:21:09 -0800 (PST)
+Date:   Thu, 02 Jan 2020 11:21:09 -0800
+In-Reply-To: <000000000000a0f82805867fb67e@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006d62f4059b2d1893@google.com>
+Subject: Re: possible deadlock in seq_read (2)
+From:   syzbot <syzbot+5378878b09e052edef7f@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The default is still set to inode32 for backwards compatibility, but
-system administrators can opt in to the new 64-bit inode numbers by
-either:
+syzbot has found a reproducer for the following crash on:
 
-1. Passing inode64 on the command line when mounting, or
-2. Configuring the kernel with CONFIG_TMPFS_INODE64=y
+HEAD commit:    7ddd09fc Add linux-next specific files for 20191220
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1648763ee00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f183b01c3088afc6
+dashboard link: https://syzkaller.appspot.com/bug?extid=5378878b09e052edef7f
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17e706e1e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14478885e00000
 
-Signed-off-by: Chris Down <chris@chrisdown.name>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Amir Goldstein <amir73il@gmail.com>
-Cc: Jeff Layton <jlayton@kernel.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: kernel-team@fb.com
----
- Documentation/filesystems/tmpfs.txt | 11 ++++++
- fs/Kconfig                          | 18 +++++++++
- include/linux/shmem_fs.h            |  1 +
- mm/shmem.c                          | 57 ++++++++++++++++++++++++++++-
- 4 files changed, 86 insertions(+), 1 deletion(-)
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+5378878b09e052edef7f@syzkaller.appspotmail.com
 
-diff --git a/Documentation/filesystems/tmpfs.txt b/Documentation/filesystems/tmpfs.txt
-index 5ecbc03e6b2f..203e12a684c9 100644
---- a/Documentation/filesystems/tmpfs.txt
-+++ b/Documentation/filesystems/tmpfs.txt
-@@ -136,6 +136,15 @@ These options do not have any effect on remount. You can change these
- parameters with chmod(1), chown(1) and chgrp(1) on a mounted filesystem.
- 
- 
-+tmpfs has a mount option to select whether it will wrap at 32- or 64-bit inode
-+numbers:
-+
-+inode64   Use 64-bit inode numbers
-+inode32   Use 32-bit inode numbers
-+
-+On 64-bit, the default is set by CONFIG_TMPFS_INODE64. On 32-bit, inode64 is
-+not legal and will produce an error at mount time.
-+
- So 'mount -t tmpfs -o size=10G,nr_inodes=10k,mode=700 tmpfs /mytmpfs'
- will give you tmpfs instance on /mytmpfs which can allocate 10GB
- RAM/SWAP in 10240 inodes and it is only accessible by root.
-@@ -147,3 +156,5 @@ Updated:
-    Hugh Dickins, 4 June 2007
- Updated:
-    KOSAKI Motohiro, 16 Mar 2010
-+Updated:
-+   Chris Down, 2 Jan 2020
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 7b623e9fc1b0..af2048ae71eb 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -199,6 +199,24 @@ config TMPFS_XATTR
- 
- 	  If unsure, say N.
- 
-+config TMPFS_INODE64
-+	bool "Use 64-bit ino_t by default in tmpfs"
-+	depends on TMPFS && 64BIT
-+	default n
-+	help
-+	  tmpfs has historically used only inode numbers as wide as an unsigned
-+	  int. In some cases this can cause wraparound, potentially resulting in
-+	  multiple files with the same inode number on a single device. This option
-+	  makes tmpfs use the full width of ino_t by default, similarly to the
-+	  inode64 mount option.
-+
-+	  tmpfs mounts that are used privately by the kernel and are not visible to
-+	  users are unaffected.
-+
-+	  To override this default, use the inode32 or inode64 mount options.
-+
-+	  If unsure, say N.
-+
- config HUGETLBFS
- 	bool "HugeTLB file system support"
- 	depends on X86 || IA64 || SPARC64 || (S390 && 64BIT) || \
-diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-index dec4353cf3b7..0e645ecd6451 100644
---- a/include/linux/shmem_fs.h
-+++ b/include/linux/shmem_fs.h
-@@ -35,6 +35,7 @@ struct shmem_sb_info {
- 	unsigned char huge;	    /* Whether to try for hugepages */
- 	kuid_t uid;		    /* Mount uid for root directory */
- 	kgid_t gid;		    /* Mount gid for root directory */
-+	bool full_inums;	    /* If i_ino should be uint or ino_t */
- 	ino_t last_ino;		    /* The last used per-sb inode number */
- 	struct mempolicy *mpol;     /* default memory policy for mappings */
- 	spinlock_t shrinklist_lock;   /* Protects shrinklist */
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 8af9fb922a96..fd2542e5ada9 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -115,11 +115,13 @@ struct shmem_options {
- 	kuid_t uid;
- 	kgid_t gid;
- 	umode_t mode;
-+	bool full_inums;
- 	int huge;
- 	int seen;
- #define SHMEM_SEEN_BLOCKS 1
- #define SHMEM_SEEN_INODES 2
- #define SHMEM_SEEN_HUGE 4
-+#define SHMEM_SEEN_INUMS 8
- };
- 
- #ifdef CONFIG_TMPFS
-@@ -2260,7 +2262,8 @@ static struct inode *shmem_get_inode(struct super_block *sb, const struct inode
- 		if (use_sb_ino) {
- 			spin_lock(&sbinfo->stat_lock);
- 			inode->i_ino = sbinfo->last_ino++;
--			if (unlikely(inode->i_ino >= UINT_MAX)) {
-+			if (unlikely(!sbinfo->full_inums &&
-+				     inode->i_ino >= UINT_MAX)) {
- 				/*
- 				 * Emulate get_next_ino uint wraparound for
- 				 * compatibility
-@@ -2277,6 +2280,12 @@ static struct inode *shmem_get_inode(struct super_block *sb, const struct inode
- 			 * since max_inodes is always 0, and is called from
- 			 * potentially unknown contexts. As such, use the global
- 			 * allocator which doesn't require the per-sb stat_lock.
-+			 *
-+			 * No special behaviour is needed for
-+			 * sbinfo->full_inums, because it's not possible to
-+			 * manually set on callers of this type, and
-+			 * CONFIG_TMPFS_INODE64 only applies to user-visible
-+			 * mounts.
- 			 */
- 			inode->i_ino = get_next_ino();
- 		}
-@@ -3450,6 +3459,7 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
- 	unsigned long long size;
- 	char *rest;
- 	int opt;
-+	const char *err;
- 
- 	opt = fs_parse(fc, &shmem_fs_parameters, param, &result);
- 	if (opt < 0)
-@@ -3511,6 +3521,18 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
- 			break;
- 		}
- 		goto unsupported_parameter;
-+	case Opt_inode32:
-+		ctx->full_inums = false;
-+		ctx->seen |= SHMEM_SEEN_INUMS;
-+		break;
-+	case Opt_inode64:
-+		if (sizeof(ino_t) < 8) {
-+			err = "Cannot use inode64 with <64bit inums in kernel";
-+			goto err_msg;
-+		}
-+		ctx->full_inums = true;
-+		ctx->seen |= SHMEM_SEEN_INUMS;
-+		break;
- 	}
- 	return 0;
- 
-@@ -3518,6 +3540,8 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
- 	return invalf(fc, "tmpfs: Unsupported parameter '%s'", param->key);
- bad_value:
- 	return invalf(fc, "tmpfs: Bad value for '%s'", param->key);
-+err_msg:
-+	return invalf(fc, "tmpfs: %s", err);
- }
- 
- static int shmem_parse_options(struct fs_context *fc, void *data)
-@@ -3602,6 +3626,12 @@ static int shmem_reconfigure(struct fs_context *fc)
- 		}
- 	}
- 
-+	if ((ctx->seen & SHMEM_SEEN_INUMS) && !ctx->full_inums &&
-+	    sbinfo->last_ino > UINT_MAX) {
-+		err = "Current inum too high to switch to 32-bit inums";
-+		goto out;
-+	}
-+
- 	if (ctx->seen & SHMEM_SEEN_HUGE)
- 		sbinfo->huge = ctx->huge;
- 	if (ctx->seen & SHMEM_SEEN_BLOCKS)
-@@ -3643,6 +3673,29 @@ static int shmem_show_options(struct seq_file *seq, struct dentry *root)
- 	if (!gid_eq(sbinfo->gid, GLOBAL_ROOT_GID))
- 		seq_printf(seq, ",gid=%u",
- 				from_kgid_munged(&init_user_ns, sbinfo->gid));
-+
-+	/*
-+	 * Showing inode{64,32} might be useful even if it's the system default,
-+	 * since then people don't have to resort to checking both here and
-+	 * /proc/config.gz to confirm 64-bit inums were successfully applied
-+	 * (which may not even exist if IKCONFIG_PROC isn't enabled).
-+	 *
-+	 * We hide it when inode64 isn't the default and we are using 32-bit
-+	 * inodes, since that probably just means the feature isn't even under
-+	 * consideration.
-+	 *
-+	 * As such:
-+	 *
-+	 *                     +-----------------+-----------------+
-+	 *                     | TMPFS_INODE64=y | TMPFS_INODE64=n |
-+	 *  +------------------+-----------------+-----------------+
-+	 *  | full_inums=true  | show            | show            |
-+	 *  | full_inums=false | show            | hide            |
-+	 *  +------------------+-----------------+-----------------+
-+	 *
-+	 */
-+	if (IS_ENABLED(CONFIG_TMPFS_INODE64) || !sbinfo->full_inums)
-+		seq_printf(seq, ",inode%d", (sbinfo->full_inums ? 64 : 32));
- #ifdef CONFIG_TRANSPARENT_HUGE_PAGECACHE
- 	/* Rightly or wrongly, show huge mount option unmasked by shmem_huge */
- 	if (sbinfo->huge)
-@@ -3702,6 +3755,7 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
- 	sbinfo->free_inodes = sbinfo->max_inodes = ctx->inodes;
- 	sbinfo->uid = ctx->uid;
- 	sbinfo->gid = ctx->gid;
-+	sbinfo->full_inums = ctx->full_inums;
- 	sbinfo->mode = ctx->mode;
- 	sbinfo->huge = ctx->huge;
- 	sbinfo->mpol = ctx->mpol;
-@@ -3915,6 +3969,7 @@ int shmem_init_fs_context(struct fs_context *fc)
- 	ctx->mode = 0777 | S_ISVTX;
- 	ctx->uid = current_fsuid();
- 	ctx->gid = current_fsgid();
-+	ctx->full_inums = IS_ENABLED(CONFIG_TMPFS_INODE64);
- 
- 	fc->fs_private = ctx;
- 	fc->ops = &shmem_fs_context_ops;
--- 
-2.24.1
+======================================================
+WARNING: possible circular locking dependency detected
+5.5.0-rc2-next-20191220-syzkaller #0 Not tainted
+------------------------------------------------------
+syz-executor877/11363 is trying to acquire lock:
+ffff8880920b8520 (&p->lock){+.+.}, at: seq_read+0x71/0x1170  
+fs/seq_file.c:161
+
+but task is already holding lock:
+ffff8880998ac428 (sb_writers#3){.+.+}, at: file_start_write  
+include/linux/fs.h:2880 [inline]
+ffff8880998ac428 (sb_writers#3){.+.+}, at: do_sendfile+0x9b9/0xd00  
+fs/read_write.c:1463
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (sb_writers#3){.+.+}:
+        percpu_down_read include/linux/percpu-rwsem.h:40 [inline]
+        __sb_start_write+0x241/0x460 fs/super.c:1674
+        sb_start_write include/linux/fs.h:1649 [inline]
+        mnt_want_write+0x3f/0xc0 fs/namespace.c:354
+        ovl_want_write+0x76/0xa0 fs/overlayfs/util.c:21
+        ovl_create_object+0xb3/0x2c0 fs/overlayfs/dir.c:596
+        ovl_create+0x28/0x30 fs/overlayfs/dir.c:627
+        lookup_open+0x12d5/0x1a90 fs/namei.c:3374
+        do_last fs/namei.c:3464 [inline]
+        path_openat+0xf2a/0x34d0 fs/namei.c:3670
+        do_filp_open+0x192/0x260 fs/namei.c:3700
+        do_sys_openat2+0x633/0x840 fs/open.c:1152
+        do_sys_open+0xfc/0x190 fs/open.c:1168
+        ksys_open include/linux/syscalls.h:1385 [inline]
+        __do_sys_open fs/open.c:1174 [inline]
+        __se_sys_open fs/open.c:1172 [inline]
+        __x64_sys_open+0x7e/0xc0 fs/open.c:1172
+        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #2 (&ovl_i_mutex_dir_key[depth]){++++}:
+        down_read+0x95/0x440 kernel/locking/rwsem.c:1495
+        inode_lock_shared include/linux/fs.h:801 [inline]
+        do_last fs/namei.c:3463 [inline]
+        path_openat+0x1c60/0x34d0 fs/namei.c:3670
+        do_filp_open+0x192/0x260 fs/namei.c:3700
+        do_open_execat+0x13b/0x6d0 fs/exec.c:861
+        __do_execve_file.isra.0+0x1702/0x22b0 fs/exec.c:1766
+        do_execveat_common fs/exec.c:1872 [inline]
+        do_execve fs/exec.c:1889 [inline]
+        __do_sys_execve fs/exec.c:1965 [inline]
+        __se_sys_execve fs/exec.c:1960 [inline]
+        __x64_sys_execve+0x8f/0xc0 fs/exec.c:1960
+        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #1 (&sig->cred_guard_mutex){+.+.}:
+        __mutex_lock_common kernel/locking/mutex.c:956 [inline]
+        __mutex_lock+0x156/0x13c0 kernel/locking/mutex.c:1103
+        mutex_lock_killable_nested+0x16/0x20 kernel/locking/mutex.c:1133
+        do_io_accounting+0x1f4/0x820 fs/proc/base.c:2772
+        proc_tgid_io_accounting+0x23/0x30 fs/proc/base.c:2821
+        proc_single_show+0xfd/0x1c0 fs/proc/base.c:756
+        seq_read+0x4ca/0x1170 fs/seq_file.c:229
+        do_loop_readv_writev fs/read_write.c:714 [inline]
+        do_loop_readv_writev fs/read_write.c:701 [inline]
+        do_iter_read+0x4a4/0x660 fs/read_write.c:935
+        vfs_readv+0xf0/0x160 fs/read_write.c:997
+        kernel_readv fs/splice.c:365 [inline]
+        default_file_splice_read+0x4fb/0xa20 fs/splice.c:422
+        do_splice_to+0x127/0x180 fs/splice.c:892
+        splice_direct_to_actor+0x320/0xa30 fs/splice.c:971
+        do_splice_direct+0x1da/0x2a0 fs/splice.c:1080
+        do_sendfile+0x597/0xd00 fs/read_write.c:1464
+        __do_sys_sendfile64 fs/read_write.c:1525 [inline]
+        __se_sys_sendfile64 fs/read_write.c:1511 [inline]
+        __x64_sys_sendfile64+0x1dd/0x220 fs/read_write.c:1511
+        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #0 (&p->lock){+.+.}:
+        check_prev_add kernel/locking/lockdep.c:2476 [inline]
+        check_prevs_add kernel/locking/lockdep.c:2581 [inline]
+        validate_chain kernel/locking/lockdep.c:2971 [inline]
+        __lock_acquire+0x2596/0x4a00 kernel/locking/lockdep.c:3955
+        lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4485
+        __mutex_lock_common kernel/locking/mutex.c:956 [inline]
+        __mutex_lock+0x156/0x13c0 kernel/locking/mutex.c:1103
+        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1118
+        seq_read+0x71/0x1170 fs/seq_file.c:161
+        do_loop_readv_writev fs/read_write.c:714 [inline]
+        do_loop_readv_writev fs/read_write.c:701 [inline]
+        do_iter_read+0x4a4/0x660 fs/read_write.c:935
+        vfs_readv+0xf0/0x160 fs/read_write.c:997
+        kernel_readv fs/splice.c:365 [inline]
+        default_file_splice_read+0x4fb/0xa20 fs/splice.c:422
+        do_splice_to+0x127/0x180 fs/splice.c:892
+        splice_direct_to_actor+0x320/0xa30 fs/splice.c:971
+        do_splice_direct+0x1da/0x2a0 fs/splice.c:1080
+        do_sendfile+0x597/0xd00 fs/read_write.c:1464
+        __do_sys_sendfile64 fs/read_write.c:1525 [inline]
+        __se_sys_sendfile64 fs/read_write.c:1511 [inline]
+        __x64_sys_sendfile64+0x1dd/0x220 fs/read_write.c:1511
+        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+other info that might help us debug this:
+
+Chain exists of:
+   &p->lock --> &ovl_i_mutex_dir_key[depth] --> sb_writers#3
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(sb_writers#3);
+                                lock(&ovl_i_mutex_dir_key[depth]);
+                                lock(sb_writers#3);
+   lock(&p->lock);
+
+  *** DEADLOCK ***
+
+1 lock held by syz-executor877/11363:
+  #0: ffff8880998ac428 (sb_writers#3){.+.+}, at: file_start_write  
+include/linux/fs.h:2880 [inline]
+  #0: ffff8880998ac428 (sb_writers#3){.+.+}, at: do_sendfile+0x9b9/0xd00  
+fs/read_write.c:1463
+
+stack backtrace:
+CPU: 0 PID: 11363 Comm: syz-executor877 Not tainted  
+5.5.0-rc2-next-20191220-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x197/0x210 lib/dump_stack.c:118
+  print_circular_bug.isra.0.cold+0x163/0x172 kernel/locking/lockdep.c:1685
+  check_noncircular+0x32e/0x3e0 kernel/locking/lockdep.c:1809
+  check_prev_add kernel/locking/lockdep.c:2476 [inline]
+  check_prevs_add kernel/locking/lockdep.c:2581 [inline]
+  validate_chain kernel/locking/lockdep.c:2971 [inline]
+  __lock_acquire+0x2596/0x4a00 kernel/locking/lockdep.c:3955
+  lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4485
+  __mutex_lock_common kernel/locking/mutex.c:956 [inline]
+  __mutex_lock+0x156/0x13c0 kernel/locking/mutex.c:1103
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1118
+  seq_read+0x71/0x1170 fs/seq_file.c:161
+  do_loop_readv_writev fs/read_write.c:714 [inline]
+  do_loop_readv_writev fs/read_write.c:701 [inline]
+  do_iter_read+0x4a4/0x660 fs/read_write.c:935
+  vfs_readv+0xf0/0x160 fs/read_write.c:997
+  kernel_readv fs/splice.c:365 [inline]
+  default_file_splice_read+0x4fb/0xa20 fs/splice.c:422
+  do_splice_to+0x127/0x180 fs/splice.c:892
+  splice_direct_to_actor+0x320/0xa30 fs/splice.c:971
+  do_splice_direct+0x1da/0x2a0 fs/splice.c:1080
+  do_sendfile+0x597/0xd00 fs/read_write.c:1464
+  __do_sys_sendfile64 fs/read_write.c:1525 [inline]
+  __se_sys_sendfile64 fs/read_write.c:1511 [inline]
+  __x64_sys_sendfile64+0x1dd/0x220 fs/read_write.c:1511
+  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x448dd9
+Code: e8 9c e6 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 3b 05 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fc37ed06ce8 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 00000000006e4a08 RCX: 0000000000448dd9
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000005
+RBP: 00000000006e4a00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000209 R11: 0000000000000246 R12: 00000000006e4a0c
+R13: 00007ffecbcb224f R14: 00007fc37ed079c0 R15: 20c49ba5e353f7cf
 
