@@ -2,131 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF47512E3D2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2020 09:24:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 092DF12E3E7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2020 09:30:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727830AbgABIYb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Jan 2020 03:24:31 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:56241 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727883AbgABIYO (ORCPT
+        id S1727757AbgABIad (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Jan 2020 03:30:33 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51863 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727688AbgABIac (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Jan 2020 03:24:14 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200102082410epoutp016746fb00529a195dbde234892c3e1d9c~mBE2Y4_nj1725517255epoutp01C
-        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Jan 2020 08:24:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200102082410epoutp016746fb00529a195dbde234892c3e1d9c~mBE2Y4_nj1725517255epoutp01C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1577953450;
-        bh=2AiL0/FzT0N/kY6Jou6rW2xmbfEd/9y88c2eKhesSjM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vKkcfLgwiVRdYXugbK3Dq8cMb9qa59oIjxGlKMl1LK5UWwSi2E0k93TU+tPvZklnN
-         seCOxgiE4bH7vHANKTdQMrFT8sfzpBjhCz/KBDy0/fjS9q+h8pgnvS7C2pX0wCjInO
-         L+PaZch9knkg+ZXV69KKHdqquFV/Qw2u6dV2EdJA=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20200102082410epcas1p423fbe9b8c327492fbb37e9018f9ff074~mBE2IbVEI0674706747epcas1p4a;
-        Thu,  2 Jan 2020 08:24:10 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.164]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 47pLfd6Y0CzMqYlx; Thu,  2 Jan
-        2020 08:24:09 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        92.C7.52419.9A8AD0E5; Thu,  2 Jan 2020 17:24:09 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20200102082409epcas1p4210cf0ea40d23689c4a5ba18b50979cf~mBE1T0rsd0403204032epcas1p4B;
-        Thu,  2 Jan 2020 08:24:09 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200102082409epsmtrp219f410e8b13e7546bf48a37077fc2719~mBE1TOD5u2039720397epsmtrp2e;
-        Thu,  2 Jan 2020 08:24:09 +0000 (GMT)
-X-AuditID: b6c32a37-59fff7000001ccc3-e3-5e0da8a92387
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A9.68.10238.9A8AD0E5; Thu,  2 Jan 2020 17:24:09 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.88.103.87]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200102082409epsmtip2cd61cfe722b61178a85c898a31c373e8~mBE1Gu1Gs2215622156epsmtip2c;
-        Thu,  2 Jan 2020 08:24:09 +0000 (GMT)
-From:   Namjae Jeon <namjae.jeon@samsung.com>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com, linkinjeon@gmail.com, pali.rohar@gmail.com,
-        Namjae Jeon <namjae.jeon@samsung.com>
-Subject: [PATCH v9 13/13] MAINTAINERS: add exfat filesystem
-Date:   Thu,  2 Jan 2020 16:20:36 +0800
-Message-Id: <20200102082036.29643-14-namjae.jeon@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200102082036.29643-1-namjae.jeon@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGKsWRmVeSWpSXmKPExsWy7bCmru7KFbxxBnN7zSyaF69ns1i5+iiT
-        xfW7t5gt9uw9yWJxedccNosf0+stJp7+zWSx5d8RVotL7z+wOHB67Jx1l91j/9w17B67bzaw
-        efRtWcXo8XmTnMeh7W/YAtiicmwyUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTy
-        EnNTbZVcfAJ03TJzgI5SUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BQYGhToFSfm
-        Fpfmpesl5+daGRoYGJkCVSbkZMzdvJit4BtrRdek/AbGBtYuRk4OCQETiYb9N4FsLg4hgR2M
-        EhcP72aDcD4xShyZvg3K+cYo8X77EyaYlp1XT7JDJPYySnz5f5QZruXqvauMXYwcHGwC2hJ/
-        toiCNIgI2Etsnn2ABaSGWWATo8Se+V9ZQWqEBawlDmyQAqlhEVCVmL3pADOIzStgK/Hu70qo
-        ++QlVm+AiHMCxWe+bwW7SEJgC5vEh9U7GCGKXCTOv13DDmELS7w6vgXKlpL4/G4vG8guCYFq
-        iY/7mSHCHYwSL77bQtjGEjfXbwA7h1lAU2L9Ln2IsKLEzt9zwaYzC/BJvPvawwoxhVeio00I
-        okRVou/SYWiQSEt0tX+AWuohce7NV0ZIiExglJhxdxnrBEa5WQgbFjAyrmIUSy0ozk1PLTYs
-        MEaOr02M4DSnZb6DccM5n0OMAhyMSjy8N+bxxAmxJpYVV+YeYpTgYFYS4S0P5I0T4k1JrKxK
-        LcqPLyrNSS0+xGgKDMiJzFKiyfnAFJxXEm9oamRsbGxhYmZuZmqsJM7L8eNirJBAemJJanZq
-        akFqEUwfEwenVANj+cIsEe+g06dc9aoyq5mU3jzom/MitqrsxZ12oe65m+7NOt34r+XGlXLT
-        Gd6c3PcPp3AyyG37vyDwxC6Vm3tcWISktSL+Bdd2zMvdvrPdoeYmT+7KmUVvjiu2u0Zo7Dsi
-        fXkK18T5Ms0bs88d6d/hr77vx2zTAta2SnXu/wt/8Wac4Z8/KeOkEktxRqKhFnNRcSIAAySL
-        bYkDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPLMWRmVeSWpSXmKPExsWy7bCSvO7KFbxxBg+eyls0L17PZrFy9VEm
-        i+t3bzFb7Nl7ksXi8q45bBY/ptdbTDz9m8liy78jrBaX3n9gceD02DnrLrvH/rlr2D1232xg
-        8+jbsorR4/MmOY9D29+wBbBFcdmkpOZklqUW6dslcGXM3byYreAba0XXpPwGxgbWLkZODgkB
-        E4mdV0+ydzFycQgJ7GaU2LlgBTtEQlri2IkzzF2MHEC2sMThw8UQNR8YJWbO3sQCEmcT0Jb4
-        s0UUpFxEwFGid9dhFpAaZoFdjBInTp9mBKkRFrCWOLBBCqSGRUBVYvamA8wgNq+ArcS7vyuh
-        bpCXWL0BIs4JFJ/5vpUNxBYSsJF49e8x2wRGvgWMDKsYJVMLinPTc4sNCwzzUsv1ihNzi0vz
-        0vWS83M3MYKDUUtzB+PlJfGHGAU4GJV4eG/M44kTYk0sK67MPcQowcGsJMJbHsgbJ8SbklhZ
-        lVqUH19UmpNafIhRmoNFSZz3ad6xSCGB9MSS1OzU1ILUIpgsEwenVAPj9Oc37fboLzu0PmXG
-        7zhOuZp3v9ZEnV3Ddn/O0SiBAqdZCeV3eYR3Rbas+nyUJ2hpZF4Y/+O0PbpVzY3Wm4P+2J3a
-        L34g4a9i6nkhWdXqFf9zb2wPZ5meKcu/WrTWxOkv64sJOToaO6Zvn6DXzyCXFbCOxUzVOTXH
-        sP/sVZHa8LlWFrXeASlKLMUZiYZazEXFiQChoV6zQgIAAA==
-X-CMS-MailID: 20200102082409epcas1p4210cf0ea40d23689c4a5ba18b50979cf
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200102082409epcas1p4210cf0ea40d23689c4a5ba18b50979cf
-References: <20200102082036.29643-1-namjae.jeon@samsung.com>
-        <CGME20200102082409epcas1p4210cf0ea40d23689c4a5ba18b50979cf@epcas1p4.samsung.com>
+        Thu, 2 Jan 2020 03:30:32 -0500
+Received: by mail-wm1-f67.google.com with SMTP id d73so4916786wmd.1;
+        Thu, 02 Jan 2020 00:30:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=cRA5UVy21UN6dx2Qu5x3A9NVTLMX1jIGtdux3DRTZi0=;
+        b=VKHqU4TKviMD3V2ScKm0W9Lw0Sk9giP+++S/ooIPT/aqNYjT5nu96Nl8U+odxA7ZuM
+         RHOt6YPQx0YiRCgyylRY1P5b1mHvxwZRf+jmFFDvoiwLxNwixuEi1+aaKEWHGmrvn+KI
+         KtEQQzrkna0S7O0W9KzkKEv6566lVsQnC0rofLvbNk4x1occ509mXasZd0KS2N7K8h3n
+         C9BSccSSpSB1wtrbSS7aAHJP0xmbnMzd9CXfnQ2A2bNsEPNpbRBB1cUo2jLp7PjznENe
+         KNEBta4QcRgfJcTbv6j2NemQibn9eqJyohRX6htPPzgv1bxwtaWL9SQRHO6CEepXhPlm
+         z8Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=cRA5UVy21UN6dx2Qu5x3A9NVTLMX1jIGtdux3DRTZi0=;
+        b=csNlzMM7JGasLgbN68nGqInfg2gUJJxVK+RYeXpWVstES/hA0+jEQwUhiSitebt1YT
+         JvWfmN8jijv2PVz6FXpfq/4w5TYF6Eyh8mg09xc8eqYZCWEoTUMrdeMwCwAS05PjbqtQ
+         0BuTXhAz7s8j35QqmneZxkBh1z3JMI2iJkvNzkKFD5HxJumdQSCWSw17RhJfkr7LyRuL
+         us71MPEn1bMoF8UMo5QbmTl69hijbbzUzMLQl6LOiwF7LSO9Jwd+y+A7vZRndqkMiBbr
+         fiNSH8zu/FqbDYb2ZTgjzl2s60bDvNMqrTqHmJKyIt8mSFkKY77bBSRhJQQNiMVMAaf+
+         bRSw==
+X-Gm-Message-State: APjAAAVzC5QBMbmraFyLBtMIAxUwhKWKlBQrpj/BHXz3LxsfgwkoAD/O
+        QLrh+QyHefmeHAVuP0q9u5w=
+X-Google-Smtp-Source: APXvYqxdrkvInhhSWiKnZlCOsPojT6xfRgodoe5qmviVFC2wVVnHxGm2u2iYYTz7EQ/6e2CNDYVrhg==
+X-Received: by 2002:a1c:f008:: with SMTP id a8mr12944271wmb.81.1577953830730;
+        Thu, 02 Jan 2020 00:30:30 -0800 (PST)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id a9sm7633562wmm.15.2020.01.02.00.30.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Jan 2020 00:30:30 -0800 (PST)
+Date:   Thu, 2 Jan 2020 09:30:29 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Namjae Jeon <namjae.jeon@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
+        sj1557.seo@samsung.com, linkinjeon@gmail.com
+Subject: Re: [PATCH v8 02/13] exfat: add super block operations
+Message-ID: <20200102083029.uv2gtig3ski23dpe@pali>
+References: <20191220062419.23516-1-namjae.jeon@samsung.com>
+ <CGME20191220062733epcas1p31665a3ae968ab8c70d91a3cddf529e73@epcas1p3.samsung.com>
+ <20191220062419.23516-3-namjae.jeon@samsung.com>
+ <20191229134025.qb3mmqatsn5c4gao@pali>
+ <000701d5c132$bed73c80$3c85b580$@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <000701d5c132$bed73c80$3c85b580$@samsung.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add myself and Sungjong Seo as exfat maintainer.
+On Thursday 02 January 2020 15:06:16 Namjae Jeon wrote:
+> > > +static const struct fs_parameter_spec exfat_param_specs[] = {
+> > > +	fsparam_u32("uid",			Opt_uid),
+> > > +	fsparam_u32("gid",			Opt_gid),
+> > > +	fsparam_u32oct("umask",			Opt_umask),
+> > > +	fsparam_u32oct("dmask",			Opt_dmask),
+> > > +	fsparam_u32oct("fmask",			Opt_fmask),
+> > > +	fsparam_u32oct("allow_utime",		Opt_allow_utime),
+> > > +	fsparam_string("iocharset",		Opt_charset),
+> > > +	fsparam_flag("utf8",			Opt_utf8),
+> > 
+> > Hello! What is the purpose of having extra special "utf8" mount option?
+> > Is not one "iocharset=utf8" option enough?
+> utf8 nls_table supports utf8<->utf32 conversion and does not support
+> surrogate character conversion.
 
-Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+So in other words, this is just subset of UTF-8 just to 3 byte long
+sequences (for Unicode code points up to the U+FFFF).
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7b626563fb3c..aa03dd5c34e2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6237,6 +6237,13 @@ F:	include/trace/events/mdio.h
- F:	include/uapi/linux/mdio.h
- F:	include/uapi/linux/mii.h
- 
-+EXFAT FILE SYSTEM
-+M:	Namjae Jeon <namjae.jeon@samsung.com>
-+M:	Sungjong Seo <sj1557.seo@samsung.com>
-+L:	linux-fsdevel@vger.kernel.org
-+S:	Maintained
-+F:	fs/exfat/
-+
- EXFAT FILE SYSTEM
- M:	Valdis Kletnieks <valdis.kletnieks@vt.edu>
- L:	linux-fsdevel@vger.kernel.org
+> The utf8 option can support the surrogate
+> character conversion of utf16 using utf16s_to_utf8s/utf8s_to_utf16s of
+> the nls base.
+
+So this is full UTF-8 support, right?
+
+And what is the point to have two options for UTF-8 support, when one is
+incomplete / broken? I see no benefit to have first option at all.
+Providing incomplete / broken support to userspace does not make much
+sense if we already have full and working support via different mount
+option. Maybe second option with full UTF-8 support should be used also
+by iocharset=utf8 and then we do not need utf8 option at all?
+
 -- 
-2.17.1
-
+Pali Rohár
+pali.rohar@gmail.com
