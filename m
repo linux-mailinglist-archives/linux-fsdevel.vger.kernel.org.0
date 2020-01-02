@@ -2,129 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1DAB12EACD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2020 21:14:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E43C012EAD4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2020 21:23:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725851AbgABUOk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Jan 2020 15:14:40 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40933 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725783AbgABUOk (ORCPT
+        id S1725883AbgABUWv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Jan 2020 15:22:51 -0500
+Received: from mout.kundenserver.de ([217.72.192.73]:53641 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725783AbgABUWu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Jan 2020 15:14:40 -0500
-Received: by mail-wr1-f65.google.com with SMTP id c14so40415625wrn.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Jan 2020 12:14:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chrisdown.name; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=EZwwlNOvSvl+rKT7a1ceC832qWXYL65iR/7ilzgvcuI=;
-        b=kSC/T5IVsJVXZ1QYz1E+5QtqlRLBa/EdDKM8V93rlOWMjn+hFAXbC6B4fa3/lBYxnF
-         ZaUzPB2KCvhts83v80WiBh4FMPvDMgEuXO0t2oiHh5JRia3twRd3O87zwybgfSKnp/o2
-         7zoj8f3mnnXI6VZypvIZdHpQqN/EBiyLdTuDk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=EZwwlNOvSvl+rKT7a1ceC832qWXYL65iR/7ilzgvcuI=;
-        b=TVwkMhy1o9Oc/Ycd4YwtljfiUPLtmlC6w9MkNiVgDWWuRBT2Dcw26VcWv+1ByxxWMb
-         lZ+7dQuDiG+H4Z063z3u+yPThCZmxoZgy7/JorOjH91Fdo+U+KzoQA+5zgeuvIT+fm+A
-         fsBLUTdILg04zNmP2xYdJR0+vBr7Zp8JATNfQcBFmzmnV9aL6ZN9LKChne9S9gMShjGi
-         A4qTSzpshwuxXF7UpNa38ozoEXS70qFheoXf4Os5kAebCPKfgQI0dZiFROtJaDAzqJIL
-         upXp525/64x/VGECk89znY82RJ+MvqA23SttvvoY075hRwgeSNvdJyzO+YFI4YL5uZMd
-         tEvA==
-X-Gm-Message-State: APjAAAX+L55AUhNXOD2Ewt53zSqklsTVLp6EcxEfdKdGbX1PsBzmErkl
-        Z914aSnDa26R9TK9E1OXaB45zA==
-X-Google-Smtp-Source: APXvYqw0A9Zkxe5CxmM+U8CeA/IPxBqdsxs3e8LiPQgrndSz0Cnq2Fc6BrACe0bbzLbKra6G+57Eww==
-X-Received: by 2002:adf:e3d0:: with SMTP id k16mr85755629wrm.241.1577996078295;
-        Thu, 02 Jan 2020 12:14:38 -0800 (PST)
-Received: from localhost ([2620:10d:c092:200::1:3256])
-        by smtp.gmail.com with ESMTPSA id w8sm8496806wmd.2.2020.01.02.12.14.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jan 2020 12:14:37 -0800 (PST)
-Date:   Thu, 2 Jan 2020 20:14:37 +0000
-From:   Chris Down <chris@chrisdown.name>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@fb.com
-Subject: Re: [PATCH v2 2/2] tmpfs: Support 64-bit inums per-sb
-Message-ID: <20200102201437.GB1181932@chrisdown.name>
-References: <cover.1577990599.git.chris@chrisdown.name>
- <34a170550a77c77ad7b6fdca86847ae7fd35d761.1577990599.git.chris@chrisdown.name>
- <CAOQ4uxg_V_TCPrOZdF2gkGgmnqeWaamABSyVp8Prx6Y+=WdLBg@mail.gmail.com>
+        Thu, 2 Jan 2020 15:22:50 -0500
+Received: from mail-qt1-f174.google.com ([209.85.160.174]) by
+ mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MvJo7-1jeFg12wev-00rEBI; Thu, 02 Jan 2020 21:22:48 +0100
+Received: by mail-qt1-f174.google.com with SMTP id g1so28554104qtr.13;
+        Thu, 02 Jan 2020 12:22:48 -0800 (PST)
+X-Gm-Message-State: APjAAAXcuzat/FvU7gXdKMvGfoNPS9BFkBdJdfJ+1XfrxLMxCVoSsWA5
+        40Y8kvtdfphEOvPyWUUwJWHCpOZLdKZKTGuqkZo=
+X-Google-Smtp-Source: APXvYqw1WBWes+WH0CrFxHA8FylK6AQHYik3my7LV7FPF6NFz9oKafXjddaDiVHL3AvLnvKIAQdI30SksZ7m1AJhJMc=
+X-Received: by 2002:ac8:47d3:: with SMTP id d19mr60326581qtr.142.1577996567289;
+ Thu, 02 Jan 2020 12:22:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxg_V_TCPrOZdF2gkGgmnqeWaamABSyVp8Prx6Y+=WdLBg@mail.gmail.com>
+References: <20200102145552.1853992-1-arnd@arndb.de>
+In-Reply-To: <20200102145552.1853992-1-arnd@arndb.de>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 2 Jan 2020 21:22:31 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a2y71R38AyOJBXWwukZ-odjSMSL4wBumdMBsNp=So0u7A@mail.gmail.com>
+Message-ID: <CAK8P3a2y71R38AyOJBXWwukZ-odjSMSL4wBumdMBsNp=So0u7A@mail.gmail.com>
+Subject: Re: [GIT PULL v3 00/27] block, scsi: final compat_ioctl cleanup
+To:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:Jod/qPEhvywko/uHVmu+k/2nrH/2auin298Lqla0cYwztJPxo5C
+ tLWz1QNbBuqG4709wjHgQPhajRdhnyjJXXJrpiBrVl+Jk4ADzkngavtkCIMCjN6iHkraSBs
+ ZV+IvhXdxvLukbpxY61cN66ZxnhA141x8ANnPQizAb6FtEJD4dry5W+qIk1QRB1Rpe5IN0X
+ 37nsI95RQKc2/Vq+q3wtQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:IxD7BSXId+w=:WWN1G8LdJPkOr+99O/QmC5
+ JcnNbFZfZzf/2ftaUZXmNHErTwB3LEorjS4FMM3IIEPFeYuWUdWR2ZoEFz1lpUpl45WkOzq+A
+ iDsulEehz+MvJfKVoDE2vt7wchLJKFWAptGi4P7AKwAIFsxTt++fUEVCPURvwLREIvoLnWT8F
+ uIubzCfzIz7bU17Pt0fbMkSO7jULmL2M2Aepw/S+m9Q3r+js6bEqO5OCphEVDNfU4mNlZ3DGM
+ cXU8mH7JOccjHiub57p+0TrqpTk4aJEyBTwDKQOzAbcmtbWoLDTbTomznpf//L/4KsiMH3iG+
+ mAX6UeC3+UAgVhNPoJN5/D0ty7cnKf5fr1wTHGvnuKYqwGUDsxx9P1+DzPrnF7FCuo0MSmH0V
+ YFx2TeiyEMn6AoAR0TRKAeh32l2ESvsOFn1vZARvZlwzP+KtvgdrHTHryV/HStThTFmHxjz9v
+ HGtn178fhQ0k+1UlPZ2hjwQeG0FV/4oFJxn+d/ipNTHhZXrRmX+BtT2BLAca66a6yYS6oFXub
+ 8Au3Uy2YicXn5j+BRYROJ+BNllEmajO6Tgz7DIFxxbpQQ9lBFsZBUZ6JHGFFtloOwy35xqnM2
+ bEyFljrf0eWNA/LiBOcn+FRdwT2P2EsAX01aqtab9PDKv68Y97ktFtcW4UPUAfa4sLlUsgbdz
+ q+CIGru+2SC0WCtq4gKsP/cBCBtD0MxeT1Vrh+ntZwuEaKvPU5sSrPDBApeW1P9KiXjjeW45E
+ cSq9JY/C8uzVyOezQM4LQSTcjsm6GoWUIwjLF3bLnrXCVTWFrbAc/3OhDuTDmNOnuKy/2Pf1k
+ 6gpKe/RXiVJXj3jb2dOFku/0xbKjurbfVef5RcaweVnJP6x36AjJ/johGqTvODN1LcsAtZnlv
+ jkVlaQ5tKcNFq0mm9D6g==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Amir Goldstein writes:
->> +config TMPFS_INODE64
->> +       bool "Use 64-bit ino_t by default in tmpfs"
->> +       depends on TMPFS && 64BIT
->> +       default n
->> +       help
->> +         tmpfs has historically used only inode numbers as wide as an unsigned
->> +         int. In some cases this can cause wraparound, potentially resulting in
->> +         multiple files with the same inode number on a single device. This option
->> +         makes tmpfs use the full width of ino_t by default, similarly to the
->> +         inode64 mount option.
->> +
->> +         tmpfs mounts that are used privately by the kernel and are not visible to
->> +         users are unaffected.
+On Thu, Jan 2, 2020 at 3:56 PM Arnd Bergmann <arnd@arndb.de> wrote:
 >
->Admins won't know what the line above means and they shouldn't care.
->It adds no information, so better remove it.
-
-Sure thing.
-
->> +
->> +       /*
->> +        * Showing inode{64,32} might be useful even if it's the system default,
->> +        * since then people don't have to resort to checking both here and
->> +        * /proc/config.gz to confirm 64-bit inums were successfully applied
->> +        * (which may not even exist if IKCONFIG_PROC isn't enabled).
->> +        *
->> +        * We hide it when inode64 isn't the default and we are using 32-bit
->> +        * inodes, since that probably just means the feature isn't even under
->> +        * consideration.
->> +        *
->> +        * As such:
->> +        *
->> +        *                     +-----------------+-----------------+
->> +        *                     | TMPFS_INODE64=y | TMPFS_INODE64=n |
->> +        *  +------------------+-----------------+-----------------+
->> +        *  | full_inums=true  | show            | show            |
->> +        *  | full_inums=false | show            | hide            |
->> +        *  +------------------+-----------------+-----------------+
->> +        *
->> +        */
->> +       if (IS_ENABLED(CONFIG_TMPFS_INODE64) || !sbinfo->full_inums)
+> Hi Martin, James,
 >
->Condition does not match comment - should be || sbinfo->full_inums)
+> If this version seems ok to everyone, please pull into
+> the scsi tree.
 
-Good catch! Thanks.
+It seems I slightly messed up the Cc list here, in case some of you are
+missing patches, the full series (22 patches, not 27) is mirrored at
+https://lore.kernel.org/lkml/20200102145552.1853992-1-arnd@arndb.de/T/
+as well.
 
->> @@ -3915,6 +3969,7 @@ int shmem_init_fs_context(struct fs_context *fc)
->>         ctx->mode = 0777 | S_ISVTX;
->>         ctx->uid = current_fsuid();
->>         ctx->gid = current_fsgid();
->> +       ctx->full_inums = IS_ENABLED(CONFIG_TMPFS_INODE64);
->>
->
->This is the wrong place for this - it is also being set for the kern_mount.
->Follow the lead of shmem_default_max_inodes.
-
-Hmm, full_inums is intended to be simply ignored for SB_KERNMOUNT though, so it 
-seems harmless, but I agree maybe it makes the intent of the code clearer to 
-move it to a more specific place.
-
-Thanks! I'll fix these up for v3.
+         Arnd
