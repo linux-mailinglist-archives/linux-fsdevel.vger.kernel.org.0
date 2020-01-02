@@ -2,100 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 395FE12E65D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2020 14:11:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C99AF12E660
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2020 14:13:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728285AbgABNK5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Jan 2020 08:10:57 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53400 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728165AbgABNK5 (ORCPT
+        id S1728298AbgABNNw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Jan 2020 08:13:52 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:33319 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728165AbgABNNv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Jan 2020 08:10:57 -0500
-Received: by mail-wm1-f68.google.com with SMTP id m24so5520912wmc.3;
-        Thu, 02 Jan 2020 05:10:55 -0800 (PST)
+        Thu, 2 Jan 2020 08:13:51 -0500
+Received: by mail-oi1-f193.google.com with SMTP id v140so12768631oie.0;
+        Thu, 02 Jan 2020 05:13:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=5QU9rTsOzLzEhmlH5FWURLkeBcEclcCF3nfzgMt4niY=;
-        b=ko1LZAaC3JhmAHFPAOrUXMPiNlNhsRZ3FF16pKEN0EibdyTuqI1IMJIQ4Bl9+QZ7k/
-         EEjHV12eix685/GRUonjG3feNA9p6Ogk0njCAfF50epGLzmfgxENK9rNcXLBYewt+GpO
-         Ba3LVSVwtm1ECFPxaiPDess6e9DutWyEpCE4IJiZOpFDjYPikVlAWqXmpQKMai54OtG/
-         ZgBsNGZw7ZIqO4h7KLhhRrd5QLvfr2F2pqzzGk/ms6KoGgj+iUUDaaeJtkR1picQWB4L
-         LCKlU15m0HflbKLxRgDF/q3SkCs2VXz23kUKHrGR7gaxeyNgTL+zOjE1jyMUDtBxdc+v
-         A0hw==
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=9QcNKEGDiVHTxJaK9sSzJDKZz/8tGzml6xrrUnRcC94=;
+        b=DNR98hYT9md7ibZzsf9cAHpaUhqIkw6rzfrvVCQnyhjys9mXDaxNYjMkoKaiCf/8xV
+         sF/2eNukwqj4A4uV/9LRCWxUJnCqmZxJ+sKTgYPD5Gw5iG9QRrTDEpEQBuC6n0ZvumFe
+         RkQ0Cpkm5gu1sspOyH+C7+wtYnudr3LYA9SfSZA23VSbq1yEiboHbiva+zBFOYBlqzcg
+         bmhc7LIkzw13ELHo822ShA49LOz7NUh46ZOxzsiTlwwG/jcZ6fpsKg/9csyVxofHLMXg
+         J12zmFqTeV+0UzM7W+pXK6HNTwO3G7WlKh73QCFTz7SswKPKsCcD8GV0iXvah3ho/BoQ
+         /9Gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=5QU9rTsOzLzEhmlH5FWURLkeBcEclcCF3nfzgMt4niY=;
-        b=YlwREIrdYQEWTnfzLKuB1pK29v8GUfYInoBB4rmrI0eIK7W2TvA2pRVXxa/7Wz1G5r
-         FdMIBU3o0+Xum3NM5OY6ciqPCG3zUIEH3u76rnc1bscyCu3Eht+mF4dYmrFK2uuIIqNG
-         RlwdY5xegmsCXTXGIzG6Kckaaw3zhuasDkEFIUY+tA2Z+wJV9ocZWG+D26D/3q1oITh3
-         w+a3nVaAHET3Ft5k3Ap4XDvV5xrGcP2HUYcx81Lt1/trQS0gNz5rKvudrugfKX79OI7B
-         cIvdrt87ViJBih9CEPyjWJ8bAwyXiroMTuxRrRXqaZE/XlHqEIQBu+tZttiTljE1Yobp
-         pnlw==
-X-Gm-Message-State: APjAAAUosECU2HtNBdAX4drdj6F4MXTK80JNoOQnJ6+C922hXXBhpkhu
-        yfds+5Ji195E9DNoua1UM/Y=
-X-Google-Smtp-Source: APXvYqzWm284jkC+hbemmMPb+amPG4TiJs/RHCW9IumhNHaPS8XGWJBRQJJcx9hxDY6WPq6sm2XOkQ==
-X-Received: by 2002:a1c:18e:: with SMTP id 136mr14876920wmb.53.1577970654921;
-        Thu, 02 Jan 2020 05:10:54 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id q19sm8512946wmc.12.2020.01.02.05.10.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jan 2020 05:10:54 -0800 (PST)
-Date:   Thu, 2 Jan 2020 14:10:53 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Namjae Jeon <linkinjeon@gmail.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=9QcNKEGDiVHTxJaK9sSzJDKZz/8tGzml6xrrUnRcC94=;
+        b=Wg/rb255qmSedlvRfJ0bcp1ioz0woKTMO01+hB+6NgvvlQForYSokKQt2q5eqMU1lI
+         lDes9rzavcybjMpYuC9nS95sZERBcviNKmjSsGNTliSv41yK6GIY2FGZeM75GhG0d04n
+         y+4YwiElcN1Zi2nZBHY/4BZ6tFkz/gws0gVjbWkhq60wEATH8YfW5q7zf7Qdl6M1z0hU
+         HxgCxUBQqhqU6KpEih+FPw+6Z7VO1vS7vLqtN635MPFMmCuYZJWVnLodEZYiTzXRfuyS
+         CYGoFIeBhrRtouWeiWZUC5cnLPh8HjGc9gJaZANCxvRcC8jf0pOY1NPsb4KVulp32S2r
+         V2Tw==
+X-Gm-Message-State: APjAAAU9pA22SyMRjly7Nr16w+3tdDqR1f9jcOBXIP77Z7A3MpbMT2db
+        dGiBUUKWmd8EBtOvvzfPylMs+9/y7NpoURrrqew=
+X-Google-Smtp-Source: APXvYqwPehMWtJxpOaaDSRC5EVqb7sCbG3k7EcqpXmvX7UerLZdVhfLa0kbWa6l+HdzzZAWcAWnCyf7PZl2YIf0XRNo=
+X-Received: by 2002:a05:6808:a11:: with SMTP id n17mr1949987oij.94.1577970831213;
+ Thu, 02 Jan 2020 05:13:51 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a8a:87:0:0:0:0:0 with HTTP; Thu, 2 Jan 2020 05:13:50 -0800 (PST)
+In-Reply-To: <20200102083029.uv2gtig3ski23dpe@pali>
+References: <20191220062419.23516-1-namjae.jeon@samsung.com>
+ <CGME20191220062733epcas1p31665a3ae968ab8c70d91a3cddf529e73@epcas1p3.samsung.com>
+ <20191220062419.23516-3-namjae.jeon@samsung.com> <20191229134025.qb3mmqatsn5c4gao@pali>
+ <000701d5c132$bed73c80$3c85b580$@samsung.com> <20200102083029.uv2gtig3ski23dpe@pali>
+From:   Namjae Jeon <linkinjeon@gmail.com>
+Date:   Thu, 2 Jan 2020 22:13:50 +0900
+Message-ID: <CAKYAXd-CUyC9vTLH7ANumLxrAQCmb8Xi=2v4-uotLFBuxf_+Cw@mail.gmail.com>
+Subject: Re: [PATCH v8 02/13] exfat: add super block operations
+To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
 Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
         sj1557.seo@samsung.com
-Subject: Re: [PATCH v9 12/13] exfat: add exfat in fs/Kconfig and fs/Makefile
-Message-ID: <20200102131053.kmvmik7aumctrih2@pali>
-References: <20200102082036.29643-1-namjae.jeon@samsung.com>
- <CGME20200102082408epcas1p194621a6aa6729011703f0c5a076a7396@epcas1p1.samsung.com>
- <20200102082036.29643-13-namjae.jeon@samsung.com>
- <20200102125830.z2uz673dlsdttjvo@pali>
- <CAKYAXd9Y6o+a7q_yismLP8nNXOUqrudC3KW8N6Z05OghYLt1jg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKYAXd9Y6o+a7q_yismLP8nNXOUqrudC3KW8N6Z05OghYLt1jg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thursday 02 January 2020 22:07:16 Namjae Jeon wrote:
-> >> index 98be354fdb61..2c7ea7e0a95b 100644
-> >> --- a/fs/Makefile
-> >> +++ b/fs/Makefile
-> >> @@ -83,6 +83,7 @@ obj-$(CONFIG_HUGETLBFS)		+= hugetlbfs/
-> >>  obj-$(CONFIG_CODA_FS)		+= coda/
-> >>  obj-$(CONFIG_MINIX_FS)		+= minix/
-> >>  obj-$(CONFIG_FAT_FS)		+= fat/
-> >> +obj-$(CONFIG_EXFAT)		+= exfat/
-> >>  obj-$(CONFIG_BFS_FS)		+= bfs/
-> >>  obj-$(CONFIG_ISO9660_FS)	+= isofs/
-> >>  obj-$(CONFIG_HFSPLUS_FS)	+= hfsplus/ # Before hfs to find wrapped HFS+
-> >
-> > Seems that all filesystems have _FS suffix in their config names. So
-> > should not have exfat config also same convention? CONFIG_EXFAT_FS?
-> Yeah, I know, However, That name conflicts with staging/exfat.
-> So I subtracted _FS suffix.
+2020-01-02 17:30 GMT+09:00, Pali Roh=C3=A1r <pali.rohar@gmail.com>:
+> On Thursday 02 January 2020 15:06:16 Namjae Jeon wrote:
+>> > > +static const struct fs_parameter_spec exfat_param_specs[] =3D {
+>> > > +	fsparam_u32("uid",			Opt_uid),
+>> > > +	fsparam_u32("gid",			Opt_gid),
+>> > > +	fsparam_u32oct("umask",			Opt_umask),
+>> > > +	fsparam_u32oct("dmask",			Opt_dmask),
+>> > > +	fsparam_u32oct("fmask",			Opt_fmask),
+>> > > +	fsparam_u32oct("allow_utime",		Opt_allow_utime),
+>> > > +	fsparam_string("iocharset",		Opt_charset),
+>> > > +	fsparam_flag("utf8",			Opt_utf8),
+>> >
+>> > Hello! What is the purpose of having extra special "utf8" mount option=
+?
+>> > Is not one "iocharset=3Dutf8" option enough?
+>> utf8 nls_table supports utf8<->utf32 conversion and does not support
+>> surrogate character conversion.
+>
+> So in other words, this is just subset of UTF-8 just to 3 byte long
+> sequences (for Unicode code points up to the U+FFFF).
+>
+>> The utf8 option can support the surrogate
+>> character conversion of utf16 using utf16s_to_utf8s/utf8s_to_utf16s of
+>> the nls base.
+>
+> So this is full UTF-8 support, right?
+>
+> And what is the point to have two options for UTF-8 support, when one is
+> incomplete / broken? I see no benefit to have first option at all.
+> Providing incomplete / broken support to userspace does not make much
+> sense if we already have full and working support via different mount
+> option. Maybe second option with full UTF-8 support should be used also
+> by iocharset=3Dutf8 and then we do not need utf8 option at all?
+Make sense. I will make it one option.
 
-Maybe it is a good idea to drop conflicting implementation prior merging
-this series? Or at least renaming conflicting name?
-
-You already wrote that it is "random previous snaphot" which does not
-sounds as something we would like to use or support.
-
--- 
-Pali Rohár
-pali.rohar@gmail.com
+Thanks!
+>
+> --
+> Pali Roh=C3=A1r
+> pali.rohar@gmail.com
+>
