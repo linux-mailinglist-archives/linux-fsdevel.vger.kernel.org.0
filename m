@@ -2,155 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2CDD12E455
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2020 10:19:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1A9112E4A1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2020 10:56:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727930AbgABJTG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Jan 2020 04:19:06 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38318 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727897AbgABJTG (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Jan 2020 04:19:06 -0500
-Received: by mail-wm1-f67.google.com with SMTP id u2so5049603wmc.3;
-        Thu, 02 Jan 2020 01:19:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=dWNZKKTfhWgqpNzUjWdosrjzGH7DY1lOFlWq07DjZ+4=;
-        b=ky5Nx8hFeyeWA3d+L8RGv0QV+ipVrbqtp1d4rRFv1v6obMoP1UqvWU5QWSqtEFxPCB
-         /Y7b/bCs+th98Qb7IvNajCMoaCAT/T73lUts/cmlGzZh3fq5X9yw7EGc7ipxkP/Wdk/A
-         mvxDDYJkRJdVXFDlVTBHD4VXVDfcdy1KRHvTUazW8+R1EjdTniu3iV9tpgwGiTUwo9zk
-         fq4lXOWKzdDJBTqyVbgaYOXQM++0Kj0fegHtndSn3RTiPrZxBj6XLcO4o2S45UWMChLI
-         MAFun2ahgD3MlBALqi4bmtg6YeOsLgCfhYv7OlcSuhdYl89WqMS8xEPbX9xUNiOULkev
-         3I2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=dWNZKKTfhWgqpNzUjWdosrjzGH7DY1lOFlWq07DjZ+4=;
-        b=TYEZoVGlc9/el2JcqFg6AqlBUQCa/t8k4aa1U0dtsu0BN040hjapbx6LvLQuLkFy2G
-         kn7gLuhea/OgoUdfajK8Qktd25rCOfhYD8dHw/ARcA1iAFNW5fuwbIAZutZEJmnN4qUj
-         C/RmEyUyuaGzYmc0NIC6dpD75KXrB2nHhXEBvfLit5uj8Pq/onGICp/FBDwzuaf88EVj
-         whmtZ2q1OJ91BgD4Hw2HM92ofH+cfpeZVhNYXy13XronCfwUQTock5M8cv3yD0OGksVD
-         d1p6XVZkMUj8RZPLFol01CuHjGYLvhQJ6InDVhWzcZMMQRpX/h154kkozq/BWPWDvFLf
-         V1DQ==
-X-Gm-Message-State: APjAAAUY60w6YGEbi/UjKV8Eb4vJpyU+LcA6hnIlx1Epdmg30GeYy/xh
-        HbKaFJdlNoWsaWX/ABS6v9M=
-X-Google-Smtp-Source: APXvYqwrZ71OWc4HSl1aU/0CvAAoZpWoLas1vEdDY6BzcirNs29twD10L9XbKUbhxHp+/KMRhinucg==
-X-Received: by 2002:a1c:c919:: with SMTP id f25mr13301843wmb.49.1577956744098;
-        Thu, 02 Jan 2020 01:19:04 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id x18sm55457022wrr.75.2020.01.02.01.19.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jan 2020 01:19:03 -0800 (PST)
-Date:   Thu, 2 Jan 2020 10:19:02 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Namjae Jeon <namjae.jeon@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com, linkinjeon@gmail.com
-Subject: Re: [PATCH v9 09/13] exfat: add misc operations
-Message-ID: <20200102091902.tk374bxohvj33prz@pali>
-References: <20200102082036.29643-1-namjae.jeon@samsung.com>
- <CGME20200102082406epcas1p268f260d90213bdaabee25a7518f86625@epcas1p2.samsung.com>
- <20200102082036.29643-10-namjae.jeon@samsung.com>
+        id S1727986AbgABJ4t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Jan 2020 04:56:49 -0500
+Received: from mout.web.de ([212.227.15.3]:43771 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727958AbgABJ4s (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 2 Jan 2020 04:56:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1577958988;
+        bh=iYNtL+PxRcjkSdwffxObOQWfik3XnwPkM/jokKb2k64=;
+        h=X-UI-Sender-Class:Cc:References:Subject:To:From:Date:In-Reply-To;
+        b=hnlrjCeUewfTxZ0+mDadBOEXO8uOTw3pGBExpsc1S5XDHh/Tl4IwrTiaCu5BMF9um
+         JKJpmY4xu3T8G7tKq+uFVNTL71+vICYIA9fcX0S7Nz0fMsrqxK4t1Zy6Hq45k4Vzx2
+         mibn4C4rZmPx0Bsr8Sn045sXdGE1cLIAPJCnVoFc=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.133.119.207]) by smtp.web.de (mrweb002
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0LyE3J-1jpS4v0B7N-015dbc; Thu, 02
+ Jan 2020 10:56:28 +0100
+Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Daniel Wagner <dwagner@suse.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        linkinjeon@gmail.com
+References: <20191220062419.23516-11-namjae.jeon@samsung.com>
+Subject: Re: [PATCH v8 10/13] exfat: add nls operations
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-fsdevel@vger.kernel.org
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <bc11e593-7943-cf78-917d-57318f0b5fe1@web.de>
+Date:   Thu, 2 Jan 2020 10:56:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
+In-Reply-To: <20191220062419.23516-11-namjae.jeon@samsung.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200102082036.29643-10-namjae.jeon@samsung.com>
-User-Agent: NeoMutt/20180716
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:jzAARglS6ZCwAjXLcRsWKgvPRmlf6zFPEfU32J1kZlLu20GCXl0
+ RWpn/fGE5lHZfbhvOUf8EHKlb3FbO8zVlpHJslyhFTCjlf4KE2Z8pCkbNRMXMNqD3ylIVuv
+ E/0sqEszJE0QQU1+StDfjlePB7mat7A6j9jZHDc03jd6fOdna6Ijb7as2U4DJPvM31YyrLo
+ Z7rZtL7cGBY3scIkGvB2A==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Pd0Yd2Z24Wg=:pkLudLv58veIKI0BymPb/b
+ gLY2g1832kzU+AG+SqOy6U+QnMNtyk2GCxeg+ruds5UxqPC9EgRnaEdH9SgJimdvCu7NLYwwF
+ rFHDVD0PGUIoCUrxBEXRR8AWtbQiM9y/3Sgbl9ygqqlhdMn9WVIiuG4skCy4A5Em3mRWh38Mp
+ mFgkm9HO0pdc3FwHcrq/IBj9xttDIUg2OqbNXQ1AbbyFbC7B0yJJVGIW+lWjcv/MjU6s9Bfev
+ aNEM49lG2C7U+orbAaYH9/7P8ZGKl8jRx96Btx21SXD882rt4L5jkCE/Ehpk8vYx/8oA1+slP
+ HqwMOE6VdIHVpB1cnFficfvyvZB/I8KEiZkeDmObz4fmJXPBcEFy6tiRKI5L3RJMvTYIGmzuv
+ uw1izqB5N55iO78f+urUGcqSlxYRYffHSmzE9DrBO4lva/6Xa2V1vUqsm2m2WUHFX3EddXYTt
+ Ag4AscxMiJn6/hzide9HqrdPWsG6USLJIYjS9RsvuBJBhkv30yUYDmyamjIYD7RjQ0OPC671M
+ 2BwHrlO+ow0+lJ3iVX4LCZCff14rs4tg2oj9Kaf8EUASbdKJysJGpVHQxBVZ4AA4EYrnVvJa5
+ I9ogzGYADEyWiwtgqDgkc68qDgWtJADV/l9EkIIzVSwW6696b5Jc4vp3h3C5FWz9kts6c03A1
+ HNeP5ago9846haYaMjr0wpcXAp70tcWO+qTvjsMlm7gFnQ4T9TlawhYLBaoFiJAg1yHSdBl3K
+ YX6sQ2y+OsbnCuNnQ6kelgPPdm3HSRzh4ML4qjyUq91xm/aOwcGLdDjGfp6kSowHHN0TJHE92
+ kMFczPFeRRYtAN8siD4VrSIrp5rZ2OJAtR38ajh6jy/f3/rL/1n5hTxqq+KZwZtbzxRnAAT2g
+ M049/xcXnD255jwn8DiIOziHTX3gUOzs92OY28mEgoyRHGEgqiG2bRPnIrbsF/Ulc7CsJ6xBj
+ SipTs6t0utrFdl5JhuPt1gpmA2SnQXFI2ZUAcq9Uwj90lE0Qz6gM1Oa2OUKkblUu+V4GDT9zK
+ O4C6kdRfo/BbBLxyZqG02VrqfusVQSOydgWRlRsnTrwaNkQrPj2/UlnHscDE3raTivzMta6Em
+ AXgiL7ZXntXAXPC7XTn6yeU9juAz2aXNw/6O1XKNLp23HQ4GLMHxAbXhGxXy46VxnaMOx1Uqg
+ 0Md9rH4e1Iktcd3VU74OIyvVqfqvHZAlyAdPbYO6BOiQQANtSKxKtFuwuptp/KygTINnrRBZd
+ +mcFePNSv6VLc10bD/sr+lIWBH/aghEAlrpf3a1DzZrP6sYrvo2gHfzgtb+g=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thursday 02 January 2020 16:20:32 Namjae Jeon wrote:
-> This adds the implementation of misc operations for exfat.
-> 
-> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
-> ---
->  fs/exfat/misc.c | 253 ++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 253 insertions(+)
->  create mode 100644 fs/exfat/misc.c
-> 
-> diff --git a/fs/exfat/misc.c b/fs/exfat/misc.c
-> new file mode 100644
-> index 000000000000..7f533bcb3b3f
-> --- /dev/null
-> +++ b/fs/exfat/misc.c
-
-...
-
-> +/* <linux/time.h> externs sys_tz
-> + * extern struct timezone sys_tz;
-> + */
-> +#define UNIX_SECS_1980    315532800L
-> +
-> +#if BITS_PER_LONG == 64
-> +#define UNIX_SECS_2108    4354819200L
-> +#endif
-
-...
-
-> +#define TIMEZONE_CUR_OFFSET()	((sys_tz.tz_minuteswest / (-15)) & 0x7F)
-> +/* Convert linear UNIX date to a FAT time/date pair. */
-> +void exfat_time_unix2fat(struct exfat_sb_info *sbi, struct timespec64 *ts,
-> +		struct exfat_date_time *tp)
+=E2=80=A6
+> +++ b/fs/exfat/nls.c
+=E2=80=A6
+> +static int exfat_load_upcase_table(struct super_block *sb,
+> +		sector_t sector, unsigned long long num_sectors,
+> +		unsigned int utbl_checksum)
 > +{
-> +	time_t second = ts->tv_sec;
-> +	time_t day, month, year;
-> +	time_t ld; /* leap day */
+=E2=80=A6
 
-Question for other maintainers: Has kernel code already time_t defined
-as 64bit? Or it is still just 32bit and 32bit systems and some time64_t
-needs to be used? I remember that there was discussion about these
-problems, but do not know if it was changed/fixed or not... Just a
-pointer for possible Y2038 problem. As "ts" is of type timespec64, but
-"second" of type time_t.
+Do you care for the clarification of remaining software development concer=
+ns
+(also for this function implementation)?
 
-> +
-> +	/* Treats as local time with proper time */
-> +	second -= sys_tz.tz_minuteswest * SECS_PER_MIN;
-> +	tp->timezone.valid = 1;
-> +	tp->timezone.off = TIMEZONE_CUR_OFFSET();
-> +
-> +	/* Jan 1 GMT 00:00:00 1980. But what about another time zone? */
-> +	if (second < UNIX_SECS_1980) {
-> +		tp->second  = 0;
-> +		tp->minute  = 0;
-> +		tp->hour = 0;
-> +		tp->day  = 1;
-> +		tp->month  = 1;
-> +		tp->year = 0;
-> +		return;
-> +	}
-> +
-> +	if (second >= UNIX_SECS_2108) {
-
-Hello, this code cause compile errors on 32bit systems as UNIX_SECS_2108
-macro is not defined when BITS_PER_LONG == 32.
-
-Value 4354819200 really cannot fit into 32bit signed integer, so you
-should use 64bit signed integer. I would suggest to define this macro
-value via LL not just L suffix (and it would work on both 32 and 64bit)
-
-  #define UNIX_SECS_2108    4354819200LL
-
-> +		tp->second  = 59;
-> +		tp->minute  = 59;
-> +		tp->hour = 23;
-> +		tp->day  = 31;
-> +		tp->month  = 12;
-> +		tp->year = 127;
-> +		return;
-> +	}
-
--- 
-Pali Rohár
-pali.rohar@gmail.com
+Regards,
+Markus
