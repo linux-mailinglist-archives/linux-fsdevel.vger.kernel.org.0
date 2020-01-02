@@ -2,97 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D94EE12E62C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2020 13:35:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 936E512E647
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2020 13:53:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbgABMfJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Jan 2020 07:35:09 -0500
-Received: from mail-il1-f197.google.com ([209.85.166.197]:48745 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728274AbgABMfJ (ORCPT
+        id S1728314AbgABMxm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Jan 2020 07:53:42 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:35504 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728297AbgABMxm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Jan 2020 07:35:09 -0500
-Received: by mail-il1-f197.google.com with SMTP id u14so25648541ilq.15
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Jan 2020 04:35:09 -0800 (PST)
+        Thu, 2 Jan 2020 07:53:42 -0500
+Received: by mail-wm1-f65.google.com with SMTP id p17so5570262wmb.0;
+        Thu, 02 Jan 2020 04:53:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=YwBwOFr2GTeVQt8tImFqrPLqlCxuVqOvF8sYlUHm2+Q=;
+        b=p/DlE16fJVziot3niZucLMnORocGMIL+ZirYo/4YUbuvBiIHVKkOJ7EhWFE69ABIKg
+         YGL50ANCbvnvq7e7Gg0PPE317Rg0EbHIMf0ixGjyYiJwPvrTNG67j1Jnc26jbJXSy0lA
+         6dGRJqi9Zot5iEumK8FfUA6Yw8xC3qg5wtaCsX5h+eLYorKl9N9uj3WwlqkewAJ10bSh
+         YDvZYvTDbBuN638FKFp6SFxud4Z3bWjvECswQVN6+8Y/j77JR4T0l3LJZIJzWCE52VXP
+         Nbgo6UDmfXtCAQe+UIjBy5iRcmvSPxSPZfo8BwP96A4Vm9dwTmbOOIQuovylwZJJGc8I
+         U1EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=y0iE5KleJVXXmUFvao8OvB4WDNhb1+wejlM/yNViWB0=;
-        b=ifEp8dEhhYguS+Tw7dKKUp8N5gU3lrU8NR69H+0dZMNEu5kgECB6uK5JXQ356lupLu
-         XsZ4TctqrCHtB5Zwd1Lh/BBoHysOTayvhzU32XsvmmHNcsRGUoEvFXmO3OYPAeRTBKfW
-         E7M1lIzVAxicwWSpDHNE6kVxruemWMnwe3dudz6zEXKKEaHoUwVkgQq/syOxgB8ra2uR
-         wAOmIluxx0SIwaMCvjSBewDC9cSubEwpQClBOfMRIiE3Wxr1tD7zTYHJb7vPjaMbuD0a
-         u1L9apPnd59E3DGxTcCKS3AhqhAgx+qh2W2srumf/Eegp1SZnnyITEW3ADwqAuwtw3Oa
-         rEAg==
-X-Gm-Message-State: APjAAAUu49MsC8iWNRS17OyjdXU1t+RhjGqfQzNiyoy/KqzjaKOqwyD+
-        tef8p961EitlwUvC0vYl3hDFWvs/meUa3anpe4na5Vf2h3IG
-X-Google-Smtp-Source: APXvYqxFR/nfC87By5t8MAevHYJSM4hc9KgEMxwcIzCAhJzxWn8oF64cx9dgEtwx2oDUqZyG7pTghhJ6gs+7Doo5hyjT/2qCnXoB
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=YwBwOFr2GTeVQt8tImFqrPLqlCxuVqOvF8sYlUHm2+Q=;
+        b=caadJEaAo/OKZw2YdVKIIpgUckA68aRq2VEmzg0MK1fpKYNr9qjVBvAKkCr/ViL3g8
+         0tHpSN8zbNM3vrjMbCTbRqxKmKTIGINtLaadAm4GKUcs62BvKf+op7kQ3GQGwktwN8Z5
+         9N4JsJkKaif/U5ZVGMJx+9HjyBHw5AQoCfm4ZhDnjAkGiCn/MshVLUNPcWVUpidRY20i
+         AbVkrq4IMvmsn2c2qSxoP+77zPvrJsrm4Z/FrcNfsfG9zyys41veLjkvhl+4tmg6didj
+         Y2xPG3Uc3jbN+fm5CwuWcETs/ToJ31KJD0bTJGpLcslfaXu0vG/egitnmaOJ7HU6zjNb
+         f7KQ==
+X-Gm-Message-State: APjAAAWlZKGuzIW5AaHJ0FfGYnCRQpmki7XMDp4LiUuJGR8ZvbHQ2hU7
+        KehS7i69rBkmmAqZWa7nV6w=
+X-Google-Smtp-Source: APXvYqz+dvHUrW9CNP28JElRU2HRzVrtAusa1wqO20Yf+ipAm5KyW+ec/KZa5sNIXWt8dEw0UFinXA==
+X-Received: by 2002:a1c:1b41:: with SMTP id b62mr14098075wmb.53.1577969620616;
+        Thu, 02 Jan 2020 04:53:40 -0800 (PST)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id d8sm57064112wre.13.2020.01.02.04.53.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Jan 2020 04:53:39 -0800 (PST)
+Date:   Thu, 2 Jan 2020 13:53:38 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Namjae Jeon <namjae.jeon@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
+        sj1557.seo@samsung.com, linkinjeon@gmail.com
+Subject: Re: [PATCH v9 11/13] exfat: add Kconfig and Makefile
+Message-ID: <20200102125338.pf3aw62qtnch5oqa@pali>
+References: <20200102082036.29643-1-namjae.jeon@samsung.com>
+ <CGME20200102082408epcas1p28d46af675103d2cd92232a4f7b712c46@epcas1p2.samsung.com>
+ <20200102082036.29643-12-namjae.jeon@samsung.com>
 MIME-Version: 1.0
-X-Received: by 2002:a92:d2:: with SMTP id 201mr72802259ila.22.1577968509084;
- Thu, 02 Jan 2020 04:35:09 -0800 (PST)
-Date:   Thu, 02 Jan 2020 04:35:09 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000736cbb059b276cd4@google.com>
-Subject: memory leak in path_openat
-From:   syzbot <syzbot+9c064b9ab4dbb724c806@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200102082036.29643-12-namjae.jeon@samsung.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Thursday 02 January 2020 16:20:34 Namjae Jeon wrote:
+> This adds the Kconfig and Makefile for exfat.
+> 
+> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
+> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
+> ---
+>  fs/exfat/Kconfig  | 21 +++++++++++++++++++++
+>  fs/exfat/Makefile |  8 ++++++++
+>  2 files changed, 29 insertions(+)
+>  create mode 100644 fs/exfat/Kconfig
+>  create mode 100644 fs/exfat/Makefile
+> 
+> diff --git a/fs/exfat/Kconfig b/fs/exfat/Kconfig
+> new file mode 100644
+> index 000000000000..11d841a5f7f0
+> --- /dev/null
+> +++ b/fs/exfat/Kconfig
+> @@ -0,0 +1,21 @@
+> +# SPDX-License-Identifier: GPL-2.0-or-later
+> +
+> +config EXFAT
+> +	tristate "exFAT filesystem support"
+> +	select NLS
+> +	help
+> +	  This allows you to mount devices formatted with the exFAT file system.
+> +	  exFAT is typically used on SD-Cards or USB sticks.
+> +
+> +	  To compile this as a module, choose M here: the module will be called
+> +	  exfat.
+> +
+> +config EXFAT_FS_DEFAULT_IOCHARSET
+> +	string "Default iocharset for exFAT"
+> +	default "utf8"
+> +	depends on EXFAT
+> +	help
 
-syzbot found the following crash on:
+Hello! We have already config option FAT_DEFAULT_IOCHARSET. Cannot it be
+reused? FAT_DEFAULT_IOCHARSET is used for msdos.ko and vfat.ko, both are
+from FAT drivers family. So it looks like that FAT_DEFAULT_IOCHARSET
+could be used also for exFAT which belongs to FAT fs family.
 
-HEAD commit:    bf8d1cd4 Merge tag 'scsi-fixes' of git://git.kernel.org/pu..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16386971e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=328af7338803d39a
-dashboard link: https://syzkaller.appspot.com/bug?extid=9c064b9ab4dbb724c806
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17f4ce15e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=153c8971e00000
+> +	  Set this to the default input/output character set you'd
+> +	  like exFAT to use. It should probably match the character set
+> +	  that most of your exFAT filesystems use, and can be overridden
+> +	  with the "iocharset" mount option for exFAT filesystems.
+> diff --git a/fs/exfat/Makefile b/fs/exfat/Makefile
+> new file mode 100644
+> index 000000000000..e9193346c80c
+> --- /dev/null
+> +++ b/fs/exfat/Makefile
+> @@ -0,0 +1,8 @@
+> +# SPDX-License-Identifier: GPL-2.0-or-later
+> +#
+> +# Makefile for the linux exFAT filesystem support.
+> +#
+> +obj-$(CONFIG_EXFAT) += exfat.o
+> +
+> +exfat-y	:= inode.o namei.o dir.o super.o fatent.o cache.o nls.o misc.o \
+> +	   file.o balloc.o
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+9c064b9ab4dbb724c806@syzkaller.appspotmail.com
-
-BUG: memory leak
-unreferenced object 0xffff88811f95b400 (size 256):
-   comm "syz-executor609", pid 6975, jiffies 4294945087 (age 7.980s)
-   hex dump (first 32 bytes):
-     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-     a0 2b ab 1b 82 88 ff ff c0 3c 80 2b 81 88 ff ff  .+.......<.+....
-   backtrace:
-     [<00000000aa112990>] kmemleak_alloc_recursive  
-include/linux/kmemleak.h:43 [inline]
-     [<00000000aa112990>] slab_post_alloc_hook mm/slab.h:586 [inline]
-     [<00000000aa112990>] slab_alloc mm/slab.c:3320 [inline]
-     [<00000000aa112990>] kmem_cache_alloc+0x13f/0x2c0 mm/slab.c:3484
-     [<00000000a62a216f>] kmem_cache_zalloc include/linux/slab.h:660 [inline]
-     [<00000000a62a216f>] __alloc_file+0x28/0x130 fs/file_table.c:101
-     [<00000000db4f5560>] alloc_empty_file+0x50/0xd0 fs/file_table.c:151
-     [<00000000178121b2>] path_openat+0x52/0x1dd0 fs/namei.c:3526
-     [<00000000b9f51901>] do_filp_open+0xaa/0x130 fs/namei.c:3567
-     [<000000008b6c278b>] do_sys_open+0x253/0x330 fs/open.c:1097
-     [<00000000de529158>] __do_sys_openat fs/open.c:1124 [inline]
-     [<00000000de529158>] __se_sys_openat fs/open.c:1118 [inline]
-     [<00000000de529158>] __x64_sys_openat+0x24/0x30 fs/open.c:1118
-     [<000000002f0aeb7b>] do_syscall_64+0x73/0x220  
-arch/x86/entry/common.c:294
-     [<00000000720f3b5c>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+-- 
+Pali Rohár
+pali.rohar@gmail.com
