@@ -2,145 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D789612EB97
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2020 22:58:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C8C112EBA8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2020 23:08:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726121AbgABV6K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Jan 2020 16:58:10 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:34258 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbgABV6I (ORCPT
+        id S1725943AbgABWIF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Jan 2020 17:08:05 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38521 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725876AbgABWIF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Jan 2020 16:58:08 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 002LsRxn088500;
-        Thu, 2 Jan 2020 21:57:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2019-08-05;
- bh=c9CiFIyiVXzLlpT9+lnQQn3z7fPJn3E86zFXm4+hGo8=;
- b=l27tJV/1FLn856+Rp/OjZkzDW2jl7hotIb6XEilTNAo7KS7Rl39jaLx7IT3t5WgPzclf
- ZDGYMC/EgYCPjcwv1xhButdkXpUrfNMjVCX+99Kmg0aMg7pviO73tTWHYWxLqZFL16kV
- qxRYuaEwynUH+0BjB5fty3tIp/E4Ge6H2nsdSJWv28D5YVtPPtwIio8wHWudjFJyC8xz
- X+2Xl3m92k3NSGsQncZqrFDMttmje6oOGXnpjtj+bt4OXUwp+mEIm7aJW+Vkn9uj3EHB
- EWRA8bAlyfC4yIaFEPKoFSI6tFW/5spkqoPiUMqgIViXzZ/EhCZ31U1al+HsD89MLpqM Hw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2x5ypqsku0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 02 Jan 2020 21:57:57 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 002LmiPw101439;
-        Thu, 2 Jan 2020 21:57:56 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2x9jm6n3tw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 02 Jan 2020 21:57:56 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 002LvtAF000910;
-        Thu, 2 Jan 2020 21:57:55 GMT
-Received: from localhost (/10.145.178.64)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 02 Jan 2020 13:57:55 -0800
-Date:   Thu, 2 Jan 2020 13:57:54 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+        Thu, 2 Jan 2020 17:08:05 -0500
+Received: by mail-wr1-f68.google.com with SMTP id y17so40741693wrh.5;
+        Thu, 02 Jan 2020 14:08:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hSkCZSCwVDDUrbTtmDApYqi12CUPtLMPAOuxrPvJKGM=;
+        b=g4fnXkQZ6tQvKDJCtac9JIAAN3qok68nbRZH+Ug/JaKrjdH00nsqlLJUkFEBJCKqsu
+         dmoif8pslECzeKCb5JAMGtNhSVtuaboSJC6Q18T87ttI6PKPgBxJsirHN7HDhtayf/Nk
+         knm+LExorhsD5Ngn7JbZxb02mJNUo0+8RsEFFDMUjtoX5eo/bPuoUQbX+OVvcYhgj0xu
+         JhCyOi6C3gA6/mVB8fdbqZS6V64bI22THEIQNABRvxtw69YpQ6+5vsRjLosoAFx4CTar
+         b5IPh2l86VfYGudHcEQYhiXmwyFmEUOW48SLd+fOtH1xBECvbRpp4omc3Qqfn28yMgdp
+         emEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hSkCZSCwVDDUrbTtmDApYqi12CUPtLMPAOuxrPvJKGM=;
+        b=j2GVDzcBm2z2aI9JialtlBcVlZcy2wkCfe178co4dWVL7I+KiQR+MMCPaSj22hWwIh
+         W1Ux2FdEgx04OLHow+TydDh9qPb4awEx81ZsTmN8yKmg6GANtN7dmqdH8pZl+oeUCPiz
+         9v+GIs7BjQmh6Mna+tUduJzRQOhuGqtkxNNxV+LLPbJ3d2WpP1nCvhc+6KOvnWQaF63k
+         48WOtqRQYnTqNNLAymndOwoKrxE8p9HlfltVXR1J28Gnfv0Q28cYa5rhPMWYF7ERXFDL
+         RgjgliS2UewBdeiU2h2zABC4Ri3asPoTu1ymQ/e84RFsXSw1a8XbWVAi57O6cMY+RRZZ
+         ImuA==
+X-Gm-Message-State: APjAAAVv5KN5dnN05ZgiCAlnp6ZKtp8nf9Iu1hlyFU0xJi3Cofydrah9
+        TcTIrfP/bx1zz6sbIQP24KI=
+X-Google-Smtp-Source: APXvYqy52IHkgh40mflvMKl6Meyj6hzKveJQJrwEcbpDiar3fGS4/Q6qnjD0W9jPOKaQc2u89W0IMw==
+X-Received: by 2002:adf:fd07:: with SMTP id e7mr82186374wrr.21.1578002882675;
+        Thu, 02 Jan 2020 14:08:02 -0800 (PST)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id e8sm57670997wrt.7.2020.01.02.14.08.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Jan 2020 14:08:01 -0800 (PST)
+Date:   Thu, 2 Jan 2020 23:08:00 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
 Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
         Eric Sandeen <sandeen@redhat.com>,
         Andreas Dilger <adilger@dilger.ca>,
         David Sterba <dsterba@suse.com>, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Subject: Re: FS_IOC_GETFSLABEL and FS_IOC_SETFSLABEL
-Message-ID: <20200102215754.GA1508646@magnolia>
+Message-ID: <20200102220800.nasrhtz23xkqxxkg@pali>
 References: <20191228143651.bjb4sjirn2q3xup4@pali>
  <517472d1-c686-2f18-4e0b-000cda7e88c7@redhat.com>
  <20200101181054.GB191637@mit.edu>
  <20200101183920.imncit5sllj46c22@pali>
+ <20200102215754.GA1508646@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="l7bzeipaopuephkr"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200101183920.imncit5sllj46c22@pali>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9488 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2001020176
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9488 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2001020177
+In-Reply-To: <20200102215754.GA1508646@magnolia>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 01, 2020 at 07:39:20PM +0100, Pali Rohár wrote:
-> On Wednesday 01 January 2020 13:10:54 Theodore Y. Ts'o wrote:
-> > On Tue, Dec 31, 2019 at 04:54:18PM -0600, Eric Sandeen wrote:
-> > > > Because I was not able to find any documentation for it, what is format
-> > > > of passed buffer... null-term string? fixed-length? and in which
-> > > > encoding? utf-8? latin1? utf-16? or filesystem dependent?
-> > > 
-> > > It simply copies the bits from the memory location you pass in, it knows
-> > > nothing of encodings.
-> > > 
-> > > For the most part it's up to the filesystem's own utilities to do any
-> > > interpretation of the resulting bits on disk, null-terminating maximal-length
-> > > label strings, etc.
-> > 
-> > I'm not sure this is going to be the best API design choice.  The
-> > blkid library interprets the on disk format for each file syustem
-> > knowing what is the "native" format for that particular file system.
-> > This is mainly an issue only for the non-Linux file systems; for the
-> > Linux file system, the party line has historically been that we don't
-> > get involved with character encoding, but in practice, what that has
-> > evolved into is that userspace has standardized on UTF-8, and that's
-> > what we pass into the kernel from userspace by convention.
-> > 
-> > But the problem is that if the goal is to make FS_IOC_GETFSLABEL and
-> > FS_IOC_SETFSLABEL work without the calling program knowing what file
-> > system type a particular pathname happens to be, then it would be
-> > easist for the userspace program if it can expect that it can always
-> > pass in a null-terminated UTF-8 string, and get back a null-terminated
-> > UTF-8.  I bet that in practice, that is what most userspace programs
-> > are going to be do anyway, since it works that way for all other file
-> > system syscalls.
 
-"Null terminated sequence of bytes*" is more or less what xfsprogs do,
-and it looks like btrfs does that as well.
+--l7bzeipaopuephkr
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-(* with the idiotic exception that if the label is exactly 256 bytes long
-then the array is not required to have a null terminator, because btrfs
-encoded that quirk of their ondisk format into the API. <grumble>)
+On Thursday 02 January 2020 13:57:54 Darrick J. Wong wrote:
+> On Wed, Jan 01, 2020 at 07:39:20PM +0100, Pali Roh=C3=A1r wrote:
+> > On Wednesday 01 January 2020 13:10:54 Theodore Y. Ts'o wrote:
+> > > On Tue, Dec 31, 2019 at 04:54:18PM -0600, Eric Sandeen wrote:
+> > > > > Because I was not able to find any documentation for it, what is =
+format
+> > > > > of passed buffer... null-term string? fixed-length? and in which
+> > > > > encoding? utf-8? latin1? utf-16? or filesystem dependent?
+> > > >=20
+> > > > It simply copies the bits from the memory location you pass in, it =
+knows
+> > > > nothing of encodings.
+> > > >=20
+> > > > For the most part it's up to the filesystem's own utilities to do a=
+ny
+> > > > interpretation of the resulting bits on disk, null-terminating maxi=
+mal-length
+> > > > label strings, etc.
+> > >=20
+> > > I'm not sure this is going to be the best API design choice.  The
+> > > blkid library interprets the on disk format for each file syustem
+> > > knowing what is the "native" format for that particular file system.
+> > > This is mainly an issue only for the non-Linux file systems; for the
+> > > Linux file system, the party line has historically been that we don't
+> > > get involved with character encoding, but in practice, what that has
+> > > evolved into is that userspace has standardized on UTF-8, and that's
+> > > what we pass into the kernel from userspace by convention.
+> > >=20
+> > > But the problem is that if the goal is to make FS_IOC_GETFSLABEL and
+> > > FS_IOC_SETFSLABEL work without the calling program knowing what file
+> > > system type a particular pathname happens to be, then it would be
+> > > easist for the userspace program if it can expect that it can always
+> > > pass in a null-terminated UTF-8 string, and get back a null-terminated
+> > > UTF-8.  I bet that in practice, that is what most userspace programs
+> > > are going to be do anyway, since it works that way for all other file
+> > > system syscalls.
+>=20
+> "Null terminated sequence of bytes*" is more or less what xfsprogs do,
+> and it looks like btrfs does that as well.
+>=20
+> (* with the idiotic exception that if the label is exactly 256 bytes long
+> then the array is not required to have a null terminator, because btrfs
+> encoded that quirk of their ondisk format into the API. <grumble>)
+>=20
+> So for VFAT, I think you can use the same code that does the name
+> encoding transformations for iocharset=3D to handle labels, right?
 
-So for VFAT, I think you can use the same code that does the name
-encoding transformations for iocharset= to handle labels, right?
+Yes I can! But I need to process also codepage=3D transformation (details
+in email <20191228200523.eaxpwxkpswzuihow@pali>). And I already have
+this implementation in progress.
 
-> > So for a file system which is a non-Linux-native file system, if it
-> > happens to store the its label using utf-16, or some other
-> > Windows-system-silliness, it would work a lot better if it assumed
-> > that it was passed in utf-8, and stored in the the Windows file system
-> > using whatever crazy encoding Windows wants to use.  Otherwise, why
-> > bother uplifting the ioctl to one which is file system independent, if
-> > the paramters are defined to be file system *dependent*?
-> 
-> Exactly. In another email I wrote that for those non-Linux-native
-> filesystem could be used encoding specified in iocharset= mount
-> parameter. I think it is better as usage of one fixing encoding (e.g.
-> UTF-8) if other filesystem strings are propagated to userspace in other
-> encoding (as specified by iocharset=).
+> > > So for a file system which is a non-Linux-native file system, if it
+> > > happens to store the its label using utf-16, or some other
+> > > Windows-system-silliness, it would work a lot better if it assumed
+> > > that it was passed in utf-8, and stored in the the Windows file system
+> > > using whatever crazy encoding Windows wants to use.  Otherwise, why
+> > > bother uplifting the ioctl to one which is file system independent, if
+> > > the paramters are defined to be file system *dependent*?
+> >=20
+> > Exactly. In another email I wrote that for those non-Linux-native
+> > filesystem could be used encoding specified in iocharset=3D mount
+> > parameter. I think it is better as usage of one fixing encoding (e.g.
+> > UTF-8) if other filesystem strings are propagated to userspace in other
+> > encoding (as specified by iocharset=3D).
+>=20
+> I'm confused by this statement... but I think we're saying the same
+> thing?
 
-I'm confused by this statement... but I think we're saying the same
-thing?
+Theodore suggested to use UTF-8 encoding for FS_IOC_GETFSLABEL. And I
+suggested to use iocharset=3D encoding for FS_IOC_GETFSLABEL. You said to
+use for VFAT "same code that does the name encoding", so if I'm
+understanding correctly, yes it is the same thing (as VFAT use
+iocharset=3D and codepage=3D mount options for name encoding). Right?
 
---D
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
 
-> 
-> -- 
-> Pali Rohár
-> pali.rohar@gmail.com
+--l7bzeipaopuephkr
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iF0EARECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXg5pvgAKCRCL8Mk9A+RD
+Ukr4AJ98GAta9U2OaTiGsrOMG9ps/7zVSwCfStjpkSU7g+R0WVUO3TWvEWLJuTk=
+=oufg
+-----END PGP SIGNATURE-----
+
+--l7bzeipaopuephkr--
