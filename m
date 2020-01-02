@@ -2,37 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1A9112E4A1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2020 10:56:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A032A12E4E5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2020 11:19:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727986AbgABJ4t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Jan 2020 04:56:49 -0500
-Received: from mout.web.de ([212.227.15.3]:43771 "EHLO mout.web.de"
+        id S1728042AbgABKTx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Jan 2020 05:19:53 -0500
+Received: from mout.web.de ([212.227.15.3]:40045 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727958AbgABJ4s (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Jan 2020 04:56:48 -0500
+        id S1728036AbgABKTw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 2 Jan 2020 05:19:52 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1577958988;
-        bh=iYNtL+PxRcjkSdwffxObOQWfik3XnwPkM/jokKb2k64=;
-        h=X-UI-Sender-Class:Cc:References:Subject:To:From:Date:In-Reply-To;
-        b=hnlrjCeUewfTxZ0+mDadBOEXO8uOTw3pGBExpsc1S5XDHh/Tl4IwrTiaCu5BMF9um
-         JKJpmY4xu3T8G7tKq+uFVNTL71+vICYIA9fcX0S7Nz0fMsrqxK4t1Zy6Hq45k4Vzx2
-         mibn4C4rZmPx0Bsr8Sn045sXdGE1cLIAPJCnVoFc=
+        s=dbaedf251592; t=1577960378;
+        bh=C0SDFD1iRngMA153Tb3Ivt07XLbnNjJQe2n8MoI2e48=;
+        h=X-UI-Sender-Class:To:Cc:References:Subject:From:Date:In-Reply-To;
+        b=Ied0+hRPgw8m455+DHiW6JC4r7YBZu6Qa3Jk1MXsflw7zDQnWa3f9pcXyyRGiAG6g
+         lDnWg+xyhMV/taTp8oE1wH7xzT4gXL8SiVtRxotvtUrEKiDNpiKNpp6CvTeR6I1d6B
+         Ht0edMto7QtHJBhE2XjWSRSly+THV6J6HrJsx0TQ=
 X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
 Received: from [192.168.1.2] ([93.133.119.207]) by smtp.web.de (mrweb002
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0LyE3J-1jpS4v0B7N-015dbc; Thu, 02
- Jan 2020 10:56:28 +0100
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0LmuQW-1jN9Ko13ls-00h3EI; Thu, 02
+ Jan 2020 11:19:38 +0100
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Daniel Wagner <dwagner@suse.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nikolay Borisov <nborisov@suse.com>,
+        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>,
         Sungjong Seo <sj1557.seo@samsung.com>,
         =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
         linkinjeon@gmail.com
-References: <20191220062419.23516-11-namjae.jeon@samsung.com>
-Subject: Re: [PATCH v8 10/13] exfat: add nls operations
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org
+References: <CAKYAXd8Ed18OYYrEgwpDZooNdmsKwFqakGhTyLUgjgfQK39NpQ@mail.gmail.com>
+Subject: Re: [v8 08/13] exfat: add exfat cache
 From:   Markus Elfring <Markus.Elfring@web.de>
 Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
@@ -77,56 +76,47 @@ Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
  x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
  pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <bc11e593-7943-cf78-917d-57318f0b5fe1@web.de>
-Date:   Thu, 2 Jan 2020 10:56:19 +0100
+Message-ID: <f253ed6a-3aae-b8df-04cf-7d5c0b3039f2@web.de>
+Date:   Thu, 2 Jan 2020 11:19:26 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.1
 MIME-Version: 1.0
-In-Reply-To: <20191220062419.23516-11-namjae.jeon@samsung.com>
+In-Reply-To: <CAKYAXd8Ed18OYYrEgwpDZooNdmsKwFqakGhTyLUgjgfQK39NpQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:jzAARglS6ZCwAjXLcRsWKgvPRmlf6zFPEfU32J1kZlLu20GCXl0
- RWpn/fGE5lHZfbhvOUf8EHKlb3FbO8zVlpHJslyhFTCjlf4KE2Z8pCkbNRMXMNqD3ylIVuv
- E/0sqEszJE0QQU1+StDfjlePB7mat7A6j9jZHDc03jd6fOdna6Ijb7as2U4DJPvM31YyrLo
- Z7rZtL7cGBY3scIkGvB2A==
+X-Provags-ID: V03:K1:Shs8ZPj6Fq3wgNTVCDef+zi2jbRsY4cfG2qt1sgeG6/ShedCShe
+ zlcCWVNm0iyDIsxwQrQjosCR2lsIGE/qV3RcldV5ijmxL23a51B8E5CBJKHwbngYiA8Ilwk
+ 2RwkEIKbIrjnwh+LR0uZucFC3janQO4SdZ4OSa3UkXdeaYQcnqtmC5pZp8GnKaMWdNux9tU
+ LW7PeaUNJhN2RMIOserwA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Pd0Yd2Z24Wg=:pkLudLv58veIKI0BymPb/b
- gLY2g1832kzU+AG+SqOy6U+QnMNtyk2GCxeg+ruds5UxqPC9EgRnaEdH9SgJimdvCu7NLYwwF
- rFHDVD0PGUIoCUrxBEXRR8AWtbQiM9y/3Sgbl9ygqqlhdMn9WVIiuG4skCy4A5Em3mRWh38Mp
- mFgkm9HO0pdc3FwHcrq/IBj9xttDIUg2OqbNXQ1AbbyFbC7B0yJJVGIW+lWjcv/MjU6s9Bfev
- aNEM49lG2C7U+orbAaYH9/7P8ZGKl8jRx96Btx21SXD882rt4L5jkCE/Ehpk8vYx/8oA1+slP
- HqwMOE6VdIHVpB1cnFficfvyvZB/I8KEiZkeDmObz4fmJXPBcEFy6tiRKI5L3RJMvTYIGmzuv
- uw1izqB5N55iO78f+urUGcqSlxYRYffHSmzE9DrBO4lva/6Xa2V1vUqsm2m2WUHFX3EddXYTt
- Ag4AscxMiJn6/hzide9HqrdPWsG6USLJIYjS9RsvuBJBhkv30yUYDmyamjIYD7RjQ0OPC671M
- 2BwHrlO+ow0+lJ3iVX4LCZCff14rs4tg2oj9Kaf8EUASbdKJysJGpVHQxBVZ4AA4EYrnVvJa5
- I9ogzGYADEyWiwtgqDgkc68qDgWtJADV/l9EkIIzVSwW6696b5Jc4vp3h3C5FWz9kts6c03A1
- HNeP5ago9846haYaMjr0wpcXAp70tcWO+qTvjsMlm7gFnQ4T9TlawhYLBaoFiJAg1yHSdBl3K
- YX6sQ2y+OsbnCuNnQ6kelgPPdm3HSRzh4ML4qjyUq91xm/aOwcGLdDjGfp6kSowHHN0TJHE92
- kMFczPFeRRYtAN8siD4VrSIrp5rZ2OJAtR38ajh6jy/f3/rL/1n5hTxqq+KZwZtbzxRnAAT2g
- M049/xcXnD255jwn8DiIOziHTX3gUOzs92OY28mEgoyRHGEgqiG2bRPnIrbsF/Ulc7CsJ6xBj
- SipTs6t0utrFdl5JhuPt1gpmA2SnQXFI2ZUAcq9Uwj90lE0Qz6gM1Oa2OUKkblUu+V4GDT9zK
- O4C6kdRfo/BbBLxyZqG02VrqfusVQSOydgWRlRsnTrwaNkQrPj2/UlnHscDE3raTivzMta6Em
- AXgiL7ZXntXAXPC7XTn6yeU9juAz2aXNw/6O1XKNLp23HQ4GLMHxAbXhGxXy46VxnaMOx1Uqg
- 0Md9rH4e1Iktcd3VU74OIyvVqfqvHZAlyAdPbYO6BOiQQANtSKxKtFuwuptp/KygTINnrRBZd
- +mcFePNSv6VLc10bD/sr+lIWBH/aghEAlrpf3a1DzZrP6sYrvo2gHfzgtb+g=
+X-UI-Out-Filterresults: notjunk:1;V03:K0:1YvB8s7obBc=:rkzwGTU5pNOJZFA9vQaTbp
+ J3Z1cdNvQlCJbuWRWtFk6iCwmJ6TsNDHfOiKIkvSU56tQjgN6PTzfu8XZwaqY3+NUW7s1/nhi
+ wLrDYLIN5urAQDLxQ2WiMslguQTWql7ZsqozMi8zoRuyYFVVo+Li+m1vv5kb4szHlUFB2isrX
+ BeWK1SV7Au0jyfC2lse2+0YWw25hPATFRv2b+Xg8ZbVBviZ110kkaBXEh77JKise3g77UtDbU
+ SX5AE6PnLllGo+z9uDu1CKrGcdkQlgWr6WzBBrfwTvs+Vy6Zz3dPiPkTHlvgDkLzNbwkfWx2Z
+ SH+h7tvzBl8J19DNXbBUb/h7Zx806nrdAP85vrszyHcWSG4hKnlzQ5Lx64ncGzSEK70XqAVXz
+ ggf9a9j/LDqrJsSL8zRLOg4w+vxlQDe99Rgw/jcUuxkCanDFZ6Ohs32OLKCUGpZ/ZVB6DyKMO
+ GBNDKBWToLyD53qbwgOEQlo5I7G68ZZGtFDtY7lJYHEcMG50i9Rf4kDYOcS99zIvHvs8+/WCm
+ 3OmEK/3tg83voSzbjKGpIJL6g/q+bmXTmMjZqRIs1tPg1HkS4gxnJyBHsM77DMt9v//lMYl9+
+ DwnQ8s+CfgxKOjyZCUm7Dbqy+bvMc0IvCjLjtl96CWn94XQ2soV2t0Z0xI7avlQimA+U5obIu
+ vcQ/E0HgOf72OAI3EI7rU85z+Tdo1UnzS/aLrRGZdsIGF5CQ0kDm0dytJA7CqvD87EypWZxuK
+ sM2DC/kffbuItROtf6hS/egkvBfEDUaCGNkv1NfvQP7w8xBTFirWDhFTX6tC5qSVPejd12jzT
+ i70y1gGpK/lKQL1IpD6etBYWrJbAdKuh0avvcvnZeFan4K0n15aLo8ZreBMfQwPMxutNgXFRH
+ DNZJQ03hke72OiWSb8vGgZgx1EJ9h8DjC/Z98mzkHPzgyz6y3MnlO32irdklLuY92+B0mBnrR
+ WR6zk6xAom9kHbAG0u5hMllP1px7wsakEvXzpNYZEi2eL5jba0kFLh9Nah9O5VeZp738Nkgj6
+ 80tXtNqTcO88IvPa9xIS4xjsUkSd54kt7DGq1W1oXwb2qTjJph36d8vIl6yH8iJUMTZoG4rDb
+ UpW/u9IqXaOIzyKwEVtJSP2ql45oTL3oKVv4wvPj/hWzmJ3XyDfmqsZYaCQstVlbvxBKk4QWo
+ ExJEeXZQou7cNl4xV+SgLS0PMfCfJKyXQ7+gWgYOCHNxkof6T88sJnOMFpTF2TjZQBiHyW3uw
+ PffxJjwDrQPwmvuTF8991cLmP9D8xrZ4beUxLi1PVbJSy9TqC7nSey0TQUU0=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-=E2=80=A6
-> +++ b/fs/exfat/nls.c
-=E2=80=A6
-> +static int exfat_load_upcase_table(struct super_block *sb,
-> +		sector_t sector, unsigned long long num_sectors,
-> +		unsigned int utbl_checksum)
-> +{
-=E2=80=A6
+> I am planning to change to share stuff included cache with fat after
+> exfat upstream.
 
-Do you care for the clarification of remaining software development concer=
-ns
-(also for this function implementation)?
+Can unwanted code duplication be avoided before?
 
 Regards,
 Markus
