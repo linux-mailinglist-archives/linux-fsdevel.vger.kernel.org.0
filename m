@@ -2,232 +2,665 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CEFA12E796
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2020 15:56:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF8A312E7CE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2020 16:04:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728571AbgABO4e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Jan 2020 09:56:34 -0500
-Received: from mout.kundenserver.de ([212.227.126.135]:44851 "EHLO
+        id S1728634AbgABPEM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Jan 2020 10:04:12 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:47589 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728544AbgABO4e (ORCPT
+        with ESMTP id S1728571AbgABPEL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Jan 2020 09:56:34 -0500
+        Thu, 2 Jan 2020 10:04:11 -0500
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MbAxU-1jKAn32tui-00bb23; Thu, 02 Jan 2020 15:56:17 +0100
+ 1MnJUy-1jU5yG242e-00jFzj; Thu, 02 Jan 2020 16:01:28 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-scsi@vger.kernel.org,
-        linux-block@vger.kernel.org, y2038@lists.linaro.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux-doc@vger.kernel.org, corbet@lwn.net, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL v3 00/27] block, scsi: final compat_ioctl cleanup
-Date:   Thu,  2 Jan 2020 15:55:18 +0100
-Message-Id: <20200102145552.1853992-1-arnd@arndb.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Doug Gilbert <dgilbert@interlog.com>,
+        =?UTF-8?q?Kai=20M=C3=A4kisara?= <Kai.Makisara@kolumbus.fi>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dongli Zhang <dongli.zhang@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Hannes Reinecke <hare@suse.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        John Garry <john.garry@huawei.com>,
+        Martin Wilck <mwilck@suse.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Ira Weiny <ira.weiny@intel.com>, Iustin Pop <iustin@k1024.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v3 13/22] compat_ioctl: scsi: move ioctl handling into drivers
+Date:   Thu,  2 Jan 2020 15:55:31 +0100
+Message-Id: <20200102145552.1853992-14-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20200102145552.1853992-1-arnd@arndb.de>
+References: <20200102145552.1853992-1-arnd@arndb.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:RN5FG3a22wHmkIpHaHUqEjmhCcVfp18qzdGmYwNx+0Xw7GzT0S1
- EISjiyHJbbFeeht4Se7zxWIbgYjPD6ZDhYzt+lZK068EvNUTT9jMLxqwgtP3CTDdiLqgcaf
- yZ6ubv8TY3XlF7JBIYoa6wRh7mkIkbgZ9sAeppsLeXu6UJFKWYJng9f/5/xPmxC49kk/qCD
- uJJwopaugKkyIBribgcDA==
+X-Provags-ID: V03:K1:/e80zwdT+wTicn0NMZuh6AZ7aAB/UfmFnLijkeDZsj8gxRxFW5k
+ N//+5PnYmCiu9NnLxiRRE0mJZsNb5V80V0Ex9rjoeqi05jIqFZUh7ziOTX1gQPinUT7BRpl
+ jeZoob0rgUjez9ZHLn85pzbYf/4sEvUOCPWPa7vZZizKKCEb9w9+sVRqZzLRRJXjzvWZ0R9
+ cMqCviOyZOxSKDQ9baMYQ==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:QYcPG+gLiC8=:lBVJ8B67jqqyuuBfc3KmUJ
- Gv9xY2R6Cb7GsdXNu6UVZgo6sUNZIVbX+rouPy1AbAywl3d3VFLyq6L+qsrQbfIEHDolo7vbW
- iVDKppmS5DLsyc/2fnCgaCJVkrkkKLSGfKFKELJjPJyiQKD4M+qdG+c0E4IUGUOMB1rth3d0L
- q3xRktib3QE/+/Q22CxRIQMBQ7Ayy9BJzJpZfGSCeLg5ftwYmk615qoyeboEDWH9YuJonhhH4
- 7McorCy3eBvWl023gYELN4FkMqwnHc1W43d3LzwQPRbQUwRrvPetZMtCut/EG9Q3xBgSPOgnb
- XlG6d4A+09kpoglUJ+WfAjvEgcgUgrdHPx3h2BojApX4gu1yfkcY7mqJ73e/m5g39qQhF+1gh
- FBG6Wbm3UVwrNDuisuJXY+n5tXrzNusbwhlD7AR03htWIO4C2M9MF3E8mU049SyQi3Yln3b4r
- 16/NYydRuQ/1FYPlaU0mtg4xlLpNliS818PQyyG8JgwF2HfcUvO5/jLrRRTyJeaZmNsPE2h4j
- wwSpGs+zdvZ1LbzcGWoyW1NRVmLaBChZOhF5ms8q3bDB23/6bolhvK3JDInA7wtmCTfBY1AJR
- MQpdl+vCFYNEiXraUKFqpC83GjJGIq0X1jGoOCwWUUd1hLa2a/vOlzmhlHoLh3z3uX6oUm8K1
- ZvAVOF2Mz9OniLBNejsZeAtI1qchsylAOMRioYf7YtVtBaCO7eWLqxfSlxpaeCDO5OvTWZMXx
- AA73cpBZJuyV9aRN3Nlu+mruxPV34P5el7KA3heupbJdIp+dZdy2Qvz4ZBJDQthFQrC1CBbXc
- 2oX7O6a1fmgqnjHn0L8kQTVcJHGdXOD/i4VPWc2eDbj7wJFKW7NgdUrLZiQqK7nqh6AETnWe0
- AFqHkPMnGh+4Edaw3fZw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:x/Q6tmSDxu8=:OjjUVNa82AbH3RiNJYC9Xv
+ mVO9b74kQFTgrYlXKNbSlG6Vs6Vo86LTUPlv7WUijUK9dAJWI30NUAICkIZeWWQDt4J8/G9/I
+ rBiyU5BTmVPe9ZTaxtUKgYpGXr1BnqCVSpj7sb85DTv5pERnqhIthEtb8SjBT2U5W7k61RrOa
+ ldAV9tfo8NkGWJnxXUe0hGwQJJwcjW/eRNwO6rXGiTGuu6RfJsdfw+p1HkjxjQjNJe+mhRrrA
+ qQpNP4iMPELMR3BoMoZVSWDJrD4ltCbNQOHfR85DpIvWIsQW7EwwCeC/xk6fm4uXj8DX4q9U7
+ FMf0y/fMe7VWuVdULYRQ7qIHqiAqHxvSm0RvN/tziqyJLnu80Z/qK6/DIRDh7TwdeB3n2zpkN
+ hQN4Tq8t/HP6CAmpo5DuqHZu+hADe0ktznB3OK/tc5TJwtET7m1UGsCiUqX3PKAj3wLv569uh
+ o6XQjGR4upeSYjmR5idXvJ/L6/cShVxi7MsCE8AHbRiECso0UO6vgwgupC2uIajcZShqUQxQT
+ oaTXT8hBNfNxUoqB9EgBgsFkcIcPR80Lqx73PsG/EkkDaJpyKx/6nQi6Ba5QToJIuOKfREgA8
+ aYWUSUEVWXR2d3EB8Soc1y8AQycGifnC+HDL3KfEHC8hq5rHSxtesh5QFjpA4GOREGY/GT/Sq
+ nZk66EO/rPHdkPHpitzqWFE00YZE8ft9h8rGiDBM7xp+mP5g8sRWY9WUOexnpzUeEYJPx9LA5
+ GkFt3CagmES56AkxBD2bG69vytWcWvhj4XvwxUZ3siOohsKkXrTe5/Lf0EZjjbTDyDZytu5nr
+ VdBBmsD+8jFaNJDY97oPQgDUR3ixrIB8ow5brQo2wbKZMST9Y76+MXU5pnKiAheYhoWYc809T
+ ujWAXClkzLx9abc/N5Yg==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Martin, James,
+Each driver calling scsi_ioctl() gets an equivalent compat_ioctl()
+handler that implements the same commands by calling scsi_compat_ioctl().
 
-If this version seems ok to everyone, please pull into
-the scsi tree.
+The scsi_cmd_ioctl() and scsi_cmd_blk_ioctl() functions are compatible
+at this point, so any driver that calls those can do so for both native
+and compat mode, with the argument passed through compat_ptr().
 
-The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+With this, we can remove the entries from fs/compat_ioctl.c.  The new
+code is larger, but should be easier to maintain and keep updated with
+newly added commands.
 
-  Linux 5.5-rc4 (2019-12-08 14:57:55 -0800)
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/block/virtio_blk.c |   3 +
+ drivers/scsi/ch.c          |   9 ++-
+ drivers/scsi/sd.c          |  50 ++++++--------
+ drivers/scsi/sg.c          |  44 ++++++++-----
+ drivers/scsi/sr.c          |  57 ++++++++++++++--
+ drivers/scsi/st.c          |  51 ++++++++------
+ fs/compat_ioctl.c          | 132 +------------------------------------
+ 7 files changed, 142 insertions(+), 204 deletions(-)
 
-are available in the Git repository at:
-
-  git://git.kernel.org:/pub/scm/linux/kernel/git/arnd/playground.git tags/block-ioctl-cleanup-5.6
-
-for you to fetch changes up to d1329555e914109846283e469b5077e7500ecfaf
-
-  Documentation: document ioctl interfaces better (2019-12-17 22:45:18 +0100)
-
-----------------------------------------------------------------
-block, scsi: final compat_ioctl cleanup
-
-This series concludes the work I did for linux-5.5 on the compat_ioctl()
-cleanup, killing off fs/compat_ioctl.c and block/compat_ioctl.c by moving
-everything into drivers.
-
-Overall this would be a reduction both in complexity and line count, but
-as I'm also adding documentation the overall number of lines increases
-in the end.
-
-My plan was originally to keep the SCSI and block parts separate.
-This did not work easily because of interdependencies: I cannot
-do the final SCSI cleanup in a good way without first addressing the
-CDROM ioctls, so this is one series that I hope could be merged through
-either the block or the scsi git trees, or possibly both if you can
-pull in the same branch.
-
-The series comes in these steps:
-
-1. clean up the sg v3 interface as suggested by Linus. I have
-   talked about this with Doug Gilbert as well, and he would
-   rebase his sg v4 patches on top of "compat: scsi: sg: fix v3
-   compat read/write interface"
-
-2. Actually moving handlers out of block/compat_ioctl.c and
-   block/scsi_ioctl.c into drivers, mixed in with cleanup
-   patches
-
-3. Document how to do this right. I keep getting asked about this,
-   and it helps to point to some documentation file.
-
-The branch is based on another one that fixes a couple of bugs found
-during the creation of this series.
-
-Changes since v2:
-- Rebase to v5.5-rc4, which contains the earlier bugfixes
-- Fix sr_block_compat_ioctl() error handling bug found by
-  Ben Hutchings
-- Fix idecd_locked_compat_ioctl() compat_ptr() bug
-- Don't try to handle HDIO_DRIVE_TASKFILE in drivers/ide
-- More documentation improvements
-
-Changes since v1:
-- move out the bugfixes into a branch for itself
-- clean up scsi sg driver further as suggested by Christoph Hellwig
-- avoid some ifdefs by moving compat_ptr() out of asm/compat.h
-- split out the blkdev_compat_ptr_ioctl function; bug spotted by
-  Ben Hutchings
-- Improve formatting of documentation
-
-[1] https://lore.kernel.org/linux-block/20191211204306.1207817-1-arnd@arndb.de/T/#m9f89df30565fc66abbded5d01f4db553b16f129f
-
-----------------------------------------------------------------
-
-Arnd Bergmann (22):
-  compat: ARM64: always include asm-generic/compat.h
-  compat: provide compat_ptr() on all architectures
-  compat: scsi: sg: fix v3 compat read/write interface
-  compat_ioctl: block: add blkdev_compat_ptr_ioctl
-  compat_ioctl: ubd, aoe: use blkdev_compat_ptr_ioctl
-  compat_ioctl: move CDROM_SEND_PACKET handling into scsi
-  compat_ioctl: move CDROMREADADIO to cdrom.c
-  compat_ioctl: cdrom: handle CDROM_LAST_WRITTEN
-  compat_ioctl: block: handle cdrom compat ioctl in non-cdrom drivers
-  compat_ioctl: add scsi_compat_ioctl
-  compat_ioctl: bsg: add handler
-  compat_ioctl: ide: floppy: add handler
-  compat_ioctl: scsi: move ioctl handling into drivers
-  compat_ioctl: move sys_compat_ioctl() to ioctl.c
-  compat_ioctl: simplify the implementation
-  compat_ioctl: move cdrom commands into cdrom.c
-  compat_ioctl: scsi: handle HDIO commands from drivers
-  compat_ioctl: move HDIO ioctl handling into drivers/ide
-  compat_ioctl: block: move blkdev_compat_ioctl() into ioctl.c
-  compat_ioctl: block: simplify compat_blkpg_ioctl()
-  compat_ioctl: simplify up block/ioctl.c
-  Documentation: document ioctl interfaces better
-
- Documentation/core-api/index.rst       |   1 +
- Documentation/core-api/ioctl.rst       | 253 +++++++++++++++
- arch/arm64/include/asm/compat.h        |  22 +-
- arch/mips/include/asm/compat.h         |  18 --
- arch/parisc/include/asm/compat.h       |  17 -
- arch/powerpc/include/asm/compat.h      |  17 -
- arch/powerpc/oprofile/backtrace.c      |   2 +-
- arch/s390/include/asm/compat.h         |   6 +-
- arch/sparc/include/asm/compat.h        |  17 -
- arch/um/drivers/ubd_kern.c             |   1 +
- arch/x86/include/asm/compat.h          |  17 -
- block/Makefile                         |   1 -
- block/bsg.c                            |   1 +
- block/compat_ioctl.c                   | 427 -------------------------
- block/ioctl.c                          | 319 ++++++++++++++----
- block/scsi_ioctl.c                     | 214 ++++++++-----
- drivers/ata/libata-scsi.c              |   9 +
- drivers/block/aoe/aoeblk.c             |   1 +
- drivers/block/floppy.c                 |   3 +
- drivers/block/paride/pcd.c             |   3 +
- drivers/block/paride/pd.c              |   1 +
- drivers/block/paride/pf.c              |   1 +
- drivers/block/pktcdvd.c                |  26 +-
- drivers/block/sunvdc.c                 |   1 +
- drivers/block/virtio_blk.c             |   3 +
- drivers/block/xen-blkfront.c           |   1 +
- drivers/cdrom/cdrom.c                  |  35 +-
- drivers/cdrom/gdrom.c                  |   3 +
- drivers/ide/ide-cd.c                   |  38 +++
- drivers/ide/ide-disk.c                 |   1 +
- drivers/ide/ide-floppy.c               |   4 +
- drivers/ide/ide-floppy.h               |   2 +
- drivers/ide/ide-floppy_ioctl.c         |  35 ++
- drivers/ide/ide-gd.c                   |  17 +
- drivers/ide/ide-ioctls.c               |  47 ++-
- drivers/ide/ide-tape.c                 |  11 +
- drivers/scsi/aic94xx/aic94xx_init.c    |   3 +
- drivers/scsi/ch.c                      |   9 +-
- drivers/scsi/hisi_sas/hisi_sas_v1_hw.c |   3 +
- drivers/scsi/hisi_sas/hisi_sas_v2_hw.c |   3 +
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c |   3 +
- drivers/scsi/ipr.c                     |   3 +
- drivers/scsi/isci/init.c               |   3 +
- drivers/scsi/mvsas/mv_init.c           |   3 +
- drivers/scsi/pm8001/pm8001_init.c      |   3 +
- drivers/scsi/scsi_ioctl.c              |  54 +++-
- drivers/scsi/sd.c                      |  50 ++-
- drivers/scsi/sg.c                      | 170 +++++-----
- drivers/scsi/sr.c                      |  53 ++-
- drivers/scsi/st.c                      |  51 +--
- fs/Makefile                            |   2 +-
- fs/compat_ioctl.c                      | 261 ---------------
- fs/internal.h                          |   6 -
- fs/ioctl.c                             | 131 ++++++--
- include/linux/blkdev.h                 |   7 +
- include/linux/compat.h                 |  18 ++
- include/linux/falloc.h                 |   2 -
- include/linux/fs.h                     |   4 -
- include/linux/ide.h                    |   2 +
- include/linux/libata.h                 |   6 +
- include/scsi/scsi_ioctl.h              |   1 +
- include/scsi/sg.h                      |  30 ++
- 62 files changed, 1269 insertions(+), 1187 deletions(-)
- create mode 100644 Documentation/core-api/ioctl.rst
- delete mode 100644 block/compat_ioctl.c
- delete mode 100644 fs/compat_ioctl.c
-
+diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
+index 7ffd719d89de..fbbf18ac1d5d 100644
+--- a/drivers/block/virtio_blk.c
++++ b/drivers/block/virtio_blk.c
+@@ -405,6 +405,9 @@ static int virtblk_getgeo(struct block_device *bd, struct hd_geometry *geo)
+ 
+ static const struct block_device_operations virtblk_fops = {
+ 	.ioctl  = virtblk_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl = blkdev_compat_ptr_ioctl,
++#endif
+ 	.owner  = THIS_MODULE,
+ 	.getgeo = virtblk_getgeo,
+ };
+diff --git a/drivers/scsi/ch.c b/drivers/scsi/ch.c
+index 76751d6c7f0d..ed5f4a6ae270 100644
+--- a/drivers/scsi/ch.c
++++ b/drivers/scsi/ch.c
+@@ -872,6 +872,10 @@ static long ch_ioctl_compat(struct file * file,
+ 			    unsigned int cmd, unsigned long arg)
+ {
+ 	scsi_changer *ch = file->private_data;
++	int retval = scsi_ioctl_block_when_processing_errors(ch->device, cmd,
++							file->f_flags & O_NDELAY);
++	if (retval)
++		return retval;
+ 
+ 	switch (cmd) {
+ 	case CHIOGPARAMS:
+@@ -883,7 +887,7 @@ static long ch_ioctl_compat(struct file * file,
+ 	case CHIOINITELEM:
+ 	case CHIOSVOLTAG:
+ 		/* compatible */
+-		return ch_ioctl(file, cmd, arg);
++		return ch_ioctl(file, cmd, (unsigned long)compat_ptr(arg));
+ 	case CHIOGSTATUS32:
+ 	{
+ 		struct changer_element_status32 ces32;
+@@ -898,8 +902,7 @@ static long ch_ioctl_compat(struct file * file,
+ 		return ch_gstatus(ch, ces32.ces_type, data);
+ 	}
+ 	default:
+-		// return scsi_ioctl_compat(ch->device, cmd, (void*)arg);
+-		return -ENOIOCTLCMD;
++		return scsi_compat_ioctl(ch->device, cmd, compat_ptr(arg));
+ 
+ 	}
+ }
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index cea625906440..5afb0046b12a 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -1465,13 +1465,12 @@ static int sd_getgeo(struct block_device *bdev, struct hd_geometry *geo)
+  *	Note: most ioctls are forward onto the block subsystem or further
+  *	down in the scsi subsystem.
+  **/
+-static int sd_ioctl(struct block_device *bdev, fmode_t mode,
+-		    unsigned int cmd, unsigned long arg)
++static int sd_ioctl_common(struct block_device *bdev, fmode_t mode,
++			   unsigned int cmd, void __user *p)
+ {
+ 	struct gendisk *disk = bdev->bd_disk;
+ 	struct scsi_disk *sdkp = scsi_disk(disk);
+ 	struct scsi_device *sdp = sdkp->device;
+-	void __user *p = (void __user *)arg;
+ 	int error;
+     
+ 	SCSI_LOG_IOCTL(1, sd_printk(KERN_INFO, sdkp, "sd_ioctl: disk=%s, "
+@@ -1507,9 +1506,6 @@ static int sd_ioctl(struct block_device *bdev, fmode_t mode,
+ 			break;
+ 		default:
+ 			error = scsi_cmd_blk_ioctl(bdev, mode, cmd, p);
+-			if (error != -ENOTTY)
+-				break;
+-			error = scsi_ioctl(sdp, cmd, p);
+ 			break;
+ 	}
+ out:
+@@ -1691,39 +1687,31 @@ static void sd_rescan(struct device *dev)
+ 	revalidate_disk(sdkp->disk);
+ }
+ 
++static int sd_ioctl(struct block_device *bdev, fmode_t mode,
++		    unsigned int cmd, unsigned long arg)
++{
++	void __user *p = (void __user *)arg;
++	int ret;
++
++	ret = sd_ioctl_common(bdev, mode, cmd, p);
++	if (ret != -ENOTTY)
++		return ret;
++
++	return scsi_ioctl(scsi_disk(bdev->bd_disk)->device, cmd, p);
++}
+ 
+ #ifdef CONFIG_COMPAT
+-/* 
+- * This gets directly called from VFS. When the ioctl 
+- * is not recognized we go back to the other translation paths. 
+- */
+ static int sd_compat_ioctl(struct block_device *bdev, fmode_t mode,
+ 			   unsigned int cmd, unsigned long arg)
+ {
+-	struct gendisk *disk = bdev->bd_disk;
+-	struct scsi_disk *sdkp = scsi_disk(disk);
+-	struct scsi_device *sdev = sdkp->device;
+ 	void __user *p = compat_ptr(arg);
+-	int error;
+-
+-	error = scsi_verify_blk_ioctl(bdev, cmd);
+-	if (error < 0)
+-		return error;
++	int ret;
+ 
+-	error = scsi_ioctl_block_when_processing_errors(sdev, cmd,
+-			(mode & FMODE_NDELAY) != 0);
+-	if (error)
+-		return error;
++	ret = sd_ioctl_common(bdev, mode, cmd, p);
++	if (ret != -ENOTTY)
++		return ret;
+ 
+-	if (is_sed_ioctl(cmd))
+-		return sed_ioctl(sdkp->opal_dev, cmd, p);
+-	       
+-	/* 
+-	 * Let the static ioctl translation table take care of it.
+-	 */
+-	if (!sdev->host->hostt->compat_ioctl)
+-		return -ENOIOCTLCMD; 
+-	return sdev->host->hostt->compat_ioctl(sdev, cmd, p);
++	return scsi_compat_ioctl(scsi_disk(bdev->bd_disk)->device, cmd, p);
+ }
+ #endif
+ 
+diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
+index eace8886d95a..bafeaf7b9ad8 100644
+--- a/drivers/scsi/sg.c
++++ b/drivers/scsi/sg.c
+@@ -911,19 +911,14 @@ static int put_compat_request_table(struct compat_sg_req_info __user *o,
+ #endif
+ 
+ static long
+-sg_ioctl(struct file *filp, unsigned int cmd_in, unsigned long arg)
++sg_ioctl_common(struct file *filp, Sg_device *sdp, Sg_fd *sfp,
++		unsigned int cmd_in, void __user *p)
+ {
+-	void __user *p = (void __user *)arg;
+ 	int __user *ip = p;
+ 	int result, val, read_only;
+-	Sg_device *sdp;
+-	Sg_fd *sfp;
+ 	Sg_request *srp;
+ 	unsigned long iflags;
+ 
+-	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
+-		return -ENXIO;
+-
+ 	SCSI_LOG_TIMEOUT(3, sg_printk(KERN_INFO, sdp,
+ 				   "sg_ioctl: cmd=0x%x\n", (int) cmd_in));
+ 	read_only = (O_RDWR != (filp->f_flags & O_ACCMODE));
+@@ -1146,29 +1141,44 @@ sg_ioctl(struct file *filp, unsigned int cmd_in, unsigned long arg)
+ 			cmd_in, filp->f_flags & O_NDELAY);
+ 	if (result)
+ 		return result;
++
++	return -ENOIOCTLCMD;
++}
++
++static long
++sg_ioctl(struct file *filp, unsigned int cmd_in, unsigned long arg)
++{
++	void __user *p = (void __user *)arg;
++	Sg_device *sdp;
++	Sg_fd *sfp;
++	int ret;
++
++	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
++		return -ENXIO;
++
++	ret = sg_ioctl_common(filp, sdp, sfp, cmd_in, p);
++	if (ret != -ENOIOCTLCMD)
++		return ret;
++
+ 	return scsi_ioctl(sdp->device, cmd_in, p);
+ }
+ 
+ #ifdef CONFIG_COMPAT
+ static long sg_compat_ioctl(struct file *filp, unsigned int cmd_in, unsigned long arg)
+ {
++	void __user *p = compat_ptr(arg);
+ 	Sg_device *sdp;
+ 	Sg_fd *sfp;
+-	struct scsi_device *sdev;
++	int ret;
+ 
+ 	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
+ 		return -ENXIO;
+ 
+-	sdev = sdp->device;
+-	if (sdev->host->hostt->compat_ioctl) { 
+-		int ret;
+-
+-		ret = sdev->host->hostt->compat_ioctl(sdev, cmd_in, (void __user *)arg);
+-
++	ret = sg_ioctl_common(filp, sdp, sfp, cmd_in, p);
++	if (ret != -ENOIOCTLCMD)
+ 		return ret;
+-	}
+-	
+-	return -ENOIOCTLCMD;
++
++	return scsi_compat_ioctl(sdp->device, cmd_in, p);
+ }
+ #endif
+ 
+diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
+index 4664fdf75c0f..6033a886c42c 100644
+--- a/drivers/scsi/sr.c
++++ b/drivers/scsi/sr.c
+@@ -38,6 +38,7 @@
+ #include <linux/kernel.h>
+ #include <linux/mm.h>
+ #include <linux/bio.h>
++#include <linux/compat.h>
+ #include <linux/string.h>
+ #include <linux/errno.h>
+ #include <linux/cdrom.h>
+@@ -598,6 +599,55 @@ static int sr_block_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd,
+ 	return ret;
+ }
+ 
++#ifdef CONFIG_COMPAT
++static int sr_block_compat_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd,
++			  unsigned long arg)
++{
++	struct scsi_cd *cd = scsi_cd(bdev->bd_disk);
++	struct scsi_device *sdev = cd->device;
++	void __user *argp = compat_ptr(arg);
++	int ret;
++
++	mutex_lock(&sr_mutex);
++
++	ret = scsi_ioctl_block_when_processing_errors(sdev, cmd,
++			(mode & FMODE_NDELAY) != 0);
++	if (ret)
++		goto out;
++
++	scsi_autopm_get_device(sdev);
++
++	/*
++	 * Send SCSI addressing ioctls directly to mid level, send other
++	 * ioctls to cdrom/block level.
++	 */
++	switch (cmd) {
++	case SCSI_IOCTL_GET_IDLUN:
++	case SCSI_IOCTL_GET_BUS_NUMBER:
++		ret = scsi_compat_ioctl(sdev, cmd, argp);
++		goto put;
++	}
++
++	/*
++	 * CDROM ioctls are handled in the block layer, but
++	 * do the scsi blk ioctls here.
++	 */
++	ret = scsi_cmd_blk_ioctl(bdev, mode, cmd, argp);
++	if (ret != -ENOTTY)
++		return ret;
++
++	ret = scsi_compat_ioctl(sdev, cmd, argp);
++
++put:
++	scsi_autopm_put_device(sdev);
++
++out:
++	mutex_unlock(&sr_mutex);
++	return ret;
++
++}
++#endif
++
+ static unsigned int sr_block_check_events(struct gendisk *disk,
+ 					  unsigned int clearing)
+ {
+@@ -641,12 +691,11 @@ static const struct block_device_operations sr_bdops =
+ 	.open		= sr_block_open,
+ 	.release	= sr_block_release,
+ 	.ioctl		= sr_block_ioctl,
++#ifdef CONFIG_COMPAT
++	.ioctl		= sr_block_compat_ioctl,
++#endif
+ 	.check_events	= sr_block_check_events,
+ 	.revalidate_disk = sr_block_revalidate_disk,
+-	/* 
+-	 * No compat_ioctl for now because sr_block_ioctl never
+-	 * seems to pass arbitrary ioctls down to host drivers.
+-	 */
+ };
+ 
+ static int sr_open(struct cdrom_device_info *cdi, int purpose)
+diff --git a/drivers/scsi/st.c b/drivers/scsi/st.c
+index 9e3fff2de83e..393f3019ccac 100644
+--- a/drivers/scsi/st.c
++++ b/drivers/scsi/st.c
+@@ -3501,7 +3501,7 @@ static int partition_tape(struct scsi_tape *STp, int size)
+ 
+ 
+ /* The ioctl command */
+-static long st_ioctl(struct file *file, unsigned int cmd_in, unsigned long arg)
++static long st_ioctl_common(struct file *file, unsigned int cmd_in, void __user *p)
+ {
+ 	int i, cmd_nr, cmd_type, bt;
+ 	int retval = 0;
+@@ -3509,7 +3509,6 @@ static long st_ioctl(struct file *file, unsigned int cmd_in, unsigned long arg)
+ 	struct scsi_tape *STp = file->private_data;
+ 	struct st_modedef *STm;
+ 	struct st_partstat *STps;
+-	void __user *p = (void __user *)arg;
+ 
+ 	if (mutex_lock_interruptible(&STp->lock))
+ 		return -ERESTARTSYS;
+@@ -3824,9 +3823,19 @@ static long st_ioctl(struct file *file, unsigned int cmd_in, unsigned long arg)
+ 	}
+ 	mutex_unlock(&STp->lock);
+ 	switch (cmd_in) {
++		case SCSI_IOCTL_STOP_UNIT:
++			/* unload */
++			retval = scsi_ioctl(STp->device, cmd_in, p);
++			if (!retval) {
++				STp->rew_at_close = 0;
++				STp->ready = ST_NO_TAPE;
++			}
++			return retval;
++
+ 		case SCSI_IOCTL_GET_IDLUN:
+ 		case SCSI_IOCTL_GET_BUS_NUMBER:
+ 			break;
++
+ 		default:
+ 			if ((cmd_in == SG_IO ||
+ 			     cmd_in == SCSI_IOCTL_SEND_COMMAND ||
+@@ -3840,42 +3849,46 @@ static long st_ioctl(struct file *file, unsigned int cmd_in, unsigned long arg)
+ 				return i;
+ 			break;
+ 	}
+-	retval = scsi_ioctl(STp->device, cmd_in, p);
+-	if (!retval && cmd_in == SCSI_IOCTL_STOP_UNIT) { /* unload */
+-		STp->rew_at_close = 0;
+-		STp->ready = ST_NO_TAPE;
+-	}
+-	return retval;
++	return -ENOTTY;
+ 
+  out:
+ 	mutex_unlock(&STp->lock);
+ 	return retval;
+ }
+ 
++static long st_ioctl(struct file *file, unsigned int cmd_in, unsigned long arg)
++{
++	void __user *p = (void __user *)arg;
++	struct scsi_tape *STp = file->private_data;
++	int ret;
++
++	ret = st_ioctl_common(file, cmd_in, p);
++	if (ret != -ENOTTY)
++		return ret;
++
++	return scsi_ioctl(STp->device, cmd_in, p);
++}
++
+ #ifdef CONFIG_COMPAT
+ static long st_compat_ioctl(struct file *file, unsigned int cmd_in, unsigned long arg)
+ {
+ 	void __user *p = compat_ptr(arg);
+ 	struct scsi_tape *STp = file->private_data;
+-	struct scsi_device *sdev = STp->device;
+-	int ret = -ENOIOCTLCMD;
++	int ret;
+ 
+ 	/* argument conversion is handled using put_user_mtpos/put_user_mtget */
+ 	switch (cmd_in) {
+-	case MTIOCTOP:
+-		return st_ioctl(file, MTIOCTOP, (unsigned long)p);
+ 	case MTIOCPOS32:
+-		return st_ioctl(file, MTIOCPOS, (unsigned long)p);
++		return st_ioctl_common(file, MTIOCPOS, p);
+ 	case MTIOCGET32:
+-		return st_ioctl(file, MTIOCGET, (unsigned long)p);
++		return st_ioctl_common(file, MTIOCGET, p);
+ 	}
+ 
+-	if (sdev->host->hostt->compat_ioctl) { 
++	ret = st_ioctl_common(file, cmd_in, p);
++	if (ret != -ENOTTY)
++		return ret;
+ 
+-		ret = sdev->host->hostt->compat_ioctl(sdev, cmd_in, (void __user *)arg);
+-
+-	}
+-	return ret;
++	return scsi_compat_ioctl(STp->device, cmd_in, p);
+ }
+ #endif
+ 
+diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
+index 358ea2ecf36b..ab4471f469e6 100644
+--- a/fs/compat_ioctl.c
++++ b/fs/compat_ioctl.c
+@@ -36,109 +36,11 @@
+ 
+ #include "internal.h"
+ 
+-#ifdef CONFIG_BLOCK
+-#include <linux/cdrom.h>
+-#include <linux/fd.h>
+-#include <scsi/scsi.h>
+-#include <scsi/scsi_ioctl.h>
+-#include <scsi/sg.h>
+-#endif
+-
+ #include <linux/uaccess.h>
+ #include <linux/watchdog.h>
+ 
+ #include <linux/hiddev.h>
+ 
+-
+-#include <linux/sort.h>
+-
+-/*
+- * simple reversible transform to make our table more evenly
+- * distributed after sorting.
+- */
+-#define XFORM(i) (((i) ^ ((i) << 27) ^ ((i) << 17)) & 0xffffffff)
+-
+-#define COMPATIBLE_IOCTL(cmd) XFORM((u32)cmd),
+-static unsigned int ioctl_pointer[] = {
+-#ifdef CONFIG_BLOCK
+-/* Big S */
+-COMPATIBLE_IOCTL(SCSI_IOCTL_GET_IDLUN)
+-COMPATIBLE_IOCTL(SCSI_IOCTL_DOORLOCK)
+-COMPATIBLE_IOCTL(SCSI_IOCTL_DOORUNLOCK)
+-COMPATIBLE_IOCTL(SCSI_IOCTL_TEST_UNIT_READY)
+-COMPATIBLE_IOCTL(SCSI_IOCTL_GET_BUS_NUMBER)
+-COMPATIBLE_IOCTL(SCSI_IOCTL_SEND_COMMAND)
+-COMPATIBLE_IOCTL(SCSI_IOCTL_PROBE_HOST)
+-COMPATIBLE_IOCTL(SCSI_IOCTL_GET_PCI)
+-#endif
+-#ifdef CONFIG_BLOCK
+-/* SG stuff */
+-COMPATIBLE_IOCTL(SG_IO)
+-COMPATIBLE_IOCTL(SG_GET_REQUEST_TABLE)
+-COMPATIBLE_IOCTL(SG_SET_TIMEOUT)
+-COMPATIBLE_IOCTL(SG_GET_TIMEOUT)
+-COMPATIBLE_IOCTL(SG_EMULATED_HOST)
+-COMPATIBLE_IOCTL(SG_GET_TRANSFORM)
+-COMPATIBLE_IOCTL(SG_SET_RESERVED_SIZE)
+-COMPATIBLE_IOCTL(SG_GET_RESERVED_SIZE)
+-COMPATIBLE_IOCTL(SG_GET_SCSI_ID)
+-COMPATIBLE_IOCTL(SG_SET_FORCE_LOW_DMA)
+-COMPATIBLE_IOCTL(SG_GET_LOW_DMA)
+-COMPATIBLE_IOCTL(SG_SET_FORCE_PACK_ID)
+-COMPATIBLE_IOCTL(SG_GET_PACK_ID)
+-COMPATIBLE_IOCTL(SG_GET_NUM_WAITING)
+-COMPATIBLE_IOCTL(SG_SET_DEBUG)
+-COMPATIBLE_IOCTL(SG_GET_SG_TABLESIZE)
+-COMPATIBLE_IOCTL(SG_GET_COMMAND_Q)
+-COMPATIBLE_IOCTL(SG_SET_COMMAND_Q)
+-COMPATIBLE_IOCTL(SG_GET_VERSION_NUM)
+-COMPATIBLE_IOCTL(SG_NEXT_CMD_LEN)
+-COMPATIBLE_IOCTL(SG_SCSI_RESET)
+-COMPATIBLE_IOCTL(SG_GET_REQUEST_TABLE)
+-COMPATIBLE_IOCTL(SG_SET_KEEP_ORPHAN)
+-COMPATIBLE_IOCTL(SG_GET_KEEP_ORPHAN)
+-#endif
+-};
+-
+-/*
+- * Convert common ioctl arguments based on their command number
+- *
+- * Please do not add any code in here. Instead, implement
+- * a compat_ioctl operation in the place that handleѕ the
+- * ioctl for the native case.
+- */
+-static long do_ioctl_trans(unsigned int cmd,
+-		 unsigned long arg, struct file *file)
+-{
+-	return -ENOIOCTLCMD;
+-}
+-
+-static int compat_ioctl_check_table(unsigned int xcmd)
+-{
+-#ifdef CONFIG_BLOCK
+-	int i;
+-	const int max = ARRAY_SIZE(ioctl_pointer) - 1;
+-
+-	BUILD_BUG_ON(max >= (1 << 16));
+-
+-	/* guess initial offset into table, assuming a
+-	   normalized distribution */
+-	i = ((xcmd >> 16) * max) >> 16;
+-
+-	/* do linear search up first, until greater or equal */
+-	while (ioctl_pointer[i] < xcmd && i < max)
+-		i++;
+-
+-	/* then do linear search down */
+-	while (ioctl_pointer[i] > xcmd && i > 0)
+-		i--;
+-
+-	return ioctl_pointer[i] == xcmd;
+-#else
+-	return 0;
+-#endif
+-}
+-
+ COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
+ 		       compat_ulong_t, arg32)
+ {
+@@ -216,19 +118,9 @@ COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
+ 				goto out_fput;
+ 		}
+ 
+-		if (!f.file->f_op->unlocked_ioctl)
+-			goto do_ioctl;
+-		break;
+-	}
+-
+-	if (compat_ioctl_check_table(XFORM(cmd)))
+-		goto found_handler;
+-
+-	error = do_ioctl_trans(cmd, arg, f.file);
+-	if (error == -ENOIOCTLCMD)
+ 		error = -ENOTTY;
+-
+-	goto out_fput;
++		goto out_fput;
++	}
+ 
+  found_handler:
+ 	arg = (unsigned long)compat_ptr(arg);
+@@ -239,23 +131,3 @@ COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
+  out:
+ 	return error;
+ }
+-
+-static int __init init_sys32_ioctl_cmp(const void *p, const void *q)
+-{
+-	unsigned int a, b;
+-	a = *(unsigned int *)p;
+-	b = *(unsigned int *)q;
+-	if (a > b)
+-		return 1;
+-	if (a < b)
+-		return -1;
+-	return 0;
+-}
+-
+-static int __init init_sys32_ioctl(void)
+-{
+-	sort(ioctl_pointer, ARRAY_SIZE(ioctl_pointer), sizeof(*ioctl_pointer),
+-		init_sys32_ioctl_cmp, NULL);
+-	return 0;
+-}
+-__initcall(init_sys32_ioctl);
 -- 
 2.20.0
 
-Cc: linux-scsi@vger.kernel.org
-Cc: linux-block@vger.kernel.org
-Cc: y2038@lists.linaro.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: linux-doc@vger.kernel.org
-Cc: corbet@lwn.net
-Cc: viro@zeniv.linux.org.uk
-Cc: linux-fsdevel@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>
