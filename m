@@ -2,21 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1EA712E10E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2020 00:40:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B7A912E1FC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jan 2020 04:59:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727484AbgAAXk0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Jan 2020 18:40:26 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:59804 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727429AbgAAXk0 (ORCPT
+        id S1727566AbgABD7k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Jan 2020 22:59:40 -0500
+Received: from mout-p-201.mailbox.org ([80.241.56.171]:16274 "EHLO
+        mout-p-201.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727509AbgABD7k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Jan 2020 18:40:26 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1imnb0-000JcJ-0Q; Wed, 01 Jan 2020 23:40:10 +0000
-Date:   Wed, 1 Jan 2020 23:40:09 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Aleksa Sarai <cyphar@cyphar.com>
+        Wed, 1 Jan 2020 22:59:40 -0500
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 47pDnP4gX9zQlB7;
+        Thu,  2 Jan 2020 04:59:37 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
+        with ESMTP id 86V7dup9i5m4; Thu,  2 Jan 2020 04:59:33 +0100 (CET)
+Date:   Thu, 2 Jan 2020 14:59:20 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     David Howells <dhowells@redhat.com>,
         Eric Biederman <ebiederm@xmission.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
@@ -27,7 +34,7 @@ Cc:     David Howells <dhowells@redhat.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH RFC 0/1] mount: universally disallow mounting over
  symlinks
-Message-ID: <20200101234009.GB8904@ZenIV.linux.org.uk>
+Message-ID: <20200102035920.dsycgxnb6ba2jhz2@yavin.dot.cyphar.com>
 References: <20191230052036.8765-1-cyphar@cyphar.com>
  <20191230054413.GX4203@ZenIV.linux.org.uk>
  <20191230054913.c5avdjqbygtur2l7@yavin.dot.cyphar.com>
@@ -36,27 +43,59 @@ References: <20191230052036.8765-1-cyphar@cyphar.com>
  <20200101005446.GH4203@ZenIV.linux.org.uk>
  <20200101030815.GA17593@ZenIV.linux.org.uk>
  <20200101144407.ugjwzk7zxrucaa6a@yavin.dot.cyphar.com>
+ <20200101234009.GB8904@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tef6rv2ffqcfqgo6"
 Content-Disposition: inline
-In-Reply-To: <20200101144407.ugjwzk7zxrucaa6a@yavin.dot.cyphar.com>
+In-Reply-To: <20200101234009.GB8904@ZenIV.linux.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 02, 2020 at 01:44:07AM +1100, Aleksa Sarai wrote:
 
-> Thanks, this fixes the issue for me (and also fixes another reproducer I
-> found -- mounting a symlink on top of itself then trying to umount it).
-> 
-> Reported-by: Aleksa Sarai <cyphar@cyphar.com>
-> Tested-by: Aleksa Sarai <cyphar@cyphar.com>
+--tef6rv2ffqcfqgo6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Pushed into #fixes.
+On 2020-01-01, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Thu, Jan 02, 2020 at 01:44:07AM +1100, Aleksa Sarai wrote:
+>=20
+> > Thanks, this fixes the issue for me (and also fixes another reproducer I
+> > found -- mounting a symlink on top of itself then trying to umount it).
+> >=20
+> > Reported-by: Aleksa Sarai <cyphar@cyphar.com>
+> > Tested-by: Aleksa Sarai <cyphar@cyphar.com>
+>=20
+> Pushed into #fixes.
 
-> As for the original topic of bind-mounting symlinks -- given this is a
-> supported feature, would you be okay with me sending an updated
-> O_EMPTYPATH series?
+Thanks. One other thing I noticed is that umount applies to the
+underlying symlink rather than the mountpoint on top. So, for example
+(using the same scripts I posted in the thread):
 
-Post it on fsdevel; I'll need to reread it anyway to say anything useful...
+  # ln -s /tmp/foo link
+  # ./mount_to_symlink /etc/passwd link
+  # umount -l link # will attempt to unmount "/tmp/foo"
+
+Is that intentional?
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--tef6rv2ffqcfqgo6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXg1qlQAKCRCdlLljIbnQ
+EjpjAP9+cSE8vOT4mUYl4IC31Io/0FRApXDAbaIGxDhJ1uYJQAD+IuziuN4KXZzb
+2vUrlYkc86XaKC4oX0suOlWHXbaUdgE=
+=iYvs
+-----END PGP SIGNATURE-----
+
+--tef6rv2ffqcfqgo6--
