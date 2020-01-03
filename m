@@ -2,101 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99C9F12FD94
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2020 21:19:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A2EBF12FDE8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2020 21:26:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728702AbgACUTr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jan 2020 15:19:47 -0500
-Received: from mail-qv1-f65.google.com ([209.85.219.65]:44142 "EHLO
-        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728638AbgACUTq (ORCPT
+        id S1728593AbgACU0q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jan 2020 15:26:46 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:47201 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726050AbgACU0q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jan 2020 15:19:46 -0500
-Received: by mail-qv1-f65.google.com with SMTP id n8so16665751qvg.11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Jan 2020 12:19:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=40ACnQIUnpge54Cj+EODMXbGQ2AM0yGbootCDBdgIh0=;
-        b=AWCc/ylFmQ91zZEJrbKovcmODhKduqUVkKGxHK8uCtVvWppAnjCzAVhlqtuTB6Zv3H
-         fwGfadWPG5OWx3vtouAanI9rAb4+nCSTS9ougZHH94RmFVRXusGOhSeq6LcZbXUbpYke
-         LecHuReAxOHZIAlNr0puF8IN10taJseJbu/8dZmgE65qy44VHc90CsjCbMPz9YIW56uc
-         KAocddCq9fbTe+4eLEe4ukQAx3KuF/S8Bs/5ss0PU18bAsmodPObJCziaNGvW+fW97nj
-         vqPpR6NvW2UHqccwDYrcuioTdRRCTX8F5vGOe97A6Uj5iUQG4sbm5c76feOsNIPb/J8O
-         nOKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=40ACnQIUnpge54Cj+EODMXbGQ2AM0yGbootCDBdgIh0=;
-        b=WZqK981MJ06+8jrua0RpwZTkpToQKGb0G8cCsYTmleyOgdl4fdGNA/PxEO9Q7XrMDE
-         CxpgpT/gcb8sa7eAe6o1PM/vAq89FO5oExIdSgI7baH6GYIwLQtc0oGN+XdUrvZTe+Oy
-         CE8sb404npOxEV4q0dlVHXDJ/9tZ0P4dvBgxdneFZ5zJVmnz69qOZGzVyv/oTkFYU7DK
-         wGnd1Yb4Kg6rNn+xQ6QHYZJkvezKzIsHbnS80EIwGsE0s5/CMXeC2/PIVJif2n2rKOAY
-         jS0Mf7705dmUPkgY7Jlyon9Yc5hbtebxItMyHGDPepFJYeQyqJtomiUesVfzPSM9eoTM
-         DqCQ==
-X-Gm-Message-State: APjAAAVWK7lOxDhVXNdcTMqMSccORWiQhzT8tFProocRDOyoJvBl9Vre
-        gq65XYE0xRuWlnqq6qnmUUp8d9dG5Oi3kwL/ZxY=
-X-Google-Smtp-Source: APXvYqwTD0MzQRfSqMjBdpNUeZAJzfDvhrEGhXGCrMyvXGb//+N8M9ASxsqTbkQfP5NbaV7n6hKI5gEfY+hOjDS6Fyg=
-X-Received: by 2002:ad4:478b:: with SMTP id z11mr69635758qvy.185.1578082785331;
- Fri, 03 Jan 2020 12:19:45 -0800 (PST)
+        Fri, 3 Jan 2020 15:26:46 -0500
+Received: from callcc.thunk.org (guestnat-104-133-0-111.corp.google.com [104.133.0.111] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 003KQ8JY013722
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 3 Jan 2020 15:26:09 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 522F24200AF; Fri,  3 Jan 2020 15:26:08 -0500 (EST)
+Date:   Fri, 3 Jan 2020 15:26:08 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Daniel Rosenberg <drosen@google.com>
+Cc:     linux-ext4@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <chao@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-fscrypt@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel-team@android.com
+Subject: Re: [PATCH 4/8] vfs: Fold casefolding into vfs
+Message-ID: <20200103202608.GB4253@mit.edu>
+References: <20191203051049.44573-1-drosen@google.com>
+ <20191203051049.44573-5-drosen@google.com>
 MIME-Version: 1.0
-Received: by 2002:ac8:4410:0:0:0:0:0 with HTTP; Fri, 3 Jan 2020 12:19:45 -0800 (PST)
-From:   "Rev.Dr Emmanuel Okoye CEO Ecobank-benin" 
-        <westernunion.benin982@gmail.com>
-Date:   Fri, 3 Jan 2020 21:19:45 +0100
-Message-ID: <CAP=nHBKxfmbdRg7q4-1jdSUL6+zok9agasMSrXV5CsEJEmZz3A@mail.gmail.com>
-Subject: I promise you must be happy today, God has uplifted you and your
- family ok
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191203051049.44573-5-drosen@google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear Friend
+On Mon, Dec 02, 2019 at 09:10:45PM -0800, Daniel Rosenberg wrote:
+> @@ -228,6 +229,13 @@ static inline int dentry_string_cmp(const unsigned char *cs, const unsigned char
+>  
+>  #endif
+>  
+> +bool needs_casefold(const struct inode *dir)
+> +{
+> +	return IS_CASEFOLDED(dir) &&
+> +			(!IS_ENCRYPTED(dir) || fscrypt_has_encryption_key(dir));
+> +}
+> +EXPORT_SYMBOL(needs_casefold);
+> +
 
-i hope all is well with you,if so, glory be to God almighty. I'm very
-happy to inform you, about my success in getting payment funds under
-the cooperation of a new partner from United States of
-America.Presently I am in uk for investment projects with my own share
-of the total sum. I didn't forget your past efforts. IMF finally
-approved your compensation payment funds this morning by prepaid (ATM)
-Debit card of US$12,500.000.00Million Dollars, Since you not received
-this payment yet, I was not certified
-but it is not your fault and not my fault, I hold nothing against
-you.than bank official whom has been detaining the transfer in the
-bank, trying to claim your funds by themselves.
+I'd suggest adding a check to make sure that dir->i_sb->s_encoding is
+non-NULL before needs_casefold() returns non-NULL.  Otherwise a bug
+(or a fuzzed file system) which manages to set the S_CASEFOLD flag without having s_encoding be initialized might cause a NULL dereference.
 
-Therefore, in appreciation of your effort I have raised an
-International prepaid (ATM) Debit card of US$12,500.000.00 in your
-favor as compensation to you.
+Also, maybe make needs_casefold() an inline function which returns 0
+if CONFIG_UNICODE is not defined?  That way the need for #ifdef
+CONFIG_UNICODE could be reduced.
 
-Now, i want you to contact my Diplomatic Agent, His name is Mike Benz
-on His  e-mail Address (mikebenz550@aol.com
+> @@ -247,7 +255,19 @@ static inline int dentry_cmp(const struct dentry *dentry, const unsigned char *c
+>  	 * be no NUL in the ct/tcount data)
+>  	 */
+>  	const unsigned char *cs = READ_ONCE(dentry->d_name.name);
+> +#ifdef CONFIG_UNICODE
+> +	struct inode *parent = dentry->d_parent->d_inode;
+>  
+> +	if (unlikely(needs_casefold(parent))) {
+> +		const struct qstr n1 = QSTR_INIT(cs, tcount);
+> +		const struct qstr n2 = QSTR_INIT(ct, tcount);
+> +		int result = utf8_strncasecmp(dentry->d_sb->s_encoding,
+> +						&n1, &n2);
+> +
+> +		if (result >= 0 || sb_has_enc_strict_mode(dentry->d_sb))
+> +			return result;
+> +	}
+> +#endif
 
-ask Him to send the Prepaid (ATM) Debit card to you. Bear in mind that
-the money is in Prepaid (ATM) Debit card, not cash, so you need to
-send to him,
-your full name
-address  where the prepaid (ATM) Debit card will be delivered to you,
-including your cell phone number. Finally, I left explicit
-instructions with him, on how to send the (ATM CARD) to you.
+This is an example of how we could drop the #ifdef CONFIG_UNICODE
+(moving the declaration of 'parent' into the #if statement) if
+needs_casefold() always returns 0 if !defined(CONFIG_UNICODE).
 
-The Prepaid (ATM) Debit card, will be send to you through my
-Diplomatic Agent Mr. Mike Benz immediately you contact him. So contact
-my Diplomatic Agent Mr. Mike Benz immediately you receive this letter.
-Below is his contact information:
+> @@ -2404,7 +2424,22 @@ struct dentry *d_hash_and_lookup(struct dentry *dir, struct qstr *name)
+>  	 * calculate the standard hash first, as the d_op->d_hash()
+>  	 * routine may choose to leave the hash value unchanged.
+>  	 */
+> +#ifdef CONFIG_UNICODE
+> +	unsigned char *hname = NULL;
+> +	int hlen = name->len;
+> +
+> +	if (IS_CASEFOLDED(dir->d_inode)) {
+> +		hname = kmalloc(PATH_MAX, GFP_ATOMIC);
+> +		if (!hname)
+> +			return ERR_PTR(-ENOMEM);
+> +		hlen = utf8_casefold(dir->d_sb->s_encoding,
+> +					name, hname, PATH_MAX);
+> +	}
+> +	name->hash = full_name_hash(dir, hname ?: name->name, hlen);
+> +	kfree(hname);
+> +#else
+>  	name->hash = full_name_hash(dir, name->name, name->len);
+> +#endif
 
-NAME : MIKE BENZ
-EMAIL ADDRESS: mikebenz550@aol.com
-Text Him, (256) 284-4886
+Perhaps this could be refactored out?  It's also used in
+link_path_walk() and lookup_one_len_common().
 
-Request for Delivery of the Prepaid (ATM) Debit card  to you today.
-Note, please I have paid for the whole service fees for you, so the
-only money you will send to my Diplomatic Agent Mr. Mike Benz is
-$50.00 for your prepaid (ATM) Debit card DELIVERY FEE to your address
-ok.
-Let me know once you receive this Card at your address.
-Best regards,
-Rev.Dr, George Adadar
+(Note, there was some strageness in lookup_one_len_common(), where
+hname is freed twice, the first time using kvfree() which I don't
+believe is needed.  But this can be fixed as part of the refactoring.)
+
+	   	    	     	    	  - Ted
