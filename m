@@ -2,120 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2EBF12FDE8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2020 21:26:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53E6412FF19
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2020 00:28:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728593AbgACU0q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jan 2020 15:26:46 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:47201 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726050AbgACU0q (ORCPT
+        id S1726232AbgACX2b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jan 2020 18:28:31 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:44606 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726118AbgACX2a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jan 2020 15:26:46 -0500
-Received: from callcc.thunk.org (guestnat-104-133-0-111.corp.google.com [104.133.0.111] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 003KQ8JY013722
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 3 Jan 2020 15:26:09 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 522F24200AF; Fri,  3 Jan 2020 15:26:08 -0500 (EST)
-Date:   Fri, 3 Jan 2020 15:26:08 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Daniel Rosenberg <drosen@google.com>
-Cc:     linux-ext4@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel-team@android.com
-Subject: Re: [PATCH 4/8] vfs: Fold casefolding into vfs
-Message-ID: <20200103202608.GB4253@mit.edu>
-References: <20191203051049.44573-1-drosen@google.com>
- <20191203051049.44573-5-drosen@google.com>
+        Fri, 3 Jan 2020 18:28:30 -0500
+Received: by mail-ot1-f65.google.com with SMTP id h9so60470489otj.11;
+        Fri, 03 Jan 2020 15:28:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=HgqJfy4S3bqmD5nD3+IHTYjooC/9GfV6lr9+njhwvjQ=;
+        b=THcf7ergVWWJb9dKDvoXaGic/JCwtojym5nwlQy4LZPARdKPvDCzgfds8VNuLbeoiZ
+         BpHax/8af57wHU86mp/Rqz5hPaZLsZ/saykUWBxe4l2PNfmbaGJAMUwRzS6oo+J6FVGD
+         EB2sUVQfu5wyOxjNeQVAOjIslBwqlZ11MM1W2hJMFZCGXOIz8bIg9VKjtof3ymUboqQx
+         r7dDz1mOKPU7l8/EYJW3kbIaIC0AyQUIq7/4eAhNVehapxvlmuqWgzMRe4tq3MBBza0/
+         A1K8mjYQ7zJ0pmYYRekRK3vsNv9Herh+4EE9zszgc9UBDXehBJnwA9WDTSHPS6d6IHig
+         OmDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=HgqJfy4S3bqmD5nD3+IHTYjooC/9GfV6lr9+njhwvjQ=;
+        b=Q8qVGTNKGvdFu2gd+CBEbMn4bGlKDtLTKq52Z1uL5zJINJJUSGywJLVDBQGwPcuOul
+         GtMJLYaBo1k3Qt8zcrxdBVLg7TRcc/H12T+32/FNpvr3BRKGruFGHqBZFwo5D4DfSVuU
+         VNTTX4jDzAzSOAskTS9WpHF2aHZj/enekSA54l4f1RZiDUrk771gIHstwhPVg6qPb6To
+         bzA5z97VdzXjGLoEuEQDnM00ddpwJQW9ENX9IqxkcxwJW6bpI4FGTe9X8mJBLgELKMNn
+         szR2Q/PXnMHcnmX0nJO30XSzp5mpDUXBQvdc2Wd7C5sBQ0Y59H0qlqKMIoa+C1hh9+Qb
+         PuJg==
+X-Gm-Message-State: APjAAAW6+vd9hAq/zFgNQDV2/PRdqyP6EWf0QOOxzFVWuObMGmaxpKKx
+        7WWLqfMRewiebgp+6SO/UVkZVoDyk/Uhema7/MEx1w==
+X-Google-Smtp-Source: APXvYqzW3zOUbakHy9OZfTK4ocheF0qElAUZ78tednBzyqAMb9keW/IknW1qV3au7WvOdOPOf8q8jlFPpfmIWBbHlIk=
+X-Received: by 2002:a05:6830:1141:: with SMTP id x1mr27466841otq.120.1578094110254;
+ Fri, 03 Jan 2020 15:28:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191203051049.44573-5-drosen@google.com>
+Received: by 2002:a8a:87:0:0:0:0:0 with HTTP; Fri, 3 Jan 2020 15:28:29 -0800 (PST)
+In-Reply-To: <20200103183604.xzfvnu2qivqnqkkx@pali>
+References: <20200102082036.29643-1-namjae.jeon@samsung.com>
+ <CGME20200102082406epcas1p268f260d90213bdaabee25a7518f86625@epcas1p2.samsung.com>
+ <20200102082036.29643-10-namjae.jeon@samsung.com> <20200102091902.tk374bxohvj33prz@pali>
+ <CAKYAXd_9XOWtcLYk-+gg636rFCYjLgHzrP5orR3XjXGMpTKWLA@mail.gmail.com>
+ <20200102114034.bjezqs45xecz4atd@pali> <20200103183604.xzfvnu2qivqnqkkx@pali>
+From:   Namjae Jeon <linkinjeon@gmail.com>
+Date:   Sat, 4 Jan 2020 08:28:29 +0900
+Message-ID: <CAKYAXd8PBdTv-no7sp13L25dB=rhE+sKff-b92Yg9fZmocyoMQ@mail.gmail.com>
+Subject: Re: [PATCH v9 09/13] exfat: add misc operations
+To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
+Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
+        sj1557.seo@samsung.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 02, 2019 at 09:10:45PM -0800, Daniel Rosenberg wrote:
-> @@ -228,6 +229,13 @@ static inline int dentry_string_cmp(const unsigned char *cs, const unsigned char
->  
->  #endif
->  
-> +bool needs_casefold(const struct inode *dir)
-> +{
-> +	return IS_CASEFOLDED(dir) &&
-> +			(!IS_ENCRYPTED(dir) || fscrypt_has_encryption_key(dir));
-> +}
-> +EXPORT_SYMBOL(needs_casefold);
-> +
+> Also I think that you should apply this Arnd's patch:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
+/?id=3D44f6b40c225eb8e82eba8fd96d8f3fb843bc5a09
+Okay:)
+>
+> And maybe it is a good idea to look at applied staging patches:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/dr=
+ivers/staging/exfat
+I will check them.
 
-I'd suggest adding a check to make sure that dir->i_sb->s_encoding is
-non-NULL before needs_casefold() returns non-NULL.  Otherwise a bug
-(or a fuzzed file system) which manages to set the S_CASEFOLD flag without having s_encoding be initialized might cause a NULL dereference.
-
-Also, maybe make needs_casefold() an inline function which returns 0
-if CONFIG_UNICODE is not defined?  That way the need for #ifdef
-CONFIG_UNICODE could be reduced.
-
-> @@ -247,7 +255,19 @@ static inline int dentry_cmp(const struct dentry *dentry, const unsigned char *c
->  	 * be no NUL in the ct/tcount data)
->  	 */
->  	const unsigned char *cs = READ_ONCE(dentry->d_name.name);
-> +#ifdef CONFIG_UNICODE
-> +	struct inode *parent = dentry->d_parent->d_inode;
->  
-> +	if (unlikely(needs_casefold(parent))) {
-> +		const struct qstr n1 = QSTR_INIT(cs, tcount);
-> +		const struct qstr n2 = QSTR_INIT(ct, tcount);
-> +		int result = utf8_strncasecmp(dentry->d_sb->s_encoding,
-> +						&n1, &n2);
-> +
-> +		if (result >= 0 || sb_has_enc_strict_mode(dentry->d_sb))
-> +			return result;
-> +	}
-> +#endif
-
-This is an example of how we could drop the #ifdef CONFIG_UNICODE
-(moving the declaration of 'parent' into the #if statement) if
-needs_casefold() always returns 0 if !defined(CONFIG_UNICODE).
-
-> @@ -2404,7 +2424,22 @@ struct dentry *d_hash_and_lookup(struct dentry *dir, struct qstr *name)
->  	 * calculate the standard hash first, as the d_op->d_hash()
->  	 * routine may choose to leave the hash value unchanged.
->  	 */
-> +#ifdef CONFIG_UNICODE
-> +	unsigned char *hname = NULL;
-> +	int hlen = name->len;
-> +
-> +	if (IS_CASEFOLDED(dir->d_inode)) {
-> +		hname = kmalloc(PATH_MAX, GFP_ATOMIC);
-> +		if (!hname)
-> +			return ERR_PTR(-ENOMEM);
-> +		hlen = utf8_casefold(dir->d_sb->s_encoding,
-> +					name, hname, PATH_MAX);
-> +	}
-> +	name->hash = full_name_hash(dir, hname ?: name->name, hlen);
-> +	kfree(hname);
-> +#else
->  	name->hash = full_name_hash(dir, name->name, name->len);
-> +#endif
-
-Perhaps this could be refactored out?  It's also used in
-link_path_walk() and lookup_one_len_common().
-
-(Note, there was some strageness in lookup_one_len_common(), where
-hname is freed twice, the first time using kvfree() which I don't
-believe is needed.  But this can be fixed as part of the refactoring.)
-
-	   	    	     	    	  - Ted
+Thanks a lot!
+>
+> --
+> Pali Roh=C3=A1r
+> pali.rohar@gmail.com
+>
