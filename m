@@ -2,223 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73F0B12F90F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2020 15:12:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EB5012F936
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2020 15:30:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbgACOMs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jan 2020 09:12:48 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:39368 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727539AbgACOMs (ORCPT
+        id S1727868AbgACOaV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jan 2020 09:30:21 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:28535 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727543AbgACOaV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jan 2020 09:12:48 -0500
+        Fri, 3 Jan 2020 09:30:21 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578060766;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        s=mimecast20190719; t=1578061820;
+        h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=CGMg0pHtt4SVc4uhGk+7pIjVLdzZuIJr8uS5jcpc3MY=;
-        b=NwyTpLUaQhy4aQcSi0ZCPkgtNMs80Ye0HTR1rp9p9oDeBngMFPadajBLTPZgz2un4KS4ha
-        x6/9ywk5L6ymgZ4epnsqc9K5wbDc4kaso+TSHWrv4QQVGymFz8MvFHZYPaTFFg9zIil/vy
-        EIfsM2YkyzyxLcEMn+m0q059Z1E0Heo=
+        bh=NhK5nDqlvB+sIRSPKXBkymesRttMWOxw8giPyZmb1PQ=;
+        b=HYBTazvZ7ahCjYuQbrTz0t45JwLsIbnTyiTWHSuUIKxnt+0Xf4Jeu3qfKNo9Ta2KoVRpw4
+        8xASgbvP5Gh0npzOGg5TQKDHKy30W4bqG8J67r6cxjMMNYcmZzeMlN1UvhEh2ZBysEVM/G
+        7TfCNOAtHWeTB64Q8aMFYBhUQrwWC6I=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-385--FlagLmkMOm7LZJqTa9NNQ-1; Fri, 03 Jan 2020 09:12:43 -0500
-X-MC-Unique: -FlagLmkMOm7LZJqTa9NNQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+ us-mta-298-FMDEIzQdMBiFS42WJCZe4A-1; Fri, 03 Jan 2020 09:30:17 -0500
+X-MC-Unique: FMDEIzQdMBiFS42WJCZe4A-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 29D92801A0D;
-        Fri,  3 Jan 2020 14:12:42 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 11FFE386;
-        Fri,  3 Jan 2020 14:12:36 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 9A02E2202E9; Fri,  3 Jan 2020 09:12:35 -0500 (EST)
-Date:   Fri, 3 Jan 2020 09:12:35 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, virtio-fs@redhat.com, miklos@szeredi.hu,
-        stefanha@redhat.com, dgilbert@redhat.com,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH 02/19] dax: Pass dax_dev to dax_writeback_mapping_range()
-Message-ID: <20200103141235.GA13350@redhat.com>
-References: <20190821175720.25901-1-vgoyal@redhat.com>
- <20190821175720.25901-3-vgoyal@redhat.com>
- <20190826115316.GB21051@infradead.org>
- <20190826203326.GB13860@redhat.com>
- <20190826205829.GC13860@redhat.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EF32B8024DD;
+        Fri,  3 Jan 2020 14:30:15 +0000 (UTC)
+Received: from [10.3.112.12] (ovpn-112-12.phx2.redhat.com [10.3.112.12])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CD74A843DA;
+        Fri,  3 Jan 2020 14:30:14 +0000 (UTC)
+Reply-To: tasleson@redhat.com
+Subject: Re: [RFC 1/9] lib/string: Add function to trim duplicate WS
+From:   Tony Asleson <tasleson@redhat.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20191223225558.19242-1-tasleson@redhat.com>
+ <20191223225558.19242-2-tasleson@redhat.com>
+ <20191223232824.GB31820@bombadil.infradead.org>
+ <8392b726-fa55-baa4-6913-5ca0e4fa46a7@redhat.com>
+Organization: Red Hat
+Message-ID: <1e22cee9-3fda-a548-57e3-910c5a79d6ba@redhat.com>
+Date:   Fri, 3 Jan 2020 08:30:13 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190826205829.GC13860@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+In-Reply-To: <8392b726-fa55-baa4-6913-5ca0e4fa46a7@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 26, 2019 at 04:58:29PM -0400, Vivek Goyal wrote:
-> On Mon, Aug 26, 2019 at 04:33:26PM -0400, Vivek Goyal wrote:
-> > On Mon, Aug 26, 2019 at 04:53:16AM -0700, Christoph Hellwig wrote:
-> > > On Wed, Aug 21, 2019 at 01:57:03PM -0400, Vivek Goyal wrote:
-> > > > Right now dax_writeback_mapping_range() is passed a bdev and dax_dev
-> > > > is searched from that bdev name.
-> > > > 
-> > > > virtio-fs does not have a bdev. So pass in dax_dev also to
-> > > > dax_writeback_mapping_range(). If dax_dev is passed in, bdev is not
-> > > > used otherwise dax_dev is searched using bdev.
-> > > 
-> > > Please just pass in only the dax_device and get rid of the block device.
-> > > The callers should have one at hand easily, e.g. for XFS just call
-> > > xfs_find_daxdev_for_inode instead of xfs_find_bdev_for_inode.
-> > 
-> > Sure. Here is the updated patch.
-> > 
-> > This patch can probably go upstream independently. If you are fine with
-> > the patch, I can post it separately for inclusion.
+On 1/2/20 4:52 PM, Tony Asleson wrote:
+> On 12/23/19 5:28 PM, Matthew Wilcox wrote:
+>> On Mon, Dec 23, 2019 at 04:55:50PM -0600, Tony Asleson wrote:
+>>> +/**
+>>> + * Removes leading and trailing whitespace and removes duplicate
+>>> + * adjacent whitespace in a string, modifies string in place.
+>>> + * @s The %NUL-terminated string to have spaces removed
+>>> + * Returns the new length
+>>> + */
+>>
+>> This isn't good kernel-doc.  See Documentation/doc-guide/kernel-doc.rst
+>> Compile with W=1 to get the format checked.
 > 
-> Forgot to update function declaration in case of !CONFIG_FS_DAX. Here is
-> the updated patch.
+> Indeed, I'll correct it.
 > 
-> Subject: dax: Pass dax_dev instead of bdev to dax_writeback_mapping_range()
+>>> +size_t strim_dupe(char *s)
+>>> +{
+>>> +	size_t ret = 0;
+>>> +	char *w = s;
+>>> +	char *p;
+>>> +
+>>> +	/*
+>>> +	 * This will remove all leading and duplicate adjacent, but leave
+>>> +	 * 1 space at the end if one or more are present.
+>>> +	 */
+>>> +	for (p = s; *p != '\0'; ++p) {
+>>> +		if (!isspace(*p) || (p != s && !isspace(*(p - 1)))) {
+>>> +			*w = *p;
+>>> +			++w;
+>>> +			ret += 1;
+>>> +		}
+>>> +	}
+>>
+>> I'd be tempted to do ...
+>>
+>> 	size_t ret = 0;
+>> 	char *w = s;
+>> 	bool last_space = false;
+>>
+>> 	do {
+>> 		bool this_space = isspace(*s);
+>>
+>> 		if (!this_space || !last_space) {
+>> 			*w++ = *s;
+>> 			ret++;
+>> 		}
+>> 		s++;
+>> 		last_space = this_space;
+>> 	} while (s[-1] != '\0');
 > 
-> As of now dax_writeback_mapping_range() takes "struct block_device" as a
-> parameter and dax_dev is searched from bdev name. This also involves taking
-> a fresh reference on dax_dev and putting that reference at the end of
-> function.
+> That leaves a starting and trailing WS, how about something like this?
 > 
-> We are developing a new filesystem virtio-fs and using dax to access host
-> page cache directly. But there is no block device. IOW, we want to make
-> use of dax but want to get rid of this assumption that there is always
-> a block device associated with dax_dev.
+> size_t strim_dupe(char *s)
+> {
+> 	size_t ret = 0;
+> 	char *w = s;
+> 	bool last_space = false;
 > 
-> So pass in "struct dax_device" as parameter instead of bdev.
+> 	do {
+> 		bool this_space = isspace(*s);
+> 		if (!this_space || (!last_space && ret)) {Mollie Fitzgerald
+> 			*w++ = *s;
+> 			ret++;
+> 		}
+> 		s++;
+> 		last_space = this_space;
+> 	} while (s[-1] != '\0');
 > 
-> ext2/ext4/xfs are current users and they already have a reference on
-> dax_device. So there is no need to take reference and drop reference to
-> dax_device on each call of this function.
+> 	if (ret > 1 && isspace(w[-2])) {
+> 		w[-2] = '\0';
+> 		ret--;
+> 	}
 > 
-> Suggested-by: Christoph Hellwig <hch@infradead.org>
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> 	ret--;
+> 	return ret;
+> }
 
-Hi Dan,
+This function was added so I could strip out extra spaces in the vpd
+0x83 string representation, to shorten them before they get added to the
+structured syslog message.  I'm starting to think this is a bad idea as
+anyone that might want to write some code to use the kernel sysfs entry
+for a device and search for it in the syslog would have to perturb the
+id string the same way.
 
-Ping for this patch. I see christoph and Jan acked it. Can we take it. Not
-sure how to get ack from ext4 developers.
+I think this change should just be removed from the patch series and
+leave the IDs as they are.
 
-Thanks
-Vivek
+If we really wanted a shorter ID, a better approach would be use a hash
+of the ID string, but that introduces another level of complexity that
+isn't helpful to end users.
 
-> ---
->  fs/dax.c            |    8 +-------
->  fs/ext2/inode.c     |    5 +++--
->  fs/ext4/inode.c     |    2 +-
->  fs/xfs/xfs_aops.c   |    2 +-
->  include/linux/dax.h |    4 ++--
->  5 files changed, 8 insertions(+), 13 deletions(-)
-> 
-> Index: rhvgoyal-linux-fuse/fs/dax.c
-> ===================================================================
-> --- rhvgoyal-linux-fuse.orig/fs/dax.c	2019-08-26 16:45:26.093710196 -0400
-> +++ rhvgoyal-linux-fuse/fs/dax.c	2019-08-26 16:45:29.462710196 -0400
-> @@ -936,12 +936,11 @@ static int dax_writeback_one(struct xa_s
->   * on persistent storage prior to completion of the operation.
->   */
->  int dax_writeback_mapping_range(struct address_space *mapping,
-> -		struct block_device *bdev, struct writeback_control *wbc)
-> +		struct dax_device *dax_dev, struct writeback_control *wbc)
->  {
->  	XA_STATE(xas, &mapping->i_pages, wbc->range_start >> PAGE_SHIFT);
->  	struct inode *inode = mapping->host;
->  	pgoff_t end_index = wbc->range_end >> PAGE_SHIFT;
-> -	struct dax_device *dax_dev;
->  	void *entry;
->  	int ret = 0;
->  	unsigned int scanned = 0;
-> @@ -952,10 +951,6 @@ int dax_writeback_mapping_range(struct a
->  	if (!mapping->nrexceptional || wbc->sync_mode != WB_SYNC_ALL)
->  		return 0;
->  
-> -	dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
-> -	if (!dax_dev)
-> -		return -EIO;
-> -
->  	trace_dax_writeback_range(inode, xas.xa_index, end_index);
->  
->  	tag_pages_for_writeback(mapping, xas.xa_index, end_index);
-> @@ -976,7 +971,6 @@ int dax_writeback_mapping_range(struct a
->  		xas_lock_irq(&xas);
->  	}
->  	xas_unlock_irq(&xas);
-> -	put_dax(dax_dev);
->  	trace_dax_writeback_range_done(inode, xas.xa_index, end_index);
->  	return ret;
->  }
-> Index: rhvgoyal-linux-fuse/include/linux/dax.h
-> ===================================================================
-> --- rhvgoyal-linux-fuse.orig/include/linux/dax.h	2019-08-26 16:45:26.094710196 -0400
-> +++ rhvgoyal-linux-fuse/include/linux/dax.h	2019-08-26 16:46:08.101710196 -0400
-> @@ -141,7 +141,7 @@ static inline void fs_put_dax(struct dax
->  
->  struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev);
->  int dax_writeback_mapping_range(struct address_space *mapping,
-> -		struct block_device *bdev, struct writeback_control *wbc);
-> +		struct dax_device *dax_dev, struct writeback_control *wbc);
->  
->  struct page *dax_layout_busy_page(struct address_space *mapping);
->  dax_entry_t dax_lock_page(struct page *page);
-> @@ -180,7 +180,7 @@ static inline struct page *dax_layout_bu
->  }
->  
->  static inline int dax_writeback_mapping_range(struct address_space *mapping,
-> -		struct block_device *bdev, struct writeback_control *wbc)
-> +		struct dax_device *dax_dev, struct writeback_control *wbc)
->  {
->  	return -EOPNOTSUPP;
->  }
-> Index: rhvgoyal-linux-fuse/fs/xfs/xfs_aops.c
-> ===================================================================
-> --- rhvgoyal-linux-fuse.orig/fs/xfs/xfs_aops.c	2019-08-26 16:45:26.094710196 -0400
-> +++ rhvgoyal-linux-fuse/fs/xfs/xfs_aops.c	2019-08-26 16:45:29.471710196 -0400
-> @@ -1120,7 +1120,7 @@ xfs_dax_writepages(
->  {
->  	xfs_iflags_clear(XFS_I(mapping->host), XFS_ITRUNCATED);
->  	return dax_writeback_mapping_range(mapping,
-> -			xfs_find_bdev_for_inode(mapping->host), wbc);
-> +			xfs_find_daxdev_for_inode(mapping->host), wbc);
->  }
->  
->  STATIC int
-> Index: rhvgoyal-linux-fuse/fs/ext4/inode.c
-> ===================================================================
-> --- rhvgoyal-linux-fuse.orig/fs/ext4/inode.c	2019-08-26 16:45:26.093710196 -0400
-> +++ rhvgoyal-linux-fuse/fs/ext4/inode.c	2019-08-26 16:45:29.475710196 -0400
-> @@ -2992,7 +2992,7 @@ static int ext4_dax_writepages(struct ad
->  	percpu_down_read(&sbi->s_journal_flag_rwsem);
->  	trace_ext4_writepages(inode, wbc);
->  
-> -	ret = dax_writeback_mapping_range(mapping, inode->i_sb->s_bdev, wbc);
-> +	ret = dax_writeback_mapping_range(mapping, sbi->s_daxdev, wbc);
->  	trace_ext4_writepages_result(inode, wbc, ret,
->  				     nr_to_write - wbc->nr_to_write);
->  	percpu_up_read(&sbi->s_journal_flag_rwsem);
-> Index: rhvgoyal-linux-fuse/fs/ext2/inode.c
-> ===================================================================
-> --- rhvgoyal-linux-fuse.orig/fs/ext2/inode.c	2019-08-26 16:45:26.093710196 -0400
-> +++ rhvgoyal-linux-fuse/fs/ext2/inode.c	2019-08-26 16:45:29.477710196 -0400
-> @@ -957,8 +957,9 @@ ext2_writepages(struct address_space *ma
->  static int
->  ext2_dax_writepages(struct address_space *mapping, struct writeback_control *wbc)
->  {
-> -	return dax_writeback_mapping_range(mapping,
-> -			mapping->host->i_sb->s_bdev, wbc);
-> +	struct ext2_sb_info *sbi = EXT2_SB(mapping->host->i_sb);
-> +
-> +	return dax_writeback_mapping_range(mapping, sbi->s_daxdev, wbc);
->  }
->  
->  const struct address_space_operations ext2_aops = {
+-Tony
 
