@@ -2,46 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAC3612FA58
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2020 17:29:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75D0C12FA5B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2020 17:29:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727959AbgACQ3n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jan 2020 11:29:43 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39866 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727859AbgACQ3n (ORCPT
+        id S1728014AbgACQ3q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jan 2020 11:29:46 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:40466 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727994AbgACQ3q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jan 2020 11:29:43 -0500
-Received: by mail-pl1-f194.google.com with SMTP id g6so16274908plp.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Jan 2020 08:29:42 -0800 (PST)
+        Fri, 3 Jan 2020 11:29:46 -0500
+Received: by mail-pj1-f67.google.com with SMTP id bg7so4910024pjb.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Jan 2020 08:29:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sargun.me; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AjtYs0UBINRJ4+zsLLVMr6kENETZfvFZvXMDxajufTI=;
-        b=OHSZ65bRDGA3pSlea/mIUMh4/x/eUVHnSjYPqjrSWQe1HIHWnrT90Ez8p9Yhwz/857
-         uAmmm/wDVZ6zgRlBObJhm2qRWglCHL8cr68F/wOiQ58rRY6S33Ip6pfb5bubDMm5Ut9D
-         0ffkmMneo7XM01oGFghkFS2/Bv3O7MjYbg6nk=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=eB+H+wKtr9wg6rNJfWFUAgXbI+ShVm182xgfnmGZIDU=;
+        b=f85XQOnziddmbXWnevVH8tqyCb+Bv2paNJFQ//lYFR8+YL/nNkZiibCRRb/B/qs1mE
+         /2m5HAW5x50jSsqxUBv2+MTVdX0fGsBR5uGv0xqc1dRr+LZyZvmxrUm35nMNmgfgi3T1
+         +12bJ0bbhU+M/ssVM8JzR0SYVBMvPfhwBxz1E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AjtYs0UBINRJ4+zsLLVMr6kENETZfvFZvXMDxajufTI=;
-        b=ZG00yPGOLfupfXQ1smgS2vzjnQw/VTXKgdhpuEhjw+w8t6k39Yiqt+i8nyhNqPyt1H
-         omJHFdJ5Fh8lJWLO0tWC9YhY3DY2UkBOUQQQoiGLn1bTs8XG0zuPwzRJa1NjC1RyTuTD
-         u15sk6Cz4/9WrZOmxJ6VTk++vaei2TYUBClldi2Itvbq1eHoGnrVoJQm/6UMRaja7EnH
-         b2dKHm9GTzdJ3JOLDolkgz6vBqyDXXqO3LzWzPvmQnI6ux+UHmHmKgzObliG5kDtg8YM
-         2vm3oyDnBGW6F4v4/onZS8yEwb7oSNhse2Ce8uy5xvKa0/IFUBDRjszoHH5PwT2tRbDX
-         qaRA==
-X-Gm-Message-State: APjAAAXXQFMJ8PkG1lWsinmW9NgXfuzrBZxjNoggXOShIHlMV3FIiQqJ
-        bwj4i9uLJWe6dbcnb1itzhinzg==
-X-Google-Smtp-Source: APXvYqxgDqGdS6beRqsWT3wx3IkYkSpOQVLFgAnGl1qpFlaigdh9WdUHvgEazdhdeNpP7mAVwFmyiQ==
-X-Received: by 2002:a17:902:7d94:: with SMTP id a20mr87107883plm.26.1578068982189;
-        Fri, 03 Jan 2020 08:29:42 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=eB+H+wKtr9wg6rNJfWFUAgXbI+ShVm182xgfnmGZIDU=;
+        b=I2h4JT9WjqJZJ2lcb9bKtGH+mDctP0Z5e1xOE1YngZObt/KZlVP2+NXhn1HxxdAfRc
+         keCP4hMz6kGJuZOTksJgTDH+hzMSei+0teEl3bo3RWV+H/ugMxI35K1Rbjc2WG2/1aY1
+         prF0j+ZRV2SwC8/XLwdGruVhh93qFsiB6M0ziQEhzPdH3DbXUPPAonJatSfP7dvCQF56
+         Bob+N2Etw7oYSx1kNCPQPURJG5MPgT9zGWI//VBhloE4RfUIFSciUmbOd38drUyAi+ze
+         ioHX1F35weUyQHoNWJV/58pLJcZoqOHQZSCrOl/MellCM2ZV++UZc7qEx8VIJccBKSyS
+         IjEQ==
+X-Gm-Message-State: APjAAAUAWzQlTBMQ0JYQTUcc6UpoyywCzHje+5KFc26SVZJnvOmsGH3n
+        C5/9oLW/GbpTvpmj1nNA0Mcl1g==
+X-Google-Smtp-Source: APXvYqx/aYa2Y6i8oTaUCVkfAVeD6NjjHFZIg7AlXcxwqpbWJJLefsfNYKOrzG5kmpQhT3iO3w80cw==
+X-Received: by 2002:a17:90a:fc82:: with SMTP id ci2mr27417376pjb.13.1578068985365;
+        Fri, 03 Jan 2020 08:29:45 -0800 (PST)
 Received: from ubuntu.netflix.com (203.20.25.136.in-addr.arpa. [136.25.20.203])
-        by smtp.gmail.com with ESMTPSA id m22sm67373970pgn.8.2020.01.03.08.29.40
+        by smtp.gmail.com with ESMTPSA id m22sm67373970pgn.8.2020.01.03.08.29.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jan 2020 08:29:41 -0800 (PST)
+        Fri, 03 Jan 2020 08:29:44 -0800 (PST)
 From:   Sargun Dhillon <sargun@sargun.me>
 To:     linux-kernel@vger.kernel.org,
         containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
@@ -51,10 +51,12 @@ Cc:     Sargun Dhillon <sargun@sargun.me>, tycho@tycho.ws,
         oleg@redhat.com, luto@amacapital.net, viro@zeniv.linux.org.uk,
         gpascutto@mozilla.com, ealvarez@mozilla.com, fweimer@redhat.com,
         jld@mozilla.com, arnd@arndb.de
-Subject: [PATCH v8 0/3] Add pidfd_getfd syscall
-Date:   Fri,  3 Jan 2020 08:29:25 -0800
-Message-Id: <20200103162928.5271-1-sargun@sargun.me>
+Subject: [PATCH v8 1/3] vfs, fdtable: Add get_task_file helper
+Date:   Fri,  3 Jan 2020 08:29:26 -0800
+Message-Id: <20200103162928.5271-2-sargun@sargun.me>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200103162928.5271-1-sargun@sargun.me>
+References: <20200103162928.5271-1-sargun@sargun.me>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -62,104 +64,92 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patchset introduces a mechanism (pidfd_getfd syscall) to get file
-descriptors from other processes via pidfd. Although this can be achieved
-using SCM_RIGHTS, and parasitic code injection, this offers a more
-straightforward mechanism, with less overhead and complexity. The process
-under manipulation's fd still remains valid, and unmodified by the
-copy operation.
+This introduces a function which can be used to fetch a file, given an
+arbitrary task. As long as the user holds a reference (refcnt) to the
+task_struct it is safe to call, and will either return NULL on failure,
+or a pointer to the file, with a refcnt.
 
-It introduces a flags field. The flags field is reserved a the moment,
-but the intent is to extend it with the following capabilities:
- * Close the remote FD when copying it
- * Drop the cgroup data if it's a fd pointing a socket when copying it
+This patch is based on Oleg Nesterov's (cf. [1]) patch from September
+2018.
 
-The syscall numbers were chosen to be one greater than openat2.
+[1]: Link: https://lore.kernel.org/r/20180915160423.GA31461@redhat.com
 
-Summary of history:
-This initially started as a ptrace command. It did not require the process
-to be stopped, and felt like kind of an awkward fit for ptrace. After that,
-it moved to an ioctl on the pidfd. Given functionality, it made sense to
-make it a syscall which did not require the process to be stopped.
+Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+Suggested-by: Oleg Nesterov <oleg@redhat.com>
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+ fs/file.c            | 22 ++++++++++++++++++++--
+ include/linux/file.h |  2 ++
+ 2 files changed, 22 insertions(+), 2 deletions(-)
 
-Previous versions:
- V7: https://lore.kernel.org/lkml/20191226180227.GA29389@ircssh-2.c.rugged-nimbus-611.internal/
- V6: https://lore.kernel.org/lkml/20191223210823.GA25083@ircssh-2.c.rugged-nimbus-611.internal/
- V5: https://lore.kernel.org/lkml/20191220232746.GA20215@ircssh-2.c.rugged-nimbus-611.internal/
- V4: https://lore.kernel.org/lkml/20191218235310.GA17259@ircssh-2.c.rugged-nimbus-611.internal/
- V3: https://lore.kernel.org/lkml/20191217005842.GA14379@ircssh-2.c.rugged-nimbus-611.internal/
- V2: https://lore.kernel.org/lkml/20191209070446.GA32336@ircssh-2.c.rugged-nimbus-611.internal/
- RFC V1: https://lore.kernel.org/lkml/20191205234450.GA26369@ircssh-2.c.rugged-nimbus-611.internal/
-
-Changes since v7:
- * No longer put security_file_recv at the end, and align with other
-   usages of putting it at the end of the file_recv.
- * Rewrite self-tests in kselftest harness.
- * Minor refactoring
-
-Changes since v6:
- * Proper attribution of get_task_file helper
- * Move all types for syscall to int to represent fd
-
-Changes since v5:
- * Drop pidfd_getfd_options struct and replace with a flags field
-
-Changes since v4:
- * Turn into a syscall
- * Move to PTRACE_MODE_ATTACH_REALCREDS from PTRACE_MODE_READ_REALCREDS
- * Remove the sample code. This will come in another patchset, as the
-   new self-tests cover all the functionality.
-
-Changes since v3:
- * Add self-test
- * Move to ioctl passing fd directly, versus args struct
- * Shuffle around include files
-
-Changes since v2:
- * Move to ioctl on pidfd instead of ptrace function
- * Add security check before moving file descriptor
-
-Changes since the RFC v1:
- * Introduce a new helper to fs/file.c to fetch a file descriptor from
-   any process. It largely uses the code suggested by Oleg, with a few
-   changes to fix locking
- * It uses an extensible options struct to supply the FD, and option.
- * I added a sample, using the code from the user-ptrace sample
-
-Sargun Dhillon (3):
-  vfs, fdtable: Add get_task_file helper
-  pid: Introduce pidfd_getfd syscall
-  test: Add test for pidfd getfd
-
- arch/alpha/kernel/syscalls/syscall.tbl        |   1 +
- arch/arm/tools/syscall.tbl                    |   1 +
- arch/arm64/include/asm/unistd.h               |   2 +-
- arch/arm64/include/asm/unistd32.h             |   2 +
- arch/ia64/kernel/syscalls/syscall.tbl         |   1 +
- arch/m68k/kernel/syscalls/syscall.tbl         |   1 +
- arch/microblaze/kernel/syscalls/syscall.tbl   |   1 +
- arch/mips/kernel/syscalls/syscall_n32.tbl     |   1 +
- arch/mips/kernel/syscalls/syscall_n64.tbl     |   1 +
- arch/mips/kernel/syscalls/syscall_o32.tbl     |   1 +
- arch/parisc/kernel/syscalls/syscall.tbl       |   1 +
- arch/powerpc/kernel/syscalls/syscall.tbl      |   1 +
- arch/s390/kernel/syscalls/syscall.tbl         |   1 +
- arch/sh/kernel/syscalls/syscall.tbl           |   1 +
- arch/sparc/kernel/syscalls/syscall.tbl        |   1 +
- arch/x86/entry/syscalls/syscall_32.tbl        |   1 +
- arch/x86/entry/syscalls/syscall_64.tbl        |   1 +
- arch/xtensa/kernel/syscalls/syscall.tbl       |   1 +
- fs/file.c                                     |  22 +-
- include/linux/file.h                          |   2 +
- include/linux/syscalls.h                      |   1 +
- include/uapi/asm-generic/unistd.h             |   4 +-
- kernel/pid.c                                  |  90 +++++++
- tools/testing/selftests/pidfd/.gitignore      |   1 +
- tools/testing/selftests/pidfd/Makefile        |   4 +-
- .../selftests/pidfd/pidfd_getfd_test.c        | 227 ++++++++++++++++++
- 26 files changed, 365 insertions(+), 6 deletions(-)
- create mode 100644 tools/testing/selftests/pidfd/pidfd_getfd_test.c
-
+diff --git a/fs/file.c b/fs/file.c
+index 2f4fcf985079..2fc5eeef54a4 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -706,9 +706,9 @@ void do_close_on_exec(struct files_struct *files)
+ 	spin_unlock(&files->file_lock);
+ }
+ 
+-static struct file *__fget(unsigned int fd, fmode_t mask, unsigned int refs)
++static struct file *__fget_files(struct files_struct *files, unsigned int fd,
++				 fmode_t mask, unsigned int refs)
+ {
+-	struct files_struct *files = current->files;
+ 	struct file *file;
+ 
+ 	rcu_read_lock();
+@@ -729,6 +729,12 @@ static struct file *__fget(unsigned int fd, fmode_t mask, unsigned int refs)
+ 	return file;
+ }
+ 
++static inline struct file *__fget(unsigned int fd, fmode_t mask,
++				  unsigned int refs)
++{
++	return __fget_files(current->files, fd, mask, refs);
++}
++
+ struct file *fget_many(unsigned int fd, unsigned int refs)
+ {
+ 	return __fget(fd, FMODE_PATH, refs);
+@@ -746,6 +752,18 @@ struct file *fget_raw(unsigned int fd)
+ }
+ EXPORT_SYMBOL(fget_raw);
+ 
++struct file *fget_task(struct task_struct *task, unsigned int fd)
++{
++	struct file *file = NULL;
++
++	task_lock(task);
++	if (task->files)
++		file = __fget_files(task->files, fd, 0, 1);
++	task_unlock(task);
++
++	return file;
++}
++
+ /*
+  * Lightweight file lookup - no refcnt increment if fd table isn't shared.
+  *
+diff --git a/include/linux/file.h b/include/linux/file.h
+index 3fcddff56bc4..c6c7b24ea9f7 100644
+--- a/include/linux/file.h
++++ b/include/linux/file.h
+@@ -16,6 +16,7 @@ extern void fput(struct file *);
+ extern void fput_many(struct file *, unsigned int);
+ 
+ struct file_operations;
++struct task_struct;
+ struct vfsmount;
+ struct dentry;
+ struct inode;
+@@ -47,6 +48,7 @@ static inline void fdput(struct fd fd)
+ extern struct file *fget(unsigned int fd);
+ extern struct file *fget_many(unsigned int fd, unsigned int refs);
+ extern struct file *fget_raw(unsigned int fd);
++extern struct file *fget_task(struct task_struct *task, unsigned int fd);
+ extern unsigned long __fdget(unsigned int fd);
+ extern unsigned long __fdget_raw(unsigned int fd);
+ extern unsigned long __fdget_pos(unsigned int fd);
 -- 
 2.20.1
 
