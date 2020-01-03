@@ -2,96 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70EC612F3DD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2020 05:45:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9411912F4D8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2020 08:06:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbgACEos (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Jan 2020 23:44:48 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:38541 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727166AbgACEos (ORCPT
+        id S1727221AbgACHGc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jan 2020 02:06:32 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:63630 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbgACHGa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Jan 2020 23:44:48 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200103044445epoutp017ddd77d3f6162a58ac1e16f5f878767e~mRujMizt-0533805338epoutp015
-        for <linux-fsdevel@vger.kernel.org>; Fri,  3 Jan 2020 04:44:45 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200103044445epoutp017ddd77d3f6162a58ac1e16f5f878767e~mRujMizt-0533805338epoutp015
+        Fri, 3 Jan 2020 02:06:30 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200103070627epoutp03ba8a815767f0c8d2c2ebb5b913783d0f~mTqR0auXa0669206692epoutp03I
+        for <linux-fsdevel@vger.kernel.org>; Fri,  3 Jan 2020 07:06:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200103070627epoutp03ba8a815767f0c8d2c2ebb5b913783d0f~mTqR0auXa0669206692epoutp03I
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1578026685;
-        bh=75O1crx9PoInAEcmq7qeyy4qEeoh27i5ezfCPmh3QS0=;
+        s=mail20170921; t=1578035187;
+        bh=rfGGNQT8evgRVw+JTBLO+XI7I4bJD+fGwGykG+9qYHQ=;
         h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=CGpLkRlZC637fHfIxA1qO+hDY3IB80htmkPvWRTzz4D6JoY05wNh1jRDCp7F4EybK
-         perfoksCSiAweg73MyUORrO9sOuTEBvTJdM2IUdZ+dRZkCRRulGL4/ParRgYDyJCND
-         9eYLtU2N9Y8iviqeZ/LwN56uPpkK3OY6tctryN6E=
+        b=jQ5Ts5r+9T/OdQO2FHk0G0dwD2j28nSGul2Rfocuf+W6hC4+HE2Surw6R9Mc5ndHr
+         EX2Aj8D2K+qrA47jWaU5JErm4B9YgPc7Bsn5myRVfNoiJsgkarPZprfvC7wy7/D1gY
+         Rs46eJpH8s3+6BwhmP870bC0PEQH9a9ymmVoUfzI=
 Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20200103044444epcas1p302c57170b718d59bdb6d93e3ecd4a39c~mRuia8xU50196101961epcas1p3w;
-        Fri,  3 Jan 2020 04:44:44 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.162]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 47pskz2TFhzMqYkh; Fri,  3 Jan
-        2020 04:44:43 +0000 (GMT)
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20200103070627epcas1p44761069aa188b7822dd095ce151f4cab~mTqRce6RQ1519215192epcas1p4Z;
+        Fri,  3 Jan 2020 07:06:27 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.166]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 47pwtV3jRVzMqYkg; Fri,  3 Jan
+        2020 07:06:26 +0000 (GMT)
 Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        57.CD.48019.BB6CE0E5; Fri,  3 Jan 2020 13:44:43 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200103044442epcas1p219334c376ffea9a151f3f5390f7d205c~mRuhDoG-e2124721247epcas1p2Z;
-        Fri,  3 Jan 2020 04:44:42 +0000 (GMT)
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        39.A2.57028.2F7EE0E5; Fri,  3 Jan 2020 16:06:26 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200103070626epcas1p3a2dc24ac9d4ae26ad190f0d26edbd225~mTqQSI5wP2168721687epcas1p3t;
+        Fri,  3 Jan 2020 07:06:26 +0000 (GMT)
 Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200103044442epsmtrp2fff97365cdd2ebfe349971e5bd392087~mRuhC95pm2213822138epsmtrp2R;
-        Fri,  3 Jan 2020 04:44:42 +0000 (GMT)
-X-AuditID: b6c32a38-23fff7000001bb93-44-5e0ec6bbc664
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200103070626epsmtrp14c57a6da2e8900fc1f20d683631eb339~mTqQRa1qo0737607376epsmtrp1o;
+        Fri,  3 Jan 2020 07:06:26 +0000 (GMT)
+X-AuditID: b6c32a35-50bff7000001dec4-68-5e0ee7f2861f
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
         epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D8.7A.06569.AB6CE0E5; Fri,  3 Jan 2020 13:44:42 +0900 (KST)
-Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip1.samsung.com
+        5A.78.06569.1F7EE0E5; Fri,  3 Jan 2020 16:06:25 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
         (KnoxPortal) with ESMTPA id
-        20200103044442epsmtip18d906b74a0a6f924d702497289459fcc~mRug4b_oU2067520675epsmtip1B;
-        Fri,  3 Jan 2020 04:44:42 +0000 (GMT)
+        20200103070625epsmtip2ad2d3260bc48f6bd73e3613cf2be0e80~mTqQKMf2x2126821268epsmtip2P;
+        Fri,  3 Jan 2020 07:06:25 +0000 (GMT)
 From:   "Namjae Jeon" <namjae.jeon@samsung.com>
 To:     =?UTF-8?Q?'Pali_Roh=C3=A1r'?= <pali.rohar@gmail.com>
 Cc:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
         <gregkh@linuxfoundation.org>, <valdis.kletnieks@vt.edu>,
         <hch@lst.de>, <sj1557.seo@samsung.com>, <linkinjeon@gmail.com>
-In-Reply-To: <20200102142026.wb5glvnf5c7uweed@pali>
+In-Reply-To: <20200102135502.hkey7z45gnprinpp@pali>
 Subject: RE: [PATCH v9 10/13] exfat: add nls operations
-Date:   Fri, 3 Jan 2020 13:44:42 +0900
-Message-ID: <002801d5c1f0$83ef7d80$8bce7880$@samsung.com>
+Date:   Fri, 3 Jan 2020 16:06:25 +0900
+Message-ID: <003101d5c204$5046e9a0$f0d4bce0$@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-Mailer: Microsoft Outlook 16.0
 Content-Language: ko
-Thread-Index: AQJSGi/S1M7UFBjz5N3SW71o+eawLwHz+Lr1AtmMBwQCdCwXw6alnvnA
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SWUwTURTN60yng1J8FpBrjaZONMYFaS2FgYga16okYoy4RKljmUBjl0mn
-        4PZTYxSoBqmJGqpERSGxElGCCyKiuIsxURTjUsHEDSW4VECCMbYdjfyde94579z73qUJVQ2l
-        pi12F++0c1aGGkZeuDFZm9h4OyZH27Mnht15opZiT52+JWOfBV4Q7JWmeyTbdvkIxXpbB2Vs
-        /e+bcvbxl6/kHNrY4AsojM0VNQpj43M3ZSyt9yNjsG6cseViN5VFrbXOzOe5XN6p4e1mR67F
-        npfBLF1hmmcypGh1ibo0NpXR2Dkbn8HMz8xKXGixhhpiNIWctSBEZXGiyCTNmul0FLh4Tb5D
-        dGUwvJBrFXRaYbrI2cQCe950s8OWrtNqZxhCyg3W/MrWY0joGLHl7tWTpBv1RXtQFA04GXZ8
-        ekl60DBahS8h2NvlQ1LxHcHV29/lUtGHoMzfrvhn+XywRB7GKtyE4O7+dEnUFbKfq5GFDyic
-        CL9/NVMeRNNxmIWju/RhDYGvIXhz5lzEHIX1EDjQFtHH4lTorgpEAkg8Ae6//xHBSpwGg41u
-        UsIj4V752wgm8FSoPv6ZkBrSwMC7arnEx8Hhkt2ElLsQdj6VhXMBByk4v79fEeYBz4fyjm2S
-        NRY+3an/O5cagj1NlCTZDt+a/95ejOBjf4aE9fC89qw8LCHwZKi9nCTR46FhsAJJDcRAT+9e
-        uXSLEop3qyTJRCh9fEMm4THgKfqqKEOMb8hYviFj+YaM4vsfdgyRfjSKF0RbHi/qhOShP12H
-        Ips6hb2ErjzMbEGYRky0sqxdmaOSc4XiVlsLAppg4pSbl4coZS63dRvvdJicBVZebEGG0Kt7
-        CXW82RHae7vLpDPM0Ov1bHJKaopBzyQo6Z+P1qtwHufiN/G8wDv/+WR0lNqNFrmrd6V4YxNK
-        Ozuzr38Y3ds5sLohdlqrQKztyV78I6d7zcaSw5nO2cssXSM0ya3tdIfag194X7WJhQFddP++
-        J6/8xNxxj4oG0rK9CnOdNcm8clJweIchQfO6Nz5YTBxYtyBd/2vJKcuDdxVVO+Itk/xFi88L
-        3vIJfaayQ2MrV/kZUszndFMIp8j9AbVONYe/AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBIsWRmVeSWpSXmKPExsWy7bCSnO6uY3xxBgtn6Fg0L17PZrFy9VEm
-        i+t3bzFb7Nl7ksXi8q45bBYTT/9mstjy7wirxaX3H1gcODx2zrrL7rF/7hp2j903G9g8+ras
-        YvT4vEnO49D2N2wBbFFcNimpOZllqUX6dglcGTMPPmYuWMxfsfDcRdYGxo08XYycHBICJhKv
-        p3WydjFycQgJ7GaUmPJsETNEQlri2IkzQDYHkC0scfhwMUTNc0aJS+tmMoLUsAnoSvz7s58N
-        pEZEwEJifqsxSA2zwAlGiTP9t1hBasAaJt52BrE5BYwl7k69zARiCwuYS7xZepcdxGYRUJE4
-        9ewLmM0rYCnxe3cDC4QtKHFy5hMwm1lAW6L3YSsjjL1s4WuoOxUkfj5dxgoRF5GY3dnGDHGP
-        m0TzVaYJjMKzkEyahWTSLCSTZiHpXsDIsopRMrWgODc9t9iwwCgvtVyvODG3uDQvXS85P3cT
-        Izi+tLR2MJ44EX+IUYCDUYmHd8I13jgh1sSy4srcQ4wSHMxKIrzlgUAh3pTEyqrUovz4otKc
-        1OJDjNIcLErivPL5xyKFBNITS1KzU1MLUotgskwcnFINjN5swkfCW9mPL+dRknaInCLO0Vwy
-        /1fU/Cde89Yw7IrefoDLpr3k029bBb63z1ZWL5xoHN/qPb/B+vmZhVHmaxRZtJdlFiXNOtz8
-        b7nq6mluybqyXDxKyj1NTAd2fhaU2BzLuGSVcuonTbNNOQ/2Lt7hpZZwwOX4ldIOdn3rAO7/
-        x6p9qm5XKbEUZyQaajEXFScCAKtxTRerAgAA
-X-CMS-MailID: 20200103044442epcas1p219334c376ffea9a151f3f5390f7d205c
+Thread-Index: AQJSGi/S1M7UFBjz5N3SW71o+eawLwHz+Lr1AtmMBwQCoo41BaakU3fg
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SaUwTQRiGM912uxBXh1r1s0ZTNx4BA7TUwmKo8U5FfmD45QVsYFOIvdIt
+        qKgJSkTBE2Oi1gISFSNyqRUFNQjVGDRBxAhC0qiJxqOiFbxFY9vFyL9n3nm/+b53ZihC0Uiq
+        qHyrk3dYOTNDRkpbvNGa2OHXEzM1+/0z2ZIzTSR74eJdCdvvGyTYm7e6pOzjNjfJVjz4JWE9
+        f+7I2N6PAekSytjq8smN7ZX1cuONgWLSeMhTh4wjl2cZO6+9J9PJ9eaUPJ7L5R1q3ppjy823
+        mgzMmoys5Vn6RI02VpvMJjFqK2fhDcyKtPTYVfnm4ECMupAzFwSldE4QmPjFKQ5bgZNX59kE
+        p4Hh7blmu1ZjjxM4i1BgNcXl2CyLtBpNgj7ozDbntXiOI/s3vPW2e5QsRh/pchRBAV4Inopa
+        IsQKfB1BR/2ychQZ5GEEu074CHHxFUHNvVH5v4rDJX6JuHELQXfDkFxcvEXwor9GFnKROBb+
+        jLaT5YiilJiF6j26kIfAt4OexkthTwTWwf3fx8M8GSfB+3O+cAcpngPeYn+YaZwMVX1nkchR
+        0HXypTTEBF4AtTV+QpxIDT9e1cpEXQmnykrDuhKvgj1PP4QjAB4hwXv1BRILVkD//foxngzv
+        7nnGoqng7eFSeWhowNvhU/vY+fsQvPlmEFkHA03NspCFwNHQ1BYvyrOh9VclEkeYCB++HJCJ
+        p9Cwr1QhWubCoV6vROQZUL43ID+CGNe4YK5xwVzjwrj+NzuNpHVoKm8XLCZe0Nq149/6Mgr/
+        1Rj9dXSsO60TYQoxE+gjfXSmQsYVCtssnQgoglHSW9YGJTqX21bEO2xZjgIzL3QiffDeKwjV
+        lBxb8OdbnVlafYJOp2MXJiYl6nXMNJr6/miTAps4J7+Z5+2841+dhIpQFSM6s6dh3cWV3o3z
+        bg5E779a7fI2NC5/SM2XlFy4ljOy4WhqYW9h4NjnlGd1B5607s62G/uLKstMwx3n9Z9tV1Ij
+        1W5XclTa94PzbrT5Er8OuicZenZlKKtWL9WcbZxyJeEMFXj+07+jcmiIO1c6YfrryGZ3TbZq
+        54AsdXFAXlY04wHFSIU8ThtDOATuL4XJFYPBAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFIsWRmVeSWpSXmKPExsWy7bCSvO7H53xxBs3zbSyaF69ns1i5+iiT
+        xfW7t5gt9uw9yWJxedccNouJp38zWWz5d4TV4tL7DywOHB47Z91l99g/dw27x+6bDWwefVtW
+        MXp83iTncWj7G7YAtigum5TUnMyy1CJ9uwSujDNT2pgKbghU9K+dxdjAeJK3i5GTQ0LARKK/
+        +TVTFyMXh5DAbkaJJQf6mCES0hLHTpwBsjmAbGGJw4eLIWqeA9UsncUKUsMmoCvx789+NpAa
+        EQELifmtxiA1zAInGCXO9N9ihWu4tvQ8I0gDp4CxxKm/08GahQXMJd4svcsOYrMIqEgcbngN
+        ZvMKWErMu7aEEcIWlDg58wkLiM0soC3R+7CVEcZetvA11KEKEj+fLmOFiItIzO5sA4uLCLhJ
+        tN54xzyBUXgWklGzkIyahWTULCTtCxhZVjFKphYU56bnFhsWGOWllusVJ+YWl+al6yXn525i
+        BMeYltYOxhMn4g8xCnAwKvHwTrjGGyfEmlhWXJl7iFGCg1lJhLc8ECjEm5JYWZValB9fVJqT
+        WnyIUZqDRUmcVz7/WKSQQHpiSWp2ampBahFMlomDU6qBMdtWyWFSVm1Q5K8ct0bvxNUP92RI
+        uAVeVuSzcuc3eXlURyXWsEhGZN3Cx1tv+8k+O6zitGFFsjXjE85DCtXqyoJBh2rZMmbN2ZYe
+        6a9V9Pj4qfrVe25K//xlMu/kysnmIXNmOm2pyza1nsj8jvV+6qyf++Uq12U8fd4yb+rWZr+e
+        69sYVbTfKrEUZyQaajEXFScCAO9vDi6tAgAA
+X-CMS-MailID: 20200103070626epcas1p3a2dc24ac9d4ae26ad190f0d26edbd225
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
@@ -102,7 +102,7 @@ X-CMS-RootMailID: 20200102082407epcas1p4cf10cd3d0ca2903707ab01b1cc523a05
 References: <20200102082036.29643-1-namjae.jeon@samsung.com>
         <CGME20200102082407epcas1p4cf10cd3d0ca2903707ab01b1cc523a05@epcas1p4.samsung.com>
         <20200102082036.29643-11-namjae.jeon@samsung.com>
-        <20200102142026.wb5glvnf5c7uweed@pali>
+        <20200102135502.hkey7z45gnprinpp@pali>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -123,47 +123,52 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 > > index 000000000000..af52328e28ff
 > > --- /dev/null
 > > +++ b/fs/exfat/nls.c
-> > =40=40 -0,0 +1,809 =40=40
-> > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > +/*
-> > + * Copyright (C) 2012-2013 Samsung Electronics Co., Ltd.
-> > + */
-> > +
-> > +=23include <linux/string.h>
-> > +=23include <linux/nls.h>
-> > +=23include <linux/slab.h>
-> > +=23include <linux/buffer_head.h>
-> > +=23include <asm/unaligned.h>
-> > +
-> > +=23include =22exfat_raw.h=22
-> > +=23include =22exfat_fs.h=22
-> > +
-> > +/* Upcase tabel macro */
-> > +=23define EXFAT_NUM_UPCASE	(2918)
-> > +=23define UTBL_COUNT		(0x10000)
-> > +
-> > +/*
-> > + * Upcase table in compressed format (7.2.5.1 Recommended Up-case
-> > +Table
-> > + * in exfat specification, See:
-> > +https://protect2.fireeye.com/url?k=3D25cbd240-78ac9666-25ca590f-0cc47a=
-3
-> > +1384a-776465f5f2917059&u=3Dhttps://docs.microsoft.com/en-us/windows/
-> > + * win32/fileio/exfat-specification).
->=20
-> Just a small suggestion: Do not wrap URLs as they are hard to copy-paste
-> into web browser. Also my email client is not able to detect URL continue
-> on next line...
-Okay, Will fix it on next version.
-Thanks for review=21
->=20
-> > + */
-> > +static const unsigned short uni_def_upcase=5BEXFAT_NUM_UPCASE=5D =3D =
-=7B
-> > +	0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007,
-> > +	0x0008, 0x0009, 0x000a, 0x000b, 0x000c, 0x000d, 0x000e, 0x000f,
 >=20
 > ...
+>=20
+> > +int exfat_nls_uni16s_to_vfsname(struct super_block *sb,
+> > +		struct exfat_uni_name *uniname, unsigned char *p_cstring,
+> > +		int buflen)
+> > +=7B
+> > +	if (EXFAT_SB(sb)->options.utf8)
+> > +		return __exfat_nls_utf16s_to_vfsname(sb, uniname, p_cstring,
+> > +				buflen);
+> > +	return __exfat_nls_uni16s_to_vfsname(sb, uniname, p_cstring,
+> buflen);
+> > +=7D
+>=20
+> Hello, I'm looking at this function and basically it do nothing.
+> Or was it supposed that this function should do something more for UTF-8
+> encoding?
+>=20
+> There is one if- statement, but in both branches is executed exactly
+> same code.
+>=20
+> And executed function just pass same arguments as current callee
+> function.
+>=20
+> So calls to exfat_nls_uni16s_to_vfsname() can be replaced by direct
+> calls to __exfat_nls_uni16s_to_vfsname().
+Ah, The function names are similar, but not same. see utf16s/uni16s.
+
+Thanks=21
+
+>=20
+> Or maybe better, rename __exfat_nls_uni16s_to_vfsname() function to
+> exfat_nls_uni16s_to_vfsname().
+>=20
+> > +int exfat_nls_vfsname_to_uni16s(struct super_block *sb,
+> > +		const unsigned char *p_cstring, const int len,
+> > +		struct exfat_uni_name *uniname, int *p_lossy)
+> > +=7B
+> > +	if (EXFAT_SB(sb)->options.utf8)
+> > +		return __exfat_nls_vfsname_to_utf16s(sb, p_cstring, len,
+> > +				uniname, p_lossy);
+> > +	return __exfat_nls_vfsname_to_uni16s(sb, p_cstring, len, uniname,
+> > +			p_lossy);
+> > +=7D
+>=20
+> And same for this function.
 >=20
 > --
 > Pali Roh=C3=A1r=0D=0A>=20pali.rohar=40gmail.com=0D=0A=0D=0A
