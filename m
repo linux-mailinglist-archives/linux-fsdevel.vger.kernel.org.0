@@ -2,100 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99C2012F5CF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2020 09:57:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20ED512F634
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2020 10:40:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727432AbgACI5R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jan 2020 03:57:17 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:43873 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726050AbgACI5R (ORCPT
+        id S1726390AbgACJke (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jan 2020 04:40:34 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33723 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726181AbgACJkd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jan 2020 03:57:17 -0500
-Received: from mail-qv1-f49.google.com ([209.85.219.49]) by
- mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MXXdn-1jE6oX3zhv-00Z0Or; Fri, 03 Jan 2020 09:57:15 +0100
-Received: by mail-qv1-f49.google.com with SMTP id n8so15948781qvg.11;
-        Fri, 03 Jan 2020 00:57:14 -0800 (PST)
-X-Gm-Message-State: APjAAAVzLmqwU93oflz90OayHaRkEtlgScMlOuLS/3OTCZ8ZWWg0eGOl
-        mflxRaKgKsis3TorOKBNsDywfOcYAuSaQxGCies=
-X-Google-Smtp-Source: APXvYqzTMjLfB/djZfKHN6GJc8U6SPp+bLcFseejCOHPAhzRIWhN2S9BjSwrezU2LR8WsFgGtj/vSg4385pE/8QPXy8=
-X-Received: by 2002:a0c:e7c7:: with SMTP id c7mr67496854qvo.222.1578041833501;
- Fri, 03 Jan 2020 00:57:13 -0800 (PST)
+        Fri, 3 Jan 2020 04:40:33 -0500
+Received: by mail-wm1-f68.google.com with SMTP id d139so6592325wmd.0;
+        Fri, 03 Jan 2020 01:40:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=z1sUFXN33eMwyXE2eTCARUGnX+8et5EQa8hCrvn/5Sc=;
+        b=SrA6nUwm62irmPRBtrIwVIEjOkRsJCbFyPHjC5DjnhhK6GTxXc6gsycA3ujsIMsxg4
+         i45307YPC1MyEMM1skVyx952bf6FlRSt+9eGR6HQDHxzLtpG1i+rlrdI5TDeFR0lFhNt
+         FQuE8WXIjy55PLxksj/zeFD6Hge9uwq3bREYpM71T+719ltp3HCOnklcTdUNqCFRePoN
+         lgOIeKzNhoL26aEHgAX2x+cIoF36QBLdkOnXCgLVgq/6Mo50nxzAsNkQZBHfsrVrd6qt
+         vBDFi/aK6mebP0Tz2CiaIyd0rindW0GCwXlHEcCd/JvpN71E9DaWbi9mR4MkgiOpH1Vl
+         f2aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=z1sUFXN33eMwyXE2eTCARUGnX+8et5EQa8hCrvn/5Sc=;
+        b=OD0873O05KrLOiWMT2+yEWzdYV5xuximdArr+6Ureizhf0bMdEIwT/XBThoLiSTfpS
+         vINZGK9cPkYpzzqK5PW9qT3mMA54N8Gn4gW4NJtGPUzxNH2RzM4yWjb/WV1lZtINnMhS
+         Y3rx10/shpDCrUypBFJ2WIUH3kiYCysQk+Rfz4KC4Ad8v6jM4O5YXxRG5eCgK0n85TK3
+         xpIhCvELQnzTkoR6HgXiUCtY2UHnxSWvXLgxNMhiYW9dgDitSqOxJXB/Ul3l/MYbxQbx
+         lF9vTGe33jJYkaN/GGQ2Xqj/3eZwiifxQR/yyINf0+dcxZ22vFwld60OHyljqKSr056B
+         9Jcw==
+X-Gm-Message-State: APjAAAVU3BeyUWe7MvbFXnv7ymyT6ydActxvTtCkbw4+14oJfDD+/hZN
+        ipy1P3RpBHJwgEWJvJusu6M=
+X-Google-Smtp-Source: APXvYqxyPaimcB9/3A8rmvZKsr/6QcbOuGvkDnZCyg40dhJrBadxWjEwJtWrw0vXqxqv0WQIMu5uUA==
+X-Received: by 2002:a1c:6707:: with SMTP id b7mr19436777wmc.54.1578044431951;
+        Fri, 03 Jan 2020 01:40:31 -0800 (PST)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id b17sm57646598wrp.49.2020.01.03.01.40.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Jan 2020 01:40:31 -0800 (PST)
+Date:   Fri, 3 Jan 2020 10:40:30 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Namjae Jeon <namjae.jeon@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
+        sj1557.seo@samsung.com, linkinjeon@gmail.com
+Subject: Re: [PATCH v9 10/13] exfat: add nls operations
+Message-ID: <20200103094030.zg4p5bqos32gc4hy@pali>
+References: <20200102082036.29643-1-namjae.jeon@samsung.com>
+ <CGME20200102082407epcas1p4cf10cd3d0ca2903707ab01b1cc523a05@epcas1p4.samsung.com>
+ <20200102082036.29643-11-namjae.jeon@samsung.com>
 MIME-Version: 1.0
-References: <20200102145552.1853992-1-arnd@arndb.de> <dc17d939c813b004e0a50af2813a1eef1fbf9574.camel@codethink.co.uk>
-In-Reply-To: <dc17d939c813b004e0a50af2813a1eef1fbf9574.camel@codethink.co.uk>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 3 Jan 2020 09:56:57 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a1tTCk_qYQ+iLp_L50biemmz+vh8kHYHL7hRPgirhxxLA@mail.gmail.com>
-Message-ID: <CAK8P3a1tTCk_qYQ+iLp_L50biemmz+vh8kHYHL7hRPgirhxxLA@mail.gmail.com>
-Subject: Re: [GIT PULL v3 00/27] block, scsi: final compat_ioctl cleanup
-To:     Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:I1cvh4okryzhKcNilmC8/jvbYZfVuC7Gu3zL5E1dw1nhWS1IsPm
- G5Ds416TnXhCHX4N3OqQef6+9rsjiCiGuKfWmAtK/kFOnOyvcSN/CM27gw3dr311C5NSxAG
- ZK+7kxKBQVfr2hmw+eOxuNVU4n+uzNKY6ER9uc6wUCq/po24V2cfsgPkO6+Glgb5QjnctA4
- 71SZQChXFWIiX0RFKbYmg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:lmKs5T3XinI=:vpspqsdsexs7fkhPmpGBPe
- +oi0veEcyaz8JCYiR15ghmGkLyeZ6HJHk179W7e5mfPsKuxTRJXeQzjsCfg072D68yi9izXvO
- WsL1ZfDUZEtWNc0cq7jGaKe8rsGuFPzoT2kQ06jrb+pT4/i4CCNb1A7MK6VY/InoR/D7jGcag
- jp8ZCPVPU9vA0SryIbqhkPKjkGdJ0FZcDQCNJNf2cvEt065jp91OY5vYQ2fcZZ/otbszo31t6
- HCXDmRfd6/ZBQYpbQ0qpv5P9oL0TIGbj1pEQFPc9bku1ODtXZAaqKrhi/TkgXpi5DBv7km1Iu
- uvOQDQcbSm2CZNtJ7cPaybjnc0JADX/zTOU3JvsJvzke28q6A8bwYN1H0RcrEvaLS573+42uM
- 3GfIfenhzmZkbuxNUiqZbJ/UCe/9/+sCqXsZBZVu3tzP4KOOEz7AJLiRlhCgjVSPLYrcXbLt4
- bbp0QaNhxPMbX0fMM2UwBcsHbEXec9lf56bTcwVT9B+IhMOAndTZA7/wWYFBpPbUWJAY06ofO
- dIizah+LcSpUN3KoZVstllojgWETUEBuOkpq+zCR5JyTTxDjw/D197lBWdTCB5CvmAuvjkZKM
- 1EJ8zSPWzopPoQt4xncQLEm+dwXoK5Is8WMisZ2uXX3xAeYpHn7ORJPni9rGPQlUWq6wj+Wwe
- IjqE0m7ovG8fbl7sGAVbfy7KsiHjJHTHs/p5nrciWUGlITYfILc6dg5xH0psdXNS7jJH/j3hr
- nu/MleWWupSZPSFaS1USBZOKGgUa0uEt8rwzess6PcjplX8ebeRSK+Elfd9tGEtI4bfpSEbrJ
- +P+lnbheWzNL8jYl5oMMz7zZr7eKm9RV9eysM8hYhnU/kPr28qeHCTelYTPL3y1RD6vj7Q6F2
- bIu5/3/E/zoju4Tpu+3A==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200102082036.29643-11-namjae.jeon@samsung.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 3, 2020 at 1:22 AM Ben Hutchings
-<ben.hutchings@codethink.co.uk> wrote:
->
-> On Thu, 2020-01-02 at 15:55 +0100, Arnd Bergmann wrote:
-> [...]
-> > Changes since v2:
-> > - Rebase to v5.5-rc4, which contains the earlier bugfixes
-> > - Fix sr_block_compat_ioctl() error handling bug found by
-> >   Ben Hutchings
-> [...]
->
-> Unfortunately that fix was squashed into "compat_ioctl: move
-> sys_compat_ioctl() to ioctl.c" whereas it belongs in "compat_ioctl:
-> scsi: move ioctl handling into drivers".
+On Thursday 02 January 2020 16:20:33 Namjae Jeon wrote:
+> This adds the implementation of nls operations for exfat.
+> 
+> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
+> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
+> ---
+>  fs/exfat/nls.c | 809 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 809 insertions(+)
+>  create mode 100644 fs/exfat/nls.c
+> 
+> diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
+> new file mode 100644
+> index 000000000000..af52328e28ff
+> --- /dev/null
+> +++ b/fs/exfat/nls.c
 
-Fixed now.
+...
 
-> If you decide to rebase again, you can add my Reviewed-by to all
-> patches.
+> +static int exfat_convert_uni_to_ch(struct nls_table *nls, unsigned short uni,
+> +		unsigned char *ch, int *lossy)
+> +{
+> +	int len;
+> +
+> +	ch[0] = 0x0;
+> +
+> +	if (uni < 0x0080) {
+> +		ch[0] = uni;
+> +		return 1;
+> +	}
+> +
+> +	len = nls->uni2char(uni, ch, MAX_CHARSET_SIZE);
+> +	if (len < 0) {
+> +		/* conversion failed */
+> +		if (lossy != NULL)
+> +			*lossy |= NLS_NAME_LOSSY;
+> +		ch[0] = '_';
+> +		return 1;
+> +	}
+> +	return len;
+> +}
 
-Done, and pushed out to the same tag as before
+Hello! This function takes one UCS-2 character in host endianity and
+converts it to one byte (via specified 8bit encoding).
 
-https://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git/
-block-ioctl-cleanup-5.6
+> +static int __exfat_nls_uni16s_to_vfsname(struct super_block *sb,
+> +		struct exfat_uni_name *p_uniname, unsigned char *p_cstring,
+> +		int buflen)
+> +{
+> +	int i, j, len, out_len = 0;
+> +	unsigned char buf[MAX_CHARSET_SIZE];
+> +	const unsigned short *uniname = p_uniname->name;
+> +	struct nls_table *nls = EXFAT_SB(sb)->nls_io;
+> +
+> +	i = 0;
+> +	while (i < MAX_NAME_LENGTH && out_len < (buflen - 1)) {
+> +		if (*uniname == '\0')
+> +			break;
+> +
+> +		len = exfat_convert_uni_to_ch(nls, *uniname, buf, NULL);
+> +		if (out_len + len >= buflen)
+> +			len = buflen - 1 - out_len;
+> +		out_len += len;
+> +
+> +		if (len > 1) {
+> +			for (j = 0; j < len; j++)
+> +				*p_cstring++ = buf[j];
+> +		} else { /* len == 1 */
+> +			*p_cstring++ = *buf;
+> +		}
+> +
+> +		uniname++;
+> +		i++;
+> +	}
+> +
+> +	*p_cstring = '\0';
+> +	return out_len;
+> +}
+> +
 
-Thank you again for the careful review!
+This function takes UCS-2 buffer in host endianity and converts it to
+string in specified 8bit encoding.
 
-Martin, please pull the URL above to get the latest version, the top commit
-is 8ce156deca718 ("Documentation: document ioctl interfaces better").
+> +
+> +int exfat_nls_uni16s_to_vfsname(struct super_block *sb,
+> +		struct exfat_uni_name *uniname, unsigned char *p_cstring,
+> +		int buflen)
+> +{
 
-       Arnd
+Looking at the code and this function is called from dir.c to translate
+exfat filename buffer stored in filesystem to format expected by VFS
+layer.
+
+On exfat filesystem file names are always stored in UTF-16LE...
+
+> +	if (EXFAT_SB(sb)->options.utf8)
+> +		return __exfat_nls_utf16s_to_vfsname(sb, uniname, p_cstring,
+> +				buflen);
+> +	return __exfat_nls_uni16s_to_vfsname(sb, uniname, p_cstring, buflen);
+
+... and therefore above "__exfat_nls_uni16s_to_vfsname" function must
+expect UTF-16LE buffer and not just UCS-2 buffer in host endianity.
+
+So two other things needs to be done: Convert character from little
+endian to host endianity and then process UTF-16 buffer and not only
+UCS-2.
+
+I see that in kernel NLS module is missing a function for converting
+UTF-16 string to UTF-32 (encoding in which every code point is
+represented just by one u32 variable). Kernel has only utf16s_to_utf8s()
+and utf8_to_utf32().
+
+> +}
+
+Btw, have you tested this exfat implementation on some big endian
+system? I think it cannot work because of missing conversion from
+UTF-16LE to UTF-16 in host endianity (therefore UTF-16BE).
+
+-- 
+Pali Rohár
+pali.rohar@gmail.com
