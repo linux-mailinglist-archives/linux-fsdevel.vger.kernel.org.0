@@ -2,256 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A00312F331
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2020 04:04:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70EC612F3DD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2020 05:45:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727305AbgACDEX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Jan 2020 22:04:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40682 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726481AbgACDEX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Jan 2020 22:04:23 -0500
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75ED021582;
-        Fri,  3 Jan 2020 03:04:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578020661;
-        bh=bn0ww6v/8zIVRqX8N5qh85TMEQLubwFfuXHmDUunY0E=;
-        h=Date:From:To:Subject:From;
-        b=F4N3tx4MQ92OBii6Yv6od9PR4iR88hxQ89rrJYDwP+pIY43RGLYuscC98sthd2G/w
-         sMHbpdZZvC0mOH2E9gCvgXjDaw1CIbKw1PoA3kEZttfk1Fact69B+YIM8cMuGivS4i
-         KT3zfg/0auzsTrF+msItLV2mrUvp04oEtUYB0cHI=
-Date:   Thu, 02 Jan 2020 19:04:21 -0800
-From:   akpm@linux-foundation.org
-To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-Subject:  mmotm 2020-01-02-19-03 uploaded
-Message-ID: <20200103030421.mZtKFteG2%akpm@linux-foundation.org>
-User-Agent: s-nail v14.8.16
+        id S1727210AbgACEos (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Jan 2020 23:44:48 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:38541 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727166AbgACEos (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 2 Jan 2020 23:44:48 -0500
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200103044445epoutp017ddd77d3f6162a58ac1e16f5f878767e~mRujMizt-0533805338epoutp015
+        for <linux-fsdevel@vger.kernel.org>; Fri,  3 Jan 2020 04:44:45 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200103044445epoutp017ddd77d3f6162a58ac1e16f5f878767e~mRujMizt-0533805338epoutp015
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1578026685;
+        bh=75O1crx9PoInAEcmq7qeyy4qEeoh27i5ezfCPmh3QS0=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=CGpLkRlZC637fHfIxA1qO+hDY3IB80htmkPvWRTzz4D6JoY05wNh1jRDCp7F4EybK
+         perfoksCSiAweg73MyUORrO9sOuTEBvTJdM2IUdZ+dRZkCRRulGL4/ParRgYDyJCND
+         9eYLtU2N9Y8iviqeZ/LwN56uPpkK3OY6tctryN6E=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20200103044444epcas1p302c57170b718d59bdb6d93e3ecd4a39c~mRuia8xU50196101961epcas1p3w;
+        Fri,  3 Jan 2020 04:44:44 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.162]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 47pskz2TFhzMqYkh; Fri,  3 Jan
+        2020 04:44:43 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        57.CD.48019.BB6CE0E5; Fri,  3 Jan 2020 13:44:43 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200103044442epcas1p219334c376ffea9a151f3f5390f7d205c~mRuhDoG-e2124721247epcas1p2Z;
+        Fri,  3 Jan 2020 04:44:42 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200103044442epsmtrp2fff97365cdd2ebfe349971e5bd392087~mRuhC95pm2213822138epsmtrp2R;
+        Fri,  3 Jan 2020 04:44:42 +0000 (GMT)
+X-AuditID: b6c32a38-23fff7000001bb93-44-5e0ec6bbc664
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D8.7A.06569.AB6CE0E5; Fri,  3 Jan 2020 13:44:42 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200103044442epsmtip18d906b74a0a6f924d702497289459fcc~mRug4b_oU2067520675epsmtip1B;
+        Fri,  3 Jan 2020 04:44:42 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     =?UTF-8?Q?'Pali_Roh=C3=A1r'?= <pali.rohar@gmail.com>
+Cc:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <gregkh@linuxfoundation.org>, <valdis.kletnieks@vt.edu>,
+        <hch@lst.de>, <sj1557.seo@samsung.com>, <linkinjeon@gmail.com>
+In-Reply-To: <20200102142026.wb5glvnf5c7uweed@pali>
+Subject: RE: [PATCH v9 10/13] exfat: add nls operations
+Date:   Fri, 3 Jan 2020 13:44:42 +0900
+Message-ID: <002801d5c1f0$83ef7d80$8bce7880$@samsung.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: ko
+Thread-Index: AQJSGi/S1M7UFBjz5N3SW71o+eawLwHz+Lr1AtmMBwQCdCwXw6alnvnA
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SWUwTURTN60yng1J8FpBrjaZONMYFaS2FgYga16okYoy4RKljmUBjl0mn
+        4PZTYxSoBqmJGqpERSGxElGCCyKiuIsxURTjUsHEDSW4VECCMbYdjfyde94579z73qUJVQ2l
+        pi12F++0c1aGGkZeuDFZm9h4OyZH27Mnht15opZiT52+JWOfBV4Q7JWmeyTbdvkIxXpbB2Vs
+        /e+bcvbxl6/kHNrY4AsojM0VNQpj43M3ZSyt9yNjsG6cseViN5VFrbXOzOe5XN6p4e1mR67F
+        npfBLF1hmmcypGh1ibo0NpXR2Dkbn8HMz8xKXGixhhpiNIWctSBEZXGiyCTNmul0FLh4Tb5D
+        dGUwvJBrFXRaYbrI2cQCe950s8OWrtNqZxhCyg3W/MrWY0joGLHl7tWTpBv1RXtQFA04GXZ8
+        ekl60DBahS8h2NvlQ1LxHcHV29/lUtGHoMzfrvhn+XywRB7GKtyE4O7+dEnUFbKfq5GFDyic
+        CL9/NVMeRNNxmIWju/RhDYGvIXhz5lzEHIX1EDjQFtHH4lTorgpEAkg8Ae6//xHBSpwGg41u
+        UsIj4V752wgm8FSoPv6ZkBrSwMC7arnEx8Hhkt2ElLsQdj6VhXMBByk4v79fEeYBz4fyjm2S
+        NRY+3an/O5cagj1NlCTZDt+a/95ejOBjf4aE9fC89qw8LCHwZKi9nCTR46FhsAJJDcRAT+9e
+        uXSLEop3qyTJRCh9fEMm4THgKfqqKEOMb8hYviFj+YaM4vsfdgyRfjSKF0RbHi/qhOShP12H
+        Ips6hb2ErjzMbEGYRky0sqxdmaOSc4XiVlsLAppg4pSbl4coZS63dRvvdJicBVZebEGG0Kt7
+        CXW82RHae7vLpDPM0Ov1bHJKaopBzyQo6Z+P1qtwHufiN/G8wDv/+WR0lNqNFrmrd6V4YxNK
+        Ozuzr38Y3ds5sLohdlqrQKztyV78I6d7zcaSw5nO2cssXSM0ya3tdIfag194X7WJhQFddP++
+        J6/8xNxxj4oG0rK9CnOdNcm8clJweIchQfO6Nz5YTBxYtyBd/2vJKcuDdxVVO+Itk/xFi88L
+        3vIJfaayQ2MrV/kZUszndFMIp8j9AbVONYe/AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBIsWRmVeSWpSXmKPExsWy7bCSnO6uY3xxBgtn6Fg0L17PZrFy9VEm
+        i+t3bzFb7Nl7ksXi8q45bBYTT/9mstjy7wirxaX3H1gcODx2zrrL7rF/7hp2j903G9g8+ras
+        YvT4vEnO49D2N2wBbFFcNimpOZllqUX6dglcGTMPPmYuWMxfsfDcRdYGxo08XYycHBICJhKv
+        p3WydjFycQgJ7GaUmPJsETNEQlri2IkzQDYHkC0scfhwMUTNc0aJS+tmMoLUsAnoSvz7s58N
+        pEZEwEJifqsxSA2zwAlGiTP9t1hBasAaJt52BrE5BYwl7k69zARiCwuYS7xZepcdxGYRUJE4
+        9ewLmM0rYCnxe3cDC4QtKHFy5hMwm1lAW6L3YSsjjL1s4WuoOxUkfj5dxgoRF5GY3dnGDHGP
+        m0TzVaYJjMKzkEyahWTSLCSTZiHpXsDIsopRMrWgODc9t9iwwCgvtVyvODG3uDQvXS85P3cT
+        Izi+tLR2MJ44EX+IUYCDUYmHd8I13jgh1sSy4srcQ4wSHMxKIrzlgUAh3pTEyqrUovz4otKc
+        1OJDjNIcLErivPL5xyKFBNITS1KzU1MLUotgskwcnFINjN5swkfCW9mPL+dRknaInCLO0Vwy
+        /1fU/Cde89Yw7IrefoDLpr3k029bBb63z1ZWL5xoHN/qPb/B+vmZhVHmaxRZtJdlFiXNOtz8
+        b7nq6mluybqyXDxKyj1NTAd2fhaU2BzLuGSVcuonTbNNOQ/2Lt7hpZZwwOX4ldIOdn3rAO7/
+        x6p9qm5XKbEUZyQaajEXFScCAKtxTRerAgAA
+X-CMS-MailID: 20200103044442epcas1p219334c376ffea9a151f3f5390f7d205c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200102082407epcas1p4cf10cd3d0ca2903707ab01b1cc523a05
+References: <20200102082036.29643-1-namjae.jeon@samsung.com>
+        <CGME20200102082407epcas1p4cf10cd3d0ca2903707ab01b1cc523a05@epcas1p4.samsung.com>
+        <20200102082036.29643-11-namjae.jeon@samsung.com>
+        <20200102142026.wb5glvnf5c7uweed@pali>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The mm-of-the-moment snapshot 2020-01-02-19-03 has been uploaded to
-
-   http://www.ozlabs.org/~akpm/mmotm/
-
-mmotm-readme.txt says
-
-README for mm-of-the-moment:
-
-http://www.ozlabs.org/~akpm/mmotm/
-
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
-
-You will need quilt to apply these patches to the latest Linus release (5.x
-or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
-
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
-
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
-
-
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
-
-	https://github.com/hnaz/linux-mm
-
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is also available at
-
-	https://github.com/hnaz/linux-mm
-
-
-
-This mmotm tree contains the following patches against 5.5-rc4:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-* mm-memory_hotplug-shrink-zones-when-offlining-memory.patch
-* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
-* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
-* mm-zsmallocc-fix-the-migrated-zspage-statistics.patch
-* mm-thp-tweak-reclaim-compaction-effort-of-local-only-and-all-node-allocations.patch
-* x86-mm-split-vmalloc_sync_all.patch
-* kcov-fix-struct-layout-for-kcov_remote_arg.patch
-* memcg-account-security-cred-as-well-to-kmemcg.patch
-* mm-move_pages-return-valid-node-id-in-status-if-the-page-is-already-on-the-target-node.patch
-* fs-direct-ioc-include-fs-internalh-for-missing-prototype.patch
-* fs-nsfsc-include-headers-for-missing-declarations.patch
-* fs-namespacec-make-to_mnt_ns-static.patch
-* hexagon-parenthesize-registers-in-asm-predicates.patch
-* hexagon-work-around-compiler-crash.patch
-* fs-fix-posix_aclc-kernel-doc-warnings.patch
-* revert-ipcsem-remove-uneeded-sem_undo_list-lock-usage-in-exit_sem.patch
-* mm-oom-fix-pgtables-units-mismatch-in-killed-process-message.patch
-* mm-gup-fix-memory-leak-in-__gup_benchmark_ioctl.patch
-* mm-gup-fix-memory-leak-in-__gup_benchmark_ioctl-fix.patch
-* mm-fix-uninitialized-memmaps-on-a-partially-populated-last-section.patch
-* fs-proc-pagec-allow-inspection-of-last-section-and-fix-end-detection.patch
-* mm-initialize-memmap-of-unavailable-memory-directly.patch
-* mm-hugetlb-defer-freeing-of-huge-pages-if-in-non-task-context.patch
-* mm-memory_hotplug-dont-free-usage-map-when-removing-a-re-added-early-section.patch
-* ocfs2-call-journal-flush-to-mark-journal-as-empty-after-journal-recovery-when-mount.patch
-* thp-fix-conflict-of-above-47bit-hint-address-and-pmd-alignment.patch
-* thp-shmem-fix-conflict-of-above-47bit-hint-address-and-pmd-alignment.patch
-* thp-shmem-fix-conflict-of-above-47bit-hint-address-and-pmd-alignment-fix.patch
-* mm-memcg-slab-fix-percpu-slab-vmstats-flushing.patch
-* mm-debug_pagealloc-dont-rely-on-static-keys-too-early.patch
-* ocfs2-fix-the-crash-due-to-call-ocfs2_get_dlm_debug-once-less.patch
-* hexagon-define-ioremap_uc.patch
-* mm-page-writebackc-avoid-potential-division-by-zero-in-wb_min_max_ratio.patch
-* mm-page-writebackc-use-div64_ul-for-u64-by-unsigned-long-divide.patch
-* mm-page-writebackc-improve-arithmetic-divisions.patch
-* init-kconfig-enable-o3-for-all-arches.patch
-* scripts-spellingtxt-add-more-spellings-to-spellingtxt.patch
-* fs-ocfs-remove-unnecessary-assertion-in-dlm_migrate_lockres.patch
-* ocfs2-remove-unneeded-semicolon.patch
-* ocfs2-make-local-header-paths-relative-to-c-files.patch
-* ocfs2-dlm-remove-redundant-assignment-to-ret.patch
-* ramfs-support-o_tmpfile.patch
-* watchdog-fix-possible-soft-lockup-warning-at-bootup.patch
-  mm.patch
-* mm-avoid-slub-allocation-while-holding-list_lock.patch
-* kmemleak-turn-kmemleak_lock-and-object-lock-to-raw_spinlock_t.patch
-* mm-clean-up-filemap_write_and_wait.patch
-* mm-cleanup-some-useless-code.patch
-* mm-vmscan-expose-cgroup_ino-for-memcg-reclaim-tracepoints.patch
-* mm-pgmap-use-correct-alignment-when-looking-at-first-pfn-from-a-region.patch
-* mm-mmap-fix-the-adjusted-length-error.patch
-* mm-memmap_init-update-variable-name-in-memmap_init_zone.patch
-* mm-memory_hotplug-poison-memmap-in-remove_pfn_range_from_zone.patch
-* mm-memory_hotplug-we-always-have-a-zone-in-find_smallestbiggest_section_pfn.patch
-* mm-memory_hotplug-dont-check-for-all-holes-in-shrink_zone_span.patch
-* mm-memory_hotplug-drop-local-variables-in-shrink_zone_span.patch
-* mm-memory_hotplug-cleanup-__remove_pages.patch
-* mm-tracing-print-symbol-name-for-kmem_alloc_node-call_site-events.patch
-* mm-early_remap-use-%pa-to-print-resource_size_t-variables.patch
-* mm-page_alloc-skip-non-present-sections-on-zone-initialization.patch
-* mm-vmscanc-remove-unused-return-value-of-shrink_node.patch
-* mm-oom-avoid-printk-iteration-under-rcu.patch
-* mm-oom-avoid-printk-iteration-under-rcu-fix.patch
-* mm-hugetlb-controller-for-cgroups-v2.patch
-* mm-get-rid-of-odd-jump-labels-in-find_mergeable_anon_vma.patch
-* mm-clean-up-obsolete-check-on-space-in-page-flags.patch
-* mm-remove-dead-code-totalram_pages_set.patch
-* mm-drop-elements-hw-and-phys_callback-from-struct-memory_block.patch
-* zram-try-to-avoid-worst-case-scenario-on-same-element-pages.patch
-* zram-fix-error-return-codes-not-being-returned-in-writeback_store.patch
-* info-task-hung-in-generic_file_write_iter.patch
-* info-task-hung-in-generic_file_write-fix.patch
-* kernel-hung_taskc-monitor-killed-tasks.patch
-* add-helpers-for-kelvin-to-from-celsius-conversion.patch
-* acpi-thermal-switch-to-use-linux-unitsh-helpers.patch
-* platform-x86-asus-wmi-switch-to-use-linux-unitsh-helpers.patch
-* platform-x86-intel_menlow-switch-to-use-linux-unitsh-helpers.patch
-* thermal-int340x-switch-to-use-linux-unitsh-helpers.patch
-* thermal-intel_pch-switch-to-use-linux-unitsh-helpers.patch
-* nvme-hwmon-switch-to-use-linux-unitsh-helpers.patch
-* thermal-remove-kelvin-to-from-celsius-conversion-helpers-from-linux-thermalh.patch
-* iwlegacy-use-linux-unitsh-helpers.patch
-* iwlwifi-use-linux-unitsh-helpers.patch
-* thermal-armada-remove-unused-to_mcelsius-macro.patch
-* iio-adc-qcom-vadc-common-use-linux-unitsh-helpers.patch
-* lib-zlib-add-s390-hardware-support-for-kernel-zlib_deflate.patch
-* s390-boot-rename-heap_size-due-to-name-collision.patch
-* lib-zlib-add-s390-hardware-support-for-kernel-zlib_inflate.patch
-* s390-boot-add-dfltcc=-kernel-command-line-parameter.patch
-* lib-zlib-add-zlib_deflate_dfltcc_enabled-function.patch
-* btrfs-use-larger-zlib-buffer-for-s390-hardware-compression.patch
-* lib-scatterlist-adjust-indentation-in-__sg_alloc_table.patch
-* string-add-stracpy-and-stracpy_pad-mechanisms.patch
-* documentation-checkpatch-prefer-stracpy-strscpy-over-strcpy-strlcpy-strncpy.patch
-* elf-smaller-code-generation-around-auxv-vector-fill.patch
-* elf-fix-start_code-calculation.patch
-* elf-dont-copy-elf-header-around.patch
-* elf-better-codegen-around-current-mm.patch
-* elf-make-bad_addr-unlikely.patch
-* elf-coredump-allocate-core-elf-header-on-stack.patch
-* elf-coredump-delete-duplicated-overflow-check.patch
-* elf-coredump-allow-process-with-empty-address-space-to-coredump.patch
-* init-mainc-log-arguments-and-environment-passed-to-init.patch
-* init-mainc-remove-unnecessary-repair_env_string-in-do_initcall_level.patch
-* init-mainc-fix-quoted-value-handling-in-unknown_bootoption.patch
-* reiserfs-prevent-null-pointer-dereference-in-reiserfs_insert_item.patch
-* signal-move-print_dropped_signal.patch
-* execve-warn-if-process-starts-with-executable-stack.patch
-* io-mapping-use-phys_pfn-macro-in-io_mapping_map_atomic_wc.patch
-* aio-simplify-read_events.patch
-* smp_mb__beforeafter_atomic-update-documentation.patch
-* ipc-mqueuec-remove-duplicated-code.patch
-* ipc-mqueuec-update-document-memory-barriers.patch
-* ipc-msgc-update-and-document-memory-barriers.patch
-* ipc-semc-document-and-update-memory-barriers.patch
-* ipc-consolidate-all-xxxctl_down-functions.patch
-* ipc-consolidate-all-xxxctl_down-functions-fix.patch
-  linux-next.patch
-  linux-next-rejects.patch
-  linux-next-git-rejects.patch
-  linux-next-fix.patch
-  linux-next-fix-2.patch
-* drivers-block-null_blk_mainc-fix-layout.patch
-* drivers-block-null_blk_mainc-fix-uninitialized-var-warnings.patch
-* pinctrl-fix-pxa2xxc-build-warnings.patch
-* mm-remove-__krealloc.patch
-* mm-add-generic-pd_leaf-macros.patch
-* arc-mm-add-pd_leaf-definitions.patch
-* arm-mm-add-pd_leaf-definitions.patch
-* arm64-mm-add-pd_leaf-definitions.patch
-* mips-mm-add-pd_leaf-definitions.patch
-* powerpc-mm-add-pd_leaf-definitions.patch
-* riscv-mm-add-pd_leaf-definitions.patch
-* s390-mm-add-pd_leaf-definitions.patch
-* sparc-mm-add-pd_leaf-definitions.patch
-* x86-mm-add-pd_leaf-definitions.patch
-* mm-pagewalk-add-p4d_entry-and-pgd_entry.patch
-* mm-pagewalk-allow-walking-without-vma.patch
-* mm-pagewalk-dont-lock-ptes-for-walk_page_range_novma.patch
-* mm-pagewalk-fix-termination-condition-in-walk_pte_range.patch
-* mm-pagewalk-add-depth-parameter-to-pte_hole.patch
-* x86-mm-point-to-struct-seq_file-from-struct-pg_state.patch
-* x86-mmefi-convert-ptdump_walk_pgd_level-to-take-a-mm_struct.patch
-* x86-mm-convert-ptdump_walk_pgd_level_debugfs-to-take-an-mm_struct.patch
-* mm-add-generic-ptdump.patch
-* x86-mm-convert-dump_pagetables-to-use-walk_page_range.patch
-* arm64-mm-convert-mm-dumpc-to-use-walk_page_range.patch
-* arm64-mm-display-non-present-entries-in-ptdump.patch
-* mm-ptdump-reduce-level-numbers-by-1-in-note_page.patch
-* proc-decouple-proc-from-vfs-with-struct-proc_ops.patch
-* proc-convert-everything-to-struct-proc_ops.patch
-* proc-convert-everything-to-struct-proc_ops-fix.patch
-* lib-string-add-strnchrnul.patch
-* bitops-more-bits_to_-macros.patch
-* bitops-more-bits_to_-macros-fix.patch
-* bitops-more-bits_to_-macros-fix-fix.patch
-* lib-add-test-for-bitmap_parse.patch
-* lib-add-test-for-bitmap_parse-fix.patch
-* lib-make-bitmap_parse_user-a-wrapper-on-bitmap_parse.patch
-* lib-rework-bitmap_parse.patch
-* lib-new-testcases-for-bitmap_parse_user.patch
-* cpumask-dont-calculate-length-of-the-input-string.patch
-* drivers-tty-serial-sh-scic-suppress-warning.patch
-* fix-read-buffer-overflow-in-delta-ipc.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  workaround-for-a-pci-restoring-bug.patch
+> On Thursday 02 January 2020 16:20:33 Namjae Jeon wrote:
+> > This adds the implementation of nls operations for exfat.
+> >
+> > Signed-off-by: Namjae Jeon <namjae.jeon=40samsung.com>
+> > Signed-off-by: Sungjong Seo <sj1557.seo=40samsung.com>
+> > ---
+> >  fs/exfat/nls.c =7C 809
+> > +++++++++++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 809 insertions(+)
+> >  create mode 100644 fs/exfat/nls.c
+> >
+> > diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c new file mode 100644
+> > index 000000000000..af52328e28ff
+> > --- /dev/null
+> > +++ b/fs/exfat/nls.c
+> > =40=40 -0,0 +1,809 =40=40
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > +/*
+> > + * Copyright (C) 2012-2013 Samsung Electronics Co., Ltd.
+> > + */
+> > +
+> > +=23include <linux/string.h>
+> > +=23include <linux/nls.h>
+> > +=23include <linux/slab.h>
+> > +=23include <linux/buffer_head.h>
+> > +=23include <asm/unaligned.h>
+> > +
+> > +=23include =22exfat_raw.h=22
+> > +=23include =22exfat_fs.h=22
+> > +
+> > +/* Upcase tabel macro */
+> > +=23define EXFAT_NUM_UPCASE	(2918)
+> > +=23define UTBL_COUNT		(0x10000)
+> > +
+> > +/*
+> > + * Upcase table in compressed format (7.2.5.1 Recommended Up-case
+> > +Table
+> > + * in exfat specification, See:
+> > +https://protect2.fireeye.com/url?k=3D25cbd240-78ac9666-25ca590f-0cc47a=
+3
+> > +1384a-776465f5f2917059&u=3Dhttps://docs.microsoft.com/en-us/windows/
+> > + * win32/fileio/exfat-specification).
+>=20
+> Just a small suggestion: Do not wrap URLs as they are hard to copy-paste
+> into web browser. Also my email client is not able to detect URL continue
+> on next line...
+Okay, Will fix it on next version.
+Thanks for review=21
+>=20
+> > + */
+> > +static const unsigned short uni_def_upcase=5BEXFAT_NUM_UPCASE=5D =3D =
+=7B
+> > +	0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007,
+> > +	0x0008, 0x0009, 0x000a, 0x000b, 0x000c, 0x000d, 0x000e, 0x000f,
+>=20
+> ...
+>=20
+> --
+> Pali Roh=C3=A1r=0D=0A>=20pali.rohar=40gmail.com=0D=0A=0D=0A
