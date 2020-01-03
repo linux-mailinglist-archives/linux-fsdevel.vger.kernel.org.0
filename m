@@ -2,257 +2,223 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9109912F836
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2020 13:31:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73F0B12F90F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jan 2020 15:12:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727508AbgACMbT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jan 2020 07:31:19 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46079 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727457AbgACMbT (ORCPT
+        id S1727598AbgACOMs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jan 2020 09:12:48 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:39368 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727539AbgACOMs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jan 2020 07:31:19 -0500
-Received: by mail-wr1-f66.google.com with SMTP id j42so42242246wrj.12;
-        Fri, 03 Jan 2020 04:31:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=gaDoAhZd9EnaspVB4eu0gwSjufuz8gDsIlWz8yJvXtw=;
-        b=VcRSqbgYZo3yVNNTLQdNTjczb8TSz9OxqCgbbSA9u77KVFJkc8bGA1ixOK/DDwqLCz
-         XyZhM+tubMWWju2gVJGndu68rjJzx8OVqp52oIs/NMvAGdV/Tx4R5JuvkRJ6495F8elv
-         bpuXLSu+Fq/RRb08Ri+or9H6dMjRzaPPmAsVbbpKN/1YOmD7ZN5ACFqlTesqQwc9EmBE
-         /c7FdatTDALlXl5IRi/VmkpdUTRax57bgIPzvqrbjg9yCxV+yoxW7sO8F/PP0FA7Ppbk
-         Nhh5nkl5oZosjZzTX9huhmfFKtATdDMOBL499WgfX5kyxmoGKoTRt5iBoAD5W40/wRWz
-         wbZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=gaDoAhZd9EnaspVB4eu0gwSjufuz8gDsIlWz8yJvXtw=;
-        b=FcFBMZmpFLm91NHWqwj0su+OLHWW5/OX58hBRdnthiqlikKUFH94efPoFfyW1FIhNd
-         Bns7Yv2WuPd7BOCL09cG7P/c9g98mHY4XYy4JsJfp/LHOoELRbE+F9GnmKsXAENhbbrO
-         274W1dLDUqs4d/Pq86SP+yEJ/wx7BfJLtGewSEpnrPoc1bWZRif9kSUgZfiEPrz8NFoK
-         JQH0h6TaAXHptSLW6PhApsluxJYsZjuY/Tnxhbks1/IS8vECQDmnPnHz2zEXJwbMFMa1
-         V/uk63i07ejZfdM0JPXDDGDXPDiz7Mw0kW1cZPGfVhvejf3o1OqzvWvdrZKN5F2AipKH
-         ersQ==
-X-Gm-Message-State: APjAAAWSC7875K5+sZWJLWNKuopZcY6POGTUb0U9mwfdBskCKaDP1xkW
-        zgKFpQgNGQvwVdeljeKBAIs=
-X-Google-Smtp-Source: APXvYqxi3dX6vftLY+XF/wFxY2bTL8Q353b1cvgiRi64Bv5qa7kenkIw1qh4+D8MoP3iMsP/yEJiCQ==
-X-Received: by 2002:adf:ea88:: with SMTP id s8mr88071919wrm.293.1578054676319;
-        Fri, 03 Jan 2020 04:31:16 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id q11sm59035802wrp.24.2020.01.03.04.31.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jan 2020 04:31:15 -0800 (PST)
-Date:   Fri, 3 Jan 2020 13:31:14 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Namjae Jeon <namjae.jeon@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com, linkinjeon@gmail.com
-Subject: Re: [PATCH v9 10/13] exfat: add nls operations
-Message-ID: <20200103123114.vm23vqag5dbry2mu@pali>
-References: <20200102082036.29643-1-namjae.jeon@samsung.com>
- <CGME20200102082407epcas1p4cf10cd3d0ca2903707ab01b1cc523a05@epcas1p4.samsung.com>
- <20200102082036.29643-11-namjae.jeon@samsung.com>
- <20200103094030.zg4p5bqos32gc4hy@pali>
+        Fri, 3 Jan 2020 09:12:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578060766;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=CGMg0pHtt4SVc4uhGk+7pIjVLdzZuIJr8uS5jcpc3MY=;
+        b=NwyTpLUaQhy4aQcSi0ZCPkgtNMs80Ye0HTR1rp9p9oDeBngMFPadajBLTPZgz2un4KS4ha
+        x6/9ywk5L6ymgZ4epnsqc9K5wbDc4kaso+TSHWrv4QQVGymFz8MvFHZYPaTFFg9zIil/vy
+        EIfsM2YkyzyxLcEMn+m0q059Z1E0Heo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-385--FlagLmkMOm7LZJqTa9NNQ-1; Fri, 03 Jan 2020 09:12:43 -0500
+X-MC-Unique: -FlagLmkMOm7LZJqTa9NNQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 29D92801A0D;
+        Fri,  3 Jan 2020 14:12:42 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 11FFE386;
+        Fri,  3 Jan 2020 14:12:36 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 9A02E2202E9; Fri,  3 Jan 2020 09:12:35 -0500 (EST)
+Date:   Fri, 3 Jan 2020 09:12:35 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, virtio-fs@redhat.com, miklos@szeredi.hu,
+        stefanha@redhat.com, dgilbert@redhat.com,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH 02/19] dax: Pass dax_dev to dax_writeback_mapping_range()
+Message-ID: <20200103141235.GA13350@redhat.com>
+References: <20190821175720.25901-1-vgoyal@redhat.com>
+ <20190821175720.25901-3-vgoyal@redhat.com>
+ <20190826115316.GB21051@infradead.org>
+ <20190826203326.GB13860@redhat.com>
+ <20190826205829.GC13860@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200103094030.zg4p5bqos32gc4hy@pali>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190826205829.GC13860@redhat.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Friday 03 January 2020 10:40:30 Pali Rohár wrote:
-> On Thursday 02 January 2020 16:20:33 Namjae Jeon wrote:
-> > This adds the implementation of nls operations for exfat.
+On Mon, Aug 26, 2019 at 04:58:29PM -0400, Vivek Goyal wrote:
+> On Mon, Aug 26, 2019 at 04:33:26PM -0400, Vivek Goyal wrote:
+> > On Mon, Aug 26, 2019 at 04:53:16AM -0700, Christoph Hellwig wrote:
+> > > On Wed, Aug 21, 2019 at 01:57:03PM -0400, Vivek Goyal wrote:
+> > > > Right now dax_writeback_mapping_range() is passed a bdev and dax_dev
+> > > > is searched from that bdev name.
+> > > > 
+> > > > virtio-fs does not have a bdev. So pass in dax_dev also to
+> > > > dax_writeback_mapping_range(). If dax_dev is passed in, bdev is not
+> > > > used otherwise dax_dev is searched using bdev.
+> > > 
+> > > Please just pass in only the dax_device and get rid of the block device.
+> > > The callers should have one at hand easily, e.g. for XFS just call
+> > > xfs_find_daxdev_for_inode instead of xfs_find_bdev_for_inode.
 > > 
-> > Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-> > Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
-> > ---
-> >  fs/exfat/nls.c | 809 +++++++++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 809 insertions(+)
-> >  create mode 100644 fs/exfat/nls.c
+> > Sure. Here is the updated patch.
 > > 
-> > diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
-> > new file mode 100644
-> > index 000000000000..af52328e28ff
-> > --- /dev/null
-> > +++ b/fs/exfat/nls.c
+> > This patch can probably go upstream independently. If you are fine with
+> > the patch, I can post it separately for inclusion.
 > 
-> ...
+> Forgot to update function declaration in case of !CONFIG_FS_DAX. Here is
+> the updated patch.
 > 
-> > +static int exfat_convert_uni_to_ch(struct nls_table *nls, unsigned short uni,
-> > +		unsigned char *ch, int *lossy)
-> > +{
-> > +	int len;
-> > +
-> > +	ch[0] = 0x0;
-> > +
-> > +	if (uni < 0x0080) {
-> > +		ch[0] = uni;
-> > +		return 1;
-> > +	}
-> > +
-> > +	len = nls->uni2char(uni, ch, MAX_CHARSET_SIZE);
-> > +	if (len < 0) {
-> > +		/* conversion failed */
-> > +		if (lossy != NULL)
-> > +			*lossy |= NLS_NAME_LOSSY;
-> > +		ch[0] = '_';
-> > +		return 1;
-> > +	}
-> > +	return len;
-> > +}
+> Subject: dax: Pass dax_dev instead of bdev to dax_writeback_mapping_range()
 > 
-> Hello! This function takes one UCS-2 character in host endianity and
-> converts it to one byte (via specified 8bit encoding).
+> As of now dax_writeback_mapping_range() takes "struct block_device" as a
+> parameter and dax_dev is searched from bdev name. This also involves taking
+> a fresh reference on dax_dev and putting that reference at the end of
+> function.
 > 
-> > +static int __exfat_nls_uni16s_to_vfsname(struct super_block *sb,
-> > +		struct exfat_uni_name *p_uniname, unsigned char *p_cstring,
-> > +		int buflen)
-> > +{
-> > +	int i, j, len, out_len = 0;
-> > +	unsigned char buf[MAX_CHARSET_SIZE];
-> > +	const unsigned short *uniname = p_uniname->name;
-> > +	struct nls_table *nls = EXFAT_SB(sb)->nls_io;
-> > +
-> > +	i = 0;
-> > +	while (i < MAX_NAME_LENGTH && out_len < (buflen - 1)) {
-> > +		if (*uniname == '\0')
-> > +			break;
-> > +
-> > +		len = exfat_convert_uni_to_ch(nls, *uniname, buf, NULL);
-> > +		if (out_len + len >= buflen)
-> > +			len = buflen - 1 - out_len;
-> > +		out_len += len;
-> > +
-> > +		if (len > 1) {
-> > +			for (j = 0; j < len; j++)
-> > +				*p_cstring++ = buf[j];
-> > +		} else { /* len == 1 */
-> > +			*p_cstring++ = *buf;
-> > +		}
-> > +
-> > +		uniname++;
-> > +		i++;
-> > +	}
-> > +
-> > +	*p_cstring = '\0';
-> > +	return out_len;
-> > +}
-> > +
+> We are developing a new filesystem virtio-fs and using dax to access host
+> page cache directly. But there is no block device. IOW, we want to make
+> use of dax but want to get rid of this assumption that there is always
+> a block device associated with dax_dev.
 > 
-> This function takes UCS-2 buffer in host endianity and converts it to
-> string in specified 8bit encoding.
+> So pass in "struct dax_device" as parameter instead of bdev.
 > 
-> > +
-> > +int exfat_nls_uni16s_to_vfsname(struct super_block *sb,
-> > +		struct exfat_uni_name *uniname, unsigned char *p_cstring,
-> > +		int buflen)
-> > +{
+> ext2/ext4/xfs are current users and they already have a reference on
+> dax_device. So there is no need to take reference and drop reference to
+> dax_device on each call of this function.
 > 
-> Looking at the code and this function is called from dir.c to translate
-> exfat filename buffer stored in filesystem to format expected by VFS
-> layer.
-> 
-> On exfat filesystem file names are always stored in UTF-16LE...
-> 
-> > +	if (EXFAT_SB(sb)->options.utf8)
-> > +		return __exfat_nls_utf16s_to_vfsname(sb, uniname, p_cstring,
-> > +				buflen);
-> > +	return __exfat_nls_uni16s_to_vfsname(sb, uniname, p_cstring, buflen);
-> 
-> ... and therefore above "__exfat_nls_uni16s_to_vfsname" function must
-> expect UTF-16LE buffer and not just UCS-2 buffer in host endianity.
-> 
-> So two other things needs to be done: Convert character from little
-> endian to host endianity and then process UTF-16 buffer and not only
-> UCS-2.
-> 
-> I see that in kernel NLS module is missing a function for converting
-> UTF-16 string to UTF-32 (encoding in which every code point is
-> represented just by one u32 variable). Kernel has only utf16s_to_utf8s()
-> and utf8_to_utf32().
+> Suggested-by: Christoph Hellwig <hch@infradead.org>
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 
-What about just filtering two u16 (one surrogate pair)? Existing NLS
-modules do not support code points above U+FFFF so two u16 (one
-surrogate pair) just needs to be converted to one replacement character.
+Hi Dan,
 
-diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
-index 81d75aed9..f626a0a89 100644
---- a/fs/exfat/nls.c
-+++ b/fs/exfat/nls.c
-@@ -545,7 +545,10 @@ static int __exfat_nls_vfsname_to_utf16s(struct super_block *sb,
- 	return unilen;
- }
- 
--static int __exfat_nls_uni16s_to_vfsname(struct super_block *sb,
-+#define SURROGATE_PAIR		0x0000d800
-+#define SURROGATE_LOW		0x00000400
-+
-+static int __exfat_nls_utf16s_to_vfsname(struct super_block *sb,
- 		struct exfat_uni_name *p_uniname, unsigned char *p_cstring,
- 		int buflen)
- {
-@@ -559,7 +562,23 @@ static int __exfat_nls_uni16s_to_vfsname(struct super_block *sb,
- 		if (*uniname == '\0')
- 			break;
- 
--		len = exfat_convert_uni_to_ch(nls, *uniname, buf, NULL);
-+		if ((*uniname & SURROGATE_MASK) != SURROGATE_PAIR) {
-+			len = exfat_convert_uni_to_ch(nls, *uniname, buf, NULL);
-+		} else {
-+			/* Process UTF-16 surrogate pair as one character */
-+			if (!(*uniname & SURROGATE_LOW) && i+1 < MAX_NAME_LENGTH &&
-+			    (*(uniname+1) & SURROGATE_MASK) == SURROGATE_PAIR &&
-+			    (*(uniname+1) & SURROGATE_LOW)) {
-+				uniname++;
-+				i++;
-+			}
-+			/* UTF-16 surrogate pair encodes code points above Ux+FFFF.
-+			 * Code points above U+FFFF are not supported by kernel NLS
-+			 * framework therefore use replacement character */
-+			len = 1;
-+			buf[0] = '_';
-+		}
-+
- 		if (out_len + len >= buflen)
- 			len = buflen - 1 - out_len;
- 		out_len += len;
-@@ -623,7 +642,7 @@ int exfat_nls_uni16s_to_vfsname(struct super_block *sb,
- 	if (EXFAT_SB(sb)->options.utf8)
- 		return __exfat_nls_utf16s_to_vfsname(sb, uniname, p_cstring,
- 				buflen);
--	return __exfat_nls_uni16s_to_vfsname(sb, uniname, p_cstring, buflen);
-+	return __exfat_nls_utf16s_to_vfsname(sb, uniname, p_cstring, buflen);
- }
- 
- int exfat_nls_vfsname_to_uni16s(struct super_block *sb,
+Ping for this patch. I see christoph and Jan acked it. Can we take it. Not
+sure how to get ack from ext4 developers.
 
-I have not tested this code, it is just an idea how to quick & dirty
-solve this problem that NLS framework works with UCS-2 encoding and
-UCS-4/UTF-32 or UTF-16.
+Thanks
+Vivek
 
-> > +}
+> ---
+>  fs/dax.c            |    8 +-------
+>  fs/ext2/inode.c     |    5 +++--
+>  fs/ext4/inode.c     |    2 +-
+>  fs/xfs/xfs_aops.c   |    2 +-
+>  include/linux/dax.h |    4 ++--
+>  5 files changed, 8 insertions(+), 13 deletions(-)
 > 
-> Btw, have you tested this exfat implementation on some big endian
-> system? I think it cannot work because of missing conversion from
-> UTF-16LE to UTF-16 in host endianity (therefore UTF-16BE).
+> Index: rhvgoyal-linux-fuse/fs/dax.c
+> ===================================================================
+> --- rhvgoyal-linux-fuse.orig/fs/dax.c	2019-08-26 16:45:26.093710196 -0400
+> +++ rhvgoyal-linux-fuse/fs/dax.c	2019-08-26 16:45:29.462710196 -0400
+> @@ -936,12 +936,11 @@ static int dax_writeback_one(struct xa_s
+>   * on persistent storage prior to completion of the operation.
+>   */
+>  int dax_writeback_mapping_range(struct address_space *mapping,
+> -		struct block_device *bdev, struct writeback_control *wbc)
+> +		struct dax_device *dax_dev, struct writeback_control *wbc)
+>  {
+>  	XA_STATE(xas, &mapping->i_pages, wbc->range_start >> PAGE_SHIFT);
+>  	struct inode *inode = mapping->host;
+>  	pgoff_t end_index = wbc->range_end >> PAGE_SHIFT;
+> -	struct dax_device *dax_dev;
+>  	void *entry;
+>  	int ret = 0;
+>  	unsigned int scanned = 0;
+> @@ -952,10 +951,6 @@ int dax_writeback_mapping_range(struct a
+>  	if (!mapping->nrexceptional || wbc->sync_mode != WB_SYNC_ALL)
+>  		return 0;
+>  
+> -	dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
+> -	if (!dax_dev)
+> -		return -EIO;
+> -
+>  	trace_dax_writeback_range(inode, xas.xa_index, end_index);
+>  
+>  	tag_pages_for_writeback(mapping, xas.xa_index, end_index);
+> @@ -976,7 +971,6 @@ int dax_writeback_mapping_range(struct a
+>  		xas_lock_irq(&xas);
+>  	}
+>  	xas_unlock_irq(&xas);
+> -	put_dax(dax_dev);
+>  	trace_dax_writeback_range_done(inode, xas.xa_index, end_index);
+>  	return ret;
+>  }
+> Index: rhvgoyal-linux-fuse/include/linux/dax.h
+> ===================================================================
+> --- rhvgoyal-linux-fuse.orig/include/linux/dax.h	2019-08-26 16:45:26.094710196 -0400
+> +++ rhvgoyal-linux-fuse/include/linux/dax.h	2019-08-26 16:46:08.101710196 -0400
+> @@ -141,7 +141,7 @@ static inline void fs_put_dax(struct dax
+>  
+>  struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev);
+>  int dax_writeback_mapping_range(struct address_space *mapping,
+> -		struct block_device *bdev, struct writeback_control *wbc);
+> +		struct dax_device *dax_dev, struct writeback_control *wbc);
+>  
+>  struct page *dax_layout_busy_page(struct address_space *mapping);
+>  dax_entry_t dax_lock_page(struct page *page);
+> @@ -180,7 +180,7 @@ static inline struct page *dax_layout_bu
+>  }
+>  
+>  static inline int dax_writeback_mapping_range(struct address_space *mapping,
+> -		struct block_device *bdev, struct writeback_control *wbc)
+> +		struct dax_device *dax_dev, struct writeback_control *wbc)
+>  {
+>  	return -EOPNOTSUPP;
+>  }
+> Index: rhvgoyal-linux-fuse/fs/xfs/xfs_aops.c
+> ===================================================================
+> --- rhvgoyal-linux-fuse.orig/fs/xfs/xfs_aops.c	2019-08-26 16:45:26.094710196 -0400
+> +++ rhvgoyal-linux-fuse/fs/xfs/xfs_aops.c	2019-08-26 16:45:29.471710196 -0400
+> @@ -1120,7 +1120,7 @@ xfs_dax_writepages(
+>  {
+>  	xfs_iflags_clear(XFS_I(mapping->host), XFS_ITRUNCATED);
+>  	return dax_writeback_mapping_range(mapping,
+> -			xfs_find_bdev_for_inode(mapping->host), wbc);
+> +			xfs_find_daxdev_for_inode(mapping->host), wbc);
+>  }
+>  
+>  STATIC int
+> Index: rhvgoyal-linux-fuse/fs/ext4/inode.c
+> ===================================================================
+> --- rhvgoyal-linux-fuse.orig/fs/ext4/inode.c	2019-08-26 16:45:26.093710196 -0400
+> +++ rhvgoyal-linux-fuse/fs/ext4/inode.c	2019-08-26 16:45:29.475710196 -0400
+> @@ -2992,7 +2992,7 @@ static int ext4_dax_writepages(struct ad
+>  	percpu_down_read(&sbi->s_journal_flag_rwsem);
+>  	trace_ext4_writepages(inode, wbc);
+>  
+> -	ret = dax_writeback_mapping_range(mapping, inode->i_sb->s_bdev, wbc);
+> +	ret = dax_writeback_mapping_range(mapping, sbi->s_daxdev, wbc);
+>  	trace_ext4_writepages_result(inode, wbc, ret,
+>  				     nr_to_write - wbc->nr_to_write);
+>  	percpu_up_read(&sbi->s_journal_flag_rwsem);
+> Index: rhvgoyal-linux-fuse/fs/ext2/inode.c
+> ===================================================================
+> --- rhvgoyal-linux-fuse.orig/fs/ext2/inode.c	2019-08-26 16:45:26.093710196 -0400
+> +++ rhvgoyal-linux-fuse/fs/ext2/inode.c	2019-08-26 16:45:29.477710196 -0400
+> @@ -957,8 +957,9 @@ ext2_writepages(struct address_space *ma
+>  static int
+>  ext2_dax_writepages(struct address_space *mapping, struct writeback_control *wbc)
+>  {
+> -	return dax_writeback_mapping_range(mapping,
+> -			mapping->host->i_sb->s_bdev, wbc);
+> +	struct ext2_sb_info *sbi = EXT2_SB(mapping->host->i_sb);
+> +
+> +	return dax_writeback_mapping_range(mapping, sbi->s_daxdev, wbc);
+>  }
+>  
+>  const struct address_space_operations ext2_aops = {
 
-Now I figured out that conversion from UTF-16LE to UTF-16 host endianity
-is already done in exfat_extract_uni_name() function, called from
-exfat_get_uniname_from_ext_entry() function. exfat_nls_uni16s_to_vfsname
-is then called on result from exfat_get_uniname_from_ext_entry(), so
-UTF-16LE processing on big endian systems should work. Sorry for that.
-
--- 
-Pali Rohár
-pali.rohar@gmail.com
