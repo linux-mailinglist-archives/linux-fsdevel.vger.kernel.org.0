@@ -2,124 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24CBE130492
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2020 22:16:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35F0E1304A0
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2020 22:23:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726207AbgADVQQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 4 Jan 2020 16:16:16 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:44324 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726170AbgADVQQ (ORCPT
+        id S1726390AbgADVXi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 4 Jan 2020 16:23:38 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:44671 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726204AbgADVXi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 4 Jan 2020 16:16:16 -0500
-Received: by mail-io1-f65.google.com with SMTP id b10so44722867iof.11;
-        Sat, 04 Jan 2020 13:16:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=snCBX0j5ay9kgj6iZfPL2/aocexXLHXt8hsG7KfcQKY=;
-        b=H0NUm63m1Oa+7DyTVnNJc/PlM5/UteN16n7bvwASZASu8wmJEzHg97yJ9jNyu1JFys
-         UEzWGhX7D2cAUsw5lwf9q3KwM+AC1hFNyQDDuycsUAWzJJRQsE/aTrfnr43420ebgOoz
-         Tf5v9J6K/Lu2NiafplulCkrh42anLxLtoTjRkve4VnLzO/EBakjavSFufAfk9gDamY/f
-         TFMKQvcXqoU6ustmDPPDEsB9mgp+EzplBKZtpOUIL2emCqu4Lu6agAWcf6RG8uYMLQCh
-         MWI5+wZ1pA2/SHfxX/y/jyFugDX0duj0BoayGr6n8r/dulX03T5djGNYVJwmvFQBwKrx
-         m51Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=snCBX0j5ay9kgj6iZfPL2/aocexXLHXt8hsG7KfcQKY=;
-        b=WabzXcWpGb+QK6ymQqDSGjWXweD7RUfgWMoaUIIkMtbYbA8W8PGKgsDO0X6G48xZNT
-         h5n71rYe1/xCWAimMNW3zaWxoHgcADv+2lNQA/DbkmZvCRbaGuz5wiqzqXyfGk+ecinJ
-         uGcWD0NxMo6fyPGDlWo06ku0yoMaS7HbzI3iNpzYcAwpeRDLqd6+jbfdUnkN5s4htK35
-         vVAznoVH+XYdG1uAE2VOqTREAqMck9EZdFzxPLK+Wp57uc52rT2CxYO2W/OQci+Ub4Ox
-         zBXHx/krLo7bFabtR21oDio47M3QRbVUUIg7Uhw6oVvI5aRlh+8VSYEEjSmnBkpbvP37
-         pVcw==
-X-Gm-Message-State: APjAAAVvAugB9CZmLEzMDiZzf31+53AuGCaLk7JtCkM0gVhVF5R/6N6S
-        AEiF+19xXt86IBOtDaE2DbgPck4CO5yH4cHJnAw=
-X-Google-Smtp-Source: APXvYqwpNX0oJAGFb7plxGj+mrk/pVD85S5jglSWMAHsjkX180fee7do9kPBZ3lFzsuac3e1xHxfVdTrHJ0kodA7IoQ=
-X-Received: by 2002:a6b:5904:: with SMTP id n4mr65813651iob.9.1578172575756;
- Sat, 04 Jan 2020 13:16:15 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1578072481.git.chris@chrisdown.name>
-In-Reply-To: <cover.1578072481.git.chris@chrisdown.name>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sat, 4 Jan 2020 23:16:04 +0200
-Message-ID: <CAOQ4uxhC6L6whNyc6bs99ZcMRxMOt5xNR0HMKmJ8w1thXgO+zw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] fs: inode: shmem: Reduce risk of inum overflow
-To:     Chris Down <chris@chrisdown.name>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Sat, 4 Jan 2020 16:23:38 -0500
+Received: from dread.disaster.area (pa49-180-68-255.pa.nsw.optusnet.com.au [49.180.68.255])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 761347E9C38;
+        Sun,  5 Jan 2020 08:23:32 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1inqtP-0005we-9i; Sun, 05 Jan 2020 08:23:31 +1100
+Date:   Sun, 5 Jan 2020 08:23:31 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@fb.com,
-        Hugh Dickins <hughd@google.com>,
-        "zhengbin (A)" <zhengbin13@huawei.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        Linux MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org,
+        Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH v2 4/5] mm: make memcg visible to lru walker isolation
+ function
+Message-ID: <20200104212331.GG23195@dread.disaster.area>
+References: <1577174006-13025-1-git-send-email-laoar.shao@gmail.com>
+ <1577174006-13025-5-git-send-email-laoar.shao@gmail.com>
+ <20200104033558.GD23195@dread.disaster.area>
+ <CALOAHbAzDth8g8+Z5hH9QnOp02UZ5+3eQf9wAQyJM-LAhmaL9A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALOAHbAzDth8g8+Z5hH9QnOp02UZ5+3eQf9wAQyJM-LAhmaL9A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=sbdTpStuSq8iNQE8viVliQ==:117 a=sbdTpStuSq8iNQE8viVliQ==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=Jdjhy38mL1oA:10
+        a=7-415B0cAAAA:8 a=20KFwNOVAAAA:8 a=pGLkceISAAAA:8 a=2bCnwIvBFboyoh0sCVsA:9
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 3, 2020 at 7:30 PM Chris Down <chris@chrisdown.name> wrote:
->
-> In Facebook production we are seeing heavy i_ino wraparounds on tmpfs.
-> On affected tiers, in excess of 10% of hosts show multiple files with
-> different content and the same inode number, with some servers even
-> having as many as 150 duplicated inode numbers with differing file
-> content.
->
-> This causes actual, tangible problems in production. For example, we
-> have complaints from those working on remote caches that their
-> application is reporting cache corruptions because it uses (device,
-> inodenum) to establish the identity of a particular cache object, but
-> because it's not unique any more, the application refuses to continue
-> and reports cache corruption. Even worse, sometimes applications may not
-> even detect the corruption but may continue anyway, causing phantom and
-> hard to debug behaviour.
->
-> In general, userspace applications expect that (device, inodenum) should
-> be enough to be uniquely point to one inode, which seems fair enough.
-> One might also need to check the generation, but in this case:
->
-> 1. That's not currently exposed to userspace
->    (ioctl(...FS_IOC_GETVERSION...) returns ENOTTY on tmpfs);
-> 2. Even with generation, there shouldn't be two live inodes with the
->    same inode number on one device.
->
-> In order to mitigate this, we take a two-pronged approach:
->
-> 1. Moving inum generation from being global to per-sb for tmpfs. This
->    itself allows some reduction in i_ino churn. This works on both 64-
->    and 32- bit machines.
-> 2. Adding inode{64,32} for tmpfs. This fix is supported on machines with
->    64-bit ino_t only: we allow users to mount tmpfs with a new inode64
->    option that uses the full width of ino_t, or CONFIG_TMPFS_INODE64.
->
-> Chris Down (2):
->   tmpfs: Add per-superblock i_ino support
->   tmpfs: Support 64-bit inums per-sb
->
->  Documentation/filesystems/tmpfs.txt | 11 ++++
->  fs/Kconfig                          | 15 +++++
->  include/linux/shmem_fs.h            |  2 +
->  mm/shmem.c                          | 97 ++++++++++++++++++++++++++++-
->  4 files changed, 124 insertions(+), 1 deletion(-)
->
+On Sat, Jan 04, 2020 at 03:26:13PM +0800, Yafang Shao wrote:
+> On Sat, Jan 4, 2020 at 11:36 AM Dave Chinner <david@fromorbit.com> wrote:
+> >
+> > On Tue, Dec 24, 2019 at 02:53:25AM -0500, Yafang Shao wrote:
+> > > The lru walker isolation function may use this memcg to do something, e.g.
+> > > the inode isolatation function will use the memcg to do inode protection in
+> > > followup patch. So make memcg visible to the lru walker isolation function.
+> > >
+> > > Something should be emphasized in this patch is it replaces
+> > > for_each_memcg_cache_index() with for_each_mem_cgroup() in
+> > > list_lru_walk_node(). Because there's a gap between these two MACROs that
+> > > for_each_mem_cgroup() depends on CONFIG_MEMCG while the other one depends
+> > > on CONFIG_MEMCG_KMEM. But as list_lru_memcg_aware() returns false if
+> > > CONFIG_MEMCG_KMEM is not configured, it is safe to this replacement.
+> > >
+> > > Cc: Dave Chinner <dchinner@redhat.com>
+> > > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> >
+> > ....
+> >
+> > > @@ -299,17 +299,15 @@ unsigned long list_lru_walk_node(struct list_lru *lru, int nid,
+> > >                                list_lru_walk_cb isolate, void *cb_arg,
+> > >                                unsigned long *nr_to_walk)
+> > >  {
+> > > +     struct mem_cgroup *memcg;
+> > >       long isolated = 0;
+> > > -     int memcg_idx;
+> > >
+> > > -     isolated += list_lru_walk_one(lru, nid, NULL, isolate, cb_arg,
+> > > -                                   nr_to_walk);
+> > > -     if (*nr_to_walk > 0 && list_lru_memcg_aware(lru)) {
+> > > -             for_each_memcg_cache_index(memcg_idx) {
+> > > +     if (list_lru_memcg_aware(lru)) {
+> > > +             for_each_mem_cgroup(memcg) {
+> > >                       struct list_lru_node *nlru = &lru->node[nid];
+> > >
+> > >                       spin_lock(&nlru->lock);
+> > > -                     isolated += __list_lru_walk_one(nlru, memcg_idx,
+> > > +                     isolated += __list_lru_walk_one(nlru, memcg,
+> > >                                                       isolate, cb_arg,
+> > >                                                       nr_to_walk);
+> > >                       spin_unlock(&nlru->lock);
+> > > @@ -317,7 +315,11 @@ unsigned long list_lru_walk_node(struct list_lru *lru, int nid,
+> > >                       if (*nr_to_walk <= 0)
+> > >                               break;
+> > >               }
+> > > +     } else {
+> > > +             isolated += list_lru_walk_one(lru, nid, NULL, isolate, cb_arg,
+> > > +                                           nr_to_walk);
+> > >       }
+> > > +
+> >
+> > That's a change of behaviour. The old code always runs per-node
+> > reclaim, then if the LRU is memcg aware it also runs the memcg
+> > aware reclaim. The new code never runs global per-node reclaim
+> > if the list is memcg aware, so shrinkers that are initialised
+> > with the flags SHRINKER_NUMA_AWARE | SHRINKER_MEMCG_AWARE seem
+> > likely to have reclaim problems with mixed memcg/global memory
+> > pressure scenarios.
+> >
+> > e.g. if all the memory is in the per-node lists, and the memcg needs
+> > to reclaim memory because of a global shortage, it is now unable to
+> > reclaim global memory.....
+> >
+> 
+> Hi Dave,
+> 
+> Thanks for your detailed explanation.
+> But I have different understanding.
+> The difference between for_each_mem_cgroup(memcg) and
+> for_each_memcg_cache_index(memcg_idx) is that the
+> for_each_mem_cgroup() includes the root_mem_cgroup while the
+> for_each_memcg_cache_index() excludes the root_mem_cgroup because the
+> memcg_idx of it is -1.
 
-CC tmpfs maintainer, linux-mm and Andrew Morton, who is the one sending
-most of the tmpfs patches to Linus.
+Except that the "root" memcg that for_each_mem_cgroup() is not the
+"global root" memcg - it is whatever memcg that is passed down in
+the shrink_control, whereever that sits in the cgroup tree heirarchy.
+do_shrink_slab() only ever passes down the global root memcg to the
+shrinkers when the global root memcg is passed to shrink_slab(), and
+that does not iterate the memcg heirarchy - it just wants to
+reclaim from global caches an non-memcg aware shrinkers.
 
-Also worth mentioning these previous attempts by zhengbin, which was trying to
-address the same problem without the per-sb ino counter approach:
+IOWs, there are multiple changes in behaviour here - memcg specific
+reclaim won't do global reclaim, and global reclaim will now iterate
+all memcgs instead of just the global root memcg.
 
-https://patchwork.kernel.org/patch/11254001/
-https://patchwork.kernel.org/patch/11023915/
+> So it can reclaim global memory even if the list is memcg aware.
+> Is that right ?
 
-Thanks,
-Amir.
+If the memcg passed to this fucntion is the root memcg, then yes,
+it will behave as you suggest. But for the majority of memcg-context
+reclaim, the memcg is not the root memcg and so they will not do
+global reclaim anymore...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
