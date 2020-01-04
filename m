@@ -2,221 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31FC413046E
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2020 21:41:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24CBE130492
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2020 22:16:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726260AbgADUlk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 4 Jan 2020 15:41:40 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:48260 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726118AbgADUlj (ORCPT
+        id S1726207AbgADVQQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 4 Jan 2020 16:16:16 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:44324 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbgADVQQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 4 Jan 2020 15:41:39 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 77F1B8EE0E9;
-        Sat,  4 Jan 2020 12:41:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1578170499;
-        bh=gmdUDBd/geITnJkhKZod9UIasb0bMhTQiITcDZytJT8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gb8tjPdfjSHdxjrEeRH4a7nz9o9WP/DJXiuyKqNju3KwlC45PpbO02ef0xS0R1lLh
-         qKidk2+7rfAqJeNdV+Xu6qubIjNLOl2s3CPLng7Ud/tQZ3ltweewm+RhKAuBYc0TF2
-         se5+cR7veqguVUxlEd0Orw8Co89bftVtyYJVcryQ=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id fnWcIxU7Bn0H; Sat,  4 Jan 2020 12:41:39 -0800 (PST)
-Received: from jarvis.int.hansenpartnership.com (jarvis.ext.hansenpartnership.com [153.66.160.226])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id AF80E8EE079;
-        Sat,  4 Jan 2020 12:41:38 -0800 (PST)
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        linux-unionfs@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-        =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        containers@lists.linux-foundation.org
-Subject: [PATCH v2 3/3] fs: expose shifting bind mount to userspace
-Date:   Sat,  4 Jan 2020 12:39:46 -0800
-Message-Id: <20200104203946.27914-4-James.Bottomley@HansenPartnership.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20200104203946.27914-1-James.Bottomley@HansenPartnership.com>
-References: <20200104203946.27914-1-James.Bottomley@HansenPartnership.com>
+        Sat, 4 Jan 2020 16:16:16 -0500
+Received: by mail-io1-f65.google.com with SMTP id b10so44722867iof.11;
+        Sat, 04 Jan 2020 13:16:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=snCBX0j5ay9kgj6iZfPL2/aocexXLHXt8hsG7KfcQKY=;
+        b=H0NUm63m1Oa+7DyTVnNJc/PlM5/UteN16n7bvwASZASu8wmJEzHg97yJ9jNyu1JFys
+         UEzWGhX7D2cAUsw5lwf9q3KwM+AC1hFNyQDDuycsUAWzJJRQsE/aTrfnr43420ebgOoz
+         Tf5v9J6K/Lu2NiafplulCkrh42anLxLtoTjRkve4VnLzO/EBakjavSFufAfk9gDamY/f
+         TFMKQvcXqoU6ustmDPPDEsB9mgp+EzplBKZtpOUIL2emCqu4Lu6agAWcf6RG8uYMLQCh
+         MWI5+wZ1pA2/SHfxX/y/jyFugDX0duj0BoayGr6n8r/dulX03T5djGNYVJwmvFQBwKrx
+         m51Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=snCBX0j5ay9kgj6iZfPL2/aocexXLHXt8hsG7KfcQKY=;
+        b=WabzXcWpGb+QK6ymQqDSGjWXweD7RUfgWMoaUIIkMtbYbA8W8PGKgsDO0X6G48xZNT
+         h5n71rYe1/xCWAimMNW3zaWxoHgcADv+2lNQA/DbkmZvCRbaGuz5wiqzqXyfGk+ecinJ
+         uGcWD0NxMo6fyPGDlWo06ku0yoMaS7HbzI3iNpzYcAwpeRDLqd6+jbfdUnkN5s4htK35
+         vVAznoVH+XYdG1uAE2VOqTREAqMck9EZdFzxPLK+Wp57uc52rT2CxYO2W/OQci+Ub4Ox
+         zBXHx/krLo7bFabtR21oDio47M3QRbVUUIg7Uhw6oVvI5aRlh+8VSYEEjSmnBkpbvP37
+         pVcw==
+X-Gm-Message-State: APjAAAVvAugB9CZmLEzMDiZzf31+53AuGCaLk7JtCkM0gVhVF5R/6N6S
+        AEiF+19xXt86IBOtDaE2DbgPck4CO5yH4cHJnAw=
+X-Google-Smtp-Source: APXvYqwpNX0oJAGFb7plxGj+mrk/pVD85S5jglSWMAHsjkX180fee7do9kPBZ3lFzsuac3e1xHxfVdTrHJ0kodA7IoQ=
+X-Received: by 2002:a6b:5904:: with SMTP id n4mr65813651iob.9.1578172575756;
+ Sat, 04 Jan 2020 13:16:15 -0800 (PST)
+MIME-Version: 1.0
+References: <cover.1578072481.git.chris@chrisdown.name>
+In-Reply-To: <cover.1578072481.git.chris@chrisdown.name>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sat, 4 Jan 2020 23:16:04 +0200
+Message-ID: <CAOQ4uxhC6L6whNyc6bs99ZcMRxMOt5xNR0HMKmJ8w1thXgO+zw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] fs: inode: shmem: Reduce risk of inum overflow
+To:     Chris Down <chris@chrisdown.name>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@fb.com,
+        Hugh Dickins <hughd@google.com>,
+        "zhengbin (A)" <zhengbin13@huawei.com>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This capability is exposed currently through the proposed new bind
-API. To mark a mount for shifting, you add the allow-shift flag to the
-properties, either by a reconfigure or a rebind.  Only real root on
-the system can do this.  Once this is done, admin in a user namespace
-(i.e. an unprivileged user) can take that mount point and bind it with
-a shift in effect.
+On Fri, Jan 3, 2020 at 7:30 PM Chris Down <chris@chrisdown.name> wrote:
+>
+> In Facebook production we are seeing heavy i_ino wraparounds on tmpfs.
+> On affected tiers, in excess of 10% of hosts show multiple files with
+> different content and the same inode number, with some servers even
+> having as many as 150 duplicated inode numbers with differing file
+> content.
+>
+> This causes actual, tangible problems in production. For example, we
+> have complaints from those working on remote caches that their
+> application is reporting cache corruptions because it uses (device,
+> inodenum) to establish the identity of a particular cache object, but
+> because it's not unique any more, the application refuses to continue
+> and reports cache corruption. Even worse, sometimes applications may not
+> even detect the corruption but may continue anyway, causing phantom and
+> hard to debug behaviour.
+>
+> In general, userspace applications expect that (device, inodenum) should
+> be enough to be uniquely point to one inode, which seems fair enough.
+> One might also need to check the generation, but in this case:
+>
+> 1. That's not currently exposed to userspace
+>    (ioctl(...FS_IOC_GETVERSION...) returns ENOTTY on tmpfs);
+> 2. Even with generation, there shouldn't be two live inodes with the
+>    same inode number on one device.
+>
+> In order to mitigate this, we take a two-pronged approach:
+>
+> 1. Moving inum generation from being global to per-sb for tmpfs. This
+>    itself allows some reduction in i_ino churn. This works on both 64-
+>    and 32- bit machines.
+> 2. Adding inode{64,32} for tmpfs. This fix is supported on machines with
+>    64-bit ino_t only: we allow users to mount tmpfs with a new inode64
+>    option that uses the full width of ino_t, or CONFIG_TMPFS_INODE64.
+>
+> Chris Down (2):
+>   tmpfs: Add per-superblock i_ino support
+>   tmpfs: Support 64-bit inums per-sb
+>
+>  Documentation/filesystems/tmpfs.txt | 11 ++++
+>  fs/Kconfig                          | 15 +++++
+>  include/linux/shmem_fs.h            |  2 +
+>  mm/shmem.c                          | 97 ++++++++++++++++++++++++++++-
+>  4 files changed, 124 insertions(+), 1 deletion(-)
+>
 
-The way an admin marks a mount is:
+CC tmpfs maintainer, linux-mm and Andrew Morton, who is the one sending
+most of the tmpfs patches to Linus.
 
-pathfd = open("/path/to/shift", O_PATH);
-fd = configfd_open("bind", O_CLOEXEC);
-configfd_action(fd, CONFIGFD_SET_FD, "pathfd", NULL, pathfd);
-configfd_action(fd, CONFIGFD_SET_FLAG, "allow-shift", NULL, 0);
-configfd_action(fd, CONFIGFD_SET_FLAG, "detached", NULL, 0);
-configfd_action(fd, CONFIGFD_CMD_CREATE, NULL, NULL, 0);
-configfd_action(fd, CONFIGFD_GET_FD, "bindfd", &bindfd, O_CLOEXEC);
+Also worth mentioning these previous attempts by zhengbin, which was trying to
+address the same problem without the per-sb ino counter approach:
 
-move_mount(bindfd, "", AT_FDCWD, "/path/to/allow", MOVE_MOUNT_F_EMPTY_PATH);
+https://patchwork.kernel.org/patch/11254001/
+https://patchwork.kernel.org/patch/11023915/
 
-Technically /path/to/shift and /path/to/allow can be the same, which
-basically installs a mnt at the path that allows onward traversal.
-
-Then any mount namespace in a user namespace can do:
-
-pathfd = open("/path/to/allow", O_PATH);
-fd = configfd_open("bind", O_CLOEXEC);
-configfd_action(fd, CONFIGFD_SET_FD, "pathfd", NULL, pathfd);
-configfd_action(fd, CONFIGFD_SET_FLAG, "shift", NULL, 0);
-configfd_action(fd, CONFIGFD_SET_FLAG, "detached", NULL, 0);
-configfd_action(fd, CONFIGFD_CMD_CREATE, NULL, NULL, 0);
-configfd_action(fd, CONFIGFD_GET_FD, "bindfd", &bindfd, O_CLOEXEC);
-
-move_mount(bindfd, "", AT_FDCWD, "/path/to/mount", MOVE_MOUNT_F_EMPTY_PATH);
-
-And /path/to/mount will have the uid/gid shifting bind mount installed.
-
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
----
- fs/bind.c           | 35 +++++++++++++++++++++++++++++++++++
- fs/mount.h          |  2 ++
- fs/namespace.c      |  1 +
- fs/proc_namespace.c |  4 ++++
- 4 files changed, 42 insertions(+)
-
-diff --git a/fs/bind.c b/fs/bind.c
-index eea4e6cd5108..6b4668041248 100644
---- a/fs/bind.c
-+++ b/fs/bind.c
-@@ -21,6 +21,8 @@ struct bind_data {
- 	bool		nodev:1;
- 	bool		detached:1;
- 	bool		recursive:1;
-+	bool		shift:1;
-+	bool		allow_shift:1;
- 	struct file	*file;
- 	struct file	*retfile;
- };
-@@ -66,6 +68,25 @@ static int bind_set_flag(const struct configfd_context *cfc,
- 		bd->nodev = true;
- 	} else if (strcmp(p->key, "noexec") == 0) {
- 		bd->noexec = true;
-+	} else if (strcmp(p->key, "shift") == 0) {
-+		struct mount *m;
-+
-+		if (!bd->file) {
-+			logger_err(cfc->log, "can't shift without setting pathfd");
-+			return -EINVAL;
-+		}
-+		m = real_mount(bd->file->f_path.mnt);
-+		if (!m->allow_shift) {
-+			logger_err(cfc->log, "pathfd doesn't allow shifting");
-+			return -EINVAL;
-+		}
-+		bd->shift = true;
-+	} else if (strcmp(p->key, "allow-shift") == 0) {
-+		if (!capable(CAP_SYS_ADMIN)) {
-+			logger_err(cfc->log, "must be root to set allow-shift");
-+			return -EPERM;
-+		}
-+		bd->allow_shift = true;
- 	} else if (strcmp(p->key, "recursive") == 0 &&
- 		   cfc->op == CONFIGFD_CMD_CREATE) {
- 		bd->recursive = true;
-@@ -126,6 +147,8 @@ static int bind_get_mnt_flags(struct bind_data *bd, int mnt_flags)
- 		mnt_flags |= MNT_NODEV;
- 	if (bd->noexec)
- 		mnt_flags |= MNT_NOEXEC;
-+	if (bd->shift)
-+		mnt_flags |= MNT_SHIFT;
- 
- 	return mnt_flags;
- }
-@@ -143,6 +166,13 @@ static int bind_reconfigure(const struct configfd_context *cfc)
- 	mnt_flags = bd->file->f_path.mnt->mnt_flags & MNT_ATIME_MASK;
- 	mnt_flags = bind_get_mnt_flags(bd, mnt_flags);
- 
-+	if (bd->allow_shift) {
-+		struct mount *m = real_mount(bd->file->f_path.mnt);
-+
-+		/* FIXME: this should be set with the reconfigure locking */
-+		m->allow_shift = true;
-+	}
-+
- 	return do_reconfigure_mnt(&bd->file->f_path, mnt_flags);
- }
- 
-@@ -183,6 +213,11 @@ static int bind_create(const struct configfd_context *cfc)
- 
- 		/* since this is a detached copy, we can do without locking */
- 		f->f_path.mnt->mnt_flags |= mnt_flags;
-+		if (bd->allow_shift) {
-+			struct mount *m = real_mount(f->f_path.mnt);
-+
-+			m->allow_shift = true;
-+		}
- 	}
- 
- 	bd->retfile = f;
-diff --git a/fs/mount.h b/fs/mount.h
-index 711a4093e475..1da13decf93b 100644
---- a/fs/mount.h
-+++ b/fs/mount.h
-@@ -72,6 +72,8 @@ struct mount {
- 	int mnt_expiry_mark;		/* true if marked for expiry */
- 	struct hlist_head mnt_pins;
- 	struct hlist_head mnt_stuck_children;
-+	/* shifting bind mount parameters */
-+	bool allow_shift:1;
- } __randomize_layout;
- 
- #define MNT_NS_INTERNAL ERR_PTR(-EINVAL) /* distinct from any mnt_namespace */
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 3ae0124e9783..8266e9540595 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1038,6 +1038,7 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
- 
- 	mnt->mnt.mnt_flags = old->mnt.mnt_flags;
- 	mnt->mnt.mnt_flags &= ~(MNT_WRITE_HOLD|MNT_MARKED|MNT_INTERNAL);
-+	mnt->allow_shift = old->allow_shift;
- 
- 	atomic_inc(&sb->s_active);
- 	mnt->mnt.mnt_sb = sb;
-diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
-index 273ee82d8aa9..bdf8d23cf42e 100644
---- a/fs/proc_namespace.c
-+++ b/fs/proc_namespace.c
-@@ -70,14 +70,18 @@ static void show_mnt_opts(struct seq_file *m, struct vfsmount *mnt)
- 		{ MNT_NOATIME, ",noatime" },
- 		{ MNT_NODIRATIME, ",nodiratime" },
- 		{ MNT_RELATIME, ",relatime" },
-+		{ MNT_SHIFT, ",shift" },
- 		{ 0, NULL }
- 	};
- 	const struct proc_fs_info *fs_infop;
-+	struct mount *rm = real_mount(mnt);
- 
- 	for (fs_infop = mnt_info; fs_infop->flag; fs_infop++) {
- 		if (mnt->mnt_flags & fs_infop->flag)
- 			seq_puts(m, fs_infop->str);
- 	}
-+	if (rm->allow_shift)
-+		seq_puts(m, ",allow-shift");
- }
- 
- static inline void mangle(struct seq_file *m, const char *s)
--- 
-2.16.4
-
+Thanks,
+Amir.
