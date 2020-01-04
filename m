@@ -2,65 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECB5F13018D
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2020 10:10:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8E991303F8
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2020 20:09:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726199AbgADJKB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 4 Jan 2020 04:10:01 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:38930 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726103AbgADJKB (ORCPT
+        id S1726167AbgADTJd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 4 Jan 2020 14:09:33 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:33713 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726118AbgADTJc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 4 Jan 2020 04:10:01 -0500
-Received: from dread.disaster.area (pa49-180-68-255.pa.nsw.optusnet.com.au [49.180.68.255])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 9109143F45C;
-        Sat,  4 Jan 2020 20:09:56 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1infRT-0001jO-J9; Sat, 04 Jan 2020 20:09:55 +1100
-Date:   Sat, 4 Jan 2020 20:09:55 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [LSF/MM TOPIC] Congestion
-Message-ID: <20200104090955.GF23195@dread.disaster.area>
-References: <20191231125908.GD6788@bombadil.infradead.org>
+        Sat, 4 Jan 2020 14:09:32 -0500
+Received: by mail-il1-f196.google.com with SMTP id v15so39278251iln.0;
+        Sat, 04 Jan 2020 11:09:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wFEXNOMKAzSNhSrJjWqlZa8udA4NNM3xeAKljDmm5RM=;
+        b=QG/h/lQnJXJJBu8QCNJrn2ezR23I2Fp1wFfPNEvee9hKnoifMgxP0rMU2ro6tMaI28
+         mi2GzrbEJqrIpTe/s2OpwsT9x1w1r1Zd32gs1KOs2lX8rKbl3NRjzTRGXtjRPRk4FADg
+         bRStZ1h53bzZ3ikFmZhvJh7sF/Tx3ayd0zxdEBPCMoWdEKalWXgMnvm6fp43LkRUSKmP
+         WmT1zCFjWPWOovRyOt55ZgXjLbqlGqOK6T+pcVNQSwduOygBf1PSUOi9PnbwbfXSYUQl
+         mehl/xqNRrNuQ58ywAcbZ6tx08os+y1yKgfjyHYY/F5XcUk0ulIHxVGr9RJTScagJXuj
+         Mx6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wFEXNOMKAzSNhSrJjWqlZa8udA4NNM3xeAKljDmm5RM=;
+        b=LRQrJeX8u+5utH2sUEBoDSTl4LHop+DEsHR8lTGL4VFLf7NwMEnbkbLz18aRlyd/jY
+         3YyHZUZwGAc4tPw384MDgXRCIWuxNA+mNjUR6pJ2TEttPvaKL1BNnSUrK88HL2AEF/XV
+         EJzTggIMAanusOiK3g9zTN7yA6hXgBZxPyqR1voHke1rkah2GsJAQU+yEYqysuS6uwpi
+         l27DCeSTO4Mau0crUnn1nX3Je+R+sk7gszmwwiTd24xfXmBmpPpRMCrnbhwGa/X6fOrK
+         IKtQWxkv2M/lJ2nE5Nv8RS7UAlbBZpwvG3UnmpupsgqqaXsVcSXW8+3uVOFb9A9ulTw6
+         p43A==
+X-Gm-Message-State: APjAAAWtwyu5iHGrfSffqhOSZSQJF88oMLZ7rGjqI44ICGT++QEi6b8n
+        qYxkw1iSXjsJSxTyRgYW4sqMkk4UnmJFWH0pZlQ=
+X-Google-Smtp-Source: APXvYqyW1em6W7xlXG2UyGMG+FdvOIalowJ0t1Um4YeUYamaAZabpkASnAAlPisrD96XGIEEpRCwq5iFHIZ4+CYm1Q8=
+X-Received: by 2002:a92:88d0:: with SMTP id m77mr84723155ilh.9.1578164971526;
+ Sat, 04 Jan 2020 11:09:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191231125908.GD6788@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
-        a=sbdTpStuSq8iNQE8viVliQ==:117 a=sbdTpStuSq8iNQE8viVliQ==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=Jdjhy38mL1oA:10
-        a=VwQbUJbxAAAA:8 a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8 a=yCk7sgB39VCk9DmHSNQA:9
-        a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22 a=1CNFftbPRP8L7MoqJWF3:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+References: <cover.1578072481.git.chris@chrisdown.name> <19ff8eddfe9cbafc87e55949189704f31d123172.1578072481.git.chris@chrisdown.name>
+In-Reply-To: <19ff8eddfe9cbafc87e55949189704f31d123172.1578072481.git.chris@chrisdown.name>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sat, 4 Jan 2020 21:09:20 +0200
+Message-ID: <CAOQ4uxjZUYNjBZKU85TMCjtBf9ear7s4yxYSZcBX6rTZoYK-Hg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] tmpfs: Add per-superblock i_ino support
+To:     Chris Down <chris@chrisdown.name>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@fb.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 31, 2019 at 04:59:08AM -0800, Matthew Wilcox wrote:
-> 
-> I don't want to present this topic; I merely noticed the problem.
-> I nominate Jens Axboe and Michael Hocko as session leaders.  See the
-> thread here:
-> 
-> https://lore.kernel.org/linux-mm/20190923111900.GH15392@bombadil.infradead.org/
-> 
-> Summary: Congestion is broken and has been for years, and everybody's
-> system is sleeping waiting for congestion that will never clear.
+On Fri, Jan 3, 2020 at 7:30 PM Chris Down <chris@chrisdown.name> wrote:
+>
+> get_next_ino has a number of problems:
+>
+> - It uses and returns a uint, which is susceptible to become overflowed
+>   if a lot of volatile inodes that use get_next_ino are created.
+> - It's global, with no specificity per-sb or even per-filesystem. This
+>   means it's not that difficult to cause inode number wraparounds on a
+>   single device, which can result in having multiple distinct inodes
+>   with the same inode number.
+>
+> This patch adds a per-superblock counter that mitigates the second case.
+> This design also allows us to later have a specific i_ino size
+> per-device, for example, allowing users to choose whether to use 32- or
+> 64-bit inodes for each tmpfs mount. This is implemented in the next
+> commit.
+>
+> Signed-off-by: Chris Down <chris@chrisdown.name>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Cc: Jeff Layton <jlayton@kernel.org>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Tejun Heo <tj@kernel.org>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: kernel-team@fb.com
+> ---
 
-Another symptom: system does not sleep because there is no recorded
-congestion so it doesn't back off when it should (the
-wait_iff_congested() backoff case).
+Some nits. When fixed you may add:
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-Cheers,
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+>  include/linux/shmem_fs.h |  1 +
+>  mm/shmem.c               | 33 ++++++++++++++++++++++++++++++++-
+>  2 files changed, 33 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+> index de8e4b71e3ba..7fac91f490dc 100644
+> --- a/include/linux/shmem_fs.h
+> +++ b/include/linux/shmem_fs.h
+> @@ -35,6 +35,7 @@ struct shmem_sb_info {
+>         unsigned char huge;         /* Whether to try for hugepages */
+>         kuid_t uid;                 /* Mount uid for root directory */
+>         kgid_t gid;                 /* Mount gid for root directory */
+> +       ino_t next_ino;             /* The next per-sb inode number to use */
+>         struct mempolicy *mpol;     /* default memory policy for mappings */
+>         spinlock_t shrinklist_lock;   /* Protects shrinklist */
+>         struct list_head shrinklist;  /* List of shinkable inodes */
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 8793e8cc1a48..638b1e30625f 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2236,6 +2236,15 @@ static int shmem_mmap(struct file *file, struct vm_area_struct *vma)
+>         return 0;
+>  }
+>
+> +/*
+> + * shmem_get_inode - reserve, allocate, and initialise a new inode
+> + *
+> + * If SB_KERNMOUNT, we use the per-sb inode allocator to avoid wraparound.
+> + * Otherwise, we use get_next_ino, which is global.
+
+Its the other way around.
+
+> + *
+> + * If max_inodes is greater than 0 (ie. non-SB_KERNMOUNT), we may have to grab
+> + * the per-sb stat_lock.
+
+It's not a "may" it's for sure, but I don't see what this comment adds
+in this context.
+The comment about stat_lock below seems enough to me.
+
+> + */
+>  static struct inode *shmem_get_inode(struct super_block *sb, const struct inode *dir,
+>                                      umode_t mode, dev_t dev, unsigned long flags)
+>  {
+> @@ -2248,7 +2257,28 @@ static struct inode *shmem_get_inode(struct super_block *sb, const struct inode
+>
+>         inode = new_inode(sb);
+>         if (inode) {
+> -               inode->i_ino = get_next_ino();
+> +               if (sb->s_flags & SB_KERNMOUNT) {
+> +                       /*
+> +                        * __shmem_file_setup, one of our callers, is lock-free:
+> +                        * it doesn't hold stat_lock in shmem_reserve_inode
+> +                        * since max_inodes is always 0, and is called from
+> +                        * potentially unknown contexts. As such, use the global
+> +                        * allocator which doesn't require the per-sb
+.
+> +                        */
+> +                       inode->i_ino = get_next_ino();
+> +               } else {
+> +                       spin_lock(&sbinfo->stat_lock);
+> +                       if (unlikely(sbinfo->next_ino > UINT_MAX)) {
+> +                               /*
+> +                                * Emulate get_next_ino uint wraparound for
+> +                                * compatibility
+> +                                */
+> +                               sbinfo->next_ino = 1;
+> +                       }
+> +                       inode->i_ino = sbinfo->next_ino++;
+> +                       spin_unlock(&sbinfo->stat_lock);
+> +               }
+> +
+>                 inode_init_owner(inode, dir, mode);
+>                 inode->i_blocks = 0;
+>                 inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
+> @@ -3662,6 +3692,7 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
+>  #else
+>         sb->s_flags |= SB_NOUSER;
+>  #endif
+> +       sbinfo->next_ino = 1;
+>         sbinfo->max_blocks = ctx->blocks;
+>         sbinfo->free_inodes = sbinfo->max_inodes = ctx->inodes;
+>         sbinfo->uid = ctx->uid;
+> --
+> 2.24.1
+>
