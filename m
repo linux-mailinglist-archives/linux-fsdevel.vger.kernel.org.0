@@ -2,135 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1CB5130119
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2020 06:52:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0681813014E
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jan 2020 08:27:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726036AbgADFwK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 4 Jan 2020 00:52:10 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43752 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725892AbgADFwK (ORCPT
+        id S1725945AbgADH0v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 4 Jan 2020 02:26:51 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:33669 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725870AbgADH0u (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 4 Jan 2020 00:52:10 -0500
-Received: by mail-pl1-f193.google.com with SMTP id p27so19779324pli.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Jan 2020 21:52:10 -0800 (PST)
+        Sat, 4 Jan 2020 02:26:50 -0500
+Received: by mail-il1-f196.google.com with SMTP id v15so38478012iln.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Jan 2020 23:26:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=lsjJu+EGZojghLrX4ddsw+K5AnhnZ8PjIQovTm/oOmU=;
-        b=qxFotJ6x1F4rGcRSERuDHRyqE7DBaXL3SH79DzRupTipxGDHuAXiqUnZhJq9ndjsu9
-         2bf7r2R/IgO9l9e7G72q2Db4fEbz/XVh/YTalI0uQCjXoipjAylw+h+0ZPuiWjagEzuz
-         EUskdvGdVLB6WhlB45xyrK9602eohnjyuetJBzYSCIiXsvhbYtIV3NTQSfVFwWCHSFRf
-         nDH2okBELCvx9PqSnyqueAuAJ23qXLenkOaj0H910xnShH7HH+oWrMjjzx2iM7tH5XqN
-         xI1N+y2W+f5rumgYi7HZJNFQqljQ+mEt0c1gGnGttu9R38uAzs2BN7xrluzwIFmDztQv
-         v6jA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4USNzvDLp/jyy/kPx70cSKAWD4PRDCrYfn94EJlOaio=;
+        b=JS2Hu8eFeQjooDGgpOE3mupsoTlqoEgC/pzbymKFSBrdxuTe8XQpaeZ9dV1q1bm959
+         yqwfjj6NvnAI5H7f/1cSICaLM6kNI3nn3X7PkmRsULXF/MahGSsyY66+0cmRhDsjcZqM
+         j0HwW4DO/HPUPGW5XE9AiU6iJ+wDxadef2SWdfHTqaofJ1bJv5FwgFuqhcz9/bf5dcUV
+         pyO+BuxIu+q4hQBd4fh9/54Qaz4INhahpautM+eB0kiV6m+u/aJM2BO9+Fqwi1eGIs/J
+         xg0pI2+8E8Eulyf7a6TxfifiHsXPuAttgjOFYzDUMBbH/JdDMz8x/lCfKxLx+RA9kVHt
+         3KIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=lsjJu+EGZojghLrX4ddsw+K5AnhnZ8PjIQovTm/oOmU=;
-        b=sh0P/kPGns7w8cHS9QRCWLKwVYob8B6llYjy/TQ1jq5DBi9FBprszatu2nDa4MJ4q4
-         0nCqmyAKDdxfxs+d2mqOD/eyRyuoQ+SHo5ypQO8xNhH9Kipt9pWJ/a9yrUyGrYVo69YN
-         TXE4quAvGIxGPwp209w/Z7STZ56DntfKOc3kVwoTL6Iq+zzLwwAx/bltEwca9uQY6mTy
-         yNJ11msv58wbYDZeDZiGeGZQWnaH1h2uiC9Cksq3Df0cvV73w6pjSjpXNYdQSBBIqmzR
-         u4gYgrY3KlV14VKHFERv+xCdJsurE/QR2w8ey7fyvlXpIJiVpERYlHj6B8HVG4E+3Qf5
-         sXwQ==
-X-Gm-Message-State: APjAAAVISrBuvqNNeBDAqLtNlLPUfI35qQT5H4Co3qPlLDnnTfrdpqb+
-        7AyRQ1WldD7QJvYRlD+tjc0VhGaidYU=
-X-Google-Smtp-Source: APXvYqxDUza2vBLfx8WAKGyjzbrpILbRtIRJnsUK2U3N3tk5x+03IayI4U7f/qILlO+0FZ3sWtC5HQ==
-X-Received: by 2002:a17:902:a706:: with SMTP id w6mr92696786plq.79.1578117129583;
-        Fri, 03 Jan 2020 21:52:09 -0800 (PST)
-Received: from [25.171.60.22] ([172.58.27.167])
-        by smtp.gmail.com with ESMTPSA id b128sm65193420pga.43.2020.01.03.21.52.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Jan 2020 21:52:08 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Andy Lutomirski <luto@amacapital.net>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH RFC 0/1] mount: universally disallow mounting over symlinks
-Date:   Sat, 4 Jan 2020 14:52:03 +0900
-Message-Id: <52B30961-5933-46D4-87A7-4056892959E8@amacapital.net>
-References: <20200101144407.ugjwzk7zxrucaa6a@yavin.dot.cyphar.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        stable@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Serge Hallyn <serge@hallyn.com>, dev@opencontainers.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20200101144407.ugjwzk7zxrucaa6a@yavin.dot.cyphar.com>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-X-Mailer: iPhone Mail (17C54)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4USNzvDLp/jyy/kPx70cSKAWD4PRDCrYfn94EJlOaio=;
+        b=GOC9LoTgaLgtwRkDCNnyRnkAWC9niM136z7vw/PzWEf0zGejFpzwua2KC5VK5cdG/y
+         Rcy7zf1aj/cClaYprSQk8wtjGuNi6DPbS9i/VqEltPCyiTM6gFqAEae+qwJyQKsoQppC
+         dsUVXZsUweRLCuPYXq6UiYRAeCWvQDyQl2cGQnHExvXxjWCFrb370OSOHnNE6MJ8vGt1
+         PjLvWxS46Gu34E6KvuNltf3U+M9YdeVbAgIIidB+1faYQ1ZExNwI+e2J2HplobLkJVYl
+         edvTp66361HAUewRcsS4R2pRiorU/T0D4M7h0BbTVglalc1kFEF7kUC12nT4vaOXmFXu
+         V/Jg==
+X-Gm-Message-State: APjAAAWudryZu9yXPNjNUofjgzbNPZcDzpwV6d9pmOdVeuLEE8OQmPRY
+        sTbM56qArqj03GTjGPDLtOeUQhbh+6gcYMEawz4=
+X-Google-Smtp-Source: APXvYqyhUdzkt1LEV3/mnjboJOnzFbBNyxAIqFqasq6eUlGxIHSns3eIUOhEp8lzDyPFPxc5FWwv01ZoSr8eB8W+Ir8=
+X-Received: by 2002:a92:3a07:: with SMTP id h7mr81250759ila.203.1578122810054;
+ Fri, 03 Jan 2020 23:26:50 -0800 (PST)
+MIME-Version: 1.0
+References: <1577174006-13025-1-git-send-email-laoar.shao@gmail.com>
+ <1577174006-13025-5-git-send-email-laoar.shao@gmail.com> <20200104033558.GD23195@dread.disaster.area>
+In-Reply-To: <20200104033558.GD23195@dread.disaster.area>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Sat, 4 Jan 2020 15:26:13 +0800
+Message-ID: <CALOAHbAzDth8g8+Z5hH9QnOp02UZ5+3eQf9wAQyJM-LAhmaL9A@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] mm: make memcg visible to lru walker isolation function
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org,
+        Dave Chinner <dchinner@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Sat, Jan 4, 2020 at 11:36 AM Dave Chinner <david@fromorbit.com> wrote:
+>
+> On Tue, Dec 24, 2019 at 02:53:25AM -0500, Yafang Shao wrote:
+> > The lru walker isolation function may use this memcg to do something, e.g.
+> > the inode isolatation function will use the memcg to do inode protection in
+> > followup patch. So make memcg visible to the lru walker isolation function.
+> >
+> > Something should be emphasized in this patch is it replaces
+> > for_each_memcg_cache_index() with for_each_mem_cgroup() in
+> > list_lru_walk_node(). Because there's a gap between these two MACROs that
+> > for_each_mem_cgroup() depends on CONFIG_MEMCG while the other one depends
+> > on CONFIG_MEMCG_KMEM. But as list_lru_memcg_aware() returns false if
+> > CONFIG_MEMCG_KMEM is not configured, it is safe to this replacement.
+> >
+> > Cc: Dave Chinner <dchinner@redhat.com>
+> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+>
+> ....
+>
+> > @@ -299,17 +299,15 @@ unsigned long list_lru_walk_node(struct list_lru *lru, int nid,
+> >                                list_lru_walk_cb isolate, void *cb_arg,
+> >                                unsigned long *nr_to_walk)
+> >  {
+> > +     struct mem_cgroup *memcg;
+> >       long isolated = 0;
+> > -     int memcg_idx;
+> >
+> > -     isolated += list_lru_walk_one(lru, nid, NULL, isolate, cb_arg,
+> > -                                   nr_to_walk);
+> > -     if (*nr_to_walk > 0 && list_lru_memcg_aware(lru)) {
+> > -             for_each_memcg_cache_index(memcg_idx) {
+> > +     if (list_lru_memcg_aware(lru)) {
+> > +             for_each_mem_cgroup(memcg) {
+> >                       struct list_lru_node *nlru = &lru->node[nid];
+> >
+> >                       spin_lock(&nlru->lock);
+> > -                     isolated += __list_lru_walk_one(nlru, memcg_idx,
+> > +                     isolated += __list_lru_walk_one(nlru, memcg,
+> >                                                       isolate, cb_arg,
+> >                                                       nr_to_walk);
+> >                       spin_unlock(&nlru->lock);
+> > @@ -317,7 +315,11 @@ unsigned long list_lru_walk_node(struct list_lru *lru, int nid,
+> >                       if (*nr_to_walk <= 0)
+> >                               break;
+> >               }
+> > +     } else {
+> > +             isolated += list_lru_walk_one(lru, nid, NULL, isolate, cb_arg,
+> > +                                           nr_to_walk);
+> >       }
+> > +
+>
+> That's a change of behaviour. The old code always runs per-node
+> reclaim, then if the LRU is memcg aware it also runs the memcg
+> aware reclaim. The new code never runs global per-node reclaim
+> if the list is memcg aware, so shrinkers that are initialised
+> with the flags SHRINKER_NUMA_AWARE | SHRINKER_MEMCG_AWARE seem
+> likely to have reclaim problems with mixed memcg/global memory
+> pressure scenarios.
+>
+> e.g. if all the memory is in the per-node lists, and the memcg needs
+> to reclaim memory because of a global shortage, it is now unable to
+> reclaim global memory.....
+>
 
-> On Jan 1, 2020, at 11:44 PM, Aleksa Sarai <cyphar@cyphar.com> wrote:
->=20
-> =EF=BB=BFOn 2020-01-01, Al Viro <viro@zeniv.linux.org.uk> wrote:
->>> On Wed, Jan 01, 2020 at 12:54:46AM +0000, Al Viro wrote:
->>> Note, BTW, that lookup_last() (aka walk_component()) does just
->>> that - we only hit step_into() on LAST_NORM.  The same goes
->>> for do_last().  mountpoint_last() not doing the same is _not_
->>> intentional - it's definitely a bug.
->>>=20
->>> Consider your testcase; link points to . here.  So the only
->>> thing you could expect from trying to follow it would be
->>> the directory 'link' lives in.  And you don't have it
->>> when you reach the fscker via /proc/self/fd/3; what happens
->>> instead is nd->path set to ./link (by nd_jump_link()) *AND*
->>> step_into() called, pushing the same ./link onto stack.
->>> It violates all kinds of assumptions made by fs/namei.c -
->>> when pushing a symlink onto stack nd->path is expected to
->>> contain the base directory for resolving it.
->>>=20
->>> I'm fairly sure that this is the cause of at least some
->>> of the insanity you've caught; there always could be
->>> something else, of course, but this hole needs to be
->>> closed in any case.
->>=20
->> ... and with removal of now unused local variable, that's
->>=20
->> mountpoint_last(): fix the treatment of LAST_BIND
->>=20
->> step_into() should be attempted only in LAST_NORM
->> case, when we have the parent directory (in nd->path).
->> We get away with that for LAST_DOT and LOST_DOTDOT,
->> since those can't be symlinks, making step_init() and
->> equivalent of path_to_nameidata() - we do a bit of
->> useless work, but that's it.  For LAST_BIND (i.e.
->> the case when we'd just followed a procfs-style
->> symlink) we really can't go there - result might
->> be a symlink and we really can't attempt following
->> it.
->>=20
->> lookup_last() and do_last() do handle that properly;
->> mountpoint_last() should do the same.
->>=20
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
->=20
-> Thanks, this fixes the issue for me (and also fixes another reproducer I
-> found -- mounting a symlink on top of itself then trying to umount it).
->=20
-> Reported-by: Aleksa Sarai <cyphar@cyphar.com>
-> Tested-by: Aleksa Sarai <cyphar@cyphar.com>
->=20
-> As for the original topic of bind-mounting symlinks -- given this is a
-> supported feature, would you be okay with me sending an updated
-> O_EMPTYPATH series?
+Hi Dave,
 
-FWIW, I have an actual use case for mounting over a symlink: replacing /etc/=
-resolv.conf.  My virtme tool is presented with somewhat arbitrary crud in /e=
-tc, where /etc/resolv.conf might be a plain file or a symlink, but, regardle=
-ss, has inappropriate contents. If it=E2=80=99s a file, I can mount a new fi=
-le over it. If it=E2=80=99s a symlink and the kernel properly supported it, I=
- could also mount over it.
+Thanks for your detailed explanation.
+But I have different understanding.
+The difference between for_each_mem_cgroup(memcg) and
+for_each_memcg_cache_index(memcg_idx) is that the
+for_each_mem_cgroup() includes the root_mem_cgroup while the
+for_each_memcg_cache_index() excludes the root_mem_cgroup because the
+memcg_idx of it is -1.
+So it can reclaim global memory even if the list is memcg aware.
+Is that right ?
 
-Yes, I could also use overlayfs.  Maybe I should regardless.
+Thanks
+Yafang
