@@ -2,350 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D19813086A
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jan 2020 15:20:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D128F1308B3
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jan 2020 16:25:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726368AbgAEOUh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Jan 2020 09:20:37 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:47783 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726188AbgAEOUh (ORCPT
+        id S1726390AbgAEPYv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Jan 2020 10:24:51 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33039 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726212AbgAEPYv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Jan 2020 09:20:37 -0500
-Received: from [172.58.27.182] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1io6lb-0001nF-EZ; Sun, 05 Jan 2020 14:20:32 +0000
-Date:   Sun, 5 Jan 2020 15:20:23 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tycho@tycho.ws, jannh@google.com,
-        cyphar@cyphar.com, oleg@redhat.com, luto@amacapital.net,
-        viro@zeniv.linux.org.uk, gpascutto@mozilla.com,
-        ealvarez@mozilla.com, fweimer@redhat.com, jld@mozilla.com,
-        arnd@arndb.de
-Subject: Re: [PATCH v8 3/3] test: Add test for pidfd getfd
-Message-ID: <20200105142019.umls5ff4b5433u6k@wittgenstein>
-References: <20200103162928.5271-1-sargun@sargun.me>
- <20200103162928.5271-4-sargun@sargun.me>
+        Sun, 5 Jan 2020 10:24:51 -0500
+Received: by mail-wr1-f68.google.com with SMTP id b6so47010085wrq.0;
+        Sun, 05 Jan 2020 07:24:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4F9+RY0yU9fqVfTSeicS1qBjnlshzGXW5AwJXhtTU9s=;
+        b=E18QoDhneNFDiyLfRMo2yBdct25MXHmDNVcq2fDINCHw6wdWiuCwG7Fv8YCu+z373m
+         zQ0FfWrp+Pc9Y1Pkrj7Z50QO9TsZbIuGTm9O3adSW70qeoX0YL42SCMioOeJW0XvdCOD
+         6oF7MIufHhxF7babum0iXZvAvBgRi+hJoo3X21mDv5ZhQU9LWbPDWu6vRRC/m39b7jMh
+         clQpzSaNQy7e1yZs8CPlaO5vkHlQMebiFfWEoWB4o46Vfh/FaqO/1XiWV0p6v+3+ckn5
+         a+7sIydrU7OmEsPMG7N3PWu556IRjBt6Hd+dMJR+7fdCYP4NylzAkjI5lpZ7bJYHNSco
+         cfAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4F9+RY0yU9fqVfTSeicS1qBjnlshzGXW5AwJXhtTU9s=;
+        b=FiYj31QT1J5ORY/F+lX7eJ5zOl8Q7KeWkFn9je/T5fpv4J7xLzNIJ+r55J90dzdAEY
+         EriFbWmIRu2PQeChv1kqG8I9YGoohHvorXwfhpvFGilJsRhUWVXq/cIGneP2cdS0wrpn
+         Xuje9NpNWAKafQW1yqDl0KLLIuDZeX19ejlTdufd1clk5lMQZR7D3ySmBtiAKt0/vYre
+         H3Art0Mu3Ze36va81QfYx+CBa8CHAl4KOxFK5NGvckP/hll/MXgfobuIYNJyNBQW9+mo
+         bPULZEorG+qGTiUlSQGGnCWoctGjxDnrjNDqQVjG3AhYP6RSES0fBWUG5zhUVBokLnoR
+         bHyQ==
+X-Gm-Message-State: APjAAAUCXRtc5TefkW41cyWl5DS/Y3mmQLmm6WJphlkK47c0Rqizrqju
+        Vo2pF+utkC/bQc331pUh7lQ=
+X-Google-Smtp-Source: APXvYqyPCZVCPY70gGbJCHHm6NLKtjwZr+Uvzi/p6xXC+Nn1md5VrLUxOH8Ai8YZjCCIOzJSC15Wtg==
+X-Received: by 2002:adf:f78e:: with SMTP id q14mr98169159wrp.186.1578237889014;
+        Sun, 05 Jan 2020 07:24:49 -0800 (PST)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id h66sm20616568wme.41.2020.01.05.07.24.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 Jan 2020 07:24:47 -0800 (PST)
+Date:   Sun, 5 Jan 2020 16:24:47 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Namjae Jeon <namjae.jeon@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
+        sj1557.seo@samsung.com, linkinjeon@gmail.com
+Subject: Re: [PATCH v9 10/13] exfat: add nls operations
+Message-ID: <20200105152447.jo27m7jgskyu2dos@pali>
+References: <20200102082036.29643-1-namjae.jeon@samsung.com>
+ <CGME20200102082407epcas1p4cf10cd3d0ca2903707ab01b1cc523a05@epcas1p4.samsung.com>
+ <20200102082036.29643-11-namjae.jeon@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="f2e4tgqxncq2o4tg"
 Content-Disposition: inline
-In-Reply-To: <20200103162928.5271-4-sargun@sargun.me>
+In-Reply-To: <20200102082036.29643-11-namjae.jeon@samsung.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 03, 2020 at 08:29:28AM -0800, Sargun Dhillon wrote:
-> The following tests:
->   * Fetch FD, and then compare via kcmp
->   * Make sure getfd can be blocked by blocking ptrace_may_access
->   * Making sure fetching bad FDs fails
->   * Make sure trying to set flags to non-zero results in an EINVAL
-> 
-> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+
+--f2e4tgqxncq2o4tg
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thursday 02 January 2020 16:20:33 Namjae Jeon wrote:
+> This adds the implementation of nls operations for exfat.
+>=20
+> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
+> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
 > ---
->  tools/testing/selftests/pidfd/.gitignore      |   1 +
->  tools/testing/selftests/pidfd/Makefile        |   4 +-
->  .../selftests/pidfd/pidfd_getfd_test.c        | 227 ++++++++++++++++++
->  3 files changed, 230 insertions(+), 2 deletions(-)
->  create mode 100644 tools/testing/selftests/pidfd/pidfd_getfd_test.c
-> 
-> diff --git a/tools/testing/selftests/pidfd/.gitignore b/tools/testing/selftests/pidfd/.gitignore
-> index 8d069490e17b..3a779c084d96 100644
-> --- a/tools/testing/selftests/pidfd/.gitignore
-> +++ b/tools/testing/selftests/pidfd/.gitignore
-> @@ -2,3 +2,4 @@ pidfd_open_test
->  pidfd_poll_test
->  pidfd_test
->  pidfd_wait
-> +pidfd_getfd_test
-> diff --git a/tools/testing/selftests/pidfd/Makefile b/tools/testing/selftests/pidfd/Makefile
-> index 43db1b98e845..2071f7ab5dc9 100644
-> --- a/tools/testing/selftests/pidfd/Makefile
-> +++ b/tools/testing/selftests/pidfd/Makefile
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -CFLAGS += -g -I../../../../usr/include/ -pthread
-> +CFLAGS += -g -I../../../../usr/include/ -pthread -Wall
->  
-> -TEST_GEN_PROGS := pidfd_test pidfd_fdinfo_test pidfd_open_test pidfd_poll_test pidfd_wait
-> +TEST_GEN_PROGS := pidfd_test pidfd_fdinfo_test pidfd_open_test pidfd_poll_test pidfd_wait pidfd_getfd_test
->  
->  include ../lib.mk
->  
-> diff --git a/tools/testing/selftests/pidfd/pidfd_getfd_test.c b/tools/testing/selftests/pidfd/pidfd_getfd_test.c
+>  fs/exfat/nls.c | 809 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 809 insertions(+)
+>  create mode 100644 fs/exfat/nls.c
+>=20
+> diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
 > new file mode 100644
-> index 000000000000..26ca75597812
+> index 000000000000..af52328e28ff
 > --- /dev/null
-> +++ b/tools/testing/selftests/pidfd/pidfd_getfd_test.c
-> @@ -0,0 +1,227 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#define _GNU_SOURCE
-> +#include <errno.h>
-> +#include <fcntl.h>
-> +#include <limits.h>
-> +#include <linux/types.h>
-> +#include <sched.h>
-> +#include <signal.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <string.h>
-> +#include <syscall.h>
-> +#include <sys/prctl.h>
-> +#include <sys/wait.h>
-> +#include <unistd.h>
-> +#include <sys/socket.h>
-> +#include <linux/kcmp.h>
-> +
-> +#include "pidfd.h"
-> +#include "../kselftest.h"
-> +#include "../kselftest_harness.h"
-> +
-> +/*
-> + * UNKNOWN_FD is an fd number that should never exist in the child, as it is
-> + * used to check the negative case.
-> + */
-> +#define UNKNOWN_FD 111
-> +
-> +static int sys_kcmp(pid_t pid1, pid_t pid2, int type, unsigned long idx1,
-> +		    unsigned long idx2)
+> +++ b/fs/exfat/nls.c
+
+=2E..
+
+> +int exfat_nls_cmp_uniname(struct super_block *sb, unsigned short *a,
+> +		unsigned short *b)
 > +{
-> +	return syscall(__NR_kcmp, pid1, pid2, type, idx1, idx2);
-> +}
+> +	int i;
 > +
-> +static int sys_pidfd_getfd(int pidfd, int fd, int flags)
-> +{
-> +	return syscall(__NR_pidfd_getfd, pidfd, fd, flags);
-> +}
-
-I think you can move this to the pidfd.h header as:
-
-static inline int sys_pidfd_getfd(int pidfd, int fd, int flags)
-{
-	return syscall(__NR_pidfd_getfd, pidfd, fd, flags);
-}
-
-Note, this also needs an
-
-#ifndef __NR_pidfd_getfd
-__NR_pidfd_getfd -1
-#endif
-so that compilation doesn't fail.
-
-> +
-> +static int sys_memfd_create(const char *name, unsigned int flags)
-> +{
-> +	return syscall(__NR_memfd_create, name, flags);
-> +}
-> +
-> +static int __child(int sk, int memfd)
-> +{
-> +	int ret;
-> +	char buf;
-> +
-> +	/*
-> +	 * Ensure we don't leave around a bunch of orphaned children if our
-> +	 * tests fail.
-> +	 */
-> +	ret = prctl(PR_SET_PDEATHSIG, SIGKILL);
-> +	if (ret) {
-> +		fprintf(stderr, "%s: Child could not set DEATHSIG\n",
-> +			strerror(errno));
-> +		return EXIT_FAILURE;
-
-return -1
-
+> +	for (i =3D 0; i < MAX_NAME_LENGTH; i++, a++, b++) {
+> +		if (exfat_nls_upper(sb, *a) !=3D exfat_nls_upper(sb, *b))
+> +			return 1;
+> +		if (*a =3D=3D 0x0)
+> +			return 0;
 > +	}
-> +
-> +	ret = send(sk, &memfd, sizeof(memfd), 0);
-> +	if (ret != sizeof(memfd)) {
-> +		fprintf(stderr, "%s: Child failed to send fd number\n",
-> +			strerror(errno));
-> +		return EXIT_FAILURE;
-
-return -1
-
-> +	}
-> +
-> +	while ((ret = recv(sk, &buf, sizeof(buf), 0)) > 0) {
-> +		if (buf == 'P') {
-> +			ret = prctl(PR_SET_DUMPABLE, 0);
-> +			if (ret < 0) {
-> +				fprintf(stderr,
-> +					"%s: Child failed to disable ptrace\n",
-> +					strerror(errno));
-> +				return EXIT_FAILURE;
-
-return -1
-
-> +			}
-> +		} else {
-> +			fprintf(stderr, "Child received unknown command %c\n",
-> +				buf);
-> +			return EXIT_FAILURE;
-
-return -1
-
-> +		}
-> +		ret = send(sk, &buf, sizeof(buf), 0);
-> +		if (ret != 1) {
-> +			fprintf(stderr, "%s: Child failed to ack\n",
-> +				strerror(errno));
-> +			return EXIT_FAILURE;
-
-return -1
-
-> +		}
-> +	}
-> +
-> +	if (ret < 0) {
-> +		fprintf(stderr, "%s: Child failed to read from socket\n",
-> +			strerror(errno));
-
-Is this intentional that this is no failure?
-
-> +	}
-> +
-> +	return EXIT_SUCCESS;
-
-return 0
-
+> +	return 0;
 > +}
-> +
-> +static int child(int sk)
-> +{
-> +	int memfd, ret;
-> +
-> +	memfd = sys_memfd_create("test", 0);
-> +	if (memfd < 0) {
-> +		fprintf(stderr, "%s: Child could not create memfd\n",
-> +			strerror(errno));
-> +		ret = EXIT_FAILURE;
 
-ret = -1;
+Hello, this function returns wrong result when second string (b) is
+longer then first string (a).
 
-> +	} else {
-> +		ret = __child(sk, memfd);
-> +		close(memfd);
-> +	}
-> +
-> +	close(sk);
-> +	return ret;
-> +}
-> +
-> +FIXTURE(child)
-> +{
-> +	pid_t pid;
-> +	int pidfd, sk, remote_fd;
-> +};
-> +
-> +FIXTURE_SETUP(child)
-> +{
-> +	int ret, sk_pair[2];
-> +
-> +	ASSERT_EQ(0, socketpair(PF_LOCAL, SOCK_SEQPACKET, 0, sk_pair))
-> +	{
-> +		TH_LOG("%s: failed to create socketpair", strerror(errno));
-> +	}
-> +	self->sk = sk_pair[0];
-> +
-> +	self->pid = fork();
-> +	ASSERT_GE(self->pid, 0);
-> +
-> +	if (self->pid == 0) {
-> +		close(sk_pair[0]);
-> +		exit(child(sk_pair[1]));
+Also it is a best practise to first check for end-of-string and then
+access/work with i-th element of string.
 
-if (child(sk_pair[1]))
-	_exit(EXIT_FAILURE);
-_exit(EXIT_SUCCESS);
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
 
-I would like to only use exit macros where one actually calls
-{_}exit()s. It makes the logic easier to follow and ensures that one
-doesn't accidently do an exit(-21345) or something (e.g. when adding new
-code).
+--f2e4tgqxncq2o4tg
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +	}
-> +
-> +	close(sk_pair[1]);
-> +
-> +	self->pidfd = sys_pidfd_open(self->pid, 0);
-> +	ASSERT_GE(self->pidfd, 0);
-> +
-> +	/*
-> +	 * Wait for the child to complete setup. It'll send the remote memfd's
-> +	 * number when ready.
-> +	 */
-> +	ret = recv(sk_pair[0], &self->remote_fd, sizeof(self->remote_fd), 0);
-> +	ASSERT_EQ(sizeof(self->remote_fd), ret);
-> +}
-> +
-> +FIXTURE_TEARDOWN(child)
-> +{
-> +	int status;
-> +
-> +	EXPECT_EQ(0, close(self->pidfd));
-> +	EXPECT_EQ(0, close(self->sk));
-> +
-> +	EXPECT_EQ(waitpid(self->pid, &status, 0), self->pid);
-> +	EXPECT_EQ(true, WIFEXITED(status));
-> +	EXPECT_EQ(0, WEXITSTATUS(status));
-> +}
-> +
-> +TEST_F(child, disable_ptrace)
-> +{
-> +	int uid, fd;
-> +	char c;
-> +
-> +	/*
-> +	 * Turn into nobody if we're root, to avoid CAP_SYS_PTRACE
-> +	 *
-> +	 * The tests should run in their own process, so even this test fails,
-> +	 * it shouldn't result in subsequent tests failing.
-> +	 */
-> +	uid = getuid();
-> +	if (uid == 0)
-> +		ASSERT_EQ(0, seteuid(USHRT_MAX));
+-----BEGIN PGP SIGNATURE-----
 
-Hm, isn't it safer to do 65535 explicitly? Since USHRT_MAX can
-technically be greater than 65535.
+iF0EARECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXhH/vAAKCRCL8Mk9A+RD
+Uqv7AJwIkABv+Bpvw7Z2sHDERYMAUNrI1QCeO5I7iyE5/RVgyXEYwonl4aM0vDQ=
+=BcPO
+-----END PGP SIGNATURE-----
 
-> +
-> +	ASSERT_EQ(1, send(self->sk, "P", 1, 0));
-> +	ASSERT_EQ(1, recv(self->sk, &c, 1, 0));
-> +
-> +	fd = sys_pidfd_getfd(self->pidfd, self->remote_fd, 0);
-> +	EXPECT_EQ(-1, fd);
-> +	EXPECT_EQ(EPERM, errno);
-> +
-> +	if (uid == 0)
-> +		ASSERT_EQ(0, seteuid(0));
-> +}
-> +
-> +TEST_F(child, fetch_fd)
-> +{
-> +	int fd, ret;
-> +
-> +	fd = sys_pidfd_getfd(self->pidfd, self->remote_fd, 0);
-> +	ASSERT_GE(fd, 0);
-> +
-> +	EXPECT_EQ(0, sys_kcmp(getpid(), self->pid, KCMP_FILE, fd, self->remote_fd));
-
-So most of these tests seem to take place when the child has already
-called exit() - or at least it's very likely that the child has already
-called exit() - and remains a zombie. That's not ideal because
-that's not the common scenario/use-case. Usually the task of which we
-want to get an fd will be alive. Also, if the child has already called
-exit(), by the time it returns to userspace it should have already
-called exit_files() and so I wonder whether this test would fail if it's
-run after the child has exited. Maybe I'm missing something here... Is
-there some ordering enforced by TEST_F()?
-
-Also, what does self->pid point to? The fd of the already exited child?
+--f2e4tgqxncq2o4tg--
