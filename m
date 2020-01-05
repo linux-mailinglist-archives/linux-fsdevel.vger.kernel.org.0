@@ -2,159 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F7A313093F
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jan 2020 17:51:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20E45130954
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jan 2020 18:44:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbgAEQvU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Jan 2020 11:51:20 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42025 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726260AbgAEQvT (ORCPT
+        id S1726385AbgAERom (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Jan 2020 12:44:42 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:35116 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726293AbgAERom (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Jan 2020 11:51:19 -0500
-Received: by mail-wr1-f67.google.com with SMTP id q6so46997644wro.9;
-        Sun, 05 Jan 2020 08:51:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=NEc2ONIGqs4JDceykYjjlLRjytS3/UAT9WyX5gz4mJs=;
-        b=tjb48Gq5Eki3T2ytZKMg7AKkC/7++9EXYp2y7ugEXaapzinQ03174dOAreazI2pqyn
-         brOf1hasHLOWtg7T+fztXIh0ldiUhc+iWs/eBo5AlFjJt5dnyYa6tfYvEWebGFSevjus
-         jgORj/yZmVP6ui/i8j55SPV0SLlSLKv7EIfB6/tVUFayLhMX85woO2xFccnub2CCB9do
-         Z+VFaIs7Wx8eO3cY6IJz2h210opEi+DBoLTG5/TiDykaZU9MryyZ2bAjzrsFdFCV9oVH
-         68SjF4m5VpOdTDIIb5+61z5KObjiRsNKJao+FaQkvlBfQBjIkjyhSgMcqP6tPJS0SWxD
-         lsPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NEc2ONIGqs4JDceykYjjlLRjytS3/UAT9WyX5gz4mJs=;
-        b=LHh82GCX+hgefYpPppsoTTqy/T+KniPMS1h/UK51FwKQi06F7pIjkvtkoHCxZ1Ks8w
-         xA801I2uMRhDxtWl6HR55VcmFxjZ1C7FM23ABCX88Zxw+hfzHNayG2q/l+I/sr+wKDqf
-         hQL1D2uzCqUe28cbCmL9QYTN9uzEtyeVYEM1XbZwuLn8JEWXTP+fET/4VDcT8Yx+nskN
-         yjQ1vlp/DuQkMyeWb0FxMyIWHVdcgXwPJ+RN874GhdHbPxD4pZ1uF6E1jMaog/Fd8Mq4
-         +DsaBX42j4jxXMowuDd7gcbAI94mtgl5rq3lrTV5Knn1mPjT1w7rUgSeAOzBiK1IMcQr
-         fCBA==
-X-Gm-Message-State: APjAAAVa8eYPJ7k6ZPAt6Au56z6mBkS5sopZ5ozvzHjo5uHfyGOeWYMY
-        0adUMotGI/g9XjZqIEnOpOQ=
-X-Google-Smtp-Source: APXvYqzuHuM6YOph/540pvgdV/vmpzihUqFdaNRgnA39GiwzXbHTNa7ZlQchPuODUDxriKqsR7XWUA==
-X-Received: by 2002:a5d:458d:: with SMTP id p13mr52668317wrq.314.1578243077695;
-        Sun, 05 Jan 2020 08:51:17 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id h2sm74392376wrt.45.2020.01.05.08.51.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Jan 2020 08:51:16 -0800 (PST)
-Date:   Sun, 5 Jan 2020 17:51:15 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Namjae Jeon <namjae.jeon@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com, linkinjeon@gmail.com, tytso@mit.edu,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: Re: [PATCH v9 10/13] exfat: add nls operations
-Message-ID: <20200105165115.37dyrcwtgf6zgc6r@pali>
-References: <20200102082036.29643-1-namjae.jeon@samsung.com>
- <CGME20200102082407epcas1p4cf10cd3d0ca2903707ab01b1cc523a05@epcas1p4.samsung.com>
- <20200102082036.29643-11-namjae.jeon@samsung.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="b4fesfv3w7a3u7ah"
-Content-Disposition: inline
-In-Reply-To: <20200102082036.29643-11-namjae.jeon@samsung.com>
-User-Agent: NeoMutt/20180716
+        Sun, 5 Jan 2020 12:44:42 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 1F8368EE148;
+        Sun,  5 Jan 2020 09:44:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1578246281;
+        bh=pfDZPxMteXgYQcTMRFiEL1bOy+FJZWdBqlqd4YdUZJU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=G3HAO4A9vSrZgFlbEn1Q5WTQZ6scOx8tvt3QMdOCGTOUKViD7GmCdniPB1MEU1sG5
+         veUbIO56gPULqC5icox4wXfiBAgBq2C6JJEz7itzztdRpi42YGW5GJrWaGbCHAP16/
+         BOIptH3X+izrhV7XMWp6mby/FsyqG1cHer4OZL7k=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Wq06jtlsziun; Sun,  5 Jan 2020 09:44:40 -0800 (PST)
+Received: from jarvis.lan (unknown [50.35.76.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 305C28EE0D2;
+        Sun,  5 Jan 2020 09:44:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1578246280;
+        bh=pfDZPxMteXgYQcTMRFiEL1bOy+FJZWdBqlqd4YdUZJU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=kK3uw9D5yvu0zqd/1xCNfdpQO79i3XbsNW7x4e8N9VSbl4+qCouUsuYgibpthx9TT
+         jfwLf/NzLyHbttJmExepVPehNkTSWr1j9Q3qwm8zqNIvYoXe9NVOsPGvJRVgu+CtAb
+         DSZqhRsJjtDUKLnl+3/JKMQKkyVVfdZIxoafoBbg=
+Message-ID: <1578246278.3310.26.camel@HansenPartnership.com>
+Subject: Re: [PATCH v2 2/3] fs: introduce uid/gid shifting bind mount
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        =?ISO-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Linux Containers <containers@lists.linux-foundation.org>
+Date:   Sun, 05 Jan 2020 09:44:38 -0800
+In-Reply-To: <CAOQ4uxiMJePVaXFiLw88rnr4qxCPN0dLQcXq_KCC831hZzM7rA@mail.gmail.com>
+References: <20200104203946.27914-1-James.Bottomley@HansenPartnership.com>
+         <20200104203946.27914-3-James.Bottomley@HansenPartnership.com>
+         <CAOQ4uxiMJePVaXFiLw88rnr4qxCPN0dLQcXq_KCC831hZzM7rA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Sun, 2020-01-05 at 01:09 +0200, Amir Goldstein wrote:
+> On Sat, Jan 4, 2020 at 10:41 PM James Bottomley
+> <James.Bottomley@hansenpartnership.com> wrote:
+> > 
+> > This implementation reverse shifts according to the user_ns
+> > belonging to the mnt_ns.  So if the vfsmount has the newly
+> > introduced flag MNT_SHIFT and the current user_ns is the same as
+> > the mount_ns->user_ns then we shift back using the user_ns before
+> > committing to the underlying filesystem.
+> > 
+> > For example, if a user_ns is created where interior (fake root, uid
+> > 0) is mapped to kernel uid 100000 then writes from interior root
+> > normally go to the filesystem at the kernel uid.  However, if
+> > MNT_SHIFT is set, they will be shifted back to write at uid 0,
+> > meaning we can bind mount real image filesystems to user_ns
+> > protected faker root.
+> > 
+> > In essence there are several things which have to be done for this
+> > to occur safely.  Firstly for all operations on the filesystem, new
+> > credentials have to be installed where fsuid and fsgid are set to
+> > the *interior* values.
+> 
+> Must we really install new creds?
 
---b4fesfv3w7a3u7ah
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Well, the reason for doing it is that for uid/gid changes that's the
+way everything else does it, so principle of least surprise.
 
-On Thursday 02 January 2020 16:20:33 Namjae Jeon wrote:
-> This adds the implementation of nls operations for exfat.
+However, there are two other cases where this doesn't work:
 
-Hello! In whole patch series are different naming convention for
-nls/Unicode related terms. E.g. uni16s, utf16s, nls, vfsname, ...
+   1. inode uid/gid changes, which are compared against the real uid/gid 
+   2. execution, where we need to bring the filesystem uid/gid to the
+      exterior representation of the interior values for unprivileged
+      execution to work.
+   3. the capable_wrt_inode checks where we're usually checking if the
+      inode uid/gid has an interior mapping, but since for shiftfs we're
+      assuming inode uid/gid are interior we need to see if anything maps
+      to them.
+   4. the in_group_p checks to see whether we're in a group that's
+      capable.
 
-Could this be fixed, so it would be unambiguously named? "uni16s" name
-is misleading as Unicode does not fit into 16byte type.
+1. could be fixed by shifting uid/gid ... I just didn't think this was
+a good idea.  2,3. can't be fixed because the direction of the check
+needs to be reversed and 4 has to be done separately because group_info
+ is a pointer to something that lives outside the credential.  Taking
+the pointer, creating a new one and shifting every group is possible, I
+just also wasn't sure if it was a wise thing to do.
 
-Based on what is in nls.h I would propose following names:
+> Maybe we just need to set/clear a SHIFTED flag on current creds?
+> 
+> i.e. instead of change_userns_creds(path)/revert_userns_creds()
+> how about start_shifted_creds(mnt)/end_shifted_creds().
+> 
+> and then cred_is_shifted() only checks the flag and no need for
+> all the cached creds mechanism.
+> 
+> current_fsuid()/current_fsgid() will take care of the shifting based
+> on the creds flag.
 
-* unicode_t *utf32s always for strings in UTF-32/UCS-4 encoding (host
-  endianity) (or "unicode_t *unis" as this is the fixed-width encoding
-  for all Unicode codepoints)
+So it is true, if current_fsuid/fsgid did the mapping, it would be a
+fifth case above, but we'd have to be sure no-one ever used the bare
+current_cred()->fsuid.  Auditing filesystems, it looks like there's
+only one current case of this in namei.c:may_follow_link(), so I think
+it could work ... but it's still a danger for other places, like
+security module checks and things.
 
-* wchar_t *utf16s always for strings in UTF-16 encoding (host endianity)
+> Also, you should consider placing a call to start_shifted/end_shifted
+> inside __mnt_want_write()/__mnt_drop_write().
+> This should automatically cover all writable fs ops  - including some
+> that you missed (setxattr).
 
-* u8 *utf8s always for strings in UTF-8 encoding
+xattr handling wasn't really missed, I left it out because it was the
+controversial case last time.  Should the interior root be able to set
+xattrs?  I think the argument was tending towards the yes except
+security. prefix ones last time so perhaps it is safe to reintroduce.
 
-* wchar_t *ucs2s always for strings in UCS-2 encoding (host endianity)
+> Taking this a step further, perhaps it would make sense to wrap all
+> readonly fs ops with mnt_want_read()/mnt_drop_read() flavors.
+> Note that inode level already has a similar i_readcount access
+> counter.
 
-Plus in the case you need to work with UTF-16 or UCS-2 in little endian,
-add appropriate naming suffixes.
+Unfortunately, read and write aren't the only operations where we need
+a shift, there's also lookup (which doesn't require read or write). 
+Now we could also go with mnt_want_lookup/mnt_drop_lookup or simply
+keep the existing shift coding on the lookup path.
 
-And use e.g. "vfsname" (char * OR unsigned char * OR u8 *) like you
-already have on some places for strings in iocharset=3D encoding.
+> This could be used, for example, to provide a facility that is
+> stronger than MNT_DETACH, and weaker than filesystem "shutdown"
+> ioctl, for blocking new file opens (with openat()) on a mounted
+> filesystem.
+> 
+> The point is, you add gating to vfs that is generic and not for
+> single use case (i.e. cred shifting).
+> 
+> Apologies in advance if  some of these ideas are ill advised.
 
+Of the two ideas, I think using a generic gate point, if we can find
+it, is a definite winner because it programmatically identifies the
+shift points.  I'm less enthused about moving the shift into
+current_fsuid/fsgid because of the potential for stuff to go wrong and
+because it's counter to how everything else is currently done, but I'll
+let the filesystem experts weigh in on this one.  The good news is that
+the two ideas aren't dependent on each other so either can be
+implemented without the other.
 
-Looking at the whole code + exfat specification and usage is:
+James
 
-Kernel NLS functions do conversion between UCS-2 and iocharset=3D.
-exfat upcase table has definitions only for UCS-2 characters.
-All exfat string structures are stored in UTF-16LE, except upcase table
-which is in UCS-2LE.
-
-It is great mess in specification, specially when it talks about Unicode
-upcase table for case insensitivity, which is limited only to code
-points up to the U+FFFF and does not say anything about Unicode
-Normalization and Normal Forms.
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-And this opens a new question, what should kernel do if userspace asks
-to create these 4 files? (Assume that iocharset=3Duff8 for full Unicode
-support)
-
-1. U+00e9
-2. U+0065, U+0301
-3. U+00c9
-4. U+0045, U+0301
-
-According to Unicode uppercase algorithm, all 4 filenames results in
-same grapheme "LATIN CAPITAL LETTER E WITH ACUTE".
-
-But with current exfat implementation first and third are treated as
-same and then second and fourth are treated as same. Therefore first and
-fourth are treated as different filenames, even the fact that they
-represent same grapheme just only one is upper case and one lower case.
-
-To prevent such thing we need to use some kind of Unicode normalization
-form here.
-
-What do you think what should kernel's exfat driver do in this case?
-
-CCing Gabriel as he was implementing some Unicode normalization for ext4
-driver and maybe should bring some light to new exfat driver too.
-
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
-
---b4fesfv3w7a3u7ah
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXhIT/QAKCRCL8Mk9A+RD
-UmiXAJ4wRXGodYjANGPhNEOOoeAKpG5kpACgwCk0fQfxkYOKmrxsPYI5PHtS2Kc=
-=DcG1
------END PGP SIGNATURE-----
-
---b4fesfv3w7a3u7ah--
