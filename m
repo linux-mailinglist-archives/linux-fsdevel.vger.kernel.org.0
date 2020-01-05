@@ -2,127 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D128F1308B3
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jan 2020 16:25:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1289213090D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jan 2020 17:23:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726390AbgAEPYv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Jan 2020 10:24:51 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33039 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726212AbgAEPYv (ORCPT
+        id S1726478AbgAEQXZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Jan 2020 11:23:25 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:49262 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726307AbgAEQXZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Jan 2020 10:24:51 -0500
-Received: by mail-wr1-f68.google.com with SMTP id b6so47010085wrq.0;
-        Sun, 05 Jan 2020 07:24:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4F9+RY0yU9fqVfTSeicS1qBjnlshzGXW5AwJXhtTU9s=;
-        b=E18QoDhneNFDiyLfRMo2yBdct25MXHmDNVcq2fDINCHw6wdWiuCwG7Fv8YCu+z373m
-         zQ0FfWrp+Pc9Y1Pkrj7Z50QO9TsZbIuGTm9O3adSW70qeoX0YL42SCMioOeJW0XvdCOD
-         6oF7MIufHhxF7babum0iXZvAvBgRi+hJoo3X21mDv5ZhQU9LWbPDWu6vRRC/m39b7jMh
-         clQpzSaNQy7e1yZs8CPlaO5vkHlQMebiFfWEoWB4o46Vfh/FaqO/1XiWV0p6v+3+ckn5
-         a+7sIydrU7OmEsPMG7N3PWu556IRjBt6Hd+dMJR+7fdCYP4NylzAkjI5lpZ7bJYHNSco
-         cfAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4F9+RY0yU9fqVfTSeicS1qBjnlshzGXW5AwJXhtTU9s=;
-        b=FiYj31QT1J5ORY/F+lX7eJ5zOl8Q7KeWkFn9je/T5fpv4J7xLzNIJ+r55J90dzdAEY
-         EriFbWmIRu2PQeChv1kqG8I9YGoohHvorXwfhpvFGilJsRhUWVXq/cIGneP2cdS0wrpn
-         Xuje9NpNWAKafQW1yqDl0KLLIuDZeX19ejlTdufd1clk5lMQZR7D3ySmBtiAKt0/vYre
-         H3Art0Mu3Ze36va81QfYx+CBa8CHAl4KOxFK5NGvckP/hll/MXgfobuIYNJyNBQW9+mo
-         bPULZEorG+qGTiUlSQGGnCWoctGjxDnrjNDqQVjG3AhYP6RSES0fBWUG5zhUVBokLnoR
-         bHyQ==
-X-Gm-Message-State: APjAAAUCXRtc5TefkW41cyWl5DS/Y3mmQLmm6WJphlkK47c0Rqizrqju
-        Vo2pF+utkC/bQc331pUh7lQ=
-X-Google-Smtp-Source: APXvYqyPCZVCPY70gGbJCHHm6NLKtjwZr+Uvzi/p6xXC+Nn1md5VrLUxOH8Ai8YZjCCIOzJSC15Wtg==
-X-Received: by 2002:adf:f78e:: with SMTP id q14mr98169159wrp.186.1578237889014;
-        Sun, 05 Jan 2020 07:24:49 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id h66sm20616568wme.41.2020.01.05.07.24.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Jan 2020 07:24:47 -0800 (PST)
-Date:   Sun, 5 Jan 2020 16:24:47 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Namjae Jeon <namjae.jeon@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com, linkinjeon@gmail.com
-Subject: Re: [PATCH v9 10/13] exfat: add nls operations
-Message-ID: <20200105152447.jo27m7jgskyu2dos@pali>
-References: <20200102082036.29643-1-namjae.jeon@samsung.com>
- <CGME20200102082407epcas1p4cf10cd3d0ca2903707ab01b1cc523a05@epcas1p4.samsung.com>
- <20200102082036.29643-11-namjae.jeon@samsung.com>
+        Sun, 5 Jan 2020 11:23:25 -0500
+Received: from [172.58.27.182] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1io8gQ-0005Xy-HA; Sun, 05 Jan 2020 16:23:19 +0000
+Date:   Sun, 5 Jan 2020 17:23:13 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: [PATCH v2 0/6] introduce configfd as generalisation of fsconfig
+Message-ID: <20200105162311.sufgft6kthetsz7q@wittgenstein>
+References: <20200104201432.27320-1-James.Bottomley@HansenPartnership.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="f2e4tgqxncq2o4tg"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200102082036.29643-11-namjae.jeon@samsung.com>
+In-Reply-To: <20200104201432.27320-1-James.Bottomley@HansenPartnership.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Sat, Jan 04, 2020 at 12:14:26PM -0800, James Bottomley wrote:
+> fsconfig is a very powerful configuration mechanism except that it
+> only works for filesystems with superblocks.  This patch series
+> generalises the useful concept of a multiple step configurational
+> mechanism carried by a file descriptor.  The object of this patch
+> series is to get bind mounts to be configurable in the same way that
+> superblock based ones are, but it should have utility beyond the
+> filesytem realm.  Patch 4 also reimplements fsconfig in terms of
+> configfd, but that's not a strictly necessary patch, it is merely a
+> useful demonstration that configfd is a superset of the properties of
+> fsconfig.
 
---f2e4tgqxncq2o4tg
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for the patch. I'm glad fsconfig() is picked back up; either by
+you or by David. We will need this for sure.
+But the configfd approach does not strike me as a great idea.
+Anonymous inode fds provide an abstraction mechanism for kernel objects
+which we built around fds such as timerfd, pidfd, mountfd and so on.
+When you stat an anonfd you get ANON_INODE_FS_MAGIC and you get the
+actual type by looking at fdinfo, or - more common - by parsing out
+/proc/<pid>/fd/<nr> and discovering "[fscontext]". So it's already a
+pretty massive abstraction layer we have. But configfd would be yet
+another fd abstraction based on anonfds.
+The idea has been that a new fd type based on anonfds comes with an api
+specific to that type of fd. That seems way nicer from an api design
+perspective than implementing new apis as part of yet another generic
+configfd layer.
 
-On Thursday 02 January 2020 16:20:33 Namjae Jeon wrote:
-> This adds the implementation of nls operations for exfat.
->=20
-> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
-> ---
->  fs/exfat/nls.c | 809 +++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 809 insertions(+)
->  create mode 100644 fs/exfat/nls.c
->=20
-> diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
-> new file mode 100644
-> index 000000000000..af52328e28ff
-> --- /dev/null
-> +++ b/fs/exfat/nls.c
+Another problem is that these syscalls here would be massive
+multiplexing syscalls. If they are ever going to be used outside of
+filesystem use-cases (which is doubtful) they will quickly rival
+prctl(), seccomp(), and ptrace(). That's not a great thing. Especially,
+since we recently (a few months ago with Linus chiming in too) had long
+discussions with the conclusion that multiplexing syscalls are
+discouraged, from a security and api design perspective. Especially when
+they are not tied to a specific API (e.g. seccomp() and bpf() are at least
+tied to a specific API). libcs such as glibc and musl had reservations
+in that regard as well.
 
-=2E..
+This would also spread the mount api across even more fd types than it
+already does now which is cumbersome for userspace.
 
-> +int exfat_nls_cmp_uniname(struct super_block *sb, unsigned short *a,
-> +		unsigned short *b)
-> +{
-> +	int i;
-> +
-> +	for (i =3D 0; i < MAX_NAME_LENGTH; i++, a++, b++) {
-> +		if (exfat_nls_upper(sb, *a) !=3D exfat_nls_upper(sb, *b))
-> +			return 1;
-> +		if (*a =3D=3D 0x0)
-> +			return 0;
-> +	}
-> +	return 0;
-> +}
+A generic API like that also makes it hard to do interception in
+userspace which is important for brokers such as e.g. used in Firefox or
+what we do in various container use-cases.
 
-Hello, this function returns wrong result when second string (b) is
-longer then first string (a).
+So I have strong reservations about configfd and would strongly favor
+the revival of the original fsconfig() patchset.
 
-Also it is a best practise to first check for end-of-string and then
-access/work with i-th element of string.
-
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
-
---f2e4tgqxncq2o4tg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXhH/vAAKCRCL8Mk9A+RD
-Uqv7AJwIkABv+Bpvw7Z2sHDERYMAUNrI1QCeO5I7iyE5/RVgyXEYwonl4aM0vDQ=
-=BcPO
------END PGP SIGNATURE-----
-
---f2e4tgqxncq2o4tg--
+Christian
