@@ -2,139 +2,234 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61BE5130575
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jan 2020 02:41:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9902130576
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jan 2020 02:43:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726358AbgAEBlb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 4 Jan 2020 20:41:31 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:46310 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726205AbgAEBlb (ORCPT
+        id S1726307AbgAEBns (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 4 Jan 2020 20:43:48 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:36216 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726205AbgAEBns (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 4 Jan 2020 20:41:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578188489;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=PFbuxjhzkUeppz8ScPsjki0VOQ0QjZ2Z1MTS33+xgec=;
-        b=h0h07MQVBtzIYS4m04pFIeBylTLEVdejJfCAE5flQ/zioFiB2ZKy8rPyZJExINaAZQo10A
-        UaQ1OSWzZZOw9+lEPZTxxqWlpqTjEa+iIKhmy2L5aPpDvDLvz1yZ+PZMzOpzG8Yert3hVa
-        +k5iHwSK3cUsmfgxRuPCMxh0nJoxtrQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-362-rPilglJfMeSLFR4wdkMzYw-1; Sat, 04 Jan 2020 20:41:26 -0500
-X-MC-Unique: rPilglJfMeSLFR4wdkMzYw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A6515182B791;
-        Sun,  5 Jan 2020 01:41:25 +0000 (UTC)
-Received: from localhost (ovpn-8-18.pek2.redhat.com [10.72.8.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3837C38A;
-        Sun,  5 Jan 2020 01:41:19 +0000 (UTC)
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fs: move guard_bio_eod() after bio_set_op_attrs
-Date:   Sun,  5 Jan 2020 09:41:14 +0800
-Message-Id: <20200105014114.4824-1-ming.lei@redhat.com>
+        Sat, 4 Jan 2020 20:43:48 -0500
+Received: by mail-io1-f68.google.com with SMTP id d15so1585195iog.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 04 Jan 2020 17:43:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SL0fis6brZ3oO414fpFkpbvgRXsOX5vhOghpLIXzWW0=;
+        b=t5z4QxS76s18OC+Bhc4iEb2ZGiI5dCXCngCtWyeGgESTvRHBVRSoeA90H8wpnHS3lA
+         SzdutXy7bsgr85t9opXQYi+Nbs+yLq7IyDtf6N4YyjAYsiYCgMmkOx0Jv/WYcrzZXOIc
+         1sDv4jcZTQSyZbiKh52D3h4g1dozrMKfMfIRr6iyk38gsN+7jMuxTa+G2eoLr11wzutq
+         BtBmU8TOsW9Qx1QnyrkJN9zlMnYokO9vLVbq78SBZcZHczD1Iq6iqCYHzN1dU9yyKP6V
+         n+wMYn5eAjlruPbh8JBdTdfBOYR7nC3TH5g43+ba4s3zyYXnZWPrxsBMn32hJ+2lEEWw
+         ONGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SL0fis6brZ3oO414fpFkpbvgRXsOX5vhOghpLIXzWW0=;
+        b=LQ3dSrEIQdBKg775t7E9SbKXsk6bko9p9LxL1/tnVNYLBuGlUaHLMlxly3CrpFH4Yl
+         2fiF+Nhs3KIlNhEcGNSmiM1tAqUnvY+ivFoeQWbdUPMx4ELZyg7Aeq4isCbQq3XENn4C
+         hJSebruYQBmzztonjVjr4XZ7qEe2N2/DHtlCa//c9QB9/kBwzTfOXftlw8v2CsTN+VaF
+         pQ04iMmNvwCJyx/LowU9hTZRABoK0KGfOX0h4KAnfIg0jRZVq5/1GJGSl8+2xwyGo2KK
+         e+O4tyaYpnAj+/gONJMqatrMqW0STpy3aJalWvJQmx1rF1QOsKJ4eU2T/PwuYVK6J9v6
+         44yg==
+X-Gm-Message-State: APjAAAUkvsZZzXL8lsyYMiRRk+jndKTZUl2z5Eewb87to74li26L3mok
+        a2lLfY7FRs4Ke3KR4UuiP1QSfaFKEfQUCfuzjhM=
+X-Google-Smtp-Source: APXvYqyEivy4+kX/DetgiHqBnFMXCW75VVIp5Mem8Dy/CZ5QGxj8bBUD4QqfA/VWfiRpNPzB1/5ESq/BKj/4/83zLpA=
+X-Received: by 2002:a5d:980f:: with SMTP id a15mr24449396iol.203.1578188627604;
+ Sat, 04 Jan 2020 17:43:47 -0800 (PST)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-Content-Transfer-Encoding: quoted-printable
+References: <1577174006-13025-1-git-send-email-laoar.shao@gmail.com>
+ <1577174006-13025-5-git-send-email-laoar.shao@gmail.com> <20200104033558.GD23195@dread.disaster.area>
+ <CALOAHbAzDth8g8+Z5hH9QnOp02UZ5+3eQf9wAQyJM-LAhmaL9A@mail.gmail.com> <20200104212331.GG23195@dread.disaster.area>
+In-Reply-To: <20200104212331.GG23195@dread.disaster.area>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Sun, 5 Jan 2020 09:43:11 +0800
+Message-ID: <CALOAHbBGRSfRTH7RYXfgAqtixuYvu=tRrr7zQyAvofrzktW=vA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] mm: make memcg visible to lru walker isolation function
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org,
+        Dave Chinner <dchinner@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Commit 85a8ce62c2ea ("block: add bio_truncate to fix guard_bio_eod")
-adds bio_truncate() for handling bio EOD. However, bio_truncate()
-doesn't use the passed 'op' parameter from guard_bio_eod's callers.
+On Sun, Jan 5, 2020 at 5:23 AM Dave Chinner <david@fromorbit.com> wrote:
+>
+> On Sat, Jan 04, 2020 at 03:26:13PM +0800, Yafang Shao wrote:
+> > On Sat, Jan 4, 2020 at 11:36 AM Dave Chinner <david@fromorbit.com> wrote:
+> > >
+> > > On Tue, Dec 24, 2019 at 02:53:25AM -0500, Yafang Shao wrote:
+> > > > The lru walker isolation function may use this memcg to do something, e.g.
+> > > > the inode isolatation function will use the memcg to do inode protection in
+> > > > followup patch. So make memcg visible to the lru walker isolation function.
+> > > >
+> > > > Something should be emphasized in this patch is it replaces
+> > > > for_each_memcg_cache_index() with for_each_mem_cgroup() in
+> > > > list_lru_walk_node(). Because there's a gap between these two MACROs that
+> > > > for_each_mem_cgroup() depends on CONFIG_MEMCG while the other one depends
+> > > > on CONFIG_MEMCG_KMEM. But as list_lru_memcg_aware() returns false if
+> > > > CONFIG_MEMCG_KMEM is not configured, it is safe to this replacement.
+> > > >
+> > > > Cc: Dave Chinner <dchinner@redhat.com>
+> > > > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > >
+> > > ....
+> > >
+> > > > @@ -299,17 +299,15 @@ unsigned long list_lru_walk_node(struct list_lru *lru, int nid,
+> > > >                                list_lru_walk_cb isolate, void *cb_arg,
+> > > >                                unsigned long *nr_to_walk)
+> > > >  {
+> > > > +     struct mem_cgroup *memcg;
+> > > >       long isolated = 0;
+> > > > -     int memcg_idx;
+> > > >
+> > > > -     isolated += list_lru_walk_one(lru, nid, NULL, isolate, cb_arg,
+> > > > -                                   nr_to_walk);
+> > > > -     if (*nr_to_walk > 0 && list_lru_memcg_aware(lru)) {
+> > > > -             for_each_memcg_cache_index(memcg_idx) {
+> > > > +     if (list_lru_memcg_aware(lru)) {
+> > > > +             for_each_mem_cgroup(memcg) {
+> > > >                       struct list_lru_node *nlru = &lru->node[nid];
+> > > >
+> > > >                       spin_lock(&nlru->lock);
+> > > > -                     isolated += __list_lru_walk_one(nlru, memcg_idx,
+> > > > +                     isolated += __list_lru_walk_one(nlru, memcg,
+> > > >                                                       isolate, cb_arg,
+> > > >                                                       nr_to_walk);
+> > > >                       spin_unlock(&nlru->lock);
+> > > > @@ -317,7 +315,11 @@ unsigned long list_lru_walk_node(struct list_lru *lru, int nid,
+> > > >                       if (*nr_to_walk <= 0)
+> > > >                               break;
+> > > >               }
+> > > > +     } else {
+> > > > +             isolated += list_lru_walk_one(lru, nid, NULL, isolate, cb_arg,
+> > > > +                                           nr_to_walk);
+> > > >       }
+> > > > +
+> > >
+> > > That's a change of behaviour. The old code always runs per-node
+> > > reclaim, then if the LRU is memcg aware it also runs the memcg
+> > > aware reclaim. The new code never runs global per-node reclaim
+> > > if the list is memcg aware, so shrinkers that are initialised
+> > > with the flags SHRINKER_NUMA_AWARE | SHRINKER_MEMCG_AWARE seem
+> > > likely to have reclaim problems with mixed memcg/global memory
+> > > pressure scenarios.
+> > >
+> > > e.g. if all the memory is in the per-node lists, and the memcg needs
+> > > to reclaim memory because of a global shortage, it is now unable to
+> > > reclaim global memory.....
+> > >
+> >
+> > Hi Dave,
+> >
+> > Thanks for your detailed explanation.
+> > But I have different understanding.
+> > The difference between for_each_mem_cgroup(memcg) and
+> > for_each_memcg_cache_index(memcg_idx) is that the
+> > for_each_mem_cgroup() includes the root_mem_cgroup while the
+> > for_each_memcg_cache_index() excludes the root_mem_cgroup because the
+> > memcg_idx of it is -1.
+>
+> Except that the "root" memcg that for_each_mem_cgroup() is not the
+> "global root" memcg - it is whatever memcg that is passed down in
+> the shrink_control, whereever that sits in the cgroup tree heirarchy.
+> do_shrink_slab() only ever passes down the global root memcg to the
+> shrinkers when the global root memcg is passed to shrink_slab(), and
+> that does not iterate the memcg heirarchy - it just wants to
+> reclaim from global caches an non-memcg aware shrinkers.
+>
+> IOWs, there are multiple changes in behaviour here - memcg specific
+> reclaim won't do global reclaim, and global reclaim will now iterate
+> all memcgs instead of just the global root memcg.
+>
+> > So it can reclaim global memory even if the list is memcg aware.
+> > Is that right ?
+>
+> If the memcg passed to this fucntion is the root memcg, then yes,
+> it will behave as you suggest. But for the majority of memcg-context
+> reclaim, the memcg is not the root memcg and so they will not do
+> global reclaim anymore...
+>
 
-So bio_trunacate() may retrieve wrong 'op', and zering pages may
-not be done for READ bio.
+Thanks for you reply.
+But I have to clairfy that this change is in list_lru_walk_node(), and
+the memcg is not passed to this funtion from shrink_control.
+In order to make it more clear, I paste the function here.
 
-Fixes this issue by moving guard_bio_eod() after bio_set_op_attrs()
-in submit_bh_wbc() so that bio_truncate() can always retrieve correct
-op info.
+- The new function
+unsigned long list_lru_walk_node(struct list_lru *lru, int nid,
+                                 list_lru_walk_cb isolate, void *cb_arg,
+                                 unsigned long *nr_to_walk)
+{
+        struct mem_cgroup *memcg;   <<<< A local variable
+        long isolated = 0;
 
-Meantime remove the 'op' parameter from guard_bio_eod() because it isn't
-used any more.
+        if (list_lru_memcg_aware(lru)) {
+                for_each_mem_cgroup(memcg) {  <<<<  scan all MEMCGs,
+including root_mem_cgroup
+                        struct list_lru_node *nlru = &lru->node[nid];
 
-Cc: Carlos Maiolino <cmaiolino@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org
-Fixes: 85a8ce62c2ea ("block: add bio_truncate to fix guard_bio_eod")
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- fs/buffer.c   | 8 ++++----
- fs/internal.h | 2 +-
- fs/mpage.c    | 2 +-
- 3 files changed, 6 insertions(+), 6 deletions(-)
+                        spin_lock(&nlru->lock);
+                        isolated += __list_lru_walk_one(nlru, memcg,
+                                                        isolate, cb_arg,
+                                                        nr_to_walk);
+                        spin_unlock(&nlru->lock);
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index e94a6619464c..18a87ec8a465 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -3031,7 +3031,7 @@ static void end_bio_bh_io_sync(struct bio *bio)
-  * errors, this only handles the "we need to be able to
-  * do IO at the final sector" case.
-  */
--void guard_bio_eod(int op, struct bio *bio)
-+void guard_bio_eod(struct bio *bio)
- {
- 	sector_t maxsector;
- 	struct hd_struct *part;
-@@ -3095,15 +3095,15 @@ static int submit_bh_wbc(int op, int op_flags, st=
-ruct buffer_head *bh,
- 	bio->bi_end_io =3D end_bio_bh_io_sync;
- 	bio->bi_private =3D bh;
-=20
--	/* Take care of bh's that straddle the end of the device */
--	guard_bio_eod(op, bio);
--
- 	if (buffer_meta(bh))
- 		op_flags |=3D REQ_META;
- 	if (buffer_prio(bh))
- 		op_flags |=3D REQ_PRIO;
- 	bio_set_op_attrs(bio, op, op_flags);
-=20
-+	/* Take care of bh's that straddle the end of the device */
-+	guard_bio_eod(bio);
-+
- 	if (wbc) {
- 		wbc_init_bio(wbc, bio);
- 		wbc_account_cgroup_owner(wbc, bh->b_page, bh->b_size);
-diff --git a/fs/internal.h b/fs/internal.h
-index 4a7da1df573d..e3fa69544b66 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -38,7 +38,7 @@ static inline int __sync_blockdev(struct block_device *=
-bdev, int wait)
- /*
-  * buffer.c
-  */
--extern void guard_bio_eod(int rw, struct bio *bio);
-+extern void guard_bio_eod(struct bio *bio);
- extern int __block_write_begin_int(struct page *page, loff_t pos, unsign=
-ed len,
- 		get_block_t *get_block, struct iomap *iomap);
-=20
-diff --git a/fs/mpage.c b/fs/mpage.c
-index a63620cdb73a..ccba3c4c4479 100644
---- a/fs/mpage.c
-+++ b/fs/mpage.c
-@@ -62,7 +62,7 @@ static struct bio *mpage_bio_submit(int op, int op_flag=
-s, struct bio *bio)
- {
- 	bio->bi_end_io =3D mpage_end_io;
- 	bio_set_op_attrs(bio, op, op_flags);
--	guard_bio_eod(op, bio);
-+	guard_bio_eod(bio);
- 	submit_bio(bio);
- 	return NULL;
- }
---=20
-2.20.1
+                        if (*nr_to_walk <= 0)
+                                break;
+                }
+        } else {
+<<<<  scan global memory only (root_mem_cgroup)
+                isolated += list_lru_walk_one(lru, nid, NULL, isolate, cb_arg,
+                                              nr_to_walk);
+        }
 
+        return isolated;
+}
+
+- While the original function is,
+
+unsigned long list_lru_walk_node(struct list_lru *lru, int nid,
+                                 list_lru_walk_cb isolate, void *cb_arg,
+                                 unsigned long *nr_to_walk)
+{
+        long isolated = 0;
+        int memcg_idx;
+
+        isolated += list_lru_walk_one(lru, nid, NULL, isolate, cb_arg,
+                                      nr_to_walk);
+            <<<<  scan global memory only (root_mem_cgroup)
+        if (*nr_to_walk > 0 && list_lru_memcg_aware(lru)) {
+                for_each_memcg_cache_index(memcg_idx) {   <<<< scan
+all MEMCGs excludes root_mem_cgroup
+                        struct list_lru_node *nlru = &lru->node[nid];
+
+                        spin_lock(&nlru->lock);
+                        isolated += __list_lru_walk_one(nlru, memcg_idx,
+                                                        isolate, cb_arg,
+                                                        nr_to_walk);
+                        spin_unlock(&nlru->lock);
+
+                        if (*nr_to_walk <= 0)
+                                break;
+                }
+        }
+
+        return isolated;
+}
+
+Is that right ?
+
+Thanks
+Yafang
