@@ -2,131 +2,354 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 379CC13095D
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jan 2020 19:02:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6C0A130995
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jan 2020 20:08:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726401AbgAESCL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Jan 2020 13:02:11 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:35432 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726376AbgAESCK (ORCPT
+        id S1726496AbgAETIS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Jan 2020 14:08:18 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:41978 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726092AbgAETIR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Jan 2020 13:02:10 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 6DCC88EE148;
-        Sun,  5 Jan 2020 10:02:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1578247330;
-        bh=BbaBBLhbSsjTslD+BkwBTL57JjaPLHlnMLLax/45S2s=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=FukxtxPFUSKxuIoWc9IXCCf4LoKq0SCKQ1mTYNE6YqmF3l6PTH6wDQrmkrzQli3UB
-         WFvRgdqMmn20Tg2iJ0nknVCj1yOSL45rpQqr2eqA6B81t0nIp/0744Sw+jQJFkETRQ
-         9yygNbmCR84N3VBj1Q4uRSIPsfbPo5Mz+GhFlwZU=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id VB4l_GFjjMEU; Sun,  5 Jan 2020 10:02:10 -0800 (PST)
-Received: from jarvis.lan (unknown [50.35.76.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id C38828EE0D2;
-        Sun,  5 Jan 2020 10:02:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1578247330;
-        bh=BbaBBLhbSsjTslD+BkwBTL57JjaPLHlnMLLax/45S2s=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=FukxtxPFUSKxuIoWc9IXCCf4LoKq0SCKQ1mTYNE6YqmF3l6PTH6wDQrmkrzQli3UB
-         WFvRgdqMmn20Tg2iJ0nknVCj1yOSL45rpQqr2eqA6B81t0nIp/0744Sw+jQJFkETRQ
-         9yygNbmCR84N3VBj1Q4uRSIPsfbPo5Mz+GhFlwZU=
-Message-ID: <1578247328.3310.36.camel@HansenPartnership.com>
-Subject: Re: [PATCH v2 0/6] introduce configfd as generalisation of fsconfig
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Christian Brauner <christian@brauner.io>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Date:   Sun, 05 Jan 2020 10:02:08 -0800
-In-Reply-To: <20200105162311.sufgft6kthetsz7q@wittgenstein>
-References: <20200104201432.27320-1-James.Bottomley@HansenPartnership.com>
-         <20200105162311.sufgft6kthetsz7q@wittgenstein>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sun, 5 Jan 2020 14:08:17 -0500
+Received: by mail-io1-f68.google.com with SMTP id c16so42963569ioo.8
+        for <linux-fsdevel@vger.kernel.org>; Sun, 05 Jan 2020 11:08:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sargun.me; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BCTcRrTcnLIdSFlZUFovhn7ud4Us6Qx7aWDrGSYm67Q=;
+        b=qYk0nmgVpoY9YoDHOxjF4mOC4ayRwWpoRM33m7Aq4+32Ri09ouv1zIeFJrMg0N803o
+         EflL3e+64TtZ1YBbJaz5m45rlVlVsHD7KOhs9SnDIFvBJ5uaWZeNUtowdshTceV7mldH
+         Yjz4JlEHPtoW2z8U+Wj/G1+JMj9K0Jp5JKiIE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BCTcRrTcnLIdSFlZUFovhn7ud4Us6Qx7aWDrGSYm67Q=;
+        b=sX5KQ8fjoTAzrkTTR3jxdU3S5JYUnuJM5wuT5VJNNq8XwmYZ4OxTzIGg8stWxoLU1c
+         P74huyBPyhzzI/5Ng/05W2Ah1CsojR0Kduxr4omsEFSqgS6M1YI9e30agC3RUkxvSOW4
+         2gxX/VK9P7ifdQcJCszSgpt83cdG4u9WVUh1ZJoyNx4/5nWD2OgGbSbjk1K1m9XULfJt
+         XCy08iI+shgp7k3EZCVN1JzbJ9aDMdOecgbMR70Ltx2sa9429xmp4UEXD/ZkX/+iIWrO
+         jg9TQhWymQIP8NrQHZnhe+GtWqPrdJIrCsWcaB8HmesMiUPNM1fNYGZAMST4mHbBxXea
+         6wSg==
+X-Gm-Message-State: APjAAAUJ7txCOIWecIZUzIWmyx3zPoeGusGoV3PkvH3N3OUPtC7CA5DC
+        K1U38S21xKtMnvWcn9aRiAg0vg==
+X-Google-Smtp-Source: APXvYqzdckJ9Zu6U6Th8Nv2+cCNO4pDtZO1eGKFxh8LVem83U1q4C3C5VApurw+rMeiVUIXzIkMvVg==
+X-Received: by 2002:a02:7310:: with SMTP id y16mr8843445jab.133.1578251295532;
+        Sun, 05 Jan 2020 11:08:15 -0800 (PST)
+Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
+        by smtp.gmail.com with ESMTPSA id e1sm23153880ill.47.2020.01.05.11.08.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 05 Jan 2020 11:08:14 -0800 (PST)
+Date:   Sun, 5 Jan 2020 19:08:13 +0000
+From:   Sargun Dhillon <sargun@sargun.me>
+To:     linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     Sargun Dhillon <sargun@sargun.me>, tycho@tycho.ws,
+        jannh@google.com, cyphar@cyphar.com, christian.brauner@ubuntu.com,
+        oleg@redhat.com, luto@amacapital.net, viro@zeniv.linux.org.uk,
+        gpascutto@mozilla.com, ealvarez@mozilla.com, fweimer@redhat.com,
+        jld@mozilla.com, arnd@arndb.de
+Subject: Re: [PATCH v8 3/3] test: Add test for pidfd getfd
+Message-ID: <20200105190812.GC8522@ircssh-2.c.rugged-nimbus-611.internal>
+References: <20200103162928.5271-1-sargun@sargun.me>
+ <20200103162928.5271-4-sargun@sargun.me>
+ <20200105142019.umls5ff4b5433u6k@wittgenstein>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200105142019.umls5ff4b5433u6k@wittgenstein>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 2020-01-05 at 17:23 +0100, Christian Brauner wrote:
-> On Sat, Jan 04, 2020 at 12:14:26PM -0800, James Bottomley wrote:
-> > fsconfig is a very powerful configuration mechanism except that it
-> > only works for filesystems with superblocks.  This patch series
-> > generalises the useful concept of a multiple step configurational
-> > mechanism carried by a file descriptor.  The object of this patch
-> > series is to get bind mounts to be configurable in the same way
-> > that superblock based ones are, but it should have utility beyond
-> > the filesytem realm.  Patch 4 also reimplements fsconfig in terms
-> > of configfd, but that's not a strictly necessary patch, it is
-> > merely a useful demonstration that configfd is a superset of the
-> > properties of fsconfig.
+On Sun, Jan 05, 2020 at 03:20:23PM +0100, Christian Brauner wrote:
+> On Fri, Jan 03, 2020 at 08:29:28AM -0800, Sargun Dhillon wrote:
+> > +static int sys_pidfd_getfd(int pidfd, int fd, int flags)
+> > +{
+> > +	return syscall(__NR_pidfd_getfd, pidfd, fd, flags);
+> > +}
 > 
-> Thanks for the patch. I'm glad fsconfig() is picked back up; either
-> by you or by David. We will need this for sure.
-> But the configfd approach does not strike me as a great idea.
-> Anonymous inode fds provide an abstraction mechanism for kernel
-> objects which we built around fds such as timerfd, pidfd, mountfd and
-> so on. When you stat an anonfd you get ANON_INODE_FS_MAGIC and you
-> get the actual type by looking at fdinfo, or - more common - by
-> parsing out /proc/<pid>/fd/<nr> and discovering "[fscontext]". So
-> it's already a pretty massive abstraction layer we have. But configfd
-> would be yet another fd abstraction based on anonfds.
-> The idea has been that a new fd type based on anonfds comes with an
-> api specific to that type of fd. That seems way nicer from an api
-> design perspective than implementing new apis as part of yet another
-> generic configfd layer.
-
-Really, it's just a fd that gathers config information and can reserve
-specific errors (and we should really work out the i18n implications of
-the latter).  Whether it's a new fd type or an anonfd with a specific
-name doesn't seem to be that significant, so the name could be set by
-the type.
-
-> Another problem is that these syscalls here would be massive
-> multiplexing syscalls. If they are ever going to be used outside of
-> filesystem use-cases (which is doubtful) they will quickly rival
-> prctl(), seccomp(), and ptrace().
-
-Actually, that's partly the point.  We do have several systemcalls with
-variable argument parsing that would benefit from an approach like
-this.  keyctl springs immediately to mind.
-
->  That's not a great thing. Especially, since we recently (a few
-> months ago with Linus chiming in too) had long discussions with the
-> conclusion that multiplexing syscalls are discouraged, from a
-> security and api design perspective. Especially when they are not
-> tied to a specific API (e.g. seccomp() and bpf() are at least tied to
-> a specific API). libcs such as glibc and musl had reservations in
-> that regard as well.
+> I think you can move this to the pidfd.h header as:
 > 
-> This would also spread the mount api across even more fd types than
-> it already does now which is cumbersome for userspace.
+> static inline int sys_pidfd_getfd(int pidfd, int fd, int flags)
+> {
+> 	return syscall(__NR_pidfd_getfd, pidfd, fd, flags);
+> }
 > 
-> A generic API like that also makes it hard to do interception in
-> userspace which is important for brokers such as e.g. used in Firefox
-> or what we do in various container use-cases.
+> Note, this also needs an
 > 
-> So I have strong reservations about configfd and would strongly favor
-> the revival of the original fsconfig() patchset.
+> #ifndef __NR_pidfd_getfd
+> __NR_pidfd_getfd -1
+> #endif
+> so that compilation doesn't fail.
+> 
+I'll go ahead and move this into pidfd.h, and follow the pattern there. I
+don't think it's worth checking if each time the return code is ENOSYS.
 
-Ah well, I did have plans for configfd to be self describing, so the
-arguments accepted by each type would be typed and pre-registered and
-thus parseable generically, so instead of being the usual anonymous
-multiplex sink, it would at least be an introspectable multiplexed
-sink.  The problem there was I can't make fsconfig fit into that
-framework but, as I said, it was only done to demo that configfd was a
-superset, I'm not wedded to that part.
+Does it make sense to add something like:
+#ifdef __NR_pidfd_getfd
+TEST_HARNESS_MAIN
+#else
+int main(void)
+{
+	fprintf(stderr, "pidfd_getfd syscall not supported\n");
+	return KSFT_SKIP;
+}
+#endif
 
-James
+to short-circuit the entire test suite?
 
+
+> > +
+> > +static int sys_memfd_create(const char *name, unsigned int flags)
+> > +{
+> > +	return syscall(__NR_memfd_create, name, flags);
+> > +}
+> > +
+> > +static int __child(int sk, int memfd)
+> > +{
+> > +	int ret;
+> > +	char buf;
+> > +
+> > +	/*
+> > +	 * Ensure we don't leave around a bunch of orphaned children if our
+> > +	 * tests fail.
+> > +	 */
+> > +	ret = prctl(PR_SET_PDEATHSIG, SIGKILL);
+> > +	if (ret) {
+> > +		fprintf(stderr, "%s: Child could not set DEATHSIG\n",
+> > +			strerror(errno));
+> > +		return EXIT_FAILURE;
+> 
+> return -1
+> 
+> > +	}
+> > +
+> > +	ret = send(sk, &memfd, sizeof(memfd), 0);
+> > +	if (ret != sizeof(memfd)) {
+> > +		fprintf(stderr, "%s: Child failed to send fd number\n",
+> > +			strerror(errno));
+> > +		return EXIT_FAILURE;
+> 
+> return -1
+> 
+> > +	}
+> > +
+> > +	while ((ret = recv(sk, &buf, sizeof(buf), 0)) > 0) {
+> > +		if (buf == 'P') {
+> > +			ret = prctl(PR_SET_DUMPABLE, 0);
+> > +			if (ret < 0) {
+> > +				fprintf(stderr,
+> > +					"%s: Child failed to disable ptrace\n",
+> > +					strerror(errno));
+> > +				return EXIT_FAILURE;
+> 
+> return -1
+> 
+> > +			}
+> > +		} else {
+> > +			fprintf(stderr, "Child received unknown command %c\n",
+> > +				buf);
+> > +			return EXIT_FAILURE;
+> 
+> return -1
+> 
+> > +		}
+> > +		ret = send(sk, &buf, sizeof(buf), 0);
+> > +		if (ret != 1) {
+> > +			fprintf(stderr, "%s: Child failed to ack\n",
+> > +				strerror(errno));
+> > +			return EXIT_FAILURE;
+> 
+> return -1
+> 
+> > +		}
+> > +	}
+> > +
+> > +	if (ret < 0) {
+> > +		fprintf(stderr, "%s: Child failed to read from socket\n",
+> > +			strerror(errno));
+> 
+> Is this intentional that this is no failure?
+> 
+My thought here, is the only case where this should happen is if the "ptrace 
+command" was not properly "transmitted", and the ptrace test itself would fail.
+
+I can add an explicit exit failure here.
+
+> > +	}
+> > +
+> > +	return EXIT_SUCCESS;
+> 
+> return 0
+> 
+> > +}
+> > +
+> > +static int child(int sk)
+> > +{
+> > +	int memfd, ret;
+> > +
+> > +	memfd = sys_memfd_create("test", 0);
+> > +	if (memfd < 0) {
+> > +		fprintf(stderr, "%s: Child could not create memfd\n",
+> > +			strerror(errno));
+> > +		ret = EXIT_FAILURE;
+> 
+> ret = -1;
+> 
+> > +	} else {
+> > +		ret = __child(sk, memfd);
+> > +		close(memfd);
+> > +	}
+> > +
+> > +	close(sk);
+> > +	return ret;
+> > +}
+> > +
+> > +FIXTURE(child)
+> > +{
+> > +	pid_t pid;
+> > +	int pidfd, sk, remote_fd;
+> > +};
+> > +
+> > +FIXTURE_SETUP(child)
+> > +{
+> > +	int ret, sk_pair[2];
+> > +
+> > +	ASSERT_EQ(0, socketpair(PF_LOCAL, SOCK_SEQPACKET, 0, sk_pair))
+> > +	{
+> > +		TH_LOG("%s: failed to create socketpair", strerror(errno));
+> > +	}
+> > +	self->sk = sk_pair[0];
+> > +
+> > +	self->pid = fork();
+> > +	ASSERT_GE(self->pid, 0);
+> > +
+> > +	if (self->pid == 0) {
+> > +		close(sk_pair[0]);
+> > +		exit(child(sk_pair[1]));
+> 
+> if (child(sk_pair[1]))
+> 	_exit(EXIT_FAILURE);
+> _exit(EXIT_SUCCESS);
+> 
+> I would like to only use exit macros where one actually calls
+> {_}exit()s. It makes the logic easier to follow and ensures that one
+> doesn't accidently do an exit(-21345) or something (e.g. when adding new
+> code).
+> 
+> > +	}
+> > +
+> > +	close(sk_pair[1]);
+> > +
+> > +	self->pidfd = sys_pidfd_open(self->pid, 0);
+> > +	ASSERT_GE(self->pidfd, 0);
+> > +
+> > +	/*
+> > +	 * Wait for the child to complete setup. It'll send the remote memfd's
+> > +	 * number when ready.
+> > +	 */
+> > +	ret = recv(sk_pair[0], &self->remote_fd, sizeof(self->remote_fd), 0);
+> > +	ASSERT_EQ(sizeof(self->remote_fd), ret);
+> > +}
+> > +
+> > +FIXTURE_TEARDOWN(child)
+> > +{
+> > +	int status;
+> > +
+> > +	EXPECT_EQ(0, close(self->pidfd));
+> > +	EXPECT_EQ(0, close(self->sk));
+> > +
+> > +	EXPECT_EQ(waitpid(self->pid, &status, 0), self->pid);
+> > +	EXPECT_EQ(true, WIFEXITED(status));
+> > +	EXPECT_EQ(0, WEXITSTATUS(status));
+> > +}
+> > +
+> > +TEST_F(child, disable_ptrace)
+> > +{
+> > +	int uid, fd;
+> > +	char c;
+> > +
+> > +	/*
+> > +	 * Turn into nobody if we're root, to avoid CAP_SYS_PTRACE
+> > +	 *
+> > +	 * The tests should run in their own process, so even this test fails,
+> > +	 * it shouldn't result in subsequent tests failing.
+> > +	 */
+> > +	uid = getuid();
+> > +	if (uid == 0)
+> > +		ASSERT_EQ(0, seteuid(USHRT_MAX));
+> 
+> Hm, isn't it safer to do 65535 explicitly? Since USHRT_MAX can
+> technically be greater than 65535.
+> 
+I borrowed this from the BPF tests. I can hardcode something like:
+#define NOBODY_UID 65535
+and setuid to that, if you think it's safer?
+
+> > +
+> > +	ASSERT_EQ(1, send(self->sk, "P", 1, 0));
+> > +	ASSERT_EQ(1, recv(self->sk, &c, 1, 0));
+> > +
+> > +	fd = sys_pidfd_getfd(self->pidfd, self->remote_fd, 0);
+> > +	EXPECT_EQ(-1, fd);
+> > +	EXPECT_EQ(EPERM, errno);
+> > +
+> > +	if (uid == 0)
+> > +		ASSERT_EQ(0, seteuid(0));
+> > +}
+> > +
+> > +TEST_F(child, fetch_fd)
+> > +{
+> > +	int fd, ret;
+> > +
+> > +	fd = sys_pidfd_getfd(self->pidfd, self->remote_fd, 0);
+> > +	ASSERT_GE(fd, 0);
+> > +
+> > +	EXPECT_EQ(0, sys_kcmp(getpid(), self->pid, KCMP_FILE, fd, self->remote_fd));
+> 
+> So most of these tests seem to take place when the child has already
+> called exit() - or at least it's very likely that the child has already
+> called exit() - and remains a zombie. That's not ideal because
+> that's not the common scenario/use-case. Usually the task of which we
+> want to get an fd will be alive. Also, if the child has already called
+> exit(), by the time it returns to userspace it should have already
+> called exit_files() and so I wonder whether this test would fail if it's
+> run after the child has exited. Maybe I'm missing something here... Is
+> there some ordering enforced by TEST_F()?
+Yeah, I think perhaps I was being too clever.
+The timeline roughly goes something like this:
+
+# Fixture bringup
+[parent] creates socket_pair
+[parent] forks, and passes pair down to child
+[parent] waits to read sizeof(int) from the sk_pair
+[child] creates memfd 
+[__child] sends local memfd number to parent via sk_pair
+[__child] waits to read from sk_pair
+[parent] reads remote memfd number from socket
+# Test
+[parent] performs tests
+# Fixture teardown
+[parent] closes sk_pair
+[__child] reads 0 from recv on sk_pair, implies the other end is closed
+[__child] Returns / exits 0
+[parent] Reaps child / reads exit code
+
+---
+The one case where this is not true, is if the parent sends 'P' to the sk pair,
+it triggers setting PR_SET_DUMPABLE to 0, and then resumes waiting for the fd to 
+close.
+
+Maybe I'm being too clever? Instead, the alternative was to send explicit stop / 
+start messages across the sk_pair, but that got kind of ugly. Do you have a 
+better suggestion?
+
+> 
+> Also, what does self->pid point to? The fd of the already exited child?
+It's just the pid of the child. pidfd is the fd of the (unexited) child.
