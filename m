@@ -2,275 +2,399 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5542B130547
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jan 2020 02:13:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 405D1130549
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jan 2020 02:15:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726263AbgAEBNv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 4 Jan 2020 20:13:51 -0500
-Received: from mga04.intel.com ([192.55.52.120]:30564 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726205AbgAEBNv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 4 Jan 2020 20:13:51 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jan 2020 17:13:48 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,396,1571727600"; 
-   d="gz'50?scan'50,208,50";a="222510239"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga003.jf.intel.com with ESMTP; 04 Jan 2020 17:13:46 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1inuUE-0001r6-49; Sun, 05 Jan 2020 09:13:46 +0800
-Date:   Sun, 5 Jan 2020 09:12:58 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     kbuild-all@lists.01.org, linux-fsdevel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [PATCH v2 4/6] fs: implement fsconfig via configfd
-Message-ID: <202001050942.GIIg3HY7%lkp@intel.com>
-References: <20200104201432.27320-5-James.Bottomley@HansenPartnership.com>
+        id S1726292AbgAEBPk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 4 Jan 2020 20:15:40 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:42803 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726205AbgAEBPj (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 4 Jan 2020 20:15:39 -0500
+Received: by mail-il1-f195.google.com with SMTP id t2so24227826ilq.9;
+        Sat, 04 Jan 2020 17:15:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=cXrALohNGoEof1VT2Z3zb7Jh/c5vxlMHZ51SFjWK6UI=;
+        b=YjqDHh9lHdKePZwONafmZbsReeslaIlsA54sJLnQ3rU1/3d3h5S+yq9yyY9QYasvUH
+         QO15LRM8or+ELQJioKM0BMh6D60ey/M7b+7+krSL8V2fG3jegiumb7hIDFNFl/UiKRET
+         6tEYTstDbKNWqD984rYOpE1m+YlneOYLWxqEHTCzO+4pck22HpMDRk1c0EQJ8dkz38QX
+         Mw6aNhR8AtmIZYCh4CkVmeQ/1xwdziB6COz2Z/XtQOrZ0ndT4w9OcX6UCeCWR0yLgVeD
+         tWtEUor0SVlBisumqexDrANgzF/GM0+MY5+PST1zgIttp8Ws2tCd1dPv0pz0ydeMnqmx
+         W7mQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=cXrALohNGoEof1VT2Z3zb7Jh/c5vxlMHZ51SFjWK6UI=;
+        b=WGBLqQBdm69NFsMteRkSW9bYybMiPa56ozgdzEy5P7um4WMnvS7CqFWieNCTT+Z0s0
+         aSh99DuIk1dGhstV74FaplM+AokIRRIip5ZS+pMZY9QnaGJsC1Ubp5qpbpOYFFSJ5bq1
+         kBnvq54NeT7rw47TdIGQrlT3Ziqx3gIklW5LEh1edaM/fuApUO149fjFGNnhOk2PRaHg
+         l5dov9saZnE12JEq7Lt4nQDx0tograeXNsoGtDzFPmV2XDctn/qy5lJ07Uwguatjljkd
+         lYwxea14zs8+0ICjt/kzQ6jRseLzeIX1kRfFQLc0MKyGWZksDV1VpeWkIOsk5y174uFq
+         8mVQ==
+X-Gm-Message-State: APjAAAXcLl4E2l1IeVSa83FRnt9jTxq4N2iYPMX0E6s2s4NyyKoaK61E
+        nBsVS/BQ0iTPIbuZc04ORL1e26RBz1m8VGP9Z8GFjygw
+X-Google-Smtp-Source: APXvYqxyBbJ/ngTfKiZsiOewQKfS9Kw9pqeTDXLTv0gdxu54RUqthzrDUoeBj+Z/nlry1rev/DvKzVYWEice8j728to=
+X-Received: by 2002:a92:4788:: with SMTP id e8mr81788501ilk.258.1578186938392;
+ Sat, 04 Jan 2020 17:15:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="hhs7eq4iwqodfd7k"
-Content-Disposition: inline
-In-Reply-To: <20200104201432.27320-5-James.Bottomley@HansenPartnership.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+From:   Kyle Sanderson <kyle.leet@gmail.com>
+Date:   Sat, 4 Jan 2020 17:15:30 -0800
+Message-ID: <CACsaVZLApLO=dNCU07ZjMx4qA8dv1=OA7n31uD9GzHkSFCm8oA@mail.gmail.com>
+Subject: Still a pretty bad time on 5.4.6 with fuse_request_end.
+To:     linux-fsdevel@vger.kernel.org, miklos@szeredi.hu
+Cc:     Linux-Kernal <linux-kernel@vger.kernel.org>,
+        fuse-devel@lists.sourceforge.net, gregkh@linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
---hhs7eq4iwqodfd7k
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi James,
-
-I love your patch! Yet something to improve:
-
-[auto build test ERROR on s390/features]
-[also build test ERROR on linus/master v5.5-rc4]
-[cannot apply to arm64/for-next/core tip/x86/asm arm/for-next ia64/next m68k/for-next hp-parisc/for-next powerpc/next sparc-next/master next-20191220]
-[if your patch is applied to the wrong git tree, please drop us a note to help
-improve the system. BTW, we also suggest to use '--base' option to specify the
-base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-
-url:    https://github.com/0day-ci/linux/commits/James-Bottomley/introduce-configfd-as-generalisation-of-fsconfig/20200105-080415
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git features
-config: i386-tinyconfig (attached as .config)
-compiler: gcc-7 (Debian 7.5.0-3) 7.5.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
-
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
-
-All error/warnings (new ones prefixed by >>):
-
-   In file included from fs/fsopen.c:13:0:
->> include/linux/syscalls.h:239:18: error: conflicting types for 'sys_fsconfig'
-     asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__)) \
-                     ^
-   include/linux/syscalls.h:225:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-     __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-     ^~~~~~~~~~~~~~~~~
-   include/linux/syscalls.h:218:36: note: in expansion of macro 'SYSCALL_DEFINEx'
-    #define SYSCALL_DEFINE5(name, ...) SYSCALL_DEFINEx(5, _##name, __VA_ARGS__)
-                                       ^~~~~~~~~~~~~~~
->> fs/fsopen.c:412:1: note: in expansion of macro 'SYSCALL_DEFINE5'
-    SYSCALL_DEFINE5(fsconfig,
-    ^~~~~~~~~~~~~~~
-   In file included from fs/fsopen.c:13:0:
-   include/linux/syscalls.h:996:17: note: previous declaration of 'sys_fsconfig' was here
-    asmlinkage long sys_fsconfig(int fs_fd, unsigned int cmd, const char __user *key,
-                    ^~~~~~~~~~~~
-
-vim +/sys_fsconfig +239 include/linux/syscalls.h
-
-1bd21c6c21e848 Dominik Brodowski   2018-04-05  228  
-e145242ea0df6b Dominik Brodowski   2018-04-09  229  /*
-e145242ea0df6b Dominik Brodowski   2018-04-09  230   * The asmlinkage stub is aliased to a function named __se_sys_*() which
-e145242ea0df6b Dominik Brodowski   2018-04-09  231   * sign-extends 32-bit ints to longs whenever needed. The actual work is
-e145242ea0df6b Dominik Brodowski   2018-04-09  232   * done within __do_sys_*().
-e145242ea0df6b Dominik Brodowski   2018-04-09  233   */
-1bd21c6c21e848 Dominik Brodowski   2018-04-05  234  #ifndef __SYSCALL_DEFINEx
-bed1ffca022cc8 Frederic Weisbecker 2009-03-13  235  #define __SYSCALL_DEFINEx(x, name, ...)					\
-bee20031772af3 Arnd Bergmann       2018-06-19  236  	__diag_push();							\
-bee20031772af3 Arnd Bergmann       2018-06-19  237  	__diag_ignore(GCC, 8, "-Wattribute-alias",			\
-bee20031772af3 Arnd Bergmann       2018-06-19  238  		      "Type aliasing is used to sanitize syscall arguments");\
-83460ec8dcac14 Andi Kleen          2013-11-12 @239  	asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))	\
-e145242ea0df6b Dominik Brodowski   2018-04-09  240  		__attribute__((alias(__stringify(__se_sys##name))));	\
-c9a211951c7c79 Howard McLauchlan   2018-03-21  241  	ALLOW_ERROR_INJECTION(sys##name, ERRNO);			\
-e145242ea0df6b Dominik Brodowski   2018-04-09  242  	static inline long __do_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__));\
-e145242ea0df6b Dominik Brodowski   2018-04-09  243  	asmlinkage long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__));	\
-e145242ea0df6b Dominik Brodowski   2018-04-09  244  	asmlinkage long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__))	\
-1a94bc34768e46 Heiko Carstens      2009-01-14  245  	{								\
-e145242ea0df6b Dominik Brodowski   2018-04-09  246  		long ret = __do_sys##name(__MAP(x,__SC_CAST,__VA_ARGS__));\
-07fe6e00f6cca6 Al Viro             2013-01-21  247  		__MAP(x,__SC_TEST,__VA_ARGS__);				\
-2cf0966683430b Al Viro             2013-01-21  248  		__PROTECT(x, ret,__MAP(x,__SC_ARGS,__VA_ARGS__));	\
-2cf0966683430b Al Viro             2013-01-21  249  		return ret;						\
-1a94bc34768e46 Heiko Carstens      2009-01-14  250  	}								\
-bee20031772af3 Arnd Bergmann       2018-06-19  251  	__diag_pop();							\
-e145242ea0df6b Dominik Brodowski   2018-04-09  252  	static inline long __do_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))
-1bd21c6c21e848 Dominik Brodowski   2018-04-05  253  #endif /* __SYSCALL_DEFINEx */
-1a94bc34768e46 Heiko Carstens      2009-01-14  254  
-
-:::::: The code at line 239 was first introduced by commit
-:::::: 83460ec8dcac14142e7860a01fa59c267ac4657c syscalls.h: use gcc alias instead of assembler aliases for syscalls
-
-:::::: TO: Andi Kleen <ak@linux.intel.com>
-:::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
-
----
-0-DAY kernel test infrastructure                 Open Source Technology Center
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
-
---hhs7eq4iwqodfd7k
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-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
-
---hhs7eq4iwqodfd7k--
+[400280.179731] BUG: unable to handle page fault for address: 0000000044000000
+[400280.179842] #PF: supervisor instruction fetch in kernel mode
+[400280.179938] #PF: error_code(0x0010) - not-present page
+[400280.180032] PGD 0 P4D 0
+[400280.180125] Oops: 0010 [#1] PREEMPT SMP NOPTI
+[400280.180221] CPU: 5 PID: 6894 Comm: mergerfs Not tainted 5.4.6-gentoo #1
+[400280.180318] Hardware name: Supermicro Super Server/A2SDi-8C-HLN4F,
+BIOS 1.1c 06/25/2019
+[400280.180424] RIP: 0010:0x44000000
+[400280.180520] Code: Bad RIP value.
+[400280.180610] RSP: 0018:ffffb155c1227c88 EFLAGS: 00010206
+[400280.180706] RAX: 0000000044000000 RBX: ffff88eb184b87f8 RCX:
+0000000000000001
+[400280.180805] RDX: 0000000000000000 RSI: ffffb155c0857dc0 RDI:
+ffff88ed53bd5600
+[400280.180904] RBP: ffff88ed53bd5600 R08: 0000000000000000 R09:
+ffffb155c1227c28
+[400280.181003] R10: ffffb155c1227b8c R11: 0000000000000000 R12:
+ffff88eb184b8808
+[400280.181103] R13: 0000000044000000 R14: ffffb155c1227d28 R15:
+ffff88ed53b45e80
+[400280.181657] FS:  00007ff8076fc700(0000) GS:ffff88ed5fb40000(0000)
+knlGS:0000000000000000
+[400280.182211] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[400280.182532] CR2: 0000000043ffffd6 CR3: 000000084812a000 CR4:
+00000000003406e0
+[400280.183084] Call Trace:
+[400280.183419]  ? fuse_request_end+0xae/0x1c0 [fuse]
+[400280.183751]  ? fuse_dev_do_write+0x2a0/0x3e0 [fuse]
+[400280.184084]  ? fuse_dev_write+0x6e/0xa0 [fuse]
+[400280.184413]  ? do_iter_readv_writev+0x150/0x1c0
+[400280.184736]  ? do_iter_write+0x80/0x190
+[400280.185056]  ? vfs_writev+0xa3/0x100
+[400280.185383]  ? __fget+0x73/0xb0
+[400280.185699]  ? do_writev+0x65/0x100
+[400280.186020]  ? do_syscall_64+0x54/0x190
+[400280.186342]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[400280.186668] Modules linked in: nfsd auth_rpcgss nfs_acl tda18271
+s5h1411 cfg80211 rfkill 8021q garp stp mrp llc xt_length xt_conntrack
+ip6table_filter ip6_tables cachefiles x86_pkg_temp_thermal
+nf_conntrack_ftp kvm_intel nf_conntrack nf_defrag_ipv4 kvm irqbypass
+snd_pcm coretemp crct10dif_pclmul saa7164 snd_timer crc32_pclmul
+tveeprom snd dvb_core crc32c_intel soundcore pcspkr
+ghash_clmulni_intel videodev mc i2c_ismt acpi_cpufreq xts aesni_intel
+crypto_simd cryptd glue_helper crc32_generic cbc sha256_generic
+libsha256 ixgb ixgbe tulip cxgb3 cxgb mdio cxgb4 vxge bonding vxlan
+ip6_udp_tunnel udp_tunnel macvlan vmxnet3 tg3 sky2 r8169 pcnet32 mii
+igb dca i2c_algo_bit i2c_core e1000 bnx2 atl1c msdos fat cramfs
+squashfs fuse xfs nfs lockd grace sunrpc fscache jfs reiserfs btrfs
+zstd_decompress zstd_compress ext4 jbd2 ext2 mbcache linear raid10
+raid1 raid0 dm_zero dm_verity reed_solomon dm_thin_pool dm_switch
+dm_snapshot dm_raid raid456 async_raid6_recov async_memcpy async_pq
+raid6_pq dm_mirror
+[400280.186787]  dm_region_hash dm_log_writes dm_log_userspace dm_log
+dm_integrity async_xor async_tx xor dm_flakey dm_era dm_delay dm_crypt
+dm_cache_smq dm_cache dm_persistent_data libcrc32c dm_bufio
+dm_bio_prison dm_mod dax firewire_core crc_itu_t sl811_hcd xhci_pci
+xhci_hcd usb_storage mpt3sas raid_class aic94xx libsas lpfc nvmet_fc
+nvmet qla2xxx megaraid_sas megaraid_mbox megaraid_mm aacraid sx8 hpsa
+3w_9xxx 3w_xxxx 3w_sas mptsas scsi_transport_sas mptfc
+scsi_transport_fc mptspi mptscsih mptbase imm parport sym53c8xx initio
+arcmsr aic7xxx aic79xx scsi_transport_spi sr_mod cdrom sg sd_mod
+pdc_adma sata_inic162x sata_mv ata_piix ahci libahci sata_qstor
+sata_vsc sata_uli sata_sis sata_sx4 sata_nv sata_via sata_svw
+sata_sil24 sata_sil sata_promise pata_via pata_jmicron pata_marvell
+pata_sis pata_netcell pata_pdc202xx_old pata_atiixp pata_amd pata_ali
+pata_it8213 pata_pcmcia pata_serverworks pata_oldpiix pata_artop
+pata_it821x pata_hpt3x2n pata_hpt3x3 pata_hpt37x pata_hpt366
+pata_cmd64x
+[400280.190120]  pata_sil680 pata_pdc2027x nvme_fc nvme_rdma rdma_cm
+iw_cm ib_cm ib_core ipv6 crc_ccitt nf_defrag_ipv6 configfs
+nvme_fabrics virtio_net net_failover failover virtio_crypto
+crypto_engine virtio_mmio virtio_pci virtio_balloon virtio_rng
+virtio_console virtio_blk virtio_scsi virtio_ring virtio
+[400280.194465] CR2: 0000000044000000
+[400280.194787] ---[ end trace 74cb513785034f62 ]---
+[400280.241518] RIP: 0010:0x44000000
+[400280.241864] Code: Bad RIP value.
+[400280.242181] RSP: 0018:ffffb155c1227c88 EFLAGS: 00010206
+[400280.242503] RAX: 0000000044000000 RBX: ffff88eb184b87f8 RCX:
+0000000000000001
+[400280.243055] RDX: 0000000000000000 RSI: ffffb155c0857dc0 RDI:
+ffff88ed53bd5600
+[400280.243607] RBP: ffff88ed53bd5600 R08: 0000000000000000 R09:
+ffffb155c1227c28
+[400280.244158] R10: ffffb155c1227b8c R11: 0000000000000000 R12:
+ffff88eb184b8808
+[400280.244707] R13: 0000000044000000 R14: ffffb155c1227d28 R15:
+ffff88ed53b45e80
+[400280.245260] FS:  00007ff8076fc700(0000) GS:ffff88ed5fb40000(0000)
+knlGS:0000000000000000
+[400280.245813] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[400280.246134] CR2: 0000000043ffffd6 CR3: 000000084812a000 CR4:
+00000000003406e0
+[444999.511865] potentially unexpected fatal signal 6.
+[444999.512234] CPU: 2 PID: 4341 Comm: rtorrent scgi Tainted: G      D
+          5.4.6-gentoo #1
+[444999.512783] Hardware name: Supermicro Super Server/A2SDi-8C-HLN4F,
+BIOS 1.1c 06/25/2019
+[444999.513329] RIP: 0033:0x7f6ce5da5ffb
+[444999.513635] Code: da b8 ea 00 00 00 0f 05 48 3d 00 f0 ff ff 77 3f
+41 89 c0 41 ba 08 00 00 00 31 d2 4c 89 ce bf 02 00 00 00 b8 0e 00 00
+00 0f 05 <48> 8b 8c 24 08 01 00 00 64 48 33 0c 25 28 00 00 00 44 89 c0
+75 1d
+[444999.514421] RSP: 002b:00007f6cda9b9dc0 EFLAGS: 00000246 ORIG_RAX:
+000000000000000e
+[444999.514424] RAX: 0000000000000000 RBX: 0000000000000006 RCX:
+00007f6ce5da5ffb
+[444999.514426] RDX: 0000000000000000 RSI: 00007f6cda9b9dc0 RDI:
+0000000000000002
+[444999.514427] RBP: 00007f6cd40020d0 R08: 0000000000000000 R09:
+00007f6cda9b9dc0
+[444999.514428] R10: 0000000000000008 R11: 0000000000000246 R12:
+00007f6cd46d7cb0
+[444999.514430] R13: 00007f6cda9ba160 R14: 0000000000000002 R15:
+0000000000000000
+[444999.514431] FS:  00007f6cda9bb700 GS:  0000000000000000
+[461505.766196] saa7164 0000:02:00.0: DVB: adapter 1 frontend 0
+frequency 0 out of range (54000000..858000000)
+[548849.079581] saa7164 0000:02:00.0: DVB: adapter 1 frontend 0
+frequency 0 out of range (54000000..858000000)
+[634641.506417] saa7164 0000:02:00.0: DVB: adapter 0 frontend 0
+frequency 0 out of range (54000000..858000000)
+[696992.559904] potentially unexpected fatal signal 6.
+[696992.560225] CPU: 5 PID: 17827 Comm: rtorrent scgi Tainted: G
+D           5.4.6-gentoo #1
+[696992.567610] Hardware name: Supermicro Super Server/A2SDi-8C-HLN4F,
+BIOS 1.1c 06/25/2019
+[696992.568172] RIP: 0033:0x7febaf26cffb
+[696992.568478] Code: da b8 ea 00 00 00 0f 05 48 3d 00 f0 ff ff 77 3f
+41 89 c0 41 ba 08 00 00 00 31 d2 4c 89 ce bf 02 00 00 00 b8 0e 00 00
+00 0f 05 <48> 8b 8c 24 08 01 00 00 64 48 33 0c 25 28 00 00 00 44 89 c0
+75 1d
+[696992.569259] RSP: 002b:00007feba38d8dc0 EFLAGS: 00000246 ORIG_RAX:
+000000000000000e
+[696992.569262] RAX: 0000000000000000 RBX: 0000000000000006 RCX:
+00007febaf26cffb
+[696992.569263] RDX: 0000000000000000 RSI: 00007feba38d8dc0 RDI:
+0000000000000002
+[696992.569264] RBP: 000055db261423f0 R08: 0000000000000000 R09:
+00007feba38d8dc0
+[696992.569265] R10: 0000000000000008 R11: 0000000000000246 R12:
+000055db5c16fc90
+[696992.569266] R13: 00007feba38d9160 R14: 0000000000000002 R15:
+0000000000000000
+[696992.569267] FS:  00007feba38da700 GS:  0000000000000000
+[721144.741527] saa7164 0000:02:00.0: DVB: adapter 0 frontend 0
+frequency 0 out of range (54000000..858000000)
+[727177.875112] BUG: kernel NULL pointer dereference, address: 0000000000000005
+[727177.875447] #PF: supervisor instruction fetch in kernel mode
+[727177.875767] #PF: error_code(0x0010) - not-present page
+[727177.876085] PGD 0 P4D 0
+[727177.876401] Oops: 0010 [#2] PREEMPT SMP NOPTI
+[727177.876721] CPU: 6 PID: 6919 Comm: mergerfs Tainted: G      D
+     5.4.6-gentoo #1
+[727177.877271] Hardware name: Supermicro Super Server/A2SDi-8C-HLN4F,
+BIOS 1.1c 06/25/2019
+[727177.877824] RIP: 0010:0x5
+[727177.878142] Code: Bad RIP value.
+[727177.878456] RSP: 0018:ffffb155c12cfc88 EFLAGS: 00010206
+[727177.878776] RAX: 0000000000000005 RBX: ffff88ed52fbdaa0 RCX:
+0000000000000001
+[727177.879324] RDX: 0000000000000000 RSI: ffffb155c74e3d98 RDI:
+ffff88ed4a4e6600
+[727177.879871] RBP: ffff88ed4a4e6600 R08: 0000000000000000 R09:
+ffffb155c12cfc28
+[727177.880419] R10: ffffb155c12cfb8c R11: 0000000000000000 R12:
+ffff88ed52fbdab0
+[727177.880967] R13: 0000000000000005 R14: ffffb155c12cfd28 R15:
+ffff88ed539ee980
+[727177.881516] FS:  00007f45f3d17700(0000) GS:ffff88ed5fb80000(0000)
+knlGS:0000000000000000
+[727177.882066] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[727177.882386] CR2: ffffffffffffffdb CR3: 000000084838a000 CR4:
+00000000003406e0
+[727177.882933] Call Trace:
+[727177.883266]  ? fuse_request_end+0xae/0x1c0 [fuse]
+[727177.883597]  ? fuse_dev_do_write+0x2a0/0x3e0 [fuse]
+[727177.883927]  ? fuse_dev_write+0x6e/0xa0 [fuse]
+[727177.884255]  ? do_iter_readv_writev+0x150/0x1c0
+[727177.884575]  ? do_iter_write+0x80/0x190
+[727177.884893]  ? vfs_writev+0xa3/0x100
+[727177.885209]  ? __switch_to+0x21/0x3f0
+[727177.885530]  ? __call_rcu+0xc3/0x190
+[727177.885848]  ? get_max_files+0x10/0x10
+[727177.886169]  ? __fget+0x73/0xb0
+[727177.886485]  ? do_writev+0x65/0x100
+[727177.886803]  ? do_syscall_64+0x54/0x190
+[727177.887122]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[727177.887446] Modules linked in: nfsd auth_rpcgss nfs_acl tda18271
+s5h1411 cfg80211 rfkill 8021q garp stp mrp llc xt_length xt_conntrack
+ip6table_filter ip6_tables cachefiles x86_pkg_temp_thermal
+nf_conntrack_ftp kvm_intel nf_conntrack nf_defrag_ipv4 kvm irqbypass
+snd_pcm coretemp crct10dif_pclmul saa7164 snd_timer crc32_pclmul
+tveeprom snd dvb_core crc32c_intel soundcore pcspkr
+ghash_clmulni_intel videodev mc i2c_ismt acpi_cpufreq xts aesni_intel
+crypto_simd cryptd glue_helper crc32_generic cbc sha256_generic
+libsha256 ixgb ixgbe tulip cxgb3 cxgb mdio cxgb4 vxge bonding vxlan
+ip6_udp_tunnel udp_tunnel macvlan vmxnet3 tg3 sky2 r8169 pcnet32 mii
+igb dca i2c_algo_bit i2c_core e1000 bnx2 atl1c msdos fat cramfs
+squashfs fuse xfs nfs lockd grace sunrpc fscache jfs reiserfs btrfs
+zstd_decompress zstd_compress ext4 jbd2 ext2 mbcache linear raid10
+raid1 raid0 dm_zero dm_verity reed_solomon dm_thin_pool dm_switch
+dm_snapshot dm_raid raid456 async_raid6_recov async_memcpy async_pq
+raid6_pq dm_mirror
+[727177.887564]  dm_region_hash dm_log_writes dm_log_userspace dm_log
+dm_integrity async_xor async_tx xor dm_flakey dm_era dm_delay dm_crypt
+dm_cache_smq dm_cache dm_persistent_data libcrc32c dm_bufio
+dm_bio_prison dm_mod dax firewire_core crc_itu_t sl811_hcd xhci_pci
+xhci_hcd usb_storage mpt3sas raid_class aic94xx libsas lpfc nvmet_fc
+nvmet qla2xxx megaraid_sas megaraid_mbox megaraid_mm aacraid sx8 hpsa
+3w_9xxx 3w_xxxx 3w_sas mptsas scsi_transport_sas mptfc
+scsi_transport_fc mptspi mptscsih mptbase imm parport sym53c8xx initio
+arcmsr aic7xxx aic79xx scsi_transport_spi sr_mod cdrom sg sd_mod
+pdc_adma sata_inic162x sata_mv ata_piix ahci libahci sata_qstor
+sata_vsc sata_uli sata_sis sata_sx4 sata_nv sata_via sata_svw
+sata_sil24 sata_sil sata_promise pata_via pata_jmicron pata_marvell
+pata_sis pata_netcell pata_pdc202xx_old pata_atiixp pata_amd pata_ali
+pata_it8213 pata_pcmcia pata_serverworks pata_oldpiix pata_artop
+pata_it821x pata_hpt3x2n pata_hpt3x3 pata_hpt37x pata_hpt366
+pata_cmd64x
+[727177.890877]  pata_sil680 pata_pdc2027x nvme_fc nvme_rdma rdma_cm
+iw_cm ib_cm ib_core ipv6 crc_ccitt nf_defrag_ipv6 configfs
+nvme_fabrics virtio_net net_failover failover virtio_crypto
+crypto_engine virtio_mmio virtio_pci virtio_balloon virtio_rng
+virtio_console virtio_blk virtio_scsi virtio_ring virtio
+[727177.895163] CR2: 0000000000000005
+[727177.895480] ---[ end trace 74cb513785034f63 ]---
+[727178.401799] RIP: 0010:0x44000000
+[727178.402142] Code: Bad RIP value.
+[727178.402453] RSP: 0018:ffffb155c1227c88 EFLAGS: 00010206
+[727178.402769] RAX: 0000000044000000 RBX: ffff88eb184b87f8 RCX:
+0000000000000001
+[727178.403312] RDX: 0000000000000000 RSI: ffffb155c0857dc0 RDI:
+ffff88ed53bd5600
+[727178.403854] RBP: ffff88ed53bd5600 R08: 0000000000000000 R09:
+ffffb155c1227c28
+[727178.404395] R10: ffffb155c1227b8c R11: 0000000000000000 R12:
+ffff88eb184b8808
+[727178.404938] R13: 0000000044000000 R14: ffffb155c1227d28 R15:
+ffff88ed53b45e80
+[727178.405482] FS:  00007f45f3d17700(0000) GS:ffff88ed5fb80000(0000)
+knlGS:0000000000000000
+[727178.406027] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[727178.406343] CR2: 0000000043ffffd6 CR3: 000000084838a000 CR4:
+00000000003406e0
+[743393.910213] BUG: kernel NULL pointer dereference, address: 0000000000000005
+[743393.910548] #PF: supervisor instruction fetch in kernel mode
+[743393.910868] #PF: error_code(0x0010) - not-present page
+[743393.911187] PGD 0 P4D 0
+[743393.911503] Oops: 0010 [#3] PREEMPT SMP NOPTI
+[743393.911823] CPU: 7 PID: 6921 Comm: mergerfs Tainted: G      D
+     5.4.6-gentoo #1
+[743393.912372] Hardware name: Supermicro Super Server/A2SDi-8C-HLN4F,
+BIOS 1.1c 06/25/2019
+[743393.912925] RIP: 0010:0x5
+[743393.913243] Code: Bad RIP value.
+[743393.913558] RSP: 0018:ffffb155c12dfc88 EFLAGS: 00010206
+[743393.913878] RAX: 0000000000000005 RBX: ffff88ed58471660 RCX:
+0000000000000001
+[743393.914426] RDX: 0000000000000000 RSI: ffffb155c74e3d98 RDI:
+ffff88ed4a4e6600
+[743393.914973] RBP: ffff88ed4a4e6600 R08: 0000000000000000 R09:
+ffffb155c12dfc28
+[743393.915521] R10: ffffb155c12dfb8c R11: 0000000000000000 R12:
+ffff88ed58471670
+[743393.916068] R13: 0000000000000005 R14: ffffb155c12dfd28 R15:
+ffff88ed539ee980
+[743393.916617] FS:  00007f45f2b11700(0000) GS:ffff88ed5fbc0000(0000)
+knlGS:0000000000000000
+[743393.917168] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[743393.917487] CR2: ffffffffffffffdb CR3: 000000084838a000 CR4:
+00000000003406e0
+[743393.918034] Call Trace:
+[743393.918366]  ? fuse_request_end+0xae/0x1c0 [fuse]
+[743393.918696]  ? fuse_dev_do_write+0x2a0/0x3e0 [fuse]
+[743393.919027]  ? fuse_dev_write+0x6e/0xa0 [fuse]
+[743393.919354]  ? do_iter_readv_writev+0x150/0x1c0
+[743393.919675]  ? do_iter_write+0x80/0x190
+[743393.919992]  ? vfs_writev+0xa3/0x100
+[743393.920309]  ? preempt_count_sub+0x5/0x90
+[743393.920626]  ? _raw_spin_unlock+0x12/0x30
+[743393.920948]  ? __call_rcu+0xc3/0x190
+[743393.921265]  ? get_max_files+0x10/0x10
+[743393.921584]  ? __fget+0x73/0xb0
+[743393.921901]  ? do_writev+0x65/0x100
+[743393.922220]  ? do_syscall_64+0x54/0x190
+[743393.922537]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[743393.922861] Modules linked in: nfsd auth_rpcgss nfs_acl tda18271
+s5h1411 cfg80211 rfkill 8021q garp stp mrp llc xt_length xt_conntrack
+ip6table_filter ip6_tables cachefiles x86_pkg_temp_thermal
+nf_conntrack_ftp kvm_intel nf_conntrack nf_defrag_ipv4 kvm irqbypass
+snd_pcm coretemp crct10dif_pclmul saa7164 snd_timer crc32_pclmul
+tveeprom snd dvb_core crc32c_intel soundcore pcspkr
+ghash_clmulni_intel videodev mc i2c_ismt acpi_cpufreq xts aesni_intel
+crypto_simd cryptd glue_helper crc32_generic cbc sha256_generic
+libsha256 ixgb ixgbe tulip cxgb3 cxgb mdio cxgb4 vxge bonding vxlan
+ip6_udp_tunnel udp_tunnel macvlan vmxnet3 tg3 sky2 r8169 pcnet32 mii
+igb dca i2c_algo_bit i2c_core e1000 bnx2 atl1c msdos fat cramfs
+squashfs fuse xfs nfs lockd grace sunrpc fscache jfs reiserfs btrfs
+zstd_decompress zstd_compress ext4 jbd2 ext2 mbcache linear raid10
+raid1 raid0 dm_zero dm_verity reed_solomon dm_thin_pool dm_switch
+dm_snapshot dm_raid raid456 async_raid6_recov async_memcpy async_pq
+raid6_pq dm_mirror
+[743393.922978]  dm_region_hash dm_log_writes dm_log_userspace dm_log
+dm_integrity async_xor async_tx xor dm_flakey dm_era dm_delay dm_crypt
+dm_cache_smq dm_cache dm_persistent_data libcrc32c dm_bufio
+dm_bio_prison dm_mod dax firewire_core crc_itu_t sl811_hcd xhci_pci
+xhci_hcd usb_storage mpt3sas raid_class aic94xx libsas lpfc nvmet_fc
+nvmet qla2xxx megaraid_sas megaraid_mbox megaraid_mm aacraid sx8 hpsa
+3w_9xxx 3w_xxxx 3w_sas mptsas scsi_transport_sas mptfc
+scsi_transport_fc mptspi mptscsih mptbase imm parport sym53c8xx initio
+arcmsr aic7xxx aic79xx scsi_transport_spi sr_mod cdrom sg sd_mod
+pdc_adma sata_inic162x sata_mv ata_piix ahci libahci sata_qstor
+sata_vsc sata_uli sata_sis sata_sx4 sata_nv sata_via sata_svw
+sata_sil24 sata_sil sata_promise pata_via pata_jmicron pata_marvell
+pata_sis pata_netcell pata_pdc202xx_old pata_atiixp pata_amd pata_ali
+pata_it8213 pata_pcmcia pata_serverworks pata_oldpiix pata_artop
+pata_it821x pata_hpt3x2n pata_hpt3x3 pata_hpt37x pata_hpt366
+pata_cmd64x
+[743393.926289]  pata_sil680 pata_pdc2027x nvme_fc nvme_rdma rdma_cm
+iw_cm ib_cm ib_core ipv6 crc_ccitt nf_defrag_ipv6 configfs
+nvme_fabrics virtio_net net_failover failover virtio_crypto
+crypto_engine virtio_mmio virtio_pci virtio_balloon virtio_rng
+virtio_console virtio_blk virtio_scsi virtio_ring virtio
+[743393.937567] CR2: 0000000000000005
+[743393.937884] ---[ end trace 74cb513785034f64 ]---
+[743393.991952] RIP: 0010:0x44000000
+[743393.992275] Code: Bad RIP value.
+[743393.992588] RSP: 0018:ffffb155c1227c88 EFLAGS: 00010206
+[743393.992907] RAX: 0000000044000000 RBX: ffff88eb184b87f8 RCX:
+0000000000000001
+[743393.993455] RDX: 0000000000000000 RSI: ffffb155c0857dc0 RDI:
+ffff88ed53bd5600
+[743393.994001] RBP: ffff88ed53bd5600 R08: 0000000000000000 R09:
+ffffb155c1227c28
+[743393.994549] R10: ffffb155c1227b8c R11: 0000000000000000 R12:
+ffff88eb184b8808
+[743393.995097] R13: 0000000044000000 R14: ffffb155c1227d28 R15:
+ffff88ed53b45e80
+[743393.995646] FS:  00007f45f2b11700(0000) GS:ffff88ed5fbc0000(0000)
+knlGS:0000000000000000
+[743393.996196] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[743393.996515] CR2: 0000000043ffffd6 CR3: 000000084838a000 CR4:
+00000000003406e0
