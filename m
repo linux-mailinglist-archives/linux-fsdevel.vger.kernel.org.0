@@ -2,71 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09B5F1318E1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2020 20:46:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28A9B131987
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2020 21:44:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbgAFTqi convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Mon, 6 Jan 2020 14:46:38 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:36250 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726657AbgAFTqi (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jan 2020 14:46:38 -0500
-Received: from localhost (unknown [IPv6:2610:98:8005::147])
+        id S1726731AbgAFUoB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jan 2020 15:44:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38908 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726657AbgAFUoB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 6 Jan 2020 15:44:01 -0500
+Received: from gmail.com (unknown [104.132.1.77])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: krisman)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id C2936291A19;
-        Mon,  6 Jan 2020 19:46:36 +0000 (GMT)
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     Pali =?utf-8?Q?Roh=C3=A1r?= <pali.rohar@gmail.com>
-Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com, linkinjeon@gmail.com, tytso@mit.edu
-Subject: Re: [PATCH v9 10/13] exfat: add nls operations
-Organization: Collabora
-References: <20200102082036.29643-1-namjae.jeon@samsung.com>
-        <CGME20200102082407epcas1p4cf10cd3d0ca2903707ab01b1cc523a05@epcas1p4.samsung.com>
-        <20200102082036.29643-11-namjae.jeon@samsung.com>
-        <20200105165115.37dyrcwtgf6zgc6r@pali>
-Date:   Mon, 06 Jan 2020 14:46:33 -0500
-In-Reply-To: <20200105165115.37dyrcwtgf6zgc6r@pali> ("Pali =?utf-8?Q?Roh?=
- =?utf-8?Q?=C3=A1r=22's?= message of
-        "Sun, 5 Jan 2020 17:51:15 +0100")
-Message-ID: <85woa4jrl2.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BADC20731;
+        Mon,  6 Jan 2020 20:44:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578343440;
+        bh=GCDF90PxaFvkCGdMTp6cM9sEWuA1IASP7woryXiIkio=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kxR3BbcmfEd73kXxSYAqfsOmgdQ2Fcysz9TiL5R0c3beHGBb4GmNNZQGIw8h8advw
+         otmHqxecH+g51yMiinkK+sU1bLicbT7jDFfAd82yOqB1479nS8FFz1NO8GvTpKAp5Z
+         Ti9u2rTBVrn+51T4bSV4dyCcTRYh59GowGLGVluc=
+Date:   Mon, 6 Jan 2020 12:43:58 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, Victor Hsieh <victorhsieh@google.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH] fs-verity: implement readahead of Merkle tree pages
+Message-ID: <20200106204357.GA254289@gmail.com>
+References: <20191216181112.89304-1-ebiggers@kernel.org>
+ <20200106181508.GA50058@jaegeuk-macbookpro.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200106181508.GA50058@jaegeuk-macbookpro.roam.corp.google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Pali Rohár <pali.rohar@gmail.com> writes:
+On Mon, Jan 06, 2020 at 10:15:08AM -0800, Jaegeuk Kim wrote:
+> >  static struct page *f2fs_read_merkle_tree_page(struct inode *inode,
+> > -					       pgoff_t index)
+> > +					       pgoff_t index,
+> > +					       unsigned long num_ra_pages)
+> >  {
+> > +	struct page *page;
+> > +
+> >  	index += f2fs_verity_metadata_pos(inode) >> PAGE_SHIFT;
+> >  
+> > -	return read_mapping_page(inode->i_mapping, index, NULL);
+> > +	page = find_get_page(inode->i_mapping, index);
+> > +	if (!page || !PageUptodate(page)) {
+> > +		if (page)
+> > +			put_page(page);
+> > +		else if (num_ra_pages > 1)
+> > +			f2fs_merkle_tree_readahead(inode->i_mapping, index,
+> > +						   num_ra_pages);
+> > +		page = read_mapping_page(inode->i_mapping, index, NULL);
+> > +		if (IS_ERR(page))
+> > +			return page;
+> 
+> We don't need to check this, but can use the below return page?
+> 
 
-> What do you think what should kernel's exfat driver do in this case?
->
-> To prevent such thing we need to use some kind of Unicode normalization
-> form here.
->
-> CCing Gabriel as he was implementing some Unicode normalization for ext4
-> driver and maybe should bring some light to new exfat driver too.
+Indeed, I'll remove the unnecessary IS_ERR(page) check.
 
-We have an in-kernel implementation of the canonical decomposition
-normalization (NFD) in fs/unicode, which is what we use for f2fs and
-ext4.  It is heated argument what is the best form for filesystem usage,
-and from what I researched, every proprietary filesystem does a
-different (and crazy in their unique way) thing.
+> > +	}
+> 
+> mark_page_accessed(page)?
+> 
+> > +	return page;
+> >  }
 
-For exfat, even though the specification is quite liberal, I think the
-reasonable answer is to follow closely whatever behavior the Windows
-implementation has, whether it does normalization at all or not. Even if
-it is just an in-memory format used internally for lookups, assuming a
-different format or treating differently invalid file names can result
-in awkward results in a filesystem created on another operating system,
-like filename collisions or false misses in lookups.
+Good idea, but read_mapping_page() already calls mark_page_accessed().  It's
+just find_get_page() that doesn't.  So after this patch, mark_page_accessed() is
+no longer called in the case where the page is already cached and Uptodate.
+I'll change it to use:
 
--- 
-Gabriel Krisman Bertazi
+	find_get_page_flags(inode->i_mapping, index, FGP_ACCESSED);
+
+- Eric
