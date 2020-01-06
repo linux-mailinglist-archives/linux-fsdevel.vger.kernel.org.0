@@ -2,188 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E908B131AF2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2020 23:02:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 625F3131C41
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 00:21:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbgAFWCj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jan 2020 17:02:39 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:57310 "EHLO
+        id S1726858AbgAFXVJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jan 2020 18:21:09 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:54458 "EHLO
         mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726895AbgAFWCj (ORCPT
+        by vger.kernel.org with ESMTP id S1726545AbgAFXVJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jan 2020 17:02:39 -0500
+        Mon, 6 Jan 2020 18:21:09 -0500
 Received: from dread.disaster.area (pa49-180-68-255.pa.nsw.optusnet.com.au [49.180.68.255])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id DAEBE7E84E1;
-        Tue,  7 Jan 2020 09:02:34 +1100 (AEDT)
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 6171D7E8AC3;
+        Tue,  7 Jan 2020 10:21:02 +1100 (AEDT)
 Received: from dave by dread.disaster.area with local (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1ioaSH-00061A-5f; Tue, 07 Jan 2020 09:02:33 +1100
-Date:   Tue, 7 Jan 2020 09:02:33 +1100
+        id 1iobgC-0006Ms-6o; Tue, 07 Jan 2020 10:21:00 +1100
+Date:   Tue, 7 Jan 2020 10:21:00 +1100
 From:   Dave Chinner <david@fromorbit.com>
-To:     Tony Asleson <tasleson@redhat.com>
-Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC 9/9] __xfs_printk: Add durable name to output
-Message-ID: <20200106220233.GK23195@dread.disaster.area>
-References: <20191223225558.19242-1-tasleson@redhat.com>
- <20191223225558.19242-10-tasleson@redhat.com>
- <20200104025620.GC23195@dread.disaster.area>
- <5ad7cf7b-e261-102c-afdc-fa34bed98921@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Mel Gorman <mgorman@suse.de>
+Subject: Re: [Lsf-pc] [LSF/MM TOPIC] Congestion
+Message-ID: <20200106232100.GL23195@dread.disaster.area>
+References: <20191231125908.GD6788@bombadil.infradead.org>
+ <20200106115514.GG12699@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5ad7cf7b-e261-102c-afdc-fa34bed98921@redhat.com>
+In-Reply-To: <20200106115514.GG12699@dhcp22.suse.cz>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 X-Optus-CM-Score: 0
 X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
         a=sbdTpStuSq8iNQE8viVliQ==:117 a=sbdTpStuSq8iNQE8viVliQ==:17
         a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=Jdjhy38mL1oA:10
-        a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=J_bn1_9MaN90Pk6s4eYA:9
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+        a=VwQbUJbxAAAA:8 a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8 a=Gjqk4l_1r1m8T7qFzNsA:9
+        a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22 a=1CNFftbPRP8L7MoqJWF3:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jan 05, 2020 at 08:45:00PM -0600, Tony Asleson wrote:
-> On 1/3/20 8:56 PM, Dave Chinner wrote:
-> > On Mon, Dec 23, 2019 at 04:55:58PM -0600, Tony Asleson wrote:
-> >> Add persistent durable name to xfs messages so we can
-> >> correlate them with other messages for the same block
-> >> device.
-> >>
-> >> Signed-off-by: Tony Asleson <tasleson@redhat.com>
-> >> ---
-> >>  fs/xfs/xfs_message.c | 17 +++++++++++++++++
-> >>  1 file changed, 17 insertions(+)
-> >>
-> >> diff --git a/fs/xfs/xfs_message.c b/fs/xfs/xfs_message.c
-> >> index 9804efe525a9..8447cdd985b4 100644
-> >> --- a/fs/xfs/xfs_message.c
-> >> +++ b/fs/xfs/xfs_message.c
-> >> @@ -20,6 +20,23 @@ __xfs_printk(
-> >>  	const struct xfs_mount	*mp,
-> >>  	struct va_format	*vaf)
-> >>  {
-> >> +	char dict[128];
-> >> +	int dict_len = 0;
-> >> +
-> >> +	if (mp && mp->m_super && mp->m_super->s_bdev &&
-> >> +		mp->m_super->s_bdev->bd_disk) {
-> >> +		dict_len = dev_durable_name(
-> >> +			disk_to_dev(mp->m_super->s_bdev->bd_disk)->parent,
-> >> +			dict,
-> >> +			sizeof(dict));
-> >> +		if (dict_len) {
-> >> +			printk_emit(
-> >> +				0, level[1] - '0', dict, dict_len,
-> >> +				"XFS (%s): %pV\n",  mp->m_fsname, vaf);
-> >> +			return;
-> >> +		}
-> >> +	}
+On Mon, Jan 06, 2020 at 12:55:14PM +0100, Michal Hocko wrote:
+> On Tue 31-12-19 04:59:08, Matthew Wilcox wrote:
 > > 
-> > NACK on the ground this is a gross hack.
+> > I don't want to present this topic; I merely noticed the problem.
+> > I nominate Jens Axboe and Michael Hocko as session leaders.  See the
+> > thread here:
 > 
-> James suggested I utilize dev_printk, which does make things simpler.
-> Would something like this be acceptable?
+> Thanks for bringing this up Matthew! The change in the behavior came as
+> a surprise to me. I can lead the session for the MM side.
 > 
-> diff --git a/fs/xfs/xfs_message.c b/fs/xfs/xfs_message.c
-> index 9804efe525a9..0738c74a8d3a 100644
-> --- a/fs/xfs/xfs_message.c
-> +++ b/fs/xfs/xfs_message.c
-> @@ -20,11 +20,18 @@ __xfs_printk(
->         const struct xfs_mount  *mp,
->         struct va_format        *vaf)
->  {
-> +       struct device *dev = NULL;
-> +
-> +       if (mp && mp->m_super && mp->m_super->s_bdev &&
-> +               mp->m_super->s_bdev->bd_disk) {
-> +               dev = disk_to_dev(mp->m_super->s_bdev->bd_disk)->parent;
-> +       }
-> +
->         if (mp && mp->m_fsname) {
-> -               printk("%sXFS (%s): %pV\n", level, mp->m_fsname, vaf);
-> +               dev_printk(level, dev, "XFS (%s): %pV\n", mp->m_fsname,
-> vaf);
->                 return;
->         }
-> -       printk("%sXFS: %pV\n", level, vaf);
-> +       dev_printk(level, dev, "XFS: %pV\n", vaf);
-
-No, because that's just doing the same thing involving dynamic
-extraction of static, unchanging information. Only now we get the
-output looking like:
-
-[ts] "<driver string> <dev name>: XFS (<dev name>): <message>"
-
-Or we get:
-
-[ts] "(NULL device *): XFS: <message>"
-
-Both of which don't provide any extra useful information to the
-person/script parsing the log message.
-
-Oh, and calling dev_printk() with a null dev pointer is likely to
-panic the machine in dev_driver_string().
-
->  }
-> 
-> >> +
-> >>  	if (mp && mp->m_fsname) {
+> > https://lore.kernel.org/linux-mm/20190923111900.GH15392@bombadil.infradead.org/
 > > 
-> > mp->m_fsname is the name of the device we use everywhere for log
-> > messages, it's set up at mount time so we don't have to do runtime
-> > evaulation of the device name every time we need to emit the device
-> > name in a log message.
+> > Summary: Congestion is broken and has been for years, and everybody's
+> > system is sleeping waiting for congestion that will never clear.
 > > 
-> > So, if you have some sooper speshial new device naming scheme, it
-> > needs to be stored into the struct xfs_mount to replace mp->m_fsname.
-> 
-> I don't think we want to replace mp->m_fsname with the vpd 0x83 device
-> identifier.  This proposed change is adding a key/value structured data
-> to the log message for non-ambiguous device identification over time,
-> not to place the ID in the human readable portion of the message.  The
-> existing name is useful too, especially when it involves a partition.
-
-Oh, if that's all you want to do, then why is this identifier needed
-in every log message? It does not change over the life of the
-filesystem, so it the persistent identifier only needs to be emitted
-to the log once at filesystem mount time. i.e.  instead of:
-
-[    2.716841] XFS (dm-0): Mounting V5 Filesystem
-
-It just needs to be:
-
-[    2.716841] XFS (dm-0): Mounting V5 Filesystem on device <persistent dev id>
-
-If you need to do any sort of special "is this the right device"
-checking, it needs to be done immediately at mount time so action
-can be taken to shutdown the filesystem and unmount the device
-immediately before further damage is done....
-
-i.e. once the filesystem is mounted, you've already got a unique and
-persistent identifier in the log for the life of the filesystem (the
-m_fsname string), so I'm struggling to understand exactly what
-problem you are trying to solve by adding redundant information
-to every log message.....
-
-> > And if you have some sooper spehsial new printk API that uses this
-> > new device name, everything XFS emits needs to use it
-> > unconditionally as we do with mp->m_fsname now.
+> > A good outcome for this meeting would be:
 > > 
-> > IOWs, this isn't conditional code - it either works for the entire
-> > life of the mount for every message we have to emit with a single
-> > setup call, or the API is broken and needs to be rethought.
+> >  - MM defines what information they want from the block stack.
 > 
-> I've been wondering why the struct scsi device uses rcu data for the vpd
-> as I would not think that it would be changing for a specific device.
-> Perhaps James can shed some light on this?
+> The history of the congestion waiting is kinda hairy but I will try to
+> summarize expectations we used to have and we can discuss how much of
+> that has been real and what followed up as a cargo cult. Maybe we just
+> find out that we do not need functionality like that anymore. I believe
+> Mel would be a great contributor to the discussion.
 
-The implementation of the in-memory driver vpd data page has no
-relationship to the lifetime of the persistent information that
-the VPD stores/reports.
+We most definitely do need some form of reclaim throttling based on
+IO congestion, because it is trivial to drive the system into swap
+storms and OOM killer invocation when there are large dirty slab
+caches that require IO to make reclaim progress and there's little
+in the way of page cache to reclaim.
+
+This is one of the biggest issues I've come across trying to make
+XFS inode reclaim non-blocking - the existing code blocks on inode
+writeback IO congestion to throttle the overall reclaim rate and
+so prevents swap storms and OOM killer rampages from occurring.
+
+The moment I remove the inode writeback blocking from the reclaim
+path and move the backoffs to the core reclaim congestion backoff
+algorithms, I see a sustantial increase in the typical reclaim scan
+priority. This is because the reclaim code does not have an
+integrated back-off mechanism that can balance reclaim throttling
+between slab cache and page cache reclaim. This results in
+insufficient page reclaim backoff under slab cache backoff
+conditions, leading to excessive page cache reclaim and swapping out
+all the anonymous pages in memory. Then performance goes to hell as
+userspace then starts to block on page faults swap thrashing like
+this:
+
+page_fault
+  swap_in
+    alloc page
+      direct reclaim
+        swap out anon page
+	  submit_bio
+	    wbt_throttle
+
+
+IOWs, page reclaim doesn't back off until userspace gets throttled
+in the block layer doing swap out during swap in during page
+faults. For these sorts of workloads there should be little to no
+swap thrashing occurring - throttling reclaim to the rate at which
+inodes are cleaned by async IO dispatcher threads is what is needed
+here, not continuing to wind up reclaim priority  until swap storms
+and the oom killer end up killng the machine...
+
+I also see this when the inode cache load is on a separate device to
+the swap partition - both devices end up at 100% utilisation, one
+doing inode writeback flat out (about 300,000 inodes/sec from an
+inode cache of 5-10 million inodes), the other is swap thrashing
+from a page cache of only 250-500 pages in size.
+
+Hence the way congestion was historically dealt with as a "global
+condition" still needs to exist in some manner - congestion on a
+single device is sufficient to cause the high level reclaim
+algroithms to misbehave badly...
+
+Hence it seems to me that having IO load feedback to the memory
+reclaim algorithms is most definitely required for memory reclaim to
+be able to make the correct decisions about what to reclaim. If the
+shrinker for the cache that uses 50% of RAM in the machine is saying
+"backoff needed" and it's underlying device is
+congested and limiting object reclaim rates, then it's a pretty good
+indication that reclaim should back off and wait for IO progress to
+be made instead of trying to reclaim from other LRUs that hold an
+insignificant amount of memory compared to the huge cache that is
+backed up waiting on IO completion to make progress....
 
 Cheers,
 
