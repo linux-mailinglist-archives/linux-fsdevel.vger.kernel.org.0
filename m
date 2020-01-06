@@ -2,99 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B03EB131640
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2020 17:42:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4B3B131656
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2020 17:55:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbgAFQm7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jan 2020 11:42:59 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37804 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbgAFQm6 (ORCPT
+        id S1726656AbgAFQzb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jan 2020 11:55:31 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38132 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbgAFQzb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jan 2020 11:42:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Y60hMYCeWYx1RgJjYe/0Uw9RlJWWRdvmgf8je/CcB+o=; b=Iq4YQ4+Jiaqn5IL9nyQWU6gA/a
-        G0i5aC7YZwecat+vNIJsyJNpFBctgTcmaCNUlrV+IMBgvXNy2XYapf6Nmm5zLWPobbUvxdX2hdvTS
-        KzMCr1F8j0SlUhfB5tgPdeNLVPGre6LlMObDzuYmLlk7rUu1OdmrUmFa2mfN21NrMZhai1T+If9mR
-        Vi477L1yV90RO8CXOaX6Z9wv2ImXTi9mmpK7N6FEDoLwyV+wDBNG2D13BD/C9Q1IRTZszQRI83THq
-        iSkt13z9XLDUrjDpA5yx3GkVYGRUPrVujHzdEDhHwYRFKdS7qkz2Hlujh9HpzpVH+ZRsj8+K3+NoB
-        jh6830Ew==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ioVSz-0003mO-8J; Mon, 06 Jan 2020 16:42:57 +0000
-Date:   Mon, 6 Jan 2020 08:42:57 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Sitsofe Wheeler <sitsofe@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, drh@sqlite.org,
-        Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-        Theodore Tso <tytso@mit.edu>,
-        harshad shirwadkar <harshadshirwadkar@gmail.com>
-Subject: Re: Questions about filesystems from SQLite author presentation
-Message-ID: <20200106164257.GJ6788@bombadil.infradead.org>
-References: <CALjAwxi3ZpRZLS9QaGfAqwAVST0Biyj_p-b22f=iq_ns4ZQyiA@mail.gmail.com>
- <CAOQ4uxhJhzUj_sjhDknGzdLs6kOXzt3GO2vyCzmuBNTSsAQLGA@mail.gmail.com>
+        Mon, 6 Jan 2020 11:55:31 -0500
+Received: by mail-pg1-f193.google.com with SMTP id a33so27127171pgm.5;
+        Mon, 06 Jan 2020 08:55:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:in-reply-to:references:mime-version:content-id
+         :date:message-id;
+        bh=df4YyZUV+IM4Z+keZd+LizEQHBEDhQXQEtITNJle4CQ=;
+        b=TJuh/iNi/KJipm6QDUvLTl2Kwonqc0io/2eFiUHK8uQCw2Nj1QW37n3hjBaJy6t22X
+         RXrblHvEuy5DLUZabM6m8wFxq49UzcECYaoioVML2RB5kwhzVXEN/+CYDyz/dZmMQvmA
+         a5ruOVlyER+7u59xhwa0sYRHc0QPxA0GyioAd8Sj6quzKYtQ5aLJXPJRCNujLBekjWRL
+         PLIoWc7PPFH+0wEEtDtSKS8x+Qg0CHc2vF1HuNmwiKJbrOxs5Sv3M8tnKvlr3LHisZ44
+         q2vEp4/pZvXr+MOysfMzfG/FSmPhl7brgMlyBbYKlW5w+cWCQAmD5m3B6yhc9k7DoDSU
+         0Jnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:in-reply-to:references
+         :mime-version:content-id:date:message-id;
+        bh=df4YyZUV+IM4Z+keZd+LizEQHBEDhQXQEtITNJle4CQ=;
+        b=bPYvF7N0iGJ+pjUTq/+Y6dCT/oOFlj5nINn9E0eS3QBQvzNqQXa9uCZzRxBUjx+N1i
+         iorsRzE8HnhCmEuVenTarJuLdJdfT8HYA8XafvJnrjA6Bphf38931voQ3Ag+MjjYZ5wr
+         RSs8CU3LZmn11AsOjMsfvFvip19WFeMiuXS1xxoD9bHHn71LRR3GiWc5C6E+iFGw9iJs
+         ybb0nORYoFmgT1eVl+USXQbopuVdgTPmzmQP4FJa87DqgZlah8NFQGUOoNKSb/DgfsL2
+         tYd+DQ7Ei3TbFMEcS89+KhmvRYPkB8POEwe0vgqr01iIBJXqiA+NSHb/U8gD2MHc8q9u
+         NaOQ==
+X-Gm-Message-State: APjAAAWzhGe8XnnPZIFk1mHH2edlhawV0pNfhUyh5rmEu9aLYHmbJDYI
+        wL1j/W/98c0P684nsABNbEYWuuER
+X-Google-Smtp-Source: APXvYqyRlTWbuwzIqqsoGt251vhrqOnu1djUONsK+NgOJb3LrrW5m1N+igc9ajp1Ht1lEyesBXjYWw==
+X-Received: by 2002:aa7:86d4:: with SMTP id h20mr103820168pfo.232.1578329731055;
+        Mon, 06 Jan 2020 08:55:31 -0800 (PST)
+Received: from jromail.nowhere (h219-110-240-103.catv02.itscom.jp. [219.110.240.103])
+        by smtp.gmail.com with ESMTPSA id a19sm24848895pju.11.2020.01.06.08.55.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 06 Jan 2020 08:55:30 -0800 (PST)
+Received: from localhost ([127.0.0.1] helo=jrobl) by jrobl id 1ioVf7-0003c8-6A ; Tue, 07 Jan 2020 01:55:29 +0900
+From:   "J. R. Okajima" <hooanon05g@gmail.com>
+Subject: Re: [PATCH]: nfs acl: bugfix, don't use static nfsd_acl_versions[]
+To:     "J. Bruce Fields" <bfields@redhat.com>
+Cc:     trond.myklebust@hammerspace.com, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org
+In-Reply-To: <20200106162854.GA25029@pick.fieldses.org>
+References: <29104.1578242282@jrobl> <20200106162854.GA25029@pick.fieldses.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxhJhzUj_sjhDknGzdLs6kOXzt3GO2vyCzmuBNTSsAQLGA@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <13894.1578329729.1@jrobl>
+Date:   Tue, 07 Jan 2020 01:55:29 +0900
+Message-ID: <13895.1578329729@jrobl>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 06, 2020 at 05:40:20PM +0200, Amir Goldstein wrote:
-> On Mon, Jan 6, 2020 at 9:26 AM Sitsofe Wheeler <sitsofe@gmail.com> wrote:
-> > If a write occurs on one or two bytes of a file at about the same time as a power
-> > loss, are other bytes of the file guaranteed to be unchanged after reboot?
-> > Or might some other bytes within the same sector have been modified as well?
-> 
-> I don't see how other bytes could change in this scenario, but I don't
-> know if the
-> hardware provides this guarantee. Maybe someone else knows the answer.
+"J. Bruce Fields":
+> Thanks, but, see 7c149057d044 "nfsd: restore NFSv3 ACL support", in
+> 5.5-rc1; looks like you and I both stumbled on the identical fix?--b.
 
-The question is nonsense because there is no way to write less than one
-sector to a hardware device, by definition.  So, treating this question
-as being a read-modify-write of a single sector (assuming the "two bytes"
-don't cross a sector boundary):
+Ah, you already fixed.  I didn't notice since I am still in v5.4.
+Sorry for the noise.
 
-Hardware vendors are reluctant to provide this guarantee, but it's
-essential to constructing a reliable storage system.  We wrote the NVMe
-spec in such a way that vendors must provide single-sector-atomicity
-guarantees, and I hope they haven't managed to wiggle some nonsense
-into the spec that allows them to not make that guarantee.  The below
-is a quote from the 1.4 spec.  For those not versed in NVMe spec-ese,
-"0's based value" means that putting a zero in this field means the
-value of AWUPF is 1.
 
-  Atomic Write Unit Power Fail (AWUPF): This field indicates the size of
-  the write operation guaranteed to be written atomically to the NVM across
-  all namespaces with any supported namespace format during a power fail
-  or error condition.
-
-  If a specific namespace guarantees a larger size than is reported in
-  this field, then this namespace specific size is reported in the NAWUPF
-  field in the Identify Namespace data structure. Refer to section 6.4.
-
-  This field is specified in logical blocks and is a 0’s based value. The
-  AWUPF value shall be less than or equal to the AWUN value.
-
-  If a write command is submitted with size less than or equal to the
-  AWUPF value, the host is guaranteed that the write is atomic to the
-  NVM with respect to other read or write commands. If a write command
-  is submitted that is greater than this size, there is no guarantee of
-  command atomicity. If the write size is less than or equal to the AWUPF
-  value and the write command fails, then subsequent read commands for the
-  associated logical blocks shall return data from the previous successful
-  write command. If a write command is submitted with size greater than
-  the AWUPF value, then there is no guarantee of data returned on
-  subsequent reads of the associated logical blocks.
-
-I take neither blame nor credit for what other storage standards may
-implement; this is the only one I had a hand in, and I had to fight
-hard to get it.
+J. R. Okajima
