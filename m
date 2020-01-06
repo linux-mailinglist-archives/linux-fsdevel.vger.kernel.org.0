@@ -2,102 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93CBF131783
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2020 19:31:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09B5F1318E1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2020 20:46:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726700AbgAFSbN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jan 2020 13:31:13 -0500
-Received: from mail-il1-f182.google.com ([209.85.166.182]:37419 "EHLO
-        mail-il1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726569AbgAFSbN (ORCPT
+        id S1726751AbgAFTqi convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Mon, 6 Jan 2020 14:46:38 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:36250 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726657AbgAFTqi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jan 2020 13:31:13 -0500
-Received: by mail-il1-f182.google.com with SMTP id t8so43389408iln.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jan 2020 10:31:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qpYkP5LNEU0kgNBHOElXzLTySBihXK+6oFjoFYy2Rfs=;
-        b=e9Q+CPQqDiqKy/9otdoD3423BzWDI6HN4CPuBosPI51OP0E7Ib2RZedwUdVAoMQ5Pi
-         FQx+7ftx2uTGEep9Q5zgR2u0IWDusq6s4u+c1fMyuIFGmXKQQUDLjMMNT3CI17jfnjy3
-         WzK4nLCrqXe7sNRlmcLH1djJ6OwkCFN07WoZv3cFNIb9vZw6B9smioFBcWBEOjLvU1JN
-         X6hWQWmhQiHLNQTGGhhnNE5ZI3/E2VVm2h9Bt+rAoyhSWgvH3A0cUkj68N5p3sm4jRj5
-         ck4loCpYfVJEjYBHcpKS/R61sxCPHMIX+SH0dkYktSDvil3mL8n6vcLFH+P98OUeRrcx
-         CeJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qpYkP5LNEU0kgNBHOElXzLTySBihXK+6oFjoFYy2Rfs=;
-        b=YqjESUUiTeJuP75vA/tSnW79yBqnf9ZsZhzQx6wN3oghk0txP9ToDWL9A7welFIGeL
-         Z5SWUCHlCxgzk1SgSNZ5jj6PzFqlqTik4Xf9/8iw3ZMFzHyWmCEmhAKRvKAZl4+/oqgK
-         A+EK/jM1b4wD+e8k8ingVxCaHuKT5AAg9u6fUcidXZg76SXjXWvcvW+C4ClW0WyJ5RAO
-         sdiPyvEfS0m5Am8qKJoqEpccOkQIhbN0Pl7o9DkbQZ7oR0ks+ctdtIbW31zXnzEx4J8U
-         alIiRgb8QtdgiRXZGqdyG0Oq3pDxSf/JPAPBuUdyhnCdltWbfOqZnHy5kaIfyz414DYz
-         f3gQ==
-X-Gm-Message-State: APjAAAVwboeWA/+D4NyPlzTJ0oPBxHlvH3hN5JsciYI1EIbpRNiwiIr6
-        LjRYvIgHkSCNYHrR2Bg4UDnZ/2PQyb88Q/Z8WO4=
-X-Google-Smtp-Source: APXvYqzEG1gVWIhtVDgS5cb7urIUnaKnxudyr3knireJkAWHnE40clrSTRVD+I73jDK+3SMRQQCI4YQnjiLNX0phV8g=
-X-Received: by 2002:a92:5c8a:: with SMTP id d10mr91950168ilg.137.1578335472529;
- Mon, 06 Jan 2020 10:31:12 -0800 (PST)
+        Mon, 6 Jan 2020 14:46:38 -0500
+Received: from localhost (unknown [IPv6:2610:98:8005::147])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: krisman)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id C2936291A19;
+        Mon,  6 Jan 2020 19:46:36 +0000 (GMT)
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     Pali =?utf-8?Q?Roh=C3=A1r?= <pali.rohar@gmail.com>
+Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
+        sj1557.seo@samsung.com, linkinjeon@gmail.com, tytso@mit.edu
+Subject: Re: [PATCH v9 10/13] exfat: add nls operations
+Organization: Collabora
+References: <20200102082036.29643-1-namjae.jeon@samsung.com>
+        <CGME20200102082407epcas1p4cf10cd3d0ca2903707ab01b1cc523a05@epcas1p4.samsung.com>
+        <20200102082036.29643-11-namjae.jeon@samsung.com>
+        <20200105165115.37dyrcwtgf6zgc6r@pali>
+Date:   Mon, 06 Jan 2020 14:46:33 -0500
+In-Reply-To: <20200105165115.37dyrcwtgf6zgc6r@pali> ("Pali =?utf-8?Q?Roh?=
+ =?utf-8?Q?=C3=A1r=22's?= message of
+        "Sun, 5 Jan 2020 17:51:15 +0100")
+Message-ID: <85woa4jrl2.fsf@collabora.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-References: <CALjAwxi3ZpRZLS9QaGfAqwAVST0Biyj_p-b22f=iq_ns4ZQyiA@mail.gmail.com>
- <CAOQ4uxhJhzUj_sjhDknGzdLs6kOXzt3GO2vyCzmuBNTSsAQLGA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhJhzUj_sjhDknGzdLs6kOXzt3GO2vyCzmuBNTSsAQLGA@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 6 Jan 2020 20:31:00 +0200
-Message-ID: <CAOQ4uxjAzAL_pNr-hU7gYcv0ARmRXK3SHYUL7ySKsNBDz1WpmQ@mail.gmail.com>
-Subject: Re: Questions about filesystems from SQLite author presentation
-To:     Sitsofe Wheeler <sitsofe@gmail.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>, drh@sqlite.org,
-        Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-        Theodore Tso <tytso@mit.edu>,
-        harshad shirwadkar <harshadshirwadkar@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 6, 2020 at 5:40 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Mon, Jan 6, 2020 at 9:26 AM Sitsofe Wheeler <sitsofe@gmail.com> wrote:
-> >
-> > At Linux Plumbers 2019 Dr Richard Hipp presented a talk about SQLite
-> > (https://youtu.be/-oP2BOsMpdo?t=5525 ). One of the slides was titled
-> > "Things to discuss"
-> > (https://sqlite.org/lpc2019/doc/trunk/slides/sqlite-intro.html/#6 )
-> > and had a few questions:
-> >
-> [...]
-> >
-> > However, there were even more questions in the briefing paper
-> > (https://sqlite.org/lpc2019/doc/trunk/briefing.md and search for '?')
-> > that couldn't be asked due to limited time. Does anyone know the
-> > answer to the extended questions and whether the the above is right
-> > deduction for the questions that were asked?
-> >
->
-> As Jan said, there is a difference between the answer to "what is the
-> current behavior" and "what are filesystem developers willing to commit
-> as behavior that will remain the same in the future", but I will try to provide
-> some answers to your questions.
->
-> > If a power loss occurs at about the same time that a file is being extended
-> > with new data, will the file be guaranteed to contain valid data after reboot,
-> > or might the extended area of the file contain all zeros or all ones or
-> > arbitrary content? In other words, is the file data always committed to disk
-> > ahead of the file size?
->
-> While that statement would generally be true (ever since ext3
-> journal=ordered...),
+Pali Rohár <pali.rohar@gmail.com> writes:
 
-Bah! scratch that. The statement is generally not true.
-Due to delayed allocation with xfs/ext4 you are much more likely to
-find the extended areas contain all zeroes.
-The only guaranty AFAIK is that with truncate+extend sequence, you
-won't find the old data in the re-extended area.
+> What do you think what should kernel's exfat driver do in this case?
+>
+> To prevent such thing we need to use some kind of Unicode normalization
+> form here.
+>
+> CCing Gabriel as he was implementing some Unicode normalization for ext4
+> driver and maybe should bring some light to new exfat driver too.
 
-Thanks,
-Amir.
+We have an in-kernel implementation of the canonical decomposition
+normalization (NFD) in fs/unicode, which is what we use for f2fs and
+ext4.  It is heated argument what is the best form for filesystem usage,
+and from what I researched, every proprietary filesystem does a
+different (and crazy in their unique way) thing.
+
+For exfat, even though the specification is quite liberal, I think the
+reasonable answer is to follow closely whatever behavior the Windows
+implementation has, whether it does normalization at all or not. Even if
+it is just an in-memory format used internally for lookups, assuming a
+different format or treating differently invalid file names can result
+in awkward results in a filesystem created on another operating system,
+like filename collisions or false misses in lookups.
+
+-- 
+Gabriel Krisman Bertazi
