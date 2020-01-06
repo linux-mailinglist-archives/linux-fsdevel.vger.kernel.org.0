@@ -2,129 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A9DE130F1A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2020 10:02:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 817AA13101E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2020 11:15:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726385AbgAFJCA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jan 2020 04:02:00 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50152 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725446AbgAFJCA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jan 2020 04:02:00 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id B2328B027;
-        Mon,  6 Jan 2020 09:01:55 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 821931E0B47; Mon,  6 Jan 2020 10:01:47 +0100 (CET)
-Date:   Mon, 6 Jan 2020 10:01:47 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        Maor Gottlieb <maorg@mellanox.com>,
-        Ran Rozenstein <ranro@mellanox.com>
-Subject: Re: [PATCH v11 00/25] mm/gup: track dma-pinned pages: FOLL_PIN
-Message-ID: <20200106090147.GA9176@quack2.suse.cz>
-References: <20191219132607.GA410823@unreal>
- <a4849322-8e17-119e-a664-80d9f95d850b@nvidia.com>
- <20191219210743.GN17227@ziepe.ca>
- <20191220182939.GA10944@unreal>
- <1001a5fc-a71d-9c0f-1090-546c4913d8a2@nvidia.com>
- <20191222132357.GF13335@unreal>
- <49d57efe-85e1-6910-baf5-c18df1382206@nvidia.com>
- <20191225052612.GA212002@unreal>
- <b879d191-a07c-e808-e48f-2b9bd8ba4fa3@nvidia.com>
- <612aa292-ec45-295c-b56c-c622876620fa@nvidia.com>
+        id S1726373AbgAFKPY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jan 2020 05:15:24 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:38217 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726155AbgAFKPY (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 6 Jan 2020 05:15:24 -0500
+Received: from dread.disaster.area (pa49-180-68-255.pa.nsw.optusnet.com.au [49.180.68.255])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id E54697E8337;
+        Mon,  6 Jan 2020 21:15:20 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1ioPPq-0001lH-KH; Mon, 06 Jan 2020 21:15:18 +1100
+Date:   Mon, 6 Jan 2020 21:15:18 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Sitsofe Wheeler <sitsofe@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, drh@sqlite.org
+Subject: Re: Questions about filesystems from SQLite author presentation
+Message-ID: <20200106101518.GI23195@dread.disaster.area>
+References: <CALjAwxi3ZpRZLS9QaGfAqwAVST0Biyj_p-b22f=iq_ns4ZQyiA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <612aa292-ec45-295c-b56c-c622876620fa@nvidia.com>
+In-Reply-To: <CALjAwxi3ZpRZLS9QaGfAqwAVST0Biyj_p-b22f=iq_ns4ZQyiA@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
+        a=sbdTpStuSq8iNQE8viVliQ==:117 a=sbdTpStuSq8iNQE8viVliQ==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=Jdjhy38mL1oA:10
+        a=jJrOw3FHAAAA:8 a=mLKua8RHAAAA:8 a=vnREMb7VAAAA:8 a=7-415B0cAAAA:8
+        a=wD3FcUrPhhqBU1ysDdUA:9 a=CjuIK1q_8ugA:10 a=9bePgjUHLSYA:10
+        a=ihO_LYgJu9wA:10 a=-FEs8UIgK8oA:10 a=NWVoK91CQyQA:10
+        a=lsIkP6lG2H4f0j7eDx0G:22 a=ewTM_9iNE6a0vsrYD_ou:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat 28-12-19 20:33:32, John Hubbard wrote:
-> On 12/27/19 1:56 PM, John Hubbard wrote:
-> ...
-> >> It is ancient verification test (~10y) which is not an easy task to
-> >> make it understandable and standalone :).
-> >>
-> > 
-> > Is this the only test that fails, btw? No other test failures or hints of
-> > problems?
-> > 
-> > (Also, maybe hopeless, but can *anyone* on the RDMA list provide some
-> > characterization of the test, such as how many pins per page, what page
-> > sizes are used? I'm still hoping to write a test to trigger something
-> > close to this...)
-> > 
-> > I do have a couple more ideas for test runs:
-> > 
-> > 1. Reduce GUP_PIN_COUNTING_BIAS to 1. That would turn the whole override of
-> > page->_refcount into a no-op, and so if all is well (it may not be!) with the
-> > rest of the patch, then we'd expect this problem to not reappear.
-> > 
-> > 2. Active /proc/vmstat *foll_pin* statistics unconditionally (just for these
-> > tests, of course), so we can see if there is a get/put mismatch. However, that
-> > will change the timing, and so it must be attempted independently of (1), in
-> > order to see if it ends up hiding the repro.
-> > 
-> > I've updated this branch to implement (1), but not (2), hoping you can give
-> > this one a spin?
-> > 
-> >     git@github.com:johnhubbard/linux.git  pin_user_pages_tracking_v11_with_diags
-> > 
-> > 
+On Mon, Jan 06, 2020 at 07:24:53AM +0000, Sitsofe Wheeler wrote:
+> At Linux Plumbers 2019 Dr Richard Hipp presented a talk about SQLite
+> (https://youtu.be/-oP2BOsMpdo?t=5525 ). One of the slides was titled
+> "Things to discuss"
+> (https://sqlite.org/lpc2019/doc/trunk/slides/sqlite-intro.html/#6 )
+> and had a few questions:
 > 
-> Also, looking ahead:
+> 1. Reliable ways to discover detailed filesystem properties
+> 2. fbarrier()
+> 3. Notify the OS about unused regions in the database file
 > 
-> a) if the problem disappears with the latest above test, then we likely have
->    a huge page refcount overflow, and there are a couple of different ways to
->    fix it. 
-> 
-> b) if it still reproduces with the above, then it's some other random mistake,
->    and in that case I'd be inclined to do a sort of guided (or classic, unguided)
->    git bisect of the series. Because it could be any of several patches.
-> 
->    If that's too much trouble, then I'd have to fall back to submitting a few
->    patches at a time and working my way up to the tracking patch...
+> For 1. I think Jan Kara said that supporting it was undesirable for
+> details like just how much additional fsync were needed due to
+> competing constraints (https://youtu.be/-oP2BOsMpdo?t=6063 ). Someone
+> mentioned there was a
+> patch for fsinfo to discover if you were on a network filesystem
+> (https://www.youtube.com/watch?v=-oP2BOsMpdo&feature=youtu.be&t=5525
+> )...
+> For 2. there was a talk by MySQL dev Sergei Golubchik (
+> https://youtu.be/-oP2BOsMpdo?t=1219 ) talking about how barriers had
+> been taken out and was there a replacement. In
+> https://youtu.be/-oP2BOsMpdo?t=1731 Chris Mason(?) seems to suggest
+> that the desired effect could be achieved with io_uring chaining.
 
-It could also be that an ordinary page reference is dropped with 'unpin'
-thus underflowing the page refcount...
+Even though it wasn't explicitly mentioned, I'm pretty sure that
+those "write barriers" for ordering groups of writes against other
+groups of writes are intended to be used for data integrity
+purposes.
 
-								Honza
+The problem is that data integrity writes also require any
+uncommitted filesytsem metadata to be written in the correct order
+to disk along with the data. i.e.  you can write to the log file,
+but if the transactions during that write that allocate space and/or
+convert it to written space have not been committed to the journal
+then the data is not on stable storage and so data completion
+ordering cannot be relied on for integrity related operations.
 
+This is why write ordering always comes back to "you need to use
+fdatasync(), O_DSYNC or RWF_DSYNC" - it is the only way to guarantee
+the integrity of a initial data write(s) right down to the hardware
+before starting the new dependent write(s).
+
+Hence AIO_FSYNC and now chained operations in io_uring to allow
+fsync to be issues asynchronously and be used as a "write barrier"
+between groups of order dependent IOs...
+
+> For 3. it sounded like Jan Kara was saying there wasn't anything at
+> the moment (hypothetically you could introduce a call that marked the
+> extents as "unwritten" but it doesn't sound like you can do that
+
+You can do that with fallocate() - FALLOC_FL_ZERO_RANGE will mark
+the unused range as unwritten in XFS, or you can just punch a hole
+to free the unused space with FALLOC_FL_PUNCH_HOLE...
+
+> today) and even if you wanted to use something like TRIM it wouldn't
+> be worth it unless you were trimming a large (gigabytes) amount of
+> data (https://youtu.be/-oP2BOsMpdo?t=6330 ).
+
+Punch the space out, then run a periodic background fstrim so the
+filesystem can issue efficient TRIM commands over free space...
+
+Cheers,
+
+Dave.
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Dave Chinner
+david@fromorbit.com
