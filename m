@@ -2,90 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D9BC130DF7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2020 08:25:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2A8D130E55
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2020 09:05:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbgAFHZW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jan 2020 02:25:22 -0500
-Received: from mail-wm1-f45.google.com ([209.85.128.45]:50551 "EHLO
-        mail-wm1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726488AbgAFHZV (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jan 2020 02:25:21 -0500
-Received: by mail-wm1-f45.google.com with SMTP id a5so14006990wmb.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 05 Jan 2020 23:25:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=Udr2VC/34D/ej3jNtnHKlwamBndRUt0c7YEySUS9AYk=;
-        b=tegvSo1+pMilhE+TKyGCXpLfcr2ODsbxMl4yqS/RBIwjBmObGk5V7Hyd0urVNdFLnB
-         yQ73s0FwM6SUJrkJlTTktD3/gtYciOXhdbQWvGSAFbHeYV28hL9nWgYcRlLJVwA7V4Ro
-         XIzEtrlAvMe8SU1nDN+TTLbUF9Jv0kAOBK0uf/WcqRhLHdJ3fnm1fjNH6IyVV5j37ZbH
-         IKnvFgpKB6Jb0ecXrjOMc/VuDJYeK+wVNks/6U28GleSvOVoiCQoCkJE0zVT0+/F2KCf
-         vR1AMHYqjumz2LALhQKob6jv4FkpAgGZhJFj1Nk0OnebgUqh9J53aiYkKIkRc7RTq7NA
-         sxGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=Udr2VC/34D/ej3jNtnHKlwamBndRUt0c7YEySUS9AYk=;
-        b=O9PWUQryuvaS48G9091RbMGvTBQPWArAF+h5cylRX8L3cfPBEpMW28Qk33fTg+8pZz
-         YJjYG/hYXGb/2G36l/xEW7DfvSmSdaWZ/FyNACbOC8CW+1dVbhqxZaKek9o9myqpppvW
-         GmiZCVckdpcXdZQPLN3jmvkSTjJkH4eplPnTzvTSODkoPnaLAmXy88/NgvaHTSvnvDax
-         aIgbzsYxdKnczy7csOh5XlBInouWrV9/5MO1/BJ16qW46qq/G1siQDq3rkEG6SfK8l7I
-         lzEW3CPZBr1FuJZRGje6M0NSW/N72ZWVFH7ZZhIUWuatNcr9rzhrNJeY+SgQ2araIeWQ
-         8h2A==
-X-Gm-Message-State: APjAAAVIqXh9x/9QZtYZfkCpSvXnHT+J8E16/1CYhlXk6Fj/FtAoFNnj
-        IhIL5sZyWEfEPGIJAqFmMLP/BwlKhQNYTfz+VPAcs+xP
-X-Google-Smtp-Source: APXvYqzMJzPVQb+2OubA1+n6rTS2XW/hj8N9D8QR/FDNAtBI9HFXoweWM3Vp0FVaLWgqUQHcuPVmsDt/qrVp2/AGKsY=
-X-Received: by 2002:a1c:3d07:: with SMTP id k7mr34811380wma.79.1578295519286;
- Sun, 05 Jan 2020 23:25:19 -0800 (PST)
+        id S1726180AbgAFIFJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jan 2020 03:05:09 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:57486 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725446AbgAFIFJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 6 Jan 2020 03:05:09 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id A87FC39B56C3B4CF6703;
+        Mon,  6 Jan 2020 16:05:06 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Mon, 6 Jan 2020
+ 16:04:57 +0800
+From:   "zhangyi (F)" <yi.zhang@huawei.com>
+To:     <viro@zeniv.linux.org.uk>
+CC:     <ast@kernel.org>, <daniel@iogearbox.net>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mtd@lists.infradead.org>, <yi.zhang@huawei.com>,
+        <yihuaijie@huawei.com>, <zhongguohua1@huawei.com>,
+        <chenjie6@huawei.com>
+Subject: [PATCH] jffs2: move jffs2_init_inode_info() just after allocating inode
+Date:   Mon, 6 Jan 2020 16:04:11 +0800
+Message-ID: <20200106080411.41394-1-yi.zhang@huawei.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-From:   Sitsofe Wheeler <sitsofe@gmail.com>
-Date:   Mon, 6 Jan 2020 07:24:53 +0000
-Message-ID: <CALjAwxi3ZpRZLS9QaGfAqwAVST0Biyj_p-b22f=iq_ns4ZQyiA@mail.gmail.com>
-Subject: Questions about filesystems from SQLite author presentation
-To:     linux-fsdevel@vger.kernel.org
-Cc:     drh@sqlite.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-At Linux Plumbers 2019 Dr Richard Hipp presented a talk about SQLite
-(https://youtu.be/-oP2BOsMpdo?t=5525 ). One of the slides was titled
-"Things to discuss"
-(https://sqlite.org/lpc2019/doc/trunk/slides/sqlite-intro.html/#6 )
-and had a few questions:
+After commit 4fdcfab5b553 ("jffs2: fix use-after-free on symlink
+traversal"), it expose a freeing uninitialized memory problem due to
+this commit move the operaion of freeing f->target to
+jffs2_i_callback(), which may not be initialized in some error path of
+allocating jffs2 inode (eg: jffs2_iget()->iget_locked()->
+destroy_inode()->..->jffs2_i_callback()->kfree(f->target)).
 
-1. Reliable ways to discover detailed filesystem properties
-2. fbarrier()
-3. Notify the OS about unused regions in the database file
+Fix this by initialize the jffs2_inode_info just after allocating it.
 
-For 1. I think Jan Kara said that supporting it was undesirable for
-details like just how much additional fsync were needed due to
-competing constraints (https://youtu.be/-oP2BOsMpdo?t=6063 ). Someone
-mentioned there was a
-patch for fsinfo to discover if you were on a network filesystem
-(https://www.youtube.com/watch?v=-oP2BOsMpdo&feature=youtu.be&t=5525
-)...
-For 2. there was a talk by MySQL dev Sergei Golubchik (
-https://youtu.be/-oP2BOsMpdo?t=1219 ) talking about how barriers had
-been taken out and was there a replacement. In
-https://youtu.be/-oP2BOsMpdo?t=1731 Chris Mason(?) seems to suggest
-that the desired effect could be achieved with io_uring chaining.
-For 3. it sounded like Jan Kara was saying there wasn't anything at
-the moment (hypothetically you could introduce a call that marked the
-extents as "unwritten" but it doesn't sound like you can do that
-today) and even if you wanted to use something like TRIM it wouldn't
-be worth it unless you were trimming a large (gigabytes) amount of
-data (https://youtu.be/-oP2BOsMpdo?t=6330 ).
+Reported-by: Guohua Zhong <zhongguohua1@huawei.com>
+Reported-by: Huaijie Yi <yihuaijie@huawei.com>
+Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
+Cc: stable@vger.kernel.org
+---
+ fs/jffs2/fs.c    | 2 --
+ fs/jffs2/super.c | 2 ++
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-However, there were even more questions in the briefing paper
-(https://sqlite.org/lpc2019/doc/trunk/briefing.md and search for '?')
-that couldn't be asked due to limited time. Does anyone know the
-answer to the extended questions and whether the the above is right
-deduction for the questions that were asked?
-
+diff --git a/fs/jffs2/fs.c b/fs/jffs2/fs.c
+index ab8cdd9e9325..50a9df7d43a5 100644
+--- a/fs/jffs2/fs.c
++++ b/fs/jffs2/fs.c
+@@ -270,7 +270,6 @@ struct inode *jffs2_iget(struct super_block *sb, unsigned long ino)
+ 	f = JFFS2_INODE_INFO(inode);
+ 	c = JFFS2_SB_INFO(inode->i_sb);
+ 
+-	jffs2_init_inode_info(f);
+ 	mutex_lock(&f->sem);
+ 
+ 	ret = jffs2_do_read_inode(c, f, inode->i_ino, &latest_node);
+@@ -438,7 +437,6 @@ struct inode *jffs2_new_inode (struct inode *dir_i, umode_t mode, struct jffs2_r
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	f = JFFS2_INODE_INFO(inode);
+-	jffs2_init_inode_info(f);
+ 	mutex_lock(&f->sem);
+ 
+ 	memset(ri, 0, sizeof(*ri));
+diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
+index 0e6406c4f362..90373898587f 100644
+--- a/fs/jffs2/super.c
++++ b/fs/jffs2/super.c
+@@ -42,6 +42,8 @@ static struct inode *jffs2_alloc_inode(struct super_block *sb)
+ 	f = kmem_cache_alloc(jffs2_inode_cachep, GFP_KERNEL);
+ 	if (!f)
+ 		return NULL;
++
++	jffs2_init_inode_info(f);
+ 	return &f->vfs_inode;
+ }
+ 
 -- 
-Sitsofe | http://sucs.org/~sits/
+2.17.2
+
