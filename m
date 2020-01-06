@@ -2,100 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C5C7131608
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2020 17:29:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B03EB131640
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2020 17:42:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726692AbgAFQ3A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jan 2020 11:29:00 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:35740 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726677AbgAFQ3A (ORCPT
+        id S1726524AbgAFQm7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jan 2020 11:42:59 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37804 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbgAFQm6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jan 2020 11:29:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578328139;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=dWZzCo0dL1t3oBL+mRxnfhduXRW4GvQOIUYTk1rT7zk=;
-        b=YtQNgwvOxTFB8V78QlgV0YOa7/TYyx5TQH10B8ONOSzQRytVLieqUTVfExaCowA/cnnWNN
-        QnmyyW7z7zHFz00OZM7SHLzwgrcAXDDSCroqsc2kfE2Hx0qlrfcpTAMidmm3cEQ1rEv69N
-        5o9Ywkv6JeW+A6EIT5BIxZYnjDuRTS8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-43-5o_xm6yvM4OHFzWq3DrMOQ-1; Mon, 06 Jan 2020 11:28:58 -0500
-X-MC-Unique: 5o_xm6yvM4OHFzWq3DrMOQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2E3F218552DF;
-        Mon,  6 Jan 2020 16:28:57 +0000 (UTC)
-Received: from pick.fieldses.org (ovpn-126-209.rdu2.redhat.com [10.10.126.209])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B7B1E10840F5;
-        Mon,  6 Jan 2020 16:28:56 +0000 (UTC)
-Received: by pick.fieldses.org (Postfix, from userid 2815)
-        id 9E8D7120198; Mon,  6 Jan 2020 11:28:54 -0500 (EST)
-Date:   Mon, 6 Jan 2020 11:28:54 -0500
-From:   "J. Bruce Fields" <bfields@redhat.com>
-To:     "J. R. Okajima" <hooanon05g@gmail.com>
-Cc:     trond.myklebust@hammerspace.com, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org
-Subject: Re: [PATCH]: nfs acl: bugfix, don't use static nfsd_acl_versions[]
-Message-ID: <20200106162854.GA25029@pick.fieldses.org>
-References: <29104.1578242282@jrobl>
+        Mon, 6 Jan 2020 11:42:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Y60hMYCeWYx1RgJjYe/0Uw9RlJWWRdvmgf8je/CcB+o=; b=Iq4YQ4+Jiaqn5IL9nyQWU6gA/a
+        G0i5aC7YZwecat+vNIJsyJNpFBctgTcmaCNUlrV+IMBgvXNy2XYapf6Nmm5zLWPobbUvxdX2hdvTS
+        KzMCr1F8j0SlUhfB5tgPdeNLVPGre6LlMObDzuYmLlk7rUu1OdmrUmFa2mfN21NrMZhai1T+If9mR
+        Vi477L1yV90RO8CXOaX6Z9wv2ImXTi9mmpK7N6FEDoLwyV+wDBNG2D13BD/C9Q1IRTZszQRI83THq
+        iSkt13z9XLDUrjDpA5yx3GkVYGRUPrVujHzdEDhHwYRFKdS7qkz2Hlujh9HpzpVH+ZRsj8+K3+NoB
+        jh6830Ew==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ioVSz-0003mO-8J; Mon, 06 Jan 2020 16:42:57 +0000
+Date:   Mon, 6 Jan 2020 08:42:57 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Sitsofe Wheeler <sitsofe@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>, drh@sqlite.org,
+        Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
+        Theodore Tso <tytso@mit.edu>,
+        harshad shirwadkar <harshadshirwadkar@gmail.com>
+Subject: Re: Questions about filesystems from SQLite author presentation
+Message-ID: <20200106164257.GJ6788@bombadil.infradead.org>
+References: <CALjAwxi3ZpRZLS9QaGfAqwAVST0Biyj_p-b22f=iq_ns4ZQyiA@mail.gmail.com>
+ <CAOQ4uxhJhzUj_sjhDknGzdLs6kOXzt3GO2vyCzmuBNTSsAQLGA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <29104.1578242282@jrobl>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxhJhzUj_sjhDknGzdLs6kOXzt3GO2vyCzmuBNTSsAQLGA@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thanks, but, see 7c149057d044 "nfsd: restore NFSv3 ACL support", in
-5.5-rc1; looks like you and I both stumbled on the identical fix?--b.
+On Mon, Jan 06, 2020 at 05:40:20PM +0200, Amir Goldstein wrote:
+> On Mon, Jan 6, 2020 at 9:26 AM Sitsofe Wheeler <sitsofe@gmail.com> wrote:
+> > If a write occurs on one or two bytes of a file at about the same time as a power
+> > loss, are other bytes of the file guaranteed to be unchanged after reboot?
+> > Or might some other bytes within the same sector have been modified as well?
+> 
+> I don't see how other bytes could change in this scenario, but I don't
+> know if the
+> hardware provides this guarantee. Maybe someone else knows the answer.
 
-On Mon, Jan 06, 2020 at 01:38:02AM +0900, J. R. Okajima wrote:
-> Here is a patch to fix nfs acl.
-> 
-> J. R. Okajima
-> 
-> ----------------------------------------
-> commit 8684b9a7c55e9283e8b21112fbdf19b4d27f36b7
-> Author: J. R. Okajima <hooanon05g@gmail.com>
-> Date:   Mon Jan 6 01:31:20 2020 +0900
-> 
->     nfs acl: bugfix, don't use static nfsd_acl_versions[]
->     
->     By the commit for v5.2-rc1,
->     e333f3bbefe3 2019-04-24 nfsd: Allow containers to set supported nfs versions
->     the line to copy a value from nfsd_acl_version[] to static
->     nfsd_acl_versions[] was removed.  It is OK, but nfsd_acl_versions[] is
->     still set to nfsd_acl_program.pg_vers which means pg_vers has NULLs for
->     its all entires and nfsacl stops working entirely.
->     I am afraid the removal of static nfsd_acl_versions[] was just
->     forgotten.
->     
->     Signed-off-by: J. R. Okajima <hooanon05g@gmail.com>
-> 
-> diff --git a/fs/nfsd/nfssvc.c b/fs/nfsd/nfssvc.c
-> index 18d94ea984ba..7f938bcb927d 100644
-> --- a/fs/nfsd/nfssvc.c
-> +++ b/fs/nfsd/nfssvc.c
-> @@ -94,12 +94,11 @@ static const struct svc_version *nfsd_acl_version[] = {
->  
->  #define NFSD_ACL_MINVERS            2
->  #define NFSD_ACL_NRVERS		ARRAY_SIZE(nfsd_acl_version)
-> -static const struct svc_version *nfsd_acl_versions[NFSD_ACL_NRVERS];
->  
->  static struct svc_program	nfsd_acl_program = {
->  	.pg_prog		= NFS_ACL_PROGRAM,
->  	.pg_nvers		= NFSD_ACL_NRVERS,
-> -	.pg_vers		= nfsd_acl_versions,
-> +	.pg_vers		= nfsd_acl_version,
->  	.pg_name		= "nfsacl",
->  	.pg_class		= "nfsd",
->  	.pg_stats		= &nfsd_acl_svcstats,
-> 
+The question is nonsense because there is no way to write less than one
+sector to a hardware device, by definition.  So, treating this question
+as being a read-modify-write of a single sector (assuming the "two bytes"
+don't cross a sector boundary):
 
+Hardware vendors are reluctant to provide this guarantee, but it's
+essential to constructing a reliable storage system.  We wrote the NVMe
+spec in such a way that vendors must provide single-sector-atomicity
+guarantees, and I hope they haven't managed to wiggle some nonsense
+into the spec that allows them to not make that guarantee.  The below
+is a quote from the 1.4 spec.  For those not versed in NVMe spec-ese,
+"0's based value" means that putting a zero in this field means the
+value of AWUPF is 1.
+
+  Atomic Write Unit Power Fail (AWUPF): This field indicates the size of
+  the write operation guaranteed to be written atomically to the NVM across
+  all namespaces with any supported namespace format during a power fail
+  or error condition.
+
+  If a specific namespace guarantees a larger size than is reported in
+  this field, then this namespace specific size is reported in the NAWUPF
+  field in the Identify Namespace data structure. Refer to section 6.4.
+
+  This field is specified in logical blocks and is a 0’s based value. The
+  AWUPF value shall be less than or equal to the AWUN value.
+
+  If a write command is submitted with size less than or equal to the
+  AWUPF value, the host is guaranteed that the write is atomic to the
+  NVM with respect to other read or write commands. If a write command
+  is submitted that is greater than this size, there is no guarantee of
+  command atomicity. If the write size is less than or equal to the AWUPF
+  value and the write command fails, then subsequent read commands for the
+  associated logical blocks shall return data from the previous successful
+  write command. If a write command is submitted with size greater than
+  the AWUPF value, then there is no guarantee of data returned on
+  subsequent reads of the associated logical blocks.
+
+I take neither blame nor credit for what other storage standards may
+implement; this is the only one I had a hand in, and I had to fight
+hard to get it.
