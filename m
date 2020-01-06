@@ -2,112 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 817AA13101E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2020 11:15:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E39201311A1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jan 2020 12:55:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726373AbgAFKPY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jan 2020 05:15:24 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:38217 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726155AbgAFKPY (ORCPT
+        id S1726173AbgAFLzS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jan 2020 06:55:18 -0500
+Received: from mail-wm1-f54.google.com ([209.85.128.54]:35639 "EHLO
+        mail-wm1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725787AbgAFLzS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jan 2020 05:15:24 -0500
-Received: from dread.disaster.area (pa49-180-68-255.pa.nsw.optusnet.com.au [49.180.68.255])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id E54697E8337;
-        Mon,  6 Jan 2020 21:15:20 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1ioPPq-0001lH-KH; Mon, 06 Jan 2020 21:15:18 +1100
-Date:   Mon, 6 Jan 2020 21:15:18 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Sitsofe Wheeler <sitsofe@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, drh@sqlite.org
-Subject: Re: Questions about filesystems from SQLite author presentation
-Message-ID: <20200106101518.GI23195@dread.disaster.area>
-References: <CALjAwxi3ZpRZLS9QaGfAqwAVST0Biyj_p-b22f=iq_ns4ZQyiA@mail.gmail.com>
+        Mon, 6 Jan 2020 06:55:18 -0500
+Received: by mail-wm1-f54.google.com with SMTP id p17so14994337wmb.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jan 2020 03:55:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GfsdYKG1B5YfyLA7EncgtcPx7R6mbN28iX2+mpEAViM=;
+        b=fy2gxKwgmj6sxUXu8xJRjwvB9rdIPnmdwno9jwhaTHOpNy2/0ckNCkWsRg6ZpEl7Ez
+         GKhMlbxqW154RPZMAMiPzt8AjLzykxLQiiJXuQYmsrwIS1iDL2vf9WYXqLh1Zn6RSz1L
+         MMckYjYTLGhJtBhIFYjgZvJU25joDtLAnBLoMJnRuwwi35d/EFViL1O1GRZg7dqHB+9D
+         ACFIMCZKaoIhOd0gmHgFEJwsmzobHh2PKn4o/yCctM5ZBCUD74a3kzL2/TLGE9XkHUUe
+         dhdpNV5j6XXxJGyXKUnSWzj7r3h0UVtnen2W6EVPYOJjBYuecCRc4eCMo1BGGXDPVY/S
+         1exQ==
+X-Gm-Message-State: APjAAAWRswfX01RAT2drxLT8GT33SnUsXsHwtWGOQie0nxc76YYbBCfI
+        ajgX4tdtvGdxl5O+a5P9U7ib531S
+X-Google-Smtp-Source: APXvYqwxHzCj74ZfnUMnk1W6z0J80qvpWYWsFB0rX9rW1LacihajjibeIJqXzILqqPnhSJ2mOM6b+Q==
+X-Received: by 2002:a7b:c30b:: with SMTP id k11mr34374696wmj.36.1578311715649;
+        Mon, 06 Jan 2020 03:55:15 -0800 (PST)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id p17sm73071586wrx.20.2020.01.06.03.55.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jan 2020 03:55:14 -0800 (PST)
+Date:   Mon, 6 Jan 2020 12:55:14 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Mel Gorman <mgorman@suse.de>
+Subject: Re: [Lsf-pc] [LSF/MM TOPIC] Congestion
+Message-ID: <20200106115514.GG12699@dhcp22.suse.cz>
+References: <20191231125908.GD6788@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALjAwxi3ZpRZLS9QaGfAqwAVST0Biyj_p-b22f=iq_ns4ZQyiA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
-        a=sbdTpStuSq8iNQE8viVliQ==:117 a=sbdTpStuSq8iNQE8viVliQ==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=Jdjhy38mL1oA:10
-        a=jJrOw3FHAAAA:8 a=mLKua8RHAAAA:8 a=vnREMb7VAAAA:8 a=7-415B0cAAAA:8
-        a=wD3FcUrPhhqBU1ysDdUA:9 a=CjuIK1q_8ugA:10 a=9bePgjUHLSYA:10
-        a=ihO_LYgJu9wA:10 a=-FEs8UIgK8oA:10 a=NWVoK91CQyQA:10
-        a=lsIkP6lG2H4f0j7eDx0G:22 a=ewTM_9iNE6a0vsrYD_ou:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20191231125908.GD6788@bombadil.infradead.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 06, 2020 at 07:24:53AM +0000, Sitsofe Wheeler wrote:
-> At Linux Plumbers 2019 Dr Richard Hipp presented a talk about SQLite
-> (https://youtu.be/-oP2BOsMpdo?t=5525 ). One of the slides was titled
-> "Things to discuss"
-> (https://sqlite.org/lpc2019/doc/trunk/slides/sqlite-intro.html/#6 )
-> and had a few questions:
+On Tue 31-12-19 04:59:08, Matthew Wilcox wrote:
 > 
-> 1. Reliable ways to discover detailed filesystem properties
-> 2. fbarrier()
-> 3. Notify the OS about unused regions in the database file
+> I don't want to present this topic; I merely noticed the problem.
+> I nominate Jens Axboe and Michael Hocko as session leaders.  See the
+> thread here:
+
+Thanks for bringing this up Matthew! The change in the behavior came as
+a surprise to me. I can lead the session for the MM side.
+
+> https://lore.kernel.org/linux-mm/20190923111900.GH15392@bombadil.infradead.org/
 > 
-> For 1. I think Jan Kara said that supporting it was undesirable for
-> details like just how much additional fsync were needed due to
-> competing constraints (https://youtu.be/-oP2BOsMpdo?t=6063 ). Someone
-> mentioned there was a
-> patch for fsinfo to discover if you were on a network filesystem
-> (https://www.youtube.com/watch?v=-oP2BOsMpdo&feature=youtu.be&t=5525
-> )...
-> For 2. there was a talk by MySQL dev Sergei Golubchik (
-> https://youtu.be/-oP2BOsMpdo?t=1219 ) talking about how barriers had
-> been taken out and was there a replacement. In
-> https://youtu.be/-oP2BOsMpdo?t=1731 Chris Mason(?) seems to suggest
-> that the desired effect could be achieved with io_uring chaining.
+> Summary: Congestion is broken and has been for years, and everybody's
+> system is sleeping waiting for congestion that will never clear.
+> 
+> A good outcome for this meeting would be:
+> 
+>  - MM defines what information they want from the block stack.
 
-Even though it wasn't explicitly mentioned, I'm pretty sure that
-those "write barriers" for ordering groups of writes against other
-groups of writes are intended to be used for data integrity
-purposes.
+The history of the congestion waiting is kinda hairy but I will try to
+summarize expectations we used to have and we can discuss how much of
+that has been real and what followed up as a cargo cult. Maybe we just
+find out that we do not need functionality like that anymore. I believe
+Mel would be a great contributor to the discussion.
 
-The problem is that data integrity writes also require any
-uncommitted filesytsem metadata to be written in the correct order
-to disk along with the data. i.e.  you can write to the log file,
-but if the transactions during that write that allocate space and/or
-convert it to written space have not been committed to the journal
-then the data is not on stable storage and so data completion
-ordering cannot be relied on for integrity related operations.
 
-This is why write ordering always comes back to "you need to use
-fdatasync(), O_DSYNC or RWF_DSYNC" - it is the only way to guarantee
-the integrity of a initial data write(s) right down to the hardware
-before starting the new dependent write(s).
+>  - Block stack commits to giving them that information.
 
-Hence AIO_FSYNC and now chained operations in io_uring to allow
-fsync to be issues asynchronously and be used as a "write barrier"
-between groups of order dependent IOs...
-
-> For 3. it sounded like Jan Kara was saying there wasn't anything at
-> the moment (hypothetically you could introduce a call that marked the
-> extents as "unwritten" but it doesn't sound like you can do that
-
-You can do that with fallocate() - FALLOC_FL_ZERO_RANGE will mark
-the unused range as unwritten in XFS, or you can just punch a hole
-to free the unused space with FALLOC_FL_PUNCH_HOLE...
-
-> today) and even if you wanted to use something like TRIM it wouldn't
-> be worth it unless you were trimming a large (gigabytes) amount of
-> data (https://youtu.be/-oP2BOsMpdo?t=6330 ).
-
-Punch the space out, then run a periodic background fstrim so the
-filesystem can issue efficient TRIM commands over free space...
-
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Michal Hocko
+SUSE Labs
