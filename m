@@ -2,156 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5F61132AF0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 17:18:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BDB4132B09
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 17:23:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728409AbgAGQS5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jan 2020 11:18:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55240 "EHLO mail.kernel.org"
+        id S1728365AbgAGQX2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jan 2020 11:23:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728335AbgAGQS4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jan 2020 11:18:56 -0500
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
+        id S1727994AbgAGQX2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 Jan 2020 11:23:28 -0500
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93DF02146E;
-        Tue,  7 Jan 2020 16:18:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A6372146E;
+        Tue,  7 Jan 2020 16:23:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578413934;
-        bh=VHaQ61kdMj1zQ28aJj/C17UOc1bhJar0a2DB7650RJo=;
+        s=default; t=1578414207;
+        bh=y7nyHtre1LVdk95yztadAkAzthxIXXf14CuMTJ61HGs=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=rZi0gUw5vTAwlfrpb2ixg2DIo+LTfSYmSN1bqVUfHuKHB340JxlkfmiV5SS3c/o85
-         2lnjYqtZplqfqgtDo91GCqRhhx9wRWUlrUZHqsAOacB/sDyYbvThQWHBGV0BrCKB8V
-         /YzpTv14l8x+EcEW72dmW8s2Rf+5iosvk4++KGEI=
-Received: by mail-vs1-f47.google.com with SMTP id g23so34246851vsr.7;
-        Tue, 07 Jan 2020 08:18:54 -0800 (PST)
-X-Gm-Message-State: APjAAAWIqQzRwCjfc+3YEDAD8THYPNlvDR7nJo+fiuALjXmf2saKbbXO
-        LPsGR2B+sE2+8xCYmOxWnM5F44YRryCi5zwAX5A=
-X-Google-Smtp-Source: APXvYqzvpalX9mYxg6Cv3airS1ivUXrhzCkCxHPr449SlfZoXw65XfEJe/ap5H8kaopm7p5nfYOfCqLcTkym5I6xFfA=
-X-Received: by 2002:a67:af11:: with SMTP id v17mr34139741vsl.99.1578413933613;
- Tue, 07 Jan 2020 08:18:53 -0800 (PST)
+        b=AdqHTgr9/+5YfzEvhvZhdfa21HP+uYxYsTFXS4bonTvyw/IkO9e/C+fwOups+6UG8
+         wYIMhDOve5TkopEUuNJkHCuCMro+Z404UQ7UsqGTzQfqyIyCfiO9R14CnYti8hjAD2
+         VuuuM5MZloEqTdWrVrHYLyTFvX2J35EP1Q1F0/yk=
+Received: by mail-vs1-f49.google.com with SMTP id g23so34257502vsr.7;
+        Tue, 07 Jan 2020 08:23:27 -0800 (PST)
+X-Gm-Message-State: APjAAAWK+57bPm3mePm6fOqc1KUaNfSi9F8r7L0phoIIqQQyIZOHSoNT
+        8P+QY9KO9CIau3ZYKqUjrrH12xy3rwiLrztCMVQ=
+X-Google-Smtp-Source: APXvYqyiwyikq1PqEkeZKmAg7xDHHQPQzHxwAbHs7MSq4VO4o/FxN0C0BcFRx0UnAmSOenPMK90qFwJtl+8LLe/QgVk=
+X-Received: by 2002:a05:6102:535:: with SMTP id m21mr55052092vsa.95.1578414206426;
+ Tue, 07 Jan 2020 08:23:26 -0800 (PST)
 MIME-Version: 1.0
-References: <20191216182656.15624-1-fdmanana@kernel.org> <20191216182656.15624-3-fdmanana@kernel.org>
- <20191229052240.GG13306@hungrycats.org>
-In-Reply-To: <20191229052240.GG13306@hungrycats.org>
+References: <20191216182656.15624-1-fdmanana@kernel.org> <20191216182656.15624-2-fdmanana@kernel.org>
+In-Reply-To: <20191216182656.15624-2-fdmanana@kernel.org>
 From:   Filipe Manana <fdmanana@kernel.org>
-Date:   Tue, 7 Jan 2020 16:18:42 +0000
-X-Gmail-Original-Message-ID: <CAL3q7H5FcdsA3NEcRae4iE5k8j8tHe-3KjKo_tTg6=fu0c_0gw@mail.gmail.com>
-Message-ID: <CAL3q7H5FcdsA3NEcRae4iE5k8j8tHe-3KjKo_tTg6=fu0c_0gw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] Btrfs: make deduplication with range including the
- last block work
-To:     Zygo Blaxell <ce3g8jdj@umail.furryterror.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
+Date:   Tue, 7 Jan 2020 16:23:15 +0000
+X-Gmail-Original-Message-ID: <CAL3q7H5+CMRkJ9yAa2AeB0aKtA=b_yW2g9JSQwCOhOtLNrH1iQ@mail.gmail.com>
+Message-ID: <CAL3q7H5+CMRkJ9yAa2AeB0aKtA=b_yW2g9JSQwCOhOtLNrH1iQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fs: allow deduplication of eof block into the end of
+ the destination file
+To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc:     linux-btrfs <linux-btrfs@vger.kernel.org>,
         xfs <linux-xfs@vger.kernel.org>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Filipe Manana <fdmanana@suse.com>
+        Filipe Manana <fdmanana@suse.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Dec 29, 2019 at 5:22 AM Zygo Blaxell
-<ce3g8jdj@umail.furryterror.org> wrote:
+On Mon, Dec 16, 2019 at 6:28 PM <fdmanana@kernel.org> wrote:
 >
-> On Mon, Dec 16, 2019 at 06:26:56PM +0000, fdmanana@kernel.org wrote:
-> > From: Filipe Manana <fdmanana@suse.com>
-> >
-> > Since btrfs was migrated to use the generic VFS helpers for clone and
-> > deduplication, it stopped allowing for the last block of a file to be
-> > deduplicated when the source file size is not sector size aligned (when
-> > eof is somewhere in the middle of the last block). There are two reasons
-> > for that:
-> >
-> > 1) The generic code always rounds down, to a multiple of the block size,
-> >    the range's length for deduplications. This means we end up never
-> >    deduplicating the last block when the eof is not block size aligned,
-> >    even for the safe case where the destination range's end offset matches
-> >    the destination file's size. That rounding down operation is done at
-> >    generic_remap_check_len();
-> >
-> > 2) Because of that, the btrfs specific code does not expect anymore any
-> >    non-aligned range length's for deduplication and therefore does not
-> >    work if such nona-aligned length is given.
-> >
-> > This patch addresses that second part, and it depends on a patch that
-> > fixes generic_remap_check_len(), in the VFS, which was submitted ealier
-> > and has the following subject:
-> >
-> >   "fs: allow deduplication of eof block into the end of the destination file"
-> >
-> > These two patches address reports from users that started seeing lower
-> > deduplication rates due to the last block never being deduplicated when
-> > the file size is not aligned to the filesystem's block size.
-> >
-> > Link: https://lore.kernel.org/linux-btrfs/2019-1576167349.500456@svIo.N5dq.dFFD/
-> > Signed-off-by: Filipe Manana <fdmanana@suse.com>
+> From: Filipe Manana <fdmanana@suse.com>
 >
-> Should these patches be marked for stable (5.0+, but see below for
-> caveats about 5.0)?  The bug affects 5.3 and 5.4 which are still active,
-> and dedupe is an important feature for some users.
+> We always round down, to a multiple of the filesystem's block size, the
+> length to deduplicate at generic_remap_check_len().  However this is only
+> needed if an attempt to deduplicate the last block into the middle of the
+> destination file is requested, since that leads into a corruption if the
+> length of the source file is not block size aligned.  When an attempt to
+> deduplicate the last block into the end of the destination file is
+> requested, we should allow it because it is safe to do it - there's no
+> stale data exposure and we are prepared to compare the data ranges for
+> a length not aligned to the block (or page) size - in fact we even do
+> the data compare before adjusting the deduplication length.
+>
+> After btrfs was updated to use the generic helpers from VFS (by commit
+> 34a28e3d77535e ("Btrfs: use generic_remap_file_range_prep() for cloning
+> and deduplication")) we started to have user reports of deduplication
+> not reflinking the last block anymore, and whence users getting lower
+> deduplication scores.  The main use case is deduplication of entire
+> files that have a size not aligned to the block size of the filesystem.
+>
+> We already allow cloning the last block to the end (and beyond) of the
+> destination file, so allow for deduplication as well.
+>
+> Link: https://lore.kernel.org/linux-btrfs/2019-1576167349.500456@svIo.N5dq.dFFD/
+> Signed-off-by: Filipe Manana <fdmanana@suse.com>
 
-Usually I only mark things for stable that are critical: corruptions,
-crashes and memory leaks for example.
-I don't think this is a critical issue, since none of those things
-happen. It's certainly inconvenient to not have
-an extent fully deduplicated, but it's just that.
-
-If a maintainer wants to add it for stable, I'm fine with it.
-
->
-> > ---
-> >  fs/btrfs/ioctl.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> > index 3418decb9e61..c41c276ff272 100644
-> > --- a/fs/btrfs/ioctl.c
-> > +++ b/fs/btrfs/ioctl.c
-> > @@ -3237,6 +3237,7 @@ static void btrfs_double_extent_lock(struct inode *inode1, u64 loff1,
-> >  static int btrfs_extent_same_range(struct inode *src, u64 loff, u64 len,
-> >                                  struct inode *dst, u64 dst_loff)
-> >  {
-> > +     const u64 bs = BTRFS_I(src)->root->fs_info->sb->s_blocksize;
-> >       int ret;
-> >
-> >       /*
-> > @@ -3244,7 +3245,7 @@ static int btrfs_extent_same_range(struct inode *src, u64 loff, u64 len,
-> >        * source range to serialize with relocation.
-> >        */
-> >       btrfs_double_extent_lock(src, loff, dst, dst_loff, len);
-> > -     ret = btrfs_clone(src, dst, loff, len, len, dst_loff, 1);
-> > +     ret = btrfs_clone(src, dst, loff, len, ALIGN(len, bs), dst_loff, 1);
->
-> A heads-up for anyone backporting this to 5.0:  this patch depends on
->
->         57a50e2506df Btrfs: remove no longer needed range length checks for deduplication
-
-For any kernel without that cleanup patch, backporting the first patch
-in the series (the one touching only fs/read_write.c) is enough.
-For any kernel with that cleanup patch, then both patches in the
-series are needed.
+Darrick, Al, any feedback?
 
 Thanks.
 
+> ---
+>  fs/read_write.c | 10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
 >
-> Simply resolving the git conflict without including 57a50e2506df produces
-> a kernel where dedupe rounds the size of the dst file up to the next
-> block boundary.  This is because 57a50e2506df changes the value of
-> "len".  Before 57a50e2506df, "len" is equivalent to "ALIGN(len, bs)"
-> at the btrfs_clone line; after 57a50e2506df, "len" is the unaligned
-> dedupe request length passed to the btrfs_extent_same_range function.
-> This changes the semantics of the btrfs_clone line significantly.
+> diff --git a/fs/read_write.c b/fs/read_write.c
+> index 5bbf587f5bc1..7458fccc59e1 100644
+> --- a/fs/read_write.c
+> +++ b/fs/read_write.c
+> @@ -1777,10 +1777,9 @@ static int remap_verify_area(struct file *file, loff_t pos, loff_t len,
+>   * else.  Assume that the offsets have already been checked for block
+>   * alignment.
+>   *
+> - * For deduplication we always scale down to the previous block because we
+> - * can't meaningfully compare post-EOF contents.
+> - *
+> - * For clone we only link a partial EOF block above the destination file's EOF.
+> + * For clone we only link a partial EOF block above or at the destination file's
+> + * EOF.  For deduplication we accept a partial EOF block only if it ends at the
+> + * destination file's EOF (can not link it into the middle of a file).
+>   *
+>   * Shorten the request if possible.
+>   */
+> @@ -1796,8 +1795,7 @@ static int generic_remap_check_len(struct inode *inode_in,
+>         if ((*len & blkmask) == 0)
+>                 return 0;
 >
-> 57a50e2506df is in 5.1, so 5.1+ kernels do not require any additional
-> patches.
+> -       if ((remap_flags & REMAP_FILE_DEDUP) ||
+> -           pos_out + *len < i_size_read(inode_out))
+> +       if (pos_out + *len < i_size_read(inode_out))
+>                 new_len &= ~blkmask;
 >
-> 4.20 and earlier don't have the bug, so don't need a fix.
+>         if (new_len == *len)
+> --
+> 2.11.0
 >
-> >       btrfs_double_extent_unlock(src, loff, dst, dst_loff, len);
-> >
-> >       return ret;
-> > --
-> > 2.11.0
-> >
