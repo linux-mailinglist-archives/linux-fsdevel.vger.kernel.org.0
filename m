@@ -2,160 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D93613214E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 09:23:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4B75132177
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 09:35:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbgAGIX5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jan 2020 03:23:57 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34910 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726428AbgAGIX5 (ORCPT
+        id S1726651AbgAGIfe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jan 2020 03:35:34 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:37046 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726485AbgAGIfe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jan 2020 03:23:57 -0500
-Received: by mail-wr1-f67.google.com with SMTP id g17so52828010wro.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jan 2020 00:23:55 -0800 (PST)
+        Tue, 7 Jan 2020 03:35:34 -0500
+Received: by mail-il1-f196.google.com with SMTP id t8so45062179iln.4;
+        Tue, 07 Jan 2020 00:35:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=colorremedies-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=M6mEj8hlQzGKALdLErXEuwCuykGhOOxyxJOLmeQvbbY=;
-        b=k92fYNraJxRgt4vvi7yOiAJZKjjQHOFJzFDfNj35+SqnMGu1vPlT1GrSF1P6sOG6Gh
-         WZ41viNKYlvctoeeGOzVsmRVSCuS/fgxHn3sB12Hew64PdbkIF7tOPCAeBwS9yn80zQs
-         zkSaosucNjHij4fp/5FlOJKgzKZ8hBcJhC93UbDd3y4ejAJtKIjvMsK0oFPjRsndSaV3
-         KDfTLjrP2hb/XfjrD2FqHI6v6tCeTeYXRNBYM2IB74ineSCOHXx3lejkD4nbthCkHNgH
-         dXNsi+F8hInzFAsnHj5MBBVf9LqaGwmFc8IoP+DjOoMtt46bpN3wBAMU314pTQ7pOtXh
-         jifw==
+        bh=r5CoQbT5gUaezb0Iibah3TtEqMoCcxCaRycqJenLuLI=;
+        b=TF+eB2GSDXJhF/T59OQ+iy9T+Zc9WjCFPfDt84dzanWVAuGQo1Zlzac9s1+ure2PrC
+         Zr6QhNoL6zQSpEpxk5dzYbcxz89HW30+qjOiGDQ+DIIbdy4bz610hIt3kz2Dic8vAFpD
+         jykyVpRxnC1LGEcxHkS6wpLOP2g2qFfvpBrXao+c7TpdM91H3ucryMcWzzgzbro4/uoW
+         7wvZZMhL5BCOu/8JXC6WqR0s1d+t54oJehDQmyjJ512li1ARK8i2xeAlnxQHfkWuWuLW
+         dPCqUuqIAcui9J8dYX8xNvfcPXHFEERrWXg32hpbfdbiUkTx8QR1yWTIVkvQWySPPUjA
+         5/Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=M6mEj8hlQzGKALdLErXEuwCuykGhOOxyxJOLmeQvbbY=;
-        b=hy66YTT2/E3YPT+c1gfjJv9GPa9/sodAd/jBKPDxUrIvKpurdTySDN/qhDtJH+AD7g
-         QpQmnr3CLpw09wLd55FDtWa5BpPE1U3apXP3kSY/qkjHFAYlqaaHroObBEEm1EtqeG8A
-         LKq3yhVfAtcEBL713ovKbUB6pJ+ETg23Oy7PKjphNSvMCqcmyMKvoL7cWbsodMN8aHS9
-         iCQ6whYJsB/H4m7N4AOUdLOxXym5pOqUQqmBmO+RAF+jSAkqcTVYMgGFnH2Qr+PM7XJb
-         MlIJNWE/MGj9zG10/bqcWKAlNVyeWzgkK5QSR+i7/qeRKdyT7OSwJm+SDTp21s80zB8t
-         CIkw==
-X-Gm-Message-State: APjAAAWcwLf4N6DEUH2aurqwDMm94Rb+53V8tDiQC27ysZG0gHfhPwEf
-        0HtudCVXUgFl49bqQhpxAiyjGnlnS7v460fm4BaZnA==
-X-Google-Smtp-Source: APXvYqy6WLx8JbEgE35DitDA0cNP7PmoEir6VdIMCuxyKoEAKiTYC2eWm5gJUqeYFD4NnXh14wQ6+9J7joUdHamrK00=
-X-Received: by 2002:adf:e6d2:: with SMTP id y18mr111400099wrm.262.1578385434699;
- Tue, 07 Jan 2020 00:23:54 -0800 (PST)
+        bh=r5CoQbT5gUaezb0Iibah3TtEqMoCcxCaRycqJenLuLI=;
+        b=gl2TewGmJsBHF3OUDhRHcMS40sV8+bFro02AGWSMSdMs59gk7MLW+lwreTMatBz1jk
+         uL2O8S2PKDhIRBEz5z1LK7HBOprSR7oYXVn4J3BKZ4iuLeBmxi5BCLU2A/3+ucyWhVBr
+         CC4Gtfw0vJKm3J6c0p+VcpeUP+FCz61QlJiwyMdcs/s60n5h1jRzQoF7VyzCTt/ULyDO
+         miwHnweqxu4pwKc/NKbVj7jzwPZ6037+buQusjIO6u4EXkYYqY/XOVKeQCB650JZbsMJ
+         I0Gmm1SROLdv9L/zGOOcpdPk1E2MWNQtzsPAxtf7WCK/IcdmT033YdmQGY8AHo9d+5ea
+         HjIQ==
+X-Gm-Message-State: APjAAAUjokOxU7nRpqnJf47ueHpp7bR3RIVFd6pg72sDYSoMmtKsc81r
+        6fTNB13KTcWPkoJvAlEpT9Nn7y2BkhWu1sqdq3k=
+X-Google-Smtp-Source: APXvYqwZ0/67PFrgvxaSPV2Zn/WpieHVE9mDArG9ZypU/RctWuftoA1HuKBAViM3JUXgxussr9iLd0lj+SSrAKpYXBA=
+X-Received: by 2002:a92:5c8a:: with SMTP id d10mr94970292ilg.137.1578386133561;
+ Tue, 07 Jan 2020 00:35:33 -0800 (PST)
 MIME-Version: 1.0
-References: <20191231125908.GD6788@bombadil.infradead.org> <20200106115514.GG12699@dhcp22.suse.cz>
- <20200106232100.GL23195@dread.disaster.area>
-In-Reply-To: <20200106232100.GL23195@dread.disaster.area>
-From:   Chris Murphy <lists@colorremedies.com>
-Date:   Tue, 7 Jan 2020 01:23:38 -0700
-Message-ID: <CAJCQCtTPtveHb8gJ7EPdck4WLsN6=RbS+kh0bGN_=-hrrWpuow@mail.gmail.com>
-Subject: Re: [Lsf-pc] [LSF/MM TOPIC] Congestion
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Michal Hocko <mhocko@kernel.org>,
+References: <cover.1578225806.git.chris@chrisdown.name> <91b4ed6727712cb6d426cf60c740fe2f473f7638.1578225806.git.chris@chrisdown.name>
+ <4106bf3f-5c99-77a4-717e-10a0ffa6a3fa@huawei.com> <CAOQ4uxijrY7mRkAW1OEym7Xi=v6+fDjhAVBfucwtWPx6bokr5Q@mail.gmail.com>
+ <alpine.LSU.2.11.2001062304500.1496@eggly.anvils>
+In-Reply-To: <alpine.LSU.2.11.2001062304500.1496@eggly.anvils>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 7 Jan 2020 10:35:22 +0200
+Message-ID: <CAOQ4uxj_rLeQY4VXzRbM78T8O=b36-Jrh4C-jdQx_6Aiy=D1BA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] tmpfs: Add per-superblock i_ino support
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Chris Down <chris@chrisdown.name>,
+        "zhengbin (A)" <zhengbin13@huawei.com>,
+        "J. R. Okajima" <hooanon05g@gmail.com>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Matthew Wilcox <willy@infradead.org>,
-        lsf-pc@lists.linux-foundation.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-mm@kvack.org, Mel Gorman <mgorman@suse.de>
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@fb.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 6, 2020 at 4:21 PM Dave Chinner <david@fromorbit.com> wrote:
+> Chris, Amir, thank you both for all the work you have been putting
+> into this over the holiday.  I'm only now catching up, sorry.
 >
-> On Mon, Jan 06, 2020 at 12:55:14PM +0100, Michal Hocko wrote:
-> > On Tue 31-12-19 04:59:08, Matthew Wilcox wrote:
-> > >
-> > > I don't want to present this topic; I merely noticed the problem.
-> > > I nominate Jens Axboe and Michael Hocko as session leaders.  See the
-> > > thread here:
-> >
-> > Thanks for bringing this up Matthew! The change in the behavior came as
-> > a surprise to me. I can lead the session for the MM side.
-> >
-> > > https://lore.kernel.org/linux-mm/20190923111900.GH15392@bombadil.infradead.org/
-> > >
-> > > Summary: Congestion is broken and has been for years, and everybody's
-> > > system is sleeping waiting for congestion that will never clear.
-> > >
-> > > A good outcome for this meeting would be:
-> > >
-> > >  - MM defines what information they want from the block stack.
-> >
-> > The history of the congestion waiting is kinda hairy but I will try to
-> > summarize expectations we used to have and we can discuss how much of
-> > that has been real and what followed up as a cargo cult. Maybe we just
-> > find out that we do not need functionality like that anymore. I believe
-> > Mel would be a great contributor to the discussion.
+> It appears that what you are ending up with above is very close to
+> the patch Google has been using for several years.  I'm glad Chris
+> has explored some interesting options, disappointed that you had no
+> more success than I had in trying to solve it efficiently with 32-bit
+> inos, agree with the way in which Amir cut it back.  That we've come to
+> the same conclusions independently is good confirmation of this approach.
 >
-> We most definitely do need some form of reclaim throttling based on
-> IO congestion, because it is trivial to drive the system into swap
-> storms and OOM killer invocation when there are large dirty slab
-> caches that require IO to make reclaim progress and there's little
-> in the way of page cache to reclaim.
+
+Indeed :)
+
+> Only yesterday did I get to see that Amir had asked to see my patch on
+> the 27th: rediffed against 5.5-rc5, appended now below.  I'm showing it,
+> though it's known deficient in three ways (not to mention lack of config
+> or mount options, but I now see Dave Chinner has an interesting take on
+> those) - better make it visible to you now, than me delay you further.
 >
-> This is one of the biggest issues I've come across trying to make
-> XFS inode reclaim non-blocking - the existing code blocks on inode
-> writeback IO congestion to throttle the overall reclaim rate and
-> so prevents swap storms and OOM killer rampages from occurring.
+> It does indicate a couple of improvements to Chris's current patch:
+> reducing use of stat_lock, as Amir suggested (in both nr_inodes limited
+> and unlimited cases); and need to fix shmem_encode_fh(), which neither
+> of us did yet.  Where we should go from here, fix Chris's or fix mine,
+> I've not decided.
 >
-> The moment I remove the inode writeback blocking from the reclaim
-> path and move the backoffs to the core reclaim congestion backoff
-> algorithms, I see a sustantial increase in the typical reclaim scan
-> priority. This is because the reclaim code does not have an
-> integrated back-off mechanism that can balance reclaim throttling
-> between slab cache and page cache reclaim. This results in
-> insufficient page reclaim backoff under slab cache backoff
-> conditions, leading to excessive page cache reclaim and swapping out
-> all the anonymous pages in memory. Then performance goes to hell as
-> userspace then starts to block on page faults swap thrashing like
-> this:
 
-This really caught my attention, however unrelated it may actually be.
-The gist of my question is: what are distributions doing wrong, that
-it's possible for an unprivileged process to take down a system such
-that an ordinary user reaches for the power button? [1] More helpful
-would be, what should distributions be doing better to avoid the
-problem in the first place? User space oom daemons are now popular,
-and there's talk about avoiding swap thrashing and oom by strict use
-of cgroupsv2 and PSI. Some people say, oh yeah duh, just don't make a
-swap device at all, what are you crazy? Then there's swap on ZRAM. And
-alas zswap too. So what's actually recommended to help with this
-problem?
+I vote in favor or best of both patches to result in a simpler outcome:
+1. use inop approach from Hugh's patch
+2. use get_next_ino() instead of per-sb ino_batch for kern_mount
 
-I don't have many original thoughts, but I can't find a reference for
-why my brain is telling me the kernel oom-killer is mainly concerned
-about kernel survival in low memory situations, and not user space.
-But an approximate is "It is the job of the linux 'oom killer' to
-sacrifice one or more processes in order to free up memory for the
-system when all else fails." [2]
+Hugh, do you have any evidence or suspect that shmem_file_setup()
+could be contributing to depleting the global get_next_ino pool?
+Do you have an objection to the combination above?
 
-However, a) failure has happened way before oom-killer is invoked,
-back when the GUI became unresponsive, and b) often it kills some
-small thing, seemingly freeing up just enough memory that the kernel
-is happy to stay in this state for indeterminate time. For my testing
-that's 30 minutes, but I'm compelled to defend a user who asserts a
-mere 15 second grace period before reaching for the power button.
+> From: Hugh Dickins <hughd@google.com>
+> Date: Fri, 7 Aug 2015 20:08:53 -0700
+> Subject: [PATCH] tmpfs: provide 64-bit inode numbers
+>
+> Some programs (including ld.so and clang) try to deduplicate opened
+> files by comparing st_dev and st_ino, which breaks down when two files
+> on the same tmpfs have the same inode number: we are now hitting this
+> problem too often.  J. R. Okajima has reported the same problem with
+> backup tools.
+>
+> tmpfs is currently sharing the same 32-bit get_next_ino() pool as
+> sockets, pipes, ramfs, hugetlbfs etc.  It delivers 32-bit inos even
+> on a 64-bit kernel for one reason: because if a 32-bit executable
+> compiled without _FILE_OFFSET_BITS=64 tries to stat a file with an
+> ino which won't fit in 32 bits, glibc fails that with EOVERFLOW.
+> glibc is being correct, but unhelpful: so 2.6.22 commit 866b04fccbf1
+> ("inode numbering: make static counters in new_inode and iunique be
+> 32 bits") forced get_next_ino() to unsigned int.
+>
+> But whatever the upstream need to avoid surprising a mis-built
+> 32-bit executable, Google production can be sure of the 64-bit
+> environment, and any remaining 32-bit executables built with
+> _FILE_OFFSET_BITS=64 (our files are sometimes bigger than 2G).
+>
+> So, leave get_next_ino() as it is, but convert tmpfs to supply
+> unsigned long inos, and let each superblock keep its own account:
+> it was weird to be sharing a pool with such disparate uses before.
+>
+> shmem_reserve_inode() already provides a good place to do this;
+> and normally it has to take stat_lock to update free_inodes, so
+> no overhead to increment its next_ino under the same lock.  But
+> if it's the internal shm_mnt, or mounted with "nr_inodes=0" to
+> increase scalability by avoiding that stat_lock, then use the
+> same percpu batching technique as get_next_ino().
+>
+> Take on board 4.2 commit 2adc376c5519 ("vfs: avoid creation of
+> inode number 0 in get_next_ino"): for safety, skip any ino whose
+> low 32 bits is 0.
+>
+> Upstream?  That's tougher: maybe try to upstream this as is, and
+> see what falls out; maybe add ino32 or ino64 mount options before
+> trying; or maybe upstream has to stick with the 32-bit ino, and a
+> scheme more complicated than this be implemented for tmpfs.
+>
+> Not-Yet-Signed-off-by: Hugh Dickins <hughd@google.com>
+>
+> 1) Probably needs minor corrections for the 32-bit kernel: I wasn't
+>    worrying about that at the time, and expect some "unsigned long"s
+>    I didn't need to change for the 64-bit kernel actually need to be
+>    "u64"s or "ino_t"s now.
+> 2) The "return 1" from shmem_encode_fh() would nowadays be written as
+>    "return FILEID_INO32_GEN" (and overlayfs takes particular interest
+>    in that fileid); yet it already put the high 32 bits of the ino into
+>    the fh: probably needs a different fileid once high 32 bits are set.
 
-This isn't a common experience across a broad user population, but
-those who have experienced it once are really familiar with it (they
-haven't experienced it only once). And I really want to know what can
-be done to make the user experience better, but it's not clear to me
-how to do that.
+Nice spotting, but this really isn't a problem for overlayfs.
+I agree that it would be nice to follow the same practice as xfs with
+XFS_FILEID_TYPE_64FLAG, but as one can see from the private
+flag, this is by no means a standard of any sort.
 
-[1]
-Fedora 30/31 default installation, 8G RAM, 8G swap (on plain SSD
-partition), and compile webkitgtk. Within ~5 minutes all RAM is
-cosumed, and the "swap storm" begins. The GUI stutters, even the mouse
-pointer starts to gets choppy, and soon after it's pretty much locked
-up and for all practical purposes it's locked up. Most typical, it
-stays this way for 30+ minutes. Occasionally oom-killer kicks in and
-clobbers something. Sometimes it's one of the compile threads. And
-also occasionally it'll be something absurd like sshd, sssd, or
-systemd-journald - which really makes no sense at all.
+As the name_to_handle_at() man page says:
+"Other than the use of the handle_bytes field, the caller should treat the
+ file_handle structure as an opaque data type: the handle_type and f_handle
+ fields are needed only by a  subsequent call to open_by_handle_at()."
 
-[2]
-https://linux-mm.org/OOM_Killer
+It is true that one of my initial versions was checking value returned from
+encode_fh, but Miklos has pointed out to me that this value is arbitrary
+and we shouldn't rely on it.
 
---
-Chris Murphy
+In current overlayfs, the value FILEID_INO32_GEN is only used internally
+to indicate the case where filesystem has no encode_fh op (see comment
+above ovl_can_decode_fh()).  IOW, only the special case of encoding
+by the default export_encode_fh() is considered a proof for 32bit inodes.
+So tmpfs has never been considered as a 32bit inodes filesystem by
+overlayfs.
+
+Thanks,
+Amir.
