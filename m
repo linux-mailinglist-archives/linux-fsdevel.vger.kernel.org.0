@@ -2,46 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC976132DD1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 19:00:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BF18132DD4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 19:00:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728584AbgAGR7m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jan 2020 12:59:42 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:34954 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728563AbgAGR7l (ORCPT
+        id S1728602AbgAGR7p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jan 2020 12:59:45 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:41458 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728580AbgAGR7o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jan 2020 12:59:41 -0500
-Received: by mail-pf1-f194.google.com with SMTP id i23so248721pfo.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jan 2020 09:59:40 -0800 (PST)
+        Tue, 7 Jan 2020 12:59:44 -0500
+Received: by mail-pl1-f196.google.com with SMTP id bd4so18250plb.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jan 2020 09:59:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sargun.me; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=8qgUnZoi7+SDE0rBMM0ljaP4yrM9jPoDNUFIwo43Ucg=;
-        b=fEhC/wgAcWBA+TdVtw6llzatCyKgNYMUSgoPXdbWZME8NDBB5g3ewuMlny3oCdLvib
-         Hkm4z5y4NZUq0ohQxHTP04ABVvmQx7bpkr8lUh7tU4O1kMAZZTnm3323YeOmG3fKTnaZ
-         n9ttoHozlj72C2GRusbyXZyONYfMDKkBOr/sA=
+        bh=6LG36Q0SWhG/CvbxDWW6ihwZbk0PyIKiASNL1qN4jbs=;
+        b=i/0Zn/GUy4XYg4TU3s98lgrvvX6bNyDP9vudbmIx+8iTgz4X+6uXf7MtEXR+mC7YHl
+         cFsxyRTyx7yzQPcgo47n0f4D5VENY/tCRYikuP5yv4gWS0q3zepcZvUUg2CEqzbETsrN
+         xLppc/bO4KoFDvdBrMjsixXGJLmBcn1wSVAxQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=8qgUnZoi7+SDE0rBMM0ljaP4yrM9jPoDNUFIwo43Ucg=;
-        b=CbYIWHuyXF+aVvjsyH4whvpVN7EQaOjeaRA0M/ply/efvHPerU/1AYhfnL889loY1H
-         lFndqktldLL7Xt0UQAB4etf/hjRkA5wwQb8kYNAFfL5qotj8pcWlXp5CO8ZxB3gaH5mV
-         Cn0apGs0nr01R4b1uAB339ncRnijJBwlp+/3uUyKCW0WT8wZVkI/DH8jvob/hCbvU9K0
-         O6SvYkdTxBT++ERHKNyMT4cME3Epqi8qEp6V9LowDWj/X2DkhvKvLEhozuEkqRD0HaHZ
-         cdMCdaW09cV22u28OaDwuj5ZlV/zeGMPdAGFTaTjyMCh1Dfa6RhHHr1T7ZQGZO8Ef9Q4
-         1gQg==
-X-Gm-Message-State: APjAAAXUCjzbqYG4bL6HcGu0F1pmTMBfn0wbjmZvKZAmZUczZl4eReIX
-        53tFp9yt4tbZcaBF0CDfl/vthoRVc6+d5A==
-X-Google-Smtp-Source: APXvYqwRun+UjlvogWyX6oieMSQO6FRUOeSPAiNYaaxuCCxk9sd5MU8bSwzPSAeZwMggqttCISD7Xg==
-X-Received: by 2002:a63:2a06:: with SMTP id q6mr694716pgq.92.1578419980336;
-        Tue, 07 Jan 2020 09:59:40 -0800 (PST)
+        bh=6LG36Q0SWhG/CvbxDWW6ihwZbk0PyIKiASNL1qN4jbs=;
+        b=PWNc8BUpRNa57TCBWX33IufGDU0OBv7x8dnhoSFXmhJnm59SBXj6tE7MsEewJ3nZuR
+         f0CSC9m2ltWq9tZrdnPumFv+JlG0nI6bdCLQyT1kOADL7h0nlN2zBT6CXg+Lnkh7+S3W
+         CpZV1Po9MeuPH5BKgT1nJTK82poAty1OxrPS/69ZXGQJFzLQ2/TnU2YSMVZMrKvXYPZj
+         /3CA4FpyxIUO4WeiRaGebxeT40Npz9q0SBkH+o57ztnwMQ2FsUM+1KHCROGS/gT22AI6
+         l4iOlHvr6Xx4hm7xWw5viqB1F2R8ERJA274fwQLAM2IcYkjGgWAOm+m0UBOSExh0RLI5
+         s21w==
+X-Gm-Message-State: APjAAAWK0jfPIL4XrhGjVecezfxuWJMmMxRkqm5PvVm72LVXcONNIpDP
+        FKge58vprVCVNZsFHUjZ7ZULoA==
+X-Google-Smtp-Source: APXvYqysf2AXME1Qm/O7vPO/Ou6BnNuDgIMkCsdqcKGejU8Aw+TCdQtJkoA5QpSA61it64agmoHf2A==
+X-Received: by 2002:a17:90a:9dc3:: with SMTP id x3mr1019412pjv.45.1578419983503;
+        Tue, 07 Jan 2020 09:59:43 -0800 (PST)
 Received: from ubuntu.netflix.com (166.sub-174-194-208.myvzw.com. [174.194.208.166])
-        by smtp.gmail.com with ESMTPSA id g7sm210324pfq.33.2020.01.07.09.59.38
+        by smtp.gmail.com with ESMTPSA id g7sm210324pfq.33.2020.01.07.09.59.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2020 09:59:39 -0800 (PST)
+        Tue, 07 Jan 2020 09:59:42 -0800 (PST)
 From:   Sargun Dhillon <sargun@sargun.me>
 To:     linux-kernel@vger.kernel.org,
         containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
@@ -51,9 +51,9 @@ Cc:     Sargun Dhillon <sargun@sargun.me>, tycho@tycho.ws,
         oleg@redhat.com, luto@amacapital.net, viro@zeniv.linux.org.uk,
         gpascutto@mozilla.com, ealvarez@mozilla.com, fweimer@redhat.com,
         jld@mozilla.com, arnd@arndb.de
-Subject: [PATCH v9 3/4] arch: wire up pidfd_getfd syscall
-Date:   Tue,  7 Jan 2020 09:59:26 -0800
-Message-Id: <20200107175927.4558-4-sargun@sargun.me>
+Subject: [PATCH v9 4/4] test: Add test for pidfd getfd
+Date:   Tue,  7 Jan 2020 09:59:27 -0800
+Message-Id: <20200107175927.4558-5-sargun@sargun.me>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200107175927.4558-1-sargun@sargun.me>
 References: <20200107175927.4558-1-sargun@sargun.me>
@@ -64,235 +64,323 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This wires up the pidfd_getfd syscall for all architectures.
+The following tests:
+  * Fetch FD, and then compare via kcmp
+  * Make sure getfd can be blocked by blocking ptrace_may_access
+  * Making sure fetching bad FDs fails
+  * Make sure trying to set flags to non-zero results in an EINVAL
 
 Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
- arch/alpha/kernel/syscalls/syscall.tbl      | 1 +
- arch/arm/tools/syscall.tbl                  | 1 +
- arch/arm64/include/asm/unistd.h             | 2 +-
- arch/arm64/include/asm/unistd32.h           | 2 ++
- arch/ia64/kernel/syscalls/syscall.tbl       | 1 +
- arch/m68k/kernel/syscalls/syscall.tbl       | 1 +
- arch/microblaze/kernel/syscalls/syscall.tbl | 1 +
- arch/mips/kernel/syscalls/syscall_n32.tbl   | 1 +
- arch/mips/kernel/syscalls/syscall_n64.tbl   | 1 +
- arch/mips/kernel/syscalls/syscall_o32.tbl   | 1 +
- arch/parisc/kernel/syscalls/syscall.tbl     | 1 +
- arch/powerpc/kernel/syscalls/syscall.tbl    | 1 +
- arch/s390/kernel/syscalls/syscall.tbl       | 1 +
- arch/sh/kernel/syscalls/syscall.tbl         | 1 +
- arch/sparc/kernel/syscalls/syscall.tbl      | 1 +
- arch/x86/entry/syscalls/syscall_32.tbl      | 1 +
- arch/x86/entry/syscalls/syscall_64.tbl      | 1 +
- arch/xtensa/kernel/syscalls/syscall.tbl     | 1 +
- include/linux/syscalls.h                    | 1 +
- include/uapi/asm-generic/unistd.h           | 4 +++-
- 20 files changed, 23 insertions(+), 2 deletions(-)
+ tools/testing/selftests/pidfd/.gitignore      |   1 +
+ tools/testing/selftests/pidfd/Makefile        |   2 +-
+ tools/testing/selftests/pidfd/pidfd.h         |   9 +
+ .../selftests/pidfd/pidfd_getfd_test.c        | 249 ++++++++++++++++++
+ 4 files changed, 260 insertions(+), 1 deletion(-)
+ create mode 100644 tools/testing/selftests/pidfd/pidfd_getfd_test.c
 
-diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-index 8e13b0b2928d..82301080f5e7 100644
---- a/arch/alpha/kernel/syscalls/syscall.tbl
-+++ b/arch/alpha/kernel/syscalls/syscall.tbl
-@@ -475,3 +475,4 @@
- 543	common	fspick				sys_fspick
- 544	common	pidfd_open			sys_pidfd_open
- # 545 reserved for clone3
-+548	common	pidfd_getfd			sys_pidfd_getfd
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index 6da7dc4d79cc..ba045e2f3a60 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -449,3 +449,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 435	common	clone3				sys_clone3
-+438	common	pidfd_getfd			sys_pidfd_getfd
-diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-index 2629a68b8724..b722e47377a5 100644
---- a/arch/arm64/include/asm/unistd.h
-+++ b/arch/arm64/include/asm/unistd.h
-@@ -38,7 +38,7 @@
- #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
- #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
+diff --git a/tools/testing/selftests/pidfd/.gitignore b/tools/testing/selftests/pidfd/.gitignore
+index 8d069490e17b..3a779c084d96 100644
+--- a/tools/testing/selftests/pidfd/.gitignore
++++ b/tools/testing/selftests/pidfd/.gitignore
+@@ -2,3 +2,4 @@ pidfd_open_test
+ pidfd_poll_test
+ pidfd_test
+ pidfd_wait
++pidfd_getfd_test
+diff --git a/tools/testing/selftests/pidfd/Makefile b/tools/testing/selftests/pidfd/Makefile
+index 43db1b98e845..75a545861375 100644
+--- a/tools/testing/selftests/pidfd/Makefile
++++ b/tools/testing/selftests/pidfd/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ CFLAGS += -g -I../../../../usr/include/ -pthread
  
--#define __NR_compat_syscalls		436
-+#define __NR_compat_syscalls		439
+-TEST_GEN_PROGS := pidfd_test pidfd_fdinfo_test pidfd_open_test pidfd_poll_test pidfd_wait
++TEST_GEN_PROGS := pidfd_test pidfd_fdinfo_test pidfd_open_test pidfd_poll_test pidfd_wait pidfd_getfd_test
+ 
+ include ../lib.mk
+ 
+diff --git a/tools/testing/selftests/pidfd/pidfd.h b/tools/testing/selftests/pidfd/pidfd.h
+index c6bc68329f4b..d482515604db 100644
+--- a/tools/testing/selftests/pidfd/pidfd.h
++++ b/tools/testing/selftests/pidfd/pidfd.h
+@@ -36,6 +36,10 @@
+ #define __NR_clone3 -1
  #endif
  
- #define __ARCH_WANT_SYS_CLONE
-diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-index 94ab29cf4f00..a8da97a2de41 100644
---- a/arch/arm64/include/asm/unistd32.h
-+++ b/arch/arm64/include/asm/unistd32.h
-@@ -879,6 +879,8 @@ __SYSCALL(__NR_fspick, sys_fspick)
- __SYSCALL(__NR_pidfd_open, sys_pidfd_open)
- #define __NR_clone3 435
- __SYSCALL(__NR_clone3, sys_clone3)
-+#define __NR_pidfd_getfd 438
-+__SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
- 
++#ifndef __NR_pidfd_getfd
++#define __NR_pidfd_getfd -1
++#endif
++
  /*
-  * Please add new compat syscalls above this comment and update
-diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
-index 36d5faf4c86c..2b11adfc860c 100644
---- a/arch/ia64/kernel/syscalls/syscall.tbl
-+++ b/arch/ia64/kernel/syscalls/syscall.tbl
-@@ -356,3 +356,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- # 435 reserved for clone3
-+438	common	pidfd_getfd			sys_pidfd_getfd
-diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-index a88a285a0e5f..44e879e98459 100644
---- a/arch/m68k/kernel/syscalls/syscall.tbl
-+++ b/arch/m68k/kernel/syscalls/syscall.tbl
-@@ -435,3 +435,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- # 435 reserved for clone3
-+438	common	pidfd_getfd			sys_pidfd_getfd
-diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-index 09b0cd7dab0a..7afa00125cc4 100644
---- a/arch/microblaze/kernel/syscalls/syscall.tbl
-+++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-@@ -441,3 +441,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 435	common	clone3				sys_clone3
-+438	common	pidfd_getfd			sys_pidfd_getfd
-diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-index e7c5ab38e403..856d5ba34461 100644
---- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-@@ -374,3 +374,4 @@
- 433	n32	fspick				sys_fspick
- 434	n32	pidfd_open			sys_pidfd_open
- 435	n32	clone3				__sys_clone3
-+438	n32	pidfd_getfd			sys_pidfd_getfd
-diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
-index 13cd66581f3b..2db6075352f3 100644
---- a/arch/mips/kernel/syscalls/syscall_n64.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
-@@ -350,3 +350,4 @@
- 433	n64	fspick				sys_fspick
- 434	n64	pidfd_open			sys_pidfd_open
- 435	n64	clone3				__sys_clone3
-+438	n64	pidfd_getfd			sys_pidfd_getfd
-diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-index 353539ea4140..e9f9d4a9b105 100644
---- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-@@ -423,3 +423,4 @@
- 433	o32	fspick				sys_fspick
- 434	o32	pidfd_open			sys_pidfd_open
- 435	o32	clone3				__sys_clone3
-+438	o32	pidfd_getfd			sys_pidfd_getfd
-diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-index 285ff516150c..c58c7eb144ca 100644
---- a/arch/parisc/kernel/syscalls/syscall.tbl
-+++ b/arch/parisc/kernel/syscalls/syscall.tbl
-@@ -433,3 +433,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 435	common	clone3				sys_clone3_wrapper
-+438	common	pidfd_getfd			sys_pidfd_getfd
-diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-index 43f736ed47f2..707609bfe3ea 100644
---- a/arch/powerpc/kernel/syscalls/syscall.tbl
-+++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-@@ -517,3 +517,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 435	nospu	clone3				ppc_clone3
-+438	common	pidfd_getfd			sys_pidfd_getfd
-diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-index 3054e9c035a3..185cd624face 100644
---- a/arch/s390/kernel/syscalls/syscall.tbl
-+++ b/arch/s390/kernel/syscalls/syscall.tbl
-@@ -438,3 +438,4 @@
- 433  common	fspick			sys_fspick			sys_fspick
- 434  common	pidfd_open		sys_pidfd_open			sys_pidfd_open
- 435  common	clone3			sys_clone3			sys_clone3
-+438  common	pidfd_getfd		sys_pidfd_getfd			sys_pidfd_getfd
-diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-index b5ed26c4c005..88f90895aad8 100644
---- a/arch/sh/kernel/syscalls/syscall.tbl
-+++ b/arch/sh/kernel/syscalls/syscall.tbl
-@@ -438,3 +438,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- # 435 reserved for clone3
-+438	common	pidfd_getfd			sys_pidfd_getfd
-diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-index 8c8cc7537fb2..218df6a2326e 100644
---- a/arch/sparc/kernel/syscalls/syscall.tbl
-+++ b/arch/sparc/kernel/syscalls/syscall.tbl
-@@ -481,3 +481,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- # 435 reserved for clone3
-+438	common	pidfd_getfd			sys_pidfd_getfd
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 15908eb9b17e..9c3101b65e0f 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -440,3 +440,4 @@
- 433	i386	fspick			sys_fspick			__ia32_sys_fspick
- 434	i386	pidfd_open		sys_pidfd_open			__ia32_sys_pidfd_open
- 435	i386	clone3			sys_clone3			__ia32_sys_clone3
-+438	i386	pidfd_getfd		sys_pidfd_getfd			__ia32_sys_pidfd_getfd
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index c29976eca4a8..cef85db75a62 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -357,6 +357,7 @@
- 433	common	fspick			__x64_sys_fspick
- 434	common	pidfd_open		__x64_sys_pidfd_open
- 435	common	clone3			__x64_sys_clone3/ptregs
-+438	common	pidfd_getfd		__x64_sys_pidfd_getfd
+  * The kernel reserves 300 pids via RESERVED_PIDS in kernel/pid.c
+  * That means, when it wraps around any pid < 300 will be skipped.
+@@ -84,4 +88,9 @@ static inline int sys_pidfd_send_signal(int pidfd, int sig, siginfo_t *info,
+ 	return syscall(__NR_pidfd_send_signal, pidfd, sig, info, flags);
+ }
  
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-index 25f4de729a6d..ae15183def12 100644
---- a/arch/xtensa/kernel/syscalls/syscall.tbl
-+++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-@@ -406,3 +406,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 435	common	clone3				sys_clone3
-+438	common	pidfd_getfd			sys_pidfd_getfd
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 2960dedcfde8..5edbc31af51f 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -1000,6 +1000,7 @@ asmlinkage long sys_fspick(int dfd, const char __user *path, unsigned int flags)
- asmlinkage long sys_pidfd_send_signal(int pidfd, int sig,
- 				       siginfo_t __user *info,
- 				       unsigned int flags);
-+asmlinkage long sys_pidfd_getfd(int pidfd, int fd, unsigned int flags);
- 
- /*
-  * Architecture-specific system calls
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index 1fc8faa6e973..d36ec3d645bd 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -850,9 +850,11 @@ __SYSCALL(__NR_pidfd_open, sys_pidfd_open)
- #define __NR_clone3 435
- __SYSCALL(__NR_clone3, sys_clone3)
- #endif
-+#define __NR_pidfd_getfd 438
-+__SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
- 
- #undef __NR_syscalls
--#define __NR_syscalls 436
-+#define __NR_syscalls 439
- 
- /*
-  * 32 bit systems traditionally used different
++static inline int sys_pidfd_getfd(int pidfd, int fd, int flags)
++{
++	return syscall(__NR_pidfd_getfd, pidfd, fd, flags);
++}
++
+ #endif /* __PIDFD_H */
+diff --git a/tools/testing/selftests/pidfd/pidfd_getfd_test.c b/tools/testing/selftests/pidfd/pidfd_getfd_test.c
+new file mode 100644
+index 000000000000..401a7c1d0312
+--- /dev/null
++++ b/tools/testing/selftests/pidfd/pidfd_getfd_test.c
+@@ -0,0 +1,249 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#define _GNU_SOURCE
++#include <errno.h>
++#include <fcntl.h>
++#include <limits.h>
++#include <linux/types.h>
++#include <sched.h>
++#include <signal.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <syscall.h>
++#include <sys/prctl.h>
++#include <sys/wait.h>
++#include <unistd.h>
++#include <sys/socket.h>
++#include <linux/kcmp.h>
++
++#include "pidfd.h"
++#include "../kselftest.h"
++#include "../kselftest_harness.h"
++
++/*
++ * UNKNOWN_FD is an fd number that should never exist in the child, as it is
++ * used to check the negative case.
++ */
++#define UNKNOWN_FD 111
++#define UID_NOBODY 65535
++
++static int sys_kcmp(pid_t pid1, pid_t pid2, int type, unsigned long idx1,
++		    unsigned long idx2)
++{
++	return syscall(__NR_kcmp, pid1, pid2, type, idx1, idx2);
++}
++
++static int sys_memfd_create(const char *name, unsigned int flags)
++{
++	return syscall(__NR_memfd_create, name, flags);
++}
++
++static int __child(int sk, int memfd)
++{
++	int ret;
++	char buf;
++
++	/*
++	 * Ensure we don't leave around a bunch of orphaned children if our
++	 * tests fail.
++	 */
++	ret = prctl(PR_SET_PDEATHSIG, SIGKILL);
++	if (ret) {
++		fprintf(stderr, "%s: Child could not set DEATHSIG\n",
++			strerror(errno));
++		return -1;
++	}
++
++	ret = send(sk, &memfd, sizeof(memfd), 0);
++	if (ret != sizeof(memfd)) {
++		fprintf(stderr, "%s: Child failed to send fd number\n",
++			strerror(errno));
++		return -1;
++	}
++
++	/*
++	 * The fixture setup is completed at this point. The tests will run.
++	 *
++	 * This blocking recv enables the parent to message the child.
++	 * Either we will read 'P' off of the sk, indicating that we need
++	 * to disable ptrace, or we will read a 0, indicating that the other
++	 * side has closed the sk. This occurs during fixture teardown time,
++	 * indicating that the child should exit.
++	 */
++	while ((ret = recv(sk, &buf, sizeof(buf), 0)) > 0) {
++		if (buf == 'P') {
++			ret = prctl(PR_SET_DUMPABLE, 0);
++			if (ret < 0) {
++				fprintf(stderr,
++					"%s: Child failed to disable ptrace\n",
++					strerror(errno));
++				return -1;
++			}
++		} else {
++			fprintf(stderr, "Child received unknown command %c\n",
++				buf);
++			return -1;
++		}
++		ret = send(sk, &buf, sizeof(buf), 0);
++		if (ret != 1) {
++			fprintf(stderr, "%s: Child failed to ack\n",
++				strerror(errno));
++			return -1;
++		}
++	}
++	if (ret < 0) {
++		fprintf(stderr, "%s: Child failed to read from socket\n",
++			strerror(errno));
++		return -1;
++	}
++
++	return 0;
++}
++
++static int child(int sk)
++{
++	int memfd, ret;
++
++	memfd = sys_memfd_create("test", 0);
++	if (memfd < 0) {
++		fprintf(stderr, "%s: Child could not create memfd\n",
++			strerror(errno));
++		ret = -1;
++	} else {
++		ret = __child(sk, memfd);
++		close(memfd);
++	}
++
++	close(sk);
++	return ret;
++}
++
++FIXTURE(child)
++{
++	/*
++	 * remote_fd is the number of the FD which we are trying to retrieve
++	 * from the child.
++	 */
++	int remote_fd;
++	/* pid points to the child which we are fetching FDs from */
++	pid_t pid;
++	/* pidfd is the pidfd of the child */
++	int pidfd;
++	/*
++	 * sk is our side of the socketpair used to communicate with the child.
++	 * When it is closed, the child will exit.
++	 */
++	int sk;
++};
++
++FIXTURE_SETUP(child)
++{
++	int ret, sk_pair[2];
++
++	ASSERT_EQ(0, socketpair(PF_LOCAL, SOCK_SEQPACKET, 0, sk_pair)) {
++		TH_LOG("%s: failed to create socketpair", strerror(errno));
++	}
++	self->sk = sk_pair[0];
++
++	self->pid = fork();
++	ASSERT_GE(self->pid, 0);
++
++	if (self->pid == 0) {
++		close(sk_pair[0]);
++		if (child(sk_pair[1]))
++			_exit(EXIT_FAILURE);
++		_exit(EXIT_SUCCESS);
++	}
++
++	close(sk_pair[1]);
++
++	self->pidfd = sys_pidfd_open(self->pid, 0);
++	ASSERT_GE(self->pidfd, 0);
++
++	/*
++	 * Wait for the child to complete setup. It'll send the remote memfd's
++	 * number when ready.
++	 */
++	ret = recv(sk_pair[0], &self->remote_fd, sizeof(self->remote_fd), 0);
++	ASSERT_EQ(sizeof(self->remote_fd), ret);
++}
++
++FIXTURE_TEARDOWN(child)
++{
++	EXPECT_EQ(0, close(self->pidfd));
++	EXPECT_EQ(0, close(self->sk));
++
++	EXPECT_EQ(0, wait_for_pid(self->pid));
++}
++
++TEST_F(child, disable_ptrace)
++{
++	int uid, fd;
++	char c;
++
++	/*
++	 * Turn into nobody if we're root, to avoid CAP_SYS_PTRACE
++	 *
++	 * The tests should run in their own process, so even this test fails,
++	 * it shouldn't result in subsequent tests failing.
++	 */
++	uid = getuid();
++	if (uid == 0)
++		ASSERT_EQ(0, seteuid(UID_NOBODY));
++
++	ASSERT_EQ(1, send(self->sk, "P", 1, 0));
++	ASSERT_EQ(1, recv(self->sk, &c, 1, 0));
++
++	fd = sys_pidfd_getfd(self->pidfd, self->remote_fd, 0);
++	EXPECT_EQ(-1, fd);
++	EXPECT_EQ(EPERM, errno);
++
++	if (uid == 0)
++		ASSERT_EQ(0, seteuid(0));
++}
++
++TEST_F(child, fetch_fd)
++{
++	int fd, ret;
++
++	fd = sys_pidfd_getfd(self->pidfd, self->remote_fd, 0);
++	ASSERT_GE(fd, 0);
++
++	EXPECT_EQ(0, sys_kcmp(getpid(), self->pid, KCMP_FILE, fd, self->remote_fd));
++
++	ret = fcntl(fd, F_GETFD);
++	ASSERT_GE(ret, 0);
++	EXPECT_GE(ret & FD_CLOEXEC, 0);
++
++	close(fd);
++}
++
++TEST_F(child, test_unknown_fd)
++{
++	int fd;
++
++	fd = sys_pidfd_getfd(self->pidfd, UNKNOWN_FD, 0);
++	EXPECT_EQ(-1, fd) {
++		TH_LOG("getfd succeeded while fetching unknown fd");
++	};
++	EXPECT_EQ(EBADF, errno) {
++		TH_LOG("%s: getfd did not get EBADF", strerror(errno));
++	}
++}
++
++TEST(flags_set)
++{
++	ASSERT_EQ(-1, sys_pidfd_getfd(0, 0, 1));
++	EXPECT_EQ(errno, EINVAL);
++}
++
++#if __NR_pidfd_getfd == -1
++int main(void)
++{
++	fprintf(stderr, "__NR_pidfd_getfd undefined. The pidfd_getfd syscall is unavailable. Test aborting\n");
++	return KSFT_SKIP;
++}
++#else
++TEST_HARNESS_MAIN
++#endif
 -- 
 2.20.1
 
