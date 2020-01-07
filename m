@@ -2,105 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7ADBD132246
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 10:29:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00C1813234B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 11:12:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727167AbgAGJ3Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jan 2020 04:29:24 -0500
-Received: from mail-wm1-f48.google.com ([209.85.128.48]:50632 "EHLO
-        mail-wm1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726485AbgAGJ3Y (ORCPT
+        id S1727799AbgAGKMN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jan 2020 05:12:13 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:44804 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726558AbgAGKMM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jan 2020 04:29:24 -0500
-Received: by mail-wm1-f48.google.com with SMTP id a5so18143735wmb.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jan 2020 01:29:23 -0800 (PST)
+        Tue, 7 Jan 2020 05:12:12 -0500
+Received: by mail-io1-f68.google.com with SMTP id b10so51989466iof.11;
+        Tue, 07 Jan 2020 02:12:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=r0RtvehmZAY2xm5teOPM9N5+pwz+MVcm7hB4hWA014U=;
-        b=bDLO9ps8qlJsulNfvf4m8YPD4Cjd+6SHyV4A3OcFB3LVrqHhRhaGxi8Q6HgLBlQ04J
-         lyPn/20bUuiw1NKdXW7kA418zRlVpa4MyNIlTkGuGUhlLMgRM5910ZC0TFpMFgEgVdtY
-         aAW2JNKpvwqAIntR/GzK4ZQUhp0oQ3Te+UKoU9UOZCoudyv8K9x6wU2VwVDOPExVVC62
-         chaMfRxuIZno/2/7/I6MyvqLOLSL9rVEJd7P+snDIuCWEJjz+rBzfVB/Ylp0+oBk4DX7
-         +u09UAAJCoUE78nVNmL3qFxwwveyLE8XyCBtRldlOuXHB8z7IQag+rJjFvum15zI4K9g
-         VsAQ==
+        bh=PbyQyZ9o+Ro7E6bXOC6SCrk7HuZRr+h0vUWe4gZ98uQ=;
+        b=mE+vclw3cfYF8tFzCALd6ffjBbn9elwbyo2EMwffZsN59D8gkO888bX94L0BigDx7F
+         v4pyG7hhBxC13kJmfR5Yx8yFLrRgTbf53DgRK+6BNulX4LVJ88/uqtPDurJ+IbRaAmKe
+         8EWtlB5diKEI3JJzHIL8tmpDSqiLcfuZhHLn6DioccebewAhH/tDiUTWY3XPDQVBh5ZG
+         rvl714eo8s/x6NhqpZbqD0JRkjrfe02kKiYkAiEV5zMYyvV91xk04MCXKgcpnnVq4paH
+         LtkyG1gx+IMCw52HZAq5gzXbppsUW0ZEga4mS2tYjQn9/QgoxTukRxnnCE3/iT4jmU9B
+         09xA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=r0RtvehmZAY2xm5teOPM9N5+pwz+MVcm7hB4hWA014U=;
-        b=tID7QDeDvAQ0C8Xdk5sZHz5PI58fqyU+SYVUBCIeP/7e9Wrv6k8XlfKO4vAb8tBY5i
-         B2MVPl5ilubfcRkDLC740WIUfloqasP6UJ1pijYil6vBfKFFm/91Y3n4YqkVGZ2Frw8l
-         YtqffuO/aNWekm7+mbqIYKAeAt+60j4hf7/nSCY1XGvg61yDF2fwxl5UQ1uowIzxdQdL
-         iQXldJ8artz//6yIrZM3vIlD9t787Afisp/JDYLxeaGrwKszrg+0R9jCbkzPjEPVUOgi
-         AnGz3pRolkksqiiAd66dqUbPVv6/ulSpCCZmsutNzSnWcfgAM3CF7FQR4DHVILhOFcSH
-         XKiA==
-X-Gm-Message-State: APjAAAWU9GbLcsasj5vp1/lV6Z03nm9tqSRBGNZGDgOxliJu9enN6d9B
-        a8m49GRL8uaT0q2vQXlhCBQnyJdONl8Wq0GhTtI=
-X-Google-Smtp-Source: APXvYqz79cMDweyaQhtNx4dfnm37WnlDWHobeFYc/4OLSiriyIRcqnzZNyjX0Uop2EWKQA+0Fo12021uYnAHtOoPteg=
-X-Received: by 2002:a1c:6585:: with SMTP id z127mr38792633wmb.113.1578389362582;
- Tue, 07 Jan 2020 01:29:22 -0800 (PST)
+        bh=PbyQyZ9o+Ro7E6bXOC6SCrk7HuZRr+h0vUWe4gZ98uQ=;
+        b=fNWl0PPULz+gTBaZQtSSdEY6kQW403O0mhiHGQplPgu4/CkIPagZzL6EpGywS1uXsQ
+         tnZIpkZnQFCjNWxiuH7+iMFBSsYO9UsW0mNC/nBLYz41Ksw9z8SDmDrPiWO0VP4xLdy3
+         shVqUd+98Z6FWtMdVoqLXdbn4dLmVp0nN7UHceccNE6Chfb6mEhHT5qmVn8HyJN3yvyb
+         /kwtaonwNrVu8xr/6oVqv1iLKj9HikVGe1Ku5NW5TXdIKCeZR7bdWP8AZD6F7Pevm6L+
+         7sXgt0DroheBEPCExPgkGilCSLji7gHnLCcch4195mk3CUkIe0LNAPniGxlRJ7xy/uYP
+         r3jQ==
+X-Gm-Message-State: APjAAAUfjhrMX3HbMOIzLc4sXmGuSK+SUWgbgYoHAJqKvFGJC2AlDmm0
+        A6umI48uuI8oMhFPzbmgf8/gqwLFErumDDSfle1wgw==
+X-Google-Smtp-Source: APXvYqx3r2qgxfq0fEj3TX01n99so2jqPkAzW5BeIfMPMxERNE6WNcSTMhTdDGboy4GGuyjRN9uytisFExuwcaccWaw=
+X-Received: by 2002:a02:81cc:: with SMTP id r12mr80549653jag.93.1578391931918;
+ Tue, 07 Jan 2020 02:12:11 -0800 (PST)
 MIME-Version: 1.0
-References: <CALjAwxi3ZpRZLS9QaGfAqwAVST0Biyj_p-b22f=iq_ns4ZQyiA@mail.gmail.com>
- <CAOQ4uxhJhzUj_sjhDknGzdLs6kOXzt3GO2vyCzmuBNTSsAQLGA@mail.gmail.com> <20200106164257.GJ6788@bombadil.infradead.org>
-In-Reply-To: <20200106164257.GJ6788@bombadil.infradead.org>
-From:   Sitsofe Wheeler <sitsofe@gmail.com>
-Date:   Tue, 7 Jan 2020 09:28:56 +0000
-Message-ID: <CALjAwxhnPtW0DvNvOpON6gHwQSXn-9HVT5z4XmGuOneBxRbr5A@mail.gmail.com>
-Subject: Re: Questions about filesystems from SQLite author presentation
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, drh@sqlite.org,
-        Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-        Theodore Tso <tytso@mit.edu>,
-        harshad shirwadkar <harshadshirwadkar@gmail.com>
+References: <cover.1578225806.git.chris@chrisdown.name> <ae9306ab10ce3d794c13b1836f5473e89562b98c.1578225806.git.chris@chrisdown.name>
+ <20200107001039.GM23195@dread.disaster.area> <20200107001643.GA485121@chrisdown.name>
+ <20200107003944.GN23195@dread.disaster.area> <CAOQ4uxjvH=UagqjHP_71_p9_dW9wKqiaWujzY1xKe7yZVFPoTA@mail.gmail.com>
+ <alpine.LSU.2.11.2001070002040.1496@eggly.anvils>
+In-Reply-To: <alpine.LSU.2.11.2001070002040.1496@eggly.anvils>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 7 Jan 2020 12:12:00 +0200
+Message-ID: <CAOQ4uxiMQ3Oz4M0wKo5FA_uamkMpM1zg7ydD8FXv+sR9AH_eFA@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] tmpfs: Support 64-bit inums per-sb
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Chris Down <chris@chrisdown.name>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@fb.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 6 Jan 2020 at 16:42, Matthew Wilcox <willy@infradead.org> wrote:
+On Tue, Jan 7, 2020 at 10:36 AM Hugh Dickins <hughd@google.com> wrote:
 >
-> On Mon, Jan 06, 2020 at 05:40:20PM +0200, Amir Goldstein wrote:
-> > On Mon, Jan 6, 2020 at 9:26 AM Sitsofe Wheeler <sitsofe@gmail.com> wrote:
-> > > If a write occurs on one or two bytes of a file at about the same time as a power
-> > > loss, are other bytes of the file guaranteed to be unchanged after reboot?
-> > > Or might some other bytes within the same sector have been modified as well?
-> >
-> > I don't see how other bytes could change in this scenario, but I don't
-> > know if the
-> > hardware provides this guarantee. Maybe someone else knows the answer.
+> On Tue, 7 Jan 2020, Amir Goldstein wrote:
+> > On Tue, Jan 7, 2020 at 2:40 AM Dave Chinner <david@fromorbit.com> wrote:
+> > > On Tue, Jan 07, 2020 at 12:16:43AM +0000, Chris Down wrote:
+> > > > Dave Chinner writes:
+> > > > > It took 15 years for us to be able to essentially deprecate
+> > > > > inode32 (inode64 is the default behaviour), and we were very happy
+> > > > > to get that albatross off our necks.  In reality, almost everything
+> > > > > out there in the world handles 64 bit inodes correctly
+> > > > > including 32 bit machines and 32bit binaries on 64 bit machines.
+> > > > > And, IMNSHO, there no excuse these days for 32 bit binaries that
+> > > > > don't using the *64() syscall variants directly and hence support
+> > > > > 64 bit inodes correctlyi out of the box on all platforms.
 >
-> The question is nonsense because there is no way to write less than one
-> sector to a hardware device, by definition.  So, treating this question
-> as being a read-modify-write of a single sector (assuming the "two bytes"
-> don't cross a sector boundary):
+> Interesting take on it.  I'd all along imagined we would have to resort
+> to a mount option for safety, but Dave is right that I was too focused on
+> avoiding tmpfs regressions, without properly realizing that people were
+> very unlikely to have written such tools for tmpfs in particular, but
+> written them for all filesystems, and already encountered and fixed
+> such EOVERFLOWs for other filesystems.
 >
-> Hardware vendors are reluctant to provide this guarantee, but it's
-> essential to constructing a reliable storage system.  We wrote the NVMe
-> spec in such a way that vendors must provide single-sector-atomicity
-> guarantees, and I hope they haven't managed to wiggle some nonsense
-> into the spec that allows them to not make that guarantee.  The below
-> is a quote from the 1.4 spec.  For those not versed in NVMe spec-ese,
-> "0's based value" means that putting a zero in this field means the
-> value of AWUPF is 1.
+> Hmm, though how readily does XFS actually reach the high inos on
+> ordinary users' systems?
+>
 
-Wow - that's the first time I've seen someone go on the record as
-saying a sector write is atomic (albeit only for NVMe disks) without
-having it instantly debated! Sadly there's no way of guaranteeing this
-atomicity from userspace if https://youtu.be/-oP2BOsMpdo?t=3557 (where
-Chris Mason(?) warns there can be corner cases trying to use O_DIRECT)
-is to be believed though?
+Define 'ordinary'
+I my calculations are correct, with default mkfs.xfs any inode allocated
+from logical offset > 2TB on a volume has high ino bits set.
+Besides, a deployment with more than 4G inodes shouldn't be hard to find.
 
-> I take neither blame nor credit for what other storage standards may
-> implement; this is the only one I had a hand in, and I had to fight
-> hard to get it.
-
-So there's no consensus for SATA/SCSI etc
-(https://stackoverflow.com/questions/2009063/are-disk-sector-writes-atomic
-)? Just need to wait until there's NVMe everywhere :-)
-
--- 
-Sitsofe | http://sucs.org/~sits/
+Thanks,
+Amir.
