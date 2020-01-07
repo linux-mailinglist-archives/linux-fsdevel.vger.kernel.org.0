@@ -2,85 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9203133777
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 00:33:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47FBB133781
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 00:39:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbgAGXdu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jan 2020 18:33:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46348 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726530AbgAGXdt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jan 2020 18:33:49 -0500
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE0392077B;
-        Tue,  7 Jan 2020 23:33:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578440028;
-        bh=u8iR85rry1MpeqLP5gJ4zjdABts0KXbUZgOU7bTsE10=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ilvREyiFi6LrKVMvjxwsFq198CcA7szEsG9h9AqNeNkfsLHxl5HrqHF/kILi4rX9D
-         rgeEdUC2W2xnsCRGTFoMASIyLzYv7cTP3hmeWExe3MN9gR9wSTkCl8QmI8Rl7UBPyJ
-         MGKFkg4QR43221u7OqxW/0VKzhSior3vgXAoSquY=
-Date:   Tue, 7 Jan 2020 15:33:48 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     "Theodore Ts'o" <tytso@mit.edu>
-Cc:     Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
-        linux-mm@kvack.org
-Subject: Re: [PATCH -v2] memcg: fix a crash in wb_workfn when a device
- disappears
-Message-Id: <20200107153348.388a20e85e045d209c459e52@linux-foundation.org>
-In-Reply-To: <20191228005211.163952-1-tytso@mit.edu>
-References: <20191227194829.150110-1-tytso@mit.edu>
-        <20191228005211.163952-1-tytso@mit.edu>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727105AbgAGXjG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jan 2020 18:39:06 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:37597 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726637AbgAGXjG (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 Jan 2020 18:39:06 -0500
+Received: by mail-ot1-f65.google.com with SMTP id k14so1805716otn.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jan 2020 15:39:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xMZkcHtFGlxtWMU0/yJi4CuOWPo2x4C+GD+Xd4ftxtY=;
+        b=fGlV4Pr2MgSNzKMiDvbbOE+RWBOvNONUJBDPutDXvnKV0UHzXrxqy41oXKo6WrCibz
+         nIRkrfWVWS/3omjTf2Szli0DI/W6lLwbaiIUY2Th1bSJbzbi5GX640rH874VzisnSJBN
+         s3Goe8kx/MBl1KrfR/Q6Q38YPMR41UmkrW1Gd+X9IIEIxtYmHbhTJRqiFPcX8Z4JUIxo
+         AbpigFkKiQOO5NhcIFROnexkKOwsN9Kh7HoEvk2zwnpTt8e9OmkfedzdRR1luOdVBsXq
+         wj40LOEnqORt9GMjzv6fUO3xLP+gEY5sn5TmCNDBD42EaYbFnVTfd41qJspyjppYb7f8
+         ISzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xMZkcHtFGlxtWMU0/yJi4CuOWPo2x4C+GD+Xd4ftxtY=;
+        b=QIorLuFuuPWI5TCwWP87/4gGVREIyvYm+uXWOzADcQ2iXf+mdPmKbbjVVzSyIO/kA6
+         bxe2QlMN2s62kA8MOLlmiwKtrmZTHuI68g9oXxc6Y08yUGuojTBeZqmROTYkuwZWaWV7
+         p26gMGM5BPjeYFxy8sPcP0tE/mEVTsQLAoUclOnTQmNjAf+cW+alh3KTxZmv4tTjJhFe
+         9DCsLV0zq8BhkxSpILhM2HEYOuoalFIJebDZvcu4awkWVLJ1JIIAPj+ZxriC+scz0nGw
+         ul57rQE3oM2pFbJ57JHXIaJUKFG3niVG5J7esWvSVzyi5RGL0OiUUmS4lSgS6Dr5VNS1
+         Ytwg==
+X-Gm-Message-State: APjAAAVVMdQk902i0YxJXb0q/2bZk3Vv7EfifOjm7dluAD2NBwtx/l9a
+        sVcSXBFgCId+waSLrSSaTYc3YwNv2Vy8da3c4t06xA==
+X-Google-Smtp-Source: APXvYqzvMVVYbs2feLkPKE0gtd4wuHz+YTqavAMbyJigJXY55hh1AQBdpn4tA6LqJn24ZzdQ5nOCMzZ/4ozWhNizGXo=
+X-Received: by 2002:a9d:68d3:: with SMTP id i19mr1958301oto.71.1578440345524;
+ Tue, 07 Jan 2020 15:39:05 -0800 (PST)
+MIME-Version: 1.0
+References: <CAPcyv4jGEAbYSJef2zLzgg6Arozsuz7eN_vZL1iTcd1XQuNT4Q@mail.gmail.com>
+ <20191216181014.GA30106@redhat.com> <20200107125159.GA15745@infradead.org>
+ <CAPcyv4jZE35sbDo6J4ihioEUFTuekJ3_h0=2Ra4PY+xn2xn1cQ@mail.gmail.com>
+ <20200107170731.GA472641@magnolia> <CAPcyv4ggH7-QhYg+YOOWn_m25uds+-0L46=N09ap-LALeGuU_A@mail.gmail.com>
+ <20200107180101.GC15920@redhat.com> <CAPcyv4gmdoqpwwwy4dS3D2eZFjmJ_Zi39k=1a4wn-_ksm-UV4A@mail.gmail.com>
+ <20200107183307.GD15920@redhat.com> <CAPcyv4ggoS4dWjq-1KbcuaDtroHKEi5Vu19ggJ-qgycs6w1eCA@mail.gmail.com>
+ <20200107190258.GB472665@magnolia> <CAPcyv4ia9r0rdbb7t0JvEnGW6nnHdAWUHbaMrY5FKBY+4Fum6Q@mail.gmail.com>
+In-Reply-To: <CAPcyv4ia9r0rdbb7t0JvEnGW6nnHdAWUHbaMrY5FKBY+4Fum6Q@mail.gmail.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 7 Jan 2020 15:38:54 -0800
+Message-ID: <CAPcyv4jDYUPp=aqH1VTfxFAXiMa0Uqn+ykptfu_yNDOjR7Akfg@mail.gmail.com>
+Subject: Re: [PATCH 01/19] dax: remove block device dependencies
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 27 Dec 2019 19:52:11 -0500 "Theodore Ts'o" <tytso@mit.edu> wrote:
+On Tue, Jan 7, 2020 at 11:46 AM Dan Williams <dan.j.williams@intel.com> wrote:
+[..]
+> > I'd say deprecate the
+> > kernel automounting partitions, but I guess it already does that, and
+>
+> Ok, now I don't know why automounting is leaking into this discussion?
+>
+> > removing it would break /something/.
+>
+> Yes, the breakage risk is anyone that was using ext4 mount failure as
+> a dax capability detector.
+>
+> > I guess you could put
+> > "/dev/pmemXpY" on the deprecation schedule.
+>
+> ...but why deprecate /dev/pmemXpY partitions altogether? If someone
+> doesn't care about dax then they can do all the legacy block things.
+> If they do care about dax then work with whole device namespaces.
 
-> Without memcg, there is a one-to-one mapping between the bdi and
-> bdi_writeback structures.  In this world, things are fairly
-> straightforward; the first thing bdi_unregister() does is to shutdown
-> the bdi_writeback structure (or wb), and part of that writeback
-> ensures that no other work queued against the wb, and that the wb is
-> fully drained.
-> 
-> With memcg, however, there is a one-to-many relationship between the
-> bdi and bdi_writeback structures; that is, there are multiple wb
-> objects which can all point to a single bdi.  There is a refcount
-> which prevents the bdi object from being released (and hence,
-> unregistered).  So in theory, the bdi_unregister() *should* only get
-> called once its refcount goes to zero (bdi_put will drop the refcount,
-> and when it is zero, release_bdi gets called, which calls
-> bdi_unregister).
-> 
-> Unfortunately, del_gendisk() in block/gen_hd.c never got the memo
-> about the Brave New memcg World, and calls bdi_unregister directly.
-> It does this without informing the file system, or the memcg code, or
-> anything else.  This causes the root wb associated with the bdi to be
-> unregistered, but none of the memcg-specific wb's are shutdown.  So when
-> one of these wb's are woken up to do delayed work, they try to
-> dereference their wb->bdi->dev to fetch the device name, but
-> unfortunately bdi->dev is now NULL, thanks to the bdi_unregister()
-> called by del_gendisk().   As a result, *boom*.
-> 
-> Fortunately, it looks like the rest of the writeback path is perfectly
-> happy with bdi->dev and bdi->owner being NULL, so the simplest fix is
-> to create a bdi_dev_name() function which can handle bdi->dev being
-> NULL.  This also allows us to bulletproof the writeback tracepoints to
-> prevent them from dereferencing a NULL pointer and crashing the kernel
-> if one is tracing with memcg's enabled, and an iSCSI device dies or a
-> USB storage stick is pulled.
-> 
-
-Is hotremoval of a device while tracing writeback the only known way of
-triggering this?
-
-Is it worth a cc:stable?
+Circling back on this point now that I understand what you meant by
+automount. It would need to be a full deprecation of /dev/pmemXpY
+devices if kpartx dax support is going to fully take over for people
+that want to use disk partition tables instead of EFI Namespace Labels
+to carve up pmem.
