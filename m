@@ -2,125 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65402132FCE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 20:46:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68AB7133002
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 20:56:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728607AbgAGTqt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jan 2020 14:46:49 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:33355 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728412AbgAGTqt (ORCPT
+        id S1728691AbgAGT4h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jan 2020 14:56:37 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:33679 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728672AbgAGT4g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jan 2020 14:46:49 -0500
-Received: by mail-oi1-f194.google.com with SMTP id v140so558192oie.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jan 2020 11:46:48 -0800 (PST)
+        Tue, 7 Jan 2020 14:56:36 -0500
+Received: by mail-ed1-f68.google.com with SMTP id r21so660586edq.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jan 2020 11:56:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oMeNYRjmE3xADDHseE8To74pLJCIPrrI6iJEnl8/MJE=;
-        b=aT9oM/LCSkoU4DdjNflW1gLMp0wxVh5dnFJb8sf5sPgjVDLhWEqnZiSRpAeeGcHRg3
-         GRzzra9Yib97QPwwnxC3RKcRXN0Osb1l24DjUOUZJ42RCQqm3m5RkDe9UzWztOZTtr3w
-         XJLFOTDwV3oVI5CjkHlup8nJ4bFUjCoH08/1ROlE0ivkkm69CMkthrbLYK4pynoIEaCB
-         4b2UfkD1BJyszzW0TA68YU1tJwy/mY/yyObGN3t3ngSw0QpZlvhObmzfxajy07Khz5ST
-         sg9FBbkL6YcKUuz5INzL2GxKWtGK7zsaP+IAywWCUcl1epohdi+uxvi6VWUJeh0J4I0J
-         5dyA==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=lUsTd9lJYwK928kai9reachpHe0HC9Hv8/gDLGwtaBI=;
+        b=m/Udengj3famfT4AeeQ1IRW+yMW7VasUnASahB37i/PoeHrkRBk2CGyFKYNukmjW7S
+         L8SRka5Jakx3oOkJPsG2IofN9vOqI+MJeZI3Q0YE0hhIfxJgla/Mvi4GlBIJ0+PXKJyR
+         fGhtIsUmeS9lphgKJPwASTV0Wis5x+akjvA6FztTMBR/K8fgi7sOjdtLa1OeTeeGw/oC
+         WuhGv+1qsxod0shrSr56iRhzuujf6ypC8mQV8JosjFfNeYtuq3xDGNFupimiXFOQL0SO
+         8SxYRsEAywqZcf7WmcQRmN/Qkf20W+/a6rRSJl252WjsQoa/SZxLvQ4mGRJVkfZ3ex9s
+         ABpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oMeNYRjmE3xADDHseE8To74pLJCIPrrI6iJEnl8/MJE=;
-        b=iwbm+qGMpOcB2/Onx4mCw54m1KM92K3HshcsGVaD1NoCFYg/dEoF2TY5SIBOY1CIbW
-         jv30Q331ZoDo6lCygnVMF7T+4TZYtMWTBYpjoltZ8n8C0YNtv3uUGq9NNwaxJ0am9csf
-         vKKvko8111WWTqGoIFS2orrKTL4DVo1kzGGk1vrzYqfqhQA/otBRYAAnsfvCbl/gViEN
-         yQbGISq4WTgUnq+o4QixYpKP1SAR/Fo4vk4LbarjNzFvCyNWTquFUtt/lA8zMHr4RYXM
-         rzPTXrnodJxXULhd6LK+8IXofMCTa5hmOHL3dqLVDu+W+gWgvW9NuLDUHEb/Bj8hyuXV
-         ndSA==
-X-Gm-Message-State: APjAAAXK5B45YDam01Ds98YbPf4nVe21lEm9rU3ykKDVSSeQUIpKNMKY
-        TuPbFhhJuwPwHCQSSfpsS5HSKtwXO/UH6qNLVE0zgQ==
-X-Google-Smtp-Source: APXvYqySAx4Aj+DuXpJ61i5oIH9smYDCpRBqp5amCWZu7+ti/Z0kAtAfr2EMJlp3TgztEotsg427i+HmWJznPk4npVI=
-X-Received: by 2002:aca:3f54:: with SMTP id m81mr33945oia.73.1578426408315;
- Tue, 07 Jan 2020 11:46:48 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=lUsTd9lJYwK928kai9reachpHe0HC9Hv8/gDLGwtaBI=;
+        b=rpNswydTK1mNl9qRkWcmA36uexmHNpso4evtwUsMPzg4N4vYipb3WYsU78JSRC0Lt4
+         qCETSRurAmQ0k+4bn/WBKAkmk/zePA/TUPElZ5HaRFUzCb9gIQFRcRVHCILjslPuNyXX
+         OIz+4ghPZE5d2j5TRVK/byYkjUlBAu2+8OG24hEDd0udixkVedl1LH2HiPvwY0ufCTOw
+         DYU71Dyc5iSdVJZo30fuYMBQfE2rsJdJRyJ1JVbdI/KYhv4Q43KbXEJofGQW1soNuI3S
+         pF5hQW/uhDrs/bQsdD0jk+CXmgk/6FI9WVxzXGlpyHD7UnmhBenEJ5RExCev8PjLdxcC
+         +wjg==
+X-Gm-Message-State: APjAAAUXTxuljQgk1FvmWUA3qPr0+5ZvXf4qWWTh56VB6V4uONI1AriY
+        1sn35ItrTpNgSu0bVIqMCMxrKj483dS8bECUV74=
+X-Google-Smtp-Source: APXvYqzNbcT08PcgNHBR6CjdjGMonF1aREtl3FixKkalZzLFfyP3YZsjOtPyVn2SjFoUiZ8TzNVIEuitC7fnDU0d3Kk=
+X-Received: by 2002:a17:907:20ef:: with SMTP id rh15mr1111482ejb.325.1578426995176;
+ Tue, 07 Jan 2020 11:56:35 -0800 (PST)
 MIME-Version: 1.0
-References: <CAPcyv4jGEAbYSJef2zLzgg6Arozsuz7eN_vZL1iTcd1XQuNT4Q@mail.gmail.com>
- <20191216181014.GA30106@redhat.com> <20200107125159.GA15745@infradead.org>
- <CAPcyv4jZE35sbDo6J4ihioEUFTuekJ3_h0=2Ra4PY+xn2xn1cQ@mail.gmail.com>
- <20200107170731.GA472641@magnolia> <CAPcyv4ggH7-QhYg+YOOWn_m25uds+-0L46=N09ap-LALeGuU_A@mail.gmail.com>
- <20200107180101.GC15920@redhat.com> <CAPcyv4gmdoqpwwwy4dS3D2eZFjmJ_Zi39k=1a4wn-_ksm-UV4A@mail.gmail.com>
- <20200107183307.GD15920@redhat.com> <CAPcyv4ggoS4dWjq-1KbcuaDtroHKEi5Vu19ggJ-qgycs6w1eCA@mail.gmail.com>
- <20200107190258.GB472665@magnolia>
-In-Reply-To: <20200107190258.GB472665@magnolia>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 7 Jan 2020 11:46:37 -0800
-Message-ID: <CAPcyv4ia9r0rdbb7t0JvEnGW6nnHdAWUHbaMrY5FKBY+4Fum6Q@mail.gmail.com>
-Subject: Re: [PATCH 01/19] dax: remove block device dependencies
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Received: by 2002:a17:906:72c6:0:0:0:0 with HTTP; Tue, 7 Jan 2020 11:56:34
+ -0800 (PST)
+Reply-To: dhlexpresscouriercompany.nyusa@gmail.com
+From:   "Dr. William Johnson" <currency1000000@gmail.com>
+Date:   Tue, 7 Jan 2020 20:56:34 +0100
+Message-ID: <CAPqfnSEyU1pBR_7HT2g1KK7i8caLMBQ8yPA8KRDVm+MN-K_Z4w@mail.gmail.com>
+Subject: contact Dhl office New York to receive your Prepaid ATM Master Card
+ worth $15.8Million US DOLLARS now.
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 7, 2020 at 11:03 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
-[..]
-> > That can already happen today. If you do not properly align the
-> > partition then dax operations will be disabled.
->
-> Er... is this conversation getting confused?  I was talking about
-> kpartx's /dev/mapper/pmem0p1 being a straight replacement for the kernel
-> creating /dev/pmem0p1.  I thnk Vivek was complaining about the
-> inconsistent behavior between the two, even if the partition is aligned
-> properly.
->
-> I'm not sure how alignment leaked in here?
-
-Oh, whoops, I was jumping to the mismatch between host device and
-partition and whether we had precedent to fail to support dax on the
-partition when the base block device does support it.
-
-But yes, the mismatch between kpartx and native partitions is weird.
-That said kpartx is there to add partition support where the kernel
-for whatever reason fails to, or chooses not to, and dax is looking
-like such a place.
-
-> > This proposal just
-> > extends that existing failure domain to make all partitions fail to
-> > support dax.
->
-> Oh, wait.  You're proposing that "partitions of pmem devices don't
-> support DAX", not "the kernel will not create partitions for pmem
-> devices".
->
-> Yeah, that would be inconsistent and weird.
-
-More weird than the current constraints?
-
-> I'd say deprecate the
-> kernel automounting partitions, but I guess it already does that, and
-
-Ok, now I don't know why automounting is leaking into this discussion?
-
-> removing it would break /something/.
-
-Yes, the breakage risk is anyone that was using ext4 mount failure as
-a dax capability detector.
-
-> I guess you could put
-> "/dev/pmemXpY" on the deprecation schedule.
-
-...but why deprecate /dev/pmemXpY partitions altogether? If someone
-doesn't care about dax then they can do all the legacy block things.
-If they do care about dax then work with whole device namespaces.
-
-The proposal is to detect dax on partitions and warn people to move to
-kpartx. Let the core fs/dax implementation continue to shed block
-dependencies.
+ATTN Dear Beneficiary.
+Goodnews
+I have Registered your Prepaid ATM Master Card
+worth $15.800,000.00 US DOLLARS with Courier company
+asigned to deliver it to you today.
+So contact Dhl office New York to receive your Prepaid ATM Master Card
+worth $15.8Million US DOLLARS now.
+Contact Person: Mrs. Mary Michael, Director, DHL Courier Company-NY USA. 10218
+Email. dhlexpresscouriercompany.nyusa@gmail.com
+Call the office +(202) 890-8752
+Rec-Confirmed your mailing address to the office as I listed below.
+Your Full Name--------------
+House Address-----------
+Your working Phone Number----------------
+ID copy-------------------------
+Sex-----------------------------
+Note,delivery fee to your address is only $25.00. send it to this
+company urgent on itunes card today so that DHL will deliver this
+Prepaid ATM Master Card to you today according to our finally
+agreement.
+Thanks for coperations,
+Dr. William Johnson
