@@ -2,65 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BA01132CE5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 18:23:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19E87132CFC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 18:29:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728365AbgAGRXB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jan 2020 12:23:01 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:34576 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728292AbgAGRXB (ORCPT
+        id S1728423AbgAGR33 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jan 2020 12:29:29 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:46234 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728366AbgAGR32 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jan 2020 12:23:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=i2nhsysMNEbmj26CAarD2a+4+ZsWCwB8cVF/8UKJy5Y=; b=AJhldERZhO1ZmK8rntydZBaJV
-        W7VzobCfuyv0IDUNPqWPPM8wxIll27RsMw5gDGnQRyMPPADfmTbqn2YvU7BrYgjpefOomRIFl/X4k
-        JGDKpdE4sVHLaQtUucOkkarjR4NmPJm9OBQ+cYA9i/RSAjFk9vKlcz3STwOWVmxHrHVhuN2Ogp1kG
-        +3q5wFo4T3bKJFzpYCwagfp+2139y41nJmkrnZ9BDa00XGTjq0HjVpUA2K4ovq8QM6BIiB7PnQGZN
-        5Rgcy7Ygt8jxgrJ8iSfeLOhTrbCdPSY1CGKH6mMN4D1Y4wsa8nNeU88vdvHbf+w6BUvK6P3lFDUOS
-        /5e+JgIsw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iosZI-0004rw-1i; Tue, 07 Jan 2020 17:23:00 +0000
-Date:   Tue, 7 Jan 2020 09:23:00 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc:     Christoph Hellwig <hch@infradead.org>, linux-btrfs@vger.kernel.org,
-        darrick.wong@oracle.com, fdmanana@kernel.org, nborisov@suse.com,
-        dsterba@suse.cz, jthumshirn@suse.de, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 4/8] btrfs: Switch to iomap_dio_rw() for dio
-Message-ID: <20200107172300.GB11624@infradead.org>
-References: <20191213195750.32184-1-rgoldwyn@suse.de>
- <20191213195750.32184-5-rgoldwyn@suse.de>
- <20191221144226.GA25804@infradead.org>
- <20200102180127.65oh2zmclpmy75ix@fiona>
+        Tue, 7 Jan 2020 12:29:28 -0500
+Received: by mail-ot1-f65.google.com with SMTP id r9so661878otp.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jan 2020 09:29:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EpnN1Qc4KdEV6DUorcFDZqPBu69hsxGWQC1ntViNntM=;
+        b=dp9Ew5g9lYMzS264P2PLif4UMUWCdr0VxT5zi507EuXBe/GMDwox3up8SHuWHmyP4T
+         9aWUzrwZZDBJ6e5ckod8FgFlwxFutDfkUszACYcESvmIW3XIRV87+SRZuMXXtbIyoQnr
+         36d1hgke3/f7kFbjgfq67/qmBh4nPMy73TncwwP+OrJFn+zy/Yh/gSHc+AM6QsIpzji/
+         ogpxDvLch5e5wIwoi8Ss33m+jQRUpS2XaDudai5FQj1dEvDxONyce8hVVSaWIe/Ykdba
+         T3kDRLJpPGsYI1zX26cb0kYkqz4k+sQ2qT01KO03k9YXXRxw4xHsrGJs2VcqvSfUTgmk
+         GPQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EpnN1Qc4KdEV6DUorcFDZqPBu69hsxGWQC1ntViNntM=;
+        b=Bq2w7Pn2g6dgI/VtNv2mdCoPMnu7o4iUOuLeFm7Vxr1sHFnI7B6kOAjtpJioBL+AtJ
+         /iwvgUSc1NjnFquhYiHLNBv16HTYwxuo45qJ3kawgbodtyg1M3Vr6jhaANWmWqwRgjnE
+         Ulmapec7nWBpa+Ls2B5fVjQI5ScWgi2NyycNbsCJH7MQfZPY3infWOdjNmVToWyUf5iL
+         N2wKvwI9AAg03PMrgJHKOteTzBjNTCzU3LA1LAovqNPm9PIjkxTp3mX95aUhw1xNPdWF
+         xx14RreqOKNREtDChH3BZR2hfoEKdJuNpPIu+qmnrSvotZf/q+SgPGbI4FFQXokNOmPx
+         oo8w==
+X-Gm-Message-State: APjAAAUoYTJBoKzlTOfYAx1E0Y+nAkfIYMvlHNPg7leXkg8N76xkzzaC
+        IE/WIYZ78YeiRLgiSDwdJ/Ckhshuj9boCBhkLLfq3A==
+X-Google-Smtp-Source: APXvYqwKo20I0n5xbnSQdFnOTztBVQs28N/hQCqru2njBZbSH8O8dd6qzeslV9G/Fnx0Sql1iukKgVWgGb0ZcMiHKVw=
+X-Received: by 2002:a9d:7852:: with SMTP id c18mr817574otm.247.1578418168350;
+ Tue, 07 Jan 2020 09:29:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200102180127.65oh2zmclpmy75ix@fiona>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20190821175720.25901-2-vgoyal@redhat.com> <20190826115152.GA21051@infradead.org>
+ <20190827163828.GA6859@redhat.com> <20190828065809.GA27426@infradead.org>
+ <20190828175843.GB912@redhat.com> <20190828225322.GA7777@dread.disaster.area>
+ <CAPcyv4jGEAbYSJef2zLzgg6Arozsuz7eN_vZL1iTcd1XQuNT4Q@mail.gmail.com>
+ <20191216181014.GA30106@redhat.com> <20200107125159.GA15745@infradead.org>
+ <CAPcyv4jZE35sbDo6J4ihioEUFTuekJ3_h0=2Ra4PY+xn2xn1cQ@mail.gmail.com> <20200107170731.GA472641@magnolia>
+In-Reply-To: <20200107170731.GA472641@magnolia>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 7 Jan 2020 09:29:17 -0800
+Message-ID: <CAPcyv4ggH7-QhYg+YOOWn_m25uds+-0L46=N09ap-LALeGuU_A@mail.gmail.com>
+Subject: Re: [PATCH 01/19] dax: remove block device dependencies
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 02, 2020 at 12:01:27PM -0600, Goldwyn Rodrigues wrote:
-> On  6:42 21/12, Christoph Hellwig wrote:
-> > So Ilooked into the "unlocked" direct I/O case, and I think the current
-> > code using dio_sem is really sketchy.  What btrfs really needs to do is
-> > take i_rwsem shared by default for direct writes, and only upgrade to
-> > the exclusive lock when needed, similar to xfs and the WIP ext4 code.
-> 
-> Sketchy in what sense? I am not trying to second-guess, but I want to
-> know where it could fail. I would want it to be simpler as well, but if
-> we can perform direct writes without locking, why should we introduce
-> locks.
+On Tue, Jan 7, 2020 at 9:08 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+>
+> On Tue, Jan 07, 2020 at 06:22:54AM -0800, Dan Williams wrote:
+> > On Tue, Jan 7, 2020 at 4:52 AM Christoph Hellwig <hch@infradead.org> wrote:
+> > >
+> > > On Mon, Dec 16, 2019 at 01:10:14PM -0500, Vivek Goyal wrote:
+> > > > > Agree. In retrospect it was my laziness in the dax-device
+> > > > > implementation to expect the block-device to be available.
+> > > > >
+> > > > > It looks like fs_dax_get_by_bdev() is an intercept point where a
+> > > > > dax_device could be dynamically created to represent the subset range
+> > > > > indicated by the block-device partition. That would open up more
+> > > > > cleanup opportunities.
+> > > >
+> > > > Hi Dan,
+> > > >
+> > > > After a long time I got time to look at it again. Want to work on this
+> > > > cleanup so that I can make progress with virtiofs DAX paches.
+> > > >
+> > > > I am not sure I understand the requirements fully. I see that right now
+> > > > dax_device is created per device and all block partitions refer to it. If
+> > > > we want to create one dax_device per partition, then it looks like this
+> > > > will be structured more along the lines how block layer handles disk and
+> > > > partitions. (One gendisk for disk and block_devices for partitions,
+> > > > including partition 0). That probably means state belong to whole device
+> > > > will be in common structure say dax_device_common, and per partition state
+> > > > will be in dax_device and dax_device can carry a pointer to
+> > > > dax_device_common.
+> > > >
+> > > > I am also not sure what does it mean to partition dax devices. How will
+> > > > partitions be exported to user space.
+> > >
+> > > Dan, last time we talked you agreed that partitioned dax devices are
+> > > rather pointless IIRC.  Should we just deprecate partitions on DAX
+> > > devices and then remove them after a cycle or two?
+> >
+> > That does seem a better plan than trying to force partition support
+> > where it is not needed.
+>
+> Question: if one /did/ have a partitioned DAX device and used kpartx to
+> create dm-linear devices for each partition, will DAX still work through
+> that?
 
-In that it needs yet another lock which doesn't really provide
-exclusion guarantees in its own.  In many ways this lock plus the
-historic i_mutex were abused to provide the shared/exclusiv lock
-that now exists natively with i_rwsem.
+The device-mapper support will continue, but it will be limited to
+whole device sub-components. I.e. you could use kpartx to carve up
+/dev/pmem0 and still have dax, but not partitions of /dev/pmem0.
