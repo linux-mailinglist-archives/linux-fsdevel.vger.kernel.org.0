@@ -2,129 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6A67132C8C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 18:07:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AC03132CA1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 18:10:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728358AbgAGRHq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jan 2020 12:07:46 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:60494 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728236AbgAGRHp (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jan 2020 12:07:45 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 007Gxs1i108694;
-        Tue, 7 Jan 2020 17:07:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=TonZdKs5flBwONqESEptkzUdNDu8nb8volKmuzA6Cz0=;
- b=Dg5eAnULbmvdHQzXt/MZgtHB0R/zWD0HQ+5s3azeZp8EEZ34ay8U8IXHjZGsgK27rehS
- bb8ffV2JEBwuogOZg4wcANMgdMBKS97CpXpWk7KU7SVlPQgFUWlVHu1DAfnGryIv1LKI
- M5AvVllmupEsFvrHYTNamVFhNzc87ByL1gWOw0iTmEuPoX1/m7tYqFY+EvYYNZUwGLxG
- 1Lo8F+6TNJ6Q1EeRhKR2XXV7l75GPDLV1kYwFuGmzfY9nlZh5W1Im1qMYi7elyFGtzp+
- gnwn6VDCbHk8N4C5wW46kKsyxAWes1ui6aXftOTsyPgLj2wHtLqD0FgPkvrqcDbM/whH 9A== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2xajnpxvme-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 07 Jan 2020 17:07:34 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 007GxqZk067504;
-        Tue, 7 Jan 2020 17:07:34 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2xcpamx72e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 07 Jan 2020 17:07:34 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 007H7XOT027070;
-        Tue, 7 Jan 2020 17:07:33 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 07 Jan 2020 09:07:33 -0800
-Date:   Tue, 7 Jan 2020 09:07:31 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 01/19] dax: remove block device dependencies
-Message-ID: <20200107170731.GA472641@magnolia>
-References: <20190821175720.25901-2-vgoyal@redhat.com>
- <20190826115152.GA21051@infradead.org>
- <20190827163828.GA6859@redhat.com>
- <20190828065809.GA27426@infradead.org>
- <20190828175843.GB912@redhat.com>
- <20190828225322.GA7777@dread.disaster.area>
- <CAPcyv4jGEAbYSJef2zLzgg6Arozsuz7eN_vZL1iTcd1XQuNT4Q@mail.gmail.com>
- <20191216181014.GA30106@redhat.com>
- <20200107125159.GA15745@infradead.org>
- <CAPcyv4jZE35sbDo6J4ihioEUFTuekJ3_h0=2Ra4PY+xn2xn1cQ@mail.gmail.com>
+        id S1728379AbgAGRKR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jan 2020 12:10:17 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48916 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728266AbgAGRKR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 Jan 2020 12:10:17 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 9A1DDB15D;
+        Tue,  7 Jan 2020 17:10:14 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 2528E1E0B47; Tue,  7 Jan 2020 18:10:14 +0100 (CET)
+Date:   Tue, 7 Jan 2020 18:10:14 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        Mo Re Ra <more7.rev@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Wez Furlong <wez@fb.com>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: File monitor problem
+Message-ID: <20200107171014.GI25547@quack2.suse.cz>
+References: <CAOQ4uxjda6iQ1D0QEVB18TcrttVpd7uac++WX0xAyLvxz0x7Ew@mail.gmail.com>
+ <20191204190206.GA8331@bombadil.infradead.org>
+ <CAOQ4uxiZWKCUKcpBt-bHOcnHoFAq+nghWmf94rJu=3CTc5VhRA@mail.gmail.com>
+ <20191211100604.GL1551@quack2.suse.cz>
+ <CAOQ4uxij13z0AazCm7AzrXOSz_eYBSFhs0mo6eZFW=57wOtwew@mail.gmail.com>
+ <CAOQ4uxiKzom5uBNbBpZTNCT0XLOrcHmOwYy=3-V-Qcex1mhszw@mail.gmail.com>
+ <CAOQ4uxgBcLPGxGVddjFsfWJvcNH4rT+GrN6-YhH8cz5K-q5z2g@mail.gmail.com>
+ <20191223181956.GB17813@quack2.suse.cz>
+ <CAOQ4uxhUGCLQyq76nqREETT8kBV9uNOKsckr+xmJdR9Xm=cW3Q@mail.gmail.com>
+ <CAOQ4uxjwy4_jWitzHc9hSaBJwVZM68xxJTub50ZfrtgFSZFH8A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4jZE35sbDo6J4ihioEUFTuekJ3_h0=2Ra4PY+xn2xn1cQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9492 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2001070137
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9492 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2001070137
+In-Reply-To: <CAOQ4uxjwy4_jWitzHc9hSaBJwVZM68xxJTub50ZfrtgFSZFH8A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 07, 2020 at 06:22:54AM -0800, Dan Williams wrote:
-> On Tue, Jan 7, 2020 at 4:52 AM Christoph Hellwig <hch@infradead.org> wrote:
+On Tue 24-12-19 05:49:42, Amir Goldstein wrote:
+> > > I can see the need for FAN_DIR_MODIFIED_WITH_NAME
+> > > (stupid name, I know) - generated when something changed with names in a
+> > > particular directory, reported with FID of the directory and the name
+> > > inside that directory involved with the change. Directory watching
+> > > application needs this to keep track of "names to check". Is the name
+> > > useful with any other type of event? _SELF events cannot even sensibly have
+> > > it so no discussion there as you mention below. Then we have OPEN, CLOSE,
+> > > ACCESS, ATTRIB events. Do we have any use for names with those?
+> > >
 > >
-> > On Mon, Dec 16, 2019 at 01:10:14PM -0500, Vivek Goyal wrote:
-> > > > Agree. In retrospect it was my laziness in the dax-device
-> > > > implementation to expect the block-device to be available.
-> > > >
-> > > > It looks like fs_dax_get_by_bdev() is an intercept point where a
-> > > > dax_device could be dynamically created to represent the subset range
-> > > > indicated by the block-device partition. That would open up more
-> > > > cleanup opportunities.
-> > >
-> > > Hi Dan,
-> > >
-> > > After a long time I got time to look at it again. Want to work on this
-> > > cleanup so that I can make progress with virtiofs DAX paches.
-> > >
-> > > I am not sure I understand the requirements fully. I see that right now
-> > > dax_device is created per device and all block partitions refer to it. If
-> > > we want to create one dax_device per partition, then it looks like this
-> > > will be structured more along the lines how block layer handles disk and
-> > > partitions. (One gendisk for disk and block_devices for partitions,
-> > > including partition 0). That probably means state belong to whole device
-> > > will be in common structure say dax_device_common, and per partition state
-> > > will be in dax_device and dax_device can carry a pointer to
-> > > dax_device_common.
-> > >
-> > > I am also not sure what does it mean to partition dax devices. How will
-> > > partitions be exported to user space.
+> > The problem is that unlike dir fid, file fid cannot be reliably resolved
+> > to path, that is the reason that I implemented  FAN_WITH_NAME
+> > for events "possible on child" (see branch fanotify_name-wip).
+
+Ok, but that seems to be a bit of an abuse, isn't it? Because with parent
+fid + name you may reconstruct the path but you won't be able to reliably
+identify the object where the operation happened? Even worse users can
+mistakenly think that parent fid + name identify the object but that is
+racy... This is exactly the kind of confusion I'd like to avoid with the
+new API.
+
+OTOH I understand that e.g. a file monitor may want to monitor CLOSE_WRITE
+like you mention below just to record directory FID + name as something
+that needs resyncing. So I agree that names in events other than directory
+events are useful as well. And I also agree that for that usecase what you
+propose would be fine.
+
+> > A filesystem monitor typically needs to be notified on name changes and on
+> > data/metadata modifications.
 > >
-> > Dan, last time we talked you agreed that partitioned dax devices are
-> > rather pointless IIRC.  Should we just deprecate partitions on DAX
-> > devices and then remove them after a cycle or two?
+> > So maybe add just two new event types:
+> > FAN_DIR_MODIFY
+> > FAN_CHILD_MODIFY
+> >
+> > Both those events are reported with name and allowed only with init flag
+> > FAN_REPORT_FID_NAME.
+> > User cannot filter FAN_DIR_MODIFY by part of create/delete/move.
+> > User cannot filter FAN_CHILD_MODIFY by part of attrib/modify/close_write.
 > 
-> That does seem a better plan than trying to force partition support
-> where it is not needed.
+> Nah, that won't do. I now remember discussing this with out in-house monitor
+> team and they said they needed to filter out FAN_MODIFY because it was too
+> noisy and rely on FAN_CLOSE_WRITE. And other may want open/access as
+> well.
 
-Question: if one /did/ have a partitioned DAX device and used kpartx to
-create dm-linear devices for each partition, will DAX still work through
-that?
+So for open/close/modify/read/attrib I don't see a need to obfuscate the
+event type. They are already abstract enough so I don't see how they could
+be easily misinterpretted. With directory events the potential for
+"optimizations" that are subtly wrong is IMHO much bigger.
 
---D
+> There is another weird way to obfuscate the event type.
+> I am not sure if users will be less confused about it:
+> Each event type belongs to a group (i.e. self, dirent, poss_on_child)
+> User may set any event type in the mask (e.g. create|delete|open|close)
+> When getting an event from event group A (e.g. create), all event types
+> of that group will be reported (e.g. create|delete).
+> 
+> To put it another way:
+> #define FAN_DIR_MODIFY (FAN_CREATE | FAN_MOVE | FAN_DELETE)
+> 
+> For example in fanotify_group_event_mask():
+> if (event_with_name) {
+>     if (marks_mask & test_mask & FAN_DIR_MODIFY)
+>         test_mask |= marks_mask & FAN_DIR_MODIFY
+> ...
+> 
+> Did somebody say over-engineering? ;)
+> 
+> TBH, I don't see how we can do event type obfuscation
+> that is both usable and not confusing, because the concept is
+> confusing. I understand the reasoning behind it, but I don't think
+> that many users will.
+> 
+> I'm hoping that you can prove me wrong and find a way to simplify
+> the API while retaining fair usability.
+
+I was thinking about this. If I understand the problem right, depending on
+the usecase we may need with each event some subset of 'object fid',
+'directory fid', 'name in directory'. So what if we provided all these
+three things in each event? Events will get somewhat bloated but it may be
+bearable.
+
+With this information we could reliably reconstruct (some) path (we always
+have directory fid + name), we can reliably identify the object involved in
+the change (we always have object fid). I'd still prefer if we obfuscated
+directory events, without possibility of filtering based of
+CREATE/DELETE/MOVE (i.e., just one FAN_DIR_MODIFY event for this fanotify
+group) - actually I have hard time coming with a usecase where application
+would care about one type of event and not the other one. The other events
+remain as they are. What do you think?
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
