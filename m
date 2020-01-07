@@ -2,79 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68AB7133002
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 20:56:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38DC2133043
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 21:04:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728691AbgAGT4h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jan 2020 14:56:37 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:33679 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728672AbgAGT4g (ORCPT
+        id S1728585AbgAGUEu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jan 2020 15:04:50 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:54363 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728358AbgAGUEt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jan 2020 14:56:36 -0500
-Received: by mail-ed1-f68.google.com with SMTP id r21so660586edq.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jan 2020 11:56:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=lUsTd9lJYwK928kai9reachpHe0HC9Hv8/gDLGwtaBI=;
-        b=m/Udengj3famfT4AeeQ1IRW+yMW7VasUnASahB37i/PoeHrkRBk2CGyFKYNukmjW7S
-         L8SRka5Jakx3oOkJPsG2IofN9vOqI+MJeZI3Q0YE0hhIfxJgla/Mvi4GlBIJ0+PXKJyR
-         fGhtIsUmeS9lphgKJPwASTV0Wis5x+akjvA6FztTMBR/K8fgi7sOjdtLa1OeTeeGw/oC
-         WuhGv+1qsxod0shrSr56iRhzuujf6ypC8mQV8JosjFfNeYtuq3xDGNFupimiXFOQL0SO
-         8SxYRsEAywqZcf7WmcQRmN/Qkf20W+/a6rRSJl252WjsQoa/SZxLvQ4mGRJVkfZ3ex9s
-         ABpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=lUsTd9lJYwK928kai9reachpHe0HC9Hv8/gDLGwtaBI=;
-        b=rpNswydTK1mNl9qRkWcmA36uexmHNpso4evtwUsMPzg4N4vYipb3WYsU78JSRC0Lt4
-         qCETSRurAmQ0k+4bn/WBKAkmk/zePA/TUPElZ5HaRFUzCb9gIQFRcRVHCILjslPuNyXX
-         OIz+4ghPZE5d2j5TRVK/byYkjUlBAu2+8OG24hEDd0udixkVedl1LH2HiPvwY0ufCTOw
-         DYU71Dyc5iSdVJZo30fuYMBQfE2rsJdJRyJ1JVbdI/KYhv4Q43KbXEJofGQW1soNuI3S
-         pF5hQW/uhDrs/bQsdD0jk+CXmgk/6FI9WVxzXGlpyHD7UnmhBenEJ5RExCev8PjLdxcC
-         +wjg==
-X-Gm-Message-State: APjAAAUXTxuljQgk1FvmWUA3qPr0+5ZvXf4qWWTh56VB6V4uONI1AriY
-        1sn35ItrTpNgSu0bVIqMCMxrKj483dS8bECUV74=
-X-Google-Smtp-Source: APXvYqzNbcT08PcgNHBR6CjdjGMonF1aREtl3FixKkalZzLFfyP3YZsjOtPyVn2SjFoUiZ8TzNVIEuitC7fnDU0d3Kk=
-X-Received: by 2002:a17:907:20ef:: with SMTP id rh15mr1111482ejb.325.1578426995176;
- Tue, 07 Jan 2020 11:56:35 -0800 (PST)
+        Tue, 7 Jan 2020 15:04:49 -0500
+Received: from callcc.thunk.org (guestnat-104-133-0-111.corp.google.com [104.133.0.111] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 007K31WJ002663
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 7 Jan 2020 15:03:02 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id B2F684207DF; Tue,  7 Jan 2020 15:03:01 -0500 (EST)
+Date:   Tue, 7 Jan 2020 15:03:01 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, linux-cifs@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Salah Triki <salah.triki@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        David Sterba <dsterba@suse.com>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Jan Kara <jack@suse.com>, Eric Sandeen <sandeen@redhat.com>,
+        Namjae Jeon <linkinjeon@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: Unification of filesystem encoding options
+Message-ID: <20200107200301.GE3619@mit.edu>
+References: <20200102211855.gg62r7jshp742d6i@pali>
+ <20200107133233.GC25547@quack2.suse.cz>
+ <20200107173842.ciskn4ahuhiklycm@pali>
 MIME-Version: 1.0
-Received: by 2002:a17:906:72c6:0:0:0:0 with HTTP; Tue, 7 Jan 2020 11:56:34
- -0800 (PST)
-Reply-To: dhlexpresscouriercompany.nyusa@gmail.com
-From:   "Dr. William Johnson" <currency1000000@gmail.com>
-Date:   Tue, 7 Jan 2020 20:56:34 +0100
-Message-ID: <CAPqfnSEyU1pBR_7HT2g1KK7i8caLMBQ8yPA8KRDVm+MN-K_Z4w@mail.gmail.com>
-Subject: contact Dhl office New York to receive your Prepaid ATM Master Card
- worth $15.8Million US DOLLARS now.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200107173842.ciskn4ahuhiklycm@pali>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ATTN Dear Beneficiary.
-Goodnews
-I have Registered your Prepaid ATM Master Card
-worth $15.800,000.00 US DOLLARS with Courier company
-asigned to deliver it to you today.
-So contact Dhl office New York to receive your Prepaid ATM Master Card
-worth $15.8Million US DOLLARS now.
-Contact Person: Mrs. Mary Michael, Director, DHL Courier Company-NY USA. 10218
-Email. dhlexpresscouriercompany.nyusa@gmail.com
-Call the office +(202) 890-8752
-Rec-Confirmed your mailing address to the office as I listed below.
-Your Full Name--------------
-House Address-----------
-Your working Phone Number----------------
-ID copy-------------------------
-Sex-----------------------------
-Note,delivery fee to your address is only $25.00. send it to this
-company urgent on itunes card today so that DHL will deliver this
-Prepaid ATM Master Card to you today according to our finally
-agreement.
-Thanks for coperations,
-Dr. William Johnson
+On Tue, Jan 07, 2020 at 06:38:42PM +0100, Pali Rohár wrote:
+> Adding support for case-insensitivity into UTF-8 NLS encoding would mean
+> to create completely new kernel NLS API (which would support variable
+> length encodings) and rewrite all NLS filesystems to use this new API.
+> Also all existing NLS encodings would be needed to port into this new
+> API.
+> 
+> It is really something which have a value? Just because of UTF-8?
+> 
+> For me it looks like better option would be to remove UTF-8 NLS encoding
+> as it is broken. Some filesystems already do not use NLS API for their
+> UTF-8 support (e.g. vfat, udf or newly prepared exfat). And others could
+> be modified/extended/fixed in similar way.
+
+You didn't mention ext4 and f2fs, which is using the Unicode code in
+fs/unicode for its case-folding and normalization support.  Ext4 and
+f2fs only supports utf-8, so using the NLS API would have added no
+value --- and it as you pointed out, the NLS API doesn't support
+variable length encoding anyway.  In contrast the fs/unicode functions
+have support for full Unicode case folding and normalization, and
+currently has the latest Unicode 12.1 tables (released May 2019).
+
+What I'd suggest is to create a new API, enhancing the functions in
+fs/unicode, to support those file systems that need to deal with
+UTF-16 and UTF-32 for their on-disk directory format, and that we
+assume that for the most part, userspace *will* be using a UTF-8
+encoding for the user<->kernel interface.  We can keep the existing
+NLS interface and mount options for legacy support, but in my opinion
+it's not worth the effort to try to do anything else.
+
+					- Ted
