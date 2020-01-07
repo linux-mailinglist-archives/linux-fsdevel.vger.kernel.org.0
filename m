@@ -2,103 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00C1813234B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 11:12:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8A1E132537
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 12:52:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727799AbgAGKMN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jan 2020 05:12:13 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:44804 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726558AbgAGKMM (ORCPT
+        id S1727973AbgAGLwG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jan 2020 06:52:06 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54588 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726690AbgAGLwG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jan 2020 05:12:12 -0500
-Received: by mail-io1-f68.google.com with SMTP id b10so51989466iof.11;
-        Tue, 07 Jan 2020 02:12:12 -0800 (PST)
+        Tue, 7 Jan 2020 06:52:06 -0500
+Received: by mail-wm1-f67.google.com with SMTP id b19so18581088wmj.4;
+        Tue, 07 Jan 2020 03:52:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PbyQyZ9o+Ro7E6bXOC6SCrk7HuZRr+h0vUWe4gZ98uQ=;
-        b=mE+vclw3cfYF8tFzCALd6ffjBbn9elwbyo2EMwffZsN59D8gkO888bX94L0BigDx7F
-         v4pyG7hhBxC13kJmfR5Yx8yFLrRgTbf53DgRK+6BNulX4LVJ88/uqtPDurJ+IbRaAmKe
-         8EWtlB5diKEI3JJzHIL8tmpDSqiLcfuZhHLn6DioccebewAhH/tDiUTWY3XPDQVBh5ZG
-         rvl714eo8s/x6NhqpZbqD0JRkjrfe02kKiYkAiEV5zMYyvV91xk04MCXKgcpnnVq4paH
-         LtkyG1gx+IMCw52HZAq5gzXbppsUW0ZEga4mS2tYjQn9/QgoxTukRxnnCE3/iT4jmU9B
-         09xA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=1IdCp+152V00WOErsRkB6rIy+yW5jX9FlF/zgyki7Lc=;
+        b=Tb/pEh7m9Jj4VrIvPmRy9mhjGxM/6ucedJ+SjAZKLVTQBNGwyEcvjeiVJ7FMwZFYSb
+         SMi7DjXMxrWfJFtvgdk7/2HrKdgjskBKFNWFkvBgr6hn68LuztLJ5rW4IpvZvuAzo1z1
+         7Q4IK2JBNJZjyVzNS3DiIgaepKAFc2y5p5UTGbUjFyw+K7XmxR+9hmxSH7LLUHaL5MqZ
+         uMAb30l1cgvfGDS+SNahOyWU27KpSkmjZo8UYvSpGBj4E0F5aJRjKTx5bDVdsIPlYc68
+         olmu6TY09muhPu3kSdCGyvSdEUxYQsBttyMf59RyVC3iRtO5L4Ea1KIgEEY+TG53OUG4
+         3jBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PbyQyZ9o+Ro7E6bXOC6SCrk7HuZRr+h0vUWe4gZ98uQ=;
-        b=fNWl0PPULz+gTBaZQtSSdEY6kQW403O0mhiHGQplPgu4/CkIPagZzL6EpGywS1uXsQ
-         tnZIpkZnQFCjNWxiuH7+iMFBSsYO9UsW0mNC/nBLYz41Ksw9z8SDmDrPiWO0VP4xLdy3
-         shVqUd+98Z6FWtMdVoqLXdbn4dLmVp0nN7UHceccNE6Chfb6mEhHT5qmVn8HyJN3yvyb
-         /kwtaonwNrVu8xr/6oVqv1iLKj9HikVGe1Ku5NW5TXdIKCeZR7bdWP8AZD6F7Pevm6L+
-         7sXgt0DroheBEPCExPgkGilCSLji7gHnLCcch4195mk3CUkIe0LNAPniGxlRJ7xy/uYP
-         r3jQ==
-X-Gm-Message-State: APjAAAUfjhrMX3HbMOIzLc4sXmGuSK+SUWgbgYoHAJqKvFGJC2AlDmm0
-        A6umI48uuI8oMhFPzbmgf8/gqwLFErumDDSfle1wgw==
-X-Google-Smtp-Source: APXvYqx3r2qgxfq0fEj3TX01n99so2jqPkAzW5BeIfMPMxERNE6WNcSTMhTdDGboy4GGuyjRN9uytisFExuwcaccWaw=
-X-Received: by 2002:a02:81cc:: with SMTP id r12mr80549653jag.93.1578391931918;
- Tue, 07 Jan 2020 02:12:11 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=1IdCp+152V00WOErsRkB6rIy+yW5jX9FlF/zgyki7Lc=;
+        b=RLxQv55bnMfQetXQofgl9dZXzvUXTuhIh8qf6/TIOQPZY4juLTI2Oy2KWN3exs/d+y
+         9U0o4sGYJuOQ0fslqVsEpLej/Hovt0KwXnCHh5kXl4WmrWbhxbKETYvH/8k16WaDPMl+
+         c3YFoA0tjX6cKxqhgB3f/3wMcwszFqjXp6awCARESDh/eAk0tSGiCHohJoFnxGkHHgMm
+         qdRQuovGOO070PazpIFvoZd2Ja0kysrurvihuPQS9O0FVHhzCQF2CVJtC1siyIhG7WNK
+         7xCFmFIZvV9zNXDDS81QWlYxRvM8fUfFAmm22sk4l3zLDbjoNmb5m/tKOSV8eH+8z4XP
+         DZYA==
+X-Gm-Message-State: APjAAAWIo4+Gr5cXW/KSyCXl2YHW39J4+VQihOgj2ynnQiglW0F7Tgec
+        S4Z4XpUbHEcoiTCtcw6plMA=
+X-Google-Smtp-Source: APXvYqzGkqsU4rE5bx3mL5nGETgA3WSI91fdY+KKbLOlbZK81M5sfoX009kOMr39/exXSQAOF7iU+g==
+X-Received: by 2002:a7b:c190:: with SMTP id y16mr40399910wmi.107.1578397924103;
+        Tue, 07 Jan 2020 03:52:04 -0800 (PST)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id s10sm76968698wrw.12.2020.01.07.03.52.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jan 2020 03:52:03 -0800 (PST)
+Date:   Tue, 7 Jan 2020 12:52:02 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
+        sj1557.seo@samsung.com, linkinjeon@gmail.com, tytso@mit.edu
+Subject: Re: [PATCH v9 10/13] exfat: add nls operations
+Message-ID: <20200107115202.shjpp6g3gsrhhkuy@pali>
+References: <20200102082036.29643-1-namjae.jeon@samsung.com>
+ <CGME20200102082407epcas1p4cf10cd3d0ca2903707ab01b1cc523a05@epcas1p4.samsung.com>
+ <20200102082036.29643-11-namjae.jeon@samsung.com>
+ <20200105165115.37dyrcwtgf6zgc6r@pali>
+ <85woa4jrl2.fsf@collabora.com>
 MIME-Version: 1.0
-References: <cover.1578225806.git.chris@chrisdown.name> <ae9306ab10ce3d794c13b1836f5473e89562b98c.1578225806.git.chris@chrisdown.name>
- <20200107001039.GM23195@dread.disaster.area> <20200107001643.GA485121@chrisdown.name>
- <20200107003944.GN23195@dread.disaster.area> <CAOQ4uxjvH=UagqjHP_71_p9_dW9wKqiaWujzY1xKe7yZVFPoTA@mail.gmail.com>
- <alpine.LSU.2.11.2001070002040.1496@eggly.anvils>
-In-Reply-To: <alpine.LSU.2.11.2001070002040.1496@eggly.anvils>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 7 Jan 2020 12:12:00 +0200
-Message-ID: <CAOQ4uxiMQ3Oz4M0wKo5FA_uamkMpM1zg7ydD8FXv+sR9AH_eFA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] tmpfs: Support 64-bit inums per-sb
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Chris Down <chris@chrisdown.name>,
-        Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@fb.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <85woa4jrl2.fsf@collabora.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 7, 2020 at 10:36 AM Hugh Dickins <hughd@google.com> wrote:
->
-> On Tue, 7 Jan 2020, Amir Goldstein wrote:
-> > On Tue, Jan 7, 2020 at 2:40 AM Dave Chinner <david@fromorbit.com> wrote:
-> > > On Tue, Jan 07, 2020 at 12:16:43AM +0000, Chris Down wrote:
-> > > > Dave Chinner writes:
-> > > > > It took 15 years for us to be able to essentially deprecate
-> > > > > inode32 (inode64 is the default behaviour), and we were very happy
-> > > > > to get that albatross off our necks.  In reality, almost everything
-> > > > > out there in the world handles 64 bit inodes correctly
-> > > > > including 32 bit machines and 32bit binaries on 64 bit machines.
-> > > > > And, IMNSHO, there no excuse these days for 32 bit binaries that
-> > > > > don't using the *64() syscall variants directly and hence support
-> > > > > 64 bit inodes correctlyi out of the box on all platforms.
->
-> Interesting take on it.  I'd all along imagined we would have to resort
-> to a mount option for safety, but Dave is right that I was too focused on
-> avoiding tmpfs regressions, without properly realizing that people were
-> very unlikely to have written such tools for tmpfs in particular, but
-> written them for all filesystems, and already encountered and fixed
-> such EOVERFLOWs for other filesystems.
->
-> Hmm, though how readily does XFS actually reach the high inos on
-> ordinary users' systems?
->
+On Monday 06 January 2020 14:46:33 Gabriel Krisman Bertazi wrote:
+> Pali Rohár <pali.rohar@gmail.com> writes:
+> 
+> > What do you think what should kernel's exfat driver do in this case?
+> >
+> > To prevent such thing we need to use some kind of Unicode normalization
+> > form here.
+> >
+> > CCing Gabriel as he was implementing some Unicode normalization for ext4
+> > driver and maybe should bring some light to new exfat driver too.
+> 
+> We have an in-kernel implementation of the canonical decomposition
+> normalization (NFD) in fs/unicode, which is what we use for f2fs and
+> ext4.  It is heated argument what is the best form for filesystem usage,
+> and from what I researched, every proprietary filesystem does a
+> different (and crazy in their unique way) thing.
+> 
+> For exfat, even though the specification is quite liberal, I think the
+> reasonable answer is to follow closely whatever behavior the Windows
+> implementation has, whether it does normalization at all or not. Even if
+> it is just an in-memory format used internally for lookups, assuming a
+> different format or treating differently invalid file names can result
+> in awkward results in a filesystem created on another operating system,
+> like filename collisions or false misses in lookups.
+> 
 
-Define 'ordinary'
-I my calculations are correct, with default mkfs.xfs any inode allocated
-from logical offset > 2TB on a volume has high ino bits set.
-Besides, a deployment with more than 4G inodes shouldn't be hard to find.
+Hi Gabriel! Thank you for your input. AFAIK Windows exfat implementation
+does not do any Unicode normalization and allow to store any sequence of
+16bit numbers excluding some "bad chars" as filename (so including also
+unpaired half of UTF-16 surrogate pair) if such upper cased filename
+(according to upcase table stored in FS) does not conflict with another
+upper cased filename already stored in directory.
 
-Thanks,
-Amir.
+So based on your suggestion, I understood that we should not do any
+Unicode Normalization even just for comparing filenames if it exists.
+
+-- 
+Pali Rohár
+pali.rohar@gmail.com
