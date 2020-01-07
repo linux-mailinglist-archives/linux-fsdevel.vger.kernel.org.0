@@ -2,74 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22C70132D46
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 18:42:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EEF7132D51
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 18:44:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728407AbgAGRmI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jan 2020 12:42:08 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:40892 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728266AbgAGRmI (ORCPT
+        id S1728459AbgAGRoL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jan 2020 12:44:11 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34388 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728344AbgAGRoK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jan 2020 12:42:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=gOiFIlZRVnOoBxSXmVwGYFu8Oc2PBoCKHWX6MtqQFiU=; b=kBxKQv05tR88yHPqmZPS9DjdT
-        JiNHmm/82p+m9xZTf2dKIujfr9khftReZFdNEXbbHz3w73EarWaoi09SEmqxnSGza9BkXGMBZcKQV
-        oF0+/9JEt35FM/7l+CED0sZhx2ZgyyVZ76L3zzH5O0rEBjoBGu+N8fFR1m40Ku7L9cxLg3srHGU6w
-        WUN+5uPadqjbIfB6BgQpTZS79lnlE4H/AMVAFJ+y02AgL63hfkIlwU3jSqoE5qY1/oMVjApl2yyX1
-        VPzJUfGURFGxrIqPiUViXhqwt59ZQ4Ws539heX5WcP2EVd8rnTMC63qp0wmCTPwk2yDdoUcrFsI7c
-        oevsLctfA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iosri-00046i-4n; Tue, 07 Jan 2020 17:42:02 +0000
-Date:   Tue, 7 Jan 2020 09:42:02 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Chris Mason <clm@fb.com>
-Cc:     Dave Chinner <david@fromorbit.com>, Jens Axboe <axboe@kernel.dk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCHSET v3 0/5] Support for RWF_UNCACHED
-Message-ID: <20200107174202.GA8938@infradead.org>
-References: <CAHk-=wjz3LE1kznro1dozhk9i9Dr4pCnkj7Fuccn2xdWeGHawQ@mail.gmail.com>
- <d0adcde2-3106-4fea-c047-4d17111bab70@kernel.dk>
- <e43a2700-8625-e136-dc9d-d0d2da5d96ac@kernel.dk>
- <CAHk-=wje8i3DVcO=fMC4tzKTS5+eHv0anrVZa_JENQt08T=qCQ@mail.gmail.com>
- <0d4e3954-c467-30a7-5a8e-7c4180275533@kernel.dk>
- <CAHk-=whk4bcVPvtAv5OmHiW5z6AXgCLFhO4YrXD7o0XC+K-aHw@mail.gmail.com>
- <fef996ca-a4ed-9633-1f79-91292a984a20@kernel.dk>
- <e7fc6b37-8106-4fe2-479c-05c3f2b1c1f1@kernel.dk>
- <20191212221818.GG19213@dread.disaster.area>
- <C08B7F86-C3D6-47C6-AB17-6F234EA33687@fb.com>
+        Tue, 7 Jan 2020 12:44:10 -0500
+Received: by mail-wr1-f68.google.com with SMTP id t2so424576wrr.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jan 2020 09:44:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chrisdown.name; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=8eqMnrGTPiMzUvhdb0Z8uXo41jdrtgsf6hpzBK0nlMQ=;
+        b=P/XrLA3sWbGycnyupfzOxWdJivC6ceAXPPCxrnLUPh+TduZx5ndkDZmQXFSHrof9j/
+         tQD9SaAE/CdOr3P0R5dH+i1X2R95TWzLK/Jp8GKp77O7/YBGVPPkFEYnAgDIzrogEDyu
+         S+xg3zJZWVZX3XvTEenCiAzsGCh+QTqRMY1+o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=8eqMnrGTPiMzUvhdb0Z8uXo41jdrtgsf6hpzBK0nlMQ=;
+        b=bh3nLgLhCbyxkknSQ7KQnVVd6IiPn+vw0CQ+6yNKO7RxqfpLntb5O+rXBEweQcfv8F
+         ryZUZxBc9Vr5TxwKCgqdX9Yx4STllzWYOYLlGJ9UND2//CTfHuIm35JJocfLiqjb0uSU
+         ig8j5ZHxDqWqXeBEbzdDlxTLJXyWsNFRbYKx8ZUlis8LG/QriO4xkalLxADmmm6bOpwJ
+         AHbCQVyZjSOm1dVcWr4+EAi/WLt35PZglUK9PL12wiY/XgNO21UvkbDbYzMvQN8Ta7Me
+         1hxvoj95ZeeFmatWUkLJxMTVyl0fXGD3ACGu1h/tgoN8EcsyWNTPz/i5sI7qmtQ0LR8B
+         e/vw==
+X-Gm-Message-State: APjAAAUPp6MumSVm2rhnVrBczAimc8GH6aSVJtO7RLnGCCXCPLJHo9O3
+        zBYLix+3zen1Z71Psc1RfTI3xQ==
+X-Google-Smtp-Source: APXvYqynyqHQyph7mlkfkGczhahKEDtFTIiSOiCq7anm6rJZZrYX1taZ671LNRgmt2SgYo6hlDdfDg==
+X-Received: by 2002:adf:82f3:: with SMTP id 106mr225820wrc.69.1578419048428;
+        Tue, 07 Jan 2020 09:44:08 -0800 (PST)
+Received: from localhost ([2620:10d:c092:180::1:2344])
+        by smtp.gmail.com with ESMTPSA id u1sm413118wmc.5.2020.01.07.09.44.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jan 2020 09:44:08 -0800 (PST)
+Date:   Tue, 7 Jan 2020 17:44:07 +0000
+From:   Chris Down <chris@chrisdown.name>
+To:     "J. Bruce Fields" <bfields@fieldses.org>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH] fs: inode: Reduce volatile inode wraparound risk when
+ ino_t is 64 bit
+Message-ID: <20200107174407.GA666424@chrisdown.name>
+References: <20191220024936.GA380394@chrisdown.name>
+ <20191220213052.GB7476@magnolia>
+ <20191221101652.GA494948@chrisdown.name>
+ <20200107173530.GC944@fieldses.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <C08B7F86-C3D6-47C6-AB17-6F234EA33687@fb.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200107173530.GC944@fieldses.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 01:32:10AM +0000, Chris Mason wrote:
-> They just have different tradeoffs.  O_DIRECT actively blows away caches 
-> and can also force writes during reads, making RWF_UNCACHED a more 
-> natural fit for some applications.  There are fewer surprises, and some 
-> services are willing to pay for flexibility with a memcpy.  In general, 
-> they still want to do some cache management because it reduces p90+ 
-> latencies across the board, and gives them more control over which pages 
-> stay in cache.
+J. Bruce Fields writes:
+>I thought that (dev, inum) was supposed to be unique from creation to
+>last unlink (and last close), and (dev, inum, generation) was supposed
+>to be unique for all time.
 
-We can always have a variant of O_DIRECT that doesn't do that and
-instead check if data was in the cache and then also copy / from to
-it in that case.  I need some time to actually look through this series,
-so it might be pretty similar to the implementation, but if defined
-the right way it could be concurrent for at least the fast path of no
-cached pages.
+Sure, but I mean, we don't really protect against even the first case.
+
+>> I didn't mention generation because, even though it's set on tmpfs
+>> (to prandom_u32()), it's not possible to evaluate it from userspace
+>> since `ioctl` returns ENOTTY. We can't ask userspace applications to
+>> introspect on an inode attribute that they can't even access :-)
+>
+>Is there any reason not to add IOC_GETVERSION support to tmpfs?
+>
+>I wonder if statx should return it too?
+
+We can, but that seems like a tangential discussion/patch series. For the 
+second case especially, that's something we should do separately from this 
+patchset, since this demonstrably fixes issues encountered in production, and 
+extending a user-facing APIs is likely to be a much more extensive discussion.
+
+(Also, this one in particular has advanced quite a lot since this v1 patch :-))
