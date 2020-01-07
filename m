@@ -2,625 +2,1158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA012133611
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 23:46:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 502BF13371A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 00:12:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727841AbgAGWqS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jan 2020 17:46:18 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:11487 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727690AbgAGWqQ (ORCPT
+        id S1727468AbgAGXMT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jan 2020 18:12:19 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:40516 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727311AbgAGXMS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jan 2020 17:46:16 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e1509fa0003>; Tue, 07 Jan 2020 14:45:14 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 07 Jan 2020 14:46:02 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 07 Jan 2020 14:46:02 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 7 Jan
- 2020 22:46:02 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 7 Jan 2020 22:46:02 +0000
-Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e150a29000f>; Tue, 07 Jan 2020 14:46:02 -0800
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v12 22/22] mm, tree-wide: rename put_user_page*() to unpin_user_page*()
-Date:   Tue, 7 Jan 2020 14:45:58 -0800
-Message-ID: <20200107224558.2362728-23-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107224558.2362728-1-jhubbard@nvidia.com>
-References: <20200107224558.2362728-1-jhubbard@nvidia.com>
+        Tue, 7 Jan 2020 18:12:18 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 007N9Y4l042399;
+        Tue, 7 Jan 2020 23:12:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=lbHk2uIkmadPQA9nJdadWdK1k0jSThpq8hRHEUmScJg=;
+ b=Hf1K0MTvPNUX4PleMjPJcJo1pofraflbR2dVi5941C2jPFw3JusadfXBdwLObePjH3yr
+ iQhOgIddPPwQUM9tJEzYwFeU2EcrQaLm6PAOO+272HNcdL7jTlYUVBTDNACR+GzLenbF
+ MdhhnWcNksuVVF7qmols3sEiGHXgWw2mTt1rCogXHu9yPsvySIl3SGdbSvHXflYQbfOn
+ kAPaj3jAZi7RyrHlxSKCm1REeUEYq+uNOqwHB0768ZZA/Q1943EMm4aisZLqYsKT/lar
+ pYnaIXHAklcql2V6Zc/YYMuoIH+PRIg/scE/cS96KGGN0N3rJqbjZoDhf98xSDbTU1gx KQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2xaj4u0rvv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 07 Jan 2020 23:12:08 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 007N41s2064791;
+        Tue, 7 Jan 2020 23:12:08 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2xcpcra0mw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 07 Jan 2020 23:12:07 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 007NC6jC018126;
+        Tue, 7 Jan 2020 23:12:06 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 07 Jan 2020 15:12:06 -0800
+Date:   Tue, 7 Jan 2020 15:12:04 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Damien Le Moal <damien.lemoal@wdc.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Johannes Thumshirn <jth@kernel.org>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Hannes Reinecke <hare@suse.de>
+Subject: Re: [PATCH v5 1/2] fs: New zonefs file system
+Message-ID: <20200107231204.GE917713@magnolia>
+References: <20200103023445.1352524-1-damien.lemoal@wdc.com>
+ <20200103023445.1352524-2-damien.lemoal@wdc.com>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1578437115; bh=9NJ9LLQjy2m8bDEsQYXxXPdiLbI64LdenH+YV9Z4hRE=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
-         Content-Transfer-Encoding:Content-Type;
-        b=Tz0m8qy5zviTPY+n2JdkQm4cfSruoc3E71s66qWJonmQ5asY5JaVXqADG+Os1vaj9
-         vRte0RwxobseuTOdB2hedbrDBWoVqm7W3Av4dmzxdViY2bp2e1mG0l92/UzDJcVJJX
-         UMsB7kld0RT5+8A+eMfFpopVfFL+2fmnki11TMgV8XokKEHOt9NyEJVsHtQUNLhzZu
-         txNeakC6uIhdtHoEwq+vx1Vh4cxYlxJbsM92OSl/h8IWMiS8bMUbeEXAlK1YQ/YH4W
-         ich+CrjZxpQFntwq7jpU77iU5j2dGMGYaYtRNOvBlscHEl59rF9RgOmDCdJJ/uVhQw
-         rYBm0+fbaaf1Q==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200103023445.1352524-2-damien.lemoal@wdc.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9493 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001070184
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9493 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001070185
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In order to provide a clearer, more symmetric API for pinning
-and unpinning DMA pages. This way, pin_user_pages*() calls
-match up with unpin_user_pages*() calls, and the API is a lot
-closer to being self-explanatory.
+On Fri, Jan 03, 2020 at 11:34:44AM +0900, Damien Le Moal wrote:
+> zonefs is a very simple file system exposing each zone of a zoned block
+> device as a file. Unlike a regular file system with zoned block device
+> support (e.g. f2fs), zonefs does not hide the sequential write
+> constraint of zoned block devices to the user. Files representing
+> sequential write zones of the device must be written sequentially
+> starting from the end of the file (append only writes).
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- Documentation/core-api/pin_user_pages.rst   |  2 +-
- arch/powerpc/mm/book3s64/iommu_api.c        |  4 +--
- drivers/gpu/drm/via/via_dmablit.c           |  4 +--
- drivers/infiniband/core/umem.c              |  2 +-
- drivers/infiniband/hw/hfi1/user_pages.c     |  2 +-
- drivers/infiniband/hw/mthca/mthca_memfree.c |  6 ++--
- drivers/infiniband/hw/qib/qib_user_pages.c  |  2 +-
- drivers/infiniband/hw/qib/qib_user_sdma.c   |  6 ++--
- drivers/infiniband/hw/usnic/usnic_uiom.c    |  2 +-
- drivers/infiniband/sw/siw/siw_mem.c         |  2 +-
- drivers/media/v4l2-core/videobuf-dma-sg.c   |  4 +--
- drivers/platform/goldfish/goldfish_pipe.c   |  4 +--
- drivers/vfio/vfio_iommu_type1.c             |  2 +-
- fs/io_uring.c                               |  4 +--
- include/linux/mm.h                          | 26 ++++++++---------
- mm/gup.c                                    | 32 ++++++++++-----------
- mm/process_vm_access.c                      |  4 +--
- net/xdp/xdp_umem.c                          |  2 +-
- 18 files changed, 55 insertions(+), 55 deletions(-)
+<snip>
 
-diff --git a/Documentation/core-api/pin_user_pages.rst b/Documentation/core=
--api/pin_user_pages.rst
-index 71849830cd48..1d490155ecd7 100644
---- a/Documentation/core-api/pin_user_pages.rst
-+++ b/Documentation/core-api/pin_user_pages.rst
-@@ -219,7 +219,7 @@ since the system was booted, via two new /proc/vmstat e=
-ntries: ::
-     /proc/vmstat/nr_foll_pin_requested
-=20
- Those are both going to show zero, unless CONFIG_DEBUG_VM is set. This is
--because there is a noticeable performance drop in put_user_page(), when th=
-ey
-+because there is a noticeable performance drop in unpin_user_page(), when =
-they
- are activated.
-=20
- References
-diff --git a/arch/powerpc/mm/book3s64/iommu_api.c b/arch/powerpc/mm/book3s6=
-4/iommu_api.c
-index a86547822034..eba73ebd8ae5 100644
---- a/arch/powerpc/mm/book3s64/iommu_api.c
-+++ b/arch/powerpc/mm/book3s64/iommu_api.c
-@@ -168,7 +168,7 @@ static long mm_iommu_do_alloc(struct mm_struct *mm, uns=
-igned long ua,
-=20
- free_exit:
- 	/* free the references taken */
--	put_user_pages(mem->hpages, pinned);
-+	unpin_user_pages(mem->hpages, pinned);
-=20
- 	vfree(mem->hpas);
- 	kfree(mem);
-@@ -214,7 +214,7 @@ static void mm_iommu_unpin(struct mm_iommu_table_group_=
-mem_t *mem)
- 		if (mem->hpas[i] & MM_IOMMU_TABLE_GROUP_PAGE_DIRTY)
- 			SetPageDirty(page);
-=20
--		put_user_page(page);
-+		unpin_user_page(page);
-=20
- 		mem->hpas[i] =3D 0;
- 	}
-diff --git a/drivers/gpu/drm/via/via_dmablit.c b/drivers/gpu/drm/via/via_dm=
-ablit.c
-index 37c5e572993a..719d036c9384 100644
---- a/drivers/gpu/drm/via/via_dmablit.c
-+++ b/drivers/gpu/drm/via/via_dmablit.c
-@@ -188,8 +188,8 @@ via_free_sg_info(struct pci_dev *pdev, drm_via_sg_info_=
-t *vsg)
- 		kfree(vsg->desc_pages);
- 		/* fall through */
- 	case dr_via_pages_locked:
--		put_user_pages_dirty_lock(vsg->pages, vsg->num_pages,
--					  (vsg->direction =3D=3D DMA_FROM_DEVICE));
-+		unpin_user_pages_dirty_lock(vsg->pages, vsg->num_pages,
-+					   (vsg->direction =3D=3D DMA_FROM_DEVICE));
- 		/* fall through */
- 	case dr_via_pages_alloc:
- 		vfree(vsg->pages);
-diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.=
-c
-index 55daefaa9b88..a6094766b6f5 100644
---- a/drivers/infiniband/core/umem.c
-+++ b/drivers/infiniband/core/umem.c
-@@ -54,7 +54,7 @@ static void __ib_umem_release(struct ib_device *dev, stru=
-ct ib_umem *umem, int d
-=20
- 	for_each_sg_page(umem->sg_head.sgl, &sg_iter, umem->sg_nents, 0) {
- 		page =3D sg_page_iter_page(&sg_iter);
--		put_user_pages_dirty_lock(&page, 1, umem->writable && dirty);
-+		unpin_user_pages_dirty_lock(&page, 1, umem->writable && dirty);
- 	}
-=20
- 	sg_free_table(&umem->sg_head);
-diff --git a/drivers/infiniband/hw/hfi1/user_pages.c b/drivers/infiniband/h=
-w/hfi1/user_pages.c
-index 9a94761765c0..3b505006c0a6 100644
---- a/drivers/infiniband/hw/hfi1/user_pages.c
-+++ b/drivers/infiniband/hw/hfi1/user_pages.c
-@@ -118,7 +118,7 @@ int hfi1_acquire_user_pages(struct mm_struct *mm, unsig=
-ned long vaddr, size_t np
- void hfi1_release_user_pages(struct mm_struct *mm, struct page **p,
- 			     size_t npages, bool dirty)
- {
--	put_user_pages_dirty_lock(p, npages, dirty);
-+	unpin_user_pages_dirty_lock(p, npages, dirty);
-=20
- 	if (mm) { /* during close after signal, mm can be NULL */
- 		atomic64_sub(npages, &mm->pinned_vm);
-diff --git a/drivers/infiniband/hw/mthca/mthca_memfree.c b/drivers/infiniba=
-nd/hw/mthca/mthca_memfree.c
-index 8269ab040c21..78a48aea3faf 100644
---- a/drivers/infiniband/hw/mthca/mthca_memfree.c
-+++ b/drivers/infiniband/hw/mthca/mthca_memfree.c
-@@ -482,7 +482,7 @@ int mthca_map_user_db(struct mthca_dev *dev, struct mth=
-ca_uar *uar,
-=20
- 	ret =3D pci_map_sg(dev->pdev, &db_tab->page[i].mem, 1, PCI_DMA_TODEVICE);
- 	if (ret < 0) {
--		put_user_page(pages[0]);
-+		unpin_user_page(pages[0]);
- 		goto out;
- 	}
-=20
-@@ -490,7 +490,7 @@ int mthca_map_user_db(struct mthca_dev *dev, struct mth=
-ca_uar *uar,
- 				 mthca_uarc_virt(dev, uar, i));
- 	if (ret) {
- 		pci_unmap_sg(dev->pdev, &db_tab->page[i].mem, 1, PCI_DMA_TODEVICE);
--		put_user_page(sg_page(&db_tab->page[i].mem));
-+		unpin_user_page(sg_page(&db_tab->page[i].mem));
- 		goto out;
- 	}
-=20
-@@ -556,7 +556,7 @@ void mthca_cleanup_user_db_tab(struct mthca_dev *dev, s=
-truct mthca_uar *uar,
- 		if (db_tab->page[i].uvirt) {
- 			mthca_UNMAP_ICM(dev, mthca_uarc_virt(dev, uar, i), 1);
- 			pci_unmap_sg(dev->pdev, &db_tab->page[i].mem, 1, PCI_DMA_TODEVICE);
--			put_user_page(sg_page(&db_tab->page[i].mem));
-+			unpin_user_page(sg_page(&db_tab->page[i].mem));
- 		}
- 	}
-=20
-diff --git a/drivers/infiniband/hw/qib/qib_user_pages.c b/drivers/infiniban=
-d/hw/qib/qib_user_pages.c
-index 7fc4b5f81fcd..342e3172ca40 100644
---- a/drivers/infiniband/hw/qib/qib_user_pages.c
-+++ b/drivers/infiniband/hw/qib/qib_user_pages.c
-@@ -40,7 +40,7 @@
- static void __qib_release_user_pages(struct page **p, size_t num_pages,
- 				     int dirty)
- {
--	put_user_pages_dirty_lock(p, num_pages, dirty);
-+	unpin_user_pages_dirty_lock(p, num_pages, dirty);
- }
-=20
- /**
-diff --git a/drivers/infiniband/hw/qib/qib_user_sdma.c b/drivers/infiniband=
-/hw/qib/qib_user_sdma.c
-index 1a3cc2957e3a..a67599b5a550 100644
---- a/drivers/infiniband/hw/qib/qib_user_sdma.c
-+++ b/drivers/infiniband/hw/qib/qib_user_sdma.c
-@@ -317,7 +317,7 @@ static int qib_user_sdma_page_to_frags(const struct qib=
-_devdata *dd,
- 		 * the caller can ignore this page.
- 		 */
- 		if (put) {
--			put_user_page(page);
-+			unpin_user_page(page);
- 		} else {
- 			/* coalesce case */
- 			kunmap(page);
-@@ -631,7 +631,7 @@ static void qib_user_sdma_free_pkt_frag(struct device *=
-dev,
- 			kunmap(pkt->addr[i].page);
-=20
- 		if (pkt->addr[i].put_page)
--			put_user_page(pkt->addr[i].page);
-+			unpin_user_page(pkt->addr[i].page);
- 		else
- 			__free_page(pkt->addr[i].page);
- 	} else if (pkt->addr[i].kvaddr) {
-@@ -706,7 +706,7 @@ static int qib_user_sdma_pin_pages(const struct qib_dev=
-data *dd,
- 	/* if error, return all pages not managed by pkt */
- free_pages:
- 	while (i < j)
--		put_user_page(pages[i++]);
-+		unpin_user_page(pages[i++]);
-=20
- done:
- 	return ret;
-diff --git a/drivers/infiniband/hw/usnic/usnic_uiom.c b/drivers/infiniband/=
-hw/usnic/usnic_uiom.c
-index 600896727d34..bd9f944b68fc 100644
---- a/drivers/infiniband/hw/usnic/usnic_uiom.c
-+++ b/drivers/infiniband/hw/usnic/usnic_uiom.c
-@@ -75,7 +75,7 @@ static void usnic_uiom_put_pages(struct list_head *chunk_=
-list, int dirty)
- 		for_each_sg(chunk->page_list, sg, chunk->nents, i) {
- 			page =3D sg_page(sg);
- 			pa =3D sg_phys(sg);
--			put_user_pages_dirty_lock(&page, 1, dirty);
-+			unpin_user_pages_dirty_lock(&page, 1, dirty);
- 			usnic_dbg("pa: %pa\n", &pa);
- 		}
- 		kfree(chunk);
-diff --git a/drivers/infiniband/sw/siw/siw_mem.c b/drivers/infiniband/sw/si=
-w/siw_mem.c
-index e53b07dcfed5..e2061dc0b043 100644
---- a/drivers/infiniband/sw/siw/siw_mem.c
-+++ b/drivers/infiniband/sw/siw/siw_mem.c
-@@ -63,7 +63,7 @@ struct siw_mem *siw_mem_id2obj(struct siw_device *sdev, i=
-nt stag_index)
- static void siw_free_plist(struct siw_page_chunk *chunk, int num_pages,
- 			   bool dirty)
- {
--	put_user_pages_dirty_lock(chunk->plist, num_pages, dirty);
-+	unpin_user_pages_dirty_lock(chunk->plist, num_pages, dirty);
- }
-=20
- void siw_umem_release(struct siw_umem *umem, bool dirty)
-diff --git a/drivers/media/v4l2-core/videobuf-dma-sg.c b/drivers/media/v4l2=
--core/videobuf-dma-sg.c
-index 162a2633b1e3..13b65ed9e74c 100644
---- a/drivers/media/v4l2-core/videobuf-dma-sg.c
-+++ b/drivers/media/v4l2-core/videobuf-dma-sg.c
-@@ -349,8 +349,8 @@ int videobuf_dma_free(struct videobuf_dmabuf *dma)
- 	BUG_ON(dma->sglen);
-=20
- 	if (dma->pages) {
--		put_user_pages_dirty_lock(dma->pages, dma->nr_pages,
--					  dma->direction =3D=3D DMA_FROM_DEVICE);
-+		unpin_user_pages_dirty_lock(dma->pages, dma->nr_pages,
-+					    dma->direction =3D=3D DMA_FROM_DEVICE);
- 		kfree(dma->pages);
- 		dma->pages =3D NULL;
- 	}
-diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/g=
-oldfish/goldfish_pipe.c
-index 2a5901efecde..1ab207ec9c94 100644
---- a/drivers/platform/goldfish/goldfish_pipe.c
-+++ b/drivers/platform/goldfish/goldfish_pipe.c
-@@ -360,8 +360,8 @@ static int transfer_max_buffers(struct goldfish_pipe *p=
-ipe,
-=20
- 	*consumed_size =3D pipe->command_buffer->rw_params.consumed_size;
-=20
--	put_user_pages_dirty_lock(pipe->pages, pages_count,
--				  !is_write && *consumed_size > 0);
-+	unpin_user_pages_dirty_lock(pipe->pages, pages_count,
-+				    !is_write && *consumed_size > 0);
-=20
- 	mutex_unlock(&pipe->lock);
- 	return 0;
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type=
-1.c
-index 18bfc2fc8e6d..a177bf2c6683 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -310,7 +310,7 @@ static int put_pfn(unsigned long pfn, int prot)
- 	if (!is_invalid_reserved_pfn(pfn)) {
- 		struct page *page =3D pfn_to_page(pfn);
-=20
--		put_user_pages_dirty_lock(&page, 1, prot & IOMMU_WRITE);
-+		unpin_user_pages_dirty_lock(&page, 1, prot & IOMMU_WRITE);
- 		return 1;
- 	}
- 	return 0;
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 9f804cb25c61..87618e3c05ea 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -4694,7 +4694,7 @@ static int io_sqe_buffer_unregister(struct io_ring_ct=
-x *ctx)
- 		struct io_mapped_ubuf *imu =3D &ctx->user_bufs[i];
-=20
- 		for (j =3D 0; j < imu->nr_bvecs; j++)
--			put_user_page(imu->bvec[j].bv_page);
-+			unpin_user_page(imu->bvec[j].bv_page);
-=20
- 		if (ctx->account_mem)
- 			io_unaccount_mem(ctx->user, imu->nr_bvecs);
-@@ -4839,7 +4839,7 @@ static int io_sqe_buffer_register(struct io_ring_ctx =
-*ctx, void __user *arg,
- 			 * release any pages we did get
- 			 */
- 			if (pret > 0)
--				put_user_pages(pages, pret);
-+				unpin_user_pages(pages, pret);
- 			if (ctx->account_mem)
- 				io_unaccount_mem(ctx->user, nr_pages);
- 			kvfree(imu->bvec);
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index f9653e666bf4..0ede06a15eea 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1044,27 +1044,27 @@ static inline void put_page(struct page *page)
- }
-=20
- /**
-- * put_user_page() - release a gup-pinned page
-+ * unpin_user_page() - release a gup-pinned page
-  * @page:            pointer to page to be released
-  *
-  * Pages that were pinned via pin_user_pages*() must be released via eithe=
-r
-- * put_user_page(), or one of the put_user_pages*() routines. This is so t=
-hat
-- * eventually such pages can be separately tracked and uniquely handled. I=
-n
-+ * unpin_user_page(), or one of the unpin_user_pages*() routines. This is =
-so
-+ * that eventually such pages can be separately tracked and uniquely handl=
-ed. In
-  * particular, interactions with RDMA and filesystems need special handlin=
-g.
-  *
-- * put_user_page() and put_page() are not interchangeable, despite this ea=
-rly
-- * implementation that makes them look the same. put_user_page() calls mus=
-t
-+ * unpin_user_page() and put_page() are not interchangeable, despite this =
-early
-+ * implementation that makes them look the same. unpin_user_page() calls m=
-ust
-  * be perfectly matched up with pin*() calls.
-  */
--static inline void put_user_page(struct page *page)
-+static inline void unpin_user_page(struct page *page)
- {
- 	put_page(page);
- }
-=20
--void put_user_pages_dirty_lock(struct page **pages, unsigned long npages,
--			       bool make_dirty);
-+void unpin_user_pages_dirty_lock(struct page **pages, unsigned long npages=
-,
-+				 bool make_dirty);
-=20
--void put_user_pages(struct page **pages, unsigned long npages);
-+void unpin_user_pages(struct page **pages, unsigned long npages);
-=20
- #if defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
- #define SECTION_IN_PAGE_FLAGS
-@@ -2594,7 +2594,7 @@ struct page *follow_page(struct vm_area_struct *vma, =
-unsigned long address,
- #define FOLL_ANON	0x8000	/* don't do file mappings */
- #define FOLL_LONGTERM	0x10000	/* mapping lifetime is indefinite: see below=
- */
- #define FOLL_SPLIT_PMD	0x20000	/* split huge pmd before returning */
--#define FOLL_PIN	0x40000	/* pages must be released via put_user_page() */
-+#define FOLL_PIN	0x40000	/* pages must be released via unpin_user_page */
-=20
- /*
-  * FOLL_PIN and FOLL_LONGTERM may be used in various combinations with eac=
-h
-@@ -2629,7 +2629,7 @@ struct page *follow_page(struct vm_area_struct *vma, =
-unsigned long address,
-  * Direct IO). This lets the filesystem know that some non-file-system ent=
-ity is
-  * potentially changing the pages' data. In contrast to FOLL_GET (whose pa=
-ges
-  * are released via put_page()), FOLL_PIN pages must be released, ultimate=
-ly, by
-- * a call to put_user_page().
-+ * a call to unpin_user_page().
-  *
-  * FOLL_PIN is similar to FOLL_GET: both of these pin pages. They use diff=
-erent
-  * and separate refcounting mechanisms, however, and that means that each =
-has
-@@ -2637,7 +2637,7 @@ struct page *follow_page(struct vm_area_struct *vma, =
-unsigned long address,
-  *
-  *     FOLL_GET: get_user_pages*() to acquire, and put_page() to release.
-  *
-- *     FOLL_PIN: pin_user_pages*() to acquire, and put_user_pages to relea=
-se.
-+ *     FOLL_PIN: pin_user_pages*() to acquire, and unpin_user_pages to rel=
-ease.
-  *
-  * FOLL_PIN and FOLL_GET are mutually exclusive for a given function call.
-  * (The underlying pages may experience both FOLL_GET-based and FOLL_PIN-b=
-ased
-@@ -2647,7 +2647,7 @@ struct page *follow_page(struct vm_area_struct *vma, =
-unsigned long address,
-  * FOLL_PIN should be set internally by the pin_user_pages*() APIs, never
-  * directly by the caller. That's in order to help avoid mismatches when
-  * releasing pages: get_user_pages*() pages must be released via put_page(=
-),
-- * while pin_user_pages*() pages must be released via put_user_page().
-+ * while pin_user_pages*() pages must be released via unpin_user_page().
-  *
-  * Please see Documentation/vm/pin_user_pages.rst for more information.
-  */
-diff --git a/mm/gup.c b/mm/gup.c
-index 1c200eeabd77..b8079d22c0be 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -45,7 +45,7 @@ static inline struct page *try_get_compound_head(struct p=
-age *page, int refs)
- }
-=20
- /**
-- * put_user_pages_dirty_lock() - release and optionally dirty gup-pinned p=
-ages
-+ * unpin_user_pages_dirty_lock() - release and optionally dirty gup-pinned=
- pages
-  * @pages:  array of pages to be maybe marked dirty, and definitely releas=
-ed.
-  * @npages: number of pages in the @pages array.
-  * @make_dirty: whether to mark the pages dirty
-@@ -55,19 +55,19 @@ static inline struct page *try_get_compound_head(struct=
- page *page, int refs)
-  *
-  * For each page in the @pages array, make that page (or its head page, if=
- a
-  * compound page) dirty, if @make_dirty is true, and if the page was previ=
-ously
-- * listed as clean. In any case, releases all pages using put_user_page(),
-- * possibly via put_user_pages(), for the non-dirty case.
-+ * listed as clean. In any case, releases all pages using unpin_user_page(=
-),
-+ * possibly via unpin_user_pages(), for the non-dirty case.
-  *
-- * Please see the put_user_page() documentation for details.
-+ * Please see the unpin_user_page() documentation for details.
-  *
-  * set_page_dirty_lock() is used internally. If instead, set_page_dirty() =
-is
-  * required, then the caller should a) verify that this is really correct,
-  * because _lock() is usually required, and b) hand code it:
-- * set_page_dirty_lock(), put_user_page().
-+ * set_page_dirty_lock(), unpin_user_page().
-  *
-  */
--void put_user_pages_dirty_lock(struct page **pages, unsigned long npages,
--			       bool make_dirty)
-+void unpin_user_pages_dirty_lock(struct page **pages, unsigned long npages=
-,
-+				 bool make_dirty)
- {
- 	unsigned long index;
-=20
-@@ -78,7 +78,7 @@ void put_user_pages_dirty_lock(struct page **pages, unsig=
-ned long npages,
- 	 */
-=20
- 	if (!make_dirty) {
--		put_user_pages(pages, npages);
-+		unpin_user_pages(pages, npages);
- 		return;
- 	}
-=20
-@@ -106,21 +106,21 @@ void put_user_pages_dirty_lock(struct page **pages, u=
-nsigned long npages,
- 		 */
- 		if (!PageDirty(page))
- 			set_page_dirty_lock(page);
--		put_user_page(page);
-+		unpin_user_page(page);
- 	}
- }
--EXPORT_SYMBOL(put_user_pages_dirty_lock);
-+EXPORT_SYMBOL(unpin_user_pages_dirty_lock);
-=20
- /**
-- * put_user_pages() - release an array of gup-pinned pages.
-+ * unpin_user_pages() - release an array of gup-pinned pages.
-  * @pages:  array of pages to be marked dirty and released.
-  * @npages: number of pages in the @pages array.
-  *
-- * For each page in the @pages array, release the page using put_user_page=
-().
-+ * For each page in the @pages array, release the page using unpin_user_pa=
-ge().
-  *
-- * Please see the put_user_page() documentation for details.
-+ * Please see the unpin_user_page() documentation for details.
-  */
--void put_user_pages(struct page **pages, unsigned long npages)
-+void unpin_user_pages(struct page **pages, unsigned long npages)
- {
- 	unsigned long index;
-=20
-@@ -130,9 +130,9 @@ void put_user_pages(struct page **pages, unsigned long =
-npages)
- 	 * single operation to the head page should suffice.
- 	 */
- 	for (index =3D 0; index < npages; index++)
--		put_user_page(pages[index]);
-+		unpin_user_page(pages[index]);
- }
--EXPORT_SYMBOL(put_user_pages);
-+EXPORT_SYMBOL(unpin_user_pages);
-=20
- #ifdef CONFIG_MMU
- static struct page *no_page_table(struct vm_area_struct *vma,
-diff --git a/mm/process_vm_access.c b/mm/process_vm_access.c
-index fd20ab675b85..de41e830cdac 100644
---- a/mm/process_vm_access.c
-+++ b/mm/process_vm_access.c
-@@ -126,8 +126,8 @@ static int process_vm_rw_single_vec(unsigned long addr,
- 		pa +=3D pinned_pages * PAGE_SIZE;
-=20
- 		/* If vm_write is set, the pages need to be made dirty: */
--		put_user_pages_dirty_lock(process_pages, pinned_pages,
--					  vm_write);
-+		unpin_user_pages_dirty_lock(process_pages, pinned_pages,
-+					    vm_write);
- 	}
-=20
- 	return rc;
-diff --git a/net/xdp/xdp_umem.c b/net/xdp/xdp_umem.c
-index d071003b5e76..ac182c38f7b0 100644
---- a/net/xdp/xdp_umem.c
-+++ b/net/xdp/xdp_umem.c
-@@ -212,7 +212,7 @@ static int xdp_umem_map_pages(struct xdp_umem *umem)
-=20
- static void xdp_umem_unpin_pages(struct xdp_umem *umem)
- {
--	put_user_pages_dirty_lock(umem->pgs, umem->npgs, true);
-+	unpin_user_pages_dirty_lock(umem->pgs, umem->npgs, true);
-=20
- 	kfree(umem->pgs);
- 	umem->pgs =3D NULL;
---=20
-2.24.1
+> +static int zonefs_file_mmap(struct file *file, struct vm_area_struct *vma)
+> +{
+> +	/*
+> +	 * Conventional zone files can be mmap-ed READ/WRITE.
+> +	 * For sequential zone files, only readonly mappings are possible.
 
+"Shared writable mappings are only possible on conventional zones"?
+
+Otherwise, this looks fine to me.
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+
+One more suggestion: Have you considered making it easier to identify a
+zonefs filesystem by stamping a UUID and/or label into the superblock?
+At some point you might want to send a patch to libblkid to detect
+zonefs so that users can do things like:
+
+# mount LABEL=my_first_smr_drive /mnt
+
+--D
+
+> +	 */
+> +	if (ZONEFS_I(file_inode(file))->i_ztype == ZONEFS_ZTYPE_SEQ &&
+> +	    (vma->vm_flags & VM_SHARED) && (vma->vm_flags & VM_MAYWRITE))
+> +		return -EINVAL;
+> +
+> +	file_accessed(file);
+> +	vma->vm_ops = &zonefs_file_vm_ops;
+> +
+> +	return 0;
+> +}
+> +
+> +static loff_t zonefs_file_llseek(struct file *file, loff_t offset, int whence)
+> +{
+> +	loff_t isize = i_size_read(file_inode(file));
+> +
+> +	/*
+> +	 * Seeks are limited to below the zone size for conventional zones
+> +	 * and below the zone write pointer for sequential zones. In both
+> +	 * cases, this limit is the inode size.
+> +	 */
+> +	return generic_file_llseek_size(file, offset, whence, isize, isize);
+> +}
+> +
+> +static ssize_t zonefs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> +{
+> +	struct inode *inode = file_inode(iocb->ki_filp);
+> +	struct zonefs_sb_info *sbi = ZONEFS_SB(inode->i_sb);
+> +	struct zonefs_inode_info *zi = ZONEFS_I(inode);
+> +	loff_t max_pos;
+> +	size_t count;
+> +	ssize_t ret;
+> +
+> +	if (iocb->ki_pos >= zi->i_max_size)
+> +		return 0;
+> +
+> +	if (iocb->ki_flags & IOCB_NOWAIT) {
+> +		if (!inode_trylock_shared(inode))
+> +			return -EAGAIN;
+> +	} else {
+> +		inode_lock_shared(inode);
+> +	}
+> +
+> +	mutex_lock(&zi->i_truncate_mutex);
+> +
+> +	/*
+> +	 * Limit read operations to written data.
+> +	 */
+> +	max_pos = i_size_read(inode);
+> +	if (iocb->ki_pos >= max_pos) {
+> +		mutex_unlock(&zi->i_truncate_mutex);
+> +		ret = 0;
+> +		goto out;
+> +	}
+> +
+> +	iov_iter_truncate(to, max_pos - iocb->ki_pos);
+> +
+> +	mutex_unlock(&zi->i_truncate_mutex);
+> +
+> +	count = iov_iter_count(to);
+> +
+> +	if (iocb->ki_flags & IOCB_DIRECT) {
+> +		if ((iocb->ki_pos | count) & sbi->s_blocksize_mask) {
+> +			ret = -EINVAL;
+> +			goto out;
+> +		}
+> +		file_accessed(iocb->ki_filp);
+> +		ret = iomap_dio_rw(iocb, to, &zonefs_iomap_ops, NULL,
+> +				   is_sync_kiocb(iocb));
+> +	} else {
+> +		ret = generic_file_read_iter(iocb, to);
+> +	}
+> +
+> +out:
+> +	inode_unlock_shared(inode);
+> +
+> +	return ret;
+> +}
+> +
+> +static int zonefs_report_zones_err_cb(struct blk_zone *zone, unsigned int idx,
+> +				      void *data)
+> +{
+> +	struct inode *inode = data;
+> +	struct zonefs_inode_info *zi = ZONEFS_I(inode);
+> +	loff_t pos;
+> +
+> +	/*
+> +	 * The condition of the zone may have change. Check it and adjust the
+> +	 * inode information as needed, similarly to zonefs_init_file_inode().
+> +	 */
+> +	if (zone->cond == BLK_ZONE_COND_OFFLINE) {
+> +		inode->i_flags |= S_IMMUTABLE;
+> +		inode->i_mode &= ~0777;
+> +		zone->wp = zone->start;
+> +	} else if (zone->cond == BLK_ZONE_COND_READONLY) {
+> +		inode->i_flags |= S_IMMUTABLE;
+> +		inode->i_mode &= ~0222;
+> +	}
+> +
+> +	pos = (zone->wp - zone->start) << SECTOR_SHIFT;
+> +	zi->i_wpoffset = pos;
+> +	if (i_size_read(inode) != pos) {
+> +		zonefs_update_stats(inode, pos);
+> +		i_size_write(inode, pos);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * When a write error occurs in a sequential zone, the zone write pointer
+> + * position must be refreshed to correct the file size and zonefs inode
+> + * write pointer offset.
+> + */
+> +static int zonefs_seq_file_write_failed(struct inode *inode, int error)
+> +{
+> +	struct zonefs_inode_info *zi = ZONEFS_I(inode);
+> +	struct super_block *sb = inode->i_sb;
+> +	sector_t sector = zi->i_zsector;
+> +	unsigned int nofs_flag;
+> +	int ret;
+> +
+> +	zonefs_warn(sb, "Updating inode zone %llu info\n", sector);
+> +
+> +	/*
+> +	 * blkdev_report_zones() uses GFP_KERNEL by default. Force execution as
+> +	 * if GFP_NOFS was specified so that it will not end up recursing into
+> +	 * the FS on memory allocation.
+> +	 */
+> +	nofs_flag = memalloc_nofs_save();
+> +	ret = blkdev_report_zones(sb->s_bdev, sector, 1,
+> +				  zonefs_report_zones_err_cb, inode);
+> +	memalloc_nofs_restore(nofs_flag);
+> +
+> +	if (ret != 1) {
+> +		if (!ret)
+> +			ret = -EIO;
+> +		zonefs_err(sb, "Get zone %llu report failed %d\n",
+> +			   sector, ret);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int zonefs_file_dio_write_end(struct kiocb *iocb, ssize_t size, int ret,
+> +				     unsigned int flags)
+> +{
+> +	struct inode *inode = file_inode(iocb->ki_filp);
+> +	struct zonefs_inode_info *zi = ZONEFS_I(inode);
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * Conventional zone file size is fixed to the zone size so there
+> +	 * is no need to do anything.
+> +	 */
+> +	if (zi->i_ztype == ZONEFS_ZTYPE_CNV)
+> +		return 0;
+> +
+> +	mutex_lock(&zi->i_truncate_mutex);
+> +
+> +	if (size < 0) {
+> +		ret = zonefs_seq_file_write_failed(inode, size);
+> +	} else if (i_size_read(inode) < iocb->ki_pos + size) {
+> +		zonefs_update_stats(inode, iocb->ki_pos + size);
+> +		i_size_write(inode, iocb->ki_pos + size);
+> +	}
+> +
+> +	mutex_unlock(&zi->i_truncate_mutex);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct iomap_dio_ops zonefs_dio_ops = {
+> +	.end_io			= zonefs_file_dio_write_end,
+> +};
+> +
+> +static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
+> +{
+> +	struct inode *inode = file_inode(iocb->ki_filp);
+> +	struct zonefs_sb_info *sbi = ZONEFS_SB(inode->i_sb);
+> +	struct zonefs_inode_info *zi = ZONEFS_I(inode);
+> +	size_t count;
+> +	ssize_t ret;
+> +
+> +	if (iocb->ki_flags & IOCB_NOWAIT) {
+> +		if (!inode_trylock(inode))
+> +			return -EAGAIN;
+> +	} else {
+> +		inode_lock(inode);
+> +	}
+> +
+> +	ret = generic_write_checks(iocb, from);
+> +	if (ret <= 0)
+> +		goto out;
+> +
+> +	iov_iter_truncate(from, zi->i_max_size - iocb->ki_pos);
+> +	count = iov_iter_count(from);
+> +
+> +	/*
+> +	 * Direct writes must be aligned to the block size, that is, the device
+> +	 * physical sector size, to avoid errors when writing sequential zones
+> +	 * on 512e devices (512B logical sector, 4KB physical sectors).
+> +	 */
+> +	if ((iocb->ki_pos | count) & sbi->s_blocksize_mask) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	/*
+> +	 * Enforce sequential writes (append only) in sequential zones.
+> +	 */
+> +	mutex_lock(&zi->i_truncate_mutex);
+> +	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ &&
+> +	    iocb->ki_pos != zi->i_wpoffset) {
+> +		zonefs_err(inode->i_sb,
+> +			   "Unaligned write at %llu + %zu (wp %llu)\n",
+> +			   iocb->ki_pos, count,
+> +			   zi->i_wpoffset);
+> +		mutex_unlock(&zi->i_truncate_mutex);
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +	mutex_unlock(&zi->i_truncate_mutex);
+> +
+> +	ret = iomap_dio_rw(iocb, from, &zonefs_iomap_ops, &zonefs_dio_ops,
+> +			   is_sync_kiocb(iocb));
+> +	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ &&
+> +	    (ret > 0 || ret == -EIOCBQUEUED)) {
+> +		if (ret > 0)
+> +			count = ret;
+> +		mutex_lock(&zi->i_truncate_mutex);
+> +		zi->i_wpoffset += count;
+> +		mutex_unlock(&zi->i_truncate_mutex);
+> +	}
+> +
+> +out:
+> +	inode_unlock(inode);
+> +
+> +	return ret;
+> +}
+> +
+> +static ssize_t zonefs_file_buffered_write(struct kiocb *iocb,
+> +					  struct iov_iter *from)
+> +{
+> +	struct inode *inode = file_inode(iocb->ki_filp);
+> +	struct zonefs_inode_info *zi = ZONEFS_I(inode);
+> +	size_t count;
+> +	ssize_t ret;
+> +
+> +	/*
+> +	 * Direct IO writes are mandatory for sequential zones so that the
+> +	 * write IO order is preserved.
+> +	 */
+> +	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ)
+> +		return -EIO;
+> +
+> +	if (iocb->ki_flags & IOCB_NOWAIT) {
+> +		if (!inode_trylock(inode))
+> +			return -EAGAIN;
+> +	} else {
+> +		inode_lock(inode);
+> +	}
+> +
+> +	ret = generic_write_checks(iocb, from);
+> +	if (ret <= 0)
+> +		goto out;
+> +
+> +	iov_iter_truncate(from, zi->i_max_size - iocb->ki_pos);
+> +	count = iov_iter_count(from);
+> +
+> +	ret = iomap_file_buffered_write(iocb, from, &zonefs_iomap_ops);
+> +	if (ret > 0)
+> +		iocb->ki_pos += ret;
+> +
+> +out:
+> +	inode_unlock(inode);
+> +	if (ret > 0)
+> +		ret = generic_write_sync(iocb, ret);
+> +
+> +	return ret;
+> +}
+> +
+> +static ssize_t zonefs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> +{
+> +	struct inode *inode = file_inode(iocb->ki_filp);
+> +
+> +	/*
+> +	 * Check that the write operation does not go beyond the zone size.
+> +	 */
+> +	if (iocb->ki_pos >= ZONEFS_I(inode)->i_max_size)
+> +		return -EFBIG;
+> +
+> +	if (iocb->ki_flags & IOCB_DIRECT)
+> +		return zonefs_file_dio_write(iocb, from);
+> +
+> +	return zonefs_file_buffered_write(iocb, from);
+> +}
+> +
+> +static const struct file_operations zonefs_file_operations = {
+> +	.open		= generic_file_open,
+> +	.fsync		= zonefs_file_fsync,
+> +	.mmap		= zonefs_file_mmap,
+> +	.llseek		= zonefs_file_llseek,
+> +	.read_iter	= zonefs_file_read_iter,
+> +	.write_iter	= zonefs_file_write_iter,
+> +	.splice_read	= generic_file_splice_read,
+> +	.splice_write	= iter_file_splice_write,
+> +	.iopoll		= iomap_dio_iopoll,
+> +};
+> +
+> +static struct kmem_cache *zonefs_inode_cachep;
+> +
+> +static struct inode *zonefs_alloc_inode(struct super_block *sb)
+> +{
+> +	struct zonefs_inode_info *zi;
+> +
+> +	zi = kmem_cache_alloc(zonefs_inode_cachep, GFP_KERNEL);
+> +	if (!zi)
+> +		return NULL;
+> +
+> +	inode_init_once(&zi->i_vnode);
+> +	mutex_init(&zi->i_truncate_mutex);
+> +	init_rwsem(&zi->i_mmap_sem);
+> +
+> +	return &zi->i_vnode;
+> +}
+> +
+> +static void zonefs_free_inode(struct inode *inode)
+> +{
+> +	kmem_cache_free(zonefs_inode_cachep, ZONEFS_I(inode));
+> +}
+> +
+> +/*
+> + * File system stat.
+> + */
+> +static int zonefs_statfs(struct dentry *dentry, struct kstatfs *buf)
+> +{
+> +	struct super_block *sb = dentry->d_sb;
+> +	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
+> +	enum zonefs_ztype t;
+> +	u64 fsid;
+> +
+> +	buf->f_type = ZONEFS_MAGIC;
+> +	buf->f_bsize = sb->s_blocksize;
+> +	buf->f_namelen = ZONEFS_NAME_MAX;
+> +
+> +	spin_lock(&sbi->s_lock);
+> +
+> +	buf->f_blocks = sbi->s_blocks;
+> +	if (WARN_ON(sbi->s_used_blocks > sbi->s_blocks))
+> +		buf->f_bfree = 0;
+> +	else
+> +		buf->f_bfree = buf->f_blocks - sbi->s_used_blocks;
+> +	buf->f_bavail = buf->f_bfree;
+> +
+> +	for (t = 0; t < ZONEFS_ZTYPE_MAX; t++) {
+> +		if (sbi->s_nr_files[t])
+> +			buf->f_files += sbi->s_nr_files[t] + 1;
+> +	}
+> +	buf->f_ffree = 0;
+> +
+> +	spin_unlock(&sbi->s_lock);
+> +
+> +	fsid = le64_to_cpup((void *)sbi->s_uuid.b) ^
+> +		le64_to_cpup((void *)sbi->s_uuid.b + sizeof(u64));
+> +	buf->f_fsid.val[0] = (u32)fsid;
+> +	buf->f_fsid.val[1] = (u32)(fsid >> 32);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct super_operations zonefs_sops = {
+> +	.alloc_inode	= zonefs_alloc_inode,
+> +	.free_inode	= zonefs_free_inode,
+> +	.statfs		= zonefs_statfs,
+> +};
+> +
+> +static const struct inode_operations zonefs_dir_inode_operations = {
+> +	.lookup		= simple_lookup,
+> +	.setattr	= zonefs_inode_setattr,
+> +};
+> +
+> +static void zonefs_init_dir_inode(struct inode *parent, struct inode *inode)
+> +{
+> +	inode_init_owner(inode, parent, S_IFDIR | 0555);
+> +	inode->i_op = &zonefs_dir_inode_operations;
+> +	inode->i_fop = &simple_dir_operations;
+> +	set_nlink(inode, 2);
+> +	inc_nlink(parent);
+> +}
+> +
+> +static void zonefs_init_file_inode(struct inode *inode, struct blk_zone *zone)
+> +{
+> +	struct super_block *sb = inode->i_sb;
+> +	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
+> +	struct zonefs_inode_info *zi = ZONEFS_I(inode);
+> +	umode_t	perm = sbi->s_perm;
+> +
+> +	if (zone->cond == BLK_ZONE_COND_OFFLINE) {
+> +		/*
+> +		 * Dead zone: make the inode immutable, disable all accesses
+> +		 * and set the file size to 0.
+> +		 */
+> +		inode->i_flags |= S_IMMUTABLE;
+> +		zone->wp = zone->start;
+> +		perm &= ~0777;
+> +	} else if (zone->cond == BLK_ZONE_COND_READONLY) {
+> +		/* Do not allow writes in read-only zones */
+> +		inode->i_flags |= S_IMMUTABLE;
+> +		perm &= ~0222;
+> +	}
+> +
+> +	zi->i_ztype = zonefs_zone_type(zone);
+> +	zi->i_zsector = zone->start;
+> +	zi->i_max_size = min_t(loff_t, MAX_LFS_FILESIZE,
+> +			       zone->len << SECTOR_SHIFT);
+> +	if (zi->i_ztype == ZONEFS_ZTYPE_CNV)
+> +		zi->i_wpoffset = zi->i_max_size;
+> +	else
+> +		zi->i_wpoffset = (zone->wp - zone->start) << SECTOR_SHIFT;
+> +
+> +	inode->i_mode = S_IFREG | perm;
+> +	inode->i_uid = sbi->s_uid;
+> +	inode->i_gid = sbi->s_gid;
+> +	inode->i_size = zi->i_wpoffset;
+> +	inode->i_blocks = zone->len;
+> +
+> +	inode->i_op = &zonefs_file_inode_operations;
+> +	inode->i_fop = &zonefs_file_operations;
+> +	inode->i_mapping->a_ops = &zonefs_file_aops;
+> +
+> +	sb->s_maxbytes = max(zi->i_max_size, sb->s_maxbytes);
+> +	sbi->s_blocks += zi->i_max_size >> sb->s_blocksize_bits;
+> +	sbi->s_used_blocks += zi->i_wpoffset >> sb->s_blocksize_bits;
+> +}
+> +
+> +static struct dentry *zonefs_create_inode(struct dentry *parent,
+> +					const char *name, struct blk_zone *zone)
+> +{
+> +	struct inode *dir = d_inode(parent);
+> +	struct dentry *dentry;
+> +	struct inode *inode;
+> +
+> +	dentry = d_alloc_name(parent, name);
+> +	if (!dentry)
+> +		return NULL;
+> +
+> +	inode = new_inode(parent->d_sb);
+> +	if (!inode)
+> +		goto out;
+> +
+> +	inode->i_ino = get_next_ino();
+> +	inode->i_ctime = inode->i_mtime = inode->i_atime = dir->i_ctime;
+> +	if (zone)
+> +		zonefs_init_file_inode(inode, zone);
+> +	else
+> +		zonefs_init_dir_inode(dir, inode);
+> +	d_add(dentry, inode);
+> +	dir->i_size++;
+> +
+> +	return dentry;
+> +
+> +out:
+> +	dput(dentry);
+> +
+> +	return NULL;
+> +}
+> +
+> +static char *zgroups_name[ZONEFS_ZTYPE_MAX] = { "cnv", "seq" };
+> +
+> +struct zonefs_zone_data {
+> +	struct super_block *sb;
+> +	unsigned int nr_zones[ZONEFS_ZTYPE_MAX];
+> +	struct blk_zone *zones;
+> +};
+> +
+> +/*
+> + * Create a zone group and populate it with zone files.
+> + */
+> +static int zonefs_create_zgroup(struct zonefs_zone_data *zd,
+> +				enum zonefs_ztype type)
+> +{
+> +	struct super_block *sb = zd->sb;
+> +	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
+> +	struct blk_zone *zone, *next, *end;
+> +	char name[ZONEFS_NAME_MAX];
+> +	struct dentry *dir;
+> +	unsigned int n = 0;
+> +
+> +	/* If the group is empty, there is nothing to do */
+> +	if (!zd->nr_zones[type])
+> +		return 0;
+> +
+> +	dir = zonefs_create_inode(sb->s_root, zgroups_name[type], NULL);
+> +	if (!dir)
+> +		return -ENOMEM;
+> +
+> +	/*
+> +	 * The first zone contains the super block: skip it.
+> +	 */
+> +	end = zd->zones + blkdev_nr_zones(sb->s_bdev->bd_disk);
+> +	for (zone = &zd->zones[1]; zone < end; zone = next) {
+> +
+> +		next = zone + 1;
+> +		if (zonefs_zone_type(zone) != type)
+> +			continue;
+> +
+> +		/*
+> +		 * For conventional zones, contiguous zones can be aggregated
+> +		 * together to form larger files.
+> +		 * Note that this overwrites the length of the first zone of
+> +		 * the set of contiguous zones aggregated together.
+> +		 * Only zones with the same condition can be agreggated so that
+> +		 * offline zones are excluded and readonly zones are aggregated
+> +		 * together into a read only file.
+> +		 */
+> +		if (type == ZONEFS_ZTYPE_CNV &&
+> +		    (sbi->s_features & ZONEFS_F_AGGRCNV)) {
+> +			for (; next < end; next++) {
+> +				if (zonefs_zone_type(next) != type ||
+> +				    next->cond != zone->cond)
+> +					break;
+> +				zone->len += next->len;
+> +			}
+> +		}
+> +
+> +		/*
+> +		 * Use the file number within its group as file name.
+> +		 */
+> +		snprintf(name, ZONEFS_NAME_MAX - 1, "%u", n);
+> +		if (!zonefs_create_inode(dir, name, zone))
+> +			return -ENOMEM;
+> +
+> +		n++;
+> +	}
+> +
+> +	zonefs_info(sb, "Zone group \"%s\" has %u file%s\n",
+> +		    zgroups_name[type], n, n > 1 ? "s" : "");
+> +
+> +	sbi->s_nr_files[type] = n;
+> +
+> +	return 0;
+> +}
+> +
+> +static int zonefs_get_zone_info_cb(struct blk_zone *zone, unsigned int idx,
+> +				   void *data)
+> +{
+> +	struct zonefs_zone_data *zd = data;
+> +
+> +	/*
+> +	 * Count the number of usable zones: the first zone at index 0 contains
+> +	 * the super block and is ignored.
+> +	 */
+> +	switch (zone->type) {
+> +	case BLK_ZONE_TYPE_CONVENTIONAL:
+> +		zone->wp = zone->start + zone->len;
+> +		if (idx)
+> +			zd->nr_zones[ZONEFS_ZTYPE_CNV]++;
+> +		break;
+> +	case BLK_ZONE_TYPE_SEQWRITE_REQ:
+> +	case BLK_ZONE_TYPE_SEQWRITE_PREF:
+> +		if (idx)
+> +			zd->nr_zones[ZONEFS_ZTYPE_SEQ]++;
+> +		break;
+> +	default:
+> +		zonefs_err(zd->sb, "Unsupported zone type 0x%x\n",
+> +			   zone->type);
+> +		return -EIO;
+> +	}
+> +
+> +	memcpy(&zd->zones[idx], zone, sizeof(struct blk_zone));
+> +
+> +	return 0;
+> +}
+> +
+> +static int zonefs_get_zone_info(struct zonefs_zone_data *zd)
+> +{
+> +	struct block_device *bdev = zd->sb->s_bdev;
+> +	int ret;
+> +
+> +	zd->zones = kvcalloc(blkdev_nr_zones(bdev->bd_disk),
+> +			     sizeof(struct blk_zone), GFP_KERNEL);
+> +	if (!zd->zones)
+> +		return -ENOMEM;
+> +
+> +	/* Get zones information */
+> +	ret = blkdev_report_zones(bdev, 0, BLK_ALL_ZONES,
+> +				  zonefs_get_zone_info_cb, zd);
+> +	if (ret < 0) {
+> +		zonefs_err(zd->sb, "Zone report failed %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	if (ret != blkdev_nr_zones(bdev->bd_disk)) {
+> +		zonefs_err(zd->sb, "Invalid zone report (%d/%u zones)\n",
+> +			   ret, blkdev_nr_zones(bdev->bd_disk));
+> +		return -EIO;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static inline void zonefs_cleanup_zone_info(struct zonefs_zone_data *zd)
+> +{
+> +	kvfree(zd->zones);
+> +}
+> +
+> +/*
+> + * Read super block information from the device.
+> + */
+> +static int zonefs_read_super(struct super_block *sb)
+> +{
+> +	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
+> +	struct zonefs_super *super;
+> +	u32 crc, stored_crc;
+> +	struct page *page;
+> +	struct bio_vec bio_vec;
+> +	struct bio bio;
+> +	int ret;
+> +
+> +	page = alloc_page(GFP_KERNEL);
+> +	if (!page)
+> +		return -ENOMEM;
+> +
+> +	bio_init(&bio, &bio_vec, 1);
+> +	bio.bi_iter.bi_sector = 0;
+> +	bio_set_dev(&bio, sb->s_bdev);
+> +	bio_set_op_attrs(&bio, REQ_OP_READ, 0);
+> +	bio_add_page(&bio, page, PAGE_SIZE, 0);
+> +
+> +	ret = submit_bio_wait(&bio);
+> +	if (ret)
+> +		goto out;
+> +
+> +	super = page_address(page);
+> +
+> +	stored_crc = le32_to_cpu(super->s_crc);
+> +	super->s_crc = 0;
+> +	crc = crc32(~0U, (unsigned char *)super, sizeof(struct zonefs_super));
+> +	if (crc != stored_crc) {
+> +		zonefs_err(sb, "Invalid checksum (Expected 0x%08x, got 0x%08x)",
+> +			   crc, stored_crc);
+> +		ret = -EIO;
+> +		goto out;
+> +	}
+> +
+> +	ret = -EINVAL;
+> +	if (le32_to_cpu(super->s_magic) != ZONEFS_MAGIC)
+> +		goto out;
+> +
+> +	sbi->s_features = le64_to_cpu(super->s_features);
+> +	if (sbi->s_features & ~ZONEFS_F_DEFINED_FEATURES) {
+> +		zonefs_err(sb, "Unknown features set 0x%llx\n",
+> +			   sbi->s_features);
+> +		goto out;
+> +	}
+> +
+> +	if (sbi->s_features & ZONEFS_F_UID) {
+> +		sbi->s_uid = make_kuid(current_user_ns(),
+> +				       le32_to_cpu(super->s_uid));
+> +		if (!uid_valid(sbi->s_uid)) {
+> +			zonefs_err(sb, "Invalid UID feature\n");
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	if (sbi->s_features & ZONEFS_F_GID) {
+> +		sbi->s_gid = make_kgid(current_user_ns(),
+> +				       le32_to_cpu(super->s_gid));
+> +		if (!gid_valid(sbi->s_gid)) {
+> +			zonefs_err(sb, "Invalid GID feature\n");
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	if (sbi->s_features & ZONEFS_F_PERM)
+> +		sbi->s_perm = le32_to_cpu(super->s_perm);
+> +
+> +	if (memchr_inv(super->s_reserved, 0, sizeof(super->s_reserved))) {
+> +		zonefs_err(sb, "Reserved area is being used\n");
+> +		goto out;
+> +	}
+> +
+> +	uuid_copy(&sbi->s_uuid, &super->s_uuid);
+> +	ret = 0;
+> +
+> +out:
+> +	__free_page(page);
+> +
+> +	return ret;
+> +}
+> +
+> +/*
+> + * Check that the device is zoned. If it is, get the list of zones and create
+> + * sub-directories and files according to the device zone configuration and
+> + * format options.
+> + */
+> +static int zonefs_fill_super(struct super_block *sb, void *data, int silent)
+> +{
+> +	struct zonefs_zone_data zd;
+> +	struct zonefs_sb_info *sbi;
+> +	struct inode *inode;
+> +	enum zonefs_ztype t;
+> +	int ret;
+> +
+> +	if (!bdev_is_zoned(sb->s_bdev)) {
+> +		zonefs_err(sb, "Not a zoned block device\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	/*
+> +	 * Initialize super block information: the maximum file size is updated
+> +	 * when the zone files are created so that the format option
+> +	 * ZONEFS_F_AGGRCNV which increases the maximum file size of a file
+> +	 * beyond the zone size is taken into account.
+> +	 */
+> +	sbi = kzalloc(sizeof(*sbi), GFP_KERNEL);
+> +	if (!sbi)
+> +		return -ENOMEM;
+> +
+> +	spin_lock_init(&sbi->s_lock);
+> +	sb->s_fs_info = sbi;
+> +	sb->s_magic = ZONEFS_MAGIC;
+> +	sb->s_maxbytes = 0;
+> +	sb->s_op = &zonefs_sops;
+> +	sb->s_time_gran	= 1;
+> +
+> +	/*
+> +	 * The block size is always equal to the device physical sector size to
+> +	 * ensure that writes on 512e devices (512B logical block and 4KB
+> +	 * physical block) are always aligned to the device physical blocks
+> +	 * (as required for writes to sequential zones on ZBC/ZAC disks).
+> +	 */
+> +	sb_set_blocksize(sb, bdev_physical_block_size(sb->s_bdev));
+> +	sbi->s_blocksize_mask = sb->s_blocksize - 1;
+> +	sbi->s_uid = GLOBAL_ROOT_UID;
+> +	sbi->s_gid = GLOBAL_ROOT_GID;
+> +	sbi->s_perm = 0640;
+> +
+> +	ret = zonefs_read_super(sb);
+> +	if (ret)
+> +		return ret;
+> +
+> +	memset(&zd, 0, sizeof(struct zonefs_zone_data));
+> +	zd.sb = sb;
+> +	ret = zonefs_get_zone_info(&zd);
+> +	if (ret)
+> +		goto out;
+> +
+> +	zonefs_info(sb, "Mounting %u zones",
+> +		    blkdev_nr_zones(sb->s_bdev->bd_disk));
+> +
+> +	/* Create root directory inode */
+> +	ret = -ENOMEM;
+> +	inode = new_inode(sb);
+> +	if (!inode)
+> +		goto out;
+> +
+> +	inode->i_ino = get_next_ino();
+> +	inode->i_mode = S_IFDIR | 0555;
+> +	inode->i_ctime = inode->i_mtime = inode->i_atime = current_time(inode);
+> +	inode->i_op = &zonefs_dir_inode_operations;
+> +	inode->i_fop = &simple_dir_operations;
+> +	set_nlink(inode, 2);
+> +
+> +	sb->s_root = d_make_root(inode);
+> +	if (!sb->s_root)
+> +		goto out;
+> +
+> +	/* Create and populate files in zone groups directories */
+> +	for (t = 0; t < ZONEFS_ZTYPE_MAX; t++) {
+> +		ret = zonefs_create_zgroup(&zd, t);
+> +		if (ret)
+> +			break;
+> +	}
+> +
+> +out:
+> +	zonefs_cleanup_zone_info(&zd);
+> +
+> +	return ret;
+> +}
+> +
+> +static struct dentry *zonefs_mount(struct file_system_type *fs_type,
+> +				   int flags, const char *dev_name, void *data)
+> +{
+> +	return mount_bdev(fs_type, flags, dev_name, data, zonefs_fill_super);
+> +}
+> +
+> +static void zonefs_kill_super(struct super_block *sb)
+> +{
+> +	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
+> +
+> +	kfree(sbi);
+> +	if (sb->s_root)
+> +		d_genocide(sb->s_root);
+> +	kill_block_super(sb);
+> +}
+> +
+> +/*
+> + * File system definition and registration.
+> + */
+> +static struct file_system_type zonefs_type = {
+> +	.owner		= THIS_MODULE,
+> +	.name		= "zonefs",
+> +	.mount		= zonefs_mount,
+> +	.kill_sb	= zonefs_kill_super,
+> +	.fs_flags	= FS_REQUIRES_DEV,
+> +};
+> +
+> +static int __init zonefs_init_inodecache(void)
+> +{
+> +	zonefs_inode_cachep = kmem_cache_create("zonefs_inode_cache",
+> +			sizeof(struct zonefs_inode_info), 0,
+> +			(SLAB_RECLAIM_ACCOUNT | SLAB_MEM_SPREAD | SLAB_ACCOUNT),
+> +			NULL);
+> +	if (zonefs_inode_cachep == NULL)
+> +		return -ENOMEM;
+> +	return 0;
+> +}
+> +
+> +static void zonefs_destroy_inodecache(void)
+> +{
+> +	/*
+> +	 * Make sure all delayed rcu free inodes are flushed before we
+> +	 * destroy the inode cache.
+> +	 */
+> +	rcu_barrier();
+> +	kmem_cache_destroy(zonefs_inode_cachep);
+> +}
+> +
+> +static int __init zonefs_init(void)
+> +{
+> +	int ret;
+> +
+> +	BUILD_BUG_ON(sizeof(struct zonefs_super) != ZONEFS_SUPER_SIZE);
+> +
+> +	ret = zonefs_init_inodecache();
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = register_filesystem(&zonefs_type);
+> +	if (ret) {
+> +		zonefs_destroy_inodecache();
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void __exit zonefs_exit(void)
+> +{
+> +	zonefs_destroy_inodecache();
+> +	unregister_filesystem(&zonefs_type);
+> +}
+> +
+> +MODULE_AUTHOR("Damien Le Moal");
+> +MODULE_DESCRIPTION("Zone file system for zoned block devices");
+> +MODULE_LICENSE("GPL");
+> +module_init(zonefs_init);
+> +module_exit(zonefs_exit);
+> diff --git a/fs/zonefs/zonefs.h b/fs/zonefs/zonefs.h
+> new file mode 100644
+> index 000000000000..0296b3426f7b
+> --- /dev/null
+> +++ b/fs/zonefs/zonefs.h
+> @@ -0,0 +1,169 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Simple zone file system for zoned block devices.
+> + *
+> + * Copyright (C) 2019 Western Digital Corporation or its affiliates.
+> + */
+> +#ifndef __ZONEFS_H__
+> +#define __ZONEFS_H__
+> +
+> +#include <linux/fs.h>
+> +#include <linux/magic.h>
+> +#include <linux/uuid.h>
+> +#include <linux/mutex.h>
+> +#include <linux/rwsem.h>
+> +
+> +/*
+> + * Maximum length of file names: this only needs to be large enough to fit
+> + * the zone group directory names and a decimal value of the start sector of
+> + * the zones for file names. 16 characters is plenty.
+> + */
+> +#define ZONEFS_NAME_MAX		16
+> +
+> +/*
+> + * Zone types: ZONEFS_ZTYPE_SEQ is used for all sequential zone types
+> + * defined in linux/blkzoned.h, that is, BLK_ZONE_TYPE_SEQWRITE_REQ and
+> + * BLK_ZONE_TYPE_SEQWRITE_PREF.
+> + */
+> +enum zonefs_ztype {
+> +	ZONEFS_ZTYPE_CNV,
+> +	ZONEFS_ZTYPE_SEQ,
+> +	ZONEFS_ZTYPE_MAX,
+> +};
+> +
+> +static inline enum zonefs_ztype zonefs_zone_type(struct blk_zone *zone)
+> +{
+> +	if (zone->type == BLK_ZONE_TYPE_CONVENTIONAL)
+> +		return ZONEFS_ZTYPE_CNV;
+> +	return ZONEFS_ZTYPE_SEQ;
+> +}
+> +
+> +/*
+> + * In-memory inode data.
+> + */
+> +struct zonefs_inode_info {
+> +	struct inode		i_vnode;
+> +
+> +	/* File zone type */
+> +	enum zonefs_ztype	i_ztype;
+> +
+> +	/* File zone start sector (512B unit) */
+> +	sector_t		i_zsector;
+> +
+> +	/* File zone write pointer position (sequential zones only) */
+> +	loff_t			i_wpoffset;
+> +
+> +	/* File maximum size */
+> +	loff_t			i_max_size;
+> +
+> +	/*
+> +	 * To serialise fully against both syscall and mmap based IO and
+> +	 * sequential file truncation, two locks are used. For serializing
+> +	 * zonefs_seq_file_truncate() against zonefs_iomap_begin(), that is,
+> +	 * file truncate operations against block mapping, i_truncate_mutex is
+> +	 * used. i_truncate_mutex also protects against concurrent accesses
+> +	 * and changes to the inode private data, and in particular changes to
+> +	 * a sequential file size on completion of direct IO writes.
+> +	 * Serialization of mmap read IOs with truncate and syscall IO
+> +	 * operations is done with i_mmap_sem in addition to i_truncate_mutex.
+> +	 * Only zonefs_seq_file_truncate() takes both lock (i_mmap_sem first,
+> +	 * i_truncate_mutex second).
+> +	 */
+> +	struct mutex		i_truncate_mutex;
+> +	struct rw_semaphore	i_mmap_sem;
+> +};
+> +
+> +static inline struct zonefs_inode_info *ZONEFS_I(struct inode *inode)
+> +{
+> +	return container_of(inode, struct zonefs_inode_info, i_vnode);
+> +}
+> +
+> +/*
+> + * On-disk super block (block 0).
+> + */
+> +#define ZONEFS_SUPER_SIZE	4096
+> +struct zonefs_super {
+> +
+> +	/* Magic number */
+> +	__le32		s_magic;
+> +
+> +	/* Checksum */
+> +	__le32		s_crc;
+> +
+> +	/* Features */
+> +	__le64		s_features;
+> +
+> +	/* 128-bit uuid */
+> +	uuid_t		s_uuid;
+> +
+> +	/* UID/GID to use for files */
+> +	__le32		s_uid;
+> +	__le32		s_gid;
+> +
+> +	/* File permissions */
+> +	__le32		s_perm;
+> +
+> +	/* Padding to ZONEFS_SUPER_SIZE bytes */
+> +	__u8		s_reserved[4052];
+> +
+> +} __packed;
+> +
+> +/*
+> + * Feature flags: used on disk in the s_features field of struct zonefs_super
+> + * and in-memory in the s_feartures field of struct zonefs_sb_info.
+> + */
+> +enum zonefs_features {
+> +	/*
+> +	 * Aggregate contiguous conventional zones into a single file.
+> +	 */
+> +	ZONEFS_F_AGGRCNV = 1ULL << 0,
+> +	/*
+> +	 * Use super block specified UID for files instead of default.
+> +	 */
+> +	ZONEFS_F_UID = 1ULL << 1,
+> +	/*
+> +	 * Use super block specified GID for files instead of default.
+> +	 */
+> +	ZONEFS_F_GID = 1ULL << 2,
+> +	/*
+> +	 * Use super block specified file permissions instead of default 640.
+> +	 */
+> +	ZONEFS_F_PERM = 1ULL << 3,
+> +};
+> +
+> +#define ZONEFS_F_DEFINED_FEATURES \
+> +	(ZONEFS_F_AGGRCNV | ZONEFS_F_UID | ZONEFS_F_GID | ZONEFS_F_PERM)
+> +
+> +/*
+> + * In-memory Super block information.
+> + */
+> +struct zonefs_sb_info {
+> +
+> +	spinlock_t		s_lock;
+> +
+> +	unsigned long long	s_features;
+> +	kuid_t			s_uid;
+> +	kgid_t			s_gid;
+> +	umode_t			s_perm;
+> +	uuid_t			s_uuid;
+> +	loff_t			s_blocksize_mask;
+> +
+> +	unsigned int		s_nr_files[ZONEFS_ZTYPE_MAX];
+> +
+> +	loff_t			s_blocks;
+> +	loff_t			s_used_blocks;
+> +};
+> +
+> +static inline struct zonefs_sb_info *ZONEFS_SB(struct super_block *sb)
+> +{
+> +	return sb->s_fs_info;
+> +}
+> +
+> +#define zonefs_info(sb, format, args...)	\
+> +	pr_info("zonefs (%s): " format, sb->s_id, ## args)
+> +#define zonefs_err(sb, format, args...)	\
+> +	pr_err("zonefs (%s) ERROR: " format, sb->s_id, ## args)
+> +#define zonefs_warn(sb, format, args...)	\
+> +	pr_warn("zonefs (%s) WARN: " format, sb->s_id, ## args)
+> +
+> +#endif
+> diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+> index 3ac436376d79..d78064007b17 100644
+> --- a/include/uapi/linux/magic.h
+> +++ b/include/uapi/linux/magic.h
+> @@ -87,6 +87,7 @@
+>  #define NSFS_MAGIC		0x6e736673
+>  #define BPF_FS_MAGIC		0xcafe4a11
+>  #define AAFS_MAGIC		0x5a3c69f0
+> +#define ZONEFS_MAGIC		0x5a4f4653
+>  
+>  /* Since UDF 2.01 is ISO 13346 based... */
+>  #define UDF_SUPER_MAGIC		0x15013346
+> -- 
+> 2.24.1
+> 
