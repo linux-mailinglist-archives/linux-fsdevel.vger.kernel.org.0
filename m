@@ -2,116 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91DC7131D23
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 02:24:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56031131D32
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 02:29:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbgAGBYA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jan 2020 20:24:00 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:51162 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727295AbgAGBYA (ORCPT
+        id S1727463AbgAGB3R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jan 2020 20:29:17 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:4935 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727315AbgAGB3Q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jan 2020 20:24:00 -0500
-Received: from dread.disaster.area (pa49-180-68-255.pa.nsw.optusnet.com.au [49.180.68.255])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 24B547E9F69;
-        Tue,  7 Jan 2020 12:23:55 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iodb7-000741-70; Tue, 07 Jan 2020 12:23:53 +1100
-Date:   Tue, 7 Jan 2020 12:23:53 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Sweet Tea Dorminy <sweettea@redhat.com>
-Cc:     Tony Asleson <tasleson@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC 9/9] __xfs_printk: Add durable name to output
-Message-ID: <20200107012353.GO23195@dread.disaster.area>
-References: <20191223225558.19242-1-tasleson@redhat.com>
- <20191223225558.19242-10-tasleson@redhat.com>
- <20200104025620.GC23195@dread.disaster.area>
- <5ad7cf7b-e261-102c-afdc-fa34bed98921@redhat.com>
- <20200106220233.GK23195@dread.disaster.area>
- <CAMeeMh-zr309TzbC3ayKUKRniat+rzurgzmeM5LJYMFVDj7bLA@mail.gmail.com>
+        Mon, 6 Jan 2020 20:29:16 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e13deb90000>; Mon, 06 Jan 2020 17:28:25 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 06 Jan 2020 17:29:12 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 06 Jan 2020 17:29:12 -0800
+Received: from [10.2.162.105] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 7 Jan
+ 2020 01:29:10 +0000
+Subject: Re: [PATCH v11 00/25] mm/gup: track dma-pinned pages: FOLL_PIN
+To:     Jan Kara <jack@suse.cz>
+CC:     Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Alex Williamson" <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        "Mike Kravetz" <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        "Shuah Khan" <shuah@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+        <bpf@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <kvm@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-rdma@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+        <netdev@vger.kernel.org>, <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Maor Gottlieb <maorg@mellanox.com>,
+        "Ran Rozenstein" <ranro@mellanox.com>
+References: <20191219132607.GA410823@unreal>
+ <a4849322-8e17-119e-a664-80d9f95d850b@nvidia.com>
+ <20191219210743.GN17227@ziepe.ca> <20191220182939.GA10944@unreal>
+ <1001a5fc-a71d-9c0f-1090-546c4913d8a2@nvidia.com>
+ <20191222132357.GF13335@unreal>
+ <49d57efe-85e1-6910-baf5-c18df1382206@nvidia.com>
+ <20191225052612.GA212002@unreal>
+ <b879d191-a07c-e808-e48f-2b9bd8ba4fa3@nvidia.com>
+ <612aa292-ec45-295c-b56c-c622876620fa@nvidia.com>
+ <20200106090147.GA9176@quack2.suse.cz>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <9128d033-530f-468c-e076-05a9f845c72f@nvidia.com>
+Date:   Mon, 6 Jan 2020 17:26:16 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMeeMh-zr309TzbC3ayKUKRniat+rzurgzmeM5LJYMFVDj7bLA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
-        a=sbdTpStuSq8iNQE8viVliQ==:117 a=sbdTpStuSq8iNQE8viVliQ==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=Jdjhy38mL1oA:10
-        a=7-415B0cAAAA:8 a=W5MWU5QX0NKCcusCbkgA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20200106090147.GA9176@quack2.suse.cz>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1578360505; bh=LL2UCmBD6dZ6/uQLwOdlycpOuM7M1h0oO/bWAMRgNao=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=UF91zYGOBNpqOMdNxjoixM6A+WrovnWJPV5f23Cd6aWVZvb4k4hny35IQtR86qo3A
+         ybsCYLDgDCC84XoPp5q++dTbiHz8qPcKr7FsoP9vF2aJUPLN5RE+WoFcsvUpQp6Wc2
+         zNktxwdJI6r7Z4Jx6GBcZwJVgSIHOvx/jDuAkAY6QN5yRyfr0B432Pz1svbf1jmTGQ
+         FxsQoEJMt9bxhtvplOYDl+pZYlQ2c5wNyCrma3ZR+XCeeJMxRSHBXNwH+cwfQ2GRkp
+         dgVeumMAJjlrrLn66kxKb59m+siRWt1zL/Z88CodJlQeEcjmF24n1h+sFApQWzTsY4
+         OfRiCW4M+tSQA==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 06, 2020 at 07:19:07PM -0500, Sweet Tea Dorminy wrote:
-> > > >> +
-> > > >>    if (mp && mp->m_fsname) {
-> > > >
-> > > > mp->m_fsname is the name of the device we use everywhere for log
-> > > > messages, it's set up at mount time so we don't have to do runtime
-> > > > evaulation of the device name every time we need to emit the device
-> > > > name in a log message.
-> > > >
-> > > > So, if you have some sooper speshial new device naming scheme, it
-> > > > needs to be stored into the struct xfs_mount to replace mp->m_fsname.
-> > >
-> > > I don't think we want to replace mp->m_fsname with the vpd 0x83 device
-> > > identifier.  This proposed change is adding a key/value structured data
-> > > to the log message for non-ambiguous device identification over time,
-> > > not to place the ID in the human readable portion of the message.  The
-> > > existing name is useful too, especially when it involves a partition.
-> >
-> > Oh, if that's all you want to do, then why is this identifier needed
-> > in every log message? It does not change over the life of the
-> > filesystem, so it the persistent identifier only needs to be emitted
-> > to the log once at filesystem mount time. i.e.  instead of:
-> >
-> > [    2.716841] XFS (dm-0): Mounting V5 Filesystem
-> >
-> > It just needs to be:
-> >
-> > [    2.716841] XFS (dm-0): Mounting V5 Filesystem on device <persistent dev id>
-> >
-> > If you need to do any sort of special "is this the right device"
-> > checking, it needs to be done immediately at mount time so action
-> > can be taken to shutdown the filesystem and unmount the device
-> > immediately before further damage is done....
-> >
-> > i.e. once the filesystem is mounted, you've already got a unique and
-> > persistent identifier in the log for the life of the filesystem (the
-> > m_fsname string), so I'm struggling to understand exactly what
-> > problem you are trying to solve by adding redundant information
-> > to every log message.....
+On 1/6/20 1:01 AM, Jan Kara wrote:
+...
+>> Also, looking ahead:
+>>
+>> a) if the problem disappears with the latest above test, then we likely have
+>>     a huge page refcount overflow, and there are a couple of different ways to
+>>     fix it.
+>>
+>> b) if it still reproduces with the above, then it's some other random mistake,
+>>     and in that case I'd be inclined to do a sort of guided (or classic, unguided)
+>>     git bisect of the series. Because it could be any of several patches.
+>>
+>>     If that's too much trouble, then I'd have to fall back to submitting a few
+>>     patches at a time and working my way up to the tracking patch...
 > 
-> Log rotation loses that identifier though; there are plenty of setups
-> where a mount-time message has been rotated out of all logs by the
-> time something goes wrong after a month or two.
+> It could also be that an ordinary page reference is dropped with 'unpin'
+> thus underflowing the page refcount...
+> 
+> 								Honza
+> 
 
-At what point months after you've mounted the filesystem do you care
-about whether the correct device was mounted or not?
+Yes.
 
-And, for the log rotation case, the filesystem log output already
-has a unique, persistent identifier for the life of the mount - the
-fsname ("dm-0" in the above example). We don't need to add a new
-device identifier to the XFS log messages to solve that problem
-because *we've already got a device identifier in the log messages*.
+And, I think I'm about out of time for this release cycle, so I'm probably going to
+submit the prerequisite patches (patches 1-10, or more boldly, 1-22), for candidates
+for 5.6.
 
-Again - the "is this the right device" information only makes sense
-to be checked at mount time. If it was the right device at mount
-time, then after months of uptime how would it suddenly become "the
-wrong device"? And if it's the wrong device at mount time, then you
-need to take action *immediately*, not after using the filesysetms
-on the device for months...
 
-Cheers,
-
-Dave.
+thanks,
 -- 
-Dave Chinner
-david@fromorbit.com
+John Hubbard
+NVIDIA
