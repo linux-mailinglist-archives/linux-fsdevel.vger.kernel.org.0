@@ -2,246 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4812A132C7A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 18:05:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18CC1132C66
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 18:02:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728389AbgAGRFn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jan 2020 12:05:43 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:37192 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728236AbgAGRFn (ORCPT
+        id S1728423AbgAGRB5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jan 2020 12:01:57 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:48434 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728211AbgAGRB4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jan 2020 12:05:43 -0500
-Received: by mail-il1-f195.google.com with SMTP id t8so201622iln.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jan 2020 09:05:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ePeYHHCrlTvEcFwyclV0yiNhluauNmITK5H/gPcNCZs=;
-        b=w4OBuTNpFkZ4P/FmzBu8dU6b7fw2GPLYj8pleo8iRtZJO3i1KMgKjdE+uc6QlqLF9V
-         3ndAKwCK+v1K4RYNyrbhwtNaCjkMji+vG0ljRk1JHvn5eVD/OWGPCyDl+MDhh9+xoHin
-         n2Z2zbTUOeKqOB0mi5JFeHcvJ4Rpmys+9bBFSTMSNyWgkdFql9T2uJ8MUMC/Th2Md56D
-         UIc9SFPW3c6zCgwqjjDbPQ8urpXjtzqIfLcvEnb7BbroDc/VA9Hm+lDoCOcSTIltQm+4
-         7UsgGiQ7y0cNNfYm4j5xejwBme95wzyz3cw7sLMmzwLpPUEndQBkpoXKIaSMnRQCCX0M
-         c6/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ePeYHHCrlTvEcFwyclV0yiNhluauNmITK5H/gPcNCZs=;
-        b=XBX4sOo/Hs4kwxAvK4H9OEMAqQyuilN8LcU0eJ7v2ZUSeepZjzONqjm5PejM9e3r0U
-         WNIFvivBg9494ngBsRW/9lsxYzuzRGXoHHye2I+4jU6Q7aCrBknVEu15gb4hsWK+YVFw
-         uZnZX+Nxl1Ac+Qcos/+QWaBP5L2fe5DO15il1ThJ63VGgV3ErvaCGBMTvNugRh9YSFaq
-         beIksLM9ubgr2Kwo0ak0n0EEt8QCU3GTHI9wY9LS1DPDomH2U7nQzpDnIevnzwLxB2Ra
-         rR83qBg3KFn0H9B0ryGN5OBdiJR1sZ11+Y3LwIuMWItX1wD6C0Wx07xwtWjGIHBUGfyz
-         AyaQ==
-X-Gm-Message-State: APjAAAX/adBitrKvOPZB1dC2Tz002HV4JKTvGADithNI5P2wq4Dy4vrG
-        qwyKc04+flps9l5Ib/Yz7Q+e/g==
-X-Google-Smtp-Source: APXvYqyVhoR2MHFjRJJVk9dUkuTnVEahiu9aLULC9GiNl3LJdTYQk5LIkVBuQsAQYQCHSn4ZKU4Z6w==
-X-Received: by 2002:a92:9cc6:: with SMTP id x67mr30621ill.31.1578416441495;
-        Tue, 07 Jan 2020 09:00:41 -0800 (PST)
-Received: from x1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id g4sm42547iln.81.2020.01.07.09.00.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2020 09:00:41 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 6/6] io_uring: add support for IORING_OP_CLOSE
-Date:   Tue,  7 Jan 2020 10:00:34 -0700
-Message-Id: <20200107170034.16165-7-axboe@kernel.dk>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200107170034.16165-1-axboe@kernel.dk>
-References: <20200107170034.16165-1-axboe@kernel.dk>
+        Tue, 7 Jan 2020 12:01:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578416515;
+        h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=D5OPPwIHTy22Wkt/OsS1YGH1EyOGhN2nFXTBHl/JscE=;
+        b=bGb3ZgDRN+xx2qoP41r17k+3sGs/nScNuY9fcuL91bUd9HMNc2f/TPStLK42CwA3LgIG/3
+        yw7YYSSnSa4PBXiSEKsfE1CjmM6Sd9o+QI0Wt6blkv7gxk+wrVD53UC8mUsgdwoLZCnWTy
+        bZFKeeG3LnD/gmIDfGQLZ3MbBEePpqQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-58-ALH5CqgFNGWBGWYC2wATTA-1; Tue, 07 Jan 2020 12:01:54 -0500
+X-MC-Unique: ALH5CqgFNGWBGWYC2wATTA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0B1848024CC;
+        Tue,  7 Jan 2020 17:01:53 +0000 (UTC)
+Received: from [10.3.112.12] (ovpn-112-12.phx2.redhat.com [10.3.112.12])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0AE2486C48;
+        Tue,  7 Jan 2020 17:01:49 +0000 (UTC)
+Reply-To: tasleson@redhat.com
+Subject: Re: [RFC 9/9] __xfs_printk: Add durable name to output
+To:     Dave Chinner <david@fromorbit.com>,
+        Sweet Tea Dorminy <sweettea@redhat.com>
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20191223225558.19242-1-tasleson@redhat.com>
+ <20191223225558.19242-10-tasleson@redhat.com>
+ <20200104025620.GC23195@dread.disaster.area>
+ <5ad7cf7b-e261-102c-afdc-fa34bed98921@redhat.com>
+ <20200106220233.GK23195@dread.disaster.area>
+ <CAMeeMh-zr309TzbC3ayKUKRniat+rzurgzmeM5LJYMFVDj7bLA@mail.gmail.com>
+ <20200107012353.GO23195@dread.disaster.area>
+From:   Tony Asleson <tasleson@redhat.com>
+Organization: Red Hat
+Message-ID: <4ce83a0e-13e1-6245-33a3-5c109aec4bf1@redhat.com>
+Date:   Tue, 7 Jan 2020 11:01:47 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200107012353.GO23195@dread.disaster.area>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This works just like close(2), unsurprisingly. We remove the file
-descriptor and post the completion inline, then offload the actual
-(potential) last file put to async context.
+On 1/6/20 7:23 PM, Dave Chinner wrote:
+> On Mon, Jan 06, 2020 at 07:19:07PM -0500, Sweet Tea Dorminy wrote:
+>>>>>> +
+>>>>>>    if (mp && mp->m_fsname) {
+>>>>>
+>>>>> mp->m_fsname is the name of the device we use everywhere for log
+>>>>> messages, it's set up at mount time so we don't have to do runtime
+>>>>> evaulation of the device name every time we need to emit the device
+>>>>> name in a log message.
+>>>>>
+>>>>> So, if you have some sooper speshial new device naming scheme, it
+>>>>> needs to be stored into the struct xfs_mount to replace mp->m_fsname.
+>>>>
+>>>> I don't think we want to replace mp->m_fsname with the vpd 0x83 device
+>>>> identifier.  This proposed change is adding a key/value structured data
+>>>> to the log message for non-ambiguous device identification over time,
+>>>> not to place the ID in the human readable portion of the message.  The
+>>>> existing name is useful too, especially when it involves a partition.
+>>>
+>>> Oh, if that's all you want to do, then why is this identifier needed
+>>> in every log message? 
 
-Mark the async part of this work as uncancellable, as we really must
-guarantee that the latter part of the close is run.
+The value is we can filter all the messages by the id as they are all
+individually identifiable.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/io_uring.c                 | 109 ++++++++++++++++++++++++++++++++++
- include/uapi/linux/io_uring.h |   1 +
- 2 files changed, 110 insertions(+)
+The structured data id that the patch series adds is not outputted by
+default by journalctl.  Please look at cover letter in patch series for
+example filter use.  You can see all the data in the journal entries by
+using journalctl -o json-pretty.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index e12b1545468d..39abe20220d0 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -301,6 +301,12 @@ struct io_poll_iocb {
- 	struct wait_queue_entry		wait;
- };
- 
-+struct io_close {
-+	struct file			*file;
-+	struct file			*put_file;
-+	int				fd;
-+};
-+
- struct io_timeout_data {
- 	struct io_kiocb			*req;
- 	struct hrtimer			timer;
-@@ -414,6 +420,7 @@ struct io_kiocb {
- 		struct io_connect	connect;
- 		struct io_sr_msg	sr_msg;
- 		struct io_open		open;
-+		struct io_close		close;
- 	};
- 
- 	struct io_async_ctx		*io;
-@@ -2225,6 +2232,94 @@ static int io_openat(struct io_kiocb *req, struct io_kiocb **nxt,
- 	return 0;
- }
- 
-+static int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-+{
-+	/*
-+	 * If we queue this for async, it must not be cancellable. That would
-+	 * leave the 'file' in an undeterminate state.
-+	 */
-+	req->work.flags |= IO_WQ_WORK_NO_CANCEL;
-+
-+	if (sqe->ioprio || sqe->off || sqe->addr || sqe->len ||
-+	    sqe->rw_flags || sqe->buf_index)
-+		return -EINVAL;
-+	if (sqe->flags & IOSQE_FIXED_FILE)
-+		return -EINVAL;
-+
-+	req->close.fd = READ_ONCE(sqe->fd);
-+	if (req->file->f_op == &io_uring_fops ||
-+	    req->close.fd == req->ring_fd)
-+		return -EBADF;
-+
-+	return 0;
-+}
-+
-+static void io_close_finish(struct io_wq_work **workptr)
-+{
-+	struct io_kiocb *req = container_of(*workptr, struct io_kiocb, work);
-+	struct io_kiocb *nxt = NULL;
-+
-+	/* Invoked with files, we need to do the close */
-+	if (req->work.files) {
-+		int ret;
-+
-+		ret = filp_close(req->close.put_file, req->work.files);
-+		if (ret < 0) {
-+			req_set_fail_links(req);
-+		}
-+		io_cqring_add_event(req, ret);
-+	}
-+
-+	fput(req->close.put_file);
-+
-+	/* we bypassed the re-issue, drop the submission reference */
-+	io_put_req(req);
-+	io_put_req_find_next(req, &nxt);
-+	if (nxt)
-+		*workptr = &nxt->work;
-+}
-+
-+static int io_close(struct io_kiocb *req, struct io_kiocb **nxt,
-+		    bool force_nonblock)
-+{
-+	int ret;
-+
-+	req->close.put_file = NULL;
-+	ret = __close_fd_get_file(req->close.fd, &req->close.put_file);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* if the file has a flush method, be safe and punt to async */
-+	if (req->close.put_file->f_op->flush && !io_wq_current_is_worker()) {
-+		req->work.flags |= IO_WQ_WORK_NEEDS_FILES;
-+		goto eagain;
-+	}
-+
-+	/*
-+	 * No ->flush(), safely close from here and just punt the
-+	 * fput() to async context.
-+	 */
-+	ret = filp_close(req->close.put_file, current->files);
-+
-+	if (ret < 0)
-+		req_set_fail_links(req);
-+	io_cqring_add_event(req, ret);
-+
-+	if (io_wq_current_is_worker()) {
-+		struct io_wq_work *old_work, *work;
-+
-+		old_work = work = &req->work;
-+		io_close_finish(&work);
-+		if (work && work != old_work)
-+			*nxt = container_of(work, struct io_kiocb, work);
-+		return 0;
-+	}
-+
-+eagain:
-+	req->work.func = io_close_finish;
-+	return -EAGAIN;
-+}
-+
- static int io_prep_sfr(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
-@@ -3253,6 +3348,9 @@ static int io_req_defer_prep(struct io_kiocb *req,
- 	case IORING_OP_OPENAT:
- 		ret = io_openat_prep(req, sqe);
- 		break;
-+	case IORING_OP_CLOSE:
-+		ret = io_close_prep(req, sqe);
-+		break;
- 	default:
- 		printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
- 				req->opcode);
-@@ -3423,6 +3521,14 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 		}
- 		ret = io_openat(req, nxt, force_nonblock);
- 		break;
-+	case IORING_OP_CLOSE:
-+		if (sqe) {
-+			ret = io_close_prep(req, sqe);
-+			if (ret)
-+				break;
-+		}
-+		ret = io_close(req, nxt, force_nonblock);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-@@ -3578,6 +3684,9 @@ static int io_grab_files(struct io_kiocb *req)
- 	int ret = -EBADF;
- 	struct io_ring_ctx *ctx = req->ctx;
- 
-+	if (!req->ring_file)
-+		return -EBADF;
-+
- 	rcu_read_lock();
- 	spin_lock_irq(&ctx->inflight_lock);
- 	/*
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 02af580754ce..42a7f0e8dee3 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -79,6 +79,7 @@ enum {
- 	IORING_OP_CONNECT,
- 	IORING_OP_FALLOCATE,
- 	IORING_OP_OPENAT,
-+	IORING_OP_CLOSE,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
--- 
-2.24.1
+One can argue that we are adding a lot of data to each log message as
+the VPD data isn't trivial.  This could be mitigated by hashing the VPD
+and storing the hash as the ID, but that makes it less user friendly.
+However, maybe it should be considered.
+
+>>> It does not change over the life of the
+>>> filesystem, so it the persistent identifier only needs to >>> be
+emitted to the log once at filesystem mount time. i.e.  >>> instead of:
+>>>
+>>> [    2.716841] XFS (dm-0): Mounting V5 Filesystem
+>>>
+>>> It just needs to be:
+>>>
+>>> [    2.716841] XFS (dm-0): Mounting V5 Filesystem on device <persistent dev id>
+>>>
+>>> If you need to do any sort of special "is this the right device"
+>>> checking, it needs to be done immediately at mount time so action
+>>> can be taken to shutdown the filesystem and unmount the device
+>>> immediately before further damage is done....
+>>>
+>>> i.e. once the filesystem is mounted, you've already got a unique and
+>>> persistent identifier in the log for the life of the filesystem (the
+>>> m_fsname string), so I'm struggling to understand exactly what
+>>> problem you are trying to solve by adding redundant information
+>>> to every log message.....
+
+m_fsname is only valid for the life of the mount, not the life of the
+FS.  Each and every time we reboot, remove/reattach a device the
+attachment point may change and thus the m_fsname changes too.  Then the
+user or script writer has to figure out what messages go with what
+device.  This is true for all the different storage layer messages.
+Some layers use sda, sata1.00 or sd 0:0:0:0 and they all refer to the
+same device.
+
+We have no unambiguous way today to identify which messages go with what
+storage device across reboots and dynamic device re-configuration across
+the storage stack.
+
+>>
+>> Log rotation loses that identifier though; there are plenty of setups
+>> where a mount-time message has been rotated out of all logs by the
+>> time something goes wrong after a month or two.
+> 
+> At what point months after you've mounted the filesystem do you care
+> about whether the correct device was mounted or not?
+
+This isn't a question about if the correct device was mounted or not.
+It's the question of what actual storage hardware was associated with
+the message(s), an association that doesn't change across reboots or
+dynamic device reconfiguration or if you move the physical device to
+another system.
+
+The cover letter example shows filtered output of one specific device
+encountering errors that has an XFS FS.  Without this added ID it would
+not be so easy to determine that these messages all belong to the same
+device.  In this case the attachment isn't changing, it's the simple
+case.  When it does change over time it gets even more difficult.
+
+> And, for the log rotation case, the filesystem log output already
+> has a unique, persistent identifier for the life of the mount - the
+> fsname ("dm-0" in the above example). We don't need to add a new
+> device identifier to the XFS log messages to solve that problem
+> because *we've already got a device identifier in the log messages*.
+
+It's very useful to have an ID that persists and identifies across
+mounts.  The existing id logging scheme tells you where something is
+attached, not what is attached.
+
+> Again - the "is this the right device" information only makes sense
+> to be checked at mount time. If it was the right device at mount
+> time, then after months of uptime how would it suddenly become "the
+> wrong device"? And if it's the wrong device at mount time, then you
+> need to take action *immediately*, not after using the filesysetms
+> on the device for months...
+> 
+> Cheers,
+> 
+> Dave.
+> 
 
