@@ -2,192 +2,215 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3972132EC3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 19:56:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A452132EF0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jan 2020 20:03:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728686AbgAGS4e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jan 2020 13:56:34 -0500
-Received: from mail-io1-f48.google.com ([209.85.166.48]:44442 "EHLO
-        mail-io1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728358AbgAGS4e (ORCPT
+        id S1728649AbgAGTDP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jan 2020 14:03:15 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:40956 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728540AbgAGTDP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jan 2020 13:56:34 -0500
-Received: by mail-io1-f48.google.com with SMTP id b10so392795iof.11;
-        Tue, 07 Jan 2020 10:56:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eOXk6Pcj/h1claA+ZposabxkWW+4bg9OU4mj2rRp8bM=;
-        b=rFTmT4AHZMZ6vYQWAEDELCsFxBP/Fer9sy0dt8jUftWNc49g7SF7PnWXK+ehMlTKFS
-         u0M/KnmY1Jps3AXX8UGH93M8FX5ZW4q1nKDKRuE9zS9XUmwPARoJxNhBntVx3RnjJRFQ
-         gTm51uPQ7wqUrAa8cvSvAHAMc0jqKMt+X8CfqlmOZjA/mCoJrcbwhKwUJ5NLDUZbt58M
-         EXBy0pDDGY9LutQw5iWbHFN/x9YwCYFMAFqJ5BKJrF/NDVcnjudzb8DpWj71s5g+KZC4
-         dr0mphs/xzX3R7he7iSu67utF1zs1J/TQgg+SVvgUq9tde6yC6NRcEBMiEWqjunnmJLH
-         HRtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eOXk6Pcj/h1claA+ZposabxkWW+4bg9OU4mj2rRp8bM=;
-        b=TR4zJOqtJk7EfXL00vG8cEkQW/hZAS2nLPw7NvivVuGmoS0Pz0E1K6jGaYuTg/HinA
-         0+QLEjXDZvWXepXs/q5sRHIcAh8ENyGPzvqxCoycD3HszefqtTDDSzAuRvURrNsuMCt0
-         BJicnqSaOhH6Ttoj4VFzS4p4CXpnCxW5sMCY3Jw4gbGgFAKPSRoqbZvtq771NBP6II2Z
-         iGE6ohngxxOIAzoy5mkQ/Umi6GEkbRivhsqHT+WkmyFDc/4GMpC55AJHMIao4bs0+pAK
-         jNMuzzZ62NvCOkQNjCNcj9GgLqovb2sbX2aPYfMonVUaC2/HuCtbOgiBDDkbzXnJHxqg
-         WITQ==
-X-Gm-Message-State: APjAAAW6XhqpXmTPH8u4Jdq+OxPewCE24hpp7wVulBu7lXtEDE7TxeEU
-        NggAL/JzCYqfi9Oe/H4fTEHbyzgy/qoCL2cNSQI=
-X-Google-Smtp-Source: APXvYqyXBOpNzY9CZXZRx6OX2pdUy3aFWqumZv93Vq61mHpBbgzOkBIIKQI/V/vvEeDZlR83xK8CyXTBmZBtqf0yFvE=
-X-Received: by 2002:a6b:5904:: with SMTP id n4mr328665iob.9.1578423392252;
- Tue, 07 Jan 2020 10:56:32 -0800 (PST)
+        Tue, 7 Jan 2020 14:03:15 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 007Ixl88041642;
+        Tue, 7 Jan 2020 19:03:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=pP16p7CV5biucxONI1CRWwnudpCh2Qi23iKl1PGz9LU=;
+ b=N6FkUc8uj9VXenfU0c2VcsoliMtTS1p0znfOAfeQ9EsHfSXpNx3QARReX3CQaDxCxWWN
+ qcHCOY20RNX5dkMFqktZpRcj4zqvwn3NVoykkV4ixXFUikVxd970Gy+bHdVBFhrJ5hDu
+ jrzcHMUaFqmNcx+ps0MORoKuohfsmAKYopXF+TOQHdtnnoPJdf80lVUtqf8qitZVPuKV
+ LCOkAcrosCgRFLrFydJh7EX5CAtInoOUiBikY6HuUr9+M7a/ERlvVhpJQ7x3xKsVGmq2
+ qZE+K7uf4+mazdelDWgUzXiWiMGdncChudF15pHR1N7IO4Oc8WS/1a2G6NsXHoNZlCNZ kg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2xaj4tynfm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 07 Jan 2020 19:03:02 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 007IsJxd089569;
+        Tue, 7 Jan 2020 19:03:01 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2xcpcqvtmj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 07 Jan 2020 19:03:01 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 007J30x7016123;
+        Tue, 7 Jan 2020 19:03:00 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 07 Jan 2020 11:03:00 -0800
+Date:   Tue, 7 Jan 2020 11:02:58 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 01/19] dax: remove block device dependencies
+Message-ID: <20200107190258.GB472665@magnolia>
+References: <CAPcyv4jGEAbYSJef2zLzgg6Arozsuz7eN_vZL1iTcd1XQuNT4Q@mail.gmail.com>
+ <20191216181014.GA30106@redhat.com>
+ <20200107125159.GA15745@infradead.org>
+ <CAPcyv4jZE35sbDo6J4ihioEUFTuekJ3_h0=2Ra4PY+xn2xn1cQ@mail.gmail.com>
+ <20200107170731.GA472641@magnolia>
+ <CAPcyv4ggH7-QhYg+YOOWn_m25uds+-0L46=N09ap-LALeGuU_A@mail.gmail.com>
+ <20200107180101.GC15920@redhat.com>
+ <CAPcyv4gmdoqpwwwy4dS3D2eZFjmJ_Zi39k=1a4wn-_ksm-UV4A@mail.gmail.com>
+ <20200107183307.GD15920@redhat.com>
+ <CAPcyv4ggoS4dWjq-1KbcuaDtroHKEi5Vu19ggJ-qgycs6w1eCA@mail.gmail.com>
 MIME-Version: 1.0
-References: <CAOQ4uxjda6iQ1D0QEVB18TcrttVpd7uac++WX0xAyLvxz0x7Ew@mail.gmail.com>
- <20191204190206.GA8331@bombadil.infradead.org> <CAOQ4uxiZWKCUKcpBt-bHOcnHoFAq+nghWmf94rJu=3CTc5VhRA@mail.gmail.com>
- <20191211100604.GL1551@quack2.suse.cz> <CAOQ4uxij13z0AazCm7AzrXOSz_eYBSFhs0mo6eZFW=57wOtwew@mail.gmail.com>
- <CAOQ4uxiKzom5uBNbBpZTNCT0XLOrcHmOwYy=3-V-Qcex1mhszw@mail.gmail.com>
- <CAOQ4uxgBcLPGxGVddjFsfWJvcNH4rT+GrN6-YhH8cz5K-q5z2g@mail.gmail.com>
- <20191223181956.GB17813@quack2.suse.cz> <CAOQ4uxhUGCLQyq76nqREETT8kBV9uNOKsckr+xmJdR9Xm=cW3Q@mail.gmail.com>
- <CAOQ4uxjwy4_jWitzHc9hSaBJwVZM68xxJTub50ZfrtgFSZFH8A@mail.gmail.com> <20200107171014.GI25547@quack2.suse.cz>
-In-Reply-To: <20200107171014.GI25547@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 7 Jan 2020 20:56:20 +0200
-Message-ID: <CAOQ4uxjx_n3f44yu9_2dGxtBGy3WssG0xfZykwjQ+n=Wcii2-w@mail.gmail.com>
-Subject: Re: File monitor problem
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Mo Re Ra <more7.rev@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Wez Furlong <wez@fb.com>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4ggoS4dWjq-1KbcuaDtroHKEi5Vu19ggJ-qgycs6w1eCA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9492 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001070148
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9492 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001070149
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 7, 2020 at 7:10 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Tue 24-12-19 05:49:42, Amir Goldstein wrote:
-> > > > I can see the need for FAN_DIR_MODIFIED_WITH_NAME
-> > > > (stupid name, I know) - generated when something changed with names in a
-> > > > particular directory, reported with FID of the directory and the name
-> > > > inside that directory involved with the change. Directory watching
-> > > > application needs this to keep track of "names to check". Is the name
-> > > > useful with any other type of event? _SELF events cannot even sensibly have
-> > > > it so no discussion there as you mention below. Then we have OPEN, CLOSE,
-> > > > ACCESS, ATTRIB events. Do we have any use for names with those?
+On Tue, Jan 07, 2020 at 10:49:55AM -0800, Dan Williams wrote:
+> On Tue, Jan 7, 2020 at 10:33 AM Vivek Goyal <vgoyal@redhat.com> wrote:
+> >
+> > On Tue, Jan 07, 2020 at 10:07:18AM -0800, Dan Williams wrote:
+> > > On Tue, Jan 7, 2020 at 10:02 AM Vivek Goyal <vgoyal@redhat.com> wrote:
 > > > >
+> > > > On Tue, Jan 07, 2020 at 09:29:17AM -0800, Dan Williams wrote:
+> > > > > On Tue, Jan 7, 2020 at 9:08 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+> > > > > >
+> > > > > > On Tue, Jan 07, 2020 at 06:22:54AM -0800, Dan Williams wrote:
+> > > > > > > On Tue, Jan 7, 2020 at 4:52 AM Christoph Hellwig <hch@infradead.org> wrote:
+> > > > > > > >
+> > > > > > > > On Mon, Dec 16, 2019 at 01:10:14PM -0500, Vivek Goyal wrote:
+> > > > > > > > > > Agree. In retrospect it was my laziness in the dax-device
+> > > > > > > > > > implementation to expect the block-device to be available.
+> > > > > > > > > >
+> > > > > > > > > > It looks like fs_dax_get_by_bdev() is an intercept point where a
+> > > > > > > > > > dax_device could be dynamically created to represent the subset range
+> > > > > > > > > > indicated by the block-device partition. That would open up more
+> > > > > > > > > > cleanup opportunities.
+> > > > > > > > >
+> > > > > > > > > Hi Dan,
+> > > > > > > > >
+> > > > > > > > > After a long time I got time to look at it again. Want to work on this
+> > > > > > > > > cleanup so that I can make progress with virtiofs DAX paches.
+> > > > > > > > >
+> > > > > > > > > I am not sure I understand the requirements fully. I see that right now
+> > > > > > > > > dax_device is created per device and all block partitions refer to it. If
+> > > > > > > > > we want to create one dax_device per partition, then it looks like this
+> > > > > > > > > will be structured more along the lines how block layer handles disk and
+> > > > > > > > > partitions. (One gendisk for disk and block_devices for partitions,
+> > > > > > > > > including partition 0). That probably means state belong to whole device
+> > > > > > > > > will be in common structure say dax_device_common, and per partition state
+> > > > > > > > > will be in dax_device and dax_device can carry a pointer to
+> > > > > > > > > dax_device_common.
+> > > > > > > > >
+> > > > > > > > > I am also not sure what does it mean to partition dax devices. How will
+> > > > > > > > > partitions be exported to user space.
+> > > > > > > >
+> > > > > > > > Dan, last time we talked you agreed that partitioned dax devices are
+> > > > > > > > rather pointless IIRC.  Should we just deprecate partitions on DAX
+> > > > > > > > devices and then remove them after a cycle or two?
+> > > > > > >
+> > > > > > > That does seem a better plan than trying to force partition support
+> > > > > > > where it is not needed.
+> > > > > >
+> > > > > > Question: if one /did/ have a partitioned DAX device and used kpartx to
+> > > > > > create dm-linear devices for each partition, will DAX still work through
+> > > > > > that?
+> > > > >
+> > > > > The device-mapper support will continue, but it will be limited to
+> > > > > whole device sub-components. I.e. you could use kpartx to carve up
+> > > > > /dev/pmem0 and still have dax, but not partitions of /dev/pmem0.
+> > > >
+> > > > So we can't use fdisk/parted to partition /dev/pmem0. Given /dev/pmem0
+> > > > is a block device, I thought tools will expect it to be partitioned.
+> > > > Sometimes I create those partitions and use /dev/pmem0. So what's
+> > > > the replacement for this. People often have tools/scripts which might
+> > > > want to partition the device and these will start failing.
 > > >
-> > > The problem is that unlike dir fid, file fid cannot be reliably resolved
-> > > to path, that is the reason that I implemented  FAN_WITH_NAME
-> > > for events "possible on child" (see branch fanotify_name-wip).
->
-> Ok, but that seems to be a bit of an abuse, isn't it? Because with parent
-> fid + name you may reconstruct the path but you won't be able to reliably
-> identify the object where the operation happened? Even worse users can
-> mistakenly think that parent fid + name identify the object but that is
-> racy... This is exactly the kind of confusion I'd like to avoid with the
-> new API.
->
-> OTOH I understand that e.g. a file monitor may want to monitor CLOSE_WRITE
-> like you mention below just to record directory FID + name as something
-> that needs resyncing. So I agree that names in events other than directory
-> events are useful as well. And I also agree that for that usecase what you
-> propose would be fine.
->
-> > > A filesystem monitor typically needs to be notified on name changes and on
-> > > data/metadata modifications.
+> > > Partitioning will still work, but dax operation will be declined and
+> > > fall back to page-cache.
+> >
+> > Ok, so if I mount /dev/pmem0p1 with dax enabled, that might fail or
+> > filesystem will fall back to using page cache. (But dax will not be
+> > enabled).
+> >
 > > >
-> > > So maybe add just two new event types:
-> > > FAN_DIR_MODIFY
-> > > FAN_CHILD_MODIFY
+> > > > IOW, I do not understand that why being able to partition /dev/pmem0
+> > > > (which is a block device from user space point of view), is pointless.
 > > >
-> > > Both those events are reported with name and allowed only with init flag
-> > > FAN_REPORT_FID_NAME.
-> > > User cannot filter FAN_DIR_MODIFY by part of create/delete/move.
-> > > User cannot filter FAN_CHILD_MODIFY by part of attrib/modify/close_write.
+> > > How about s/pointless/redundant/. Persistent memory can already be
+> > > "partitioned" via namespace boundaries.
 > >
-> > Nah, that won't do. I now remember discussing this with out in-house monitor
-> > team and they said they needed to filter out FAN_MODIFY because it was too
-> > noisy and rely on FAN_CLOSE_WRITE. And other may want open/access as
-> > well.
->
-> So for open/close/modify/read/attrib I don't see a need to obfuscate the
-> event type. They are already abstract enough so I don't see how they could
-> be easily misinterpretted. With directory events the potential for
-> "optimizations" that are subtly wrong is IMHO much bigger.
->
-
-OK, that simplifies things quite a bit.
-
-> > There is another weird way to obfuscate the event type.
-> > I am not sure if users will be less confused about it:
-> > Each event type belongs to a group (i.e. self, dirent, poss_on_child)
-> > User may set any event type in the mask (e.g. create|delete|open|close)
-> > When getting an event from event group A (e.g. create), all event types
-> > of that group will be reported (e.g. create|delete).
+> > But that's an entirely different way of partitioning. To me being able
+> > to use block devices (with dax capability) in same way as any other
+> > block device makes sense.
 > >
-> > To put it another way:
-> > #define FAN_DIR_MODIFY (FAN_CREATE | FAN_MOVE | FAN_DELETE)
+> > > Block device partitioning is
+> > > then redundant and needlessly complicates, as you have found, the
+> > > kernel implementation.
 > >
-> > For example in fanotify_group_event_mask():
-> > if (event_with_name) {
-> >     if (marks_mask & test_mask & FAN_DIR_MODIFY)
-> >         test_mask |= marks_mask & FAN_DIR_MODIFY
-> > ...
+> > It does complicate kernel implementation. Is it too hard to solve the
+> > problem in kernel.
 > >
-> > Did somebody say over-engineering? ;)
-> >
-> > TBH, I don't see how we can do event type obfuscation
-> > that is both usable and not confusing, because the concept is
-> > confusing. I understand the reasoning behind it, but I don't think
-> > that many users will.
-> >
-> > I'm hoping that you can prove me wrong and find a way to simplify
-> > the API while retaining fair usability.
->
-> I was thinking about this. If I understand the problem right, depending on
-> the usecase we may need with each event some subset of 'object fid',
-> 'directory fid', 'name in directory'. So what if we provided all these
-> three things in each event? Events will get somewhat bloated but it may be
-> bearable.
->
+> > W.r.t partitioning, bdev_dax_pgoff() seems to be the pain point where
+> > dax code refers back to block device to figure out partition offset in
+> > dax device. If we create a dax object corresponding to "struct block_device"
+> > and store sector offset in that, then we could pass that object to dax
+> > code and not worry about referring back to bdev. I have written some
+> > proof of concept code and called that object "dax_handle". I can post
+> > that code if there is interest.
+> 
+> I don't think it's worth it in the end especially considering
+> filesystems are looking to operate on /dev/dax devices directly and
+> remove block entanglements entirely.
+> 
+> > IMHO, it feels useful to be able to partition and use a dax capable
+> > block device in same way as non-dax block device. It will be really
+> > odd to think that if filesystem is on /dev/pmem0p1, then dax can't
+> > be enabled but if filesystem is on /dev/mapper/pmem0p1, then dax
+> > will work.
+> 
+> That can already happen today. If you do not properly align the
+> partition then dax operations will be disabled.
 
-I agree.
+Er... is this conversation getting confused?  I was talking about
+kpartx's /dev/mapper/pmem0p1 being a straight replacement for the kernel
+creating /dev/pmem0p1.  I thnk Vivek was complaining about the
+inconsistent behavior between the two, even if the partition is aligned
+properly.
 
-What I like about the fact that users don't need to choose between
-'parent fid' and 'object fid' is that it makes some hard questions go away:
-1. How are "self" events reported? simple - just with 'object id'
-2. How are events on disconnected dentries reported? simple - just
-with 'object id'
-3. How are events on the root of the watch reported? same answer
+I'm not sure how alignment leaked in here?
 
-Did you write 'directory fid' as opposed to 'parent fid' for a reason?
-Was it your intention to imply that events on directories (e.g.
-open/close/attrib) are
-never reported with 'parent fid' , 'name in directory'?
+> This proposal just
+> extends that existing failure domain to make all partitions fail to
+> support dax.
 
-I see no functional problem with making that distinction between directory and
-non-directory, but I have a feeling that 'parent fid', 'name in
-directory', 'object id',
-regardless of dir/non-dir is going to be easier to document and less confusing
-for users to understand, so this is my preference.
+Oh, wait.  You're proposing that "partitions of pmem devices don't
+support DAX", not "the kernel will not create partitions for pmem
+devices".
 
-> With this information we could reliably reconstruct (some) path (we always
-> have directory fid + name), we can reliably identify the object involved in
-> the change (we always have object fid). I'd still prefer if we obfuscated
-> directory events, without possibility of filtering based of
-> CREATE/DELETE/MOVE (i.e., just one FAN_DIR_MODIFY event for this fanotify
-> group) - actually I have hard time coming with a usecase where application
-> would care about one type of event and not the other one. The other events
-> remain as they are. What do you think?
+Yeah, that would be inconsistent and weird.  I'd say deprecate the
+kernel automounting partitions, but I guess it already does that, and
+removing it would break /something/.  I guess you could put
+"/dev/pmemXpY" on the deprecation schedule.
 
-That sounds like a plan.
-I have no problem with the FAN_DIR_MODIFY obfuscation.
-
-Will re-work the patches and demo.
-
-Thanks,
-Amir.
+--D
