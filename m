@@ -2,103 +2,236 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E0B213494E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 18:26:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D65D51349C7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 18:50:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729756AbgAHR0e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jan 2020 12:26:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48734 "EHLO mail.kernel.org"
+        id S1728177AbgAHRur (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jan 2020 12:50:47 -0500
+Received: from verein.lst.de ([213.95.11.211]:50484 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729544AbgAHR0c (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jan 2020 12:26:32 -0500
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12EE220705;
-        Wed,  8 Jan 2020 17:26:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578504391;
-        bh=ij94aMQ07BTirE2iQNs+dEg6zAm/wuo0VueM7DAIze4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oHEjZcS3fZyHeprMzzff0S4Qy7ZcDSwpql0QpUi80QfppmiZQy/P4oJ803uYuwA5v
-         x1z5xr+45sSoD3DV04KiQ0p1hjw++k6Xwnn+gSKBhtW5tfWhW2/9kVKkkQ88eIbzQA
-         xNgFPef3+sqSoWBVJZJ9OaQn9qe8KNklyQnyAd9c=
-Date:   Wed, 8 Jan 2020 09:26:29 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Satya Tangirala <satyat@google.com>,
-        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Kim Boojin <boojin.kim@samsung.com>
-Subject: Re: [PATCH v6 2/9] block: Add encryption context to struct bio
-Message-ID: <20200108172629.GA232722@sol.localdomain>
-References: <20191218145136.172774-1-satyat@google.com>
- <20191218145136.172774-3-satyat@google.com>
- <20191218212116.GA7476@magnolia>
- <yq1y2v9e37b.fsf@oracle.com>
- <20191218222726.GC47399@gmail.com>
- <yq1fthhdttv.fsf@oracle.com>
- <20200108140730.GC2896@infradead.org>
+        id S1727181AbgAHRur (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Jan 2020 12:50:47 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 8DE3968BFE; Wed,  8 Jan 2020 18:50:44 +0100 (CET)
+Date:   Wed, 8 Jan 2020 18:50:44 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Namjae Jeon <namjae.jeon@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
+        sj1557.seo@samsung.com, linkinjeon@gmail.com, pali.rohar@gmail.com
+Subject: Re: [PATCH v9 03/13] exfat: add inode operations
+Message-ID: <20200108175044.GA14009@lst.de>
+References: <20200102082036.29643-1-namjae.jeon@samsung.com> <CGME20200102082402epcas1p47cdc0873473f99c5d81f56865bb94abc@epcas1p4.samsung.com> <20200102082036.29643-4-namjae.jeon@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200108140730.GC2896@infradead.org>
+In-Reply-To: <20200102082036.29643-4-namjae.jeon@samsung.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 08, 2020 at 06:07:30AM -0800, Christoph Hellwig wrote:
-> On Wed, Dec 18, 2019 at 07:47:56PM -0500, Martin K. Petersen wrote:
-> > Absolutely. That's why it's a union. Putting your stuff there is a
-> > prerequisite as far as I'm concerned. No need to grow the bio when the
-> > two features are unlikely to coexist. We can revisit that later should
-> > the need arise.
-> 
-> With NVMe key per I/O support some form of inline encryption and PI are
-> very likely to be used together in the not too far future.
+On Thu, Jan 02, 2020 at 04:20:26PM +0800, Namjae Jeon wrote:
+> +#include "exfat_fs.h"
+> +
+> +/* 2-level option flag */
+> +enum {
+> +	BMAP_NOT_CREATE,
+> +	BMAP_ADD_CLUSTER,
+> +};
 
-The NVMe "key per I/O" draft is heavily flawed, and I don't think it will be
-useful at all in the Linux kernel context.  The problem is that, as far as I can
-tell, it doesn't allow the encryption algorithm and IVs to be selected, or even
-standardized or made discoverable in any way.  It does say that AES-256 must be
-supported, but it doesn't say which mode of operation (i.e. it could be
-something inappropriate for disk encryption, like ECB), nor does it say whether
-AES-256 has to be the default or not, and if it's not the default how to
-discover that and select AES-256.  IV generation is also unspecified, so it
-could be something insecure like always using the same IV.
+I looked at how this flag is used and found the get_block code a little
+confusing.  Let me know what you think of the following untested patch to
+streamline that area:
 
-So effectively the NVMe encryption will be unspecified, untestable, and
-unverifiable.  That means that vendors are likely to implement it insecurely,
-similar to how they're implementing self-encrypting drives insecurely [1].
-(Granted, there are some reasons to think that vendors are less likely to screw
-up key per I/O.  But inevitably some will still get it wrong.)
 
-[1] https://www.ieee-security.org/TC/SP2019/papers/310.pdf
-
-Also, since "key per I/O" won't allow selecting IVs, all the encrypted data will
-be tied to its physical location on-disk.  That will make "key per I/O" unusable
-in any case where encrypted blocks are moved without the key, e.g.
-filesystem-level encryption on many filesystems.
-
-And since the way that dm-crypt and fscrypt work is that you select which
-algorithm and IV generator you want to use, to even use NVMe "key per I/O" with
-them we'd have to add magic settings that say to use some unspecified
-hardware-specific encryption format, which could be completely insecure.  As one
-of the fscrypt maintainers I'd be really hesistant to accept any such patch, and
-I think the dm-crypt people would feel the same way.
-
-I've already raised these concerns in the NVMe and TCG Storage working groups,
-and the people working on it refused to make any changes, as they consider "key
-per I/O" to be more akin to the TCG Opal self-encrypting drive specification,
-and not actually intended to be "inline encryption".
-
-So let's not over-engineer this kernel patchset to support some broken
-vaporware, please.
-
-- Eric
+diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
+index c2b04537cb24..ccf9700c6a55 100644
+--- a/fs/exfat/inode.c
++++ b/fs/exfat/inode.c
+@@ -17,12 +17,6 @@
+ #include "exfat_raw.h"
+ #include "exfat_fs.h"
+ 
+-/* 2-level option flag */
+-enum {
+-	BMAP_NOT_CREATE,
+-	BMAP_ADD_CLUSTER,
+-};
+-
+ static int __exfat_write_inode(struct inode *inode, int sync)
+ {
+ 	int ret = -EIO;
+@@ -298,109 +292,91 @@ static int exfat_map_cluster(struct inode *inode, unsigned int clu_offset,
+ 	return 0;
+ }
+ 
+-static int exfat_bmap(struct inode *inode, sector_t sector, sector_t *phys,
+-		unsigned long *mapped_blocks, int *create)
++static int exfat_map_new_buffer(struct exfat_inode_info *ei,
++		struct buffer_head *bh, loff_t pos)
+ {
+-	struct super_block *sb = inode->i_sb;
+-	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+-	sector_t last_block;
+-	unsigned int cluster, clu_offset, sec_offset;
+-	int err = 0;
+-
+-	*phys = 0;
+-	*mapped_blocks = 0;
+-
+-	last_block = EXFAT_B_TO_BLK_ROUND_UP(i_size_read(inode), sb);
+-	if (sector >= last_block && *create == BMAP_NOT_CREATE)
+-		return 0;
+-
+-	/* Is this block already allocated? */
+-	clu_offset = sector >> sbi->sect_per_clus_bits;  /* cluster offset */
+-
+-	err = exfat_map_cluster(inode, clu_offset, &cluster,
+-		*create & BMAP_ADD_CLUSTER);
+-	if (err) {
+-		if (err != -ENOSPC)
+-			return -EIO;
+-		return err;
+-	}
+-
+-	if (cluster != EXFAT_EOF_CLUSTER) {
+-		/* sector offset in cluster */
+-		sec_offset = sector & (sbi->sect_per_clus - 1);
+-
+-		*phys = exfat_cluster_to_sector(sbi, cluster) + sec_offset;
+-		*mapped_blocks = sbi->sect_per_clus - sec_offset;
+-	}
++	if (buffer_delay(bh) && pos > ei->i_size_aligned)
++		return -EIO;
++	set_buffer_new(bh);
+ 
+-	if (sector < last_block)
+-		*create = BMAP_NOT_CREATE;
++	/*
++	 * Adjust i_size_aligned if i_size_ondisk is bigger than it.
++	 * (i.e. non-DA)
++	 */
++	if (ei->i_size_ondisk > ei->i_size_aligned)
++		ei->i_size_aligned = ei->i_size_ondisk;
+ 	return 0;
+ }
+ 
+ static int exfat_get_block(struct inode *inode, sector_t iblock,
+ 		struct buffer_head *bh_result, int create)
+ {
++	struct exfat_inode_info *ei = EXFAT_I(inode);
+ 	struct super_block *sb = inode->i_sb;
++	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+ 	unsigned long max_blocks = bh_result->b_size >> inode->i_blkbits;
+ 	int err = 0;
+-	unsigned long mapped_blocks;
+-	sector_t phys;
++	unsigned long mapped_blocks = 0;
++	unsigned int cluster, sec_offset;
++	sector_t last_block;
++	sector_t phys = 0;
+ 	loff_t pos;
+-	int bmap_create = create ? BMAP_ADD_CLUSTER : BMAP_NOT_CREATE;
++	
++	mutex_lock(&sbi->s_lock);
++	last_block = EXFAT_B_TO_BLK_ROUND_UP(i_size_read(inode), sb);
++	if (iblock >= last_block && !create)
++		goto done;
+ 
+-	mutex_lock(&EXFAT_SB(sb)->s_lock);
+-	err = exfat_bmap(inode, iblock, &phys, &mapped_blocks, &bmap_create);
++	/* Is this block already allocated? */
++	err = exfat_map_cluster(inode, iblock >> sbi->sect_per_clus_bits,
++				&cluster, create);
+ 	if (err) {
+-		if (err != -ENOSPC)
+-			exfat_fs_error_ratelimit(sb,
+-				"failed to bmap (inode : %p iblock : %llu, err : %d)",
+-				inode, (unsigned long long)iblock, err);
++		if (err == -ENOSPC)
++			goto unlock_ret;
++
++		exfat_fs_error_ratelimit(sb,
++			"failed to bmap (inode : %p iblock : %llu, err : %d)",
++			inode, (unsigned long long)iblock, err);
+ 		goto unlock_ret;
+ 	}
+ 
+-	if (phys) {
+-		max_blocks = min(mapped_blocks, max_blocks);
+-
+-		/* Treat newly added block / cluster */
+-		if (bmap_create || buffer_delay(bh_result)) {
+-			/* Update i_size_ondisk */
+-			pos = EXFAT_BLK_TO_B((iblock + 1), sb);
+-			if (EXFAT_I(inode)->i_size_ondisk < pos)
+-				EXFAT_I(inode)->i_size_ondisk = pos;
+-
+-			if (bmap_create) {
+-				if (buffer_delay(bh_result) &&
+-				    pos > EXFAT_I(inode)->i_size_aligned) {
+-					exfat_fs_error(sb,
+-						"requested for bmap out of range(pos : (%llu) > i_size_aligned(%llu)\n",
+-						pos,
+-						EXFAT_I(inode)->i_size_aligned);
+-					err = -EIO;
+-					goto unlock_ret;
+-				}
+-				set_buffer_new(bh_result);
+-
+-				/*
+-				 * adjust i_size_aligned if i_size_ondisk is
+-				 * bigger than it. (i.e. non-DA)
+-				 */
+-				if (EXFAT_I(inode)->i_size_ondisk >
+-				    EXFAT_I(inode)->i_size_aligned) {
+-					EXFAT_I(inode)->i_size_aligned =
+-						EXFAT_I(inode)->i_size_ondisk;
+-				}
+-			}
++	if (cluster == EXFAT_EOF_CLUSTER)
++		goto done;
++
++	/* sector offset in cluster */
++	sec_offset = iblock & (sbi->sect_per_clus - 1);
++
++	phys = exfat_cluster_to_sector(sbi, cluster) + sec_offset;
++	mapped_blocks = sbi->sect_per_clus - sec_offset;
++	max_blocks = min(mapped_blocks, max_blocks);
+ 
+-			if (buffer_delay(bh_result))
+-				clear_buffer_delay(bh_result);
++	/* Treat newly added block / cluster */
++	if (iblock < last_block)
++		create = 0;
++
++	if (create || buffer_delay(bh_result)) {
++		pos = EXFAT_BLK_TO_B((iblock + 1), sb);
++		if (ei->i_size_ondisk < pos)
++			ei->i_size_ondisk = pos;
++	}
++
++	if (create) {
++		err = exfat_map_new_buffer(ei, bh_result, pos);
++		if (err) {
++			exfat_fs_error(sb,
++				"requested for bmap out of range(pos : (%llu) > i_size_aligned(%llu)\n",
++				pos, ei->i_size_aligned);
++			goto unlock_ret;
+ 		}
+-		map_bh(bh_result, sb, phys);
+ 	}
+ 
++	if (buffer_delay(bh_result))
++		clear_buffer_delay(bh_result);
++	map_bh(bh_result, sb, phys);
++done:
+ 	bh_result->b_size = EXFAT_BLK_TO_B(max_blocks, sb);
+ unlock_ret:
+-	mutex_unlock(&EXFAT_SB(sb)->s_lock);
++	mutex_unlock(&sbi->s_lock);
+ 	return err;
+ }
+ 
