@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1A45134714
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 17:04:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 680F5134715
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 17:04:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728767AbgAHQEX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jan 2020 11:04:23 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34734 "EHLO
+        id S1728770AbgAHQE3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jan 2020 11:04:29 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40307 "EHLO
         mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728587AbgAHQEX (ORCPT
+        with ESMTP id S1728032AbgAHQE2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jan 2020 11:04:23 -0500
-Received: by mail-pg1-f196.google.com with SMTP id r11so1808489pgf.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jan 2020 08:04:22 -0800 (PST)
+        Wed, 8 Jan 2020 11:04:28 -0500
+Received: by mail-pg1-f196.google.com with SMTP id k25so1788819pgt.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jan 2020 08:04:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6tDRHfnOHhoFqOdXrEqpx02xS4p7Z8x/5vQQY0aLm8A=;
-        b=B5fOQPY05C9Lq+n9bt52buT2A7zkUL4sgv4b5/aECGwJd39DWMxRsy2c8cF/pkfLyU
-         WfKb7TzULr/fJztTjK8x2Ui/8G47hn0Y5MfDn10NN0zXi7fXrY921d+aW4z5EsMaQGHl
-         1nMAkJPUXIe0WM2pBF51WSkdzUJC2fR20TYqFFckLRPZURcOZOlQVOctax8yGfmmAETM
-         ZwsFdFiQR+5CVXOF9LYIPsDlrakNHc6JzoFI2UexDMfzdNQwGjCKls1cqjYlaKO2dpNa
-         JkFTLjRci3FahIpEeUq0kC6qrHFqK2UwB786bPemUQg35E8ECpLqlhqSxw52rdXrclg9
-         5bdw==
+        bh=Mf24uDxaxrXyVR4iCc3eAN/jtu0xKe1ZH34Ft0DWACg=;
+        b=UFK59NqJPTz8BoeQ77BfQ+g5LONu/dr6l0d0g52YSUrbiG6xRjko26oVDtEVsHPsD0
+         sLsL5G/iP4iOGBCIeED9AwBiw9ntPiCBdbdcF9mDcRgt0W8fUJ+1MGHknNRkRcyGnGOa
+         zQhZWUf4Wk7/i0RParuvUd+yMRMpHZniPBCS4iRGlfp0RACYKB3W+dJ3BR1ITnuZncL6
+         YE8WEeeW4P2NX933EJbqhtiqYtUCxXCP6d7ZUEiCDx5TAJcdZaHvlrfQ6/pbtfrPdNJ4
+         FVY0UhBCq0sf6biYqyWxXcbdST4mQyfOA7ssO8xVkdkPujOo8D5/SQEkPG2woll6nrJL
+         YGhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=6tDRHfnOHhoFqOdXrEqpx02xS4p7Z8x/5vQQY0aLm8A=;
-        b=ARq7E6hr4bSOOYo+3y1Z4IjtxH1ri/lRpe0QTyyObLhj5bjJrHamDxJSZWuDN3csif
-         ozTO4JpYZ9yYcwWpaRWVDzgfTYzrm0q/rEm/6WsRn9mwbnH//qJkoCcDaQoKxL2XCb58
-         BwSEEYXFQTU41vyVFB14zpV/9gOJTdSS+4LndbwUEW8aKsGsuLpYBtNG8mTQ4ydwI/Ln
-         UPNrWhG8VCyI95BrioRZp3t0dFx7m0bQnEGO+0FTIZjFi3qn81nhpjiR3lN2t0EDGHje
-         dKtDSOmc1z9XlYql+dNdpE+0aFGpyFDx3M6sE8ReleKsZwUnPQclrs3G/qZpaAOAspUn
-         odww==
-X-Gm-Message-State: APjAAAUbUIqW2u73Wkn0zgsTomj05FVTsDb5EQ5GrGonNp5+68AGFaKE
-        UiZ02vQSTlB3XRX48JydjGo=
-X-Google-Smtp-Source: APXvYqwfRgPZUp3MgB5cdkyxCriBpjrgtBHzNG9GXRLTGn33q60rXLqX9nFm9V64JP+A+KjED3q8EQ==
-X-Received: by 2002:a62:ee11:: with SMTP id e17mr5905285pfi.48.1578499462405;
-        Wed, 08 Jan 2020 08:04:22 -0800 (PST)
+        bh=Mf24uDxaxrXyVR4iCc3eAN/jtu0xKe1ZH34Ft0DWACg=;
+        b=aeJpImLk0A/NnGSH0UVt34raqGcDdoSZrE5Nmy8Cqr+oizUAp+Kyp/jtsG+lJTKKI/
+         b4liGK6PBCsNLtynNMCS/UN3Na30XmoaNAJ0DZKb/2oWDgWuukRCL1vTU4G4kZurQueK
+         NTAWiZFmDVf3x3G+pSKwW8Kyd8TLL0EvUUUyOBfSKb+0T64DfvUdtyn0du49Mw6M+6Lf
+         GbP7xnTA4szkN2pEjIEUveBZqL8DANNEni+yWmHWSgAuuyFO7q54UJKcv6kx8pbuiFT+
+         i1a4lGbS8gBIKVAj8Zea3qGOpgZsQi8rvQUsD7p2mC6nqDqHvuhQdlyv9AgTYSsVdYsT
+         R8mQ==
+X-Gm-Message-State: APjAAAW0BvI1ksCj6wCv6wF1g54Y+rgAK6NHijKtKp1tTN8822zZCQ4i
+        wfSn5aVnOCAff6T3KPordkc=
+X-Google-Smtp-Source: APXvYqzpzaMo2o2yXGVPMqVWd7zOMF6/eFu/cnrHQ2glwGA4Vc7bHzW2fKgoLF43tcgijlEb5spNiA==
+X-Received: by 2002:a62:cdcb:: with SMTP id o194mr5659462pfg.117.1578499467505;
+        Wed, 08 Jan 2020 08:04:27 -0800 (PST)
 Received: from dev.localdomain ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id d22sm4079894pfo.187.2020.01.08.08.04.19
+        by smtp.gmail.com with ESMTPSA id d22sm4079894pfo.187.2020.01.08.08.04.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Jan 2020 08:04:21 -0800 (PST)
+        Wed, 08 Jan 2020 08:04:26 -0800 (PST)
 From:   Yafang Shao <laoar.shao@gmail.com>
 To:     dchinner@redhat.com, hannes@cmpxchg.org, mhocko@kernel.org,
         vdavydov.dev@gmail.com, guro@fb.com, akpm@linux-foundation.org,
         viro@zeniv.linux.org.uk
 Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH v3 2/3] mm, shrinker: make memcg low reclaim visible to lru walker isolation function
-Date:   Wed,  8 Jan 2020 11:03:56 -0500
-Message-Id: <1578499437-1664-3-git-send-email-laoar.shao@gmail.com>
+Subject: [PATCH v3 3/3] memcg, inode: protect page cache from freeing inode
+Date:   Wed,  8 Jan 2020 11:03:57 -0500
+Message-Id: <1578499437-1664-4-git-send-email-laoar.shao@gmail.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1578499437-1664-1-git-send-email-laoar.shao@gmail.com>
 References: <1578499437-1664-1-git-send-email-laoar.shao@gmail.com>
@@ -61,110 +61,162 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A new member memcg_low_reclaim is introduced in shrink_control struct,
-which is derived from scan_control struct, in order to tell the shrinker
-whether the reclaim session is under memcg low reclaim or not.
-The followup patch will use this new member.
+On my server there're some running MEMCGs protected by memory.{min, low},
+but I found the usage of these MEMCGs abruptly became very small, which
+were far less than the protect limit. It confused me and finally I
+found that was because of inode stealing.
+Once an inode is freed, all its belonging page caches will be dropped as
+well, no matter how may page caches it has. So if we intend to protect the
+page caches in a memcg, we must protect their host (the inode) first.
+Otherwise the memcg protection can be easily bypassed with freeing inode,
+especially if there're big files in this memcg.
+
+Supposes we have a memcg, and the stat of this memcg is,
+        memory.current = 1024M
+        memory.min = 512M
+And in this memcg there's a inode with 800M page caches.
+Once this memcg is scanned by kswapd or other regular reclaimers,
+    kswapd <<<< It can be either of the regular reclaimers.
+        shrink_node_memcgs
+            switch (mem_cgroup_protected()) <<<< Not protected
+                case MEMCG_PROT_NONE:  <<<< Will scan this memcg
+                        beak;
+            shrink_lruvec() <<<< Reclaim the page caches
+            shrink_slab()   <<<< It may free this inode and drop all its
+                                 page caches(800M).
+So we must protect the inode first if we want to protect page caches.
+
+The inherent mismatch between memcg and inode is a trouble. One inode can
+be shared by different MEMCGs, but it is a very rare case. If an inode is
+shared, its belonging page caches may be charged to different MEMCGs.
+Currently there's no perfect solution to fix this kind of issue, but the
+inode majority-writer ownership switching can help it more or less.
 
 Cc: Dave Chinner <dchinner@redhat.com>
 Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 ---
- include/linux/shrinker.h |  3 +++
- mm/vmscan.c              | 27 ++++++++++++++++-----------
- 2 files changed, 19 insertions(+), 11 deletions(-)
+ fs/inode.c | 78 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 75 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
-index 0f80123..dc42ae5 100644
---- a/include/linux/shrinker.h
-+++ b/include/linux/shrinker.h
-@@ -31,6 +31,9 @@ struct shrink_control {
- 
- 	/* current memcg being shrunk (for memcg aware shrinkers) */
- 	struct mem_cgroup *memcg;
-+
-+	/* derived from struct scan_control */
-+	bool memcg_low_reclaim;
- };
- 
- #define SHRINK_STOP (~0UL)
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 5a6445e..c97d005 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -639,10 +639,9 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
- 
- /**
-  * shrink_slab - shrink slab caches
-- * @gfp_mask: allocation context
-- * @nid: node whose slab caches to target
-  * @memcg: memory cgroup whose slab caches to target
-- * @priority: the reclaim priority
-+ * @sc: scan_control struct for this reclaim session
-+ * @nid: node whose slab caches to target
-  *
-  * Call the shrink functions to age shrinkable caches.
-  *
-@@ -652,15 +651,18 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
-  * @memcg specifies the memory cgroup to target. Unaware shrinkers
-  * are called only if it is the root cgroup.
-  *
-- * @priority is sc->priority, we take the number of objects and >> by priority
-- * in order to get the scan target.
-+ * @sc is the scan_control struct, we take the number of objects
-+ * and >> by sc->priority in order to get the scan target.
-  *
-  * Returns the number of reclaimed slab objects.
+diff --git a/fs/inode.c b/fs/inode.c
+index 2b0f511..80dddbc 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -54,6 +54,12 @@
+  *   inode_hash_lock
   */
--static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
--				 struct mem_cgroup *memcg,
--				 int priority)
-+static unsigned long shrink_slab(struct mem_cgroup *memcg,
-+				 struct scan_control *sc,
-+				 int nid)
- {
-+	bool memcg_low_reclaim = sc->memcg_low_reclaim;
-+	gfp_t gfp_mask = sc->gfp_mask;
-+	int priority = sc->priority;
- 	unsigned long ret, freed = 0;
- 	struct shrinker *shrinker;
  
-@@ -682,6 +684,7 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
- 			.gfp_mask = gfp_mask,
- 			.nid = nid,
- 			.memcg = memcg,
-+			.memcg_low_reclaim = memcg_low_reclaim,
- 		};
++struct inode_isolate_control {
++	struct list_head *freeable;
++	struct mem_cgroup *memcg;	/* derived from shrink_control */
++	bool memcg_low_reclaim;		/* derived from scan_control */
++};
++
+ static unsigned int i_hash_mask __read_mostly;
+ static unsigned int i_hash_shift __read_mostly;
+ static struct hlist_head *inode_hashtable __read_mostly;
+@@ -713,6 +719,61 @@ int invalidate_inodes(struct super_block *sb, bool kill_dirty)
+ 	return busy;
+ }
  
- 		ret = do_shrink_slab(&sc, shrinker, priority);
-@@ -708,6 +711,9 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
- void drop_slab_node(int nid)
++#ifdef CONFIG_MEMCG_KMEM
++/*
++ * Once an inode is freed, all its belonging page caches will be dropped as
++ * well, even if there're lots of page caches. So if we intend to protect
++ * page caches in a memcg, we must protect their host(the inode) first.
++ * Otherwise the memcg protection can be easily bypassed with freeing inode,
++ * especially if there're big files in this memcg.
++ * Note that it may happen that the page caches are already charged to the
++ * memcg, but the inode hasn't been added to this memcg yet. In this case,
++ * this inode is not protected.
++ * The inherent mismatch between memcg and inode is a trouble. One inode
++ * can be shared by different MEMCGs, but it is a very rare case. If
++ * an inode is shared, its belonging page caches may be charged to
++ * different MEMCGs. Currently there's no perfect solution to fix this
++ * kind of issue, but the inode majority-writer ownership switching can
++ * help it more or less.
++ */
++static bool memcg_can_reclaim_inode(struct inode *inode,
++				    struct inode_isolate_control *iic)
++{
++	unsigned long cgroup_size;
++	unsigned long protection;
++	struct mem_cgroup *memcg;
++	bool reclaimable = true;
++
++	if (!inode->i_data.nrpages)
++		goto out;
++
++	/* Excludes freeing inode via drop_caches */
++	if (!current->reclaim_state)
++		goto out;
++
++	memcg = iic->memcg;
++	if (!memcg || memcg == root_mem_cgroup)
++		goto out;
++
++	protection = mem_cgroup_protection(memcg, iic->memcg_low_reclaim);
++	if (!protection)
++		goto out;
++
++	cgroup_size = mem_cgroup_size(memcg);
++	if (inode->i_data.nrpages + protection >= cgroup_size)
++		reclaimable = false;
++
++out:
++	return reclaimable;
++}
++#else /* CONFIG_MEMCG_KMEM */
++static bool memcg_can_reclaim_inode(struct inode *inode,
++				    struct inode_isolate_control *iic)
++{
++	return true;
++}
++#endif /* CONFIG_MEMCG_KMEM */
++
+ /*
+  * Isolate the inode from the LRU in preparation for freeing it.
+  *
+@@ -731,8 +792,9 @@ int invalidate_inodes(struct super_block *sb, bool kill_dirty)
+ static enum lru_status inode_lru_isolate(struct list_head *item,
+ 		struct list_lru_one *lru, spinlock_t *lru_lock, void *arg)
  {
- 	unsigned long freed;
-+	struct scan_control sc = {
-+		.gfp_mask = GFP_KERNEL,
+-	struct list_head *freeable = arg;
+-	struct inode	*inode = container_of(item, struct inode, i_lru);
++	struct inode_isolate_control *iic = arg;
++	struct list_head *freeable = iic->freeable;
++	struct inode *inode = container_of(item, struct inode, i_lru);
+ 
+ 	/*
+ 	 * we are inverting the lru lock/inode->i_lock here, so use a trylock.
+@@ -741,6 +803,11 @@ static enum lru_status inode_lru_isolate(struct list_head *item,
+ 	if (!spin_trylock(&inode->i_lock))
+ 		return LRU_SKIP;
+ 
++	if (!memcg_can_reclaim_inode(inode, iic)) {
++		spin_unlock(&inode->i_lock);
++		return LRU_ROTATE;
++	}
++
+ 	/*
+ 	 * Referenced or dirty inodes are still in use. Give them another pass
+ 	 * through the LRU as we canot reclaim them now.
+@@ -798,9 +865,14 @@ long prune_icache_sb(struct super_block *sb, struct shrink_control *sc)
+ {
+ 	LIST_HEAD(freeable);
+ 	long freed;
++	struct inode_isolate_control iic = {
++		.freeable = &freeable,
++		.memcg = sc->memcg,
++		.memcg_low_reclaim = sc->memcg_low_reclaim,
 +	};
  
- 	do {
- 		struct mem_cgroup *memcg = NULL;
-@@ -715,7 +721,7 @@ void drop_slab_node(int nid)
- 		freed = 0;
- 		memcg = mem_cgroup_iter(NULL, NULL, NULL);
- 		do {
--			freed += shrink_slab(GFP_KERNEL, nid, memcg, 0);
-+			freed += shrink_slab(memcg, &sc, nid);
- 		} while ((memcg = mem_cgroup_iter(NULL, memcg, NULL)) != NULL);
- 	} while (freed > 10);
+ 	freed = list_lru_shrink_walk(&sb->s_inode_lru, sc,
+-				     inode_lru_isolate, &freeable);
++				     inode_lru_isolate, &iic);
+ 	dispose_list(&freeable);
+ 	return freed;
  }
-@@ -2684,8 +2690,7 @@ static void shrink_node_memcgs(pg_data_t *pgdat, struct scan_control *sc)
- 
- 		shrink_lruvec(lruvec, sc);
- 
--		shrink_slab(sc->gfp_mask, pgdat->node_id, memcg,
--			    sc->priority);
-+		shrink_slab(memcg, sc, pgdat->node_id);
- 
- 		/* Record the group's reclaim efficiency */
- 		vmpressure(sc->gfp_mask, memcg, false,
 -- 
 1.8.3.1
 
