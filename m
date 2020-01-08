@@ -2,199 +2,368 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4D3B1340D1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 12:43:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 380D2134133
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 12:51:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727905AbgAHLmq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jan 2020 06:42:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38128 "EHLO mail.kernel.org"
+        id S1727212AbgAHLvf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jan 2020 06:51:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727678AbgAHLmS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jan 2020 06:42:18 -0500
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726290AbgAHLvf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Jan 2020 06:51:35 -0500
+Received: from localhost (c-98-234-77-170.hsd1.ca.comcast.net [98.234.77.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E7112070E;
-        Wed,  8 Jan 2020 11:42:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 495E1206DA;
+        Wed,  8 Jan 2020 11:51:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578483737;
-        bh=OlQZeo740Su06wuXHefKEzsnt66PntUWyaO+y7/tcUQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ikAZy7Esqy1l5DaqTouFaDH3aME1O/98nsR/xZbYYffMg57KWUfzxxdnhkXUmnEvh
-         MYvJYIL1vciLabjRUQT3Zpu2Q9WZDHQbJCU7zFymFXGpallM5VlL8O8yue7eWpyB+Y
-         5GYVx7h4bzSYYHrWREzVVP3/MtDSYgwAxX7SK6Yo=
-Received: by mail-ua1-f47.google.com with SMTP id a12so996599uan.0;
-        Wed, 08 Jan 2020 03:42:17 -0800 (PST)
-X-Gm-Message-State: APjAAAX2NxcUuuxcjBudqYrg3ZiJD29ooSLNxsiq6A5RkgaV+irOMQMg
-        /sRU9ANUH7onEBgMUHtng+4A826CnsJc7OAzw1U=
-X-Google-Smtp-Source: APXvYqx50cdmAurB4QGQeYV6BrWEuBYMsixLljqyjLwF3Mm+xipZP+LVObT7Osxd1dQxjSfkH7djk0Tu2ySh/9MeJV4=
-X-Received: by 2002:ab0:738c:: with SMTP id l12mr2764169uap.135.1578483736505;
- Wed, 08 Jan 2020 03:42:16 -0800 (PST)
+        s=default; t=1578484293;
+        bh=UaIxLZUI75Nhbq0wZwJ9Y9VnTVdDPODF8I6Yh67fzSA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tFFKdgGabDv2XpV7p5rWZmsHOHdxYqIOYTmoNUoMI7xPlmiNp1RObtxD7yRvcSbHb
+         eKRLtPgSy39OK+usHe3gQVmMj7vkwqn+nMkZ9QSE8sGMkcqeimCxhcieeoWeqreZI1
+         1bzWtwfZcbYU1e2boj4CmHBo+rM2WbUrcIPue6gk=
+Date:   Wed, 8 Jan 2020 03:51:32 -0800
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Chao Yu <chao@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v3] fs: Fix page_mkwrite off-by-one errors
+Message-ID: <20200108115132.GA28331@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20191218130935.32402-1-agruenba@redhat.com>
 MIME-Version: 1.0
-References: <20191216182656.15624-1-fdmanana@kernel.org> <20191216182656.15624-3-fdmanana@kernel.org>
- <20191229052240.GG13306@hungrycats.org> <CAL3q7H5FcdsA3NEcRae4iE5k8j8tHe-3KjKo_tTg6=fu0c_0gw@mail.gmail.com>
- <20200107181630.GB24056@hungrycats.org>
-In-Reply-To: <20200107181630.GB24056@hungrycats.org>
-From:   Filipe Manana <fdmanana@kernel.org>
-Date:   Wed, 8 Jan 2020 11:42:05 +0000
-X-Gmail-Original-Message-ID: <CAL3q7H58avTiOiTOuzTt-q3L0i5d9G10e+4j9f0RTps+bOH+1w@mail.gmail.com>
-Message-ID: <CAL3q7H58avTiOiTOuzTt-q3L0i5d9G10e+4j9f0RTps+bOH+1w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] Btrfs: make deduplication with range including the
- last block work
-To:     Zygo Blaxell <ce3g8jdj@umail.furryterror.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Filipe Manana <fdmanana@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191218130935.32402-1-agruenba@redhat.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 7, 2020 at 6:16 PM Zygo Blaxell
-<ce3g8jdj@umail.furryterror.org> wrote:
->
-> On Tue, Jan 07, 2020 at 04:18:42PM +0000, Filipe Manana wrote:
-> > On Sun, Dec 29, 2019 at 5:22 AM Zygo Blaxell
-> > <ce3g8jdj@umail.furryterror.org> wrote:
-> > >
-> > > On Mon, Dec 16, 2019 at 06:26:56PM +0000, fdmanana@kernel.org wrote:
-> > > > From: Filipe Manana <fdmanana@suse.com>
-> > > >
-> > > > Since btrfs was migrated to use the generic VFS helpers for clone and
-> > > > deduplication, it stopped allowing for the last block of a file to be
-> > > > deduplicated when the source file size is not sector size aligned (when
-> > > > eof is somewhere in the middle of the last block). There are two reasons
-> > > > for that:
-> > > >
-> > > > 1) The generic code always rounds down, to a multiple of the block size,
-> > > >    the range's length for deduplications. This means we end up never
-> > > >    deduplicating the last block when the eof is not block size aligned,
-> > > >    even for the safe case where the destination range's end offset matches
-> > > >    the destination file's size. That rounding down operation is done at
-> > > >    generic_remap_check_len();
-> > > >
-> > > > 2) Because of that, the btrfs specific code does not expect anymore any
-> > > >    non-aligned range length's for deduplication and therefore does not
-> > > >    work if such nona-aligned length is given.
-> > > >
-> > > > This patch addresses that second part, and it depends on a patch that
-> > > > fixes generic_remap_check_len(), in the VFS, which was submitted ealier
-> > > > and has the following subject:
-> > > >
-> > > >   "fs: allow deduplication of eof block into the end of the destination file"
-> > > >
-> > > > These two patches address reports from users that started seeing lower
-> > > > deduplication rates due to the last block never being deduplicated when
-> > > > the file size is not aligned to the filesystem's block size.
-> > > >
-> > > > Link: https://lore.kernel.org/linux-btrfs/2019-1576167349.500456@svIo.N5dq.dFFD/
-> > > > Signed-off-by: Filipe Manana <fdmanana@suse.com>
-> > >
-> > > Should these patches be marked for stable (5.0+, but see below for
-> > > caveats about 5.0)?  The bug affects 5.3 and 5.4 which are still active,
-> > > and dedupe is an important feature for some users.
-> >
-> > Usually I only mark things for stable that are critical: corruptions,
-> > crashes and memory leaks for example.
-> > I don't think this is a critical issue, since none of those things
-> > happen. It's certainly inconvenient to not have
-> > an extent fully deduplicated, but it's just that.
->
-> In btrfs the reference counting is done by extent and extents are
-> immutable, so extents are either fully deduplicated, or not deduplicated
-> at all.  We have to dedupe every part of an extent, and if we fail to
-> do so, no data space is saved while metadata usage increases for the
-> new partial extent reference.
+Hi Andreas,
 
-Yes, I know. That was explained in the cover letter, why allowing
-deduplication of the eof block is more important for btrfs than it is
-for xfs for example.
+On 12/18, Andreas Gruenbacher wrote:
+> Hi Darrick,
+> 
+> can this fix go in via the xfs tree?
+> 
+> Thanks,
+> Andreas
+> 
+> --
+> 
+> The check in block_page_mkwrite that is meant to determine whether an
+> offset is within the inode size is off by one.  This bug has been copied
+> into iomap_page_mkwrite and several filesystems (ubifs, ext4, f2fs,
+> ceph).
+> 
+> Fix that by introducing a new page_mkwrite_check_truncate helper that
+> checks for truncate and computes the bytes in the page up to EOF.  Use
+> the helper in the above mentioned filesystems.
+> 
+> In addition, use the new helper in btrfs as well.
+> 
+> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+> Acked-by: David Sterba <dsterba@suse.com> (btrfs part)
+> Acked-by: Richard Weinberger <richard@nod.at> (ubifs part)
+> ---
+>  fs/btrfs/inode.c        | 15 ++++-----------
+>  fs/buffer.c             | 16 +++-------------
+>  fs/ceph/addr.c          |  2 +-
+>  fs/ext4/inode.c         | 14 ++++----------
+>  fs/f2fs/file.c          | 19 +++++++------------
+>  fs/iomap/buffered-io.c  | 18 +++++-------------
+>  fs/ubifs/file.c         |  3 +--
+>  include/linux/pagemap.h | 28 ++++++++++++++++++++++++++++
+>  8 files changed, 53 insertions(+), 62 deletions(-)
+> 
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index 56032c518b26..86c6fcd8139d 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -9016,13 +9016,11 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
+>  	ret = VM_FAULT_NOPAGE; /* make the VM retry the fault */
+>  again:
+>  	lock_page(page);
+> -	size = i_size_read(inode);
+>  
+> -	if ((page->mapping != inode->i_mapping) ||
+> -	    (page_start >= size)) {
+> -		/* page got truncated out from underneath us */
+> +	ret2 = page_mkwrite_check_truncate(page, inode);
+> +	if (ret2 < 0)
+>  		goto out_unlock;
+> -	}
+> +	zero_start = ret2;
+>  	wait_on_page_writeback(page);
+>  
+>  	lock_extent_bits(io_tree, page_start, page_end, &cached_state);
+> @@ -9043,6 +9041,7 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
+>  		goto again;
+>  	}
+>  
+> +	size = i_size_read(inode);
+>  	if (page->index == ((size - 1) >> PAGE_SHIFT)) {
+>  		reserved_space = round_up(size - page_start,
+>  					  fs_info->sectorsize);
+> @@ -9075,12 +9074,6 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
+>  	}
+>  	ret2 = 0;
+>  
+> -	/* page is wholly or partially inside EOF */
+> -	if (page_start + PAGE_SIZE > size)
+> -		zero_start = offset_in_page(size);
+> -	else
+> -		zero_start = PAGE_SIZE;
+> -
+>  	if (zero_start != PAGE_SIZE) {
+>  		kaddr = kmap(page);
+>  		memset(kaddr + zero_start, 0, PAGE_SIZE - zero_start);
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index d8c7242426bb..53aabde57ca7 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -2499,23 +2499,13 @@ int block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
+>  	struct page *page = vmf->page;
+>  	struct inode *inode = file_inode(vma->vm_file);
+>  	unsigned long end;
+> -	loff_t size;
+>  	int ret;
+>  
+>  	lock_page(page);
+> -	size = i_size_read(inode);
+> -	if ((page->mapping != inode->i_mapping) ||
+> -	    (page_offset(page) > size)) {
+> -		/* We overload EFAULT to mean page got truncated */
+> -		ret = -EFAULT;
+> +	ret = page_mkwrite_check_truncate(page, inode);
+> +	if (ret < 0)
+>  		goto out_unlock;
+> -	}
+> -
+> -	/* page is wholly or partially inside EOF */
+> -	if (((page->index + 1) << PAGE_SHIFT) > size)
+> -		end = size & ~PAGE_MASK;
+> -	else
+> -		end = PAGE_SIZE;
+> +	end = ret;
+>  
+>  	ret = __block_write_begin(page, 0, end, get_block);
+>  	if (!ret)
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index 7ab616601141..ef958aa4adb4 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -1575,7 +1575,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+>  	do {
+>  		lock_page(page);
+>  
+> -		if ((off > size) || (page->mapping != inode->i_mapping)) {
+> +		if (page_mkwrite_check_truncate(page, inode) < 0) {
+>  			unlock_page(page);
+>  			ret = VM_FAULT_NOPAGE;
+>  			break;
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 28f28de0c1b6..51ab1d2cac80 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -5871,7 +5871,6 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
+>  {
+>  	struct vm_area_struct *vma = vmf->vma;
+>  	struct page *page = vmf->page;
+> -	loff_t size;
+>  	unsigned long len;
+>  	int err;
+>  	vm_fault_t ret;
+> @@ -5907,18 +5906,13 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
+>  	}
+>  
+>  	lock_page(page);
+> -	size = i_size_read(inode);
+> -	/* Page got truncated from under us? */
+> -	if (page->mapping != mapping || page_offset(page) > size) {
+> +	err = page_mkwrite_check_truncate(page, inode);
+> +	if (err < 0) {
+>  		unlock_page(page);
+> -		ret = VM_FAULT_NOPAGE;
+> -		goto out;
+> +		goto out_ret;
+>  	}
+> +	len = err;
+>  
+> -	if (page->index == size >> PAGE_SHIFT)
+> -		len = size & ~PAGE_MASK;
+> -	else
+> -		len = PAGE_SIZE;
+>  	/*
+>  	 * Return if we have all the buffers mapped. This avoids the need to do
+>  	 * journal_start/journal_stop which can block and take a long time
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 85af112e868d..0e77b2e6f873 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -51,7 +51,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+>  	struct inode *inode = file_inode(vmf->vma->vm_file);
+>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>  	struct dnode_of_data dn = { .node_changed = false };
+> -	int err;
+> +	int offset, err;
+>  
+>  	if (unlikely(f2fs_cp_error(sbi))) {
+>  		err = -EIO;
+> @@ -70,13 +70,14 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+>  	file_update_time(vmf->vma->vm_file);
+>  	down_read(&F2FS_I(inode)->i_mmap_sem);
+>  	lock_page(page);
+> -	if (unlikely(page->mapping != inode->i_mapping ||
+> -			page_offset(page) > i_size_read(inode) ||
+> -			!PageUptodate(page))) {
+> +	err = -EFAULT;
+> +	if (likely(PageUptodate(page)))
+> +		err = page_mkwrite_check_truncate(page, inode);
+> +	if (unlikely(err < 0)) {
+>  		unlock_page(page);
+> -		err = -EFAULT;
+>  		goto out_sem;
+>  	}
+> +	offset = err;
 
->
-> This bug means the dedupe feature is not usable _at all_ for single-extent
-> files with non-aligned EOF, and that is a significant problem for users
-> that rely on dedupe to manage space usage on btrfs (e.g. for build
-> servers where there are millions of duplicate odd-sized small files, and
-> the space savings from working dedupe can be 90% or more).  Doubling or
-> tripling space usage for the same data is beyond inconvenience.
+This is a bit odd, so how about this?
 
-Sure, I understand that, I know how btrfs manages extents and I'm well
-familiar with its cloning/deduplication implementation.
+	offset = -EFAULT;
+	if (likely(PageUptodate(page))
+		offset = page_mkwrite_check_truncate(page, inode);
 
-Still, it's not something I consider critical enough to get to stable,
-as there's no corruption, data loss or a crash.
-That doesn't mean the patches aren't going to stable branches, that
-depends on the maintainers of each subsystem (vfs, btrfs).
+	if (unlikely(offset < 0) {
+		unlock_page(page);
+		err = offset;
+		goto out_sem;
+	}
 
-Thanks.
+I think Linus will address the merge conflict simply later.
 
->
-> It is possible to work around the bug in userspace and recover the space
-> with clone, but there is no way to do it safely on live data without a
-> working dedupe-range ioctl.
->
-> > If a maintainer wants to add it for stable, I'm fine with it.
->
-> At this point it would only affect 5.4--all the other short-term kernels
-> are closed, and none of the LTS kernels need the patch--but it would be
-> nice if 5.4 had working dedupe.
->
-> > >
-> > > > ---
-> > > >  fs/btrfs/ioctl.c | 3 ++-
-> > > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> > > > index 3418decb9e61..c41c276ff272 100644
-> > > > --- a/fs/btrfs/ioctl.c
-> > > > +++ b/fs/btrfs/ioctl.c
-> > > > @@ -3237,6 +3237,7 @@ static void btrfs_double_extent_lock(struct inode *inode1, u64 loff1,
-> > > >  static int btrfs_extent_same_range(struct inode *src, u64 loff, u64 len,
-> > > >                                  struct inode *dst, u64 dst_loff)
-> > > >  {
-> > > > +     const u64 bs = BTRFS_I(src)->root->fs_info->sb->s_blocksize;
-> > > >       int ret;
-> > > >
-> > > >       /*
-> > > > @@ -3244,7 +3245,7 @@ static int btrfs_extent_same_range(struct inode *src, u64 loff, u64 len,
-> > > >        * source range to serialize with relocation.
-> > > >        */
-> > > >       btrfs_double_extent_lock(src, loff, dst, dst_loff, len);
-> > > > -     ret = btrfs_clone(src, dst, loff, len, len, dst_loff, 1);
-> > > > +     ret = btrfs_clone(src, dst, loff, len, ALIGN(len, bs), dst_loff, 1);
-> > >
-> > > A heads-up for anyone backporting this to 5.0:  this patch depends on
-> > >
-> > >         57a50e2506df Btrfs: remove no longer needed range length checks for deduplication
-> >
-> > For any kernel without that cleanup patch, backporting the first patch
-> > in the series (the one touching only fs/read_write.c) is enough.
-> > For any kernel with that cleanup patch, then both patches in the
-> > series are needed.
-> >
-> > Thanks.
-> >
-> > >
-> > > Simply resolving the git conflict without including 57a50e2506df produces
-> > > a kernel where dedupe rounds the size of the dst file up to the next
-> > > block boundary.  This is because 57a50e2506df changes the value of
-> > > "len".  Before 57a50e2506df, "len" is equivalent to "ALIGN(len, bs)"
-> > > at the btrfs_clone line; after 57a50e2506df, "len" is the unaligned
-> > > dedupe request length passed to the btrfs_extent_same_range function.
-> > > This changes the semantics of the btrfs_clone line significantly.
-> > >
-> > > 57a50e2506df is in 5.1, so 5.1+ kernels do not require any additional
-> > > patches.
-> > >
-> > > 4.20 and earlier don't have the bug, so don't need a fix.
-> > >
-> > > >       btrfs_double_extent_unlock(src, loff, dst, dst_loff, len);
-> > > >
-> > > >       return ret;
-> > > > --
-> > > > 2.11.0
-> > > >
-> >
+Thanks,
+
+>  
+>  	/* block allocation */
+>  	__do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO, true);
+> @@ -101,14 +102,8 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+>  	if (PageMappedToDisk(page))
+>  		goto out_sem;
+>  
+> -	/* page is wholly or partially inside EOF */
+> -	if (((loff_t)(page->index + 1) << PAGE_SHIFT) >
+> -						i_size_read(inode)) {
+> -		loff_t offset;
+> -
+> -		offset = i_size_read(inode) & ~PAGE_MASK;
+> +	if (offset != PAGE_SIZE)
+>  		zero_user_segment(page, offset, PAGE_SIZE);
+> -	}
+>  	set_page_dirty(page);
+>  	if (!PageUptodate(page))
+>  		SetPageUptodate(page);
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index d33c7bc5ee92..1aaf157fd6e9 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -1062,24 +1062,16 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops)
+>  	struct page *page = vmf->page;
+>  	struct inode *inode = file_inode(vmf->vma->vm_file);
+>  	unsigned long length;
+> -	loff_t offset, size;
+> +	loff_t offset;
+>  	ssize_t ret;
+>  
+>  	lock_page(page);
+> -	size = i_size_read(inode);
+> -	offset = page_offset(page);
+> -	if (page->mapping != inode->i_mapping || offset > size) {
+> -		/* We overload EFAULT to mean page got truncated */
+> -		ret = -EFAULT;
+> +	ret = page_mkwrite_check_truncate(page, inode);
+> +	if (ret < 0)
+>  		goto out_unlock;
+> -	}
+> -
+> -	/* page is wholly or partially inside EOF */
+> -	if (offset > size - PAGE_SIZE)
+> -		length = offset_in_page(size);
+> -	else
+> -		length = PAGE_SIZE;
+> +	length = ret;
+>  
+> +	offset = page_offset(page);
+>  	while (length > 0) {
+>  		ret = iomap_apply(inode, offset, length,
+>  				IOMAP_WRITE | IOMAP_FAULT, ops, page,
+> diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
+> index cd52585c8f4f..91f7a1f2db0d 100644
+> --- a/fs/ubifs/file.c
+> +++ b/fs/ubifs/file.c
+> @@ -1563,8 +1563,7 @@ static vm_fault_t ubifs_vm_page_mkwrite(struct vm_fault *vmf)
+>  	}
+>  
+>  	lock_page(page);
+> -	if (unlikely(page->mapping != inode->i_mapping ||
+> -		     page_offset(page) > i_size_read(inode))) {
+> +	if (unlikely(page_mkwrite_check_truncate(page, inode) < 0)) {
+>  		/* Page got truncated out from underneath us */
+>  		goto sigbus;
+>  	}
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index 37a4d9e32cd3..ccb14b6a16b5 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -636,4 +636,32 @@ static inline unsigned long dir_pages(struct inode *inode)
+>  			       PAGE_SHIFT;
+>  }
+>  
+> +/**
+> + * page_mkwrite_check_truncate - check if page was truncated
+> + * @page: the page to check
+> + * @inode: the inode to check the page against
+> + *
+> + * Returns the number of bytes in the page up to EOF,
+> + * or -EFAULT if the page was truncated.
+> + */
+> +static inline int page_mkwrite_check_truncate(struct page *page,
+> +					      struct inode *inode)
+> +{
+> +	loff_t size = i_size_read(inode);
+> +	pgoff_t index = size >> PAGE_SHIFT;
+> +	int offset = offset_in_page(size);
+> +
+> +	if (page->mapping != inode->i_mapping)
+> +		return -EFAULT;
+> +
+> +	/* page is wholly inside EOF */
+> +	if (page->index < index)
+> +		return PAGE_SIZE;
+> +	/* page is wholly past EOF */
+> +	if (page->index > index || !offset)
+> +		return -EFAULT;
+> +	/* page is partially inside EOF */
+> +	return offset;
+> +}
+> +
+>  #endif /* _LINUX_PAGEMAP_H */
+> -- 
+> 2.20.1
