@@ -2,100 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC13713405E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 12:24:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3EAB13409C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 12:36:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726319AbgAHLYq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jan 2020 06:24:46 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:38841 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726107AbgAHLYq (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jan 2020 06:24:46 -0500
-Received: by mail-oi1-f193.google.com with SMTP id l9so2308613oii.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jan 2020 03:24:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=QFQ9MzNR3N8+jCKSFbC/snv1ofUy7bS229pDEsG4jtU=;
-        b=BfSBKC9urrCfL+mnO1wDRiAIf3kvrUAK0zCMfKv3A2Nivl2OaQw1dNxFOIBX86ylrP
-         rYgOOTUO/HQDnD/zc1XkjpuUASqyWQI9CzirZWviiktrYETdU6r8etl0Y0yxJGsSviuU
-         wEv2TR39OsGQRTp/K2XmYVevlUrZnvFmRFVreWJzXgegipHdKA0P+N4yFTPhBxkxC02D
-         M8s5WP2PPW04v+VK8lSTJQEU55xtHHLdyNrniaRMQ4K9BbYSHtJXAHHsiCfaJ3cElKzJ
-         9i0vt0PDlUiG9abu4hOGc/li01v0s9DqA8NBYZ9ycI3KftuOhCcz/h7nGEj14pX8YSu7
-         76EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=QFQ9MzNR3N8+jCKSFbC/snv1ofUy7bS229pDEsG4jtU=;
-        b=OMnj5uHynz5p98IyRvqu2gb5AWRZ4JB6QUZqQVznI8CF3UoO3X7UWT4uhUnm8kgDG+
-         qxCC247+19VLJ1PSodsRV0ceUA+ftojfymIG1EbG5vxHZkM0lAzEglOvsEfVB6G/qIgm
-         fBsvOs6wjbghxhFAWfFSUubJC271OA0i6OEV9FjIj4VOyQKVm/jGtIAhkpza1dzZgi+Q
-         92v2bVH+T+NsVZkfLSSHzz2fYTpHKnEEepvIQDnwFmLxRdKsCPHwJUEjNdK5rwjPBu/P
-         fVXC02sx1vkQGydHei0El2bHsmOMEvi/5yaQQcmPxUkdhjDYbABUoVjBVhjujAThRLNt
-         j/Lw==
-X-Gm-Message-State: APjAAAXXDIWs2oxyDdR6qKHpRL+FrqCKumUppgEmO2voHuGKgirhE0TL
-        4trUL834DBBMW4/zDIO1Rx2Fgg==
-X-Google-Smtp-Source: APXvYqzOWV+sbUpUBdYUxYwIk/nJwIoBL6vcjOmXeYbyU08FMkPZ2OYEZkrYkv7PKP8zAf5XscqRDw==
-X-Received: by 2002:aca:ab0e:: with SMTP id u14mr2709116oie.1.1578482685125;
-        Wed, 08 Jan 2020 03:24:45 -0800 (PST)
-Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id a74sm1002436oii.37.2020.01.08.03.24.43
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 08 Jan 2020 03:24:44 -0800 (PST)
-Date:   Wed, 8 Jan 2020 03:24:42 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Chris Mason <clm@fb.com>
-cc:     Dave Chinner <david@fromorbit.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Hugh Dickins <hughd@google.com>,
-        Chris Down <chris@chrisdown.name>,
-        Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [PATCH v5 2/2] tmpfs: Support 64-bit inums per-sb
-In-Reply-To: <4E9DF932-C46C-4331-B88D-6928D63B8267@fb.com>
-Message-ID: <alpine.LSU.2.11.2001080259350.1884@eggly.anvils>
-References: <cover.1578225806.git.chris@chrisdown.name> <ae9306ab10ce3d794c13b1836f5473e89562b98c.1578225806.git.chris@chrisdown.name> <20200107001039.GM23195@dread.disaster.area> <20200107001643.GA485121@chrisdown.name> <20200107003944.GN23195@dread.disaster.area>
- <CAOQ4uxjvH=UagqjHP_71_p9_dW9wKqiaWujzY1xKe7yZVFPoTA@mail.gmail.com> <alpine.LSU.2.11.2001070002040.1496@eggly.anvils> <CAOQ4uxiMQ3Oz4M0wKo5FA_uamkMpM1zg7ydD8FXv+sR9AH_eFA@mail.gmail.com> <20200107210715.GQ23195@dread.disaster.area>
- <4E9DF932-C46C-4331-B88D-6928D63B8267@fb.com>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        id S1727186AbgAHLgR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jan 2020 06:36:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56344 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726098AbgAHLgR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Jan 2020 06:36:17 -0500
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 07D2B20656;
+        Wed,  8 Jan 2020 11:36:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578483376;
+        bh=6l5MrTMa36YQHowQlrBJo4LPKmB21icAwjOtvtoNU7I=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=GK8Ncn/C5GO4nYCOUjSepzM9ghLttFM3Ui24XFm6Ca5/t2HcuGXOM349u2zy7G6h7
+         qXMkhbiAS1E0bIhCp0wXKgQyP7TIcLVcE6pr2HEVWrHdN/MFKD+1QdmvewSPILpnMP
+         vJ2PG1d5aedv5Llsy67T52cyGK651AR0rKwFDbwA=
+Received: by mail-ua1-f48.google.com with SMTP id c14so960832uaq.11;
+        Wed, 08 Jan 2020 03:36:15 -0800 (PST)
+X-Gm-Message-State: APjAAAWCwtbAAYnUG8FbsSEpcTAZdceLqakMYZcbvq9qkJDOBMkCQQFV
+        x8lNYoOL7WtraFoTK+d3dd8xWY8ffF+KpLilybs=
+X-Google-Smtp-Source: APXvYqxBYjnwEvjxQOq9WcUn/wTWUag1L2k2a/9dif0jVh9/EZ1sln6m0OjzOjjXtG45Zb5xZ8wQi8owxM8/s5KEM+s=
+X-Received: by 2002:ab0:738c:: with SMTP id l12mr2749363uap.135.1578483375023;
+ Wed, 08 Jan 2020 03:36:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+References: <20191216182656.15624-1-fdmanana@kernel.org> <20191216182656.15624-2-fdmanana@kernel.org>
+ <CAL3q7H5+CMRkJ9yAa2AeB0aKtA=b_yW2g9JSQwCOhOtLNrH1iQ@mail.gmail.com> <20200107175739.GC472651@magnolia>
+In-Reply-To: <20200107175739.GC472651@magnolia>
+From:   Filipe Manana <fdmanana@kernel.org>
+Date:   Wed, 8 Jan 2020 11:36:04 +0000
+X-Gmail-Original-Message-ID: <CAL3q7H5TuaLDW3aXSa68pxvLu4s1Gg38RRSRyA430LxK302k3A@mail.gmail.com>
+Message-ID: <CAL3q7H5TuaLDW3aXSa68pxvLu4s1Gg38RRSRyA430LxK302k3A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fs: allow deduplication of eof block into the end of
+ the destination file
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>,
+        Filipe Manana <fdmanana@suse.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 7 Jan 2020, Chris Mason wrote:
-> On 7 Jan 2020, at 16:07, Dave Chinner wrote:
-> 
-> > IOWs, there are *lots* of 64bit inode numbers out there on XFS
-> > filesystems....
-> 
-> It's less likely in btrfs but +1 to all of Dave's comments.  I'm happy 
-> to run a scan on machines in the fleet and see how many have 64 bit 
-> inodes (either buttery or x-y), but it's going to be a lot.
+On Tue, Jan 7, 2020 at 5:57 PM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+>
+> On Tue, Jan 07, 2020 at 04:23:15PM +0000, Filipe Manana wrote:
+> > On Mon, Dec 16, 2019 at 6:28 PM <fdmanana@kernel.org> wrote:
+> > >
+> > > From: Filipe Manana <fdmanana@suse.com>
+> > >
+> > > We always round down, to a multiple of the filesystem's block size, the
+> > > length to deduplicate at generic_remap_check_len().  However this is only
+> > > needed if an attempt to deduplicate the last block into the middle of the
+> > > destination file is requested, since that leads into a corruption if the
+> > > length of the source file is not block size aligned.  When an attempt to
+> > > deduplicate the last block into the end of the destination file is
+> > > requested, we should allow it because it is safe to do it - there's no
+> > > stale data exposure and we are prepared to compare the data ranges for
+> > > a length not aligned to the block (or page) size - in fact we even do
+> > > the data compare before adjusting the deduplication length.
+> > >
+> > > After btrfs was updated to use the generic helpers from VFS (by commit
+> > > 34a28e3d77535e ("Btrfs: use generic_remap_file_range_prep() for cloning
+> > > and deduplication")) we started to have user reports of deduplication
+> > > not reflinking the last block anymore, and whence users getting lower
+> > > deduplication scores.  The main use case is deduplication of entire
+> > > files that have a size not aligned to the block size of the filesystem.
+> > >
+> > > We already allow cloning the last block to the end (and beyond) of the
+> > > destination file, so allow for deduplication as well.
+> > >
+> > > Link: https://lore.kernel.org/linux-btrfs/2019-1576167349.500456@svIo.N5dq.dFFD/
+> > > Signed-off-by: Filipe Manana <fdmanana@suse.com>
+> >
+> > Darrick, Al, any feedback?
+>
+> Is there a fstest to check for correct operation of dedupe at or beyond
+> source and destfile EOF?  Particularly if one range is /not/ at EOF?
 
-Dave, Amir, Chris, many thanks for the info you've filled in -
-and absolutely no need to run any scan on your fleet for this,
-I think we can be confident that even if fb had some 15-year-old tool
-in use on its fleet of 2GB-file filesystems, it would not be the one
-to insist on a kernel revert of 64-bit tmpfs inos.
+Such as what generic/158 does already?
 
-The picture looks clear now: while ChrisD does need to hold on to his
-config option and inode32/inode64 mount option patch, it is much better
-left out of the kernel until (very unlikely) proved necessary.
 
-Thanks,
-Hugh
+> And that an mmap read of the EOF block will see zeroes past EOF before
+> and after the dedupe operation?
+
+Can you elaborate a bit more? Why an mmap read and not a buffered or a
+direct IO read before and after deduplication?
+Is there anything special for the mmap reads on xfs, is that your
+concern? Or is the idea to deduplicate while the file is mmap'ed?
+
+>
+> If I fallocate a 16k file, write 'X' into the first 5000 bytes,
+> write 'X' into the first 66,440 bytes (60k + 5000) of a second file, and
+> then try to dedupe (first file, 0-8k) with (second file, 60k-68k),
+> should that work?
+
+You haven't mentioned the size of the second file, nor if the first
+file has a size of 16K which I assume (instead of fallocate with the
+keep size flag).
+
+Anyway, I assume you actually meant to dedupe the range 0 - 5000 from
+the first file into the range 60k - 60k + 5000 of the second file, and
+that the second file has a size of 60k + 5000.
+If so, that fails with -EINVAL because the source range is not block
+size aligned, and we already have generic fstests that test attempt to
+duplication and clone non-aligned ranges that don't end at eof.
+This patch doesn't change that behaviour, it only aims to allow
+deduplication of the eof block of the source file into the eof of the
+destination file.
+
+
+>
+> I'm convinced that we could support dedupe to EOF when the ranges of the
+> two files both end at the respective file's EOF, but it's the weirder
+> corner cases that I worry about...
+
+Well, we used to do that in btrfs before migrating to the generic code.
+Since I discovered the corruption due to deduplication of the eof
+block into the middle of a file in 2018's summer, the btrfs fix
+allowed deduplication of the eof block only if the destination end
+offset matched the eof of the destination file:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=de02b9f6bb65a6a1848f346f7a3617b7a9b930c0
+
+Since then no issues were found nor users reported any problems so far.
+
+Any other specific test you would like to see?
+
+Thanks.
+
+>
+> --D
+>
+> > Thanks.
+> >
+> > > ---
+> > >  fs/read_write.c | 10 ++++------
+> > >  1 file changed, 4 insertions(+), 6 deletions(-)
+> > >
+> > > diff --git a/fs/read_write.c b/fs/read_write.c
+> > > index 5bbf587f5bc1..7458fccc59e1 100644
+> > > --- a/fs/read_write.c
+> > > +++ b/fs/read_write.c
+> > > @@ -1777,10 +1777,9 @@ static int remap_verify_area(struct file *file, loff_t pos, loff_t len,
+> > >   * else.  Assume that the offsets have already been checked for block
+> > >   * alignment.
+> > >   *
+> > > - * For deduplication we always scale down to the previous block because we
+> > > - * can't meaningfully compare post-EOF contents.
+> > > - *
+> > > - * For clone we only link a partial EOF block above the destination file's EOF.
+> > > + * For clone we only link a partial EOF block above or at the destination file's
+> > > + * EOF.  For deduplication we accept a partial EOF block only if it ends at the
+> > > + * destination file's EOF (can not link it into the middle of a file).
+> > >   *
+> > >   * Shorten the request if possible.
+> > >   */
+> > > @@ -1796,8 +1795,7 @@ static int generic_remap_check_len(struct inode *inode_in,
+> > >         if ((*len & blkmask) == 0)
+> > >                 return 0;
+> > >
+> > > -       if ((remap_flags & REMAP_FILE_DEDUP) ||
+> > > -           pos_out + *len < i_size_read(inode_out))
+> > > +       if (pos_out + *len < i_size_read(inode_out))
+> > >                 new_len &= ~blkmask;
+> > >
+> > >         if (new_len == *len)
+> > > --
+> > > 2.11.0
+> > >
