@@ -2,107 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACEF5134C32
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 20:53:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F103C134C38
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 20:56:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726583AbgAHTxi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jan 2020 14:53:38 -0500
-Received: from mout.kundenserver.de ([217.72.192.74]:34317 "EHLO
+        id S1726820AbgAHT4E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jan 2020 14:56:04 -0500
+Received: from mout.kundenserver.de ([212.227.126.133]:60149 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726129AbgAHTxi (ORCPT
+        with ESMTP id S1725835AbgAHT4D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jan 2020 14:53:38 -0500
-Received: from mail-qv1-f42.google.com ([209.85.219.42]) by
- mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MowX2-1jTWZy1Ixq-00qV6s; Wed, 08 Jan 2020 20:53:36 +0100
-Received: by mail-qv1-f42.google.com with SMTP id o18so1968763qvf.1;
-        Wed, 08 Jan 2020 11:53:36 -0800 (PST)
-X-Gm-Message-State: APjAAAUZLPRLKxsGpRz/QG6xdozAa4DoKL3IPVWytmaMXZZIJjzMaMiV
-        j5mA/YdTcN2b41bgK7sIX1EO+cNAxKIssljLPO4=
-X-Google-Smtp-Source: APXvYqzz1FEb17HQw2MzP9KbuWTRpvX3DXpUClw6P4CBrHAMSrHr5EA6+oQLpF/hUblCQhUOBZ7UJ10/HWIJ7uNh/OU=
-X-Received: by 2002:a0c:bd20:: with SMTP id m32mr5713916qvg.197.1578513215022;
- Wed, 08 Jan 2020 11:53:35 -0800 (PST)
+        Wed, 8 Jan 2020 14:56:03 -0500
+Received: from mail-qt1-f178.google.com ([209.85.160.178]) by
+ mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1Mxlmw-1jcQTU0aQ2-00zIlg; Wed, 08 Jan 2020 20:56:02 +0100
+Received: by mail-qt1-f178.google.com with SMTP id w30so2620613qtd.12;
+        Wed, 08 Jan 2020 11:56:01 -0800 (PST)
+X-Gm-Message-State: APjAAAUr9p1t5xLdjB4/S5bY2JYHzKX7xwPORP5J+0dO8Ixmrm/HIQiW
+        33AtIk4D4dzNSs5NnKoYQireHBkPyW9WEn1H2CM=
+X-Google-Smtp-Source: APXvYqzXK0rfPwBftQB0RE1XIgRMNTUIw9qK3d59ooAvjGuihoB6fVlODosXZOAlUf75nlJAib+A4QY+RHOs+9BOv3E=
+X-Received: by 2002:ac8:3a27:: with SMTP id w36mr5029098qte.204.1578513360994;
+ Wed, 08 Jan 2020 11:56:00 -0800 (PST)
 MIME-Version: 1.0
-References: <CGME20191119071406epcas1p285f075eac966cfdd6f79362ecc433d6b@epcas1p2.samsung.com>
- <20191119071107.1947-1-namjae.jeon@samsung.com> <20191119071107.1947-10-namjae.jeon@samsung.com>
-In-Reply-To: <20191119071107.1947-10-namjae.jeon@samsung.com>
+References: <CGME20191220062733epcas1p31665a3ae968ab8c70d91a3cddf529e73@epcas1p3.samsung.com>
+ <20191220062419.23516-1-namjae.jeon@samsung.com> <20191220062419.23516-3-namjae.jeon@samsung.com>
+In-Reply-To: <20191220062419.23516-3-namjae.jeon@samsung.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 8 Jan 2020 20:53:18 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a2_-xkiV0EeemKDNgsU+Xv+fROmsTUa6j0hBaQSCPKMag@mail.gmail.com>
-Message-ID: <CAK8P3a2_-xkiV0EeemKDNgsU+Xv+fROmsTUa6j0hBaQSCPKMag@mail.gmail.com>
-Subject: Re: [PATCH v2 09/13] exfat: add misc operations
+Date:   Wed, 8 Jan 2020 20:55:44 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a1wcrKzhhODwoQTu=WHorkd+dQThk+G9w77QSgJ=LnR4A@mail.gmail.com>
+Message-ID: <CAK8P3a1wcrKzhhODwoQTu=WHorkd+dQThk+G9w77QSgJ=LnR4A@mail.gmail.com>
+Subject: Re: [PATCH v8 02/13] exfat: add super block operations
 To:     Namjae Jeon <namjae.jeon@samsung.com>
 Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
         gregkh <gregkh@linuxfoundation.org>,
         Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Christoph Hellwig <hch@lst.de>, linkinjeon@gmail.com,
-        Markus.Elfring@web.de, sj1557.seo@samsung.com
+        Christoph Hellwig <hch@lst.de>, sj1557.seo@samsung.com,
+        linkinjeon@gmail.com
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:jRwLuZZDM0g+KFqNC89Z06v7rG4UYhEHg+LwMdad9ssopYREh3s
- VzybyV7HsdLjm7JB42xcCirw2KHBt+9RbX1/VkgeyvxHxyMxnwRf3xHTq+YICIYeraADjRr
- 9H+M5TpdfPtyTfOGuSPb6UwubJQVbMfSlwoXiBJjNclty+wcq8jyp58EpjXXyw5OTEpaphO
- XisG/OA3IozM7BiGS7/+Q==
+X-Provags-ID: V03:K1:OpI7f7DP2Jh+tQ8zk/scRoTVj3fVoxTOYwxnefLYPhlQ6ME51lW
+ jwWFn6yGu7sSanIpQ7ZeyGWPGuEFQPtpN1SuEb3VU5wwG1rAGENGnATeA1kupI+0GkszRpX
+ jKP3H4gykBaDQlpBKdEZmhe8KUYVMLs6AsHiOcY9IajUoDBLfYF+5qr4h+g0i/NHA4MdrzQ
+ 0L+F3T/F83lrp/udgHrlQ==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:iYqflDIp2fY=:HguQYxkFQEPXp+GtBYr94O
- YKql0y34sQIth81A4+xX3aSvoWQvWoERBfu8SHmWzbFGrmdh/xvM1xslro/ggzcEngRCP3ufC
- XdUh5CNUCEjN+2bWbwPymkyWiN76Tfz9IPL2FPcbtrg84DjA8DkAtPn+dcBwBl/8vkqRH2A44
- MdV4GBNey28NO3DAJz9LjojYIjM3y9dSfEXmMVOpLPY5MSLFkOizgh+51+EsKsrYEWXp3fK+8
- usLqfDSOGyiTH3oMrkkozhVwpUhGLIYW/tqatZSrInrKAPupaeoH+UPDl5+kwRKWLlf1Nne95
- OapS5YSz1B/o4st+d/dKoyqrKfnXBIk6P6lSw62SUcV+i3s3kXc4/DmoJ8hhi0wbm78qAT0hx
- WYDh4887oT1Mnc/NrpT5xRVK3/bNA7tOZyb6V+HLxuaMZOfiFduDmt9KJuzlNL+5LcRmsLNk4
- VhZaE+1SQaRFeY2AygqGMZTj2zh0XGrtUFfV+fKgcQL3RBNGIckvYXgDfPfim+WevKwJfGGEB
- PTD8RR6GKf2TiAgE3TGfT2Zsivd/Ng0tp7MOMUHe1dMFI+LGDE89b/rHguWWLldbtTltXmTbc
- f3EH42gcezVSqA611A4g9eqUgrGq+LBxI8yv61onOos2CDdxkMkvaLOu+/Bj7u/RM/iX5yoxw
- Ki9y+Pgg/b3uuoH8pfHOfOb2QhCzptZPAy5zOKo46mT7uUKJi6p6y/LTtseCd4eXBFlitgVaz
- acOKBZLvq8a9Ci2744yZfgnA/0ZX6mRpwyFXxMYJoKDmqkwfYB311YgRaAc7yzlXIryrAnrez
- MX+NmhW/e/79Plla2dkftfF5+wcIzF5s0tGl4sJUGTiVvdijentI7UukN+2hroDWRSV0OFDXQ
- 8Q/v4ybSwjJ6TpZytmjA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Fam8oH3bCN4=:KE6Y2BgatYDMgkEeOTiUvy
+ srhYE9igrfZ6MtuHhh5I7GEx5t9fwJYsDca54GJVJTm1qkuq//rUo6Jxz9gL7W/wSnYQP7Kwh
+ kjiqkOxDFWDxG21i2O/P4jSIyqXvkhlppRw/zG0P1GN0J4kbiVdZAXTkHS1Oapk7yOBu44NCo
+ ETd+eX1AcnOTSXwG3+aAwKqw4YHyOIvWUUt5c8/zIszQD9gbK9m4AF6oI5UDaQRkYBgKF2TmL
+ Np7L7tHHk4AH7tRR1nr0D3zC//4B1js6GxI8AKnS3KsPAOxrcXP2m/PTvAVRQ/mm1QGquEQff
+ wVjPylyK8PfRFJOhuccS3y9kHFLRH/EZukkJroygBrFMX6bGJgc47M3OtZ9NREG/yTCOkYRFY
+ FoH0lojuEiYSAA98sSi+SfUWWYrVSI4dylHmfK2h3ba8RKDEXK8CK4RedYQvtzLkKvNhy9f7b
+ o7V5PYlwoCRv1ns0GLRRNJRjcL6/hKfHtG+vrlyxmRAgkoy1utm96nXa006PrAZrBeKFYSfOb
+ yENdJt14svhqG1hoKEDmzELgRgmtk0lK350xdMB+vst286V/QEOEZV253OU3TNz8Ntvb8P3D1
+ M1p0X547yUXiIg3gUMKADCICb5FcXgLCpVLoy8b/95XHQP9zGGiC0dJB2QOUazBG+p/jskodG
+ y+Ao2sscy7er7I7CLi+BA1DomuW+cRV+y+bUG7KauYKKVhoo/u3vuD9HRtoE0V3xdMPjLP/QL
+ 4ouwHMyy3gL+Cwh0BWqQBsDrJ2fR7IYZ9c0/fWmZ5s+2qu5BKkbpAFxNcVYI/dRxGHWTkvkRe
+ lINU/L5elEQZJjkvG1a/xj5Gh4EAc2r1FhFImb2oNBT3JrhUotBpHfuCUy6oKQsHeGJqXPOtZ
+ WqKVLVc78cNPJG+sK/Xw==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 8:16 AM Namjae Jeon <namjae.jeon@samsung.com> wrote:
+On Fri, Dec 20, 2019 at 7:28 AM Namjae Jeon <namjae.jeon@samsung.com> wrote:
 
-> +/* <linux/time.h> externs sys_tz
-> + * extern struct timezone sys_tz;
-> + */
-> +#define UNIX_SECS_1980    315532800L
+> +static int exfat_fill_super(struct super_block *sb, struct fs_context *fc)
+> +{
+> +       struct exfat_sb_info *sbi = sb->s_fs_info;
+> +       struct exfat_mount_options *opts = &sbi->options;
+> +       struct inode *root_inode;
+> +       int err;
 > +
-> +#if BITS_PER_LONG == 64
-> +#define UNIX_SECS_2108    4354819200L
-> +#endif
+> +       if (opts->allow_utime == (unsigned short)-1)
+> +               opts->allow_utime = ~opts->fs_dmask & 0022;
 > +
-> +/* days between 1970/01/01 and 1980/01/01 (2 leap days) */
-> +#define DAYS_DELTA_DECADE    (365 * 10 + 2)
-> +/* 120 (2100 - 1980) isn't leap year */
-> +#define NO_LEAP_YEAR_2100    (120)
-> +#define IS_LEAP_YEAR(y)    (!((y) & 0x3) && (y) != NO_LEAP_YEAR_2100)
+> +       if (opts->utf8 && strcmp(opts->iocharset, exfat_iocharset_with_utf8)) {
+> +               exfat_msg(sb, KERN_WARNING,
+> +                       "utf8 enabled, \"iocharset=%s\" is recommended",
+> +                       exfat_iocharset_with_utf8);
+> +       }
 > +
-> +#define SECS_PER_MIN    (60)
-> +#define SECS_PER_HOUR   (60 * SECS_PER_MIN)
-> +#define SECS_PER_DAY    (24 * SECS_PER_HOUR)
-
-None of this code should exist, just use time64_to_tm() and tm_to_time64()
-
-> +       if (!sbi->options.tz_utc)
-> +               ts->tv_sec += sys_tz.tz_minuteswest * SECS_PER_MIN;
-
-I would make tz_utc the default here. Not sure what windows uses or what
-the specification says, but sys_tz is a rather unreliable interface, and it's
-better to not use that at all if it can be avoided.
-
-It may be useful to have a mount option for the time zone offset instead.
-
-> +       ts->tv_nsec = 0;
-> +}
+> +       if (opts->discard) {
+> +               struct request_queue *q = bdev_get_queue(sb->s_bdev);
 > +
-> +/* Convert linear UNIX date to a FAT time/date pair. */
-> +void exfat_time_unix2fat(struct exfat_sb_info *sbi, struct timespec64 *ts,
-> +               struct exfat_date_time *tp)
+> +               if (!blk_queue_discard(q))
+> +                       exfat_msg(sb, KERN_WARNING,
+> +                               "mounting with \"discard\" option, but the device does not support discard");
+> +               opts->discard = 0;
+> +       }
+> +
+> +       sb->s_flags |= SB_NODIRATIME;
+> +       sb->s_magic = EXFAT_SUPER_MAGIC;
+> +       sb->s_op = &exfat_sops;
 
-This is basically time64_to_tm(), just be careful about to check whether
-months are counted from 1 or 0.
+I don't see you set up s_time_gran, s_time_min and s_time_max
+anywhere. Please fill those to get the correct behavior. That also lets
+you drop the manual truncation of the values.
 
        Arnd
