@@ -2,116 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14A63134B2A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 20:02:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB494134B45
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 20:09:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728481AbgAHTCC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jan 2020 14:02:02 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:33641 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727585AbgAHTCC (ORCPT
+        id S1729887AbgAHTJH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jan 2020 14:09:07 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44302 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726803AbgAHTJH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jan 2020 14:02:02 -0500
-Received: by mail-wm1-f66.google.com with SMTP id d139so315097wmd.0;
-        Wed, 08 Jan 2020 11:02:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=NKyuYRQqoZHQmqzlPg1E+wM60Q1zmjCJTKBWatUXfXk=;
-        b=BHmluhRLje+ldzmTar8OvemUfNfab+NKjpFXegQMxLK1sOFc8LvcISUvn2w1d7z/zG
-         MuwIFw+xGnLP1BQeLzB1xipV1bdLSvnRLpcCnbrHeX3w8sMiA9Ez+1GvqJ1KdPGpR6t+
-         4+CG5Ve55+QrajvbGlAtYaItP9g1sgo1ezpawJQhjYaxJqsrpgaFr9dMYeTPwGrDI3lL
-         AhA6HrSyTqJmwqqzqMx6lcStZZFRNK67jhIfA86L8ErQZZ3k4jgzZym+d4FG6YelslNK
-         fqi8wWcOja2Tj2IF1AxeHL3v5Eyi+ccs7OWW+cA9vE0WMHcY3c0Dc1JVe9hUN50DqQBr
-         NIFw==
+        Wed, 8 Jan 2020 14:09:07 -0500
+Received: by mail-wr1-f65.google.com with SMTP id q10so4565905wrm.11;
+        Wed, 08 Jan 2020 11:09:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NKyuYRQqoZHQmqzlPg1E+wM60Q1zmjCJTKBWatUXfXk=;
-        b=ZGjO5+x7YAN4MmMMUS1s1kHXiMPE/fSF9dQpACZEVJvum8UnYot+dPStGq/IFUYrpM
-         0Q5JE/23MZ3NsXeOA9nIhCbD5ZGsrwnYMloPJCZ5Gu3KZdW4dB2nynqF4RvL/SVx4Yit
-         eRL+cm/Utzgpc+/CJQX84Sd23D8yWMcaGDusfvO/3hZonJx5nmXjDOCCcUODYUpofxHz
-         j03HrbI9kMEtBmp/ebBKUL15Wn0N7PZZ7v9m/Qjvcif1GDhFyQC1DluEcYbaxp4BumIT
-         mmuoWMjbcoVvJCaDfrimAOAK8dnZjKn4ccSqfp3ILxow252r0VhK9Q3dgvvr5pCri2rA
-         vnTg==
-X-Gm-Message-State: APjAAAVFYj514ofv1eqD8/HSLcWsQ5ww6LZtc0GUej8RvG5eKuPJ6u4R
-        zNP+XuN5K3aCD4dDX0TutCY=
-X-Google-Smtp-Source: APXvYqzl0+rJwKsJeB3IpgRSeWetj8+Ny3enXPHmRQSd27kIk5j/gKXHBeYXvA8rGm/pN05qwGROOg==
-X-Received: by 2002:a1c:9d8b:: with SMTP id g133mr68958wme.27.1578510121032;
-        Wed, 08 Jan 2020 11:02:01 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id f127sm71520wma.4.2020.01.08.11.01.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jan 2020 11:02:00 -0800 (PST)
-Date:   Wed, 8 Jan 2020 20:01:59 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Markus Elfring <Markus.Elfring@web.de>,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        linkinjeon@gmail.com
-Subject: Re: [v8 08/13] exfat: add exfat cache
-Message-ID: <20200108190159.rfizxzi3tujpp7ck@pali>
-References: <CAKYAXd8Ed18OYYrEgwpDZooNdmsKwFqakGhTyLUgjgfQK39NpQ@mail.gmail.com>
- <f253ed6a-3aae-b8df-04cf-7d5c0b3039f2@web.de>
- <20200108180819.3gt6ihm4w2haustn@pali>
- <20200108184616.GA15429@lst.de>
+        bh=EDt9PpnWYw9+1uM3iek2is+z9rkEsgm1w44H6sertTc=;
+        b=dVqtXlkAXEi/9UJPPsX+UGIYgpXve2s1HFxP6xtAVZf8NJmh1ES+yeZ0QjnYcUbExI
+         ettOyqIfHCpSs79eEedeeJPoqDx3z4ArfOWFSl0nhMjFp1WUxD3ntqwUBSJkSwDAguAQ
+         pqk77oyUlax6ChTuUpUuGyXGcjpBdEoP1DoGEAj68y3SsB+KaoNiGN47kxfoRY3v2d2t
+         aYeJRcXWcUP4ArA35L2fXEbdzkPyYRRXVd2e1wVo9tsPVFTjg66UP2MBmie0kAxsqSyt
+         l5zl26C78PjIkwAPEv9BvNXQygrWoHdFOywgSgWsgBbS+DvdUKiLLlsJgn4rrAXNCLe1
+         UEXg==
+X-Gm-Message-State: APjAAAW3KOp/QqfdCde0+ZuAn/el9YtCBdjKelaOoNrdseBVUJYu7GKB
+        HtgRk0rhzWA8XLkUnETNsv4=
+X-Google-Smtp-Source: APXvYqyJVrHpKvwQw0WvOKVuy9aPtIbMWBNlGnRkVPXKDkNRRrwoqwysf3uNntLZ4Qp4lyZXxG9ixw==
+X-Received: by 2002:adf:f586:: with SMTP id f6mr6115866wro.46.1578510545450;
+        Wed, 08 Jan 2020 11:09:05 -0800 (PST)
+Received: from darkstar ([2a04:ee41:4:500b:c62:197d:80dc:1629])
+        by smtp.gmail.com with ESMTPSA id b16sm5451110wrj.23.2020.01.08.11.09.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 08 Jan 2020 11:09:04 -0800 (PST)
+Date:   Wed, 8 Jan 2020 20:08:52 +0100
+From:   Patrick Bellasi <patrick.bellasi@matbug.net>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Qais Yousef <qais.yousef@arm.com>, Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        valentin.schneider@arm.com, qperret@google.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] sched/rt: Add a new sysctl to control uclamp_util_min
+Message-ID: <20200108190852.GB9635@darkstar>
+References: <20191220164838.31619-1-qais.yousef@arm.com>
+ <20200108134448.GG2844@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="3ydy4x3myfhpwesm"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200108184616.GA15429@lst.de>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20200108134448.GG2844@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 08-Jan 14:44, Peter Zijlstra wrote:
+> On Fri, Dec 20, 2019 at 04:48:38PM +0000, Qais Yousef wrote:
+> > RT tasks by default try to run at the highest capacity/performance
+> > level. When uclamp is selected this default behavior is retained by
+> > enforcing the uclamp_util_min of the RT tasks to be
+> > uclamp_none(UCLAMP_MAX), which is SCHED_CAPACITY_SCALE; the maximum
+> > value.
+> > 
+> > See commit 1a00d999971c ("sched/uclamp: Set default clamps for RT tasks").
+> > 
+> > On battery powered devices, this default behavior could consume more
+> > power, and it is desired to be able to tune it down. While uclamp allows
+> > tuning this by changing the uclamp_util_min of the individual tasks, but
+> > this is cumbersome and error prone.
+> > 
+> > To control the default behavior globally by system admins and device
+> > integrators, introduce the new sysctl_sched_rt_uclamp_util_min to
+> > change the default uclamp_util_min value of the RT tasks.
+> > 
+> > Whenever the new default changes, it'd be applied on the next wakeup of
+> > the RT task, assuming that it still uses the system default value and
+> > not a user applied one.
+> 
+> This is because these RT tasks are not in a cgroup or not affected by
+> cgroup settings? I feel the justification is a little thin here.
 
---3ydy4x3myfhpwesm
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+RT task are kind of special right now. To keep simple the initial
+implementation we hardcoded the behavior: always run at max OPP unless
+explicitely asked by a task-specific value.
 
-On Wednesday 08 January 2020 19:46:16 Christoph Hellwig wrote:
-> On Wed, Jan 08, 2020 at 07:08:19PM +0100, Pali Roh=C3=A1r wrote:
-> > On Thursday 02 January 2020 11:19:26 Markus Elfring wrote:
-> > > > I am planning to change to share stuff included cache with fat after
-> > > > exfat upstream.
-> > >=20
-> > > Can unwanted code duplication be avoided before?
-> >=20
-> > +1 Could it be possible?
->=20
-> Let's defer that until we have the code upstream.
+To add a system wide setting specifically for RT tasks, we need to
+generalize what we already do for CFS tasks and keep the behavior of
+the two classes aligned (apart for the default value).
+IOW, no rt.c specific code should be required.
 
-Ok.
+> > If the uclamp_util_min of an RT task is 0, then the RT utilization of
+> > the rq is used to drive the frequency selection in schedutil for RT
+> > tasks.
+> 
+> Did cpu_uclamp_write() forget to check for input<0 ?
 
-> Getting rid
-> of the staging version and having proper upstream exfat support
-> should be a priority for now, especially as sharing will involve
-> coordination with multiple maintainers.  If it works out nicely
-> I'm all for it, though!
+The cgroup API uses percentages, which gets only sanitized [0..100].00
+values.
 
-Fine for me.
+Moreover, capacity_from_percent() returns a uclamp_request.util which
+is a u64. Thus, there should not be issues related to negative values.
+Writing such a value should just fail the write syscall.
 
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
 
---3ydy4x3myfhpwesm
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+#include <best/regards.h>
 
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXhYnJQAKCRCL8Mk9A+RD
-Urr0AJ9sl0GoHqDf4d0r/LAkz/EY6TXsWACgiC5lR8ZgyX6u+tkMscKZDEHCtCM=
-=RcXx
------END PGP SIGNATURE-----
-
---3ydy4x3myfhpwesm--
+Patrick Bellasi
