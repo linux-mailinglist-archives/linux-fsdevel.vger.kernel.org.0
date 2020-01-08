@@ -2,114 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 205E4133E8B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 10:51:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2524133F43
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 11:26:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727088AbgAHJvO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jan 2020 04:51:14 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45869 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726087AbgAHJvO (ORCPT
+        id S1727754AbgAHK0H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jan 2020 05:26:07 -0500
+Received: from mail-il1-f179.google.com ([209.85.166.179]:37416 "EHLO
+        mail-il1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726252AbgAHK0H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jan 2020 04:51:14 -0500
-Received: by mail-wr1-f65.google.com with SMTP id j42so2577101wrj.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jan 2020 01:51:13 -0800 (PST)
+        Wed, 8 Jan 2020 05:26:07 -0500
+Received: by mail-il1-f179.google.com with SMTP id t8so2240028iln.4;
+        Wed, 08 Jan 2020 02:26:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SYIX5lCn201jIdgFI8cXaaFqyTSNVacx0tO+JKzdFG8=;
-        b=wFe4jLFlUg6FK/9/5dItkW8JnJTzFY6w0imwJZ4kbornDo9YbT0RTpZrEXYpRk3f2+
-         LbZP1U3K/1Lxn/KAIeCt9oa6+rXtwlLJqhrhfukloDcA4lwxBCaoUawe2cJnb+XvkI0s
-         MsvlKQuetVXhoYv9leB4T/Ue6x3fCj4Y6ayzOo8x2ikfD7GhXK0OjdkR2PVp8RWqF6Mx
-         ncaY+Spy4k/ppc6qECRxF3IKEUsaZEh9onRO5Wv99KmxM79jC+rfAkkKbPNf+EtVzlK2
-         7gJ+PwLkSl+PYgIqgq+DOvQL6kh3W2L6cspPM5q43ZQiUis1/byKsxDf/j9lkw5im1Ki
-         hX/w==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tyB3mOjJSrqsONVsfz+3VJfm9oi9nwp6r77cUhFGmWs=;
+        b=emsIw5nTLQgoJ5U5y9FPsPIDZ+SCATb3XciZ3ntV046jVJg6CtjENgnxFdqg6OeJnV
+         wR3DX1bEdpvq9pQ5MXFbcn2ikCLvcmrtQJAgH/Ue8PCROcXByhrV4YfEwuMXjDkxH+SD
+         pMT11T4/aQF2bSMiyi86PYhiQmfIP24qAH3ztjUxFta8dsvNF1Prmmw0MoRpgfg1ZVGo
+         J25hg24V8rvHkRs72ZkX9G5unb6b/3AvFE26vH7UipD7yFpsiija6kGVgnaEapVsxLK2
+         TSro/xCUMCYPoidBkS6Bc7a2fA6w4bsKPvzlt+/r+WDBVwN0JfeBkk2+v1dIiCrppvLQ
+         GjHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SYIX5lCn201jIdgFI8cXaaFqyTSNVacx0tO+JKzdFG8=;
-        b=GN6963YeEvMgWsfTj4e68t8slk0v44amNEasF0tVPmCncFrMwtFuDIzd/VKbIOdaq7
-         BSfsC9MSIDyN2pXQvWrzPUkchhO09zlN/ZxSg+UitqsYKXg8+XIv4KzPVinZHC3WlDUo
-         jzoDwSxTM1hLoA6MZntpSkjmU09IxsyzY2vf1lw703EhvROS6NIisPmf99KIU+QUO+8k
-         eVV0K6BSd1a1IzbtErCI9I3cQQfudDUm5I1lkchamZN6qlkFMkhoed7iHn6lR3jmmW9Y
-         v+1oInsB8AXNmfmhMcYTvmrO65hTCGIq239Ks6UGv2XI5fz66aKM5Gbf+Lp4CbTSdmLs
-         hgeg==
-X-Gm-Message-State: APjAAAX8rv6eXP2g//jsK4VF6wuqtxmGC+KUhGooaSgOGcjZq3vDVICb
-        c5FH7XL3GhXHLErekNZWj9YG4g==
-X-Google-Smtp-Source: APXvYqwpJ/qkuF9mN7qO3XblBcRL45/iYNNTuD+IaCRUy2rP1dYfdG9lOJlJx+LEbkSUEDmE7Q8jWA==
-X-Received: by 2002:adf:e3d0:: with SMTP id k16mr3557559wrm.241.1578477072161;
-        Wed, 08 Jan 2020 01:51:12 -0800 (PST)
-Received: from google.com ([2a00:79e0:d:110:d6cc:2030:37c1:9964])
-        by smtp.gmail.com with ESMTPSA id z83sm3276181wmg.2.2020.01.08.01.51.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jan 2020 01:51:11 -0800 (PST)
-Date:   Wed, 8 Jan 2020 09:51:08 +0000
-From:   Quentin Perret <qperret@google.com>
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     Qais Yousef <qais.yousef@arm.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        valentin.schneider@arm.com,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH] sched/rt: Add a new sysctl to control uclamp_util_min
-Message-ID: <20200108095108.GA153171@google.com>
-References: <20191220164838.31619-1-qais.yousef@arm.com>
- <20200107134234.GA158998@google.com>
- <8bb17e84-d43f-615f-d04d-c36bb6ede5e0@arm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tyB3mOjJSrqsONVsfz+3VJfm9oi9nwp6r77cUhFGmWs=;
+        b=DGnwHPWvFIdP5bDjvhEoeOYXtG20S1jkkAVxTOekvfCSDSurksnj+EoXGDpKx0wKXL
+         t6nF9vqL8wWqkvhgQKKJofnR3QuIoc3k7Wmu/FDHnhiIS/r0Pi+EvgpzEfv4UfN1JdSJ
+         6jjC005NFM/5NDOqd2hxFSbHkDDORYDnyRfkGxQvVw7JvyDLq2j841B0oUS9zl9CLmFV
+         +lHuqVdqz+zi0jJaclmzX8AhPpuFRw3g1abNSx7z2Yo9FPFZJ67jJ009BYxHrycRYkYW
+         TeaBHOQxDZ/nQ/lRMX0yxviUhPi0A/j3oiwIR2ou6D6R6pQFXy/9aNMWz9xrHRjD7zR+
+         NLYg==
+X-Gm-Message-State: APjAAAXqfUq0xVV+Z7920cm7T0FaEyQUIZl0+90W1O5eC8WLLQuHxMlM
+        vVVhLzfEpyiEtDxdf9KH5XehN+wvapMTcdEfgp4=
+X-Google-Smtp-Source: APXvYqz/GR6mi1GJBIIaXnDHQqIqSM76RT/EaCZ3iyjPJuavyY1FToRbRed45nxoZ9YQHKqzERww7hRmclph5on09Ls=
+X-Received: by 2002:a92:5c8a:: with SMTP id d10mr3397276ilg.137.1578479167003;
+ Wed, 08 Jan 2020 02:26:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8bb17e84-d43f-615f-d04d-c36bb6ede5e0@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CAOQ4uxiZWKCUKcpBt-bHOcnHoFAq+nghWmf94rJu=3CTc5VhRA@mail.gmail.com>
+ <20191211100604.GL1551@quack2.suse.cz> <CAOQ4uxij13z0AazCm7AzrXOSz_eYBSFhs0mo6eZFW=57wOtwew@mail.gmail.com>
+ <CAOQ4uxiKzom5uBNbBpZTNCT0XLOrcHmOwYy=3-V-Qcex1mhszw@mail.gmail.com>
+ <CAOQ4uxgBcLPGxGVddjFsfWJvcNH4rT+GrN6-YhH8cz5K-q5z2g@mail.gmail.com>
+ <20191223181956.GB17813@quack2.suse.cz> <CAOQ4uxhUGCLQyq76nqREETT8kBV9uNOKsckr+xmJdR9Xm=cW3Q@mail.gmail.com>
+ <CAOQ4uxjwy4_jWitzHc9hSaBJwVZM68xxJTub50ZfrtgFSZFH8A@mail.gmail.com>
+ <20200107171014.GI25547@quack2.suse.cz> <CAOQ4uxjx_n3f44yu9_2dGxtBGy3WssG0xfZykwjQ+n=Wcii2-w@mail.gmail.com>
+ <20200108090434.GA20521@quack2.suse.cz>
+In-Reply-To: <20200108090434.GA20521@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 8 Jan 2020 12:25:55 +0200
+Message-ID: <CAOQ4uxjPyaMs0dvObkJR49kjf6zga553wEFRsWDBA28Vta-FnQ@mail.gmail.com>
+Subject: Re: File monitor problem
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Mo Re Ra <more7.rev@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Wez Furlong <wez@fb.com>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tuesday 07 Jan 2020 at 20:30:36 (+0100), Dietmar Eggemann wrote:
-> On 07/01/2020 14:42, Quentin Perret wrote:
-> > Hi Qais,
-> > 
-> > On Friday 20 Dec 2019 at 16:48:38 (+0000), Qais Yousef wrote:
-> 
-> [...]
-> 
-> >> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-> >> index e591d40fd645..19572dfc175b 100644
-> >> --- a/kernel/sched/rt.c
-> >> +++ b/kernel/sched/rt.c
-> >> @@ -2147,6 +2147,12 @@ static void pull_rt_task(struct rq *this_rq)
-> >>   */
-> >>  static void task_woken_rt(struct rq *rq, struct task_struct *p)
-> >>  {
-> >> +	/*
-> >> +	 * When sysctl_sched_rt_uclamp_util_min value is changed by the user,
-> >> +	 * we apply any new value on the next wakeup, which is here.
-> >> +	 */
-> >> +	uclamp_rt_sync_default_util_min(p);
-> > 
-> > The task has already been enqueued and sugov has been called by then I
-> > think, so this is a bit late. You could do that in uclamp_rq_inc() maybe?
-> 
-> That's probably better.
-> Just to be sure ...we want this feature (an existing rt task gets its
-> UCLAMP_MIN value set when the sysctl changes) because there could be rt
-> tasks running before the sysctl is set?
+> > What I like about the fact that users don't need to choose between
+> > 'parent fid' and 'object fid' is that it makes some hard questions go away:
+> > 1. How are "self" events reported? simple - just with 'object id'
+> > 2. How are events on disconnected dentries reported? simple - just
+> > with 'object id'
+> > 3. How are events on the root of the watch reported? same answer
+> >
+> > Did you write 'directory fid' as opposed to 'parent fid' for a reason?
+> > Was it your intention to imply that events on directories (e.g.
+> > open/close/attrib) are
+> > never reported with 'parent fid' , 'name in directory'?
+>
+> Yes, that was what I thought.
+>
+> > I see no functional problem with making that distinction between directory and
+> > non-directory, but I have a feeling that 'parent fid', 'name in
+> > directory', 'object id',
+> > regardless of dir/non-dir is going to be easier to document and less confusing
+> > for users to understand, so this is my preference.
+>
+> Understood. The reason why I decided like this is that for a directory,
+> the parent may be actually on a different filesystem (so generating fid
+> will be more difficult) and also that what you get from dentry->d_parent
+> need not be the dir through which you actually reached the directory (think
+> of bind mounts) which could be a bit confusing. So I have no problem with
+> always providing 'parent fid' if we can give good answers to these
+> questions...
+>
 
-Yeah, I was wondering the same thing, but I'd expect sysadmin to want
-this. We could change the min clamp of existing RT tasks in userspace
-instead, but given how simple Qais' lazy update code is, the in-kernel
-looks reasonable to me. No strong opinion, though.
+Actually, my current code in branch fanotify_name already takes care of
+some of those cases and it is rather easy to deal with the bind mount case
+if path is available:
+
+      if (path && path->mnt->mnt_root != dentry)
+               mnt = real_mount(path->mnt);
+
+      /* Not reporting parent fid + name for fs root, bind mount root and
+         disconnected dentry */
+      if (!IS_ROOT(dentry) && (!path || mnt))
+               marks_mask |= fsnotify_watches_children(
+                                               dentry->d_sb->s_fsnotify_mask);
+      if (mnt)
+               marks_mask |= fsnotify_watches_children(
+                                               mnt->mnt_fsnotify_mask);
+
+Note that a non-dir can also be bind mounted, so the concern you raised is
+actually not limited to directories.
+It is true that with the code above, FAN_ATTRIB and FAN_MODIFY (w/o path)
+could still be reported to sb mark with the parent/name under the bind mount,
+but that is not wrong at all IMO - I would say that is the expected behavior for
+a filesystem mark.
+
+IOW, the answer to your question, phrased in man page terminology is:
+(parent fid + name) information is not guarantied to be available except for
+FAN_DIR_MODIFY, but it may be available as extra info in addition to object fid
+for events that are possible on child.
+
+For example, an application relying on (parent fid + name) information for
+FAN_MODIFY (e.g. for remote mirror) simply cannot get this information when
+nfsd opens a file with a disconnected dentry and writes to it.
+
+TBH, I am not convinced myself that reporting (parent fid + name) for
+directories
+is indeed easier to document/implement than treating directories different that
+non-directories, but I am going to try and implement it this way and prepare a
+draft man page update to see how it looks - I may yet change my mind after
+going through this process...
 
 Thanks,
-Quentin
+Amir.
