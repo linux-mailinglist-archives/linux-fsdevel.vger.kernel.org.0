@@ -2,292 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54B54134B76
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 20:25:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70B59134B94
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 20:41:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729962AbgAHTZf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jan 2020 14:25:35 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40354 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727428AbgAHTZf (ORCPT
+        id S1728938AbgAHTlN convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Wed, 8 Jan 2020 14:41:13 -0500
+Received: from mout.kundenserver.de ([212.227.126.134]:41577 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727247AbgAHTlM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jan 2020 14:25:35 -0500
-Received: by mail-wr1-f68.google.com with SMTP id c14so4640094wrn.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jan 2020 11:25:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=0sNC8jmXp2Yi+T5aKk0mqVrDOvJHjARtc2RxQpOJLOU=;
-        b=T9JxaQpo6wsWMd6+cS6hhpZO+/whCXJqrRwAHYbI3vdtzydpgHnKsgun0nJzlxr1H7
-         2lyEzBvCCPjcPva7LSBhUxg6VwzenlUkqEJWPxtE6WGUscwI2ye6zG3L2rFfHyua/ROm
-         y6TMF2U7WrF79z9xJJ5mWazLwCzhgVlb+rTns=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=0sNC8jmXp2Yi+T5aKk0mqVrDOvJHjARtc2RxQpOJLOU=;
-        b=uVjS+ANMP5xGsWA5jQSqEeFrcGnZodNX7uJlJlBb4VST02nm3bYXoMYpnAl0I84bvI
-         Qc8Thy7X6MOBh3t7PbrSfFj/vXaH7+uvAVhjUqNc8C2I36Wmo7k8yGCiaCiFnqybzJzQ
-         cVbAeRg4mKdj9MTb8GVvWizPOY2ZpPugMvW0D5yQUupug4iUbDf8PqDEo/P+wpJdvZT6
-         vDDDng6Bn7gO6Q+tzP4wlkFlcSLXtqV0gx1WGuBUNbwVmezJhvv2jftLvNQjz/LbRR3a
-         Wfh1cm6QtVz/DQsUSL+sscjgeJdEbx1B1j9WMQp2VlfA//+w6RHcYSMLme9fUoVE0RzQ
-         XaEQ==
-X-Gm-Message-State: APjAAAUraLOSgCR6Yi5We72K0KU1Lv7RAGeFtr7sMfM1MAWVBrrwpQFQ
-        bb2eN1MWFHwVu8FuIdmvQQC0zw==
-X-Google-Smtp-Source: APXvYqy0HQKXvGunDbArFkX9VaqJ014nHzIWKb6VNWwl1qML6LqiWZqhVQOCSiUbRB2cR4io/f0Wpg==
-X-Received: by 2002:adf:e812:: with SMTP id o18mr6186746wrm.127.1578511533465;
-        Wed, 08 Jan 2020 11:25:33 -0800 (PST)
-Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id e18sm5363682wrr.95.2020.01.08.11.25.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jan 2020 11:25:32 -0800 (PST)
-Date:   Wed, 8 Jan 2020 20:25:25 +0100
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     fstests@vger.kernel.org
-Cc:     Eryu Guan <guaneryu@gmail.com>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] xfstests: add fuse support
-Message-ID: <20200108192504.GA893@miu.piliscsaba.redhat.com>
+        Wed, 8 Jan 2020 14:41:12 -0500
+Received: from mail-qk1-f171.google.com ([209.85.222.171]) by
+ mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MWhxY-1jDV5r0huy-00X3aU; Wed, 08 Jan 2020 20:41:11 +0100
+Received: by mail-qk1-f171.google.com with SMTP id z14so3746989qkg.9;
+        Wed, 08 Jan 2020 11:41:10 -0800 (PST)
+X-Gm-Message-State: APjAAAUMd5ceqXieUYjK3VvbkI+DjiNGgHgcNNv/KLMF//hSG0MuUQMS
+        bgoHTRpd6h8KqbuxKL+GbvoZDNAqOxFzBd8/Jq8=
+X-Google-Smtp-Source: APXvYqxiVPuIo2aUDi5vmlJyIky/kJTYp0QIReiwM5NicLbcufc/SzKdNmgsBGBMHO/ACmG5dNsjq1WsefdzjW6nvKI=
+X-Received: by 2002:a05:620a:cef:: with SMTP id c15mr6064016qkj.352.1578512469958;
+ Wed, 08 Jan 2020 11:41:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20200102082036.29643-1-namjae.jeon@samsung.com>
+ <CGME20200102082406epcas1p268f260d90213bdaabee25a7518f86625@epcas1p2.samsung.com>
+ <20200102082036.29643-10-namjae.jeon@samsung.com> <20200102091902.tk374bxohvj33prz@pali>
+ <20200108180304.GE14650@lst.de>
+In-Reply-To: <20200108180304.GE14650@lst.de>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 8 Jan 2020 20:40:53 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a0S6DBJqDMj4Oy9xeYVhW87HbBX2SqURFPKYT8K1z7fDw@mail.gmail.com>
+Message-ID: <CAK8P3a0S6DBJqDMj4Oy9xeYVhW87HbBX2SqURFPKYT8K1z7fDw@mail.gmail.com>
+Subject: Re: [PATCH v9 09/13] exfat: add misc operations
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        sj1557.seo@samsung.com, linkinjeon@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Provags-ID: V03:K1:2TDjqw8FMGsB5SM5iyToeENVJTWUamr8vTUyiILIVhTDwyqDik4
+ ELVH1/L7BhrDoaKOQss1N1HGwjeoR/8qG+ARob2zwEZ/VBELbhUXhlf84YhIl4r39835LaX
+ JDL5rS5WAOHBcHbkrtyDy283xT6q2zx8Cz4cNLVI4OlVyilZAdg6NTQ34tuHs7g1VlWxgeW
+ jl0Ves0KXNNNeGYi8u63g==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:l1DlwR/VxLM=:OJGxiFzXpjf6MoBNLVEcrW
+ 37BTBmKJYaSR0Plwza0jhlV9fH3rt7aSCjAVj6ODByZNUdP005m8HJ7pP27X1+pma1vvnNwFd
+ EofiJtuqebJi9mqPAdL4XBxXvGog/p442EQxZBixzi5WTqfsyCgD/ALNMIzq+cTLajLrX3hSa
+ ZJYsWvh2V7iB6UP71hfjIibf+kr00+vB1fnVUR+62Vg3r/35Kv3rWdJQET4B8p1+ov5CiuXyF
+ SfiUM0BR8pGTSQT+Q2EBpwhTim//Nhs1kvywodHirZ4aUKuVcLGyTYmdklTMj+uxJY6YZ7vqu
+ HJxEydTbcg8V/RT4lJ5Xbj2ztiKJBkV8olFzwQucwmKPi4yQ3bw9g0uKr4DQex9B3In1bbI5o
+ AdQgAd50/n8p+YJvPJaSytgD7H9VknRC4jeu6Kdr29VDF+Nd40GVQZ5f2s4Jbtlvy1wVVY2k/
+ U7I7yB20PmjvfX2LATOdNj+wJRDOCUf/ybztSa4r62k81x7bXsDOlt0gF669PXNkRMRY8uqs+
+ raBXmcMCWxAerAQGsJwSuSh4J9csNzXjYfnljJysEWwwiQm7jzY3nrfxmmbVCYWaBW/6Abj7D
+ dAH14ij7H7j2Ecg337Mi/8+Rmu3XKlE5WiZrz5PxlSXiOx0vwN7qlBXz3Aeu9mIbKokRtm15E
+ WH1ozlIHr2p1cnNanK9Nf9zeUkN9aeY+MoaunQgozCxfQNTeoudTD+sVLUDmxFwosdp4KHLZO
+ ueWYIrko6VrZZQ5fTIMtVqiZGZrODNggO8k3EFwbU5N8+QpenhiyScxrmsA/IlAbWZ0vd0MAJ
+ fkKbqk0xX37E4F1O0SCswbLJnsFbMrQLvx6VsxDPstaOqLdVhGpGeBLYZKrajVsbSGkxVTLs5
+ vHJvRrNyZiwhWjLLfHLg==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This allows using any fuse filesystem that can be mounted with
+On Wed, Jan 8, 2020 at 7:03 PM Christoph Hellwig <hch@lst.de> wrote:
+>
+> Arnd, can you review the exfat time handling, especially vs y2038
+> related issues?
 
-  mount -t fuse.$SUBTYPE ...
+Sure, thanks for adding me to the loop
 
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- README.fuse   |   28 ++++++++++++++++++++++++++++
- check         |    2 ++
- common/attr   |    4 ++--
- common/config |    8 +++++++-
- common/rc     |   34 ++++++++++++++++++++++++++++------
- 5 files changed, 67 insertions(+), 9 deletions(-)
+> On Thu, Jan 02, 2020 at 10:19:02AM +0100, Pali Rohár wrote:
+> > On Thursday 02 January 2020 16:20:32 Namjae Jeon wrote:
+> > > +#define TIMEZONE_CUR_OFFSET()      ((sys_tz.tz_minuteswest / (-15)) & 0x7F)
+> > > +/* Convert linear UNIX date to a FAT time/date pair. */
+> > > +void exfat_time_unix2fat(struct exfat_sb_info *sbi, struct timespec64 *ts,
+> > > +           struct exfat_date_time *tp)
+> > > +{
+> > > +   time_t second = ts->tv_sec;
+> > > +   time_t day, month, year;
+> > > +   time_t ld; /* leap day */
+> >
+> > Question for other maintainers: Has kernel code already time_t defined
+> > as 64bit? Or it is still just 32bit and 32bit systems and some time64_t
+> > needs to be used? I remember that there was discussion about these
+> > problems, but do not know if it was changed/fixed or not... Just a
+> > pointer for possible Y2038 problem. As "ts" is of type timespec64, but
+> > "second" of type time_t.
 
---- a/common/config
-+++ b/common/config
-@@ -295,6 +295,9 @@ _mount_opts()
- 	9p)
- 		export MOUNT_OPTIONS=$PLAN9_MOUNT_OPTIONS
- 		;;
-+	fuse)
-+		export MOUNT_OPTIONS=$FUSE_MOUNT_OPTIONS
-+		;;
- 	xfs)
- 		export MOUNT_OPTIONS=$XFS_MOUNT_OPTIONS
- 		;;
-@@ -353,6 +356,9 @@ _test_mount_opts()
- 	9p)
- 		export TEST_FS_MOUNT_OPTS=$PLAN9_MOUNT_OPTIONS
- 		;;
-+	fuse)
-+		export TEST_FS_MOUNT_OPTS=$FUSE_MOUNT_OPTIONS
-+		;;
- 	cifs)
- 		export TEST_FS_MOUNT_OPTS=$CIFS_MOUNT_OPTIONS
- 		;;
-@@ -485,7 +491,7 @@ _check_device()
- 	fi
- 
- 	case "$FSTYP" in
--	9p|tmpfs|virtiofs)
-+	9p|fuse|tmpfs|virtiofs)
- 		# 9p and virtiofs mount tags are just plain strings, so anything is allowed
- 		# tmpfs doesn't use mount source, ignore
- 		;;
---- a/common/rc
-+++ b/common/rc
-@@ -143,6 +143,8 @@ case "$FSTYP" in
- 	 ;;
-     9p)
- 	 ;;
-+    fuse)
-+	 ;;
-     ceph)
- 	 ;;
-     glusterfs)
-@@ -339,7 +341,7 @@ _try_scratch_mount()
- 		_overlay_scratch_mount $*
- 		return $?
- 	fi
--	_mount -t $FSTYP `_scratch_mount_options $*`
-+	_mount -t $FSTYP$SUBTYP `_scratch_mount_options $*`
- }
- 
- # mount scratch device with given options and _fail if mount fails
-@@ -422,7 +424,7 @@ _test_mount()
-         return $?
-     fi
-     _test_options mount
--    _mount -t $FSTYP $TEST_OPTIONS $TEST_FS_MOUNT_OPTS $SELINUX_MOUNT_OPTIONS $* $TEST_DEV $TEST_DIR
-+    _mount -t $FSTYP$SUBTYP $TEST_OPTIONS $TEST_FS_MOUNT_OPTS $SELINUX_MOUNT_OPTIONS $* $TEST_DEV $TEST_DIR
- }
- 
- _test_unmount()
-@@ -614,6 +616,9 @@ _test_mkfs()
-     9p)
- 	# do nothing for 9p
- 	;;
-+    fuse)
-+	# do nothing for fuse
-+	;;
-     virtiofs)
- 	# do nothing for virtiofs
- 	;;
-@@ -654,6 +659,9 @@ _mkfs_dev()
-     9p)
- 	# do nothing for 9p
- 	;;
-+    fuse)
-+	# do nothing for fuse
-+	;;
-     virtiofs)
- 	# do nothing for virtiofs
- 	;;
-@@ -705,6 +713,14 @@ _scratch_cleanup_files()
- 		_overlay_mkdirs $OVL_BASE_SCRATCH_MNT
- 		# leave base fs mouted so tests can setup lower/upper dir files
- 		;;
-+	fuse)
-+		[ -n "$SCRATCH_MNT" ] || return 1
-+		_scratch_mount
-+		if [ ! -e $SCRATCH_MNT/bin/sh ]; then
-+			rm -rf $SCRATCH_MNT/*
-+		fi
-+		_scratch_unmount
-+		;;
- 	*)
- 		[ -n "$SCRATCH_MNT" ] || return 1
- 		_scratch_mount
-@@ -721,7 +737,7 @@ _scratch_mkfs()
- 	local mkfs_status
- 
- 	case $FSTYP in
--	nfs*|cifs|ceph|overlay|glusterfs|pvfs2|9p|virtiofs)
-+	nfs*|cifs|ceph|overlay|glusterfs|pvfs2|9p|fuse|virtiofs)
- 		# unable to re-create this fstyp, just remove all files in
- 		# $SCRATCH_MNT to avoid EEXIST caused by the leftover files
- 		# created in previous runs
-@@ -1495,7 +1511,7 @@ _require_scratch_nocheck()
- 			_notrun "this test requires a valid \$SCRATCH_MNT"
- 		fi
- 		;;
--	9p|virtiofs)
-+	9p|fuse|virtiofs)
- 		if [ -z "$SCRATCH_DEV" ]; then
- 			_notrun "this test requires a valid \$SCRATCH_DEV"
- 		fi
-@@ -1619,7 +1635,7 @@ _require_test()
- 			_notrun "this test requires a valid \$TEST_DIR"
- 		fi
- 		;;
--	9p|virtiofs)
-+	9p|fuse|virtiofs)
- 		if [ -z "$TEST_DEV" ]; then
- 			_notrun "this test requires a valid \$TEST_DEV"
- 		fi
-@@ -2599,7 +2615,7 @@ _mount_or_remount_rw()
- 
- 	if [ $USE_REMOUNT -eq 0 ]; then
- 		if [ "$FSTYP" != "overlay" ]; then
--			_mount -t $FSTYP $mount_opts $device $mountpoint
-+			_mount -t $FSTYP$SUBTYP $mount_opts $device $mountpoint
- 		else
- 			_overlay_mount $device $mountpoint
- 		fi
-@@ -2727,6 +2743,9 @@ _check_test_fs()
-     9p)
- 	# no way to check consistency for 9p
- 	;;
-+    fuse)
-+	# no way to check consistency for fuse
-+	;;
-     virtiofs)
- 	# no way to check consistency for virtiofs
- 	;;
-@@ -2788,6 +2807,9 @@ _check_scratch_fs()
-     9p)
- 	# no way to check consistency for 9p
- 	;;
-+    fuse)
-+	# no way to check consistency for fuse
-+	;;
-     virtiofs)
- 	# no way to check consistency for virtiofs
- 	;;
---- a/check
-+++ b/check
-@@ -56,6 +56,7 @@ check options
-     -glusterfs		test GlusterFS
-     -cifs		test CIFS
-     -9p			test 9p
-+    -fuse		test fuse
-     -virtiofs		test virtiofs
-     -overlay		test overlay
-     -pvfs2		test PVFS2
-@@ -269,6 +270,7 @@ while [ $# -gt 0 ]; do
- 	-glusterfs)	FSTYP=glusterfs ;;
- 	-cifs)		FSTYP=cifs ;;
- 	-9p)		FSTYP=9p ;;
-+	-fuse)		FSTYP=fuse ;;
- 	-virtiofs)	FSTYP=virtiofs ;;
- 	-overlay)	FSTYP=overlay; export OVERLAY=true ;;
- 	-pvfs2)		FSTYP=pvfs2 ;;
---- a/common/attr
-+++ b/common/attr
-@@ -238,7 +238,7 @@ _getfattr()
- 
- # set maximum total attr space based on fs type
- case "$FSTYP" in
--xfs|udf|pvfs2|9p|ceph)
-+xfs|udf|pvfs2|9p|ceph|fuse)
- 	MAX_ATTRS=1000
- 	;;
- *)
-@@ -258,7 +258,7 @@ xfs|udf|btrfs)
- pvfs2)
- 	MAX_ATTRVAL_SIZE=8192
- 	;;
--9p|ceph)
-+9p|ceph|fuse)
- 	MAX_ATTRVAL_SIZE=65536
- 	;;
- *)
---- /dev/null
-+++ b/README.fuse
-@@ -0,0 +1,28 @@
-+Here are instructions for testing fuse using the passthrough_ll example
-+filesystem provided in the libfuse source tree:
-+
-+git clone git://github.com/libfuse/libfuse.git
-+cd libfuse
-+meson build
-+cd build
-+ninja
-+cp example/passthrough_ll /usr/bin
-+cd
-+cat << 'EOF' > /sbin/mount.fuse.passthrough_ll
-+#!/bin/bash
-+ulimit -n 1048576
-+exec /usr/bin/passthrough_ll -ofsname="$@"
-+EOF
-+chmod +x /sbin/mount.fuse.passthrough_ll
-+mkdir -p /mnt/test /mnt/scratch /home/test/test /home/test/scratch
-+
-+Use the following config file:
-+
-+export TEST_DEV=non1
-+export TEST_DIR=/mnt/test
-+export SCRATCH_DEV=non2
-+export SCRATCH_MNT=/mnt/scratch
-+export FSTYP=fuse
-+export SUBTYP=.passthrough_ll
-+export FUSE_MOUNT_OPTIONS="-osource=/home/test/scratch,allow_other,default_permissions"
-+export TEST_FS_MOUNT_OPTS="-osource=/home/test/test,allow_other,default_permissions"
+I am actually very close to sending the patches to remove the time_t
+definition from the kernel, at least in yesterday's version there were no
+users.
 
+exfat_time_unix2fat() seems to be a copy of the old fat_time_unix2fat()
+that we fixed a while ago, please have a look at that implementation
+based on time64_to_tm(), which avoids time_t.
 
-
+      Arnd
