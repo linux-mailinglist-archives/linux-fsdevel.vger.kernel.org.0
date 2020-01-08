@@ -2,75 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9202C133A95
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 05:39:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 527CF133AC1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 06:17:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbgAHEj1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jan 2020 23:39:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58170 "EHLO mail.kernel.org"
+        id S1725944AbgAHFRI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jan 2020 00:17:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726290AbgAHEj1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jan 2020 23:39:27 -0500
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1725774AbgAHFRI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Jan 2020 00:17:08 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 900FA2087F
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jan 2020 04:39:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59507205F4;
+        Wed,  8 Jan 2020 05:17:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578458366;
-        bh=dPkwsTHDSFh/AlhLKMu8SfXypcftv+MrrSXdjB8TlCg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=zo2q/guK0Te/iTqGXf3SvyqyWLZnZryXPvlKdFXdNJdGBBy8ctLeTY2cPwgEHE06N
-         NPJbRd8JxRD23NLJgsLXpSJawO2dNwLgMoXyn5etXhzNfdNtiX8KV8gXLwFHH5Jmj7
-         K3TYOsWq2pU0Xxc8rWGq+IHMRapADDP2TTdSFTko=
-Received: by mail-wm1-f53.google.com with SMTP id p17so1070822wma.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jan 2020 20:39:26 -0800 (PST)
-X-Gm-Message-State: APjAAAWh6MLjSM+q05WCVFOlTMjQ9vdaXU6dtHF17vlQEuEFzg4LXfKL
-        gC8GXL9J13C/CBiGJEU4HepbaGmrLhR3rzNQFWu4xA==
-X-Google-Smtp-Source: APXvYqz/SlzA6q8BHzR8wgKeCu5YF8gd0+SAe8SHOFxrPyQnlZmV8Zsm1JVs0cwdLErhzYcGzMfm2lHs87ilm/bZZrU=
-X-Received: by 2002:a1c:7ed0:: with SMTP id z199mr1421925wmc.58.1578458364943;
- Tue, 07 Jan 2020 20:39:24 -0800 (PST)
-MIME-Version: 1.0
-References: <20191230052036.8765-1-cyphar@cyphar.com> <20191230052036.8765-2-cyphar@cyphar.com>
- <CAHk-=wjHPCQsMeK5bFOJQnrGPfVDXTAFQK4VsBZPj5u=ZgS-QA@mail.gmail.com> <20191230082847.dkriyisvu7wwxqqu@yavin.dot.cyphar.com>
-In-Reply-To: <20191230082847.dkriyisvu7wwxqqu@yavin.dot.cyphar.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 7 Jan 2020 20:39:10 -0800
-X-Gmail-Original-Message-ID: <CALCETrX1JZV-KtU-LwAuTv4Dc2yFWdTOKUZnmN_pgbUdC-bgLw@mail.gmail.com>
-Message-ID: <CALCETrX1JZV-KtU-LwAuTv4Dc2yFWdTOKUZnmN_pgbUdC-bgLw@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/1] mount: universally disallow mounting over symlinks
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        stable <stable@vger.kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Serge Hallyn <serge@hallyn.com>, dev@opencontainers.org,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        s=default; t=1578460627;
+        bh=6DqBJAl2kjOCf1oC9VXFfY+JG1WsolzIxUrqFyuWY1M=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=GyMFAwTaHPKZxt3iskasGOLh42Jb2+KmmkdAcVWrXZWSmOkoo+MC/POnzZq3E0gaE
+         FD415/RWJnSfygsVWSalEB2vd+zDtB3G+Vm4kU1RLYduQ22dMQFRivgap/24WUWJ0b
+         iX/n2ETr5rKK/L2rNuXtRhrXgie64J8qNCwZOm3Q=
+Date:   Wed, 8 Jan 2020 14:17:00 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 01/22] bootconfig: Add Extra Boot Config support
+Message-Id: <20200108141700.425599efe7ab0ac7c4329661@kernel.org>
+In-Reply-To: <20200107205945.63e5d35a@rorschach.local.home>
+References: <157736902773.11126.2531161235817081873.stgit@devnote2>
+        <157736904075.11126.16068256892686522924.stgit@devnote2>
+        <20200107205945.63e5d35a@rorschach.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 30, 2019 at 12:29 AM Aleksa Sarai <cyphar@cyphar.com> wrote:
->
-> On 2019-12-29, Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> > On Sun, Dec 29, 2019 at 9:21 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
->
-> If allowing bind-mounts over symlinks is allowed (which I don't have a
-> problem with really), it just means we'll need a few more kernel pieces
-> to get this hardening to work. But these features would be useful
-> outside of the problems I'm dealing with (O_EMPTYPATH and some kind of
-> pidfd-based interface to grab the equivalent of /proc/self/exe and a few
-> other such magic-link targets).
+Hi Steve,
 
-As one data point, I would use this ability in virtme: this would
-allow me to more reliably mount over /etc/resolve.conf even when it's
-a symlink.
+On Tue, 7 Jan 2020 20:59:45 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-(Perhaps I should use overlayfs instead.  Hmm.)
+> On Thu, 26 Dec 2019 23:04:00 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> 
+> > +/**
+> > + * xbc_node_is_value() - Test the node is a value node
+> > + * @node: An XBC node.
+> > + *
+> > + * Test the @node is a value node and return true if a value node, false if not.
+> > + */
+> > +static inline __init bool xbc_node_is_value(struct xbc_node *node)
+> > +{
+> > +	return !!(node->data & XBC_VALUE);
+> 
+> The "!!" is not needed, as this is a static inline bool function. The
+> compiler will make this a 1 or 0 without it.
+> 
+> 	return node->data & XBC_VALUE;
+> 
+> is sufficient.
+
+OK.
+
+> 
+> > +}
+> > +
+> > +/**
+> > + * xbc_node_is_key() - Test the node is a key node
+> > + * @node: An XBC node.
+> > + *
+> > + * Test the @node is a key node and return true if a key node, false if not.
+> > + */
+> > +static inline __init bool xbc_node_is_key(struct xbc_node *node)
+> > +{
+> > +	return !(node->data & XBC_VALUE);
+> > +}
+> > +
+
+Maybe this is better use xbc_node_is_value()
+
+	return !xbc_node_is_value();
+
+Right?
+
+> > +
+> > +/*
+> > + * Return delimiter or error, no node added. As same as lib/cmdline.c,
+> > + * you can use " around spaces, but can't escape " for value.
+> > + */
+> > +static int __init __xbc_parse_value(char **__v, char **__n)
+> > +{
+> > +	char *p, *v = *__v;
+> > +	int c, quotes = 0;
+> > +
+> > +	v = skip_spaces(v);
+> > +	while (*v == '#') {
+> > +		v = skip_comment(v);
+> > +		v = skip_spaces(v);
+> > +	}
+> > +	if (*v == '"' || *v == '\'') {
+> > +		quotes = *v;
+> > +		v++;
+> > +	}
+> > +	p = v - 1;
+> > +	while ((c = *++p)) {
+> > +		if (!isprint(c) && !isspace(c))
+> > +			return xbc_parse_error("Non printable value", p);
+> > +		if (quotes) {
+> > +			if (c != quotes)
+> > +				continue;
+> > +			quotes = 0;
+> > +			*p++ = '\0';
+> > +			p = skip_spaces(p);
+> 
+> Hmm, if p here == "    \0" then skip_spaces() will make p == "\0"
+> 
+> > +			c = *p;
+> > +			if (c && !strchr(",;\n#}", c))
+> > +				return xbc_parse_error("No value delimiter", p);
+> > +			p++;
+> 
+> Now p == one passed "\0" which is in unknown territory.
+
+Ah, right!
+
+> 
+> > +			break;
+> > +		}
+> > +		if (strchr(",;\n#}", c)) {
+> 
+> Also, why are we looking at '\n'? as wouldn't that get skipped by
+> skip_spaces() too?
+
+I forgot that '\n' is also isspace() true...
+
+Thank you!
+
+> 
+> -- Steve
+> 
+> > +			v = strim(v);
+> > +			*p++ = '\0';
+> > +			break;
+> > +		}
+> > +	}
+> > +	if (quotes)
+> > +		return xbc_parse_error("No closing quotes", p);
+> > +	if (c == '#') {
+> > +		p = skip_comment(p);
+> > +		c = *p;
+> > +	}
+> > +	*__n = p;
+> > +	*__v = v;
+> > +
+> > +	return c;
+> > +}
+> > +
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
