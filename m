@@ -2,128 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B559F133D5A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 09:39:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A43B8133DC9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 10:04:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727259AbgAHIid (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jan 2020 03:38:33 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:30166 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726313AbgAHIid (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jan 2020 03:38:33 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0088bSEK053024
-        for <linux-fsdevel@vger.kernel.org>; Wed, 8 Jan 2020 03:38:31 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2xb8wh9c44-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jan 2020 03:38:31 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
-        Wed, 8 Jan 2020 08:38:30 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 8 Jan 2020 08:38:28 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0088cRrR27132064
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 8 Jan 2020 08:38:28 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E47D342045;
-        Wed,  8 Jan 2020 08:38:27 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6644642041;
-        Wed,  8 Jan 2020 08:38:27 +0000 (GMT)
-Received: from [9.199.159.43] (unknown [9.199.159.43])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  8 Jan 2020 08:38:27 +0000 (GMT)
-Subject: Re: [RESEND PATCH 0/1] Use inode_lock/unlock class of provided APIs
- in filesystems
-To:     Mike Marshall <hubcap@omnibond.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20200101105248.25304-1-riteshh@linux.ibm.com>
- <CAOg9mSR17qRJ4VM5=1jndRwHw2Gcz8txgU9+-9GPFOfR34q7OA@mail.gmail.com>
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Date:   Wed, 8 Jan 2020 14:08:26 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1727224AbgAHJEh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jan 2020 04:04:37 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46786 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726360AbgAHJEh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Jan 2020 04:04:37 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 8020FAED8;
+        Wed,  8 Jan 2020 09:04:34 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 234FA1E0B47; Wed,  8 Jan 2020 10:04:34 +0100 (CET)
+Date:   Wed, 8 Jan 2020 10:04:34 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        Mo Re Ra <more7.rev@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Wez Furlong <wez@fb.com>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: File monitor problem
+Message-ID: <20200108090434.GA20521@quack2.suse.cz>
+References: <CAOQ4uxiZWKCUKcpBt-bHOcnHoFAq+nghWmf94rJu=3CTc5VhRA@mail.gmail.com>
+ <20191211100604.GL1551@quack2.suse.cz>
+ <CAOQ4uxij13z0AazCm7AzrXOSz_eYBSFhs0mo6eZFW=57wOtwew@mail.gmail.com>
+ <CAOQ4uxiKzom5uBNbBpZTNCT0XLOrcHmOwYy=3-V-Qcex1mhszw@mail.gmail.com>
+ <CAOQ4uxgBcLPGxGVddjFsfWJvcNH4rT+GrN6-YhH8cz5K-q5z2g@mail.gmail.com>
+ <20191223181956.GB17813@quack2.suse.cz>
+ <CAOQ4uxhUGCLQyq76nqREETT8kBV9uNOKsckr+xmJdR9Xm=cW3Q@mail.gmail.com>
+ <CAOQ4uxjwy4_jWitzHc9hSaBJwVZM68xxJTub50ZfrtgFSZFH8A@mail.gmail.com>
+ <20200107171014.GI25547@quack2.suse.cz>
+ <CAOQ4uxjx_n3f44yu9_2dGxtBGy3WssG0xfZykwjQ+n=Wcii2-w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAOg9mSR17qRJ4VM5=1jndRwHw2Gcz8txgU9+-9GPFOfR34q7OA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20010808-0016-0000-0000-000002DB6934
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20010808-0017-0000-0000-0000333DE31B
-Message-Id: <20200108083827.6644642041@d06av24.portsmouth.uk.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-08_01:2020-01-07,2020-01-08 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- clxscore=1015 suspectscore=0 phishscore=0 priorityscore=1501 spamscore=0
- lowpriorityscore=0 mlxscore=0 mlxlogscore=999 adultscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
- definitions=main-2001080074
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxjx_n3f44yu9_2dGxtBGy3WssG0xfZykwjQ+n=Wcii2-w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 1/3/20 2:31 AM, Mike Marshall wrote:
-> Ritesh -
+On Tue 07-01-20 20:56:20, Amir Goldstein wrote:
+> On Tue, Jan 7, 2020 at 7:10 PM Jan Kara <jack@suse.cz> wrote:
+> > > There is another weird way to obfuscate the event type.
+> > > I am not sure if users will be less confused about it:
+> > > Each event type belongs to a group (i.e. self, dirent, poss_on_child)
+> > > User may set any event type in the mask (e.g. create|delete|open|close)
+> > > When getting an event from event group A (e.g. create), all event types
+> > > of that group will be reported (e.g. create|delete).
+> > >
+> > > To put it another way:
+> > > #define FAN_DIR_MODIFY (FAN_CREATE | FAN_MOVE | FAN_DELETE)
+> > >
+> > > For example in fanotify_group_event_mask():
+> > > if (event_with_name) {
+> > >     if (marks_mask & test_mask & FAN_DIR_MODIFY)
+> > >         test_mask |= marks_mask & FAN_DIR_MODIFY
+> > > ...
+> > >
+> > > Did somebody say over-engineering? ;)
+> > >
+> > > TBH, I don't see how we can do event type obfuscation
+> > > that is both usable and not confusing, because the concept is
+> > > confusing. I understand the reasoning behind it, but I don't think
+> > > that many users will.
+> > >
+> > > I'm hoping that you can prove me wrong and find a way to simplify
+> > > the API while retaining fair usability.
+> >
+> > I was thinking about this. If I understand the problem right, depending on
+> > the usecase we may need with each event some subset of 'object fid',
+> > 'directory fid', 'name in directory'. So what if we provided all these
+> > three things in each event? Events will get somewhat bloated but it may be
+> > bearable.
+> >
 > 
-> I just loaded your patch on top of 5.5-rc4 and it looks fine to me
-> and xfstests :-) ... I pointed ftrace at the orangefs function you
-> modified while xfstests was running, and it got called about a
-> jillion times...
-
-Thanks Mike for testing this. Shall I add your Tested-by?
-
--ritesh
-
-
+> I agree.
 > 
-> -Mike
+> What I like about the fact that users don't need to choose between
+> 'parent fid' and 'object fid' is that it makes some hard questions go away:
+> 1. How are "self" events reported? simple - just with 'object id'
+> 2. How are events on disconnected dentries reported? simple - just
+> with 'object id'
+> 3. How are events on the root of the watch reported? same answer
 > 
-> On Wed, Jan 1, 2020 at 5:53 AM Ritesh Harjani <riteshh@linux.ibm.com> wrote:
->>
->> Al, any comments?
->> Resending this after adding Reviewed-by/Acked-by tags.
->>
->>
->>  From previous version:-
->> Matthew Wilcox in [1] suggested that it will be a good idea
->> to define some missing API instead of directly using i_rwsem in
->> filesystems drivers for lock/unlock/downgrade purposes.
->>
->> This patch does that work. No functionality change in this patch.
->>
->> After this there are only lockdep class of APIs at certain places
->> in filesystems which are directly using i_rwsem and second is XFS,
->> but it seems to be anyway defining it's own xfs_ilock/iunlock set
->> of APIs and 'iolock' naming convention for this lock.
->>
->> [1]: https://www.spinics.net/lists/linux-ext4/msg68689.html
->>
->> Ritesh Harjani (1):
->>    fs: Use inode_lock/unlock class of provided APIs in filesystems
->>
->>   fs/btrfs/delayed-inode.c |  2 +-
->>   fs/btrfs/ioctl.c         |  4 ++--
->>   fs/ceph/io.c             | 24 ++++++++++++------------
->>   fs/nfs/io.c              | 24 ++++++++++++------------
->>   fs/orangefs/file.c       |  4 ++--
->>   fs/overlayfs/readdir.c   |  2 +-
->>   fs/readdir.c             |  4 ++--
->>   include/linux/fs.h       | 21 +++++++++++++++++++++
->>   8 files changed, 53 insertions(+), 32 deletions(-)
->>
->> --
->> 2.21.0
->>
+> Did you write 'directory fid' as opposed to 'parent fid' for a reason?
+> Was it your intention to imply that events on directories (e.g.
+> open/close/attrib) are
+> never reported with 'parent fid' , 'name in directory'?
 
+Yes, that was what I thought.
+ 
+> I see no functional problem with making that distinction between directory and
+> non-directory, but I have a feeling that 'parent fid', 'name in
+> directory', 'object id',
+> regardless of dir/non-dir is going to be easier to document and less confusing
+> for users to understand, so this is my preference.
+
+Understood. The reason why I decided like this is that for a directory,
+the parent may be actually on a different filesystem (so generating fid
+will be more difficult) and also that what you get from dentry->d_parent
+need not be the dir through which you actually reached the directory (think
+of bind mounts) which could be a bit confusing. So I have no problem with
+always providing 'parent fid' if we can give good answers to these
+questions...
+
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
