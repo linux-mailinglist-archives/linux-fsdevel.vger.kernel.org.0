@@ -2,129 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B1991348D9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 18:09:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C5DB1348D7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 18:08:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729665AbgAHRJV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jan 2020 12:09:21 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:36501 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbgAHRJV (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jan 2020 12:09:21 -0500
-Received: from host.242.234.23.62.rev.coltfrance.com ([62.23.234.242] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1ipEnM-00052V-PD; Wed, 08 Jan 2020 17:07:00 +0000
-Date:   Wed, 8 Jan 2020 18:07:04 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Christian Brauner <christian@brauner.io>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] introduce configfd as generalisation of fsconfig
-Message-ID: <20200108170703.zhcuohzdp22y5yma@wittgenstein>
-References: <20200104201432.27320-1-James.Bottomley@HansenPartnership.com>
- <20200105162311.sufgft6kthetsz7q@wittgenstein>
- <1578247328.3310.36.camel@HansenPartnership.com>
+        id S1729516AbgAHRIo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jan 2020 12:08:44 -0500
+Received: from verein.lst.de ([213.95.11.211]:50298 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726401AbgAHRIo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Jan 2020 12:08:44 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id B094668BFE; Wed,  8 Jan 2020 18:08:40 +0100 (CET)
+Date:   Wed, 8 Jan 2020 18:08:40 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Namjae Jeon <namjae.jeon@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
+        sj1557.seo@samsung.com, linkinjeon@gmail.com, pali.rohar@gmail.com
+Subject: Re: [PATCH v9 01/13] exfat: add in-memory and on-disk structures
+ and headers
+Message-ID: <20200108170840.GB13388@lst.de>
+References: <20200102082036.29643-1-namjae.jeon@samsung.com> <CGME20200102082400epcas1p4cd0ad14967bd8d231fc0efcede8bd99c@epcas1p4.samsung.com> <20200102082036.29643-2-namjae.jeon@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1578247328.3310.36.camel@HansenPartnership.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20200102082036.29643-2-namjae.jeon@samsung.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[extending the Cc a bit]
-
-On Sun, Jan 05, 2020 at 10:02:08AM -0800, James Bottomley wrote:
-> On Sun, 2020-01-05 at 17:23 +0100, Christian Brauner wrote:
-> > On Sat, Jan 04, 2020 at 12:14:26PM -0800, James Bottomley wrote:
-> > > fsconfig is a very powerful configuration mechanism except that it
-> > > only works for filesystems with superblocks.  This patch series
-> > > generalises the useful concept of a multiple step configurational
-> > > mechanism carried by a file descriptor.  The object of this patch
-> > > series is to get bind mounts to be configurable in the same way
-> > > that superblock based ones are, but it should have utility beyond
-> > > the filesytem realm.  Patch 4 also reimplements fsconfig in terms
-> > > of configfd, but that's not a strictly necessary patch, it is
-> > > merely a useful demonstration that configfd is a superset of the
-> > > properties of fsconfig.
-> > 
-> > Thanks for the patch. I'm glad fsconfig() is picked back up; either
-> > by you or by David. We will need this for sure.
-> > But the configfd approach does not strike me as a great idea.
-> > Anonymous inode fds provide an abstraction mechanism for kernel
-> > objects which we built around fds such as timerfd, pidfd, mountfd and
-> > so on. When you stat an anonfd you get ANON_INODE_FS_MAGIC and you
-> > get the actual type by looking at fdinfo, or - more common - by
-> > parsing out /proc/<pid>/fd/<nr> and discovering "[fscontext]". So
-> > it's already a pretty massive abstraction layer we have. But configfd
-> > would be yet another fd abstraction based on anonfds.
-> > The idea has been that a new fd type based on anonfds comes with an
-> > api specific to that type of fd. That seems way nicer from an api
-> > design perspective than implementing new apis as part of yet another
-> > generic configfd layer.
+On Thu, Jan 02, 2020 at 04:20:24PM +0800, Namjae Jeon wrote:
+> This adds in-memory and on-disk structures and headers.
 > 
-> Really, it's just a fd that gathers config information and can reserve
-> specific errors (and we should really work out the i18n implications of
+> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
+> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
 
-It's rather a complex multiplexer intended to go beyond the realm of
-filesystems/mount api and that's something we have been burned by before.
+This looks good modulo a few cosmetic nitpicks below.
 
-> the latter).  Whether it's a new fd type or an anonfd with a specific
-> name doesn't seem to be that significant, so the name could be set by
-> the type.
-> 
-> > Another problem is that these syscalls here would be massive
-> > multiplexing syscalls. If they are ever going to be used outside of
-> > filesystem use-cases (which is doubtful) they will quickly rival
-> > prctl(), seccomp(), and ptrace().
-> 
-> Actually, that's partly the point.  We do have several systemcalls with
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-Actually I think that's the problem. The keyctl api itself suffers
-from the problem that it already has a complex multiplexer. That could
-either point to bad api design (sorry, David :)) or it's just a very
-complex use-case like the mount api. The good thing is that it's
-restricted to a single domain: keys. And that's good. Plumbing both e.g.
-keys and (parts of) mounts on top of another generic api is what strikes
-me as a bad idea.
+> --- /dev/null
+> +++ b/fs/exfat/exfat_fs.h
+> @@ -0,0 +1,569 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +/*
+> + * Copyright (C) 2012-2013 Samsung Electronics Co., Ltd.
+> + */
+> +
+> +#ifndef _EXFAT_H
+> +#define _EXFAT_H
 
-> variable argument parsing that would benefit from an approach like
-> this.  keyctl springs immediately to mind.
-> 
-> >  That's not a great thing. Especially, since we recently (a few
-> > months ago with Linus chiming in too) had long discussions with the
-> > conclusion that multiplexing syscalls are discouraged, from a
-> > security and api design perspective. Especially when they are not
-> > tied to a specific API (e.g. seccomp() and bpf() are at least tied to
-> > a specific API). libcs such as glibc and musl had reservations in
-> > that regard as well.
-> > 
-> > This would also spread the mount api across even more fd types than
-> > it already does now which is cumbersome for userspace.
-> > 
-> > A generic API like that also makes it hard to do interception in
-> > userspace which is important for brokers such as e.g. used in Firefox
-> > or what we do in various container use-cases.
-> > 
-> > So I have strong reservations about configfd and would strongly favor
-> > the revival of the original fsconfig() patchset.
-> 
-> Ah well, I did have plans for configfd to be self describing, so the
-> arguments accepted by each type would be typed and pre-registered and
-> thus parseable generically, so instead of being the usual anonymous
-> multiplex sink, it would at least be an introspectable multiplexed
-> sink.  The problem there was I can't make fsconfig fit into that
+This should probably be _EXFAT_FS_H to match the actual file name.
 
-We already have fsconfig() to configure mounts so it seems odd to now
-spread the mount api onto configfd imho.
+> +
+> +#include <linux/fs.h>
+> +#include <linux/ratelimit.h>
+> +
+> +#define EXFAT_SUPER_MAGIC       (0x2011BAB0UL)
 
-Christian
+No need for the braces.
+
+> +/*
+> + * exfat common MACRO
+> + */
+
+Not sure this comment is all that helpful.
+
+> +#define CLUSTER_32(x)			((unsigned int)((x) & 0xFFFFFFFFU))
+
+This could just use lower_32_bits().
+
+> +#define EXFAT_BAD_CLUSTER		(0xFFFFFFF7U)
+> +#define EXFAT_FREE_CLUSTER		(0)
+> +/* Cluster 0, 1 are reserved, the first cluster is 2 in the cluster heap. */
+> +#define EXFAT_RESERVED_CLUSTERS		(2)
+> +#define EXFAT_FIRST_CLUSTER		(2)
+
+No need for the braces.
+
+> +/* type values */
+> +#define TYPE_UNUSED		0x0000
+> +#define TYPE_DELETED		0x0001
+> +#define TYPE_INVALID		0x0002
+> +#define TYPE_CRITICAL_PRI	0x0100
+> +#define TYPE_BITMAP		0x0101
+> +#define TYPE_UPCASE		0x0102
+> +#define TYPE_VOLUME		0x0103
+> +#define TYPE_DIR		0x0104
+> +#define TYPE_FILE		0x011F
+> +#define TYPE_CRITICAL_SEC	0x0200
+> +#define TYPE_STREAM		0x0201
+> +#define TYPE_EXTEND		0x0202
+> +#define TYPE_ACL		0x0203
+> +#define TYPE_BENIGN_PRI		0x0400
+> +#define TYPE_GUID		0x0401
+> +#define TYPE_PADDING		0x0402
+> +#define TYPE_ACLTAB		0x0403
+> +#define TYPE_BENIGN_SEC		0x0800
+> +#define TYPE_ALL		0x0FFF
+
+Shouldn't this go into exfat_raw.h?  Maybe check if a few other
+values should as well if they define an on-disk format.
+
+> +static inline sector_t exfat_cluster_to_sector(struct exfat_sb_info *sbi,
+> +		unsigned int clus)
+> +{
+> +	return ((clus - EXFAT_RESERVED_CLUSTERS) << sbi->sect_per_clus_bits)
+> +		+ sbi->data_start_sector;
+
+Nitpick: normally we put the operators at the of the previous line in
+Linux code.
+
+> +#define EXFAT_DELETE		~(0x80)
+
+The braces would more useful outside the ~.
+
+> +#define file_num_ext			dentry.file.num_ext
+> +#define file_checksum			dentry.file.checksum
+> +#define file_attr			dentry.file.attr
+> +#define file_create_time		dentry.file.create_time
+> +#define file_create_date		dentry.file.create_date
+> +#define file_modify_time		dentry.file.modify_time
+> +#define file_modify_date		dentry.file.modify_date
+> +#define file_access_time		dentry.file.access_time
+> +#define file_access_date		dentry.file.access_date
+> +#define file_create_time_ms		dentry.file.create_time_ms
+> +#define file_modify_time_ms		dentry.file.modify_time_ms
+> +#define file_create_tz			dentry.file.create_tz
+> +#define file_modify_tz			dentry.file.modify_tz
+> +#define file_access_tz			dentry.file.access_tz
+> +#define stream_flags			dentry.stream.flags
+> +#define stream_name_len			dentry.stream.name_len
+> +#define stream_name_hash		dentry.stream.name_hash
+> +#define stream_start_clu		dentry.stream.start_clu
+> +#define stream_valid_size		dentry.stream.valid_size
+> +#define stream_size			dentry.stream.size
+> +#define name_flags			dentry.name.flags
+> +#define name_unicode			dentry.name.unicode_0_14
+> +#define bitmap_flags			dentry.bitmap.flags
+> +#define bitmap_start_clu		dentry.bitmap.start_clu
+> +#define bitmap_size			dentry.bitmap.size
+> +#define upcase_start_clu		dentry.upcase.start_clu
+> +#define upcase_size			dentry.upcase.size
+> +#define upcase_checksum			dentry.upcase.checksum
+
+Personally I don't find these defines very helpful - directly seeing
+the field name makes the code much easier to read.
