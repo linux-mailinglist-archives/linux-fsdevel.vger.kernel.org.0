@@ -2,184 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 527CF133AC1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 06:17:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78257133BF7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 08:03:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725944AbgAHFRI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jan 2020 00:17:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33246 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725774AbgAHFRI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jan 2020 00:17:08 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59507205F4;
-        Wed,  8 Jan 2020 05:17:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578460627;
-        bh=6DqBJAl2kjOCf1oC9VXFfY+JG1WsolzIxUrqFyuWY1M=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GyMFAwTaHPKZxt3iskasGOLh42Jb2+KmmkdAcVWrXZWSmOkoo+MC/POnzZq3E0gaE
-         FD415/RWJnSfygsVWSalEB2vd+zDtB3G+Vm4kU1RLYduQ22dMQFRivgap/24WUWJ0b
-         iX/n2ETr5rKK/L2rNuXtRhrXgie64J8qNCwZOm3Q=
-Date:   Wed, 8 Jan 2020 14:17:00 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 01/22] bootconfig: Add Extra Boot Config support
-Message-Id: <20200108141700.425599efe7ab0ac7c4329661@kernel.org>
-In-Reply-To: <20200107205945.63e5d35a@rorschach.local.home>
-References: <157736902773.11126.2531161235817081873.stgit@devnote2>
-        <157736904075.11126.16068256892686522924.stgit@devnote2>
-        <20200107205945.63e5d35a@rorschach.local.home>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1726466AbgAHHDj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jan 2020 02:03:39 -0500
+Received: from cloud1-vm154.de-nserver.de ([178.250.10.56]:16283 "EHLO
+        cloud1-vm154.de-nserver.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725944AbgAHHDj (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Jan 2020 02:03:39 -0500
+X-Greylist: delayed 324 seconds by postgrey-1.27 at vger.kernel.org; Wed, 08 Jan 2020 02:03:38 EST
+Received: (qmail 1578 invoked from network); 8 Jan 2020 07:58:13 +0100
+X-Fcrdns: No
+Received: from phoffice.de-nserver.de (HELO [10.11.11.182]) (185.39.223.5)
+  (smtp-auth username hostmaster@profihost.com, mechanism plain)
+  by cloud1-vm154.de-nserver.de (qpsmtpd/0.92) with (ECDHE-RSA-AES256-GCM-SHA384 encrypted) ESMTPSA; Wed, 08 Jan 2020 07:58:13 +0100
+X-GeoIP-Country: DE
+From:   Stefan Priebe - Profihost AG <s.priebe@profihost.ag>
+Subject: slow sync performance on LSI / Broadcom MegaRaid performance with
+ battery cache
+To:     Ric Wheeler <rwheeler@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Chinmay V S <cvs268@gmail.com>
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Theodore Ts'o <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <matthew@wil.cx>
+References: <528CA73B.9070604@profihost.ag>
+ <20131120125446.GA6284@infradead.org>
+ <CAK-9PRAManphkxT3ub0DfW8hx=xbq+ZeqUB0E0CEnFTfF7AQuw@mail.gmail.com>
+ <528CC36A.7080003@profihost.ag>
+ <CAK-9PRDyGhXPef-Vbt83Os-oowFZ2HzSZVY9PH3rSdnTwNmf2w@mail.gmail.com>
+ <20131120153703.GA23160@thunk.org> <20131120155507.GA5380@fieldses.org>
+ <CAK-9PRCQ6qWvzpdvK8BswpS+TfgM7NeoRaVdChFHhyDjwtUGTw@mail.gmail.com>
+ <20131120175807.GC5380@fieldses.org>
+ <CAK-9PRDNxHAX70cN88kRt03FkYbDB_x1cFQQYmVzqiCX=aZD6w@mail.gmail.com>
+ <20131121101101.GA18404@infradead.org> <528FB828.5000301@profihost.ag>
+ <528FC09E.5090004@redhat.com> <5290F386.5040806@profihost.ag>
+ <5291038E.4000908@redhat.com>
+Message-ID: <acf161f8-2d78-544c-7c5b-8f92be74ab50@profihost.ag>
+Date:   Wed, 8 Jan 2020 07:58:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
+MIME-Version: 1.0
+In-Reply-To: <5291038E.4000908@redhat.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: de-DE
 Content-Transfer-Encoding: 7bit
+X-User-Auth: Auth by hostmaster@profihost.com through 185.39.223.5
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Steve,
+Hello list,
 
-On Tue, 7 Jan 2020 20:59:45 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+while we used adaptec controller with battery cache for years we
+recently switched to dell hw using the perc controllers which are
+rebranded lsi/broadcom controllers.
 
-> On Thu, 26 Dec 2019 23:04:00 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> 
-> > +/**
-> > + * xbc_node_is_value() - Test the node is a value node
-> > + * @node: An XBC node.
-> > + *
-> > + * Test the @node is a value node and return true if a value node, false if not.
-> > + */
-> > +static inline __init bool xbc_node_is_value(struct xbc_node *node)
-> > +{
-> > +	return !!(node->data & XBC_VALUE);
-> 
-> The "!!" is not needed, as this is a static inline bool function. The
-> compiler will make this a 1 or 0 without it.
-> 
-> 	return node->data & XBC_VALUE;
-> 
-> is sufficient.
+We're running btrfs subvolume / snapshot workloads and while those are
+very fast on btrfs using a btrfs raid 0 on top of several raid 5 running
+on adaptec (battery backed up) in write back mode.
 
-OK.
+The performance really sucks on those LSI controllers even the one i
+have has 8GB cache instead of just 1GB at adaptec.
 
-> 
-> > +}
-> > +
-> > +/**
-> > + * xbc_node_is_key() - Test the node is a key node
-> > + * @node: An XBC node.
-> > + *
-> > + * Test the @node is a key node and return true if a key node, false if not.
-> > + */
-> > +static inline __init bool xbc_node_is_key(struct xbc_node *node)
-> > +{
-> > +	return !(node->data & XBC_VALUE);
-> > +}
-> > +
+Especially sync / fsync are awfully slow taking sometimes 30-45 minutes
+while btrfs is doing snapshots. The workload on all machines is the same
+and the disks are ok.
 
-Maybe this is better use xbc_node_is_value()
+Is there a way to disable FLUSH / sync at all for those devices? Just to
+test?
 
-	return !xbc_node_is_value();
+I'm already using nobarrier mount option on btrfs but this does not help
+either.
 
-Right?
+Thanks!
 
-> > +
-> > +/*
-> > + * Return delimiter or error, no node added. As same as lib/cmdline.c,
-> > + * you can use " around spaces, but can't escape " for value.
-> > + */
-> > +static int __init __xbc_parse_value(char **__v, char **__n)
-> > +{
-> > +	char *p, *v = *__v;
-> > +	int c, quotes = 0;
-> > +
-> > +	v = skip_spaces(v);
-> > +	while (*v == '#') {
-> > +		v = skip_comment(v);
-> > +		v = skip_spaces(v);
-> > +	}
-> > +	if (*v == '"' || *v == '\'') {
-> > +		quotes = *v;
-> > +		v++;
-> > +	}
-> > +	p = v - 1;
-> > +	while ((c = *++p)) {
-> > +		if (!isprint(c) && !isspace(c))
-> > +			return xbc_parse_error("Non printable value", p);
-> > +		if (quotes) {
-> > +			if (c != quotes)
-> > +				continue;
-> > +			quotes = 0;
-> > +			*p++ = '\0';
-> > +			p = skip_spaces(p);
-> 
-> Hmm, if p here == "    \0" then skip_spaces() will make p == "\0"
-> 
-> > +			c = *p;
-> > +			if (c && !strchr(",;\n#}", c))
-> > +				return xbc_parse_error("No value delimiter", p);
-> > +			p++;
-> 
-> Now p == one passed "\0" which is in unknown territory.
-
-Ah, right!
-
-> 
-> > +			break;
-> > +		}
-> > +		if (strchr(",;\n#}", c)) {
-> 
-> Also, why are we looking at '\n'? as wouldn't that get skipped by
-> skip_spaces() too?
-
-I forgot that '\n' is also isspace() true...
-
-Thank you!
-
-> 
-> -- Steve
-> 
-> > +			v = strim(v);
-> > +			*p++ = '\0';
-> > +			break;
-> > +		}
-> > +	}
-> > +	if (quotes)
-> > +		return xbc_parse_error("No closing quotes", p);
-> > +	if (c == '#') {
-> > +		p = skip_comment(p);
-> > +		c = *p;
-> > +	}
-> > +	*__n = p;
-> > +	*__v = v;
-> > +
-> > +	return c;
-> > +}
-> > +
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Greets,
+Stefan
