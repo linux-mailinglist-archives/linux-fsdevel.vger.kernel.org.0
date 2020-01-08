@@ -2,119 +2,370 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A43B8133DC9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 10:04:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7269F133DE9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 10:10:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727224AbgAHJEh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jan 2020 04:04:37 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46786 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726360AbgAHJEh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jan 2020 04:04:37 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 8020FAED8;
-        Wed,  8 Jan 2020 09:04:34 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 234FA1E0B47; Wed,  8 Jan 2020 10:04:34 +0100 (CET)
-Date:   Wed, 8 Jan 2020 10:04:34 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        Mo Re Ra <more7.rev@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Wez Furlong <wez@fb.com>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: File monitor problem
-Message-ID: <20200108090434.GA20521@quack2.suse.cz>
-References: <CAOQ4uxiZWKCUKcpBt-bHOcnHoFAq+nghWmf94rJu=3CTc5VhRA@mail.gmail.com>
- <20191211100604.GL1551@quack2.suse.cz>
- <CAOQ4uxij13z0AazCm7AzrXOSz_eYBSFhs0mo6eZFW=57wOtwew@mail.gmail.com>
- <CAOQ4uxiKzom5uBNbBpZTNCT0XLOrcHmOwYy=3-V-Qcex1mhszw@mail.gmail.com>
- <CAOQ4uxgBcLPGxGVddjFsfWJvcNH4rT+GrN6-YhH8cz5K-q5z2g@mail.gmail.com>
- <20191223181956.GB17813@quack2.suse.cz>
- <CAOQ4uxhUGCLQyq76nqREETT8kBV9uNOKsckr+xmJdR9Xm=cW3Q@mail.gmail.com>
- <CAOQ4uxjwy4_jWitzHc9hSaBJwVZM68xxJTub50ZfrtgFSZFH8A@mail.gmail.com>
- <20200107171014.GI25547@quack2.suse.cz>
- <CAOQ4uxjx_n3f44yu9_2dGxtBGy3WssG0xfZykwjQ+n=Wcii2-w@mail.gmail.com>
+        id S1727522AbgAHJJ3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jan 2020 04:09:29 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:33410 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727112AbgAHJJ3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Jan 2020 04:09:29 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 855672A8A9A212927650;
+        Wed,  8 Jan 2020 17:09:25 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 8 Jan 2020
+ 17:09:23 +0800
+Subject: Re: [PATCH v3] fs: Fix page_mkwrite off-by-one errors
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>, Jeff Layton <jlayton@kernel.org>,
+        Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        "Artem Bityutskiy" <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        <ceph-devel@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-mtd@lists.infradead.org>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, <linux-btrfs@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>
+References: <20191218130935.32402-1-agruenba@redhat.com>
+ <20200107232031.GD472641@magnolia>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <e0b3d239-dd8a-de08-3b1b-42a2eb2b366f@huawei.com>
+Date:   Wed, 8 Jan 2020 17:09:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjx_n3f44yu9_2dGxtBGy3WssG0xfZykwjQ+n=Wcii2-w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200107232031.GD472641@magnolia>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 07-01-20 20:56:20, Amir Goldstein wrote:
-> On Tue, Jan 7, 2020 at 7:10 PM Jan Kara <jack@suse.cz> wrote:
-> > > There is another weird way to obfuscate the event type.
-> > > I am not sure if users will be less confused about it:
-> > > Each event type belongs to a group (i.e. self, dirent, poss_on_child)
-> > > User may set any event type in the mask (e.g. create|delete|open|close)
-> > > When getting an event from event group A (e.g. create), all event types
-> > > of that group will be reported (e.g. create|delete).
-> > >
-> > > To put it another way:
-> > > #define FAN_DIR_MODIFY (FAN_CREATE | FAN_MOVE | FAN_DELETE)
-> > >
-> > > For example in fanotify_group_event_mask():
-> > > if (event_with_name) {
-> > >     if (marks_mask & test_mask & FAN_DIR_MODIFY)
-> > >         test_mask |= marks_mask & FAN_DIR_MODIFY
-> > > ...
-> > >
-> > > Did somebody say over-engineering? ;)
-> > >
-> > > TBH, I don't see how we can do event type obfuscation
-> > > that is both usable and not confusing, because the concept is
-> > > confusing. I understand the reasoning behind it, but I don't think
-> > > that many users will.
-> > >
-> > > I'm hoping that you can prove me wrong and find a way to simplify
-> > > the API while retaining fair usability.
-> >
-> > I was thinking about this. If I understand the problem right, depending on
-> > the usecase we may need with each event some subset of 'object fid',
-> > 'directory fid', 'name in directory'. So what if we provided all these
-> > three things in each event? Events will get somewhat bloated but it may be
-> > bearable.
-> >
+On 2020/1/8 7:20, Darrick J. Wong wrote:
+> On Wed, Dec 18, 2019 at 02:09:35PM +0100, Andreas Gruenbacher wrote:
+>> Hi Darrick,
+>>
+>> can this fix go in via the xfs tree?
+>>
+>> Thanks,
+>> Andreas
+>>
+>> --
+>>
+>> The check in block_page_mkwrite that is meant to determine whether an
+>> offset is within the inode size is off by one.  This bug has been copied
+>> into iomap_page_mkwrite and several filesystems (ubifs, ext4, f2fs,
+>> ceph).
+>>
+>> Fix that by introducing a new page_mkwrite_check_truncate helper that
+>> checks for truncate and computes the bytes in the page up to EOF.  Use
+>> the helper in the above mentioned filesystems.
+>>
+>> In addition, use the new helper in btrfs as well.
+>>
+>> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+>> Acked-by: David Sterba <dsterba@suse.com> (btrfs part)
+>> Acked-by: Richard Weinberger <richard@nod.at> (ubifs part)
+>> ---
+>>  fs/btrfs/inode.c        | 15 ++++-----------
+>>  fs/buffer.c             | 16 +++-------------
+>>  fs/ceph/addr.c          |  2 +-
+>>  fs/ext4/inode.c         | 14 ++++----------
+>>  fs/f2fs/file.c          | 19 +++++++------------
 > 
-> I agree.
+> Well, the f2fs developers never acked this and there was a conflict when
+> I put this into for-next, so I removed the f2fs part (and fixed the
+> unused variable warning in the ext4 part)...
+
+Sorry for late reply.
+
+Acked-by: Chao Yu <yuchao0@huawei.com>
+
+BTW, to avoid such conflict, does f2fs need to rebase/fix its last code
+on current patch?
+
+Thanks,
+
 > 
-> What I like about the fact that users don't need to choose between
-> 'parent fid' and 'object fid' is that it makes some hard questions go away:
-> 1. How are "self" events reported? simple - just with 'object id'
-> 2. How are events on disconnected dentries reported? simple - just
-> with 'object id'
-> 3. How are events on the root of the watch reported? same answer
+> --D
 > 
-> Did you write 'directory fid' as opposed to 'parent fid' for a reason?
-> Was it your intention to imply that events on directories (e.g.
-> open/close/attrib) are
-> never reported with 'parent fid' , 'name in directory'?
-
-Yes, that was what I thought.
- 
-> I see no functional problem with making that distinction between directory and
-> non-directory, but I have a feeling that 'parent fid', 'name in
-> directory', 'object id',
-> regardless of dir/non-dir is going to be easier to document and less confusing
-> for users to understand, so this is my preference.
-
-Understood. The reason why I decided like this is that for a directory,
-the parent may be actually on a different filesystem (so generating fid
-will be more difficult) and also that what you get from dentry->d_parent
-need not be the dir through which you actually reached the directory (think
-of bind mounts) which could be a bit confusing. So I have no problem with
-always providing 'parent fid' if we can give good answers to these
-questions...
-
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>>  fs/iomap/buffered-io.c  | 18 +++++-------------
+>>  fs/ubifs/file.c         |  3 +--
+>>  include/linux/pagemap.h | 28 ++++++++++++++++++++++++++++
+>>  8 files changed, 53 insertions(+), 62 deletions(-)
+>>
+>> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+>> index 56032c518b26..86c6fcd8139d 100644
+>> --- a/fs/btrfs/inode.c
+>> +++ b/fs/btrfs/inode.c
+>> @@ -9016,13 +9016,11 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
+>>  	ret = VM_FAULT_NOPAGE; /* make the VM retry the fault */
+>>  again:
+>>  	lock_page(page);
+>> -	size = i_size_read(inode);
+>>  
+>> -	if ((page->mapping != inode->i_mapping) ||
+>> -	    (page_start >= size)) {
+>> -		/* page got truncated out from underneath us */
+>> +	ret2 = page_mkwrite_check_truncate(page, inode);
+>> +	if (ret2 < 0)
+>>  		goto out_unlock;
+>> -	}
+>> +	zero_start = ret2;
+>>  	wait_on_page_writeback(page);
+>>  
+>>  	lock_extent_bits(io_tree, page_start, page_end, &cached_state);
+>> @@ -9043,6 +9041,7 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
+>>  		goto again;
+>>  	}
+>>  
+>> +	size = i_size_read(inode);
+>>  	if (page->index == ((size - 1) >> PAGE_SHIFT)) {
+>>  		reserved_space = round_up(size - page_start,
+>>  					  fs_info->sectorsize);
+>> @@ -9075,12 +9074,6 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
+>>  	}
+>>  	ret2 = 0;
+>>  
+>> -	/* page is wholly or partially inside EOF */
+>> -	if (page_start + PAGE_SIZE > size)
+>> -		zero_start = offset_in_page(size);
+>> -	else
+>> -		zero_start = PAGE_SIZE;
+>> -
+>>  	if (zero_start != PAGE_SIZE) {
+>>  		kaddr = kmap(page);
+>>  		memset(kaddr + zero_start, 0, PAGE_SIZE - zero_start);
+>> diff --git a/fs/buffer.c b/fs/buffer.c
+>> index d8c7242426bb..53aabde57ca7 100644
+>> --- a/fs/buffer.c
+>> +++ b/fs/buffer.c
+>> @@ -2499,23 +2499,13 @@ int block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
+>>  	struct page *page = vmf->page;
+>>  	struct inode *inode = file_inode(vma->vm_file);
+>>  	unsigned long end;
+>> -	loff_t size;
+>>  	int ret;
+>>  
+>>  	lock_page(page);
+>> -	size = i_size_read(inode);
+>> -	if ((page->mapping != inode->i_mapping) ||
+>> -	    (page_offset(page) > size)) {
+>> -		/* We overload EFAULT to mean page got truncated */
+>> -		ret = -EFAULT;
+>> +	ret = page_mkwrite_check_truncate(page, inode);
+>> +	if (ret < 0)
+>>  		goto out_unlock;
+>> -	}
+>> -
+>> -	/* page is wholly or partially inside EOF */
+>> -	if (((page->index + 1) << PAGE_SHIFT) > size)
+>> -		end = size & ~PAGE_MASK;
+>> -	else
+>> -		end = PAGE_SIZE;
+>> +	end = ret;
+>>  
+>>  	ret = __block_write_begin(page, 0, end, get_block);
+>>  	if (!ret)
+>> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+>> index 7ab616601141..ef958aa4adb4 100644
+>> --- a/fs/ceph/addr.c
+>> +++ b/fs/ceph/addr.c
+>> @@ -1575,7 +1575,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+>>  	do {
+>>  		lock_page(page);
+>>  
+>> -		if ((off > size) || (page->mapping != inode->i_mapping)) {
+>> +		if (page_mkwrite_check_truncate(page, inode) < 0) {
+>>  			unlock_page(page);
+>>  			ret = VM_FAULT_NOPAGE;
+>>  			break;
+>> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+>> index 28f28de0c1b6..51ab1d2cac80 100644
+>> --- a/fs/ext4/inode.c
+>> +++ b/fs/ext4/inode.c
+>> @@ -5871,7 +5871,6 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
+>>  {
+>>  	struct vm_area_struct *vma = vmf->vma;
+>>  	struct page *page = vmf->page;
+>> -	loff_t size;
+>>  	unsigned long len;
+>>  	int err;
+>>  	vm_fault_t ret;
+>> @@ -5907,18 +5906,13 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
+>>  	}
+>>  
+>>  	lock_page(page);
+>> -	size = i_size_read(inode);
+>> -	/* Page got truncated from under us? */
+>> -	if (page->mapping != mapping || page_offset(page) > size) {
+>> +	err = page_mkwrite_check_truncate(page, inode);
+>> +	if (err < 0) {
+>>  		unlock_page(page);
+>> -		ret = VM_FAULT_NOPAGE;
+>> -		goto out;
+>> +		goto out_ret;
+>>  	}
+>> +	len = err;
+>>  
+>> -	if (page->index == size >> PAGE_SHIFT)
+>> -		len = size & ~PAGE_MASK;
+>> -	else
+>> -		len = PAGE_SIZE;
+>>  	/*
+>>  	 * Return if we have all the buffers mapped. This avoids the need to do
+>>  	 * journal_start/journal_stop which can block and take a long time
+>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>> index 85af112e868d..0e77b2e6f873 100644
+>> --- a/fs/f2fs/file.c
+>> +++ b/fs/f2fs/file.c
+>> @@ -51,7 +51,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+>>  	struct inode *inode = file_inode(vmf->vma->vm_file);
+>>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>>  	struct dnode_of_data dn = { .node_changed = false };
+>> -	int err;
+>> +	int offset, err;
+>>  
+>>  	if (unlikely(f2fs_cp_error(sbi))) {
+>>  		err = -EIO;
+>> @@ -70,13 +70,14 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+>>  	file_update_time(vmf->vma->vm_file);
+>>  	down_read(&F2FS_I(inode)->i_mmap_sem);
+>>  	lock_page(page);
+>> -	if (unlikely(page->mapping != inode->i_mapping ||
+>> -			page_offset(page) > i_size_read(inode) ||
+>> -			!PageUptodate(page))) {
+>> +	err = -EFAULT;
+>> +	if (likely(PageUptodate(page)))
+>> +		err = page_mkwrite_check_truncate(page, inode);
+>> +	if (unlikely(err < 0)) {
+>>  		unlock_page(page);
+>> -		err = -EFAULT;
+>>  		goto out_sem;
+>>  	}
+>> +	offset = err;
+>>  
+>>  	/* block allocation */
+>>  	__do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO, true);
+>> @@ -101,14 +102,8 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+>>  	if (PageMappedToDisk(page))
+>>  		goto out_sem;
+>>  
+>> -	/* page is wholly or partially inside EOF */
+>> -	if (((loff_t)(page->index + 1) << PAGE_SHIFT) >
+>> -						i_size_read(inode)) {
+>> -		loff_t offset;
+>> -
+>> -		offset = i_size_read(inode) & ~PAGE_MASK;
+>> +	if (offset != PAGE_SIZE)
+>>  		zero_user_segment(page, offset, PAGE_SIZE);
+>> -	}
+>>  	set_page_dirty(page);
+>>  	if (!PageUptodate(page))
+>>  		SetPageUptodate(page);
+>> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+>> index d33c7bc5ee92..1aaf157fd6e9 100644
+>> --- a/fs/iomap/buffered-io.c
+>> +++ b/fs/iomap/buffered-io.c
+>> @@ -1062,24 +1062,16 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops)
+>>  	struct page *page = vmf->page;
+>>  	struct inode *inode = file_inode(vmf->vma->vm_file);
+>>  	unsigned long length;
+>> -	loff_t offset, size;
+>> +	loff_t offset;
+>>  	ssize_t ret;
+>>  
+>>  	lock_page(page);
+>> -	size = i_size_read(inode);
+>> -	offset = page_offset(page);
+>> -	if (page->mapping != inode->i_mapping || offset > size) {
+>> -		/* We overload EFAULT to mean page got truncated */
+>> -		ret = -EFAULT;
+>> +	ret = page_mkwrite_check_truncate(page, inode);
+>> +	if (ret < 0)
+>>  		goto out_unlock;
+>> -	}
+>> -
+>> -	/* page is wholly or partially inside EOF */
+>> -	if (offset > size - PAGE_SIZE)
+>> -		length = offset_in_page(size);
+>> -	else
+>> -		length = PAGE_SIZE;
+>> +	length = ret;
+>>  
+>> +	offset = page_offset(page);
+>>  	while (length > 0) {
+>>  		ret = iomap_apply(inode, offset, length,
+>>  				IOMAP_WRITE | IOMAP_FAULT, ops, page,
+>> diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
+>> index cd52585c8f4f..91f7a1f2db0d 100644
+>> --- a/fs/ubifs/file.c
+>> +++ b/fs/ubifs/file.c
+>> @@ -1563,8 +1563,7 @@ static vm_fault_t ubifs_vm_page_mkwrite(struct vm_fault *vmf)
+>>  	}
+>>  
+>>  	lock_page(page);
+>> -	if (unlikely(page->mapping != inode->i_mapping ||
+>> -		     page_offset(page) > i_size_read(inode))) {
+>> +	if (unlikely(page_mkwrite_check_truncate(page, inode) < 0)) {
+>>  		/* Page got truncated out from underneath us */
+>>  		goto sigbus;
+>>  	}
+>> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+>> index 37a4d9e32cd3..ccb14b6a16b5 100644
+>> --- a/include/linux/pagemap.h
+>> +++ b/include/linux/pagemap.h
+>> @@ -636,4 +636,32 @@ static inline unsigned long dir_pages(struct inode *inode)
+>>  			       PAGE_SHIFT;
+>>  }
+>>  
+>> +/**
+>> + * page_mkwrite_check_truncate - check if page was truncated
+>> + * @page: the page to check
+>> + * @inode: the inode to check the page against
+>> + *
+>> + * Returns the number of bytes in the page up to EOF,
+>> + * or -EFAULT if the page was truncated.
+>> + */
+>> +static inline int page_mkwrite_check_truncate(struct page *page,
+>> +					      struct inode *inode)
+>> +{
+>> +	loff_t size = i_size_read(inode);
+>> +	pgoff_t index = size >> PAGE_SHIFT;
+>> +	int offset = offset_in_page(size);
+>> +
+>> +	if (page->mapping != inode->i_mapping)
+>> +		return -EFAULT;
+>> +
+>> +	/* page is wholly inside EOF */
+>> +	if (page->index < index)
+>> +		return PAGE_SIZE;
+>> +	/* page is wholly past EOF */
+>> +	if (page->index > index || !offset)
+>> +		return -EFAULT;
+>> +	/* page is partially inside EOF */
+>> +	return offset;
+>> +}
+>> +
+>>  #endif /* _LINUX_PAGEMAP_H */
+>> -- 
+>> 2.20.1
+>>
+> .
+> 
