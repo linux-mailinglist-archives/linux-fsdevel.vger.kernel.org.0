@@ -2,146 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A2DB133F63
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 11:37:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10F67133F68
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 11:38:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbgAHKhq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jan 2020 05:37:46 -0500
-Received: from monster.unsafe.ru ([5.9.28.80]:59224 "EHLO mail.unsafe.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727272AbgAHKhq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jan 2020 05:37:46 -0500
-Received: from comp-core-i7-2640m-0182e6 (nat-pool-brq-t.redhat.com [213.175.37.10])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727811AbgAHKiS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jan 2020 05:38:18 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:38480 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727338AbgAHKiS (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Jan 2020 05:38:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578479897;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type;
+        bh=McNFtCRyd0uLcr0MpXcFYvBNH/vbYBADBPOFmbrGxlc=;
+        b=VAfBLoPaAnIeEqvdrFSG3wHs8yPOYMY+u8xcce4OzlhEXMfFYLIM1xeVJPfsIPj6UWOpQh
+        tXYVdkjjqW+koMPe2v978XP6HTJA88qWz+/+HuhGgxY5XXNzQT52swPP5p5lBYxD0jZcsS
+        azyyn9L8xG7PruwURzGfKVOhJwk9lTI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-199-uyBo9BCtNpStiTDHHqITgw-1; Wed, 08 Jan 2020 05:38:14 -0500
+X-MC-Unique: uyBo9BCtNpStiTDHHqITgw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.unsafe.ru (Postfix) with ESMTPSA id 64226C61AB0;
-        Wed,  8 Jan 2020 10:37:42 +0000 (UTC)
-Date:   Wed, 8 Jan 2020 11:37:41 +0100
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-Subject: Re: [PATCH v6 00/10] proc: modernize proc to support multiple
- private instances
-Message-ID: <20200108103617.sowveextdxz5hkme@comp-core-i7-2640m-0182e6>
-Mail-Followup-To: Alexey Dobriyan <adobriyan@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>, Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-References: <20191225125151.1950142-1-gladkov.alexey@gmail.com>
- <20200106151514.GA382@avx2>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 79ABA10054E3;
+        Wed,  8 Jan 2020 10:38:13 +0000 (UTC)
+Received: from 10.255.255.10 (ovpn-204-196.brq.redhat.com [10.40.204.196])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8CE4E5D9E1;
+        Wed,  8 Jan 2020 10:38:12 +0000 (UTC)
+Date:   Wed, 8 Jan 2020 11:38:10 +0100
+From:   Karel Zak <kzak@redhat.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        util-linux@vger.kernel.org
+Subject: [ANNOUNCE] util-linux v2.35-rc2
+Message-ID: <20200108103810.6s45opguridzzp2q@10.255.255.10>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200106151514.GA382@avx2>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 06, 2020 at 06:15:14PM +0300, Alexey Dobriyan wrote:
-> >  	hidepid=	Set /proc/<pid>/ access mode.
-> >  	gid=		Set the group authorized to learn processes information.
-> > +	pidonly=	Show only task related subset of procfs.
-> 
-> I'd rather have
-> 
-> 	mount -t proc -o set=pid
+The util-linux release v2.35-rc2 is available at
 
-This is a great idea.
+    https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/v2.35/
 
-> so that is can be naturally extended to 
-> 
-> 	mount -t proc -o set=pid,sysctl,misc
->
-> > +static int proc_dir_open(struct inode *inode, struct file *file)
-> > +{
-> > +	struct proc_fs_info *fs_info = proc_sb_info(inode->i_sb);
-> > +
-> > +	if (proc_fs_pidonly(fs_info) == PROC_PIDONLY_ON)
-> > +		return -ENOENT;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  /*
-> >   * These are the generic /proc directory operations. They
-> >   * use the in-memory "struct proc_dir_entry" tree to parse
-> > @@ -338,6 +357,7 @@ static const struct file_operations proc_dir_operations = {
-> >  	.llseek			= generic_file_llseek,
-> >  	.read			= generic_read_dir,
-> >  	.iterate_shared		= proc_readdir,
-> > +	.open			= proc_dir_open,
-> 
-> This should not be necessary: if lookup and readdir filters work
-> then ->open can't happen.
+Feedback and bug reports, as always, are welcomed.
 
-Yes you are right.
-
-> > --- a/include/linux/proc_fs.h
-> > +++ b/include/linux/proc_fs.h
-> > +/* definitions for hide_pid field */
-> > +enum {
-> > +	HIDEPID_OFF	  = 0,
-> > +	HIDEPID_NO_ACCESS = 1,
-> > +	HIDEPID_INVISIBLE = 2,
-> > +	HIDEPID_NOT_PTRACABLE = 3, /* Limit pids to only ptracable pids */
-> > +};
-> 
-> These should live in uapi/ as they _are_ user interface to mount().
-
-OK.
-
-What do you think, maybe it's better to make these values a mask ?
-
-I mean:
-
-#define HIDEPID_OFF 0
-#define HIDEPID_NO_ACCESS 1
-#define HIDEPID_INVISIBLE 2
-#define HIDEPID_NOT_PTRACABLE 4
-
-In this case, if in the future there appear values that can be combined,
-then there will be no need to make additional parameters.
+  Karel
 
 -- 
-Rgrds, legion
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
 
