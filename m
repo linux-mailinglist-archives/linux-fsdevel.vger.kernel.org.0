@@ -2,81 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DE15134476
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 15:01:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52CB213448C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jan 2020 15:06:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728342AbgAHOBm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jan 2020 09:01:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34512 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726699AbgAHOBl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jan 2020 09:01:41 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 874F720705;
-        Wed,  8 Jan 2020 14:01:39 +0000 (UTC)
-Date:   Wed, 8 Jan 2020 09:01:38 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 01/22] bootconfig: Add Extra Boot Config support
-Message-ID: <20200108090138.4fd561ac@gandalf.local.home>
-In-Reply-To: <20200108141700.425599efe7ab0ac7c4329661@kernel.org>
-References: <157736902773.11126.2531161235817081873.stgit@devnote2>
-        <157736904075.11126.16068256892686522924.stgit@devnote2>
-        <20200107205945.63e5d35a@rorschach.local.home>
-        <20200108141700.425599efe7ab0ac7c4329661@kernel.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1728690AbgAHOF5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jan 2020 09:05:57 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:56102 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727127AbgAHOF4 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Jan 2020 09:05:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Y5Zp5DraPm2b4G9FdcZzJFZL/5Lu3ash5oRZzFlJrrQ=; b=ZeMiKnCPJGvzDo+O/UfvlAu/N
+        sZUrBeXq9/DJgejEzJDxzf/u0MHMTCjzgqOmsbdOmsplpjSF+MkuW0DiAqEdNsTqfoUraHxNwAXbk
+        i+aGIqK/w63kPTUn31L2QobgAZ2sdtvimXrYJLJ3R3ImQW6+o9UhbZ9Nz8dc9tG5TrZO/DXYVaW8/
+        BDhX8Dsq/AtEbptlxAGgQ/JUdjA1Ym9PIeV+/4fkGukWoSaaYPAK+crtDFdUWjqOcbtQtFkZAQ4Ep
+        oC76mAnRDykgejw3xuIYmk2Ev4MAzNf5BYpNLIfQTElSy/Orqb2coN+t9D2vtyZkweJH/95p4VxeN
+        pMzqMtnIA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ipBy8-0008I6-HI; Wed, 08 Jan 2020 14:05:56 +0000
+Date:   Wed, 8 Jan 2020 06:05:56 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Satya Tangirala <satyat@google.com>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Kim Boojin <boojin.kim@samsung.com>
+Subject: Re: [PATCH v6 0/9] Inline Encryption Support
+Message-ID: <20200108140556.GB2896@infradead.org>
+References: <20191218145136.172774-1-satyat@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191218145136.172774-1-satyat@google.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 8 Jan 2020 14:17:00 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+I haven't been able to deep dive into the details, but the structure
+of this still makes me very unhappy.
 
-> > > +}
-> > > +
-> > > +/**
-> > > + * xbc_node_is_key() - Test the node is a key node
-> > > + * @node: An XBC node.
-> > > + *
-> > > + * Test the @node is a key node and return true if a key node, false if not.
-> > > + */
-> > > +static inline __init bool xbc_node_is_key(struct xbc_node *node)
-> > > +{
-> > > +	return !(node->data & XBC_VALUE);
-> > > +}
-> > > +  
-> 
-> Maybe this is better use xbc_node_is_value()
-> 
-> 	return !xbc_node_is_value();
-> 
-> Right?
+Most of it is related to the software fallback again.  Please split the
+fallback into a separate file, and also into a separate data structure.
+There is abslutely no need to have the overhead of the software only
+fields for the hardware case.
 
-Agreed.
+On the counter side I think all the core block layer code added should
+go into a single file instead of split into three with some odd
+layering.
 
--- Steve
-
-> 
-
+Also what I don't understand is why this managed key-slots on a per-bio
+basis.  Wou;dn't it make a whole lot more sense to manage them on a
+struct request basis once most of the merging has been performed?
