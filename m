@@ -2,49 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41622135CE9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2020 16:37:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C21D9135CE8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2020 16:37:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732455AbgAIPhS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Jan 2020 10:37:18 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:35733 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728098AbgAIPhS (ORCPT
+        id S1732486AbgAIPhV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Jan 2020 10:37:21 -0500
+Received: from mail-qk1-f176.google.com ([209.85.222.176]:35729 "EHLO
+        mail-qk1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728098AbgAIPhU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Jan 2020 10:37:18 -0500
-Received: by mail-qt1-f193.google.com with SMTP id e12so6214019qto.2;
-        Thu, 09 Jan 2020 07:37:17 -0800 (PST)
+        Thu, 9 Jan 2020 10:37:20 -0500
+Received: by mail-qk1-f176.google.com with SMTP id z76so6367689qka.2;
+        Thu, 09 Jan 2020 07:37:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=s2YJGyHBLvtLKqb9SRpRu2YXGxUEZDi676bDfDkyEFg=;
-        b=ZneKtiAlMcidG4UdYbHPyxPvUR5AWwRcKL1wUXAKDc3yaB5Rz2JG2cg9C+f/skx5di
-         IPR1RluXbxEvHAmkbAnTVYeiCBecT03OzDYOo2OAHOHyuRB11O8rFg3tNiTOZLHmgXoa
-         MDVcLXuCkhA1oB8ew29ESo+iL2YRj+s/rpqID+AgHME6pbnELqyMDAgHnW+2SQNpPP+w
-         qa9P8QKO7h3dtEfAoPylj50dBtBSxZp8+7AFMi+ZRNDBYAZndBhg3CrVPteAPfeEtlfx
-         QjKbf7Bh/VxE39BXkS2iW5QtRy7yAmy4Ihv5t2FvO5Gi6UQ3SfCpkGzS2kwEEsdy9Ixw
-         /zzg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=44qeSbgK4fjxtx3Jl3gaoujj676TRWsAIPJoecKwxeA=;
+        b=noa0a510xUsCS83uXW9qp66lUzBtzCWLZCNOz+h/lTvAlhnXI2GABGdvyDVPFMzEcH
+         wZK4fb8EYbCh4foaOpydy1F4EusJwlS8NhTvSgnRSZlEKliGYglDwi61QL/zlQ7noqE0
+         3X4EEGTdyw3+WSZpyzcySaoxn5erAYcfg9l8A8Gar7h2l0CZ4B41M5xrtuQR5zFZt5fp
+         3kHzDPdAN+WEZl9DSILegCRA0+AZ4xHC4i8Gz3E2ZhAkcIOzjXq9pv7VBbpu0yS04qSx
+         kXXXgPHcJ2klqc/o5Lgs8+bbzmo4lJXgxXOwEBD5C65z27dXKFueLGDAXoNnfUrXIgHM
+         0AUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=s2YJGyHBLvtLKqb9SRpRu2YXGxUEZDi676bDfDkyEFg=;
-        b=mOaRoE2a/5px/T8mIM6hF9MnFRxwEEF5uGxu9OT1ppZsSxJaQ3/SaOYI4Yiov9tQSG
-         EJUal8RQ4Q33YiSpVBWGBsoSzzPRMqc2dFsvyozpAyObpoSMlLNflyGGD+iWhh+oizlS
-         FFTYtSkMhn+s0Y+2ECfBv9mRleT3St/2piNpeHSa1avqV49WKduxOKVBkYoTuvMCJ8AF
-         7ln9dQiDTPZDLAT2uQ6w5/ororjHFwhM+cGNJ6U2S5kaio8my8sPsm6ca8BXRrbFd44m
-         7EwUDRlo1ZhC2tnCMsREiMAFeoS8MffTDl2s8OX+fjQiq23o+5mvIuk5bsuN3mR+v51L
-         rP1w==
-X-Gm-Message-State: APjAAAUsPuRmEuyYTtu8DwUdCKOaRupdTo98ntPwYxbNNFmjSm1OAXMz
-        yYmTeqK61lrkmiHR1aqgG9U=
-X-Google-Smtp-Source: APXvYqzRsrNCmNbKgXNaQF/bpdsSBKi6qZ1al31wLZdA+ei0VbefgTZAFJ0ZXB5U1yp13F10a5Gylg==
-X-Received: by 2002:ac8:65d3:: with SMTP id t19mr8721051qto.369.1578584237194;
-        Thu, 09 Jan 2020 07:37:17 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=44qeSbgK4fjxtx3Jl3gaoujj676TRWsAIPJoecKwxeA=;
+        b=MNMu6r3SEqkw8PxloHK2rBeE2yG8K0G4temtNNTBAW5uDtg31ptSQ9kfbbpZd1L3FC
+         jTf7AXHZvEfiz+J0BaxeGvWER1oGVCIAkC6/GOgpTjsqdk1/XhzbxO1Rb/OvBnqNUD5v
+         GzqO7TIwXOt0y8oWbxdzlzUcF9hwxCkWNZDKV/KOkHirOb2+YkMo3Vgp/nImJKnWFDWV
+         oyzEsrhBsZZY/cE7bNOqWhGENvimPhp373rdwkyVPW33/k1YeIgxt5eQIR7a3uOuKhdD
+         iQ+tatkgp0nvAEdXigUj4J12/jiG22t1kzGrKlSK3aL9c60MMqHJk1HJBFCPslJS1Rbr
+         muvg==
+X-Gm-Message-State: APjAAAW+VnGn1cvDxNvZ3jVP+iNfTZy5f4mG6fUqP4QLw/RO1/kgn4XO
+        BwDbV/IZ9ZvLbRTbjSdkuPgyOyZ/yrM=
+X-Google-Smtp-Source: APXvYqzqA3NMUhSuJbSsfbCvQfcWyNR0IMB4i9uRm/zTmXCuUbC6swcJY7SbRpsMEcQotMbC0rW2zw==
+X-Received: by 2002:a05:620a:128f:: with SMTP id w15mr9779885qki.472.1578584239612;
+        Thu, 09 Jan 2020 07:37:19 -0800 (PST)
 Received: from localhost.localdomain ([2804:14d:72b1:8920:a2ce:f815:f14d:bfac])
-        by smtp.gmail.com with ESMTPSA id u16sm3122008qku.19.2020.01.09.07.37.14
+        by smtp.gmail.com with ESMTPSA id u16sm3122008qku.19.2020.01.09.07.37.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 07:37:16 -0800 (PST)
+        Thu, 09 Jan 2020 07:37:19 -0800 (PST)
 From:   "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
 X-Google-Original-From: Daniel W. S. Almeida
 To:     viro@zeniv.linux.org.uk
@@ -52,10 +52,12 @@ Cc:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         skhan@linuxfoundation.org,
         linux-kernel-mentees@lists.linuxfoundation.org
-Subject: [RESEND] fs: posix-acl.c: Fix warnings
-Date:   Thu,  9 Jan 2020 12:37:07 -0300
-Message-Id: <20200109153708.1021891-1-dwlsalmeida@gmail.com>
+Subject: [RESEND] fs: seq_file.c: Fix warnings
+Date:   Thu,  9 Jan 2020 12:37:08 -0300
+Message-Id: <20200109153708.1021891-2-dwlsalmeida@gmail.com>
 X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200109153708.1021891-1-dwlsalmeida@gmail.com>
+References: <20200109153708.1021891-1-dwlsalmeida@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -65,45 +67,48 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
 
-Fix the following warning
+Fix the following warnings:
 
-/fs/posix_acl.c:636: WARNING: Inline emphasis start-string without end-string.
+fs/seq_file.c:40: WARNING: Inline strong start-string without end-string.
+fs/seq_file.c:40: WARNING: Inline strong start-string without end-string.
+fs/seq_file.c:40: WARNING: Inline strong start-string without end-string.
+fs/seq_file.c:40: WARNING: Inline strong start-string without end-string
 
-By escaping a character.
+By escaping the parenthesis in the affected line. Line breaks were added
+for clarity.
 
 Signed-off-by: Daniel W. S. Almeida <dwlsalmeida@gmail.com>
 ---
- fs/posix_acl.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/seq_file.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/fs/posix_acl.c b/fs/posix_acl.c
-index 84ad1c90d535..cb25966c6881 100644
---- a/fs/posix_acl.c
-+++ b/fs/posix_acl.c
-@@ -634,7 +634,7 @@ EXPORT_SYMBOL_GPL(posix_acl_create);
+diff --git a/fs/seq_file.c b/fs/seq_file.c
+index 1600034a929b..aad4354ceeb0 100644
+--- a/fs/seq_file.c
++++ b/fs/seq_file.c
+@@ -38,10 +38,18 @@ static void *seq_buf_alloc(unsigned long size)
+  *	@op: method table describing the sequence
   *
-  * Update the file mode when setting an ACL: compute the new file permission
-  * bits based on the ACL.  In addition, if the ACL is equivalent to the new
-- * file mode, set *acl to NULL to indicate that no ACL should be set.
-+ * file mode, set \*acl to NULL to indicate that no ACL should be set.
-  *
-  * As with chmod, clear the setgit bit if the caller is not in the owning group
-  * or capable of CAP_FSETID (see inode_change_ok).
-@@ -743,12 +743,12 @@ posix_acl_from_xattr(struct user_namespace *user_ns,
- 		return ERR_PTR(-EINVAL);
- 	if (count == 0)
- 		return NULL;
--	
-+
- 	acl = posix_acl_alloc(count, GFP_NOFS);
- 	if (!acl)
- 		return ERR_PTR(-ENOMEM);
- 	acl_e = acl->a_entries;
--	
-+
- 	for (end = entry + count; entry != end; acl_e++, entry++) {
- 		acl_e->e_tag  = le16_to_cpu(entry->e_tag);
- 		acl_e->e_perm = le16_to_cpu(entry->e_perm);
+  *	seq_open() sets @file, associating it with a sequence described
+- *	by @op.  @op->start() sets the iterator up and returns the first
+- *	element of sequence. @op->stop() shuts it down.  @op->next()
+- *	returns the next element of sequence.  @op->show() prints element
+- *	into the buffer.  In case of error ->start() and ->next() return
++ *	by @op.
++ *
++ *	@op->start\(\) sets the iterator up and returns the first
++ *	element of sequence.
++ *
++ *	@op->stop\(\) shuts it down.
++ *
++ *	@op->next\(\) returns the next element of sequence.
++ *
++ *	@op->show\(\) prints element into the buffer.
++ *
++ *	In case of error ->start() and ->next() return
+  *	ERR_PTR(error).  In the end of sequence they return %NULL. ->show()
+  *	returns 0 in case of success and negative number in case of error.
+  *	Returning SEQ_SKIP means "discard this element and move on".
 -- 
 2.24.1
 
