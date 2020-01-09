@@ -2,98 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FACE135099
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2020 01:44:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F62B1350C9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2020 02:02:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727168AbgAIAoC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jan 2020 19:44:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33382 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726654AbgAIAoC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jan 2020 19:44:02 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C5ABD2070E;
-        Thu,  9 Jan 2020 00:44:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578530642;
-        bh=Go188rL5tikNt03I4uWv26oj+FUof0Vk+S7a6HlvT1A=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=wVjR5/sPmfzWsNjUYs7iAFkDuAiMFnOpPCjdP+oU0s+4tHE0RLgbXYKiXuSJulplY
-         WZVBvVyNaV7D1gkAtlMQFENto0ov9x31m3PyRs1uW7fKs78RbYeEqMnDd0yifwYvyL
-         QJQ799I/TfvKrDuKHFPYFjkL73uGZt3h28MFnhyU=
-Message-ID: <064b5f5318fd433f03242ed234fe7c370899e224.camel@kernel.org>
-Subject: Re: [PATCH v5 2/2] tmpfs: Support 64-bit inums per-sb
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Hugh Dickins <hughd@google.com>, Chris Mason <clm@fb.com>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Chris Down <chris@chrisdown.name>,
-        Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>
-Date:   Wed, 08 Jan 2020 19:43:52 -0500
-In-Reply-To: <alpine.LSU.2.11.2001080259350.1884@eggly.anvils>
-References: <cover.1578225806.git.chris@chrisdown.name>
-         <ae9306ab10ce3d794c13b1836f5473e89562b98c.1578225806.git.chris@chrisdown.name>
-         <20200107001039.GM23195@dread.disaster.area>
-         <20200107001643.GA485121@chrisdown.name>
-         <20200107003944.GN23195@dread.disaster.area>
-         <CAOQ4uxjvH=UagqjHP_71_p9_dW9wKqiaWujzY1xKe7yZVFPoTA@mail.gmail.com>
-         <alpine.LSU.2.11.2001070002040.1496@eggly.anvils>
-         <CAOQ4uxiMQ3Oz4M0wKo5FA_uamkMpM1zg7ydD8FXv+sR9AH_eFA@mail.gmail.com>
-         <20200107210715.GQ23195@dread.disaster.area>
-         <4E9DF932-C46C-4331-B88D-6928D63B8267@fb.com>
-         <alpine.LSU.2.11.2001080259350.1884@eggly.anvils>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
+        id S1727082AbgAIBCp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jan 2020 20:02:45 -0500
+Received: from mail-pg1-f174.google.com ([209.85.215.174]:35043 "EHLO
+        mail-pg1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726654AbgAIBCp (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Jan 2020 20:02:45 -0500
+Received: by mail-pg1-f174.google.com with SMTP id l24so2384561pgk.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jan 2020 17:02:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ohlEOH5XWZ6A1s4JDpVP+2TOtl9UGDxWVMf8fpmYopY=;
+        b=Tn614v3IQX5DPzGvONLnn2DMWx1qlDTwcNP7VpUtT/crVYqRW07tYmWfDEq554ngES
+         t+REJ3IqPUkviApcsxFbnFjzY746dDn/epjM7RbAYbeZxFVelCAz6fYskY2AkcdXXivD
+         bCjJb4JwtVe9yZghxC/3O6WcrAy+oARFugfxxhdS0UltabUtrfvxhIPMCPiqZ2STnx69
+         ULljbUD60XjcYAcvODYbfZaY/HAX8SzfFql48ykJHHmthndK+wGzkuTps6YBhYY2JJDI
+         tg0KGqaOa5SE8X2dZeeRLtdluwaGiLgP+VqZYrRiArPnPMqC3i2XAb6BCUqEljGXOlVA
+         OHkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ohlEOH5XWZ6A1s4JDpVP+2TOtl9UGDxWVMf8fpmYopY=;
+        b=Tz2sDuJFwNbOF5PV0qoE3tzzqGNW3DvVwTf9cJB3W+ArFrRx8aMSnNdCRN16jE3Wyx
+         i3ZeLemf2O8o3qLLbzWsznMC59ta6LLfwnJlMDmknjz0Q+wx/jT5hB7GxCBAK6QCZizt
+         092a9YUKL8s3P1o0DPqIJKimrIeYFAS8GhSa9HZ9Z56bCyQ4MEdYOxj6fb/Xdb4euHi+
+         lHs0ealTVVVHyvAjC7dTuqs1PradIOuWoqRakOmZERJYN1DSHZjjx++tzaDfWW1ZMi+L
+         Vth6pJlkKbuWg+P+FE6s7Q6RG3BnYt4BQjcBNqMQwgaL81csKhRaIbtAMQvN+mc7c9sL
+         VM8A==
+X-Gm-Message-State: APjAAAXGSqBPU6PLJpGkodjrNOaG5nb+0EINh+ia2bZlY/OxnIqWb8v1
+        C9zY3hzrh4WyamTgJBR56yvjDeHNiPk=
+X-Google-Smtp-Source: APXvYqy6eI6tbMcDpdYa1V7JRnmd3NXhhV8t8X/dcg/efqJu/i03zdPKcn/Tfg9NI0cNiPEHz4dm7w==
+X-Received: by 2002:a63:134e:: with SMTP id 14mr8409191pgt.115.1578531764003;
+        Wed, 08 Jan 2020 17:02:44 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id a6sm4730969pgg.25.2020.01.08.17.02.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Jan 2020 17:02:43 -0800 (PST)
+Subject: Re: [PATCHSET v2 0/6] io_uring: add support for open/close
+To:     Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+References: <20200107170034.16165-1-axboe@kernel.dk>
+ <e4fb6287-8216-529e-9666-5ec855db02fb@samba.org>
+ <4adb30f4-2ab3-6029-bc94-c72736b9004a@kernel.dk>
+ <4dffd58e-5602-62d5-d1af-343c4a091ed9@samba.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <eb99e387-f385-c36d-b1d9-f99ec470eba6@kernel.dk>
+Date:   Wed, 8 Jan 2020 18:02:42 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
+In-Reply-To: <4dffd58e-5602-62d5-d1af-343c4a091ed9@samba.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2020-01-08 at 03:24 -0800, Hugh Dickins wrote:
-> On Tue, 7 Jan 2020, Chris Mason wrote:
-> > On 7 Jan 2020, at 16:07, Dave Chinner wrote:
-> > 
-> > > IOWs, there are *lots* of 64bit inode numbers out there on XFS
-> > > filesystems....
-> > 
-> > It's less likely in btrfs but +1 to all of Dave's comments.  I'm happy 
-> > to run a scan on machines in the fleet and see how many have 64 bit 
-> > inodes (either buttery or x-y), but it's going to be a lot.
+On 1/8/20 4:05 PM, Stefan Metzmacher wrote:
+> Am 08.01.20 um 23:57 schrieb Jens Axboe:
+>> On 1/8/20 2:17 PM, Stefan Metzmacher wrote:
+>>> Am 07.01.20 um 18:00 schrieb Jens Axboe:
+>>>> Sending this out separately, as I rebased it on top of the work.openat2
+>>>> branch from Al to resolve some of the conflicts with the differences in
+>>>> how open flags are built.
+>>>
+>>> Now that you rebased on top of openat2, wouldn't it be better to add
+>>> openat2 that to io_uring instead of the old openat call?
+>>
+>> The IORING_OP_OPENAT already exists, so it would probably make more sense
+>> to add IORING_OP_OPENAT2 alongside that. Or I could just change it. Don't
+>> really feel that strongly about it, I'll probably just add openat2 and
+>> leave openat alone, openat will just be a wrapper around openat2 anyway.
 > 
-> Dave, Amir, Chris, many thanks for the info you've filled in -
-> and absolutely no need to run any scan on your fleet for this,
-> I think we can be confident that even if fb had some 15-year-old tool
-> in use on its fleet of 2GB-file filesystems, it would not be the one
-> to insist on a kernel revert of 64-bit tmpfs inos.
-> 
-> The picture looks clear now: while ChrisD does need to hold on to his
-> config option and inode32/inode64 mount option patch, it is much better
-> left out of the kernel until (very unlikely) proved necessary.
+> Great, thanks!
 
-This approach seems like the best course to me.
+Here:
 
-FWIW, at the time we capped this at 32-bits (2007), 64-bit machines were
-really just becoming widely available, and it was quite common to run
-32-bit, non-LFS apps on a 64-bit kernel. Users were hitting spurious
-EOVERFLOW errors all over the place so this seemed like the best way to
-address it.
+https://git.kernel.dk/cgit/linux-block/log/?h=for-5.6/io_uring-vfs
 
-The world has changed a lot since then though, and one would hope that
-almost everything these days is compiled with FILE_OFFSET_BITS=64.
+Not tested yet, will wire this up in liburing and write a test case
+as well.
 
-Fingers crossed!
 -- 
-Jeff Layton <jlayton@kernel.org>
+Jens Axboe
 
