@@ -2,163 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 893E31363BE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 00:24:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B7641363DB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 00:32:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729299AbgAIXYd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Jan 2020 18:24:33 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:12253 "EHLO
+        id S1728241AbgAIXcV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Jan 2020 18:32:21 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:15116 "EHLO
         mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725840AbgAIXYd (ORCPT
+        with ESMTP id S1725840AbgAIXcV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Jan 2020 18:24:33 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200109232429epoutp03ecee8ed1cff57f3c608693beaf9e4c12~oW37kUYdx1758417584epoutp03F
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Jan 2020 23:24:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200109232429epoutp03ecee8ed1cff57f3c608693beaf9e4c12~oW37kUYdx1758417584epoutp03F
+        Thu, 9 Jan 2020 18:32:21 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200109233218epoutp03cdbcc61d64b0dc1dfd82513da27ac019~oW_wO0WXO2289322893epoutp03R
+        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Jan 2020 23:32:18 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200109233218epoutp03cdbcc61d64b0dc1dfd82513da27ac019~oW_wO0WXO2289322893epoutp03R
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1578612269;
-        bh=lMGhktOYLMYAWK+NX3Jxwp6jFGb6ANpkrOAtwzIsmMk=;
+        s=mail20170921; t=1578612738;
+        bh=qYz4RWaAVEIVMPvjWOgfwAbf2N6owWkSInijo+H7HzE=;
         h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=mfu8u1pLuwKKx6TlsCNmaVi7SyhTm2Dzj95Gd/iMqDyXrXk1Np7dMZxqatPt/Ji5m
-         FikOCWwWRArHgQCgUSdR4vS9higngjhEAscDLzOGowxIY+CxUAWZIfHZrA5xHn21F2
-         oPtQo0gu6D8S6jGVpqwcDct/R3vqb18IOSM0iPP4=
+        b=S1i9hhZVNpfPjjqsl28LkFO5zy05oeLspXYCJe2R9JBnnFnRGzcqJpVFnudH36m6Y
+         2Xssd5kDcc90AeUwxsfa0KcsmMy8MkA1iDJGPt+T2mKFig4f2j2szwU+nfeOfGYVB0
+         GVoVXQD8tkLCzJm4VFm4XF7f1lK0MutuRlwlAsPs=
 Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200109232429epcas1p135bb753e048a10025a098dc3155ad6c0~oW37IuqvA1257212572epcas1p1g;
-        Thu,  9 Jan 2020 23:24:29 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.165]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 47v2JD3tBZzMqYkj; Thu,  9 Jan
-        2020 23:24:28 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        68.5D.57028.C26B71E5; Fri, 10 Jan 2020 08:24:28 +0900 (KST)
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200109233218epcas1p216a90b721fce9b24ca91cbc9bb16ef7f~oW_v0yS3e0847508475epcas1p2a;
+        Thu,  9 Jan 2020 23:32:18 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.164]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 47v2TF2gt4zMqYkc; Thu,  9 Jan
+        2020 23:32:17 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D2.33.48019.108B71E5; Fri, 10 Jan 2020 08:32:17 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
         epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200109232428epcas1p281af6e3194bb3d30dd0344c1985a9909~oW3539uVp0905609056epcas1p2Z;
-        Thu,  9 Jan 2020 23:24:28 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        20200109233216epcas1p2c9d7e9d31268733b4fc9c1fc0ad47ebf~oW_uiALBL0850008500epcas1p28;
+        Thu,  9 Jan 2020 23:32:16 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
         epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200109232428epsmtrp10b042efa0a0d8cc9989a475b4755cee4~oW353Sdgd1664416644epsmtrp1I;
-        Thu,  9 Jan 2020 23:24:28 +0000 (GMT)
-X-AuditID: b6c32a35-4f3ff7000001dec4-0a-5e17b62c2468
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        7A.37.06569.B26B71E5; Fri, 10 Jan 2020 08:24:28 +0900 (KST)
-Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
+        20200109233216epsmtrp1f80c1e0ab387d2f4542897fa543d7e5a~oW_uhS5zP2048320483epsmtrp15;
+        Thu,  9 Jan 2020 23:32:16 +0000 (GMT)
+X-AuditID: b6c32a38-23fff7000001bb93-76-5e17b80151f1
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D5.B6.10238.008B71E5; Fri, 10 Jan 2020 08:32:16 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip1.samsung.com
         (KnoxPortal) with ESMTPA id
-        20200109232427epsmtip28b8384a785ef16b3fbc2060b81aa46b2~oW35rOzdi1016610166epsmtip2b;
-        Thu,  9 Jan 2020 23:24:27 +0000 (GMT)
+        20200109233216epsmtip15eefb7ca5f611cab4c5f00ec776304a7~oW_uUON6x2165321653epsmtip1d;
+        Thu,  9 Jan 2020 23:32:16 +0000 (GMT)
 From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'Christoph Hellwig'" <hch@lst.de>
-Cc:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>, <valdis.kletnieks@vt.edu>,
+To:     "'Arnd Bergmann'" <arnd@arndb.de>
+Cc:     =?utf-8?Q?'Pali_Roh=C3=A1r'?= <pali.rohar@gmail.com>,
+        <linux-kernel@vger.kernel.org>,
+        "'Linux FS-devel Mailing List'" <linux-fsdevel@vger.kernel.org>,
+        "'gregkh'" <gregkh@linuxfoundation.org>,
+        "'Valdis Kletnieks'" <valdis.kletnieks@vt.edu>,
         <sj1557.seo@samsung.com>, <linkinjeon@gmail.com>,
-        <pali.rohar@gmail.com>
-In-Reply-To: <20200108180040.GB14650@lst.de>
-Subject: RE: [PATCH v9 06/13] exfat: add exfat entry operations
-Date:   Fri, 10 Jan 2020 08:24:27 +0900
-Message-ID: <001901d5c743$eff08030$cfd18090$@samsung.com>
+        "'Christoph Hellwig'" <hch@lst.de>
+In-Reply-To: <CAK8P3a0S6DBJqDMj4Oy9xeYVhW87HbBX2SqURFPKYT8K1z7fDw@mail.gmail.com>
+Subject: RE: [PATCH v9 09/13] exfat: add misc operations
+Date:   Fri, 10 Jan 2020 08:32:16 +0900
+Message-ID: <001e01d5c745$0765ca80$16315f80$@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJSGi/S1M7UFBjz5N3SW71o+eawLwIyMVVdAji9BWUBuFo0Daa5OQYQ
+Thread-Index: AQJSGi/S1M7UFBjz5N3SW71o+eawLwJob/ETArMVgR4BcbvZIAG7WpyVAtwAkTymkS7JAA==
 Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUhTYRTHeXbv7q7V7DbNHQxq3rBMUndb05to78giQyGKiHJd9OKsvbG7
-        mdaHVpaaiSYG4iqSjFAzlJqm1VpZIlZEL5QVWBRlGr1oke9U2+4iv/3P8/zO+Z/zPIfEFK1E
-        JJlntvM2M2ekiVl4+91lCXHL25VZ6ppqFVtU30KwjZe6JWxf/2uMvenpxdln188QbNWDKQnr
-        /n1Pyj79PoyvJXWdrn6Zznu2Waa78cpJ6CrcTUj388pCXde1L0QmsdOYYuC5HN6m4s3Zlpw8
-        c24qvXmrfoNem6hm4phVbBKtMnMmPpXemJ4Zl5Zn9DVEq/I5o8N3lMkJAp2wOsVmcdh5lcEi
-        2FNp3ppjtDJqa7zAmQSHOTc+22JKZtTqFVofucdoeDE6iVsbZxfcqa4lnKiTLEMhJFAroazo
-        IipDs0gF1YGg/f1NXAx+IPDenpKKwSiC4YZm9C/l28dzQcqDYGKgJ0gNIWj780nmpwgqDn5P
-        ewm/DqeWwMOJYpkfwqj7CP60VQUuQqjlcL78fqBsGLUGxh8PSv0ap6LhcNNkgJFTq6CmpwMT
-        9Tzorf2A+zVGLYJrX89gYksqmPh4USqapUHr9DEkMuFw+ngx5jcGqkgG/T0dEjFhI3gbnFJR
-        h8HnHrdM1JEwVOnvlPTpgzDiDdYvRTA4lipqDbxqaZX6EYxaBi3XE8TjKOicOhu0DYVvv8ql
-        YhU5lBYrRCQaKp7eDTawAMpKhmUnEe2aMZhrxmCuGQO4/pvVIbwJRfBWwZTLC4yVmfnbV1Bg
-        W2O1HejUo/QuRJGIniM3hCmzFFIuXyg0dSEgMTpc3v0yIkshz+EKD/A2i97mMPJCF9L63r0K
-        i5yfbfHtvtmuZ7QrNBoNuzIxKVGroZVycvzJbgWVy9n5fTxv5W3/8iRkSKQTzZntiY36VRuz
-        aeBwaPeijC3JQ7o7l3fnDxaVegoyhPgxpiKmPu9IyXP3ifBJT8qAcd6ONgdS9lXSxafqD+yv
-        G2nkmudrbjVEuyP2X01foN0eW1NHLn7cPjm17p5bPzF3/baEUBoGTHZPTPnRpRm7bvcderOX
-        vVAe9m5779uxKKWExgUDx8RiNoH7C5NqXUDDAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBIsWRmVeSWpSXmKPExsWy7bCSvK7ONvE4g02OFs2L17NZrFx9lMni
-        +t1bzBZ79p5ksbi8aw6bxcTTv5kstvw7wmpx6f0HFgcOj52z7rJ77J+7ht1j980GNo++LasY
-        PT5vkvM4tP0NWwBbFJdNSmpOZllqkb5dAlfGtW+/WApWclccnDyTrYFxJ0cXIyeHhICJxLun
-        81m6GLk4hAR2M0r0texjg0hISxw7cYa5i5EDyBaWOHy4GKLmOaPEukU7GUFq2AR0Jf792Q9W
-        LyKgJnHmZxs7SBGzwCVGiQm9TcwQHfcZJbrnHmQCqeIU0JFY1HMKrFtYwF7ix4UXrCA2i4Cq
-        ROOqX2CTeAUsJaYf38EMYQtKnJz5hAXkCmYBPYm2jWCtzALyEtvfzmGGOFRB4ufTZawQR7hJ
-        bPjTClUjIjG7s415AqPwLCSTZiFMmoVk0iwkHQsYWVYxSqYWFOem5xYbFhjlpZbrFSfmFpfm
-        pesl5+duYgTHl5bWDsYTJ+IPMQpwMCrx8GYIi8cJsSaWFVfmHmKU4GBWEuE9ekMsTog3JbGy
-        KrUoP76oNCe1+BCjNAeLkjivfP6xSCGB9MSS1OzU1ILUIpgsEwenVAOj/7sk/t9rROy+bTuZ
-        YHBIc+YTpm1XCtunCC317zb4deWDjqPE8/ilHaVnXsitawoNqnzcEPf697bbkge3Fe0O/Hzl
-        4/07cxU17ry6EP9F6ItI+dF1t93LH0zIkz33dpehT/9J+ayo74vNL288wr73MKv5ymU3YrJn
-        7/Ge5fI7/NPXnEUn2tfniiixFGckGmoxFxUnAgBBPMt/qwIAAA==
-X-CMS-MailID: 20200109232428epcas1p281af6e3194bb3d30dd0344c1985a9909
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJJsWRmVeSWpSXmKPExsWy7bCmni7jDvE4gwfPhC3+TjrGbtG8eD2b
+        xcrVR5ksrt+9xWyxZ+9JFovLu+awWUw8/ZvJYsu/I6wWl95/YHHg9Pj9axKjx85Zd9k99s9d
+        w+6x+2YDm0ffllWMHp83yXkc2v6GLYA9KscmIzUxJbVIITUvOT8lMy/dVsk7ON453tTMwFDX
+        0NLCXEkhLzE31VbJxSdA1y0zB+g0JYWyxJxSoFBAYnGxkr6dTVF+aUmqQkZ+cYmtUmpBSk6B
+        oUGBXnFibnFpXrpecn6ulaGBgZEpUGVCTsaz99PYC+YLV7z8+JGlgXGFUBcjJ4eEgInE05XP
+        mLsYuTiEBHYwSrRf/MME4XxilFh3tJ0RwvnGKHFv/TFGmJbrWydCtexllDg+vYkNwnnJKLHy
+        chsbSBWbgK7Evz/7wWwRAVWJV092s4MUMQtcYJK487sJLMEpEChx7ONTVhBbWMBC4vWRA0Bx
+        Dg4WoIbW7WIgYV4BS4nPHTdZIWxBiZMzn7CA2MwC2hLLFr5mhrhIQeLn02WsELvCJA5fms8E
+        USMiMbuzDexSCYF2dokzN7dAveAisXzTFyYIW1ji1fEt7BC2lMTL/jZ2kBskBKolPu6Hmt/B
+        KPHiuy2EbSxxc/0GVpASZgFNifW79CHCihI7f89lhFjLJ/Huaw8rxBReiY42aFCrSvRdOgy1
+        VFqiq/0D+wRGpVlIHpuF5LFZSB6YhbBsASPLKkax1ILi3PTUYsMCE+TI3sQITrZaFjsY95zz
+        OcQowMGoxMObISweJ8SaWFZcmXuIUYKDWUmE9+gNsTgh3pTEyqrUovz4otKc1OJDjKbAYJ/I
+        LCWanA/MBHkl8YamRsbGxhYmZuZmpsZK4rwcPy7GCgmkJ5akZqemFqQWwfQxcXBKNTBOXXy2
+        dO2FZZ5bFxrF/nFlyInhuL5IoD84YcOV5LuxkyPvO8etVCncGrCk59mr897OV6acKPo424Rr
+        4vHXZ1/stHf7uHSqWI6qXuzBj1dtpUtYv7AvPTvHLprNs9893T5J1jL54dxDzI6RUQvyjDVE
+        P78+UMg+014mrHli82LbX50tgi4rvLYpsRRnJBpqMRcVJwIAQJzRSswDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCIsWRmVeSWpSXmKPExsWy7bCSnC7DDvE4g7WrTSz+TjrGbtG8eD2b
+        xcrVR5ksrt+9xWyxZ+9JFovLu+awWUw8/ZvJYsu/I6wWl95/YHHg9Pj9axKjx85Zd9k99s9d
+        w+6x+2YDm0ffllWMHp83yXkc2v6GLYA9issmJTUnsyy1SN8ugSvj9oxdTAWHeSu6tnxhb2Bc
+        z9XFyMkhIWAicX3rROYuRi4OIYHdjBI/n3YxQySkJY6dOANkcwDZwhKHDxdD1DxnlPjcugOs
+        hk1AV+Lfn/1sILaIgKrEqye72UGKmAWuMUncvveFEaLjDJPEodvLWECqOAUCJY59fMoKYgsL
+        WEi8PnKADWQDC1B363YxkDCvgKXE546brBC2oMTJmU/AWpkFtCWe3nwKZy9b+BrqUAWgo5ex
+        QhwRJnH40nwmiBoRidmdbcwTGIVnIRk1C8moWUhGzULSsoCRZRWjZGpBcW56brFhgWFearle
+        cWJucWleul5yfu4mRnDcaWnuYLy8JP4QowAHoxIPb4aweJwQa2JZcWXuIUYJDmYlEd6jN8Ti
+        hHhTEiurUovy44tKc1KLDzFKc7AoifM+zTsWKSSQnliSmp2aWpBaBJNl4uCUamDUNjvwOPKo
+        a7BT8Y3KBaqrbjAvNt3XwObqHqLFGNt2zX1G2/vqo4v+hTlc3yCgXXpUTmFGxWfXyRL2Xb5X
+        pmbsW3Xrl1wBm/DC6g0nf++T/V/9kyE54szz8KO8ywJaN3BbfJux9LxAdKuR3wrxeRU5oW5P
+        tD8Fva5Q/Zn63kvyt+r0jqyC1jglluKMREMt5qLiRABNFRIKtwIAAA==
+X-CMS-MailID: 20200109233216epcas1p2c9d7e9d31268733b4fc9c1fc0ad47ebf
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200102082404epcas1p4a28c34799df317165ddf8bd5a0b433e9
+X-CMS-RootMailID: 20200102082406epcas1p268f260d90213bdaabee25a7518f86625
 References: <20200102082036.29643-1-namjae.jeon@samsung.com>
-        <CGME20200102082404epcas1p4a28c34799df317165ddf8bd5a0b433e9@epcas1p4.samsung.com>
-        <20200102082036.29643-7-namjae.jeon@samsung.com>
-        <20200108180040.GB14650@lst.de>
+        <CGME20200102082406epcas1p268f260d90213bdaabee25a7518f86625@epcas1p2.samsung.com>
+        <20200102082036.29643-10-namjae.jeon@samsung.com>
+        <20200102091902.tk374bxohvj33prz@pali> <20200108180304.GE14650@lst.de>
+        <CAK8P3a0S6DBJqDMj4Oy9xeYVhW87HbBX2SqURFPKYT8K1z7fDw@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > +int exfat_ent_get(struct super_block *sb, unsigned int loc,
-> > +		unsigned int *content)
-> > +{
-> > +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-> > +	int err;
-> > +
-> > +	if (!is_valid_cluster(sbi, loc)) {
-> > +		exfat_fs_error(sb, "invalid access to FAT (entry 0x%08x)",
-> > +			loc);
-> > +		return -EIO;
-> > +	}
-> > +
-> > +	err = __exfat_ent_get(sb, loc, content);
-> > +	if (err) {
-> > +		exfat_fs_error(sb,
-> > +			"failed to access to FAT (entry 0x%08x, err:%d)",
-> > +			loc, err);
-> > +		return err;
-> > +	}
-> > +
-> > +	if (!is_reserved_cluster(*content) &&
-> > +			!is_valid_cluster(sbi, *content)) {
-> > +		exfat_fs_error(sb,
-> > +			"invalid access to FAT (entry 0x%08x) bogus content
-> (0x%08x)",
-> > +			loc, *content);
-> > +		return -EIO;
-> > +	}
-> > +
-> > +	if (*content == EXFAT_FREE_CLUSTER) {
-> > +		exfat_fs_error(sb,
-> > +			"invalid access to FAT free cluster (entry 0x%08x)",
-> > +			loc);
-> > +		return -EIO;
-> > +	}
-> > +
-> > +	if (*content == EXFAT_BAD_CLUSTER) {
-> > +		exfat_fs_error(sb,
-> > +			"invalid access to FAT bad cluster (entry 0x%08x)",
-> > +			loc);
-> > +		return -EIO;
-> > +	}
-> > +	return 0;
-> 
-> Maybe these explicit checks should move up, and then is_reserved_cluster
-> can be replaced with an explicit check just for EXFAT_EOF_CLUSTER?
-Right, Will fix it on v10.
-> 
-> Otherwise looks good:
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-Thanks!
-
+> On Wed, Jan 8, 2020 at 7:03 PM Christoph Hellwig <hch=40lst.de> wrote:
+> >
+> > Arnd, can you review the exfat time handling, especially vs y2038
+> > related issues?
+>=20
+> Sure, thanks for adding me to the loop
+>=20
+> > On Thu, Jan 02, 2020 at 10:19:02AM +0100, Pali Roh=C3=A1r=20wrote:=0D=
+=0A>=20>=20>=20On=20Thursday=2002=20January=202020=2016:20:32=20Namjae=20Je=
+on=20wrote:=0D=0A>=20>=20>=20>=20+=23define=20TIMEZONE_CUR_OFFSET()=20=20=
+=20=20=20=20((sys_tz.tz_minuteswest=20/=20(-15))=0D=0A>=20&=200x7F)=0D=0A>=
+=20>=20>=20>=20+/*=20Convert=20linear=20UNIX=20date=20to=20a=20FAT=20time/d=
+ate=20pair.=20*/=20void=0D=0A>=20>=20>=20>=20+exfat_time_unix2fat(struct=20=
+exfat_sb_info=20*sbi,=20struct=20timespec64=0D=0A>=20*ts,=0D=0A>=20>=20>=20=
+>=20+=20=20=20=20=20=20=20=20=20=20=20struct=20exfat_date_time=20*tp)=20=7B=
+=0D=0A>=20>=20>=20>=20+=20=20=20time_t=20second=20=3D=20ts->tv_sec;=0D=0A>=
+=20>=20>=20>=20+=20=20=20time_t=20day,=20month,=20year;=0D=0A>=20>=20>=20>=
+=20+=20=20=20time_t=20ld;=20/*=20leap=20day=20*/=0D=0A>=20>=20>=0D=0A>=20>=
+=20>=20Question=20for=20other=20maintainers:=20Has=20kernel=20code=20alread=
+y=20time_t=0D=0A>=20>=20>=20defined=20as=2064bit?=20Or=20it=20is=20still=20=
+just=2032bit=20and=2032bit=20systems=20and=0D=0A>=20>=20>=20some=20time64_t=
+=20needs=20to=20be=20used?=20I=20remember=20that=20there=20was=20discussion=
+=0D=0A>=20>=20>=20about=20these=20problems,=20but=20do=20not=20know=20if=20=
+it=20was=20changed/fixed=20or=0D=0A>=20>=20>=20not...=20Just=20a=20pointer=
+=20for=20possible=20Y2038=20problem.=20As=20=22ts=22=20is=20of=20type=0D=0A=
+>=20>=20>=20timespec64,=20but=20=22second=22=20of=20type=20time_t.=0D=0A>=
+=20=0D=0A>=20I=20am=20actually=20very=20close=20to=20sending=20the=20patche=
+s=20to=20remove=20the=20time_t=0D=0A>=20definition=20from=20the=20kernel,=
+=20at=20least=20in=20yesterday's=20version=20there=20were=20no=0D=0A>=20use=
+rs.=0D=0A>=20=0D=0A>=20exfat_time_unix2fat()=20seems=20to=20be=20a=20copy=
+=20of=20the=20old=20fat_time_unix2fat()=0D=0A>=20that=20we=20fixed=20a=20wh=
+ile=20ago,=20please=20have=20a=20look=20at=20that=20implementation=20based=
+=0D=0A>=20on=20time64_to_tm(),=20which=20avoids=20time_t.=0D=0AOkay,=20Pali=
+=20reported=20it=20and=20suggested=20to=20check=20your=20patch=20in=20stagi=
+ng/exfat.=0D=0AI=20will=20fix=20it=20on=20v10.=0D=0A=0D=0AThanks=20for=20yo=
+ur=20review=21=0D=0A>=20=0D=0A>=20=20=20=20=20=20=20Arnd=0D=0A=0D=0A
