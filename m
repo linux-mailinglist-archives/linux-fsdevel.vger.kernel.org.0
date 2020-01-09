@@ -2,134 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DE761359A6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2020 13:59:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38EAB1359AB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2020 14:01:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729303AbgAIM7f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Jan 2020 07:59:35 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43781 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728435AbgAIM7e (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Jan 2020 07:59:34 -0500
-Received: by mail-wr1-f66.google.com with SMTP id d16so7255340wre.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Jan 2020 04:59:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=AqcxbkOCLbfDGGIInlBZRcRWhCGcmVCvEWgZGtv+if8=;
-        b=M88clX48Uvwaj7ZXu3/zfnStjWcfKQSElwKGjq1LJDP07OYAGfRCc9WT6OF8IskYI3
-         HlD9WxxQ+mU/hQqbVvoVifaWuJJi0h/mVp6zbsdOW8bMTUyuHH/sDqz1VX9nqU2yqGub
-         t8oLnBOlUGNlZikzTlYSE3XrxOjsIsl5TAiwgtuCmxBIutsTKCK1kYJb7EWX4G8s/fRo
-         BltF70mNVvnKo5+/dLX7yiUrSePkkl8/wz/MCzcbV3Up0+GbXn0OS1JZOJzQTP9uQIlR
-         rixGEdVpK3dFjVFpGyQ6a3SU/C3tRRdAwxiqAx6oZVH4h5e5H1SfXdInsuV2XiDGW1xa
-         zLEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=AqcxbkOCLbfDGGIInlBZRcRWhCGcmVCvEWgZGtv+if8=;
-        b=Wwu+CT5cWGH8RMsznz//wSGfe9saqosaLS9knBYIVBOze/k6E3WmLk78l9iZZLe+jG
-         v4vhyOf58FefH6k6uhc/6K9UL9LqZvNzbpy2z6j5DtC+C7IWugrQYIUaxLDGpkJ/k+ai
-         03OpzpkH3TJTM6jkjdJMlKmz6MjIckJnpwCYrgKfwkvshJM6BtvLNELRqHxeqWjBGN70
-         zww1b6hXlx52GHwpg7doKgpkC7OdzdOYtUz5q8tVpJaw0C72ZqFm+r4bPWQH6GAWkOpm
-         yjziNedxeOiBHZJdGvOzllzP8ObjxbEv57ZonnmgyY8wB/tNtdu+qNLwxo2xpFGFGb5k
-         aCHg==
-X-Gm-Message-State: APjAAAXaLMMVhuTr/Npf2gMWJgrwfmeAH44yp5IYHFCoN4t1wdoVNTAG
-        sARhGwJPtYk16WhFRoTE61EmFLR6
-X-Google-Smtp-Source: APXvYqxGuXO+U4b3JDzXE0XFTn+4lLQng4bldMt0gs1oMT28nCQERPNKqIRmUw7evk7c45p/Ev7gBg==
-X-Received: by 2002:a5d:4c8c:: with SMTP id z12mr10705591wrs.222.1578574772656;
-        Thu, 09 Jan 2020 04:59:32 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id n187sm2853402wme.28.2020.01.09.04.59.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 04:59:31 -0800 (PST)
-Date:   Thu, 9 Jan 2020 13:59:31 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] udf: Fix free space reporting for metadata and
- virtual partitions
-Message-ID: <20200109125931.bewmdj65vqmpv5mw@pali>
-References: <20200109125330.2023-1-jack@suse.cz>
+        id S1729791AbgAINBF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Jan 2020 08:01:05 -0500
+Received: from foss.arm.com ([217.140.110.172]:58734 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728435AbgAINBF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 9 Jan 2020 08:01:05 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 702C231B;
+        Thu,  9 Jan 2020 05:01:02 -0800 (PST)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 73F623F534;
+        Thu,  9 Jan 2020 05:01:00 -0800 (PST)
+Date:   Thu, 9 Jan 2020 13:00:58 +0000
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        valentin.schneider@arm.com, qperret@google.com,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] sched/rt: Add a new sysctl to control uclamp_util_min
+Message-ID: <20200109130052.feebuwuuvwvm324w@e107158-lin.cambridge.arm.com>
+References: <20191220164838.31619-1-qais.yousef@arm.com>
+ <20200108134448.GG2844@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200109125330.2023-1-jack@suse.cz>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20200108134448.GG2844@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20171215
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thursday 09 January 2020 13:53:30 Jan Kara wrote:
-> Free space on filesystems with metadata or virtual partition maps
-> currently gets misreported. This is because these partitions are just
-> remapped onto underlying real partitions from which keep track of free
-> blocks. Take this remapping into account when counting free blocks as
-> well.
+On 01/08/20 14:44, Peter Zijlstra wrote:
+> On Fri, Dec 20, 2019 at 04:48:38PM +0000, Qais Yousef wrote:
+> > RT tasks by default try to run at the highest capacity/performance
+> > level. When uclamp is selected this default behavior is retained by
+> > enforcing the uclamp_util_min of the RT tasks to be
+> > uclamp_none(UCLAMP_MAX), which is SCHED_CAPACITY_SCALE; the maximum
+> > value.
+> > 
+> > See commit 1a00d999971c ("sched/uclamp: Set default clamps for RT tasks").
+> > 
+> > On battery powered devices, this default behavior could consume more
+> > power, and it is desired to be able to tune it down. While uclamp allows
+> > tuning this by changing the uclamp_util_min of the individual tasks, but
+> > this is cumbersome and error prone.
+> > 
+> > To control the default behavior globally by system admins and device
+> > integrators, introduce the new sysctl_sched_rt_uclamp_util_min to
+> > change the default uclamp_util_min value of the RT tasks.
+> > 
+> > Whenever the new default changes, it'd be applied on the next wakeup of
+> > the RT task, assuming that it still uses the system default value and
+> > not a user applied one.
 > 
-> Reported-by: Pali Rohár <pali.rohar@gmail.com>
-> Signed-off-by: Jan Kara <jack@suse.cz>
+> This is because these RT tasks are not in a cgroup or not affected by
+> cgroup settings? I feel the justification is a little thin here.
 
-Reviewed-by: Pali Rohár <pali.rohar@gmail.com>
+The uclamp_min for RT tasks is always hardcoded to 1024 at the moment. So even
+if they belong to a cgroup->uclamp_min = 0, they'll still run at max frequency,
+no?
 
-> ---
->  fs/udf/super.c | 22 +++++++++++++++++-----
->  1 file changed, 17 insertions(+), 5 deletions(-)
+To control this behavior with cgroups one must have a daemon that:
+
+	while true:
+		for_each_rt_task:
+			set task->uclamp_min = 0
+			add to rt_cgroup
+			rt_cgroup.util_min = $DESIRED_DEFAULT_RT_UCLMAP_MIN
+
+		sleep $M_SECONDS
+
+The above will overwrite the task util_min in case it was modified by the app
+or sysadmin.
+
+
+OR we can do
+
+The counter intuitive usage of uclamp_max to throttle the default boost
+
+	while true:
+		for_each_rt_task():
+			add to rt_cgroup
+			rt_cgroup.util_max = $DESIRED_DEFAULT_RT_UCLMAP_MIN
+
+		sleep $M_SECONDS
+
+Or did I miss something?
+
+Apologies if the justification was thin. The problem seemed too obvious to me
+and maybe I missed that it might not be.
+
+What I am trying to do is make this hardcoded value a configurable parameter so
+it can be set to anything at runtime. Which gives the desired behavior of
+giving the RT task the minimum boost without pushing the system to highest
+performance level which would consume a lot of energy.
+
+I anticipate this to be set once in init scripts. But I can see how this can be
+modified later because for instance the device is charging and power isn't an
+issue so get the max performance anyway.
+
+Also different power save mode can modify this value at runtime.
+
+I think this would benefit mobile and laptop equally.
+
+Keep in mind that kthreads and irq_threads are RT tasks too. So not all
+RT tasks in the system are user triggered.
+
 > 
-> diff --git a/fs/udf/super.c b/fs/udf/super.c
-> index 2d0b90800519..5a4a6fb36819 100644
-> --- a/fs/udf/super.c
-> +++ b/fs/udf/super.c
-> @@ -2492,17 +2492,29 @@ static unsigned int udf_count_free_table(struct super_block *sb,
->  static unsigned int udf_count_free(struct super_block *sb)
->  {
->  	unsigned int accum = 0;
-> -	struct udf_sb_info *sbi;
-> +	struct udf_sb_info *sbi = UDF_SB(sb);
->  	struct udf_part_map *map;
-> +	unsigned int part = sbi->s_partition;
-> +	int ptype = sbi->s_partmaps[part].s_partition_type;
-> +
-> +	if (ptype == UDF_METADATA_MAP25) {
-> +		part = sbi->s_partmaps[part].s_type_specific.s_metadata.
-> +							s_phys_partition_ref;
-> +	} else if (ptype == UDF_VIRTUAL_MAP15 || ptype == UDF_VIRTUAL_MAP20) {
-> +		/*
-> +		 * Filesystems with VAT are append-only and we cannot write to
-> + 		 * them. Let's just report 0 here.
-> +		 */
-> +		return 0;
-> +	}
->  
-> -	sbi = UDF_SB(sb);
->  	if (sbi->s_lvid_bh) {
->  		struct logicalVolIntegrityDesc *lvid =
->  			(struct logicalVolIntegrityDesc *)
->  			sbi->s_lvid_bh->b_data;
-> -		if (le32_to_cpu(lvid->numOfPartitions) > sbi->s_partition) {
-> +		if (le32_to_cpu(lvid->numOfPartitions) > part) {
->  			accum = le32_to_cpu(
-> -					lvid->freeSpaceTable[sbi->s_partition]);
-> +					lvid->freeSpaceTable[part]);
->  			if (accum == 0xFFFFFFFF)
->  				accum = 0;
->  		}
-> @@ -2511,7 +2523,7 @@ static unsigned int udf_count_free(struct super_block *sb)
->  	if (accum)
->  		return accum;
->  
-> -	map = &sbi->s_partmaps[sbi->s_partition];
-> +	map = &sbi->s_partmaps[part];
->  	if (map->s_partition_flags & UDF_PART_FLAG_UNALLOC_BITMAP) {
->  		accum += udf_count_free_bitmap(sb,
->  					       map->s_uspace.s_bitmap);
+> > If the uclamp_util_min of an RT task is 0, then the RT utilization of
+> > the rq is used to drive the frequency selection in schedutil for RT
+> > tasks.
+> 
+> Did cpu_uclamp_write() forget to check for input<0 ?
 
--- 
-Pali Rohár
-pali.rohar@gmail.com
+Hmm just tried that and it seems so
+
+# echo -1 > cpu.uclamp.min
+# cat cpu.uclamp.min
+42949671.96
+
+capacity_from_percent(); we check for
+
+7301                 if (req.percent > UCLAMP_PERCENT_SCALE) {
+7302                         req.ret = -ERANGE;
+7303                         return req;
+7304                 }
+
+But req.percent is s64, maybe it should be u64?
+
+Thanks
+
+--
+Qais Yousef
