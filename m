@@ -2,113 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C21D9135CE8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2020 16:37:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC562135ED1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2020 17:59:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732486AbgAIPhV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Jan 2020 10:37:21 -0500
-Received: from mail-qk1-f176.google.com ([209.85.222.176]:35729 "EHLO
-        mail-qk1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728098AbgAIPhU (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Jan 2020 10:37:20 -0500
-Received: by mail-qk1-f176.google.com with SMTP id z76so6367689qka.2;
-        Thu, 09 Jan 2020 07:37:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=44qeSbgK4fjxtx3Jl3gaoujj676TRWsAIPJoecKwxeA=;
-        b=noa0a510xUsCS83uXW9qp66lUzBtzCWLZCNOz+h/lTvAlhnXI2GABGdvyDVPFMzEcH
-         wZK4fb8EYbCh4foaOpydy1F4EusJwlS8NhTvSgnRSZlEKliGYglDwi61QL/zlQ7noqE0
-         3X4EEGTdyw3+WSZpyzcySaoxn5erAYcfg9l8A8Gar7h2l0CZ4B41M5xrtuQR5zFZt5fp
-         3kHzDPdAN+WEZl9DSILegCRA0+AZ4xHC4i8Gz3E2ZhAkcIOzjXq9pv7VBbpu0yS04qSx
-         kXXXgPHcJ2klqc/o5Lgs8+bbzmo4lJXgxXOwEBD5C65z27dXKFueLGDAXoNnfUrXIgHM
-         0AUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=44qeSbgK4fjxtx3Jl3gaoujj676TRWsAIPJoecKwxeA=;
-        b=MNMu6r3SEqkw8PxloHK2rBeE2yG8K0G4temtNNTBAW5uDtg31ptSQ9kfbbpZd1L3FC
-         jTf7AXHZvEfiz+J0BaxeGvWER1oGVCIAkC6/GOgpTjsqdk1/XhzbxO1Rb/OvBnqNUD5v
-         GzqO7TIwXOt0y8oWbxdzlzUcF9hwxCkWNZDKV/KOkHirOb2+YkMo3Vgp/nImJKnWFDWV
-         oyzEsrhBsZZY/cE7bNOqWhGENvimPhp373rdwkyVPW33/k1YeIgxt5eQIR7a3uOuKhdD
-         iQ+tatkgp0nvAEdXigUj4J12/jiG22t1kzGrKlSK3aL9c60MMqHJk1HJBFCPslJS1Rbr
-         muvg==
-X-Gm-Message-State: APjAAAW+VnGn1cvDxNvZ3jVP+iNfTZy5f4mG6fUqP4QLw/RO1/kgn4XO
-        BwDbV/IZ9ZvLbRTbjSdkuPgyOyZ/yrM=
-X-Google-Smtp-Source: APXvYqzqA3NMUhSuJbSsfbCvQfcWyNR0IMB4i9uRm/zTmXCuUbC6swcJY7SbRpsMEcQotMbC0rW2zw==
-X-Received: by 2002:a05:620a:128f:: with SMTP id w15mr9779885qki.472.1578584239612;
-        Thu, 09 Jan 2020 07:37:19 -0800 (PST)
-Received: from localhost.localdomain ([2804:14d:72b1:8920:a2ce:f815:f14d:bfac])
-        by smtp.gmail.com with ESMTPSA id u16sm3122008qku.19.2020.01.09.07.37.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2020 07:37:19 -0800 (PST)
-From:   "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
-X-Google-Original-From: Daniel W. S. Almeida
-To:     viro@zeniv.linux.org.uk
-Cc:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: [RESEND] fs: seq_file.c: Fix warnings
-Date:   Thu,  9 Jan 2020 12:37:08 -0300
-Message-Id: <20200109153708.1021891-2-dwlsalmeida@gmail.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200109153708.1021891-1-dwlsalmeida@gmail.com>
-References: <20200109153708.1021891-1-dwlsalmeida@gmail.com>
+        id S1731450AbgAIQ7l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Jan 2020 11:59:41 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46026 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731320AbgAIQ7l (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 9 Jan 2020 11:59:41 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 4803CAE03;
+        Thu,  9 Jan 2020 16:59:39 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 666A21E0798; Thu,  9 Jan 2020 17:53:24 +0100 (CET)
+Date:   Thu, 9 Jan 2020 17:53:24 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] udf: Fix free space reporting for metadata and virtual
+ partitions
+Message-ID: <20200109165324.GA6145@quack2.suse.cz>
+References: <20200108121919.12343-1-jack@suse.cz>
+ <20200108223240.gi5g2jza3rxuzk6z@pali>
+ <20200109124405.GE22232@quack2.suse.cz>
+ <20200109125657.ir264jcd6oujox3a@pali>
+ <20200109130837.b6f62jpeb3myns64@pali>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200109130837.b6f62jpeb3myns64@pali>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+On Thu 09-01-20 14:08:37, Pali Rohár wrote:
+> On Thursday 09 January 2020 13:56:57 Pali Rohár wrote:
+> > On Thursday 09 January 2020 13:44:05 Jan Kara wrote:
+> > > On Wed 08-01-20 23:32:40, Pali Rohár wrote:
+> > > > On Wednesday 08 January 2020 13:19:19 Jan Kara wrote:
+> > > > > Free space on filesystems with metadata or virtual partition maps
+> > > > > currently gets misreported. This is because these partitions are just
+> > > > > remapped onto underlying real partitions from which keep track of free
+> > > > > blocks. Take this remapping into account when counting free blocks as
+> > > > > well.
+> > > > > 
+> > > > > Reported-by: Pali Rohár <pali.rohar@gmail.com>
+> > > > > Signed-off-by: Jan Kara <jack@suse.cz>
+> > > > > ---
+> > > > >  fs/udf/super.c | 19 ++++++++++++++-----
+> > > > >  1 file changed, 14 insertions(+), 5 deletions(-)
+> > > > > 
+> > > > > I plan to take this patch to my tree.
+> > > > > 
+> > > > > diff --git a/fs/udf/super.c b/fs/udf/super.c
+> > > > > index 8c28e93e9b73..b89e420a4b85 100644
+> > > > > --- a/fs/udf/super.c
+> > > > > +++ b/fs/udf/super.c
+> > > > > @@ -2492,17 +2492,26 @@ static unsigned int udf_count_free_table(struct super_block *sb,
+> > > > >  static unsigned int udf_count_free(struct super_block *sb)
+> > > > >  {
+> > > > >  	unsigned int accum = 0;
+> > > > > -	struct udf_sb_info *sbi;
+> > > > > +	struct udf_sb_info *sbi = UDF_SB(sb);
+> > > > >  	struct udf_part_map *map;
+> > > > > +	unsigned int part = sbi->s_partition;
+> > > > > +	int ptype = sbi->s_partmaps[part].s_partition_type;
+> > > > > +
+> > > > > +	if (ptype == UDF_METADATA_MAP25) {
+> > > > > +		part = sbi->s_partmaps[part].s_type_specific.s_metadata.
+> > > > > +							s_phys_partition_ref;
+> > > > > +	} else if (ptype == UDF_VIRTUAL_MAP15 || ptype == UDF_VIRTUAL_MAP20) {
+> > > > > +		part = UDF_I(sbi->s_vat_inode)->i_location.
+> > > > > +							partitionReferenceNum;
+> > > > 
+> > > > Hello! I do not think that it make sense to report "free blocks" for
+> > > > discs with Virtual partition. By definition of VAT, all blocks prior to
+> > > > VAT are already "read-only" and therefore these blocks cannot be use for
+> > > > writing new data by any implementation. And because VAT is stored on the
+> > > > last block, in our model all blocks are "occupied".
+> > > 
+> > > Fair enough. Let's just always return 0 for disks with VAT partition.
+> > > 
+> > > > > +	}
+> > > > >  
+> > > > > -	sbi = UDF_SB(sb);
+> > > > >  	if (sbi->s_lvid_bh) {
+> > > > >  		struct logicalVolIntegrityDesc *lvid =
+> > > > >  			(struct logicalVolIntegrityDesc *)
+> > > > >  			sbi->s_lvid_bh->b_data;
+> > > > > -		if (le32_to_cpu(lvid->numOfPartitions) > sbi->s_partition) {
+> > > > > +		if (le32_to_cpu(lvid->numOfPartitions) > part) {
+> > > > >  			accum = le32_to_cpu(
+> > > > > -					lvid->freeSpaceTable[sbi->s_partition]);
+> > > > > +					lvid->freeSpaceTable[part]);
+> > > > 
+> > > > And in any case freeSpaceTable should not be used for discs with VAT.
+> > > > And we should ignore its value for discs with VAT.
+> > > > 
+> > > > UDF 2.60 2.2.6.2: Free Space Table values be maintained ... except ...
+> > > > for a virtual partition ...
+> > > > 
+> > > > And same applies for "partition with Access Type pseudo-overwritable".
+> > > 
+> > > Well this is handled by the 'accum == 0xffffffff' condition below. So we
+> > > effectively ignore these values.
+> > 
+> > Ok.
+> 
+> Now I'm thinking about another scenario: UDF allows you to have two
+> partitions of Type1 (physical) on one volume: one with read-only access
+> type and one with overwritable access type.
+> 
+> UDF 2.60 2.2.6.2 says: For a partition with Access Type read-only, the
+> Free Space Table value shall be set to zero. And therefore we should
+> ignore it.
 
-Fix the following warnings:
+That's what's going to happen (the code ends up ignoring values -1 and 0).
 
-fs/seq_file.c:40: WARNING: Inline strong start-string without end-string.
-fs/seq_file.c:40: WARNING: Inline strong start-string without end-string.
-fs/seq_file.c:40: WARNING: Inline strong start-string without end-string.
-fs/seq_file.c:40: WARNING: Inline strong start-string without end-string
+> But current implementation for discs without Metadata partition (all
+> with UDF 2.01) reads free space table (only) from partition
+> 
+>   unsigned int part = sbi->s_partition;
+> 
+> So is this s_partition one with read-only or overwritable access type?
 
-By escaping the parenthesis in the affected line. Line breaks were added
-for clarity.
+Well, this is the partition we've got fileset from. I presume that's going
+to be on overwritable partition but who knows. Honestly, I have my doubts
+we'll handle disks with two Type1 partitions correctly since I never met
+such disks :) Do you have some disk image to try? :)
 
-Signed-off-by: Daniel W. S. Almeida <dwlsalmeida@gmail.com>
----
- fs/seq_file.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+> And to make it more complicated, UDF 2.60 2.2.10 requires that such discs
+> (with two partitions) needs to have also Metadata Partition Map.
 
-diff --git a/fs/seq_file.c b/fs/seq_file.c
-index 1600034a929b..aad4354ceeb0 100644
---- a/fs/seq_file.c
-+++ b/fs/seq_file.c
-@@ -38,10 +38,18 @@ static void *seq_buf_alloc(unsigned long size)
-  *	@op: method table describing the sequence
-  *
-  *	seq_open() sets @file, associating it with a sequence described
-- *	by @op.  @op->start() sets the iterator up and returns the first
-- *	element of sequence. @op->stop() shuts it down.  @op->next()
-- *	returns the next element of sequence.  @op->show() prints element
-- *	into the buffer.  In case of error ->start() and ->next() return
-+ *	by @op.
-+ *
-+ *	@op->start\(\) sets the iterator up and returns the first
-+ *	element of sequence.
-+ *
-+ *	@op->stop\(\) shuts it down.
-+ *
-+ *	@op->next\(\) returns the next element of sequence.
-+ *
-+ *	@op->show\(\) prints element into the buffer.
-+ *
-+ *	In case of error ->start() and ->next() return
-  *	ERR_PTR(error).  In the end of sequence they return %NULL. ->show()
-  *	returns 0 in case of success and negative number in case of error.
-  *	Returning SEQ_SKIP means "discard this element and move on".
+But in this case Metadata Partition Map is presumably over the overwritable
+partition so we should fine, shouldn't we?
+
+								Honza
 -- 
-2.24.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
