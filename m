@@ -2,146 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38170135103
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2020 02:35:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C9EE135107
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2020 02:41:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727797AbgAIBfL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jan 2020 20:35:11 -0500
-Received: from foss.arm.com ([217.140.110.172]:52546 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726654AbgAIBfL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jan 2020 20:35:11 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 51B8B31B;
-        Wed,  8 Jan 2020 17:35:10 -0800 (PST)
-Received: from [10.0.2.15] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 36C023F6C4;
-        Wed,  8 Jan 2020 17:35:08 -0800 (PST)
-Subject: Re: [PATCH] sched/rt: Add a new sysctl to control uclamp_util_min
-To:     Patrick Bellasi <patrick.bellasi@matbug.net>,
-        Qais Yousef <qais.yousef@arm.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        qperret@google.com, linux-kernel@vger.kernel.org,
+        id S1727417AbgAIBlY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jan 2020 20:41:24 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:28835 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726654AbgAIBlY (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Jan 2020 20:41:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578534083;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=++BJMDhJnEZzwpRB8uVTSWyKTo0GbD3+bxramlo68KI=;
+        b=ORfYGeLj4scN8H3dXoZbN1+pWsQbadwKCadgVg7WYbCPmQqD6qz5yjhrvrxvsaXIIMPCkf
+        q8Mf3cSRBIjQ93iTdSZdWlsAjJXAnhkG02hcctlCWCDoMZLOZoR6S7D+TpSUj9erfkJOv8
+        xBNSTuvAZoeAkUN7+tq1/4g/lMlCc74=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-192-EMsxYRcuNoyVE7fDxYJUNQ-1; Wed, 08 Jan 2020 20:41:20 -0500
+X-MC-Unique: EMsxYRcuNoyVE7fDxYJUNQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9E0A71800D71;
+        Thu,  9 Jan 2020 01:41:19 +0000 (UTC)
+Received: from agk-dp.fab.redhat.com (agk-dp.fab.redhat.com [10.33.15.10])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 44C4B60E1C;
+        Thu,  9 Jan 2020 01:41:19 +0000 (UTC)
+Received: from agk by agk-dp.fab.redhat.com with local (Exim 4.69)
+        (envelope-from <agk@redhat.com>)
+        id 1ipMp3-0001FU-IR; Thu, 09 Jan 2020 01:41:17 +0000
+Date:   Thu, 9 Jan 2020 01:41:17 +0000
+From:   Alasdair G Kergon <agk@redhat.com>
+To:     Tony Asleson <tasleson@redhat.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Sweet Tea Dorminy <sweettea@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-References: <20191220164838.31619-1-qais.yousef@arm.com>
- <20200108185650.GA9635@darkstar>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <026e46e4-5d09-6260-0fa7-e365b0795c9a@arm.com>
-Date:   Thu, 9 Jan 2020 01:35:01 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+Subject: Re: [RFC 9/9] __xfs_printk: Add durable name to output
+Message-ID: <20200109014117.GB3809@agk-dp.fab.redhat.com>
+Mail-Followup-To: Tony Asleson <tasleson@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Sweet Tea Dorminy <sweettea@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20191223225558.19242-1-tasleson@redhat.com> <20191223225558.19242-10-tasleson@redhat.com> <20200104025620.GC23195@dread.disaster.area> <5ad7cf7b-e261-102c-afdc-fa34bed98921@redhat.com> <20200106220233.GK23195@dread.disaster.area> <CAMeeMh-zr309TzbC3ayKUKRniat+rzurgzmeM5LJYMFVDj7bLA@mail.gmail.com> <20200107012353.GO23195@dread.disaster.area> <4ce83a0e-13e1-6245-33a3-5c109aec4bf1@redhat.com> <20200108021002.GR23195@dread.disaster.area> <9e449c65-193c-d69c-1454-b1059221e5dc@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20200108185650.GA9635@darkstar>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9e449c65-193c-d69c-1454-b1059221e5dc@redhat.com>
+Organization: Red Hat UK Ltd. Registered in England and Wales, number
+        03798903. Registered Office: Peninsular House, 30-36 Monument
+        Street, 4th Floor, London, England, EC3R 8NB.
+User-Agent: Mutt/1.5.18 (2008-05-17)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 08/01/2020 18:56, Patrick Bellasi wrote:
-> Here you are force setting the task-specific _requests_ to match the
-> system-wide _constraints_. This is not required and it's also
-> conceptually wrong, since you mix two concepts: requests and
-> constraints.
-> 
-> System-default values must never be synchronized with task-specific
-> values. This allows to always satisfy task _requests_ when not
-> conflicting with system-wide (or task-group) _constraints_.
-> 
-> For example, assuming we have a task with util_min=500 and we keep
-> changing the system-wide constraints, we would like the following
-> effective clamps to be enforced:
-> 
->    time | system-wide | task-specific | effective clamp
->    -----+-------------+---------------+-----------------
->      t0 |        1024 |           500 |             500
->      t1 |           0 |           500 |               0
->      t2 |         200 |           500 |             200
->      t3 |         600 |           500 |             500
-> 
-> If the taks should then change it's requested util_min:
-> 
->    time | system-wide | task-specific | effective clamp
->    -----+-------------+---------------+----------------
->      t4 |         600 |          800  |             600
->      t6 |        1024 |          800  |             800
-> 
-> If you force set the task-specific requests to match the system-wide
-> constraints, you cannot get the above described behaviors since you
-> keep overwriting the task _requests_ with system-wide _constraints_.
-> 
+On Wed, Jan 08, 2020 at 10:53:13AM -0600, Tony Asleson wrote:
+> We are not removing any existing information, we are adding.
 
-But is what Qais' proposing really a system-wide *constraint*? What we want
-to do here is have a knob for the RT uclamp.min values, because gotomax isn't
-viable (for mobile, you know the story!). This leaves user_defined values
-alone, so you should be able to reproduce exactly what you described above.
-If I take your t3 and t4 examples:
+A difficulty with this approach is:  Where do you stop when your storage
+configuration is complicated and changing?  Do you add the complete
+relevant part of the storage stack configuration to every storage
+message in the kernel so that it is easy to search later?
 
-| time | system-wide | rt default | task-specific | user_defined | effective |                       
-|------+-------------+------------+---------------+--------------+-----------|                       
-| t3   |         600 |       1024 |           500 | Y            |       500 |                       
-| t4   |         600 |       1024 |           800 | Y            |       600 |
+Or do you catch the messages in userspace and add some of this
+information there before sending them on to your favourite log message
+database?  (ref. peripety, various rsyslog extensions)
 
-If the values were *not* user-defined, then it would depend on the default
-knob Qais is introducing:
+> I think all the file systems should include their FS UUID in the FS log
+> messages too, but that is not part of the problem we are trying to solve.
 
-| time | system-wide | rt default | task-specific | user_defined | effective |                       
-|------+-------------+------------+---------------+--------------+-----------|                       
-| t3   |         600 |       1024 |          1024 | N            |       600 |                       
-| t4   |         600 |          0 |             0 | N            |         0 | 
+Each layer (subsystem) should already be tagging its messages in an
+easy-to-parse way so that all those relating to the same object (e.g.
+filesystem instance, disk) at its level of the stack can easily be
+matched together later.  Where this doesn't already happen, we should
+certainly be fixing that as it's a pre-requisite for any sensible
+post-processing: As long as the right information got recorded, it can
+all be joined together on demand later by some userspace software.
+ 
+> The user has to systematically and methodically go through the logs
+> trying to deduce what the identifier was referring to at the time of the
+> error.  This isn't trivial and virtually impossible at times depending
+> on circumstances.
 
-It's not forcing the task-specific value to the system-wide RT value, it's
-just using it as tweakable default. At least that's how I understand it,
-did I miss something?
+So how about logging what these identifiers reference at different times
+in a way that is easy to query later?
 
-> Thus, requests and contraints must always float independently and
-> used to compute the effective clamp at task wakeup time via:
-> 
->    enqueue_task(rq, p, flags)
->      uclamp_rq_inc(rq, p)
->        uclamp_rq_inc_id(rq, p, clamp_id)
->          uclamp_eff_get(p, clamp_id)
->            uclamp_tg_restrict(p, clamp_id)
->      p->sched_class->enqueue_task(rq, p, flags)
-> 
-> where the task-specific request is restricted considering its task group
-> effective value (the constraint).
-> 
-> Do note that the root task group effective value (for cfs) tasks is kept
-> in sync with the system default value and propagated down to the
-> effective value of all subgroups.
-> 
-> Do note also that the effective value is computed before calling into
-> the scheduling class's enqueue_task(). Which means that we have the
-> right value in place before we poke sugov.
-> 
-> Thus, a proper implementation of what you need should just
-> replicate/generalize what we already do for cfs tasks.
-> 
+Come to think of it, we already get uevents when the references change,
+and udev rules even already now create neat "by-*" links for us.  Maybe
+we just need to log better what udev is actually already doing?
 
-Reading
+Then we could reproduce what the storage configuration looked like at
+any particular time in the past to provide the missing context for
+the identifiers in the log messages.
 
-  7274a5c1bbec ("sched/uclamp: Propagate system defaults to the root group")
+                    ---------------------
+ 
+Which seems like an appropriate time to introduce storage-logger.
 
-I see "The clamp values are not tunable at the level of the root task group".
-This means that, for mobile systems where we want a default uclamp.min of 0
-for RT tasks, we would need to create a cgroup for all RT tasks (and tweak
-its uclamp.min, but from playing around a bit I see that defaults to 0).
+    https://github.com/lvmteam/storage-logger
 
-(Would we need CONFIG_RT_GROUP_SCHED for this? IIRC there's a few pain points
-when turning it on, but I think we don't have to if we just want things like
-uclamp value propagation?)
+    Fedora rawhide packages:
+      https://copr.fedorainfracloud.org/coprs/agk/storage-logger/ 
 
-It's quite more work than the simple thing Qais is introducing (and on both
-user and kernel side).
+The goal of this particular project is to maintain a record of the
+storage configuration as it changes over time.  It should provide a
+quick way to check the state of a system at a specified time in the
+past.
+
+The initial logging implementation is triggered by storage uevents and
+consists of two components:
+
+1. A new udev rule file, 99-zzz-storage-logger.rules, which runs after
+all the other rules have run and invokes:
+
+2. A script, udev_storage_logger.sh, that captures relevant
+information about devices that changed and stores it in the system
+journal.
+
+The effect is to log the data from relevant uevents plus some
+supplementary information (including device-mapper tables, for example).
+It does not yet handle filesystem-related events.
+
+Two methods to query the data are offered:
+
+1. journalctl
+Data is tagged with the identifier UDEVLOG and retrievable as
+key-value pairs.
+  journalctl -t UDEVLOG --output verbose
+  journalctl -t UDEVLOG --output json
+    --since 'YYYY-MM-DD HH:MM:SS' 
+    --until 'YYYY-MM-DD HH:MM:SS'
+  journalctl -t UDEVLOG --output verbose
+    --output-fields=PERSISTENT_STORAGE_ID,MAJOR,MINOR
+     PERSISTENT_STORAGE_ID=dm-name-vg1-lvol0
+
+2. lsblkj  [appended j for journal]
+This lsblk wrapper reprocesses the logged uevents to reconstruct a
+dummy system environment that "looks like" the system did at a
+specified earlier time and then runs lsblk against it.
+
+Yes, I'm looking for feedback to help to decide whether or not it's
+worth developing this any further.
+
+Alasdair
+
