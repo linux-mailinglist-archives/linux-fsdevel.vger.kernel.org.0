@@ -2,102 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0ECEA135137
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2020 03:03:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57A6E13513A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2020 03:05:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727807AbgAICD4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jan 2020 21:03:56 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:38638 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727797AbgAICD4 (ORCPT
+        id S1727849AbgAICFk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jan 2020 21:05:40 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:47082 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727837AbgAICFk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jan 2020 21:03:56 -0500
-Received: by mail-pl1-f194.google.com with SMTP id f20so1882246plj.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jan 2020 18:03:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=bvQg+LxFMIJ5CUVmtu63eojL5hkuYWw8tQBem5norCI=;
-        b=GebOjeBTPu8s5SIYddRsBbZUSpUo6Lht+ASKHIGR0mvZs8tWBpypz9mJTWppcmoReg
-         +riQFYlZUyMak9BFuKcPRtyEhuHOWVVDW4HB096mTRyGvLJd42wl/IpWfXToK2PbepOw
-         7WLzMYS80CXiXjpcCWgRpQodilbgSFG7ZAzA4qNRj5O0ZSmib0CL3qoM3Tj7QkKdbS+G
-         aaoispdLcZDPzMkAhBeeAUjwXkDWZoTz479JIu2N1S01KsjT4pA3P1g7EKmZ4qJA725c
-         RpFTNUMxSj4+JoCROd/1Cc2KM6cILw5k2iLo5iSm5sZ3X4Sba9sXQmkdy5ENnwF/1CJF
-         B6+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bvQg+LxFMIJ5CUVmtu63eojL5hkuYWw8tQBem5norCI=;
-        b=VoHkE94jOWjzfaONsq+MG6nhUjr0wB4ynxraW4ok15nk70krknuENdEHSoXFxAhIwp
-         /qdiZhUv9wLqMPTbuyvlwo4fNCsvW0JaOpHgj7sue56iqc02omrGk9JAuhezxIn6B3Zf
-         QAYESBr9GTNwFYdnHIbvs75gi1tOC+xhEuSE/SVjiNlh/9BsOXFpwOK4u52j++UuFpvG
-         +l+neS8eAai0WcfE2nBFCkJm+pMRIyE99KX0xOX6oOo61acVyGSHDerUuYrMHw+BHXOa
-         wpPZSNF1ezb7jk50hBkgkpjaYp7GLeUluj/H6+h3R9oHMj0pX0imwjKKHl5ykAB4f8Ei
-         3jUQ==
-X-Gm-Message-State: APjAAAWtp63n48gx42P5ar3E/hKuAEUgqiohfSDVjtyY/lujeY6WwrEi
-        GudIG6T2viEfVkDFJjq5YAvbxw==
-X-Google-Smtp-Source: APXvYqysci+ybBBfFoBTS8pypSqrLYiTCkceL+OSgmospOeEaAA9rc6LaU0pICjLVT7ARdNXuk2VJQ==
-X-Received: by 2002:a17:902:7d94:: with SMTP id a20mr6050657plm.297.1578535435212;
-        Wed, 08 Jan 2020 18:03:55 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id a16sm5019329pgb.5.2020.01.08.18.03.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Jan 2020 18:03:54 -0800 (PST)
-Subject: Re: [PATCHSET v2 0/6] io_uring: add support for open/close
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-References: <20200107170034.16165-1-axboe@kernel.dk>
- <e4fb6287-8216-529e-9666-5ec855db02fb@samba.org>
- <4adb30f4-2ab3-6029-bc94-c72736b9004a@kernel.dk>
- <4dffd58e-5602-62d5-d1af-343c4a091ed9@samba.org>
- <eb99e387-f385-c36d-b1d9-f99ec470eba6@kernel.dk>
-Message-ID: <9a407238-5505-c446-80b7-086646dd15be@kernel.dk>
-Date:   Wed, 8 Jan 2020 19:03:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Wed, 8 Jan 2020 21:05:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578535539;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=39HTy+I9bsQga0QDeboxAcXZyuRivEM92MqxhtYaKTc=;
+        b=PTYti7+beFkwXx3FawWd85Wp0Pv9tTYs0Uam1dskkfu2IBFuW7Ipvas8XqLi7G7UlALyHI
+        WHeGk5A1Jig8dtUuo4ibRQDsPfLq9WfAuQxlBAbcpBKEEzzEssovbHFYvjeVK7HR++6yS4
+        F5GSG6UIimMznnDxwA4y9N6yGgfEHIc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-178-E_WwN-hBNwalC6slI8-Dsw-1; Wed, 08 Jan 2020 21:05:38 -0500
+X-MC-Unique: E_WwN-hBNwalC6slI8-Dsw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1D7CD1005514;
+        Thu,  9 Jan 2020 02:05:37 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-20.pek2.redhat.com [10.72.8.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EC03D10027A6;
+        Thu,  9 Jan 2020 02:05:28 +0000 (UTC)
+Date:   Thu, 9 Jan 2020 10:05:24 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Carlos Maiolino <cmaiolino@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        syzbot+2b9e54155c8c25d8d165@syzkaller.appspotmail.com
+Subject: Re: [PATCH V2] block: add bio_truncate to fix guard_bio_eod
+Message-ID: <20200109020524.GD9655@ming.t460p>
+References: <20191227230548.20079-1-ming.lei@redhat.com>
+ <20200108133735.GB4455@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <eb99e387-f385-c36d-b1d9-f99ec470eba6@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200108133735.GB4455@infradead.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/8/20 6:02 PM, Jens Axboe wrote:
-> On 1/8/20 4:05 PM, Stefan Metzmacher wrote:
->> Am 08.01.20 um 23:57 schrieb Jens Axboe:
->>> On 1/8/20 2:17 PM, Stefan Metzmacher wrote:
->>>> Am 07.01.20 um 18:00 schrieb Jens Axboe:
->>>>> Sending this out separately, as I rebased it on top of the work.openat2
->>>>> branch from Al to resolve some of the conflicts with the differences in
->>>>> how open flags are built.
->>>>
->>>> Now that you rebased on top of openat2, wouldn't it be better to add
->>>> openat2 that to io_uring instead of the old openat call?
->>>
->>> The IORING_OP_OPENAT already exists, so it would probably make more sense
->>> to add IORING_OP_OPENAT2 alongside that. Or I could just change it. Don't
->>> really feel that strongly about it, I'll probably just add openat2 and
->>> leave openat alone, openat will just be a wrapper around openat2 anyway.
->>
->> Great, thanks!
+On Wed, Jan 08, 2020 at 05:37:35AM -0800, Christoph Hellwig wrote:
 > 
-> Here:
+> > +void bio_truncate(struct bio *bio, unsigned new_size)
 > 
-> https://git.kernel.dk/cgit/linux-block/log/?h=for-5.6/io_uring-vfs
-> 
-> Not tested yet, will wire this up in liburing and write a test case
-> as well.
+> This function really needs a kerneldoc or similar comment describing
+> what it does in detail.
 
-Wrote a basic test case, and used my openbench as well. Seems to work
-fine for me. Pushed prep etc support to liburing.
+OK, will do that.
 
--- 
-Jens Axboe
+> 
+> > +	if (bio_data_dir(bio) != READ)
+> > +		goto exit;
+> 
+> This really should check the passed in op for REQ_OP_READ directly instead
+> of just the direction on the potentially not fully set up bio.
+
+It has been addressed in:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commit/?h=block-5.5&id=802ca0381befe29ba0783e08e3369f9e87ef9d0d
+
+
+Thanks,
+Ming
 
