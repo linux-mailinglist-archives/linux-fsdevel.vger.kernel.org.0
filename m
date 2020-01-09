@@ -2,105 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B60A135812
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2020 12:36:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E265135971
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2020 13:44:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725776AbgAILga (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Jan 2020 06:36:30 -0500
-Received: from foss.arm.com ([217.140.110.172]:57584 "EHLO foss.arm.com"
+        id S1727861AbgAIMoJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Jan 2020 07:44:09 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41190 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725308AbgAILga (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Jan 2020 06:36:30 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C0A0831B;
-        Thu,  9 Jan 2020 03:36:27 -0800 (PST)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A80053F703;
-        Thu,  9 Jan 2020 03:36:25 -0800 (PST)
-Date:   Thu, 9 Jan 2020 11:36:23 +0000
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Quentin Perret <qperret@google.com>
-Cc:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        valentin.schneider@arm.com,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH] sched/rt: Add a new sysctl to control uclamp_util_min
-Message-ID: <20200109113623.jk4yth6koyq2wwh7@e107158-lin.cambridge.arm.com>
-References: <20191220164838.31619-1-qais.yousef@arm.com>
- <20200107134234.GA158998@google.com>
- <8bb17e84-d43f-615f-d04d-c36bb6ede5e0@arm.com>
- <20200108095108.GA153171@google.com>
+        id S1725308AbgAIMoJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 9 Jan 2020 07:44:09 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 70840B0BF;
+        Thu,  9 Jan 2020 12:44:06 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id C8EA91E0798; Thu,  9 Jan 2020 13:44:05 +0100 (CET)
+Date:   Thu, 9 Jan 2020 13:44:05 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] udf: Fix free space reporting for metadata and virtual
+ partitions
+Message-ID: <20200109124405.GE22232@quack2.suse.cz>
+References: <20200108121919.12343-1-jack@suse.cz>
+ <20200108223240.gi5g2jza3rxuzk6z@pali>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20200108095108.GA153171@google.com>
-User-Agent: NeoMutt/20171215
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200108223240.gi5g2jza3rxuzk6z@pali>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 01/08/20 09:51, Quentin Perret wrote:
-> On Tuesday 07 Jan 2020 at 20:30:36 (+0100), Dietmar Eggemann wrote:
-> > On 07/01/2020 14:42, Quentin Perret wrote:
-> > > Hi Qais,
-> > > 
-> > > On Friday 20 Dec 2019 at 16:48:38 (+0000), Qais Yousef wrote:
+On Wed 08-01-20 23:32:40, Pali Rohár wrote:
+> On Wednesday 08 January 2020 13:19:19 Jan Kara wrote:
+> > Free space on filesystems with metadata or virtual partition maps
+> > currently gets misreported. This is because these partitions are just
+> > remapped onto underlying real partitions from which keep track of free
+> > blocks. Take this remapping into account when counting free blocks as
+> > well.
 > > 
-> > [...]
+> > Reported-by: Pali Rohár <pali.rohar@gmail.com>
+> > Signed-off-by: Jan Kara <jack@suse.cz>
+> > ---
+> >  fs/udf/super.c | 19 ++++++++++++++-----
+> >  1 file changed, 14 insertions(+), 5 deletions(-)
 > > 
-> > >> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-> > >> index e591d40fd645..19572dfc175b 100644
-> > >> --- a/kernel/sched/rt.c
-> > >> +++ b/kernel/sched/rt.c
-> > >> @@ -2147,6 +2147,12 @@ static void pull_rt_task(struct rq *this_rq)
-> > >>   */
-> > >>  static void task_woken_rt(struct rq *rq, struct task_struct *p)
-> > >>  {
-> > >> +	/*
-> > >> +	 * When sysctl_sched_rt_uclamp_util_min value is changed by the user,
-> > >> +	 * we apply any new value on the next wakeup, which is here.
-> > >> +	 */
-> > >> +	uclamp_rt_sync_default_util_min(p);
-> > > 
-> > > The task has already been enqueued and sugov has been called by then I
-> > > think, so this is a bit late. You could do that in uclamp_rq_inc() maybe?
+> > I plan to take this patch to my tree.
 > > 
-> > That's probably better.
-> > Just to be sure ...we want this feature (an existing rt task gets its
-> > UCLAMP_MIN value set when the sysctl changes) because there could be rt
-> > tasks running before the sysctl is set?
+> > diff --git a/fs/udf/super.c b/fs/udf/super.c
+> > index 8c28e93e9b73..b89e420a4b85 100644
+> > --- a/fs/udf/super.c
+> > +++ b/fs/udf/super.c
+> > @@ -2492,17 +2492,26 @@ static unsigned int udf_count_free_table(struct super_block *sb,
+> >  static unsigned int udf_count_free(struct super_block *sb)
+> >  {
+> >  	unsigned int accum = 0;
+> > -	struct udf_sb_info *sbi;
+> > +	struct udf_sb_info *sbi = UDF_SB(sb);
+> >  	struct udf_part_map *map;
+> > +	unsigned int part = sbi->s_partition;
+> > +	int ptype = sbi->s_partmaps[part].s_partition_type;
+> > +
+> > +	if (ptype == UDF_METADATA_MAP25) {
+> > +		part = sbi->s_partmaps[part].s_type_specific.s_metadata.
+> > +							s_phys_partition_ref;
+> > +	} else if (ptype == UDF_VIRTUAL_MAP15 || ptype == UDF_VIRTUAL_MAP20) {
+> > +		part = UDF_I(sbi->s_vat_inode)->i_location.
+> > +							partitionReferenceNum;
 > 
-> Yeah, I was wondering the same thing, but I'd expect sysadmin to want
-> this. We could change the min clamp of existing RT tasks in userspace
-> instead, but given how simple Qais' lazy update code is, the in-kernel
-> looks reasonable to me. No strong opinion, though.
+> Hello! I do not think that it make sense to report "free blocks" for
+> discs with Virtual partition. By definition of VAT, all blocks prior to
+> VAT are already "read-only" and therefore these blocks cannot be use for
+> writing new data by any implementation. And because VAT is stored on the
+> last block, in our model all blocks are "occupied".
 
-The way I see this being used is set in init.rc. If any RT tasks were created
-(most likely kthreads) before that they'll just be updated on the next
-wakeup.
+Fair enough. Let's just always return 0 for disks with VAT partition.
 
-Of course this approach allows the value to change any point of time when the
-system is running without having to do a reboot/recompile or kick a special
-script/app to modify all existing RT tasks and continuously monitor new ones.
+> > +	}
+> >  
+> > -	sbi = UDF_SB(sb);
+> >  	if (sbi->s_lvid_bh) {
+> >  		struct logicalVolIntegrityDesc *lvid =
+> >  			(struct logicalVolIntegrityDesc *)
+> >  			sbi->s_lvid_bh->b_data;
+> > -		if (le32_to_cpu(lvid->numOfPartitions) > sbi->s_partition) {
+> > +		if (le32_to_cpu(lvid->numOfPartitions) > part) {
+> >  			accum = le32_to_cpu(
+> > -					lvid->freeSpaceTable[sbi->s_partition]);
+> > +					lvid->freeSpaceTable[part]);
+> 
+> And in any case freeSpaceTable should not be used for discs with VAT.
+> And we should ignore its value for discs with VAT.
+> 
+> UDF 2.60 2.2.6.2: Free Space Table values be maintained ... except ...
+> for a virtual partition ...
+> 
+> And same applies for "partition with Access Type pseudo-overwritable".
 
-Another advantage is that apps that have special requirement (like professional
-audio) can use the per-task uclamp API to bump their uclamp_min without
-conflicting with the desired generic value for all other RT tasks.
+Well this is handled by the 'accum == 0xffffffff' condition below. So we
+effectively ignore these values.
 
-IOW, we can easily at run time control the baseline performance for RT tasks
-with a single knob without interfering with RT tasks that opt-in to modify
-their own uclamp values.
+> >  			if (accum == 0xFFFFFFFF)
+> >  				accum = 0;
+> >  		}
 
---
-Qais Yousef
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
