@@ -2,91 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F6F01352CE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2020 06:45:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5DEA1353A3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2020 08:17:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725922AbgAIFpU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Jan 2020 00:45:20 -0500
-Received: from mail-pg1-f178.google.com ([209.85.215.178]:32965 "EHLO
-        mail-pg1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725893AbgAIFpU (ORCPT
+        id S1728267AbgAIHRk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Jan 2020 02:17:40 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:55714 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728229AbgAIHRk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Jan 2020 00:45:20 -0500
-Received: by mail-pg1-f178.google.com with SMTP id 6so2674991pgk.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jan 2020 21:45:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:mime-version:content-id:date:message-id;
-        bh=lcX+bMkzZdNuKee9UFHwA6yraMbsvHhMh1TYkr3y65U=;
-        b=LVA9oTnqSf77kMGcOaCgxrIHnMrSFijLlUxxIuThln7t/yNGehQfNWAB5KU690Ypf7
-         EwK5sKtWnE5XxS/s+Bc4cAdAnW3J9IbuoR+Il4E0wqRrhA57b2YEZdaAslmlowkvWWgT
-         uVyoDEBG7VzsNs+IDIY8YWx3d0B+C6zy32xaGULB/Y4q4wsNLA/pXT5xM/z9BsfocRwd
-         xC216pKCXx+TpKXP3LCsf4cvHoDV8FCYi2B2NBILzpIJ0XejY3mm5+6CS6IxbgFy61Kl
-         9rcBD6n1IRiEqt5hRMe4R1u2uFl2QvIn84x1xVu+h8UFVoSSIND7ubmVHA3V4IHhCtgG
-         g5MQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:mime-version:content-id:date
-         :message-id;
-        bh=lcX+bMkzZdNuKee9UFHwA6yraMbsvHhMh1TYkr3y65U=;
-        b=b3McsQOvesEaqogU/KLhBwsNE/khkZQ2Sdw2bL7akm/xp2SjvpOh/ozprCLX+RT917
-         0e/VF866k3IY8j5g5RLNpWDvhDAs9vZigTcN22+jiqHJ1Q6smMbFGwnDf6Ya/YU95j5y
-         dvUu/0AUouq+X5kFnWsmWrlYikij0DOUxqXOIxMT/YeENxwqOG8SzrEoDItgaIzP4Oer
-         XMxcRyys9I0aHiTIR5NjBwO5OFVdf6rl5Lb8t3OirfK926pwDgO7tBGwJfnoVLTE9GuE
-         mfLCX4JNPFzPFYZSqTR5UOybSIJ48oTEEIi3u0IPN/TIG54wcYy8ktJP8h8/hR+7t3mU
-         iiFA==
-X-Gm-Message-State: APjAAAV41EDhSUruzSWLW/gotQB9cBDsFIEO1xlhzAP6NOKo7czfLDM9
-        gIGMRaHGMHcEU60ijT+RQAs=
-X-Google-Smtp-Source: APXvYqx0Ft/F0XtbAWcQMlKtO+itz37aoDGlXAj12AsZJxRRPje1jyIgB6WtciTIyeDn23HC7YfZyA==
-X-Received: by 2002:aa7:949a:: with SMTP id z26mr9245233pfk.98.1578548719393;
-        Wed, 08 Jan 2020 21:45:19 -0800 (PST)
-Received: from jromail.nowhere (h219-110-240-103.catv02.itscom.jp. [219.110.240.103])
-        by smtp.gmail.com with ESMTPSA id r7sm5900899pfg.34.2020.01.08.21.45.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 Jan 2020 21:45:19 -0800 (PST)
-Received: from localhost ([127.0.0.1] helo=jrobl) by jrobl id 1ipQdA-0004Qw-UF ; Thu, 09 Jan 2020 14:45:16 +0900
-From:   "J. R. Okajima" <hooanon05g@gmail.com>
-To:     dhowells@redhat.com
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: Q, SIGIO on pipe
+        Thu, 9 Jan 2020 02:17:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=QiGddIdznuWpaK7y0GhGRJ+SVWaUTsy0jZCxFwhuX10=; b=b/atrdTv7mTla8rMm5os8qR0f
+        xlx3bPLebE+cRT2xapyhAqh5XtlEwbso2AIXRqJHaNMt1Qxl2UzsLsYiOKhqLu8ZJ8goRpKw2Rji8
+        Wui2E6GzrlCEQCH652U27E57x2zdbA/K58n+RRc7c/lTak1zYj2B4RuBQUnBeZFwa4gpIFo2vzXwx
+        IwGxS1NC3SBaC2wjRzEmdks9rxLY2K5wuJzl5HQlTUX6gpUVYDS8seZZNIGSPS4YdSE50vt2AR1Uu
+        C/iIPAipbWYc6EbkVkh24BtzWdM+T8MxcGXo0lhkbE+448tKoWYjCjGgYOf0kgcp5zJbU8csKk3iw
+        NrO8vBYAQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ipS4Z-0000Gl-7c; Thu, 09 Jan 2020 07:17:39 +0000
+Date:   Wed, 8 Jan 2020 23:17:39 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Carlos Maiolino <cmaiolino@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        syzbot+2b9e54155c8c25d8d165@syzkaller.appspotmail.com
+Subject: Re: [PATCH V2] block: add bio_truncate to fix guard_bio_eod
+Message-ID: <20200109071739.GB32217@infradead.org>
+References: <20191227230548.20079-1-ming.lei@redhat.com>
+ <20200108133735.GB4455@infradead.org>
+ <20200109020524.GD9655@ming.t460p>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <17044.1578548716.1@jrobl>
-Date:   Thu, 09 Jan 2020 14:45:16 +0900
-Message-ID: <17045.1578548716@jrobl>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200109020524.GD9655@ming.t460p>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Between v5.4 and v5.5-rc5, big changes are made around pipe and my test
-program behaves differently.
+On Thu, Jan 09, 2020 at 10:05:24AM +0800, Ming Lei wrote:
+> OK, will do that.
+> 
+> > 
+> > > +	if (bio_data_dir(bio) != READ)
+> > > +		goto exit;
+> > 
+> > This really should check the passed in op for REQ_OP_READ directly instead
+> > of just the direction on the potentially not fully set up bio.
+> 
+> It has been addressed in:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commit/?h=block-5.5&id=802ca0381befe29ba0783e08e3369f9e87ef9d0d
 
-{
-	err = mknod(fname, S_IFIFO | 0644, /*dev*/0);
-	fd = open(fname, O_RDWR, /*mode*/0);
-	err = sigaction(SIGIO, &sa, NULL);
-
-	pid = getpid();
-	err = fcntl(fd, F_SETOWN, pid);
-	err = fcntl(fd, F_SETSIG, SIGIO);
-	flags = fcntl(fd, F_GETFL);
-	err = fcntl(fd, F_SETFL, O_NONBLOCK | O_ASYNC | flags);
-
-	ssz = write(fd, &i, 1);
-	ssz = read(fd, &i, 1);
-}
-
-In v5.4, the final write(2) and read(2) generate/send SIGIO for each,
-POLLIN and POLLOUT respectively.
-But in v5.5-rc5, read(2) doesn't generate/send SIGIO POLLOUT while it
-reads 1 byte successfully.
-
-Reading new pipe.c, pipe_read() fires the signal only when the pipe
-buffer was full (16 as PIPE_DEF_BUFFERS defines), so my test program
-which writes only 1 byte doesn't receive the signal.  Am I right?  If
-so, is this an intentional behaviour and the previous behaviour was
-wrong and violated some standards?
-
-
-J. R. Okajima
+Well, it fixes the bug introduced.  But it still uses bio_data_dir
+instead of the explicit REQ_OP_READ check, and still uses a calling
+convention that leads to such errors.
