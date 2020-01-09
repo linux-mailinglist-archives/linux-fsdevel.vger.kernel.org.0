@@ -2,169 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05E50134FF8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2020 00:22:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FACE135099
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2020 01:44:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727224AbgAHXWI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jan 2020 18:22:08 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41336 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726548AbgAHXWI (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jan 2020 18:22:08 -0500
-Received: by mail-pl1-f194.google.com with SMTP id bd4so1733768plb.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jan 2020 15:22:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=idTV0a+8MiH1OisXB3/9lsN87GoZDMzj7s8vYjk0Mjs=;
-        b=MJOgQw8vNdXb9aeyHaR1lyLfnCFttJmVvY52x1PdX/aPOyckhatEVd5INDIB0fOn2z
-         CgCUEmqCrDfdMyu39k5np4TrAs1gCrm68GQ6XZpiDaAt+iratGAuaNbFOHYIXYrmlviR
-         8DMI0PBRPFjodVPoju6mo3fBlu60aEDLBsgOezHjCcwO5C6nnRQHFVG9qZnT/dplEBeg
-         +sTjS9qMUcYjc+l9Ni4qcDuR9BGy1vSdeDeVLtJWwbx6eUBfwSc9iwHJqwaoScsc97El
-         T6vE1hhVpBHCfaevsT7rO+xkjQhTS5o/Q0+g2RzmxSU4cSJBnTnd+HF1zLDHMG+PkGxH
-         9d5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=idTV0a+8MiH1OisXB3/9lsN87GoZDMzj7s8vYjk0Mjs=;
-        b=JiK9i4fqBHyd/ZMr8wa+yl3WNgO/pohutoOzAM/OOVwjOxK2/xG89JTE8lyfBDJjUf
-         WBQEPCUcLTMXjpJYiTCDzFyLspNth5cgeWOxzhNKkYVJt536msM9MsUYV00vcRPTLmqX
-         dp91vF9PMMhxyGD9iWiOEgXvZPkm8iWQgZq6Lj5q34vFx3Ijkx/mpQkG9k8Nl3Ozv1pg
-         WLJ8v4IahonFUeixflUNspRuSOfu7Lc+ZJIC9ReuO7eZ6XnbY0xtDvyUXzK4pPBnuJUp
-         n2JSuqvOJIPxmnttc5MRoXepBOjFNuwrnZIX9eIi85JMEl+jdln/UZ6xpKUbYbw+5sVc
-         cStQ==
-X-Gm-Message-State: APjAAAUjFcqBS8MDKCfHrQF+Gu2Ax7RFwnjcAJKSlDWSVTNtrdz5UpqA
-        zPEQRhTE9bVi6bvAi2ergUW2jw==
-X-Google-Smtp-Source: APXvYqwarFjYLTE++qOfxi3ZiTtcpNfA30knau5d/vurvLMjiSbZMTF/UX9Rs4FeuU0rZlGJy++vVA==
-X-Received: by 2002:a17:902:ff07:: with SMTP id f7mr8235000plj.12.1578525726107;
-        Wed, 08 Jan 2020 15:22:06 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id y38sm4798536pgk.33.2020.01.08.15.22.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Jan 2020 15:22:05 -0800 (PST)
-Subject: Re: [PATCH 3/6] io_uring: add support for IORING_OP_OPENAT
-To:     Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-References: <20200107170034.16165-1-axboe@kernel.dk>
- <20200107170034.16165-4-axboe@kernel.dk>
- <82a015c4-f5b9-7c85-7d80-78964cb0d82e@samba.org>
- <4ccb935c-7ff9-592f-8c27-0af3d38326d7@kernel.dk>
- <2afdd5a5-0eb5-8fba-58d1-03001abbab7e@samba.org>
- <9672da37-bf6f-ce2d-403c-5e2692c67782@kernel.dk>
- <d0f0e726-8e6f-aa43-07b6-fdb3b49ce1bc@samba.org>
- <d5a5dc20-7e11-8489-b9d5-c2cf8a4bdf4b@kernel.dk>
- <a0f1b3a0-9827-b3e1-da0c-a2b71151fd4e@samba.org>
- <0b8a0f70-c2de-1b1c-28d4-5c578a3534eb@kernel.dk>
- <d42d5abd-c87b-1d97-00f3-95460a81c527@samba.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <7c97ddec-24b9-c88d-da7e-89aa161f1634@kernel.dk>
-Date:   Wed, 8 Jan 2020 16:22:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727168AbgAIAoC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jan 2020 19:44:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33382 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726654AbgAIAoC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Jan 2020 19:44:02 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5ABD2070E;
+        Thu,  9 Jan 2020 00:44:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578530642;
+        bh=Go188rL5tikNt03I4uWv26oj+FUof0Vk+S7a6HlvT1A=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=wVjR5/sPmfzWsNjUYs7iAFkDuAiMFnOpPCjdP+oU0s+4tHE0RLgbXYKiXuSJulplY
+         WZVBvVyNaV7D1gkAtlMQFENto0ov9x31m3PyRs1uW7fKs78RbYeEqMnDd0yifwYvyL
+         QJQ799I/TfvKrDuKHFPYFjkL73uGZt3h28MFnhyU=
+Message-ID: <064b5f5318fd433f03242ed234fe7c370899e224.camel@kernel.org>
+Subject: Re: [PATCH v5 2/2] tmpfs: Support 64-bit inums per-sb
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Hugh Dickins <hughd@google.com>, Chris Mason <clm@fb.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Chris Down <chris@chrisdown.name>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>
+Date:   Wed, 08 Jan 2020 19:43:52 -0500
+In-Reply-To: <alpine.LSU.2.11.2001080259350.1884@eggly.anvils>
+References: <cover.1578225806.git.chris@chrisdown.name>
+         <ae9306ab10ce3d794c13b1836f5473e89562b98c.1578225806.git.chris@chrisdown.name>
+         <20200107001039.GM23195@dread.disaster.area>
+         <20200107001643.GA485121@chrisdown.name>
+         <20200107003944.GN23195@dread.disaster.area>
+         <CAOQ4uxjvH=UagqjHP_71_p9_dW9wKqiaWujzY1xKe7yZVFPoTA@mail.gmail.com>
+         <alpine.LSU.2.11.2001070002040.1496@eggly.anvils>
+         <CAOQ4uxiMQ3Oz4M0wKo5FA_uamkMpM1zg7ydD8FXv+sR9AH_eFA@mail.gmail.com>
+         <20200107210715.GQ23195@dread.disaster.area>
+         <4E9DF932-C46C-4331-B88D-6928D63B8267@fb.com>
+         <alpine.LSU.2.11.2001080259350.1884@eggly.anvils>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
 MIME-Version: 1.0
-In-Reply-To: <d42d5abd-c87b-1d97-00f3-95460a81c527@samba.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/8/20 4:11 PM, Stefan Metzmacher wrote:
-> Am 09.01.20 um 00:05 schrieb Jens Axboe:
->> On 1/8/20 4:03 PM, Stefan Metzmacher wrote:
->>> Am 08.01.20 um 23:53 schrieb Jens Axboe:
->>>> On 1/8/20 10:04 AM, Stefan Metzmacher wrote:
->>>>> Am 08.01.20 um 17:40 schrieb Jens Axboe:
->>>>>> On 1/8/20 9:32 AM, Stefan Metzmacher wrote:
->>>>>>> Am 08.01.20 um 17:20 schrieb Jens Axboe:
->>>>>>>> On 1/8/20 6:05 AM, Stefan Metzmacher wrote:
->>>>>>>>> Hi Jens,
->>>>>>>>>
->>>>>>>>>> This works just like openat(2), except it can be performed async. For
->>>>>>>>>> the normal case of a non-blocking path lookup this will complete
->>>>>>>>>> inline. If we have to do IO to perform the open, it'll be done from
->>>>>>>>>> async context.
->>>>>>>>>
->>>>>>>>> Did you already thought about the credentials being used for the async
->>>>>>>>> open? The application could call setuid() and similar calls to change
->>>>>>>>> the credentials of the userspace process/threads. In order for
->>>>>>>>> applications like samba to use this async openat, it would be required
->>>>>>>>> to specify the credentials for each open, as we have to multiplex
->>>>>>>>> requests from multiple user sessions in one process.
->>>>>>>>>
->>>>>>>>> This applies to non-fd based syscall. Also for an async connect
->>>>>>>>> to a unix domain socket.
->>>>>>>>>
->>>>>>>>> Do you have comments on this?
->>>>>>>>
->>>>>>>> The open works like any of the other commands, it inherits the
->>>>>>>> credentials that the ring was setup with. Same with the memory context,
->>>>>>>> file table, etc. There's currently no way to have multiple personalities
->>>>>>>> within a single ring.
->>>>>>>
->>>>>>> Ah, it's user = get_uid(current_user()); and ctx->user = user in
->>>>>>> io_uring_create(), right?
->>>>>>
->>>>>> That's just for the accounting, it's the:
->>>>>>
->>>>>> ctx->creds = get_current_cred();
->>>>>
->>>>> Ok, I just looked at an old checkout.
->>>>>
->>>>> In kernel-dk-block/for-5.6/io_uring-vfs I see this only used in
->>>>> the async processing. Does a non-blocking openat also use ctx->creds?
->>>>
->>>> There's basically two sets here - one set is in the ring, and the other
->>>> is the identity that the async thread (briefly) assumes if we have to go
->>>> async. Right now they are the same thing, and hence we don't need to
->>>> play any tricks off the system call submitting SQEs to assume any other
->>>> identity than the one we have.
->>>
->>> I see two cases using it io_sq_thread() and
->>> io_wq_create()->io_worker_handle_work() call override_creds().
->>>
->>> But aren't non-blocking syscall executed in the context of the thread
->>> calling io_uring_enter()->io_submit_sqes()?
->>> In only see some magic around ctx->sqo_mm for that case, but ctx->creds
->>> doesn't seem to be used in that case. And my design would require that.
->>
->> For now, the sq thread (which is used if you use IORING_SETUP_SQPOLL)
->> currently requires fixed files, so it can't be used with open at the
->> moment anyway. But if/when enabled, it'll assume the same credentials
->> as the async context and syscall path.
+On Wed, 2020-01-08 at 03:24 -0800, Hugh Dickins wrote:
+> On Tue, 7 Jan 2020, Chris Mason wrote:
+> > On 7 Jan 2020, at 16:07, Dave Chinner wrote:
+> > 
+> > > IOWs, there are *lots* of 64bit inode numbers out there on XFS
+> > > filesystems....
+> > 
+> > It's less likely in btrfs but +1 to all of Dave's comments.  I'm happy 
+> > to run a scan on machines in the fleet and see how many have 64 bit 
+> > inodes (either buttery or x-y), but it's going to be a lot.
 > 
-> I'm sorry, but I'm still unsure we're talking about the same thing
-> (or maybe I'm missing some basics here).
+> Dave, Amir, Chris, many thanks for the info you've filled in -
+> and absolutely no need to run any scan on your fleet for this,
+> I think we can be confident that even if fb had some 15-year-old tool
+> in use on its fleet of 2GB-file filesystems, it would not be the one
+> to insist on a kernel revert of 64-bit tmpfs inos.
 > 
-> My understanding of the io_uring_enter() is that it will execute as much
-> non-blocking calls as it can without switching to any other kernel thread.
+> The picture looks clear now: while ChrisD does need to hold on to his
+> config option and inode32/inode64 mount option patch, it is much better
+> left out of the kernel until (very unlikely) proved necessary.
 
-Correct, any SQE that we can do without switching, we will.
+This approach seems like the best course to me.
 
-> And my fear is that openat will use get_current_cred() instead of
-> ctx->creds.
+FWIW, at the time we capped this at 32-bits (2007), 64-bit machines were
+really just becoming widely available, and it was quite common to run
+32-bit, non-LFS apps on a 64-bit kernel. Users were hitting spurious
+EOVERFLOW errors all over the place so this seemed like the best way to
+address it.
 
-OK, I think I follow your concern. So you'd like to setup the rings from
-a _different_ user, and then later on use it for submission for SQEs that
-a specific user. So sort of the same as our initial discussion, except
-the mapping would be static. The difference being that you might setup
-the ring from a different user than the user that would be submitting IO
-on it?
+The world has changed a lot since then though, and one would hope that
+almost everything these days is compiled with FILE_OFFSET_BITS=64.
 
-If so, then we do need something to support that, probably an
-IORING_REGISTER_CREDS or similar. This would allow you to replace the
-creds you currently have in ctx->creds with whatever new one.
-
-> I'm I missing something?
-
-I think we're talking about the same thing, just different views of it :-)
-
+Fingers crossed!
 -- 
-Jens Axboe
+Jeff Layton <jlayton@kernel.org>
 
