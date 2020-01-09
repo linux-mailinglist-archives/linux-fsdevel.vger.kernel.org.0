@@ -2,103 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 009F11363A7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 00:11:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 093AF1363B6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 00:21:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728637AbgAIXLA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Jan 2020 18:11:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50956 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727876AbgAIXLA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Jan 2020 18:11:00 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C447320656;
-        Thu,  9 Jan 2020 23:10:57 +0000 (UTC)
-Date:   Thu, 9 Jan 2020 18:10:55 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 00/22] tracing: bootconfig: Boot-time tracing and
- Extra boot config
-Message-ID: <20200109181055.1999b344@gandalf.local.home>
-In-Reply-To: <157736902773.11126.2531161235817081873.stgit@devnote2>
-References: <157736902773.11126.2531161235817081873.stgit@devnote2>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1728962AbgAIXVm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Jan 2020 18:21:42 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:22029 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725840AbgAIXVk (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 9 Jan 2020 18:21:40 -0500
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200109232137epoutp01cb990eca551160596f84024be65073bd~oW1a9Vi8y3247832478epoutp01M
+        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Jan 2020 23:21:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200109232137epoutp01cb990eca551160596f84024be65073bd~oW1a9Vi8y3247832478epoutp01M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1578612097;
+        bh=T+CeYd6IFZglOI4g+diQBYqoYYrYS/DvRp1wf9ehhSs=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=Y89hp8wXi3HKHGbnfbukvhKOGw0y6ZIwjNpfEuMTenrcuONm8E7Y9aALJfH9Gg2Gv
+         EXZXbYYfyR+4AXid68qxUrZ4dAoY2+gWiZzQagaD0HI6v3whYsVnYAPz4JRMkIhLoN
+         U468v4hMl1AZOlN05yWnwJWzblo4K9WoTKji7sZc=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20200109232137epcas1p4e338856c504cd9f67eadc4b1600deba4~oW1asrb5-0706907069epcas1p4I;
+        Thu,  9 Jan 2020 23:21:37 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.162]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 47v2Dw1YPYzMqYkg; Thu,  9 Jan
+        2020 23:21:36 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        7C.FA.48498.085B71E5; Fri, 10 Jan 2020 08:21:36 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200109232135epcas1p31123857fc9cec29067aafda53561683b~oW1ZbZY1t0707807078epcas1p3i;
+        Thu,  9 Jan 2020 23:21:35 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200109232135epsmtrp10c9724d2abb16adff1ebe63cb7e3fd4d~oW1ZasjBv1664216642epsmtrp1k;
+        Thu,  9 Jan 2020 23:21:35 +0000 (GMT)
+X-AuditID: b6c32a36-a3dff7000001bd72-b3-5e17b580f5cb
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        59.46.10238.F75B71E5; Fri, 10 Jan 2020 08:21:35 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200109232135epsmtip139602e5d66cf9aabfc8b266346cb88c9~oW1ZRA59Z1335813358epsmtip1c;
+        Thu,  9 Jan 2020 23:21:35 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     "'Christoph Hellwig'" <hch@lst.de>
+Cc:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <gregkh@linuxfoundation.org>, <valdis.kletnieks@vt.edu>,
+        <sj1557.seo@samsung.com>, <linkinjeon@gmail.com>,
+        <pali.rohar@gmail.com>
+In-Reply-To: <20200108172135.GC13388@lst.de>
+Subject: RE: [PATCH v9 02/13] exfat: add super block operations
+Date:   Fri, 10 Jan 2020 08:21:35 +0900
+Message-ID: <001701d5c743$8945ffe0$9bd1ffa0$@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJSGi/S1M7UFBjz5N3SW71o+eawLwKPpVYaAeKSrnsCTHWGIqa0Uqbw
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLJsWRmVeSWpSXmKPExsWy7bCmgW7DVvE4g/f97BbNi9ezWaxcfZTJ
+        4vrdW8wWe/aeZLG4vGsOm8XE07+ZLLb8O8Jqcen9BxYHDo+ds+6ye+yfu4bdY/fNBjaPvi2r
+        GD0+b5LzOLT9DVsAW1SOTUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqt
+        kotPgK5bZg7QQUoKZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XUgpScAkODAr3ixNzi0rx0
+        veT8XCtDAwMjU6DKhJyMZU0rWAuu8FRsXDqZuYHxIWcXIyeHhICJxL+/85m6GLk4hAR2MEq8
+        PXyKESQhJPCJUeLFLEEI+xujxN8pojANza9WM0I07GWUuLihkQ3Ceckose/QFFaQKjYBXYl/
+        f/azgdgiAmoSZ362sYMUMQucYpT4v3UiWIJTQEfi+LUZQAkODmEBe4mODZIgYRYBVYkDvd3s
+        IDavgKXEotdPoGxBiZMzn7CA2MwC8hLb385hhrhIQeLn02WsELvcJFa1TWCDqBGRmN3Zxgyy
+        V0KgnV1iwuzjTBANLhKHm0+wQdjCEq+Ob2GHsKUkXva3gd0jIVAt8XE/1PwOYEh8t4WwjSVu
+        rt/AClLCLKApsX6XPkRYUWLn77mMEGv5JN597WGFmMIr0dEmBFGiKtF36TDUAdISXe0f2Ccw
+        Ks1C8tgsJI/NQvLALIRlCxhZVjGKpRYU56anFhsWGCFH9SZGcFLVMtvBuOiczyFGAQ5GJR7e
+        DGHxOCHWxLLiytxDjBIczEoivEdviMUJ8aYkVlalFuXHF5XmpBYfYjQFhvtEZinR5Hxgws8r
+        iTc0NTI2NrYwMTM3MzVWEufl+HExVkggPbEkNTs1tSC1CKaPiYNTqoGxqdGDlfvuha75z0Ju
+        SbXkTK7/WF4/4+HcH1ZXyi7+CWO+Nu39msIzL3Zcmf8/uvFD0iHH5RaPxXR+/UwMXdlz5/T6
+        hVsfXF7hdNj13qOXmotCfHqvbUoV2xjv+ip/5vX2YA2jjq7Um37bc5ncBbfULNeu+xzJfuz2
+        FZVLH2V+uiS/SVfhkY06qMRSnJFoqMVcVJwIAM5KO+/AAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOIsWRmVeSWpSXmKPExsWy7bCSnG79VvE4gwfd+hbNi9ezWaxcfZTJ
+        4vrdW8wWe/aeZLG4vGsOm8XE07+ZLLb8O8Jqcen9BxYHDo+ds+6ye+yfu4bdY/fNBjaPvi2r
+        GD0+b5LzOLT9DVsAWxSXTUpqTmZZapG+XQJXxrKmFawFV3gqNi6dzNzA+JCzi5GTQ0LARKL5
+        1WrGLkYuDiGB3YwSiy5PYoRISEscO3GGuYuRA8gWljh8uBgkLCTwnFHi4nlBEJtNQFfi35/9
+        bCC2iICaxJmfbewgc5gFLjFKTOhtYoYYep9RYv+BmSwgVZwCOhLHr81gBxkqLGAv0bFBEiTM
+        IqAqcaC3mx3E5hWwlFj0+gmULShxcuYTFpByZgE9ibaNYKcxC8hLbH87hxniTAWJn0+XsULc
+        4Caxqm0CG0SNiMTszjbmCYzCs5BMmoUwaRaSSbOQdCxgZFnFKJlaUJybnltsWGCYl1quV5yY
+        W1yal66XnJ+7iREcXVqaOxgvL4k/xCjAwajEw5shLB4nxJpYVlyZe4hRgoNZSYT36A2xOCHe
+        lMTKqtSi/Pii0pzU4kOM0hwsSuK8T/OORQoJpCeWpGanphakFsFkmTg4pRoY45N7Mw4/ez0r
+        3O/D4ZbP/f+mWD5z7Gi1l7934/2nn99P/fK8eoV7V+6T4PisGfvfOX56cPHHkeT5ooYfrNvd
+        JnvGl1o3rtpkcvSW1ZQJgZHPD+1acP5+1U0Zof0tpff3/z5Y0rgqkP3glZ2HTr2rz5ysHlLM
+        M2FpMKfDpeaSqZmxmnYlgXc6JyqxFGckGmoxFxUnAgA7vmGHqgIAAA==
+X-CMS-MailID: 20200109232135epcas1p31123857fc9cec29067aafda53561683b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200102082401epcas1p2f33f3c11ecedabff2165ba216854d8fe
+References: <20200102082036.29643-1-namjae.jeon@samsung.com>
+        <CGME20200102082401epcas1p2f33f3c11ecedabff2165ba216854d8fe@epcas1p2.samsung.com>
+        <20200102082036.29643-3-namjae.jeon@samsung.com>
+        <20200108172135.GC13388@lst.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 26 Dec 2019 23:03:48 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> Looks good, modulo a few nitpicks below:
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+Thanks!
+> 
+> On Thu, Jan 02, 2020 at 04:20:25PM +0800, Namjae Jeon wrote:
+> > +static int exfat_statfs(struct dentry *dentry, struct kstatfs *buf) {
+> > +	struct super_block *sb = dentry->d_sb;
+> > +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+> > +	unsigned long long id = huge_encode_dev(sb->s_bdev->bd_dev);
+> 
+> > +	if (sbi->used_clusters == ~0u) {
+> 
+> Various other places use UINT_MAX here instead.  Maybe it makes sense to
+> add a EXFAT_CLUSTERS_UNTRACKED or similar define and use that in all
+> places?
+Okay.
+> 
+> > +	if ((new_flag == VOL_DIRTY) && (!buffer_dirty(sbi->pbr_bh)))
+> 
+> No need for both sets of inner braces.
+Yep.
+> 
+> > +static bool is_exfat(struct pbr *pbr) {
+> > +	int i = MUST_BE_ZERO_LEN;
+> > +
+> > +	do {
+> > +		if (pbr->bpb.f64.res_zero[i - 1])
+> > +			break;
+> > +	} while (--i);
+> > +	return i ? false : true;
+> > +}
+> 
+> I find the MUST_BE_ZERO_LEN a little weird here.  Maybe that should be
+> something like PBP64_RESERVED_LEN?
+Okay.
 
-> Hello,
 > 
-> This is the 5th version of the series for the boot-time tracing.
+> Also I think this could be simplified by just using memchr_inv in the
+> caller
 > 
-> Previous version is here.
+> 	if (memchr_inv(pbr->bpb.f64.res_zero, 0,
+> 			sizeof(pbr->bpb.f64.res_zero)))
+> 		ret = -EINVAL;
+> 		goto free_bh;
+> 	}
+Okay.
 > 
-> https://lkml.kernel.org/r/157528159833.22451.14878731055438721716.stgit@devnote2
+> > +	/* set maximum file size for exFAT */
+> > +	sb->s_maxbytes = 0x7fffffffffffffffLL;
+> 
+> That this is setting the max size is pretty obvious.  Maybe the comment
+> should be updated to mention how this max file size is calculated?
+I will add the comment.
 
-Hi Masami,
+Thanks for your review!
 
-I applied all your patches to a test branch and was playing with it a
-little. This seems fine to me and works well (and very easy to use).
-Probably could use some more examples, but that's just a nit.
-
-If nobody has any issues with this code, I'll wait for v6 with the
-fixes to issues found in this series, and I'll happily apply them for
-linux-next.
-
--- Steve
-
-
-> 
-> In this version, I removed RFC tag from the series.
-> Changes from the v4 are here, updating bootconfig things.
-> 
->  - [1/22] Fix help comment and indent of Kconfig.
->           Restrict available characters in values(*)
->           Drop backslash escape from quoted value(**)
->  - [3/22] Fix Makefile to compile tool correctly
->           Remove unused pattern from Makefile
->  - [4/22] Show test target bootconfig
->           Add printable value testcases
->           Add bad array testcase
->  - [9/22] Fix TOC list
->           Add notes about available characters.
->           Fix to use correct quotes (``) for .rst.
-> 
-> (*) this is for preventing admin from shoot himself.
-> (**) this rule is from legacy command line.
-> 
-> Boot-time tracing features are not modified. I know Tom is working
-> on exporting synthetic event (and dynamic events) APIs for module.
-> If that APIs are merged first, I will update my series on top
-> of that.
-> 
-> This series can be applied on v5.5-rc3 or directly available at;
-> 
-> https://github.com/mhiramat/linux.git ftrace-boottrace-v5
-> 
-> 
