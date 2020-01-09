@@ -2,96 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E310F1357DB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2020 12:25:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B60A135812
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jan 2020 12:36:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730604AbgAILZN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Jan 2020 06:25:13 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43420 "EHLO mx2.suse.de"
+        id S1725776AbgAILga (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Jan 2020 06:36:30 -0500
+Received: from foss.arm.com ([217.140.110.172]:57584 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730565AbgAILZN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Jan 2020 06:25:13 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 947B96A4CE;
-        Thu,  9 Jan 2020 11:24:47 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 1FABF1E0798; Thu,  9 Jan 2020 12:24:47 +0100 (CET)
-Date:   Thu, 9 Jan 2020 12:24:47 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 01/19] dax: remove block device dependencies
-Message-ID: <20200109112447.GG27035@quack2.suse.cz>
-References: <CAPcyv4jGEAbYSJef2zLzgg6Arozsuz7eN_vZL1iTcd1XQuNT4Q@mail.gmail.com>
- <20191216181014.GA30106@redhat.com>
- <20200107125159.GA15745@infradead.org>
- <CAPcyv4jZE35sbDo6J4ihioEUFTuekJ3_h0=2Ra4PY+xn2xn1cQ@mail.gmail.com>
- <20200107170731.GA472641@magnolia>
- <CAPcyv4ggH7-QhYg+YOOWn_m25uds+-0L46=N09ap-LALeGuU_A@mail.gmail.com>
- <20200107180101.GC15920@redhat.com>
- <CAPcyv4gmdoqpwwwy4dS3D2eZFjmJ_Zi39k=1a4wn-_ksm-UV4A@mail.gmail.com>
- <20200107183307.GD15920@redhat.com>
- <CAPcyv4ggoS4dWjq-1KbcuaDtroHKEi5Vu19ggJ-qgycs6w1eCA@mail.gmail.com>
+        id S1725308AbgAILga (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 9 Jan 2020 06:36:30 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C0A0831B;
+        Thu,  9 Jan 2020 03:36:27 -0800 (PST)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A80053F703;
+        Thu,  9 Jan 2020 03:36:25 -0800 (PST)
+Date:   Thu, 9 Jan 2020 11:36:23 +0000
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Quentin Perret <qperret@google.com>
+Cc:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        valentin.schneider@arm.com,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel-team@android.com
+Subject: Re: [PATCH] sched/rt: Add a new sysctl to control uclamp_util_min
+Message-ID: <20200109113623.jk4yth6koyq2wwh7@e107158-lin.cambridge.arm.com>
+References: <20191220164838.31619-1-qais.yousef@arm.com>
+ <20200107134234.GA158998@google.com>
+ <8bb17e84-d43f-615f-d04d-c36bb6ede5e0@arm.com>
+ <20200108095108.GA153171@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4ggoS4dWjq-1KbcuaDtroHKEi5Vu19ggJ-qgycs6w1eCA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200108095108.GA153171@google.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 07-01-20 10:49:55, Dan Williams wrote:
-> On Tue, Jan 7, 2020 at 10:33 AM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > W.r.t partitioning, bdev_dax_pgoff() seems to be the pain point where
-> > dax code refers back to block device to figure out partition offset in
-> > dax device. If we create a dax object corresponding to "struct block_device"
-> > and store sector offset in that, then we could pass that object to dax
-> > code and not worry about referring back to bdev. I have written some
-> > proof of concept code and called that object "dax_handle". I can post
-> > that code if there is interest.
+On 01/08/20 09:51, Quentin Perret wrote:
+> On Tuesday 07 Jan 2020 at 20:30:36 (+0100), Dietmar Eggemann wrote:
+> > On 07/01/2020 14:42, Quentin Perret wrote:
+> > > Hi Qais,
+> > > 
+> > > On Friday 20 Dec 2019 at 16:48:38 (+0000), Qais Yousef wrote:
+> > 
+> > [...]
+> > 
+> > >> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+> > >> index e591d40fd645..19572dfc175b 100644
+> > >> --- a/kernel/sched/rt.c
+> > >> +++ b/kernel/sched/rt.c
+> > >> @@ -2147,6 +2147,12 @@ static void pull_rt_task(struct rq *this_rq)
+> > >>   */
+> > >>  static void task_woken_rt(struct rq *rq, struct task_struct *p)
+> > >>  {
+> > >> +	/*
+> > >> +	 * When sysctl_sched_rt_uclamp_util_min value is changed by the user,
+> > >> +	 * we apply any new value on the next wakeup, which is here.
+> > >> +	 */
+> > >> +	uclamp_rt_sync_default_util_min(p);
+> > > 
+> > > The task has already been enqueued and sugov has been called by then I
+> > > think, so this is a bit late. You could do that in uclamp_rq_inc() maybe?
+> > 
+> > That's probably better.
+> > Just to be sure ...we want this feature (an existing rt task gets its
+> > UCLAMP_MIN value set when the sysctl changes) because there could be rt
+> > tasks running before the sysctl is set?
 > 
-> I don't think it's worth it in the end especially considering
-> filesystems are looking to operate on /dev/dax devices directly and
-> remove block entanglements entirely.
-> 
-> > IMHO, it feels useful to be able to partition and use a dax capable
-> > block device in same way as non-dax block device. It will be really
-> > odd to think that if filesystem is on /dev/pmem0p1, then dax can't
-> > be enabled but if filesystem is on /dev/mapper/pmem0p1, then dax
-> > will work.
-> 
-> That can already happen today. If you do not properly align the
-> partition then dax operations will be disabled. This proposal just
-> extends that existing failure domain to make all partitions fail to
-> support dax.
+> Yeah, I was wondering the same thing, but I'd expect sysadmin to want
+> this. We could change the min clamp of existing RT tasks in userspace
+> instead, but given how simple Qais' lazy update code is, the in-kernel
+> looks reasonable to me. No strong opinion, though.
 
-Well, I have some sympathy with the sysadmin that has /dev/pmem0 device,
-decides to create partitions on it for whatever (possibly misguided)
-reason and then ponders why the hell DAX is not working? And PAGE_SIZE
-partition alignment is so obvious and widespread that I don't count it as a
-realistic error case sysadmins would be pondering about currently.
+The way I see this being used is set in init.rc. If any RT tasks were created
+(most likely kthreads) before that they'll just be updated on the next
+wakeup.
 
-So I'd find two options reasonably consistent:
-1) Keep status quo where partitions are created and support DAX.
-2) Stop partition creation altogether, if anyones wants to split pmem
-device further, he can use dm-linear for that (i.e., kpartx).
+Of course this approach allows the value to change any point of time when the
+system is running without having to do a reboot/recompile or kick a special
+script/app to modify all existing RT tasks and continuously monitor new ones.
 
-But I'm not sure if the ship hasn't already sailed for option 2) to be
-feasible without angry users and Linus reverting the change.
+Another advantage is that apps that have special requirement (like professional
+audio) can use the per-task uclamp API to bump their uclamp_min without
+conflicting with the desired generic value for all other RT tasks.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+IOW, we can easily at run time control the baseline performance for RT tasks
+with a single knob without interfering with RT tasks that opt-in to modify
+their own uclamp values.
+
+--
+Qais Yousef
