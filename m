@@ -2,141 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00C6713784A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 22:07:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E50DB1378A5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 22:45:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbgAJVHn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Jan 2020 16:07:43 -0500
-Received: from mout-p-102.mailbox.org ([80.241.56.152]:23372 "EHLO
-        mout-p-102.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726842AbgAJVHm (ORCPT
+        id S1726996AbgAJVpp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Jan 2020 16:45:45 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39663 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726948AbgAJVpo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Jan 2020 16:07:42 -0500
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 47vbCv5hSczKmhn;
-        Fri, 10 Jan 2020 22:07:39 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
-        with ESMTP id hIHoHiMQzTgm; Fri, 10 Jan 2020 22:07:33 +0100 (CET)
-Date:   Sat, 11 Jan 2020 08:07:19 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        stable <stable@vger.kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Serge Hallyn <serge@hallyn.com>, dev@opencontainers.org,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>
-Subject: Re: [PATCH RFC 0/1] mount: universally disallow mounting over
- symlinks
-Message-ID: <20200110210719.ktg3l2kwjrdutlh6@yavin>
-References: <20191230072959.62kcojxpthhdwmfa@yavin.dot.cyphar.com>
- <20200101004324.GA11269@ZenIV.linux.org.uk>
- <20200101005446.GH4203@ZenIV.linux.org.uk>
- <20200101030815.GA17593@ZenIV.linux.org.uk>
- <20200101144407.ugjwzk7zxrucaa6a@yavin.dot.cyphar.com>
- <20200101234009.GB8904@ZenIV.linux.org.uk>
- <20200102035920.dsycgxnb6ba2jhz2@yavin.dot.cyphar.com>
- <20200103014901.GC8904@ZenIV.linux.org.uk>
- <20200108031314.GE8904@ZenIV.linux.org.uk>
- <CAHk-=wgQ3yOBuK8mxpnntD8cfX-+10ba81f86BYg8MhvwpvOMg@mail.gmail.com>
+        Fri, 10 Jan 2020 16:45:44 -0500
+Received: by mail-pf1-f196.google.com with SMTP id q10so1745185pfs.6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Jan 2020 13:45:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=85uBcaKJVYynn+Km3yZLrt2LABn/ujp4kH1tchf72pQ=;
+        b=fFk+ijjG8oQy7LHiL7KQwoSUrPKToO3xGIfQktv7xCVRr50sD04tjZDR0VioAFl3mE
+         2UvNLpoV/EQaPK8Tw6WgOPZbbBU89HmvvmmGkCkPrVtcWA6ZlnkyO2lFqW4vmq367U49
+         kNrRqygH2oUX4SawAcIrPySvrA8TbliPHsgcBw0tIChmiwryBDq+EqZ4BKclRoSrYDhH
+         +oYPiQ/6TmgYTA3EAP1+7vjvNkhj2k5F5bx4v9ReVyJJnqNmdIZzoZAl4QL4YT/mdanr
+         Jwc9lwCptjwNXWa9qP3KOLSOq8QrEUAWTrbcKwny7SgVvmx2avkQt5RnZBI3zg/i+dEf
+         UPhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=85uBcaKJVYynn+Km3yZLrt2LABn/ujp4kH1tchf72pQ=;
+        b=VQDE8xBYPFxIsMpzcm48wy42BsvM/ygUy7yNFN2WfbQTy4AhU5u5ecArywNVOdHHRG
+         GW1gH/XWetA5KfwytRoBwhBO2LdPELpTwy76w01AgFeFG8i1nQJYCGxq9T/TqO11Nlmr
+         fhPm1ieYc4q96GhojtusU+G0kH3PzEz3iK4WlAMfjZa9KwdBRZVbQlL/nvHhoqIHxMPy
+         9xL7umGzFjhh1gRBV+hXEkSUN4rsU07R+5+IHyGb8lpYKgI22uLnCZV2ia3fbBcH9JkC
+         HAmw9L2njFuYGusfHq439Uarou2+m+uTNXaOYQjvJ3U7FE/lVkxZsP4KZdrduWJac8Hf
+         CnzA==
+X-Gm-Message-State: APjAAAUviqVr2N3cEWW9umo3HaetiLzGHtQSGfMFZ3LKPT2wZZHKBaqO
+        d5yi/XT4T6QE41d3EEHsA6/TOA==
+X-Google-Smtp-Source: APXvYqxgE7a0uaAsLuTGuMgpdPUQxw+3dqFpxr4k4kTVVg1Wowt51riMR900Qq1pwViSA3TKwYiZVg==
+X-Received: by 2002:a63:1101:: with SMTP id g1mr6656701pgl.435.1578692743701;
+        Fri, 10 Jan 2020 13:45:43 -0800 (PST)
+Received: from [10.83.36.153] ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id j2sm4059514pfi.22.2020.01.10.13.45.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Jan 2020 13:45:42 -0800 (PST)
+Subject: Re: [PATCH-next 2/3] sysctl/sysrq: Remove __sysrq_enabled copy
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        Vasiliy Khoruzhick <vasilykh@arista.com>,
+        linux-serial@vger.kernel.org, Iurii Zaikin <yzaikin@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        linux-fsdevel@vger.kernel.org
+References: <20200109215444.95995-1-dima@arista.com>
+ <20200109215444.95995-3-dima@arista.com> <20200110164035.GA1822445@kroah.com>
+From:   Dmitry Safonov <dima@arista.com>
+Message-ID: <04436968-5e89-0286-81e5-61acbe583f73@arista.com>
+Date:   Fri, 10 Jan 2020 21:45:30 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ngr34thsixezvd7j"
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgQ3yOBuK8mxpnntD8cfX-+10ba81f86BYg8MhvwpvOMg@mail.gmail.com>
+In-Reply-To: <20200110164035.GA1822445@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Greg,
 
---ngr34thsixezvd7j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 1/10/20 4:40 PM, Greg Kroah-Hartman wrote:
+> On Thu, Jan 09, 2020 at 09:54:43PM +0000, Dmitry Safonov wrote:
+[..]
+>> @@ -2844,6 +2827,26 @@ static int proc_dostring_coredump(struct ctl_table *table, int write,
+>>  }
+>>  #endif
+>>  
+>> +#ifdef CONFIG_MAGIC_SYSRQ
+>> +static int sysrq_sysctl_handler(struct ctl_table *table, int write,
+>> +				void __user *buffer, size_t *lenp, loff_t *ppos)
+>> +{
+>> +	int tmp, ret;
+>> +
+>> +	tmp = sysrq_get_mask();
+>> +
+>> +	ret = __do_proc_dointvec(&tmp, table, write, buffer,
+>> +			       lenp, ppos, NULL, NULL);
+>> +	if (ret || !write)
+>> +		return ret;
+>> +
+>> +	if (write)
+>> +		sysrq_toggle_support(tmp);
+>> +
+>> +	return 0;
+>> +}
+>> +#endif
+> 
+> Why did you move this function down here?  Can't it stay where it is and
+> you can just fix the logic there?  Now you have two different #ifdef
+> blocks intead of just one :(
 
-On 2020-01-07, Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> On Tue, Jan 7, 2020 at 7:13 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > Another interesting question is whether we want O_PATH open
-> > to trigger automounts.
->=20
-> It does sound like they shouldn't, but as you say:
->=20
-> >     The thing is, we do *NOT* trigger them
-> > (or traverse mountpoints) at the starting point of lookups.
-> > I believe it's a mistake (and mine, at that), but I doubt that
-> > there's anything that can be done about it at that point.
-> > It's a user-visible behaviour [..]
->=20
-> Hmm. I wonder how set in stone that is. We may have two decades of
-> history of not doing it at start point of lookups, but we do *not*
-> have two decades of history of O_PATH.
->=20
-> So what I think we agree would be sane behavior would be for O_PATH
-> opens to not trigger automounts (unless there's a slash at the end,
-> whatever), but _do_ add the mount-point traversal to the beginning of
-> lookups.
->=20
-> But only do it for the actual O_PATH fd case, not the cwd/root/non-O_PATH=
- case.
->=20
-> That way we maintain original behavior: if somebody overmounts your
-> cwd, you still see the pre-mount directory on lookups, because your
-> cwd is "under" the mount.
->=20
-> But if you open a file with O_PATH, and somebody does a mount
-> _afterwards_, the openat() will see that later mount and/or do the
-> automount.
->=20
-> Don't you think that would be the more sane/obvious semantics of how
-> O_PATH should work?
+Yeah, well __do_proc_dointvec() made me do it.
 
-If I'm understanding this proposal correctly, this would be a problem
-for the libpathrs use-case -- if this is done then there's no way to
-avoid a TOCTOU with someone mounting and the userspace program checking
-whether something is a mountpoint (unless you have Linux >5.6 and
-RESOLVE_NO_XDEV). Today, you can (in theory) do it with MNT_EXPIRE:
+sysrq_sysctl_handler() declaration should be before ctl_table array of
+sysctls, so I couldn't remove the forward-declaration.
 
-  1. Open the candidate directory.
-  2. umount2(MNT_EXPIRE) the fd.
-    * -EINVAL means it wasn't a mountpoint when we got the fd, and the
-	  fd is a stable handle to the underlying directory.
-	* -EAGAIN or -EBUSY means that it was a mountpoint or became a
-	  mountpoint after the fd was opened (we don't care about that, but
-	  fail-safe is better here).
-  3. Use the fd from (1) for all operations.
+So, I could forward-declare __do_proc_dointvec() instead, but looking at
+the neighborhood, I decided to follow the file-style (there is a couple
+of forward-declarations before the sysctl array, some under ifdefs).
 
-Don't get me wrong, I want to fix this issue *properly* by adding some
-new kernel features that allow us to avoid worrying about
-mounts-over-magiclinks -- but on old kernels (which libpathrs cares
-about) I would be worried about changes like this being backported
-resulting in it being not possible to implement the hardening I
-mentioned up-thread.
+I admit that the result is imperfect and can put __do_proc_dointvec()
+definition before instead, no hard feelings.
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---ngr34thsixezvd7j
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXhjnhAAKCRCdlLljIbnQ
-EhaiAP9e9kkZEWJCnBThFyXtSMRZyNVXHckugjlX6Ia4tELkfwD+KmuEPaDHPZsv
-ZqHH8TBxEFo6jF26WNsOXtxaBZwFsQ0=
-=uAob
------END PGP SIGNATURE-----
-
---ngr34thsixezvd7j--
+Thanks,
+          Dmitry
