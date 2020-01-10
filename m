@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0963E13724F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 17:06:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76B63137252
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 17:06:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728801AbgAJQFt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Jan 2020 11:05:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54192 "EHLO mail.kernel.org"
+        id S1728825AbgAJQGA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Jan 2020 11:06:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728452AbgAJQFs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Jan 2020 11:05:48 -0500
+        id S1728585AbgAJQGA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 10 Jan 2020 11:06:00 -0500
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E18C20838;
-        Fri, 10 Jan 2020 16:05:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 004C820848;
+        Fri, 10 Jan 2020 16:05:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578672348;
-        bh=VFEjD3rWysPcuxgSvHRR7T5OPSD7O8/ZP7SYzqnrnX4=;
+        s=default; t=1578672359;
+        bh=r8TkR+YZ0nz5BjKES4oKL1ljV5KXeJigYvqY16isHSs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zf6jI6ay+SNjggK9lhe7t5Pi7N7yDzoIbnOWLwZ6IB+T2jGoZFQRysqWN3SRIKBjG
-         BZywpv9Zz3t9OhotjlsrRuG6Lfggv1DayhaeHA9S3zFqYsTGrsbgDwbXdiF0t/MJ/L
-         qLC8Cg73UUIA7DOU2oz8gVjR5zuL+03BnUG5S/Ho=
+        b=bYuBaocwEPuvtM3DNBvNtOM9kzj6RY1PPqZ2HTkVe3FI2LYITUQFtW5drvS6Wgvzu
+         3+kQEZaaW1WPcxzkz33I824WCkX7CBw8IQJsthuMricT9B66MskXdCSDVVLps6ZHnG
+         ul7FMKNKlXlK/DDKyDRdPKp8tP55OxstlY8AlAxM=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Steven Rostedt <rostedt@goodmis.org>
 Cc:     Ingo Molnar <mingo@redhat.com>,
@@ -41,9 +41,9 @@ Cc:     Ingo Molnar <mingo@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 12/22] tracing: kprobes: Register to dynevent earlier stage
-Date:   Sat, 11 Jan 2020 01:05:42 +0900
-Message-Id: <157867234213.17873.18039000024374948737.stgit@devnote2>
+Subject: [PATCH v6 13/22] tracing: Accept different type for synthetic event fields
+Date:   Sat, 11 Jan 2020 01:05:53 +0900
+Message-Id: <157867235358.17873.61732996461602171.stgit@devnote2>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <157867220019.17873.13377985653744804396.stgit@devnote2>
 References: <157867220019.17873.13377985653744804396.stgit@devnote2>
@@ -56,51 +56,30 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Register kprobe event to dynevent in subsys_initcall level.
-This will allow kernel to register new kprobe events in
-fs_initcall level via trace_run_command.
+Make the synthetic event accepts a different type field to record.
+However, the size and signed flag must be same.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- kernel/trace/trace_kprobe.c |   19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+ kernel/trace/trace_events_hist.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index 5899911a5720..5584405b899d 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -1685,11 +1685,12 @@ static __init void setup_boot_kprobe_events(void)
- 	enable_boot_kprobe_events();
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index f62de5f43e79..dae2c25b209a 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -4110,8 +4110,11 @@ static int check_synth_field(struct synth_event *event,
+ 
+ 	field = event->fields[field_pos];
+ 
+-	if (strcmp(field->type, hist_field->type) != 0)
+-		return -EINVAL;
++	if (strcmp(field->type, hist_field->type) != 0) {
++		if (field->size != hist_field->size ||
++		    field->is_signed != hist_field->is_signed)
++			return -EINVAL;
++	}
+ 
+ 	return 0;
  }
- 
--/* Make a tracefs interface for controlling probe points */
--static __init int init_kprobe_trace(void)
-+/*
-+ * Register dynevent at subsys_initcall. This allows kernel to setup kprobe
-+ * events in fs_initcall without tracefs.
-+ */
-+static __init int init_kprobe_trace_early(void)
- {
--	struct dentry *d_tracer;
--	struct dentry *entry;
- 	int ret;
- 
- 	ret = dyn_event_register(&trace_kprobe_ops);
-@@ -1699,6 +1700,16 @@ static __init int init_kprobe_trace(void)
- 	if (register_module_notifier(&trace_kprobe_module_nb))
- 		return -EINVAL;
- 
-+	return 0;
-+}
-+subsys_initcall(init_kprobe_trace_early);
-+
-+/* Make a tracefs interface for controlling probe points */
-+static __init int init_kprobe_trace(void)
-+{
-+	struct dentry *d_tracer;
-+	struct dentry *entry;
-+
- 	d_tracer = tracing_init_dentry();
- 	if (IS_ERR(d_tracer))
- 		return 0;
 
