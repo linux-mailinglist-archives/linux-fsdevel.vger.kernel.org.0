@@ -2,86 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6205C136C1B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 12:41:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99DB7136D14
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 13:31:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727750AbgAJLlC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Jan 2020 06:41:02 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:47166 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727689AbgAJLlC (ORCPT
+        id S1728189AbgAJMbd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Jan 2020 07:31:33 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:41896 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727753AbgAJMbc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Jan 2020 06:41:02 -0500
-Received: from ip5f5bd663.dynamic.kabel-deutschland.de ([95.91.214.99] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1ipsew-0007ZR-Fb; Fri, 10 Jan 2020 11:40:58 +0000
-Date:   Fri, 10 Jan 2020 12:40:57 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tycho@tycho.ws, jannh@google.com,
-        cyphar@cyphar.com, oleg@redhat.com, luto@amacapital.net,
-        viro@zeniv.linux.org.uk, gpascutto@mozilla.com,
-        ealvarez@mozilla.com, fweimer@redhat.com, jld@mozilla.com,
-        arnd@arndb.de
-Subject: Re: [PATCH v9 0/4] Add pidfd_getfd syscall
-Message-ID: <20200110114056.zuc6ft2o4qspmbl6@wittgenstein>
-References: <20200107175927.4558-1-sargun@sargun.me>
- <20200107205449.5dcp7o3hplg7r3fw@wittgenstein>
+        Fri, 10 Jan 2020 07:31:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=B/rKaa819gyayiC8Xe2hoNfVxDFo4LjZMb+oCIBCt4A=; b=Mj1/cHpyNqAgv/lVJOV/TP+Zj
+        egd1NiWTg95WnXdO8GzEGGiVWXwRU3H+E29g0uVUBnxj9ZG7x0fcYtVBTI//wNlkf+KsAOmx7axTf
+        Gc8pv2zZYaPxRunSGtLY4RuN7jj+dSV2b5+aIhFylnGPxBelgs3smecSXa7E34ZnQngJ7W/2xA+1a
+        NUzhU4twKo0iuaHP3wTcsVoqDE18tS5u72bzSdI5+qJSI+AHD+3TO72VAqUy9Zy0Y5FPdZH5P/N9h
+        2KFuCwQdTla2L7GluHlni2Ux9OYIM+JCNP3jqnY6GtykRDI9mopYWyIA8zDezasfGBpIUQ8Ce3CYo
+        VZkuzcBug==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iptRn-0003UC-1r; Fri, 10 Jan 2020 12:31:27 +0000
+Date:   Fri, 10 Jan 2020 04:31:27 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-nvdimm@lists.01.org, dan.j.williams@intel.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: dax: Get rid of fs_dax_get_by_host() helper
+Message-ID: <20200110123127.GA6558@infradead.org>
+References: <20200106181117.GA16248@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200107205449.5dcp7o3hplg7r3fw@wittgenstein>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20200106181117.GA16248@redhat.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 07, 2020 at 09:54:49PM +0100, Christian Brauner wrote:
-> On Tue, Jan 07, 2020 at 09:59:23AM -0800, Sargun Dhillon wrote:
-> > This patchset introduces a mechanism (pidfd_getfd syscall) to get file
-> > descriptors from other processes via pidfd. Although this can be achieved
-> > using SCM_RIGHTS, and parasitic code injection, this offers a more
-> > straightforward mechanism, with less overhead and complexity. The process
-> > under manipulation's fd still remains valid, and unmodified by the
-> > copy operation.
-> > 
-> > It introduces a flags field. The flags field is reserved a the moment,
-> > but the intent is to extend it with the following capabilities:
-> >  * Close the remote FD when copying it
-> >  * Drop the cgroup data if it's a fd pointing a socket when copying it
-> > 
-> > The syscall numbers were chosen to be one greater than openat2.
-> > 
-> > Summary of history:
-> > This initially started as a ptrace command. It did not require the process
-> > to be stopped, and felt like kind of an awkward fit for ptrace. After that,
-> > it moved to an ioctl on the pidfd. Given the core functionality, it made
-> > sense to make it a syscall which did not require the process to be stopped.
-> > 
-> > Previous versions:
-> >  V8: https://lore.kernel.org/lkml/20200103162928.5271-1-sargun@sargun.me/
-> >  V7: https://lore.kernel.org/lkml/20191226180227.GA29389@ircssh-2.c.rugged-nimbus-611.internal/
-> >  V6: https://lore.kernel.org/lkml/20191223210823.GA25083@ircssh-2.c.rugged-nimbus-611.internal/
-> >  V5: https://lore.kernel.org/lkml/20191220232746.GA20215@ircssh-2.c.rugged-nimbus-611.internal/
-> >  V4: https://lore.kernel.org/lkml/20191218235310.GA17259@ircssh-2.c.rugged-nimbus-611.internal/
-> >  V3: https://lore.kernel.org/lkml/20191217005842.GA14379@ircssh-2.c.rugged-nimbus-611.internal/
-> >  V2: https://lore.kernel.org/lkml/20191209070446.GA32336@ircssh-2.c.rugged-nimbus-611.internal/
-> >  RFC V1: https://lore.kernel.org/lkml/20191205234450.GA26369@ircssh-2.c.rugged-nimbus-611.internal/
+On Mon, Jan 06, 2020 at 01:11:17PM -0500, Vivek Goyal wrote:
+> Looks like nobody is using fs_dax_get_by_host() except fs_dax_get_by_bdev()
+> and it can easily use dax_get_by_host() instead.
 > 
-> I don't see anything wrong with this series anymore:
-> 
-> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-> 
-> Other Acked-bys/Reviewed-bys and reviews of course strongly encouraged!
-> Christian
+> IIUC, fs_dax_get_by_host() was only introduced so that one could compile
+> with CONFIG_FS_DAX=n and CONFIG_DAX=m. fs_dax_get_by_bdev() achieves
+> the same purpose and hence it looks like fs_dax_get_by_host() is not
+> needed anymore.
+>  
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 
-Fyi, I'm waiting a few days on a reply from Al.
-Depending on his input the intent rn is to move this into my for-next
-early next week.
+Looks good,
 
-Christian
+Reviewed-by: Christoph Hellwig <hch@lst.de>
