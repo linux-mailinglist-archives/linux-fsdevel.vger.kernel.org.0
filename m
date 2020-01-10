@@ -2,88 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C31D136E62
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 14:43:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0355A13714B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 16:31:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728289AbgAJNm6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Jan 2020 08:42:58 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:40296 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728226AbgAJNm5 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Jan 2020 08:42:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=GYGF/a4qRWroP/Y/H4KPJyAQgKptGfA1ZmohXqWNKSA=; b=iQ+UspVXX1HEG+w2HZ5QjJauD
-        MOgh04LefdeXka9JjPakR5ZwXGMxxwoMqVtzLmS+0IlQ+rxmVjXgituwUKia9I4yyLztfQa7I5JOi
-        lOljcymFY6l8mT9sBFx5yocFX5VQRisY2pU7VmXAYjgabjBCHphK4LJU0p4pmDybipvCArejlAPYz
-        O8IR7/chn/iknXFupNZzt0qtbVmdUMxc11plVOLGeTb6KperE2MryVCihcyFxtZDwGIpxwqpY+iDQ
-        60wfxwfalJkdp4R80n8/ZaKISh99WqpkW5Oq/D0JeUG/XkPzeTUU/e+9wP5uW6s7QnK1gLW7moqWG
-        aL8Jd+aUw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ipuYg-0003gY-P0; Fri, 10 Jan 2020 13:42:38 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        id S1728369AbgAJPbI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Jan 2020 10:31:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50182 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728137AbgAJPbH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 10 Jan 2020 10:31:07 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 0D71E30025A;
-        Fri, 10 Jan 2020 14:41:03 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id F027C2B612615; Fri, 10 Jan 2020 14:42:36 +0100 (CET)
-Date:   Fri, 10 Jan 2020 14:42:36 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        valentin.schneider@arm.com, qperret@google.com,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] sched/rt: Add a new sysctl to control uclamp_util_min
-Message-ID: <20200110134236.GM2844@hirez.programming.kicks-ass.net>
-References: <20191220164838.31619-1-qais.yousef@arm.com>
- <20200108134448.GG2844@hirez.programming.kicks-ass.net>
- <20200109130052.feebuwuuvwvm324w@e107158-lin.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200109130052.feebuwuuvwvm324w@e107158-lin.cambridge.arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F61020673;
+        Fri, 10 Jan 2020 15:31:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578670267;
+        bh=PmlZ0floUXtGGa7TOfgYeBKFANJKRe+aQitOtud+P8c=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=X36GmWlHGvdXfYh5YuOf44/kmbaIMvVOj2MbahzvrCVQ+8puv/3KqDuhFCWJTuaRF
+         CtJbxKd7AtMrp6ePDdBWol5fdg87tr/PHW18OCfLJ+Cb3x0fxOC8Y4vAiROVldLZLz
+         deogJUz0nIuBkh+hPJgohYk79pa7bq7pvppTZc+M=
+Date:   Sat, 11 Jan 2020 00:30:59 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 00/22] tracing: bootconfig: Boot-time tracing and
+ Extra boot config
+Message-Id: <20200111003059.5c24c0ee4a85df10ec9f17e6@kernel.org>
+In-Reply-To: <20200109181055.1999b344@gandalf.local.home>
+References: <157736902773.11126.2531161235817081873.stgit@devnote2>
+        <20200109181055.1999b344@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 09, 2020 at 01:00:58PM +0000, Qais Yousef wrote:
-> On 01/08/20 14:44, Peter Zijlstra wrote:
+Hi Steve,
 
-> > Did cpu_uclamp_write() forget to check for input<0 ?
-> 
-> Hmm just tried that and it seems so
-> 
-> # echo -1 > cpu.uclamp.min
-> # cat cpu.uclamp.min
-> 42949671.96
-> 
-> capacity_from_percent(); we check for
-> 
-> 7301                 if (req.percent > UCLAMP_PERCENT_SCALE) {
-> 7302                         req.ret = -ERANGE;
-> 7303                         return req;
-> 7304                 }
-> 
-> But req.percent is s64, maybe it should be u64?
+On Thu, 9 Jan 2020 18:10:55 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-		if ((u64)req.percent > UCLAMP_PERCENT_SCALE)
+> On Thu, 26 Dec 2019 23:03:48 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > Hello,
+> > 
+> > This is the 5th version of the series for the boot-time tracing.
+> > 
+> > Previous version is here.
+> > 
+> > https://lkml.kernel.org/r/157528159833.22451.14878731055438721716.stgit@devnote2
+> 
+> Hi Masami,
+> 
+> I applied all your patches to a test branch and was playing with it a
+> little. This seems fine to me and works well (and very easy to use).
+> Probably could use some more examples, but that's just a nit.
 
-should do, I think.
+OK, I'll add some examples to Documentation/trace/boottime-trace.rst
+next time.
+
+> 
+> If nobody has any issues with this code, I'll wait for v6 with the
+> fixes to issues found in this series, and I'll happily apply them for
+> linux-next.
+
+Thanks! I'll send v6 soon, which is including fixes and testcases. :)
+
+Thank you!
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
