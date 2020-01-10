@@ -2,307 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83A0E1367EB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 08:07:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6205C136C1B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 12:41:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726947AbgAJHHd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Jan 2020 02:07:33 -0500
-Received: from mga01.intel.com ([192.55.52.88]:27348 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726281AbgAJHHd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Jan 2020 02:07:33 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2020 23:07:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,415,1571727600"; 
-   d="scan'208";a="371524736"
-Received: from chenyu-office.sh.intel.com ([10.239.158.173])
-  by orsmga004.jf.intel.com with ESMTP; 09 Jan 2020 23:07:29 -0800
-From:   Chen Yu <yu.c.chen@intel.com>
-To:     x86@kernel.org
-Cc:     Bhupesh Sharma <bhsharma@redhat.com>,
-        Dave Young <dyoung@redhat.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Chris Down <chris@chrisdown.name>,
-        Michal Hocko <mhocko@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][v6] x86/resctrl: Add task resctrl information display
-Date:   Fri, 10 Jan 2020 15:06:08 +0800
-Message-Id: <20200110070608.18902-1-yu.c.chen@intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727750AbgAJLlC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Jan 2020 06:41:02 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:47166 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727689AbgAJLlC (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 10 Jan 2020 06:41:02 -0500
+Received: from ip5f5bd663.dynamic.kabel-deutschland.de ([95.91.214.99] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1ipsew-0007ZR-Fb; Fri, 10 Jan 2020 11:40:58 +0000
+Date:   Fri, 10 Jan 2020 12:40:57 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Sargun Dhillon <sargun@sargun.me>
+Cc:     linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, tycho@tycho.ws, jannh@google.com,
+        cyphar@cyphar.com, oleg@redhat.com, luto@amacapital.net,
+        viro@zeniv.linux.org.uk, gpascutto@mozilla.com,
+        ealvarez@mozilla.com, fweimer@redhat.com, jld@mozilla.com,
+        arnd@arndb.de
+Subject: Re: [PATCH v9 0/4] Add pidfd_getfd syscall
+Message-ID: <20200110114056.zuc6ft2o4qspmbl6@wittgenstein>
+References: <20200107175927.4558-1-sargun@sargun.me>
+ <20200107205449.5dcp7o3hplg7r3fw@wittgenstein>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200107205449.5dcp7o3hplg7r3fw@wittgenstein>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Monitoring tools that want to find out which resctrl control
-and monitor groups a task belongs to must currently read
-the "tasks" file in every group until they locate the process
-ID.
+On Tue, Jan 07, 2020 at 09:54:49PM +0100, Christian Brauner wrote:
+> On Tue, Jan 07, 2020 at 09:59:23AM -0800, Sargun Dhillon wrote:
+> > This patchset introduces a mechanism (pidfd_getfd syscall) to get file
+> > descriptors from other processes via pidfd. Although this can be achieved
+> > using SCM_RIGHTS, and parasitic code injection, this offers a more
+> > straightforward mechanism, with less overhead and complexity. The process
+> > under manipulation's fd still remains valid, and unmodified by the
+> > copy operation.
+> > 
+> > It introduces a flags field. The flags field is reserved a the moment,
+> > but the intent is to extend it with the following capabilities:
+> >  * Close the remote FD when copying it
+> >  * Drop the cgroup data if it's a fd pointing a socket when copying it
+> > 
+> > The syscall numbers were chosen to be one greater than openat2.
+> > 
+> > Summary of history:
+> > This initially started as a ptrace command. It did not require the process
+> > to be stopped, and felt like kind of an awkward fit for ptrace. After that,
+> > it moved to an ioctl on the pidfd. Given the core functionality, it made
+> > sense to make it a syscall which did not require the process to be stopped.
+> > 
+> > Previous versions:
+> >  V8: https://lore.kernel.org/lkml/20200103162928.5271-1-sargun@sargun.me/
+> >  V7: https://lore.kernel.org/lkml/20191226180227.GA29389@ircssh-2.c.rugged-nimbus-611.internal/
+> >  V6: https://lore.kernel.org/lkml/20191223210823.GA25083@ircssh-2.c.rugged-nimbus-611.internal/
+> >  V5: https://lore.kernel.org/lkml/20191220232746.GA20215@ircssh-2.c.rugged-nimbus-611.internal/
+> >  V4: https://lore.kernel.org/lkml/20191218235310.GA17259@ircssh-2.c.rugged-nimbus-611.internal/
+> >  V3: https://lore.kernel.org/lkml/20191217005842.GA14379@ircssh-2.c.rugged-nimbus-611.internal/
+> >  V2: https://lore.kernel.org/lkml/20191209070446.GA32336@ircssh-2.c.rugged-nimbus-611.internal/
+> >  RFC V1: https://lore.kernel.org/lkml/20191205234450.GA26369@ircssh-2.c.rugged-nimbus-611.internal/
+> 
+> I don't see anything wrong with this series anymore:
+> 
+> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+> 
+> Other Acked-bys/Reviewed-bys and reviews of course strongly encouraged!
+> Christian
 
-Add an additional file /proc/{pid}/cpu_resctrl to provide this
-information.
+Fyi, I'm waiting a few days on a reply from Al.
+Depending on his input the intent rn is to move this into my for-next
+early next week.
 
-The output is as followed, for example:
-
- 1)   ""
-      Resctrl is not available.
-
- 2)   "/"
-      Task is part of the root group, task is not associated to
-      any monitor group.
-
- 3)   "/mon_groups/mon0"
-      Task is part of the root group and monitor group mon0.
-
- 4)   "/group0"
-      Task is part of resctrl control group group0, task is not
-      associated to any monitor group.
-
- 5)   "/group0/mon_groups/mon1"
-      Task is part of resctrl control group group0 and monitor
-      group mon1.
-
-Tested-by: Jinshi Chen <jinshi.chen@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Chris Down <chris@chrisdown.name>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
----
-v1: Initial version reviewed by Reinette Chatre,
-    Fenghua Yu and Tony Luck.
-
-v2: According to Boris's suggestion,
-    reduce indentation level in proc_resctrl_show().
-    Create the include/linux/resctrl.h header and
-    declare proc_resctrl_show() in this file, so
-    that other architectures would probably use it
-    in the future. Different architectures should
-    implement architectural specific proc_resctrl_show()
-    accordingly.
-
-v3: According to Boris's suggestion,
-    Return empty string if the resctrl filesystem has
-    not been mounted.
-    Rename the config from CPU_RESCTRL to PROC_CPU_RESCTRL
-    to better represent its usage. Move PROC_CPU_RESCTRL
-    from arch/Kconfig to fs/proc/Kconfig.
-    And let PROC_CPU_RESCTRL to be depended on PROC_FS.
-
-v4: According to Thomas's suggestion, changed the output
-    from multiple lines to one single line.
-
-v5: According to Alexey's feedback, removed the header file
-    proc_fs.h in resctrl.h, and changed seq_puts() to
-    seq_putc() for simplicity.
-
-v6: According to Chris Down's suggestion,
-    1. rename:
-    /proc/{pid}/resctrl to /proc/{pid}/cpu_resctrl
-    to better reflect its meaning.
-    2. change the description in comments:
-    "control group" to "resctrl control group"
-    as the former is confusing for cgroup users.
----
- arch/x86/Kconfig                       |  1 +
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 79 ++++++++++++++++++++++++++
- fs/proc/Kconfig                        |  4 ++
- fs/proc/base.c                         |  7 +++
- include/linux/resctrl.h                | 14 +++++
- 5 files changed, 105 insertions(+)
- create mode 100644 include/linux/resctrl.h
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 5e8949953660..6e17a68c7d77 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -456,6 +456,7 @@ config X86_CPU_RESCTRL
- 	bool "x86 CPU resource control support"
- 	depends on X86 && (CPU_SUP_INTEL || CPU_SUP_AMD)
- 	select KERNFS
-+	select PROC_CPU_RESCTRL		if PROC_FS
- 	help
- 	  Enable x86 CPU resource control support.
- 
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index 2e3b06d6bbc6..dcbf62d6b689 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -725,6 +725,85 @@ static int rdtgroup_tasks_show(struct kernfs_open_file *of,
- 	return ret;
- }
- 
-+#ifdef CONFIG_PROC_CPU_RESCTRL
-+
-+/*
-+ * A task can only be part of one resctrl
-+ * control group and of one monitor
-+ * group which is associated to that resctrl
-+ * control group.
-+ * So one line is simple and clear enough:
-+ *
-+ * 1)   ""
-+ *    resctrl is not available.
-+ *
-+ * 2)   "/"
-+ *    Task is part of the root group, and it is
-+ *    not associated to any monitor group.
-+ *
-+ * 3)   "/mon_groups/mon0"
-+ *    Task is part of the root group and monitor
-+ *    group mon0.
-+ *
-+ * 4)   "/group0"
-+ *    Task is part of resctrl control group group0,
-+ *    and it is not associated to any monitor group.
-+ *
-+ * 5)   "/group0/mon_groups/mon1"
-+ *    Task is part of resctrl control group group0 and monitor
-+ *    group mon1.
-+ */
-+int proc_resctrl_show(struct seq_file *s, struct pid_namespace *ns,
-+		      struct pid *pid, struct task_struct *tsk)
-+{
-+	struct rdtgroup *rdtg;
-+	int ret = 0;
-+
-+	mutex_lock(&rdtgroup_mutex);
-+
-+	/* Return empty if resctrl has not been mounted. */
-+	if (!static_branch_unlikely(&rdt_enable_key))
-+		goto unlock;
-+
-+	list_for_each_entry(rdtg, &rdt_all_groups, rdtgroup_list) {
-+		struct rdtgroup *crg;
-+
-+		/*
-+		 * Task information is only relevant for shareable
-+		 * and exclusive groups.
-+		 */
-+		if (rdtg->mode != RDT_MODE_SHAREABLE &&
-+		    rdtg->mode != RDT_MODE_EXCLUSIVE)
-+			continue;
-+
-+		if (rdtg->closid != tsk->closid)
-+			continue;
-+
-+		seq_printf(s, "/%s", rdtg->kn->name);
-+		list_for_each_entry(crg, &rdtg->mon.crdtgrp_list,
-+				    mon.crdtgrp_list) {
-+			if (tsk->rmid != crg->mon.rmid)
-+				continue;
-+			seq_printf(s, "%smon_groups/%s",
-+				   rdtg == &rdtgroup_default ? "" : "/",
-+				   crg->kn->name);
-+			break;
-+		}
-+		seq_putc(s, '\n');
-+		goto unlock;
-+	}
-+	/*
-+	 * The above search should succeed. Otherwise return
-+	 * with an error.
-+	 */
-+	ret = -ENOENT;
-+unlock:
-+	mutex_unlock(&rdtgroup_mutex);
-+
-+	return ret;
-+}
-+#endif
-+
- static int rdt_last_cmd_status_show(struct kernfs_open_file *of,
- 				    struct seq_file *seq, void *v)
- {
-diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
-index 733881a6387b..27ef84d99f59 100644
---- a/fs/proc/Kconfig
-+++ b/fs/proc/Kconfig
-@@ -103,3 +103,7 @@ config PROC_CHILDREN
- config PROC_PID_ARCH_STATUS
- 	def_bool n
- 	depends on PROC_FS
-+
-+config PROC_CPU_RESCTRL
-+	def_bool n
-+	depends on PROC_FS
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index ebea9501afb8..32c9ff154667 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -94,6 +94,7 @@
- #include <linux/sched/debug.h>
- #include <linux/sched/stat.h>
- #include <linux/posix-timers.h>
-+#include <linux/resctrl.h>
- #include <trace/events/oom.h>
- #include "internal.h"
- #include "fd.h"
-@@ -3060,6 +3061,9 @@ static const struct pid_entry tgid_base_stuff[] = {
- #endif
- #ifdef CONFIG_CGROUPS
- 	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
-+#endif
-+#ifdef CONFIG_PROC_CPU_RESCTRL
-+	ONE("cpu_resctrl", S_IRUGO, proc_resctrl_show),
- #endif
- 	ONE("oom_score",  S_IRUGO, proc_oom_score),
- 	REG("oom_adj",    S_IRUGO|S_IWUSR, proc_oom_adj_operations),
-@@ -3460,6 +3464,9 @@ static const struct pid_entry tid_base_stuff[] = {
- #endif
- #ifdef CONFIG_CGROUPS
- 	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
-+#endif
-+#ifdef CONFIG_PROC_CPU_RESCTRL
-+	ONE("cpu_resctrl", S_IRUGO, proc_resctrl_show),
- #endif
- 	ONE("oom_score", S_IRUGO, proc_oom_score),
- 	REG("oom_adj",   S_IRUGO|S_IWUSR, proc_oom_adj_operations),
-diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-new file mode 100644
-index 000000000000..daf5cf64c6a6
---- /dev/null
-+++ b/include/linux/resctrl.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _RESCTRL_H
-+#define _RESCTRL_H
-+
-+#ifdef CONFIG_PROC_CPU_RESCTRL
-+
-+int proc_resctrl_show(struct seq_file *m,
-+		      struct pid_namespace *ns,
-+		      struct pid *pid,
-+		      struct task_struct *tsk);
-+
-+#endif
-+
-+#endif /* _RESCTRL_H */
--- 
-2.17.1
-
+Christian
