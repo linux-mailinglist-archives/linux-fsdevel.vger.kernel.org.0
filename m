@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C01013770C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 20:31:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27B1113773D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 20:31:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728638AbgAJT34 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Jan 2020 14:29:56 -0500
-Received: from mga03.intel.com ([134.134.136.65]:21738 "EHLO mga03.intel.com"
+        id S1728814AbgAJTbQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Jan 2020 14:31:16 -0500
+Received: from mga14.intel.com ([192.55.52.115]:10924 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727709AbgAJT34 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Jan 2020 14:29:56 -0500
+        id S1728566AbgAJT35 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 10 Jan 2020 14:29:57 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 11:29:55 -0800
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 11:29:56 -0800
 X-IronPort-AV: E=Sophos;i="5.69,418,1571727600"; 
-   d="scan'208";a="247130740"
+   d="scan'208";a="272503818"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.157])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 11:29:55 -0800
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 11:29:56 -0800
 From:   ira.weiny@intel.com
 To:     linux-kernel@vger.kernel.org
 Cc:     Ira Weiny <ira.weiny@intel.com>,
@@ -30,10 +30,12 @@ Cc:     Ira Weiny <ira.weiny@intel.com>,
         "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH V2 00/12] Enable per-file/directory DAX operations V2
-Date:   Fri, 10 Jan 2020 11:29:30 -0800
-Message-Id: <20200110192942.25021-1-ira.weiny@intel.com>
+Subject: [RFC PATCH V2 01/12] fs/stat: Define DAX statx attribute
+Date:   Fri, 10 Jan 2020 11:29:31 -0800
+Message-Id: <20200110192942.25021-2-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20200110192942.25021-1-ira.weiny@intel.com>
+References: <20200110192942.25021-1-ira.weiny@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -43,90 +45,65 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Ira Weiny <ira.weiny@intel.com>
 
-At LSF/MM'19 [1] [2] we discussed applications that overestimate memory
-consumption due to their inability to detect whether the kernel will
-instantiate page cache for a file, and cases where a global dax enable via a
-mount option is too coarse.
+In order for users to determine if a file is currently operating in DAX
+mode (effective DAX).  Define a statx attribute value and set that
+attribute if the effective DAX flag is set.
 
-The following patch series enables selecting the use of DAX on individual files
-and/or directories on xfs, and lays some groundwork to do so in ext4.  In this
-scheme the dax mount option can be omitted to allow the per-file property to
-take effect.
+To go along with this we propose the following addition to the statx man
+page:
 
-The insight at LSF/MM was to separate the per-mount or per-file "physical"
-capability switch from an "effective" attribute for the file.
+STATX_ATTR_DAX
 
-At LSF/MM we discussed the difficulties of switching the mode of a file with
-active mappings / page cache.  It was thought the races could be avoided by
-limiting mode flips to 0-length files.
+	DAX (cpu direct access) is a file mode that attempts to minimize
+	software cache effects for both I/O and memory mappings of this
+	file.  It requires a capable device, a compatible filesystem
+	block size, and filesystem opt-in. It generally assumes all
+	accesses are via cpu load / store instructions which can
+	minimize overhead for small accesses, but adversely affect cpu
+	utilization for large transfers. File I/O is done directly
+	to/from user-space buffers. While the DAX property tends to
+	result in data being transferred synchronously it does not give
+	the guarantees of synchronous I/O that data and necessary
+	metadata are transferred. Memory mapped I/O may be performed
+	with direct mappings that bypass system memory buffering. Again
+	while memory-mapped I/O tends to result in data being
+	transferred synchronously it does not guarantee synchronous
+	metadata updates. A dax file may optionally support being mapped
+	with the MAP_SYNC flag which does allow cpu store operations to
+	be considered synchronous modulo cpu cache effects.
 
-However, this turns out to not be true.[3] This is because address space
-operations (a_ops) may be in use at any time the inode is referenced and users
-have expressed a desire to be able to change the mode on a file with data in
-it.  For those reasons this patch set allows changing the mode flag on a file
-as long as it is not current mapped.
+Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+---
+ fs/stat.c                 | 3 +++
+ include/uapi/linux/stat.h | 1 +
+ 2 files changed, 4 insertions(+)
 
-Furthermore, DAX is a property of the inode and as such, many operations other
-than address space operations need to be protected during a mode change.
-
-Therefore callbacks are placed within the inode operations and used to lock the
-inode as appropriate.
-
-As in V1, Users are able to query the effective and physical flags separately
-at any time.  Specifically the addition of the statx attribute bit allows them
-to ensure the file is operating in the mode they intend.  This 'effective flag'
-and physical flags could differ when the filesystem is mounted with the dax
-flag for example.
-
-It should be noted that the physical DAX flag inheritance is not shown in this
-patch set as it was maintained from previous work on XFS.  The physical DAX flag
-and it's inheritance will need to be added to other file systems for user
-control. 
-
-Finally, extensive testing was performed which resulted in a couple of bug fix
-and clean up patches.  Specifically:
-
-	fs: remove unneeded IS_DAX() check
-	fs/xfs: Fix truncate up
-
-'Fix truncate up' deserves specific attention because I'm not 100% sure it is
-the correct fix.  Without that patch fsx testing failed within a few minutes
-with this error.
-
-	Mapped Write: non-zero data past EOF (0x3b0da) page offset 0xdb is 0x3711
-
-With 'Fix truncate up' running fsx while changing modes can run for hours but I
-have seen 2 other errors in the same genre after many hours of continuous
-testing.
-
-They are:
-
-	READ BAD DATA: offset = 0x22dc, size = 0xcc7e, fname = /mnt/pmem/dax-file
-
-	Mapped Read: non-zero data past EOF (0x3309e) page offset 0x9f is 0x6ab4
-
-After seeing the patches to fix stale data exposure problems[4] I'm more
-confident now that all 3 of these errors are a latent bug rather than a bug in
-this series itself.
-
-However, because of these failures I'm only submitting this set RFC.
-
-
-[1] https://lwn.net/Articles/787973/
-[2] https://lwn.net/Articles/787233/
-[3] https://lkml.org/lkml/2019/10/20/96
-[4] https://patchwork.kernel.org/patch/11310511/
-
-
-To: linux-kernel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Chinner <david@fromorbit.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org
-Cc: linux-xfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
+diff --git a/fs/stat.c b/fs/stat.c
+index 030008796479..894699c74dde 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -79,6 +79,9 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
+ 	if (IS_AUTOMOUNT(inode))
+ 		stat->attributes |= STATX_ATTR_AUTOMOUNT;
+ 
++	if (IS_DAX(inode))
++		stat->attributes |= STATX_ATTR_DAX;
++
+ 	if (inode->i_op->getattr)
+ 		return inode->i_op->getattr(path, stat, request_mask,
+ 					    query_flags);
+diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
+index ad80a5c885d5..e5f9d5517f6b 100644
+--- a/include/uapi/linux/stat.h
++++ b/include/uapi/linux/stat.h
+@@ -169,6 +169,7 @@ struct statx {
+ #define STATX_ATTR_ENCRYPTED		0x00000800 /* [I] File requires key to decrypt in fs */
+ #define STATX_ATTR_AUTOMOUNT		0x00001000 /* Dir: Automount trigger */
+ #define STATX_ATTR_VERITY		0x00100000 /* [I] Verity protected file */
++#define STATX_ATTR_DAX			0x00002000 /* [I] File is DAX */
+ 
+ 
+ #endif /* _UAPI_LINUX_STAT_H */
+-- 
+2.21.0
 
