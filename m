@@ -2,89 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21844136D2B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 13:36:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED792136E4B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 14:40:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728121AbgAJMgg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Jan 2020 07:36:36 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:49312 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728010AbgAJMgg (ORCPT
+        id S1728250AbgAJNkY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Jan 2020 08:40:24 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:40236 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728192AbgAJNkX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Jan 2020 07:36:36 -0500
+        Fri, 10 Jan 2020 08:40:23 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=f/42qAPbVsW+72MUlq6/DiKhzWxy8T8Hdkwap/qT96A=; b=fEApSJolHaXmpdLYBb+Kkv8Df
-        BGQz3JHJbvpYxwghgcQ6w2GqDx37gBdlNAcBRR2IhHq7bLXUI0kKJMEKsa0vIsqtORSOf/CH4cE5T
-        Xwsj1uGAQtxR/yLpUOSiwVEBEYdzPgHAUs1ofiX1hdTQu1EHvg1Xy/6nf0/BV6/6Z1co1P+6cHxk4
-        Xnqyp0cPEwm83h6/DTRS+riPEzRcEw3vnnEH/NSQGzCNmLwpBofZFEikltSBx+l2HJgHLATqQTKvr
-        Z23nhy3IejVYasyMnB5v/3udsJnqEdFD3lfUFeQnEoms+RUyXa2IO2K0GKHmbFdvlPMuh4SZezxpr
-        LkSZT0k7A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iptWh-0006RF-VG; Fri, 10 Jan 2020 12:36:31 +0000
-Date:   Fri, 10 Jan 2020 04:36:31 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 01/19] dax: remove block device dependencies
-Message-ID: <20200110123631.GA16268@infradead.org>
-References: <20200107125159.GA15745@infradead.org>
- <CAPcyv4jZE35sbDo6J4ihioEUFTuekJ3_h0=2Ra4PY+xn2xn1cQ@mail.gmail.com>
- <20200107170731.GA472641@magnolia>
- <CAPcyv4ggH7-QhYg+YOOWn_m25uds+-0L46=N09ap-LALeGuU_A@mail.gmail.com>
- <20200107180101.GC15920@redhat.com>
- <CAPcyv4gmdoqpwwwy4dS3D2eZFjmJ_Zi39k=1a4wn-_ksm-UV4A@mail.gmail.com>
- <20200107183307.GD15920@redhat.com>
- <CAPcyv4ggoS4dWjq-1KbcuaDtroHKEi5Vu19ggJ-qgycs6w1eCA@mail.gmail.com>
- <20200109112447.GG27035@quack2.suse.cz>
- <CAPcyv4j5Mra8qeLO3=+BYZMeXNAxFXv7Ex7tL9gra1TbhOgiqg@mail.gmail.com>
+         bh=eg00gB5MIhosfgx54pb6m/6BTbun0f1ISZugspfmb0Y=; b=FmFQpjHOHVqGjrXsr25KBEkQY
+        ZZWqukYHz+36aJ9r8c/zVY5l+S6Pj+cjcgn2j+tFg5tSMoVNvAyuCHX7YfU282PakvlTT7G+gpLuv
+        A865RDnXjV+NasjD38XTI4f8jhAr4uNVZYhTgy6/zf+JTpCcXgUzk5hOjVv5L0lNyUu3WEwu5eJPC
+        CcBU6coeZW+1sHmoXcQ0NS7wMSys7IG0Ho+my/nmbDXUve77AUaKNITc/WunW4LZ6JkAh0J8Evjl5
+        Hc82u4te9BuKQLb7Rj/DcrXp4C7RgtwnzfgeeqK9JP6oRh1gDY1RIevO4aikYeE312Oon1thbOHu8
+        jyvV8Gefw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ipuW6-0003f2-M1; Fri, 10 Jan 2020 13:39:58 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 0AE123043C9;
+        Fri, 10 Jan 2020 14:38:22 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C32142B612615; Fri, 10 Jan 2020 14:39:56 +0100 (CET)
+Date:   Fri, 10 Jan 2020 14:39:56 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        valentin.schneider@arm.com, qperret@google.com,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] sched/rt: Add a new sysctl to control uclamp_util_min
+Message-ID: <20200110133956.GL2844@hirez.programming.kicks-ass.net>
+References: <20191220164838.31619-1-qais.yousef@arm.com>
+ <20200108134448.GG2844@hirez.programming.kicks-ass.net>
+ <20200109130052.feebuwuuvwvm324w@e107158-lin.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4j5Mra8qeLO3=+BYZMeXNAxFXv7Ex7tL9gra1TbhOgiqg@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200109130052.feebuwuuvwvm324w@e107158-lin.cambridge.arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 09, 2020 at 12:03:01PM -0800, Dan Williams wrote:
-> > So I'd find two options reasonably consistent:
-> > 1) Keep status quo where partitions are created and support DAX.
-> > 2) Stop partition creation altogether, if anyones wants to split pmem
-> > device further, he can use dm-linear for that (i.e., kpartx).
-> >
-> > But I'm not sure if the ship hasn't already sailed for option 2) to be
-> > feasible without angry users and Linus reverting the change.
+On Thu, Jan 09, 2020 at 01:00:58PM +0000, Qais Yousef wrote:
+> On 01/08/20 14:44, Peter Zijlstra wrote:
+> > On Fri, Dec 20, 2019 at 04:48:38PM +0000, Qais Yousef wrote:
+> > > RT tasks by default try to run at the highest capacity/performance
+> > > level. When uclamp is selected this default behavior is retained by
+> > > enforcing the uclamp_util_min of the RT tasks to be
+> > > uclamp_none(UCLAMP_MAX), which is SCHED_CAPACITY_SCALE; the maximum
+> > > value.
+> > > 
+> > > See commit 1a00d999971c ("sched/uclamp: Set default clamps for RT tasks").
+> > > 
+> > > On battery powered devices, this default behavior could consume more
+> > > power, and it is desired to be able to tune it down. While uclamp allows
+> > > tuning this by changing the uclamp_util_min of the individual tasks, but
+> > > this is cumbersome and error prone.
+> > > 
+> > > To control the default behavior globally by system admins and device
+> > > integrators, introduce the new sysctl_sched_rt_uclamp_util_min to
+> > > change the default uclamp_util_min value of the RT tasks.
+> > > 
+> > > Whenever the new default changes, it'd be applied on the next wakeup of
+> > > the RT task, assuming that it still uses the system default value and
+> > > not a user applied one.
+> > 
+> > This is because these RT tasks are not in a cgroup or not affected by
+> > cgroup settings? I feel the justification is a little thin here.
 > 
-> Christoph? I feel myself leaning more and more to the "keep pmem
-> partitions" camp.
-> 
-> I don't see "drop partition support" effort ending well given the long
-> standing "ext4 fails to mount when dax is not available" precedent.
+> The uclamp_min for RT tasks is always hardcoded to 1024 at the moment. So even
+> if they belong to a cgroup->uclamp_min = 0, they'll still run at max frequency,
+> no?
 
-Do we have any evidence of existing setups with DAX and partitions?
-Can we just throw in a patch to reject that case for now before actually
-removing the code and see if anyone screams.  And fix ext4 up while
-we are at it.
+Argh, this is that counter intuitive max aggregate nonsense biting me.
 
-> I think the next least bad option is to have a dax_get_by_host()
-> variant that passes an offset and length pair rather than requiring a
-> later bdev_dax_pgoff() to recall the offset. This also prevents
-> needing to add another dax-device object representation.
-
-IFF we have to keep partition support, yes.  But keeping it just seems
-like a really bad idea.
