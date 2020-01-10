@@ -2,378 +2,307 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67285136757
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 07:21:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83A0E1367EB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 08:07:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731487AbgAJGVH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Jan 2020 01:21:07 -0500
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:37923 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731474AbgAJGVH (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Jan 2020 01:21:07 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 5662B750A;
-        Fri, 10 Jan 2020 01:21:05 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Fri, 10 Jan 2020 01:21:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
-        b+ZGcb0/KVYZkQOlq20JAB6Sn30afLRg5IIrioZNDZ8=; b=s3Rok71ByVn9eVvq
-        u4+98kagxaqDcIhtphgolhxfCXBCNDCSURX+1CWoi1Uu4hy13+Ex3cQfsd3bSRic
-        NKWdKEHEhyBcMpDd1ErnjBKl3G2Rdf4pU1dM3tdCYAi9Tq6BD+XYc1P62NVM1pfk
-        CLUnDZFlMS9h4TJ2+0k1E854cukRqR9ZHOQgfKyrWKmGEscNmwA682mAkYVEtrmR
-        oJE2s6VggThR3nqP2XQcHHokGXh5Hh6nvFeTOnoH9tGQfgPOxRWaPRwM2jaus67/
-        AfM6vi2yN1GtGTUzNqLtb12rlo+TMYl9c7UhvG5RoJjQsjRXQmR2+aP1hWMdxRtP
-        3GnK7A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=b+ZGcb0/KVYZkQOlq20JAB6Sn30afLRg5IIrioZND
-        Z8=; b=dWPdyE5i6jrc845fcUl2SC1og32KDL+4p1Ur8234QsYGCS8lgkbwiLqna
-        0VlKgtPR+MJepSj04lW+15OgjbW/ppTT+aSSZOgmCqYvmPvSETpyWh4V1JJq8Jse
-        HaTxmFqownOAQ2ZfyW6tclCf80UY5+Z2ev+zwd2bA9miNpEM/jV1IM/Nct7acs/a
-        Hvl5TCHeKClTTnpBnPWZ36ibYgk5RLETF774tcEb3jf1+xFmfWofRjHuc5g1D5k3
-        e4TMEQ41IU+X5s/Ie78jjtUWA65y5yZnhb5xUllPmoQuhPQnKSQ0eC6ME5wB1vPC
-        wMAKe3SMFJ5LnykQDzPcjtwmnPpgg==
-X-ME-Sender: <xms:0BcYXvZHZJbxKJZXN8mM1rNs4f9g7jlPl5-osZt0_lJ76rTruy2A0A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdeivddgkeelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucffohhmrghinhepthhuhh
-    hsrdhorhhgnecukfhppeduudekrddvtdelrddujeehrddvheenucfrrghrrghmpehmrghi
-    lhhfrhhomheprhgrvhgvnhesthhhvghmrgifrdhnvghtnecuvehluhhsthgvrhfuihiivg
-    eptd
-X-ME-Proxy: <xmx:0BcYXsBiwRmxpApU1NXNkpESKLoXDv_pCGGctpBGISU7A6GWTRjkZQ>
-    <xmx:0BcYXpUdSA6MmWB8QcbE-pP75Soqh_P1W2C1EAVu7Umd_7EQ9TwL_g>
-    <xmx:0BcYXt1CzCyrdA69qotaFQXC4lXSjy8uF_tsEKE8aizkJ-8a3j-Jyw>
-    <xmx:0RcYXjWaCqpO0PC9mwyAt0W49zGT-SSZD0QCRjJR-AV76BKNEaFfRw>
-Received: from mickey.themaw.net (unknown [118.209.175.25])
-        by mail.messagingengine.com (Postfix) with ESMTPA id AB1A530600A8;
-        Fri, 10 Jan 2020 01:20:59 -0500 (EST)
-Message-ID: <979cf680b0fbdce515293a3449d564690cde6a3f.camel@themaw.net>
-Subject: Re: [PATCH RFC 0/1] mount: universally disallow mounting over
- symlinks
-From:   Ian Kent <raven@themaw.net>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        stable <stable@vger.kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Serge Hallyn <serge@hallyn.com>, dev@opencontainers.org,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Fri, 10 Jan 2020 14:20:55 +0800
-In-Reply-To: <20200110041523.GK8904@ZenIV.linux.org.uk>
-References: <20200101005446.GH4203@ZenIV.linux.org.uk>
-         <20200101030815.GA17593@ZenIV.linux.org.uk>
-         <20200101144407.ugjwzk7zxrucaa6a@yavin.dot.cyphar.com>
-         <20200101234009.GB8904@ZenIV.linux.org.uk>
-         <20200102035920.dsycgxnb6ba2jhz2@yavin.dot.cyphar.com>
-         <20200103014901.GC8904@ZenIV.linux.org.uk>
-         <20200108031314.GE8904@ZenIV.linux.org.uk>
-         <CAHk-=wgQ3yOBuK8mxpnntD8cfX-+10ba81f86BYg8MhvwpvOMg@mail.gmail.com>
-         <20200108213444.GF8904@ZenIV.linux.org.uk>
-         <CAHk-=wiq11+thoe60qhsSHk_nbRF2TRL1Wnf6eHcYObjhJmsww@mail.gmail.com>
-         <20200110041523.GK8904@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726947AbgAJHHd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Jan 2020 02:07:33 -0500
+Received: from mga01.intel.com ([192.55.52.88]:27348 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726281AbgAJHHd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 10 Jan 2020 02:07:33 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2020 23:07:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,415,1571727600"; 
+   d="scan'208";a="371524736"
+Received: from chenyu-office.sh.intel.com ([10.239.158.173])
+  by orsmga004.jf.intel.com with ESMTP; 09 Jan 2020 23:07:29 -0800
+From:   Chen Yu <yu.c.chen@intel.com>
+To:     x86@kernel.org
+Cc:     Bhupesh Sharma <bhsharma@redhat.com>,
+        Dave Young <dyoung@redhat.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Chris Down <chris@chrisdown.name>,
+        Michal Hocko <mhocko@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][v6] x86/resctrl: Add task resctrl information display
+Date:   Fri, 10 Jan 2020 15:06:08 +0800
+Message-Id: <20200110070608.18902-1-yu.c.chen@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2020-01-10 at 04:15 +0000, Al Viro wrote:
-> On Thu, Jan 09, 2020 at 04:08:16PM -0800, Linus Torvalds wrote:
-> > On Wed, Jan 8, 2020 at 1:34 PM Al Viro <viro@zeniv.linux.org.uk>
-> > wrote:
-> > > The point is, we'd never followed mounts on /proc/self/cwd et.al.
-> > > I hadn't checked 2.0, but 2.1.100 ('97, before any changes from
-> > > me)
-> > > is that way.
-> > 
-> > Hmm. If that's the case, maybe they should be marked implicitly as
-> > O_PATH when opened?
-> 
-> I thought you wanted O_PATH as starting point to have mounts
-> traversed?
-> Confused...
-> 
-> > > Actually, scratch that - 2.0 behaves the same way
-> > > (mountpoint crossing is done in iget() there; is that Minix
-> > > influence
-> > > or straight from the Lions' book?)
-> > 
-> > I don't think I ever had access to Lions' - I've _seen_ a printout
-> > of
-> > it later, and obviously maybe others did,
-> > 
-> > More likely it's from Maurice Bach: the Design of the Unix
-> > Operating
-> > System. I'm pretty sure that's where a lot of the FS layer stuff
-> > came
-> > from.  Certainly the bad old buffer head interfaces, and quite
-> > likely
-> > the iget() stuff too.
-> > 
-> > > 0.10: forward traversal in iget(), back traversal in
-> > > fs/namei.c:find_entry()
-> > 
-> > Whee, you _really_ went back in time.
-> > 
-> > So I did too.
-> > 
-> > And looking at that code in iget(), I doubt it came from anywhere.
-> > Christ. It's just looping over a fixed-size array, both when
-> > finding
-> > the inode, and finding the superblock.
-> > 
-> > Cute, but unbelievably stupid. It was a more innocent time.
-> > 
-> > In other words, I think you can chalk it up to just me, because
-> > blaming anybody else for that garbage would be very very unfair
-> > indeed
-> > ;)
-> 
-> See 
-> https://minnie.tuhs.org/cgi-bin/utree.pl?file=V7/usr/sys/sys/iget.c
-> Exactly the same algorithm, complete with linear searches over those
-> fixed-sized array.
-> 
-> <grabs Bach> Right, he simply transcribes v7 iget().
-> 
-> So I suspect that you are right - your variant of iget was pretty
-> much
-> one-to-one implementation of Bach's description of v7 iget.
-> 
-> Your namei wasn't - Bach has 'if the entry points to root and you are
-> in the root and name is "..", find mount table entry (by device
-> number),
-> drop your directory inode, grab the inode of mountpount and restart
-> the search for ".." in there', which gives back traversals to
-> arbitrary
-> depth.  And v7 namei() (as Bach mentions) uses iget() for starting
-> point
-> as well as for each component.  You kept pointers instead, which is
-> where
-> the other difference has come from (no mount traversal at the
-> starting
-> point)...
-> 
-> Actually, I've misread your code in 0.10 - it does unlimited forward
-> traversals; it's back traversals that go only one level.  The forward
-> ones got limited to one level in 0.95, but then mount-over-root had
-> been banned all along.  I'd read the pre-dcache variant of iget(),
-> seen it go pretty much all the way back to beginning and hadn't
-> sorted out the 0.12 -> 0.95 transition...
-> 
-> > > How would your proposal deal with access("/proc/self/fd/42/foo",
-> > > MAY_READ)
-> > > vs. faccessat(42, "foo", MAY_READ)?
-> > 
-> > I think that in a perfect world, the O_PATH'ness of '42' would be
-> > the
-> > deciding factor. Wouldn't those be the best and most consistent
-> > semantics?
-> > 
-> > And then 'cwd'/'root' always have the O_PATH behavior.
-> 
-> See above - unless I'm misparsing you, you wanted mount traversals in
-> the
-> starting point if it's ...at() with O_PATH fd.  With O_PATH open()
-> not
-> doing them.
-> 
-> For cwd and root the situation is opposite - we do NOT traverse
-> mounts
-> for those.  And that's really too late to change.
-> 
-> > > The latter would trigger automount,
-> > > the former would not...  Or would you extend that to "traverse
-> > > mounts
-> > > upon following procfs links, if the file in question had been
-> > > opened with
-> > > O_PATH"?
-> > 
-> > Exactly.
-> > 
-> > But you know what? I do not believe this is all that important, and
-> > I
-> > doubt it will matter to anybody.
-> 
-> FWIW, digging through the automount-related parts of that stuff has
-> caught several fun issues.  One (and I'm rather embarrassed by it)
-> should've been caught back in commit 8aef18845266 (VFS: Fix vfsmount
-> overput on simultaneous automount).  To quote the commit message:
->     The problem is that lock_mount() drops the caller's reference to
-> the
->     mountpoint's vfsmount in the case where it finds something
-> already mounted on
->     the mountpoint as it transits to the mounted filesystem and
-> replaces path->mnt
->     with the new mountpoint vfsmount.
->     
->     During a pathwalk, however, we don't take a reference on the
-> vfsmount if it is
->     the same as the one in the nameidata struct, but do_add_mount()
-> doesn't know
->     this.
-> At which point I should've gone "what the fuck?" - lock_mount() does,
-> indeed,
-> drop path->mnt in this situation and replaces it with the whatever's
-> come to
-> cover it.  For mount(2) that's the right thing to do - we _want_ to
-> mount
-> on top of whatever we have at the mountpoint.  For automounts we very
-> much
-> don't want that - it's either "mount right on top of the automount
-> trigger"
-> or discard whatever we'd been about to mount and walk into whatever's
-> got
-> mounted there (presumably the same thing triggered by another
-> process).
-> We kinda-sorta get that effect, but in a very convoluted way:
-> do_add_mount()
-> will refuse to mount something on top of itself -
->         /* Refuse the same filesystem on the same mount point */
->         err = -EBUSY;
->         if (path->mnt->mnt_sb == newmnt->mnt.mnt_sb &&
->             path->mnt->mnt_root == path->dentry)
->                 goto unlock;
-> which will end up with -EBUSY returned (and recognized by
-> follow_automount()).
-> 
-> First of all, that's unreliable.  If somebody not only has triggered
-> that
-> automount, but managed to _mount_ something else on top (for example,
-> has triggered it by lookup of mountpoint-to-be in mount(2)), we'll
-> end
-> up not triggering that check.  In which case we'll get something like
-> nfs referral point under nfs automounted there under tmpfs from
-> explicit
-> overmount under same nfs mount we'd automounted there - identical to
-> what's
-> been buried under tmpfs.  It's hard to hit, but not impossibly so.
-> 
-> What's more, the whole solution is a kludge - the root of problem is
-> that lock_mount() is the wrong thing to do in case of
-> finish_automount().
-> We don't want to go into whatever's overmounting us there, both for
-> the reasons above *and* because it's a PITA for the caller.  So the
-> right solution is
-> 	* lift lock_mount() call from do_add_mount() into its callers
-> (all 2 of them); while we are at it, lift unlock_mount() as well
-> (makes for simpler failure exits in do_add_mount()).
-> 	* replace the call of lock_mount() in finish_automount()
-> with variant that doesn't do "unlock, walk deeper and retry locking",
-> returning ERR_PTR(-EBUSY) in such case.
-> 	* get rid of the kludge introduced in that commit.  Better
-> yet, don't bother with traversing into the covering mount in case
-> of success - let the caller of follow_automount() do that.  Which
-> eliminates the need to pass need_mntput to the sucker and suggests
-> an even better solution - have this analogue of lock_mount()
-> return NULL instead of ERR_PTR(-EBUSY) and treat it in
-> finish_automount()
-> as "OK, discard what we wanted to mount and return 0".  That gets
-> rid of the entire
->         err = finish_automount(mnt, path);
->         switch (err) {
->         case -EBUSY:
->                 /* Someone else made a mount here whilst we were busy
-> */
->                 return 0;
->         case 0:
->                 path_put(path);
->                 path->mnt = mnt;
->                 path->dentry = dget(mnt->mnt_root);
->                 return 0;
->         default:
->                 return err;
->         }
-> chunk in follow_automount() - it would just be
-> 	return finish_automount(mnt, path);
-> 
-> Another thing (in the same area) is not a bug per se, but...
-> after the call of ->d_automount() we have this:
->         if (IS_ERR(mnt)) {
->                 /*
->                  * The filesystem is allowed to return -EISDIR here
-> to indicate
->                  * it doesn't want to automount.  For instance,
-> autofs would do
->                  * this so that its userspace daemon can mount on
-> this dentry.
->                  *
->                  * However, we can only permit this if it's a
-> terminal point in
->                  * the path being looked up; if it wasn't then the
-> remainder of
->                  * the path is inaccessible and we should say so.
->                  */
->                 if (PTR_ERR(mnt) == -EISDIR && (nd->flags &
-> LOOKUP_PARENT))
->                         return -EREMOTE;
->                 return PTR_ERR(mnt);
-> 	}
-> Except that not a single instance of ->d_automount() has ever
-> returned
-> -EISDIR.  Certainly not autofs one, despite the what the comment
-> says.
-> That chunk has come from dhowells, back when the whole mount trap
-> series
-> had been merged.  After talking that thing over (fun: trying to
-> figure
-> out what had been intended nearly 9 years ago, when people involved
-> are
-> in UK, US east coast and AU west coast respectively.  The only way it
-> could suck more would've been if I were on the west coast - then all
-> timezone deltas would be 8-hour ones)...  looks like it's a rudiment
-> of plans that got superseded during the series development, nobody
-> quite remembers exact details.  Conclusion: it's not even dead, it's
-> stillborn; bury it.
+Monitoring tools that want to find out which resctrl control
+and monitor groups a task belongs to must currently read
+the "tasks" file in every group until they locate the process
+ID.
 
-Yeah, autofs ->d_automount() doesn't return -EISDIR, by the time
-we get there it's not relevant any more, so that check looks
-redundant. I'm not aware of any other fs automount implementation
-that needs that EISDIR pass-thru function.
+Add an additional file /proc/{pid}/cpu_resctrl to provide this
+information.
 
-I didn't notice it at the time of the merge, sorry about that.
+The output is as followed, for example:
 
-While we're at it that:
-   if (!path->dentry->d_op || !path->dentry->d_op->d_automount)
-       return -EREMOTE;
+ 1)   ""
+      Resctrl is not available.
 
-at the top of follow_automount() isn't going to be be relevant
-for autofs because ->d_automount() really must always be defined
-for it.
+ 2)   "/"
+      Task is part of the root group, task is not associated to
+      any monitor group.
 
-But, at the time of the merge, I didn't object to it because
-there were (are) other file systems that use the VFS automount
-function which may accidentally not define the method.
+ 3)   "/mon_groups/mon0"
+      Task is part of the root group and monitor group mon0.
 
-> 
-> Unfortunately, there are other interesting questions related to
-> autofs-specific bits (->d_manage()) and the timezone-related fun
-> is, of course, still there.  I hope to sort that out today or
-> tomorrow, at least enough to do a reasonable set of backportable
-> fixes to put in front of follow_managed()/step_into() queue.
-> Oh, well...
+ 4)   "/group0"
+      Task is part of resctrl control group group0, task is not
+      associated to any monitor group.
 
-Yeah, I know it slows you down but I kink-off like having a chance
-to look at what's going and think about your questions before trying
-to answer them, rather than replying prematurely, as I usually do ...
+ 5)   "/group0/mon_groups/mon1"
+      Task is part of resctrl control group group0 and monitor
+      group mon1.
 
-It's been a bit of a busy day so far but I'm getting to look into
-the questions you've asked.
+Tested-by: Jinshi Chen <jinshi.chen@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Chris Down <chris@chrisdown.name>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+---
+v1: Initial version reviewed by Reinette Chatre,
+    Fenghua Yu and Tony Luck.
 
-Ian
+v2: According to Boris's suggestion,
+    reduce indentation level in proc_resctrl_show().
+    Create the include/linux/resctrl.h header and
+    declare proc_resctrl_show() in this file, so
+    that other architectures would probably use it
+    in the future. Different architectures should
+    implement architectural specific proc_resctrl_show()
+    accordingly.
+
+v3: According to Boris's suggestion,
+    Return empty string if the resctrl filesystem has
+    not been mounted.
+    Rename the config from CPU_RESCTRL to PROC_CPU_RESCTRL
+    to better represent its usage. Move PROC_CPU_RESCTRL
+    from arch/Kconfig to fs/proc/Kconfig.
+    And let PROC_CPU_RESCTRL to be depended on PROC_FS.
+
+v4: According to Thomas's suggestion, changed the output
+    from multiple lines to one single line.
+
+v5: According to Alexey's feedback, removed the header file
+    proc_fs.h in resctrl.h, and changed seq_puts() to
+    seq_putc() for simplicity.
+
+v6: According to Chris Down's suggestion,
+    1. rename:
+    /proc/{pid}/resctrl to /proc/{pid}/cpu_resctrl
+    to better reflect its meaning.
+    2. change the description in comments:
+    "control group" to "resctrl control group"
+    as the former is confusing for cgroup users.
+---
+ arch/x86/Kconfig                       |  1 +
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 79 ++++++++++++++++++++++++++
+ fs/proc/Kconfig                        |  4 ++
+ fs/proc/base.c                         |  7 +++
+ include/linux/resctrl.h                | 14 +++++
+ 5 files changed, 105 insertions(+)
+ create mode 100644 include/linux/resctrl.h
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 5e8949953660..6e17a68c7d77 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -456,6 +456,7 @@ config X86_CPU_RESCTRL
+ 	bool "x86 CPU resource control support"
+ 	depends on X86 && (CPU_SUP_INTEL || CPU_SUP_AMD)
+ 	select KERNFS
++	select PROC_CPU_RESCTRL		if PROC_FS
+ 	help
+ 	  Enable x86 CPU resource control support.
+ 
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index 2e3b06d6bbc6..dcbf62d6b689 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -725,6 +725,85 @@ static int rdtgroup_tasks_show(struct kernfs_open_file *of,
+ 	return ret;
+ }
+ 
++#ifdef CONFIG_PROC_CPU_RESCTRL
++
++/*
++ * A task can only be part of one resctrl
++ * control group and of one monitor
++ * group which is associated to that resctrl
++ * control group.
++ * So one line is simple and clear enough:
++ *
++ * 1)   ""
++ *    resctrl is not available.
++ *
++ * 2)   "/"
++ *    Task is part of the root group, and it is
++ *    not associated to any monitor group.
++ *
++ * 3)   "/mon_groups/mon0"
++ *    Task is part of the root group and monitor
++ *    group mon0.
++ *
++ * 4)   "/group0"
++ *    Task is part of resctrl control group group0,
++ *    and it is not associated to any monitor group.
++ *
++ * 5)   "/group0/mon_groups/mon1"
++ *    Task is part of resctrl control group group0 and monitor
++ *    group mon1.
++ */
++int proc_resctrl_show(struct seq_file *s, struct pid_namespace *ns,
++		      struct pid *pid, struct task_struct *tsk)
++{
++	struct rdtgroup *rdtg;
++	int ret = 0;
++
++	mutex_lock(&rdtgroup_mutex);
++
++	/* Return empty if resctrl has not been mounted. */
++	if (!static_branch_unlikely(&rdt_enable_key))
++		goto unlock;
++
++	list_for_each_entry(rdtg, &rdt_all_groups, rdtgroup_list) {
++		struct rdtgroup *crg;
++
++		/*
++		 * Task information is only relevant for shareable
++		 * and exclusive groups.
++		 */
++		if (rdtg->mode != RDT_MODE_SHAREABLE &&
++		    rdtg->mode != RDT_MODE_EXCLUSIVE)
++			continue;
++
++		if (rdtg->closid != tsk->closid)
++			continue;
++
++		seq_printf(s, "/%s", rdtg->kn->name);
++		list_for_each_entry(crg, &rdtg->mon.crdtgrp_list,
++				    mon.crdtgrp_list) {
++			if (tsk->rmid != crg->mon.rmid)
++				continue;
++			seq_printf(s, "%smon_groups/%s",
++				   rdtg == &rdtgroup_default ? "" : "/",
++				   crg->kn->name);
++			break;
++		}
++		seq_putc(s, '\n');
++		goto unlock;
++	}
++	/*
++	 * The above search should succeed. Otherwise return
++	 * with an error.
++	 */
++	ret = -ENOENT;
++unlock:
++	mutex_unlock(&rdtgroup_mutex);
++
++	return ret;
++}
++#endif
++
+ static int rdt_last_cmd_status_show(struct kernfs_open_file *of,
+ 				    struct seq_file *seq, void *v)
+ {
+diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
+index 733881a6387b..27ef84d99f59 100644
+--- a/fs/proc/Kconfig
++++ b/fs/proc/Kconfig
+@@ -103,3 +103,7 @@ config PROC_CHILDREN
+ config PROC_PID_ARCH_STATUS
+ 	def_bool n
+ 	depends on PROC_FS
++
++config PROC_CPU_RESCTRL
++	def_bool n
++	depends on PROC_FS
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index ebea9501afb8..32c9ff154667 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -94,6 +94,7 @@
+ #include <linux/sched/debug.h>
+ #include <linux/sched/stat.h>
+ #include <linux/posix-timers.h>
++#include <linux/resctrl.h>
+ #include <trace/events/oom.h>
+ #include "internal.h"
+ #include "fd.h"
+@@ -3060,6 +3061,9 @@ static const struct pid_entry tgid_base_stuff[] = {
+ #endif
+ #ifdef CONFIG_CGROUPS
+ 	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
++#endif
++#ifdef CONFIG_PROC_CPU_RESCTRL
++	ONE("cpu_resctrl", S_IRUGO, proc_resctrl_show),
+ #endif
+ 	ONE("oom_score",  S_IRUGO, proc_oom_score),
+ 	REG("oom_adj",    S_IRUGO|S_IWUSR, proc_oom_adj_operations),
+@@ -3460,6 +3464,9 @@ static const struct pid_entry tid_base_stuff[] = {
+ #endif
+ #ifdef CONFIG_CGROUPS
+ 	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
++#endif
++#ifdef CONFIG_PROC_CPU_RESCTRL
++	ONE("cpu_resctrl", S_IRUGO, proc_resctrl_show),
+ #endif
+ 	ONE("oom_score", S_IRUGO, proc_oom_score),
+ 	REG("oom_adj",   S_IRUGO|S_IWUSR, proc_oom_adj_operations),
+diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
+new file mode 100644
+index 000000000000..daf5cf64c6a6
+--- /dev/null
++++ b/include/linux/resctrl.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _RESCTRL_H
++#define _RESCTRL_H
++
++#ifdef CONFIG_PROC_CPU_RESCTRL
++
++int proc_resctrl_show(struct seq_file *m,
++		      struct pid_namespace *ns,
++		      struct pid *pid,
++		      struct task_struct *tsk);
++
++#endif
++
++#endif /* _RESCTRL_H */
+-- 
+2.17.1
 
