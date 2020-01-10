@@ -2,95 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0355A13714B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 16:31:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0A6D1371A7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 16:47:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728369AbgAJPbI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Jan 2020 10:31:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50182 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728137AbgAJPbH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Jan 2020 10:31:07 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F61020673;
-        Fri, 10 Jan 2020 15:31:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578670267;
-        bh=PmlZ0floUXtGGa7TOfgYeBKFANJKRe+aQitOtud+P8c=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=X36GmWlHGvdXfYh5YuOf44/kmbaIMvVOj2MbahzvrCVQ+8puv/3KqDuhFCWJTuaRF
-         CtJbxKd7AtMrp6ePDdBWol5fdg87tr/PHW18OCfLJ+Cb3x0fxOC8Y4vAiROVldLZLz
-         deogJUz0nIuBkh+hPJgohYk79pa7bq7pvppTZc+M=
-Date:   Sat, 11 Jan 2020 00:30:59 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 00/22] tracing: bootconfig: Boot-time tracing and
- Extra boot config
-Message-Id: <20200111003059.5c24c0ee4a85df10ec9f17e6@kernel.org>
-In-Reply-To: <20200109181055.1999b344@gandalf.local.home>
-References: <157736902773.11126.2531161235817081873.stgit@devnote2>
-        <20200109181055.1999b344@gandalf.local.home>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1728382AbgAJPrm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Jan 2020 10:47:42 -0500
+Received: from mail-pf1-f172.google.com ([209.85.210.172]:36544 "EHLO
+        mail-pf1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728137AbgAJPrm (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 10 Jan 2020 10:47:42 -0500
+Received: by mail-pf1-f172.google.com with SMTP id x184so1331769pfb.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Jan 2020 07:47:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7u685f2L9+jaOz+HCh7JiAVcK59LzFp/aZgY0iyCtcc=;
+        b=Rhkl9uRn77mVhePvZ/x8FUpLU5lBp+aPDxU3+U/P7gFNB5BNp3Ci5gRPBD6opA/1lh
+         t0u1dmdo2h3x87qWRQ4qwoQKzUrstsmQAcp/sxfnKubnA9Nuqs0da4UAxwzyJRjavIJC
+         /erfeUknqoeUeNrlXjSViY6GQvRY41EmEbO/Lv3+fe3M/OYH/xCM/QoU5voWxl9wnI7q
+         XERksJYI1WTzvIN/2d3rFc5jp+BrmxgFttdNyCENrjC9NimmGDzudfufAemJ+tI7tqPx
+         ngQRTRzakAOVpGrx8r3Y2sxk3KAcbMM0V7Ww1UFeBLC8TJ2ZVWzt6FVAMYwLmhpxQO1W
+         10kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7u685f2L9+jaOz+HCh7JiAVcK59LzFp/aZgY0iyCtcc=;
+        b=fGpzWNoqTmvRZP+6UaY2vqNFdOicfVBuuAH+CkfRIxHyIC2qqT1Xlv8fJ2n8YTtWjj
+         OY0Ag6eVZGS/q+re04ao8X3APyZiIQm35pTrz6RqbH/MPzEhFNE90tQ1FnDc8k+EavbA
+         nVsJhHdmkg00x28UnzSVkq0eNqnMa73rbse0Lxm9XpXVT01aXMQ+sBaNJI/pYerv62ZP
+         xvUqzZoe9emtPw8y/dkcDDzxbHej7EWaH8mbS9/NmGvErREpiiy3+JsUxmKUjS6Pli/K
+         gLThOeZQOJhfa2p3hXQhj4/82yGZwwzfxZWV5s1ELsl6yVSUSbr1Z5c3DhYDfbwKMrT+
+         cLMg==
+X-Gm-Message-State: APjAAAU5Cw5m8F7vwiAFKf59pO2hP7kmv4m8AwzLczeyvqLN8CgTL7hl
+        bppkSPaaiUk0DKXnLz2vbqdMXciWskw=
+X-Google-Smtp-Source: APXvYqxJ17D8iSmjKOv0S2rNWY8y7KffM7W9AZcZOwRXnp3zR9jsDuzXwvPfEPReGAywTlqjX7HmOA==
+X-Received: by 2002:a63:1b0a:: with SMTP id b10mr5170711pgb.56.1578671261678;
+        Fri, 10 Jan 2020 07:47:41 -0800 (PST)
+Received: from x1.localdomain ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id 3sm3489520pfi.13.2020.01.10.07.47.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jan 2020 07:47:41 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCHSET 0/3] io_uring: add support for madvise/fadvise
+Date:   Fri, 10 Jan 2020 08:47:36 -0700
+Message-Id: <20200110154739.2119-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.24.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Steve,
-
-On Thu, 9 Jan 2020 18:10:55 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> On Thu, 26 Dec 2019 23:03:48 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > Hello,
-> > 
-> > This is the 5th version of the series for the boot-time tracing.
-> > 
-> > Previous version is here.
-> > 
-> > https://lkml.kernel.org/r/157528159833.22451.14878731055438721716.stgit@devnote2
-> 
-> Hi Masami,
-> 
-> I applied all your patches to a test branch and was playing with it a
-> little. This seems fine to me and works well (and very easy to use).
-> Probably could use some more examples, but that's just a nit.
-
-OK, I'll add some examples to Documentation/trace/boottime-trace.rst
-next time.
-
-> 
-> If nobody has any issues with this code, I'll wait for v6 with the
-> fixes to issues found in this series, and I'll happily apply them for
-> linux-next.
-
-Thanks! I'll send v6 soon, which is including fixes and testcases. :)
-
-Thank you!
-
+Nothing earth shattering here, just wiring up madvise and fadvise for
+io_uring. The madvise part requires a small prep patch.
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Jens Axboe
+
+
