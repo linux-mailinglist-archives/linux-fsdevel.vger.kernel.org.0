@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AA6F137733
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 20:31:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2FD9137730
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 20:31:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729127AbgAJTao (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Jan 2020 14:30:44 -0500
-Received: from mga12.intel.com ([192.55.52.136]:38365 "EHLO mga12.intel.com"
+        id S1729118AbgAJTan (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Jan 2020 14:30:43 -0500
+Received: from mga14.intel.com ([192.55.52.115]:10951 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728948AbgAJTaI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Jan 2020 14:30:08 -0500
+        id S1728966AbgAJTaJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 10 Jan 2020 14:30:09 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 11:30:07 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 11:30:08 -0800
 X-IronPort-AV: E=Sophos;i="5.69,418,1571727600"; 
-   d="scan'208";a="371693760"
+   d="scan'208";a="224289175"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.157])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 11:30:06 -0800
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 11:30:08 -0800
 From:   ira.weiny@intel.com
 To:     linux-kernel@vger.kernel.org
 Cc:     Ira Weiny <ira.weiny@intel.com>,
@@ -30,9 +30,9 @@ Cc:     Ira Weiny <ira.weiny@intel.com>,
         "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH V2 07/12] fs: Add locking for a dynamic inode 'mode'
-Date:   Fri, 10 Jan 2020 11:29:37 -0800
-Message-Id: <20200110192942.25021-8-ira.weiny@intel.com>
+Subject: [RFC PATCH V2 08/12] fs/xfs: Add lock/unlock mode to xfs
+Date:   Fri, 10 Jan 2020 11:29:38 -0800
+Message-Id: <20200110192942.25021-9-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20200110192942.25021-1-ira.weiny@intel.com>
 References: <20200110192942.25021-1-ira.weiny@intel.com>
@@ -45,317 +45,240 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Ira Weiny <ira.weiny@intel.com>
 
-DAX requires special address space operations but many other functions
-check the IS_DAX() mode.
+XFS requires regular files to be locked while changing to/from DAX mode.
 
-DAX is a property of the inode thus we define an inode mode lock as an
-inode operation which file systems can optionally define.
+Define a new DAX lock type and implement the [un]lock_mode() inode
+operation callbacks.
 
-This patch defines the core function callbacks as well as puts the
-locking calls in place.
+We define a new XFS_DAX_* lock type to carry the lock through the
+transaction because we don't want to use IOLOCK as that would cause
+performance issues with locking of the inode itself.
 
 Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 ---
- Documentation/filesystems/vfs.rst | 30 ++++++++++++++++
- fs/ioctl.c                        | 23 +++++++++----
- fs/open.c                         |  4 +++
- include/linux/fs.h                | 57 +++++++++++++++++++++++++++++--
- mm/fadvise.c                      | 10 ++++--
- mm/khugepaged.c                   |  2 ++
- mm/mmap.c                         |  7 ++++
- 7 files changed, 123 insertions(+), 10 deletions(-)
+ fs/xfs/xfs_icache.c |  2 ++
+ fs/xfs/xfs_inode.c  | 37 +++++++++++++++++++++++++++++++++++--
+ fs/xfs/xfs_inode.h  | 12 ++++++++++--
+ fs/xfs/xfs_iops.c   | 24 +++++++++++++++++++++++-
+ 4 files changed, 70 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index 7d4d09dd5e6d..b945aa95f15a 100644
---- a/Documentation/filesystems/vfs.rst
-+++ b/Documentation/filesystems/vfs.rst
-@@ -59,6 +59,28 @@ like open(2) the file, or stat(2) it to peek at the inode data.  The
- stat(2) operation is fairly simple: once the VFS has the dentry, it
- peeks at the inode data and passes some of it back to userspace.
+diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
+index 8dc2e5414276..0288672e8902 100644
+--- a/fs/xfs/xfs_icache.c
++++ b/fs/xfs/xfs_icache.c
+@@ -74,6 +74,8 @@ xfs_inode_alloc(
+ 	INIT_LIST_HEAD(&ip->i_ioend_list);
+ 	spin_lock_init(&ip->i_ioend_lock);
  
-+Changing inode 'modes' dynamically
-+----------------------------------
++	percpu_init_rwsem(&ip->i_dax_sem);
 +
-+Some file systems may have different modes for their inodes which require
-+dyanic changing.  A specific example of this is DAX enabled files in XFS and
-+ext4.  To switch the mode safely we lock the inode mode in all "normal" file
-+system operations and restrict mode changes to those operations.  The specific
-+rules are.
-+
-+To do this a file system must follow the following rules.
-+
-+        1) the direct_IO address_space_operation must be supported in all
-+           potential a_ops vectors for any mode suported by the inode.
-+	2) Filesystems must define the lock_mode() and unlock_mode() operations
-+           in struct inode_operations.  These functions are used by the core
-+           vfs layers to ensure that the mode is stable before allowing the
-+           core operations to proceed.
-+        3) Mode changes shall not be allowed while the file is mmap'ed
-+        4) While changing modes filesystems should take exclusive locks which
-+           prevent the core vfs layer from proceeding.
-+
-+
- 
- The File Object
- ---------------
-@@ -437,6 +459,8 @@ As of kernel 2.6.22, the following members are defined:
- 		int (*atomic_open)(struct inode *, struct dentry *, struct file *,
- 				   unsigned open_flag, umode_t create_mode);
- 		int (*tmpfile) (struct inode *, struct dentry *, umode_t);
-+		void (*lock_mode)(struct inode *);
-+		void (*unlock_mode)(struct inode *);
- 	};
- 
- Again, all methods are called without any locks being held, unless
-@@ -584,6 +608,12 @@ otherwise noted.
- 	atomically creating, opening and unlinking a file in given
- 	directory.
- 
-+``lock_mode``
-+	called to prevent operations which depend on the inode's mode from
-+        proceeding should a mode change be in progress
-+
-+``unlock_mode``
-+	called when critical mode dependent operation is complete
- 
- The Address Space Object
- ========================
-diff --git a/fs/ioctl.c b/fs/ioctl.c
-index 7c9a5df5a597..ed6ab5303a24 100644
---- a/fs/ioctl.c
-+++ b/fs/ioctl.c
-@@ -55,18 +55,29 @@ EXPORT_SYMBOL(vfs_ioctl);
- static int ioctl_fibmap(struct file *filp, int __user *p)
- {
- 	struct address_space *mapping = filp->f_mapping;
-+	struct inode *inode = filp->f_inode;
- 	int res, block;
- 
-+	lock_inode_mode(inode);
-+
- 	/* do we support this mess? */
--	if (!mapping->a_ops->bmap)
--		return -EINVAL;
--	if (!capable(CAP_SYS_RAWIO))
--		return -EPERM;
-+	if (!mapping->a_ops->bmap) {
-+		res = -EINVAL;
-+		goto out;
-+	}
-+	if (!capable(CAP_SYS_RAWIO)) {
-+		res = -EPERM;
-+		goto out;
-+	}
- 	res = get_user(block, p);
- 	if (res)
--		return res;
-+		goto out;
- 	res = mapping->a_ops->bmap(mapping, block);
--	return put_user(res, p);
-+	res = put_user(res, p);
-+
-+out:
-+	unlock_inode_mode(inode);
-+	return res;
+ 	return ip;
  }
  
- /**
-diff --git a/fs/open.c b/fs/open.c
-index b0be77ea8f1b..c62428bbc525 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -59,10 +59,12 @@ int do_truncate(struct dentry *dentry, loff_t length, unsigned int time_attrs,
- 	if (ret)
- 		newattrs.ia_valid |= ret | ATTR_FORCE;
+diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+index 401da197f012..e8fd95b75e5b 100644
+--- a/fs/xfs/xfs_inode.c
++++ b/fs/xfs/xfs_inode.c
+@@ -142,12 +142,12 @@ xfs_ilock_attr_map_shared(
+  *
+  * Basic locking order:
+  *
+- * i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
++ * i_rwsem -> i_dax_sem -> i_mmap_lock -> page_lock -> i_ilock
+  *
+  * mmap_sem locking order:
+  *
+  * i_rwsem -> page lock -> mmap_sem
+- * mmap_sem -> i_mmap_lock -> page_lock
++ * mmap_sem -> i_dax_sem -> i_mmap_lock -> page_lock
+  *
+  * The difference in mmap_sem locking order mean that we cannot hold the
+  * i_mmap_lock over syscall based read(2)/write(2) based IO. These IO paths can
+@@ -181,6 +181,13 @@ xfs_ilock(
+ 	ASSERT((lock_flags & (XFS_ILOCK_SHARED | XFS_ILOCK_EXCL)) !=
+ 	       (XFS_ILOCK_SHARED | XFS_ILOCK_EXCL));
+ 	ASSERT((lock_flags & ~(XFS_LOCK_MASK | XFS_LOCK_SUBCLASS_MASK)) == 0);
++	ASSERT((lock_flags & (XFS_DAX_SHARED | XFS_DAX_EXCL)) !=
++	       (XFS_DAX_SHARED | XFS_DAX_EXCL));
++
++	if (lock_flags & XFS_DAX_EXCL)
++		percpu_down_write(&ip->i_dax_sem);
++	else if (lock_flags & XFS_DAX_SHARED)
++		percpu_down_read(&ip->i_dax_sem);
  
-+	lock_inode_mode(dentry->d_inode);
- 	inode_lock(dentry->d_inode);
- 	/* Note any delegations or leases have already been broken: */
- 	ret = notify_change(dentry, &newattrs, NULL);
- 	inode_unlock(dentry->d_inode);
-+	unlock_inode_mode(dentry->d_inode);
- 	return ret;
+ 	if (lock_flags & XFS_IOLOCK_EXCL) {
+ 		down_write_nested(&VFS_I(ip)->i_rwsem,
+@@ -224,6 +231,8 @@ xfs_ilock_nowait(
+ 	 * You can't set both SHARED and EXCL for the same lock,
+ 	 * and only XFS_IOLOCK_SHARED, XFS_IOLOCK_EXCL, XFS_ILOCK_SHARED,
+ 	 * and XFS_ILOCK_EXCL are valid values to set in lock_flags.
++	 *
++	 * XFS_DAX_* is not allowed
+ 	 */
+ 	ASSERT((lock_flags & (XFS_IOLOCK_SHARED | XFS_IOLOCK_EXCL)) !=
+ 	       (XFS_IOLOCK_SHARED | XFS_IOLOCK_EXCL));
+@@ -232,6 +241,7 @@ xfs_ilock_nowait(
+ 	ASSERT((lock_flags & (XFS_ILOCK_SHARED | XFS_ILOCK_EXCL)) !=
+ 	       (XFS_ILOCK_SHARED | XFS_ILOCK_EXCL));
+ 	ASSERT((lock_flags & ~(XFS_LOCK_MASK | XFS_LOCK_SUBCLASS_MASK)) == 0);
++	ASSERT((lock_flags & (XFS_DAX_SHARED | XFS_DAX_EXCL)) == 0);
+ 
+ 	if (lock_flags & XFS_IOLOCK_EXCL) {
+ 		if (!down_write_trylock(&VFS_I(ip)->i_rwsem))
+@@ -302,6 +312,8 @@ xfs_iunlock(
+ 	       (XFS_ILOCK_SHARED | XFS_ILOCK_EXCL));
+ 	ASSERT((lock_flags & ~(XFS_LOCK_MASK | XFS_LOCK_SUBCLASS_MASK)) == 0);
+ 	ASSERT(lock_flags != 0);
++	ASSERT((lock_flags & (XFS_DAX_SHARED | XFS_DAX_EXCL)) !=
++	       (XFS_DAX_SHARED | XFS_DAX_EXCL));
+ 
+ 	if (lock_flags & XFS_IOLOCK_EXCL)
+ 		up_write(&VFS_I(ip)->i_rwsem);
+@@ -318,6 +330,11 @@ xfs_iunlock(
+ 	else if (lock_flags & XFS_ILOCK_SHARED)
+ 		mrunlock_shared(&ip->i_lock);
+ 
++	if (lock_flags & XFS_DAX_EXCL)
++		percpu_up_write(&ip->i_dax_sem);
++	else if (lock_flags & XFS_DAX_SHARED)
++		percpu_up_read(&ip->i_dax_sem);
++
+ 	trace_xfs_iunlock(ip, lock_flags, _RET_IP_);
  }
  
-@@ -306,7 +308,9 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
- 		return -EOPNOTSUPP;
+@@ -333,6 +350,8 @@ xfs_ilock_demote(
+ 	ASSERT(lock_flags & (XFS_IOLOCK_EXCL|XFS_MMAPLOCK_EXCL|XFS_ILOCK_EXCL));
+ 	ASSERT((lock_flags &
+ 		~(XFS_IOLOCK_EXCL|XFS_MMAPLOCK_EXCL|XFS_ILOCK_EXCL)) == 0);
++	/* XFS_DAX_* is not allowed */
++	ASSERT((lock_flags & (XFS_DAX_SHARED | XFS_DAX_EXCL)) == 0);
  
- 	file_start_write(file);
-+	lock_inode_mode(inode);
- 	ret = file->f_op->fallocate(file, mode, offset, len);
-+	unlock_inode_mode(inode);
- 
- 	/*
- 	 * Create inotify and fanotify events.
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e11989502eac..631f11d6246e 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -359,6 +359,11 @@ typedef struct {
- typedef int (*read_actor_t)(read_descriptor_t *, struct page *,
- 		unsigned long, unsigned long);
- 
-+/**
-+ * NOTE: DO NOT define new functions in address_space_operations without first
-+ * considering how dynamic inode modes can be supported.  See the comment in
-+ * struct inode_operations for the lock_mode() and unlock_mode() callbacks.
-+ */
- struct address_space_operations {
- 	int (*writepage)(struct page *page, struct writeback_control *wbc);
- 	int (*readpage)(struct file *, struct page *);
-@@ -1817,6 +1822,11 @@ struct block_device_operations;
- 
- struct iov_iter;
- 
-+/**
-+ * NOTE: DO NOT define new functions in file_operations without first
-+ * considering how dynamic inode modes can be supported.  See the comment in
-+ * struct inode_operations for the lock_mode() and unlock_mode() callbacks.
-+ */
- struct file_operations {
- 	struct module *owner;
- 	loff_t (*llseek) (struct file *, loff_t, int);
-@@ -1859,6 +1869,20 @@ struct file_operations {
- 	int (*fadvise)(struct file *, loff_t, loff_t, int);
- } __randomize_layout;
- 
-+/*
-+ * Filesystems wishing to support dynamic inode modes must do the following.
-+ *
-+ * 1) the direct_IO address_space_operation must be supported in all
-+ *    potential a_ops vectors for any mode suported by the inode.
-+ * 2) Filesystems must define the lock_mode() and unlock_mode() operations
-+ *    in struct inode_operations.  These functions are used by the core
-+ *    vfs layers to ensure that the mode is stable before allowing the
-+ *    core operations to proceed.
-+ * 3) Mode changes shall not be allowed while the file is mmap'ed
-+ * 4) While changing modes filesystems should take exclusive locks which
-+ *    prevent the core vfs layer from proceeding.
-+ *
-+ */
- struct inode_operations {
- 	struct dentry * (*lookup) (struct inode *,struct dentry *, unsigned int);
- 	const char * (*get_link) (struct dentry *, struct inode *, struct delayed_call *);
-@@ -1887,18 +1911,47 @@ struct inode_operations {
- 			   umode_t create_mode);
- 	int (*tmpfile) (struct inode *, struct dentry *, umode_t);
- 	int (*set_acl)(struct inode *, struct posix_acl *, int);
-+	void (*lock_mode)(struct inode*);
-+	void (*unlock_mode)(struct inode*);
- } ____cacheline_aligned;
- 
-+static inline void lock_inode_mode(struct inode *inode)
-+{
-+	WARN_ON_ONCE(inode->i_op->lock_mode &&
-+		     !inode->i_op->unlock_mode);
-+	if (inode->i_op->lock_mode)
-+		inode->i_op->lock_mode(inode);
-+}
-+static inline void unlock_inode_mode(struct inode *inode)
-+{
-+	WARN_ON_ONCE(inode->i_op->unlock_mode &&
-+		     !inode->i_op->lock_mode);
-+	if (inode->i_op->unlock_mode)
-+		inode->i_op->unlock_mode(inode);
-+}
-+
- static inline ssize_t call_read_iter(struct file *file, struct kiocb *kio,
- 				     struct iov_iter *iter)
- {
--	return file->f_op->read_iter(kio, iter);
-+	struct inode		*inode = file_inode(kio->ki_filp);
-+	ssize_t ret;
-+
-+	lock_inode_mode(inode);
-+	ret = file->f_op->read_iter(kio, iter);
-+	unlock_inode_mode(inode);
-+	return ret;
- }
- 
- static inline ssize_t call_write_iter(struct file *file, struct kiocb *kio,
- 				      struct iov_iter *iter)
- {
--	return file->f_op->write_iter(kio, iter);
-+	struct inode		*inode = file_inode(kio->ki_filp);
-+	ssize_t ret;
-+
-+	lock_inode_mode(inode);
-+	ret = file->f_op->write_iter(kio, iter);
-+	unlock_inode_mode(inode);
-+	return ret;
- }
- 
- static inline int call_mmap(struct file *file, struct vm_area_struct *vma)
-diff --git a/mm/fadvise.c b/mm/fadvise.c
-index 4f17c83db575..a4095a5deac8 100644
---- a/mm/fadvise.c
-+++ b/mm/fadvise.c
-@@ -47,7 +47,10 @@ int generic_fadvise(struct file *file, loff_t offset, loff_t len, int advice)
- 
- 	bdi = inode_to_bdi(mapping->host);
- 
-+	lock_inode_mode(inode);
- 	if (IS_DAX(inode) || (bdi == &noop_backing_dev_info)) {
-+		int ret = 0;
-+
- 		switch (advice) {
- 		case POSIX_FADV_NORMAL:
- 		case POSIX_FADV_RANDOM:
-@@ -58,10 +61,13 @@ int generic_fadvise(struct file *file, loff_t offset, loff_t len, int advice)
- 			/* no bad return value, but ignore advice */
- 			break;
- 		default:
--			return -EINVAL;
-+			ret = -EINVAL;
- 		}
--		return 0;
-+
-+		unlock_inode_mode(inode);
-+		return ret;
- 	}
-+	unlock_inode_mode(inode);
- 
- 	/*
- 	 * Careful about overflows. Len == 0 means "as much as possible".  Use
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index b679908743cb..ff49da065db0 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1592,9 +1592,11 @@ static void collapse_file(struct mm_struct *mm,
- 		} else {	/* !is_shmem */
- 			if (!page || xa_is_value(page)) {
- 				xas_unlock_irq(&xas);
-+				lock_inode_mode(file->f_inode);
- 				page_cache_sync_readahead(mapping, &file->f_ra,
- 							  file, index,
- 							  PAGE_SIZE);
-+				unlock_inode_mode(file->f_inode);
- 				/* drain pagevecs to help isolate_lru_page() */
- 				lru_add_drain();
- 				page = find_lock_page(mapping, index);
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 70f67c4515aa..dfaf1130e706 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1542,11 +1542,18 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
- 			vm_flags |= VM_NORESERVE;
+ 	if (lock_flags & XFS_ILOCK_EXCL)
+ 		mrdemote(&ip->i_lock);
+@@ -369,6 +388,13 @@ xfs_isilocked(
+ 		return rwsem_is_locked(&VFS_I(ip)->i_rwsem);
  	}
  
-+	if (file)
-+		lock_inode_mode(file_inode(file));
++	if (lock_flags & (XFS_DAX_EXCL|XFS_DAX_SHARED)) {
++		if (!(lock_flags & XFS_DAX_SHARED))
++			return !debug_locks ||
++				percpu_rwsem_is_held(&ip->i_dax_sem, 0);
++		return rwsem_is_locked(&ip->i_dax_sem);
++	}
 +
- 	addr = mmap_region(file, addr, len, vm_flags, pgoff, uf);
- 	if (!IS_ERR_VALUE(addr) &&
- 	    ((vm_flags & VM_LOCKED) ||
- 	     (flags & (MAP_POPULATE | MAP_NONBLOCK)) == MAP_POPULATE))
- 		*populate = len;
+ 	ASSERT(0);
+ 	return 0;
+ }
+@@ -465,6 +491,9 @@ xfs_lock_inodes(
+ 	ASSERT(!(lock_mode & XFS_ILOCK_EXCL) ||
+ 		inodes <= XFS_ILOCK_MAX_SUBCLASS + 1);
+ 
++	/* XFS_DAX_* is not allowed */
++	ASSERT((lock_mode & (XFS_DAX_SHARED | XFS_DAX_EXCL)) == 0);
 +
-+	if (file)
-+		unlock_inode_mode(file_inode(file));
+ 	if (lock_mode & XFS_IOLOCK_EXCL) {
+ 		ASSERT(!(lock_mode & (XFS_MMAPLOCK_EXCL | XFS_ILOCK_EXCL)));
+ 	} else if (lock_mode & XFS_MMAPLOCK_EXCL)
+@@ -566,6 +595,10 @@ xfs_lock_two_inodes(
+ 	ASSERT(!(ip0_mode & (XFS_MMAPLOCK_SHARED|XFS_MMAPLOCK_EXCL)) ||
+ 	       !(ip1_mode & (XFS_ILOCK_SHARED|XFS_ILOCK_EXCL)));
+ 
++	/* XFS_DAX_* is not allowed */
++	ASSERT((ip0_mode & (XFS_DAX_SHARED | XFS_DAX_EXCL)) == 0);
++	ASSERT((ip1_mode & (XFS_DAX_SHARED | XFS_DAX_EXCL)) == 0);
 +
- 	return addr;
+ 	ASSERT(ip0->i_ino != ip1->i_ino);
+ 
+ 	if (ip0->i_ino > ip1->i_ino) {
+diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+index 492e53992fa9..693ca66bd89b 100644
+--- a/fs/xfs/xfs_inode.h
++++ b/fs/xfs/xfs_inode.h
+@@ -67,6 +67,9 @@ typedef struct xfs_inode {
+ 	spinlock_t		i_ioend_lock;
+ 	struct work_struct	i_ioend_work;
+ 	struct list_head	i_ioend_list;
++
++	/* protect changing the mode to/from DAX */
++	struct percpu_rw_semaphore i_dax_sem;
+ } xfs_inode_t;
+ 
+ /* Convert from vfs inode to xfs inode */
+@@ -278,10 +281,13 @@ static inline void xfs_ifunlock(struct xfs_inode *ip)
+ #define	XFS_ILOCK_SHARED	(1<<3)
+ #define	XFS_MMAPLOCK_EXCL	(1<<4)
+ #define	XFS_MMAPLOCK_SHARED	(1<<5)
++#define	XFS_DAX_EXCL		(1<<6)
++#define	XFS_DAX_SHARED		(1<<7)
+ 
+ #define XFS_LOCK_MASK		(XFS_IOLOCK_EXCL | XFS_IOLOCK_SHARED \
+ 				| XFS_ILOCK_EXCL | XFS_ILOCK_SHARED \
+-				| XFS_MMAPLOCK_EXCL | XFS_MMAPLOCK_SHARED)
++				| XFS_MMAPLOCK_EXCL | XFS_MMAPLOCK_SHARED \
++				| XFS_DAX_EXCL | XFS_DAX_SHARED)
+ 
+ #define XFS_LOCK_FLAGS \
+ 	{ XFS_IOLOCK_EXCL,	"IOLOCK_EXCL" }, \
+@@ -289,7 +295,9 @@ static inline void xfs_ifunlock(struct xfs_inode *ip)
+ 	{ XFS_ILOCK_EXCL,	"ILOCK_EXCL" }, \
+ 	{ XFS_ILOCK_SHARED,	"ILOCK_SHARED" }, \
+ 	{ XFS_MMAPLOCK_EXCL,	"MMAPLOCK_EXCL" }, \
+-	{ XFS_MMAPLOCK_SHARED,	"MMAPLOCK_SHARED" }
++	{ XFS_MMAPLOCK_SHARED,	"MMAPLOCK_SHARED" }, \
++	{ XFS_DAX_EXCL,   	"DAX_EXCL" }, \
++	{ XFS_DAX_SHARED,	"DAX_SHARED" }
+ 
+ 
+ /*
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index d6843cdb51d0..a2f2604c3187 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -1158,6 +1158,16 @@ xfs_vn_tmpfile(
+ 	return xfs_generic_create(dir, dentry, mode, 0, true);
  }
  
++static void xfs_lock_mode(struct inode *inode)
++{
++	xfs_ilock(XFS_I(inode), XFS_DAX_SHARED);
++}
++
++static void xfs_unlock_mode(struct inode *inode)
++{
++	xfs_iunlock(XFS_I(inode), XFS_DAX_SHARED);
++}
++
+ static const struct inode_operations xfs_inode_operations = {
+ 	.get_acl		= xfs_get_acl,
+ 	.set_acl		= xfs_set_acl,
+@@ -1168,6 +1178,18 @@ static const struct inode_operations xfs_inode_operations = {
+ 	.update_time		= xfs_vn_update_time,
+ };
+ 
++static const struct inode_operations xfs_reg_inode_operations = {
++	.get_acl		= xfs_get_acl,
++	.set_acl		= xfs_set_acl,
++	.getattr		= xfs_vn_getattr,
++	.setattr		= xfs_vn_setattr,
++	.listxattr		= xfs_vn_listxattr,
++	.fiemap			= xfs_vn_fiemap,
++	.update_time		= xfs_vn_update_time,
++	.lock_mode              = xfs_lock_mode,
++	.unlock_mode            = xfs_unlock_mode,
++};
++
+ static const struct inode_operations xfs_dir_inode_operations = {
+ 	.create			= xfs_vn_create,
+ 	.lookup			= xfs_vn_lookup,
+@@ -1372,7 +1394,7 @@ xfs_setup_iops(
+ 
+ 	switch (inode->i_mode & S_IFMT) {
+ 	case S_IFREG:
+-		inode->i_op = &xfs_inode_operations;
++		inode->i_op = &xfs_reg_inode_operations;
+ 		inode->i_fop = &xfs_file_operations;
+ 		if (IS_DAX(inode))
+ 			inode->i_mapping->a_ops = &xfs_dax_aops;
 -- 
 2.21.0
 
