@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27B1113773D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 20:31:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FB83137737
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 20:31:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728814AbgAJTbQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Jan 2020 14:31:16 -0500
-Received: from mga14.intel.com ([192.55.52.115]:10924 "EHLO mga14.intel.com"
+        id S1728719AbgAJTbC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Jan 2020 14:31:02 -0500
+Received: from mga01.intel.com ([192.55.52.88]:21831 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728566AbgAJT35 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Jan 2020 14:29:57 -0500
+        id S1728860AbgAJTaA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 10 Jan 2020 14:30:00 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 11:29:56 -0800
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 11:30:00 -0800
 X-IronPort-AV: E=Sophos;i="5.69,418,1571727600"; 
-   d="scan'208";a="272503818"
+   d="scan'208";a="216772415"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.157])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 11:29:56 -0800
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 11:29:59 -0800
 From:   ira.weiny@intel.com
 To:     linux-kernel@vger.kernel.org
 Cc:     Ira Weiny <ira.weiny@intel.com>,
@@ -30,9 +30,9 @@ Cc:     Ira Weiny <ira.weiny@intel.com>,
         "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH V2 01/12] fs/stat: Define DAX statx attribute
-Date:   Fri, 10 Jan 2020 11:29:31 -0800
-Message-Id: <20200110192942.25021-2-ira.weiny@intel.com>
+Subject: [RFC PATCH V2 03/12] fs/xfs: Separate functionality of xfs_inode_supports_dax()
+Date:   Fri, 10 Jan 2020 11:29:33 -0800
+Message-Id: <20200110192942.25021-4-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20200110192942.25021-1-ira.weiny@intel.com>
 References: <20200110192942.25021-1-ira.weiny@intel.com>
@@ -45,65 +45,85 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Ira Weiny <ira.weiny@intel.com>
 
-In order for users to determine if a file is currently operating in DAX
-mode (effective DAX).  Define a statx attribute value and set that
-attribute if the effective DAX flag is set.
+xfs_inode_supports_dax() should reflect if the inode can support DAX not
+that it is enabled for DAX.  Leave that to other helper functions.
 
-To go along with this we propose the following addition to the statx man
-page:
+Change the caller of xfs_inode_supports_dax() to call
+xfs_inode_use_dax() which reflects new logic to override the effective
+DAX flag with either the mount option or the physical DAX flag.
 
-STATX_ATTR_DAX
-
-	DAX (cpu direct access) is a file mode that attempts to minimize
-	software cache effects for both I/O and memory mappings of this
-	file.  It requires a capable device, a compatible filesystem
-	block size, and filesystem opt-in. It generally assumes all
-	accesses are via cpu load / store instructions which can
-	minimize overhead for small accesses, but adversely affect cpu
-	utilization for large transfers. File I/O is done directly
-	to/from user-space buffers. While the DAX property tends to
-	result in data being transferred synchronously it does not give
-	the guarantees of synchronous I/O that data and necessary
-	metadata are transferred. Memory mapped I/O may be performed
-	with direct mappings that bypass system memory buffering. Again
-	while memory-mapped I/O tends to result in data being
-	transferred synchronously it does not guarantee synchronous
-	metadata updates. A dax file may optionally support being mapped
-	with the MAP_SYNC flag which does allow cpu store operations to
-	be considered synchronous modulo cpu cache effects.
+To make the logic clear create 2 helper functions for the mount and
+physical flag.
 
 Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 ---
- fs/stat.c                 | 3 +++
- include/uapi/linux/stat.h | 1 +
- 2 files changed, 4 insertions(+)
+ fs/xfs/xfs_iops.c | 32 ++++++++++++++++++++++++++------
+ 1 file changed, 26 insertions(+), 6 deletions(-)
 
-diff --git a/fs/stat.c b/fs/stat.c
-index 030008796479..894699c74dde 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -79,6 +79,9 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
- 	if (IS_AUTOMOUNT(inode))
- 		stat->attributes |= STATX_ATTR_AUTOMOUNT;
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 8afe69ca188b..0a0ea90259e9 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -1234,6 +1234,15 @@ static const struct inode_operations xfs_inline_symlink_inode_operations = {
+ 	.update_time		= xfs_vn_update_time,
+ };
  
-+	if (IS_DAX(inode))
-+		stat->attributes |= STATX_ATTR_DAX;
++static bool
++xfs_inode_mount_is_dax(
++	struct xfs_inode *ip)
++{
++	struct xfs_mount	*mp = ip->i_mount;
 +
- 	if (inode->i_op->getattr)
- 		return inode->i_op->getattr(path, stat, request_mask,
- 					    query_flags);
-diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
-index ad80a5c885d5..e5f9d5517f6b 100644
---- a/include/uapi/linux/stat.h
-+++ b/include/uapi/linux/stat.h
-@@ -169,6 +169,7 @@ struct statx {
- #define STATX_ATTR_ENCRYPTED		0x00000800 /* [I] File requires key to decrypt in fs */
- #define STATX_ATTR_AUTOMOUNT		0x00001000 /* Dir: Automount trigger */
- #define STATX_ATTR_VERITY		0x00100000 /* [I] Verity protected file */
-+#define STATX_ATTR_DAX			0x00002000 /* [I] File is DAX */
++	return (mp->m_flags & XFS_MOUNT_DAX) == XFS_MOUNT_DAX;
++}
++
+ /* Figure out if this file actually supports DAX. */
+ static bool
+ xfs_inode_supports_dax(
+@@ -1245,11 +1254,6 @@ xfs_inode_supports_dax(
+ 	if (!S_ISREG(VFS_I(ip)->i_mode) || xfs_is_reflink_inode(ip))
+ 		return false;
  
+-	/* DAX mount option or DAX iflag must be set. */
+-	if (!(mp->m_flags & XFS_MOUNT_DAX) &&
+-	    !(ip->i_d.di_flags2 & XFS_DIFLAG2_DAX))
+-		return false;
+-
+ 	/* Block size must match page size */
+ 	if (mp->m_sb.sb_blocksize != PAGE_SIZE)
+ 		return false;
+@@ -1258,6 +1262,22 @@ xfs_inode_supports_dax(
+ 	return xfs_inode_buftarg(ip)->bt_daxdev != NULL;
+ }
  
- #endif /* _UAPI_LINUX_STAT_H */
++static bool
++xfs_inode_is_dax(
++	struct xfs_inode *ip)
++{
++	return (ip->i_d.di_flags2 & XFS_DIFLAG2_DAX) == XFS_DIFLAG2_DAX;
++}
++
++static bool
++xfs_inode_use_dax(
++	struct xfs_inode *ip)
++{
++	return xfs_inode_supports_dax(ip) &&
++		(xfs_inode_mount_is_dax(ip) ||
++		 xfs_inode_is_dax(ip));
++}
++
+ STATIC void
+ xfs_diflags_to_iflags(
+ 	struct inode		*inode,
+@@ -1276,7 +1296,7 @@ xfs_diflags_to_iflags(
+ 		inode->i_flags |= S_SYNC;
+ 	if (flags & XFS_DIFLAG_NOATIME)
+ 		inode->i_flags |= S_NOATIME;
+-	if (xfs_inode_supports_dax(ip))
++	if (xfs_inode_use_dax(ip))
+ 		inode->i_flags |= S_DAX;
+ }
+ 
 -- 
 2.21.0
 
