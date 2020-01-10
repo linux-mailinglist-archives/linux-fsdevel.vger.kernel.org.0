@@ -2,186 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A18991373D9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 17:40:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F04D1373F7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jan 2020 17:45:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728529AbgAJQkj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Jan 2020 11:40:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38396 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728492AbgAJQki (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Jan 2020 11:40:38 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93009205F4;
-        Fri, 10 Jan 2020 16:40:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578674438;
-        bh=ghwT9udGzFrI759DFzCiR1cP5wbf5wcwUL/Ty1oAAt4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FcRjA3WCXsltMm/vW2YxcIFxXQ9LJ7UMhG+2itz701PCG1v3z3I8/3D8ROl81la8V
-         9p+q8NmV9m0PHSZF8+P0goioG1ox055bD67dhTIoYjdTQUxn3HBFduEuICthJPv1Yo
-         YCyBoH3EMvZkQmKiIcomfnwVpukeNyWEdVsrJ/OM=
-Date:   Fri, 10 Jan 2020 17:40:35 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Dmitry Safonov <dima@arista.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Jiri Slaby <jslaby@suse.com>,
-        Vasiliy Khoruzhick <vasilykh@arista.com>,
-        linux-serial@vger.kernel.org, Iurii Zaikin <yzaikin@google.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH-next 2/3] sysctl/sysrq: Remove __sysrq_enabled copy
-Message-ID: <20200110164035.GA1822445@kroah.com>
-References: <20200109215444.95995-1-dima@arista.com>
- <20200109215444.95995-3-dima@arista.com>
+        id S1728892AbgAJQpI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Jan 2020 11:45:08 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39038 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728107AbgAJQpI (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 10 Jan 2020 11:45:08 -0500
+Received: by mail-wr1-f67.google.com with SMTP id y11so2446764wrt.6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Jan 2020 08:45:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chrisdown.name; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ympT5AY/DLl6UvuOCQnir9hVpWD64MMWty4h6MSY0Uc=;
+        b=grsTIxw69aF1wk5b95935hZWjq6OuMW2LUVE+UZgYwNKRK2xArvuAAXFlmsla9UBic
+         QoxoszrvgwSlKPFJlE6/tOUAJ+8skkaNMQWEI6v7uWzO3mvd9qiUS/otfZMFQUAlHm/w
+         8up97pyFZiEUl3kFEo+kNrPE/vlE2s0yDRVBA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ympT5AY/DLl6UvuOCQnir9hVpWD64MMWty4h6MSY0Uc=;
+        b=ncEqy8Rvd5kc4ljRyBQr5gdhB9DN+2S8XEWWYf0lgfEwa/hmaUfs6dSYPaCnCxhUJG
+         dvKcl9KBWaefbHhbs6S31l29nzDm+YB+WbbyKbPG+Hhx1XKj90W19ROerFD6XTVQINa5
+         L8R5bSNkdym5A3KT5xmsk65wVexRrA33YeDzp2ccr2WKaCqIwossxesAULvNgzZkVw1M
+         m3t+wgV9tMjZzabQk+fwB+1wqsLab7t/5y+4PaUAUDDfLvAp83hgqaY/w51OB+xJnWKt
+         hrZSM0nRSY5s37yjZaYu9X6rajaeVfBboqZ+eoLx0cY+LH0sm9kRvhxgIDl7d7D6Hjkl
+         LRAQ==
+X-Gm-Message-State: APjAAAX2xdKSHtY0U+IsZ67yYTsghsQA74MCkkNxtDoFPh5m1ggRVGvD
+        GafcZ2Af7zoTeUuhiZpHpNjG1Q==
+X-Google-Smtp-Source: APXvYqx8rXwpLQ7ifI81LfMYzyilHJtApNJMIaEHlbBH7ZTahixW6jrbn4b5p2Rj+1+wR/12UcK4Gw==
+X-Received: by 2002:a05:6000:1288:: with SMTP id f8mr4518896wrx.66.1578674705827;
+        Fri, 10 Jan 2020 08:45:05 -0800 (PST)
+Received: from localhost ([2a01:4b00:8432:8a00:63de:dd93:20be:f460])
+        by smtp.gmail.com with ESMTPSA id x10sm2823222wrp.58.2020.01.10.08.45.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jan 2020 08:45:05 -0800 (PST)
+Date:   Fri, 10 Jan 2020 16:45:03 +0000
+From:   Chris Down <chris@chrisdown.name>
+To:     Hugh Dickins <hughd@google.com>, Dave Chinner <david@fromorbit.com>
+Cc:     Chris Mason <clm@fb.com>, Amir Goldstein <amir73il@gmail.com>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>
+Subject: Re: [PATCH v5 2/2] tmpfs: Support 64-bit inums per-sb
+Message-ID: <20200110164503.GA1697@chrisdown.name>
+References: <ae9306ab10ce3d794c13b1836f5473e89562b98c.1578225806.git.chris@chrisdown.name>
+ <20200107001039.GM23195@dread.disaster.area>
+ <20200107001643.GA485121@chrisdown.name>
+ <20200107003944.GN23195@dread.disaster.area>
+ <CAOQ4uxjvH=UagqjHP_71_p9_dW9wKqiaWujzY1xKe7yZVFPoTA@mail.gmail.com>
+ <alpine.LSU.2.11.2001070002040.1496@eggly.anvils>
+ <CAOQ4uxiMQ3Oz4M0wKo5FA_uamkMpM1zg7ydD8FXv+sR9AH_eFA@mail.gmail.com>
+ <20200107210715.GQ23195@dread.disaster.area>
+ <4E9DF932-C46C-4331-B88D-6928D63B8267@fb.com>
+ <alpine.LSU.2.11.2001080259350.1884@eggly.anvils>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20200109215444.95995-3-dima@arista.com>
+In-Reply-To: <alpine.LSU.2.11.2001080259350.1884@eggly.anvils>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 09, 2020 at 09:54:43PM +0000, Dmitry Safonov wrote:
-> Many embedded boards have a disconnected TTL level serial which can
-> generate some garbage that can lead to spurious false sysrq detects.
-> 
-> Currently, sysrq can be either completely disabled for serial console
-> or always disabled (with CONFIG_MAGIC_SYSRQ_SERIAL), since
-> commit 732dbf3a6104 ("serial: do not accept sysrq characters via serial port")
-> 
-> At Arista, we have such boards that can generate BREAK and random
-> garbage. While disabling sysrq for serial console would solve
-> the problem with spurious false sysrq triggers, it's also desirable
-> to have a way to enable sysrq back.
-> 
-> Having the way to enable sysrq was beneficial to debug lockups with
-> a manual investigation in field and on the other side preventing false
-> sysrq detections.
-> 
-> As a preparation to add sysrq_toggle_support() call into uart,
-> remove a private copy of sysrq_enabled from sysctl - it should reflect
-> the actual status of sysrq.
-> 
-> Furthermore, the private copy isn't correct already in case
-> sysrq_always_enabled is true. So, remove __sysrq_enabled and use a
-> getter-helper for sysrq enabled status.
-> 
-> Cc: Iurii Zaikin <yzaikin@google.com>
-> Cc: Jiri Slaby <jslaby@suse.com>
-> Cc: Luis Chamberlain <mcgrof@kernel.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: linux-fsdevel@vger.kernel.org
-> Signed-off-by: Dmitry Safonov <dima@arista.com>
-> ---
->  drivers/tty/sysrq.c   |  7 +++++++
->  include/linux/sysrq.h |  1 +
->  kernel/sysctl.c       | 41 ++++++++++++++++++++++-------------------
->  3 files changed, 30 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
-> index f724962a5906..ef3e78967146 100644
-> --- a/drivers/tty/sysrq.c
-> +++ b/drivers/tty/sysrq.c
-> @@ -73,6 +73,13 @@ static bool sysrq_on_mask(int mask)
->  	       (sysrq_enabled & mask);
->  }
->  
-> +int sysrq_get_mask(void)
-> +{
-> +	if (sysrq_always_enabled)
-> +		return 1;
-> +	return sysrq_enabled;
-> +}
-> +
->  static int __init sysrq_always_enabled_setup(char *str)
->  {
->  	sysrq_always_enabled = true;
-> diff --git a/include/linux/sysrq.h b/include/linux/sysrq.h
-> index 8c71874e8485..4a0b351fa2d3 100644
-> --- a/include/linux/sysrq.h
-> +++ b/include/linux/sysrq.h
-> @@ -50,6 +50,7 @@ int unregister_sysrq_key(int key, struct sysrq_key_op *op);
->  struct sysrq_key_op *__sysrq_get_key_op(int key);
->  
->  int sysrq_toggle_support(int enable_mask);
-> +int sysrq_get_mask(void);
->  
->  #else
->  
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index d396aaaf19a3..6ddb4d7df0e1 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -229,25 +229,8 @@ static int proc_dopipe_max_size(struct ctl_table *table, int write,
->  		void __user *buffer, size_t *lenp, loff_t *ppos);
->  
->  #ifdef CONFIG_MAGIC_SYSRQ
-> -/* Note: sysrq code uses its own private copy */
-> -static int __sysrq_enabled = CONFIG_MAGIC_SYSRQ_DEFAULT_ENABLE;
-> -
->  static int sysrq_sysctl_handler(struct ctl_table *table, int write,
-> -				void __user *buffer, size_t *lenp,
-> -				loff_t *ppos)
-> -{
-> -	int error;
-> -
-> -	error = proc_dointvec(table, write, buffer, lenp, ppos);
-> -	if (error)
-> -		return error;
-> -
-> -	if (write)
-> -		sysrq_toggle_support(__sysrq_enabled);
-> -
-> -	return 0;
-> -}
-> -
-> +			void __user *buffer, size_t *lenp, loff_t *ppos);
->  #endif
->  
->  static struct ctl_table kern_table[];
-> @@ -747,7 +730,7 @@ static struct ctl_table kern_table[] = {
->  #ifdef CONFIG_MAGIC_SYSRQ
->  	{
->  		.procname	= "sysrq",
-> -		.data		= &__sysrq_enabled,
-> +		.data		= NULL,
->  		.maxlen		= sizeof (int),
->  		.mode		= 0644,
->  		.proc_handler	= sysrq_sysctl_handler,
-> @@ -2844,6 +2827,26 @@ static int proc_dostring_coredump(struct ctl_table *table, int write,
->  }
->  #endif
->  
-> +#ifdef CONFIG_MAGIC_SYSRQ
-> +static int sysrq_sysctl_handler(struct ctl_table *table, int write,
-> +				void __user *buffer, size_t *lenp, loff_t *ppos)
-> +{
-> +	int tmp, ret;
-> +
-> +	tmp = sysrq_get_mask();
-> +
-> +	ret = __do_proc_dointvec(&tmp, table, write, buffer,
-> +			       lenp, ppos, NULL, NULL);
-> +	if (ret || !write)
-> +		return ret;
-> +
-> +	if (write)
-> +		sysrq_toggle_support(tmp);
-> +
-> +	return 0;
-> +}
-> +#endif
+Hi Hugh, Dave,
 
-Why did you move this function down here?  Can't it stay where it is and
-you can just fix the logic there?  Now you have two different #ifdef
-blocks intead of just one :(
+Hugh Dickins writes:
+>Dave, Amir, Chris, many thanks for the info you've filled in -
+>and absolutely no need to run any scan on your fleet for this,
+>I think we can be confident that even if fb had some 15-year-old tool
+>in use on its fleet of 2GB-file filesystems, it would not be the one
+>to insist on a kernel revert of 64-bit tmpfs inos.
+>
+>The picture looks clear now: while ChrisD does need to hold on to his
+>config option and inode32/inode64 mount option patch, it is much better
+>left out of the kernel until (very unlikely) proved necessary.
 
-thanks,
+Based on Mikael's comment above about Steam binaries, and the lack of 
+likelihood that they can be rebuilt, I'm inclined to still keep inode{64,32}, 
+but make legacy behaviour require explicit opt-in. That is:
 
-greg k-h
+- Default it to inode64
+- Remove the Kconfig option
+- Only print it as an option if tmpfs was explicitly mounted with inode32
+
+The reason I suggest keeping this is that I'm mildly concerned that the kind of 
+users who might be impacted by this change due to 32-bit _FILE_OFFSET_BITS -- 
+like the not-too-uncommon case that Mikael brings up -- seem unlikely to be the 
+kind of people that would find it in an rc.
+
+Other than that, the first patch could be similar to how it is now, 
+incorporating Hugh's improvements to the first patch to put everything under 
+the same stat_lock in shmem_reserve_inode.
+
+What do you folks think?
+
+Thanks,
+
+Chris
