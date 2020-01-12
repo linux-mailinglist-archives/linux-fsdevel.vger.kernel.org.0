@@ -2,102 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98AB0138868
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2020 23:14:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 278161388C4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2020 00:31:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733179AbgALWOL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 12 Jan 2020 17:14:11 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43745 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727222AbgALWOL (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 12 Jan 2020 17:14:11 -0500
-Received: by mail-wr1-f65.google.com with SMTP id d16so6720485wre.10
-        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Jan 2020 14:14:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Pdsn7Z43myA4UM/waxQ04+O5Uff/PNpJ2sZTu/NBBhQ=;
-        b=peitwbdH0PEzHXILp4o55vJNfIMewfas8TB78TKNQTzgDZd7vcGW5MbgYnJzdogAvx
-         P7yH5akqY21dHfdmKZ7rgfxfZ/RZinG6VRJPZR0iPRNxyjTWMfQX8QsIiEilUKSD5O1T
-         H8Rr3S6NDRcC5lUTVpxKUnUmJnG6i/K/bq4+u6sm3x6qYVeaZ+qiqKJSIBNPGvXJOcpl
-         tipEJLPCIkLdOZbn880NPqEPx2wt/714ELtLQQJ0lVOvQ3xe3E0/tBMZBLtcnV48T/oL
-         7L1Fjqji9lNKnlka2922pvst5javZR0MR6oWsnfAyyEPR8CGmmhtZlMIaFlKodV5S4ha
-         eJ6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Pdsn7Z43myA4UM/waxQ04+O5Uff/PNpJ2sZTu/NBBhQ=;
-        b=ts4RoH7TBLM1n4zmssMHXj83IM1gzNX4mZn7BUN1sU6ox3n2qeSfa2VuyhyWSjZw2j
-         kS8eXLhlYdLAiVcs///19b6X5fCbXMogezgFnCHyKqWl+5Zp44PtCVucM4bSX3EMVAOT
-         p3BdBMxNS2zfJs92++topTMNN1CsFFtugy6Dh5w8V/1zaaYrkxUxx19o556wPmKQ/GY2
-         0M3+ZDBy7F3p0OOTXhFV2F3xEhtoDaH0QKlrECXK/Tb97Z/YljMpm4BvWDK+3lvKKG3o
-         d2V9Jl/zexVy3p4bVHjeu2eLq1B2s4wdW3xEy2qSXmsMJ1AsBPIDWEOzq7rBTsL7yG1u
-         WOoA==
-X-Gm-Message-State: APjAAAUvQqiyzM/icGdZxtZfAHX2D5I0kJY0vWtokQYrBqYQc4eOMNrc
-        xn5PFchWyXY2Wo9iK3kgVQ0Ca5Rc
-X-Google-Smtp-Source: APXvYqxP3zmyBU+A1ueBQwz6VBg4TQTNFFMb+7FI1T3HttRgBQK9kq/CsI8Jk8Edw48qSH+Qhnj0pg==
-X-Received: by 2002:adf:f18b:: with SMTP id h11mr14512633wro.56.1578867249429;
-        Sun, 12 Jan 2020 14:14:09 -0800 (PST)
-Received: from Pali-Latitude.lan (ip-89-103-160-142.net.upcbroadband.cz. [89.103.160.142])
-        by smtp.gmail.com with ESMTPSA id d14sm12838967wru.9.2020.01.12.14.14.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Jan 2020 14:14:08 -0800 (PST)
-From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>
-To:     linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
-Subject: [PATCH] udf: Fix meaning of ENTITYID_FLAGS_* macros to be really bitwise-or flags
-Date:   Sun, 12 Jan 2020 23:13:53 +0100
-Message-Id: <20200112221353.29711-1-pali.rohar@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        id S2387422AbgALXb2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 Jan 2020 18:31:28 -0500
+Received: from foss.arm.com ([217.140.110.172]:33012 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727323AbgALXb1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 12 Jan 2020 18:31:27 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1F10530E;
+        Sun, 12 Jan 2020 15:31:27 -0800 (PST)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 20B963F534;
+        Sun, 12 Jan 2020 15:31:25 -0800 (PST)
+Date:   Sun, 12 Jan 2020 23:31:22 +0000
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        valentin.schneider@arm.com, qperret@google.com,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] sched/rt: Add a new sysctl to control uclamp_util_min
+Message-ID: <20200112233122.b26kidww6xphuyqq@e107158-lin.cambridge.arm.com>
+References: <20191220164838.31619-1-qais.yousef@arm.com>
+ <20200108134448.GG2844@hirez.programming.kicks-ass.net>
+ <20200109130052.feebuwuuvwvm324w@e107158-lin.cambridge.arm.com>
+ <20200110134236.GM2844@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200110134236.GM2844@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20171215
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Currently ENTITYID_FLAGS_* macros definitions are written as hex numbers
-but their meaning is not bitwise-or flags. But rather bit position. This is
-unusual and could be misleading. So change meaning of ENTITYID_FLAGS_*
-macros definitions to be really bitwise-or flags.
+On 01/10/20 14:42, Peter Zijlstra wrote:
+> On Thu, Jan 09, 2020 at 01:00:58PM +0000, Qais Yousef wrote:
+> > On 01/08/20 14:44, Peter Zijlstra wrote:
+> 
+> > > Did cpu_uclamp_write() forget to check for input<0 ?
+> > 
+> > Hmm just tried that and it seems so
+> > 
+> > # echo -1 > cpu.uclamp.min
+> > # cat cpu.uclamp.min
+> > 42949671.96
+> > 
+> > capacity_from_percent(); we check for
+> > 
+> > 7301                 if (req.percent > UCLAMP_PERCENT_SCALE) {
+> > 7302                         req.ret = -ERANGE;
+> > 7303                         return req;
+> > 7304                 }
+> > 
+> > But req.percent is s64, maybe it should be u64?
+> 
+> 		if ((u64)req.percent > UCLAMP_PERCENT_SCALE)
+> 
+> should do, I think.
 
-Signed-off-by: Pali Rohár <pali.rohar@gmail.com>
----
- fs/udf/ecma_167.h | 4 ++--
- fs/udf/super.c    | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Okay I'll send a separate fix for that.
 
-diff --git a/fs/udf/ecma_167.h b/fs/udf/ecma_167.h
-index f9ee412fe..3fd85464a 100644
---- a/fs/udf/ecma_167.h
-+++ b/fs/udf/ecma_167.h
-@@ -95,8 +95,8 @@ struct regid {
- } __packed;
- 
- /* Flags (ECMA 167r3 1/7.4.1) */
--#define ENTITYID_FLAGS_DIRTY		0x00
--#define ENTITYID_FLAGS_PROTECTED	0x01
-+#define ENTITYID_FLAGS_DIRTY		0x01
-+#define ENTITYID_FLAGS_PROTECTED	0x02
- 
- /* Volume Structure Descriptor (ECMA 167r3 2/9.1) */
- #define VSD_STD_ID_LEN			5
-diff --git a/fs/udf/super.c b/fs/udf/super.c
-index 0dad63f88..7e6ec9fa0 100644
---- a/fs/udf/super.c
-+++ b/fs/udf/super.c
-@@ -773,7 +773,7 @@ static int udf_verify_domain_identifier(struct super_block *sb,
- 		udf_warn(sb, "Not OSTA UDF compliant %s descriptor.\n", dname);
- 		goto force_ro;
- 	}
--	if (ident->flags & (1 << ENTITYID_FLAGS_DIRTY)) {
-+	if (ident->flags & ENTITYID_FLAGS_DIRTY) {
- 		udf_warn(sb, "Possibly not OSTA UDF compliant %s descriptor.\n",
- 			 dname);
- 		goto force_ro;
--- 
-2.20.1
+Cheers
 
+--
+Qais Yousef
