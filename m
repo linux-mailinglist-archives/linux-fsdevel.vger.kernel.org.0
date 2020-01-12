@@ -2,98 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC0AF138404
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2020 00:35:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F30BA138489
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2020 03:16:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731692AbgAKXfW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Jan 2020 18:35:22 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:37380 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731623AbgAKXfW (ORCPT
+        id S1731950AbgALCQs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Jan 2020 21:16:48 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34330 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731948AbgALCQs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Jan 2020 18:35:22 -0500
-Received: by mail-oi1-f193.google.com with SMTP id z64so5195928oia.4;
-        Sat, 11 Jan 2020 15:35:21 -0800 (PST)
+        Sat, 11 Jan 2020 21:16:48 -0500
+Received: by mail-pl1-f196.google.com with SMTP id g9so198230plq.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Jan 2020 18:16:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=6nsqiMT9oMX01YJWr2NQaCFjUFg9E87lTHlKtmL/4JU=;
-        b=jyDXLARC4k7VXdXWwWGocAv7u6XXI1C3kObhkXU7msPtMaC1AKSSX4qoZ0+hHGbEEc
-         p6Q47yLsjt0o0908SGKRRiYTgx7Kub3t3oQzIqOIVPPQug++rKL5LoTHOWOwIFghzq/k
-         tYjl79RptnOa38hS8LUdT0vnkZT5x4rm1pIvnpvYDQbpnLhEImOg5laNAV9ZMvMjAON0
-         cnElF3OTMOvoyORRpX+GuclcTSdWeW4N5YGjGKnz1aNqWMkFzXyKMwqE+f+wyKWBISD+
-         ArrhJdFnr2tNZbrrvqig3m9jjav2i/WRE1XpdXJVxNnJTGeawQqwheVAwpaojgoWW2Zf
-         OrZA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vGIDhMkgk6Yxk9hwcJUbeiuGdVTEJQSdVtxa8Ksgq0I=;
+        b=VKTp20o6e1570ly+OroArEs2yK8TRc8zTn1AM6UonyvsiELOT9JRoatzH/zDEmSSMm
+         cZnrNwagysbC84XUWOWPzvMrktG1nStCemX63kEVM3lp/r+rJBZCGlgHLKcu875h3DiQ
+         R7jIoghHxClJEGkWH9X/+Q6ZdWgrqmlo5TzSLZAOzwyU1pOpWeWL8QnXbLCppCyr9Pky
+         UK80Lo90j88hbqJs+KdVCEtw0qt1j0GVrybB6Wwf0CfzgrZwOLcgry2h1+6UtgOwZODv
+         Kkz7eS0klJasPiUkf2w89ct2lqGatlEw8nLm4Y1lzhB/zTi0hXC47ttMVtI0yVLjwZEu
+         xN3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=6nsqiMT9oMX01YJWr2NQaCFjUFg9E87lTHlKtmL/4JU=;
-        b=brYZVtfy0RJmYfgYAsa3nmz0HtHY3/Dc9cMXxgf8JxGfWfUlWDL5gDyzTOfoqegl/t
-         JVlG8GoRAiito0AeXdjM0F7u7moYXgesaJJFgYoxD3FOQiKDXsfmJ/J9TbLNZPsLGANk
-         jVEbgFR1sGAvVP32o3IZKE2bhULO6vvHGUlWsGf79O8fOZwh658i+qCpOSAm0QkaGADe
-         quSkwsEaptB8iC2eRtJ8qAaIOhM83n+Xtd40oJGxeDd7Pac6C4GygEWTST3lHsrEHHQs
-         RTjKdDJsx9XgvAUKmCwUaZzY0Ance20z5KITC5SMYC/c4YMj4c//r4ihdSWG3+ff2KZ+
-         6RrQ==
-X-Gm-Message-State: APjAAAWT/cm2WtHTgMPd2kiUx99nAIP3xUNnQNZ8XVa5EMPxKkzpavAw
-        qBT2blcLHxqVGPIeKRaBnD141w1nXpixb9h2xQH/5w==
-X-Google-Smtp-Source: APXvYqyUB0xeTnDpzHjEuZdGxoOL5/li0WIDrMMHdo+U4FwFwZTbhGAUZVZRm78WL5ug4KSpmT9xG14s300ZUTE+3dk=
-X-Received: by 2002:a05:6808:a11:: with SMTP id n17mr7456835oij.94.1578785721361;
- Sat, 11 Jan 2020 15:35:21 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vGIDhMkgk6Yxk9hwcJUbeiuGdVTEJQSdVtxa8Ksgq0I=;
+        b=ZYWhK0zP8pUkjsURzST6ZIXtk8FSVbSK1jIKD4FsHJ3slADQlWVFnddCn65KgJrEgX
+         /SsgUK+GYrMEdfWglx174liO5c5Af6LdbH06+CT9s+K5RHaK8ScC0GM7sm7IccNFVtcL
+         B6hMs3fyC7To+jLf29uE9V+8QuMdzIMInKGDQvWON+Lm6UlM4DMmCRrTuZNaM7bSNNjs
+         BZK3OBxngHWScD4jYf7+4g7Uh+HqYoRl+WhDoypZJskKMTNhcWo0TPjcw9/oMS3PWTy7
+         wCKiQ91PB71nIvjUIhrI4jRePH7d9wyctx/RfRqZ0BpHRHOyT9jb8lcWKBdWzUZG5m+J
+         WyJw==
+X-Gm-Message-State: APjAAAUiFa4Hoaoy3nciOhF+0YJT08C4OYiTp5X9IAhg3ZXZMTW+IsH9
+        Y8fg9Z+lqu0FP0mcAFDVzh2bb4gpZ0c=
+X-Google-Smtp-Source: APXvYqyv1LeI+xjOOHaKKiHuxN7/X39asnC3k5SnqhpCRcLo0rDk59XFNfJqk0XKBHd6prsa49uoxQ==
+X-Received: by 2002:a17:90a:ead3:: with SMTP id ev19mr15035309pjb.80.1578795407788;
+        Sat, 11 Jan 2020 18:16:47 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id x22sm8389504pgc.2.2020.01.11.18.16.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 11 Jan 2020 18:16:47 -0800 (PST)
+Subject: Re: [PATCH 3/3] io_uring: add IORING_OP_MADVISE
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20200110154739.2119-1-axboe@kernel.dk>
+ <20200110154739.2119-4-axboe@kernel.dk> <20200111231014.bmpxdg2juw3mxiwr@box>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <cea0337c-0ce7-b390-44ab-9f064894ca3d@kernel.dk>
+Date:   Sat, 11 Jan 2020 19:16:45 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Received: by 2002:a8a:87:0:0:0:0:0 with HTTP; Sat, 11 Jan 2020 15:35:20 -0800 (PST)
-In-Reply-To: <20200111175611.GA422540@kroah.com>
-References: <20200111121419.22669-1-linkinjeon@gmail.com> <20200111175611.GA422540@kroah.com>
-From:   Namjae Jeon <linkinjeon@gmail.com>
-Date:   Sun, 12 Jan 2020 08:35:20 +0900
-Message-ID: <CAKYAXd-+o-cmn17r0Z-k9gmrQW=8Pj_PDFNvG+jP8eCSPDbV9Q@mail.gmail.com>
-Subject: Re: [PATCH] staging: exfat: make staging/exfat and fs/exfat mutually exclusive
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     valdis.kletnieks@vt.edu, devel@driverdev.osuosl.org,
-        Namjae Jeon <namjae.jeon@samsung.com>, amir73il@gmail.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200111231014.bmpxdg2juw3mxiwr@box>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2020-01-12 2:56 GMT+09:00, Greg KH <gregkh@linuxfoundation.org>:
-> On Sat, Jan 11, 2020 at 09:14:19PM +0900, Namjae Jeon wrote:
->> From: Namjae Jeon <namjae.jeon@samsung.com>
+On 1/11/20 4:10 PM, Kirill A. Shutemov wrote:
+> On Fri, Jan 10, 2020 at 08:47:39AM -0700, Jens Axboe wrote:
+>> This adds support for doing madvise(2) through io_uring. We assume that
+>> any operation can block, and hence punt everything async. This could be
+>> improved, but hard to make bullet proof. The async punt ensures it's
+>> safe.
 >>
->> Make staging/exfat and fs/exfat mutually exclusive to select the one
->> between two same filesystem.
->>
->> Suggested-by: Amir Goldstein <amir73il@gmail.com>
->> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
->> ---
->>  drivers/staging/exfat/Kconfig | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/staging/exfat/Kconfig
->> b/drivers/staging/exfat/Kconfig
->> index 292a19dfcaf5..9a0fccec65d9 100644
->> --- a/drivers/staging/exfat/Kconfig
->> +++ b/drivers/staging/exfat/Kconfig
->> @@ -1,7 +1,7 @@
->>  # SPDX-License-Identifier: GPL-2.0
->>  config STAGING_EXFAT_FS
->>  	tristate "exFAT fs support"
->> -	depends on BLOCK
->> +	depends on BLOCK && !EXFAT_FS
->
-> There is no such symbol in the kernel tree, so this isn't going to do
-> anything :(
->
-> When/if EXFAT_FS does show up, I will be glad to add this.  Or better
-> yet, just have this as part of the "real" exfat patchset, that would
-> make the most sense, right?
-Right,
-Thanks!
->
-> thanks,
->
-> greg k-h
->
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> 
+> How capability checks work with io_uring?
+> 
+> MADV_HWPOISON requires CAP_SYS_ADMIN and I just want to make sure it will
+> not open a way around.
+
+There are two ways the request can get invoked from io_uring:
+
+1) Inline from the system call, personality is the application (of course)
+   in that case.
+
+2) Async helper, personality (creds, mm, etc) are inherited from the ring.
+
+So it should be totally safe, and madvise is no different than the other
+system calls supported in that regard.
+
+-- 
+Jens Axboe
+
