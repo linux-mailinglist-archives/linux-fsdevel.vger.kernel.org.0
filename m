@@ -2,214 +2,294 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3F2213885B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2020 22:34:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8A0713885D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2020 22:40:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387437AbgALVeG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 12 Jan 2020 16:34:06 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:40248 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727128AbgALVeG (ORCPT
+        id S1733179AbgALVkc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 Jan 2020 16:40:32 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:32835 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727222AbgALVkc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 12 Jan 2020 16:34:06 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iqkro-006qzE-Fy; Sun, 12 Jan 2020 21:33:52 +0000
-Date:   Sun, 12 Jan 2020 21:33:52 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Ian Kent <raven@themaw.net>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        stable <stable@vger.kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Serge Hallyn <serge@hallyn.com>, dev@opencontainers.org,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RFC 0/1] mount: universally disallow mounting over
- symlinks
-Message-ID: <20200112213352.GP8904@ZenIV.linux.org.uk>
-References: <20200101144407.ugjwzk7zxrucaa6a@yavin.dot.cyphar.com>
- <20200101234009.GB8904@ZenIV.linux.org.uk>
- <20200102035920.dsycgxnb6ba2jhz2@yavin.dot.cyphar.com>
- <20200103014901.GC8904@ZenIV.linux.org.uk>
- <20200108031314.GE8904@ZenIV.linux.org.uk>
- <CAHk-=wgQ3yOBuK8mxpnntD8cfX-+10ba81f86BYg8MhvwpvOMg@mail.gmail.com>
- <20200108213444.GF8904@ZenIV.linux.org.uk>
- <CAHk-=wiq11+thoe60qhsSHk_nbRF2TRL1Wnf6eHcYObjhJmsww@mail.gmail.com>
- <20200110041523.GK8904@ZenIV.linux.org.uk>
- <979cf680b0fbdce515293a3449d564690cde6a3f.camel@themaw.net>
+        Sun, 12 Jan 2020 16:40:32 -0500
+Received: by mail-lj1-f193.google.com with SMTP id y6so7887692lji.0;
+        Sun, 12 Jan 2020 13:40:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to;
+        bh=Jyl4d4zHXjE2fzyvfEeWIdPg0Qhn3KHMynJV0N+3WYU=;
+        b=ZSe3IixKEAgrG7hyvrnHaC91mNXbJeKLlqhK7ohILkkyIRlwlq+bVIZfS8XlN7LrZ+
+         hOWJTRgZ2GW//CgbsUna8RLTEobNJiD5OXx9ujkNG2FItxw/Ou4/Os1jVSAWXEXiNyn7
+         YJXALmZHFhPEey3on5XddyoVUxj7RK5/sJd2/MICnMpe9CPtaY2k4iCKWXalcu2iH2in
+         2IITkshRnthtMQgq4bAxo0B87LabnV1/q2727qWFka1OAbwwJ7PR0o327VHXJRH1NeG6
+         hiDZLTdHxSj6KJvO3mcD4AInD5C6nwf2wC/t2NyN006AU6jOF4BXrbwVDeYFPWpibc9p
+         iz8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to;
+        bh=Jyl4d4zHXjE2fzyvfEeWIdPg0Qhn3KHMynJV0N+3WYU=;
+        b=dXw1gpQ+vZe0XvW0eVmsNPBf7QjquiIAk1/p50Nz06dt4jVNxbLizV9kqyLOdQHAKo
+         fNnvkHHVP0qEESM4s5Ktq0E/uybRyCNccI0fi2ubv3N/dIWgAws2o2C9AU4NJOPBzoUQ
+         qLNXNosLTb1sEVz82HAsKc7QLm192aRuRodcKeaw4CSjJAtWOidmjSTU7yW++CkmYDb+
+         NaBbHObbRzjP75wchBXWpyoOaqjR7uRRaJvfUOXv3oiqMuSt1JWG3VHoSZj7OEe36vce
+         Ewp1okaeqM5rMKXLkBOwPRbbFHzzLedfyIZK1GtpYwu0NioSDAOd21JGwbk1aGrPX8LU
+         nvEg==
+X-Gm-Message-State: APjAAAWd2nun9j8rHmxfA/llc4Q1QDtdkAb254KBarbvAXHHNjbe3Pt5
+        mnfbyTqaMsyrEY7bnHglelWZ0dxB
+X-Google-Smtp-Source: APXvYqxxco/ezPHxDYaiyAgPOOOMkEsSBSVAT1MhpQInb2CmlvYfR2lVgbzIyCvs0xMAxg8PfGd9WQ==
+X-Received: by 2002:a2e:88c5:: with SMTP id a5mr8900103ljk.201.1578865229080;
+        Sun, 12 Jan 2020 13:40:29 -0800 (PST)
+Received: from [192.168.43.115] ([109.126.145.157])
+        by smtp.gmail.com with ESMTPSA id z13sm4687427lfi.69.2020.01.12.13.40.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 12 Jan 2020 13:40:28 -0800 (PST)
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20200110154739.2119-1-axboe@kernel.dk>
+ <20200110154739.2119-4-axboe@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH 3/3] io_uring: add IORING_OP_MADVISE
+Message-ID: <a9a6be4f-2d81-7634-a2f5-38341f718a7e@gmail.com>
+Date:   Mon, 13 Jan 2020 00:39:46 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <979cf680b0fbdce515293a3449d564690cde6a3f.camel@themaw.net>
+In-Reply-To: <20200110154739.2119-4-axboe@kernel.dk>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="TnaMNkjdr2jxx9mkkbIg3uf04PlhI8t8E"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 02:20:55PM +0800, Ian Kent wrote:
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--TnaMNkjdr2jxx9mkkbIg3uf04PlhI8t8E
+Content-Type: multipart/mixed; boundary="28z4doOrSDfZi7mZ8O7rPeprdWzFB7fqi";
+ protected-headers="v1"
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Message-ID: <a9a6be4f-2d81-7634-a2f5-38341f718a7e@gmail.com>
+Subject: Re: [PATCH 3/3] io_uring: add IORING_OP_MADVISE
+References: <20200110154739.2119-1-axboe@kernel.dk>
+ <20200110154739.2119-4-axboe@kernel.dk>
+In-Reply-To: <20200110154739.2119-4-axboe@kernel.dk>
 
-> Yeah, autofs ->d_automount() doesn't return -EISDIR, by the time
-> we get there it's not relevant any more, so that check looks
-> redundant. I'm not aware of any other fs automount implementation
-> that needs that EISDIR pass-thru function.
-> 
-> I didn't notice it at the time of the merge, sorry about that.
-> 
-> While we're at it that:
->    if (!path->dentry->d_op || !path->dentry->d_op->d_automount)
->        return -EREMOTE;
-> 
-> at the top of follow_automount() isn't going to be be relevant
-> for autofs because ->d_automount() really must always be defined
-> for it.
-> 
-> But, at the time of the merge, I didn't object to it because
-> there were (are) other file systems that use the VFS automount
-> function which may accidentally not define the method.
+--28z4doOrSDfZi7mZ8O7rPeprdWzFB7fqi
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-OK...
+On 10/01/2020 18:47, Jens Axboe wrote:
+> This adds support for doing madvise(2) through io_uring. We assume that=
 
-> > Unfortunately, there are other interesting questions related to
-> > autofs-specific bits (->d_manage()) and the timezone-related fun
-> > is, of course, still there.  I hope to sort that out today or
-> > tomorrow, at least enough to do a reasonable set of backportable
-> > fixes to put in front of follow_managed()/step_into() queue.
-> > Oh, well...
-> 
-> Yeah, I know it slows you down but I kink-off like having a chance
+> any operation can block, and hence punt everything async. This could be=
 
-Nice typo, that ;-)
+> improved, but hard to make bullet proof. The async punt ensures it's
+> safe.
+>=20
+I don't like that it share structs/fields names with fadvise. E.g. madvis=
+e's
+context is called struct io_fadvise. Could it at least have fadvise_advic=
+e filed
+in struct io_uring_sqe? io_uring parts of the patchset look good.
 
-> to look at what's going and think about your questions before trying
-> to answer them, rather than replying prematurely, as I usually do ...
-> 
-> It's been a bit of a busy day so far but I'm getting to look into
-> the questions you've asked.
+Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
 
-Here's a bit more of those (I might've missed some of your replies on
-IRC; my apologies if that's the case):
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  fs/io_uring.c                 | 56 ++++++++++++++++++++++++++++++++++-=
 
-1) AFAICS, -EISDIR from ->d_manage() actually means "don't even try
-->d_automount() here".  If its effect can be delayed until the decision
-to call ->d_automount(), the things seem to get simpler.  Is it ever
-returned in situation when the sucker _is_ overmounted?
+>  include/uapi/linux/io_uring.h |  1 +
+>  2 files changed, 56 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 0b200a7d4ae0..378f97cc2bf2 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -403,7 +403,10 @@ struct io_files_update {
+> =20
+>  struct io_fadvise {
+>  	struct file			*file;
+> -	u64				offset;
+> +	union {
+> +		u64			offset;
+> +		u64			addr;
+> +	};
+>  	u32				len;
+>  	u32				advice;
+>  };
+> @@ -682,6 +685,10 @@ static const struct io_op_def io_op_defs[] =3D {
+>  		/* IORING_OP_FADVISE */
+>  		.needs_file		=3D 1,
+>  	},
+> +	{
+> +		/* IORING_OP_MADVISE */
+> +		.needs_mm		=3D 1,
+> +	},
+>  };
+> =20
+>  static void io_wq_submit_work(struct io_wq_work **workptr);
+> @@ -2448,6 +2455,42 @@ static int io_openat(struct io_kiocb *req, struc=
+t io_kiocb **nxt,
+>  	return 0;
+>  }
+> =20
+> +static int io_madvise_prep(struct io_kiocb *req, const struct io_uring=
+_sqe *sqe)
+> +{
+> +#if defined(CONFIG_ADVISE_SYSCALLS) && defined(CONFIG_MMU)
+> +	if (sqe->ioprio || sqe->buf_index || sqe->off)
+> +		return -EINVAL;
+> +
+> +	req->fadvise.addr =3D READ_ONCE(sqe->addr);
+> +	req->fadvise.len =3D READ_ONCE(sqe->len);
+> +	req->fadvise.advice =3D READ_ONCE(sqe->fadvise_advice);
+> +	return 0;
+> +#else
+> +	return -EOPNOTSUPP;
+> +#endif
+> +}
+> +
+> +static int io_madvise(struct io_kiocb *req, struct io_kiocb **nxt,
+> +		      bool force_nonblock)
+> +{
+> +#if defined(CONFIG_ADVISE_SYSCALLS) && defined(CONFIG_MMU)
+> +	struct io_fadvise *fa =3D &req->fadvise;
+> +	int ret;
+> +
+> +	if (force_nonblock)
+> +		return -EAGAIN;
+> +
+> +	ret =3D do_madvise(fa->addr, fa->len, fa->advice);
+> +	if (ret < 0)
+> +		req_set_fail_links(req);
+> +	io_cqring_add_event(req, ret);
+> +	io_put_req_find_next(req, nxt);
+> +	return 0;
+> +#else
+> +	return -EOPNOTSUPP;
+> +#endif
+> +}
+> +
+>  static int io_fadvise_prep(struct io_kiocb *req, const struct io_uring=
+_sqe *sqe)
+>  {
+>  	if (sqe->ioprio || sqe->buf_index || sqe->addr)
+> @@ -3769,6 +3812,9 @@ static int io_req_defer_prep(struct io_kiocb *req=
+,
+>  	case IORING_OP_FADVISE:
+>  		ret =3D io_fadvise_prep(req, sqe);
+>  		break;
+> +	case IORING_OP_MADVISE:
+> +		ret =3D io_madvise_prep(req, sqe);
+> +		break;
+>  	default:
+>  		printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
+>  				req->opcode);
+> @@ -3973,6 +4019,14 @@ static int io_issue_sqe(struct io_kiocb *req, co=
+nst struct io_uring_sqe *sqe,
+>  		}
+>  		ret =3D io_fadvise(req, nxt, force_nonblock);
+>  		break;
+> +	case IORING_OP_MADVISE:
+> +		if (sqe) {
+> +			ret =3D io_madvise_prep(req, sqe);
+> +			if (ret)
+> +				break;
+> +		}
+> +		ret =3D io_madvise(req, nxt, force_nonblock);
+> +		break;
+>  	default:
+>  		ret =3D -EINVAL;
+>  		break;
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_urin=
+g.h
+> index f87d8fb42916..7cb6fe0fccd7 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -88,6 +88,7 @@ enum {
+>  	IORING_OP_READ,
+>  	IORING_OP_WRITE,
+>  	IORING_OP_FADVISE,
+> +	IORING_OP_MADVISE,
+> =20
+>  	/* this goes last, obviously */
+>  	IORING_OP_LAST,
+>=20
 
-2) can autofs_d_automount() ever be called for a daemon?  Looks like it
-shouldn't be...
-
-3) is _anything_ besides root directory ever created in direct autofs
-superblocks by anyone?  If not, why does autofs_lookup() even bother to
-do anything there?  IOW, why not have it return ERR_PTR(-ENOENT) immediately
-for direct ones?  Or am I missing something and it is, in fact, possible
-to have the daemon create something in those?
-
-4) Symlinks look like they should qualify for parent being non-empty;
-at least autofs_d_manage() seems to think so (simple_empty() use).
-So shouldn't we remove the trap from its parent on symlink/restore on
-unlink if parent gets empty?  For version 4 or earlier, that is.  Or is
-it simply that daemon only creates symlinks in root directory?
+--=20
+Pavel Begunkov
 
 
-Anyway, intermediate state of the series is in #work.namei right now,
-and some _very_ interesting possibilities open up.  It definitely
-needs more massage around __follow_mount_rcu() (as it is, the
-fastpath in there is still too twisted).  Said that
-	* call graph is less convoluted
-	* follow_managed() calls are folded into step_into().  Interface:
-int step_into(nd, flags, dentry, inode, seq), with inode/seq used only
-if we are in RCU mode.
-	* ".." still doesn't use that; it probably ought to.
-	* lookup_fast() doesn't take path - nd, &inode, &seq and returns dentry
-	* lookup_open() and fs/namei.c:atomic_open() get similar treatment
-- don't take path, return dentry.
-	* calls of follow_managed()/step_into() combination returning 1
-are always followed by get_link(), and very shortly, at that.  So much
-that we can realistically merge pick_link() (in the end of
-step_into()) with get_link().  That merge is NOT done in this branch yet.
+--28z4doOrSDfZi7mZ8O7rPeprdWzFB7fqi--
 
-The last one promises to get rid of a rather unpleasant group of calling
-conventions.  Right now we have several functions (step_into()/
-walk_component()/lookup_last()/do_last()) with the following calling
-conventions:
-	-E...	=> error
-	0	=> non-symlink or symlink not followed; nd->path points to it
-	1	=> picked a symlink to follow; its mount/dentry/seq has been
-pushed on nd->stack[]; its inode is stashed into nd->link_inode for
-subsequent get_link() to pick.  nd->path is left unchanged.
+--TnaMNkjdr2jxx9mkkbIg3uf04PlhI8t8E
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-That way all of those become
-	ERR_PTR(-E...)	=> error
-	NULL		=> non-symlink, symlink not followed or a pure
-jump (bare "/" or procfs ones); nd->path points to where we end up
-        string		=> symlink being followed; the sucker's pushed
-to stack, initial jump (if any) has been handled and the string returned
-is what we need to traverse.
+-----BEGIN PGP SIGNATURE-----
 
-IMO it's less arbitrary that way.  More importantly, the separation between
-step_into() committing to symlink traversal and (inevitably following)
-get_link() is gone - it's one operation after that change.  No nd->link_inode
-either - it's only needed to carry the information from pick_link() to the
-next get_link().
+iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl4bkigACgkQWt5b1Glr
++6WObw//YAQdVzXMcJJKxco0yWIVtpcOiE+UPoDSCJ2IDIjo7WDj17fOWXwhsnBC
+x3IYOqOOGpeTpHQ5Bzhq+6U3dZShEc1Tf/vEtIwVRpupoFpklmULLIwwMcyxnJIF
+n/yo8mi1MtdjzZKiTjeFyWXGx7baLSDVv0ZPZDk0CdOearbrfVIsywXMlMjNy89h
+s66o+kBP/WiO+jIumZkZrcD0g67hSnh/WzC2Y3NBCo6Yka14R4nmeOQDG4MSBkFK
+P+CusaSoaCdenfuPkYhk6JJ8tq7XoR09FtS0FMOWjNH8fYkpdHvQxy1R+a9ZkMu/
+TBhlWxH81fi3sDaS8LBHEnDD5X6v2lbWmysdCVv6Ocd72ZlavqduGrwnIDgiIbbs
+jwgqvc8y3GFa+/mEfK4q9atCCGpcPQuB7wpx/YftVAVRkS2sAlJ6bLRSu0ygsEiE
+2ArhtaUM+KITKh4UM2yX3s7yvRz7ovqGbHSaFmlj9d2QX0k05MWi6aodtTFXgEOn
+P4siXkzjbK9Z1GtCcWamxqHCDPksgBvauXs8VlDbORtnhsg/1UyKaw+PkoCjRO+j
+3BWmbFnKpt0qEucH26DB8VxgzFGj/tcAj1QXUOy3JD2iVhMYpbv/WVtiU5DxW9ng
+zXXNc6mwP8eblwhtT16k87ITaggpNwCWxh6xBTzL7UEqIaWs4zc=
+=fscM
+-----END PGP SIGNATURE-----
 
-Loops turn into
-	while (!(err = link_path_walk(nd, s)) &&
-	       (s = lookup_last(nd)) != NULL)
-		;
-and
-	while (!(err = link_path_walk(nd, s)) &&
-	       (s = do_last(nd, file, op)) != NULL)
-		;
-
-trailing_symlink() goes away (folded into pick_link()/get_link() combo,
-conditional upon nd->depth at the entry).  And in link_path_walk() we'll
-have
-                if (unlikely(!*name)) {
-                        /* pathname body, done */
-                        if (!nd->depth)
-                                return 0;
-                        name = nd->stack[nd->depth - 1].name;
-                        /* trailing symlink, done */
-                        if (!name)
-                                return 0;
-                        /* last component of nested symlink */
-                        s = walk_component(nd, WALK_FOLLOW);
-                } else {
-                        /* not the last component */
-                        s = walk_component(nd, WALK_FOLLOW | WALK_MORE);
-                }
-                if (s) {
-                        if (IS_ERR(s))
-                                return PTR_ERR(s);
-			/* a symlink to follow */
-			nd->stack[nd->depth - 1].name = name;
-                        name = s;
-                        continue;
-                }
-
-Anyway, before I try that one I'm going to fold path_openat2() into
-that series - that step is definitely going to require some massage
-there; it's too close to get_link() changes done in Aleksa's series.
-
-If we do that, we get a single primitive for "here's the result of
-lookup; traverse mounts and either move into the result or, if
-it's a symlink that needs to be traversed, start the symlink
-traversal - jump into the base position for it (if needed) and
-return the pathname that needs to be handled".  As it is, mainline
-has that logics spread over about a dozen locations...
-
-Diffstat at the moment:
- fs/autofs/dev-ioctl.c |   6 +-
- fs/internal.h         |   1 -
- fs/namei.c            | 460 ++++++++++++++------------------------------------
- fs/namespace.c        |  97 +++++++----
- fs/nfs/nfstrace.h     |   2 -
- fs/open.c             |   4 +-
- include/linux/namei.h |   3 +-
- 7 files changed, 197 insertions(+), 376 deletions(-)
-
-In the current form the sucker appears to work (so far - about 30%
-into the usual xfstests run) without visible slowdowns...
+--TnaMNkjdr2jxx9mkkbIg3uf04PlhI8t8E--
