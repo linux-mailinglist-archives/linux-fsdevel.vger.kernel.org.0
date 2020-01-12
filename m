@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A0ED13879C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2020 19:00:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24373138798
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jan 2020 19:00:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733197AbgALR7v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 12 Jan 2020 12:59:51 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39083 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733155AbgALR7v (ORCPT
+        id S1733220AbgALR7w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 Jan 2020 12:59:52 -0500
+Received: from mail-wm1-f52.google.com ([209.85.128.52]:51302 "EHLO
+        mail-wm1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733191AbgALR7w (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 12 Jan 2020 12:59:51 -0500
-Received: by mail-wr1-f66.google.com with SMTP id y11so6379353wrt.6;
-        Sun, 12 Jan 2020 09:59:50 -0800 (PST)
+        Sun, 12 Jan 2020 12:59:52 -0500
+Received: by mail-wm1-f52.google.com with SMTP id d73so7216562wmd.1;
+        Sun, 12 Jan 2020 09:59:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=I7p3MTVh7YW9DcnuTnIP7pDzwPRCSGKLfSdL+8Sg37M=;
-        b=APD6gBkArkoCRa5hy0KIkpF9vcj82jkyOWBkslfE0wW7/PzK87pTLmwiYM6a7yM90a
-         8wzH0lzDh+vYapb5+OotTkwql512VUuDVJou0acaXY5hobfJz0MQWpbcOijOs/0YM/ue
-         Ws/Z/zQeQ7TNy7btBJ52k0A1rn1SrOCjf8CqWO/MXGQdoDIknS4nbhPcmMQjJ7XAD52H
-         Oybo1fnhoeu3Pc1ZPp6g2OdgUvE33DxP7/3sfxgGl3woY76uwmumXd1A9TXmSvu2gyXw
-         6LN/jIh2fL+SS4B4tmjFQDiJEAg9vyJH9ETqz9hBOr7LgibghfiTuNeqgUR83jfZdipv
-         I9lQ==
+        bh=UI0olG8Ukex2VWgAiT/l06nIRGJslLR40+ZHv7ZVUKc=;
+        b=u4VYHSVtc62kKwCw8LfnRdHaQz785lmJ/mFM6OwbwFG5eM/ox/lljIrE490W5Ivl1E
+         TvVGQ031Wu269rPLrJPT61hw4wFDbd0xQCLGONvT5PjYTWlcqw4QShlWzkiLJbcP4LwE
+         D6MWSImvjwW4uiJMmKNF53GD2dPjUUlr2IioWYh5HS/wTnORZellfnu04Kk2zewQvGuk
+         Kpra+pFY6+0LbSt5aIzuTrBKAD1weJI0gpgLdelEgDO/LeUeoUkI+kwV827xCOnoo3n5
+         m4c8iICpKkPWsMqwIOpYu/btWo08a4CN6V31UoN7g1JQrSJFtNp5SYd74G4ECIc94uyd
+         r+Uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=I7p3MTVh7YW9DcnuTnIP7pDzwPRCSGKLfSdL+8Sg37M=;
-        b=KwfQCTtlpq6+y1R8OiO0UNGnBKvWG0Z12w4/kM90AhQ+Yz7ydzuJMC3mAA2NOiJjGy
-         6Y6RkW9R/XMiLcxGM39vuLzOTS4uzLxZIdhQV45JDlnZ8c2y0FG9lrw9GeMLSneKJbeG
-         l0i+k9RGSUlnm4uAiF00rguu9rV7SOjmlyivK0xStYeDU6Di3AcHeic4+HTEyXadBjt8
-         M5h1+Ft8dL9iP2TqwQLagZmDDaW3Hak6AHaEDYOfND5iZ5V2Yvl6zOCXrddZu8r7q3s9
-         5FsRk8NrtyVPg7Sdiq7J+PzMs6okaA6FNaVxU0+MoqrevoO/37T1/WeZibQ1fkF+fUqr
-         5gdw==
-X-Gm-Message-State: APjAAAUpmBkn4GJW4LbcXHwBi/IW/8zEdeft/8x4SesGBfshHk3fbtyj
-        iF7dt1puNBBa6AHeq2b3A+RQPM33
-X-Google-Smtp-Source: APXvYqx8jVVXP2mT9xjVxDqVe2Ls7boR3vrxUDKVudBmPvhg1niv2uT8b9SxZjnAcIt0ulVVbx7gVg==
-X-Received: by 2002:a5d:4b8f:: with SMTP id b15mr15105861wrt.100.1578851989330;
-        Sun, 12 Jan 2020 09:59:49 -0800 (PST)
+        bh=UI0olG8Ukex2VWgAiT/l06nIRGJslLR40+ZHv7ZVUKc=;
+        b=K8cyzcYICi0OOSeh6OeMpz0pbHh2kbE3csN7yHbs0hWM/x7VF8lx4rXZwedu7iyt4h
+         xbzuTmEvSMRQ5hRDZcUpRLmmkwr4KBjcs46w9EBjc9Z4phkGOhOikVStmc+ENwSyJh2n
+         tdFVOSP+CqJ7Nix3CyGFuUEdGpBLZl8spZkxbUst22hfClGfLTtF6FYCJOfB0ic8u5vC
+         wwvszQzKODwIXPiQvEVLEOVqACrwfvyy8pFQ0PVD/hq1XEokQYZe0ZvYcnJv4cRXNLYP
+         GVlXkXE1cpi1dTZeESKs+QDBI7hWPDMnnWwBLt4qSmg4Q4EnxH1ud7MttkHhDWHzZ/bN
+         CEbg==
+X-Gm-Message-State: APjAAAUe+zPWUiZXaeBuEGmvy8VYd/nInxGosEjh6NRxSPl3fNFCYHBK
+        yrAGx4AuCqKjm0m4mD0lYYVstTbQ
+X-Google-Smtp-Source: APXvYqwIILguQViiff3Pti4Cez1bl6U3fwyMu1qvpJl99JqO/PKZcXKhB0sk5rqPaBqdjWso1LIdyA==
+X-Received: by 2002:a7b:c450:: with SMTP id l16mr14913994wmi.166.1578851990392;
+        Sun, 12 Jan 2020 09:59:50 -0800 (PST)
 Received: from Pali-Latitude.lan (ip-89-103-160-142.net.upcbroadband.cz. [89.103.160.142])
-        by smtp.gmail.com with ESMTPSA id t25sm11076522wmj.19.2020.01.12.09.59.48
+        by smtp.gmail.com with ESMTPSA id t25sm11076522wmj.19.2020.01.12.09.59.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Jan 2020 09:59:48 -0800 (PST)
+        Sun, 12 Jan 2020 09:59:49 -0800 (PST)
 From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jan Kara <jack@suse.cz>
-Subject: [WIP PATCH 2/4] udf: Fix reading numFiles and numDirs from UDF 2.00+ VAT discs
-Date:   Sun, 12 Jan 2020 18:59:31 +0100
-Message-Id: <20200112175933.5259-3-pali.rohar@gmail.com>
+Subject: [WIP PATCH 3/4] udf: Fix reading minUDFReadRev and minUDFWriteRev from UDF 2.00+ VAT discs
+Date:   Sun, 12 Jan 2020 18:59:32 +0100
+Message-Id: <20200112175933.5259-4-pali.rohar@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200112175933.5259-1-pali.rohar@gmail.com>
 References: <20200112175933.5259-1-pali.rohar@gmail.com>
@@ -71,71 +71,49 @@ implemented in this change yet.
 
 Signed-off-by: Pali Rohár <pali.rohar@gmail.com>
 ---
- fs/udf/super.c  | 25 ++++++++++++++++++++++---
- fs/udf/udf_sb.h |  3 +++
- 2 files changed, 25 insertions(+), 3 deletions(-)
+ fs/udf/super.c  | 11 ++++++++++-
+ fs/udf/udf_sb.h |  2 ++
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/fs/udf/super.c b/fs/udf/super.c
-index 8df6e9962..e8661bf01 100644
+index e8661bf01..0dad63f88 100644
 --- a/fs/udf/super.c
 +++ b/fs/udf/super.c
-@@ -1202,6 +1202,8 @@ static int udf_load_vat(struct super_block *sb, int p_index, int type1_index)
- 		map->s_type_specific.s_virtual.s_start_offset = 0;
- 		map->s_type_specific.s_virtual.s_num_entries =
- 			(sbi->s_vat_inode->i_size - 36) >> 2;
-+		/* TODO: Add support for reading Logical Volume Extended Information (UDF 1.50 Errata, DCN 5003, 3.3.4.5.1.3) */
-+		map->s_type_specific.s_virtual.s_has_additional_data = false;
- 	} else if (map->s_partition_type == UDF_VIRTUAL_MAP20) {
- 		vati = UDF_I(sbi->s_vat_inode);
- 		if (vati->i_alloc_type != ICBTAG_FLAG_AD_IN_ICB) {
-@@ -1215,6 +1217,12 @@ static int udf_load_vat(struct super_block *sb, int p_index, int type1_index)
- 							vati->i_ext.i_data;
- 		}
- 
-+		map->s_type_specific.s_virtual.s_has_additional_data =
-+			true;
-+		map->s_type_specific.s_virtual.s_num_files =
-+			le32_to_cpu(vat20->numFiles);
-+		map->s_type_specific.s_virtual.s_num_dirs =
-+			le32_to_cpu(vat20->numDirs);
+@@ -1223,6 +1223,10 @@ static int udf_load_vat(struct super_block *sb, int p_index, int type1_index)
+ 			le32_to_cpu(vat20->numFiles);
+ 		map->s_type_specific.s_virtual.s_num_dirs =
+ 			le32_to_cpu(vat20->numDirs);
++		map->s_type_specific.s_virtual.s_min_udf_read_rev =
++			le16_to_cpu(vat20->minUDFReadRev);
++		map->s_type_specific.s_virtual.s_min_udf_write_rev =
++			le16_to_cpu(vat20->minUDFWriteRev);
  		map->s_type_specific.s_virtual.s_start_offset =
  			le16_to_cpu(vat20->lengthHeader);
  		map->s_type_specific.s_virtual.s_num_entries =
-@@ -2417,9 +2425,20 @@ static int udf_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	buf->f_blocks = sbi->s_partmaps[sbi->s_partition].s_partition_len;
- 	buf->f_bfree = udf_count_free(sb);
- 	buf->f_bavail = buf->f_bfree;
--	buf->f_files = (lvidiu != NULL ? (le32_to_cpu(lvidiu->numFiles) +
--					  le32_to_cpu(lvidiu->numDirs)) : 0)
--			+ buf->f_bfree;
-+
-+	if ((sbi->s_partmaps[sbi->s_partition].s_partition_type == UDF_VIRTUAL_MAP15 ||
-+	     sbi->s_partmaps[sbi->s_partition].s_partition_type == UDF_VIRTUAL_MAP20) &&
-+	     sbi->s_partmaps[sbi->s_partition].s_type_specific.s_virtual.s_has_additional_data)
-+		buf->f_files = sbi->s_partmaps[sbi->s_partition].s_type_specific.s_virtual.s_num_files +
-+			       sbi->s_partmaps[sbi->s_partition].s_type_specific.s_virtual.s_num_dirs +
-+			       buf->f_bfree;
-+	else if (lvidiu != NULL)
-+		buf->f_files = le32_to_cpu(lvidiu->numFiles) +
-+			       le32_to_cpu(lvidiu->numDirs) +
-+			       buf->f_bfree;
-+	else
-+		buf->f_files = buf->f_bfree;
-+
- 	buf->f_ffree = buf->f_bfree;
- 	buf->f_namelen = UDF_NAME_LEN;
- 	buf->f_fsid.val[0] = (u32)id;
+@@ -2238,7 +2242,12 @@ static int udf_fill_super(struct super_block *sb, void *options, int silent)
+ 			goto error_out;
+ 		}
+ 
+-		if (sbi->s_lvd_udfrev >= 0x0102) { /* minUDFReadRev and minUDFWriteRev were introduced in UDF 1.02 */
++		if ((sbi->s_partmaps[sbi->s_partition].s_partition_type == UDF_VIRTUAL_MAP15 ||
++		     sbi->s_partmaps[sbi->s_partition].s_partition_type == UDF_VIRTUAL_MAP20) &&
++		     sbi->s_partmaps[sbi->s_partition].s_type_specific.s_virtual.s_has_additional_data) {
++			minUDFReadRev = sbi->s_partmaps[sbi->s_partition].s_type_specific.s_virtual.s_min_udf_read_rev;
++			minUDFWriteRev = sbi->s_partmaps[sbi->s_partition].s_type_specific.s_virtual.s_min_udf_write_rev;
++		} else if (sbi->s_lvd_udfrev >= 0x0102) { /* minUDFReadRev and minUDFWriteRev were introduced in UDF 1.02 */
+ 			minUDFReadRev = le16_to_cpu(lvidiu->minUDFReadRev);
+ 			minUDFWriteRev = le16_to_cpu(lvidiu->minUDFWriteRev);
+ 		} else {
 diff --git a/fs/udf/udf_sb.h b/fs/udf/udf_sb.h
-index 6bd0d4430..c74abbc84 100644
+index c74abbc84..baac0357b 100644
 --- a/fs/udf/udf_sb.h
 +++ b/fs/udf/udf_sb.h
-@@ -78,6 +78,9 @@ struct udf_sparing_data {
- struct udf_virtual_data {
- 	__u32	s_num_entries;
- 	__u16	s_start_offset;
-+	bool	s_has_additional_data;
-+	__u32	s_num_files;
-+	__u32	s_num_dirs;
+@@ -81,6 +81,8 @@ struct udf_virtual_data {
+ 	bool	s_has_additional_data;
+ 	__u32	s_num_files;
+ 	__u32	s_num_dirs;
++	__u16	s_min_udf_read_rev;
++	__u16	s_min_udf_write_rev;
  };
  
  struct udf_bitmap {
