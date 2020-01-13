@@ -2,93 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D2F4139C4B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2020 23:17:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36390139C4E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2020 23:19:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728746AbgAMWR6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jan 2020 17:17:58 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:44399 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726530AbgAMWR6 (ORCPT
+        id S1728819AbgAMWTe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jan 2020 17:19:34 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:41201 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726530AbgAMWTd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jan 2020 17:17:58 -0500
-Received: by mail-ot1-f68.google.com with SMTP id h9so10523523otj.11;
-        Mon, 13 Jan 2020 14:17:57 -0800 (PST)
+        Mon, 13 Jan 2020 17:19:33 -0500
+Received: by mail-il1-f194.google.com with SMTP id f10so9582268ils.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jan 2020 14:19:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bK5tAWYYK9RXUwEYak4dnGM+/7DX2wX/UYXB9gMajUQ=;
-        b=ST4aSNTTlA/yd/eg+W3JhTUhV6Lymv/8pDR/NCMtzSaGxbjejrjsj5JOOrNLmLFwHS
-         txzGWLc7LtTQZA6H/Pv6XNc+Yj9EOcL7cvnwGRpc6XJxvOiJq3cx58d8ft+HUt6C2EeE
-         5tkBZAWLGSOKcNV0tpGqAUSpp+x2yS4V9yBaYhcrOTz9bKAZ+8q4Sqn1s04dV2WS3OcY
-         kM9V7JcMhFPU1A8RkJoC/BLny1iM3OC/qfL5CTrVhKenXWKqOBdNcV7c6G0z60fcLmjE
-         +qx1uMIRkYyJB+1xarfE3iHNDSMlNrslZFTlNx5LphRGI5Ta+JQx/9q6TLTHtePJ5k7M
-         gnxQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:subject:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=1bRlb8icLO9A3T9CUBl/y+fFvzY9LjvdXm5n3OeDKjc=;
+        b=Dvw5S/ZKaOPQshFbiohKBvJWqhiCv2LLZFpqBW5hitEKxLq+JWKJlEphJEmAAsMOpQ
+         pZlK2/LSYRsVrBkb2MhurRPVZxfP+ni2rbtQUGr3sHy1sKdoDmq2wxXtCqvMpxP2K16R
+         q4AuF16H25ZEzKJuzbNWgBrzwlHSqpdcrVGJb6ZLEFX0CKaUawMW6UwPD6VbogPI5p1F
+         Y2DVIzxrCUbRIEtDdDrXLxjN7kZtnuyljM4noA0ClQjmu3GWXIfA8H+e2oil7I3fRGHX
+         /qm22hxKUFF2bxM/1tG0x+7Aez7n5nnBNMkXYfdwe9YFXkI87ET+2WSrdWwhh3DhtmCs
+         Dh3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bK5tAWYYK9RXUwEYak4dnGM+/7DX2wX/UYXB9gMajUQ=;
-        b=hFgAEMWCyUWT6hLAcaz3qWAmvcMxtEjspfQe5tVGvJ9dACd+6oFEftXyR/4yfuhDRK
-         9dwvkZZKJRl321V+2NwHkKe7KCu/1G1yG5zjyVB8XbuPo2oSVS6XQFsQNPsWu5rfBHeD
-         wFkEHOrthJ2Aku29i6jGQHY5UCzj44dHZknMcaKpsPNuFIXnPhZ2XqEnwdcv4R/6HQTA
-         wqRU/aLKMdu7UXUNHueXgLEwirwKEIeTxJfFi95mFn1GBjJhJbn2GXaRYmdSdWaR3NS+
-         ZJRQ5eHN2rhzHlgmClHbGllpVqTgOfIkuWbRcoJti8wkIsBMO/Et9od/uUT2fAZEWilb
-         Ilew==
-X-Gm-Message-State: APjAAAU1TnQp4bl3ylQ3ByAX+4ZP9IaMjiqh0Q0YyCBJSUryLdSPcOR0
-        c0QZSaU/7PIRJuxR+NXg2sE0ssgkOxpNW4pOU6s=
-X-Google-Smtp-Source: APXvYqyVdhG3hldz4ONnrT0gKc2YOBgljzMvL2rp8Bg5pF5JXB45PNzpJxFm6UCbTZB/iCUobze1pw30POKZAru7U64=
-X-Received: by 2002:a05:6830:155a:: with SMTP id l26mr14851212otp.339.1578953877354;
- Mon, 13 Jan 2020 14:17:57 -0800 (PST)
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1bRlb8icLO9A3T9CUBl/y+fFvzY9LjvdXm5n3OeDKjc=;
+        b=sC5f/3m9A3ulQne9wYdlL2BNfE7hGHKjI17PU0qo2VttIhtx11OfFYcJDjfytAw+1z
+         1U1Yejy5FSJOMwkcjLdxMagSdf/JMkJ5OnUxNgpSMpUr40TEgRQ+aGbrNL7IHwWNvDNx
+         IfCwAOKmmwRiH1O23gJ85akBuFIGdyZNS182yRl6lyuEKjfFvGf+RlU+lfxj81UlARQG
+         ArWSY8iEuveUgvfXKsfWAEPacmltrNRI8j3mTK2IzTkNTNcDlwnmbs7+wmYUkc0Ztu9d
+         X/8Vf8BxRXxQ+Z/ztM3ukMlaP9rORj6Z4X7B3my8GwHd77gxodV21XBBsbG878F4kyZ0
+         EJsA==
+X-Gm-Message-State: APjAAAU+4PURQZsTZjTCXEyI66n1zR/b06GiYGeDrVnqTdEnhrgWyjEf
+        oVhBOG2SEBFGwMwgTHEcD4pJrQ==
+X-Google-Smtp-Source: APXvYqzO0GHbV0w/TmUPEhOW7PoX0tTib7NohzGu9yTqXinG8F1yldxNXPgqeMkVhNSZKFgvHTNGOw==
+X-Received: by 2002:a92:8655:: with SMTP id g82mr656940ild.2.1578953973226;
+        Mon, 13 Jan 2020 14:19:33 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id f125sm4176309ilh.88.2020.01.13.14.19.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jan 2020 14:19:32 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: Re: [RFC 0/8] Replacing the readpages a_op
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Chris Mason <clm@fb.com>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "hch@infradead.org" <hch@infradead.org>
+References: <20200113153746.26654-1-willy@infradead.org>
+ <6CA4CD96-0812-4261-8FF9-CD28AA2EC38A@fb.com>
+ <20200113175436.GC332@bombadil.infradead.org>
+Message-ID: <e1b7a95a-5d49-2053-a0b4-a26ea26ca798@kernel.dk>
+Date:   Mon, 13 Jan 2020 15:19:31 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-References: <20191219165250.2875-1-bprotopopov@hotmail.com>
- <CAH2r5mu0Jd=MACMn6_KPvNWoAPVu+V_3FOnoEZxDWoy0x2qEzA@mail.gmail.com>
- <780DD595-1F92-4C34-A323-BB32748E5D07@dilger.ca> <20200113203613.GA111855@jra4>
-In-Reply-To: <20200113203613.GA111855@jra4>
-From:   Boris Protopopov <boris.v.protopopov@gmail.com>
-Date:   Mon, 13 Jan 2020 17:17:46 -0500
-Message-ID: <CAHhKpQ6s9szkMk-C8bZzC=3X3APu64Sujc5xtB5-Aa4_beiA7w@mail.gmail.com>
-Subject: Re: [PATCH] Add support for setting owner info, dos attributes, and
- create time
-To:     Jeremy Allison <jra@samba.org>
-Cc:     Andreas Dilger <adilger@dilger.ca>,
-        Steve French <smfrench@gmail.com>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200113175436.GC332@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-OK, I will look into adding ctime-related attribute, and model it after btime.
+On Mon, Jan 13, 2020 at 10:54 AM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Mon, Jan 13, 2020 at 04:42:10PM +0000, Chris Mason wrote:
+> > Btrfs basically does this now, honestly iomap isn't that far away.
+> > Given how sensible iomap is for this, I'd rather see us pile into
+> > that abstraction than try to pass pagevecs for large ranges.
+> > Otherwise, if
+>
+> I completely misread this at first and thought you were proposing we
+> pass a bio_vec to ->readahead.  Initially, this is a layering
+> violation, completely unnecessary to have all these extra offset/size
+> fields being allocated and passed around.  But ... the bio_vec and the
+> skb_frag_t are now the same data structure, so both block and network
+> use it.  It may make sense to have this as the common data structure
+> for 'unit of IO'.  The bio supports having the bi_vec allocated
+> externally to the data structure while the skbuff would need to copy
+> the array.
+>
+> Maybe we need a more neutral name than bio_vec so as to not upset
+> people.  page_frag, perhaps [1].
+>
+> [1] Yes, I know about the one in include/linux/mm_types_task.h
 
-On Mon, Jan 13, 2020 at 3:36 PM Jeremy Allison <jra@samba.org> wrote:
->
-> On Mon, Jan 13, 2020 at 01:26:39PM -0700, Andreas Dilger via samba-technical wrote:
-> > On Jan 9, 2020, at 12:10 PM, Steve French <smfrench@gmail.com> wrote:
-> > >
-> > > One loosely related question ...
-> > >
-> > > Your patch adds the ability to set creation time (birth time) which
-> > > can be useful for backup/restore cases, but doesn't address the other
-> > > hole in Linux (the inability to restore a files ctime).
-> > >
-> > > In Linux the ability to set timestamps seems quite limited (utimes
-> > > only allows setting mtime and atime).
-> >
-> > The whole point of not being able to change ctime and btime as a regular
-> > user is so that it is possible to determine when a file was actually
-> > created on the filesystem and last modified.  That is often useful for
-> > debugging or forensics reasons.
-> >
-> > I think if this is something that SMB/CIFS wants to do, it should save
-> > these attributes into an xattr of its own (e.g. user.dos or whatever),
-> > rather than using the ctime and btime(crtime) fields in the filesystem.
->
-> FYI, we (Samba) already do this for create time to store/fetch it
-> on systems and filesystems that don't store a create time. It's
-> easy to add extra info here.
+Note that bio_vecs support page merging, so page fragment isn't very
+descriptive. Not sure what a good name would be, but fragment isn't it.
+But any shared type would imply that others should support that as well
+if you're passing it around (or by pointer).
+
+-- 
+Jens Axboe
+
