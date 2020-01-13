@@ -2,196 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 253BC139C5D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2020 23:22:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1FC0139C69
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2020 23:27:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728931AbgAMWW2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jan 2020 17:22:28 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:39974 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbgAMWW2 (ORCPT
+        id S1728833AbgAMW1G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jan 2020 17:27:06 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:47614 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726530AbgAMW1G (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jan 2020 17:22:28 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00DMIIDR193120;
-        Mon, 13 Jan 2020 22:22:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=zPglb8UhbO+chGhG6wk5CJulSpyMF19uAt4IoPjXOk8=;
- b=qRNp3GXO0QymCdwNBUWWWEH5+lsY3l3T6R32GvGpMj9D6zVGI0H8g/YG1mQFyVVA7ZLG
- 7eVelb+li75WXODKZxZtZ8kyImuolHGeBB0RBjrP+gHdonkzBjiHZAkLqLPUHFr8Orf0
- ezQXoUxMRwOevMZzYFDUGoybICd55/WyQK9bDLT6GrMlyCqxBr3SHN1mjWfdyPHzcri0
- yG7jDnOw2ZmyGuF5/kjMJEfMzHubWsz2mgWqdYI+N4ihy3kmqSmOo9YR4RwR8cQFFwCz
- 458aXN6myy6qQa0FjnG6z0FVIIvJtSkjwgetPOOv80XeDP1jck6vvIO01Iu58Us57Xjn gg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2xf74s2018-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 13 Jan 2020 22:22:17 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00DMJYxe005880;
-        Mon, 13 Jan 2020 22:22:16 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 2xfqvtksq7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 13 Jan 2020 22:22:16 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00DMMFae023817;
-        Mon, 13 Jan 2020 22:22:15 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 13 Jan 2020 14:22:14 -0800
-Date:   Mon, 13 Jan 2020 14:22:12 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     ira.weiny@intel.com
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH V2 09/12] fs: Prevent mode change if file is mmap'ed
-Message-ID: <20200113222212.GO8247@magnolia>
-References: <20200110192942.25021-1-ira.weiny@intel.com>
- <20200110192942.25021-10-ira.weiny@intel.com>
+        Mon, 13 Jan 2020 17:27:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=SxeMrcw8VfwoTo9Q+GzAW5ii85Q073aK0lgVbFxIoE4=; b=fX/j+1OwGRaQw1c6OulAfDSmc
+        vF070DKVrwwzQje2r/Ium//k5I3u9hwozV+Xoa4216mfL+YrUwXzxsJrQMDOIkCkCRw5Ct9LS8p9j
+        AkAjnyuhUi4vpw7Nm8PKBgtAmM3TlMP2BA/2l7bdHal6njOrB193U4SxKHpSIDARKyrB+ONzZiDnw
+        UKf2El+WNSNNn16tg9v+RbOknmcaG4kM7NeLckDlBDewswSWtw1XrqnB81tsyErYzirIttekNgVrP
+        70YlWvPwuqWdZ0zE8jKHMy+LTiuwvl9eWBFZZmsN2It2mJmUiFmrAsaTbjPEeLnvksPaRvmoyTS77
+        HMOmJcTMg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ir8Aq-0006Ri-Nz; Mon, 13 Jan 2020 22:27:04 +0000
+Date:   Mon, 13 Jan 2020 14:27:04 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Chris Mason <clm@fb.com>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "hch@infradead.org" <hch@infradead.org>
+Subject: Re: [RFC 0/8] Replacing the readpages a_op
+Message-ID: <20200113222704.GC18216@bombadil.infradead.org>
+References: <20200113153746.26654-1-willy@infradead.org>
+ <6CA4CD96-0812-4261-8FF9-CD28AA2EC38A@fb.com>
+ <20200113174008.GB332@bombadil.infradead.org>
+ <15C84CC9-3196-441D-94DE-F3FD7AC364F0@fb.com>
+ <20200113215811.GA18216@bombadil.infradead.org>
+ <910af281-4e2b-3e5d-5533-b5ceafd59665@kernel.dk>
+ <20200113221047.GB18216@bombadil.infradead.org>
+ <1b94e6b6-29dc-2e90-d1ca-982accd3758c@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200110192942.25021-10-ira.weiny@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9499 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=990
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2001130181
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9499 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2001130182
+In-Reply-To: <1b94e6b6-29dc-2e90-d1ca-982accd3758c@kernel.dk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 11:29:39AM -0800, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
+On Mon, Jan 13, 2020 at 03:14:26PM -0700, Jens Axboe wrote:
+> On 1/13/20 3:10 PM, Matthew Wilcox wrote:
+> > On Mon, Jan 13, 2020 at 03:00:40PM -0700, Jens Axboe wrote:
+> >> On 1/13/20 2:58 PM, Matthew Wilcox wrote:
+> >>> On Mon, Jan 13, 2020 at 06:00:52PM +0000, Chris Mason wrote:
+> >>>> This is true, I didn't explain that part well ;)  Depending on 
+> >>>> compression etc we might end up poking the xarray inside the actual IO 
+> >>>> functions, but the main difference is that btrfs is building a single 
+> >>>> bio.  You're moving the plug so you'll merge into single bio, but I'd 
+> >>>> rather build 2MB bios than merge them.
+> >>>
+> >>> Why don't we store a bio pointer inside the plug?  You're opencoding that,
+> >>> iomap is opencoding that, and I bet there's a dozen other places where
+> >>> we pass a bio around.  Then blk_finish_plug can submit the bio.
+> >>
+> >> Plugs aren't necessarily a bio, they can be callbacks too.
+> > 
+> > I'm thinking something as simple as this:
+>
+> It's a little odd imho, the plugging generally collect requests. Sounds
+> what you're looking for is some plug owner private data, which just
+> happens to be a bio in this case?
 > 
-> Page faults need to ensure the inode mode is correct and consistent with
-> the vmf information at the time of the fault.  There is no easy way to
-> ensure the vmf information is correct if a mode change is in progress.
-> Furthermore, there is no good use case to require a mode change while
-> the file is mmap'ed.
-> 
-> Track mmap's of the file and fail the mode change if the file is
-> mmap'ed.
-> 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> ---
->  fs/inode.c         |  2 ++
->  fs/xfs/xfs_ioctl.c |  8 ++++++++
->  include/linux/fs.h |  1 +
->  mm/mmap.c          | 19 +++++++++++++++++--
->  4 files changed, 28 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 2b0f51161918..944711aed6f8 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -245,6 +245,8 @@ static struct inode *alloc_inode(struct super_block *sb)
->  		return NULL;
->  	}
->  
-> +	atomic64_set(&inode->i_mapped, 0);
-> +
->  	return inode;
->  }
->  
-> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> index bc3654fe3b5d..1ab0906c6c7f 100644
-> --- a/fs/xfs/xfs_ioctl.c
-> +++ b/fs/xfs/xfs_ioctl.c
-> @@ -1200,6 +1200,14 @@ xfs_ioctl_setattr_dax_invalidate(
->  		goto out_unlock;
->  	}
->  
-> +	/*
-> +	 * If there is a mapping in place we must remain in our current mode.
-> +	 */
-> +	if (atomic64_read(&inode->i_mapped)) {
+> Is this over repeated calls to some IO generating helper? Would it be
+> more efficient if that helper could generate the full bio in one go,
+> instead of piecemeal?
 
-Urk, should we really be messing around with the address space
-internals?
+The issue is around ->readpages.  Take a look at how iomap_readpages
+works, for example.  We're under a plug (taken in mm/readahead.c),
+but we still go through the rigamarole of keeping a pointer to the bio
+in ctx.bio and passing ctx around so that we don't end up with many
+fragments which have to be recombined into a single bio at the end.
 
-> +		error = -EBUSY;
-> +		goto out_unlock;
-> +	}
-> +
->  	error = filemap_write_and_wait(inode->i_mapping);
->  	if (error)
->  		goto out_unlock;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 631f11d6246e..6e7dc626b657 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -740,6 +740,7 @@ struct inode {
->  #endif
->  
->  	void			*i_private; /* fs or device private pointer */
-> +	atomic64_t               i_mapped;
-
-I would have expected to find this in struct address_space since the
-mapping count is a function of the address space, right?
-
---D
-
->  } __randomize_layout;
->  
->  struct timespec64 timestamp_truncate(struct timespec64 t, struct inode *inode);
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index dfaf1130e706..e6b68924b7ca 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -171,12 +171,17 @@ void unlink_file_vma(struct vm_area_struct *vma)
->  static struct vm_area_struct *remove_vma(struct vm_area_struct *vma)
->  {
->  	struct vm_area_struct *next = vma->vm_next;
-> +	struct file *f = vma->vm_file;
->  
->  	might_sleep();
->  	if (vma->vm_ops && vma->vm_ops->close)
->  		vma->vm_ops->close(vma);
-> -	if (vma->vm_file)
-> -		fput(vma->vm_file);
-> +	if (f) {
-> +		struct inode *inode = file_inode(f);
-> +		if (inode)
-> +			atomic64_dec(&inode->i_mapped);
-> +		fput(f);
-> +	}
->  	mpol_put(vma_policy(vma));
->  	vm_area_free(vma);
->  	return next;
-> @@ -1837,6 +1842,16 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
->  
->  	vma_set_page_prot(vma);
->  
-> +	/*
-> +	 * Track if there is mapping in place such that a mode change
-> +	 * does not occur on a file which is mapped
-> +	 */
-> +	if (file) {
-> +		struct inode		*inode = file_inode(file);
-> +
-> +		atomic64_inc(&inode->i_mapped);
-> +	}
-> +
->  	return addr;
->  
->  unmap_and_free_vma:
-> -- 
-> 2.21.0
-> 
+I think what I want is a bio I can reach from current, somehow.  And the
+plug feels like a natural place to keep it because it's basically saying
+"I want to do lots of little IOs and have them combined".  The fact that
+the iomap code has a bio that it precombines fragments into suggests to
+me that the existing antifragmentation code in the plugging mechanism
+isn't good enough.  So let's make it better by storing a bio in the plug
+and then we can get rid of the bio in the iomap code.
