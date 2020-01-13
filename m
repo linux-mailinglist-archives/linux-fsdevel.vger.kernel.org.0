@@ -2,72 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 623321390CD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2020 13:08:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE5D613923B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2020 14:31:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727286AbgAMMIx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jan 2020 07:08:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53824 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726480AbgAMMIx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jan 2020 07:08:53 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id B1A75AD12;
-        Mon, 13 Jan 2020 12:08:51 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 540C91E0D0E; Mon, 13 Jan 2020 13:08:51 +0100 (CET)
-Date:   Mon, 13 Jan 2020 13:08:51 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
-Subject: Re: udf: Suspicious values in udf_statfs()
-Message-ID: <20200113120851.GG23642@quack2.suse.cz>
-References: <20200112162311.khkvcu2u6y4gbbr7@pali>
+        id S1728731AbgAMNbG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jan 2020 08:31:06 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:50722 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbgAMNbF (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 13 Jan 2020 08:31:05 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iqznr-007J3N-Qf; Mon, 13 Jan 2020 13:30:47 +0000
+Date:   Mon, 13 Jan 2020 13:30:47 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Ian Kent <raven@themaw.net>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        David Howells <dhowells@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Serge Hallyn <serge@hallyn.com>, dev@opencontainers.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 0/1] mount: universally disallow mounting over
+ symlinks
+Message-ID: <20200113133047.GR8904@ZenIV.linux.org.uk>
+References: <20200101030815.GA17593@ZenIV.linux.org.uk>
+ <20200101144407.ugjwzk7zxrucaa6a@yavin.dot.cyphar.com>
+ <20200101234009.GB8904@ZenIV.linux.org.uk>
+ <20200102035920.dsycgxnb6ba2jhz2@yavin.dot.cyphar.com>
+ <20200103014901.GC8904@ZenIV.linux.org.uk>
+ <20200110231945.GL8904@ZenIV.linux.org.uk>
+ <aea0bc800b6a1e547ca1944738ff9db4379098ba.camel@themaw.net>
+ <20200113035407.GQ8904@ZenIV.linux.org.uk>
+ <41c535d689530f3715f21cd25074eb61e825a5f6.camel@themaw.net>
+ <58f9894e51a00ad2a4ac3d4122bf29e7cb6c0d54.camel@themaw.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200112162311.khkvcu2u6y4gbbr7@pali>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <58f9894e51a00ad2a4ac3d4122bf29e7cb6c0d54.camel@themaw.net>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Mon, Jan 13, 2020 at 02:03:00PM +0800, Ian Kent wrote:
 
-On Sun 12-01-20 17:23:11, Pali Rohár wrote:
-> I looked at udf_statfs() implementation and I see there two things which
-> are probably incorrect:
+> Oh wait, for systemd I was actually looking at:
+> https://github.com/systemd/systemd/blob/master/src/shared/switch-root.c
 > 
-> First one:
-> 
-> 	buf->f_blocks = sbi->s_partmaps[sbi->s_partition].s_partition_len;
-> 
-> If sbi->s_partition points to Metadata partition then reported number
-> of blocks seems to be incorrect. Similar like in udf_count_free().
+> > 
+> > Mind you, that's not the actual systemd repo. either I probably
+> > need to look a lot deeper (and at the actual systemd repo) to
+> > work out what's actually being called.
+> > 
+> > > Sigh...  Guess I'll have to dig that Fedora KVM image out and
+> > > try to see what it's about... ;-/  Here comes a couple of hours
+> > > of build...
 
-Oh, right. This needs similar treatment like udf_count_free(). I'll fix it.
-Thanks for spotting.
+D'oh...  And yes, that would've been a bisect hazard - switch to
+path_lookupat() later in the series gets rid of that.  Incremental
+(to be foldede, of course):
 
-> Second one:
-> 
-> 	buf->f_files = (lvidiu != NULL ? (le32_to_cpu(lvidiu->numFiles) +
-> 					  le32_to_cpu(lvidiu->numDirs)) : 0)
-> 			+ buf->f_bfree;
-> 
-> What f_files entry should report? Because result of sum of free blocks
-> and number of files+directories does not make sense for me.
-
-This is related to the fact that we return 'f_bfree' as the number of 'free
-file nodes' in 'f_ffree'. And tools generally display f_files-f_ffree as
-number of used inodes. In other words we treat every free block also as a
-free 'inode' and report it in total amount of 'inodes'. I know this is not
-very obvious but IMHO it causes the least confusion to users reading df(1)
-output.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+diff --git a/fs/namei.c b/fs/namei.c
+index 1793661c3342..204677c37751 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2634,7 +2634,7 @@ path_mountpoint(struct nameidata *nd, unsigned flags, struct path *path)
+ 		(err = lookup_last(nd)) > 0) {
+ 		s = trailing_symlink(nd);
+ 	}
+-	if (!err)
++	if (!err && (nd->flags & LOOKUP_RCU))
+ 		err = unlazy_walk(nd);
+ 	if (!err)
+ 		err = handle_lookup_down(nd);
