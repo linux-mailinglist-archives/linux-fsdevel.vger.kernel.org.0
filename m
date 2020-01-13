@@ -2,77 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD70A139B04
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2020 21:55:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5484139BFD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2020 22:58:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726536AbgAMUzL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jan 2020 15:55:11 -0500
-Received: from hr2.samba.org ([144.76.82.148]:49934 "EHLO hr2.samba.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726086AbgAMUzL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jan 2020 15:55:11 -0500
-X-Greylist: delayed 1132 seconds by postgrey-1.27 at vger.kernel.org; Mon, 13 Jan 2020 15:55:10 EST
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Message-ID:Cc:To:From:Date;
-        bh=JNKUuHInooF9ZI3fIFoHcMxkLm77ZEkAj3bulBvDOQE=; b=ZyawoKgBGqgc9wfBvamZTettCB
-        FfagFfjTRczYIJAo1y5ZOcioVTbSKZ6FmwfoDxu7ui7sXRQ3WoWbAof3MUj5wTnlspl59KmOLvR5N
-        7UKgofrhgmqutPhUyxZREe8VwMZzLv5/9SDd761M7CeYogMbVUAk7v/SB495dLqJeZFp+t4CBPfc4
-        PjEkbSOlVRiOyhkd1ddKrXsPwmutgd+ze9JNhgIXRUCaekzPb948JhI8r791gAzbGN2qWacDjV6x9
-        Im9Z76Tp0s56gDihN9tm8B7WN7lDtwiu6/jxX7KJZlhMoOK1UimpkU2fAKdA782wZePiCSb8+h8mQ
-        hg0uHzCA71vbsosGAZCG8rPkK2s/spH5GoM6KrfbHXd67D8AQ2FqNYCLpnOCfX+wUMQUgboFLV6xD
-        PQTPbmLvBYy4EMY1MzjFmgnK8KyzT1wO5IgRkued5SftXQx1G9FAc0ZYnG4F1O1hPnfe48aKBUCbz
-        pCdiL0QBmKkKPm5EyNQCiteT;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
-        (Exim)
-        id 1ir6Rc-0002NT-P4; Mon, 13 Jan 2020 20:36:17 +0000
-Date:   Mon, 13 Jan 2020 12:36:13 -0800
-From:   Jeremy Allison <jra@samba.org>
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     Steve French <smfrench@gmail.com>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        Boris Protopopov <boris.v.protopopov@gmail.com>,
-        samba-technical <samba-technical@lists.samba.org>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] Add support for setting owner info, dos attributes, and
- create time
-Message-ID: <20200113203613.GA111855@jra4>
-Reply-To: Jeremy Allison <jra@samba.org>
-References: <20191219165250.2875-1-bprotopopov@hotmail.com>
- <CAH2r5mu0Jd=MACMn6_KPvNWoAPVu+V_3FOnoEZxDWoy0x2qEzA@mail.gmail.com>
- <780DD595-1F92-4C34-A323-BB32748E5D07@dilger.ca>
+        id S1727382AbgAMV6L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jan 2020 16:58:11 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:40128 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728733AbgAMV6L (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 13 Jan 2020 16:58:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=vIM78U2tiWS9Y/ZT/+KZFKq5Yv/4AD1q7UnORAYypVA=; b=QhjG5sZ73yT68+nsT+PJK7boT
+        5hGKSj9h0MWjy4zOpkZ99sx5F6bMnW4oeh/BVRiYN7rRSA5+LDcu4UCW4ylznEE2T+LXn6e7l0h3v
+        Wk/kRBrV2qeyieT7kIa2lL9X5D/SVPWk8lvc1U6nfVa8mcU0kp19XDbP/87FSMlP7A+H445fZlN8l
+        5uPAOyAkMVsLHkA2Wbswv6mGE1BGhr0mjdBHjwmSWONgFNHiDjm9hUy8ne2zu+8AfRc6SOpDyFXFv
+        vPFy5BBfjcF4YapnTJ3IUrvylWDHRrrdixB/pAlaPyYUgfzCNGdwD5g+fI0AfTp9fabFTNFVZFiD6
+        LH5vvu3jA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ir7it-0001Om-5J; Mon, 13 Jan 2020 21:58:11 +0000
+Date:   Mon, 13 Jan 2020 13:58:11 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Chris Mason <clm@fb.com>
+Cc:     "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "hch@infradead.org" <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: [RFC 0/8] Replacing the readpages a_op
+Message-ID: <20200113215811.GA18216@bombadil.infradead.org>
+References: <20200113153746.26654-1-willy@infradead.org>
+ <6CA4CD96-0812-4261-8FF9-CD28AA2EC38A@fb.com>
+ <20200113174008.GB332@bombadil.infradead.org>
+ <15C84CC9-3196-441D-94DE-F3FD7AC364F0@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <780DD595-1F92-4C34-A323-BB32748E5D07@dilger.ca>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <15C84CC9-3196-441D-94DE-F3FD7AC364F0@fb.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 01:26:39PM -0700, Andreas Dilger via samba-technical wrote:
-> On Jan 9, 2020, at 12:10 PM, Steve French <smfrench@gmail.com> wrote:
-> > 
-> > One loosely related question ...
-> > 
-> > Your patch adds the ability to set creation time (birth time) which
-> > can be useful for backup/restore cases, but doesn't address the other
-> > hole in Linux (the inability to restore a files ctime).
-> > 
-> > In Linux the ability to set timestamps seems quite limited (utimes
-> > only allows setting mtime and atime).
-> 
-> The whole point of not being able to change ctime and btime as a regular
-> user is so that it is possible to determine when a file was actually
-> created on the filesystem and last modified.  That is often useful for
-> debugging or forensics reasons.
-> 
-> I think if this is something that SMB/CIFS wants to do, it should save
-> these attributes into an xattr of its own (e.g. user.dos or whatever),
-> rather than using the ctime and btime(crtime) fields in the filesystem.
+On Mon, Jan 13, 2020 at 06:00:52PM +0000, Chris Mason wrote:
+> This is true, I didn't explain that part well ;)  Depending on 
+> compression etc we might end up poking the xarray inside the actual IO 
+> functions, but the main difference is that btrfs is building a single 
+> bio.  You're moving the plug so you'll merge into single bio, but I'd 
+> rather build 2MB bios than merge them.
 
-FYI, we (Samba) already do this for create time to store/fetch it
-on systems and filesystems that don't store a create time. It's
-easy to add extra info here.
+Why don't we store a bio pointer inside the plug?  You're opencoding that,
+iomap is opencoding that, and I bet there's a dozen other places where
+we pass a bio around.  Then blk_finish_plug can submit the bio.
