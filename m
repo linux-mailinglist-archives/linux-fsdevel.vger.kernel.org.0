@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2EA11397F0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2020 18:40:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20AB2139822
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2020 18:54:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728650AbgAMRkJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jan 2020 12:40:09 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:46912 "EHLO
+        id S1728633AbgAMRyg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jan 2020 12:54:36 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:49088 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726109AbgAMRkJ (ORCPT
+        with ESMTP id S1726435AbgAMRyg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jan 2020 12:40:09 -0500
+        Mon, 13 Jan 2020 12:54:36 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=YctpbuGe1IPkhl3jLN2rW9BnsRulU9T+gp+qDp5l7+M=; b=hq1cOaLqGl/JJDil8k6N4fy6C
-        bFiOFHmO32SDpWx66UoRRcUKTgNRwGjWExt7N6rhGWChvwOLuiJ0Zqt/cXAWIUqim3YdByFUTa03Q
-        HYUJ0Ipqi7ADnpmnmITNqpuk/dIED4MafwlnVzjojRllOvzcisPj1eti2o75wwPtICqWjp1RVgRF3
-        tyJ8Az+4hGHnSBRf8GWAaVVGpWWuV4ulNIw2GzqluAmF2hz6m1gGsADjoFbAIIJd565xwb9uRccgD
-        ZguPVLuqhvXeUo6ZByObIVthvQEiR+pvmtv6UwoGsC8gi0Oy39QCrHbyaY3AKy4SlxQWb2rQdfp4X
-        9tXCv8BPw==;
+         bh=v68KOmmFCgojskPM3niSU92RDz2UGXctd3aEcUGr1z0=; b=JoDbgk3KvfTL3TCtvdKWEkP2I
+        GGxzbOkOAhh4bu+x8KEXH765FH6bbPxzLnlxNd6Vo1qGp7Oy+ocl7praB1F0ZFFcPrF1w4l3JDfmS
+        8NNXB5UE4oCt32dAVbZ+aRCpZK+jRuCX+K1o7Fy8T2Y/G4a2OoPFm+NoHeyjkZjj+QNZP6pSCUgHA
+        f87JzB4e8x3h1MUsbJlOKaBJykMaZG2/khdlcFQWa1y209JIWtvajJF/+U3lPa++T0SsC6yec7F+p
+        ElANtlsCvb30WH6eXo3R/reXUHHDy2TjhScLZ5srtYZIy+l34p4/NOd+9IOt6kJhbPr11njpxo1+r
+        ABzvCY8BA==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ir3hA-0002Np-V1; Mon, 13 Jan 2020 17:40:08 +0000
-Date:   Mon, 13 Jan 2020 09:40:08 -0800
+        id 1ir3vA-0006y8-8w; Mon, 13 Jan 2020 17:54:36 +0000
+Date:   Mon, 13 Jan 2020 09:54:36 -0800
 From:   Matthew Wilcox <willy@infradead.org>
 To:     Chris Mason <clm@fb.com>
 Cc:     "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
@@ -35,7 +35,7 @@ Cc:     "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
         "jlayton@kernel.org" <jlayton@kernel.org>,
         "hch@infradead.org" <hch@infradead.org>
 Subject: Re: [RFC 0/8] Replacing the readpages a_op
-Message-ID: <20200113174008.GB332@bombadil.infradead.org>
+Message-ID: <20200113175436.GC332@bombadil.infradead.org>
 References: <20200113153746.26654-1-willy@infradead.org>
  <6CA4CD96-0812-4261-8FF9-CD28AA2EC38A@fb.com>
 MIME-Version: 1.0
@@ -48,89 +48,20 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Mon, Jan 13, 2020 at 04:42:10PM +0000, Chris Mason wrote:
-> On 13 Jan 2020, at 10:37, Matthew Wilcox wrote:
-> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> > I think everybody hates the readpages API.  The fundamental problem 
-> > with
-> > it is that it passes the pages to be read on a doubly linked list, 
-> > using
-> > the ->lru list in the struct page.  That means the filesystems have to
-> > do the work of calling add_to_page_cache{,_lru,_locked}, and handling
-> > failures (because another task is also accessing that chunk of the 
-> > file,
-> > and so it fails).
-> 
-> I've always kind of liked the compromise of sending the lists.  It's 
-> really good at the common case and doesn't have massive problems when 
-> things break down.
-
-I think we'll have to disagree on that point.  Linked lists are awful
-for the CPU in the common case, and the error handling code for "things
-break down" is painful.  I'm pretty sure I spotted three bugs in the
-CIFS implementation.
-
-> Just glancing through the patches, the old 
-> readpages is called in bigger chunks, so for massive reads we can do 
-> more effective readahead on metadata.  I don't think any of us actually 
-> do, but we could.
-> 
-> With this new operation, our window is constant, and much smaller.
-> 
-> > The fundamental question is, how do we indicate to the implementation 
-> > of
-> > ->readahead what pages to operate on?  I've gone with passing a 
-> > pagevec.
-> > This has the obvious advantage that it's a data structure that already
-> > exists and is used within filemap for batches of pages.  I had to add 
-> > a
-> > bit of new infrastructure to support iterating over the pages in the
-> > pagevec, but with that done, it's quite nice.
-> >
-> > I think the biggest problem is that the size of the pagevec is limited
-> > to 15 pages (60kB).  So that'll mean that if the readahead window 
-> > bumps
-> > all the way up to 256kB, we may end up making 5 BIOs (and merging 
-> > them)
-> > instead of one.  I'd kind of like to be able to allocate variable 
-> > length
-> > pagevecs while allowing regular pagevecs to be allocated on the stack,
-> > but I can't figure out a way to do that.  eg this doesn't work:
-> >
-> > -       struct page *pages[PAGEVEC_SIZE];
-> > +       union {
-> > +               struct page *pages[PAGEVEC_SIZE];
-> > +               struct page *_pages[];
-> > +       }
-> >
-> > and if we just allocate them, useful and wonderful tools are going to
-> > point out when pages[16] is accessed that we've overstepped the end of
-> > the array.
-> >
-> > I have considered alternatives to the pagevec like just having the
-> > ->readahead implementation look up the pages in the i_pages XArray
-> > directly.  That didn't work out too well.
-> >
-> 
 > Btrfs basically does this now, honestly iomap isn't that far away.  
 > Given how sensible iomap is for this, I'd rather see us pile into that 
 > abstraction than try to pass pagevecs for large ranges.  Otherwise, if 
-> the lists are awkward we can make some helpers to make it less error 
-> prone?
 
-I did do a couple of helpers for lists for iomap before deciding the
-whole thing was too painful.  I didn't look at btrfs until just now, but, um ...
+I completely misread this at first and thought you were proposing we
+pass a bio_vec to ->readahead.  Initially, this is a layering violation,
+completely unnecessary to have all these extra offset/size fields being
+allocated and passed around.  But ... the bio_vec and the skb_frag_t are
+now the same data structure, so both block and network use it.  It may
+make sense to have this as the common data structure for 'unit of IO'.
+The bio supports having the bi_vec allocated externally to the data
+structure while the skbuff would need to copy the array.
 
-int extent_readpages(struct address_space *mapping, struct list_head *pages,
-                     unsigned nr_pages)
-..
-        struct page *pagepool[16];
-..
-        while (!list_empty(pages)) {
-..
-                        list_del(&page->lru);
-                        if (add_to_page_cache_lru(page, mapping, page->index,
-..
-                        pagepool[nr++] = page;
+Maybe we need a more neutral name than bio_vec so as to not upset people.
+page_frag, perhaps [1].
 
-you're basically doing exactly what i'm proposing to be the new interface!
-OK, you get one extra page per batch ;-P
+[1] Yes, I know about the one in include/linux/mm_types_task.h
