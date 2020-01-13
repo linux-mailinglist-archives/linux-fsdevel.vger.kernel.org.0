@@ -2,128 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69F38139080
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2020 12:58:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F673139091
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2020 13:00:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728775AbgAML6Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jan 2020 06:58:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49292 "EHLO mx2.suse.de"
+        id S1726976AbgAMMAw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jan 2020 07:00:52 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50112 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727286AbgAML6Y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jan 2020 06:58:24 -0500
+        id S1726127AbgAMMAw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 13 Jan 2020 07:00:52 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id AD415AE17;
-        Mon, 13 Jan 2020 11:58:22 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 3EC30AE17;
+        Mon, 13 Jan 2020 12:00:50 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 493401E0D0E; Mon, 13 Jan 2020 12:58:22 +0100 (CET)
-Date:   Mon, 13 Jan 2020 12:58:22 +0100
+        id D25031E0D0E; Mon, 13 Jan 2020 13:00:49 +0100 (CET)
+Date:   Mon, 13 Jan 2020 13:00:49 +0100
 From:   Jan Kara <jack@suse.cz>
 To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jan Kara <jack@suse.cz>
-Subject: Re: [WIP PATCH 2/4] udf: Fix reading numFiles and numDirs from UDF
- 2.00+ VAT discs
-Message-ID: <20200113115822.GE23642@quack2.suse.cz>
+Subject: Re: [WIP PATCH 1/4] udf: Do not access LVIDIU revision members when
+ they are not filled
+Message-ID: <20200113120049.GF23642@quack2.suse.cz>
 References: <20200112175933.5259-1-pali.rohar@gmail.com>
- <20200112175933.5259-3-pali.rohar@gmail.com>
+ <20200112175933.5259-2-pali.rohar@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200112175933.5259-3-pali.rohar@gmail.com>
+In-Reply-To: <20200112175933.5259-2-pali.rohar@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun 12-01-20 18:59:31, Pali Rohár wrote:
-> These two fields are stored in VAT and override previous values stored in
-> LVIDIU.
+On Sun 12-01-20 18:59:30, Pali Rohár wrote:
+> minUDFReadRev, minUDFWriteRev and maxUDFWriteRev members were introduced in
+> UDF 1.02. Previous UDF revisions used that area for implementation specific
+> data. So in this case do not touch these members.
 > 
-> This change contains only implementation for UDF 2.00+. For UDF 1.50 there
-> is an optional structure "Logical Volume Extended Information" which is not
-> implemented in this change yet.
+> To check if LVIDIU contain revisions members, first read UDF revision from
+> LVD. If revision is at least 1.02 LVIDIU should contain revision members.
+> 
+> This change should fix mounting UDF 1.01 images in R/W mode. Kernel would
+> not touch, read overwrite implementation specific area of LVIDIU.
 > 
 > Signed-off-by: Pali Rohár <pali.rohar@gmail.com>
 
-For this and the following patch, I'd rather have the 'additional data'
-like number of files, dirs, or revisions, stored in the superblock than
-having them hidden in the VAT partition structure. And places that parse
-corresponding on-disk structures would fill in the numbers into the
-superblock.
+Maybe we could store the fs revision in the superblock as well to avoid
+passing the udf_rev parameter?
 
-								Honza
+Also this patch contains several lines over 80 columns.
+
+									Honza
+
 > ---
->  fs/udf/super.c  | 25 ++++++++++++++++++++++---
+>  fs/udf/super.c  | 37 ++++++++++++++++++++++++++-----------
 >  fs/udf/udf_sb.h |  3 +++
->  2 files changed, 25 insertions(+), 3 deletions(-)
+>  2 files changed, 29 insertions(+), 11 deletions(-)
 > 
 > diff --git a/fs/udf/super.c b/fs/udf/super.c
-> index 8df6e9962..e8661bf01 100644
+> index 2d0b90800..8df6e9962 100644
 > --- a/fs/udf/super.c
 > +++ b/fs/udf/super.c
-> @@ -1202,6 +1202,8 @@ static int udf_load_vat(struct super_block *sb, int p_index, int type1_index)
->  		map->s_type_specific.s_virtual.s_start_offset = 0;
->  		map->s_type_specific.s_virtual.s_num_entries =
->  			(sbi->s_vat_inode->i_size - 36) >> 2;
-> +		/* TODO: Add support for reading Logical Volume Extended Information (UDF 1.50 Errata, DCN 5003, 3.3.4.5.1.3) */
-> +		map->s_type_specific.s_virtual.s_has_additional_data = false;
->  	} else if (map->s_partition_type == UDF_VIRTUAL_MAP20) {
->  		vati = UDF_I(sbi->s_vat_inode);
->  		if (vati->i_alloc_type != ICBTAG_FLAG_AD_IN_ICB) {
-> @@ -1215,6 +1217,12 @@ static int udf_load_vat(struct super_block *sb, int p_index, int type1_index)
->  							vati->i_ext.i_data;
->  		}
+> @@ -765,7 +765,7 @@ static int udf_check_vsd(struct super_block *sb)
+>  }
 >  
-> +		map->s_type_specific.s_virtual.s_has_additional_data =
-> +			true;
-> +		map->s_type_specific.s_virtual.s_num_files =
-> +			le32_to_cpu(vat20->numFiles);
-> +		map->s_type_specific.s_virtual.s_num_dirs =
-> +			le32_to_cpu(vat20->numDirs);
->  		map->s_type_specific.s_virtual.s_start_offset =
->  			le16_to_cpu(vat20->lengthHeader);
->  		map->s_type_specific.s_virtual.s_num_entries =
-> @@ -2417,9 +2425,20 @@ static int udf_statfs(struct dentry *dentry, struct kstatfs *buf)
->  	buf->f_blocks = sbi->s_partmaps[sbi->s_partition].s_partition_len;
->  	buf->f_bfree = udf_count_free(sb);
->  	buf->f_bavail = buf->f_bfree;
-> -	buf->f_files = (lvidiu != NULL ? (le32_to_cpu(lvidiu->numFiles) +
-> -					  le32_to_cpu(lvidiu->numDirs)) : 0)
-> -			+ buf->f_bfree;
+>  static int udf_verify_domain_identifier(struct super_block *sb,
+> -					struct regid *ident, char *dname)
+> +					struct regid *ident, char *dname, u16 *udf_rev)
+>  {
+>  	struct domainIdentSuffix *suffix;
+>  
+> @@ -779,6 +779,8 @@ static int udf_verify_domain_identifier(struct super_block *sb,
+>  		goto force_ro;
+>  	}
+>  	suffix = (struct domainIdentSuffix *)ident->identSuffix;
+> +	if (udf_rev)
+> +		*udf_rev = le16_to_cpu(suffix->UDFRevision);
+>  	if ((suffix->domainFlags & DOMAIN_FLAGS_HARD_WRITE_PROTECT) ||
+>  	    (suffix->domainFlags & DOMAIN_FLAGS_SOFT_WRITE_PROTECT)) {
+>  		if (!sb_rdonly(sb)) {
+> @@ -801,7 +803,7 @@ static int udf_load_fileset(struct super_block *sb, struct fileSetDesc *fset,
+>  {
+>  	int ret;
+>  
+> -	ret = udf_verify_domain_identifier(sb, &fset->domainIdent, "file set");
+> +	ret = udf_verify_domain_identifier(sb, &fset->domainIdent, "file set", NULL);
+>  	if (ret < 0)
+>  		return ret;
+>  
+> @@ -1404,7 +1406,7 @@ static int udf_load_logicalvol(struct super_block *sb, sector_t block,
+>  	}
+>  
+>  	ret = udf_verify_domain_identifier(sb, &lvd->domainIdent,
+> -					   "logical volume");
+> +					   "logical volume", &sbi->s_lvd_udfrev);
+>  	if (ret)
+>  		goto out_bh;
+>  	ret = udf_sb_alloc_partition_maps(sb, le32_to_cpu(lvd->numPartitionMaps));
+> @@ -2055,12 +2057,19 @@ static void udf_close_lvid(struct super_block *sb)
+>  	mutex_lock(&sbi->s_alloc_mutex);
+>  	lvidiu->impIdent.identSuffix[0] = UDF_OS_CLASS_UNIX;
+>  	lvidiu->impIdent.identSuffix[1] = UDF_OS_ID_LINUX;
+> -	if (UDF_MAX_WRITE_VERSION > le16_to_cpu(lvidiu->maxUDFWriteRev))
+> -		lvidiu->maxUDFWriteRev = cpu_to_le16(UDF_MAX_WRITE_VERSION);
+> -	if (sbi->s_udfrev > le16_to_cpu(lvidiu->minUDFReadRev))
+> -		lvidiu->minUDFReadRev = cpu_to_le16(sbi->s_udfrev);
+> -	if (sbi->s_udfrev > le16_to_cpu(lvidiu->minUDFWriteRev))
+> -		lvidiu->minUDFWriteRev = cpu_to_le16(sbi->s_udfrev);
 > +
-> +	if ((sbi->s_partmaps[sbi->s_partition].s_partition_type == UDF_VIRTUAL_MAP15 ||
-> +	     sbi->s_partmaps[sbi->s_partition].s_partition_type == UDF_VIRTUAL_MAP20) &&
-> +	     sbi->s_partmaps[sbi->s_partition].s_type_specific.s_virtual.s_has_additional_data)
-> +		buf->f_files = sbi->s_partmaps[sbi->s_partition].s_type_specific.s_virtual.s_num_files +
-> +			       sbi->s_partmaps[sbi->s_partition].s_type_specific.s_virtual.s_num_dirs +
-> +			       buf->f_bfree;
-> +	else if (lvidiu != NULL)
-> +		buf->f_files = le32_to_cpu(lvidiu->numFiles) +
-> +			       le32_to_cpu(lvidiu->numDirs) +
-> +			       buf->f_bfree;
-> +	else
-> +		buf->f_files = buf->f_bfree;
+> +	/* minUDFReadRev, minUDFWriteRev and maxUDFWriteRev members were
+> +	 * introduced in UDF 1.02. Previous UDF revisions used that area for
+> +	 * implementation specific data. So in this case do not touch it. */
+> +	if (sbi->s_lvd_udfrev >= 0x0102) {
+> +		if (UDF_MAX_WRITE_VERSION > le16_to_cpu(lvidiu->maxUDFWriteRev))
+> +			lvidiu->maxUDFWriteRev = cpu_to_le16(UDF_MAX_WRITE_VERSION);
+> +		if (sbi->s_udfrev > le16_to_cpu(lvidiu->minUDFReadRev))
+> +			lvidiu->minUDFReadRev = cpu_to_le16(sbi->s_udfrev);
+> +		if (sbi->s_udfrev > le16_to_cpu(lvidiu->minUDFWriteRev))
+> +			lvidiu->minUDFWriteRev = cpu_to_le16(sbi->s_udfrev);
+> +	}
 > +
->  	buf->f_ffree = buf->f_bfree;
->  	buf->f_namelen = UDF_NAME_LEN;
->  	buf->f_fsid.val[0] = (u32)id;
+>  	if (!UDF_QUERY_FLAG(sb, UDF_FLAG_INCONSISTENT))
+>  		lvid->integrityType = cpu_to_le32(LVID_INTEGRITY_TYPE_CLOSE);
+>  
+> @@ -2220,8 +2229,14 @@ static int udf_fill_super(struct super_block *sb, void *options, int silent)
+>  			ret = -EINVAL;
+>  			goto error_out;
+>  		}
+> -		minUDFReadRev = le16_to_cpu(lvidiu->minUDFReadRev);
+> -		minUDFWriteRev = le16_to_cpu(lvidiu->minUDFWriteRev);
+> +
+> +		if (sbi->s_lvd_udfrev >= 0x0102) { /* minUDFReadRev and minUDFWriteRev were introduced in UDF 1.02 */
+> +			minUDFReadRev = le16_to_cpu(lvidiu->minUDFReadRev);
+> +			minUDFWriteRev = le16_to_cpu(lvidiu->minUDFWriteRev);
+> +		} else {
+> +			minUDFReadRev = minUDFWriteRev = sbi->s_lvd_udfrev;
+> +		}
+> +
+>  		if (minUDFReadRev > UDF_MAX_READ_VERSION) {
+>  			udf_err(sb, "minUDFReadRev=%x (max is %x)\n",
+>  				minUDFReadRev,
 > diff --git a/fs/udf/udf_sb.h b/fs/udf/udf_sb.h
-> index 6bd0d4430..c74abbc84 100644
+> index 3d83be54c..6bd0d4430 100644
 > --- a/fs/udf/udf_sb.h
 > +++ b/fs/udf/udf_sb.h
-> @@ -78,6 +78,9 @@ struct udf_sparing_data {
->  struct udf_virtual_data {
->  	__u32	s_num_entries;
->  	__u16	s_start_offset;
-> +	bool	s_has_additional_data;
-> +	__u32	s_num_files;
-> +	__u32	s_num_dirs;
->  };
+> @@ -137,6 +137,9 @@ struct udf_sb_info {
+>  	/* Fileset Info */
+>  	__u16			s_serial_number;
 >  
->  struct udf_bitmap {
+> +	/* LVD UDF revision filled to media at format time */
+> +	__u16			s_lvd_udfrev;
+> +
+>  	/* highest UDF revision we have recorded to this media */
+>  	__u16			s_udfrev;
+>  
 > -- 
 > 2.20.1
 > 
