@@ -2,34 +2,34 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1270139427
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2020 15:59:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72F6D13943A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2020 16:02:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729075AbgAMO7z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jan 2020 09:59:55 -0500
-Received: from mout.kundenserver.de ([212.227.126.130]:38907 "EHLO
+        id S1728892AbgAMPCv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jan 2020 10:02:51 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:50661 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728843AbgAMO7y (ORCPT
+        with ESMTP id S1726567AbgAMPCv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jan 2020 09:59:54 -0500
-Received: from mail-qt1-f169.google.com ([209.85.160.169]) by
- mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1Mv3M8-1jhkGu2QxU-00qyh5; Mon, 13 Jan 2020 15:59:52 +0100
-Received: by mail-qt1-f169.google.com with SMTP id 5so9339754qtz.1;
-        Mon, 13 Jan 2020 06:59:52 -0800 (PST)
-X-Gm-Message-State: APjAAAUkWUZHjTkzsf5F1mDo85SPeANxN5MtDe6cNFWG6JZjqfgNvNgt
-        bYS925y3u3ErEsKuPlzTrMe5O5dKnaPo4XKI1R8=
-X-Google-Smtp-Source: APXvYqxiLj2wevglx5PMrcSeH3ieonohCOIBtZJiPN4aZqmn8jtgw7RUzenpGKQGwDOInwqXHgXQNFN0lGfRPS4hcg8=
-X-Received: by 2002:ac8:768d:: with SMTP id g13mr10516984qtr.7.1578927591343;
- Mon, 13 Jan 2020 06:59:51 -0800 (PST)
+        Mon, 13 Jan 2020 10:02:51 -0500
+Received: from mail-qt1-f182.google.com ([209.85.160.182]) by
+ mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1M7sM0-1inBU31ZIo-0051YL; Mon, 13 Jan 2020 16:02:49 +0100
+Received: by mail-qt1-f182.google.com with SMTP id d18so9307850qtj.10;
+        Mon, 13 Jan 2020 07:02:49 -0800 (PST)
+X-Gm-Message-State: APjAAAWOGvDVfcGRfdFNDLMAfh646YVfQAVLtj/2GGcYkDqCNKcQi4lz
+        hl1jf7gBxX9E6MT0jr8L23hzskrldX6YmgkbtXU=
+X-Google-Smtp-Source: APXvYqxsoEYmTq+RE4xAl65+mhorh2I9NE7KRvTRmwGYPXc6DTXOraF2Y1j53/xbkqS1OmdA70RBWtQ5A13Lqfh9Scc=
+X-Received: by 2002:ac8:47d3:: with SMTP id d19mr14102091qtr.142.1578927768175;
+ Mon, 13 Jan 2020 07:02:48 -0800 (PST)
 MIME-Version: 1.0
-References: <20200107175927.4558-1-sargun@sargun.me> <20200107175927.4558-4-sargun@sargun.me>
-In-Reply-To: <20200107175927.4558-4-sargun@sargun.me>
+References: <20200107175927.4558-1-sargun@sargun.me> <20200107175927.4558-2-sargun@sargun.me>
+In-Reply-To: <20200107175927.4558-2-sargun@sargun.me>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 13 Jan 2020 15:59:35 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a0NO2d5oD1dMhunyrHmoa_+CeD-JsM-Yffbp+vgJwu8fA@mail.gmail.com>
-Message-ID: <CAK8P3a0NO2d5oD1dMhunyrHmoa_+CeD-JsM-Yffbp+vgJwu8fA@mail.gmail.com>
-Subject: Re: [PATCH v9 3/4] arch: wire up pidfd_getfd syscall
+Date:   Mon, 13 Jan 2020 16:02:31 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a1Mv2+GuV_1DKKMvmS8MzMDaheCiUvRps-h+cATHpPXJA@mail.gmail.com>
+Message-ID: <CAK8P3a1Mv2+GuV_1DKKMvmS8MzMDaheCiUvRps-h+cATHpPXJA@mail.gmail.com>
+Subject: Re: [PATCH v9 1/4] vfs, fdtable: Add fget_task helper
 To:     Sargun Dhillon <sargun@sargun.me>
 Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Linux Containers <containers@lists.linux-foundation.org>,
@@ -46,25 +46,25 @@ Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Florian Weimer <fweimer@redhat.com>,
         Jed Davis <jld@mozilla.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:2AACtcI4qkurdtORyUyh4PXYxvV94KBzn9Ud9I489qlGWCMakAL
- 0Qtg97WXjtBsns67iAaS8UiACPmURGdHm35slfCae15WEGX+8Du8ZDK63mPI/itcWFvlByt
- 6/fOAv9agSTK1ufYVLULfcOQFHil/338kndMoRmYkYzV7H9JfAETjixFSRGiR4h3kHswxBG
- TPv4ocfyyJMtrhyTFYZvA==
+X-Provags-ID: V03:K1:EazS39lBXe7l2MXTjvoN3t5fQWhLNgan09i4rpbG1Ror2bq23ZP
+ gaK4s9swynMmEhrzadP23qax9Ft4zh4tRox6X3DXu2sB4W7wYUEcUURcDK8FCSlhm70Hp2M
+ 3Hi5wndJwn9IO3b2a0H5/yL/6LCCbrbdi74YxzI/CiBydYGlklxAeuqtJi8iw9v1fLWxwtK
+ L7bkNbOgof36eZzGjegsA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:/XoSKrJOcRc=:6RmmOTiWEj5AmHd7ljY4NI
- AuBj1ifmljtEWVta9rVL18WFBEx7NZGrRIh/9qkvJ2q+J07Fo6vmZXrG/0Y3FMMPrgLMCKVZE
- JxICpCMdBVhP5/zmqD84oGoGVb6/o9Ia4x8ng6Fwq0vX0VrxKXsRaJfeps05660cDYsgYIM/O
- K8OqQ1N2n4MO7ddDB0XWfdaUpy53ob6KwwVX13SjMPxsPKC+DUAVOeluawtUfJ3dvON5OYgky
- mCjT/1PkB08fcKc8RHAh+fPKes0UTdDI3vkLcL1G+isXfzve5cjIZghSwXXpvuHgmIuQOotUf
- mGE8e73i+TBzo0exhUxzP0/J2v5krNKOykm1/Z+QmZKlgsFV1sdTHGUSg8h0SRqmyaRhh8r+g
- 0Ob+Up1L5wOMO65oFS+FEj4Y9Apas72aC6V+CZ8RCpEVkZBzShtuEkd+D4jwEY1zWN4VQHWe6
- q13HZ6Td5RNzzbUcqa56JTn5R7CbO/8JJ9ZINZpQKcg8WsebU6/GYWVT8+kwCnfOZHz/2DNug
- F3UMuGaK7TfIRZ9LaSmprqVlVtSnqKYm3Ifym35aV8eXACoos8lgHqD51k9U4rMPU+fTRfSoy
- xdhmzqinDe+rMcltPZLyqyLZGcwmjZdAvzs3TtFiZJXi+2KSa1P5av5Xwt2cqXWO9+Y0MdnA6
- c4sMgSi0SkNQmcEQvsH/SSY5AxSxaLiSX/hTkBU3Pw0BGLTPcIQ7n/KdXOqYzYbb0wpbjgsmc
- V7t1jex2fulLFhstVgIWUc+AG55r+r2A0M3a6lwbIlYV6yPwHqDmEIxVm/QllJgsOCuba6cNE
- 0hyULfPDKXLzTVMal4pFP93YZtTHLNvRXzmT4aGupH78hgjRuMuthZ+PMqzW1v7NpqptO4VjR
- 25DIRpw2mqZ/4NNiypSA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:DzF3lkCw0C0=:T6j1HF4d6Cj5rxi0G7MhBt
+ s6EZ3WerxgZCSYsy2blIJJpGCLjBKypdL9Cl48ryGAUYCXYw+3b85YR/YCNlhQcbqAP8U8fq7
+ 0KTtSpy4FPf5sdwVRZ6GbitVJwuWlugU7E0Haw3lcfZVU+Vxd9E63ktH8eslFL2dGV73MFANe
+ zB1SPq8K7a3/aVFZH2VoB/cmjQKiFRvmlp1Jn8BU9JtKR8j8Z/lBABsnkUSufvmOnPQi5Dn4+
+ CU9Smt1rT8+RU9TV8D0qVO23POvvETdkqeWn+IE6Wh78fgq65PnyEzi1TntV7SjIiGa24QtLf
+ LJsAHg4ybvzs5wOoYLdyNJGWavtHDvstxhquSirN+8qBofKkdd74tWXK/EQvBpfREmmlpmt0A
+ +dTVwvMU8tc5bihkYim3JKxTCB5yAGUPLdtxtmPjSby9YXDrH9zjhOg4wubTmqYFLt4MlCeBT
+ /tKChaKgzAxGG0jqRNTWXj88MPyY18uAvFcNE8tW5UDIqxXG5dv6cwcwpJIApSzrpZGFSbJr2
+ jahz1MTrCzfm6milvi2Y2wKFuMX+wd2cML5cR9BLn+rbNbDwuwPgOa2MV77gP/uEtxGVbW6BC
+ Ig45p94v/PJKA5kYLyprtVzqCqJZxVxKJsFEcSMnKWtN0nuMPJzffS3HgFLA7XEmpXN+Wo71W
+ 85z8JrBKCBG1O+Dt17yC6TFQnENPsIDYn7Oi9R6HmiMAPrw20eKqT16o5O1da8ZtIP8dZweht
+ xpZx0zSPUq7mdL3wlW5JOeYu9VZg0ZvZfL6q9XEtaPKoWNp6bgYtxwEMl/O/g1omCSzTJ89My
+ XNOWVTl0X/ysBZpfc2zrl2AiNKvqnyia3oIkveNiHXFTHjr2Z92n3Mpv9dl+uEOfgnVsBanP8
+ KlaV45aPLTFupKctzkiw==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -72,11 +72,18 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Tue, Jan 7, 2020 at 6:59 PM Sargun Dhillon <sargun@sargun.me> wrote:
 >
-> This wires up the pidfd_getfd syscall for all architectures.
+> This introduces a function which can be used to fetch a file, given an
+> arbitrary task. As long as the user holds a reference (refcnt) to the
+> task_struct it is safe to call, and will either return NULL on failure,
+> or a pointer to the file, with a refcnt.
+>
+> This patch is based on Oleg Nesterov's (cf. [1]) patch from September
+> 2018.
+>
+> [1]: Link: https://lore.kernel.org/r/20180915160423.GA31461@redhat.com
 >
 > Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+> Suggested-by: Oleg Nesterov <oleg@redhat.com>
 > Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-
-This all looks correct,
 
 Reviewed-by: Arnd Bergmann <arnd@arndb.de>
