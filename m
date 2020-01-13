@@ -2,130 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B47F5138BB0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2020 07:11:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67CE3138BE5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2020 07:40:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733312AbgAMGLA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jan 2020 01:11:00 -0500
-Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:33103 "EHLO
-        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732572AbgAMGK7 (ORCPT
+        id S1733238AbgAMGku convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jan 2020 01:40:50 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:50204 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732311AbgAMGku (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jan 2020 01:10:59 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.west.internal (Postfix) with ESMTP id B466334E;
-        Mon, 13 Jan 2020 01:03:08 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Mon, 13 Jan 2020 01:03:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
-        9Z6VUqdqPXpLn669vPyb+CQZlzNvkMAwmc1OtG2A7bg=; b=FJ+hlWNWRyO3bUzQ
-        mU6lJAlgm5zemUjvxDyxio74eo5D+xwnbYH2LR3wiVXN7+X3QP8oLYhOR9Lj+PBi
-        sh8gfItBzv8n3ikWXB1ysNHwFp18y9/pciiyAMtzioUVg9HAVcmNogyvHy6iHFdV
-        nl86jk8NYWaY9aiw4LdM/XMr0O1woaQQ1fDM2XtObjQmOlv4Z9bAR469U0NwpS1M
-        hpJlSQsZw0MH7qKCI8T2SECdFolVjdVH/AMgmSC3yVb3xzHlo7rmAteq66rz4Z14
-        sst4ZRSf0PLntYnaCS/nT72LO18TPS5XIzfE8gTkpbYG/xptt1+sFso4dL6Ht2L9
-        GaWIDw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=9Z6VUqdqPXpLn669vPyb+CQZlzNvkMAwmc1OtG2A7
-        bg=; b=TSX7MS1vVDaVQxKh/S5NfhasA1b1ydZGUNqi6HAKn7HRHp+X6ihk0kIvn
-        mh4HwNKXPWxk9hS/s4ul03Zc2vQPHiC9bvisxrIcFVi+F5Z4ZhXphu5MgBM7etNA
-        b1idW+9xhYbDsjVxoBaJkZ1Wdq6hOn/Pv5dRGEfwd34VRrc0g10i6bu19kI5cav6
-        0sWNVIUPT8e7IO9W3PAfC17d3/W86Ujch5zgyy8JzIwC5ntvZ50G4fG0D8kcDPz1
-        0c0uNLFhFaGfziK2JvUQVhWT4B2VpQPx+70U2c4B5yFrenugrE5BKiMe2k+O/I7s
-        0tkRAE8jI2GdmNt96T+IE/2tTWQcA==
-X-ME-Sender: <xms:GwgcXpcMsfKuSdcdiHHMfprUEqTioGSNI86XT20OV2S1PHixb2oIgQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdeiledgledvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucffohhmrghinhepghhith
-    hhuhgsrdgtohhmnecukfhppeduudekrddvtdelrddujeehrddvheenucfrrghrrghmpehm
-    rghilhhfrhhomheprhgrvhgvnhesthhhvghmrgifrdhnvghtnecuvehluhhsthgvrhfuih
-    iivgeptd
-X-ME-Proxy: <xmx:GwgcXtmEUEamm_EPdfFMXSYx6yCXdt61le-aSJGuScRzDvO20fskNA>
-    <xmx:GwgcXuynn2oCGOcsuIfkae_Fwq9BGSTnegqf11WrlWIUKBA9I9CZHQ>
-    <xmx:GwgcXgwn1rHnm3qk6K7lr5nxaqpwqeeiG6glo60EYHI9yMrVLwHriA>
-    <xmx:HAgcXrnLrLpulrqlFePddhNq9yVIM5Y8F6pN6HBMbNOy-QMohJs916rjgGY>
-Received: from mickey.themaw.net (unknown [118.209.175.25])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 0BDED80061;
-        Mon, 13 Jan 2020 01:03:02 -0500 (EST)
-Message-ID: <58f9894e51a00ad2a4ac3d4122bf29e7cb6c0d54.camel@themaw.net>
-Subject: Re: [PATCH RFC 0/1] mount: universally disallow mounting over
- symlinks
-From:   Ian Kent <raven@themaw.net>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        stable@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Serge Hallyn <serge@hallyn.com>, dev@opencontainers.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 13 Jan 2020 14:03:00 +0800
-In-Reply-To: <41c535d689530f3715f21cd25074eb61e825a5f6.camel@themaw.net>
-References: <20191230072959.62kcojxpthhdwmfa@yavin.dot.cyphar.com>
-         <20200101004324.GA11269@ZenIV.linux.org.uk>
-         <20200101005446.GH4203@ZenIV.linux.org.uk>
-         <20200101030815.GA17593@ZenIV.linux.org.uk>
-         <20200101144407.ugjwzk7zxrucaa6a@yavin.dot.cyphar.com>
-         <20200101234009.GB8904@ZenIV.linux.org.uk>
-         <20200102035920.dsycgxnb6ba2jhz2@yavin.dot.cyphar.com>
-         <20200103014901.GC8904@ZenIV.linux.org.uk>
-         <20200110231945.GL8904@ZenIV.linux.org.uk>
-         <aea0bc800b6a1e547ca1944738ff9db4379098ba.camel@themaw.net>
-         <20200113035407.GQ8904@ZenIV.linux.org.uk>
-         <41c535d689530f3715f21cd25074eb61e825a5f6.camel@themaw.net>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 13 Jan 2020 01:40:50 -0500
+Received: by mail-pj1-f68.google.com with SMTP id r67so3731612pjb.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Jan 2020 22:40:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:content-transfer-encoding:mime-version
+         :subject:message-id:date:cc:to;
+        bh=kExGYfwhBDe/JLj4DdbRd5dLdG+WtWHG09NOf1OYrp8=;
+        b=kdKNTPBcT/XbhdvLj8F+kRFyIM9HdahrGcTswK6JxRtZcacD0RwTj1M4ejGayKqi3P
+         RRCZKRlKcwu3Fn772o+FYzoGaoqHL0tlJBV8/kgJqOCc9ip1qbTs28mIRgTQMbsEXJY2
+         GUmOkpfKqDYSu8bmyseszPJogEBJqUa2KTBrUrEqTpDWe68GNO+MWpAeJp1ZSdZhOIpz
+         VUHbgy+kabAZdHJeetZllCJQjywq05SHUChgIcp3qvrl3aVyxI4UPyfqJRMdKFcOs3UP
+         3d/x/XHRKuvNdzLl8QOpCE47YRoYzfyo5xNsdIr8igl36fpx1dMuAxnrCermT8SYuXun
+         lh3A==
+X-Gm-Message-State: APjAAAWVgplnoNVQK2C1vZAgZS+AzzrdZwM6MveI3LrTkKDuSlRurQJH
+        bsZYf8fD3q0JpB4pkwLM+xga+Ol+
+X-Google-Smtp-Source: APXvYqzvJ9txXYszI0v7n/Igop07YBn8RDNsJPS/SoNYYJO9Kxpia8EBYOmp+M+E0nSJ7PBWYq7wMQ==
+X-Received: by 2002:a17:902:708c:: with SMTP id z12mr12217481plk.15.1578897649164;
+        Sun, 12 Jan 2020 22:40:49 -0800 (PST)
+Received: from resnet-11-27.resnet.ucsb.edu (ResNet-11-27.resnet.ucsb.edu. [169.231.11.27])
+        by smtp.gmail.com with ESMTPSA id q22sm12794161pfg.170.2020.01.12.22.40.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 12 Jan 2020 22:40:48 -0800 (PST)
+From:   Saagar Jha <saagar@saagarjha.com>
+Content-Type: text/plain;
+        charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.1\))
+Subject: [PATCH] vfs: prevent signed overflow by using u64 over loff_t
+Message-Id: <AECA23B8-C4AC-4280-A709-746DD9FC44F9@saagarjha.com>
+Date:   Sun, 12 Jan 2020 22:40:47 -0800
+Cc:     viro@zeniv.linux.org.uk
+To:     linux-fsdevel@vger.kernel.org
+X-Mailer: Apple Mail (2.3608.60.0.2.1)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2020-01-13 at 14:00 +0800, Ian Kent wrote:
-> On Mon, 2020-01-13 at 03:54 +0000, Al Viro wrote:
-> > On Mon, Jan 13, 2020 at 09:48:23AM +0800, Ian Kent wrote:
-> > 
-> > > I did try this patch and I was trying to work out why it didn't
-> > > work. But thought I'd let you know what I saw.
-> > > 
-> > > Applying it to current Linus tree systemd stops at switch root.
-> > > 
-> > > Not sure what causes that, I couldn't see any reason for it.
-> > 
-> > Wait a minute...  So you are seeing problems early in the boot,
-> > before any autofs ioctls might come into play?
-> 
-> I did, then I checked it booted without the patch, then tried
-> building from scratch with the patch twice and same thing
-> happened each time.
-> 
-> Looked like this, such as it is:
-> [ OK ] Reached target Switch Root.
-> [ OK ] Started Plymouth switch root service.
->        Starting Switch Root...
-> 
-> I don't have any evidence but thought it might be this:
-> https://github.com/karelzak/util-linux/blob/master/sys-utils/switch_root.c
+Hi,
 
-Oh wait, for systemd I was actually looking at:
-https://github.com/systemd/systemd/blob/master/src/shared/switch-root.c
+I think I’ve found a signed integer overflow when reconstructing the
+64-bit offset from the two 32-bit values syscall arguments, and I believe
+the patch below would fix this issue. Unfortunately I don't have in the
+way of experience contributing to the kernel, so I would appreciate it if
+someone would point out if I should
 
-> 
-> Mind you, that's not the actual systemd repo. either I probably
-> need to look a lot deeper (and at the actual systemd repo) to
-> work out what's actually being called.
-> 
-> > Sigh...  Guess I'll have to dig that Fedora KVM image out and
-> > try to see what it's about... ;-/  Here comes a couple of hours
-> > of build...
+* not submit this at all,
+* submit this somewhere else,
+* fix it some other way,
+* format this differently,
+* test it using some method that I am unaware of,
+* or am missing something else in general.
+
+I've tried my best to align with the guidelines but if I've tripped up on
+the details I would appreciate guidance on what I should be doing instead.
+
+Thanks,
+Saagar Jha
+
+From c3525c7dfb9cede7cc246200ba70455855a3ec8b Mon Sep 17 00:00:00 2001
+From: Saagar Jha <saagar@saagarjha.com>
+Date: Sun, 12 Jan 2020 21:46:28 -0800
+Subject: [PATCH] vfs: prevent signed overflow by using u64 over loff_t
+
+32-bit system calls taking a 64-bit offset that arrive as split over two
+32-bit unsigned integers overflow the signed loff_t when shifted over by
+32 bits. Using unsigned intermediate types fixes the undefined behavior.
+
+Signed-off-by: Saagar Jha <saagar@saagarjha.com>
+---
+ fs/read_write.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 5bbf587f5bc1..3a1dfafcaf65 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -347,7 +347,7 @@ SYSCALL_DEFINE5(llseek, unsigned int, fd, unsigned long, offset_high,
+ 	if (whence > SEEK_MAX)
+ 		goto out_putf;
+
+-	offset = vfs_llseek(f.file, ((loff_t) offset_high << 32) | offset_low,
++	offset = vfs_llseek(f.file, ((u64) offset_high << 32) | offset_low,
+ 			whence);
+
+ 	retval = (int)offset;
+@@ -1250,7 +1250,7 @@ COMPAT_SYSCALL_DEFINE5(preadv, compat_ulong_t, fd,
+ 		const struct compat_iovec __user *,vec,
+ 		compat_ulong_t, vlen, u32, pos_low, u32, pos_high)
+ {
+-	loff_t pos = ((loff_t)pos_high << 32) | pos_low;
++	loff_t pos = (((u64)pos_high << 32) | pos_low;
+
+ 	return do_compat_preadv64(fd, vec, vlen, pos, 0);
+ }
+@@ -1272,7 +1272,7 @@ COMPAT_SYSCALL_DEFINE6(preadv2, compat_ulong_t, fd,
+ 		compat_ulong_t, vlen, u32, pos_low, u32, pos_high,
+ 		rwf_t, flags)
+ {
+-	loff_t pos = ((loff_t)pos_high << 32) | pos_low;
++	loff_t pos = ((u64)pos_high << 32) | pos_low;
+
+ 	if (pos == -1)
+ 		return do_compat_readv(fd, vec, vlen, flags);
+@@ -1359,7 +1359,7 @@ COMPAT_SYSCALL_DEFINE5(pwritev, compat_ulong_t, fd,
+ 		const struct compat_iovec __user *,vec,
+ 		compat_ulong_t, vlen, u32, pos_low, u32, pos_high)
+ {
+-	loff_t pos = ((loff_t)pos_high << 32) | pos_low;
++	loff_t pos = ((u64)pos_high << 32) | pos_low;
+
+ 	return do_compat_pwritev64(fd, vec, vlen, pos, 0);
+ }
+@@ -1380,7 +1380,7 @@ COMPAT_SYSCALL_DEFINE6(pwritev2, compat_ulong_t, fd,
+ 		const struct compat_iovec __user *,vec,
+ 		compat_ulong_t, vlen, u32, pos_low, u32, pos_high, rwf_t, flags)
+ {
+-	loff_t pos = ((loff_t)pos_high << 32) | pos_low;
++	loff_t pos = ((u64)pos_high << 32) | pos_low;
+
+ 	if (pos == -1)
+ 		return do_compat_writev(fd, vec, vlen, flags);
+--
+2.24.1
 
