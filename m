@@ -2,161 +2,208 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7FFE139841
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2020 19:01:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FA55139867
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2020 19:11:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728842AbgAMSBE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jan 2020 13:01:04 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:46600 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728633AbgAMSBD (ORCPT
+        id S1728792AbgAMSLn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jan 2020 13:11:43 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33207 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726878AbgAMSLm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jan 2020 13:01:03 -0500
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.16.0.42/8.16.0.42) with SMTP id 00DHr9Xp015144;
-        Mon, 13 Jan 2020 10:00:55 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=facebook;
- bh=S8noNA3HH4KBOgOZ57Yns89d3C/LADlJzhiVXf8KWMM=;
- b=HC6ogb+dpHbdyhqY6aj7WCaVR4ikYPNu1u8XE5CBiApv2Ngs1G9aHYUtjbFyyyAfF/Qd
- yGdm8iC6wziRXdX9Jip2gUcAanHJds84FoMa3QUPrOoR69K2nEKqE46p7eVx6uwwySQs
- ZLJDvHb850g/yF7lA58wNFCxYAv//MBl8xM= 
-Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by m0001303.ppops.net with ESMTP id 2xfawr9bps-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 13 Jan 2020 10:00:55 -0800
-Received: from prn-hub03.TheFacebook.com (2620:10d:c081:35::127) by
- prn-hub04.TheFacebook.com (2620:10d:c081:35::128) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1713.5; Mon, 13 Jan 2020 10:00:53 -0800
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
- via Frontend Transport; Mon, 13 Jan 2020 10:00:53 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mLY8d8ShYWi3caN2SBLP2xJ27wsRAP1e9p16niQO/ZoYiLGy4b5kSHXggiHRD9//FuHGu5TmB2OOzJz+01NITQL2X/G5lQWrbXiV9ht+gqfu5XLOjzR76sslc5c1oqZC4IAbQri7gcw4P/0JBUHbSXJSP5kd588Dey6XRNk/LSTKYlOyazh0Pqo2XCrYW+OHDkk+PpOUpYS+RSHDbgJTeZs32h8rMYxx8mwmHZ2GN7bCThw5NhLmFfi2sy9IX124DjptGrpi/tFnGGv5d0jWFpPXAZlRjp+qNHwWZv1+iSInMKGsFTsLSQLYVH3u/OFepiZKmVeTPOPjg/DH6lF0pA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S8noNA3HH4KBOgOZ57Yns89d3C/LADlJzhiVXf8KWMM=;
- b=aelgTNKUBskdsiCAci3nZzyO/gvMRNhztA6G/gmjzd21fNnsxJlGkJij93x6nzmSfX3dMt2fqA/WDM0L570Kd7w7gBEAbcdNwcj0kRVmoZIbzZTj3bfMnE0eU6tQNn0pZeReNAB9lXXS0Z8qEaFl0oVGsK/l5XbCCw/vIX53JgWEeuK7ClZgI2MEej4+cE4bAKDp19L8RajWR4PYZnbkG19q+C6JEVIjTIe84RY/0dqLAWzl31SiR9vCNdvhk8anrpp/2BXTxMci8m79uriuwqH9HWJWnJbGF2M0N25skoQebOvleRIN3B5m8NgHrPAMDU+bSNwVUSxTJezPzmsQJA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S8noNA3HH4KBOgOZ57Yns89d3C/LADlJzhiVXf8KWMM=;
- b=RyN2UJGzFJISB3qEhl//pvUKbtTk+y04xBocCP4D8xu7A1kS+xKxZI8a55G+MMMjVYWfRKhX0Dt1GH+0D9I6f949L2Do02r8x5DvNc1rVV/bUGafuk0iu1eosMCZDd65FUJGhZHrY0XKZeIBfQULktalMpg0fb+trMSv7KRnRgk=
-Received: from SN6PR15MB2446.namprd15.prod.outlook.com (52.135.64.153) by
- SN6PR15MB2432.namprd15.prod.outlook.com (52.135.65.156) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2623.9; Mon, 13 Jan 2020 18:00:52 +0000
-Received: from SN6PR15MB2446.namprd15.prod.outlook.com
- ([fe80::615e:4236:ddfa:3d10]) by SN6PR15MB2446.namprd15.prod.outlook.com
- ([fe80::615e:4236:ddfa:3d10%6]) with mapi id 15.20.2623.015; Mon, 13 Jan 2020
- 18:00:52 +0000
-Received: from [172.30.120.61] (2620:10d:c091:480::1025) by MN2PR14CA0024.namprd14.prod.outlook.com (2603:10b6:208:23e::29) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2623.9 via Frontend Transport; Mon, 13 Jan 2020 18:00:51 +0000
-From:   Chris Mason <clm@fb.com>
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "hch@infradead.org" <hch@infradead.org>
-Subject: Re: [RFC 0/8] Replacing the readpages a_op
-Thread-Topic: [RFC 0/8] Replacing the readpages a_op
-Thread-Index: AQHVyieJJr3DU4NMDUiHtIM35/TqzKfozHmAgAAQNgCAAAXGAA==
-Date:   Mon, 13 Jan 2020 18:00:52 +0000
-Message-ID: <15C84CC9-3196-441D-94DE-F3FD7AC364F0@fb.com>
-References: <20200113153746.26654-1-willy@infradead.org>
- <6CA4CD96-0812-4261-8FF9-CD28AA2EC38A@fb.com>
- <20200113174008.GB332@bombadil.infradead.org>
-In-Reply-To: <20200113174008.GB332@bombadil.infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: MailMate (1.13.1r5671)
-x-clientproxiedby: MN2PR14CA0024.namprd14.prod.outlook.com
- (2603:10b6:208:23e::29) To SN6PR15MB2446.namprd15.prod.outlook.com
- (2603:10b6:805:22::25)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c091:480::1025]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 6752ab99-e401-4ffa-20dc-08d798528734
-x-ms-traffictypediagnostic: SN6PR15MB2432:
-x-microsoft-antispam-prvs: <SN6PR15MB2432D576856B5E6F5216B3CAD3350@SN6PR15MB2432.namprd15.prod.outlook.com>
-x-fb-source: Internal
-x-ms-oob-tlc-oobclassifiers: OLM:4714;
-x-forefront-prvs: 028166BF91
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(346002)(366004)(376002)(39860400002)(199004)(189003)(86362001)(4326008)(478600001)(5660300002)(81156014)(81166006)(8936002)(8676002)(36756003)(6486002)(33656002)(66946007)(66556008)(66446008)(66476007)(64756008)(6916009)(2906002)(53546011)(71200400001)(52116002)(2616005)(16526019)(186003)(54906003)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR15MB2432;H:SN6PR15MB2446.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: VyIuF3+r+sfLZiROhh2Fp4z0mJ8Bq/f+1+cg/aDGNYEufAoEpL9xjnJ7P0ZtLDKVLsXFHdrIw4YthkHg/v7DXkR8oM2/CdXe6FluazYMHjBdrMWbd209T9g//7hHkK5AapMHBnjZ+Po4lfhi+Nu0w1a1Em+RPJwiVu2shw2wkcqMnuNn30BY2oOY4egOWAuztHx9P+1gtCrgf4sXdkEHTE95PNNqrr6rN7lHuqAV7d98su5gCTNyxbFQMcMdkFx6EqRmD5wsxb+nlJyuE60sXXGVnYsdgixw12NNvoi6FlyGp6pPA7Gd4MqX2SXoDptPv2BehgE7zYodKjuporVjD1zZ/2dAsmTJESnv0G+5M7BfHgcq5xOoVcoyJYHScshZYIquvSuvL3B4GUjovqqaJZlJMrDFvCLivizeRcoDbQQd819dx5ieeTDMJQm79bII
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 13 Jan 2020 13:11:42 -0500
+Received: by mail-wr1-f66.google.com with SMTP id b6so9628596wrq.0;
+        Mon, 13 Jan 2020 10:11:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=uPVm5hkau2avZJszOC1N8WygJacrNIkqFqGLAd5A9U4=;
+        b=jvvGdbKX5ldral0ASnIkZktNNUcq9mFuLem8RNNSob3Z+ldHF3VYqNWcYm51tGapOB
+         2u+vYF6q1RuFHX0IIZLulXqdA0cS3Bt9WO8ebg9pslobIJl/6rvRHdwjEoxkBwsEDwvg
+         Tvn+zEy32B4S9ZYrYlXquKCyi9iY8nNFZKvTYZQiiIOqs6ztdcYrwHWgWBtv34ZwG0R4
+         yMUNvPd+2EUBjyNIWpTc7ivTsQVPOyNfROHlkhatBaTtrctryktLS90fsnKnyaO4gnj0
+         9YirHQj3k36xqSwyRfK82I1hHbcoufGLd32+MX9D3tqk6aZrtXhEVx2tbQSLhab1+8Q0
+         hsBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uPVm5hkau2avZJszOC1N8WygJacrNIkqFqGLAd5A9U4=;
+        b=M4BJ7jmV41dSh+DBKl/6W6fL6zT3mnrOkA8MbBAowbJqUdKoAtH5V6Kr0OuQy0tXlj
+         dV5HMp+NN2Ud4vjWYSPmS3p3idqnzuFkhyCF5yTcpEQmJdb2RfDh0ck1pxw37EYP31Jm
+         snsYHMMRBUENYcky3D+s03e66iukVqm2d3/EnPeEO+g5ydXoMWPldcq32gPA653pGgfU
+         fyMuoY1HykayDgOFTYkwGIbKoZu9XJ6tOVsQhPKzyO0nweF+L8jJ/4my1I4q/7bpHAgo
+         Dy70Ioil2kdsqDBCVpPkPA4R9Z1o7hnJX3uRbVVG2lkVyWkj99xxXA/hMnAzlbAiTUKb
+         LqGA==
+X-Gm-Message-State: APjAAAWIiBrFIy9hVvEOb26PcOTgcySx14jd3NoCfRXCq2P6lmwjjimi
+        Qqwd1x+YDPhDHPoTjTs4aes=
+X-Google-Smtp-Source: APXvYqwoFiHz2JVimqUJiS0ZWmsb8K3cDxBCGzjyxYDqT7d/1e0brSlZkxMOkhrfXOjIi2UcyLIUjQ==
+X-Received: by 2002:adf:e550:: with SMTP id z16mr20114651wrm.315.1578939100472;
+        Mon, 13 Jan 2020 10:11:40 -0800 (PST)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id i5sm15086910wml.31.2020.01.13.10.11.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jan 2020 10:11:39 -0800 (PST)
+Date:   Mon, 13 Jan 2020 19:11:38 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [WIP PATCH 2/4] udf: Fix reading numFiles and numDirs from UDF
+ 2.00+ VAT discs
+Message-ID: <20200113181138.iqmo33ml2kpnmsfo@pali>
+References: <20200112175933.5259-1-pali.rohar@gmail.com>
+ <20200112175933.5259-3-pali.rohar@gmail.com>
+ <20200113115822.GE23642@quack2.suse.cz>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6752ab99-e401-4ffa-20dc-08d798528734
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jan 2020 18:00:52.0944
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: RoINcDA8ItYwxe8LOScqcr+Jwub00lTLYkh0XUIDLxOnpccN5ZuS02ASO+p0Reot
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR15MB2432
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-13_06:2020-01-13,2020-01-13 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 lowpriorityscore=0
- priorityscore=1501 malwarescore=0 impostorscore=0 bulkscore=0 adultscore=0
- clxscore=1015 suspectscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001130144
-X-FB-Internal: deliver
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="sg2x6nv6xm67glzb"
+Content-Disposition: inline
+In-Reply-To: <20200113115822.GE23642@quack2.suse.cz>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 13 Jan 2020, at 12:40, Matthew Wilcox wrote:
 
-> On Mon, Jan 13, 2020 at 04:42:10PM +0000, Chris Mason wrote:
->
-> I did do a couple of helpers for lists for iomap before deciding the
-> whole thing was too painful.  I didn't look at btrfs until just now,=20
-> but, um ...
->
-> int extent_readpages(struct address_space *mapping, struct list_head=20
-> *pages,
->                      unsigned nr_pages)
-> ..
->         struct page *pagepool[16];
-> ..
->         while (!list_empty(pages)) {
-> ..
->                         list_del(&page->lru);
->                         if (add_to_page_cache_lru(page, mapping,=20
-> page->index,
-> ..
->                         pagepool[nr++] =3D page;
->
-> you're basically doing exactly what i'm proposing to be the new=20
-> interface!
-> OK, you get one extra page per batch ;-P
+--sg2x6nv6xm67glzb
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is true, I didn't explain that part well ;)  Depending on=20
-compression etc we might end up poking the xarray inside the actual IO=20
-functions, but the main difference is that btrfs is building a single=20
-bio.  You're moving the plug so you'll merge into single bio, but I'd=20
-rather build 2MB bios than merge them.
+On Monday 13 January 2020 12:58:22 Jan Kara wrote:
+> On Sun 12-01-20 18:59:31, Pali Roh=C3=A1r wrote:
+> > These two fields are stored in VAT and override previous values stored =
+in
+> > LVIDIU.
+> >=20
+> > This change contains only implementation for UDF 2.00+. For UDF 1.50 th=
+ere
+> > is an optional structure "Logical Volume Extended Information" which is=
+ not
+> > implemented in this change yet.
+> >=20
+> > Signed-off-by: Pali Roh=C3=A1r <pali.rohar@gmail.com>
+>=20
+> For this and the following patch, I'd rather have the 'additional data'
+> like number of files, dirs, or revisions, stored in the superblock than
+> having them hidden in the VAT partition structure. And places that parse
+> corresponding on-disk structures would fill in the numbers into the
+> superblock.
 
-I guess it doesn't feel like enough of a win to justify the churn.  If=20
-we find a way to do much larger pagevecs, I think this makes more sense.
+This is not simple. Kernel first reads and parses VAT and later parses
+LVIDIU. VAT is optional UDF feature and in UDF 1.50 are even those data
+optional.
 
--chris
+Logic for determining minimal write UDF revision is currently in code
+which parse LVIDIU. And this is the only place which needs access UDF
+revisions stored in VAT and LVIDIU.
 
+UDF revision from LVD is already stored into superblock.
+
+And because VAT is parsed prior to parsing LVIDIU is is also not easy to
+store number of files and directories into superblock. LVIDIU needs to
+know if data from VAT were loaded to superblock or not and needs to know
+if data from LVIDIU should be stored into superblock or not.
+
+Any idea how to do it without complicating whole code?
+
+> 								Honza
+> > ---
+> >  fs/udf/super.c  | 25 ++++++++++++++++++++++---
+> >  fs/udf/udf_sb.h |  3 +++
+> >  2 files changed, 25 insertions(+), 3 deletions(-)
+> >=20
+> > diff --git a/fs/udf/super.c b/fs/udf/super.c
+> > index 8df6e9962..e8661bf01 100644
+> > --- a/fs/udf/super.c
+> > +++ b/fs/udf/super.c
+> > @@ -1202,6 +1202,8 @@ static int udf_load_vat(struct super_block *sb, i=
+nt p_index, int type1_index)
+> >  		map->s_type_specific.s_virtual.s_start_offset =3D 0;
+> >  		map->s_type_specific.s_virtual.s_num_entries =3D
+> >  			(sbi->s_vat_inode->i_size - 36) >> 2;
+> > +		/* TODO: Add support for reading Logical Volume Extended Information=
+ (UDF 1.50 Errata, DCN 5003, 3.3.4.5.1.3) */
+> > +		map->s_type_specific.s_virtual.s_has_additional_data =3D false;
+> >  	} else if (map->s_partition_type =3D=3D UDF_VIRTUAL_MAP20) {
+> >  		vati =3D UDF_I(sbi->s_vat_inode);
+> >  		if (vati->i_alloc_type !=3D ICBTAG_FLAG_AD_IN_ICB) {
+> > @@ -1215,6 +1217,12 @@ static int udf_load_vat(struct super_block *sb, =
+int p_index, int type1_index)
+> >  							vati->i_ext.i_data;
+> >  		}
+> > =20
+> > +		map->s_type_specific.s_virtual.s_has_additional_data =3D
+> > +			true;
+> > +		map->s_type_specific.s_virtual.s_num_files =3D
+> > +			le32_to_cpu(vat20->numFiles);
+> > +		map->s_type_specific.s_virtual.s_num_dirs =3D
+> > +			le32_to_cpu(vat20->numDirs);
+> >  		map->s_type_specific.s_virtual.s_start_offset =3D
+> >  			le16_to_cpu(vat20->lengthHeader);
+> >  		map->s_type_specific.s_virtual.s_num_entries =3D
+> > @@ -2417,9 +2425,20 @@ static int udf_statfs(struct dentry *dentry, str=
+uct kstatfs *buf)
+> >  	buf->f_blocks =3D sbi->s_partmaps[sbi->s_partition].s_partition_len;
+> >  	buf->f_bfree =3D udf_count_free(sb);
+> >  	buf->f_bavail =3D buf->f_bfree;
+> > -	buf->f_files =3D (lvidiu !=3D NULL ? (le32_to_cpu(lvidiu->numFiles) +
+> > -					  le32_to_cpu(lvidiu->numDirs)) : 0)
+> > -			+ buf->f_bfree;
+> > +
+> > +	if ((sbi->s_partmaps[sbi->s_partition].s_partition_type =3D=3D UDF_VI=
+RTUAL_MAP15 ||
+> > +	     sbi->s_partmaps[sbi->s_partition].s_partition_type =3D=3D UDF_VI=
+RTUAL_MAP20) &&
+> > +	     sbi->s_partmaps[sbi->s_partition].s_type_specific.s_virtual.s_ha=
+s_additional_data)
+> > +		buf->f_files =3D sbi->s_partmaps[sbi->s_partition].s_type_specific.s=
+_virtual.s_num_files +
+> > +			       sbi->s_partmaps[sbi->s_partition].s_type_specific.s_virtual.=
+s_num_dirs +
+> > +			       buf->f_bfree;
+> > +	else if (lvidiu !=3D NULL)
+> > +		buf->f_files =3D le32_to_cpu(lvidiu->numFiles) +
+> > +			       le32_to_cpu(lvidiu->numDirs) +
+> > +			       buf->f_bfree;
+> > +	else
+> > +		buf->f_files =3D buf->f_bfree;
+> > +
+> >  	buf->f_ffree =3D buf->f_bfree;
+> >  	buf->f_namelen =3D UDF_NAME_LEN;
+> >  	buf->f_fsid.val[0] =3D (u32)id;
+> > diff --git a/fs/udf/udf_sb.h b/fs/udf/udf_sb.h
+> > index 6bd0d4430..c74abbc84 100644
+> > --- a/fs/udf/udf_sb.h
+> > +++ b/fs/udf/udf_sb.h
+> > @@ -78,6 +78,9 @@ struct udf_sparing_data {
+> >  struct udf_virtual_data {
+> >  	__u32	s_num_entries;
+> >  	__u16	s_start_offset;
+> > +	bool	s_has_additional_data;
+> > +	__u32	s_num_files;
+> > +	__u32	s_num_dirs;
+> >  };
+> > =20
+> >  struct udf_bitmap {
+> > --=20
+> > 2.20.1
+> >=20
+
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
+
+--sg2x6nv6xm67glzb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EARECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXhyy2AAKCRCL8Mk9A+RD
+UgwvAJ9da0YhDoqSW4YYkzMsBuwhv42BqQCfTb6Gm6/D1H8nj3a9spMm1Xrr3YI=
+=6a1y
+-----END PGP SIGNATURE-----
+
+--sg2x6nv6xm67glzb--
