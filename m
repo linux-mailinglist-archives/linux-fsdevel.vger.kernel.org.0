@@ -2,95 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1FC0139C69
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2020 23:27:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29C75139C72
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2020 23:30:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728833AbgAMW1G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jan 2020 17:27:06 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:47614 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726530AbgAMW1G (ORCPT
+        id S1728829AbgAMWaJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jan 2020 17:30:09 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:34194 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726530AbgAMWaI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jan 2020 17:27:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=SxeMrcw8VfwoTo9Q+GzAW5ii85Q073aK0lgVbFxIoE4=; b=fX/j+1OwGRaQw1c6OulAfDSmc
-        vF070DKVrwwzQje2r/Ium//k5I3u9hwozV+Xoa4216mfL+YrUwXzxsJrQMDOIkCkCRw5Ct9LS8p9j
-        AkAjnyuhUi4vpw7Nm8PKBgtAmM3TlMP2BA/2l7bdHal6njOrB193U4SxKHpSIDARKyrB+ONzZiDnw
-        UKf2El+WNSNNn16tg9v+RbOknmcaG4kM7NeLckDlBDewswSWtw1XrqnB81tsyErYzirIttekNgVrP
-        70YlWvPwuqWdZ0zE8jKHMy+LTiuwvl9eWBFZZmsN2It2mJmUiFmrAsaTbjPEeLnvksPaRvmoyTS77
-        HMOmJcTMg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ir8Aq-0006Ri-Nz; Mon, 13 Jan 2020 22:27:04 +0000
-Date:   Mon, 13 Jan 2020 14:27:04 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Chris Mason <clm@fb.com>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "hch@infradead.org" <hch@infradead.org>
-Subject: Re: [RFC 0/8] Replacing the readpages a_op
-Message-ID: <20200113222704.GC18216@bombadil.infradead.org>
-References: <20200113153746.26654-1-willy@infradead.org>
- <6CA4CD96-0812-4261-8FF9-CD28AA2EC38A@fb.com>
- <20200113174008.GB332@bombadil.infradead.org>
- <15C84CC9-3196-441D-94DE-F3FD7AC364F0@fb.com>
- <20200113215811.GA18216@bombadil.infradead.org>
- <910af281-4e2b-3e5d-5533-b5ceafd59665@kernel.dk>
- <20200113221047.GB18216@bombadil.infradead.org>
- <1b94e6b6-29dc-2e90-d1ca-982accd3758c@kernel.dk>
+        Mon, 13 Jan 2020 17:30:08 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00DMNcxl171558;
+        Mon, 13 Jan 2020 22:29:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=25CiF6daHnR1vOGlT2zLjWwy8YF2rNmqXCEwgry4lk8=;
+ b=S+Mf/nwHGiaPDLETKmXJ+EqUwgRjBYiFnW8IKm2zpK6zuLjWXHNyoce9ehuoWiwlZ8wt
+ LPGGpJI9L272Ri0RxbyCChNdoKvDgmY+U7TaveS3PbeVOAucz5QYuhPa6UyC2Ez0blPB
+ ZC5OdTwunYEs3tlS1UD5zW9S0H+qM3IYzMW7JNpChHE4NuYShHdrOfrc0FFv4p3ESHWY
+ KjffP5uk8wFbHVHdbhFwyqaSTV9th1MtHKaQJWHQxSAqxX1wkFmSplDLrUleWfvuOlL1
+ bq3E4ImY+rW6gX4SynK2zzeVGSAAabh+5ekjxuFe0hXp2kgGuKYZ7oaUlgCneZdHOgRk 8A== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2xf73ya024-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 13 Jan 2020 22:29:58 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00DMOXRB016713;
+        Mon, 13 Jan 2020 22:27:57 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2xfqvtma79-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 13 Jan 2020 22:27:57 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 00DMRvAH013676;
+        Mon, 13 Jan 2020 22:27:57 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 13 Jan 2020 14:27:56 -0800
+Date:   Mon, 13 Jan 2020 14:27:55 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     ira.weiny@intel.com
+Cc:     linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH V2 10/12] fs/xfs: Fix truncate up
+Message-ID: <20200113222755.GP8247@magnolia>
+References: <20200110192942.25021-1-ira.weiny@intel.com>
+ <20200110192942.25021-11-ira.weiny@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1b94e6b6-29dc-2e90-d1ca-982accd3758c@kernel.dk>
+In-Reply-To: <20200110192942.25021-11-ira.weiny@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9499 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=895
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001130183
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9499 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=955 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001130183
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 03:14:26PM -0700, Jens Axboe wrote:
-> On 1/13/20 3:10 PM, Matthew Wilcox wrote:
-> > On Mon, Jan 13, 2020 at 03:00:40PM -0700, Jens Axboe wrote:
-> >> On 1/13/20 2:58 PM, Matthew Wilcox wrote:
-> >>> On Mon, Jan 13, 2020 at 06:00:52PM +0000, Chris Mason wrote:
-> >>>> This is true, I didn't explain that part well ;)  Depending on 
-> >>>> compression etc we might end up poking the xarray inside the actual IO 
-> >>>> functions, but the main difference is that btrfs is building a single 
-> >>>> bio.  You're moving the plug so you'll merge into single bio, but I'd 
-> >>>> rather build 2MB bios than merge them.
-> >>>
-> >>> Why don't we store a bio pointer inside the plug?  You're opencoding that,
-> >>> iomap is opencoding that, and I bet there's a dozen other places where
-> >>> we pass a bio around.  Then blk_finish_plug can submit the bio.
-> >>
-> >> Plugs aren't necessarily a bio, they can be callbacks too.
-> > 
-> > I'm thinking something as simple as this:
->
-> It's a little odd imho, the plugging generally collect requests. Sounds
-> what you're looking for is some plug owner private data, which just
-> happens to be a bio in this case?
+On Fri, Jan 10, 2020 at 11:29:40AM -0800, ira.weiny@intel.com wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
 > 
-> Is this over repeated calls to some IO generating helper? Would it be
-> more efficient if that helper could generate the full bio in one go,
-> instead of piecemeal?
+> When zeroing the end of a file we must account for bytes contained in
+> the final page which are past EOF.
+> 
+> Extend the range passed to iomap_zero_range() to reach LLONG_MAX which
+> will include all bytes of the final page.
+> 
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> ---
+>  fs/xfs/xfs_iops.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index a2f2604c3187..a34b04e8ac9c 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -910,7 +910,7 @@ xfs_setattr_size(
+>  	 */
+>  	if (newsize > oldsize) {
+>  		trace_xfs_zero_eof(ip, oldsize, newsize - oldsize);
+> -		error = iomap_zero_range(inode, oldsize, newsize - oldsize,
+> +		error = iomap_zero_range(inode, oldsize, LLONG_MAX - oldsize,
 
-The issue is around ->readpages.  Take a look at how iomap_readpages
-works, for example.  We're under a plug (taken in mm/readahead.c),
-but we still go through the rigamarole of keeping a pointer to the bio
-in ctx.bio and passing ctx around so that we don't end up with many
-fragments which have to be recombined into a single bio at the end.
+Huh?  Won't this cause the file size to be set to LLONG_MAX?
 
-I think what I want is a bio I can reach from current, somehow.  And the
-plug feels like a natural place to keep it because it's basically saying
-"I want to do lots of little IOs and have them combined".  The fact that
-the iomap code has a bio that it precombines fragments into suggests to
-me that the existing antifragmentation code in the plugging mechanism
-isn't good enough.  So let's make it better by storing a bio in the plug
-and then we can get rid of the bio in the iomap code.
+--D
+
+>  				&did_zeroing, &xfs_buffered_write_iomap_ops);
+>  	} else {
+>  		error = iomap_truncate_page(inode, newsize, &did_zeroing,
+> -- 
+> 2.21.0
+> 
