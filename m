@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E95413AD54
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 16:17:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AFFA13AD56
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 16:17:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729138AbgANPRI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jan 2020 10:17:08 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46930 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726450AbgANPRI (ORCPT
+        id S1729144AbgANPRJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jan 2020 10:17:09 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51376 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725904AbgANPRI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 14 Jan 2020 10:17:08 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z7so12497751wrl.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2020 07:17:06 -0800 (PST)
+Received: by mail-wm1-f66.google.com with SMTP id d73so14219609wmd.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2020 07:17:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=LMdGC8h/b+0RUp5I4s67e3K7+OCIWfuzPBvZkge9vGs=;
-        b=mlH+/4voyFo5BPKOtmGs5yk8e8YbvLhAxRotr+XFsKagwVsiUvxV+zucOvOhCmXvia
-         UnVSK9Q2CzkBUwOxkpHTDObIXcKT8Cxy6nKwvZAc9ij6p7b9WSVSBXPGVWQi7DbdLWhR
-         YteLZTTNqlymv9Z5vzMYPLeky038tMMOu2di88JUHk4V/MEZoyQfcfWP143icXfjy6dD
-         8sjYx/0qzxrSZ3EwRD6pEP0wHN1vDr1H/BO91Tkx7nCjY61Hi2U8zCK0bbmXXQqBM+C4
-         ewWzIj6ThLCNdHqV84f5ccsIESPEyfZ9o9/w9dZ0gQWc+PyBoJsubM5iebWXFIxkMYBx
-         +DZA==
+        bh=xI6UsR2HtRTdQ7AnXLxpbvVM2BEy5RIvfWcGKDAXsbE=;
+        b=W523Srz16ex4m6WIhfstZPV19MkeksaQB5qOxmHSV4QsdDSIQt4QDWFM/vk/Jm4PrM
+         KMn8zkEwXyrgiU9+zh9yhiG9i0cIjZTqgzbFupQkfjEoxgyGUh8yJWWdQ12kXJYxJf9F
+         EjRW4VoO72BAPFnUDYft8WuPq5Nw7BzCd05eBewwZZ9ecfTEnm+Ro1Nu0H6nBuSJymmc
+         9/26mOremHDvOAb0sOFLwHC0Lpz1hdB320JBs1ZF4NSyMNZQAP4han2+ok8F/TIdw1sS
+         LKLa9+D/jN8PgK2njaT0BXPI/WEpfdt+dIfu3GkjrsQBPwevsblqaMcQdUWZi5YJRHAH
+         cROw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=LMdGC8h/b+0RUp5I4s67e3K7+OCIWfuzPBvZkge9vGs=;
-        b=BFY3txvUerPs7Tfwap4WaFqBgfEUzmj/yrmkUUnx9a4nVZEKOV23wgU/ueSgaHWjBI
-         gKIPKjK+HDM5UaMPigZ2c4R79ohD/gAfS/PFWZHbXxWXQtLiFWQEJGp9FZzHg8Agr8HR
-         nRbgYmznelSsq60kYgkhF2P0cqKiISvwauB8hygEbE0L0vuyZqXSK8B+QodpYTMd48tX
-         Z0jXEqclLiWDvfBgSapZ/KASdHWmxppubW7t+iabEdipdi3bk9btufJvMyCAmcRReu7n
-         lTLYWNB0GHIFt3Uf9OVk/FrNDz5VVVbmqiSaNaUjHRsK5oqg98fsr+q1Xg2PUkZ0M0hT
-         ecFg==
-X-Gm-Message-State: APjAAAVVy4cWufiYdjOVJnzXbeBoYQPMfO2xiOpb7yzvlhKs6OCbDbvS
-        WrMSMWNDJXEgHuYGbTftLb8=
-X-Google-Smtp-Source: APXvYqz5ZOVjGkDmyOV5pXPF0HQNZP8/yvx63hyGBgg/F6p+hCdZcwrRqs6URuI93TxdSvbGUH4ObQ==
-X-Received: by 2002:adf:ef49:: with SMTP id c9mr25214447wrp.292.1579015025307;
-        Tue, 14 Jan 2020 07:17:05 -0800 (PST)
+        bh=xI6UsR2HtRTdQ7AnXLxpbvVM2BEy5RIvfWcGKDAXsbE=;
+        b=UlI0QahTuiiv04O81FI1k2w9bwSWqlQBtc4oj3U9395bRhLaF5GEz/th8jlBLBLQJB
+         rqZ4uRWqik3fTmI+QUMeoefunRqJe2TZIgbCE2MTMjnoYGnGrVTX21lYQGor0h1+YSKi
+         LhNdYQdyv3zV7CJZEFBcAcsitxtIbf75nT3yUbCAZyKpwApgobQNeVMtVgC6DCjuKBRx
+         4TnjXpHkUyJMMMpSnqUV1bGAS4NWWsWldTFREQB9vit6964XKF+m7D6YkksPI6neubJ4
+         194LPHIXZ5hkuDG+o8U38I2fzrDbxXazREE1DxxrF0p5ejT/HegNpXTShzOWPnwcHyBz
+         SKLA==
+X-Gm-Message-State: APjAAAU5D97Ghul2PLIQkr8k49f25nuXLOOFrTekr/7PED0maVBMEAtD
+        SINcuEdMRwQGrsHBjlesvaw=
+X-Google-Smtp-Source: APXvYqzyYuoSBBDDH/N77dbBgE8qME+Q5+2FnJEEwR5QsscwzTOvl9BVsVjALoxy8pKuM5qDf3dqjg==
+X-Received: by 2002:a1c:a745:: with SMTP id q66mr26617844wme.167.1579015026484;
+        Tue, 14 Jan 2020 07:17:06 -0800 (PST)
 Received: from amir-ThinkPad-T480.ctera.local (bzq-166-168-31-246.red.bezeqint.net. [31.168.166.246])
-        by smtp.gmail.com with ESMTPSA id s19sm18276993wmj.33.2020.01.14.07.17.04
+        by smtp.gmail.com with ESMTPSA id s19sm18276993wmj.33.2020.01.14.07.17.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2020 07:17:04 -0800 (PST)
+        Tue, 14 Jan 2020 07:17:06 -0800 (PST)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH 3/6] fsnotify: simplify arguments passing to fsnotify_parent()
-Date:   Tue, 14 Jan 2020 17:16:52 +0200
-Message-Id: <20200114151655.29473-4-amir73il@gmail.com>
+Subject: [PATCH 4/6] fsnotify: replace inode pointer with tag
+Date:   Tue, 14 Jan 2020 17:16:53 +0200
+Message-Id: <20200114151655.29473-5-amir73il@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200114151655.29473-1-amir73il@gmail.com>
 References: <20200114151655.29473-1-amir73il@gmail.com>
@@ -58,137 +58,74 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Instead of passing both dentry and path and having to figure out which
-one to use, use the data/data_type convention to simplify the code.
+The event inode field is used only for comparison in queue merges and
+cannot be dereferenced after handle_event(), because it does not hold a
+refcount on the inode.
+
+Replace it with an abstract tag do to the same thing. We are going to
+set this tag for values other than inode pointer in fanotify.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/notify/fsnotify.c             | 21 ++++++++++-----------
- include/linux/fsnotify.h         | 14 ++------------
- include/linux/fsnotify_backend.h | 12 ++++++------
- 3 files changed, 18 insertions(+), 29 deletions(-)
+ fs/notify/fanotify/fanotify.c        | 2 +-
+ fs/notify/inotify/inotify_fsnotify.c | 2 +-
+ include/linux/fsnotify_backend.h     | 8 +++-----
+ 3 files changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index 13578372aee8..a8b281569bbf 100644
---- a/fs/notify/fsnotify.c
-+++ b/fs/notify/fsnotify.c
-@@ -143,14 +143,18 @@ void __fsnotify_update_child_dentry_flags(struct inode *inode)
- }
+diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+index b4cd90afece1..34454390e4b6 100644
+--- a/fs/notify/fanotify/fanotify.c
++++ b/fs/notify/fanotify/fanotify.c
+@@ -26,7 +26,7 @@ static bool should_merge(struct fsnotify_event *old_fsn,
+ 	old = FANOTIFY_E(old_fsn);
+ 	new = FANOTIFY_E(new_fsn);
  
- /* Notify this dentry's parent about a child's events. */
--int __fsnotify_parent(const struct path *path, struct dentry *dentry, __u32 mask)
-+int fsnotify_parent(__u32 mask, const void *data, int data_type)
- {
--	struct dentry *parent;
-+	struct dentry *parent, *dentry;
- 	struct inode *p_inode;
- 	int ret = 0;
+-	if (old_fsn->inode != new_fsn->inode || old->pid != new->pid ||
++	if (old_fsn->tag != new_fsn->tag || old->pid != new->pid ||
+ 	    old->fh_type != new->fh_type || old->fh_len != new->fh_len)
+ 		return false;
  
--	if (!dentry)
--		dentry = path->dentry;
-+	if (data_type == FSNOTIFY_EVENT_DENTRY)
-+		dentry = (struct dentry *)data;
-+	else if (data_type == FSNOTIFY_EVENT_PATH)
-+		dentry = ((struct path *)data)->dentry;
-+	else
-+		return 0;
- 
- 	if (!(dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED))
- 		return 0;
-@@ -168,12 +172,7 @@ int __fsnotify_parent(const struct path *path, struct dentry *dentry, __u32 mask
- 		mask |= FS_EVENT_ON_CHILD;
- 
- 		take_dentry_name_snapshot(&name, dentry);
--		if (path)
--			ret = fsnotify(p_inode, mask, path, FSNOTIFY_EVENT_PATH,
--				       &name.name, 0);
--		else
--			ret = fsnotify(p_inode, mask, dentry,
--				       FSNOTIFY_EVENT_DENTRY, &name.name, 0);
-+		ret = fsnotify(p_inode, mask, data, data_type, &name.name, 0);
- 		release_dentry_name_snapshot(&name);
- 	}
- 
-@@ -181,7 +180,7 @@ int __fsnotify_parent(const struct path *path, struct dentry *dentry, __u32 mask
- 
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(__fsnotify_parent);
-+EXPORT_SYMBOL_GPL(fsnotify_parent);
- 
- static int send_to_group(struct inode *to_tell,
- 			 __u32 mask, const void *data,
-diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-index 5746420bb121..dfdc8a1a3c38 100644
---- a/include/linux/fsnotify.h
-+++ b/include/linux/fsnotify.h
-@@ -30,30 +30,20 @@ static inline int fsnotify_dirent(struct inode *dir, struct dentry *dentry,
- 			&dentry->d_name, 0);
- }
- 
--/* Notify this dentry's parent about a child's events. */
--static inline int fsnotify_parent(const struct path *path,
--				  struct dentry *dentry, __u32 mask)
--{
--	if (!dentry)
--		dentry = path->dentry;
--
--	return __fsnotify_parent(path, dentry, mask);
--}
--
- /*
-  * Simple wrappers to consolidate calls fsnotify_parent()/fsnotify() when
-  * an event is on a path/dentry.
-  */
- static inline void fsnotify_dentry(struct dentry *dentry, __u32 mask)
- {
--	fsnotify_parent(NULL, dentry, mask);
-+	fsnotify_parent(mask, dentry, FSNOTIFY_EVENT_DENTRY);
- 	fsnotify(d_inode(dentry), mask, dentry, FSNOTIFY_EVENT_DENTRY, NULL, 0);
- }
- 
- static inline int fsnotify_path(struct inode *inode, const struct path *path,
- 				__u32 mask)
- {
--	int ret = fsnotify_parent(path, NULL, mask);
-+	int ret = fsnotify_parent(mask, path, FSNOTIFY_EVENT_PATH);
- 
- 	if (ret)
- 		return ret;
+diff --git a/fs/notify/inotify/inotify_fsnotify.c b/fs/notify/inotify/inotify_fsnotify.c
+index d510223d302c..cbaaec234fcd 100644
+--- a/fs/notify/inotify/inotify_fsnotify.c
++++ b/fs/notify/inotify/inotify_fsnotify.c
+@@ -39,7 +39,7 @@ static bool event_compare(struct fsnotify_event *old_fsn,
+ 	if (old->mask & FS_IN_IGNORED)
+ 		return false;
+ 	if ((old->mask == new->mask) &&
+-	    (old_fsn->inode == new_fsn->inode) &&
++	    (old_fsn->tag == new_fsn->tag) &&
+ 	    (old->name_len == new->name_len) &&
+ 	    (!old->name_len || !strcmp(old->name, new->name)))
+ 		return true;
 diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-index cb47759b1ce9..77edd866926f 100644
+index 77edd866926f..caf8bbc1be08 100644
 --- a/include/linux/fsnotify_backend.h
 +++ b/include/linux/fsnotify_backend.h
-@@ -351,9 +351,9 @@ struct fsnotify_mark {
- /* called from the vfs helpers */
+@@ -132,8 +132,7 @@ struct fsnotify_ops {
+  */
+ struct fsnotify_event {
+ 	struct list_head list;
+-	/* inode may ONLY be dereferenced during handle_event(). */
+-	struct inode *inode;	/* either the inode the event happened to or its parent */
++	unsigned long tag;	/* identifier for queue merges */
+ };
  
- /* main fsnotify call to send events */
--extern int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
--		    const struct qstr *name, u32 cookie);
--extern int __fsnotify_parent(const struct path *path, struct dentry *dentry, __u32 mask);
-+extern int fsnotify(struct inode *to_tell, __u32 mask, const void *data,
-+		    int data_type, const struct qstr *name, u32 cookie);
-+extern int fsnotify_parent(__u32 mask, const void *data, int data_type);
- extern void __fsnotify_inode_delete(struct inode *inode);
- extern void __fsnotify_vfsmount_delete(struct vfsmount *mnt);
- extern void fsnotify_sb_delete(struct super_block *sb);
-@@ -508,13 +508,13 @@ static inline void fsnotify_init_event(struct fsnotify_event *event,
+ /*
+@@ -499,11 +498,10 @@ extern void fsnotify_put_mark(struct fsnotify_mark *mark);
+ extern void fsnotify_finish_user_wait(struct fsnotify_iter_info *iter_info);
+ extern bool fsnotify_prepare_user_wait(struct fsnotify_iter_info *iter_info);
+ 
+-static inline void fsnotify_init_event(struct fsnotify_event *event,
+-				       struct inode *inode)
++static inline void fsnotify_init_event(struct fsnotify_event *event, void *tag)
+ {
+ 	INIT_LIST_HEAD(&event->list);
+-	event->inode = inode;
++	event->tag = (unsigned long)tag;
+ }
  
  #else
- 
--static inline int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
--			   const struct qstr *name, u32 cookie)
-+static inline int fsnotify(struct inode *to_tell, __u32 mask, const void *data,
-+			   int data_type, const struct qstr *name, u32 cookie)
- {
- 	return 0;
- }
- 
--static inline int __fsnotify_parent(const struct path *path, struct dentry *dentry, __u32 mask)
-+static inline int fsnotify_parent(__u32 mask, const void *data, int data_type)
- {
- 	return 0;
- }
 -- 
 2.17.1
 
