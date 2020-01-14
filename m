@@ -2,88 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78BB913B57A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 23:51:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6146913B5D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 00:29:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728769AbgANWvC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jan 2020 17:51:02 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:33606 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728746AbgANWvB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jan 2020 17:51:01 -0500
-Received: from callcc.thunk.org (guestnat-104-133-0-108.corp.google.com [104.133.0.108] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 00EMnH2t015142
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 14 Jan 2020 17:49:18 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 441C34207DF; Tue, 14 Jan 2020 17:49:17 -0500 (EST)
-Date:   Tue, 14 Jan 2020 17:49:17 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, hch@lst.de,
-        adilger.kernel@dilger.ca, darrick.wong@oracle.com, clm@fb.com,
-        josef@toxicpanda.com, dsterba@suse.com, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Problems with determining data presence by examining extents?
-Message-ID: <20200114224917.GA165687@mit.edu>
-References: <4467.1579020509@warthog.procyon.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4467.1579020509@warthog.procyon.org.uk>
+        id S1728894AbgANX3b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jan 2020 18:29:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34880 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728650AbgANX3b (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 14 Jan 2020 18:29:31 -0500
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76F8C24679;
+        Tue, 14 Jan 2020 23:29:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579044570;
+        bh=k4eU69C07g5/9QQrVCph8KAUUUUEi8RmXHDj6/HO/Ik=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Gu0y5RtywBnxt/5MHNzmIuAGL99UYOUTR4MOUoFz/V8A0XNK0I0bw+ID9QXrLG+b9
+         4yxWu1bIpxAgRKCCzCYPru9Le6et10vSO5ADJMjyl++hjxh7tjrdlkd5kSXYwv5i4H
+         zD3MC1qTDzqpxI561Q50RCSE3Ph+HIgvwbWCQkns=
+Date:   Tue, 14 Jan 2020 15:29:29 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?ISO-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?ISO-8859-1?Q?J=E9r?= =?ISO-8859-1?Q?=F4me?= Glisse 
+        <jglisse@redhat.com>, "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v12 00/22] mm/gup: prereqs to track dma-pinned pages:
+ FOLL_PIN
+Message-Id: <20200114152929.807fecabfe2258ae2707a88b@linux-foundation.org>
+In-Reply-To: <9d7f3c1a-6020-bdec-c513-80c5399e55d7@nvidia.com>
+References: <20200107224558.2362728-1-jhubbard@nvidia.com>
+        <2a9145d4-586e-6489-64e4-0c54f47afaa1@nvidia.com>
+        <9d7f3c1a-6020-bdec-c513-80c5399e55d7@nvidia.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 14, 2020 at 04:48:29PM +0000, David Howells wrote:
-> Again with regard to my rewrite of fscache and cachefiles:
-> 
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-iter
-> 
-> I've got rid of my use of bmap()!  Hooray!
-> 
-> However, I'm informed that I can't trust the extent map of a backing file to
-> tell me accurately whether content exists in a file because:
-> 
->  (a) Not-quite-contiguous extents may be joined by insertion of blocks of
->      zeros by the filesystem optimising itself.  This would give me a false
->      positive when trying to detect the presence of data.
-> 
->  (b) Blocks of zeros that I write into the file may get punched out by
->      filesystem optimisation since a read back would be expected to read zeros
->      there anyway, provided it's below the EOF.  This would give me a false
->      negative.
-> 
-> Is there some setting I can use to prevent these scenarios on a file - or can
-> one be added?
+On Tue, 14 Jan 2020 12:15:08 -0800 John Hubbard <jhubbard@nvidia.com> wrote:
 
-I don't think there's any way to do this in a portable way, at least
-today.  There is a hack we could be use that would work for ext4
-today, at least with respect to (a), but I'm not sure we would want to
-make any guarantees with respect to (b).
+> > 
+> > Hi Andrew and all,
+> > 
+> > To clarify: I'm hoping that this series can go into 5.6.
+> > 
+> > Meanwhile, I'm working on tracking down and solving the problem that Leon
+> > reported, in the "track FOLL_PIN pages" patch, and that patch is not part of
+> > this series.
+> > 
+> 
+> Hi Andrew and all,
+> 
+> Any thoughts on this?
 
-I suspect I understand why you want this; I've fielded some requests
-for people wanting to do something very like this at $WORK, for what I
-assume to be for the same reason you're seeking to do this; to create
-do incremental caching of files and letting the file system track what
-has and hasn't been cached yet.
+5.6 is late.  But it was in -mm before (briefly) and appears to be
+mature and well-reviewed.
 
-If we were going to add such a facility, what we could perhaps do is
-to define a new flag indicating that a particular file should have no
-extent mapping optimization applied, such that FIEMAP would return a
-mapping if and only if userspace had written to a particular block, or
-had requested that a block be preallocated using fallocate().  The
-flag could only be set on a zero-length file, and this might disable
-certain advanced file system features, such as reflink, at the file
-system's discretion; and there might be unspecified performance
-impacts if this flag is set on a file.
+I'll toss it in there and shall push it into -next hopefully today. 
+Let's decide 2-3 weeks hence.
 
-File systems which do not support this feature would not allow this
-flag to be set.
-
-				- Ted
