@@ -2,192 +2,280 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7EC8139CA3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jan 2020 23:34:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED723139DBB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 01:02:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728896AbgAMWe2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jan 2020 17:34:28 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:62444 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726530AbgAMWe1 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jan 2020 17:34:27 -0500
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.16.0.42/8.16.0.42) with SMTP id 00DMOYXW010687;
-        Mon, 13 Jan 2020 14:34:19 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=facebook;
- bh=eH/01cfhuhS91Q7Z4pl6FjRLfn15vCxcXLMH7VHrYyE=;
- b=onQsHNXwc645vaffPWY1H7bFHgJCnslaoYes8u0qzfze9Md2I6XIbnCI53VMjsLo/zoC
- i00FVut60A5/RM3yxTs2qJ3D97ByijOAdF7Ei4e7ljgICFHVU2qT0HnMSzVBejvfz3of
- DarbUgOs+A0qYz8y6ZrZs6BWmDmwnq6ls3U= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by m0089730.ppops.net with ESMTP id 2xfar4an2q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Mon, 13 Jan 2020 14:34:19 -0800
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (100.104.98.9) by
- o365-in.thefacebook.com (100.104.94.229) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Mon, 13 Jan 2020 14:34:17 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TPAj1dTOSOQmqC2ffDx8xPrpURPe82EWfa1wLuovlnnbVNSwzPR2//1AVPEI+NjtqDeA69B4FxwpaHj9JMR5q/GlWjDvqxiH2Lu1fCS1NoaA/0R/9yp2sFuNDnYUVbaFMeRAGR432CRnBj12PVSTjltDhDv9Cbqw7Bc+y87V5YCeUnnxc6TI6AIeqSmh1vaRawZxrSA9i42Qw7GvC7a5UndE57ZFcU1mAMGzMVYrgBk7/TMpzp5Dw6QWAS5TbqujtY91Xb7N7nSjOi9BQ9ffKFVedCu3pPm/Lo/q7oSzATqYyyrJSS8YAUoQ43KXHemLyZ7kkYdwMXfsFBMPzqiRrw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eH/01cfhuhS91Q7Z4pl6FjRLfn15vCxcXLMH7VHrYyE=;
- b=K1hzOwzheOcYYV0CdRHqias5XyBp2Ylxz82ODzBtFlvMUa4iiVbf3BMcyOaVe5Gmh1DGtEsVGG4FujdOcu++MmgghUjbpg6YHPMJla6hjzbWvWKOPszIxjjgoaxGhdTEcdxUzuyz8xbJ8GygRTmLlzxclaLKW8dUHPdQQSTXx0pM8FzC8qZo/ztmRMj3DgUXsAo4mXZm4ZUaTZcIdBw+PA3Zk7V5eT1JmSifq68r0nH/ikmplRIeezSipLl6kfTZLKru00WeX7t+g91i0C2VrlXFzdBsi9JQgR7HS2gOinSagr/ARw8IOtZZKHioacqCA4x3TkwX7KgeCTJJtFnW/g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eH/01cfhuhS91Q7Z4pl6FjRLfn15vCxcXLMH7VHrYyE=;
- b=ZhnPoH8dpcb4zYEESka2IKuxwbrxjt8A7VMERuQ36ZV7FkrXbnIfz6DCk+ZQN8hhQMiRGXqvs0796g1YIB7rJmnq77bk3Pfb5WdnVPSRlSKh3FtKIv375xQXHvQKGp2EnMPgfYtKEkbVYZechPeV46O16zc/O8dpsJVBbLGUEsE=
-Received: from SN6PR15MB2446.namprd15.prod.outlook.com (52.135.64.153) by
- SN6PR15MB2463.namprd15.prod.outlook.com (52.132.123.143) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2623.9; Mon, 13 Jan 2020 22:34:16 +0000
-Received: from SN6PR15MB2446.namprd15.prod.outlook.com
- ([fe80::615e:4236:ddfa:3d10]) by SN6PR15MB2446.namprd15.prod.outlook.com
- ([fe80::615e:4236:ddfa:3d10%6]) with mapi id 15.20.2623.015; Mon, 13 Jan 2020
- 22:34:16 +0000
-Received: from [172.30.120.61] (2620:10d:c091:480::1025) by MN2PR10CA0002.namprd10.prod.outlook.com (2603:10b6:208:120::15) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2623.9 via Frontend Transport; Mon, 13 Jan 2020 22:34:15 +0000
-From:   Chris Mason <clm@fb.com>
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     Jens Axboe <axboe@kernel.dk>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "hch@infradead.org" <hch@infradead.org>
-Subject: Re: [RFC 0/8] Replacing the readpages a_op
-Thread-Topic: [RFC 0/8] Replacing the readpages a_op
-Thread-Index: AQHVyieJJr3DU4NMDUiHtIM35/TqzKfozHmAgAAQNgCAAAXGAIAAQlOAgAAAsgCAAALTgIAAAQUAgAADiACAAAIAgA==
-Date:   Mon, 13 Jan 2020 22:34:16 +0000
-Message-ID: <F1FD3E8B-AC7E-48AB-99CD-E5D8E71851EE@fb.com>
-References: <20200113153746.26654-1-willy@infradead.org>
- <6CA4CD96-0812-4261-8FF9-CD28AA2EC38A@fb.com>
- <20200113174008.GB332@bombadil.infradead.org>
- <15C84CC9-3196-441D-94DE-F3FD7AC364F0@fb.com>
- <20200113215811.GA18216@bombadil.infradead.org>
- <910af281-4e2b-3e5d-5533-b5ceafd59665@kernel.dk>
- <20200113221047.GB18216@bombadil.infradead.org>
- <1b94e6b6-29dc-2e90-d1ca-982accd3758c@kernel.dk>
- <20200113222704.GC18216@bombadil.infradead.org>
-In-Reply-To: <20200113222704.GC18216@bombadil.infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: MailMate (1.13.1r5671)
-x-clientproxiedby: MN2PR10CA0002.namprd10.prod.outlook.com
- (2603:10b6:208:120::15) To SN6PR15MB2446.namprd15.prod.outlook.com
- (2603:10b6:805:22::25)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c091:480::1025]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 8f431476-121f-4b03-d138-08d79878b8da
-x-ms-traffictypediagnostic: SN6PR15MB2463:
-x-microsoft-antispam-prvs: <SN6PR15MB24639D329A18D487DC4DC546D3350@SN6PR15MB2463.namprd15.prod.outlook.com>
-x-fb-source: Internal
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 028166BF91
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(39860400002)(396003)(136003)(366004)(189003)(199004)(36756003)(86362001)(2906002)(478600001)(54906003)(2616005)(6486002)(316002)(33656002)(53546011)(186003)(5660300002)(16526019)(6916009)(4326008)(8676002)(66946007)(71200400001)(52116002)(81166006)(81156014)(66476007)(66556008)(64756008)(66446008)(8936002);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR15MB2463;H:SN6PR15MB2446.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ZNpZygRdkUhHknY8jzBz01HPqeuN1V5Qj7hqjpyCQ0qvXyUeTInIJMgHksn7QiZMwl4PuhIMEPiUq9PJFhbSO/KLzBz+ghXTrmz0KWze2vCiaZdBQ39PdznSq5nRqDj0QaG7WDm1L8EcxWPtJKMqj9K9tKE0xSUNVRdh43Xr86CHaDy7ey2CDA4zCa2x74gcaNk4ZREMcRAeA1mIIOQsTN7spsqs1/SRwgTyNc5ZzUE/RW2l3QMMG7tz4c+W0msz0SL6WAYip1eVs8+yiKNeze1Q2pjKTxM3eakl3jAVmmCc0whFcAytRivekLUHtggovWwOLuxGDpcxNR/B2g45dIKZov3ZEyYDcfDLblZkNH3NhZbwlvWdzLe/Dj9Sn+o2huolHxLq/wN7Id4JBLxKQzdBPGExPpWvDWx7r+zRpDbe5HDdgrnH15U+hYqhRm01
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8f431476-121f-4b03-d138-08d79878b8da
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jan 2020 22:34:16.2799
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: sdC5zUiGwJrzztFnzvaJlXq+VxtpBZ154YN7yYpg4elEcqzN98AMuQ2T65FlznYR
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR15MB2463
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-13_07:2020-01-13,2020-01-13 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxscore=0
- mlxlogscore=677 bulkscore=0 clxscore=1015 priorityscore=1501
- impostorscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0
- phishscore=0 spamscore=0 malwarescore=0 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.12.0-1910280000
- definitions=main-2001130183
-X-FB-Internal: deliver
+        id S1729099AbgANACk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jan 2020 19:02:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44250 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728800AbgANACk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 13 Jan 2020 19:02:40 -0500
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0A8B2084D;
+        Tue, 14 Jan 2020 00:02:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578960159;
+        bh=3rMP88KeQ95Q1jALKKLcvL/uxmNmdiRFVwsItINpQOY=;
+        h=Date:From:To:Subject:From;
+        b=HTCYuNmSlWl8GiuRzzB3EfHwdW9BcN3tOFIiX9O/0+mNkiTMCBE12DnmHn4yBB6Ba
+         b7vg2q6c8v5Q6x7MdY6CO7q8/tF74v3c2XUHKOjdPkCE78o00XVaqADdS90+XKDWId
+         9+E/RF7KWoqpCtOwRYM2tAjO6wNdrX9MdpW9/Jc0=
+Date:   Mon, 13 Jan 2020 16:02:38 -0800
+From:   akpm@linux-foundation.org
+To:     broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        mm-commits@vger.kernel.org
+Subject:  mmotm 2020-01-13-16-02 uploaded
+Message-ID: <20200114000238.AdMWG%akpm@linux-foundation.org>
+User-Agent: s-nail v14.9.15
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 13 Jan 2020, at 17:27, Matthew Wilcox wrote:
+The mm-of-the-moment snapshot 2020-01-13-16-02 has been uploaded to
 
-> On Mon, Jan 13, 2020 at 03:14:26PM -0700, Jens Axboe wrote:
->> On 1/13/20 3:10 PM, Matthew Wilcox wrote:
->>> On Mon, Jan 13, 2020 at 03:00:40PM -0700, Jens Axboe wrote:
->>>> On 1/13/20 2:58 PM, Matthew Wilcox wrote:
->>>>> On Mon, Jan 13, 2020 at 06:00:52PM +0000, Chris Mason wrote:
->>>>>> This is true, I didn't explain that part well ;)  Depending on
->>>>>> compression etc we might end up poking the xarray inside the=20
->>>>>> actual IO
->>>>>> functions, but the main difference is that btrfs is building a=20
->>>>>> single
->>>>>> bio.  You're moving the plug so you'll merge into single bio, but=20
->>>>>> I'd
->>>>>> rather build 2MB bios than merge them.
->>>>>
->>>>> Why don't we store a bio pointer inside the plug?  You're=20
->>>>> opencoding that,
->>>>> iomap is opencoding that, and I bet there's a dozen other places=20
->>>>> where
->>>>> we pass a bio around.  Then blk_finish_plug can submit the bio.
->>>>
->>>> Plugs aren't necessarily a bio, they can be callbacks too.
->>>
->>> I'm thinking something as simple as this:
->>
->> It's a little odd imho, the plugging generally collect requests.=20
->> Sounds
->> what you're looking for is some plug owner private data, which just
->> happens to be a bio in this case?
->>
->> Is this over repeated calls to some IO generating helper? Would it be
->> more efficient if that helper could generate the full bio in one go,
->> instead of piecemeal?
->
-> The issue is around ->readpages.  Take a look at how iomap_readpages
-> works, for example.  We're under a plug (taken in mm/readahead.c),
-> but we still go through the rigamarole of keeping a pointer to the bio
-> in ctx.bio and passing ctx around so that we don't end up with many
-> fragments which have to be recombined into a single bio at the end.
->
-> I think what I want is a bio I can reach from current, somehow.  And=20
-> the
-> plug feels like a natural place to keep it because it's basically=20
-> saying
-> "I want to do lots of little IOs and have them combined".  The fact=20
-> that
-> the iomap code has a bio that it precombines fragments into suggests=20
-> to
-> me that the existing antifragmentation code in the plugging mechanism
-> isn't good enough.  So let's make it better by storing a bio in the=20
-> plug
-> and then we can get rid of the bio in the iomap code.
+   http://www.ozlabs.org/~akpm/mmotm/
 
-Both btrfs and xfs do this, we have a bio that we pass around and build=20
-and submit.  We both also do some gymnastics in writepages to avoid=20
-waiting for the bios we've been building to finish while we're building=20
-them.
+mmotm-readme.txt says
 
-I love the idea of the plug api having a way to hold that for us, but=20
-sometimes we really are building the bios, and we don't want the plug to=20
-let it go if we happen to schedule.
+README for mm-of-the-moment:
 
--chris
+http://www.ozlabs.org/~akpm/mmotm/
+
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
+
+You will need quilt to apply these patches to the latest Linus release (5.x
+or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
+
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
+
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
+
+
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
+
+	https://github.com/hnaz/linux-mm
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is also available at
+
+	https://github.com/hnaz/linux-mm
+
+
+
+This mmotm tree contains the following patches against 5.5-rc6:
+(patches marked "*" will be included in linux-next)
+
+* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
+* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
+* mm-thp-tweak-reclaim-compaction-effort-of-local-only-and-all-node-allocations.patch
+* x86-mm-split-vmalloc_sync_all.patch
+* revert-ipcsem-remove-uneeded-sem_undo_list-lock-usage-in-exit_sem.patch
+* mm-fix-uninitialized-memmaps-on-a-partially-populated-last-section.patch
+* fs-proc-pagec-allow-inspection-of-last-section-and-fix-end-detection.patch
+* mm-initialize-memmap-of-unavailable-memory-directly.patch
+* mm-memory_hotplug-dont-free-usage-map-when-removing-a-re-added-early-section.patch
+* thp-fix-conflict-of-above-47bit-hint-address-and-pmd-alignment.patch
+* thp-shmem-fix-conflict-of-above-47bit-hint-address-and-pmd-alignment.patch
+* thp-shmem-fix-conflict-of-above-47bit-hint-address-and-pmd-alignment-fix.patch
+* mm-memcg-slab-fix-percpu-slab-vmstats-flushing.patch
+* mm-debug_pagealloc-dont-rely-on-static-keys-too-early.patch
+* mm-debug_pagealloc-dont-rely-on-static-keys-too-early-fix.patch
+* mm-page-writebackc-avoid-potential-division-by-zero-in-wb_min_max_ratio.patch
+* mm-page-writebackc-use-div64_ul-for-u64-by-unsigned-long-divide.patch
+* mm-page-writebackc-improve-arithmetic-divisions.patch
+* mm-memcg-slab-call-flush_memcg_workqueue-only-if-memcg-workqueue-is-valid.patch
+* mm-khugepaged-add-trace-status-description-for-scan_page_has_private.patch
+* mm-thp-grab-the-lock-before-manipulation-defer-list.patch
+* lib-test_bitmap-correct-test-data-offsets-for-32-bit.patch
+* watchdog-fix-uaf-in-reboot-notifier-handling-in-watchdog-core-code.patch
+* memcg-fix-a-crash-in-wb_workfn-when-a-device-disappears.patch
+* scripts-spellingtxt-add-more-spellings-to-spellingtxt.patch
+* scripts-spellingtxt-add-issus-typo.patch
+* fs-ocfs-remove-unnecessary-assertion-in-dlm_migrate_lockres.patch
+* ocfs2-remove-unneeded-semicolon.patch
+* ocfs2-make-local-header-paths-relative-to-c-files.patch
+* ocfs2-dlm-remove-redundant-assignment-to-ret.patch
+* ocfs2-dlm-move-bits_to_bytes-to-bitopsh-for-wider-use.patch
+* ocfs2-fix-a-null-pointer-dereference-when-call-ocfs2_update_inode_fsync_trans.patch
+* ocfs2-use-ocfs2_update_inode_fsync_trans-to-access-t_tid-in-handle-h_transaction.patch
+* ramfs-support-o_tmpfile.patch
+* watchdog-fix-possible-soft-lockup-warning-at-bootup.patch
+* watchdog-fix-possible-soft-lockup-warning-at-bootup-v2.patch
+  mm.patch
+* mm-avoid-slub-allocation-while-holding-list_lock.patch
+* kmemleak-turn-kmemleak_lock-and-object-lock-to-raw_spinlock_t.patch
+* mm-clean-up-filemap_write_and_wait.patch
+* mm-fix-gup_pud_range.patch
+* mm-gupc-use-is_vm_hugetlb_page-to-check-whether-to-follow-huge.patch
+* mm-cleanup-some-useless-code.patch
+* mm-vmscan-expose-cgroup_ino-for-memcg-reclaim-tracepoints.patch
+* mm-pgmap-use-correct-alignment-when-looking-at-first-pfn-from-a-region.patch
+* mm-mmap-fix-the-adjusted-length-error.patch
+* mm-page_vma_mappedc-explicitly-compare-pfn-for-normal-hugetlbfs-and-thp-page.patch
+* drivers-base-memoryc-cache-blocks-in-radix-tree-to-accelerate-lookup.patch
+* drivers-base-memoryc-cache-blocks-in-radix-tree-to-accelerate-lookup-fix-2.patch
+* mm-memmap_init-update-variable-name-in-memmap_init_zone.patch
+* mm-memory_hotplug-poison-memmap-in-remove_pfn_range_from_zone.patch
+* mm-memory_hotplug-we-always-have-a-zone-in-find_smallestbiggest_section_pfn.patch
+* mm-memory_hotplug-dont-check-for-all-holes-in-shrink_zone_span.patch
+* mm-memory_hotplug-drop-local-variables-in-shrink_zone_span.patch
+* mm-memory_hotplug-cleanup-__remove_pages.patch
+* mm-memory_hotplug-drop-valid_start-valid_end-from-test_pages_in_a_zone.patch
+* mm-memory_hotplug-pass-in-nid-to-online_pages.patch
+* drivers-base-memoryc-get-rid-of-find_memory_block.patch
+* mm-tracing-print-symbol-name-for-kmem_alloc_node-call_site-events.patch
+* mm-early_remap-use-%pa-to-print-resource_size_t-variables.patch
+* mm-page_alloc-skip-non-present-sections-on-zone-initialization.patch
+* mm-page_alloc-fix-and-rework-pfn-handling-in-memmap_init_zone.patch
+* mm-factor-out-next_present_section_nr.patch
+* mm-remove-the-memory-isolate-notifier.patch
+* mm-remove-count-parameter-from-has_unmovable_pages.patch
+* mm-vmscanc-remove-unused-return-value-of-shrink_node.patch
+* mm-memblock-define-memblock_physmem_add.patch
+* memblock-use-__func__-in-remaining-memblock_dbg-call-sites.patch
+* mm-oom-avoid-printk-iteration-under-rcu.patch
+* mm-oom-avoid-printk-iteration-under-rcu-fix.patch
+* mm-hugetlb-controller-for-cgroups-v2.patch
+* mm-huge_memoryc-use-head-to-check-huge-zero-page.patch
+* mm-huge_memoryc-use-head-to-emphasize-the-purpose-of-page.patch
+* mm-huge_memoryc-reduce-critical-section-protected-by-split_queue_lock.patch
+* mm-migrate-remove-useless-mask-of-start-address.patch
+* mm-migrate-clean-up-some-minor-coding-style.patch
+* mm-migrate-add-stable-check-in-migrate_vma_insert_page.patch
+* mm-get-rid-of-odd-jump-labels-in-find_mergeable_anon_vma.patch
+* zswap-add-allocation-hysteresis-if-pool-limit-is-hit.patch
+* mm-clean-up-obsolete-check-on-space-in-page-flags.patch
+* mm-remove-dead-code-totalram_pages_set.patch
+* mm-drop-elements-hw-and-phys_callback-from-struct-memory_block.patch
+* mm-fix-comments-related-to-node-reclaim.patch
+* lib-rbtree-avoid-pointless-rb_node-alignment.patch
+* zram-try-to-avoid-worst-case-scenario-on-same-element-pages.patch
+* zram-try-to-avoid-worst-case-scenario-on-same-element-pages-update.patch
+* zram-fix-error-return-codes-not-being-returned-in-writeback_store.patch
+* info-task-hung-in-generic_file_write_iter.patch
+* info-task-hung-in-generic_file_write-fix.patch
+* kernel-hung_taskc-monitor-killed-tasks.patch
+* y2038-remove-ktime-to-from-timespec-timeval-conversion.patch
+* y2038-remove-unused-time32-interfaces.patch
+* y2038-hide-timeval-timespec-itimerval-itimerspec-types.patch
+* add-helpers-for-kelvin-to-from-celsius-conversion.patch
+* acpi-thermal-switch-to-use-linux-unitsh-helpers.patch
+* platform-x86-asus-wmi-switch-to-use-linux-unitsh-helpers.patch
+* platform-x86-intel_menlow-switch-to-use-linux-unitsh-helpers.patch
+* thermal-int340x-switch-to-use-linux-unitsh-helpers.patch
+* thermal-intel_pch-switch-to-use-linux-unitsh-helpers.patch
+* nvme-hwmon-switch-to-use-linux-unitsh-helpers.patch
+* thermal-remove-kelvin-to-from-celsius-conversion-helpers-from-linux-thermalh.patch
+* iwlegacy-use-linux-unitsh-helpers.patch
+* iwlwifi-use-linux-unitsh-helpers.patch
+* thermal-armada-remove-unused-to_mcelsius-macro.patch
+* iio-adc-qcom-vadc-common-use-linux-unitsh-helpers.patch
+* lib-zlib-add-s390-hardware-support-for-kernel-zlib_deflate.patch
+* s390-boot-rename-heap_size-due-to-name-collision.patch
+* lib-zlib-add-s390-hardware-support-for-kernel-zlib_inflate.patch
+* s390-boot-add-dfltcc=-kernel-command-line-parameter.patch
+* lib-zlib-add-zlib_deflate_dfltcc_enabled-function.patch
+* btrfs-use-larger-zlib-buffer-for-s390-hardware-compression.patch
+* lib-scatterlist-adjust-indentation-in-__sg_alloc_table.patch
+* uapi-rename-ext2_swab-to-swab-and-share-globally-in-swabh.patch
+* lib-find_bitc-join-_find_next_bit_le.patch
+* lib-find_bitc-uninline-helper-_find_next_bit.patch
+* string-add-stracpy-and-stracpy_pad-mechanisms.patch
+* documentation-checkpatch-prefer-stracpy-strscpy-over-strcpy-strlcpy-strncpy.patch
+* elf-smaller-code-generation-around-auxv-vector-fill.patch
+* elf-fix-start_code-calculation.patch
+* elf-dont-copy-elf-header-around.patch
+* elf-better-codegen-around-current-mm.patch
+* elf-make-bad_addr-unlikely.patch
+* elf-coredump-allocate-core-elf-header-on-stack.patch
+* elf-coredump-delete-duplicated-overflow-check.patch
+* elf-coredump-allow-process-with-empty-address-space-to-coredump.patch
+* init-mainc-log-arguments-and-environment-passed-to-init.patch
+* init-mainc-remove-unnecessary-repair_env_string-in-do_initcall_level.patch
+* init-mainc-fix-quoted-value-handling-in-unknown_bootoption.patch
+* init-fix-misleading-this-architecture-does-not-have-kernel-memory-protection-message.patch
+* reiserfs-prevent-null-pointer-dereference-in-reiserfs_insert_item.patch
+* execve-warn-if-process-starts-with-executable-stack.patch
+* io-mapping-use-phys_pfn-macro-in-io_mapping_map_atomic_wc.patch
+* aio-simplify-read_events.patch
+* smp_mb__beforeafter_atomic-update-documentation.patch
+* ipc-mqueuec-remove-duplicated-code.patch
+* ipc-mqueuec-update-document-memory-barriers.patch
+* ipc-msgc-update-and-document-memory-barriers.patch
+* ipc-semc-document-and-update-memory-barriers.patch
+* ipc-consolidate-all-xxxctl_down-functions.patch
+* ipc-consolidate-all-xxxctl_down-functions-fix.patch
+  linux-next.patch
+  linux-next-rejects.patch
+  linux-next-fix.patch
+* drivers-block-null_blk_mainc-fix-layout.patch
+* drivers-block-null_blk_mainc-fix-uninitialized-var-warnings.patch
+* pinctrl-fix-pxa2xxc-build-warnings.patch
+* mm-remove-__krealloc.patch
+* mm-add-generic-pd_leaf-macros.patch
+* arc-mm-add-pd_leaf-definitions.patch
+* arm-mm-add-pd_leaf-definitions.patch
+* arm64-mm-add-pd_leaf-definitions.patch
+* mips-mm-add-pd_leaf-definitions.patch
+* powerpc-mm-add-pd_leaf-definitions.patch
+* riscv-mm-add-pd_leaf-definitions.patch
+* s390-mm-add-pd_leaf-definitions.patch
+* sparc-mm-add-pd_leaf-definitions.patch
+* x86-mm-add-pd_leaf-definitions.patch
+* mm-pagewalk-add-p4d_entry-and-pgd_entry.patch
+* mm-pagewalk-add-p4d_entry-and-pgd_entry-fix.patch
+* mm-pagewalk-allow-walking-without-vma.patch
+* mm-pagewalk-dont-lock-ptes-for-walk_page_range_novma.patch
+* mm-pagewalk-fix-termination-condition-in-walk_pte_range.patch
+* mm-pagewalk-add-depth-parameter-to-pte_hole.patch
+* x86-mm-point-to-struct-seq_file-from-struct-pg_state.patch
+* x86-mmefi-convert-ptdump_walk_pgd_level-to-take-a-mm_struct.patch
+* x86-mm-convert-ptdump_walk_pgd_level_debugfs-to-take-an-mm_struct.patch
+* mm-add-generic-ptdump.patch
+* x86-mm-convert-dump_pagetables-to-use-walk_page_range.patch
+* arm64-mm-convert-mm-dumpc-to-use-walk_page_range.patch
+* arm64-mm-display-non-present-entries-in-ptdump.patch
+* mm-ptdump-reduce-level-numbers-by-1-in-note_page.patch
+* x86-mm-avoid-allocating-struct-mm_struct-on-the-stack.patch
+* x86-mm-avoid-allocating-struct-mm_struct-on-the-stack-fix.patch
+* proc-decouple-proc-from-vfs-with-struct-proc_ops.patch
+* proc-convert-everything-to-struct-proc_ops.patch
+* proc-convert-everything-to-struct-proc_ops-fix.patch
+* lib-string-add-strnchrnul.patch
+* bitops-more-bits_to_-macros.patch
+* lib-add-test-for-bitmap_parse.patch
+* lib-add-test-for-bitmap_parse-fix.patch
+* lib-add-test-for-bitmap_parse-fix-2.patch
+* lib-make-bitmap_parse_user-a-wrapper-on-bitmap_parse.patch
+* lib-rework-bitmap_parse.patch
+* lib-new-testcases-for-bitmap_parse_user.patch
+* cpumask-dont-calculate-length-of-the-input-string.patch
+* treewide-remove-redundent-is_err-before-error-code-check.patch
+* arm-dma-api-fix-max_pfn-off-by-one-error-in-__dma_supported.patch
+* drivers-tty-serial-sh-scic-suppress-warning.patch
+* fix-read-buffer-overflow-in-delta-ipc.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  workaround-for-a-pci-restoring-bug.patch
