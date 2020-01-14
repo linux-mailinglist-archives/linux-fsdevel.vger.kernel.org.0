@@ -2,128 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9716139E22
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 01:25:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AF06139E5C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 01:35:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729099AbgANAZ3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jan 2020 19:25:29 -0500
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:34495 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726536AbgANAZ3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jan 2020 19:25:29 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 7F7657699;
-        Mon, 13 Jan 2020 19:25:28 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Mon, 13 Jan 2020 19:25:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
-        XFMTDBtfZHyOed7ZfNLbmx3RNw8tsdJDO4d09AfyreM=; b=I2KNDFPfO4++5woh
-        Cv9+FYDbg0wzwLTavX3kLx+EHn8Q18NuIs+jqQWuarjw1NE+Zr5ih3Aqffp5KVvZ
-        kDOiTi6mlgNgi2nc9al6pJgd+oLGc0vkHEREjILC+Va3hddW/B98Mg4b9DqBXQGZ
-        ashy5rq75a3k85pz3ZxNirx/Sih4BWJhq8ck4j+LeFyHum/4jHodx2gXZdTJHyyF
-        DYBJMTKR4x0Jz5WY3jCeiDSEmRMGh0KK3Ji3CGXQ8s0RYEV6KPX4FYMMre05AAqi
-        D6Y5h5R7wxUt1oztN99McV+kgUrg82l+XrLd+0TaAvk2j1KL4ahYlpGewQQsrTJ9
-        hdix3w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=XFMTDBtfZHyOed7ZfNLbmx3RNw8tsdJDO4d09Afyr
-        eM=; b=FvAfXkVhBHwCnEjEnIhffwPCShG13/kCORFDhQUOK8FfZVCXc3t4co4rU
-        kwFyOB7c3TSO347gZaoWx6HiCp/hSHVnGtixPTiM75Cv3RHuC5R4uYXOZHl1+cqX
-        oaAEF/1RWSCvuXqnM7JkyubPOrN5vDHeDo2sDzfFvFH3yX1LylQLMIemTnvofyW5
-        khaaXwkhBL3U9BE4tL60xIJXYCTojno+VysAQ90vHEAYNcH8/cgVQNXTuUjpKMd6
-        M9Ukdh4ZTi6+6lXUrBw04KyMavKgBOYNfN6Ii+QHcetTfv6xjbW0E84eisU4euOt
-        FHIjykuHyaccKrUitVlB1qjxwIyrQ==
-X-ME-Sender: <xms:dwodXpWP-PAZ8T_JYYRYRU5ZMicpYKidZXY3DZlDytKoUsePwM5oDA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdejuddgvddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucfkphepuddukedrvddtle
-    drudejhedrvdehnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgr
-    fidrnhgvthenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:dwodXsAsuu8nva3t4h-3fEN2U5lV_ZCnBr8eIrbfceQMO4BDdzz1Lg>
-    <xmx:dwodXjFvriQIKE7K-SUPP8Ps_oonmO-5papqb1mtcOMHocMhw2ZHhA>
-    <xmx:dwodXrdOPsxQaFwEHjUakg6WPVod0GWiD2M_YPTQq2ZEcTySZggaCg>
-    <xmx:eAodXivqthC1ZIwAIcCOasT42x8LlItV_-Uw9j_7c7lwa7hFyX1giA>
-Received: from mickey.themaw.net (unknown [118.209.175.25])
-        by mail.messagingengine.com (Postfix) with ESMTPA id B008E30607B4;
-        Mon, 13 Jan 2020 19:25:22 -0500 (EST)
-Message-ID: <19fa114ef619057c0d14dc1a587d0ae9ad67dc6d.camel@themaw.net>
-Subject: Re: [PATCH RFC 0/1] mount: universally disallow mounting over
- symlinks
-From:   Ian Kent <raven@themaw.net>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        stable <stable@vger.kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Serge Hallyn <serge@hallyn.com>, dev@opencontainers.org,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Tue, 14 Jan 2020 08:25:19 +0800
-In-Reply-To: <800d36a0dccd43f1b61cab6332a6252ab9aab73c.camel@themaw.net>
-References: <20200101144407.ugjwzk7zxrucaa6a@yavin.dot.cyphar.com>
-         <20200101234009.GB8904@ZenIV.linux.org.uk>
-         <20200102035920.dsycgxnb6ba2jhz2@yavin.dot.cyphar.com>
-         <20200103014901.GC8904@ZenIV.linux.org.uk>
-         <20200108031314.GE8904@ZenIV.linux.org.uk>
-         <CAHk-=wgQ3yOBuK8mxpnntD8cfX-+10ba81f86BYg8MhvwpvOMg@mail.gmail.com>
-         <20200108213444.GF8904@ZenIV.linux.org.uk>
-         <CAHk-=wiq11+thoe60qhsSHk_nbRF2TRL1Wnf6eHcYObjhJmsww@mail.gmail.com>
-         <20200110041523.GK8904@ZenIV.linux.org.uk>
-         <979cf680b0fbdce515293a3449d564690cde6a3f.camel@themaw.net>
-         <20200112213352.GP8904@ZenIV.linux.org.uk>
-         <800d36a0dccd43f1b61cab6332a6252ab9aab73c.camel@themaw.net>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+        id S1728949AbgANAfW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jan 2020 19:35:22 -0500
+Received: from mga04.intel.com ([192.55.52.120]:18398 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728844AbgANAfW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 13 Jan 2020 19:35:22 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jan 2020 16:35:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,430,1571727600"; 
+   d="scan'208";a="218812609"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga007.fm.intel.com with ESMTP; 13 Jan 2020 16:35:21 -0800
+Date:   Mon, 13 Jan 2020 16:35:21 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH V2 08/12] fs/xfs: Add lock/unlock mode to xfs
+Message-ID: <20200114003521.GB29860@iweiny-DESK2.sc.intel.com>
+References: <20200110192942.25021-1-ira.weiny@intel.com>
+ <20200110192942.25021-9-ira.weiny@intel.com>
+ <20200113221957.GN8247@magnolia>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200113221957.GN8247@magnolia>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2020-01-13 at 10:59 +0800, Ian Kent wrote:
-> 
-> > 3) is _anything_ besides root directory ever created in direct
-> > autofs
-> > superblocks by anyone?  If not, why does autofs_lookup() even
-> > bother
-> > to
-> > do anything there?  IOW, why not have it return ERR_PTR(-ENOENT)
-> > immediately
-> > for direct ones?  Or am I missing something and it is, in fact,
-> > possible
-> > to have the daemon create something in those?
-> 
-> Short answer is no, longer answer is directories "shouldn't" ever
-> be created inside direct mount points.
-> 
-> The thing is that the multi-mount map construct can be used with
-> direct mounts too, but they must always have a real mount at the
-> base because they are direct mounts. So processes should not be
-> able to walk into them while they are being mounted (constructed).
-> 
-> But I'm pretty sure it's rare (maybe not done at all) that this
-> map construct is used with direct mounts.
+On Mon, Jan 13, 2020 at 02:19:57PM -0800, Darrick J. Wong wrote:
+> On Fri, Jan 10, 2020 at 11:29:38AM -0800, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
 
-This isn't right.
+[snip]
 
-There's actually nothing stopping a user from using a direct map
-entry that's a multi-mount without an actual mount at its root.
-So there could be directories created under these, it's just not
-usually done.
+> >  
+> > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+> > index 401da197f012..e8fd95b75e5b 100644
+> > --- a/fs/xfs/xfs_inode.c
+> > +++ b/fs/xfs/xfs_inode.c
+> > @@ -142,12 +142,12 @@ xfs_ilock_attr_map_shared(
+> >   *
+> >   * Basic locking order:
+> >   *
+> > - * i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
+> > + * i_rwsem -> i_dax_sem -> i_mmap_lock -> page_lock -> i_ilock
+> 
+> Mmmmmm, more locks.  Can we skip the extra lock if CONFIG_FSDAX=n or if
+> the filesystem devices don't support DAX at all?
 
-I'm pretty sure I don't check and disallow this.
+I'll look into it.
 
-Ian
+> 
+> Also, I don't think we're actually following the i_rwsem -> i_daxsem
+> order in fallocate, and possibly elsewhere too?
+
+I'll have to verify.  It took a lot of iterations to get the order working so
+I'm not going to claim perfection.
+
+> 
+> Does the vfs have to take the i_dax_sem to do remapping things like
+> reflink?  (Pretend that reflink and dax are compatible for the moment)
+
+Honestly I can't say for sure.  For this series I was careful to exclude
+reflink from the locking requirement.
+
+[snip]
+
+> >  
+> >  #define XFS_LOCK_FLAGS \
+> >  	{ XFS_IOLOCK_EXCL,	"IOLOCK_EXCL" }, \
+> > @@ -289,7 +295,9 @@ static inline void xfs_ifunlock(struct xfs_inode *ip)
+> >  	{ XFS_ILOCK_EXCL,	"ILOCK_EXCL" }, \
+> >  	{ XFS_ILOCK_SHARED,	"ILOCK_SHARED" }, \
+> >  	{ XFS_MMAPLOCK_EXCL,	"MMAPLOCK_EXCL" }, \
+> > -	{ XFS_MMAPLOCK_SHARED,	"MMAPLOCK_SHARED" }
+> > +	{ XFS_MMAPLOCK_SHARED,	"MMAPLOCK_SHARED" }, \
+> > +	{ XFS_DAX_EXCL,   	"DAX_EXCL" }, \
+> 
+> Whitespace between the comma & string.
+
+Fixed.
+
+[snip]
+
+> > +
+> >  static const struct inode_operations xfs_dir_inode_operations = {
+> >  	.create			= xfs_vn_create,
+> >  	.lookup			= xfs_vn_lookup,
+> > @@ -1372,7 +1394,7 @@ xfs_setup_iops(
+> >  
+> >  	switch (inode->i_mode & S_IFMT) {
+> >  	case S_IFREG:
+> > -		inode->i_op = &xfs_inode_operations;
+> > +		inode->i_op = &xfs_reg_inode_operations;
+> 
+> xfs_file_inode_operations?
+
+Sounds better.  Fixed.
+
+Ira
 
