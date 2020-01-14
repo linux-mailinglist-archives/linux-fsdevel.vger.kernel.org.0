@@ -2,220 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3991313B0B2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 18:19:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D93D713B167
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 18:53:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728761AbgANRT2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jan 2020 12:19:28 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33798 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728699AbgANRT1 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jan 2020 12:19:27 -0500
-Received: by mail-pg1-f196.google.com with SMTP id r11so6702798pgf.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2020 09:19:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=sV0m/dXPWRmuP2RjACCvkkMA97TOhcVtBgTEpOrLJfk=;
-        b=o7zZznzhqZFGgU9x2MbhAKw04qYYxhD8b7BKYI/OMvzOHR2NDcQykBrM770RXdPCxU
-         m6UbMbRulyr1pTxNJ+7Ug+Qty0Hrl07WK8bS+OoMtjmhQ0N9scmO0Z7bzoH9D/d2rEIK
-         NmAwp46D4yPecyvTMpDWNVO9MZbDturBdBnOI5ql5FHTB5sQ7rgBBojpdc7/BWZxYgIW
-         m5c3vp8pX5c8lUj8+pKbVBj/BZy3dUj89ALRKwMDK0/lnVdyKokBmHVvWNdmV0jothLt
-         a0UPrZlFaT8RHluzZEFtVM9V2nbcLnHlSJ0i9y5qj2igz2RnnFIOYLPJZOwzLQUYQ2TV
-         OKiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=sV0m/dXPWRmuP2RjACCvkkMA97TOhcVtBgTEpOrLJfk=;
-        b=KnnfHjszDzCPHNT3IOfhfpcb2WynRKcnGOSgytSRsZyBrOvRXw9wQxrgioOqVK11T0
-         OUzzWLpD27cLig4MTeV7X5FKDAeynsBqrq2+XMJ/DP+Ts6rnCCECXwEkxRvCKgpIX02/
-         e+6rzv9L95U4jaO5569Ut1Fr1LK6ilUqPwSdzftcsLTJaIGkjeRrYDgMo4zzWCXJY+x9
-         uDICaivA1Xq6lfscvQNGeBqI7W7iVtkQrCypjl8WLwsWzjA4rsJT4y3da+66t7111mzO
-         XlEs0LOXR5P+gyZPBEn/5x6mBrwfH9qREuUo43v1WGHOcTwytbChHqjlLWKa+4aHo2P5
-         ncxQ==
-X-Gm-Message-State: APjAAAUnae3J207OLUa5DpLecUZkTLKv8LNxE5mJJ7W8Rf+oIzO3Qi7n
-        2EUAuV1sbNzNUsqpprxVFkVh+A==
-X-Google-Smtp-Source: APXvYqxnkgB7dODzw4NXcFYzDJCNxG/IKs5tPYtgPo5DN5549y6+1pt2+Cuqa9Ve6PvwtSCgHyCxHQ==
-X-Received: by 2002:a63:fe50:: with SMTP id x16mr27638703pgj.31.1579022366814;
-        Tue, 14 Jan 2020 09:19:26 -0800 (PST)
-Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id m128sm18965687pfm.183.2020.01.14.09.19.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2020 09:19:26 -0800 (PST)
-From:   Dmitry Safonov <dima@arista.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
-        Dmitry Safonov <dima@arista.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Jiri Slaby <jslaby@suse.com>, Joe Perches <joe@perches.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Vasiliy Khoruzhick <vasilykh@arista.com>,
-        linux-serial@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
+        id S1728656AbgANRxz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jan 2020 12:53:55 -0500
+Received: from mga12.intel.com ([192.55.52.136]:5109 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726450AbgANRxz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 14 Jan 2020 12:53:55 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2020 09:53:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,319,1574150400"; 
+   d="scan'208";a="225622891"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga006.jf.intel.com with ESMTP; 14 Jan 2020 09:53:54 -0800
+Date:   Tue, 14 Jan 2020 09:53:54 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCHv2-next 1/3] sysctl/sysrq: Remove __sysrq_enabled copy
-Date:   Tue, 14 Jan 2020 17:19:10 +0000
-Message-Id: <20200114171912.261787-2-dima@arista.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114171912.261787-1-dima@arista.com>
-References: <20200114171912.261787-1-dima@arista.com>
+Subject: Re: [RFC PATCH V2 09/12] fs: Prevent mode change if file is mmap'ed
+Message-ID: <20200114175353.GA7871@iweiny-DESK2.sc.intel.com>
+References: <20200110192942.25021-1-ira.weiny@intel.com>
+ <20200110192942.25021-10-ira.weiny@intel.com>
+ <20200113222212.GO8247@magnolia>
+ <20200114004610.GD29860@iweiny-DESK2.sc.intel.com>
+ <20200114013004.GU8247@magnolia>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200114013004.GU8247@magnolia>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Many embedded boards have a disconnected TTL level serial which can
-generate some garbage that can lead to spurious false sysrq detects.
+On Mon, Jan 13, 2020 at 05:30:04PM -0800, Darrick J. Wong wrote:
+> On Mon, Jan 13, 2020 at 04:46:10PM -0800, Ira Weiny wrote:
+> > On Mon, Jan 13, 2020 at 02:22:12PM -0800, Darrick J. Wong wrote:
+> > > On Fri, Jan 10, 2020 at 11:29:39AM -0800, ira.weiny@intel.com wrote:
+> > > > From: Ira Weiny <ira.weiny@intel.com>
+> > > > 
+> > 
+> > [snip]
+> > 
+> > > >  
+> > > > diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+> > > > index bc3654fe3b5d..1ab0906c6c7f 100644
+> > > > --- a/fs/xfs/xfs_ioctl.c
+> > > > +++ b/fs/xfs/xfs_ioctl.c
+> > > > @@ -1200,6 +1200,14 @@ xfs_ioctl_setattr_dax_invalidate(
+> > > >  		goto out_unlock;
+> > > >  	}
+> > > >  
+> > > > +	/*
+> > > > +	 * If there is a mapping in place we must remain in our current mode.
+> > > > +	 */
+> > > > +	if (atomic64_read(&inode->i_mapped)) {
+> > > 
+> > > Urk, should we really be messing around with the address space
+> > > internals?
+> > 
+> > I contemplated a function call instead of checking i_mapped directly?  Is that
+> > what you mean?
+> 
+> Yeah.  Abstracting the details just enough that filesystems don't have
+> to know that i_mapped is atomic64 etc.
 
-Currently, sysrq can be either completely disabled for serial console
-or always disabled (with CONFIG_MAGIC_SYSRQ_SERIAL), since
-commit 732dbf3a6104 ("serial: do not accept sysrq characters via serial port")
+Done.
 
-At Arista, we have such boards that can generate BREAK and random
-garbage. While disabling sysrq for serial console would solve
-the problem with spurious false sysrq triggers, it's also desirable
-to have a way to enable sysrq back.
+> 
+> > 
+> > > 
+> > > > +		error = -EBUSY;
+> > > > +		goto out_unlock;
+> > > > +	}
+> > > > +
+> > > >  	error = filemap_write_and_wait(inode->i_mapping);
+> > > >  	if (error)
+> > > >  		goto out_unlock;
+> > > > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > > > index 631f11d6246e..6e7dc626b657 100644
+> > > > --- a/include/linux/fs.h
+> > > > +++ b/include/linux/fs.h
+> > > > @@ -740,6 +740,7 @@ struct inode {
+> > > >  #endif
+> > > >  
+> > > >  	void			*i_private; /* fs or device private pointer */
+> > > > +	atomic64_t               i_mapped;
+> > > 
+> > > I would have expected to find this in struct address_space since the
+> > > mapping count is a function of the address space, right?
+> > 
+> > I suppose but the only external call (above) would be passing an inode.  So to
+> > me it seemed better here.
+> 
+> But the number of memory mappings reflects the state of the address
+> space, not the inode.  Or maybe put another way, if I were an mm
+> developer I would not expect to look in struct inode for mm state.
 
-Having the way to enable sysrq was beneficial to debug lockups with
-a manual investigation in field and on the other side preventing false
-sysrq detections.
+This is a good point...
 
-As a preparation to add sysrq_toggle_support() call into uart,
-remove a private copy of sysrq_enabled from sysctl - it should reflect
-the actual status of sysrq.
+> 
+> static inline bool inode_has_mappings(struct inode *inode)
+> {
+> 	return atomic64_read(&inode->i_mapping->mapcount) > 0;
+> }
+> 
+> OTOH if there exist other mm developers who /do/ find that storing the
+> mmap count in struct inode is more logical, please let me know. :)
 
-Furthermore, the private copy isn't correct already in case
-sysrq_always_enabled is true. So, remove __sysrq_enabled and use a
-getter-helper for sysrq enabled status.
+...  My thinking was that the number of mappings does not matters to the mm
+system...  However, I'm starting to think you are correct...  ;-)
 
-Cc: Iurii Zaikin <yzaikin@google.com>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Dmitry Safonov <dima@arista.com>
----
- drivers/tty/sysrq.c   |  7 +++++++
- include/linux/sysrq.h |  7 +++++++
- kernel/sysctl.c       | 41 ++++++++++++++++++++++-------------------
- 3 files changed, 36 insertions(+), 19 deletions(-)
+I've made a note of it and we will see what others think.
 
-diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
-index f724962a5906..ef3e78967146 100644
---- a/drivers/tty/sysrq.c
-+++ b/drivers/tty/sysrq.c
-@@ -73,6 +73,13 @@ static bool sysrq_on_mask(int mask)
- 	       (sysrq_enabled & mask);
- }
- 
-+int sysrq_get_mask(void)
-+{
-+	if (sysrq_always_enabled)
-+		return 1;
-+	return sysrq_enabled;
-+}
-+
- static int __init sysrq_always_enabled_setup(char *str)
- {
- 	sysrq_always_enabled = true;
-diff --git a/include/linux/sysrq.h b/include/linux/sysrq.h
-index 8c71874e8485..ad09a7eefda2 100644
---- a/include/linux/sysrq.h
-+++ b/include/linux/sysrq.h
-@@ -50,6 +50,7 @@ int unregister_sysrq_key(int key, struct sysrq_key_op *op);
- struct sysrq_key_op *__sysrq_get_key_op(int key);
- 
- int sysrq_toggle_support(int enable_mask);
-+int sysrq_get_mask(void);
- 
- #else
- 
-@@ -71,6 +72,12 @@ static inline int unregister_sysrq_key(int key, struct sysrq_key_op *op)
- 	return -EINVAL;
- }
- 
-+static inline int sysrq_get_mask(void)
-+{
-+	/* Magic SysRq disabled mask */
-+	return 0;
-+}
-+
- #endif
- 
- #endif /* _LINUX_SYSRQ_H */
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index d396aaaf19a3..6ddb4d7df0e1 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -229,25 +229,8 @@ static int proc_dopipe_max_size(struct ctl_table *table, int write,
- 		void __user *buffer, size_t *lenp, loff_t *ppos);
- 
- #ifdef CONFIG_MAGIC_SYSRQ
--/* Note: sysrq code uses its own private copy */
--static int __sysrq_enabled = CONFIG_MAGIC_SYSRQ_DEFAULT_ENABLE;
--
- static int sysrq_sysctl_handler(struct ctl_table *table, int write,
--				void __user *buffer, size_t *lenp,
--				loff_t *ppos)
--{
--	int error;
--
--	error = proc_dointvec(table, write, buffer, lenp, ppos);
--	if (error)
--		return error;
--
--	if (write)
--		sysrq_toggle_support(__sysrq_enabled);
--
--	return 0;
--}
--
-+			void __user *buffer, size_t *lenp, loff_t *ppos);
- #endif
- 
- static struct ctl_table kern_table[];
-@@ -747,7 +730,7 @@ static struct ctl_table kern_table[] = {
- #ifdef CONFIG_MAGIC_SYSRQ
- 	{
- 		.procname	= "sysrq",
--		.data		= &__sysrq_enabled,
-+		.data		= NULL,
- 		.maxlen		= sizeof (int),
- 		.mode		= 0644,
- 		.proc_handler	= sysrq_sysctl_handler,
-@@ -2844,6 +2827,26 @@ static int proc_dostring_coredump(struct ctl_table *table, int write,
- }
- #endif
- 
-+#ifdef CONFIG_MAGIC_SYSRQ
-+static int sysrq_sysctl_handler(struct ctl_table *table, int write,
-+				void __user *buffer, size_t *lenp, loff_t *ppos)
-+{
-+	int tmp, ret;
-+
-+	tmp = sysrq_get_mask();
-+
-+	ret = __do_proc_dointvec(&tmp, table, write, buffer,
-+			       lenp, ppos, NULL, NULL);
-+	if (ret || !write)
-+		return ret;
-+
-+	if (write)
-+		sysrq_toggle_support(tmp);
-+
-+	return 0;
-+}
-+#endif
-+
- static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int write,
- 				     void __user *buffer,
- 				     size_t *lenp, loff_t *ppos,
--- 
-2.24.1
+Ira
 
+> 
+> --D
+> 
+> > Ira
+> > 
+> > > 
+> > > --D
+> > > 
