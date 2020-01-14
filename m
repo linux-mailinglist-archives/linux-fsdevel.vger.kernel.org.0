@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D5C413AEB4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 17:13:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0947213AEB7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 17:13:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726053AbgANQMe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jan 2020 11:12:34 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:43372 "EHLO
+        id S1729083AbgANQMg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jan 2020 11:12:36 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43402 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728850AbgANQMd (ORCPT
+        with ESMTP id S1728850AbgANQMg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jan 2020 11:12:33 -0500
+        Tue, 14 Jan 2020 11:12:36 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=kUvZdbrxgXYM+XtmN49YBQ9SrUjZBQUmtmFMa7zViEA=; b=LRd1rAVdu7xTOpYjtX3JQ4QZqG
-        OqE7DLd8J2fmEAv0BXF5eYeuB+Q4dCGgSpqnyXC/I+SAPH2yKKm2W8AGVklxNeHrCc1aMXKfFPqh3
-        FftbCFmQR9IbEawSShE+O3RO0vdHjoG5zBSXk6SDvo6YgfFtI01W1ebtS0qaocS8cQyK9O7GSYqZx
-        5UM81HbcAvgOK6roMBpJ7uqBXhC5VacnY/zdsuGhGItpqfMqGz3rcy0umTAJQXsjxlnxGk4qs8+UO
-        mklssD83lByYvKT7G3flWLK7WiKJVLPSMW6Cg4vdkf0oaB2HzWfW+ruX2oiypP9+wwGm7uH9HiCzy
-        9qiyXnxw==;
+        bh=ieFO0VW89Plk/SxbxvjUMyxGKaaWQ3fu6VZZX3+eXfU=; b=kWOqEnHoRjSX1561j4MXD/6Osb
+        /OSAUcMlRV+0OWE0r2Z9tu9pFwGdI9kU0cZLSrXGU5IgPFiU6NFRlChhIO7uHCiaP4wNdJTnqu6T9
+        Ps6ig31zrnEbY0fXUCQw3qTjXUe1NlpLy17XH2HPoPNpiJUSG0x6d++F+lFe7LfPM6r+8Xv04Gyag
+        AbtmbVoAxfu/Ep68NNEmqpcqONUpR8jSGGMIFYT1Py+iCoBpYi14sVJ+dAbBfnXr2oVLhpUAkIL9K
+        Aypu60LR6r1u0zQW/bnDAMKp4wozCSqUhg9jx/OHWyPSJHeWsIXS11ws8MzTl5qh3PhQvKaIew/NW
+        EU6QFkZg==;
 Received: from [2001:4bb8:18c:4f54:fcbb:a92b:61e1:719] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1irOnw-00007u-QN; Tue, 14 Jan 2020 16:12:33 +0000
+        id 1irOnz-00008Y-Fj; Tue, 14 Jan 2020 16:12:36 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Waiman Long <longman@redhat.com>,
@@ -36,9 +36,9 @@ To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         linux-ext4@vger.kernel.org, cluster-devel@redhat.com
 Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH 02/12] locking/rwsem: Exit early when held by an anonymous owner
-Date:   Tue, 14 Jan 2020 17:12:15 +0100
-Message-Id: <20200114161225.309792-3-hch@lst.de>
+Subject: [PATCH 03/12] xfs: fix IOCB_NOWAIT handling in xfs_file_dio_aio_read
+Date:   Tue, 14 Jan 2020 17:12:16 +0100
+Message-Id: <20200114161225.309792-4-hch@lst.de>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200114161225.309792-1-hch@lst.de>
 References: <20200114161225.309792-1-hch@lst.de>
@@ -50,33 +50,32 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The rwsem code overloads the owner field with either a task struct or
-negative magic numbers.  Add a quick hack to catch these negative
-values early on.  Without this spinning on a writer that replaced the
-owner with RWSEM_OWNER_UNKNOWN, rwsem_spin_on_owner can crash while
-deferencing the task_struct ->on_cpu field of a -8 value.
-
-XXX: This might be a bit of a hack as the code otherwise doesn't use
-the ERR_PTR family macros, better suggestions welcome.
+Direct I/O reads can also be used with RWF_NOWAIT & co.  Fix the inode
+locking in xfs_file_dio_aio_read to take IOCB_NOWAIT into account.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- kernel/locking/rwsem.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/xfs/xfs_file.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-index 44e68761f432..6adc719a30a1 100644
---- a/kernel/locking/rwsem.c
-+++ b/kernel/locking/rwsem.c
-@@ -725,6 +725,8 @@ rwsem_spin_on_owner(struct rw_semaphore *sem, unsigned long nonspinnable)
- 	state = rwsem_owner_state(owner, flags, nonspinnable);
- 	if (state != OWNER_WRITER)
- 		return state;
-+	if (IS_ERR(owner))
-+		return state;
+diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+index c93250108952..b8a4a3f29b36 100644
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -187,7 +187,12 @@ xfs_file_dio_aio_read(
  
- 	rcu_read_lock();
- 	for (;;) {
+ 	file_accessed(iocb->ki_filp);
+ 
+-	xfs_ilock(ip, XFS_IOLOCK_SHARED);
++	if (iocb->ki_flags & IOCB_NOWAIT) {
++		if (!xfs_ilock_nowait(ip, XFS_IOLOCK_SHARED))
++			return -EAGAIN;
++	} else {
++		xfs_ilock(ip, XFS_IOLOCK_SHARED);
++	}
+ 	ret = iomap_dio_rw(iocb, to, &xfs_read_iomap_ops, NULL,
+ 			is_sync_kiocb(iocb));
+ 	xfs_iunlock(ip, XFS_IOLOCK_SHARED);
 -- 
 2.24.1
 
