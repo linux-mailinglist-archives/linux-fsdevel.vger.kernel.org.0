@@ -2,185 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4B2E13A880
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 12:37:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1AC513A8E7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 13:01:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729508AbgANLhL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jan 2020 06:37:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60672 "EHLO mx2.suse.de"
+        id S1728826AbgANMBk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jan 2020 07:01:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40614 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725956AbgANLhL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jan 2020 06:37:11 -0500
+        id S1725956AbgANMBk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 14 Jan 2020 07:01:40 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id D7FC2ACBD;
-        Tue, 14 Jan 2020 11:37:08 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id BC840AE34;
+        Tue, 14 Jan 2020 12:01:38 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 7F2BF1E0D0E; Tue, 14 Jan 2020 12:37:07 +0100 (CET)
-Date:   Tue, 14 Jan 2020 12:37:07 +0100
+        id 5544B1E0D0E; Tue, 14 Jan 2020 13:01:38 +0100 (CET)
+Date:   Tue, 14 Jan 2020 13:01:38 +0100
 From:   Jan Kara <jack@suse.cz>
 To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
 Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [WIP PATCH 2/4] udf: Fix reading numFiles and numDirs from UDF
- 2.00+ VAT discs
-Message-ID: <20200114113707.GG6466@quack2.suse.cz>
+Subject: Re: [WIP PATCH 1/4] udf: Do not access LVIDIU revision members when
+ they are not filled
+Message-ID: <20200114120138.GH6466@quack2.suse.cz>
 References: <20200112175933.5259-1-pali.rohar@gmail.com>
- <20200112175933.5259-3-pali.rohar@gmail.com>
- <20200113115822.GE23642@quack2.suse.cz>
- <20200113181138.iqmo33ml2kpnmsfo@pali>
- <20200114111817.GF6466@quack2.suse.cz>
+ <20200112175933.5259-2-pali.rohar@gmail.com>
+ <20200113120049.GF23642@quack2.suse.cz>
+ <20200113183728.ucuidmverddt4nme@pali>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200114111817.GF6466@quack2.suse.cz>
+In-Reply-To: <20200113183728.ucuidmverddt4nme@pali>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 14-01-20 12:18:17, Jan Kara wrote:
-> On Mon 13-01-20 19:11:38, Pali Rohár wrote:
-> > On Monday 13 January 2020 12:58:22 Jan Kara wrote:
-> > > On Sun 12-01-20 18:59:31, Pali Rohár wrote:
-> > > > These two fields are stored in VAT and override previous values stored in
-> > > > LVIDIU.
-> > > > 
-> > > > This change contains only implementation for UDF 2.00+. For UDF 1.50 there
-> > > > is an optional structure "Logical Volume Extended Information" which is not
-> > > > implemented in this change yet.
-> > > > 
-> > > > Signed-off-by: Pali Rohár <pali.rohar@gmail.com>
+On Mon 13-01-20 19:37:28, Pali Rohár wrote:
+> On Monday 13 January 2020 13:00:49 Jan Kara wrote:
+> > On Sun 12-01-20 18:59:30, Pali Rohár wrote:
+> > > minUDFReadRev, minUDFWriteRev and maxUDFWriteRev members were introduced in
+> > > UDF 1.02. Previous UDF revisions used that area for implementation specific
+> > > data. So in this case do not touch these members.
 > > > 
-> > > For this and the following patch, I'd rather have the 'additional data'
-> > > like number of files, dirs, or revisions, stored in the superblock than
-> > > having them hidden in the VAT partition structure. And places that parse
-> > > corresponding on-disk structures would fill in the numbers into the
-> > > superblock.
+> > > To check if LVIDIU contain revisions members, first read UDF revision from
+> > > LVD. If revision is at least 1.02 LVIDIU should contain revision members.
+> > > 
+> > > This change should fix mounting UDF 1.01 images in R/W mode. Kernel would
+> > > not touch, read overwrite implementation specific area of LVIDIU.
+> > > 
+> > > Signed-off-by: Pali Rohár <pali.rohar@gmail.com>
 > > 
-> > This is not simple. Kernel first reads and parses VAT and later parses
-> > LVIDIU. VAT is optional UDF feature and in UDF 1.50 are even those data
-> > optional.
-> > 
-> > Logic for determining minimal write UDF revision is currently in code
-> > which parse LVIDIU. And this is the only place which needs access UDF
-> > revisions stored in VAT and LVIDIU.
-> > 
-> > UDF revision from LVD is already stored into superblock.
-> > 
-> > And because VAT is parsed prior to parsing LVIDIU is is also not easy to
-> > store number of files and directories into superblock. LVIDIU needs to
-> > know if data from VAT were loaded to superblock or not and needs to know
-> > if data from LVIDIU should be stored into superblock or not.
-> > 
-> > Any idea how to do it without complicating whole code?
+> > Maybe we could store the fs revision in the superblock as well to avoid
+> > passing the udf_rev parameter?
 > 
-> Let's take the discussion about revision storage to the thread about the
-> other patch. But for number of directories and files I was thinking like:
+> Unfortunately not. Function udf_verify_domain_identifier() is called
+> also when parsing FSD. FSD is stored on partition map and e.g. Metadata
+> partition map depends on UDF revision. So it is not a good idea to
+> overwrite UDF revision from FSD. This is reason why I decided to use
+> initial UDF revision number only from LVD.
 > 
-> We could initialize values in the superblock to -1 (or whatever invalid
-> value - define a constant for it). The first place that has valid values
-> available (detected by the superblock having still invalid values) stores them
-> in the superblock. We are guaranteed to parse VAT before LVIDIU because we
-> need VAT to locate LVIDIU in the first place so this logic should be
-> reliable.
+> But whole stuff around UDF revision is a mess. UDF revision is stored on
+> these locations:
+> 
+> main LVD
+> reserve LVD
+> main IUVD
+> reserve IUVD
+> FSD
+> 
+> And optionally (when specific UDF feature is used) also on:
+> 
+> sparable partition map 1.50+
+> virtual partition map 1.50+
+> all sparing tables 1.50+
+> VAT 1.50
+> 
+> Plus tuple minimal read, minimal write, maximal write UDF revision is
+> stored on:
+> 
+> LVIDIU 1.02+
+> VAT 2.00+
+> 
+> VAT in 2.00+ format overrides information stored on LVIDIU.
 
-Hum, now checking the code, I was wrong with "we are guaranteed to parse
-VAT before LVIDIU". It is rather on contrary - we need to load LVID to be
-able to locate VAT. So if we added processing of numDirs and numFiles from
-LVID to udf_load_logicalvolint(), we can later just override the values when
-parsing VAT.
+Thanks for the summary. This is indeed a mess in the standard so let's not
+overcomplicate it. I agree with just taking the revision from 'main LVD'
+and storing it in the superblock like you do in this patch. I'd just
+slightly change your code so that extracting a revision from 'struct regid'
+is a separate function and not "hidden" inside
+udf_verify_domain_identifier(). There's no strong reason for combining
+these two.
+
+WRT parsing of minUDFReadRev and friends, I'd handle them similarly to
+numDirs and numFiles. I'd initialize them to the version we've got from
+LVD, then possibly override them in udf_load_logicalvolint(), and finally
+possibly override them in udf_load_vat().
 
 								Honza
-
-> 
-> And later when using the values, we can also easily check whether we
-> actually have sensible values available in the first place...
-> 
-> 								Honza
-> 
-> > > >  fs/udf/super.c  | 25 ++++++++++++++++++++++---
-> > > >  fs/udf/udf_sb.h |  3 +++
-> > > >  2 files changed, 25 insertions(+), 3 deletions(-)
-> > > > 
-> > > > diff --git a/fs/udf/super.c b/fs/udf/super.c
-> > > > index 8df6e9962..e8661bf01 100644
-> > > > --- a/fs/udf/super.c
-> > > > +++ b/fs/udf/super.c
-> > > > @@ -1202,6 +1202,8 @@ static int udf_load_vat(struct super_block *sb, int p_index, int type1_index)
-> > > >  		map->s_type_specific.s_virtual.s_start_offset = 0;
-> > > >  		map->s_type_specific.s_virtual.s_num_entries =
-> > > >  			(sbi->s_vat_inode->i_size - 36) >> 2;
-> > > > +		/* TODO: Add support for reading Logical Volume Extended Information (UDF 1.50 Errata, DCN 5003, 3.3.4.5.1.3) */
-> > > > +		map->s_type_specific.s_virtual.s_has_additional_data = false;
-> > > >  	} else if (map->s_partition_type == UDF_VIRTUAL_MAP20) {
-> > > >  		vati = UDF_I(sbi->s_vat_inode);
-> > > >  		if (vati->i_alloc_type != ICBTAG_FLAG_AD_IN_ICB) {
-> > > > @@ -1215,6 +1217,12 @@ static int udf_load_vat(struct super_block *sb, int p_index, int type1_index)
-> > > >  							vati->i_ext.i_data;
-> > > >  		}
-> > > >  
-> > > > +		map->s_type_specific.s_virtual.s_has_additional_data =
-> > > > +			true;
-> > > > +		map->s_type_specific.s_virtual.s_num_files =
-> > > > +			le32_to_cpu(vat20->numFiles);
-> > > > +		map->s_type_specific.s_virtual.s_num_dirs =
-> > > > +			le32_to_cpu(vat20->numDirs);
-> > > >  		map->s_type_specific.s_virtual.s_start_offset =
-> > > >  			le16_to_cpu(vat20->lengthHeader);
-> > > >  		map->s_type_specific.s_virtual.s_num_entries =
-> > > > @@ -2417,9 +2425,20 @@ static int udf_statfs(struct dentry *dentry, struct kstatfs *buf)
-> > > >  	buf->f_blocks = sbi->s_partmaps[sbi->s_partition].s_partition_len;
-> > > >  	buf->f_bfree = udf_count_free(sb);
-> > > >  	buf->f_bavail = buf->f_bfree;
-> > > > -	buf->f_files = (lvidiu != NULL ? (le32_to_cpu(lvidiu->numFiles) +
-> > > > -					  le32_to_cpu(lvidiu->numDirs)) : 0)
-> > > > -			+ buf->f_bfree;
-> > > > +
-> > > > +	if ((sbi->s_partmaps[sbi->s_partition].s_partition_type == UDF_VIRTUAL_MAP15 ||
-> > > > +	     sbi->s_partmaps[sbi->s_partition].s_partition_type == UDF_VIRTUAL_MAP20) &&
-> > > > +	     sbi->s_partmaps[sbi->s_partition].s_type_specific.s_virtual.s_has_additional_data)
-> > > > +		buf->f_files = sbi->s_partmaps[sbi->s_partition].s_type_specific.s_virtual.s_num_files +
-> > > > +			       sbi->s_partmaps[sbi->s_partition].s_type_specific.s_virtual.s_num_dirs +
-> > > > +			       buf->f_bfree;
-> > > > +	else if (lvidiu != NULL)
-> > > > +		buf->f_files = le32_to_cpu(lvidiu->numFiles) +
-> > > > +			       le32_to_cpu(lvidiu->numDirs) +
-> > > > +			       buf->f_bfree;
-> > > > +	else
-> > > > +		buf->f_files = buf->f_bfree;
-> > > > +
-> > > >  	buf->f_ffree = buf->f_bfree;
-> > > >  	buf->f_namelen = UDF_NAME_LEN;
-> > > >  	buf->f_fsid.val[0] = (u32)id;
-> > > > diff --git a/fs/udf/udf_sb.h b/fs/udf/udf_sb.h
-> > > > index 6bd0d4430..c74abbc84 100644
-> > > > --- a/fs/udf/udf_sb.h
-> > > > +++ b/fs/udf/udf_sb.h
-> > > > @@ -78,6 +78,9 @@ struct udf_sparing_data {
-> > > >  struct udf_virtual_data {
-> > > >  	__u32	s_num_entries;
-> > > >  	__u16	s_start_offset;
-> > > > +	bool	s_has_additional_data;
-> > > > +	__u32	s_num_files;
-> > > > +	__u32	s_num_dirs;
-> > > >  };
-> > > >  
-> > > >  struct udf_bitmap {
-> > > > -- 
-> > > > 2.20.1
-> > > > 
-> > 
-> > -- 
-> > Pali Rohár
-> > pali.rohar@gmail.com
-> 
-> 
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
