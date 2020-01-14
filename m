@@ -2,177 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ABEE13AE55
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 17:05:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43ACE13AEE7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 17:13:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728929AbgANQE6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jan 2020 11:04:58 -0500
-Received: from mail-io1-f41.google.com ([209.85.166.41]:34301 "EHLO
-        mail-io1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728835AbgANQE5 (ORCPT
+        id S1726946AbgANQM2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jan 2020 11:12:28 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43336 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbgANQM2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jan 2020 11:04:57 -0500
-Received: by mail-io1-f41.google.com with SMTP id z193so14393330iof.1;
-        Tue, 14 Jan 2020 08:04:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=v3IvYmcGimwuEN+/tbhVg4f+uAHLk1U4Opz1X1TABkM=;
-        b=BRbkRaQGkZsDAKCG9VdBHFPU2jVnKOc8SEywhumuz9LXfxBFF/KBBf/ViobDyt8Ltb
-         4hb70Rjjr0euUf9mDAeTSnbf3hyDF9Yi9/aoJPc4Wq378qeHrR9dkJCyTkgCgrutTcSm
-         GrdNhZXaJt3XXLDpYuy2VQDPwa/pCKxq9ja26hHjjLX4bwVckP/QuJ5eniHv0S5zMjyw
-         Y6Ek+zq5zVEiso8lC9uRb8ZznFJn1IPvy0G4tJ/1MTz662zOiB4pYbAvihW3AbPILxht
-         Z1XvLwv+T2fuen4V6E4+QAnBKB/dOfItyaxyzUOuSfhNgYM/STjacljtbPdt17bLZwpm
-         1YZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=v3IvYmcGimwuEN+/tbhVg4f+uAHLk1U4Opz1X1TABkM=;
-        b=p+FKbeeXawEcGz7wW1d2m0kyDIbh281u38SEFLiCeCqxLEd/NWJw+7xvskMthwswM0
-         gEj5SpnhkI7zN2inWhpngmRcDrlONmsW4MNJddVzOpN8OWp09jXXVOyVpf9MtBNRq5Fc
-         wKO3pvqaK/a7f0sQ1YQ7qcpBv+7lIc4WGZ/g8Ng8ZmptcVJ+690zSPmuIjHcnmam15Ti
-         FsgU0rUs5HEmpZXjcwKVf4Xt3RzrMH1Lp51yOD5gL4OWYIu6S8bMehYbe6WyHsnx7rKf
-         /fsIUkUAzbS+ayZSarfkFppA3tDTQJhxnFBbaFAmPP3T+/JMpZca/fP2RwkyCFgfm+c2
-         Ae1A==
-X-Gm-Message-State: APjAAAXR3fEdTYY2zQ/T49nDovIH2gAweZ+I4SFMD+J7s1WNyYeSWRim
-        xQ6r5mZcPptTfm4/Da1cxIFu6Myzf+hAb4m9Plg=
-X-Google-Smtp-Source: APXvYqyLvxCk0Y5/M9spC9uyi7Y+XWQiWwIY1wxE92OOmzgTP3PKC8QOD4Iqs18UgnfXReUZQaI752wU3S2Eqz5kObE=
-X-Received: by 2002:a5d:93d1:: with SMTP id j17mr18349954ioo.300.1579017897096;
- Tue, 14 Jan 2020 08:04:57 -0800 (PST)
-MIME-Version: 1.0
-References: <20200110070608.18902-1-yu.c.chen@intel.com> <20200114092450.GA31032@zn.tnic>
-In-Reply-To: <20200114092450.GA31032@zn.tnic>
-From:   Chen Yu <yu.chen.surf@gmail.com>
-Date:   Wed, 15 Jan 2020 00:04:44 +0800
-Message-ID: <CADjb_WRicSYZP3cXz+PWzXCY42qxgHM2Q5uoqqiSzKtfQ--AZQ@mail.gmail.com>
-Subject: Re: [PATCH][v6] x86/resctrl: Add task resctrl information display
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Chen Yu <yu.c.chen@intel.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Dave Young <dyoung@redhat.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        Tue, 14 Jan 2020 11:12:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=oyX+VCOGiR0VHFHOIdjFAfh8SfeH2y+niob+14o5ARo=; b=Ca224Nnp1IKl1DDDxR7kqrgHd
+        Vr1uBgC+EqacfNTkQsMmIumteCicSFmyGYIJCVmnY5UuJ+pwOftZ5c3EpwLG7FFdLhyoEdl2egMYE
+        jPzUvSqfe0BCCc6+iyKZJKY6Bt8qxRHIkUVEM5xvn5keUT7XiLhBWQLczmA6yJYrPSg5l4Ofx5AIm
+        OGpABtl/mEM+U7MmryzHf2drt6XW/9NYxbupfWcfDeUTgOv3e72or4V54MjH1qFx+XUpwAqrcXw/b
+        sedAhE1eK421rV1WDgwP+3Falg/Iisww5WjC6DzcUjq+JaAh6VNeldhXMySGMyzSYqDmNlEmdEdiH
+        XO5GP+7Lg==;
+Received: from [2001:4bb8:18c:4f54:fcbb:a92b:61e1:719] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1irOnr-000073-FS; Tue, 14 Jan 2020 16:12:28 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Waiman Long <longman@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Chris Down <chris@chrisdown.name>,
-        Michal Hocko <mhocko@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: RFC: hold i_rwsem until aio completes
+Date:   Tue, 14 Jan 2020 17:12:13 +0100
+Message-Id: <20200114161225.309792-1-hch@lst.de>
+X-Mailer: git-send-email 2.24.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Boris,
-On Tue, Jan 14, 2020 at 5:25 PM Borislav Petkov <bp@alien8.de> wrote:
->
-> On Fri, Jan 10, 2020 at 03:06:08PM +0800, Chen Yu wrote:
-> > Monitoring tools that want to find out which resctrl control
-> > and monitor groups a task belongs to must currently read
-> > the "tasks" file in every group until they locate the process
-> > ID.
-> >
-> > Add an additional file /proc/{pid}/cpu_resctrl to provide this
-> > information.
-> >
-> > The output is as followed, for example:
-> >
-> >  1)   ""
-> >       Resctrl is not available.
-> >
-> >  2)   "/"
-> >       Task is part of the root group, task is not associated to
-> >       any monitor group.
-> >
-> >  3)   "/mon_groups/mon0"
-> >       Task is part of the root group and monitor group mon0.
-> >
-> >  4)   "/group0"
-> >       Task is part of resctrl control group group0, task is not
-> >       associated to any monitor group.
-> >
-> >  5)   "/group0/mon_groups/mon1"
-> >       Task is part of resctrl control group group0 and monitor
-> >       group mon1.
->
-> So this way to present the information is totally non-intuitive,
-> IMNSVHO. What's wrong with:
->
-> 1)
->         res_group:
->         mon_group:
->
-> 2)
->         res_group: /
->         mon_group:
->
-> 3)
->         res_group: /
->         mon_group: mon0
->
-> 4)
->         res_group: group0
->         mon_group:
->
-> 5)
->         res_group: group0
->         mon_group: mon1
->
-> ?
->
-> You can even call the file "cpu_resctrl_groups" so that it is clear that
-> it will dump groups and then do:
->
->         res: group0
->         mon: mon1
->
-> which is both human-readable and easily greppable.
->
-Yes, to display resctrl control and monitor group separately might be more
-friendly to the user.  Although I was thinking if the user would like
-to see the full path of
-the resource, which might make it easier to be parsed:
-A) res: group0
-    mon: mon1
-vs
-B) res: /group0
-    mon: /group0/mon_groups/mon1
-as proposal B might introduce duplication I'll send a new version
-based on proposal A.
-> > +/*
-> > + * A task can only be part of one resctrl
-> > + * control group and of one monitor
-> > + * group which is associated to that resctrl
-> > + * control group.
->
-> Extend those comments to 80 cols.
->
-Okay. will do.
-> > + * So one line is simple and clear enough:
->
-> Actually, the one line format you've done is confusing and can be done
-> much more human- and tool-readable.
->
-Got it.
-Thanks,
-Chenyu
+Hi all,
 
-> Thx.
->
-> --
-> Regards/Gruss,
->     Boris.
->
-> https://people.kernel.org/tglx/notes-about-netiquette
+Asynchronous read/write operations currently use a rather magic locking
+scheme, were access to file data is normally protected using a rw_semaphore,
+but if we are doing aio where the syscall returns to userspace before the
+I/O has completed we also use an atomic_t to track the outstanding aio
+ops.  This scheme has lead to lots of subtle bugs in file systems where
+didn't wait to the count to reach zero, and due to its adhoc nature also
+means we have to serialize direct I/O writes that are smaller than the
+file system block size.
+
+All this is solved by releasing i_rwsem only when the I/O has actually
+completed, but doings so is against to mantras of Linux locking primites:
+
+ (1) no unlocking by another process than the one that acquired it
+ (2) no return to userspace with locks held
+
+It actually happens we have various places that work around this.  A few
+callers do non-owner unlocks of rwsems, which are pretty nasty for
+PREEMPT_RT as the owner tracking doesn't work.  OTOH the file system
+freeze code has both problems and works around them a little better,
+although in a somewhat awkward way, in that it releases the lockdep
+object when returning to userspace, and reacquires it when done, and
+also clears the rwsem owner when returning to userspace, and then sets
+the new onwer before unlocking.
+
+This series tries to follow that scheme, also it doesn't fully work.  The
+first issue is that the rwsem code has a bug where it doesn't properly
+handle clearing the owner.  This series has a patch to fix that, but it
+is ugly and might not be correct so some help is needed.  Second I/O
+completions often come from interrupt context, which means the re-acquire
+is recorded as from irq context, leading to warnings about incorrect
+contexts.  I wonder if we could just have a bit in lockdep that says
+returning to userspace is ok for this particular lock?  That would also
+clean up the fsfreeze situation a lot.
+
+Let me know what you think of all this.  While I converted all the iomap
+using file systems only XFS is actually tested.
+
+Diffstat:
+
+ 24 files changed, 144 insertions(+), 180 deletions(-)
