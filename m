@@ -2,101 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59B9D13B34A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 20:59:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAB6A13B353
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 21:02:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728733AbgANT6h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jan 2020 14:58:37 -0500
-Received: from mail-il1-f179.google.com ([209.85.166.179]:42779 "EHLO
-        mail-il1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728558AbgANT6h (ORCPT
+        id S1728754AbgANUCW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jan 2020 15:02:22 -0500
+Received: from mout-p-102.mailbox.org ([80.241.56.152]:60288 "EHLO
+        mout-p-102.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726523AbgANUCW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jan 2020 14:58:37 -0500
-Received: by mail-il1-f179.google.com with SMTP id t2so12637745ilq.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2020 11:58:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Nr2suBWyH3G+SrgEdmZRyOadvDn7vyAkXtdlcbJy6/4=;
-        b=aYomd4wid0gLfURx68KZmThGg8susm1oZebC86DWoGy17aPwwIHZCO/7aXwygnBiCu
-         ypdTUjsihgMvxzsNSGl3o1sH1+edhCI2vNNrPmzk0qNsXOsdOOnKqDAleRw9Dwh91O2k
-         hygkeIwpwgtMDTjTO7gWpin6jM3kA3kV6X5h8g6LAJVXwi7GEKcbFweoQD8cd5sdbkao
-         iYEucLXAhLWFYXGjkPwgmjPugSoMAg3v4gHdRntXFqRqJRd8gsz5JFqCWK791uPdRPwy
-         dWPb42NuNnrxGUB5WVEz2yo2BfAyZSLSepWumJBeIWNeRfcUwSSSZCALCaEafMvYHhC5
-         9wQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Nr2suBWyH3G+SrgEdmZRyOadvDn7vyAkXtdlcbJy6/4=;
-        b=Gu3g2rNOVqiCPed3GIBGBtasJ47oMfmRLbZcI81nPXeviKBCyyn3Kw1Cg1v9+ds4Sj
-         ytXGJbrfHx8BA8M9YNpluGAjHiFYTdeYeP3R4QaManO5XFZTisyhjncZ4wuljiLRNfiB
-         mvSPPJo9HK3rdmOsQWVDcSrra8P6GlUENZN7sooe/ZmWtiMwlWMiIP5+kJgxzhiNDxL0
-         b3vODUaMI2qG2+v5CHa8/hPcbbAg2Ip11C99tAxxHq3gk4+qH4aZoJvHr+PAcatFbPum
-         nyNCPieRPmjX9ZrNog0hwW4LqDQrUM3KGtJGGaIxbjTPzoeipZTDCgGrGFy7MHek0naM
-         KZNQ==
-X-Gm-Message-State: APjAAAUYHI6FMZuDFsc0cuKsY0e6NjtmTIN3ab7aWBf53wH5oeKaJii5
-        v3TZ/TouPg1+4h6zvMpoZVUTy7fmgkD+w8Ix5qIIcA==
-X-Google-Smtp-Source: APXvYqzvt7tQjE9nIbRq/GFGA8JfwPqvomO7FDWciY6I0Wm4Eq3osYgBIICZPCmG6GvM4efnYyVFw61IKKpA0yuWOvE=
-X-Received: by 2002:a92:d5c3:: with SMTP id d3mr93904ilq.250.1579031916154;
- Tue, 14 Jan 2020 11:58:36 -0800 (PST)
-MIME-Version: 1.0
-References: <20200114154034.30999-1-amir73il@gmail.com> <20200114162234.GZ8904@ZenIV.linux.org.uk>
- <CAOQ4uxjbRzuAPHbgyW+uGmamc=fZ=eT_p4wCSb0QT7edtUqu8Q@mail.gmail.com> <20200114191907.GC8904@ZenIV.linux.org.uk>
-In-Reply-To: <20200114191907.GC8904@ZenIV.linux.org.uk>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 14 Jan 2020 21:58:25 +0200
-Message-ID: <CAOQ4uxh-1cUQtWoNR+JzR0fCo-yEC4UrQGcZvKyj6Pg11G7FRQ@mail.gmail.com>
-Subject: Re: dcache: abstract take_name_snapshot() interface
+        Tue, 14 Jan 2020 15:02:22 -0500
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 47y1Zf2B6hzKmVl;
+        Tue, 14 Jan 2020 21:02:18 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id 8yIjXp1Taw1j; Tue, 14 Jan 2020 21:02:14 +0100 (CET)
+Date:   Wed, 15 Jan 2020 07:01:50 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
 To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        stable <stable@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Serge Hallyn <serge@hallyn.com>, dev@opencontainers.org,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>
+Subject: Re: [PATCH RFC 0/1] mount: universally disallow mounting over
+ symlinks
+Message-ID: <20200114200150.ryld4npoblns2ybe@yavin>
+References: <20200101005446.GH4203@ZenIV.linux.org.uk>
+ <20200101030815.GA17593@ZenIV.linux.org.uk>
+ <20200101144407.ugjwzk7zxrucaa6a@yavin.dot.cyphar.com>
+ <20200101234009.GB8904@ZenIV.linux.org.uk>
+ <20200102035920.dsycgxnb6ba2jhz2@yavin.dot.cyphar.com>
+ <20200103014901.GC8904@ZenIV.linux.org.uk>
+ <20200108031314.GE8904@ZenIV.linux.org.uk>
+ <CAHk-=wgQ3yOBuK8mxpnntD8cfX-+10ba81f86BYg8MhvwpvOMg@mail.gmail.com>
+ <20200110210719.ktg3l2kwjrdutlh6@yavin>
+ <20200114045733.GW8904@ZenIV.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yw32mmv2xicgi7vl"
+Content-Disposition: inline
+In-Reply-To: <20200114045733.GW8904@ZenIV.linux.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 14, 2020 at 9:19 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Tue, Jan 14, 2020 at 08:06:56PM +0200, Amir Goldstein wrote:
-> > > // NOTE: release_dentry_name_snapshot() will be needed for both copies.
-> > > clone_name_snapshot(struct name_snapshot *to, const struct name_snapshot *from)
-> > > {
-> > >         to->name = from->name;
-> > >         if (likely(to->name.name == from->inline_name)) {
-> > >                 memcpy(to->inline_name, from->inline_name,
-> > >                         to->name.len);
-> > >                 to->name.name = to->inline_name;
-> > >         } else {
-> > >                 struct external_name *p;
-> > >                 p = container_of(to->name.name, struct external_name, name[0]);
-> > >                 atomic_inc(&p->u.count);
-> > >         }
-> > > }
-> > >
-> > > and be done with that.  Avoids any extensions or tree-wide renamings, etc.
-> >
-> > I started with something like this but than in one of the early
-> > revisions I needed
-> > to pass some abstract reference around before cloning the name into the event,
-> > but with my current patches I can get away with a simple:
-> >
-> > if (data_type == FANOTIFY_EVENT_NAME)
-> >     clone_name_snapshot(&event->name, data);
-> > else if (dentry)
-> >     take_dentry_name_snapshot(&event->name, dentry);
-> >
-> > So that simple interface should be good enough for my needs.
->
-> I really think it would be safer that way; do you want me to throw that into
-> vfs.git (#work.dcache, perhaps)?  I don't have anything going on in the
-> vicinity, so it's not likely to cause conflicts either way and nothing I'd
-> seen posted on fsdevel seems to be likely to step into it, IIRC, so...
-> Up to you.
 
-Sure, that would be great.
+--yw32mmv2xicgi7vl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Amir.
+On 2020-01-14, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Sat, Jan 11, 2020 at 08:07:19AM +1100, Aleksa Sarai wrote:
+>=20
+> > If I'm understanding this proposal correctly, this would be a problem
+> > for the libpathrs use-case -- if this is done then there's no way to
+> > avoid a TOCTOU with someone mounting and the userspace program checking
+> > whether something is a mountpoint (unless you have Linux >5.6 and
+> > RESOLVE_NO_XDEV). Today, you can (in theory) do it with MNT_EXPIRE:
+> >=20
+> >   1. Open the candidate directory.
+> >   2. umount2(MNT_EXPIRE) the fd.
+> >     * -EINVAL means it wasn't a mountpoint when we got the fd, and the
+> > 	  fd is a stable handle to the underlying directory.
+> > 	* -EAGAIN or -EBUSY means that it was a mountpoint or became a
+> > 	  mountpoint after the fd was opened (we don't care about that, but
+> > 	  fail-safe is better here).
+> >   3. Use the fd from (1) for all operations.
+>=20
+> ... except that foo/../bar *WILL* cross into the covering mount, on any
+> kernel that supports ...at(2) at all, so I would be very cautious about
+> any kind "hardening" claims in that case.
+
+In the use-case I have, we would have full control over what the path
+being opened is (and thus you wouldn't open "foo/../bar"). But I agree
+that generally the MNT_EXPIRE solution is really non-ideal anyway.
+
+Not to mention that we're still screwed when it comes to using
+magic-links (because if someone bind-mounts a magic-link over a
+magic-link there's absolutely no race-free way to be sure that we're
+traversing the right magic-link -- for that we'll need to have a
+different solution).
+
+> I'm not sure about Linus' proposal - it looks rather convoluted and we
+> get a hard to describe twist of semantics in an area (procfs symlinks
+> vs. mount traversal) on top of everything else in there...
+
+Yeah, I agree.
+
+> 1) do you see any problems on your testcases with the current #fixes?
+> That's commit 7a955b7363b8 as branch tip.
+
+I will take a quick look later today, but I'm currently at a conference.
+
+> 2) do you have any updates you would like to fold into stuff in
+> #work.openat2?  Right now I have a local variant of #work.namei (with
+> fairly cosmetical change compared to vfs.git one) that merges clean
+> with #work.openat2; I would like to do any updates/fold-ins/etc.
+> of #work.openat2 *before* doing a merge and continuing to work on
+> top of the merge results...
+
+Yes, there were two patches I sent a while ago[1]. I can re-send them if
+you like. The second patch switches open_how->mode to a u64, but I'm
+still on the fence about whether that makes sense to do...
+
+[1]: https://lore.kernel.org/lkml/20191219105533.12508-1-cyphar@cyphar.com/
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--yw32mmv2xicgi7vl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXh4eKwAKCRCdlLljIbnQ
+EohNAP9bZokE7Mx988k9i8bCb2VifwEsK32qWbBGbd1mfrCgcAD9FPGxR3BU2iR4
+1M+DPlD/ZTxDuzJUo2DWSGfEWzl2hAQ=
+=b/NS
+-----END PGP SIGNATURE-----
+
+--yw32mmv2xicgi7vl--
