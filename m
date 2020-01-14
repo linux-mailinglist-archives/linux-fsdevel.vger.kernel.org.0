@@ -2,235 +2,196 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16E3613B508
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 23:04:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2C3013B545
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 23:23:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728901AbgANWEQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jan 2020 17:04:16 -0500
-Received: from mail-il1-f199.google.com ([209.85.166.199]:48445 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728760AbgANWEO (ORCPT
+        id S1728862AbgANWXQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jan 2020 17:23:16 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:43686 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728682AbgANWXQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jan 2020 17:04:14 -0500
-Received: by mail-il1-f199.google.com with SMTP id u14so11681483ilq.15
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2020 14:04:13 -0800 (PST)
+        Tue, 14 Jan 2020 17:23:16 -0500
+Received: by mail-ot1-f67.google.com with SMTP id p8so14237668oth.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jan 2020 14:23:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EMbN1Woq544EfOz/nfTttJ7Xl0GliaVxV4hQJh4QosE=;
+        b=C57IauRMqinuAWTYCo5F6FpoAxD6l1tnXRkUV9Yp8jG0u5XVdw7Tq1FtkDft9QMAsM
+         e91sVxxfbB7VV/SdDxU7ia89cdtc/wFaKJPoZdZWBISOQXj9aEK3Qoa3KEWF0UbNmCI4
+         ToId79vINoXMj3VmXCSiXoWS5YnHK8S68mVrpm8kYb6guvcXGETqDN/05svyPuhGTkJD
+         J1XEnETkz4oaJd5S+3iL3sDuEyAQdO5Z1R9xyCCj5YRS8hCiacAXzo/h/BhZmANiro1i
+         krRoo5aKVW4r9YNdl+5pWKl9DAmz/y0agtKvABl07X/vusocmjng6K5HDyPO6/fpt4wR
+         ysWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=3S9j3uq36gpvrhnH3ydXwg7I0WRc5NPGZffM/xDaOQ4=;
-        b=HxQC+92dUVS8CnhYua3ozA+g2tGsEB6EhV2vX4HTd2N25RcKaVFTcwaJ5xo9Iu2Uoi
-         n2PULSkQpcrLJh++55h8Oc7dhlyuC02iMcC7/3XzGgQ7zgFddcTjYJGwp2iGjw21suOc
-         Uk8R0hAi1+PWO3ddxK4aGnTq+egdec/8Hwo/wn/wyJjwynVJSXgBMu+GasI6ODYSnAaN
-         FKCqXXf+SLnrg/dAfhsPIhuUUXz/fxpr1H2l2zw+3l08no5YqWFuVmcJj1hdBtPbOeYP
-         fo4QZiPnBt2GiD0zfu4oMeXktzj0U1dbejP873dsyRxO7Pa1WrSw8scdvutc1Sf2IUsD
-         TDMA==
-X-Gm-Message-State: APjAAAUGxACntrzG3bMONh/1BT3ifoitQBXHH6hNBoL6tGj9htpAxBUd
-        w/RUzeNo4FM0UhnBLt1n82/hZuZh0m4ogmwqURFsptYml6fP
-X-Google-Smtp-Source: APXvYqzGw7+E4Qb4MFTi8sqavJrANCW76Yc3mrQOOUjOJMiwlkeR/2ZHwvrF7c5DaAm/QvZ3i/RyhWMP5QoadwAoM6b53ReBqQpX
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EMbN1Woq544EfOz/nfTttJ7Xl0GliaVxV4hQJh4QosE=;
+        b=tL1AL72kU0jpKgltMX0MqjvvmE2C7XYb6NZPLekw6ejIIbRK9BwXO9jYPR7cY5CUGZ
+         tDL18pmTA5VrvZHNcWG466sjO+bu/2WYLaoizxPXX+6luAt0lQPAX6AbIrZXTbQWqH1F
+         o7aPfLeIZtE3/MUqDQOG01WvST4bPlslhxDDwC29F0ou2PYXjz3MbcpCmP3yBKQ7vLLV
+         wLedbKbp2AN66qecDEC5ShXvfNkjnvBryRzTOrL2inYKNENoR0OvJJvDI0DWagoD1zp0
+         fY0mUzi6lYl1TSacaRezH0dN8wVuTxdlcf1RYhrO9yMvVGxbR7CctFurCjoRhylWMyU0
+         OCPA==
+X-Gm-Message-State: APjAAAX1J4j8HmRZYTSdyeUafoeuP2awQW1gb5uolIcljciCaxDCEthY
+        rUERLbHHbyOiYdiB88jFLgKSF26j11C/6rr6CDFX6w==
+X-Google-Smtp-Source: APXvYqzOj0y10lowarBS0JJLnrvBFRxnVw01yD2hv4VnkEfe2ZTMAVrMVqvG1TtiLJXv8MX8dl19DhHZVCzvPr5O3Lg=
+X-Received: by 2002:a9d:4e99:: with SMTP id v25mr471449otk.363.1579040595440;
+ Tue, 14 Jan 2020 14:23:15 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a92:d18a:: with SMTP id z10mr663613ilz.48.1579039453602;
- Tue, 14 Jan 2020 14:04:13 -0800 (PST)
-Date:   Tue, 14 Jan 2020 14:04:13 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b7f160059c20c5a9@google.com>
-Subject: possible deadlock in proc_pid_stack
-From:   syzbot <syzbot+c84a45dcab486e41c053@syzkaller.appspotmail.com>
-To:     adobriyan@gmail.com, akpm@linux-foundation.org,
-        christian@brauner.io, guro@fb.com, kent.overstreet@gmail.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mhocko@suse.com, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <20200107170731.GA472641@magnolia> <CAPcyv4ggH7-QhYg+YOOWn_m25uds+-0L46=N09ap-LALeGuU_A@mail.gmail.com>
+ <20200107180101.GC15920@redhat.com> <CAPcyv4gmdoqpwwwy4dS3D2eZFjmJ_Zi39k=1a4wn-_ksm-UV4A@mail.gmail.com>
+ <20200107183307.GD15920@redhat.com> <CAPcyv4ggoS4dWjq-1KbcuaDtroHKEi5Vu19ggJ-qgycs6w1eCA@mail.gmail.com>
+ <20200109112447.GG27035@quack2.suse.cz> <CAPcyv4j5Mra8qeLO3=+BYZMeXNAxFXv7Ex7tL9gra1TbhOgiqg@mail.gmail.com>
+ <20200114203138.GA3145@redhat.com> <CAPcyv4iXKFt207Pen+E1CnqCFtC1G85fxw5EXFVx+jtykGWMXA@mail.gmail.com>
+ <20200114212805.GB3145@redhat.com>
+In-Reply-To: <20200114212805.GB3145@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 14 Jan 2020 14:23:04 -0800
+Message-ID: <CAPcyv4igrs40uWuCB163PPBLqyGVaVbaNfE=kCfHRPRuvZdxQA@mail.gmail.com>
+Subject: Re: [PATCH 01/19] dax: remove block device dependencies
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jeff Moyer <jmoyer@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Tue, Jan 14, 2020 at 1:28 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> On Tue, Jan 14, 2020 at 12:39:00PM -0800, Dan Williams wrote:
+> > On Tue, Jan 14, 2020 at 12:31 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > >
+> > > On Thu, Jan 09, 2020 at 12:03:01PM -0800, Dan Williams wrote:
+> > > > On Thu, Jan 9, 2020 at 3:27 AM Jan Kara <jack@suse.cz> wrote:
+> > > > >
+> > > > > On Tue 07-01-20 10:49:55, Dan Williams wrote:
+> > > > > > On Tue, Jan 7, 2020 at 10:33 AM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > > > > > > W.r.t partitioning, bdev_dax_pgoff() seems to be the pain point where
+> > > > > > > dax code refers back to block device to figure out partition offset in
+> > > > > > > dax device. If we create a dax object corresponding to "struct block_device"
+> > > > > > > and store sector offset in that, then we could pass that object to dax
+> > > > > > > code and not worry about referring back to bdev. I have written some
+> > > > > > > proof of concept code and called that object "dax_handle". I can post
+> > > > > > > that code if there is interest.
+> > > > > >
+> > > > > > I don't think it's worth it in the end especially considering
+> > > > > > filesystems are looking to operate on /dev/dax devices directly and
+> > > > > > remove block entanglements entirely.
+> > > > > >
+> > > > > > > IMHO, it feels useful to be able to partition and use a dax capable
+> > > > > > > block device in same way as non-dax block device. It will be really
+> > > > > > > odd to think that if filesystem is on /dev/pmem0p1, then dax can't
+> > > > > > > be enabled but if filesystem is on /dev/mapper/pmem0p1, then dax
+> > > > > > > will work.
+> > > > > >
+> > > > > > That can already happen today. If you do not properly align the
+> > > > > > partition then dax operations will be disabled. This proposal just
+> > > > > > extends that existing failure domain to make all partitions fail to
+> > > > > > support dax.
+> > > > >
+> > > > > Well, I have some sympathy with the sysadmin that has /dev/pmem0 device,
+> > > > > decides to create partitions on it for whatever (possibly misguided)
+> > > > > reason and then ponders why the hell DAX is not working? And PAGE_SIZE
+> > > > > partition alignment is so obvious and widespread that I don't count it as a
+> > > > > realistic error case sysadmins would be pondering about currently.
+> > > > >
+> > > > > So I'd find two options reasonably consistent:
+> > > > > 1) Keep status quo where partitions are created and support DAX.
+> > > > > 2) Stop partition creation altogether, if anyones wants to split pmem
+> > > > > device further, he can use dm-linear for that (i.e., kpartx).
+> > > > >
+> > > > > But I'm not sure if the ship hasn't already sailed for option 2) to be
+> > > > > feasible without angry users and Linus reverting the change.
+> > > >
+> > > > Christoph? I feel myself leaning more and more to the "keep pmem
+> > > > partitions" camp.
+> > > >
+> > > > I don't see "drop partition support" effort ending well given the long
+> > > > standing "ext4 fails to mount when dax is not available" precedent.
+> > > >
+> > > > I think the next least bad option is to have a dax_get_by_host()
+> > > > variant that passes an offset and length pair rather than requiring a
+> > > > later bdev_dax_pgoff() to recall the offset. This also prevents
+> > > > needing to add another dax-device object representation.
+> > >
+> > > I am wondering what's the conclusion on this. I want to this to make
+> > > progress in some direction so that I can make progress on virtiofs DAX
+> > > support.
+> >
+> > I think we should at least try to delete the partition support and see
+> > if anyone screams. Have a module option to revert the behavior so
+> > people are not stuck waiting for the revert to land, but if it stays
+> > quiet then we're in a better place with that support pushed out of the
+> > dax core.
+>
+> Hi Dan,
+>
+> So basically keep partition support code just that disable it by default
+> and it is enabled by some knob say kernel command line option/module
+> option.
 
-syzbot found the following crash on:
+Yes.
 
-HEAD commit:    e033e7d4 Merge branch 'dhowells' (patches from DavidH)
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1499533ee00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cfbb8fa33f49f9f3
-dashboard link: https://syzkaller.appspot.com/bug?extid=c84a45dcab486e41c053
-compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/  
-c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+> At what point of time will we remove that code completely. I mean what
+> if people scream after two kernel releases, after we have removed the
+> code.
 
-Unfortunately, I don't have any reproducer for this crash yet.
+I'd follow the typical timelines of Documentation/ABI/obsolete which
+is a year or more.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+c84a45dcab486e41c053@syzkaller.appspotmail.com
+>
+> Also, from distribution's perspective, we might not hear from our
+> customers for a very long time (till we backport that code in to
+> existing releases or release this new code in next major release). From
+> that view point I will not like to break existing user visible behavior.
+>
+> How bad it is to keep partition support around. To me it feels reasonaly
+> simple where we just have to store offset into dax device into another
+> dax object:
 
-======================================================
-WARNING: possible circular locking dependency detected
-5.5.0-rc6-syzkaller #0 Not tainted
-------------------------------------------------------
-syz-executor.5/21564 is trying to acquire lock:
-ffff8880a29cdf10 (&sig->cred_guard_mutex){+.+.}, at: lock_trace  
-fs/proc/base.c:406 [inline]
-ffff8880a29cdf10 (&sig->cred_guard_mutex){+.+.}, at:  
-proc_pid_stack+0xd9/0x200 fs/proc/base.c:450
+If we end up keeping partition support, we're not adding another object.
 
-but task is already holding lock:
-ffff8880a8bb30a0 (&p->lock){+.+.}, at: seq_read+0x6b/0xdb0 fs/seq_file.c:161
+> and pass that object around (instead of dax_device). If that's
+> the case, I am not sure why to even venture into a direction where some
+> user's setup might be broken.
 
-which lock already depends on the new lock.
+It was a mistake to support them. If that mistake can be undone
+without breaking existing deployments the code base is better off
+without the concept.
 
+> Also from an application perspective, /dev/pmem is a block device, so it
+> should behave like a block device, (including kernel partition table support).
+> From that view, dax looks like just an additional feature of that device
+> which can be enabled by passing option "-o dax".
 
-the existing dependency chain (in reverse order) is:
+dax via block devices was a crutch that we leaned on too heavily, and
+the implementation has slowly been moving away from it ever since.
 
--> #3 (&p->lock){+.+.}:
-        lock_acquire+0x154/0x250 kernel/locking/lockdep.c:4485
-        __mutex_lock_common+0x16e/0x2f30 kernel/locking/mutex.c:956
-        __mutex_lock kernel/locking/mutex.c:1103 [inline]
-        mutex_lock_nested+0x1b/0x30 kernel/locking/mutex.c:1118
-        seq_read+0x6b/0xdb0 fs/seq_file.c:161
-        proc_reg_read+0x1d5/0x2e0 fs/proc/inode.c:223
-        do_loop_readv_writev fs/read_write.c:714 [inline]
-        do_iter_read+0x4a2/0x5b0 fs/read_write.c:935
-        vfs_readv+0xc2/0x120 fs/read_write.c:997
-        kernel_readv fs/splice.c:365 [inline]
-        default_file_splice_read+0x579/0xa40 fs/splice.c:422
-        do_splice_to fs/splice.c:892 [inline]
-        splice_direct_to_actor+0x3c9/0xb90 fs/splice.c:971
-        do_splice_direct+0x200/0x330 fs/splice.c:1080
-        do_sendfile+0x7e4/0xfd0 fs/read_write.c:1464
-        __do_sys_sendfile64 fs/read_write.c:1525 [inline]
-        __se_sys_sendfile64 fs/read_write.c:1511 [inline]
-        __x64_sys_sendfile64+0x176/0x1b0 fs/read_write.c:1511
-        do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> IOW, can we reconsider the idea of not supporting kernel partition tables
+> for dax capable block devices. I can only see downsides of removing kernel
+> partition table support and only upside seems to be little cleanup of dax
+> core code.
 
--> #2 (sb_writers#3){.+.+}:
-        lock_acquire+0x154/0x250 kernel/locking/lockdep.c:4485
-        percpu_down_read include/linux/percpu-rwsem.h:40 [inline]
-        __sb_start_write+0x189/0x420 fs/super.c:1674
-        sb_start_write include/linux/fs.h:1650 [inline]
-        mnt_want_write+0x4a/0xa0 fs/namespace.c:354
-        ovl_want_write+0x77/0x80 fs/overlayfs/util.c:21
-        ovl_create_object+0xaf/0x2d0 fs/overlayfs/dir.c:596
-        ovl_create+0x29/0x30 fs/overlayfs/dir.c:627
-        lookup_open fs/namei.c:3241 [inline]
-        do_last fs/namei.c:3331 [inline]
-        path_openat+0x234d/0x4250 fs/namei.c:3537
-        do_filp_open+0x192/0x3d0 fs/namei.c:3567
-        do_sys_open+0x29f/0x560 fs/open.c:1097
-        ksys_open include/linux/syscalls.h:1383 [inline]
-        __do_sys_creat fs/open.c:1155 [inline]
-        __se_sys_creat fs/open.c:1153 [inline]
-        __x64_sys_creat+0x65/0x70 fs/open.c:1153
-        do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Can you help find end users that depend on it? Even the Red Hat
+installation guide example shows mounting on pmem0 directly. [1]
 
--> #1 (&ovl_i_mutex_dir_key[depth]#2){++++}:
-        lock_acquire+0x154/0x250 kernel/locking/lockdep.c:4485
-        down_read+0x39/0x50 kernel/locking/rwsem.c:1495
-        inode_lock_shared include/linux/fs.h:801 [inline]
-        do_last fs/namei.c:3330 [inline]
-        path_openat+0xa7a/0x4250 fs/namei.c:3537
-        do_filp_open+0x192/0x3d0 fs/namei.c:3567
-        do_open_execat+0xff/0x620 fs/exec.c:856
-        __do_execve_file+0x758/0x1cc0 fs/exec.c:1761
-        do_execveat_common fs/exec.c:1867 [inline]
-        do_execve fs/exec.c:1884 [inline]
-        __do_sys_execve fs/exec.c:1960 [inline]
-        __se_sys_execve fs/exec.c:1955 [inline]
-        __x64_sys_execve+0x94/0xb0 fs/exec.c:1955
-        do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+My primary concern is people that might be booting from pmem as boot
+support requires an EFI partition table, and initramfs images would
+need to be respun to move to kpartx.
 
--> #0 (&sig->cred_guard_mutex){+.+.}:
-        check_prev_add kernel/locking/lockdep.c:2476 [inline]
-        check_prevs_add kernel/locking/lockdep.c:2581 [inline]
-        validate_chain+0x1507/0x7be0 kernel/locking/lockdep.c:2971
-        __lock_acquire+0xc5a/0x1bc0 kernel/locking/lockdep.c:3955
-        lock_acquire+0x154/0x250 kernel/locking/lockdep.c:4485
-        __mutex_lock_common+0x16e/0x2f30 kernel/locking/mutex.c:956
-        __mutex_lock kernel/locking/mutex.c:1103 [inline]
-        mutex_lock_killable_nested+0x1b/0x30 kernel/locking/mutex.c:1133
-        lock_trace fs/proc/base.c:406 [inline]
-        proc_pid_stack+0xd9/0x200 fs/proc/base.c:450
-        proc_single_show+0xe7/0x180 fs/proc/base.c:756
-        seq_read+0x4d8/0xdb0 fs/seq_file.c:229
-        do_loop_readv_writev fs/read_write.c:714 [inline]
-        do_iter_read+0x4a2/0x5b0 fs/read_write.c:935
-        vfs_readv fs/read_write.c:997 [inline]
-        do_preadv+0x178/0x290 fs/read_write.c:1089
-        __do_sys_preadv fs/read_write.c:1139 [inline]
-        __se_sys_preadv fs/read_write.c:1134 [inline]
-        __x64_sys_preadv+0x9e/0xb0 fs/read_write.c:1134
-        do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-other info that might help us debug this:
-
-Chain exists of:
-   &sig->cred_guard_mutex --> sb_writers#3 --> &p->lock
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(&p->lock);
-                                lock(sb_writers#3);
-                                lock(&p->lock);
-   lock(&sig->cred_guard_mutex);
-
-  *** DEADLOCK ***
-
-1 lock held by syz-executor.5/21564:
-  #0: ffff8880a8bb30a0 (&p->lock){+.+.}, at: seq_read+0x6b/0xdb0  
-fs/seq_file.c:161
-
-stack backtrace:
-CPU: 1 PID: 21564 Comm: syz-executor.5 Not tainted 5.5.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1fb/0x318 lib/dump_stack.c:118
-  print_circular_bug+0xc3f/0xe70 kernel/locking/lockdep.c:1685
-  check_noncircular+0x206/0x3a0 kernel/locking/lockdep.c:1809
-  check_prev_add kernel/locking/lockdep.c:2476 [inline]
-  check_prevs_add kernel/locking/lockdep.c:2581 [inline]
-  validate_chain+0x1507/0x7be0 kernel/locking/lockdep.c:2971
-  __lock_acquire+0xc5a/0x1bc0 kernel/locking/lockdep.c:3955
-  lock_acquire+0x154/0x250 kernel/locking/lockdep.c:4485
-  __mutex_lock_common+0x16e/0x2f30 kernel/locking/mutex.c:956
-  __mutex_lock kernel/locking/mutex.c:1103 [inline]
-  mutex_lock_killable_nested+0x1b/0x30 kernel/locking/mutex.c:1133
-  lock_trace fs/proc/base.c:406 [inline]
-  proc_pid_stack+0xd9/0x200 fs/proc/base.c:450
-  proc_single_show+0xe7/0x180 fs/proc/base.c:756
-  seq_read+0x4d8/0xdb0 fs/seq_file.c:229
-  do_loop_readv_writev fs/read_write.c:714 [inline]
-  do_iter_read+0x4a2/0x5b0 fs/read_write.c:935
-  vfs_readv fs/read_write.c:997 [inline]
-  do_preadv+0x178/0x290 fs/read_write.c:1089
-  __do_sys_preadv fs/read_write.c:1139 [inline]
-  __se_sys_preadv fs/read_write.c:1134 [inline]
-  __x64_sys_preadv+0x9e/0xb0 fs/read_write.c:1134
-  do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45af49
-Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f893d1e0c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000127
-RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 000000000045af49
-RDX: 0000000000000332 RSI: 00000000200017c0 RDI: 0000000000000004
-RBP: 000000000075bfc8 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f893d1e16d4
-R13: 00000000004c954e R14: 00000000004e2220 R15: 00000000ffffffff
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+[1]: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html-single/storage_administration_guide/index#Configuring-Persistent-Memory-for-File-System-Direct-Access-DAX
