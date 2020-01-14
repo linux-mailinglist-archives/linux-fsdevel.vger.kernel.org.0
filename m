@@ -2,112 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 309D913A134
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 07:59:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B11F13A1DB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 08:25:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728859AbgANG7e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jan 2020 01:59:34 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:57750 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728680AbgANG7e (ORCPT
+        id S1729337AbgANHZa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jan 2020 02:25:30 -0500
+Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:34409 "EHLO
+        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729145AbgANHZ2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jan 2020 01:59:34 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00E6wuax189199;
-        Tue, 14 Jan 2020 06:59:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=Um3aq13bt3KE8FaQoSHBOGx9xF1pyNNvuGHu3EV01Lg=;
- b=bwSScmx96s4yKtSNq2SZAalf38tHkEjLxLXLH0i7GgzsalBbDpDbuafNPtg9OBNw5hHD
- +Wnqy3cZbhidEUkZpVIuSO+O5p3AshrjC8HTQekJ4Egk7cov7XSfWPxkX+Xq6Sv/Y2JO
- xeRojrUAJyP2rFn4hCvDwkTawdb7rhsRrrfUuylEjLqmoltt9pGiSuXxIwc7YmOqF/Yu
- KZl5Yq7PWzxhpz4TZi4UK9aTsNaDgBGn6je5Emo5QjGOqXwCgieyKqAgzDnvHJxznHhF
- IMl/cdc8vk8m+ufDSsbmp4OsurT2tZiR6h2EA+VDdufYHfeaznprgga8tUF9Soiri2dl 3g== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2xf74s3xdb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 14 Jan 2020 06:59:29 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00E6xJo4074324;
-        Tue, 14 Jan 2020 06:59:29 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2xh8ergxrn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 14 Jan 2020 06:59:28 +0000
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00E6x2HU012071;
-        Tue, 14 Jan 2020 06:59:02 GMT
-Received: from kadam (/129.205.23.165)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 13 Jan 2020 22:59:01 -0800
-Date:   Tue, 14 Jan 2020 09:58:54 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     syzbot <syzbot+79eb0f3df962caf839ed@syzkaller.appspotmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: kernel BUG at fs/namei.c:LINE!
-Message-ID: <20200114065854.GA3719@kadam>
-References: <00000000000008132d059c13c47b@google.com>
+        Tue, 14 Jan 2020 02:25:28 -0500
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailnew.west.internal (Postfix) with ESMTP id 10B8B588;
+        Tue, 14 Jan 2020 02:25:26 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Tue, 14 Jan 2020 02:25:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
+        /NSb4tftAi/8pTDnCjJ4L9lPoIhmBX5FSwiZPETnwD0=; b=E+ih20sLIVU+JbJh
+        GMonwA3D/ZyhFUdpopjO/xWDrjZbqNO8zR9cLwbWeJr22sMl1zKFbETUElpcnVa7
+        AZwG1LxxtTO+ko/gqWu80xN7Zbk/PcLuuDF5nrzNxGUeBFUkpEqytNpRR4zj9jgQ
+        MwNA4ZaiNwOlduy0avAJJTt28ITICiZQsmwskuDugVgvIoxc/2fhyOpucVwLenD8
+        2rzQRanDG6iaiZ/zm3UAwId6Qy/QndsPopAnMpE0XJzDKxmIWC+jR3WChj0eXaSl
+        RECfi2W8F9+zXmaU42/RdbEIQ2LN7taoksGTww8VcWjjFAV+lCAoxfzTQP8br7xQ
+        s0mDXA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=/NSb4tftAi/8pTDnCjJ4L9lPoIhmBX5FSwiZPETnw
+        D0=; b=Qw7ET2JBhGByLUbuhnMGdCt0ocsN4ZJ1W63vM2d0Zj4VYuzMJCZIEqhmz
+        zYRBHMx4dCEm4HJ7vzFDuj6t795vci2ZrwsUNL/Jj2lg1ySSC/H+cKBYRJJx1asc
+        JUZAoTc57MJSHGBSIZ7vLbAWVMM+ntQmGprAzzvUdqp/F568NcT3cJEtQ57Dz1vh
+        oqsDLvCIknSE7wgxh8i2Tzb/mddOiBj+TXBtXYkQXw5O6oLPt8uMZJh9LIfm4fPY
+        QxFCroF3EtV1zts0ra0mRLmvjJ+CjNA29Ry7Y/sHRZgaGtQHBLoR9zOPjctKHmeO
+        c9EpvMI9Ex3sMQuNAqxPxiL5LcxIQ==
+X-ME-Sender: <xms:5GwdXoyDk01dGhrYk-lUgd_o49kcDsWhhmsFBI9wGmXSUGGMEbGmuQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdejuddguddtiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghn
+    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuffhomhgrihhnpehgih
+    hthhhusgdrtghomhenucfkphepuddukedrvddtledrudejhedrvdehnecurfgrrhgrmhep
+    mhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvthenucevlhhushhtvghruf
+    hiiigvpedt
+X-ME-Proxy: <xmx:5GwdXqhQh5_xsQeu5Bt4b-uQgEUgv7L0TE_eUIaS5jxLSehm7Cn-jg>
+    <xmx:5GwdXjqLQoGkx49VqXhKNW3LwhcJRZVWB3tgbBYVXmPhM_d299SSBg>
+    <xmx:5GwdXpg2yG7pEdPaTNZH7UOTmDXi9-7YFtu76zkYqKd9fZx1BCgcIw>
+    <xmx:5WwdXhBRnznhTdSbPNsSDY5dRfJ20UAStkRh6FV2Bpj5Vc-4DtjGta3THcU>
+Received: from mickey.themaw.net (unknown [118.209.175.25])
+        by mail.messagingengine.com (Postfix) with ESMTPA id D37C730602DB;
+        Tue, 14 Jan 2020 02:25:19 -0500 (EST)
+Message-ID: <7b2b9f81871898d2b6301a74f2bee85943f21cdc.camel@themaw.net>
+Subject: Re: [PATCH RFC 0/1] mount: universally disallow mounting over
+ symlinks
+From:   Ian Kent <raven@themaw.net>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        David Howells <dhowells@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Serge Hallyn <serge@hallyn.com>, dev@opencontainers.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 14 Jan 2020 15:25:15 +0800
+In-Reply-To: <20200113133047.GR8904@ZenIV.linux.org.uk>
+References: <20200101030815.GA17593@ZenIV.linux.org.uk>
+         <20200101144407.ugjwzk7zxrucaa6a@yavin.dot.cyphar.com>
+         <20200101234009.GB8904@ZenIV.linux.org.uk>
+         <20200102035920.dsycgxnb6ba2jhz2@yavin.dot.cyphar.com>
+         <20200103014901.GC8904@ZenIV.linux.org.uk>
+         <20200110231945.GL8904@ZenIV.linux.org.uk>
+         <aea0bc800b6a1e547ca1944738ff9db4379098ba.camel@themaw.net>
+         <20200113035407.GQ8904@ZenIV.linux.org.uk>
+         <41c535d689530f3715f21cd25074eb61e825a5f6.camel@themaw.net>
+         <58f9894e51a00ad2a4ac3d4122bf29e7cb6c0d54.camel@themaw.net>
+         <20200113133047.GR8904@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000008132d059c13c47b@google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9499 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=742
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2001140060
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9499 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=803 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2001140060
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 10:33:10PM -0800, syzbot wrote:
-> ------------[ cut here ]------------
-> kernel BUG at fs/namei.c:684!
-> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-> CPU: 1 PID: 9764 Comm: syz-executor.0 Not tainted
+On Mon, 2020-01-13 at 13:30 +0000, Al Viro wrote:
+> On Mon, Jan 13, 2020 at 02:03:00PM +0800, Ian Kent wrote:
+> 
+> > Oh wait, for systemd I was actually looking at:
+> > https://github.com/systemd/systemd/blob/master/src/shared/switch-root.c
+> > 
+> > > Mind you, that's not the actual systemd repo. either I probably
+> > > need to look a lot deeper (and at the actual systemd repo) to
+> > > work out what's actually being called.
+> > > 
+> > > > Sigh...  Guess I'll have to dig that Fedora KVM image out and
+> > > > try to see what it's about... ;-/  Here comes a couple of hours
+> > > > of build...
+> 
+> D'oh...  And yes, that would've been a bisect hazard - switch to
+> path_lookupat() later in the series gets rid of that.  Incremental
+> (to be foldede, of course):
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 1793661c3342..204677c37751 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2634,7 +2634,7 @@ path_mountpoint(struct nameidata *nd, unsigned
+> flags, struct path *path)
+>  		(err = lookup_last(nd)) > 0) {
+>  		s = trailing_symlink(nd);
+>  	}
+> -	if (!err)
+> +	if (!err && (nd->flags & LOOKUP_RCU))
+>  		err = unlazy_walk(nd);
+>  	if (!err)
+>  		err = handle_lookup_down(nd);
 
-> 5.5.0-rc5-next-20200113-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
+Ok, so I've tested with the updated patch.
 
-> RIP: 0010:unlazy_walk+0x306/0x3b0 fs/namei.c:684
+The autofs connectathon tests I use function fine.
 
->  path_mountpoint.isra.0+0x1d5/0x340 fs/namei.c:2788
->  filename_mountpoint+0x181/0x380 fs/namei.c:2809
->  user_path_mountpoint_at+0x3a/0x50 fs/namei.c:2839
->  ksys_umount+0x164/0xef0 fs/namespace.c:1683
+I also tested sending a SIGKILL to the daemon with about 180 active
+mounts and restarted the daemon to test the function of the ioctls
+that Al was concerned about.
 
-  2289  static const char *path_init(struct nameidata *nd, unsigned flags)
-  2290  {
-  2291          int error;
-  2292          const char *s = nd->name->name;
-  2293  
-  2294          if (!*s)
-  2295                  flags &= ~LOOKUP_RCU;
-                        ^^^^^^^^^^^^^^^^^^^^
-My guess is that LOOKUP_RCU gets cleared out here.  Maybe the problem
-was introduced in commit e56b43b971a7 ("reimplement path_mountpoint()
-with less magic") because before we checked LOOKUP_RCU before calling
-unlazy_walk().
+While the connectathon test expired everything I had 3 mounts left
+after allowing sufficient expire time with the SIGKILL test.
 
--       /* If we're in rcuwalk, drop out of it to handle last component */
--       if (nd->flags & LOOKUP_RCU) {
--               if (unlazy_walk(nd))
+Those mounts correspond to one map entry that has a mix of NFS
+vers=3 and vers=2 mount options and NFSv2 isn't supported by the
+servers I use in testing.
 
-  2296          if (flags & LOOKUP_RCU)
-  2297                  rcu_read_lock();
-  2298  
+I'm inclined to think this is a bug in the automount mount tree
+re-connection code rather than a problem with this patch since
+all the other mounts, some simple and others with not so simple
+constructs, expired fine after automount re-connected to them.
 
-regards,
-dan carpenter
+There are two other map entries that have an NFS vers=2 option but
+they are simple mounts that will fail on attempting the automount
+because the server doesn't support v2 so they don't end up with
+mounts to reconnect to.
+
+This particular map entry, having a mix of NFS vers=3 and vers=2
+in the offsets of the entry, will lead to a partial mount of the
+map entry which is probably not being handled properly by automount
+when re-connecting to the mounts in the tree.
+
+So I think the patch here is fine from an autofs POV.
+
+Ian
 
