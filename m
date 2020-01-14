@@ -2,172 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B8FC139DF6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 01:20:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9716139E22
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 01:25:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729246AbgANAUG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jan 2020 19:20:06 -0500
-Received: from mga12.intel.com ([192.55.52.136]:23483 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728865AbgANAUG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jan 2020 19:20:06 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jan 2020 16:20:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,430,1571727600"; 
-   d="scan'208";a="422976956"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga005.fm.intel.com with ESMTP; 13 Jan 2020 16:20:05 -0800
-Date:   Mon, 13 Jan 2020 16:20:05 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH V2 07/12] fs: Add locking for a dynamic inode 'mode'
-Message-ID: <20200114002005.GA29860@iweiny-DESK2.sc.intel.com>
-References: <20200110192942.25021-1-ira.weiny@intel.com>
- <20200110192942.25021-8-ira.weiny@intel.com>
- <20200113221218.GM8247@magnolia>
+        id S1729099AbgANAZ3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jan 2020 19:25:29 -0500
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:34495 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726536AbgANAZ3 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 13 Jan 2020 19:25:29 -0500
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 7F7657699;
+        Mon, 13 Jan 2020 19:25:28 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Mon, 13 Jan 2020 19:25:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
+        XFMTDBtfZHyOed7ZfNLbmx3RNw8tsdJDO4d09AfyreM=; b=I2KNDFPfO4++5woh
+        Cv9+FYDbg0wzwLTavX3kLx+EHn8Q18NuIs+jqQWuarjw1NE+Zr5ih3Aqffp5KVvZ
+        kDOiTi6mlgNgi2nc9al6pJgd+oLGc0vkHEREjILC+Va3hddW/B98Mg4b9DqBXQGZ
+        ashy5rq75a3k85pz3ZxNirx/Sih4BWJhq8ck4j+LeFyHum/4jHodx2gXZdTJHyyF
+        DYBJMTKR4x0Jz5WY3jCeiDSEmRMGh0KK3Ji3CGXQ8s0RYEV6KPX4FYMMre05AAqi
+        D6Y5h5R7wxUt1oztN99McV+kgUrg82l+XrLd+0TaAvk2j1KL4ahYlpGewQQsrTJ9
+        hdix3w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=XFMTDBtfZHyOed7ZfNLbmx3RNw8tsdJDO4d09Afyr
+        eM=; b=FvAfXkVhBHwCnEjEnIhffwPCShG13/kCORFDhQUOK8FfZVCXc3t4co4rU
+        kwFyOB7c3TSO347gZaoWx6HiCp/hSHVnGtixPTiM75Cv3RHuC5R4uYXOZHl1+cqX
+        oaAEF/1RWSCvuXqnM7JkyubPOrN5vDHeDo2sDzfFvFH3yX1LylQLMIemTnvofyW5
+        khaaXwkhBL3U9BE4tL60xIJXYCTojno+VysAQ90vHEAYNcH8/cgVQNXTuUjpKMd6
+        M9Ukdh4ZTi6+6lXUrBw04KyMavKgBOYNfN6Ii+QHcetTfv6xjbW0E84eisU4euOt
+        FHIjykuHyaccKrUitVlB1qjxwIyrQ==
+X-ME-Sender: <xms:dwodXpWP-PAZ8T_JYYRYRU5ZMicpYKidZXY3DZlDytKoUsePwM5oDA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdejuddgvddtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucfkphepuddukedrvddtle
+    drudejhedrvdehnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgr
+    fidrnhgvthenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:dwodXsAsuu8nva3t4h-3fEN2U5lV_ZCnBr8eIrbfceQMO4BDdzz1Lg>
+    <xmx:dwodXjFvriQIKE7K-SUPP8Ps_oonmO-5papqb1mtcOMHocMhw2ZHhA>
+    <xmx:dwodXrdOPsxQaFwEHjUakg6WPVod0GWiD2M_YPTQq2ZEcTySZggaCg>
+    <xmx:eAodXivqthC1ZIwAIcCOasT42x8LlItV_-Uw9j_7c7lwa7hFyX1giA>
+Received: from mickey.themaw.net (unknown [118.209.175.25])
+        by mail.messagingengine.com (Postfix) with ESMTPA id B008E30607B4;
+        Mon, 13 Jan 2020 19:25:22 -0500 (EST)
+Message-ID: <19fa114ef619057c0d14dc1a587d0ae9ad67dc6d.camel@themaw.net>
+Subject: Re: [PATCH RFC 0/1] mount: universally disallow mounting over
+ symlinks
+From:   Ian Kent <raven@themaw.net>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        David Howells <dhowells@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        stable <stable@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Serge Hallyn <serge@hallyn.com>, dev@opencontainers.org,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Tue, 14 Jan 2020 08:25:19 +0800
+In-Reply-To: <800d36a0dccd43f1b61cab6332a6252ab9aab73c.camel@themaw.net>
+References: <20200101144407.ugjwzk7zxrucaa6a@yavin.dot.cyphar.com>
+         <20200101234009.GB8904@ZenIV.linux.org.uk>
+         <20200102035920.dsycgxnb6ba2jhz2@yavin.dot.cyphar.com>
+         <20200103014901.GC8904@ZenIV.linux.org.uk>
+         <20200108031314.GE8904@ZenIV.linux.org.uk>
+         <CAHk-=wgQ3yOBuK8mxpnntD8cfX-+10ba81f86BYg8MhvwpvOMg@mail.gmail.com>
+         <20200108213444.GF8904@ZenIV.linux.org.uk>
+         <CAHk-=wiq11+thoe60qhsSHk_nbRF2TRL1Wnf6eHcYObjhJmsww@mail.gmail.com>
+         <20200110041523.GK8904@ZenIV.linux.org.uk>
+         <979cf680b0fbdce515293a3449d564690cde6a3f.camel@themaw.net>
+         <20200112213352.GP8904@ZenIV.linux.org.uk>
+         <800d36a0dccd43f1b61cab6332a6252ab9aab73c.camel@themaw.net>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200113221218.GM8247@magnolia>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 02:12:18PM -0800, Darrick J. Wong wrote:
-> On Fri, Jan 10, 2020 at 11:29:37AM -0800, ira.weiny@intel.com wrote:
-> > From: Ira Weiny <ira.weiny@intel.com>
-
-[snip]
-
-> >  
-> >  The File Object
-> >  ---------------
-> > @@ -437,6 +459,8 @@ As of kernel 2.6.22, the following members are defined:
-> >  		int (*atomic_open)(struct inode *, struct dentry *, struct file *,
-> >  				   unsigned open_flag, umode_t create_mode);
-> >  		int (*tmpfile) (struct inode *, struct dentry *, umode_t);
-> > +		void (*lock_mode)(struct inode *);
-> > +		void (*unlock_mode)(struct inode *);
+On Mon, 2020-01-13 at 10:59 +0800, Ian Kent wrote:
 > 
-> Yikes.  "mode" has a specific meaning for inodes, and this lock isn't
-> related to i_mode.  This lock protects aops from changing while an
-> address space operation is in use.
-
-Ah...  yea ok mode is a bad name.
-
+> > 3) is _anything_ besides root directory ever created in direct
+> > autofs
+> > superblocks by anyone?  If not, why does autofs_lookup() even
+> > bother
+> > to
+> > do anything there?  IOW, why not have it return ERR_PTR(-ENOENT)
+> > immediately
+> > for direct ones?  Or am I missing something and it is, in fact,
+> > possible
+> > to have the daemon create something in those?
 > 
-> >  	};
-> >  
-> >  Again, all methods are called without any locks being held, unless
-> > @@ -584,6 +608,12 @@ otherwise noted.
-> >  	atomically creating, opening and unlinking a file in given
-> >  	directory.
-> >  
-> > +``lock_mode``
-> > +	called to prevent operations which depend on the inode's mode from
-> > +        proceeding should a mode change be in progress
+> Short answer is no, longer answer is directories "shouldn't" ever
+> be created inside direct mount points.
 > 
-> "Inodes can't change mode, because files do not suddenly become
-> directories". ;)
-
-Yea sorry.
-
+> The thing is that the multi-mount map construct can be used with
+> direct mounts too, but they must always have a real mount at the
+> base because they are direct mounts. So processes should not be
+> able to walk into them while they are being mounted (constructed).
 > 
-> Oh, you meant "lock_XXXX is called to prevent a change in the pagecache
-> mode from proceeding while there are address space operations in
-> progress".  So these are really more aops get and put functions...
+> But I'm pretty sure it's rare (maybe not done at all) that this
+> map construct is used with direct mounts.
 
-At first I actually did have aops get/put functions but this is really
-protecting more than the aops vector because as Christoph said there are file
-operations which need to be protected not just address space operations.
+This isn't right.
 
-But I agree "mode" is a bad name...  Sorry...
+There's actually nothing stopping a user from using a direct map
+entry that's a multi-mount without an actual mount at its root.
+So there could be directories created under these, it's just not
+usually done.
 
-> 
-> > +``unlock_mode``
-> > +	called when critical mode dependent operation is complete
-> >  
-> >  The Address Space Object
-> >  ========================
-> > diff --git a/fs/ioctl.c b/fs/ioctl.c
-> > index 7c9a5df5a597..ed6ab5303a24 100644
-> > --- a/fs/ioctl.c
-> > +++ b/fs/ioctl.c
-> > @@ -55,18 +55,29 @@ EXPORT_SYMBOL(vfs_ioctl);
-> >  static int ioctl_fibmap(struct file *filp, int __user *p)
-> >  {
-> >  	struct address_space *mapping = filp->f_mapping;
-> > +	struct inode *inode = filp->f_inode;
-> >  	int res, block;
-> >  
-> > +	lock_inode_mode(inode);
-> > +
-> >  	/* do we support this mess? */
-> > -	if (!mapping->a_ops->bmap)
-> > -		return -EINVAL;
-> > -	if (!capable(CAP_SYS_RAWIO))
-> > -		return -EPERM;
-> > +	if (!mapping->a_ops->bmap) {
-> > +		res = -EINVAL;
-> > +		goto out;
-> > +	}
-> > +	if (!capable(CAP_SYS_RAWIO)) {
-> > +		res = -EPERM;
-> > +		goto out;
-> 
-> Why does the order of these checks change here?
+I'm pretty sure I don't check and disallow this.
 
-I don't understand?  The order does not change we just can't return without
-releasing the lock.  And to protect against bmap changing the lock needs to be
-taken first.
+Ian
 
-[snip]
-
-> >  
-> > +static inline void lock_inode_mode(struct inode *inode)
-> 
-> inode_aops_get()?
-
-Let me think on this.  This is not just getting a reference to the aops vector.
-It is more than that...  and inode_get is not right either!  ;-P
-
-> 
-> > +{
-> > +	WARN_ON_ONCE(inode->i_op->lock_mode &&
-> > +		     !inode->i_op->unlock_mode);
-> > +	if (inode->i_op->lock_mode)
-> > +		inode->i_op->lock_mode(inode);
-> > +}
-> > +static inline void unlock_inode_mode(struct inode *inode)
-> > +{
-> > +	WARN_ON_ONCE(inode->i_op->unlock_mode &&
-> > +		     !inode->i_op->lock_mode);
-> > +	if (inode->i_op->unlock_mode)
-> > +		inode->i_op->unlock_mode(inode);
-> > +}
-> > +
-> >  static inline ssize_t call_read_iter(struct file *file, struct kiocb *kio,
-> >  				     struct iov_iter *iter)
-> 
-> inode_aops_put()?
-
-...  something like that but not 'aops'...
-
-Ira
-
-> 
-> --D
-> 
