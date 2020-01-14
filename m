@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D85913AEDC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 17:13:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD86813AED5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 17:13:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729530AbgANQNU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jan 2020 11:13:20 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:43562 "EHLO
+        id S1728990AbgANQNN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jan 2020 11:13:13 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43598 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729296AbgANQMr (ORCPT
+        with ESMTP id S1729334AbgANQMu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jan 2020 11:12:47 -0500
+        Tue, 14 Jan 2020 11:12:50 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=kuBKhMklw+YxwJKcgxxO2S9Flu8Wk6bhNkWsODoSOE0=; b=sCB1kcD90uIUWLGF48wprnsXiX
-        3TB+jsOI4Y2LkRdrKtxH7i+aXulnTirR1Cm/o8Nz6e4INd8u4uc0mJ3rPB5SzAwsKj5VfFRQAJBVr
-        3fUFDOuZm+DBrQQWkhuoNqedHFyFeIuI8r927b3PwWgcpgLD/Am4ErzsYUPEBFxz7sZuTCsVinp4t
-        b/PWVC2rKPI1UPEI1qNqzum+uHVMcQA2gZRteVU9VeEFHkzOfP20VFKZOc1tfVxyDUniazlYLshgf
-        FZcWjN50VlbXvGJKA5TxSQ7uDk2TOGwTCR8IhGlGSp9FaxaAyGjBKQ3+KxCIelMg+ZEfos510Jftn
-        QT84XA8Q==;
+        bh=KsSHHUOODJAHu0IH1q2ibItg0o+FnF2PjXUOf0SG9sk=; b=UEzcY+P6ZvJxzr8ibbfl7rLl4Z
+        173d2Re54ZTDUtZuxdT3xB1jvIvX/ELdv1aF02PAqHtlKcZHFtbKxF/AoiK2YmisrsIC7XEHHgzRB
+        tF9ZwhfAEH0phGwBRkfQjaxddO0iPZZyh55XP9r+dVluaUZGpM2OOoJN68oVnheCZxD9/R2O+iSJq
+        JULueo3prR4THi9bWDNyJYcLPoDCbiI21velupVtAIonY/MelN+LDgMpyONrFeUd/7weRrLxsSYo8
+        0Np5PDa2YtOY71dex2+4X7fGg4vkORBUCVG4MAF6EhUV3BQ+FwVbaYsBWGEEtLexQG0Lh+Qzpq31f
+        batE4Azg==;
 Received: from [2001:4bb8:18c:4f54:fcbb:a92b:61e1:719] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1irOoA-0000CC-CW; Tue, 14 Jan 2020 16:12:46 +0000
+        id 1irOoD-0000DG-38; Tue, 14 Jan 2020 16:12:49 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Waiman Long <longman@redhat.com>,
@@ -36,9 +36,9 @@ To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         linux-ext4@vger.kernel.org, cluster-devel@redhat.com
 Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH 07/12] iomap: allow holding i_rwsem until aio completion
-Date:   Tue, 14 Jan 2020 17:12:20 +0100
-Message-Id: <20200114161225.309792-8-hch@lst.de>
+Subject: [PATCH 08/12] ext4: hold i_rwsem until AIO completes
+Date:   Tue, 14 Jan 2020 17:12:21 +0100
+Message-Id: <20200114161225.309792-9-hch@lst.de>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200114161225.309792-1-hch@lst.de>
 References: <20200114161225.309792-1-hch@lst.de>
@@ -50,132 +50,191 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The direct I/O code currently uses a hand crafted i_dio_count that needs
-to be incremented under i_rwsem and then is decremented when I/O
-completes.  That scheme means file system code needs to be very careful
-to wait for i_dio_count to reach zero under i_rwsem in various places
-that are very cumbersome to get rid.  It also means we can't get the
-effect of an exclusive i_rwsem for actually asynchronous I/O, forcing
-pointless synchronous execution of sub-blocksize writes.
-
-Replace the i_dio_count scheme with holding i_rwsem over the duration
-of the whole I/O.  While this introduces a non-owner unlock that isn't
-nice to RT workload, the open coded locking primitive using i_dio_count
-isn't any better.
+Switch ext4 from the magic i_dio_count scheme to just hold i_rwsem
+until the actual I/O has completed to reduce the locking complexity
+and avoid nasty bugs due to missing inode_dio_wait calls.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/iomap/direct-io.c  | 44 +++++++++++++++++++++++++++++++++++++------
- include/linux/iomap.h |  2 ++
- 2 files changed, 40 insertions(+), 6 deletions(-)
+ fs/ext4/extents.c     | 12 ------------
+ fs/ext4/file.c        | 21 +++++++++++++--------
+ fs/ext4/inode.c       | 11 -----------
+ fs/ext4/ioctl.c       |  5 -----
+ fs/ext4/move_extent.c |  4 ----
+ 5 files changed, 13 insertions(+), 40 deletions(-)
 
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index e706329d71a0..0113ac33b0a0 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -70,7 +70,7 @@ static void iomap_dio_submit_bio(struct iomap_dio *dio, struct iomap *iomap,
- 	dio->submit.cookie = submit_bio(bio);
- }
+diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+index 0e8708b77da6..b6aa2d249b30 100644
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -4777,9 +4777,6 @@ static long ext4_zero_range(struct file *file, loff_t offset,
+ 	if (mode & FALLOC_FL_KEEP_SIZE)
+ 		flags |= EXT4_GET_BLOCKS_KEEP_SIZE;
  
--static ssize_t iomap_dio_complete(struct iomap_dio *dio)
-+static ssize_t iomap_dio_complete(struct iomap_dio *dio, bool unlock)
- {
- 	const struct iomap_dio_ops *dops = dio->dops;
- 	struct kiocb *iocb = dio->iocb;
-@@ -112,6 +112,13 @@ static ssize_t iomap_dio_complete(struct iomap_dio *dio)
- 			dio_warn_stale_pagecache(iocb->ki_filp);
- 	}
- 
-+	if (unlock) {
-+		if (dio->flags & IOMAP_DIO_RWSEM_EXCL)
-+			up_write(&inode->i_rwsem);
-+		else if (dio->flags & IOMAP_DIO_RWSEM_SHARED)
-+			up_read(&inode->i_rwsem);
-+	}
-+
- 	/*
- 	 * If this is a DSYNC write, make sure we push it to stable storage now
- 	 * that we've written data.
-@@ -129,8 +136,22 @@ static void iomap_dio_complete_work(struct work_struct *work)
- {
- 	struct iomap_dio *dio = container_of(work, struct iomap_dio, aio.work);
- 	struct kiocb *iocb = dio->iocb;
-+	struct inode *inode = file_inode(iocb->ki_filp);
- 
--	iocb->ki_complete(iocb, iomap_dio_complete(dio), 0);
-+	/*
-+	 * XXX: For reads this code is directly called from bio ->end_io, which
-+	 * often is hard or softirq context.  In that case lockdep records the
-+	 * below as lock acquisitions from irq context and causes warnings.
-+	 */
-+	if (dio->flags & IOMAP_DIO_RWSEM_EXCL) {
-+		rwsem_acquire(&inode->i_rwsem.dep_map, 0, 0, _THIS_IP_);
-+		if (IS_ENABLED(CONFIG_RWSEM_SPIN_ON_OWNER))
-+			atomic_long_set(&inode->i_rwsem.owner, (long)current);
-+	} else if (dio->flags & IOMAP_DIO_RWSEM_SHARED) {
-+		rwsem_acquire_read(&inode->i_rwsem.dep_map, 0, 0, _THIS_IP_);
-+	}
-+
-+	iocb->ki_complete(iocb, iomap_dio_complete(dio, true), 0);
- }
- 
- /*
-@@ -430,7 +451,7 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 	dio->i_size = i_size_read(inode);
- 	dio->dops = dops;
- 	dio->error = 0;
--	dio->flags = 0;
-+	dio->flags = dio_flags;
- 
- 	dio->submit.iter = iter;
- 	dio->submit.waiter = current;
-@@ -551,8 +572,7 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 	dio->wait_for_completion = wait_for_completion;
- 	if (!atomic_dec_and_test(&dio->ref)) {
- 		if (!wait_for_completion)
--			return -EIOCBQUEUED;
+-	/* Wait all existing dio workers, newcomers will block on i_mutex */
+-	inode_dio_wait(inode);
 -
-+			goto async_completion;
- 		for (;;) {
- 			set_current_state(TASK_UNINTERRUPTIBLE);
- 			if (!READ_ONCE(dio->submit.waiter))
-@@ -567,10 +587,22 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 		__set_current_state(TASK_RUNNING);
+ 	/* Preallocate the range including the unaligned edges */
+ 	if (partial_begin || partial_end) {
+ 		ret = ext4_alloc_file_blocks(file,
+@@ -4949,9 +4946,6 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+ 			goto out;
  	}
  
--	return iomap_dio_complete(dio);
-+	return iomap_dio_complete(dio, false);
+-	/* Wait all existing dio workers, newcomers will block on i_mutex */
+-	inode_dio_wait(inode);
+-
+ 	ret = ext4_alloc_file_blocks(file, lblk, max_blocks, new_size, flags);
+ 	if (ret)
+ 		goto out;
+@@ -5525,9 +5519,6 @@ int ext4_collapse_range(struct inode *inode, loff_t offset, loff_t len)
+ 		goto out_mutex;
+ 	}
  
- out_free_dio:
- 	kfree(dio);
+-	/* Wait for existing dio to complete */
+-	inode_dio_wait(inode);
+-
+ 	/*
+ 	 * Prevent page faults from reinstantiating pages we have released from
+ 	 * page cache.
+@@ -5678,9 +5669,6 @@ int ext4_insert_range(struct inode *inode, loff_t offset, loff_t len)
+ 		goto out_mutex;
+ 	}
+ 
+-	/* Wait for existing dio to complete */
+-	inode_dio_wait(inode);
+-
+ 	/*
+ 	 * Prevent page faults from reinstantiating pages we have released from
+ 	 * page cache.
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index 08b603d0c638..b3410a3ede27 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -74,9 +74,10 @@ static ssize_t ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 		return generic_file_read_iter(iocb, to);
+ 	}
+ 
+-	ret = iomap_dio_rw(iocb, to, &ext4_iomap_ops, NULL, 0);
+-	inode_unlock_shared(inode);
+-
++	ret = iomap_dio_rw(iocb, to, &ext4_iomap_ops, NULL,
++			   IOMAP_DIO_RWSEM_SHARED);
++	if (ret != -EIOCBQUEUED)
++		inode_unlock_shared(inode);
+ 	file_accessed(iocb->ki_filp);
  	return ret;
-+
-+async_completion:
-+	/*
-+	 * We are returning to userspace now, but i_rwsem is still held until
-+	 * the I/O completion comes back.
-+	 */
-+	if (dio_flags & (IOMAP_DIO_RWSEM_EXCL | IOMAP_DIO_RWSEM_SHARED))
-+		rwsem_release(&inode->i_rwsem.dep_map, _THIS_IP_);
-+	if ((dio_flags & IOMAP_DIO_RWSEM_EXCL) &&
-+	    IS_ENABLED(CONFIG_RWSEM_SPIN_ON_OWNER))
-+		atomic_long_set(&inode->i_rwsem.owner, RWSEM_OWNER_UNKNOWN);
-+	return -EIOCBQUEUED;
  }
- EXPORT_SYMBOL_GPL(iomap_dio_rw);
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 3faeb8fd0961..f259bb979d7f 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -249,6 +249,8 @@ int iomap_writepages(struct address_space *mapping,
- #define IOMAP_DIO_UNWRITTEN	(1 << 0)	/* covers unwritten extent(s) */
- #define IOMAP_DIO_COW		(1 << 1)	/* covers COW extent(s) */
- #define IOMAP_DIO_SYNCHRONOUS	(1 << 2)	/* no async completion */
-+#define IOMAP_DIO_RWSEM_EXCL	(1 << 3)	/* holds shared i_rwsem */
-+#define IOMAP_DIO_RWSEM_SHARED	(1 << 4)	/* holds exclusive i_rwsem */
+@@ -405,7 +406,6 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	    !is_sync_kiocb(iocb) && ext4_unaligned_aio(inode, from, offset)) {
+ 		unaligned_aio = true;
+ 		dio_flags |= IOMAP_DIO_SYNCHRONOUS;
+-		inode_dio_wait(inode);
+ 	}
  
- struct iomap_dio_ops {
- 	int (*end_io)(struct kiocb *iocb, ssize_t size, int error,
+ 	/*
+@@ -416,7 +416,10 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	if (!unaligned_aio && ext4_overwrite_io(inode, offset, count) &&
+ 	    ext4_should_dioread_nolock(inode)) {
+ 		overwrite = true;
++		dio_flags |= IOMAP_DIO_RWSEM_SHARED;
+ 		downgrade_write(&inode->i_rwsem);
++	} else {
++		dio_flags |= IOMAP_DIO_RWSEM_EXCL;
+ 	}
+ 
+ 	if (offset + count > EXT4_I(inode)->i_disksize) {
+@@ -444,10 +447,12 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		ret = ext4_handle_inode_extension(inode, offset, ret, count);
+ 
+ out:
+-	if (overwrite)
+-		inode_unlock_shared(inode);
+-	else
+-		inode_unlock(inode);
++	if (ret != -EIOCBQUEUED) {
++		if (overwrite)
++			inode_unlock_shared(inode);
++		else
++			inode_unlock(inode);
++	}
+ 
+ 	if (ret >= 0 && iov_iter_count(from)) {
+ 		ssize_t err;
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 629a25d999f0..e2dac0727ab0 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3965,9 +3965,6 @@ int ext4_punch_hole(struct inode *inode, loff_t offset, loff_t length)
+ 
+ 	}
+ 
+-	/* Wait all existing dio workers, newcomers will block on i_mutex */
+-	inode_dio_wait(inode);
+-
+ 	/*
+ 	 * Prevent page faults from reinstantiating pages we have released from
+ 	 * page cache.
+@@ -5263,11 +5260,6 @@ int ext4_setattr(struct dentry *dentry, struct iattr *attr)
+ 				if (error)
+ 					goto err_out;
+ 			}
+-			/*
+-			 * Blocks are going to be removed from the inode. Wait
+-			 * for dio in flight.
+-			 */
+-			inode_dio_wait(inode);
+ 		}
+ 
+ 		down_write(&EXT4_I(inode)->i_mmap_sem);
+@@ -5798,9 +5790,6 @@ int ext4_change_inode_journal_flag(struct inode *inode, int val)
+ 	if (is_journal_aborted(journal))
+ 		return -EROFS;
+ 
+-	/* Wait for all existing dio workers */
+-	inode_dio_wait(inode);
+-
+ 	/*
+ 	 * Before flushing the journal and switching inode's aops, we have
+ 	 * to flush all dirty data the inode has. There can be outstanding
+diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+index e8870fff8224..99d21d81074f 100644
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -153,10 +153,6 @@ static long swap_inode_boot_loader(struct super_block *sb,
+ 	if (err)
+ 		goto err_out;
+ 
+-	/* Wait for all existing dio workers */
+-	inode_dio_wait(inode);
+-	inode_dio_wait(inode_bl);
+-
+ 	truncate_inode_pages(&inode->i_data, 0);
+ 	truncate_inode_pages(&inode_bl->i_data, 0);
+ 
+@@ -364,7 +360,6 @@ static int ext4_ioctl_setflags(struct inode *inode,
+ 	 */
+ 	if (S_ISREG(inode->i_mode) && !IS_IMMUTABLE(inode) &&
+ 	    (flags & EXT4_IMMUTABLE_FL)) {
+-		inode_dio_wait(inode);
+ 		err = filemap_write_and_wait(inode->i_mapping);
+ 		if (err)
+ 			goto flags_out;
+diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
+index 30ce3dc69378..20240808569f 100644
+--- a/fs/ext4/move_extent.c
++++ b/fs/ext4/move_extent.c
+@@ -602,10 +602,6 @@ ext4_move_extents(struct file *o_filp, struct file *d_filp, __u64 orig_blk,
+ 	/* Protect orig and donor inodes against a truncate */
+ 	lock_two_nondirectories(orig_inode, donor_inode);
+ 
+-	/* Wait for all existing dio workers */
+-	inode_dio_wait(orig_inode);
+-	inode_dio_wait(donor_inode);
+-
+ 	/* Protect extent tree against block allocations via delalloc */
+ 	ext4_double_down_write_data_sem(orig_inode, donor_inode);
+ 	/* Check the filesystem environment whether move_extent can be done */
 -- 
 2.24.1
 
