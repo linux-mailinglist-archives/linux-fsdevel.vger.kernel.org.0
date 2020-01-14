@@ -2,87 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B3BC13AF04
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 17:17:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A5C713AF2D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 17:22:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726379AbgANQRB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jan 2020 11:17:01 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:53816 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726450AbgANQRB (ORCPT
+        id S1726270AbgANQWk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jan 2020 11:22:40 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:42054 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725904AbgANQWk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jan 2020 11:17:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579018620;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=MmNBZkwBy1szGWacQmXBphuROcFRHJi+XYFCIYFXOoM=;
-        b=gzfyc8+ZPiPFPjoukb2gx+HkP4JWvMOorBR+Rc0VZ8iOu7VXvuU1Bwg4v6pVtjyJjZFgTE
-        /0YRPB/BsH8QEKVtkjFBYJkXpHvzt7B/Y6/wLIxZoH3MC3bu117h0aF5DOiZubIDw0a8Co
-        wZKbl7cE9/j5wLkE6HPZ+rqPn5jToBc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-430-dIecYhpBPyKNb0Hd40mSXg-1; Tue, 14 Jan 2020 11:16:57 -0500
-X-MC-Unique: dIecYhpBPyKNb0Hd40mSXg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0BD568DD348;
-        Tue, 14 Jan 2020 16:16:56 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 03D2680F5C;
-        Tue, 14 Jan 2020 16:16:54 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] afs: Fix afs_lookup() to not clobber the version on a new
- dentry
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 14 Jan 2020 16:16:54 +0000
-Message-ID: <157901861423.1394.15115986296413304429.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Tue, 14 Jan 2020 11:22:40 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1irOxe-0086Ld-27; Tue, 14 Jan 2020 16:22:34 +0000
+Date:   Tue, 14 Jan 2020 16:22:34 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: dcache: abstract take_name_snapshot() interface
+Message-ID: <20200114162234.GZ8904@ZenIV.linux.org.uk>
+References: <20200114154034.30999-1-amir73il@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200114154034.30999-1-amir73il@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fix afs_lookup() to not clobber the version set on a new dentry by
-afs_do_lookup() - especially as it's using the wrong version of the version
-(we need to use the one given to us by whatever op the dir contents
-correspond to rather than what's in the afs_vnode).
+On Tue, Jan 14, 2020 at 05:40:34PM +0200, Amir Goldstein wrote:
+> Generalize the take_name_snapshot()/release_name_snapshot() interface
+> so it is possible to snapshot either a dentry d_name or its snapshot.
+> 
+> The order of fields d_name and d_inode in struct dentry is swapped
+> so d_name is adjacent to d_iname.  This does not change struct size
+> nor cache lines alignment.
+> 
+> Currently, we snapshot the old name in vfs_rename() and we snapshot the
+> snapshot the dentry name in __fsnotify_parent() and then we pass qstr
+> to inotify which allocated a variable length event struct and copied the
+> name.
+> 
+> This new interface allows us to snapshot the name directly into an
+> fanotify event struct instead of allocating a variable length struct
+> and copying the name to it.
 
-Fixes: 9dd0b82ef530 ("afs: Fix missing dentry data version updating")
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+Ugh...  That looks like being too damn cute for no good reason.  That
+trick with union is _probably_ safe, but I wouldn't bet a dime on
+e.g. randomize_layout crap not screwing it over in random subset of
+gcc versions.  You are relying upon fairly subtle reading of 6.2.7
+and it feels like just the place for layout-mangling plugins to fuck
+up.
 
- fs/afs/dir.c |    6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+With -fplan9-extensions we could go for renaming struct name_snapshot
+fields and using an anon member in struct dentry -
+	...
+	struct inode *d_inode;
+	struct name_snapshot;	// d_name and d_iname
+	struct lockref d_lockref;
+	...
 
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index 813db1708494..5c794f4b051a 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -952,12 +952,8 @@ static struct dentry *afs_lookup(struct inode *dir, struct dentry *dentry,
- 	afs_stat_v(dvnode, n_lookup);
- 	inode = afs_do_lookup(dir, dentry, key);
- 	key_put(key);
--	if (inode == ERR_PTR(-ENOENT)) {
-+	if (inode == ERR_PTR(-ENOENT))
- 		inode = afs_try_auto_mntpt(dentry, dir);
--	} else {
--		dentry->d_fsdata =
--			(void *)(unsigned long)dvnode->status.data_version;
--	}
- 
- 	if (!IS_ERR_OR_NULL(inode))
- 		fid = AFS_FS_I(inode)->fid;
+but IMO it's much safer to have an explicit
 
+// NOTE: release_dentry_name_snapshot() will be needed for both copies.
+clone_name_snapshot(struct name_snapshot *to, const struct name_snapshot *from)
+{
+	to->name = from->name;
+	if (likely(to->name.name == from->inline_name)) {
+		memcpy(to->inline_name, from->inline_name,
+			to->name.len);
+		to->name.name = to->inline_name;
+	} else {
+                struct external_name *p;
+                p = container_of(to->name.name, struct external_name, name[0]);
+		atomic_inc(&p->u.count);
+	}
+}
+
+and be done with that.  Avoids any extensions or tree-wide renamings, etc.
