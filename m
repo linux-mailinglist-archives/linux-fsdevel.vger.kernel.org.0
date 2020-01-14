@@ -2,173 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7251313B446
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 22:28:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACA0613B45D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jan 2020 22:32:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728894AbgANV2S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jan 2020 16:28:18 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:31260 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728757AbgANV2R (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jan 2020 16:28:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579037296;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=CmEl4tOAlf+q1dssiqaydOdwINh9FE1HPfFzHT2TJms=;
-        b=RAxbJx2DYUNoQz47bEidt5YOfffdqrwh9z1ngL0OsJOS3wleSQriPOGSmMs/bmT1BvD2yw
-        bMJIpQ6XuvLVfyxh3qluIrhDBiZ65W4l34VTVWUvE4j8Bta1Kifbwzfa75LLVbHkjqKYxk
-        hyMvbUutosrAwE4JaSJJ1wjOhTiqL4c=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-225-ulhA3bQmN5-1R1ohd67YdA-1; Tue, 14 Jan 2020 16:28:12 -0500
-X-MC-Unique: ulhA3bQmN5-1R1ohd67YdA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1728877AbgANVbd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jan 2020 16:31:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42424 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726491AbgANVbd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 14 Jan 2020 16:31:33 -0500
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9B0CE100728F;
-        Tue, 14 Jan 2020 21:28:10 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B2C7B10372F3;
-        Tue, 14 Jan 2020 21:28:05 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 47D7B220A24; Tue, 14 Jan 2020 16:28:05 -0500 (EST)
-Date:   Tue, 14 Jan 2020 16:28:05 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jeff Moyer <jmoyer@redhat.com>
-Subject: Re: [PATCH 01/19] dax: remove block device dependencies
-Message-ID: <20200114212805.GB3145@redhat.com>
-References: <20200107170731.GA472641@magnolia>
- <CAPcyv4ggH7-QhYg+YOOWn_m25uds+-0L46=N09ap-LALeGuU_A@mail.gmail.com>
- <20200107180101.GC15920@redhat.com>
- <CAPcyv4gmdoqpwwwy4dS3D2eZFjmJ_Zi39k=1a4wn-_ksm-UV4A@mail.gmail.com>
- <20200107183307.GD15920@redhat.com>
- <CAPcyv4ggoS4dWjq-1KbcuaDtroHKEi5Vu19ggJ-qgycs6w1eCA@mail.gmail.com>
- <20200109112447.GG27035@quack2.suse.cz>
- <CAPcyv4j5Mra8qeLO3=+BYZMeXNAxFXv7Ex7tL9gra1TbhOgiqg@mail.gmail.com>
- <20200114203138.GA3145@redhat.com>
- <CAPcyv4iXKFt207Pen+E1CnqCFtC1G85fxw5EXFVx+jtykGWMXA@mail.gmail.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B3EB24656;
+        Tue, 14 Jan 2020 21:31:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579037492;
+        bh=GYh5yHnh97crjUGcpNk4U6wgwEXtefUmh/sSj0nDhcw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Gy5kqOExzRwji185eoB98JBO7eFuWv/RF0w4IPYwJHE7O3C14sKdF4CTZuMLYUhli
+         nOzatFMeiKnnTyXd2psPtdj1xFMw8jRowwvjxH7l2SzLsCQN+R6GzFAWgSgVV7EUx3
+         kNcZ7+QZ+D77atEjVGVwo+B2/3TMSDF/JmZEfgCg=
+Date:   Tue, 14 Jan 2020 13:31:31 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fscrypt@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Victor Hsieh <victorhsieh@google.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH v2] fs-verity: implement readahead of Merkle
+ tree pages
+Message-ID: <20200114213130.GG41220@gmail.com>
+References: <20200106205533.137005-1-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4iXKFt207Pen+E1CnqCFtC1G85fxw5EXFVx+jtykGWMXA@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+In-Reply-To: <20200106205533.137005-1-ebiggers@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 14, 2020 at 12:39:00PM -0800, Dan Williams wrote:
-> On Tue, Jan 14, 2020 at 12:31 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
-> > On Thu, Jan 09, 2020 at 12:03:01PM -0800, Dan Williams wrote:
-> > > On Thu, Jan 9, 2020 at 3:27 AM Jan Kara <jack@suse.cz> wrote:
-> > > >
-> > > > On Tue 07-01-20 10:49:55, Dan Williams wrote:
-> > > > > On Tue, Jan 7, 2020 at 10:33 AM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > > > > > W.r.t partitioning, bdev_dax_pgoff() seems to be the pain point where
-> > > > > > dax code refers back to block device to figure out partition offset in
-> > > > > > dax device. If we create a dax object corresponding to "struct block_device"
-> > > > > > and store sector offset in that, then we could pass that object to dax
-> > > > > > code and not worry about referring back to bdev. I have written some
-> > > > > > proof of concept code and called that object "dax_handle". I can post
-> > > > > > that code if there is interest.
-> > > > >
-> > > > > I don't think it's worth it in the end especially considering
-> > > > > filesystems are looking to operate on /dev/dax devices directly and
-> > > > > remove block entanglements entirely.
-> > > > >
-> > > > > > IMHO, it feels useful to be able to partition and use a dax capable
-> > > > > > block device in same way as non-dax block device. It will be really
-> > > > > > odd to think that if filesystem is on /dev/pmem0p1, then dax can't
-> > > > > > be enabled but if filesystem is on /dev/mapper/pmem0p1, then dax
-> > > > > > will work.
-> > > > >
-> > > > > That can already happen today. If you do not properly align the
-> > > > > partition then dax operations will be disabled. This proposal just
-> > > > > extends that existing failure domain to make all partitions fail to
-> > > > > support dax.
-> > > >
-> > > > Well, I have some sympathy with the sysadmin that has /dev/pmem0 device,
-> > > > decides to create partitions on it for whatever (possibly misguided)
-> > > > reason and then ponders why the hell DAX is not working? And PAGE_SIZE
-> > > > partition alignment is so obvious and widespread that I don't count it as a
-> > > > realistic error case sysadmins would be pondering about currently.
-> > > >
-> > > > So I'd find two options reasonably consistent:
-> > > > 1) Keep status quo where partitions are created and support DAX.
-> > > > 2) Stop partition creation altogether, if anyones wants to split pmem
-> > > > device further, he can use dm-linear for that (i.e., kpartx).
-> > > >
-> > > > But I'm not sure if the ship hasn't already sailed for option 2) to be
-> > > > feasible without angry users and Linus reverting the change.
-> > >
-> > > Christoph? I feel myself leaning more and more to the "keep pmem
-> > > partitions" camp.
-> > >
-> > > I don't see "drop partition support" effort ending well given the long
-> > > standing "ext4 fails to mount when dax is not available" precedent.
-> > >
-> > > I think the next least bad option is to have a dax_get_by_host()
-> > > variant that passes an offset and length pair rather than requiring a
-> > > later bdev_dax_pgoff() to recall the offset. This also prevents
-> > > needing to add another dax-device object representation.
-> >
-> > I am wondering what's the conclusion on this. I want to this to make
-> > progress in some direction so that I can make progress on virtiofs DAX
-> > support.
+On Mon, Jan 06, 2020 at 12:55:33PM -0800, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> I think we should at least try to delete the partition support and see
-> if anyone screams. Have a module option to revert the behavior so
-> people are not stuck waiting for the revert to land, but if it stays
-> quiet then we're in a better place with that support pushed out of the
-> dax core.
+> When fs-verity verifies data pages, currently it reads each Merkle tree
+> page synchronously using read_mapping_page().
+> 
+> Therefore, when the Merkle tree pages aren't already cached, fs-verity
+> causes an extra 4 KiB I/O request for every 512 KiB of data (assuming
+> that the Merkle tree uses SHA-256 and 4 KiB blocks).  This results in
+> more I/O requests and performance loss than is strictly necessary.
+> 
+> Therefore, implement readahead of the Merkle tree pages.
+> 
+> For simplicity, we take advantage of the fact that the kernel already
+> does readahead of the file's *data*, just like it does for any other
+> file.  Due to this, we don't really need a separate readahead state
+> (struct file_ra_state) just for the Merkle tree, but rather we just need
+> to piggy-back on the existing data readahead requests.
+> 
+> We also only really need to bother with the first level of the Merkle
+> tree, since the usual fan-out factor is 128, so normally over 99% of
+> Merkle tree I/O requests are for the first level.
+> 
+> Therefore, make fsverity_verify_bio() enable readahead of the first
+> Merkle tree level, for up to 1/4 the number of pages in the bio, when it
+> sees that the REQ_RAHEAD flag is set on the bio.  The readahead size is
+> then passed down to ->read_merkle_tree_page() for the filesystem to
+> (optionally) implement if it sees that the requested page is uncached.
+> 
+> While we're at it, also make build_merkle_tree_level() set the Merkle
+> tree readahead size, since it's easy to do there.
+> 
+> However, for now don't set the readahead size in fsverity_verify_page(),
+> since currently it's only used to verify holes on ext4 and f2fs, and it
+> would need parameters added to know how much to read ahead.
+> 
+> This patch significantly improves fs-verity sequential read performance.
+> Some quick benchmarks with 'cat'-ing a 250MB file after dropping caches:
+> 
+>     On an ARM64 phone (using sha256-ce):
+>         Before: 217 MB/s
+>         After: 263 MB/s
+>         (compare to sha256sum of non-verity file: 357 MB/s)
+> 
+>     In an x86_64 VM (using sha256-avx2):
+>         Before: 173 MB/s
+>         After: 215 MB/s
+>         (compare to sha256sum of non-verity file: 223 MB/s)
+> 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+> 
+> Changed v1 => v2:
+>   - Ensure that the pages continue being marked accessed when they're
+>     already cached and Uptodate.
+>   - Removed unnecessary IS_ERR(page) checks.
+>   - Adjusted formatting of the prototype of f2fs_mpage_readpages() to
+>     avoid a merge conflict with the f2fs tree.
+> 
+>  fs/ext4/verity.c             | 47 ++++++++++++++++++++++++++++++++++--
+>  fs/f2fs/data.c               |  2 +-
+>  fs/f2fs/f2fs.h               |  3 +++
+>  fs/f2fs/verity.c             | 47 ++++++++++++++++++++++++++++++++++--
+>  fs/verity/enable.c           |  8 +++++-
+>  fs/verity/fsverity_private.h |  1 +
+>  fs/verity/open.c             |  1 +
+>  fs/verity/verify.c           | 34 +++++++++++++++++++++-----
+>  include/linux/fsverity.h     |  7 +++++-
+>  9 files changed, 137 insertions(+), 13 deletions(-)
 
-Hi Dan,
+Applied to fscrypt.git#fsverity for 5.6.
 
-So basically keep partition support code just that disable it by default
-and it is enabled by some knob say kernel command line option/module
-option.
-
-At what point of time will we remove that code completely. I mean what
-if people scream after two kernel releases, after we have removed the
-code.
-
-Also, from distribution's perspective, we might not hear from our
-customers for a very long time (till we backport that code in to
-existing releases or release this new code in next major release). From
-that view point I will not like to break existing user visible behavior.
-
-How bad it is to keep partition support around. To me it feels reasonaly
-simple where we just have to store offset into dax device into another
-dax object and pass that object around (instead of dax_device). If that's
-the case, I am not sure why to even venture into a direction where some
-user's setup might be broken.
-
-Also from an application perspective, /dev/pmem is a block device, so it
-should behave like a block device, (including kernel partition table support).
-From that view, dax looks like just an additional feature of that device
-which can be enabled by passing option "-o dax".
-
-IOW, can we reconsider the idea of not supporting kernel partition tables
-for dax capable block devices. I can only see downsides of removing kernel
-partition table support and only upside seems to be little cleanup of dax
-core code.
-
-Thanks
-Vivek
-
+- Eric
