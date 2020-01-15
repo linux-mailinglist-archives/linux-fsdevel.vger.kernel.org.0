@@ -2,129 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 560EE13BAFA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 09:28:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A2E0213BADA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 09:28:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729147AbgAOI2x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 03:28:53 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:37555 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728897AbgAOI2c (ORCPT
+        id S1726506AbgAOI2F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 03:28:05 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:60418 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726220AbgAOI2F (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 03:28:32 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200115082830epoutp012ef89183736a032978e1dec28f3adb25~qAhVnQm2b1528515285epoutp01r
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jan 2020 08:28:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200115082830epoutp012ef89183736a032978e1dec28f3adb25~qAhVnQm2b1528515285epoutp01r
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1579076910;
-        bh=Vl3K76ctdGp141COTWoYQOF+6xn4+/PDupmo6U2ImZk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bePGKMYxmVrk6PFU3o2YN2aAq+vqaOPLkHAUBEQWFjQ/4rVom0Uj6UdsS15W7dAo3
-         iri5YH643ciSSOBh5P+SwigUyxFGHw72UXlHNv6tRVhfWsE0cKGu/B2ApVnbNV6vl4
-         iUVwkXTkLk3ztL0b6Mu3jmqlKvZLHXna3FumUNUE=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20200115082829epcas1p3209c93f77c6b6fe5c33972db996af650~qAhVCsTtX1260012600epcas1p3S;
-        Wed, 15 Jan 2020 08:28:29 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.165]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 47yL7c5dtpzMqYkt; Wed, 15 Jan
-        2020 08:28:28 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        FC.6E.52419.B2DCE1E5; Wed, 15 Jan 2020 17:28:27 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200115082826epcas1p3475ce2b4d03234dc96ced428be582eb3~qAhSXqXdQ0883908839epcas1p3y;
-        Wed, 15 Jan 2020 08:28:26 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200115082826epsmtrp1d583802d1489ee3814aba47b6e7efccb~qAhSW6h5O0484504845epsmtrp1L;
-        Wed, 15 Jan 2020 08:28:26 +0000 (GMT)
-X-AuditID: b6c32a37-5b7ff7000001ccc3-13-5e1ecd2bd3db
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        AF.4A.10238.A2DCE1E5; Wed, 15 Jan 2020 17:28:26 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.88.103.87]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200115082826epsmtip13b5ff6f257339c40dd6564ee20020d24~qAhSKhnrh0110201102epsmtip1j;
-        Wed, 15 Jan 2020 08:28:26 +0000 (GMT)
-From:   Namjae Jeon <namjae.jeon@samsung.com>
+        Wed, 15 Jan 2020 03:28:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579076883;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type;
+        bh=adl4YTtGwDsGU3mcOyNEDPoRcVEGa1oR2kpCSJ2EC6U=;
+        b=Pl3HcE7Hrvu75Zc0j77XI1BUYpRVHzchDfJEiTSx7LgNSEN840opV3qp/BpBaW8oMZbAH6
+        IlVIrWgQVKgkVMC2LVae7wtuhIAc/LWsOlD7ze6A3PxlhO3//7Kl9j6iEFe5S9K3KDb719
+        ZDG3/GKLT/unCTs+cFUMe2sGGNxu1y8=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-187-LUXfe06_Oj2NThsRC6y0Nw-1; Wed, 15 Jan 2020 03:28:01 -0500
+X-MC-Unique: LUXfe06_Oj2NThsRC6y0Nw-1
+Received: by mail-qv1-f70.google.com with SMTP id z12so10578032qvk.14
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jan 2020 00:28:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=adl4YTtGwDsGU3mcOyNEDPoRcVEGa1oR2kpCSJ2EC6U=;
+        b=B3D0WNZVkIRgAbo0lBGpIw2fa0+5c6MrZBspjhYrPPvZIDa4lF/nDBEhwBclkNbxbJ
+         caw++QfT86HJHdUlDfeCYrLLkJMZKh5iiHJZt2SCRYOr0jN/fryoDPXIT45d4Db8+/lN
+         8sf/SVndesLAslmEYs4dk4NLXeSqWnFK4OTNJsELkznafHYm9GzoFXj1WLd81wngLSsG
+         ZdXDsD0PJGIvtQoYKHwoTwNCsBAh8E4/BeuWv9HLlF1hCdTxMYfTS3kwnu2tXmrm84WA
+         3lM9rNKn76bskJKMBOlyw/Mh9bVlytFFXVSw4ivM5YYMJN5Jbi3rpCLgv98EWYPAm7pV
+         Jqsw==
+X-Gm-Message-State: APjAAAUh9xDjWkbW7hahQ8EVKkEN72Qi2j7A3XQj39j37sN7gdoMhF5X
+        Xbtqul0U8zl/Ict5tuNqj0e+cKS1/uvlfa6n8vwXn8NSEDkxtIfJCk7GoYCO20AyWyjbe7OTXtj
+        OgxfZSjz9COG40K7x5f5+vRpiTra5FEDQkfywKMBGzg==
+X-Received: by 2002:a0c:bd20:: with SMTP id m32mr20837534qvg.197.1579076881139;
+        Wed, 15 Jan 2020 00:28:01 -0800 (PST)
+X-Google-Smtp-Source: APXvYqynnIvI5Tdl1vtJm+JFA4/fXl3/u2hfPlTaOuV5Y0yec93AWwALsaiQEu+kRVo1l9SynVVGsOGBz9NPoVfX9pQ=
+X-Received: by 2002:a0c:bd20:: with SMTP id m32mr20837524qvg.197.1579076880853;
+ Wed, 15 Jan 2020 00:28:00 -0800 (PST)
+MIME-Version: 1.0
+From:   Ondrej Holy <oholy@redhat.com>
+Date:   Wed, 15 Jan 2020 09:27:24 +0100
+Message-ID: <CA+wuGHCr2zJKFkHyRECOLAXsijLAcQgHVoACcNbvLbXnqarOtg@mail.gmail.com>
+Subject: Weird fuse_operations.read calls with Linux 5.4
 To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com, linkinjeon@gmail.com, pali.rohar@gmail.com,
-        arnd@arndb.de, Namjae Jeon <namjae.jeon@samsung.com>
-Subject: [PATCH v10 14/14] staging: exfat: make staging/exfat and fs/exfat
- mutually exclusive
-Date:   Wed, 15 Jan 2020 17:24:47 +0900
-Message-Id: <20200115082447.19520-15-namjae.jeon@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200115082447.19520-1-namjae.jeon@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUhTURjm3LvdTXFxmZYHI5uXRmnMNuf0Jq6iplyowIi+yXXTi0rb3drd
-        JOuHimWyYqb9sNShKCFORcmVzRJ1VmZRpJHah78q6GN9mNmXGe16Z/XvOc/7POd5z3teKSov
-        xWKkBaydsbG0icDCRVeH4tWqtfdjs9XuHjk5X31bQpY1d2Jka9sthJyYeoqSN/pGROSj3nqM
-        /F5TTFbdm0NI7++bYnLs4yfRpnBq7mc1oHy1UxKq390uoa4/KcEol9cDqJnLsZS/J4BlSfab
-        0vMZOpexKRg2x5JbwObpia07jVuMuhS1RqVZT6YSCpY2M3rCsC1LlVlgCrZHKAppkyNIZdEc
-        R6zbkG6zOOyMIt/C2fUEY801WTVqayJHmzkHm5eYYzGnadTqJF1QeciUX/bhPWJ1Y8dq5j1I
-        CagXO0GYFOLJ8EyTX8RjOX4NQE+32gnCg/gzgK7hUbFw+ArgqdGX6KJj3NscKvQB2N3+DP1r
-        udPkA04glWL4WvjLu5Q3ROEbYXfdgIjXoPgggIGHbglfiMSNcPRKB8JjEa6E7vrmhQQZrocz
-        3R2YkLYStnUNLPBhQf6m95GEvwjiAxisG6+WCCIDfPy8LGSIhG+HvSE+Br6pLJfwDUH8BJzu
-        D72gAsDX3/QC1sInnV1iXoLi8bCzd51Ax0HfnBvwGMWXwA+zZ8XCLTJYUS4XJEroGhtCBLwc
-        Ok9/CoVScKK2BQgjOQfgxbsu5ByIrf2X0AiAByxjrJw5j+E0Vu3/H3YZLKxfQuo10PVgmx/g
-        UkBEyBTPV2TLxXQhV2T2AyhFiSjZyIUgJculi44zNovR5jAxnB/ogoOsQmOW5liCy8zajRpd
-        klarJZNTUlN0WiJaltEYmy3H82g7c4RhrIxt0YdIw2JKQGl5gvxrRMOquC1tgdUzKsMBvS+z
-        9PCOjkZka1rzGrjb2zH9IoUxnN280bknQdmeEXg1aY1j2w5Gpc/u6vFFT54aSu1/XDNW1TAZ
-        2Lc3HTuvVO59DUAF++PFpR+9rkLDoL2sMtGDXln1rrK1ZaXsfcTR7VRxOahbkqSLEH15d5IQ
-        cfm0JgG1cfQfDnTYPJQDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNLMWRmVeSWpSXmKPExsWy7bCSnK7WWbk4g0mrdSz+TjrGbtG8eD2b
-        xcrVR5ksrt+9xWyxZ+9JFovLu+awWfyYXm8x8fRvJost/46wWlx6/4HFgcvj969JjB47Z91l
-        99g/dw27x+6bDWwefVtWMXp83iTncWj7G7YA9igum5TUnMyy1CJ9uwSujOZ3b5kK5rJVTP+7
-        iqmBcQ5rFyMnh4SAicS1LYuBbC4OIYHdjBL792xngkhISxw7cYa5i5EDyBaWOHy4GKLmA6PE
-        je5GdpA4m4C2xJ8toiDlIgKOEr27DrOA1DALnGaU6N74EGyOsECsxLa3K8FsFgFViblzFjOD
-        2LwCthKfN69lg9glL7F6wwGwOCdQ/MiWy+wgtpCAjcS0JyeZJjDyLWBkWMUomVpQnJueW2xY
-        YJiXWq5XnJhbXJqXrpecn7uJERykWpo7GC8viT/EKMDBqMTDq3BHNk6INbGsuDL3EKMEB7OS
-        CO/JGUAh3pTEyqrUovz4otKc1OJDjNIcLErivE/zjkUKCaQnlqRmp6YWpBbBZJk4OKUaGKPu
-        P5glLMQTsNxwSYzKP6Ngn+CCxlOGyn9rdv3L++npdlJ926HHe313Kd0Onigty/XQ6cS9LdMj
-        TP5qGU3ieiK2+LTD60MS6aIujAa8cbvDFPiPzY2cKZbXYJVxmFdtxZy1BU62q07JH8pcxW8Y
-        xBjCqGogZbpNeXfSfZ9eZU674LXLgoqMlFiKMxINtZiLihMBVqsQvE4CAAA=
-X-CMS-MailID: 20200115082826epcas1p3475ce2b4d03234dc96ced428be582eb3
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200115082826epcas1p3475ce2b4d03234dc96ced428be582eb3
-References: <20200115082447.19520-1-namjae.jeon@samsung.com>
-        <CGME20200115082826epcas1p3475ce2b4d03234dc96ced428be582eb3@epcas1p3.samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Make staging/exfat and fs/exfat mutually exclusive to select the one
-between two same filesystem.
+Hi,
 
-Suggested-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
----
- drivers/staging/exfat/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I have been directed here from https://github.com/libfuse/libfuse/issues/488.
 
-diff --git a/drivers/staging/exfat/Kconfig b/drivers/staging/exfat/Kconfig
-index 292a19dfcaf5..9a0fccec65d9 100644
---- a/drivers/staging/exfat/Kconfig
-+++ b/drivers/staging/exfat/Kconfig
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- config STAGING_EXFAT_FS
- 	tristate "exFAT fs support"
--	depends on BLOCK
-+	depends on BLOCK && !EXFAT_FS
- 	select NLS
- 	help
- 	  This adds support for the exFAT file system.
--- 
-2.17.1
+My issue is that with Linux Kernel 5.4, one read kernel call (e.g.
+made by cat tool) triggers two fuse_operations.read executions and in
+both cases with 0 offset even though that first read successfully
+returned some bytes.
+
+For gvfs, it leads to redundant I/O operations, or to "Operation not
+supported" errors if seeking is not supported. This doesn't happen
+with Linux 5.3. Any idea what is wrong here?
+
+$ strace cat /run/user/1000/gvfs/ftp\:host\=server\,user\=user/foo
+...
+openat(AT_FDCWD, "/run/user/1000/gvfs/ftp:host=server,user=user/foo",
+O_RDONLY) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=20, ...}) = 0
+fadvise64(3, 0, 0, POSIX_FADV_SEQUENTIAL) = 0
+mmap(NULL, 139264, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS,
+-1, 0) = 0x7fbc42b92000
+read(3, 0x7fbc42b93000, 131072)         = -1 EOPNOTSUPP (Operation not
+supported)
+...
+
+$ /usr/libexec/gvfsd-fuse /run/user/1000/gvfs -d
+...
+open flags: 0x8000 /ftp:host=server,user=user/foo
+   open[139679517117488] flags: 0x8000 /ftp:host=server,user=user/foo
+   unique: 8, success, outsize: 32
+unique: 10, opcode: READ (15), nodeid: 3, insize: 80, pid: 5053
+read[139679517117488] 4096 bytes from 0 flags: 0x8000
+   read[139679517117488] 20 bytes from 0
+   unique: 10, success, outsize: 36
+unique: 12, opcode: READ (15), nodeid: 3, insize: 80, pid: 5053
+read[139679517117488] 4096 bytes from 0 flags: 0x8000
+   unique: 12, error: -95 (Operation not supported), outsize: 16
+...
+
+See for other information: https://gitlab.gnome.org/GNOME/gvfs/issues/441
+
+Regards
+
+Ondrej
+--
+Ondrej Holy
+Software Engineer, Core Desktop Development
+Red Hat Czech s.r.o
 
