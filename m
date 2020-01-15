@@ -2,185 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8331C13C2D4
+	by mail.lfdr.de (Postfix) with ESMTP id 102B713C2D3
 	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 14:32:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729037AbgAONbE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 08:31:04 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:41307 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729033AbgAONbD (ORCPT
+        id S1728998AbgAONbB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 08:31:01 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:38196 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726474AbgAONbA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 08:31:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579095063;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=GQ2XRP21NZuztGMRryaosSMfssmG+japErixEXGjARs=;
-        b=ex+Rvf3gH9IrrW/XXEQ5ociWuwoRnsgiUndqL3bPz0g08AY01fFthhEKQ6CjoNAsKhuFWJ
-        X+cSeJ19Omf0jFgz52MmsBqRzXnRxmu9MZJjGEyGY+0kdbbrLwxxyQoCY56bsWQILJCujQ
-        Cfb9cXeAciZCiZTRwM/wyoc5dvLIHv0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-190-1ywfiLYhPqad1cHeU8Iv_Q-1; Wed, 15 Jan 2020 08:30:59 -0500
-X-MC-Unique: 1ywfiLYhPqad1cHeU8Iv_Q-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 649DC801E6C;
-        Wed, 15 Jan 2020 13:30:57 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A86B310372F3;
-        Wed, 15 Jan 2020 13:30:54 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 02/14] security: Add hooks to rule on setting a watch
- [ver #3]
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     dhowells@redhat.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>, nicolas.dichtel@6wind.com,
-        raven@themaw.net, Christian Brauner <christian@brauner.io>,
-        dhowells@redhat.com, keyrings@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 15 Jan 2020 13:30:53 +0000
-Message-ID: <157909505391.20155.3152153524575565871.stgit@warthog.procyon.org.uk>
-In-Reply-To: <157909503552.20155.3030058841911628518.stgit@warthog.procyon.org.uk>
-References: <157909503552.20155.3030058841911628518.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Wed, 15 Jan 2020 08:31:00 -0500
+Received: by mail-ot1-f68.google.com with SMTP id z9so13953732oth.5;
+        Wed, 15 Jan 2020 05:31:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=fAOeXDRIFaUFNONgtpOUkG+D4IroA4wgYRWzDTSRd0s=;
+        b=frzTSkzQQWX4VjczDNEDcuNHb5JEDqNX6M4BnBJ7CSNPqX/yg1oTMXKQx+C9las5hp
+         f+btcUWXU1Nc4eX6U+t4B1r5ZDEjryLNNTIZDPZAvpvKQ/K1jlqj9E0gZ1ZCuNLI+Mux
+         HiIB0ZidAiJSXBVX2os15BI7/Y72/yXWXHMS5KObVOO7unYX0ySxhFAC+vyDqWigiovh
+         cuQiVR9E7gQq+9kVBHO90s9HDYJus8cgguLuZhVe5hgWUULZH79+koFeJYDXyfeQ543R
+         IdDSsLsKEvIgCIB1jRxcSV+2FE3ynu1h/gzi6eYbNoLgn2Rgpt1KG95nSN2enGsm70S+
+         ghNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=fAOeXDRIFaUFNONgtpOUkG+D4IroA4wgYRWzDTSRd0s=;
+        b=NLiFeRpj10ouaDhgJcgo2p3tVsbRdVP+n3FmU5qzuo5I3pQRVhryA5HLEMlN47Eg7B
+         VjpcLMpj+A5wDIX4vIBjUP5aCvtaNiQ4k6Mjzu03fjYhPAu/LoTXxY3hixZ5pTGv7FuJ
+         RSKEaiHRVKJGh2HIObPMRtRwSU5lLw/lIMU70VZyPkuZsBgwLNB2HMW8h7ESLQ0mXT7k
+         2mvUdetatJoZLC1phfZUej0+vfCGU6No17N+4GBW5VDU0pVL7QNF3HpKPofXX3EcU/M5
+         dDGKr8TaDLp4n8OggvI3WfiygOjG2UmnzbOJLiarpBYW4NHFiCUCbued79rZWriOrEPy
+         d2xw==
+X-Gm-Message-State: APjAAAVo9fc+KD6SJoMbAOLiHCqGk6xAz6t0qY1k3odrL2BssCzdXlVq
+        YHHXDQQBiSa4cFVkzPm9itvLvGM4vEBTFftJIYf6Jg==
+X-Google-Smtp-Source: APXvYqysJw7pgv4PQLsZuez7XkX8FpXJWIj/tJczIZ3Z3NRp3N4+5pYeDIO45G/tlhAAMWGfEY3HfNSBTVmltZeNVl4=
+X-Received: by 2002:a9d:6196:: with SMTP id g22mr2804475otk.204.1579095059650;
+ Wed, 15 Jan 2020 05:30:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Received: by 2002:a8a:87:0:0:0:0:0 with HTTP; Wed, 15 Jan 2020 05:30:59 -0800 (PST)
+In-Reply-To: <CAK8P3a3Vqz=T_=sFwBBPa2_Hi_dA=BwWod=L9JkLxUgi=aKNWw@mail.gmail.com>
+References: <CGME20200115082824epcas1p4eb45d088c2f88149acb94563c4a9b276@epcas1p4.samsung.com>
+ <20200115082447.19520-1-namjae.jeon@samsung.com> <20200115082447.19520-10-namjae.jeon@samsung.com>
+ <CAK8P3a3Vqz=T_=sFwBBPa2_Hi_dA=BwWod=L9JkLxUgi=aKNWw@mail.gmail.com>
+From:   Namjae Jeon <linkinjeon@gmail.com>
+Date:   Wed, 15 Jan 2020 22:30:59 +0900
+Message-ID: <CAKYAXd9_qmanQCcrdpScFWvPXuZvk4jhv7Gc=t_vRL9zqWNSjA@mail.gmail.com>
+Subject: Re: [PATCH v10 09/14] exfat: add misc operations
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Christoph Hellwig <hch@lst.de>, sj1557.seo@samsung.com,
+        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add security hooks that will allow an LSM to rule on whether or not a watch
-may be set.  More than one hook is required as the watches watch different
-types of object.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Casey Schaufler <casey@schaufler-ca.com>
-cc: Stephen Smalley <sds@tycho.nsa.gov>
-cc: linux-security-module@vger.kernel.org
----
-
- include/linux/lsm_hooks.h |   24 ++++++++++++++++++++++++
- include/linux/security.h  |   17 +++++++++++++++++
- security/security.c       |   14 ++++++++++++++
- 3 files changed, 55 insertions(+)
-
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 20d8cf194fb7..79d7c73676d7 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -1416,6 +1416,18 @@
-  *	@ctx is a pointer in which to place the allocated security context.
-  *	@ctxlen points to the place to put the length of @ctx.
-  *
-+ * Security hooks for the general notification queue:
-+ *
-+ * @watch_key:
-+ *	Check to see if a process is allowed to watch for event notifications
-+ *	from a key or keyring.
-+ *	@key: The key to watch.
-+ *
-+ * @watch_devices:
-+ *	Check to see if a process is allowed to watch for event notifications
-+ *	from devices (as a global set).
-+ *
-+ *
-  * Security hooks for using the eBPF maps and programs functionalities through
-  * eBPF syscalls.
-  *
-@@ -1698,6 +1710,12 @@ union security_list_options {
- 	int (*inode_notifysecctx)(struct inode *inode, void *ctx, u32 ctxlen);
- 	int (*inode_setsecctx)(struct dentry *dentry, void *ctx, u32 ctxlen);
- 	int (*inode_getsecctx)(struct inode *inode, void **ctx, u32 *ctxlen);
-+#ifdef CONFIG_KEY_NOTIFICATIONS
-+	int (*watch_key)(struct key *key);
-+#endif
-+#ifdef CONFIG_DEVICE_NOTIFICATIONS
-+	int (*watch_devices)(void);
-+#endif
- 
- #ifdef CONFIG_SECURITY_NETWORK
- 	int (*unix_stream_connect)(struct sock *sock, struct sock *other,
-@@ -1985,6 +2003,12 @@ struct security_hook_heads {
- 	struct hlist_head inode_notifysecctx;
- 	struct hlist_head inode_setsecctx;
- 	struct hlist_head inode_getsecctx;
-+#ifdef CONFIG_KEY_NOTIFICATIONS
-+	struct hlist_head watch_key;
-+#endif
-+#ifdef CONFIG_DEVICE_NOTIFICATIONS
-+	struct hlist_head watch_devices;
-+#endif
- #ifdef CONFIG_SECURITY_NETWORK
- 	struct hlist_head unix_stream_connect;
- 	struct hlist_head unix_may_send;
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 3e8d4bacd59d..8f2fa100d128 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -1274,6 +1274,23 @@ static inline int security_locked_down(enum lockdown_reason what)
- }
- #endif	/* CONFIG_SECURITY */
- 
-+#if defined(CONFIG_SECURITY) && defined(CONFIG_KEY_NOTIFICATIONS)
-+int security_watch_key(struct key *key);
-+#else
-+static inline int security_watch_key(struct key *key)
-+{
-+	return 0;
-+}
-+#endif
-+#if defined(CONFIG_SECURITY) && defined(CONFIG_DEVICE_NOTIFICATIONS)
-+int security_watch_devices(void);
-+#else
-+static inline int security_watch_devices(void)
-+{
-+	return 0;
-+}
-+#endif
-+
- #ifdef CONFIG_SECURITY_NETWORK
- 
- int security_unix_stream_connect(struct sock *sock, struct sock *other, struct sock *newsk);
-diff --git a/security/security.c b/security/security.c
-index cd2d18d2d279..578863f230a6 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1956,6 +1956,20 @@ int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen)
- }
- EXPORT_SYMBOL(security_inode_getsecctx);
- 
-+#ifdef CONFIG_KEY_NOTIFICATIONS
-+int security_watch_key(struct key *key)
-+{
-+	return call_int_hook(watch_key, 0, key);
-+}
-+#endif
-+
-+#ifdef CONFIG_DEVICE_NOTIFICATIONS
-+int security_watch_devices(void)
-+{
-+	return call_int_hook(watch_devices, 0);
-+}
-+#endif
-+
- #ifdef CONFIG_SECURITY_NETWORK
- 
- int security_unix_stream_connect(struct sock *sock, struct sock *other, struct sock *newsk)
-
+2020-01-15 19:10 GMT+09:00, Arnd Bergmann <arnd@arndb.de>:
+> On Wed, Jan 15, 2020 at 9:28 AM Namjae Jeon <namjae.jeon@samsung.com>
+> wrote:
+>
+>> +#define SECS_PER_MIN    (60)
+>> +#define TIMEZONE_SEC(x)        ((x) * 15 * SECS_PER_MIN)
+>> +
+>> +static void exfat_adjust_tz(struct timespec64 *ts, u8 tz_off)
+>> +{
+>> +       if (tz_off <= 0x3F)
+>> +               ts->tv_sec -= TIMEZONE_SEC(tz_off);
+>> +       else /* 0x40 <= (tz_off & 0x7F) <=0x7F */
+>> +               ts->tv_sec += TIMEZONE_SEC(0x80 - tz_off);
+>> +}
+>> +
+>> +static inline int exfat_tz_offset(struct exfat_sb_info *sbi)
+>> +{
+>> +       if (sbi->options.time_offset)
+>> +               return sbi->options.time_offset;
+>> +       return sys_tz.tz_minuteswest;
+>> +}
+>> +
+>> +/* Convert a EXFAT time/date pair to a UNIX date (seconds since 1 1 70).
+>> */
+>> +void exfat_get_entry_time(struct exfat_sb_info *sbi, struct timespec64
+>> *ts,
+>> +               __le16 time, __le16 date, u8 tz)
+>> +{
+>> +       u16 t = le16_to_cpu(time);
+>> +       u16 d = le16_to_cpu(date);
+>> +
+>> +       ts->tv_sec = mktime64(1980 + (d >> 9), d >> 5 & 0x000F, d &
+>> 0x001F,
+>> +                             t >> 11, (t >> 5) & 0x003F, (t & 0x001F) <<
+>> 1);
+>> +       ts->tv_nsec = 0;
+>
+> This part looks good to me now.
+Thanks.
+>
+>> +       if (tz & EXFAT_TZ_VALID)
+>> +               /* Treat as UTC time, but need to adjust timezone to UTC0
+>> */
+>> +               exfat_adjust_tz(ts, tz & ~EXFAT_TZ_VALID);
+>> +       else
+>> +               /* Treat as local time */
+>> +               ts->tv_sec -= exfat_tz_offset(sbi) * SECS_PER_MIN;
+>> +}
+>
+> Whereas this seems rather complex, when it deals with three different
+> cases:
+>
+> - timezone stored in inode
+> - timezone offset passed as mount option
+> - local time from sys_tz.tz_minuteswest
+>
+> Does the exfat specification require to use some notion of 'local time'
+> here
+> as the fallback? The problem with sys_tz.tz_minuteswest is that it is
+> not too well-defined,
+It is not described in the specification. I don't know exactly what
+the problem is because sys_tz.tz_minuteswest seems to work fine to me.
+It can be random garbage value ?
+> so if there is a choice, falling back to UTC would
+> be nicer.
+Okay.
+>
+>> +/* Convert linear UNIX date to a EXFAT time/date pair. */
+>> +void exfat_set_entry_time(struct exfat_sb_info *sbi, struct timespec64
+>> *ts,
+>> +               __le16 *time, __le16 *date, u8 *tz)
+>> +{
+>> +       struct tm tm;
+>> +       u16 t, d;
+>> +
+>> +       /* clamp to the range valid in the exfat on-disk representation.
+>> */
+>> +       time64_to_tm(clamp_t(time64_t, ts->tv_sec,
+>> EXFAT_MIN_TIMESTAMP_SECS,
+>> +               EXFAT_MAX_TIMESTAMP_SECS), -exfat_tz_offset(sbi) *
+>> SECS_PER_MIN,
+>> +               &tm);
+>
+> I think you can drop the clamping here, as thes_time_min/s_time_max fields
+> should take care of that.
+Okay.
+>
+> For writing out timestamps, it may be best to always encode them as UTC
+> and set set timezone-valid bit for that. That way, the min/max values
+> are known at compile time regardless of which time zone the machine
+> thinks it is in.
+Okay, I will check it.
+Thanks for your review!
+>
+>       Arnd
+>
