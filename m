@@ -2,66 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28C3A13CECF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 22:20:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 717AB13CF33
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 22:34:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729577AbgAOVUI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 16:20:08 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:49555 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729259AbgAOVUG (ORCPT
+        id S1729103AbgAOVeW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 16:34:22 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:14312 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726187AbgAOVeV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 16:20:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579123206;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=/9aI+XysB2K8PkWSb2xgoTza9SmIoeznTkyTmdcAhMI=;
-        b=LsKYN4MzHgT8eyx3aaNnqkqULZwjMOL+GhwuhwCEDENefbieZO+XwzSlkMthEM9irWf5dL
-        UVVOZ/4iEVLMlspxw8ZmsZvG0HJUAQLno+jXEPGOJPqrOxPTihsv5ocne6ovcc6yGVfdzp
-        OYpjTX4zS+j4qKm6RNC6t4GvLg2TuwY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-285-63FEipuPOjSs30P70YfqlA-1; Wed, 15 Jan 2020 16:20:02 -0500
-X-MC-Unique: 63FEipuPOjSs30P70YfqlA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9BABD92FA0;
-        Wed, 15 Jan 2020 21:20:01 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6661160BE0;
-        Wed, 15 Jan 2020 21:20:00 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAH2r5msP9W5Jd+=W0oFnEbqzj5dYEzdiydSoX0m0sdZ5KOF-zQ@mail.gmail.com>
-References: <CAH2r5msP9W5Jd+=W0oFnEbqzj5dYEzdiydSoX0m0sdZ5KOF-zQ@mail.gmail.com> <157432403818.17624.9300948341879954830.stgit@warthog.procyon.org.uk>
-To:     Steve French <smfrench@gmail.com>
-Cc:     dhowells@redhat.com, Steve French <sfrench@samba.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] cifs: Don't use iov_iter::type directly
+        Wed, 15 Jan 2020 16:34:21 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e1f85210000>; Wed, 15 Jan 2020 13:33:21 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 15 Jan 2020 13:34:16 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 15 Jan 2020 13:34:16 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 15 Jan
+ 2020 21:34:16 +0000
+Subject: Re: [PATCH v12 11/22] mm/gup: introduce pin_user_pages*() and
+ FOLL_PIN
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>
+References: <20200107224558.2362728-1-jhubbard@nvidia.com>
+ <20200107224558.2362728-12-jhubbard@nvidia.com>
+ <20200115153020.GF19546@infradead.org>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <1a0ee1db-5528-86a8-0713-3d820fbdf4ad@nvidia.com>
+Date:   Wed, 15 Jan 2020 13:34:16 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <26196.1579123199.1@warthog.procyon.org.uk>
-Date:   Wed, 15 Jan 2020 21:19:59 +0000
-Message-ID: <26197.1579123199@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <20200115153020.GF19546@infradead.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1579124001; bh=87Rlq6x45ruVW7JTVYUJt0mWD3kN4xgsTUgpHaSTwOs=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=dbP5SmA0QfbUlmT548bubiJAkEQguNXb+B22BE0nnic910e/52B3pTFYwo0R9gnOk
+         /mlFxNBraLMyXPTecP1trRDknv0CWyUqRUhn8AvgRKQEt/OrYnrlJ5ltQrtwu2/iZG
+         uXyWe/Tp3/8o2BssD5h12JhA8/Qf+tvLIUVBAfdgHpiHf/vpXBUQ/a29w86sKWsdhS
+         xLP+ysLSXK1OimxyU8GqDxRUN80ueCmWM+W82ScjqhN2l7u6YLSbkEfUVc40jSw+4n
+         1alFBQ4/aOAizIIaeTPZN6p/1uIoYyQqWqSWRALwuOXb5xR9ZMfEIX7FqzbdBDPZRO
+         IYaka2FAJgWiw==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Steve French <smfrench@gmail.com> wrote:
+On 1/15/20 7:30 AM, Christoph Hellwig wrote:
+> On Tue, Jan 07, 2020 at 02:45:47PM -0800, John Hubbard wrote:
+>> Introduce pin_user_pages*() variations of get_user_pages*() calls,
+>> and also pin_longterm_pages*() variations.
+>>
+>> For now, these are placeholder calls, until the various call sites
+>> are converted to use the correct get_user_pages*() or
+>> pin_user_pages*() API.
+> 
+> What do the pure placeholders buy us?  The API itself looks ok,
+> but until it actually is properly implemented it doesn't help at
+> all, and we've had all kinds of bad experiences with these sorts
+> of stub APIs.
+> 
 
-> tentatively merged into cifs-2.6.git for-next (pending more of the
-> usual automated testing we do with the buildbot)
+Hi Christoph,
 
-Thanks.
+Absolutely agreed, and in fact, after spending some time in this area I 
+am getting a much better understanding of just how problematic "this will 
+be used soon" APIs really are. However, this is not quite that case.
 
-David
+The following things make this different from a "pure placeholder" API:
 
+1) These APIs are all exercised in the following patches in this series, 
+unless I've overlooked one, and
+
+2) The pages are actually tracked in the very next patch that I want to
+post. That patch was posted as part of the v11 series [1], but 
+Leon Romanovsky reported a problem with it, and so I'm going to add in
+the ability to handle larger "pin" refcounts for the huge page cases.
+
+Meanwhile, I wanted to get these long-simmering simpler preparatory
+patches submitted, because it's clear that the API is unaffected by the
+huge page refcount fix. (That fix will likely use the second struct page of
+the compound page, to count up higher.)
+
+
+[1] https://lore.kernel.org/r/20191216222537.491123-24-jhubbard@nvidia.com  
+    [PATCH v11 23/25] mm/gup: track FOLL_PIN pages
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
