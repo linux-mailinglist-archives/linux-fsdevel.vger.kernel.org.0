@@ -2,134 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 717AB13CF33
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 22:34:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32EC713CF7A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 22:54:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729103AbgAOVeW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 16:34:22 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:14312 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726187AbgAOVeV (ORCPT
+        id S1730378AbgAOVyO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 16:54:14 -0500
+Received: from mail-qt1-f169.google.com ([209.85.160.169]:42157 "EHLO
+        mail-qt1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730376AbgAOVyN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 16:34:21 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e1f85210000>; Wed, 15 Jan 2020 13:33:21 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 15 Jan 2020 13:34:16 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 15 Jan 2020 13:34:16 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 15 Jan
- 2020 21:34:16 +0000
-Subject: Re: [PATCH v12 11/22] mm/gup: introduce pin_user_pages*() and
- FOLL_PIN
-To:     Christoph Hellwig <hch@infradead.org>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>
-References: <20200107224558.2362728-1-jhubbard@nvidia.com>
- <20200107224558.2362728-12-jhubbard@nvidia.com>
- <20200115153020.GF19546@infradead.org>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <1a0ee1db-5528-86a8-0713-3d820fbdf4ad@nvidia.com>
-Date:   Wed, 15 Jan 2020 13:34:16 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Wed, 15 Jan 2020 16:54:13 -0500
+Received: by mail-qt1-f169.google.com with SMTP id j5so17155334qtq.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jan 2020 13:54:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding;
+        bh=JtTvNccN+0/+lCGUOatY00GbzmTZrZ9tQej/2dZXgxw=;
+        b=KePd9ZfqDfmOkXqFFTc3Q9LwzsdRxP/xYXtHcwOYE2P45KBCjSc7c09L/RvSjEB3lY
+         QMzCYCg4J138ouYNcOygau/65JCD6GLK9yg6ZujG+wHqgyj6xyoPj6PIg6EXpnaufwh7
+         Z510eSm16ZQQlyVQUQ6H4u455OeTZzrZoL2cHWu/2KDD55t3Dg3KPfSsFqOK1sG2ro6C
+         wpw0NoTRojtNoZ1Mm/O6vJrSogBMAqYbLVyoBo6in2wt4xTkU/Q6oi+gH+1liu+6xGtu
+         DNYenwCawyAjhSHWPmBnnZtQIznYZmw6UFDfQNPmBQgDGs4Z4KR8S2bmvh8uklxplGW+
+         9kVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding;
+        bh=JtTvNccN+0/+lCGUOatY00GbzmTZrZ9tQej/2dZXgxw=;
+        b=AZyd8OoVBGwgEI2FYDw3Mnaax/HT+O79AIQ0CzWodJTF0w99JSgRfFNOumB6MxcTqI
+         X1Uf4lDCt6/z7zXY+FAZZsQCRtIXRvewtPDoHHjecAigjyftgJbjL+7xV9iad7OiJU2l
+         j7I3+HDzQ9gOI1yyDrwV+MNxz04Hq6WAKdxOi2F2HGgRehTQLmcOI0k2BTZJYgcxUOQl
+         /BUMFhOTncBxC3thJOJpEaegCUrCUBAokiIwHFZYaFZW09h6ybd3+50rCcKG7iWmUauu
+         pIqbYiSDFyrEZIbUamPTyBxGG93OszpN7G2lMWTJ9RvuR8WP6SeLsn0OGBFJLqNTomy0
+         GxGQ==
+X-Gm-Message-State: APjAAAUiO1IvtV7Uw4VK9aWK7jqZkt4Ry9rK8wqamX1CDiITjj1OSJU5
+        Hoe/Afbt5ID2n9InfqV/UmoEjg==
+X-Google-Smtp-Source: APXvYqxcRE3B5iQiFW7B0tOZ3c36MzfvnKAl5xIFQTt35nmhPCQoqb66aA5/hose3wVQiuv4Glt7kQ==
+X-Received: by 2002:aed:2150:: with SMTP id 74mr707121qtc.323.1579125251168;
+        Wed, 15 Jan 2020 13:54:11 -0800 (PST)
+Received: from localhost ([107.15.81.208])
+        by smtp.gmail.com with ESMTPSA id g21sm9058033qkl.116.2020.01.15.13.54.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2020 13:54:10 -0800 (PST)
+Date:   Wed, 15 Jan 2020 16:54:09 -0500
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     lsf-pc <lsf-pc@lists.linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-nvme@lists.infradead.org, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: REMINDER: LSF/MM/BPF: 2020: Call for Proposals
+Message-ID: <20200115215409.5pd4fnoawqzs7rvw@jbacik-mbp>
 MIME-Version: 1.0
-In-Reply-To: <20200115153020.GF19546@infradead.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1579124001; bh=87Rlq6x45ruVW7JTVYUJt0mWD3kN4xgsTUgpHaSTwOs=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=dbP5SmA0QfbUlmT548bubiJAkEQguNXb+B22BE0nnic910e/52B3pTFYwo0R9gnOk
-         /mlFxNBraLMyXPTecP1trRDknv0CWyUqRUhn8AvgRKQEt/OrYnrlJ5ltQrtwu2/iZG
-         uXyWe/Tp3/8o2BssD5h12JhA8/Qf+tvLIUVBAfdgHpiHf/vpXBUQ/a29w86sKWsdhS
-         xLP+ysLSXK1OimxyU8GqDxRUN80ueCmWM+W82ScjqhN2l7u6YLSbkEfUVc40jSw+4n
-         1alFBQ4/aOAizIIaeTPZN6p/1uIoYyQqWqSWRALwuOXb5xR9ZMfEIX7FqzbdBDPZRO
-         IYaka2FAJgWiw==
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/15/20 7:30 AM, Christoph Hellwig wrote:
-> On Tue, Jan 07, 2020 at 02:45:47PM -0800, John Hubbard wrote:
->> Introduce pin_user_pages*() variations of get_user_pages*() calls,
->> and also pin_longterm_pages*() variations.
->>
->> For now, these are placeholder calls, until the various call sites
->> are converted to use the correct get_user_pages*() or
->> pin_user_pages*() API.
-> 
-> What do the pure placeholders buy us?  The API itself looks ok,
-> but until it actually is properly implemented it doesn't help at
-> all, and we've had all kinds of bad experiences with these sorts
-> of stub APIs.
-> 
+This is a reminder that we are still taking requests for this years Linux
+Storage, Filesystem, Memory Management, and BPF Summit.  Below is the original
+announcement but we would like to hilight a few changes and re-iterate a few
+things.
 
-Hi Christoph,
+1) The venue has been finalized and as such the website is now live
 
-Absolutely agreed, and in fact, after spending some time in this area I 
-am getting a much better understanding of just how problematic "this will 
-be used soon" APIs really are. However, this is not quite that case.
+	https://events.linuxfoundation.org/lsfmm/
 
-The following things make this different from a "pure placeholder" API:
+2) Please make sure to fill out the google form to make sure we don't miss your
+request.
 
-1) These APIs are all exercised in the following patches in this series, 
-unless I've overlooked one, and
+3) PLEASE STILL SUBMIT TOPICS TO THE RELEVANT MAILINGLISTS.  The topics of
+interest part of the form is so we can figure out what topics from the
+mailinglist are the relevant discussions to have.  If you submit a topic please
+feel free to paste a lore link in your form if you've not already filled out the
+form.
 
-2) The pages are actually tracked in the very next patch that I want to
-post. That patch was posted as part of the v11 series [1], but 
-Leon Romanovsky reported a problem with it, and so I'm going to add in
-the ability to handle larger "pin" refcounts for the huge page cases.
+The rest of the details of course are in the original announcment which is
+included below.  Thanks,
 
-Meanwhile, I wanted to get these long-simmering simpler preparatory
-patches submitted, because it's clear that the API is unaffected by the
-huge page refcount fix. (That fix will likely use the second struct page of
-the compound page, to count up higher.)
+Josef
 
+-------------- Original announcement ---------------------
+The annual Linux Storage, Filesystem, Memory Management, and BPF
+(LSF/MM/BPF) Summit for 2020 will be held from April 27 - April 29 at
+The Riviera Palm Springs, A Tribute Portfolio Resort in Palm Springs,
+California. LSF/MM/BPF is an invitation-only technical workshop to map
+out improvements to the Linux storage, filesystem, BPF, and memory
+management subsystems that will make their way into the mainline kernel
+within the coming years.
 
-[1] https://lore.kernel.org/r/20191216222537.491123-24-jhubbard@nvidia.com  
-    [PATCH v11 23/25] mm/gup: track FOLL_PIN pages
+LSF/MM/BPF 2020 will be a three day, stand-alone conference with four
+subsystem-specific tracks, cross-track discussions, as well as BoF and
+hacking sessions.
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+On behalf of the committee I am issuing a call for agenda proposals
+that are suitable for cross-track discussion as well as technical
+subjects for the breakout sessions.
+
+If advance notice is required for visa applications then please point
+that out in your proposal or request to attend, and submit the topic
+as soon as possible.
+
+This year will be a little different for requesting attendance.  Please
+do the following by February 15th, 2020.
+
+1) Fill out the following Google form to request attendance and
+suggest any topics
+
+	https://forms.gle/voWi1j9kDs13Lyqf9
+
+In previous years we have accidentally missed people's attendance
+requests because they either didn't cc lsf-pc@ or we simply missed them
+in the flurry of emails we get.  Our community is large and our
+volunteers are busy, filling this out will help us make sure we don't
+miss anybody.
+
+2) Proposals for agenda topics should still be sent to the following
+lists to allow for discussion among your peers.  This will help us
+figure out which topics are important for the agenda.
+
+        lsf-pc@lists.linux-foundation.org
+
+and CC the mailing lists that are relevant for the topic in question:
+
+        FS:     linux-fsdevel@vger.kernel.org
+        MM:     linux-mm@kvack.org
+        Block:  linux-block@vger.kernel.org
+        ATA:    linux-ide@vger.kernel.org
+        SCSI:   linux-scsi@vger.kernel.org
+        NVMe:   linux-nvme@lists.infradead.org
+        BPF:    bpf@vger.kernel.org
+
+Please tag your proposal with [LSF/MM/BPF TOPIC] to make it easier to
+track. In addition, please make sure to start a new thread for each
+topic rather than following up to an existing one. Agenda topics and
+attendees will be selected by the program committee, but the final
+agenda will be formed by consensus of the attendees on the day.
+
+We will try to cap attendance at around 25-30 per track to facilitate
+discussions although the final numbers will depend on the room sizes
+at the venue.
+
+For discussion leaders, slides and visualizations are encouraged to
+outline the subject matter and focus the discussions. Please refrain
+from lengthy presentations and talks; the sessions are supposed to be
+interactive, inclusive discussions.
+
+There will be no recording or audio bridge. However, we expect that
+written minutes will be published as we did in previous years:
+
+2019: https://lwn.net/Articles/lsfmm2019/
+
+2018: https://lwn.net/Articles/lsfmm2018/
+
+2017: https://lwn.net/Articles/lsfmm2017/
+
+2016: https://lwn.net/Articles/lsfmm2016/
+
+2015: https://lwn.net/Articles/lsfmm2015/
+
+2014: http://lwn.net/Articles/LSFMM2014/
+
+3) If you have feedback on last year's meeting that we can use to
+improve this year's, please also send that to:
+
+        lsf-pc@lists.linux-foundation.org
+
+Thank you on behalf of the program committee:
+
+	Josef Bacik (Filesystems)
+	Amir Goldstein (Filesystems)
+	Martin K. Petersen (Storage)
+	Omar Sandoval (Storage)
+	Michal Hocko (MM)
+	Dan Williams (MM)
+	Alexei Starovoitov (BPF)
+	Daniel Borkmann (BPF)
