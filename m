@@ -2,90 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ADCD13BD56
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 11:26:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBEAD13BEB5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 12:42:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729728AbgAOKZm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 05:25:42 -0500
-Received: from mout.kundenserver.de ([212.227.17.10]:38643 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729631AbgAOKZm (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 05:25:42 -0500
-Received: from mail-qt1-f173.google.com ([209.85.160.173]) by
- mrelayeu.kundenserver.de (mreue107 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1Msqty-1jg3X12u40-00t9dl; Wed, 15 Jan 2020 11:25:39 +0100
-Received: by mail-qt1-f173.google.com with SMTP id i13so15299053qtr.3;
-        Wed, 15 Jan 2020 02:25:39 -0800 (PST)
-X-Gm-Message-State: APjAAAUMoawuhGAUQ9MTz8INzejSe+qde0QOIWMaz/uZdZXOV9pghxpe
-        j5FLZZ01KtJw6XJfkEmObjiT9BzxlypNZ6vvLLM=
-X-Google-Smtp-Source: APXvYqxpuhynJBn4yx21WjIw3nubH1blYL0w6bO48MGvf28mqDOMWLqUGKBHq3Rnw96u8X2M6HN66y7y478g7fpYmxs=
-X-Received: by 2002:ac8:6153:: with SMTP id d19mr2754011qtm.18.1579083938582;
- Wed, 15 Jan 2020 02:25:38 -0800 (PST)
+        id S1730097AbgAOLmK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 06:42:10 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41998 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729900AbgAOLmK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Jan 2020 06:42:10 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 641C1AEEE;
+        Wed, 15 Jan 2020 11:42:08 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 9817D1E0CBC; Wed, 15 Jan 2020 12:34:55 +0100 (CET)
+Date:   Wed, 15 Jan 2020 12:34:55 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH V2 09/12] fs: Prevent mode change if file is mmap'ed
+Message-ID: <20200115113455.GA2595@quack2.suse.cz>
+References: <20200110192942.25021-1-ira.weiny@intel.com>
+ <20200110192942.25021-10-ira.weiny@intel.com>
+ <20200113222212.GO8247@magnolia>
+ <20200114004610.GD29860@iweiny-DESK2.sc.intel.com>
+ <20200114013004.GU8247@magnolia>
+ <20200114175353.GA7871@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-References: <CGME20200115082820epcas1p34ebebebaf610fd61c4e9882fca8ddbd5@epcas1p3.samsung.com>
- <20200115082447.19520-1-namjae.jeon@samsung.com> <20200115082447.19520-4-namjae.jeon@samsung.com>
-In-Reply-To: <20200115082447.19520-4-namjae.jeon@samsung.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 15 Jan 2020 11:25:22 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a3YOsFtuDDw9=d7_EY60Xvmx4Mc=NJmsy3f3Y9L87Ub=g@mail.gmail.com>
-Message-ID: <CAK8P3a3YOsFtuDDw9=d7_EY60Xvmx4Mc=NJmsy3f3Y9L87Ub=g@mail.gmail.com>
-Subject: Re: [PATCH v10 03/14] exfat: add inode operations
-To:     Namjae Jeon <namjae.jeon@samsung.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Christoph Hellwig <hch@lst.de>, sj1557.seo@samsung.com,
-        linkinjeon@gmail.com,
-        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:qQ16a62MJXwG16nVvWgdenECLmibZogu1QKYOCn6yF7WN+F64A7
- oCfznoFSDHUQvAI2cT+b49ziPDKC7yH4BJp1fLtx4FW38znBzVNXFaTjzc3fIGp4/3T09UA
- l5UwAcMCip1wMuWMh+QvJUvw7xdJtjB2H5K+7P/QgGeWA+R+BiPXKty5zTEKrV/cqHvC8H+
- UtdHaTpbbDTlIY/U/KY2g==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:1WCkLNSHsGA=:fD2fqRZjniq/nEdkNJ6ajr
- b6/SpojxTHCCkIcJcnotza/iA3JSeUndTVdUF5eL6uGAW7NhLGr3U7RPhglGfP6nMhkVvsJmS
- 785WSlpW1EV8rcU0sxp1soJsTo0nW39KHsU3H1CiYQjc/7JNAB9MQS1duPHX/C6CU6nRTLiHU
- be2o9p/Qky1zdjqLPQrqcATBBDE+IYd1S9V/mKDMDa2x+wf7Ez4PwazBqyuD0JMdn2+WEEF/1
- aWJ2KMl7xEtVgg6tscayjMLQ9/HTdDEUDRicnEvvyyoizNN24yGvQGqO8190SB4npt0IKL/GL
- GBXiIDonJJ77eFx1OA3wtVwNALQsfGmFLbMKvJaqtduL0YQE6Xg6yOgIq4FsUtdnU8Lp8j/uG
- K2uzjxnGtNYmwoQdvoIbklwefGSNbBPA1RTFSyIy83VOsnAojOVpjbkfvy5vOhBOqfb8p97cu
- u0nxPXlwuoICXkBEdyleFDrpKZN6WSJHMcf8ZsyzwOCANPwIrnaTdAcnli6kuH/9dbva7smTC
- aZKNn0WRTRmu7z7d5sZ3iIRz7p2vBpIHDiLtbBIroLLT/hDoU/H56cSPkMrGZxI/mUkcmR8K7
- 6Ahg+WjPL0crdsi9USLeIjn0jjrzRudpcBiRtNJPEpnwbefyHZyHxPZxUcQSHUIpx0h8ZS6eW
- sWsBAEqQ5vWQkKjYdY1a0kx1oe0Wgfgyd+Xmpy55z/GXzTBuk6yydxDm8lHF+NI2hx9SRnLgB
- zG/onPjPm1tXug3x26LALOl0XlQub3MaIe80RUuAzgiUxQ647sqJb628yCroj8qrwe+bYqiyn
- +f0BIAwT4kUaTXl4J1NRSWkjiKjhB9ZvWVJ2sXsV5VElVFz0PD42AL2I/F3MKfpj3672Qgc+X
- Zug/MC75cp6m73vTr2Qw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200114175353.GA7871@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 9:28 AM Namjae Jeon <namjae.jeon@samsung.com> wrote:
+On Tue 14-01-20 09:53:54, Ira Weiny wrote:
+> On Mon, Jan 13, 2020 at 05:30:04PM -0800, Darrick J. Wong wrote:
+> > > > > +		error = -EBUSY;
+> > > > > +		goto out_unlock;
+> > > > > +	}
+> > > > > +
+> > > > >  	error = filemap_write_and_wait(inode->i_mapping);
+> > > > >  	if (error)
+> > > > >  		goto out_unlock;
+> > > > > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > > > > index 631f11d6246e..6e7dc626b657 100644
+> > > > > --- a/include/linux/fs.h
+> > > > > +++ b/include/linux/fs.h
+> > > > > @@ -740,6 +740,7 @@ struct inode {
+> > > > >  #endif
+> > > > >  
+> > > > >  	void			*i_private; /* fs or device private pointer */
+> > > > > +	atomic64_t               i_mapped;
+> > > > 
+> > > > I would have expected to find this in struct address_space since the
+> > > > mapping count is a function of the address space, right?
+> > > 
+> > > I suppose but the only external call (above) would be passing an inode.  So to
+> > > me it seemed better here.
+> > 
+> > But the number of memory mappings reflects the state of the address
+> > space, not the inode.  Or maybe put another way, if I were an mm
+> > developer I would not expect to look in struct inode for mm state.
+> 
+> This is a good point...
+> 
+> > 
+> > static inline bool inode_has_mappings(struct inode *inode)
+> > {
+> > 	return atomic64_read(&inode->i_mapping->mapcount) > 0;
+> > }
+> > 
+> > OTOH if there exist other mm developers who /do/ find that storing the
+> > mmap count in struct inode is more logical, please let me know. :)
+> 
+> ...  My thinking was that the number of mappings does not matters to the mm
+> system...  However, I'm starting to think you are correct...  ;-)
+> 
+> I've made a note of it and we will see what others think.
 
-> +       /* set FILE_INFO structure using the acquired struct exfat_dentry */
-> +       exfat_set_entry_time(sbi, &inode->i_ctime,
-> +                       &ep->dentry.file.create_time,
-> +                       &ep->dentry.file.create_date,
-> +                       &ep->dentry.file.create_tz);
-> +       exfat_set_entry_time(sbi, &inode->i_mtime,
-> +                       &ep->dentry.file.modify_time,
-> +                       &ep->dentry.file.modify_date,
-> +                       &ep->dentry.file.modify_tz);
-> +       exfat_set_entry_time(sbi, &inode->i_atime,
-> +                       &ep->dentry.file.access_time,
-> +                       &ep->dentry.file.access_date,
-> +                       &ep->dentry.file.access_tz);
+Well, more importantly mapping != inode. There can be multiple inodes
+pointing to the same mapping (struct address_space) as is the case for
+example for block devices. So this counter definitely belongs into struct
+address_space.
 
-I wonder if i_ctime should be handled differently. With statx() we finally have
-a concept of "file creation time" in "stx_btime". so it would make sense to
-store dentry.file.create_time in there rather than in i_ctime.
-
-It seems that traditionally most file systems that cannot store ctime separately
-just set i_ctime and i_mtime both to what is is modify_time here, though
-fat and hpfs use i_ctime to refer to creation time.
-
-      Arnd
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
