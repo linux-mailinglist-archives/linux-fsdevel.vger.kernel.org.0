@@ -2,112 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16CCD13C397
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 14:52:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AA3813C46E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 14:59:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729027AbgAONuY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 08:50:24 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:44537 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726085AbgAONuV (ORCPT
+        id S1729882AbgAON7L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 08:59:11 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:57118 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729887AbgAONz3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 08:50:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579096220;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=w+swK9osAIFZi3cI9plfEPgc0HcD0yrb1cBEuZ3PWuI=;
-        b=CE5Gv8OjqLpwR9x9G/v76Xqsw0JqrzhccwgY88x6gdAN0WaRJQ1VdgeGQcXRwPWACULl2v
-        oNtIL+FQwUKOArNC8LmAiGj4u4p8kQxT43j+P6eBP7asPoRTuO4vC+s1Ko0YZIUIE2nBNd
-        pVVMWJeBj15pTcbdfH0lU2r3IJJoQjk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-15-GOHqpJ9cNSinEYjPiomTzw-1; Wed, 15 Jan 2020 08:50:16 -0500
-X-MC-Unique: GOHqpJ9cNSinEYjPiomTzw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 837421005502;
-        Wed, 15 Jan 2020 13:50:14 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 142CC19C5B;
-        Wed, 15 Jan 2020 13:50:11 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200114224917.GA165687@mit.edu>
-References: <20200114224917.GA165687@mit.edu> <4467.1579020509@warthog.procyon.org.uk>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, hch@lst.de, adilger.kernel@dilger.ca,
-        darrick.wong@oracle.com, clm@fb.com, josef@toxicpanda.com,
-        dsterba@suse.com, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Problems with determining data presence by examining extents?
+        Wed, 15 Jan 2020 08:55:29 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1irj8p-008oCW-0s; Wed, 15 Jan 2020 13:55:27 +0000
+Date:   Wed, 15 Jan 2020 13:55:27 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Laurent Vivier <laurent@vivier.eu>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Subject: Re: [RFC v2] binfmt_misc: pass binfmt_misc flags to the interpreter
+Message-ID: <20200115135527.GG8904@ZenIV.linux.org.uk>
+References: <20191122150830.15855-1-laurent@vivier.eu>
+ <b39e59a6-82f2-2122-5b22-4d8a77eda275@vivier.eu>
+ <2a464b33-0b1d-ff35-5aab-77019a072593@vivier.eu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <22055.1579096211.1@warthog.procyon.org.uk>
-Date:   Wed, 15 Jan 2020 13:50:11 +0000
-Message-ID: <22056.1579096211@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2a464b33-0b1d-ff35-5aab-77019a072593@vivier.eu>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Theodore Y. Ts'o <tytso@mit.edu> wrote:
+On Wed, Jan 15, 2020 at 01:19:16PM +0100, Laurent Vivier wrote:
+> Le 07/01/2020 à 15:50, Laurent Vivier a écrit :
+> > Hi,
+> > 
+> > this change is simple, easy to read and understand but it is really
+> > needed by user space application interpreter to know the status of the
+> > system configuration.
+> > 
+> > Could we have a comment saying if there is a problem or if it is good to
+> > be merged?
+> 
+> Anyone?
 
-> but I'm not sure we would want to make any guarantees with respect to (b).
+	FWIW, one thing that looks worrying here is that these bits become
+userland ABI after this patch - specific values passed in that thing
+can't be changed.  And no a single mention of that in fs/binfmt_misc.c,
+leaving a nasty trap.  As far as one can tell, their values are fair game
+for reordering, etc. - not even visible outside of fs/binfmt_misc.c;
+purely internal constants.  And the effect of such modifications after
+your patch will not be "everything breaks, patch gets caught by somebody's
+tests" - it will be a quiet breakage for some users.
 
-Um.  That would potentially make disconnected operation problematic.  Now,
-it's unlikely that I'll want to store a 256KiB block of zeros, but not
-impossible.
+> >>  #define MISC_FMT_OPEN_BINARY (1 << 30)
+> >>  #define MISC_FMT_CREDENTIALS (1 << 29)
+> >>  #define MISC_FMT_OPEN_FILE (1 << 28)
+> >> +#define MISC_FMT_FLAGS_MASK (MISC_FMT_PRESERVE_ARGV0 | MISC_FMT_OPEN_BINARY | \
+> >> +			     MISC_FMT_CREDENTIALS | MISC_FMT_OPEN_FILE)
 
-> I suspect I understand why you want this; I've fielded some requests
-> for people wanting to do something very like this at $WORK, for what I
-> assume to be for the same reason you're seeking to do this; to create
-> do incremental caching of files and letting the file system track what
-> has and hasn't been cached yet.
-
-Exactly so.  If I can't tap in to the filesystem's own map of what data is
-present in a file, then I have to do it myself in parallel.  Keeping my own
-list or map has a number of issues:
-
- (1) It's redundant.  I have to maintain a second copy of what the filesystem
-     already maintains.  This uses extra space.
-
- (2) My map may get out of step with the filesystem after a crash.  The
-     filesystem has tools to deal with this in its own structures.
-
- (3) If the file is very large and sparse, then keeping a bit-per-block map in
-     a single xattr may not suffice or may become unmanageable.  There's a
-     limit of 64k, which for bit-per-256k limits the maximum mappable size to
-     1TiB (I could use multiple xattrs, but some filesystems may have total
-     xattr limits) and whatever the size, I need a single buffer big enough to
-     hold it.
-
-     I could use a second file as a metadata cache - but that has worse
-     coherency properties.  (As I understand it, setxattr is synchronous and
-     journalled.)
-
-> If we were going to add such a facility, what we could perhaps do is
-> to define a new flag indicating that a particular file should have no
-> extent mapping optimization applied, such that FIEMAP would return a
-> mapping if and only if userspace had written to a particular block, or
-> had requested that a block be preallocated using fallocate().  The
-> flag could only be set on a zero-length file, and this might disable
-> certain advanced file system features, such as reflink, at the file
-> system's discretion; and there might be unspecified performance
-> impacts if this flag is set on a file.
-
-That would be fine for cachefiles.
-
-Also, I don't need to know *where* the data is, only that the first byte of my
-block exists - if a DIO read returns short when it reaches a hole.
-
-David
-
+IOW, you are making those parts of userland ABI cast in stone forever.
+Whether this bit assignment does make sense or not, such things really
+should not be hidden.
