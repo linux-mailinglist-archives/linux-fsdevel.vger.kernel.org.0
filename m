@@ -2,119 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DE9D13BE9C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 12:37:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C55B013BEB2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 12:41:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730051AbgAOLhV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 06:37:21 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39188 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729900AbgAOLhT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 06:37:19 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 10DC6AEEE;
-        Wed, 15 Jan 2020 11:37:16 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 5B5171E0D08; Wed, 15 Jan 2020 12:37:15 +0100 (CET)
-Date:   Wed, 15 Jan 2020 12:37:15 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     ira.weiny@intel.com
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH V2 01/12] fs/stat: Define DAX statx attribute
-Message-ID: <20200115113715.GB2595@quack2.suse.cz>
-References: <20200110192942.25021-1-ira.weiny@intel.com>
- <20200110192942.25021-2-ira.weiny@intel.com>
+        id S1730145AbgAOLla (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 06:41:30 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:42821 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730140AbgAOLla (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Jan 2020 06:41:30 -0500
+Received: by mail-il1-f194.google.com with SMTP id t2so14552643ilq.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jan 2020 03:41:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jerE6nCByPyp8nMkftpi9G1L1UkFSdwJwwfGyKZUqsE=;
+        b=JIHvEujlN5p1XuTt0rPkXvdYsnyG/7UFqzoe+IiLnkhDGRitv8VCHPHm9/diZ7/dMC
+         ZbKRhoCiAY5eXXXTPh4h4lCGGb8YuPwF/rlzYM107YYsmQDikVsHJMpkIUl0MKIWKn6r
+         7zuFVMMM87H3B0Knrag8uRwPF08GCtzjkKlow=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jerE6nCByPyp8nMkftpi9G1L1UkFSdwJwwfGyKZUqsE=;
+        b=GuH8HIR9Mb41TbeRoHEFCNkvw6soaRwLR+BCNe/fk1LMhz3D/ViQSYc7b6kPqnMCV3
+         Xy0yf9veq5xVZNaXKSO2fgHom6pc50mY4l7lNxo/+pY0I5ejsftyBIqv/W/iY0JLOWW6
+         heXrif/m1Tx3P1fnl5sWBOGKSRnb/ORGlcj2XoUFRIlO+aLSa0BREvybSRQZK9/vJu0/
+         VilhNg6L9SZ3NH9akNIl7b9BPj+J3t4V5iQZlJOqNUt+eY6qWW5e2AVINV7AtMlu8KMM
+         n2AOdx0VIQLHu8ne49OlmVqaWUzQMZVG7W5Y/cr/w93mRJlaR/tqViRxuWAe0aV4a7JP
+         DMQA==
+X-Gm-Message-State: APjAAAUlESgJyQ6PS8Cz78YA6gLkAg5MllLl6T4q5D88vQQDtERt7vC9
+        WHv7JZtfEVQTOKSz38GrYXOOBu0aJfQzWfTeLZIu4g==
+X-Google-Smtp-Source: APXvYqylsgznQ5bI1+nHvYQwmEivmZhBzlDLdL1TTLmcspNdd5vXcuw3jyD3K/TlUCMRyPEvtyXSqwLalJCLofp9WKE=
+X-Received: by 2002:a92:89c2:: with SMTP id w63mr2976176ilk.252.1579088489003;
+ Wed, 15 Jan 2020 03:41:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200110192942.25021-2-ira.weiny@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CA+wuGHCr2zJKFkHyRECOLAXsijLAcQgHVoACcNbvLbXnqarOtg@mail.gmail.com>
+In-Reply-To: <CA+wuGHCr2zJKFkHyRECOLAXsijLAcQgHVoACcNbvLbXnqarOtg@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 15 Jan 2020 12:41:17 +0100
+Message-ID: <CAJfpegsECDNeL0FmaB=BsYdYrmZSLpG5etvwhW5uQWGJJjODeg@mail.gmail.com>
+Subject: Re: Weird fuse_operations.read calls with Linux 5.4
+To:     Ondrej Holy <oholy@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 10-01-20 11:29:31, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
-> 
-> In order for users to determine if a file is currently operating in DAX
-> mode (effective DAX).  Define a statx attribute value and set that
-> attribute if the effective DAX flag is set.
-> 
-> To go along with this we propose the following addition to the statx man
-> page:
-> 
-> STATX_ATTR_DAX
-> 
-> 	DAX (cpu direct access) is a file mode that attempts to minimize
-> 	software cache effects for both I/O and memory mappings of this
-> 	file.  It requires a capable device, a compatible filesystem
-> 	block size, and filesystem opt-in. It generally assumes all
-> 	accesses are via cpu load / store instructions which can
-> 	minimize overhead for small accesses, but adversely affect cpu
-> 	utilization for large transfers. File I/O is done directly
-> 	to/from user-space buffers. While the DAX property tends to
-> 	result in data being transferred synchronously it does not give
-> 	the guarantees of synchronous I/O that data and necessary
-> 	metadata are transferred. Memory mapped I/O may be performed
-> 	with direct mappings that bypass system memory buffering. Again
-> 	while memory-mapped I/O tends to result in data being
-> 	transferred synchronously it does not guarantee synchronous
-> 	metadata updates. A dax file may optionally support being mapped
-> 	with the MAP_SYNC flag which does allow cpu store operations to
-> 	be considered synchronous modulo cpu cache effects.
-> 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+On Wed, Jan 15, 2020 at 9:28 AM Ondrej Holy <oholy@redhat.com> wrote:
+>
+> Hi,
+>
+> I have been directed here from https://github.com/libfuse/libfuse/issues/488.
+>
+> My issue is that with Linux Kernel 5.4, one read kernel call (e.g.
+> made by cat tool) triggers two fuse_operations.read executions and in
+> both cases with 0 offset even though that first read successfully
+> returned some bytes.
+>
+> For gvfs, it leads to redundant I/O operations, or to "Operation not
+> supported" errors if seeking is not supported. This doesn't happen
+> with Linux 5.3. Any idea what is wrong here?
+>
+> $ strace cat /run/user/1000/gvfs/ftp\:host\=server\,user\=user/foo
+> ...
+> openat(AT_FDCWD, "/run/user/1000/gvfs/ftp:host=server,user=user/foo",
 
-This looks good to me. You can add:
+Hi, I'm trying to reproduce this on fedora30, but even failing to get
+that "cat" to work.  I've  replaced "server" with a public ftp server,
+but it's not even getting to the ftp backend.  Is there a trick to
+enable the ftp backend?  Haven't found the answer by googling...
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Thanks,
+Miklos
 
-								Honza
 
-> ---
->  fs/stat.c                 | 3 +++
->  include/uapi/linux/stat.h | 1 +
->  2 files changed, 4 insertions(+)
-> 
-> diff --git a/fs/stat.c b/fs/stat.c
-> index 030008796479..894699c74dde 100644
-> --- a/fs/stat.c
-> +++ b/fs/stat.c
-> @@ -79,6 +79,9 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
->  	if (IS_AUTOMOUNT(inode))
->  		stat->attributes |= STATX_ATTR_AUTOMOUNT;
->  
-> +	if (IS_DAX(inode))
-> +		stat->attributes |= STATX_ATTR_DAX;
-> +
->  	if (inode->i_op->getattr)
->  		return inode->i_op->getattr(path, stat, request_mask,
->  					    query_flags);
-> diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
-> index ad80a5c885d5..e5f9d5517f6b 100644
-> --- a/include/uapi/linux/stat.h
-> +++ b/include/uapi/linux/stat.h
-> @@ -169,6 +169,7 @@ struct statx {
->  #define STATX_ATTR_ENCRYPTED		0x00000800 /* [I] File requires key to decrypt in fs */
->  #define STATX_ATTR_AUTOMOUNT		0x00001000 /* Dir: Automount trigger */
->  #define STATX_ATTR_VERITY		0x00100000 /* [I] Verity protected file */
-> +#define STATX_ATTR_DAX			0x00002000 /* [I] File is DAX */
->  
->  
->  #endif /* _UAPI_LINUX_STAT_H */
-> -- 
-> 2.21.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> O_RDONLY) = 3
+> fstat(3, {st_mode=S_IFREG|0644, st_size=20, ...}) = 0
+> fadvise64(3, 0, 0, POSIX_FADV_SEQUENTIAL) = 0
+> mmap(NULL, 139264, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS,
+> -1, 0) = 0x7fbc42b92000
+> read(3, 0x7fbc42b93000, 131072)         = -1 EOPNOTSUPP (Operation not
+> supported)
+> ...
+>
+> $ /usr/libexec/gvfsd-fuse /run/user/1000/gvfs -d
+> ...
+> open flags: 0x8000 /ftp:host=server,user=user/foo
+>    open[139679517117488] flags: 0x8000 /ftp:host=server,user=user/foo
+>    unique: 8, success, outsize: 32
+> unique: 10, opcode: READ (15), nodeid: 3, insize: 80, pid: 5053
+> read[139679517117488] 4096 bytes from 0 flags: 0x8000
+>    read[139679517117488] 20 bytes from 0
+>    unique: 10, success, outsize: 36
+> unique: 12, opcode: READ (15), nodeid: 3, insize: 80, pid: 5053
+> read[139679517117488] 4096 bytes from 0 flags: 0x8000
+>    unique: 12, error: -95 (Operation not supported), outsize: 16
+> ...
+>
+> See for other information: https://gitlab.gnome.org/GNOME/gvfs/issues/441
+>
+> Regards
+>
+> Ondrej
+> --
+> Ondrej Holy
+> Software Engineer, Core Desktop Development
+> Red Hat Czech s.r.o
+>
