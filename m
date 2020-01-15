@@ -2,96 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21AF113CDF7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 21:18:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FD5713CE54
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 21:53:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728925AbgAOURw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 15:17:52 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:33698 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbgAOURv (ORCPT
+        id S1729162AbgAOUxk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 15:53:40 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:38221 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726220AbgAOUxj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 15:17:51 -0500
-Received: by mail-ot1-f66.google.com with SMTP id b18so17294818otp.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jan 2020 12:17:51 -0800 (PST)
+        Wed, 15 Jan 2020 15:53:39 -0500
+Received: by mail-io1-f67.google.com with SMTP id i7so10902103ioo.5;
+        Wed, 15 Jan 2020 12:53:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=dPd0oj72IQTr7Ho1Km4ZWXqORK+AR/nQgrcplLwpJyE=;
-        b=fpojuKnu+Wi5p9+eOGcUnK1tXz/ym+tDyQJR7fiN07JPdlNydPbQ1RuKfL9nYOO/vp
-         ktdoj1LGNeeH0tLetzt6le5Wb0WjNM3TI4p2CjOGGX+EuSOWw0DzUACfhhv8vVjFUZDe
-         W6M8jugyiYMYQ6KmvTTdLB9sA/e2SPnlatCfzz0H0tbTOuYqDFrMchmtCY6PyFUez9hR
-         OJoFqGd7eJNY1E5+nY46wPN/+WfX65rZrOFaITHNzfaWg74cclGgIH9l50y+jzJWSEL7
-         OLoPXxM4Hj1zKIsYyFEQOBs4ip5mmicI0GLmGXVjvoFJoRTGMOaPmOsh7mhiRTDNLsCU
-         UcPg==
+        bh=YWIHRbYWg17G075OY4eWYQhDn0gRsG9PxICiq1XbMr8=;
+        b=Lvop1QhXrCEbQx2immTT1T6xd7Fg2zKxq5onuyBGSnZ7dU1zv4gwaZkY4ZACskshd+
+         Ac85gV7njN9+DH22TJiIdpN309gssNeKtNMDAUSRLSPVq+3MYFJI8JHIBKV6FnMClI2k
+         Nmqz6hcUmIB7ZzsbE6DioYhKbBKB3U6WF7l1sRHQfOumOgwl7u3+kAgGf1o6erJq3XTX
+         nxc2o7XnFxutgZiCNO/piqNRYsSVH+meRegX9mXPljhW6kG1i01JjgazqEf9wd2hjm+7
+         RMMZJZBJHeceUkjK99sf419KZTNbeLH7NSMDqTz8y2HtnmC64kDQmaTI2FuDzinzlaFN
+         eeAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=dPd0oj72IQTr7Ho1Km4ZWXqORK+AR/nQgrcplLwpJyE=;
-        b=q66mqsbIMa/sT3U3vhgfGyiDxeUWUXqaTeH0VZzoc9tM0NGii0F4erExof7tcpjU6M
-         l8iT/OIP9ezK0Cwi9WxSbpFzoQTs7aTzr/4Rsl0pUfjwBwoTpAdTs07wohhcYIZ3jwRA
-         VK/RmxIP2D4YVLzz7r0oTP+YaoekOrb9+/MglbsssHe9CVcfte/Mj0e6B5NItQg8RjMA
-         2IcgRe5StTvaTHXOgSZdIv+Ymk1iePFGJLQptlvhquU6IeNhUimSkFNg2BWfJthjnSvG
-         etDigg3HzyVr9fzrT9+tw1TAiX6kCXBnjdRHjhiNH5weyEeWBD2RUa9nrCkdzLORrh19
-         fDlg==
-X-Gm-Message-State: APjAAAVD+T3JTTJMc2eoTFXZc5qqmZABtjdF4qSoHbP9GLcVGrottzRy
-        N1Xgpm3C95bwUHS/fSaw+9muNITzoFs1VrJ1P3Sj7w==
-X-Google-Smtp-Source: APXvYqxa2PtNKtiTJcIUathhM+5vp8w9k5zscIWT4wSuOwLkVVcCWydFq1TB1qX0u3WdgAKuekec5Tb3+clHuOZsZ0c=
-X-Received: by 2002:a9d:68d3:: with SMTP id i19mr3785693oto.71.1579119471207;
- Wed, 15 Jan 2020 12:17:51 -0800 (PST)
+        bh=YWIHRbYWg17G075OY4eWYQhDn0gRsG9PxICiq1XbMr8=;
+        b=R7+kCa1aMis3BoVdcazgh6OAuwxDmSuaWOE60A1krvv+sls6wkyI2/tW9kj2AHX/+o
+         0hACSn0g/hNd9wUX/DBQMvZKYm2yWvbykizfe1wmbg95QDcLMpI7kfypwtWWdCDoKU2a
+         P8+WzyDUgCsO4a5sM1VzctFuCcRu0NN2ScJz8W3Ak7aH2m4G/H4sr7+d7pUvhZ0FVf6q
+         w0pouv8i5JljJk3Wrw9hLNTyYkDeTXhPBBozG9BUz1u7q+Fpn2fD1iuArUW3Bg6qVB/D
+         UdDoc/R7NX6UKbmz97nZrZU6F4lRrpq7y+lH0rIxNw0W8XfuNrn+LB5pYcjvKZLa7Rhv
+         CEPg==
+X-Gm-Message-State: APjAAAVsnjMZzYiK5WTaQJvncZ4c0WmolHBaaeCPs5qwNwWKcekqARAI
+        LFmKSfwMnCa3G0M14HZ4Qpjx9JYeLvO0xvpX7jGKUX1u
+X-Google-Smtp-Source: APXvYqzrrT1mqNol7/s30EC4wo/MmtHb5zzwePJp5mVWT+JRRMSFP+DT8sWmfEDB31Wo3Rinfyf7H9kaAeNEKqlDskQ=
+X-Received: by 2002:a5d:84d1:: with SMTP id z17mr1872158ior.169.1579121618886;
+ Wed, 15 Jan 2020 12:53:38 -0800 (PST)
 MIME-Version: 1.0
-References: <20200107180101.GC15920@redhat.com> <CAPcyv4gmdoqpwwwy4dS3D2eZFjmJ_Zi39k=1a4wn-_ksm-UV4A@mail.gmail.com>
- <20200107183307.GD15920@redhat.com> <CAPcyv4ggoS4dWjq-1KbcuaDtroHKEi5Vu19ggJ-qgycs6w1eCA@mail.gmail.com>
- <20200109112447.GG27035@quack2.suse.cz> <CAPcyv4j5Mra8qeLO3=+BYZMeXNAxFXv7Ex7tL9gra1TbhOgiqg@mail.gmail.com>
- <20200114203138.GA3145@redhat.com> <CAPcyv4iXKFt207Pen+E1CnqCFtC1G85fxw5EXFVx+jtykGWMXA@mail.gmail.com>
- <20200114212805.GB3145@redhat.com> <CAPcyv4igrs40uWuCB163PPBLqyGVaVbaNfE=kCfHRPRuvZdxQA@mail.gmail.com>
- <20200115195617.GA4133@redhat.com>
-In-Reply-To: <20200115195617.GA4133@redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 15 Jan 2020 12:17:40 -0800
-Message-ID: <CAPcyv4iEoN9SnBveG7-Mhvd+wQApi1XKVnuYpyYxDybrFv_YYw@mail.gmail.com>
-Subject: Re: [PATCH 01/19] dax: remove block device dependencies
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jeff Moyer <jmoyer@redhat.com>
+References: <157432403818.17624.9300948341879954830.stgit@warthog.procyon.org.uk>
+In-Reply-To: <157432403818.17624.9300948341879954830.stgit@warthog.procyon.org.uk>
+From:   Steve French <smfrench@gmail.com>
+Date:   Wed, 15 Jan 2020 14:53:28 -0600
+Message-ID: <CAH2r5msP9W5Jd+=W0oFnEbqzj5dYEzdiydSoX0m0sdZ5KOF-zQ@mail.gmail.com>
+Subject: Re: [PATCH] cifs: Don't use iov_iter::type directly
+To:     David Howells <dhowells@redhat.com>
+Cc:     Steve French <sfrench@samba.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 11:56 AM Vivek Goyal <vgoyal@redhat.com> wrote:
-[..]
-> > Even the Red Hat
-> > installation guide example shows mounting on pmem0 directly. [1]
->
-> Below that example it also says.
->
-> "When creating partitions on a pmem device to be used for direct access,
-> partitions must be aligned on page boundaries. On the Intel 64 and AMD64
-> architecture, at least 4KiB alignment for the start and end of the
-> partition, but 2MiB is the preferred alignment. By default, the parted
-> tool aligns partitions on 1MiB boundaries. For the first partition,
-> specify 2MiB as the start of the partition. If the size of the partition
-> is a multiple of 2MiB, all other partitions are also aligned."
->
-> So documentation is clearly saying dax will work with partitions as well.
-> And some user might decide to just do that.
+tentatively merged into cifs-2.6.git for-next (pending more of the
+usual automated testing we do with the buildbot)
 
-Yes, of course but my point is that it was ambiguous.
+On Thu, Nov 21, 2019 at 2:14 AM David Howells <dhowells@redhat.com> wrote:
+>
+> Don't use iov_iter::type directly, but rather use the new accessor
+> functions that have been added.  This allows the .type field to be split
+> and rearranged without the need to update the filesystems.
+>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> ---
+>
+>  fs/cifs/file.c |    8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+> index fa7b0fa72bb3..526f2b95332d 100644
+> --- a/fs/cifs/file.c
+> +++ b/fs/cifs/file.c
+> @@ -2833,7 +2833,7 @@ cifs_write_from_iter(loff_t offset, size_t len, struct iov_iter *from,
+>                                         "direct_writev couldn't get user pages "
+>                                         "(rc=%zd) iter type %d iov_offset %zd "
+>                                         "count %zd\n",
+> -                                       result, from->type,
+> +                                       result, iov_iter_type(from),
+>                                         from->iov_offset, from->count);
+>                                 dump_stack();
+>
+> @@ -3044,7 +3044,7 @@ static ssize_t __cifs_writev(
+>          * In this case, fall back to non-direct write function.
+>          * this could be improved by getting pages directly in ITER_KVEC
+>          */
+> -       if (direct && from->type & ITER_KVEC) {
+> +       if (direct && iov_iter_is_kvec(from)) {
+>                 cifs_dbg(FYI, "use non-direct cifs_writev for kvec I/O\n");
+>                 direct = false;
+>         }
+> @@ -3556,7 +3556,7 @@ cifs_send_async_read(loff_t offset, size_t len, struct cifsFileInfo *open_file,
+>                                         "couldn't get user pages (rc=%zd)"
+>                                         " iter type %d"
+>                                         " iov_offset %zd count %zd\n",
+> -                                       result, direct_iov.type,
+> +                                       result, iov_iter_type(&direct_iov),
+>                                         direct_iov.iov_offset,
+>                                         direct_iov.count);
+>                                 dump_stack();
+> @@ -3767,7 +3767,7 @@ static ssize_t __cifs_readv(
+>          * fall back to data copy read path
+>          * this could be improved by getting pages directly in ITER_KVEC
+>          */
+> -       if (direct && to->type & ITER_KVEC) {
+> +       if (direct && iov_iter_is_kvec(to)) {
+>                 cifs_dbg(FYI, "use non-direct cifs_user_readv for kvec I/O\n");
+>                 direct = false;
+>         }
+>
 
-I'm going to take a look at how hard it would be to develop a kpartx
-fallback in udev. If that can live across the driver transition then
-maybe this can be a non-event for end users that already have that
-udev update deployed.
+
+-- 
+Thanks,
+
+Steve
