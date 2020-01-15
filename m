@@ -2,51 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BF5913CCCF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 20:08:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29A7513CCD3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 20:08:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729078AbgAOTHs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 14:07:48 -0500
-Received: from verein.lst.de ([213.95.11.211]:52404 "EHLO verein.lst.de"
+        id S1729146AbgAOTIs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 14:08:48 -0500
+Received: from mga02.intel.com ([134.134.136.20]:52145 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728986AbgAOTHs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 14:07:48 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 9783D68B20; Wed, 15 Jan 2020 20:07:44 +0100 (CET)
-Date:   Wed, 15 Jan 2020 20:07:44 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: RFC: hold i_rwsem until aio completes
-Message-ID: <20200115190744.GA2628@lst.de>
-References: <20200114161225.309792-1-hch@lst.de> <20200114192700.GC22037@ziepe.ca> <20200115065614.GC21219@lst.de> <20200115132428.GA25201@ziepe.ca> <20200115143347.GL2827@hirez.programming.kicks-ass.net> <20200115144948.GB25201@ziepe.ca> <849239ff-d2d1-4048-da58-b4347e0aa2bd@redhat.com>
+        id S1728949AbgAOTIs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Jan 2020 14:08:48 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jan 2020 11:08:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,323,1574150400"; 
+   d="scan'208";a="256889655"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga002.fm.intel.com with ESMTP; 15 Jan 2020 11:08:46 -0800
+Date:   Wed, 15 Jan 2020 11:08:46 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH V2 07/12] fs: Add locking for a dynamic inode 'mode'
+Message-ID: <20200115190846.GE23311@iweiny-DESK2.sc.intel.com>
+References: <20200110192942.25021-1-ira.weiny@intel.com>
+ <20200110192942.25021-8-ira.weiny@intel.com>
+ <20200113221218.GM8247@magnolia>
+ <20200114002005.GA29860@iweiny-DESK2.sc.intel.com>
+ <20200114010322.GS8247@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <849239ff-d2d1-4048-da58-b4347e0aa2bd@redhat.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20200114010322.GS8247@magnolia>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 02:03:22PM -0500, Waiman Long wrote:
-> >> (1) no unlocking by another process than the one that acquired it
-> >> (2) no return to userspace with locks held
-> > As an example flow: obtain the read side lock, schedual a work queue,
-> > return to user space, and unlock the read side from the work queue.
-> 
-> We currently have down_read_non_owner() and up_read_non_owner() that
-> perform the lock and unlock without lockdep tracking. Of course, that is
-> a hack and their use must be carefully scrutinized to make sure that
-> there is no deadlock or other potentially locking issues.
+On Mon, Jan 13, 2020 at 05:03:22PM -0800, Darrick J. Wong wrote:
+> On Mon, Jan 13, 2020 at 04:20:05PM -0800, Ira Weiny wrote:
+> > On Mon, Jan 13, 2020 at 02:12:18PM -0800, Darrick J. Wong wrote:
+> > > On Fri, Jan 10, 2020 at 11:29:37AM -0800, ira.weiny@intel.com wrote:
+> > > > From: Ira Weiny <ira.weiny@intel.com>
 
-That doesn't help with returning to userspace while the lock is held.
+[snip]
+
+> > > > +``lock_mode``
+> > > > +	called to prevent operations which depend on the inode's mode from
+> > > > +        proceeding should a mode change be in progress
+> > > 
+> > > "Inodes can't change mode, because files do not suddenly become
+> > > directories". ;)
+> > 
+> > Yea sorry.
+> > 
+> > > 
+> > > Oh, you meant "lock_XXXX is called to prevent a change in the pagecache
+> > > mode from proceeding while there are address space operations in
+> > > progress".  So these are really more aops get and put functions...
+> > 
+> > At first I actually did have aops get/put functions but this is really
+> > protecting more than the aops vector because as Christoph said there are file
+> > operations which need to be protected not just address space operations.
+> > 
+> > But I agree "mode" is a bad name...  Sorry...
+> 
+> inode_fops_{get,set}(), then?
+> 
+> inode_start_fileop()
+> inode_end_fileop() ?
+> 
+> Trying to avoid sounding foppish <COUGH>
+
+What about?
+
+inode_[un]lock_state()?
+
+Ira
+
