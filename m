@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACCEB13C2CE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 14:32:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8331C13C2D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 14:32:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728963AbgAONa6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 08:30:58 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:43253 "EHLO
+        id S1729037AbgAONbE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 08:31:04 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:41307 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728913AbgAONa6 (ORCPT
+        with ESMTP id S1729033AbgAONbD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 08:30:58 -0500
+        Wed, 15 Jan 2020 08:31:03 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579095056;
+        s=mimecast20190719; t=1579095063;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=i32RwNIexlSTGjPdh8V9cz3m8rKQLmmbJ0m7mElrktI=;
-        b=QnglwokVDdB25S4gMu1ERA05DtfMWaxIPCHFYNIKg++ABuBPvJGNbn/t5R5gtLsMmadeea
-        2ZTihfzNhiK1Pr2npiyNL1Nmbc8Xirychd4fZ8MMvbyn9Ck2hBJROmve2sd82jL/wSSRd1
-        BXT9/Bc863kowMkm1XaxCCyJheW1JG0=
+        bh=GQ2XRP21NZuztGMRryaosSMfssmG+japErixEXGjARs=;
+        b=ex+Rvf3gH9IrrW/XXEQ5ociWuwoRnsgiUndqL3bPz0g08AY01fFthhEKQ6CjoNAsKhuFWJ
+        X+cSeJ19Omf0jFgz52MmsBqRzXnRxmu9MZJjGEyGY+0kdbbrLwxxyQoCY56bsWQILJCujQ
+        Cfb9cXeAciZCiZTRwM/wyoc5dvLIHv0=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-212-oeaLoyRRMv2Abshugu_WAw-1; Wed, 15 Jan 2020 08:30:51 -0500
-X-MC-Unique: oeaLoyRRMv2Abshugu_WAw-1
+ us-mta-190-1ywfiLYhPqad1cHeU8Iv_Q-1; Wed, 15 Jan 2020 08:30:59 -0500
+X-MC-Unique: 1ywfiLYhPqad1cHeU8Iv_Q-1
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AA4C4801E6C;
-        Wed, 15 Jan 2020 13:30:48 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 649DC801E6C;
+        Wed, 15 Jan 2020 13:30:57 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C7ECE10372F3;
-        Wed, 15 Jan 2020 13:30:45 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A86B310372F3;
+        Wed, 15 Jan 2020 13:30:54 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 01/14] uapi: General notification queue definitions [ver
- #3]
+Subject: [RFC PATCH 02/14] security: Add hooks to rule on setting a watch
+ [ver #3]
 From:   David Howells <dhowells@redhat.com>
 To:     torvalds@linux-foundation.org
 Cc:     dhowells@redhat.com,
@@ -52,8 +52,8 @@ Cc:     dhowells@redhat.com,
         linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 15 Jan 2020 13:30:45 +0000
-Message-ID: <157909504508.20155.16673561263079184328.stgit@warthog.procyon.org.uk>
+Date:   Wed, 15 Jan 2020 13:30:53 +0000
+Message-ID: <157909505391.20155.3152153524575565871.stgit@warthog.procyon.org.uk>
 In-Reply-To: <157909503552.20155.3030058841911628518.stgit@warthog.procyon.org.uk>
 References: <157909503552.20155.3030058841911628518.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
@@ -66,105 +66,121 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add UAPI definitions for the general notification queue, including the
-following pieces:
-
- (*) struct watch_notification.
-
-     This is the metadata header for notification messages.  It includes a
-     type and subtype that indicate the source of the message
-     (eg. WATCH_TYPE_MOUNT_NOTIFY) and the kind of the message
-     (eg. NOTIFY_MOUNT_NEW_MOUNT).
-
-     The header also contains an information field that conveys the
-     following information:
-
-	- WATCH_INFO_LENGTH.  The size of the entry (entries are variable
-          length).
-
-	- WATCH_INFO_ID.  The watch ID specified when the watchpoint was
-          set.
-
-	- WATCH_INFO_TYPE_INFO.  (Sub)type-specific information.
-
-	- WATCH_INFO_FLAG_*.  Flag bits overlain on the type-specific
-          information.  For use by the type.
-
-     All the information in the header can be used in filtering messages at
-     the point of writing into the buffer.
-
- (*) struct watch_notification_removal
-
-     This is an extended watch-removal notification record that includes an
-     'id' field that can indicate the identifier of the object being
-     removed if available (for instance, a keyring serial number).
+Add security hooks that will allow an LSM to rule on whether or not a watch
+may be set.  More than one hook is required as the watches watch different
+types of object.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Casey Schaufler <casey@schaufler-ca.com>
+cc: Stephen Smalley <sds@tycho.nsa.gov>
+cc: linux-security-module@vger.kernel.org
 ---
 
- include/uapi/linux/watch_queue.h |   55 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
- create mode 100644 include/uapi/linux/watch_queue.h
+ include/linux/lsm_hooks.h |   24 ++++++++++++++++++++++++
+ include/linux/security.h  |   17 +++++++++++++++++
+ security/security.c       |   14 ++++++++++++++
+ 3 files changed, 55 insertions(+)
 
-diff --git a/include/uapi/linux/watch_queue.h b/include/uapi/linux/watch_queue.h
-new file mode 100644
-index 000000000000..5f3d21e8a34b
---- /dev/null
-+++ b/include/uapi/linux/watch_queue.h
-@@ -0,0 +1,55 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+#ifndef _UAPI_LINUX_WATCH_QUEUE_H
-+#define _UAPI_LINUX_WATCH_QUEUE_H
-+
-+#include <linux/types.h>
-+
-+enum watch_notification_type {
-+	WATCH_TYPE_META		= 0,	/* Special record */
-+	WATCH_TYPE__NR		= 1
-+};
-+
-+enum watch_meta_notification_subtype {
-+	WATCH_META_REMOVAL_NOTIFICATION	= 0,	/* Watched object was removed */
-+	WATCH_META_LOSS_NOTIFICATION	= 1,	/* Data loss occurred */
-+};
-+
-+/*
-+ * Notification record header.  This is aligned to 64-bits so that subclasses
-+ * can contain __u64 fields.
-+ */
-+struct watch_notification {
-+	__u32			type:24;	/* enum watch_notification_type */
-+	__u32			subtype:8;	/* Type-specific subtype (filterable) */
-+	__u32			info;
-+#define WATCH_INFO_LENGTH	0x0000007f	/* Length of record */
-+#define WATCH_INFO_LENGTH__SHIFT 0
-+#define WATCH_INFO_ID		0x0000ff00	/* ID of watchpoint */
-+#define WATCH_INFO_ID__SHIFT	8
-+#define WATCH_INFO_TYPE_INFO	0xffff0000	/* Type-specific info */
-+#define WATCH_INFO_TYPE_INFO__SHIFT 16
-+#define WATCH_INFO_FLAG_0	0x00010000	/* Type-specific info, flag bit 0 */
-+#define WATCH_INFO_FLAG_1	0x00020000	/* ... */
-+#define WATCH_INFO_FLAG_2	0x00040000
-+#define WATCH_INFO_FLAG_3	0x00080000
-+#define WATCH_INFO_FLAG_4	0x00100000
-+#define WATCH_INFO_FLAG_5	0x00200000
-+#define WATCH_INFO_FLAG_6	0x00400000
-+#define WATCH_INFO_FLAG_7	0x00800000
-+};
-+
-+
-+/*
-+ * Extended watch removal notification.  This is used optionally if the type
-+ * wants to indicate an identifier for the object being watched, if there is
-+ * such.  This can be distinguished by the length.
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 20d8cf194fb7..79d7c73676d7 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1416,6 +1416,18 @@
+  *	@ctx is a pointer in which to place the allocated security context.
+  *	@ctxlen points to the place to put the length of @ctx.
+  *
++ * Security hooks for the general notification queue:
 + *
-+ * type -> WATCH_TYPE_META
-+ * subtype -> WATCH_META_REMOVAL_NOTIFICATION
-+ */
-+struct watch_notification_removal {
-+	struct watch_notification watch;
-+	__u64	id;		/* Type-dependent identifier */
-+};
++ * @watch_key:
++ *	Check to see if a process is allowed to watch for event notifications
++ *	from a key or keyring.
++ *	@key: The key to watch.
++ *
++ * @watch_devices:
++ *	Check to see if a process is allowed to watch for event notifications
++ *	from devices (as a global set).
++ *
++ *
+  * Security hooks for using the eBPF maps and programs functionalities through
+  * eBPF syscalls.
+  *
+@@ -1698,6 +1710,12 @@ union security_list_options {
+ 	int (*inode_notifysecctx)(struct inode *inode, void *ctx, u32 ctxlen);
+ 	int (*inode_setsecctx)(struct dentry *dentry, void *ctx, u32 ctxlen);
+ 	int (*inode_getsecctx)(struct inode *inode, void **ctx, u32 *ctxlen);
++#ifdef CONFIG_KEY_NOTIFICATIONS
++	int (*watch_key)(struct key *key);
++#endif
++#ifdef CONFIG_DEVICE_NOTIFICATIONS
++	int (*watch_devices)(void);
++#endif
+ 
+ #ifdef CONFIG_SECURITY_NETWORK
+ 	int (*unix_stream_connect)(struct sock *sock, struct sock *other,
+@@ -1985,6 +2003,12 @@ struct security_hook_heads {
+ 	struct hlist_head inode_notifysecctx;
+ 	struct hlist_head inode_setsecctx;
+ 	struct hlist_head inode_getsecctx;
++#ifdef CONFIG_KEY_NOTIFICATIONS
++	struct hlist_head watch_key;
++#endif
++#ifdef CONFIG_DEVICE_NOTIFICATIONS
++	struct hlist_head watch_devices;
++#endif
+ #ifdef CONFIG_SECURITY_NETWORK
+ 	struct hlist_head unix_stream_connect;
+ 	struct hlist_head unix_may_send;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 3e8d4bacd59d..8f2fa100d128 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -1274,6 +1274,23 @@ static inline int security_locked_down(enum lockdown_reason what)
+ }
+ #endif	/* CONFIG_SECURITY */
+ 
++#if defined(CONFIG_SECURITY) && defined(CONFIG_KEY_NOTIFICATIONS)
++int security_watch_key(struct key *key);
++#else
++static inline int security_watch_key(struct key *key)
++{
++	return 0;
++}
++#endif
++#if defined(CONFIG_SECURITY) && defined(CONFIG_DEVICE_NOTIFICATIONS)
++int security_watch_devices(void);
++#else
++static inline int security_watch_devices(void)
++{
++	return 0;
++}
++#endif
 +
-+#endif /* _UAPI_LINUX_WATCH_QUEUE_H */
+ #ifdef CONFIG_SECURITY_NETWORK
+ 
+ int security_unix_stream_connect(struct sock *sock, struct sock *other, struct sock *newsk);
+diff --git a/security/security.c b/security/security.c
+index cd2d18d2d279..578863f230a6 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1956,6 +1956,20 @@ int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen)
+ }
+ EXPORT_SYMBOL(security_inode_getsecctx);
+ 
++#ifdef CONFIG_KEY_NOTIFICATIONS
++int security_watch_key(struct key *key)
++{
++	return call_int_hook(watch_key, 0, key);
++}
++#endif
++
++#ifdef CONFIG_DEVICE_NOTIFICATIONS
++int security_watch_devices(void)
++{
++	return call_int_hook(watch_devices, 0);
++}
++#endif
++
+ #ifdef CONFIG_SECURITY_NETWORK
+ 
+ int security_unix_stream_connect(struct sock *sock, struct sock *other, struct sock *newsk)
 
