@@ -2,82 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B6F113BA00
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 07:57:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EB1713BA0A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 08:00:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729103AbgAOG4S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 01:56:18 -0500
-Received: from verein.lst.de ([213.95.11.211]:49228 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726075AbgAOG4S (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 01:56:18 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id E956E68AFE; Wed, 15 Jan 2020 07:56:14 +0100 (CET)
-Date:   Wed, 15 Jan 2020 07:56:14 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Waiman Long <longman@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: RFC: hold i_rwsem until aio completes
-Message-ID: <20200115065614.GC21219@lst.de>
-References: <20200114161225.309792-1-hch@lst.de> <20200114192700.GC22037@ziepe.ca>
+        id S1729139AbgAOHAQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 02:00:16 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:40006 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725999AbgAOHAQ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Jan 2020 02:00:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=e/HwDJPULoIYF73mp6McqVlqD1raV4CY1J/pokd3Z88=; b=RnWCULGz0F8WwEcYsM4hO5v1K
+        +uB4kKjW6Ai37YFOoFp3+ik9b1pQQXl+VRmlQd5MW+129Ay98QE8ZMFX8HkX0s8djw5e0Phox9l3t
+        QjZk1IKDfoG25eNE+fgpvu9L1vnAkKhaz4ZJOcRC+8IIE6vMJHNbi08C8UziSO7G4aQ9S44qW6aIa
+        wWJ5mTMlAZSYQe9J4XE5RqOyBBeikZS8O3TlXHQaKh7rFnBkP3Po4p/6IpHwvkajrE4y0IdmPvrxU
+        2YZJrcjfpOd0ODa4CcUdGClpg6u7+bxgL3p3f/QSCbBvRuT3dg+JtKdD1/b52bcad3IBI+UfqkCKO
+        ZTQ6paXPw==;
+Received: from [2601:1c0:6280:3f0::ed68]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ircew-0002Af-G2; Wed, 15 Jan 2020 07:00:10 +0000
+Subject: Re: [PATCH v7 2/2] zonefs: Add documentation
+To:     Damien Le Moal <damien.lemoal@wdc.com>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Johannes Thumshirn <jth@kernel.org>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Hannes Reinecke <hare@suse.de>
+References: <20200115062859.1389827-1-damien.lemoal@wdc.com>
+ <20200115062859.1389827-3-damien.lemoal@wdc.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <072a051e-4fbb-e662-c136-f9f27157169f@infradead.org>
+Date:   Tue, 14 Jan 2020 23:00:09 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200114192700.GC22037@ziepe.ca>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20200115062859.1389827-3-damien.lemoal@wdc.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 14, 2020 at 03:27:00PM -0400, Jason Gunthorpe wrote:
-> I've seen similar locking patterns quite a lot, enough I've thought
-> about having a dedicated locking primitive to do it. It really wants
-> to be a rwsem, but as here the rwsem rules don't allow it.
+On 1/14/20 10:28 PM, Damien Le Moal wrote:
+> Add the new file Documentation/filesystems/zonefs.txt to document
+> zonefs principles and user-space tool usage.
 > 
-> The common pattern I'm looking at looks something like this:
-> 
->  'try begin read'() // aka down_read_trylock()
-> 
->   /* The lockdep release hackery you describe,
->      the rwsem remains read locked */
->  'exit reader'()
-> 
->  .. delegate unlock to work queue, timer, irq, etc ..
-> 
-> in the new context:
-> 
->  're_enter reader'() // Get our lockdep tracking back
-> 
->  'end reader'() // aka up_read()
-> 
-> vs a typical write side:
-> 
->  'begin write'() // aka down_write()
-> 
->  /* There is no reason to unlock it before kfree of the rwsem memory.
->     Somehow the user prevents any new down_read_trylock()'s */
->  'abandon writer'() // The object will be kfree'd with a locked writer
->  kfree()
-> 
-> The typical goal is to provide an object destruction path that can
-> serialize and fence all readers wherever they may be before proceeding
-> to some synchronous destruction.
-> 
-> Usually this gets open coded with some atomic/kref/refcount and a
-> completion or wait queue. Often implemented wrongly, lacking the write
-> favoring bias in the rwsem, and lacking any lockdep tracking on the
-> naked completion.
-> 
-> Not to discourage your patch, but to ask if we can make the solution
-> more broadly applicable?
+> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+> ---
+>  Documentation/filesystems/zonefs.txt | 241 +++++++++++++++++++++++++++
+>  MAINTAINERS                          |   1 +
+>  2 files changed, 242 insertions(+)
+>  create mode 100644 Documentation/filesystems/zonefs.txt
 
-Your requirement seems a little different, and in fact in many ways
-similar to the percpu_ref primitive.
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+
+thanks.
+-- 
+~Randy
