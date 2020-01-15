@@ -2,209 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56D9A13C337
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 14:33:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E77B13C354
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 14:38:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729431AbgAONcu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 08:32:50 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:49333 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729425AbgAONcu (ORCPT
+        id S1726555AbgAONin (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 08:38:43 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36670 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726501AbgAONin (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 08:32:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579095169;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=utVDqKWa9w0MxbNr+//nh4VRwHhuaYt/H7MzHznHw2c=;
-        b=HuSYNWEwFntXJUigqVy5RbjDP/E9XoQ8fIBTTcgAtjB3+PRvM1cD46EgMDIFUzHby7vXcB
-        qtkn7lEgoVBHeaJX5dKQeBzv1m1WpUt6CSGtsWpmSIuf2wAULjkzyO3G5pgTtubBTvEQzL
-        Q0DUAi4lYIWpvJz7t4GJYepRd12fYYw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-205-Z5OoyMoLMUy-Z43N4Lej6A-1; Wed, 15 Jan 2020 08:32:45 -0500
-X-MC-Unique: Z5OoyMoLMUy-Z43N4Lej6A-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7F4DE801E72;
-        Wed, 15 Jan 2020 13:32:43 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C3C2660BF4;
-        Wed, 15 Jan 2020 13:32:40 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 14/14] smack: Implement the watch_key and
- post_notification hooks [ver #3]
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     dhowells@redhat.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>, nicolas.dichtel@6wind.com,
-        raven@themaw.net, Christian Brauner <christian@brauner.io>,
-        dhowells@redhat.com, keyrings@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 15 Jan 2020 13:32:40 +0000
-Message-ID: <157909516006.20155.16914270465856385214.stgit@warthog.procyon.org.uk>
-In-Reply-To: <157909503552.20155.3030058841911628518.stgit@warthog.procyon.org.uk>
-References: <157909503552.20155.3030058841911628518.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Wed, 15 Jan 2020 08:38:43 -0500
+Received: by mail-wr1-f66.google.com with SMTP id z3so15792698wru.3;
+        Wed, 15 Jan 2020 05:38:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=MRqEF+ZMOwLJppUz+VO6oZ4Q/D2Rzrl4xHi1YEYQLtg=;
+        b=uTk70boG6WkAXIawTZJ3I3ANEBmErGIvR4jdgXu/LJRiKxfSq8uC2IwjTYDag5dm0I
+         K24X45XFx3PyPSBtSFg7B7mjTXP2fgmoF9fGrbEJC98hSnbR1cJ1EotH3QLxirQRzYLm
+         JYQ2GN0i3QyHZ1Bja5mvMu8KpMhElHxkA84rQGD5Gn2r4Ly68pB1i+jF7MQ252lRoNCM
+         IXQxxW2dBArSBXOU8AJHe0Hw1HoxtoM6kWSpSFKWqeGjaOogAnADc1E3ihXv/lxE933J
+         oCal5kT3Or0GgsauRJXrjWL2wtwe35P4CS7nxyz+7RjVCd+9W11wnkL9TUqMUQ5L8AYE
+         w2sA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=MRqEF+ZMOwLJppUz+VO6oZ4Q/D2Rzrl4xHi1YEYQLtg=;
+        b=TljXnfKxSmPrdMEatVPNCrcrLiPDScpVbpq9DvXcgjBgHuEvGdrTXodyGSbPzBcxgX
+         4hWX7gXo9hMu97K4/+yyjWrvTyI8FrcX8WhcTAyarskPK/MF0XTjDe6VOOVtcWN+/66g
+         sIDStR2yQbQSZr9++6VD3wSU0NfJEul4hr5PGNraWmSIXl095WNLoiPf6CNibomu1gh2
+         7j5/WNaxLx2N0HaxP1AZn/ZcHGHsbWr90FC+lDi0gFJncjzu5vllwLvnLkUAO+a8VMWL
+         NBIK1Aq7/VcsD7UNdBjoNszYKG7GH6VtK23MLuPmoYOB/5oKX4RnJrTJnVoGzK2irlVI
+         6E0A==
+X-Gm-Message-State: APjAAAX/dMfkpd1NzBdejYEguncBUccEMs5o7EWCN5rs+1PiMAZNdNIt
+        KfWv74EcsVmouVNudPmFFc4=
+X-Google-Smtp-Source: APXvYqzjIg3lMcAWmPk2mqWA8QUaBKNQJHUapYxN/nrWZJxSVVUtgXz1O8LMMB87rZZ1kaQotBJQgg==
+X-Received: by 2002:a05:6000:cf:: with SMTP id q15mr30716458wrx.393.1579095520162;
+        Wed, 15 Jan 2020 05:38:40 -0800 (PST)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id h66sm25056366wme.41.2020.01.15.05.38.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2020 05:38:39 -0800 (PST)
+Date:   Wed, 15 Jan 2020 14:38:38 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Namjae Jeon <linkinjeon@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Christoph Hellwig <hch@lst.de>, sj1557.seo@samsung.com
+Subject: Re: [PATCH v10 09/14] exfat: add misc operations
+Message-ID: <20200115133838.q33p5riihsinp6c4@pali>
+References: <CGME20200115082824epcas1p4eb45d088c2f88149acb94563c4a9b276@epcas1p4.samsung.com>
+ <20200115082447.19520-1-namjae.jeon@samsung.com>
+ <20200115082447.19520-10-namjae.jeon@samsung.com>
+ <CAK8P3a3Vqz=T_=sFwBBPa2_Hi_dA=BwWod=L9JkLxUgi=aKNWw@mail.gmail.com>
+ <CAKYAXd9_qmanQCcrdpScFWvPXuZvk4jhv7Gc=t_vRL9zqWNSjA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKYAXd9_qmanQCcrdpScFWvPXuZvk4jhv7Gc=t_vRL9zqWNSjA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Implement the watch_key security hook in Smack to make sure that a key
-grants the caller Read permission in order to set a watch on a key.
+On Wednesday 15 January 2020 22:30:59 Namjae Jeon wrote:
+> 2020-01-15 19:10 GMT+09:00, Arnd Bergmann <arnd@arndb.de>:
+> > On Wed, Jan 15, 2020 at 9:28 AM Namjae Jeon <namjae.jeon@samsung.com>
+> > wrote:
+> >
+> >> +#define SECS_PER_MIN    (60)
+> >> +#define TIMEZONE_SEC(x)        ((x) * 15 * SECS_PER_MIN)
+> >> +
+> >> +static void exfat_adjust_tz(struct timespec64 *ts, u8 tz_off)
+> >> +{
+> >> +       if (tz_off <= 0x3F)
+> >> +               ts->tv_sec -= TIMEZONE_SEC(tz_off);
+> >> +       else /* 0x40 <= (tz_off & 0x7F) <=0x7F */
+> >> +               ts->tv_sec += TIMEZONE_SEC(0x80 - tz_off);
+> >> +}
+> >> +
+> >> +static inline int exfat_tz_offset(struct exfat_sb_info *sbi)
+> >> +{
+> >> +       if (sbi->options.time_offset)
+> >> +               return sbi->options.time_offset;
+> >> +       return sys_tz.tz_minuteswest;
+> >> +}
+> >> +
+> >> +/* Convert a EXFAT time/date pair to a UNIX date (seconds since 1 1 70).
+> >> */
+> >> +void exfat_get_entry_time(struct exfat_sb_info *sbi, struct timespec64
+> >> *ts,
+> >> +               __le16 time, __le16 date, u8 tz)
+> >> +{
+> >> +       u16 t = le16_to_cpu(time);
+> >> +       u16 d = le16_to_cpu(date);
+> >> +
+> >> +       ts->tv_sec = mktime64(1980 + (d >> 9), d >> 5 & 0x000F, d &
+> >> 0x001F,
+> >> +                             t >> 11, (t >> 5) & 0x003F, (t & 0x001F) <<
+> >> 1);
+> >> +       ts->tv_nsec = 0;
+> >
+> > This part looks good to me now.
+> Thanks.
+> >
+> >> +       if (tz & EXFAT_TZ_VALID)
+> >> +               /* Treat as UTC time, but need to adjust timezone to UTC0
+> >> */
+> >> +               exfat_adjust_tz(ts, tz & ~EXFAT_TZ_VALID);
+> >> +       else
+> >> +               /* Treat as local time */
+> >> +               ts->tv_sec -= exfat_tz_offset(sbi) * SECS_PER_MIN;
+> >> +}
+> >
+> > Whereas this seems rather complex, when it deals with three different
+> > cases:
+> >
+> > - timezone stored in inode
+> > - timezone offset passed as mount option
+> > - local time from sys_tz.tz_minuteswest
+> >
+> > Does the exfat specification require to use some notion of 'local time'
+> > here
+> > as the fallback? The problem with sys_tz.tz_minuteswest is that it is
+> > not too well-defined,
+> It is not described in the specification. I don't know exactly what
+> the problem is because sys_tz.tz_minuteswest seems to work fine to me.
+> It can be random garbage value ?
+> > so if there is a choice, falling back to UTC would
+> > be nicer.
+> Okay.
 
-Also implement the post_notification security hook to make sure that the
-notification source is granted Write permission by the watch queue.
+Arnd, what is the default value of sys_tz.tz_minuteswest? What is the
+benefit of not using it?
 
-For the moment, the watch_devices security hook is left unimplemented as
-it's not obvious what the object should be since the queue is global and
-didn't previously exist.
+I though that timezone mount option is just an old hack when userspace
+does not correctly set kernel's timezone and that this timezone mount
+option should be in most cases avoided.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
----
+So also another question, what is benefit of having fs specific timezone
+mount option? As it is fs specific it means that it would be used so
+much.
 
- include/linux/lsm_audit.h  |    1 +
- security/smack/smack_lsm.c |   82 +++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 82 insertions(+), 1 deletion(-)
+> >
+> >> +/* Convert linear UNIX date to a EXFAT time/date pair. */
+> >> +void exfat_set_entry_time(struct exfat_sb_info *sbi, struct timespec64
+> >> *ts,
+> >> +               __le16 *time, __le16 *date, u8 *tz)
+> >> +{
+> >> +       struct tm tm;
+> >> +       u16 t, d;
+> >> +
+> >> +       /* clamp to the range valid in the exfat on-disk representation.
+> >> */
+> >> +       time64_to_tm(clamp_t(time64_t, ts->tv_sec,
+> >> EXFAT_MIN_TIMESTAMP_SECS,
+> >> +               EXFAT_MAX_TIMESTAMP_SECS), -exfat_tz_offset(sbi) *
+> >> SECS_PER_MIN,
+> >> +               &tm);
+> >
+> > I think you can drop the clamping here, as thes_time_min/s_time_max fields
+> > should take care of that.
+> Okay.
+> >
+> > For writing out timestamps, it may be best to always encode them as UTC
+> > and set set timezone-valid bit for that. That way, the min/max values
+> > are known at compile time regardless of which time zone the machine
+> > thinks it is in.
+> Okay, I will check it.
+> Thanks for your review!
+> >
+> >       Arnd
+> >
 
-diff --git a/include/linux/lsm_audit.h b/include/linux/lsm_audit.h
-index 915330abf6e5..734d67889826 100644
---- a/include/linux/lsm_audit.h
-+++ b/include/linux/lsm_audit.h
-@@ -74,6 +74,7 @@ struct common_audit_data {
- #define LSM_AUDIT_DATA_FILE	12
- #define LSM_AUDIT_DATA_IBPKEY	13
- #define LSM_AUDIT_DATA_IBENDPORT 14
-+#define LSM_AUDIT_DATA_NOTIFICATION 15
- 	union 	{
- 		struct path path;
- 		struct dentry *dentry;
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index ecea41ce919b..71b6f37d49c1 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -4273,7 +4273,7 @@ static int smack_key_permission(key_ref_t key_ref,
- 	if (tkp == NULL)
- 		return -EACCES;
- 
--	if (smack_privileged_cred(CAP_MAC_OVERRIDE, cred))
-+	if (smack_privileged(CAP_MAC_OVERRIDE))
- 		return 0;
- 
- #ifdef CONFIG_AUDIT
-@@ -4319,8 +4319,81 @@ static int smack_key_getsecurity(struct key *key, char **_buffer)
- 	return length;
- }
- 
-+
-+#ifdef CONFIG_KEY_NOTIFICATIONS
-+/**
-+ * smack_watch_key - Smack access to watch a key for notifications.
-+ * @key: The key to be watched
-+ *
-+ * Return 0 if the @watch->cred has permission to read from the key object and
-+ * an error otherwise.
-+ */
-+static int smack_watch_key(struct key *key)
-+{
-+	struct smk_audit_info ad;
-+	struct smack_known *tkp = smk_of_current();
-+	int rc;
-+
-+	if (key == NULL)
-+		return -EINVAL;
-+	/*
-+	 * If the key hasn't been initialized give it access so that
-+	 * it may do so.
-+	 */
-+	if (key->security == NULL)
-+		return 0;
-+	/*
-+	 * This should not occur
-+	 */
-+	if (tkp == NULL)
-+		return -EACCES;
-+
-+	if (smack_privileged_cred(CAP_MAC_OVERRIDE, current_cred()))
-+		return 0;
-+
-+#ifdef CONFIG_AUDIT
-+	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_KEY);
-+	ad.a.u.key_struct.key = key->serial;
-+	ad.a.u.key_struct.key_desc = key->description;
-+#endif
-+	rc = smk_access(tkp, key->security, MAY_READ, &ad);
-+	rc = smk_bu_note("key watch", tkp, key->security, MAY_READ, rc);
-+	return rc;
-+}
-+#endif /* CONFIG_KEY_NOTIFICATIONS */
- #endif /* CONFIG_KEYS */
- 
-+#ifdef CONFIG_WATCH_QUEUE
-+/**
-+ * smack_post_notification - Smack access to post a notification to a queue
-+ * @w_cred: The credentials of the watcher.
-+ * @cred: The credentials of the event source (may be NULL).
-+ * @n: The notification message to be posted.
-+ */
-+static int smack_post_notification(const struct cred *w_cred,
-+				   const struct cred *cred,
-+				   struct watch_notification *n)
-+{
-+	struct smk_audit_info ad;
-+	struct smack_known *subj, *obj;
-+	int rc;
-+
-+	/* Always let maintenance notifications through. */
-+	if (n->type == WATCH_TYPE_META)
-+		return 0;
-+
-+	if (!cred)
-+		return 0;
-+	subj = smk_of_task(smack_cred(cred));
-+	obj = smk_of_task(smack_cred(w_cred));
-+
-+	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_NOTIFICATION);
-+	rc = smk_access(subj, obj, MAY_WRITE, &ad);
-+	rc = smk_bu_note("notification", subj, obj, MAY_WRITE, rc);
-+	return rc;
-+}
-+#endif /* CONFIG_WATCH_QUEUE */
-+
- /*
-  * Smack Audit hooks
-  *
-@@ -4709,8 +4782,15 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(key_free, smack_key_free),
- 	LSM_HOOK_INIT(key_permission, smack_key_permission),
- 	LSM_HOOK_INIT(key_getsecurity, smack_key_getsecurity),
-+#ifdef CONFIG_KEY_NOTIFICATIONS
-+	LSM_HOOK_INIT(watch_key, smack_watch_key),
-+#endif
- #endif /* CONFIG_KEYS */
- 
-+#ifdef CONFIG_WATCH_QUEUE
-+	LSM_HOOK_INIT(post_notification, smack_post_notification),
-+#endif
-+
-  /* Audit hooks */
- #ifdef CONFIG_AUDIT
- 	LSM_HOOK_INIT(audit_rule_init, smack_audit_rule_init),
-
+-- 
+Pali Rohár
+pali.rohar@gmail.com
