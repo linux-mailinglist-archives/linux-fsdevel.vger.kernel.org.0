@@ -2,140 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4172013C6DA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 16:03:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E47813C767
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 16:24:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729045AbgAOPDd convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 10:03:33 -0500
-Received: from mout.kundenserver.de ([212.227.126.133]:56503 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726132AbgAOPDd (ORCPT
+        id S1729015AbgAOPXh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 10:23:37 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48766 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726165AbgAOPXh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 10:03:33 -0500
-Received: from mail-qk1-f170.google.com ([209.85.222.170]) by
- mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MKuGD-1j5pc718HN-00LDZa; Wed, 15 Jan 2020 16:03:30 +0100
-Received: by mail-qk1-f170.google.com with SMTP id a203so15920536qkc.3;
-        Wed, 15 Jan 2020 07:03:30 -0800 (PST)
-X-Gm-Message-State: APjAAAUTH+OhoeArYDcHK6lLuou6CZD62hVTzfwWVuNwdeZA/AzpaWiL
-        awcsahaZqxBCFz7EAwXhrt5aSxM8+m1dsjOp4h0=
-X-Google-Smtp-Source: APXvYqyLEtTG1GZUpIw0OkGP+O+sBSsb+LojprESwrqQPyNJkIFkk2fME3gwB3pEN88Qe6ZkLxRK+sarxOTwhUNkQn0=
-X-Received: by 2002:a05:620a:cef:: with SMTP id c15mr28574667qkj.352.1579100609065;
- Wed, 15 Jan 2020 07:03:29 -0800 (PST)
+        Wed, 15 Jan 2020 10:23:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=XJx25SjGDNaPjSZ5TNemDMINDpbBYIW/xJOLgTsR2QM=; b=hhbgi8BJKTkNcGbj/zsunWm8Nk
+        5/QjY8sMr0mKKH9pQML6hCHgjupQSuiVpFa35irs5bk6Fyb0UXZ1Yk33/ewO5HcNonK3bLaNQlK9j
+        vKW8gUSqaVd9vEKlh6jNUdhGn+SVvs43+luv2lVS3kKMoCNgeVxJWJGs0m9STdgU4Qtt71bfJRfCg
+        Hs7bX3HZshLtu6+z7ViFzZPM/Q11Zm0+3LL1wi1u6yCjGgTKJxM/vuInUUiL02Q9vr1wQQHktXl01
+        ud7iaVtdov/flVsEByz9WQ5V6SiyJzpX3YWSsvca9IYSpvPI0fNOHBgvyQHf7/UrLeeWuISjdgkdd
+        igfjbtlQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1irkVe-0007PR-Hi; Wed, 15 Jan 2020 15:23:06 +0000
+Date:   Wed, 15 Jan 2020 07:23:06 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, bpf@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v12 04/22] mm: devmap: refactor 1-based refcounting for
+ ZONE_DEVICE pages
+Message-ID: <20200115152306.GA19546@infradead.org>
+References: <20200107224558.2362728-1-jhubbard@nvidia.com>
+ <20200107224558.2362728-5-jhubbard@nvidia.com>
 MIME-Version: 1.0
-References: <CGME20200115082824epcas1p4eb45d088c2f88149acb94563c4a9b276@epcas1p4.samsung.com>
- <20200115082447.19520-1-namjae.jeon@samsung.com> <20200115082447.19520-10-namjae.jeon@samsung.com>
- <CAK8P3a3Vqz=T_=sFwBBPa2_Hi_dA=BwWod=L9JkLxUgi=aKNWw@mail.gmail.com>
- <CAKYAXd9_qmanQCcrdpScFWvPXuZvk4jhv7Gc=t_vRL9zqWNSjA@mail.gmail.com>
- <20200115133838.q33p5riihsinp6c4@pali> <CAK8P3a1ozgLYpDtveU0CtLj5fEFG8i=_QrnEAtoVFt-yC=Dc0g@mail.gmail.com>
- <20200115142428.ugsp3binf2vuiarq@pali>
-In-Reply-To: <20200115142428.ugsp3binf2vuiarq@pali>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 15 Jan 2020 16:03:12 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a0_sotmv40qHkhE5M=PwEYLuJfX+uRFZvh9iGzhv6R6vw@mail.gmail.com>
-Message-ID: <CAK8P3a0_sotmv40qHkhE5M=PwEYLuJfX+uRFZvh9iGzhv6R6vw@mail.gmail.com>
-Subject: Re: [PATCH v10 09/14] exfat: add misc operations
-To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
-Cc:     Namjae Jeon <linkinjeon@gmail.com>,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Christoph Hellwig <hch@lst.de>, sj1557.seo@samsung.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:X3H0QcE2jFdspteJSk8fSpj1ophyqEmMuDO8cOJwQbCnkMBqGrz
- SN5FHEbNEvlkpo8rIXHQeNtXOTVLyofH4z54WOxOggNPh6PCKeCmmWt7bYCzZtmCU9hLXOB
- GTMvC+50mf8Wv9kg5RStJnvhM9wphxD9eq52Ya/cWnQ3YFHzbLFwvG3s0tVX0LofgUMgbwF
- cjFI+nGlEGXKVNZ1sQbsQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:SRpCajnw3uA=:JnWYDUbp/mZ6rEppOH1diO
- /DOGJIOd55WLAahGjPJ4eXl7aotAC9JrAkbYeRYEXH4k3o4MQ1SLLMuEMToVJW21FRZk0aY+O
- Cz6W6ICqSN1bmSQTLSMn5JzZ6PG50ht8uHy4wshUvPbMAL8IxAyzk7DSP03/o8bRC5pSEbH1e
- ikkJtVsATYwSUvalD8XSZP/CkwhKChqve+FdCc9HfuqvYAxrx/dmMM34UBihu+Zyq9bF/ve/D
- fHBxjohbzPnfytzMoSiZYrglzIyzSMBx2li3AC1bA/ZhNUp4SK3DbfXF5tSGJyFX/LMBWFXWe
- vugLWNUKxo6KtHHIh7T0iLmRy66UUHFtr1IMIB/Io4ny73i9dx0qkoWtbhmDH/1vlvJffsjl5
- ZPxA6IODL8bwM1Kh52si5MLK9i3QVEEumsQGz9Bpyi43V8hQKjA7gEZHcQC+vpAoadYfZ1tr5
- ys4JbUxye1Zu+0exzI77cy3+bAWR1k1+6o82t+Zl8IIOJ4RndQLTU8jg7jj0IkcoBuCXamf6H
- AGCcyVn5/ZKhUwZ6ma9/tFvh7wk5D6XZBaTauQpyQVW/VgvwsOh41VIpvmju4ZiVqZhtmoU0M
- xl9S24cIlKcYwVgqdD1HqdbxoegnnAZF7cS5pXDhvDdN7Bi1EefLX9mHguPu8AJGQnP/oDmEP
- OvIUOQuBlykD9UxxPqamgeMjN0qhtTkXDbWrfdiinlayMkYzA1ZbWoN6+2g/R9fLzXJlquexl
- YFFziuMidoji/ZI+q90G2ZsvF7pa9Z8jT/wJgPrZW6hpfavJvDDVjyZfEAy/F6bbCtrC7h+RD
- CjsayRD0LtP+3EBmFgSLREHuPuaOl/iKGHNusYjrGM20IoeMBRHsyc92eULnHXqhLxgBlaeIi
- Dp6Km1qmJnmdJBEKduJA==
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200107224558.2362728-5-jhubbard@nvidia.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 3:24 PM Pali Roh√°r <pali.rohar@gmail.com> wrote:
-> On Wednesday 15 January 2020 14:50:10 Arnd Bergmann wrote:
-> > On Wed, Jan 15, 2020 at 2:38 PM Pali Roh√°r <pali.rohar@gmail.com> wrote:
-> > > On Wednesday 15 January 2020 22:30:59 Namjae Jeon wrote:
-> > > > 2020-01-15 19:10 GMT+09:00, Arnd Bergmann <arnd@arndb.de>:
-> > However, in user space, every user may set their own timezone with
-> > the 'TZ' variable, and the default timezone may be different inside of a
-> > container based on the contents of /etc/timezone in its root directory.
->
-> So kernel timezone is shared across all containers, right?
+On Tue, Jan 07, 2020 at 02:45:40PM -0800, John Hubbard wrote:
+> An upcoming patch changes and complicates the refcounting and
+> especially the "put page" aspects of it. In order to keep
+> everything clean, refactor the devmap page release routines:
+> 
+> * Rename put_devmap_managed_page() to page_is_devmap_managed(),
+>   and limit the functionality to "read only": return a bool,
+>   with no side effects.
+> 
+> * Add a new routine, put_devmap_managed_page(), to handle
+>   decrementing the refcount for ZONE_DEVICE pages.
+> 
+> * Change callers (just release_pages() and put_page()) to check
+>   page_is_devmap_managed() before calling the new
+>   put_devmap_managed_page() routine. This is a performance
+>   point: put_page() is a hot path, so we need to avoid non-
+>   inline function calls where possible.
+> 
+> * Rename __put_devmap_managed_page() to free_devmap_managed_page(),
+>   and limit the functionality to unconditionally freeing a devmap
+>   page.
+> 
+> This is originally based on a separate patch by Ira Weiny, which
+> applied to an early version of the put_user_page() experiments.
+> Since then, JÈrÙme Glisse suggested the refactoring described above.
 
-Yes.
-
-> > You can use it to access removable media that were written in
-> > a different timezone or a partition that is shared with another OS
-> > running on the same machine but with different timezone settings.
->
-> So... basically all userspace <--> kernel API which works with timestamp
-> do not have information about timezone right? creat(), utime() or
-> utimensat() just pass timestamp without timezone information. Is this
-> timestamp mean to be in UTC or in local user time zone (as specified by
-> user's TZ= env variable)?
-
-As a rule, all timekeeping in the kernel is done in terms of UTC. You can
-see what the current exceptions are using
-
-$ git grep -wl sys_tz
-Documentation/filesystems/vfat.txt
-arch/alpha/kernel/osf_sys.c
-arch/nds32/kernel/vdso.c
-arch/powerpc/kernel/time.c
-arch/s390/kernel/time.c
-arch/sparc/kernel/vdso.c
-drivers/media/platform/vivid/vivid-rds-gen.c
-drivers/media/platform/vivid/vivid-vbi-gen.c
-drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-drivers/scsi/3w-9xxx.c
-drivers/scsi/3w-sas.c
-drivers/scsi/aacraid/commsup.c
-drivers/scsi/arcmsr/arcmsr_hba.c
-drivers/scsi/mvumi.c
-drivers/scsi/mvumi.h
-drivers/scsi/smartpqi/smartpqi_init.c
-fs/affs/amigaffs.c
-fs/affs/inode.c
-fs/affs/super.c
-fs/fat/misc.c
-fs/hfs/hfs_fs.h
-fs/hfs/inode.c
-fs/hfs/sysdep.c
-fs/hpfs/hpfs_fn.h
-fs/udf/udftime.c
-include/linux/time.h
-kernel/debug/kdb/kdb_main.c
-kernel/time/ntp.c
-kernel/time/time.c
-kernel/time/timekeeping.c
-kernel/time/vsyscall.c
-net/netfilter/nft_meta.c
-net/netfilter/xt_time.c
-tools/testing/selftests/x86/test_vdso.c
-
-The vdso and kernel/time/ code are for maintaining the timezone through
-settimeofday()/gettimeofday(), and the drivers should probably all be changed
-to use UTC. The file systems (affs, fat, hfs, hpfs and udf) do this for
-compatibility with other operating systems that store the metadata in
-localtime.
-
-       Arnd
+I'm really not sold on this scheme.  Note that I think it is
+particularly bad, but it also doesn't seem any better than what
+we had before, and it introduced quite a bit more code.
