@@ -2,106 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6D1513BC83
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 10:36:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABDE213BC8D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 10:39:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729489AbgAOJg3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 04:36:29 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55628 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729476AbgAOJg3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 04:36:29 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 73212AFE4;
-        Wed, 15 Jan 2020 09:36:26 +0000 (UTC)
-Subject: Re: [PATCH v7 2/2] zonefs: Add documentation
-To:     Damien Le Moal <damien.lemoal@wdc.com>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Johannes Thumshirn <jth@kernel.org>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>
-References: <20200115062859.1389827-1-damien.lemoal@wdc.com>
- <20200115062859.1389827-3-damien.lemoal@wdc.com>
-From:   Hannes Reinecke <hare@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
- 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
- azzYF4VRJsdl+d0MCaSy8mUh
-Message-ID: <689973eb-69a4-e622-a85e-8a2a64035f77@suse.de>
-Date:   Wed, 15 Jan 2020 10:36:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1729491AbgAOJjU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 04:39:20 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35589 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729406AbgAOJjU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Jan 2020 04:39:20 -0500
+Received: by mail-wr1-f68.google.com with SMTP id g17so15020606wro.2;
+        Wed, 15 Jan 2020 01:39:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=ZfnLElFWa6G1bLX7+mNV41fXukHAYDx919Y3lEHje0o=;
+        b=s6n7uOoRZciHM+AWw01UFjo/YPOlfTf2uKFE40T1I7QMhf5q9n+zdss3nKXJnbP6l2
+         zsUa0RxZLYJQoZn9srzAcKf7lKlAidY2SzzdsDXE1WzsEbTTVFApd6LlUbUy038kdJFg
+         H2677lS15IjLvEumD3425/7ybsP76IpE3tru4DydDRPfjOADd6GwEMTXlkBDC1Lz/GaF
+         ekCn/TMELJ/pXK/zNW0bEyCFCkELKhBXE9gdqc1E5ZNvhh8d7LR/4lXSxybFc5hqt8Ey
+         ZBGm0kU/+CxWKQqpi5p2YBgoZpBH9650hkR3DjoNUKrkMOIRT0tV5CuXkFacmCiQGKyN
+         17nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=ZfnLElFWa6G1bLX7+mNV41fXukHAYDx919Y3lEHje0o=;
+        b=TtcVC+D1yDuDM0ZZRuv6Tk3hMLUVDL0leI7EPh/QX0MYbPvjr85aVgPRvsMhfaUl/G
+         f36ch2s+KT0D9ES7iPoa49xTszlbNyl5wFgQbBwTtYqWI+lXEEAUVnrAfQgB+oN9qs5Y
+         +A6DbxpZb/yqev+7KT/Ssm1fvVr5hbTBtLoaLh/oDJ+bF1qbOrwCOFSq0bucWDs+8ZUd
+         ZRHRHKCvi6uJxUafcPWQLmvt0n+wyil3Va1ZcnLBXfiCnzfPZvqgAAf04kqpP8kbJQm9
+         jCSuDDEXBd/1C9kgs7aeY6n8F34BL6JnqryHJM4mzL1UNnGZ3DOEH78pdhxDb16SH7eO
+         S+lw==
+X-Gm-Message-State: APjAAAXSjYmLd04r3PvxCjlPP44pb/2Ye/3L7k3p6+KOt5Min2lgrkhl
+        t4q2+a2JsM4+JQwOl/VRCmw=
+X-Google-Smtp-Source: APXvYqxBXwCDlcnH2Sq70fnoWbE1++IW5U2XzenIZYo8cRzNgUv/sPzrBdcTC2riWlQM/pVqne21aQ==
+X-Received: by 2002:a5d:494f:: with SMTP id r15mr31311049wrs.143.1579081157963;
+        Wed, 15 Jan 2020 01:39:17 -0800 (PST)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id a1sm22403351wmj.40.2020.01.15.01.39.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2020 01:39:17 -0800 (PST)
+Date:   Wed, 15 Jan 2020 10:39:15 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Namjae Jeon <namjae.jeon@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
+        sj1557.seo@samsung.com, linkinjeon@gmail.com, arnd@arndb.de
+Subject: Re: [PATCH v10 11/14] exfat: add Kconfig and Makefile
+Message-ID: <20200115093915.cjef2jadiwe2eul4@pali>
+References: <20200115082447.19520-1-namjae.jeon@samsung.com>
+ <CGME20200115082825epcas1p1f22ddca6dbf5d70e65d3b0e3c25c3a59@epcas1p1.samsung.com>
+ <20200115082447.19520-12-namjae.jeon@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20200115062859.1389827-3-damien.lemoal@wdc.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200115082447.19520-12-namjae.jeon@samsung.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/15/20 7:28 AM, Damien Le Moal wrote:
-> Add the new file Documentation/filesystems/zonefs.txt to document
-> zonefs principles and user-space tool usage.
-> 
-> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+On Wednesday 15 January 2020 17:24:44 Namjae Jeon wrote:
+> This adds the Kconfig and Makefile for exfat.
+>=20
+> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
+> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
 > ---
->  Documentation/filesystems/zonefs.txt | 241 +++++++++++++++++++++++++++
->  MAINTAINERS                          |   1 +
->  2 files changed, 242 insertions(+)
->  create mode 100644 Documentation/filesystems/zonefs.txt
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+>  fs/exfat/Kconfig  | 21 +++++++++++++++++++++
+>  fs/exfat/Makefile |  8 ++++++++
+>  2 files changed, 29 insertions(+)
+>  create mode 100644 fs/exfat/Kconfig
+>  create mode 100644 fs/exfat/Makefile
+>=20
+> diff --git a/fs/exfat/Kconfig b/fs/exfat/Kconfig
+> new file mode 100644
+> index 000000000000..9eeaa6d06adf
+> --- /dev/null
+> +++ b/fs/exfat/Kconfig
+> @@ -0,0 +1,21 @@
+> +# SPDX-License-Identifier: GPL-2.0-or-later
+> +
+> +config EXFAT_FS
+> +	tristate "exFAT filesystem support"
+> +	select NLS
+> +	help
+> +	  This allows you to mount devices formatted with the exFAT file system.
+> +	  exFAT is typically used on SD-Cards or USB sticks.
+> +
+> +	  To compile this as a module, choose M here: the module will be called
+> +	  exfat.
+> +
+> +config EXFAT_DEFAULT_IOCHARSET
+> +	string "Default iocharset for exFAT"
+> +	default "utf8"
+> +	depends on EXFAT_FS
+> +	help
+> +	  Set this to the default input/output character set you'd
+> +	  like exFAT to use. It should probably match the character set
+> +	  that most of your exFAT filesystems use, and can be overridden
+> +	  with the "iocharset" mount option for exFAT filesystems.
 
-Cheers,
+Hello! This description is incorrect. iocharset option specify what
+character set is expected by VFS layer and not character set used by
+exFAT filesystem. exFAT filesystem always uses UTF-16 as this is the
+only allowed by exFAT specification.
 
-Hannes
--- 
-Dr. Hannes Reinecke		      Teamlead Storage & Networking
-hare@suse.de			                  +49 911 74053 688
-SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), GF: Felix Imendörffer
+> diff --git a/fs/exfat/Makefile b/fs/exfat/Makefile
+> new file mode 100644
+> index 000000000000..ed51926a4971
+> --- /dev/null
+> +++ b/fs/exfat/Makefile
+> @@ -0,0 +1,8 @@
+> +# SPDX-License-Identifier: GPL-2.0-or-later
+> +#
+> +# Makefile for the linux exFAT filesystem support.
+> +#
+> +obj-$(CONFIG_EXFAT_FS) +=3D exfat.o
+> +
+> +exfat-y	:=3D inode.o namei.o dir.o super.o fatent.o cache.o nls.o misc.o=
+ \
+> +	   file.o balloc.o
+
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
