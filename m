@@ -2,101 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6AD613C35A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 14:40:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E6D513C399
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 14:52:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728915AbgAONj5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 08:39:57 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:34926 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728890AbgAONj5 (ORCPT
+        id S1729031AbgAONua convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 08:50:30 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:44779 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbgAONu3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 08:39:57 -0500
-Received: by mail-oi1-f194.google.com with SMTP id k4so15401500oik.2;
-        Wed, 15 Jan 2020 05:39:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=f6zc5HN4DUXE781/BcWszDvELlf43+ohtINNihx8v/k=;
-        b=BOxSa87jpc68noq8HKuBAAeZAGfCPqKsHzJXIh3SEGyU07BD2e+3wC2eYoT8oWBOMZ
-         yzQGVZcwxu0VbLwOh8Pt4MfnCmZngfZE8F0S7w4/nbkWlYboDvoDcSuagzktWvBLh4K3
-         SOE/sZpn8K2n6mUK/+S4PMyOygKFlG92b8OuLVTFOsCVl9oWs9pVyDjuwMbRZDvzbg6m
-         xWDogAPxfEofferYsRQynB03zra/p5ipj7LAM/Muww6QQ81IyjGEo/ADppCu6GUDODI+
-         c0Nv1iEbJY2L8xaPZzDwoshkiWWD+02ou5nFPGXbi08K7rq2g/7aFmtzADTngAPZx41d
-         iVFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=f6zc5HN4DUXE781/BcWszDvELlf43+ohtINNihx8v/k=;
-        b=HOFs5icTpePxgD0tiJoE/pOcrnw7FtUteY9CSQLfcJ4O0YKaLy+26SbWD3eZbHfo+f
-         BiqwBxODr7dMay4xa0+8NCfw+7+AbiLk13fyOhUi0GC3XHJd/Ms7nt1hXA8NKpbOqz1i
-         VtwOVWbAmPRvFbSeukp0eaq2pJCZvT/pcgUxxqKXHavvf1VcSH1Ifzys6ZxOiGYWqN5V
-         MMbS/Q4nKPf9BW8A3d4apdNXkpRl3Gdz6UuOxugFZLKIDiUJzgad0OsA9JLc4337eILg
-         OpYENjOM5eiKyHz1dXkqlJefchmNWDJtFIME167fcrchlaefJYloqf7D3wdajs+lRhhF
-         Vjhg==
-X-Gm-Message-State: APjAAAUVASsfVA2Ww2F7gRAFWvjaLZa+mzb94fkaWWfcWeRcKB7Ve2P3
-        j+7q4lm1KiXNBPHmHEuKuepsEn5NNhhi4UYwaKs=
-X-Google-Smtp-Source: APXvYqywQHg+aUBx4eoKOxeLk9t+5Vfp4wvLcqQcGdNAxiM7nHNwcHhBOl8zb5PYutwhtNQgEB3nkivmFuQnTFEZRyw=
-X-Received: by 2002:aca:1b08:: with SMTP id b8mr12831720oib.62.1579095596501;
- Wed, 15 Jan 2020 05:39:56 -0800 (PST)
+        Wed, 15 Jan 2020 08:50:29 -0500
+Received: from mail-qv1-f41.google.com ([209.85.219.41]) by
+ mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MacWq-1jOIvZ1STS-00cBGy; Wed, 15 Jan 2020 14:50:27 +0100
+Received: by mail-qv1-f41.google.com with SMTP id dc14so7338848qvb.9;
+        Wed, 15 Jan 2020 05:50:27 -0800 (PST)
+X-Gm-Message-State: APjAAAVQPx15b4AjJCGeywdptelLsYDvuGQ48fq4a10RRa0QG2HQwmE7
+        94tVMQXPfT0+x1OkwMSEj96eg0ITnaOXllAmUHM=
+X-Google-Smtp-Source: APXvYqyl7uNQv+weHDkj+4n/1x08jQKkMwbhnzB0cjncUcoprt2VN7a56hddZyTo34cvRVHUb+kjlRzLrmpR32DvACo=
+X-Received: by 2002:a0c:d788:: with SMTP id z8mr20822765qvi.211.1579096226126;
+ Wed, 15 Jan 2020 05:50:26 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a8a:87:0:0:0:0:0 with HTTP; Wed, 15 Jan 2020 05:39:56 -0800 (PST)
-In-Reply-To: <CAK8P3a3YOsFtuDDw9=d7_EY60Xvmx4Mc=NJmsy3f3Y9L87Ub=g@mail.gmail.com>
-References: <CGME20200115082820epcas1p34ebebebaf610fd61c4e9882fca8ddbd5@epcas1p3.samsung.com>
- <20200115082447.19520-1-namjae.jeon@samsung.com> <20200115082447.19520-4-namjae.jeon@samsung.com>
- <CAK8P3a3YOsFtuDDw9=d7_EY60Xvmx4Mc=NJmsy3f3Y9L87Ub=g@mail.gmail.com>
-From:   Namjae Jeon <linkinjeon@gmail.com>
-Date:   Wed, 15 Jan 2020 22:39:56 +0900
-Message-ID: <CAKYAXd-CwLR3vLS_uPKOPzrEzB7v3rcdTCRR6BEhN-imeA_wPQ@mail.gmail.com>
-Subject: Re: [PATCH v10 03/14] exfat: add inode operations
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
+References: <CGME20200115082824epcas1p4eb45d088c2f88149acb94563c4a9b276@epcas1p4.samsung.com>
+ <20200115082447.19520-1-namjae.jeon@samsung.com> <20200115082447.19520-10-namjae.jeon@samsung.com>
+ <CAK8P3a3Vqz=T_=sFwBBPa2_Hi_dA=BwWod=L9JkLxUgi=aKNWw@mail.gmail.com>
+ <CAKYAXd9_qmanQCcrdpScFWvPXuZvk4jhv7Gc=t_vRL9zqWNSjA@mail.gmail.com> <20200115133838.q33p5riihsinp6c4@pali>
+In-Reply-To: <20200115133838.q33p5riihsinp6c4@pali>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 15 Jan 2020 14:50:10 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a1ozgLYpDtveU0CtLj5fEFG8i=_QrnEAtoVFt-yC=Dc0g@mail.gmail.com>
+Message-ID: <CAK8P3a1ozgLYpDtveU0CtLj5fEFG8i=_QrnEAtoVFt-yC=Dc0g@mail.gmail.com>
+Subject: Re: [PATCH v10 09/14] exfat: add misc operations
+To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
+Cc:     Namjae Jeon <linkinjeon@gmail.com>,
+        Namjae Jeon <namjae.jeon@samsung.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
         gregkh <gregkh@linuxfoundation.org>,
         Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Christoph Hellwig <hch@lst.de>, sj1557.seo@samsung.com,
-        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
+        Christoph Hellwig <hch@lst.de>, sj1557.seo@samsung.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Provags-ID: V03:K1:Y8h8lkSOLNjm7tnDH8hZQmI38TXya9ENaqh+Nr2XlDYvbVlqPPZ
+ +9xPSGXEAK8bs+iwj/d540d5PdsXjr6Wy3/KbHy0ZZAezmdYmuHRLdxHKSNdV5/YbojH/Q0
+ l7oD6eofrv3vtMfmuraBRNxg535jQC4YwrkvKR3hqGJQ3bGbXDHLcVw0WhL/AtlUpUFBw4g
+ HiNR8k0ivYv3ajYUkCUmg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:+bu4/c32c1g=:44YrMUmOErEQchdHl7bXCz
+ aOpSaBMkZIlqbAdiX/DFYl8YRHJmNHnVuiT1g8JyAgAtVPQQzArjv4n6KtwaBw6fGj9W/woNj
+ LJnce+RXGEsAxT9S7jlOeaz23TGLprKLm6um/JVD9d8wc1exNeMSlV6qQt1dRzaue6ZViJF40
+ izZ/bRf8MJ3sppuinfQRZmyJGdbNyKbbGP7eYtF70NJv6clczVrfAY2WZFO7KEotfXAv1I0W8
+ 7TmInzH6TdGe6Ek0ZA6BP1oQW+ktqSBcxYTP/wWtydHfMsybxfpiuUKuLG0zHiAtJUIANERMn
+ TILdQvfNUPYwQLpb/IUSEjbdzyqBePo306iF27wnXLVWgSS2Mi35V7xr3gbr1lO2LBTaSCe36
+ ZwOIgVJ9YwyhlLTEDO34xLCh3YK/DwDjteQq9k1lsyEmWkToaPv6QGXZz+3/S9HQ3Ow0mYCHs
+ QHNLqb7RE1gqzTIcWqT1+jc0NQOKiwoGrgxpPLCpgU2RSytzl6rzPaFy9D96Gor5o5jdSDob1
+ A5PAleLeS0vdH9G1hYAfwUePVXNnmXVnh+Rzp+3j3LSpTZ9GFDxh/O44cbeh9hig7w28CcFC3
+ +PJUMGSxXEP6s1sx/x/b071EJ6oj0rNyzOaim5LtzTm1ul5wo//C1Cl0eFB/hBrXzjbsKV3Hr
+ 9PrnXsFMVdAqGtQN2JV492j6kQZ8DcI7CCQrhZp7Eac8P6n16pfyJqVpoGzpIw2zsayr8rQsn
+ Pay3I9krsbE+GHTZcUJFkR0WdKur2YTaoLHLQ4vpt844LwIbalYlN5+HRjVtrgpXaYKVwi/v3
+ voBal+RL7H5lUOO9cMoIziGklKR6synGPPtcYU/neHF/qSu19IoXLfGiwTZgU9VCG6mV7QiNb
+ Heq9LyPkl4J6RxNDMMvQ==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2020-01-15 19:25 GMT+09:00, Arnd Bergmann <arnd@arndb.de>:
-> On Wed, Jan 15, 2020 at 9:28 AM Namjae Jeon <namjae.jeon@samsung.com>
-> wrote:
->
->> +       /* set FILE_INFO structure using the acquired struct exfat_dentry
->> */
->> +       exfat_set_entry_time(sbi, &inode->i_ctime,
->> +                       &ep->dentry.file.create_time,
->> +                       &ep->dentry.file.create_date,
->> +                       &ep->dentry.file.create_tz);
->> +       exfat_set_entry_time(sbi, &inode->i_mtime,
->> +                       &ep->dentry.file.modify_time,
->> +                       &ep->dentry.file.modify_date,
->> +                       &ep->dentry.file.modify_tz);
->> +       exfat_set_entry_time(sbi, &inode->i_atime,
->> +                       &ep->dentry.file.access_time,
->> +                       &ep->dentry.file.access_date,
->> +                       &ep->dentry.file.access_tz);
->
-> I wonder if i_ctime should be handled differently. With statx() we finally
-> have
-> a concept of "file creation time" in "stx_btime". so it would make sense to
-> store dentry.file.create_time in there rather than in i_ctime.
-Right.
->
-> It seems that traditionally most file systems that cannot store ctime
-> separately
-> just set i_ctime and i_mtime both to what is is modify_time here, though
-> fat and hpfs use i_ctime to refer to creation time.
-I will check it.
+On Wed, Jan 15, 2020 at 2:38 PM Pali Rohár <pali.rohar@gmail.com> wrote:
+> On Wednesday 15 January 2020 22:30:59 Namjae Jeon wrote:
+> > 2020-01-15 19:10 GMT+09:00, Arnd Bergmann <arnd@arndb.de>:
 
-Thanks for your review!
+> > It is not described in the specification. I don't know exactly what
+> > the problem is because sys_tz.tz_minuteswest seems to work fine to me.
+> > It can be random garbage value ?
+> >
+> > > so if there is a choice, falling back to UTC would
+> > > be nicer.
+> >
+> > Okay.
 >
->       Arnd
+> Arnd, what is the default value of sys_tz.tz_minuteswest? What is the
+> benefit of not using it?
 >
+> I though that timezone mount option is just an old hack when userspace
+> does not correctly set kernel's timezone and that this timezone mount
+> option should be in most cases avoided.
+
+The main problem is that it is system-wide and initialized at boot
+time through settimeofday() to a timezone picked by the system
+administrator.
+
+However, in user space, every user may set their own timezone with
+the 'TZ' variable, and the default timezone may be different inside of a
+container based on the contents of /etc/timezone in its root directory.
+
+> So also another question, what is benefit of having fs specific timezone
+> mount option? As it is fs specific it means that it would be used so
+> much.
+
+You can use it to access removable media that were written in
+a different timezone, or a partition that is shared with another OS
+running on the same machine but with different timezone settings.
+
+     Arnd
