@@ -2,167 +2,216 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 076B113CD6C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 20:49:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 475BF13CD8B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 20:56:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729377AbgAOTsu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 14:48:50 -0500
-Received: from mail-pj1-f54.google.com ([209.85.216.54]:50899 "EHLO
-        mail-pj1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729305AbgAOTst (ORCPT
+        id S1729598AbgAOT4b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 14:56:31 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:22264 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729593AbgAOT4b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 14:48:49 -0500
-Received: by mail-pj1-f54.google.com with SMTP id r67so392859pjb.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jan 2020 11:48:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=mfOcggh9Ij5VrzzcP3dcYGzGv0U+3av4+wN4xCGn2hk=;
-        b=M2G/cnOwd/oFmzBASlg+3RqBtFzOPZybUgUGoE9A1sLNkSCuwWLyFz2lW64IfdFsna
-         9AQlZom4Ba5CyPqMjBQA9C8+RfYOs4T01nBk8B65/Bw+x9sEBjnQ6K0vJV9mxZ9obt45
-         Ne9RJHAP1nLs32+Jb691Ph6cfKzWcmSk+Aa6QPjwHLTNctgothN38yQaunuF4KymMEEf
-         DtYQauwDrpMgfCwd8NNFuICuDQ+/l5cBD996TlyR071ifvOazmG94Wv9lYxbWzb2YNI+
-         VUka4MMOF1pRwsSud1zk7CK7oRnQ801uD42ZPcimYEJn/+pvVwX2TMKJ0gSq72E7NiKn
-         8rMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=mfOcggh9Ij5VrzzcP3dcYGzGv0U+3av4+wN4xCGn2hk=;
-        b=lXBvUOS/zWaS0rPRwzoee9Q515ZRy9AoW11IlNyN5ZinUJrdW/8Kb64/VpCydE4kIU
-         EaqRJLN4QEnfS9dK1Dvo4bsczft64TLhpCTAgwtPMOkYQ3ePoIo9ikXwy4mhPfQmbXQh
-         UQFyfJEGjJtNzn2PywaW5dZWUAOWNR/qHBvapQaS2YbwEEKjAZcwnfZqe4KKTgL8Xqqz
-         krglixviYxr/JvU/aodOQJLre3mG2sBMnfXyU+Up+KNPPJDpvzs62oQQ6zw3b3TmN8qr
-         6B6jyv8M79xYoG7FRadtx3nwt5QZENKjJQvsX1DnblhShBurXW3aqDVnqbQZNcuYitXB
-         NvGg==
-X-Gm-Message-State: APjAAAUTDoA/Vje/06Pm2rEe5JS/SJskck5C1ZSgTdvVKqW7671tAKLn
-        B1TRGD4PM4bOjt7TfL7Gt0mUdg==
-X-Google-Smtp-Source: APXvYqxP6WhNjxkfuE0g6khT7UyihhalBizsQoBp9O693hV+s+j7MHh19YyDAax8jCcjC9KTJ2bxsQ==
-X-Received: by 2002:a17:90a:b78d:: with SMTP id m13mr1882398pjr.100.1579117728439;
-        Wed, 15 Jan 2020 11:48:48 -0800 (PST)
-Received: from cabot-wlan.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
-        by smtp.gmail.com with ESMTPSA id g67sm23485209pfb.66.2020.01.15.11.48.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 Jan 2020 11:48:47 -0800 (PST)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <C0F67EC5-7B5D-4179-9F28-95B84D9CC326@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_CC498D30-739D-4ED3-A222-2F501C8D578D";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: Problems with determining data presence by examining extents?
-Date:   Wed, 15 Jan 2020 12:48:44 -0700
-In-Reply-To: <20200115133101.GA28583@lst.de>
-Cc:     Qu Wenruo <quwenruo.btrfs@gmx.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Wed, 15 Jan 2020 14:56:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579118189;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=iFz2DGgnuoyO/vc+L4OwV72STrnhF4EdxNMzsd8pbN0=;
+        b=IqzVONjdzHNKNs5wL5uhR7v5VVizrQhBiu1gU719XonOma1vsrOl4OMHEBg0sVYxf328sW
+        fZSoocSDqDgL5H3SdPGJvq5SBxbtNuACkfxqOuDqCl4fY0Sn9hISkSuF7uYQiuFHkwtb+E
+        kbyLBf6HlpnKvYoISWcymtlQAjsmnyc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-341-C1mMTu0JOJ6LM089s9cTWA-1; Wed, 15 Jan 2020 14:56:25 -0500
+X-MC-Unique: C1mMTu0JOJ6LM089s9cTWA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8DE0C10054E3;
+        Wed, 15 Jan 2020 19:56:23 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CA40E108132E;
+        Wed, 15 Jan 2020 19:56:17 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 565B9220A24; Wed, 15 Jan 2020 14:56:17 -0500 (EST)
+Date:   Wed, 15 Jan 2020 14:56:17 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Jan Kara <jack@suse.cz>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-To:     David Howells <dhowells@redhat.com>, Christoph Hellwig <hch@lst.de>
-References: <4467.1579020509@warthog.procyon.org.uk>
- <00fc7691-77d5-5947-5493-5c97f262da81@gmx.com>
- <27181AE2-C63F-4932-A022-8B0563C72539@dilger.ca>
- <afa71c13-4f99-747a-54ec-579f11f066a0@gmx.com>
- <20200115133101.GA28583@lst.de>
-X-Mailer: Apple Mail (2.3273)
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jeff Moyer <jmoyer@redhat.com>
+Subject: Re: [PATCH 01/19] dax: remove block device dependencies
+Message-ID: <20200115195617.GA4133@redhat.com>
+References: <20200107180101.GC15920@redhat.com>
+ <CAPcyv4gmdoqpwwwy4dS3D2eZFjmJ_Zi39k=1a4wn-_ksm-UV4A@mail.gmail.com>
+ <20200107183307.GD15920@redhat.com>
+ <CAPcyv4ggoS4dWjq-1KbcuaDtroHKEi5Vu19ggJ-qgycs6w1eCA@mail.gmail.com>
+ <20200109112447.GG27035@quack2.suse.cz>
+ <CAPcyv4j5Mra8qeLO3=+BYZMeXNAxFXv7Ex7tL9gra1TbhOgiqg@mail.gmail.com>
+ <20200114203138.GA3145@redhat.com>
+ <CAPcyv4iXKFt207Pen+E1CnqCFtC1G85fxw5EXFVx+jtykGWMXA@mail.gmail.com>
+ <20200114212805.GB3145@redhat.com>
+ <CAPcyv4igrs40uWuCB163PPBLqyGVaVbaNfE=kCfHRPRuvZdxQA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4igrs40uWuCB163PPBLqyGVaVbaNfE=kCfHRPRuvZdxQA@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
---Apple-Mail=_CC498D30-739D-4ED3-A222-2F501C8D578D
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
-	charset=us-ascii
-
-On Jan 15, 2020, at 6:31 AM, Christoph Hellwig <hch@lst.de> wrote:
+On Tue, Jan 14, 2020 at 02:23:04PM -0800, Dan Williams wrote:
+> On Tue, Jan 14, 2020 at 1:28 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> >
+> > On Tue, Jan 14, 2020 at 12:39:00PM -0800, Dan Williams wrote:
+> > > On Tue, Jan 14, 2020 at 12:31 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > > >
+> > > > On Thu, Jan 09, 2020 at 12:03:01PM -0800, Dan Williams wrote:
+> > > > > On Thu, Jan 9, 2020 at 3:27 AM Jan Kara <jack@suse.cz> wrote:
+> > > > > >
+> > > > > > On Tue 07-01-20 10:49:55, Dan Williams wrote:
+> > > > > > > On Tue, Jan 7, 2020 at 10:33 AM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > > > > > > > W.r.t partitioning, bdev_dax_pgoff() seems to be the pain point where
+> > > > > > > > dax code refers back to block device to figure out partition offset in
+> > > > > > > > dax device. If we create a dax object corresponding to "struct block_device"
+> > > > > > > > and store sector offset in that, then we could pass that object to dax
+> > > > > > > > code and not worry about referring back to bdev. I have written some
+> > > > > > > > proof of concept code and called that object "dax_handle". I can post
+> > > > > > > > that code if there is interest.
+> > > > > > >
+> > > > > > > I don't think it's worth it in the end especially considering
+> > > > > > > filesystems are looking to operate on /dev/dax devices directly and
+> > > > > > > remove block entanglements entirely.
+> > > > > > >
+> > > > > > > > IMHO, it feels useful to be able to partition and use a dax capable
+> > > > > > > > block device in same way as non-dax block device. It will be really
+> > > > > > > > odd to think that if filesystem is on /dev/pmem0p1, then dax can't
+> > > > > > > > be enabled but if filesystem is on /dev/mapper/pmem0p1, then dax
+> > > > > > > > will work.
+> > > > > > >
+> > > > > > > That can already happen today. If you do not properly align the
+> > > > > > > partition then dax operations will be disabled. This proposal just
+> > > > > > > extends that existing failure domain to make all partitions fail to
+> > > > > > > support dax.
+> > > > > >
+> > > > > > Well, I have some sympathy with the sysadmin that has /dev/pmem0 device,
+> > > > > > decides to create partitions on it for whatever (possibly misguided)
+> > > > > > reason and then ponders why the hell DAX is not working? And PAGE_SIZE
+> > > > > > partition alignment is so obvious and widespread that I don't count it as a
+> > > > > > realistic error case sysadmins would be pondering about currently.
+> > > > > >
+> > > > > > So I'd find two options reasonably consistent:
+> > > > > > 1) Keep status quo where partitions are created and support DAX.
+> > > > > > 2) Stop partition creation altogether, if anyones wants to split pmem
+> > > > > > device further, he can use dm-linear for that (i.e., kpartx).
+> > > > > >
+> > > > > > But I'm not sure if the ship hasn't already sailed for option 2) to be
+> > > > > > feasible without angry users and Linus reverting the change.
+> > > > >
+> > > > > Christoph? I feel myself leaning more and more to the "keep pmem
+> > > > > partitions" camp.
+> > > > >
+> > > > > I don't see "drop partition support" effort ending well given the long
+> > > > > standing "ext4 fails to mount when dax is not available" precedent.
+> > > > >
+> > > > > I think the next least bad option is to have a dax_get_by_host()
+> > > > > variant that passes an offset and length pair rather than requiring a
+> > > > > later bdev_dax_pgoff() to recall the offset. This also prevents
+> > > > > needing to add another dax-device object representation.
+> > > >
+> > > > I am wondering what's the conclusion on this. I want to this to make
+> > > > progress in some direction so that I can make progress on virtiofs DAX
+> > > > support.
+> > >
+> > > I think we should at least try to delete the partition support and see
+> > > if anyone screams. Have a module option to revert the behavior so
+> > > people are not stuck waiting for the revert to land, but if it stays
+> > > quiet then we're in a better place with that support pushed out of the
+> > > dax core.
+> >
+> > Hi Dan,
+> >
+> > So basically keep partition support code just that disable it by default
+> > and it is enabled by some knob say kernel command line option/module
+> > option.
 > 
-> On Wed, Jan 15, 2020 at 09:10:44PM +0800, Qu Wenruo wrote:
->>> That allows userspace to distinguish fe_physical addresses that may be
->>> on different devices.  This isn't in the kernel yet, since it is mostly
->>> useful only for Btrfs and nobody has implemented it there.  I can give
->>> you details if working on this for Btrfs is of interest to you.
->> 
->> IMHO it's not good enough.
->> 
->> The concern is, one extent can exist on multiple devices (mirrors for
->> RAID1/RAID10/RAID1C2/RAID1C3, or stripes for RAID5/6).
->> I didn't see how it can be easily implemented even with extra fields.
->> 
->> And even we implement it, it can be too complex or bug prune to fill
->> per-device info.
+> Yes.
 > 
-> It's also completely bogus for the use cases to start with.  fiemap
-> is a debug tool reporting the file system layout.  Using it for anything
-> related to actual data storage and data integrity is a receipe for
-> disaster.  As said the right thing for the use case would be something
-> like the NFS READ_PLUS operation.  If we can't get that easily it can
-> be emulated using lseek SEEK_DATA / SEEK_HOLE assuming no other thread
-> could be writing to the file, or the raciness doesn't matter.
+> > At what point of time will we remove that code completely. I mean what
+> > if people scream after two kernel releases, after we have removed the
+> > code.
+> 
+> I'd follow the typical timelines of Documentation/ABI/obsolete which
+> is a year or more.
+> 
+> >
+> > Also, from distribution's perspective, we might not hear from our
+> > customers for a very long time (till we backport that code in to
+> > existing releases or release this new code in next major release). From
+> > that view point I will not like to break existing user visible behavior.
+> >
+> > How bad it is to keep partition support around. To me it feels reasonaly
+> > simple where we just have to store offset into dax device into another
+> > dax object:
+> 
+> If we end up keeping partition support, we're not adding another object.
+> 
+> > and pass that object around (instead of dax_device). If that's
+> > the case, I am not sure why to even venture into a direction where some
+> > user's setup might be broken.
+> 
+> It was a mistake to support them. If that mistake can be undone
+> without breaking existing deployments the code base is better off
+> without the concept.
+> 
+> > Also from an application perspective, /dev/pmem is a block device, so it
+> > should behave like a block device, (including kernel partition table support).
+> > From that view, dax looks like just an additional feature of that device
+> > which can be enabled by passing option "-o dax".
+> 
+> dax via block devices was a crutch that we leaned on too heavily, and
+> the implementation has slowly been moving away from it ever since.
+> 
+> > IOW, can we reconsider the idea of not supporting kernel partition tables
+> > for dax capable block devices. I can only see downsides of removing kernel
+> > partition table support and only upside seems to be little cleanup of dax
+> > core code.
+> 
+> Can you help find end users that depend on it?
 
-I don't think either of those will be any better than FIEMAP, if the reason
-is that the underlying filesystem is filling in holes with actual data
-blocks to optimize the IO pattern.  SEEK_HOLE would not find a hole in
-the block allocation, and would happily return the block of zeroes to
-the caller.  Also, it isn't clear if SEEK_HOLE considers an allocated but
-unwritten extent to be a hole or a block?
+I can't think of a real user at this point of time. Just that I am
+concerned, once the change goes in, somebody will get affected at later
+point of time and comes out complainig and this change will be seen as
+breaking user space and hence regression.
 
-I think what is needed here is an fadvise/ioctl that tells the filesystem
-"don't allocate blocks unless actually written" for that file.  Storing
-anything in a separate data structure is a recipe for disaster, since it
-will become inconsistent after a crash, or filesystem corruption+e2fsck,
-and will unnecessarily bloat the on-disk metadata for every file to hold
-redundant information.
+> Even the Red Hat
+> installation guide example shows mounting on pmem0 directly. [1]
 
-I don't see COW/reflink/compression as being a problem in this case, since
-what cachefiles cares about is whether there is _any_ data for a given
-logical offset, not where/how the data is stored.  IF FIEMAP was used for
-a btrfs backing filesystem, it would need the "EXTENT_DATA_COMPRESSED"
-feature to be implemented as well, so that it can distinguish the logical
-vs. physical allocations.  I don't think that would be needed for SEEK_HOLE
-and SEEK_DATA, so long as they handle unwritten extents properly (and are
-correctly implemented in the first place, some filesystems fall back to
-always returning the next block for SEEK_DATA).
+Below that example it also says.
 
-Cheers, Andreas
+"When creating partitions on a pmem device to be used for direct access,
+partitions must be aligned on page boundaries. On the Intel 64 and AMD64
+architecture, at least 4KiB alignment for the start and end of the
+partition, but 2MiB is the preferred alignment. By default, the parted
+tool aligns partitions on 1MiB boundaries. For the first partition,
+specify 2MiB as the start of the partition. If the size of the partition
+is a multiple of 2MiB, all other partitions are also aligned."
 
+So documentation is clearly saying dax will work with partitions as well.
+And some user might decide to just do that.
 
+Thanks
+Vivek
 
-
-
-
---Apple-Mail=_CC498D30-739D-4ED3-A222-2F501C8D578D
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl4fbJ0ACgkQcqXauRfM
-H+CGqw//clrcdoV9kWx8edXSbVsdv8WiQjBERU0J4tkQgIcsIPB4/w1kWk/qsk56
-Cew1K8m6uWzKmrOb9pOdDUQeSVMiqoCEFJKabnEu17miBjRBeQofftQazJ66VCDt
-jTpqDmTIJlX6GPHmJQf52V+YMzRqdZhWPBwU2DOiLzXktvPt8zLJdUQLhvHv5xom
-rKXBFqi3ZKW8MAtVN4xdwMCpgqzqgwE/ZEciZkIQmkt71eo2+mqg5DxYGDjBbV8r
-u/KQm0mkh1otrCgskTUcb7mhnf52uWkpZQZTtBD246ShTvnuU0MaCSqv3HhLHVo+
-p5/q5S3oFE67Odc/Tj3vFW0N2R5uX0o20tGr4TFoRl5enngiCM2OTg3Pqh2fq8vc
-hrOw8SARGuhCq5QNOyydtpQ1YO1QTT6TTxVJTxXEkkxWyexPBtufupKUCRVhTkC2
-nfh704xUn137Gcr5Rk8p2io54s8kKnLUE5sVGU44TrD0voG6f8OD/eI1vr7XWLIw
-5pNtxLfFLe0LNFX5+5M0FfmJxuXyVqzUT5co79d3AHVwjN0/LYmuN+ICgWomBy34
-fm2S4mdW1SyLCK8T3LVXX5/JFpK+e0jzQ8DFUhumUzES+q0uMRSdDQjxRX5asdX2
-z3CT+qbgnMElZuf+JaARqPC/tV8z+FlawJv/xgVq7eXpmILQjA0=
-=1vdd
------END PGP SIGNATURE-----
-
---Apple-Mail=_CC498D30-739D-4ED3-A222-2F501C8D578D--
