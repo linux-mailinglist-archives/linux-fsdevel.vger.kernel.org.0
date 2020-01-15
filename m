@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F89313C331
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 14:32:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C371E13C325
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 14:32:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729048AbgAONc0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 08:32:26 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:40584 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729014AbgAONc0 (ORCPT
+        id S1729375AbgAONce (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 08:32:34 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:44752 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729369AbgAONcd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 08:32:26 -0500
+        Wed, 15 Jan 2020 08:32:33 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579095145;
+        s=mimecast20190719; t=1579095152;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=xw/f3n5bD2UHropjz/lBOnsY06YP1A7ZbnfKqMhhuJc=;
-        b=fUOK91om8ppPW56IoaqEQdAxQHaJL/u4nToc6U+a/21DjdLtqNR2uZyBYN8KGnNtqZqrA7
-        m8GYR84tsrKn2Yv/1tRWpyIWJgtMYGAmlUU+hqJYiE3vxJ9imp1xESWy6AlW/UZOWBmvyj
-        RaTYSXWINfsOOUjFKqQVhVxQ3pPvnFI=
+        bh=2kpM5+6R7K724v04WX/QUjWPqtEKeYfEvrwh5TlT6Kk=;
+        b=Toq5kwHJo72pAn/FCD771qEIKt1imxeBtCJQTQK+izsh+aTv68gwFCZtTpVUnHGPrqPXnJ
+        fvh7SN/rEQdfft6JLnhdhcHBl5wLk6Tw+qh9AcCoIRTt9x/UmIZUyVfMUsd61d7mCyo8Lx
+        6b/C4mDw5BHypObRFuptO3RlDyzZZVQ=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-116-cbtRm0YyPgSkOTBs1g_Kiw-1; Wed, 15 Jan 2020 08:32:19 -0500
-X-MC-Unique: cbtRm0YyPgSkOTBs1g_Kiw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+ us-mta-423-YjWzdLlEM6WeOan9GpEBIw-1; Wed, 15 Jan 2020 08:32:28 -0500
+X-MC-Unique: YjWzdLlEM6WeOan9GpEBIw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 78721800D50;
-        Wed, 15 Jan 2020 13:32:17 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 875909122A;
+        Wed, 15 Jan 2020 13:32:26 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BB2595C28C;
-        Wed, 15 Jan 2020 13:32:14 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7A0A619C5B;
+        Wed, 15 Jan 2020 13:32:23 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 11/14] block: Add block layer notifications [ver #3]
+Subject: [RFC PATCH 12/14] usb: Add USB subsystem notifications [ver #3]
 From:   David Howells <dhowells@redhat.com>
 To:     torvalds@linux-foundation.org
 Cc:     dhowells@redhat.com,
@@ -51,321 +51,369 @@ Cc:     dhowells@redhat.com,
         linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 15 Jan 2020 13:32:14 +0000
-Message-ID: <157909513401.20155.11696586597485616420.stgit@warthog.procyon.org.uk>
+Date:   Wed, 15 Jan 2020 13:32:22 +0000
+Message-ID: <157909514270.20155.15305842826442957104.stgit@warthog.procyon.org.uk>
 In-Reply-To: <157909503552.20155.3030058841911628518.stgit@warthog.procyon.org.uk>
 References: <157909503552.20155.3030058841911628518.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a block layer notification mechanism whereby notifications about
-block-layer events such as I/O errors, can be reported to a monitoring
-process asynchronously.
+Add a USB subsystem notification mechanism whereby notifications about
+hardware events such as device connection, disconnection, reset and I/O
+errors, can be reported to a monitoring process asynchronously.
 
 Firstly, an event queue needs to be created:
 
 	pipe2(fds, O_NOTIFICATION_PIPE);
 	ioctl(fds[1], IOC_WATCH_QUEUE_SET_SIZE, 256);
 
-then a notification can be set up to report block notifications via that
+then a notification can be set up to report USB notifications via that
 queue:
 
 	struct watch_notification_filter filter = {
 		.nr_filters = 1,
 		.filters = {
 			[0] = {
-				.type = WATCH_TYPE_BLOCK_NOTIFY,
+				.type = WATCH_TYPE_USB_NOTIFY,
 				.subtype_filter[0] = UINT_MAX;
 			},
 		},
 	};
 	ioctl(fds[1], IOC_WATCH_QUEUE_SET_FILTER, &filter);
-	watch_devices(fds[1], 12);
+	notify_devices(fds[1], 12);
 
-After that, records will be placed into the queue when, for example, errors
-occur on a block device.  Records are of the following format:
+After that, messages will be placed into the queue when events occur on a
+USB device or bus.  Messages are of the following format:
 
-	struct block_notification {
+	struct usb_notification {
 		struct watch_notification watch;
-		__u64	dev;
-		__u64	sector;
+		__u32	error;
+		__u32	reserved;
+		__u8	name_len;
+		__u8	name[0];
 	} *n;
 
 Where:
 
-	n->watch.type will be WATCH_TYPE_BLOCK_NOTIFY
+	n->watch.type will be WATCH_TYPE_USB_NOTIFY
 
 	n->watch.subtype will be the type of notification, such as
-	NOTIFY_BLOCK_ERROR_CRITICAL_MEDIUM.
+	NOTIFY_USB_DEVICE_ADD.
 
 	n->watch.info & WATCH_INFO_LENGTH will indicate the length of the
-	record.
+	message.
 
 	n->watch.info & WATCH_INFO_ID will be the second argument to
-	watch_devices(), shifted.
+	device_notify(), shifted.
 
-	n->dev will be the device numbers munged together.
+	n->error and n->reserved are intended to convey information such as
+	error codes, but are currently not used
 
-	n->sector will indicate the affected sector (if appropriate for the
-	event).
+	n->name_len and n->name convey the USB device name as an
+	unterminated string.  This may be truncated - it is currently
+	limited to a maximum 63 chars.
 
-Note that it is permissible for event records to be of variable length -
-or, at least, the length may be dependent on the subtype.
+Note that it is permissible for messages to be of variable length - or, at
+least, the length may be dependent on the subtype.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+cc: linux-usb@vger.kernel.org
 ---
 
- Documentation/watch_queue.rst    |    4 +++-
- block/Kconfig                    |    9 +++++++++
- block/blk-core.c                 |   29 ++++++++++++++++++++++++++++
- include/linux/blkdev.h           |   15 ++++++++++++++
- include/uapi/linux/watch_queue.h |   30 ++++++++++++++++++++++++++++-
- samples/watch_queue/watch_test.c |   40 +++++++++++++++++++++++++++++++++++++-
- 6 files changed, 124 insertions(+), 3 deletions(-)
+ Documentation/watch_queue.rst    |    9 +++++++
+ drivers/usb/core/Kconfig         |    9 +++++++
+ drivers/usb/core/devio.c         |   47 ++++++++++++++++++++++++++++++++++++++
+ drivers/usb/core/hub.c           |    4 +++
+ include/linux/usb.h              |   18 +++++++++++++++
+ include/uapi/linux/watch_queue.h |   28 ++++++++++++++++++++++-
+ samples/watch_queue/watch_test.c |   29 +++++++++++++++++++++++
+ 7 files changed, 142 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/watch_queue.rst b/Documentation/watch_queue.rst
-index ed592700be0e..f2299f631ae8 100644
+index f2299f631ae8..5321a9cb1ab2 100644
 --- a/Documentation/watch_queue.rst
 +++ b/Documentation/watch_queue.rst
-@@ -8,7 +8,9 @@ opened by userspace.  This can be used in conjunction with::
+@@ -12,6 +12,8 @@ opened by userspace.  This can be used in conjunction with::
  
-   * Key/keyring notifications
+     * Block layer event notifications
  
--  * General device event notifications
-+  * General device event notifications, including::
++    * USB subsystem event notifications
 +
-+    * Block layer event notifications
- 
  
  The notifications buffers can be enabled by:
-diff --git a/block/Kconfig b/block/Kconfig
-index c23094a14a2b..9fa6ce2177bc 100644
---- a/block/Kconfig
-+++ b/block/Kconfig
-@@ -181,6 +181,15 @@ config BLK_SED_OPAL
- 	Enabling this option enables users to setup/unlock/lock
- 	Locking ranges for SED devices using the Opal protocol.
  
-+config BLK_NOTIFICATIONS
-+	bool "Block layer event notifications"
-+	depends on DEVICE_NOTIFICATIONS
+@@ -262,6 +264,13 @@ Any particular buffer can be fed from multiple sources.  Sources include:
+     or temporary link loss.  Watches of this type are set on the global device
+     watch list.
+ 
++  * WATCH_TYPE_USB_NOTIFY
++
++    Notifications of this type indicate USB subsystem events, such as
++    attachment, removal, reset and I/O errors.  Separate events are generated
++    for buses and devices.  Watchpoints of this type are set on the global
++    device watch list.
++
+ 
+ Event Filtering
+ ===============
+diff --git a/drivers/usb/core/Kconfig b/drivers/usb/core/Kconfig
+index ecaacc8ed311..57e7b649e48b 100644
+--- a/drivers/usb/core/Kconfig
++++ b/drivers/usb/core/Kconfig
+@@ -102,3 +102,12 @@ config USB_AUTOSUSPEND_DELAY
+ 	  The default value Linux has always had is 2 seconds.  Change
+ 	  this value if you want a different delay and cannot modify
+ 	  the command line or module parameter.
++
++config USB_NOTIFICATIONS
++	bool "Provide USB hardware event notifications"
++	depends on USB && DEVICE_NOTIFICATIONS
 +	help
-+	  This option provides support for getting block layer event
-+	  notifications.  This makes use of the /dev/watch_queue misc device to
-+	  handle the notification buffer and provides the device_notify() system
-+	  call to enable/disable watches.
-+
- menu "Partition Types"
- 
- source "block/partitions/Kconfig"
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 089e890ab208..50a5de025d5e 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -187,6 +187,22 @@ static const struct {
- 	[BLK_STS_IOERR]		= { -EIO,	"I/O" },
- };
- 
-+#ifdef CONFIG_BLK_NOTIFICATIONS
-+static const
-+enum block_notification_type blk_notifications[ARRAY_SIZE(blk_errors)] = {
-+	[BLK_STS_TIMEOUT]	= NOTIFY_BLOCK_ERROR_TIMEOUT,
-+	[BLK_STS_NOSPC]		= NOTIFY_BLOCK_ERROR_NO_SPACE,
-+	[BLK_STS_TRANSPORT]	= NOTIFY_BLOCK_ERROR_RECOVERABLE_TRANSPORT,
-+	[BLK_STS_TARGET]	= NOTIFY_BLOCK_ERROR_CRITICAL_TARGET,
-+	[BLK_STS_NEXUS]		= NOTIFY_BLOCK_ERROR_CRITICAL_NEXUS,
-+	[BLK_STS_MEDIUM]	= NOTIFY_BLOCK_ERROR_CRITICAL_MEDIUM,
-+	[BLK_STS_PROTECTION]	= NOTIFY_BLOCK_ERROR_PROTECTION,
-+	[BLK_STS_RESOURCE]	= NOTIFY_BLOCK_ERROR_KERNEL_RESOURCE,
-+	[BLK_STS_DEV_RESOURCE]	= NOTIFY_BLOCK_ERROR_DEVICE_RESOURCE,
-+	[BLK_STS_IOERR]		= NOTIFY_BLOCK_ERROR_IO,
-+};
-+#endif
-+
- blk_status_t errno_to_blk_status(int errno)
- {
- 	int i;
-@@ -227,6 +243,19 @@ static void print_req_error(struct request *req, blk_status_t status,
- 		req->cmd_flags & ~REQ_OP_MASK,
- 		req->nr_phys_segments,
- 		IOPRIO_PRIO_CLASS(req->ioprio));
-+
-+#ifdef CONFIG_BLK_NOTIFICATIONS
-+	if (blk_notifications[idx]) {
-+		struct block_notification n = {
-+			.watch.type	= WATCH_TYPE_BLOCK_NOTIFY,
-+			.watch.subtype	= blk_notifications[idx],
-+			.watch.info	= watch_sizeof(n),
-+			.dev		= req->rq_disk ? disk_devt(req->rq_disk) : 0,
-+			.sector		= blk_rq_pos(req),
-+		};
-+		post_block_notification(&n);
-+	}
-+#endif
- }
- 
- static void req_bio_endio(struct request *rq, struct bio *bio,
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 47eb22a3b7f9..3cd1853dbdac 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -27,6 +27,7 @@
- #include <linux/percpu-refcount.h>
- #include <linux/scatterlist.h>
- #include <linux/blkzoned.h>
++	  This option provides support for getting hardware event notifications
++	  on USB devices and interfaces.  This makes use of the
++	  /dev/watch_queue misc device to handle the notification buffer.
++	  device_notify(2) is used to set/remove watches.
+diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
+index 12bb5722b420..3436a2bb6e98 100644
+--- a/drivers/usb/core/devio.c
++++ b/drivers/usb/core/devio.c
+@@ -41,6 +41,7 @@
+ #include <linux/dma-mapping.h>
+ #include <asm/byteorder.h>
+ #include <linux/moduleparam.h>
 +#include <linux/watch_queue.h>
  
- struct module;
- struct scsi_ioctl_command;
-@@ -1770,6 +1771,20 @@ static inline bool blk_req_can_dispatch_to_zone(struct request *rq)
- }
- #endif /* CONFIG_BLK_DEV_ZONED */
+ #include "usb.h"
  
-+#ifdef CONFIG_BLK_NOTIFICATIONS
-+static inline void post_block_notification(struct block_notification *n)
+@@ -2747,13 +2748,59 @@ static void usbdev_remove(struct usb_device *udev)
+ 	mutex_unlock(&usbfs_mutex);
+ }
+ 
++#ifdef CONFIG_USB_NOTIFICATIONS
++static noinline void post_usb_notification(const char *devname,
++					   enum usb_notification_type subtype,
++					   u32 error)
 +{
-+	u64 id = 0; /* Might want to allow dev# here. */
++	unsigned int name_len, n_len;
++	u64 id = 0; /* We can put a device ID here for separate dev watches */
 +
-+	post_device_notification(&n->watch, id);
++	struct {
++		struct usb_notification n;
++		char more_name[USB_NOTIFICATION_MAX_NAME_LEN -
++			       (sizeof(struct usb_notification) -
++				offsetof(struct usb_notification, name))];
++	} n;
++
++	name_len = strlen(devname);
++	name_len = min_t(size_t, name_len, USB_NOTIFICATION_MAX_NAME_LEN);
++	n_len = offsetof(struct usb_notification, name) + name_len;
++
++	memset(&n, 0, sizeof(n));
++	memcpy(n.n.name, devname, n_len);
++
++	n.n.watch.type		= WATCH_TYPE_USB_NOTIFY;
++	n.n.watch.subtype	= subtype;
++	n.n.watch.info		= n_len;
++	n.n.error		= error;
++	n.n.name_len		= name_len;
++
++	post_device_notification(&n.n.watch, id);
 +}
-+#else
-+static inline void post_block_notification(struct block_notification *n)
++
++void post_usb_device_notification(const struct usb_device *udev,
++				  enum usb_notification_type subtype, u32 error)
 +{
++	post_usb_notification(dev_name(&udev->dev), subtype, error);
++}
++
++void post_usb_bus_notification(const struct usb_bus *ubus,
++			       enum usb_notification_type subtype, u32 error)
++{
++	post_usb_notification(ubus->bus_name, subtype, error);
 +}
 +#endif
 +
-+
- #else /* CONFIG_BLOCK */
+ static int usbdev_notify(struct notifier_block *self,
+ 			       unsigned long action, void *dev)
+ {
+ 	switch (action) {
+ 	case USB_DEVICE_ADD:
++		post_usb_device_notification(dev, NOTIFY_USB_DEVICE_ADD, 0);
+ 		break;
+ 	case USB_DEVICE_REMOVE:
++		post_usb_device_notification(dev, NOTIFY_USB_DEVICE_REMOVE, 0);
+ 		usbdev_remove(dev);
+ 		break;
+ 	}
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index f229ad6952c0..eaf28eed51b0 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -30,6 +30,7 @@
+ #include <linux/random.h>
+ #include <linux/pm_qos.h>
+ #include <linux/kobject.h>
++#include <linux/watch_queue.h>
  
- struct block_device;
+ #include <linux/uaccess.h>
+ #include <asm/byteorder.h>
+@@ -4606,6 +4607,9 @@ hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,
+ 				(udev->config) ? "reset" : "new", speed,
+ 				devnum, driver_name);
+ 
++	if (udev->config)
++		post_usb_device_notification(udev, NOTIFY_USB_DEVICE_RESET, 0);
++
+ 	/* Set up TT records, if needed  */
+ 	if (hdev->tt) {
+ 		udev->tt = hdev->tt;
+diff --git a/include/linux/usb.h b/include/linux/usb.h
+index e656e7b4b1e4..93fa0666f95a 100644
+--- a/include/linux/usb.h
++++ b/include/linux/usb.h
+@@ -26,6 +26,7 @@
+ struct usb_device;
+ struct usb_driver;
+ struct wusb_dev;
++enum usb_notification_type;
+ 
+ /*-------------------------------------------------------------------------*/
+ 
+@@ -2015,6 +2016,23 @@ extern void usb_led_activity(enum usb_led_event ev);
+ static inline void usb_led_activity(enum usb_led_event ev) {}
+ #endif
+ 
++/*
++ * Notification functions.
++ */
++#ifdef CONFIG_USB_NOTIFICATIONS
++extern void post_usb_device_notification(const struct usb_device *udev,
++					 enum usb_notification_type subtype,
++					 u32 error);
++extern void post_usb_bus_notification(const struct usb_bus *ubus,
++				      enum usb_notification_type subtype,
++				      u32 error);
++#else
++static inline void post_usb_device_notification(const struct usb_device *udev,
++						unsigned int subtype, u32 error) {}
++static inline void post_usb_bus_notification(const struct usb_bus *ubus,
++					     unsigned int subtype, u32 error) {}
++#endif
++
+ #endif  /* __KERNEL__ */
+ 
+ #endif
 diff --git a/include/uapi/linux/watch_queue.h b/include/uapi/linux/watch_queue.h
-index c3d8320b5d3a..557771413242 100644
+index 557771413242..ad1ae229674a 100644
 --- a/include/uapi/linux/watch_queue.h
 +++ b/include/uapi/linux/watch_queue.h
-@@ -14,7 +14,8 @@
- enum watch_notification_type {
+@@ -15,7 +15,8 @@ enum watch_notification_type {
  	WATCH_TYPE_META		= 0,	/* Special record */
  	WATCH_TYPE_KEY_NOTIFY	= 1,	/* Key change event notification */
--	WATCH_TYPE__NR		= 2
-+	WATCH_TYPE_BLOCK_NOTIFY	= 2,	/* Block layer event notification */
-+	WATCH_TYPE__NR		= 3
+ 	WATCH_TYPE_BLOCK_NOTIFY	= 2,	/* Block layer event notification */
+-	WATCH_TYPE__NR		= 3
++	WATCH_TYPE_USB_NOTIFY	= 3,	/* USB subsystem event notification */
++	WATCH_TYPE__NR		= 4
  };
  
  enum watch_meta_notification_subtype {
-@@ -101,4 +102,31 @@ struct key_notification {
- 	__u32	aux;		/* Per-type auxiliary data */
+@@ -129,4 +130,29 @@ struct block_notification {
+ 	__u64	sector;			/* Affected sector */
  };
  
 +/*
-+ * Type of block layer notification.
++ * Type of USB layer notification.
 + */
-+enum block_notification_type {
-+	NOTIFY_BLOCK_ERROR_TIMEOUT		= 1, /* Timeout error */
-+	NOTIFY_BLOCK_ERROR_NO_SPACE		= 2, /* Critical space allocation error */
-+	NOTIFY_BLOCK_ERROR_RECOVERABLE_TRANSPORT = 3, /* Recoverable transport error */
-+	NOTIFY_BLOCK_ERROR_CRITICAL_TARGET	= 4, /* Critical target error */
-+	NOTIFY_BLOCK_ERROR_CRITICAL_NEXUS	= 5, /* Critical nexus error */
-+	NOTIFY_BLOCK_ERROR_CRITICAL_MEDIUM	= 6, /* Critical medium error */
-+	NOTIFY_BLOCK_ERROR_PROTECTION		= 7, /* Protection error */
-+	NOTIFY_BLOCK_ERROR_KERNEL_RESOURCE	= 8, /* Kernel resource error */
-+	NOTIFY_BLOCK_ERROR_DEVICE_RESOURCE	= 9, /* Device resource error */
-+	NOTIFY_BLOCK_ERROR_IO			= 10, /* Other I/O error */
++enum usb_notification_type {
++	NOTIFY_USB_DEVICE_ADD		= 0, /* USB device added */
++	NOTIFY_USB_DEVICE_REMOVE	= 1, /* USB device removed */
++	NOTIFY_USB_DEVICE_RESET		= 2, /* USB device reset */
++	NOTIFY_USB_DEVICE_ERROR		= 3, /* USB device error */
 +};
 +
 +/*
-+ * Block layer notification record.
-+ * - watch.type = WATCH_TYPE_BLOCK_NOTIFY
-+ * - watch.subtype = enum block_notification_type
++ * USB subsystem notification record.
++ * - watch.type = WATCH_TYPE_USB_NOTIFY
++ * - watch.subtype = enum usb_notification_type
 + */
-+struct block_notification {
-+	struct watch_notification watch; /* WATCH_TYPE_BLOCK_NOTIFY */
-+	__u64	dev;			/* Device number */
-+	__u64	sector;			/* Affected sector */
++struct usb_notification {
++	struct watch_notification watch; /* WATCH_TYPE_USB_NOTIFY */
++	__u32	error;
++	__u32	reserved;
++	__u8	name_len;		/* Length of device name */
++	__u8	name[0];		/* Device name (padded to __u64, truncated at 63 chars) */
 +};
++
++#define USB_NOTIFICATION_MAX_NAME_LEN 63
 +
  #endif /* _UAPI_LINUX_WATCH_QUEUE_H */
 diff --git a/samples/watch_queue/watch_test.c b/samples/watch_queue/watch_test.c
-index 0eaff5dc04c3..f5260fb792d1 100644
+index f5260fb792d1..e4d47dfcc5d7 100644
 --- a/samples/watch_queue/watch_test.c
 +++ b/samples/watch_queue/watch_test.c
-@@ -58,6 +58,32 @@ static void saw_key_change(struct watch_notification *n, size_t len)
- 	       k->key_id, n->subtype, key_subtypes[n->subtype], k->aux);
+@@ -84,6 +84,26 @@ static void saw_block_change(struct watch_notification *n, size_t len)
+ 	       (unsigned long long)b->sector);
  }
  
-+static const char *block_subtypes[256] = {
-+	[NOTIFY_BLOCK_ERROR_TIMEOUT]			= "timeout",
-+	[NOTIFY_BLOCK_ERROR_NO_SPACE]			= "critical space allocation",
-+	[NOTIFY_BLOCK_ERROR_RECOVERABLE_TRANSPORT]	= "recoverable transport",
-+	[NOTIFY_BLOCK_ERROR_CRITICAL_TARGET]		= "critical target",
-+	[NOTIFY_BLOCK_ERROR_CRITICAL_NEXUS]		= "critical nexus",
-+	[NOTIFY_BLOCK_ERROR_CRITICAL_MEDIUM]		= "critical medium",
-+	[NOTIFY_BLOCK_ERROR_PROTECTION]			= "protection",
-+	[NOTIFY_BLOCK_ERROR_KERNEL_RESOURCE]		= "kernel resource",
-+	[NOTIFY_BLOCK_ERROR_DEVICE_RESOURCE]		= "device resource",
-+	[NOTIFY_BLOCK_ERROR_IO]				= "I/O",
++static const char *usb_subtypes[256] = {
++	[NOTIFY_USB_DEVICE_ADD]		= "dev-add",
++	[NOTIFY_USB_DEVICE_REMOVE]	= "dev-remove",
++	[NOTIFY_USB_DEVICE_RESET]	= "dev-reset",
++	[NOTIFY_USB_DEVICE_ERROR]	= "dev-error",
 +};
 +
-+static void saw_block_change(struct watch_notification *n, size_t len)
++static void saw_usb_event(struct watch_notification *n, size_t len)
 +{
-+	struct block_notification *b = (struct block_notification *)n;
++	struct usb_notification *u = (struct usb_notification *)n;
 +
-+	if (len < sizeof(struct block_notification))
++	if (len < sizeof(struct usb_notification))
 +		return;
 +
-+	printf("BLOCK %08llx e=%u[%s] s=%llx\n",
-+	       (unsigned long long)b->dev,
-+	       n->subtype, block_subtypes[n->subtype],
-+	       (unsigned long long)b->sector);
++	printf("USB %*.*s %s e=%x r=%x\n",
++	       u->name_len, u->name_len, u->name,
++	       usb_subtypes[n->subtype],
++	       u->error, u->reserved);
 +}
 +
  /*
   * Consume and display events.
   */
-@@ -131,6 +157,9 @@ static void consumer(int fd)
- 			case WATCH_TYPE_KEY_NOTIFY:
- 				saw_key_change(&n.n, len);
+@@ -160,6 +180,9 @@ static void consumer(int fd)
+ 			case WATCH_TYPE_BLOCK_NOTIFY:
+ 				saw_block_change(&n.n, len);
  				break;
-+			case WATCH_TYPE_BLOCK_NOTIFY:
-+				saw_block_change(&n.n, len);
++			case WATCH_TYPE_USB_NOTIFY:
++				saw_usb_event(&n.n, len);
 +				break;
  			default:
  				printf("other type\n");
  				break;
-@@ -142,12 +171,16 @@ static void consumer(int fd)
+@@ -171,7 +194,7 @@ static void consumer(int fd)
  }
  
  static struct watch_notification_filter filter = {
--	.nr_filters	= 1,
-+	.nr_filters	= 2,
+-	.nr_filters	= 2,
++	.nr_filters	= 3,
  	.filters = {
  		[0]	= {
  			.type			= WATCH_TYPE_KEY_NOTIFY,
+@@ -181,6 +204,10 @@ static struct watch_notification_filter filter = {
+ 			.type			= WATCH_TYPE_BLOCK_NOTIFY,
  			.subtype_filter[0]	= UINT_MAX,
  		},
-+		[1]	= {
-+			.type			= WATCH_TYPE_BLOCK_NOTIFY,
++		[2]	= {
++			.type			= WATCH_TYPE_USB_NOTIFY,
 +			.subtype_filter[0]	= UINT_MAX,
 +		},
  	},
  };
  
-@@ -181,6 +214,11 @@ int main(int argc, char **argv)
- 		exit(1);
- 	}
- 
-+	if (syscall(__NR_watch_devices, fd, 0x04, 0) == -1) {
-+		perror("watch_devices");
-+		exit(1);
-+	}
-+
- 	consumer(fd);
- 	exit(0);
- }
 
