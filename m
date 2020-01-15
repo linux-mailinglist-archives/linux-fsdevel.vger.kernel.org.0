@@ -2,176 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7925A13CECA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 22:20:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28C3A13CECF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 22:20:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729992AbgAOVTp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 16:19:45 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:11075 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729263AbgAOVTo (ORCPT
+        id S1729577AbgAOVUI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 16:20:08 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:49555 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729259AbgAOVUG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 16:19:44 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e1f81da0000>; Wed, 15 Jan 2020 13:19:22 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 15 Jan 2020 13:19:42 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 15 Jan 2020 13:19:42 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 15 Jan
- 2020 21:19:42 +0000
-Subject: Re: [PATCH v12 04/22] mm: devmap: refactor 1-based refcounting for
- ZONE_DEVICE pages
-To:     Christoph Hellwig <hch@infradead.org>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-References: <20200107224558.2362728-1-jhubbard@nvidia.com>
- <20200107224558.2362728-5-jhubbard@nvidia.com>
- <20200115152306.GA19546@infradead.org>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <4707f191-86f8-db4a-c3de-0a84b415b658@nvidia.com>
-Date:   Wed, 15 Jan 2020 13:19:41 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Wed, 15 Jan 2020 16:20:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579123206;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=/9aI+XysB2K8PkWSb2xgoTza9SmIoeznTkyTmdcAhMI=;
+        b=LsKYN4MzHgT8eyx3aaNnqkqULZwjMOL+GhwuhwCEDENefbieZO+XwzSlkMthEM9irWf5dL
+        UVVOZ/4iEVLMlspxw8ZmsZvG0HJUAQLno+jXEPGOJPqrOxPTihsv5ocne6ovcc6yGVfdzp
+        OYpjTX4zS+j4qKm6RNC6t4GvLg2TuwY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-285-63FEipuPOjSs30P70YfqlA-1; Wed, 15 Jan 2020 16:20:02 -0500
+X-MC-Unique: 63FEipuPOjSs30P70YfqlA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9BABD92FA0;
+        Wed, 15 Jan 2020 21:20:01 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6661160BE0;
+        Wed, 15 Jan 2020 21:20:00 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAH2r5msP9W5Jd+=W0oFnEbqzj5dYEzdiydSoX0m0sdZ5KOF-zQ@mail.gmail.com>
+References: <CAH2r5msP9W5Jd+=W0oFnEbqzj5dYEzdiydSoX0m0sdZ5KOF-zQ@mail.gmail.com> <157432403818.17624.9300948341879954830.stgit@warthog.procyon.org.uk>
+To:     Steve French <smfrench@gmail.com>
+Cc:     dhowells@redhat.com, Steve French <sfrench@samba.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] cifs: Don't use iov_iter::type directly
 MIME-Version: 1.0
-In-Reply-To: <20200115152306.GA19546@infradead.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1579123162; bh=GeG6npnwyerPXrXB3bHbzqY7iBJ1oGmlF7ZkUct1x7k=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=jj9z8sItAejAXuqLJp407Y0oGvSfSmMgC2Khnl/UaD4X75Jfs+E4VVRGeSQsgj4wP
-         14n675+NVsxapYKvaJVbv9kK8eZuWxvO3Y6Z1FaTdzbTeZYm8ghKmuNIE5C0gACdNX
-         GRKd75x36rcOJr0kw/HdaVzIwMxuti46gF1ZGWWpciXiVKzpgvI3qlfJhfyWO1skXq
-         uplmy/sgWDjhYQkuOFvVaYpZjSy0ueb1q0Sh/SzXH1k9SEC0ZieDiM/hkNzj/S5EwR
-         OOf7dWtMC6wOQv1+ifMLfIwYfX7dbiwP1/6cV/7beAaEJMsZqU2lquKgjSAKnqyNBE
-         3XR6j/+C8nurA==
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <26196.1579123199.1@warthog.procyon.org.uk>
+Date:   Wed, 15 Jan 2020 21:19:59 +0000
+Message-ID: <26197.1579123199@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/15/20 7:23 AM, Christoph Hellwig wrote:
-...
-> 
-> I'm really not sold on this scheme.  Note that I think it is
-> particularly bad, but it also doesn't seem any better than what
-> we had before, and it introduced quite a bit more code.
-> 
+Steve French <smfrench@gmail.com> wrote:
 
-Hi Christoph,
+> tentatively merged into cifs-2.6.git for-next (pending more of the
+> usual automated testing we do with the buildbot)
 
-All by itself, yes. But the very next patch (which needs a little 
-rework for other reasons, so not included here) needs to reuse some of 
-these functions within __unpin_devmap_managed_user_page():
+Thanks.
 
-    page_is_devmap_managed()
-    free_devmap_managed_page()
+David
 
-That patch was posted as part of the v11 series [1], and it did this:
-
-+#ifdef CONFIG_DEV_PAGEMAP_OPS
-+static bool __unpin_devmap_managed_user_page(struct page *page)
-+{
-+	int count;
-+
-+	if (!page_is_devmap_managed(page))
-+		return false;
-+
-+	count = page_ref_sub_return(page, GUP_PIN_COUNTING_BIAS);
-+
-+	__update_proc_vmstat(page, NR_FOLL_PIN_RETURNED, 1);
-+	/*
-+	 * devmap page refcounts are 1-based, rather than 0-based: if
-+	 * refcount is 1, then the page is free and the refcount is
-+	 * stable because nobody holds a reference on the page.
-+	 */
-+	if (count == 1)
-+		free_devmap_managed_page(page);
-+	else if (!count)
-+		__put_page(page);
-+
-+	return true;
-+}
-+#else
-+static bool __unpin_devmap_managed_user_page(struct page *page)
-+{
-+	return false;
-+}
-+#endif /* CONFIG_DEV_PAGEMAP_OPS */
-+
-+/**
-+ * unpin_user_page() - release a dma-pinned page
-+ * @page:            pointer to page to be released
-+ *
-+ * Pages that were pinned via pin_user_pages*() must be released via either
-+ * unpin_user_page(), or one of the unpin_user_pages*() routines. This is so
-+ * that such pages can be separately tracked and uniquely handled. In
-+ * particular, interactions with RDMA and filesystems need special handling.
-+ */
-+void unpin_user_page(struct page *page)
-+{
-+	page = compound_head(page);
-+
-+	/*
-+	 * For devmap managed pages we need to catch refcount transition from
-+	 * GUP_PIN_COUNTING_BIAS to 1, when refcount reach one it means the
-+	 * page is free and we need to inform the device driver through
-+	 * callback. See include/linux/memremap.h and HMM for details.
-+	 */
-+	if (__unpin_devmap_managed_user_page(page))
-+		return;
-+
-+	if (page_ref_sub_and_test(page, GUP_PIN_COUNTING_BIAS))
-+		__put_page(page);
-+
-+	__update_proc_vmstat(page, NR_FOLL_PIN_RETURNED, 1);
-+}
-+EXPORT_SYMBOL(unpin_user_page);
-
-
-[1] https://lore.kernel.org/r/20191216222537.491123-24-jhubbard@nvidia.com  
-    [PATCH v11 23/25] mm/gup: track FOLL_PIN pages
-
-thanks,
--- 
-John Hubbard
-NVIDIA
