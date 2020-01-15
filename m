@@ -2,109 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E2BB13C632
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 15:35:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48B9313C63A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 15:35:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729106AbgAOOfW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 09:35:22 -0500
-Received: from mout-p-101.mailbox.org ([80.241.56.151]:22240 "EHLO
-        mout-p-101.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbgAOOfV (ORCPT
+        id S1726418AbgAOOff (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 09:35:35 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:48129 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728905AbgAOOff (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 09:35:21 -0500
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        Wed, 15 Jan 2020 09:35:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579098934;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=02gzqhLOtgbp3kYs0sEj7toypycUFhqtBNRxiOLtfDo=;
+        b=IwLPGwt81206FTl0a+78MJDXYYQNqhcjusuovIbSlWYU1JYTyWP9ujE8cNJOdFTFp3dBsx
+        iEG3qlniPKOzkY3+Fbi3gIcWvmw27xjHXVIcarHsix2r1Vp9fT2mQSJNcIFcIrtMXWbC31
+        MKNw1XCjM8rxCJC4zY2m4evBmmAAfzQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-1-8SlNiMreOIWVPvbUAcL_5g-1; Wed, 15 Jan 2020 09:35:30 -0500
+X-MC-Unique: 8SlNiMreOIWVPvbUAcL_5g-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 47yVGv2gWTzKmbK;
-        Wed, 15 Jan 2020 15:35:19 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
-        with ESMTP id P4dLfi4K-_0D; Wed, 15 Jan 2020 15:35:13 +0100 (CET)
-Date:   Thu, 16 Jan 2020 01:34:59 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        stable <stable@vger.kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Serge Hallyn <serge@hallyn.com>, dev@opencontainers.org,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 12180802B79;
+        Wed, 15 Jan 2020 14:35:26 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3B2AF5C28C;
+        Wed, 15 Jan 2020 14:35:23 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200115133101.GA28583@lst.de>
+References: <20200115133101.GA28583@lst.de> <4467.1579020509@warthog.procyon.org.uk> <00fc7691-77d5-5947-5493-5c97f262da81@gmx.com> <27181AE2-C63F-4932-A022-8B0563C72539@dilger.ca> <afa71c13-4f99-747a-54ec-579f11f066a0@gmx.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     dhowells@redhat.com, Qu Wenruo <quwenruo.btrfs@gmx.com>,
+        Andreas Dilger <adilger@dilger.ca>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>
-Subject: Re: [PATCH RFC 0/1] mount: universally disallow mounting over
- symlinks
-Message-ID: <20200115143459.l4wurqyetkmptsdm@yavin>
-References: <20200101234009.GB8904@ZenIV.linux.org.uk>
- <20200102035920.dsycgxnb6ba2jhz2@yavin.dot.cyphar.com>
- <20200103014901.GC8904@ZenIV.linux.org.uk>
- <20200108031314.GE8904@ZenIV.linux.org.uk>
- <CAHk-=wgQ3yOBuK8mxpnntD8cfX-+10ba81f86BYg8MhvwpvOMg@mail.gmail.com>
- <20200110210719.ktg3l2kwjrdutlh6@yavin>
- <20200114045733.GW8904@ZenIV.linux.org.uk>
- <20200114200150.ryld4npoblns2ybe@yavin>
- <20200115142517.GI8904@ZenIV.linux.org.uk>
- <20200115142906.saagd2lse7i7njux@yavin>
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Problems with determining data presence by examining extents?
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="u4mn5eoypdaexxxf"
-Content-Disposition: inline
-In-Reply-To: <20200115142906.saagd2lse7i7njux@yavin>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <26092.1579098922.1@warthog.procyon.org.uk>
+Date:   Wed, 15 Jan 2020 14:35:22 +0000
+Message-ID: <26093.1579098922@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Christoph Hellwig <hch@lst.de> wrote:
 
---u4mn5eoypdaexxxf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> If we can't get that easily it can be emulated using lseek SEEK_DATA /
+> SEEK_HOLE assuming no other thread could be writing to the file, or the
+> raciness doesn't matter.
 
-On 2020-01-16, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> On 2020-01-15, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > On Wed, Jan 15, 2020 at 07:01:50AM +1100, Aleksa Sarai wrote:
-> >=20
-> > > Yes, there were two patches I sent a while ago[1]. I can re-send them=
- if
-> > > you like. The second patch switches open_how->mode to a u64, but I'm
-> > > still on the fence about whether that makes sense to do...
-> >=20
-> > IMO plain __u64 is better than games with __aligned_u64 - all sizes are
-> > fixed, so...
-> >=20
-> > > [1]: https://lore.kernel.org/lkml/20191219105533.12508-1-cyphar@cypha=
-r.com/
-> >=20
-> > Do you want that series folded into "open: introduce openat2(2) syscall"
-> > and "selftests: add openat2(2) selftests" or would you rather have them
-> > appended at the end of the series.  Personally I'd go for "fold them in"
-> > if it had been about my code, but it's really up to you.
->=20
-> "fold them in" would probably be better to avoid making the mainline
-> history confusing afterwards. Thanks.
+Another thread could be writing to the file, and the raciness matters if I
+want to cache the result of calling SEEK_HOLE - though it might be possible
+just to mask it off.
 
-Also (if you prefer) I can send a v3 which uses u64s rather than
-aligned_u64s.
+One problem I have with SEEK_HOLE is that there's no upper bound on it.  Say
+I have a 1GiB cachefile that's completely populated and I want to find out if
+the first byte is present or not.  I call:
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+	end = vfs_llseek(file, SEEK_HOLE, 0);
 
---u4mn5eoypdaexxxf
-Content-Type: application/pgp-signature; name="signature.asc"
+It will have to scan the metadata of the entire 1GiB file and will then
+presumably return the EOF position.  Now this might only be a mild irritation
+as I can cache this information for later use, but it does put potentially put
+a performance hiccough in the case of someone only reading the first page or
+so of the file (say the file program).  On the other hand, probably most of
+the files in the cache are likely to be complete - in which case, it's
+probably quite cheap.
 
------BEGIN PGP SIGNATURE-----
+However, SEEK_HOLE doesn't help with the issue of the filesystem 'altering'
+the content of the file by adding or removing blocks of zeros.
 
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXh8jEAAKCRCdlLljIbnQ
-EgAQAQC483OrZyiBJYG/79I435iT1B2imv4w4itecQxjDIotqQEA4j43Ly9wivoP
-vlgdPGsgRV9piX8BxAvqQHyRKdQcdww=
-=q/o9
------END PGP SIGNATURE-----
+David
 
---u4mn5eoypdaexxxf--
