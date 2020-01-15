@@ -2,169 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F21413D030
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 23:38:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7A3513D08A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 00:11:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729880AbgAOWiW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 17:38:22 -0500
-Received: from mga01.intel.com ([192.55.52.88]:62536 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728939AbgAOWiW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 17:38:22 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jan 2020 14:38:21 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,323,1574150400"; 
-   d="scan'208";a="423770541"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga005.fm.intel.com with ESMTP; 15 Jan 2020 14:38:21 -0800
-Date:   Wed, 15 Jan 2020 14:38:21 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jan Kara <jack@suse.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
+        id S1731068AbgAOXJP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 18:09:15 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:32896 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729661AbgAOXJO (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Jan 2020 18:09:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579129753;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=3kh6FESOjeCOQkkcKQDJe6CbgaZZXbwDLWZRH4+4Tss=;
+        b=jBPUrvCj6p74elJ9vq+GP0zxVTTcZ9leECjxcqqL2tX7OkTPoq4zzwG0r8kG6c4eZ3Rqv1
+        fb4mYuEVgR321M9A7YHgh1VxHGYt8dkAd0XhRXq1Qbtn4A8fAqEAtP31ot/0jfriJXqhay
+        YtEMBVg7J8h3Nqq8wA0oKPUuxSdGm2g=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-185-UC9E83_LNMupIBVLbIZ7aA-1; Wed, 15 Jan 2020 18:09:09 -0500
+X-MC-Unique: UC9E83_LNMupIBVLbIZ7aA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 18964800D41;
+        Wed, 15 Jan 2020 23:09:07 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4EFA35D9C9;
+        Wed, 15 Jan 2020 23:09:04 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <7233E240-8EE5-4CD1-B8A4-A90925F51A1B@dilger.ca>
+References: <7233E240-8EE5-4CD1-B8A4-A90925F51A1B@dilger.ca> <C0F67EC5-7B5D-4179-9F28-95B84D9CC326@dilger.ca> <4467.1579020509@warthog.procyon.org.uk> <00fc7691-77d5-5947-5493-5c97f262da81@gmx.com> <27181AE2-C63F-4932-A022-8B0563C72539@dilger.ca> <afa71c13-4f99-747a-54ec-579f11f066a0@gmx.com> <20200115133101.GA28583@lst.de> <23762.1579121702@warthog.procyon.org.uk>
+To:     Andreas Dilger <adilger@dilger.ca>
+Cc:     dhowells@redhat.com, Christoph Hellwig <hch@lst.de>,
+        Qu Wenruo <quwenruo.btrfs@gmx.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         "Theodore Y. Ts'o" <tytso@mit.edu>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
         linux-ext4 <linux-ext4@vger.kernel.org>,
         linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC PATCH V2 01/12] fs/stat: Define DAX statx attribute
-Message-ID: <20200115223821.GG23311@iweiny-DESK2.sc.intel.com>
-References: <20200110192942.25021-1-ira.weiny@intel.com>
- <20200110192942.25021-2-ira.weiny@intel.com>
- <20200115113715.GB2595@quack2.suse.cz>
- <20200115173834.GD8247@magnolia>
- <20200115194512.GF23311@iweiny-DESK2.sc.intel.com>
- <CAPcyv4hwefzruFj02YHYiy8nOpHJFGLKksjiXoRUGpT3C2rDag@mail.gmail.com>
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Problems with determining data presence by examining extents?
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4hwefzruFj02YHYiy8nOpHJFGLKksjiXoRUGpT3C2rDag@mail.gmail.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <7025.1579129743.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Wed, 15 Jan 2020 23:09:03 +0000
+Message-ID: <7026.1579129743@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 12:10:50PM -0800, Dan Williams wrote:
-> On Wed, Jan 15, 2020 at 11:45 AM Ira Weiny <ira.weiny@intel.com> wrote:
-> >
-> > On Wed, Jan 15, 2020 at 09:38:34AM -0800, Darrick J. Wong wrote:
-> > > On Wed, Jan 15, 2020 at 12:37:15PM +0100, Jan Kara wrote:
-> > > > On Fri 10-01-20 11:29:31, ira.weiny@intel.com wrote:
-> > > > > From: Ira Weiny <ira.weiny@intel.com>
-> > > > >
+Andreas Dilger <adilger@dilger.ca> wrote:
 
-[snip]
+> > It would also have to say that blocks of zeros shouldn't be optimised =
+away.
+> =
 
-> > Ok I changed a couple of things as well.  How does this sound?
-> >
-> >
-> > STATX_ATTR_DAX
-> >
-> >         DAX (cpu direct access) is a file mode that attempts to minimize
-> 
-> s/mode/state/?
+> I don't necessarily see that as a requirement, so long as the filesystem
+> stores a "block" at that offset, but it could dedupe all zero-filled blo=
+cks
+> to the same "zero block".  That still allows saving storage space, while
+> keeping the semantics of "this block was written into the file" rather t=
+han
+> "there is a hole at this offset".
 
-DOH!  yes state...  ;-)
+Yeah, that's more what I was thinking of.  Provided I can find out that
+something is present, it should be fine.
 
-> 
-> >         software cache effects for both I/O and memory mappings of this
-> >         file.  It requires a block device and file system which have
-> >         been configured to support DAX.
-> 
-> It may not require a block device in the future.
+David
 
-Ok:
-
-"It requires a file system which has been configured to support DAX." ?
-
-I'm trying to separate the user of the individual STATX DAX flag from the Admin
-details of configuring the file system and/or devices which supports it.
-
-Also, I just realized that we should follow the format of the other STATX_*
-attributes.  They all read something like "the file is..."
-
-So I'm adding that text as well.
-
-> 
-> >
-> >         DAX generally assumes all accesses are via cpu load / store
-> >         instructions which can minimize overhead for small accesses, but
-> >         may adversely affect cpu utilization for large transfers.
-> >
-> >         File I/O is done directly to/from user-space buffers and memory
-> >         mapped I/O may be performed with direct memory mappings that
-> >         bypass kernel page cache.
-> >
-> >         While the DAX property tends to result in data being transferred
-> >         synchronously, it does not give the same guarantees of
-> >         synchronous I/O where data and the necessary metadata are
-> 
-> Maybe use "O_SYNC I/O" explicitly to further differentiate the 2
-> meanings of "synchronous" in this sentence?
-
-Done.
-
-> 
-> >         transferred together.
-> >
-> >         A DAX file may support being mapped with the MAP_SYNC flag,
-> >         which enables a program to use CPU cache flush operations to
-> 
-> s/operations/instructions/
-
-Done.
-
-> 
-> >         persist CPU store operations without an explicit fsync(2).  See
-> >         mmap(2) for more information.
-> 
-> I think this also wants a reference to the Linux interpretation of
-> platform "persistence domains" we were discussing that here [1], but
-> maybe it should be part of a "pmem" manpage that can be referenced
-> from this man page.
-
-Sure, but for now I think referencing mmap for details on MAP_SYNC works.
-
-I suspect that we may have some word smithing once I get this series in and we
-submit a change to the statx man page itself.  Can I move forward with the
-following for this patch?
-
-<quote>
-STATX_ATTR_DAX
-
-        The file is in the DAX (cpu direct access) state.  DAX state
-        attempts to minimize software cache effects for both I/O and
-        memory mappings of this file.  It requires a file system which
-        has been configured to support DAX.
-
-        DAX generally assumes all accesses are via cpu load / store
-        instructions which can minimize overhead for small accesses, but
-        may adversely affect cpu utilization for large transfers.
-
-        File I/O is done directly to/from user-space buffers and memory
-        mapped I/O may be performed with direct memory mappings that
-        bypass kernel page cache.
-
-        While the DAX property tends to result in data being transferred
-        synchronously, it does not give the same guarantees of
-        synchronous I/O where data and the necessary metadata are
-        transferred together.
-
-        A DAX file may support being mapped with the MAP_SYNC flag,
-        which enables a program to use CPU cache flush instructions to
-        persist CPU store operations without an explicit fsync(2).  See
-        mmap(2) for more information.
-</quote>
-
-Ira
-
-> 
-> [1]: http://lore.kernel.org/r/20200108064905.170394-1-aneesh.kumar@linux.ibm.com
