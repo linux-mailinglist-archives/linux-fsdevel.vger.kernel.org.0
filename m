@@ -2,106 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E6D513C399
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 14:52:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16CCD13C397
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 14:52:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729031AbgAONua convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 08:50:30 -0500
-Received: from mout.kundenserver.de ([212.227.17.13]:44779 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbgAONu3 (ORCPT
+        id S1729027AbgAONuY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 08:50:24 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:44537 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726085AbgAONuV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 08:50:29 -0500
-Received: from mail-qv1-f41.google.com ([209.85.219.41]) by
- mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MacWq-1jOIvZ1STS-00cBGy; Wed, 15 Jan 2020 14:50:27 +0100
-Received: by mail-qv1-f41.google.com with SMTP id dc14so7338848qvb.9;
-        Wed, 15 Jan 2020 05:50:27 -0800 (PST)
-X-Gm-Message-State: APjAAAVQPx15b4AjJCGeywdptelLsYDvuGQ48fq4a10RRa0QG2HQwmE7
-        94tVMQXPfT0+x1OkwMSEj96eg0ITnaOXllAmUHM=
-X-Google-Smtp-Source: APXvYqyl7uNQv+weHDkj+4n/1x08jQKkMwbhnzB0cjncUcoprt2VN7a56hddZyTo34cvRVHUb+kjlRzLrmpR32DvACo=
-X-Received: by 2002:a0c:d788:: with SMTP id z8mr20822765qvi.211.1579096226126;
- Wed, 15 Jan 2020 05:50:26 -0800 (PST)
+        Wed, 15 Jan 2020 08:50:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579096220;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=w+swK9osAIFZi3cI9plfEPgc0HcD0yrb1cBEuZ3PWuI=;
+        b=CE5Gv8OjqLpwR9x9G/v76Xqsw0JqrzhccwgY88x6gdAN0WaRJQ1VdgeGQcXRwPWACULl2v
+        oNtIL+FQwUKOArNC8LmAiGj4u4p8kQxT43j+P6eBP7asPoRTuO4vC+s1Ko0YZIUIE2nBNd
+        pVVMWJeBj15pTcbdfH0lU2r3IJJoQjk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-15-GOHqpJ9cNSinEYjPiomTzw-1; Wed, 15 Jan 2020 08:50:16 -0500
+X-MC-Unique: GOHqpJ9cNSinEYjPiomTzw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 837421005502;
+        Wed, 15 Jan 2020 13:50:14 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 142CC19C5B;
+        Wed, 15 Jan 2020 13:50:11 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200114224917.GA165687@mit.edu>
+References: <20200114224917.GA165687@mit.edu> <4467.1579020509@warthog.procyon.org.uk>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, hch@lst.de, adilger.kernel@dilger.ca,
+        darrick.wong@oracle.com, clm@fb.com, josef@toxicpanda.com,
+        dsterba@suse.com, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Problems with determining data presence by examining extents?
 MIME-Version: 1.0
-References: <CGME20200115082824epcas1p4eb45d088c2f88149acb94563c4a9b276@epcas1p4.samsung.com>
- <20200115082447.19520-1-namjae.jeon@samsung.com> <20200115082447.19520-10-namjae.jeon@samsung.com>
- <CAK8P3a3Vqz=T_=sFwBBPa2_Hi_dA=BwWod=L9JkLxUgi=aKNWw@mail.gmail.com>
- <CAKYAXd9_qmanQCcrdpScFWvPXuZvk4jhv7Gc=t_vRL9zqWNSjA@mail.gmail.com> <20200115133838.q33p5riihsinp6c4@pali>
-In-Reply-To: <20200115133838.q33p5riihsinp6c4@pali>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 15 Jan 2020 14:50:10 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a1ozgLYpDtveU0CtLj5fEFG8i=_QrnEAtoVFt-yC=Dc0g@mail.gmail.com>
-Message-ID: <CAK8P3a1ozgLYpDtveU0CtLj5fEFG8i=_QrnEAtoVFt-yC=Dc0g@mail.gmail.com>
-Subject: Re: [PATCH v10 09/14] exfat: add misc operations
-To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
-Cc:     Namjae Jeon <linkinjeon@gmail.com>,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Christoph Hellwig <hch@lst.de>, sj1557.seo@samsung.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:Y8h8lkSOLNjm7tnDH8hZQmI38TXya9ENaqh+Nr2XlDYvbVlqPPZ
- +9xPSGXEAK8bs+iwj/d540d5PdsXjr6Wy3/KbHy0ZZAezmdYmuHRLdxHKSNdV5/YbojH/Q0
- l7oD6eofrv3vtMfmuraBRNxg535jQC4YwrkvKR3hqGJQ3bGbXDHLcVw0WhL/AtlUpUFBw4g
- HiNR8k0ivYv3ajYUkCUmg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:+bu4/c32c1g=:44YrMUmOErEQchdHl7bXCz
- aOpSaBMkZIlqbAdiX/DFYl8YRHJmNHnVuiT1g8JyAgAtVPQQzArjv4n6KtwaBw6fGj9W/woNj
- LJnce+RXGEsAxT9S7jlOeaz23TGLprKLm6um/JVD9d8wc1exNeMSlV6qQt1dRzaue6ZViJF40
- izZ/bRf8MJ3sppuinfQRZmyJGdbNyKbbGP7eYtF70NJv6clczVrfAY2WZFO7KEotfXAv1I0W8
- 7TmInzH6TdGe6Ek0ZA6BP1oQW+ktqSBcxYTP/wWtydHfMsybxfpiuUKuLG0zHiAtJUIANERMn
- TILdQvfNUPYwQLpb/IUSEjbdzyqBePo306iF27wnXLVWgSS2Mi35V7xr3gbr1lO2LBTaSCe36
- ZwOIgVJ9YwyhlLTEDO34xLCh3YK/DwDjteQq9k1lsyEmWkToaPv6QGXZz+3/S9HQ3Ow0mYCHs
- QHNLqb7RE1gqzTIcWqT1+jc0NQOKiwoGrgxpPLCpgU2RSytzl6rzPaFy9D96Gor5o5jdSDob1
- A5PAleLeS0vdH9G1hYAfwUePVXNnmXVnh+Rzp+3j3LSpTZ9GFDxh/O44cbeh9hig7w28CcFC3
- +PJUMGSxXEP6s1sx/x/b071EJ6oj0rNyzOaim5LtzTm1ul5wo//C1Cl0eFB/hBrXzjbsKV3Hr
- 9PrnXsFMVdAqGtQN2JV492j6kQZ8DcI7CCQrhZp7Eac8P6n16pfyJqVpoGzpIw2zsayr8rQsn
- Pay3I9krsbE+GHTZcUJFkR0WdKur2YTaoLHLQ4vpt844LwIbalYlN5+HRjVtrgpXaYKVwi/v3
- voBal+RL7H5lUOO9cMoIziGklKR6synGPPtcYU/neHF/qSu19IoXLfGiwTZgU9VCG6mV7QiNb
- Heq9LyPkl4J6RxNDMMvQ==
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <22055.1579096211.1@warthog.procyon.org.uk>
+Date:   Wed, 15 Jan 2020 13:50:11 +0000
+Message-ID: <22056.1579096211@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 2:38 PM Pali Rohár <pali.rohar@gmail.com> wrote:
-> On Wednesday 15 January 2020 22:30:59 Namjae Jeon wrote:
-> > 2020-01-15 19:10 GMT+09:00, Arnd Bergmann <arnd@arndb.de>:
+Theodore Y. Ts'o <tytso@mit.edu> wrote:
 
-> > It is not described in the specification. I don't know exactly what
-> > the problem is because sys_tz.tz_minuteswest seems to work fine to me.
-> > It can be random garbage value ?
-> >
-> > > so if there is a choice, falling back to UTC would
-> > > be nicer.
-> >
-> > Okay.
->
-> Arnd, what is the default value of sys_tz.tz_minuteswest? What is the
-> benefit of not using it?
->
-> I though that timezone mount option is just an old hack when userspace
-> does not correctly set kernel's timezone and that this timezone mount
-> option should be in most cases avoided.
+> but I'm not sure we would want to make any guarantees with respect to (b).
 
-The main problem is that it is system-wide and initialized at boot
-time through settimeofday() to a timezone picked by the system
-administrator.
+Um.  That would potentially make disconnected operation problematic.  Now,
+it's unlikely that I'll want to store a 256KiB block of zeros, but not
+impossible.
 
-However, in user space, every user may set their own timezone with
-the 'TZ' variable, and the default timezone may be different inside of a
-container based on the contents of /etc/timezone in its root directory.
+> I suspect I understand why you want this; I've fielded some requests
+> for people wanting to do something very like this at $WORK, for what I
+> assume to be for the same reason you're seeking to do this; to create
+> do incremental caching of files and letting the file system track what
+> has and hasn't been cached yet.
 
-> So also another question, what is benefit of having fs specific timezone
-> mount option? As it is fs specific it means that it would be used so
-> much.
+Exactly so.  If I can't tap in to the filesystem's own map of what data is
+present in a file, then I have to do it myself in parallel.  Keeping my own
+list or map has a number of issues:
 
-You can use it to access removable media that were written in
-a different timezone, or a partition that is shared with another OS
-running on the same machine but with different timezone settings.
+ (1) It's redundant.  I have to maintain a second copy of what the filesystem
+     already maintains.  This uses extra space.
 
-     Arnd
+ (2) My map may get out of step with the filesystem after a crash.  The
+     filesystem has tools to deal with this in its own structures.
+
+ (3) If the file is very large and sparse, then keeping a bit-per-block map in
+     a single xattr may not suffice or may become unmanageable.  There's a
+     limit of 64k, which for bit-per-256k limits the maximum mappable size to
+     1TiB (I could use multiple xattrs, but some filesystems may have total
+     xattr limits) and whatever the size, I need a single buffer big enough to
+     hold it.
+
+     I could use a second file as a metadata cache - but that has worse
+     coherency properties.  (As I understand it, setxattr is synchronous and
+     journalled.)
+
+> If we were going to add such a facility, what we could perhaps do is
+> to define a new flag indicating that a particular file should have no
+> extent mapping optimization applied, such that FIEMAP would return a
+> mapping if and only if userspace had written to a particular block, or
+> had requested that a block be preallocated using fallocate().  The
+> flag could only be set on a zero-length file, and this might disable
+> certain advanced file system features, such as reflink, at the file
+> system's discretion; and there might be unspecified performance
+> impacts if this flag is set on a file.
+
+That would be fine for cachefiles.
+
+Also, I don't need to know *where* the data is, only that the first byte of my
+block exists - if a DIO read returns short when it reaches a hole.
+
+David
+
